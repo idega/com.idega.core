@@ -13,8 +13,8 @@ import com.idega.event.IWStateMachine;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.StyledButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.util.GenericFormCollector;
 import com.idega.util.datastructures.Collectable;
@@ -30,23 +30,20 @@ import com.idega.util.datastructures.Collectable;
 
 public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmitListener { 
     
-//  private SubmitButton apply;
-    
-//  private final static String HELP_TEXT_KEY = "tabbed_property_panel";
-//  
-    
     public static final String TAB_FORM_NAME = "tab_form";
     public static final String TAB_STORE_WINDOW = "tab_store_window";
     private static String TabbedPropertyPanelAttributeString = "-TabbedPropertyPanel";
     private boolean applyClicked = false;
     private String attributeString;
     private Table buttonTable;
+    private StyledButton cancelButton;
     private SubmitButton cancel;
     private boolean cancelClicked = false;
     private GenericFormCollector collector;
     private boolean first = true;
     private Table frameTable;
     private boolean justConstructed = true;
+    private StyledButton okButton;
     private SubmitButton ok;
     private boolean okClicked = false;
     private boolean stateChanged = false;
@@ -80,15 +77,11 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
                 tempTab = new TabbedPropertyPanel(key,iwc);
             }
             
-            
-            
             iwc.setSessionAttribute(key+TabbedPropertyPanelAttributeString, tempTab);
             tempTab.setAttributeString(key+TabbedPropertyPanelAttributeString);
             return tempTab;
         }
     }
-    
-    
     
     //added - birna
     public TabbedPropertyPanel(IWContext iwc) {
@@ -112,7 +105,11 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         
         setName(TAB_FORM_NAME);
         frameTable = new Table();
-//      frameTable.setStyleClass("main");
+        frameTable.setCellpadding(0);
+        frameTable.setCellspacing(0);
+        frameTable.setWidth(Table.HUNDRED_PERCENT);
+        frameTable.setHeight(2, 5);
+
         tpane = IWTabbedPane.getInstance(key,iwc);
         tpane.addChangeListener(this);
         // add all change listeners
@@ -133,9 +130,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         initializeLayout();
         initializeButtons(iwc);
         
-        
         ok.addIWSubmitListener(this, this,iwc);
-        //   apply.addIWSubmitListener(this, this,iwc);
         cancel.addIWSubmitListener(this, this,iwc);
     }
     
@@ -149,32 +144,23 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
             }
             this.cancelClicked = false;
             this.applyClicked = false;
-            
-//          }else if(e.getSource() == apply){
-//          boolean success = collector.storeAll(e.getIWContext());
-//          this.okClicked = false;
-//          this.cancelClicked = false;
-//          if(success){
-//          this.applyClicked = true;
-//          }else{
-//          this.applyClicked = false;
-//          }
         }
         else if(e.getSource() == cancel){
             this.okClicked = false;
             this.cancelClicked = true;
             this.applyClicked = false;
-        } else {
+        }
+        else {
             boolean success = collector.storeAll(e.getIWContext());
             if(success){
                 this.okClicked = true;
-            }else{
+            }
+            else{
                 this.okClicked = false;
             }
             this.cancelClicked = false;
             this.applyClicked = false;
         }
-        
     }
     
     public void addTab(PresentationObject collectable, int index, IWContext iwc){
@@ -216,7 +202,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         tpane.dispose(iwc);
         ok.endEvent(iwc);
         cancel.endEvent(iwc);
-//      apply.endEvent(iwc);
     }
     
     public PresentationObject[] getAddedTabs(){
@@ -237,21 +222,21 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     
     public void initializeButtons(IWContext iwc){
         //changed for localized buttons - birna
-        IWResourceBundle iwrb = getResourceBundle(iwc);
-        ok = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), iwrb.getLocalizedString("save", "Save"));
+    			IWResourceBundle iwrb = getResourceBundle(iwc);
+        ok = new SubmitButton(iwrb.getLocalizedString("save", "Save"), iwrb.getLocalizedString("save", "Save"));
+        okButton = new StyledButton(ok);
         //ok.setSubmitConfirm(iwrb.getLocalizedString("change.group.details?", "Do you want to save changes to group details?"));
-        cancel = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), iwrb.getLocalizedString("close", "Close"));
-//      apply = new SubmitButton(iwrb.getLocalizedImageButton("apply", "Apply"),iwrb.getLocalizedString("commit", "Commit"));
-        
-        
+        cancel = new SubmitButton(iwrb.getLocalizedString("close", "Close"), iwrb.getLocalizedString("close", "Close"));
+        cancelButton = new StyledButton(cancel);
     }
     
     public void initializeLayout(){
-        frameTable.resize(1,2);
+        frameTable.resize(1,3);
         frameTable.add(tpane,1,1);
-        frameTable.setAlignment(1,1,"center");
-        frameTable.setWidth(470);
-//      frameTable.setHeight(500);
+        frameTable.setCellpadding(0);
+        frameTable.setCellspacing(0);
+        frameTable.setBorder(0);
+        frameTable.setWidth(Table.HUNDRED_PERCENT);
     }
     
     public boolean justConstructed(){
@@ -263,53 +248,34 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         this.tpane.justConstructed(justConstructed);
     }
     
-//  public SubmitButton getApplyButton(){
-//  return apply;
-//  }
-    
-    
     public void lineUpButtons(){
-        // assuming all buttons are enabled
+        buttonTable = new Table(2, 1);
         
-        buttonTable = new Table(5,1);
-        
-        buttonTable.setCellpadding(0);
+        buttonTable.setCellpadding(5);
         buttonTable.setCellspacing(0);
-        buttonTable.setHeight(37);
         buttonTable.setStyleClass("main");
-        buttonTable.setWidth("400");
+        buttonTable.setWidth(Table.HUNDRED_PERCENT);
+        buttonTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
         
-        buttonTable.setVerticalAlignment(1,1,"middle");
-        buttonTable.setVerticalAlignment(2,1,"middle");
-        buttonTable.setVerticalAlignment(4,1,"middle");
-        buttonTable.setAlignment(2,1,"right");
-        buttonTable.setAlignment(4,1,"right");
-        
-        buttonTable.setWidth(3,1,"7");
-        buttonTable.setWidth(5,1,"7");
-        
-//      buttonTable.add(getHelpButton(iwc),1,1);
-        
-        if(useOkButton) {
-            buttonTable.add(ok,4,1);
-            buttonTable.add(Text.NON_BREAKING_SPACE,4,1);
-            
+        Table buttons = new Table();
+        buttons.setCellpadding(0);
+        buttons.setCellspacing(0);
+
+				if (useOkButton) {
+          buttons.add(okButton, 1, 1);
         }
         
         if(useCancelButton) {
-            buttonTable.add(cancel,4,1);
+          buttons.setWidth(2, 5);
+          buttons.add(cancelButton, 3, 1);
         }
-//      buttonTable.add(apply,5,1);
+        buttonTable.add(buttons, 2, 1);
         
-        frameTable.add(buttonTable,1,2);
-        frameTable.setAlignment(1,2,"center");
-        
+        frameTable.add(buttonTable, 1, 3);
     }
     
     public void main(IWContext iwc) throws Exception{
-        
         if(stateChanged){
-            
             boolean success = collector.setSelectedIndex(tpane.getSelectedIndex(),iwc);
             if(!success){
                 this.getIWTabbedPane().setSelectedIndex(collector.getSelectedIndex());
@@ -317,12 +283,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
             stateChanged = false;
         }
         super.main(iwc);
-        /*    if(this.justConstructed()){
-         lineUpButtons();
-         ok.addIWSubmitListener(this, this,iwc);
-         apply.addIWSubmitListener(this, this,iwc);
-         }
-         */
     }
     
     public void setAttributeString(String attributeString){
@@ -336,7 +296,8 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         first = false;
     }
     
-    
-    
-    
+    public void addHelpButton(PresentationObject obj) {
+    		buttonTable.emptyCell(1, 1);
+    		buttonTable.add(obj, 1, 1);
+    }   
 }
