@@ -80,6 +80,7 @@ public class Text extends PresentationObject {
 
 	public Text(String text) {
 		super();
+		setTransient(false);
 		setText(text);
 		attributeSet = false;
 		teletype = false;
