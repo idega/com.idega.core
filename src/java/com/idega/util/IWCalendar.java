@@ -56,6 +56,16 @@ public class IWCalendar {
 
 	/**
 	 * Construct a new <code>IWCalendar</code> object that is initialized to
+	 * the given date and default locale.
+	 */
+	public IWCalendar(Date date) {
+		_calendar = new GregorianCalendar();
+		_calendar.setTime(date);
+		_locale = LocaleUtil.getIcelandicLocale();
+	}
+
+	/**
+	 * Construct a new <code>IWCalendar</code> object that is initialized to
 	 * the given locale and calendar from the constructed IWTimestamp.
 	 */
 	public IWCalendar(Locale locale, IWTimestamp timestamp) {
@@ -68,6 +78,16 @@ public class IWCalendar {
 	 */
 	public IWCalendar(Locale locale, GregorianCalendar calendar) {
 		_calendar = calendar;
+		_locale = locale;
+	}
+
+	/**
+	 * Construct a new <code>IWCalendar</code> object that is initialized to
+	 * the given date and locale.
+	 */
+	public IWCalendar(Locale locale, Date date) {
+		_calendar = new GregorianCalendar();
+		_calendar.setTime(date);
 		_locale = locale;
 	}
 
@@ -787,7 +807,7 @@ public class IWCalendar {
 
 	/**
 	 * Sets the current date (January = 1).
-	 * @param year The day to year
+	 * @param year The day to set
 	 * @param month The month to set
 	 * @param day The day to set
 	 */
@@ -795,5 +815,13 @@ public class IWCalendar {
 		_calendar.set(_calendar.YEAR, year);	
 		_calendar.set(_calendar.MONTH, month - 1);	
 		_calendar.set(_calendar.DATE, day);	
+	}
+	
+	/**
+	 * Sets the current date according to the date setting of the Date object.
+	 * @param date	The date to set
+	 */
+	public void setDate(Date date) {
+		_calendar.setTime(date);	
 	}
 }
