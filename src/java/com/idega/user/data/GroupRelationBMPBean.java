@@ -180,6 +180,43 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   public Collection ejbFindGroupsRelationshipsContaining(int groupID,String relationType)throws FinderException,RemoteException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationType+"' and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
+  
+  /**
+   * Finds all active relationships specified only in one direction with groupID and relationType ether with value relationType or orRelationType, relationType and orRelationType may be null
+   */
+  public Collection ejbFindGroupsRelationshipsContaining(int groupID,String relationType,String orRelationType)throws FinderException,RemoteException{
+    String firstRelationTypeClause = getRelationTypeWhereClause(relationType);
+    String secondRelationTypeClause = getRelationTypeWhereClause(orRelationType);
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and ("+firstRelationTypeClause+" OR "+secondRelationTypeClause+") and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
+  }
+
+
+
+  /**
+   * Finds all active relationships specified only in one direction with groupID and relationType as specified
+   */
+  public Collection ejbFindGroupsRelationshipsByRelatedGroup(int groupID,String relationType)throws FinderException,RemoteException{
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationType+"' and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
+  }
+  
+  /**
+   * Finds all active relationships specified only in one direction with groupID and relationType ether with value relationType or orRelationType, relationType and orRelationType may be null
+   */
+  public Collection ejbFindGroupsRelationshipsByRelatedGroup(int groupID,String relationType,String orRelationType)throws FinderException,RemoteException{
+    String firstRelationTypeClause = getRelationTypeWhereClause(relationType);
+    String secondRelationTypeClause = getRelationTypeWhereClause(orRelationType);
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+groupID+" and ("+firstRelationTypeClause+" OR "+secondRelationTypeClause+") and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
+  }
+  
+  protected String getRelationTypeWhereClause(String value){
+  	if(value==null){
+  		return RELATIONSHIP_TYPE_COLUMN+" is null";
+  	}
+  	else{
+  		return RELATIONSHIP_TYPE_COLUMN+"='"+value+"'";
+  	}	
+  }
+
 
   /**
    * Finds all active relationships specified only in one direction with groupID and relatedGroupID and relationshipType as specified

@@ -1,18 +1,29 @@
 package com.idega.user.business;
 
+import java.rmi.RemoteException;
+import java.util.Collection;
+
 import javax.ejb.*;
+
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
 
 public interface UserBusiness extends com.idega.business.IBOService
 {
  public java.util.Collection getUsers()throws javax.ejb.FinderException,java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.user.data.User getUser(int p0) throws java.rmi.RemoteException;
- public java.util.Collection getUserGroupsNotDirectlyRelated(int p0) throws java.rmi.RemoteException;
+
+
+// public java.util.Collection getUserGroupsNotDirectlyRelated(int p0) throws java.rmi.RemoteException;
+ public java.util.Collection getParentGroupsInDirectForUser(int p0) throws java.rmi.RemoteException;
+ 
  public void updateUserMail(int p0,java.lang.String p1)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection listOfUserEmails(int p0) throws java.rmi.RemoteException;
  public void setUserUnderDomain(com.idega.builder.data.IBDomain p0,com.idega.user.data.User p1,com.idega.user.data.GroupDomainRelationType p2)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public void deleteUser(int p0)throws javax.ejb.RemoveException, java.rmi.RemoteException;
- public java.util.Collection getAllGroupsNotDirectlyRelated(int p0) throws java.rmi.RemoteException;
+ //public java.util.Collection getAllGroupsNotDirectlyRelated(int p0) throws java.rmi.RemoteException;
  public com.idega.core.data.Phone getUsersWorkPhone(com.idega.user.data.User p0)throws com.idega.user.business.NoPhoneFoundException, java.rmi.RemoteException;
+ //public java.util.Collection getAllGroupsNotDirectlyRelated(int p0,com.idega.presentation.IWContext p1) throws java.rmi.RemoteException;
  public com.idega.user.data.User createUserByPersonalIDIfDoesNotExist(java.lang.String p0,java.lang.String p1,com.idega.user.data.Gender p2,com.idega.util.IWTimestamp p3)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.core.data.Email lookupEmail(java.lang.String p0) throws java.rmi.RemoteException;
  public com.idega.core.business.AddressBusiness getAddressBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
@@ -24,7 +35,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.core.data.AddressHome getAddressHome() throws java.rmi.RemoteException;
  public com.idega.core.data.Phone getUsersFaxPhone(com.idega.user.data.User p0)throws com.idega.user.business.NoPhoneFoundException, java.rmi.RemoteException;
  public com.idega.user.business.UserProperties getUserProperties(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Collection getAllGroupsNotDirectlyRelated(int p0,com.idega.presentation.IWContext p1) throws java.rmi.RemoteException;
+ //public java.util.Collection getAllGroupsNotDirectlyRelated(int p0,com.idega.presentation.IWContext p1) throws java.rmi.RemoteException;
  public com.idega.user.business.UserProperties getUserProperties(int p0) throws java.rmi.RemoteException;
  public com.idega.core.data.Address getUserAddress1(int p0)throws javax.ejb.EJBException,java.rmi.RemoteException, java.rmi.RemoteException;
  public void updateUser(com.idega.user.data.User p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,java.lang.String p4,java.lang.String p5,java.lang.Integer p6,java.lang.String p7,com.idega.util.IWTimestamp p8,java.lang.Integer p9)throws javax.ejb.EJBException,java.rmi.RemoteException, java.rmi.RemoteException;
@@ -62,6 +73,17 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2,com.idega.user.data.Group p3)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getAllUsersOrderedByFirstName()throws javax.ejb.FinderException,java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.user.data.GroupHome getGroupHome() throws java.rmi.RemoteException;
+
+ public java.util.Collection getNonParentGroups(int p0) throws java.rmi.RemoteException;
+/**
+ * Gets all the groups that the user is in recursively up the group tree filtered with specified groupTypes
+ * @param aUser a User to find parent Groups for
+ * @param groupTypes the Groups a String array of group types of which the Groups to be returned must be
+= * @return Collection of Groups found recursively up the tree
+ * @throws EJBException If an error occured
+ */
+  public Collection getUserGroups(User aUser, String[] groupTypes) throws EJBException,java.rmi.RemoteException;
+  
  public java.lang.Integer getGenderId(java.lang.String p0)throws java.lang.Exception, java.rmi.RemoteException;
  public com.idega.core.data.Phone getUserPhone(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getUserGroupsDirectlyRelated(com.idega.user.data.User p0) throws java.rmi.RemoteException;
@@ -70,4 +92,22 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.core.data.Address updateUsersMainAddressOrCreateIfDoesNotExist(java.lang.Integer p0,java.lang.String p1,java.lang.Integer p2,java.lang.String p3,java.lang.String p4,java.lang.String p5,java.lang.String p6)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getUserGroups(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
+
+
+	/**
+	 * Cast a Group that is a "UserReresentative" Group to a User instance.
+	 * @param userGroups An instance of a Group that is really a "UserReresentative" group i.e. the Group representation of the User
+	 * @param userGroup A instnance of a Group that is really a "UserReresentative" group i.e. the Group representation of the User
+	 * @return User
+	 * @throws EJBException If an error occurs casting
+	 */
+	public User castUserGroupToUser(Group userGroup)throws EJBException,RemoteException;
+
+	/**
+	 * Cast a Group that is a "UserReresentative" Group to a User instance.
+	 * @param userGroupCollection A Collection with instnances of a Group that are really a "UserReresentative" groups i.e. the Group representation of the User
+	 * @return Collection of user instances representing the Groups
+	 * @throws EJBException If an error occurs casting
+	 */
+	public Collection castUserGroupsToUsers(Collection userGroupCollection)throws EJBException,RemoteException;
 }

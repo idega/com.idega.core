@@ -309,6 +309,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return createUser(firstname,middlename,lastname,(String)null);
   }
 
+
   /**
    * Creates a new user with a firstname,middlename, lastname and personalID where middlename and personalID can be null
    */
@@ -722,7 +723,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
   /**
-   * Returns null if no emails found for user
+   * Gets all the Emails registered to a User with id iUserId
+   * @param iUserId an ID of a User
+   * @return Collection of Emails for the User or Null if no emails are found.
    */
   public Collection listOfUserEmails(int iUserId){
     try {
@@ -782,9 +785,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
   }
 
-  public  Collection getUsersInGroup(int iGroupId) {
-    try {
-      return getGroupBusiness().getUsersContained(iGroupId);
+/**
+ * Gets all users that are directly children of the group with id iGroupId
+ * @return Collection of User objects.
+ * @see com.idega.user.business.UserBusiness#getUsersInGroup(Group)
+ */
+  public Collection getUsersInGroup(int iGroupId) {
+    try{
+    	//EntityFinder.findRelated(group,com.idega.user.data.UserBMPBean.getStaticInstance());
+    	Collection groupList = this.getGroupBusiness().getUsersContained(iGroupId);
+      	return castUserGroupsToUsers(groupList);
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -792,9 +802,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
   }
 
-  public  Collection getUsersInGroup(Group group) {
+/**
+ * Gets all users that are directly children of the group aGroup
+ * @return Collection of User objects. * @see com.idega.user.business.UserBusiness#getUsersInGroup(Group) */
+  public Collection getUsersInGroup(Group aGroup) {
     try {
-      return this.getGroupBusiness().getUsersContained(group);  //EntityFinder.findRelated(group,com.idega.user.data.UserBMPBean.getStaticInstance());
+    	int groupID = ((Integer)aGroup.getPrimaryKey()).intValue();
+    	return getUsersInGroup(groupID);
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -803,16 +817,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
 
+ /**
+  * Gets a collection of all users in the system.
+  * @return Collection of User entities  * @see com.idega.user.business.UserBusiness#getUsers()  */
   public  Collection getUsers() throws FinderException,RemoteException{
     //Collection l = EntityFinder.findAll(com.idega.user.data.UserBMPBean.getStaticInstance());
     Collection l = this.getUserHome().findAllUsers();
     return l;
   }
 
-
+	
 
   /**
-   *  Returns User from userid, throws EJBException if not found
+   *  Returns User from userid, throws an unchecked EJBException if not found
+   * @throws EJBException if nothing found or an error occured
    */
   public  User getUser(int iUserId){
     return getUser(new Integer(iUserId));
@@ -862,7 +880,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
   public  Collection getUserGroupsDirectlyRelated(User user){
     try {
-      return getGroupBusiness().getGroupsContainingDirectlyRelated(user.getGroupID()); //  EntityFinder.findRelated(user,com.idega.user.data.GroupBMPBean.getStaticInstance());
+      return getGroupBusiness().getParentGroups(user.getGroupID()); //  EntityFinder.findRelated(user,com.idega.user.data.GroupBMPBean.getStaticInstance());
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -870,7 +888,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
   }
 
-  public  Collection getUserGroupsNotDirectlyRelated(int iUserId){
+
+/**
+ * Gets all the groups that are indirect parents (grand parents etc.) of the user with id iUserId
+ *@param iUserId the ID of the user to get indirect parents for
+ *@return Collection of Group entities that are not direct parents of the specified user
+ * */
+	public  Collection getParentGroupsInDirectForUser(int iUserId){
+  //public  Collection getUserGroupsNotDirectlyRelated(int iUserId){
     try {
       User user = this.getUser(iUserId);
       /*Collection isDirectlyRelated = getUserGroupsDirectlyRelated(user);
@@ -890,7 +915,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         return null;
       }
       */
-      return this.getGroupBusiness().getGroupsContainingNotDirectlyRelated(user.getGroupID());
+      return this.getGroupBusiness().getParentGroupsInDirect(user.getGroupID());
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -898,13 +923,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
   }
 
-	/**
-	 * 	 * @deprecated Replaced with getAllGroupsNotDirectlyRelated(int iUserId)	 */
-  public  Collection getAllGroupsNotDirectlyRelated(int iUserId,IWContext iwc){
-  	return 	getAllGroupsNotDirectlyRelated(iUserId);
-  }
-
-  public  Collection getAllGroupsNotDirectlyRelated(int iUserId){
+/**
+ * Returns all the groups that are not a direct parent of the User with id iUserId. That is both groups that are indirect parents of the user or not at all parents of the user.
+ * @see com.idega.user.business.GroupBusiness#getAllGroupsNotDirectlyRelated(int)
+ * @return Collection of non direct parent groups
+ */
+  public Collection getNonParentGroups(int iUserId){
     try {
 
       User user = getUser(iUserId);
@@ -925,7 +949,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         return null;
       }
       */
-      return getGroupBusiness().getAllGroupsNotDirectlyRelated(user.getGroupID());
+      return getGroupBusiness().getNonParentGroups(user.getGroupID());
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -934,19 +958,46 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
 
-  public  Collection getUserGroups(User user) throws RemoteException{
+/**
+ * Gets all the groups that the user is in recursively up the group tree with all availble group types.
+ * @param aUser a User to find parent Groups for
+ * @return Collection of Groups found recursively up the tree
+ * @throws EJBException If an error occured
+ */
+  public  Collection getUserGroups(User aUser) throws EJBException{
     //String[] groupTypesToReturn = new String[2];
-
     //groupTypesToReturn[0] = com.idega.user.data.GroupBMPBean.getStaticInstance().getGroupTypeValue();
     //groupTypesToReturn[1] = com.idega.core.accesscontrol.data.PermissionGroupBMPBean.getStaticPermissionGroupInstance().getGroupTypeValue();
-    return getUserGroups(user,null,false);
+    return getUserGroups(aUser,null,false);
   }
 
-  /**
-   * @todo replace ((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(user.getGroupID()) by user.getGroupID()
-   */
-  public  Collection getUserGroups(User user, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws RemoteException{
-    return getGroupBusiness().getGroupsContaining(user.getGroup(),groupTypes, returnSepcifiedGroupTypes);
+
+/**
+ * Gets all the groups that the user is in recursively up the group tree filtered with specified groupTypes
+ * @param aUser a User to find parent Groups for
+ * @param groupTypes the Groups a String array of group types of which the Groups to be returned must be
+= * @return Collection of Groups found recursively up the tree
+ * @throws EJBException If an error occured
+ */
+  public Collection getUserGroups(User aUser, String[] groupTypes) throws EJBException{
+    return getUserGroups(aUser,groupTypes, false);
+  }
+
+
+/**
+ * Returns recursively up the group tree parents of User aUser with filtered out with specified groupTypes
+ * @param aUser a User to find parent Groups for
+ * @param groupTypes the Groups a String array of group types to be filtered with
+ * @param returnSpecifiedGroupTypes if true it returns the Collection with all the groups that are of the types specified in  groupTypes[], else it returns the opposite (all the groups that are not of any of the types specified by groupTypes[])
+ * @return Collection of Groups found recursively up the tree
+ * @throws EJBException If an error occured
+ */
+  public Collection getUserGroups(User aUser, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws EJBException{
+    try {
+		return getGroupBusiness().getParentGroupsRecursive(aUser.getGroup(),groupTypes, returnSepcifiedGroupTypes);
+	} catch (RemoteException e) {
+		throw new IBORuntimeException(e,this);
+	}
   }
 
 
@@ -1022,8 +1073,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 
 /**
- * @return Correct name of the group or user or null if there was an error getting the name.
- * Gets the name of the group and explicitely checks if the "groupOrUser" and if it is a user it 
+ * @return Correct name of the group or user or empty string if there was an error getting the name.
+ * Gets the name of the group and explicitly checks if the "groupOrUser" and if it is a user it 
  * returns the correct name of the user. Else it regularely returns the name of the group.
  **/
   public String getNameOfGroupOrUser(Group groupOrUser){
@@ -1102,5 +1153,59 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public AddressBusiness getAddressBusiness() throws RemoteException{
 		return (AddressBusiness) getServiceInstance(AddressBusiness.class);
 	}
+
+
+
+	/**
+	 * Cast a Group that is a "UserReresentative" Group to a User instance.
+	 * @param userGroups An instance of a Group that is really a "UserReresentative" group i.e. the Group representation of the User	 * @param userGroup A instnance of a Group that is really a "UserReresentative" group i.e. the Group representation of the User	 * @return User
+	 * @throws EJBException If an error occurs casting	 */
+	public User castUserGroupToUser(Group userGroup)throws EJBException{
+		try{
+			if(userGroup instanceof User){
+				return (User)userGroup;	
+			}
+			else{
+				return this.getUserHome().findUserForUserGroup(userGroup);
+			}
+		}
+		catch(Exception e){
+			throw new IBORuntimeException(e);	
+		}
+	}
+	
+
+	/**
+	 * Cast a Group that is a "UserReresentative" Group to a User instance.
+	 * @param userGroupCollection A Collection with instnances of a Group that are really a "UserReresentative" groups i.e. the Group representation of the User
+	 * @return Collection of user instances representing the Groups
+	 * @throws EJBException If an error occurs casting
+	 */
+	public Collection castUserGroupsToUsers(Collection userGroupCollection)throws EJBException{
+		try{
+			boolean mayReturnWholeCollection=true;
+			for (Iterator iter = userGroupCollection.iterator(); iter.hasNext();) {
+				Group userGroup = (Group) iter.next();
+				if(userGroup instanceof User){
+					//nothing
+				}
+				else{
+					mayReturnWholeCollection=false;
+					break;	
+				}
+			}
+			
+			if(mayReturnWholeCollection){
+				return userGroupCollection;
+			}
+			else{
+				return this.getUserHome().findUsersForUserRepresentativeGroups(userGroupCollection);
+			}
+		}
+		catch(Exception e){
+			throw new IBORuntimeException(e,this);
+		}
+	}
+	
 
 } // Class UserBusiness

@@ -10,7 +10,9 @@ import com.idega.data.IDOException;
 import com.idega.data.IDOFinderException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORemoveRelationshipException;
+import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
+import com.idega.util.ListUtil;
 
 import java.rmi.RemoteException;
 import java.sql.Date;
@@ -395,28 +397,48 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		setColumn(_COLUMNNAME_PRIMARY_GROUP_ID, icGroupId);
 	}
 
-	public void setHomePageID(int pageID) throws java.rmi.RemoteException {
-		Group group = getGeneralGroup();
-		group.setHomePageID(pageID);
-		group.store();
+	public void setHomePageID(int pageID)  {
+		try{
+			Group group = getGeneralGroup();
+			group.setHomePageID(pageID);
+			group.store();
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
 	}
 
-	public void setHomePageID(Integer pageID) throws java.rmi.RemoteException {
-		Group group = getGeneralGroup();
-		group.setHomePageID(pageID);
-		group.store();
+	public void setHomePageID(Integer pageID) {
+		try{
+			Group group = getGeneralGroup();
+			group.setHomePageID(pageID);
+			group.store();
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
 	}
 
-	public void setHomePage(IBPage page) throws java.rmi.RemoteException {
-		Group group = getGeneralGroup();
-		group.setHomePage(page);
-		group.store();
+	public void setHomePage(IBPage page)  {
+		try{
+			Group group = getGeneralGroup();
+			group.setHomePage(page);
+			group.store();
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
 	}
 	
-	public void setCreated(Timestamp stamp) throws java.rmi.RemoteException {
-		Group group = getGeneralGroup();
-		group.setCreated(stamp);
-		group.store();
+	public void setCreated(Timestamp stamp) {
+		try{
+			Group group = getGeneralGroup();
+			group.setCreated(stamp);
+			group.store();
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
 	}
 
 	/*  Setters end   */
@@ -481,6 +503,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	/*  Finders begin   */
 
+
+
+	/**
+	 * Returns the Users that is the instance of the User representing the Groups in the Collection groupList
+	 * @param groupList a Group of type "UserRepresentative"
+	 * @return Collection of primary keys of the Users representing the UserGroups
+	 * @throws FinderException If an error occurs
+	 */
 	public Collection ejbFindUsersForUserRepresentativeGroups(Collection groupList) throws FinderException {
 		//      System.out.println("[UserBMPBean]: groupList = "+groupList);
 		String sGroupList = IDOUtil.getInstance().convertListToCommaseparatedString(groupList);
@@ -515,6 +545,20 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//      return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+this.getIDColumnName()+" in ("+sGroupList+")");
 	}
 
+	/**
+	 * Returns the User that is the instance of the User representing the group userRepGroup	 * @param userRepGroup a Group of type "UserRepresentative"	 * @return Integer the primary key of the User representing the UserGroup	 * @throws FinderException If an error occurs	 */
+	public Integer ejbFindUserForUserRepresentativeGroup(Group userRepGroup) throws FinderException {
+		try{
+			String sGroupPK = userRepGroup.getPrimaryKey().toString();
+			IDOQuery query = idoQueryGetSelect();
+			query.appendWhereEqualsQuoted(this.getIDColumnName(),sGroupPK);
+			return (Integer)this.idoFindOnePKByQuery(query);
+		}
+		catch(RemoteException rme){
+			throw new IDOFinderException(rme);
+		}
+	}
+
 	public Collection ejbFindAllUsers() throws FinderException {
 		return super.idoFindAllIDsBySQL();
 	}
@@ -523,7 +567,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return super.idoFindAllIDsByColumnBySQL(_COLUMNNAME_PRIMARY_GROUP_ID, group.getPrimaryKey().toString());
 	}
 
-	public Collection ejbFindAllUsersOrderedByFirstName() throws FinderException, RemoteException {
+	public Collection ejbFindAllUsersOrderedByFirstName() throws FinderException {
 		IDOQuery query = new IDOQuery();
 		query.appendSelectAllFrom(this.getEntityName());
 		query.appendOrderBy(this.getColumnNameFirstName() + "," + this.getColumnNameLastName() + "," + this.getColumnNameMiddleName());
@@ -542,28 +586,28 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//      return super.idoFindAllIDsOrderedBySQL(this.getColumnNameFirstName());
 	}
 
-	public void removeGroup(int p0, boolean p1) throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public void removeGroup(int p0, boolean p1) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
 	}
-	public void removeUser(User p0) throws java.rmi.RemoteException, java.rmi.RemoteException {
+	public void removeUser(User p0) {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method removeUser() not yet implemented.");
 	}
-	public void setGroupType(String p0) throws java.rmi.RemoteException {
+	public void setGroupType(String p0){
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method setGroupType() not yet implemented.");
 	}
-	public String getGroupTypeValue() throws java.rmi.RemoteException {
+	public String getGroupTypeValue() {
 		return "user_group_representative";
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method getGroupTypeValue() not yet implemented.");
 	}
-	public void setExtraInfo(String p0) throws java.rmi.RemoteException {
+	public void setExtraInfo(String p0) {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method setExtraInfo() not yet implemented.");
 	}
-	public void removeGroup() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public void removeGroup() throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
 	}
@@ -572,92 +616,99 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	   //return equals((Object)this);
 	   return this.getGeneralGroup().equals(p0);
 	 }*/
-	public void addGroup(Group p0) throws java.rmi.RemoteException, javax.ejb.EJBException, java.rmi.RemoteException {
+	public void addGroup(Group p0) throws EJBException{
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not yet implemented.");
 	}
-	public List getGroupsContained(String[] p0, boolean p1) throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public List getChildGroups(String[] p0, boolean p1) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not yet implemented.");
 	}
-	public List getListOfAllGroupsContaining(int p0) throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public List getListOfAllGroupsContaining(int p0) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContaining() not yet implemented.");
 	}
-	public void addGroup(int p0) throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public void addGroup(int p0) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not yet implemented.");
 	}
-	public List getListOfAllGroupsContained() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	public List getChildGroups() throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContained() not yet implemented.");
 	}
-	public Collection getAllGroupsContainingUser(User p0) throws java.rmi.RemoteException, javax.ejb.EJBException, java.rmi.RemoteException {
+	public Collection getAllGroupsContainingUser(User p0) throws EJBException{
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method getAllGroupsContainingUser() not yet implemented.");
 	}
-	public void removeGroup(Group p0) throws java.rmi.RemoteException, javax.ejb.EJBException, java.rmi.RemoteException {
+	public void removeGroup(Group p0) throws EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
 	}
-	public String getGroupType() throws java.rmi.RemoteException {
+	public String getGroupType() {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method getGroupType() not yet implemented.");
 		return "user_group_representative";
 	}
-	public List getListOfAllGroupsContainingThis() throws javax.ejb.EJBException, java.rmi.RemoteException {
+	/**
+	 * Gets a list of all the groups that this "group" is directly member of.	 * @see com.idega.user.data.Group#getListOfAllGroupsContainingThis()	 */
+	public List getParentGroups()  {
 		/**@todo: Implement this com.idega.user.data.Group method*/
-		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContainingThis() not yet implemented.");
+		//throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContainingThis() not yet implemented.");
+		try{
+			List l = getGeneralGroup().getParentGroups();
+			Group primaryGroup = this.getPrimaryGroup();
+			if(!l.contains(primaryGroup)){
+				l.add(primaryGroup);
+			}
+			return l;
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
 	}
-	public String getExtraInfo() throws java.rmi.RemoteException {
+	public String getExtraInfo()  {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method getExtraInfo() not yet implemented.");
-		return this.getGeneralGroup().getExtraInfo();
+		try{
+			return this.getGeneralGroup().getExtraInfo();
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
 	}
-	public void addUser(User p0) throws java.rmi.RemoteException, java.rmi.RemoteException {
+	public void addUser(User p0){
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method addUser() not yet implemented.");
 	}
 
 	public Iterator getChildren() {
-		/**@todo: Implement this com.idega.core.ICTreeNode method*/
-		throw new java.lang.UnsupportedOperationException("Method getChildren() not yet implemented.");
+		return ListUtil.getEmptyList().iterator();
 	}
 	public boolean getAllowsChildren() {
-		/**@todo: Implement this com.idega.core.ICTreeNode method*/
-		throw new java.lang.UnsupportedOperationException("Method getAllowsChildren() not yet implemented.");
+		return false;
 	}
 	public ICTreeNode getChildAtIndex(int childIndex) {
 		/**@todo: Implement this com.idega.core.ICTreeNode method*/
-		throw new java.lang.UnsupportedOperationException("Method getChildAtIndex() not yet implemented.");
+		throw new java.lang.UnsupportedOperationException("Method getChildAtIndex() not supported.");
 	}
 	public int getChildCount() {
-		/**@todo: Implement this com.idega.core.ICTreeNode method*/
-		throw new java.lang.UnsupportedOperationException("Method getChildCount() not yet implemented.");
+		return 0;
 	}
 	public int getIndex(ICTreeNode node) {
-		/**@todo: Implement this com.idega.core.ICTreeNode method*/
-		throw new java.lang.UnsupportedOperationException("Method getIndex() not yet implemented.");
+		throw new java.lang.UnsupportedOperationException("Method getIndex() not supported.");
 	}
 	public ICTreeNode getParentNode() {
 		/**@todo: Implement this com.idega.core.ICTreeNode method*/
 		throw new java.lang.UnsupportedOperationException("Method getParentNode() not yet implemented.");
 	}
 	public boolean isLeaf() {
-		/**@todo: Implement this com.idega.core.ICTreeNode method*/
-		throw new java.lang.UnsupportedOperationException("Method isLeaf() not yet implemented.");
+		return true;
 	}
 	public String getNodeName() {
-		/**@todo: Implement this com.idega.core.ICTreeNode method*/
-		throw new java.lang.UnsupportedOperationException("Method getNodeName() not yet implemented.");
+		return this.getName();
 	}
 	public int getNodeID() {
-		/**@todo: Implement this com.idega.core.ICTreeNode method*/
-		throw new java.lang.UnsupportedOperationException("Method getNodeID() not yet implemented.");
-	}
-	public int getSiblingCount() {
-		/**@todo: Implement this com.idega.core.ICTreeNode method*/
-		throw new java.lang.UnsupportedOperationException("Method getSiblingCount() not yet implemented.");
+		return this.getID();
 	}
 
 	public Integer ejbFindUserFromEmail(String emailAddress) throws FinderException, RemoteException {
@@ -713,32 +764,53 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		throw new FinderException("No legal names provided");
 	}
 
-	public Integer ejbFindByPersonalID(String personalId) throws FinderException, RemoteException {
+	public Integer ejbFindByPersonalID(String personalId) throws FinderException {
 		Collection users = super.idoFindAllIDsByColumnBySQL(getColumnNamePersonalID(), personalId);
 		if (!users.isEmpty())
 			return (Integer) users.iterator().next();
 		else
 			throw new FinderException("No user found");
 	}
-
-	public Integer ejbFindUserForUserGroup(int userGroupID) throws FinderException {
+	
+	/**
+	 * Returns the User that is the instance of the User representing the group userRepGroup
+	 * @param userRepGroupID a primary key of a Group of type "UserRepresentative"
+	 * @return Integer the primary key of the User representing the UserGroup
+	 * @throws FinderException If an error occurs or no user is found for the Group
+	 */
+	public Integer ejbFindUserForUserGroup(int userRepGroupID) throws FinderException {
 		/** @todo Remove backwards compatability  */
 		Integer pk;
-		try {
-			pk = (Integer) super.idoFindOnePKBySQL("select * from " + getEntityName() + " where " + _COLUMNNAME_USER_GROUP_ID + "='" + userGroupID + "'");
-		}
-		catch (FinderException ex) {
-			pk = new Integer(userGroupID);
-		}
-		catch (Exception ex) {
-			throw new IDOFinderException(ex);
-		}
+		//try {
+			IDOQuery query = idoQueryGetSelect();
+			query.appendWhereEquals(_COLUMNNAME_USER_GROUP_ID,userRepGroupID);
+			pk = (Integer)this.idoFindOnePKByQuery(query);
+		
+			//pk = (Integer) super.idoFindOnePKBySQL("select * from " + getEntityName() + " where " + _COLUMNNAME_USER_GROUP_ID + "='" + userRepGroupID + "'");
+		//}
+		//catch (FinderException ex) {
+			//pk = new Integer(userRepGroupID);
+		//}
+		//catch (Exception ex) {
+			//throw new IDOFinderException(ex);
+		//}
 		return pk;
 	}
-
-	public Integer ejbFindUserForUserGroup(Group userGroup) throws FinderException, RemoteException {
-		int groupID = ((Integer) userGroup.getPrimaryKey()).intValue();
-		return this.ejbFindUserForUserGroup(groupID);
+	
+	/**
+	 * Returns the User that is the instance of the User representing the group userRepGroup
+	 * @param userRepGroup a Group of type "UserRepresentative"
+	 * @return Integer the primary key of the User representing the UserGroup
+	 * @throws FinderException If an error occurs or no user is found for the Group
+	 */
+	public Integer ejbFindUserForUserGroup(Group userRepGroup) throws FinderException {
+		try{
+			int groupID = ((Integer) userRepGroup.getPrimaryKey()).intValue();
+			return this.ejbFindUserForUserGroup(groupID);
+		}
+		catch(RemoteException rme){
+			throw new IDOFinderException(rme);
+		}
 	}
 
 	/*  Finders end   */
