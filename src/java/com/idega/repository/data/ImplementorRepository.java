@@ -79,6 +79,14 @@ public class ImplementorRepository {
 		}
 	}
 	
+	public Object getImplementorOrNull(Class interfaceClass, Class implementationClass) {
+		try {
+			return getImplementor(interfaceClass, implementationClass);
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
+	}
+	
 	/**
 	 * 
 	 * @param interfaceClass
