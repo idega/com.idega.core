@@ -39,10 +39,7 @@ public class BlockMenu extends Block {
   private String prmObjectClass = "obj_clss";
   private Class defaultClass = null;
 
-  private static final String prmCategoryId = "fin_cat";
-
   protected void control(IWContext iwc){
-
     iwrb = getResourceBundle(iwc);
     iwb = getBundle(iwc);
 
@@ -69,13 +66,11 @@ public class BlockMenu extends Block {
       Object obj =  Class.forName(className).newInstance();
       if(obj instanceof Block)
         T.add((Block)obj,1,2);
-
       }
       catch(Exception e){}
     }
     else{
       T.add(getBoxedLinks(iwc,className),1,1);
-
     }
     add(T);
   }
@@ -109,18 +104,23 @@ public class BlockMenu extends Block {
 
   public PresentationObject getLinkTable(IWContext iwc,String currentClassName){
      Table frame = new Table();
-      frame.setWidth("100%");
+     //frame.setWidth("100%");
       frame.setCellpadding(2);
       frame.setCellspacing(2);
 
         int row = 1;
         int col = 1;
         if(objects != null){
+          frame.add(Edit.formatText("|"),col,row);
+          col++;
           java.util.Iterator I = objects.iterator();
           Block obj;
           while(I.hasNext()){
             obj = (Block) I.next();
-            frame.add(getLink(obj.getClass(),obj.getLocalizedName(iwc)),col++,row);
+            frame.add(getLink(obj.getClass(),obj.getLocalizedName(iwc)),col,row);
+            col++;
+            frame.add(Edit.formatText("|"),col,row);
+            col++;
           }
         }
       return frame;
