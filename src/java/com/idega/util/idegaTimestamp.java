@@ -418,19 +418,19 @@ public class idegaTimestamp{
   }
 
   public void setDate( int date ){
-    Calendar = new GregorianCalendar( getYear(), getMonth(), date, getHour(), getMinute(), getSecond());
+    Calendar = new GregorianCalendar( getYear(), getMonth() - 1, date, getHour(), getMinute(), getSecond());
   }
 
   public void setHour( int hour ){
-    Calendar = new GregorianCalendar( getYear(), getMonth(), getDate(), hour, getMinute(), getSecond());
+    Calendar = new GregorianCalendar( getYear(), getMonth() - 1, getDate(), hour, getMinute(), getSecond());
   }
 
   public void setMinute( int minute ){
-    Calendar = new GregorianCalendar( getYear(), getMonth(), getDate(), getHour(), minute, getSecond());
+    Calendar = new GregorianCalendar( getYear(), getMonth() - 1, getDate(), getHour(), minute, getSecond());
   }
 
   public void setSecond( int second ){
-    Calendar = new GregorianCalendar( getYear(), getMonth(), getDate(), getHour(), getMinute(), second );
+    Calendar = new GregorianCalendar( getYear(), getMonth() - 1, getDate(), getHour(), getMinute(), second );
   }
 
 /*
