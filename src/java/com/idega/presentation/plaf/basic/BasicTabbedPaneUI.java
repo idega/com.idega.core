@@ -5,9 +5,12 @@ package com.idega.presentation.plaf.basic;
 import java.util.Vector;
 
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.plaf.GenericTabbedPaneUI;
+import com.idega.presentation.plaf.GenericTabbedPaneUI.GenericTabPagePresentation;
+import com.idega.presentation.plaf.GenericTabbedPaneUI.GenericTabPresentation;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWColor;
@@ -198,24 +201,16 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
       	row = 4;
 
       for (int i = 0; i < this.getAddedTabs().size(); i++) {
-
         PresentationObject tempObj = this.getTab(i,(this.getSelectedIndex()==i));
-
         this.add(tempObj,column,row-1);
-
         this.add(Text.emptyString(),column,row);
-
 //        this.setWidth(i+2,tempObj.getWidth());
-
         this.setWidth(column,"70");
-
-        this.setColor(column++, row, (this.getSelectedIndex()==i) ? color : bright);
-        
+        this.setColor(column++, row, (this.getSelectedIndex()==i) ? color : bright);        
         if ( i == 4 ) {
         	row = 2;
         	column = 2;
         }
-
       }
 
 			int size = getAddedTabs().size();
@@ -300,186 +295,135 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
 
     private class Tab extends Table{
 
-
-
         private String Name;
-
         private boolean selected;
-
         private IWColor color;
-
         private IWColor dark;
-
         private IWColor tabColor;
-
-
-
-
-
-
+        
+        private boolean style = true; //style is default set to isiStyle - birna
 
         public Tab(IWColor color){
-
           super();
-
           this.color = color;
-
           selected = false;
-
           this.setCellpadding(0);
-
           this.setCellspacing(0);
-
 //          this.setWidth(TabName.length()*10);
-
           this.setWidth(75);
-
-          initilizeTab();
-
+          newStyleInitializeTab();
+          //initilizeTab();
         }
+        //a function to initialize the new style for tabbed UserPropertyWindow - birna
+        public void newStyleInitializeTab() {
+					this.setStyleClass("box"); //"box" is a table style in memberStyles.css
+        	this.resize(3,3);
+					for (int i=1;i <= 3 ; i++) {
+						for (int j=1;j <= 3; j++) {
+							this.add(Text.emptyString(),i,j);
+						}
+					}
+					dark = color.darker();
+					IWColor darker = dark.darker();
+					IWColor darkest = darker.darker();
+					IWColor bright = color.brighter();
 
-
-
+					tabColor = isSelected() ? dark : bright;
+					this.setWidth(1, "1");
+					this.setWidth(3,"1");
+					this.setHeight(1, "1");
+					this.setHeight(3, "1");
+					 
+					this.setColor(1,1,bright.getHexColorString());
+					 
+					this.setColor(2,2,tabColor.getHexColorString());
+					this.setColor(2,3,bright.getHexColorString());
+					 
+					this.setColor(3,1,bright.getHexColorString());
+					 					
+					super.setHeight(2,2, Integer.toString(23));
+					this.setAlignment(2,2,"center");
+        }
+        
         public void initilizeTab(){
-
           this.resize(5,3);
-
           for (int i=1;i <= 5 ; i++) {
-
             for (int j=1;j <= 3; j++) {
-
               this.add(Text.emptyString(),i,j);
-
             }
-
           }
 
-
-
           dark = color.darker();
-
           IWColor darker = dark.darker();
-
           IWColor darkest = darker.darker();
-
           IWColor bright = color.brighter();
 
           tabColor = isSelected() ? color : dark;
-
-
-
           this.setWidth(1, "1");
-
           this.setWidth(2, "1");
-
           this.setWidth(4, "1");
-
           this.setWidth(5, "1");
-
           this.setHeight(1, "1");
-
           this.setHeight(2, "1");
 
-
-
-
-
           this.setColor(1,3,bright.getHexColorString());
-
-
-
+          
           this.setColor(2,2,bright.getHexColorString());
-
           this.setColor(2,3,tabColor.getHexColorString());
 
-
-
           this.setColor(3,1,bright.getHexColorString());
-
           this.setColor(3,2,tabColor.getHexColorString());
-
           this.setColor(3,3,tabColor.getHexColorString());
 
-
-
           this.setColor(4,2,darkest.getHexColorString());
-
           this.setColor(4,3,darker.getHexColorString());
 
-
-
           this.setColor(5,3,darkest.getHexColorString());
-
-
 
 //temp
 
           super.setHeight(3,3, Integer.toString(23));
 
-
-
           this.setAlignment(3,3,"center");
 
-
-
         }
-
-
 
         public void addLink(PresentationObject link){
-
-          this.add(link,3,3);
-
+          
+          this.add(link,2,2); //changed from this.add(link,3,3);
         }
-
-
 
         public void setSelected(boolean select){
-
           this.selected = select;
-
-          initilizeTab();
-
+          newStyleInitializeTab();
+         // initilizeTab();
         }
-
-
-
+        
         public boolean isSelected(){
-
           return this.selected;
-
         }
-
-
-
-
 
         public void updateTab(){
-
-          tabColor = isSelected() ? color : dark;
-
-          this.setColor(2,3,tabColor.getHexColorString());
-
-          this.setColor(3,2,tabColor.getHexColorString());
-
-          this.setColor(3,3,tabColor.getHexColorString());
-
-
-
+        	IWColor bright = color.brighter();
+          tabColor = isSelected() ? dark : bright; //changed from color:dark;
+//changed for the new userPropertyWindow          
+          this.setColor(2,2,tabColor.getHexColorString());
+  
+//          this.setColor(2,3,tabColor.getHexColorString());
+//          this.setColor(3,2,tabColor.getHexColorString());
+//          this.setColor(3,3,tabColor.getHexColorString());
         }
-
-
+        
+			private Page parentPage;
+			private String styleScript = "memberStyles.css";
+			private String styleSrc = "";
 
         public void main(IWContext iwc) throws Exception {
-
+					parentPage = this.getParentPage();
+					styleSrc = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/" + styleScript);
+					parentPage.addStyleSheetURL(styleSrc);		
           updateTab();
-
         }
-
-
-
-
-
     } // Inner(Inner)Class Tab END
 
 
