@@ -157,7 +157,7 @@ public class RequestControlFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpSession session = httpRequest.getSession();
-		System.out.println("Doing stuff...");
+		//System.out.println("Doing stuff...");
 
 		// if this request is excluded from the filter, then just process it
 		if (!isFilteredRequest(httpRequest)) {
