@@ -22,6 +22,7 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.presentation.ui.Window;
 import com.idega.transaction.IdegaTransactionManager;
+import com.idega.user.presentation.GroupChooser;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -66,7 +67,7 @@ public class CreateUser extends Window {
 	private CheckBox disableAccountField;
 	private CheckBox goToPropertiesField;
 
-	private DropdownMenu primaryGroupField;
+	private GroupChooser primaryGroupField;
 
 	private SubmitButton okButton;
 	private SubmitButton cancelButton;
@@ -156,29 +157,7 @@ public class CreateUser extends Window {
 		goToPropertiesField = new CheckBox(goToPropertiesFieldParameterName);
 		goToPropertiesField.setChecked(true);
 
-		primaryGroupField = new DropdownMenu(this.primaryGroupFieldParameterName);
-		//primaryGroupField.addMenuElement("","aðalhópur");
-		primaryGroupField.addSeparator();
-
-		try {
-			String[] gr = new String[1];
-			gr[0] = ((UserGroupRepresentative) com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
-			List groups = com.idega.core.data.GenericGroupBMPBean.getAllGroups(gr, false);
-			if (groups != null) {
-				/**
-				 * @todo filter standardGroups
-				 */
-				//groups.removeAll(AccessController.getStandardGroups());
-				Iterator iter = groups.iterator();
-				while (iter.hasNext()) {
-					GenericGroup item = (GenericGroup) iter.next();
-					primaryGroupField.addMenuElement(item.getID(), item.getName());
-				}
-			}
-		}
-		catch (Exception ex) {
-
-		}
+		primaryGroupField = new GroupChooser(this.primaryGroupFieldParameterName);
 
 		okButton = new SubmitButton("     OK     ", submitButtonParameterName, okButtonParameterValue);
 		cancelButton = new SubmitButton(" Cancel ", submitButtonParameterName, cancelButtonParameterValue);
