@@ -148,7 +148,7 @@ public class XMLData {
       xmlFileId = ( (Integer) xmlFile.getPrimaryKey()).intValue();
     }
     catch (Exception ex)  {
-      System.err.println("[QueryResult]: input stream could not be parsed. Message was: " + ex.getMessage());
+      System.err.println("[XMLData]: input stream could not be parsed. Message was: " + ex.getMessage());
       ex.printStackTrace(System.err);
       document = null;
       xmlFileId = -1;
@@ -156,7 +156,7 @@ public class XMLData {
         inputStream.close();
       }
       catch (IOException ioEx)  {
-        System.err.println("[QueryResult]: input stream could not be closed. Message was: "+ ex.getMessage());
+        System.err.println("[XMLData]: input stream could not be closed. Message was: "+ ex.getMessage());
         ioEx.printStackTrace(System.err);
       }
     }      
