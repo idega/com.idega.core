@@ -18,6 +18,7 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.io.ObjectReader;
 import com.idega.io.Storable;
 import com.idega.io.ObjectWriter;
 
@@ -225,13 +226,14 @@ public class XMLData implements Storable {
     xmlFile.setFileSize(size);
     try {
     	xmlFile.setFileValue(inputStream);
+    	xmlFile.store();
     }
     finally {
     	close(inputStream);
     }
 //    try {
       //xmlFile.update();
-    xmlFile.store();
+
 //    }
 //    catch (SQLException ex)  {
 //      System.err.println("[XMLData] problem storing ICFile Message is: "+ex.getMessage());
@@ -358,4 +360,7 @@ public class XMLData implements Storable {
   	return writer.write(this);
   }
 
+  public Object read(ObjectReader reader) throws RemoteException {
+  	return reader.read(this);
+  }
 }
