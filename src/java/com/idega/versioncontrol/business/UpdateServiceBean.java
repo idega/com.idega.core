@@ -3,6 +3,7 @@
  */
 package com.idega.versioncontrol.business;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -38,7 +39,8 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 	private boolean executeCVSUpdate(String directory){
 		try
 		{
-			int exit = executeCVSCommand("update -P -A -d",directory);
+			String[] args={"-P","-A","-d"};
+			int exit = executeCVSCommand("update",args,directory);
 			if(exit==0){
 				return true;
 			}
@@ -54,12 +56,13 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 		}
 	}
 	
-	private int executeCVSCommand(String command,String directory) throws IOException{
+	private int executeCVSCommand(String command,String[] args,String directory) throws IOException{
 		int returnValue=-1;
-		String cmd = "cvs "+command+" "+directory;
-		System.out.println("Executing command:"+cmd);
+		String cmd = "cvs "+command;
+		File dir = new File(directory,null);
+		System.out.println("Executing command:"+cmd+" in dir="+directory);
 		Runtime runtime = Runtime.getRuntime();
-		Process process = runtime.exec(cmd);
+		Process process = runtime.exec(cmd,args,dir);
 		InputStream input = process.getInputStream();
 		InputStream err = process.getErrorStream();
 		try
