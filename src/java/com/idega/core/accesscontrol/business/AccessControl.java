@@ -69,11 +69,13 @@ public class AccessControl{
         PermissionGroup[] groups = getPermissionGroups(user);
         String sGroupList = "";
 
-        if (groups != null){
+        if (groups != null && groups.length > 0){
           for(int g = 0; g < groups.length; g++){
             if(g>0){ sGroupList += ", "; }
             sGroupList += Integer.toString(groups[g].getID());
           }
+        } else {
+          return false;
         }
 
         if (obj == null){ // page
