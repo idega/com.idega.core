@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.81 2003/09/11 16:28:49 aron Exp $
+ * $Id: DatastoreInterface.java,v 1.82 2003/10/09 18:31:42 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -90,6 +90,30 @@ public abstract class DatastoreInterface {
 		}
 		return theReturn;
 	}
+
+
+	/**
+	 * This method gets the correct instance of DatastoreInterface for the default datasource
+	 * @return the instance of DatastoreInterface for the current application
+	 */
+	public static DatastoreInterface getInstance() {
+		Connection conn=null;
+		try{
+			conn = ConnectionBroker.getConnection();
+			return getInstance(conn);
+		}
+		finally{
+			if(conn!=null){
+				ConnectionBroker.freeConnection(conn);
+			}
+		}
+	}
+
+	/**
+	 * This method gets the correct instance of DatastoreInterface for the Connection connection
+	 * @param connection the connection to get the DatastoreInterface implementation for
+	 * @return
+	 */
 	public static DatastoreInterface getInstance(Connection connection) {
 		//String datastoreType = getDataStoreType(connection);
 		//if(datastoreType.equals("idega"){
@@ -99,9 +123,9 @@ public abstract class DatastoreInterface {
 		return getInstance(getDataStoreType(connection));
 	}
 	/**
-	
-	 * <b>This</b> function is bla
-	
+	 * This method gets the correct instance of DatastoreInterface for the GenericEntity method
+	 * @param entity the bean instance to get the DatastoreInterface implementation for
+	 * @return
 	 */
 	public static DatastoreInterface getInstance(GenericEntity entity) {
 		//String datastoreType=null;
