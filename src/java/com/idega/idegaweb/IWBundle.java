@@ -466,7 +466,7 @@ public class IWBundle implements java.lang.Comparable{
     }
 
 
-    protected String getPropertiesRealPath(){
+    public String getPropertiesRealPath(){
       //return getRealRootPath()+File.pathSeparator+"properties";
       return propertiesRealPath;
     }
