@@ -105,7 +105,7 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
    */
   public ICTreeNode getParentNode(){
     try{
-      int parent_id = EntityControl.returnSingleSQLQuery(this,"select "+this.getIDColumnName()+" from "+this.getEntityName()+" where child_"+this.getIDColumnName()+"='"+this.getID()+"'");
+      int parent_id = EntityControl.returnSingleSQLQuery(this,"select "+this.getIDColumnName()+" from "+this.getEntityName()+"_TREE where child_"+this.getIDColumnName()+"='"+this.getID()+"'");
       if(parent_id!=-1){
         TreeableEntity entity = (TreeableEntity)this.getClass().newInstance();
         entity.findByPrimaryKey(parent_id);
