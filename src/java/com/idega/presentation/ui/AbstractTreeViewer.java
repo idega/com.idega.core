@@ -628,6 +628,13 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
       frameTable.setColumnVerticalAlignment(col+1,alignment);
   }
 
+  public void setExtraColumnHeading(int col, PresentationObject obj){
+      frameTable.add(obj,col+1,1);
+  }
+
+  public void setColumnHeading(int col, PresentationObject obj){
+      frameTable.add(obj,col,1);
+  }
 
   public void setDefaultOpenLevel(int value){
     defaultOpenLevel = value;

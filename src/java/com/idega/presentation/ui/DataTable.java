@@ -28,6 +28,9 @@ public class DataTable extends PresentationObjectContainer {
   private String buttonAlign  = "right";
   private Vector buttons = null;
   private int bottomHeight = 3;
+  private int _rows = -1;
+  private int _columns = -1;
+  private boolean _addBottom = true;
 
   private String DARKBLUE = "#27334B";
   private String DARKGREY = "#D7DADF";
@@ -49,6 +52,8 @@ public class DataTable extends PresentationObjectContainer {
     contentTable.setHeight(this.sHeight);
     contentTable.setCellpadding(3);
     contentTable.setCellspacing(1);
+    if ( _columns != -1 ) contentTable.setColumns(_columns);
+    if ( _rows != -1 ) contentTable.setRows(_rows);
     contentTable.setHorizontalZebraColored(WHITE,LIGHTGREY);
 
     if(infoTitles){
@@ -58,14 +63,18 @@ public class DataTable extends PresentationObjectContainer {
         contentTable.setRowColor(2,DARKGREY);
     }
 
-    int lastrow = contentTable.getRows()+1;
+    int lastrow = contentTable.getRows();
     int lastcol = contentTable.getColumns();
     contentTable.mergeCells(1,1,contentTable.getColumns(),1);
     contentTable.setColor(1,1,DARKBLUE);
 
-    contentTable.mergeCells(1,lastrow,lastcol,lastrow);
-    contentTable.add(image,1,lastrow);
-    contentTable.setColor(1,lastrow,DARKRED);
+    if ( _addBottom ) {
+      lastrow++;
+      contentTable.mergeCells(1,lastrow,lastcol,lastrow);
+      contentTable.add(image,1,lastrow);
+      contentTable.setColor(1,lastrow,DARKRED);
+    }
+
     if(buttons!=null){
       lastrow++;
       contentTable.mergeCells(1,lastrow,lastcol,lastrow);
@@ -121,7 +130,31 @@ public class DataTable extends PresentationObjectContainer {
   public void setHeight(int tableHeight){
     this.sHeight = String.valueOf(tableHeight);
   }
+  public void setTableRows(int rows){
+    _rows = rows;
+  }
+  public void setTableColumns(int columns){
+    _columns = columns;
+  }
+  public void setHeaderColor(String color){
+    DARKBLUE=color;
+  }
+  public void setTitleColor(String color){
+    DARKGREY=color;
+  }
+  public void setZebraColors(String color1,String color2){
+    WHITE=color1;
+    LIGHTGREY=color2;
+  }
+  public void setBottomColor(String color){
+    DARKRED=color;
+  }
+  public void addBottom(boolean addBottom){
+    _addBottom = addBottom;
+  }
+
   public Table getContentTable(){
     return contentTable;
   }
+
 }
