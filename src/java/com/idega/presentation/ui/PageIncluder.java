@@ -180,6 +180,18 @@ public class PageIncluder extends PresentationObject implements Index{
      * @todo use expressions to make none case sensitive or implement using HTMLDocumentLoader (Advanced Swing);
      * **/
 
+   /* Finish if needed but make sure it is a configurable option
+    * just an idea to get all javascripts and styles from the real page 
+     List headerTag = TextSoap.FindAllBetween(out, "<head>","</head>");
+    if(headerTag!=null && headerTag.isEmpty()) {
+        String headerContent = (String)headerTag.iterator().next();
+        List styles = TextSoap.FindAllBetween(out, "<style type=\"text/css\">\n","</style>\n");
+        if(styles!=null && styles.isEmpty()) {
+            this.getParentPage().setStyleDefinition()...   
+        }
+    }
+    */
+    
     out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(out);
     out = preProcess(out,iwc);
     if( forceFrame ){
