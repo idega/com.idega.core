@@ -36,7 +36,7 @@ import com.idega.util.ListUtil;
  * Description:
  * Copyright:    Copyright (c) 2001-2003 idega software
  * Company:      idega.is
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>,
  * @version 1.0
  */
 public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements Group, ICTreeNode, MetaDataCapable {
@@ -57,14 +57,18 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	static final String COLUMN_CREATED = "CREATED";
 	static final String COLUMN_HOME_PAGE_ID = "HOME_PAGE_ID";
 	static final String COLUMN_ALIAS_TO_GROUP = "ALIAS_ID";
+	static final String COLUMN_PERMISSION_CONTROLLING_GROUP = "PERM_GROUP_ID";
+	static final String COLUMN_IS_PERMISSION_CONTROLLING_GROUP = "IS_PERM_CONTROLLING";
 	static final String COLUMN_SHORT_NAME = "SHORT_NAME";
 	static final String COLUMN_ABBREVATION = "ABBR";
+	
   
   static final String META_DATA_HOME_PAGE = "homepage";
 
 	private static List userGroupTypeSingletonList;
 
 	private List userRepresentativeGroupTypeList;
+	
 	public final void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(getNameColumnName(), "Group name", true, true, "java.lang.String");
@@ -84,7 +88,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		this.addManyToManyRelationShip(Address.class, SQL_RELATION_ADDRESS);
 		addMetaDataRelationship();
 		//can have extra info in the ic_metadata table
-
+		
+//		id of the group that has the permissions for this group. If this is not null then this group has inherited permissions.
+		addManyToOneRelationship(COLUMN_PERMISSION_CONTROLLING_GROUP, Group.class);
+		addAttribute(COLUMN_IS_PERMISSION_CONTROLLING_GROUP, "Do children of this group get same permissions", true, true, Boolean.class);
+		
 		addManyToOneRelationship(COLUMN_ALIAS_TO_GROUP, Group.class);
 		setNullable(COLUMN_ALIAS_TO_GROUP, true);
 
@@ -202,6 +210,22 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public Group getAlias() {
 		return (Group)getColumnValue(COLUMN_ALIAS_TO_GROUP);
 	}
+	
+	public void setPermissionControllingGroupID(int id) {
+		setColumn(COLUMN_PERMISSION_CONTROLLING_GROUP, id);
+	}
+
+	public void setPermissionControllingGroup(Group controllingGroup) {
+		setColumn(COLUMN_PERMISSION_CONTROLLING_GROUP, controllingGroup);
+	}
+
+	public int getPermissionControllingGroupID() {
+		return getIntColumnValue(COLUMN_PERMISSION_CONTROLLING_GROUP);
+	}
+
+	public Group getPermissionControllingGroup() {
+		return (Group)getColumnValue(COLUMN_PERMISSION_CONTROLLING_GROUP);
+	}
 
 	public void setShortName(String shortName) {
 		setColumn(COLUMN_SHORT_NAME, shortName);
@@ -259,6 +283,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
   
   public void setHomePageURL(String homePage)  {
     setMetaData(META_DATA_HOME_PAGE, homePage );
+  }
+  
+  public void setIsPermissionControllingGroup(boolean isControlling){
+  	setColumn(COLUMN_IS_PERMISSION_CONTROLLING_GROUP,isControlling);
+  }
+  
+  public boolean isPermissionControllingGroup(){
+  	return getBooleanColumnValue(COLUMN_IS_PERMISSION_CONTROLLING_GROUP,false);
   }
 
 	/**

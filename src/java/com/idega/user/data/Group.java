@@ -79,4 +79,11 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTr
  public void setShortName(java.lang.String p0);
  public void store();
  public void addGroup(com.idega.user.data.Group p0, Timestamp time);
+ public void setPermissionControllingGroupID(int id);
+ public void setPermissionControllingGroup(Group controllingGroup);
+ public int getPermissionControllingGroupID();
+ public Group getPermissionControllingGroup();
+ public void setIsPermissionControllingGroup(boolean isControlling);
+  public boolean isPermissionControllingGroup();
+  
 }

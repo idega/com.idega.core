@@ -1479,6 +1479,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   }
 
 
+
  
   private UserBusiness getUserBusiness() {
     IWApplicationContext context = getIWApplicationContext();

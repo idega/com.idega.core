@@ -26,7 +26,7 @@ import com.idega.data.IDOStoreException;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 
@@ -417,6 +417,63 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 			throw new IDORuntimeException(e,this);	
 		}
 	}
+	
+	
+	public void setPermissionControllingGroupID(int id) {
+		try{
+			getGeneralGroup().setPermissionControllingGroupID(id);	
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
+	}
+	
+	public void setPermissionControllingGroup(Group controllingGroup) {
+		try{
+			getGeneralGroup().setPermissionControllingGroup(controllingGroup);	
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
+	}
+	
+	public int getPermissionControllingGroupID() {
+		try{
+			return getGeneralGroup().getPermissionControllingGroupID();	
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
+	}
+	
+	public Group getPermissionControllingGroup() {
+		try{
+			return getGeneralGroup().getPermissionControllingGroup();	
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
+	}
+	
+	public void setIsPermissionControllingGroup(boolean isControlling){
+		try{
+			getGeneralGroup().setIsPermissionControllingGroup(isControlling);	
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
+	}
+	
+	public boolean isPermissionControllingGroup(){
+		try{
+			return getGeneralGroup().isPermissionControllingGroup();	
+		}
+		catch(Exception e){
+			throw new IDORuntimeException(e,this);	
+		}
+	}
+	 
+	
 	//
 	//
 	//

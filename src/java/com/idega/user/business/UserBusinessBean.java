@@ -1556,6 +1556,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						GroupBusiness groupBiz = getGroupBusiness();
 						
 						Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
+						Iterator iterating = directlyRelatedParents.iterator();
+						Vector additionalGroups = new Vector();
+						while (iterating.hasNext()) {
+							Group parent = (Group) iterating.next();
+							if(parent.getPermissionControllingGroupID()>0){
+								additionalGroups.add(parent.getPermissionControllingGroup());
+							}
+							
+						}
+						directlyRelatedParents.addAll(additionalGroups);
+						
+						
 						Collection ownedPermissions = null;
 						Collection allViewAndOwnerPermissions = new Vector();
 						
