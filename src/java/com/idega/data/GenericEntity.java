@@ -3122,6 +3122,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	public void renameMetaData(String oldKeyName, String newKeyName) {
+		renameMetaData(oldKeyName, newKeyName, null);
+	}
+	
+	public void renameMetaData(String oldKeyName, String newKeyName, String value) {
 		if (_theMetaDataAttributes == null) {
 			getMetaData();
 		}
@@ -3131,6 +3135,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				try {
 					MetaData md = ((MetaDataHome) IDOLookup.getHome(MetaData.class)).findByPrimaryKey(pk);
 					md.setName(newKeyName);
+					if (value != null) {
+						md.setValue(value);
+					}
 					md.store();
 					getMetaData(); // Reloading metadata cache
 				}

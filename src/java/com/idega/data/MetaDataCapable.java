@@ -40,10 +40,16 @@ public interface MetaDataCapable
 	 * Gets the metadata set for the key metaDataKey
 	 */
 	public String getMetaData(String metaDataKey);
+
 	/**
 	 * Rename a metadata key
 	 */
 	public void renameMetaData(String oldKeyName, String newKeyName);
+
+	/**
+	 * Rename a metadata key, and change the value
+	 */
+	public void renameMetaData(String oldKeyName, String newKeyName, String value);
 	
 	/**
 	 * Gets the metadata for the key metaDataKey
