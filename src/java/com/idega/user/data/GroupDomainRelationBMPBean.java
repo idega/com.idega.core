@@ -47,7 +47,7 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
     this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Timestamp.class);
     this.addAttribute(SET_PASSIVE_BY, "set passive by", true, true, Integer.class, MANY_TO_ONE, User.class);
 
-		this.addMetaDataRelationship(); 
+	//	this.addMetaDataRelationship(); 
 }
 
   public String getEntityName() {
