@@ -181,9 +181,17 @@ public class idegaTimestamp{
       return false;
     else
       return true;
-
   }
 
+  public void setAsDate(){
+    isDate= true;
+    isTime=false;
+  }
+
+  public void setAsTime(){
+    isDate= false;
+    isTime=true;
+  }
 
 
   public boolean isLaterThan( idegaTimestamp compareStamp ){
@@ -919,6 +927,14 @@ public class idegaTimestamp{
   }
 
   public static int getMinutesBetween(idegaTimestamp before, idegaTimestamp after){
+    if(before.isTime || after.isTime){
+      before.setDate(1);
+      before.setMonth(2);
+      before.setYear(1);
+      after.setDate(1);
+      after.setMonth(2);
+      after.setYear(1);
+    }
     long lBefore = before.getGregorianCalendar().getTime().getTime();
     long lAfter = after.getGregorianCalendar().getTime().getTime();
 
