@@ -26,7 +26,7 @@ public Script(){
 public Script(String scriptLanguage){
 	super();
 	setScriptLanguage(scriptLanguage);
-        setType();
+	setType();
 	scriptCode = new Hashtable();
 }
 
@@ -170,7 +170,7 @@ public String getMethods(){
 			String methodName = (String) function;
 			String methodValue = (String) getMethod(methodName);
 
-    			returnString = methodName + " = " + methodValue + ";\n\n";
+			returnString = methodName + " = " + methodValue + ";\n\n";
 		}
 	}
 
@@ -198,10 +198,10 @@ public void print(IWContext iwc)throws Exception{
       com.idega.builder.data.IBDomain d = com.idega.builder.business.BuilderLogic.getInstance().getCurrentDomain(iwc);
 
       if (d.getURL() != null) {
-        String src = getAttribute("src");
-        if (src != null && src.startsWith("/")) {
-          setAttribute("src",d.getURL()+src);
-        }
+	String src = getAttribute("src");
+	if (src != null && src.startsWith("/")) {
+	  setAttribute("src",d.getURL()+src);
+	}
       }
 
 			//if (getInterfaceStyle().equals("something")){
@@ -212,7 +212,7 @@ public void print(IWContext iwc)throws Exception{
 				if (! isAttributeSet("src")){
 					println(getVariables());
 					println(getMethods());
-          println(getScriptCode(iwc));
+	  println(getScriptCode(iwc));
 				}
 				println("//-->");
 				println("\n</script>");
@@ -228,6 +228,13 @@ public void print(IWContext iwc)throws Exception{
 	}
 }
 
+  public void setFunction(String functionName,String functionCode) {
+    addFunction(functionName,functionCode);
+  }
+
+  public void setVariable(String variableName,String variableValue) {
+    addVariable(variableName,variableValue);
+  }
 
   public Object clone() {
     Script obj = null;
@@ -235,7 +242,7 @@ public void print(IWContext iwc)throws Exception{
       obj = (Script)super.clone();
       obj.scriptType = this.scriptType;
       if(this.scriptCode != null){
-        obj.scriptCode = (Hashtable)this.scriptCode.clone();
+	obj.scriptCode = (Hashtable)this.scriptCode.clone();
       }
     }
     catch(Exception ex) {
