@@ -43,13 +43,13 @@ public class IWAuthorizationFilter implements Filter {
 		
 
 		
-		HttpServletRequest request = (HttpServletRequest)srequest;
+		/*HttpServletRequest request = (HttpServletRequest)srequest;
 		HttpServletResponse response = (HttpServletResponse)sresponse;
 		
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
 		
 		String appUri = iwma.getApplicationContextURI();
-		String requestUri = request.getRequestURI();
+		String requestUri = request.getRequestURI();*/
 		
 		//TODO: implement authorization check
 		
