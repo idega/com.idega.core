@@ -77,6 +77,42 @@
     <url-pattern>/servlet/WindowOpener/*</url-pattern>
   </servlet-mapping>
 
+
+    <!-- The IWAuthenticator Filter -->
+    <filter>
+        <filter-name>IWAuthenticator</filter-name>
+        <filter-class>com.idega.servlet.filter.IWAuthenticator</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>IWAuthenticator</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- The IWWelcomeFilter Filter -->
+    <filter>
+        <filter-name>IWWelcomeFilter</filter-name>
+        <filter-class>com.idega.servlet.filter.IWWelcomeFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>IWWelcomeFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- The IWAuthorizationFilter Filter -->
+    <filter>
+        <filter-name>IWAuthorizationFilter</filter-name>
+        <filter-class>com.idega.servlet.filter.IWAuthorizationFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>IWAuthorizationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
     <welcome-file>index.html</welcome-file>
