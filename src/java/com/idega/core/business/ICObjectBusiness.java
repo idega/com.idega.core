@@ -104,6 +104,9 @@ public class ICObjectBusiness {
       return inst;
   }
 
+  /**
+   * Constructs a new PresentationObject with the class associated with the ICObjectInstance , icObjectClassName must be in the form of a int
+   */
   public PresentationObject getNewObjectInstance(String icObjectClassName){
       PresentationObject inst = null;
       try{
@@ -203,7 +206,7 @@ public class ICObjectBusiness {
   }
 
   /**
-   * Returns ICObject that has the specific icObjectInstanceID
+   * Returns ICObjectInstance that has the specific icObjectInstanceID
    */
   public  ICObjectInstance getICObjectInstance(int icObjectInstanceID){
     try{
