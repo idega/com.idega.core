@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.81 2004/12/07 15:11:12 tryggvil Exp $
+ * $Id: Table.java,v 1.82 2004/12/10 13:37:33 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -166,8 +166,8 @@ public class Table extends PresentationObjectContainer implements TableType{
 	 * @return true if Facets are used
 	 */
 	private boolean useFacetBasedCells(){
-		return PresentationObject.USE_JSF_RENDERING;
-		//return false;
+		//return PresentationObject.USE_JSF_RENDERING;
+		return false;
 	}
 	
 	/**
@@ -1328,10 +1328,12 @@ public class Table extends PresentationObjectContainer implements TableType{
 			//TODO: Remove this legacy implementation 
 			// - as the table cells are now JSF Facets they cannot be children as well
 			List theReturn = new ArrayList();
-			for (int x = 0; x < theCells.length; x++) {
-				for (int y = 0; y < theCells[x].length; y++) {
-					if (theCells[x][y] != null) {
-						theReturn.add(theCells[x][y]);
+			if(theCells!=null){
+				for (int x = 0; x < theCells.length; x++) {
+					for (int y = 0; y < theCells[x].length; y++) {
+						if (theCells[x][y] != null) {
+							theReturn.add(theCells[x][y]);
+						}
 					}
 				}
 			}
