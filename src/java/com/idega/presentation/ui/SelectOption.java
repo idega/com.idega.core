@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.faces.component.UIComponent;
 
+import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 
 /**
@@ -133,4 +134,16 @@ public class SelectOption extends InterfaceObject {
 	public boolean isContainer() {
 		return false;
 	}
+	
+	
+	/**
+	 * This method is overrided from the PresentationObjectContainer superclass here 
+	 * to call clone(iwc,false) and sets the askForPermission value always to false
+	 */
+	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission)
+	{
+		//This method is overridden is because the SelectOption instances do not have a direct ICObjectInstanceId (in the Builder)
+		// - this is because the Dropdownmenu is inserted in the Builder, not a SelectOption
+		return this.clone(iwc,false);
+	}	
 }
