@@ -21,6 +21,8 @@ import com.idega.util.LocaleUtil;
 
 */
 public class IWMainApplicationSettings extends IWPropertyList {
+	public static final String CHARACTER_ENCODING = "character_encoding";
+	public static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
 	private static String IW_SERVICE_CLASS_NAME = "iw_service_class_name";
 	private static String DEFAULT_TEMPLATE_NAME = "defaulttemplatename";
 	private static String DEFAULT_TEMPLATE_CLASS = "defaulttemplateclass";
@@ -248,5 +250,11 @@ public class IWMainApplicationSettings extends IWPropertyList {
 		 * @todo: implement better
 		 */
 		return this.getDefaultLocale();
+	}
+	/**
+	 * @return The character encoding string for example UTF-16 or the default ISO-8859-1
+	 */
+	public String getCharacterEncoding() {
+		return getProperty(CHARACTER_ENCODING, DEFAULT_CHARACTER_ENCODING);
 	}
 }
