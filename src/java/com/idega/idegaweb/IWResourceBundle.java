@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.30 2003/12/09 21:57:58 tryggvil Exp $
+ * $Id: IWResourceBundle.java,v 1.31 2003/12/11 15:32:07 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -325,5 +325,15 @@ public class IWResourceBundle extends ResourceBundle {
 			return true;
 		}
 		return false;
+	}
+	
+	public String toString(){
+		IWBundle bundleParent = this.getIWBundleParent();
+		if(bundleParent!=null){
+			return bundleParent+"/"+this.locale;
+		}
+		else{
+			return this.locale.toString();
+		}
 	}
 }

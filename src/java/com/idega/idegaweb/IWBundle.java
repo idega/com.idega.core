@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.72 2003/12/09 21:57:58 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.73 2003/12/11 15:32:29 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -1219,7 +1219,10 @@ public class IWBundle implements java.lang.Comparable
 	{
 		return (ICObjectHome) IDOLookup.getHome(ICObject.class);
 	}
-
+	public String toString(){
+		return this.getBundleIdentifier();
+	}
+	
 	
 	//STANDARD LOGGING METHODS:
 	
