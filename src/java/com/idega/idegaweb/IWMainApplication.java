@@ -41,6 +41,7 @@ import javax.servlet.ServletContext;
 public class IWMainApplication{//implements ServletContext{
 
   public static String IdegaEventListenerClassParameter="idegaweb_event_classname";
+	public static String ApplicationEventListenersParameter="idegaweb_application_events";
   public static String IWEventSessionAddressParameter="iw_event_address";     // added by gummi@idega.is
   public static final String windowOpenerParameter=Page.IW_FRAME_STORAGE_PARMETER;
 
@@ -794,7 +795,7 @@ public class IWMainApplication{//implements ServletContext{
 			}
 		}
 		else{
-			appContext=SLASH;	
+			appContext=SLASH;
 		}
 		checkedAppContext = true;
 	}
@@ -819,11 +820,11 @@ public class IWMainApplication{//implements ServletContext{
 		}
 		else if(appContext.equals(SLASH)){
 			return true;
-		}	
-		else{
-			return false;	
 		}
-		
+		else{
+			return false;
+		}
+
 	}
 	public String getTranslatedURIWithContext(String url)
 	{
@@ -890,7 +891,7 @@ public class IWMainApplication{//implements ServletContext{
 	{
 		return getTranslatedURIWithContext(this.IDEGAWEB_APP_SERVLET_URI);
 	}
-  
+
 
 /*
   public String getRealPath(String p0){
@@ -910,7 +911,7 @@ public class IWMainApplication{//implements ServletContext{
 			return application.getRealPath(uri);
 		}
 	}
-	
+
 	public String getCacheDirectoryURI(){
 		if (cacheDirURI==null)
 		{
@@ -918,6 +919,22 @@ public class IWMainApplication{//implements ServletContext{
 		}
 		return cacheDirURI;
 	}
+
+	public void addApplicationEventListener(Class eventListenerClass){
+    List eventListeners = (List)getAttribute(ApplicationEventListenersParameter);
+    if(eventListeners==null)
+      eventListeners = new Vector();
+    if(!eventListeners.contains(eventListenerClass.getName()))
+      eventListeners.add(eventListenerClass.getName());
+    setAttribute(ApplicationEventListenersParameter,eventListeners);
+  }
+
+  public List getApplicationEventListeners(){
+    List eventListeners = (List)getAttribute(ApplicationEventListenersParameter);
+    if(eventListeners==null)
+      eventListeners = new Vector();
+    return eventListeners;
+  }
 
 
 }
