@@ -45,7 +45,9 @@ public abstract class GenericInput extends InterfaceObject {
 			println("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " "+(!markup.equals(Page.HTML) ? "/" : "")+">");
 		}
 		else if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
-			printWML(main);
+			if(normalPrintSequence()) {
+				printWML(main);
+			}
 		}
 	}
 
