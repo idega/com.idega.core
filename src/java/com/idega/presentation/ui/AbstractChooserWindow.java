@@ -3,7 +3,6 @@ package com.idega.presentation.ui;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
-import com.idega.presentation.Table;
 import com.idega.presentation.Script;
 import com.idega.idegaweb.presentation.IWAdminWindow;
 
@@ -30,6 +29,7 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
   protected static final String SCRIPT_PREFIX_IN_A_FRAME = "top.";
 
   private boolean isInAFrame = false;
+  private boolean onlyScript = false;
 
   public AbstractChooserWindow(){
   }
@@ -52,15 +52,17 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
     if( displayString == null ) displayString = "";
     if( valueString == null ) valueString = "";
 
-    HiddenInput hPrefix = new HiddenInput(SCRIPT_PREFIX_PARAMETER,prefix);
-    HiddenInput hSuffix = new HiddenInput(SCRIPT_SUFFIX_PARAMETER,suffix);
-    HiddenInput hDisplayString = new HiddenInput(DISPLAYSTRING_PARAMETER_NAME,displayString);
-    HiddenInput hValueString = new HiddenInput(VALUE_PARAMETER_NAME,valueString);
+    if( !onlyScript ){
+      HiddenInput hPrefix = new HiddenInput(SCRIPT_PREFIX_PARAMETER,prefix);
+      HiddenInput hSuffix = new HiddenInput(SCRIPT_SUFFIX_PARAMETER,suffix);
+      HiddenInput hDisplayString = new HiddenInput(DISPLAYSTRING_PARAMETER_NAME,displayString);
+      HiddenInput hValueString = new HiddenInput(VALUE_PARAMETER_NAME,valueString);
 
-    add(hPrefix);
-    add(hSuffix);
-    add(hDisplayString);
-    add(hValueString);
+      add(hPrefix);
+      add(hSuffix);
+      add(hDisplayString);
+      add(hValueString);
+    }
 
     //script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+AbstractChooser.DISPLAYSTRING_PARAMETER_NAME+".value=displaystring;"+AbstractChooser.VALUE_PARAMETER_NAME+".value=value;window.close();return false }");
     if( isInAFrame ){
@@ -91,6 +93,10 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
 
   public void isInAFrame(boolean isInAFrame){
     this.isInAFrame = isInAFrame;
+  }
+
+  public void setOnlyScript(boolean onlyScript){
+    this.onlyScript = onlyScript;
   }
 
 }

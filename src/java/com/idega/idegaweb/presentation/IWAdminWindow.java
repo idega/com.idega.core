@@ -22,6 +22,8 @@ private Table headerTable;
 private Table leftTable;
 private Table rightTable;
 private boolean merged = true;
+private boolean displayEmpty = false;
+
 private String rightWidth = "160";
 private String method = "post";
 
@@ -67,13 +69,17 @@ public static String HEADER_COLOR="#0E2456";
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
     iwbCore = iwc.getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
-    makeTables();
-    setAllMargins(0);
+    if( !displayEmpty ){
+      makeTables();
+      setAllMargins(0);
 
-    if ( merged )
-      super.add(adminTable);
-    else
-      super.add(adminForm);
+      if ( merged ){
+        super.add(adminTable);
+      }
+      else{
+        super.add(adminForm);
+      }
+    }
 
     super._main(iwc);
   }
@@ -135,11 +141,15 @@ public static String HEADER_COLOR="#0E2456";
   }
 
   public void add(PresentationObject obj) {
-    if(adminTable==null){
-      adminTable=new Table();
-      super.add(adminTable);
+    if( !displayEmpty ){
+      if(adminTable==null){
+        adminTable=new Table();
+        super.add(adminTable);
+      }
+      adminTable.add(obj,1,2);
     }
-    adminTable.add(obj,1,2);
+    else super.add(obj);
+
   }
 
   public void addBottom(PresentationObject obj) {
@@ -307,6 +317,10 @@ public static String HEADER_COLOR="#0E2456";
 
   public void setStyle(PresentationObject obj){
     obj.setAttribute("style",STYLE);
+  }
+
+  public void setEmpty(){
+    this.displayEmpty = true;
   }
 
   public void setStyle(PresentationObject obj,String style){
