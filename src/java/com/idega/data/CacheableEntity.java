@@ -75,7 +75,10 @@ public class CacheableEntity extends GenericEntity {
     IWMainApplication.getIWCacheManager().cacheTable(this,getCacheKey());
     //IWMainApplication.getIWCacheManager().cacheTable(this,key1);
     //IWMainApplication.getIWCacheManager().cacheTable(this,key1,key2);
+  }
 
+  public void cacheEntityByID(){
+    IWMainApplication.getIWCacheManager().cacheTable(this,getIDColumnName());
   }
 
   public String getCacheKey(){

@@ -207,6 +207,13 @@ public class IWCacheManager {
     cacheTable(entity,columnNameForKey,null);
   }
 
+  public void removeTableFromCache(Class entityClass){
+    if( entityMaps != null ){
+      entityMaps.remove(entityClass);
+      if( entityMapsKeys != null ) entityMapsKeys.remove(entityClass);
+    }
+  }
+
   public void cacheTable(CacheableEntity entity, String columnNameForKey ,String columnNameForSecondKey){
 
     if( entityMaps == null ){

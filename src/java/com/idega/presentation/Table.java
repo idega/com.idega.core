@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.10 2001/12/04 23:40:13 gummi Exp $
+ * $Id: Table.java,v 1.11 2001/12/05 23:46:16 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -339,6 +339,9 @@ public class Table extends PresentationObjectContainer {
 
   public void setHeight(int xpos,int ypos, String height){
     setAttribute(xpos,ypos,"height",height);
+    Image spacer = (Image) transparentcell.clone();
+    spacer.setHeight(height);
+    add(spacer,xpos,ypos);
   }
 
   public void setWidth(int xpos, int ypos, String width){
