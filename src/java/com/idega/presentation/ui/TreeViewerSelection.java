@@ -34,7 +34,7 @@ public class TreeViewerSelection extends TreeViewer {
         
   private Text textProxyForSelectedNode;
     
-  public void setSelectedNode(Text textProxyForSelectedNode) {
+  public void setSelectedNode(int selectedNodeId) {
     this.selectedNodeId = selectedNodeId;
   }
     
