@@ -63,11 +63,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final String USER_PROPERTY_PARAMETER = "user_properties";
 
 	public static final String LOGINTYPE_AS_ANOTHER_USER = "as_another_user";
-
+	
 	public static final String SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN = "loginname_for_invalid_login";
 	public static boolean USING_OLD_USER_SYSTEM=false;
-
 	
+	private static final String PARAM_LOGIN_BY_UNIQUE_ID = "l_by_uuid";
+	private static final String LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST = "LOGIN_BY_UUID_AUTHORIZED_HOSTS";
+
 	
 	public LoginBusinessBean() {
 	}
@@ -261,6 +263,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 							onLoginFailed(iwc, canLogin, username);
 						}
 					}
+					else if(isLoginByUUID(iwc)){
+						String uuid = iwc.getParameter(PARAM_LOGIN_BY_UNIQUE_ID);
+						boolean success = logInByUUID(iwc, uuid);
+						if(!success){
+							System.err.println("[LoginBusinessBean] Attempt to login with UUID: "+uuid+" failed from referer: "+iwc.getReferer()+" , might be an attack");
+						}
+					}
 				} else if (isTryAgainAction(iwc)) {
 					//internalSetState(iwc, "loggedoff");
 					//internalSetState(iwc, STATE_LOGGED_OUT);
@@ -278,6 +287,29 @@ public class LoginBusinessBean implements IWPageEventListener {
 			//throw (IdegaWebException)ex.fillInStackTrace();
 		}
 		return true;
+	}
+	
+	/**
+	 * If you want to allow all referers to login via uuid do not set the LOGIN_BY_UUID_AUTHORIZED_HOSTS application property.
+	 * The LOGIN_BY_UUID_AUTHORIZED_HOSTS property is a commaseparated list of host names and ip numbers that can login via uuid.
+	 * @param iwc
+	 * @return true if the parameter PARAM_LOGIN_BY_UNIQUE_ID is set and the referer is allowed to login by uuid.
+	 */
+	protected boolean isLoginByUUID(IWContext iwc) {
+		if( iwc.isParameterSet(PARAM_LOGIN_BY_UNIQUE_ID)){
+			String referer = iwc.getReferer();
+			String allowedReferers = iwc.getIWMainApplication().getSettings().getProperty(LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST,"");
+			if(allowedReferers==null || "".equals(allowedReferers)){
+				return true;
+			}
+			else{
+				if(referer!=null && allowedReferers.indexOf(referer)>=0){
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -1107,6 +1139,38 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 		return returner;
 
+	}
+	
+	/**
+	 * Logs you into idegaweb by a universally unique identifier UUID if it finds a user with that id.
+	 * @param iwc
+	 * @param uuid
+	 * @return true if succeeded in login on a user with his UUID
+	 * @throws Exception
+	 */
+	public boolean logInByUUID(IWContext iwc, String uuid) throws Exception {
+		boolean returner = false;
+		try {
+			com.idega.user.data.User user = getUserBusiness(iwc).getUserByUniqueId(uuid);
+			LoginTable[] login_table = (LoginTable[]) (com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance()).findAllByColumn(com.idega.core.accesscontrol.data.LoginTableBMPBean.getColumnNameUserID(), user.getPrimaryKey().toString());
+
+			LoginTable lTable = this.chooseLoginRecord(iwc, login_table, user);
+			if (lTable != null) {
+				returner = logIn(iwc, lTable);
+				if (returner)
+					onLoginSuccessful(iwc);
+			} else {
+				try {
+					throw new LoginCreateException("No record chosen");
+				} catch (LoginCreateException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+		} catch (EJBException e) {
+			returner = false;
+		}
+		return returner;
 	}
 
 	/**
