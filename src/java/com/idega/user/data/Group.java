@@ -1,6 +1,9 @@
 package com.idega.user.data;
 
 import javax.ejb.*;
+
+import com.idega.data.IDOAddRelationshipException;
+
 import java.rmi.RemoteException;
 
 public interface Group extends com.idega.data.IDOEntity, com.idega.core.ICTreeNode {
@@ -48,30 +51,35 @@ public interface Group extends com.idega.data.IDOEntity, com.idega.core.ICTreeNo
 	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException, RemoteException;
 	public void addUniqueRelation(Group relatedGroup, String relationType) throws CreateException, RemoteException;
 	public boolean hasRelationTo(int groupId, String relationType) throws RemoteException;
-	/**
-	 * Returns a collection of Group objects that are related by the relation type relationType with this Group
-	 */
-	public java.util.Collection getRelatedBy(GroupRelationType relationType) throws FinderException, RemoteException;
+  /**
+   * Returns a collection of Group objects that are related by the relation type relationType with this Group
+   */
+  public java.util.Collection getRelatedBy(GroupRelationType relationType)throws FinderException,RemoteException;
 
-	/**
-	 * Returns a collection of Group objects that are related by the relation type relationType with this Group
-	 */
-	public java.util.Collection getRelatedBy(String relationType) throws FinderException, RemoteException;
+  /**
+   * Returns a collection of Group objects that are related by the relation type relationType with this Group
+   */
+  public java.util.Collection getRelatedBy(String relationType)throws FinderException,RemoteException;
 
-	public void setCreated(java.sql.Timestamp p0) throws java.rmi.RemoteException;
-	public java.sql.Timestamp getCreated() throws java.rmi.RemoteException;
-	public boolean hasRelationTo(Group group) throws java.rmi.RemoteException;
+  public void setCreated(java.sql.Timestamp p0) throws java.rmi.RemoteException;
+  public java.sql.Timestamp getCreated() throws java.rmi.RemoteException;
+  public boolean hasRelationTo(Group group) throws  java.rmi.RemoteException;
 
-	public com.idega.builder.data.IBPage getHomePage() throws java.rmi.RemoteException;
-	public int getHomePageID() throws java.rmi.RemoteException;
-	public void setHomePage(com.idega.builder.data.IBPage p0) throws java.rmi.RemoteException, java.rmi.RemoteException;
-	public void setHomePageID(int p0) throws java.rmi.RemoteException;
-	public void setHomePageID(java.lang.Integer p0) throws java.rmi.RemoteException;
-	public boolean isUser();
-	public java.util.Collection getReverseRelatedBy(String relationType) throws FinderException, java.rmi.RemoteException;
+  public com.idega.builder.data.IBPage getHomePage() throws java.rmi.RemoteException;
+  public int getHomePageID() throws java.rmi.RemoteException;
+  public void setHomePage(com.idega.builder.data.IBPage p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
+  public void setHomePageID(int p0) throws java.rmi.RemoteException;
+  public void setHomePageID(java.lang.Integer p0) throws java.rmi.RemoteException;
+  public boolean isUser();
+  public java.util.Collection getReverseRelatedBy(String relationType) throws FinderException, java.rmi.RemoteException;
+  public void setMetaData(java.lang.String p0, java.lang.String p1); 
+  public void addAddress(com.idega.core.data.Address p0) throws IDOAddRelationshipException;
+  public java.util.Collection getPhones();
+  public java.util.Collection getEmails();
 
 	public void setAliasID(int id) throws java.rmi.RemoteException;;
 	public void setAlias(Group alias) throws java.rmi.RemoteException;;
 	public int getAliasID() throws java.rmi.RemoteException;;
 	public Group getAlias() throws java.rmi.RemoteException;;
 }
+

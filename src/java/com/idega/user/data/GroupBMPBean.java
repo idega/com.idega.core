@@ -5,8 +5,11 @@ import com.idega.util.ListUtil;
 import com.idega.data.*;
 import javax.ejb.*;
 import com.idega.core.ICTreeNode;
+import com.idega.core.data.Address;
+import com.idega.core.data.Email;
 import com.idega.core.data.ICNetwork;
 import com.idega.core.data.ICProtocol;
+import com.idega.core.data.Phone;
 import com.idega.util.IWTimestamp;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -29,6 +32,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public static final int GROUP_ID_USERS = -1906;
 
 	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
+  private static final String SQL_RELATION_ADDRESS = "IC_USER_ADDRESS";
+  public final static String SQL_RELATION_EMAIL = "IC_USER_EMAIL";
+  public final static String SQL_RELATION_PHONE = "IC_USER_PHONE";
 	private static final String EMPTY_STRING = "";
 
 	private static final String COLUMN_GROUP_ID = "ic_group_id";
@@ -49,11 +55,18 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		addAttribute(COLUMN_CREATED, "Created when", Timestamp.class);
 		addAttribute(getColumnNameHomePageID(), "Home page ID", true, true, Integer.class, "many-to-one", IBPage.class);
 		setNullable(getColumnNameHomePageID(), true);
-		addManyToManyRelationShip(ICNetwork.class, "ic_group_network");
-		addManyToManyRelationShip(ICProtocol.class, "ic_group_protocol");
+
+		this.addManyToManyRelationShip(ICNetwork.class, "ic_group_network");
+		this.addManyToManyRelationShip(ICProtocol.class, "ic_group_protocol");
+    this.addManyToManyRelationShip(Phone.class, SQL_RELATION_PHONE);
+    this.addManyToManyRelationShip(Email.class, SQL_RELATION_EMAIL);
+    this.addManyToManyRelationShip(Address.class, SQL_RELATION_ADDRESS);    
+    addMetaDataRelationship();//can have extra info in the ic_metadata table
+
 		addManyToOneRelationship(COLUMN_ALIAS_TO_GROUP, Group.class);
 		setNullable(COLUMN_ALIAS_TO_GROUP, true);
-		addMetaDataRelationship(); //can have extra info in the ic_metadata table
+
+
 	}
 	public final String getEntityName() {
 		return "ic_group";
@@ -1193,4 +1206,29 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public boolean isUser() {
 		return UserBMPBean.USER_GROUP_TYPE.equals(this.getGroupType());
 	}
+  
+  public void addAddress(Address address) throws IDOAddRelationshipException {
+    this.idoAddTo(address);
+  }  
+  
+  public Collection getPhones() {
+    try {
+      return super.idoGetRelatedEntities(Phone.class);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException("Error in getPhones() : " + e.getMessage());
+    }
+  }
+
+  public Collection getEmails() {
+    try {
+      return super.idoGetRelatedEntities(Email.class);
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException("Error in getEmails() : " + e.getMessage());
+    }
+  }
+
 } // Class Group
