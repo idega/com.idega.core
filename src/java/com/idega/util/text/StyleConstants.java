@@ -15,6 +15,8 @@ public static final String DELIMITER_COLON = ":";
 public static final String DELIMITER_SEMICOLON = ";";
 
 public static final String ATTRIBUTE_COLOR = "color";
+public static final String ATTRIBUTE_BACKGROUND_COLOR = "background-color";
+public static final String ATTRIBUTE_BORDER = "border";
 public static final String ATTRIBUTE_FONT_FAMILY = "font-family";
 public static final String ATTRIBUTE_FONT_SIZE = "font-size";
 public static final String ATTRIBUTE_FONT_STRETCH = "font-stretch";
@@ -27,9 +29,10 @@ public static final String ATTRIBUTE_TEXT_ALIGN = "text-align";
 public static final String ATTRIBUTE_TEXT_DECORATION = "text-decoration";
 public static final String ATTRIBUTE_TEXT_SHADOW = "text-shadow";
 public static final String ATTRIBUTE_TEXT_TRANSFORM = "text-transform";
+public static final String ATTRIBUTE_WHITE_SPACE = "white-space";
 public static final String ATTRIBUTE_WORD_SPACING = "word-spacing";
 
-public static final String[] ALL_STYLES = {ATTRIBUTE_FONT_FAMILY,ATTRIBUTE_FONT_SIZE,ATTRIBUTE_FONT_STRETCH,ATTRIBUTE_FONT_VARIANT,ATTRIBUTE_FONT_WEIGHT,ATTRIBUTE_COLOR,ATTRIBUTE_LETTER_SPACING,ATTRIBUTE_LINE_HEIGHT,ATTRIBUTE_FONT_STYLE,ATTRIBUTE_TEXT_ALIGN,ATTRIBUTE_TEXT_DECORATION,ATTRIBUTE_TEXT_SHADOW,ATTRIBUTE_TEXT_TRANSFORM,ATTRIBUTE_WORD_SPACING};
+public static final String[] ALL_STYLES = {ATTRIBUTE_FONT_FAMILY,ATTRIBUTE_FONT_SIZE,ATTRIBUTE_FONT_STRETCH,ATTRIBUTE_FONT_VARIANT,ATTRIBUTE_FONT_WEIGHT,ATTRIBUTE_COLOR,ATTRIBUTE_BACKGROUND_COLOR,ATTRIBUTE_LETTER_SPACING,ATTRIBUTE_LINE_HEIGHT,ATTRIBUTE_FONT_STYLE,ATTRIBUTE_TEXT_ALIGN,ATTRIBUTE_TEXT_DECORATION,ATTRIBUTE_TEXT_SHADOW,ATTRIBUTE_TEXT_TRANSFORM,ATTRIBUTE_WHITE_SPACE,ATTRIBUTE_WORD_SPACING};
 
 public static final String FONT_FAMILY_ARIAL = "Arial,Helvetica,sans-serif";
 public static final String FONT_FAMILY_COURIER = "Courier New,Courier,mono";
@@ -86,9 +89,23 @@ public static final String LETTER_SPACING_NORMAL = "normal";
 
 public static final String WORD_SPACING_NORMAL = "normal";
 
+public static final String WHITE_SPACE_NORMAL = "normal";
+public static final String WHITE_SPACE_PRE = "pre";
+public static final String WHITE_SPACE_NOWRAP = "nowrap";
+
 public static final String TEXT_ALIGN_LEFT = "left";
 public static final String TEXT_ALIGN_CENTER = "center";
 public static final String TEXT_ALIGN_RIGHT = "right";
 public static final String TEXT_ALIGN_JUSTIFY = "justify";
+
+public static final String BORDER_NONE = "none";
+public static final String BORDER_DOTTED = "dotted";
+public static final String BORDER_DASHED = "dashed";
+public static final String BORDER_SOLID = "solid";
+public static final String BORDER_DOUBLE = "double";
+public static final String BORDER_GROOVE = "groove";
+public static final String BORDER_RIDGE = "ridge";
+public static final String BORDER_INSET = "inset";
+public static final String BORDER_OUTSET = "outset";
 
 }
