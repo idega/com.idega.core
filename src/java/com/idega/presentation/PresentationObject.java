@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.56 2002/07/22 17:34:27 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.57 2002/09/18 08:28:42 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -17,6 +17,8 @@ import java.io.*;
 import java.util.*;
 import javax.servlet.http.*;
 import java.sql.*;
+
+import com.idega.user.business.UserProperties;
 import com.idega.util.database.*;
 import com.idega.core.data.*;
 import javax.swing.event.EventListenerList;
@@ -1006,6 +1008,14 @@ public class PresentationObject extends Object implements Cloneable {
     IWBundle bundle = getBundle(iwuc);
     if(bundle!=null){
       return bundle.getResourceBundle(iwuc.getCurrentLocale());
+    }
+    return null;
+  }
+
+  public IWPropertyList getUserProperties(IWUserContext iwuc){
+    IWBundle bundle = getBundle(iwuc);
+    if(bundle!=null){
+      return bundle.getUserProperties(iwuc);
     }
     return null;
   }

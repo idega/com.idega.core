@@ -12,8 +12,11 @@ import com.idega.presentation.IWContext;
 import java.io.*;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
+
+import com.idega.user.business.UserProperties;
 import com.idega.util.LocaleUtil;
 import com.idega.util.FileUtil;
+import com.idega.block.login.business.LoginBusiness;
 import com.idega.core.data.ICObject;
 import com.idega.presentation.Block;
 
@@ -409,6 +412,11 @@ public class IWBundle implements java.lang.Comparable {
 	return localizableStringsFile;
     }
 
+    public IWPropertyList getUserProperties(IWUserContext iwuc) {
+    	UserProperties properties = (UserProperties) iwuc.getSessionAttribute(LoginBusiness.USER_PROPERTY_PARAMETER);
+    	return properties.getProperties(this.getBundleName());
+    }
+    
     public IWResourceBundle getResourceBundle(IWContext iwc){
       return getResourceBundle(iwc.getCurrentLocale());
     }

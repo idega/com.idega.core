@@ -33,11 +33,13 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWSystemProperties;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
+import com.idega.user.business.UserProperties;
 import com.idega.util.datastructures.HashtableMultivalued;
 /**
  * A class to serve as the context of a user request in an idegaWeb application.
@@ -609,6 +611,9 @@ public class IWContext extends Object implements IWUserContext, IWApplicationCon
   public IWSystemProperties getSystemProperties() {
   	return getApplication().getSystemProperties();
   }
+  public UserProperties getUserProperties() {
+  	return (UserProperties) this.getSessionAttribute(LoginBusiness.USER_PROPERTY_PARAMETER);
+  }	
 	public Locale getCurrentLocale() {
 		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
 		if (theReturn == null) {
