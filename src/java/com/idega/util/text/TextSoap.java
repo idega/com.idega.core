@@ -830,7 +830,6 @@ public class TextSoap {
 		for (int i = 0; i < n; i++) {
 			char c = stringToConvert.charAt(i);
 			String unicode = transliterator.transliterate(String.valueOf(c));
-			System.out.println(c+": "+unicode);
 			
 			if (unicode.equalsIgnoreCase("\\u003C"))
 				sb.append("&lt;");
