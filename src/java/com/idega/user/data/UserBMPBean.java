@@ -1207,6 +1207,13 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return this.idoFindIDsBySQL(query.toString());
 	}
 
+	public Collection ejbFindUsersWithContract() throws FinderException{
+		Collection c = idoFindPKsBySQL("select * from con_contract c, ic_user u " +
+		"where c.ic_user_id = u.ic_user_id");
+		return c;
+		
+	}
+	
 	private String getUserDateOfBirthSearchString(int startAge, int endAge) {
 		IDOQuery query = idoQuery();
 				

@@ -1244,6 +1244,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return this.getUserHome().findAllUsersOrderedByFirstName(); 
   }
   
+  public Collection getUsersWithContract()throws FinderException,RemoteException{
+	return this.getUserHome().findUsersWithContract(); 
+  }  
+  
   
   
 	public Email getUsersMainEmail(User user)throws NoEmailFoundException{
@@ -1995,6 +1999,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
     return null;
   }    
+  
+	
+   
    
 
 } // Class UserBusiness

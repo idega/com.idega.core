@@ -210,4 +210,16 @@ public Collection findByGroupRelationInitiationTimeAndStatus(Group relatedGroup,
 	return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
+public Collection findUsersWithContract() throws IDOLookupException, FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersWithContract();
+	this.idoCheckInPooledEntity(entity);
+	return ids;
+	//return this.getEntityCollectionForPrimaryKeys(ids);
+	//return this.getIDOEntityListForPrimaryKeys(ids);
+}
+
+
+
+
 }
