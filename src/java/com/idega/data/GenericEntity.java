@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.60 2001/10/24 15:33:28 palli Exp $
+ * $Id: GenericEntity.java,v 1.61 2001/10/25 12:25:26 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -60,14 +60,20 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   protected static int STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE = 3;
   protected static int STATE_DELETED = 4;
 
+  /**
+   *
+   */
   public GenericEntity() {
-          this(_defaultString);
+    this(_defaultString);
   }
 
+  /**
+   *
+   */
   public GenericEntity(String dataSource) {
-          setDatasource(dataSource);
-          firstLoadInMemoryCheck();
-          setDefaultValues();
+    setDatasource(dataSource);
+    firstLoadInMemoryCheck();
+    setDefaultValues();
   }
 
   public GenericEntity(int id) throws SQLException {
@@ -85,13 +91,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 
   private void firstLoadInMemoryCheck() {
-    Vector theReturn = (Vector)_theAttributes.get(this.getClass().getName());
+    Vector theReturn = (Vector)_theAttributes.get(getClass().getName());
     if (theReturn == null) {
       theReturn = new Vector();
-      _theAttributes.put(this.getClass().getName(),theReturn);
+      _theAttributes.put(getClass().getName(),theReturn);
 
       //First store a static instance of this class
-      String className = this.getClass().getName();
+      String className = getClass().getName();
       try {
         _allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
       }
@@ -102,11 +108,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       initializeAttributes();
       afterInitializeAttributes();
       setLobColumnName();
-      if(EntityControl.getIfEntityAutoCreate()){
+      if(EntityControl.getIfEntityAutoCreate()) {
          try{
           DatastoreInterface.getInstance(this).createEntityRecord(this);
          }
-         catch(Exception ex){
+         catch(Exception ex) {
           ex.printStackTrace();
          }
       }
@@ -116,7 +122,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * Meant to be overrided in subclasses to add default attributes
    */
-  protected void afterInitializeAttributes(){
+  protected void afterInitializeAttributes() {
   }
 
   /**
@@ -127,7 +133,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   }
 
 	protected String getTableName() {
-		return getEntityName();
+		return(getEntityName());
 	}
 
   /**
@@ -140,31 +146,25 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   protected Vector getAttributes() {
     //ties the attribute vector to the subclass of GenericEntity because
     //the theAttributes variable is static.
-    Vector theReturn = (Vector)_theAttributes.get(this.getClass().getName());
+    Vector theReturn = (Vector)_theAttributes.get(getClass().getName());
 
-    /*if (theReturn == null) {
-      theReturn = new Vector();
-      theAttributes.put(this.getClass().getName(),theReturn);
-      firstLoadInMemory();
-    }*/
-
-    return theReturn;
+    return(theReturn);
   }
 
 	public void setID(int id) {
 		setColumn(getIDColumnName(),new Integer(id));
 	}
 
-        public void setID(Integer id) {
+  public void setID(Integer id) {
 		setColumn(getIDColumnName(),id);
 	}
 
 	public int getID() {
-		return getIntColumnValue(getIDColumnName());
+		return(getIntColumnValue(getIDColumnName()));
 	}
 
 	public Integer getIDInteger() {
-		return (Integer)getColumnValue(getIDColumnName());
+		return(getIntegerColumnValue(getIDColumnName()));
 	}
 
 	/**
@@ -215,8 +215,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
           try{
             addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName));
           }
-          catch(ClassNotFoundException e){
-            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          catch(ClassNotFoundException e) {
+            throw new RuntimeException("Exception in "+getClass().getName()+e.getMessage());
           }
         }
 
@@ -237,8 +237,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
           try{
             addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),maxLength);
           }
-          catch(ClassNotFoundException e){
-            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          catch(ClassNotFoundException e) {
+            throw new RuntimeException("Exception in "+getClass().getName()+e.getMessage());
           }
        }
 
@@ -265,8 +265,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
           try{
             addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),relationShipType,Class.forName(relationShipClassName));
           }
-          catch(ClassNotFoundException e){
-            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          catch(ClassNotFoundException e) {
+            throw new RuntimeException("Exception in "+getClass().getName()+e.getMessage());
           }
         }
 
@@ -281,16 +281,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		addAttribute(attribute);
 	}
 
-	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength,String relationShipType,String relationShipClassName){
+	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,String storageClassName,int maxLength,String relationShipType,String relationShipClassName) {
           try{
             addAttribute(attributeName,longName,ifVisible,ifEditable,Class.forName(storageClassName),maxLength,relationShipType,Class.forName(relationShipClassName));
           }
-          catch(ClassNotFoundException e){
-            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          catch(ClassNotFoundException e) {
+            throw new RuntimeException("Exception in "+getClass().getName()+e.getMessage());
           }
         }
 
-	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,int maxLength,String relationShipType,Class relationShipClass){
+	public void addAttribute(String attributeName,String longName,boolean ifVisible,boolean ifEditable,Class storageClass,int maxLength,String relationShipType,Class relationShipClass) {
 		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
@@ -303,39 +303,39 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-	public void addAttribute(EntityAttribute attribute){
+	public void addAttribute(EntityAttribute attribute) {
             getAttributes().addElement(attribute);
 	}
 
-        public void addLanguageAttribute(){
-          this.addAttribute(getLanguageIDColumnName(),"Tungumál", true, true, "java.lang.Integer","one_to_one","com.idega.core.localisation.data.Language");
+        public void addLanguageAttribute() {
+          addAttribute(getLanguageIDColumnName(),"Tungumál", true, true, "java.lang.Integer","one_to_one","com.idega.core.localisation.data.Language");
         }
 
 
 	/**
 	 * @deprecated Replaced with getAttribute()
 	 */
-	public EntityAttribute getColumn(String columnName){
+	public EntityAttribute getColumn(String columnName) {
 		return getAttribute(columnName);
 	}
 
-	public EntityAttribute getAttribute(String attributeName){
+	public EntityAttribute getAttribute(String attributeName) {
 		//return (EntityAttribute) columns.get(columnName.toLowerCase());
 		EntityAttribute theReturn = null;
 		EntityAttribute tempColumn = null;
-		for (Enumeration enumeration=getAttributes().elements();enumeration.hasMoreElements();){
+		for (Enumeration enumeration=getAttributes().elements();enumeration.hasMoreElements();) {
 			tempColumn = (EntityAttribute)enumeration.nextElement();
-			if (tempColumn.getColumnName().toLowerCase().equals(attributeName.toLowerCase())){
+			if (tempColumn.getColumnName().toLowerCase().equals(attributeName.toLowerCase())) {
 				theReturn = tempColumn;
 			}
 		}
-/*    if(theReturn==null){
-      System.err.println("Error in "+this.getClass().getName()+".getAttribute(): ColumnName='"+attributeName+"' exists in table but not in Entity Class");
+/*    if(theReturn==null) {
+      System.err.println("Error in "+getClass().getName()+".getAttribute(): ColumnName='"+attributeName+"' exists in table but not in Entity Class");
     }*/
 		return theReturn;
 	}
 
-	public void addRelationship(String relationshipName,String relationshipType,String relationshipClassName){
+	public void addRelationship(String relationshipName,String relationshipType,String relationshipClassName) {
           try{
                 EntityAttribute attribute = new EntityAttribute();
 		attribute.setName(relationshipName);
@@ -343,24 +343,24 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		attribute.setRelationShipClass(Class.forName(relationshipClassName));
 		addAttribute(attribute);
           }
-          catch(ClassNotFoundException e){
-            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          catch(ClassNotFoundException e) {
+            throw new RuntimeException("Exception in "+getClass().getName()+e.getMessage());
           }
 	}
 
 	/**
 	*Constructs an array of GenericEntities through an int Array (containing rows of id's from the datastore) - uses the findByPrimaryKey method to instanciate a new object fetched from the database
 	**/
-	public GenericEntity[] constructArray(int[] id_array){
+	public GenericEntity[] constructArray(int[] id_array) {
 		GenericEntity[] returnArr = null;
 		try{
-			returnArr =  (GenericEntity[]) java.lang.reflect.Array.newInstance(this.getClass(),id_array.length);
-			for (int i = 0; i < id_array.length ; i++){
-				returnArr[i] = (GenericEntity) Class.forName(this.getClass().getName()).newInstance();
+			returnArr =  (GenericEntity[]) java.lang.reflect.Array.newInstance(getClass(),id_array.length);
+			for (int i = 0; i < id_array.length ; i++) {
+				returnArr[i] = (GenericEntity) Class.forName(getClass().getName()).newInstance();
 				returnArr[i].findByPrimaryKey(id_array[i]);
 			}
 		}
-		catch(Exception ex){
+		catch(Exception ex) {
 			System.err.println("There was an error in GenericEntity.constructArray(int[] id_array): "+ex.getMessage());
 		}
 		return returnArr;
@@ -370,45 +370,45 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	/**
 	*Constructs an array of GenericEntities through a String Array (containing only int's for the rows of id's from the datastore) - uses the findByPrimaryKey method to instanciate a new object fetched from the database
 	**/
-	public GenericEntity[] constructArray(String[] id_array){
+	public GenericEntity[] constructArray(String[] id_array) {
 
 		GenericEntity[] returnArr = null;
 		try{
-			returnArr = (GenericEntity[]) java.lang.reflect.Array.newInstance(this.getClass(),id_array.length);
-			for (int i = 0; i < id_array.length ; i++){
-				returnArr[i] = (GenericEntity) Class.forName(this.getClass().getName()).newInstance();
+			returnArr = (GenericEntity[]) java.lang.reflect.Array.newInstance(getClass(),id_array.length);
+			for (int i = 0; i < id_array.length ; i++) {
+				returnArr[i] = (GenericEntity) Class.forName(getClass().getName()).newInstance();
 				returnArr[i].findByPrimaryKey(Integer.parseInt(id_array[i]));
 			}
 		}
-		catch(Exception ex){
+		catch(Exception ex) {
 			System.err.println("There was an error in GenericEntity.constructArray(String[] id_array): "+ex.getMessage());
 		}
 		return returnArr;
 	}
 
 
-	protected void setValue(String columnName,Object columnValue){
-		if (columnValue!=null){
+	protected void setValue(String columnName,Object columnValue) {
+		if (columnValue!=null) {
 			_columns.put(columnName.toLowerCase(),columnValue);
-                        if((_state==STATE_NEW)||(_state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
+                        if((_state==STATE_NEW)||(_state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
                           setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
                         }
                         else{
-		          this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+		          setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
                         }
                 }
 	}
 
-	protected Object getValue(String columnName){
+	protected Object getValue(String columnName) {
 		return _columns.get(columnName.toLowerCase());
 	}
 
-        public void removeFromColumn(String columnName){
+        public void removeFromColumn(String columnName) {
           _columns.remove(columnName.toLowerCase());
         }
 
-	public void setColumn(String columnName,Object columnValue){
-		if (this.getRelationShipClass(columnName)==null){
+	public void setColumn(String columnName,Object columnValue) {
+		if (getRelationShipClass(columnName)==null) {
 			setValue(columnName,columnValue);
 		}
 		else{
@@ -416,27 +416,27 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 	}
 
-	public void setColumn(String columnName,int columnValue){
+	public void setColumn(String columnName,int columnValue) {
 		setValue(columnName,new Integer(columnValue));
 	}
 
-	public void setColumn(String columnName,Integer columnValue){
+	public void setColumn(String columnName,Integer columnValue) {
 		setValue(columnName,columnValue);
 	}
 
-	public void setColumn(String columnName,float columnValue){
+	public void setColumn(String columnName,float columnValue) {
 		setValue(columnName,new Float(columnValue));
 	}
 
-	public void setColumn(String columnName,Float columnValue){
+	public void setColumn(String columnName,Float columnValue) {
 		setValue(columnName,columnValue);
 	}
 
-	public void setColumn(String columnName,boolean columnValue){
+	public void setColumn(String columnName,boolean columnValue) {
 		setValue(columnName,new Boolean(columnValue));
 	}
 
-	public void setColumn(String columnName,Boolean columnValue){
+	public void setColumn(String columnName,Boolean columnValue) {
 		setValue(columnName,columnValue);
 	}
 
@@ -447,7 +447,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     Connection Conn= null;
 		try{
 			Conn = getConnection(getDatasource());
-      String sql = "update "+this.getEntityName()+" set "+columnName+" = null where "+this.getIDColumnName()+" = "+Integer.toString(this.getID());
+      String sql = "update "+getEntityName()+" set "+columnName+" = null where "+getIDColumnName()+" = "+Integer.toString(getID());
 			Conn.createStatement().executeUpdate(sql);
       Conn.commit();
 		}
@@ -455,7 +455,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       e.printStackTrace(System.err);
     }
 		finally{
-			if (Conn != null){
+			if (Conn != null) {
 				freeConnection(getDatasource(),Conn);
 			}
 		}
@@ -465,9 +465,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * The Outputstream must be completele written to when insert() or update() is executed on the Entity Class
    */
-  public OutputStream getColumnOutputStream(String columnName){
+  public OutputStream getColumnOutputStream(String columnName) {
     BlobWrapper wrapper = getBlobColumnValue(columnName);
-    if(wrapper==null){
+    if(wrapper==null) {
       wrapper = new BlobWrapper(this,columnName);
       setColumn(columnName,wrapper);
     }
@@ -475,9 +475,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   }
 
 
-  public void setColumn(String columnName,InputStream streamForBlobWrite){
+  public void setColumn(String columnName,InputStream streamForBlobWrite) {
     BlobWrapper wrapper = getBlobColumnValue(columnName);
-    if(wrapper!=null){
+    if(wrapper!=null) {
        wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
     }
     else{
@@ -487,33 +487,33 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
   }
 
-  public BlobWrapper getBlobColumnValue(String columnName){
-    return (BlobWrapper) getColumnValue(columnName);
+  public BlobWrapper getBlobColumnValue(String columnName) {
+    return (BlobWrapper)getColumnValue(columnName);
   }
 
   public InputStream getInputStreamColumnValue(String columnName)throws Exception{
     BlobWrapper wrapper = getBlobColumnValue(columnName);
-    if(wrapper==null){
+    if(wrapper==null) {
       wrapper = new BlobWrapper(this,columnName);
-      this.setColumn(columnName,wrapper);
+      setColumn(columnName,wrapper);
     }
     return wrapper.getBlobInputStream();
   }
 
-	public Object getColumnValue(String columnName){
+	public Object getColumnValue(String columnName) {
 		Object returnObj = null;
 		Object value = getValue(columnName);
-		if (value instanceof com.idega.data.GenericEntity){
+		if (value instanceof com.idega.data.GenericEntity) {
 			returnObj = value;
 		}
-		else if (value instanceof java.lang.Integer){
-			if ((getRelationShipClass(columnName)!=null)){
-				if (getRelationShipClass(columnName).getName().indexOf("idega") != -1){
+		else if (value instanceof java.lang.Integer) {
+			if ((getRelationShipClass(columnName)!=null)) {
+				if (getRelationShipClass(columnName).getName().indexOf("idega") != -1) {
 					try{
 						returnObj =getRelationShipClass(columnName).newInstance();
 						((GenericEntity)returnObj).findByPrimaryKey(((Integer)value).intValue());
 					}
-					catch(Exception ex){
+					catch(Exception ex) {
 						System.err.println("There was an error in GenericEntity.getColumnValue(String columnName): "+ex.getMessage());
 						ex.printStackTrace(System.err);
 					}
@@ -531,7 +531,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		else{
 			returnObj= value;
 		}
-		if (returnObj== null){
+		if (returnObj== null) {
 		}
 		else{
 		}
@@ -539,10 +539,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		return returnObj;
 	}
 
-	public String getStringColumnValue(String columnName){
-		if (getColumnValue(columnName) != null){
-			if(getStorageClassName(columnName).equals("java.lang.Boolean")){
-				if (((Boolean)getColumnValue(columnName)).booleanValue() == true){
+	public String getStringColumnValue(String columnName) {
+		if (getColumnValue(columnName) != null) {
+			if(getStorageClassName(columnName).equals("java.lang.Boolean")) {
+				if (((Boolean)getColumnValue(columnName)).booleanValue() == true) {
 					return "Y";
 				}
 				else{
@@ -558,15 +558,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 	}
 
-	public char getCharColumnValue(String columnName){
+	public char getCharColumnValue(String columnName) {
 		Character tempChar = (Character) getColumnValue(columnName);
 
 		return tempChar.charValue();
 	}
 
-	public float getFloatColumnValue(String columnName){
+	public float getFloatColumnValue(String columnName) {
 		Float tempFloat = (Float) getColumnValue(columnName);
-		if (tempFloat != null){
+		if (tempFloat != null) {
 			return tempFloat.floatValue();
 		}
 		else{
@@ -574,9 +574,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 	}
 
-	public double getDoubleColumnValue(String columnName){
+	public double getDoubleColumnValue(String columnName) {
 		Double tempDouble = (Double) getColumnValue(columnName);
-		if (tempDouble != null){
+		if (tempDouble != null) {
 			return tempDouble.doubleValue();
 		}
 		else{
@@ -585,13 +585,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-        public Integer getIntegerColumnValue(String columnName){
+        public Integer getIntegerColumnValue(String columnName) {
             return (Integer) getValue(columnName);
         }
 
-	public int getIntColumnValue(String columnName){
+	public int getIntColumnValue(String columnName) {
 		Integer tempInt = (Integer) getValue(columnName);
-    if (tempInt != null){
+    if (tempInt != null) {
       return tempInt.intValue();
     }
     else{
@@ -599,9 +599,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
 	}
 
-	public boolean getBooleanColumnValue(String columnName){
+	public boolean getBooleanColumnValue(String columnName) {
 		Boolean tempBool = (Boolean) getValue(columnName);
-    if (tempBool != null){
+    if (tempBool != null) {
       return tempBool.booleanValue();
     }
     else{
@@ -610,25 +610,25 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-	public void setLongName(String columnName,String longName){
+	public void setLongName(String columnName,String longName) {
 		getColumn(columnName).setLongName(longName);
 	}
 
-	public String getLongName(String columnName){
+	public String getLongName(String columnName) {
 		return getColumn(columnName).getLongName();
 	}
 
-	public void setRelationShipType(String columnName,String type){
+	public void setRelationShipType(String columnName,String type) {
 		getColumn(columnName).setRelationShipType(type);
 	}
 
-	public String getRelationShipType(String columnName){
+	public String getRelationShipType(String columnName) {
 		return getColumn(columnName).getRelationShipType();
 	}
 
-  public int getStorageClassType(String columnName){
+  public int getStorageClassType(String columnName) {
     EntityAttribute attribute = getColumn(columnName);
-    if(attribute!=null){
+    if(attribute!=null) {
       return attribute.getStorageClassType();
     }
     else{
@@ -639,9 +639,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * @deprecated replaced with getStorageClassType
    */
-	public String getStorageClassName(String columnName){
+	public String getStorageClassName(String columnName) {
             String theReturn = "";
-            if (getColumn(columnName) != null){
+            if (getColumn(columnName) != null) {
   		  theReturn = getColumn(columnName).getStorageClassName();
           }
             return theReturn;
@@ -650,92 +650,92 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
         /**
          * @deprecated replaced with setStorageClassType
          */
-	public void setStorageClassName(String columnName,String className){
+	public void setStorageClassName(String columnName,String className) {
             try{
 		getColumn(columnName).setStorageClass(Class.forName(className));
             }
-            catch(ClassNotFoundException e){
-              throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+            catch(ClassNotFoundException e) {
+              throw new RuntimeException("Exception in "+getClass().getName()+e.getMessage());
             }
 	}
 
-        public void setStorageClassType(String columnName,int classType){
+        public void setStorageClassType(String columnName,int classType) {
             getColumn(columnName).setStorageClassType(classType);
         }
 
-	public void setEditable(String columnName,boolean ifEditable){
+	public void setEditable(String columnName,boolean ifEditable) {
 		getColumn(columnName).setEditable(ifEditable);
 	}
 
-	public boolean getIfEditable(String columnName){
+	public boolean getIfEditable(String columnName) {
 		return getColumn(columnName).getIfEditable();
 	}
 
-	public void setVisible(String columnName,boolean ifVisible){
+	public void setVisible(String columnName,boolean ifVisible) {
 		getColumn(columnName).setVisible(ifVisible);
 	}
 
-	public boolean getIfVisible(String columnName){
+	public boolean getIfVisible(String columnName) {
 		return getColumn(columnName).getIfVisible();
 	}
 
         /*
-	public String getRelationShipClassName(String columnName){
+	public String getRelationShipClassName(String columnName) {
                 String theReturn = "";
-                if (getColumn(columnName) != null){
+                if (getColumn(columnName) != null) {
   		  theReturn = getColumn(columnName).getRelationShipClassName();
                 }
             return theReturn;
 	}
         */
 
-	public Class getRelationShipClass(String columnName){
+	public Class getRelationShipClass(String columnName) {
           EntityAttribute column = getColumn(columnName);
-          if(column!=null){
+          if(column!=null) {
             return column.getRelationShipClass();
           }
           return null;
 	}
 
-	public void setRelationShipClassName(String columnName,String className){
+	public void setRelationShipClassName(String columnName,String className) {
           try{
 		getColumn(columnName).setRelationShipClass(Class.forName(className));
           }
-          catch(ClassNotFoundException e){
-            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          catch(ClassNotFoundException e) {
+            throw new RuntimeException("Exception in "+getClass().getName()+e.getMessage());
           }
 	}
 
 
- 	public void setMaxLength(String columnName,int maxLength){
+ 	public void setMaxLength(String columnName,int maxLength) {
 		getColumn(columnName).setMaxLength(maxLength);
 	}
 
-	public int getMaxLength(String columnName){
+	public int getMaxLength(String columnName) {
 		return getColumn(columnName).getMaxLength();
 	}
 
-	public void setNullable(String columnName,boolean ifNullable){
+	public void setNullable(String columnName,boolean ifNullable) {
 		getColumn(columnName).setNullable(ifNullable);
 	}
 
-	public boolean getIfNullable(String columnName){
+	public boolean getIfNullable(String columnName) {
 		return getColumn(columnName).getIfNullable();
 	}
 
-          public boolean getIfUnique(String columnName){
+          public boolean getIfUnique(String columnName) {
               return getColumn(columnName).getIfUnique();
           }
 
-          public void setUnique(String columnName,boolean ifUnique){
+          public void setUnique(String columnName,boolean ifUnique) {
             getColumn(columnName).setUnique(ifUnique);
           }
 
-        public void setAsPrimaryKey(String columnName,boolean ifPrimaryKey){
+        public void setAsPrimaryKey(String columnName,boolean ifPrimaryKey) {
           getColumn(columnName).setAsPrimaryKey(ifPrimaryKey);
         }
 
-        public boolean isPrimaryKey(String columnName){
+        public boolean isPrimaryKey(String columnName) {
             return getColumn(columnName).isPrimaryKey();
         }
 
@@ -756,29 +756,29 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	/**
 	 * Frees the connection used, must be done after using a databaseconnection
 	 */
-	public void freeConnection(String datasourceName,Connection connection){
+	public void freeConnection(String datasourceName,Connection connection) {
 		ConnectionBroker.freeConnection(datasourceName,connection);
 	}
 
 	/**
 	 * Frees the default connection used, must be done after using a databaseconnection
 	 */
-	public void freeConnection(Connection connection){
+	public void freeConnection(Connection connection) {
 		ConnectionBroker.freeConnection(getDatasource(),connection);
 	}
 
 
-	public void setDatasource(String dataSource){
+	public void setDatasource(String dataSource) {
 		_dataSource=dataSource;
 	}
 
-	public String getDatasource(){
+	public String getDatasource() {
 		return _dataSource;
 	}
 
-	public String getIDColumnName(){
+	public String getIDColumnName() {
           String entityName = getEntityName();
-          if (entityName.endsWith("_")){
+          if (entityName.endsWith("_")) {
                   return entityName+"id";
           }
           else{
@@ -786,17 +786,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
           }
 	}
 
-        public static String getLanguageIDColumnName(){
+        public static String getLanguageIDColumnName() {
           return "language_id";
         }
 
-	protected String getAllColumnsAndValues(){
+	protected String getAllColumnsAndValues() {
 		String returnString="";
-		for (Enumeration e = _columns.keys(); e.hasMoreElements();){
-		//for (Enumeration e = columns.elements(); e.hasMoreElements();){
+		for (Enumeration e = _columns.keys(); e.hasMoreElements();) {
+		//for (Enumeration e = columns.elements(); e.hasMoreElements();) {
 			String ColumnName = (String)e.nextElement();
-			if (isValidColumnForUpdateList(ColumnName)){
-				if (returnString.equals("")){
+			if (isValidColumnForUpdateList(ColumnName)) {
+				if (returnString.equals("")) {
 					returnString = returnString + ColumnName + "='"+getStringColumnValue(ColumnName)+"'";
 				}
 				else{
@@ -809,19 +809,19 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-	protected String getAllColumnsAndQuestionMarks(){
+	protected String getAllColumnsAndQuestionMarks() {
 		StringBuffer returnString= new StringBuffer("");
                 String[] names = getColumnNames();
                 String questionmark = "=?";
 
-		for(int i=0;i<names.length;i++){
-                //for (Enumeration e = columns.keys(); e.hasMoreElements();){
-		//for (Enumeration e = columns.elements(); e.hasMoreElements();){
+		for(int i=0;i<names.length;i++) {
+                //for (Enumeration e = columns.keys(); e.hasMoreElements();) {
+		//for (Enumeration e = columns.elements(); e.hasMoreElements();) {
 			//String ColumnName = (String)e.nextElement();
                         String ColumnName = names[i];
 
-			if (isValidColumnForUpdateList(ColumnName)){
-				if (returnString.toString().equals("")){
+			if (isValidColumnForUpdateList(ColumnName)) {
+				if (returnString.toString().equals("")) {
 					returnString.append(ColumnName);
                                         returnString.append(questionmark);
 				}
@@ -837,18 +837,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-	public String[] getColumnNames(){
+	public String[] getColumnNames() {
 
 		Vector vector = new Vector();
 		int i=0;
-		//for (Enumeration e = columns.keys(); e.hasMoreElements();i++){
-		for (Enumeration e = getAttributes().elements(); e.hasMoreElements();i++){
+		//for (Enumeration e = columns.keys(); e.hasMoreElements();i++) {
+		for (Enumeration e = getAttributes().elements(); e.hasMoreElements();i++) {
 			EntityAttribute temp = (EntityAttribute)e.nextElement();
-                        if (temp.getAttributeType().equals("column")){
+                        if (temp.getAttributeType().equals("column")) {
                           vector.addElement(temp.getColumnName().toLowerCase());
 		        }
                 }
-		if (vector != null){
+		if (vector != null) {
 			vector.trimToSize();
 			return (String[]) vector.toArray(new String[0]);
 			//return vector.toArray(new GenericEntity[0]);
@@ -858,30 +858,30 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 	}
 
-	public String[] getVisibleColumnNames(){
+	public String[] getVisibleColumnNames() {
 
 		Vector theColumns = new Vector();
                 Vector theAttributes = getAttributes();
-		for (Enumeration e = getAttributes().elements(); e.hasMoreElements();){
-		//for (Enumeration e = columns.elements(); e.hasMoreElements();){
+		for (Enumeration e = getAttributes().elements(); e.hasMoreElements();) {
+		//for (Enumeration e = columns.elements(); e.hasMoreElements();) {
 
 			String tempName = (String)((EntityAttribute)e.nextElement()).getColumnName();
-			if (getIfVisible(tempName)){
+			if (getIfVisible(tempName)) {
 				theColumns.addElement(tempName);
 			}
 		}
 		return (String[])theColumns.toArray(new String[0]);
 	}
 
-	public String[] getEditableColumnNames(){
+	public String[] getEditableColumnNames() {
 
 		Vector theColumns = new Vector();
 
-		for (Enumeration e = _columns.keys(); e.hasMoreElements();){
-		//for (Enumeration e = columns.elements(); e.hasMoreElements();){
+		for (Enumeration e = _columns.keys(); e.hasMoreElements();) {
+		//for (Enumeration e = columns.elements(); e.hasMoreElements();) {
 
 			String tempName = (String)e.nextElement();
-			if (getIfEditable(tempName)){
+			if (getIfEditable(tempName)) {
 				theColumns.addElement(tempName);
 			};
 		}
@@ -891,13 +891,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	/**
 	*Used to generate the ?,? mark list for preparedstatement
 	**/
-	protected String getQuestionmarksForColumns(){
+	protected String getQuestionmarksForColumns() {
 		String returnString = "";
 		String[] names = getColumnNames();
-		for (int i = 0; i < names.length; i++){
-			if(isValidColumnForInsertList(names[i])){
-      //if (!isNull(names[i])){
-				if (returnString.equals("")){
+		for (int i = 0; i < names.length; i++) {
+			if(isValidColumnForInsertList(names[i])) {
+      //if (!isNull(names[i])) {
+				if (returnString.equals("")) {
 					returnString = 	"?";
 				}
 				else{
@@ -909,14 +909,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-  boolean isValidColumnForUpdateList(String columnName){
-      if (isNull(columnName)){
+  boolean isValidColumnForUpdateList(String columnName) {
+      if (isNull(columnName)) {
         return false;
       }
       else{
-        if(getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
+        if(getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER) {
           BlobWrapper wrapper = (BlobWrapper)getColumnValue(columnName);
-          if(wrapper==null){
+          if(wrapper==null) {
             return false;
           }
           else{
@@ -927,12 +927,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       }
   }
 
-  boolean isValidColumnForInsertList(String columnName){
-      if (isNull(columnName)){
+  boolean isValidColumnForInsertList(String columnName) {
+      if (isNull(columnName)) {
         return false;
       }
       else{
-        if(getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
+        if(getStorageClassType(columnName)==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER) {
           return false;
         }
         return true;
@@ -940,14 +940,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   }
 
 
-  protected String getCommaDelimitedColumnNames(){
+  protected String getCommaDelimitedColumnNames() {
     String newCachedColumnNameList = getStaticInstance()._cachedColumnNameList;
-    if(newCachedColumnNameList==null){
+    if(newCachedColumnNameList==null) {
       String returnString = "";
       String[] names = getColumnNames();
-      for (int i = 0; i < names.length; i++){
-        if (isValidColumnForInsertList(names[i])){
-          if (returnString.equals("")){
+      for (int i = 0; i < names.length; i++) {
+        if (isValidColumnForInsertList(names[i])) {
+          if (returnString.equals("")) {
             returnString = names[i];
           }
           else{
@@ -963,12 +963,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 
 
-	protected String getCommaDelimitedColumnValues(){
+	protected String getCommaDelimitedColumnValues() {
 		String returnString = "";
 		String[] names = getColumnNames();
-		for (int i = 0; i < names.length; i++){
-			if (isValidColumnForInsertList(names[i])){
-				if (returnString.equals("")){
+		for (int i = 0; i < names.length; i++) {
+			if (isValidColumnForInsertList(names[i])) {
+				if (returnString.equals("")) {
 					returnString = 	"'"+getStringColumnValue(names[i])+"'";
 				}
 				else{
@@ -980,69 +980,19 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
-	public boolean isNull(String columnName){
-		/*if (columns.get(columnName) instanceof java.lang.String){
-			String tempString = (String)columns.get(columnName);
-			if (tempString.equals("idega_special_null")){
-				return true;
-			}
-			else{
-				return false;
-			}
-		}
-		else{
-			return false;
-		}*/
-/*
-		if (getColumnValue(columnName) == null){
-			return true;
-		}
-		else{
-			return false;
-		}
-*/
-                if (_columns.get(columnName.toLowerCase())== null){
-                  return true;
-                }
-                else{
-                  return false;
-                }
-
+	public boolean isNull(String columnName) {
+    if (_columns.get(columnName.toLowerCase()) == null) {
+      return true;
+    }
+    else{
+      return false;
+    }
 	}
 
-	/*
-	 * Returns the type of the underlying datastore - returns: "mysql", "interbase", "oracle", "unimplemented"
-	 */
-	 /*
-	public String getDataStoreType(Connection connection){
-		if (dataStoreType == null){
-			if (connection != null){
-				if (connection.getClass().getName().indexOf("oracle") != -1 ){
-					dataStoreType = "oracle";
-				}
-				else if (connection.getClass().getName().indexOf("interbase") != -1 ){
-					dataStoreType = "interbase";
-				}
-				else if (connection.getClass().getName().indexOf("mysql") != -1 ){
-					dataStoreType =  "mysql";
-				}
-
-				else{
-					dataStoreType = "unimplemented";
-				}
-			}
-			else{
-				dataStoreType =  "";
-			}
-		}
-		return dataStoreType;
-	}*/
-
-
 	/**
-	**Override this function to set default values to columns if they have no set values
-	**/
-	public void setDefaultValues(){
+	 * Override this function to set default values to columns if they have no set values
+	 */
+	public void setDefaultValues() {
 		//default implementation does nothing
 	}
 
@@ -1054,8 +1004,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     try{
       DatastoreInterface.getInstance(this).insert(this);
     }
-    catch(Exception ex){
-      if(ex instanceof SQLException){
+    catch(Exception ex) {
+      if(ex instanceof SQLException) {
         ex.printStackTrace();
         throw (SQLException)ex.fillInStackTrace();
       }
@@ -1070,11 +1020,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   */
   public void updateMetaData()throws SQLException{
     try{
-      if(this.getID()!=-1) DatastoreInterface.getInstance(this).crunchMetaData(this);
+      if(getID()!=-1) DatastoreInterface.getInstance(this).crunchMetaData(this);
       else System.err.println("GenericEntity: updateMetaData() getID = -1 !");
     }
-    catch(Exception ex){
-      if(ex instanceof SQLException){
+    catch(Exception ex) {
+      if(ex instanceof SQLException) {
         ex.printStackTrace();
         throw (SQLException)ex.fillInStackTrace();
       }
@@ -1112,8 +1062,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     try{
       DatastoreInterface.getInstance(c).insert(this,c);
     }
-    catch(Exception ex){
-      if(ex instanceof SQLException){
+    catch(Exception ex) {
+      if(ex instanceof SQLException) {
         ex.printStackTrace();
         throw (SQLException)ex.fillInStackTrace();
       }
@@ -1132,8 +1082,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       try{
         DatastoreInterface.getInstance(this).update(this);
       }
-      catch(Exception ex){
-        if(ex instanceof SQLException){
+      catch(Exception ex) {
+        if(ex instanceof SQLException) {
           ex.printStackTrace();
           throw (SQLException)ex.fillInStackTrace();
         }
@@ -1196,25 +1146,25 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	/**
 	**Function to populate a column through a string representation
 	**/
-	public void setStringColumn(String columnName,String columnValue){
+	public void setStringColumn(String columnName,String columnValue) {
                 int classType=getStorageClassType(columnName);
-		if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
-			if (columnValue != null){
+		if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER) {
+			if (columnValue != null) {
 				setColumn(columnName,new Integer(columnValue));
 			}
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_LANG_STRING){
-			if (columnValue != null){
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_STRING) {
+			if (columnValue != null) {
 				setColumn(columnName,columnValue);
 			}
 
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_LANG_BOOLEAN){
-			if (columnValue != null){
-				if (columnValue.equals("Y")){
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_BOOLEAN) {
+			if (columnValue != null) {
+				if (columnValue.equals("Y")) {
 					setColumn(columnName,new Boolean(true));
 				}
-				else if (columnValue.equals("N")){
+				else if (columnValue.equals("N")) {
 					setColumn(columnName,new Boolean(false));
 				}
 				else{
@@ -1222,33 +1172,33 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 				}
 			}
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_LANG_FLOAT){
-			if (columnValue != null){
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_FLOAT) {
+			if (columnValue != null) {
 				setColumn(columnName,new Float(columnValue));
 			}
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_LANG_DOUBLE){
-			if (columnValue != null){
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_DOUBLE) {
+			if (columnValue != null) {
 				setColumn(columnName,new Double(columnValue));
 			}
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP){
-			if (columnValue != null){
+		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP) {
+			if (columnValue != null) {
 				setColumn(columnName,java.sql.Timestamp.valueOf(columnValue));
 			}
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_SQL_DATE){
-			if (columnValue != null){
+		else if (classType==EntityAttribute.TYPE_JAVA_SQL_DATE) {
+			if (columnValue != null) {
 				setColumn(columnName,java.sql.Date.valueOf(columnValue));
 			}
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIME){
-			if (columnValue != null){
+		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIME) {
+			if (columnValue != null) {
 				setColumn(columnName,java.sql.Time.valueOf(columnValue));
 			}
 		}
-		else if (classType==EntityAttribute.TYPE_COM_IDEGA_UTIL_GENDER){
-			if (columnValue != null){
+		else if (classType==EntityAttribute.TYPE_COM_IDEGA_UTIL_GENDER) {
+			if (columnValue != null) {
 				setColumn(columnName,columnValue.toString());
 			}
 		}
@@ -1258,72 +1208,72 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	protected void fillColumn(String columnName,ResultSet RS)throws SQLException{
 		int classType = getStorageClassType(columnName);
 
-                if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
-			//if (RS.getInt(columnName) != -1){
+                if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER) {
+			//if (RS.getInt(columnName) != -1) {
                         int theInt = RS.getInt(columnName);
                         boolean wasNull = RS.wasNull();
-                        if(!wasNull){
+                        if(!wasNull) {
                             setColumn(columnName.toLowerCase(),new Integer(theInt));
                         }
 			//}
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_LANG_STRING){
-			if (RS.getString(columnName) != null){
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_STRING) {
+			if (RS.getString(columnName) != null) {
 				setColumn(columnName.toLowerCase(),RS.getString(columnName));
 			}
 
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_LANG_BOOLEAN){
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_BOOLEAN) {
 			String theString = RS.getString(columnName);
-                        if (theString != null){
-				if (theString.equals("Y")){
+                        if (theString != null) {
+				if (theString.equals("Y")) {
 					setColumn(columnName.toLowerCase(),new Boolean(true));
 				}
-				else if (theString.equals("N")){
+				else if (theString.equals("N")) {
 					setColumn(columnName.toLowerCase(),new Boolean(false));
 				}
 			}
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_LANG_FLOAT){
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_FLOAT) {
                         float theFloat = RS.getFloat(columnName);
                         boolean wasNull = RS.wasNull();
-                        if(!wasNull){
+                        if(!wasNull) {
                             setColumn(columnName.toLowerCase(),new Float(theFloat));
                         }
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_LANG_DOUBLE){
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_DOUBLE) {
                         double theDouble = RS.getFloat(columnName);
                         boolean wasNull = RS.wasNull();
-                        if(!wasNull){
+                        if(!wasNull) {
                             setColumn(columnName.toLowerCase(),new Double(theDouble));
                         }
 			double doble = RS.getDouble(columnName);
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP){
-			if (RS.getTimestamp(columnName) != null){
+		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP) {
+			if (RS.getTimestamp(columnName) != null) {
 				setColumn(columnName.toLowerCase(),RS.getTimestamp(columnName));
 			}
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_SQL_DATE){
-			if (RS.getDate(columnName) != null){
+		else if (classType==EntityAttribute.TYPE_JAVA_SQL_DATE) {
+			if (RS.getDate(columnName) != null) {
 				setColumn(columnName.toLowerCase(),RS.getDate(columnName));
 			}
 		}
-		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIME){
+		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIME) {
 			java.sql.Date date = RS.getDate(columnName);
-                        if (date != null){
+                        if (date != null) {
 				setColumn(columnName.toLowerCase(),date);
 			}
 		}
-		else if (classType==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
-			/*if (RS.getDate(columnName) != null){
+		else if (classType==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER) {
+			/*if (RS.getDate(columnName) != null) {
 				setColumn(columnName.toLowerCase(),RS.getTime(columnName));
 			}*/
                         setColumn(columnName.toLowerCase(),getEmptyBlob(columnName));
 		}
-		else if (classType==EntityAttribute.TYPE_COM_IDEGA_UTIL_GENDER){
+		else if (classType==EntityAttribute.TYPE_COM_IDEGA_UTIL_GENDER) {
 			String gender = RS.getString(columnName);
-                        if (gender != null){
+                        if (gender != null) {
 				setColumn(columnName.toLowerCase(),new Gender(gender));
 			}
 		}
@@ -1355,27 +1305,27 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
                           throw new SQLException("Record with id="+id+" not found");
 
 			String[] columnNames = getColumnNames();
-			for (int i = 0; i < columnNames.length; i++){
+			for (int i = 0; i < columnNames.length; i++) {
 				try{
-                                  if (RS.getString(columnNames[i]) != null){
+                                  if (RS.getString(columnNames[i]) != null) {
 				  	fillColumn(columnNames[i],RS);
 			          }
                                 }
-                                catch(SQLException ex){
+                                catch(SQLException ex) {
                                   //NOCATH
                                   try{
-                                    //if (RS.getString(columnNames[i].toUpperCase()) != null){
+                                    //if (RS.getString(columnNames[i].toUpperCase()) != null) {
 				  	fillColumn(columnNames[i],RS);
 			            //}
                                   }
-                                  catch(SQLException exe){
+                                  catch(SQLException exe) {
                                     try{
-                                      //if (RS.getString(columnNames[i].toLowerCase()) != null){
+                                      //if (RS.getString(columnNames[i].toLowerCase()) != null) {
 				    	  fillColumn(columnNames[i],RS);
 			                //}
                                       }
-                                    catch(SQLException exep){
-                                         System.err.println("Exception in "+this.getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+exep.getMessage());
+                                    catch(SQLException exep) {
+                                         System.err.println("Exception in "+getClass().getName()+" findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found: "+exep.getMessage());
                                           //exep.printStackTrace(System.err);
                                     }
                                   }
@@ -1387,10 +1337,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 		}
 		finally{
-			if(Stmt != null){
+			if(Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
@@ -1398,7 +1348,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 
 
-	public String getNameOfMiddleTable(GenericEntity entity1,GenericEntity entity2){
+	public String getNameOfMiddleTable(GenericEntity entity1,GenericEntity entity2) {
             return EntityControl.getNameOfMiddleTable(entity1,entity2);
 
         }
@@ -1414,9 +1364,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
                 buffer.append("select e.* from ");
                 buffer.append(tableToSelectFrom + " middle, "+entity.getEntityName()+" e");
                 buffer.append(" where ");
-                buffer.append("middle."+this.getIDColumnName());
+                buffer.append("middle."+getIDColumnName());
                 buffer.append("=");
-                buffer.append(this.getID());
+                buffer.append(getID());
                 buffer.append(" and ");
                 buffer.append("middle."+entity.getIDColumnName());
                 buffer.append("=");
@@ -1452,25 +1402,25 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		Statement Stmt= null;
 		Vector vector = new Vector();
 		String tableToSelectFrom = "";
-		if (entity.getEntityName().endsWith("_")){
-			tableToSelectFrom = entity.getEntityName()+this.getEntityName();
+		if (entity.getEntityName().endsWith("_")) {
+			tableToSelectFrom = entity.getEntityName()+getEntityName();
 		}
 		else{
-			tableToSelectFrom = entity.getEntityName()+"_"+this.getEntityName();
+			tableToSelectFrom = entity.getEntityName()+"_"+getEntityName();
 		}
 
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			ResultSet RS = Stmt.executeQuery(SQLString);
-			while (RS.next()){
+			while (RS.next()) {
 
 				GenericEntity tempobj=null;
 				try{
 					tempobj = (GenericEntity)Class.forName(entity.getClass().getName()).newInstance();
 					tempobj.findByPrimaryKey(RS.getInt(entity.getIDColumnName()));
 				}
-				catch(Exception ex){
+				catch(Exception ex) {
 					System.err.println("There was an error in GenericEntity.findRelated(GenericEntity entity,String SQLString): "+ex.getMessage());
 
 				}
@@ -1482,15 +1432,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 		}
 		finally{
-			if(Stmt != null){
+			if(Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
 
-		if (vector != null){
+		if (vector != null) {
 			vector.trimToSize();
 			return (GenericEntity[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(entity.getClass(),0));
 			//return vector.toArray(new GenericEntity[0]);
@@ -1504,11 +1454,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	*Finds all instances of the current object in the otherEntity
 	**/
 	public GenericEntity[] findAssociated(GenericEntity otherEntity)throws SQLException{
-		return otherEntity.findAll("select * from "+otherEntity.getEntityName()+" where "+this.getIDColumnName()+"='"+this.getID()+"'");
+		return otherEntity.findAll("select * from "+otherEntity.getEntityName()+" where "+getIDColumnName()+"='"+getID()+"'");
 	}
 
 	public GenericEntity[] findAssociatedOrdered(GenericEntity otherEntity,String column_name)throws SQLException{
-		return otherEntity.findAll("select * from "+otherEntity.getEntityName()+" where "+this.getIDColumnName()+"='"+this.getID()+"' order by "+column_name+"");
+		return otherEntity.findAll("select * from "+otherEntity.getEntityName()+" where "+getIDColumnName()+"='"+getID()+"' order by "+column_name+"");
 	}
 
 	public GenericEntity[] findAll()throws SQLException{
@@ -1574,14 +1524,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
         public int getNumberOfRecordsRelated(GenericEntity entity)throws SQLException{
             String tableToSelectFrom = getNameOfMiddleTable(entity,this);
-            String SQLString="select count(*) from "+tableToSelectFrom+" where "+this.getIDColumnName()+"="+this.getID();
+            String SQLString="select count(*) from "+tableToSelectFrom+" where "+getIDColumnName()+"="+getID();
             //System.out.println(SQLString);
             return getNumberOfRecords(SQLString);
 	}
 
         public int getNumberOfRecordsReverseRelated(GenericEntity entity)throws SQLException{
             String tableToSelectFrom = getNameOfMiddleTable(this, entity);
-            String SQLString="select count(*) from "+tableToSelectFrom+" where "+this.getIDColumnName()+"="+this.getID();
+            String SQLString="select count(*) from "+tableToSelectFrom+" where "+getIDColumnName()+"="+getID();
             //System.out.println(SQLString);
             return getNumberOfRecords(SQLString);
 	}
@@ -1612,7 +1562,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
             ResultSet rs = null;
             int recordCount = -1;
             try {
-                conn = getConnection(this.getDatasource());
+                conn = getConnection(getDatasource());
                 stmt = conn.createStatement();
                 rs = stmt.executeQuery(CountSQLString);
                 if(rs.next())
@@ -1629,10 +1579,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
                 System.err.println("There was an error in GenericEntity.getNumberOfRecords "+e.getMessage());
             }
             finally{
-                if(stmt != null){
+                if(stmt != null) {
                     stmt.close();
                 }
-                if (conn != null){
+                if (conn != null) {
                     freeConnection(getDatasource(),conn);
                 }
             }
@@ -1660,27 +1610,27 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			ResultSet RS = Stmt.executeQuery(SQLString);
 			metaData = RS.getMetaData();
                         int count = 1;
-			while (RS.next() && check){
+			while (RS.next() && check) {
                           count++;
-                          if(returningNumberOfRecords!=-1){
-                            if(count>returningNumberOfRecords){
+                          if(returningNumberOfRecords!=-1) {
+                            if(count>returningNumberOfRecords) {
                               check=false;
                             }
                           }
 
 				GenericEntity tempobj=null;
 				try{
-					tempobj = (GenericEntity)Class.forName(this.getClass().getName()).newInstance();
+					tempobj = (GenericEntity)Class.forName(getClass().getName()).newInstance();
 				}
-				catch(Exception ex){
+				catch(Exception ex) {
 					System.err.println("There was an error in GenericEntity.findAll "+ex.getMessage());
 					ex.printStackTrace(System.err);
 				}
-				if(tempobj != null){
-					for (int i = 1; i <= metaData.getColumnCount(); i++){
+				if(tempobj != null) {
+					for (int i = 1; i <= metaData.getColumnCount(); i++) {
 
 
-						if ( RS.getObject(metaData.getColumnName(i)) != null){
+						if ( RS.getObject(metaData.getColumnName(i)) != null) {
 
 							//System.out.println("ColumName "+i+": "+metaData.getColumnName(i));
 							tempobj.fillColumn(metaData.getColumnName(i),RS);
@@ -1695,15 +1645,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 		}
 		finally{
-			if(Stmt != null){
+			if(Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
 		/*
-		for (Enumeration enum = theIDs.elements();enum.hasMoreElements();){
+		for (Enumeration enum = theIDs.elements();enum.hasMoreElements();) {
 			Integer tempInt = (Integer) enum.nextElement();
 			vector.addElement(new GenericEntity(tempInt.intValue()));
 		}*/
@@ -1711,14 +1661,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
                 List list = EntityFinder.findAll(this,SQLString,returningNumberOfRecords);
 
-		if (list != null){
-			return (GenericEntity[]) list.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
+		if (list != null) {
+			return (GenericEntity[]) list.toArray((Object[])java.lang.reflect.Array.newInstance(getClass(),0));
 			//return vector.toArray(new GenericEntity[0]);
 		}
 		else{
                         //Provided for backwards compatability where there was almost never returned null if
                         //there was nothing found
-                        return (GenericEntity[]) java.lang.reflect.Array.newInstance(this.getClass(),0);
+                        return (GenericEntity[]) java.lang.reflect.Array.newInstance(getClass(),0);
 		}
 	}
 
@@ -1738,10 +1688,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			int i = Stmt.executeUpdate(sql);
 		}
 		finally{
-			if(Stmt != null){
+			if(Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
@@ -1828,7 +1778,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
             int i = Stmt.executeUpdate("insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+") values("+getID()+","+entityToAddTo.getID()+")");
           }
           finally{
-            if(Stmt != null){
+            if(Stmt != null) {
               Stmt.close();
             }
           }
@@ -1848,10 +1798,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			int i = Stmt.executeUpdate("insert into "+getNameOfMiddleTable((GenericEntity)GenericEntity.getStaticInstance(entityToAddTo),this)+"("+getIDColumnName()+","+((GenericEntity)GenericEntity.getStaticInstance(entityToAddTo)).getIDColumnName()+") values("+getID()+","+id+")");
 		}
 		finally{
-			if(Stmt != null){
+			if(Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
@@ -1872,10 +1822,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			int i = Stmt.executeUpdate("insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+","+extraColumnName+") values('"+getID()+"','"+entityToAddTo.getID()+"','"+extraColumnValue+"')");
 		}
 		finally{
-			if(Stmt != null){
+			if(Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
@@ -1892,10 +1842,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			int i = Stmt.executeUpdate("insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+","+extraColumnName+","+extraColumnName1+") values('"+getID()+"','"+entityToAddTo.getID()+"','"+extraColumnValue+"','"+extraColumnValue1+"')");
 		}
 		finally{
-			if(Stmt != null){
+			if(Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
@@ -1913,10 +1863,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			int i = Stmt.executeUpdate("insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+","+extraColumnName+","+extraColumnName1+","+extraColumnName2+") values('"+getID()+"','"+entityToAddTo.getID()+"','"+extraColumnValue+"','"+extraColumnValue1+"','"+extraColumnValue2+"')");
 		}
 		finally{
-			if(Stmt != null){
+			if(Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
@@ -1938,19 +1888,19 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			Stmt = conn.createStatement();
 
                         if( (entityToRemoveFrom.getID()==-1) || (entityToRemoveFrom.getID()==0))//removing all in middle table
-                          qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+this.getIDColumnName()+"='"+this.getID()+"'";
+                          qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+getIDColumnName()+"='"+getID()+"'";
                         else// just removing this particular one
-                          qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+this.getIDColumnName()+"='"+this.getID()+"' AND "+entityToRemoveFrom.getIDColumnName()+"='"+entityToRemoveFrom.getID()+"'";
+                          qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+getIDColumnName()+"='"+getID()+"' AND "+entityToRemoveFrom.getIDColumnName()+"='"+entityToRemoveFrom.getID()+"'";
 
                         //  System.out.println("GENERIC ENTITY: "+ qry);
                           i = Stmt.executeUpdate(qry);
 
                 }
 		finally{
-			if(Stmt != null){
+			if(Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
@@ -1970,16 +1920,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
                   Stmt = conn.createStatement();
 
                   if( (entityToRemoveFrom.getID()==-1) || (entityToRemoveFrom.getID()==0))//removing all in middle table
-                    qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+this.getIDColumnName()+"='"+this.getID()+"'";
+                    qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+getIDColumnName()+"='"+getID()+"'";
                   else// just removing this particular one
-                    qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+this.getIDColumnName()+"='"+this.getID()+"' AND "+entityToRemoveFrom.getIDColumnName()+"='"+entityToRemoveFrom.getID()+"'";
+                    qry = "delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+getIDColumnName()+"='"+getID()+"' AND "+entityToRemoveFrom.getIDColumnName()+"='"+entityToRemoveFrom.getID()+"'";
 
                   //  System.out.println("GENERIC ENTITY: "+ qry);
                     i = Stmt.executeUpdate(qry);
 
                 }
 		finally{
-                  if(Stmt != null){
+                  if(Stmt != null) {
                           Stmt.close();
                   }
 		}
@@ -1993,8 +1943,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		try{
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-                        String idColumnName = this.getIDColumnName();
-                        int id = this.getID();
+                        String idColumnName = getIDColumnName();
+                        int id = getID();
 
 			int count = 0;
                         for (int i = 0; i < entityToRemoveFrom.length; i++) {
@@ -2011,10 +1961,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 		}
 		finally{
-			if(Stmt != null){
+			if(Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
@@ -2033,18 +1983,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			int i = Stmt.executeUpdate("delete from "+getNameOfMiddleTable(entityToRemoveFrom,this)+" where "+entityToRemoveFrom.getIDColumnName()+"='"+entityToRemoveFrom.getID()+"'");
 		}
 		finally{
-			if(Stmt != null){
+			if(Stmt != null) {
 				Stmt.close();
 			}
-			if (conn != null){
+			if (conn != null) {
 				freeConnection(getDatasource(),conn);
 			}
 		}
 
 	}
 
-        public boolean equals(Object obj){
-          if(obj instanceof GenericEntity){
+        public boolean equals(Object obj) {
+          if(obj instanceof GenericEntity) {
             return equals((GenericEntity)obj);
           }
           else{
@@ -2053,10 +2003,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
         }
 
 
-        public boolean equals(GenericEntity entity){
-          if(entity!=null){
-            if(entity.getClass().equals(this.getClass())){
-              if(entity.getID()==this.getID()){
+        public boolean equals(GenericEntity entity) {
+          if(entity!=null) {
+            if(entity.getClass().equals(getClass())) {
+              if(entity.getID()==getID()) {
                 return true;
               }
               return false;
@@ -2066,155 +2016,155 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
           return false;
         }
 
-        public void empty(){
+        public void empty() {
           _columns.clear();
         }
 
 
-        private GenericEntity getStaticInstance(){
-          return getStaticInstance(this.getClass().getName());
+        private GenericEntity getStaticInstance() {
+          return getStaticInstance(getClass().getName());
         }
 
         protected boolean hasLobColumn()throws Exception{
-          String lobColumnName = this.getStaticInstance()._lobColumnName;
-          if(lobColumnName==null){
+          String lobColumnName = getStaticInstance()._lobColumnName;
+          if(lobColumnName==null) {
             return false;
           }
           return true;
         }
 
 
-        private void setLobColumnName(){
-          if( this.getStaticInstance()._lobColumnName == null ) {
-            String[] columnNames = this.getColumnNames();
+        private void setLobColumnName() {
+          if( getStaticInstance()._lobColumnName == null ) {
+            String[] columnNames = getColumnNames();
             for (int i = 0; i < columnNames.length; i++) {
-              if( EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER == this.getStorageClassType(columnNames[i]) ){
-                this.getStaticInstance()._lobColumnName = columnNames[i];
+              if( EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER == getStorageClassType(columnNames[i]) ) {
+                getStaticInstance()._lobColumnName = columnNames[i];
               }
             }
           }
         }
 
-        public String getLobColumnName(){
-          return  this.getStaticInstance()._lobColumnName;
+        public String getLobColumnName() {
+          return  getStaticInstance()._lobColumnName;
         }
 
-        public static GenericEntity getStaticInstance(String entityClassName){
-            if (_allStaticClasses==null){
+        public static GenericEntity getStaticInstance(String entityClassName) {
+            if (_allStaticClasses==null) {
               _allStaticClasses=new Hashtable();
             }
             GenericEntity theReturn = (GenericEntity)_allStaticClasses.get(entityClassName);
-            if(theReturn==null){
+            if(theReturn==null) {
               try{
                 theReturn = (GenericEntity)Class.forName(entityClassName).newInstance();
                 _allStaticClasses.put(entityClassName,theReturn);
               }
-              catch(Exception ex){
+              catch(Exception ex) {
                 ex.printStackTrace();
               }
             }
             return theReturn;
         }
 
-        public static GenericEntity getStaticInstance(Class entityClass){
+        public static GenericEntity getStaticInstance(Class entityClass) {
             return getStaticInstance(entityClass.getName());
         }
 
-      public void addManyToManyRelationShip(GenericEntity relatingEntity,String relationShipTableName){
+      public void addManyToManyRelationShip(GenericEntity relatingEntity,String relationShipTableName) {
             addManyToManyRelationShip(relatingEntity.getClass().getName(),relationShipTableName);
       }
 
 
 
-      public void addManyToManyRelationShip(Class relatingEntityClass,String relationShipTableName){
-            EntityControl.addManyToManyRelationShip(this.getClass().getName(),relatingEntityClass.getName(),relationShipTableName);
+      public void addManyToManyRelationShip(Class relatingEntityClass,String relationShipTableName) {
+            EntityControl.addManyToManyRelationShip(getClass().getName(),relatingEntityClass.getName(),relationShipTableName);
       }
 
 
-      public void addManyToManyRelationShip(String relatingEntityClassName,String relationShipTableName){
+      public void addManyToManyRelationShip(String relatingEntityClassName,String relationShipTableName) {
           try{
             addManyToManyRelationShip(Class.forName(relatingEntityClassName),relationShipTableName);
           }
-          catch(ClassNotFoundException e){
-            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          catch(ClassNotFoundException e) {
+            throw new RuntimeException("Exception in "+getClass().getName()+e.getMessage());
           }
       }
 
 
-      public void addManyToManyRelationShip(String relatingEntityClassName){
+      public void addManyToManyRelationShip(String relatingEntityClassName) {
             String relationShipTableName;
             try{
 
 
-              String tableName1 = this.getEntityName();
+              String tableName1 = getEntityName();
               String tableName2 = ((GenericEntity)Class.forName(relatingEntityClassName).newInstance()).getEntityName();
 
               relationShipTableName = StringHandler.concatAlphabetically(tableName1,tableName2,"_");
               addManyToManyRelationShip(relatingEntityClassName,relationShipTableName);
             }
-            catch(Exception ex){
+            catch(Exception ex) {
               ex.printStackTrace();
             }
       }
 
-      public void addManyToManyRelationShip(Class relatingEntityClass){
+      public void addManyToManyRelationShip(Class relatingEntityClass) {
                 addManyToManyRelationShip(relatingEntityClass.getName());
       }
 
-      public void addTreeRelationShip(){
+      public void addTreeRelationShip() {
         EntityControl.addTreeRelationShip(this);
       }
 
-      protected int getEntityState(){
+      protected int getEntityState() {
         return _state;
       }
 
-      protected void setEntityState(int state){
+      protected void setEntityState(int state) {
         _state=state;
       }
 
-      public boolean isInSynchWithDatastore(){
-        return (getEntityState()==this.STATE_IN_SYNCH_WITH_DATASTORE);
+      public boolean isInSynchWithDatastore() {
+        return (getEntityState()==STATE_IN_SYNCH_WITH_DATASTORE);
       }
 
 
-      public static GenericEntity getEntityInstance(Class entityClass, int id){
+      public static GenericEntity getEntityInstance(Class entityClass, int id) {
         GenericEntity entity = null;
         try{
           entity = (GenericEntity) entityClass.newInstance();
           entity.findByPrimaryKey(id);
         }
-        catch(Exception e){
+        catch(Exception e) {
          e.printStackTrace(System.err);
          System.err.println("GenericEntity: error initializing entity");
         }
        return entity;
       }
 
-      public static GenericEntity getEntityInstance(Class entityClass){
+      public static GenericEntity getEntityInstance(Class entityClass) {
         GenericEntity entity = null;
         try{
           entity = (GenericEntity) entityClass.newInstance();
         }
-        catch(Exception e){
+        catch(Exception e) {
          e.printStackTrace(System.err);
          System.err.println("GenericEntity: error initializing entity");
         }
        return entity;
       }
 
-  public void addMetaDataRelationship(){
+  public void addMetaDataRelationship() {
     addManyToManyRelationShip(MetaData.class);
-    this.getStaticInstance(this.getClass())._hasMetaDataRelationship=true;
+    getStaticInstance(getClass())._hasMetaDataRelationship=true;
   }
 
-  public boolean hasMetaDataRelationship(){
-   return this.getStaticInstance(this.getClass())._hasMetaDataRelationship;
+  public boolean hasMetaDataRelationship() {
+   return getStaticInstance(getClass())._hasMetaDataRelationship;
   }
 
 
 // fetches the metadata for this id and puts it in a HashTable
-  private void getMetaData(){
+  private void getMetaData() {
     Connection conn= null;
     Statement Stmt= null;
     _theMetaDataAttributes = new Hashtable();
@@ -2236,7 +2186,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       buffer.append(".");
       buffer.append(getIDColumnName());
       buffer.append("=");
-      buffer.append(this.getID());
+      buffer.append(getID());
       buffer.append(" and ");
       buffer.append(tableToSelectFrom);
       buffer.append(".");
@@ -2253,7 +2203,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       ResultSet RS = Stmt.executeQuery(query);
 
 
-      while(RS.next()){
+      while(RS.next()) {
         _theMetaDataAttributes.put(RS.getString("metadata_name"),RS.getString("metadata_value"));
         _theMetaDataIds.put(RS.getString("metadata_name"),new Integer(RS.getInt("ic_metadata_id")));
       }
@@ -2261,21 +2211,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       RS.close();
 
     }
-    catch(SQLException ex){
-      System.err.println("Exception in "+this.getClass().getName()+" gettingMetaData "+ex.getMessage());
+    catch(SQLException ex) {
+      System.err.println("Exception in "+getClass().getName()+" gettingMetaData "+ex.getMessage());
       ex.printStackTrace(System.err);
     }
     finally{
     try{
-     if(Stmt != null){
+     if(Stmt != null) {
       Stmt.close();
       }
     }
-    catch(SQLException ex){
-      System.err.println("Exception in "+this.getClass().getName()+" gettingMetaData "+ex.getMessage());
+    catch(SQLException ex) {
+      System.err.println("Exception in "+getClass().getName()+" gettingMetaData "+ex.getMessage());
       ex.printStackTrace(System.err);
     }
-    if (conn != null){
+    if (conn != null) {
       freeConnection(getDatasource(),conn);
     }
 
@@ -2283,33 +2233,33 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   }
 
-  public String getMetaData(String metaDataKey){
+  public String getMetaData(String metaDataKey) {
     if( _theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
     return (String) _theMetaDataAttributes.get(metaDataKey);
   }
 
-  public void setMetaDataAttributes(Hashtable metaDataAttribs){
+  public void setMetaDataAttributes(Hashtable metaDataAttribs) {
     String metaDataKey;
-    for (Enumeration e = metaDataAttribs.keys(); e.hasMoreElements();){
+    for (Enumeration e = metaDataAttribs.keys(); e.hasMoreElements();) {
        metaDataKey = (String)e.nextElement();
        addMetaData(metaDataKey,(String) metaDataAttribs.get(metaDataKey));
     }
   }
 
-  public void setMetaData(String metaDataKey, String metaDataValue){
+  public void setMetaData(String metaDataKey, String metaDataValue) {
      addMetaData(metaDataKey,metaDataValue);
   }
 
-  public void addMetaData(String metaDataKey, String metaDataValue){
+  public void addMetaData(String metaDataKey, String metaDataValue) {
     if( _theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
 
-    if( metaDataValue!=null ){
+    if( metaDataValue!=null ) {
       Object obj = _theMetaDataAttributes.put(metaDataKey,metaDataValue);
       metaDataHasChanged(true);
 
-      if( obj == null ){//is new
+      if( obj == null ) {//is new
 
-        if( _insertMetaDataVector == null ){
+        if( _insertMetaDataVector == null ) {
           _insertMetaDataVector = new Vector();
         }
 
@@ -2317,12 +2267,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
       }
       else{//is old
-        if( _updateMetaDataVector == null ){
+        if( _updateMetaDataVector == null ) {
           _updateMetaDataVector = new Vector();
         }
 
 
-      if( _insertMetaDataVector!=null ){
+      if( _insertMetaDataVector!=null ) {
         if(_insertMetaDataVector.indexOf(metaDataKey) == -1) {//is old and not in the insertlist
           _updateMetaDataVector.add(metaDataKey);
         }
@@ -2338,10 +2288,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
   * return true if the metadata to delete already exists
   */
-  public boolean removeMetaData(String metaDataKey){
+  public boolean removeMetaData(String metaDataKey) {
     if( _theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
 
-    if( _deleteMetaDataVector == null ){
+    if( _deleteMetaDataVector == null ) {
       _deleteMetaDataVector = new Vector();
     }
 
@@ -2356,31 +2306,31 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     else return false;
   }
 
-  public Hashtable getMetaDataAttributes(){
+  public Hashtable getMetaDataAttributes() {
     return _theMetaDataAttributes;
   }
 
-  public Hashtable getMetaDataIds(){
+  public Hashtable getMetaDataIds() {
     return _theMetaDataIds;
   }
 
-  public Vector getMetaDataUpdateVector(){
+  public Vector getMetaDataUpdateVector() {
     return _updateMetaDataVector;
   }
 
-  public Vector getMetaDataInsertVector(){
+  public Vector getMetaDataInsertVector() {
     return _insertMetaDataVector;
   }
 
-  public Vector getMetaDataDeleteVector(){
+  public Vector getMetaDataDeleteVector() {
     return _deleteMetaDataVector;
   }
 
-  public boolean metaDataHasChanged(){
+  public boolean metaDataHasChanged() {
     return _metaDataHasChanged;
   }
 
-  public void metaDataHasChanged(boolean metaDataHasChanged){
+  public void metaDataHasChanged(boolean metaDataHasChanged) {
     _metaDataHasChanged = metaDataHasChanged;
   }
 
@@ -2388,7 +2338,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
    * not implemented
    * @todo: implement
    */
-  public javax.ejb.EJBHome getEJBHome(){
+  public javax.ejb.EJBHome getEJBHome() {
     return null;
   }
 
@@ -2396,67 +2346,67 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
    * Not implemented
    * @todo: implement
    */
-  public javax.ejb.Handle getHandle(){
+  public javax.ejb.Handle getHandle() {
     return null;
   }
 
-  public Object getPrimaryKey(){
+  public Object getPrimaryKey() {
     return new Integer(getID());
   }
 
-  public boolean isIdentical(javax.ejb.EJBObject ejbo){
-    if(ejbo!=null){
+  public boolean isIdentical(javax.ejb.EJBObject ejbo) {
+    if(ejbo!=null) {
       try{
-        return ejbo.getPrimaryKey().equals(this.getPrimaryKey());
+        return ejbo.getPrimaryKey().equals(getPrimaryKey());
       }
-      catch(java.rmi.RemoteException rme){
+      catch(java.rmi.RemoteException rme) {
         rme.printStackTrace();
       }
     }
     return false;
   }
 
-  public void remove(){
+  public void remove() {
     try{
       delete();
     }
-    catch(Exception e){
+    catch(Exception e) {
       e.printStackTrace();
       throw new javax.ejb.EJBException(e.getMessage());
     }
   }
 
 
-  public void store(){
+  public void store() {
     try{
-      if((_state==STATE_NEW)||(_state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)){
+      if((_state==STATE_NEW)||(_state==STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
         insert();
       }
-      else if(_state==STATE_NOT_IN_SYNCH_WITH_DATASTORE){
+      else if(_state==STATE_NOT_IN_SYNCH_WITH_DATASTORE) {
         update();
       }
     }
-    catch(Exception e){
+    catch(Exception e) {
       e.printStackTrace();
       throw new javax.ejb.EJBException(e.getMessage());
     }
   }
 
-  public void ejbActivate(){}
+  public void ejbActivate() {}
 
-  public void ejbLoad(){}
+  public void ejbLoad() {}
 
-  public void ejbPassivate(){
-    if(_columns!=null){
+  public void ejbPassivate() {
+    if(_columns!=null) {
       _columns.clear();
     }
   }
 
-  public void ejbRemove(){remove();}
+  public void ejbRemove() {remove();}
 
-  public void ejbStore(){store();}
+  public void ejbStore() {store();}
 
-  public void setEntityContext(javax.ejb.EntityContext ctx){}
+  public void setEntityContext(javax.ejb.EntityContext ctx) {}
 
-  public void unsetEntityContext(){}
+  public void unsetEntityContext() {}
 }
