@@ -1,5 +1,5 @@
 /*
- * $Id: IWPhaseListener.java,v 1.1 2004/11/14 23:37:11 tryggvil Exp $
+ * $Id: IWPhaseListener.java,v 1.2 2004/12/07 15:09:55 tryggvil Exp $
  * Created on 3.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -10,7 +10,6 @@
 package com.idega.faces;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Logger;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
@@ -80,8 +79,9 @@ public class IWPhaseListener implements PhaseListener{
 				findNextInstanceOfNotPresentationObject(iwc,po);
 			}
 			else{
-				List children = comp.getChildren();
-				for (Iterator iter = children.iterator(); iter.hasNext();) {
+				//List children = comp.getChildren();
+				//for (Iterator iter = children.iterator(); iter.hasNext();) {
+				for (Iterator iter = comp.getFacetsAndChildren(); iter.hasNext();) {
 					UIComponent child = (UIComponent) iter.next();
 					call_Main(iwc,child);
 				}
@@ -100,15 +100,17 @@ public class IWPhaseListener implements PhaseListener{
 	protected void findNextInstanceOfNotPresentationObject(IWContext iwc, UIComponent comp) {
 		if(comp!=null){
 			if(comp instanceof PresentationObject){
-				List children = comp.getChildren();
-				for (Iterator iter = children.iterator(); iter.hasNext();) {
+				//List children = comp.getChildren();
+				//for (Iterator iter = children.iterator(); iter.hasNext();) {
+				for (Iterator iter = comp.getFacetsAndChildren(); iter.hasNext();) {
 					UIComponent child = (UIComponent) iter.next();
 					findNextInstanceOfNotPresentationObject(iwc,child);
 				}
 			}
 			else{
-				List children = comp.getChildren();
-				for (Iterator iter = children.iterator(); iter.hasNext();) {
+				//List children = comp.getChildren();
+				//for (Iterator iter = children.iterator(); iter.hasNext();) {
+				for (Iterator iter = comp.getFacetsAndChildren(); iter.hasNext();) {
 					UIComponent child = (UIComponent) iter.next();
 					call_Main(iwc,child);
 				}
