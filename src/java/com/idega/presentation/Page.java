@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.92 2004/01/19 13:25:13 laddi Exp $
+ *  $Id: Page.java,v 1.93 2004/02/04 10:45:55 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -84,6 +84,7 @@ public class Page extends PresentationObjectContainer {
 	private static boolean NULL_CLONE_PAGE_INITIALIZED = false;
 
 	private ICFile styleFile = null;
+	private static final String CHARACTER_ENCODING = "character_encoding";
 
 	/**
 	 *  Description of the Field
@@ -1237,8 +1238,9 @@ public class Page extends PresentationObjectContainer {
 	public String getMetaInformation(IWContext iwc) {
 
 		boolean addIdegaAuthorAndCopyRight = false;
-
-		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset=iso-8859-1\">\n<meta name=\"generator\" content=\"idegaWeb 1.3\">\n";
+		String characterEncoding = iwc.getApplicationSettings().getProperty(CHARACTER_ENCODING, "ISO-8859-1");
+		
+		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset="+characterEncoding+"\">\n<meta name=\"generator\" content=\"idegaWeb 1.3\">\n";
 
 		//If the user is logged on then there is no caching by proxy servers
 		boolean notUseProxyCaching = true;
