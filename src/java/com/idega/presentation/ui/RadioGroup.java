@@ -1,6 +1,6 @@
 /*
 
- * $Id: RadioGroup.java,v 1.4 2002/04/06 19:07:45 tryggvil Exp $
+ * $Id: RadioGroup.java,v 1.5 2002/10/15 11:31:21 laddi Exp $
 
  *
 
@@ -544,7 +544,7 @@ public class RadioGroup extends InterfaceObjectContainer {
 
         System.out.println("Button value = " + b.getValue());
 
-        System.out.println("Button _checked = " + b._checked);
+        System.out.println("Button _checked = " + b.getSelected());
 
         if (b.getSelected())
 
