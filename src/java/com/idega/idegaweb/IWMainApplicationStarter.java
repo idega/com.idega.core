@@ -281,12 +281,13 @@ public class IWMainApplicationStarter {
 	}
 	
 	/**
-	 * This is a fix so that these bundle starters are always started
+	 * Category bundle is not registered in many web applications (but used) because category wasn't a bundle in the past
+	 * Call BundleStarter directly because the bundle is not loaded by old web applications! 
 	 */
 	private void startTemporaryBundleStarters(){
 	    IWBundleStartable starter;
         try {
-            starter = (IWBundleStartable) Class.forName("com.idega.builder.IWBundleStarter").newInstance();
+            starter = (IWBundleStartable) Class.forName("com.idega.block.category.IWBundleStarter").newInstance();
             starter.start(null);
         } catch (InstantiationException e) {
             // TODO Auto-generated catch block
@@ -298,21 +299,8 @@ public class IWMainApplicationStarter {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-	    IWBundleStartable starter2;
-        try {
-            starter2 = (IWBundleStartable) Class.forName("com.idega.block.media.IWBundleStarter").newInstance();
-            starter2.start(null);
-        } catch (InstantiationException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        } catch (IllegalAccessException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        } catch (ClassNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
 	}
+	
 	
 	/**
 	 * This is a fix so that these bundle starters are always started
@@ -365,7 +353,7 @@ public class IWMainApplicationStarter {
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICNetwork","com.idega.core.net.data.ICNetwork");
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICProtocol","com.idega.core.net.data.ICProtocol");
 		
-		// perhaps this entry is not neccessary (by thomas)
+		// perhaps these entries are not necessary (by thomas)
 		rfregistry.registerRefactoredClass("com.idega.builder.handler.PropertyHandler", ICPropertyHandler.class.getName());
 		rfregistry.registerRefactoredClass("com.idega.core.builder.data.ICPropertyHandler", ICPropertyHandler.class.getName());
 	}
