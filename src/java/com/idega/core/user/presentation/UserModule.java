@@ -9,6 +9,7 @@ import com.idega.presentation.app.*;
 import com.idega.idegaweb.IWConstants;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.accesscontrol.data.PermissionGroup;
+import com.idega.idegaweb.IWBundle;
 
 
 /**
@@ -23,6 +24,7 @@ import com.idega.core.accesscontrol.data.PermissionGroup;
 public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {//com.idega.presentation.app.IWApplication {
 
   boolean justConstructed = true;
+
 
   public UserModule() {
     super();
@@ -46,6 +48,8 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
 
   public static class UserModulePage extends Table{//Page{
 
+		private IWBundle iwb;
+
     public UserModulePage(){
       /*this.setMarginHeight(0);
       this.setMarginWidth(0);
@@ -62,9 +66,13 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
       super.setAlignment(1,1,"center");
     }
 
+		public String getBundleIdentifier(){
+	    return "com.idega.core.user";
+		}
+
     public void main(IWContext iwc)throws Exception{
 
-
+		  iwb = getBundle(iwc);
 
 
       Table tb = new Table(2,4);
@@ -88,14 +96,13 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
       tb.add(ifr1,1,2);
       tb.add(ifr,2,2);
 
-
-      Link tLink12 = new Link(new Image("/idegaweb/bundles/core.bundle/resources/menn_edit.gif"));
+			Link tLink12 = new Link(iwb.getImage("group.gif"));
       tLink12.setWindowToOpen(CreateUserGroup.class);
       tb.add(Text.getNonBrakingSpace(),1,3);
       tb.add(Text.getNonBrakingSpace(),1,3);
       tb.add(tLink12,1,3);
 
-      Link tLink11 = new Link(new Image("/idegaweb/bundles/core.bundle/resources/kall_edit.gif"));
+			Link tLink11 = new Link(iwb.getImage("group.gif"));
       tLink11.setWindowToOpen(CreateUser.class);
       tb.add(Text.getNonBrakingSpace(),2,3);
       tb.add(Text.getNonBrakingSpace(),2,3);
