@@ -15,6 +15,7 @@ import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.event.CreateGroupEvent;
@@ -51,9 +52,9 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 	private Help help;
 //  private SubmitButton apply;
 
-	private final static String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
-	private final static String HELP_TEXT_KEY = "tabbed_property_panel";
-  
+//	private final static String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
+//	private final static String HELP_TEXT_KEY = "tabbed_property_panel";
+//  
   
 	private CreateGroupEvent _createEvent;
 
@@ -68,6 +69,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
   private TabbedPropertyPanel(String key, IWContext iwc) {
     frameTable = new Table();
+//    frameTable.setStyleClass("back");
 //    this.setMethod("get");
 //    frameTable.setBorder(1);  // temp
     tpane = IWTabbedPane.getInstance(key,iwc);
@@ -95,28 +97,25 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
  //   apply.addIWSubmitListener(this, this,iwc);
     cancel.addIWSubmitListener(this, this,iwc);
   }
-  public Help getHelpButton(IWContext iwc) {
-//	added for help-button
-			IWBundle iwb = getBundle(iwc);
-			help = new Help();
-			Image helpImage = iwb.getImage("help.gif");
-			help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
-			help.setHelpTextKey(HELP_TEXT_KEY);
-			help.setImage(helpImage);
-			return help;	
-  }
+//  public Help getHelpButton(IWContext iwc) {
+////	added for help-button
+//			IWBundle iwb = getBundle(iwc);
+//			help = new Help();
+//			Image helpImage = iwb.getImage("help.gif");
+//			help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+//			help.setHelpTextKey(HELP_TEXT_KEY);
+//			help.setImage(helpImage);
+//			return help;	
+//  }
   
   public void initializeButtons(IWContext iwc){
-  	
-  	//changed for localized buttons - birna
+    	//changed for localized buttons - birna
   	IWResourceBundle iwrb = getResourceBundle(iwc);
 		ok = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), iwrb.getLocalizedString("save", "Save"));
 		cancel = new SubmitButton(iwrb.getLocalizedImageButton("close", "Close"), iwrb.getLocalizedString("close", "Close"));
 //		apply = new SubmitButton(iwrb.getLocalizedImageButton("apply", "Apply"),iwrb.getLocalizedString("commit", "Commit"));
 
-//    ok = new SubmitButton("     OK     ");
-//    cancel = new SubmitButton(" Cancel ");
-//    apply = new SubmitButton("  Apply  ");
+		
   }
 
 
@@ -271,24 +270,31 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
 
   public void lineUpButtons(){
+		IWContext iwc = IWContext.getInstance();
+		
     // assuming all buttons are enabled
-
+    
     buttonTable = new Table(5,1);
 
     buttonTable.setCellpadding(0);
     buttonTable.setCellspacing(0);
     buttonTable.setHeight(27);
+    buttonTable.setStyleClass("main");
+    buttonTable.setWidth("100%");
 
-    buttonTable.setVerticalAlignment(1,1,"bottom");
-    buttonTable.setVerticalAlignment(3,1,"bottom");
-    buttonTable.setVerticalAlignment(5,1,"bottom");
+    buttonTable.setVerticalAlignment(1,1,"middle");
+    buttonTable.setVerticalAlignment(2,1,"middle");
+    buttonTable.setVerticalAlignment(4,1,"middle");
+    buttonTable.setAlignment(2,1,"right");
+    buttonTable.setAlignment(4,1,"right");
 
-    buttonTable.setWidth(2,1,"7");
-    buttonTable.setWidth(4,1,"7");
+    buttonTable.setWidth(3,1,"7");
+    buttonTable.setWidth(5,1,"7");
     
 //    buttonTable.add(getHelpButton(iwc),1,1);
-    buttonTable.add(ok,3,1);
-    buttonTable.add(cancel,5,1);
+    buttonTable.add(ok,4,1);
+    buttonTable.add(Text.NON_BREAKING_SPACE,4,1);
+    buttonTable.add(cancel,4,1);
 //    buttonTable.add(apply,5,1);
 
     frameTable.add(buttonTable,1,2);

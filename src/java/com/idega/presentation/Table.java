@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.46 2003/09/21 21:15:41 palli Exp $
+ * $Id: Table.java,v 1.47 2003/11/12 10:56:17 birna Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -652,6 +652,21 @@ public class Table extends PresentationObjectContainer {
 		TextStyler styler = new TextStyler(theObjects[xpos-1][ypos-1].getStyleAttribute());
 		styler.setStyleValue(styleAttribute, styleValue);
 		theObjects[xpos - 1][ypos - 1].setStyleAttribute(styler.getStyleString());
+	}
+	//added for setting a styleClass for a specific cell in a table
+	public void setStyleClass(int xpos, int ypos, String styleName) {
+		if(isResizable) {
+			if(xpos > this.getColumns()) {
+				setColumns(xpos);
+			}
+			if(ypos > this.getRows()) {
+				setRows(ypos);
+			}
+		}
+		if (this.theObjects[xpos - 1][ypos - 1] == null) {
+			theObjects[xpos - 1][ypos - 1] = new PresentationObjectContainer();
+		}
+		this.theObjects[xpos - 1][ypos - 1].setAttribute("class",styleName);
 	}
 	
 	public void setAttribute(int xpos, int ypos, String attribute) {

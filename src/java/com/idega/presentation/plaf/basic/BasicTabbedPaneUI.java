@@ -315,7 +315,7 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
 
     public void initilizePage(){
     	this.resize(1,1);
-    	this.add(Text.emptyString(),1,1);
+ //   	this.add(Text.emptyString(),1,1);
     	
     	this.setWidth("100%");
     	this.setHeight("100%");
