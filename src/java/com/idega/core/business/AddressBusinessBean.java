@@ -62,7 +62,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
    */
   public String getStreetNameFromAddressString(String addressString){
    int index = TextSoap.getIndexOfFirstNumberInString(addressString);
-    if( index!=-1 ){
+    if( index==-1 ){
       return addressString;
     }
     else{
