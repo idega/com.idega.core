@@ -8,8 +8,12 @@ package com.idega.data;
  * @version 1.0
  */
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 public class IDOUtil {
+	private static final String COMMA_AND_SPACE = ", ";
+	private static final String SINGLE_QUOTE = "'";
 	private static IDOUtil instance;
 	private IDOUtil() {
 	}
@@ -25,23 +29,23 @@ public class IDOUtil {
 	 * @returns a String with comma separated list of primary keys for the IDOEntities
 	 */
 	public String convertListToCommaseparatedString(Collection list) {
-		String sList = "";
+		StringBuffer sList = new StringBuffer();
 		if (list != null && list.size() > 0) {
 			//String sGroupList = "";
 			Iterator iter = list.iterator();
 			for (int g = 0; iter.hasNext(); g++) {
 				IDOEntity item = (IDOEntity) iter.next();
 				if (g > 0) {
-					sList += ", ";
+					sList.append(COMMA_AND_SPACE);
 				}
 				//try {
-					sList += item.getPrimaryKey();
+					sList.append(item.getPrimaryKey());
 				//} catch (RemoteException rme) {
 				//	rme.printStackTrace();
 				//}
 			}
 		}
-		return sList;
+		return sList.toString();
 	}
 	/**
 	 * @param sArray An array of string primary keys
@@ -70,11 +74,11 @@ public class IDOUtil {
 	public String convertArrayToCommaseparatedString(
 		IDOEntity[] entityArray,
 		boolean whithSimpleQuoteMarks) {
-		String sList = "";
+		StringBuffer sList = new StringBuffer();
 		if (entityArray != null && entityArray.length > 0) {
 			for (int g = 0; g < entityArray.length; g++) {
 				if (g > 0) {
-					sList += ", ";
+					sList.append(COMMA_AND_SPACE);
 				}
 				String sPK = null;
 				try {
@@ -84,32 +88,32 @@ public class IDOUtil {
 				}
 				if (sPK != null) {
 					if (whithSimpleQuoteMarks) {
-						sList += "'" + sPK + "'";
+						sList.append(SINGLE_QUOTE).append(sPK).append(SINGLE_QUOTE);
 					} else {
-						sList += sPK;
+						sList.append(sPK);
 					}
 				}
 			}
 		}
-		return sList;
+		return sList.toString();
 	}
 	public String convertArrayToCommaseparatedString(
 		String[] sArray,
 		boolean whithSimpleQuoteMarks) {
-		String sList = "";
+			StringBuffer sList = new StringBuffer();
 		if (sArray != null && sArray.length > 0) {
 			for (int g = 0; g < sArray.length; g++) {
 				if (g > 0) {
-					sList += ", ";
+					sList.append(COMMA_AND_SPACE);
 				}
 				if (whithSimpleQuoteMarks) {
-					sList += "'" + sArray[g] + "'";
+					sList.append(SINGLE_QUOTE).append(sArray[g]).append(SINGLE_QUOTE);
 				} else {
-					sList += sArray[g];
+					sList.append(sArray[g]);
 				}
 			}
 		}
-		return sList;
+		return sList.toString();
 	}
 	
 	/**
@@ -143,4 +147,29 @@ public class IDOUtil {
 		}
 		return theReturn;
 	}
+	
+	/**
+	 * Used to convert a Collection of IDOEntities to a Map.
+	 * @param entities a Collection of IDOEntity instances.
+	 * @return if entities are not null or empty it return a Map that has the primarykeys of the entities as the keys and the entities as values, else returns null
+	 */	
+	public Map convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(Collection entities){
+		
+		if( entities!=null && !entities.isEmpty()){
+			HashMap map = new HashMap();
+			
+			Iterator iter = entities.iterator();
+			while (iter.hasNext()) {
+				IDOEntity entity = (IDOEntity) iter.next();
+				map.put(entity.getPrimaryKey(),entity);
+			}
+			
+			return map;
+		}
+		else return null;
+		
+	}
+	
+	
+	
 }
