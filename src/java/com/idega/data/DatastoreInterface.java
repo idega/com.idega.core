@@ -420,7 +420,9 @@ public abstract class DatastoreInterface{
         String tableName = relation.getTableName();
         GenericEntity relatingEntity = null;
         try{
-          String creationStatement = "CREATE TABLE (";
+          String creationStatement = "CREATE TABLE ";
+          creationStatement += tableName;
+          creationStatement += "(";
 
           Set set;
           Iterator iter;
@@ -429,7 +431,7 @@ public abstract class DatastoreInterface{
           iter = set.iterator();
           while (iter.hasNext()) {
             if(creationStatement.indexOf(",")!=-1){
-              creationStatement += ',';
+              creationStatement += ",";
             }
             String column = (String)iter.next();
             creationStatement += column + " INTEGER NOT NULL";
