@@ -1,21 +1,17 @@
 package com.idega.presentation.ui;
 
-import com.idega.presentation.text.Link;
-import com.idega.idegaweb.IWBundle;
-import com.idega.presentation.Block;
+import com.idega.block.help.data.HelpNode;
+import com.idega.block.help.presentation.Help;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.business.PageTreeNode;
 import com.idega.core.ICTreeNode;
-import com.idega.presentation.Script;
-import com.idega.presentation.Table;
-import com.idega.presentation.Image;
+import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
-
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.List;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Script;
+import com.idega.presentation.text.Link;
 
 /**
  * Title:        idegaWeb
@@ -219,9 +215,12 @@ public class TreeViewer extends AbstractTreeViewer {
           if ( fromEditor )
           	l.setOnClick("save('http://"+iwc.getServerName()+BuilderLogic.getInstance().getIBPageURL(iwc, node.getNodeID())+"','_self')");
           else
-          	l.setOnClick(ONCLICK_FUNCTION_NAME+"('"+nodeName+"','"+node.getNodeID()+"')");
+          	l.setOnClick(ONCLICK_FUNCTION_NAME+"('"+nodeName+"','"+node.getNodeID()+"')");          	         
         } else if(nodeActionPrm != null){
           l.addParameter(nodeActionPrm,node.getNodeID());
+          if (node instanceof HelpNode) {
+          	l.addParameter(Help.HELP_BUNDLE,((HelpNode)node).getBundleName());
+          }
         }
         this.setLinkToMaintainOpenAndClosedNodes(l);
         if(_nowrap){
