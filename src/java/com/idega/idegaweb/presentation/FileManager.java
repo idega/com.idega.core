@@ -77,7 +77,8 @@ public class FileManager extends Block {
 				if(null!=folder){
 					if(relativePath == true){
 						String appURI = iwc.getIWMainApplication().getApplicationRealPath();
-						currentFolder = appURI+folder;
+						folder =appURI+folder;
+						currentFolder = folder;
 //						System.out.println("Path is relative to: "+appURI);
 						relativePath = false;
 					}else{
@@ -97,7 +98,7 @@ public class FileManager extends Block {
 			if(iwc.isParameterSet(PRM_SUB_FOLDER))
 				currentFolder = folder+iwc.getParameter(PRM_SUB_FOLDER);
 			
-//			System.out.println("path:"+currentFolder);
+			System.out.println("path:"+currentFolder);
 			
 			if(iwc.isMultipartFormData()){
 				if(processUpload(iwc))
@@ -558,7 +559,10 @@ public class FileManager extends Block {
 	 * @param stopfolder The sTOPFOLDER to set.
 	 */
 	public void setTopLevelBrowseFolder(String toplevel) {
-		topLevelFolder = toplevel;
+		if(!toplevel.startsWith("/"))
+			topLevelFolder = "/"+toplevel;
+		else
+			topLevelFolder = toplevel;
 	}
 
 	/**
@@ -581,6 +585,8 @@ public class FileManager extends Block {
 	public void setStartingFolderRealPath(String folder) {
 		relativePath = false;
 		this.folder = folder;
+		if(this.topLevelFolder==null)
+			topLevelFolder = folder;
 //		System.out.println("Path set to "+folder);
 	}
 
@@ -590,6 +596,8 @@ public class FileManager extends Block {
 	public void setStartingFolderRelativePath(String folder) {
 		relativePath = true;
 		this.folder = folder;
+		if(this.topLevelFolder==null)
+			topLevelFolder = folder;
 //		System.out.println("Path set to "+folder);
 	}
 
