@@ -33,7 +33,10 @@ public BackButton(Image defaultImage){
 	super();
 	setAttribute("OnClick","history.go("+this.howFarBackOrForward+")");
 	this.defaultImage= defaultImage;
-	setAttribute("src",defaultImage.getURL());
+        String URL = defaultImage.getURL();
+        if ( URL == null )
+          URL = defaultImage.getMediaServletString();
+	setAttribute("src",URL);
 }
 
 public void setHistoryMove(String howFarBackOrForward){

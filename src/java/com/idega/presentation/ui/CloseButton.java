@@ -33,7 +33,10 @@ public CloseButton(String displayString){
 public CloseButton(Image defaultImage){
 	super();
 	this.defaultImage = defaultImage;
-	setAttribute("src",defaultImage.getURL());
+        String URL = defaultImage.getURL();
+        if ( URL == null )
+          URL = defaultImage.getMediaServletString();
+	setAttribute("src",URL);
 	setAttribute("OnClick","top.window.close()");
 }
 

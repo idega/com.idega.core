@@ -32,7 +32,10 @@ public PrintButton(Image defaultImage){
 	super();
 	setAttribute("OnClick","javascript:window.print();");
 	this.defaultImage= defaultImage;
-	setAttribute("src",defaultImage.getURL());
+        if ( URL == null )
+          URL = defaultImage.getMediaServletString();
+	setAttribute("src",URL);
+	setAttribute("src",URL);
 }
 
 
