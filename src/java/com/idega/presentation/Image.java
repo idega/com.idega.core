@@ -147,7 +147,7 @@ private void getImage(IWContext iwc) throws SQLException{
       cachedImage = (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject("com.idega.jmodule.image.data.ImageEntity",imageId,iwma);
      }
      else{
-      cachedImage = (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject("com.idega.block.media.data.ImageEntity",imageId,iwma);
+      cachedImage = (Cache) IWCacheManager.getInstance(iwma).getCachedBlobObject("com.idega.block.image.data.ImageEntity",imageId,iwma);
      }
 
     if( cachedImage != null ){
