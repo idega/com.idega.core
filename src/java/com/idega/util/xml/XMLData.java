@@ -216,7 +216,7 @@ public class XMLData {
     inputStream.close();
     // reading finished
     // delete file
-    auxiliaryFile.delete();
+    // auxiliaryFile.delete();
     return xmlFile;
   }
   
