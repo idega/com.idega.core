@@ -78,4 +78,36 @@ public class ICFileCategory extends GenericEntity {
   public int getParentID(){
     return getIntColumnValue("parent_id");
   }
+
+  public void insertStartData() {
+    try {
+      ICFileCategory cat;
+      cat = new ICFileCategory();
+      cat.setName("IC_CATEGORY_IMAGES");
+      cat.insert();
+
+      cat = new ICFileCategory();
+      cat.setName("IC_CATEGORY_MOVIES");
+      cat.insert();
+
+      cat = new ICFileCategory();
+      cat.setName("IC_CATEGORY_AUDIO");
+      cat.insert();
+
+      cat = new ICFileCategory();
+      cat.setName("IC_CATEGORY_DOCUMENTS");
+      cat.insert();
+
+      cat = new ICFileCategory();
+      cat.setName("IC_CATEGORY_FLASH");
+      cat.insert();
+
+      cat = new ICFileCategory();
+      cat.setName("IC_CATEGORY_OTHER");
+      cat.insert();
+    }
+    catch (SQLException sql) {
+      sql.printStackTrace(System.err);
+    }
+  }
 }
