@@ -479,7 +479,7 @@ public class Form extends InterfaceObjectContainer {
 				add(getAssociatedFormScript());
 
 			if (getInterfaceStyle().equals("default")) {
-				println("<form " + getMarkupAttributesString() + " >");
+				println("<form " + (iwc.isIE() ? "name=\""+getName()+"\"" : "") + getMarkupAttributesString() + " >");
 				super.print(iwc);
 				print("</form>");
 			}
