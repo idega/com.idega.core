@@ -34,7 +34,7 @@ public class LoginTable extends GenericEntity{
 
         public void insertStartData() throws SQLException {
           LoginTable login = new LoginTable();
-          List user = EntityFinder.findAllByColumn(User.getStaticInstance(), User.getUserIDColumnName(),User.getAdminDefaultName());
+          List user = EntityFinder.findAllByColumn(User.getStaticInstance(), User.getFirstNameColumnName(),User.getAdminDefaultName());
           User adminUser = null;
           if(user != null){
             adminUser = ((User)user.get(0));
