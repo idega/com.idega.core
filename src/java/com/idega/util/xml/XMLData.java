@@ -1,12 +1,13 @@
 package com.idega.util.xml;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICFileHome;
 import com.idega.data.IDOLookup;
+import com.idega.util.FileUtil;
 import com.idega.xml.XMLDocument;
 import com.idega.xml.XMLElement;
 import com.idega.xml.XMLOutput;
@@ -75,6 +76,7 @@ public class XMLData {
   public void store() throws IOException  {
     // create or fetch existing file
     ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
+    xmlFile.setMimeType("text/xml");
     OutputStream output = xmlFile.getFileValueForWrite();
     XMLOutput xmlOutput = new XMLOutput("  ", true);
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));
@@ -83,6 +85,9 @@ public class XMLData {
     XMLDocument document = getDocument();
     xmlOutput.output(document, output);
     output.close();
+    //FileWriter writer = new FileWriter("thomasTest.xml");
+    xmlOutput.output(document, System.out);
+    
     try {
       if (xmlFileId < 0) {
         xmlFile.store();
@@ -98,8 +103,9 @@ public class XMLData {
  
   private void initialize(ICFile xmlFile) {
     XMLParser parser = new XMLParser();
+    InputStream inputStream = null;
     try {
-      BufferedInputStream inputStream = new BufferedInputStream(xmlFile.getFileValue());
+      inputStream = xmlFile.getFileValue();
       document = parser.parse(inputStream);
       inputStream.close();
       xmlFileId = ( (Integer) xmlFile.getPrimaryKey()).intValue();
@@ -108,6 +114,12 @@ public class XMLData {
       System.err.println("[QueryResult]: input stream could not be parsed. Message was: " + ex.getMessage());
       document = null;
       xmlFileId = -1;
+      try { 
+        inputStream.close();
+      }
+      catch (IOException ioEx)  {
+        System.err.println("[QueryResult]: input stream could not be closed. Message was: "+ ex.getMessage());
+      }
     }      
   } 
     
