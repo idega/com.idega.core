@@ -420,7 +420,7 @@ public class IWBundle implements java.lang.Comparable{
         return this.getResourceBundle(locale).getResourcesURL();
     }
 
-    protected String getResourcesVirtualPath(){
+    public String getResourcesVirtualPath(){
     //private String getLocaleDirectory(Locale locale){
         //return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
         return resourcesVirtualPath;
