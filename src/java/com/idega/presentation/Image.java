@@ -272,6 +272,15 @@ public void setOnClick(String action){
   setAttribute("onClick",action);
 }
 
+public void setOnClickImageURL(String clickImageURL){
+  overImageUrl = clickImageURL;
+  setAttribute("onClick","swapImgRestore(); swapImage('"+getName()+"','','"+clickImageURL+"',1)");
+}
+
+public void setOnClickImage(Image image) {
+  setOnClickImageURL(image.getURL());
+}
+
 public void setOverImageURL(String overImageURL){
 	this.overImageUrl = overImageUrl;
 
