@@ -21,6 +21,7 @@ public class StyledIWAdminWindow extends Window {
 private final static String IW_BUNDLE_IDENTIFIER="com.idega.user"; 
 
 public static final String MAIN_STYLECLASS = "main";
+public static final String TITLE_STYLECLASS = "windowTitleStyle";
 
 private IWBundle iwb;
 public IWBundle iwbCore;
@@ -104,6 +105,7 @@ private Image helpImage = null;
 		headerTable.setAlignment(2,1,"right");
 		headerTable.setVerticalAlignment(1,1,"top");
 		if(titleIsSet) {
+			headerTable.setCellpaddingRight(2, 1, 12);
 			headerTable.add(getAdminTitle(),2,1);
 		}
 
@@ -154,8 +156,8 @@ private Image helpImage = null;
 	}
 
 	public void addTitle(String title,String style) {
-		adminTitle = new Text(title+"&nbsp;&nbsp;");
-		adminTitle.setFontStyle(style);
+		adminTitle = new Text("." + title);
+		adminTitle.setStyleClass(style);
 		super.setTitle(title);
 		titleIsSet = true;
 	}
