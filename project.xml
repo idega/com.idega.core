@@ -101,7 +101,7 @@
     <dependency>
       <groupId>smile</groupId>
       <artifactId>smile</artifactId>
-      <version>0.3.2</version>
+      <version>0.3.3</version>
       <type>jar</type>
       <url>http://smile.sourceforge.net/</url>
       <properties/>
