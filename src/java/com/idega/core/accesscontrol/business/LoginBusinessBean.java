@@ -479,7 +479,7 @@ public class LoginBusinessBean implements IWEventListener
 			{
 				
 				
-				LoginTable lTable = chooseLoginRecord(iwc, login_table);
+				LoginTable lTable = login_table[0];
 				if(lTable != null){
 //					returner = logIn(iwc, login_table[0], login);
 					if (logIn(iwc, login_table[0], login))
@@ -673,7 +673,7 @@ public class LoginBusinessBean implements IWEventListener
 				login);
 		if (login_table != null && login_table.length > 0)
 		{
-			LoginTable lTable = chooseLoginRecord(iwc, login_table);
+			LoginTable lTable = login_table[0];
 			if(lTable != null){
 				returner = logIn(iwc, login_table[0], login);
 				if (returner)
@@ -701,7 +701,7 @@ public class LoginBusinessBean implements IWEventListener
 					user.getPrimaryKey().toString());
 			if (login_table != null && login_table.length > 0)
 			{
-				LoginTable lTable = chooseLoginRecord(iwc, login_table);
+				LoginTable lTable = chooseLoginRecord(iwc, login_table,user);
 				if(lTable != null){
 					returner = logIn(iwc, lTable, lTable.getUserLogin());
 					if (returner)
@@ -728,7 +728,7 @@ public class LoginBusinessBean implements IWEventListener
 	 * @param loginRecords - all login records for one user
 	 * @return LoginTable record to log on the system
 	 */
-	protected LoginTable chooseLoginRecord(IWContext iwc, LoginTable[] loginRecords) throws Exception{
+	protected LoginTable chooseLoginRecord(IWContext iwc, LoginTable[] loginRecords, User user) throws Exception{
 		LoginTable chosenRecord = null;
 		if(loginRecords != null)
 		for(int i = 0; i < loginRecords.length; i++){
