@@ -5,9 +5,10 @@
 
 */
 package com.idega.presentation.ui;
-import java.io.*;
-import java.util.*;
-import com.idega.presentation.*;
+import java.io.IOException;
+
+import com.idega.presentation.IWContext;
+import com.idega.util.text.TextSoap;
 /**
 
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -16,6 +17,9 @@ import com.idega.presentation.*;
 
 */
 public class TextArea extends InterfaceObject {
+
+	private boolean isSetAsNotEmpty;
+	private String notEmptyErrorMessage;
 
 	private static String ROWS_ATTRIBUTE = "rows";
 	private static String COLS_ATTRIBUTE = "cols";
@@ -87,6 +91,9 @@ public class TextArea extends InterfaceObject {
 				getScript().addFunction("countCharacters", "function countCharacters(msgText,maxChar) {\n	var length = msgText.value.length;\n	if (length > maxChar ) {\n	\tmsgText.value = msgText.value.substr(0,maxChar);\n	}\n	}");
 			}
 		}
+
+		if (isSetAsNotEmpty)
+			setOnSubmitFunction("warnIfEmpty", "function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", notEmptyErrorMessage);
 	}
 
 	public void print(IWContext iwc) throws IOException {
@@ -173,4 +180,13 @@ public class TextArea extends InterfaceObject {
 		_content = content;
 	}
 
+	/**
+	 * Sets the text input so that it can not be empty, displays an alert with the given 
+	 * error message if the "error" occurs.  Uses Javascript.
+	 * @param errorMessage	The error message to display.
+	 */
+	public void setAsNotEmpty(String errorMessage) {
+		isSetAsNotEmpty = true;
+		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+	}
 }
