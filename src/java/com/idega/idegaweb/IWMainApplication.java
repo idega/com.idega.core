@@ -47,6 +47,7 @@ public class IWMainApplication{//implements ServletContext{
   public final static String BUNDLES_STANDARD_DIRECTORY = "bundles";
   public final static String IDEGAWEB_SPECIAL_DIRECTORY = "idegaweb";
 
+  public final static String IW_ACCESSCONTROL_TYPE_PROPERTY="iw_accesscontrol_type";
 
   private static String SETTINGS_STORAGE_PARAMETER="idegaweb_main_application_settings";
   private static String bundlesFileName="bundles.properties";

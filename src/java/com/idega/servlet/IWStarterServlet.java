@@ -25,6 +25,8 @@ import java.io.File;
 public class IWStarterServlet extends GenericServlet
 {
 
+
+
 	//public PoolManager poolMgr;
 
 	public void init() throws ServletException{
@@ -80,7 +82,6 @@ public class IWStarterServlet extends GenericServlet
               }
             }
           }
-
         }
 
         private static void addToClassPath(String path){
@@ -105,6 +106,10 @@ public class IWStarterServlet extends GenericServlet
             }
             else{
               sendStartMessage("EntityAutoCreation Not Active");
+            }
+            String accControlType = application.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
+            if(accControlType!=null){
+                com.idega.jmodule.object.JModuleObject.usingNewAcessControlSystem=true;
             }
             startDatabasePool();
             application.loadBundles();
