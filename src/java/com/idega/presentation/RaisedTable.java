@@ -16,6 +16,7 @@ public class RaisedTable extends PresentationObjectContainer {
 
   private String _lightColor = "#FFFFFF";
   private String _darkColor = "#999999";
+  private String _color = "#CCCCCC";
 
   private Table iwacTable;
 
@@ -66,6 +67,7 @@ public class RaisedTable extends PresentationObjectContainer {
     iwacTable.setColor(2,3,_darkColor);
     iwacTable.setColor(1,2,_lightColor);
     iwacTable.setColor(3,2,_darkColor);
+    iwacTable.setColor(2,2,_color);
 
     iwacTable.add(emptyCell,1,1);
     iwacTable.add(emptyCell,2,1);
@@ -107,5 +109,17 @@ public class RaisedTable extends PresentationObjectContainer {
 
   public void setDarkShadowColor(String color) {
     _darkColor = color;
+  }
+
+  public synchronized Object clone() {
+    RaisedTable obj = null;
+    try {
+      obj = (RaisedTable) super.clone();
+      obj.iwacTable= (Table)this.iwacTable.clone();
+    }
+    catch(Exception ex) {
+      ex.printStackTrace(System.err);
+    }
+    return obj;
   }
 }
