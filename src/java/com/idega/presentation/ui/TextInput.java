@@ -18,6 +18,7 @@ public class TextInput extends GenericInput {
 	private boolean isSetAsIntegers;
 	private boolean isSetAsPosNegIntegers;
 	private boolean isSetAsFloat;
+	private boolean isSetAsDouble;
 	private boolean isSetAsAlphabetical;
 	private boolean isSetAsEmail;
 	private boolean isSetAsNotEmpty;
@@ -69,6 +70,7 @@ public class TextInput extends GenericInput {
 		isSetAsIntegers = false;
 		isSetAsPosNegIntegers = false;
 		isSetAsFloat = false;
+		isSetAsDouble = false;
 		isSetAsAlphabetical = false;
 		isSetAsEmail = false;
 		isSetAsNotEmpty = false;
@@ -232,6 +234,31 @@ public class TextInput extends GenericInput {
 		floatErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 		setDecimals(decimals);
 	}	
+
+	/**
+	 * Sets the text input so that it must contain a double, displays an alert with the 
+	 * given error message if the "error" occurs.  Uses Javascript.
+	 * @param errorMessage	The error message to display.
+	 */
+	public void setAsDouble(String errorMessage) {
+		setAsDouble(errorMessage, decimals);
+	}
+	
+	/**
+	 * Sets the text input so that it must contain a double, displays an alert with the 
+	 * given error message if the "error" occurs.  
+	 * Also, sets the (exact) number of decimal to be displayed for a double field. 
+	 * If set to negative number, the value is ignored.
+	 * Uses Javascript.
+	 * @param errorMessage	The error message to display.
+	 * @param dec The number of decimals 
+	 */
+	public void setAsDouble(String errorMessage, int decimals) {
+		isSetAsDouble = true;
+		floatErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+		setDecimals(decimals);
+	}
+
 	
 	/**
 	 * Sets the (exact) number of decimal to be displayed for a float field. 
@@ -299,20 +326,22 @@ public class TextInput extends GenericInput {
 		if (isSetAsCreditCardNumber)
 			setOnSubmitFunction("warnIfNotCreditCardNumber", "function warnIfNotCreditCardNumber (inputbox,warnMsg) {\n  \n   if (inputbox.value.length == 16){ \n    return true; \n   } \n else if (inputbox.value.length == 0){\n return true; \n }   \n     alert ( warnMsg );\n   return false;\n \n }", notCreditCardErrorMessage);
 
-		if (isSetAsFloat) {
+		if (isSetAsFloat || isSetAsDouble) {
 			setOnSubmitFunction("warnIfNotFloat", "function warnIfNotFloat(inputbox,warnMsg,submit) {\n	var ok = false;\n	var inputString = inputbox.value;\n	for(i=0; i < inputString.length; i++) { \n	\tif (inputString.charAt(i) == \",\") { inputString = inputString.substring(0,i) + \".\" + inputString.substring(i+1,inputString.length); }\n	}\n	if (inputString.length == 0) {\n		ok = true;\n	} else if (isNaN(inputString)){\n	\talert ( warnMsg );\n	\tok = false;\n	}else{\n		ok = true;\n	}\n	if (ok && submit){\n		inputbox.value = inputString;\n	}\n 	return ok;\n}", floatErrorMessage, "true");
 			setOnBlur("return warnIfNotFloat(this, '"+ floatErrorMessage +"', false)");
 
 			//formating decimal sign (for default Locale) and number of decimals
 			
-			NumberFormat number = NumberFormat.getInstance(iwc.getCurrentLocale()); 
-			number.setGroupingUsed(false); 
+			NumberFormat numberFormat = NumberFormat.getInstance(iwc.getCurrentLocale()); 
+			numberFormat.setGroupingUsed(false); 
 			if (decimals >= 0){
-				number.setMaximumFractionDigits(decimals);
-				number.setMinimumFractionDigits(decimals);				
+				numberFormat.setMaximumFractionDigits(decimals);
+				numberFormat.setMinimumFractionDigits(decimals);				
 			}
 			try{
-				setContent(number.format(new Float(getContent())));
+				// do not forget the cast to Object otherwise the compiler is complaining
+				Object number = (isSetAsFloat) ? (Object) new Float(getContent()) : (Object) new Double(getContent());
+				setContent(numberFormat.format(number));
 			}catch(IllegalArgumentException ex){ 
 				//ex.printStackTrace();
 			}
@@ -336,6 +365,7 @@ public class TextInput extends GenericInput {
 			obj.isSetAsIntegers = this.isSetAsIntegers;
 			obj.isSetAsPosNegIntegers = this.isSetAsPosNegIntegers;			
 			obj.isSetAsFloat = this.isSetAsFloat;
+			obj.isSetAsDouble = this.isSetAsDouble;
 			obj.isSetAsAlphabetical = this.isSetAsAlphabetical;
 			obj.isSetAsEmail = this.isSetAsEmail;
 			obj.isSetAsNotEmpty = this.isSetAsNotEmpty;
