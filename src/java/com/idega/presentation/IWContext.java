@@ -151,8 +151,6 @@ implements IWUserContext, IWApplicationContext {
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-			//TODO remove debug
-			System.out.println("characterencoding: " + getRequest().getCharacterEncoding());
 		}
 	}
 	/**
