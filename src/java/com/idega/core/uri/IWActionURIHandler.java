@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURIHandler.java,v 1.2 2005/02/25 14:50:13 eiki Exp $
+ * $Id: IWActionURIHandler.java,v 1.3 2005/03/08 18:29:43 gummi Exp $
  * Created on 18.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,11 +13,11 @@ package com.idega.core.uri;
 
 /**
  * 
- *  Last modified: $Date: 2005/02/25 14:50:13 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/03/08 18:29:43 $ by $Author: gummi $
  * 
  *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface IWActionURIHandler {
 	
@@ -50,5 +50,10 @@ public interface IWActionURIHandler {
 	 */
 	public boolean canHandleIWActionURI(IWActionURI uri);
 	
+	/**
+	 * 
+	 * @return returns identifier for the current implementation of this interface
+	 */
+	public String getHandlerIdentifier();
 	
 }

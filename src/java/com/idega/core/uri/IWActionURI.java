@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURI.java,v 1.3 2005/02/28 13:37:06 eiki Exp $
+ * $Id: IWActionURI.java,v 1.4 2005/03/08 18:29:43 gummi Exp $
  * Created on Jan 31, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,45 +9,51 @@
  */
 package com.idega.core.uri;
 
+import java.util.StringTokenizer;
 import com.idega.idegaweb.IWMainApplication;
 
 
 /**
  * 
- *  Last modified: $Date: 2005/02/28 13:37:06 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/03/08 18:29:43 $ by $Author: gummi $
  * A "parser" class for an action URI that divides an action uri into three parts: action, path and identifier
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IWActionURI {
 	
 	private String actionPart;
 	private String pathPart;
 	private String identifierPart;
-	private String originalURI;
-	private String contextURI;
+	private String handlerIdentifierPart;
+	private String contextURI = "/";
+	
+	private final static String UNDEFINED_HANDLER_IDENTIFER = "default";
+	
+	private int INDEX_OF_ACTION = 0;
+	private int INDEX_OF_HANDLER_IDENTIFIER = 1;
 
+	public IWActionURI() {
+		
+	}
+	
 	/**
 	 * 
 	 */
-	public IWActionURI(String requestURI) {
-		originalURI = requestURI;
+	public IWActionURI(String requestURI) {		
+		parseRequestURI(requestURI);
+	}
+	
+	public void parseRequestURI(String requestURI){
+		setActionPart(extractActionPart(requestURI));
 		
-		actionPart = extractActionPart(requestURI);
+		setHandlerIdentifier(extractHandlerIdentifierPart(requestURI));
 		
-		pathPart = extractPathPart(requestURI);
+		setPathPart(extractPathPart(requestURI));
 		
-		identifierPart = extractIdentifierPath(requestURI);
+		setIdentifierPart(extractIdentifierPath(requestURI));
 		
-		contextURI = IWMainApplication.getDefaultIWMainApplication().getApplicationContextURI();
-		
-//		
-//		String[] parts = requestURI.split("/");
-//		for (int i = 0; i < parts.length; i++) {
-//			String string = parts[i];
-//			System.out.println("Part["+i+"] = "+string);
-//			
-//		}
+		setContextURI(IWMainApplication.getDefaultIWMainApplication().getApplicationContextURI());
 	}
 	
 	
@@ -63,13 +69,35 @@ public class IWActionURI {
 
 	/**
 	 * @param requestURI
+	 * @return the handler identifier part of the requesturi
+	 */
+	protected String extractHandlerIdentifierPart(String requestURI) {
+		//get the path part
+		StringTokenizer tokenizer = new StringTokenizer(extractActionURI(requestURI),"/");
+		for(int i = 0; i < INDEX_OF_HANDLER_IDENTIFIER;i++){
+			if(tokenizer.hasMoreTokens()){
+				tokenizer.nextToken();
+			}
+		}
+		
+		if(tokenizer.hasMoreTokens()){
+			return tokenizer.nextToken();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * @param requestURI
 	 * @return the path part of the requesturi
 	 */
 	protected String extractPathPart(String requestURI) {
 		//get the path part
-		int index = requestURI.indexOf(getActionPart());
+		String actionPath = extractActionURI(requestURI);
+		String prefix = getActionPart()+"/"+getHandlerIdentifier();
+		int index = actionPath.indexOf(prefix);
 		if(index>=0){
-			return requestURI.substring(index+actionPart.length());
+			return actionPath.substring(index+prefix.length());
 		}
 		
 		return null;
@@ -82,49 +110,70 @@ public class IWActionURI {
 	 */
 	protected String extractActionPart(String requestURI) {
 		//get the action part
-		int index = requestURI.indexOf(IWActionURIManager.IDEGAWEB_ACTION_PATH_PREFIX);
-		String action = requestURI.substring(index+IWActionURIManager.IDEGAWEB_ACTION_PATH_PREFIX.length());
+		String action = extractActionURI(requestURI);
 		action = action.substring(0,action.indexOf("/"));
 		return action;
+	}
+	
+	/**
+	 * @param requestURI
+	 * @return the action path of the requesturi e.g. "edit/files/cms/article/1.xml" from "/idegaweb/action/edit/files/cms/article/1.xml"
+	 */
+	protected String extractActionURI(String requestURI) {
+		//get the action path
+		int index = requestURI.indexOf(IWActionURIManager.IDEGAWEB_ACTION_PATH_PREFIX);
+		String actionPath = requestURI.substring(index+IWActionURIManager.IDEGAWEB_ACTION_PATH_PREFIX.length());
+		return actionPath;
 	}
 
 
 	/**
-	 * @return Returns the actionPart, e.g. "edit" from /idegaweb/action/edit/files/cms/article/1.xml
+	 * @return Returns the actionPart, e.g. "edit" from /idegaweb/action/edit/default/files/cms/article/1.xml
 	 */
 	public String getActionPart() {
 		return actionPart;
 	}
 	
 	/**
-	 * @return Returns the pathPart, e.g. "/files/cms/article/" from /idegaweb/action/edit/files/cms/article/01012005.article/en.xml
+	 * @return Returns the pathPart, e.g. "/files/cms/article/01012005.article/en.xml" from /idegaweb/action/edit/default/files/cms/article/01012005.article/en.xml
 	 */
 	public String getPathPart() {
 		return pathPart;
 	}
 	
 	/**
-	 * @return Returns the identifierPart, e.g. "01012005.article/en.xml" from /idegaweb/action/edit/files/cms/article/01012005.article/en.xml
+	 * @return Returns the identifierPart, e.g. "01012005.article/en.xml" from /idegaweb/action/edit/default/files/cms/article/01012005.article/en.xml
 	 */
 	public String getIdentifierPart() {
 		return identifierPart;
 	}
 	
+	
+	/**
+	 * @return Returns the handlerIdentifier, e.g. "default" from /idegaweb/action/edit/default/files/cms/article/1.xml
+	 */
+	public String getHandlerIdentifier() {
+		return (handlerIdentifierPart!=null)?handlerIdentifierPart:UNDEFINED_HANDLER_IDENTIFER;
+	}
+	
+	public String getContextURI(){
+		return contextURI;
+	}
+	
 	public static void main(String[] args){
-		new IWActionURI("/idegaweb/action/edit/files/cms/article/01012005.article/en.xml");
+		IWActionURI uri = new IWActionURI("/idegaweb/action/edit/default/files/cms/article/01012005.article/en.xml");
+		
+		System.out.println(uri.getContextURI());
+		System.out.println(IWActionURIManager.IDEGAWEB_ACTION_PATH_PREFIX);
+		System.out.println(uri.getActionPart());
+		System.out.println(uri.getHandlerIdentifier());
+		System.out.println(uri.getPathPart());
+			
+		System.out.println(uri.toString());
+		
+		
 	}
-	/**
-	 * @return Returns the originalURI.
-	 */
-	public String getOriginalURI() {
-		return originalURI;
-	}
-	/**
-	 * @param originalURI The originalURI to set.
-	 */
-	public void setOriginalURI(String originalURI) {
-		this.originalURI = originalURI;
-	}
+	
 	/**
 	 * @param actionPart The actionPart to set.
 	 */
@@ -144,15 +193,36 @@ public class IWActionURI {
 		this.pathPart = pathPart;
 	}
 	
-	public String toString(){
-		return getOriginalURI();
+	
+	/**
+	 * @param handlerIdentifier The handlerIdentifier to set.
+	 */
+	public void setHandlerIdentifier(String handlerIdentifier) {
+		this.handlerIdentifierPart = handlerIdentifier;
 	}
 	
-	public String getContextURI(){
-		if(!contextURI.endsWith("/")){
+	
+	public void setContextURI(String uri){
+		contextURI = uri;
+		if(contextURI != null && !contextURI.endsWith("/")){
 			contextURI = contextURI+"/";
+		} else if(contextURI==null){
+			contextURI = "/";
 		}
-		return contextURI;
 	}
 	
+	public String buildActionURI(){
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(getContextURI());
+		buffer.append(IWActionURIManager.IDEGAWEB_ACTION_PATH_PREFIX);
+		buffer.append(getActionPart());
+		buffer.append("/");
+		buffer.append(getHandlerIdentifier());
+		buffer.append(getPathPart());
+		return buffer.toString();
+	}
+	
+	public String toString(){
+		return buildActionURI();
+	}
 }

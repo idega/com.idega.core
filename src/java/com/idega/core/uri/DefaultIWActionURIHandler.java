@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWActionURIHandler.java,v 1.2 2005/02/25 14:50:13 eiki Exp $
+ * $Id: DefaultIWActionURIHandler.java,v 1.3 2005/03/08 18:29:43 gummi Exp $
  * Created on Jan 31, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -12,11 +12,11 @@ package com.idega.core.uri;
 
 /**
  * 
- *  Last modified: $Date: 2005/02/25 14:50:13 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/03/08 18:29:43 $ by $Author: gummi $
  * A default implementation of IWActionURIHandler. The main method here is the getRedirectURI method.
  * It will return the path part of the action uri by default.
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class DefaultIWActionURIHandler implements IWActionURIHandler {
 
@@ -51,5 +51,9 @@ public class DefaultIWActionURIHandler implements IWActionURIHandler {
 	 */
 	public boolean canHandleIWActionURI(IWActionURI uri) {
 		return false;
+	}
+	
+	public String getHandlerIdentifier(){
+		return "default";
 	}
 }

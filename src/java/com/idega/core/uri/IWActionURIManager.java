@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURIManager.java,v 1.4 2005/02/28 13:37:06 eiki Exp $
+ * $Id: IWActionURIManager.java,v 1.5 2005/03/08 18:29:43 gummi Exp $
  * Created on 31.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,7 +19,7 @@ import com.idega.repository.data.Singleton;
 
 /**
  * 
- *  Last modified: $Date: 2005/02/28 13:37:06 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/03/08 18:29:43 $ by $Author: gummi $
  * 
  * A singleton business object to get an IWActionURIHandler for an URI or the redirect URI directly.<br>
  * Register you IWActionURIHandlers using the registerHandler methods. <br>
@@ -28,11 +28,11 @@ import com.idega.repository.data.Singleton;
  * and set a low number (0-x) to prioratize your handler before the default one.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class IWActionURIManager implements Singleton {
 	
-	public static String IDEGAWEB_ACTION_PATH_PREFIX = "/idegaweb/action/";
+	public static String IDEGAWEB_ACTION_PATH_PREFIX = "idegaweb/action/";
 	public static String IW_ACTION_URI_HANDLER_APPLICATION_STORAGE_PARAM = "IWActionURIManager";
 	
 	private List handlerList;
@@ -52,39 +52,52 @@ public class IWActionURIManager implements Singleton {
 		}
 		return manager;
 	} 
+	
+	protected IWActionURI createIWActionURI(){
+		return new IWActionURI();
+	}
 
 	public String getActionURIPrefixWithContext(String action){
-		String context = IWMainApplication.getDefaultIWMainApplication().getApplicationContextURI();
-		StringBuffer buf = new StringBuffer();
-		if(context.endsWith("/")){
-			context = context.substring(0,context.length()-1);
-		}
-		
-		buf.append(context).append(IDEGAWEB_ACTION_PATH_PREFIX).append(action).append("/");
-		return buf.toString();
+		IWActionURI uri = createIWActionURI();
+		String context = IWMainApplication.getDefaultIWMainApplication().getApplicationContextURI();	
+		uri.setContextURI(context);	
+		uri.setActionPart(action);
+		return uri.toString();
 	}
 	
-	public String getActionURIPrefixWithContext(String action, String suffix){
-		String prefix = getActionURIPrefixWithContext(action);
-		if(suffix.startsWith("/")){
-			suffix = suffix.substring(1);
-		}
-		return prefix+suffix;	
+	public String getActionURIPrefixWithContext(String action, String subject){
+		IWActionURI uri = createIWActionURI();
+		String context = IWMainApplication.getDefaultIWMainApplication().getApplicationContextURI();	
+		uri.setContextURI(context);	
+		uri.setActionPart(action);
+		uri.setPathPart(subject);
+		return uri.toString();	
+	}
+	
+	public String getActionURIPrefixWithContext(String action, String subject, String handlerIdentifier){
+		IWActionURI uri = createIWActionURI();
+		String context = IWMainApplication.getDefaultIWMainApplication().getApplicationContextURI();	
+		uri.setContextURI(context);	
+		uri.setActionPart(action);
+		uri.setPathPart(subject);
+		uri.setHandlerIdentifier(handlerIdentifier);
+		return uri.toString();	
 	}
 	
 	public String getActionURIPrefixWithoutContext(String action){
-		StringBuffer buf = new StringBuffer();
-		buf.append(IDEGAWEB_ACTION_PATH_PREFIX).append(action).append("/");
-		return buf.toString();
+		IWActionURI uri = createIWActionURI();
+		uri.setActionPart(action);
+		return uri.toString();
 	}
 	
-	public String getActionURIPrefixWithoutContext(String action, String suffix){
-		String prefix = getActionURIPrefixWithoutContext(action);
-		if(suffix.startsWith("/")){
-			suffix = suffix.substring(1);
-		}
-		return prefix+suffix;		
+	public String getActionURIPrefixWithoutContext(String action, String subject){
+		IWActionURI uri = createIWActionURI();
+		uri.setActionPart(action);
+		uri.setPathPart(subject);
+		return uri.toString();		
 	}
+	
+	
 	
 	
 	/**
@@ -147,6 +160,21 @@ public class IWActionURIManager implements Singleton {
 		
 		//fallback to default handler>
 		return getDefaultHandler();
+	}
+	
+	public IWActionURIHandler getIWActionURIHandlerByIdentifier(String handlerIdentifier){
+		List handlers = getHandlerList();
+		Iterator iter = handlers.iterator();
+		
+		boolean handles = false;
+		while (iter.hasNext()) {
+			IWActionURIHandler handler = (IWActionURIHandler) iter.next();
+			handles = handler.getHandlerIdentifier().equals(handlerIdentifier);
+			if(handles){
+				return handler;
+			}
+		}
+		return null;
 	}
 	
 	public IWActionURIHandler getDefaultHandler(){
