@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.107 2004/05/11 14:22:28 gummi Exp $
+ * $Id: Link.java,v 1.108 2004/05/11 14:35:04 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2148,10 +2148,10 @@ public void setWindowToOpen(String className) {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.idega.builder.dynamicpagetrigger.util.DPTCrawlable#setLinkedDPTPage(com.idega.core.builder.data.ICPage)
+	 * @see com.idega.builder.dynamicpagetrigger.util.DPTCrawlable#setLinkedDPTPage(int)
 	 */
-	public void setLinkedDPTPage(ICPage page) {
-		this.setPage(page);
+	public void setLinkedDPTPageID(int pageId) {
+		this.setPage(pageId);
 	}
 	
 	public String getLinkedDPTPageName(IWContext iwc) {
