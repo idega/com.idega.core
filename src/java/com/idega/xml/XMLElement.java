@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.14 2004/10/11 18:35:55 laddi Exp $
+ * $Id: XMLElement.java,v 1.15 2004/10/19 12:07:17 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,6 +10,7 @@
 package com.idega.xml;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -53,10 +54,9 @@ public class XMLElement {
     if (_element != null) {
       Element el = element.getElement();
       if (el != null) {
-        _element.addContent(el);
+      		_element.addContent(el.detach());
       }
     }
-
     return this;
   }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.20 2004/08/06 10:01:33 laddi Exp $
+ * $Id: IWPropertyList.java,v 1.21 2004/10/19 12:07:17 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -292,8 +292,11 @@ public class IWPropertyList {
 		while (iter.hasNext()) {
 			XMLElement keyElement = (XMLElement) iter.next();
 			XMLElement nameElement = keyElement.getChild(nameTag);
-			if (nameElement.getText().equalsIgnoreCase(key)) {
-				return keyElement;
+			if(nameElement != null){
+				String childText = nameElement.getText();
+				if ( childText!= null && childText.equalsIgnoreCase(key)) {
+					return keyElement;
+				}
 			}
 		}
 		return null;
