@@ -42,12 +42,12 @@ public SubmitButton(Image defaultImage){
 
 public SubmitButton(Image defaultImage, String name){
 	this(name,"default");
-	this.defaultImage = defaultImage;
+	this.setButtonImage(defaultImage);
 }
 
 public SubmitButton(Image defaultImage, String name, String value){
 	this(name,value);
-	this.defaultImage = defaultImage;
+	this.setButtonImage(defaultImage);
 
         this.parameterName=name;
         this.parameterValue=value;
@@ -167,6 +167,10 @@ public void main(IWContext iwc){
     }
   }
 
+}
+
+public void setButtonImage(Image image){
+  this.defaultImage=image;
 }
 
 
