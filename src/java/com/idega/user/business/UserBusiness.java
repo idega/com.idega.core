@@ -11,6 +11,7 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
 import com.idega.core.accesscontrol.business.LoginCreateException;
+import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressType;
@@ -89,7 +90,14 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.user.data.User createUserByPersonalIDIfDoesNotExist(java.lang.String p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,com.idega.user.data.Gender p4,com.idega.util.IWTimestamp p5)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public void updateUser(int p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,java.lang.String p4,java.lang.String p5,java.lang.Integer p6,java.lang.String p7,com.idega.util.IWTimestamp p8,java.lang.Integer p9)throws javax.ejb.EJBException,java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.core.accesscontrol.data.LoginTable generateUserLogin(com.idega.user.data.User p0)throws LoginCreateException, java.rmi.RemoteException;
- public void addNewUserEmail(int p0,java.lang.String p1) throws java.rmi.RemoteException;
+ /**
+  * Adds an email to the given user, existent email records for the user are left untouched
+  * see storeUserEmail for email replacements
+  * @param userId
+  * @param emailAddress
+  * @throws java.rmi.RemoteException
+  */
+ public void addNewUserEmail(int userId,java.lang.String emailAddress) throws java.rmi.RemoteException;
  public com.idega.core.accesscontrol.data.LoginTable generateUserLogin(int p0)throws java.lang.Exception, java.rmi.RemoteException;
  public int getHomePageIDForUser(com.idega.user.data.User p0) throws java.rmi.RemoteException;
  public java.util.Collection getUserGroups(com.idega.user.data.User p0,java.lang.String[] p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
@@ -190,4 +198,21 @@ public interface UserBusiness extends com.idega.business.IBOService
   public String getUserApplicationStyleSheet(Page parentPage, IWContext iwc);
 
 	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException;
+
+	/**
+	   * Adds email to the given user, and removes older emails if requested
+	   */
+	  public Email storeUserEmail(Integer userID,String emailAddress,boolean replaceExistentRecords )throws RemoteException;
+	  
+	  /**
+	   * Adds email to the given user, and removes older emails if requested
+	   */
+	  public Email storeUserEmail(User user,String emailAddress,boolean replaceExistentRecords )throws RemoteException;
+	  
+	  /**
+	   * Removes email relations to given user
+	   * @param user
+	   * @return true if successfull, else false
+	   */
+	  public boolean removeUserEmails(User user);
 }

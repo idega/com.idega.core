@@ -44,9 +44,11 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
+import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDOStoreException;
 import com.idega.data.IDOUtil;
 import com.idega.idegaweb.IWBundle;
@@ -1027,21 +1029,55 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
     return null;
   }
+  
+  /**
+   * Adds email to the given user, and removes older emails if requested
+   */
+  public Email storeUserEmail(Integer userID,String emailAddress,boolean replaceExistentRecord ){
+  	return storeUserEmail(getUser(userID),emailAddress,replaceExistentRecord);
+  }
+  
+  /**
+   * Adds email to the given user, and removes older emails if requested
+   */
+  public Email storeUserEmail(User user,String emailAddress,boolean replaceExistentRecord ){
+  	try {
+		if(replaceExistentRecord)
+			removeUserEmails(user);
+		Email emailRecord = lookupEmail(emailAddress);
+		if(emailRecord==null){
+			emailRecord = this.getEmailHome().create();
+			emailRecord.setEmailAddress(emailAddress);
+			emailRecord.store();
+		}
+		user.addEmail(emailRecord);
+		return emailRecord;
+	} catch (IDOStoreException e) {
+		e.printStackTrace();
+	} catch (IDOAddRelationshipException e) {
+		e.printStackTrace();
+	} catch (CreateException e) {
+		e.printStackTrace();
+	}
+	return null;
+  }
+  /**
+   * Removes email relations to given user
+   * @param user
+   * @return true if successfull, else false
+   */
+  public boolean removeUserEmails(User user){
+  	try {
+		user.removeAllEmails();
+		return true;
+	} catch (IDORemoveRelationshipException e) {
+		e.printStackTrace();
+	}
+	return false;
+  }
 
   public void addNewUserEmail(int iUserId,String sNewEmailAddress){
-    try {
-      Email eEmail = lookupEmail(sNewEmailAddress);
-      if(eEmail==null){
-        eEmail = this.getEmailHome().create();
-        eEmail.setEmailAddress(sNewEmailAddress);
-        eEmail.store();
-      }
-      User U = getUser(iUserId);
-      U.addEmail(eEmail);
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-    }
+    storeUserEmail(getUser(iUserId),sNewEmailAddress,false);
   }
 
   public  Email lookupEmail(String EmailAddress){
