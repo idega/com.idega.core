@@ -31,6 +31,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   boolean showRootNodeTreeIcons = false;
   int defaultOpenLevel = 1;
   int _cols = 1;
+  int _extracols = 1;
 
   private static final String TREEVIEW_PREFIX = "treeviewer/ui/";
 
@@ -66,8 +67,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   protected String iconWidth = "16";
   protected String iconHeight = "16";
 
+  Table frameTable = null;
   Table treeTable = null;
-  Table firstColumnTable = null;
   int treeTableIndex = 1;
 
 
@@ -88,20 +89,21 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     super();
     defaultRoot = new DefaultTreeNode("root",-1);
     icons = new Image[14];
-    firstColumnTable = new Table(2,1);
-    firstColumnTable.setCellpadding(0);
-    firstColumnTable.setCellspacing(0);
-    firstColumnTable.setWidth(1,"1");
-    firstColumnTable.setWidth("100%");
-    treeTable = new Table();
+    treeTable = new Table(2,1);
+    //treeTable.setBorder(1);
     treeTable.setCellpadding(0);
     treeTable.setCellspacing(0);
-    treeTable.setColumnAlignment(1,"left");
+//    treeTable.setWidth("100%");
+    frameTable = new Table();
+    //frameTable.setBorder(1);
+    frameTable.setCellpadding(0);
+    frameTable.setCellspacing(0);
+    frameTable.setColumnAlignment(1,"left");
   }
 
 
-  private Table getFirstColumnTableClone(){
-    return (Table)firstColumnTable;
+  private Table getTreeTableClone(){
+    return (Table)treeTable.clone();
   }
 
   public void setIconDimensions(String width, String Height){
@@ -168,8 +170,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
   public void drawTree(IWContext iwc){
     this.empty();
-    this.add(treeTable);
-    treeTable.empty();
+    this.add(frameTable);
+    frameTable.empty();
     treeTableIndex = 1;
     if(_showSuperRootNode){
       drawSuperRoot(iwc);
@@ -195,7 +197,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     nodeTable.add(new Text(_superRootNodeName),3,1);
 
 
-    treeTable.add(nodeTable,1,this.getRowIndex());
+    frameTable.add(nodeTable,1,this.getRowIndex());
     if(defaultRoot.getChildCount() > 0){
       drawTree(defaultRoot.getChildren(),null, iwc);
     }
@@ -209,7 +211,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
         boolean hasChild = (item.getChildCount() > 0);
         boolean isOpen = false;
         int rowIndex = getRowIndex();
-        Table firstColumn = this.getFirstColumnTableClone();
+        Table treeColumns = this.getTreeTableClone();
         if(hasChild){
           isOpen = openNodes.contains(Integer.toString(item.getNodeID()));
         }
@@ -218,17 +220,30 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
         for (int k = 1; k < _cols; k++) {
           PresentationObject obj = this.getObjectToAddToColumn(k,item,iwc,isOpen,hasChild,isRoot);
           if(obj != null){
-            if(k == 1){
-              firstColumn.add(obj,2,1);
-            }else{
-              treeTable.add(obj,k+1,1);
-            }
+            treeColumns.add(obj,k+1,1);
+          }
+        }
+
+        for (int k = 1; k < _extracols; k++) {
+          PresentationObject obj = this.getObjectToAddToParallelExtraColumn(k,item,iwc,isOpen,hasChild,isRoot);
+          if(obj != null){
+            frameTable.add(obj,k+1,rowIndex);
           }
         }
 
         if(collectedIcons != null){
-          for (int j = 0; j < collectedIcons.length; j++) {
-            firstColumn.add(collectedIcons[j],1,1);
+          int collectedIconslength = collectedIcons.length;
+         /* try {
+            int width = Integer.parseInt(iconWidth)*(collectedIconslength+1);
+            treeColumns.setWidth(1,Integer.toString(width));
+          }
+          catch (NumberFormatException ex) {
+            System.err.println("AbstractTreeViewer iconWidth: "+ iconWidth);
+            // doNothing iconWidth is x%
+          }
+*/
+          for (int j = 0; j < collectedIconslength; j++) {
+            treeColumns.add(collectedIcons[j],1,1);
           }
         }
         Image[] newCollectedIcons = null;
@@ -244,7 +259,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                   }else{
                     p = icons[ICONINDEX_ROOT_MINUS];
                   }
-                  firstColumn.add(p,1,1);
+                  treeColumns.add(p,1,1);
                   newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
                 } else {
                   PresentationObject p = null;
@@ -254,10 +269,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                   }else{
                     p = icons[ICONINDEX_ROOT_PLUS];
                   }
-                  firstColumn.add(p,1,1);
+                  treeColumns.add(p,1,1);
                 }
               } else {
-                firstColumn.add(icons[ICONINDEX_ROOT_LINE],1,1);
+                treeColumns.add(icons[ICONINDEX_ROOT_LINE],1,1);
                 //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
               }
             } else {
@@ -271,7 +286,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                     }else{
                       p = icons[ICONINDEX_F_MINUS];
                     }
-                    firstColumn.add(p,1,1);
+                    treeColumns.add(p,1,1);
                     newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
                   } else {
                     PresentationObject p = null;
@@ -281,10 +296,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                     }else{
                       p = icons[ICONINDEX_F_PLUS];
                     }
-                    firstColumn.add(p,1,1);
+                    treeColumns.add(p,1,1);
                   }
                 } else {
-                  firstColumn.add(icons[ICONINDEX_F_LINE],1,1);
+                  treeColumns.add(icons[ICONINDEX_F_LINE],1,1);
                   //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
                 }
               } else if(hasChild){
@@ -297,7 +312,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                     }else{
                       p = icons[ICONINDEX_L_MINUS];
                     }
-                    firstColumn.add(p,1,1);
+                    treeColumns.add(p,1,1);
                     newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
                   } else{
                     PresentationObject p = null;
@@ -307,10 +322,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                     }else{
                       p = icons[ICONINDEX_L_PLUS];
                     }
-                    firstColumn.add(p,1,1);
+                    treeColumns.add(p,1,1);
                   }
                 } else {
-                  firstColumn.add(icons[ICONINDEX_L_LINE],1,1);
+                  treeColumns.add(icons[ICONINDEX_L_LINE],1,1);
                   //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
                 }
               } else {
@@ -323,7 +338,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                       p = icons[ICONINDEX_M_MINUS];
                     }
                     setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                    firstColumn.add(p,1,1);
+                    treeColumns.add(p,1,1);
                     newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
                   } else {
                     PresentationObject p = null;
@@ -333,10 +348,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                       p = icons[ICONINDEX_M_PLUS];
                     }
                     setLinkToOpenOrCloseNode((Link)p,item,isOpen);
-                    firstColumn.add(p,1,1);
+                    treeColumns.add(p,1,1);
                   }
                 } else {
-                  firstColumn.add(icons[ICONINDEX_M_LINE],1,1);
+                  treeColumns.add(icons[ICONINDEX_M_LINE],1,1);
                   //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
                 }
               }
@@ -353,7 +368,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                 }else{
                   p = icons[ICONINDEX_L_MINUS];
                 }
-                firstColumn.add(p,1,1);
+                treeColumns.add(p,1,1);
                 newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
               } else {
                 PresentationObject p = null;
@@ -363,10 +378,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                 }else{
                   p = icons[ICONINDEX_L_PLUS];
                 }
-                firstColumn.add(p,1,1);
+                treeColumns.add(p,1,1);
               }
             } else {
-              firstColumn.add(icons[ICONINDEX_L_LINE],1,1);
+              treeColumns.add(icons[ICONINDEX_L_LINE],1,1);
               //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
             }
           } else{
@@ -379,7 +394,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                 }else{
                   p = icons[ICONINDEX_M_MINUS];
                 }
-                firstColumn.add(p,1,1);
+                treeColumns.add(p,1,1);
                 newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_LINE]);
               } else {
                 PresentationObject p = null;
@@ -389,16 +404,16 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
                 }else{
                   p = icons[ICONINDEX_M_PLUS];
                 }
-                firstColumn.add(p,1,1);
+                treeColumns.add(p,1,1);
               }
             } else {
-              firstColumn.add(icons[ICONINDEX_M_LINE],1,1);
+              treeColumns.add(icons[ICONINDEX_M_LINE],1,1);
               //newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
             }
           }
         }
 
-        treeTable.add(firstColumn,1,rowIndex);
+        frameTable.add(treeColumns,1,rowIndex);
 
         if(hasChild && isOpen){
           drawTree(item.getChildren(),newCollectedIcons, iwc);
@@ -476,6 +491,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
 
   public abstract PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode);
+
+  public PresentationObject getObjectToAddToParallelExtraColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode){
+    return null;
+  }
 
 
   public void setToShowSuperRootNode(boolean value){
@@ -574,33 +593,39 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   }
 
 
-  public void setColumns(int cols){
-    _cols = cols;
-    treeTable.resize(_cols,treeTable.getRows());
+  public void setTreeColumns(int cols){
+    _cols = cols+1;
+    treeTable.resize(_cols,frameTable.getRows());
   }
 
-  public void setColumnWidth(int col, String width){
-    treeTable.setWidth(col,width);
+  public void setParallelExtraColumns(int cols){
+    _extracols = cols+1;
+    frameTable.resize(_extracols,frameTable.getRows());
+  }
+
+
+  public void setColumns(int cols){
+    setTreeColumns(cols);
+  }
+
+  public void setExtraColumnWidth(int col, String width){
+    frameTable.setWidth(col+1,width);
+  }
+
+  public void setTreeColumnWidth(int col, String width){
+    treeTable.setWidth(col+1,width);
   }
 
   public void setWidth(String s){
-    treeTable.setWidth(s);
+    frameTable.setWidth(s);
   }
 
-  public void setColumnHorizontalAlignemnt(int col, String alignment){
-    if(col == 1){
-      firstColumnTable.setColumnAlignment(1,alignment);
-    }else{
-      treeTable.setColumnAlignment(col,alignment);
-    }
+  public void setExtraColumnHorizontalAlignemnt(int col, String alignment){
+      frameTable.setColumnAlignment(col+1,alignment);
   }
 
-  public void setColumnVerticalAlignemnt(int col, String alignment){
-    if(col == 1){
-      firstColumnTable.setColumnVerticalAlignment(1,alignment);
-    }else{
-      treeTable.setColumnVerticalAlignment(col,alignment);
-    }
+  public void setExtraColumnVerticalAlignemnt(int col, String alignment){
+      frameTable.setColumnVerticalAlignment(col+1,alignment);
   }
 
 

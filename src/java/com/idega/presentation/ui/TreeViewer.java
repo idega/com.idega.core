@@ -50,6 +50,7 @@ public class TreeViewer extends AbstractTreeViewer {
     super();
     folderAndFileIcons = new Image[3];
     this.setColumns(2);
+    this.setTreeColumnWidth(1,"16");
   }
 
 
