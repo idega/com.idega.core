@@ -22,13 +22,13 @@ import com.idega.data.GenericEntity;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class UserStatusBMPBean extends GenericEntity implements UserStatus {
-	private static final String ENTITY_NAME = "ic_usergroup_status";
-	private static final String STATUS_ID = "status_id";
-	private static final String IC_USER = "ic_user_id";
-	private static final String IC_GROUP = "ic_group_id";
-	private static final String DATE_FROM = "date_from";
-	private static final String DATE_TO = "date_to";
-	private static final String CREATED_BY = "created_by";
+	protected static final String ENTITY_NAME = "ic_usergroup_status";
+	protected static final String STATUS_ID = "status_id";
+	protected static final String IC_USER = "ic_user_id";
+	protected static final String IC_GROUP = "ic_group_id";
+	protected static final String DATE_FROM = "date_from";
+	protected static final String DATE_TO = "date_to";
+	protected static final String CREATED_BY = "created_by";
 
 	public UserStatusBMPBean() {
 		super();
@@ -183,6 +183,25 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		sql.append(" order by ");
 		sql.append(DATE_FROM);
 		
+		return super.idoFindIDsBySQL(sql.toString());
+	}	
+
+	public Collection ejbFindAllActiveByUserIdAndGroupId(int user_id, int group_id) throws FinderException {
+		StringBuffer sql = new StringBuffer("select * from ");
+		sql.append(ENTITY_NAME);
+		sql.append(" where ");
+		sql.append(IC_USER);
+		sql.append(" = ");
+		sql.append(user_id);
+		sql.append(" and ");
+		sql.append(IC_GROUP);
+		sql.append(" = ");
+		sql.append(group_id);
+		sql.append(" and ");
+		sql.append(DATE_TO);
+		sql.append(" is NULL ");
+		sql.append(" order by ");
+		sql.append(DATE_FROM);
 		return super.idoFindIDsBySQL(sql.toString());
 	}	
 	

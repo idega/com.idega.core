@@ -48,6 +48,12 @@ public interface UserStatusHome extends IDOHome {
             throws FinderException;
 
     /**
+     * @see com.idega.user.data.UserStatusBMPBean#ejbFindAllByUserIdAndGroupId
+     */
+    public Collection findAllActiveByUserIdAndGroupId(int user_id, int group_id)
+            throws FinderException;
+
+    /**
      * @see com.idega.user.data.UserStatusBMPBean#ejbFindAllByUserIDAndStatusID
      */
     public Collection findAllByUserIDAndStatusID(Integer userID,

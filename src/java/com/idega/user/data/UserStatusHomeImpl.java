@@ -65,6 +65,15 @@ public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
         return this.getEntityCollectionForPrimaryKeys(ids);
     }
 
+    public Collection findAllActiveByUserIdAndGroupId(int user_id, int group_id)
+    		throws FinderException {
+        com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+        java.util.Collection ids = ((UserStatusBMPBean) entity)
+        		.ejbFindAllActiveByUserIdAndGroupId(user_id, group_id);
+        this.idoCheckInPooledEntity(entity);
+        return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
     public Collection findAllByUserIDAndStatusID(Integer userID,
             Integer statusID) throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
