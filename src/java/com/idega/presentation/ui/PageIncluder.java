@@ -334,6 +334,10 @@ public class PageIncluder extends PresentationObject implements Index{
     if(forceFrame){
       html = TextSoap.findAndReplace(html,tag+"=\"/",pageIncluderPrefix.substring(1,pageIncluderPrefix.length()),tag+"=\"/",tag+"=\""+pageIncluderPrefix+BASEURL );// the / case
       html = TextSoap.findAndReplace(html,tag+"=\"",pageIncluderPrefix,tag+"=\""+pageIncluderPrefix+RELATIVEURL);
+      /**@todo make this a boolean choice
+       * special case. changes https to http
+       */
+      html = TextSoap.findAndReplace(html,tag+"=\"https://",tag+"=\""+pageIncluderPrefix+"http://");// the http:// case
     }
     else{
       html = TextSoap.findAndReplace(html,tag+"=\"/",tag+"=\""+BASEURL);
