@@ -908,6 +908,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     //return null;
   }
 
+	/**
+	 *  Returns User from personal id, throws EJBException if not found
+	 */
+	public  User getUser(String personalID) throws EJBException {
+		try {
+			return getUserHome().findByPersonalID(personalID);
+		}
+		catch (Exception ex) {
+			throw new EJBException("Error getting user for personal id: "+personalID+" Message: "+ex.getMessage());
+		}
+		//return null;
+	}
+	
 
   public  Collection getUsersInNoGroup() throws SQLException  {
     //return EntityFinder.findNonRelated(com.idega.user.data.GroupBMPBean.getStaticInstance(),com.idega.user.data.UserBMPBean.getStaticInstance());
