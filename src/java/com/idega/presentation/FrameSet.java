@@ -188,7 +188,6 @@ public class FrameSet extends Window{
       //goneThroughMain = false;
       initVariables(iwc);
       StringBuffer buf = new StringBuffer();
-      System.out.println("IN A WINDOW " + isInAWindow);
 
       if( !isInAWindow ){
         buf.append(getStartTag());
