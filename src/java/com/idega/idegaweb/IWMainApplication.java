@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.137 2005/03/02 12:36:44 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.138 2005/03/03 04:16:26 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -83,10 +83,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/03/02 12:36:44 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/03 04:16:26 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.137 $
+ * @version $Revision: 1.138 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -144,7 +144,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private final static String _IFRAME_CONTENT_URL = "/servlet/IBIFrameServlet/";
     private final static String IDEGAWEB_APP_SERVLET_URI = "/servlet/idegaweb";
     
-    private final static String NEW_WINDOW_URL="/window/";
+    private final static String NEW_WINDOW_URL="/workspace/window/";
     private final static String NEW_BUILDER_PAGE_URL="/pages/";
     private final static String WORKSPACE_URI="/workspace/";
     private final static String LOGIN_URI="/login/";
