@@ -112,4 +112,14 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
     setColumn(COLUMN_HANDLER_CLASS,obj);
   }
 
+
+  public String getGeneralGroupTypeString(){
+    return TYPE_GENERAL_GROUP;
+  }
+
+  public String getPermissionGroupTypeString(){
+    return TYPE_PERMISSION_GROUP;
+  }
+
+
 }

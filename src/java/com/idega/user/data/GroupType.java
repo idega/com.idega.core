@@ -12,4 +12,6 @@ public interface GroupType extends com.idega.data.IDOLegacyEntity
  public java.lang.String getType();
  public java.lang.String getDescription();
  public java.lang.String getIDColumnName();
+ public java.lang.String getGeneralGroupTypeString();
+ public java.lang.String getPermissionGroupTypeString();
 }
