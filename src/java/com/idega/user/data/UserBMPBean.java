@@ -9,11 +9,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
-
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailBMPBean;
@@ -49,6 +47,7 @@ import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.StringHandler;
 import com.idega.util.text.Name;
 import com.idega.util.text.TextSoap;
 
@@ -1530,19 +1529,22 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		int count = 0;
 		Criteria firstNameCriteria = null;
 		if(firstName!=null && !firstName.equals("")){
-			firstNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameFirstName(),MatchCriteria.LIKE,firstName+"%");
+			String conditionString = StringHandler.firstCharacterToUpperCase(firstName);
+			firstNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameFirstName(),MatchCriteria.LIKE,conditionString+"%");
 			count++;
 		}
 		
 		Criteria middleNameCriteria = null;
 		if(middleName!=null && !middleName.equals("") ){
-			middleNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameMiddleName(),MatchCriteria.LIKE,middleName+"%");
+			String conditionString = StringHandler.firstCharacterToUpperCase(middleName);
+			middleNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameMiddleName(),MatchCriteria.LIKE,conditionString+"%");
 			count++;
 		}
 		
 		Criteria lastNameCriteria = null;
 		if(lastName!=null  && !lastName.equals("") ){
-			lastNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameLastName(),MatchCriteria.LIKE,lastName+"%");
+			String conditionString = StringHandler.firstCharacterToUpperCase(lastName);
+			lastNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameLastName(),MatchCriteria.LIKE,conditionString+"%");
 			count++;
 		}
 		
