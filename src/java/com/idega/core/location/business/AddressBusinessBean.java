@@ -110,6 +110,24 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
     }
     return null;
   }
+  
+  /**
+   * Creates the fully qualifying address string with postal and country info from the address bean<br>
+   * seperated by a ","
+   * @return The full address string with postal info and country
+   */
+  public String getFullAddressString(Address address){
+  	StringBuffer fullAddress = new StringBuffer();
+    String streetNameAndNumber = address.getStreetAddress();
+    String postalCode = address.getPostalAddress();
+    String country = address.getCountry().getName();
+    
+    fullAddress.append(streetNameAndNumber).append(", ")
+	.append(postalCode).append(", ")
+	.append(country);
+  	
+  	return fullAddress.toString();
+  }
 
 
 } // Class AddressBusinessBean
