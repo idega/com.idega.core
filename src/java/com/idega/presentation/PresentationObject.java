@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.62 2003/02/10 15:32:19 thomas Exp $
+ * $Id: PresentationObject.java,v 1.63 2003/03/30 23:24:34 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1511,6 +1511,10 @@ public class PresentationObject extends Object implements Cloneable {
         append(getComponentId());
       return buffer.toString();
     }
+    // if there is a object instance id use this one
+    int instanceId;
+    if ((instanceId = getICObjectInstanceID()) != 0)
+      return Integer.toString(instanceId);
     // first fetch my component id
     buffer.append(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
     buffer.append(getComponentId());
