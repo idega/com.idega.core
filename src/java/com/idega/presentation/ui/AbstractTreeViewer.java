@@ -428,6 +428,23 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     }
   }
 
+  public void setFirstLevelNodes(Iterator nodes){
+    defaultRoot.clear();
+    if(nodes != null){
+      while (nodes.hasNext()) {
+        ICTreeNode node = (ICTreeNode) nodes.next();
+        defaultRoot.addTreeNode(node);
+      }
+    }
+  }
+
+
+  public void addFirstLevelNode(ICTreeNode node){
+    if(node != null){
+      defaultRoot.addTreeNode(node);
+    }
+  }
+
   public void setToMaintainParameter(String parameterName,IWContext iwc){
     openCloseLink.maintainParameter(parameterName,iwc);
   }

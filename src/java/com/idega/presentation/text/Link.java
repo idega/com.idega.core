@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.36 2002/01/02 12:15:59 palli Exp $
+ * $Id: Link.java,v 1.37 2002/01/02 21:00:22 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -231,6 +231,13 @@ public class Link extends Text {
    */
   public Link(PresentationObject mo, Class classToInstanciate, Class templatePageClass) {
     this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templatePageClass));
+    if(_parameterString == null){
+      _parameterString = new StringBuffer();
+    }
+  }
+
+  public Link(Class classToInstanciate) {
+    this(Link.DEFAULT_TEXT_STRING,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
     if(_parameterString == null){
       _parameterString = new StringBuffer();
     }
