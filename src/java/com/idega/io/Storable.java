@@ -1,10 +1,12 @@
 package com.idega.io;
 
+import java.rmi.RemoteException;
+
 
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description:
- * 	See also {@link com.idega.io.Writer Writer}
+ * 	See {@link com.idega.io.ObjectWriter Writer}
  * </p>
  * 
  * <p>Copyright: Copyright (c) 2003</p>
@@ -15,6 +17,6 @@ package com.idega.io;
  */
 public interface Storable {
 	
-	public Object write(Writer writer);
+	public Object write(ObjectWriter writer) throws RemoteException;
 	
 }
