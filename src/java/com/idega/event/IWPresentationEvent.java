@@ -35,8 +35,6 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
   public static String DEFAULT_IW_EVENT_TARGET="iw_event_frame";
   private String eventTarget = null;
   
-  public static String EVENT_CONTROLLER = "event_controller";
-
 	/**
 	 * 
 	 * @uml.property name="_parameters"
@@ -164,10 +162,6 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
     return _parameters.iterator();
   }
   
-  public void setController(String controllerCompoundId)  {
-    this.addParameter(EVENT_CONTROLLER, controllerCompoundId);
-  }
-
   public abstract boolean initializeEvent(IWContext iwc);
 
   public Object clone(){
