@@ -1619,7 +1619,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws RemoteException
 	 */
 	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)throws RemoteException{
-		Collection topNodes = new Vector();
+		Collection topNodes = new ArrayList();
 		if( user != null ){
 			
 			topNodes = (Collection)iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString());
@@ -1650,7 +1650,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						
 						Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
 						Iterator iterating = directlyRelatedParents.iterator();
-						Vector additionalGroups = new Vector();
+						List additionalGroups = new ArrayList();
 						while (iterating.hasNext()) {
 							Group parent = (Group) iterating.next();
 							if(parent.getPermissionControllingGroupID()>0){
@@ -1662,7 +1662,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						
 						
 						Collection ownedPermissions = null;
-						Collection allViewAndOwnerPermissions = new Vector();
+						Collection allViewAndOwnerPermissions = new ArrayList();
 						
 						//get all view permissions for direct parent and put in a list
 						Collection viewPermissions = AccessControl.getAllGroupViewPermissions(directlyRelatedParents);				
