@@ -952,9 +952,14 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     return this.getGroupHome().findByPrimaryKey(new Integer(id));
   }
   
-  //TODO this should return a collection!!
-	public Group getGroupByGroupName(String name)throws FinderException,RemoteException{
-		return this.getGroupHome().findByName(name);
+ 
+	public Collection getGroupsByGroupName(String name)throws RemoteException{
+		try {
+			return this.getGroupHome().findGroupsByName(name);
+		}
+		catch (FinderException e) {
+			return ListUtil.getEmptyList();
+		}
 	}
 
   public User getUserByID(int id)throws FinderException,RemoteException{
@@ -1036,7 +1041,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	  	//if it is found this must mean an update
 	  	if(uniqueID!=null){
 		  	try {
-				group = getGroupHome().findGroupByUniqueId(uniqueID);
+				group = getGroupByUniqueId(uniqueID);
 			} catch (FinderException e) {
 				System.out.println("GroupBusiness: Group not found by unique id: "+uniqueID);
 			}
@@ -1076,6 +1081,12 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	  	
 	  }
 	
+public Group getGroupByUniqueId(String uniqueID) throws FinderException {
+		Group group;
+		group = getGroupHome().findGroupByUniqueId(uniqueID);
+		return group;
+	}
+
 /**
  * Adds all the ldap attributes as metadata-fields to the group
 	 * @param group
@@ -1094,7 +1105,13 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 			try {
 				while (attrlist.hasMore()) {
 					Attribute att = (Attribute) attrlist.next();
-					String key = ldapUtil.getAttributeKeyWithMetaDataNamePrefix(att);
+					String key = null;
+					if(ldapUtil.isAttributeIWMetaDataKey(att)){
+						key = ldapUtil.getAttributeKeyWithoutMetaDataNamePrefix(att);
+					}
+					else{
+						key = ldapUtil.getAttributeKeyWithMetaDataNamePrefix(att);
+					}
 					
 					if(key.indexOf("binary")<0){
 						
@@ -2112,7 +2129,7 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 		
 		//try and get by metadata first then by inaccurate method
 		Collection groups = getGroupsByLDAPAttribute(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING,identifier);
-
+		
 		if(!groups.isEmpty() && groups.size()==1){
 			//we found it!
 			group = (Group)groups.iterator().next();
@@ -2158,13 +2175,74 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 							group = (Group)candidates.iterator().next();
 						}
 					}
+				}else if(potentialParent.isEmpty()){
+					
+					Collection possibleGroups = getGroupsByGroupName(groupName);
+					
+					if(!possibleGroups.isEmpty()){
+						List dnParts = util.getListOfStringsFromDirectoryString(dn);
+						String rootDN = IWLDAPUtil.getInstance().getRootDNString(this.getIWApplicationContext());
+						boolean isTheWinner = false;
+						//this used to be return (Group) possibleWinners.next() if the size of the collection was 1 but I think that not enough checking
+						Iterator possibleWinners = possibleGroups.iterator();
+						while(possibleWinners.hasNext() && group==null){
+							Group child = (Group) possibleWinners.next();
+							//a recursive method that checks all the parents names of this group against the names in the ldap dn string
+							isTheWinner = isParentPathCorrectFromDN(child,1,dnParts,rootDN);
+							if(isTheWinner){
+								group = child;
+							}
+						}
+						
+					}
 				}
+				
 			}
-		}	
+		}
+		
 		
 		return group;
 	}
 
+
+	/**
+	 * Checks RECURSIVELY if the name of the childs parent is the same as in the childs DN
+	 * @param child
+	 * @param i
+	 * @param dnParts
+	 * @param rootDN
+	 * @return
+	 */
+	private boolean isParentPathCorrectFromDN(Group child, int indexOfChildsParentInDNParts, List dnParts, String rootDN) {
+		boolean isPathCorrect = true;
+		List parents = child.getParentGroups();
+
+		//"there can be..only one!...parent"
+		if(!parents.isEmpty()){
+			String dnPart = (String)dnParts.get(indexOfChildsParentInDNParts);
+			String parentName = dnPart.substring(dnPart.indexOf("=")+1);
+			Group parent = (Group)parents.get(0);
+			int size = dnParts.size();
+			if(parent.getName().equals(parentName) && indexOfChildsParentInDNParts<size){
+				//keep on checking this parents parent...recursive
+				isPathCorrect = isParentPathCorrectFromDN(parent,++indexOfChildsParentInDNParts,dnParts,rootDN);
+			}
+			else{
+				isPathCorrect = false;
+			}
+		}
+		else{
+			//check if the remaining dn is the root dn
+			List remaining = dnParts.subList(indexOfChildsParentInDNParts,dnParts.size());
+			String restOfDn = ListUtil.convertListOfStringsToCommaseparatedString(remaining);
+			if(!restOfDn.equals(rootDN)){
+				isPathCorrect = false;
+			}
+			
+		}
+		
+		return isPathCorrect;
+	}
 
 	/**
 	 * Gets all the groups that have this ldap metadata
@@ -2232,10 +2310,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/09/16 17:41:40 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/09/21 18:56:19 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.72 $
+	 * @version $Revision: 1.73 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

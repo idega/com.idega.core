@@ -53,8 +53,7 @@ public interface GroupBusiness extends com.idega.business.IBOService {
             throws javax.ejb.EJBException, java.rmi.RemoteException,
             java.rmi.RemoteException;
 
-    public Group getGroupByGroupName(String name) throws FinderException,
-            RemoteException;
+    public Collection getGroupsByGroupName(String name) throws RemoteException;
 
     public com.idega.user.data.GroupType getGroupTypeFromString(
             java.lang.String p0) throws java.rmi.RemoteException,
@@ -485,7 +484,7 @@ public interface GroupBusiness extends com.idega.business.IBOService {
   public Collection getOwnerUsersForGroup(Group group) throws RemoteException;
 	public ICFile createGroupHomeFolder(Group group) throws CreateException;
   public Address getGroupMainAddress(Group group) throws RemoteException, IDOLookupException, IDOCompositePrimaryKeyException,  IDORelationshipException;
-  public Group getGroupByDirectoryString(DirectoryString dn) throws RemoteException, FinderException;
+  public Group getGroupByDirectoryString(DirectoryString dn) throws RemoteException;
 
 	/**
 	 * Optimized version of getParentGroups(Group group) by Gummi 25.08.2004
@@ -532,5 +531,5 @@ public GroupType createVisibleGroupType(String groupType) throws RemoteException
  * @throws RemoteException
  */
 public GroupType createGroupTypeOrUpdate(String groupType, boolean visible) throws RemoteException;
-
+public Group getGroupByUniqueId(String uniqueID) throws FinderException;
 }

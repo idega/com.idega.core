@@ -21,6 +21,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
+import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -2701,7 +2702,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		
 		if(uniqueID!=null){
 			try {
-				user = getUserHome().findUserByUniqueId(uniqueID);
+				user = getUserByUniqueId(uniqueID);
 				
 			} catch (FinderException e) {
 				System.out.println("UserBusiness: User not found by unique id:"+uniqueID);
@@ -2769,6 +2770,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return user;
 	}
 	
+	public User getUserByUniqueId(String uniqueID) throws FinderException {
+		User user;
+		user = getUserHome().findUserByUniqueId(uniqueID);
+		return user;
+	}
+
 	/**
 	 * Creates or updates a user from an LDAP DN and its attributes and adds it under the parentGroup supplied
 	 * @throws NamingException
@@ -2825,12 +2832,33 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param identifier
 	 * @return
 	 */
-	private User getUserByDirectoryString(String identifier) {
+	public User getUserByDirectoryString(DirectoryString dn) {
+		return getUserByDirectoryString(dn.toString());
+	}
+	
+	/**
+	 * Looks for the user by his DN in his metadata
+	 * @param identifier
+	 * @return
+	 */
+	public User getUserByDirectoryString(String dn) {
 		User user = null;
-		Collection users = getUsersByLDAPAttribute(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING,identifier);
+		Collection users = getUsersByLDAPAttribute(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING,dn);
 
 		if(!users.isEmpty() && users.size()==1){
 			user = (User)users.iterator().next();
+		}
+		else{
+			int index = dn.indexOf("/");
+			int commaIndex = dn.indexOf(",");
+			if(index>0 && index<commaIndex){
+				String pid = dn.substring(index+1,commaIndex);
+				try {
+					user = getUser(pid);
+				}
+				catch (FinderException e) {
+				}
+			}
 		}
 		
 		

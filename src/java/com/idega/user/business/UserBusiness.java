@@ -4,14 +4,13 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
-
+import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
@@ -241,4 +240,19 @@ public interface UserBusiness extends com.idega.business.IBOService
 		 * @throws RemoteException
 		 */
 		 public String isUserSuitedForGroup(User user, Group targetGroup)throws RemoteException;
+		 
+		 public User getUserByUniqueId(String uniqueID) throws FinderException;
+		 /**
+			 * Looks for the user by his DN in his metadata
+			 * @param identifier
+			 * @return
+			 */
+			public User getUserByDirectoryString(String dn);
+			
+			/**
+			 * Looks for the user by his DN in his metadata
+			 * @param identifier
+			 * @return
+			 */
+			public User getUserByDirectoryString(DirectoryString dn);
 }

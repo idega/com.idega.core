@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 import javax.ejb.FinderException;
 import org.codehaus.plexus.ldapserver.ldapv3.Filter;
@@ -140,12 +141,14 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 						
 						Group group = null;
 						
-						try{
-							group = getGroupBusiness().getGroupHome().findGroupByUniqueId(uniqueId);
-						}
-						catch(FinderException e){
-						//	e.printStackTrace();
-							System.err.println("[IWUserLDAPBackend] Could not find the group with the unique id:"+uniqueId+" trying directory string");
+						if(uniqueId!=null){
+							try{
+								group = getGroupBusiness().getGroupHome().findGroupByUniqueId(uniqueId);
+							}
+							catch(FinderException e){
+							//	e.printStackTrace();
+								System.err.println("[IWUserLDAPBackend] Could not find the group with the unique id:"+uniqueId+" trying directory string");
+							}
 						}
 						
 						if(group==null){
@@ -238,23 +241,48 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	 * @see org.codehaus.plexus.ldapserver.server.backend.Backend#modify(org.codehaus.plexus.ldapserver.server.syntax.DirectoryString,
 	 *      java.util.Vector)
 	 */
-	public void modify(DirectoryString dn, Vector changeEntries) throws DirectoryException {
-		// TODO find user or group we are looking for from dn. cn=user o=group
-		// and ou=group
-		//iterate through changes and apply them and store the object
-		//boolean isUser = ldapUtil.isUser(dn);
-		//boolean isGroup = ldapUtil.isGroup(dn);
-		/*
-		 * Entry entry = (Entry) datastore.get( name );
-		 * 
-		 * if ( entry != null ) { Entry current = (Entry) entry.clone();
-		 * Enumeration changeEnum = changeEntries.elements(); while (
-		 * changeEnum.hasMoreElements() ) { oneChange( current, (EntryChange)
-		 * changeEnum.nextElement() ); } SchemaChecker.getInstance().checkEntry(
-		 * current ); index( entry, changeEntries ); datastore.put( name,
-		 * current ); }
-		 */
-		super.modify(dn, changeEntries);
+	public void modify(DirectoryString base, Vector changeEntries) throws DirectoryException {
+	
+		if(ldapUtil.isUser(base)) {
+			
+			User user = null;
+			try {
+				user = getUser(base, null);
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+				super.modify(base, changeEntries);
+			}
+			
+			if(user==null){
+				System.err.println("[IWUserLDAPBackend] No user found for DN : "+base.toString());
+				super.modify(base, changeEntries);
+			}else{
+				//TODO modify the record
+			}
+			
+		}
+		else if(ldapUtil.isGroup(base)){
+			Group group = null;
+			try {
+				group = getGroup(base, null);
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+				super.modify(base, changeEntries);
+			}
+			
+			if(group==null){
+				System.err.println("[IWUserLDAPBackend] No group found for DN : "+base.toString());
+				super.modify(base, changeEntries);
+			}else{
+				//TODO modify the record
+			}
+			
+			
+		}
+		
+		
 	}
 	
 	/*
@@ -265,62 +293,91 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	 */
 	public LDAPResultEnum rename(DirectoryString oldname, DirectoryString newname) {
 		// TODO Auto-generated method stub
+		//moving a group or a user is not supported
 		return super.rename(oldname, newname);
 	}
 	
 	
-	private Entry getEntry(DirectoryString base, Vector attributes, String uniqueId) throws InvalidDNException, RemoteException {
+	public Entry getEntry(DirectoryString base, Vector attributes, String uniqueId) throws InvalidDNException, RemoteException {
 		Entry entry = new Entry(base);
-		try {
+		
 			if(ldapUtil.isUser(base)) {
-				User user = (User)getGroupBusiness().getGroupByDirectoryString(base);
-				fillUserEntry(user,entry);
+				
+				User user = getUser(base, uniqueId); 
+
+				if(user==null){
+					System.err.println("[IWUserLDAPBackend] No user found for DN : "+base.toString());
+					throw new InvalidDNException(base.getDirectoryString());
+				}
+				else{
+					fillUserEntry(user,entry);
+				}
 			}
 			else if(ldapUtil.isGroup(base)){
-				Group group = getGroupBusiness().getGroupByDirectoryString(base);
-				fillGroupEntry(group,entry);
+				Group group = getGroup(base, uniqueId); 
+
+				if(group==null){
+					System.err.println("[IWUserLDAPBackend] No group found for DN : "+base.toString());
+					throw new InvalidDNException(base.getDirectoryString());
+				}
+				else{
+					fillGroupEntry(group,entry);
+				}
 			}
-		} 
-		catch (FinderException e) {
-			e.printStackTrace();
-			throw new InvalidDNException(base.getDirectoryString());
-		}
 		
 		return entry;
 	}
 	
+	private Group getGroup(DirectoryString base, String uniqueId) throws RemoteException {
+		Group group = null;
+		try{	
+			if(uniqueId!=null){
+				group = getGroupBusiness().getGroupByUniqueId(uniqueId);
+			}
+		} 
+		catch (FinderException e) {
+			System.err.println("[IWUserLDAPBackend] No group found for unique id: "+uniqueId+" trying DN");
+		}
+		
+		if(group==null){
+			group = getGroupBusiness().getGroupByDirectoryString(base);
+			
+		}
+		return group;
+	}
+	private User getUser(DirectoryString base, String uniqueId) throws RemoteException {
+		User user = null;
+		try{	
+			if(uniqueId!=null){
+				user = getUserBusiness().getUserByUniqueId(uniqueId);
+			}
+		} 
+		catch (FinderException e) {
+			System.err.println("[IWUserLDAPBackend] No user found for unique id: "+uniqueId+" trying DN");
+		}
+		
+		if(user==null){
+			user = (User)getUserBusiness().getUserByDirectoryString(base.toString());
+		}
+		return user;
+	}
 	private Entry getChildEntry(DirectoryString base,Group group) throws InvalidDNException {
 		Entry entry;
 		
 		if(group instanceof User) {
-//			mail: eiki@idega.is
-//			initials: ESH
-//			title: manager, product development
-//			uid: eiki
-//			telephoneNumber: +1 408 555 1862
-//			facsimileTelephoneNumber: +1 408 555 1992
-//			mobile: +1 408 555 1941
 			User user = (User)group;
 			String identifier = getUserIdentifier(user,base);
-//			
-//			DirectoryString childDN = new DirectoryString(identifier+","+dn);
 			DirectoryString childDN = new DirectoryString(identifier);
 			entry = new Entry(childDN);
-			
 			fillUserEntry(user,entry);
-			
 		}
 		else {
 			String identifier = getGroupIdentifier(group,base);
-			
 			DirectoryString childDN = new DirectoryString(identifier);
 			entry = new Entry(childDN);
 			fillGroupEntry(group, entry);
 			
 		}
-		
-		
-		
 		return entry;
 	}
 	
@@ -330,7 +387,7 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 		String identifier = "cn="; 
 		String  fullName = user.getName();
 		String personalId = user.getPersonalID();
-		identifier = identifier+fullName+"-"+personalId+","+base.toString();
+		identifier = identifier+fullName+"/"+personalId+","+base.toString();
 		
 		
 		return IWLDAPUtil.getInstance().getEscapedLDAPString(identifier);
@@ -448,7 +505,8 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 			entry.put(new DirectoryString(LDAP_ATTRIBUTE_TELEPHONE_NUMBER),phoneValues);
 		}
 		
-		
+		//add the metadata
+		addMetaDataFromGroup(user, entry);
 		
 		Vector objectClasses = new Vector();
 		objectClasses.add(new DirectoryString(LDAP_SCHEMA_PERSON));
@@ -463,7 +521,9 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	 * @param entry
 	 */
 	private void fillGroupEntry(Group group, Entry entry) {
-		String name = IWLDAPUtil.getInstance().getEscapedLDAPString(getGroupName(group));
+		//String name = IWLDAPUtil.getInstance().getEscapedLDAPString(getGroupName(group));
+		String name = getGroupName(group);
+		
 		String desc = group.getDescription();
 		String uuid = group.getUniqueId();
 		
@@ -527,11 +587,31 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 			entry.put(new DirectoryString(LDAP_ATTRIBUTE_TELEPHONE_NUMBER),phoneValues);
 		}
 		
+		//add the metadata
+		addMetaDataFromGroup(group, entry);
+		
+		
 		Vector objectClasses = new Vector();
 		objectClasses.add(new DirectoryString(LDAP_SCHEMA_ORGANIZATIONAL_UNIT));
 		entry.put(new DirectoryString(LDAP_ATTRIBUTE_OBJECT_CLASS),objectClasses);
 	}
 	
+	private void addMetaDataFromGroup(Group group, Entry entry) {
+		//add the groups metadata
+		Map metadata = group.getMetaDataAttributes();
+		if(metadata!=null && !metadata.isEmpty()){
+			Iterator iter = metadata.keySet().iterator();
+			while(iter.hasNext()){
+				String metaKey = (String)iter.next();
+				String metaValue = (String)metadata.get(metaKey);
+				if(metaValue!=null){
+					Vector metaDataValue = getAttributeVectorForSingleEntry(metaValue);
+					entry.put(new DirectoryString(ldapUtil.getAttributeKeyWithMetaDataNamePrefix(metaKey)),metaDataValue);
+				}
+			}
+			
+		}
+	}
 	private Vector getAttributeVectorForSingleEntry(String value) {
 		Vector attributes = new Vector();
 		if(value!=null) {
