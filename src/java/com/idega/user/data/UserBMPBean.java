@@ -958,7 +958,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public Integer ejbFindByPersonalID(String personalId) throws FinderException {
     IDOQuery query = idoQueryGetSelect();
     query
-      .appendEqualsQuoted(getColumnNamePersonalID(), personalId)
+      .appendWhereEqualsQuoted(getColumnNamePersonalID(), personalId)
       .appendAnd();
     appendIsNotDeleted(query);
     
