@@ -979,7 +979,7 @@ public class IWTimestamp implements Comparable {
 	 */
 	//To methods
 	public String toString() {
-		return this.getTimestamp().toString();//.substring(0,19);
+		return this.getTimestamp().toString().substring(0,19);
 	}
 
 	/**
