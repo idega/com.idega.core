@@ -52,7 +52,6 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI {
 			super();
 			this.setCellpadding(0);
 			this.setCellspacing(0);
-			setWidth(Table.HUNDRED_PERCENT);
 		}
 
 		public Link getTabLink(PresentationObject obj) {
@@ -81,7 +80,6 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI {
 			this.empty();
 			this.setBorder(0);
 			setID("mamaseika");
-			setWidth(Table.HUNDRED_PERCENT);
 
 			int tabSize = this.getAddedTabs().size();
 			if (this.getSelectedIndex() == -1 && tabSize != 0) {
@@ -98,10 +96,11 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI {
 					((Table) tempObj).setLeftCellBorderWidth(1, 1, 0);
 				}
 				if (row > 1) {
+					//((Table) tempObj).setCellpaddingTop(1, 1, 1);
 					((Table) tempObj).setTopCellBorderWidth(1, 1, 0);
 				}
 				this.add(tempObj, column, row);
-				this.setWidth(column,"25%");
+				this.setWidth(column, 120);
 				column++;
 				if (i == 3) {
 					row++;
@@ -145,7 +144,7 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI {
 			public Tab(IWColor color) {
 				super();
 				selected = false;
-				this.setCellpadding(0);
+				this.setCellpadding(1);
 				this.setCellspacing(0);
 				newStyleInitializeTab();
 			}

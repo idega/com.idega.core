@@ -79,7 +79,7 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 			setCellpadding(0);
 			setCellspacing(0);
 			setBorder(1);
-			setWidth(Table.HUNDRED_PERCENT);
+			//setWidth(Table.HUNDRED_PERCENT);
 			tabs = new Vector();
 		}
 
