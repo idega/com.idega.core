@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import java.util.Iterator;
 import com.idega.data.GenericEntity;
+import com.idega.core.user.data.User;
 
 /**
  * Title:        User
@@ -26,6 +27,15 @@ public class UserGroupBusiness {
   public UserGroupBusiness() {
   }
 
+
+  public static void deleteGroup(int groupId) throws SQLException {
+    GenericGroup delGroup = new GenericGroup(groupId);
+
+    delGroup.removeFrom((User)User.getStaticInstance(User.class));
+    delGroup.removeGroup(GenericGroup.getStaticInstance());
+
+    delGroup.delete();
+  }
 
 
   public static List getAllGroupsRelated(int uGroupId)throws SQLException{

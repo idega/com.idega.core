@@ -143,6 +143,7 @@ public class GeneralUserInfoTab extends UserTab{
 
     displayNameField = new TextInput(displayNameFieldName);
     displayNameField.setLength(12);
+    displayNameField.setMaxlength(20);
 
     descriptionField = new TextArea(descriptionFieldName);
     descriptionField.setHeight(7);

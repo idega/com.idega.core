@@ -231,7 +231,7 @@ public class GenericGroup extends GenericEntity{
 			Stmt = conn.createStatement();
                         String qry;
                         if( (entityToRemoveFrom.getID()==-1) || (entityToRemoveFrom.getID()==0))//removing all in middle table
-                          qry = "delete from IC_GROUP_TREE where "+this.getIDColumnName()+"='"+this.getID()+"'";
+                          qry = "delete from IC_GROUP_TREE where "+this.getIDColumnName()+"='"+this.getID()+"' OR CHILD_IC_GROUP_ID ='"+this.getID()+"'";
                         else// just removing this particular one
                           qry = "delete from IC_GROUP_TREE where "+this.getIDColumnName()+"='"+this.getID()+"' AND CHILD_IC_GROUP_ID ='"+entityToRemoveFrom.getID()+"'";
 

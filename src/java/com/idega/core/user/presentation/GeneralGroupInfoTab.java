@@ -12,6 +12,7 @@ import com.idega.jmodule.object.interfaceobject.SelectionBox;
 import com.idega.jmodule.object.interfaceobject.SubmitButton;
 import com.idega.jmodule.object.interfaceobject.Form;
 import com.idega.jmodule.object.interfaceobject.TextArea;
+import com.idega.jmodule.object.interfaceobject.TextInput;
 import com.idega.core.business.UserGroupBusiness;
 import com.idega.core.data.GenericGroup;
 import java.util.List;
@@ -31,42 +32,64 @@ import com.idega.util.Disposable;
 public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
 
 
+  private TextInput nameField;
   private TextArea descriptionField;
 
+  private Text nameText;
   private Text descriptionText;
 
+  private String nameFieldName;
   private String descriptionFieldName;
 
   private Link addLink;
   private IFrame memberofFrame;
   public static final String PARAMETER_GROUP_ID = "ic_group_id";
-  public static final String SESSIONADDRESS_GROUPS_DIRECTLY_RELATED = "ic_group_ic_group_direct";
-  public static final String SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED = "ic_group_ic_group_not_direct";
+  public static final String SESSIONADDRESS_GROUPS_DIRECTLY_RELATED = "ic_group_ic_group_direct_GGIT";
+  public static final String SESSIONADDRESS_GROUPS_NOT_DIRECTLY_RELATED = "ic_group_ic_group_not_direct_GGIT";
 
   protected Text memberof;
 
   public GeneralGroupInfoTab() {
     super();
-    this.setName("Members");
+    this.setName("General");
   }
 
   public void initFieldContents() {
     addLink.setWindowToOpen(GeneralGroupInfoTab.GroupGroupSetter.class);
     addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,this.getGroupId());
+
+     try{
+      GenericGroup group = new GenericGroup(getGroupId());
+
+      fieldValues.put(this.nameFieldName,(group.getName() != null) ? group.getName():"" );
+      fieldValues.put(this.descriptionFieldName,(group.getDescription() != null) ? group.getDescription():"" );
+      this.updateFieldsDisplayStatus();
+
+    }catch(Exception e){
+      System.err.println("GeneralGroupInfoTab error initFieldContents, GroupId : " + getGroupId());
+    }
+
+
   }
   public void updateFieldsDisplayStatus() {
-    /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
+    nameField.setContent((String)fieldValues.get(this.nameFieldName));
+
+    descriptionField.setContent((String)fieldValues.get(this.descriptionFieldName));
   }
   public void initializeFields() {
 
+
+    nameField = new TextInput(nameFieldName);
+    nameField.setLength(26);
+
     descriptionField = new TextArea(descriptionFieldName);
     descriptionField.setHeight(5);
-    descriptionField.setWidth(42);
+    descriptionField.setWidth(43);
     descriptionField.setWrap(true);
 
     memberofFrame = new IFrame("ic_user_memberof_ic_group",GeneralGroupInfoTab.GroupList.class);
     memberofFrame.setHeight(150);
-    memberofFrame.setWidth(370);
+    memberofFrame.setWidth(367);
     memberofFrame.setScrolling(IFrame.SCROLLING_YES);
 
     addLink = new Link("  Add  ");
@@ -74,8 +97,11 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
   }
   public void initializeTexts() {
 
+    nameText = this.getTextObject();
+    nameText.setText("Name:");
+
     descriptionText = getTextObject();
-    descriptionText.setText("Description : ");
+    descriptionText.setText("Description:");
 
     memberof = this.getTextObject();
     memberof.setText("Member of:");
@@ -83,11 +109,35 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
 
   }
   public boolean store(ModuleInfo modinfo) {
+    try{
+      if(getGroupId() > -1){
+
+        GenericGroup group = new GenericGroup(getGroupId());
+        group.setName((String)fieldValues.get(this.nameFieldName));
+        group.setDescription((String)fieldValues.get(this.descriptionFieldName));
+
+        group.update();
+
+      }
+    }catch(Exception e){
+      //return false;
+      e.printStackTrace(System.err);
+      throw new RuntimeException("update group exception");
+    }
     return true;
   }
   public void lineUpFields() {
-    this.resize(1,4);
-    this.setBorder(1);
+    this.resize(1,5);
+    this.setCellpadding(0);
+    this.setCellspacing(0);
+
+    Table nameTable = new Table(2,1);
+    nameTable.setCellpadding(0);
+    nameTable.setCellspacing(0);
+    nameTable.setWidth(1,1,"50");
+    nameTable.add(this.nameText,1,1);
+    nameTable.add(this.nameField,2,1);
+    this.add(nameTable,1,1);
 
     Table descriptionTable = new Table(1,2);
     descriptionTable.setCellpadding(0);
@@ -95,24 +145,48 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     descriptionTable.setHeight(1,columnHeight);
     descriptionTable.add(descriptionText,1,1);
     descriptionTable.add(this.descriptionField,1,2);
-    this.add(descriptionTable,1,1);
+    this.add(descriptionTable,1,2);
 
-    this.add(memberof,1,2);
-    this.add(memberofFrame,1,3);
+    this.add(memberof,1,3);
+    this.add(memberofFrame,1,4);
 
-    this.setHeight(2,"30");
-    this.setHeight(4,super.columnHeight);
+    this.setHeight(3,"30");
+    this.setHeight(1,super.columnHeight);
+    this.setHeight(5,super.columnHeight);
 
-    this.add(addLink,1,4);
+    this.add(addLink,1,5);
   }
+
   public boolean collect(ModuleInfo modinfo) {
-    return true;
+    if(modinfo != null){
+
+      String gname = modinfo.getParameter(this.nameFieldName);
+      String desc = modinfo.getParameter(this.descriptionFieldName);
+
+      if(gname != null){
+        fieldValues.put(this.nameFieldName,gname);
+      }
+
+      if(desc != null){
+        fieldValues.put(this.descriptionFieldName,desc);
+      }
+
+      this.updateFieldsDisplayStatus();
+
+      return true;
+    }
+    return false;
+
   }
   public void initializeFieldNames() {
     descriptionFieldName = "UM_group_desc";
+    nameFieldName = "UM_group_name";
   }
   public void initializeFieldValues() {
-    /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
+    fieldValues.put(this.nameFieldName,"");
+    fieldValues.put(this.descriptionFieldName,"");
+
+    this.updateFieldsDisplayStatus();
   }
 
   public void dispose(ModuleInfo modinfo){

@@ -33,8 +33,8 @@ public class UserGroupList extends UserTab implements Disposable{
   private Link addLink;
   private IFrame memberofFrame;
   public static final String PARAMETER_USER_ID = "ic_user_id";
-  public static final String SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED = "ic_user_ic_group_direct";
-  public static final String SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED = "ic_user_ic_group_not_direct";
+  public static final String SESSIONADDRESS_USERGROUPS_DIRECTLY_RELATED = "ic_user_ic_group_direct_UGL";
+  public static final String SESSIONADDRESS_USERGROUPS_NOT_DIRECTLY_RELATED = "ic_user_ic_group_not_direct_UGL";
 
   protected Text memberof;
 
