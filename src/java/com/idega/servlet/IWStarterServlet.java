@@ -143,6 +143,10 @@ public class IWStarterServlet extends GenericServlet
 	      application.getSettings().setAutoCreateStrings(true);
 	      sendStartMessage("AutoCreateLocalizedStrings is active");
 	    }
+	    if(application.getSettings().getIfAutoCreateProperties()){
+	      application.getSettings().setAutoCreateProperties(true);
+	      sendStartMessage("AutoCreateProperties is active");
+	    }
 	    if(application.getSettings().getIfEntityAutoCreate()){
 	      EntityControl.setAutoCreationOfEntities(true);
 	      sendStartMessage("EntityAutoCreation Active");

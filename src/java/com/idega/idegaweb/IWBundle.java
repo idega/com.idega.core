@@ -235,7 +235,14 @@ public class IWBundle implements java.lang.Comparable {
 
     public String getProperty(String propertyName, String returnValueIfNull){
       String prop = getProperty(propertyName);
-      if( prop == null ) return returnValueIfNull;
+      if( prop == null ) {
+	if ( getApplication().getSettings().isAutoCreatePropertiesActive() ) {
+	  if ( getApplication().getSettings().isDebugActive() )
+	    System.out.println("Storing property: "+propertyName);
+	  setProperty(propertyName,returnValueIfNull);
+	}
+	return returnValueIfNull;
+      }
       else return prop;
     }
 

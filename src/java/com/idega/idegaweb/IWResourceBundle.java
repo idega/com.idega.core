@@ -168,7 +168,8 @@ public class IWResourceBundle extends ResourceBundle {
       String returnString = getLocalizedString(key);
       if (returnString == null) {
 	if ( getIWBundleParent().getApplication().getSettings().isAutoCreateStringsActive() ) {
-	  System.out.println("Storing localized string: "+key);
+	  if ( getIWBundleParent().getApplication().getSettings().isDebugActive() )
+	    System.out.println("Storing localized string: "+key);
 	  setLocalizedString(key,returnValueIfNull);
 	}
 	return returnValueIfNull;
