@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-
+import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.data.ICTreeNode;
@@ -67,7 +67,12 @@ public class NavigationJSMenu extends Block {
 			buffer.append("var yOverlap  = ").append(yOffset).append(";").append("\n\n");
 			buffer.append("menuContent = new Array ();\n\n");
 			
-			ICTreeNode node = bservice.getPageTree(rootNode);
+			int userId = -1;
+			try{
+				userId = iwc.getCurrentUserId();
+			}
+			catch(NotLoggedOnException nle){}
+			ICTreeNode node = bservice.getPageTree(rootNode,userId);
 			Iterator iterator = node.getChildren();
 			row = 0;
 			int parentRow = -1;
