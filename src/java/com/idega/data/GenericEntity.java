@@ -2755,7 +2755,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			buffer.append(".");
 			buffer.append(metadataIdColumn);
 			String query = buffer.toString();
-			//System.out.println("MetadataQuery="+query);
+			this.debug("[MetadataQuery]: "+query);
 			ResultSet RS = Stmt.executeQuery(query);
 			while (RS.next()) {
 				_theMetaDataAttributes.put(RS.getString("metadata_name"), RS.getString("metadata_value"));
