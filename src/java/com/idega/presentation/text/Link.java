@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.137 2004/09/08 02:59:29 laddi Exp $
+ * $Id: Link.java,v 1.138 2004/09/28 16:35:03 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1367,7 +1367,7 @@ public class Link extends Text {
 	 */
 	private void addTheMaintainedParameters(IWContext iwc) {
 		List list = com.idega.idegaweb.IWURL.getGloballyMaintainedParameters(iwc);
-		if (list != null) {
+		if (list != null && !list.isEmpty()) {
 			Iterator iter = list.iterator();
 			while (iter.hasNext()) {
 				String parameterName = (String) iter.next();
