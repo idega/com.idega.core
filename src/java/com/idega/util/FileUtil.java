@@ -371,8 +371,9 @@ public class FileUtil {
    * path = "../d/e.txt"
    * returns file = "/a/b/d/e.txt"
    * @param file
-   * @param relativeUnixPath
+   * @param relativePath
    * @return
+   * @author thomas
    */
   public static File getFileRelativeToFile(File file, String relativePath) {
   	char[] separators = {UNIX_FILE_SEPARATOR , WINDOWS_FILE_SEPARATOR};
@@ -398,7 +399,79 @@ public class FileUtil {
   	return result;
   }
   
-
+  /** Creates a file plus folders relative to the specified (existing) file according the specified path.
+   * Note: Works with windows or unix separators.
+   * + returns the specified file if the path is null or empty
+   * + returns a folder if the specified path ends with a separator
+   * E.g.
+   * file = "/a/b/c.txt" (is a file)
+   * path = "../d/e.txt"
+   * returns file = "/a/d/e.txt"
+   * E.g.
+   * file = "/a/b/c" (is a folder)
+   * path = "../d/e.txt"
+   * returns file = "/a/b/d/e.txt"
+   * @param file
+   * @param relativePath
+   * @return
+   * @author thomas
+   */
+  public static File createFileRelativeToFile(File file, String relativePath) throws IOException {
+  	char[] separatorsChar = {UNIX_FILE_SEPARATOR ,WINDOWS_FILE_SEPARATOR};
+  	String separators = new String(separatorsChar);
+  	if (! file.exists()) {
+  		throw new IOException("[FileUtil] File does not exist: "+ file.getPath());
+  	}
+  	if (relativePath == null) {
+  		return file;
+  	}
+  	int length = relativePath.length();
+  	if (length <= 0) {
+  		// relativePath is empty
+  		return file;
+  	}
+  	char lastCharacter = relativePath.charAt(--length);
+  	// if the relative path ends with a separator create a folder!
+  	// e.g. relative path is "/a/b/" that is ends with a separator
+  	boolean resultShouldBeAFolder = separators.indexOf(lastCharacter) != -1;
+  	File result = file;
+  	if (result.isFile()) {
+  		result = result.getParentFile();
+  	}
+  	StringTokenizer tokenizer = new StringTokenizer(relativePath, separators.toString());
+  	boolean hasMoreTokens = tokenizer.hasMoreTokens();
+  	while (hasMoreTokens) {
+  		String token = tokenizer.nextToken();
+		hasMoreTokens = tokenizer.hasMoreTokens();
+  		if (".".equals(token)) {
+  			// do nothing
+  		}
+  		else if ("..".equals(token)) {
+  			// go to parent
+			result = result.getParentFile();
+  		}
+  		else {
+  			// do something
+  			result = new File(result, token);
+  			if (! result.exists()) {
+  				// do something
+  				boolean success = false;
+  				if (hasMoreTokens || resultShouldBeAFolder) {
+  					// create a folder
+  					success = result.mkdir();
+  				}
+  				else {
+  					// it is a file
+  					success = result.createNewFile();
+  				}
+				if (! success) {
+  					throw new IOException("[FileUtil] File could not be created: " + result.getPath());
+  				}
+  			}
+  		}
+  	}
+  	return result;
+  }
 
 /** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String **/
   public static String getStringFromURL(String uri){
