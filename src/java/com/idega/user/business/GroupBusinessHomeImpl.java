@@ -1,6 +1,6 @@
 /*
- * $Id: GroupBusinessHomeImpl.java,v 1.5 2004/10/11 17:23:43 eiki Exp $
- * Created on Oct 11, 2004
+ * $Id: GroupBusinessHomeImpl.java,v 1.6 2004/10/19 19:54:41 eiki Exp $
+ * Created on Oct 18, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import com.idega.business.IBOHomeImpl;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/11 17:23:43 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/10/19 19:54:41 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class GroupBusinessHomeImpl extends IBOHomeImpl implements GroupBusinessHome {
 

@@ -20,6 +20,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
+import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
@@ -1042,22 +1043,11 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		//String email = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_EMAIL,attributes);
 		//String address = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
 		//String phone = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);
-			
-	  	Group group = null;
-	  	
-		//try to find the group by its unique id
+		
+		//search for the group
+		//try to find the group by its unique id or DN
 	  	//if it is found this must mean an update
-	  	if(uniqueID!=null){
-		  	try {
-				group = getGroupByUniqueId(uniqueID);
-			} catch (FinderException e) {
-				System.out.println("GroupBusiness: Group not found by unique id: "+uniqueID);
-			}
-	  	}
-	  	
-	  	if(group==null && distinguishedName!=null){
-			group = getGroupByDirectoryString(ldapUtil.convertDNToDirectoryString(distinguishedName));
-	  	}
+	  	Group group = getGroupByDNOrUniqueId(distinguishedName, uniqueID);
 	  	
 	  	if(group==null){
 	  		System.out.println("GroupBusiness: Group not found by directoryString. Creating a new group...");
@@ -1089,6 +1079,33 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	  	
 	  }
 	
+/**
+ * Tries to to get the group by its unique id and then tries to find it by the distinguished name (LDAP) if that fails.
+ * Both values do NOT need to be set.
+	 * @param distinguishedName
+	 * @param uniqueID
+	 * @param ldapUtil
+	 * @return The group if found but otherwise null
+	 * @throws RemoteException
+	 */
+	public Group getGroupByDNOrUniqueId(DN distinguishedName, String uniqueID) throws RemoteException {
+		Group group = null;
+	  	IWLDAPUtil ldapUtil = IWLDAPUtil.getInstance();
+	  	if(uniqueID!=null){
+		  	try {
+				group = getGroupByUniqueId(uniqueID);
+			} catch (FinderException e) {
+				//temp debug
+				System.out.println("GroupBusiness: Group not found by unique id: "+uniqueID);
+			}
+	  	}
+	  	
+	  	if(group==null && distinguishedName!=null){
+			group = getGroupByDirectoryString(ldapUtil.convertDNToDirectoryString(distinguishedName));
+	  	}
+		return group;
+	}
+
 public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 		Group group;
 		group = getGroupHome().findGroupByUniqueId(uniqueID);
@@ -1420,63 +1437,119 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
   	return getGroupTypeHome().findGroupTypeByGroupTypeString(type);
   }
   
-/**
- * Method getUserGroupPluginsForGroupType.
- * @param groupType
- * @return Collection of plugins or null if no found or error occured
- */
-  public Collection getUserGroupPluginsForGroupTypeString(String groupType){
-  	try {
-		return getUserGroupPlugInHome().findRegisteredPlugInsForGroupType(groupType);
-	} catch (Exception e) {
-		e.printStackTrace();
-		return null;
-	}
+  /**
+   * Returns a collection of UserGroupPluginBusiness beans or an empty list
+   * @param plugins
+   * @return a collection of UserGroupPluginBusiness implementing classes
+   */
+  protected Collection getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(Collection plugins) {
+
+  	if(plugins!=null && !plugins.isEmpty()){
+  	  	ArrayList list = new ArrayList();
+  		Iterator iter = plugins.iterator();
+  		while (iter.hasNext()) {
+  			UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
+  			UserGroupPlugInBusiness pluginBiz;
+  			try {
+  				pluginBiz = (UserGroupPlugInBusiness) getServiceInstance(Class.forName(element.getBusinessICObject().getClassName()) );
+  				list.add(pluginBiz);
+  			}
+  			catch (IBOLookupException e) {
+  				e.printStackTrace();
+  			}
+  			catch (RemoteException e) {
+  				e.printStackTrace();
+  			}
+  			catch (ClassNotFoundException e) {
+  				e.printStackTrace();
+  			}
+  		}
+  	}
+
+  	return ListUtil.getEmptyList();
   }
 
-/**
- * Method getUserGroupPluginsForGroupType.
- * @param groupType
- * @return Collection of plugins or null if no found or error occured
- */
-  public Collection getUserGroupPluginsForGroupType(GroupType groupType){
-  	try {
-		return getUserGroupPlugInHome().findRegisteredPlugInsForGroupType(groupType);
-	} catch (Exception e) {
-		e.printStackTrace();
-		return null;
-	}
-  }
   
-  public Collection getUserGroupPluginsForGroup(Group group) {
-  	try {
-		return getUserGroupPlugInHome().findRegisteredPlugInsForGroup(group);
-	} catch (Exception e) {
-		e.printStackTrace();
-		return null;
+/**
+ * Gets a collection of UserGroupPluginBusiness beans that can operate on the supplied group type
+ * @param groupType
+ * @return Collection of plugins
+ * @throws RemoteException
+ */
+  public Collection getUserGroupPluginsForGroupType(String groupType) throws RemoteException{
+
+	try {
+		return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findRegisteredPlugInsForGroupType(groupType));
 	}
+	catch (FinderException e) {
+		//no big deal, there are no plugins registered. Return an empty list
+	}
+	catch (IDORelationshipException e) {
+//		no big deal, there are no plugins registered. Return an empty list
+	}
+
+	return ListUtil.getEmptyList();
+	
   }
   
   /**
- * Method getUserGroupPluginsForUser.
- * @param user
- * @return Collection of plugins or null if no found or error occured
- */
-  public Collection getUserGroupPluginsForUser(User user){
+   * Gets a collection of UserGroupPluginBusiness beans that can operate on the supplied group
+ * @param group
+ * @return Collection of plugins
+ * @throws RemoteException
+   */
+  public Collection getUserGroupPluginsForGroup(Group group) throws RemoteException {
   	try {
-  		//finna allar gruppur tengdar thessum user og gera find fall sem tekur inn i sig collection a groups 
-		return getUserGroupPlugInHome().findRegisteredPlugInsForUser(user);
-	} catch (Exception e) {
-		e.printStackTrace();
-		return null;
+		return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findRegisteredPlugInsForGroup(group));
 	}
+	catch (FinderException e) {
+		//no big deal, there are no plugins registered. Return an empty list
+	}
+
+	return ListUtil.getEmptyList();
   }
   
+  /**
+ * Gets a collection of UserGroupPluginBusiness beans that can operate on the supplied user
+ * @param user
+ * @return Collection of plugins
+ * @throws RemoteException
+ */
+  public Collection getUserGroupPluginsForUser(User user) throws RemoteException{
+  	try {
+  		//finna allar gruppur tengdar thessum user og gera find fall sem tekur inn i sig collection a groups 
+		return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findRegisteredPlugInsForUser(user));
+	}
+	catch (FinderException e) {
+		//no big deal, there are no plugins registered. Return an empty list
+	}
+	
+	return ListUtil.getEmptyList();
+  }
+  
+  
+  /**
+   * Gets a collection of all registered UserGroupPluginBusiness beans
+   * @return Collection of plugins
+   * @throws RemoteException
+   */
+    public Collection getUserGroupPlugins() throws RemoteException{
+	    	try {
+	  		return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findAllPlugIns());
+	  	}
+	  	catch (FinderException e) {
+	  		//no big deal, there are no plugins registered. Return an empty list
+	  	}
+	  	
+	  	return ListUtil.getEmptyList();
+    }
+    
+    
   public GroupTypeHome getGroupTypeHome() throws RemoteException{
   	return  (GroupTypeHome) this.getIDOHome(GroupType.class);
   }
   	
-  public UserGroupPlugInHome getUserGroupPlugInHome() throws RemoteException{
+  protected UserGroupPlugInHome getUserGroupPlugInHome() throws RemoteException{
   	return  (UserGroupPlugInHome) this.getIDOHome(UserGroupPlugIn.class);
   }
 
@@ -2324,10 +2397,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/10/11 17:23:44 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/10/19 19:54:41 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.79 $
+	 * @version $Revision: 1.80 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

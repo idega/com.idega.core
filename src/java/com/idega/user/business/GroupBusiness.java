@@ -1,6 +1,6 @@
 /*
- * $Id: GroupBusiness.java,v 1.45 2004/10/11 17:23:44 eiki Exp $
- * Created on Oct 11, 2004
+ * $Id: GroupBusiness.java,v 1.46 2004/10/19 19:54:41 eiki Exp $
+ * Created on Oct 18, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -43,7 +43,6 @@ import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeHome;
 import com.idega.user.data.User;
-import com.idega.user.data.UserGroupPlugInHome;
 import com.idega.user.data.UserGroupRepresentativeHome;
 import com.idega.user.data.UserHome;
 import com.idega.util.datastructures.NestedSetsContainer;
@@ -51,10 +50,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/11 17:23:44 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/10/19 19:54:41 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.45 $
+ * @version $Revision: 1.46 $
  */
 public interface GroupBusiness extends IBOService, IWLDAPConstants {
 
@@ -312,6 +311,11 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 			Group parentGroup) throws CreateException, NamingException, RemoteException;
 
 	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupByDNOrUniqueId
+	 */
+	public Group getGroupByDNOrUniqueId(DN distinguishedName, String uniqueID) throws RemoteException;
+
+	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupByUniqueId
 	 */
 	public Group getGroupByUniqueId(String uniqueID) throws FinderException, java.rmi.RemoteException;
@@ -423,34 +427,29 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	public GroupType getGroupTypeFromString(String type) throws RemoteException, FinderException;
 
 	/**
-	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPluginsForGroupTypeString
-	 */
-	public Collection getUserGroupPluginsForGroupTypeString(String groupType) throws java.rmi.RemoteException;
-
-	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPluginsForGroupType
 	 */
-	public Collection getUserGroupPluginsForGroupType(GroupType groupType) throws java.rmi.RemoteException;
+	public Collection getUserGroupPluginsForGroupType(String groupType) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPluginsForGroup
 	 */
-	public Collection getUserGroupPluginsForGroup(Group group) throws java.rmi.RemoteException;
+	public Collection getUserGroupPluginsForGroup(Group group) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPluginsForUser
 	 */
-	public Collection getUserGroupPluginsForUser(User user) throws java.rmi.RemoteException;
+	public Collection getUserGroupPluginsForUser(User user) throws RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPlugins
+	 */
+	public Collection getUserGroupPlugins() throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupTypeHome
 	 */
 	public GroupTypeHome getGroupTypeHome() throws RemoteException;
-
-	/**
-	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPlugInHome
-	 */
-	public UserGroupPlugInHome getUserGroupPlugInHome() throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#addGroupUnderDomainRoot
