@@ -58,11 +58,12 @@ public class BlockMenu extends Block {
       className = String.valueOf(defaultClass.hashCode());
     }
 
+    /*
     if(paramtersToMainTain!=null)
       System.err.println("parameter collection size is "+paramtersToMainTain.size());
     else
       System.err.println("parameter collection size is null");
-
+*/
     if(className !=null){
       try{
       if(showLinks)

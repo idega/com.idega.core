@@ -369,7 +369,7 @@ public class LoginDBHandler {
       sql.append(new LoginRecord().getIDColumnName());
       sql.append( " = ");
       sql.append(iLoginRecordId);
-      System.err.println(sql.toString());
+      //System.err.println(sql.toString());
 
       com.idega.data.SimpleQuerier.execute(sql.toString());
       return true;
