@@ -1,5 +1,5 @@
 /*
- * $Id: XMLParser.java,v 1.4 2003/03/14 09:42:37 palli Exp $
+ * $Id: XMLParser.java,v 1.5 2003/03/16 11:23:15 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -51,7 +51,7 @@ public class XMLParser {
       throw new XMLException(e.getMessage());
     }
 		catch(IOException e) {
-			e.getCause().printStackTrace();
+			e.printStackTrace();
 			throw new XMLException(e.getMessage());
 		}
     
@@ -72,7 +72,7 @@ public class XMLParser {
       throw new XMLException(e.getMessage());
     }
 		catch(IOException e) {
-			e.getCause().printStackTrace();
+			e.printStackTrace();
 			throw new XMLException(e.getMessage());
 		}
     
@@ -93,7 +93,7 @@ public class XMLParser {
       throw new XMLException(e.getMessage());
     }
 		catch(IOException e) {
-			e.getCause().printStackTrace();
+			e.printStackTrace();
 			throw new XMLException(e.getMessage());
 		}    
 
@@ -115,7 +115,7 @@ public class XMLParser {
       throw new XMLException(e.getMessage());
     }
     catch(IOException e) {
-    	e.getCause().printStackTrace();
+    	e.printStackTrace();
 			throw new XMLException(e.getMessage());
     }
 
