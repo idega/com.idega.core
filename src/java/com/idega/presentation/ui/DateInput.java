@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.27 2003/04/03 20:36:55 laddi Exp $
+ * $Id: DateInput.java,v 1.28 2003/04/22 09:47:37 roar Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -626,6 +626,18 @@ public class DateInput extends InterfaceObjectContainer {
 	 */
 	public void setStyleClass(String styleName) {
 		_styleClass = styleName;
+	}
+	
+	public String getIDForDay(){
+		return _theDay.getID();	
+	}
+
+	public String getIDForMonth(){
+		return _theMonth.getID();	
+	}
+
+	public String getIDForYear(){
+		return _theYear.getID();	
 	}
 
 }
