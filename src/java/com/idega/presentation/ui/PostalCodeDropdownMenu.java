@@ -19,6 +19,7 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 	
 	private Country country = null;
 	private String countryName = null;
+	private boolean showCountry = false;
 	public static final String IW_POSTAL_CODE_MENU_PARAM_NAME="iw_postal_code_id";
 	
 	public PostalCodeDropdownMenu(){
@@ -32,6 +33,9 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 		}
 		
 		if( country!=null ){
+			if(showCountry){
+				addMenuElement(-1,country.getName());
+			}
 			Collection postals = getAddressBusiness(iwc).getPostalCodeHome().findAllByCountryIdOrderedByPostalCode(((Integer)country.getPrimaryKey()).intValue());
 			Iterator iter = postals.iterator();
 			while (iter.hasNext()) {
@@ -43,6 +47,10 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 		}
 		else addMenuElement("No country selected");
 				
+	}
+	
+	public void setShowCountry(boolean flag){
+		this.showCountry = flag;
 	}
 	
 	
