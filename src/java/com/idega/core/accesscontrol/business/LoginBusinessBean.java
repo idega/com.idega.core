@@ -55,7 +55,7 @@ public class LoginBusinessBean implements IWEventListener {
 	private static final String _APPADDRESS_LOGGED_ON_LIST = "ic_loggedon_list";
 	private static final String _LOGGINADDRESS_LOGGED_ON_INFO = "ic_loggedon_info";
 	public static final String USER_PROPERTY_PARAMETER = "user_properties";
-	
+
 	public static final String LOGINTYPE_AS_ANOTHER_USER = "as_another_user";
 
 	public static final int STATE_NO_STATE = 0;
@@ -123,6 +123,7 @@ public class LoginBusinessBean implements IWEventListener {
 	 */
 	protected boolean logOutUser(IWContext iwc) {
 		try {
+
 			logOut(iwc);
 			//internalSetState(iwc, "loggedoff");
 			internalSetState(iwc, STATE_LOGGED_OUT);
@@ -199,7 +200,14 @@ public class LoginBusinessBean implements IWEventListener {
 				if (isLogOffAction(iwc)) {
 					//logOut(iwc);
 					//internalSetState(iwc,"loggedoff");
-					logOutUser(iwc);
+					
+					LoggedOnInfo info = getLoggedOnInfo(iwc);
+					if (LOGINTYPE_AS_ANOTHER_USER.equals(info.getLoginType())) {
+						this.logOutAsAnotherUser(iwc);
+						onLoginSuccessful(iwc);
+					} else {
+						logOutUser(iwc);
+					}
 				}
 			} else {
 
@@ -339,9 +347,8 @@ public class LoginBusinessBean implements IWEventListener {
 		storeLoggedOnInfoInSession(iwc, loginTableId, loginTable.getUserLogin(), user, loginRecordId, loginTable.getLoginType());
 		return true;
 	}
-	
+
 	protected void storeUserAndGroupInformationInSession(IWContext iwc, User user) throws Exception {
-		
 		//New user system
 		iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
 		LoginBusinessBean.setUser(iwc, user);
@@ -367,9 +374,9 @@ public class LoginBusinessBean implements IWEventListener {
 			GenericGroup primaryGroup = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(user.getPrimaryGroupID());
 			LoginBusinessBean.setPrimaryGroup(iwc, primaryGroup);
 		}
-		
+
 		UserProperties properties = new UserProperties(iwc.getApplication(), user.getID());
-		setLoginAttribute(USER_PROPERTY_PARAMETER, properties,iwc);
+		setLoginAttribute(USER_PROPERTY_PARAMETER, properties, iwc);
 	}
 
 	protected void storeLoggedOnInfoInSession(IWContext iwc, int loginTableId, String login, User user, int loginRecordId, String loginType) {
@@ -386,7 +393,7 @@ public class LoginBusinessBean implements IWEventListener {
 		getLoggedOnInfoList(iwc).add(lInfo);
 		setLoggedOnInfo(lInfo, iwc);
 
-		iwc.setSessionAttribute(user.getID() + "-LoginInfo", lInfo);
+		this.setLoginAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, lInfo,iwc);
 	}
 
 	private int verifyPasswordAndLogin(IWContext iwc, String login, String password) throws Exception {
@@ -431,17 +438,20 @@ public class LoginBusinessBean implements IWEventListener {
 		return returner;
 	}
 	protected void logOut(IWContext iwc) throws Exception {
+		
 		if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
 			// this.getLoggedOnInfoList(iwc).remove(this.getLoggedOnInfo(iwc));
+			
+			LoggedOnInfo info = getLoggedOnInfo(iwc);
 			List ll = this.getLoggedOnInfoList(iwc);
-			int indexOfLoggedOfInfo = ll.indexOf(getLoggedOnInfo(iwc));
+			int indexOfLoggedOfInfo = ll.indexOf(info);
 			if (indexOfLoggedOfInfo > -1) {
 				LoggedOnInfo _logOnInfo = (LoggedOnInfo)ll.remove(indexOfLoggedOfInfo);
 				LoginDBHandler.recordLogout(_logOnInfo.getLoginRecordId());
 			}
-			
+
 			UserProperties properties = getUserProperties(iwc);
-			if (properties != null){
+			if (properties != null) {
 				properties.store();
 			}
 
@@ -569,7 +579,7 @@ public class LoginBusinessBean implements IWEventListener {
 		return returner;
 	}
 
-	public boolean logInAsAnotherUser(IWContext iwc, String personalID)  throws Exception  {
+	public boolean logInAsAnotherUser(IWContext iwc, String personalID) throws Exception {
 		boolean returner = false;
 		try {
 			com.idega.user.data.User user = getUserBusiness(iwc).getUser(personalID);
@@ -584,9 +594,8 @@ public class LoginBusinessBean implements IWEventListener {
 		return returner;
 	}
 
+	public boolean retrieveLoginInformation(IWContext iwc) {
 
-	public boolean retrieveLoginInformation(IWContext iwc){
-		
 		//logout
 		if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
 			List ll = this.getLoggedOnInfoList(iwc);
@@ -597,54 +606,59 @@ public class LoginBusinessBean implements IWEventListener {
 			}
 			iwc.removeSessionAttribute(LoginAttributeParameter);
 		}
-		
+
 		//login
 		Object obj = iwc.getSessionAttribute(prmReservedLoginSessionAttribute);
-		if(obj != null){
-			iwc.setSessionAttribute(LoginAttributeParameter,obj);
+		if (obj != null) {
+			iwc.setSessionAttribute(LoginAttributeParameter, obj);
 			return true;
 		} else {
 			return false;
 		}
-		
+
 	}
-	
-	public void reserveLoginInformation(IWContext iwc){
+
+	public void reserveLoginInformation(IWContext iwc) {
 		if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
 			// this.getLoggedOnInfoList(iwc).remove(this.getLoggedOnInfo(iwc));
-			
-			UserProperties properties = (UserProperties)getLoginAttribute(USER_PROPERTY_PARAMETER,iwc);
+
+			UserProperties properties = (UserProperties)getLoginAttribute(USER_PROPERTY_PARAMETER, iwc);
 			if (properties != null)
 				properties.store();
 
-			iwc.setSessionAttribute(prmReservedLoginSessionAttribute,iwc.getSessionAttribute(LoginAttributeParameter));
+			iwc.setSessionAttribute(prmReservedLoginSessionAttribute, iwc.getSessionAttribute(LoginAttributeParameter));
+			
+			//logout
 			iwc.removeSessionAttribute(LoginAttributeParameter);
 		}
 	}
-	
-	public void logOutAsAnotherUser(IWContext iwc){
+
+	public void logOutAsAnotherUser(IWContext iwc) {
 		LoggedOnInfo info = this.getLoggedOnInfo(iwc);
 		int rec = info.getLoginRecordId();
 		retrieveLoginInformation(iwc);
 		LoginDBHandler.recordLogout(rec);
 	}
-	
-	
-	
+
 	public boolean logInAsAnotherUser(IWContext iwc, User user) throws Exception {
-		
-		if(isLoggedOn(iwc)){
-			if(iwc.getUser().equals(user)){
+
+		if (isLoggedOn(iwc)) {
+			LoggedOnInfo info = this.getLoggedOnInfo(iwc);
+			if (iwc.getUser().equals(user)) {
 				return true;
+			} else if(LOGINTYPE_AS_ANOTHER_USER.equals(info.getLoginType())){
+				System.out.println("trying to log in as another user faild: log out of current \"other user\"");
+				return false;
 			}
 			reserveLoginInformation(iwc);
-			storeUserAndGroupInformationInSession(iwc, user);		
-			LoggedOnInfo info = this.getLoggedOnInfo(iwc);
+			storeUserAndGroupInformationInSession(iwc, user);
 			int loginRecordId = LoginDBHandler.recordLogin(info.getLoginTableId(), iwc.getRemoteIpAddress(), user.getID());
-			storeLoggedOnInfoInSession(iwc, info.getLoginTableId(), info.getLogin(), user, loginRecordId, LOGINTYPE_AS_ANOTHER_USER );
+			storeLoggedOnInfoInSession(iwc, info.getLoginTableId(), info.getLogin(), user, loginRecordId, LOGINTYPE_AS_ANOTHER_USER);
+			onLoginSuccessful(iwc);
+			
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -675,7 +689,6 @@ public class LoginBusinessBean implements IWEventListener {
 	}
 
 	/**
-	 * 
 	 * @param loginRecords - all login records for one user
 	 * @return LoginTable record to log on the system
 	 */
@@ -705,9 +718,9 @@ public class LoginBusinessBean implements IWEventListener {
 	public LoggedOnInfo createLoggedOnInfo(IWContext iwc) {
 		return new LoggedOnInfo();
 	}
-	
+
 	public static UserProperties getUserProperties(IWUserContext iwuc) {
-		return (UserProperties) getLoginAttribute(LoginBusinessBean.USER_PROPERTY_PARAMETER,iwuc);
+		return (UserProperties)getLoginAttribute(LoginBusinessBean.USER_PROPERTY_PARAMETER, iwuc);
 	}
 
 }
