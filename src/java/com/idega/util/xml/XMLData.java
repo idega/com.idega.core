@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.rmi.RemoteException;
 
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
@@ -16,7 +17,7 @@ import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.Storable;
-import com.idega.io.Writer;
+import com.idega.io.ObjectWriter;
 
 import com.idega.presentation.IWContext;
 import com.idega.util.FileUtil;
@@ -48,6 +49,7 @@ public class XMLData implements Storable {
   private XMLDocument document = null;
   private int xmlFileId = -1;
   private String name = null;
+  private String rootName = null;
   
   public static XMLData getInstanceForFile(int xmlFileId) {
     XMLData data = new XMLData();
@@ -61,15 +63,27 @@ public class XMLData implements Storable {
     return data;
   }
   
+  public static XMLData getInstanceForFile(String path) throws IOException {
+  	XMLData data = new XMLData();
+  	data.initialize(path);
+  	return data;
+  }
+  
   public static XMLData getInstanceWithoutExistingFile()  {
     XMLData data = new XMLData();
     return data;
   } 
   
-  public static XMLData getInstanceWithoutExistingFile(String name) {
+  public static XMLData getInstanceWithoutExistingFileSetName(String name) {
     XMLData data = XMLData.getInstanceWithoutExistingFile();
     data.setName(name);
     return data;
+  }
+  
+  public static XMLData getInstanceWithoutExistingFileSetNameSetRootName(String name, String rootName) {
+  	XMLData data = getInstanceWithoutExistingFileSetName(name);
+  	data.rootName = rootName;
+  	return data;
   }
  
   public void initialize(int fileId) {
@@ -77,11 +91,6 @@ public class XMLData implements Storable {
     initialize(xmlFile);
   }
   
-  public void inittialize(ICFile xmlFile) {
-    // force to initialize with an instance of XMLFile
-    initialize(xmlFile);
-  }
-    
   public String getName()  {
     // name is set
     if (name != null && name.length() > 0) {
@@ -105,7 +114,8 @@ public class XMLData implements Storable {
   public XMLDocument getDocument()  {
     if (document == null)  {
       // create an empty document
-      document = new XMLDocument(new XMLElement(DEFAULT_ROOT));
+    	String tempRootName = (rootName == null) ? DEFAULT_ROOT : rootName;
+      document = new XMLDocument(new XMLElement(tempRootName));
     }  
     return document;
   }
@@ -222,14 +232,17 @@ public class XMLData implements Storable {
   
 
   private void initialize(ICFile xmlFile) {
-    InputStream inputStream = null;
+  	 name = xmlFile.getName();
+  	 xmlFileId = ( (Integer) xmlFile.getPrimaryKey()).intValue();
+  	 InputStream inputStream = xmlFile.getFileValue();
+  	 initialize(inputStream);
+  }
+  	 
+  private void initialize(InputStream inputStream) {
     try {
-      name = xmlFile.getName();
       XMLParser parser = new XMLParser();
-      inputStream = xmlFile.getFileValue();
       document = parser.parse(inputStream);
       inputStream.close();
-      xmlFileId = ( (Integer) xmlFile.getPrimaryKey()).intValue();
     }
     catch (Exception ex)  {
       System.err.println("[XMLData]: input stream could not be parsed. Message was: " + ex.getMessage());
@@ -246,6 +259,15 @@ public class XMLData implements Storable {
     }      
   } 
     
+  private void initialize(String path) throws IOException {
+  	File file = new File(path);
+  	if (! (file.exists() && file.canRead() && file.isFile())) {
+  		throw new IOException("[XMLData] File could not be opened");
+  	}
+  	InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+  	initialize(inputStream);
+  }
+  	
     
   private ICFile getXMLFile(int fileId)  {
     try {
@@ -289,7 +311,7 @@ public class XMLData implements Storable {
    xmlFileId = i;
   }
   
-  public Object write(Writer writer) {
+  public Object write(ObjectWriter writer) throws RemoteException {
   	return writer.write(this);
   }
 
