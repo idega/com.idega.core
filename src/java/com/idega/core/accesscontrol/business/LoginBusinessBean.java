@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -20,6 +21,7 @@ import com.idega.core.accesscontrol.data.LoginInfoHome;
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
@@ -40,7 +42,7 @@ import com.idega.util.reflect.MethodFinder;
  * Description:
  * Copyright:    Copyright (c) 2000-2002 idega.is All Rights Reserved
  * Company:      idega
-  *@author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson</a>,<a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+  *@author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.1
 
  */
@@ -117,8 +119,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		try {
 			int didLogin = verifyPasswordAndLogin(iwc, username, password);
 			if (didLogin == STATE_LOGGED_ON) {
-				//internalSetState(iwc, "loggedon");
-				internalSetState(iwc, STATE_LOGGED_ON);
+				onLoginSuccessful(iwc);
 				return true;
 			}
 			return false;
@@ -343,6 +344,28 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected static void setPrimaryGroup(IWUserContext iwc, GenericGroup value) {
 		LoginBusinessBean.setLoginAttribute(PrimaryGroupParameter, value, iwc);
 	}
+	
+	/**
+	 * Use this method if the one calling this method is not logged in, else use #logInAsAnotherUser(IWContext,User)
+	 * @param iwc
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
+	protected boolean logIn(IWContext iwc, User user) throws Exception {
+		Collection logins = ((LoginTableHome)IDOLookup.getHome(LoginTable.class)).findLoginsForUser(user);
+		if(!logins.isEmpty()) {
+			LoginTable loginTable = (LoginTable)logins.iterator().next();
+		
+			storeUserAndGroupInformationInSession(iwc, user);
+			
+			int loginTableId = loginTable.getID();
+			int loginRecordId = LoginDBHandler.recordLogin(loginTableId, iwc.getRemoteIpAddress());
+			storeLoggedOnInfoInSession(iwc, loginTableId, loginTable.getUserLogin(), user, loginRecordId, loginTable.getLoginType());
+			return true;
+		}
+		return false;
+	}	
 	protected boolean logIn(IWContext iwc, LoginTable loginTable) throws Exception {
 		//New user system
 		com.idega.core.user.data.UserHome uHome = (com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHome(User.class);
@@ -725,6 +748,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginDBHandler.recordLogout(rec);
 	}
 
+	/**
+	 * Use this method if the one calling this method is logged in, else use #logIn(IWContext,User)
+	 * @param iwc
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
 	public boolean logInAsAnotherUser(IWContext iwc, User user) throws Exception {
 
 		if (isLoggedOn(iwc)) {
