@@ -3,8 +3,10 @@ package com.idega.presentation.ui;
 import java.rmi.RemoteException;
 import java.text.Collator;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -17,6 +19,9 @@ import javax.ejb.FinderException;
 import com.idega.business.IBOLookup;
 import com.idega.core.business.AddressBusiness;
 import com.idega.core.data.Country;
+import com.idega.core.data.CountryHome;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 //import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
@@ -34,6 +39,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 	private String selectedCountryName = null;
 	private Country selectedCountry = null;
 	public static final String IW_COUNTRY_MENU_PARAM_NAME="iw_country_id";
+	private static Map countries = null;
 	
 	public CountryDropdownMenu(){
 		super(IW_COUNTRY_MENU_PARAM_NAME); 
@@ -43,9 +49,41 @@ public class CountryDropdownMenu extends DropdownMenu {
 		super(parameterName); 
 	}
 	
+	private Country getCountryByISO(String ISO){
+		if(countries==null)
+			initCountries();
+		if(countries.containsKey(ISO))
+			return (Country) countries.get(ISO);
+		return null;
+	}
+	
+	private void initCountries(){
+		
+		try {
+			CountryHome countryHome = (CountryHome) IDOLookup.getHome(Country.class);
+			Collection counts = countryHome.findAll();
+			countries = new Hashtable(counts.size());
+			for (Iterator iter = counts.iterator(); iter.hasNext();) {
+				Country element = (Country) iter.next();
+				countries.put(element.getIsoAbbreviation(),element);
+			}
+		}
+		catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void main(IWContext iwc) throws Exception{
-		//TODO eiki cache countries
+		//TODO eiki cache countries 
+		// some caching made by aron
 		super.main(iwc);
+		//System.out.println( "country dropdown main start "+ com.idega.util.IWTimestamp.RightNow().toString());
 		List localeCountries = Arrays.asList(Locale.getISOCountries());
 		
 		//List locales = Arrays.asList( java.util.Locale.getAvailableLocales());
@@ -61,6 +99,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 		String lang = currentLocale.getISO3Language();
 		Locale locale;
 		List smallCountries = new Vector();
+		CountryHome countryHome = getAddressBusiness(iwc).getCountryHome();
 		while (iter.hasNext()) {
 			//Locale locale = (Locale) iter.next();
 			
@@ -69,7 +108,8 @@ public class CountryDropdownMenu extends DropdownMenu {
 				locale = new Locale(lang,ISOCountry);
 				
 				countryDisplayName = locale.getDisplayCountry(currentLocale);
-				country = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(locale.getCountry());	
+				//country = countryHome.findByIsoAbbreviation(locale.getCountry());	
+				country = getCountryByISO(locale.getCountry());
 				
 				if( countryDisplayName!=null && country!=null && !countries.containsKey(country.getPrimaryKey())){
 					countries.put(country.getPrimaryKey(),country);//cache
@@ -78,13 +118,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 					//addMenuElement(((Integer)country.getPrimaryKey()).intValue(),countryDisplayName);
 				}
 			}
-			catch (RemoteException e1) {
-				e1.printStackTrace();
-			}
-			catch (EJBException e1) {
-				e1.printStackTrace();
-			}
-			catch (FinderException e1) {
+			catch (Exception e1) {
 				//e1.printStackTrace();
 			}
 		}
@@ -116,7 +150,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 		if(selectedCountry!=null){
 			setSelectedElement(((Integer)selectedCountry.getPrimaryKey()).intValue());
 		}
-		
+		//System.out.println( "country dropdown main end "+ com.idega.util.IWTimestamp.RightNow().toString());
 	}
 	
 	
