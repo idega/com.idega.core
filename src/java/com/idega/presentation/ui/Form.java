@@ -483,7 +483,7 @@ public void setEventListener(String eventListenerClassName){
 
 
   public void setPageToSubmitTo(int ibPageID){
-    this.setAction(com.idega.idegaweb.IWMainApplication.BUILDER_SERVLET_URL+"/?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageID);
+    this.setAction(com.idega.idegaweb.IWMainApplication.BUILDER_SERVLET_URL+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageID);
   }
 
 
