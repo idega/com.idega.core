@@ -1,6 +1,11 @@
-//idega 2000 - Tryggvi Larusson
 /*
- *Copyright 2000 idega.is All Rights Reserved.
+ * $Id: TextInput.java,v 1.36 2005/03/08 12:18:50 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
  */
 package com.idega.presentation.ui;
 
@@ -10,9 +15,16 @@ import javax.faces.context.FacesContext;
 import com.idega.presentation.IWContext;
 import com.idega.util.text.TextSoap;
 
+
+
 /**
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
- * @version 1.2
+ * <p>
+ * Class that renders out a input element of type text
+ * </p>
+ *  Last modified: $Date: 2005/03/08 12:18:50 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
+ * @version $Revision: 1.36 $
  */
 public class TextInput extends GenericInput {
     private boolean isSetAsIntegers;
