@@ -4,6 +4,8 @@
 */
 package com.idega.presentation.ui;
 
+import java.text.NumberFormat;
+
 import com.idega.presentation.IWContext;
 import com.idega.util.text.TextSoap;
 
@@ -32,6 +34,8 @@ public class TextInput extends GenericInput {
 	private String minimumLengthErrorMessage;
 
 	private int minimumLength;
+	
+	private int decimals = -1;	
 
 	/**
 	 * Constructs a new <code>TextInput</code> with the name "untitled".
@@ -198,9 +202,33 @@ public class TextInput extends GenericInput {
 	 * @param errorMessage	The error message to display.
 	 */
 	public void setAsFloat(String errorMessage) {
+		setAsFloat(errorMessage, decimals);
+	}
+	
+	/**
+	 * Sets the text input so that it must contain a float, displays an alert with the 
+	 * given error message if the "error" occurs.  
+	 * Also, sets the (exact) number of decimal to be displayed for a float field. 
+	 * If set to negative number, the value is ignored.
+	 * Uses Javascript.
+	 * @param errorMessage	The error message to display.
+	 * @param dec The number of decimals 
+	 */
+	public void setAsFloat(String errorMessage, int decimals) {
 		isSetAsFloat = true;
 		floatErrorMessage = TextSoap.removeLineBreaks(errorMessage);
-	}
+		setDecimals(decimals);
+	}	
+	
+	/**
+	 * Sets the (exact) number of decimal to be displayed for a float field. 
+	 * If set to negative number, the value is ignored.
+	 * 
+	 * @param dec The number of decimals
+	 */
+	public void setDecimals(int dec){
+		decimals = dec;
+	}	
 
 	/**
 	 * @deprecated	Use setAsIcelandicSSNumber(String errorMessage)
@@ -256,8 +284,20 @@ public class TextInput extends GenericInput {
 			setOnSubmitFunction("warnIfNotCreditCardNumber", "function warnIfNotCreditCardNumber (inputbox,warnMsg) {\n  \n   if (inputbox.value.length == 16){ \n    return true; \n   } \n else if (inputbox.value.length == 0){\n return true; \n }   \n     alert ( warnMsg );\n   return false;\n \n }", notCreditCardErrorMessage);
 
 		if (isSetAsFloat) {
-			setOnSubmitFunction("warnIfNotFloat", "function warnIfNotFloat(inputbox,warnMsg) {\n	var inputString = inputbox.value;\n	for(i=0; i < inputString.length; i++) { \n	\tif (inputString.charAt(i) == \",\") { inputString = inputString.substring(0,i) + \".\" + inputString.substring(i+1,inputString.length); }\n	}\n	if (inputString.length == 0) { return true;\n	}\n	if (isNaN(inputString)){\n	\talert ( warnMsg );\n	\treturn false;\n	}\n	return true;\n	}", floatErrorMessage);
-			setOnBlur("return checkSubmit(this)");
+			setOnSubmitFunction("warnIfNotFloat", "function warnIfNotFloat(inputbox,warnMsg,submit) {\n	var ok = false;\n	var inputString = inputbox.value;\n	for(i=0; i < inputString.length; i++) { \n	\tif (inputString.charAt(i) == \",\") { inputString = inputString.substring(0,i) + \".\" + inputString.substring(i+1,inputString.length); }\n	}\n	if (inputString.length == 0) {\n		ok = true;\n	} else if (isNaN(inputString)){\n	\talert ( warnMsg );\n	\tok = false;\n	}else{\n		ok = true;\n	}\n	if (ok && submit){\n		inputbox.value = inputString;\n	}\n 	return ok;\n}", floatErrorMessage, "true");
+			setOnBlur("return warnIfNotFloat(this, '"+ floatErrorMessage +"', false)");
+
+			//formating decimal sign (for default Locale) and number of decimals
+			NumberFormat number = NumberFormat.getInstance(); 
+			if (decimals >= 0){
+				number.setMaximumFractionDigits(decimals);
+				number.setMinimumFractionDigits(decimals);				
+			}
+			try{
+				setContent(number.format(new Float(getContent())));
+			}catch(IllegalArgumentException ex){ 
+				ex.printStackTrace();
+			}
 		}
 		
 		if (isSetMinimumLength) {
