@@ -172,8 +172,12 @@ public class SelectQuery implements Outputable, Cloneable {
 		}
 		throw new IDORelationshipException("No relation found between tables!");
 	}
-	
+
 	public void addManyToManyJoin(Table srcTable, Table destTable) throws IDORelationshipException {
+		addManyToManyJoin(srcTable, destTable, null);
+	}
+	
+	public void addManyToManyJoin(Table srcTable, Table destTable, String alias) throws IDORelationshipException {
 		if (srcTable.hasEntityDefinition() && destTable.hasEntityDefinition()) {
 			IDOEntityDefinition source = srcTable.getEntityDefinition();
 			IDOEntityDefinition destination = destTable.getEntityDefinition();
@@ -187,7 +191,7 @@ public class SelectQuery implements Outputable, Cloneable {
 							String middleTableName = source.getMiddleTableNameForRelation(destination.getSQLTableName());
 							if (middleTableName == null) { throw new IDORelationshipException("Middle table not found for tables."); }
 	
-							Table middleTable = new Table(middleTableName);
+							Table middleTable = new Table(middleTableName, alias);
 	
 							addCriteria(new JoinCriteria(srcTable.getColumn(source.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase()), middleTable.getColumn(source.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase())));
 							addCriteria(new JoinCriteria(middleTable.getColumn(destination.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase()), destTable.getColumn(destination.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase())));
