@@ -610,6 +610,12 @@ public class IWMainApplication{//implements ServletContext{
 
   public static String getHashCode(Class classObject){
 
+    if(cryptoCodes == null)
+      cryptoCodes = new Properties();
+
+    if(cryptoProps == null)
+      cryptoProps =new Properties();
+
     String hashcode;
     if(cryptoCodes.containsKey(classObject.getName())){
       hashcode = (String) cryptoCodes.get(classObject.getName());
