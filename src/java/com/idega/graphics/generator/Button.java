@@ -117,8 +117,6 @@ public class Button {
       Button button = new Button();
       button.fillColor = IWColor.getAWTColorFromHex(args[1]);
       button.highlightColor = IWColor.getAWTColorFromHex(args[2]);
-      button.width = Integer.parseInt(args[3]);
-      button.height = Integer.parseInt(args[4]);
       File file = new File(args[5]);
       FileInputStream fis = new FileInputStream(file);
       Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
@@ -133,6 +131,10 @@ public class Button {
           button.name = tokens.nextToken();
           button.text = tokens.nextToken().toUpperCase();
         }
+
+        button.width = Integer.parseInt(args[3]);
+        button.height = Integer.parseInt(args[4]);
+        button.resize = false;
         button.generate();
       }
 
