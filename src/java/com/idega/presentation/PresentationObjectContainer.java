@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.30 2004/05/24 23:45:29 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.31 2004/05/24 23:54:30 gummi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -376,7 +376,6 @@ public class PresentationObjectContainer extends PresentationObject
 			}
 			catch (NumberFormatException e)
 			{
-				System.out.println("PresentationObjectContainer#getContainedObject("+objectInstanceID+") - NumberFormatException");
 				int objectInstanceIDInt = Integer.parseInt(objectInstanceID.substring(0, objectInstanceID.indexOf(".")));
 				String index = objectInstanceID.substring(objectInstanceID.indexOf(".") + 1, objectInstanceID.length());
 				if (index.indexOf(".") == -1)
@@ -390,6 +389,7 @@ public class PresentationObjectContainer extends PresentationObject
 					try {
 						return (((Table) getContainedObject(objectInstanceIDInt)).containerAt(xindex, yindex));
 					} catch (ClassCastException e1) {
+						System.out.println("PresentationObjectContainer#getContainedObject("+objectInstanceID+") - NumberFormatException");
 						e1.printStackTrace();
 						System.out.println(getContainedObject(objectInstanceIDInt).getClassName()+": "+getContainedObject(objectInstanceIDInt));
 						return (null);
