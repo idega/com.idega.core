@@ -5,13 +5,13 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
@@ -54,7 +54,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static String LoginStateMsgParameter = "login_state_msg";
 	//public static String LoginRedirectPageParameter = "login_redirect_page";
 	//public static String LoginFailedRedirectPageParameter = "login_failed_redirect_page";
-	private static String LoginAttributeParameter = "login_attributes";
+	protected static String LoginAttributeParameter = "login_attributes";
 	private static String prmReservedLoginSessionAttribute = "reserved_login_attributes";
 	private static String UserGroupRepresentativeParameter = "ic_user_representative_group";
 	private static String PrimaryGroupsParameter = "ic_user_primarygroups";
@@ -68,34 +68,38 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final String SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN = "loginname_for_invalid_login";
 	public static boolean USING_OLD_USER_SYSTEM=false;
 
-	public static final int STATE_NO_STATE = 0;
-	public static final int STATE_LOGGED_ON = 1;
-	public static final int STATE_LOGGED_OUT = 2;
-	public static final int STATE_NO_USER = 3;
-	public static final int STATE_WRONG_PASSW = 4;
-	public static final int STATE_LOGIN_EXPIRED = 5;
-	public static final int STATE_LOGIN_FAILED = 6;
-	public static final int STATE_LOGIN_FAILED_DISABLED_NEXT_TIME = 8;
+	
 	
 	public LoginBusinessBean() {
 	}
 	public static boolean isLoggedOn(IWUserContext iwc) {
-		if (iwc.getSessionAttribute(LoginAttributeParameter) == null) {
-			return false;
-		}
-		return true;
+		return getUser(iwc)!=null;
+	    //if (iwc.getSessionAttribute(LoginAttributeParameter) == null) {
+		//	return false;
+		//}
+		//return true;
+	}
+	
+	//public static void internalSetState(IWContext iwc, int state) {
+	public static void internalSetState(IWContext iwc, LoginState state)throws RemoteException{
+		//iwc.setSessionAttribute(LoginStateParameter, new Integer(state));
+		getLoginSession(iwc).setLoginState(state);
 	}
 
-	public static void internalSetState(IWContext iwc, int state) {
-		iwc.setSessionAttribute(LoginStateParameter, new Integer(state));
-	}
-
-	public static int internalGetState(IWContext iwc) {
-		Integer state = (Integer)iwc.getSessionAttribute(LoginStateParameter);
-		if (state != null)
-			return state.intValue();
-		else
-			return STATE_NO_STATE;
+	public static LoginState internalGetState(IWContext iwc) {
+		try {
+            /*Integer state = (Integer)iwc.getSessionAttribute(LoginStateParameter);
+            if (state != null)
+            	return state.intValue();
+            else
+            	return STATE_NO_STATE;
+            */
+            return getLoginSession(iwc).getLoginState();
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return LoginState.NoState;
 	}
 
 	/**
@@ -117,11 +121,17 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	protected boolean logInUser(IWContext iwc, String username, String password) {
 		try {
+		    /*
 			int didLogin = verifyPasswordAndLogin(iwc, username, password);
 			if (didLogin == STATE_LOGGED_ON) {
 				onLoginSuccessful(iwc);
 				return true;
-			}
+			}*/
+		    LoginState didLogin = verifyPasswordAndLogin(iwc,username,password);
+		    if(didLogin.equals(LoginState.LoggedOn)){
+		        onLoginSuccessful(iwc);
+		        return true;
+		    }
 			return false;
 		} catch (Exception e) {
 			return false;
@@ -131,12 +141,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * @return True if logOut was succesful, false if it failed
 	 */
-	protected boolean logOutUser(IWContext iwc) {
+	protected boolean logOutUser(IWContext iwc) throws RemoteException{
 		try {
 
 			logOut(iwc);
 			//internalSetState(iwc, "loggedoff");
-			internalSetState(iwc, STATE_LOGGED_OUT);
+			//internalSetState(iwc, STATE_LOGGED_OUT);
+			internalSetState(iwc,LoginState.LoggedOut);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -169,19 +180,23 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * Can be overrided in subclasses to alter behaviour
 	 * By default this sets the state to "login failed" and does not log in a user
 	 */
-	protected void onLoginFailed(IWContext iwc, int loginState, String username) {
+	//protected void onLoginFailed(IWContext iwc, int loginState, String username) {
+	protected void onLoginFailed(IWContext iwc, LoginState loginState, String username)throws RemoteException {  
 		logOutUser(iwc);
-		internalSetState(iwc, loginState);
-		iwc.setSessionAttribute(UserAttributeParameter, username);
+		//internalSetState(iwc, loginState);
+		//iwc.setSessionAttribute(UserAttributeParameter, username);
+		internalSetState(iwc,loginState);
+		getLoginSession(iwc).setUserLoginName(username);
 	}
 	/**
 	 * Invoked when the login was succesful
 	 * Can be overrided in subclasses to alter behaviour
 	 * By default this sets the state to "logged on"
 	 */
-	protected void onLoginSuccessful(IWContext iwc) {
+	protected void onLoginSuccessful(IWContext iwc)throws RemoteException {
 		//internalSetState(iwc, "loggedon");
-		internalSetState(iwc, STATE_LOGGED_ON);
+		//internalSetState(iwc, STATE_LOGGED_ON);
+	    internalSetState(iwc,LoginState.LoggedOn);
 	}
 
 	public static boolean isLogOnAction(IWContext iwc) {
@@ -221,12 +236,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 			} else {
 
 				if (isLogOnAction(iwc)) {
-					int canLogin = STATE_LOGGED_OUT;
+					//int canLogin = STATE_LOGGED_OUT;
+				    LoginState canLogin = LoginState.LoggedOut;
 					String username = getLoginUserName(iwc);
 					String password = getLoginPassword(iwc);
 					if ((username != null) && (password != null)) {
 						canLogin = verifyPasswordAndLogin(iwc, username, password);
-						if (canLogin == STATE_LOGGED_ON) {
+						//if (canLogin == STATE_LOGGED_ON) {
+						if (canLogin.equals(LoginState.LoggedOn)) {
 							//isLoggedOn(iwc);
 							//internalSetState(iwc,"loggedon");
 							// addon
@@ -248,7 +265,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 					}
 				} else if (isTryAgainAction(iwc)) {
 					//internalSetState(iwc, "loggedoff");
-					internalSetState(iwc, STATE_LOGGED_OUT);
+					//internalSetState(iwc, STATE_LOGGED_OUT);
+					internalSetState(iwc, LoginState.LoggedOut);
 				}
 
 			}
@@ -274,38 +292,63 @@ public class LoginBusinessBean implements IWPageEventListener {
 	*/
 	public static void setLoginAttribute(String key, Object value, IWUserContext iwc) throws NotLoggedOnException {
 		if (isLoggedOn(iwc)) {
-			Object obj = iwc.getSessionAttribute(LoginAttributeParameter);
-			((Hashtable)obj).put(key, value);
+		    try {
+                /*
+                Object obj = iwc.getSessionAttribute(LoginAttributeParameter);
+                ((Hashtable)obj).put(key, value);
+                */
+                getLoginSession(iwc).setLoginAttribute(key,value);
+            } catch (RemoteException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 		} else {
 			throw new NotLoggedOnException();
 		}
 	}
 	public static Object getLoginAttribute(String key, IWUserContext iwc) throws NotLoggedOnException {
 		if (isLoggedOn(iwc)) {
-			Object obj = iwc.getSessionAttribute(LoginAttributeParameter);
-			if (obj == null) {
-				return null;
-			} else {
-				return ((Hashtable)obj).get(key);
-			}
+		    try {
+                /*
+                Object obj = iwc.getSessionAttribute(LoginAttributeParameter);
+                if (obj == null) {
+                	return null;
+                } else {
+                	return ((Hashtable)obj).get(key);
+                }*/
+                return getLoginSession(iwc).getLoginAttribute(key);
+            } catch (RemoteException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                
+            }
+            return null;
 		} else {
 			throw new NotLoggedOnException();
 		}
 	}
 
-	public static void removeLoginAttribute(String key, IWContext iwc) {
+	public static void removeLoginAttribute(String key, IWUserContext iwc) throws RemoteException,RemoveException{
 		if (isLoggedOn(iwc)) {
+		    /*
 			Object obj = iwc.getSessionAttribute(LoginAttributeParameter);
 			if (obj != null) {
 				((Hashtable)obj).remove(key);
 			}
-		} else if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
+			*/
+		    getLoginSession(iwc).removeLoginAttribute(key);
+		} 
+		/*else if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
 			iwc.removeSessionAttribute(LoginAttributeParameter);
+		*/
+		else if(getLoginSession(iwc)!=null){
+		    removeLoginSession(iwc);
 		}
 	}
-	public static User getUser(IWUserContext iwc) /* throws NotLoggedOnException */ {
+	public static User getUser(IWUserContext iwc)  /* throws NotLoggedOnException */ {
 		try {
-			return (User)LoginBusinessBean.getLoginAttribute(UserAttributeParameter, iwc);
+			//return (User)LoginBusinessBean.getLoginAttribute(UserAttributeParameter, iwc);
+		    return getLoginSession(iwc).getUser();
 		} catch (NotLoggedOnException ex) {
 			return null;
 		}
@@ -321,28 +364,56 @@ public class LoginBusinessBean implements IWPageEventListener {
 		
 		}
 		
-		*/
+		*/ catch (RemoteException e) {
+
+        }
+		return null;
 	}
-	public static List getPermissionGroups(IWUserContext iwc) throws NotLoggedOnException {
-		return (List)LoginBusinessBean.getLoginAttribute(PermissionGroupParameter, iwc);
+	public static List getPermissionGroups(IWUserContext iwc)  {
+		try {
+            //return (List)LoginBusinessBean.getLoginAttribute(PermissionGroupParameter, iwc);
+            return getLoginSession(iwc).getPermissionGroups();
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
 	}
-	public static UserGroupRepresentative getUserRepresentativeGroup(IWUserContext iwc) throws NotLoggedOnException {
-		return (UserGroupRepresentative)LoginBusinessBean.getLoginAttribute(UserGroupRepresentativeParameter, iwc);
+	public static UserGroupRepresentative getUserRepresentativeGroup(IWUserContext iwc)  {
+		try {
+            //return (UserGroupRepresentative)LoginBusinessBean.getLoginAttribute(UserGroupRepresentativeParameter, iwc);
+            return getLoginSession(iwc).getRepresentativeGroup();
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
 	}
-	public static GenericGroup getPrimaryGroup(IWUserContext iwc) throws NotLoggedOnException {
-		return (GenericGroup)LoginBusinessBean.getLoginAttribute(PrimaryGroupParameter, iwc);
+	public static GenericGroup getPrimaryGroup(IWUserContext iwc){
+		try {
+            //return (GenericGroup)LoginBusinessBean.getLoginAttribute(PrimaryGroupParameter, iwc);
+            return getLoginSession(iwc).getPrimaryGroup();
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
 	}
-	protected static void setUser(IWUserContext iwc, User user) {
-		LoginBusinessBean.setLoginAttribute(UserAttributeParameter, user, iwc);
+	protected static void setUser(IWUserContext iwc, User user) throws RemoteException {
+		//LoginBusinessBean.setLoginAttribute(UserAttributeParameter, user, iwc);
+	    getLoginSession(iwc).setUser(user);
 	}
-	protected static void setPermissionGroups(IWUserContext iwc, List value) {
-		LoginBusinessBean.setLoginAttribute(PermissionGroupParameter, value, iwc);
+	protected static void setPermissionGroups(IWUserContext iwc, List value) throws RemoteException {
+		//LoginBusinessBean.setLoginAttribute(PermissionGroupParameter, value, iwc);
+	    getLoginSession(iwc).setPermissionGroups(value);
 	}
-	protected static void setUserRepresentativeGroup(IWUserContext iwc, UserGroupRepresentative value) {
-		LoginBusinessBean.setLoginAttribute(UserGroupRepresentativeParameter, value, iwc);
+	protected static void setUserRepresentativeGroup(IWUserContext iwc, UserGroupRepresentative value) throws RemoteException {
+		//LoginBusinessBean.setLoginAttribute(UserGroupRepresentativeParameter, value, iwc);
+	    getLoginSession(iwc).setRepresentativeGroup(value);
 	}
-	protected static void setPrimaryGroup(IWUserContext iwc, GenericGroup value) {
-		LoginBusinessBean.setLoginAttribute(PrimaryGroupParameter, value, iwc);
+	protected static void setPrimaryGroup(IWUserContext iwc, GenericGroup value) throws RemoteException {
+		//LoginBusinessBean.setLoginAttribute(PrimaryGroupParameter, value, iwc);
+	    getLoginSession(iwc).setPrimaryGroup(value);
 	}
 	
 	/**
@@ -388,15 +459,19 @@ public class LoginBusinessBean implements IWPageEventListener {
 		List groups = null;
 		if(isUsingOldUserSystem()){
 			//Old user system
-			iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
-			LoginBusinessBean.setUser(iwc, user);
+			//iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
+			
+			
+			//LoginBusinessBean.setUser(iwc, user);
+		    getLoginSession(iwc).setUser(user);
 			groups = UserBusiness.getUserGroups(user);
 			//Old user system end
 		}
 		else{
 			//New user system
-			iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
-			LoginBusinessBean.setUser(iwc, user);
+			//iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
+			//LoginBusinessBean.setUser(iwc, user);
+		    getLoginSession(iwc).setUser(user);
 			com.idega.user.business.UserBusiness userbusiness = (com.idega.user.business.UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc, com.idega.user.business.UserBusiness.class);
 			com.idega.user.data.User newUser = com.idega.user.util.Converter.convertToNewUser(user);
 			Collection userGroups = userbusiness.getUserGroups(newUser);
@@ -406,19 +481,24 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 
 		if (groups != null) {
-			LoginBusinessBean.setPermissionGroups(iwc, groups);
+			//LoginBusinessBean.setPermissionGroups(iwc, groups);
+		    getLoginSession(iwc).setPermissionGroups(groups);
 		}
 		int userGroupId = user.getGroupID();
 		if (userGroupId != -1) {
-			LoginBusinessBean.setUserRepresentativeGroup(iwc, ((com.idega.core.user.data.UserGroupRepresentativeHome)com.idega.data.IDOLookup.getHomeLegacy(UserGroupRepresentative.class)).findByPrimaryKeyLegacy(userGroupId));
+			//LoginBusinessBean.setUserRepresentativeGroup(iwc, ((com.idega.core.user.data.UserGroupRepresentativeHome)com.idega.data.IDOLookup.getHomeLegacy(UserGroupRepresentative.class)).findByPrimaryKeyLegacy(userGroupId));
+		    getLoginSession(iwc).setRepresentativeGroup(((com.idega.core.user.data.UserGroupRepresentativeHome)com.idega.data.IDOLookup.getHomeLegacy(UserGroupRepresentative.class)).findByPrimaryKeyLegacy(userGroupId));
 		}
 		if (user.getPrimaryGroupID() != -1) {
-			GenericGroup primaryGroup = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(user.getPrimaryGroupID());
-			LoginBusinessBean.setPrimaryGroup(iwc, primaryGroup);
+		    GenericGroup primaryGroup = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHome(GenericGroup.class)).findByPrimaryKey(new Integer(user.getPrimaryGroupID()));
+			//LoginBusinessBean.setPrimaryGroup(iwc, primaryGroup);
+			getLoginSession(iwc).setPrimaryGroup(primaryGroup);
 		}
 
 		UserProperties properties = new UserProperties(iwc.getIWMainApplication(), user.getID());
-		setLoginAttribute(USER_PROPERTY_PARAMETER, properties, iwc);
+		//setLoginAttribute(USER_PROPERTY_PARAMETER, properties, iwc);
+		getLoginSession(iwc).setUserProperties(properties);
+		
 	}
 
 	/**
@@ -428,7 +508,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	{
 		return this.USING_OLD_USER_SYSTEM;
 	}
-	protected void storeLoggedOnInfoInSession(IWContext iwc, int loginTableId, String login, User user, int loginRecordId, String loginType) {
+	protected void storeLoggedOnInfoInSession(IWContext iwc, int loginTableId, String login, User user, int loginRecordId, String loginType) throws NotLoggedOnException, RemoteException {
 		LoggedOnInfo lInfo = createLoggedOnInfo(iwc);
 		lInfo.setLoginTableId(loginTableId);
 		lInfo.setLogin(login);
@@ -444,17 +524,19 @@ public class LoginBusinessBean implements IWPageEventListener {
 		
 	}
 
-	private int verifyPasswordAndLogin(IWContext iwc, String login, String password) throws Exception {
+	private LoginState verifyPasswordAndLogin(IWContext iwc, String login, String password) throws Exception {
 		LoginTable[] login_table = (LoginTable[]) (com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance()).findAllByColumn(com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(), login);
 		if (login_table == null) {
-			return STATE_NO_USER;
+			//return STATE_NO_USER;
+		    return LoginState.NoUser;
 		}
 		if (login_table.length > 0) {
 			LoginTable loginTable = login_table[0];
 			User user = loginTable.getUser();
 			boolean isAdmin = user.equals(iwc.getAccessController().getAdministratorUser());
 			if (isLoginExpired(loginTable) && !isAdmin) {
-				return STATE_LOGIN_EXPIRED;
+				//return STATE_LOGIN_EXPIRED;
+			    return LoginState.Expired;
 			}
 			LoginInfo loginInfo = null;
 			try {
@@ -466,12 +548,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 			if (Encrypter.verifyOneWayEncrypted(loginTable.getUserPassword(), password)) {
 				if (loginTable != null) {
 					if (loginInfo!=null && !loginInfo.getAccountEnabled() && !isAdmin) {
-						return STATE_LOGIN_EXPIRED;
+						//return STATE_LOGIN_EXPIRED;
+					    return LoginState.Expired;
 					}
 					if (logIn(iwc, loginTable)) {
 						loginInfo.setFailedAttemptCount(0);
 						loginInfo.store();
-						return STATE_LOGGED_ON;
+						//return STATE_LOGGED_ON;
+						return LoginState.LoggedOn;
 					}
 				} else {
 					try {
@@ -482,9 +566,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 				}
 			} else {
 				if(isAdmin) { // admin must get unlimited attempts
-					return STATE_WRONG_PASSW;
+					//return STATE_WRONG_PASSW;
+				    return LoginState.WrongPassword;
 				}
-				int returnCode = STATE_WRONG_PASSW;
+				//int returnCode = STATE_WRONG_PASSW;
+				LoginState returnCode = LoginState.WrongPassword;
 				int maxFailedLogginAttempts = 0;
 				try {
 					String maxStr = iwc.getIWMainApplication().getBundle("com.idega.core").getProperty("max_failed_login_attempts");
@@ -498,7 +584,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 					loginInfo.setFailedAttemptCount(failedAttempts);
 					if(failedAttempts==maxFailedLogginAttempts-1) {
 						System.out.println("login failed, disabled next time");
-						returnCode = STATE_LOGIN_FAILED_DISABLED_NEXT_TIME;
+						//returnCode = STATE_LOGIN_FAILED_DISABLED_NEXT_TIME;
+						returnCode = LoginState.FailedDisabledNextTime;
 					} else if(failedAttempts>=maxFailedLogginAttempts) {
 						System.out.println("Maximum loggin attemps, disabling account " + login);
 						loginInfo.setAccountEnabled(false);
@@ -511,10 +598,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 				return returnCode;
 			}
 		} else {
-			return STATE_NO_USER;
+			//return STATE_NO_USER;
+		    return LoginState.NoUser;
 		}
 
-		return STATE_LOGIN_FAILED;
+		//return STATE_LOGIN_FAILED;
+		return LoginState.Failed;
 	}
 	
 	public static void resetPassword(String login, String newPassword, boolean changeNextTime) throws Exception {
@@ -546,15 +635,18 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return returner;
 	}
 	protected void logOut(IWContext iwc) throws Exception {
-		if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
+		//if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
+	    if (getLoginSession(iwc) != null) {
 			// this.getLoggedOnInfoList(iwc).remove(this.getLoggedOnInfo(iwc));
 
 			LoggedOnInfo info = getLoggedOnInfo(iwc);
-			List ll = this.getLoggedOnInfoList(iwc);
-			int indexOfLoggedOfInfo = ll.indexOf(info);
-			if (indexOfLoggedOfInfo > -1) {
-				LoggedOnInfo _logOnInfo = (LoggedOnInfo)ll.remove(indexOfLoggedOfInfo);
-				LoginDBHandler.recordLogout(_logOnInfo.getLoginRecordId());
+			if(info!=null){
+				List ll = this.getLoggedOnInfoList(iwc);
+				int indexOfLoggedOfInfo = ll.indexOf(info);
+				if (indexOfLoggedOfInfo > -1) {
+					LoggedOnInfo _logOnInfo = (LoggedOnInfo)ll.remove(indexOfLoggedOfInfo);
+					LoginDBHandler.recordLogout(_logOnInfo.getLoginRecordId());
+				}
 			}
 
 			UserProperties properties = getUserProperties(iwc);
@@ -562,7 +654,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 				properties.store();
 			}
 
-			iwc.removeSessionAttribute(LoginAttributeParameter);
+			//iwc.removeSessionAttribute(LoginAttributeParameter);
+			removeLoginSession(iwc);
 		}
 
 		HttpSession session = iwc.getSession();
@@ -615,17 +708,26 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return loggedOnList;
 	}
 
-	public static LoggedOnInfo getLoggedOnInfo(IWUserContext iwc) throws NotLoggedOnException {
-		// Not stored as LoginAttribute because it is HttpSessionBindingListener
-		//return (LoggedOnInfo)getLoginAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, iwc);
-		return (LoggedOnInfo)iwc.getSessionAttribute(_LOGGINADDRESS_LOGGED_ON_INFO);
+	public static LoggedOnInfo getLoggedOnInfo(IWUserContext iwc) {
+		try {
+            // Not stored as LoginAttribute because it is HttpSessionBindingListener
+            //return (LoggedOnInfo)getLoginAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, iwc);
+            //return (LoggedOnInfo)iwc.getSessionAttribute(_LOGGINADDRESS_LOGGED_ON_INFO);
+            return getLoginSession(iwc).getLoggedOnInfo();
+        } catch (RemoteException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
 	}
 
-	public static void setLoggedOnInfo(LoggedOnInfo lInfo, IWContext iwc) throws NotLoggedOnException {
+	public static void setLoggedOnInfo(LoggedOnInfo lInfo, IWContext iwc) throws NotLoggedOnException, RemoteException {
         // Not stored as LoginAttribute because it is HttpSessionBindingListener
 		//setLoginAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, lInfo, iwc);
 		if(isLoggedOn(iwc)){
-			iwc.setSessionAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, lInfo);
+		    
+			//iwc.setSessionAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, lInfo);
+		    getLoginSession(iwc).setLoggedOnInfo(lInfo);
 		} else {
 			throw new NotLoggedOnException();
 		}
@@ -709,23 +811,31 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return returner;
 	}
 
-	public boolean retrieveLoginInformation(IWContext iwc) {
+	public boolean retrieveLoginInformation(IWContext iwc) throws NotLoggedOnException, RemoteException {
 
 		//logout
-		if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
+		
+	    //if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
+	    
+	    if(getLoginSession(iwc)!=null){
+	        
 			List ll = this.getLoggedOnInfoList(iwc);
 			int indexOfLoggedOfInfo = ll.indexOf(getLoggedOnInfo(iwc));
 			if (indexOfLoggedOfInfo > -1) {
 				LoggedOnInfo _logOnInfo = (LoggedOnInfo)ll.remove(indexOfLoggedOfInfo);
 				LoginDBHandler.recordLogout(_logOnInfo.getLoginRecordId());
 			}
-			iwc.removeSessionAttribute(LoginAttributeParameter);
+			
 		}
 
 		//login
-		Object obj = iwc.getSessionAttribute(prmReservedLoginSessionAttribute);
-		if (obj != null) {
-			iwc.setSessionAttribute(LoginAttributeParameter, obj);
+		//Object obj = iwc.getSessionAttribute(prmReservedLoginSessionAttribute);
+		//Object obj = iwc.getSessionAttribute(prmReservedLoginSessionAttribute);
+	    getLoginSession(iwc).retrieve();
+		//if (obj != null) {
+	    if(getLoginSession(iwc).getUser()!=null){
+	        
+			//iwc.setSessionAttribute(LoginAttributeParameter, obj);
 			return true;
 		} else {
 			return false;
@@ -733,28 +843,47 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	}
 
-	public void reserveLoginInformation(IWContext iwc) {
-		if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
+	public void reserveLoginInformation(IWContext iwc) throws RemoteException {
+		
+	    //if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
+	    if(getLoginSession(iwc)!=null){
 			// this.getLoggedOnInfoList(iwc).remove(this.getLoggedOnInfo(iwc));
 
-			UserProperties properties = (UserProperties)getLoginAttribute(USER_PROPERTY_PARAMETER, iwc);
+			//UserProperties properties = (UserProperties)getLoginAttribute(USER_PROPERTY_PARAMETER, iwc);
+		    UserProperties properties = getLoginSession(iwc).getUserProperties();
 			if (properties != null)
 				properties.store();
 
-			iwc.setSessionAttribute(prmReservedLoginSessionAttribute, iwc.getSessionAttribute(LoginAttributeParameter));
+			//iwc.setSessionAttribute(prmReservedLoginSessionAttribute, iwc.getSessionAttribute(LoginAttributeParameter));
+			//iwc.setSessionAttribute(prmReservedLoginSessionAttribute,getLoginSession(iwc));
 			
-			//logout
-			iwc.removeSessionAttribute(LoginAttributeParameter);
+			getLoginSession(iwc).reserve();
+			
+                //logout
+                //iwc.removeSessionAttribute(LoginAttributeParameter);
+                //removeLoginSession(iwc);
+           
 		}
 	}
 
-	public void logOutAsAnotherUser(IWContext iwc) {
+	public void logOutAsAnotherUser(IWContext iwc) throws NotLoggedOnException, RemoteException {
 		LoggedOnInfo info = this.getLoggedOnInfo(iwc);
 		int rec = info.getLoginRecordId();
 		retrieveLoginInformation(iwc);
 		info.setLoginType("");
-		setLoggedOnInfo(info,iwc);
+		//setLoggedOnInfo(info,iwc);
 		LoginDBHandler.recordLogout(rec);
+	}
+	
+	/**
+	 * Use this method if the one calling this method is logged in, else use #logIn(IWContext,User)
+	 * @param iwc
+	 * @param user
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean logInAsAnotherUser(IWContext iwc, User user) throws Exception {
+	    return logInAsAnotherUser(iwc,user,true);
 	}
 
 	/**
@@ -764,18 +893,21 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean logInAsAnotherUser(IWContext iwc, User user) throws Exception {
+	private boolean logInAsAnotherUser(IWContext iwc, User user,boolean reserveCurrentUser) throws Exception {
 
 		if (isLoggedOn(iwc)) {
-			LoggedOnInfo info = this.getLoggedOnInfo(iwc);
+		    LoggedOnInfo info = this.getLoggedOnInfo(iwc);
 			if (iwc.getUser().equals(user)) {
 				return true;
-			} else if(LOGINTYPE_AS_ANOTHER_USER.equals(info.getLoginType())){
+			//} else if(LOGINTYPE_AS_ANOTHER_USER.equals(info.getLoginType())){
+			} else if( getLoginSession(iwc).isReserved()){
 				System.out.println("trying to log in as another user faild: log out of current \"other user\"");
 				return false;
 			}
-			reserveLoginInformation(iwc);
+			if(reserveCurrentUser)
+			    reserveLoginInformation(iwc);
 			storeUserAndGroupInformationInSession(iwc, user);
+			
 			int loginRecordId = LoginDBHandler.recordLogin(info.getLoginTableId(), iwc.getRemoteIpAddress(), user.getID());
 			storeLoggedOnInfoInSession(iwc, info.getLoginTableId(), info.getLogin(), user, loginRecordId, LOGINTYPE_AS_ANOTHER_USER);
 			onLoginSuccessful(iwc);
@@ -874,7 +1006,21 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	public static UserProperties getUserProperties(IWUserContext iwuc) {
-		return (UserProperties)getLoginAttribute(LoginBusinessBean.USER_PROPERTY_PARAMETER, iwuc);
+		try {
+            //return (UserProperties)getLoginAttribute(LoginBusinessBean.USER_PROPERTY_PARAMETER, iwuc);
+            return getLoginSession(iwuc).getUserProperties();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
+	}
+	
+	private static LoginSession getLoginSession(IWUserContext iwc) throws RemoteException {
+        return (LoginSession) IBOLookup.getSessionInstance(iwc, LoginSession.class);
+	}
+	
+	private static void removeLoginSession(IWUserContext iwc) throws RemoteException,RemoveException {
+	   IBOLookup.removeSessionInstance(iwc,LoginSession.class);
 	}
 
 }
