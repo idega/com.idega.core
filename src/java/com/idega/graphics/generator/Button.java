@@ -120,7 +120,7 @@ public class Button {
       File file = new File(args[5]);
       FileInputStream fis = new FileInputStream(file);
       Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
-      button.setFont(font.deriveFont(Integer.parseInt(args[6])));
+      button.setFont(font.deriveFont(Float.parseFloat(args[6])));
       button.onlyCreateUpState(true);
 
       Iterator iter = tokenizers.iterator();
