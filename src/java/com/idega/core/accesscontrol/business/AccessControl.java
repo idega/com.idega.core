@@ -681,6 +681,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 				//PAGE
 				if ((obj instanceof Page && ((Page) obj).getPageID() != _notBuilderPageID) || (obj instanceof PagePermissionObject)){
+					
+
+					//builder users should always get edit/view permission on pages:
+					if(iwc.getAccessController().hasRole(StandardRoles.ROLE_KEY_BUILDER,iwc)){
+						return Boolean.TRUE;
+					}
+					
 					for (int i = 0; i < arrayLength; i++) {
 						myPermission = PermissionCacher.hasPermissionForPage( obj, iwc, permissionKey, permissionGroupLists[i]);
 						if (Boolean.TRUE.equals(myPermission)) {
@@ -708,7 +715,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 						}
 						// Global - (Page)
 					}
-
+					
+					
 					return myPermission;
 
 				} //PAGE ENDS
