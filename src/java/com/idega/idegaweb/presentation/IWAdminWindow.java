@@ -1,11 +1,19 @@
 package com.idega.idegaweb.presentation;
 
-import com.idega.presentation.text.*;
-import com.idega.presentation.*;
-import com.idega.presentation.ui.*;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWProperty;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.help.presentation.Help;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.InterfaceObject;
+import com.idega.presentation.ui.Window;
+import com.idega.user.util.ICUserConstants;
 
 public class IWAdminWindow extends Window {
 
@@ -435,6 +443,16 @@ public class IWAdminWindow extends Window {
 	 */
 	public void setToUseStyleSheetFromCoreBundle(boolean value) {
 		useStyleSheetFromCoreBundle = value;
+	}
+	public static Help getHelp(String helpTextKey) {
+		IWContext iwc = IWContext.getInstance();
+		IWBundle iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+	 	Help help = new Help();
+	 	Image helpImage = iwb.getImage("help.gif");//.setSrc("/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
+ 	  help.setHelpTextBundle( ICUserConstants.HELP_BUNDLE_IDENTFIER);
+	  help.setHelpTextKey(helpTextKey);
+	  help.setImage(helpImage);
+	  return help;
 	}
 
 }
