@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.34 2002/08/12 12:59:32 palli Exp $
+ * $Id: LoginDBHandler.java,v 1.35 2002/11/13 22:24:41 gimmi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -36,36 +36,43 @@ public class LoginDBHandler
 	/**
 	 * @deprecated replaced with createUserLogin()
 	 */
-	protected static int createLogin(boolean update, int userID, String userLogin, String password) throws Exception
+	protected static int createLogin(boolean update, int userID, String userLogin, String password) throws LoginCreateException, RemoteException
 	{
 		return createUserLogin(update, userID, userLogin, password).getID();
 	}
 	protected static LoginTable createUserLogin(boolean update, int userID, String userLogin, String password)
-		throws Exception
+		throws LoginCreateException, RemoteException
 	{
-		List noLogin =
-			EntityFinder.findAllByColumn(
-				com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(),
-				com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserIDColumnName(),
-				userID);
+		List noLogin;
+		try {
+			noLogin =
+				EntityFinder.findAllByColumn(
+					com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(),
+					com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserIDColumnName(),
+					userID);
+		} catch (SQLException e) {
+			throw new LoginCreateException(e.getMessage());
+		}
+		
 		LoginTable loginTable;
 		if (update)
 		{
 			if (noLogin == null)
 			{
-				throw new Exception("User_id : " + userID + " , cannot update login : cannot find login");
+				throw new LoginCreateException("User_id : " + userID + " , cannot update login : cannot find login");
 			}
 			loginTable = (LoginTable) noLogin.get(0);
 			if (loginTable.getUserId() != userID || loginTable == null)
 			{
-				throw new Exception("Login update failed.");
+				throw new LoginCreateException("Login update failed.");
 			}
 		}
 		else
 		{
 			if (noLogin != null)
 			{
-				throw new Exception("User_id : " + userID + " , cannot create new login : user has one already");
+				throw new UserHasLoginException("User_id : " + userID + " , cannot create new login : user has one already");
+//				throw new Exception("User_id : " + userID + " , cannot create new login : user has one already");
 			}
 			loginTable =
 				((com.idega.core.accesscontrol.data.LoginTableHome) com
@@ -81,7 +88,7 @@ public class LoginDBHandler
 		}
 		else if (!update)
 		{
-			throw new Exception("invalid user_id");
+			throw new LoginCreateException("invalid user_id");
 		}
 		String encryptedPassword = null;
 		if (password != null && !"".equals(password))
@@ -91,7 +98,7 @@ public class LoginDBHandler
 		}
 		else if (!update)
 		{
-			throw new Exception("Password not valid");
+			throw new LoginCreateException("Password not valid");
 		}
 		if (update)
 		{
@@ -99,16 +106,20 @@ public class LoginDBHandler
 			{
 				if (!loginTable.getUserLogin().equals(userLogin))
 				{
-					noLogin =
-						EntityFinder.findAllByColumn(
-							com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(),
-							com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(),
-							userLogin);
+					try {
+						noLogin =
+							EntityFinder.findAllByColumn(
+								com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(),
+								com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(),
+								userLogin);
+					} catch (SQLException e) {
+						throw new LoginCreateException(e.getMessage());
+					}
 					if (noLogin != null && (noLogin.size() > 0 && ((LoginTable) noLogin.get(0)).getUserId() != userID))
 					{
 						LoginTable tempLoginTable = (LoginTable) noLogin.get(0);
 						if (tempLoginTable.getUserId() != userID)
-							throw new Exception("login not valid : in use");
+							throw new LoginCreateException("login not valid : in use");
 					}
 				}
 				if (encryptedPassword != null)
@@ -118,7 +129,7 @@ public class LoginDBHandler
 				}
 				else
 				{
-					throw new Exception("Password not valid");
+					throw new LoginCreateException("Password not valid");
 				}
 			}
 		}
@@ -126,20 +137,24 @@ public class LoginDBHandler
 		{
 			if (userLogin != null && !"".equals(userLogin))
 			{
-				noLogin =
-					EntityFinder.findAllByColumn(
-						com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(),
-						com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(),
-						userLogin);
+				try {
+					noLogin =
+						EntityFinder.findAllByColumn(
+							com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(),
+							com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(),
+							userLogin);
+				} catch (SQLException e) {
+					throw new LoginCreateException(e.getMessage());
+				}
 				if (noLogin != null)
 				{
-					throw new Exception("login not valid : in use");
+					throw new LoginCreateException("login not valid : in use");
 				}
 				loginTable.setUserLogin(userLogin);
 			}
 			else
 			{
-				throw new Exception("Login not valid: null or emptyString");
+				throw new LoginCreateException("Login not valid: null or emptyString");
 			}
 		}
 		loginTable.setLastChanged(IWTimestamp.getTimestampRightNow());
@@ -158,16 +173,16 @@ public class LoginDBHandler
 		{
 			if (update)
 			{
-				throw new Exception("Login update failed");
+				throw new LoginCreateException("Login update failed");
 			}
 			else
 			{
-				throw new Exception("Login creation failed");
+				throw new LoginCreateException("Login creation failed");
 			}
 		}
 		if (loginTable.getID() < 1 && !update)
 		{
-			throw new Exception("Login creation failed, login_id : " + loginTable.getID());
+			throw new LoginCreateException("Login creation failed, login_id : " + loginTable.getID());
 		}
 		return loginTable;
 	}
@@ -315,7 +330,7 @@ public class LoginDBHandler
 		Boolean userAllowedToChangePassw,
 		Boolean changeNextTime,
 		String encryptionType)
-		throws Exception
+		throws LoginCreateException, RemoteException
 	{
 		LoginTable login = createUserLogin(false, userID, userLogin, password);
 		int loginTableID = login.getID();
@@ -345,17 +360,17 @@ public class LoginDBHandler
 						.getHomeLegacy(LoginTable.class))
 						.findByPrimaryKeyLegacy(loginTableID)
 						.delete();
-					throw new Exception(e.getMessage() + "LoginTable entry was removed");
+					throw new LoginCreateException(e.getMessage() + "LoginTable entry was removed");
 				}
 				catch (SQLException sql)
 				{
 					sql.printStackTrace();
-					throw new Exception(e.getMessage() + "Transaction faild: LoginTable entry failed to remove");
+					throw new LoginCreateException(e.getMessage() + "Transaction faild: LoginTable entry failed to remove");
 				}
 			}
 			else
 			{
-				throw e;
+				throw new LoginCreateException(e.getMessage());
 			}
 		}
 		return login;
@@ -458,12 +473,12 @@ public class LoginDBHandler
 			encryptionType);
 	}
 	public static LoginTable createLogin(com.idega.user.data.User user, String userLogin, String password)
-		throws Exception
+		throws LoginCreateException, RemoteException
 	{
 		int userID = ((Integer) user.getPrimaryKey()).intValue();
 		return createLogin(userID, userLogin, password);
 	}
-	public static LoginTable createLogin(int userID, String userLogin, String password) throws Exception
+	public static LoginTable createLogin(int userID, String userLogin, String password) throws LoginCreateException, RemoteException
 	{
 		return createLogin(userID, userLogin, password, null, null, -1, null, null, null, null);
 	}
@@ -732,26 +747,37 @@ public class LoginDBHandler
 	}
 	/**
 	 * Generates a login for a user with a random password and a login derived from the users name (or random login if all possible logins are taken)
+	 * @param userId the id for the user.
+	 * @throws LoginCreateException If an error occurs creating login for the user.
 	 */
-	public static LoginTable generateUserLogin(int userID) throws Exception
+	public static LoginTable generateUserLogin(int userID) throws LoginCreateException, RemoteException
 	{
-		User user = getUser(userID);
-		String[] possibleLogins = getPossibleGeneratedUserLogins(user);
-		String generatedPassword = getGeneratedPasswordForUser();
-		for (int i = 0; i < possibleLogins.length; i++)
-		{
-			String login = possibleLogins[i];
-			try
+		User user;
+		try {
+			user = getUser(userID);
+			String[] possibleLogins = getPossibleGeneratedUserLogins(user);
+			String generatedPassword = getGeneratedPasswordForUser();
+			for (int i = 0; i < possibleLogins.length; i++)
 			{
-				return createLogin(userID, login, generatedPassword);
+				String login = possibleLogins[i];
+				try
+				{
+					return createLogin(userID, login, generatedPassword);
+				}
+				catch (UserHasLoginException e)
+				{
+					throw e;
+				}catch (LoginCreateException e) {
+					//e.printStackTrace();
+					System.err.println("Error creating login for userID: " + user.getID() + " with login: " + login);
+				}
 			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-				System.err.println("Error creating login for userID: " + user.getID() + " with login: " + login);
-			}
+		} catch (FinderException e) {
+			e.printStackTrace(System.err);
+			System.err.println("Error creating login for userID: " + userID + " cannot find user with ID");
 		}
-		throw new Exception("Error creating login for userID: " + user.getID() + ". Exhausted possibilities");
+		
+		throw new LoginCreateException("Error creating login for userID: " + userID + ". Exhausted possibilities");
 	}
 	private static String getGeneratedPasswordForUser()
 	{

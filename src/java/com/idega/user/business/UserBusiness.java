@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import javax.ejb.*;
 
+import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 
@@ -58,7 +59,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.user.data.User getUser(java.lang.Integer p0) throws java.rmi.RemoteException;
  public com.idega.user.data.User createUserByPersonalIDIfDoesNotExist(java.lang.String p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,com.idega.user.data.Gender p4,com.idega.util.IWTimestamp p5)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public void updateUser(int p0,java.lang.String p1,java.lang.String p2,java.lang.String p3,java.lang.String p4,java.lang.String p5,java.lang.Integer p6,java.lang.String p7,com.idega.util.IWTimestamp p8,java.lang.Integer p9)throws javax.ejb.EJBException,java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.core.accesscontrol.data.LoginTable generateUserLogin(com.idega.user.data.User p0)throws java.lang.Exception, java.rmi.RemoteException;
+ public com.idega.core.accesscontrol.data.LoginTable generateUserLogin(com.idega.user.data.User p0)throws LoginCreateException, java.rmi.RemoteException;
  public void addNewUserEmail(int p0,java.lang.String p1) throws java.rmi.RemoteException;
  public com.idega.core.accesscontrol.data.LoginTable generateUserLogin(int p0)throws java.lang.Exception, java.rmi.RemoteException;
  public int getHomePageIDForUser(com.idega.user.data.User p0) throws java.rmi.RemoteException;

@@ -6,6 +6,7 @@ import com.idega.builder.data.IBPageHome;
 
 import java.sql.SQLException;
 import com.idega.user.data.*;
+import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.data.*;
 import com.idega.util.IWTimestamp;
@@ -287,8 +288,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
   /**
    * Generates a login for a user with a random password and a login derived from the users name (or random login if all possible logins are taken)
-   */
-  public LoginTable generateUserLogin(int userID)throws Exception{
+	 * @param userId the id for the user.
+	 * @throws LoginCreateException If an error occurs creating login for the user.
+	 */   
+  public LoginTable generateUserLogin(int userID)throws LoginCreateException, RemoteException{
     //return this.generateUserLogin(userID);
     return LoginDBHandler.generateUserLogin(userID);
   }
@@ -296,7 +299,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   /**
    * Generates a login for a user with a random password and a login derived from the users name (or random login if all possible logins are taken)
    */
-  public LoginTable generateUserLogin(User user)throws Exception{
+  public LoginTable generateUserLogin(User user)throws LoginCreateException, RemoteException{
     //return LoginDBHandler.generateUserLogin(user);
     int userID = ((Integer)user.getPrimaryKey()).intValue();
     return this.generateUserLogin(userID);
