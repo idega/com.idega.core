@@ -213,7 +213,7 @@ public class FolderBlock extends Block {
 		return obj;
 	}
 
-	public boolean copyBlock(int newInstanceID, DPTCopySession copySession) {
+	public boolean copyBlock(String pageKey,int newInstanceID, DPTCopySession copySession) {
 		try {
 			return ((FolderBlockBusiness)IBOLookup.getServiceInstance(getIWApplicationContext(),FolderBlockBusiness.class)).copyCategoryAttachments(this.getBlockInstanceID(), newInstanceID);
 		} catch (IBOLookupException e) {

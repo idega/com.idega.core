@@ -17,7 +17,7 @@ public interface Builderaware {
 public final static String IW_CORE_BUNDLE_IDENTIFIER="com.idega.core";
 
   public boolean deleteBlock(int ICObjectInstanceId);
-  public boolean copyBlock(int newInstanceID, DPTCopySession copySession);
+  public boolean copyBlock(String pageKey, int newInstanceID, DPTCopySession copySession);
   public String getBundleIdentifier();
   public String getLocalizedNameKey();
   public String getLocalizedNameValue();

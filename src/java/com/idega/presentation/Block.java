@@ -121,7 +121,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return true;
 	}
 
-	public boolean copyBlock(int newInstanceID, DPTCopySession copySession) {
+	public boolean copyBlock(String pageKey,int newInstanceID, DPTCopySession copySession) {
 		System.err.println("method copyBlock(int newInstanceID) not implemented in class " + this.getClass().getName());
 		return true;
 	}
