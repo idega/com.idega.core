@@ -36,7 +36,7 @@ public class ImageFactory {
   private static String GENERATED_IMAGES_FOLDER = "iw_generated";
 
 
-  private ImageFactory(IWMainApplication iwma) {
+  ImageFactory(IWMainApplication iwma) {
     this.iwma = iwma;
   }
 
@@ -51,7 +51,7 @@ public class ImageFactory {
       defaultFont = fontbase.deriveFont(Font.PLAIN,10.f);
     }
     catch (Exception ex) {
-      ex.printStackTrace(System.err);
+      System.err.println("ImageFactory : default font is missing using default java font instead");
     }
 
    }
