@@ -29,7 +29,7 @@ import com.idega.util.reflect.MethodFinder;
 public class IBOLookup implements Singleton
 {
 	private static IBOLookup instance;
-	protected static IBOLookup getInstance()
+	protected static synchronized IBOLookup getInstance()
 	{
 		if (instance == null)
 		{

@@ -46,7 +46,7 @@ public class IWCacheManager implements Singleton {
   private IWCacheManager() {
   }
 
-  public static IWCacheManager getInstance(IWMainApplication iwma){
+  public static synchronized IWCacheManager getInstance(IWMainApplication iwma){
     IWCacheManager iwcm = (IWCacheManager)iwma.getAttribute(IW_CACHEMANAGER_KEY);
     if(iwcm==null){
       iwcm = new IWCacheManager();

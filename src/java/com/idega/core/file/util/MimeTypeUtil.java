@@ -319,7 +319,7 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 		}
 	}
 	
-	public static MimeTypeUtil getInstance(){
+	public static synchronized MimeTypeUtil getInstance(){
 		IWApplicationContext iwac = IWMainApplication.getDefaultIWApplicationContext();
 		MimeTypeUtil util = (MimeTypeUtil) iwac.getApplicationAttribute(MIME_TYPE_PROPS_FILE_NAME);
 		if(util==null){

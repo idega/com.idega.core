@@ -22,7 +22,7 @@ public class ThreadContext implements Singleton
 	/**
 	 * Return a static instance of this class since only one instance is needed in each JVM
 	 * */
-	public static ThreadContext getInstance()
+	public static synchronized ThreadContext getInstance()
 	{
 		if (instance == null)
 		{
