@@ -28,6 +28,11 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	private EventTimer timer;
 	public static final String TIMER_THREAD_NAME = "ic_user_Group_Relation_Daemon";
 	
+	private EventTimer groupTreeEventTimer;
+	public static final String GROUP_TREE_TIMER_THREAD_NAME = "user_fetch_grouptree";
+	private static final String BUNDLE_PROPERTY_NAME_FETCH_GROUPTREE_INTERVAL = "user_fetch_grouptree_interval";
+
+	
 	public GroupRelationDaemonBundleStarter() {
 	}
 	
@@ -39,6 +44,19 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 		// -- Fix for working properly on Interebase with entity-auto-create-on.
 		timer.start(3 * 60 * 1000);
 		System.out.println("Group Relation Daemon Bundle Starter: starting");
+		
+		try {
+			//System.out.println("[USER]: com.idega.user bundle starter starting...");
+			if(GroupTreeImageProcedure.getInstance().isAvailable()){
+				int fetchGroupTreeInterval = Integer.parseInt(bundle.getProperty(BUNDLE_PROPERTY_NAME_FETCH_GROUPTREE_INTERVAL, String.valueOf(EventTimer.THREAD_SLEEP_5_MINUTES)));
+				groupTreeEventTimer = new EventTimer(fetchGroupTreeInterval, GROUP_TREE_TIMER_THREAD_NAME);
+				groupTreeEventTimer.addActionListener(this);
+				groupTreeEventTimer.start();
+		    }
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void actionPerformed(ActionEvent event) {
@@ -73,6 +91,19 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 		catch (Exception x) {
 			x.printStackTrace();
 		}
+		try {
+			if(event.getActionCommand().equalsIgnoreCase(GROUP_TREE_TIMER_THREAD_NAME)){
+				//System.out.println("[USER]: fetching grouptree "+IWTimestamp.RightNow());
+				GroupBusiness business = getGroupBusiness(bundle.getApplication().getIWApplicationContext());
+				business.refreshGroupTreeSnapShotInANewThread();
+				int fetchGroupTreeInterval = Integer.parseInt(bundle.getProperty(BUNDLE_PROPERTY_NAME_FETCH_GROUPTREE_INTERVAL, String.valueOf(EventTimer.THREAD_SLEEP_5_MINUTES)));
+				//System.out.println("[USER]: interval "+fetchGroupTreeInterval);
+				groupTreeEventTimer.setInterval(fetchGroupTreeInterval);
+			}
+		}
+		catch (Exception e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	/**
@@ -82,6 +113,10 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 		if (timer != null) {
 			timer.stop();
 			timer = null;
+		}
+		if (groupTreeEventTimer != null) {
+			groupTreeEventTimer.stop();
+			groupTreeEventTimer = null;
 		}
 	}
 	
