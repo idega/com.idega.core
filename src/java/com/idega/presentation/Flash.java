@@ -8,6 +8,7 @@ public Flash(){
   //setCodeBase("http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=4,0,2,0");
   setCodeBase("http://active.macromedia.com/flash2/cabs/swflash.cab#version=4,0,0,0");
   setPluginSpace("http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash");
+  setParam("quality","high");
 }
 
 public Flash(String url){
@@ -18,7 +19,6 @@ public Flash(String url,String name){
   this();
   //setName(name);
   setURL(url);
-  setParam("quality","high");
   setHeight("100%");
   setWidth("100%");
 }
