@@ -7,7 +7,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Link;
-import com.idega.idegaweb.IWMainApplication;
+
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.ui.DropdownMenu;
@@ -57,18 +57,20 @@ public class LocaleChanger extends Block {
     Iterator iter = ICLocaleBusiness.listOfLocalesJAVA().iterator();
     Locale locale;
     Locale currentLocale = iwc.getCurrentLocale();
-    while(iter.hasNext()){
+    if(ImageLocalizationMap !=null){
+      while(iter.hasNext()){
 
-      locale = (Locale) iter.next();
-      if(!locale.equals(currentLocale)){
-        Integer imageId = (Integer)ImageLocalizationMap.get(locale);
-        if(imageId !=null){
-          try{
-          Image image = new Image(imageId.intValue());
-          T.add(getSwitcherLink(image,locale),col,row++);
-          }
-          catch(Exception ex){
-            ex.printStackTrace();
+        locale = (Locale) iter.next();
+        if(!locale.equals(currentLocale)){
+          Integer imageId = (Integer)ImageLocalizationMap.get(locale);
+          if(imageId !=null){
+            try{
+            Image image = new Image(imageId.intValue());
+            T.add(getSwitcherLink(image,locale),col,row++);
+            }
+            catch(Exception ex){
+              ex.printStackTrace();
+            }
           }
         }
       }
