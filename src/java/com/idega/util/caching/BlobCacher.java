@@ -43,32 +43,33 @@ public class BlobCacher  {
 
 
   private static void cacheToFile(String entityClassString, int id, String applicationURL, HashtableDoubleKeyed cache, String blobColumnName ){
-    InputStream input;
+    InputStream input = null;
     GenericEntity entity;
     try{
       entity = GenericEntity.getEntityInstance(Class.forName(entityClassString),id);
       input = entity.getInputStreamColumnValue(blobColumnName);
+      String realPath = applicationURL+separator+rootCachingPath;
+      String virtualPath = "/"+rootCachingPath+"/";
+      String fileName = entity.getName();
+
+      if(input != null ){
+        FileUtil.streamToFile(input,realPath,entity.getID()+"_"+fileName);
+        cache.put(entity.getEntityName(), Integer.toString(entity.getID()),virtualPath+java.net.URLEncoder.encode(entity.getID()+"_"+fileName));
+      }
     }
     catch( Exception e ){
      e.printStackTrace(System.err);
      System.err.println("BlobCacher : error getting stream from blob");
-     return;
     }
-
-    String realPath = applicationURL+separator+rootCachingPath;
-    String virtualPath = "/"+rootCachingPath+"/";
-    String fileName = entity.getName();
-
-    try{
-      FileUtil.streamToFile(input,realPath,entity.getID()+"_"+fileName);
+    finally{
+      try{
+       if (input != null ) input.close();
+      }
+      catch(IOException e){
+        e.printStackTrace(System.err);
+        System.err.println("BlobCacher : error closing stream");
+      }
     }
-    catch( Exception e ){
-     e.printStackTrace(System.err);
-     System.err.println("BlobCacher : error streaming to file");
-     return;
-    }
-
-    cache.put(entity.getEntityName(), Integer.toString(entity.getID()),virtualPath+java.net.URLEncoder.encode(entity.getID()+"_"+fileName));
 
   }
 
@@ -114,8 +115,7 @@ public class BlobCacher  {
   }
   // not done yet
   private static void deleteCachedBlobFile(String pathAndFileName){
-     // File file = new File( (String) enum.nextElement());
-     // file.delete();
+     FileUtil.delete(pathAndFileName);
   }
 
 

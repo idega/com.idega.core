@@ -23,7 +23,7 @@ public class BlobInputStream extends InputStream{
   private GenericEntity entity;
   private ResultSet RS;
   private Statement Stmt;
-
+  private int status; //not used
   private String columnName;
   private String tableName;
 
@@ -69,25 +69,20 @@ public class BlobInputStream extends InputStream{
       if (RS != null){
           RS.close();
        }
+      if(Stmt!= null){
+          Stmt.close();
+      }
 
     }
     catch(Exception ex){
-      System.err.println("Error in BlobInputStream: "+ex.getMessage());
+      System.err.println("BlobInputStream : error closing stmt or rs");
       ex.printStackTrace(System.err);
     }
     finally{
-
-      if(Stmt!= null){
-        Stmt.close();
-        Stmt = null;
-      }
       if (conn!= null){
         entity.freeConnection(conn);
       }
-
     }
-
-
   }
 
   // basic inputstream functions
@@ -159,14 +154,6 @@ public class BlobInputStream extends InputStream{
 
   private String getTableName(){
     return this.tableName;
-  }
-
-  private void setDatasource(String datasourceName){
-    this.dataSourceName=datasourceName;
-  }
-
-  private String getDatasource(){
-    return this.dataSourceName;
   }
 
   private void initConnection() throws SQLException{
