@@ -361,9 +361,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 				else
 				{	
 					parent = getParentFromParentCollection(cachedGroups);
-					cachedParents.put(this.getPrimaryKey(), parent);
-					if (cachedGroups != null && parent!= null) {
-						cachedGroups.put(parent.getPrimaryKey(), parent);
+					if (parent != null){
+						cachedParents.put(this.getPrimaryKey(), parent);
+						if (cachedGroups != null && !cachedGroups.containsKey(parent.getPrimaryKey())) {
+							cachedGroups.put(parent.getPrimaryKey(), parent);
+						}
 					}
 				}
 			}
