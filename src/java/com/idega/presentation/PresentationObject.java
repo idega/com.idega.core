@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.23 2002/02/22 12:38:08 laddi Exp $
+ * $Id: PresentationObject.java,v 1.24 2002/02/22 13:02:07 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -27,6 +27,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.data.EntityFinder;
 import com.idega.exception.ICObjectNotInstalledException;
 import com.idega.presentation.ui.Form;
@@ -559,7 +560,8 @@ public class PresentationObject extends Object implements Cloneable {
   protected void prepareClone(PresentationObject newObjToCreate) {
   }
 
-  public synchronized Object _clone(IWContext iwc, boolean askForPermission){
+  public Object _clone(IWContext iwc, boolean askForPermission){
+    //System.out.println("Caling _clone(iwc,boolean) for: "+this.getClass().getName());
     if(askForPermission||iwc!=null){
       if(iwc.hasViewPermission(this)){
 	return this.clone(iwc,askForPermission);
@@ -571,13 +573,46 @@ public class PresentationObject extends Object implements Cloneable {
     }
   }
 
-  public synchronized Object clone(IWContext iwc) {
+  public Object clone(IWContext iwc) {
     return this._clone(iwc,true);
   }
 
-  public synchronized Object clone() {
-    return this.clone(null, false);
+  public  Object clone() {
+    //return this.clone(null, false);
+    return doRealClone();
   }
+
+  private Object doRealClone(){
+    PresentationObject obj = null;
+/*    System.err.println("--");
+    System.err.println("Cloning class of type: "+ this.getClassName());
+    System.err.println("--");
+*/
+    try {
+      //This is forbidden in clone i.e. "new":
+      //obj = (PresentationObject)Class.forName(this.getClassName()).newInstance();
+      obj = (PresentationObject)super.clone();
+      if (this.attributes != null) {
+        obj.setAttribute((Hashtable)this.attributes.clone());
+      }
+      obj.setName(this.name);
+      //obj.setParentObject(this.parentObject);
+      this.prepareClone(obj);
+      Vector vector;
+      obj.initializedInMain = this.initializedInMain;
+      obj.ic_object_instance_id = this.ic_object_instance_id;
+      obj.ic_object_id = this.ic_object_id;
+
+
+      //obj.defaultState = this.defaultState;  //same object, unnecessary to clone
+
+    }
+    catch(Exception ex) {
+      ex.printStackTrace(System.err);
+    }
+    return obj;
+  }
+
 
   /*
   public synchronized Object clone() {
@@ -603,16 +638,13 @@ public class PresentationObject extends Object implements Cloneable {
   }
   */
 
-  public synchronized Object clone(IWContext iwc, boolean askForPermission) {
-    PresentationObject obj = null;
-/*    System.err.println("--");
-    System.err.println("Cloning class of type: "+ this.getClassName());
-    System.err.println("--");
-*/
+  public Object clone(IWContext iwc, boolean askForPermission) {
+/*    PresentationObject obj = null;
     try {
       //This is forbidden in clone i.e. "new":
       //obj = (PresentationObject)Class.forName(this.getClassName()).newInstance();
-      obj = (PresentationObject)super.clone();
+      //obj = (PresentationObject)super.clone();
+      obj = (PresentationObject)this.clone();
       if (this.attributes != null) {
 	obj.setAttribute((Hashtable)this.attributes.clone());
       }
@@ -635,6 +667,8 @@ public class PresentationObject extends Object implements Cloneable {
 
 
     return obj;
+    */
+    return (PresentationObject)this.clone();
   }
 /*
   protected void initICObjectInstanceId(IWContext iwc){
@@ -917,29 +951,29 @@ public class PresentationObject extends Object implements Cloneable {
     return IW_BUNDLE_IDENTIFIER;
   }
 
-  public IWBundle getBundle(IWContext iwc){
-    IWMainApplication iwma = iwc.getApplication();
+  public IWBundle getBundle(IWUserContext iwuc){
+    IWMainApplication iwma = iwuc.getApplicationContext().getApplication();
     return iwma.getBundle(getBundleIdentifier());
   }
 
-  public IWResourceBundle getResourceBundle(IWContext iwc){
-    IWBundle bundle = getBundle(iwc);
+  public IWResourceBundle getResourceBundle(IWUserContext iwuc){
+    IWBundle bundle = getBundle(iwuc);
     if(bundle!=null){
-      return bundle.getResourceBundle(iwc.getCurrentLocale());
+      return bundle.getResourceBundle(iwuc.getCurrentLocale());
     }
     return null;
   }
 
-  public String getLocalizedString(String key,IWContext iwc){
-    IWResourceBundle bundle = getResourceBundle(iwc);
+  public String getLocalizedString(String key,IWUserContext iwuc){
+    IWResourceBundle bundle = getResourceBundle(iwuc);
     if(bundle!=null){
       return bundle.getLocalizedString(key);
     }
     return null;
   }
 
-  public String getLocalizedString(String key,String defaultValue,IWContext iwc){
-    IWResourceBundle bundle = getResourceBundle(iwc);
+  public String getLocalizedString(String key,String defaultValue,IWUserContext iwuc){
+    IWResourceBundle bundle = getResourceBundle(iwuc);
     if(bundle!=null){
       return bundle.getLocalizedString(key,defaultValue);
     }
