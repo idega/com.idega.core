@@ -51,8 +51,12 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
           return (String) getColumnValue("street_name");
   }
 
+  /**
+   * All names are stored in uppercase, uses String.toUpperCase();
+   */
   public void setStreetName(String street_name){
-                  setColumn("street_name",street_name);	}
+    setColumn("street_name",street_name.toUpperCase());
+  }
 
   public String getStreetNumber(){
                   return getStringColumnValue("street_number");
@@ -158,4 +162,17 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
       throw new RemoteException(e.getMessage());
     }
   }
+    
+    public String getStreetAddress(){
+    	StringBuffer addr = new StringBuffer();
+    	String street = getStreetName();
+    	if(street!=null)
+    		addr.append(street).append(" ");
+    	String number = this.getStreetNumber();
+    	if(number !=null)
+    		addr.append(number);
+    	return addr.toString();
+    }
+    
+  
 }
