@@ -1,6 +1,6 @@
 /*
 
- * $Id: BlobWrapper.java,v 1.9 2002/04/06 19:07:43 tryggvil Exp $
+ * $Id: BlobWrapper.java,v 1.10 2002/08/12 12:15:27 palli Exp $
 
  *
 
@@ -562,9 +562,9 @@ public class BlobWrapper {
 
         id = com.idega.data.EntityControl.createUniqueID(entity);
 
-        if(dimensions) statement = "insert into image (image_id,image_value,content_type,image_name,width,height,date_added,from_file,parent_id) values("+id+",?,?,?,?,?,"+idegaTimestamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
+        if(dimensions) statement = "insert into image (image_id,image_value,content_type,image_name,width,height,date_added,from_file,parent_id) values("+id+",?,?,?,?,?,"+IWTimeStamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
 
-        else statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,"+idegaTimestamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
+        else statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,"+IWTimeStamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
 
       }
 

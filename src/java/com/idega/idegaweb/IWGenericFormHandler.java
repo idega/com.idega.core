@@ -144,13 +144,13 @@ public class IWGenericFormHandler implements java.lang.Cloneable{
     }
     else if(parameterType.equals(DATE_TYPE)){
       DateFormat format = DateFormat.getDateInstance(DateFormat.DEFAULT,iwc.getCurrentLocale());
-      com.idega.util.idegaTimestamp its = new com.idega.util.idegaTimestamp(parameterValue);
+      com.idega.util.IWTimeStamp its = new com.idega.util.IWTimeStamp(parameterValue);
       java.util.Date date = its.getSQLDate();
       return format.format(date);
     }
     else if(parameterType.equals(TIMESTAMP_TYPE)){
       DateFormat format = DateFormat.getDateInstance(DateFormat.DEFAULT,iwc.getCurrentLocale());
-      com.idega.util.idegaTimestamp its = new com.idega.util.idegaTimestamp(parameterValue);
+      com.idega.util.IWTimeStamp its = new com.idega.util.IWTimeStamp(parameterValue);
       java.util.Date date = its.getSQLDate();
       return format.format(date);
     }

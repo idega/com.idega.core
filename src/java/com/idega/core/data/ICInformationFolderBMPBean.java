@@ -6,7 +6,7 @@ import java.sql.*;
 
 import com.idega.data.CacheableEntity;
 
-import com.idega.util.idegaTimestamp;
+import com.idega.util.IWTimeStamp;
 
 import com.idega.core.user.data.User;
 
@@ -830,7 +830,7 @@ public class ICInformationFolderBMPBean extends com.idega.data.CacheableEntityBM
 
             setColumn(getColumnDeleted(), DELETED);
 
-            setDeletedWhen(idegaTimestamp.getTimestampRightNow());
+            setDeletedWhen(IWTimeStamp.getTimestampRightNow());
 
 //      setDeletedBy(iwc.getUserId());
 

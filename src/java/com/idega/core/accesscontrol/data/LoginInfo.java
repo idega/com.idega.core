@@ -11,7 +11,7 @@ public interface LoginInfo extends com.idega.data.IDOLegacyEntity
  public java.lang.String getEncryprionType();
  public java.lang.String getIDColumnName();
  public int getLoginTableId();
- public com.idega.util.idegaTimestamp getModified();
+ public com.idega.util.IWTimeStamp getModified();
  public boolean getPasswNeverExpires();
  public boolean getPasswordExpires();
  public void setAccountEnabled(java.lang.Boolean p0);
@@ -24,7 +24,7 @@ public interface LoginInfo extends com.idega.data.IDOLegacyEntity
  public void setDefaultValues();
  public void setEncriptionType(java.lang.String p0);
  public void setLoginTableId(int p0);
- public void setModified(com.idega.util.idegaTimestamp p0);
+ public void setModified(com.idega.util.IWTimeStamp p0);
  public void setPasswNeverExpires(java.lang.Boolean p0);
  public void setPasswNeverExpires(boolean p0);
  public void setPasswordExpires(boolean p0);

@@ -206,17 +206,17 @@ public void setList(IDOLegacyEntity[] entity){
 
 							Object value = entity[y-1].getColumnValue(columnName);
 
-							idegaTimestamp stamp = null;
+							IWTimeStamp stamp = null;
 
 							if (value instanceof java.sql.Timestamp){
 
-								stamp =  new idegaTimestamp((java.sql.Timestamp) value);
+								stamp =  new IWTimeStamp((java.sql.Timestamp) value);
 
 							}
 
 							else if (value instanceof java.sql.Date){
 
-								stamp =  new idegaTimestamp((java.sql.Date) value);
+								stamp =  new IWTimeStamp((java.sql.Date) value);
 
 							}
 

@@ -10,7 +10,7 @@ import com.idega.core.data.ICObjectInstance;
 
 import com.idega.data.EntityFinder;
 
-import com.idega.util.idegaTimestamp;
+import com.idega.util.IWTimeStamp;
 
 import java.sql.SQLException;
 
@@ -226,7 +226,7 @@ public class FolderBlockBusiness {
 
     folder.setValid(true);
 
-    folder.setCreated(idegaTimestamp.getTimestampRightNow());
+    folder.setCreated(IWTimeStamp.getTimestampRightNow());
 
 
 
@@ -326,7 +326,7 @@ public class FolderBlockBusiness {
 
     cat.setValid(true);
 
-    cat.setCreated(idegaTimestamp.getTimestampRightNow());
+    cat.setCreated(IWTimeStamp.getTimestampRightNow());
 
 
 

@@ -13,7 +13,7 @@ import com.idega.data.EntityFinder;
 import com.idega.core.accesscontrol.data.*;
 import com.idega.core.business.*;
 import com.idega.core.user.business.UserBusiness;
-import com.idega.util.idegaTimestamp;
+import com.idega.util.IWTimeStamp;
 import com.idega.data.SimpleQuerier;
 import com.idega.util.EncryptionType;
 import com.idega.idegaweb.IWServiceImpl;
@@ -1178,7 +1178,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
     adminUser.setPrimaryGroupID(this.getPermissionGroupAdministrator().getID());
     adminUser.update();
 
-    LoginDBHandler.createLogin(adminUser.getID(),"Administrator","idega",Boolean.TRUE,idegaTimestamp.RightNow(),-1,Boolean.FALSE,Boolean.TRUE,Boolean.FALSE,EncryptionType.MD5);
+    LoginDBHandler.createLogin(adminUser.getID(),"Administrator","idega",Boolean.TRUE,IWTimeStamp.RightNow(),-1,Boolean.FALSE,Boolean.TRUE,Boolean.FALSE,EncryptionType.MD5);
     return adminUser;
   }
 

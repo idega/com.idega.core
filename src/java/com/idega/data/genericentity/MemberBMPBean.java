@@ -352,7 +352,7 @@ public class MemberBMPBean extends com.idega.data.GenericEntity implements com.i
 
 public int getAge() {
 
-    int currentYear = com.idega.util.idegaTimestamp.RightNow().getYear();
+    int currentYear = com.idega.util.IWTimeStamp.RightNow().getYear();
 
     int memberYear = 0;
 
@@ -362,7 +362,7 @@ public int getAge() {
 
     if (date != null) {
 
-        com.idega.util.idegaTimestamp stamp = new com.idega.util.idegaTimestamp(date);
+        com.idega.util.IWTimeStamp stamp = new com.idega.util.IWTimeStamp(date);
 
         memberYear = stamp.getYear();
 

@@ -1518,7 +1518,7 @@ public class idegaCalendar{
 
                 easterDay = getEasterDay(ar);
 
-                idegaTimestamp stamp = new idegaTimestamp(easterDay[2],easterDay[1],easterDay[0]);
+                IWTimeStamp stamp = new IWTimeStamp(easterDay[2],easterDay[1],easterDay[0]);
 
 
 

@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.32 2002/07/31 14:43:48 tryggvil Exp $
+ * $Id: LoginDBHandler.java,v 1.33 2002/08/12 12:15:25 palli Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -24,7 +24,7 @@ import com.idega.data.EntityFinder;
 import com.idega.data.IDORemoveException;
 import com.idega.util.Encrypter;
 import com.idega.util.StringHandler;
-import com.idega.util.idegaTimestamp;
+import com.idega.util.IWTimeStamp;
 /**
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
@@ -142,7 +142,7 @@ public class LoginDBHandler
 				throw new Exception("Login not valid: null or emptyString");
 			}
 		}
-		loginTable.setLastChanged(idegaTimestamp.getTimestampRightNow());
+		loginTable.setLastChanged(IWTimeStamp.getTimestampRightNow());
 		try
 		{
 			if (update)
@@ -175,7 +175,7 @@ public class LoginDBHandler
 		boolean update,
 		int loginTableID,
 		Boolean accountEnabled,
-		idegaTimestamp modified,
+		IWTimeStamp modified,
 		int daysOfVality,
 		Boolean passwordExpires,
 		Boolean userAllowedToChangePassw,
@@ -228,7 +228,7 @@ public class LoginDBHandler
 		}
 		else
 		{
-			logInfo.setModified(idegaTimestamp.RightNow());
+			logInfo.setModified(IWTimeStamp.RightNow());
 		}
 		if (daysOfVality > -1)
 		{
@@ -283,7 +283,7 @@ public class LoginDBHandler
 		String userLogin,
 		String password,
 		Boolean accountEnabled,
-		idegaTimestamp modified,
+		IWTimeStamp modified,
 		int daysOfValidity,
 		Boolean passwordExpires,
 		Boolean userAllowedToChangePassw,
@@ -309,7 +309,7 @@ public class LoginDBHandler
 		String userLogin,
 		String password,
 		Boolean accountEnabled,
-		idegaTimestamp modified,
+		IWTimeStamp modified,
 		int daysOfValidity,
 		Boolean passwordExpires,
 		Boolean userAllowedToChangePassw,
@@ -368,7 +368,7 @@ public class LoginDBHandler
 		String userLogin,
 		String password,
 		Boolean accountEnabled,
-		idegaTimestamp modified,
+		IWTimeStamp modified,
 		int daysOfVality,
 		Boolean passwNeverExpires,
 		Boolean userAllowedToChangePassw,
@@ -392,7 +392,7 @@ public class LoginDBHandler
 		String userLogin,
 		String password,
 		Boolean accountEnabled,
-		idegaTimestamp modified,
+		IWTimeStamp modified,
 		int daysOfVality,
 		Boolean passwNeverExpires,
 		Boolean userAllowedToChangePassw,
@@ -418,7 +418,7 @@ public class LoginDBHandler
 	public static void updateLoginInfo(
 		int loginTableID,
 		Boolean accoutEnabled,
-		idegaTimestamp modified,
+		IWTimeStamp modified,
 		int daysOfVality,
 		Boolean passwNeverExpires,
 		Boolean userAllowedToChangePassw,
@@ -438,7 +438,7 @@ public class LoginDBHandler
 	public static void updateLoginInfo(
 		int loginTableID,
 		Boolean accoutEnabled,
-		idegaTimestamp modified,
+		IWTimeStamp modified,
 		int daysOfVality,
 		Boolean passwNeverExpires,
 		Boolean userAllowedToChangePassw,
@@ -675,7 +675,7 @@ public class LoginDBHandler
 					.createLegacy();
 			inRec.setIPAdress(IPAddress);
 			inRec.setLoginId(iLoginId);
-			inRec.setLogInStamp(idegaTimestamp.getTimestampRightNow());
+			inRec.setLogInStamp(IWTimeStamp.getTimestampRightNow());
 			inRec.store();
 			Integer id = (Integer) inRec.getPrimaryKey();
 			return id.intValue();
@@ -695,7 +695,7 @@ public class LoginDBHandler
 			LoginRecord lr =
 				((LoginRecordHome) com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class)).findByPrimaryKey(
 					iLoginRecordId);
-			lr.setLogOutStamp(idegaTimestamp.getTimestampRightNow());
+			lr.setLogOutStamp(IWTimeStamp.getTimestampRightNow());
 			lr.store();
 			return true;
 		}

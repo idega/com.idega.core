@@ -18,7 +18,7 @@ import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.core.user.presentation.UserPropertyWindow;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.accesscontrol.business.AccessControl;
-import com.idega.util.idegaTimestamp;
+import com.idega.util.IWTimeStamp;
 import com.idega.transaction.IdegaTransactionManager;
 import javax.transaction.TransactionManager;
 import java.util.List;
@@ -367,7 +367,7 @@ public class CreateUser extends Window {
                                    null,null,null,null,primaryGroupId);
 
 
-      LoginDBHandler.createLogin(newUser.getID(),login,password,bEnabledAccount,idegaTimestamp.RightNow(),
+      LoginDBHandler.createLogin(newUser.getID(),login,password,bEnabledAccount,IWTimeStamp.RightNow(),
                                  5000,bPasswNeverExpires,bAllowedToChangePassw,bMustChage,null);
 
       transaction.commit();

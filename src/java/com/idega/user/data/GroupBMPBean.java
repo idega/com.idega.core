@@ -7,7 +7,7 @@ import javax.ejb.*;
 import com.idega.core.ICTreeNode;
 import com.idega.core.data.ICNetwork;
 import com.idega.core.data.ICProtocol;
-import com.idega.util.idegaTimestamp;
+import com.idega.util.IWTimeStamp;
 
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -79,7 +79,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
   public void setDefaultValues(){
     setGroupType(getGroupTypeValue());
-    setCreated(idegaTimestamp.getTimestampRightNow());
+    setCreated(IWTimeStamp.getTimestampRightNow());
   }
 
 //  public void insertStartData(){

@@ -8,7 +8,7 @@ import java.sql.*;
 
 import com.idega.core.data.ICObjectInstance;
 
-import com.idega.util.idegaTimestamp;
+import com.idega.util.IWTimeStamp;
 
 
 
@@ -298,7 +298,7 @@ public class CategoryBusiness{
 
       else{
 
-        Cat.setCreated(idegaTimestamp.getTimestampRightNow());
+        Cat.setCreated(IWTimeStamp.getTimestampRightNow());
 
         Cat.setValid(true);
 

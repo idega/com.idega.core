@@ -148,7 +148,7 @@ public class IWStarterServlet extends GenericServlet
 	      e.printStackTrace(System.err);
 	    }
 	    IWMainApplication application = new IWMainApplication(this.getServletContext());
-            application.getSettings().setProperty("last_startup",com.idega.util.idegaTimestamp.RightNow().toString());
+            application.getSettings().setProperty("last_startup",com.idega.util.IWTimeStamp.RightNow().toString());
 	    if(application.getSettings().getIfDebug()){
 	      application.getSettings().setDebug(true);
 	      sendStartMessage("Debug mode is active");
@@ -234,7 +234,7 @@ public class IWStarterServlet extends GenericServlet
 
 	public void endIdegaWebApplication(){
 	    IWMainApplication application = IWMainApplication.getIWMainApplication(getServletContext());
-            application.getSettings().setProperty("last_shutdown",com.idega.util.idegaTimestamp.RightNow().toString());
+            application.getSettings().setProperty("last_shutdown",com.idega.util.IWTimeStamp.RightNow().toString());
 	    application.unload();
 	    endDatabasePool();
 	    sendShutdownMessage("Completed");

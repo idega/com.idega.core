@@ -6,7 +6,7 @@ import com.idega.data.IDOLookup;
 import com.idega.core.data.ICLocale;
 import com.idega.core.data.ICLocaleHome;
 import com.idega.util.LocaleUtil;
-import com.idega.util.idegaTimestamp;
+import com.idega.util.IWTimeStamp;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.ui.DropdownMenu;
 
@@ -31,7 +31,7 @@ public class ICLocaleBusiness {
   private static Hashtable LocaleHashByString = null, LocaleHashById = null;
   private static Hashtable LocaleHashInUseByString = null, LocaleHashInUseById = null;
   private static List allIcLocales = null,usedIcLocales = null,notUsedIcLocales = null;
-  private static idegaTimestamp reloadStamp = null;
+  private static IWTimeStamp reloadStamp = null;
 
 
   private static List listOfAllICLocales(){
@@ -192,10 +192,10 @@ public class ICLocaleBusiness {
     makeLists();
     makeHashtables();
 
-    reloadStamp = idegaTimestamp.RightNow();
+    reloadStamp = IWTimeStamp.RightNow();
   }
 
-  public static idegaTimestamp getReloadStamp(){
+  public static IWTimeStamp getReloadStamp(){
     if(reloadStamp == null)
       reload();
     return reloadStamp;
