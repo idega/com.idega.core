@@ -5,6 +5,7 @@ package com.idega.idegaweb.employment.data;
 import java.sql.*;
 import com.idega.data.*;
 import com.idega.data.genericentity.*;
+import com.idega.core.user.data.User;
 
 public class EmploymentMemberInfo extends GenericEntity{
 
@@ -24,6 +25,7 @@ public class EmploymentMemberInfo extends GenericEntity{
 		addAttribute("cv","Starfsferill",true,true, "java.lang.String",3500);
 		addAttribute("began_work","hóf störf", true, true, "java.lang.String");
                 addAttribute("","Deild",true,true,"java.lang.Integer");
+              this.addManyToManyRelationShip(User.class);
 	}
 
         public String getIDColumnName(){
@@ -66,6 +68,9 @@ public class EmploymentMemberInfo extends GenericEntity{
 		return returner;
 	}
 
+        /**
+         * @deprecated
+         */
 	public Member getMember() {
 		return (new Member());
 	}

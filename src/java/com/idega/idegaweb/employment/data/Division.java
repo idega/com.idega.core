@@ -5,6 +5,7 @@ package com.idega.idegaweb.employment.data;
 //import java.util.*;
 import java.sql.*;
 import com.idega.data.*;
+import com.idega.core.user.data.User;
 
 public class Division extends GenericEntity{
 
@@ -20,6 +21,8 @@ public class Division extends GenericEntity{
 		addAttribute(getIDColumnName());
 		addAttribute("division_name","Nafn deildar",true,true,"java.lang.String");
                 addAttribute("parent_id","pabba id",true,true,"java.lang.Integer");
+            this.addManyToManyRelationShip(User.class);
+
 	}
 
         public String getIDColumnName(){
