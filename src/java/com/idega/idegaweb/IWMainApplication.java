@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
@@ -314,12 +315,35 @@ public class IWMainApplication {//implements ServletContext{
         application.removeAttribute(parameterName);
     }
 
+    /**
+     * Gets the application instance from the given ServletContext instance
+     * @param application
+     * @return
+     */
     public static IWMainApplication getIWMainApplication(
             ServletContext application) {
         return (IWMainApplication) application
                 .getAttribute(IWMainApplication.ApplicationStorageParameterName);
     }
 
+    /**
+     * Gets the application instance from the given FacesContext instance
+     * @param application
+     * @return
+     */
+    public static IWMainApplication getIWMainApplication(
+            FacesContext facesContext) {
+    	
+    		try{
+    			ServletContext servletContext = (ServletContext)facesContext.getExternalContext().getContext();
+    			return getIWMainApplication(servletContext);
+    		}
+    		catch(ClassCastException cce){
+    			throw new RuntimeException("IWMainApplication.getIWMainApplication(): FacesContext does not contain a ServletContext",cce);
+    		}
+    }
+    
+    
     public String getDefaultDarkInterfaceColor() {
         return defaultDarkInterfaceColor;
     }
