@@ -179,7 +179,7 @@ private void printButton(IWContext iwc) throws IOException{
         }
 	else{
 		setAttribute("border","0");
-		print("<input type=\"image\" src=\""+defaultImage.getURL()+"\" name=\""+getName()+"\" "+getAttributeString()+" >");
+		print("<input type=\"image\" src=\""+defaultImage.getMediaServletString()+"\" name=\""+getName()+"\" "+getAttributeString()+" >");
 	}
 }
 
