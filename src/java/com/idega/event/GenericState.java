@@ -3,6 +3,7 @@ package com.idega.event;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 import java.util.ListIterator;
@@ -17,7 +18,7 @@ import java.util.StringTokenizer;
  * @version 1.0
  */
 
-public class GenericState extends Object implements Cloneable {
+public class GenericState extends Object implements Cloneable,Serializable {
 
   public final static String STATESTRING_VALUE_SEPERATOR = "|";
   public final static String STATESTRING_MULTIVALUE_ARRAY_ELEMENT_SEPERATOR = ";";

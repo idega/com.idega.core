@@ -6,15 +6,15 @@ package com.idega.util.text;
  * @author @version 1.0
  */
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
 
-public class TextStyler {
+public class TextStyler implements Serializable{
 
 	private HashMap _styleMap;
-
 	private String _styleString;
 
 	private String[] _styles = StyleConstants.ALL_STYLES;
