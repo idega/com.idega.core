@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.10 2001/11/02 11:35:44 palli Exp $
+ * $Id: Page.java,v 1.11 2001/11/03 13:05:50 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -555,6 +555,12 @@ System.out.println("Entering title update seq");
 //        instance.updateTemplate(this._te);
       }
     }*/
+
+      if (_templateId != null) {
+        BuilderLogic instance = BuilderLogic.getInstance();
+//        instance.updateName(_title,iwc);
+        instance.changeTemplateId(_templateId,iwc);
+      }
 
   }
 
