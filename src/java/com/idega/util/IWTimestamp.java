@@ -861,7 +861,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return String
 	 */
 	public String getLocaleTime(Locale locale) {
-		return getLocaleDate(locale, LONG);
+		return getLocaleTime(locale, LONG);
 	}
 
 	/**
