@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
  * @version 1.0
  */
 
-public class GenericState {
+public class GenericState extends Object implements Cloneable {
 
   public final static String STATESTRING_VALUE_SEPERATOR = "|";
   public final static String STATESTRING_MULTIVALUE_ARRAY_ELEMENT_SEPERATOR = ";";
@@ -29,6 +29,30 @@ public class GenericState {
 //  List defaultStage = null;
   int pageKey;
   int instanceId;
+
+
+  public synchronized Object clone(){
+
+    GenericState obj = null;
+    try {
+
+
+      obj = (GenericState)super.clone();
+
+      if(state != null){
+        obj.state = (List)((Vector)this.state).clone();
+      }
+      obj.pageKey = this.pageKey;
+      obj.instanceId = this.instanceId;
+
+    }
+    catch (CloneNotSupportedException ex) {
+      ex.printStackTrace();
+    }
+
+    return obj;
+  }
+
 /*
   public GenericState(String pageKey, int instanceId , IWContext iwc) {
     this(pageKey,instanceId,iwc.getCurrentState(pageKey,instanceId));
@@ -114,8 +138,8 @@ public class GenericState {
   protected void parseStateString(String stateString){
     //System.err.println(this+" string to parse: "+stateString);
     StringTokenizer stoken = new StringTokenizer(stateString,STATESTRING_VALUE_SEPERATOR);
+    state = new Vector();
     while (stoken.hasMoreTokens()) {
-      state = new Vector();
       String token = stoken.nextToken();
       StringTokenizer tmpToken = new StringTokenizer(token,this.STATESTRING_MULTIVALUE_ARRAY_ELEMENT_SEPERATOR);
       int tokenCount = tmpToken.countTokens();
@@ -134,7 +158,7 @@ public class GenericState {
         if(!STATESTRING_NOVALUE.equals(token)){
           state.add(token);
         } else {
-          state.add(null);
+          state.add(STATESTRING_NOVALUE);
         }
       }
     }
