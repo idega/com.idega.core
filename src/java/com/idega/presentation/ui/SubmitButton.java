@@ -149,7 +149,9 @@ public void setStyle(String style) {
 public void main(IWContext iwc){
   if (usingControlParameter){
     if(!parameterName.equals(emptyString)){
-      if(this.defaultImage==null){
+        this.getParentForm().addControlParameter(parameterName,emptyString);
+        this.setOnClick("this.form."+parameterName+".value='"+parameterValue+"'");
+      /*if(this.defaultImage==null){
         this.getParentForm().setControlParameter(parameterName,emptyString);
         this.setOnClick("this.form."+parameterName+".value='"+parameterValue+"'");
       }
@@ -163,7 +165,8 @@ public void main(IWContext iwc){
         else{
           throw new RuntimeException("ControlParameter is null in parent form");
         }
-      }
+      }*/
+
     }
   }
 

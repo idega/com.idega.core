@@ -22,7 +22,8 @@ private Window window;
 private Vector maintainedParameters;
 private boolean maintainAllParameters;
 private PresentationObject submitToObject;
-private Parameter controlParameter;
+//private Parameter controlParameter;
+private Map controlParameters;
 private Class windowClass;
 
 private static String FORM_EVENT_PARAMETER="idega_special_form_event";
@@ -418,8 +419,12 @@ public void print(IWContext iwc)throws Exception{
         obj.maintainedParameters = (Vector)this.maintainedParameters.clone();
       }
 
-      if(controlParameter != null){
-        obj.controlParameter = (Parameter)this.controlParameter.clone();
+      //if(controlParameter != null){
+      //  obj.controlParameter = (Parameter)this.controlParameter.clone();
+      //}
+
+      if(controlParameters != null){
+        obj.controlParameters = (Map)((HashMap)this.controlParameters).clone();
       }
 
       if(windowClass != null){
@@ -436,20 +441,43 @@ public void print(IWContext iwc)throws Exception{
     return obj;
   }
 
-protected Parameter getControlParameter(){
+/*protected Parameter getControlParameter(){
   return controlParameter;
-}
+}*/
 
-protected void setControlParameter(String parameterName,String parameterValue){
-  if (controlParameter==null){
-    setControlParameter(new Parameter(parameterName,parameterValue));
+protected Map getControlParameters(){
+  if(controlParameters==null){
+    controlParameters = new HashMap();
   }
+  return controlParameters;
 }
 
+/**
+ * @deprecated replaced with addControlParameter
+ */
+protected void setControlParameter(String parameterName,String parameterValue){
+    addControlParameter(new Parameter(parameterName,parameterValue));
+}
+/**
+ * @deprecated replaced with addControlParameter
+ */
 protected void setControlParameter(Parameter parameter){
-  if (controlParameter==null){
+  addControlParameter(parameter);
+  /*if (controlParameter==null){
     controlParameter=parameter;
     add(controlParameter);
+  }*/
+}
+
+protected void addControlParameter(String parameterName,String parameterValue){
+    addControlParameter(new Parameter(parameterName,parameterValue));
+}
+
+protected void addControlParameter(Parameter parameter){
+  Parameter param =(Parameter) getControlParameters().get(parameter.getName());
+  if(param==null){
+    getControlParameters().put(parameter.getName(),parameter);
+    add(parameter);
   }
 }
 
