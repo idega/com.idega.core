@@ -1889,6 +1889,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    * @param comment
    */
   public boolean storeUserTopGroupNodes(User user,Collection nodeGroups,String comment){
+      if (true) //TODO Sigtryggur This is temporarly disabled, untill decaching has been enabled
+          return true;
+      
       javax.transaction.TransactionManager transactionManager = com.idega.transaction.IdegaTransactionManager.getInstance();
       try {
         transactionManager.begin();
