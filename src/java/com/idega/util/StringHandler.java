@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.31 2004/11/23 17:28:11 thomas Exp $
+ * $Id: StringHandler.java,v 1.32 2005/01/07 11:00:19 thomas Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -25,10 +25,10 @@ import java.util.TreeSet;
 
 /**
  *  This class has utility methods to work with strings.<br>
- *  Last modified: $Date: 2004/11/23 17:28:11 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/01/07 11:00:19 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>,<a href="mailto:gummi@idega.is">Gudmundur Saemundsson</a>
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  */
 public class StringHandler {
   
@@ -96,7 +96,9 @@ public class StringHandler {
 	public static final String SLASH="/";
 	public static final String NEWLINE="\n";
 	
-	public StringHandler() {}
+	public StringHandler() {
+		// empty blocks
+	}
 	/**
 	 * Returns an random String with the desired length with the Roman alphabet (upper and lower case) and numbers 0-9
 	 */
@@ -174,9 +176,7 @@ public class StringHandler {
 							if (theString.length() > 0) {
 								return theString;
 							}
-							else {
-								throw new NoSuchElementException();
-							}
+							throw new NoSuchElementException();
 						}
 					}
 					else {
@@ -187,9 +187,7 @@ public class StringHandler {
 					if (e instanceof NoSuchElementException) {
 						throw (NoSuchElementException) e.fillInStackTrace();
 					}
-					else {
-						throw new NoSuchElementException();
-					}
+					throw new NoSuchElementException();
 				}
 				return theReturn;
 			}
@@ -677,6 +675,16 @@ public class StringHandler {
 		char c2;
 		boolean firstDigitIsZero1 = true;
 		boolean firstDigitIsZero2 = true;
+		if (version1 == null) {
+			if (version2 == null) {
+				return 0;
+			}
+			return -1;
+		}
+		else if (version2 == null) {
+			return 1;
+		}
+
 		int versionLength1 = version1.length();
 		int versionLength2 = version2.length();
 		while (true) {
