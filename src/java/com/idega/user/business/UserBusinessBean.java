@@ -1691,8 +1691,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 								
 								if( !groupMap.containsKey(primaryKey) ){
 									Group permissionGroup = groupBiz.getGroupByGroupID(primaryKey.intValue());
-									if( !cachedGroups.containsKey(primaryKey) )
-										cachedGroups.put(primaryKey,permissionGroup);	
+									if( !cachedGroups.containsKey(primaryKey) ) {
+										cachedGroups.put(primaryKey,permissionGroup);
+									}
 									Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup, cachedParents, cachedGroups);
 									Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
 									parents.put(primaryKey,parentMap);
