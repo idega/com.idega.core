@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.idega.builder.business.PageCacher;
+//import com.idega.builder.business.PageCacher;
 import com.idega.core.builder.data.ICPage;
 
 
@@ -165,7 +165,8 @@ public class HtmlReferenceRewriter {
 		instance.process();
 		
 		ibpage.store();
-		PageCacher.flagPageInvalid(pageKey);
+		//PageCacher.flagPageInvalid(pageKey);
+		//PageCacher.flagAllPagesInvalid();
 	}
 
 	/**
