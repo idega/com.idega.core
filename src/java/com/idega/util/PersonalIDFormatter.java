@@ -2,7 +2,7 @@ package com.idega.util;
 
 import java.util.Locale;
 /**
- * Title:        idegaclasses
+ * Title:        A class for formatting presentation of PersonalIDs
  * Description:
  * Copyright:    Copyright (c) 2002
  * Company:      idega
@@ -17,6 +17,10 @@ public class PersonalIDFormatter {
 	private PersonalIDFormatter() {
 	}
 
+	/**
+	 * Accepts input in which is a valid personalID for a specific locale.
+	 * @return A formatted version of the personalID if the personalID is valid for the specified locale and the PersonalIDFormatter can handle the locale.
+	 **/
 	public static String formatPersonalID(
 		String originalString,
 		Locale locale) {
