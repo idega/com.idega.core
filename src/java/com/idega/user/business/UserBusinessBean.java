@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -1550,7 +1549,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					else{
 						System.out.println("TOP NODES fetch starts : "+ IWTimestamp.RightNow().toString());
 						Map parents = new HashMap();
-						Map groupMap = new Hashtable();//we need it to be synchronized so we can remove items while in a iterator
+						Map groupMap = new HashMap();//we need it to be synchronized so we can remove items while in a iterator
 						Map aliasMap = new HashMap();
 						
 						IDOUtil idoUtil = IDOUtil.getInstance();
@@ -1667,33 +1666,40 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 							}
 							
 							//check the children recursively
+							List groupsToRemove = new ArrayList();
 							Iterator keyIter = groupMap.keySet().iterator();
 							while (keyIter.hasNext()) {
 								Integer topNodeId = (Integer) keyIter.next();
-								try {
-									//also we need to check the children of the current top nodes recursively for aliases :s
-									Collection aliasesRecursive = getGroupBusiness().getChildGroupsRecursiveResultFiltered(getGroupBusiness().getGroupByGroupID(topNodeId.intValue()),aliasGroupType,true);
-									
-									if( aliasesRecursive!=null && !aliasesRecursive.isEmpty()){
-										Iterator aliasIter = aliasesRecursive.iterator();
-										while (aliasIter.hasNext()) {
-											Group alias = (Group) aliasIter.next();
-											Integer aliasGroupsId = new Integer(alias.getAliasID());
-											if(groupMap.containsKey(aliasGroupsId)){//only remove if they are not both top nodes
-												groupMap.remove(topNodeId);
-											}
+								if(skipThese.containsKey(topNodeId)){
+									continue;//it's going to be removed later
+								}
+								else{
+									try {
+										//also we need to check the children of the current top nodes recursively for aliases :s
+										Collection aliasesRecursive = getGroupBusiness().getChildGroupsRecursiveResultFiltered(getGroupBusiness().getGroupByGroupID(topNodeId.intValue()),aliasGroupType,true);
+										
+										if( aliasesRecursive!=null && !aliasesRecursive.isEmpty()){
+											Iterator aliasIter = aliasesRecursive.iterator();
+											while (aliasIter.hasNext()) {
+												Group alias = (Group) aliasIter.next();
+												Integer aliasGroupsId = new Integer(alias.getAliasID());
+												if(groupMap.containsKey(aliasGroupsId)){//only remove if they are not both top nodes
+													groupsToRemove.add(aliasGroupsId);
+													skipThese.put(aliasGroupsId,null);
+												}
+											}	
 										}
-										
-										
 									}
-								
+									catch (FinderException e1) {
+										e1.printStackTrace();
+									}
 								}
-								catch (FinderException e1) {
-									
-									e1.printStackTrace();
-								}
-								
-								
+							}
+							
+							//remove the top nodes that have aliases under another top node, or itself to avoid crashing the server in an endless loop?
+							Iterator removeIter = groupsToRemove.iterator();
+							while (removeIter.hasNext()) {
+								groupMap.remove(removeIter.next());
 							}
 							
 							
