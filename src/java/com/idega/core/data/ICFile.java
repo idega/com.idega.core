@@ -55,10 +55,10 @@ public class ICFile extends TreeableEntity {
     addAttribute(getColumnNameCreationDate(),"Creation date",true,true, java.sql.Timestamp.class);
     addAttribute(getColumnNameModificationDate(),"Modification date",true,true, java.sql.Timestamp.class);
     addAttribute(getColumnNameFileSize(),"file size in bytes",true,true,java.lang.Integer.class);
-
+/*
     addAttribute(getColumnDeleted(),"Deleted",true,true,String.class,1);
     addAttribute(getColumnDeletedBy(),"Deleted by",true,true,Integer.class,"many-to-one",User.class);
-    addAttribute(getColumnDeletedWhen(),"Deleted when",true,true,Timestamp.class);
+    addAttribute(getColumnDeletedWhen(),"Deleted when",true,true,Timestamp.class);*/
 
 
     addMetaDataRelationship();//can have extra info in the ic_metadata table
