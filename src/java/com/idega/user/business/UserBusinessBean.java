@@ -1385,9 +1385,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		catch(Exception e){
-			e.printStackTrace();	
+			return -1;	
 		}
-		return -1;
 	}
 
 	/**
