@@ -563,13 +563,12 @@ public static String getWindowArgumentCallingScript(boolean tool,
 	
   String no = "0";
   String yes = "1";
-  String sp = "'";
 
-  StringBuffer buf = new StringBuffer(sp).append("toolbar=").append(tool?yes:no).append("','").append("location=").append(loc?yes:no).append("',");
-  buf.append(sp).append("directories=").append(dir?yes:no).append("','").append("status").append(stat?yes:no).append("',");
-  buf.append(sp).append("menubar=").append(menu?yes:no).append("','").append("titlebar=").append(title?yes:no).append("',");
-  buf.append(sp).append("scrollbars=").append(scroll?yes:no).append("','").append("resizable=").append(resize?yes:no).append("',");
-  buf.append(sp).append("width=").append(theWidth).append("','").append("height=").append(theHeight).append("'");
+  StringBuffer buf = new StringBuffer("toolbar=").append(tool?yes:no).append(",").append("location=").append(loc?yes:no).append(",");
+  buf.append("directories=").append(dir?yes:no).append(",").append("status").append(stat?yes:no).append(",");
+  buf.append("menubar=").append(menu?yes:no).append(",").append("titlebar=").append(title?yes:no).append(",");
+  buf.append("scrollbars=").append(scroll?yes:no).append(",").append("resizable=").append(resize?yes:no).append(",");
+  buf.append("width=").append(theWidth).append(",").append("height=").append(theHeight).append("");
   if(xCoordinate!=null)
   	buf.append(",").append("left=").append(xCoordinate);
   if(yCoordinate!=null)
