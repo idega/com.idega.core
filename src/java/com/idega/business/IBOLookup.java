@@ -2,6 +2,7 @@ package com.idega.business;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.HashMap;
@@ -118,6 +119,12 @@ public class IBOLookup
 		try{
 			Method defaultCreateMethod = getCreateMethod(home);
 			session = (IBOService)defaultCreateMethod.invoke(home,null);
+		}
+		catch(InvocationTargetException ite){
+			//ite.printStackTrace();
+			Throwable e = ite.getTargetException();
+			e.printStackTrace();
+			throw new CreateException("Exception invoking create method for: "+beanInterfaceClass.getName()+". Error was:"+e.getClass().getName()+":"+e.getMessage());	
 		}
 		catch(Exception e){
 			e.printStackTrace();
