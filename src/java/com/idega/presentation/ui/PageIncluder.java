@@ -381,7 +381,7 @@ public class PageIncluder extends PresentationObject implements Index{
 
     html = symbolReplace(html,"nbsp;");
     
-    html = symbolReplace(html,"amp;"); a muuu point see top of method
+    html = symbolReplace(html,"amp;");// a muuu point see top of method
     
     html = symbolReplace(html,"quot;");
     html = symbolReplace(html,"middot");
