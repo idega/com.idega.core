@@ -53,6 +53,8 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 //	private final static String HELP_TEXT_KEY = "tabbed_property_panel";
 //  
   
+  public static final String TAB_FORM_NAME = "tab_form";
+  
 	private CreateGroupEvent _createEvent;
 
   private boolean useOkButton=true;
@@ -65,6 +67,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
   }
 
   private TabbedPropertyPanel(String key, IWContext iwc) {
+  	setName(TAB_FORM_NAME);
     frameTable = new Table();
 //		frameTable.setStyleClass("main");
     tpane = IWTabbedPane.getInstance(key,iwc);
