@@ -1,12 +1,12 @@
 package com.idega.presentation.ui;
 
-import java.net.*;
+import java.net.URL;
+import java.util.List;
+import java.net.URLEncoder;
 import java.util.Enumeration;
-import java.util.Vector;
+import com.idega.presentation.*;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
-import com.idega.presentation.PresentationObject;
-import com.idega.presentation.IWContext;
 import com.idega.util.FileUtil;
 import com.idega.util.text.TextSoap;
 import com.idega.builder.data.IBPage;
@@ -33,6 +33,9 @@ public class PageIncluder extends PresentationObject{
   private String token = null;
   private String tokenReplacer;
 
+  private String out;
+  private int index = 100;
+
   private static final String PAGE_INCLUDER_PARAMETER_NAME="iw_uri";
   private static final String PAGE_INCLUDER_SESSION_NAME="iw_session_token";
   private int instanceId;
@@ -47,7 +50,20 @@ public class PageIncluder extends PresentationObject{
     this.URL = URL;
   }
 
+  private void sortAndProcess(IWContext iwc){
+    Page parent = this.getParentPage();
+    List myList = parent.getAllContainedObjectsRecursive();
+
+
+  }
+
+  public void setLoadIndex(int index){
+   this.index = index;
+  }
+
   public void main(IWContext iwc) throws Exception {
+    sortAndProcess(iwc);
+
     if (forceFrame) {
       if (_sendToPage != null) {
         if (_sendToPageIfSet == null){
@@ -68,6 +84,17 @@ public class PageIncluder extends PresentationObject{
     if(URL!=null){
       initVariables(iwc);
       if( doPrint(iwc) ){
+        if(out==null){
+          process(iwc);
+        }
+
+        println(out);
+        out = null;
+      }
+    }
+  }
+
+  protected void process(IWContext iwc)throws IOException{
         StringBuffer location = new StringBuffer();
         StringBuffer queryBuf = new StringBuffer();
         String query = null;
@@ -241,7 +268,9 @@ public class PageIncluder extends PresentationObject{
 
         debug("Location url is: "+loc);
 
-        String html = FileUtil.getStringFromURL(loc);
+
+        out = FileUtil.getStringFromURL(loc);
+
 
         URL url = new URL(loc);
         BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
@@ -252,17 +281,13 @@ public class PageIncluder extends PresentationObject{
          * @todo use expressions to make none case sensitive or implement using HTMLDocumentLoader (Advanced Swing);
          * **/
 
-        html = TextSoap.stripHTMLTagAndChangeBodyTagToTable(html);
-        html = preProcess(html);
-        html = encodeQueryStrings(html);
-        html = changeSrcAttributes(html);
-        html = changeAHrefAttributes(html);
-        html = changeFormActionAttributes(html);
-        html = postProcess(html);
-
-        println(html);
-      }
-    }
+        out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(out);
+        out = preProcess(out);
+        out = encodeQueryStrings(out);
+        out = changeSrcAttributes(out);
+        out = changeAHrefAttributes(out);
+        out = changeFormActionAttributes(out);
+        out = postProcess(out);
   }
 
 
@@ -351,7 +376,7 @@ public class PageIncluder extends PresentationObject{
     html = TextSoap.findAndReplace(html,"#aelig;","&aelig;");
     html = TextSoap.findAndReplace(html,"#AELIG;","&AELIG;");
     html = TextSoap.findAndReplace(html,"#ouml;","&ouml;");
-    html = TextSoap.findAndReplace(html,"#OUML;","&OUML;");
+    html = TextSoap.findAndReplace(html,"#Ouml;","&Ouml;");
     html = TextSoap.findAndReplace(html,"#nbsp;","&nbsp;");
     html = TextSoap.findAndReplace(html,"#amp;","&amp;");
     html = TextSoap.findAndReplace(html,"#quot;","&quot;");
@@ -406,6 +431,7 @@ public class PageIncluder extends PresentationObject{
       obj.sessionURL = this.sessionURL;
       obj.token = this.token;
       obj.tokenReplacer = this.tokenReplacer;
+      obj.out = this.out;
     }
     catch(Exception ex) {
       ex.printStackTrace(System.err);
