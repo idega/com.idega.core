@@ -1000,6 +1000,17 @@ public class IWTimestamp implements Comparable {
 	}
 
 	/**
+	 * Returns the hours between the given <code>IWTimestamp</code> objects.  If
+	 * the first one is later than the second a negative value is returned.
+	 * @param before		The first IWTimestamp to use.
+	 * @param after		The second IWTimestamp to use.
+	 * @return int
+	 */
+	public static int getHoursBetween(IWTimestamp before, IWTimestamp after) {
+		return (int) (getMilliSecondsBetween(before, after) / 3600000);
+	}
+	
+	/**
 	 * Returns the milliseconds between the given <code>IWTimestamp</code> objects.  If
 	 * the first one is later than the second a negative value is returned.
 	 * @param before		The first IWTimestamp to use.
