@@ -387,7 +387,7 @@ public class UserBusiness {
     Statement Stmt= null;
     try {
       Email eEmail = lookupEmail(sNewEmailAddress);
-      if(eEmail!=null){
+      if(eEmail==null){
         eEmail = new Email();
         eEmail.setEmailAddress(sNewEmailAddress);
         eEmail.insert();
