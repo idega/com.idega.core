@@ -23,7 +23,6 @@ import com.idega.util.IWTimestamp;
 
 public class GroupRelationBMPBean extends GenericEntity implements GroupRelation {
 
-
 	protected static final String  TABLE_NAME="IC_GROUP_RELATION";
 	protected static final String  GROUP_ID_COLUMN="IC_GROUP_ID";
 	protected static final String  RELATED_GROUP_ID_COLUMN="RELATED_IC_GROUP_ID";
@@ -34,7 +33,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   protected static final String  SET_PASSIVE_BY="SET_PASSIVE_BY";
   protected static final String CREATED_BY = "CREATED_BY";
   protected static final String RELATED_GROUP_TYPE_COLUMN = "RELATED_GROUP_TYPE";
-  
+
   protected static final String INITIATION_MODIFICATION_DATE_COLUMN="INIT_MODIFICATION_DATE";
   protected static final String TERMINATION_MODIFICATION_DATE_COLUMN="TERM_MODIFICATION_DATE";
 
@@ -262,10 +261,12 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   /**Finders begin**/
 
   public Collection ejbFindGroupsRelationshipsUnder(Group group)throws FinderException{
+  	//FIXME why does this method not check for active status?
     return this.idoFindAllIDsByColumnOrderedBySQL(this.GROUP_ID_COLUMN,group.getPrimaryKey().toString());
   }
 
   public Collection ejbFindGroupsRelationshipsContaining(Group group)throws FinderException{
+  	//FIXME why does this method not check for active status?
     return this.idoFindAllIDsByColumnOrderedBySQL(this.RELATED_GROUP_ID_COLUMN,group.getPrimaryKey().toString());
   }
 
@@ -279,14 +280,15 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   
   
 	/**
-	 * Finds all relationships specified only in one direction with groupID and relationType as specified
+	 * Finds all relationships specified only in one direction with groupID and relationType as specified ordered by initiation date
 	 */
-	public Collection ejbFindAllGroupsRelationshipsByRelatedGroup(int groupID,String relationType)throws FinderException{
-		return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+groupID
+	public Collection ejbFindAllGroupsRelationshipsByRelatedGroupOrderedByInitiationDate(int groupID,String relationType)throws FinderException{
+		return idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+groupID
 		+" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationType+"' order by " + this.INITIATION_DATE_COLUMN);
 	}
 
   public Collection ejbFindGroupsRelationshipsUnder(int groupID)throws FinderException{
+  	//FIXME why does this method not check for active status and use prefetch method?
     return this.idoFindAllIDsByColumnOrderedBySQL(this.GROUP_ID_COLUMN,groupID);
   }
 

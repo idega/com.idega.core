@@ -36,6 +36,7 @@ import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
 import com.idega.data.MetaDataCapable;
+import com.idega.data.UniqueIDCapable;
 import com.idega.data.query.AND;
 import com.idega.data.query.Criteria;
 import com.idega.data.query.InCriteria;
@@ -53,7 +54,7 @@ import com.idega.util.ListUtil;
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson</a>,
  * @version 1.0
  */
-public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements Group, ICTreeNode, MetaDataCapable {
+public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements Group, ICTreeNode, MetaDataCapable,UniqueIDCapable {
 	private static final int PREFETCH_SIZE = 100;
 	public static final int GROUP_ID_EVERYONE = -7913;
 	public static final int GROUP_ID_USERS = -1906;
@@ -1133,14 +1134,21 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	/**
 	 *
-	 * @return all groups where getGroupType() is same as this.getGroupTypeValue()
+	 * @return all groups excluding user representative groups
 	 * @throws FinderException
 	 */
 	public Collection ejbFindAll() throws FinderException {
 		//          String[] types = {this.getGroupTypeValue()};
 		//          return ejbFindAllGroups(types,true);
-		return super.idoFindIDsBySQL("select * from " + getEntityName() + " where " + getGroupTypeColumnName() + " like '" + this.getGroupTypeValue() + "' order by " + getNameColumnName());
+		String theUserType = "ic_user_representative";
+		
+		SelectQuery query = idoSelectQuery();
+		query.addCriteria(new MatchCriteria(idoQueryTable(),getGroupTypeColumnName(),MatchCriteria.NOTEQUALS,GenericEntity.COLUMN_VALUE_TRUE,true));
+		int prefetchSize = 10000;
+		return super.idoFindPKsByQueryUsingLoadBalance(query,prefetchSize);
 	}
+	
+	
 	/**
 	 * @deprecated replaced with ejbFindAllGroups
 	 */

@@ -13,9 +13,9 @@ public class GroupRelationHomeImpl extends com.idega.data.IDOFactory implements 
  }
 
 
-public java.util.Collection findAllGroupsRelationshipsByRelatedGroup(int p0,java.lang.String p1)throws javax.ejb.FinderException{
+public java.util.Collection findAllGroupsRelationshipsByRelatedGroupOrderedByInitiationDate(int p0,java.lang.String p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindAllGroupsRelationshipsByRelatedGroup(p0,p1);
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindAllGroupsRelationshipsByRelatedGroupOrderedByInitiationDate(p0,p1);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }

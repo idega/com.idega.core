@@ -32,5 +32,4 @@ public interface GroupHome extends com.idega.data.IDOHome
  public int getNumberOfTopNodeVisibleGroupsContained(com.idega.core.builder.data.ICDomain p0)throws javax.ejb.FinderException,com.idega.data.IDOException;
  public int getNumberOfVisibleGroupsContained(com.idega.user.data.Group p0)throws javax.ejb.FinderException,com.idega.data.IDOException;
  public java.lang.String getRelationTypeGroupParent();
-
 }

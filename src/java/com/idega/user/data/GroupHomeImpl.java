@@ -189,5 +189,4 @@ public java.lang.String getRelationTypeGroupParent(){
 	return theReturn;
 }
 
-
 }

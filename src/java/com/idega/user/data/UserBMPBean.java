@@ -10,10 +10,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
-
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailBMPBean;
@@ -820,11 +818,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public Collection ejbFindAllUsers() throws FinderException {
     // use where not because DELETED = NULL means also not deleted
     // select * from ic_user where deleted != 'Y'
-    IDOQuery query = idoQueryGetSelect();
-    query.appendWhere();
-    appendIsNotDeleted(query);
-    return idoFindPKsBySQL(query.toString());
-   
+		SelectQuery query = idoSelectQuery();
+		query.addCriteria(new MatchCriteria(idoQueryTable(),getColumnNameDeleted(),MatchCriteria.NOTEQUALS,GenericEntity.COLUMN_VALUE_FALSE,true));
+		
+		return idoFindPKsByQueryUsingLoadBalance(query,10000);
 	}
 	
   /** Gets newest users that are not marked as deleted
@@ -835,11 +832,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public Collection ejbFindNewestUsers(int returningNumberOfRecords, int startingRecord) throws FinderException {
     // use where not because DELETED = NULL means also not deleted
     // select * from ic_user where deleted != 'Y'
-    IDOQuery query = idoQueryGetSelect();
-    query.appendWhere();
-    appendIsNotDeleted(query);
-    query.appendOrderByDescending(getIDColumnName());
-    return idoFindPKsBySQL(query.toString(), returningNumberOfRecords, startingRecord);
+	    IDOQuery query = idoQueryGetSelect();
+	    query.appendWhere();
+	    appendIsNotDeleted(query);
+	    query.appendOrderByDescending(getIDColumnName());
+	    return idoFindPKsBySQL(query.toString(), returningNumberOfRecords, startingRecord);
    
 	}
 	

@@ -1,12 +1,12 @@
 package com.idega.user.data;
 
 import java.sql.Timestamp;
-
 import com.idega.core.file.data.ICFile;
+import com.idega.data.UniqueIDCapable;
 import com.idega.data.query.SelectQuery;
 
 
-public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTreeNode,com.idega.data.MetaDataCapable
+public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTreeNode,com.idega.data.MetaDataCapable,UniqueIDCapable
 {
  public void addAddress(com.idega.core.location.data.Address p0)throws com.idega.data.IDOAddRelationshipException;
  public void addEmail(com.idega.core.contact.data.Email p0)throws com.idega.data.IDOAddRelationshipException;
