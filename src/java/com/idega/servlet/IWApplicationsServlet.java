@@ -10,6 +10,7 @@ import com.idega.presentation.ui.Form;
 import com.idega.development.presentation.Localizer;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.text.Link;
 
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.presentation.app.IWControlCenter;
@@ -162,10 +163,12 @@ private IWResourceBundle iwrb;
           myForm.add(dropdown);
           dropdownTable.add(myForm);
 
+
         headerImage = iwrb.getImage("/login/header.jpg","",323,196);
       }
-
-      mainTable.add(headerImage,1,1);
+       Link lheaderLink = new Link(headerImage,"/index.jsp");
+      //mainTable.add(headerImage,1,1);
+      mainTable.add(lheaderLink,1,1);
       thePage.add(frameTable);
    }
 
