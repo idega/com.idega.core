@@ -171,4 +171,6 @@ public interface IDOLegacyEntity extends IDOEntity{
  public void removeFrom(GenericEntity entityToRemoveFrom, Connection conn)throws SQLException;
  public void removeFrom(Class classToRemoveFrom) throws SQLException;
  public int getEntityState();
+ public GenericEntity[] findAllByColumnOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName, String condition1, String condition2)throws SQLException;
+
 }

@@ -465,7 +465,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 
         /**
-         * Sets the column null
+         * Sets the column to null
          */
 	public void removeFromColumn(String columnName){
 	  //_columns.remove(columnName.toLowerCase());
@@ -518,6 +518,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 	/**
+         * @deprecated replaced with removeFromColumn(columnName)
 	**Sets a column value to null
 	**/
   public void setColumnAsNull(String columnName)throws SQLException{
