@@ -218,7 +218,9 @@ public int getAge() {
         try {
             List members = EntityFinder.findAllByColumn(new Member(),"SOCIAL_SECURITY_NUMBER",socialSecurityNumber);
             if (members != null) {
-                if (members.size()  > 0) returner = (Member) members.get(0);
+                if (members.size()  > 0) {
+                    returner = (Member) members.get((members.size()-1));
+                }
             }
         }
         catch (SQLException sq) {
