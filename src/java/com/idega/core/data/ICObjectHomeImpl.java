@@ -1,5 +1,9 @@
 package com.idega.core.data;
 
+import java.util.Collection;
+
+import javax.ejb.FinderException;
+
 
 public class ICObjectHomeImpl extends com.idega.data.IDOFactory implements ICObjectHome
 {
@@ -27,6 +31,20 @@ public class ICObjectHomeImpl extends com.idega.data.IDOFactory implements ICObj
 public java.util.Collection findAllByObjectType(java.lang.String p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((ICObjectBMPBean)entity).ejbFindAllByObjectType(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findAllByBundle(java.lang.String p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((ICObjectBMPBean)entity).ejbFindAllByBundle(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findAllByObjectTypeAndBundle(java.lang.String p0,String bundle)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((ICObjectBMPBean)entity).ejbFindAllByObjectTypeAndBundle(p0,bundle);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
@@ -59,5 +77,46 @@ public ICObject findByClassName(java.lang.String p0)throws javax.ejb.FinderExcep
  }
 
 
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.data.ICObjectHome#findAllBlocks()
+	 */
+	public Collection findAllBlocks() throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((ICObjectBMPBean)entity).ejbFindAllBlocks();
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.data.ICObjectHome#findAllBlocksByBundle(java.lang.String)
+	 */
+	public Collection findAllBlocksByBundle(String p0) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((ICObjectBMPBean)entity).ejbFindAllBlocksByBundle(p0);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.data.ICObjectHome#findAllElements()
+	 */
+	public Collection findAllElements() throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((ICObjectBMPBean)entity).ejbFindAllElements();
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.data.ICObjectHome#findAllElementsByBundle(java.lang.String)
+	 */
+	public Collection findAllElementsByBundle(String p0) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((ICObjectBMPBean)entity).ejbFindAllElementsByBundle(p0);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 
 }

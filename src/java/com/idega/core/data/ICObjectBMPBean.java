@@ -20,6 +20,7 @@ import java.util.Vector;
 import javax.ejb.FinderException;
 
 import com.idega.data.EntityFinder;
+import com.idega.data.IDOQuery;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.PresentationObject;
@@ -437,9 +438,35 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
         	return super.idoFindPKsByQuery( super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(),type));
         }
         
+		public Collection ejbFindAllByObjectTypeAndBundle(String type,String bundle)throws FinderException{
+			IDOQuery query = super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(),type).
+			appendAndEquals(this.getBundleColumnName(),bundle);
+			return super.idoFindPKsByQuery( query);
+		}
+		
+		public Collection ejbFindAllByBundle(String bundle)throws FinderException{
+			return super.idoFindPKsByQuery( super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getBundleColumnName(),bundle));
+		}
+        
         public Object ejbFindByClassName(String className) throws FinderException{
         	return super.idoFindOnePKByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(getClassNameColumnName(),className));
         }
+        
+        public Collection ejbFindAllBlocksByBundle(String bundle)throws FinderException{
+        	return ejbFindAllByObjectTypeAndBundle(COMPONENT_TYPE_BLOCK,bundle);
+        }
+        
+		public Collection ejbFindAllBlocks()throws FinderException{
+			return ejbFindAllByObjectType(COMPONENT_TYPE_BLOCK);
+		}
+		
+		public Collection ejbFindAllElementsByBundle(String bundle)throws FinderException{
+			  return ejbFindAllByObjectTypeAndBundle(COMPONENT_TYPE_ELEMENT,bundle);
+		  }
+        
+		  public Collection ejbFindAllElements()throws FinderException{
+			  return ejbFindAllByObjectType(COMPONENT_TYPE_ELEMENT);
+		  }
 
 
 
