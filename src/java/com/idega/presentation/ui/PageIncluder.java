@@ -81,6 +81,7 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   private void sortAndProcess(IWContext iwc){
+  	
     //sort
     Page parent = this.getParentPage();/**@todo get in main**/
     List objects = parent.getChildrenRecursive();
@@ -124,16 +125,9 @@ public class PageIncluder extends PresentationObject implements Index{
     instanceId=getICObjectInstanceID();
     changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
 
-//  security check to stop hackers from using the pageincluder from a domain that is not allowed
-    if(allowedDomainsAndIPNumberMap!=null){
-    		if( changeURL ){
-    			URLUtil util = new URLUtil(getLocation(iwc));
-    			String domainOrIpPart = util.getHost();
-    			if(!allowedDomainsAndIPNumberMap.containsKey(domainOrIpPart)){
-    				return;//if the domain is not allowed to ask for pageincluding then do nothing
-    			}	
-    		}
-    }	
+    if(changeURL){
+    	 changeURL = canChangeURLFromRequest(iwc);	
+    }
     
     if( changeURL && (_sendToPage != null) && iwc.isParameterSet(_sendToPageIfSet) ) {//forwarding
       forwardToIBPage(fromPage,_sendToPage,iwc);
@@ -142,7 +136,29 @@ public class PageIncluder extends PresentationObject implements Index{
 
   }
 
-  public void print(IWContext iwc)throws IOException{
+  /**
+   * Security check to stop hackers from using the pageincluder from a domain that is not allowed
+ * @param iwc
+ */
+  private boolean canChangeURLFromRequest(IWContext iwc) {
+  	if(allowedDomainsAndIPNumberMap!=null){
+  		boolean changingTheURLFromRequest = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
+  		if(changingTheURLFromRequest){
+  			String url = iwc.getParameter(PAGE_INCLUDER_PARAMETER_NAME+_label);
+  			if(url==null || "".equals(url)){
+  				url = iwc.getParameter(PAGE_INCLUDER_PARAMETER_NAME+instanceId);
+  			}
+			URLUtil util = new URLUtil(url);
+			String domainOrIpPart = util.getHost();
+			if(!allowedDomainsAndIPNumberMap.containsKey(domainOrIpPart)){
+				return false;//if the domain is not allowed to ask for pageincluding then return false
+			}
+  		}
+  	}
+  	return true;
+  }
+
+public void print(IWContext iwc)throws IOException{
     if(URL!=null){
       if(out!=null) println(out);
       out = null;
@@ -576,7 +592,10 @@ public class PageIncluder extends PresentationObject implements Index{
       String param = (String) enum.nextElement();
       //debug(param+" : "+iwc.getParameter(param));
       if ( param.equals(instanceParam) || param.equals(labelParam)  ){
-        URL = decodeQueryString(iwc.getParameter(param));
+      	boolean canChangeURL = canChangeURLFromRequest(iwc);
+      	if(canChangeURL){
+      		URL = decodeQueryString(iwc.getParameter(param));
+      	}
         //System.out.println("Changing location to:"+location.toString());
       }
       else{
