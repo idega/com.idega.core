@@ -32,6 +32,8 @@ private boolean asImageButton = false;
 
 private static final String emptyString = "";
 
+private boolean encloseByForm = true;
+
 public SubmitButton(){
 	this(emptyString,"Submit");
 	setName(getDefaultName());
@@ -225,33 +227,42 @@ public void print(IWContext iwc) throws Exception{
 	//if ( doPrint(iwc) ) {
 		if (getLanguage().equals("HTML")){
 
-			if(isEnclosedByForm()){
-
-			//if (getInterfaceStyle().equals("something")){
-			//}
-			//else{
-
-				printButton(iwc);
-
-			//}
-			}
-			else{
-				Form myForm = new Form();
-				myForm.setParentObject(getParentObject());
-				this.setParentObject(myForm);
-				myForm.add(this);
-
-				//If a window is put inside the submit button, only implemented so if you have no form default around the button
-				if (window != null){
-					getParentForm().setAction(window.getURL(iwc));
-					getParentForm().setTarget(window.getTarget());
-					//getParentForm().setTarget("#");
-					getParentForm().setOnSubmit(window.getCallingScriptStringForForm(iwc));
+			if ( encloseByForm ) {
+				if(isEnclosedByForm()){
+	
+				//if (getInterfaceStyle().equals("something")){
+				//}
+				//else{
+	
+					printButton(iwc);
+	
+				//}
 				}
-				myForm._print(iwc);
+				else{
+					Form myForm = new Form();
+					myForm.setParentObject(getParentObject());
+					this.setParentObject(myForm);
+					myForm.add(this);
+	
+					//If a window is put inside the submit button, only implemented so if you have no form default around the button
+					if (window != null){
+						getParentForm().setAction(window.getURL(iwc));
+						getParentForm().setTarget(window.getTarget());
+						//getParentForm().setTarget("#");
+						getParentForm().setOnSubmit(window.getCallingScriptStringForForm(iwc));
+					}
+					myForm._print(iwc);
+				}
+			}
+			else {
+				printButton(iwc);	
 			}
 		}
 	//}
+}
+
+public void setToEncloseByForm(boolean enclose) {
+	encloseByForm = enclose;
 }
 
 
