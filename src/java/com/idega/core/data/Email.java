@@ -2,6 +2,7 @@ package com.idega.core.data;
 
 import com.idega.data.*;
 import java.sql.SQLException;
+import com.idega.core.user.data.User;
 
 
 /**
@@ -28,6 +29,7 @@ public class Email extends GenericEntity {
     this.addAttribute(this.getIDColumnName());
     this.addAttribute(getColumnNameAddress(),"Netfang",true,true,String.class,255);
     this.addAttribute(getColumnNameEmailTypeId(),"Gerð",true,true,Integer.class,"many-to-one",EmailType.class);
+    this.addManyToManyRelationShip(User.class,"ic_user_email");
   }
 
   public String getEntityName() {

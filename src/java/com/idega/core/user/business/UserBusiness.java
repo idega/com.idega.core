@@ -90,9 +90,24 @@ public class UserBusiness {
 
     //delUser.removeFrom(GenericGroup.getStaticInstance());
     int groupId =delUser.getGroupID();
-    delUser.removeFrom((Address)Address.getStaticInstance(Address.class));
-    delUser.removeFrom((Email)Email.getStaticInstance(Email.class));
-    delUser.removeFrom((Phone)Phone.getStaticInstance(Phone.class));
+    try {
+      delUser.removeFrom((Address)Address.getStaticInstance(Address.class));
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
+    try {
+      delUser.removeFrom((Email)Email.getStaticInstance(Email.class));
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+    try {
+      delUser.removeFrom((Phone)Phone.getStaticInstance(Phone.class));
+    }
+    catch (SQLException exc) {
+      exc.printStackTrace();
+    }
 
     LoginDBHandler.deleteUserLogin(userId);
     delUser.delete();

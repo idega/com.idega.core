@@ -2,6 +2,7 @@ package com.idega.core.data;
 
 import java.sql.*;
 import com.idega.data.*;
+import com.idega.core.user.data.User;
 
 /**
  * Title:        IW Core
@@ -30,6 +31,7 @@ public class Phone extends GenericEntity{
       addAttribute(getColumnNameAreaCodeId(),"Svæðisnúmer",true,true,Integer.class,"many-to-one",AreaCode.class);
       addAttribute(getColumnNamePhoneTypeId(),"Tegund",true,true,Integer.class,"many-to-one",PhoneType.class);
 //      this.addManyToManyRelationShip(PhoneType.class,"ic_phone_phone_type");
+      this.addManyToManyRelationShip(User.class,"ic_user_phone");
     }
 
     public String getEntityName(){
