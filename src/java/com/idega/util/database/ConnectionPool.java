@@ -37,7 +37,7 @@ import com.idega.util.LogWriter;
  * [poolname].loglevel The level of logging for the pool. Possible values
  * are: 0 (NONE - no logging), 1 (INFO - only information messages), 2
  * (ERROR - show error messages), 3 (DEBUG - show all info,error and debug
- * messages). The default is 1 (INFO.<br> 
+ * messages). The default is 1 (INFO).<br> 
  * 
  * [poolname].logintimeout The timout (in
  * seconds) that the pool will wait for a connection before throwing an
@@ -49,7 +49,7 @@ import com.idega.util.LogWriter;
  * This software is the proprietary information of Idega hf. Use is subject
  *to license terms.
  * 
- *@author Originally <a href="http://www.wrox.com">wrox</a> modified by <a
+ *@author Originally by <a href="http://www.wrox.com">wrox</a> modified by <a
  *href="mailto: tryggvi@idega.is">Tryggvi Larusson</a>
  *@version 1.3
  */
