@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.7 2002/02/18 10:32:02 tryggvil Exp $
+ * $Id: DateInput.java,v 1.8 2002/02/18 12:29:48 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -113,15 +113,26 @@ public Object clone(){
 
 public void setName(String name){
   super.setName(name);
-  _theWholeDate.setName(name);
-  _theDay.setName(name+"_day");
-  _theMonth.setName(name+"_month");
+  if(_theWholeDate!=null){
+    _theWholeDate.setName(name);
+  }
+  if(_theDay!=null){
+    _theDay.setName(name+"_day");
+  }
+  if(_theMonth!=null){
+    _theMonth.setName(name+"_month");
+  }
   if(_showYear){
-    _theYear.setName(name+"_year");
+    if(_theYear!=null){
+      _theYear.setName(name+"_year");
+    }
   }
   else{
-    _theYearHidden.setName(name+"_year");
+    if(_theYearHidden!=null){
+      _theYearHidden.setName(name+"_year");
+    }
   }
+
 }
 
 private void doSomeShit(){
