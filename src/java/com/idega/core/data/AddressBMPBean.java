@@ -217,12 +217,10 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		IDOQuery query = idoQuery();
 		query.appendSelect().append("a.*").appendFrom().append(getEntityName()).append(" a, ");
 		query.append("ic_user_address iua, ic_address_type iat ").appendWhereEquals("a.ic_address_id", "iua.ic_address_id");
-		query.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("iat.unique_name = ").appendWithinSingleQuotes(type.getUniqueName());
+		query.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("a.ic_address_type_id = ").append(( (Integer) type.getPrimaryKey()).intValue());
 
 		return (Integer) super.idoFindOnePKBySQL(query.toString());
 	}
-	
-	
 
 	public Collection ejbFindPrimaryUserAddresses(String[] userIDs) throws FinderException {
 		IDOQuery query = idoQuery();
@@ -245,10 +243,10 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	}
 	
 	public Collection ejbFindUserAddressesByAddressType(int userID,AddressType type) throws FinderException {
-		IDOQuery query = idoQuery();
-		query.appendSelect().append("a.*").appendFrom().append(getEntityName()).append(" a, ");
-		query.append("ic_user_address iua, ic_address_type iat ").appendWhereEquals("a.ic_address_id", "iua.ic_address_id");
-		query.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("iat.unique_name = ").appendWithinSingleQuotes(type.getUniqueName());
+    IDOQuery query = idoQuery();
+    query.appendSelect().append("a.*").appendFrom().append(getEntityName()).append(" a, ");
+    query.append("ic_user_address iua, ic_address_type iat ").appendWhereEquals("a.ic_address_id", "iua.ic_address_id");
+    query.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("a.ic_address_type_id = ").append(( (Integer) type.getPrimaryKey()).intValue());
 
 		return super.idoFindPKsBySQL(query.toString());
 	}
