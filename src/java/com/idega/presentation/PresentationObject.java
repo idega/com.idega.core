@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.88 2004/05/08 14:43:08 gummi Exp $
+ * $Id: PresentationObject.java,v 1.89 2004/05/10 07:49:58 gimmi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -2103,7 +2103,10 @@ implements Cloneable{//,UIComponent{
 	 }
 	 
 	 public void setCurrentUserHasRelationToContainingDPTPage(Boolean value) {
-	 	getParentPage().setCurrentUserHasRelationToContainingDPTPage(value);
+	 	Page page = getParentPage();
+	 	if (page != null) {
+		 	getParentPage().setCurrentUserHasRelationToContainingDPTPage(value);
+	 	}
 	 }
 	 
 	 /**
@@ -2111,7 +2114,12 @@ implements Cloneable{//,UIComponent{
 	  * @return returns null if it has not been checked and set yet. It is set in the Accesscontrol class.
 	  */
 	 public Boolean hasCurrentUserRelationToContainingDPTPage() {
-	 	return getParentPage().hasCurrentUserRelationToContainingDPTPage();
+	 	Page page = getParentPage();
+	 	if (page != null) {
+	 		return page.hasCurrentUserRelationToContainingDPTPage();
+	 	} else {
+	 		return Boolean.FALSE;
+	 	}
 	 }
 
 	 //METHODS FOR DPT PAGES END
