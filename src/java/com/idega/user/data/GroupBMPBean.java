@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 /**
  * Title:        IW Core
  * Description:
@@ -362,7 +361,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @todo change name to getChildGroups();
 	 */
 	public List getChildGroups() throws EJBException {
-		List theReturn = new Vector();
+		List theReturn = new ArrayList();
 		try {
 			Collection relations = this.getParentalGroupRelationships();
 			Iterator iter = relations.iterator();
@@ -385,7 +384,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		//this casting of group to groupbmpbean can be dangerous for users (Group)
 		Collection relations = ((GroupBMPBean)containingGroup).getParentalGroupRelationships();
 		Iterator iter = relations.iterator();
-		Collection PKs = new Vector();
+		Collection PKs = new ArrayList();
 		while (iter.hasNext()) {
 			GroupRelation item = (GroupRelation) iter.next();
 			PKs.add(item.getRelatedGroupPK());
@@ -417,7 +416,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		throws RemoteException, FinderException, IDOException {
 		Collection relations = this.getGroupRelationHome().findGroupsRelationshipsUnder(containingGroup);
 		Iterator iter = relations.iterator();
-		Collection PKs = new Vector();
+		Collection PKs = new ArrayList();
 		while (iter.hasNext()) {
 			GroupRelation item = (GroupRelation) iter.next();
 			PKs.add(item.getRelatedGroupPK());
@@ -451,7 +450,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 				containingDomain,
 				getGroupDomainRelationTypeHome().getTopNodeRelationType());
 		Iterator iter = relations.iterator();
-		Collection PKs = new Vector();
+		Collection PKs = new ArrayList();
 		while (iter.hasNext()) {
 			GroupDomainRelation item = (GroupDomainRelation) iter.next();
 			PKs.add(item.getRelatedGroupPK());
@@ -486,7 +485,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 				containingDomain,
 				getGroupDomainRelationTypeHome().getTopNodeRelationType());
 		Iterator iter = relations.iterator();
-		Collection PKs = new Vector();
+		Collection PKs = new ArrayList();
 		while (iter.hasNext()) {
 			GroupDomainRelation item = (GroupDomainRelation) iter.next();
 			PKs.add(item.getRelatedGroupPK());
@@ -587,8 +586,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 */
 	public List getChildGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws EJBException {
 		List list = this.getChildGroups();
-		List specifiedGroups = new Vector();
-		List notSpecifiedGroups = new Vector();
+		List specifiedGroups = new ArrayList();
+		List notSpecifiedGroups = new ArrayList();
 		int j = 0;
 		int k = 0;
 		Iterator iter2 = list.iterator();
@@ -700,7 +699,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 */
 	public Collection getRelatedBy(String relationType) throws FinderException, RemoteException {
 		GroupRelation rel = null;
-		Collection theReturn = new Vector();
+		Collection theReturn = new ArrayList();
 		Collection rels = null;
 		rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relationType);
 		Iterator iter = rels.iterator();
@@ -940,7 +939,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return this.getGroupTypeValue();
 	}
 	public Collection ejbFindGroups(String[] groupIDs) throws FinderException {
-		Collection toReturn = new Vector(0);
+		Collection toReturn = new ArrayList(0);
 		String sGroupList = "";
 		/*    if (groupIDs != null && groupIDs.length > 0){
 		      for(int g = 0; g < groupIDs.length; g++){
@@ -970,7 +969,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public boolean hasRelationTo(Group group) throws RemoteException {
 		int myId = ((Integer) this.getPrimaryKey()).intValue();
 		int groupId = ((Integer) group.getPrimaryKey()).intValue();
-		Collection relations = new Vector();
+		Collection relations = new ArrayList();
 		try {
 			relations = this.getGroupRelationHome().findGroupsRelationshipsContainingUniDirectional(groupId, myId);
 		} catch (FinderException ex) {
