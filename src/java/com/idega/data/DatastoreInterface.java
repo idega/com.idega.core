@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.59 2003/03/01 18:44:11 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.60 2003/03/02 13:50:16 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -35,8 +35,8 @@ import com.idega.util.database.ConnectionBroker;
 public abstract class DatastoreInterface {
 	private static Hashtable interfacesHashtable;
 	private static Map interfacesByDatasourcesMap;
-	private final static int STATEMENT_INSERT = 1;
-	private final static int STATEMENT_UPDATE = 2;
+	 final static int STATEMENT_INSERT = 1;
+	 final static int STATEMENT_UPDATE = 2;
 	protected boolean useTransactionsInEntityCreation = true;
 	protected IDOTableCreator _TableCreator;
 	protected DatabaseMetaData _databaseMetaData;
@@ -1116,25 +1116,19 @@ public abstract class DatastoreInterface {
 		throw new RuntimeException("setNumberGeneratorValue() not implemented for " + this.getClass().getName());
 	}
 	/**
-	
 	 * This method outputs the outputString to System.out if the Application property
-	
 	 * "debug" is set to "TRUE"
-	
 	 */
-	private static void debug(String outputString, IDOLegacyEntity entity) {
+	protected static void debug(String outputString, IDOLegacyEntity entity) {
 		if (IWMainApplicationSettings.isDebugActive()) {
 			System.out.println("[DEBUG] \"" + outputString + "\" : " + entity.getEntityName());
 		}
 	}
 	/**
-	
 	 * This method outputs the outputString to System.out if the Application property
-	
 	 * "debug" is set to "TRUE"
-	
 	 */
-	private static void debug(String outputString) {
+	protected static void debug(String outputString) {
 		if (IWMainApplicationSettings.isDebugActive()) {
 			System.out.println("[DEBUG] \"" + outputString + "\" : DatastoreInterface");
 		}
