@@ -26,6 +26,7 @@ public class SingleLineItem extends Container {
   private boolean isSelected = false;
   private Window window;
   private GridBagConstraints gbc = null;
+  private Color bgColor = Color.white;
 
 
   public SingleLineItem() {
@@ -33,6 +34,7 @@ public class SingleLineItem extends Container {
     setSize(getPreferredSize());
     GridBagLayout grid = new GridBagLayout();
     setLayout(grid);
+    setBackground(bgColor);
   }
 
   public void setComponentOffset(int componentOffset){
@@ -150,6 +152,7 @@ public class SingleLineItem extends Container {
     public void mousePressed(MouseEvent e) {
       if( e.getClickCount() > 1){
         isSelected = true;
+        setBackground(Color.blue);
         openWindow();
       }
       else{
