@@ -3,6 +3,7 @@ package com.idega.data;
 import java.util.Map;
 import java.util.HashMap;
 import java.rmi.RemoteException;
+import javax.ejb.EJBException;
 
 import com.idega.business.IBOLookup;
 
@@ -174,6 +175,16 @@ public class IDOLookup extends IBOLookup{
 
   public IDOEntityDefinition getEntityDefinitionForClass(Class entityInterfaceClass)throws RemoteException{
     return GenericEntity.getStaticInstance(entityInterfaceClass).getEntityDefinition();
+  }
+
+  static IDOLegacyEntity instanciateEntity(Class entityInterfaceClass){
+    try{
+      Class beanClass = getBeanClassFor(entityInterfaceClass);
+      return (IDOLegacyEntity)beanClass.newInstance();
+    }
+    catch(Exception e){
+      throw new EJBException(e.getMessage());
+    }
   }
 
 }

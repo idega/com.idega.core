@@ -2634,10 +2634,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
       /**
        *
-       * @deprecated Replaced with IDOLookup.createLegacy(entityClass);
+       * @deprecated Replaced with IDOLookup.instanciateEntity(entityClass);
        */
       public static IDOLegacyEntity getEntityInstance(Class entityClass){
-	return IDOLookup.createLegacy(entityClass);
+	return IDOLookup.instanciateEntity(entityClass);
       }
 
 
@@ -3013,7 +3013,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
    private static IDOLegacyEntity instanciateEntity(Class entityInterfaceOrBeanClass){
     try{
-      return IDOLookup.createLegacy(entityInterfaceOrBeanClass);
+      //return IDOLookup.createLegacy(entityInterfaceOrBeanClass);
+      return instanciateEntity(entityInterfaceOrBeanClass);
     }
     catch(Exception e1){
       //Only for legacy beans;
