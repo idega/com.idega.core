@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.76 2004/11/23 17:14:32 tryggvil Exp $
+ * $Id: Table.java,v 1.77 2004/11/23 17:21:51 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -107,7 +107,8 @@ public class Table extends PresentationObjectContainer implements TableType{
 	protected boolean forceToRenderAsTableInWML = false;
 	
 	//Variables to hold coordinates of merge point of cells
-	//Initialized only if neededprotected Vector beginMergedxpos;
+	//Initialized only if needed
+	protected Vector beginMergedxpos;
 	protected Vector beginMergedypos;
 	protected Vector endMergedxpos;
 	protected Vector endMergedypos;
