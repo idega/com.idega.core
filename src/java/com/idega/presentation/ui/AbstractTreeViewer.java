@@ -1,5 +1,6 @@
 package com.idega.presentation.ui;
 
+import java.util.*;
 import com.idega.presentation.text.Link;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.Block;
@@ -11,9 +12,6 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.text.Text;
 
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Title:        idegaWeb
@@ -39,6 +37,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   public static final String _UI_MAC = "mac/";
   public static final String _UI_IW = "iw/";
   private String _ui = _UI_IW;
+
+  private HashMap _extraHorizontal;
+  private HashMap _extraVertical;
 
   Image icons[] = null;
   String iconNames[]={"treeviewer_trancparent.gif","treeviewer_line.gif",
@@ -487,7 +488,28 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     }
     updateOpenNodes(iwc);
     drawTree(iwc);
+    setAlignments();
 
+  }
+
+  private void setAlignments() {
+    if ( _extraHorizontal != null ) {
+      Iterator iter = _extraHorizontal.keySet().iterator();
+      while (iter.hasNext()) {
+	Integer column = (Integer)iter.next();
+	String alignment = (String) _extraHorizontal.get(column);
+	this.frameTable.setColumnAlignment(column.intValue(),alignment);
+      }
+    }
+
+    if ( _extraVertical != null ) {
+      Iterator iter = _extraVertical.keySet().iterator();
+      while (iter.hasNext()) {
+	Integer column = (Integer)iter.next();
+	String alignment = (String) _extraVertical.get(column);
+	this.frameTable.setColumnVerticalAlignment(column.intValue(),alignment);
+      }
+    }
   }
 
 
@@ -630,11 +652,15 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   }
 
   public void setExtraColumnHorizontalAlignment(int col, String alignment){
-      frameTable.setColumnAlignment(col+1,alignment);
+    if ( _extraHorizontal == null )
+      _extraHorizontal = new HashMap();
+    _extraHorizontal.put(new Integer(col+1),alignment);
   }
 
   public void setExtraColumnVerticalAlignment(int col, String alignment){
-      frameTable.setColumnVerticalAlignment(col+1,alignment);
+    if ( _extraVertical == null )
+      _extraVertical = new HashMap();
+    _extraVertical.put(new Integer(col+1),alignment);
   }
 
   public void setExtraColumnHeading(int col, PresentationObject obj){
