@@ -122,7 +122,7 @@ implements IWUserContext, IWApplicationContext {
 		setRequest(request);
 		setResponse(response);
 		setServletContext(context);
-		setLanguage(getRightLanguage(request));
+		setLanguage(getDetectedClientMarkupLanguage(request));
 		if(getIfSetRequestCharacterEncoding()){
 			try {
 				getRequest().setCharacterEncoding(getApplicationSettings().getCharacterEncoding());
@@ -242,7 +242,7 @@ implements IWUserContext, IWApplicationContext {
 	 * This methods just checks the User-agent header to see if the device is a known wap device, otherwise html is assumed
 	 * @param request The request, needed to find output
 	 */
-	private String getRightLanguage(HttpServletRequest request) {
+	private String getDetectedClientMarkupLanguage(HttpServletRequest request) {
 		//Todo: set the language to WML when the user-agent is of that type
 		//--only implemented for the UPG1 test WAP browser
 		// @TODO (jonas) use better method to find content types supported by client. Use rdf docs referenced in request headers.x
@@ -329,16 +329,10 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return theReturn;
 	}
-	/**
-	 * @deprecated
-	 */
-	public void setRequest(HttpServletRequest request) {
+	protected void setRequest(HttpServletRequest request) {
 		this._request = request;	
 	}
-	/**
-	 * @deprecated
-	 */
-	public void setResponse(HttpServletResponse response) {
+	protected void setResponse(HttpServletResponse response) {
 		this._response = response;
 	}
 	public void setLanguage(String language) {
@@ -356,9 +350,6 @@ implements IWUserContext, IWApplicationContext {
 	public void setSpokenLanguage(String spokenLanguage) {
 		this.spokenLanguage = spokenLanguage;
 	}
-	//public void setInterfaceStyle(String InterfaceStyle) {
-	//	this.interfaceStyle = InterfaceStyle;
-	//}
 	public HttpServletRequest getRequest() {
 		return this._request;
 	}
