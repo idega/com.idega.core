@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.38 2002/03/15 12:09:33 gummi Exp $
+ * $Id: PresentationObject.java,v 1.39 2002/03/20 19:15:23 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -38,6 +38,8 @@ import com.idega.builder.business.BuilderLogic;
 public class PresentationObject extends Object implements Cloneable {
   //private final static String IW_BUNDLE_IDENTIFIER="com.idega.idegaweb";
   public final static String IW_BUNDLE_IDENTIFIER="com.idega.core";
+  public final static String WIDTH ="width";
+  public final static String HEIGHT ="height";
 
   protected static final String slash = "/";
 
@@ -1101,5 +1103,23 @@ public class PresentationObject extends Object implements Cloneable {
    public String getIBPageParameterName(){
      return BuilderLogic.IB_PAGE_PARAMETER;
    }
+
+
+  public void setWidth(String width){
+    setAttribute(WIDTH,width);
+  }
+
+  public void setHeight(String height){
+    setAttribute(HEIGHT,height);
+  }
+
+  public String getHeight(){
+   return getAttribute(HEIGHT);
+  }
+
+  public String getWidth(){
+    return getAttribute(WIDTH);
+  }
+
 
 }

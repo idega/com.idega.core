@@ -218,20 +218,45 @@ public String getName(){
 	return this.getTitle();
 }
 
-public int getWidth(){
+public int getWindowWidth(){
 	return this.width;
 }
 
-public void setWidth(int width){
-	this.width=width;
+public String getWidth(){
+  return String.valueOf(width);
 }
 
-public int getHeight(){
+public void setWidth(int width){
+  this.width=width;
+}
+
+/**
+ * This method overrides the one in PresentationObject and width must be and integer
+ * @param width the int width
+ */
+public void setWidth(String width){
+  this.width=Integer.parseInt(width);
+}
+
+public int getWindowHeight(){
 	return this.height;
 }
 
+public String getHeight(){
+  return String.valueOf(height);
+}
+
+
 public void setHeight(int height){
 	this.height=height;
+}
+
+/**
+ * This method overrides the one in PresentationObject and height must be and integer
+ * @param height the int height
+ */
+public void setHeight(String height){
+  this.height=Integer.parseInt(height);
 }
 
 /*
@@ -316,12 +341,12 @@ public static String getCallingScriptString(Class windowClass,String url,boolean
       return getWindowCallingScript(theURL,"tempwindow",true,true,true,true,true,true,true,true,false,500,500);
   }
   //return "window.open('"+theURL+"','"+win.getTarget()+"','resizable="+win.returnCheck(windowInstance.resizable)+",toolbar="+win.returnCheck(windowInstance.toolbar)+",location="+win.returnCheck(win.location)+",directories="+win.returnCheck(win.directories)+",status="+win.returnCheck(win.status)+",scrollbars="+win.returnCheck(win.scrollbar)+",menubar="+win.returnCheck(win.menubar)+",titlebar="+win.returnCheck(win.titlebar)+win.returnFullScreen()+",width="+win.getWidth()+",height="+win.getHeight()+"')";
-  return getWindowCallingScript(theURL,win.getTarget(),win.toolbar,win.location,win.directories,win.status,win.menubar,win.titlebar,win.scrollbar,win.resizable,win.fullscreen,win.getWidth(),win.getHeight());
+  return getWindowCallingScript(theURL,win.getTarget(),win.toolbar,win.location,win.directories,win.status,win.menubar,win.titlebar,win.scrollbar,win.resizable,win.fullscreen,win.getWindowWidth(),win.getWindowHeight());
 }
 
 public String getCallingScriptString(IWContext iwc,String url){
   //return "window.open('"+url+"','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
-  return getWindowCallingScript(url,getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWidth(),getHeight());
+  return getWindowCallingScript(url,getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWindowWidth(),getWindowHeight());
 }
 
 public String getCallingScriptString(IWContext iwc){
@@ -335,7 +360,7 @@ protected String getCallingScriptStringForForm(IWContext iwc){
             setName(getID());
           }*/
   //return "window.open('','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
-  return getWindowCallingScript("",getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWidth(),getHeight());
+  return getWindowCallingScript("",getTarget(),toolbar,location,directories,status,menubar,titlebar,scrollbar,resizable,fullscreen,getWindowWidth(),getWindowHeight());
 }
 
 /**

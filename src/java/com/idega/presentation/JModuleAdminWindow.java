@@ -167,7 +167,7 @@ public String MenuAlignment = "&nbsp;&nbsp;&nbsp;&nbsp;";
 	  tafla.setHeight("100%");
           int widthOfHeader=58;
 	  tafla.setHeight(1,Integer.toString(widthOfHeader));
-          tafla.setHeight(2,Integer.toString(this.getHeight()-widthOfHeader));
+          tafla.setHeight(2,Integer.toString(this.getWindowHeight()-widthOfHeader));
 	  //tafla.setHeight(2,"17");
 	  //tafla.setBorder(0);
 	  //tafla.setAlignment("center");
