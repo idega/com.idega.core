@@ -1,11 +1,12 @@
 package com.idega.util.reflect;
 /**
- * Title:        idegaclasses
+ * A utility class to find methods by reflection.
+ * Title:       idega Reflection utility classes
  * Description:
- * Copyright:    Copyright (c) 2001
+ * Copyright:    Copyright (c) 2001-2003
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0
+ * @version 1.1
  */
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -314,7 +315,7 @@ public class MethodFinder
 	* Gets only the method that is named "name" in class objectClass and takes in no arguments (parameters)
 	* @throws NoSuchMethodException if no mathing method is found.
 	**/
-	public Method getMethodsWithNameAndNoParameters(Class objectClass, String name) throws NoSuchMethodException
+	public Method getMethodWithNameAndNoParameters(Class objectClass, String name) throws NoSuchMethodException
 	{
 		Method[] allMethods = objectClass.getMethods();
 		for (int i = 0; i < allMethods.length; i++)
@@ -331,6 +332,29 @@ public class MethodFinder
 		throw new NoSuchMethodException("Method " + name + "() not found in " + objectClass.getName());
 	}
 	/**
+	* Gets only the method that is named "name" in class objectClass and takes in one parameter of the type parameterType
+	* @throws NoSuchMethodException if no mathing method is found.
+	**/
+	public Method getMethodWithNameAndOneParameter(Class objectClass, String name,Class parameterType) throws NoSuchMethodException
+	{
+		Method[] allMethods = objectClass.getMethods();
+		for (int i = 0; i < allMethods.length; i++)
+		{
+			Method methodToCheck = allMethods[i];
+			if (methodToCheck.getName().equals(name))
+			{
+				if (methodToCheck.getParameterTypes().length == 1)
+				{
+					if(methodToCheck.getParameterTypes()[0].equals(parameterType)){
+						return methodToCheck;
+					}
+				}
+			}
+		}
+		throw new NoSuchMethodException("Method " + name + "() not found in " + objectClass.getName());
+	}
+	
+	/**
 	* Gets all the methods that are named "name" in class objectClass
 	* @return An array with all mathing methods or an array with length 0 if no mathing methods are found.
 	**/
@@ -338,6 +362,7 @@ public class MethodFinder
 	{
 		return getMethodsWithName(objectClass, name, -1);
 	}
+	
 	/**
 	 * Gets all the methods that are named "name" in class objectClass
 	 * @return An array with all mathing methods or an array with length 0 if no mathing methods are found.
