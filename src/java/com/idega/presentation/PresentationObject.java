@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.49 2002/06/12 13:44:04 eiki Exp $
+ * $Id: PresentationObject.java,v 1.50 2002/06/12 16:48:20 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -159,7 +159,7 @@ public class PresentationObject extends Object implements Cloneable {
     if (interfaceStyle == null) {
       interfaceStyle = "default";
     };
-
+    this.out = iwc.getWriter();
   }
 
   protected void initInMain(IWContext iwc) throws Exception{
@@ -391,7 +391,6 @@ public class PresentationObject extends Object implements Cloneable {
   }
 
   public void _print(IWContext iwc) throws Exception {
-    this.out = iwc.getWriter();
     this.print(iwc);
   }
 
