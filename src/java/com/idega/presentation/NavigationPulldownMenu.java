@@ -37,7 +37,7 @@ public class NavigationPulldownMenu extends Block {
 		rootNode = bservice.getRootPageId();
       }
 
-      ICTreeNode node = bservice.getPageTree(rootNode, iwc.getCurrentUserId());
+      ICTreeNode node = bservice.getPageTree(rootNode);
 
       if ( iwc.isIE() ) {
 	getParentPage().setOnLoad("InitMenu()");

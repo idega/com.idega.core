@@ -67,7 +67,7 @@ public class NavigationJSMenu extends Block {
 			buffer.append("var yOverlap  = ").append(yOffset).append(";").append("\n\n");
 			buffer.append("menuContent = new Array ();\n\n");
 			
-			ICTreeNode node = bservice.getPageTree(rootNode, iwc.getCurrentUserId());
+			ICTreeNode node = bservice.getPageTree(rootNode);
 			Iterator iterator = node.getChildren();
 			row = 0;
 			int parentRow = -1;
