@@ -70,6 +70,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   public String _lobColumnName;
   private boolean insertStartData=true;
 
+  protected static String COLUMN_VALUE_TRUE = "Y";
+  protected static String COLUMN_VALUE_FALSE = "N";
+
 
 /*
   protected static int STATE_NEW = 0;
@@ -711,6 +714,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	  return getBooleanColumnValue(columnName, false);
 	}
 
+
 	public boolean getBooleanColumnValue(String columnName, boolean returnValueIfNull){
 	    Object value = getValue(columnName);
 	    if(value!=null){
@@ -722,10 +726,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	      }
 	      else if (value instanceof String ){
 		String sValue = (String)value;
-		if(sValue.equals("Y")){
+		if(sValue.equals(COLUMN_VALUE_TRUE)){
 		  return true;
 		}
-		else if(sValue.equals("N")){
+		else if(sValue.equals(COLUMN_VALUE_FALSE)){
 		  return false;
 		}
 	      }
@@ -1128,7 +1132,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       }
       catch(Exception e){}
       if(ex instanceof SQLException){
-	    //ex.printStackTrace();
+	    ex.printStackTrace();
 	    throw (SQLException)ex.fillInStackTrace();
       }
       else{
@@ -3628,6 +3632,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       return this.getPrimaryKey();
     }
     catch(SQLException sqle){
+      sqle.printStackTrace();
       throw new IDOCreateException(sqle);
     }
   }
