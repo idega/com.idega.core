@@ -30,7 +30,7 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
         super(width,height);
         super.setScrollbar(false);
         super.setAllMargins(0);
-        super.setTopMargin(1);//changed from 3
+        super.setTopMargin(0);//changed from 3
     }
     
     public void _main(IWContext iwc) throws Exception {
