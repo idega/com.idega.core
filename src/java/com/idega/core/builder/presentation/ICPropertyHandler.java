@@ -1,5 +1,5 @@
 /*
- * $Id: ICPropertyHandler.java,v 1.1 2004/06/28 11:12:49 thomas Exp $
+ * $Id: ICPropertyHandler.java,v 1.1 2004/06/28 14:06:40 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -7,7 +7,7 @@
  * Use is subject to license terms.
  *
  */
-package com.idega.core.builder.data;
+package com.idega.core.builder.presentation;
 
 import java.util.List;
 import com.idega.presentation.PresentationObject;
