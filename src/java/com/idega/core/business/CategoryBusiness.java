@@ -407,7 +407,7 @@ public class CategoryBusiness{
 
   public int createCategory(int iObjectInstanceId,String type)throws RemoteException{
 
-    return saveCategory(-1,"Category - "+iObjectInstanceId,"Category - "+iObjectInstanceId,iObjectInstanceId ,type,false).getID();
+    return saveCategory(-1,type+" Category - "+iObjectInstanceId,type+"Category - "+iObjectInstanceId,iObjectInstanceId ,type,false).getID();
 
   }
   
