@@ -711,8 +711,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	
 	public int getIntColumnValue(String columnName, int returnValueIfNull) {
-		Integer tempInt = (Integer)getValue(columnName);
-		return (tempInt == null) ? returnValueIfNull : tempInt.intValue();
+		Object tempInt = getValue(columnName);
+		return (tempInt == null) ? returnValueIfNull : new Integer(tempInt.toString()).intValue();
 	}
 	public boolean getBooleanColumnValue(String columnName) {
 		return getBooleanColumnValue(columnName, false);
