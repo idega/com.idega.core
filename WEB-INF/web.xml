@@ -83,6 +83,17 @@
     <url-pattern>/servlet/WindowOpener/*</url-pattern>
   </servlet-mapping>
 
+    <!-- The IWEncodingFilter Filter , MUST be the first filter -->
+    <filter>
+        <filter-name>IWEncodingFilter</filter-name>
+        <filter-class>com.idega.servlet.filter.IWEncodingFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>IWEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
 
     <!-- The IWAuthenticator Filter -->
     <filter>
@@ -117,8 +128,29 @@
         <filter-name>IWAuthorizationFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-
+    
+     <!-- MyFaces MultiPart Filter -->
+    <filter>
+        <filter-name>multipartFilter</filter-name>
+        <filter-class>net.sourceforge.myfaces.custom.fileupload.MultipartFilter</filter-class>
+         <init-param>
+            <param-name>maxFileSize</param-name>
+            <param-value>100m</param-value>
+            <description>Set the size limit for uploaded files.
+                Format: 10 - 10 bytes
+                        10k - 10 KB
+                        10m - 10 MB
+            </description>
+        </init-param>        
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>multipartFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+    <!-- MyFaces MultiPart Filter MUST BE AFTER THE IWEncodingFilter -->
+    
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
     <welcome-file>index.html</welcome-file>
