@@ -144,10 +144,20 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	protected void startIdegaDatabasePool(IWMainApplication iwma) {
 		String separator = File.separator;
 		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_IDEGA;
-		String file = iwma.getPropertiesRealPath()+separator+"db.properties";
-		sendStartMessage("Reading Databases from file: "+file);
+		String fileName=null;
+		String sfile1 = iwma.getRealPath("/")+"/WEB-INF/idegaweb/properties/db.properties";
+		String sfile2= iwma.getPropertiesRealPath()+separator+"db.properties";
+		File file1 = new File(sfile1);
+		File file2 = new File(sfile2);
+		if(file1.exists()){
+			fileName=sfile1;
+		}
+		else if(file2.exists()){
+			fileName=sfile2;
+		}
+		sendStartMessage("Reading Databases from file: "+fileName);
 		sendStartMessage("Starting idega Datastore ConnectionPool");
-		PoolManager.getInstance(file,iwma);	
+		PoolManager.getInstance(fileName,iwma);	
 	}
 	protected void startJDBCDatasourcePool(IWMainApplication iwma){
 		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_JDBC_DATASOURCE;
@@ -233,7 +243,14 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		startTemporaryBundleStarters();
 		application.startAccessController();
 		application.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
+		
+		if(PresentationObject.USE_JSF_RENDERING){
+			application.loadViewManager();
+			sendStartMessage("Loaded the ViewManager");
+		}		
+		
 		application.loadBundles();
+
 		executeServices(application);
 		//create ibdomain
 		long end = System.currentTimeMillis();
