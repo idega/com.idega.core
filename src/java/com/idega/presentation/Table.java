@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.4 2001/10/24 18:13:12 laddi Exp $
+ * $Id: Table.java,v 1.5 2001/10/25 18:50:07 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -797,19 +797,20 @@ public class Table extends PresentationObjectContainer {
         }
         else{
           //print(Text.getNonBrakingSpace().getText());
-          print("<img src=\"\" width=1 height=1>");
+          print("<img src=\""+transparentcell.getURL()+"\" width=1 height=1>");
         }
       }
 
     }
     else{
-      print("<img src=\"\" width=1 height=1>");
+      print("<img src=\""+transparentcell.getURL()+"\" width=1 height=1>");
       //print(Text.getNonBrakingSpace().getText());
     }
   }
 
   public void print(IWContext iwc) throws Exception{
     initVariables(iwc);
+    this.transparentcell = getTransparentCell(iwc);
     //if( doPrint(iwc)){
       if (getLanguage().equals("HTML")){
                     String theErrorMessage = getErrorMessage();
@@ -829,6 +830,13 @@ public class Table extends PresentationObjectContainer {
               for(int x=1;x<=cols;){
 
                 if(theObjects[x-1][y-1] != null){
+                  if ( theObjects[x-1][y-1].getAttributeString().indexOf("align") == -1 ) {
+                    setAlignment(x,y,"left");
+                  }
+                  if ( theObjects[x-1][y-1].getAttributeString().indexOf("valign") == -1 ) {
+                    setVerticalAlignment(x,y,"middle");
+                  }
+
                   if (printString==null){
                     printString = new StringBuffer();
                   }
