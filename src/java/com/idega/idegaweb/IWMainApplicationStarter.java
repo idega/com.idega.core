@@ -2,8 +2,12 @@ package com.idega.idegaweb;
 
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.LogManager;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -157,6 +161,7 @@ public class IWMainApplicationStarter {
 		application.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 		
 		this.startDatabasePool();
+		this.startLogManager();
 		IWStyleManager iwStyleManager = new IWStyleManager(application);
 		iwStyleManager.getStyleSheet();
 		sendStartMessage("Starting IWStyleManager");
@@ -172,6 +177,31 @@ public class IWMainApplicationStarter {
 		sendStartMessage("Completed in " + time + " seconds");
 	}
 	
+	/**
+	 * 
+	 */
+	private void startLogManager() {
+		File propertiesDir = new File(this.iwma.getPropertiesRealPath());
+		File propertiesFile = new File(propertiesDir,"logging.properties");
+		if(propertiesFile.exists()){
+			try {
+				LogManager.getLogManager().readConfiguration(new FileInputStream(propertiesFile));
+			}
+			catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	protected void setApplicationVariables(IWMainApplication application){
 		if (application.getSettings().getIfDebug()) {
 					application.getSettings().setDebug(true);
