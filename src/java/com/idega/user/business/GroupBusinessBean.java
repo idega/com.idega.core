@@ -1153,8 +1153,9 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 	public void setMetaDataFromLDAPAttributes(Group group, DN distinguishedName, Attributes attributes) {
 		IWLDAPUtil ldapUtil = IWLDAPUtil.getInstance();
 		
+		//good to have for future lookup, should actually be multivalued!
 		if(distinguishedName!=null){
-			group.setMetaData(ldapUtil.getAttributeKeyWithMetaDataNamePrefix(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING),distinguishedName.toString());
+			group.setMetaData(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING,distinguishedName.toString().toLowerCase());
 		}
 		
 		if (attributes != null) {
@@ -1162,27 +1163,35 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 			try {
 				while (attrlist.hasMore()) {
 					Attribute att = (Attribute) attrlist.next();
-					String key = null;
-					if(ldapUtil.isAttributeIWMetaDataKey(att)){
-						key = ldapUtil.getAttributeKeyWithoutMetaDataNamePrefix(att);
-					}
-					else{
-						key = ldapUtil.getAttributeKeyWithMetaDataNamePrefix(att);
-					}
 					
-					if(key.indexOf("binary")<0){
+					//only store true meta data keys and not ldap keys that have been handled already
+					if(ldapUtil.isAttributeIWMetaDataKey(att)){
+						String key = ldapUtil.getAttributeKeyWithoutMetaDataNamePrefix(att);
+						String keyWithPrefix = att.getID();
 						
-						String value;
-						try {
-							value = att.get().toString();
-							if(value.length()<=2000){
-								group.setMetaData(key,value);
+						if(key.indexOf("binary")<0){
+							String value;
+							try {
+								value = ldapUtil.getSingleValueOfAttributeByAttributeKey(keyWithPrefix, attributes);
+								
+								if(value.length()<=2000){
+									group.setMetaData(key,value);
+								}
+								else{
+									System.err.println("[GroupBusiness] attribute is too long: "+key);
+								}
+								//Todo if we want to copy all ldap attributes we could remove all attributes we have handled and just
+								//save the rest as metdata
+								//attributes.remove(key);
 							}
+							catch (Exception e) {
+								System.err.println("[GroupBusiness] attribute has no value or an error occured: "+key);
+							}
+							
 						}
-						catch (Exception e) {
-							System.out.println("[GroupBusiness] atttribute has no value");
+						else{
+							System.out.print("[GroupBusiness] binary attributes not supported yet: "+key);
 						}
-						
 					}
 				}
 			}
@@ -2240,11 +2249,12 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	 */
 	public Group getGroupByDirectoryString(DirectoryString dn) throws RemoteException {
 		//TODO use one of the DN helper classes to do this cleaner
-		String identifier = dn.getDirectoryString();
+		String identifier = dn.getDirectoryString().toLowerCase();
+		String dnFromMetaDataKey = IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING;
 		Group group = null;
 		
 		//try and get by metadata first then by inaccurate method
-		Collection groups = getGroupsByLDAPAttribute(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING,identifier);
+		Collection groups = getGroupsByMetaDataKeyAndValue(dnFromMetaDataKey,identifier);
 		
 		if(!groups.isEmpty() && groups.size()==1){
 			//we found it!
@@ -2270,7 +2280,7 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 				String parentDN = identifier.substring(firstComma+1,identifier.length());
 				List candidates = new Vector();
 				//2.
-				Collection potentialParent = getGroupsByLDAPAttribute(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING,parentDN);
+				Collection potentialParent = getGroupsByMetaDataKeyAndValue(dnFromMetaDataKey,parentDN);
 				if(!potentialParent.isEmpty() && potentialParent.size()==1){
 					//we found it!
 					Group parent = (Group)potentialParent.iterator().next();
@@ -2280,9 +2290,8 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 						Iterator iter = children.iterator();
 						while (iter.hasNext()) {
 							Group child = (Group) iter.next();
-							String dnFromMetaData = util.getAttributeKeyWithMetaDataNamePrefix(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING);
 							//4.
-							if(groupName.equals(child.getName()) && child.getMetaData(dnFromMetaData)==null){
+							if(groupName.equals(child.getName()) && child.getMetaData(dnFromMetaDataKey)==null){
 								candidates.add(child);
 							}
 						}
@@ -2364,16 +2373,15 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	}
 
 	/**
-	 * Gets all the groups that have this ldap metadata
+	 * Gets all the groups that have this metadata key and value
 	 * @param key
 	 * @param value
-	 * @return
+	 * @return a collection of Groups or an empty list
 	 */
-	public Collection getGroupsByLDAPAttribute(String key, String value){
-		IWLDAPUtil util = IWLDAPUtil.getInstance();
+	public Collection getGroupsByMetaDataKeyAndValue(String key, String value){
 		Collection groups;
 		try {
-			groups = getGroupHome().findGroupsByMetaData(util.getAttributeKeyWithMetaDataNamePrefix(key),value);
+			groups = getGroupHome().findGroupsByMetaData(key,value);
 		}
 		catch (FinderException e) {
 			return ListUtil.getEmptyList();
@@ -2429,10 +2437,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/11/17 17:32:07 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/11/23 17:11:08 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.85 $
+	 * @version $Revision: 1.86 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

@@ -12,7 +12,7 @@ package com.idega.core.ldap.util;
 public interface IWLDAPConstants {
 	
 	public static final String LDAP_META_DATA_KEY_PREFIX = "idegaweb_ldap_";
-	public static final String LDAP_META_DATA_KEY_DIRECTORY_STRING = "directory_string";
+	public static final String LDAP_META_DATA_KEY_DIRECTORY_STRING = "ldap_rdn";
 	//supported schemas
 	public static final String LDAP_SCHEMA_ORGANIZATION = "organization";
 	public static final String LDAP_SCHEMA_ORGANIZATIONAL_UNIT = "organizationalUnit";

@@ -80,7 +80,7 @@ LDAPReplicationConstants {
 		exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION);
 		exactIndexes.add(LDAP_ATTRIBUTE_OBJECT_CLASS);
 		exactIndexes.add(LDAP_ATTRIBUTE_DESCRIPTION);
-		
+		exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID);
 		//lowercase
 		exactIndexes.add(LDAP_ATTRIBUTE_COMMON_NAME.toLowerCase());
 		exactIndexes.add(LDAP_ATTRIBUTE_EMAIL.toLowerCase());
@@ -92,6 +92,7 @@ LDAPReplicationConstants {
 		exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION.toLowerCase());
 		exactIndexes.add(LDAP_ATTRIBUTE_OBJECT_CLASS.toLowerCase());
 		exactIndexes.add(LDAP_ATTRIBUTE_DESCRIPTION.toLowerCase());
+		exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID.toLowerCase());
 		
 		//uppercase
 		exactIndexes.add(LDAP_ATTRIBUTE_COMMON_NAME.toUpperCase());
@@ -104,7 +105,7 @@ LDAPReplicationConstants {
 		exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION.toUpperCase());
 		exactIndexes.add(LDAP_ATTRIBUTE_OBJECT_CLASS.toUpperCase());
 		exactIndexes.add(LDAP_ATTRIBUTE_DESCRIPTION.toUpperCase());
-		
+		exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID.toUpperCase());
 		
 		
 		//exactIndexes.addElement( new DirectoryString( "seealso" ) );
@@ -937,7 +938,7 @@ LDAPReplicationConstants {
 		if (metadata != null && !metadata.isEmpty()) {
 			Iterator iter = metadata.keySet().iterator();
 			while (iter.hasNext()) {
-				String metaKey = (String) iter.next();
+				String metaKey = (String) iter.next(); 
 				String metaValue = (String) metadata.get(metaKey);
 				if (metaValue != null) {
 					List metaDataValue = getAttributeListForSingleEntry(metaValue);

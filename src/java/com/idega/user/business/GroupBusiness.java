@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusiness.java,v 1.48 2004/11/16 14:53:32 eiki Exp $
+ * $Id: GroupBusiness.java,v 1.49 2004/11/23 17:11:08 eiki Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -50,10 +50,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2004/11/16 14:53:32 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/11/23 17:11:08 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.48 $
+ * @version $Revision: 1.49 $
  */
 public interface GroupBusiness extends IBOService, IWLDAPConstants {
 
@@ -632,9 +632,9 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	public Group getGroupByDirectoryString(DirectoryString dn) throws RemoteException;
 
 	/**
-	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByLDAPAttribute
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByMetaDataKeyAndValue
 	 */
-	public Collection getGroupsByLDAPAttribute(String key, String value) throws java.rmi.RemoteException;
+	public Collection getGroupsByMetaDataKeyAndValue(String key, String value) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getLastGroupTreeSnapShot
