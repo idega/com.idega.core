@@ -2,6 +2,7 @@ package com.idega.core.data;
 
 import java.sql.SQLException;
 import com.idega.builder.data.IBPage;
+import com.idega.core.data.ICNetwork;
 
 /**
  * Title:        IW Core
@@ -29,6 +30,7 @@ public class ICProtocol extends GenericType {
     super.initializeAttributes();
     this.addManyToManyRelationShip(GenericGroup.class,"ic_group_protocol");
     this.addManyToManyRelationShip(IBPage.class,"ib_page_ic_protocol");
+    this.addManyToManyRelationShip(ICNetwork.class,"ib_protocol_network");
   }
 
   public String getEntityName() {
