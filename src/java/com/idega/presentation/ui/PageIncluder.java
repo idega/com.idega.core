@@ -21,6 +21,7 @@ public class PageIncluder extends PresentationObject{
   private String pageIncluderPrefix = null;
   private static final String PAGE_INCLUDER_PARAMETER_NAME="iw_uri";
   private int instanceId;
+  private boolean forceFrame = false;
 
   public PageIncluder(){
     super();
@@ -39,7 +40,14 @@ public class PageIncluder extends PresentationObject{
         StringBuffer queryBuf = new StringBuffer();
         String query = null;
         instanceId=getICObjectInstanceID();
-        pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
+
+        if(forceFrame){
+          pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
+        }
+        else {
+         pageIncluderPrefix ="";
+        }
+
 
         if( iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId) ){//after clicking a link og submitting a form
           //get all parameters even from post actions
@@ -99,7 +107,7 @@ public class PageIncluder extends PresentationObject{
          * @todo use expressions to make none case sensitive or implement using HTMLDocumentLoader (Advanced Swing);
          * **/
 
-        html = TextSoap.stripHTMLandBodyTag(html);
+        html = TextSoap.stripHTMLTagAndChangeBodyTagToTable(html);
         html = preProcess(html);
         html = encodeQueryStrings(html);
         html = changeSrcAttributes(html);
@@ -156,8 +164,14 @@ public class PageIncluder extends PresentationObject{
   protected String insertPageIncludeInTag(String tag,String html){
     html = TextSoap.findAndReplace(html,tag+"=\"//",tag+"=\""+pageIncluderPrefix+"http://");// the // case
     html = TextSoap.findAndReplace(html,tag+"=\"http://",tag+"=\""+pageIncluderPrefix+"http://");// the http:// case
-    html = TextSoap.findAndReplace(html,tag+"=\"/",pageIncluderPrefix.substring(1,pageIncluderPrefix.length()),tag+"=\"/",tag+"=\""+pageIncluderPrefix+BASEURL );// the / case
-    html = TextSoap.findAndReplace(html,tag+"=\"",pageIncluderPrefix,tag+"=\""+pageIncluderPrefix+RELATIVEURL);
+    if(forceFrame){
+      html = TextSoap.findAndReplace(html,tag+"=\"/",pageIncluderPrefix.substring(1,pageIncluderPrefix.length()),tag+"=\"/",tag+"=\""+pageIncluderPrefix+BASEURL );// the / case
+      html = TextSoap.findAndReplace(html,tag+"=\"",pageIncluderPrefix,tag+"=\""+pageIncluderPrefix+RELATIVEURL);
+    }
+    else{
+      html = TextSoap.findAndReplace(html,tag+"=\"/",tag+"=\""+BASEURL );
+      html = TextSoap.findAndReplace(html,tag+"=\"","http://",tag+"=\""+RELATIVEURL);
+    }
     return html;
   }
 
@@ -246,6 +260,10 @@ public class PageIncluder extends PresentationObject{
 
   public void setURL(String URL){
     this.URL = URL;
+  }
+
+  public void setForceInFrame(boolean forceFrame){
+    this.forceFrame = forceFrame;
   }
 
   }
