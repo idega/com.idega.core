@@ -31,6 +31,6 @@ public class OracleAS extends DefaultAppServer {
      * This appserver has a bug for this so we return true
      */
     public boolean getSupportsSettingCharactersetInRequest() {
-        return false;
+        return true;
     }    
 }
