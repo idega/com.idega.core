@@ -29,6 +29,7 @@ public class IDOQuery {
 	private static final String ORDER_BY = " ORDER BY ";
 	private static final String WHERE = " WHERE ";
 	private static final String LIKE = " LIKE ";
+	private static final String NOT_LIKE = " NOT LIKE ";
 	private static final String EQUAL_SIGN = "=";
 	private static final String EXCLAMATION_MARK = "!";
 	private static final String NOT_EQUAL_SIGN = "!=";
@@ -928,6 +929,11 @@ public class IDOQuery {
 
 	public IDOQuery appendNOTEqual() {
 		return this.append(NOT_EQUAL_SIGN);
+	}
+	
+	
+	public IDOQuery appendNOTLike() {
+		return this.append(NOT_LIKE);
 	}
 
 	public IDOQuery appendSingleQuote() {

@@ -45,4 +45,16 @@ public class Parameter extends GenericInput {
 			setContent(iwc.getParameter(getName()));
 		}
 	}
+	
+	public boolean equals(Object obj){
+		if(obj instanceof Parameter){
+			Parameter pObj = (Parameter)obj;
+			boolean name = this.getName().equals(pObj.getName());
+			boolean content = this.getContent().equals(pObj.getContent());
+			boolean inputType = this.getInputType().equals(pObj.getInputType());
+			return (name && content && inputType);
+		} else {
+			return super.equals(obj);
+		}
+	}
 }
