@@ -65,19 +65,12 @@ public class StringHandler {
 
 
   /**
-
    * Concatenates two strings to after alphabetical comparison
-
    */
-
    public static String concatAlphabetically(String string1,String string2, String separator){
-
       String first;
-
       String second;
-
       int compare = string1.compareTo(string2);
-
       if(compare<0){
 
          first=string1;
@@ -272,6 +265,48 @@ public class StringHandler {
 
 
 
+    /**
+     * Strips the string of all non-roman characters such as special Icelandic,Swedish,German etc. characters
+     */
+    public static String stripNonRomanCharacters(String inputString){
+      char[] cAinputString = inputString.toCharArray();
+      for (int i = 0; i < cAinputString.length; i++) {
+        char c = cAinputString[i];
+        char newC = translateCharacter(c);
+        cAinputString[i]=newC;
+      }
+      String newString = new String(cAinputString);
+      return newString;
+    }
+
+    private static char translateCharacter(char c){
+      /**
+       * @todo: Finish implementation
+       */
+      switch (c) {
+        case '…' :
+          return 'O';
+        case 'š' :
+          return 'o';
+        case 'ƒ':
+          return 'E';
+        case 'Ž' :
+          return 'e';
+        case 'Š':
+          return 'a';
+        case '€' :
+          return 'A';
+        case '':
+          return 'A';
+        case 'Œ' :
+          return 'a';
+        case 'ç':
+          return 'A';
+        case '‡' :
+          return 'a';
+      }
+      return c;
+    }
 
 
 } // Class StringHandler
