@@ -1,5 +1,5 @@
 /*
- * $Id: HelpWindow.java,v 1.3 2004/02/20 16:37:42 tryggvil Exp $
+ * $Id: HelpWindow.java,v 1.4 2004/02/24 11:33:11 birna Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -70,7 +70,7 @@ public class HelpWindow extends StyledIWAdminWindow {
 	private final static String ERROR_NO_BUNDLE = "hlp_err_no_bundle";
 	
 	//the style for a white table with gray border
-	private String mainTableStyle = "main";
+	private String mainTableStyle = "borderAllWhite";
 	
 	private boolean _hasEdit = false;
 	private IWBundle _iwb = null;
