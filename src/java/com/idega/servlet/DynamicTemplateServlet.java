@@ -13,13 +13,12 @@ import javax.servlet.jsp.*;
 import com.idega.presentation.*;
 import com.idega.idegaweb.*;
 import com.idega.idegaweb.template.*;
-import com.idega.jmodule.*;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
 */
-public class DynamicTemplateServlet extends PageJSPModule{
+public class DynamicTemplateServlet extends IWJSPPresentationServlet{
 
 
   private static String DEFAULT = "default";
