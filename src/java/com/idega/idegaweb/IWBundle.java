@@ -79,6 +79,8 @@ public class IWBundle implements java.lang.Comparable {
   private final static String COMPONENT_CLASS_PROPERTY="component_class";
   private final static String BUNDLE_STARTER_CLASS = "iw_bundle_starter_class";
 
+	private IWBundleStartable starter;
+
 
    protected IWBundle(String rootRealPath,String bundleIdentifier,IWMainApplication superApplication){
 	this(rootRealPath,rootRealPath,bundleIdentifier,superApplication);
@@ -221,13 +223,25 @@ public class IWBundle implements java.lang.Comparable {
       String starterClassName = this.getProperty(this.BUNDLE_STARTER_CLASS);
       if(starterClassName!=null){
 	try{
-	  IWBundleStartable starter = (IWBundleStartable)Class.forName(starterClassName).newInstance();
+	  starter = (IWBundleStartable)Class.forName(starterClassName).newInstance();
 	  starter.start(this);
 	}
 	catch(Exception e){
 	  e.printStackTrace();
 	}
       }
+   }
+   
+   
+  public void unload(){
+		storeState();
+		stopStartClass();  	
+  }
+   
+   private void stopStartClass(){
+   	if (starter != null) {
+   		starter.stop(this);	
+   	}	
    }
 
 
