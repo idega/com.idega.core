@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.65 2003/10/28 10:54:47 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.66 2003/10/28 15:39:43 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +36,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Vector;
+import java.util.ArrayList;
 import javax.ejb.FinderException;
 /**
  * A class to serve as a wrapper for an idegaWeb Bundle.
@@ -65,12 +64,12 @@ public class IWBundle implements java.lang.Comparable
 	private String propertiesRealPath;
 	private String classesRealPath;
 	private IWMainApplication superApplication;
-	private Hashtable localePaths;
-	private Hashtable resourceBundles;
+	private Map localePaths;
+	private Map resourceBundles;
 	private boolean autoCreateLocalizedResources = true;
 	private boolean autoCreate = false;
-	private Hashtable handlers;
-	private Hashtable localeRealPaths;
+	private Map handlers;
+	private Map localeRealPaths;
 	private SortedMap localizableStringsMap;
 	private Properties localizableStringsProperties;
 	private File localizableStringsFile;
@@ -103,9 +102,9 @@ public class IWBundle implements java.lang.Comparable
 		this.autoCreate = autoCreate;
 		this.superApplication = superApplication;
 		this.identifier = bundleIdentifier;
-		handlers = new Hashtable();
-		localeRealPaths = new Hashtable();
-		resourceBundles = new Hashtable();
+		handlers = new HashMap();
+		localeRealPaths = new HashMap();
+		resourceBundles = new HashMap();
 		setRootRealPath(rootRealPath);
 		setRootVirtualPath(rootVirtualPath);
 		try
@@ -362,7 +361,7 @@ public class IWBundle implements java.lang.Comparable
 	}
 	public String[] getAvailableProperties()
 	{
-		return ((String[]) ((Vector) propertyList.getKeys()).toArray(new String[0]));
+		return ((String[]) ((List) propertyList.getKeys()).toArray(new String[0]));
 	}
 	public String[] getLocalizableStrings()
 	{
@@ -370,10 +369,10 @@ public class IWBundle implements java.lang.Comparable
 	}
 	public boolean removeLocalizableString(String key)
 	{
-		Enumeration enum = this.resourceBundles.elements();
-		while (enum.hasMoreElements())
+		Iterator iter = this.resourceBundles.values().iterator();
+		while (iter.hasNext())
 		{
-			IWResourceBundle item = (IWResourceBundle) enum.nextElement();
+			IWResourceBundle item = (IWResourceBundle) iter.next();
 			item.removeString(key);
 		}
 		return this.localizableStringsMap.remove(key) != null ? true : false;
@@ -488,10 +487,10 @@ public class IWBundle implements java.lang.Comparable
 			debug("Storing State");
 		}
 		propertyList.store();
-		Enumeration enum = this.resourceBundles.elements();
-		while (enum.hasMoreElements())
+		Iterator iter = this.resourceBundles.values().iterator();
+		while (iter.hasNext())
 		{
-			IWResourceBundle item = (IWResourceBundle) enum.nextElement();
+			IWResourceBundle item = (IWResourceBundle) iter.next();
 			item.storeState();
 		}
 		try
