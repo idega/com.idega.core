@@ -1,7 +1,9 @@
 package com.idega.user.data;
 
+import com.idega.data.MetaDataCapable;
 
-public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNode
+
+public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNode,MetaDataCapable
 {
  public void addAddress(com.idega.core.data.Address p0)throws com.idega.data.IDOAddRelationshipException;
  public void addEmail(com.idega.core.data.Email p0)throws com.idega.data.IDOAddRelationshipException;
@@ -14,7 +16,6 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public void addRelation(int p0,java.lang.String p1)throws javax.ejb.CreateException;
  public void addUniqueRelation(int p0,java.lang.String p1)throws javax.ejb.CreateException;
  public void addUniqueRelation(com.idega.user.data.Group p0,java.lang.String p1)throws javax.ejb.CreateException;
- public boolean equals(com.idega.user.data.Group p0);
  public com.idega.user.data.Group getAlias();
  public int getAliasID();
  public java.util.Collection getAllGroupsContainingUser(com.idega.user.data.User p0)throws javax.ejb.EJBException;
@@ -47,7 +48,6 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public int getSiblingCount();
  public boolean hasRelationTo(int p0,java.lang.String p1);
  public boolean hasRelationTo(com.idega.user.data.Group p0);
- public boolean hasRelationTo(int p0);
  public void initializeAttributes();
  public boolean isLeaf();
  public boolean isUser();
@@ -62,7 +62,6 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
  public void setCreated(java.sql.Timestamp p0);
  public void setDescription(java.lang.String p0);
  public void setExtraInfo(java.lang.String p0);
- public void setGroupType(com.idega.user.data.GroupType p0);
  public void setGroupType(java.lang.String p0);
  public void setHomePage(com.idega.builder.data.IBPage p0);
  public void setHomePageID(int p0);
