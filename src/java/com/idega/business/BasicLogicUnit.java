@@ -7,7 +7,7 @@ package com.idega.business;
 
 import java.util.Hashtable;
 import com.idega.presentation.IWContext;
-import com.idega.idegaweb.IdegaWebException;
+import com.idega.idegaweb.IWException;
 import com.idega.util.InheritableStaticPropertyHandler;
 
 
@@ -26,7 +26,7 @@ public class BasicLogicUnit implements IdegaWebEventListener{
       }
 
 
-      public void actionPerformed(IWContext iwc)throws IdegaWebException{
+      public void actionPerformed(IWContext iwc)throws IWException{
 
       }
 

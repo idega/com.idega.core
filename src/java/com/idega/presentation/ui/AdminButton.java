@@ -20,8 +20,8 @@ public class AdminButton extends GenericButton{
 //private Image defaultImage;
 //private Image onMouseOverImage;
 //private Image onClickImage;
-private String adminWindowPage=IdegaWebApplication.windowOpenerURL;
-private String sessionStorageName=IdegaWebApplication.windowOpenerParameter;
+private String adminWindowPage=IWMainApplication.windowOpenerURL;
+private String sessionStorageName=IWMainApplication.windowOpenerParameter;
 
 private GenericButton button;
 private Link link;

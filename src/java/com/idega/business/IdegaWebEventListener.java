@@ -6,7 +6,7 @@
 package com.idega.business;
 
 import com.idega.presentation.*;
-import com.idega.idegaweb.IdegaWebException;
+import com.idega.idegaweb.IWException;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -16,6 +16,6 @@ import com.idega.idegaweb.IdegaWebException;
 */
 public interface IdegaWebEventListener{
 
-      public void actionPerformed(IWContext iwc)throws IdegaWebException;
+      public void actionPerformed(IWContext iwc)throws IWException;
 
 }
