@@ -100,25 +100,25 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	{
 		try
 		{
-			if (((IDOEntityBean) entity).getPrimaryKeyClass().equals(Integer.class))
+			//if (((GenericEntity) entity).getPrimaryKeyClass().equals(Integer.class))
+			//{
+			boolean pkIsNull = entity.isNull(entity.getIDColumnName());
+			if (pkIsNull)
 			{
-				boolean pkIsNull = entity.isNull(entity.getIDColumnName()) && entity.getPrimaryKey() == null;
-				if (pkIsNull)
-				{
-					//Object value = this.executeQuery(entity, "select @@IDENTITY");
-					Statement stmt = conn.createStatement();
-					ResultSet rs = stmt.executeQuery("select @@IDENTITY");
-					rs.next();
-					int id = rs.getInt(1);
-					entity.setID(id);
-					rs.close();
-					stmt.close();
-					//String tableName = entity.getTableName();
-					//Statement stmt2 = conn.createStatement();
-					//stmt2.executeUpdate("set IDENTITY_INSERT " + tableName + " off");
-					//stmt2.close();
-				}
+				//Object value = this.executeQuery(entity, "select @@IDENTITY");
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery("select @@IDENTITY");
+				rs.next();
+				int id = rs.getInt(1);
+				entity.setID(id);
+				rs.close();
+				stmt.close();
+				//String tableName = entity.getTableName();
+				//Statement stmt2 = conn.createStatement();
+				//stmt2.executeUpdate("set IDENTITY_INSERT " + tableName + " off");
+				//stmt2.close();
 			}
+			//}
 		}
 		catch (Exception e)
 		{
@@ -195,8 +195,8 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 			statement.append(") values (");
 			statement.append(getQuestionmarksForColumns(entity));
 			statement.append(")");
-			if (isDebugActive())
-				debug(statement.toString());
+			//if (isDebugActive())
+			//	debug(statement.toString());
 			Stmt = conn.prepareStatement(statement.toString());
 			setForPreparedStatement(STATEMENT_INSERT, Stmt, entity);
 			Stmt.execute();
@@ -225,20 +225,20 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	{
 		try
 		{
-			if (((IDOEntityBean) entity).getPrimaryKeyClass().equals(Integer.class))
+			//if (((GenericEntity) entity).getPrimaryKeyClass().equals(Integer.class))
+			//{
+			boolean pkIsNull = entity.isNull(entity.getIDColumnName());
+			if (!pkIsNull)
 			{
-				boolean pkIsNull = entity.isNull(entity.getIDColumnName()) && entity.getPrimaryKey() == null;
-				if (!pkIsNull)
-				{
-					String tableName = entity.getTableName();
-					Statement stmt2 = conn.createStatement();
-					String sql = "set IDENTITY_INSERT " + tableName + " on";
-					stmt2.executeUpdate(sql);
-					debug(sql);
-					stmt2.close();
-					return true;
-				}
+				String tableName = entity.getTableName();
+				Statement stmt2 = conn.createStatement();
+				String sql = "set IDENTITY_INSERT " + tableName + " on";
+				stmt2.executeUpdate(sql);
+				//debug(sql);
+				stmt2.close();
+				return true;
 			}
+			//}
 		}
 		catch (Exception e)
 		{
@@ -252,15 +252,15 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		{
 			try
 			{
-				if (((IDOEntityBean) entity).getPrimaryKeyClass().equals(Integer.class))
-				{
-					String tableName = entity.getTableName();
-					Statement stmt2 = conn.createStatement();
-					String sql = "set IDENTITY_INSERT " + tableName + " off";
-					stmt2.executeUpdate(sql);
-					debug(sql);
-					return false;
-				}
+				//if (((GenericEntity) entity).getPrimaryKeyClass().equals(Integer.class))
+				//{
+				String tableName = entity.getTableName();
+				Statement stmt2 = conn.createStatement();
+				String sql = "set IDENTITY_INSERT " + tableName + " off";
+				stmt2.executeUpdate(sql);
+				//debug(sql);
+				return false;
+				//}
 			}
 			catch (Exception e)
 			{
@@ -270,4 +270,47 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		}
 		return false;
 	}
+/*
+	public void update(GenericEntity entity, Connection conn) throws Exception
+	{
+		executeBeforeUpdate(entity);
+		PreparedStatement Stmt = null;
+		try
+		{
+			boolean entityInsertModeIsOn = false;
+			entityInsertModeIsOn = turnOnIdentityInsertFlag(entity, conn, entityInsertModeIsOn);
+			conn = entity.getConnection();
+			//			Stmt = conn.createStatement();
+
+			String statement =
+				"update "
+					+ entity.getEntityName()
+					+ " set "
+					+ entity.getAllColumnsAndQuestionMarks()
+					+ " where "
+					+ entity.getIDColumnName()
+					+ "="
+					+ entity.getID();
+			//System.out.println(statement);
+			Stmt = conn.prepareStatement(statement);
+			setForPreparedStatement(STATEMENT_UPDATE, Stmt, entity);
+			Stmt.execute();
+			if (updateNumberGeneratedValueAfterInsert())
+			{
+				updateNumberGeneratedValue(entity, conn);
+			}
+			turnOffIdentityInsertFlag(entity, conn, entityInsertModeIsOn);
+			//int i = Stmt.executeUpdate("update "+entity.getEntityName()+" set "+entity.getAllColumnsAndValues()+" where "+entity.getIDColumnName()+"="+entity.getID());
+		}
+		finally
+		{
+			if (Stmt != null)
+			{
+				Stmt.close();
+			}
+		}
+		executeAfterUpdate(entity);
+		entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+	}
+*/
 }
