@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.40 2004/12/20 08:54:56 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.41 2004/12/21 10:37:32 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -20,16 +20,17 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.text.Text;
 /**
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2004/12/20 08:54:56 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/21 10:37:32 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.40 $
+ * @version $Revision: 1.41 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -264,7 +265,7 @@ public class PresentationObjectContainer extends PresentationObject
 			//if (!isEmpty())
 			//{
 			
-			if(USE_JSF_RENDERING){
+			if(IWMainApplication.USE_JSF){
 				Iterator iter = getFacetsAndChildren();
 				while(iter.hasNext()){
 					UIComponent child = (UIComponent)iter.next();

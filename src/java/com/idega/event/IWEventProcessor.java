@@ -346,7 +346,7 @@ public class IWEventProcessor {
 				}
 	        }
 		}
-		else if(PresentationObject.USE_JSF_RENDERING){
+		else if(IWMainApplication.USE_JSF){
 			//This is a hack so we don't have to add the myfaces dependency yet
 			FileUploadUtil.handleMyFacesMultiPartRequest(iwc);
 		}

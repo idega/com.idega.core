@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.118 2004/12/20 08:54:56 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.119 2004/12/21 10:37:32 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/20 08:54:56 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/21 10:37:32 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.118 $
+ * @version $Revision: 1.119 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -124,10 +124,11 @@ public class IWMainApplication //{//implements ServletContext{
     private static final String NEW_WINDOW_URL="/window/";
     private static final String NEW_BUILDER_PAGE_URL="/pages/";
     
-    
     //Static variables:
     protected static IWMainApplication defaultIWMainApplication;
     public static boolean USE_NEW_URL_SCHEME=false;
+	//This is a temporary solution should be removed when JSF implementation is done:
+	public static boolean USE_JSF=false;
     private static IWCacheManager cacheManager;
     private static boolean alreadyUnLoaded = false;//for restartApplication
     public static boolean DEBUG_FLAG = false;
@@ -149,7 +150,8 @@ public class IWMainApplication //{//implements ServletContext{
 	private AppServer applicationServer;
 	//Holds a map of Window classes to know its dimensions etc.
     private Map windowClassesStaticInstances;
-
+    private Application realJSFApplication;
+    
     public IWMainApplication(ServletContext application,AppServer appserver) {
         this.application = application;
         setApplicationServer(appserver);        
@@ -1373,7 +1375,6 @@ public class IWMainApplication //{//implements ServletContext{
 		return false;
 	}
 
-	private Application realJSFApplication;
 	protected Application getRealJSFApplication(){
 		return realJSFApplication;
 	}

@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.84 2004/12/20 08:54:56 tryggvil Exp $
+ * $Id: Table.java,v 1.85 2004/12/21 10:37:32 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -20,6 +20,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWColor;
@@ -166,7 +167,7 @@ public class Table extends PresentationObjectContainer implements TableType{
 	 * @return true if Facets are used
 	 */
 	protected boolean useFacetBasedCells(){
-		return PresentationObject.USE_JSF_RENDERING;
+		return IWMainApplication.USE_JSF;
 	}
 	
 	/**

@@ -245,7 +245,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		application.startAccessController();
 		application.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
 		
-		if(PresentationObject.USE_JSF_RENDERING){
+		if(IWMainApplication.USE_JSF){
 			application.loadViewManager();
 			sendStartMessage("Loaded the ViewManager");
 		}		
@@ -341,8 +341,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 		String usingJSFRendering = application.getSettings().getProperty(IWMainApplication.PROPERTY_JSF_RENDERING);
 		if (usingJSFRendering != null && !"false".equalsIgnoreCase(usingJSFRendering)) {
-			sendStartMessage("Using JSF rendering");
-			PresentationObject.USE_JSF_RENDERING=true;
+			sendStartMessage("Using JavaServer Faces Runtime");
+			IWMainApplication.USE_JSF=true;
 		}
 	}
 	

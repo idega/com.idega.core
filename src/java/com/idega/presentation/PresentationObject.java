@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.116 2004/12/20 08:54:56 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.117 2004/12/21 10:37:32 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -65,10 +65,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/12/20 08:54:56 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/21 10:37:32 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.116 $
+ * @version $Revision: 1.117 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -91,9 +91,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public static String COMPOUNDID_COMPONENT_DELIMITER = ":";
 	// constant for compoundId
 	public static String COMPOUNDID_CHILD_NUMBER_DELIMITER = "_";
-	//This is a temporary solution should be removed when JSF implementation is done:
-	public static boolean USE_JSF_RENDERING=false;
-	
 	//temporary legacy variables:
 	private transient HttpServletRequest _request;
 	private transient HttpServletResponse _response;
@@ -552,7 +549,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public void print(String string)
 	{
-		if(USE_JSF_RENDERING){
+		if(IWMainApplication.USE_JSF){
 			try {
 				FacesContext.getCurrentInstance().getResponseWriter().write(string);
 			}
@@ -571,7 +568,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public void println(String string)
 	{
-		if(USE_JSF_RENDERING){
+		if(IWMainApplication.USE_JSF){
 			try {
 				ResponseWriter writer = FacesContext.getCurrentInstance().getResponseWriter();
 				writer.write(string);
@@ -2148,7 +2145,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	protected void renderChild(FacesContext context, UIComponent child) throws IOException {
 		if(child!=null){
-			if(USE_JSF_RENDERING){
+			if(IWMainApplication.USE_JSF){
 				/*if(child.isRendered()){
 					child.encodeBegin(context);
 					if(child.getRendersChildren()){
