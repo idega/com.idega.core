@@ -110,7 +110,7 @@ public class TextEditor extends PresentationObject {
 
         buf.append("</script>");
 
-        source._print(iwc);
+        renderChild(iwc,source);
         println(buf.toString());
         /*
         var WE_DHTMLEDIT_PATH = "webEdition/dhtmledit/";
@@ -128,7 +128,7 @@ public class TextEditor extends PresentationObject {
        TextArea area = new TextArea(inputName,cols,rows);
        text = TextSoap.findAndReplace(text, "<br/>","\r\n");
        area.setContent(text);
-       area._print(iwc);
+       renderChild(iwc,area);
       }
     }
   }

@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.141 2004/12/28 00:20:56 tryggvil Exp $
+ * $Id: Link.java,v 1.142 2004/12/29 14:31:30 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1744,7 +1744,7 @@ public class Link extends Text {
 				}
 				else {
 					if (_obj != null) {
-						_obj._print(iwc);
+						renderChild(iwc,_obj);
 					}
 				}
 			}
