@@ -508,7 +508,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				List groupIds = new Vector();
 				Iterator iter = groups.iterator();
 				while (iter.hasNext()) {
-					groupIds.add(Integer.toString(((GenericGroup) iter.next()).getID()));
+					GenericGroup group = (GenericGroup) iter.next();
+					if(group!=null) {
+						groupIds.add(Integer.toString(group.getID()));
+					}
 				}
 
 				usersGroupsToCheckAgainstPermissions = new List[5];
@@ -562,7 +565,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Iterator iter = groups.iterator();
 		while (iter.hasNext()) {
 			Group parent = (Group) iter.next();
-			if (!AccessControl.PERMISSION_KEY_OWNER.equals(permissionKey) && parent.getPermissionControllingGroupID() > 0) {
+			if (!AccessControl.PERMISSION_KEY_OWNER.equals(permissionKey) && parent!=null && parent.getPermissionControllingGroupID() > 0) {
 				groupsToCheckForPermissions.add(parent.getPermissionControllingGroup());
 			}
 		}
