@@ -124,7 +124,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
 		try{
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("CREATE TRIGGER "+entity.getTableName()+"_trig BEFORE INSERT ON "+entity.getTableName()+" FOR EACH ROW WHEN (NEW."+entity.getIDColumnName()+" is null) DECLARE TEMP INTEGER; BEGIN SELECT "+entity.getTableName()+"_seq.NEXTVAL INTO TEMP FROM DUAL; :NEW."+entity.getIDColumnName()+":=TEMP;END;");
+			int i = Stmt.executeUpdate("CREATE TRIGGER "+entity.getTableName()+"_trig FOR "+entity.getTableName()+" AFTER INSERT { IF NEW."+entity.getIDColumnName()+" is null THEN select "+this.getSapDBSequenceName(entity)+".NEXTVAL INTO TEMP FROM DUAL; :NEW."+entity.getIDColumnName()+":=TEMP;}");
 		}
 		finally{
 			if(Stmt != null){
