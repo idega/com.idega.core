@@ -225,19 +225,61 @@ public class ICObjectBusiness {
     }
   }
 
+
   /**
    * Creates a new empty ICObjectInstance
+   * Catches any possible Exceptions and throws a RuntimeException if anything occurres
    */
-  public  ICObjectInstance createICObjectInstance(){
-    return new ICObjectInstance();
+  public  ICObjectInstance createICObjectInstance() throws IDOCreateException{
+    try{
+      return new ICObjectInstance();
+    }
+    catch(RuntimeException re){
+      throw new IDOCreateException(re);
+    }
   }
 
 
   /**
    * Creates a new empty ICObject
+   * Catches any possible Exceptions and throws a RuntimeException if anything occurres
    */
-  public  ICObject createICObject(){
-    return new ICObject();
+  public ICObject createICObject()throws IDOCreateException{
+    try{
+      return new ICObject();
+    }
+    catch(RuntimeException re){
+      throw new IDOCreateException(re);
+    }
+  }
+
+
+
+  /**
+   * Creates a new empty ICObjectInstance
+   * Catches any possible Exceptions and throws a RuntimeException if anything occurres
+   */
+  public  ICObjectInstance createICObjectInstanceLegacy(){
+    try{
+      return createICObjectInstance();
+    }
+    catch(IDOCreateException idoe){
+      throw new RuntimeException(idoe.getMessage());
+    }
+  }
+
+
+  /**
+   * Creates a new empty ICObject
+   * Catches any possible Exceptions and throws a RuntimeException if anything occurres
+   */
+  public ICObject createICObjectLegacy(){
+    try{
+      return createICObject();
+    }
+    catch(IDOCreateException idoe){
+      throw new RuntimeException(idoe.getMessage());
+    }
   }
 
 
