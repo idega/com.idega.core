@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.126 2004/10/19 11:06:02 tryggvil Exp $
+ *  $Id: Page.java,v 1.127 2004/11/14 23:20:47 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -11,7 +11,6 @@ package com.idega.presentation;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
+import javax.faces.context.FacesContext;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
@@ -47,20 +47,47 @@ import com.idega.util.datastructures.QueueMap;
 /**
  * An instance of this class is always a top level object in UIComponent tree in an HTML presentation in idegaWeb.
  * This object maps to and renders the 
- * <code><pre>
+ * <pre>
  * <HTML><HEAD>...</HEAD> <BODY>... </BODY></HTML>
- * </pre></code>
+ * </code>
  * tags in HTML and renders the children inside the body tags.
  * 
  *@author     <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  *@version    1.2
  */
 public class Page extends PresentationObjectContainer {
+	
+	//static variables:
+	private static Page NULL_CLONE_PAGE = new Page();
+	private static boolean NULL_CLONE_PAGE_INITIALIZED = false;
+	protected final static String ROWS_PROPERTY = "ROWS";
+	protected final static String IW_PAGE_KEY = "idegaweb_page";
+	public final static String IW_FRAME_STORAGE_PARMETER = "idegaweb_frame_page";
+	public final static String IW_FRAME_CLASS_PARAMETER = "idegaweb_frame_class";
+	public final static String IW_FRAMESET_PAGE_PARAMETER = "idegaweb_frameset_path";
+	public final static String IW_FRAME_NAME_PARAMETER = "idegaweb_frame_name";
+	public final static String PRM_IW_BROWSE_EVENT_SOURCE = "iw_b_e_s";
+	// private final static String START_TAG="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>";
+	/**
+	 *  By skipping the validation URL XML compliant browser still recognise
+	 *  attributes such as height / width *
+	 */
+	private final static String START_TAG = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n<html>";
+	public final static String MARKUP_LANGUAGE = "markup_language";
+	public final static String HTML = "HTML";
+	public final static String XHTML = "XHTML";
+	public final static String XHTML1_1 = "XHTML1.1";
+	private final static String END_TAG = "</html>";
+	private static String META_KEYWORDS = "keywords";
+	private static String META_DESCRIPTION = "description";
+	private static String META_HTTP_EQUIV_EXPIRES = "Expires";
+	
+	//State held variables:
 	private int _ibPageID;
 	private String _title;
-	private Script _theAssociatedScript;
-	private Script associatedBodyScript = null;
-	private Script _theSourceScript;
+	//private Script _theAssociatedScript;
+	//private Script associatedBodyScript = null;
+	//private Script _theSourceScript;
 	private boolean _zeroWait = false;
 	private int _redirectSecondInterval = -1;
 	private String _redirectURL = null;
@@ -79,75 +106,27 @@ public class Page extends PresentationObjectContainer {
 	private int _shortCutIconID = -1;
 	private boolean _addStyleSheet = false;
 	private boolean _addBody = true;
-	private Hashtable _frameProperties;
+	private Map _frameProperties;
 	private boolean _isTemplate = false;
 	private boolean _isPage = true;
 	private boolean _isDraft = false;
 	private boolean _isExtendingTemplate = false;
 	private String _templateId = null;
-	private Hashtable _styleDefinitions;
-	private Hashtable _metaTags;
+	private Map _styleDefinitions;
+	private Map _metaTags;
 	private QueueMap _styleSheets;
 	private QueueMap _javascripts;
 	private QueueMap _javascriptStringsBeforeJSUrls;
 	private QueueMap _javascriptStringsAfterJSUrls;
-	private Hashtable _HTTPEquivs;
+	private Map _HTTPEquivs;
 	protected Map _localizationMap;
-
 	private boolean addGlobalScript = true;
-	private static String META_KEYWORDS = "keywords";
-	private static String META_DESCRIPTION = "description";
-	private static String META_HTTP_EQUIV_EXPIRES = "Expires";
-
-	private static Page NULL_CLONE_PAGE = new Page();
-	private static boolean NULL_CLONE_PAGE_INITIALIZED = false;
-
 	private ICFile styleFile = null;
-	
 	private ICDynamicPageTrigger dynamicPageTrigger = null;
-
-
-	/**
-	 *  Description of the Field
-	 */
-	protected final static String ROWS_PROPERTY = "ROWS";
-
-	/**
-	 *  Description of the Field
-	 */
-	protected final static String IW_PAGE_KEY = "idegaweb_page";
-	/**
-	 *  Description of the Field
-	 */
-	public final static String IW_FRAME_STORAGE_PARMETER = "idegaweb_frame_page";
-	/**
-	 *  Description of the Field
-	 */
-	public final static String IW_FRAME_CLASS_PARAMETER = "idegaweb_frame_class";
-
-	public final static String IW_FRAMESET_PAGE_PARAMETER = "idegaweb_frameset_path";
-	public final static String IW_FRAME_NAME_PARAMETER = "idegaweb_frame_name";
-	public final static String PRM_IW_BROWSE_EVENT_SOURCE = "iw_b_e_s";
-
-	// private final static String START_TAG="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>";
-
-	/**
-	 *  By skipping the validation URL XML compliant browser still recognise
-	 *  attributes such as height / width *
-	 */
-	private final static String START_TAG = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n<html>";
-
-	public final static String MARKUP_LANGUAGE = "markup_language";
-	public final static String HTML = "HTML";
-	public final static String XHTML = "XHTML";
-	public final static String XHTML1_1 = "XHTML1.1";
-	
-	private final static String END_TAG = "</html>";
 	private boolean _isCategory = false;
 	private ICPage _windowToOpenOnLoad;
 	private int _windowWidth = 800;
 	private int _windowHeight = 600;
-	
 	private ICPage forwardPage;
 
 
@@ -383,9 +362,12 @@ public class Page extends PresentationObjectContainer {
 
 		if (_styleDefinitions != null) {
 			returnString.append("<style type=\"text/css\">\n<!--\n");
-			Enumeration e = _styleDefinitions.keys();
-			while (e.hasMoreElements()) {
-				styleName = (String) e.nextElement();
+			Iterator keyIter = _styleDefinitions.keySet().iterator();
+			//Enumeration e = _styleDefinitions.keys();
+			//while (e.hasMoreElements()) {
+			while(keyIter.hasNext()){
+				//styleName = (String) e.nextElement();
+				styleName = (String)keyIter.next();
 				returnString.append("\t");
 				returnString.append(styleName);
 				String styleAttribute = getStyleAttribute(styleName);
@@ -428,9 +410,12 @@ public class Page extends PresentationObjectContainer {
 		String tagName = "";
 
 		if (_metaTags != null) {
-			Enumeration e = _metaTags.keys();
-			while (e.hasMoreElements()) {
-				tagName = (String) e.nextElement();
+			//Enumeration e = _metaTags.keys();
+			//while (e.hasMoreElements()) {
+			Iterator keyIter = _metaTags.keySet().iterator();
+			while(keyIter.hasNext()){
+				//tagName = (String) e.nextElement();
+				tagName = (String) keyIter.next();
 				returnString.append("<meta name=\"");
 				returnString.append(tagName);
 				returnString.append("\" ");
@@ -446,9 +431,12 @@ public class Page extends PresentationObjectContainer {
 		}
 
 		if (this._HTTPEquivs != null) {
-			Enumeration e = _HTTPEquivs.keys();
-			while (e.hasMoreElements()) {
-				tagName = (String) e.nextElement();
+			//Enumeration e = _HTTPEquivs.keys();
+			//while (e.hasMoreElements()) {
+			Iterator keyIter = _HTTPEquivs.keySet().iterator();
+			while(keyIter.hasNext()){
+				//tagName = (String) e.nextElement();
+				tagName = (String)keyIter.next();
 				returnString.append("<meta http-equiv=\"");
 				returnString.append(tagName);
 				returnString.append("\" ");
@@ -673,7 +661,8 @@ public class Page extends PresentationObjectContainer {
 	 *@param  myScript  The new associatedScript value
 	 */
 	public void setAssociatedScript(Script myScript) {
-		_theAssociatedScript = myScript;
+		getFacets().put("page_associated_script",myScript);
+		//_theAssociatedScript = myScript;
 	}
 
 	/*
@@ -683,8 +672,10 @@ public class Page extends PresentationObjectContainer {
 	 *  Description of the Method
 	 */
 	private void initializeAssociatedScript() {
+		Script _theAssociatedScript = (Script) getFacets().get("page_associated_script");
 		if (_theAssociatedScript == null) {
 			_theAssociatedScript = new Script();
+			setAssociatedScript(_theAssociatedScript);
 		}
 	}
 
@@ -693,7 +684,8 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public Script getAssociatedScript() {
 		initializeAssociatedScript();
-		return _theAssociatedScript;
+		//return _theAssociatedScript;
+		return (Script) getFacets().get("page_associated_script");
 	}
 
 	/**
@@ -950,10 +942,10 @@ public class Page extends PresentationObjectContainer {
 		super.prepareClone(newObjToCreate);
 		Page newPage = (Page) newObjToCreate;
 		newPage._title = _title;
-		Script newScript = (Script) _theAssociatedScript;
-		if (newScript != null) {
-			newPage._theAssociatedScript = (Script) newScript.clone();
-		}
+		//Script newScript = (Script) _theAssociatedScript;
+		//if (newScript != null) {
+		//	newPage._theAssociatedScript = (Script) newScript.clone();
+		//}
 		newPage._zeroWait = _zeroWait;
 		newPage._redirectInfo = _redirectInfo;
 		newPage._doReload = _doReload;
@@ -1033,9 +1025,9 @@ public class Page extends PresentationObjectContainer {
 		Page obj = null;
 		try {
 			obj = (Page) super.clone(iwc, askForPermission);
-			if (_theAssociatedScript != null) {
-				obj._theAssociatedScript = (Script) _theAssociatedScript.clone();
-			}
+			//if (_theAssociatedScript != null) {
+			//	obj._theAssociatedScript = (Script) _theAssociatedScript.clone();
+			//}
 			obj._title = _title;
 			obj._zeroWait = _zeroWait;
 			obj._redirectInfo = _redirectInfo;
@@ -1304,6 +1296,38 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public void print(IWContext iwc) throws Exception {
 
+
+			this.printBegin(iwc);
+			//Catch all exceptions that are thrown in print functions of objects stored inside
+			try {
+				super.print(iwc);
+			}
+			catch (Exception ex) {
+				println("<h1>An Error Occurred!</h1>");
+				println("IW Error");
+				println("<pre>");
+				String message = ex.getMessage();
+				if(message!=null){
+					println(message);
+				}
+				ex.printStackTrace(System.err);
+				println("</pre>");
+			}
+			
+			this.printEnd(iwc);
+	}
+
+	
+	public void encodeBegin(FacesContext context) throws IOException{
+		this.printBegin(IWContext.getIWContext(context));
+	}
+	
+	/**
+	 * Bridging method for JSF:
+	 * @throws Exception
+	 */
+	public void printBegin(IWContext iwc) throws IOException{
+		this.initVariables(iwc);
 		boolean isInsideOtherPage = this.isChildOfOtherPage();
 
 		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
@@ -1338,7 +1362,9 @@ public class Page extends PresentationObjectContainer {
 
 				print(getHeadContents(markup,characterEncoding,iwc));
 				if (getAssociatedScript() != null) {
-					getAssociatedScript()._print(iwc);
+					//getAssociatedScript()._print(iwc);
+					UIComponent script = getAssociatedScript();
+					this.renderChild(iwc,script);
 				}
 
 				//Laddi: Made obsolete with default style sheet
@@ -1351,30 +1377,12 @@ public class Page extends PresentationObjectContainer {
 				if (_addBody) {
 					println("<body " + getMarkupAttributesString() + ">");
 					if (getAssociatedBodyScript() != null) {
-						getAssociatedBodyScript()._print(iwc);
+						//getAssociatedBodyScript()._print(iwc);
+						UIComponent script = getAssociatedBodyScript();
+						this.renderChild(iwc,script);
 					}
 				}
 				//added by Eiki for frameSet in a page support
-
-			}
-			//Catch all exceptions that are thrown in print functions of objects stored inside
-			try {
-				super.print(iwc);
-			}
-			catch (Exception ex) {
-				println("<h1>An Error Occurred!</h1>");
-				println("IW Error");
-				println("<pre>");
-				println(ex.getMessage());
-				ex.printStackTrace(System.err);
-				println("</pre>");
-			}
-
-			if (!isInsideOtherPage) {
-				if (_addBody) {
-					println("\n\n</body>");
-				}
-				println(getEndTag());
 			}
 		}
 		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
@@ -1396,40 +1404,50 @@ public class Page extends PresentationObjectContainer {
 			}else{
 				println(" id=\"card1\">");
 			}
-			
-			
-
-			//Catch all exceptions that are thrown in print functions of objects stored inside
-			try {
-				super.print(iwc);
-			}
-			catch (Exception ex) {
-				println("<p>Villa var&eth;!</p>");
-				println("<p>IWError</p>");
-				println("<p>");
-				println(ex.getMessage());
-				ex.printStackTrace(System.err);
-				println("</p>");
-			}
-
-			println("</card>");
-			println("</wml>");
 		}
 		else if(getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML)){
 			println("<?xml version=\"1.0\" encoding=\"iso-8859-1\" ?>");
 			//println("<!DOCTYPE ITEXT SYSTEM \"http://www.lowagie.com/iText/itext.dtd\">");
 			println("<itext producer=\"Idega Software, http://www.idega.com\">");
-			try {
-				super.print(iwc);
+		}
+	}
+	
+	public void encodeChildren(FacesContext context)throws IOException{
+		for (Iterator iter = getChildren().iterator(); iter.hasNext();) {
+			UIComponent child = (UIComponent) iter.next();
+			this.renderChild(context,child);
+		}
+	}
+	
+	public void encodeEnd(FacesContext context)throws IOException{
+		this.printEnd(IWContext.getIWContext(context));
+	}
+	/**
+	 * Bridging method for JSF:
+	 */
+	public void printEnd(IWContext iwc)throws IOException{
+		
+
+		boolean isInsideOtherPage = this.isChildOfOtherPage();
+
+		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {		
+			if (!isInsideOtherPage) {
+				if (_addBody) {
+					println("\n\n</body>");
+				}
+				println(getEndTag());
 			}
-			catch (Exception ex) {
-				println("<paragraph leading=\"18.0\" font=\"unknown\" align=\"Default\">An error occurred</paragraph>");
-			}
+		}
+		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
+			println("</card>");
+			println("</wml>");
+		}
+		else if(getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_PDF_XML)){
 			println("</itext>");
 
 		}
 	}
-
+	
 	/**
 	 *@param  key     The new property value
 	 *@param  values  The new property value
@@ -1871,8 +1889,10 @@ public class Page extends PresentationObjectContainer {
 	 * @return Script
 	 */
 	public Script getAssociatedBodyScript() {
+		Script associatedBodyScript = (Script)getFacets().get("page_associated_body_script");
 		if (associatedBodyScript == null) {
-			setAssociatedBodyScript(new Script());
+			associatedBodyScript = new Script();
+			setAssociatedBodyScript(associatedBodyScript);
 		}
 		return associatedBodyScript;
 	}
@@ -1882,7 +1902,113 @@ public class Page extends PresentationObjectContainer {
 	 * @param associatedScript The associatedScript to set
 	 */
 	public void setAssociatedBodyScript(Script script) {
-		this.associatedBodyScript = script;
+		//this.associatedBodyScript = script;
+		getFacets().put("page_associated_body_script",script);
 	}
+	
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
+	 */
+	public void restoreState(FacesContext context, Object state) {
+		Object values[] = (Object[])state;
+		super.restoreState(context, values[0]);
+		this._ibPageID = ((Integer) values[1]).intValue();
+		this._title = (String) values[2];
+		this._zeroWait=((Boolean)values[3]).booleanValue();
+		this._redirectSecondInterval=((Integer)values[4]).intValue();
+		this._redirectURL=(String)values[5];
+		this._redirectInfo=(String)values[6];
+		this._redirectURL=(String)values[7];
+		this._doReload=((Boolean)values[8]).booleanValue();
+		this._linkColor=(String)values[9];
+		this._visitedColor=(String)values[10];
+		this._hoverColor=(String)values[11];
+		this._textDecoration=(String)values[12];
+		this._hoverDecoration=(String)values[13];
+		this._pageStyleFont=(String)values[14];
+		this._pageStyleFontSize=(String)values[15];
+		this._pageStyleFontStyle=(String)values[16];
+		this._shortCutIconURL=(String)values[17];
+		this._shortCutIconID=((Integer)values[18]).intValue();
+		this._addStyleSheet=((Boolean)values[19]).booleanValue();
+		this._addBody=((Boolean)values[20]).booleanValue();
+		this._frameProperties=(Map)values[21];
+		this._isTemplate=((Boolean)values[22]).booleanValue();
+		this._isPage=((Boolean)values[23]).booleanValue();
+		this._isDraft=((Boolean)values[24]).booleanValue();
+		this._isExtendingTemplate=((Boolean)values[25]).booleanValue();
+		this._templateId=(String)values[26];
+		this._styleDefinitions=(Map)values[27];
+		this._metaTags=(Map)values[28];
+		this._styleSheets=(QueueMap)values[29];
+		this._javascripts=(QueueMap)values[30];
+		this._javascriptStringsBeforeJSUrls=(QueueMap)values[31];
+		this._javascriptStringsAfterJSUrls=(QueueMap)values[32];
+		this._HTTPEquivs=(Map)values[33];
+		this._localizationMap=(Map)values[34];
+		this.addGlobalScript=((Boolean)values[35]).booleanValue();
+		this.styleFile=(ICFile)values[36];
+		this.dynamicPageTrigger=(ICDynamicPageTrigger)values[37];
+		this._isCategory=((Boolean)values[38]).booleanValue();
+		this._windowToOpenOnLoad=(ICPage)values[39];
+		this._windowWidth=((Integer)values[40]).intValue();
+		this._windowHeight=((Integer)values[41]).intValue();
+		this.forwardPage=(ICPage)values[42];
+	
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
+	 */
+	public Object saveState(FacesContext context) {
+		Object values[] = new Object[43];
+		values[0] = super.saveState(context);
+		values[1]=new Integer(this._ibPageID);
+		values[2]=this._title;
+		values[3]=Boolean.valueOf(this._zeroWait);
+		values[4]=new Integer(this._redirectSecondInterval);
+		values[5]=this._redirectURL;
+		values[6]=this._redirectInfo;
+		values[7]=this._redirectURL;
+		values[8]=Boolean.valueOf(this._doReload);
+		values[9]=this._linkColor;
+		values[10]=this._visitedColor;
+		values[11]=this._hoverColor;
+		values[12]=this._textDecoration;
+		values[13]=this._hoverDecoration;
+		values[14]=this._pageStyleFont;
+		values[15]=this._pageStyleFontSize;
+		values[16]=this._pageStyleFontStyle;
+		values[17]=this._shortCutIconURL;
+		values[18]=new Integer(this._shortCutIconID);
+		values[19]=Boolean.valueOf(this._addStyleSheet);
+		values[20]=Boolean.valueOf(this._addBody);
+		values[21]=this._frameProperties;
+		values[22]=Boolean.valueOf(this._isTemplate);
+		values[23]=Boolean.valueOf(this._isPage);
+		values[24]=Boolean.valueOf(this._isDraft);
+		values[25]=Boolean.valueOf(this._isExtendingTemplate);
+		values[26]=this._templateId;
+		values[27]=this._styleDefinitions;
+		values[28]=this._metaTags;
+		values[29]=this._styleSheets;
+		values[30]=this._javascripts;
+		values[31]=this._javascriptStringsBeforeJSUrls;
+		values[32]=this._javascriptStringsAfterJSUrls;
+		values[33]=this._HTTPEquivs;
+		values[34]=this._localizationMap;
+		values[35]=Boolean.valueOf(this.addGlobalScript);
+		values[36]=this.styleFile;
+		values[37]=this.dynamicPageTrigger;
+		values[38]=Boolean.valueOf(this._isCategory);
+		values[39]=this._windowToOpenOnLoad;
+		values[40]=new Integer(this._windowWidth);
+		values[41]=new Integer(this._windowHeight);
+		values[42]=this.forwardPage;
+		return values;
+	}	
+	
+	
 	
 }
