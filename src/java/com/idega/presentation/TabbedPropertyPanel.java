@@ -12,16 +12,12 @@ import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.user.app.UserApplication;
 import com.idega.user.event.CreateGroupEvent;
 import com.idega.util.GenericFormCollector;
 import com.idega.util.datastructures.Collectable;
-//import com.idega.presentation.ui.ResetButton;
-import com.idega.user.presentation.StyledIWAdminWindow;
 
 /**
  * Title:        UserModule
