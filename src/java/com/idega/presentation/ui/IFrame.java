@@ -5,6 +5,7 @@
 
 package com.idega.presentation.ui;
 
+import com.idega.core.localisation.business.LocaleSwitcher;
 import java.io.*;
 import java.util.*;
 import com.idega.presentation.*;
@@ -30,6 +31,7 @@ public static final int FRAMEBORDER_ON = 1;
 public static final int FRAMEBORDER_OFF = 0;
 private boolean transparent = false;
 private int ibPageId = 0;
+private boolean addLocaleID = false;
 
 public IFrame(){
 	this("untitled");
@@ -75,6 +77,10 @@ public IFrame(String name,String URL,int width,int height){
 
   public void setTitle(String title){
     setAttribute("title",title);
+  }
+
+  public void setToAddLocaleID(boolean addLocaleID){
+    this.addLocaleID = addLocaleID;
   }
 
   public void setSrc(String source){
@@ -156,6 +162,16 @@ public IFrame(String name,String URL,int width,int height){
   }
 
   public void print(IWContext iwc)throws IOException{
+    String src = getAttribute("src");
+    if ( src != null ) {
+      if ( src.indexOf("?") != -1 ) {
+	setAttribute("src",src+"&"+LocaleSwitcher.languageParameterString+"="+iwc.getCurrentLocale().toString());
+      }
+      else {
+	setAttribute("src",src+"?"+LocaleSwitcher.languageParameterString+"="+iwc.getCurrentLocale().toString());
+      }
+    }
+
     if(transparent) setAttribute("ALLOWTRANSPARENCY","true");
     if(ibPageId > 0){
       setAttribute("src",iwc.getRequestURI()+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageId+"");
@@ -165,7 +181,7 @@ public IFrame(String name,String URL,int width,int height){
       print("<iframe name=\""+getName()+"\""+getAttributeString()+" >");
       String content = super.getContent();
       if(content!=null){
-        print(content);
+	print(content);
       }
       println("</iframe>\n");
     }
