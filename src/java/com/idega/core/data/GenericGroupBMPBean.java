@@ -100,31 +100,32 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	}
 	//??
 	public GenericGroup[] getAllGroupsContainingThis() throws SQLException {
-		List vector = this.getListOfAllGroupsContainingThis();
+		List vector = this.getParentGroups();
 		if (vector != null) {
 			return (GenericGroup[]) vector.toArray((Object[]) java.lang.reflect.Array.newInstance(this.getClass(), 0));
 		} else {
 			return new GenericGroup[0];
 		}
 	}
-	/**
-	 * Gets the groups that are direct parents of this group.
-	 * @deprecated Replaced with getParentGroups
-	 */
-	public List getListOfAllGroupsContainingThis() throws SQLException{
-		try{
-			return ListUtil.convertCollectionToList(getParentGroups());	
-		}
-		catch(Exception e){
-			throw new SQLException(e.getMessage());	
-		}
-	}
+	///**
+	// * Gets the groups that are direct parents of this group.
+	// * @deprecated Replaced with getParentGroups
+	// */
+	//public List getListOfAllGroupsContainingThis() throws SQLException{
+	//	try{
+	//		return ListUtil.convertCollectionToList(getParentGroups());	
+	//	}
+	//	catch(Exception e){
+	//		throw new SQLException(e.getMessage());	
+	//	}
+	//}
 	
 	/**
 	 * Gets the groups that are direct parents of this group
 	 **/
-	public Collection getParentGroups(){
-		return getParentGroupsLegacy();
+	public List getParentGroups(){
+		//return getParentGroupsLegacy();
+		return ListUtil.convertCollectionToList(getParentGroupsLegacy());	
 	}
 	
 	/**
@@ -143,7 +144,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	/**
 	 * @deprecated Old implementation. Uses IC_GROUP_TREE to find parent groups.
 	 **/
-	public List getListOfAllGroupsContaining(int group_id) throws SQLException {
+	protected List getListOfAllGroupsContaining(int group_id) throws SQLException {
 		String tableToSelectFrom = "IC_GROUP_TREE";
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("select * from ");
@@ -193,7 +194,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	}
 	//??
 	public GenericGroup[] getAllGroupsContained() throws SQLException {
-		List vector = this.getListOfAllGroupsContained();
+		List vector = this.getChildGroups();
 		if (vector != null) {
 			return (GenericGroup[]) vector.toArray((Object[]) java.lang.reflect.Array.newInstance(this.getClass(), 0));
 		} else {
@@ -215,9 +216,10 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	/**
 	 * Gets the groups that are direct children of this group
 	 **/
-	public Collection getChildGroups(){
+	public List getChildGroups(){
 		try{
-		return getChildGroupsLegacy();
+			//return getChildGroupsLegacy();
+			return ListUtil.convertCollectionToList(getChildGroupsLegacy());	
 		}
 		catch(SQLException e){
 			throw new IDORuntimeException(e,this);	
@@ -282,8 +284,8 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	 * @todo change implementation: let the database handle the filtering
 	
 	 */
-	public List getGroupsContained(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws SQLException {
-		List list = this.getListOfAllGroupsContained();
+	public List getChildGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws SQLException {
+		List list = this.getChildGroups();
 		List specifiedGroups = new Vector();
 		List notSpecifiedGroups = new Vector();
 		int j = 0;

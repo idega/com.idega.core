@@ -20,9 +20,9 @@ public interface GenericGroup extends com.idega.data.IDOLegacyEntity
  public java.lang.String getExtraInfo();
  public java.lang.String getGroupType();
  public java.lang.String getGroupTypeValue();
- public java.util.List getGroupsContained(java.lang.String[] p0,boolean p1)throws java.sql.SQLException;
- public java.util.List getListOfAllGroupsContained()throws java.sql.SQLException;
- public java.util.List getListOfAllGroupsContainingThis()throws java.sql.SQLException;
+ public java.util.List getChildGroups(java.lang.String[] p0,boolean p1)throws java.sql.SQLException;
+ public java.util.List getChildGroups()throws java.sql.SQLException;
+ public java.util.List getParentGroups()throws java.sql.SQLException;
  public java.lang.String getName();
  public void removeGroup(com.idega.core.data.GenericGroup p0)throws java.sql.SQLException;
  public void removeGroup()throws java.sql.SQLException;

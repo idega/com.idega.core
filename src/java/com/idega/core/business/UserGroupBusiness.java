@@ -106,7 +106,7 @@ public class UserGroupBusiness {
 
   public static List getGroupsContainingDirectlyRelated(GenericGroup group){
     try {
-      return group.getListOfAllGroupsContainingThis();
+      return group.getParentGroups();
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -209,7 +209,7 @@ public class UserGroupBusiness {
    * @todo change implementation: create method getGroupsContaining(List groupContained, String[] groupTypes, boolean returnSepcifiedGroupTypes) and use in this method
    */
   public static List getGroupsContaining(GenericGroup groupContained, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws SQLException{
-    List groups = groupContained.getListOfAllGroupsContainingThis();
+    List groups = groupContained.getParentGroups();
 
     if (groups != null && groups.size() > 0){
       Hashtable GroupsContained = new Hashtable();
@@ -264,7 +264,7 @@ public class UserGroupBusiness {
   }
 
   private static void putGroupsContaining(GenericGroup group, Hashtable GroupsContained ) throws SQLException{
-    List pGroups = group.getListOfAllGroupsContainingThis();
+    List pGroups = group.getParentGroups();
     if (pGroups != null){
       String key = "";
       Iterator iter = pGroups.iterator();
@@ -329,7 +329,7 @@ public class UserGroupBusiness {
    * @todo change implementation: create method getGroupsContained(List groupContaining, String[] groupTypes, boolean returnSepcifiedGroupTypes) and use in this method
    */
   public static List getGroupsContained(GenericGroup groupContaining, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws SQLException{
-    List groups = groupContaining.getListOfAllGroupsContained();
+    List groups = groupContaining.getChildGroups();
 
     if (groups != null && groups.size() > 0){
       Hashtable GroupsContained = new Hashtable();
@@ -405,7 +405,7 @@ public class UserGroupBusiness {
       groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
       //filter end
 
-      List list = group.getGroupsContained(groupsNotToReturn,false);
+      List list = group.getChildGroups(groupsNotToReturn,false);
       if(list != null){
         list.remove(group);
       }
@@ -421,7 +421,7 @@ public class UserGroupBusiness {
    * @todo filter out UserGroupRepresentative groups ? time
    */
   public static List getUsersContainedDirectlyRelated(GenericGroup group) throws SQLException{
-    List result = group.getListOfAllGroupsContained();
+    List result = group.getChildGroups();
     return UserGroupBusiness.getUsersForUserRepresentativeGroups(result);
   }
 
@@ -486,7 +486,7 @@ public class UserGroupBusiness {
 
 
   private static void putGroupsContained(GenericGroup group, Hashtable GroupsContained ) throws SQLException{
-    List pGroups = group.getListOfAllGroupsContained();
+    List pGroups = group.getChildGroups();
     if (pGroups != null){
       String key = "";
       Iterator iter = pGroups.iterator();

@@ -506,7 +506,8 @@ public class IDOQuery {
   }
 
 	/**
-	 * Appends a where (where columnName=columnValue) without quotemarks	 * @param columnName	 * @param columnValue	 * @return IDOQuery this Object	 */
+	 * Appends a where (where columnName=columnValue) without quotemarks	 * @param columnName the name of the field
+	 * @param columnValue the value	 * @return IDOQuery this Object	 */
   public IDOQuery appendWhereEquals(String columnName,String columnValue){
   	appendWhere(columnName);
   	this.appendEqualSign();
@@ -514,6 +515,16 @@ public class IDOQuery {
   	return this;
   }
   
+	/**
+	 * Appends a where (where columnName=columnValue) without quotemarks
+	 * @param columnName the name of the field
+	 * @param columnValue the value
+	 * @return IDOQuery this Object
+	 */
+   public IDOQuery appendWhereEquals(String columnName,int columnValue){
+		return appendWhereEquals(columnName,Integer.toString(columnValue));
+  }
+
   
   public IDOQuery appendWhereEqualsQuoted(String columnName,String columnValue){
   	appendWhere(columnName);
@@ -529,6 +540,8 @@ public class IDOQuery {
   	this.appendWithinSingleQuotes(columnValue);
   	return this;
   }
+
+
 
   public IDOQuery appendAndEqualsQuoted(String columnName,String columnValue){
   	appendAnd();
