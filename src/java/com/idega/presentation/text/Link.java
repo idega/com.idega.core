@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.94 2003/09/09 12:20:19 laddi Exp $
+ * $Id: Link.java,v 1.95 2003/09/18 12:30:22 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation.text;
 
+import com.idega.block.media.business.MediaBusiness;
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBPage;
 import com.idega.core.builder.business.BuilderConstants;
@@ -29,6 +30,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.Window;
+import com.idega.util.caching.Cache;
 import com.idega.util.text.TextSoap;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -202,48 +204,34 @@ public class Link extends Text {
 	}
 
 	/**
-	 * For files
-	 * @deprecated replaced with com.idega.presentation.ui.FilePresentation
+	 * Construct a link to a file
 	 */
-	public Link(int file_id) {
-		/**
-		 * @todo: Temporary workaround before this constructor is removed
-		 */
-		this(new Text("File"), IWContext.getInstance().getApplication().getMediaServletURI() + "?file_id=" + file_id);
+	public Link(int icFileId) {
+	
+		this("File");
+		Cache cache = MediaBusiness.getCachedFileInfo(icFileId, IWContext.getInstance().getApplication());
+		setURL(cache.getVirtualPathToFile());
 		//this(new Text("File"),com.idega.idegaweb.IWMainApplication.MEDIA_SERVLET_URL+"?file_id="+file_id);
 	}
-
 	/**
-	 * @deprecated replaced with com.idega.presentation.ui.FilePresentation
+	 * Construct a link to a file with text
 	 */
-	public Link(int file_id, String file_name) {
-		/**
-		 * @todo: Temporary workaround before this constructor is removed
-		 */
-		this(new Text(file_name), IWContext.getInstance().getApplication().getMediaServletURI() + "?file_id=" + file_id);
-		//this(new Text(file_name),com.idega.idegaweb.IWMainApplication.MEDIA_SERVLET_URL+"?file_id="+file_id);
+	public Link(int icFileId, String textOnLink) {
+		this(icFileId);
+		setText(textOnLink);
 	}
-
-	/**
-	 * @deprecated replaced with com.idega.presentation.ui.FilePresentation
-	 */
-	public Link(PresentationObject mo, int file_id) {
-		super();
-		_obj = mo;
+	
 		/**
-		 * @todo: Temporary workaround before this constructor is removed
+		 * Construct a link to a file on a presentation object
 		 */
-		setURL(IWContext.getInstance().getApplication().getMediaServletURI() + "?file_id=" + file_id);
+	public Link(PresentationObject mo, int icFileId) {
+		this(icFileId);
+		_obj = mo;
 		_obj.setParentObject(this);
 		_objectType = OBJECT_TYPE_MODULEOBJECT;
 	}
 
-	/**
-	 * @deprecated replaced with com.idega.presentation.ui.FilePresentation
-	 */
-	public Link(int file_id, Window myWindow) {
-		setWindow(myWindow);
-	}
+
 
 	/**
 	 *
