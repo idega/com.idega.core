@@ -68,7 +68,10 @@ public class IDOContainer {
 
   protected IDOEntity getFreeBeanInstance(Class entityInterfaceClass)throws Exception{
     List l = getFreeBeansList(entityInterfaceClass);
-    IDOEntity entity = (IDOEntity)l.get(0);
+    IDOEntity entity = null;
+    if(!l.isEmpty()){
+      entity= (IDOEntity)l.get(0);
+    }
     if(entity==null){
       entity = this.instanciateBean(entityInterfaceClass);
     }
@@ -82,6 +85,7 @@ public class IDOContainer {
       return entity;
     }
     catch(Exception e){
+      e.printStackTrace();
       throw new CreateException(e.getMessage());
     }
   }

@@ -2331,7 +2331,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 	public static GenericEntity getStaticInstance(String entityClassName){
-	    if (_allStaticClasses==null){
+	    try{
+          return getStaticInstance(Class.forName(entityClassName));
+        }
+        catch(Exception e){
+          throw new RuntimeException(e.getClass().getName()+": "+e.getMessage());
+        }
+        /*if (_allStaticClasses==null){
 	      _allStaticClasses=new Hashtable();
 	    }
 	    GenericEntity theReturn = (GenericEntity)_allStaticClasses.get(entityClassName);
@@ -2344,12 +2350,30 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		ex.printStackTrace();
 	      }
 	    }
-	    return theReturn;
+	    return theReturn;*/
 	}
 
 	public static GenericEntity getStaticInstance(Class entityClass){
-	    return getStaticInstance(entityClass.getName());
-	}
+	    //return getStaticInstance(entityClass.getName());
+        if(entityClass.isInterface()){
+          return getStaticInstance(IDOLookup.getBeanClassFor(entityClass));
+        }
+        if (_allStaticClasses==null){
+	      _allStaticClasses=new Hashtable();
+	    }
+	    GenericEntity theReturn = (GenericEntity)_allStaticClasses.get(entityClass);
+	    if(theReturn==null){
+	      try{
+            //theReturn = (GenericEntity)entityClass.newInstance();
+            theReturn = instanciateEntity(entityClass);
+            _allStaticClasses.put(entityClass,theReturn);
+	      }
+	      catch(Exception ex){
+		    ex.printStackTrace();
+	      }
+	    }
+	    return theReturn;
+    }
 
       public void addManyToManyRelationShip(GenericEntity relatingEntity,String relationShipTableName){
 	    addManyToManyRelationShip(relatingEntity.getClass().getName(),relationShipTableName);
@@ -2378,7 +2402,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 
 	      String tableName1 = this.getEntityName();
-	      String tableName2 = ((GenericEntity)Class.forName(relatingEntityClassName).newInstance()).getEntityName();
+	      String tableName2 = this.instanciateEntity(relatingEntityClassName).getEntityName();
 
 	      relationShipTableName = StringHandler.concatAlphabetically(tableName1,tableName2,"_");
 	      addManyToManyRelationShip(relatingEntityClassName,relationShipTableName);
@@ -2784,6 +2808,31 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
    public String getCachedColumnNamesList(){
     return ((GenericEntity)getIDOEntityStaticInstance())._cachedColumnNameList;
+   }
+
+   private static GenericEntity instanciateEntity(String entityClassName){
+    try{
+      return instanciateEntity(Class.forName(entityClassName));
+    }
+    catch(Exception e){
+      e.printStackTrace();
+      throw new RuntimeException(e.getClass().getName()+": "+e.getMessage());
+    }
+   }
+
+   private static GenericEntity instanciateEntity(Class entityClass){
+      if(entityClass.isInterface()){
+        return instanciateEntity(IDOLookup.getBeanClassFor(entityClass));
+      }
+      else{
+        try{
+          return (GenericEntity)entityClass.newInstance();
+        }
+        catch(Exception e){
+          //e.printStackTrace();
+          throw new RuntimeException(e.getMessage());
+        }
+      }
    }
 
 }

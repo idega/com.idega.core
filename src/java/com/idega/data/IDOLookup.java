@@ -17,7 +17,7 @@ import java.rmi.RemoteException;
 public class IDOLookup{
 
   private static final String FACTORY_SUFFIX = "Factory";
-  private static final String BEAN_SUFFIX = "Bean";
+  private static final String BEAN_SUFFIX = "BMPBean";
 
   private static Map homes = new Hashtable();
 
@@ -25,8 +25,24 @@ public class IDOLookup{
   private IDOLookup() {
   }
 
+  private static Class getInterfaceClass(Class entityBeanOrInterfaceClass){
+    if(entityBeanOrInterfaceClass.isInterface()){
+      return entityBeanOrInterfaceClass;
+    }
+    else{
+      String className = entityBeanOrInterfaceClass.getName();
+      String interfaceClassName = className.substring(0,className.indexOf(BEAN_SUFFIX));
+      try{
+        return Class.forName(interfaceClassName);
+      }
+      catch(ClassNotFoundException e){
+        throw new RuntimeException(e.getClass()+": "+e.getMessage());
+      }
+    }
+  }
+
   private static Class getFactoryClassFor(Class entityInterfaceClass)throws Exception{
-    String className = entityInterfaceClass.getName();
+    String className = getInterfaceClass(entityInterfaceClass).getName();
     String homeClassName = className + FACTORY_SUFFIX;
     return Class.forName(homeClassName);
   }
@@ -39,8 +55,9 @@ public class IDOLookup{
     }
     catch(Exception e){
       e.printStackTrace();
+      throw new RuntimeException(e.getClass().getName()+": "+e.getMessage());
     }
-    return null;
+    //return null;
   }
 
   public static IDOHome getHome(Class entityInterfaceClass)throws RemoteException{

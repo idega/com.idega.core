@@ -25,6 +25,7 @@ public abstract class IDOFactory implements IDOHome{
       //return (IDOEntity)beanClass.newInstance();
     }
     catch(Exception e){
+      e.printStackTrace();
       throw new javax.ejb.CreateException(e.getMessage());
     }
   }
