@@ -9,6 +9,10 @@ import javax.ejb.FinderException;
 
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.file.data.ICFile;
+import com.idega.core.location.data.Address;
+import com.idega.data.IDOCompositePrimaryKeyException;
+import com.idega.data.IDOLookupException;
+import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupRelationHome;
@@ -286,9 +290,6 @@ public interface GroupBusiness extends com.idega.business.IBOService {
             String countryName, String city, String province, String poBox)
             throws javax.ejb.CreateException, java.rmi.RemoteException;
 
-    public com.idega.core.location.data.Address getGroupMainAddress(Group group)
-            throws RemoteException;
-
     public com.idega.core.contact.data.Phone[] getGroupPhones(Group group)
             throws RemoteException;
 
@@ -459,5 +460,6 @@ public interface GroupBusiness extends com.idega.business.IBOService {
   
   public Collection getOwnerUsersForGroup(Group group) throws RemoteException;
 	public ICFile createGroupHomeFolder(Group group) throws CreateException;
+  public Address getGroupMainAddress(Group group) throws RemoteException, IDOLookupException, IDOCompositePrimaryKeyException,  IDORelationshipException;
 
 }

@@ -37,7 +37,11 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
+import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
+import com.idega.data.IDOQuery;
+import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
@@ -1353,23 +1357,16 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
    * Gets the users main address and returns it.
    * @returns the address if found or null if not.
    */
-  public Address getGroupMainAddress(Group group) throws RemoteException{
-    return getGroupMainAddress(((Integer)group.getPrimaryKey()).intValue());
+  public Address getGroupMainAddress(Group group) throws RemoteException, IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException{
+ 		AddressType type = getAddressHome().getAddressType1();
+  	Collection coll = group.getAddresses(type);
+  	if (coll == null || coll.isEmpty()) {
+  	  	return null;
+  	}
+  	// return the first element (there is only on element)
+  	return (Address) coll.iterator().next();
   }  
 
-  /**
-  * Gets the user's main address and returns it.
-  * @returns the address if found or null if not.
-  */
-  public Address getGroupMainAddress(int userID) throws EJBException,RemoteException{
-    try {
-      return getAddressHome().findPrimaryUserAddress(userID);
-    }
-    catch (FinderException fe) {
-      return null;
-    }
-  }
-  
   public AddressHome getAddressHome(){
     if(addressHome==null){
       try{
