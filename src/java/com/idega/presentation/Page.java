@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.116 2004/07/07 23:14:43 gummi Exp $
+ *  $Id: Page.java,v 1.117 2004/07/11 15:16:21 gummi Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1266,6 +1266,9 @@ public class Page extends PresentationObjectContainer {
 			println("<?xml version=\"1.0\"?>");
 			println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">");
 			println("<wml>");
+			println("<head>");
+			println("<meta http-equiv=\"cache-control\" content=\"no-cache\"/>");
+			println("</head>");
 			print("<card title=\"" + getLocalizedTitle(iwc) + "\"");
 			if(_redirectSecondInterval>-1){
 				print(" ontimer=\""+_redirectURL+"\"");
