@@ -5,21 +5,32 @@
 
 package com.idega.idegaweb;
 
-import java.io.*;
-import java.util.*;
-import javax.servlet.*;
-import java.net.*;
-import com.idega.util.*;
-import com.idega.util.FileUtil;
-import com.idega.util.text.TextSoap;
-import com.idega.util.Executer;
-import com.idega.presentation.Page;
-import com.idega.util.caching.BlobCacher;
-import com.idega.exception.IWBundleDoesNotExist;
-import com.idega.core.accesscontrol.business.AccessController;
-import com.idega.graphics.generator.ImageFactory;
-import com.idega.presentation.PresentationObject;
 import com.idega.block.media.business.MediaBundleStarter;
+import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.exception.IWBundleDoesNotExist;
+import com.idega.graphics.generator.ImageFactory;
+import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
+import com.idega.util.Executer;
+import com.idega.util.FileUtil;
+import com.idega.util.LocaleUtil;
+import com.idega.util.LogWriter;
+import com.idega.util.text.TextSoap;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Vector;
+import javax.servlet.ServletContext;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -342,7 +353,7 @@ public class IWMainApplication{//implements ServletContext{
       System.out.println("[idegaWeb] : shutdown : Storing application state and deleting cached/generated content");
       storeStatus();
       storeCryptoProperties();
-      IWCacheManager.deleteCachedBlobs(this);
+      //IWCacheManager.deleteCachedBlobs(this);
       getImageFactory().deleteGeneratedImages(this);
       alreadyUnLoaded = true;
     }
