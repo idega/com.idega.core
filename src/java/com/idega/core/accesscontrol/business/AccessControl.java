@@ -360,7 +360,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
           //instance
 
           // Global - (object)
-          if(!permissionType.equals(_PERMISSIONKEY_VIEW) || (!PermissionCacher.anyInstancePerissionsDefined(obj,iwc,permissionType) && permissionType.equals(_PERMISSIONKEY_VIEW)) ){
+          //if(!permissionType.equals(_PERMISSIONKEY_VIEW) || (!PermissionCacher.anyInstancePerissionsDefined(obj,iwc,permissionType) && permissionType.equals(_PERMISSIONKEY_VIEW)) ){
+          if(!PermissionCacher.anyInstancePerissionsDefined(obj,iwc,permissionType)){
             for (int i = 0; i < arrayLength; i++) {
               myPermission = PermissionCacher.hasPermissionForObject(obj,iwc,permissionType,permissionGroupLists[i]);
               if(myPermission != null){
