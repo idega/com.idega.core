@@ -496,6 +496,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public Collection ejbFindGroupsByName(String name) throws FinderException {
 		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "'");
 	}
+	
+	public Collection ejbFindGroupsByGroupTypeAndLikeName(String groupType, String partOfGroupName) throws FinderException {
+		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + this.getGroupTypeColumnName() + " = '" + groupType + "' and "+ this.getNameColumnName() + " like '" + partOfGroupName + "'");
+	}
+	
 	public Collection ejbFindGroupsByAbbreviation(String abbreviation) throws FinderException {
 		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + COLUMN_ABBREVATION + " = '" + abbreviation + "'");
 	}

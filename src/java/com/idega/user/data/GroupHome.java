@@ -1,6 +1,6 @@
 /*
- * $Id: GroupHome.java,v 1.25 2004/10/18 17:22:46 eiki Exp $
- * Created on Oct 18, 2004
+ * $Id: GroupHome.java,v 1.26 2004/11/16 14:52:42 eiki Exp $
+ * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.data.IDOHome;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/18 17:22:46 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/11/16 14:52:42 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public interface GroupHome extends IDOHome {
 
@@ -41,6 +41,11 @@ public interface GroupHome extends IDOHome {
 	public Collection findGroupsByName(String name) throws FinderException;
 
 	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByGroupTypeAndLikeName
+	 */
+	public Collection findGroupsByGroupTypeAndLikeName(String groupType, String partOfGroupName) throws FinderException;
+
+	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByAbbreviation
 	 */
 	public Collection findGroupsByAbbreviation(String abbreviation) throws FinderException;
@@ -54,6 +59,12 @@ public interface GroupHome extends IDOHome {
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupByPrimaryKey
 	 */
 	public Group findGroupByPrimaryKey(Object primaryKey) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContainedTemp
+	 */
+	public Collection findGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes)
+			throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContained

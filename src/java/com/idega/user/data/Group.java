@@ -1,6 +1,6 @@
 /*
- * $Id: Group.java,v 1.46 2004/10/18 17:22:46 eiki Exp $
- * Created on Oct 18, 2004
+ * $Id: Group.java,v 1.47 2004/11/16 14:52:42 eiki Exp $
+ * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -39,10 +39,10 @@ import com.idega.idegaweb.IWApplicationContext;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/18 17:22:46 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/11/16 14:52:42 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.46 $
+ * @version $Revision: 1.47 $
  */
 public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDCapable {
 

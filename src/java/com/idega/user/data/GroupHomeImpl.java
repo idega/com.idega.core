@@ -1,6 +1,6 @@
 /*
- * $Id: GroupHomeImpl.java,v 1.25 2004/10/18 17:22:46 eiki Exp $
- * Created on Oct 18, 2004
+ * $Id: GroupHomeImpl.java,v 1.26 2004/11/16 14:52:42 eiki Exp $
+ * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.data.IDOFactory;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/18 17:22:46 $ by $Author: eiki $
+ *  Last modified: $Date: 2004/11/16 14:52:42 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public class GroupHomeImpl extends IDOFactory implements GroupHome {
 
@@ -61,6 +61,14 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	public Collection findGroupsByGroupTypeAndLikeName(String groupType, String partOfGroupName) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsByGroupTypeAndLikeName(groupType,
+				partOfGroupName);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
 	public Collection findGroupsByAbbreviation(String abbreviation) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsByAbbreviation(abbreviation);
@@ -80,6 +88,15 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		Object pk = ((GroupBMPBean) entity).ejbFindGroupByPrimaryKey(primaryKey);
 		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
+	}
+
+	public Collection findGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes)
+			throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsContainedTemp(containingGroup, groupTypes,
+				returnTypes);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
 	public Collection findGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
