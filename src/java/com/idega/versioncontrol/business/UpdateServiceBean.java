@@ -55,6 +55,7 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 	}
 	
 	private int executeCVSCommand(String command,String directory) throws IOException{
+		int returnValue=-1;
 		String cmd = "cvs "+command+" "+directory;
 		System.out.println("Executing command:"+cmd);
 		Runtime runtime = Runtime.getRuntime();
@@ -63,7 +64,24 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 		InputStream err = process.getErrorStream();
 		try
 		{
+			returnValue = process.waitFor();
+		}
+		catch (InterruptedException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try
+		{
 			writeInputStreamToPrintStream(input,System.out);
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try
+		{
 			writeInputStreamToPrintStream(err,System.err);
 		}
 		catch (IOException e)
@@ -71,7 +89,7 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		int returnValue = process.exitValue();
+		returnValue = process.exitValue();
 		return returnValue;
 	}
 
