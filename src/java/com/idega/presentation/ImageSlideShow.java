@@ -195,7 +195,7 @@ public class ImageSlideShow extends Block
 	private Link getLink(String imageName, int step, PresentationObject object)
 	{
 		Link link = new Link(object);
-		link.setURL("javascript://");
+		link.setURL("#");
 		link.setOnClick(getCallingScript(imageName, step));
 		return link;
 	}
@@ -280,7 +280,7 @@ public class ImageSlideShow extends Block
 	}
 	private String getCallingScript(String name, int step)
 	{
-		return "Check" + name + "(" + step + ")";
+		return "javascript: slide_" + name + "(" + step + ")";
 	}
 	private Script getDelayScript(String name)
 	{
@@ -295,7 +295,7 @@ public class ImageSlideShow extends Block
 		String sCurrent = "Current_" + name;
 		String sPicArray = "Pics_" + name;
 		String sAddPic = "addPic" + name;
-		String sCheck = "Check" + name;
+		String sCheck = "slide_" + name;
 		StringBuffer addPics = new StringBuffer();
 		//addPics.append("var ").append(sDelay).append(" = 0;\n");
 		addPics.append("var ").append(sCurrent).append(" = ").append(delay).append(";\n");
