@@ -18,7 +18,7 @@ import java.util.Vector;
 
 public class SingleLineItem extends Panel {
   private int height = 16;
-  private int width = 100;
+  private int width = 120;
   private int nextXpos = 0;
   private int nextYpos = 0;
   private int componentOffset = 5;
