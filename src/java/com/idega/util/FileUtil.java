@@ -12,6 +12,7 @@ package com.idega.util;
  import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -22,6 +23,7 @@ import java.io.LineNumberReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -32,6 +34,7 @@ public class FileUtil {
 
 
   private FileUtil() {
+  	// empty
   }
 
   public static void createFileAndFolder(String path,String fileNameWithoutFullPath){
@@ -51,9 +54,7 @@ public class FileUtil {
       folder.mkdirs();
       return true;
     }
-    else{
-      return false;
-    }
+    return false;
   }
 
   public static boolean createFile(String fileNameWithFullPath){
@@ -248,9 +249,7 @@ public class FileUtil {
 	  }
       return true;
     }
-    else{
-      return false;
-    }
+    return false;
   }
 
 	/**
@@ -261,9 +260,26 @@ public class FileUtil {
 		if(folder.exists()){
 			return folder.listFiles();
 		}
-		else{
-			return null;
+		return null;
+	}
+	
+	/** 
+	 * Returns folders of a folder. Returns null if no folders exist.
+	 * @param path
+	 * @return
+	 */
+	public static List getDirectoriesInDirectory(String path) {
+		File folder = new File(path);
+		if (folder.exists()) {
+			FileFilter filter = new FileFilter() {
+				public boolean accept(File file) {
+					return file.isDirectory();
+				}
+			};
+			File[] folders = folder.listFiles(filter);
+			return Arrays.asList(folders);
 		}
+		return null;
 	}
 
   public static List getLinesFromFile(File fromFile) throws IOException{
