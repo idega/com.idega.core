@@ -17,6 +17,8 @@ import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.idega.core.file.business.ICFileSystem;
+import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOLookup;
@@ -32,6 +34,7 @@ import com.idega.presentation.IWContext;
 public class DownloadWriter implements MediaWritable {
     
     public final static String PRM_ABSOLUTE_FILE_PATH = "abs_fpath";
+    public final static String PRM_RELATIVE_FILE_PATH = "rel_fpath";
     public final static String PRM_FILE_ID = "fileId";
     private File file = null;
     private ICFile icFile = null;
@@ -49,10 +52,16 @@ public class DownloadWriter implements MediaWritable {
     public void init(HttpServletRequest req, IWContext iwc) {
         String fileId = iwc.getParameter(PRM_FILE_ID);
         String absPath = iwc.getParameter(PRM_ABSOLUTE_FILE_PATH);
+        String relPath = iwc.getParameter(PRM_RELATIVE_FILE_PATH);
         if(fileId!=null){
             try {
+                ICFileSystem fsystem = ICFileSystemFactory.getFileSystem(iwc);
+    			   String fileURL = fsystem.getFileURI(Integer.valueOf(fileId).intValue());
+    			   file = new File(iwc.getIWMainApplication().getRealPath(fileURL));
+    			   
                 icFile = ((ICFileHome)IDOLookup.getHome(ICFile.class)).findByPrimaryKey(Integer.valueOf(fileId));
-                setAsDownload(iwc,icFile.getName(),icFile.getFileSize().intValue());
+                //setAsDownload(iwc,icFile.getName(),icFile.getFileSize().intValue());
+    			   setAsDownload(iwc,file.getName(),(int)file.length());
             } catch (Exception e) {
                 icFile=null;
             }
@@ -67,6 +76,14 @@ public class DownloadWriter implements MediaWritable {
             }
 
         }
+        else if(relPath!=null){
+            file = new File(iwc.getIWMainApplication().getRealPath(relPath));
+            if(file!=null && file.exists() && file.canRead()){
+                iwc.getResponse().setHeader("Content-Disposition", "attachment;filename=\"" + file.getName()+ "\"");
+            		iwc.getResponse().setContentLength((int) file.length());
+            		setAsDownload(iwc,file.getName(),(int)file.length());
+            }
+        }
 
     }
 
@@ -74,18 +91,8 @@ public class DownloadWriter implements MediaWritable {
      * @see com.idega.io.MediaWritable#writeTo(java.io.OutputStream)
      */
     public void writeTo(OutputStream out) throws IOException {
-        if(icFile!=null){
-            BufferedInputStream fis = new BufferedInputStream(icFile.getFileValue());
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            while (fis.available() > 0) {
-				baos.write(fis.read());
-			}
-			baos.writeTo(out);
-			baos.flush();
-            	baos.close();
-            	fis.close();
-        }
-        else if(file!=null && file.exists() && file.canRead()){
+        
+        if(file!=null && file.exists() && file.canRead() && file.length()>0){
             BufferedInputStream fis = new BufferedInputStream(new FileInputStream(file));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			while (fis.available() > 0) {
@@ -95,6 +102,17 @@ public class DownloadWriter implements MediaWritable {
 			baos.flush();
         		baos.close();
         		fis.close();
+        }
+        else if(icFile!=null){
+            BufferedInputStream fis = new BufferedInputStream(icFile.getFileValue());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            while (fis.available() > 0) {
+				baos.write(fis.read());
+			}
+			baos.writeTo(out);
+			baos.flush();
+            	baos.close();
+            	fis.close();
         }
         else
     			throw new IOException("No file value");
