@@ -31,21 +31,46 @@ public class MethodFinder {
   public Method getMethod(String methodIdentifier){
     try{
       String[] idArray = getIdentifierAsArray(methodIdentifier);
-      Class c = getDeclaringClass(idArray);
-      System.out.println("Declaring class: "+c.getName());
-      Method[] methods = getMethods(c);
+      Class declaringClass = getDeclaringClass(idArray);
+      return getMethod(methodIdentifier,declaringClass,idArray);
+    }
+    catch(Exception e){
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+
+  public Method getMethod(String methodIdentifier, Class declaringClass){
+    String[] idArray = getIdentifierAsArray(methodIdentifier);
+    return getMethod(methodIdentifier,declaringClass,idArray);
+  }
+
+
+  private Method getMethod(String methodIdentifier, Class declaringClass,String[] idArray){
+    try{
+
+      //System.out.println("Declaring class: "+c.getName());
+      Method[] methods = getMethods(declaringClass);
       for (int i = 0; i < methods.length; i++) {
         if(methods[i].getName().equals(getMethodName(idArray))){
-          System.out.println("MethodName: "+methods[i].getName()+" returnType = "+methods[i].getReturnType().getName());
+          //System.out.println("MethodName: "+methods[i].getName()+" returnType = "+methods[i].getReturnType().getName());
           if(methods[i].getReturnType().equals(getReturnTypeClass(idArray))){
             Class[] classes = getArgumentClasses(idArray);
             Class[] methodClasses = methods[i].getParameterTypes();
             boolean check=true;
             if(methodClasses.length>0){
-              for (int j = 0;(j < methodClasses.length && check); j++) {
-                if(!methodClasses[j].equals(classes[j])){
-                  System.out.println("MethodClasses["+j+"]"+methodClasses[j].getName());
-                  check=false;
+              if(classes.length!=methodClasses.length){
+                check = false;
+              }
+              else{
+                for (int j = 0;(j < classes.length && check); j++) {
+                  if(!methodClasses[j].equals(classes[j])){
+                    //System.out.print(methodIdentifier);
+                    //System.out.println(methods[i].toString());
+                    //System.out.println("MethodClasses["+j+"]"+methodClasses[j].getName());
+                    check=false;
+                  }
                 }
               }
             }
@@ -70,14 +95,29 @@ public class MethodFinder {
     return null;
   }
 
+  public String getMethodIdentifierWithoutDeclaringClass(Method method){
+    return getMethodIdentifier(method,false);
+  }
+
+
   public String getMethodIdentifier(Method method){
+    return getMethodIdentifier(method,true);
+  }
+
+
+  private String getMethodIdentifier(Method method,boolean includeDeclaringClass){
     StringBuffer buf = new StringBuffer();
     buf.append(separator);
     buf.append(methodString);
     buf.append(separator);
     buf.append(method.getModifiers());
     buf.append(separator);
-    buf.append(method.getDeclaringClass().getName());
+    if(includeDeclaringClass){
+      buf.append(method.getDeclaringClass().getName());
+    }
+    else{
+      buf.append("implied");
+    }
     buf.append(separator);
     buf.append(method.getReturnType().getName());
     buf.append(separator);
@@ -171,6 +211,15 @@ public class MethodFinder {
 
   public Method[] getMethods(Class c){
     return c.getMethods();
+  }
+
+  public String[] getMethodIdentifiersWithoutDeclaringClass(Class c){
+    Method[] methods = getMethods(c);
+    String[] theReturn = new String[methods.length];
+    for (int i = 0; i < theReturn.length; i++) {
+      theReturn[i]=getMethodIdentifierWithoutDeclaringClass(methods[i]);
+    }
+    return theReturn;
   }
 
   public String[] getMethodIdentifiers(Class c){
