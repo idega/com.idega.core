@@ -554,12 +554,13 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		//since we chose it in the group chooser
 		if(baseGroupToOverwrite!=null){
 			parentGroup = null;
-			if(entryUniqueId!=null){
+			if(entryUniqueId!=null && !"".equals(entryUniqueId)){
 				baseGroupToOverwrite.setUniqueId(thisServersLDAPBase);
 			}
 			if(entryDN!=null){
-	
+				baseGroupToOverwrite.setMetaData(ldapUtil.getAttributeKeyWithMetaDataNamePrefix(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING),entryDN.toString());
 			}	
+			baseGroupToOverwrite.store();
 		}
 		
 		if(parentGroup!=null){

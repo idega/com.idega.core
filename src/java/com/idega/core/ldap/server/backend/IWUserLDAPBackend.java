@@ -275,20 +275,7 @@ LDAPReplicationConstants {
 				else {
 					//get children if a group
 					if (ldapUtil.isGroup(base) || uniqueId != null) {
-						Group group = null;
-						if (uniqueId != null) {
-							try {
-								group = getGroupBusiness().getGroupHome().findGroupByUniqueId(uniqueId);
-							}
-							catch (FinderException e) {
-								//	e.printStackTrace();
-								System.err.println("[IWUserLDAPBackend] Could not find the group with the unique id:"
-										+ uniqueId + " trying directory string");
-							}
-						}
-						if (group == null) {
-							group = getGroupBusiness().getGroupByDirectoryString(base);
-						}
+						Group group = getGroup(base,uniqueId);
 						//handle when group is not found specially, code to send??
 						if (group != null) {
 							Collection groups = group.getChildGroups();

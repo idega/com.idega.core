@@ -1,5 +1,6 @@
 package com.idega.core.ldap.client.naming;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.String;
 import java.util.Vector;
 import java.util.Enumeration;
@@ -187,7 +188,13 @@ public class DN implements Name
                 ldapDN = ldapDN.substring(0,ldapDN.length()-1);
             }
         }
-        return ldapDN;
+        try {
+			return new String(ldapDN.getBytes(),"UTF-8");
+		}
+		catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return ldapDN;
     }
 
 
