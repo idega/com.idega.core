@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.faces.context.FacesContext;
 
 
@@ -19,7 +20,7 @@ import javax.faces.context.FacesContext;
 public class Script extends PresentationObject{
 
 private String scriptType;
-private LinkedHashMap scriptCode;
+private Map scriptCode;
 private Hashtable variables;
 private Hashtable methods;
 
@@ -30,12 +31,21 @@ public Script(){
 public Script(String scriptLanguage){
 	super();
 	setType();
-	scriptCode = new LinkedHashMap();
+	//scriptCode = new LinkedHashMap();
 }
 
 /*public void setScriptType(String scriptType){
 	setAttribute("language",scriptType);
 }*/
+
+protected Map getScriptCode(){
+	if(scriptCode!=null){
+		scriptCode=new LinkedHashMap();
+	}
+	return scriptCode;
+}
+
+
 
 protected void setType(){
   setType("text/javascript");
@@ -61,11 +71,11 @@ public void setScriptCode(String code){
 
 public String getScriptCode(IWContext iwc){
 	StringBuffer returnString = new StringBuffer();
-	Iterator iter = scriptCode.keySet().iterator();
+	Iterator iter = getScriptCode().keySet().iterator();
 	
 	while (iter.hasNext()) {
 		Object function=iter.next();
-		String functionCode = (String) scriptCode.get(function);
+		String functionCode = (String) getScriptCode().get(function);
 
 		returnString.append(functionCode + "\n");
 	}
@@ -75,7 +85,7 @@ public String getScriptCode(IWContext iwc){
 }
 
 public boolean doesFunctionExist(String function){
-  if(scriptCode.get(function)==null){
+  if(getScriptCode().get(function)==null){
       return false;
   }
   else{
@@ -84,13 +94,13 @@ public boolean doesFunctionExist(String function){
 }
 
 public void removeFunction(String functionName){
-	scriptCode.remove(functionName);
+	getScriptCode().remove(functionName);
 }
 
 public void addToFunction(String functionName,String scriptString){
 
-	if (scriptCode != null){
-		String functionCode = (String) scriptCode.get(functionName);
+	if (getScriptCode() != null){
+		String functionCode = (String) getScriptCode().get(functionName);
 
 		if ( functionCode != null){
 
@@ -106,15 +116,15 @@ public void addToFunction(String functionName,String scriptString){
 
 			returnString = beginString + "\n" + scriptString + "\n" + endString;
 
-			scriptCode.put(functionName,returnString);
+			getScriptCode().put(functionName,returnString);
 		}
 	}
 }
 
 public void addToBeginningOfFunction(String functionName,String scriptString){
 
-	if (scriptCode != null){
-		String functionCode = (String) scriptCode.get(functionName);
+	if (getScriptCode() != null){
+		String functionCode = (String) getScriptCode().get(functionName);
 
 		if ( functionCode != null){
 
@@ -130,14 +140,14 @@ public void addToBeginningOfFunction(String functionName,String scriptString){
 
 			returnString = beginString + "\n" + scriptString + "\n" + endString;
 
-			scriptCode.put(functionName,returnString);
+			getScriptCode().put(functionName,returnString);
 		}
 	}
 }
 
 
 public void addFunction(String functionName,String scriptString){
-	scriptCode.put(functionName,scriptString);
+	getScriptCode().put(functionName,scriptString);
 }
 
 public void addVariable(String variableName, String variableValue){
@@ -214,7 +224,7 @@ public void addScriptSource(String jsString){
 }
 
 public String getFunction(String functionName){
-	return (String) scriptCode.get(functionName);
+	return (String) getScriptCode().get(functionName);
 }
 
 public void print(IWContext iwc)throws Exception{
@@ -265,7 +275,7 @@ public void print(IWContext iwc)throws Exception{
       obj = (Script)super.clone();
       obj.scriptType = this.scriptType;
       if(this.scriptCode != null){
-      	obj.scriptCode = (LinkedHashMap)this.scriptCode.clone();
+      	obj.scriptCode = (Map)((LinkedHashMap)this.scriptCode).clone();
       }
     }
     catch(Exception ex) {
@@ -282,7 +292,7 @@ public void print(IWContext iwc)throws Exception{
 		Object values[] = (Object[])state;
 		super.restoreState(context, values[0]);
 		this.scriptType = (String) values[1];
-		this.scriptCode = (LinkedHashMap) values[2];
+		this.scriptCode = (Map) values[2];
 		this.variables = (Hashtable) values[3];
 		this.methods = (Hashtable) values[4];
 	}
