@@ -443,7 +443,8 @@ public class ConnectionPool
 	}
 	public synchronized void release()
 	{
-		refresher.stop();
+		if (refresher != null)
+			refresher.stop();
 		refresher=null;
 		Enumeration allConnections = freeConnections.elements();
 		while (allConnections.hasMoreElements())
