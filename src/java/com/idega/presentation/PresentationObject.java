@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.102 2004/07/14 12:35:15 aron Exp $
+ * $Id: PresentationObject.java,v 1.103 2004/10/19 10:59:20 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -18,14 +18,12 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
-
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
@@ -56,6 +54,7 @@ import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.ui.Form;
+import com.idega.util.RenderUtils;
 import com.idega.util.logging.LoggingHelper;
 import com.idega.util.text.TextStyler;
 /**
@@ -2035,11 +2034,23 @@ implements Cloneable, PresentationObjectType
 	protected void renderChild(FacesContext context, UIComponent child) throws IOException {
 		if(child!=null){
 			if(USE_JSF_RENDERING){
-				child.encodeBegin(context);
-				if(child.getRendersChildren()){
-					child.encodeChildren(context);
-				}
-				child.encodeEnd(context);
+				/*if(child.isRendered()){
+					child.encodeBegin(context);
+					if(child.getRendersChildren()){
+						child.encodeChildren(context);
+					}
+					if(child instanceof UIForm){
+						boolean b = child.getRendersChildren();
+						child.encodeChildren(context);
+						Collection fChildren = child.getChildren();
+						for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+							UIComponent fChild = (UIComponent) iter.next();
+							renderChild(context,fChild);
+						}
+					}
+					child.encodeEnd(context);
+				}*/
+				RenderUtils.renderChild(context,child);
 			}
 			else{
 				IWContext iwc = this.castToIWContext(context);
@@ -2064,11 +2075,8 @@ implements Cloneable, PresentationObjectType
 		return IWContext.getIWContext(fc);
 	}
 	
-	public boolean getRendersSelf(){
-		return true;
-	}
-	
 	public boolean getRendersChildren(){
+		//This is overrided because PresentationObjects have no extra Renderer by default
 		return true;
 	}
 	
