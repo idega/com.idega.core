@@ -105,7 +105,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
       theReturn = "VARCHAR(1)";
     }
     else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
-      theReturn = "BLOB";
+      theReturn = "LONG BYTE";
     }
     else{
       theReturn = "";
