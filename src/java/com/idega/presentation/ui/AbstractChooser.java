@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.8 2002/03/15 00:40:26 laddi Exp $
+ * $Id: AbstractChooser.java,v 1.9 2002/03/15 13:42:46 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -43,6 +43,15 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   private String _attributeValue;
   private String _attributeName;
   private Link link = null;
+  private boolean disabled = true;
+
+  /**
+  *
+  * @param aDisabled - the new value for disabled
+  */
+  public void setDisabled(boolean aDisabled){
+	  disabled = aDisabled;
+  }
 
   /**
    *
@@ -185,7 +194,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 
   public PresentationObject getPresentationObject(IWContext iwc) {
     TextInput input = new TextInput(displayInputName);
-    input.setDisabled(true);
+    input.setDisabled(disabled);
 
     if (_style != null) {
       input.setAttribute("style",_style);
