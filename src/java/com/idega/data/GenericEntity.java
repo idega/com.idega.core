@@ -3521,6 +3521,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 	public void addManyToManyRelationShip(Class relatingEntityClass, String relationShipTableName)
 	{
+		
 		EntityControl.addManyToManyRelationShip(
 			this.getClass().getName(),
 			relatingEntityClass.getName(),
@@ -3540,11 +3541,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	public void addManyToManyRelationShip(String relatingEntityClassName)
 	{
 		String relationShipTableName;
-		try
-		{
-			String tableName1 = this.getEntityName();
-			String tableName2 = this.instanciateEntity(relatingEntityClassName).getEntityName();
-			relationShipTableName = StringHandler.concatAlphabetically(tableName1, tableName2, "_");
+		try{
+			relationShipTableName = EntityControl.getMiddleTableString(this,instanciateEntity(relatingEntityClassName) );
 			addManyToManyRelationShip(relatingEntityClassName, relationShipTableName);
 		}
 		catch (Exception ex)

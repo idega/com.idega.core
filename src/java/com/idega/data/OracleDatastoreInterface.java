@@ -5,12 +5,14 @@
 package com.idega.data;
 import java.io.BufferedInputStream;
 import java.io.OutputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import oracle.jdbc.driver.OracleResultSet;
+import oracle.sql.BLOB;
 /**
 *A class for database abstraction for the Oracle Database.
 * This is an implemention that ovverrides implementations from com.idega.data.DatastoreInterface 
@@ -20,6 +22,12 @@ import oracle.jdbc.driver.OracleResultSet;
 *@version 1.0
 */
 public class OracleDatastoreInterface extends DatastoreInterface {
+	
+	public OracleDatastoreInterface(){
+		super();	
+		EntityControl.limitTableNameToThirtyCharacters = true;
+	}
+	
 	/*public String getSQLType(String javaClassName){
 	  String theReturn;
 	  if (javaClassName.equals("java.lang.Integer")){
@@ -67,7 +75,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 				theReturn = "VARCHAR2(" + maxlength + ")";
 			}
 			else {
-				theReturn = "LONG VARCHAR";
+				theReturn = "CLOB";
 			}
 		}
 		else if (javaClassName.equals("java.lang.Boolean")) {
@@ -255,9 +263,11 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			entity.setID(createUniqueID(entity));
 		}
 	}
+	
+	/*
 	protected void insertBlob(IDOLegacyEntity entity) throws Exception {
 		Connection Conn = null;
-		oracle.sql.BLOB blob;
+		BLOB blob;
 		try {
 			Conn = entity.getConnection();
 			if (Conn == null)
@@ -272,10 +282,12 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 					+ " WHERE "
 					+ entity.getIDColumnName()
 					+ " ='"
-					+ entity.getID()
+					+ entity.getPrimaryKey()
 					+ "' FOR UPDATE ";
 			ResultSet RS2 = stmt2.executeQuery(cmd);
 			RS2.next();
+			//insert into empty_blob()
+			
 			blob = ((OracleResultSet) RS2).getBLOB(1);
 			// write the array of binary data to a BLOB
 			OutputStream outstream = blob.getBinaryOutputStream();
@@ -308,6 +320,9 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 				entity.freeConnection(Conn);
 		}
 	}
+	
+	
+	*/
 	protected String getCreateUniqueIDQuery(IDOLegacyEntity entity) {
 		return "SELECT " + getOracleSequenceName(entity) + ".nextval FROM dual";
 	}

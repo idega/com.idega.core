@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Vector;
 import java.util.Iterator;
+
+import com.idega.util.StringHandler;
 import com.idega.util.datastructures.HashtableDoubleKeyed;
 import com.idega.util.datastructures.HashtableMultivalued;
 /**
@@ -26,6 +28,9 @@ public class EntityControl {
 	private static HashtableDoubleKeyed relationshipTables = new HashtableDoubleKeyed();
 	private static HashtableMultivalued relationshipClasses = new HashtableMultivalued();
 	private static boolean autoCreate = false;
+	protected static boolean limitTableNameToThirtyCharacters = false;
+	
+	
 	// throw away!!
 	protected static String getInterbaseGeneratorName(IDOLegacyEntity entity) {
 		String entityName = entity.getTableName();
@@ -541,17 +546,25 @@ public class EntityControl {
 		String relatingEntityClassName2,
 		String relationShipTableName) {
 		try {
+			
 			addManyToManyRelationShip(
 				com.idega.data.GenericEntity.getStaticInstance(relatingEntityClassName1),
 				com.idega.data.GenericEntity.getStaticInstance(relatingEntityClassName2),
 				relationShipTableName);
+				
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 	public static String getTreeRelationShipTableName(IDOLegacyEntity entity) {
-		return entity.getTableName() + "_tree";
+		String treeName = entity.getTableName() + "_tree";
+		if(limitTableNameToThirtyCharacters ){
+			treeName = treeName.substring(0, Math.min(30,treeName.length()));	
+		}
+		
+		return treeName;
 	}
+	
 	public static String getTreeRelationShipChildColumnName(IDOLegacyEntity entity) {
 		return "child_" + entity.getIDColumnName();
 	}
@@ -560,6 +573,15 @@ public class EntityControl {
 		String idColumnName1 = entity.getIDColumnName();
 		String idColumnName2 = getTreeRelationShipChildColumnName(entity);
 		addManyToManyRelationShip(entity, entity, relationShipTableName, idColumnName1, idColumnName2);
+	}
+	
+	private static String getCheckedRelatedTableName(String relatedTableName){
+		//this is necessary for Oracle and maybe others!
+		if( limitTableNameToThirtyCharacters ){
+			relatedTableName = relatedTableName.substring(0, Math.min(relatedTableName.length(), 30));	
+		}
+		
+		return relatedTableName;
 	}
 	private static void addManyToManyRelationShip(
 		IDOLegacyEntity relatingEntity1,
@@ -573,7 +595,12 @@ public class EntityControl {
 		String relatingEntityName1 = relatingEntity1.getEntityName();
 		String relatingEntityName2 = relatingEntity2.getEntityName();
 		EntityRelationship rel = new EntityRelationship();
-		rel.setTableName(relationShipTableName);
+		
+
+		//cuts the string if too long
+		rel.setTableName(getCheckedRelatedTableName(relationShipTableName) );
+		
+		
 		Class relatingEntityClass1 = relatingEntity1.getClass();
 		Class relatingEntityClass2 = relatingEntity2.getClass();
 		rel.addColumn(column1, relatingEntityClass1);
@@ -638,15 +665,20 @@ public class EntityControl {
 	}
 	protected static String getMiddleTableString(IDOLegacyEntity entity1, IDOLegacyEntity entity2) {
 		String tableToSelectFrom = "";
-		if (entity1.getEntityName().endsWith("_")) {
-			tableToSelectFrom = entity1.getEntityName() + entity2.getEntityName();
-		} else {
-			tableToSelectFrom = entity1.getEntityName() + "_" + entity2.getEntityName();
-		}
-		if (tableToSelectFrom.endsWith("_")) {
-			tableToSelectFrom = tableToSelectFrom.substring(0, tableToSelectFrom.length() - 1);
-		}
-		return tableToSelectFrom;
+//		commented out by Eiki 14.nov.2002 this was not looking up the name correctly
+//		if (entity1.getEntityName().endsWith("_")) {
+//			tableToSelectFrom = entity1.getEntityName() + entity2.getEntityName();
+//		} else {
+//			tableToSelectFrom = entity1.getEntityName() + "_" + entity2.getEntityName();
+//		}
+//		if (tableToSelectFrom.endsWith("_")) {
+//			tableToSelectFrom = tableToSelectFrom.substring(0, tableToSelectFrom.length() - 1);
+//		}
+
+		tableToSelectFrom = StringHandler.concatAlphabetically(entity1.getEntityName(), entity2.getEntityName(), "_");
+		
+		return getCheckedRelatedTableName(tableToSelectFrom);
+		
 	}
 	protected static String getNameOfMiddleTable(IDOLegacyEntity entity1, IDOLegacyEntity entity2) {
 		String tableName = getManyToManyRelationShipName(entity1, entity2);

@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.51 2002/08/26 13:38:16 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.52 2002/11/14 22:59:03 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -398,20 +398,24 @@ public abstract class DatastoreInterface {
 	protected void executeBeforeInsert(IDOLegacyEntity entity) throws Exception {
 	}
 	protected void executeAfterInsert(IDOLegacyEntity entity) throws Exception {
-		if (entity.hasLobColumn())
-			insertBlob(entity);
-		if (entity.hasMetaDataRelationship())
+		if (entity.hasLobColumn() && (entity.getBlobColumnValue(entity.getLobColumnName()).getInputStreamForBlobWrite()!=null) ){
+				insertBlob(entity);
+		}
+		if (entity.hasMetaDataRelationship()){
 			crunchMetaData(entity);
+		}
 	}
 	protected void executeBeforeUpdate(IDOLegacyEntity entity) throws Exception {
 	}
 	protected void executeAfterUpdate(IDOLegacyEntity entity) throws Exception {
 		if (!supportsBlobInUpdate()) {
-			if (entity.hasLobColumn())
+			if (entity.hasLobColumn() && (entity.getBlobColumnValue(entity.getLobColumnName()).getInputStreamForBlobWrite()!=null) ){
 				insertBlob(entity);
+			}
 		}
-		if (entity.hasMetaDataRelationship())
+		if (entity.hasMetaDataRelationship()){
 			crunchMetaData(entity);
+		}
 	}
 	protected void executeBeforeDelete(IDOLegacyEntity entity) throws Exception {
 	}
