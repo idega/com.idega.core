@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.78 2004/11/24 22:55:15 tryggvil Exp $
+ * $Id: Table.java,v 1.79 2004/11/24 23:01:30 tryggvil Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -165,9 +165,18 @@ public class Table extends PresentationObjectContainer implements TableType{
 
 	/**
 	*Add an object inside this Table in cell with coordinates 1,1
+	*- overrided from PresentationObject to maintain compatability
 	*/
 	public void add(PresentationObject modObject) {
 		add(modObject, 1, 1);
+	}
+	
+	/**
+	*Add an object inside this Table in cell with coordinates 1,1 
+	*- overrided from PresentationObject to maintain compatability
+	*/
+	public void add(UIComponent component) {
+		add(component, 1, 1);
 	}
 	
 	/*public void addText(String theText, String format, int xpos, int ypos) {
