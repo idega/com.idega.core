@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.14 2001/11/09 12:10:55 eiki Exp $
+ * $Id: Page.java,v 1.15 2001/11/09 12:19:13 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -599,10 +599,10 @@ public class Page extends PresentationObjectContainer {
           println("<link rel=\"stylesheet\" href=\""+_styleSheetURL+"\" type=\"text/css\">\n");
         }
         else {
-          println("<STYLE TYPE=\"text/css\">\n" +
+          println("<style type=\"text/css\">\n" +
                   "<!--\n" +
                   getStyleDefinition() +
-                  "   -->\n</STYLE>");
+                  "   -->\n</style>");
         }
         println("</head>\n<body  "+getAttributeString()+" >\n");
       }

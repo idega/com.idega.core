@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.22 2001/10/26 18:24:19 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.23 2001/11/09 12:23:03 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -150,10 +150,8 @@ long time1 = System.currentTimeMillis();
 
 long time2 = System.currentTimeMillis();
 PrintWriter writer = iwc.getWriter();
-writer.println("<!-- --------------------------------------- -->");
-writer.println("<!-- Printing page: "+ (time2 - time1 )+ " ms -->");
+writer.println("<!--"+ (time2 - time1 )+ " ms-->");
 //writer.println("<!-- viewpermission: "+com.idega.core.accesscontrol.business.AccessControl._COUNTER +" -->");
-writer.println("<!-- --------------------------------------- -->");
 
             /*if (connectionRequested()){
                             freeConnection();
