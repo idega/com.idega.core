@@ -12,6 +12,11 @@
       <name>1.9</name>
       <tag>CORE_1_9</tag>
     </version>
+    <version>
+      <id>1.9.1</id>
+      <name>1.9.1</name>
+      <tag>CORE_1_9_1</tag>
+    </version>
   </versions>
   <branches/>
   <mailingLists>
@@ -126,7 +131,6 @@
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
     </dependency>
-
     <dependency>
       <groupId>javamail</groupId>
       <artifactId>javamail</artifactId>
@@ -167,7 +171,6 @@
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
     </dependency>
-
     <dependency>
       <groupId>myfaces</groupId>
       <artifactId>jsf-api</artifactId>
@@ -175,7 +178,7 @@
       <type>jar</type>
       <url>http://java.sun.com/j2ee/javaserverfaces/</url>
       <properties>
-      	<idegaweb.bundle.include>true</idegaweb.bundle.include>
+        <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
     </dependency>
     <dependency>
