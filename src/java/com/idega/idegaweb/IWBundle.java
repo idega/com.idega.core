@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.74 2004/01/12 12:15:35 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.75 2004/01/12 13:38:34 aron Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -24,6 +24,8 @@ import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 
+import com.idega.core.component.business.BundleRegistrationListener;
+import com.idega.core.component.business.RegisterException;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectBMPBean;
 import com.idega.core.component.data.ICObjectHome;
@@ -938,6 +940,18 @@ public class IWBundle implements java.lang.Comparable
 								registerBlockPermissionKeys(c);
 							}
 						}
+						// new register part
+						Class[] implementedInterfaces = c.getInterfaces();
+						boolean isRegisterable = false;
+						for (int j = 0; j < implementedInterfaces.length; j++) {
+							if (BundleRegistrationListener.class.getName().equals(implementedInterfaces[j].getName())){
+								isRegisterable = true;
+							}
+						}
+						if(isRegisterable){
+							BundleRegistrationListener regObj =(BundleRegistrationListener)c.newInstance();
+							regObj.registerInBundle(this, ico);
+						}
 					}
 					catch (ClassNotFoundException e)
 					{
@@ -954,6 +968,10 @@ public class IWBundle implements java.lang.Comparable
 						e.printStackTrace();
 					}
 					catch (IllegalAccessException e)
+					{
+						e.printStackTrace();
+					}
+					catch (RegisterException e)
 					{
 						e.printStackTrace();
 					}
