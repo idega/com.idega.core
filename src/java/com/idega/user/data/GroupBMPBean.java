@@ -699,6 +699,16 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		//}
 	}
 	
+	/**
+		 * Only adds a relation if one does not exist already
+		 * @param relatedGroup
+		 * @param relationType
+		 * @throws CreateException
+		 * @throws RemoteException
+		 */
+		public void addUniqueRelation(Group relatedGroup, String relationType) throws CreateException, RemoteException {
+			addUniqueRelation(((Integer) (relatedGroup.getPrimaryKey())).intValue(), relationType);
+		}
 	
 	public void removeRelation(Group relatedGroup, String relationType) throws RemoveException, RemoteException {
 		int groupId = this.getGroupIDFromGroup(relatedGroup);

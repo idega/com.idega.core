@@ -259,6 +259,10 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException, RemoteException {
 		this.getGeneralGroup().addUniqueRelation(relatedGroupId, relationType);
 	}
+	
+	public void addUniqueRelation(Group relatedGroup, String relationType) throws CreateException, RemoteException {
+		this.getGeneralGroup().addUniqueRelation(relatedGroup, relationType);
+	}
 
 	public void addRelation(int relatedGroupId, String relationType) throws CreateException, RemoteException {
 		this.getGeneralGroup().addRelation(relatedGroupId, relationType);

@@ -47,6 +47,7 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.ICTreeNod
   public void removeRelation(Group relatedGroup,String relationType)throws RemoveException,RemoteException;
   public void removeRelation(int relatedGroupId,String relationType)throws RemoveException,RemoteException;
 	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException, RemoteException;
+	public void addUniqueRelation(Group relatedGroup, String relationType) throws CreateException, RemoteException;
 	public boolean hasRelationTo(int groupId, String relationType) throws RemoteException;
   /**
    * Returns a collection of Group objects that are related by the relation type relationType with this Group
