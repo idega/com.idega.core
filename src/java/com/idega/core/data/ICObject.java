@@ -11,6 +11,8 @@ import com.idega.jmodule.object.*;
 import com.idega.block.news.presentation.NewsReader;
 import com.idega.block.text.presentation.TextReader;
 import com.idega.block.login.presentation.Login;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 
 
 /**
@@ -20,6 +22,7 @@ import com.idega.block.login.presentation.Login;
 public class ICObject extends GenericEntity{
 
         private static final String object_type_column_name = "object_type";
+        private final static String BUNDLE_COLUMN_NAME="bundle";
 
 	public ICObject(){
 		super();
@@ -36,7 +39,8 @@ public class ICObject extends GenericEntity{
 		addAttribute(getIDColumnName());
 		addAttribute("object_name","Name",true,true,"java.lang.String");
 		addAttribute("class_name","Class Name",true,true,"java.lang.String");
-                addAttribute(getObjectTypeColumn(),"Class Name",true,true,"java.lang.String");
+                addAttribute(getObjectTypeColumnName(),"Class Name",true,true,"java.lang.String",1000);
+                addAttribute(getBundleColumnName(),"Bundle",true,true,"java.lang.String",1000);
 		//addAttribute("settings_url","Slóð stillingasíðu",true,true,"java.lang.String");
 		//addAttribute("class_value","Klasi sjálfur",true,true,"java.sql.Blob");
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer","many-to-one","com.idega.data.genericentity.Image");
@@ -44,7 +48,7 @@ public class ICObject extends GenericEntity{
 		//addAttribute("image_id","MyndNúmer",false,false,"java.lang.Integer","one-to-many","com.idega.projects.golf.entity.ImageEntity");
 	}
 
-        public static String getObjectTypeColumn(){
+        public static String getObjectTypeColumnName(){
           return object_type_column_name;
         }
 
@@ -125,12 +129,32 @@ public class ICObject extends GenericEntity{
 
 
         public String getObjectType(){
-          return getStringColumnValue(getObjectTypeColumn());
+          return getStringColumnValue(getObjectTypeColumnName());
         }
 
         public void setObjectType(String objectType){
-          setColumn(getObjectTypeColumn(),objectType);
+          setColumn(getObjectTypeColumnName(),objectType);
         }
 
+
+        public String getBundleIdentifier(){
+          return getStringColumnValue(getBundleColumnName());
+        }
+
+        public void setBundleIdentifier(String bundleIdentifier){
+          setColumn(getBundleColumnName(),bundleIdentifier);
+        }
+
+        public void setBundle(IWBundle bundle){
+          setBundleIdentifier(bundle.getBundleIdentifier());
+        }
+
+        public IWBundle getBundle(IWMainApplication iwma){
+          return iwma.getBundle(getBundleIdentifier());
+        }
+
+        public static String getBundleColumnName(){
+          return BUNDLE_COLUMN_NAME;
+        }
 
 }
