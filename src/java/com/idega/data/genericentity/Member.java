@@ -8,7 +8,6 @@ package com.idega.data.genericentity;
 //import java.util.*;
 import java.sql.*;
 import com.idega.data.*;
-import com.idega.builder.accesscontrol.data.PermissionGroup;
 import java.util.List;
 
 /**
@@ -168,11 +167,6 @@ public class Member extends GenericEntity implements Comparable{
 
         public List getAllGroups() throws SQLException{
           return EntityFinder.findRelated(this,Group.getStaticInstance());
-        }
-
-        public List getPermissionGroups() throws SQLException{
-          return EntityFinder.findRelated(this,PermissionGroup.getStaticPermissionGroupInstance());
-          //return (PermissionGroup[])findResated(new PermissionGroup());
         }
 
     public static Member getStaticInstance(){

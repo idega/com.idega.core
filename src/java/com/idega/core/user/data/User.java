@@ -2,7 +2,7 @@ package com.idega.core.user.data;
 
 import com.idega.data.*;
 import com.idega.core.data.*;
-import com.idega.builder.accesscontrol.data.PermissionGroup;
+import com.idega.core.accesscontrol.data.PermissionGroup;
 import java.util.List;
 import java.sql.*;
 
@@ -41,12 +41,12 @@ public class User extends GenericEntity {
       addAttribute(getDisplayNameColumnName(),"Kenninafn",true,true,"java.lang.String");
       addAttribute(getDescriptionColumnName(),"Lýsing",true,true,"java.lang.String");
       addAttribute(getDateOfBirthColumnName(),"Fæðingardagur",true,true,"java.sql.Date");
-      addAttribute(getGenderColumnName(),"Kyn",true,true,"java.lang.String");
+      addAttribute(getGenderColumnName(),"Kyn",true,true,"java.lang.Integer","many_to_one","com.idega.core.user.data.Gender");
+      addAttribute(getSystemImageColumnName(),"Kerfismynd",true,true,"java.lang.Integer","one_to_one","com.idega.core.data.Image");
 
     }
 
     public void setDefaultValues(){
-
     }
 
     public String getIDColumnName(){
@@ -84,7 +84,11 @@ public class User extends GenericEntity {
     }
 
     public static String getGenderColumnName(){
-      return "gender";
+      return "ic_gender_id";
+    }
+
+    public static String getSystemImageColumnName(){
+      return "system_image_id";
     }
 
     /*  ColumNames end   */
@@ -116,8 +120,12 @@ public class User extends GenericEntity {
       return (Date) getColumnValue(getDateOfBirthColumnName());
     }
 
-    public String getGender(){
-      return getStringColumnValue(getGenderColumnName());
+    public int getGenderID(){
+      return getIntColumnValue(getGenderColumnName());
+    }
+
+    public int getSystemImageID(){
+      return getIntColumnValue(getSystemImageColumnName());
     }
 
     public String getName(){
@@ -153,8 +161,20 @@ public class User extends GenericEntity {
       setColumn(getDateOfBirthColumnName(),dateOfBirth);
     }
 
-    public void setGender(String gender){
+    public void setGender(Integer gender){
       setColumn(getGenderColumnName(),gender);
+    }
+
+    public void setGender(int gender){
+      setColumn(getGenderColumnName(),gender);
+    }
+
+    public void setSystemImageID(Integer imageID){
+      setColumn(getSystemImageColumnName(),imageID);
+    }
+
+    public void setSystemImageID(int imageID){
+      setColumn(getSystemImageColumnName(),imageID);
     }
 
     /*  Setters end   */
@@ -163,10 +183,16 @@ public class User extends GenericEntity {
 
 
 
+
+
+
+
+    /*  OLD   */
+
+
     public Group[] getGenericGroups()throws SQLException{
       Group group = new Group();
       return (Group[]) findRelated(group);
-      //return (Union[])union.findAll("select * from "+union.getEntityName()+" where "+this.getIDColumnName()+"='"+this.getID()+"' ");
     }
 
     public List getAllGroups() throws SQLException{

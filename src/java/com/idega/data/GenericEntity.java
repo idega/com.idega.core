@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.14 2001/05/25 00:26:36 palli Exp $
+ * $Id: GenericEntity.java,v 1.15 2001/06/14 13:34:00 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -223,6 +223,10 @@ public abstract class GenericEntity implements java.io.Serializable {
 	public void addAttribute(EntityAttribute attribute){
             getAttributes().addElement(attribute);
 	}
+
+        public void addLanguageAttribute(){
+          this.addAttribute(getLanguageIDColumnName(),"Tungumál", true, true, "java.lang.Integer","one_to_one","com.idega.core.localisation.data.Language");
+        }
 
 
 	/**
@@ -618,6 +622,10 @@ public abstract class GenericEntity implements java.io.Serializable {
 			return getTableName()+"_id";
 		}
 	}
+
+        public static String getLanguageIDColumnName(){
+          return "language_id";
+        }
 
 	protected String getAllColumnsAndValues(){
 		String returnString="";

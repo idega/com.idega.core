@@ -18,16 +18,15 @@ public class Address extends GenericEntity{
 		addAttribute(getIDColumnName());
 		addAttribute("street", "Heimilisfang", true, true, "java.lang.String");
 		addAttribute("street_number", "Númer", true, true, "java.lang.String");
-		addAttribute("postalcode_id", "Póstnúmer", true, true, "java.lang.Integer");
+		addAttribute("postal_code_id", "Póstnúmer", true, true, "java.lang.Integer");
 		addAttribute("country_id", "Land id", true, true, "java.lang.Integer");
-                addAttribute("address_value", "Auka uppl.", true, true, "java.lang.String");
 
 		addAttribute("address_attribute", "Tegund heimisfangs", true, true, "java.lang.String");
 		addAttribute("address_value", "Auka uppl.", true, true, "java.lang.String");
 	}
 
 	public String getEntityName(){
-		return "address";
+		return "ic_address";
 	}
 
 	public void setDefaulValues() {

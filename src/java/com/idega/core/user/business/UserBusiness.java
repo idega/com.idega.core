@@ -18,7 +18,7 @@ public class UserBusiness {
   }
 
 
-  public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, String gender, idegaTimestamp date_of_birth) throws SQLException{
+  public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth) throws SQLException{
     User userToAdd = new User();
 
     if(firstname != null){
@@ -39,6 +39,7 @@ public class UserBusiness {
     if(gender != null){
       userToAdd.setGender(gender);
     }
+
     if(date_of_birth != null){
       userToAdd.setDateOfBirth(date_of_birth.getSQLDate());
     }
@@ -51,7 +52,7 @@ public class UserBusiness {
   }
 
 
-  public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, String gender, idegaTimestamp date_of_birth) throws SQLException {
+  public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, idegaTimestamp date_of_birth) throws SQLException {
     User userToUpdate = new User(user_id);
 
     if(firstname != null){

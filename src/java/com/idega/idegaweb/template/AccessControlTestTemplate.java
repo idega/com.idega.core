@@ -1,7 +1,7 @@
 package com.idega.idegaweb.template;
 
 import com.idega.jmodule.forum.presentation.GrayForums;
-import com.idega.builder.accesscontrol.business.AccessControl;
+import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.jmodule.object.ModuleInfo;
 import com.idega.jmodule.object.textObject.Text;
 import com.idega.jmodule.login.*;

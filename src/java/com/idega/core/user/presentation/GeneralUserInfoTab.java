@@ -275,7 +275,7 @@ public class GeneralUserInfoTab extends Table implements Collectable{
         business.updateUser(userId,(String)fieldValues.get(this.firstNameFieldName),
                             (String)fieldValues.get(this.middleNameFieldName),(String)fieldValues.get(this.lastNameFieldName),
                             (String)fieldValues.get(this.displayNameFieldName),(String)fieldValues.get(this.descriptionFieldName),
-                            (String)fieldValues.get(this.genderFieldName),new idegaTimestamp((String)fieldValues.get(this.dateOfBirthFieldName)));
+                            Integer.decode((String)fieldValues.get(this.genderFieldName)),new idegaTimestamp((String)fieldValues.get(this.dateOfBirthFieldName)));
       }
     }catch(Exception e){
       return true;
@@ -299,7 +299,7 @@ public class GeneralUserInfoTab extends Table implements Collectable{
       fieldValues.put(this.displayNameFieldName,(user.getDisplayName() != null) ? user.getDisplayName():"" );
       fieldValues.put(this.descriptionFieldName,(user.getDescription() != null) ? user.getDescription():"" );
       fieldValues.put(this.dateOfBirthFieldName,(user.getDateOfBirth()!= null) ? new idegaTimestamp(user.getDateOfBirth()).toSQLDateString() : "");
-      fieldValues.put(this.genderFieldName,(user.getGender() != null) ? user.getGender():"" );
+      fieldValues.put(this.genderFieldName,(user.getGenderID() != -1) ? Integer.toString(user.getGenderID()):"" );
       this.updateFieldsDisplayStatus();
 
     }catch(Exception e){
