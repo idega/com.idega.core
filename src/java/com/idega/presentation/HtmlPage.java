@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.util.text.AttributeParser;
 
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -264,7 +265,32 @@ public class HtmlPage extends Page {
 				}
 				out.write("</title>");
 			}
-			out.write("</head>");		
+			out.write("</head>");	
+			
+			String[] htmlBody = body.split("<body");
+			out.write(htmlBody[0]);
+			
+			String attributes = htmlBody[1].substring(0, htmlBody[1].indexOf(">"));
+			Map attributeMap = AttributeParser.parse(attributes);
+			Iterator iter = attributeMap.keySet().iterator();
+			while (iter.hasNext()) {
+				String attribute = (String) iter.next();
+				String value = (String) attributeMap.get(attribute);
+				if (attribute.equals("onload")) {
+					this.setMarkupAttributeMultivalued("onload", value);
+				}
+				if (attribute.equals("onunload")) {
+					this.setMarkupAttributeMultivalued("onunload", value);
+				}
+				else {
+					if (!isMarkupAttributeSet(attribute)) {
+						setMarkupAttribute(attribute, value);
+					}
+				}
+			}
+			out.write("<body " + getMarkupAttributesString() + " >\n");
+			
+			body = htmlBody[1].substring(htmlBody[1].indexOf(">" + 1));
 			
 			//Process the template regions:			
 			String[] parts = body.split("<!-- TemplateBeginEditable");
