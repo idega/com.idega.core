@@ -59,6 +59,30 @@ public class IWProperty{
     return this.getPropertyType(getKeyElement());
   }
 
+  public boolean getBooleanValue(){
+    String value = getValue();
+    if(value!=null){
+      if(value.equalsIgnoreCase("true")){
+        return true;
+      }
+      else if(value.equalsIgnoreCase("false")){
+        return false;
+      }
+      else if(value.equalsIgnoreCase("y")){
+        return true;
+      }
+      else if(value.equalsIgnoreCase("n")){
+        return false;
+      }
+      else{
+        return false;
+      }
+    }
+    return false;
+
+
+  }
+
   public String getValue(){
     return this.getPropertyValue(getKeyElement());
   }

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.10 2001/09/13 16:06:42 tryggvil Exp $
+ * $Id: IWPropertyList.java,v 1.11 2001/10/08 21:05:45 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -31,7 +31,7 @@ import com.idega.util.ListUtil;
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  *@version 0.8 - Under development
  */
-public class IWPropertyList {
+public class IWPropertyList{
   private Document xmlDocument;
   private File xmlFile;
   private Element parentElement;
@@ -415,4 +415,6 @@ public class IWPropertyList {
       }
     }
   }
+
+
 }
