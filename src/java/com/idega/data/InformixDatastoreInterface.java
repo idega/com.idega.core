@@ -91,7 +91,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
       theReturn = "FLOAT";
     }
     else if (javaClassName.equals("java.sql.Timestamp")){
-      theReturn = "TIMESTAMP";
+      theReturn = "DATE";
     }
     else if (javaClassName.equals("java.sql.Date")){
       theReturn = "DATE";
@@ -163,10 +163,7 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 
 
     public void deleteEntityRecord(GenericEntity entity)throws Exception{
-      /**
-       * @todo change
-       */
-      //deleteTrigger(entity);
+      deleteTrigger(entity);
       deleteSequence(entity);
       deleteTable(entity);
 
