@@ -71,7 +71,7 @@ public class ListUtil {
   		
   		for (int i = 0; i < stringArray.length; i++) {
 				String string = stringArray[i];
-				returnList.add(0,string);
+				returnList.add(i,string);
 			}
   		
   		return returnList;
