@@ -3,9 +3,10 @@
  */
 package com.idega.util.text;
 
-import java.util.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 import com.ibm.icu.text.UnicodeToHexTransliterator;
 //@todo use regular expressions such as import com.stevesoft.pat.*;
@@ -259,14 +260,19 @@ public class TextSoap {
 	 *@return                Description of the Return Value
 	 */
 	public static String findAndReplace(String text, String stringToFind, String stringToReplace) {
-		// Regex r = new Regex(stringToFind,stringReplace);
+		//Regex r = new Regex(stringToFind,stringReplace);
 		//return r.replaceAll(text); with regular expr. package called PAT
+		
 		StringBuffer buf = new StringBuffer("");
-		String returnString;
 		if (stringToFind != null && !stringToFind.equals("")) {
 			int index = text.indexOf(stringToFind);
 			int index2 = 0;
 			int length = stringToFind.length();
+			
+			if (index == -1) {
+				return text;
+			}
+			
 			while (index != -1) {
 				buf.append(text.substring(index2, index)); //paste from last index or beginning
 				buf.append(stringToReplace);
@@ -277,11 +283,7 @@ public class TextSoap {
 				}
 			}
 		}
-		returnString = buf.toString();
-		if (returnString.equals("")) {
-			returnString = text;
-		}
-		return returnString;
+		return buf.toString();
 	}
 
 	public static String findAndReplace(String text, String stringToFind, String stringAfterFindString, String stringToReplaceIfAfterStringIsNotPresent) {
