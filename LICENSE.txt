@@ -1,7 +1,7 @@
 /*
- $Id: LICENSE.txt,v 1.2 2004/06/04 11:39:42 idegaweb Exp $
+ $Id: LICENSE.txt,v 1.3 2004/06/04 11:40:10 idegaweb Exp $
 
- Copyright 2003 (C) idega Software. All Rights Reserved.
+ Copyright 2003-2004 (C) idega Software. All Rights Reserved.
  
  Redistribution and use of this software and associated documentation
  ("Software"), with or without modification, are permitted provided
