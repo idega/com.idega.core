@@ -38,8 +38,12 @@ private int icObjectInstanceIDForWindow=-1;
 private Class classToInstanciateAndSubmitTo;
 private int _submitToPage = -1;
 private Script associatedScript = null;
-
+private boolean sendToHTTPS = false;
 private static String FORM_EVENT_PARAMETER="idega_special_form_event";
+private static String HTTP = "http";
+private static String HTTPS = "https";
+private static String COLONSLASHSLASH = "://";
+private static String SLASH = "/";
 
 
 /**
@@ -207,6 +211,27 @@ public void main(IWContext iwc){
    //iwc.setSessionAttribute(IdegaWebHandler.windowOpenerParameter,window);
     com.idega.servlet.WindowOpener.storeWindow(iwc,window);
   }
+  
+}
+
+/**
+ * Converts the set action POST/GET to an HTTPS url
+ **/
+private void contvertActionToHTTPS(IWContext iwc){
+	String action = getAction();
+	if(action!=null){
+		if(action.startsWith(HTTP)){
+			if(action.startsWith(HTTPS)){
+				//nothing
+			}	
+			else{
+				setAction(HTTPS+action.substring(4,action.length()));
+			}
+		}
+		else{
+			setAction(HTTPS+COLONSLASHSLASH+iwc.getRequest().getServerName()+SLASH+iwc.getRequestURI());
+		}
+	}
 }
 
 public void addParameter(String parameterName,String parameterValue){
@@ -386,6 +411,10 @@ public void print(IWContext iwc)throws Exception{
 			//setAction(getIdegaSpecialRequestURI(iwc)+"?idega_session_id="+iwc.getSession().getId());
 			setAction(getIdegaSpecialRequestURI(iwc));
 		}
+		if(sendToHTTPS){
+			contvertActionToHTTPS(iwc);	
+		}
+		
 		if (getLanguage().equals("HTML")){
 			//String Action = getAction();
 			//if (Action.indexOf("idega_session_id") == -1){
@@ -592,6 +621,21 @@ public Script getAssociatedFormScript() {
 public void setAssociatedFormScript(Script associatedScript) {
 	this.associatedScript = associatedScript;
 }
+
+
+	/**
+	 * Set the form to automatically send over to a corresponding HTTPS address
+	 **/	
+	public void setToSendToHTTPS(){
+		setToSendToHTTPS(true);	
+	}
+
+	/**
+	 * Set if the form should automatically send over to a corresponding HTTPS address
+	 **/
+	public void setToSendToHTTPS(boolean doSendToHTTPS){
+		sendToHTTPS=doSendToHTTPS;
+	}	
 
 } // Class ends
 
