@@ -2105,8 +2105,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 	
-	public int getNumberOfRecords(String columnName, String Operator, String columnValue) throws SQLException {
-		return getNumberOfRecords("select count(*) from " + getEntityName() + " where " + columnName + " " + Operator + " " + columnValue);
+	public int getNumberOfRecordsForStringColumn(String columnName, String operator, String columnValue) throws SQLException {
+		StringBuffer buffer = new StringBuffer("\'");
+		buffer.append(columnValue);
+		buffer.append('\'');
+		return getNumberOfRecords(columnName,operator, buffer.toString());
+	}
+	
+	public int getNumberOfRecords(String columnName, String operator, String columnValue) throws SQLException {
+		StringBuffer buffer = new StringBuffer("select count(*) from ");
+		buffer.append(getEntityName()).append(" where ").append(columnName).append(" ").append(operator).append(" ").append(columnValue);
+		return getNumberOfRecords(buffer.toString());
 	}
 	public int getMaxColumnValue(String columnName) throws SQLException {
 		return getIntTableValue("select max(" + columnName + ") from " + getEntityName());
