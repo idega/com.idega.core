@@ -343,7 +343,7 @@ protected String getCallingScriptStringForForm(IWContext iwc){
  * using js function openwindow from global.js
  * (Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height)
  */
-private static String getWindowCallingScript(String url,String name,boolean tool,
+public static String getWindowCallingScript(String url,String name,boolean tool,
               boolean loc,boolean dir,boolean stat,boolean menu,boolean title
               ,boolean scroll,boolean resize,boolean fullscr,int theWidth,int theHeight ){
 
