@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.23 2001/12/10 13:17:50 tryggvil Exp $
+ * $Id: Page.java,v 1.24 2001/12/11 14:04:00 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -50,6 +50,9 @@ public class Page extends PresentationObjectContainer {
   private String _templateId = null;
   private Hashtable _styleDefinitions;
   private Hashtable _metaTags;
+
+  private static String META_KEYWORDS = "keywords";
+  private static String META_DESCRIPTION = "description";
 
   private static Page NULL_CLONE_PAGE = new Page();
 
@@ -131,6 +134,14 @@ public class Page extends PresentationObjectContainer {
       _metaTags = new Hashtable();
     }
     _metaTags.put(tagName,tagValue);
+  }
+
+  public void setKeywordsMetaTag(String wordsCommaSeparated) {
+    setMetaTag(META_KEYWORDS,wordsCommaSeparated);
+  }
+
+  public void setDescriptionMetaTag(String wordsCommaSeparated) {
+    setMetaTag(META_DESCRIPTION,wordsCommaSeparated);
   }
 
   private void setDefaultValues() {
