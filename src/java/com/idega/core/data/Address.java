@@ -18,14 +18,14 @@ public class Address extends GenericEntity{
 
 	public void initializeAttributes(){
 		addAttribute(getIDColumnName());
-                addAttribute(getColumnNameAddressTypeId(),"Gerð heimilisfangs",true,true, Integer.class,"many-to-one",AddressType.class);
-		addAttribute("street_name", "Heimilisfang", true, true, String.class);
-		addAttribute("street_number", "Númer", true, true, String.class);
-                addAttribute("city","Borg", true, true, String.class);
-                addAttribute("providence","Hérað", true ,true, String.class);
-                addAttribute("p_o_box","Pósthólf",true, true, String.class);
-		addAttribute("postal_code_id", "Póstnúmer", true, true, Integer.class, "many-to-one",PostalCode.class);
-		addAttribute("ic_country_id", "Land id", true, true,Integer.class, "many-to-one",Country.class);
+                addManyToOneRelationship(getColumnNameAddressTypeId(),"Address type",AddressType.class);
+		addAttribute("street_name", "Street Name", true, true, String.class);
+		addAttribute("street_number", "Street numbeer", true, true, String.class);
+                addAttribute("city","City", true, true, String.class);
+                addAttribute("providence","Providence", true ,true, String.class);
+                addAttribute("p_o_box","PostBox",true, true, String.class);
+		addManyToOneRelationship("postal_code_id", "PostalCode",PostalCode.class);
+		addManyToOneRelationship("ic_country_id", "Country",Country.class);
                 this.addManyToManyRelationShip(User.class,"ic_user_address");
         }
 

@@ -40,7 +40,7 @@ public class ICFileType extends CacheableEntity {
     this.addAttribute(getColumnNameDisplayName(),"Nafn",true,true,String.class,255);
     this.addAttribute(getColumnNameDescription(),"Lýsing",true,true,String.class,500);
     this.addAttribute(getColumnNameUniqueName(),"unique name",true,true,String.class,255);
-    addAttribute(getColumnNameFileTypeHandler(),"Filetypehandler",true,true, Integer.class,"many-to-one",ICFileTypeHandler.class);
+    addManyToOneRelationship(getColumnNameFileTypeHandler(),"Filetypehandler",ICFileTypeHandler.class);
   }
 
   public String getEntityName() {

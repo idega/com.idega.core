@@ -27,8 +27,8 @@ public class Email extends GenericEntity {
 
   public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
-    this.addAttribute(getColumnNameAddress(),"Netfang",true,true,String.class,255);
-    this.addAttribute(getColumnNameEmailTypeId(),"Gerð",true,true,Integer.class,"many-to-one",EmailType.class);
+    this.addAttribute(getColumnNameAddress(),"Email address",true,true,String.class,255);
+    addManyToOneRelationship(getColumnNameEmailTypeId(),"Type",EmailType.class);
     this.addManyToManyRelationShip(User.class,"ic_user_email");
   }
 
