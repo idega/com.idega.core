@@ -9,7 +9,6 @@ import com.idega.data.EntityControl;
 import com.idega.data.IDOContainer;
 import com.idega.user.data.GroupRelationType;
 import com.idega.user.data.GroupRelationTypeHome;
-import com.idega.util.FileUtil;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.database.PoolManager;
 
