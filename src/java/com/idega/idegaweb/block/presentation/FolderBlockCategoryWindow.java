@@ -37,6 +37,9 @@ import com.idega.presentation.ui.TextInput;
 	*@author <a href="mailto:aron@idega.is">Aron Birkir</a>
  * @version 1.1
  */
+
+//TODO extend FolderBlockComponent and change name to FolderBlockCategoryEditor
+
 public class FolderBlockCategoryWindow extends IWAdminWindow {
 	private int iCategoryId = -1;
 	protected int iObjectInstanceId = -1;

@@ -1,5 +1,7 @@
 package com.idega.core.category.data;
 
+import com.idega.data.IDOException;
+
 
 public class ICInformationCategoryHomeImpl extends com.idega.data.IDOFactory implements ICInformationCategoryHome
 {
@@ -65,5 +67,11 @@ public void removeObjectInstanceRelation(com.idega.core.component.data.ICObjectI
 	this.idoCheckInPooledEntity(entity);
 }
 
+public boolean hasAvailableCategory(int icObjectID) throws IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	boolean result = ((ICInformationCategoryBMPBean)entity).ejbHomeHasAvailableCategory(icObjectID);
+	this.idoCheckInPooledEntity(entity);
+	return result;
+}
 
 }

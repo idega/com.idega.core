@@ -23,6 +23,7 @@ import com.idega.core.component.data.ICObjectInstance;
 import com.idega.core.component.data.ICObjectInstanceHome;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.EntityFinder;
+import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDORemoveRelationshipException;
@@ -89,6 +90,17 @@ public class FolderBlockBusinessBean extends IBOServiceBean implements FolderBlo
 			ex.printStackTrace();
 		}
 		return null;
+	}
+	
+	public boolean hasAvailableCategory(int icObjectId) {
+		try {
+			return this.getCategoryHome().hasAvailableCategory(icObjectId);
+		} catch (IDOLookupException e) {
+			e.printStackTrace();
+		} catch (IDOException e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 	public ICInformationFolder createICInformationFolder(String name, String description, String type, int ICObjectId, int ownerGroup, int relatedInstanceId) throws SQLException {

@@ -26,4 +26,5 @@ public interface FolderBlockBusiness extends com.idega.business.IBOService
  public void storeCategoryToParent(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void storeInstanceCategories(int p0,int[] p1) throws java.rmi.RemoteException;
  public boolean updateCategory(com.idega.presentation.IWContext p0,int p1,java.lang.String p2,java.lang.String p3,int p4)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public boolean hasAvailableCategory(int icObjectId);
 }

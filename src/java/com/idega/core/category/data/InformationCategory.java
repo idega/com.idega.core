@@ -2,6 +2,8 @@ package com.idega.core.category.data;
 
 import java.sql.Timestamp;
 
+
+
 /**
  *  <p>
  *  Title: idegaWeb</p> <p>

@@ -438,5 +438,13 @@ public class ICInformationFolderBMPBean extends com.idega.data.CacheableEntityBM
 	public void ejbHomeRemoveObjectInstanceRelation(ICObjectInstance instance) throws IDORemoveRelationshipException {
 		idoRemoveFrom(instance);
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.idega.block.blog.business.IBOPresentableDataEntry#getDisplayString()
+	 */
+	public String getDisplayString() {
+		return getName();
+	}
+	
 
 }

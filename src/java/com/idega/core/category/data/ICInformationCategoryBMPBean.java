@@ -15,6 +15,7 @@ import com.idega.core.user.data.User;
 import com.idega.data.EntityControl;
 import com.idega.data.EntityFinder;
 import com.idega.data.GenericEntity;
+import com.idega.data.IDOException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.TreeableEntityBMPBean;
@@ -515,6 +516,27 @@ public class ICInformationCategoryBMPBean extends TreeableEntityBMPBean implemen
 	
 	public void ejbHomeRemoveObjectInstanceRelation(ICObjectInstance instance) throws IDORemoveRelationshipException{
 		idoRemoveFrom(instance);
+	}
+	
+	public boolean ejbHomeHasAvailableCategory(int icObjectID) throws IDOException{
+		IDOQuery query = idoQuery();
+		query.appendSelectCountFrom(this);
+
+		query.appendWhereEquals(getColumnObjectId(), icObjectID);
+		
+		query.appendAnd();
+		appendIsNotDeleted(query);
+		
+		int countOfRecords = idoGetNumberOfRecords(query);
+
+		return (countOfRecords > 0);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.block.blog.business.IBOPresentableDataEntry#getDisplayString()
+	 */
+	public String getDisplayString() {
+		return getName();
 	}
 
 }
