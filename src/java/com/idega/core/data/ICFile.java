@@ -50,7 +50,8 @@ public class ICFile extends TreeableEntity {
     //Removed LanguageIDColumn in favor of Locale
     //addAttribute(getColumnNameLanguageId(),"Language",true,true, Integer.class,"many-to-one",ICLanguage.class);
     addManyToOneRelationship(getColumnNameLocale(),"Locale",ICLocale.class);
-    addManyToOneRelationship(getColumnNameMimeType(),"Mime Type of file",ICMimeType.class);
+//    addManyToOneRelationship(getColumnNameMimeType(),"Mime Type of file",ICMimeType.class);
+    addAttribute(getColumnNameMimeType(),"Mime Type of file",true,true, String.class,100,"many-to-one",ICMimeType.class);
     addAttribute(getColumnNameName(),"File name",true,true, String.class, 255);
     addAttribute(getColumnNameDescription(),"Description",true,true, String.class, 1000);
     addAttribute(getColumnNameFileValue(),"The file value",true,true, com.idega.data.BlobWrapper.class);
