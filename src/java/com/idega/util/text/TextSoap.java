@@ -1732,6 +1732,8 @@ public static String findAndReplaceOnPrefixCondition(String text, String stringT
       int index2 = 0;
       int length = stringToFind.length();
       int length2 = prefix.length();
+      boolean A = false;
+      boolean B = replaceOnMissingPrefix;
 
       while (index != -1) {
         replaceString = stringToFind;
@@ -1740,9 +1742,17 @@ public static String findAndReplaceOnPrefixCondition(String text, String stringT
         index2 = index+length;
 
         try{
-         // if( (text.substring(index2-length2,index2).equals(prefix)) xor (!replaceOnMissingPrefix) ){
+          //(A && !B ) || (!A && B) )  XOR
+          // isbefore replaceOnMissingPrefix
+          // T          T   nothing
+          // F          F   nothing
+          // T          F   replace
+          // F          T   replace
+          A = text.substring(index2-length2,index2).equals(prefix);
+          if( (A && !B ) || (!A && B) ){
             replaceString = stringToReplace;
-          //}
+          }
+
         }
         catch(Exception e){
          e.printStackTrace();
