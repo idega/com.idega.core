@@ -4,11 +4,13 @@ import java.net.*;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.io.IOException;
+import javax.servlet.RequestDispatcher;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.IWContext;
 import com.idega.util.FileUtil;
 import com.idega.util.text.TextSoap;
 import com.idega.builder.data.IBPage;
+import com.idega.builder.business.BuilderLogic;
 
 /**
  * A presentationObject that uses FileUtil.getStringFromURL to serverside include a given URL
@@ -24,6 +26,7 @@ public class PageIncluder extends PresentationObject{
   private String _sendURLTo = null;
   private IBPage _sendToPage = null;
   private String _sendToPageIfSet = null;
+  private String currentPageParameterAndValue = null;
 
   private String sessionId = null;
   private String sessionURL = null;
@@ -44,6 +47,23 @@ public class PageIncluder extends PresentationObject{
     this.URL = URL;
   }
 
+  public void main(IWContext iwc) throws Exception {
+    if (forceFrame) {
+      if (_sendToPage != null) {
+        if (_sendToPageIfSet == null){
+          RequestDispatcher req = iwc.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)_sendToPage.getPrimaryKeyValue()).intValue()));
+          req.forward(iwc.getRequest(),iwc.getResponse());
+        }
+        else {
+          if (iwc.isParameterSet(_sendToPageIfSet)){
+            RequestDispatcher req = iwc.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(iwc.getApplicationContext(),((Integer)_sendToPage.getPrimaryKeyValue()).intValue()));
+            req.forward(iwc.getRequest(),iwc.getResponse());
+          }
+        }
+      }
+    }
+  }
+
   public void print(IWContext iwc)throws IOException{
     if(URL!=null){
       initVariables(iwc);
@@ -60,27 +80,42 @@ public class PageIncluder extends PresentationObject{
         }*/
 
         if (forceFrame) {
-          if (_sendURLTo == null)
-            pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
+          String currentPage = getCurrentIBPageIDToURLString(iwc);
+          StringBuffer buf = new StringBuffer();
+          buf.append(iwc.getRequestURI());
+          buf.append('?');
+          buf.append(currentPage);
+          buf.append('&');
+
+
+          if (_sendURLTo == null){
+            buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+            buf.append(instanceId);
+            buf.append('=');
+          }
           else {
-            if (_sendToPageIfSet == null)
-              pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+_sendURLTo+"=";
+            if (_sendToPageIfSet == null){
+              buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+              buf.append(_sendURLTo);
+              buf.append('=');
+            }
             else {
-              if (iwc.isParameterSet(_sendToPageIfSet))
-                pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+_sendURLTo+"=";
-              else
-                pageIncluderPrefix = iwc.getRequestURI()+"?"+PAGE_INCLUDER_PARAMETER_NAME+instanceId+"=";
+              if (iwc.isParameterSet(_sendToPageIfSet)){
+                buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+                buf.append(_sendURLTo);
+                buf.append('=');
+              }
+              else{
+                buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+                buf.append(instanceId);
+                buf.append('=');
+              }
             }
           }
 
-          if (_sendToPage != null) {
-            if (_sendToPageIfSet == null)
-              iwc.setSessionAttribute("ib_page_id",((Integer)_sendToPage.getPrimaryKeyValue()).toString());
-            else {
-              if (iwc.isParameterSet(_sendToPageIfSet))
-                iwc.setSessionAttribute("ib_page_id",((Integer)_sendToPage.getPrimaryKeyValue()).toString());
-            }
-          }
+          pageIncluderPrefix = buf.toString();
+
+
         }
         else {
          pageIncluderPrefix ="";
@@ -265,24 +300,30 @@ public class PageIncluder extends PresentationObject{
     return html;
   }
 
-  protected String insertPageIncludeInTagIgnoreCase(String tag,String html){
+  protected String insertPageIncludeInTagIgnoreCase( String tag,String html){
     html = insertPageIncludeInTag(tag.toLowerCase(),html);
     html = insertPageIncludeInTag(tag.toUpperCase(),html);
     return html;
   }
 
   protected String insertPageIncludeInTag(String tag,String html){
-    html = TextSoap.findAndReplace(html,tag+"=\"//",tag+"=\""+pageIncluderPrefix+"http://");// the // case
+    html = TextSoap.findAndReplace(html,tag+"=\"//",tag+"=\""+pageIncluderPrefix+"http://" );// the // case
     html = TextSoap.findAndReplace(html,tag+"=\"http://",tag+"=\""+pageIncluderPrefix+"http://");// the http:// case
+
     if(forceFrame){
       html = TextSoap.findAndReplace(html,tag+"=\"/",pageIncluderPrefix.substring(1,pageIncluderPrefix.length()),tag+"=\"/",tag+"=\""+pageIncluderPrefix+BASEURL );// the / case
       html = TextSoap.findAndReplace(html,tag+"=\"",pageIncluderPrefix,tag+"=\""+pageIncluderPrefix+RELATIVEURL);
     }
     else{
-      html = TextSoap.findAndReplace(html,tag+"=\"/",tag+"=\""+BASEURL );
+      html = TextSoap.findAndReplace(html,tag+"=\"/",tag+"=\""+BASEURL);
       html = TextSoap.findAndReplace(html,tag+"=\"","http://",tag+"=\""+RELATIVEURL);
     }
     return html;
+  }
+
+  protected String getCurrentIBPageIDToURLString(IWContext iwc){
+    BuilderLogic bill = BuilderLogic.getInstance();
+    return bill.IB_PAGE_PARAMETER+"="+bill.getCurrentIBPageID(iwc);
   }
 
   protected String changeURLToAbsoluteValueIgnoreCase(String tag,String html){
