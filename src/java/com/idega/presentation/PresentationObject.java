@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.79 2004/02/05 20:59:40 laddi Exp $
+ * $Id: PresentationObject.java,v 1.80 2004/02/06 13:49:46 laddi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -764,7 +764,7 @@ implements Cloneable,UIComponent{
 			{
 				obj.setMarkupAttributes((Map) ((Hashtable) this.attributes).clone());
 			}
-			obj.setName(this.name);
+			obj.setName(this.getName());
 			//obj.setParentObject(this.parentObject);
 			this.prepareClone(obj);
 			obj.initializedInMain = this.initializedInMain;
