@@ -5,14 +5,11 @@ package com.idega.core.location.data;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
-
 import javax.ejb.FinderException;
-
 import com.idega.core.user.data.User;
 import com.idega.data.EntityAttribute;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
-import com.idega.data.IDORelationshipException;
 import com.idega.util.text.TextSoap;
 
 public class AddressBMPBean extends com.idega.data.GenericEntity implements Address {
@@ -28,6 +25,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	private static final String IC_ADDRESS_TYPE_ID = "IC_ADDRESS_TYPE_ID";
 	private static final String IC_COUNTRY_ID = "IC_COUNTRY_ID";
 	private static final String COORDINATE = "COORDINATE";
+	private static final String COORDINATE_ID = "IC_ADDRESS_COORDINATE_ID";
 	private transient AddressTypeHome addressTypeHome;
 	private static AddressType type1; //for caching
 	private static AddressType type2; //for caching
@@ -59,7 +57,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		// Deprecated
 		//addAttribute(COORDINATE, "coordinate", true, true, String.class, 50);
 		
-		this.addManyToManyRelationShip(AddressCoordinate.class);
+		this.addManyToOneRelationship(COORDINATE_ID, AddressCoordinate.class);
 		
 		addIndex("IDX_ADDRESS_TYPE", getColumnNameAddressTypeId());
 		addIndex("IDX_ADDRESS_STREET_NAME", STREET_NAME);
@@ -180,7 +178,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		return getIntColumnValue(IC_ADDRESS_TYPE_ID);
 	}
 
-	public Collection getCoordinates() throws IDORelationshipException {
+	public AddressCoordinate getCoordinate() {
 		String oldVal = getStringColumnValue(COORDINATE);
 		if (oldVal != null) {
 			try {
@@ -203,14 +201,11 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 			}
 		}
 
-		Collection coll = this.idoGetRelatedEntities(AddressCoordinate.class);
-		return coll;
+		return (AddressCoordinate) getColumn(COORDINATE_ID);
 	}
 	
-	public void setCoordinate(AddressCoordinate coordinate) throws IDORelationshipException {
-		this.idoRemoveFrom(AddressCoordinate.class);
-		this.idoAddTo(coordinate);
-//		setColumn(COORDINATE, coordinate);
+	public void setCoordinate(AddressCoordinate coordinate) {
+		this.setColumn(COORDINATE_ID, coordinate);
 	}
 	
 	public Country getCountry() {
