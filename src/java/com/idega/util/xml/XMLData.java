@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
+//import java.sql.SQLException;
 
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICFileHome;
@@ -126,7 +126,7 @@ public class XMLData {
       throw new IOException("xml file could not be stored");
     }
     if (xmlFileId < 0) {
-      xmlFileId = xmlFile.getID();
+      xmlFileId = ((Integer)xmlFile.getPrimaryKey()).intValue();
       // the default name uses the id, therefore set again and store again
       if (name == null) {
         xmlFile.setName(getName());
@@ -201,15 +201,15 @@ public class XMLData {
     // write to the ICFile object
     xmlFile.setFileSize(size);
     xmlFile.setFileValue(inputStream);
-    try {
-      // do not use store()
-      xmlFile.update();
-    }
-    catch (SQLException ex)  {
-      System.err.println("[XMLData] problem storing ICFile Message is: "+ex.getMessage());
-      ex.printStackTrace(System.err);
-      throw new IOException("xml file could not be stored");
-    }
+//    try {
+      //xmlFile.update();
+	  xmlFile.store();
+//    }
+//    catch (SQLException ex)  {
+//      System.err.println("[XMLData] problem storing ICFile Message is: "+ex.getMessage());
+//      ex.printStackTrace(System.err);
+//      throw new IOException("xml file could not be stored");
+//    }
     inputStream.close();
     // reading finished
     // delete file

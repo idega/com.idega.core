@@ -11,6 +11,11 @@ import java.util.Locale;
 import javax.ejb.FinderException;
 
 import com.idega.core.user.data.User;
+import com.idega.core.version.data.ICItem;
+import com.idega.core.version.data.ICVersion;
+import com.idega.core.version.util.ICVersionQuery;
+import com.idega.data.IDOQuery;
+import com.idega.data.MetaDataCapable;
 import com.idega.data.TreeableEntity;
 import com.idega.data.TreeableEntityBMPBean;
 import com.idega.idegaweb.IWCacheManager;
@@ -26,7 +31,7 @@ import com.idega.util.IWTimestamp;
  * @version 1.0
  */
 
-public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,TreeableEntity  {
+public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,TreeableEntity,MetaDataCapable {
 
   private static final String FILE_VALUE = "file_value";
   public static String IC_ROOT_FOLDER_CACHE_KEY = "ic_root_folder";
@@ -34,6 +39,9 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,Treea
 
   public final static String DELETED = "Y";
   public final static String NOT_DELETED = "N";
+  
+  private static final String TABLENAME_ICFILE_ICITEM = "ic_file_ic_item";
+  private static final String TABLENAME_ICFILE_ICVERSION = "ic_file_ic_version";
 
 
   public ICFileBMPBean() {
@@ -63,7 +71,10 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,Treea
     addAttribute(getColumnDeleted(),"Deleted",true,true,String.class,1);
     addAttribute(getColumnDeletedBy(),"Deleted by",true,true,Integer.class,"many-to-one",User.class);
     addAttribute(getColumnDeletedWhen(),"Deleted when",true,true,Timestamp.class);
-
+	
+	
+	addManyToManyRelationShip(ICItem.class,TABLENAME_ICFILE_ICITEM);
+	addManyToManyRelationShip(ICVersion.class,TABLENAME_ICFILE_ICVERSION);
 
     addMetaDataRelationship();//can have extra info in the ic_metadata table
 
@@ -335,5 +346,34 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,Treea
     }
     else throw new FinderException("File was not found");
   }
+  
+  
+  public Integer ejbFindEntityOfSpecificVersion(ICVersion version) throws FinderException{
+  	ICVersionQuery query = new ICVersionQuery();
+  	query.appendFindEntityOfSpecificVersionQuery(TABLENAME_ICFILE_ICVERSION,version);
+  	
+  	return (Integer)this.idoFindOnePKByQuery(query);
+  }
+  
+  /**
+   * @deprecated Legacy
+   * @return
+   * @throws FinderException
+   */
+  public  Collection ejbFindAllDescendingOrdered() throws FinderException {
+	String query = "select * from "+this.getTableName()+" order by "+getIDColumnName()+" desc";
+	return idoFindPKsBySQL(query);
+  }
+  
+  public Object ejbFindRootFolder() throws FinderException {
+		//EntityFinder.findAllByColumn(file,com.idega.core.data.ICFileBMPBean.getColumnNameName(),com.idega.core.data.ICFileBMPBean.IC_ROOT_FOLDER_NAME,com.idega.core.data.ICFileBMPBean.getColumnNameMimeType(),com.idega.core.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
+		IDOQuery query = idoQuery();
+		query.appendSelectAllFrom(this);
+		query.appendWhereEqualsQuoted(ICFileBMPBean.getColumnNameName(), ICFileBMPBean.IC_ROOT_FOLDER_NAME);
+		query.appendAndEqualsQuoted(com.idega.core.data.ICFileBMPBean.getColumnNameMimeType(),com.idega.core.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
+
+		return idoFindOnePKByQuery(query);
+  }
+  
 
 }

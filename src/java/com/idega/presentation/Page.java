@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.78 2003/06/13 15:47:05 aron Exp $
+ *  $Id: Page.java,v 1.79 2003/07/01 14:07:19 gummi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -972,7 +972,7 @@ public class Page extends PresentationObjectContainer {
 
 		/* get the files cached url */
 		if (styleFile != null) {
-			setStyleSheetURL(MediaBusiness.getMediaURL(styleFile.getID(), iwc.getApplication()));
+			setStyleSheetURL(MediaBusiness.getMediaURL(((Integer)styleFile.getPrimaryKey()).intValue(), iwc.getApplication()));
 		}
 	}
 

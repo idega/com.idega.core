@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.idega.data.CacheableEntity;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.util.FileUtil;
 import com.idega.util.StringHandler;
@@ -253,8 +254,8 @@ public class IWCacheManager {
     cacheTable(entity,entity.getCacheKey());
   }
 
-/** caches a single entity of type IDOLegacyEntity **/
-  public void cacheEntity(IDOLegacyEntity entity, String cacheKey){
+/** caches a single entity of type IDOEntity **/
+  public void cacheEntity(IDOEntity entity, String cacheKey){
     if( entityMaps == null ){
       entityMaps = new HashMap();
     }

@@ -37,7 +37,7 @@ private PresentationObject leftObject,rightObject;
       rightObject = iwb.getImage("arrowright.gif");
     if(fileFolder == null && fileId > 1){
       try {
-        fileFolder = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHomeLegacy(ICFile.class)).findByPrimaryKeyLegacy(fileId);
+        fileFolder = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHome(ICFile.class)).findByPrimaryKey(new Integer(fileId));
       }
       catch (Exception ex) {
       }
@@ -71,7 +71,7 @@ private PresentationObject leftObject,rightObject;
     // iterator work
 
       Image image = new Image();
-      name = "p_"+String.valueOf(fileFolder.getID());
+      name = "p_"+fileFolder.getPrimaryKey().toString();
 
       try{
 
@@ -85,7 +85,7 @@ private PresentationObject leftObject,rightObject;
 
       }
       if(fileImage !=null){
-        image = new Image(fileImage.getID());
+        image = new Image(((Integer)fileImage.getPrimaryKey()).intValue());
         if ( image != null ) {
           if ( width > 0 )
             image.setWidth(width);
@@ -94,7 +94,7 @@ private PresentationObject leftObject,rightObject;
           if ( alt != null )
             image.setAlt(alt);
         }
-        urls.add(MediaBusiness.getMediaURL(fileImage.getID(),iwc.getApplication()));
+        urls.add(MediaBusiness.getMediaURL(((Integer)fileImage.getPrimaryKey()).intValue(),iwc.getApplication()));
         image.setName(name);
         T.add(image,1,imageRow);
         }
@@ -106,7 +106,7 @@ private PresentationObject leftObject,rightObject;
       while (iter.hasNext()) {
         fileImage = (ICFile)iter.next();
         try{
-          String url = MediaBusiness.getMediaURL(fileImage.getID(),iwc.getApplication());
+          String url = MediaBusiness.getMediaURL(((Integer)fileImage.getPrimaryKey()).intValue(),iwc.getApplication());
           if(!urls.contains(url))
             urls.add(url);
         }

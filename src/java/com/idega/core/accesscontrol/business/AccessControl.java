@@ -208,7 +208,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
   public boolean isOwner(ICFile file, IWUserContext iwc)throws Exception{
-    return isOwner(AccessController.CATEGORY_FILE_ID, Integer.toString(file.getID()),iwc);
+    return isOwner(AccessController.CATEGORY_FILE_ID, file.getPrimaryKey().toString(),iwc);
   }
   
 	public boolean isOwner(Group group, IWUserContext iwc)throws Exception{
@@ -1451,7 +1451,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
    * @todo implement setAsOwner(ICFile file, IWUserContext iwc)throws Exception
    */
   public void setAsOwner(ICFile file, int groupId, IWUserContext iwc)throws Exception {
-    setPermission(AccessController.CATEGORY_FILE_ID,iwc,Integer.toString(groupId),Integer.toString(file.getID()),AccessControl.PERMISSION_KEY_OWNER,Boolean.TRUE);
+    setPermission(AccessController.CATEGORY_FILE_ID,iwc,Integer.toString(groupId),file.getPrimaryKey().toString(),AccessControl.PERMISSION_KEY_OWNER,Boolean.TRUE);
   }
   
 	public void setAsOwner(Group group, int groupId, IWUserContext iwc)throws Exception {

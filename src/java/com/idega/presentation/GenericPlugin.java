@@ -313,7 +313,7 @@ public void print(IWContext iwc)throws IOException{
 
     if(file!=null) {
 
-      setURL(MediaBusiness.getMediaURL(file.getID(),iwc.getApplication()));
+      setURL(MediaBusiness.getMediaURL(file,iwc.getApplication()));
 
     }
 

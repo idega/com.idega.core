@@ -506,7 +506,7 @@ private void getHTMLImage(IWContext iwc){//optimize by writing in pure html
    *
    */
    // if( ((image!=null) && (image.getID()!=-1)) ){//(|| ((image2!=null) && (image2.getID()!=-1)) ){//begin debug
-if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()!=-1)) ){//begin debug
+if( ((image!=null) && (image.getPrimaryKey()!= null)) || ((image2!=null) && (image2.getID()!=-1)) ){//begin debug
 
       String texti = null;
       String link = null;

@@ -5,10 +5,11 @@ import java.util.Collection;
 import java.util.Locale;
 
 import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDOLegacyEntity;
 import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORemoveRelationshipException;
 
-public interface ICCategory extends com.idega.data.TreeableEntity,com.idega.core.business.Category
+public interface ICCategory extends com.idega.data.TreeableEntity,IDOLegacyEntity,com.idega.core.business.Category
 {
  public void setValid(boolean p0);
  public boolean getValid();

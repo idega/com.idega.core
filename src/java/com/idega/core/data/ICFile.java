@@ -1,7 +1,7 @@
 package com.idega.core.data;
 
 
-public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity
+public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity,com.idega.data.MetaDataCapable
 {
  public java.sql.Timestamp getCreationDate();
  public boolean getDeleted();
@@ -33,4 +33,5 @@ public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.Treeable
  public void setName(java.lang.String p0);
  public void superDelete()throws java.sql.SQLException;
  public void unDelete(boolean p0)throws java.sql.SQLException;
+ public void delete()throws java.sql.SQLException;
 }

@@ -4,6 +4,11 @@ package com.idega.core.data;
 
 import java.sql.SQLException;
 
+import javax.ejb.CreateException;
+
+import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDOLookupException;
+
 
 
 
@@ -140,7 +145,7 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
 
 
-  public void insertStartData() {
+  public void insertStartData() throws IDOAddRelationshipException {
 
     try {
 
@@ -160,7 +165,7 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
 
 
-      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHomeLegacy(ICFile.class)).createLegacy();
+      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHome(ICFile.class)).create();
 
       file.setName("Applications");
 
@@ -168,10 +173,10 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
       file.setDescription("The default folder for applications");
 
-      file.insert();
+      file.store();
 
-      file.addTo(cat);
-
+      //file.addTo(cat);
+	  ((ICFileCategoryBMPBean)cat).idoAddTo(file);
 
 
       cat = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy();
@@ -184,7 +189,7 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
 
 
-      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHomeLegacy(ICFile.class)).createLegacy();
+      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHome(ICFile.class)).create();
 
       file.setName("Audio");
 
@@ -192,10 +197,10 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
       file.setDescription("The default folder for audio and music");
 
-      file.insert();
+      file.store();
 
-      file.addTo(cat);
-
+      //file.addTo(cat);
+	  ((ICFileCategoryBMPBean)cat).idoAddTo(file);
 
 
       cat = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy();
@@ -208,7 +213,7 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
 
 
-      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHomeLegacy(ICFile.class)).createLegacy();
+      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHome(ICFile.class)).create();
 
       file.setName("Documents");
 
@@ -216,10 +221,10 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
       file.setDescription("The default folder for documents");
 
-      file.insert();
+      file.store();
 
-      file.addTo(cat);
-
+      //file.addTo(cat);
+	  ((ICFileCategoryBMPBean)cat).idoAddTo(file);
 
 
       cat = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy();
@@ -232,7 +237,7 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
 
 
-      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHomeLegacy(ICFile.class)).createLegacy();
+      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHome(ICFile.class)).create();
 
       file.setName("Flash");
 
@@ -240,10 +245,10 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
       file.setDescription("The default folder for flash movies");
 
-      file.insert();
+      file.store();
 
-      file.addTo(cat);
-
+      //file.addTo(cat);
+	  ((ICFileCategoryBMPBean)cat).idoAddTo(file);
 
 
       cat = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy();
@@ -256,7 +261,7 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
 
 
-      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHomeLegacy(ICFile.class)).createLegacy();
+      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHome(ICFile.class)).create();
 
       file.setName("Images");
 
@@ -264,10 +269,10 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
       file.setDescription("The default folder for images");
 
-      file.insert();
+      file.store();
 
-      file.addTo(cat);
-
+      //file.addTo(cat);
+	  ((ICFileCategoryBMPBean)cat).idoAddTo(file);
 
 
       cat = ((com.idega.core.data.ICFileCategoryHome)com.idega.data.IDOLookup.getHomeLegacy(ICFileCategory.class)).createLegacy();
@@ -280,7 +285,7 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
 
 
-      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHomeLegacy(ICFile.class)).createLegacy();
+      file = ((com.idega.core.data.ICFileHome)com.idega.data.IDOLookup.getHome(ICFile.class)).create();
 
       file.setName("Movies");
 
@@ -288,19 +293,19 @@ public class ICFileCategoryBMPBean extends com.idega.data.GenericEntity implemen
 
       file.setDescription("The default folder for movies");
 
-      file.insert();
+      file.store();
 
-      file.addTo(cat);
+      //file.addTo(cat);
+	  ((ICFileCategoryBMPBean)cat).idoAddTo(file);
 
 
-
-    }
-
-    catch (SQLException sql) {
-
+    } catch (SQLException sql) {
       sql.printStackTrace(System.err);
-
-    }
+    } catch (IDOLookupException e) {
+		e.printStackTrace(System.err);
+	} catch (CreateException e) {
+		e.printStackTrace(System.err);
+	}
 
   }
 

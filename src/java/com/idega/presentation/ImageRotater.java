@@ -41,9 +41,9 @@ private String _alt;
 
       try {
 	if ( folder )
-	  image = new Image(((ICFile)(imageVector.elementAt(num))).getID());
+	  image = new Image(((Integer)((ICFile)(imageVector.elementAt(num))).getPrimaryKey()).intValue());
 	else
-	  image = new Image(_imageFile.getID());
+	  image = new Image(((Integer)_imageFile.getPrimaryKey()).intValue());
       }
       catch (SQLException e) {
 	e.printStackTrace(System.err);
