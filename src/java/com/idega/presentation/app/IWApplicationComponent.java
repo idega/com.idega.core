@@ -6,8 +6,11 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 
 /**
- * @deprecated Deprecated class - components should now use the iw_applicationcomponent style class
- * 
+ * <p>
+ * Class that presents a "application component" or a part of a application on screen.<br>
+ * This is used e.g. by the Builder but is mostly irrelevant in new versions - can now be accomplished by setting the style
+ * class "iw_applicationcomponent".
+ * </p>
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
