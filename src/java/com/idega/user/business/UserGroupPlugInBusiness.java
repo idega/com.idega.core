@@ -59,7 +59,7 @@ public interface UserGroupPlugInBusiness extends IBOService {
    * @param targetGroup target, where the user should be moved to.
    * @return a message that says what is wrong else null.
    */
-    public String isUserAssignableFromGroupToGroup(User user, Group sourceGroup, Group targetGroup);
+    public String isUserAssignableFromGroupToGroup(User user, Group sourceGroup, Group targetGroup) throws RemoteException;
     
    /** Checks if the user is suited for the specified target.
    * 
@@ -67,5 +67,5 @@ public interface UserGroupPlugInBusiness extends IBOService {
    * @param targetGroup target
    * @return a message that says what is wrong else null.
    */
-    public String isUserSuitedForGroup(User user, Group targetGroup);
+    public String isUserSuitedForGroup(User user, Group targetGroup) throws RemoteException;
 }
