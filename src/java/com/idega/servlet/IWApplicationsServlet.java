@@ -9,6 +9,7 @@ import com.idega.jmodule.object.Image;
 import com.idega.jmodule.object.interfaceobject.Form;
 import com.idega.development.presentation.Localizer;
 import com.idega.jmodule.object.interfaceobject.DropdownMenu;
+import com.idega.jmodule.object.textObject.Text;
 
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.jmodule.object.app.IWControlCenter;
@@ -106,12 +107,17 @@ private IWResourceBundle iwrb;
 
       if(isAdministrator){
         IWControlCenter iwcc = new IWControlCenter();
-        mainTable.mergeCells(1,2,1,3);
-        mainTable.setHeight(2,"225");
+        mainTable.setHeight(2,"195");
         mainTable.setAlignment(1,2,"center");
         mainTable.setVerticalAlignment(1,2,"middle");
         mainTable.add(iwcc,1,2);
         headerImage = iwrb.getImage("/login/header_app_suite.jpg","",323,196);
+
+        Login login = new Login();
+          login.setLogoutButton(iwrb.getImage("/login/logout.gif"));
+          login.setHeight("25");
+        mainTable.add(login,1,3);
+
       }
 
       else {
@@ -130,7 +136,7 @@ private IWResourceBundle iwrb;
           login.setPasswordTextSize(1);
           login.setHeight("130");
           login.setStyle("font-family: Verdana; font-size: 8pt; border: 1 solid #000000");
-          login.setInputLength(10);
+          login.setInputLength(13);
           login.setLayout(Login.LAYOUT_STACKED);
           loginTable.add(login,1,1);
         mainTable.add(loginTable,1,2);
