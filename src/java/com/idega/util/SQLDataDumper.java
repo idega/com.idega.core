@@ -217,7 +217,7 @@ public class SQLDataDumper {
 		insertInto.append(" SET ");
 		
 		StringBuffer line;
-		String item,first_column, firstValue = null;
+		String item, firstValue = null;
 		while (rs.next()) {				
 			line = new StringBuffer(insertInto.toString());
 			for (int i = 1; i < columns; i++) {
