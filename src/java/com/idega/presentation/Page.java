@@ -1,7 +1,7 @@
 /*
- *  $Id: Page.java,v 1.142 2005/03/08 10:23:07 gimmi Exp $
- *
- *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
+ *  $Id: Page.java,v 1.143 2005/03/08 12:59:04 tryggvil Exp $
+ *  Created in 2000 by Tryggvi Larusson
+ *  Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
  *  This software is the proprietary information of Idega hf.
  *  Use is subject to license terms.
@@ -48,15 +48,18 @@ import com.idega.util.URLUtil;
 import com.idega.util.datastructures.QueueMap;
 
 /**
- * An instance of this class is always a top level object in UIComponent tree in an HTML presentation in idegaWeb.
+ * <p>
+ * An instance of this class (or subclass) is always a top level object in UIComponent tree in an HTML presentation in idegaWeb.
  * This object maps to and renders the 
  * <pre>
- * <HTML><HEAD>...</HEAD> <BODY>... </BODY></HTML>
+ * &lt;HTML&gt;&lt;HEAD&gt;...&lt;/HEAD&gt; &lt;BODY&gt;... &lt;/BODY&gt;&lt;/HTML&gt;
  * </pre>
  * tags in HTML and renders the children inside the body tags.
+ * </p>
+ *  Last modified: $Date: 2005/03/08 12:59:04 $ by $Author: tryggvil $
  * 
- *@author     <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- *@version    1.2
+ * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
+ * @version $Revision: 1.143 $
  */
 public class Page extends PresentationObjectContainer {
 	
