@@ -1,5 +1,5 @@
 /*
- * $Id: EntityBulkUpdater.java,v 1.7 2002/04/06 19:07:43 tryggvil Exp $
+ * $Id: EntityBulkUpdater.java,v 1.8 2003/05/23 23:47:40 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -123,6 +123,11 @@ public class EntityBulkUpdater {
       return;
     try {
       c = ConnectionBroker.getConnection();
+      if( c.getAutoCommit() ){
+				c.setAutoCommit(false);
+      }
+
+      
       if (insert_ != null) {
         Iterator i = insert_.iterator();
         while (i.hasNext()) {
@@ -179,6 +184,7 @@ public class EntityBulkUpdater {
 
       c.commit();
 
+
     }
     catch(SQLException e) {
       try {
@@ -190,8 +196,16 @@ public class EntityBulkUpdater {
       System.err.println("EntityBulkUpdater : ROLLBACK FAILED");
     }
     finally {
-     if ( c != null )
-       ConnectionBroker.freeConnection(c);
+     if ( c != null ){
+				try {
+					c.setAutoCommit(true);
+				}
+				catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+				ConnectionBroker.freeConnection(c);
+     }
+
     }
   }
 
