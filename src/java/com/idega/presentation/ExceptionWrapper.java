@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionWrapper.java,v 1.4 2003/05/06 20:28:45 laddi Exp $
+ * $Id: ExceptionWrapper.java,v 1.5 2003/05/15 06:17:29 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -22,6 +22,7 @@ public class ExceptionWrapper extends ExpandContainer {
 
   private Exception _exception;
   private String _errorStyle;
+  private String _thrower;
 
   public ExceptionWrapper() {
   	super();
@@ -33,15 +34,20 @@ public class ExceptionWrapper extends ExpandContainer {
 	}
 
   public ExceptionWrapper(Exception ex, PresentationObject thrower) {
+    super();
     setException(ex);
-    add(thrower);
+    _thrower = thrower.getClassName();
+    //add(thrower);
   }
 
 	protected void initialize(IWContext iwc) {
 		super.initialize(iwc);
 		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
 		
-		Text error = new Text(iwrb.getLocalizedString("error.exception_thrown","An exception was thrown"));
+		String errorMessage = iwrb.getLocalizedString("error.exception_thrown","An exception was thrown");
+		if (_thrower != null)
+			errorMessage += ": "+_thrower;
+		Text error = new Text(errorMessage);
 		if (_exception != null) {
 			PreformattedText stackTrace = new PreformattedText(getStackTrace(_exception));
 			if (_errorStyle != null)
@@ -55,6 +61,7 @@ public class ExceptionWrapper extends ExpandContainer {
 	
 	//TODO: Return the stack trace instead...
 	private String getStackTrace(Exception exception) {
+		exception.printStackTrace(System.err);
 		return exception.getMessage();
 	}
 
