@@ -2,95 +2,52 @@
 
 /*
 
-*Copyright 2000 idega.is All Rights Reserved.
+ *Copyright 2000 idega.is All Rights Reserved.
 
-*/
-
-
+ */
 
 package com.idega.presentation.jsp;
 
+import java.io.IOException;
 
-
-import java.io.*;
-
-import javax.servlet.*;
-
-import javax.servlet.http.*;
-
-import javax.servlet.jsp.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.jsp.JspPage;
 
 import com.idega.servlet.IWPresentationServlet;
 
-
-
 /**
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
+ * @version 1.2
+ */
 
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+public class JSPModule extends IWPresentationServlet implements JspPage {
 
-*@version 1.2
-
-*/
-
-public class JSPModule extends IWPresentationServlet implements JspPage{
-
-
-
-	public void jspInit(){
-
-          /*try{
-
-                  super.init();
-
-          }
-
-          catch(ServletException e){
-
-          }*/
-
+	public void jspInit() {
+		/*
+		 * try{ super.init(); } catch(ServletException e){ }
+		 */
 	}
 
-
-
-
-
-	public void __theService(HttpServletRequest request, HttpServletResponse response)
-
-	throws ServletException,IOException{
-
-                try{
-
-		  _jspService(request,response);
-
-                }
-
-                catch(Exception ex){
-
-                  handleException(ex,this);
-
-                }
-
+	public void __theService(HttpServletRequest request,
+			HttpServletResponse response)
+	throws ServletException, IOException {
+		try {
+			_jspService(request, response);
+		}
+		catch (Exception ex) {
+			handleException(ex, this);
+		}
 	}
 
-
-
-	public void jspDestroy(){
-
+	public void jspDestroy() {
 		super.destroy();
-
 	}
 
-
-
-
-
-	public void _jspService(HttpServletRequest request,HttpServletResponse response)throws ServletException, IOException{
-
-
-
+	public void _jspService(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 	}
-
-
 
 }
 
