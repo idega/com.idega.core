@@ -761,6 +761,18 @@ public void setCacheWriter(PrintWriter writer){
     return Request.getContentType();
   }
 
+  public String getRemoteIpAddress(){
+    return Request.getRemoteAddr();
+  }
+
+  public String getRemoteHostName(){
+    return Request.getRemoteHost();
+  }
+
+  public String getRemoteUser(){
+    return Request.getRemoteUser();
+  }
+
   public boolean hasPermission(String permissionKey, PresentationObject obj){
     try {
       return this.getAccessController().hasPermission(permissionKey,obj,this);
