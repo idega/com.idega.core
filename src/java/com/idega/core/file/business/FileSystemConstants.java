@@ -13,9 +13,9 @@ package com.idega.core.file.business;
 public class FileSystemConstants
 {
 	public static final String STANDARD_IW_BUNDLE_IDENTIFIER="com.idega.block.media";
-	public static final String ZOOMIMAGE = "zoomimage";
-	public static final String ZOOMPAGE = "zoompage";
-	public static final String ZOOMWIDTH = "zoomwidth";
-	public static final String ZOOMHEIGHT = "zoomheight";
 	public static final String PARAM_FILE_ID="media_id";
+
+  public static final String ZOOMIMAGE = "zoom_image", ZOOMHEIGHT = "zoom_height",
+  ZOOMWIDTH = "zoom_width", ZOOMPAGE = "zoom_page";
+
 }
