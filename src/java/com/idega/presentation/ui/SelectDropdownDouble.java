@@ -33,6 +33,7 @@ public class SelectDropdownDouble extends InterfaceObject {
 	protected Map _secondaryMap;
 	
 	private int _spaceBetween = 3;
+	private int verticalSpaceBetween = 5;
 	private SelectDropdownDouble _objectToDisable;
 	private String _disableValue;
 	
@@ -83,7 +84,7 @@ public class SelectDropdownDouble extends InterfaceObject {
 				table.add(primaryLabel,1,1);
 			if(secondaryLabel!=null)
 				table.add(secondaryLabel,1,2);
-			table.setWidth(2,_spaceBetween);
+			table.setHeight(2,verticalSpaceBetween);
 			table.add(getPrimaryDropdown(),3,1);
 			table.add(getSecondaryDropdown(),3,2);
 		
@@ -293,5 +294,11 @@ public class SelectDropdownDouble extends InterfaceObject {
 	 */
 	public void setSecondaryLabel(Text secondaryLabel) {
 		this.secondaryLabel = secondaryLabel;
+	}
+	/**
+	 * @param verticalSpaceBetween The verticalSpaceBetween to set.
+	 */
+	public void setVerticalSpaceBetween(int verticalSpaceBetween) {
+		this.verticalSpaceBetween = verticalSpaceBetween;
 	}
 }
