@@ -142,9 +142,11 @@ public class IWBundle implements java.lang.Comparable {
 	propertyList = new IWPropertyList(getPropertiesRealPath(),propertyFileName,false);
       }
 
-      String SystemClassPath = System.getProperty("java.class.path");
-      String newClassPath = SystemClassPath+File.pathSeparator+this.getClassesRealPath();
-      System.setProperty("java.class.path",newClassPath);
+      StringBuffer SystemClassPath = new StringBuffer(System.getProperty("java.class.path"));
+      SystemClassPath.append(File.pathSeparator);
+      SystemClassPath.append(getClassesRealPath());
+
+      System.setProperty("java.class.path",SystemClassPath.toString());
 
       installComponents();
       try{

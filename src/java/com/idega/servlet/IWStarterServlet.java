@@ -137,19 +137,6 @@ public class IWStarterServlet extends GenericServlet
 	}
 
 	public void startIdegaWebApplication(){
-          Properties prop = System.getProperties();
-
-      // Collection by Traverse wizard 2.02:
-      Iterator property =    prop.keySet().iterator();
-      String x;
-      while (property.hasNext()) {
-       x= (String)property.next();
-       System.out.println("System.getProperty("+x+") = "+prop.getProperty(x));
-
-         //with x
-       } //end v
-
-
 	    try{
 	      addToClassPath();
 	    }

@@ -511,8 +511,6 @@ public class IWMainApplication{//implements ServletContext{
     unload();
 
     String prePath = System.getProperty("user.dir");//return /tomcat/bin
-    //String classPath = System.getProperty("java.class.path");
-    //System.getProperty(user.name) = eiki cool!
     System.out.println("IWMainApplication: restarting application server at : " +prePath);
 
     try{//windows
@@ -531,19 +529,9 @@ public class IWMainApplication{//implements ServletContext{
       ex.printStackTrace();
       return false;
     }
-  /*
-      Properties prop = System.getProperties();
 
-      // Collection by Traverse wizard 2.02:
-      Iterator property =    prop.keySet().iterator();
-      String x;
-      while (property.hasNext()) {
-       x= (String)property.next();
-       System.out.println("System.getProperty("+x+") = "+prop.getProperty(x));
 
-         //with x
-       } //end v
-*/
+
   }
 
   public void startAccessController(){
