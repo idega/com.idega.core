@@ -59,6 +59,11 @@ public class QueueSet extends HashSet implements Set {
 		return super.add(obj);
 	}
 	
+	public boolean addAtBeginning(Object obj){
+		_set.add(0,obj);
+		return super.add(obj);
+	}
+	
 	public boolean remove(Object obj){
 		_set.remove(obj);
 		return super.remove(obj);

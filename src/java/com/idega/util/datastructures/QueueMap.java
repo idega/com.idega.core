@@ -23,7 +23,7 @@ import java.util.Set;
  */
 public class QueueMap extends HashMap implements Map {
 	
-	private Set _keySet = new QueueSet();
+	private QueueSet _keySet = new QueueSet();
 	private List _valueList = new ArrayList();
 	
 	/**
@@ -58,6 +58,12 @@ public class QueueMap extends HashMap implements Map {
 	public Object put(Object key, Object value){
 		_keySet.add(key);
 		_valueList.add(value);
+		return super.put(key,value);
+	}
+	
+	public Object putAtBeginning(Object key, Object value){
+		_keySet.addAtBeginning(key);
+		_valueList.add(0,value);
 		return super.put(key,value);
 	}
 

@@ -221,6 +221,11 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroup.getPrimaryKey().toString()+" and "+this.GROUP_ID_COLUMN+"="+group.getPrimaryKey().toString());
   }
   
+  public Collection ejbFindGroupsRelationshipsContainingGroupsAndStatus(Group group,Group relatedGroup, String status)throws FinderException{
+	return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroup.getPrimaryKey().toString()+" and "+this.GROUP_ID_COLUMN+"="+group.getPrimaryKey().toString()+" and "+this.STATUS_COLUMN+" like '"+status+"'");
+  }
+  
+  
 	/**
 	 * Finds all relationships specified only in one direction with groupID and relationType as specified
 	 */
