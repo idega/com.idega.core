@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.66 2003/04/03 20:36:55 laddi Exp $
+ * $Id: PresentationObject.java,v 1.67 2003/04/04 11:36:21 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1465,7 +1465,7 @@ public class PresentationObject extends Object implements Cloneable {
 	{
 		try
 		{
-			this.setStyleAttribute("width:" + width + "px");
+			this.setStyleAttribute("width:" + Integer.parseInt(width) + "px");
 		}
 		catch (NumberFormatException e)
 		{
@@ -1480,7 +1480,7 @@ public class PresentationObject extends Object implements Cloneable {
 	{
 		try
 		{
-			this.setStyleAttribute("height:" + height + "px");
+			this.setStyleAttribute("height:" + Integer.parseInt(height) + "px");
 		}
 		catch (NumberFormatException e)
 		{
