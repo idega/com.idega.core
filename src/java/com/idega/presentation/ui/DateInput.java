@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.39 2004/03/05 17:06:42 sigtryggur Exp $
+ * $Id: DateInput.java,v 1.40 2004/03/05 17:33:02 sigtryggur Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -20,6 +20,7 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.text.TextSoap;
 
 import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -779,11 +780,8 @@ public class DateInput extends InterfaceObject implements InputHandler{
 				return null;
 			}
 			else {
-				Date date = new Date();
-				date.setYear(Integer.parseInt(dateString.substring(2,4))+100);
-				date.setMonth(Integer.parseInt(dateString.substring(5,7))-1);
-				date.setDate(Integer.parseInt(dateString.substring(8,10)));
-				return date;
+				SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd");
+				return formatter.parse(dateString);
 			}		
 		}
 		else
