@@ -16,7 +16,31 @@ import java.util.logging.Logger;
  */
 public class LoggingHelper {
 	
-	
+    private static String NEWLINE="\n";
+    private static String TAB="\t";
+    private static String COLON = ":";
+    private static String COLON_WITH_SPACE = " : ";
+    private static String DOT = ".";
+    /**
+     * Logs the exception to the anonymous logger with loglevel Warning:
+     * @param e the Exception to log
+     */
+	public static void logException(Exception e){
+	    Logger logger = Logger.getAnonymousLogger();
+		logException(e,null,logger,Level.WARNING);
+	}
+    /**
+     * Logs the exception to the default logger of Object catcher with loglevel Warning:
+     * @param e the Exception to log
+     */
+	public static void logException(Exception e,Object catcher){
+	    Logger logger = Logger.getLogger(catcher.getClass().getName());
+		logException(e,catcher,logger,Level.WARNING);
+	}
+    /**
+     * Logs the exception to the specified logger with loglevel Warning:
+     * @param e the Exception to log
+     */
 	public static void logException(Exception e,Object catcher,Logger logger){
 		logException(e,catcher,logger,Level.WARNING);
 	}
@@ -25,11 +49,17 @@ public class LoggingHelper {
 		//e.printStackTrace();
 		StackTraceElement[] ste = e.getStackTrace();
 		StringBuffer buf = new StringBuffer(e.getClass().getName());
-		buf.append(" : ");
+		buf.append(COLON_WITH_SPACE);
+		buf.append(e.getMessage());
+		buf.append(NEWLINE);
 		if(ste.length>0){
+		    buf.append(TAB);
+			buf.append(ste[0].getClassName());
+			buf.append(DOT);
 			buf.append(ste[0].getMethodName());
-			buf.append(":");
+			buf.append(COLON);
 			buf.append(ste[0].getLineNumber());
+			buf.append(NEWLINE);
 		}
 		String str = buf.toString();
 		logger.log(level,str);
