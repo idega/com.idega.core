@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationProductInfo.java,v 1.4 2005/02/16 09:27:51 tryggvil Exp $
+ * $Id: ApplicationProductInfo.java,v 1.5 2005/02/17 17:52:26 tryggvil Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.util.IWTimestamp;
 /**
  *  This class holds information about the application product installed.<br>
  * 
- *  Last modified: $Date: 2005/02/16 09:27:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/02/17 17:52:26 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ApplicationProductInfo {
 	
@@ -191,7 +191,7 @@ public class ApplicationProductInfo {
 	
 	public boolean isMajorVersionEqualOrHigherThan(int version){
 		int majorVersion = getMajorVersion();
-		return (version>=majorVersion);
+		return (version<=majorVersion);
 	}
 	
 }
