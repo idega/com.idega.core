@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.81 2005/03/08 13:50:27 tryggvil Exp $
+ * $Id: Form.java,v 1.82 2005/03/09 01:33:11 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
@@ -36,10 +38,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2005/03/08 13:50:27 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/09 01:33:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.81 $
+ * @version $Revision: 1.82 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -59,29 +61,59 @@ public class Form
 	private static final String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER;
 	private static String COLONSLASHSLASH = "://";
 	private static String SLASH = "/";
-
+	private static String HTTP = "http";
+	private static String HTTPS = "https";
 	//instance variables:
-	private Window window;
 	private List maintainedParameters;
 	private boolean maintainAllParameters;
-	private PresentationObject submitToObject;
-	// private Parameter controlParameter;
 	private Map controlParameters;
 	private Class windowClass;
 	private int icObjectInstanceIDForWindow = -1;
 	private Class classToInstanciateAndSubmitTo;
 	private int _submitToPage = -1;
-	private Script associatedScript = null;
 	private boolean sendToHTTPS = false;
-	private static String FORM_EVENT_PARAMETER = "idega_special_form_event";
-	private static String HTTP = "http";
-	private static String HTTPS = "https";
 	private boolean _disableObject;
 	private Map _objectsToDisable;
 	private boolean _disableOnSubmit;
 	private boolean showLoadingLayerOnSubmit = true;
 	private boolean printLoadingLayer = false;
 
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[14];
+		values[0] = super.saveState(ctx);
+		values[1] = maintainedParameters;
+		values[2] = Boolean.valueOf(maintainAllParameters);
+		values[3] = controlParameters;
+		values[4] = windowClass;
+		values[5] = new Integer(icObjectInstanceIDForWindow);
+		values[6] = classToInstanciateAndSubmitTo;
+		values[7] = new Integer(_submitToPage);
+		values[8] = Boolean.valueOf(sendToHTTPS);
+		values[9] = Boolean.valueOf(_disableObject);
+		values[10] = _objectsToDisable;
+		values[11] = Boolean.valueOf(_disableOnSubmit);
+		values[12] = Boolean.valueOf(showLoadingLayerOnSubmit);
+		values[13] = Boolean.valueOf(printLoadingLayer);
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		maintainedParameters = (List)values[1];
+		maintainAllParameters = ((Boolean)values[2]).booleanValue();
+		controlParameters = (Map)values[3];
+		windowClass = (Class)values[4];
+		icObjectInstanceIDForWindow = ((Integer)values[5]).intValue();
+		classToInstanciateAndSubmitTo = (Class)values[6];
+		_submitToPage = ((Integer)values[7]).intValue();
+		sendToHTTPS = ((Boolean)values[8]).booleanValue();
+		_disableObject = ((Boolean)values[9]).booleanValue();
+		_objectsToDisable = (Map)values[10];
+		_disableOnSubmit = ((Boolean)values[11]).booleanValue();
+		showLoadingLayerOnSubmit = ((Boolean)values[12]).booleanValue();
+		printLoadingLayer = ((Boolean)values[13]).booleanValue();
+	}
+	
 	/**
 	 * Defaults to send to the page itself and the POST method
 	 */
@@ -102,6 +134,7 @@ public class Form
 
 	public Form(Class classToInstanciateAndSubmitTo) {
 		// this(IWMainApplication.getObjectInstanciatorURL(classToInstanciateAndSubmitTo));
+		setTransient(false);
 	}
 
 	public Form(String actionURL, String method) {
@@ -117,6 +150,7 @@ public class Form
 		// this(IWMainApplication.getObjectInstanciatorURL(classToInstanciateAndSubmitTo),method);
 		this.setMethod(method);
 		this.setClassToInstanciateAndSendTo(classToInstanciateAndSubmitTo);
+		setTransient(false);
 	}
 
 	/**
@@ -130,8 +164,9 @@ public class Form
 	}
 
 	public void initialize() {
-		add(new Parameter(FORM_EVENT_PARAMETER, this.getID()));
-		this.add(new HiddenInput(IWMainApplication.IWEventSessionAddressParameter, ""));
+		//add(new Parameter(FORM_EVENT_PARAMETER, this.getID()));
+		//this.add(new HiddenInput(IWMainApplication.IWEventSessionAddressParameter, ""));
+		setTransient(false);
 	}
 
 	private void setOnAction(String actionType, String action) {
@@ -169,8 +204,25 @@ public class Form
 		return getMarkupAttribute("target");
 	}
 
+	//TODO remove this variable declaration and move totally to facets:
+	//This variable is kept because of legacy reasons but should be replaced with a Facet
+	private Window oldPopupWindow;
 	protected void setWindow(Window window) {
-		this.window = window;
+		if(IWMainApplication.useJSF){
+			getFacets().put("popupwindow",window);
+		}
+		else{
+			this.oldPopupWindow = window;
+		}
+	}
+	
+	protected Window getWindow(){
+		if(IWMainApplication.useJSF){
+			return (Window)getFacet("popupwindow");
+		}
+		else{
+			return this.oldPopupWindow;
+		}
 	}
 
 	public void setMultiPart() {
@@ -238,9 +290,9 @@ public class Form
 			BuilderService bservice = getBuilderService(iwc);
 			this.setAction(bservice.getPageURI(_submitToPage));
 		}
-		if (window != null) {
+		if (getWindow() != null) {
 			// iwc.setSessionAttribute(IdegaWebHandler.windowOpenerParameter,window);
-			com.idega.servlet.WindowOpener.storeWindow(iwc, window);
+			com.idega.servlet.WindowOpener.storeWindow(iwc, getWindow());
 		}
 		if (_disableObject) {
 			getScript().addFunction("disableObject", "function disableObject (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].disabled=eval(value);\n	\t}\n	else\n	inputs.disabled=eval(value);\n}");
@@ -555,6 +607,22 @@ public class Form
 		 * String tempString = (String)enum.nextElement(); add(); } }
 		 */
 	}
+	
+	/**
+	 * Gets the Parameter object for the old idegaWeb event sytem.
+	 * <p>
+	 * TODO tryggvil describe method getEventParameter
+	 * </p>
+	 * @return
+	 */
+	protected UIComponent getEventParameter(){
+		Parameter parameter = (Parameter) getFacet(IWMainApplication.IWEventSessionAddressParameter);
+		if(parameter==null){
+			parameter = new Parameter(IWMainApplication.IWEventSessionAddressParameter,"");
+			getFacets().put(IWMainApplication.IWEventSessionAddressParameter,parameter);
+		}
+		return parameter;
+	}
 
 	public void print(IWContext iwc) throws Exception {
 		if (getScript().doesFunctionExist("checkSubmit")) {
@@ -569,12 +637,12 @@ public class Form
 		// if ( doPrint(iwc) ){
 
 		addTheMaintainedParameters(iwc);
-		if (window != null) {
+		if (getWindow() != null) {
 			// setAction(window.getURL(iwc)+"?idega_session_id="+iwc.getSession().getId());
-			setAction(window.getURL(iwc));
-			setTarget(window.getTarget());
+			setAction(getWindow().getURL(iwc));
+			setTarget(getWindow().getTarget());
 			// setTarget("#");
-			setOnSubmit(window.getCallingScriptStringForForm(iwc));
+			setOnSubmit(getWindow().getCallingScriptStringForForm(iwc));
 		}
 
 		if (getAction() == null) {
@@ -595,6 +663,9 @@ public class Form
 				add(getAssociatedFormScript());
 
 			println("<form " + (markup.equals(Page.HTML) ? "name=\"" + getName() + "\"" : "") + getMarkupAttributesString() + " >");
+			
+			UIComponent eventParameter = getEventParameter();
+			renderChild(iwc,eventParameter);
 			super.print(iwc);
 			print("</form>");
 		}
@@ -673,11 +744,11 @@ public class Form
 		try {
 			obj = (Form) super.clone();
 
-			if (this.submitToObject != null) {
-				obj.submitToObject = (PresentationObject) this.submitToObject.clone();
-			}
-			if (window != null) {
-				obj.window = (Window) this.window.clone();
+			//if (this.submitToObject != null) {
+			//	obj.submitToObject = (PresentationObject) this.submitToObject.clone();
+			//}
+			if (this.oldPopupWindow != null) {
+				obj.oldPopupWindow = (Window) this.oldPopupWindow.clone();
 			}
 
 			if (maintainedParameters != null) {
@@ -790,7 +861,7 @@ public class Form
 	protected void addControlParameter(Parameter parameter) {
 		Parameter param = (Parameter) getControlParameters().get(parameter.getName());
 		if (param == null) {
-			getControlParameters().put(parameter.getName(), parameter);
+			getControlParameters().put(parameter.getName(), parameter.getValueAsString());
 			add(parameter);
 		}
 	}
@@ -910,26 +981,39 @@ public class Form
 	 * 
 	 * @return Script
 	 */
+	//TODO remove this variable declaration and move totally to facets:
+	//This variable is kept because of legacy reasons but should be replaced with a Facet
+	private Script oldAssociatedScript;
 	public Script getAssociatedFormScript() {
+		Script associatedScript=null;
+		if(IWMainApplication.useJSF){
+			associatedScript = (Script) getFacet("form_associatedscript");
+		}
+		else{
+			associatedScript = oldAssociatedScript;
+		}
 		if (associatedScript == null) {
 			setAssociatedFormScript(new Script());
 		}
 		return associatedScript;
 	}
 
+	/**
+	 * Sets the associatedScript.
+	 * @param associatedScript The associatedScript to set
+	 */
+	public void setAssociatedFormScript(Script associatedScript) {
+		if(IWMainApplication.useJSF){
+			getFacets().put("form_associatedscript",associatedScript);
+		}
+		else{
+			oldAssociatedScript=associatedScript;
+		}
+	}
 	protected Script getScript() {
 		return getAssociatedFormScript();
 	}
 
-	/**
-	 * Sets the associatedScript.
-	 * 
-	 * @param associatedScript
-	 *          The associatedScript to set
-	 */
-	public void setAssociatedFormScript(Script associatedScript) {
-		this.associatedScript = associatedScript;
-	}
 
 	/**
 	 * Set the form to automatically send over to a corresponding HTTPS address
