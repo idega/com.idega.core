@@ -1,17 +1,11 @@
 package com.idega.core.accesscontrol.data;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Collection;
 
 import javax.ejb.FinderException;
 
-import com.idega.data.IDOQuery;
-import com.idega.data.IDOUtil;
 import com.idega.data.TreeableEntity;
 import com.idega.data.TreeableEntityBMPBean;
-import com.idega.user.data.Group;
-import com.idega.user.data.User;
-import com.idega.util.IWTimestamp;
 
 /**
  * Title:        ICPermissionTypeBMPBean
