@@ -627,4 +627,41 @@ public abstract class InterfaceObject extends PresentationObject {
 			return true;
 		return false;	
 	}
+
+	protected void setCheckSubmit() {
+		if (getScript().getFunction("checkSubmit") == null) {
+			getScript().addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
+		}
+	}
+	
+	/**
+	 * Sets a function to perform on submit of the parent form.  If the function returns
+	 * false the form will not submit.
+	 * @param functionName	The name of the function to check on submit.
+	 * @param function			The function to perform.
+	 * @param value				A value to use in the function.
+	 */
+	protected void setOnSubmitFunction(String functionName, String function, String value) {
+		setOnSubmitFunction(functionName, function, value, null);
+	}
+	
+	/**
+	 * Sets a function to perform on submit of the parent form.  If the function returns
+	 * false the form will not submit.
+	 * @param functionName	The name of the function to check on submit.
+	 * @param function			The function to perform.
+	 * @param value1				A primary value to use in the function.
+	 * @param value2				A seconday value to use in the function.
+	 */
+	protected void setOnSubmitFunction(String functionName, String function, String value1, String value2) {
+		if (getParentForm() != null) {
+			getParentForm().setOnSubmit("return checkSubmit(this)");
+			setCheckSubmit();
+			if (value2 != null)
+				getScript().addToFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "', '"+value2+"') == false ){\nreturn false;\n}\n");
+			else
+				getScript().addToFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "') == false ){\nreturn false;\n}\n");
+			getScript().addFunction(functionName, function);
+		}
+	}
 }
