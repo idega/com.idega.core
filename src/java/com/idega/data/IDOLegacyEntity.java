@@ -95,7 +95,7 @@ public interface IDOLegacyEntity extends IDOEntity {
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
-	public java.lang.String getNameOfMiddleTable(com.idega.data.IDOEntity p0, com.idega.data.IDOEntity p1);
+	public java.lang.String getNameOfMiddleTable(com.idega.data.IDOLegacyEntity p0, com.idega.data.IDOLegacyEntity p1);
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
