@@ -1,6 +1,5 @@
 package com.idega.core.category.business;
 
-import java.util.Map;
 
 
 public interface CategoryService extends com.idega.business.IBOService

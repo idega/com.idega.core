@@ -8,8 +8,6 @@ package com.idega.data;
 
 import java.rmi.RemoteException;
 import java.sql.SQLException;
-import java.util.Hashtable;
-import java.util.Map;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -23,7 +21,6 @@ import com.idega.core.localisation.data.ICLocale;
 import com.idega.core.version.data.ICItem;
 import com.idega.core.version.data.ICItemHome;
 import com.idega.core.version.data.ICVersion;
-//import com.idega.core.version.data.ICVersionHome;
 import com.idega.core.version.data.ICVersionableEntity;
 import com.idega.core.version.data.ICVersionableHome;
 

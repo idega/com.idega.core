@@ -6,7 +6,6 @@
  */
 package com.idega.data;
 
-import java.util.Map;
 
 /**
  * A class that data classes should implement to declare that they implement metata property behaviour.

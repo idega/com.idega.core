@@ -1,7 +1,7 @@
 package com.idega.data;
 
-import java.sql.*;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  *
