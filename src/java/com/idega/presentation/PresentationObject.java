@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.80 2004/02/06 13:49:46 laddi Exp $
+ * $Id: PresentationObject.java,v 1.81 2004/02/09 03:58:30 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -247,7 +247,9 @@ implements Cloneable,UIComponent{
 		{
 			this.attributes = new Hashtable();
 		}
-		this.attributes.put((Object) attributeName, (Object) attributeValue);
+		if(attributeName!=null && attributeValue!=null){
+			this.attributes.put((Object) attributeName, (Object) attributeValue);
+		}
 	}
 	public void removeMarkupAttribute(String attributeName)
 	{
