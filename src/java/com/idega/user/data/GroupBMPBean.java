@@ -616,27 +616,23 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @throws FinderException
 	 */
 	public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
-
-		String findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
-
-		SelectQuery query = idoSelectQuery();
-		Criteria theCriteria = null;
+	    Table groupTable = new Table(ENTITY_NAME, "g");
+	    Table groupRelTable = new Table(GroupRelationBMPBean.TABLE_NAME, "gr");
+	    SelectQuery query = new SelectQuery(groupTable);
+		query.addColumn(new WildCardColumn(groupTable));
+		query.addJoin(groupTable, COLUMN_GROUP_ID, groupRelTable,GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN);
 		if (groupTypes != null && !groupTypes.isEmpty()) {
-			theCriteria = new InCriteria(idoQueryTable(),COLUMN_GROUP_TYPE,groupTypes,!returnTypes);
-		}
-		
-		
-		Criteria inCr = new InCriteria(idoQueryTable(),COLUMN_GROUP_ID,findGroupRelationsSQL);
-			
-		if(theCriteria==null){
-			theCriteria = inCr;
-		} else {
-			theCriteria = new AND(theCriteria,inCr);
-		}
-		
-		query.addCriteria(theCriteria);
-		query.addOrder(idoQueryTable(),this.COLUMN_NAME,true);
-		
+	        if (groupTypes.size() == 1){
+	            query.addCriteria(new MatchCriteria(groupTable, COLUMN_GROUP_TYPE, MatchCriteria.NOTEQUALS, groupTypes.iterator().next().toString()));
+	        } else {
+	            query.addCriteria(new InCriteria(groupTable, COLUMN_GROUP_TYPE, groupTypes, !returnTypes));
+	        }
+	    }		
+	    query.addCriteria(new MatchCriteria(groupRelTable, GroupRelationBMPBean.GROUP_ID_COLUMN, MatchCriteria.EQUALS, containingGroup.getPrimaryKey()));
+	    query.addCriteria(new MatchCriteria(groupRelTable, GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN, MatchCriteria.EQUALS, RELATION_TYPE_GROUP_PARENT));
+	    String[] statuses = {GroupRelationBMPBean.STATUS_ACTIVE, GroupRelationBMPBean.STATUS_PASSIVE_PENDING};
+	    query.addCriteria(new InCriteria(groupRelTable, GroupRelationBMPBean.STATUS_COLUMN, statuses));
+	    query.addOrder(groupTable, COLUMN_NAME, true);
 		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
 		//return idoFindPKsBySQL(query.toString());
 	}
