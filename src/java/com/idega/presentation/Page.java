@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.120 2004/07/30 14:15:20 thomas Exp $
+ *  $Id: Page.java,v 1.121 2004/08/08 13:01:06 laddi Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -145,6 +145,7 @@ public class Page extends PresentationObjectContainer {
 	private int _windowWidth = 800;
 	private int _windowHeight = 600;
 	
+	private ICPage forwardPage;
 
 	/**
 	 */
@@ -908,6 +909,10 @@ public class Page extends PresentationObjectContainer {
 	public String getRedirectInfo() {
 		return _redirectInfo;
 	}
+	
+	public void forwardToPage(Page page) {
+		this.forwardPage = page;
+	}
 
 	/**
 	 *@param  milliseconds  The new toClose value
@@ -1077,6 +1082,10 @@ public class Page extends PresentationObjectContainer {
 	 *@exception  Exception  Description of the Exception
 	 */
 	public void main(IWContext iwc) throws Exception {
+		if (forwardPage != null) {
+			iwc.forwardToIBPage(this, forwardPage);
+		}
+		
 		if (_doReload) {
 			if (iwc.getSession().getAttribute("idega_special_reload") != null) {
 				iwc.getSession().removeAttribute("idega_special_reload");
