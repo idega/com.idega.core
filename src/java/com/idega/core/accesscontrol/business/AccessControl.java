@@ -738,34 +738,32 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					if(Boolean.FALSE.equals(myPermission)) { //TODO: should check if myPermission is null when the todo above has been changed (myPermission should be set null there)
 						PresentationObject currentObject = (PresentationObject)obj; //TODO: user interfase to avoid using presentation object in business logic
 						Boolean hasRelationToPage = currentObject.hasCurrentUserRelationToContainingDPTPage();  //does not need iwuc because the value is set as null in the clone method in PresentationObject
-						if(hasRelationToPage==null) {
-							String templateID = currentObject.getTemplateId();
-							if(templateID!=null) {								
-								//Get ownergroup
-								Group relatedDPTPageGroup = (Group)currentObject.getDPTPageRelationGroup(iwc);
-								//check if user is in ownergroup
-								if(relatedDPTPageGroup != null) {
-									boolean isInOwnerGroup = false;
-									Object pk = relatedDPTPageGroup.getPrimaryKey().toString();
-									for (int i = 0; i < permissionGroupLists.length; i++) {
-										List groupIDs = permissionGroupLists[i];
-										for (Iterator iter = groupIDs.iterator(); iter.hasNext();) {
-											Object gr = iter.next();
-											isInOwnerGroup = pk.equals(gr);
-											if(isInOwnerGroup) {
-												break;
-											}
-										}
+						String templateID = currentObject.getTemplateId();
+						if(hasRelationToPage==null && templateID!=null) {							
+							//Get ownergroup
+							Group relatedDPTPageGroup = (Group)currentObject.getDPTPageRelationGroup(iwc);
+							//check if user is in ownergroup
+							if(relatedDPTPageGroup != null) {
+								boolean isInOwnerGroup = false;
+								Object pk = relatedDPTPageGroup.getPrimaryKey().toString();
+								for (int i = 0; i < permissionGroupLists.length; i++) {
+									List groupIDs = permissionGroupLists[i];
+									for (Iterator iter = groupIDs.iterator(); iter.hasNext();) {
+										Object gr = iter.next();
+										isInOwnerGroup = pk.equals(gr);
 										if(isInOwnerGroup) {
 											break;
 										}
 									}
-									hasRelationToPage = new Boolean(isInOwnerGroup);
-									currentObject.setCurrentUserHasRelationToContainingDPTPage(hasRelationToPage);
-								}		
-							}
+									if(isInOwnerGroup) {
+										break;
+									}
+								}
+								hasRelationToPage = new Boolean(isInOwnerGroup);
+								currentObject.setCurrentUserHasRelationToContainingDPTPage(hasRelationToPage);
+							}		
 						}
-						if(Boolean.TRUE.equals(hasRelationToPage)) {
+						if(Boolean.TRUE.equals(hasRelationToPage) && templateID!=null) {
 							//if so, check for permission for the template object
 //									List[] permissionOrder = new List[1];
 //									permissionOrder[0] = groupIDs;
