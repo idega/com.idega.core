@@ -15,13 +15,12 @@ import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
-import com.idega.idegaweb.block.presentation.Builderaware;
-import com.idega.builder.dynamicpagetrigger.business.DPTCopySession;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWStyleManager;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.block.presentation.Builderaware;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
@@ -123,10 +122,6 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return true;
 	}
 
-	public boolean copyBlock(String pageKey,int newInstanceID, DPTCopySession copySession) {
-		System.err.println("method copyBlock(int newInstanceID) not implemented in class " + this.getClass().getName());
-		return true;
-	}
 
 	public boolean isAdministrator(IWContext iwc) throws Exception {
 		if (usingNewAcessControlSystem) {
