@@ -20,6 +20,8 @@ public class StyledIWAdminWindow extends Window {
 private final static String IW_BUNDLE_IDENTIFIER="com.idega.user"; 
 public static final String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
 
+public static final String MAIN_STYLECLASS = "main";
+
 private IWBundle iwb;
 public IWBundle iwbCore;
 public IWBundle iwbUser;
