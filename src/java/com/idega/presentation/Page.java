@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.129 2004/12/07 15:52:53 eiki Exp $
+ *  $Id: Page.java,v 1.130 2004/12/23 21:34:32 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1319,6 +1319,7 @@ public class Page extends PresentationObjectContainer {
 
 	
 	public void encodeBegin(FacesContext context) throws IOException{
+		callMain(context);
 		this.printBegin(IWContext.getIWContext(context));
 	}
 	
@@ -1413,10 +1414,22 @@ public class Page extends PresentationObjectContainer {
 	}
 	
 	public void encodeChildren(FacesContext context)throws IOException{
-		for (Iterator iter = getChildren().iterator(); iter.hasNext();) {
+		List children = getChildren();
+		//This is a temporary workaround, because of iterator NoSuchElementException problem (iterator should be used when it starts working)
+		Object[] array = children.toArray();
+		for (int i = 0; i < array.length; i++) {
+			Object obj = array[i];
+			UIComponent child = (UIComponent)obj;
+			renderChild(context,child);
+		}
+		
+		/*Iterator iter = children.iterator();
+		int size = children.size();
+		while(iter.hasNext()){
+		//for (Iterator iter = children.iterator(); iter.hasNext();) {
 			UIComponent child = (UIComponent) iter.next();
 			this.renderChild(context,child);
-		}
+		}*/
 	}
 	
 	public void encodeEnd(FacesContext context)throws IOException{

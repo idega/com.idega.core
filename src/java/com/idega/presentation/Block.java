@@ -33,27 +33,25 @@ import com.idega.presentation.text.Text;
 */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
+	//static variables:
 	private static Map permissionKeyMap = new Hashtable();
+	public final static String IW_BLOCK_CACHE_KEY = "iw_not_cached";
+	public static boolean usingNewAcessControlSystem = false;
+	private static final String concatter = "_";
+	static final String newline = "\n";
+	
+	//Instance variables:
 	private String cacheKey = null;
 	private String derivedCacheKey = null;
 	private boolean cacheable = false;
 	private long cacheInterval;
 	private int targetObjInst = -1;
 	private int targetObjInstset = -2;
-
 	private boolean editPermission = false;
-
 	private boolean debugParameters = false;
-
-	private static final String concatter = "_";
-	static final String newline = "\n";
-
-	public final static String IW_BLOCK_CACHE_KEY = "iw_not_cached";
-
-	public static boolean usingNewAcessControlSystem = false;
-	
 	private String blockWidth = null;
 
+	
 	public Block() {
 		setDefaultWidth();
 	}
@@ -458,7 +456,13 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	 * @return
 	 */
 	protected boolean isCacheable(IWContext iwc) {
-		return this.cacheable;
+		if(IWMainApplication.USE_JSF){
+			//cache temporarily disabled in JSF while cache bug is resolved
+			return false;
+		}
+		else{
+			return this.cacheable;
+		}
 	}
 
 	/**
@@ -559,34 +563,45 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		super.decode(fc);
 	}
 	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
+	 */
+	public void restoreState(FacesContext context, Object state) {
+		Object values[] = (Object[])state;
+		super.restoreState(context, values[0]);
+		this.cacheKey = (String) values[1];
+		this.derivedCacheKey = (String) values[2];
+		this.cacheable = ((Boolean) values[3]).booleanValue();
+		this.cacheInterval = ((Long)values[4]).longValue();
+		this.targetObjInst = ((Integer)values[5]).intValue();
+		this.targetObjInstset = ((Integer)values[6]).intValue();
+		this.editPermission = ((Boolean)values[7]).booleanValue();
+		this.debugParameters = ((Boolean)values[8]).booleanValue();
+		this.blockWidth = (String)values[9];
+		
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
+	 */
+	public Object saveState(FacesContext context) {
+		Object values[] = new Object[10];
+		values[0] = super.saveState(context);
+		values[1] = (String)cacheKey;
+		values[2] = derivedCacheKey;
+		values[3] = Boolean.valueOf(cacheable);
+		values[4] = new Long(cacheInterval);
+		values[5] = new Integer(targetObjInst);
+		values[6] = new Integer(targetObjInstset);
+		values[7] = Boolean.valueOf(editPermission);
+		values[8] = Boolean.valueOf(debugParameters);
+		values[9] = blockWidth;
+		return values;
+	}
+	
 	/*
 	 * End Overrided methods from JSF's UIComponent:
 	 */		
 	
-	/*
-	 * Begin idegaWeb specific JSF Stuff
-	 */		
-	
-	/**
-	 * This method is the bridge between old idegaWeb and new JSF support and 
-	 * calls the main(IWContext) method and necessary initializing.
-	 * 
-	 * This funcion is invoked on each request by the user (before print(iwc) )
-	 * on a PresentationObject Instance.
-	 */
-	public void facesMain(IWContext iwc) throws Exception
-	{
-		//if(!this.goneThroughMain){
-			this.empty();
-			this.initializeInMain(iwc);
-			main(iwc);
-			goneThroughMain=true;
-		//}
-	}
-		
-	/*
-	 * End idegaWeb specific JSF Stuff
-	 */	
 	
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
@@ -607,4 +622,12 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		blockWidth = Table.HUNDRED_PERCENT;
 	}
 	
+	
+	 /**
+	  * Returns wheather the "goneThroughMain" variable is reset back to false in the restore phase.
+	  */
+	 protected boolean resetGoneThroughMainInRestore(){
+	 	return true;
+	 }
+	 	
 }

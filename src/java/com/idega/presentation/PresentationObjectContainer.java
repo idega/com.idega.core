@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.41 2004/12/21 10:37:32 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.42 2004/12/23 21:34:32 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -27,10 +27,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2004/12/21 10:37:32 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/23 21:34:32 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.41 $
+ * @version $Revision: 1.42 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -39,7 +39,7 @@ public class PresentationObjectContainer extends PresentationObject
 	//Legacy temporary variable:
 	protected transient List allObjects = null;
 
-	protected boolean goneThroughMain = false;
+	//protected boolean goneThroughMain = false;
 	protected boolean _locked = true;
 	protected String _label = null;
 	/**
@@ -266,14 +266,15 @@ public class PresentationObjectContainer extends PresentationObject
 			//{
 			
 			if(IWMainApplication.USE_JSF){
-				Iterator iter = getFacetsAndChildren();
+				//Do not go through the children in JSF as that is done through the encode/begin/children methods:
+				/*Iterator iter = getFacetsAndChildren();
 				while(iter.hasNext()){
 					UIComponent child = (UIComponent)iter.next();
 					if(child instanceof PresentationObject){
 						PresentationObject po = (PresentationObject)child;
 						po._main(iwc);
 					}
-				}
+				}*/
 			}
 			else{
 				int numberOfObjects = numberOfObjects();
@@ -302,14 +303,6 @@ public class PresentationObjectContainer extends PresentationObject
 			}
 		}
 		goneThroughMain = true;
-	}
-	/**
-	 * Empties the container of all PresentationObjects stored inside
-	 */
-	public void empty()
-	{
-		getChildren().clear();
-		//theObjects.removeAll(theObjects);
 	}
 
 	/**
@@ -854,8 +847,7 @@ public class PresentationObjectContainer extends PresentationObject
 	}
 	
 	public void encodeBegin(FacesContext context)throws IOException{
-		//Does nothing here
-		//super.encodeBegin(context);
+		callMain(context);
 	}
 
 	public void encodeChildren(FacesContext context) throws IOException{
@@ -874,20 +866,25 @@ public class PresentationObjectContainer extends PresentationObject
 	 */
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
-		super.restoreState(context, values[0]);
-		this.goneThroughMain = ((Boolean) values[1]).booleanValue();
-		this._locked = ((Boolean) values[2]).booleanValue();
-		this._label = (String) values[3];
+		try{
+			super.restoreState(context, values[0]);
+		}
+		catch(ClassCastException cce){
+			cce.printStackTrace();
+		}
+		//this.goneThroughMain = ((Boolean) values[1]).booleanValue();
+		this._locked = ((Boolean) values[1]).booleanValue();
+		this._label = (String) values[2];
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[4];
+		Object values[] = new Object[3];
 		values[0] = super.saveState(context);
-		values[1] = Boolean.valueOf(this.goneThroughMain);
-		values[2] = Boolean.valueOf(this._locked);
-		values[3] = _label;
+		//values[1] = Boolean.valueOf(this.goneThroughMain);
+		values[1] = Boolean.valueOf(this._locked);
+		values[2] = _label;
 		return values;
 	}
 }

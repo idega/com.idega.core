@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.117 2004/12/21 10:37:32 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.118 2004/12/23 21:34:31 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,7 @@ package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -65,10 +66,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/12/21 10:37:32 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/23 21:34:31 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.117 $
+ * @version $Revision: 1.118 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -110,7 +111,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	private String errorMessage;
 	protected boolean hasBeenAdded = false;
 	protected String treeID;
-	private boolean goneThroughMain = false;
+	protected boolean goneThroughMain = false;
 	private int ic_object_instance_id=-1;
 	private int ic_object_id=-1;
 	/**
@@ -140,6 +141,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	protected Map facetMap;
 	protected List childrenList;
 
+	//This property should not be cloned or statesaved, it is used for state restoring of transient components set by properties in the Builder.
+	private List builderProperties;
+	//Marker to mark if this component instance is restored via the JSF state restoring mechanism
+	private boolean isStateRestored=false;
 
 	/**
 	 * Default constructor.
@@ -2004,7 +2009,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		this.errorMessage=(String)values[4];
 		this.hasBeenAdded=((Boolean)values[5]).booleanValue();
 		this.treeID=(String)values[6];
-		this.goneThroughMain=((Boolean)values[7]).booleanValue();
+		if(resetGoneThroughMainInRestore()){
+			this.goneThroughMain=false;
+		}
+		else{
+			this.goneThroughMain=((Boolean)values[7]).booleanValue();
+		}
 		this.ic_object_instance_id=((Integer)values[8]).intValue();
 		this.ic_object_id=((Integer)values[9]).intValue();
 		this.listenerList=(EventListenerList)values[10];
@@ -2024,6 +2034,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		this.formerCompoundId=(String)values[24];
 		this._styler=(TextStyler)values[25];
 		this._objTemplateID=(String)values[26];
+		//This variable is set only to know that the object is recreated from serialized state
+		this.isStateRestored=true;
 	}
 
 	/* (non-Javadoc)
@@ -2092,6 +2104,46 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 
 	/**
+	 * Bridging method to call the old idegaWeb _main(IWContext method) to work inside JavaServerFaces.
+	 * This can be done in three ways, from the IWPhaseListener, from encodeBegin(FacesContext) or from encodeChildren(FacesContext)
+	 * @param fc
+	 * @throws IOException
+	 */
+	public void callMain(FacesContext fc)throws IOException{
+		try {
+			//if(!goneThroughRenderPhase()){
+				IWContext iwc = castToIWContext(fc);
+				//This should only happen when the component is restored and before main is called the first time on the (restored)component
+				if(isRestoredFromState()&&!goneThroughMain){
+					resetBeforeMain(fc);
+				}
+				//initVariables(iwc);
+				this._main(iwc);
+			//}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			if(e instanceof IOException){
+				throw (IOException)e;
+			}
+			else{
+				e.printStackTrace();
+				//throw new IOException(e.getMessage());
+			}
+		}
+	}
+	
+	/**
+	 * Resets the component before main is called (again in a state restored instance). 
+	 * This is done to be compatible with the JSF store/restore-state mechanism.
+	 * @param context
+	 */
+	protected void resetBeforeMain(FacesContext context){
+		empty();
+	}
+	
+	
+	/**
 	 * Bridging method to call the old idegaWeb print(IWContext method) to work inside JavaServerFaces.
 	 * This is usually done from encodeBegin(FacesContext) or encodeChildren(FacesContext)
 	 * @param fc
@@ -2118,6 +2170,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 
 	public void encodeBegin(FacesContext fc)throws IOException{
+		callMain(fc);
 		callPrint(fc);
 	}
 	
@@ -2421,4 +2474,40 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 public boolean isContainer() {
 	 	return false;
 	 }
+	 
+	 private List getBuilderProperties(){
+	 	if(builderProperties==null){
+	 		builderProperties=new ArrayList();
+	 	}
+	 	return builderProperties;
+	 }
+	 
+	 public void addBuilderProperty(Property property){
+	 	getBuilderProperties().add(property);
+	 }
+	 
+	 /**
+	  * Gets wheather the object is recreated in JSFs restoreState phase. This is false if the object is just newly created
+	  * @return
+	  */
+	 protected boolean isRestoredFromState(){
+	 	return this.isStateRestored;
+	 }
+	 
+	 /**
+	  * Returns wheather the "goneThroughMain" variable is reset back to false in the restore phase.
+	  */
+	 protected boolean resetGoneThroughMainInRestore(){
+	 	return false;
+	 }
+	 
+	/**
+	 * Removes the children of this component
+	 */
+	public void empty()
+	{
+		getChildren().clear();
+		//theObjects.removeAll(theObjects);
+	}
+	 
 }
