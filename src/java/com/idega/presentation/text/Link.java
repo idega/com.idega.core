@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.13 2001/10/29 19:15:34 tryggvil Exp $
+ * $Id: Link.java,v 1.14 2001/10/29 19:32:15 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1056,7 +1056,9 @@ public class Link extends Text {
     _formToSubmit = form;
     setURL(HASH);
     if ((getIWLinkListeners() != null && getIWLinkListeners().length != 0) || useEvent) {
-       setOnClick("document."+form.getID()+"."+IWMainApplication.IWEventSessionAddressParameter+".value=this.id ;document."+form.getID()+".submit()");
+       //setOnClick("document."+form.getID()+"."+IWMainApplication.IWEventSessionAddressParameter+".value=this.id ;document."+form.getID()+".submit()");
+      setOnClick("document."+form.getID()+"."+IWMainApplication.IWEventSessionAddressParameter+".value='"+this.getID()+"';document."+form.getID()+".submit();alert('check')");
+
     }
     else {
       setOnClick("document."+form.getID()+".submit()");
