@@ -85,6 +85,22 @@ public void main(IWContext iwc)throws Exception{
     addToScripts(script);
 }
 
+public void addToSelectedBox(String value, String displayString){
+	getRightBox().addElement(value,displayString);	
+}
+
+
+public void addToAvailableBox(String value, String displayString){
+	getLeftBox().addElement(value,displayString);	
+}
+
+public void addToLeftBox(String value, String displayString){
+	addToAvailableBox(value,displayString);	
+}
+
+public void addToRightBox(String value, String displayString){
+	addToSelectedBox(value,displayString);	
+}
 
 
 }
