@@ -118,6 +118,7 @@ public abstract class DatastoreInterface{
 	public static String getDataStoreType(Connection connection){
             String dataStoreType;
 			if (connection != null){
+
 		 		if(connection instanceof com.idega.data.DatastoreConnection){
 					return getDataStoreType(((DatastoreConnection)connection).getUnderLyingConnection());
 				}
@@ -444,6 +445,8 @@ public abstract class DatastoreInterface{
             creationStatement += tableName;
             creationStatement += "(";
 
+            String primaryKeyStatement = "alter table "+tableName+" add primary key (";
+
             Set set;
             Iterator iter;
 
@@ -453,14 +456,17 @@ public abstract class DatastoreInterface{
             while (iter.hasNext()) {
               if(mayAddComma){
                 creationStatement += ",";
+                primaryKeyStatement += ",";
               }
               String column = (String)iter.next();
               creationStatement += column + " INTEGER NOT NULL";
+              primaryKeyStatement +=column;
               mayAddComma = true;
             }
             creationStatement += ")";
+            primaryKeyStatement +=")";
             executeUpdate(entity,creationStatement);
-
+            executeUpdate(entity,primaryKeyStatement);
 
 
              set = relMap.keySet();
