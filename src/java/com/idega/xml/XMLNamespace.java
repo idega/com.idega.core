@@ -1,5 +1,5 @@
 /*
- * $Id: XMLNamespace.java,v 1.1 2005/02/15 17:11:56 joakim Exp $
+ * $Id: XMLNamespace.java,v 1.2 2005/02/16 10:25:17 joakim Exp $
  *
  * Copyright (C) 2004 Idega. All Rights Reserved.
  *
@@ -15,10 +15,10 @@ import org.jdom.Namespace;
 /**
  * A wrapper to hide JDOM in case we want to replace it later on.
  * 
- * Last modified: $Date: 2005/02/15 17:11:56 $ by $Author: joakim $
+ * Last modified: $Date: 2005/02/16 10:25:17 $ by $Author: joakim $
  *
  * @author Joakim Johnson
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class XMLNamespace {
 	Namespace namespace;
@@ -32,7 +32,7 @@ public class XMLNamespace {
 	}
 	
 	/**
-	 * This object really returns a org.jdom.Namespace type but is declared Object becaluse of jdom dependency issues.
+	 * This object really returns a org.jdom.Namespace type but is declared Object because of jdom dependency issues.
 	 * @return the set Namespace instance
 	 */
 	protected Object getNamespace() {
