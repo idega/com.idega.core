@@ -1,5 +1,5 @@
 /*
- * $Id: TreeViewer.java,v 1.7 2001/10/30 17:41:40 palli Exp $
+ * $Id: TreeViewer.java,v 1.8 2001/11/01 17:21:07 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -342,7 +342,8 @@ public class TreeViewer extends PresentationObjectContainer {
           _tableRows = ypos;
         }
 
-        ypos = addNode(iwc,table,xpos+1,oldypos,oldNode,newparentarray,'L',recurseLevel+1,bundle);
+        if (oldNode != null)
+          ypos = addNode(iwc,table,xpos+1,oldypos,oldNode,newparentarray,'L',recurseLevel+1,bundle);
       }
     }
 
