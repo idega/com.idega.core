@@ -30,7 +30,7 @@ import javax.ejb.*;
 import java.util.Collection;
 
 /**
- * A class to serve as a base class for objects mapped to persistent data.
+ * A class to serve as a base implementation for objects mapped to persistent data in the IDO Framework.
  *
  *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -1191,7 +1191,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       }
     }
   }
-
 
   public void delete()throws SQLException{
     try {
