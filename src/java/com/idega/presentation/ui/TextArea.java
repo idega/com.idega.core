@@ -1,5 +1,5 @@
 /*
- * $Id: TextArea.java,v 1.16 2005/03/08 12:50:57 tryggvil Exp $
+ * $Id: TextArea.java,v 1.17 2005/03/08 12:51:36 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -9,9 +9,7 @@
  */
 package com.idega.presentation.ui;
 import java.io.IOException;
-import java.util.List;
 import javax.faces.context.FacesContext;
-
 import com.idega.presentation.IWContext;
 import com.idega.util.text.TextSoap;
 
@@ -21,10 +19,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a textarea input element.
  * </p>
- *  Last modified: $Date: 2005/03/08 12:50:57 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/08 12:51:36 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class TextArea extends InterfaceObject {
 
