@@ -690,7 +690,7 @@ public class StringHandler {
 
 	public static String shortenToLength(CharSequence sequence, int length) {
 		int tempLength = sequence.length();
-		if (tempLength >= length) {
+		if (tempLength <= length) {
 			return sequence.toString();
 		}
 		return sequence.subSequence(0, length).toString();
