@@ -2931,7 +2931,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     return getPrimaryKey();
   }
 
-  public Object ejbPostCreate(){return getPrimaryKey();}
+  public void ejbPostCreate(){}
 
   /*public Object ejbCreate(Object primaryKey){this.setPrimaryKey(primaryKey);return primaryKey;}
 

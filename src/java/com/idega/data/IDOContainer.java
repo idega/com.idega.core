@@ -71,11 +71,11 @@ public class IDOContainer {
   }
 
   protected IDOEntity getFreeBeanInstance(Class entityInterfaceClass)throws Exception{
-    List l = getFreeBeansList(entityInterfaceClass);
     IDOEntity entity = null;
+    /*List l = getFreeBeansList(entityInterfaceClass);
     if(!l.isEmpty()){
       entity= (IDOEntity)l.get(0);
-    }
+    }*/
     if(entity==null){
       entity = this.instanciateBean(entityInterfaceClass);
     }
@@ -84,8 +84,16 @@ public class IDOContainer {
 
   public IDOEntity createEntity(Class entityInterfaceClass)throws javax.ejb.CreateException{
     try{
-      IDOEntity entity = getFreeBeanInstance(entityInterfaceClass);
+      IDOEntity entity = null;
+      try{
+        entity = getFreeBeanInstance(entityInterfaceClass);
+      }
+      catch(Error e){
+        System.err.println("[idoContainer] : Error creating bean for "+entityInterfaceClass.getName());
+        e.printStackTrace();
+      }
       ((EntityBean)entity).ejbActivate();
+      ((IDOEntityBean)entity).ejbCreate();
       return entity;
     }
     catch(Exception e){
@@ -95,8 +103,22 @@ public class IDOContainer {
   }
 
   protected IDOEntity instanciateBean(Class entityInterfaceClass)throws Exception{
-    Class beanClass = IDOLookup.getBeanClassFor(entityInterfaceClass);
-    IDOEntity entity = (IDOEntity)beanClass.newInstance();
+    Class beanClass = null;
+    IDOEntity entity = null;
+    try{
+      beanClass = IDOLookup.getBeanClassFor(entityInterfaceClass);
+    }
+    catch(Error t){
+      System.err.println("Error looking up bean class for bean: "+entityInterfaceClass.getName());
+      t.printStackTrace();
+    }
+    try{
+      entity = (IDOEntity)beanClass.newInstance();
+    }
+    catch(Error t){
+      System.err.println("Error instanciating bean class for bean: "+entityInterfaceClass.getName());
+      t.printStackTrace();
+    }
     return entity;
   }
 
