@@ -247,14 +247,14 @@ public class ICObjectBusiness {
    */
   public int getRelatedEntityId(ICObjectInstance icObjectInstance, Class entityToGetIdFrom){
     try {
-      List L = EntityFinder.findRelated(icObjectInstance,entityToGetIdFrom);
+      List L = EntityFinder.getInstance().findRelated(icObjectInstance,entityToGetIdFrom);
       if(L!= null){
         return ((GenericEntity) L.get(0)).getID();
       }
       else
         return -1;
     }
-    catch (SQLException ex) {
+    catch (IDOFinderException ex) {
       ex.printStackTrace();
       return -2;
     }
