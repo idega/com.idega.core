@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.12 2002/10/22 21:41:19 laddi Exp $
+ * $Id: DropdownMenu.java,v 1.13 2002/10/23 13:27:05 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,6 +16,7 @@ import com.idega.data.IDOLegacyEntity;
 import com.idega.presentation.IWContext;
 
 /**
+ * @deprecated Replaced by <code>SelectDropdown</code>
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.2
  */
@@ -62,37 +63,26 @@ public class DropdownMenu extends GenericSelect {
 		setName(Name);
 	}
 
-	/**
-	 * @deprecated
-	 */
 	public void addMenuElementFirst(String value, String displayString) {
-		addFirstOption(new Option(displayString, value));
+		addFirstOption(new SelectOption(displayString, value));
 	}
 
-	/**
-	 * @deprecated
-	 */
 	public void addMenuElement(String value, String displayString) {
-		addOption(new Option(displayString, value));
+		addOption(new SelectOption(displayString, value));
 	}
 
-	/**
-	 * @deprecated
-	 */
 	public void addMenuElement(int value, String displayString) {
-		addOption(new Option(displayString, Integer.toString(value)));
+		addOption(new SelectOption(displayString, value));
 	}
 
-	/**
-	 * @deprecated
-	 */
 	public void addMenuElement(String value) {
-		addOption(new Option(value, value));
+		addOption(new SelectOption(value, value));
 	}
 
-	/**
-	 * @deprecated
-	 */
+	public void addDisabledMenuElement(String value, String displayString) {
+		addDisabledOption(new SelectOption(displayString,value));
+	}
+
 	public void setMenuElementDisplayString(String value, String displayString) {
 		this.setOptionName(value, displayString);
 	}
@@ -115,14 +105,6 @@ public class DropdownMenu extends GenericSelect {
 	}
 
 	/**
-	 * @deprecated
-	 **/
-	public void addDisabledMenuElement(String value, String displayString) {
-		addDisabledOption(new Option(displayString,value));
-	}
-
-	/**
-	 * @deprecated
 	 * Sets the element by value elementValue as selected if it is found in this menu
 	 **/
 	public void setSelectedElement(String value) {
@@ -130,7 +112,6 @@ public class DropdownMenu extends GenericSelect {
 	}
 
 	/**
-	 * @deprecated
 	 * Sets the element by value elementValue as selected if it is found in this menu
 	 **/
 	public void setSelectedElement(int elementValue) {
