@@ -36,6 +36,8 @@ public class LocationInput extends InterfaceObject {
 	private DropdownMenu cityDrop = null;
 	private DropdownMenu zipDrop = null;
 	
+	private Collection availableCountries = null;
+	
 	private String iframeName = "tmpFrame";
 	private String separator = " ";
 	
@@ -49,6 +51,8 @@ public class LocationInput extends InterfaceObject {
 		parZipID = postalCodeParameterName;
 		
 		iframeName = parCountryID + "_" + parCityName + "_" + zipDrop;
+		
+		setName(iframeName);
 		
 		countryDrop = new DropdownMenu(parCountryID);
 		cityDrop = new DropdownMenu(parCityName);
@@ -66,7 +70,9 @@ public class LocationInput extends InterfaceObject {
 		if (zipDrop != null) {
 			inp.zipDrop = (DropdownMenu) zipDrop.clone();
 		}
-		
+		if (availableCountries != null) {
+			inp.availableCountries = availableCountries;
+		}
 		return inp;
 	}
 	
@@ -100,13 +106,16 @@ public class LocationInput extends InterfaceObject {
 
 		CountryHome countryHome = (CountryHome) IDOLookup.getHome(Country.class);
 		PostalCodeHome pcHome = (PostalCodeHome) IDOLookup.getHome(PostalCode.class);
-		Collection countries = countryHome.findAll();
+		if ( availableCountries == null ) {
+			availableCountries = countryHome.findAll();
+		}
 		Collection postalCodes = null;
 		Collection cities = null;
 
 		SelectorUtility su = new SelectorUtility();
 		
-		countryDrop.addMenuElements(countries);
+		countryDrop.addMenuElement("-1", "Select a country");
+		countryDrop.addMenuElements(availableCountries);
 		if (usedCountryID != null) {
 			cities = pcHome.getUniquePostalCodeNamesByCountryIdOrderedByPostalCodeName(Integer.parseInt(usedCountryID));
 			countryDrop.setSelectedElement(usedCountryID);
@@ -120,7 +129,7 @@ public class LocationInput extends InterfaceObject {
 			}
 		}
 		if (cities == null) {
-			cityDrop.addFirstOption(new SelectOption("Select a country", "-1"));
+			cityDrop.addFirstOption(new SelectOption("Select a city", "-1"));
 		} 
 		
 		if (usedCityName != null) {
@@ -130,7 +139,7 @@ public class LocationInput extends InterfaceObject {
 
 		zipDrop = (DropdownMenu) su.getSelectorFromIDOEntities(zipDrop, postalCodes, "getPostalAddress");
 		if (postalCodes == null) {
-			zipDrop.addFirstOption(new SelectOption("Select a city", "-1"));
+			zipDrop.addFirstOption(new SelectOption("Select a postal code", "-1"));
 		}
 		if (usedZipID != null) {
 			zipDrop.setSelectedElement(usedZipID);
@@ -179,7 +188,16 @@ public class LocationInput extends InterfaceObject {
 		} catch (IDOLookupException e) {
 			e.printStackTrace();
 		} 
-		
+	}
+
+	public void setStyleClass(String styleClass) {
+		countryDrop.setStyleClass(styleClass);
+		cityDrop.setStyleClass(styleClass);
+		zipDrop.setStyleClass(styleClass);
+	}
+	
+	public void setAvailableCountries(Collection countries) {
+		this.availableCountries = countries;
 	}
 
 	public boolean isContainer() {
