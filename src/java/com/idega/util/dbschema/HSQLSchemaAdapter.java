@@ -17,7 +17,12 @@ public class HSQLSchemaAdapter extends SQLSchemaAdapter { //implements
 	public String getSQLType(String javaClassName, int maxlength) {
 		String theReturn;
 		if (javaClassName.equals("java.lang.Integer")) {
-			theReturn = "INTEGER";
+			if(maxlength>10){
+				theReturn = "BIGINT";
+			}
+			else{
+				theReturn = "INTEGER";
+			}
 		} else if (javaClassName.equals("java.lang.String")) {
 			if (maxlength <= 0) {
 				theReturn = "VARCHAR(255)";
