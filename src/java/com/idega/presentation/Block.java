@@ -276,7 +276,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   catch(Exception e){
     System.err.println("Block: Error checking for edit rights");
   }
-    this.cacheKey += iwc.getCurrentLocale().toString()+edit;
+    this.cacheKey += iwc.getCurrentLocale().toString()+edit+iwc.getQueryString();
 
    // if(loggedon){
       //String parameter = AccessControl.ACCESSCONTROL_GROUP_PARAMETER;
