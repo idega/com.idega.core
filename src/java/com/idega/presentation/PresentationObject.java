@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.15 2001/12/19 13:15:43 aron Exp $
+ * $Id: PresentationObject.java,v 1.16 2002/01/11 12:33:12 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -74,7 +74,7 @@ public class PresentationObject extends Object implements Cloneable {
 
   private boolean _useBuilderObjectControl = true;
   private boolean _belongsToParent = false;
-  private boolean _keepInstanceIDOnInheritance = true;
+  private boolean _changeInstanceIDOnInheritance = false;
   private boolean _allowPagePermissionInheritance = true;
 
   private GenericState defaultState = null;
@@ -945,12 +945,12 @@ public class PresentationObject extends Object implements Cloneable {
     return(_belongsToParent);
   }
 
-  public boolean getKeepInstanceIDOnInheritance() {
-    return(_keepInstanceIDOnInheritance);
+  public boolean getChangeInstanceIDOnInheritance() {
+    return(_changeInstanceIDOnInheritance);
   }
 
-  public void setKeepInstanceIDOnInheritance(boolean keep) {
-    _keepInstanceIDOnInheritance = keep;
+  public void setChangeInstanceIDOnInheritance(boolean change) {
+    _changeInstanceIDOnInheritance = change;
   }
 
   public boolean allowPagePermissionInheritance(){
