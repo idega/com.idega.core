@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.apple.eawt.ApplicationEvent;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.builder.business.BuilderConstants;
@@ -1133,14 +1132,6 @@ implements IWUserContext, IWApplicationContext {
 	 * BEGIN ABSTRACT METHODS FROM FacesContext
 	 */
 	
-	
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#addApplicationEvent(javax.faces.event.ApplicationEvent)
-	 */
-	public void addApplicationEvent(ApplicationEvent arg0)
-	{
-		// TODO Auto-generated method stub
-	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.context.FacesContext#addFacesEvent(javax.faces.event.FacesEvent)
