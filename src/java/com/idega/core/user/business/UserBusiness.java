@@ -439,10 +439,12 @@ public class UserBusiness {
     }
   }
 
+
   public static List getUsers() throws SQLException  {
-    List nonrelated = EntityFinder.findRelated(GenericGroup.getStaticInstance(),User.getStaticInstance());
-    return nonrelated;
+    List l = EntityFinder.findAll(User.getStaticInstance());
+    return l;
   }
+
 
   public static List getUsersInNoGroup() throws SQLException  {
     //return EntityFinder.findNonRelated(GenericGroup.getStaticInstance(),User.getStaticInstance());

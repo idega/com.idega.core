@@ -786,10 +786,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
+  /**
+   * @todo implement filter to get grouptypes from property file
+   */
   private static String[] getPermissionGroupFilter(){
     //filter begin
-    String[] groupsToReturn = new String[1];
+    String[] groupsToReturn = new String[2];
     groupsToReturn[0] = PermissionGroup.getStaticPermissionGroupInstance().getGroupTypeValue();
+    groupsToReturn[1] = is.idega.idegaweb.project.data.IPParticipantGroup.getStaticGroupInstance().getGroupTypeValue();
     //filter end
     return groupsToReturn;
   }
@@ -1147,7 +1151,38 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   /**
    * @todo implement setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception
    */
-   public void setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception {}
+  public void setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception {}
+
+
+  public static void copyICObjectPermissions(IWContext iwc, String idToCopyFrom, String idToCopyTo) throws Exception{
+    copyPermissions(iwc,AccessController._CATEYGORYSTRING_OBJECT_INSTATNCE_ID,idToCopyFrom,idToCopyTo);
+  }
+
+  public static void copyPermissions(IWContext iwc, String contextType, String identifierToCopyFrom, String identifierToCopyTo) throws Exception{
+    List permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),contextType,ICPermission.getContextValueColumnName(),identifierToCopyFrom);
+    if(permissions != null){
+      Iterator iter = permissions.iterator();
+      while (iter.hasNext()) {
+        ICPermission item = (ICPermission)iter.next();
+        ICPermission perm = new ICPermission();
+        perm.setContextType(contextType);
+        perm.setContextValue(identifierToCopyTo);
+        perm.setGroupID(new Integer(item.getGroupID()));
+        String str = item.getPermissionStringValue();
+        if(str != null){
+          perm.setPermissionString(str);
+        }
+        String st = item.getPermissionStringValue();
+        if(st != null){
+          perm.setPermissionStringValue(st);
+        }
+        perm.setPermissionValue(new Boolean(item.getPermissionValue()));
+      }
+    }
+  }
+
+
+
 
 
 
