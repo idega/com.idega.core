@@ -9,6 +9,7 @@ import com.idega.core.component.data.ICObjectBMPBean;
 import com.idega.data.EntityFinder;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.FrameSet;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -99,6 +100,7 @@ public class IWApplication extends FrameSet
 		 */
 		Image iconImage = null;
 		IWBundle bundle = null;
+		IWResourceBundle iwrb = null;
 		if (obj == null)
 		{
 			bundle = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
@@ -116,6 +118,11 @@ public class IWApplication extends FrameSet
 			{
 				iconImage = bundle.getImage("IWApplicationIcon.gif");
 			}
+			
+		}
+		iwrb = bundle.getResourceBundle(iwc);
+		if(iwrb!=null){
+		    name = iwrb.getLocalizedString("iwapplication_name."+name,name);
 		}
 		Link icon_image = new Link(iconImage);
 		icon_image.setWindowToOpen(iwApplicationClass);
