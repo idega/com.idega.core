@@ -362,8 +362,8 @@ private void getHTMLImage(IWContext iwc){//optimize by writing in pure html
    */
     if( ((image!=null) && (image.getID()!=-1)) || ((image2!=null) && (image2.getID()!=-1)) ){//begin debug
 
-      String texti;
-      String link;
+      String texti = null;
+      String link = null;
       String name;
       String width;
       String height;
@@ -376,8 +376,8 @@ private void getHTMLImage(IWContext iwc){//optimize by writing in pure html
         height = image2.getHeight();
       }
       else{
-        texti = image.getDescription();
-        link = image.getLink();
+        //texti = image.getDescription();
+        //link = image.getLink();
         name = image.getName();
         width = image.getWidth();
         height = image.getHeight();
