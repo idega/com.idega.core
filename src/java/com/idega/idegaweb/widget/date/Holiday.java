@@ -1,5 +1,5 @@
 /*
- * $Id: Holiday.java,v 1.3 2004/11/02 08:46:30 laddi Exp $
+ * $Id: Holiday.java,v 1.4 2004/11/02 14:09:22 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,11 +18,12 @@ import com.idega.util.IWCalendar;
 
 /**
  * Shows a locale specific holiday as a Text object.  Uses information from ICU4J.
+ * Shows nothing if there is no holiday on the current day.  Has possibility to show the day of week instead.
  * 
  * Last modified: 14.10.2004 11:24:56 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Holiday extends Widget {
 	

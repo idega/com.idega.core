@@ -1,5 +1,5 @@
 /*
- * $Id: UserHomeLink.java,v 1.1 2004/11/01 18:46:40 laddi Exp $
+ * $Id: UserHomeLink.java,v 1.2 2004/11/02 14:09:22 laddi Exp $
  * Created on 1.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -34,7 +34,7 @@ import com.idega.user.business.UserBusiness;
  * Last modified: 1.11.2004 17:07:07 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class UserHomeLink extends PresentationObjectContainer {
 	
@@ -100,10 +100,18 @@ public class UserHomeLink extends PresentationObjectContainer {
 		}
 	}
 	
+	/**
+	 * Sets the style class to use when logged on.  Is used on the surrounding Link.
+	 * @param loggedOnStyleClass The loggedOnStyleClass to set.
+	 */
 	public void setLoggedOnStyleClass(String loggedOnStyleClass) {
 		iLoggedOnStyleClass = loggedOnStyleClass;
 	}
 	
+	/**
+	 * Sets the style class to use when logged off.  Is set to all added objects.
+	 * @param loggedOffStyleClass The loggedOffStyleClass to set.
+	 */
 	public void setLoggedOffStyleClass(String loggedOffStyleClass) {
 		iLoggedOffStyleClass = loggedOffStyleClass;
 	}

@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.4 2004/10/29 09:30:07 laddi Exp $
+ * $Id: Page.java,v 1.5 2004/11/02 14:09:22 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,12 @@ import com.idega.presentation.text.Text;
 
 
 /**
+ * Shows the current page's localized name as a Text object.
+ * 
  * Last modified: 14.10.2004 13:56:18 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class Page extends Widget {
 
@@ -41,5 +43,4 @@ public class Page extends Widget {
 			return null;
 		}
 	}
-
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: Sunrise.java,v 1.2 2004/10/26 09:05:20 laddi Exp $
+ * $Id: Sunrise.java,v 1.3 2004/11/02 14:09:22 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,18 @@ import com.idega.util.IWTimestamp;
 
 
 /**
+ * Shows the time of sunset of the current Locale and date as a Text object.
+ * Has a set method to change the style (details) of the time shown.
+ * Available styles:<br>
+ * 		IWCalendar.SHORT (default): completely numeric, such as 3:30pm<br>
+ * 		IWCalendar.MEDIUM: is longer<br>
+ * 		IWCalendar.LONG: is even longer, such as 3:30:32pm<br>
+ * 		IWCalendar.FULL: is pretty completely specified, such as 3:30:42pm PST
+ * 
  * Last modified: 14.10.2004 13:37:28 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Sunrise extends Widget {
 
@@ -32,13 +40,16 @@ public class Sunrise extends Widget {
 	 */
 	protected PresentationObject getWidget(IWContext iwc) {
 		IWCalendar calendar = new IWCalendar(getLocale());
-		calendar.setDate(2004, 6, 21);
 		IWTimestamp stamp = new IWTimestamp(calendar.getSunRiseSet(true));
 		
 		Text text = new Text(stamp.getLocaleTime(getLocale(), style));
 		return text;
 	}
 
+	/**
+	 * Sets the style of the time.
+	 * @param style	The style to set
+	 */
 	public void setTimeStyle(int style) {
 		this.style = style;
 	}

@@ -1,5 +1,5 @@
 /*
- * $Id: MoonPhase.java,v 1.2 2004/11/02 08:47:02 laddi Exp $
+ * $Id: MoonPhase.java,v 1.3 2004/11/02 14:09:22 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -25,12 +25,13 @@ import com.idega.util.IWCalendar;
  * Last modified: 02.11.2004 09:39:38 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class MoonPhase extends Widget {
 	
-	private int width = -1;
-	private int height = -1;
+	private int iWidth = -1;
+	private int iHeight = -1;
+	private String iAlignment;
 
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.widget.Widget#getWidget(com.idega.presentation.IWContext)
@@ -47,11 +48,14 @@ public class MoonPhase extends Widget {
 		Image image = getBundle().getImage("/moonphase/" + moon + ".gif");
 		
 		if (image != null) {
-			if (width > 0) {
-				image.setWidth(width);
+			if (iWidth > 0) {
+				image.setWidth(iWidth);
 			}
-			if (height > 0) {
-				image.setHeight(height);
+			if (iHeight > 0) {
+				image.setHeight(iHeight);
+			}
+			if (iAlignment != null) {
+				image.setAlignment(iAlignment);
 			}
 			return image;
 		}
@@ -60,15 +64,26 @@ public class MoonPhase extends Widget {
 	}
 
 	/**
+	 * Sets the height of the moon phase image
 	 * @param height The height to set.
 	 */
 	public void setHeight(int height) {
-		this.height = height;
+		this.iHeight = height;
 	}
+	
 	/**
+	 * Sets the width of the moon phase image
 	 * @param width The width to set.
 	 */
 	public void setWidth(int width) {
-		this.width = width;
+		this.iWidth = width;
+	}
+	
+	/**
+	 * Sets the alignment of the moon phase image
+	 * @param alignment The alignment to set.
+	 */
+	public void setAlignment(String alignment) {
+		iAlignment = alignment;
 	}
 }

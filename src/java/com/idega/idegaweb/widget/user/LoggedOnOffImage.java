@@ -1,5 +1,5 @@
 /*
- * $Id: LoggedOnOffImage.java,v 1.1 2004/11/01 18:46:40 laddi Exp $
+ * $Id: LoggedOnOffImage.java,v 1.2 2004/11/02 14:09:22 laddi Exp $
  * Created on 1.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -21,7 +21,7 @@ import com.idega.presentation.PresentationObject;
  * Last modified: 1.11.2004 18:16:35 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class LoggedOnOffImage extends Widget {
 
@@ -46,6 +46,7 @@ public class LoggedOnOffImage extends Widget {
 	}
 
 	/**
+	 * Sets the image to show when user is logged off.
 	 * @param loggedOffImage The loggedOffImage to set.
 	 */
 	public void setLoggedOffImage(Image loggedOffImage) {
@@ -53,6 +54,7 @@ public class LoggedOnOffImage extends Widget {
 	}
 	
 	/**
+	 * Sets the image to show when user is logged on.
 	 * @param loggedOnImage The loggedOnImage to set.
 	 */
 	public void setLoggedOnImage(Image loggedOnImage) {

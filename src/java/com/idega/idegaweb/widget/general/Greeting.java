@@ -1,5 +1,5 @@
 /*
- * $Id: Greeting.java,v 1.1 2004/10/14 12:11:56 laddi Exp $
+ * $Id: Greeting.java,v 1.2 2004/11/02 14:09:22 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,12 @@ import com.idega.util.IWTimestamp;
 
 
 /**
+ * Shows a localized greeting based on the time of day as a Text object.
+ * 
  * Last modified: 14.10.2004 13:49:04 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Greeting extends Widget {
 
@@ -46,5 +48,4 @@ public class Greeting extends Widget {
 	  Text text = new Text(greeting);
 	  return text;
 	}
-
 }
