@@ -26,9 +26,26 @@ import javax.servlet.http.HttpSession;
  * USAGE: 
  * Add the following to your web.xml (under /WEB-INF): 
  * 	<filter>
- * 		<filter-name>requestControlFilter </filter-name>
- * 		<filter-class>com.idega.servlet.filter.RequestControlFilter </filter-class>
+ * 		<filter-name>RequestControlFilter</filter-name>
+ * 		<filter-class>com.idega.servlet.filter.RequestControlFilter</filter-class>
  * 	</filter>
+ * 
+ * And then you have to specify where to control requests:
+ *
+ * 	<filter-mapping>
+ *	   	<filter-name>RequestControlFilter</filter-name>
+ * 		<url-pattern>*.jsp</url-pattern>
+ * 	</filter-mapping>
+ *
+ * 	<filter-mapping>
+ * 		<filter-name>RequestControlFilter</filter-name>
+ * 		<url-pattern>*.html</url-pattern>
+ * 	</filter-mapping>
+ *	
+ * 	<filter-mapping>
+ * 		<filter-name>RequestControlFilter</filter-name>
+ * 		<url-pattern>/servlet/*</url-pattern>
+ * 	</filter-mapping>
  * 
  * Use this filter to synchronize requests to your web application and
  * reduce the maximum load that each individual user can put on your web
@@ -94,6 +111,7 @@ public class RequestControlFilter implements Filter {
 	 *          Configuration from web.xml file
 	 */
 	public void init(FilterConfig config) throws ServletException {
+		System.out.println("[idegaWebApp] : Starting RequestControlFilter");
 		// parse all of the initialization parameters, collecting the exclude
 		// patterns and the max wait parameters
 		Enumeration enum = config.getInitParameterNames();
@@ -139,6 +157,7 @@ public class RequestControlFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpSession session = httpRequest.getSession();
+		System.out.println("Doing stuff...");
 
 		// if this request is excluded from the filter, then just process it
 		if (!isFilteredRequest(httpRequest)) {

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * 		<filter-class>com.idega.servlet.filter.GZIPFilter</filter-class>
  * 	</filter>
  * 
- * And then you can specify what to compress:
+ * And then you have to specify what to compress:
  *
  * 	<filter-mapping>
  *	   	<filter-name>Compress</filter-name>
@@ -50,6 +50,7 @@ public class GZIPFilter implements Filter {
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
 	public void init(FilterConfig arg0) throws ServletException {
+		System.out.println("[idegaWebApp] : Starting GZIPFilter");
 	}
 
 	/*
