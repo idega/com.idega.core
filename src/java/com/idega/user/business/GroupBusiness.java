@@ -428,4 +428,17 @@ public interface GroupBusiness extends com.idega.business.IBOService {
      */
     public void applyPermissionInheritanceFromGroupToGroup(Group groupToGetInheritanceFrom, Group groupToInheritPermissions);
 
+    /**
+     * This method should only be called once for a newly created group if it was done in code. This method is
+     * automatically called if the group is created in the user application.
+     * Sets the user as the owner of the group and gives his primary group all group permissions to the group. 
+     * Also gives all owners' primary groups of the groups parent groups permission to give others permission 
+     * to this group. Finally checks the groups parent if any for inherited permissions and sets them.
+     * @param iwc
+     * @param newlyCreatedGroup
+     * @param user
+     * @throws RemoteException
+     */
+    public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(IWUserContext iwuc,Group newlyCreatedGroup, User user) throws RemoteException;
+
 }

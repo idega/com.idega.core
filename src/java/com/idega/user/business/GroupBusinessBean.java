@@ -1692,6 +1692,35 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 
   }
   
+  /**
+   * This method should only be called once for a newly created group if it was done in code. This method is
+   * automatically called if the group is created in the user application.
+   * Sets the user as the owner of the group and gives his primary group all group permissions to the group. 
+   * Also gives all owners' primary groups of the groups parent groups permission to give others permission 
+   * to this group. Finally checks the groups parent if any for inherited permissions and sets them.
+   * @param iwc
+   * @param newlyCreatedGroup
+   * @param user
+   * @throws RemoteException
+   */
+  public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(IWUserContext iwuc,Group newlyCreatedGroup, User user) throws RemoteException {
+
+      //set user as owner of group
+      applyUserAsGroupsOwner(iwuc, newlyCreatedGroup, user);
+
+      //give the current users primary group all permission except for owner
+      applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup(iwuc, newlyCreatedGroup);
+
+      //owners should get the permission to give permission for this group
+      applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(iwuc, newlyCreatedGroup);
+
+      //check if to inherit permissions from parent or its permission
+      Collection parentGroups = newlyCreatedGroup.getParentGroups();
+      
+      if(parentGroups!=null && !parentGroups.isEmpty()) {
+          applyPermissionInheritanceFromGroupToGroup((Group)parentGroups.iterator().next(), newlyCreatedGroup);
+      }
+  }
  
 } // Class
 
