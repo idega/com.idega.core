@@ -29,6 +29,7 @@ public class SingleLineItem extends Panel {
   private Color bgColor = Color.white;
   private Container parentContainer;
   private String ID;
+  private boolean fillRight = false;
 
 
   public SingleLineItem(Container parent) {
@@ -140,7 +141,7 @@ public class SingleLineItem extends Panel {
       gbc = new GridBagConstraints();
       gbc.gridx = nextXpos;
       gbc.gridy = nextYpos; //Set at position 0,0
-      gbc.weightx = gbc.weighty = 0; //No weight so component wont resize
+      //gbc.weightx = gbc.weighty = 0; //No weight so component wont resize
       //gbc.anchor = gbc.SOUTHWEST;
       gbc.fill = GridBagConstraints.NONE;
 
@@ -157,6 +158,13 @@ public class SingleLineItem extends Panel {
       gbc.fill = GridBagConstraints.HORIZONTAL; //take up extra space horizontally*/
 
     }
+      if( fillRight ){
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = gbc.weighty = 1;
+        System.out.println("FILL");
+      }
+
+
       gbc.gridx = nextXpos;
       nextXpos++;
 
@@ -177,6 +185,9 @@ public class SingleLineItem extends Panel {
 
   }
 
+  public void setNextToFillRight(boolean fillRight){
+   this.fillRight = fillRight;
+  }
 
   private final class ClickAdapter extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
