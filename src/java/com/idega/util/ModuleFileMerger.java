@@ -202,7 +202,7 @@ public class ModuleFileMerger {
 	protected void appendModulePartWithComments(ModuleFile module,StringBuffer outString){
 		String moduleId = module.getModuleIdentifier();
 		String moduleVersion = module.getModuleVersion();
-		File inputFile = module.getSourcefile();
+		//File inputFile = module.getSourcefile();
 		
 		String modulePartBegin = "<!-- MODULE:BEGIN "+moduleId+" "+moduleVersion+" -->\n";
 		String modulePartEnd = "<!-- MODULE:END "+moduleId+" "+moduleVersion+" -->\n";
