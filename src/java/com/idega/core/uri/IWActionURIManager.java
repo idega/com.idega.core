@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURIManager.java,v 1.2 2005/02/25 14:50:13 eiki Exp $
+ * $Id: IWActionURIManager.java,v 1.3 2005/02/27 15:16:34 eiki Exp $
  * Created on 31.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
 package com.idega.core.uri;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
@@ -18,7 +19,7 @@ import com.idega.repository.data.Singleton;
 
 /**
  * 
- *  Last modified: $Date: 2005/02/25 14:50:13 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/02/27 15:16:34 $ by $Author: eiki $
  * 
  * A singleton business object to get an IWActionURIHandler for an URI or the redirect URI directly.<br>
  * Register you IWActionURIHandlers using the registerHandler methods. <br>
@@ -27,7 +28,7 @@ import com.idega.repository.data.Singleton;
  * and set a low number (0-x) to prioratize your handler before the default one.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class IWActionURIManager implements Singleton {
 	
@@ -52,12 +53,48 @@ public class IWActionURIManager implements Singleton {
 		return manager;
 	} 
 
+	public String getActionURIPrefixWithContext(String action){
+		String context = IWMainApplication.getDefaultIWMainApplication().getApplicationContextURI();
+		StringBuffer buf = new StringBuffer();
+		if(context.endsWith("/")){
+			context = context.substring(0,context.length()-1);
+		}
+		
+		buf.append(context).append(IDEGAWEB_ACTION_PATH_PREFIX).append(action).append("/");
+		return buf.toString();
+	}
+	
+	public String getActionURIPrefixWithContext(String action, String suffix){
+		String prefix = getActionURIPrefixWithContext(action);
+		if(suffix.startsWith("/")){
+			suffix = suffix.substring(1);
+		}
+		return prefix+suffix;	
+	}
+	
+	public String getActionURIPrefixWithoutContext(String action){
+		StringBuffer buf = new StringBuffer();
+		buf.append(IDEGAWEB_ACTION_PATH_PREFIX).append(action).append("/");
+		return buf.toString();
+	}
+	
+	public String getActionURIPrefixWithoutContext(String action, String suffix){
+		String prefix = getActionURIPrefixWithoutContext(action);
+		if(suffix.startsWith("/")){
+			suffix = suffix.substring(1);
+		}
+		return prefix+suffix;		
+	}
+	
 	
 	/**
 	 * 
 	 * @return the list of IWActionURIHandlers, default impl uses a LinkedList
 	 */
 	public List getHandlerList() {
+		if(handlerList==null){
+			handlerList = new LinkedList();
+		}
 		return handlerList;
 	}
 	
