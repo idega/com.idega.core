@@ -295,7 +295,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
   */
 
   protected String getCreateUniqueIDQuery(GenericEntity entity){
-    return "SELECT "+getSapDBSequenceName(entity)+".nextval FROM dual";
+    return "SELECT "+getSapDBSequenceName(entity)+".NEXTVAL FROM dual";
   }
 
 
