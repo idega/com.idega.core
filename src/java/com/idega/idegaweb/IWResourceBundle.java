@@ -158,16 +158,24 @@ public class IWResourceBundle extends ResourceBundle {
       return iwBundleParent;
     }
 
-    public Image getImage(String name){
-      return new Image(getResourcesURL()+slash+name);
+    public Image getImage(String urlInBundle){
+      return new Image(getResourcesURL()+slash+urlInBundle);
     }
 
-    public Image getImage(String name, String alt){
-      return new Image(getResourcesURL()+slash+name,alt);
+    public Image getImage(String urlInBundle, int width, int height){
+      return getImage(urlInBundle, "", width, height);
     }
 
-    public Image getImage(String name, String key, String defaultKeyValue){
-      return new Image(getResourcesURL()+slash+name,getLocalizedString(key,defaultKeyValue));
+    public Image getImage(String urlInBundle, String name, int width, int height){
+      return new Image(urlInBundle,name, width, height);
+    }
+
+    public Image getImage(String urlInBundle, String name){
+      return new Image(getResourcesURL()+slash+urlInBundle,name);
+    }
+
+    public Image getImage(String urlInBundle, String key, String defaultKeyValue){
+      return new Image(getResourcesURL()+slash+urlInBundle,getLocalizedString(key,defaultKeyValue));
     }
 
     private void setResourcesURL(String url){
