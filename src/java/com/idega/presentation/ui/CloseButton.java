@@ -101,6 +101,7 @@ public void print(IWContext iwc) throws IOException{
 
 public void setButtonImage(Image image){
   this.defaultImage=image;
+  this.useGeneratedImage=false;
 }
 
 }
