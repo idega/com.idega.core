@@ -1117,7 +1117,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 			after.setDay(1);
 			after.setMonth(2);
 			after.setYear(1);
-			System.out.println(before.isTime()+"/"+after.isTime());
+			//System.out.println(before.isTime()+"/"+after.isTime());
 		}
 		
 		long lBefore = before.getGregorianCalendar().getTime().getTime();
