@@ -112,14 +112,14 @@ public class IBOServiceBean implements IBOService, SessionBean {
   /**
    * Get an instance of the service bean specified by serviceClass
    */
-  protected IBOService getServiceInstance(Class serviceClass)throws RemoteException{
+  protected IBOService getServiceInstance(Class serviceClass)throws IBOLookupException{
     return IBOLookup.getServiceInstance(this.getIWApplicationContext(),serviceClass);
   }
 
   /**
    * Get an instance of the session bean specified by serviceClass
    */
-  protected IBOService getSessionInstance(IWUserContext iwuc,Class sessionClass)throws RemoteException{
+  protected IBOService getSessionInstance(IWUserContext iwuc,Class sessionClass)throws IBOLookupException{
     return IBOLookup.getSessionInstance(iwuc,sessionClass);
   }
 

@@ -66,7 +66,7 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
     this.iwuc=null;
   }
 
-  protected IBOSession getSessionInstance(Class beanClass)throws RemoteException{
+  protected IBOSession getSessionInstance(Class beanClass)throws IBOLookupException{
     return IBOLookup.getSessionInstance(this.getUserContext(),beanClass);
   }
 

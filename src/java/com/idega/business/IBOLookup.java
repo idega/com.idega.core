@@ -173,12 +173,12 @@ public class IBOLookup
 	 * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
 	 */
 	public static IBOService getServiceInstance(IWApplicationContext iwac, Class beanInterfaceClass)
-		throws RemoteException
+		throws IBOLookupException
 	{
 		return getInstance().getServiceInstanceImpl(iwac, beanInterfaceClass);
 	}
 	private IBOService getServiceInstanceImpl(IWApplicationContext iwac, Class beanInterfaceClass)
-		throws RemoteException
+		throws IBOLookupException
 	{
 		IBOService service = (IBOService) this.getServicesMap(iwac).get(beanInterfaceClass);
 		if (service == null)
@@ -193,7 +193,7 @@ public class IBOLookup
 			}
 			catch (CreateException cre)
 			{
-				throw new RemoteException("[IBOLookup] : CreateException : " + cre.getMessage());
+				throw new IBOLookupException("[IBOLookup] : CreateException : " + cre.getMessage());
 			}
 		}
 		return service;
