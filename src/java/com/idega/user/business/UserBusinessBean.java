@@ -432,10 +432,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
       LoginDBHandler.deleteUserLogin(userId);
       delUser.remove();
-
-      this.getGroupBusiness().deleteGroup(groupId);
+			try {
+      	this.getGroupBusiness().deleteGroup(groupId);
+			}catch (FinderException fe) {
+				System.out.println("[UserBusinessBean] : cannot find group to delete with user");	
+			}
     }
     catch(Exception e){
+  		//e.printStackTrace(System.err);
       throw new RemoveException(e.getMessage());
     }
   }
