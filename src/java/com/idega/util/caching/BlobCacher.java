@@ -31,7 +31,7 @@ public class BlobCacher  {
     //check for cachetable in memory
     if( cacheTableExists( entityClassString, id, app) ){
       //check if this blob has already been cached
-      HashtableDoubleKeyed cache = getURLCacheTable(app);
+      HashtableDoubleKeyed cache = getCacheTable(app);
       url = (String) cache.get(GenericEntity.getStaticInstance(entityClassString).getEntityName(), Integer.toString(id) );
       if( url == null ) {//if null cache it for next time
        cacheToFile(entityClassString,id,app.getApplicationRealPath(), cache, blobColumnName,app);
@@ -47,7 +47,7 @@ public class BlobCacher  {
     GenericEntity entity;
     try{
       entity = GenericEntity.getEntityInstance(Class.forName(entityClassString),id);
-      app.setAttribute();
+      // setja inn entitie app.setAttribute();
 
       input = entity.getInputStreamColumnValue(blobColumnName);
       String realPath = applicationURL+separator+rootCachingPath;
