@@ -221,7 +221,7 @@ public class CalendarMonth extends TimePeriod{
 		return new CalendarMonth(newStamp);
 	}
 	public boolean equals(Object o){
-		return toString().equals(o);
+		return toString().equals(o.toString());
 	}
 	
 	/**
