@@ -173,14 +173,14 @@ public class IDOTableCreator{
         if(!this.doesTableExist(entity,entity.getTableName())){
           createTable(entity);
           createTrigger(entity);
-          try{
+          //try{
             createForeignKeys(entity);
-          }
-          catch(Exception e){
+          //}
+          //catch(Exception e){
             //e.printStackTrace();
-            System.err.println("Exception in creating Foreign Keys for: "+entity.getClass().getName());
-            System.err.println("  Error was: "+e.getMessage());
-          }
+            //System.err.println("Exception in creating Foreign Keys for: "+entity.getClass().getName());
+            //System.err.println("  Error was: "+e.getMessage());
+          //}
           createMiddleTables(entity);
           entity.insertStartData();
         }
@@ -188,10 +188,11 @@ public class IDOTableCreator{
         this.endEntityCreationTransaction(entity,canCommit,true);
       }
       catch(Exception ex){
-        System.out.println("===");
+        System.err.println("===");
         System.err.println("Exception and rollback for: "+entity.getClass().getName());
-        System.out.println("===");
-        ex.printStackTrace();
+        System.err.println("\tMessage: "+ex.getMessage());
+        System.err.println("===");
+        //ex.printStackTrace();
         this.endEntityCreationTransaction(entity,canCommit,false);
       }
     }
@@ -345,7 +346,7 @@ public class IDOTableCreator{
         Map relMap = relation.getColumnsAndReferencingClasses();
         String tableName = relation.getTableName();
         GenericEntity relatingEntity = null;
-        try{
+        //try{
           if(!doesTableExist(entity,tableName)){
             String creationStatement = "CREATE TABLE ";
             creationStatement += tableName;
@@ -380,14 +381,14 @@ public class IDOTableCreator{
             while (iter.hasNext()) {
               String column = (String)iter.next();
               Class relClass = (Class)relMap.get(column);
-              try{
+              //try{
                 GenericEntity entity1 = (GenericEntity)relClass.newInstance();
                 //createEntityRecord(entity1);
                 createForeignKey(entity,tableName,column,entity1.getTableName(),entity1.getIDColumnName());
-              }
-              catch(Exception e){
-                e.printStackTrace();
-              }
+              //}
+              //catch(Exception e){
+              //  e.printStackTrace();
+              //}
             }
         }
 
@@ -402,11 +403,11 @@ public class IDOTableCreator{
             createForeignKey(entity,tableName,entity.getIDColumnName(),entity.getTableName());
             createForeignKey(entity,tableName,relatingEntity.getIDColumnName(),relatingEntity.getTableName());
           }*/
-        }
-        catch(Exception ex){
-          System.err.println("Failed creating middle-table: "+tableName);
-          ex.printStackTrace();
-        }
+        //}
+        //catch(Exception ex){
+          //System.err.println("Failed creating middle-table: "+tableName);
+          //ex.printStackTrace();
+        //}
 
 
         //}

@@ -31,7 +31,7 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
     super(id);
   }
 
-  protected void afterInitializeAttributes(){
+  protected void beforeInitializeAttributes(){
     addTreeRelationShip();
   }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.75 2002/01/29 12:55:25 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.76 2002/02/05 14:42:08 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -101,6 +101,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
         ex.printStackTrace();
       }
       //call the ializeAttributes that stores information about columns and relationships
+      beforeInitializeAttributes();
       initializeAttributes();
       afterInitializeAttributes();
       setLobColumnName();
@@ -114,6 +115,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       }
     }
   }
+
+  /**
+   * Meant to be overrided in subclasses to add default attributes
+   */
+  protected void beforeInitializeAttributes(){
+  }
+
+
 
   /**
    * Meant to be overrided in subclasses to add default attributes
