@@ -17,6 +17,7 @@ import javax.rmi.PortableRemoteObject;
 
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.repository.data.Singleton;
 import com.idega.util.reflect.MethodFinder;
 /**
  * IBOLookup is a class use to get instances of IBO (Service and Session) objects.<br><br>
@@ -25,7 +26,7 @@ import com.idega.util.reflect.MethodFinder;
  * Copyright (c) 2002-2004 Idega Software
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  */
-public class IBOLookup
+public class IBOLookup implements Singleton
 {
 	private static IBOLookup instance;
 	protected static IBOLookup getInstance()
