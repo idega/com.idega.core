@@ -8,6 +8,9 @@ import java.io.OutputStream;
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICFileHome;
 import com.idega.data.IDOLookup;
+import com.idega.io.MemoryFileBuffer;
+import com.idega.io.MemoryInputStream;
+import com.idega.io.MemoryOutputStream;
 
 import com.idega.xml.XMLDocument;
 import com.idega.xml.XMLElement;
@@ -108,16 +111,23 @@ public class XMLData {
     ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
     xmlFile.setMimeType("text/xml");
     xmlFile.setName(getName());
-    OutputStream output = xmlFile.getFileValueForWrite();
+    // does not work: getFileValueForWrite()
+    //OutputStream output = xmlFile.getFileValueForWrite();
+    MemoryFileBuffer buffer = new MemoryFileBuffer();
+    OutputStream outputStream = new MemoryOutputStream(buffer);
     XMLOutput xmlOutput = new XMLOutput("  ", true);
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));
     xmlOutput.setTextNormalize(true);
     xmlOutput.setEncoding("iso-8859-1");
     // do not use document directly use accessor method
     XMLDocument document = getDocument();
-    xmlOutput.output(document, output);
-    output.flush();
-    output.close();
+    xmlOutput.output(document, outputStream);
+    outputStream.flush();
+    outputStream.close();
+    // set file value
+    InputStream inputStream = new MemoryInputStream(buffer);
+    xmlFile.setFileValue(inputStream);
+    inputStream.close();
     try {
       xmlFile.store();
       if (xmlFileId < 0) {
