@@ -89,6 +89,8 @@ public class DataTable extends PresentationObjectContainer {
       contentTable.setAlignment(1,lastrow,buttonAlign);
       while(buttons.size()>0){
         contentTable.add((PresentationObject)buttons.remove(0),1,lastrow);
+        if (buttons.size()>0)
+        	contentTable.add(Text.NON_BREAKING_SPACE,1,lastrow);
       }
     }
 
