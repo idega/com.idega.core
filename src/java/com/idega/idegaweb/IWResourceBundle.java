@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.23 2003/04/03 09:53:23 laddi Exp $
+ * $Id: IWResourceBundle.java,v 1.24 2003/05/30 21:04:50 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -8,6 +8,14 @@
  *
  */
 package com.idega.idegaweb;
+
+
+import com.idega.exception.IWBundleDoesNotExist;
+import com.idega.presentation.Image;
+import com.idega.util.SortedProperties;
+
+import java.io.InputStream;
+import java.io.IOException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,7 +45,8 @@ public class IWResourceBundle extends ResourceBundle {
 
 	// ==================privates====================
 	private TreeMap lookup;
-	private Properties properties = new Properties();
+	private Properties properties = new SortedProperties();
+	//private Properties properties = new Properties();
 	private Locale locale;
 	private File file;
 	private IWBundle iwBundleParent;
@@ -135,7 +144,7 @@ public class IWResourceBundle extends ResourceBundle {
 		this.locale = locale;
 	}
 
-	public void storeState() {
+	public synchronized void storeState() {
 		try {
 			properties.clear();
 			if (lookup != null) {
@@ -175,16 +184,19 @@ public class IWResourceBundle extends ResourceBundle {
 			return null;
 		}
 	}
-
-	public String getLocalizedString(String key, String returnValueIfNull) {
+	
+	/**
+	* Gets a localized stringvalue  and sets the value as returnValueIfNotFound if it is previously not found and returns it.
+	*/
+	public String getLocalizedString(String key, String returnValueIfNotFound) {
 		String returnString = getLocalizedString(key);
 		if ( (returnString == null) || "".equals(returnString) ) {
 			if (getIWBundleParent().getApplication().getSettings().isAutoCreateStringsActive()) {
 				if (getIWBundleParent().getApplication().getSettings().isDebugActive())
 					System.out.println("Storing localized string: " + key);
-				setLocalizedString(key, returnValueIfNull);
+				setLocalizedString(key, returnValueIfNotFound);
 			}
-			return returnValueIfNull;
+			return returnValueIfNotFound;
 		}
 		else
 			return returnString;
@@ -226,12 +238,19 @@ public class IWResourceBundle extends ResourceBundle {
 		return this.iwBundleParent.getApplication().getImageFactory().createTab(text, iwBundleParent, getLocale(), flip);
 	}
 
+	/**
+	 * Sets a value of a string key in this ResourceBundle. Stores the files implicitly (storeState()) to the diskafter a call to this method.
+	 * @param key a String key
+	 * @param value a value to the key
+	 */
 	public void setString(String key, String value) {
 		lookup.put(key, value);
 		String string = (String) this.iwBundleParent.getLocalizableStringsMap().get(key);
 		if (string == null) {
 			this.iwBundleParent.getLocalizableStringsMap().put(key, value);
+			iwBundleParent.storeState();
 		}
+		this.storeState();
 	}
 
 	public boolean removeString(String key) {
