@@ -61,7 +61,7 @@ public class ImplementorRepository {
 		addImplementorForCaller(interfaceClass, null, implementationClass);
 	}
 	
-	public Object getImplementor(Class interfaceClass, Class callerClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public Object newInstance(Class interfaceClass, Class callerClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		List implementors = getValidImplementorClasses(interfaceClass, callerClass);
 		// get the first one
 		if (implementors == null) {
@@ -71,9 +71,9 @@ public class ImplementorRepository {
 		return implementorClass.newInstance();
 	}
 	
-	public Object getImplementorOrNull(Class interfaceClass, Class callerClass) {
+	public Object newInstanceOrNull(Class interfaceClass, Class callerClass) {
 		try {
-			return getImplementor(interfaceClass, callerClass);
+			return newInstance(interfaceClass, callerClass);
 		} 
 		catch (ClassNotFoundException e) {
 			return null;
@@ -175,5 +175,5 @@ public class ImplementorRepository {
 		return false;		
 	}
 	
-	
+
 }

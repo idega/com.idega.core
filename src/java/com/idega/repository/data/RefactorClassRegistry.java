@@ -98,7 +98,7 @@ public class RefactorClassRegistry
 	
 	public Object newInstance(Class aClass, Class callerClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		if (aClass.isInterface()) {
-			return ImplementorRepository.getInstance().getImplementor(aClass, callerClass);
+			return ImplementorRepository.getInstance().newInstance(aClass, callerClass);
 		}
 		return aClass.newInstance();
 	}
