@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.6 2003/10/03 01:42:00 tryggvil Exp $
+ * $Id: XMLElement.java,v 1.7 2003/10/31 13:24:26 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -313,5 +313,12 @@ public class XMLElement {
     Element el = (Element)_element.clone();
     XMLElement element = new XMLElement(el);
     return element;
+  }
+  
+  public XMLElement detach()	{
+  	if (_element != null)	{
+  		return new XMLElement(_element.detach());
+  	}
+  	return null;
   }
 }
