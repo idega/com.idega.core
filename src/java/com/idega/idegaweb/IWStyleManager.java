@@ -30,7 +30,9 @@ public class IWStyleManager implements Singleton {
 
 	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IWStyleManager();}};
 	
-	private IWStyleManager() {
+
+	
+	public IWStyleManager() {
 		// empty
 	}
 	
