@@ -36,21 +36,25 @@ public java.util.Collection findAllUsers()throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindAllUsers();
 	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
+//return this.getEntityCollectionForPrimaryKeys(ids);
+			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
 public java.util.Collection findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindByNames(p0,p1,p2);
 	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
+//return this.getEntityCollectionForPrimaryKeys(ids);
+			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
 public java.util.Collection findUsersForUserRepresentativeGroups(java.util.Collection p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersForUserRepresentativeGroups(p0);
 	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
+//return this.getEntityCollectionForPrimaryKeys(ids);
+			return this.getIDOEntityListForPrimaryKeys(ids);
+	
 }
 
 public User findUserForUserRepresentativeGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException{
@@ -64,14 +68,16 @@ public java.util.Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersInPrimaryGroup(p0);
 	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
+//return this.getEntityCollectionForPrimaryKeys(ids);
+			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
 public java.util.Collection findUsersBySearchCondition(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(p0);
 	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
+//return this.getEntityCollectionForPrimaryKeys(ids);
+			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
 public java.util.Collection findUsersByYearOfBirth (int minYear, int maxYear)throws javax.ejb.FinderException,java.rmi.RemoteException{
@@ -85,7 +91,8 @@ public Collection findUsersBySearchCondition(String condition, String[] userIds)
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(condition, userIds);
 	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
+//return this.getEntityCollectionForPrimaryKeys(ids);
+			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
 public User findUserForUserGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException{
@@ -106,14 +113,16 @@ public java.util.Collection findUsers(java.lang.String[] userIDs)throws javax.ej
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsers(userIDs);
 	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
+//return this.getEntityCollectionForPrimaryKeys(ids);
+			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
 public java.util.Collection findAllUsersOrderedByFirstName()throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindAllUsersOrderedByFirstName();
 	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
+//return this.getEntityCollectionForPrimaryKeys(ids);
+			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
  public User findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
