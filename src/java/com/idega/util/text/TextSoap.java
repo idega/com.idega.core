@@ -1815,6 +1815,41 @@ public static String findAndReplaceOnPrefixCondition(String text, String stringT
     return lowestIndex;
   }
 
+	/**
+	 * Capitalizes the given string, making the first letter uppercase and the others
+	 * lowercase.
+	 * @param stringToCapitalize	The string to capitalize
+	 * @return String
+	 * @throws NullPointerException	if stringToCapitalize is null
+	 */
+	public static String capitalize(String stringToCapitalize) throws NullPointerException {
+		String string = stringToCapitalize.toLowerCase();
+		char chars[] = string.toCharArray();
+		if (chars.length > 0)
+			chars[0] = Character.toUpperCase(chars[0]);
+		System.out.println(new String(chars));
+		return new String(chars);
+	}
+
+	/**
+	 * Capitalizes the given string, making the first characters uppercase as well as all
+	 * characters after the specified separator.  All other characters are displayed
+	 * lowercase.
+	 * @param stringToCapitalize	The string to capitalize
+	 * @param separator					The separator to use
+	 * @return String
+	 * @throws NullPointerException	if stringToCapitalize is null
+	 */
+	public static String capitalize(String stringToCapitalize, String separator) throws NullPointerException {
+		StringTokenizer tokens = new StringTokenizer(stringToCapitalize, separator);
+		StringBuffer returnString = new StringBuffer();
+		while (tokens.hasMoreTokens()) {
+			returnString.append(capitalize(tokens.nextToken()));
+			if (tokens.hasMoreTokens())
+				returnString.append(separator);
+		}
+		return returnString.toString();
+	}
 }
 
 
