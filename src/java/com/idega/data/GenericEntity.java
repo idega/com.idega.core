@@ -2203,7 +2203,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			String middleTable = getNameOfMiddleTable(getStaticInstanceIDO(entityToAddTo), this);
-			String columnName = (getStaticInstance(entityToAddTo)).getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
+			String columnName = (getStaticInstanceIDO(entityToAddTo)).getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
 			if (ids != null) {
 				for (int i = 0; i < ids.length; i++) {
 					try {
