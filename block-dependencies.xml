@@ -1,6 +1,14 @@
 <project>
     <extend>base-project.xml</extend>
     <dependencies>
+            <dependency>
+            <groupId>servletapi</groupId>
+            <artifactId>servletapi</artifactId>
+            <version>2.3</version>
+            <type>jar</type>
+            <url>http://java.sun.com/products/servlet/docs.html</url>
+            <properties/>
+        </dependency>
         <dependency>
             <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
