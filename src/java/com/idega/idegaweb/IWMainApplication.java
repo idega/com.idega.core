@@ -51,6 +51,7 @@ public class IWMainApplication{//implements ServletContext{
   private static String MEDIA_SERVLET_URL="/servlet/MediaServlet/";
   private static String BUILDER_SERVLET_URL="/servlet/IBMainServlet/";
   private static String _IFRAME_CONTENT_URL="/servlet/IBIFrameServlet/";
+  private static String IDEGAWEB_APP_SERVLET_URI = "/servlet/idegaweb";
 
   public static String templateParameter="idegaweb_template";
   public static String templateClassParameter="idegaweb_template_class";
@@ -91,6 +92,12 @@ public class IWMainApplication{//implements ServletContext{
   private static final String APACHE_RESTART_PARAMETER = "restart_apache";
 
   private static final String CONTEXT_PATH_KEY="IW_CONTEXT_PATH";
+	private String APP_CONTEXT_URI_KEY = "IW_APP_CONTEXT_URI";
+	private String appContext;
+	private static String SLASH="/";
+	private boolean checkedAppContext;
+	private String cacheDirURI;
+
 
   public static boolean DEBUG_FLAG = false;
 
@@ -389,9 +396,7 @@ public class IWMainApplication{//implements ServletContext{
     //System.out.println("setPropertiesRealPath : "+propertiesRealPath);
   }
 
-  public String getRealPath(String p0){
-    return application.getRealPath(p0);
-  }
+
 
   /**
    * Returns the real path to the WebApplication
@@ -776,15 +781,79 @@ public class IWMainApplication{//implements ServletContext{
     System.out.println("[idegaWebApp] : "+message);
   }
 
+	public void setApplicationContextURI(String uri)
+	{
+		if(uri!=null){
+			if (uri.startsWith(SLASH))
+			{
+				appContext = uri;
+			}
+			else
+			{
+				appContext = SLASH + uri;
+			}
+		}
+		else{
+			appContext=SLASH;	
+		}
+		checkedAppContext = true;
+	}
+	/**
+	 *@return The part of the request URI that belongs to this application, returns "/" if running under the ROOT context
+	 **/
+	public String getApplicationContextURI()
+	{
+		if (!checkedAppContext)
+		{
+			setApplicationContextURI(this.getSettings().getProperty(APP_CONTEXT_URI_KEY));
+			checkedAppContext = true;
+		}
+		if(appContext==null){
+			return this.SLASH;
+		}
+		return appContext;
+	}
+	public boolean isRunningUnderRootContext(){
+		if (appContext==null){
+			return true;
+		}
+		else if(appContext.equals(SLASH)){
+			return true;
+		}	
+		else{
+			return false;	
+		}
+		
+	}
+	public String getTranslatedURIWithContext(String url)
+	{
+		String appContext = getApplicationContextURI();
+		if (isRunningUnderRootContext())
+		{
+			return url;
+		}
+		else
+		{
+			if(url.startsWith(this.SLASH)){
+				return appContext + url;
+			}
+			else{
+				return appContext +SLASH+url;
+			}
+		}
+	}
+
+
+/*
   protected String getTranslatedURLWithContext(String url){
-    /**
-     * @todo: implement
-     */
+    //
+     // @todo: implement
+     //
     return url;
   }
-
+*/
   public String getWindowOpenerURI(){
-    return getTranslatedURLWithContext(this.windowOpenerURL);
+    return getTranslatedURIWithContext(this.windowOpenerURL);
   }
 
   public  String getWindowOpenerURI(Class windowToOpen){
@@ -802,21 +871,53 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   public String getObjectInstanciatorURI(){
-    return getTranslatedURLWithContext(objectInstanciatorURL);
+    return getTranslatedURIWithContext(objectInstanciatorURL);
   }
 
   public String getMediaServletURI(){
-    return getTranslatedURLWithContext(this.MEDIA_SERVLET_URL);
+    return getTranslatedURIWithContext(this.MEDIA_SERVLET_URL);
   }
 
   public String getBuilderServletURI(){
-    return getTranslatedURLWithContext(this.BUILDER_SERVLET_URL);
+    return getTranslatedURIWithContext(this.BUILDER_SERVLET_URL);
   }
 
   public String getIFrameContentURI(){
-    return getTranslatedURLWithContext(this._IFRAME_CONTENT_URL);
+    return getTranslatedURIWithContext(this._IFRAME_CONTENT_URL);
   }
 
+ 	public String getIdegaWebApplicationsURI()
+	{
+		return getTranslatedURIWithContext(this.IDEGAWEB_APP_SERVLET_URI);
+	}
+  
+
+/*
+  public String getRealPath(String p0){
+    return application.getRealPath(p0);
+  }
+*/
+	/**
+	 * Returns the real path to the resource associated with the request URI.<br><br>
+	 * This method takes into account the application context URI that the application is running under unlike ServletContext.getRealPath(String s0)
+	 */
+	public String getRealPath(String requestURI){
+		if(this.isRunningUnderRootContext()){
+			return this.application.getRealPath(requestURI);
+		}
+		else{
+			String uri = requestURI.substring(this.getApplicationContextURI().length(),requestURI.length());
+			return application.getRealPath(uri);
+		}
+	}
+	
+	public String getCacheDirectoryURI(){
+		if (cacheDirURI==null)
+		{
+				cacheDirURI = getTranslatedURIWithContext(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
+		}
+		return cacheDirURI;
+	}
 
 
 }

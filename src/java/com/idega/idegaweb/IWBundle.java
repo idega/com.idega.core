@@ -503,7 +503,7 @@ public class IWBundle implements java.lang.Comparable {
 	 //return resourcesPath+"/"+iwc.getCurrentLocale().toString();
     }
 
-    public String getResourcesURL(Locale locale){
+/*    public String getResourcesURL(Locale locale){
       return getResourcesVirtualPath(locale);
     }
 
@@ -522,7 +522,35 @@ public class IWBundle implements java.lang.Comparable {
 	//return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
 	return resourcesVirtualPath;
     }
+*/
 
+	public String getResourcesURL(Locale locale)
+	{
+		return getResourcesVirtualPath(locale);
+		//return this.getApplication().getTranslatedURIWithContext(getResourcesVirtualPath(locale));
+	}
+	public String getResourcesURL()
+	{
+		return getResourcesVirtualPath();
+		//return this.getApplication().getTranslatedURIWithContext(getResourcesVirtualPath());
+	
+	}
+	public String getResourcesVirtualPath(Locale locale)
+	{
+		//private String getLocaleDirectory(Locale locale){
+		//return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
+	
+		return this.getResourceBundle(locale).getResourcesURL();
+		//return this.getApplication().getTranslatedURIWithContext(this.getResourceBundle(locale).getResourcesURL());
+	}
+
+	public String getResourcesVirtualPath()
+	{
+		//private String getLocaleDirectory(Locale locale){
+		//return this.getResourcesVirtualPath()+File.pathSeparator+locale.toString()+".locale";
+		//return resourcesVirtualPath;
+		return getApplication().getTranslatedURIWithContext(resourcesVirtualPath);
+	}
 
     public String getResourcesRealPath(Locale locale){
       String path = (String)localeRealPaths.get(locale);

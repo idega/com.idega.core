@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.36 2002/06/13 13:31:21 eiki Exp $
+ * $Id: IWPresentationServlet.java,v 1.37 2002/08/09 10:27:24 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -48,8 +48,8 @@ import java.util.StringTokenizer;
 public  class IWPresentationServlet extends IWCoreServlet{
 
   private static final String IW_BUNDLE_IDENTIFIER = "com.idega.core";
-
   private static final String IW_MODULEINFO_KEY="idegaweb_iwc";
+	private Boolean checkedCurrentAppContext = null;
 	/*
 	public void init(ServletConfig config)
 	  throws ServletException{
@@ -64,11 +64,30 @@ public  class IWPresentationServlet extends IWCoreServlet{
 		System.out.println("Inside init for "+servletName);
 		initializePage();
 	}*/
+	protected boolean hasCheckedCurrentAppContext(){
+		if(checkedCurrentAppContext==null){
+			synchronized(this){
+				if(checkedCurrentAppContext==null){
+					checkedCurrentAppContext=Boolean.TRUE;
+					return false;
+				}
+				else{
+					return true;
+				}
+			}
+		}
+		else{
+			return true;
+		}
+	}
 
 	private void __initializeIWC(HttpServletRequest request, HttpServletResponse response) throws Exception {
 	  //TODO
 	  //Find a better solution for this:
 	  IWContext iwc = null;
+	  if(!hasCheckedCurrentAppContext()){
+	  	this.getApplication().setApplicationContextURI(request.getContextPath());	
+	  }
 	  //IWContext iwc = (IWContext)request.getSession().getAttribute("idega_special_iwc");
 
 	  if (iwc == null) {
