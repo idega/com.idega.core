@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.133 2005/01/06 02:31:07 tryggvil Exp $
+ *  $Id: Page.java,v 1.134 2005/01/12 10:46:24 gimmi Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -203,25 +203,43 @@ public class Page extends PresentationObjectContainer {
 	}
 
 	private String getStyleSheetURL(String markup, IWContext iwc) {
-		
+	
+		QueueMap map = new QueueMap();
 		//The default style sheet MUST come first so we can override it in latter sheets!
 		List sheets = GlobalIncludeManager.getInstance().getStyleSheets();
 		for (Iterator iter = sheets.iterator(); iter.hasNext();) {
 			String url = (String) iter.next();
 			String styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext(url);
-			this.addStyleSheetURL(styleSheetURL);
+			map.put(styleSheetURL, styleSheetURL);
+//			this.addStyleSheetURL(styleSheetURL);
 		}
 		
+		StringBuffer buffer = new StringBuffer();
+
+		// First the default and global style sheets
+		if (!map.isEmpty()) {
+			Iterator iter = map.values().iterator();
+			while (iter.hasNext()) {
+				String URL = (String) iter.next();
+				addStyleSheet(buffer, markup, URL);
+			}
+		}
+		
+		// Now the added style
 		if (_styleSheets != null && !_styleSheets.isEmpty()) {
-			StringBuffer buffer = new StringBuffer();
 			Iterator iter = _styleSheets.values().iterator();
 			while (iter.hasNext()) {
 				String URL = (String) iter.next();
-				buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" "+(!markup.equals(HTML) ? "/" : "")+">\n");
+				addStyleSheet(buffer, markup, URL);
 			}
-			return buffer.toString();
 		}
-		return "";
+		
+
+		return buffer.toString();
+	}
+	
+	private StringBuffer addStyleSheet(StringBuffer buffer, String markup, String URL) {
+		return buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" "+(!markup.equals(HTML) ? "/" : "")+">\n");
 	}
 
 	public void addJavascriptURL(String URL) {
@@ -513,6 +531,20 @@ public class Page extends PresentationObjectContainer {
 	 *@param  styleSheetURL  The new styleSheetURL value
 	 */
 	public void setStyleSheetURL(String styleSheetURL) {
+		int index = styleSheetURL.indexOf(",");
+
+		while (index > -1) {
+			addStyleSheetURL(styleSheetURL.substring(0, index));
+			
+			try {
+				styleSheetURL = styleSheetURL.substring(index+1);
+			} catch (ArrayIndexOutOfBoundsException e) {
+				styleSheetURL = styleSheetURL.substring(index);
+			}
+			styleSheetURL.trim();
+			index = styleSheetURL.indexOf(",");
+		}
+		
 		addStyleSheetURL(styleSheetURL);
 	}
 
