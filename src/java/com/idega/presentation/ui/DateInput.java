@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.23 2003/03/12 15:50:51 thomas Exp $
+ * $Id: DateInput.java,v 1.24 2003/03/14 11:19:03 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -15,6 +15,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Script;
 
 import com.idega.util.IWTimestamp;
+import com.idega.util.text.TextSoap;
 
 import java.text.DateFormatSymbols;
 
@@ -26,7 +27,7 @@ import java.util.Locale;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class DateInput extends InterfaceObject {
+public class DateInput extends InterfaceObjectContainer {
   private Script _script;
   private DropdownMenu _theDay;
   private DropdownMenu _theMonth;
@@ -61,7 +62,12 @@ public class DateInput extends InterfaceObject {
   // the method setSetValues is invoked. The problem is that
   // TabbedPropertyWindow seems not to call the main method. 
   private boolean dropDownMenusUpToDate = true;
+  private boolean _keepStatusOnAction = false;
 
+	private boolean isSetAsNotEmpty;
+	private String notEmptyErrorMessage;
+	private String _styleClass;
+	
   /**
    * Creates a new DateInput object.
    */
@@ -142,6 +148,16 @@ public class DateInput extends InterfaceObject {
       }
     }
   }
+
+	/**
+	 * Sets the content (value) of the date input.
+	 * @param value	The content to set.
+	 */
+	public void setContent(String content) {
+		IWTimestamp stamp = new IWTimestamp(content);
+		if (stamp != null)
+			setDate(stamp.getDate());
+	}
 
   private void addMenuElementsToDropdowns() {
     IWTimestamp stamp = IWTimestamp.RightNow();
@@ -363,6 +379,7 @@ public class DateInput extends InterfaceObject {
   }
 
   private void setSetValues() {
+    Form form = getParentForm();
     dropDownMenusUpToDate = true; // because this method was called
     if (_setMonth != null) {
       _theMonth.setSelectedElement(_setMonth);
@@ -407,6 +424,45 @@ public class DateInput extends InterfaceObject {
     addLocalized(iwc);
     addScriptElements(iwc);
     _justConstructed = false;
+
+		if (_keepStatusOnAction)
+			handleKeepStatus(iwc); 
+      
+		if (_isDisabled) {
+			_theYear.setDisabled(_isDisabled);
+			_theMonth.setDisabled(_isDisabled);
+			_theDay.setDisabled(_isDisabled);
+		}
+		if (_styleClass != null) {
+			_theYear.setStyleClass(_styleClass);
+			_theMonth.setStyleClass(_styleClass);
+			_theDay.setStyleClass(_styleClass);
+		}
+
+		if (_displayDayLast) {
+			if (this._showYear) {
+				add(_theYear);
+			}
+
+			add(_theMonth);
+
+			if (_isShowDay) {
+				add(_theDay);
+			}
+		} else {
+			if (_isShowDay) {
+				add(_theDay);
+			}
+
+			add(_theMonth);
+
+			if (this._showYear) {
+				add(_theYear);
+			}
+		}
+
+		add(_theWholeDate);
+		add(_script);
   }
 
   public void addScriptElements(IWContext iwc) {
@@ -427,7 +483,19 @@ public class DateInput extends InterfaceObject {
         _theMonth.setOnChange("iwSetValueOfHiddenDateWithMonth('" + this._selectedYear + "',this.form." + _theMonth.getName() + ",'01',this.form." + _theWholeDate.getName() + ");");
       }
     }
+		if (isSetAsNotEmpty) {
+			if (_showYear)
+				_theYear.setAsNotEmpty(notEmptyErrorMessage, "YY");
+			_theMonth.setAsNotEmpty(notEmptyErrorMessage, "00");
+			if (_isShowDay)
+				_theDay.setAsNotEmpty(notEmptyErrorMessage, "00");
+		}
   }
+
+	public void setAsNotEmpty(String errorMessage) {
+		isSetAsNotEmpty = true;
+		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+	}
 
   private void addLocalized(IWContext iwc) {
     Locale locale = iwc.getCurrentLocale();
@@ -489,9 +557,11 @@ public class DateInput extends InterfaceObject {
     }
   }
 
-  public void print(IWContext iwc) throws Exception {
+  /*public void print(IWContext iwc) throws Exception {
     if (!dropDownMenusUpToDate)
       setSetValues();
+    if (_keepStatusOnAction)
+    	handleKeepStatus(iwc); 
       
     super.print(iwc);
 
@@ -525,7 +595,7 @@ public class DateInput extends InterfaceObject {
 
     _theWholeDate._print(iwc);
     _script._print(iwc);
-  }
+  }*/
 
   /**
    * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
@@ -542,4 +612,20 @@ public class DateInput extends InterfaceObject {
     _setCheck = true;
     setSetValues();
   }
+  
+  public void keepStatusOnAction(boolean keepStatus) {
+  	_keepStatusOnAction = keepStatus;
+  }
+
+	public void keepStatusOnAction() {
+		keepStatusOnAction(true);
+	}
+
+	/**
+	 * @see com.idega.presentation.PresentationObject#setStyleClass(java.lang.String)
+	 */
+	public void setStyleClass(String styleName) {
+		_styleClass = styleName;
+	}
+
 }
