@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.20 2004/01/06 10:43:52 palli Exp $
+ * $Id: AbstractChooser.java,v 1.21 2004/06/02 15:42:28 birna Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -49,6 +49,9 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	private IWBundle _bundle;
 	private IWResourceBundle _iwrb;
 	private int _inputLength = -1;
+	
+	private String styleClassName;
+	private boolean isStyleClassSet = false;
 
 	/**
 	 * @param aDisabled -
@@ -219,6 +222,9 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			if (_style != null) {
 				input.setMarkupAttribute("style", _style);
 			}
+			if(isStyleClassSet) {
+				input.setStyleClass(styleClassName);
+			}
 
 			if (_stringDisplay != null) {
 				input.setValue(_stringDisplay);
@@ -256,6 +262,11 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 
 	public void setInputStyle(String style) {
 		_style = style;
+	}
+	
+	public void setStyleClassName(String styleClassName) {
+		this.styleClassName = styleClassName;
+		isStyleClassSet = true;
 	}
 
 	public void addForm(boolean addForm) {
