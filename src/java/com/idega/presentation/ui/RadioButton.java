@@ -1,5 +1,5 @@
 /*
- * $Id: RadioButton.java,v 1.6 2002/10/15 11:31:04 laddi Exp $
+ * $Id: RadioButton.java,v 1.7 2003/02/06 17:08:08 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -47,7 +47,17 @@ public class RadioButton extends GenericInput {
 	 * Sets the radio button as selected.
 	 */
 	public void setSelected() {
-		setAttribute("checked");
+		setSelected(true);
+	}
+
+	/**
+	 * Sets the radio button as selected.
+	 */
+	public void setSelected(boolean selected) {
+		if (selected)
+			setAttribute("checked");
+		else
+			removeAttribute("checked");
 	}
 
 	/**
