@@ -1132,7 +1132,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		if(personalId!=null && !personalId.equals("") ){
 			query.append(operator)
 			.append(" ( ")
-			.append(getColumnNamePersonalID()).append(" like '%").append(personalId).append("%' ")
+			.append(getColumnNamePersonalID()).append(" like '").append(personalId).append("%' ")
 			.append(" ) ");
 		}
 			
@@ -1198,9 +1198,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 */
 	private String getUserNameSearchString(String condition) {
 		StringBuffer sql = new StringBuffer();
-		sql.append(getColumnNameFirstName()).append(" like '%").append(condition).append("%' OR ")
-		.append(getColumnNameMiddleName()).append(" like '%").append(condition).append("%' OR ")
-		.append(getColumnNameLastName()).append(" like '%").append(condition).append("%'");
+		sql.append(getColumnNameFirstName()).append(" like '").append(condition).append("%' OR ")
+		.append(getColumnNameMiddleName()).append(" like '").append(condition).append("%' OR ")
+		.append(getColumnNameLastName()).append(" like '").append(condition).append("%'");
 		
 		return sql.toString();
 	}
