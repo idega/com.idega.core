@@ -1,20 +1,25 @@
 package com.idega.presentation.ui;
 
-import java.util.*;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.io.IOException;
-import javax.servlet.RequestDispatcher;
-import com.idega.presentation.PresentationObject;
-import com.idega.presentation.Page;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.idega.builder.business.BuilderLogic;
+import com.idega.builder.data.IBPage;
 import com.idega.presentation.IWContext;
-import com.idega.util.Index;
-import com.idega.util.IndexComparator;
+import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
 import com.idega.util.FileUtil;
 import com.idega.util.Index;
+import com.idega.util.IndexComparator;
 import com.idega.util.text.TextSoap;
-import com.idega.builder.data.IBPage;
-import com.idega.builder.business.BuilderLogic;
 
 /**
  * A presentationObject that uses FileUtil.getStringFromURL to serverside include a given URL

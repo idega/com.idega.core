@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.13 2003/04/01 23:27:23 thomas Exp $
+ * $Id: AbstractChooser.java,v 1.14 2003/04/03 10:08:17 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,15 +10,15 @@
 package com.idega.presentation.ui;
 
 import java.net.URLEncoder;
+
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
-import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
-import com.idega.presentation.text.Text;
-import com.idega.presentation.Image;
-import com.idega.idegaweb.IWBundle;
 
 /**
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>,<a href="palli@idega.is">Pall Helgason</a>

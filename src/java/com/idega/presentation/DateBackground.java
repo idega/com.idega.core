@@ -1,7 +1,6 @@
 package com.idega.presentation;
 
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
 

@@ -5,7 +5,6 @@
 package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -33,7 +32,6 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
-import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWSystemProperties;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;

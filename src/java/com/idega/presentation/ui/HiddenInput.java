@@ -4,9 +4,6 @@
 */
 package com.idega.presentation.ui;
 
-import java.io.*;
-import java.util.*;
-import com.idega.presentation.*;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

@@ -5,18 +5,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.idega.presentation.ui.Form;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
-import com.idega.util.GenericFormCollector;
-import com.idega.util.datastructures.Collectable;
+import javax.swing.event.ChangeListener;
+
 import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
+import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.event.IWModuleEvent;
-import com.idega.event.IWEventException;
+import com.idega.util.GenericFormCollector;
+import com.idega.util.datastructures.Collectable;
 //import com.idega.presentation.ui.ResetButton;
 
 /**

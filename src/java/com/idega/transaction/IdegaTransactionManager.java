@@ -20,13 +20,18 @@ package com.idega.transaction;
 
 */
 
-import com.idega.util.*;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.InvalidTransactionException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
-import javax.transaction.*;
-
-import javax.transaction.xa.*;
-
-import com.idega.data.*;
+import com.idega.data.IDOLegacyEntity;
+import com.idega.util.ThreadContext;
 
 
 /**

@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.15 2003/04/02 17:56:42 laddi Exp $
+ * $Id: DropdownMenu.java,v 1.16 2003/04/03 10:08:17 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import com.idega.data.IDOLegacyEntity;
-import com.idega.presentation.IWContext;
 
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

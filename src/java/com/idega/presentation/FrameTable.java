@@ -5,15 +5,20 @@
 
 package com.idega.presentation;
 
-import com.idega.idegaweb.*;
 import java.rmi.RemoteException;
-import com.idega.business.*;
-import com.idega.presentation.ui.Window;
-
-import java.io.*;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+
+import com.idega.business.IBOLookup;
+import com.idega.business.IWFrameBusiness;
+import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWPresentationLocation;
+import com.idega.idegaweb.IWURL;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.ui.Window;
 
 
 /**

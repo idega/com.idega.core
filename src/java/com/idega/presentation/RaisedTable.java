@@ -1,7 +1,5 @@
 package com.idega.presentation;
 
-import com.idega.presentation.*;
-import com.idega.idegaweb.*;
 
 /**
  * Title:        idegaclasses

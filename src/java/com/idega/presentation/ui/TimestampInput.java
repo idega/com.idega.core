@@ -1,6 +1,6 @@
 /*
 
- * $Id: TimestampInput.java,v 1.5 2002/08/12 12:59:32 palli Exp $
+ * $Id: TimestampInput.java,v 1.6 2003/04/03 10:08:17 laddi Exp $
 
  *
 
@@ -20,21 +20,18 @@ package com.idega.presentation.ui;
 
 
 
-import java.io.*;
-
-import java.util.*;
-
-import com.idega.presentation.*;
-
-import com.idega.presentation.text.*;
-
-import com.idega.util.*;
-
-import com.idega.idegaweb.IWBundle;
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import com.idega.idegaweb.IWResourceBundle;
-
-import java.text.DateFormatSymbols;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Script;
+import com.idega.presentation.text.Text;
+import com.idega.util.IWTimestamp;
 
 
 

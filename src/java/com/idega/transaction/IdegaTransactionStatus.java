@@ -20,11 +20,7 @@ package com.idega.transaction;
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  */
 
-import com.idega.util.*;
-
-import javax.transaction.*;
-
-import javax.transaction.xa.*;
+import javax.transaction.Status;
 
 
 

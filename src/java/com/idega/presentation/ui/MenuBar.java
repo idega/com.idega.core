@@ -2,9 +2,8 @@ package com.idega.presentation.ui;
 
 
 
-import com.idega.presentation.*;
-
-import java.sql.*;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Script;
 
 
 

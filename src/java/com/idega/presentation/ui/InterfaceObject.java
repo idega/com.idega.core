@@ -4,9 +4,9 @@
 */
 package com.idega.presentation.ui;
 
-import java.io.*;
-import java.util.*;
-import com.idega.presentation.*;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Script;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

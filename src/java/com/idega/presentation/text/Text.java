@@ -6,12 +6,13 @@
 package com.idega.presentation.text;
 
 
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Locale;
-import com.idega.presentation.*;
+import java.util.Map;
+
 import com.idega.core.localisation.business.ICLocaleBusiness;
-import com.idega.core.data.ICLocale;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
 
 
 /**

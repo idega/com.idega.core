@@ -1,20 +1,15 @@
 package com.idega.presentation;
 
 import java.sql.SQLException;
-import java.util.*;
 import java.util.Iterator;
-import com.idega.core.data.ICFile;
-import com.idega.core.data.ICMimeType;
-import com.idega.presentation.Block;
-import com.idega.presentation.Image;
-import com.idega.presentation.Table;
-import com.idega.presentation.text.Link;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.Script;
-import com.idega.idegaweb.IWResourceBundle;
-import com.idega.idegaweb.IWBundle;
+import java.util.List;
+import java.util.Vector;
+
 import com.idega.block.media.business.MediaBusiness;
+import com.idega.core.data.ICFile;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.SubmitButton;
 
 public class ImageSlideShow extends Block {

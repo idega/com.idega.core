@@ -5,8 +5,6 @@ import com.idega.event.IWPresentationEvent;
 import com.idega.event.NoSuchEventException;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.Parameter;
-import java.util.List;
-import java.util.Vector;
 
 
 /**

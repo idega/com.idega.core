@@ -2,15 +2,17 @@ package com.idega.io;
 
 
 
-import java.io.*;
-
-import java.util.Hashtable;
-
-import java.util.Enumeration;
-
-import java.sql.*;
-
-import java.net.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 
 

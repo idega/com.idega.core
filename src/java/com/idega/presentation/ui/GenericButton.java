@@ -4,14 +4,16 @@
 */
 package com.idega.presentation.ui;
 
-import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import com.idega.block.media.business.MediaBusiness;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBDomain;
 import com.idega.builder.data.IBPage;
-import com.idega.presentation.*;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.util.URLUtil;
 import com.idega.util.text.TextSoap;
 

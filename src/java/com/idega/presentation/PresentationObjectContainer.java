@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.19 2002/09/26 20:46:51 eiki Exp $
+ * $Id: PresentationObjectContainer.java,v 1.20 2003/04/03 10:08:16 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,12 +9,15 @@
  */
 package com.idega.presentation;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWLocation;
-import com.idega.presentation.text.*;
-import java.util.*;
-import java.io.*;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.text.Text;
 
 /**
  * A base class for Containers of PresentationObjects

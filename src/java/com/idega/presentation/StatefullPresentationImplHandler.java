@@ -1,12 +1,12 @@
 package com.idega.presentation;
-import java.sql.SQLException;
-import java.util.StringTokenizer;
 import java.rmi.RemoteException;
+import java.util.StringTokenizer;
+
 import com.idega.business.IBOLookup;
+import com.idega.event.IWPresentationState;
+import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
-import com.idega.event.IWStateMachine;
-import com.idega.event.IWPresentationState;
 
 /**
  * <p>Title: idegaWeb</p>

@@ -6,19 +6,14 @@ package com.idega.presentation.ui;
 
 
 
-import com.idega.data.*;
+import java.io.IOException;
 
-import java.io.*;
-
-import com.idega.presentation.ui.*;
-
-import com.idega.presentation.text.*;
-
-import com.idega.presentation.*;
-
-import javax.servlet.http.*;
-
-import java.util.*;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
 
 
 

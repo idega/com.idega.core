@@ -1,20 +1,15 @@
 package com.idega.presentation;
 
-import com.idega.block.IWBlock;
-import com.idega.presentation.Block;
-import com.idega.presentation.PresentationObject;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.Table;
-import com.idega.presentation.Image;
-import com.idega.presentation.ui.Parameter;
-import com.idega.presentation.text.*;
-import com.idega.util.text.Edit;
-import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
-import java.util.Vector;
-import java.util.List;
 import java.util.Collection;
+import java.util.Vector;
+
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Parameter;
+import com.idega.util.text.Edit;
 
 /**
  * Title:   idegaclasses

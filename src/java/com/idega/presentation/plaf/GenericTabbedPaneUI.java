@@ -2,29 +2,18 @@ package com.idega.presentation.plaf;
 
 
 
-import com.idega.presentation.Table;
-
+import java.util.EventListener;
 import java.util.Vector;
 
-import com.idega.presentation.PresentationObject;
-
-import com.idega.presentation.text.Link;
-
 import javax.swing.event.ChangeEvent;
-
 import javax.swing.event.ChangeListener;
-
 import javax.swing.event.EventListenerList;
 
-import java.util.EventListener;
-
-import javax.swing.SingleSelectionModel;
-
-import com.idega.presentation.ui.SubmitButton;
-
-import com.idega.util.IWColor;
-
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.Form;
+import com.idega.util.IWColor;
 
 
 

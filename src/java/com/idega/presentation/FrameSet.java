@@ -5,16 +5,13 @@
 
 package com.idega.presentation;
 
-import com.idega.presentation.ui.Window;
-
-import java.io.*;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.*;
+import java.util.Map;
 
-import com.idega.idegaweb.IWURL;
-import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWURL;
+import com.idega.presentation.ui.Window;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

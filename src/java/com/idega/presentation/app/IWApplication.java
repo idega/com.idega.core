@@ -12,37 +12,20 @@ package com.idega.presentation.app;
 
 
 
-import com.idega.idegaweb.*;
-
-import com.idega.presentation.FrameSet;
-
-import com.idega.presentation.Image;
-
-import com.idega.presentation.PresentationObject;
-
-import com.idega.presentation.Table;
-
-import com.idega.presentation.text.Link;
-
-import com.idega.presentation.text.Text;
-
-import com.idega.presentation.IWContext;
-
-import com.idega.presentation.ui.Window;
-
-
-
-
-
-import com.idega.data.EntityFinder;
-
-import com.idega.data.IDOLegacyEntity;
+import java.util.List;
 
 import com.idega.core.data.ICObject;
-
-
-
-import java.util.List;
+import com.idega.data.EntityFinder;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWConstants;
+import com.idega.presentation.FrameSet;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Window;
 
 
 

@@ -12,11 +12,13 @@ package com.idega.presentation.text;
 
 
 
-import java.io.*;
+import java.util.Iterator;
+import java.util.List;
 
-import java.util.*;
-
-import com.idega.presentation.*;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.PresentationObjectContainer;
 
 
 

@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.72 2003/03/10 14:50:18 laddi Exp $
+ *  $Id: Page.java,v 1.73 2003/04/03 10:08:16 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,12 @@
  */
 package com.idega.presentation;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
+
 import com.idega.block.media.business.MediaBusiness;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.business.PageTreeNode;
@@ -16,7 +22,6 @@ import com.idega.builder.data.IBDomain;
 import com.idega.business.IBOLookup;
 import com.idega.business.IWFrameBusiness;
 import com.idega.core.data.ICFile;
-import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWStyleManager;
 import com.idega.idegaweb.IWUserContext;
@@ -26,14 +31,6 @@ import com.idega.presentation.ui.Window;
 import com.idega.servlet.IWCoreServlet;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
-
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Vector;
 
 /**
  *@author     <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

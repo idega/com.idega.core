@@ -2,51 +2,22 @@ package com.idega.presentation;
 
 
 
-import com.idega.presentation.ui.Form;
-
-import com.idega.presentation.PresentationObjectContainer;
-
-import com.idega.presentation.PresentationObject;
-
-import com.idega.presentation.ui.SubmitButton;
-
-import com.idega.presentation.plaf.IWTabbedPaneUI;
-
-import com.idega.presentation.plaf.basic.BasicTabbedPaneUI;
-
-import com.idega.presentation.plaf.TabbedPaneFrame;
-
-import com.idega.presentation.text.Link;
-
-import com.idega.util.IWColor;
-
-import com.idega.event.IWLinkEvent;
-
-import com.idega.event.IWLinkListener;
-
-import com.idega.presentation.plaf.GenericTabbedPaneUI;
-
-import com.idega.util.Disposable;
-
-
-
-import javax.swing.SwingConstants;
-
-import javax.swing.SingleSelectionModel;
-
-import javax.swing.DefaultSingleSelectionModel;
-
-import javax.swing.event.ChangeListener;
-
-import javax.swing.event.ChangeEvent;
-
-import javax.swing.Icon;
-
-
-
 import java.util.Vector;
 
-import java.util.Locale;
+import javax.swing.DefaultSingleSelectionModel;
+import javax.swing.SingleSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import com.idega.event.IWLinkEvent;
+import com.idega.event.IWLinkListener;
+import com.idega.presentation.plaf.GenericTabbedPaneUI;
+import com.idega.presentation.plaf.IWTabbedPaneUI;
+import com.idega.presentation.plaf.basic.BasicTabbedPaneUI;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.ui.Form;
+import com.idega.util.Disposable;
 
 
 

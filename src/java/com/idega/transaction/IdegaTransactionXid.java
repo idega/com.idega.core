@@ -22,11 +22,7 @@ package com.idega.transaction;
  *UNIMPLEMENTED CLASS
 */
 
-import com.idega.util.*;
-
-import javax.transaction.*;
-
-import javax.transaction.xa.*;
+import javax.transaction.xa.Xid;
 
 
 

@@ -12,11 +12,8 @@ package com.idega.presentation.text;
 
 
 
-import java.io.*;
-
-import java.util.*;
-
-import com.idega.presentation.*;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObjectContainer;
 
 
 

@@ -2,11 +2,9 @@ package com.idega.io;
 
 
 
-import java.io.*;
-
-import java.awt.event.*;
-
-import java.net.*;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 

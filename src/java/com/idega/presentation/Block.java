@@ -5,19 +5,22 @@
 
 package com.idega.presentation;
 
-import com.idega.idegaweb.IWConstants;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWStyleManager;
-import com.idega.presentation.text.*;
-import java.util.*;
-import java.io.*;
-//import com.idega.jmodule.login.business.*;
-//import com.idega.block.login.business.LoginBusiness;
-//import com.idega.core.accesscontrol.business.AccessControl;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import com.idega.block.IWBlock;
 import com.idega.core.data.ICObjectInstance;
 import com.idega.idegaweb.IWCacheManager;
-import com.idega.block.IWBlock;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWStyleManager;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
 
 /**
  *

@@ -2,11 +2,7 @@ package com.idega.io;
 
 
 
-import java.io.*;
-
-import java.awt.event.*;
-
-import java.net.*;
+import java.io.FileReader;
 
 
 

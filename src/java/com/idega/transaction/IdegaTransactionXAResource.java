@@ -10,9 +10,9 @@
 
 package com.idega.transaction;
 
-import com.idega.util.*;
-import javax.transaction.*;
-import javax.transaction.xa.*;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 
 /**

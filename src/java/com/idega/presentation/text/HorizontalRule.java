@@ -12,13 +12,10 @@ package com.idega.presentation.text;
 
 
 
-import java.io.*;
+import java.io.IOException;
 
-import java.util.*;
-
-import com.idega.presentation.*;
-
-import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
 
 
 

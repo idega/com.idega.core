@@ -5,11 +5,10 @@
 
 package com.idega.presentation.ui;
 
+import java.io.IOException;
+
 import com.idega.core.localisation.business.LocaleSwitcher;
-import java.io.*;
-import java.util.*;
-import com.idega.presentation.*;
-import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

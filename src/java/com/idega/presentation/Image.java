@@ -5,20 +5,22 @@
 package com.idega.presentation;
 
 //import java.io.*;
-import com.idega.block.media.business.MediaConstants;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import com.idega.block.image.data.ImageEntity;
 import com.idega.block.image.presentation.ImageAttributeSetter;
 import com.idega.block.media.business.MediaBusiness;
-import java.util.*;
-import java.sql.*;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.text.*;
-import com.idega.presentation.ui.*;
-import com.idega.idegaweb.IWCacheManager;
-import com.idega.util.caching.Cache;
 import com.idega.block.media.servlet.MediaServlet;
-import com.idega.block.image.data.ImageEntity;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.idegaweb.IWCacheManager;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Window;
+import com.idega.util.caching.Cache;
 
 
 /**

@@ -2,19 +2,13 @@ package com.idega.presentation;
 
 
 
-import com.idega.block.media.business.MediaBusiness;
-
+import java.io.IOException;
 import java.util.Hashtable;
-
 import java.util.Iterator;
-
 import java.util.Map;
 
-import java.io.IOException;
-
+import com.idega.block.media.business.MediaBusiness;
 import com.idega.core.data.ICFile;
-
-import com.idega.idegaweb.IWMainApplication;
 
 
 

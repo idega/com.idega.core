@@ -1,8 +1,6 @@
 package com.idega.presentation.text;
 
-import com.idega.presentation.PresentationObject;
 import com.idega.presentation.IWContext;
-import java.io.IOException;
 /**
  * Title:
  * Description:

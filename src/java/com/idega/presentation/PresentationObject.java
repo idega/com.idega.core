@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.64 2003/04/01 17:35:12 thomas Exp $
+ * $Id: PresentationObject.java,v 1.65 2003/04/03 10:08:16 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,25 +9,52 @@
  */
 package com.idega.presentation;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.rmi.RemoteException;
-import com.idega.business.IBOLookup;
-import com.idega.event.*;
-import com.idega.idegaweb.*;
-import java.io.*;
-import java.util.*;
-import javax.servlet.http.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import com.idega.user.business.UserProperties;
-import com.idega.util.database.*;
-import com.idega.util.text.TextStyler;
-import com.idega.core.data.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
-import com.idega.data.EntityFinder;
-import com.idega.exception.ICObjectNotInstalledException;
-import com.idega.presentation.ui.Form;
-import com.idega.business.GenericState;
+
 import com.idega.builder.business.BuilderLogic;
+import com.idega.business.GenericState;
+import com.idega.business.IBOLookup;
+import com.idega.core.data.ICObject;
+import com.idega.core.data.ICObjectInstance;
+import com.idega.data.EntityFinder;
+import com.idega.event.IWActionListener;
+import com.idega.event.IWEvent;
+import com.idega.event.IWEventMachine;
+import com.idega.event.IWLinkEvent;
+import com.idega.event.IWLinkListener;
+import com.idega.event.IWPresentationState;
+import com.idega.event.IWStateMachine;
+import com.idega.event.IWSubmitEvent;
+import com.idega.event.IWSubmitListener;
+import com.idega.exception.ICObjectNotInstalledException;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWException;
+import com.idega.idegaweb.IWLocation;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.idegaweb.IWPresentationLocation;
+import com.idega.idegaweb.IWPropertyList;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.ui.Form;
+import com.idega.util.database.ConnectionBroker;
+import com.idega.util.text.TextStyler;
 
 
 /**

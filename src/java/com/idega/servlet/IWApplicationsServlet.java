@@ -1,21 +1,17 @@
 package com.idega.servlet;
 
 import com.idega.block.login.presentation.Login;
-
-import com.idega.presentation.Page;
-import com.idega.presentation.Table;
+import com.idega.development.presentation.Localizer;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
-import com.idega.presentation.ui.Form;
-import com.idega.development.presentation.Localizer;
-import com.idega.presentation.ui.DropdownMenu;
-import com.idega.presentation.text.Text;
-import com.idega.presentation.text.Link;
-
-import com.idega.core.accesscontrol.business.AccessControl;
+import com.idega.presentation.Page;
+import com.idega.presentation.Table;
 import com.idega.presentation.app.IWControlCenter;
-import com.idega.idegaweb.IWResourceBundle;
-import com.idega.idegaweb.IWBundle;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.Form;
 
 /**
  * Title:        idegaclasses

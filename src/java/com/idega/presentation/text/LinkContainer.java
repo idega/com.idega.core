@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.9 2003/03/20 14:21:23 laddi Exp $
+ * $Id: LinkContainer.java,v 1.10 2003/04/03 10:08:17 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,29 +9,22 @@
  */
 package com.idega.presentation.text;
 
-import com.idega.block.media.business.MediaBusiness;
-import com.idega.util.StringHandler;
-import com.idega.util.text.TextSoap;
-import com.idega.presentation.ui.Window;
-import java.net.URLDecoder;
-import java.util.List;
 import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Locale;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Locale;
 
+import com.idega.block.media.business.MediaBusiness;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.builder.data.IBPage;
 import com.idega.core.data.ICFile;
 import com.idega.core.localisation.business.LocaleSwitcher;
-import com.idega.event.IWLinkEvent;
-import com.idega.event.IWLinkListener;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.ui.Window;
+import com.idega.util.StringHandler;
+import com.idega.util.text.TextSoap;
 
 /**
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

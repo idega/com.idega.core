@@ -9,7 +9,6 @@ import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.presentation.ui.Window;
-import com.idega.presentation.text.Text;
 
 
 /**

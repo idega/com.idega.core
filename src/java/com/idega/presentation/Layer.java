@@ -5,9 +5,7 @@
 
 package com.idega.presentation;
 
-import java.util.*;
-import java.io.*;
-import com.idega.presentation.text.*;
+import java.util.Enumeration;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>

@@ -2,43 +2,15 @@ package com.idega.presentation.plaf.basic;
 
 
 
-import com.idega.util.IWColor;
-
-import com.idega.presentation.ui.SubmitButton;
-
-import com.idega.presentation.plaf.GenericTabbedPaneUI;
-
-import com.idega.presentation.plaf.IWTabbedPaneUI;
-
-import com.idega.presentation.plaf.TabbedPaneFrame;
-
-import com.idega.presentation.plaf.TabPagePresentation;
-
-import com.idega.presentation.plaf.TabPresentation;
-
-import com.idega.presentation.PresentationObject;
-
-import com.idega.presentation.IWContext;
-
-import com.idega.presentation.text.Link;
-
-import com.idega.presentation.text.Text;
-
-import com.idega.presentation.Table;
-
-
-
 import java.util.Vector;
 
-import java.util.EventListener;
-
-
-
-import javax.swing.event.ChangeEvent;
-
-import javax.swing.event.ChangeListener;
-
-import javax.swing.event.EventListenerList;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
+import com.idega.presentation.plaf.GenericTabbedPaneUI;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.util.IWColor;
 
 
 

@@ -1,7 +1,6 @@
 package com.idega.presentation.awt;
 
-import java.awt.Component;
-import java.awt.image.*;     // For ImageFilter stuff
+import java.awt.image.RGBImageFilter;
 
 /**
  * Title:

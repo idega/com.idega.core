@@ -4,9 +4,9 @@
 */
 package com.idega.presentation.ui;
 
-import java.io.*;
-import java.util.*;
-import com.idega.presentation.*;
+import java.io.IOException;
+
+import com.idega.presentation.IWContext;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2

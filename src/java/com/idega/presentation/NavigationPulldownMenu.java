@@ -1,13 +1,13 @@
 package com.idega.presentation;
 
-import com.idega.presentation.text.Link;
-import com.idega.presentation.text.Text;
-import com.idega.presentation.*;
-import com.idega.builder.business.PageTreeNode;
-import com.idega.builder.business.BuilderLogic;
-import com.idega.builder.data.IBPage;
 import java.util.Iterator;
 import java.util.Vector;
+
+import com.idega.builder.business.BuilderLogic;
+import com.idega.builder.business.PageTreeNode;
+import com.idega.builder.data.IBPage;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
 
 
 /**

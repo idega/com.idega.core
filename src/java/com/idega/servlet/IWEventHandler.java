@@ -5,20 +5,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.swing.event.ChangeListener;
-
 import com.idega.business.IBOLookup;
-import com.idega.event.IWPresentationEvent;
-import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWUserContext;
-import com.idega.idegaweb.browser.presentation.IWBrowseControl;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
-import com.idega.presentation.PresentationObject;
-import com.idega.presentation.StatefullPresentation;
 
 /**
  *@author     <a href="mailto:thomas@idega.is">Thomas Hilbig</a>

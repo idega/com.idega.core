@@ -2,19 +2,18 @@ package com.idega.io;
 
 
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import java.sql.*;
-
-import com.idega.presentation.IWContext;
+import oracle.jdbc.driver.OracleResultSet;
 
 import com.idega.util.IWTimestamp;
-
-import oracle.sql.*;
-
-import oracle.jdbc.driver.*;
-
-import com.idega.data.IDOLegacyEntity;
 
 /**
 

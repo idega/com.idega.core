@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.34 2003/03/30 11:56:15 laddi Exp $
+ * $Id: Table.java,v 1.35 2003/04/03 10:08:16 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,16 +9,15 @@
  */
 package com.idega.presentation;
 
-import java.util.Vector;
-import java.util.List;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWColor;
-import com.idega.util.text.StyleConstants;
 import com.idega.util.text.TextStyler;
-import com.idega.idegaweb.IWMainApplication;
-import java.util.Iterator;
-import com.idega.idegaweb.IWUserContext;
 
 /**
  * A class to use for presentation of 2 dimensional (grid) layout.

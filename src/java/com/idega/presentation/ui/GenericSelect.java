@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Vector;
 
 import com.idega.presentation.IWContext;
 import com.idega.util.text.TextSoap;
