@@ -34,6 +34,7 @@ public class ThreadContext
 	 * Unloads the ThreadContext
 	 */
 	public void unload(){
+		instance.threadsMap=null;
 		instance=null;
 	}
 
