@@ -2,12 +2,19 @@ package com.idega.presentation.ui;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 import java.net.URLEncoder;
 import java.util.Enumeration;
-import com.idega.presentation.*;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Page;
+import com.idega.presentation.IWContext;
+import com.idega.util.Index;
+import com.idega.util.IndexComparator;
 import com.idega.util.FileUtil;
+import com.idega.util.Index;
 import com.idega.util.text.TextSoap;
 import com.idega.builder.data.IBPage;
 import com.idega.builder.business.BuilderLogic;
@@ -17,7 +24,7 @@ import com.idega.builder.business.BuilderLogic;
 *@author <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
 *@version 1.0
 */
-public class PageIncluder extends PresentationObject{
+public class PageIncluder extends PresentationObject implements Index{
   private String URL = null;
   private String BASEURL = null;
   private String RELATIVEURL = null;
@@ -51,14 +58,41 @@ public class PageIncluder extends PresentationObject{
   }
 
   private void sortAndProcess(IWContext iwc){
+    //sort
     Page parent = this.getParentPage();
-    List myList = parent.getAllContainedObjectsRecursive();
+    List objects = parent.getAllContainedObjectsRecursive();
+    ArrayList includers = new ArrayList();
+    Iterator iter = objects.iterator();
+    while (iter.hasNext()) {
+      Object item = iter.next();
+      if( (item instanceof PageIncluder) && (!item.equals(this)) ){
+        includers.add(item);
+      }
+    }
 
+    IndexComparator indexer = new IndexComparator(IndexComparator.ORDER_BY_INDEX);
+    indexer.sortedArrayList(includers);
+
+    //process
+    Iterator iter2 = includers.iterator();
+    while (iter2.hasNext()) {
+      PageIncluder item = (PageIncluder)iter2.next();
+      try {
+        item.process(iwc);
+      }
+      catch (IOException ex) {
+        ex.printStackTrace(System.err);
+      }
+    }
 
   }
 
-  public void setLoadIndex(int index){
+  public void setIndex(int index){
    this.index = index;
+  }
+
+  public int getIndex(){
+   return index;
   }
 
   public void main(IWContext iwc) throws Exception {
