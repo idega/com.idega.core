@@ -29,6 +29,13 @@ public class ThreadContext
 		}
 		return instance;
 	}
+	
+	/**
+	 * Unloads the ThreadContext
+	 */
+	public void unload(){
+		instance=null;
+	}
 
 	private Map getThreadsMap(){
 		if (threadsMap == null)
