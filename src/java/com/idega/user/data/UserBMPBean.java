@@ -1170,7 +1170,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}else {
 			if (maxAge != -1)
 				endAge = maxAge;											
-			return ejbFindUsersByConditions(condition,condition,null,null,-1,-1,0,12,null,userIds,false, orderLastFirst);
+			return ejbFindUsersByConditions(condition,condition,null,null,-1,-1,0,endAge,null,userIds,false, orderLastFirst);
 		}
 	}
 	
