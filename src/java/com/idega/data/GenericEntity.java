@@ -3365,7 +3365,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		{
 			if (entity.getClass().equals(this.getClass()))
 			{
-				if (entity.getID() == this.getID())
+				Object entityPK= null;
+				try
+				{
+					entityPK = entity.getPrimaryKey();
+				}
+				catch (RemoteException e)
+				{}
+				if (entityPK != null && entityPK.equals(this.getPrimaryKey()))
 				{
 					return true;
 				}
