@@ -298,7 +298,7 @@ private static String thePropertiesFileLocation;
 				logWriter.log(e, "Couldn't deregister JDBC driver: " + driver.getClass().getName(), LogWriter.ERROR);
 			}
 		}
-		iwma=null;
+		instance=null;
 	}
 	//debug
 	public String getStats(String name)
