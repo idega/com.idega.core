@@ -367,7 +367,7 @@ private void getHTMLImage(IWContext iwc){//optimize by writing in pure html
         height = image.getHeight();
       }
 
-      if( name != null ) setName(name);
+     // if( getName() != null && name != null ) setName(name);
 
       if(!limitImageWidth){
         if( (width!=null) && (!width.equalsIgnoreCase("")) && (!width.equalsIgnoreCase("-1")) ) {
@@ -485,6 +485,16 @@ public void limitImageWidth( boolean limitImageWidth ){
     return URIBuffer.toString();
   }
 
+  public static String getServletURL(int imageId){
+    StringBuffer URIBuffer = new StringBuffer(IWMainApplication.MEDIA_SERVLET_URL);
+    URIBuffer.append(imageId);
+    URIBuffer.append("image?");
+    URIBuffer.append("image_id");
+    URIBuffer.append("=");
+    URIBuffer.append(imageId);
+    return URIBuffer.toString();
+  }
+
   public synchronized Object clone() {
     Image obj = null;
     try {
@@ -523,8 +533,8 @@ public void limitImageWidth( boolean limitImageWidth ){
   }
 
   public void print(IWContext iwc)throws IOException{
-	initVariables(iwc);
-		if (getLanguage().equals("HTML")){
+    initVariables(iwc);
+    if (getLanguage().equals("HTML")){
       //added by eiki
       if( imageId ==-1 ){//from an url
         if (getName() != null){
@@ -537,7 +547,7 @@ public void limitImageWidth( boolean limitImageWidth ){
       else{//from the database
         getHTMLImage(iwc);
       }
-		}
+    }
   }
 
 }
