@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.37 2002/02/18 14:09:50 tryggvil Exp $
+ * $Id: Page.java,v 1.38 2002/02/19 12:03:14 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -43,6 +43,7 @@ public class Page extends PresentationObjectContainer {
   private String _pageStyleFontStyle = Text.FONT_FACE_STYLE_NORMAL;
   private String _styleSheetURL = "/style/style.css";
   private boolean _addStyleSheet = false;
+  private boolean _addBody = true;
   private Hashtable _frameProperties;
   private boolean _isTemplate = false;
   private boolean _isPage = true;
@@ -505,6 +506,10 @@ public class Page extends PresentationObjectContainer {
     _doReload = true;
   }
 
+  public void setAddBody(boolean addBodyTag) {
+    _addBody = addBodyTag;
+  }
+
   /**
    *
    */
@@ -726,7 +731,9 @@ public class Page extends PresentationObjectContainer {
                   getStyleDefinition() +
                   "   -->\n</style>");
         }
-        println("</head>\n<body  "+getAttributeString()+" >\n");
+        println("</head>\n");
+        if(_addBody)  println("<body  "+getAttributeString()+" >\n");//added by Eiki for frameSet in a page support
+
       }
       //Catch all exceptions that are thrown in print functions of objects stored inside
       try {
@@ -741,7 +748,7 @@ public class Page extends PresentationObjectContainer {
       }
 
       if(!isInsideOtherPage){
-        println("\n</body>");
+        if(_addBody) println("\n</body>");
         println(getEndTag());
       }
     }

@@ -24,6 +24,7 @@ public class FrameSet extends Window{
 
   private int alignment;
   private int numberOfFrames=0;
+  private boolean isInAWindow = false;
 
   private static final int ALIGNMENT_VERTICAL=1;
   private static final int ALIGNMENT_HORIZONTAL=2;
@@ -154,6 +155,11 @@ public class FrameSet extends Window{
     }
 
     public void _main(IWContext iwc)throws Exception{
+      isInAWindow = isChildOfOtherPage();
+      if( isInAWindow ){
+        this.getParentPage().setAddBody(false);
+      }
+
       super._main(iwc);
       this.adaptFrames(iwc);
     }
@@ -182,9 +188,16 @@ public class FrameSet extends Window{
       //goneThroughMain = false;
       initVariables(iwc);
       StringBuffer buf = new StringBuffer();
-      buf.append(getStartTag());
-      buf.append(getMetaInformation(iwc));
-      buf.append("<title>"+getTitle()+"</title>");
+      System.out.println("IN A WINDOW " + isInAWindow);
+
+      if( !isInAWindow ){
+        buf.append(getStartTag());
+        buf.append(getMetaInformation(iwc));
+        buf.append("<title>"+getTitle()+"</title>");
+      }
+
+
+
       buf.append("\n<frameset ");
       buf.append(getFrameSetPropertiesString());
       buf.append(" >\n");
@@ -201,7 +214,10 @@ public class FrameSet extends Window{
 
 
       buf.append("\n</frameset>\n");
-      buf.append(getEndTag());
+
+      if( !isInAWindow ){
+        buf.append(getEndTag());
+      }
       print(buf.toString());
     }
 
@@ -308,7 +324,6 @@ public class FrameSet extends Window{
         setFrameProperty(frameIndex,"scrolling","no");
       }
     }
-
 
     public void setMarginWidth(int frameIndex,int width) {
       setFrameProperty(frameIndex,"marginwidth",Integer.toString(width));
