@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.129 2004/08/11 07:18:42 laddi Exp $
+ * $Id: Link.java,v 1.130 2004/08/11 07:47:53 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1871,7 +1871,7 @@ public class Link extends Text {
 		StringBuffer method = new StringBuffer();
 		method.append("function submitForm(formID) {").append("\n\t");
 		if (useFormValidation) {
-			method.append("if (checkSubmit(getElementById(formID)) {").append("\n\t\t");
+			method.append("if (checkSubmit(getElementById(formID))) {").append("\n\t\t");
 			method.append("getElementById(formID).submit();").append("\n\t");
 			method.append("}").append("\n");
 		}
