@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.8 2005/02/03 11:05:20 thomas Exp $
+ * $Id: BaseFilter.java,v 1.9 2005/02/23 19:23:19 tryggvil Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.util.RequestUtil;
 /**
  *  Class that holds basic functionality used by many filters.<br>
  * 
- *  Last modified: $Date: 2005/02/03 11:05:20 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/02/23 19:23:19 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
@@ -64,6 +64,16 @@ public abstract class BaseFilter implements Filter, MutableClass {
 		IWMainApplication iwma = getIWMainApplication(request);
 		return iwma.getTranslatedURIWithContext(SETUP_URI);
 		//return NEW_IDEGAWEB_LOGIN;
+	}
+	
+	/**
+	 * Gets the pages uri prefixed with context path
+	 * @param request
+	 * @return
+	 */
+	protected String getPagesUri(HttpServletRequest request){
+		IWMainApplication iwma = getIWMainApplication(request);
+		return iwma.getTranslatedURIWithContext(PAGES_URI);
 	}
 	
 	protected String getURIMinusContextPath(HttpServletRequest request) {
