@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.62 2003/10/03 01:41:58 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.63 2003/10/06 06:30:13 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -947,22 +947,24 @@ public class IWBundle implements java.lang.Comparable
 	{
 		IWPropertyList cl = getComponentList();
 		IWProperty prop = cl.getIWProperty(className);
-		IWPropertyList pl = prop.getPropertyList();
-		if (pl.getProperty(COMPONENT_PROPERTY_FILE) == null)
-		{
-			if (autoMoveComponentPropertiesToFile)
+		if (prop != null) {
+			IWPropertyList pl = prop.getPropertyList();
+			if (pl.getProperty(COMPONENT_PROPERTY_FILE) == null)
 			{
-				try
+				if (autoMoveComponentPropertiesToFile)
 				{
-					moveComponentPropertyFromBundleToFile(className, pl);
+					try
+					{
+						moveComponentPropertyFromBundleToFile(className, pl);
+					}
+					catch (Exception e)
+					{
+						return true;
+					}
+					return false;
 				}
-				catch (Exception e)
-				{
-					return true;
-				}
-				return false;
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
