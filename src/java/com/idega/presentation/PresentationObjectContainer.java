@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.42 2004/12/23 21:34:32 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.43 2004/12/28 00:20:56 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -27,10 +27,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2004/12/23 21:34:32 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/28 00:20:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.42 $
+ * @version $Revision: 1.43 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -866,12 +866,13 @@ public class PresentationObjectContainer extends PresentationObject
 	 */
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
-		try{
+		/*try{
 			super.restoreState(context, values[0]);
 		}
 		catch(ClassCastException cce){
 			cce.printStackTrace();
-		}
+		}*/
+		super.restoreState(context, values[0]);
 		//this.goneThroughMain = ((Boolean) values[1]).booleanValue();
 		this._locked = ((Boolean) values[1]).booleanValue();
 		this._label = (String) values[2];

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.120 2004/12/27 18:07:57 thomas Exp $
+ * $Id: PresentationObject.java,v 1.121 2004/12/28 00:20:56 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -11,7 +11,6 @@ package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -63,16 +62,18 @@ import com.idega.presentation.ui.Form;
 import com.idega.util.RenderUtils;
 import com.idega.util.StringHandler;
 import com.idega.util.logging.LoggingHelper;
+import com.idega.util.reflect.Property;
+import com.idega.util.reflect.PropertyCache;
 import com.idega.util.text.TextStyler;
 /**
  * This is the base class for all user interface components in old idegaWeb.<br>
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/12/27 18:07:57 $ by $Author: thomas $
+ * Last modified: $Date: 2004/12/28 00:20:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.120 $
+ * @version $Revision: 1.121 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -144,8 +145,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	protected Map facetMap;
 	protected List childrenList;
 
-	//This property should not be cloned or statesaved, it is used for state restoring of transient components set by properties in the Builder.
-	private List builderProperties;
 	//Marker to mark if this component instance is restored via the JSF state restoring mechanism
 	private boolean isStateRestored=false;
 
@@ -2121,8 +2120,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			//if(!goneThroughRenderPhase()){
 				IWContext iwc = castToIWContext(fc);
 				//This should only happen when the component is restored and before main is called the first time on the (restored)component
-				if(isRestoredFromState()&&!goneThroughMain){
-					resetBeforeMain(fc);
+				if(isRestoredFromState()){
+					if(!goneThroughMain&&resetGoneThroughMainInRestore()){
+						resetBeforeMain(fc);
+					}
 				}
 				//initVariables(iwc);
 				this._main(iwc);
@@ -2147,6 +2148,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	protected void resetBeforeMain(FacesContext context){
 		empty();
+		restoreFromReflectionProperties();
 	}
 	
 	
@@ -2482,15 +2484,35 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 	return false;
 	 }
 	 
-	 private List getBuilderProperties(){
-	 	if(builderProperties==null){
-	 		builderProperties=new ArrayList();
-	 	}
-	 	return builderProperties;
+	 private List getReflectionProperties(){
+	 	String cacheKey = Integer.toString(this.getICObjectInstanceID());
+	 	return PropertyCache.getInstance().getPropertyList(cacheKey);
 	 }
 	 
-	 public void addBuilderProperty(Property property){
-	 	getBuilderProperties().add(property);
+	 public void addReflectionProperty(Property property){
+	 	if(this instanceof Block){
+	 		if(this.getClass().getName().indexOf("Navigation")!=-1){
+	 			boolean check=true;
+	 		}
+	 	}
+	 	List properties = getReflectionProperties();
+	 	if(properties!=null){
+	 		properties.add(property);
+	 	}
+	 	property.setPropertyOnInstance(this);
+	 }
+	 
+	 protected void restoreFromReflectionProperties(){
+ 		if(this.getClass().getName().indexOf("Navigation")!=-1){
+ 			boolean check=true;
+ 		}
+	 	List properties = getReflectionProperties();
+	 	if(properties!=null){
+		 	for (Iterator iter = properties.iterator(); iter.hasNext();) {
+				Property property = (Property) iter.next();
+				property.setPropertyOnInstance(this);
+			}
+	 	}
 	 }
 	 
 	 /**

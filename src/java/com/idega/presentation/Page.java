@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.131 2004/12/27 15:10:25 thomas Exp $
+ *  $Id: Page.java,v 1.132 2004/12/28 00:20:56 tryggvil Exp $
  *
  *  Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1963,7 +1963,7 @@ public class Page extends PresentationObjectContainer {
 		this._localizationMap=(Map)values[34];
 		this.addGlobalScript=((Boolean)values[35]).booleanValue();
 		this.styleFile=(ICFile)values[36];
-		this.dynamicPageTrigger=(ICDynamicPageTrigger)values[37];
+		//this.dynamicPageTrigger=(ICDynamicPageTrigger)values[37];
 		this._isCategory=((Boolean)values[38]).booleanValue();
 		this._windowToOpenOnLoad=(ICPage)values[39];
 		this._windowWidth=((Integer)values[40]).intValue();
@@ -2013,7 +2013,7 @@ public class Page extends PresentationObjectContainer {
 		values[34]=this._localizationMap;
 		values[35]=Boolean.valueOf(this.addGlobalScript);
 		values[36]=this.styleFile;
-		values[37]=this.dynamicPageTrigger;
+		//values[37]=this.dynamicPageTrigger;
 		values[38]=Boolean.valueOf(this._isCategory);
 		values[39]=this._windowToOpenOnLoad;
 		values[40]=new Integer(this._windowWidth);

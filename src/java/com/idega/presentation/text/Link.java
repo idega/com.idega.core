@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.140 2004/11/19 10:22:09 eiki Exp $
+ * $Id: Link.java,v 1.141 2004/12/28 00:20:56 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -52,38 +52,35 @@ import com.idega.util.text.TextSoap;
  */
 public class Link extends Text {
 
+	//Static variables:
+	private static String _sessionStorageName = IWMainApplication.windowOpenerParameter;
+	private static final String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER;
+	private static final String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
+	public static final String HASH = "#";
+	public static final String JAVASCRIPT = "javascript:";
+	public static final String TARGET_ATTRIBUTE = "target";
+	public static final String HREF_ATTRIBUTE = "href";
+	//private static final String OBJECT_TYPE_WINDOW = "Window";
+	protected static final String OBJECT_TYPE_MODULEOBJECT = "PresentationObject";
+	protected static final String OBJECT_TYPE_TEXT = "Text";
+	protected static final String OBJECT_TYPE_IMAGE = "Image";
+	public static final String TARGET_NEW_WINDOW = "_new";
+	public static final String TARGET_SELF_WINDOW = "_self";
+	public static final String TARGET_BLANK_WINDOW = "_blank";
+	public static final String TARGET_PARENT_WINDOW = "_parent";
+	public static final String TARGET_TOP_WINDOW = "_top";
+	
+	//Instance variables:
 	private PresentationObject _obj;
 	private Window _myWindow = null;
 	private Form _formToSubmit;
 	private Class _windowClass = null;
 	private Window _windowInstance = null;
 	private int icObjectInstanceIDForWindow = -1;
-
 	private StringBuffer _parameterString;
 	//private String displayString;
 	private String _objectType;
 	private String windowOpenerJavascriptString = null;
-	private static String _sessionStorageName = IWMainApplication.windowOpenerParameter;
-	
-	private static final String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER;
-	private static final String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
-	
-	public static final String HASH = "#";
-	public static final String JAVASCRIPT = "javascript:";
-	public static final String TARGET_ATTRIBUTE = "target";
-	public static final String HREF_ATTRIBUTE = "href";
-
-	//private static final String OBJECT_TYPE_WINDOW = "Window";
-	protected static final String OBJECT_TYPE_MODULEOBJECT = "PresentationObject";
-	protected static final String OBJECT_TYPE_TEXT = "Text";
-	protected static final String OBJECT_TYPE_IMAGE = "Image";
-
-	public static final String TARGET_NEW_WINDOW = "_new";
-	public static final String TARGET_SELF_WINDOW = "_self";
-	public static final String TARGET_BLANK_WINDOW = "_blank";
-	public static final String TARGET_PARENT_WINDOW = "_parent";
-	public static final String TARGET_TOP_WINDOW = "_top";
-
 	private boolean isImageButton = false;
 	private boolean isImageTab = false;
 	private boolean useTextAsLocalizedTextKey = false;
@@ -96,30 +93,22 @@ public class Link extends Text {
 	private boolean _maintainAllParameters = false;
 	private int _imageId;
 	private String _hostname = null;
-	
 	private int _onMouseOverImageId;
 	private int _onClickImageId;
 	private Image _onMouseOverImage = null;
 	private Image _onClickImage = null;
 
-
 	//If Link is constructed to open an instance of an object in a new page via ObjectInstanciator
 	private Class classToInstanciate;
 	//private Class templatePageClass;
 	private String templateForObjectInstanciation;
-
 	private List listenerInstances = null;
 	private List maintainedParameters = null;
-
 	private boolean https = false;
 	private String protocol = null;
-
 	private ICFile file = null;
-
 	private int fileId = -1;
-
 	private final static String DEFAULT_TEXT_STRING = "No text";
-
 	public static boolean usingEventSystem = false;
 	//A BuilderPage to link to:
 	private int ibPage=0;

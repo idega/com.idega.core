@@ -54,6 +54,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	
 	public Block() {
 		setDefaultWidth();
+		setTransient(false);
 	}
 
 	public String getBundleIdentifier() {
