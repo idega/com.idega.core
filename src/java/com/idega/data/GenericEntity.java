@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.55 2001/10/20 10:02:55 laddi Exp $
+ * $Id: GenericEntity.java,v 1.56 2001/10/20 10:19:51 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1520,6 +1520,10 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 		return findAll("select * from "+getEntityName()+" where "+columnName+" like '"+toFind+"' order by "+orderByColumnName);
 	}
 
+ 	public GenericEntity[] findAllByColumnOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName, String condition1, String condition2)throws SQLException{
+		return findAll("select * from "+getEntityName()+" where "+columnName1+" "+condition1+" '"+toFind1+"' and "+columnName2+" "+condition2+" '"+toFind2+"' order by "+orderByColumnName);
+	}
+
  	public GenericEntity[] findAllByColumnOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' order by "+orderByColumnName);
 	}
@@ -1536,15 +1540,19 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 		return findAll("select * from "+getEntityName()+" order by "+orderByColumnName+" desc");
 	}
 
+	public GenericEntity[] findAllByColumn(String columnName, String toFind, String condition)throws SQLException{
+		return findAll("select * from "+getEntityName()+" where "+columnName+" "+condition+" '"+toFind+"'");
+	}
+
 	public GenericEntity[] findAllByColumn(String columnName, String toFind)throws SQLException{
 		return findAll("select * from "+getEntityName()+" where "+columnName+" like '"+toFind+"'");
 	}
 
 	public GenericEntity[] findAllByColumn(String columnName, int toFind)throws SQLException{
-		return findAll("select * from "+getEntityName()+" where "+columnName+" like '"+Integer.toString(toFind)+"'");
+		return findAllByColumn(columnName,Integer.toString(toFind));
 	}
 
-        public GenericEntity[] findAllByColumn(String columnName1, String toFind1,String columnName2, String toFind2, String columnName3, String toFind3)throws SQLException{
+  public GenericEntity[] findAllByColumn(String columnName1, String toFind1,String columnName2, String toFind2, String columnName3, String toFind3)throws SQLException{
  		return findAll("select * from "+getEntityName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' and "+columnName3+" like '"+toFind3+"'");
  	}
 
@@ -1552,7 +1560,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 		return findAll("select * from "+getEntityName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
 	}
 
-        public int getNumberOfRecords(String columnName, String columnValue)throws SQLException{
+  public int getNumberOfRecords(String columnName, String columnValue)throws SQLException{
 		return getNumberOfRecords("select count(*) from "+getEntityName()+" where "+columnName+" like '"+columnValue+"'");
 	}
 
