@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSessionBean.java,v 1.1 2004/09/07 13:52:18 aron Exp $
+ * $Id: LoginSessionBean.java,v 1.2 2005/02/08 15:51:07 gimmi Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -12,7 +12,7 @@ package com.idega.core.accesscontrol.business;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Stack;
 import com.idega.business.IBOSessionBean;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.data.User;
@@ -21,16 +21,16 @@ import com.idega.user.business.UserProperties;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/07 13:52:18 $ by $Author: aron $
+ *  Last modified: $Date: 2005/02/08 15:51:07 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
     
 
     private SessionHelper sessionHelper = new SessionHelper();
-    private SessionHelper reservedSessionHelper  = null;
+    private Stack reservedSessionHelpers = new Stack();
     
     private void reset(){
         sessionHelper = null;
@@ -172,24 +172,15 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
         this.sessionHelper.userProperties = userProperties;
     }
   
-    /**
-     * @return Returns the reserved status.
-     */
-    public boolean isReserved() {
-        return reservedSessionHelper!=null;
-    }
-    
     public void retrieve(){
-        if(reservedSessionHelper!=null){
-            sessionHelper = reservedSessionHelper;
-            reservedSessionHelper = null;
-        }
+    	if (reservedSessionHelpers != null && !reservedSessionHelpers.isEmpty()) {
+    		sessionHelper = (SessionHelper) reservedSessionHelpers.pop();
+    	}
     }
     
     public void reserve(){
-        this.reservedSessionHelper = sessionHelper;
+    	reservedSessionHelpers.push(sessionHelper);
         reset();
-        
     }
     
     private class SessionHelper{

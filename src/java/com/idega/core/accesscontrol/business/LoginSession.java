@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSession.java,v 1.1 2004/09/07 13:52:18 aron Exp $
+ * $Id: LoginSession.java,v 1.2 2005/02/08 15:51:07 gimmi Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.user.business.UserProperties;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/07 13:52:18 $ by $Author: aron $
+ *  Last modified: $Date: 2005/02/08 15:51:07 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface LoginSession extends IBOSession {
     /**
@@ -133,7 +133,7 @@ public interface LoginSession extends IBOSession {
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#isReserved
      */
-    public boolean isReserved() throws java.rmi.RemoteException;
+//    public boolean isReserved() throws java.rmi.RemoteException;
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#retrieve
