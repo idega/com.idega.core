@@ -157,6 +157,10 @@ public class SortedProperties extends Properties implements SortedMap
 		return getInternalSortedMap().equals(o);
 	}
 
+	public String getProperty(String key){
+		return (String)get(key);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.util.Dictionary#get(java.lang.Object)
 	 */
