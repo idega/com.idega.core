@@ -995,6 +995,22 @@ public class IWTimestamp implements Comparable {
 	}
 
 	/**
+	 * Sets the date of the timestamp according to the inStr. The format is YYYYMMDD
+	 * @param inStr String representation of a date
+	 */
+	public void setDate(String inStr) throws DateFormatException
+	{
+		try{
+			setYear(Integer.parseInt(inStr.substring(0, 3)));
+			setMonth(Integer.parseInt(inStr.substring(4, 5)));
+			setDay(Integer.parseInt(inStr.substring(6, 7)));
+		} catch (Exception e){
+			System.out.println("Could not parse the following date: "+inStr+". Expected format is YYYYMMDD.");
+			throw new DateFormatException();
+		}
+	}
+
+	/**
 	 * Returns an SQL string for the given date and time settings.
 	 * @return String
 	 * @see java.lang.Object#toString()
