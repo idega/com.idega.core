@@ -69,6 +69,14 @@ public class HashMatrix {
   public Set firstKeySet()  {
     return (xDimension == null) ? new HashSet(0) : xDimension.keySet();
   }
+  
+  /** Returns true if this matrix contains no key-key-value mappings
+   * 
+   * @return true if this matrix contains no key-key-value-mappings
+   */
+  public boolean isEmpty()  {
+    return ( (xDimension == null)  || ( xDimension.isEmpty() ) );    
+  }
  
   protected Map getYDimension(Object xKey)  {
     if (xDimension == null) {
