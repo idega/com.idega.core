@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.14 2002/03/05 18:15:36 tryggvil Exp $
+ * $Id: Table.java,v 1.15 2002/03/06 15:56:42 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -26,43 +26,43 @@ import java.util.Iterator;
  * @version 1.2
  */
 public class Table extends PresentationObjectContainer {
-  private static Image transparentcell;
-  private static final String IW_BUNDLE_IDENTIFIER = "com.idega.core";
+  protected static Image transparentcell;
+  protected static final String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 
-  private PresentationObjectContainer theObjects[][];
+  protected PresentationObjectContainer theObjects[][];
 
-  private int cols = 0;
-  private int rows = 0;
+  protected int cols = 0;
+  protected int rows = 0;
 
   //Variables to hold coordinates of merge point of cells
   //Initialized only if needed
-  private Vector beginMergedxpos;
-  private Vector beginMergedypos;
-  private Vector endMergedxpos;
-  private Vector endMergedypos;
-  private boolean isResizable;
+  protected Vector beginMergedxpos;
+  protected Vector beginMergedypos;
+  protected Vector endMergedxpos;
+  protected Vector endMergedypos;
+  protected boolean isResizable;
 
-  private boolean cellsAreMerged;
+  protected boolean cellsAreMerged;
 
-  private static final String COLOR_ATTRIBUTE="bgcolor";
-
-
-  private boolean addLineTop = false;
-  private boolean addLinesBetween = false;
-  private boolean addLinesBottom = false;
-  private boolean addLineLeft = false;
-  private boolean addVerticalLinesBetween = false;
-  private boolean addLineRight = false;
-  private String lineColor = "#000000";
-  private String lineHeight = "1";
-  private String lineWidth = "1";
-  private int lineColspan = 0;
-  private int[] lineRows = new int[0];
-  private int[] lineCols = new int[0];
+  protected static final String COLOR_ATTRIBUTE="bgcolor";
 
 
-  private static final String HTML_TR_START="\n<tr>";
-  private static final String HTML_TR_END = "\n</tr>";
+  protected boolean addLineTop = false;
+  protected boolean addLinesBetween = false;
+  protected boolean addLinesBottom = false;
+  protected boolean addLineLeft = false;
+  protected boolean addVerticalLinesBetween = false;
+  protected boolean addLineRight = false;
+  protected String lineColor = "#000000";
+  protected String lineHeight = "1";
+  protected String lineWidth = "1";
+  protected int lineColspan = 0;
+  protected int[] lineRows = new int[0];
+  protected int[] lineCols = new int[0];
+
+
+  protected static final String HTML_TR_START="\n<tr>";
+  protected static final String HTML_TR_END = "\n</tr>";
 
 
   /**
@@ -201,7 +201,7 @@ public class Table extends PresentationObjectContainer {
  * IW_USES_OLD_MEDIA_TABLES   (set to anything)
  *
  */
-  private String getImageUrl(Image image){
+  protected String getImageUrl(Image image){
 
     if(image.getURL()!=null ){
       return image.getURL();
@@ -501,7 +501,7 @@ public class Table extends PresentationObjectContainer {
   }
 
   /*Tells if a cell in a table is merged with another*/
-  private boolean isInMergedCell(int xpos, int ypos){
+  protected boolean isInMergedCell(int xpos, int ypos){
     boolean theReturn = false;
     boolean xcheck=false;
     boolean ycheck=false;
@@ -583,7 +583,7 @@ public class Table extends PresentationObjectContainer {
     this.add(myText,xpos,ypos);
   }
 
-  private int getWidthOfMergedCell(int startxpos, int startypos){
+  protected int getWidthOfMergedCell(int startxpos, int startypos){
     int returnint = 1;
     int i = 0;
     for (Enumeration e = beginMergedxpos.elements();e.hasMoreElements();){
@@ -626,7 +626,7 @@ public class Table extends PresentationObjectContainer {
     return returnint;
   }
 
-  private int getHeightOfMergedCell(int startxpos, int startypos){
+  protected int getHeightOfMergedCell(int startxpos, int startypos){
     int returnint = 1;
 
     int i = 0;
@@ -672,7 +672,7 @@ public class Table extends PresentationObjectContainer {
 
 
 
-  private boolean isTopLeftOfMergedCell(int xpos, int ypos){
+  protected boolean isTopLeftOfMergedCell(int xpos, int ypos){
     boolean theReturn = false;
 
     if( ! cellsAreMerged){
@@ -845,7 +845,7 @@ public class Table extends PresentationObjectContainer {
   }
 
   //Prints out the no-breaking-space for cells
-  private void printNbsp(IWContext iwc, int xpos,int ypos){
+  protected void printNbsp(IWContext iwc, int xpos,int ypos){
     if (theObjects[xpos-1][ypos-1] != null){
       if (theObjects[xpos-1][ypos-1].isEmpty()){
         if( false){
