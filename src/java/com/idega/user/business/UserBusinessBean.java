@@ -235,7 +235,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     try{
       user = getUserHome().findByPersonalID(personalID);
       user.setFullName(fullName);
-      if (user.getDisplayName() == null) {
+      if (user.getDisplayName() == null || "".equals(user.getDisplayName().trim())) {
       		user.setDisplayName(fullName);
       }
       
