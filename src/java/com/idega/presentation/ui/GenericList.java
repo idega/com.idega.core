@@ -230,7 +230,7 @@ public void setList(IDOLegacyEntity[] entity){
 
 							else{
 
-                                                          stringToDisplay = stamp.getISLDate();
+                                                          stringToDisplay = stamp.getLocaleDate(LocaleUtil.getIcelandicLocale());
 
 						        }
 
