@@ -37,6 +37,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	private static String sClassName = User.class.getName();
 	static String USER_GROUP_TYPE="ic_user_representative";
+	public final static String TABLE_NAME = "ic_user";
 
 	//    public UserBMPBean(){
 	//      super();
@@ -47,7 +48,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	//    }
 
 	public String getEntityName() {
-		return "ic_user";
+		return TABLE_NAME;
 	}
 
 	public void initializeAttributes() {
