@@ -13,6 +13,11 @@ import com.idega.jmodule.object.textObject.*;
 import com.idega.idegaweb.*;
 import com.idega.business.IWEventListener;
 import com.idega.event.*;
+import java.awt.EventQueue;
+import java.awt.ActiveEvent;
+import java.awt.Toolkit;
+import java.awt.AWTEvent;
+import com.idega.event.IWEvent;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -99,7 +104,22 @@ public  class IWPresentationServlet extends IWCoreServlet{
 
                   //added by gummi@idega.is
                   //begin
+                  String sessionAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
+                  if (sessionAddress != null)
+                  {
+                    Object obj = moduleinfo.getSessionAttribute(sessionAddress);
+                    if(obj != null)
+                    {
+                      if(obj instanceof ActiveEvent && obj instanceof AWTEvent )
+                      {
+                        EventQueue q = Toolkit.getDefaultToolkit().getSystemEventQueue();
+                        q.postEvent((AWTEvent)obj);
+                      }
+                    }
 
+                  }
+
+/* old
                   String eventAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
                   if(eventAddress != null){
                     ModuleObject someModuleObj = (ModuleObject)moduleinfo.getSessionAttribute(eventAddress);
@@ -107,7 +127,7 @@ public  class IWPresentationServlet extends IWCoreServlet{
                       someModuleObj.postIWActionEvent();
                     }
                   }
-
+*/
                   //end
 
                   //if (isActionPerformed(request,response)){

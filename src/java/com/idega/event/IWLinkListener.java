@@ -3,7 +3,7 @@ package com.idega.event;
 import java.util.EventListener;
 
 /**
- * Title:        idegaWeb project
+ * Title:        IW Event
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
@@ -11,6 +11,6 @@ import java.util.EventListener;
  * @version 1.0
  */
 
-public interface IWActionListener extends EventListener{
-  public void actionPerformed(IWActionEvent e);
+public interface IWLinkListener extends EventListener{
+  public void actionPerformed(IWLinkEvent e);
 }
