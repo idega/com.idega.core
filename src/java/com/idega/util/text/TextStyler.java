@@ -9,53 +9,92 @@ package com.idega.util.text;
  * @version 1.0
  */
 
+import java.util.StringTokenizer;
+import java.util.HashMap;
+import java.util.Iterator;
+import com.idega.util.text.StyleConstants;
+import com.idega.presentation.Block;
+import com.idega.presentation.IWContext;
+
+
 public class TextStyler {
 
-	public static String FONTFACE = "font-face";
-	public static String FONTWEIGHT = "font-weight";
-	public static String COLOR = "color";
-	public static String FONTSIZE = "font-size";
-	public static String TEXTDECORATION = "text-decoration";
+private HashMap _styleMap;
+private String _styleString;
+private String[] _styles = StyleConstants.ALL_STYLES;
 
-	public static String defaultFontFace = "Arial, Helvetica, sans-serif";
-	public static String defaultFontWeight = "bold";
-	public static String defaultColor = "black";
-	public static String defaultFontSize = "8pt";
-	public static String defaultTextDecoration = "none";
+public TextStyler() {
+  setDefaultValues();
+  setMapStyles();
+}
 
-	public static String getDefaultStyle(){
-		return getStyle(defaultFontFace,defaultFontWeight,defaultColor,defaultFontSize,defaultTextDecoration);
-	}
+public TextStyler(String styleString) {
+  this();
+  _styleString = styleString;
+  setMapStyles();
+}
 
-	public static String getStyle(String fontFace,String fontWeight,String Color,String fontSize,String TextDecoration){
-		String colon = ": ";
-		String semicolon = "; ";
-		StringBuffer style = new StringBuffer();
-		style.append(FONTFACE);
-		style.append(colon);
-		style.append(fontFace!=null?fontFace:defaultFontFace);
-		style.append(semicolon);
+  public String getStyleString() {
+    Iterator iter = _styleMap.keySet().iterator();
+    String attribute;
+    String value;
+    String styleString = "";
+    while (iter.hasNext()) {
+      attribute = (String) iter.next();
+      value = (String) _styleMap.get(attribute);
+      if ( value != null ) {
+        styleString += attribute + StyleConstants.DELIMITER_COLON + value + StyleConstants.DELIMITER_SEMICOLON;
+      }
+    }
+    return styleString;
+  }
 
-		style.append(FONTWEIGHT);
-		style.append(colon);
-		style.append(fontWeight !=null?fontWeight:defaultFontWeight);
-		style.append(semicolon);
+  private void setMapStyles() {
+    if ( _styleString != null ) {
+      StringTokenizer tokens = new StringTokenizer(_styleString,";");
+      int a = -1;
+      String attribute;
+      String value;
 
-		style.append(FONTWEIGHT);
-		style.append(colon);
-		style.append(Color !=null?Color:defaultColor);
-		style.append(semicolon);
+      while (tokens.hasMoreTokens()) {
+        StringTokenizer tokens2 = new StringTokenizer(tokens.nextToken(),":");
 
-		style.append(FONTSIZE);
-		style.append(colon);
-		style.append(fontSize !=null?fontSize:defaultFontSize);
-		style.append(semicolon);
+        a = 1;
+        attribute = null;
+        value = null;
 
-		style.append(TEXTDECORATION);
-		style.append(colon);
-		style.append(TextDecoration !=null?TextDecoration:defaultTextDecoration);
-		style.append(semicolon);
+        while (tokens2.hasMoreTokens()) {
+          if ( a == 1 ) {
+            attribute = tokens2.nextToken();
+            a++;
+          }
+          else if ( a == 2 )
+            value = tokens2.nextToken();
+        }
+        _styleMap.put(attribute,value);
+      }
+    }
+  }
 
-		return style.toString();
-	}
+  private void setDefaultValues() {
+    if ( _styleMap == null )
+      _styleMap = new HashMap();
+
+    if ( _styles != null ) {
+      for ( int a = 0; a < _styles.length; a++ ) {
+        _styleMap.put(_styles[a],null);
+      }
+    }
+  }
+
+  public void setStyleValue(String attribute,String value) {
+    _styleMap.put(attribute,value);
+  }
+
+  public String getStyleValue(String attribute) {
+    String value = (String) _styleMap.get(attribute);
+    if ( value != null )
+      return value;
+    return "";
+  }
 }
