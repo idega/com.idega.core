@@ -1,5 +1,5 @@
 /*
- * $Id: RadioButton.java,v 1.9 2003/11/05 21:03:40 laddi Exp $
+ * $Id: RadioButton.java,v 1.10 2003/11/05 22:02:29 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -80,12 +80,12 @@ public class RadioButton extends GenericInput {
 				buffer.append("function isSelected(inputs,message) {").append("\n\t");
 				buffer.append("if (inputs.length > 1) {").append("\n\t\t");
 				buffer.append("for(var i=0;i<inputs.length;i++) {").append("\n\t\t\t");
-				buffer.append("if (inputs[i].selected == true)").append("\n\t\t\t\t");
+				buffer.append("if (inputs[i].checked == true)").append("\n\t\t\t\t");
 				buffer.append("return true;").append("\n\t\t");
 				buffer.append("}").append("\n\t");
 				buffer.append("}").append("\n\t");
 				buffer.append("else {").append("\n\t\t");
-				buffer.append("if (inputs.selected == true)").append("\n\t\t\t");
+				buffer.append("if (inputs.checked == true)").append("\n\t\t\t");
 				buffer.append("return true;").append("\n\t");
 				buffer.append("}").append("\n\t");
 				buffer.append("alert(message);").append("\n");
