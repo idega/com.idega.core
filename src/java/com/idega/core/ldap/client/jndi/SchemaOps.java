@@ -6,12 +6,22 @@
  */
 package com.idega.core.ldap.client.jndi;
 
-import javax.naming.directory.*;
-import javax.naming.NamingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.naming.NamingEnumeration;
-import java.util.*;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.BasicAttributes;
+import javax.naming.directory.DirContext;
 
-import org.apache.log4j.*;
 
 
 /**
@@ -30,7 +40,7 @@ public class SchemaOps
 
     final static String subschemaAttributeName = "subschemaSubentry";
 
-    private final static Logger log = Logger.getLogger("com.ca.commons.jndi.SchemaOps");
+    private final static Logger log = Logger.getLogger("com.idega.core.ldap.client.jndi.SchemaOps");
 
     public static final String SCHEMA_FAKE_OBJECT_CLASS_NAME = "synthetic_JXplorer_schema_object";
     private static final BasicAttribute schemaObjectClassAttribute = new BasicAttribute("objectClass");
@@ -58,7 +68,7 @@ public class SchemaOps
         if (ctx == null)
             return;
 
-        log.debug("Reading Schema info from directory context");
+        log.log(Level.FINER,"Reading Schema info from directory context");
 
         setSchemaRoot(getSchemaRoot());
         rawSchemaAttributes = getRawSchema();
@@ -84,7 +94,7 @@ public class SchemaOps
 
         setSchemaRoot("cn=schema");
         loadOIDs();
-        log.debug("SCHEMA ROOTX:" + getSchemaRoot());
+        log.log(Level.FINER,"SCHEMA ROOTX:" + getSchemaRoot());
     }
 
     /**
@@ -132,7 +142,7 @@ public class SchemaOps
                 {
                     String value = (String)values.nextElement();
                     if (value.indexOf('(') == -1)
-                        log.debug("skipping non schema attribute: " + rawSchemaAtt.getID() + ":" + value);
+                        log.log(Level.FINER,"skipping non schema attribute: " + rawSchemaAtt.getID() + ":" + value);
                     else
                         oids.put (getOID(value), getFirstName(value));
                 }
@@ -140,7 +150,7 @@ public class SchemaOps
         }
         catch (NamingException e)
         {
-            log.error("Unable to read schema oids: ", e);
+            log.log(Level.WARNING,"Unable to read schema oids: ", e);
         }
     }
 
@@ -302,26 +312,26 @@ public class SchemaOps
             throws NamingException
     {
         String rawSchemaRoot = getSchemaRoot();
-        log.debug("reading raw schema from " + rawSchemaRoot);
+        log.log(Level.FINER,"reading raw schema from " + rawSchemaRoot);
         //Attributes rawSchema = ctx.getAttributes(rawSchemaRoot);
         // need to explicitly list operational attributes... (although eTrust Directory doesn't need this, others do)
 //        Attributes rawSchema = ctx.getAttributes(rawSchemaRoot, new String[] {"attributeTypes", "objectClasses", "matchingRules", "matchingRuleUse", "ditStructureRules", "ldapSyntaxes", "nameForms" });
         Attributes rawSchema = ctx.getAttributes(rawSchemaRoot, new String[] {"attributeTypes", "objectClasses", "matchingRules", "ldapSyntaxes", "*" });
         if (rawSchema == null)
         {
-            log.warn("null schema read - returning empty schema list.");
+        		log.log(Level.WARNING,"null schema read - returning empty schema list.");
             rawSchema = new BasicAttributes();  // return empty atts rather than null, to cut down on 'check for null' code...
         }
         else
         {
             if (rawSchema.size()==0) // may be a type of directory that requires explicit listing of schema objects...
             {
-                log.warn("Unable to read schema details from directory.");
+            		log.log(Level.WARNING,"Unable to read schema details from directory.");
                 rawSchema = new BasicAttributes();  // give up - set to empty :-(
                 return rawSchema;
             }
 
-            log.debug("some schema read...");
+            log.log(Level.FINER,"some schema read...");
 
 
 
@@ -352,13 +362,13 @@ public class SchemaOps
 
         try
         {
-            log.debug("start get schema root call");
+            log.log(Level.FINER,"start get schema root call");
             Attributes SSSE;
             SSSE = ctx.getAttributes("", new String[]{subschemaAttributeName});
             if (SSSE != null && SSSE.get(subschemaAttributeName) != null)
                 schemaRoot = (String) SSSE.get(subschemaAttributeName).get();
 
-            log.debug("schema root read as being: '" + String.valueOf(schemaRoot) + "'");
+            log.log(Level.FINER,"schema root read as being: '" + String.valueOf(schemaRoot) + "'");
         }
         catch (NamingException e)
         {
@@ -367,7 +377,7 @@ public class SchemaOps
 
         if (schemaRoot == null )
         {
-            log.debug("forcing value of schema root to 'cn=schema', since can't read subschema attribute name");
+            log.log(Level.FINER,"forcing value of schema root to 'cn=schema', since can't read subschema attribute name");
             schemaRoot = "cn=schema";  // default: this is what it usually is anyway... :-)
         }
         return schemaRoot;
@@ -740,7 +750,7 @@ public class SchemaOps
                 return returnBuffer.toString();
             }
         }
-        log.debug("unexpected end of schema text in single quoted block");
+        log.log(Level.FINER,"unexpected end of schema text in single quoted block");
         return returnBuffer.toString();
     }
 
@@ -891,7 +901,7 @@ public class SchemaOps
         }
         catch(Exception e)
         {
-            log.error("can't parse '" + ldapSchemaDescription + "'");
+            log.log(Level.WARNING,"can't parse '" + ldapSchemaDescription + "'");
             e.printStackTrace();
             return "0";
         }
@@ -917,7 +927,7 @@ public class SchemaOps
             pos = ldapSchemaDescription.indexOf(' ');
             if(pos == -1)
             {
-                log.error("unable to get name from " + ldapSchemaDescription);
+                log.log(Level.WARNING,"unable to get name from " + ldapSchemaDescription);
                 return "syntax_error";
             }
             return ldapSchemaDescription.substring(0, pos).trim();
@@ -929,7 +939,7 @@ public class SchemaOps
             return ldapSchemaDescription.substring(quote_pos, last_pos);
         else
         {
-            log.error("unable to parse " + ldapSchemaDescription);
+            log.log(Level.WARNING,"unable to parse " + ldapSchemaDescription);
             return "syntax_error";
         }
 
@@ -987,7 +997,7 @@ public class SchemaOps
         }
         catch (StringIndexOutOfBoundsException e)
         {
-            log.error("unable to parse line: " + ldapSyntaxDescription, e);
+            log.log(Level.WARNING,"unable to parse line: " + ldapSyntaxDescription, e);
             return new String[]{"syntax_error"};
         }
     }
@@ -1091,7 +1101,7 @@ public class SchemaOps
 
                 if (atts == null)
                 {
-                    log.error("error reading object classes for " + dn );
+                    log.log(Level.WARNING,"error reading object classes for " + dn );
                 }
                 else
                 {
@@ -1103,13 +1113,13 @@ public class SchemaOps
 
                     if (objectClasses == null) // aargh! Give up.
                     {
-                        log.error("unable to recognize object classes for " + dn);
+                        log.log(Level.WARNING,"unable to recognize object classes for " + dn);
                     }
                     else
                     {
                         NamingEnumeration names = objectClasses.getAll();
                         if (names == null)
-                            log.error("object class has no attributes!");
+                            log.log(Level.WARNING,"object class has no attributes!");
 
                         ArrayList returnArray = new ArrayList(10);
                         while (names.hasMore())
@@ -1122,7 +1132,7 @@ public class SchemaOps
         }
         catch (NamingException e)
         {
-            log.error("error reading object classes for " + dn +"\n  internal error III:  ", e);
+            log.log(Level.WARNING,"error reading object classes for " + dn +"\n  internal error III:  ", e);
         }
         return null;
     }
@@ -1165,7 +1175,7 @@ public class SchemaOps
         }
         catch (NamingException e)
         {
-            log.error("unable to get binary attributes from schema", e);
+            log.log(Level.WARNING,"unable to get binary attributes from schema", e);
             return "";
         }
 /*
@@ -1220,12 +1230,12 @@ public class SchemaOps
         }
         catch (NamingException e)
         {
-            log.error("unable to get value for " + entryName + " value: " + schemaAttribute, e);
+            log.log(Level.WARNING,"unable to get value for " + entryName + " value: " + schemaAttribute, e);
         }
         catch (NullPointerException e2)
         {
             if ("DESC".equals(schemaAttribute) == false)  // ignore frequent error encountered searching for option 'DESC' schema paramater
-                log.error("unable to read any schema entry for " + entryName + "and attribute: " + schemaAttribute, e2);
+                log.log(Level.WARNING,"unable to read any schema entry for " + entryName + "and attribute: " + schemaAttribute, e2);
         }
         return null;
     }
@@ -1273,7 +1283,7 @@ public class SchemaOps
         }
         catch(NamingException e)
         {
-            log.error("Unable to determine if attribute '" + name + "' is SINGLE-VALUE." + e);
+            log.log(Level.WARNING,"Unable to determine if attribute '" + name + "' is SINGLE-VALUE." + e);
         }
         return false;
     }

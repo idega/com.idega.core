@@ -1,10 +1,16 @@
 
 package com.idega.core.ldap.client.jndi;
 
-import org.apache.log4j.Logger;
 
-import javax.naming.*;
-import javax.naming.directory.*;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.Name;
+import javax.naming.NameClassPair;
+import javax.naming.NameParser;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
 
 /**
  *   The AdvancedOps class extends BasicOps to allow for complex directory
@@ -25,7 +31,7 @@ public class AdvancedOps extends BasicOps
 
     protected NameParser parser;
 
-    private final static Logger logCategory = Logger.getLogger("com.ca.commons.jndi.BasicOps");
+    private final static Logger log = Logger.getLogger("com.idega.core.ldap.client.jndi.BasicOps");
 
 
     /**
@@ -102,7 +108,7 @@ public class AdvancedOps extends BasicOps
 
     public boolean deleteTree(Name nodeDN)        // may be a single node.
     {
-        logCategory.debug("recursively delete Tree " + nodeDN.toString());
+        log.log(Level.FINER,"recursively delete Tree " + nodeDN.toString());
 
         open("Deleting " + nodeDN.toString(), "deleted ");
         boolean ret = recDeleteTree(nodeDN);
@@ -169,7 +175,7 @@ public class AdvancedOps extends BasicOps
 
     public boolean moveTree(Name oldNodeDN, Name newNodeDN)       // may be a single node.
     {
-        logCategory.debug("recursively move tree from " + oldNodeDN.toString() + " to " + newNodeDN.toString());
+    		log.log(Level.FINER,"recursively move tree from " + oldNodeDN.toString() + " to " + newNodeDN.toString());
 
         open("Moving " + oldNodeDN.toString(), "moving");
         boolean ret = recMoveTree(oldNodeDN, newNodeDN);
@@ -252,7 +258,7 @@ public class AdvancedOps extends BasicOps
 
     public boolean copyTree(Name oldNodeDN, Name newNodeDN)       // may be a single node.
     {
-        logCategory.debug("recursively copy tree from " + oldNodeDN.toString() + " to " + newNodeDN.toString());
+    		log.log(Level.FINER,"recursively copy tree from " + oldNodeDN.toString() + " to " + newNodeDN.toString());
 
         open("Copying " + oldNodeDN.toString(), "copying");
         boolean ret = recCopyTree(oldNodeDN, newNodeDN);

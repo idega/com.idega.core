@@ -26,7 +26,7 @@ import com.idega.core.ldap.client.jndi.AdvancedOps;
 public class DXOps extends AdvancedOps
 {
 
-    private final static Logger log = Logger.getLogger("com.ca.commons.naming.DXOps");
+    private final static Logger log = Logger.getLogger("com.idega.core.ldap.client.naming.DXOps");
 
     /**
      *    Initialise with the directory context.

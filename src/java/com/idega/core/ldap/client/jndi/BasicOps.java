@@ -1,7 +1,8 @@
 package com.idega.core.ldap.client.jndi;
 
 import java.util.Properties;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.NameParser;
@@ -16,7 +17,6 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.apache.log4j.Logger;
 
 /**
 *    <p>The BasicOps class contains methods for performing basic
@@ -35,7 +35,7 @@ public class BasicOps
 
     private static final String DEFAULT_DSML_CTX = "com.sun.jndi.dsmlv2.soap.DsmlSoapCtxFactory";
 
-    private final static Logger log = Logger.getLogger("com.ca.commons.jndi.BasicOps");
+    private final static Logger log = Logger.getLogger("com.idega.core.ldap.client.jndi.BasicOps");
 
 
     private Attributes schema = null;
@@ -127,7 +127,7 @@ public class BasicOps
         env.put("java.naming.ldap.version", String.valueOf(connectionData.version) );   // ignored for DSML
 
         // general default parameters
-        log.debug("connection protocol = " + connectionData.protocol);
+        log.log(Level.FINER,"connection protocol = " + connectionData.protocol);
         if (connectionData.protocol == connectionData.LDAP)
         {
             env.put(Context.INITIAL_CONTEXT_FACTORY, DEFAULT_CTX);
@@ -361,11 +361,11 @@ public class BasicOps
     public static DirContext openContext(Properties env)
         throws NamingException
     {
-        log.debug("opening Directory Context to " + env.get(Context.PROVIDER_URL) + "\n using: " + env.get(Context.INITIAL_CONTEXT_FACTORY));
+        log.log(Level.FINER,"opening Directory Context to " + env.get(Context.PROVIDER_URL) + "\n using: " + env.get(Context.INITIAL_CONTEXT_FACTORY));
 
         DirContext ctx = new InitialDirContext(env);
 
-        log.debug("context successfully opened " + (ctx != null));
+        log.log(Level.FINER,"context successfully opened " + (ctx != null));
 
         if (ctx != null)
         {
@@ -394,7 +394,7 @@ public class BasicOps
         if (ctx == null)
             throw new NamingException("No context open to retrieve Schema from");
 
-        log.debug("getSchema() call");
+        log.log(Level.FINER,"getSchema() call");
 
         return ctx.getSchema("");
     }
@@ -505,7 +505,7 @@ public class BasicOps
 
     public boolean renameObject (Name OldDN, Name NewDN)
     {
-        log.debug("renaming object " + OldDN.toString() + " to " + NewDN.toString());
+        log.log(Level.FINER,"renaming object " + OldDN.toString() + " to " + NewDN.toString());
 
         Name oldDN = preParse(OldDN);
         Name newDN = preParse(NewDN);
@@ -542,7 +542,7 @@ public class BasicOps
 
     public boolean copyObject(Name FromDN, Name ToDN)
     {
-        log.debug("copying object " + FromDN.toString() + " to " + ToDN.toString());
+        log.log(Level.FINER,"copying object " + FromDN.toString() + " to " + ToDN.toString());
 
         Name fromDN = preParse(FromDN);
         Name toDN = preParse(ToDN);
@@ -565,7 +565,7 @@ public class BasicOps
 
     public boolean addObject (Name Dn, Attributes atts)
     {
-        log.debug("add object " + Dn.toString());
+        log.log(Level.FINER,"add object " + Dn.toString());
         Name dn = preParse(Dn);
 
         if (ctx == null) return error("Null Directory Context\n  in BasicOps.addObject()\n  (so can't do anything!)", null);
@@ -597,7 +597,7 @@ public class BasicOps
 
     public boolean deleteObject (Name Dn)
     {
-        log.debug("delete object " + Dn.toString());
+        log.log(Level.FINER,"delete object " + Dn.toString());
 
         Name dn = preParse(Dn);
 
@@ -631,7 +631,7 @@ public class BasicOps
 
     public boolean exists(Name NodeDN)
     {
-        log.debug("checking existance of: " + NodeDN.toString());
+        log.log(Level.FINER,"checking existance of: " + NodeDN.toString());
 
         Name nodeDN = preParse(NodeDN);
         try
@@ -673,7 +673,7 @@ public class BasicOps
 
     public synchronized Attributes read(Name Dn, String[] returnAttributes)
     {
-        log.debug("reading object " + Dn.toString());
+        log.log(Level.FINER,"reading object " + Dn.toString());
 
         Name dn = preParse(Dn);
 
@@ -708,7 +708,7 @@ public class BasicOps
 
     public boolean modifyAttributes(Name Dn, int mod_type, Attributes attr)
     {
-        log.debug("modifying object " + Dn.toString() + " mod type is: " + mod_type);
+        log.log(Level.FINER,"modifying object " + Dn.toString() + " mod type is: " + mod_type);
 
         Name dn = preParse(Dn);
 
@@ -737,7 +737,7 @@ public class BasicOps
 
     public boolean modifyAttributes(Name Dn, ModificationItem[] modList)
     {
-        log.debug("modifying object " + Dn.toString() + " with list of mod items ");
+        log.log(Level.FINER,"modifying object " + Dn.toString() + " with list of mod items ");
         Name dn = preParse(Dn);
 
         if (ctx == null) return error("Null Directory Context\n  in BasicOps.modifyAttributes\n  (so can't do anything!)", null);
@@ -961,7 +961,7 @@ public class BasicOps
         }
         catch (NamingException e)
         {
-            log.error("Search failed", e);
+            log.log(Level.WARNING,"Search failed", e);
             return null;
         }
 
@@ -970,7 +970,7 @@ public class BasicOps
     private NamingEnumeration rawOneLevelSearch(Name searchbase, String filter, int limit,
                 int timeout, String[] returnAttributes ) throws NamingException
     {
-        log.debug("searching next level: from " + searchbase.toString() + " with filter " + filter);
+        log.log(Level.FINER,"searching next level: from " + searchbase.toString() + " with filter " + filter);
         /* specify search constraints to search one level */
         SearchControls constraints = new SearchControls();
 
@@ -982,7 +982,7 @@ public class BasicOps
 
         NamingEnumeration results = ctx.search(searchbase, filter, null);
 
-        log.debug("finished next level search; results exist? " + results.hasMoreElements());
+        log.log(Level.FINER,"finished next level search; results exist? " + results.hasMoreElements());
         results = postParseNameClassPairs(results, searchbase);
         return results;
 
@@ -1016,7 +1016,7 @@ public class BasicOps
     public NamingEnumeration searchSubTree(Name Searchbase, String filter, int limit,
                                     int timeout, String[] returnAttributes)
     {
-        log.debug("searching subtree from " + Searchbase.toString() + " with filter " + filter);
+        log.log(Level.FINER,"searching subtree from " + Searchbase.toString() + " with filter " + filter);
 
         Name searchbase = preParse(Searchbase);
 
@@ -1084,7 +1084,7 @@ public class BasicOps
     public NamingEnumeration searchBaseObject(Name Searchbase, String filter, int limit,
                                     int timeout, String[] returnAttributes)
     {
-        log.debug("searching object " + Searchbase.toString() + " with filter " + filter);
+        log.log(Level.FINER,"searching object " + Searchbase.toString() + " with filter " + filter);
 
         Name searchbase = preParse(Searchbase);
 
@@ -1127,7 +1127,7 @@ public class BasicOps
 
     public void close()
     {
-        log.debug("closing context");
+        log.log(Level.FINER,"closing context");
 
         if (ctx == null) return;  // it is not an error to multiply disconnect.
 
@@ -1152,7 +1152,7 @@ public class BasicOps
 
     public NameParser getBaseNameParser()
     {
-        log.debug("getting base name parser");
+        log.log(Level.FINER,"getting base name parser");
 
         if (ctx == null) {error("Null Directory Context\n  in BasicOps.searchSubTree()\n  (so can't do anything!)", null); return null; }
 
@@ -1184,7 +1184,7 @@ public class BasicOps
         errorMsg = msg;         //TE: set the error msg.
         errorException = e;     //TE: set the exception.
 
-        log.error("BasicOps error: " + msg + "\n  ", e);
+        log.log(Level.WARNING,"BasicOps error: " + msg + "\n  ", e);
         return false;
     }
 
@@ -1251,10 +1251,10 @@ public class BasicOps
     protected NamingEnumeration postParseNameClassPairs(NamingEnumeration e, Name searchBase)
         throws NamingException
     {
-        if (log.isDebugEnabled())
+        if (log.isLoggable(Level.FINER))
         {
 
-            log.debug("in post Parse Name Class Pairs.  Elements available = " + e.hasMoreElements());
+            log.log(Level.FINER,"in post Parse Name Class Pairs.  Elements available = " + e.hasMoreElements());
 
             try
             {
@@ -1262,14 +1262,14 @@ public class BasicOps
                 {
                     SearchResult bloop = (SearchResult)e.nextElement();
                     if (bloop == null)
-                        log.debug("NULL RESULT");
+                        log.log(Level.FINER,"NULL RESULT");
                     else
-                        log.debug("next result: " + bloop.getName());
+                        log.log(Level.FINER,"next result: " + bloop.getName());
                 }
             }
             catch (Exception e2)
             {
-                log.error("unexpected exception: ", e2);
+                log.log(Level.WARNING,"unexpected exception: ", e2);
             }
         }
 
@@ -1309,7 +1309,7 @@ public class BasicOps
         }
         catch (NamingException e)
         {
-            log.error("Error changing context environment deleteRDN to " + value);
+            log.log(Level.WARNING,"Error changing context environment deleteRDN to " + value);
         }
         return false;
     }

@@ -1,14 +1,18 @@
 
 package com.idega.core.ldap.client.naming;
 
-import javax.naming.*;
-import javax.naming.directory.*;
-
-import java.util.*;
-
-import com.idega.core.ldap.client.cbutil.*;
-import com.idega.core.ldap.client.jndi.SchemaOps;  // for the log call.
-import org.apache.log4j.*;
+import java.util.Hashtable;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import com.idega.core.ldap.client.cbutil.CBBase64;
+import com.idega.core.ldap.client.cbutil.CBUtility;
+import com.idega.core.ldap.client.jndi.SchemaOps;
 
 /**
  *    This is largely a schema-aware wrapper to BasicAttribute, with some
@@ -31,7 +35,7 @@ public class DXAttribute extends BasicAttribute
 
     static SchemaOps schema;  // the schema of the most recently connected to directory
 
-    private final static Logger log = Logger.getLogger("com.ca.commons.naming.DXAttribute");  // ...It's round it's heavy it's wood... It's better than bad, it's good...
+    private final static Logger log = Logger.getLogger("com.idega.core.ldap.client.naming.DXAttribute");  // ...It's round it's heavy it's wood... It's better than bad, it's good...
 
     static
     {
@@ -602,7 +606,7 @@ public class DXAttribute extends BasicAttribute
     public static void setVerboseBinary(boolean status)
     {
         verboseBinary = status;
-        log.debug("setting binary attribute status to " + status);
+        log.log(Level.FINER,"setting binary attribute status to " + status);
     }
 
     public String getID()
@@ -614,7 +618,7 @@ public class DXAttribute extends BasicAttribute
              if (binary)
                  id = id + ";binary";
          }
-         log.debug("returning binary id " + id);
+         log.log(Level.FINER,"returning binary id " + id);
          return id;
     }
 	
