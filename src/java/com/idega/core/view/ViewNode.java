@@ -1,8 +1,8 @@
 /*
- * $Id: ViewNode.java,v 1.4 2005/03/06 00:14:27 tryggvil Exp $
+ * $Id: ViewNode.java,v 1.5 2005/03/06 12:01:42 tryggvil Exp $
  * Created on 2.9.2004
  *
- * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
@@ -17,18 +17,19 @@ import javax.faces.context.FacesContext;
 
 
 /**
+ * <p>
  * Base interface for "view nodes".<br>
  * A view node is a node in a hierarchial (tree) structure that represents both URLs and references to
  * UserInterface functions.<br>
  * There is an instance of a view node for each part of a URL structure and is separated by the '/' character.
  * So that for example in the URL "/myapp/workspace/builder" there is one ViewNode instance for both
  * 'workspace' and 'builder parts of the URL. <br>
- * ViewNodes are accessed and managed by the ViewManager instance.
- * 
- *  Last modified: $Date: 2005/03/06 00:14:27 $ by $Author: tryggvil $
+ * ViewNodes are accessed and managed by the ViewManager instance.<br>
+ * </p>
+ *  Last modified: $Date: 2005/03/06 12:01:42 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface ViewNode {
 	
@@ -88,7 +89,7 @@ public interface ViewNode {
 	public String getResourceURI();
 	//public Class getComponentClass();
 	/**
-	 * Creates a new instance of the component for this node.
+	 * Creates a new instance of the component for this node. This is only applicable if the node is ComponentBased.
 	 */
 	public UIComponent createComponent(FacesContext context);
 	
@@ -107,6 +108,10 @@ public interface ViewNode {
 	public KeyboardShortcut getKeyboardShortcut();
 	public ToolTip getToolTip(Locale locale);
 	
+	/**
+	 * Controls wheather the node will be rendered in User Interface, menus and such.
+	 * @return
+	 */
 	public boolean isRendered();
 	
 }
