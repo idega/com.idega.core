@@ -196,6 +196,11 @@ public class EntityFinder{
          * Returns null if nothing found
          */
 	protected static List findRelated(GenericEntity fromEntity,GenericEntity returningEntity,String SQLString)throws SQLException{
+		if(debug){
+			System.err.println("EntityFinder : findRelated :");
+			System.err.println(SQLString);
+		}
+
 		Connection conn= null;
 		Statement Stmt= null;
 		//Vector vector = new Vector();
