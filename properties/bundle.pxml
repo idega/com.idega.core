@@ -491,6 +491,32 @@
             </value>
             <type>map</type>
           </key>
+          <key>
+            <name>com.idega.core.search.presentation.Searcher</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.core.search.presentation.Searcher.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.core.search.presentation.SearchResults</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.core.search.presentation.SearchResults.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
         </map>
       </value>
       <type>map</type>
