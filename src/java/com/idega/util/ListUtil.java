@@ -42,12 +42,7 @@ public class ListUtil {
       return (List)coll;
     }
     else{
-      List theReturn = new ArrayList();
-      Iterator iter = coll.iterator();
-      while (iter.hasNext()) {
-        Object item = iter.next();
-        theReturn.add(item);
-      }
+      List theReturn = new ArrayList(coll);
       return theReturn;
     }
   }
