@@ -108,6 +108,14 @@ public java.util.Collection findUsersBySearchCondition(java.lang.String p0, bool
 			return this.getIDOEntityListForPrimaryKeys(ids);
 }
 
+public java.util.Collection findUsersBySearchConditionAndMaxAge(java.lang.String p0, boolean p1, int maxAge)throws javax.ejb.FinderException,java.rmi.RemoteException{	
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(p0, p1);
+	this.idoCheckInPooledEntity(entity);
+//return this.getEntityCollectionForPrimaryKeys(ids);
+			return this.getIDOEntityListForPrimaryKeys(ids);
+}
+
 public java.util.Collection findUsersByYearOfBirth (int minYear, int maxYear)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByYearOfBirth(minYear,maxYear);
