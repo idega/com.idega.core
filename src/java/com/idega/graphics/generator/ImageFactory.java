@@ -42,6 +42,8 @@ public class ImageFactory {
   public Image createButton(String textOnButton, IWBundle iwb, Locale local){
     Image image = null;
     String filePath;
+    String fileVirtualPath;
+
     if( local!=null ) filePath = iwb.getResourcesRealPath(local);
     else filePath = iwb.getResourcesRealPath();
 
@@ -52,7 +54,8 @@ public class ImageFactory {
     Button button = new Button(textOnButton);
     button.generate(filePath);
 
-    image = new Image("test",filePath+button.getButtonUpName(),filePath+button.getButtonOverName());
+    fileVirtualPath = iwb.getResourcesURL()+"/"+GENERATED_IMAGES_FOLDER+"/";
+    image = new Image("test",fileVirtualPath+button.getButtonUpName(),fileVirtualPath+button.getButtonOverName());
 
     return image;
   }
