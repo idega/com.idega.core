@@ -60,6 +60,10 @@ public class UserLoginTab extends UserTab {
     _displayLoginInfoSettings = false;
   }
 
+  public void displayLoginInfoSettings(){
+    _displayLoginInfoSettings = true;
+  }
+
   public UserLoginTab() {
     super();
     super.setName("Login");

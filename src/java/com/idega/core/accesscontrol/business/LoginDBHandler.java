@@ -589,19 +589,17 @@ public class LoginDBHandler {
 
 
   public static LoginInfo getLoginInfo(int loginTableId){
-
     LoginInfo li = null;
-
     try {
-
       li = new LoginInfo(loginTableId);
-
-    }
-
-    catch (SQLException ex) {
-
-      ex.printStackTrace();
-
+    } catch (SQLException ex) {
+      try {
+        li = new LoginInfo();
+        li.setID(loginTableId);
+        li.insert();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
     }
 
     return li;
