@@ -17,8 +17,8 @@ import java.util.Vector;
  */
 
 public class SingleLineItem extends Panel {
-  private int height = 16;
-  private int width = 120;
+  private int iHeight = 16;
+  private int iWidth = 120;
   private int nextXpos = 0;
   private int nextYpos = 0;
   private int componentOffset = 5;
@@ -33,7 +33,6 @@ public class SingleLineItem extends Panel {
 
   public SingleLineItem(Container parent) {
     addMouseListener(new ClickAdapter());
-    setSize(getPreferredSize());
     GridBagLayout grid = new GridBagLayout();
     setLayout(grid);
     setBackground(bgColor);
@@ -45,6 +44,12 @@ public class SingleLineItem extends Panel {
     this.componentOffset = componentOffset;
   }
 
+  public void setComponentOffset(int width, int height){
+    this.iWidth = width;
+    this.iHeight = height;
+  }
+
+
   public void addActionListener(ActionListener l) {
       actionListener = AWTEventMulticaster.add(actionListener, l);
   }
@@ -54,17 +59,15 @@ public class SingleLineItem extends Panel {
   }
 
   public Dimension getPreferredSize() {
-    return new Dimension(width, height);
+    return new Dimension(iWidth,iHeight);
   }
 
   public Dimension getMinimumSize() {
-         return getPreferredSize();
-
-    //return new Dimension(0, 0);
+    return new Dimension(iWidth,iHeight);
   }
 
   public Dimension getMaximumSize() {
-      return getPreferredSize();
+    return new Dimension(iWidth,iHeight);
   }
 
   /*public void paint(Graphics g) {
@@ -155,8 +158,6 @@ public class SingleLineItem extends Panel {
 
       component.addMouseListener(new ClickAdapter());
       super.add(component,gbc);
-      doLayout();
-      repaint();
       return component;
   }
 
@@ -192,15 +193,7 @@ public class SingleLineItem extends Panel {
         comps[i].repaint();
       }
 
-
-//      layout();
       SingleLineItem.this.doLayout();
-      SingleLineItem.this.repaint();
-//      parentContainer.layout();
-      SingleLineItem.this.parentContainer.doLayout();
-      SingleLineItem.this.parentContainer.repaint();
-
-            SingleLineItem.this.doLayout();
       SingleLineItem.this.repaint();
 
       actionListener.actionPerformed(new ActionEvent(SingleLineItem.this,ActionEvent.ACTION_PERFORMED, "iw-selected"));

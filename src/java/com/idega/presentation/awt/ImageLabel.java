@@ -375,8 +375,8 @@ public class ImageLabel extends Canvas {
       if (height > 0)
         explicitHeight=height;
     }
-//    super.resize(width, height);
-    super.setSize(width, height);
+  //  super.resize(width, height);
+//    super.setSize(width, height);
   }
 
   /** Resizes the ImageLabel. If you don't resize the
@@ -411,7 +411,7 @@ public class ImageLabel extends Canvas {
         explicitHeight=height;
     }
 //    super.reshape(x, y, width, height);
-    super.setBounds(x, y, width, height);
+//    super.setBounds(x, y, width, height);
   }
 
   //----------------------------------------------------
