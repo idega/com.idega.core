@@ -39,7 +39,7 @@ public class ImageFactory {
    if(factory == null){
     factory = new ImageFactory(iwma);
     coreBundle = iwma.getCoreBundle();
-    String folderPath = coreBundle.getResourcesURL()+FileUtil.getFileSeparator()+iwma.CORE_BUNDLE_FONT_FOLDER_NAME+FileUtil.getFileSeparator();
+    String folderPath = coreBundle.getResourcesRealPath()+FileUtil.getFileSeparator()+iwma.CORE_BUNDLE_FONT_FOLDER_NAME+FileUtil.getFileSeparator();
     try {
       Font fontbase = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(folderPath+"Spliffy.ttf"));
       defaultFont = fontbase.deriveFont(Font.PLAIN,10.f);
