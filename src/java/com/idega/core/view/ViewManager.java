@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.5 2004/12/31 02:21:07 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.6 2005/01/27 10:30:05 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.util.FacesUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2004/12/31 02:21:07 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/27 10:30:05 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ViewManager {
 	
@@ -132,7 +132,7 @@ public class ViewManager {
 			//getApplicationRoot().addChildViewNode(node);
 			node.setParent(getApplicationRoot());
 			//String jspUri = iwma.getBundle("com.idega.webface").getJSPURI("workspace.jsp");
-			String jspUri = "/idegaweb/bundles/com.idega.webface.bundle/jsp/workspace.jsp";
+			String jspUri = "/idegaweb/bundles/com.idega.workspace.bundle/jsp/workspace.jsp";
 			node.setJspUri(jspUri);
 			workspaceNode = node;
 		}
