@@ -72,6 +72,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   private static final String NULL = "null";
   
   private static final String JOB_META_DATA_KEY = "job";
+	private static final String WORKPLACE_META_DATA_KEY = "workplace";
 
 	private static final String SESSION_KEY_TOP_NODES =  "top_nodes_for_user";
 
@@ -667,6 +668,23 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     else
       return job;
   }  
+
+	public void updateUserWorkPlace(int userId, String workPlace) {
+		if (workPlace == null || workPlace.length() == 0)
+		workPlace = NULL;
+		User user = getUser(userId);
+		user.setMetaData(WORKPLACE_META_DATA_KEY, workPlace);
+		user.store();
+	}
+    
+	public String getUserWorkPlace(User user)  {
+		String workPlace = (String) user.getMetaData(WORKPLACE_META_DATA_KEY);
+		if (workPlace == null || NULL.equals(workPlace))
+			return "";
+		else
+			return workPlace;
+	}  
+
 
   /**
    * @deprecated user getUsersMainAddress instead.

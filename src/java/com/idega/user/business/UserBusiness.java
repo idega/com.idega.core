@@ -25,6 +25,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  
  public void updateUserMail(int p0,java.lang.String p1)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public void updateUserJob(int p0,java.lang.String p1);
+ public void updateUserWorkPlace(int p0,java.lang.String p1);
  public java.util.Collection listOfUserEmails(int p0) throws java.rmi.RemoteException;
  public void setUserUnderDomain(com.idega.builder.data.IBDomain p0,com.idega.user.data.User p1,com.idega.user.data.GroupDomainRelationType p2)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  public void deleteUser(int p0, com.idega.user.data.User p1)throws javax.ejb.RemoveException, java.rmi.RemoteException;
@@ -37,6 +38,7 @@ public interface UserBusiness extends com.idega.business.IBOService
  public com.idega.core.business.AddressBusiness getAddressBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.core.data.Email getUserMail(int p0) throws java.rmi.RemoteException;
  public java.lang.String getUserJob(com.idega.user.data.User p0);
+ public java.lang.String getUserWorkPlace(com.idega.user.data.User p0);
  public java.util.Collection getUsersInPrimaryGroup(com.idega.user.data.Group p0) throws java.rmi.RemoteException;
  public java.util.Collection getUsersInNoGroup()throws java.sql.SQLException, java.rmi.RemoteException;
  public com.idega.user.data.UserHome getUserHome() throws java.rmi.RemoteException;
