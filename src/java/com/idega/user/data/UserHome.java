@@ -1,7 +1,6 @@
 package com.idega.user.data;
 
 import java.rmi.RemoteException;
-import java.sql.Date;
 import java.util.Collection;
 
 import javax.ejb.FinderException;
