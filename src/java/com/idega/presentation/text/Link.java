@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.58 2002/03/22 15:18:07 eiki Exp $
+ * $Id: Link.java,v 1.59 2002/03/26 16:43:08 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -195,14 +195,22 @@ public class Link extends Text{
    * @deprecated replaced with com.idega.presentation.ui.FilePresentation
    */
   public Link(int file_id) {
-    this(new Text("File"),com.idega.idegaweb.IWMainApplication.MEDIA_SERVLET_URL+"?file_id="+file_id);
+    /**
+     * @todo: Temporary workaround before this constructor is removed
+     */
+    this(new Text("File"),IWContext.getInstance().getApplication().getMediaServletURI()+"?file_id="+file_id);
+    //this(new Text("File"),com.idega.idegaweb.IWMainApplication.MEDIA_SERVLET_URL+"?file_id="+file_id);
   }
 
   /**
    * @deprecated replaced with com.idega.presentation.ui.FilePresentation
    */
   public Link(int file_id, String file_name) {
-    this(new Text(file_name),com.idega.idegaweb.IWMainApplication.MEDIA_SERVLET_URL+"?file_id="+file_id);
+    /**
+     * @todo: Temporary workaround before this constructor is removed
+     */
+    this(new Text(file_name),IWContext.getInstance().getApplication().getMediaServletURI()+"?file_id="+file_id);
+    //this(new Text(file_name),com.idega.idegaweb.IWMainApplication.MEDIA_SERVLET_URL+"?file_id="+file_id);
   }
 
   /**
@@ -211,7 +219,10 @@ public class Link extends Text{
   public Link(PresentationObject mo, int file_id) {
     super();
     _obj = mo;
-    setURL(com.idega.idegaweb.IWMainApplication.MEDIA_SERVLET_URL+"?file_id="+file_id);
+    /**
+     * @todo: Temporary workaround before this constructor is removed
+     */
+    setURL(IWContext.getInstance().getApplication().getMediaServletURI()+"?file_id="+file_id);
     _obj.setParentObject(this);
     _objectType = OBJECT_TYPE_MODULEOBJECT;
   }

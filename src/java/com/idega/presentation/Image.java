@@ -190,7 +190,7 @@ private void getImage(IWContext iwc) throws SQLException{
     }
 
     StringBuffer URIBuffer;
-    URIBuffer = new StringBuffer(IWMainApplication.MEDIA_SERVLET_URL);
+    URIBuffer = new StringBuffer(iwma.getMediaServletURI());
     URIBuffer.append(imageId);
     URIBuffer.append("image?");
     URIBuffer.append(idName);
