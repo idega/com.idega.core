@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.29 2001/07/17 19:24:17 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.30 2001/07/17 21:03:57 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -374,7 +374,7 @@ public abstract class GenericEntity implements java.io.Serializable {
         }
 
 	public void setColumn(String columnName,Object columnValue){
-		if (this.getRelationShipClassName(columnName).equals("")){
+		if (this.getRelationShipClass(columnName)==null){
 			setValue(columnName,columnValue);
 		}
 		else{
@@ -451,10 +451,10 @@ public abstract class GenericEntity implements java.io.Serializable {
 			returnObj = value;
 		}
 		else if (value instanceof java.lang.Integer){
-			if (!(getRelationShipClassName(columnName).equals(""))){
-				if (getRelationShipClassName(columnName).indexOf("idega") != -1){
+			if ((getRelationShipClass(columnName)!=null)){
+				if (getRelationShipClass(columnName).getName().indexOf("idega") != -1){
 					try{
-						returnObj = Class.forName(getRelationShipClassName(columnName)).newInstance();
+						returnObj =getRelationShipClass(columnName).newInstance();
 						((GenericEntity)returnObj).findByPrimaryKey(((Integer)value).intValue());
 					}
 					catch(Exception ex){
@@ -623,12 +623,22 @@ public abstract class GenericEntity implements java.io.Serializable {
 		return getColumn(columnName).getIfVisible();
 	}
 
+        /*
 	public String getRelationShipClassName(String columnName){
                 String theReturn = "";
                 if (getColumn(columnName) != null){
   		  theReturn = getColumn(columnName).getRelationShipClassName();
                 }
             return theReturn;
+	}
+        */
+
+	public Class getRelationShipClass(String columnName){
+          EntityAttribute column = getColumn(columnName);
+          if(column!=null){
+            return column.getRelationShipClass();
+          }
+          return null;
 	}
 
 	public void setRelationShipClassName(String columnName,String className){
@@ -1826,10 +1836,19 @@ public abstract class GenericEntity implements java.io.Serializable {
 
 
 
-      public void addManyToManyRelationShip(String relatingEntityClassName,String relationShipTableName){
-            EntityControl.addManyToManyRelationShip(this.getClass().getName(),relatingEntityClassName,relationShipTableName);
+      public void addManyToManyRelationShip(Class relatingEntityClass,String relationShipTableName){
+            EntityControl.addManyToManyRelationShip(this.getClass().getName(),relatingEntityClass.getName(),relationShipTableName);
       }
 
+
+      public void addManyToManyRelationShip(String relatingEntityClassName,String relationShipTableName){
+          try{
+            addManyToManyRelationShip(Class.forName(relatingEntityClassName),relationShipTableName);
+          }
+          catch(ClassNotFoundException e){
+            throw new RuntimeException("Exception in "+this.getClass().getName()+e.getMessage());
+          }
+      }
 
       public void addManyToManyRelationShip(String relatingEntityClassName){
             String relationShipTableName;

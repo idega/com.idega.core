@@ -343,9 +343,11 @@ public abstract class DatastoreInterface{
       List list = getRelatedEntityClasses(entity);
       Iterator iter = list.iterator();
       while (iter.hasNext()) {
-        String className = (String)iter.next();
+        //String className = (String)iter.next();
+        Class myClass = (Class)iter.next();
           //try{
-            GenericEntity relationShipEntity = (GenericEntity)Class.forName(className).newInstance();
+            //GenericEntity relationShipEntity = (GenericEntity)Class.forName(className).newInstance();
+            GenericEntity relationShipEntity = (GenericEntity)myClass.newInstance();
             createEntityRecord(relationShipEntity);
           //}
           //catch(Exception ex){
@@ -356,14 +358,14 @@ public abstract class DatastoreInterface{
 
   /**
    * Gets the entities that are related by  one-to many and many-to-many relationships
-   * Returns a List of Strings
+   * Returns a List of Class Objects
    */
   private List getRelatedEntityClasses(GenericEntity entity){
       List returnNames = new Vector();
       String[] names = entity.getColumnNames();
       for (int i = 0; i < names.length; i++) {
-        String relationShipClass = entity.getRelationShipClassName(names[i]);
-        if (!relationShipClass.equals("")) {
+        Class relationShipClass = entity.getRelationShipClass(names[i]);
+        if ( relationShipClass!=null ) {
           try{
             returnNames.add(relationShipClass);
           }
@@ -374,12 +376,11 @@ public abstract class DatastoreInterface{
       }
       returnNames.addAll(getManyToManyRelatedEntityClasses(entity));
       return returnNames;
-
   }
 
   /**
    * Gets the entities that are related by many-to-many relationships
-   * Returns a List of Strings
+   * Returns a List of Class Objects
    */
   private List getManyToManyRelatedEntityClasses(GenericEntity entity){
       List list = new Vector();
@@ -388,8 +389,9 @@ public abstract class DatastoreInterface{
         Iterator iter = classList.iterator();
         while (iter.hasNext()) {
           Class item = (Class)iter.next();
-          String className = item.getName();
-          list.add(className);
+          //String className = item.getName();
+          //list.add(className);
+          list.add(item);
         }
       }
       return list;
@@ -429,12 +431,14 @@ public abstract class DatastoreInterface{
 
           set = relMap.keySet();
           iter = set.iterator();
+          boolean mayAddComma = false;
           while (iter.hasNext()) {
-            if(creationStatement.indexOf(",")!=-1){
+            if(mayAddComma){
               creationStatement += ",";
             }
             String column = (String)iter.next();
             creationStatement += column + " INTEGER NOT NULL";
+            mayAddComma = true;
           }
           creationStatement += ")";
           executeUpdate(entity,creationStatement);
@@ -519,9 +523,9 @@ public abstract class DatastoreInterface{
     String[] names = entity.getColumnNames();
     for (int i = 0; i < names.length; i++) {
         //try{
-          if (!entity.getRelationShipClassName(names[i]).equals("")) {
+          if (entity.getRelationShipClass(names[i])!=null) {
             String table1=entity.getTableName();
-            String table2=((GenericEntity)Class.forName(entity.getRelationShipClassName(names[i])).newInstance()).getTableName();
+            String table2=((GenericEntity)entity.getRelationShipClass(names[i]).newInstance()).getTableName();
             String columnName = names[i];
             createForeignKey(entity,table1,columnName,table2);
           }
