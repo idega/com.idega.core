@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Pattern;
 
 import javax.ejb.CreateException;
 
@@ -51,13 +52,22 @@ public class POIUtility {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet(sheetName);
 
+		Text obj;
+		String text;
+		
+		Pattern sp = Pattern.compile(Text.NON_BREAKING_SPACE, Pattern.CASE_INSENSITIVE);
+		Pattern br = Pattern.compile(Text.BREAK, Pattern.CASE_INSENSITIVE);
+		
 		for (int x = 1; x <= rows; x++) { // has to start on 1, because getCellAt does (x-1, y-1)
 			HSSFRow row = sheet.createRow((short)(x-1));
 			sheet.setRowSumsBelow(true);
 			for (int y = 1; y <= cols; y++) {// has to start on 1, because getCellAt does (x-1, y-1)
-				Text obj = (Text) table.getCellAt(y, x).getContainedObject(Text.class);
+				obj = (Text) table.getCellAt(y, x).getContainedObject(Text.class);
 				if (obj != null) {
-					row.createCell((short)(y-1)).setCellValue(obj.toString());
+					text = obj.toString();
+					sp.matcher(text).replaceAll(" ");
+					br.matcher(text).replaceAll("\n");
+					row.createCell((short)(y-1)).setCellValue(text);
 				}
 			}
 		}
