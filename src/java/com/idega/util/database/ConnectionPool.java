@@ -444,6 +444,7 @@ public class ConnectionPool
 	public synchronized void release()
 	{
 		refresher.stop();
+		refresher=null;
 		Enumeration allConnections = freeConnections.elements();
 		while (allConnections.hasMoreElements())
 		{
@@ -721,5 +722,13 @@ public class ConnectionPool
 	{
 		logWriter.log("[ConnectionPool-Debug] : " + debug, LogWriter.DEBUG);
 		//System.out.println("[ConnectionPool-Debug] : "+debug);
+	}
+	
+	/**
+	 * Returns the name.
+	 * @return String
+	 */
+	public String getName() {
+		return name;
 	}
 }
