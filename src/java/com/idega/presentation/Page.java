@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.58 2002/08/29 18:28:11 laddi Exp $
+ *  $Id: Page.java,v 1.59 2002/09/04 12:50:36 eiki Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation;
 
+import com.idega.util.IWColor;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -128,6 +129,14 @@ public class Page extends PresentationObjectContainer {
 	public void setBackgroundColor(String color) {
 		setAttribute("bgcolor", color);
 	}
+
+        /**
+	 *@param  color  The new backgroundColor value
+	 */
+	public void setBackgroundColor(IWColor color) {
+		setAttribute("bgcolor", color.getHexColorString());
+	}
+
 
 	/**
 	 *@param  color  The new textColor value
@@ -1000,14 +1009,14 @@ public class Page extends PresentationObjectContainer {
 
 				print(getMetaInformation(iwc));
 				print(getMetaTags());
-				
+
 				//Laddi: Made obsolete with default style sheet
 				/*if (_addStyleSheet) {
 					println("<link rel=\"stylesheet\" href=\"" + _styleSheetURL + "\" type=\"text/css\">\n");
 				}*/
-				    
+
 				println("\n</head>");
-				
+
 				if (_addBody) {
 					println("<body " + getAttributeString() + ">");
 				}
