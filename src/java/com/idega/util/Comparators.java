@@ -2,6 +2,7 @@ package com.idega.util;
 
 import java.util.Comparator;
 import java.beans.MethodDescriptor;
+import java.lang.reflect.Method;
 import com.idega.presentation.IWContext;
 
 import com.idega.idegaweb.IWProperty;
@@ -26,6 +27,10 @@ public class Comparators{
    */
   public static Comparator getMethodDescriptionComparator(IWContext iwc){
     return new MethodDescriptionComparator(iwc);
+  }
+
+  public static Comparator getMethodComparator(){
+    return new MethodComparator();
   }
 
   public static Comparator getMethodDescriptorComparator(){
@@ -60,6 +65,19 @@ public class Comparators{
   }
 
 
+  private static class MethodComparator implements Comparator{
 
+    private MethodComparator(){
+
+    }
+
+    public int compare(Object parm1, Object parm2) {
+        Method method1 = (Method)parm1;
+        Method method2 = (Method)parm2;
+        String s1 = method1.toString();
+        String s2 = method2.toString();
+        return s1.compareTo(s2);
+    }
+  }
 
 }
