@@ -67,9 +67,10 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 			this.value = value;
 		} else {
 			this.value = quote(value);
+			this.placeHolderValue = value;
 		}
 		this.matchType = matchType;
-		this.placeHolderValue = value;
+		
 	}
 
 	public MatchCriteria(Column column, String matchType, String value, boolean addQuotes) {
