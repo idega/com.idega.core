@@ -91,7 +91,7 @@ public class PrimaryKeyDefinition implements IDOPrimaryKeyDefinition {
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOPrimaryKeyDefinition#getField()
 	 */
-	public IDOEntityField getField() throws IDOCompositPrimaryKeyException {
+	public IDOEntityField getField() throws IDOCompositePrimaryKeyException {
 		if(!isComposite()){
 			try {
 				return getFields()[0];
@@ -100,7 +100,7 @@ public class PrimaryKeyDefinition implements IDOPrimaryKeyDefinition {
 				throw e;
 			}
 		} else {
-			throw new IDOCompositPrimaryKeyException();
+			throw new IDOCompositePrimaryKeyException();
 		}
 	}
 

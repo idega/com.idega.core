@@ -478,7 +478,7 @@ public class IDOQuery {
 		return this;
 	}
 
-	public IDOQuery appendSelectIDColumnFrom(IDOEntity entity) throws IDOCompositPrimaryKeyException {
+	public IDOQuery appendSelectIDColumnFrom(IDOEntity entity) throws IDOCompositePrimaryKeyException {
 		this.appendSelect();
 		this.append(entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
 		this.appendFrom();

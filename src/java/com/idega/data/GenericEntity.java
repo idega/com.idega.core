@@ -924,7 +924,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			try {
 				return pkd.getField().getSQLFieldName();
 			}
-			catch (IDOCompositPrimaryKeyException e) {
+			catch (IDOCompositePrimaryKeyException e) {
 				return pkd.getFields()[0].getSQLFieldName();
 			}
 		}
@@ -1613,7 +1613,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 		try {
 			entityIDColumnName = entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
-		} catch (IDOCompositPrimaryKeyException e) {
+		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 		}
 
@@ -1686,7 +1686,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				buffer.append("=");
 				buffer.append(primaryValue);
 			}
-		} catch (IDOCompositPrimaryKeyException e) {
+		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -2228,7 +2228,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		try {
 			Stmt = conn.createStatement();
 			Stmt.executeUpdate("insert into " + getNameOfMiddleTable(entityToAddTo, this) + "(" + getIDColumnName() + "," + entityToAddTo.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName() + ") values(" + getPrimaryKeyValueSQLString() + "," + getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue()) + ")");
-		} catch (IDOCompositPrimaryKeyException e) {
+		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 		} finally {
 			if (Stmt != null) {
@@ -2246,7 +2246,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			Stmt.executeUpdate("insert into " + getNameOfMiddleTable((IDOEntity)com.idega.data.GenericEntity.getStaticInstanceIDO(entityToAddTo), this) + "(" + getIDColumnName() + "," + (com.idega.data.GenericEntity.getStaticInstanceIDO(entityToAddTo)).getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName() + ") values(" + getPrimaryKeyValueSQLString() + "," + id + ")");
-		} catch (IDOCompositPrimaryKeyException e) {
+		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 			throw new SQLException(e.getMessage());
 		} finally {
@@ -2277,7 +2277,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 					}
 				}
 			}
-		} catch (IDOCompositPrimaryKeyException e) {
+		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 			throw new SQLException(e.getMessage());
 		} finally {
@@ -2366,7 +2366,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			//  System.out.println("GENERIC ENTITY: "+ qry);
 
 			Stmt.executeUpdate(qry);
-		} catch (IDOCompositPrimaryKeyException e) {
+		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 		} catch (EJBException e) {
 			e.printStackTrace();

@@ -17,7 +17,7 @@ package com.idega.data;
 public interface IDOPrimaryKeyDefinition {
 
 	public IDOEntityField[] getFields();
-	public IDOEntityField getField() throws IDOCompositPrimaryKeyException;
+	public IDOEntityField getField() throws IDOCompositePrimaryKeyException;
 	public boolean isComposite();
 	public Class getPrimaryKeyClass();
 }
