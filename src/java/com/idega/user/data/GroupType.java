@@ -4,21 +4,29 @@ import javax.ejb.*;
 
 public interface GroupType extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity
 {
+ public java.lang.String getAliasGroupTypeString();
+ public boolean getAutoCreate();
+ public java.lang.String getDefaultGroupName();
+ public java.lang.String getDescription();
+ public java.lang.String getGeneralGroupTypeString();
  public java.lang.String getIDColumnName();
- public boolean getVisibility() throws java.rmi.RemoteException;
- public java.lang.Class getPrimaryKeyClass() throws java.rmi.RemoteException;
- public void setGroupTypeAsPermissionGroup() throws java.rmi.RemoteException;
- public void initializeAttributes();
- public void setGroupTypeAsGeneralGroup() throws java.rmi.RemoteException;
- public void setGroupTypeAsAliasGroup() throws java.rmi.RemoteException;
- public void setDescription(java.lang.String p0) throws java.rmi.RemoteException;
- public java.lang.String getDescription() throws java.rmi.RemoteException;
- public void setType(java.lang.String p0) throws java.rmi.RemoteException;
- public void setVisibility(boolean p0) throws java.rmi.RemoteException;
- public java.lang.String getGeneralGroupTypeString() throws java.rmi.RemoteException;
+ public java.lang.Integer getMaximumNumberOfInstances();
+ public java.lang.Integer getMaximumNumberOfInstancesPerParent();
+ public java.lang.Integer getNumberOfInstancesToAutoCreate();
+ public java.lang.String getPermissionGroupTypeString();
+ public java.lang.Class getPrimaryKeyClass();
  public java.lang.String getType();
- public java.lang.String getPermissionGroupTypeString() throws java.rmi.RemoteException;
- public java.lang.String getAliasGroupTypeString() throws java.rmi.RemoteException;
- public void setDefaultGroupName(String name);
- public String getDefaultGroupName();
+ public boolean getVisibility();
+ public void initializeAttributes();
+ public void setAutoCreate(java.lang.Boolean p0);
+ public void setDefaultGroupName(java.lang.String p0);
+ public void setDescription(java.lang.String p0);
+ public void setGroupTypeAsAliasGroup();
+ public void setGroupTypeAsGeneralGroup();
+ public void setGroupTypeAsPermissionGroup();
+ public void setMaximumNumberOfInstances(java.lang.Integer p0);
+ public void setMaximumNumberOfInstancesPerParent(java.lang.Integer p0);
+ public void setNumberOfInstancesToAutoCreate(java.lang.Integer p0);
+ public void setType(java.lang.String p0);
+ public void setVisibility(boolean p0);
 }

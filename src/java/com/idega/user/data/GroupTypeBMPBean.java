@@ -21,20 +21,25 @@ import com.idega.data.TreeableEntityBMPBean;
  * <p>Company: idega Software</p>
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,Eirikur
  * Hrafnsson
- * @version 1.0
+ * @version 1.1
  */
 
 public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType,TreeableEntity {
 
-  private static String TABLE_NAME="IC_GROUP_TYPE";
-  private static String TYPE_COLUMN="GROUP_TYPE";
-  private static String DESCRIPTION_COLUMN="DESCRIPTION";
-	private static String DEFAULT_GROUP_NAME_COLUMN="DEFAULT_GROUP_NAME";//could also be used as a localization key
+  private static final String TABLE_NAME="IC_GROUP_TYPE";
+	private static final String TYPE_COLUMN ="GROUP_TYPE";
+	private static final String DESCRIPTION_COLUMN="DESCRIPTION";
+	private static final String DEFAULT_GROUP_NAME_COLUMN="DEFAULT_GROUP_NAME";//could also be used as a localization key
 	
-  private static String COLUMN_HANDLER_CLASS="HANDLER_CLASS_ID";
-  private static String COLUMN_IS_VISIBLE = "IS_VISIBLE";
-
-  private static final String TYPE_GENERAL_GROUP = "general";
+	private static final String COLUMN_HANDLER_CLASS="HANDLER_CLASS_ID";
+	private static final String COLUMN_IS_VISIBLE = "IS_VISIBLE";
+  
+	private static final String COLUMN_MAX_INSTANCES = "MAX_INSTANCES";
+	private static final String COLUMN_MAX_INSTANCES_PER_PARENT = "MAX_INSTANCES_PER_PARENT";
+	private static final String COLUMN_AUTO_CREATE = "AUTO_CREATE";
+	private static final String COLUMN_NUMBER_OF_INSTANCES_TO_AUTO_CREATE = "INSTANCES_AUTO_CREATED";
+	
+	private static final String TYPE_GENERAL_GROUP = "general";
   private static final String TYPE_USER_REPRESENTATIVE = "ic_user_representative";
   private static final String TYPE_PERMISSION_GROUP = "permission";
   private static final String TYPE_ALIAS = "alias";
@@ -49,6 +54,10 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 //    this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",String.class,500); this is handled with plugins
  //   this.addAttribute(COLUMN_HANDLER_CLASS, "GroupTypeHandler",true,true, Integer.class,"one-to-many",ICObject.class);
     this.addAttribute(COLUMN_IS_VISIBLE,"is Visible",Boolean.class);
+		this.addAttribute(COLUMN_AUTO_CREATE,"Auto create",Boolean.class);
+		this.addAttribute(COLUMN_NUMBER_OF_INSTANCES_TO_AUTO_CREATE,"Number of instances to autocreate",Integer.class);
+		this.addAttribute(COLUMN_MAX_INSTANCES,"Maximum number of instances globaly",Integer.class);
+		this.addAttribute(COLUMN_MAX_INSTANCES_PER_PARENT,"Maximum number of instances per parent",Integer.class);
   }
 
 
@@ -153,7 +162,31 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 	public String getDefaultGroupName(){
 		return getStringColumnValue(DEFAULT_GROUP_NAME_COLUMN);
 	}
-
+	
+	public Integer getNumberOfInstancesToAutoCreate(){
+		return getIntegerColumnValue(COLUMN_NUMBER_OF_INSTANCES_TO_AUTO_CREATE);
+	}
+	
+	public void setNumberOfInstancesToAutoCreate(Integer number){
+		setColumn(COLUMN_NUMBER_OF_INSTANCES_TO_AUTO_CREATE,number);
+	}
+	
+	public Integer getMaximumNumberOfInstances(){
+		return getIntegerColumnValue(COLUMN_MAX_INSTANCES);
+	}
+	
+	public void setMaximumNumberOfInstances(Integer max){
+		setColumn(COLUMN_MAX_INSTANCES,max);
+	}
+	
+	public Integer getMaximumNumberOfInstancesPerParent(){
+		return getIntegerColumnValue(COLUMN_MAX_INSTANCES_PER_PARENT);
+	}
+	
+	public void setMaximumNumberOfInstancesPerParent(Integer max){
+		setColumn(COLUMN_MAX_INSTANCES_PER_PARENT,max);
+	}
+	
   public String getIDColumnName(){
     return TYPE_COLUMN;
   }
@@ -205,6 +238,16 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
   public boolean getVisibility(){
     return getBooleanColumnValue(COLUMN_IS_VISIBLE,true);
   }
+  
+	
+	public boolean getAutoCreate(){
+		return getBooleanColumnValue(COLUMN_AUTO_CREATE,false);
+	}
+	
+	public void setAutoCreate(Boolean autoCreate){
+		setColumn(COLUMN_AUTO_CREATE,autoCreate);
+	}
+	
 
   public Collection ejbFindAllGroupTypes() throws FinderException{
     return super.idoFindIDsBySQL("select * from "+getEntityName());
