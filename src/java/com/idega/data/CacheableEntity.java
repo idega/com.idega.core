@@ -40,7 +40,7 @@ public class CacheableEntity extends GenericEntity {
   */
   public void insert()throws SQLException{
     super.insert();
-    IWMainApplication.getIWCacheManager().cacheTable(this);
+    cacheEntity();/**@todo this should not happen all the time*/
     IWMainApplication.getIWCacheManager().insertIntoCachedTable(this);
   }
 
@@ -48,7 +48,7 @@ public class CacheableEntity extends GenericEntity {
   *deletes this entity as a record in the datastore and cache
   */
   public void delete()throws SQLException{
-    IWMainApplication.getIWCacheManager().cacheTable(this);
+    cacheEntity();
     super.delete();
     IWMainApplication.getIWCacheManager().deleteFromCachedTable(this);
   }
@@ -57,7 +57,7 @@ public class CacheableEntity extends GenericEntity {
   *updates this entity as a record in the datastore and cache
   */
   public void update()throws SQLException{
-    IWMainApplication.getIWCacheManager().cacheTable(this);
+    cacheEntity();
     super.update();
     IWMainApplication.getIWCacheManager().updateFromCachedTable(this);
   }

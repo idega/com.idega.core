@@ -24,7 +24,7 @@ public class ICFileType extends CacheableEntity {
   public static String IC_FILE_TYPE_IMAGE = "ic_image";
   public static String IC_FILE_TYPE_VECTOR_GRAPHICS = "ic_vector";
   public static String IC_FILE_TYPE_VIDEO = "ic_video";
-  public static String IC_FILE_TYPE_SYSTEM = "iwdbfs";//idegaWeb database file system (type)
+  public static String IC_FILE_TYPE_SYSTEM = "ic_system";//idegaWeb database file system (type)
 
 
   public ICFileType() {
@@ -101,64 +101,63 @@ public class ICFileType extends CacheableEntity {
     try {
       ICFileType type;
       ICFile file;
-
-
-      IWMainApplication.getIWCacheManager().cacheTable(new ICFileTypeHandler());
+      ICFileTypeHandler handler = new ICFileTypeHandler();
 
       type = new ICFileType();
       type.setName("iW system");
       type.setUniqueName(IC_FILE_TYPE_SYSTEM);
       type.setDescription("IdegaWeb database file system types such as ic_folder");
-   //   type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_SYSTEM));
+      type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_SYSTEM));
       type.insert();
 
       type = new ICFileType();
       type.setName("Applications");
       type.setUniqueName(IC_FILE_TYPE_APPLICATION);
       type.setDescription("Applications or executables");
-  //    type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_APPLICATION));
+      type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_APPLICATION));
       type.insert();
 
       type = new ICFileType();
       type.setName("Audio");
       type.setType(IC_FILE_TYPE_AUDIO);
       type.setDescription("Audio files such as .mp3 .au");
-   //   type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_AUDIO));
+      type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_AUDIO));
       type.insert();
 
       type = new ICFileType();
       type.setName("Documents");
       type.setType(IC_FILE_TYPE_DOCUMENT);
       type.setDescription("Documents or textfiles such as .doc .xls .txt .html");
-  //    type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_DOCUMENT));
+      type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_DOCUMENT));
       type.insert();
 
       type = new ICFileType();
       type.setName("Images");
       type.setType(IC_FILE_TYPE_IMAGE);
       type.setDescription("Image files");
-  //    type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_IMAGE));
+      type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_IMAGE));
       type.insert();
 
       type = new ICFileType();
       type.setName("Vector graphics");
       type.setType(IC_FILE_TYPE_VECTOR_GRAPHICS);
       type.setDescription("Vector graphic files such as .swf (Flash) .dir (Shockwave)");
- //     type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_VECTOR_GRAPHICS));
+      type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_VECTOR_GRAPHICS));
       type.insert();
 
       type = new ICFileType();
       type.setName("Video");
       type.setType(IC_FILE_TYPE_VIDEO);
       type.setDescription("Video or movie files such as .mov .mpg .avi");
- //     type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_VIDEO));
+      type.setFileTypeHandler((ICFileTypeHandler) IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileTypeHandler.class,ICFileTypeHandler.IC_FILE_TYPE_HANDLER_VIDEO));
       type.insert();
+
+      this.cacheEntity();
 
     }
     catch (SQLException sql) {
       sql.printStackTrace(System.err);
-      System.out.println("ICFILETYPE : ANUSSS");
-    }
+     }
   }
 
   public String getCacheKey(){

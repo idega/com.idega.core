@@ -119,6 +119,8 @@ public class ICFileTypeHandler extends CacheableEntity {
       handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_VIDEO, VideoTypeHandler.class );
       handler.insert();
 
+      handler.cacheEntity();
+
     }
     catch (SQLException sql) {
       sql.printStackTrace(System.err);
