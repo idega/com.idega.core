@@ -1062,7 +1062,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
     catch(Exception ex){
       if(ex instanceof SQLException){
-	    //ex.printStackTrace();
+	    ex.printStackTrace();
 	    throw (SQLException)ex.fillInStackTrace();
       }
       else{
