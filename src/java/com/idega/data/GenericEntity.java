@@ -118,7 +118,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			//First store a static instance of this class
 			//String className = this.getClass().getName();
 			try {
-				_allStaticClasses.put(this.getClass(), this.instanciateEntity(this.getClass()));
+				_allStaticClasses.put(this.getClass().getName(), this.instanciateEntity(this.getClass()));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -2399,9 +2399,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			}
 		}
 	}
-	public String getLobColumnName() {
-		return ((GenericEntity)this.getIDOEntityStaticInstance())._lobColumnName;
-	}
+  
+  public String getLobColumnName()  {
+    return ((GenericEntity)this.getIDOEntityStaticInstance())._lobColumnName;
+  }
+  
 	public static IDOLegacyEntity getStaticInstance(String entityClassName) {
 		try {
 			return getStaticInstance(Class.forName(entityClassName));
@@ -2431,7 +2433,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		if (_allStaticClasses == null) {
 			_allStaticClasses = new Hashtable();
 		}
-		IDOLegacyEntity theReturn = (GenericEntity)_allStaticClasses.get(entityClass);
+		IDOLegacyEntity theReturn = (GenericEntity)_allStaticClasses.get(entityClass.getName());
 		if (theReturn == null) {
 			try {
 				//theReturn = (IDOLegacyEntity)entityClass.newInstance();
