@@ -3,8 +3,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -305,6 +307,27 @@ public class StringHandler {
   }
   	
   
+	public static Map getReplaceMapIgnoreCase(String str, String pattern, String replace)  {
+		Map indexMap = new HashMap();
+		int s = 0;
+	    int e = 0;
+	    String upperPattern = pattern.toUpperCase();
+	    int length = upperPattern.length();
+	    String upperStr = str.toUpperCase();
+	    while ((e = upperStr.indexOf(upperPattern, s)) >= 0) {
+	    	indexMap.put(new Integer(e), replace);
+	    	int i = e;
+	    	i++;
+	    	while (i < e + length) {
+	    		indexMap.put(new Integer(i++),"");
+			}
+	      	s = i;
+		}
+	    return indexMap;
+	}  
+  
+  
+  
   /** Replaces all occurences of the specified pattern in the specified string with the
    * specified replace, ignores case.
    * Example: replace("A cat is not a caterpillar", "ca", "hu") returns "A hut is not a huterpillar"
@@ -315,7 +338,18 @@ public class StringHandler {
    * @author thomas 
    */
 	public static String replaceIgnoreCase(String str, String pattern, String replace)  {
-		return replace(str.toUpperCase(), pattern.toUpperCase(), replace);
+		int s = 0;
+	    int e = 0;
+	    String upperPattern = pattern.toUpperCase();
+	    String upperStr = str.toUpperCase();
+	    StringBuffer result = new StringBuffer();
+	    while ((e = upperStr.indexOf(upperPattern, s)) >= 0) {
+	    	result.append(str.substring(s, e));
+	      result.append(replace);
+	      s = e+upperPattern.length();
+	    }
+	    result.append(str.substring(s));
+	    return result.toString();
 	}
 	
   /** Replaces all occurences of the specified pattern in the specified string with the
