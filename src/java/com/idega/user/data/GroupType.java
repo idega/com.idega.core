@@ -6,14 +6,12 @@ public interface GroupType extends com.idega.data.IDOEntity,com.idega.data.Treea
  public boolean getAutoCreate();
  public java.lang.String getDefaultGroupName();
  public java.lang.String getDescription();
- public java.lang.String getIDColumnName();
  public java.lang.Integer getMaximumNumberOfInstances();
  public java.lang.Integer getMaximumNumberOfInstancesPerParent();
  public java.lang.Integer getNumberOfInstancesToAutoCreate();
  public java.lang.Class getPrimaryKeyClass();
  public java.lang.String getType();
  public boolean getVisibility();
- public void initializeAttributes();
  public void setAutoCreate(java.lang.Boolean p0);
  public void setDefaultGroupName(java.lang.String p0);
  public void setDescription(java.lang.String p0);

@@ -68,7 +68,7 @@ public class UserGroupPlugInBMPBean extends GenericEntity implements UserGroupPl
   
   public Collection ejbFindRegisteredPlugInsForGroupType(String groupType)throws RemoteException, FinderException, IDORelationshipException{
     GroupTypeHome gHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
-    return this.ejbFindRegisteredPlugInsForGroupType(gHome.findByPrimaryKey(groupType) );
+    return this.ejbFindRegisteredPlugInsForGroupType(gHome.findGroupTypeByGroupTypeString(groupType) );
   }
 
   public void setDescription(String description){

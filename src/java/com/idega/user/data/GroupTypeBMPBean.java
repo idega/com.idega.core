@@ -252,6 +252,10 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
   public Collection ejbFindAllGroupTypes() throws FinderException{
     return super.idoFindIDsBySQL("select * from "+getEntityName());
   }
+  
+  public String ejbFindGroupTypeByGroupTypeString(String groupType) throws FinderException{
+      return (String) idoFindOnePKByColumnBySQL(TYPE_COLUMN, groupType);
+   }
 
   public Collection ejbFindVisibleGroupTypes() throws FinderException{
     IDOQuery query = idoQuery();
