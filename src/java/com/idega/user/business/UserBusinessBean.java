@@ -1546,7 +1546,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						System.out.println("TOP NODES fetch starts : "+ IWTimestamp.RightNow().toString());
 						Map parents = new HashMap();
 						Map groupMap = new HashMap();
-						ArrayList aliasList = new ArrayList();
+						Map aliasMap = new HashMap();
 						
 						IDOUtil idoUtil = IDOUtil.getInstance();
 						GroupBusiness groupBiz = getGroupBusiness();
@@ -1596,9 +1596,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 									//if it's an alias we don't need the original group and make a list of those groups to filter out later
 									if(permissionGroup.getAliasID()!=-1){
 										Integer originalGroupID = new Integer(permissionGroup.getAliasID());
-										if(!aliasList.contains(originalGroupID)){
-											aliasList.add(originalGroupID);
-										}
+										aliasMap.put(originalGroupID,primaryKey);
 									}
 								}
 						
@@ -1611,35 +1609,61 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 							}
 						}
 						
-						System.out.println("TOP NODES fetch ends and sort start : "+ IWTimestamp.RightNow().toString());
+						debug("TOP NODES fetch ends and sort start : "+ IWTimestamp.RightNow().toString());
 						//Filter out the real top nodes!
 						Map skipThese = new HashMap();
 						Set keys = parents.keySet();
 						Iterator iter = keys.iterator();
 						while (iter.hasNext()) {
-							Integer myGroup = (Integer) iter.next();
-							//we already have a shortcut to this group use that instead so skip this one
-							if(aliasList.contains(myGroup)) continue;
-							else{
-								Iterator iter2 = parents.keySet().iterator();
-								while (iter2.hasNext()) {
-									Integer myGroup2 = (Integer) iter2.next();
-									if( aliasList.contains(myGroup2) || myGroup.equals(myGroup2) || skipThese.containsKey(myGroup)) continue;//dont check for self
+							Integer thePermissionGroupsId = (Integer) iter.next();
+				
+							Iterator iter2 = parents.keySet().iterator();
+							while (iter2.hasNext()) {
+								Integer groupToCompareTo = (Integer) iter2.next();
+								//If this group was already checked or is the same as the comparing group, continue (skip this one)
+								if( thePermissionGroupsId.equals(groupToCompareTo) || skipThese.containsKey(thePermissionGroupsId)){
+									continue;//dont check for self
+								}
+								
+								//Get the parents to see if thePermissionGroupsId is in it. ergo it is a parent of the comparing group and therefor a higher node 
+								Map theParents = (Map) (parents.get(groupToCompareTo));
+								
+								//or the permissiongroup has a shortcut 
+								if(theParents!=null && theParents.containsKey(thePermissionGroupsId)){
+									//it's a parent of the comparing group so we don't have to check the comparing group again
+									skipThese.put(groupToCompareTo,null);//for the check skip check 
+									groupMap.remove(groupToCompareTo);//the groups that will be left are the top nodes
 									
-									Map theParents = (Map) (parents.get(myGroup2));
+								}//remove if this group is a child group of myGroup
 									
-									if(theParents!=null && theParents.containsKey(myGroup)){
-										skipThese.put(myGroup2,null); 
-										groupMap.remove(myGroup2);
-										
-									}//remove if this group is a child group of myGroup
-										
-								}//inner while ends
-							}
+							}//inner while ends
+							
 						}//outer while ends
 						
+						//Now we have to check if the remaining top nodes have a shortcut 
+						//that is not a top node and if so we need to remove that node 
+						//unless there is only one node left
+						if(groupMap!=null && groupMap.size()>1){
+							if(!aliasMap.isEmpty()){
+								Iterator keyIter = groupMap.keySet().iterator();
+								while (keyIter.hasNext()) {
+									Integer topNodeId = (Integer) keyIter.next();
+									Integer aliasGroupsId = (Integer)aliasMap.get(topNodeId);
+									if(aliasGroupsId!=null){
+										if(!groupMap.containsKey(aliasGroupsId)){//only remove if they are not both top nodes
+											groupMap.remove(topNodeId);
+										}
+									}
+								}
+							}
+							
+						}
+						
+						
+						//finally done! the remaining nodes are the top nodes
 						topNodes = groupMap.values();
-						System.out.println("TOP NODES sort ends : "+ IWTimestamp.RightNow().toString());
+						
+						debug("TOP NODES sort ends : "+ IWTimestamp.RightNow().toString());
 					}
 						
 				}
