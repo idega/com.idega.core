@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.12 2002/02/21 15:57:36 tryggvil Exp $
+ * $Id: DateInput.java,v 1.13 2002/02/25 16:24:34 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -24,7 +24,7 @@ import com.idega.idegaweb.IWResourceBundle;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class DateInput extends InterfaceObjectContainer{
+public class DateInput extends InterfaceObject{
 
 
 private Script _script;
@@ -90,7 +90,12 @@ public DateInput(String name, boolean _inShort){
   constructInputs();
 }
 
+ //public Object _clone(IWContext iwc, boolean askForPermission) {
+ // return clone();
+ //}
+
 public Object clone(){
+  //System.out.println("DateInput.clone()");
   DateInput newObject = (DateInput)super.clone();
   if(_theWholeDate!=null){
     newObject._theWholeDate = (Parameter)this._theWholeDate.clone();
@@ -110,7 +115,6 @@ public Object clone(){
   if(_script!=null){
     newObject._script = (Script) this._script.clone();
   }
-  newObject._justConstructed=false;
   return newObject;
 }
 
@@ -386,7 +390,7 @@ public void setDay(String day){
 	_setCheck=true;
 	if (day.length() > 1 ){
 		//_theDay.setSelectedElement(day);
-	  _setDay=day;
+      _setDay=day;
     }
 	else{
 		//_theDay.setSelectedElement("0"+day);
@@ -420,11 +424,14 @@ public void setToCurrentDate(){
 /**
 **Does nothing - overrides function in superclass - does nothing
 **/
-public void add(PresentationObject mo){
+/*public void add(PresentationObject mo){
 	//does nothing
 }
+*/
 
-
+/**
+ *
+ */
 public void setYearRange(int _fromYear,int _toYear){
   this._fromYear=_fromYear;
   this._toYear=_toYear;
@@ -532,8 +539,7 @@ private void setSetValues(){
 
 private void addDropDowns(){
     if(_justConstructed){
-      System.out.println("DateInput.addDropDowns()");
-      if(_displayDayLast){
+      /*if(_displayDayLast){
         if(this._showYear){
           super.add(_theYear);
         }
@@ -559,11 +565,11 @@ private void addDropDowns(){
       }
       super.add(_theWholeDate);
       super.add(_script);
+    */
   }
 }
 
 public void main(IWContext iwc)throws Exception{
-  System.out.println("DateInput.main(iwc)");
   //constructInputs();
   setSetValues();
   addDropDowns();
@@ -677,6 +683,38 @@ public void main(IWContext iwc)throws Exception{
     else{
       return "01";
     }
+  }
+
+  public void print(IWContext iwc)throws Exception{
+    super.print(iwc);
+    if(_displayDayLast){
+        if(this._showYear){
+          _theYear.print(iwc);
+        }
+        else{
+          //super.add(_theYearHidden);
+        }
+        _theMonth.print(iwc);
+        if (_isShowDay) {
+          _theDay.print(iwc);
+        }
+      }
+      else{
+        if (_isShowDay) {
+          _theDay.print(iwc);
+        }
+        _theMonth.print(iwc);
+        if(this._showYear){
+          _theYear.print(iwc);
+        }
+        else{
+          //super.add(_theYearHidden);
+        }
+      }
+      _theWholeDate.print(iwc);
+      _script.print(iwc);
+
+
   }
 
 }
