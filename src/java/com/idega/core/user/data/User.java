@@ -164,9 +164,12 @@ public class User extends GenericEntity {
 
     public void setFirstName(String fName) {
       if(!com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(fName)){
-        fName = "Invalid name";
+        fName = "Invalid firstname";
       }
-      setColumn(getColumnNameFirstName(),fName);
+      if(com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(this.getFirstName())){ // if not Administrator
+        setColumn(getColumnNameFirstName(),fName);
+      }
+
     }
 
     public void setMiddleName(String mName) {

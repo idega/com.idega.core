@@ -17,12 +17,13 @@ public class LoggedOnInfo {
 
   private User _user = null;
   private HttpSession _session = null;
-  private idegaTimestamp _timeOfLoggon = null;
+  private idegaTimestamp _timeOfLogon = null;
+  private String _login = null;
 
   public LoggedOnInfo() {
 
   }
-  //getters
+  //setters
   public void setUser(User user){
     _user = user;
   }
@@ -31,11 +32,15 @@ public class LoggedOnInfo {
     _session = session;
   }
 
-  public void setTimeOfLoggon(idegaTimestamp timeOfLoggon){
-    _timeOfLoggon = timeOfLoggon;
+  public void setTimeOfLogon(idegaTimestamp timeOfLogon){
+    _timeOfLogon = timeOfLogon;
   }
 
-  //setters
+  public void setLogin(String login){
+    _login = login;
+  }
+
+  //getters
   public User getUser(){
     return _user;
   }
@@ -44,9 +49,16 @@ public class LoggedOnInfo {
     return _session;
   }
 
-  public idegaTimestamp getTimeOfLoggon(){
-    return _timeOfLoggon;
+  public idegaTimestamp getTimeOfLogon(){
+    return _timeOfLogon;
   }
+
+  public String getLogin(){
+    return _login;
+  }
+
+
+  //
 
   public boolean equals(Object obj){
     if(obj instanceof LoggedOnInfo ){
