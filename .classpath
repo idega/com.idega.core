@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <classpath>
-  <classpathentry excluding="" kind="src" path="src\java">
+  <classpathentry excluding="" kind="src" path="src/java">
   </classpathentry>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-b9-rc2.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-1.0.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar">
   </classpathentry>
@@ -29,7 +29,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/informix_jdbc/jars/informix_jdbc-9.0.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/poi/jars/poi-1.8.0-dev-20020919.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/poi/jars/poi-2.5-final-20040428.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jug/jars/jug-1.1.jar">
   </classpathentry>
@@ -43,6 +43,6 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/javaldap/jars/javaldap-server-0.3.jar">
   </classpathentry>
-  <classpathentry kind="output" path="target\classes">
+  <classpathentry kind="output" path="target/classes">
   </classpathentry>
 </classpath>
