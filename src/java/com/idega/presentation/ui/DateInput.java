@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.19 2002/10/12 20:28:52 laddi Exp $
+ * $Id: DateInput.java,v 1.20 2002/10/13 14:23:12 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -198,6 +198,8 @@ public class DateInput extends InterfaceObject {
 
 	public void setYear(int year) {
 		_setCheck = true;
+		// Gimmi 13.10.2002
+		_selectedYear = year;
 		if (_fromYear > _toYear) {
 			if (_fromYear < year) {
 				_fromYear = year;
