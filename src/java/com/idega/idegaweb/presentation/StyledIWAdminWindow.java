@@ -11,7 +11,6 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.Window;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.util.ICUserConstants;
@@ -27,17 +26,13 @@ private IWBundle iwb;
 public IWBundle iwbCore;
 public IWBundle iwbUser;
 private IWResourceBundle iwrb;
-private Form adminForm;
-private Table adminTable;
 private Table headerTable;
 private Table mainTable;
 private boolean merged = true;
-private boolean displayEmpty = false;
 
 private String rightWidth = "160";
 private String method = "post";
 private int _cellPadding = 0;
-
 private Page parentPage;
 private String styleSrc = "";
 private String inputTextStyle = "text";
@@ -79,67 +74,46 @@ private Image helpImage = null;
 	public StyledIWAdminWindow(String name,String classToInstanciate,String template){
 		super(name,classToInstanciate,template);
 	}
-/*
-	public StyledIWAdminWindow(String name,Class classToInstanciate,Class template){
-		super(name,classToInstanciate,template);
-	}
-*/
+
 	public StyledIWAdminWindow(String name,Class classToInstanciate){
 		super(name,classToInstanciate);
 	}
 
-	public Form getUnderlyingForm(){
-		return adminForm;
-	}
-
-	private void makeTables()  {
-    
-		adminForm = new Form();
-		adminForm.setMethod(method);
-
-		headerTable = new Table();
-		headerTable.setCellpadding(0);
-		headerTable.setCellspacing(0);
-		headerTable.setStyleClass(bannerTableStyle);
-		headerTable.setWidth("100%");
-		headerTable.setAlignment(2,1,"right");
-		headerTable.setVerticalAlignment(1,1,"top");
-		if(titleIsSet) {
-			headerTable.setCellpaddingRight(2, 1, 12);
-			headerTable.add(getAdminTitle(),2,1);
+	private void createTablesAndAddThemIfNeeded()  {
+		if(headerTable==null){
+			headerTable = new Table();
+			headerTable.setCellpadding(0);
+			headerTable.setCellspacing(0);
+			headerTable.setStyleClass(bannerTableStyle);
+			headerTable.setWidth("100%");
+			headerTable.setAlignment(2,1,"right");
+			headerTable.setVerticalAlignment(1,1,"top");
+			if(titleIsSet) {
+				headerTable.setCellpaddingRight(2, 1, 12);
+				headerTable.add(getAdminTitle(),2,1);
+			}
+			add(headerTable);
 		}
 
-		mainTable = new Table();
-		mainTable.setStyleClass(backTableStyle);
-		mainTable.setCellpadding(_cellPadding);
-		mainTable.setWidth("100%");
-		mainTable.setHeight("100%");
-		mainTable.setCellspacing(0);
-		mainTable.setVerticalAlignment(1, 1, "top");
-		mainTable.setCellpadding(1, 1, 6);
-		adminForm.add(mainTable);
+		if(mainTable==null){
+			mainTable = new Table();
+			mainTable.setStyleClass(backTableStyle);
+			mainTable.setCellpadding(_cellPadding);
+			mainTable.setWidth("100%");
+			mainTable.setHeight("100%");
+			mainTable.setCellspacing(0);
+			mainTable.setVerticalAlignment(1, 1, "top");
+			mainTable.setCellpadding(1, 1, 6);
+			add(mainTable);	
+		}
+		
+		
+
 	}
-	/**
-	 * Adds an image to the top banner of the page
-	 * @param topImage - is added to the header.
-	 */
-//	public void addTopImage(Image topImage) {
-//		headerTable.add(topImage);
-//	}
 
 	public void add(PresentationObject obj, IWContext iwc) {
-		userBusiness = getUserBusiness(iwc);
-//		Image topImage = userBusiness.getTopImage(iwc);
-		if( !displayEmpty ){
-			if(adminTable==null){
-				makeTables();
-//				addTopImage(topImage);
-				super.add(headerTable);
-				super.add(mainTable);
-			}
-			mainTable.add(obj, 1, 1);
-		}
-		else super.add(obj);
+		createTablesAndAddThemIfNeeded();	
+		mainTable.add(obj, 1, 1);		
 	}
 	
 	public void addTitle(String title) {
@@ -197,7 +171,7 @@ private Image helpImage = null;
 		iwb = getBundle(iwc);
 		userBusiness = getUserBusiness(iwc);
 		parentPage = this.getParentPage();
-		styleSrc = userBusiness.getUserApplicationStyleSheet(parentPage, iwc);
+		styleSrc = userBusiness.getUserApplicationStyleSheetURL();
 		parentPage.addStyleSheetURL(styleSrc);
 		
 		super._main(iwc);
@@ -230,12 +204,6 @@ private Image helpImage = null;
 		return help;
 		
 	}
-
-
-	
-//	public UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException {
-//		return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, UserBusiness.class);
-//	}
 	
 	protected UserBusiness getUserBusiness(IWApplicationContext iwc) {
 			if (userBusiness == null) {
