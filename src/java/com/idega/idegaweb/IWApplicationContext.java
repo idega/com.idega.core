@@ -2,6 +2,10 @@ package com.idega.idegaweb;
 
 import javax.servlet.ServletContext;
 
+import java.rmi.RemoteException;
+
+import com.idega.builder.data.IBDomain;
+
 /**
  * Title:        idegaclasses
  * Description:
@@ -11,12 +15,13 @@ import javax.servlet.ServletContext;
  * @version 1.0
  */
 
-public interface IWApplicationContext {
+public interface IWApplicationContext extends java.io.Serializable{
 
   public IWMainApplication getApplication();
   public IWMainApplicationSettings getApplicationSettings();
   public void setApplicationAttribute(String attributeName,Object attributeValue);
   public Object getApplicationAttribute(String attributeName);
   public void removeApplicationAttribute(String attributeName);
+  public IBDomain getDomain()throws RemoteException;
 
 }

@@ -7,7 +7,7 @@ package com.idega.presentation;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.sql.*;
+import java.sql.Connection;
 import java.util.*;
 import com.idega.presentation.ui.*;
 import java.io.*;
@@ -16,6 +16,9 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWConstants;
+import com.idega.builder.data.IBDomain;
+import com.idega.builder.data.IBDomainHome;
+import com.idega.data.IDOLookup;
 import com.idega.util.LocaleUtil;
 import java.util.WeakHashMap;
 import com.idega.block.login.business.LoginBusiness;
@@ -26,7 +29,7 @@ import com.idega.builder.business.BuilderLogic;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.util.datastructures.HashtableMultivalued;
 import com.idega.io.UploadFile;
-
+import java.rmi.RemoteException;
 
 /**
  * A class to serve as the context of a user request in an idegaWeb application.
@@ -49,6 +52,7 @@ private HttpServletResponse _response;
 private final static String LOCALE_ATTRIBUTE="idegaweb_locale";
 
 private final static String WEAK_HASHMAP_KEY ="idegaweb_weak_hashmap";
+private final static String IWAPP_CURRENT_DOMAIN_ID = "iw_current_domain_id";
 
 //private HttpSession session;
 private String language; //Variable to set the language i.e. HTML
@@ -465,10 +469,18 @@ public String getInterfaceStyle(){
 	return this.interfaceStyle;
 }
 
+/**
+ * @deprecated
+ */
 public Connection getConnection(){
 	return this.Conn;
 }
 
+
+
+/**
+ * @deprecated
+ */
 public void setConnection(Connection conn){
 	this.Conn = Conn;
 }
@@ -1058,6 +1070,33 @@ public void setCacheWriter(PrintWriter writer){
     }
     return _clientIsHandHeld;
   }
+
+
+  public IBDomain getDomain()throws RemoteException{
+    try {
+      String id = (String)this.getApplicationAttribute(IWAPP_CURRENT_DOMAIN_ID);
+      int domainID=1;
+      if (id != null) {
+        try{
+      	  domainID = Integer.parseInt(id);
+        }
+        catch(NumberFormatException nfe){
+        }
+      }
+
+      return com.idega.builder.data.IBDomainBMPBean.getDomain(domainID);
+      /**
+       * @todo: Comment in when EntityBeanCaching is default on:
+       */
+       //IBDomainHome domainHome = (IBDomainHome)IDOLookup.getHome(IBDomain.class);
+       //return domainHome.findByPrimaryKey(domainID);
+    }
+    catch(Exception e) {
+      e.printStackTrace();
+      throw new RuntimeException(e.getMessage());
+    }
+  }
+
 }
 
 

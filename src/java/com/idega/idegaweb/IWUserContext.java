@@ -17,7 +17,7 @@ import com.idega.core.accesscontrol.business.AccessController;
  * @version 1.0
  */
 
-public interface IWUserContext {
+public interface IWUserContext extends java.io.Serializable{
 
   public Object getSessionAttribute(String attributeName);
   public void setSessionAttribute(String attributeName,Object attribute);

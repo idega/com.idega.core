@@ -34,15 +34,8 @@ import com.idega.core.ICComponent;
 
 public interface IWComponent extends ICComponent{
 
-
-
     public IWMainApplication getIWMainApplication(IWContext iwc);
-
-
-
     public Image getImageIcon();
-
-
 
 }
 
