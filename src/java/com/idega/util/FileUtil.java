@@ -182,7 +182,19 @@ public class FileUtil {
     return strings;
   }
 
-/** uses getLinesFromFile and cuts the lines into java.util.StringTokenizer and returns them in a vector **/
+  public static String getStringFromFile(String pathAndFile) throws IOException{
+    StringBuffer buffer = new StringBuffer();
+    Vector vector = getLinesFromFile(pathAndFile);
+    if ( vector != null ) {
+      Iterator iter = vector.iterator();
+      while (iter.hasNext()) {
+        buffer.append((String) iter.next());
+      }
+    }
+    return buffer.toString();
+  }
+
+  /** uses getLinesFromFile and cuts the lines into java.util.StringTokenizer and returns them in a vector **/
    public static Vector getCommaSeperatedTokensFromLinesFromFile(String pathAndFile, String seperatorToken) throws IOException{
     Vector lines = getLinesFromFile(pathAndFile);
     Vector tokens = new Vector();
