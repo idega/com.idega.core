@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -45,6 +46,9 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDOStoreException;
 import com.idega.data.IDOUtil;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
@@ -1805,11 +1809,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     
   private String moveUserWithoutTest(User user, Group parentGroup, Group targetGroup, User currentUser) {
     int userId = ((Integer) user.getPrimaryKey()).intValue();
-    int parentGroupId = ((Integer) parentGroup.getPrimaryKey()).intValue();  
     int targetGroupId = ((Integer) targetGroup.getPrimaryKey()).intValue();
-    if (parentGroupId == targetGroupId) {
-      // there was a previous test therefore localization is it not necessary
-      return "source and target are the same";
+    int parentGroupId = -1;
+    if (parentGroup != null)  {
+      parentGroupId = ((Integer) parentGroup.getPrimaryKey()).intValue();  
+      if (parentGroupId == targetGroupId) {
+        // there was a previous test therefore localization is it not necessary
+        return "source and target are the same";
+      }
     }
     int primaryGroupId = user.getPrimaryGroupID();
     // Transaction starts
@@ -1817,8 +1824,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     try {
       transactionManager.begin();
       // check if the primaryGroup is the parentGroup
-      boolean targetIsSetAsPrimaryGroup;
-      if (targetIsSetAsPrimaryGroup = (parentGroupId == primaryGroupId))  {
+      boolean targetIsSetAsPrimaryGroup = false;
+      if (parentGroup != null && (targetIsSetAsPrimaryGroup = (parentGroupId == primaryGroupId)))  {
         user.setPrimaryGroup(targetGroup);
         user.store();
       }
@@ -1829,7 +1836,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       // usually there should not be such a GroupRelation
       // therefore be sure that the method below does not throw an error if it 
       // is not able to find a group relation.
-      parentGroup.removeUser(user,currentUser);
+      if (parentGroup != null) {
+        parentGroup.removeUser(user,currentUser);
+      }
       // set target group
       if (! targetIsSetAsPrimaryGroup)  {
         targetGroup.addGroup(userId);
@@ -1860,6 +1869,30 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
 
   private String isUserAssignableToGroup(User user, Group parentGroup, Group targetGroup) {
+    IWMainApplication application = getIWApplicationContext().getApplication();
+    IWBundle bundle = application.getBundle("is.idega.idegaweb.member");
+    Locale locale = application.getSettings().getDefaultLocale();
+    IWResourceBundle iwrb = bundle.getResourceBundle(locale);
+    int targetGroupId = ((Integer) targetGroup.getPrimaryKey()).intValue();
+    
+    // is the user already a member of the target group?
+    Collection coll;
+    try {
+      coll = getGroupBusiness().getParentGroups(user);
+    }
+    catch (Exception ex)  {
+      throw new RuntimeException(ex.getMessage());
+    }
+
+    
+    Iterator iteratorUserGroups = coll.iterator();
+    while (iteratorUserGroups.hasNext())  {
+      Group group = (Group) iteratorUserGroups.next();
+      int id = ((Integer) group.getPrimaryKey()).intValue();
+      if (id == targetGroupId)  {
+        return iwrb.getLocalizedString("age_gender_user_already_member_of_the_target_group", "The user is already a member of the target group");
+      }
+    }
     try {
       Collection plugins = getGroupBusiness().getUserGroupPluginsForGroupTypeString(targetGroup.getGroupType());
       Iterator iter = plugins.iterator();
