@@ -1,10 +1,7 @@
 package com.idega.util.datastructures;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.Map;
+
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -26,46 +23,9 @@ import com.idega.util.text.StringNumberComparator;
  * @version 1.0
  * Created on Jun 11, 2003
  */
-public class SortedHashMatrix {
+public class SortedHashMatrix extends HashMatrix {
   
-  private SortedMap xDimension;
-
-  public Object put(Object xKey, Object yKey, Object value)  {
-    SortedMap yDimension = getYDimension(xKey);
-    // retrieve old value first
-    Object oldValue = yDimension.get(yKey);
-    // store new value
-    yDimension.put(yKey, value);
-    // return old value
-    return oldValue;
-  }
-  
-  public Object get(Object xKey, Object yKey) {
-    return getYDimension(xKey).get(yKey);
-  }
-  
-  public List getCopiedListOfValues() {
-    List values = new ArrayList();
-    if (xDimension == null) {
-      return values;
-    }
-    Iterator xIterator = xDimension.values().iterator();
-    while (xIterator.hasNext())  {
-      SortedMap yDimension = (SortedMap) xIterator.next();
-      Iterator yIterator = yDimension.values().iterator();
-      while (yIterator.hasNext()) {
-        Object value = yIterator.next();
-        values.add(value);
-      }
-    }
-    return values;
-  }
-  
-  public Set firstKeySet()  {
-    return (xDimension == null) ? new HashSet(0) : xDimension.keySet();
-  }
- 
-  private SortedMap getYDimension(Object xKey)  {
+ protected Map getYDimension(Object xKey)  {
     if (xDimension == null) {
       xDimension = new TreeMap(new StringNumberComparator());
     }
