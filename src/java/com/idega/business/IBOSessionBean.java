@@ -6,6 +6,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 import javax.ejb.RemoveException;
+import javax.servlet.http.HttpSession;
 
 import java.rmi.RemoteException;
 
@@ -13,6 +14,8 @@ import com.idega.core.user.data.User;
 
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWUserContextImpl;
+import com.idega.presentation.IWContext;
 
 /**
  * Title:        idega Business Objects
@@ -39,8 +42,14 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
   public void ejbPostCreate(IWUserContext iwuc){
   }
 
-  public void setUserContext(IWUserContext iwuc) {
-    this.iwuc=iwuc;
+  public void setUserContext(IWUserContext _iwuc) {
+  	IWUserContext iwucToSet = _iwuc;
+  	if(_iwuc instanceof IWContext){
+		IWContext iwc = (IWContext)_iwuc;
+  		HttpSession session = iwc.getSession();
+  		iwucToSet = new IWUserContextImpl(session);
+  	}
+    this.iwuc=iwucToSet;
   }
   public IWUserContext getUserContext() {
     return iwuc;
