@@ -102,7 +102,7 @@ public Image(int imageId) throws SQLException{
   super();
   this.imageId = imageId;
   setBorder(0);
-
+  setName(this.getID());
 }
 
 
