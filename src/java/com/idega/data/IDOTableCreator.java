@@ -115,12 +115,12 @@ public class IDOTableCreator{
         if(_dsi.useTransactionsInEntityCreation){
           if(canCommit){
             if(transactionSuccessful){
-              System.out.println("\t\t\tCommitting!!!!");
+              //System.out.println("\t\t\tCommitting!!!!");
               trans.commit();
               registerEndOfCreatingEntity(entity);
             }
             else{
-              System.out.println("\t\t\tRollbacking!!!!");
+              //System.out.println("\t\t\tRollbacking!!!!");
               trans.rollback();
               registerEndOfCreatingEntity(entity);
             }
@@ -130,11 +130,11 @@ public class IDOTableCreator{
           }
           else{
             if(transactionSuccessful){
-              System.out.println("\t\t\tNot permitted to commit!!");
+              //System.out.println("\t\t\tNot permitted to commit!!");
             }
             else{
               trans.setRollbackOnly();
-              System.out.println("\t\t\tNot permitted to Rollback!!");
+              //System.out.println("\t\t\tNot permitted to Rollback!!");
             }
           }
         }
