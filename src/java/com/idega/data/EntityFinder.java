@@ -181,7 +181,8 @@ public class EntityFinder{
 
 
 	public static List findAllByColumn(GenericEntity fromEntity,String columnName1, String toFind1,String columnName2, String toFind2)throws SQLException{
-		return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
+		//System.out.println("select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
+                return findAll(fromEntity,"select * from "+fromEntity.getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
 	}
 
         public static List findAllByColumn(GenericEntity fromEntity,String columnName1, String toFind1,String columnName2, String toFind2, String columnName3, String toFind3)throws SQLException{

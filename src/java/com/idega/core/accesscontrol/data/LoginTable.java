@@ -29,8 +29,8 @@ public class LoginTable extends GenericEntity implements EncryptionType{
 	public void initializeAttributes(){
           addAttribute(this.getIDColumnName());
           addAttribute(User.getColumnNameUserID(),"Notandi",true,true,Integer.class,"many-to-one",User.class);
-          addAttribute(getUserLoginColumnName(),"Notandanafn",true,true,String.class,20);
-          addAttribute(getUserPasswordColumnName(),"Lykilorð",true,true,String.class,20);
+          addAttribute(getUserLoginColumnName(),"Notandanafn",true,true,String.class,32);
+          addAttribute(getUserPasswordColumnName(),"Lykilorð",true,true,String.class,255);
 	}
 
 	public String getEntityName(){
@@ -91,12 +91,53 @@ public class LoginTable extends GenericEntity implements EncryptionType{
         }
 
 	public String getUserPassword(){
-          return getStringColumnValue(getUserPasswordColumnName());
+          String str = getStringColumnValue(getUserPasswordColumnName());
+          char[] pass = new char[str.length()/2];
+
+          try {
+
+            for (int i = 0; i < pass.length; i++) {
+              pass[i] = (char)Integer.decode("0x"+str.charAt(i*2)+str.charAt((i*2)+1)).intValue();
+            }
+
+            return String.valueOf(pass);
+          }
+          catch (Exception ex) {
+            ex.printStackTrace();
+            return str;
+          }
+
 	}
 
+
 	public void setUserPassword(String userPassword){
-          setColumn(getUserPasswordColumnName(), userPassword);
+          try {
+            String str = "";
+            char[] pass = userPassword.toCharArray();
+            for (int i = 0; i < pass.length; i++) {
+              String hex = Integer.toHexString((int)pass[i]);
+              while (hex.length() < 2) {
+                String s = "0";
+                s += hex;
+                hex = s;
+              }
+              str += hex;
+            }
+
+            if(str.equals("") && !userPassword.equals("")){
+              str = null;
+            }
+
+            setColumn(getUserPasswordColumnName(), str);
+          }
+          catch (Exception ex) {
+            ex.printStackTrace();
+            setColumn(getUserPasswordColumnName(), userPassword);
+          }
+
+
 	}
+
 	public void setUserLogin(String userLogin) {
           setColumn(getUserLoginColumnName(), userLogin);
 	}

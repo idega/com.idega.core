@@ -109,6 +109,10 @@ public class ICPermission extends GenericEntity {
     setColumn(getPermissionValueColumnName(),PermissionStringValue);
   }
 
+  public void setPermissionValue( boolean PermissionStringValue){
+    setColumn(getPermissionValueColumnName(),PermissionStringValue);
+  }
+
 
 
 
@@ -124,6 +128,10 @@ public class ICPermission extends GenericEntity {
     setColumn(getGroupIDColumnName(),GroupID);
   }
 
+
+  public void setGroupID( int GroupID){
+    setColumn(getGroupIDColumnName(),GroupID);
+  }
 
 
 

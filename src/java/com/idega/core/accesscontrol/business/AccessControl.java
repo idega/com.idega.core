@@ -21,6 +21,9 @@ import com.idega.idegaweb.IWServiceNotStartedException;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.core.user.data.UserGroupRepresentative;
 
+import java.sql.SQLException;
+import java.util.Set;
+
 
 
 
@@ -791,12 +794,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
    */
   private static String[] getPermissionGroupFilter(){
     //filter begin
-//    String[] groupsToReturn = new String[2];
-//    groupsToReturn[0] = PermissionGroup.getStaticPermissionGroupInstance().getGroupTypeValue();
-//    groupsToReturn[1] = is.idega.idegaweb.project.data.IPParticipantGroup.getStaticGroupInstance().getGroupTypeValue();
+    String[] groupsToReturn = new String[2];
+    groupsToReturn[0] = PermissionGroup.getStaticPermissionGroupInstance().getGroupTypeValue();
+    groupsToReturn[1] = com.idega.builder.dynamicpagetrigger.data.DPTPermissionGroup.getStaticGroupInstance().getGroupTypeValue();
+/*
     String[] groupsToReturn = new String[1];
     groupsToReturn[0] = PermissionGroup.getStaticPermissionGroupInstance().getGroupTypeValue();
-
+*/
     //filter end
     return groupsToReturn;
   }
@@ -891,7 +895,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   }
 
 
-  public User getAdministratorUser() throws Exception{
+  public User getAdministratorUser() throws Exception {
     Object ob = getApplication().getAttribute(_APPADDRESS_ADMINISTRATOR_USER);
     if(ob == null){
       try {
@@ -1157,11 +1161,87 @@ public class AccessControl extends IWServiceImpl implements AccessController {
   public void setAsOwner(ICObject obj, int entityRecordId, IWContext iwc)throws Exception {}
 
 
-  public static void copyICObjectPermissions(IWContext iwc, String idToCopyFrom, String idToCopyTo) throws Exception{
-    copyPermissions(iwc,AccessController._CATEYGORYSTRING_OBJECT_INSTATNCE_ID,idToCopyFrom,idToCopyTo);
+
+
+  public static void copyObjectInstancePermissions( String idToCopyFrom, String idToCopyTo) throws SQLException{
+    copyPermissions(AccessController._CATEYGORYSTRING_OBJECT_INSTATNCE_ID,idToCopyFrom,idToCopyTo);
   }
 
-  public static void copyPermissions(IWContext iwc, String contextType, String identifierToCopyFrom, String identifierToCopyTo) throws Exception{
+  public static void copyPagePermissions( String idToCopyFrom, String idToCopyTo) throws SQLException{
+    copyPermissions(AccessController._CATEYGORYSTRING_PAGE_ID,idToCopyFrom,idToCopyTo);
+  }
+
+  public static List getGroupsPermissions(String category, GenericGroup group, Set identifiers) throws SQLException{
+    ICPermission permission = ICPermission.getStaticInstance();
+    List permissions = null;
+    String instanceIds = "";
+    if(identifiers != null){
+      Iterator iter = identifiers.iterator();
+      boolean first = true;
+      while (iter.hasNext()) {
+        if(!first){
+          instanceIds += ",";
+        }
+        instanceIds += (String)iter.next();
+        first = false;
+      }
+    }
+    if(!instanceIds.equals("")){
+      permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + category + "' AND " + permission.getContextValueColumnName() + " in(" + instanceIds + ") AND " + permission.getGroupIDColumnName() + " = " + group.getID());
+    }
+//    System.err.println("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + category + "' AND " + permission.getContextValueColumnName() + " in(" + instanceIds + ") AND " + permission.getGroupIDColumnName() + " = " + group.getID());
+//    System.err.println(" = " + permissions);
+    return permissions;
+  }
+
+  public static List getGroupsPermissionsForInstances(GenericGroup group, Set instances) throws SQLException{
+    return getGroupsPermissions(AccessController._CATEYGORYSTRING_OBJECT_INSTATNCE_ID,group, instances);
+  }
+
+  public static List getGroupsPermissionsForPages(GenericGroup group, Set instances) throws SQLException{
+    return getGroupsPermissions(AccessController._CATEYGORYSTRING_PAGE_ID,group, instances);
+  }
+
+  public static boolean replicatePermissionForNewGroup(ICPermission permission, GenericGroup group){
+    try {
+      ICPermission p = new ICPermission();
+
+      String s = permission.getContextType();
+      if(s != null){
+        p.setContextType(s);
+      }
+
+      String s2 = permission.getContextValue();
+      if(s2 != null){
+        p.setContextValue(s2);
+      }
+
+      String s3 = permission.getPermissionString();
+      if(s3 != null){
+        p.setPermissionString(s3);
+      }
+
+      String s4 = permission.getPermissionStringValue();
+      if(s4 != null){
+        p.setPermissionStringValue(s4);
+      }
+
+      p.setPermissionValue(permission.getPermissionValue());
+
+      // gorupID changes
+      p.setGroupID(group.getID());
+
+      p.insert();
+      return true;
+    }
+    catch (Exception ex) {
+      System.err.println("AccessControl.replicatePermissionForNewGroup(..) did not succeed");
+      return false;
+    }
+
+  }
+
+  public static void copyPermissions( String contextType, String identifierToCopyFrom, String identifierToCopyTo) throws SQLException{
     List permissions = EntityFinder.findAllByColumn(ICPermission.getStaticInstance(),ICPermission.getContextTypeColumnName(),contextType,ICPermission.getContextValueColumnName(),identifierToCopyFrom);
     if(permissions != null){
       Iterator iter = permissions.iterator();
@@ -1170,16 +1250,19 @@ public class AccessControl extends IWServiceImpl implements AccessController {
         ICPermission perm = new ICPermission();
         perm.setContextType(contextType);
         perm.setContextValue(identifierToCopyTo);
-        perm.setGroupID(new Integer(item.getGroupID()));
-        String str = item.getPermissionStringValue();
+        perm.setGroupID(item.getGroupID());
+        String str = item.getPermissionString();
         if(str != null){
           perm.setPermissionString(str);
         }
-        String st = item.getPermissionStringValue();
-        if(st != null){
-          perm.setPermissionStringValue(st);
+
+        String str2 = item.getPermissionStringValue();
+        if(str2 != null){
+          perm.setPermissionStringValue(str2);
         }
-        perm.setPermissionValue(new Boolean(item.getPermissionValue()));
+        perm.setPermissionValue(item.getPermissionValue());
+
+        perm.insert();
       }
     }
   }
