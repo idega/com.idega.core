@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.41 2002/12/07 21:13:24 laddi Exp $
+ * $Id: IWPresentationServlet.java,v 1.42 2002/12/22 23:18:14 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -596,7 +596,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 						if (tokenizer.hasMoreTokens())
 							mimetype = tokenizer.nextToken();
 					}
-					UploadFile file = new UploadFile(fileName, filePath, webPath.toString(), mimetype, (long) - 1);
+					UploadFile file = new UploadFile(fileName, filePath, iwc.getApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, (long) - 1);
 					long size = filePart.writeTo(file);
 					file.setSize(size);
 					iwc.setUploadedFile(file);
