@@ -8,6 +8,7 @@
  */
 package com.idega.presentation.text;
 
+import com.idega.core.file.data.ICFile;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.DownloadWriter;
 import com.idega.presentation.IWContext;
@@ -27,6 +28,7 @@ public class DownloadLink extends Link {
      */
     public DownloadLink() {
         super();
+        setMediaWriterClass(DownloadWriter.class);
     }
     
     /**
@@ -35,6 +37,7 @@ public class DownloadLink extends Link {
      */
     public DownloadLink(String text) {
         super(text);
+        setMediaWriterClass(DownloadWriter.class);
     }
     
     /**
@@ -61,6 +64,7 @@ public class DownloadLink extends Link {
      */
     public DownloadLink(PresentationObject mo) {
         super(mo);
+        setMediaWriterClass(DownloadWriter.class);
     }
    
     /**
@@ -68,6 +72,7 @@ public class DownloadLink extends Link {
      */
     public DownloadLink(Text text) {
         super(text);
+        setMediaWriterClass(DownloadWriter.class);
         // TODO Auto-generated constructor stub
     }
     
@@ -78,6 +83,20 @@ public class DownloadLink extends Link {
         super(text);
         addParameter(DownloadWriter.PRM_ABSOLUTE_FILE_PATH,absolutepath);
         // TODO Auto-generated constructor stub
+    }
+    
+    /* (non-Javadoc)
+     * @see com.idega.presentation.text.Link#setFile(com.idega.core.file.data.ICFile)
+     */
+    public void setFile(ICFile file) {
+        addParameter(DownloadWriter.PRM_FILE_ID,((Integer)file.getPrimaryKey()).intValue());
+    }
+    
+    /* (non-Javadoc)
+     * @see com.idega.presentation.text.Link#setFile(int)
+     */
+    public void setFile(int fileId) {
+        addParameter(DownloadWriter.PRM_FILE_ID,fileId);
     }
     
     
