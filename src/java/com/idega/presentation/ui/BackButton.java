@@ -20,6 +20,7 @@ public class BackButton extends GenericButton {
 
 	private static final String BACK_KEY = "backbutton.back";
 	private static final String BACK_KEY_DEFAULT_VALUE = "Back";
+	private boolean defaultContent = false;
 
 
 	/**
@@ -27,6 +28,7 @@ public class BackButton extends GenericButton {
 	 */
 	public BackButton() {
 		this("Back");
+		defaultContent=true;
 	}
 
 	/**
@@ -65,7 +67,7 @@ public class BackButton extends GenericButton {
 		super.main(iwc);
 		IWBundle iwb = this.getBundle(iwc);
 		IWResourceBundle iwrb = iwb.getResourceBundle(iwc);
-		if(!isImage){
+		if(!isImage && defaultContent){
 			super.setValue(iwrb.getLocalizedString(BACK_KEY,BACK_KEY_DEFAULT_VALUE));	
 		}
 	}
