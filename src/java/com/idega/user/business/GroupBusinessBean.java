@@ -1553,8 +1553,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
           Iterator iter = col.iterator();
           while (iter.hasNext()) {
               Group parent = (Group) iter.next();
-              Collection owners = AccessControl
-                      .getAllOwnerGroupPermissionsReverseForGroup(parent);
+              Collection owners = AccessControl.getAllOwnerGroupPermissionsReverseForGroup(parent);
 
               if (owners != null && !owners.isEmpty()) {
                   Iterator iter2 = owners.iterator();
@@ -1563,16 +1562,17 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
                       ICPermission perm = (ICPermission) iter2.next();
                       User user = userBiz.getUser(perm.getGroupID());
                       Group primary = user.getPrimaryGroup();
-                      String primaryGroupId = primary.getPrimaryKey()
-                              .toString();
-                      try {
-                          //the owners primary group
-                          access.setPermission(
-                                  AccessController.CATEGORY_GROUP_ID, iwc,
-                                  primaryGroupId, groupId,
-                                  access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
-                      } catch (Exception e) {
-                          e.printStackTrace();
+                      if(primary!=null) {
+	                      String primaryGroupId = primary.getPrimaryKey().toString();
+	                      try {
+	                          //the owners primary group
+	                          access.setPermission(
+	                                  AccessController.CATEGORY_GROUP_ID, iwc,
+	                                  primaryGroupId, groupId,
+	                                  access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
+	                      } catch (Exception e) {
+	                          e.printStackTrace();
+	                      }
                       }
                   }
               }
