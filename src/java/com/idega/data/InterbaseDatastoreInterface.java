@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.32 2004/07/14 11:28:38 gimmi Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.33 2004/08/12 11:52:07 sigtryggur Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -100,9 +100,14 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		return entity.getTableName()+"_trig";
 	}
 	
-	public void createTrigger(GenericEntity entity) throws Exception
-	{
-		createGenerator(entity);
+	public void createTrigger(GenericEntity entity) throws Exception {
+		createTrigger(entity, true);
+	}
+
+	public void createTrigger(GenericEntity entity, boolean createGenerator) throws Exception {	
+		if (createGenerator) {
+			createGenerator(entity);
+		}
 		Connection conn = null;
 		Statement Stmt = null;
 		try
@@ -165,7 +170,6 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		Connection conn = null;
 		Statement Stmt = null;
 		ResultSet rs = null;
-		ResultSet rs2 = null;
 		boolean returner = false;
 		try {
 			conn = entity.getConnection();
@@ -174,17 +178,25 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 			boolean generatorExists = false;
 			String trigSQL = "select * from RDB$TRIGGERS where RDB$TRIGGER_NAME = '"+getTriggerName(entity)+"'";
 			try {
-				Stmt.executeQuery(trigSQL);
-				triggerExists = true;
+				rs = Stmt.executeQuery(trigSQL.toUpperCase());
+				if (rs != null && rs.next()) {					
+					triggerExists = true;
+				}
 			} catch (Exception e) {
 				log("Error finding trigger table");
+			} finally {
+				rs.close();
 			}
 			String genSQL = "select * from RDB$GENERATORS where RDB$GENERATOR_NAME = '"+getInterbaseGeneratorName(entity)+"'";
 			try {
-				Stmt.executeQuery(genSQL);
-				generatorExists = true;
+				rs = Stmt.executeQuery(genSQL.toUpperCase());	
+				if (rs != null && rs.next()) {
+					generatorExists = true;
+				}
 			} catch (Exception e) {
 				log("Error finding generator table");
+			} finally {
+				rs.close();
 			}
 			
 			
@@ -192,31 +204,38 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 				returner = true; 
 			}
 			else if (createIfNot) {
-				String maxSQL = "select max ("+entity.getIDColumnName()+" as MAX from "+entity.getEntityName();
+				String maxSQL = "select max ("+entity.getIDColumnName()+") as MAX_ID from "+entity.getEntityName();
 				
-				if (!generatorExists && !triggerExists) {
-					createTrigger(entity);
+				if (!triggerExists) {
+					createTrigger(entity, !generatorExists);
 				}
 				int valueToSet = 1;
-				rs2 = Stmt.executeQuery(maxSQL);
-				if (rs2 != null && rs2.next()) {
-					valueToSet = Integer.parseInt(rs2.getString("MAX"));
+				try {
+					rs = Stmt.executeQuery(maxSQL);
+					if (rs != null && rs.next()) {
+						String sMax = rs.getString("MAX_ID");
+						if (sMax != null) {
+							valueToSet = Integer.parseInt(sMax);
+						}
+					}
 					System.out.println("SET GENERATOR "+getInterbaseGeneratorName(entity)+" TO "+valueToSet);
 					Stmt.executeUpdate("SET GENERATOR "+getInterbaseGeneratorName(entity)+" TO "+valueToSet);
 				}
-				
+				catch (NumberFormatException e) {
+					//UPDATE TRIGGER ignored
+					//Not numeric value in primary key field in table "+entity.getEntityName());
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					rs.close();
+				}
 				returner = true;
 			}
 		}
 		finally {
 			if (Stmt != null) {
 				Stmt.close();
-			}
-			if (rs != null) {
-				rs.close();
-			}
-			if (rs2 != null) {
-				rs2.close();
 			}
 			if (conn != null) {
 				entity.freeConnection(conn);
