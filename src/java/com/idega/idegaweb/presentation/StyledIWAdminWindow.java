@@ -111,9 +111,8 @@ private Image helpImage = null;
 		mainTable.setWidth("100%");
 		mainTable.setHeight("100%");
 		mainTable.setCellspacing(0);
-		mainTable.setHeight(1,1,"6");
-		mainTable.setWidth(1,2,"6");
-		mainTable.setVerticalAlignment(2,2,"top");
+		mainTable.setVerticalAlignment(1, 1, "top");
+		mainTable.setCellpadding(1, 1, 6);
 		adminForm.add(mainTable);
 	}
 	/**
@@ -134,7 +133,7 @@ private Image helpImage = null;
 				super.add(headerTable);
 				super.add(mainTable);
 			}
-			mainTable.add(obj,2,2);
+			mainTable.add(obj, 1, 1);
 		}
 		else super.add(obj);
 	}
