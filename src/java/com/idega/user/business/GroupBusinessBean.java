@@ -1068,15 +1068,17 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	  		
 	  		//todoupdate emails,addresses,phone and email
 	  		group.store();
+	  	
+	  		List parent = group.getParentGroups();
+	  		if(parent.isEmpty() && parentGroup!=null){
+	  			parentGroup.addGroup(group);
+	  		}
 	  	}
 	  	
 	  	//set all the attributes as metadata also
 	  	setMetaDataFromLDAPAttributes(group,distinguishedName,attributes);
 	  	
-	  	
 	  	return group;
-	  	
-	  	
 	  }
 	
 /**
@@ -2397,10 +2399,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/10/20 10:54:06 $ by $Author: thomas $
+	 *  Last modified: $Date: 2004/10/28 11:59:02 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.81 $
+	 * @version $Revision: 1.82 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
