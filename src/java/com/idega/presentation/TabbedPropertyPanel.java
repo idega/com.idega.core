@@ -54,6 +54,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 //  
   
   public static final String TAB_FORM_NAME = "tab_form";
+  public static final String TAB_STORE_WINDOW = "tab_store_window";
   
 	private CreateGroupEvent _createEvent;
 
@@ -67,8 +68,18 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
   }
 
   private TabbedPropertyPanel(String key, IWContext iwc) {
+  	collector = new GenericFormCollector();
+  	if (iwc.getSessionAttribute(TAB_STORE_WINDOW) != null) {
+  		boolean success = collector.storeAll(iwc);
+  		if(success){
+  			this.okClicked = true;
+  		}else{
+  			this.okClicked = false;
+  		}
+  		iwc.removeSessionAttribute(TAB_STORE_WINDOW);
+  	}
+  	
   	setName(TAB_FORM_NAME);
-  	addIWSubmitListener(this, iwc);
     frameTable = new Table();
 //		frameTable.setStyleClass("main");
     tpane = IWTabbedPane.getInstance(key,iwc);
@@ -89,7 +100,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     tpane.setTabsToFormSubmit(this);
     this.add(frameTable);
     initializeLayout();
-    collector = new GenericFormCollector();
     initializeButtons(iwc);
     lineUpButtons();
     ok.addIWSubmitListener(this, this,iwc);
