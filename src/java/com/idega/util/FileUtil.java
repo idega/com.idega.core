@@ -30,6 +30,10 @@ import java.util.StringTokenizer;
 
 public class FileUtil {
 
+  public static char UNIX_FILE_SEPARATOR = '/';
+  public static char WINDOWS_FILE_SEPARATOR = '\\';
+  
+	
   private static String systemSeparatorString =  "file.separator";
 
 
