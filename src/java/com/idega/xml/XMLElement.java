@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.18 2005/01/25 00:38:17 tryggvil Exp $
+ * $Id: XMLElement.java,v 1.19 2005/02/15 17:13:58 joakim Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,6 +16,7 @@ import java.util.Vector;
 import org.jdom.Attribute;
 import org.jdom.CDATA;
 import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jdom.Text;
 import org.jdom.filter.Filter;
 
@@ -28,6 +29,10 @@ public class XMLElement {
 
   public XMLElement(String name) {
     _element = new Element(name);
+  }
+
+  public XMLElement(String name, XMLNamespace namespace) {
+    _element = new Element(name, (Namespace)namespace.getNamespace());
   }
 
   /**
@@ -76,6 +81,16 @@ public class XMLElement {
   public XMLElement getChild(String name) {
     if (_element != null) {
       Element el = _element.getChild(name);
+      if (el != null)
+        return(new XMLElement(el));
+    }
+
+    return(null);
+  }
+
+  public XMLElement getChild(String name, XMLNamespace namespace) {
+    if (_element != null) {
+      Element el = _element.getChild(name,(Namespace)namespace.getNamespace());
       if (el != null)
         return(new XMLElement(el));
     }
