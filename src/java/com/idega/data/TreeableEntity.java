@@ -42,12 +42,23 @@ public abstract class TreeableEntity extends GenericEntity implements ICTreeNode
      * Returns the children of the reciever as an Iterator. Returns null if no children found
      */
     public Iterator getChildren(){
+      return getChildren(null);
+    }
+
+    public Iterator getChildren(String orderBy){
       try{
         String thisTable=this.getTableName();
         String treeTable = thisTable+"_tree";
         String idColumnName = this.getIDColumnName();
         String childIDColumnName="child_"+idColumnName;
-        List list = EntityFinder.findAll(this,"select "+thisTable+".* from "+thisTable+","+treeTable+" where "+thisTable+"."+idColumnName+"="+treeTable+"."+childIDColumnName+" and "+treeTable+"."+idColumnName+"='"+this.getID()+"'");
+        StringBuffer buffer = new StringBuffer();
+          buffer.append("select "+thisTable+".* from "+thisTable+","+treeTable+" where "+thisTable+"."+idColumnName+"="+treeTable+"."+childIDColumnName+" and "+treeTable+"."+idColumnName+"='"+this.getID()+"'");
+          if (orderBy != null && !orderBy.equals("")) {
+            buffer.append(" order by "+thisTable+"."+orderBy);
+          }
+
+
+        List list = EntityFinder.findAll(this,buffer.toString());
         if(list != null){
           return list.iterator();
         }
