@@ -3,7 +3,6 @@ package com.idega.presentation.ui;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;

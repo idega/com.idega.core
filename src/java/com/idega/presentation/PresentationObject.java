@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.69 2003/08/05 19:45:36 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.70 2003/08/06 09:41:16 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
