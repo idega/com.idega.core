@@ -38,7 +38,6 @@ public class SingleLineItem extends Panel {
     setBackground(bgColor);
     setForeground(Color.black);
     parentContainer = parent;
-    this.doLayout();
   }
 
   public void setComponentOffset(int componentOffset){
@@ -163,12 +162,13 @@ public class SingleLineItem extends Panel {
   }
 
   public void refresh() {
+   doLayout();
    Component[] comps = SingleLineItem.this.getComponents();
    for (int i = 0; i < comps.length; i++) {
     comps[i].repaint();
    }
-
-   doLayout();
+   parentContainer.doLayout();
+   parentContainer.repaint();
    repaint();
 
   }
