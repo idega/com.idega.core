@@ -29,7 +29,7 @@ public class TopNodeGroupBMPBean extends GenericEntity  implements TopNodeGroup{
     public final static String COLUMN_USER_ID = "USER_ID";
     public final static String COLUMN_GROUP_ID = "GROUP_ID";
     public final static String COLUMN_LASTCHANGED = "LAST_CHANGED";
-    public final static String COLUMN_COMMENT = "COMMENT";
+    public final static String COLUMN_COMMENT = "TN_COMMENT";
     
 
     /* (non-Javadoc)
