@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
  * Copyright:    Copyright (c) 2001
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 0.5 UNFINISHED - UNDER DEVELOPMENT
+ * @version 1.0
  */
 
 public interface IDOEntity extends EJBObject{
@@ -21,6 +21,6 @@ public interface IDOEntity extends EJBObject{
   public void removeFrom(IDOEntity entity) throws RemoteException;
   */
   public void store() throws IDOStoreException,RemoteException;
-  public void remove() throws IDORemoveException,RemoteException;
+  public void remove() throws javax.ejb.RemoveException,RemoteException;
 
 }
