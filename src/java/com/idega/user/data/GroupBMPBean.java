@@ -461,8 +461,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 	public int ejbHomeGetNumberOfGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws RemoteException, FinderException, IDOException {
-		Collection relations = this.getGroupRelationHome().findGroupsRelationshipsUnder(containingGroup);
-		Iterator iter = relations.iterator();
+		Collection relations = ((GroupBMPBean) containingGroup).getParentalGroupRelationships();
+    Iterator iter = relations.iterator();
 		Collection PKs = new ArrayList();
 		while (iter.hasNext()) {
 			GroupRelation item = (GroupRelation) iter.next();
