@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Vector;
 import java.util.Iterator;
-
 import com.idega.util.StringHandler;
 import com.idega.util.datastructures.HashtableDoubleKeyed;
 import com.idega.util.datastructures.HashtableMultivalued;
@@ -27,17 +26,24 @@ public class EntityControl {
 	private static HashtableMultivalued relationshipClasses = new HashtableMultivalued();
 	private static boolean autoCreate = false;
 	protected static boolean limitTableNameToThirtyCharacters = false;
-	
-	
+	/**
+	**Creates a unique ID for the ID column
+	*@deprecated moved to InterbaseDatastoreInterface. This method will be
+	*removed in future versions */
 	// throw away!!
 	protected static String getInterbaseGeneratorName(IDOLegacyEntity entity) {
 		String entityName = entity.getTableName();
 		if (entityName.endsWith("_")) {
 			return (entityName + "gen").toUpperCase();
-		} else {
+		}
+		else {
 			return (entityName + "_gen").toUpperCase();
 		}
 	}
+	/**
+	**Creates a unique ID for the ID column
+	*@deprecated moved to OracleDatastoreInterface. This method will be removed
+	*in future versions */
 	// throw away!!
 	protected static String getOracleSequenceName(IDOLegacyEntity entity) {
 		String entityName = entity.getTableName();
@@ -50,9 +56,9 @@ public class EntityControl {
 		//}
 	}
 	/**
-	
 	**Creates a unique ID for the ID column
-	
+	*@deprecated moved to DatastoreInterface and its subclasses
+	*This method will be removed in future versions
 	**/
 	// throw away!!
 	public static int createUniqueID(IDOLegacyEntity entity) throws SQLException {
@@ -68,13 +74,15 @@ public class EntityControl {
 				RS = stmt.executeQuery("SELECT GEN_ID(" + getInterbaseGeneratorName(entity) + ", 1) FROM RDB$DATABASE");
 				RS.next();
 				returnInt = RS.getInt(1);
-			} else if (datastoreType.equals("oracle")) {
+			}
+			else if (datastoreType.equals("oracle")) {
 				stmt = conn.createStatement();
 				RS = stmt.executeQuery("SELECT " + getOracleSequenceName(entity) + ".nextval  FROM dual");
 				RS.next();
 				returnInt = RS.getInt(1);
 			}
-		} finally {
+		}
+		finally {
 			if (RS != null) {
 				RS.close();
 			}
@@ -453,7 +461,8 @@ public class EntityControl {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
 			Stmt.executeUpdate("delete from " + entity.getEntityName() + " where " + columnName + "='" + stringColumnValue + "'");
-		} finally {
+		}
+		finally {
 			if (Stmt != null) {
 				Stmt.close();
 			}
@@ -486,7 +495,8 @@ public class EntityControl {
 					+ "='"
 					+ stringColumnValue2
 					+ "'");
-		} finally {
+		}
+		finally {
 			if (Stmt != null) {
 				Stmt.close();
 			}
@@ -505,7 +515,8 @@ public class EntityControl {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
 			Stmt.executeUpdate("delete from " + entity.getEntityName());
-		} finally {
+		}
+		finally {
 			if (Stmt != null) {
 				Stmt.close();
 			}
@@ -515,69 +526,87 @@ public class EntityControl {
 		}
 		entity.setEntityState(entity.STATE_DELETED);
 	}
-	/**
-	 * Attention: Beta implementation
-	 */
-	public static void addManyToManyRelationShip(
+	public static EntityRelationship addManyToManyRelationShip(
 		IDOLegacyEntity relatingEntity1,
 		IDOLegacyEntity relatingEntity2,
 		String relationShipTableName) {
 		try {
 			String idColumnName1 = relatingEntity1.getIDColumnName();
 			String idColumnName2 = relatingEntity2.getIDColumnName();
-			addManyToManyRelationShip(relatingEntity1, relatingEntity2, relationShipTableName, idColumnName1, idColumnName2);
-		} catch (Exception e) {
+			return addManyToManyRelationShip(relatingEntity1, relatingEntity2, relationShipTableName, idColumnName1, idColumnName2);
+		}
+		catch (Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
-	/**
-	 * Attention: Beta implementation
-	 */
-	public static void addManyToManyRelationShip(
+	protected static EntityRelationship addManyToManyRelationShip(String relatingEntityClassName1, String relatingEntityClassName2) {
+		try {
+			IDOLegacyEntity entity1 = GenericEntity.getStaticInstance(relatingEntityClassName1);
+			IDOLegacyEntity entity2 = GenericEntity.getStaticInstance(relatingEntityClassName2);
+			String generatedTableName = createMiddleTableString(entity1, entity2);
+			return addManyToManyRelationShip(entity1, entity2, generatedTableName);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
+	public static EntityRelationship addManyToManyRelationShip(
 		String relatingEntityClassName1,
 		String relatingEntityClassName2,
 		String relationShipTableName) {
 		try {
-			
-			addManyToManyRelationShip(
+			return addManyToManyRelationShip(
 				com.idega.data.GenericEntity.getStaticInstance(relatingEntityClassName1),
 				com.idega.data.GenericEntity.getStaticInstance(relatingEntityClassName2),
 				relationShipTableName);
-				
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			ex.printStackTrace();
+			return null;
 		}
 	}
 	public static String getTreeRelationShipTableName(IDOLegacyEntity entity) {
-		String treeName = entity.getTableName() + "_tree";
-		if(limitTableNameToThirtyCharacters ){
-			//treeName = treeName.substring(0, Math.min(30,treeName.length()));	
-			treeName=getTableNameShortenedToThirtyCharacters(treeName);
+		EntityRelationship rel = getManyToManyRelationShip(entity, entity);
+		if (rel != null) {
+			return rel.getTableName();
 		}
-		
+		else {
+			return null;
+		}
+		/*
+		String treeName = entity.getTableName() + "_tree";
+		treeName = getCheckedRelatedTableName(treeName);
+		return treeName;
+		*/
+	}
+	private static String createTreeRelationShipTableName(IDOLegacyEntity entity) {
+		String treeName = entity.getTableName() + "_tree";
 		return treeName;
 	}
-	
 	public static String getTreeRelationShipChildColumnName(IDOLegacyEntity entity) {
 		return "child_" + entity.getIDColumnName();
 	}
 	public static void addTreeRelationShip(IDOLegacyEntity entity) {
-		String relationShipTableName = getTreeRelationShipTableName(entity);
+		String relationShipTableName = createTreeRelationShipTableName(entity);
 		String idColumnName1 = entity.getIDColumnName();
 		String idColumnName2 = getTreeRelationShipChildColumnName(entity);
 		addManyToManyRelationShip(entity, entity, relationShipTableName, idColumnName1, idColumnName2);
 	}
-	
-	private static String getCheckedRelatedTableName(String relatedTableName){
+	static String getCheckedRelatedTableName(String relatedTableName) {
 		//this is necessary for Oracle and maybe others!
-		if( limitTableNameToThirtyCharacters ){
+		if (limitTableNameToThirtyCharacters) {
 			//relatedTableName = relatedTableName.substring(0, Math.min(relatedTableName.length(), 30));	
-			relatedTableName=getTableNameShortenedToThirtyCharacters(relatedTableName);
+			relatedTableName = getTableNameShortenedToThirtyCharacters(relatedTableName);
 		}
-		
 		return relatedTableName;
 	}
-	private static void addManyToManyRelationShip(
+	static EntityRelationship addManyToManyRelationShip(IDOLegacyEntity relatingEntity1, IDOLegacyEntity relatingEntity2) {
+		String relationShipTableName = createMiddleTableString(relatingEntity1, relatingEntity2);
+		return addManyToManyRelationShip(relatingEntity1, relatingEntity2, relationShipTableName);
+	}
+	private static EntityRelationship addManyToManyRelationShip(
 		IDOLegacyEntity relatingEntity1,
 		IDOLegacyEntity relatingEntity2,
 		String relationShipTableName,
@@ -589,12 +618,7 @@ public class EntityControl {
 		String relatingEntityName1 = relatingEntity1.getEntityName();
 		String relatingEntityName2 = relatingEntity2.getEntityName();
 		EntityRelationship rel = new EntityRelationship();
-		
-
-		//cuts the string if too long
-		rel.setTableName(getCheckedRelatedTableName(relationShipTableName) );
-		
-		
+		rel.setTableName(relationShipTableName);
 		Class relatingEntityClass1 = relatingEntity1.getClass();
 		Class relatingEntityClass2 = relatingEntity2.getClass();
 		rel.addColumn(column1, relatingEntityClass1);
@@ -603,6 +627,7 @@ public class EntityControl {
 		//relationshipTables.put(relatingEntityClassName1,relatingEntityClassName2,relationShipTableName);
 		relationshipClasses.put(relatingEntityClass1, relatingEntityClass2);
 		relationshipClasses.put(relatingEntityClass2, relatingEntityClass1);
+		return rel;
 	}
 	/**
 	 * Returns a list of Class Objects
@@ -637,42 +662,37 @@ public class EntityControl {
 		return getManyToManyRelationShipName(entity1.getEntityName(), entity2.getEntityName());
 	}
 	protected static String getManyToManyRelationShipName(String relatingEntityName1, String relatingEntityName2) {
-		if (relationshipTables == null) {
-			relationshipTables = new HashtableDoubleKeyed();
-			return null;
-		}
-		EntityRelationship rel = (EntityRelationship) relationshipTables.get(relatingEntityName1, relatingEntityName2);
-		if (rel == null) {
-			return null;
-		} else {
+		EntityRelationship rel = getManyToManyRelationShip(relatingEntityName1, relatingEntityName2);
+		if (rel != null) {
 			return rel.getTableName();
 		}
-		//return (String)relationshipTables.get(relatingEntityClassName1,relatingEntityClassName2);
+		else {
+			return null;
+		}
 	}
-	protected static String getMiddleTableString(IDOLegacyEntity entity1, IDOLegacyEntity entity2) {
+	private static String createMiddleTableString(IDOLegacyEntity entity1, IDOLegacyEntity entity2) {
 		String tableToSelectFrom = "";
-//		commented out by Eiki 14.nov.2002 this was not looking up the name correctly
-//		if (entity1.getEntityName().endsWith("_")) {
-//			tableToSelectFrom = entity1.getEntityName() + entity2.getEntityName();
-//		} else {
-//			tableToSelectFrom = entity1.getEntityName() + "_" + entity2.getEntityName();
-//		}
-//		if (tableToSelectFrom.endsWith("_")) {
-//			tableToSelectFrom = tableToSelectFrom.substring(0, tableToSelectFrom.length() - 1);
-//		}
-
+		//		commented out by Eiki 14.nov.2002 this was not looking up the name correctly
+		//		if (entity1.getEntityName().endsWith("_")) {
+		//			tableToSelectFrom = entity1.getEntityName() + entity2.getEntityName();
+		//		} else {
+		//			tableToSelectFrom = entity1.getEntityName() + "_" + entity2.getEntityName();
+		//		}
+		//		if (tableToSelectFrom.endsWith("_")) {
+		//			tableToSelectFrom = tableToSelectFrom.substring(0, tableToSelectFrom.length() - 1);
+		//		}
 		tableToSelectFrom = StringHandler.concatAlphabetically(entity1.getEntityName(), entity2.getEntityName(), "_");
-		
-		return getCheckedRelatedTableName(tableToSelectFrom);
-		
+		return tableToSelectFrom;
+		//return getCheckedRelatedTableName(tableToSelectFrom);
 	}
 	protected static String getNameOfMiddleTable(IDOLegacyEntity entity1, IDOLegacyEntity entity2) {
 		String tableName = getManyToManyRelationShipName(entity1, entity2);
 		if (tableName == null) {
-			String tableToSelectFrom = getMiddleTableString(entity1, entity2);
-			addManyToManyRelationShip(entity1, entity2, tableToSelectFrom);
-			return tableToSelectFrom;
-		} else {
+			String generatedTableName = createMiddleTableString(entity1, entity2);
+			EntityRelationship rel = addManyToManyRelationShip(entity1, entity2, generatedTableName);
+			return rel.getTableName();
+		}
+		else {
 			return tableName;
 		}
 	}
@@ -695,17 +715,21 @@ public class EntityControl {
 			if (rs != null)
 				rs.close();
 			//System.out.println(SQLString+"\n");
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			System.err.println("There was an error in EntityControl.returnSingleSQLQuery " + e.getMessage());
 			e.printStackTrace(System.err);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			System.err.println("There was an error in EntityControl.returnSingleSQLQuery " + e.getMessage());
 			e.printStackTrace(System.err);
-		} finally {
+		}
+		finally {
 			if (stmt != null) {
 				try {
 					stmt.close();
-				} catch (SQLException ex) {
+				}
+				catch (SQLException ex) {
 					System.err.println("There was an error in EntityControl.returnSingleSQLQuery " + ex.getMessage());
 					ex.printStackTrace(System.err);
 				}
@@ -736,7 +760,8 @@ public class EntityControl {
 					recordAt = rs.getInt(1);
 					recordCount[counter] = recordAt;
 					counter++;
-				} catch (ArrayIndexOutOfBoundsException ex) {
+				}
+				catch (ArrayIndexOutOfBoundsException ex) {
 					size += 10;
 					int[] newArr = new int[size];
 					for (int i = 0; i < recordCount.length; i++) {
@@ -755,17 +780,21 @@ public class EntityControl {
 				recordCount = newArr;
 			}
 			//System.out.println(SQLString+"\n");
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			System.err.println("There was an error in EntityControl.returnSingleSQLQuery " + e.getMessage());
 			e.printStackTrace(System.err);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			System.err.println("There was an error in EntityControl.returnSingleSQLQuery " + e.getMessage());
 			e.printStackTrace(System.err);
-		} finally {
+		}
+		finally {
 			if (stmt != null) {
 				try {
 					stmt.close();
-				} catch (SQLException ex) {
+				}
+				catch (SQLException ex) {
 					System.err.println("There was an error in EntityControl.returnSingleSQLQuery " + ex.getMessage());
 					ex.printStackTrace(System.err);
 				}
@@ -803,14 +832,32 @@ public class EntityControl {
 		}
 		return theReturn;
 	}
-	
-	protected static String getTableNameShortenedToThirtyCharacters(String originalTableName){
-		try{
-			String theReturn = originalTableName.substring(0, Math.min(30,originalTableName.length()));	
+	protected static String getTableNameShortenedToThirtyCharacters(String originalTableName) {
+		try {
+			String theReturn = originalTableName.substring(0, Math.min(30, originalTableName.length()));
 			return theReturn;
 		}
-		catch(NullPointerException ne){
+		catch (NullPointerException ne) {
 			throw new RuntimeException("EntityControl.getTableNameShortenedToThirtyCharacters(). originalTableName is null");
 		}
+	}
+	public static EntityRelationship getManyToManyRelationShip(IDOLegacyEntity relatingEntity1, IDOLegacyEntity relatingEntity2) {
+		String relatingEntityName1 = relatingEntity1.getEntityName();
+		String relatingEntityName2 = relatingEntity2.getEntityName();
+		return getManyToManyRelationShip(relatingEntityName1, relatingEntityName2);
+	}
+	protected static EntityRelationship getManyToManyRelationShip(String relatingEntityName1, String relatingEntityName2) {
+		if (relationshipTables == null) {
+			relationshipTables = new HashtableDoubleKeyed();
+			return null;
+		}
+		EntityRelationship rel = (EntityRelationship) relationshipTables.get(relatingEntityName1, relatingEntityName2);
+		if (rel == null) {
+			return null;
+		}
+		else {
+			return rel;
+		}
+		//return (String)relationshipTables.get(relatingEntityClassName1,relatingEntityClassName2);
 	}
 }

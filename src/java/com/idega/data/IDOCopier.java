@@ -1,12 +1,5 @@
 package com.idega.data;
-/**
- * Title:        A class to copy the IDO data objects persisted in one datasource to another.
- * Description:
- * Copyright:    Copyright (c) 2001-2002 idega
- * Company:      idega
- *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- *@version 1.0
- */
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,6 +11,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import java.util.ArrayList;
+
+/**
+ * Title:        A class to copy the IDO data objects persisted in one datasource to another.
+ * Description:
+ * Copyright:    Copyright (c) 2001-2002 idega software
+ *  Company:     idega software
+ *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ *@version 1.0
+ */
 public class IDOCopier {
 	private IDOLegacyEntity fromEntity;
 	private String toDataSourceName;
@@ -175,13 +177,15 @@ public class IDOCopier {
 		while (iter.hasNext()) {
 			IDOEntityRelationshipCopyInfo info = (IDOEntityRelationshipCopyInfo) iter.next();
 			if (!info.copied) {
-				String crossTableName = info.relation.getTableName();
+
 				Connection toConn = null;
 				Connection fromConn = null;
 				try {
 					toConn = this.toEntity.getConnection();
 					fromConn = fromEntity.getConnection();
-					this.copyManyToManyData(crossTableName, fromConn, toConn);
+					String fromTableName = getCrossTableName(info.relation,fromConn);
+					String toTableName = getCrossTableName(info.relation,toConn);
+					this.copyManyToManyData(fromTableName,toTableName, fromConn, toConn);
 				}
 				catch (SQLException e) {
 					e.printStackTrace();
@@ -196,6 +200,30 @@ public class IDOCopier {
 				}
 				info.copied = true;
 			}
+		}
+	}
+	/**
+	 * Method getCrosTableName.
+	 * @param entityRelationship
+	 * @param fromConn
+	 * @return String
+	 */
+	private String getCrossTableName(EntityRelationship entityRelationship, Connection fromConn) {
+		/**
+		 * Workaround implementation
+		 * @todo Implement this in a more elegant way
+		 */
+		if(this.isDatasourceOracle(fromConn)){
+			/**
+			 * Returns the possibly truncated name of the table
+			 */
+			return EntityControl.getCheckedRelatedTableName(entityRelationship.getTableName());
+		}
+		else{
+			/**
+			 * Returns the originally set "longer" set name of the table
+			 */
+			return entityRelationship.getSetTableName();			
 		}
 	}
 	private IDOEntityCopyInfo addToCopiedEntityList(IDOLegacyEntity entity) {
@@ -238,15 +266,15 @@ public class IDOCopier {
 	private List getManyToManyRelatedAndCopied(IDOLegacyEntity entity) {
 		return entityRelationshipInfos;
 	}
-	private void copyManyToManyData(String crossTableName, Connection fromConnection, Connection toConnection) {
-		System.out.println("[idoCopier] Copying data for cross-table: " + crossTableName);
+	private void copyManyToManyData(String fromTableName,String toTableName, Connection fromConnection, Connection toConnection) {
+		System.out.println("[idoCopier] Copying data from cross-table: " + fromTableName+" to cross-table: " + toTableName);
 		Statement stmt = null;
 		PreparedStatement ps = null;
 		ResultSet RS = null;
 		try {
 			stmt = fromConnection.createStatement();
-			ps = toConnection.prepareStatement("insert into " + crossTableName + " values(?,?)");
-			RS = stmt.executeQuery("select * from " + crossTableName);
+			ps = toConnection.prepareStatement("insert into " + toTableName + " values(?,?)");
+			RS = stmt.executeQuery("select * from " + fromTableName);
 			ResultSetMetaData rsm = RS.getMetaData();
 			int columnCount = rsm.getColumnCount();
 			while (RS.next()) {
