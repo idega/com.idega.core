@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.20 2002/10/13 14:23:12 gimmi Exp $
+ * $Id: DateInput.java,v 1.21 2002/10/21 21:08:13 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -176,11 +176,11 @@ public class DateInput extends InterfaceObject {
 
 	public void setStyle(String styleAttribute) {
 		if (this._isShowDay) {
-			_theDay.setStyle(styleAttribute);
+			_theDay.setStyleClass(styleAttribute);
 		}
-		_theMonth.setStyle(styleAttribute);
+		_theMonth.setStyleClass(styleAttribute);
 		if (this._showYear) {
-			_theYear.setStyle(styleAttribute);
+			_theYear.setStyleClass(styleAttribute);
 		}
 	}
 
