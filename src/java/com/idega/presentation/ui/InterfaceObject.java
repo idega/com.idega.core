@@ -4,6 +4,8 @@
 */
 package com.idega.presentation.ui;
 
+import java.io.IOException;
+import javax.faces.context.FacesContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
@@ -585,6 +587,15 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		keepStatusOnAction(true);
 	}
 
+	
+	protected void callPrint(FacesContext fc)throws IOException{
+		//Overridden here to call the same methods as _print():
+		IWContext iwc = castToIWContext(fc);
+		if (statusKeptOnAction())
+			handleKeepStatus(iwc);
+		super.callPrint(fc);
+	}
+		
 	public void _print(IWContext iwc) throws Exception {
 		if (statusKeptOnAction())
 			handleKeepStatus(iwc);
