@@ -14,8 +14,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.caching.CacheMap;
-import com.idega.util.refactor.RefactorClassRegistry;
 public class MethodFinder
 {
 	static final String separator = ":";
