@@ -1,5 +1,5 @@
 /*
- $Id: LICENSE.txt,v 1.1 2004/02/16 21:15:44 tryggvil Exp $
+ $Id: LICENSE.txt,v 1.2 2004/06/04 11:39:42 idegaweb Exp $
 
  Copyright 2003 (C) idega Software. All Rights Reserved.
  
@@ -16,9 +16,9 @@
     following disclaimer in the documentation and/or other
     materials provided with the distribution.
  
- 3. The name "werkflow" must not be used to endorse or promote
+ 3. The name "idegaWeb" must not be used to endorse or promote
     products derived from this Software without prior written
-    permission of The Werken Company.  For written permission,
+    permission of idega Software.  For written permission,
     please contact tryggvi@idega.com.
  
  4. Products derived from this Software may not be called "idega"
