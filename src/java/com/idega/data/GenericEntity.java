@@ -2946,6 +2946,19 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * Returns a collection of returningEntity instances
    */
+  protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass)throws EJBException{
+    try{
+      return EntityFinder.getInstance().findRelated(this,returningEntityInterfaceClass);
+    }
+    catch(Exception e){
+      throw new EJBException(e.getMessage());
+    }
+  }
+
+
+  /**
+   * Returns a collection of returningEntity instances
+   */
   protected Collection idoGetRelatedEntities(IDOLegacyEntity returningEntity)throws EJBException{
     Vector vector = new Vector();
     Collection ids = idoGetRelatedEntityIDs(returningEntity);
@@ -2968,6 +2981,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
     return vector;
   }
+
+
+
 
   /**
    * Returns a collection of returningEntity primary keys
