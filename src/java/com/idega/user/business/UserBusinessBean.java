@@ -1918,7 +1918,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       coll = getGroupBusiness().getParentGroups(user);
     }
     catch (Exception ex)  {
-      throw new RuntimeException("UserBusiness: Can't get parent groups. Message is: " + ex.getMessage());
+      throw new RuntimeException("[UserBusiness]: Can't get parent groups. Message is: " + ex.getMessage());
     }
 
     
@@ -1945,8 +1945,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         }    
       }
     }
-    catch (Exception ex)  {
+    catch (RemoteException ex)  {
       throw new RuntimeException(ex.getMessage());
+    }
+    catch (ClassNotFoundException cex)  {
+      throw new RuntimeException("[UserBusiness]: Class was not found. Message is: "+ cex.getMessage());
     }
     return null;
   }
