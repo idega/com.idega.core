@@ -71,6 +71,8 @@ public class StringHandler {
   
 	public static String alfabet= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	public static final String EMPTY_STRING= "";
+	public static final String DASH= "-";
+	
 	public StringHandler() {}
 	/**
 	 * Returns an random String with the desired length with the Roman alphabet (upper and lower case) and numbers 0-9
@@ -216,4 +218,26 @@ public class StringHandler {
       // return substitution string
     return SUBSTITUTION[i];
 	}
+	
+	/**
+	 * Returns a string or dash if there is no string. If the string is either
+	 * null or an empty string a dash (-) is returned else it returns the input
+	 * string str.
+	 * @param str String to check
+	 * @return String which is either a dash or the input str.
+	 */
+	public static String getStringOrDash(String str){
+		if(str==null){
+			return DASH;
+		}
+		else{
+			if(str.equals(EMPTY_STRING)){
+				return DASH;
+			}
+			else{
+				return str;
+			}
+		}
+	}
+	
 } 
