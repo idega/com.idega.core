@@ -61,17 +61,17 @@ public void setScriptCode(String code){
 */
 
 public String getScriptCode(IWContext iwc){
-	String returnString="";
+	StringBuffer returnString = new StringBuffer();
 	for (Enumeration e = scriptCode.keys(); e.hasMoreElements();){
 
 		Object function=e.nextElement();
 		String functionName = (String) function;
 		String functionCode = (String) scriptCode.get(function);
 
-		returnString = returnString + "\n\n" + functionCode;
+		returnString.append("\n\n" + functionCode);
 	}
 
-	return returnString;
+	return returnString.toString();
 
 }
 
@@ -133,21 +133,22 @@ public String getVariable(String variableName) {
 }
 
 public String getVariables(){
-	String returnString="";
+	StringBuffer returnString = new StringBuffer();
 	if ( variables != null ) {
-		for (Enumeration e = variables.keys(); e.hasMoreElements(); ) {
+		Enumeration e = variables.keys();
+		while ( e.hasMoreElements() ) {
 			Object function=e.nextElement();
 			String variableName = (String) function;
 			String variableValue = (String) getVariable(variableName);
 
 			if ( variableValue != null )
-			      returnString = "var " + variableName + " = " + variableValue + ";\n\n";
+			      returnString.append("var " + variableName + " = " + variableValue + ";\n\n");
 			else
-			      returnString = "var " + variableName + ";\n\n";
+			      returnString.append("var " + variableName + ";\n\n");
 		}
 	}
 
-	return returnString;
+	return returnString.toString();
 
 }
 
@@ -163,18 +164,18 @@ public String getMethod(String methodName) {
 }
 
 public String getMethods(){
-	String returnString="";
+	StringBuffer returnString = new StringBuffer();
 	if ( methods != null ) {
 		for (Enumeration e = methods.keys(); e.hasMoreElements(); ) {
 			Object function=e.nextElement();
 			String methodName = (String) function;
 			String methodValue = (String) getMethod(methodName);
 
-			returnString = methodName + " = " + methodValue + ";\n\n";
+			returnString.append(methodName + " = " + methodValue + ";\n\n");
 		}
 	}
 
-	return returnString;
+	return returnString.toString();
 
 }
 
