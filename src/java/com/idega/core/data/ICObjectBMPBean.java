@@ -20,6 +20,8 @@ import java.util.Vector;
 import javax.ejb.FinderException;
 
 import com.idega.data.EntityFinder;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
@@ -99,7 +101,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 
 		addAttribute(getClassNameColumnName(),"Class Name",true,true,java.lang.String.class);
 
-                addAttribute(getObjectTypeColumnName(),"Class Name",true,true,java.lang.String.class,1000);
+                addAttribute(getObjectTypeColumnName(),"Class Name",true,true,java.lang.String.class,"one-to-many", ICObjectType.class);
 
                 addAttribute(getBundleColumnName(),"Bundle",true,true,java.lang.String.class,1000);
 
@@ -159,9 +161,21 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 
         private static List componentList;
 
+				public static List getAvailableComponentTypes(){
+					try {
+						ICObjectTypeHome 	gtHome =(ICObjectTypeHome) IDOLookup.getHome(ICObjectType.class);
+						List list = new Vector(gtHome.findAll());
+						return list;
+					} catch (IDOLookupException e) {
+						e.printStackTrace();
+					} catch (FinderException e1) {
+						e1.printStackTrace();
+					}
+					return getAvailableComponentTypesOld() ;
+				}
 
 
-        public static List getAvailableComponentTypes(){
+        private static List getAvailableComponentTypesOld(){
 
           if(componentList==null){
 
@@ -440,7 +454,8 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
         
 		public Collection ejbFindAllByObjectTypeAndBundle(String type,String bundle)throws FinderException{
 			IDOQuery query = super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(),type).
-			appendAndEquals(this.getBundleColumnName(),bundle);
+			appendAndEqualsQuoted(this.getBundleColumnName(),bundle);
+			//System.out.println(query.toString());
 			return super.idoFindPKsByQuery( query);
 		}
 		
