@@ -1407,15 +1407,19 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			//buffer.append("select * from ");
 			buffer.append("select ");
 			//System.out.println("COLUMN NAMES : "+DatastoreInterface.getCommaDelimitedColumnNamesForSelect(this));/**@is this where it is supposed to be?**/
-			buffer.append(DatastoreInterface.getInstance(this).getCommaDelimitedColumnNamesForSelect(this));
+			DatastoreInterface dsi = DatastoreInterface.getInstance(this);
+			buffer.append(dsi.getCommaDelimitedColumnNamesForSelect(this));
 			buffer.append(" from "); //skips lob colums
 			buffer.append(getEntityName());
-			buffer.append(" where ");
+			/*buffer.append(" where ");
 			buffer.append(getIDColumnName());
 			buffer.append("='");
 			buffer.append(pk.toString());
-			buffer.append("'");
-			ResultSet RS = Stmt.executeQuery(buffer.toString());
+			buffer.append("'");*/
+			dsi.appendPrimaryKeyWhereClause(this,buffer);
+			
+			String sql = buffer.toString();
+			ResultSet RS = Stmt.executeQuery(sql);
 			//ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
 			//eiki added null check
 			if ((RS == null) || !RS.next())
@@ -3903,5 +3907,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return this.getColumnValue(field.getName());
 	}
 	
+	/**
+	 * Convenience method to get a reference to a home for an entity
+	 * @param entityClass The entity interface class to get a reference to its home.
+	 * @return the home instance
+	 */
+	protected IDOHome getIDOHome(Class entityClass) throws IDOLookupException{
+		return IDOLookup.getHome(entityClass);
+	}
 
 }

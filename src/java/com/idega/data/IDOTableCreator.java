@@ -273,6 +273,7 @@ public class IDOTableCreator{
         	System.err.println("===");
         	System.err.println("Exception and rollback for: "+entity.getClass().getName());
         	System.err.println("\tMessage: "+ex.getMessage());
+        	ex.printStackTrace();
         	System.err.println("===");
 		//}
         //ex.printStackTrace();

@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.79 2003/07/28 17:28:12 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.80 2003/08/05 16:27:28 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -62,6 +62,8 @@ public abstract class DatastoreInterface {
 			className = "com.idega.data.InformixDatastoreInterface";
 		} else if (datastoreType.equals("hsql")) {
 			className = "com.idega.data.HSQLDatastoreInterface";
+		} else if (datastoreType.equals("mckoi")) {
+			className = "com.idega.data.McKoiDatastoreInterface";
 		} else {
 			//className = "unimplemented DatastoreInterface";
 			throw new IDONoDatastoreError();
@@ -151,6 +153,8 @@ public abstract class DatastoreInterface {
 					dataStoreType = "interbase";
 				} else if (checkString.indexOf("hsql") != -1 || checkString.indexOf("hypersonicsql") != -1) {
 					dataStoreType = "hsql";
+				} else if (checkString.indexOf("mckoi") != -1 ) {
+					dataStoreType = "mckoi";
 				} else if (checkString.indexOf("mysql") != -1) {
 					dataStoreType = "mysql";
 				} else if (checkString.indexOf("sap") != -1) {
@@ -534,11 +538,13 @@ public abstract class DatastoreInterface {
 			statement.append(entity.getTableName());
 			statement.append(" set ");
 			statement.append(entity.getLobColumnName());
-			statement.append("=? where ");
+			statement.append("=? ");
+			this.appendPrimaryKeyWhereClause(entity,statement);
+			/*statement.append("where ");
 			statement.append(entity.getIDColumnName());
 			statement.append(" = '");
 			statement.append(entity.getID());
-			statement.append("'");
+			statement.append("'");*/
 			//System.out.println(statement);
 			//System.out.println("In insertBlob() in DatastoreInterface");
 			BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
@@ -551,7 +557,8 @@ public abstract class DatastoreInterface {
 					Conn = entity.getConnection();
 					//if(Conn== null){ System.out.println("In insertBlob() in DatastoreInterface conn==null"); return;}
 					//BufferedInputStream bin = new BufferedInputStream(instream);
-					PS = Conn.prepareStatement(statement.toString());
+					String sql = statement.toString();
+					PS = Conn.prepareStatement(sql);
 					//System.out.println("bin.available(): "+bin.available());
 					//PS.setBinaryStream(1, bin, 0 );
 					//PS.setBinaryStream(1, instream, instream.available() );
@@ -682,44 +689,21 @@ public abstract class DatastoreInterface {
 	public void setBlobstreamForStatement(PreparedStatement statement, InputStream stream, int index) throws SQLException, IOException {
 		statement.setBinaryStream(index, stream, stream.available());
 	}
+	
 	public void update(GenericEntity entity) throws Exception {
 		if (entity.columnsHaveChanged()) {
-			executeBeforeUpdate(entity);
 			Connection conn = null;
-			PreparedStatement Stmt = null;
 			try {
 				conn = entity.getConnection();
-				//		  Stmt = conn.createStatement();
-				StringBuffer statement = new StringBuffer("");
-				statement.append("update ");
-				statement.append(entity.getTableName());
-				statement.append(" set ");
-				statement.append(getAllColumnsAndQuestionMarks(entity));
-				/*statement.append(" where ");
-				statement.append(entity.getIDColumnName());
-				statement.append("=");
-				statement.append(entity.getID());
-				*/
-				appendPrimaryKeyWhereClause(entity, statement);
-				if (isDebugActive())
-					debug(statement.toString());
-				Stmt = conn.prepareStatement(statement.toString());
-				setForPreparedStatement(STATEMENT_UPDATE, Stmt, entity);
-				//Stmt.execute();
-				Stmt.executeUpdate();
-				//int i = Stmt.executeUpdate("update "+entity.getTableName()+" set "+entity.getAllColumnsAndValues()+" where "+entity.getIDColumnName()+"="+entity.getID());
+				update(entity, conn);
 			} finally {
-				if (Stmt != null) {
-					Stmt.close();
-				}
 				if (conn != null) {
 					entity.freeConnection(conn);
 				}
 			}
-			executeAfterUpdate(entity);
-			entity.setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 		}
 	}
+	
 	public void update(GenericEntity entity, Connection conn) throws Exception {
 		executeBeforeUpdate(entity);
 		PreparedStatement Stmt = null;
@@ -729,16 +713,11 @@ public abstract class DatastoreInterface {
 			statement.append(entity.getTableName());
 			statement.append(" set ");
 			statement.append(getAllColumnsAndQuestionMarks(entity));
-			/*
-			statement.append(" where ");
-			statement.append(entity.getIDColumnName());
-			statement.append("=");
-			statement.append(entity.getID());
-			*/
 			appendPrimaryKeyWhereClause(entity, statement);
+			String sql = statement.toString();
 			if (isDebugActive())
-				debug(statement.toString());
-			Stmt = conn.prepareStatement(statement.toString());
+				debug(sql);
+			Stmt = conn.prepareStatement(sql);
 			setForPreparedStatement(STATEMENT_UPDATE, Stmt, entity);
 			Stmt.execute();
 		} finally {
@@ -790,54 +769,28 @@ public abstract class DatastoreInterface {
 		entity.setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 
+
 	public void delete(GenericEntity entity) throws Exception {
-		executeBeforeInsert(entity);
-		Connection conn = null;
-		Statement Stmt = null;
-		try {
-			conn = entity.getConnection();
-			Stmt = conn.createStatement();
-			StringBuffer statement = new StringBuffer("");
-			statement.append("delete from  ");
-			statement.append(entity.getTableName());
-			/*
-			statement.append(" where ");
-			statement.append(entity.getIDColumnName());
-			statement.append("=");
-			statement.append(entity.getID());
-			*/
-			appendPrimaryKeyWhereClause(entity, statement);
-			Stmt.executeUpdate(statement.toString());
-			if (entity.hasMetaDataRelationship()) {
-				deleteMetaData(entity, conn);
-			}
-		} finally {
-			if (Stmt != null) {
-				try {
-					Stmt.close();
-				} catch (SQLException sqle) {
+			Connection conn = null;
+			try {
+				conn = entity.getConnection();
+				delete(entity, conn);
+			} finally {
+				if (conn != null) {
+					entity.freeConnection(conn);
 				}
 			}
-			if (conn != null) {
-				entity.freeConnection(conn);
-			}
-		}
-		executeAfterInsert(entity);
-		entity.setEntityState(IDOLegacyEntity.STATE_DELETED);
+		
 	}
+
 	public void delete(GenericEntity entity, Connection conn) throws Exception {
-		executeBeforeInsert(entity);
+		//executeBeforeInsert(entity);
 		Statement Stmt = null;
 		try {
 			Stmt = conn.createStatement();
 			StringBuffer statement = new StringBuffer("");
 			statement.append("delete from  ");
 			statement.append(entity.getTableName());
-			/*statement.append(" where ");
-			statement.append(entity.getIDColumnName());
-			statement.append("=");
-			statement.append(entity.getID());
-			*/
 			appendPrimaryKeyWhereClause(entity, statement);
 			Stmt.executeUpdate(statement.toString());
 			if (entity.hasMetaDataRelationship()) {
@@ -851,7 +804,7 @@ public abstract class DatastoreInterface {
 				}
 			}
 		}
-		executeAfterInsert(entity);
+		//executeAfterInsert(entity);
 		entity.setEntityState(IDOLegacyEntity.STATE_DELETED);
 	}
 	public void deleteMetaData(GenericEntity entity, Connection conn) throws Exception {
