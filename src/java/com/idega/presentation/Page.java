@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.65 2002/11/13 11:49:17 laddi Exp $
+ *  $Id: Page.java,v 1.66 2002/11/22 09:48:22 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -51,7 +51,7 @@ public class Page extends PresentationObjectContainer {
 	private String _pageStyleFont = Text.FONT_FACE_ARIAL;
 	private String _pageStyleFontSize = Text.FONT_SIZE_10_STYLE_TAG;
 	private String _pageStyleFontStyle = Text.FONT_FACE_STYLE_NORMAL;
-	private String _styleSheetURL = IWStyleManager.STYLE_URL;
+	private String _styleSheetURL;
 	private boolean _addStyleSheet = false;
 	private boolean _addBody = true;
 	private Hashtable _frameProperties;
@@ -119,7 +119,6 @@ public class Page extends PresentationObjectContainer {
 	 */
 	public Page(String s) {
 		super();
-		setDefaultValues();
 		setTitle(s);
 	}
 
@@ -949,11 +948,14 @@ public class Page extends PresentationObjectContainer {
 			}
 		}
 
+		if (this._styleSheetURL == null)
+			_styleSheetURL = iwc.getApplication().getTranslatedURIWithContext("/idegaweb/style/style.css");
 		/* get the files cached url */
 		if (styleFile != null) {
 			setStyleSheetURL(MediaBusiness.getMediaURL(styleFile.getID(), iwc.getApplication()));
 		}
 
+		setDefaultValues();
 	}
 
 	/*
