@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.Vector;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
-import javax.ejb.EJBHome;
+import javax.ejb.EJBHome; 
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.EntityContext;
@@ -105,7 +105,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		setDatasource(dataSource);
 		//setColumn(getIDColumnName(),new Integer(id));
 		firstLoadInMemoryCheck();
-		//findByPrimaryKey(getID());
+
 		//ejbCreate(new Integer(id));
 		//ejbLoad();
 		this.findByPrimaryKey(id);
@@ -676,6 +676,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		Connection Conn = null;
 		try
 		{
+			/**
+			 * @todo stringbuffer
+			 * */
 			Conn = getConnection(getDatasource());
 			String sql =
 				"update "
@@ -684,8 +687,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ columnName
 					+ " = null where "
 					+ this.getIDColumnName()
-					+ " = "
-					//+ Integer.toString(this.getID()) ;
 					+ this.getPrimaryKeyValueSQLString();
 					
 			Conn.createStatement().executeUpdate(sql);
@@ -1329,7 +1330,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		try
 		{
-			if (this.getID() != -1)
+			if (isIdColumnValueNotEmpty())
 				DatastoreInterface.getInstance(this).crunchMetaData(this);
 			else
 				System.err.println("IDOLegacyEntity: updateMetaData() getID = -1 !");
@@ -1941,36 +1942,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	public IDOLegacyEntity[] findRelated(IDOLegacyEntity entity, String entityColumnName, String entityColumnValue)
 		throws SQLException
 	{
-		/*String tableToSelectFrom = getNameOfMiddleTable(entity,this);
-		StringBuffer buffer=new StringBuffer();
-		buffer.append("select e.* from ");
-		buffer.append(tableToSelectFrom + " middle, "+entity.getEntityName()+" e");
-		buffer.append(" where ");
-		buffer.append("middle."+this.getIDColumnName());
-		buffer.append("=");
-		buffer.append(this.getID());
-		buffer.append(" and ");
-		buffer.append("middle."+entity.getIDColumnName());
-		buffer.append("=");
-		buffer.append("e."+entity.getIDColumnName());
-		if ( entity.getID() != -1 ) {
-		  buffer.append(" and ");
-		  buffer.append("middle."+entity.getIDColumnName());
-		  buffer.append("=");
-		  buffer.append(entity.getID());
-		}
-		if (entityColumnName != null)
-		if (!entityColumnName.equals("")) {
-		  buffer.append(" and ");
-		  buffer.append("e."+entityColumnName);
-		  if (entityColumnValue != null) {
-		    buffer.append(" = ");
-		    buffer.append("'"+entityColumnValue+"'");
-		  }else {
-		    buffer.append(" is null");
-		  }
-		}
-		String SQLString=buffer.toString();*/
+
 		String SQLString = this.getFindRelatedSQLQuery(entity, entityColumnName, entityColumnValue);
 		return findRelated(entity, SQLString);
 	}
@@ -2057,18 +2029,23 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		buffer.append(" where ");
 		buffer.append("middle." + this.getIDColumnName());
 		buffer.append("=");
-		buffer.append(this.getID());
+		//buffer.append(this.getID());
+		buffer.append(getPrimaryKeyValueSQLString());
 		buffer.append(" and ");
 		buffer.append("middle." + entity.getIDColumnName());
 		buffer.append("=");
 		buffer.append("e." + entity.getIDColumnName());
-		if (entity.getID() != -1)
+		
+		///if (entity.getID() != -1)
+		if( isColumnValueNotEmpty( getKeyValueSQLString(entity.getPrimaryKeyValue()) ) )
 		{
 			buffer.append(" and ");
 			buffer.append("middle." + entity.getIDColumnName());
 			buffer.append("=");
-			buffer.append(entity.getID());
+			//buffer.append(entity.getID());
+			buffer.append(getKeyValueSQLString(entity.getPrimaryKeyValue()));
 		}
+		
 		if (entityColumnName != null)
 			if (!entityColumnName.equals(""))
 			{
@@ -2166,9 +2143,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 				+ otherEntity.getEntityName()
 				+ " where "
 				+ this.getIDColumnName()
-				+ "='"
-				+ this.getID()
-				+ "'");
+				+ "= "
+				+ getPrimaryKeyValueSQLString());
 	}
 	/**
 	 * @deprecated
@@ -2180,11 +2156,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 				+ otherEntity.getEntityName()
 				+ " where "
 				+ this.getIDColumnName()
-				+ "='"
-				+ this.getID()
-				+ "' order by "
-				+ column_name
-				+ "");
+				+ "= "
+				+ getPrimaryKeyValueSQLString()
+				+ " order by "
+				+ column_name);
 	}
 	/**
 	 * @deprecated
@@ -2463,7 +2438,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		String tableToSelectFrom = getNameOfMiddleTable(entity, this);
 		String SQLString =
-			"select count(*) from " + tableToSelectFrom + " where " + this.getIDColumnName() + "=" + this.getID();
+			"select count(*) from " + tableToSelectFrom + " where " + this.getIDColumnName() + "=" + getPrimaryKeyValueSQLString();
 		//System.out.println(SQLString);
 		return getNumberOfRecords(SQLString);
 	}
@@ -2471,7 +2446,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		String tableToSelectFrom = getNameOfMiddleTable(this, entity);
 		String SQLString =
-			"select count(*) from " + tableToSelectFrom + " where " + this.getIDColumnName() + "=" + this.getID();
+			"select count(*) from " + tableToSelectFrom + " where " + this.getIDColumnName() + "=" + getPrimaryKeyValueSQLString();
 		//System.out.println(SQLString);
 		return getNumberOfRecords(SQLString);
 	}
@@ -2645,8 +2620,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			Stmt = conn.createStatement();
 			//String sql = "insert into "+getNameOfMiddleTable(entityToAddTo,this)+"("+getIDColumnName()+","+entityToAddTo.getIDColumnName()+") values("+getID()+","+entityToAddTo.getID()+")";
 			String sql = null;
-			try
-			{
+			//try
+			//{
 				sql =
 					"insert into "
 						+ getNameOfMiddleTable(entityToAddTo, this)
@@ -2654,16 +2629,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 						+ getIDColumnName()
 						+ ","
 						+ entityToAddTo.getIDColumnName()
-						+ ") values('"
-						+ this.getPrimaryKey().toString()
-						+ "','"
-						+ entityToAddTo.getPrimaryKey().toString()
-						+ "')";
-			}
+						+ ") values("
+						+ getPrimaryKeyValueSQLString()
+						+ ",'"
+						+ getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue())
+						+ ")";
+			/*}
 			catch (RemoteException rme)
 			{
 				throw new SQLException("RemoteException in addTo, message: " + rme.getMessage());
-			}
+			}*/
 			//System.out.println("statement: "+sql);
 			int i = Stmt.executeUpdate(sql);
 		}
@@ -2696,11 +2671,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ " set "
 					+ getIDColumnName()
 					+ " = "
-					+ getID()
+					+ getPrimaryKeyValueSQLString()
 					+ " where "
 					+ getIDColumnName()
 					+ " = "
-					+ entityFrom.getID();
+					+ getKeyValueSQLString(entityFrom.getPrimaryKeyValue());
 			int i = Stmt.executeUpdate(sql);
 		}
 		finally
@@ -2734,9 +2709,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ ","
 					+ entityToAddToColumName
 					+ ") values("
-					+ getID()
+					+ getPrimaryKeyValueSQLString()
 					+ ","
-					+ entityToAddTo.getID()
+					+ getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue())
 					+ ")";
 			int i = Stmt.executeUpdate(sql);
 		}
@@ -2769,9 +2744,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ ","
 					+ entityToAddToColumName
 					+ ") values("
-					+ getID()
+					+ getPrimaryKeyValueSQLString()
 					+ ","
-					+ entityToAddTo.getID()
+					+ getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue())
 					+ ")";
 			System.out.println(sql);
 			int i = Stmt.executeUpdate(sql);
@@ -2805,7 +2780,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ " where "
 					+ entityToDeleteColumName
 					+ " = "
-					+ entityToDelete.getID();
+					+ getKeyValueSQLString(entityToDelete.getPrimaryKeyValue());
 			int i = Stmt.executeUpdate(sql);
 		}
 		finally
@@ -2838,9 +2813,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 						+ ","
 						+ entityToAddTo.getIDColumnName()
 						+ ") values("
-						+ getID()
+						+ getPrimaryKeyValueSQLString()
 						+ ","
-						+ entityToAddTo.getID()
+						+ getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue())
 						+ ")");
 		}
 		finally
@@ -2874,7 +2849,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 						+ ((IDOLegacyEntity) com.idega.data.GenericEntity.getStaticInstance(entityToAddTo))
 							.getIDColumnName()
 						+ ") values("
-						+ getID()
+						+ getPrimaryKeyValueSQLString()
 						+ ","
 						+ id
 						+ ")");
@@ -2923,7 +2898,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 									+ ","
 									+ columnName
 									+ ") values("
-									+ getID()
+									+ getPrimaryKeyValueSQLString()
 									+ ","
 									+ ids[i]
 									+ ")");
@@ -2964,11 +2939,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 						+ entityToAddTo.getIDColumnName()
 						+ ","
 						+ extraColumnName
-						+ ") values('"
-						+ getID()
-						+ "','"
-						+ entityToAddTo.getID()
-						+ "','"
+						+ ") values("
+						+ getPrimaryKeyValueSQLString()
+						+ ","
+						+ getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue())
+						+ ",'"
 						+ extraColumnValue
 						+ "')");
 		}
@@ -3010,11 +2985,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 						+ extraColumnName
 						+ ","
 						+ extraColumnName1
-						+ ") values('"
-						+ getID()
-						+ "','"
-						+ entityToAddTo.getID()
-						+ "','"
+						+ ") values("
+						+ getPrimaryKeyValueSQLString()
+						+ ","
+						+ getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue())
+						+ ",'"
 						+ extraColumnValue
 						+ "','"
 						+ extraColumnValue1
@@ -3063,9 +3038,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 						+ ","
 						+ extraColumnName2
 						+ ") values('"
-						+ getID()
+						+ getPrimaryKeyValueSQLString()
 						+ "','"
-						+ entityToAddTo.getID()
+						+ getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue())
 						+ "','"
 						+ extraColumnValue
 						+ "','"
@@ -3099,37 +3074,35 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			int i = 0;
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			try
-			{
-				if ((entityToRemoveFrom.getID() == -1)
-					|| (entityToRemoveFrom.getID() == 0)) //removing all in middle table
+			//try
+			//{
+				if (!isColumnValueNotEmpty( getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue())) ) //removing all in middle table
 					qry =
 						"delete from "
 							+ getNameOfMiddleTable(entityToRemoveFrom, this)
 							+ " where "
 							+ this.getIDColumnName()
-							+ "='"
-							+ getPrimaryKey().toString()
-							+ "'";
+							+ "= "
+							+ getPrimaryKeyValueSQLString();
 				else // just removing this particular one
 					qry =
 						"delete from "
 							+ getNameOfMiddleTable(entityToRemoveFrom, this)
 							+ " where "
 							+ this.getIDColumnName()
-							+ "='"
-							+ getPrimaryKey().toString()
-							+ "' AND "
+							+ "="
+							+ getPrimaryKeyValueSQLString()
+							+ " AND "
 							+ entityToRemoveFrom.getIDColumnName()
-							+ "='"
-							+ entityToRemoveFrom.getPrimaryKey().toString()
-							+ "'";
-			}
-			catch (RemoteException rme)
+							+ "= "
+							+ getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue()) ;
+			//}
+			/*catch (RemoteException rme)
 			{
 				throw new SQLException("RemoteException in removeFrom, message: " + rme.getMessage());
-			}
+			}*/
 			//  System.out.println("GENERIC ENTITY: "+ qry);
+			
 			i = Stmt.executeUpdate(qry);
 		}
 		finally
@@ -3162,9 +3135,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ getNameOfMiddleTable(com.idega.data.GenericEntity.getStaticInstance(entityToRemoveFrom), this)
 					+ " where "
 					+ this.getIDColumnName()
-					+ "='"
-					+ this.getID()
-					+ "' AND "
+					+ "= "
+					+ getPrimaryKeyValueSQLString()
+					+ " AND "
 					+ com.idega.data.GenericEntity.getStaticInstance(entityToRemoveFrom).getIDColumnName()
 					+ "='"
 					+ id
@@ -3202,10 +3175,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ getNameOfMiddleTable(getStaticInstance(entityToRemoveFrom), this)
 					+ " where "
 					+ this.getIDColumnName()
-					+ "='"
-					+ this.getPrimaryKey().toString()
-					+ "'";
-			;
+					+ "= "
+					+ getPrimaryKeyValueSQLString();
+			
 			//  System.out.println("GENERIC ENTITY: "+ qry);
 			i = Stmt.executeUpdate(qry);
 		}
@@ -3234,28 +3206,27 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		{
 			int i = 0;
 			Stmt = conn.createStatement();
-			if ((entityToRemoveFrom.getID() == -1) || (entityToRemoveFrom.getID() == 0)) //removing all in middle table
+			if ( isColumnValueNotEmpty( getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue()) )) //removing all in middle table
 				qry =
 					"delete from "
 						+ getNameOfMiddleTable(entityToRemoveFrom, this)
 						+ " where "
 						+ this.getIDColumnName()
-						+ "='"
-						+ this.getID()
-						+ "'";
+						+ "= "
+						+ getPrimaryKeyValueSQLString();
 			else // just removing this particular one
 				qry =
 					"delete from "
 						+ getNameOfMiddleTable(entityToRemoveFrom, this)
 						+ " where "
 						+ this.getIDColumnName()
-						+ "='"
-						+ this.getID()
-						+ "' AND "
+						+ "= "
+						+ getPrimaryKeyValueSQLString()
+						+ " AND "
 						+ entityToRemoveFrom.getIDColumnName()
-						+ "='"
-						+ entityToRemoveFrom.getID()
-						+ "'";
+						+ "= "
+						+ getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue());
+						
 			//  System.out.println("GENERIC ENTITY: "+ qry);
 			i = Stmt.executeUpdate(qry);
 		}
@@ -3276,7 +3247,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			String idColumnName = this.getIDColumnName();
-			int id = this.getID();
+			String id = getPrimaryKeyValueSQLString();
 			int count = 0;
 			for (int i = 0; i < entityToRemoveFrom.length; i++)
 			{
@@ -3286,20 +3257,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 							+ getNameOfMiddleTable(entityToRemoveFrom[i], this)
 							+ " where "
 							+ idColumnName
-							+ "='"
-							+ id
-							+ "'");
-				if ((entityToRemoveFrom[i].getID() == -1)
-					|| (entityToRemoveFrom[i].getID() == 0)) //removing all in middle table
-					count
-						+= Stmt.executeUpdate(
+							+ "= "
+							+ id);
+				if (!isColumnValueNotEmpty( getKeyValueSQLString(entityToRemoveFrom[i].getPrimaryKeyValue()) )) //removing all in middle table
+					count += Stmt.executeUpdate(
 							"delete from "
 								+ getNameOfMiddleTable(entityToRemoveFrom[i], this)
 								+ " where "
 								+ idColumnName
-								+ "='"
-								+ id
-								+ "'");
+								+ "= "
+								+ id);
 				else // just removing this particular one
 					count
 						+= Stmt.executeUpdate(
@@ -3307,13 +3274,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 								+ getNameOfMiddleTable(entityToRemoveFrom[i], this)
 								+ " where "
 								+ idColumnName
-								+ "='"
+								+ "= "
 								+ id
-								+ "' AND "
+								+ " AND "
 								+ entityToRemoveFrom[i].getIDColumnName()
-								+ "='"
-								+ entityToRemoveFrom[i].getID()
-								+ "'");
+								+ "= "
+								+ getKeyValueSQLString(entityToRemoveFrom[i].getPrimaryKeyValue()));
 			}
 		}
 		finally
@@ -3342,9 +3308,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 						+ getNameOfMiddleTable(entityToRemoveFrom, this)
 						+ " where "
 						+ entityToRemoveFrom.getIDColumnName()
-						+ "='"
-						+ entityToRemoveFrom.getID()
-						+ "'");
+						+ "= "
+						+ getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue()));
 		}
 		finally
 		{
@@ -3598,8 +3563,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			buffer.append(tableToSelectFrom);
 			buffer.append(".");
 			buffer.append(getIDColumnName());
-			buffer.append("=");
-			buffer.append(this.getID());
+			buffer.append("= ");
+			buffer.append(getPrimaryKeyValueSQLString());
 			buffer.append(" and ");
 			buffer.append(tableToSelectFrom);
 			buffer.append(".");
@@ -4704,7 +4669,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	 * @param keyValue
 	 *  @return String
 	 */
-	public String getKeyValueSQLString(Object value){
+	public static String getKeyValueSQLString(Object value){
 		if( value!= null ){
 			if( value instanceof String ){
 				return "'"+value.toString()+"'";	
@@ -4713,4 +4678,28 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		}
 		else return null;
 	}
+	
+	/**
+	 * Method isIdColumnValueNotEmpty gets the primarykey value and uses isColumnValueNotEmpty to check if it is empty or not
+	 * @return boolean
+	 */
+	public boolean isIdColumnValueNotEmpty(){
+		String value = getPrimaryKeyValueSQLString();
+		return isColumnValueNotEmpty(value);
+	}
+	
+	/**
+	 * Method isColumnNotEmpty. This methods checks if the value is null,-1,'-1' or "" and return false or true.
+	 * @param value
+	 * @return boolean return true if the value is non of the above values
+	 */
+	public static boolean isColumnValueNotEmpty(String value){
+		//not sure if the =0 check is needed
+		if( (value != null) && (!value.equals("-1")) && (!value.equals("'-1'")) && (!value.equals("")) && (!value.equals("0")) ){
+		 return true;	
+		}
+		else return false;
+	}
+	
+	
 }

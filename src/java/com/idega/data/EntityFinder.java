@@ -234,7 +234,7 @@ public class EntityFinder{
 	*Finds all instances of the fromEntity in the otherEntity, returns null if no match
 	**/
 	public static List findAssociated(IDOLegacyEntity fromEntity,IDOLegacyEntity otherEntity)throws SQLException{
-		return findAll(otherEntity,"select * from "+otherEntity.getTableName()+" where "+fromEntity.getIDColumnName()+"='"+fromEntity.getID()+"'");
+		return findAll(otherEntity,"select * from "+otherEntity.getTableName()+" where "+fromEntity.getIDColumnName()+"= "+GenericEntity.getKeyValueSQLString(fromEntity.getPrimaryKeyValue()));
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class EntityFinder{
     }
 
 	public static List findAssociatedOrdered(IDOLegacyEntity fromEntity,IDOLegacyEntity otherEntity,String column_name)throws SQLException{
-		return findAll(otherEntity,"select * from "+otherEntity.getTableName()+" where "+fromEntity.getIDColumnName()+"='"+fromEntity.getID()+"' order by "+column_name+"");
+		return findAll(otherEntity,"select * from "+otherEntity.getTableName()+" where "+fromEntity.getIDColumnName()+"= "+GenericEntity.getKeyValueSQLString(fromEntity.getPrimaryKeyValue())+"  order by "+column_name+"");
 	}
 
 	/**
@@ -536,7 +536,7 @@ public class EntityFinder{
 
     public static List findReverseRelated(IDOLegacyEntity fromEntity,IDOLegacyEntity returningEntity)throws SQLException{
 		String tableToSelectFrom = EntityControl.getNameOfMiddleTable(fromEntity,returningEntity);
-		String SQLString="select * from "+tableToSelectFrom+" where "+fromEntity.getIDColumnName()+"="+fromEntity.getID();
+		String SQLString="select * from "+tableToSelectFrom+" where "+fromEntity.getIDColumnName()+"="+GenericEntity.getKeyValueSQLString(fromEntity.getPrimaryKeyValue());
 		return findRelated(fromEntity,returningEntity,SQLString);
 	}
 
@@ -627,11 +627,11 @@ public class EntityFinder{
     buffer.append(" where ");
     buffer.append(fromEntity.getIDColumnName());
     buffer.append("=");
-    buffer.append(fromEntity.getID());
+    buffer.append(GenericEntity.getKeyValueSQLString(fromEntity.getPrimaryKeyValue()));
     //buffer.append(" order by ");
     //buffer.append(fromEntity.getIDColumnName());
     String SQLString=buffer.toString();
-    //String SQLString="select * from "+tableToSelectFrom+" where "+fromEntity.getIDColumnName()+"="+fromEntity.getID();
+    //String SQLString="select * from "+tableToSelectFrom+" where "+fromEntity.getIDColumnName()+"="+GenericEntity.getKeyValueSQLString(fromEntity.getPrimaryKeyValue());
     //System.out.println("FindRelated SQLString="+SQLString+"crap");
     return findRelated(fromEntity,returningEntity,SQLString);
   }
@@ -650,7 +650,7 @@ public class EntityFinder{
     buffer.append(" where ");
     buffer.append(tableToSelectFrom).append(".").append(fromEntity.getIDColumnName());
     buffer.append("=");
-    buffer.append(fromEntity.getID());
+    buffer.append(GenericEntity.getKeyValueSQLString(fromEntity.getPrimaryKeyValue()));
     buffer.append(" and ");
     buffer.append(tableToSelectFrom).append(".").append(returningEntity.getIDColumnName());
     buffer.append("=");
@@ -660,7 +660,7 @@ public class EntityFinder{
     buffer.append("=");
     buffer.append(returningEntityColumnValue);
     String SQLString=buffer.toString();
-    //String SQLString="select * from "+tableToSelectFrom+" where "+fromEntity.getIDColumnName()+"="+fromEntity.getID();
+    //String SQLString="select * from "+tableToSelectFrom+" where "+fromEntity.getIDColumnName()+"="+GenericEntity.getKeyValueSQLString(fromEntity.getPrimaryKeyValue());
     //System.out.println("FindRelated SQLString="+SQLString+"crap");
     try {
       return findRelated(fromEntity,returningEntity,SQLString);
@@ -750,7 +750,7 @@ public class EntityFinder{
 		buffer.append(dot);
 		buffer.append(fromEntity.getIDColumnName());
 		buffer.append("=");
-		buffer.append(fromEntity.getID());
+		buffer.append(GenericEntity.getKeyValueSQLString(fromEntity.getPrimaryKeyValue()));
 		buffer.append(" and ");
 		buffer.append(fromTable);
 		buffer.append(dot);
@@ -864,7 +864,7 @@ public class EntityFinder{
 				entity.freeConnection(conn);
 			}
 		}
-		if(entity.getID() != -1){
+		if( GenericEntity.isColumnValueNotEmpty(GenericEntity.getKeyValueSQLString(entity.getPrimaryKeyValue())) ){
 		  return entity;
 		}
 		return null;
