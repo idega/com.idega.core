@@ -64,12 +64,12 @@ public class Image extends PresentationObject
 	public Image()
 	{
 		this("");
-		setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
+		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 	}
 	public Image(String url)
 	{
 		this(url, "");
-		setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
+		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 	}
 	public Image(String url, String name)
 	{
@@ -79,7 +79,7 @@ public class Image extends PresentationObject
 		setName(name);
 		setAlt(name);
 		setURL(url);
-		setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
+		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 	}
 	public Image(String name, String url, String overImageUrl)
 	{
@@ -87,7 +87,7 @@ public class Image extends PresentationObject
 		setName(name);
 		setAlt(name);
 		setURL(url);
-		setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
+		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 		this.overImageUrl = overImageUrl;
 		setOnMouseOut("swapImgRestore()");
 		setOnMouseOver("swapImage('" + getName() + "','','" + overImageUrl + "',1)");
@@ -107,7 +107,7 @@ public class Image extends PresentationObject
 		setURL(url);
 		setWidth(width);
 		setHeight(height);
-		setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
+		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 	}
 	/**
 	*Fetches an image from the database through the imageservlet or blobcache
@@ -116,7 +116,7 @@ public class Image extends PresentationObject
 	{
 		super();
 		this.imageId = imageId;
-		setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
+		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 		setName(this.generateID());
 	}
 	public Image(int imageId, String name) throws SQLException
