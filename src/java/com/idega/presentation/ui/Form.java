@@ -150,6 +150,9 @@ public void setOnSubmit(String script){
 	setOnAction("onSubmit",script);
 }
 
+public void setOnClick(String script){
+	setOnAction("onClick",script);
+}
 
 
 private List findAllInputNamesHelper(List vector,PresentationObjectContainer cont){
