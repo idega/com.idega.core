@@ -21,7 +21,7 @@ import com.idega.util.IWTimestamp;
 /**
  * Title:        User
  * Copyright:    Copyright (c) 2000 idega.is All Rights Reserved
- * Company:      idega margmiğlun
+ * Company:      idega margmiï¿½lun
  * @author
  * @version 1.0
  */
@@ -207,9 +207,7 @@ public class UserBusiness {
 
   public static Email getUserMail(User user) {
     try {
-      EntityFinder.debug = true;
       List L = EntityFinder.getInstance().findRelated(user,Email.class);
-      EntityFinder.debug = false;
       if(L != null){
         if ( L.size() > 0 )
           return (Email)L.get(0);
