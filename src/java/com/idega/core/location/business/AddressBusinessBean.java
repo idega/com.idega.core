@@ -110,11 +110,11 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		CommuneHome communeHome = getCommuneHome();
 		Commune commune;
 		try {
-			commune = communeHome.findByCommuneCode(Commune);
+			commune = communeHome.findByCommuneName(Commune);
 		}
 		catch (FinderException e) {
 			commune = communeHome.create();
-			commune.setCommuneCode(Commune);
+//			commune.setCommuneCode(Commune);	//Set only if we find commune code
 			commune.setCommuneName(Commune);
 			commune.setIsValid(true);
 			commune.store();

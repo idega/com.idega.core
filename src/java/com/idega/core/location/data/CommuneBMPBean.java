@@ -33,7 +33,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 		addAttribute(getIDColumnName());
 		addAttribute(COLUMN_COMMUNE_NAME, "Commune", true, true, String.class,50);
 		addAttribute(COLUMN_COMMUNE, "Commune name uppercase", true, true, String.class, 50);
-		addAttribute(COLUMN_COMMUNE_CODE, "Commune code", true, true, String.class, 50);
+		addAttribute(COLUMN_COMMUNE_CODE, "Commune code", true, true, String.class, 20);
 		addManyToOneRelationship(COLUMN_PROVINCE_ID, "Province", Province.class);
 		addManyToOneRelationship(COLUMN_GROUP_ID, "Group", Group.class);
 		addAttribute(COLUMN_DEFAULT, "Default commune", true, true, Boolean.class);
