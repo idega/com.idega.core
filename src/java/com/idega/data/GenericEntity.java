@@ -112,7 +112,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       //First store a static instance of this class
       String className = this.getClass().getName();
       try {
-	_allStaticClasses.put(className,(GenericEntity)Class.forName(className).newInstance());
+	_allStaticClasses.put(this.getClass(),this.instanciateEntity(this.getClass()));
       }
       catch(Exception ex) {
 	ex.printStackTrace();
@@ -412,7 +412,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		try{
 			returnArr =  (GenericEntity[]) java.lang.reflect.Array.newInstance(this.getClass(),id_array.length);
 			for (int i = 0; i < id_array.length ; i++){
-				returnArr[i] = (GenericEntity) Class.forName(this.getClass().getName()).newInstance();
+				returnArr[i] = (GenericEntity) instanciateEntity(this.getClass());
 				returnArr[i].findByPrimaryKey(id_array[i]);
 			}
 		}
@@ -432,7 +432,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		try{
 			returnArr = (GenericEntity[]) java.lang.reflect.Array.newInstance(this.getClass(),id_array.length);
 			for (int i = 0; i < id_array.length ; i++){
-				returnArr[i] = (GenericEntity) Class.forName(this.getClass().getName()).newInstance();
+				returnArr[i] = (GenericEntity) instanciateEntity(this.getClass());
 				returnArr[i].findByPrimaryKey(Integer.parseInt(id_array[i]));
 			}
 		}
@@ -593,11 +593,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			if ((getRelationShipClass(columnName)!=null)){
 				if (getRelationShipClass(columnName).getName().indexOf("idega") != -1){
 					try{
-						returnObj =getRelationShipClass(columnName).newInstance();
-                        GenericEntity returnEntity = (GenericEntity)returnObj;
-                        returnEntity.setDatasource(this.getDatasource());
-						returnEntity.findByPrimaryKey(((Integer)value).intValue());
-					}
+                                              returnObj = this.findByPrimaryInOtherClass(getRelationShipClass(columnName),((Integer)value).intValue());
+                                        }
 					catch(Exception ex){
 						System.err.println("There was an error in GenericEntity.getColumnValue(String columnName): "+ex.getMessage());
 						ex.printStackTrace(System.err);
@@ -1515,8 +1512,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 				GenericEntity tempobj=null;
 				try{
-					tempobj = (GenericEntity)Class.forName(entity.getClass().getName()).newInstance();
-					tempobj.findByPrimaryKey(RS.getInt(entity.getIDColumnName()));
+					Class relatedClass = entity.getClass();
+                                        tempobj = this.findByPrimaryInOtherClass(relatedClass,RS.getInt(entity.getIDColumnName()));
 				}
 				catch(Exception ex){
 					System.err.println("There was an error in GenericEntity.findRelated(GenericEntity entity,String SQLString): "+ex.getMessage());
@@ -2432,13 +2429,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	return (getEntityState()==this.STATE_IN_SYNCH_WITH_DATASTORE);
       }
 
-
+      /**
+       *
+       * @deprecated replaced with IDOLookup.findByPrimaryKeyLegacy();
+       */
       public static GenericEntity getEntityInstance(Class entityClass, int id){
 	GenericEntity entity = null;
 	try{
-	  entity = (GenericEntity) entityClass.newInstance();
-	  entity.findByPrimaryKey(id);
-	}
+	  return IDOLookup.findByPrimaryKeyLegacy(entityClass,id);
+        }
 	catch(Exception e){
 	 e.printStackTrace(System.err);
 	 System.err.println("GenericEntity: error initializing entity");
@@ -2446,16 +2445,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
        return entity;
       }
 
+      /**
+       *
+       * @deprecated Replaced with IDOLookup.createLegacy(entityClass);
+       */
       public static GenericEntity getEntityInstance(Class entityClass){
-	GenericEntity entity = null;
-	try{
-	  entity = (GenericEntity) entityClass.newInstance();
-	}
-	catch(Exception e){
-	 e.printStackTrace(System.err);
-	 System.err.println("GenericEntity: error initializing entity");
-	}
-       return entity;
+	return IDOLookup.createLegacy(entityClass);
       }
 
 
@@ -2820,19 +2815,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
    }
 
-   private static GenericEntity instanciateEntity(Class entityClass){
-      if(entityClass.isInterface()){
-        return instanciateEntity(IDOLookup.getBeanClassFor(entityClass));
-      }
-      else{
-        try{
-          return (GenericEntity)entityClass.newInstance();
-        }
-        catch(Exception e){
-          //e.printStackTrace();
-          throw new RuntimeException(e.getMessage());
-        }
-      }
+   private static GenericEntity instanciateEntity(Class entityInterfaceOrBeanClass){
+      return IDOLookup.createLegacy(entityInterfaceOrBeanClass);
    }
 
+
+  private GenericEntity findByPrimaryInOtherClass(Class entityInterfaceOrBeanClass,int id)throws java.sql.SQLException{
+    GenericEntity returnEntity = IDOLookup.findByPrimaryKeyLegacy(entityInterfaceOrBeanClass,id);
+    returnEntity.setDatasource(this.getDatasource());
+    return returnEntity;
+  }
 }

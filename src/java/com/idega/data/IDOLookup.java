@@ -99,9 +99,23 @@ public class IDOLookup{
   }
 
 
+   public static GenericEntity createLegacy(Class entityInterfaceOrBeanClass){
+      //return createNew(entityInterfaceClass);
+      if(entityInterfaceOrBeanClass.isInterface()){
+        return createLegacy(IDOLookup.getBeanClassFor(entityInterfaceOrBeanClass));
+      }
+      else{
+        try{
+          return (GenericEntity)entityInterfaceOrBeanClass.newInstance();
+        }
+        catch(Exception e){
+          e.printStackTrace();
+          throw new RuntimeException(e.getMessage());
+        }
+      }
+   }
 
-
-  public static IDOLegacyEntity createLegacy(Class entityInterfaceClass){
+  private static IDOLegacyEntity createNew(Class entityInterfaceClass){
     try{
       return (IDOLegacyEntity)getHome(entityInterfaceClass).idoCreate();
     }
@@ -110,7 +124,20 @@ public class IDOLookup{
     }
   }
 
-  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,int id)throws java.sql.SQLException{
+
+  public static GenericEntity findByPrimaryKeyLegacy(Class entityInterfaceOrBeanClass,int id)throws java.sql.SQLException{
+    //return findByPrimaryKeyNew(entityInterfaceOrBeanClass,id);
+    try{
+      GenericEntity entity = createLegacy(entityInterfaceOrBeanClass);
+      entity.findByPrimaryKey(id);
+      return entity;
+    }
+    catch(Exception e){
+      throw new java.sql.SQLException(e.getMessage());
+    }
+  }
+
+  private static IDOLegacyEntity findByPrimaryKeyNew(Class entityInterfaceClass,int id)throws java.sql.SQLException{
     try{
       return (IDOLegacyEntity)getHome(entityInterfaceClass).idoFindByPrimaryKey(id);
     }
@@ -127,6 +154,7 @@ public class IDOLookup{
       throw new java.sql.SQLException(e.getMessage());
     }
   }
+
 
 
 }
