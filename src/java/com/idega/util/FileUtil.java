@@ -16,6 +16,8 @@ package com.idega.util;
  import java.io.LineNumberReader;
  import java.io.FileReader;
  import java.util.Vector;
+ import java.util.StringTokenizer;
+ import java.util.Iterator;
 
 public class FileUtil {
 
@@ -160,7 +162,7 @@ public class FileUtil {
       return false;
     }
   }
-
+/** Gets the lines from a file and return the as a vector of strings **/
   public static Vector getLinesFromFile(String pathAndFile) throws IOException{
     Vector strings = new Vector();
 
@@ -178,6 +180,25 @@ public class FileUtil {
     }
 
     return strings;
+  }
+
+/** uses getLinesFromFile and cuts the lines into java.util.StringTokenizer and returns them in a vector **/
+   public static Vector getCommaSeperatedTokensFromLinesFromFile(String pathAndFile, String seperatorToken) throws IOException{
+    Vector lines = getLinesFromFile(pathAndFile);
+    Vector tokens = new Vector();
+    String item;
+
+    Iterator iter = lines.iterator();
+    StringTokenizer tokenizer;
+
+    while (iter.hasNext()) {
+      item = (String) iter.next();
+      tokenizer = new StringTokenizer(item,seperatorToken);
+      tokens.add(tokenizer);
+    }
+
+
+    return tokens;
   }
 
 

@@ -1,11 +1,12 @@
 package com.idega.graphics.generator;
 
 import java.util.Vector;
+import java.util.StringTokenizer;
+import java.util.Iterator;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.Image;
 import java.awt.Graphics2D;
-import com.idega.graphics.GIFEncoder;
 import java.io.OutputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -18,6 +19,8 @@ import java.awt.Font;
 import com.idega.util.FileUtil;
 import com.idega.util.IWColor;
 import com.idega.util.FileUtil;
+import com.idega.graphics.GIFEncoder;
+
 
 /**
  * Title:
@@ -68,6 +71,7 @@ public class Button {
   private BufferedImage image;
   private Graphics2D g;
   private boolean resize = false;
+  private boolean onlyCreateUpState = false;
 
   public Button() {
     this("");
@@ -104,24 +108,33 @@ public class Button {
   /**
    * This method allows direct generating of buttons through a command line or cgi script<br/>
    * the allowed parameters in correct order are<br/>
-   * 1:inputfile 2:textonbutton 3:fillcolor 4:highlightcolor 5:width 6:height 7:pathtofont
+   * 1:inputfile 2:fillcolor 3:highlightcolor 4:width 5:height 6:pathtofontfile
    */
   public static void main(String[] args) {
     try{
-    Vector rows = FileUtil.getLinesFromFile(args[0]);
-    Button button = new Button();
-    button.text = args[1];
-    button.fillColor = IWColor.getAWTColorFromHex(args[2]);
-    button.highlightColor = IWColor.getAWTColorFromHex(args[3]);
-    button.width = Integer.parseInt(args[4]);
-    button.height = Integer.parseInt(args[5]);
-
-
-      File file = new File(args[6]);
+      Vector tokenizers = FileUtil.getCommaSeperatedTokensFromLinesFromFile(args[0],"=");
+      Button button = new Button();
+      button.fillColor = IWColor.getAWTColorFromHex(args[1]);
+      button.highlightColor = IWColor.getAWTColorFromHex(args[2]);
+      button.width = Integer.parseInt(args[3]);
+      button.height = Integer.parseInt(args[4]);
+      File file = new File(args[5]);
       FileInputStream fis = new FileInputStream(file);
       Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
       button.setFont(font.deriveFont(12f));
-      button.generate();
+      button.onlyCreateUpState(true);
+
+      Iterator iter = tokenizers.iterator();
+      while (iter.hasNext()) {
+        StringTokenizer tokens = (StringTokenizer)iter.next();
+
+        while(tokens.hasMoreTokens()){
+          button.name = tokens.nextToken();
+          button.text = tokens.nextToken();
+        }
+        button.generate();
+      }
+
 
     }
     catch(Exception e){
@@ -156,6 +169,10 @@ public class Button {
 
   public void setUnderColor(Color color){
     underColor = color;
+  }
+
+  public void onlyCreateUpState(boolean onlyCreateUpState){
+    this.onlyCreateUpState = onlyCreateUpState;
   }
 
   public String getUpName(){
@@ -219,9 +236,10 @@ public class Button {
 
     makeButton(g,text,image,folderPath,getStaticButtonUpString());
 
-    makeButton(g,text,image,folderPath,getStaticButtonOverString());
-
-    makeButton(g,text,image,folderPath,getStaticButtonDownString());
+    if( !onlyCreateUpState ){
+      makeButton(g,text,image,folderPath,getStaticButtonOverString());
+      makeButton(g,text,image,folderPath,getStaticButtonDownString());
+    }
 
   }
 
