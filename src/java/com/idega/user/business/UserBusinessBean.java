@@ -21,6 +21,7 @@ import com.idega.idegaweb.presentation.DataEmailer;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -404,13 +405,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 /**
  * This methods remoces this useer from all groups and deletes his login.
  */
-  public  void deleteUser(int userId) throws RemoveException {
-      try{
-      User delUser = getUser(userId);
+  public  void deleteUser(int userId, User currentUser) throws RemoveException {
+    User delUser = getUser(userId);
+    deleteUser(delUser, currentUser);
+  }
 
-      /**
-       * @todo: consider this method.
-       */
+
+
+/**
+ * This methods remoces this useer from all groups and deletes his login.
+ */
+  public  void deleteUser(User delUser, User currentUser) throws RemoveException {
+    
+    try {
 
 			Collection groups = getGroupBusiness().getParentGroups(delUser);
 			
@@ -422,7 +429,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				}
 			}
 			
-			LoginDBHandler.deleteUserLogin(userId);
+			LoginDBHandler.deleteUserLogin(delUser.getID());
 			
       //delUser.removeAllAddresses();
       //delUser.removeAllEmails();
@@ -434,9 +441,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       	this.getGroupBusiness().deleteGroup(groupId);
 			}catch (FinderException fe) {
 				System.out.println("[UserBusinessBean] : cannot find group to delete with user");	
-			}
+			}*/
 			
-			delUser.remove();*/
+	
+      delUser.delete(currentUser.getID());
+      delUser.store();
     }
     catch(Exception e){
   		//e.printStackTrace(System.err);
