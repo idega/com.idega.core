@@ -675,12 +675,12 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	public IWPresentationEvent getOpenCloseEventModel() {
 		if (_eventModel == null) {
 			_eventModel = new TreeViewerEvent();
-			if (this.getICObjectInstanceID() != 0) {
+			/*if (this.getICObjectInstanceID() != 0) {
 				_eventModel.setSource(this.getICObjectInstanceID());
-			} else {
+			} else {*/
 				//_eventModel.setSource(this.getLocation());
 				_eventModel.setSource(this);
-			}
+      //}
 		}
 		return _eventModel;
 	}
