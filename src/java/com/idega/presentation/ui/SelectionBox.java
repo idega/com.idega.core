@@ -296,6 +296,14 @@ public class SelectionBox extends InterfaceObject
 		getMenuElement(elementValue).setSelected(true);
 	}
 	/**
+	 * Sets the element by value elementValue as selected if it is found in this selectionbox
+	 **/
+	public void setSelectedElement(int elementValue)
+	{
+		setSelectedElement(Integer.toString(elementValue));
+	}	
+	
+	/**
 	 * Sets all the elements by values in elementValues as selected if it is found in this selectionbox
 	 **/
 	public void setSelectedElements(String[] elementValues)
@@ -308,6 +316,20 @@ public class SelectionBox extends InterfaceObject
 			}
 		}
 	}
+	/**
+	 * Sets all the elements by values in elementValues as selected if it is found in this selectionbox
+	 **/
+	public void setSelectedElements(int[] elementValues)
+	{
+		if(elementValues !=null){
+			for (int i = 0; i < elementValues.length; i++)
+			{
+				int value = elementValues[i];
+				setSelectedElement(value);
+			}
+		}
+	}
+	
 	/**
 	 * Maintains all the previously selected elements over a request submit
 	 **/
@@ -439,8 +461,8 @@ public class SelectionBox extends InterfaceObject
 		}
 	}
 	/**
-	 * Sets the allSelected.
-	 * @param allSelected The allSelected to set
+	 * Sets if all values should be selected.
+	 * @param allSelected True if all values whould be selected, false otherwise.
 	 */
 	public void setAllSelected(boolean allSelected)
 	{
