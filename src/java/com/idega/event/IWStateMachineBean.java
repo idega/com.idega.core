@@ -185,7 +185,12 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 	}
 
 	public void unload() {
-		this.getIWApplicationContext().removeApplicationAttribute(stateMapKey);
+		try{
+			this.getIWApplicationContext().removeApplicationAttribute(stateMapKey);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 		this._userStatesMap = null;
 	}
 
