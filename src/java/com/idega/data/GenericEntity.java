@@ -218,6 +218,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * default unimplemented function, gets the name of the record from the datastore
 	 */
 	public String getName() {
+		Object primaryKey = this.getPrimaryKey();
+		if (primaryKey != null)
+			return primaryKey.toString();
 		return null;
 	}
 	public BlobWrapper getEmptyBlob(String columnName) {
