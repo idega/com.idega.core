@@ -74,9 +74,9 @@ public java.util.Collection findUsersBySearchCondition(java.lang.String p0)throw
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public Collection findUsersBySearchCondition(String condition, Collection validUserPks) throws FinderException, RemoteException {
+public Collection findUsersBySearchCondition(String condition, String[] userIds) throws FinderException, RemoteException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(condition, validUserPks);
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(condition, userIds);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }

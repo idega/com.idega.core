@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -900,28 +901,44 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return ejbFindUsersBySearchCondition(condition, null);
 	}
 	
-	public Collection ejbFindUsersBySearchCondition(String condition, Collection validUserPks) throws FinderException, RemoteException {
-		if (condition == null || condition.equals("")) {
-			return ejbFindAllUsers();	
+	
+	/**
+	 * 
+	 * @param condition
+	 * @param validUserPks if NULL, the function ignores it, else uses it. 
+	 * @return Collection
+	 * @throws FinderException
+	 * @throws RemoteException
+	 */
+	public Collection ejbFindUsersBySearchCondition(String condition, String[] userIds) throws FinderException, RemoteException {
+		if (userIds != null && userIds.length == 0) {
+			return ejbFindUsersBySearchCondition(condition, new String[]{"-1"});
+		}else if (condition == null || condition.equals("")) {
+			if (userIds == null) {
+				return ejbFindAllUsers();
+			}else {
+				return ejbFindUsers(userIds);
+			}
 		}else {
 			IDOQuery query = new IDOQuery();
 			query.appendSelectAllFrom(this).appendWhere()
+			.append("(")
 			.append(getColumnNameFirstName()).append(" like '%").append(condition).append("%'")
 			.appendOr()
 			.append(getColumnNameMiddleName()).append(" like '%").append(condition).append("%'")
 			.appendOr()
 			.append(getColumnNameLastName()).append(" like '%").append(condition).append("%'")
 			.appendOr()
-			.append(getColumnNamePersonalID()).append(" like '%").append(condition).append("%'");
+			.append(getColumnNamePersonalID()).append(" like '%").append(condition).append("%'")
+			.append(")");
 			
-			if ( validUserPks != null && validUserPks.size() > 0 ) {
-				Iterator iter = validUserPks.iterator();
+			if ( userIds != null) {
 				query.appendAnd().append(getIDColumnName()).append(" IN (");
-				while (iter.hasNext()) {
-					query.append(iter.next());
-					if (iter.hasNext()) {
+				for (int i = 0; i < userIds.length; i++) {
+					if (i != 0) {
 						query.append(",");	
 					}
+					query.append(userIds[i]);
 				}	
 				query.append(")");	
 			}
