@@ -84,10 +84,8 @@ private PresentationObject leftObject,rightObject;
 
 
       Image image = new Image();
-      name = fileFolder.getName();
-      if(name.indexOf(".")> 0)
-        name = name.substring(0,name.indexOf("."));
-      name = "p"+name;
+      name = "p_"+String.valueOf(fileFolder.getID());
+
 
       try{
       if(!MediaBusiness.isFolder(fileFolder))
