@@ -90,6 +90,9 @@ public class ImageFactory {
     Button button = new Button(textOnButton,defaultFont);
     button.generate(filePath);
 
+
+    System.out.println("fileVirtualPath :"+fileVirtualPath);
+
     String upName = URLEncoder.encode(fileVirtualPath+button.getUpName());
     String downName = URLEncoder.encode(fileVirtualPath+button.getDownName());
     String overName = URLEncoder.encode(fileVirtualPath+button.getOverName());

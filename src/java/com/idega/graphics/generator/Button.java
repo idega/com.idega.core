@@ -20,6 +20,7 @@ import com.idega.util.FileUtil;
 import com.idega.util.IWColor;
 import com.idega.util.FileUtil;
 import com.idega.graphics.GIFEncoder;
+import com.idega.util.text.TextSoap;
 import java.awt.RenderingHints;
 
 
@@ -334,6 +335,8 @@ public class Button {
       }
 
       path+=sName;
+
+      sName = TextSoap.findAndCut(sName," ");
 
       if( effect == getStaticButtonUpString() ){
         buttonUpName = sName;
