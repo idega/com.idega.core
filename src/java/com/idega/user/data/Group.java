@@ -1,5 +1,7 @@
 package com.idega.user.data;
 
+import java.util.Hashtable;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
@@ -85,5 +87,8 @@ public interface Group extends com.idega.data.IDOEntity, com.idega.core.ICTreeNo
 	public Group getAlias();
   public void addEmail(com.idega.core.data.Email email) throws IDOAddRelationshipException;
   public void addPhone(com.idega.core.data.Phone phone) throws IDOAddRelationshipException;
+  
+  public void setMetaDataAttributes(java.util.Hashtable p0);
+  public java.util.Hashtable getMetaDataAttributes();
 }
 
