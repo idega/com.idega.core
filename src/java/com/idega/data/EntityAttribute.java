@@ -26,6 +26,7 @@ public class EntityAttribute implements IDOEntityField {
 	private String attributeType;
 	private boolean isPrimaryKey = false;
 	private boolean isUnique = false;
+	private String _description = null;
 
 	private GenericEntityDefinition entityDefinition;
 
@@ -367,5 +368,26 @@ public class EntityAttribute implements IDOEntityField {
 			throw new IDORelationshipException("This field is not part of many-to-one relationship");
 		}
 	}
+
+//	/* (non-Javadoc)
+//	 * @see dori.jasper.engine.JRField#getDescription()
+//	 */
+//	public String getDescription() {
+//		return _description;
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see dori.jasper.engine.JRField#setDescription(java.lang.String)
+//	 */
+//	public void setDescription(String description) {
+//		_description = description;
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see dori.jasper.engine.JRField#getValueClass()
+//	 */
+//	public Class getValueClass() {
+//		return this.getDataTypeClass();
+//	}
 
 }
