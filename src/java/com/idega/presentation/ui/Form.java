@@ -240,7 +240,7 @@ public class Form extends InterfaceObject {
 			}
 		}
 		
-		if (getScript().getMethod("checkSubmit") != null) {
+		if (getScript().doesFunctionExist("checkSubmit")) {
 			getScript().addToFunction("checkSubmit", "return true;");
 		}
 	}
