@@ -611,20 +611,20 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 	protected void setValue(String columnName, Object columnValue)
 	{
-		if (columnValue != null)
-		{
+		if (columnValue != null) {
 			//_columns.put(columnName.toLowerCase(),columnValue);
 			_columns.put(columnName.toUpperCase(), columnValue);
-			this.flagColumnUpdate(columnName);
-			if ((getEntityState() == STATE_NEW) || (getEntityState() == STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE))
-			{
-				setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
-			}
-			else
-			{
-				this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
-			}
+    }
+    else {
+      removeFromColumn(columnName);
+    }
+		this.flagColumnUpdate(columnName);
+		if ((getEntityState() == STATE_NEW) || (getEntityState() == STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE))	{
+			setEntityState(STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
 		}
+		else {
+			this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+	  }
 	}
 	protected Object getValue(String columnName)
 	{
