@@ -243,6 +243,10 @@ public class IWBundle{
         return localizableStringsFile;
     }
 
+    public IWResourceBundle getResourceBundle(ModuleInfo modinfo){
+      return getResourceBundle(modinfo.getCurrentLocale());
+    }
+
     public IWResourceBundle getResourceBundle(Locale locale){
         IWResourceBundle theReturn = (IWResourceBundle)resourceBundles.get(locale);
         try{
