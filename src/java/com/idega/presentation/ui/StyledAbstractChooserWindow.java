@@ -21,6 +21,7 @@ public abstract class StyledAbstractChooserWindow extends StyledIWAdminWindow{
 	
 	String chooserSelectionParameter=AbstractChooser.VALUE_PARAMETER_NAME;
 	public static String SELECT_FUNCTION_NAME = "chooserSelect";
+	public static String PERFORM_AFTER_SELECT_FUNCTION_NAME = "performAfterSelect";
 
 
 	protected static final String DISPLAYSTRING_PARAMETER_NAME = AbstractChooser.DISPLAYSTRING_PARAMETER_NAME;
@@ -76,15 +77,31 @@ public abstract class StyledAbstractChooserWindow extends StyledIWAdminWindow{
 				add(hValueString);
 			}
 
+			//closes the window and can be overridden
+			script.addFunction(PERFORM_AFTER_SELECT_FUNCTION_NAME, "function "+PERFORM_AFTER_SELECT_FUNCTION_NAME+"()"+"{"+getPerformAfterSelectScriptString(iwc)+"}");
+			
 			//script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+AbstractChooser.DISPLAYSTRING_PARAMETER_NAME+".value=displaystring;"+AbstractChooser.VALUE_PARAMETER_NAME+".value=value;window.close();return false }");
 			if( isInAFrame ){
-				script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+SCRIPT_PREFIX_IN_A_FRAME+ prefix+displayString+"."+suffix+"=displaystring; "+SCRIPT_PREFIX_IN_A_FRAME+prefix+valueString+".value=value;window.close();return false;}");
+				script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+SCRIPT_PREFIX_IN_A_FRAME+ prefix+displayString+"."+suffix+"=displaystring; "+SCRIPT_PREFIX_IN_A_FRAME+prefix+valueString+".value=value;\n "+PERFORM_AFTER_SELECT_FUNCTION_NAME+"(); }");
 			}
 			else{
-				script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+prefix+displayString+"."+suffix+"=displaystring;"+prefix+valueString+".value=value;window.close();return false;}");
+				script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+prefix+displayString+"."+suffix+"=displaystring;"+prefix+valueString+".value=value;\n "+PERFORM_AFTER_SELECT_FUNCTION_NAME+"(); }");
 			}
+			
+			
+			
 		}
 		displaySelection(iwc);
+	}
+
+	/**
+	 * Override this method to do something in javascript after the chooser value has been set.
+	 * The default behaviour is to close the window and return false
+	 * @param iwc
+	 * @return
+	 */
+	protected String getPerformAfterSelectScriptString(IWContext iwc) {
+		return "window.close();return false;";
 	}
 
 	public abstract void displaySelection(IWContext iwc);
