@@ -685,8 +685,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 */
 	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException, RemoteException {
 		//try{
-		if(!hasRelationTo(relatedGroupId)){//should check also for relationtype!
-		
+		if(!hasRelationTo(relatedGroupId,relationType)){
+			//System.out.println("hasRelationTo("+relatedGroupId+","+relationType+") IS FALSE");
 			GroupRelation rel = this.getGroupRelationHome().create();
 			rel.setGroup(this);
 			rel.setRelatedGroup(relatedGroupId);
@@ -1023,13 +1023,26 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		
 	}
 	/**
-	 * 
+	 * This is bidirectional
 	 */
 	public boolean hasRelationTo(int groupId) throws RemoteException {
 		int myId = ((Integer) this.getPrimaryKey()).intValue();
 		Collection relations = new ArrayList();
 		try {
-			relations = this.getGroupRelationHome().findGroupsRelationshipsContainingUniDirectional(groupId, myId);
+			relations = this.getGroupRelationHome().findGroupsRelationshipsContainingBiDirectional(myId, groupId);
+		} catch (FinderException ex) {
+			ex.printStackTrace();
+		}
+		return !relations.isEmpty();
+	}
+	/**
+	 * This is bidirectional
+	 */
+	public boolean hasRelationTo(int groupId, String relationType) throws RemoteException {
+		int myId = ((Integer) this.getPrimaryKey()).intValue();
+		Collection relations = new ArrayList();
+		try {
+			relations = this.getGroupRelationHome().findGroupsRelationshipsContainingBiDirectional(myId,groupId,relationType);
 		} catch (FinderException ex) {
 			ex.printStackTrace();
 		}
