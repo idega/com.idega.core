@@ -84,6 +84,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
                       stmt = conn.createStatement();
                       RS = stmt.executeQuery("select last_insert_id()");
+                      RS.next();
                       returnInt = RS.getInt(1);
 		}
 		finally{
