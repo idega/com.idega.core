@@ -1,6 +1,6 @@
 /*
 
- * $Id: Table.java,v 1.21 2002/04/06 19:07:45 tryggvil Exp $
+ * $Id: Table.java,v 1.22 2002/05/06 13:02:23 gummi Exp $
 
  *
 
@@ -2594,7 +2594,7 @@ public boolean isEmpty(int x, int y){
 
     }
 
-    return transparentcell;
+    return (Image)transparentcell.clone();
 
   }
 
