@@ -184,6 +184,16 @@ public class ICLocaleBusiness {
     return r;
   }
 
+	public static ICLocale getICLocale(Locale locale){
+    if(LocaleHashByString == null)
+      reload();
+    if( LocaleHashByString!=null && LocaleHashByString.containsKey(locale.toString()) ){
+      ICLocale ICL = (ICLocale) LocaleHashByString.get(locale.toString());
+      return ICL;
+    }
+    return null;
+  }
+
   /**
    * Returns a Locale from a Locale string like Locale.toString();
    */
