@@ -70,8 +70,6 @@ private IWResourceBundle iwrb;
         outerTable.setCellspacing(1);
         outerTable.setCellpadding(0);
         outerTable.setColor("#000000");
-        outerTable.setAlignment("center");
-        outerTable.setVerticalAlignment("middle");
         frameTable.add(outerTable,1,1);
 
       Table mainTable = new Table(1,4);
