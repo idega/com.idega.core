@@ -1,13 +1,12 @@
-//idega 2000 - Tryggvi Larusson
 /*
-*Copyright 2000 idega.is All Rights Reserved.
-*/
-
-
-/**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
+ *  $Id: Window.java,v 1.34 2005/03/08 13:04:24 tryggvil Exp $
+ *  Created in 2000 by Tryggvi Larusson
+ *  Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
+ *
+ *  This software is the proprietary information of Idega hf.
+ *  Use is subject to license terms.
+ *
+ */
 package com.idega.presentation.ui;
 
 import java.util.Iterator;
@@ -20,9 +19,17 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Page;
 
+
 /**
- * Class to create pop-up windows and Windows to open with various settings
- * */
+* <p>
+* An instance of this class is a Page but can be used for pages displayed in pop-up windows and such.
+* This class has therefore properties to set width,height etc. of the pop-up window that is opened.
+* </p>
+* Last modified: $Date: 2005/03/08 13:04:24 $ by $Author: tryggvil $
+* 
+* @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
+* @version $Revision: 1.34 $
+*/
 public class Window extends Page{
 
   private String title;
