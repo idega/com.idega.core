@@ -1077,9 +1077,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * Gets if the group is of type "UserGroupRepresentative"
 	 **/
 	public boolean isUser(){
-		if(UserBMPBean.USER_GROUP_TYPE.equals(this.getGroupType())){
-			return true;
-		}
-		return false;
+		return UserBMPBean.USER_GROUP_TYPE.equals(this.getGroupType());
 	}
 } // Class Group
