@@ -103,7 +103,7 @@ public class IWMainApplicationStarter {
 		String file = iwma.getPropertiesRealPath()+separator+"db.properties";
 		sendStartMessage("Reading Databases from file: "+file);
 		sendStartMessage("Starting idega Datastore ConnectionPool");
-		PoolManager.getInstance(file);	
+		PoolManager.getInstance(file,iwma);	
 	}
 	protected void startJDBCDatasourcePool(IWMainApplication iwma){
 		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_JDBC_DATASOURCE;

@@ -15,7 +15,9 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.LogWriter;
+import com.idega.util.text.TextSoap;
 /**
  *
  *@author <a href="http://www.wrox.com">wrox</a> modified by <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -24,7 +26,9 @@ import com.idega.util.LogWriter;
 */
 public class PoolManager
 {
-	private static String thePropertiesFileLocation;
+	
+private static final String IW_APPLICATION_PATH_PLACE_HOLDER = "{iw_application_path}";//a string you can use in a connection url
+    private static String thePropertiesFileLocation;
 	private static String DEFAULT_DSN = "default";
 	static private PoolManager instance;
 	static private int clients;
@@ -32,12 +36,21 @@ public class PoolManager
 	private PrintWriter pw;
 	private Vector drivers = new Vector();
 	private Hashtable pools = new Hashtable();
+	private static IWMainApplication iwma;//added by eiki.
+	
 	private PoolManager()
 	{
 		init(System.getProperty("file.separator") + "db.properties");
 	}
 	private PoolManager(String propertiesFileLocation)
 	{
+		init(propertiesFileLocation);
+	}
+	
+	private PoolManager(String propertiesFileLocation, IWMainApplication iwMainApplication)
+	{
+	    iwma = iwMainApplication;
+	    
 		init(propertiesFileLocation);
 	}
 	static synchronized public PoolManager getInstance()
@@ -49,6 +62,7 @@ public class PoolManager
 		clients++;
 		return instance;
 	}
+	
 
 	static synchronized public PoolManager getInstance(String propertiesFileLocation)
 	{
@@ -56,6 +70,17 @@ public class PoolManager
 		{
 			thePropertiesFileLocation = propertiesFileLocation;
 			instance = new PoolManager(propertiesFileLocation);
+		}
+		clients++;
+		return instance;
+	}
+	
+	static synchronized public PoolManager getInstance(String propertiesFileLocation, IWMainApplication mainApplication)
+	{
+		if (instance == null)
+		{
+			thePropertiesFileLocation = propertiesFileLocation;
+			instance = new PoolManager(propertiesFileLocation,mainApplication);
 		}
 		clients++;
 		return instance;
@@ -125,10 +150,19 @@ public class PoolManager
 			{
 				String poolName = name.substring(0, name.lastIndexOf("."));
 				String url = props.getProperty(poolName + ".url");
+				
 				if (url == null)
 				{
 					logWriter.log("No URL specified for " + poolName, LogWriter.ERROR);
 					continue;
+				}else {
+//				  replace the {iw_application_path} variable with the real path to the applications we folder
+				    if(iwma!=null) {
+				        String applicationRealPath = iwma.getApplicationRealPath();
+				        //does not work because the string must be an expression 
+				        //url.replaceAll(IW_APPLICATION_PATH_PLACE_HOLDER, applicationRealPath);
+				        url = TextSoap.findAndReplace(url,IW_APPLICATION_PATH_PLACE_HOLDER, applicationRealPath);
+				    }
 				}
 				String user = props.getProperty(poolName + ".user");
 				String password = props.getProperty(poolName + ".password");
