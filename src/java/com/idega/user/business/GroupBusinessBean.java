@@ -1811,13 +1811,13 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
   public GroupType createGroupTypeOrUpdate(String groupType, boolean visible) throws RemoteException{
   	GroupTypeHome home = getGroupTypeHome();
   	 try {
-        GroupType type = getGroupTypeHome().findByPrimaryKey(groupType);
+        GroupType type = home.findByPrimaryKey(groupType);
         type.setVisibility(visible);
         return type;
       }
       catch (FinderException findEx)  {
         try {
-	        GroupType type = getGroupTypeHome().create();
+	        GroupType type = home.create();
 	        type.setType(groupType);
 	        type.setVisibility(visible);
 	        type.store();
@@ -2316,10 +2316,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/10/04 20:37:39 $ by $Author: eiki $
+	 *  Last modified: $Date: 2004/10/11 12:41:40 $ by $Author: laddi $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.77 $
+	 * @version $Revision: 1.78 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
