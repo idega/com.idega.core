@@ -19,7 +19,10 @@ import javax.ejb.*;
 
 public class IDOContainer {
 
+  //Static variables:
   private static IDOContainer instance;
+  
+  //Instance variables:
   private boolean beanCachingActive=false;
   private boolean queryCachingActive=false;
 
@@ -35,6 +38,16 @@ public class IDOContainer {
       instance = new IDOContainer();
     }
     return instance;
+  }
+  
+  /**
+   * Unloads the previously loaded instance and all its resources
+   */
+  public static void unload(){
+  	instance.beanCacheMap=null;
+  	instance.beanCacheMap=null;
+  	instance.isBeanCacheActive=null;
+  	instance=null;
   }
 
   protected Map getBeanMap(){
