@@ -131,7 +131,7 @@ public static String HEADER_COLOR = "#0E2456";
       headerTable.setAlignment(2,1,"right");
 //      Image idegaweb = iwbCore.getImage("/editorwindow/idegaweb.gif","idegaWeb");
 //      headerTable.add(idegaweb,1,1);
-      headerTable.setStyleClass(1,1,"banner");
+      headerTable.setStyleClass(1,1,"top_left");
       adminTable.add(headerTable,1,1);
 
     leftTable = new Table();
