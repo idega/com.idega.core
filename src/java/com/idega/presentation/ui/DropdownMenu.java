@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.8 2002/08/06 11:27:28 palli Exp $
+ * $Id: DropdownMenu.java,v 1.9 2002/09/15 14:56:12 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -339,5 +339,13 @@ public class DropdownMenu extends InterfaceObject {
 		}
 
 		setMenuElements(vec);
+	}
+	
+	/**
+	 * Sets the width in pixels or percents
+	 */
+	public void setWidth(String width)
+	{
+		setWidthStyle(width);
 	}
 }
