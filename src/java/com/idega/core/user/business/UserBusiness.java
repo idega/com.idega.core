@@ -3,6 +3,10 @@ package com.idega.core.user.business;
 import java.sql.SQLException;
 import com.idega.core.user.data.User;
 import com.idega.util.idegaTimestamp;
+import java.util.List;
+import com.idega.core.data.Email;
+import java.sql.Connection;
+import java.sql.Statement;
 
 /**
  * Title:        User
@@ -81,6 +85,48 @@ public class UserBusiness {
 
   }
 
+  public static List listOfUserEmails(int iUserId){
+    StringBuffer sql = new StringBuffer("select ie.* ");
+    sql.append("from ic_email ie,ic_user_email iue ");
+    sql.append("where ie.ic_email_id = iue.ic_email_address ");
+    sql.append(" and iue.ic_user_id = ");
+    sql.append(iUserId);
+    Email eEmail = new Email();
+    try {
+      return com.idega.data.EntityFinder.findAll(eEmail,sql.toString());
+    }
+    catch (SQLException ex) {
+      return null;
+    }
+  }
+  public static void addNewUserEmail(int iUserId,String sNewEmailAddress){
+    Connection conn= null;
+    Statement Stmt= null;
+    try {
+      Email eEmail = new Email();
+      eEmail.setEmailAddress(sNewEmailAddress);
+      eEmail.insert();
+      eEmail.getID();
 
+      conn = com.idega.util.database.ConnectionBroker.getConnection();
+      Stmt = conn.createStatement();
+      Stmt.executeUpdate("insert into IC_USER_EMAIL (IC_USER_ID, IC_EMAIL_ADDRESS) values("+String.valueOf(iUserId)+","+String.valueOf(eEmail.getID())+")");
+
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+    }
+    finally{
+      if(Stmt != null){
+        try{
+        Stmt.close();
+        }
+        catch(SQLException ex){}
+      }
+      if (conn != null){
+        com.idega.util.database.ConnectionBroker.freeConnection(conn);
+      }
+    }
+  }
 
 } // Class UserBusiness

@@ -260,4 +260,20 @@ public class LoginDBHandler {
 
   }
 
+  public static LoginTable findUserLogin(int iUserId){
+    LoginTable LT = null;
+    try {
+      LoginTable l = new LoginTable();
+      List list = EntityFinder.findAllByColumn(l,l.getUserIDColumnName(),iUserId);
+      if(list != null){
+        LT = (LoginTable) list.get(0);
+      }
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      LT = null;
+    }
+    return LT;
+  }
+
 }
