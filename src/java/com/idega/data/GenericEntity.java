@@ -3594,7 +3594,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + " = " + toFind + " order by " + orderByColumnName);
 	}
 	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, int toFind, String orderByColumnName) throws FinderException {
-		return idoFindAllIDsByColumnOrderedBySQL(columnName, Integer.toString(toFind), columnName);
+		return idoFindAllIDsByColumnOrderedBySQL(columnName, Integer.toString(toFind), orderByColumnName);
 	}
 	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, String toFind) throws FinderException {
 		return idoFindAllIDsByColumnOrderedBySQL(columnName, toFind, columnName);
