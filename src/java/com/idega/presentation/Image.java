@@ -247,6 +247,10 @@ public void setBorder(String s){
 	setAttribute("border",s);
 }
 
+public void setBorderColor(String color)  {
+  setStyleAttribute("border-color:"+color);
+}
+
 public void setBorder(int i){
 	setBorder(Integer.toString(i));
 }
