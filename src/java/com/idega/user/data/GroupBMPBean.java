@@ -1145,7 +1145,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 		else {
 			try {
-				Collection types = this.getGroupTypeHome().findVisibleGroupTypes();//TODO optimize or cache
+//				Collection types = this.getGroupTypeHome().findVisibleGroupTypes();//TODO optimize or cache
 				return this.getGroupHome().getNumberOfVisibleGroupsContained(this);
 			}
 			catch (FinderException e) {
