@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.7 2001/12/04 23:40:13 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.8 2002/02/25 15:51:24 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -479,10 +479,22 @@ public class PresentationObjectContainer extends PresentationObject {
   }
 
 
- public synchronized Object clone(IWContext iwc, boolean askForPermission) {
+  public Object _clone(IWContext iwc, boolean askForPermission){
+    if(askForPermission){
+      if(iwc!=null && iwc.hasViewPermission(this)){
+        return this.clone(iwc,askForPermission);
+      } else {
+        return NULL_CLONE_OBJECT;
+      }
+    } else {
+      return this.clone();
+    }
+  }
+
+ public Object clone(IWContext iwc, boolean askForPermission) {
     PresentationObjectContainer obj = null;
     try {
-      obj = (PresentationObjectContainer)super.clone(iwc, askForPermission);
+      obj = (PresentationObjectContainer)super.clone();
       obj._locked = this._locked;
       //if(!(this instanceof Table)){
         if (this.theObjects != null) {
@@ -508,35 +520,6 @@ public class PresentationObjectContainer extends PresentationObject {
     }
     return obj;
   }
-
-
-  /*
-  public synchronized Object clone() {
-    PresentationObjectContainer obj = null;
-    try {
-      obj = (PresentationObjectContainer)super.clone();
-      //if(!(this instanceof Table)){
-        if (this.theObjects != null) {
-            //obj.setObjects((Vector)this.theObjects.clone());
-            obj.theObjects=(Vector)this.theObjects.clone();
-            ListIterator iter = obj.theObjects.listIterator();
-            while (iter.hasNext()) {
-              int index = iter.nextIndex();
-              Object item = iter.next();
-              //Object item = obj.theObjects.elementAt(index);
-              if(item instanceof PresentationObjectContainer){
-                obj.theObjects.set(index,((PresentationObjectContainer)item).clone());
-              }
-            }
-        //}
-      }
-    }
-    catch(Exception ex) {
-      ex.printStackTrace(System.err);
-    }
-    return obj;
-  }
-  */
 
 
 

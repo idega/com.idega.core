@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.26 2002/02/22 13:27:13 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.27 2002/02/25 15:51:24 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -562,9 +562,9 @@ public class PresentationObject extends Object implements Cloneable {
 
   public Object _clone(IWContext iwc, boolean askForPermission){
     //System.out.println("Caling _clone(iwc,boolean) for: "+this.getClass().getName());
-    if(askForPermission||iwc!=null){
-      if(iwc.hasViewPermission(this)){
-	return this.clone(iwc,askForPermission);
+    if(askForPermission){
+      if(iwc!=null && iwc.hasViewPermission(this)){
+        return this.clone();
       } else {
 	return NULL_CLONE_OBJECT;
       }
@@ -576,43 +576,11 @@ public class PresentationObject extends Object implements Cloneable {
   public Object clone(IWContext iwc) {
     return this._clone(iwc,true);
   }
-
-  public  Object clone() {
-    return this.clone(null, false);
-    //return doRealClone();
+/*
+  public  Object clone(IWContext iwc, boolean askForPermission) {
+    return this.clone();
   }
-
-  private Object doRealClone(){
-    PresentationObject obj = null;
-/*    System.err.println("--");
-    System.err.println("Cloning class of type: "+ this.getClassName());
-    System.err.println("--");
 */
-    try {
-      //This is forbidden in clone i.e. "new":
-      //obj = (PresentationObject)Class.forName(this.getClassName()).newInstance();
-      obj = (PresentationObject)super.clone();
-      if (this.attributes != null) {
-        obj.setAttribute((Hashtable)this.attributes.clone());
-      }
-      obj.setName(this.name);
-      //obj.setParentObject(this.parentObject);
-      this.prepareClone(obj);
-      Vector vector;
-      obj.initializedInMain = this.initializedInMain;
-      obj.ic_object_instance_id = this.ic_object_instance_id;
-      obj.ic_object_id = this.ic_object_id;
-
-
-      //obj.defaultState = this.defaultState;  //same object, unnecessary to clone
-
-    }
-    catch(Exception ex) {
-      ex.printStackTrace(System.err);
-    }
-    return obj;
-  }
-
 
   /*
   public synchronized Object clone() {
@@ -638,9 +606,9 @@ public class PresentationObject extends Object implements Cloneable {
   }
   */
 
-  public Object clone(IWContext iwc, boolean askForPermission) {
+  public Object clone() {
 
-/*    PresentationObject obj = null;
+    PresentationObject obj = null;
     try {
       //This is forbidden in clone i.e. "new":
       //obj = (PresentationObject)Class.forName(this.getClassName()).newInstance();
@@ -668,9 +636,8 @@ public class PresentationObject extends Object implements Cloneable {
 
 
     return obj;
-    */
     //return (PresentationObject)this.clone();
-    return this.doRealClone();
+    //return this.doRealClone();
   }
 /*
   protected void initICObjectInstanceId(IWContext iwc){
