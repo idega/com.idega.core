@@ -60,15 +60,16 @@ public class IWEventHandler extends IWPresentationServlet {
        return "com.idega.user";
      }
 
-     public void main(IWContext iwc) throws Exception{
-      IWStateMachine stateMachine;     
+     public void main(IWContext iwc) {
+      IWStateMachine stateMachine;  
+      Collection controllers;   
       try {
         stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwc,IWStateMachine.class);
+        controllers = stateMachine.getAllControllers();
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());
       }
-      Collection controllers = stateMachine.getAllControllers();
       Iterator iterator = controllers.iterator();
       while (iterator.hasNext())  {
         IWControlFramePresentationState state = (IWControlFramePresentationState) iterator.next();
