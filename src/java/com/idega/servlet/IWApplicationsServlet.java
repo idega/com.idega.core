@@ -2,17 +2,18 @@ package com.idega.servlet;
 
 import com.idega.block.login.presentation.Login;
 import com.idega.core.localisation.presentation.LocalePresentationUtil;
-import com.idega.development.presentation.Localizer;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.app.IWControlCenter;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
+import com.idega.util.reflect.MethodInvoker;
 
 /**
  * Title:        idegaclasses
@@ -111,13 +112,29 @@ private IWResourceBundle iwrb;
         mainTable.add(iwcc,1,2);
         headerImage = iwrb.getImage("login/header_app_suite.jpg","",323,196);
 
+		try{
+			PresentationObject login = (PresentationObject)Class.forName("com.idega.block.login.presentation.Login").newInstance();
+			MethodInvoker invoker = MethodInvoker.getInstance();
+			invoker.invokeMethodWithStringParameter(login,"setLogoutButtonImageURL",iwrb.getImageURI("login/logout.gif"));
+			invoker.invokeMethodWithStringParameter(login,"setHeight","60");
+			invoker.invokeMethodWithStringParameter(login,"setWidth","70");
+			invoker.invokeMethodWithStringParameter(login,"setLoginAlignment","right");
+			invoker.invokeMethodWithBooleanParameter(login,"setViewOnlyLogoutButton",true);
+		/*
         Login login = new Login();
           login.setLogoutButton(iwrb.getImage("login/logout.gif"));
           login.setHeight("60");
           login.setWidth("70");
           login.setViewOnlyLogoutButton(true);
           login.setLoginAlignment("right");
-        mainTable.add(login,1,3);
+          */
+          
+        	mainTable.add(login,1,3);
+		}
+		catch(Exception e){
+			add(iwrb.getLocalizedString("login.init.error","There was an error initialising the login component, most likely it is missing"));
+			e.printStackTrace();
+		}
 
       }
 
