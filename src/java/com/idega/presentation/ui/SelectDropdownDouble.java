@@ -18,6 +18,8 @@ import com.idega.presentation.Table;
  */
 public class SelectDropdownDouble extends InterfaceObjectContainer {
 
+	private String _primarySelected;
+	private String _secondarySelected;
 	private String primaryName = "primary";
 	private String secondaryName = "secondary";
 	private DropdownMenu primary = null;
@@ -42,7 +44,7 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		}
 		
 		addElementsToPrimary();
-		getPrimaryDropdown().setOnChange("setDropdownOptions(this, findObj('"+secondaryName+"'));");
+		getPrimaryDropdown().setOnChange("setDropdownOptions(this, findObj('"+secondaryName+"'), -1);");
 		getSecondaryDropdown().addMenuElement(-1,"");
 		getSecondaryDropdown().setSelectedElement(-1);
 
@@ -62,7 +64,9 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		script.addFunction("arrayVariables", getArrayVariables());
 		script.addFunction("setDropdownOptions", getSelectorScript());
 		
-		getParentPage().setOnLoad("setDropdownOptions(findObj('"+primaryName+"'),findObj('"+secondaryName+"'))");
+		if (_secondarySelected == null)
+			_secondarySelected = "-1";
+		getParentPage().setOnLoad("setDropdownOptions(findObj('"+primaryName+"'),findObj('"+secondaryName+"'), '"+_secondarySelected+"')");
 	}
 	
 	private void addElementsToPrimary() {
@@ -77,6 +81,8 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 					hasSelected = true;
 				}
 			}
+			if (_primarySelected != null)
+				getPrimaryDropdown().setSelectedElement(_primarySelected);
 		}
 	}
 
@@ -107,13 +113,16 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 	
 	private String getSelectorScript() {
 		StringBuffer s = new StringBuffer();
-		s.append("function setDropdownOptions(input, inputToChange) {").append("\n\t");
+		s.append("function setDropdownOptions(input, inputToChange, selected) {").append("\n\t");
 		s.append("var chosen = input.options[input.selectedIndex].value;").append("\n\t");
 		s.append("inputToChange.options.length = 0;").append("\n\n\t");
 		s.append("var array = dropdownValues[chosen];").append("\n\t");
-		s.append("for (var a=0; a < array.length; a++)").append("\n\t\t");
-		s.append("inputToChange.options[inputToChange.options.length] = array[a];").append("\n");
-		s.append("}");
+		s.append("for (var a=0; a < array.length; a++)").append("{\n\t\t");
+		s.append("inputToChange.options[inputToChange.options.length] = array[a];").append("\n\t\t");
+		s.append("var option = inputToChange.options[inputToChange.options.length - 1];").append("\n\t\t");
+		s.append("if (option == selected)").append("\n\t\t\t");
+		s.append("option.selected = 'true';").append("\n\t");
+		s.append("}").append("\n").append("}");
 
 		return s.toString();
 	}
@@ -126,6 +135,12 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		
 		_primaryCollection.add(new SelectOption(name, value));
 		_secondaryMap.put(value, values);
+	}
+	
+	public void addEmptyElement(String primaryDisplayString, String secondaryDisplayString) {
+		Map map = new HashMap();
+		map.put("-1", secondaryDisplayString);
+		addMenuElement("-1", primaryDisplayString, map);
 	}
 	
 	public DropdownMenu getPrimaryDropdown() {
@@ -175,4 +190,8 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		secondaryName = string;
 	}
 
+	public void setSelectedValues(String primaryValue, String secondaryValue) {
+		_primarySelected = primaryValue;
+		_secondarySelected = secondaryValue;
+	}
 }
