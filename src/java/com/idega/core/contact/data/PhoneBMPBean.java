@@ -221,7 +221,7 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 			buf.append(" and p.");
 			buf.append(getColumnNamePhoneTypeId());
 			buf.append("=");
-			buf.append(getHomeNumberID());
+			buf.append(phoneTypeID);
 				
 			//System.out.println(buf.toString());
 			return buf.toString();
