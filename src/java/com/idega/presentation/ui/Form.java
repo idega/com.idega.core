@@ -289,47 +289,50 @@ public class Form extends InterfaceObject {
 	
 	private String getShowLoadingLayerScript(IWContext iwc){
 	    StringBuffer script = new StringBuffer();
-	    String imageUrl = iwc.getIWMainApplication().getCoreBundle().getImageURI("loading_notext.gif");
-	    script.append(" var loaded = false;");
+	    //String imageUrl = iwc.getIWMainApplication().getCoreBundle().getImageURI("loading_notext.gif");
+	    script.append(" var loaded = false;\n");
 	    script.append("function showLoadingLayer(){ ").append("\n");
-	    script.append("var theDiv = findObj( \"busybuddy\" );").append("\n");         
-	    script.append("if( !theDiv ) { ").append("\n");
-	    script.append("return; ").append("\n");
-	    script.append("}").append("\n");
+	    script.append("  var theDiv = findObj( \"busybuddy\" );").append("\n");         
+	    script.append("  if( !theDiv ) { ").append("\n");
+	    script.append("     return; ").append("\n");
+	    script.append("   }").append("\n");
 	    String target = getTarget();
 	    if(target!=null){
-	        script.append(" theTargetFrame = findObj('"+target+"');\n");
-	        script.append(" if(theTargetFrame){");
+	        //script.append("alert(window.opener.top['"+target+"'].ReadyState);\n");
+	        script.append("   theTargetFrame = findObj('"+target+"',window.opener);\n");
+	        script.append("   if(theTargetFrame){\n");
+	        //script.append(" window.status='target found';");
 	        
 	    }
-	    script.append("var theWinDimension = window_getSizeWidthAndHeight(); ").append("\n");
-	    script.append("var busyImage = new Image(); ").append("\n");
-	    script.append("busyImage.src = \""+imageUrl+"\"; ").append("\n");
-	    script.append("var imWidth = busyImage.width?busyImage.width:0;").append("\n");
-	    script.append("var imHeight = busyImage.height?busyImage.height:0; ").append("\n");
-	    script.append("var psLeft = (theWinDimension[0]-imWidth)/2; ").append("\n");
-	    script.append("var psTop = (theWinDimension[1]-imHeight)/2; ").append("\n");
-	    script.append("if( theDiv.style ) { ").append("\n");
-	    script.append("theDiv.style.visibility = 'visible';").append("\n");
-	    script.append("theDiv.style.zindex = 999999;").append("\n");
-	    script.append("theDiv.style.position = 'absolute';").append("\n");
+	    script.append("    var theWinDimension = window_getSizeWidthAndHeight(); ").append("\n");
+	    //script.append("    var busyImage = new Image(); ").append("\n");
+	    //script.append("    busyImage.src = \""+imageUrl+"\"; ").append("\n");
+	    script.append("    var imWidth = theDiv.width?theDiv.width:0;").append("\n");
+	    script.append("    var imHeight = theDiv.height?theDiv.height:0; ").append("\n");
+	    script.append("    var psLeft = (theWinDimension[0]-imWidth)/2; ").append("\n");
+	    script.append("    var psTop = (theWinDimension[1]-imHeight)/2; ").append("\n");
+	    script.append("    if( theDiv.style ) { ").append("\n");
+	    script.append("      theDiv.style.visibility = 'visible';").append("\n");
+	    script.append("      theDiv.style.zindex = 999999;").append("\n");
+	    script.append("      theDiv.style.position = 'absolute';").append("\n");
 	    //script.append("theDiv.style.width = imWidth;").append("\n");
 	    //script.append("theDiv.style.height = imHeight;").append("\n");
-	    script.append("theDiv.style.left = psLeft+'px';").append("\n");
-	    script.append("theDiv.style.top = psTop+'px';").append("\n");
-	    script.append("} else {").append("\n");          
-	    script.append("theDiv.visibility = 'show' ;").append("\n"); 
-	    script.append("theDiv.visibility = 'visible';").append("\n");
-	    script.append("theDiv.zindex = 999999;").append("\n");
-	    script.append("theDiv.position = 'absolute';").append("\n");
+	    script.append("      theDiv.style.left = psLeft+'px';").append("\n");
+	    script.append("      theDiv.style.top = psTop+'px';").append("\n");
+	    script.append("    } else {").append("\n");          
+	    script.append("      theDiv.visibility = 'show' ;").append("\n"); 
+	    script.append("      theDiv.visibility = 'visible';").append("\n");
+	    script.append("      theDiv.zindex = 999999;").append("\n");
+	    script.append("      theDiv.position = 'absolute';").append("\n");
 	    //script.append("theDiv.width = imWidth;").append("\n");
 	    //script.append("theDiv.height = imHeight;").append("\n");
-	    script.append("theDiv.left = psLeft+'px';").append("\n");
-	    script.append("theDiv.top = psTop+'px';").append("\n");
-	    script.append("}").append("\n");
+	    script.append("      theDiv.left = psLeft+'px';").append("\n");
+	    script.append("      theDiv.top = psTop+'px';").append("\n");
+	    script.append("    }").append("\n");
 	    
 	    if(target!=null){
-	        script.append(" }\n");
+	        
+	        script.append("   }\n");
 	    }
 	    script.append("}").append("\n");
 			
@@ -341,11 +344,8 @@ public class Form extends InterfaceObject {
 	    String imageUrl = iwc.getIWMainApplication().getCoreBundle().getImageURI("loading_notext.gif");
 	    
 	    script.append("	if(!loaded){ ").append("\n");
-	   
-	    //script.append("window.status = 'winwidth='+theWinDimension[0]+' winheight='+theWinDimension[1]+' imagewidht='+imWidth+' imageheight='+imHeight+ ").append("\n");
-	    //script.append("' psLeft='+psLeft+' psTop='+psTop ; ").append("\n");
 	    script.append("document.write('<div id=\"busybuddy\" class=\"LoadLayer\" >");
-	    script.append("<img src=\""+imageUrl+"\">&nbsp;");
+	    script.append("<img src=\""+imageUrl+"\" onError=\"this.width=1;this.height=1;\">&nbsp;");
 	    script.append(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString("loading_text","Loading"));
 	    script.append("</div>') ").append("\n");
 	    script.append("loaded = true; ").append("\n");
