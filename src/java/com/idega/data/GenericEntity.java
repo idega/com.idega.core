@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.22 2001/06/25 13:44:01 eiki Exp $
+ * $Id: GenericEntity.java,v 1.23 2001/06/26 19:01:08 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1755,4 +1755,17 @@ public abstract class GenericEntity implements java.io.Serializable {
         return (getEntityState()==this.STATE_IN_SYNCH_WITH_DATASTORE);
       }
 
+
+      public static GenericEntity getInitializedEntity(String entityClassString, int id){
+        GenericEntity entity = null;
+        try{
+          entity = (GenericEntity) Class.forName(entityClassString).newInstance();
+          entity.findByPrimaryKey(id);
+        }
+        catch(Exception e){
+         e.printStackTrace(System.err);
+         System.err.println("GenericEntity: error initializing entity");
+        }
+       return entity;
+      }
 }
