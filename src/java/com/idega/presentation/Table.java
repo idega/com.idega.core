@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.63 2004/06/10 19:55:02 tryggvil Exp $
+ * $Id: Table.java,v 1.64 2004/06/23 23:00:29 gimmi Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1727,6 +1727,24 @@ public class Table extends PresentationObjectContainer {
 
 	public void setTopLine(boolean value) {
 		addLineTop = value;
+	}
+	
+	public void setTableBorder(int width, String color, String style) {
+		setStyleAttribute("border-width", width+"px");
+		setStyleAttribute("border-color", color);
+		setStyleAttribute("border-style", style);
+	}
+
+	public void setTableBorderTop(int width, String color, String style) {
+		setStyleAttribute("border-top-width", width+"px");
+		setStyleAttribute("border-top-color", color);
+		setStyleAttribute("border-top-style", style);
+	}
+
+	public void setTableBorderBottom(int width, String color, String style) {
+		setStyleAttribute("border-bottom-width", width+"px");
+		setStyleAttribute("border-bottom-color", color);
+		setStyleAttribute("border-bottom-style", style);
 	}
 
 	public void setBottomLine(boolean value) {
