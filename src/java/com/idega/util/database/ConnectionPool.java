@@ -91,7 +91,7 @@ public class ConnectionPool
    {
     //debug still active for now
      // lastRefresh = System.currentTimeMillis();
-      initializeRefresher(interval);
+    //  initializeRefresher(interval);
 
       //
       for (int i = 0; i < initConns; i++)
