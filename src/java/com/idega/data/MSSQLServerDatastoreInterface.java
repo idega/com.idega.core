@@ -91,7 +91,6 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	 */
 	public void createTrigger(IDOLegacyEntity entity) throws Exception
 	{
-		// TODO Auto-generated method stub
 	}
 	/**
 	 * @param entity
@@ -131,7 +130,6 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	 */
 	protected boolean updateNumberGeneratedValueAfterInsert()
 	{
-		// TODO Auto-generated method stub
 		return true;
 	}
 	public String getIDColumnType()

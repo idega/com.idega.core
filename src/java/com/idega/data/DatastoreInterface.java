@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.61 2003/03/06 01:27:15 aron Exp $
+ * $Id: DatastoreInterface.java,v 1.62 2003/03/07 12:52:54 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -403,7 +403,6 @@ public abstract class DatastoreInterface {
 	 */
 	protected void updateNumberGeneratedValue(IDOLegacyEntity entity, Connection conn)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 	/**
@@ -411,7 +410,6 @@ public abstract class DatastoreInterface {
 	 */
 	protected boolean updateNumberGeneratedValueAfterInsert()
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	/**
