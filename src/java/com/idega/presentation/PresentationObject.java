@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.85 2004/02/26 09:12:42 laddi Exp $
+ * $Id: PresentationObject.java,v 1.86 2004/03/22 16:04:51 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -1890,6 +1890,10 @@ implements Cloneable{//,UIComponent{
 		}
 		return super.getId();
 	}
+	
+	public String getFamily(){
+		return "idegaweb";
+	}	
 	
 	/**
 	 * Default idegaWeb JSF id generation mechanism
