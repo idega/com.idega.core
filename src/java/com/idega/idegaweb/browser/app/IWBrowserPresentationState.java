@@ -77,16 +77,13 @@ public class IWBrowserPresentationState extends IWPresentationStateImpl implemen
     return _showMenuFrame;
   }
 
-  public boolean actionPerformed(IWPresentationEvent e)throws IWException{
-    boolean refresh = false;
+  public void actionPerformed(IWPresentationEvent e)throws IWException{
     if(e instanceof IWBrowseEvent){
 
-
-      refresh = true;
+      fireStateChanged();
     }
 
 
-    return refresh;
   }
 
   public Object clone() {

@@ -1,5 +1,6 @@
 package com.idega.event;
 
+import java.rmi.RemoteException;
 import java.util.*;
 import com.idega.idegaweb.IWException;
 import com.idega.presentation.IWContext;
@@ -38,7 +39,12 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
 //  }
 
   public EventListenerList getListenersFor(ICObjectInstance instance){
-    return getListenersFor((Object)instance);
+    try {
+      return getListenersFor((Object)instance.getPrimaryKey());
+    }
+    catch (RemoteException ex) {
+      throw new RuntimeException(ex.getMessage());
+    }
   }
 
 //  private EventListenerList getListenersFor(int idObj){
@@ -64,6 +70,16 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
 //      System.out.println("getListenersFor(): initialize for -> "+idObj);
       getUserStatesMap().put(idObj,list);
     }
+
+//    Object[] arr = list.getListenerList();
+//    if(arr.length == 0){
+//      System.out.println("IWEventMachine: arr.length = 0");
+//    }
+//    for (int i = 0; i < arr.length; i++) {
+//      System.out.println("IWEventMachine: arr["+i+"]:"+arr[i]);
+//    }
+
+
     return list;
   }
 
@@ -75,12 +91,19 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
 //      getUserContext().setSessionAttribute(mapKey,stateMap);
 //    }
 //    System.out.println("getUserStatesMap()._stateMap.isEmpty(): "+_stateMap.isEmpty());
+
+
+
     if(!_stateMap.isEmpty()){
       Set set = _stateMap.keySet();
       Iterator iter = set.iterator();
+      int counter = 1;
       while (iter.hasNext()) {
         Object item = iter.next();
-//        System.out.println("_stateMap contained key = "+item);
+//        System.out.println("_stateMap key"+counter+" contained = "+item);
+//        System.out.println("_stateMap key"+counter+".hashCode() = "+item.hashCode());
+//        System.out.println("_stateMap key"+counter+".getClass() = "+item.getClass());
+        counter++;
       }
     }
     return _stateMap;
@@ -90,7 +113,7 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
 
   public void processEvent(Page page, IWContext iwc) {
 //    System.out.println("-------------processEvent begins-----------------------");
-//
+
 //    System.out.println("getEventListenerList: machine = "+ this);
 
     IWPresentationEvent[] events = IWPresentationEvent.getCurrentEvents(iwc);

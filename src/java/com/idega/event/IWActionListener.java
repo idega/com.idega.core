@@ -14,7 +14,7 @@ import com.idega.idegaweb.IWException;
 
 public interface IWActionListener extends EventListener {
 
-  public boolean actionPerformed(IWPresentationEvent e) throws IWException;
+  public void actionPerformed(IWPresentationEvent e) throws IWException;
 
 
 

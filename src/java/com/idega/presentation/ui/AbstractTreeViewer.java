@@ -1,17 +1,13 @@
 package com.idega.presentation.ui;
 
-import com.idega.event.NoSuchEventException;
+import com.idega.event.*;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.*;
 import com.idega.presentation.event.TreeViewerEvent;
 import java.util.*;
 import com.idega.presentation.text.Link;
 import com.idega.idegaweb.IWBundle;
-import com.idega.presentation.Block;
 import com.idega.core.ICTreeNode;
-import com.idega.presentation.Table;
-import com.idega.presentation.Image;
-import com.idega.presentation.IWContext;
-import com.idega.presentation.PresentationObject;
-import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.text.Text;
 
 
@@ -24,7 +20,7 @@ import com.idega.presentation.text.Text;
  * @version 1.0
  */
 
-public abstract class AbstractTreeViewer extends PresentationObjectContainer {
+public abstract class AbstractTreeViewer extends PresentationObjectContainer implements StatefullPresentation {
 
   DefaultTreeNode defaultRoot = null;
   boolean showRootNode = false;
@@ -91,8 +87,14 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
   private TreeViewerEvent _eventModel = null;
 
+  private StatefullPresentationImplHandler stateHandler = null;
+
   public AbstractTreeViewer() {
     super();
+
+    stateHandler = new StatefullPresentationImplHandler();
+    stateHandler.setPresentationStateClass(TreeViewerPS.class);
+
     defaultRoot = new DefaultTreeNode("root",-1);
     icons = new Image[14];
     treeTable = new Table(2,1);
@@ -156,7 +158,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     _showTreeIcons_changed = true;
   }
 
-  public void initializeInMain(IWContext iwc){
+  public void initializeInMain(IWContext iwc) throws Exception {
+    super.initializeInMain(iwc);
+    this.addIWActionListener((IWActionListener)this.getPresentationState(iwc));
     initIcons(iwc);
   }
 
@@ -454,16 +458,16 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     if(defaultOpenLevel > 0){
       setInitOpenLevel(iter,1);
     }
-    TreeViewerEvent event = new TreeViewerEvent();
-    event.setOpenNodes(openNodes);
-    _eventModel = event;
   }
 
   private void setInitOpenLevel(Iterator iter, int level){
     if(iter != null){
       for (int i = 0; iter.hasNext() ; i++) {
 	ICTreeNode node = (ICTreeNode)iter.next();
-	openNodes.add(Integer.toString(node.getNodeID()));
+        Object item = Integer.toString(node.getNodeID());
+        if(!openNodes.contains(item)){
+	  openNodes.add(item);
+        }
 	if( level < defaultOpenLevel ){
 	  setInitOpenLevel(node.getChildren(),level+1);
 	}
@@ -476,16 +480,29 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   }
 
   public void updateOpenNodes(IWContext iwc){
-    try {
-      TreeViewerEvent event = new TreeViewerEvent(iwc);
-      this.setOpenNodes(event.getOpenNodeList());
-      _eventModel = event;
-    }
-    catch (NoSuchEventException ex) {
-      openNodes.clear();
-      setInitOpenLevel();
+    TreeViewerPS state = (TreeViewerPS)this.getPresentationState(iwc);
+//    System.out.println("----------------updateOpenNodes-----------------");
+//    System.out.println(this+" STATE = "+ state );
+//
+//    System.out.println("ATV - TreeViewerPS: initLevel: " + state.setToInitOpenLevel());
+//    Iterator iter = state.getOpenNodeList().iterator();
+//    int counter = 1;
+//    while (iter.hasNext()) {
+//      Object item = iter.next();
+//      System.out.println("ATV - TreeViewerPS: openItem"+counter+": "+item);
+//      counter++;
+//    }
+
+    this.setOpenNodes(state.getOpenNodeList());
+
+
+
+    if(state.setToInitOpenLevel()){
+      this.setInitOpenLevel();
     }
   }
+
+
 
   public void main(IWContext iwc) throws Exception {
     if(_showTreeIcons_changed){
@@ -603,12 +620,24 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
 
   public Link setLinkToMaintainOpenAndClosedNodes(Link l){
-    l.addEventModel(_eventModel);
+//    l.addEventModel(_eventModel);
     return l;
   }
 
+  public IWPresentationEvent getOpenCloseEventModel(){
+    if(_eventModel == null){
+      _eventModel = new TreeViewerEvent();
+      if(this.getICObjectInstanceID() != 0){
+        _eventModel.setSource(this.getICObjectInstanceID());
+      } else {
+        _eventModel.setSource(this.getLocation());
+      }
+    }
+    return _eventModel;
+  }
+
   public Link setLinkToOpenOrCloseNode(Link l, ICTreeNode node, boolean nodeIsOpen){
-    TreeViewerEvent event = (TreeViewerEvent)_eventModel.clone();
+    TreeViewerEvent event = (TreeViewerEvent)getOpenCloseEventModel().clone();
     if(nodeIsOpen){
       event.setToCloseNode(node);
     } else {
@@ -720,6 +749,28 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   }
 
 */
+
+
+
+
+  public Class getPresentationStateClass(){
+    return stateHandler.getPresentationStateClass();
+  }
+
+  public IWPresentationState getPresentationState(IWUserContext iwuc){
+    return stateHandler.getPresentationState(this,iwuc);
+  }
+
+  public StatefullPresentationImplHandler getStateHandler(){
+    return stateHandler;
+  }
+
+
+
+
+
+
+
 
 
   public class DefaultTreeNode implements ICTreeNode {

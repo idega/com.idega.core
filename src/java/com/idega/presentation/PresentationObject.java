@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.47 2002/06/07 11:06:04 gummi Exp $
+ * $Id: PresentationObject.java,v 1.48 2002/06/10 15:42:28 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -705,6 +705,10 @@ public class PresentationObject extends Object implements Cloneable {
     /*if(this.ic_object_instance_id == 0){
       initICObjectInstanceId(iwc);
     }*/
+    if(_iwuc == null){
+      this.setIWUserContext(iwc);
+    }
+
     if(!initializedInMain){
       this.initInMain(iwc);
     }
@@ -1247,7 +1251,21 @@ public class PresentationObject extends Object implements Cloneable {
   }
 
   public void addIWActionListener(IWActionListener l){
-    getEventListenerList(this.getIWUserContext()).add(IWActionListener.class,l);
+//    getEventListenerList(this.getIWUserContext()).remove(IWActionListener.class,l);
+
+    Object[] list = getEventListenerList(this.getIWUserContext()).getListenerList();
+
+    boolean hasBeenAdded = false;
+    // Is l on the list?
+    for (int i = list.length-2; i>=0; i-=2) {
+        if ((list[i]==IWActionListener.class) && (list[i+1].equals(l) == true)) {
+            hasBeenAdded = true;
+            break;
+        }
+    }
+    if(!hasBeenAdded){
+      getEventListenerList(this.getIWUserContext()).add(IWActionListener.class,l);
+    }
 //    System.out.println();
 //    System.out.println("addIWActionListener: _listenerList = "+getEventListenerList(this.getIWUserContext()));
 //    System.out.println("addIWActionListener: IWActionListener = " + l);

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.15 2002/06/07 11:06:04 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.16 2002/06/10 15:42:28 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -42,7 +42,7 @@ public class PresentationObjectContainer extends PresentationObject {
       }
       if (modObject != null) {
         modObject.setParentObject(this);
-        modObject.setLocation(this.getLocation());
+//        modObject.setLocation(this.getLocation());
         this.theObjects.add(index,modObject);
       }
     }
@@ -61,7 +61,7 @@ public class PresentationObjectContainer extends PresentationObject {
       }
       if (modObject != null) {
         modObject.setParentObject(this);
-        modObject.setLocation(this.getLocation());
+//        modObject.setLocation(this.getLocation());
         this.theObjects.addElement(modObject);
       }
     }
@@ -84,7 +84,7 @@ public class PresentationObjectContainer extends PresentationObject {
       theObjects = new Vector();
     }
     modObject.setParentObject(this);
-    modObject.setLocation(this.getLocation());
+//    modObject.setLocation(this.getLocation());
     theObjects.insertElementAt(modObject,0);
   }
 
@@ -448,7 +448,7 @@ public class PresentationObjectContainer extends PresentationObject {
       }
       if (modObject != null) {
         modObject.setParentObject(this);
-        modObject.setLocation(this.getLocation());
+//        modObject.setLocation(this.getLocation());
         theObjects.insertElementAt(modObject,index);
       }
     }
@@ -468,7 +468,7 @@ public class PresentationObjectContainer extends PresentationObject {
       if (modObject != null) {
 <<<<<<< PresentationObjectContainer.java
         modObject.setParentObject(this);
-        modObject.setLocation(this.getLocation());
+//        modObject.setLocation(this.getLocation());
         theObjects.setElementAt(modObject,index);
 =======
 	modObject.setParentObject(this);
@@ -569,7 +569,7 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
      theObjects = new Vector();
     }
     o.setParentObject(this);
-    o.setLocation(this.getLocation());
+//    o.setLocation(this.getLocation());
     return theObjects.set(index,o);
   }
 
@@ -644,7 +644,7 @@ public synchronized Object _clone(IWUserContext iwc, boolean askForPermission){
           ((PresentationObject)item).setLocation(location,iwuc);
         }
         if(item instanceof StatefullPresentation){
-          IWPresentationState state = ((StatefullPresentation)this).getPresentationState(iwuc);
+          IWPresentationState state = ((StatefullPresentation)item).getPresentationState(iwuc);
           if(state != null){
             state.setLocation(location);
           }

@@ -42,6 +42,10 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
     _page = page;
   }
 
+  public boolean containsParameter(Parameter prm){
+    return _parameters.contains(prm);
+  }
+
   public IWPresentationEvent(PresentationObject source){
     super(source);
     initializeVariables();
@@ -207,18 +211,19 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
     String sourceString = iwc.getParameter(PRM_IW_EVENT_SOURCE);
     try {
       Integer primaryKey = new Integer(sourceString);
-      ICObjectInstance instance = (ICObjectInstance)IDOLookup.findByPrimaryKey(ICObjectInstance.class,primaryKey);
-      return instance;
+//      ICObjectInstance instance = (ICObjectInstance)IDOLookup.findByPrimaryKey(ICObjectInstance.class,primaryKey);
+//      return instance;
+      return primaryKey;
     }
     catch (NumberFormatException ex) {
       // Source is location
     }
-    catch (RemoteException rex) {
-      throw new RuntimeException(rex.getMessage());
-    }
-    catch (FinderException fe) {
-      throw new RuntimeException(fe.getMessage());
-    }
+//    catch (RemoteException rex) {
+//      throw new RuntimeException(rex.getMessage());
+//    }
+//    catch (FinderException fe) {
+//      throw new RuntimeException(fe.getMessage());
+//    }
 
     return IWPresentationLocation.getLocationObject(sourceString);
   }
