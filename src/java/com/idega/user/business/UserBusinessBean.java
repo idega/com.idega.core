@@ -725,7 +725,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 
   public UserGroupBusiness getUserGroupBusiness()throws RemoteException{
-    return (UserGroupBusiness) IBOLookup.getServiceInstance(null,UserGroupBusiness.class);
+    return (UserGroupBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(),UserGroupBusiness.class);
   }
 
   public Collection getAllUsersOrderedByFirstName()throws FinderException,RemoteException{
