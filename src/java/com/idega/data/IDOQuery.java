@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.idega.data.query.SelectQuery;
+
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
@@ -65,6 +67,11 @@ public class IDOQuery {
 
 	private DatastoreInterface dataStore = null;
 
+	public static IDOQuery getStaticInstance() {
+		IDOQuery query = new IDOQuery();
+		return query;
+	}
+	
 	/**
 	 * @see com.idega.data.GenericEntity.idoQuery()
 	 */
@@ -906,6 +913,11 @@ public class IDOQuery {
 	public IDOQuery appendIn(IDOQuery query) {
 		this.append(IN);
 		this.appendWithinParentheses(query);
+		return this;
+	}
+	public IDOQuery appendIn(SelectQuery query) {
+		this.append(IN);
+		this.appendWithinParentheses(query.toString());
 		return this;
 	}
 
