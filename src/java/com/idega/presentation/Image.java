@@ -341,7 +341,7 @@ private String getPrintString(){
   if ( align != null ) {
     sPrint.append(" align=\""+align+"\" ");
   }
-  sPrint.append(" >");
+  sPrint.append(" />");
   return sPrint.toString();
 }
 

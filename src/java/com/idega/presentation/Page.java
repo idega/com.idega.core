@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.12 2001/11/06 18:18:03 palli Exp $
+ * $Id: Page.java,v 1.13 2001/11/09 12:05:42 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -673,9 +673,9 @@ public class Page extends PresentationObjectContainer {
    *
    */
   public String getMetaInformation(IWContext iwc){
-    String theReturn = "\n<meta http-equiv=\"pragma\" content=\"no-cache\">\n<meta http-equiv=\"content-type\" content=\"text/html; charset=iso-8859-1\">\n<meta name=\"generator\" content=\"idegaWeb 1.3\">\n<meta name=\"author\" content=\"idega.is\">\n<meta name=\"copyright\" content=\"idega.is\">\n";
+    String theReturn = "\n<meta http-equiv=\"pragma\" content=\"no-cache\"/>\n<meta http-equiv=\"content-type\" content=\"text/html; charset=iso-8859-1\"/>\n<meta name=\"generator\" content=\"idegaWeb 1.3\"/>\n<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\"/>\n";
     if (getRedirectInfo() != null) {
-      theReturn += "<meta http-equiv=\"refresh\" content=\""+getRedirectInfo()+"\">";
+      theReturn += "<meta http-equiv=\"refresh\" content=\""+getRedirectInfo()+"\"/>";
     }
     return theReturn;
   }
