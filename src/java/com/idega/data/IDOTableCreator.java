@@ -149,7 +149,10 @@ public class IDOTableCreator{
   protected boolean doesTableExist(IDOLegacyEntity entity,String tableName){
     boolean theReturner=true;
     try{
+    	long start = System.currentTimeMillis();
         executeQuery(entity,"select * from "+tableName);
+        long end = System.currentTimeMillis();
+        System.err.println("[idoTableCreator] select took "+((end-start))+" milliseconds"+"  ("+tableName+")");
     }
     catch(Exception se){
       //String message = se.getMessage();
