@@ -1,5 +1,7 @@
 package com.idega.idegaweb;
 
+import java.io.Serializable;
+
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description: </p>
@@ -9,7 +11,7 @@ package com.idega.idegaweb;
  * @version 1.0
  */
 
-public interface IWLocation extends Cloneable{
+public interface IWLocation extends Cloneable,Serializable{
 
   public String getTarget();
 
