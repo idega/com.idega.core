@@ -321,7 +321,7 @@ public void print(IWContext iwc)throws Exception{
 			if (getInterfaceStyle().equals("default")){
 				getPrintWriter().println("<form name=\""+getName()+"\" "+getAttributeString()+" >");
 				super.print(iwc);
-				getPrintWriter().println("</form>");
+				getPrintWriter().print("</form>");
 			}
 		}
 		else if (getLanguage().equals("WML")){
