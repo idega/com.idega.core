@@ -34,7 +34,6 @@ public class SortedProperties extends Properties implements SortedMap
 	public SortedProperties()
 	{
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	/**
 	 * @param defaults
@@ -42,7 +41,6 @@ public class SortedProperties extends Properties implements SortedMap
 	public SortedProperties(Properties defaults)
 	{
 		super(defaults);
-		// TODO Auto-generated constructor stub
 	}
 	/* (non-Javadoc)
 	 * @see java.util.SortedMap#comparator()
@@ -100,7 +98,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public synchronized void clear()
 	{
-		// TODO Auto-generated method stub
 		getInternalSortedMap().clear();
 	}
 
@@ -109,7 +106,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public synchronized boolean contains(Object value)
 	{
-		// TODO Auto-generated method stub
 		//return super.contains(value);
 		return getInternalSortedMap().containsValue(value);
 	}
@@ -119,7 +115,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public synchronized boolean containsKey(Object key)
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().containsKey(key);
 	}
 
@@ -128,7 +123,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public boolean containsValue(Object value)
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().containsValue(value);
 	}
 
@@ -137,7 +131,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public synchronized Enumeration elements()
 	{
-		// TODO Auto-generated method stub
 		Vector v = new Vector(getInternalSortedMap().values());
 		return v.elements();
 		//return getInternalSortedMap().elements();
@@ -148,7 +141,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public Set entrySet()
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().entrySet();
 	}
 
@@ -157,7 +149,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public synchronized boolean equals(Object o)
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().equals(o);
 	}
 
@@ -166,7 +157,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public synchronized Object get(Object key)
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().get(key);
 	}
 
@@ -175,7 +165,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public synchronized int hashCode()
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().hashCode();
 	}
 
@@ -184,7 +173,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public boolean isEmpty()
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().isEmpty();
 	}
 
@@ -210,7 +198,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public synchronized Object put(Object key, Object value)
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().put(key, value);
 	}
 
@@ -219,7 +206,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public synchronized void putAll(Map t)
 	{
-		// TODO Auto-generated method stub
 		getInternalSortedMap().putAll(t);
 	}
 
@@ -228,7 +214,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	protected void rehash()
 	{
-		// TODO Auto-generated method stub
 		//getInternalSortedMap().rehash();
 	}
 
@@ -237,7 +222,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public synchronized Object remove(Object key)
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().remove(key);
 	}
 
@@ -246,7 +230,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public int size()
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().size();
 	}
 
@@ -255,7 +238,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public synchronized String toString()
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().toString();
 	}
 
@@ -264,7 +246,6 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	public Collection values()
 	{
-		// TODO Auto-generated method stub
 		return getInternalSortedMap().values();
 	}
 
