@@ -68,7 +68,7 @@
         </dependency>
         <dependency>
         	<!-- cos is short for com.oreilly.servlet -->
-            <groupId>cos</groupId>
+            <groupId>servlet.com</groupId>
             <artifactId>cos</artifactId>
             <version>05Nov2002</version>
             <type>jar</type>
