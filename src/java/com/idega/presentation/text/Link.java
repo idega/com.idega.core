@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.111 2004/05/19 08:54:26 birna Exp $
+ * $Id: Link.java,v 1.112 2004/05/19 17:58:51 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1008,7 +1008,6 @@ public class Link extends Text implements DPTCrawlable {
 	public void setLocale(String languageString) {
 		//setEventListener(LocaleSwitcher.class.getName());
 		addParameter(LocaleSwitcher.languageParameterString, languageString);
-		this.setToMaintainAllParameter(true);
 	}
 
 	/**
