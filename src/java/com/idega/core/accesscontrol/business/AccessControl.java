@@ -135,12 +135,14 @@ public class AccessControl{
   }
 
   public static boolean isAdmin(ModuleInfo modinfo)throws SQLException{
+    System.err.println("in isAdmin");
     try {
       Object ob = LoginBusiness.getLoginAttribute(getAdministratorGroupName(), modinfo);
       if(ob != null){
         return ((Boolean)ob).booleanValue();
       }else{
         List groups = LoginBusiness.getPermissionGroups(modinfo);
+        System.err.println("Groups = "+ groups);
         if (groups != null){
           Iterator iter = groups.iterator();
           while (iter.hasNext()) {
@@ -755,7 +757,7 @@ public class AccessControl{
     groupsToReturn[0] = PermissionGroup.getStaticPermissionGroupInstance().getGroupTypeValue();
     //filter end
 
-    List permissionGroups = UserGroupBusiness.getGroupsContaining(new GenericGroup(user.getID()),groupsToReturn,true);
+    List permissionGroups = UserGroupBusiness.getGroupsContaining(new GenericGroup(user.getGroupID()),groupsToReturn,true);
 
     if(permissionGroups != null){
       return permissionGroups;
