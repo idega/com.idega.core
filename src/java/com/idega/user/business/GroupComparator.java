@@ -234,7 +234,7 @@ public class GroupComparator extends GenericGroupComparator{
 		}
 		indent = indent - getTopmostParentLevel();
 		for (int i=0;i<indent;i++)
-			indentString = "&nbsp;&nbsp;" + indentString;
+			indentString = "&nbsp;&middot;&nbsp;" + indentString;
 		indentString = indentString + group.getName();
 		return indentString;
 	}
