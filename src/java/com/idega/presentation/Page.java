@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.71 2003/02/15 18:26:18 laddi Exp $
+ *  $Id: Page.java,v 1.72 2003/03/10 14:50:18 laddi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -132,14 +132,14 @@ public class Page extends PresentationObjectContainer {
 	 *@param  color  The new backgroundColor value
 	 */
 	public void setBackgroundColor(String color) {
-		setAttribute("bgcolor", color);
+		setStyleAttribute("background-color:"+color);
 	}
 
 	/**
 	*@param  color  The new backgroundColor value
 	*/
 	public void setBackgroundColor(IWColor color) {
-		setAttribute("bgcolor", color.getHexColorString());
+		setBackgroundColor(color.getHexColorString());
 	}
 
 	/**
@@ -545,38 +545,41 @@ public class Page extends PresentationObjectContainer {
 	 *@param  width  The new marginWidth value
 	 */
 	public void setMarginWidth(int width) {
-		setAttribute("marginwidth", Integer.toString(width));
+		setLeftMargin(width);
+		//setAttribute("marginwidth", Integer.toString(width));
 	}
 
 	/**
 	 *@param  height  The new marginHeight value
 	 */
 	public void setMarginHeight(int height) {
-		setAttribute("marginheight", Integer.toString(height));
+		setTopMargin(height);
+		//setAttribute("marginheight", Integer.toString(height));
 	}
 
 	/**
 	 *@param  leftmargin  The new leftMargin value
 	 */
 	public void setLeftMargin(int leftmargin) {
-		setAttribute("leftmargin", Integer.toString(leftmargin));
+		setStyleAttribute("margin-left:"+leftmargin+"px");
+		//setAttribute("leftmargin", Integer.toString(leftmargin));
 	}
 
 	/**
 	 *@param  topmargin  The new topMargin value
 	 */
 	public void setTopMargin(int topmargin) {
-		setAttribute("topmargin", Integer.toString(topmargin));
+		setStyleAttribute("margin-top:"+topmargin+"px");
+		//setAttribute("topmargin", Integer.toString(topmargin));
 	}
 
 	/**
 	 *@param  allMargins  The new allMargins value
 	 */
 	public void setAllMargins(int allMargins) {
-		setMarginWidth(allMargins);
-		setMarginHeight(allMargins);
-		setLeftMargin(allMargins);
-		setTopMargin(allMargins);
+		//setMarginWidth(allMargins);
+		//setMarginHeight(allMargins);
+		setStyleAttribute("margin:"+allMargins+"px");
 	}
 
 	/**
@@ -617,7 +620,7 @@ public class Page extends PresentationObjectContainer {
 	 *@param  imageURL  The new backgroundImage value
 	 */
 	public void setBackgroundImage(String imageURL) {
-		setAttribute("background", imageURL);
+		setStyleAttribute("background:url('"+imageURL+"')");
 	}
 
 	/**
@@ -1026,6 +1029,9 @@ public class Page extends PresentationObjectContainer {
 				println("<head>");
 				println("<title>" + getLocalizedTitle(iwc) + "</title>\n");
 
+				print(getMetaInformation(iwc));
+				print(getMetaTags());
+
 				if (addGlobalScript) {
 					//Print a reference to the global .js script file
 					String src = iwc.getApplication().getCoreBundle().getResourcesURL();
@@ -1056,10 +1062,6 @@ public class Page extends PresentationObjectContainer {
 
 				print(getStyleSheetURL());
 				print(getStyleDefinition());
-				print("\n");
-
-				print(getMetaInformation(iwc));
-				print(getMetaTags());
 
 				//Laddi: Made obsolete with default style sheet
 				/*if (_addStyleSheet) {
@@ -1150,20 +1152,20 @@ public class Page extends PresentationObjectContainer {
 
 		boolean addIdegaAuthorAndCopyRight = false;
 
-		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset=iso-8859-1\"/>\n<meta name=\"generator\" content=\"idegaWeb 1.3\"/>\n";
+		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset=iso-8859-1\">\n<meta name=\"generator\" content=\"idegaWeb 1.3\">\n";
 
 		//If the user is logged on then there is no caching by proxy servers
 		boolean notUseProxyCaching = true;
 
 		if (notUseProxyCaching) {
-			theReturn += "<meta http-equiv=\"pragma\" content=\"no-cache\"/>\n";
+			theReturn += "<meta http-equiv=\"pragma\" content=\"no-cache\">\n";
 		}
 		if (getRedirectInfo() != null) {
-			theReturn += "<meta http-equiv=\"refresh\" content=\"" + getRedirectInfo() + "\"/>\n";
+			theReturn += "<meta http-equiv=\"refresh\" content=\"" + getRedirectInfo() + "\">\n";
 		}
 
 		if (addIdegaAuthorAndCopyRight) {
-			theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\"/>\n";
+			theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\">\n";
 		}
 		return theReturn;
 	}
