@@ -60,6 +60,9 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		addAttribute(INITIATION_DATE_COLUMN,"Initiation Date",Timestamp.class);
 	 	addAttribute(TERMINATION_DATE_COLUMN,"Termination Date",Timestamp.class);
 	 	addAttribute(SET_PASSIVE_BY_COLUMN, "Passivated by", true, true, Integer.class, MANY_TO_ONE, User.class);
+	 	
+	 	addIndex("IDX_IC_PERM_1", new String[]{GROUP_ID_COLUMN, PERMISSION_STRING_COLUMN, CONTEXT_TYPE_COLUMN, STATUS_COLUMN});
+	 	addIndex("IDX_IC_PERM_2", CONTEXT_VALUE_COLUMN);
  	
 	}
 	
