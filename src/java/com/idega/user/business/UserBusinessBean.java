@@ -1663,7 +1663,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						Collection allViewAndOwnerPermissions = new ArrayList();
 						
 						//get all view permissions for direct parent and put in a list
-						Collection viewPermissions = AccessControl.getAllGroupViewPermissions(directlyRelatedParents);				
+						Collection viewPermissions = new ArrayList();
+						viewPermissions.addAll(AccessControl.getAllGroupViewPermissions(directlyRelatedParents));
 						allViewAndOwnerPermissions.addAll(viewPermissions);
 											
 						ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup( user );
