@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.100 2004/05/22 16:46:44 gimmi Exp $
+ * $Id: DatastoreInterface.java,v 1.101 2004/06/07 14:19:52 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -273,7 +273,10 @@ public abstract class DatastoreInterface {
 	}
 
 	public void createEntityRecord(GenericEntity entity) throws Exception {
-		getTableCreator().createEntityRecord(entity);
+		if(!(entity instanceof GenericView))
+			getTableCreator().createEntityRecord(entity);
+		else
+			getTableCreator().createEntityView((GenericView) entity);
 	}
 
 	public void executeBeforeCreateEntityRecord(GenericEntity entity) throws Exception {
@@ -1511,7 +1514,27 @@ public abstract class DatastoreInterface {
 		return tableExists;
 	}
 
-	private String[] getColumnArrayFromMetaData(String dataSourceName, String tableName) {
+	
+	/**
+	 * Queries given datasource for view existance
+	 * @param dataSourceName
+	 * @param tableName
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean doesViewExist(String dataSourceName, String tableName) throws Exception {
+		String checkQuery = "select count(*) from " + tableName;
+		try {
+			executeQuery(dataSourceName, checkQuery);
+			return true;
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+		return false;
+	}
+	
+	private String[] getColumnArrayFromMetaData(String dataSourceName,String tableName){
+
 		Connection conn = null;
 		ResultSet rs = null;
 		Vector v = new Vector();

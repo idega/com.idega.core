@@ -19,6 +19,7 @@ import javax.transaction.TransactionManager;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.ThreadContext;
+import com.idega.util.Timer;
 import com.idega.util.logging.LoggingHelper;
 
 
@@ -147,6 +148,23 @@ public class IDOTableCreator{
         e.printStackTrace();
       }
   }
+  
+  protected boolean doesViewExist(GenericView entityView){
+  	boolean returner =true;
+  	String viewName =entityView.getViewName();
+  	Timer timer = new Timer();
+  	timer.start();
+  	try {
+		if(!_dsi.doesViewExist(entityView.getDatasource(),viewName))
+			throw new Exception("View "+viewName+"does not exists");
+	}
+	catch (Exception e) {
+		returner =false;
+	}
+    timer.stop();
+    debug("doesViewExist() check took "+(timer.getTime())+" milliseconds"+"  ("+viewName+")");
+  	return returner;
+  }
 
 
   protected boolean doesTableExist(GenericEntity entity,String tableName){
@@ -230,6 +248,35 @@ public class IDOTableCreator{
 	    	throw new Exception("Table "+tableName+" does not exist");	
 	    }
 	}
+	
+	/**
+	 * Creates an entity record (view) that represents the view entity in the datastore
+	 */
+	public void createEntityView(GenericView entityView){
+		if(!doesViewExist(entityView)){
+			boolean canCommit=false;
+			debug("Creating "+entityView.getClass().getName()+" - view: "+entityView.getTableName());
+			try {
+				canCommit = this.startEntityCreationTransaction(entityView,canCommit);
+				//Create the records of all referenced entities (which this entity has dependent relationships on)
+				if(!this.hasAlreadyStartedCreatingEntity(entityView)){
+					createRefrencedTables(entityView);
+				}
+				createView(entityView);
+				//commit
+				this.endEntityCreationTransaction(entityView,canCommit,true);
+			}
+			catch (Exception e) {
+				log(e);
+				// rollback
+				this.endEntityCreationTransaction(entityView,canCommit,false);
+				e.printStackTrace();
+			}
+		} 
+		else{
+			debug("Synchronizing  "+entityView.getClass().getName()+" - viewname: "+entityView.getViewName());
+		}
+	}
 
   /**
    * Creates an entity record (table) that represents the entity in the datastore
@@ -249,6 +296,7 @@ public class IDOTableCreator{
         if(!this.hasAlreadyStartedCreatingEntity(entity)){
           createRefrencedTables(entity);
         }
+
 
         //Check again if table exists because it could be created through createRefrencedTables(entity)
         if(!this.doesTableExist(entity,entity.getTableName())){
@@ -290,6 +338,7 @@ public class IDOTableCreator{
         	}
         	System.out.println("===========================================");
         }
+
 
       }
       catch(Exception ex){
@@ -404,6 +453,16 @@ public class IDOTableCreator{
           //  ex.printStackTrace();
           //}
       }
+  }
+  
+  protected void createReferencedViews(GenericView entityView)throws Exception{
+  	java.util.Collection list = entityView.getDependantViewClasses();
+  	Iterator iter = list.iterator();
+  	while (iter.hasNext()) {
+  		Class myClass = (Class)iter.next();
+  		GenericView relationShipView = (GenericView)myClass.newInstance();
+  		createEntityView(relationShipView);
+  	}
   }
 
   /**
@@ -669,7 +728,10 @@ public class IDOTableCreator{
         //}
     }
   }
-
+  
+  protected void createView(GenericView viewEntity)throws Exception{
+  	executeUpdate(viewEntity,viewEntity.getCreationSQL());
+  }
 
   protected void createTable(GenericEntity entity)throws Exception{
     //if(!doesTableExist(entity,entity.getTableName())){
