@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.110 2004/12/03 11:42:49 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.111 2004/12/03 11:44:08 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -60,10 +60,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/03 11:42:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/03 11:44:08 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.110 $
+ * @version $Revision: 1.111 $
  */
 public class IWMainApplication {//implements ServletContext{
 
@@ -488,7 +488,7 @@ public class IWMainApplication {//implements ServletContext{
     public void shutdownApplicationServices(){
     		ICLocaleBusiness.unload();
     		ImageFactory.getStaticInstance(this).unload();
-    		try {
+    		/*try {
 				((IWStateMachine)IBOLookup.getServiceInstance(this.getIWApplicationContext(),IWStateMachine.class)).unload();
 			}
 			catch (IBOLookupException e1) {
@@ -499,7 +499,7 @@ public class IWMainApplication {//implements ServletContext{
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
-		}
+		}*/	
 		ThreadContext.getInstance().unload();
     		IDOContainer.unload();
     		IDOLookup.unload();
