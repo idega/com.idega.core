@@ -26,7 +26,7 @@ public class LoginViewHandler extends WindowViewHandler {
 	}	
 	
 	public Class getDefaultPageClass() throws ClassNotFoundException{
-		return Class.forName("com.idega.webface.workspace.WorkspaceLoginPage");
+		return Class.forName("com.idega.workspace.WorkspaceLoginPage");
 	}
 	
 }
