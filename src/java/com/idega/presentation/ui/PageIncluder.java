@@ -353,7 +353,14 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   protected String encodeQueryStrings(String html){
+    //laddi changed links in idegaweb to use amp; instead of a & 
+    //so we need to fix that here!
+    html = TextSoap.findAndReplace(html,"amp;","&");
+    
+    //laddi again, only replacing single &, a javascript issue
     html = TextSoap.findAndReplace(html,"&","&",symbol);
+
+    
     //fixing this should be done with a HTMLEditor object OR
     //make a single general expression fix
     //by getting all between (textSoap) changing them and then use a find replace on the originals
