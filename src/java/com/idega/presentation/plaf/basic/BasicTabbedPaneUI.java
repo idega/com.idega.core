@@ -113,7 +113,7 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
       
       int row = 2;
       int column = 2;
-      if ( tabSize > 5 )//changed from 5
+      if ( tabSize > 4 )//changed from 5
       	row = 4;
 
       for (int i = 0; i < tabSize; i++) {
@@ -124,13 +124,13 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI{
         this.setWidth(column,"100%");
 //        this.setColor(column++, row, (this.getSelectedIndex()==i) ? color : bright);        
         if ( i == 4 ) {
-        	row = 2;
+        	row = 4;
         	column = 2;
         }
       }
 
 			int size = getAddedTabs().size();
-			if ( size > 5 ) {
+			if ( size > 4 ) { //changed from 5
 				size = 5;
 				row = 4;	
 			}

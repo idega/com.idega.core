@@ -8,10 +8,12 @@ import java.util.Iterator;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.idega.block.help.presentation.Help;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWStateMachine;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
@@ -46,7 +48,11 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 
   private SubmitButton ok;
   private SubmitButton cancel;
+	private Help help;
 //  private SubmitButton apply;
+
+	private final static String MEMBER_HELP_BUNDLE_IDENTIFIER = "is.idega.idegaweb.member.isi";
+	private final static String HELP_TEXT_KEY = "tabbed_property_panel";
   
   
 	private CreateGroupEvent _createEvent;
@@ -91,6 +97,13 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
   }
 
   public void initializeButtons(IWContext iwc){
+  	//added for help-button
+  	IWBundle iwb = getBundle(iwc);
+		help = new Help();
+		Image helpImage = iwb.getImage("help.gif");
+		help.setHelpTextBundle( MEMBER_HELP_BUNDLE_IDENTIFIER);
+		help.setHelpTextKey(HELP_TEXT_KEY);
+		help.setImage(helpImage);
   	//changed for localized buttons - birna
   	IWResourceBundle iwrb = getResourceBundle(iwc);
 		ok = new SubmitButton(iwrb.getLocalizedImageButton("save", "Save"), iwrb.getLocalizedString("save", "Save"));
@@ -269,8 +282,9 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     buttonTable.setWidth(2,1,"7");
     buttonTable.setWidth(4,1,"7");
 
-    buttonTable.add(ok,1,1);
-    buttonTable.add(cancel,3,1);
+    buttonTable.add(help,1,1);
+    buttonTable.add(ok,3,1);
+    buttonTable.add(cancel,5,1);
 //    buttonTable.add(apply,5,1);
 
     frameTable.add(buttonTable,1,2);
