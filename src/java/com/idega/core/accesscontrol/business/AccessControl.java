@@ -1883,6 +1883,48 @@ private Collection getParentGroupsAndPermissionControllingParentGroups(String pe
 	}
 	
 	
+	/**
+	 * Gets a list of all permissions associtated with the supplied group and permission string (type e.g. view,edit,owner etc)
+	 * @param group the group that you want to see what permissions have been set to. 
+	 * @param permissionString the type
+	 * @return
+	 */
+	public static Collection getAllGroupPermissionsReverseForGroupAndPermissionString(Group group, String permissionString){
+		Collection returnCol = new Vector();//empty
+		try{
+			returnCol = getPermissionHome().findAllPermissionsByTypeAndContextValueAndPermissionString(AccessControl.CATEGORY_STRING_GROUP_ID,group.getPrimaryKey().toString(),permissionString);
+		}
+		catch(FinderException ex){
+			ex.printStackTrace();
+		}
+		catch(RemoteException x){
+			x.printStackTrace();
+		}
+		
+		return returnCol;
+	}
+	
+	public static Collection getAllOwnerGroupPermissionsReverseForGroup(Group group){
+		return getAllGroupPermissionsReverseForGroupAndPermissionString(group,AccessControl.PERMISSION_KEY_OWNER);
+	}
+	
+	public static Collection getAllEditGroupPermissionsReverseForGroup(Group group){
+		return getAllGroupPermissionsReverseForGroupAndPermissionString(group,AccessControl.PERMISSION_KEY_EDIT);
+	}
+	
+	public static Collection getAllViewGroupPermissionsReverseForGroup(Group group){
+		return getAllGroupPermissionsReverseForGroupAndPermissionString(group,AccessControl.PERMISSION_KEY_VIEW);
+	}
+	
+	public static Collection getAllDeleteGroupPermissionsReverseForGroup(Group group){
+		return getAllGroupPermissionsReverseForGroupAndPermissionString(group,AccessControl.PERMISSION_KEY_DELETE);
+	}
+	
+	public static Collection getAllCreateGroupPermissionsReverseForGroup(Group group){
+		return getAllGroupPermissionsReverseForGroupAndPermissionString(group,AccessControl.PERMISSION_KEY_CREATE);
+	}
+	
+	
 	public static Collection getAllGroupPermissionsOwnedByGroup(Group group){
 		Collection returnCol =  new Vector();//empty
 		try{
