@@ -1009,7 +1009,6 @@ public class DatastoreConnection implements Connection{
  *  Comment in for JDK 1.4 compile compatability!!!
 
 
-
     public java.sql.Statement createStatement(int iOne, int iTwo, int iThree){return null;}
 
 
