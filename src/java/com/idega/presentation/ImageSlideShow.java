@@ -17,17 +17,32 @@ import com.idega.idegaweb.IWBundle;
 public class ImageSlideShow extends Block {
 
 private static final String IMAGE_SLIDE_SHOW = "image_slide_show";
+public static int TOP = 1;
+public static int BOTTOM = 2;
+public static int OUTER = 4;
+public static int INNER = 8;
 private ICFile fileFolder;
-private String width;
-private String height;
-private String alt;
-private String preloadImages = "";
-private int fileId = -1;
 private List listOfFiles = null;
+private int width;
+private int height;
+private int buttonAlign = BOTTOM+OUTER;
+private int fileId = -1;
+private int delay = 0;
+private String alt;
 private boolean useJavascript = true;
+private boolean showButtons = true;
+private PresentationObject leftObject,rightObject;
+
+
 
   public void main(IWContext iwc) {
     IWBundle iwb = getBundle(iwc);
+    if(leftObject==null)
+      leftObject = iwb.getImage("arrowleft.gif");
+    if(rightObject==null)
+      rightObject = iwb.getImage("arrowright.gif");
+
+
     if(fileFolder == null && fileId > 1){
       try {
         fileFolder = new ICFile(fileId);
@@ -45,106 +60,198 @@ private boolean useJavascript = true;
     Table T = new Table(2,2);
     String name = "";
     Vector urls = new Vector();
+    int buttonRow = 2;
+    int imageRow = 1;
+    if((buttonAlign & TOP)!=0){
+      imageRow = 2;
+      buttonRow = 1;
+    }
 
-        try {
-          name = fileFolder.getName();
-          if(name.indexOf(".")> 0)
-            name = name.substring(0,name.indexOf("."));
-          name = "p"+name;
+    try {
+      name = fileFolder.getName();
+      if(name.indexOf(".")> 0)
+        name = name.substring(0,name.indexOf("."));
+      name = "p"+name;
 
-          Image image = new Image(fileFolder.getID());
-          if ( image != null ) {
-	          if ( width != null )
-              image.setWidth(width);
-            if ( height != null )
-              image.setHeight(height);
-	          if ( alt != null )
-              image.setName(alt);
-          }
-          urls.add(image.getServletURL(fileFolder.getID()));
-          image.setName(name);
-	        T.add(image);
-
-        }
-        catch (Exception ex) {
-          ex.printStackTrace();
-        }
-
-      Iterator iter = null;
-      if ( fileFolder.getChildCount() > 0 && fileFolder.getChildren() != null ) {
-        iter = fileFolder.getChildren();
+      Image image = new Image(fileFolder.getID());
+      if ( image != null ) {
+        if ( width > 0 )
+          image.setWidth(width);
+        if ( height > 0 )
+          image.setHeight(height);
+        if ( alt != null )
+          image.setAlt(alt);
       }
-      else if(listOfFiles!=null){
-        iter = listOfFiles.iterator();
+      urls.add(image.getServletURL(fileFolder.getID()));
+      image.setName(name);
+      T.add(image,1,imageRow);
+
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+    }
+
+    // iterator init
+    Iterator iter = null;
+    if ( fileFolder.getChildCount() > 0 && fileFolder.getChildren() != null ) {
+      iter = fileFolder.getChildren();
+    }
+    else if(listOfFiles!=null){
+      iter = listOfFiles.iterator();
+    }
+
+    // iterator work
+    if(iter !=null && iter.hasNext()){
+      ICFile image ;
+      while (iter.hasNext()) {
+        image = (ICFile)iter.next();
+        try{
+          Image img = new Image(image.getID());
+          urls.add(img.getServletURL(image.getID()));
+        }
+        catch(SQLException ex){
+          ex.printStackTrace(System.err);
+
+        }
       }
 
-      if(iter !=null && iter.hasNext()){
-        ICFile image ;
-        while (iter.hasNext()) {
-          image = (ICFile)iter.next();
-          try{
-            Image img = new Image(image.getID());
-            urls.add(img.getServletURL(image.getID()));
-          }
-          catch(SQLException ex){
-            ex.printStackTrace(System.err);
+      // layout
+        T.mergeCells(1,imageRow,2,imageRow);
 
-          }
-        }
-        T.mergeCells(1,1,2,1);
-        Link left = new Link(iwb.getImage("arrowleft.gif"));
-          left.setURL("javascript://");
-          left.setOnClick(getCallingScript(name,-1));
-          Link right = new Link(iwb.getImage("arrowright.gif"));
-          right.setURL("javascript://");
-          right.setOnClick(getCallingScript(name,+1));
-          if(getParentPage()!=null)
+        if(getParentPage()!=null)
           getParentPage().getAssociatedScript().addFunction("slide"+name,getSlideScript(name,urls));
-          T.add(left,1,2);
-          T.add(right,2,2);
-          T.setCellpadding(0);
-          T.setCellspacing(0);
-          T.setAlignment(2,2,"right");
+        if(showButtons){
+          T.add(getLeftLink(name),1,buttonRow);
+          T.add(getRightLink(name),2,buttonRow);
+          if((buttonAlign & INNER) != 0){
+           T.setAlignment(1,buttonRow,"right");
+           T.setAlignment(2,buttonRow,"left");
+          }
+          else if((buttonAlign & OUTER) != 0){
+            T.setAlignment(1,buttonRow,"left");
+            T.setAlignment(2,buttonRow,"right");
+          }
+        }
+        else
+           T.mergeCells(1,2,2,2);
+
+        T.setCellpadding(0);
+        T.setCellspacing(0);
 
       }
       else
         T.mergeCells(1,2,2,2);
 
       add(T);
+      if(delay > 0)
+      add(getDelayScript(name));
     }
   }
 
+  private Link getLeftLink(String imageName){
+    return getLink(imageName,-1,leftObject);
+  }
+
+  private Link getRightLink(String imageName){
+    return getLink(imageName,1,rightObject);
+  }
+
+  private Link getLink(String imageName,int step,PresentationObject object){
+   Link link =new Link(object);
+   link.setURL("javascript://");
+   link.setOnClick(getCallingScript(imageName,step));
+   return link;
+  }
+
   public void setFileFolder(ICFile imagefile) {
-    fileFolder = imagefile;
+    this.fileFolder = imagefile;
   }
 
   public void setFileId(int iImageFileId){
-    fileId = iImageFileId;
+    this.fileId = iImageFileId;
   }
 
   public void setFiles(List listOfImageFiles){
-    listOfFiles = listOfImageFiles;
+    this.listOfFiles = listOfImageFiles;
+  }
+
+  public void setDelay(int seconds){
+    if(seconds > 0)
+      delay = 1000*seconds;
   }
 
   public void setWidth(String width) {
-    width = width;
+    this.width = Integer.parseInt(width);
   }
 
-  public void setWidth(int imagewidth) {
-    width = String.valueOf(imagewidth);
+  public void setWidth(int width) {
+    this.width = width;
   }
 
   public void setHeight(String height) {
-    height = height;
+    this.height = Integer.parseInt(height);
+  }
+
+   public void setHeight(int height) {
+    this.width = height;
   }
 
   public void setAlt(String alt) {
-    alt = alt;
+    this.alt = alt;
+  }
+
+  public void setLeftImage(Image leftImage){
+    this.leftObject = leftImage;
+  }
+
+  public void setRightImage(Image rightImage){
+    this.rightObject = rightImage;
+  }
+
+  public void setShowButtons(boolean showButtons){
+    this.showButtons = showButtons;
+  }
+
+  public void setButtonsInnerAlignment(boolean innerAlign){
+    if(innerAlign)
+      buttonAlign |= INNER;
+    else
+      setButtonsOuterAlignment(true);
+  }
+
+  public void setButtonsOuterAlignment(boolean outerAlign){
+    if(outerAlign){
+      buttonAlign |= OUTER;
+    }
+    else
+      setButtonsInnerAlignment(true);
+  }
+
+  public void setButtonsTopAlignment(boolean topAlign){
+    if(topAlign)
+      buttonAlign |= TOP;
+    else
+      setButtonsBottomAlignment(true);
+  }
+
+  public void setButtonsBottomAlignment(boolean bottomAlign){
+    if(bottomAlign)
+      buttonAlign |= TOP;
+    else
+      setButtonsTopAlignment(true);
   }
 
   private String getCallingScript(String name,int step){
 
     return "Check"+name+"("+step+")";
+  }
+
+  private Script getDelayScript(String name){
+    StringBuffer addPics = new StringBuffer();
+    addPics.append("setInterval('").append(getCallingScript(name,1)).append("',").append(delay).append(");");
+    Script s = new Script();
+    s.addFunction(name+"load",addPics.toString());
+    return s;
   }
 
   private String getSlideScript(String name,List urls){
@@ -155,8 +262,10 @@ private boolean useJavascript = true;
     String sCheck = "Check"+name;
 
 
-    StringBuffer addPics = new StringBuffer("var ").append(sCurrent).append(" = 0;\n");
-    addPics.append("var ").append(sPicArray).append(" = new Array();\n\n");
+    StringBuffer addPics = new StringBuffer();
+    //addPics.append("var ").append(sDelay).append(" = 0;\n");
+    addPics.append("var ").append(sCurrent).append(" = ").append(delay).append(";\n");
+    addPics.append("var ").append(sPicArray).append(" = new Array();\n");
 
     addPics.append("function ").append(sAddPic).append("(_p) {\n\t");
     addPics.append(sPicArray).append("[").append(sPicArray).append(".length?");
@@ -176,26 +285,21 @@ private boolean useJavascript = true;
     addPics.append(sPicArray).append(".length);\n\t");
     addPics.append("document.").append(name).append(".src = ");
     addPics.append(sPicArray).append("[").append(sCurrent).append("].src;\n");
-    addPics.append("}");
+    addPics.append("}\n");
 
     return addPics.toString();
-  /*
 
-   <script type=text/javascript>
-    var current = 0;
-    var myPics = new Array();
-    function addPic(_p) {
-      myPics[myPics.length?myPics.length:0] = new Image();
-      myPics[myPics.length-1].src=_p;
+  }
+
+  public Object clone(IWContext iwc){
+    ImageSlideShow obj = null;
+    try {
+      obj = (ImageSlideShow)super.clone();
     }
+    catch(Exception ex){
 
-    addPic("http://www.js-examples.com/js/pic1.gif");
-    addPic("http://www.js-examples.com/js/pic2.gif");
-
-    function checkIt(val) {
-      current = Math.abs((current+parseInt(val))%myPics.length);
-      document.myimg.src = myPics[current].src;
-    }*/
+    }
+    return obj;
   }
 
 }// class ImageRotater
