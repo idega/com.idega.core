@@ -1155,12 +1155,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	*/
   public synchronized void update()throws SQLException{
       try{
-	    DatastoreInterface.getInstance(this).update(this);
+        DatastoreInterface.getInstance(this).update(this);
 	flushQueryCache();
       }
       catch(Exception ex){
 	if(ex instanceof SQLException){
-	  ex.printStackTrace();
+	  //ex.printStackTrace();
 	  throw (SQLException)ex.fillInStackTrace();
 	}
       }
@@ -1180,7 +1180,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     }
     catch(Exception ex) {
       if(ex instanceof SQLException) {
-	ex.printStackTrace();
+	//ex.printStackTrace();
 	throw (SQLException)ex.fillInStackTrace();
       }
     }
