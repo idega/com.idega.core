@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.8 2003/12/05 19:20:49 thomas Exp $
+ * $Id: XMLElement.java,v 1.9 2004/03/12 18:43:45 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -325,10 +325,16 @@ public class XMLElement {
     return element;
   }
   
+  // do not remove that method even if it is not used at the moment
   public XMLElement detach()	{
   	if (_element != null)	{
   		return new XMLElement(_element.detach());
   	}
   	return null;
   }
+  
+  public void setName(String newName) {
+  	_element.setName(newName);
+  }
+		
 }
