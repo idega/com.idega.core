@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.67 2003/04/04 11:36:21 laddi Exp $
+ * $Id: PresentationObject.java,v 1.68 2003/06/07 11:11:03 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1193,9 +1193,14 @@ public class PresentationObject extends Object implements Cloneable {
     System.err.println("AT  :"+new java.util.Date(System.currentTimeMillis()).toString());
     java.util.Enumeration enum = iwc.getParameterNames();
     String prm;
-    while(enum.hasMoreElements()){
-      prm = (String) enum.nextElement();
-      System.err.println("Name: "+prm+"\t Value: "+iwc.getParameter(prm));
+	while(enum.hasMoreElements()){
+    	prm = (String) enum.nextElement();
+      	String[] values =  iwc.getParameterValues(prm);
+      	for (int i = 0; i < values.length; i++) {
+      		//debug("Name: "+prm+(values.length>1?" # "+(i+1):"")+"\t Value: "+values[i]);
+			System.err.println("Name: "+prm+(values.length>1?" # "+(i+1):"")+"\t Value: "+values[i]);
+	  	}
+	  //System.err.println("Name: "+prm+"\t Value: "+iwc.getParameter(prm));
     }
     System.err.println();
    }
