@@ -23,7 +23,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	private int _cursor = 0;
 	private Vector _PKs;
 	private LoadTracker _tracker;
-	private int fetchSize = 1000;
+	private int fetchSize = 1;
 
 	private IDOPrimaryKeyList() {
 	}
@@ -32,6 +32,32 @@ public class IDOPrimaryKeyList implements List, Runnable {
 //	private void reloadResultSet(){
 //
 //	}
+
+	private void debugPKs(){
+	    System.out.println("[IDOPrimaryKeyList]: _PKs content ->");
+		System.out.println("Index\tObject");
+		System.out.println("-----\t------");
+		ListIterator iter = _PKs.listIterator();
+		int count=0;
+		boolean showNulls = true;
+		while (iter.hasNext()) {
+			int index = iter.nextIndex();
+			Object item = iter.next();
+			if(item != null || showNulls){
+				System.out.println(index+"\t"+item);
+				if(item != null){
+				    showNulls = true;
+				} else {
+				   showNulls = false;
+				   count++;
+				}
+			} else {
+			    count++;
+			}
+		}
+		System.out.println("Number of null objects: "+count);
+		System.out.println("[IDOPrimaryKeyList]: _PKs content ends");
+	}
 
 	public IDOPrimaryKeyList(String sqlQuery,String countQuery, GenericEntity entity, int size) {
 		_sqlQuery = sqlQuery;
@@ -74,6 +100,10 @@ public class IDOPrimaryKeyList implements List, Runnable {
 
 	}
 
+	/**
+	 * @param fromIndex low endpoint (inclusive).
+	 * @param toIndex high endpoint (exclusive).
+	 */
 	private void loadSubset(int fromIndex, int toIndex) throws IDOFinderException
 	{
 		List setsToLoad;
@@ -92,12 +122,12 @@ public class IDOPrimaryKeyList implements List, Runnable {
 		{
 			_entity.debug("[IDOPrimaryKeyList]: Going to Datastore for SQL query: " + _sqlQuery);
 			_entity.debug("[IDOPrimaryKeyList]: getting PKs from "+fromIndex+" to "+toIndex);
-			System.out.println("[IDOPrimaryKeyList]: setsToLoad ->");
-			Iterator iter = setsToLoad.iterator();
-			while (iter.hasNext()) {
-				int[] item = (int[])iter.next();
-				System.out.println("From: "+item[LoadTracker.FROM_INDEX_IN_ARRAY]+"\tTo:"+item[LoadTracker.TO_INDEX_IN_ARRAY]);
-			}
+//			System.out.println("[IDOPrimaryKeyList]: setsToLoad ->");
+//			Iterator iter = setsToLoad.iterator();
+//			while (iter.hasNext()) {
+//				int[] item = (int[])iter.next();
+//				System.out.println("From: "+item[LoadTracker.FROM_INDEX_IN_ARRAY]+"\tTo:"+item[LoadTracker.TO_INDEX_IN_ARRAY]);
+//			}
 
 		}
 
@@ -122,7 +152,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				//JDBC 1.0
 				ResultSet RS = Stmt.executeQuery(_sqlQuery);
 
-				int RSpos = 0;
+				int RSpos = -1;
 				while (iter.hasNext())
 				{
 					int i = iter.nextIndex();
@@ -140,21 +170,25 @@ public class IDOPrimaryKeyList implements List, Runnable {
 					}
 
 
-				    for (;RSpos < fromIndex; RSpos++) {
+				    while((RSpos+1) < fromIndex) {
 						if(!RS.next())
 						{
 						   RSpos =  fromIndex;
 						   break;
 						}
+						RSpos++;  // RS.next()
 					}
 					//
 
-					for (;RSpos < tIndex;RSpos++)
+					//while((RSpos+1) <= tIndex)
+					while((RSpos+1) < tIndex)
 					{
 						if(!RS.next())
 						{
+							RSpos++;
 						    break;
 						}
+						RSpos++;  // RS.next()
 						Object pk = _entity.getPrimaryKeyFromResultSet(RS);
 						if (pk != null)
 						{
@@ -234,6 +268,10 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				}
 			}
 		}
+//
+//		if(_entity.isDebugActive()){
+//		    debugPKs();
+//		}
 	}
 
 //    private void freeConnection(){
@@ -322,17 +360,32 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	return _PKs.listIterator(index);
   }
 
-  public List subList(int fromIndex, int toIndex) {
-	try
-	{
-		this.loadSubset(fromIndex,toIndex);
+	/**
+	 * Returns a view of the portion of this List between fromIndex,
+	 * inclusive, and toIndex, exclusive.  (If fromIndex and ToIndex are
+	 * equal, the returned List is empty.)  The returned List is backed by this
+	 * List, so changes in the returned List are reflected in this List, and
+	 * vice-versa.
+	 *
+	 * @param fromIndex low endpoint (inclusive) of the subList.
+	 * @param toIndex high endpoint (exclusive) of the subList.
+	 * @return a view of the specified range within this List.
+	 * @throws IndexOutOfBoundsException endpoint index value out of range
+	 *         <code>(fromIndex &lt; 0 || toIndex &gt; size)</code>
+	 * @throws IllegalArgumentException endpoint indices out of order
+	 *	       <code>(fromIndex &gt; toIndex)</code>
+	 */
+	public List subList(int fromIndex, int toIndex) {
+		try
+		{
+			this.loadSubset(fromIndex,toIndex);
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+		return _PKs.subList(fromIndex, toIndex);
 	}
-	catch (Exception ex)
-	{
-		ex.printStackTrace();
-	}
-	return _PKs.subList(fromIndex, toIndex);
-  }
 
 
   public boolean equals(Object o) {
@@ -344,7 +397,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 	if(obj == null){
 		try
 		{
-			loadSubset(Math.max(0,index-5),Math.min(index+20,_size));
+			loadSubset(index,index);
 		}
 		catch (Exception ex)
 		{
@@ -424,7 +477,20 @@ public class IDOPrimaryKeyList implements List, Runnable {
 			_subsetMinLength = subsetMinLength;
 		}
 
-
+		private void debugLoadedSubSets(){
+	    System.out.println("[IDOPrimaryKeyList]: _loadedSubSets content ->");
+		System.out.println("From\tTo");
+		System.out.println("-----\t------");
+		Iterator iter = _loadedSubSets.iterator();
+		boolean showNulls = true;
+		while (iter.hasNext()) {
+			int[] item = (int[])iter.next();
+			if(item != null || showNulls){
+				System.out.println(item[0]+"\t"+item[1]);
+			}
+		}
+		System.out.println("[IDOPrimaryKeyList]: _loadedSubSets content ends");
+	}
 
 		public float getLoadRatio(){
 		    if(_size != 0){
@@ -450,6 +516,10 @@ public class IDOPrimaryKeyList implements List, Runnable {
 //		}
 
 
+		/**
+		 * @param fromIndex low endpoint (inclusive).
+		 * @param toIndex high endpoint (exclusive).
+		 */
 		private boolean isLoaded(int fromIndex, int toIndex){
 //		    int fIndex = Math.min(fromIndex,toIndex);
 		    int fIndex = fromIndex;
@@ -466,25 +536,32 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				if(item[FROM_INDEX_IN_ARRAY] <= fIndex && item[TO_INDEX_IN_ARRAY] >= tIndex){
 				    return true;
 				}
-				if(item[FROM_INDEX_IN_ARRAY] > tIndex ){
+				if(item[FROM_INDEX_IN_ARRAY] > tIndex+1 ){
 				    break;
 				}
 			}
 			return false;
 		}
 
+		/**
+		 * @param fromIndex low endpoint (inclusive).
+		 * @param toIndex high endpoint (exclusive).
+		 */
 		public List getNotLoadedSubsets(int fromIndex, int toIndex){
-			if (_entity.isDebugActive()){
-			    System.out.println("[IDOPrimaryKeyList]: _size = "+_size);
-			}
+//			if (_entity.isDebugActive()){
+//			    System.out.println("[IDOPrimaryKeyList]: _size = "+_size);
+//				debugLoadedSubSets();
+//			}
 			List toReturn = new Vector();
 			int fIndex = Math.min(fromIndex,toIndex);
 			fIndex = Math.min(fIndex,_size);
 			int tIndex = Math.max(fromIndex,toIndex);
-			if (_entity.isDebugActive()){
-				System.out.println("[IDOPrimaryKeyList]: 1");
-				System.out.println("[IDOPrimaryKeyList]: getNotLoadedSubsets("+fIndex+","+tIndex+")");
-			}
+//			if (_entity.isDebugActive()){
+//				System.out.println("[IDOPrimaryKeyList]: 1");
+//				System.out.println("[IDOPrimaryKeyList]: getNotLoadedSubsets("+fIndex+","+tIndex+")");
+//				System.out.println("[IDOPrimaryKeyList]: isLoaded("+fromIndex+","+toIndex+") = "+isLoaded(fromIndex,toIndex));
+//
+//			}
 			if(isLoaded(fromIndex,toIndex)){
 			    return toReturn;
 			}
@@ -495,10 +572,10 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				int [] interval = new int[2];
 				interval[FROM_INDEX_IN_ARRAY] = fIndex;
 				interval[TO_INDEX_IN_ARRAY] = tIndex;
-				if (_entity.isDebugActive()){
-					System.out.println("[IDOPrimaryKeyList]: 2");
-					System.out.println("[IDOPrimaryKeyList]: getNotLoadedSubsets("+fIndex+","+tIndex+")");
-				}
+//				if (_entity.isDebugActive()){
+//					System.out.println("[IDOPrimaryKeyList]: 2");
+//					System.out.println("[IDOPrimaryKeyList]: getNotLoadedSubsets("+fIndex+","+tIndex+")");
+//				}
 				toReturn.add(interval);
 				return toReturn;
 			} else {
@@ -508,17 +585,17 @@ public class IDOPrimaryKeyList implements List, Runnable {
 					int[] item = (int[])iter.next();
 
 
-					if(tIndex < item[FROM_INDEX_IN_ARRAY] && (index != 0 && ((int[])_loadedSubSets.get(index-1))[TO_INDEX_IN_ARRAY] < fIndex)){  // interval is not part of any other interval
-						if(index == 0){
+					if(( fIndex >= item[TO_INDEX_IN_ARRAY] && !iter.hasNext() )||(tIndex <= item[FROM_INDEX_IN_ARRAY] && (index != 0 && ((int[])_loadedSubSets.get(index-1))[TO_INDEX_IN_ARRAY] <= fIndex))){  // interval is not part of any other interval
+//						if(index == 0){
 							int [] interval = new int[2];
 							interval[FROM_INDEX_IN_ARRAY] = fIndex;
 							interval[TO_INDEX_IN_ARRAY] = Math.min(tIndex,_size);
-							if (_entity.isDebugActive()){
-								System.out.println("[IDOPrimaryKeyList]: 2");
-								System.out.println("[IDOPrimaryKeyList]: getNotLoadedSubsets("+interval[FROM_INDEX_IN_ARRAY]+","+interval[TO_INDEX_IN_ARRAY]+")");
-							}
+//							if (_entity.isDebugActive()){
+//								System.out.println("[IDOPrimaryKeyList]: 3");
+//								System.out.println("[IDOPrimaryKeyList]: getNotLoadedSubsets("+interval[FROM_INDEX_IN_ARRAY]+","+interval[TO_INDEX_IN_ARRAY]+")");
+//							}
 							toReturn.add(interval);
-						}
+//						}
 					    break;
 					}
 
@@ -532,26 +609,26 @@ public class IDOPrimaryKeyList implements List, Runnable {
 //						} else {
 //						    interval[TO_INDEX_IN_ARRAY] = min;
 //						}
-						if (_entity.isDebugActive()){
-							System.out.println("[IDOPrimaryKeyList]: 4");
-							System.out.println("[IDOPrimaryKeyList]: getNotLoadedSubsets("+interval[FROM_INDEX_IN_ARRAY]+","+interval[TO_INDEX_IN_ARRAY]+")");
-						}
+//						if (_entity.isDebugActive()){
+//							System.out.println("[IDOPrimaryKeyList]: 4");
+//							System.out.println("[IDOPrimaryKeyList]: getNotLoadedSubsets("+interval[FROM_INDEX_IN_ARRAY]+","+interval[TO_INDEX_IN_ARRAY]+")");
+//						}
 						toReturn.add(interval);
 					}
 
-					if(tIndex > item[TO_INDEX_IN_ARRAY] ){ // interval outreaches item's interval
+					if(fIndex < item[TO_INDEX_IN_ARRAY] && tIndex > item[TO_INDEX_IN_ARRAY] ){ // interval outreaches item's interval
 						int [] interval = new int[2];
-						interval[FROM_INDEX_IN_ARRAY] = item[TO_INDEX_IN_ARRAY]+1;
+						interval[FROM_INDEX_IN_ARRAY] = item[TO_INDEX_IN_ARRAY];
 						int min = Math.min(tIndex,_size);
 						if(_loadedSubSets.size() > index+1){
 						    interval[TO_INDEX_IN_ARRAY] = Math.min(min,((int[])_loadedSubSets.get(index+1))[FROM_INDEX_IN_ARRAY]);
 						} else {
 						    interval[TO_INDEX_IN_ARRAY] = min;
 						}
-						if (_entity.isDebugActive()){
-							System.out.println("[IDOPrimaryKeyList]: 5");
-							System.out.println("[IDOPrimaryKeyList]: getNotLoadedSubsets("+interval[FROM_INDEX_IN_ARRAY]+","+interval[TO_INDEX_IN_ARRAY]+")");
-						}
+//						if (_entity.isDebugActive()){
+//							System.out.println("[IDOPrimaryKeyList]: 5");
+//							System.out.println("[IDOPrimaryKeyList]: getNotLoadedSubsets("+interval[FROM_INDEX_IN_ARRAY]+","+interval[TO_INDEX_IN_ARRAY]+")");
+//						}
 						toReturn.add(interval);
 					}
 				}
@@ -561,60 +638,163 @@ public class IDOPrimaryKeyList implements List, Runnable {
 			}
 		}
 
+
+
+		/**
+		 * @param fromIndex low endpoint (inclusive).
+		 * @param toIndex high endpoint (exclusive).
+		 */
 		public void addLoadedSubSet(int fromIndex, int toIndex){
-			int fIndex = Math.min(fromIndex,toIndex);
-			int tIndex = Math.max(fromIndex,toIndex);
-			boolean done = false;
-			if(_loadedSubSets.size() != 0)
-			{
-				Iterator iter = _loadedSubSets.iterator();
-				while (iter.hasNext()) {
-//					int index = iter.nextIndex();
-					int[] item = (int[])iter.next();
-					if(item[FROM_INDEX_IN_ARRAY] > tIndex){
-					    break;
-					}
-					if(item[FROM_INDEX_IN_ARRAY] <= fIndex && item[TO_INDEX_IN_ARRAY] >= fIndex ){
-						// fromIndex is within this subse
-						done = true;
-						if(item[TO_INDEX_IN_ARRAY] < tIndex){
-							item[TO_INDEX_IN_ARRAY] = tIndex;
-							fIndex = item[FROM_INDEX_IN_ARRAY];
-							while (iter.hasNext()) {
-//								index = iter.nextIndex();
-								int[] item2 = (int[])iter.next();
-								if(item2[FROM_INDEX_IN_ARRAY] <= item[TO_INDEX_IN_ARRAY]){
-								    if( item2[TO_INDEX_IN_ARRAY] >= item[TO_INDEX_IN_ARRAY]){
-										item[TO_INDEX_IN_ARRAY] = item2[TO_INDEX_IN_ARRAY];
-										iter.remove();
-										break;
-									} else {
-									    iter.remove();
-									}
-								}
-							}
-						} else {
-							break;
-						}
-					} else if(item[FROM_INDEX_IN_ARRAY] >= tIndex && item[TO_INDEX_IN_ARRAY] <= tIndex){
-						// toIndex is within this subset
-						done = true;
-						item[FROM_INDEX_IN_ARRAY] = fIndex;
-						break;
-					}
-				}
-			}
-			//if(_numberOfSubsets == 0 || !done)
-			if(!done)
-			{
-				int[] newInterval = new int[2];
-				newInterval[FROM_INDEX_IN_ARRAY] = fIndex;
-				newInterval[TO_INDEX_IN_ARRAY] = tIndex;
-				_loadedSubSets.add(newInterval);
-				Collections.sort(_loadedSubSets, _comparator);
+			if (_entity.isDebugActive()){
+			    System.out.println("[IDOPrimaryKeyList]: addLoadedSubSet("+fromIndex+","+toIndex+") -> begins");
+				debugLoadedSubSets();
 			}
 
+			List toReturn = new Vector();
+			int fIndex = Math.min(fromIndex,toIndex);
+			fIndex = Math.min(fIndex,_size);
+			int tIndex = Math.max(fromIndex,toIndex);
+//			if (_entity.isDebugActive()){
+//				System.out.println("[IDOPrimaryKeyList]: 1");
+//				System.out.println("[IDOPrimaryKeyList]: addLoadedSubSet("+fIndex+","+tIndex+")");
+//			}
+//			if(isLoaded(fromIndex,toIndex)){
+//			    return toReturn;
+//			}
+			tIndex = Math.max(tIndex,fromIndex+_subsetMinLength);
+			tIndex = Math.min(tIndex,_size);
+			boolean done = false;
+			if(_loadedSubSets.size() == 0){
+				int [] interval = new int[2];
+				interval[FROM_INDEX_IN_ARRAY] = fIndex;
+				interval[TO_INDEX_IN_ARRAY] = tIndex;
+//				if (_entity.isDebugActive()){
+//					System.out.println("[IDOPrimaryKeyList]: 2");
+//					System.out.println("[IDOPrimaryKeyList]: addLoadedSubSet("+fIndex+","+tIndex+")");
+//				}
+				_loadedSubSets.add(interval);
+			} else {
+				ListIterator iter = _loadedSubSets.listIterator();
+				while (iter.hasNext()) {
+					int index = iter.nextIndex();
+					int[] item = (int[])iter.next();
+
+
+					if(( fIndex >= item[TO_INDEX_IN_ARRAY] && !iter.hasNext() )||(tIndex <= item[FROM_INDEX_IN_ARRAY] && (index != 0 && ((int[])_loadedSubSets.get(index-1))[TO_INDEX_IN_ARRAY] <= fIndex))){  // interval is not part of any other interval
+//						if(index == 0){
+							int [] interval = new int[2];
+							interval[FROM_INDEX_IN_ARRAY] = fIndex;
+							interval[TO_INDEX_IN_ARRAY] = Math.min(tIndex,_size);
+//							if (_entity.isDebugActive()){
+//								System.out.println("[IDOPrimaryKeyList]: 3");
+//								System.out.println("[IDOPrimaryKeyList]: addLoadedSubSet("+interval[FROM_INDEX_IN_ARRAY]+","+interval[TO_INDEX_IN_ARRAY]+")");
+//							}
+							iter.add(interval);
+//						}
+					    break;
+					}
+
+					if(fIndex < item[FROM_INDEX_IN_ARRAY] && tIndex >= item[FROM_INDEX_IN_ARRAY]){  // interval begins before item's interval and covers at least some of it
+					    int [] interval = new int[2];
+						interval[FROM_INDEX_IN_ARRAY] = fIndex;
+						int min = Math.min(tIndex,item[FROM_INDEX_IN_ARRAY]);
+						interval[TO_INDEX_IN_ARRAY] = min;
+//						if(_loadedSubSets.size() > index+1){
+//						    interval[TO_INDEX_IN_ARRAY] = Math.min(min,((int[])_loadedSubSets.get(index+1))[FROM_INDEX_IN_ARRAY]);
+//						} else {
+//						    interval[TO_INDEX_IN_ARRAY] = min;
+//						}
+//						if (_entity.isDebugActive()){
+//							System.out.println("[IDOPrimaryKeyList]: 4");
+//							System.out.println("[IDOPrimaryKeyList]: addLoadedSubSet("+interval[FROM_INDEX_IN_ARRAY]+","+interval[TO_INDEX_IN_ARRAY]+")");
+//						}
+						iter.add(interval);
+					}
+
+					if(fIndex < item[TO_INDEX_IN_ARRAY] && tIndex > item[TO_INDEX_IN_ARRAY] ){ // interval outreaches item's interval
+						int [] interval = new int[2];
+						interval[FROM_INDEX_IN_ARRAY] = item[TO_INDEX_IN_ARRAY];
+						int min = Math.min(tIndex,_size);
+						if(_loadedSubSets.size() > index+1){
+						    interval[TO_INDEX_IN_ARRAY] = Math.min(min,((int[])_loadedSubSets.get(index+1))[FROM_INDEX_IN_ARRAY]);
+						} else {
+						    interval[TO_INDEX_IN_ARRAY] = min;
+						}
+//						if (_entity.isDebugActive()){
+//							System.out.println("[IDOPrimaryKeyList]: 5");
+//							System.out.println("[IDOPrimaryKeyList]: addLoadedSubSet("+interval[FROM_INDEX_IN_ARRAY]+","+interval[TO_INDEX_IN_ARRAY]+")");
+//						}
+						iter.add(interval);
+					}
+				}
+				Collections.sort(_loadedSubSets,_comparator);
+			}
+			if (_entity.isDebugActive()){
+				System.out.println("And then");
+				debugLoadedSubSets();
+				System.out.println("[IDOPrimaryKeyList]: addLoadedSubSet("+fromIndex+","+toIndex+") -> ends");
+
+			}
 		}
+
+//		/**
+//		 * @param fromIndex low endpoint (inclusive).
+//		 * @param toIndex high endpoint (exclusive).
+//		 */
+//		public void addLoadedSubSet(int fromIndex, int toIndex){
+//			int fIndex = Math.min(fromIndex,toIndex);
+//			int tIndex = Math.max(fromIndex,toIndex);
+//			boolean done = false;
+//			if(_loadedSubSets.size() != 0)
+//			{
+//				Iterator iter = _loadedSubSets.iterator();
+//				while (iter.hasNext()) {
+					//int index = iter.nextIndex();
+//					int[] item = (int[])iter.next();
+//					if(item[FROM_INDEX_IN_ARRAY] >= tIndex){
+//					    break;
+//					}
+//					if(item[FROM_INDEX_IN_ARRAY] <= fIndex && item[TO_INDEX_IN_ARRAY] >= fIndex ){
+//						// fromIndex is within this subset
+//						done = true;
+//						if(item[TO_INDEX_IN_ARRAY] < tIndex){
+//							item[TO_INDEX_IN_ARRAY] = tIndex;
+//							fIndex = item[FROM_INDEX_IN_ARRAY];
+//							while (iter.hasNext()) {
+								//index = iter.nextIndex();
+//								int[] item2 = (int[])iter.next();
+//								if(item2[FROM_INDEX_IN_ARRAY] <= item[TO_INDEX_IN_ARRAY]){
+//								    if( item2[TO_INDEX_IN_ARRAY] >= item[TO_INDEX_IN_ARRAY]){
+//										item[TO_INDEX_IN_ARRAY] = item2[TO_INDEX_IN_ARRAY];
+//										iter.remove();
+//										break;
+//									} else {
+//									    iter.remove();
+//									}
+//								}
+//							}
+//						} else {
+//							break;
+//						}
+//					} else if(item[FROM_INDEX_IN_ARRAY] >= tIndex && item[TO_INDEX_IN_ARRAY] <= tIndex){
+//						// toIndex is within this subset
+//						done = true;
+//						item[FROM_INDEX_IN_ARRAY] = fIndex;
+//						break;
+//					}
+//				}
+//			}
+//			//if(_numberOfSubsets == 0 || !done)
+//			if(!done)
+//			{
+//				int[] newInterval = new int[2];
+//				newInterval[FROM_INDEX_IN_ARRAY] = fIndex;
+//				newInterval[TO_INDEX_IN_ARRAY] = tIndex;
+//				_loadedSubSets.add(newInterval);
+//				Collections.sort(_loadedSubSets, _comparator);
+//			}
+//
+//		}
 
 
 
