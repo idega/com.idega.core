@@ -283,6 +283,10 @@ public class CategoryBusiness {
 			.getID();
 	}
 	
+	public ICCategory createCategory(int iObjectInstanceId, String type, String name, String description) throws RemoteException {
+		return saveCategory(-1, name, description, iObjectInstanceId, type, false);
+	}
+	
 	public void saveCategoryToParent(int category, int parent) throws RemoteException {
 		try {
 			ICCategory cat = getCategoryHome().findByPrimaryKey(new Integer(category));
