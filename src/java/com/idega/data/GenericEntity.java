@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.9 2001/05/17 22:04:12 eiki Exp $
+ * $Id: GenericEntity.java,v 1.10 2001/05/17 23:02:44 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -29,9 +29,8 @@ public abstract class GenericEntity implements java.io.Serializable {
   private String dataSource;
   private static String defaultString="default";
   private String cachedColumnNameList;
-  //debug eiki
-  public Boolean hasLobColumn;
-  public String LobColumnName;
+  private Boolean hasLobColumn;
+  private String lobColumnName;
 
 	public GenericEntity() {
 		setDatasource(defaultString);
@@ -1569,8 +1568,31 @@ public abstract class GenericEntity implements java.io.Serializable {
         }
 
 
-        public GenericEntity getStaticInstance(){
+        private GenericEntity getStaticInstance(){
           return getStaticInstance(this.getClass().getName());
+        }
+
+        protected boolean hasLobColumn()throws Exception{
+          Boolean hasLobColumn = this.getStaticInstance().hasLobColumn;
+          String lobColumnName = this.getStaticInstance().lobColumnName;
+          boolean bool = false;
+          if( hasLobColumn == null ){
+            String[] columnNames = this.getColumnNames();
+            for (int i = 0; i < columnNames.length; i++) {
+              if( EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER == this.getStorageClassType(columnNames[i]) ){
+                hasLobColumn = new Boolean(true);
+                lobColumnName = columnNames[i];
+                bool = hasLobColumn.booleanValue();
+              }
+            }
+          }
+          else bool = hasLobColumn.booleanValue();
+
+          return bool;
+        }
+
+        protected String getLobColumnName(){
+          return  this.getStaticInstance().lobColumnName;
         }
 
         public static GenericEntity getStaticInstance(String entityClassName){
@@ -1591,9 +1613,7 @@ public abstract class GenericEntity implements java.io.Serializable {
 
 
 
-      public
-
-       void addManyToManyRelationShip(GenericEntity relatingEntity,String relationShipTableName){
+      public void addManyToManyRelationShip(GenericEntity relatingEntity,String relationShipTableName){
             addManyToManyRelationShip(relatingEntity.getClass().getName(),relationShipTableName);
       }
 

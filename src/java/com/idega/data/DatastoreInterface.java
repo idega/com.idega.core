@@ -390,16 +390,7 @@ public abstract class DatastoreInterface{
   }
 
   protected void executeAfterInsert(GenericEntity entity)throws Exception{
-    Boolean hasLobColumn = entity.getStaticInstance().hasLobColumn;
-    if( hasLobColumn == null ){
-      String[] columnNames = entity.getColumnNames();
-      for (int i = 0; i < columnNames.length; i++) {
-        if( EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER == entity.getStorageClassType(columnNames[i]) ){
-          hasLobColumn = new Boolean(true);
-          insertBlob(entity);
-        }
-      }
-    }
+    if( entity.hasLobColumn() ) insertBlob(entity);
   }
 
   protected void insertBlob(GenericEntity entity)throws Exception{
@@ -427,7 +418,7 @@ public abstract class DatastoreInterface{
 	}
 
 	private void insertIntoPreparedStatement(String columnName,PreparedStatement statement, int index,GenericEntity entity)throws SQLException{
-    String storageClassName = entity.getStorageClassName(columnName);
+          String storageClassName = entity.getStorageClassName(columnName);
 		if (storageClassName.equals("java.lang.Integer")){
 			statement.setInt(index,entity.getIntColumnValue(columnName));
 		}

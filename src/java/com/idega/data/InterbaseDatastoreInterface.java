@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.3 2001/05/17 17:59:19 palli Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.4 2001/05/17 23:02:44 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -14,6 +14,7 @@ import javax.naming.*;
 import javax.sql.*;
 import java.util.*;
 import com.idega.util.database.*;
+import java.io.BufferedInputStream;
 
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -215,15 +216,38 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
   }
 
   protected void executeBeforeInsert(GenericEntity entity)throws Exception{
-				if ( entity.isNull(entity.getIDColumnName()) ){
-					entity.setID(createUniqueID(entity));
-				}
+    if ( entity.isNull(entity.getIDColumnName()) ){
+            entity.setID(createUniqueID(entity));
+    }
   }
 
 
   protected void insertBlob(GenericEntity entity)throws Exception{
+    /*String statement ;
+    Connection Conn = null;
 
+    try{
+      Conn = entity.getConnection();
+      if(Conn== null) return;
 
+      statement = "update " + entity.getTableName() + " set " + entity.getLobColumnName() + "=? where " + entity.getIDColumnName() + " = " + entity.getID();
+      Conn.setAutoCommit(false);
+
+      BufferedInputStream bin = new BufferedInputStream( entity.getV writeInputStream );
+      PreparedStatement PS = Conn.prepareStatement(statement);
+      PS.setBinaryStream(1, bin, bin.available() );
+      PS.execute();
+      PS.close();
+      Conn.commit();
+      Conn.setAutoCommit(true);
+
+    }
+    catch(SQLException ex){ex.printStackTrace(); System.err.println( "error saving to db");}
+    catch(Exception ex){ex.printStackTrace();}
+    finally{
+      if(Conn != null) entity.freeConnection(Conn);
+    }
+*/
   }
 
 

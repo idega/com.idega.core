@@ -22,7 +22,8 @@ public  class EntityControl{
 
     private static HashtableDoubleKeyed relationShips;
 
-	/*protected static String getInterbaseGeneratorName(GenericEntity entity){
+    // throw away!!
+	protected static String getInterbaseGeneratorName(GenericEntity entity){
 		String entityName = entity.getTableName();
 		if (entityName.endsWith("_")){
 			return (entityName+"gen").toUpperCase();
@@ -30,10 +31,10 @@ public  class EntityControl{
 		else{
 			return (entityName+"_gen").toUpperCase();
 		}
-	}*/
+	}
 
-
-	/*protected static String getOracleSequenceName(GenericEntity entity){
+    // throw away!!
+	protected static String getOracleSequenceName(GenericEntity entity){
 		String entityName = entity.getTableName();
 		return entityName+"_seq";
     //if (entityName.endsWith("_")){
@@ -42,13 +43,13 @@ public  class EntityControl{
 		//else{
 		//	return entityName+"_seq";
 		//}
-	}*/
+	}
 
 
 	/**
 	**Creates a unique ID for the ID column
 	**/
-  /*
+    // throw away!!
 	public static int createUniqueID(GenericEntity entity) throws SQLException{
 		int returnInt = -1;
 		Connection conn = null;
@@ -85,7 +86,7 @@ public  class EntityControl{
 			}
 		}
 		return returnInt;
-	}*/
+	}
 
 
 
