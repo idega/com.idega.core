@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.45 2004/02/02 11:45:13 aron Exp $
+ * $Id: LoginDBHandler.java,v 1.46 2004/02/13 17:04:15 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -11,6 +11,7 @@ package com.idega.core.accesscontrol.business;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -18,17 +19,21 @@ import java.util.Random;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
 import com.idega.core.accesscontrol.data.LoginInfo;
+import com.idega.core.accesscontrol.data.LoginInfoHome;
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableBMPBean;
 import com.idega.core.user.data.User;
 import com.idega.data.EntityFinder;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDORemoveException;
 import com.idega.util.Encrypter;
-import com.idega.util.StringHandler;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringHandler;
 /**
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
@@ -202,28 +207,40 @@ public class LoginDBHandler
 		String encryptionType)
 		throws Exception
 	{
-		List noLoginInfo =
+		/*List noLoginInfo =
 			EntityFinder.findAllByColumn(
 				com.idega.core.accesscontrol.data.LoginInfoBMPBean.getStaticInstance(),
 				com.idega.core.accesscontrol.data.LoginInfoBMPBean.getLoginTableIdColumnName(),
-				loginTableID);
-		LoginInfo logInfo;
+				loginTableID);*/
+		//LoginInfo logInfo;
+		LoginInfoHome linfoHome = (LoginInfoHome)IDOLookup.getHome(LoginInfo.class);
+		LoginInfo logInfo=null;
+		
+		try{
+			logInfo = linfoHome.findByPrimaryKey(new Integer(loginTableID));
+		}
+		catch(FinderException fe){}
+		
 		if (update)
 		{
-			if (noLoginInfo == null)
+			if (logInfo == null)
 			{
 				throw new Exception(
 					"login_id : " + loginTableID + " , cannot update loginInfo : cannot find loginInfo");
 			}
-			logInfo = (LoginInfo) noLoginInfo.get(0);
-			if (logInfo.getID() != loginTableID || logInfo == null)
+			int primaryKey=-1;
+			Object pk = logInfo.getPrimaryKey();
+			if(pk!=null){
+				primaryKey=((Integer)pk).intValue();
+			}
+			if (primaryKey != loginTableID || logInfo == null)
 			{
 				throw new Exception("LoginInfo update failed. ");
 			}
 		}
 		else
 		{
-			if (noLoginInfo != null)
+			if (logInfo != null)
 			{
 				throw new Exception(
 					"login_id : " + loginTableID + " , cannot create new loginInfo : user has one already");
@@ -234,7 +251,7 @@ public class LoginDBHandler
 					.data
 					.IDOLookup
 					.getHomeLegacy(LoginInfo.class))
-					.createLegacy();
+					.create();
 		}
 		logInfo.setID(loginTableID);
 		if (accountEnabled != null)
@@ -277,14 +294,14 @@ public class LoginDBHandler
 		{
 			if (update)
 			{
-				logInfo.update();
+				logInfo.store();
 			}
 			else
 			{
-				logInfo.insert();
+				logInfo.store();
 			}
 		}
-		catch (SQLException ex)
+		catch (Exception ex)
 		{
 			if (update)
 			{
@@ -295,7 +312,12 @@ public class LoginDBHandler
 				throw new Exception("LoginInfo creation failed. ");
 			}
 		}
-		return logInfo.getID();
+		int primaryKey=-1;
+		Object pk = logInfo.getPrimaryKey();
+		if(pk!=null){
+			primaryKey=((Integer)pk).intValue();
+		}
+		return primaryKey;
 	}
 	
 	public static LoginTable createLogin(
@@ -600,27 +622,19 @@ public class LoginDBHandler
 		LoginInfo li = null;
 		try
 		{
-			li =
-				(
-					(com.idega.core.accesscontrol.data.LoginInfoHome) com.idega.data.IDOLookup.getHomeLegacy(
-						LoginInfo.class)).findByPrimaryKeyLegacy(
-					loginTableId);
+			LoginInfoHome liHome = (LoginInfoHome)IDOLookup.getHome(LoginInfo.class);
+			li = liHome.findByPrimaryKey(new Integer(loginTableId));
 		}
-		catch (SQLException ex)
+		catch (Exception ex)
 		{
 			try
 			{
-				li =
-					((com.idega.core.accesscontrol.data.LoginInfoHome) com
-						.idega
-						.data
-						.IDOLookup
-						.getHomeLegacy(LoginInfo.class))
-						.createLegacy();
+				LoginInfoHome liHome = (LoginInfoHome)IDOLookup.getHome(LoginInfo.class);
+				li = liHome.create();
 				li.setID(loginTableId);
-				li.insert();
+				li.store();
 			}
-			catch (SQLException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
@@ -677,21 +691,22 @@ public class LoginDBHandler
 			}
 			try
 			{
-				LoginInfo li =
-					(
-						(com.idega.core.accesscontrol.data.LoginInfoHome) com.idega.data.IDOLookup.getHomeLegacy(
-							LoginInfo.class)).findByPrimaryKeyLegacy(
-						login.getID());
+				LoginInfoHome liHome = (LoginInfoHome)IDOLookup.getHome(LoginInfo.class);
+				LoginInfo li = liHome.findByPrimaryKey(login.getPrimaryKey());
 				li.remove();
 			}
 			//catch (RemoteException e)
 			//{
 			//	e.printStackTrace();
 			//}
-			catch (SQLException sql)
+			catch (IDOLookupException lookup)
 			{
-				sql.printStackTrace();
+				lookup.printStackTrace();
 			}
+			catch (FinderException fe)
+			{
+				fe.printStackTrace();
+			}			
 			catch (IDORemoveException ex)
 			{
 				ex.printStackTrace();
