@@ -211,6 +211,9 @@ public boolean isParameterSet(String parameterName){
 	if (Request.getParameter(parameterName) != null){
 		theReturn = true;
 	}
+	if (Request.getParameter(parameterName+".x") != null){
+		theReturn = true;
+	}
 	return theReturn;
 }
 
