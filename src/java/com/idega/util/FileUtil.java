@@ -10,6 +10,8 @@ package com.idega.util;
  */
 
  import java.io.File;
+ import java.io.InputStream;
+ import java.io.FileOutputStream;
  import java.io.IOException;
 
 public class FileUtil {
@@ -87,6 +89,38 @@ public class FileUtil {
   public static File delete(File file){
     file.delete();
     return file;
+  }
+
+  /**
+   * Deletes a File from an url.
+   */
+
+  public static boolean delete(String fileNameWithFullPath){
+    File file = new File(fileNameWithFullPath);
+    return file.delete();
+}
+
+/*
+* streams an inputstream to a file and closes the input stream
+*/
+  public static void streamToFile( InputStream input, String filePath, String fileName) throws Exception{
+    File file = getFileAndCreateIfNotExists(filePath,fileName);
+    FileOutputStream fileOut = new FileOutputStream(file);
+
+    byte buffer[]= new byte[1024];
+    int	noRead	= 0;
+
+    noRead = input.read( buffer, 0, 1024 );
+
+    //Write out the stream to the file
+    while ( noRead != -1 ){
+      fileOut.write( buffer, 0, noRead );
+      noRead = input.read( buffer, 0, 1024 );
+    }
+
+    fileOut.flush();
+    fileOut.close();
+    input.close();
   }
 
 

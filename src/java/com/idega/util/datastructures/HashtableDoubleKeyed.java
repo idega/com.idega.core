@@ -41,6 +41,10 @@ public class HashtableDoubleKeyed{
       return table.remove(StringHandler.concatAlphabetically(key1,key2));
   }
 
+  public Enumeration keys(){
+      return table.keys();
+  }
+
   /**
    * Returns a list of objects put for this key
    */
