@@ -240,7 +240,21 @@ public class ICLocaleBusiness {
   }
 
   /**
+   *  returns ICLocale from Locale string identifier
+   */
+  public static ICLocale getICLocale(String localeString){
+    if(LocaleHashByString == null)
+      reload();
+    if( LocaleHashByString!=null && LocaleHashByString.containsKey(localeString) ){
+      ICLocale ICL = (ICLocale) LocaleHashByString.get(localeString);
+      return ICL;
+    }
+    return null;
+  }
+
+  /**
    * Returns a Locale from a Locale string like Locale.toString();
+   * returns null if not found
    */
   public static Locale getLocaleFromLocaleString(String localeString){
     if(localeString.length() == 2){
@@ -253,7 +267,8 @@ public class ICLocaleBusiness {
       return new Locale(localeString.substring(0,2),localeString.substring(3,5),localeString.substring(6,localeString.length()));
     }
     else
-      return Locale.getDefault();
+      return null;
+      //return Locale.getDefault();
   }
 
   public static Locale getLocale(int iLocaleId){
