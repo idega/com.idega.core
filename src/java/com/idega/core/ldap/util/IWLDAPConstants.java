@@ -56,5 +56,6 @@ public interface IWLDAPConstants {
 	public static final String LDAP_ATTRIBUTE_REGISTERED_ADDRESS = "registeredAddress";
 	public static final String LDAP_ATTRIBUTE_EMAIL = "mail";
 	public static final String LDAP_ATTRIBUTE_LOCATION = "l";
+	public static final String LDAP_USER_DIRECTORY_STRING_SEPARATOR = "-";
 
 }
