@@ -14,7 +14,7 @@ public final static String STYLE = "font-family:arial; font-size:8pt; color:#000
 public final static String STYLE_2 = "font-family:arial; font-size:8pt; color:#000000; text-align: justify;";
 
 private IWBundle iwb;
-private IWBundle iwbCore;
+public IWBundle iwbCore;
 private IWResourceBundle iwrb;
 private Form adminForm;
 private Table adminTable;
@@ -126,6 +126,18 @@ private boolean merged = false;
     leftTable.add(obj,1,rows);
   }
 
+  public void addLeft(String headline, String text) {
+    int rows = leftTable.getRows();
+    if ( !leftTable.isEmpty(1,rows) ) {
+      rows++;
+    }
+
+    leftTable.add(formatHeadline(headline),1,rows);
+    leftTable.add(Text.getBreak(),1,rows);
+    leftTable.add(Text.getBreak(),1,rows);
+    leftTable.add(formatText(text,false),1,rows);
+  }
+
   public void addRight(String text) {
     int rows = rightTable.getRows();
     if ( !rightTable.isEmpty(1,rows) ) {
@@ -196,13 +208,31 @@ private boolean merged = false;
     headerTable.add(obj,1,rows);
   }
 
-  public Text formatText(String s){
+  public Text formatText(String s, boolean bold){
     Text T= new Text();
     if ( s != null ) {
       T= new Text(s);
-      T.setBold();
+      if ( bold )
+        T.setBold();
       T.setFontColor("#000000");
       T.setFontSize(Text.FONT_SIZE_7_HTML_1);
+      T.setFontFace(Text.FONT_FACE_VERDANA);
+    }
+    return T;
+  }
+
+  public Text formatText(String s) {
+    Text T = formatText(s,true);
+    return T;
+  }
+
+  public Text formatHeadline(String s) {
+    Text T= new Text();
+    if ( s != null ) {
+      T= new Text(s);
+       T.setBold();
+      T.setFontColor("#000000");
+      T.setFontSize(Text.FONT_SIZE_10_HTML_2);
       T.setFontFace(Text.FONT_FACE_VERDANA);
     }
     return T;
