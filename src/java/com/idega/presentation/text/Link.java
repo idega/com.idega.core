@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.23 2001/11/03 14:38:31 gummi Exp $
+ * $Id: Link.java,v 1.24 2001/11/05 14:37:16 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -353,6 +353,7 @@ public class Link extends Text {
         int index = 0;
         while (token.hasMoreTokens()) {
           String st = token.nextToken();
+					if(token.hasMoreTokens()){
           String value = token.nextToken();
           if(prmName.equals(st)){
             return true;
@@ -364,6 +365,7 @@ public class Link extends Text {
             //System.err.println("token "+index+" : "+st+" / false");
           //}
           index++;
+        }
         }
       }
       else{
