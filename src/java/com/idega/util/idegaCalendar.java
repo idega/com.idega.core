@@ -591,41 +591,55 @@ public class idegaCalendar{
 	}
 
 
-	public String getNameOfDay(int dagur, ModuleInfo modinfo) {
-            String nafn= getNameOfDay(dagur);
-            String spokenLanguage = modinfo.getSpokenLanguage();
+        public String getISLNameOfDay(int dagur) {
+            return getNameOfDay(dagur);
+        }
 
-            if (spokenLanguage!=null) {
-                if (spokenLanguage.equals("EN")) {
-                      switch (dagur) {
-                              case 1:
-                                      nafn=("Sunday");
-                                      break;
-                              case 2:
-                                      nafn=("Monday");
-                                      break;
-                              case 3:
-                                      nafn=("Tuesday");
-                                      break;
-                              case 4:
-                                      nafn=("Wednesday");
-                                      break;
-                              case 5:
-                                      nafn=("Thursday");
-                                      break;
-                              case 6:
-                                      nafn=("Friday");
-                                      break;
-                              case 7:
-                                      nafn=("Saturday");
-                                      break;
-                      }
-                  }
-              }
-              else {
-//                  nafn = getNameOfDay(dagur);
-              }
-              return nafn;
+	public String getNameOfDay(int day, ModuleInfo modinfo) {
+            Locale currentLocale = modinfo.getCurrentLocale();
+            String returner = "";
+
+            if(currentLocale.equals(com.idega.util.LocaleUtil.getIcelandicLocale())){
+                returner = getISLNameOfDay(day);
+            }else if (currentLocale.equals(Locale.ENGLISH)){
+                returner = getENGNameOfDay(day);
+            }else if (currentLocale.equals(Locale.UK)){
+                returner = getENGNameOfDay(day);
+            }else if (currentLocale.equals(Locale.US)){
+                returner = getENGNameOfDay(day);
+            }else {
+                returner = getENGNameOfDay(day);
+            }
+
+            return returner;
+        }
+
+        public String getENGNameOfDay(int dagur) {
+            String nafn= getNameOfDay(dagur);
+            switch (dagur) {
+                case 1:
+                    nafn=("Sunday");
+                    break;
+                case 2:
+                    nafn=("Monday");
+                    break;
+                case 3:
+                    nafn=("Tuesday");
+                    break;
+                case 4:
+                    nafn=("Wednesday");
+                    break;
+                case 5:
+                    nafn=("Thursday");
+                    break;
+                case 6:
+                    nafn=("Friday");
+                    break;
+                case 7:
+                    nafn=("Saturday");
+                    break;
+            }
+            return nafn;
 	}
 
 
