@@ -10,14 +10,17 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
-
 import javax.ejb.FinderException;
-
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDOStoreException;
+import com.idega.data.query.Column;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
+import com.idega.data.query.WildCardColumn;
 
 
 
@@ -157,7 +160,16 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   }
 
   public Collection ejbFindAllByCountryIdOrderedByPostalCode(int countryId)throws FinderException,RemoteException{
-    return this.idoFindAllIDsByColumnOrderedBySQL(COLUMN_COUNTRY_ID, Integer.toString(countryId),COLUMN_POSTAL_CODE);
+  	Table table = new Table(this);
+  	Column countryCol = new Column(table, COLUMN_COUNTRY_ID);
+  	
+  	SelectQuery query = new SelectQuery(table);
+  	query.addColumn(new WildCardColumn(table));
+  	query.addCriteria(new MatchCriteria(countryCol, MatchCriteria.EQUALS, countryId));
+  	query.addOrder(table, COLUMN_POSTAL_CODE, true);
+  	
+  	return this.idoFindPKsByQuery(query);
+//    return this.idoFindAllIDsByColumnOrderedBySQL(COLUMN_COUNTRY_ID, Integer.toString(countryId),COLUMN_POSTAL_CODE);
   }
   
   public Collection ejbHomeFindByName(String name) throws FinderException {
