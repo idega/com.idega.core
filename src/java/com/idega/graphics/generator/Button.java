@@ -55,6 +55,7 @@ public class Button {
   private int doubleBorder = (2*borderSize);
   private int textXPos = 5;
   private int textYPos = 10;
+  private int verticalPadding = 5;
 
   private String buttonUpName;
   private String buttonDownName;
@@ -64,7 +65,7 @@ public class Button {
   private Font font;
   private BufferedImage image;
   private Graphics2D g;
-
+  private boolean resize = false;
 
   public Button() {
   }
@@ -155,17 +156,24 @@ public class Button {
   public void generate() {
     generate("");
   }
+
   public void generate(String folderPath) {
 
     image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
 
     g = image.createGraphics();
 
-    g.setBackground(borderColor);
-
-
     if( font!= null ) g.setFont(font);
     fitText(g);
+
+    if( resize ){
+      image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+      g = image.createGraphics();
+      if( font!= null ) g.setFont(font);
+    }
+
+    g.setBackground(borderColor);
+
 
     makeButton(g,text,image,folderPath,BUTTON_UP);
 
@@ -188,13 +196,12 @@ public class Button {
     int tHeight = fm.getAscent();
 
     if( tWidth >= width ){
-      width = tWidth+8;
-      image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
-      g = image.createGraphics();
-      if( font!= null ) g.setFont(font);
+      width = tWidth+(2*verticalPadding);
+      resize = true;
     }
+
     textXPos = (width-tWidth)/2;
-    textYPos = (height+tHeight)/2;
+    textYPos = ((height+tHeight)/2)-1;
   }
 
   public void makeButton(Graphics2D g, String text, Image image, String filename, String effect){
