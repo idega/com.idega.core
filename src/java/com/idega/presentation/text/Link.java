@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.65 2002/03/27 19:18:55 tryggvil Exp $
+ * $Id: Link.java,v 1.66 2002/04/03 11:50:21 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1719,7 +1719,12 @@ public class Link extends Text{
     /**
      * @todo Temporary workaround - Find out why this is needed
      */
-     this.setURIToWindowOpenerClass(IWContext.getInstance());
+    try {
+      this.setURIToWindowOpenerClass(IWContext.getInstance());
+    }
+    catch(Exception e) {
+
+    }
 
     //setURL(IWMainApplication.windowOpenerURL);
     //addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass);
