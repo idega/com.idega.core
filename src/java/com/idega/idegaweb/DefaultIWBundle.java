@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.11 2004/12/21 17:39:33 gimmi Exp $
+ * $Id: DefaultIWBundle.java,v 1.12 2004/12/28 17:18:17 gimmi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -24,11 +24,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.ejb.FinderException;
+import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.component.html.HtmlOutputText;
-
 import com.idega.core.component.business.BundleRegistrationListener;
 import com.idega.core.component.business.RegisterException;
 import com.idega.core.component.data.ICObject;
@@ -1466,9 +1465,14 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 */
 	public HtmlOutputText getLocalizedText(String localizationKey) {
 		HtmlOutputText t = new HtmlOutputText();
-		String valueBinding = "#{bundles['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
-		t.setValueBinding("value",getApplication().createValueBinding(valueBinding));
+		t = (HtmlOutputText) getLocalizedUIComponent(localizationKey, t);
 		return t;
+	}
+	
+	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component) {
+		String valueBinding = "#{bundles['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
+		component.setValueBinding("value",getApplication().createValueBinding(valueBinding));
+		return component;
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundle#getLocalizedImage(java.lang.String)
