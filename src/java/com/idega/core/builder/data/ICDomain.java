@@ -15,4 +15,6 @@ public interface ICDomain extends com.idega.data.IDOLegacyEntity
  public void setIBPage(com.idega.core.builder.data.ICPage p0);
  public com.idega.core.builder.data.ICPage getStartPage();
  public com.idega.core.builder.data.ICPage getStartTemplate();
+ public void setServerName(String serverName);
+ public String getServerName();
 }
