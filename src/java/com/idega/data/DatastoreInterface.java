@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.83 2003/10/10 09:05:24 laddi Exp $
+ * $Id: DatastoreInterface.java,v 1.84 2003/11/07 15:28:51 joakim Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -698,6 +698,8 @@ public abstract class DatastoreInterface {
 				statement.setObject(index, entity.getColumnValue(columnName));
 			}
 		} catch (Exception ex) {
+			System.out.println("Original error message");
+			ex.printStackTrace();
 			throw new SQLException("Entity: " + entity.getEntityName() + "; Column:  " + columnName + " - " + ex.getMessage());
 		}
 	}
