@@ -49,16 +49,17 @@ public class Output {
     }
 
     public void indent() {
-        currentIndent.append(indent);
+//        currentIndent.append(indent);
     }
 
     public void unindent() {
-        currentIndent.setLength(currentIndent.length() - indent.length());
+//        currentIndent.setLength(currentIndent.length() - indent.length());
     }
 
     private void writeNewLineIfNeeded() {
         if (newLineComing) {
-            result.append('\n').append(currentIndent);
+            //result.append('\n').append(currentIndent);
+        	   result.append(' ');//.append(currentIndent);
             newLineComing = false;
         }
     }
