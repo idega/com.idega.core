@@ -1,8 +1,11 @@
 package com.idega.core.data;
 
+import com.idega.data.TreeableEntity;
 
-public interface ICInformationCategory extends com.idega.data.CacheableEntity,com.idega.core.business.InformationCategory
+
+public interface ICInformationCategory extends TreeableEntity,com.idega.core.business.InformationCategory
 {
+ public void addCategoryToInstance(int p0)throws java.sql.SQLException;
  public java.sql.Timestamp getCreated();
  public boolean getDeleted();
  public int getDeletedBy();
@@ -13,8 +16,10 @@ public interface ICInformationCategory extends com.idega.data.CacheableEntity,co
  public int getOwnerFolderId();
  public java.lang.String getType();
  public boolean getValid();
+ public void initializeAttributes();
+ public void removeCategoryFromInstance(int p0)throws java.sql.SQLException;
  public void setCreated(java.sql.Timestamp p0);
- public void setDeleted(boolean p0);
+ public void setDeleted(int userID, boolean p0);
  public void setDescription(java.lang.String p0);
  public void setFolderSpecific(int p0);
  public void setGlobal()throws java.sql.SQLException;
