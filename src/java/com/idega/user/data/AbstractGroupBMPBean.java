@@ -324,8 +324,16 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		this.getGeneralGroup().removeRelation(relatedGroup, relationType);
 	}
 
+	public void removeRelation(Group relatedGroup, String relationType, User performer) throws RemoveException{
+		this.getGeneralGroup().removeRelation(relatedGroup, relationType, performer);
+	}
+
 	public void removeRelation(int relatedGroupId, String relationType) throws RemoveException{
 		this.getGeneralGroup().removeRelation(relatedGroupId, relationType);
+	}
+
+	public void removeRelation(int relatedGroupId, String relationType, User performer) throws RemoveException{
+		this.getGeneralGroup().removeRelation(relatedGroupId, relationType, performer);
 	}
 
 	public java.util.List getParentGroups() throws javax.ejb.EJBException{

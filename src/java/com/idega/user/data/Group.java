@@ -1,6 +1,7 @@
 package com.idega.user.data;
 
 import java.sql.Timestamp;
+import javax.ejb.RemoveException;
 import com.idega.core.file.data.ICFile;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.query.SelectQuery;
@@ -67,6 +68,8 @@ public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTr
  public void removeGroup(int p0,com.idega.user.data.User p1,boolean p2)throws javax.ejb.EJBException;
  public void removeRelation(com.idega.user.data.Group p0,java.lang.String p1)throws javax.ejb.RemoveException;
  public void removeRelation(int p0,java.lang.String p1)throws javax.ejb.RemoveException;
+ public void removeRelation(Group relatedGroup, String relationType, User performer) throws RemoveException;
+ public void removeRelation(int relatedGroupId, String relationType, User performer) throws RemoveException;
  public void removeUser(com.idega.user.data.User p0,com.idega.user.data.User p1);
  public void removeUser(com.idega.user.data.User p0,com.idega.user.data.User p1, java.sql.Timestamp p2);
  public void setAbbrevation(java.lang.String p0);

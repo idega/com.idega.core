@@ -977,11 +977,29 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		addUniqueRelation(((Integer) (relatedGroup.getPrimaryKey())).intValue(), relationType);
 	}
 
+	/**
+	 * @deprecated use removeRelation(int relatedGroupId, String relationType, User performer)
+	 */
 	public void removeRelation(Group relatedGroup, String relationType) throws RemoveException {
 		int groupId = this.getGroupIDFromGroup(relatedGroup);
 		this.removeRelation(groupId, relationType);
 	}
+	/**
+	 * @deprecated use removeRelation(int relatedGroupId, String relationType, User performer)
+	 */
 	public void removeRelation(int relatedGroupId, String relationType) throws RemoveException {
+		removeRelation(relatedGroupId, relationType,null);
+	}
+	
+	/**
+	 * @deprecated use removeRelation(int relatedGroupId, String relationType, User performer)
+	 */
+	public void removeRelation(Group relatedGroup, String relationType, User performer) throws RemoveException {
+		int groupId = this.getGroupIDFromGroup(relatedGroup);
+		this.removeRelation(groupId, relationType, performer);
+	}
+	
+	public void removeRelation(int relatedGroupId, String relationType, User performer) throws RemoveException {
 		GroupRelation rel = null;
 		try {
 			//Group group = this.getGroupHome().findByPrimaryKey(relatedGroupId);
@@ -990,7 +1008,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			Iterator iter = rels.iterator();
 			while (iter.hasNext()) {
 				rel = (GroupRelation)iter.next();
-				rel.remove();
+				if (performer == null) {
+					rel.remove();
+				} else {
+					rel.removeBy(performer);
+				}
 			}
 		}
 		catch (FinderException e) {
