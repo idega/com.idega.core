@@ -1,5 +1,5 @@
 /*
- * $Id: UIComponentWrapper.java,v 1.2 2005/01/14 12:07:27 joakim Exp $
+ * $Id: UIComponentWrapper.java,v 1.3 2005/01/17 17:05:41 gummi Exp $
  * Created on 9.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -48,10 +48,10 @@ import javax.faces.validator.Validator;
  * childrens of this class when the faces servlet restores the component tree. (The same probably goes for 
  * facets but has not been tested)
  * 
- *  Last modified: $Date: 2005/01/14 12:07:27 $ by $Author: joakim $
+ *  Last modified: $Date: 2005/01/17 17:05:41 $ by $Author: gummi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class UIComponentWrapper extends UIComponent implements EditableValueHolder {
 
@@ -207,9 +207,11 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 	
 	protected Map getComponentMap(){
 		UIComponent c = getUIComponent();
-		Map componentFacetMap = c.getFacets();
-		if(componentFacetMap != null){
-			return componentFacetMap;
+		if(c != null){
+			Map componentFacetMap = c.getFacets();
+			if(componentFacetMap != null){
+				return componentFacetMap;
+			}
 		}
 		return tmpComponentFacetMap;
 	}
