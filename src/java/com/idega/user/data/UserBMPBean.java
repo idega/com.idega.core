@@ -1005,6 +1005,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   	return super.idoFindPKsBySQL(query.toString());
   }
   
+  public Collection ejbFindUsersInQuery(IDOQuery query) throws FinderException {
+  	IDOQuery sqlQuery = idoQuery();
+		sqlQuery.appendSelectAllFrom(this).appendWhere(getColumnNameUserID()).appendIn(query);
+		return super.idoFindPKsByQuery(sqlQuery);
+  }
+  
   /**
 	 * Returns users within a given birth year range
 	 *	 * @param minYear , the year on the format 'yyyy' 

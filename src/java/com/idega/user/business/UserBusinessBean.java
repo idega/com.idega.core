@@ -650,6 +650,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   	}
   }
   
+	public Collection getUsers(IDOQuery query) throws EJBException,RemoteException{
+		try {
+			return getUserHome().findUsersInQuery(query);
+		}
+		catch (FinderException fe) {
+			return null;
+		}
+	}
+  
 	/**
 	 * Method updateUsersMainAddressOrCreateIfDoesNotExist. This method can both be used to update the user main address or to create one<br>
 	 * if one does not exist. Only userId and StreetName(AndNumber) are required to be not null others are optional.

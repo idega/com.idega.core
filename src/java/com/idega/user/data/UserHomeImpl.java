@@ -32,6 +32,14 @@ public User findUserForUserGroup(int p0)throws javax.ejb.FinderException{
 	return this.findByPrimaryKey(pk);
 }
 
+public java.util.Collection findUsersInQuery(com.idega.data.IDOQuery query)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersInQuery(query);
+	this.idoCheckInPooledEntity(entity);
+//return this.getEntityCollectionForPrimaryKeys(ids);
+			return this.getIDOEntityListForPrimaryKeys(ids);
+}
+
 public java.util.Collection findAllUsers()throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindAllUsers();

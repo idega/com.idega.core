@@ -26,5 +26,6 @@ public interface UserHome extends com.idega.data.IDOHome
  public java.util.Collection findUsersByYearOfBirth (int minYear, int maxYear)  throws  FinderException,RemoteException;
  public int getUserCount()throws com.idega.data.IDOException;
  public java.lang.String getGroupType();
+ public java.util.Collection findUsersInQuery(com.idega.data.IDOQuery query)throws javax.ejb.FinderException;
 
 }
