@@ -29,7 +29,8 @@ public class MemoryInputStream extends InputStream{
 
   public int read(byte[] b, int off, int len){
     //System.out.println("Calling read3 on MemoryInputStream");
-    if(position < buffer.length()){
+    int bufferlength = buffer.length();
+    if(position < bufferlength){
       int oldPos = position;
       position+=len;
       return buffer.read(b,oldPos+off,len);
@@ -44,13 +45,27 @@ public class MemoryInputStream extends InputStream{
     return buffer.length()-position;
   }
 
-  public void close(){ }
+  public void close(){
+    try{
+      reset();
+    }
+    catch(IOException e){
+      e.printStackTrace();
+    }
+    //System.out.println("Calling close on MemoryInputStream");
+  }
 
-  public synchronized void mark(int p0) { }
+  public synchronized void mark(int p0) {
+    //System.out.println("Calling mark on MemoryInputStream");
+  }
 
-  public synchronized void reset() throws IOException { }
+  public synchronized void reset() throws IOException {
+    position=0;
+    //System.out.println("Calling reset on MemoryInputStream");
+  }
 
   public boolean markSupported() {
+    //System.out.println("Calling markSupported on MemoryInputStream");
     return false;
   }
 }

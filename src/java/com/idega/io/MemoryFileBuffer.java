@@ -34,13 +34,22 @@ public class MemoryFileBuffer{
   }
 
   protected synchronized int read(byte[] b, int off, int len){
-    try{
-      System.arraycopy(this.buffer,off,b,0,len);
-      return len;
-    }
-    catch(RuntimeException e){
-      return -1;
-    }
+    //try{
+      int bufferlength = this.buffer.length;
+      int remaining = bufferlength-off;
+      int numberCopied = 0;
+      if(remaining<len){
+        numberCopied=remaining;
+      }
+      else{
+        numberCopied=len;
+      }
+      System.arraycopy(this.buffer,off,b,0,numberCopied);
+      return numberCopied;
+    //}
+    //catch(RuntimeException e){
+    //  return -1;
+    //}
   }
 
 

@@ -25,6 +25,7 @@ public class MemoryOutputStream extends OutputStream{
   }
 
   public void write(byte[] b){
+    //System.out.println("Calling write0 on MemoryOutputStream");
     if(!isClosed){
       int oldPos = position;
       position += b.length;
@@ -33,13 +34,14 @@ public class MemoryOutputStream extends OutputStream{
   }
 
   public void write(byte[] b, int off, int len){
-  //System.out.println("Calling write on MemoryOutputStream");
+    //System.out.println("Calling write1 on MemoryOutputStream");
     if(!isClosed){
       buffer.write(b,off,len);
     }
   }
 
   public void write(int b){
+    //System.out.println("Calling write2 on MemoryOutputStream");
     if(!isClosed){
       byte[] myByte = new byte[1];
       myByte[0]=(byte)b;
