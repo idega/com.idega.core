@@ -1,7 +1,5 @@
 package com.idega.user.data;
 
-import java.util.Hashtable;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
