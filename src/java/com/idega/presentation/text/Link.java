@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.7 2001/10/24 13:22:38 gummi Exp $
+ * $Id: Link.java,v 1.8 2001/10/24 15:09:19 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -58,6 +58,7 @@ public class Link extends Text {
   public static final String TARGET_TOP_WINDOW = "_top";
 
   private boolean isImageButton = false;
+  private boolean isImageTab = false;
   private boolean useTextAsLocalizedTextKey = false;
   private boolean hasClass = false;
   private boolean _maintainAllGlobalParameters = false;
@@ -279,6 +280,16 @@ public class Link extends Text {
       }
       else{
         _obj = iwc.getApplication().getCoreBundle().getImageButton(text);
+      }
+      _obj.setParentObject(this);
+      _objectType = OBJECT_TYPE_MODULEOBJECT;
+    }
+    else if( isImageTab ){//get a generated button gif image
+      if(useTextAsLocalizedTextKey){//the text entered is a local key
+        _obj = iwc.getApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text,text,false);
+      }
+      else{
+        _obj = iwc.getApplication().getCoreBundle().getImageTab(text,false);
       }
       _obj.setParentObject(this);
       _objectType = OBJECT_TYPE_MODULEOBJECT;
@@ -1144,6 +1155,19 @@ public class Link extends Text {
   public void setAsImageButton(boolean isImageButton, boolean useTextAsLocalizedTextKey ){
     setAsImageButton(isImageButton);
     setAsLocalizedImageButton(useTextAsLocalizedTextKey);
+  }
+
+  public void setAsImageTab(boolean isImageTab){
+   this.isImageTab = isImageTab;
+  }
+
+  public void setAsLocalizedImageTab( boolean useTextAsLocalizedTextKey ){
+    this.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
+  }
+
+  public void setAsImageTab(boolean isImageTab, boolean useTextAsLocalizedTextKey ){
+    setAsImageTab(isImageTab);
+    setAsLocalizedImageTab(useTextAsLocalizedTextKey);
   }
 }
 
