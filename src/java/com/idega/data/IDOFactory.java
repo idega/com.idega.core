@@ -103,9 +103,6 @@ public abstract class IDOFactory implements IDOHome{
     return idoFindByPrimaryKey(getEntityInterfaceClass(),primaryKey);
   }
 
-  public List findAll() throws FinderException{
-    throw new IDOFinderException("[idoFactory] : findAll() Not supported");
-  }
 
   /**
    * @todo: implement

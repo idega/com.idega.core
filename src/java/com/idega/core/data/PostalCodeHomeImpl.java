@@ -20,6 +20,20 @@ public PostalCode findByPostalCodeAndCountryId(java.lang.String p0,int p1)throws
 	return this.findByPrimaryKey(pk);
 }
 
+public java.util.Collection findAll()throws java.rmi.RemoteException,javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((PostalCodeBMPBean)entity).ejbFindAll();
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findByPostalCodeAndCountryId(int p0)throws java.rmi.RemoteException,javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((PostalCodeBMPBean)entity).ejbFindByPostalCodeAndCountryId(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
  public PostalCode findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (PostalCode) super.findByPrimaryKeyIDO(pk);
  }

@@ -112,4 +112,13 @@ public class PostalCodeBMPBean extends GenericEntity implements com.idega.core.d
     else throw new FinderException("PostalCode not found");
   }
 
+  public Collection ejbFindByPostalCodeAndCountryId(int countryId)throws FinderException,RemoteException{
+    return idoFindAllIDsByColumnBySQL("ic_country_id", Integer.toString(countryId));
+  }
+
+
+  public Collection ejbFindAll()throws FinderException,RemoteException{
+    return idoFindAllIDsBySQL();
+  }
+
 }
