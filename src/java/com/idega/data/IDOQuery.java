@@ -1238,6 +1238,15 @@ public class IDOQuery implements Cloneable {
 			if (index != -1) {
 				_buffer.replace(0, index, this.SELECT_COUNT);
 			}
+			
+			
+			int index2 = _buffer.indexOf(" order by ");
+			if (index2 < 0) {
+				index2 = _buffer.indexOf(" ORDER BY ");
+			}
+			if (index2 != -1) {
+				_buffer = _buffer.replace(index2,_buffer.length(),"");
+			}
 		}
 		return this;
 	}
