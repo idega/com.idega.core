@@ -1,5 +1,5 @@
 /*
- * $Id: ErrorChecker.java,v 1.3 2001/07/26 12:40:36 palli Exp $
+ * $Id: ErrorChecker.java,v 1.4 2001/07/30 11:46:38 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -58,7 +58,7 @@ public class ErrorChecker {
                 (5 * var5) +
                 (4 * var6) +
                 (3 * var7) +
-                (2*var8);
+                (2 * var8);
 
       int res = sum % 11;
       int vartala = 11 - res;
