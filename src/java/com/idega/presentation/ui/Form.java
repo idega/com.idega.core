@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.83 2005/03/09 01:56:15 tryggvil Exp $
+ * $Id: Form.java,v 1.84 2005/03/09 14:48:23 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2005/03/09 01:56:15 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/09 14:48:23 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.83 $
+ * @version $Revision: 1.84 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -303,7 +303,7 @@ public class Form
 					String name = (String) iter.next();
 					String values = (String) _objectsToDisable.get(name);
 					setCheckSubmit();
-					getScript().addToFunction("checkSubmit", "disableObject(findObj('" + name + "'),'" + String.valueOf(values) + "')");
+					getScript().addToFunction("checkSubmit", "disableObject(findObj('" + name + "'),'" + String.valueOf(values) + "');");
 				}
 			}
 		}
