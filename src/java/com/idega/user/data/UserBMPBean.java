@@ -1113,6 +1113,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			query.append(" ( ")
 			.append(getUserDateOfBirthSearchString(startAge, endAge))
 			.append(" ) ");
+			
+			firstOperatorAdded = true;
 		}
 		
 		//not deleted
