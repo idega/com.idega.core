@@ -17,7 +17,7 @@ public abstract class IBOHomeImpl implements IBOHome{
   }
 
   public IBOService createIBO(Class entityInterfaceClass)throws javax.ejb.CreateException{
-    Class beanClass = IBOLookup.getBeanClassFor(entityInterfaceClass);
+    Class beanClass = IBOLookup.getIBOBeanClassFor(entityInterfaceClass);
     try{
       IBOService bean = (IBOService)beanClass.newInstance();
       IBOSessionContext context = new IBOSessionContext();
@@ -64,7 +64,7 @@ public abstract class IBOHomeImpl implements IBOHome{
   protected abstract Class getBeanInterfaceClass();
 
   protected Class getBeanClass(){
-    return IBOLookup.getBeanClassFor(getBeanInterfaceClass());
+    return IBOLookup.getIBOBeanClassFor(getBeanInterfaceClass());
   }
 
   protected Class getEntityBeanClass(){

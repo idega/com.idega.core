@@ -178,7 +178,7 @@ public class IBOLookup
 	* Gets the Class object for the (BMP) bean class of a data bean.
 	* @param entityInterfaceClass i the (Remote) interface of the data bean.
 	*/
-	static Class getBeanClassFor(Class entityInterfaceClass)
+	static Class getIBOBeanClassFor(Class entityInterfaceClass)
 	{
 		return getInstance().getBeanClassForNonStatic(entityInterfaceClass);
 	}
