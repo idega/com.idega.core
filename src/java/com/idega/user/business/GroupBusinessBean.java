@@ -1077,26 +1077,35 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     catch (Exception ex)  {
       throw new RuntimeException(ex.getMessage());
     }
+    
     // get general and alias group type
     GroupType generalType = findOrCreateGeneralGroupType(groupType, groupTypeHome);
     GroupType aliasType = findOrCreateAliasGroupType(groupType, groupTypeHome);
 
+    
+    //TODO only add general and alias if allowed.
+    //
+    
     ArrayList groupTypes = new ArrayList();
     if (group == null)  {
       // first case: group is null 
       groupTypes.add(generalType);
       groupTypes.add(aliasType);
     }
-    else {
-      // second case: group is not null
-      // first: type of selected group
-      groupTypes.add(groupType);
-      // second: general type
-      if (! generalType.getType().equals(groupTypeString))
+    else {	
+    	//TODO only adds general group as an option under generalgroups
+    	//TODO watch for circual references in children
+    	//Change the grouptype bean to add allowed stuff
+    	
+      //TODO only add if allowed
+    	if (! generalType.getType().equals(groupTypeString)){	
         groupTypes.add(generalType);
-      // third: alias type
-      if (! aliasType.getType().equals(groupTypeString))
+      }
+      
+    	//TODO only add if allowed
+      if (! aliasType.getType().equals(groupTypeString)){
         groupTypes.add(aliasType);
+      }
       // then add children of type of selected group
       addGroupTypeChildren(groupTypes, groupType);
     }
@@ -1107,7 +1116,9 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
     Iterator iterator = groupType.getChildren();
     while (iterator != null && iterator.hasNext())  {
       GroupType child = (GroupType) iterator.next();
-      list.add(child);
+      if(!list.contains(child)){
+      	list.add(child);
+      }
       addGroupTypeChildren(list, child);
     }
   }
