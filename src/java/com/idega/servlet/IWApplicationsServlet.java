@@ -83,7 +83,7 @@ private IWResourceBundle iwrb;
         mainTable.setAlignment(1,1,"right");
         mainTable.setAlignment(1,2,"right");
         mainTable.setAlignment(1,3,"right");
-        mainTable.setAlignment(1,4,"middle");
+        mainTable.setAlignment(1,4,"center");
         mainTable.setVerticalAlignment(1,1,"top");
         mainTable.setVerticalAlignment(1,2,"top");
         mainTable.setVerticalAlignment(1,3,"top");
