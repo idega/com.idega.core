@@ -31,7 +31,7 @@ public class IWEventHandler extends IWPresentationServlet {
     IWContext iwc = getIWContext();
     
     Page page = new EventViewer();
-    page.add("EventHandler");
+    //page.add("EventHandler");
     setPage(page);
     
     
