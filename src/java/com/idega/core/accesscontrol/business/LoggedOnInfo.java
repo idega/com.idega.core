@@ -1,7 +1,12 @@
 package com.idega.core.accesscontrol.business;
 
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+
+import com.idega.block.login.business.LoginBusiness;
 import com.idega.core.user.data.User;
+import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -13,10 +18,10 @@ import com.idega.util.IWTimestamp;
  * @version 1.0
  */
 
-public class LoggedOnInfo {
+public class LoggedOnInfo implements HttpSessionBindingListener  {
 
   private User _user = null;
-  private HttpSession _session = null;
+//  private HttpSession _session = null; 
   private IWTimestamp _timeOfLogon = null;
   private String _login = null;
   private int _loginRecordId = -1;
@@ -29,9 +34,11 @@ public class LoggedOnInfo {
     _user = user;
   }
 
+/*
   public void setSession(HttpSession session){
     _session = session;
   }
+*/
 
   public void setTimeOfLogon(IWTimestamp timeOfLogon){
     _timeOfLogon = timeOfLogon;
@@ -50,9 +57,11 @@ public class LoggedOnInfo {
     return _user;
   }
 
+/*
   public HttpSession getSession(){
     return _session;
   }
+*/
 
   public IWTimestamp getTimeOfLogon(){
     return _timeOfLogon;
@@ -72,18 +81,44 @@ public class LoggedOnInfo {
   public boolean equals(Object obj){
     if(obj instanceof LoggedOnInfo ){
       return this.equals((LoggedOnInfo)obj);
-    }else if(obj instanceof HttpSession){
-      return this.equals((HttpSession)obj);
-    }else {
-      return super.equals(obj);
     }
+    
+    return false;
+    /*else if(obj instanceof HttpSession){
+      return this.equals((HttpSession)obj);
+    }
+    else {
+      return super.equals(obj);
+    }*/
   }
+
 
   public boolean equals(LoggedOnInfo obj){
-    return this.getSession().equals((HttpSession)((LoggedOnInfo)obj).getSession());
+    return this.getUser().equals(((LoggedOnInfo)obj).getUser());
   }
-
+/*
   public boolean equals(HttpSession obj){
     return this.getSession().equals((HttpSession)obj);
   }
+  
+  
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpSessionBindingListener#valueBound(javax.servlet.http.HttpSessionBindingEvent)
+	 */
+	public void valueBound(HttpSessionBindingEvent event) {
+		//do nothing
+		
+	}
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(javax.servlet.http.HttpSessionBindingEvent)
+	 */
+	public void valueUnbound(HttpSessionBindingEvent event) {
+		//log out!
+		String name = _user.getName();
+		boolean success = LoginBusiness.logOutUserOnSessionTimeout(event.getSession(),this);
+		System.out.println("LoggedOnInfo: Session has expired logging off user: "+name+". Success = "+ success);
+		
+	}
+  
+  
 }
