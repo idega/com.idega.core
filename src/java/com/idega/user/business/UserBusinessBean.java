@@ -1876,11 +1876,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   }
   
   private boolean isMemberOfGroup(int parentGroupToTest, User user)  {
+    // first check the primary group
     Group group = user.getPrimaryGroup();
-    int primaryGroupId = ((Integer) group.getPrimaryKey()).intValue();
-    if (parentGroupToTest == primaryGroupId)  {
-      return true;
+    if (group != null)  {
+      int primaryGroupId = ((Integer) group.getPrimaryKey()).intValue();
+      if (parentGroupToTest == primaryGroupId)  {
+        return true;
+      }
     }
+    // then check the group relations
     int userId = ((Integer) user.getPrimaryKey()).intValue();
     Collection coll;
     try{
