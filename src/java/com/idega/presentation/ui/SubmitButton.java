@@ -1,9 +1,15 @@
-//idega 2000 - Tryggvi Larusson
 /*
-*Copyright 2000 idega.is All Rights Reserved.
-*/
+ * $Id: SubmitButton.java,v 1.35 2005/03/08 18:28:55 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.presentation.ui;
 
+import javax.faces.context.FacesContext;
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
 import com.idega.idegaweb.IWMainApplication;
@@ -11,21 +17,26 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
+ * <p>
+ * This is a component for rendering out a button (input) of type submit.
+ * </p>
+ *  Last modified: $Date: 2005/03/08 18:28:55 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.35 $
+ */
 public class SubmitButton extends GenericButton {
 
+	//constants:
 	private static final String emptyString = "";
 
+	//Instance variables:
 	private String parameterName;
 	private String parameterValue;
 	private String onClickScript = null;
-
 	private boolean usingControlParameter = false;
 	// not used private boolean asImageButton = false;
 	private boolean encloseByForm = true;
-
 	private boolean _enabledWhenChecked = false;
 	private boolean _confirmSubmit = false;
 	private boolean _confirmSingleSubmit = false;
@@ -34,7 +45,37 @@ public class SubmitButton extends GenericButton {
 	private String _confirmSingleMessage;
 	
 	
-	
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[12];
+		values[0] = super.saveState(ctx);
+		values[1] = parameterName;
+		values[2] = parameterValue;
+		values[3] = onClickScript;
+		values[4] = Boolean.valueOf(usingControlParameter);
+		values[5] = Boolean.valueOf(encloseByForm);
+		values[6] = Boolean.valueOf(_enabledWhenChecked);
+		values[7] = Boolean.valueOf(_confirmSubmit);
+		values[8] = Boolean.valueOf(_confirmSingleSubmit);
+		values[9] = Boolean.valueOf(_checkedObjectName);
+		values[10] = Boolean.valueOf(_confirmMessage);
+		values[11] = Boolean.valueOf(_confirmSingleMessage);
+		return values;
+	}
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		parameterName = (String)values[1];
+		parameterValue = (String)values[2];
+		onClickScript = (String)values[3];
+		usingControlParameter = ((Boolean)values[4]).booleanValue();
+		encloseByForm = ((Boolean)values[5]).booleanValue();
+		_enabledWhenChecked = ((Boolean)values[6]).booleanValue();
+		_confirmSubmit = ((Boolean)values[7]).booleanValue();
+		_confirmSingleSubmit = ((Boolean)values[8]).booleanValue();
+		_checkedObjectName = ((String)values[9]);
+		_confirmMessage = ((String)values[10]);
+		_confirmSingleMessage = ((String)values[11]);
+	}
 
 
 	/**
