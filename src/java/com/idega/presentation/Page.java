@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.99 2004/02/20 16:37:43 tryggvil Exp $
+ *  $Id: Page.java,v 1.100 2004/03/22 21:37:25 tryggvil Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.idega.business.IBOLookup;
+import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
@@ -552,7 +553,15 @@ public class Page extends PresentationObjectContainer {
 		try {
 			bservice = getBuilderService(iwc);
 			int pageId = bservice.getCurrentPageId(iwc);
-			node = (ICTreeNode)bservice.getPageTree(pageId,iwc.getCurrentUserId());
+			int currentUserId = -1;
+			if(iwc.isLoggedOn()){
+				currentUserId=iwc.getCurrentUserId();
+				node = (ICTreeNode)bservice.getPageTree(pageId,currentUserId);
+			}
+			else{
+				node = (ICTreeNode)bservice.getPageTree(pageId);
+			}
+			
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
