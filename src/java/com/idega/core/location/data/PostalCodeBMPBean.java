@@ -17,6 +17,7 @@ import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDOStoreException;
 
 
 
@@ -27,6 +28,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	static final String COLUMN_POSTAL_CODE_ID = "IC_POSTAL_CODE_ID";
 	static final String COLUMN_POSTAL_CODE = "POSTAL_CODE";
 	static final String COLUMN_NAME = "NAME";
+	static final String COLUMN_POSTAL_ADDRESS = "POSTAL_ADDRESS";
 	static final String COLUMN_COUNTRY_ID = "IC_COUNTRY_ID";
 	static final String COLUMN_COMMUNE_ID = "IC_COMMUNE_ID";
 
@@ -42,6 +44,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
     addAttribute(getIDColumnName());
     addAttribute(COLUMN_POSTAL_CODE, "Postalcode", true, true, String.class,50);
     addAttribute(COLUMN_NAME, "Name", true, true, String.class,50);
+    addAttribute(COLUMN_POSTAL_ADDRESS, "Postaladdress", true, true, String.class,50);
     addManyToOneRelationship(COLUMN_COUNTRY_ID, "Country", Country.class);
     addManyToOneRelationship(COLUMN_COMMUNE_ID, "Commmune", Commune.class);
     
@@ -139,6 +142,9 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
     return getIntColumnValue(COLUMN_COUNTRY_ID);
   }
   
+  private void setPostalAddress(String postal_address){
+      setColumn(COLUMN_POSTAL_ADDRESS, postal_address);
+    }
  
 
   public Integer ejbFindByPostalCodeAndCountryId(String code,int countryId)throws FinderException,RemoteException{
@@ -188,14 +194,18 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   }
   
    public String getPostalAddress(){
-    	StringBuffer addr = new StringBuffer();
-    	String code = getPostalCode();
-    	if(code!=null)
-    		addr.append(code).append(" ");
-    	String name = this.getName();
-    	if(name !=null)
-    		addr.append(name);
-    	return addr.toString();
+      String postalAddress = getStringColumnValue(COLUMN_POSTAL_ADDRESS);
+      if (postalAddress == null) {
+	        StringBuffer addr = new StringBuffer();
+	    	String code = getPostalCode();
+	    	if(code!=null)
+	    		addr.append(code).append(" ");
+	    	String name = this.getName();
+	    	if(name !=null)
+	    		addr.append(name);
+	    	postalAddress = addr.toString();
+      }
+      return postalAddress;
     }
 
 	public Collection ejbHomeFindByPostalCodeFromTo(String codeFrom, String
@@ -235,4 +245,8 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		return false;
 	}
 
+	public void store() throws IDOStoreException {
+		setPostalAddress(getPostalCode()+" "+getName());
+	    super.store();
+	}
 }
