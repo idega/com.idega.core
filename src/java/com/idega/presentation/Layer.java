@@ -8,6 +8,8 @@ import javax.faces.context.FacesContext;
 import com.idega.util.text.TextStyler;
 
 /**
+ * This component renders a layer or a 'div' tag in HTML around its children.
+ * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
  * @version 1.2
  */
