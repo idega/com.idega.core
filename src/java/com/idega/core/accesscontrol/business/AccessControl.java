@@ -3041,6 +3041,31 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			return false;
 		}
 	}
+	
+	/**
+	 * Add a role with a permission key connection
+	 * */
+	public boolean addRoleToGroup(String roleKey, String permissionKey, Integer groupId, IWUserContext iwuc) {
+		try {
+			setPermission(AccessController.CATEGORY_ROLE, iwuc, groupId.toString(), permissionKey ,roleKey, Boolean.TRUE);
+			return true;
+		}
+		catch (Exception e) { //setPermission throws Exception!? but does it rollback on errors?
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean removeRoleFromGroup(String roleKey, String permissionKey, Integer groupId, IWUserContext iwuc) {
+		try {
+			setPermission(AccessController.CATEGORY_ROLE, iwuc, groupId.toString(), permissionKey, roleKey,Boolean.FALSE);
+			return true;
+		}
+		catch (Exception e) { //setPermission throws Exception!? but does it rollback on errors?
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	/**
 	 * @author eiki
