@@ -84,7 +84,9 @@ public class CountryDropdownMenu extends DropdownMenu {
 		try {
 			if( selectedCountryName!=null){
 				selectedCountry = getAddressBusiness(iwc).getCountryHome().findByCountryName(selectedCountryName);	
-			}else{
+			}
+			// we must ensure no external selected country is set
+			else if(selectedCountry==null){
 				selectedCountry = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(currentLocale.getCountry());	
 			}
 		}
