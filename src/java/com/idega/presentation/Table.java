@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.69 2004/08/04 16:36:44 anna Exp $
+ * $Id: Table.java,v 1.70 2004/08/04 17:02:11 anna Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -530,15 +530,15 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setTopCellBorderWidth(int column, int row, int borderWidth) {
-		setStyle(column, row, "border-width-top", borderWidth+"px");
+		setStyle(column, row, "border-top-width", borderWidth+"px");
 	}
 	
 	public void setTopCellBorderColor(int column, int row, String borderColor) {
-		setStyle(column, row, "border-color-top", borderColor);
+		setStyle(column, row, "border-top-color", borderColor);
 	}
 	
 	public void setTopCellBorderStyle(int column, int row, String borderStyle) {
-		setStyle(column, row, "border-style-top", borderStyle);
+		setStyle(column, row, "border-top-style", borderStyle);
 	}
 	
 	public void setTopCellBorder(int column, int row, int borderWidth, String borderColor, String borderStyle) {
@@ -548,15 +548,15 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setBottomCellBorderWidth(int column, int row, int borderWidth) {
-		setStyle(column, row, "border-width-bottom", borderWidth+"px");
+		setStyle(column, row, "border-bottom-width", borderWidth+"px");
 	}
 	
 	public void setBottomCellBorderColor(int column, int row, String borderColor) {
-		setStyle(column, row, "border-color-bottom", borderColor);
+		setStyle(column, row, "border-bottom-color", borderColor);
 	}
 	
 	public void setBottomCellBorderStyle(int column, int row, String borderStyle) {
-		setStyle(column, row, "border-style-bottom", borderStyle);
+		setStyle(column, row, "border-bottom-style", borderStyle);
 	}
 	
 	public void setBottomCellBorder(int column, int row, int borderWidth, String borderColor, String borderStyle) {
@@ -566,15 +566,15 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setLeftCellBorderWidth(int column, int row, int borderWidth) {
-		setStyle(column, row, "border-width-left", borderWidth+"px");
+		setStyle(column, row, "border-left-width", borderWidth+"px");
 	}
 	
 	public void setLeftCellBorderColor(int column, int row, String borderColor) {
-		setStyle(column, row, "border-color-left", borderColor);
+		setStyle(column, row, "border-left-color", borderColor);
 	}
 	
 	public void setLeftCellBorderStyle(int column, int row, String borderStyle) {
-		setStyle(column, row, "border-style-left", borderStyle);
+		setStyle(column, row, "border-left-style", borderStyle);
 	}
 	
 	public void setLeftCellBorder(int column, int row, int borderWidth, String borderColor, String borderStyle) {
@@ -584,15 +584,15 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public void setRightCellBorderWidth(int column, int row, int borderWidth) {
-		setStyle(column, row, "border-width-right", borderWidth+"px");
+		setStyle(column, row, "border-right-width", borderWidth+"px");
 	}
 	
 	public void setRightCellBorderColor(int column, int row, String borderColor) {
-		setStyle(column, row, "border-color-right", borderColor);
+		setStyle(column, row, "border-right-color", borderColor);
 	}
 	
 	public void setRightCellBorderStyle(int column, int row, String borderStyle) {
-		setStyle(column, row, "border-style-right", borderStyle);
+		setStyle(column, row, "border-right-style", borderStyle);
 	}
 	
 	public void setRightCellBorder(int column, int row, int borderWidth, String borderColor, String borderStyle) {
