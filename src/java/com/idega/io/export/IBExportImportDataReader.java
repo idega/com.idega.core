@@ -239,7 +239,7 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
 		// create the new page 			
 		// you have to use page helper because page helper changes some settings for the builder application
 		String pageHelperPageType = convertXMLTypeElement(type);
-		int currentPageId = pageHelper.createNewPage(parentId, originalName, pageHelperPageType, importTemplateValue, pageTree, iwc); 
+		int currentPageId = pageHelper.createPageOrTemplateToplevelOrWithParent(originalName, parentId, pageHelperPageType, importTemplateValue, pageTree, iwc); 
 		// get the just created page
 		StorableHolder holder = getHolderForPage(currentPageId);
 		entryNameHolder.put(zipEntryName, holder);
@@ -543,8 +543,8 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
   			input.closeEntry();
   		}
   	}
-  	// do not hide an existing exception
   	catch (IOException io) {
+  		// do not hide an existing exception
   	}
   }
   
@@ -554,8 +554,8 @@ public class IBExportImportDataReader extends ReaderFromFile implements ObjectRe
   			input.closeStream();
   		}
   	}
-  	// do not hide an existing exception
   	catch (IOException io) {
+  		// do not hide an existing exception
   	}
   }
   
