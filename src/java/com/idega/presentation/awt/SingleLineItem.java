@@ -184,18 +184,21 @@ public class SingleLineItem extends Panel {
         }
       }
 
-      Component[] comps = getComponents();
+      Component[] comps = SingleLineItem.this.getComponents();
       for (int i = 0; i < comps.length; i++) {
         comps[i].repaint();
       }
 
 
 //      layout();
-      doLayout();
-      repaint();
+      SingleLineItem.this.doLayout();
+      SingleLineItem.this.repaint();
 //      parentContainer.layout();
-      parentContainer.doLayout();
-      parentContainer.repaint();
+      SingleLineItem.this.parentContainer.doLayout();
+      SingleLineItem.this.parentContainer.repaint();
+
+            SingleLineItem.this.doLayout();
+      SingleLineItem.this.repaint();
 
       actionListener.actionPerformed(new ActionEvent(SingleLineItem.this,ActionEvent.ACTION_PERFORMED, "iw-selected"));
     }
