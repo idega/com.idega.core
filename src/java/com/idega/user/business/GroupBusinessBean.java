@@ -2217,6 +2217,7 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	 * @return
 	 */
 	private boolean isParentPathCorrectFromDN(Group child, int indexOfChildsParentInDNParts, List dnParts, String rootDN) {
+		IWLDAPUtil ldapUtil = IWLDAPUtil.getInstance();
 		boolean isPathCorrect = true;
 		List parents = child.getParentGroups();
 
@@ -2226,7 +2227,9 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 			String parentName = dnPart.substring(dnPart.indexOf("=")+1);
 			Group parent = (Group)parents.get(0);
 			int size = dnParts.size();
-			if(parent.getName().equals(parentName) && indexOfChildsParentInDNParts<size){
+			String name = ldapUtil.removeTrailingSpaces(parent.getName());
+			
+			if(name.equals(parentName) && indexOfChildsParentInDNParts<size){
 				//keep on checking this parents parent...recursive
 				isPathCorrect = isParentPathCorrectFromDN(parent,++indexOfChildsParentInDNParts,dnParts,rootDN);
 			}
@@ -2313,10 +2316,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2004/09/30 10:00:53 $ by $Author: gimmi $
+	 *  Last modified: $Date: 2004/10/04 20:37:39 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.76 $
+	 * @version $Revision: 1.77 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
