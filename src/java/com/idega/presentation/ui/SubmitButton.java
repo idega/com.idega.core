@@ -9,6 +9,7 @@ import com.idega.event.IWSubmitListener;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.util.text.TextSoap;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -156,8 +157,8 @@ public class SubmitButton extends GenericButton {
 	 */
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
-			if (_confirmSubmit)
-				setInputType(INPUT_TYPE_BUTTON);
+			/*if (_confirmSubmit)
+				setInputType(INPUT_TYPE_BUTTON);*/
 			
 			if (encloseByForm) {
 				if (isEnclosedByForm()) {
@@ -201,7 +202,7 @@ public class SubmitButton extends GenericButton {
 	 */
 	public void setSubmitConfirm(String confirmMessage) {
 		_confirmSubmit = true;
-		_confirmMessage = confirmMessage;
+		_confirmMessage = TextSoap.removeLineBreaks(confirmMessage);
 	}
 	
 	/**
