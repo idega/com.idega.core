@@ -54,11 +54,11 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		}
 		else if (javaClassName.equals("java.lang.Float"))
 		{
-			theReturn = "FLOAT";
+			theReturn = "REAL";
 		}
 		else if (javaClassName.equals("java.lang.Double"))
 		{
-			theReturn = "FLOAT(15)";
+			theReturn = "FLOAT";
 		}
 		else if (javaClassName.equals("java.sql.Timestamp"))
 		{
