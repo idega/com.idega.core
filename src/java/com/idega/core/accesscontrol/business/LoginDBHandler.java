@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.43 2003/06/16 15:46:25 gummi Exp $
+ * $Id: LoginDBHandler.java,v 1.44 2004/01/30 13:16:48 aron Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -10,8 +10,10 @@
 package com.idega.core.accesscontrol.business;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -811,11 +813,15 @@ public class LoginDBHandler
 		User user;
 		try {
 			user = getUser(userID);
-			String[] possibleLogins = getPossibleGeneratedUserLogins(user);
+			List possibleLogins = getPossibleGeneratedUserLogins(user);
 			String generatedPassword = getGeneratedPasswordForUser();
-			for (int i = 0; i < possibleLogins.length; i++)
-			{
-				String login = possibleLogins[i];
+		
+			//or (int i = 0; i < possibleLogins.length; i++)
+			//{
+			//	String login = possibleLogins[i];
+			for (Iterator iter = possibleLogins.iterator(); iter.hasNext();) {
+				String login = (String) iter.next();
+				
 				try
 				{
 					return createLogin(userID, login, generatedPassword);
@@ -839,9 +845,8 @@ public class LoginDBHandler
 	{
 		return com.idega.util.StringHandler.getRandomStringNonAmbiguous(8);
 	}
-	private static String[] getPossibleGeneratedUserLogins(User user)
+	private static List getPossibleGeneratedUserLogins(User user)
 	{
-		String[] theReturn = new String[5];
 		String userFirstName = user.getFirstName();
 		String userLastName = user.getLastName();
 		String firstName = null;
@@ -862,48 +867,155 @@ public class LoginDBHandler
 				middleName = StringHandler.stripNonRomanCharacters(user.getMiddleName()).toLowerCase();
 			}
 		}
+		if(firstName==null)	
+			firstName="";
+		if(middleName==null)	
+			middleName="";
+		if(lastName==null)	
+			lastName="";
 		String finalPossibility = StringHandler.getRandomString(8);
+		ArrayList userNameList = new ArrayList(200);
 		try
 		{
-			theReturn[0] = firstName + lastName.substring(0, 1);
+			userNameList.add( firstName + lastName.substring(0, 1));
 		}
 		catch (Exception e)
 		{
-			theReturn[0] = StringHandler.getRandomString(8);
+			userNameList.add(  StringHandler.getRandomString(8));
 		}
-		try
-		{
-			if (middleName != null)
-			{
-				theReturn[1] = firstName.substring(0, 1) + middleName.substring(0, 1) + lastName.substring(0, 1);
+		try		{
+			if (middleName != null)			{
+				userNameList.add(  firstName.substring(0, 1) + middleName.substring(0, 1) + lastName.substring(0, 1));
 			}
-			else
-			{
-				theReturn[1] = firstName + lastName.substring(0, 2);
+			else			{
+				userNameList.add(  firstName + lastName.substring(0, 2));
 			}
 		}
-		catch (Exception e)
-		{
-			theReturn[1] = StringHandler.getRandomString(8);
+		catch (Exception e)		{
+			userNameList.add(  StringHandler.getRandomString(8));
 		}
-		try
-		{
-			theReturn[2] = firstName.substring(0, firstName.length() - 1) + lastName.substring(0, 1);
+		try		{
+			userNameList.add(  firstName.substring(0, firstName.length() - 1) + lastName.substring(0, 1));
 		}
-		catch (Exception e)
-		{
-			theReturn[2] = StringHandler.getRandomString(8);
+		catch (Exception e)		{
+			userNameList.add( StringHandler.getRandomString(8));
 		}
-		try
-		{
-			theReturn[3] = firstName.substring(0, firstName.length()) + lastName.substring(0, 3);
+		try{
+			userNameList.add(  firstName.substring(0, firstName.length()) + lastName.substring(0, 3));
 		}
-		catch (Exception e)
-		{
-			theReturn[3] = StringHandler.getRandomString(8);
+		catch (Exception e){
+			userNameList.add(  StringHandler.getRandomString(8));
 		}
-		theReturn[4] = finalPossibility;
-		return theReturn;
+		
+		userNameList.add(generatePossibleUserNames(firstName,middleName,lastName,8));
+		userNameList.add( finalPossibility);
+		return userNameList;
+	}
+	
+	public static List generatePossibleUserNames(String first,String middle,String last,int userNameLength){
+		int namelength = userNameLength;
+		char[][] array = new char[196][namelength];
+		String alfabet = first+last+middle;
+		boolean rand = false;
+		char[] alfa = alfabet.toCharArray();
+		char[] digi = new String("0123456789ZXYW").toCharArray();
+		int digilength = digi.length;
+		int alfalength = alfabet.length();
+		// index1 keeps track of first startindex
+		// index2 keeps track of second index
+		int index1 = 0;
+		int index2 = first.length();
+		int index3 = last.length()+middle.length()-2;
+		int count1 = first.length();
+		int count2 = 0;
+		//int laststep = namelength-first.length();
+		String startletters = new String("ZWYX");
+		int startlettercount = startletters.length();
+		java.util.ArrayList list = new java.util.ArrayList(196);
+		
+		for (int row = 0;row<array.length;row++){
+			int col = 0;
+			// add first part of name
+			for (int j = 0 ; j < count1&& index1+j<alfalength && col<namelength; j++) {
+				array[row][col++] = alfa[index1+j];
+			}
+			// add second part of name
+			if(!rand){
+				for (int j =0 ; j < count2 && index2+(j)<alfalength && col<namelength; j++) {
+					array[row][col++] = alfa[index2+(j)];
+				}
+			}
+			else{
+				Random random = new Random();
+				for (int j =0 ; j < count2 && index2+(j)<alfalength && col<namelength; j++)
+					array[row][col++] = digi[random.nextInt(digilength)];
+			}
+		
+			// if we havent reached the final length
+			// we increase the letter count
+			if((count2+count1)<namelength){
+				// 
+				if(count1>count2 && count1<first.length())
+					count1++;
+				else 
+					count2++;
+			}
+			// We have reached the final name length
+			// count equals final length of user name
+			else{
+				// last name limits
+				if(count1>1 && (count2+1)<=last.length()){
+					count1--;
+					count2++;
+				}
+				// first name limits
+				/*
+				else if(count1<first.length()){
+					count1++;
+					count2--;
+				}*/
+				else if( index2== first.length()){
+					index2 = index3;
+					count2 = 1;
+					//laststep = namelength-first.length();
+				}
+				else if(!rand ) {
+					rand = true;
+					count2=1;
+					index2 = first.length();
+				}
+				else if(startlettercount>0){
+					
+					alfa = (startletters.charAt(startletters.length()-startlettercount)+alfabet).toCharArray();
+					index2= first.length()+1;
+					count2=1;
+					count1 = first.length()+1;
+					if((first.length()+1)<=namelength)
+						count1--;
+						
+					startlettercount--;
+					rand =false;
+				}
+				else 	{// lets break this 
+					//System.out.println(row);
+					continue;
+					
+				}
+			}
+			//System.out.println(array[row]);
+			list.add(new String(array[row]));
+		}
+		list.trimToSize();
+		return list;
+	}
+	
+	public static void main(String[] args){
+		java.util.List list = generatePossibleUserNames("aron","birkir","gudmundsson",8);
+		for (Iterator iter = list.iterator(); iter.hasNext();) {
+			String element = (String) iter.next();
+			System.out.println(element);
+		}
+		
 	}
 
 	public static void changeNextTime(LoginTable login,boolean changeValue){                LoginInfo info = getLoginInfo(login.getID());
