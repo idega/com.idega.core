@@ -32,7 +32,7 @@ public class SingleLineItem extends Component {
   //  Panel panel = new Panel();
   java.net.URL url = SingleLineItem.class.getResource("face_in.gif");
   Image img=Toolkit.getDefaultToolkit().getImage(url);
-  add(new ImageLabel(img));
+  add(img);
 
   }
 
@@ -82,7 +82,8 @@ public class SingleLineItem extends Component {
         if( components!= null){
           int length = components.size();
           for (int i = 0; i < length; i++) {
-            ((Component)components.elementAt(i)).paint(g);
+            if( components.elementAt(i) instanceof Component) ((Component)components.elementAt(i)).paint(g);
+            else if( components.elementAt(i) instanceof Image) g.drawImage((Image)components.elementAt(i),2,2,this);
           }
         }
 
@@ -122,7 +123,7 @@ public class SingleLineItem extends Component {
     if(window!=null) window.setVisible(true);
   }
 
-  public void add(Component component){
+  public void add(Object component){
     if( components == null ) components = new Vector();
     components.add(component);
   }
