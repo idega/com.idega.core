@@ -30,6 +30,8 @@ public class IWMainApplicationSettings extends IWPropertyList{
   private static String DEFAULT_LOCALE="defaultlocale";
   private static String _SERVICE_CLASSES_KEY = "iw_service_class_key";
 
+  public static final String IW_POOLMANAGER_TYPE = "iw_poolmanager";
+
 
   public IWMainApplicationSettings(IWMainApplication application){
     super(application.getPropertiesRealPath(),"idegaweb.pxml",true);

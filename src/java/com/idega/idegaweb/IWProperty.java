@@ -528,5 +528,8 @@ public class IWProperty{
 
 */
 
+  public String toString(){
+    return getValue();
+  }
 
 }

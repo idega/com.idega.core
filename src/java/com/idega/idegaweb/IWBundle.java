@@ -63,6 +63,8 @@ public class IWBundle implements java.lang.Comparable{
   private final static String COMPONENT_TYPE_PROPERTY="component_type";
   private final static String COMPONENT_ICON_PROPERTY="component_icon";
   private final static String COMPONENT_CLASS_PROPERTY="component_class";
+  private final static String BUNDLE_STARTER_CLASS = "iw_bundle_starter_class";
+
 
    protected IWBundle(String rootRealPath,String bundleIdentifier,IWMainApplication superApplication){
         this(rootRealPath,rootRealPath,bundleIdentifier,superApplication);
@@ -136,6 +138,7 @@ public class IWBundle implements java.lang.Comparable{
       System.setProperty("java.class.path",newClassPath);
 
       installComponents();
+      runStartClass();
       try{
         createDataRecords();
       }
@@ -158,6 +161,18 @@ public class IWBundle implements java.lang.Comparable{
             e.printStackTrace();
           }
         }
+      }
+   }
+
+
+   private void runStartClass(){
+      String starterClassName = this.getProperty(this.BUNDLE_STARTER_CLASS);
+      try{
+        IWBundleStartable starter = (IWBundleStartable)Class.forName(starterClassName).newInstance();
+        starter.start(this);
+      }
+      catch(Exception e){
+        e.printStackTrace();
       }
    }
 
