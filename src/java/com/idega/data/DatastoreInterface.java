@@ -1,31 +1,38 @@
-//idega 2000-2001 - Tryggvi Larusson
 /*
-*Copyright 2000-2001 idega.is All Rights Reserved.
-*/
-
+ * $Id: DatastoreInterface.java,v 1.29 2001/10/29 16:33:18 palli Exp $
+ *
+ * Copyright (C) 2001 Idega hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
+ */
 package com.idega.data;
 
-
-
-
-import java.sql.*;
-import javax.naming.*;
-import javax.sql.*;
-import java.util.*;
-import com.idega.util.database.*;
-import java.io.*;
-import javax.transaction.Transaction;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.sql.Time;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import com.idega.util.database.ConnectionBroker;
+import java.io.InputStream;
 import javax.transaction.TransactionManager;
 import com.idega.transaction.IdegaTransactionManager;
-import javax.transaction.NotSupportedException;
 import com.idega.util.ThreadContext;
 
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.3
-*/
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version 1.3
+  */
 public abstract class DatastoreInterface{
-
   private static Hashtable interfacesHashtable;
   private static String recordCreationKey="datastoreinterface_entity_record_creation";
 
@@ -40,7 +47,7 @@ public abstract class DatastoreInterface{
     if (interfacesHashtable == null){
       interfacesHashtable = new Hashtable();
     }
-    System.out.println("DatastoreInterface,datastoreType="+datastoreType);
+//    System.out.println("DatastoreInterface,datastoreType="+datastoreType);
 
     if (datastoreType.equals("oracle")){
        className = "com.idega.data.OracleDatastoreInterface";
@@ -148,7 +155,7 @@ public abstract class DatastoreInterface{
                                           e.printStackTrace();
                                           checkString = connection.getClass().getName();
                                         }
-                                        System.out.println("DatastoreIterface,checkString="+checkString);
+//                                        System.out.println("DatastoreIterface,checkString="+checkString);
 					if (checkString.indexOf("oracle") != -1 ){
 						dataStoreType = "oracle";
 					}
