@@ -25,20 +25,20 @@ public class ICObjectBusiness {
 
   private static ICObjectBusiness instance;
 
-  private static Map icoInstanceMap;
-  private static Map icObjectMap;
+  private  Map icoInstanceMap;
+  private  Map icObjectMap;
 
   private ICObjectBusiness(){
   }
 
-  private static Map getIcoInstanceMap(){
+  private  Map getIcoInstanceMap(){
     if(icoInstanceMap==null){
       icoInstanceMap = new HashMap();
     }
     return icoInstanceMap;
   }
 
-  private static Map getIcObjectMap(){
+  private  Map getIcObjectMap(){
     if(icObjectMap==null){
       icObjectMap = new HashMap();
     }
@@ -70,7 +70,7 @@ public class ICObjectBusiness {
     }
   }
 
-  public Class getICObjectClass(int ICObjectId) throws SQLException{
+  public Class getICObjectClass(int ICObjectId) {
     ICObject obj = this.getICObject(ICObjectId);
     if(obj != null){
       try {
