@@ -116,14 +116,14 @@ public class IDOUtil {
 	/**
 	 * Returns the int ID of an entity if the primaryKey of the entity is an Integer.
 	 * If not it throws a RuntimeException	 * @param entity an IDOEntity instance.	 * @return int Which is the ID of the entity if the primary key is an integer
-	 * @throws A RuntimeException if the primary key of the entity is not Integer	 */
+	 * @throws RuntimeException if the primary key of the entity is not Integer	 */
 	public int getID(IDOEntity entity){
 		try{
 			Integer iID = (Integer)entity.getPrimaryKey();
 			return iID.intValue();
 		}
 		catch(Exception e){
-			throw new RuntimeException("Error getting ID of entity. The underlying excption was: "+e.getClass().getName()+" : "+e.getMessage());
+			throw new RuntimeException("Error getting ID of entity. The underlying exception was: "+e.getClass().getName()+" : "+e.getMessage());
 		}
 	}
 	
@@ -132,7 +132,7 @@ public class IDOUtil {
 	 * If not it throws a RuntimeException
 	 * @param entities a Collection of IDOEntity instances.
 	 * @return int[] Which is the IDs of all the entities in the Collection if the primary key is an integer
-	 * @throws A RuntimeException if the primary key of the entities is not Integer
+	 * @throws RuntimeException if the primary key of the entities is not Integer
 	 */	
 	public int[] getIDs(Collection entities){
 		int[] theReturn = new int[entities.size()];
