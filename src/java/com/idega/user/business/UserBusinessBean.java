@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.ejb.CreateException;
@@ -1965,41 +1966,55 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    */
   public Collection getAllGroupsWithEditPermission(User user, IWUserContext iwuc) {
     
-    Collection resultGroups = new ArrayList();
-    GroupBusiness groupBiz = null;
-    try {
-      groupBiz = getGroupBusiness();
-    }
-    catch (RemoteException ex)  {
-      throw new RuntimeException(ex.getMessage());
-    }
+    Collection resultGroups = new TreeSet();  // important to use Set so there will not be any doubles
+    GroupHome grHome = getGroupHome();
+//	GroupBusiness groupBiz = null;
+//	try {
+//	  groupBiz = getGroupBusiness();
+//	}
+//	catch (RemoteException ex)  {
+//	  throw new RuntimeException(ex.getMessage());
+//	}
     
     Collection permissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
     List parentGroupsList = user.getParentGroups();
     
       Collection editPermissions = AccessControl.getAllGroupEditPermissions(parentGroupsList);
      // permissions.removeAll(editPermissions); // avoid double entries
-      permissions.addAll(editPermissions);
+//      permissions.addAll(editPermissions);
+      
+		Collection allPermissions = new ArrayList();
+		allPermissions.addAll(permissions);
+		allPermissions.addAll(editPermissions);
 
-    Iterator iterator = permissions.iterator();
-    while (iterator.hasNext()) {
-      ICPermission perm = (ICPermission) iterator.next();
-      try {
-        String groupId = perm.getContextValue();
-        Group group = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
-        resultGroups.add(group);
-      }
-      catch (NumberFormatException e1) {
-        e1.printStackTrace();
-      }
-      catch (FinderException e1) {
-        System.out.println("UserBusiness: In getAllGroupsWithEditPermission. group not found"+perm.getContextValue());
-      }
-      catch (RemoteException ex)  {
-        throw new RuntimeException(ex.getMessage());
-      }
-    }
-    return resultGroups;
+		Iterator iterator = allPermissions.iterator();
+		while (iterator.hasNext()) {
+			ICPermission perm = (ICPermission) iterator.next();
+			try {
+				String groupId = perm.getContextValue();
+//				Group group = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
+//				resultGroups.add(group);
+				Object grPK = grHome.decode(groupId); 
+				resultGroups.add(grPK);
+			}
+			catch (NumberFormatException e1) {
+				e1.printStackTrace();
+			}
+//			catch (FinderException e1) {
+//				System.out.println("UserBusiness: In getAllGroupsWithEditPermission. group not found"+perm.getContextValue());
+//			}
+//			catch (RemoteException ex)  {
+//				throw new RuntimeException(ex.getMessage());
+//			}
+		}
+		try {
+			return grHome.findByPrimaryKeyCollection(resultGroups);
+		} catch (FinderException e) {
+			System.out.println("UserBusiness: In getAllGroupsWithEditPermission. groups not found");
+			e.printStackTrace();
+			return ListUtil.getEmptyList();
+		}
+
   }
   
 	/**
@@ -2010,7 +2025,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	public Collection getAllGroupsWithViewPermission(User user, IWUserContext iwuc) {
     
-		Collection resultGroups = new ArrayList();
+		Collection resultGroups = new TreeSet();  // important to use Set so there will not be any doubles
 		//Group userGroup = null;
 //		GroupBusiness groupBiz = null;
 		GroupHome grHome = getGroupHome();
