@@ -11,10 +11,10 @@ import java.util.Enumeration;
 /**
  * Title:
  * Description:
- * Copyright:    Copyright (c) 2001
- * Company:
- * @author
- * @version 1.0
+ * Copyright:    Copyright (c) 2000-2001 idega.is All Rights Reserved
+ * Company:      idega
+  *@author <a href="mailto:aron@idega.is">Aron Birkir</a>
+ * @version 1.1
  */
 
 public class ICLocalePresentation {

@@ -26,16 +26,24 @@ public class ICLocale extends GenericEntity {
     this.addAttribute(getColumnNameLocale(),"Locale",true,true,String.class,20);
     this.addAttribute(getColumnNameLanguageId(),"Language",true,true,Integer.class,"many-to-one",ICLanguage.class);
     this.addAttribute(getColumnNameCountryId(),"Country",true,true,Integer.class,"many-to-one",Country.class);
+    this.addAttribute(getColumnNameInUse(),"In use",true,true,Boolean.class,"many-to-one",Country.class);
   }
 
   public void insertStartData() throws Exception{
-    ICLocale is= new ICLocale();
-    is.setLocale("is_IS");
-    is.insert();
 
-    ICLocale en= new ICLocale();
-    en.setLocale("en");
-    en.insert();
+    java.util.Locale[] JavaLocales = java.util.Locale.getAvailableLocales();
+    ICLocale il;
+    String sLocale;
+    for (int i = 0; i < JavaLocales.length; i++) {
+      il = new ICLocale();
+      sLocale = JavaLocales[i].toString();
+      il.setLocale(sLocale);
+      if(sLocale.equals("en"))
+        il.setInUse(true);
+      else
+        il.setInUse(false);
+      il.insert();
+    }
   }
 
 
@@ -46,6 +54,7 @@ public class ICLocale extends GenericEntity {
   public static String getColumnNameLocale(){return "LOCALE";}
   public static String getColumnNameLanguageId(){return "IC_LANGUAGE_ID";}
   public static String getColumnNameCountryId(){return "IC_COUNTRY_ID";}
+  public static String getColumnNameInUse(){return "IN_USE";}
 
   public String getName(){
     return getLocale();
@@ -74,6 +83,12 @@ public class ICLocale extends GenericEntity {
   }
   public int getCountryId(){
     return getIntColumnValue(getColumnNameCountryId());
+  }
+  public void setInUse(boolean inUse){
+    setColumn(getColumnNameInUse() ,inUse);
+  }
+  public boolean getInUse(){
+    return getBooleanColumnValue(getColumnNameInUse());
   }
 
 }

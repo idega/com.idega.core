@@ -7,6 +7,7 @@ import com.idega.util.idegaTimestamp;
 import java.util.List;
 import java.util.Vector;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Locale;
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -14,10 +15,10 @@ import java.util.Iterator;
 /**
  * Title:
  * Description:
- * Copyright:    Copyright (c) 2001
- * Company:
- * @author
- * @version 1.0
+ * Copyright:    Copyright (c) 2000-2001 idega.is All Rights Reserved
+ * Company:      idega
+  *@author <a href="mailto:aron@idega.is">Aron Birkir</a>
+ * @version 1.1
  */
 
 public class ICLocaleBusiness {
@@ -50,10 +51,45 @@ public class ICLocaleBusiness {
   }
 
   public static List listOfLocales(){
+    return listOfLocalesInUse();
+    /*
     try {
       return EntityFinder.findAll(new ICLocale());
     }
     catch (SQLException ex) {
+      return null;
+    }
+    */
+  }
+
+  public static List listOfAllLocales(){
+    try {
+      return EntityFinder.findAll(new ICLocale());
+    }
+    catch (SQLException ex) {
+      return null;
+    }
+  }
+
+  public static List listOfLocalesInUse(){
+    try {
+     return  EntityFinder.findAllByColumn(new ICLocale(),ICLocale.getColumnNameInUse(),"Y");
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public static List listOfLocales(boolean inUse){
+    try {
+      if(inUse)
+        return  EntityFinder.findAllByColumn(new ICLocale(),ICLocale.getColumnNameInUse(),"Y");
+      else
+        return EntityFinder.findAllByColumn(new ICLocale(),ICLocale.getColumnNameInUse(),"N");
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
       return null;
     }
   }
@@ -71,12 +107,11 @@ public class ICLocaleBusiness {
         localeList.add(locale);
       }
     }
-
     return localeList;
   }
 
   private static void makeHashtables(){
-    List L = listOfLocales();
+    List L = listOfAllLocales();
     if(L!=null){
       int len = L.size();
       LocaleHashById = new Hashtable(len);
@@ -89,6 +124,20 @@ public class ICLocaleBusiness {
     }
   }
 
+  public static Map mapOfLocalesInUseByString(){
+    List listOfLocalesInUse = listOfLocalesInUse();
+    if(listOfLocalesInUse != null){
+      Hashtable H = new Hashtable();
+      Iterator I = listOfLocalesInUse.iterator();
+      while(I.hasNext()){
+        ICLocale locale = (ICLocale) I.next();
+        H.put(locale.getLocale(),locale);
+      }
+      return H;
+    }
+    return null;
+  }
+
   public static void reload(){
     makeHashtables();
     reloadStamp = idegaTimestamp.RightNow();
@@ -98,6 +147,14 @@ public class ICLocaleBusiness {
     if(reloadStamp == null)
       reload();
     return reloadStamp;
+  }
+
+  public static Map getMapOfLocalesById(){
+    return getLocaleHashById();
+  }
+
+  public static Map getMapOfLocalesByString(){
+    return getLocaleHashByString();
   }
 
   public static Hashtable getLocaleHashById(){
@@ -153,6 +210,36 @@ public class ICLocaleBusiness {
     catch(Exception ex){
       ex.printStackTrace();
       return null;
+
+    }
+  }
+
+  public static void makeLocalesInUse(List listOfStringIds){
+    if(listOfStringIds != null){
+      StringBuffer ids = new StringBuffer();
+      Iterator I = listOfStringIds.iterator();
+      String id;
+      if(I.hasNext()){
+        id = (String) I.next();
+        ids.append(id);
+      }
+      while(I.hasNext()){
+        id = (String) I.next();
+        ids.append(",");
+        ids.append(id);
+      }
+      try {
+        String sqlA = "update ic_locale set in_use = 'Y' where ic_locale_id in ("+ids.toString()+")";
+        System.err.println(sqlA);
+        String sqlB = "update ic_locale set in_use = 'N' where ic_locale_id not in ("+ids.toString()+")";
+        System.err.println(sqlB);
+        com.idega.data.SimpleQuerier.execute(sqlA);
+        com.idega.data.SimpleQuerier.execute(sqlB);
+      }
+      catch (Exception ex) {
+        ex.printStackTrace();
+      }
+
 
     }
   }
