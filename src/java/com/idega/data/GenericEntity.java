@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.56 2001/10/20 10:19:51 laddi Exp $
+ * $Id: GenericEntity.java,v 1.57 2001/10/20 11:03:51 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1633,7 +1633,7 @@ public abstract class GenericEntity implements java.io.Serializable,IDOLegacyEnt
 
 
         public GenericEntity[] findAll(String SQLString)throws SQLException{
-          System.out.println(SQLString);
+          //System.out.println(SQLString);
           return findAll(SQLString,-1);
         }
 
