@@ -4,7 +4,14 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
-  
+
+    <release version="3.0.2" date="2005-03-31">
+      <action dev="tryggvil" type="update">
+      	This version is the very first one with a correct iwbar.
+        Declaration of version for use in new systems based on JSF.
+      </action>              
+    </release>
+    
     <release version="3.0.0" date="2005-03-10">
       <action dev="tryggvil" type="update">
         Declaration of version for use in new systems based on JSF.
