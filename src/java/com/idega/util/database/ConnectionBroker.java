@@ -19,6 +19,14 @@ import com.idega.transaction.*;
 */
 public class ConnectionBroker{
 
+
+	public final static int POOL_MANAGER_TYPE_IDEGA=1;
+	public final static int POOL_MANAGER_TYPE_POOLMAN=2;
+
+
+	public static int POOL_MANAGER_TYPE=1;
+
+
         /**
          * Returns a Datastore connection from the default datasource
          */
