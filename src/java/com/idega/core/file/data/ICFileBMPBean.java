@@ -2,6 +2,7 @@ package com.idega.core.file.data;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -23,7 +24,7 @@ import com.idega.data.TreeableEntityBMPBean;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.Storable;
-import com.idega.io.Writer;
+import com.idega.io.ObjectWriter;
 import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
 
@@ -394,7 +395,7 @@ public boolean isFolder()
 	}
 }
 
-	public Object write(Writer writer) {
+	public Object write(ObjectWriter writer) throws RemoteException {
 		return writer.write(this);
 	}
   
