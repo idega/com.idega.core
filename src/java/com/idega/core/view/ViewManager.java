@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.9 2005/03/03 09:10:35 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.10 2005/03/06 12:26:16 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import com.idega.util.FacesUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2005/03/03 09:10:35 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/06 12:26:16 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class ViewManager implements Singleton {
 	
@@ -188,6 +188,26 @@ public class ViewManager implements Singleton {
 			//Return the rootNode if nothing found:
 			return root;
 		}
+	}
+	
+	/**
+	 * <p>
+	 * Checks if the given node is in the hierarchy of the URI uri.<br>
+	 * e.g. if the given node has the uri /workspace/content then this method returns true for the uri /workspace/content/documents.
+	 * </p>
+	 * @param node
+	 * @param uri
+	 * @return
+	 */
+	public boolean isNodeInHierarchy(ViewNode node,String uri){
+		
+		String nodeUri = node.getURI();
+		if(uri!=null){
+			if(uri.startsWith(nodeUri)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	

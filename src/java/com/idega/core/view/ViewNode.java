@@ -1,5 +1,5 @@
 /*
- * $Id: ViewNode.java,v 1.5 2005/03/06 12:01:42 tryggvil Exp $
+ * $Id: ViewNode.java,v 1.6 2005/03/06 12:26:16 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import javax.faces.context.FacesContext;
  * 'workspace' and 'builder parts of the URL. <br>
  * ViewNodes are accessed and managed by the ViewManager instance.<br>
  * </p>
- *  Last modified: $Date: 2005/03/06 12:01:42 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/06 12:26:16 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public interface ViewNode {
 	
@@ -112,6 +112,6 @@ public interface ViewNode {
 	 * Controls wheather the node will be rendered in User Interface, menus and such.
 	 * @return
 	 */
-	public boolean isRendered();
+	public boolean isVisibleInMenus();
 	
 }

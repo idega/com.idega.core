@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.7 2005/03/03 06:24:48 tryggvil Exp $
+ * $Id: DefaultViewNode.java,v 1.8 2005/03/06 12:26:16 tryggvil Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2005/03/03 06:24:48 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/06 12:26:16 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -512,13 +512,13 @@ public class DefaultViewNode implements ViewNode {
 	/**
 	 * @return Returns the isRendered.
 	 */
-	public boolean isRendered() {
+	public boolean isVisibleInMenus() {
 		return isRendered;
 	}
 	/**
 	 * @param isRendered The isRendered to set.
 	 */
-	public void setRendered(boolean isRendered) {
+	public void setVisibleInMenus(boolean isRendered) {
 		this.isRendered = isRendered;
 	}
 }
