@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.26 2002/10/23 14:41:52 laddi Exp $
+ * $Id: Table.java,v 1.27 2002/11/01 14:20:04 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -795,12 +795,20 @@ public class Table extends PresentationObjectContainer {
 	protected void printNbsp(IWContext iwc, int xpos, int ypos) {
 		if (theObjects[xpos - 1][ypos - 1] != null) {
 			if (theObjects[xpos - 1][ypos - 1].isEmpty()) {
+				String width = "1";
+				String height = "1";
+				
+				if (theObjects[xpos - 1][ypos - 1].isAttributeSet("width"))
+					width = theObjects[xpos - 1][ypos - 1].getAttribute("width");
+				if (theObjects[xpos - 1][ypos - 1].isAttributeSet("height"))
+					height = theObjects[xpos - 1][ypos - 1].getAttribute("height");
+				
 				if (false) {
 					//not implemented
 				}
 				else {
 					//print(Text.getNonBrakingSpace().getText());
-					print("<img src=\"" + transparentcell.getURL() + "\" width=\"1\" height=\"1\" alt=\"\">");
+					print("<img src=\"" + transparentcell.getURL() + "\" width=\""+width+"\" height=\""+height+"\" alt=\"\">");
 				}
 			}
 		}
