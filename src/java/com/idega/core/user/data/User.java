@@ -35,16 +35,16 @@ public class User extends GenericEntity {
     public void initializeAttributes(){
       addAttribute(getIDColumnName());
 
-      addAttribute(getColumnNameFirstName(),"Fornafn",true,true,"java.lang.String");
-      addAttribute(getColumnNameMiddleName(),"Miðnafn",true,true,"java.lang.String");
-      addAttribute(getColumnNameLastName(),"Eftirnafn",true,true,"java.lang.String");
-      addAttribute(getColumnNameDisplayName(),"Kenninafn",true,true,"java.lang.String");
-      addAttribute(getColumnNameDescription(),"Lýsing",true,true,"java.lang.String");
-      addAttribute(getColumnNameDateOfBirth(),"Fæðingardagur",true,true,"java.sql.Date");
-      addAttribute(getColumnNameGender(),"Kyn",true,true,"java.lang.Integer","many_to_one","com.idega.core.user.data.Gender");
-      addAttribute(getColumnNameSystemImage(),"Kerfismynd",true,true,"java.lang.Integer","one_to_one","com.idega.core.data.ICFile");
-      addAttribute(_COLUMNNAME_USER_GROUP_ID,"Notandi",true,true,Integer.class,"one-to-one",GenericGroup.class);
-      addAttribute(_COLUMNNAME_PRIMARY_GROUP_ID,"Aðal notendahópur",true,true,Integer.class,"one-to-one",GenericGroup.class);
+      addAttribute(getColumnNameFirstName(),"First name",true,true,java.lang.String.class);
+      addAttribute(getColumnNameMiddleName(),"Middle name",true,true,java.lang.String.class);
+      addAttribute(getColumnNameLastName(),"Last name",true,true,java.lang.String.class);
+      addAttribute(getColumnNameDisplayName(),"Display name",true,true,java.lang.String.class);
+      addAttribute(getColumnNameDescription(),"Description",true,true,java.lang.String.class);
+      addAttribute(getColumnNameDateOfBirth(),"Birth date",true,true,java.sql.Date.class);
+      addManyToOneRelationship(getColumnNameGender(),"Gender",com.idega.core.user.data.Gender.class);
+      addOneToOneRelationship(getColumnNameSystemImage(),"Image",com.idega.core.data.ICFile.class);
+      addOneToOneRelationship(_COLUMNNAME_USER_GROUP_ID,"User",GenericGroup.class);
+      addOneToOneRelationship(_COLUMNNAME_PRIMARY_GROUP_ID,"Primary group",GenericGroup.class);
       this.addManyToManyRelationShip(Address.class,"ic_user_address");
       this.addManyToManyRelationShip(Phone.class,"ic_user_phone");
       this.addManyToManyRelationShip(Email.class,"ic_user_email");

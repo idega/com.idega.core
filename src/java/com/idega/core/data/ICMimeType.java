@@ -33,7 +33,7 @@ public class ICMimeType extends CacheableEntity {
   public void initializeAttributes() {
     addAttribute(getIDColumnName(),"Mime type",true,true, String.class,100);
     addAttribute(getColumnNameDescription(),"Description",true,true, String.class,255);
-    addAttribute(getColumnNameFileType(),"File type",true,true, Integer.class,"many-to-one",ICFileType.class);
+   addManyToOneRelationship(getColumnNameFileType(),"File type",ICFileType.class);
 
     setAsPrimaryKey(getIDColumnName(),true);
     setNullable(getIDColumnName(),false);
