@@ -8,7 +8,6 @@ package com.idega.servlet.filter;
 
 import java.io.IOException;
 import java.util.logging.Logger;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -18,8 +17,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.accesscontrol.jaas.IWJAASAutenticationRequestWrapper;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWMainApplicationSettings;
@@ -68,14 +67,34 @@ public class IWAuthenticator implements Filter {
 		//IWContext iwc = IWContext.getIWContext(fc);
 		IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
 		
-		setServletContextPath(iwc);
+		if(useBasicAuthenticationMethod(iwc)){
+			if(!iwc.isLoggedOn()){
+				if (!getLoginBusiness(iwc).authenticateBasicAuthenticationRequest(iwc)) {	
+					getLoginBusiness(iwc).callForBasicAuthentication(iwc,null);
+					return;
+				}
+			}
+		} else {
+			if(!iwc.isLoggedOn()){
+				getLoginBusiness(iwc).authenticateBasicAuthenticationRequest(iwc);
+			}
+			setServletContextPath(iwc);
+			
+			tryRegularLogin(iwc);
+			
+			performCookieLogin(iwc);
+			addCookie(iwc);
+		}
 		
-		tryRegularLogin(iwc);
-		
-		performCookieLogin(iwc);
-		addCookie(iwc);
+		chain.doFilter(new IWJAASAutenticationRequestWrapper(iwc), response);
+	}
 
-		chain.doFilter(request, response);
+	/**
+	 * @param iwc
+	 * @return
+	 */
+	private boolean useBasicAuthenticationMethod(IWContext iwc) {
+		return iwc.isWebDavClient();
 	}
 
 	/*
