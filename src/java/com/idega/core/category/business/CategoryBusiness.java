@@ -12,10 +12,13 @@ import com.idega.core.category.data.ICCategoryHome;
 import com.idega.core.component.business.ICObjectBusiness;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.core.component.data.ICObjectInstanceHome;
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.util.IWTimestamp;
 
 public class CategoryBusiness {
+    
+	private static String TREE_ORDER_COLUMN_NAME = "TREE_ORDER";
 	
 	private static CategoryBusiness categoryBusiness;
 	
@@ -213,6 +216,19 @@ public class CategoryBusiness {
 		return saveCategory(Cat, iObjectInstanceId, 0, allowMultible);
 	}
 	
+	public boolean createPossiblyMissingTreeOrderColumnInICCategoryICObjectInstanceMiddleTable(ICCategory cat) {
+	    
+	    try {
+            ((GenericEntity)cat).insertStartData();
+        } catch (Exception e) {
+            
+            e.printStackTrace();
+            return false;
+        }
+	    
+        return true;
+	}
+	
 	public ICCategory saveCategory(ICCategory Cat, int iObjectInstanceId, int orderNumber, boolean allowMultible) {
 		javax.transaction.TransactionManager t = com.idega.transaction.IdegaTransactionManager.getInstance();
 		try {
@@ -234,10 +250,18 @@ public class CategoryBusiness {
 							ICObjectInstance.class)).findByPrimaryKeyLegacy(
 						iObjectInstanceId);
 				//catObjInstHome.setOrderNumber(Cat, objIns, orderNumber);
+				
+				//added by Eiki, a fix for databases that do not have the TREE_ORDER COLUMN!
+				//We must find a better way!
+				createPossiblyMissingTreeOrderColumnInICCategoryICObjectInstanceMiddleTable(Cat);
+				////
+				
+				
+				
 				// Allows only one category per instanceId
 				if (!allowMultible)
 					objIns.removeFrom((ICCategory) com.idega.core.category.data.ICCategoryBMPBean.getEntityInstance(ICCategory.class));
-				Cat.addTo(objIns, "TREE_ORDER", String.valueOf(orderNumber));
+				Cat.addTo(objIns, TREE_ORDER_COLUMN_NAME, String.valueOf(orderNumber));
 			}
 			t.commit();
 			return Cat;
