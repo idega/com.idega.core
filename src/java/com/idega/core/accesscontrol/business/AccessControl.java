@@ -223,7 +223,7 @@ public class AccessControl{
       ICPermission permission = ICPermission.getStaticInstance();
       boolean update = true;
       try {
-        permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = " + getPageString() + " AND " + permission.getContextValueColumnName() + " = " + PageContextValue + " AND " + permission.getPermissionStringColumnName() + " = " + permissionType + " AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
+        permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getPageString() + "' AND " + permission.getContextValueColumnName() + " = '" + PageContextValue + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
       }
       catch (Exception ex) {
         permission = new ICPermission();
@@ -250,7 +250,7 @@ public class AccessControl{
       ICPermission permission = ICPermission.getStaticInstance();
       boolean update = true;
       try {
-        permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = " + getObjectIdString() + " AND " + permission.getContextValueColumnName() + " = " + obj.getICObject().getID() + " AND " + permission.getPermissionStringColumnName() + " = " + permissionType + " AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
+        permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectIdString() + "' AND " + permission.getContextValueColumnName() + " = '" + obj.getICObject().getID() + "' AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
       }
       catch (Exception ex) {
         permission = new ICPermission();
@@ -275,7 +275,7 @@ public class AccessControl{
       ICPermission permission = ICPermission.getStaticInstance();
       boolean update = true;
       try {
-        permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = " + getObjectInstanceIdString() + " AND " + permission.getContextValueColumnName() + " = " + obj.getICInstance(modinfo).getID() + " AND " + permission.getPermissionStringColumnName() + " = " + permissionType + " AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
+        permission = (ICPermission)(permission.findAll("SELECT * FROM " + permission.getEntityName() + " WHERE " + permission.getContextTypeColumnName() + " = '" + getObjectInstanceIdString() + "' AND " + permission.getContextValueColumnName() + " = " + obj.getICInstance(modinfo).getID() + " AND " + permission.getPermissionStringColumnName() + " = '" + permissionType + "' AND " + permission.getGroupIDColumnName() + " = " + group.getID()))[0];
       }
       catch (Exception ex) {
         permission = new ICPermission();

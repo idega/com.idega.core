@@ -44,7 +44,7 @@ public class ICObject extends GenericEntity{
 
 	public void setDefaultValues(){
 		//setColumn("image_id",1);
-                setColumn("small_icon_image_id",1);
+//                setColumn("small_icon_image_id",1);
 	}
 
 	public String getName(){
