@@ -1,105 +1,535 @@
+/*
+ * $Id: Group.java,v 1.43 2004/09/21 18:55:13 eiki Exp $
+ * Created on Sep 17, 2004
+ *
+ * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.user.data;
 
 import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+import com.idega.core.builder.data.ICPage;
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.Phone;
+import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
+import com.idega.core.location.data.Address;
+import com.idega.core.location.data.AddressType;
+import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDOCompositePrimaryKeyException;
+import com.idega.data.IDOEntity;
+import com.idega.data.IDOLookupException;
+import com.idega.data.IDORelationshipException;
+import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.query.SelectQuery;
+import com.idega.idegaweb.IWApplicationContext;
 
 
-public interface Group extends com.idega.data.IDOEntity,com.idega.core.data.ICTreeNode,com.idega.data.MetaDataCapable,UniqueIDCapable
-{
- public void addAddress(com.idega.core.location.data.Address p0)throws com.idega.data.IDOAddRelationshipException;
- public void addEmail(com.idega.core.contact.data.Email p0)throws com.idega.data.IDOAddRelationshipException;
- public void addGroup(com.idega.user.data.Group p0)throws javax.ejb.EJBException;
- public void addGroup(int p0)throws javax.ejb.EJBException;
- public void addPhone(com.idega.core.contact.data.Phone p0)throws com.idega.data.IDOAddRelationshipException;
- public void addRelation(com.idega.user.data.Group p0,java.lang.String p1)throws javax.ejb.CreateException;
- public void addRelation(com.idega.user.data.Group p0,com.idega.user.data.GroupRelationType p1)throws javax.ejb.CreateException;
- public void addRelation(int p0,com.idega.user.data.GroupRelationType p1)throws javax.ejb.CreateException;
- public void addRelation(int p0,java.lang.String p1)throws javax.ejb.CreateException;
- public void addUniqueRelation(int p0,java.lang.String p1)throws javax.ejb.CreateException;
- public void addUniqueRelation(com.idega.user.data.Group p0,java.lang.String p1)throws javax.ejb.CreateException;
- public java.lang.String getAbbrevation();
- public java.util.Collection getAddresses(com.idega.core.location.data.AddressType p0) throws  com.idega.data.IDOLookupException, com.idega.data.IDOCompositePrimaryKeyException, com.idega.data.IDORelationshipException; 
- public com.idega.user.data.Group getAlias();
- public int getAliasID();
- public java.util.Collection getAllGroupsContainingUser(com.idega.user.data.User p0)throws javax.ejb.EJBException;
- public boolean getAllowsChildren();
- public com.idega.core.data.ICTreeNode getChildAtIndex(int p0);
- public int getChildCount();
- public java.util.List getChildGroups()throws javax.ejb.EJBException;
- public java.util.Collection getChildGroups(Group p0)throws javax.ejb.EJBException;
- public java.util.List getChildGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.EJBException;
- public java.util.Iterator getChildrenIterator();
- public java.util.Collection getChildren();
- public java.sql.Timestamp getCreated();
- public java.lang.String getDescription();
- public java.util.Collection getEmails();
- public java.lang.String getExtraInfo();
- public java.lang.String getGroupType();
- public java.lang.String getGroupTypeDescription();
- public java.lang.String getGroupTypeKey();
- public java.lang.String getGroupTypeValue();
- public com.idega.core.builder.data.ICPage getHomePage();
- public int getHomePageID();
- public int getIndex(com.idega.core.data.ICTreeNode p0);
- public java.lang.String getHomePageURL();
- public java.lang.String getName();
- public int getNodeID();
- public java.lang.String getNodeName();
- public java.lang.String getNodeName(java.util.Locale p0);
- public java.util.List getParentGroups()throws javax.ejb.EJBException;
- public java.util.List getParentGroups(java.util.Map p0,java.util.Map p1)throws javax.ejb.EJBException;
- public com.idega.core.data.ICTreeNode getParentNode();
- public java.util.Collection getPhones();
- public java.util.Collection getRelatedBy(com.idega.user.data.GroupRelationType p0)throws javax.ejb.FinderException;
- public java.util.Collection getRelatedBy(java.lang.String p0)throws javax.ejb.FinderException;
- public java.util.Collection getReverseRelatedBy(java.lang.String p0)throws javax.ejb.FinderException;
- public java.lang.String getShortName();
- public int getSiblingCount();
- public boolean hasRelationTo(com.idega.user.data.Group p0);
- public boolean hasRelationTo(int p0);
- public boolean hasRelationTo(int p0,java.lang.String p1);
- public void initializeAttributes();
- public boolean isLeaf();
- public boolean isUser();
- public void removeGroup(com.idega.user.data.Group p0,com.idega.user.data.User p1)throws javax.ejb.EJBException;
- public void removeGroup(com.idega.user.data.User p0)throws javax.ejb.EJBException;
- public void removeGroup(int p0,com.idega.user.data.User p1,boolean p2)throws javax.ejb.EJBException;
- public void removeRelation(com.idega.user.data.Group p0,java.lang.String p1)throws javax.ejb.RemoveException;
- public void removeRelation(int p0,java.lang.String p1)throws javax.ejb.RemoveException;
- public void removeRelation(Group relatedGroup, String relationType, User performer) throws RemoveException;
- public void removeRelation(int relatedGroupId, String relationType, User performer) throws RemoveException;
- public void removeUser(com.idega.user.data.User p0,com.idega.user.data.User p1);
- public void removeUser(com.idega.user.data.User p0,com.idega.user.data.User p1, java.sql.Timestamp p2);
- public void setAbbrevation(java.lang.String p0);
- public void setAlias(com.idega.user.data.Group p0);
- public void setAliasID(int p0);
- public void setCreated(java.sql.Timestamp p0);
- public void setDescription(java.lang.String p0);
- public void setExtraInfo(java.lang.String p0);
- public void setGroupType(java.lang.String p0);
- public void setGroupType(com.idega.user.data.GroupType p0);
- public void setHomePage(com.idega.core.builder.data.ICPage p0);
- public void setHomePageID(int p0);
- public void setHomePageID(java.lang.Integer p0);
- public void setHomePageURL(java.lang.String p0);
- public void setName(java.lang.String p0);
- public void setShortName(java.lang.String p0);
- public void store();
- public void addGroup(com.idega.user.data.Group p0, Timestamp time);
- public void setPermissionControllingGroupID(int id);
- public void setPermissionControllingGroup(Group controllingGroup);
- public int getPermissionControllingGroupID();
- public Group getPermissionControllingGroup();
- public void setIsPermissionControllingGroup(boolean isControlling);
- public boolean isPermissionControllingGroup();
- public boolean isAlias();
- public int getHomeFolderID();
- public ICFile getHomeFolder();
- public void setHomeFolderID(int fileID);
- public void setHomeFolderID(Integer fileID);
- public void setHomeFolder(ICFile file);
- public SelectQuery getSelectQueryConstraints();
+/**
+ * 
+ *  Last modified: $Date: 2004/09/21 18:55:13 $ by $Author: eiki $
+ * 
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.43 $
+ */
+public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDCapable {
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeValue
+	 */
+	public String getGroupTypeValue();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeKey
+	 */
+	public String getGroupTypeKey();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeDescription
+	 */
+	public String getGroupTypeDescription();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getName
+	 */
+	public String getName();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setName
+	 */
+	public void setName(String name);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getGroupType
+	 */
+	public String getGroupType();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setGroupType
+	 */
+	public void setGroupType(String groupType);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setGroupType
+	 */
+	public void setGroupType(GroupType groupType);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setAliasID
+	 */
+	public void setAliasID(int id);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setAlias
+	 */
+	public void setAlias(Group alias);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getAliasID
+	 */
+	public int getAliasID();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getAlias
+	 */
+	public Group getAlias();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#isAlias
+	 */
+	public boolean isAlias();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setPermissionControllingGroupID
+	 */
+	public void setPermissionControllingGroupID(int id);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setPermissionControllingGroup
+	 */
+	public void setPermissionControllingGroup(Group controllingGroup);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getPermissionControllingGroupID
+	 */
+	public int getPermissionControllingGroupID();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getPermissionControllingGroup
+	 */
+	public Group getPermissionControllingGroup();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setShortName
+	 */
+	public void setShortName(String shortName);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setAbbrevation
+	 */
+	public void setAbbrevation(String abbr);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getDescription
+	 */
+	public String getDescription();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setDescription
+	 */
+	public void setDescription(String description);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getExtraInfo
+	 */
+	public String getExtraInfo();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setExtraInfo
+	 */
+	public void setExtraInfo(String extraInfo);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getCreated
+	 */
+	public Timestamp getCreated();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setCreated
+	 */
+	public void setCreated(Timestamp created);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getHomePageID
+	 */
+	public int getHomePageID();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getHomePage
+	 */
+	public ICPage getHomePage();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setHomePageID
+	 */
+	public void setHomePageID(int pageID);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setHomePageID
+	 */
+	public void setHomePageID(Integer pageID);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setHomePage
+	 */
+	public void setHomePage(ICPage page);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getHomeFolderID
+	 */
+	public int getHomeFolderID();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getHomeFolder
+	 */
+	public ICFile getHomeFolder();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setHomeFolderID
+	 */
+	public void setHomeFolderID(int fileID);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setHomeFolderID
+	 */
+	public void setHomeFolderID(Integer fileID);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setHomeFolder
+	 */
+	public void setHomeFolder(ICFile file);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getShortName
+	 */
+	public String getShortName();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getAbbrevation
+	 */
+	public String getAbbrevation();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getHomePageURL
+	 */
+	public String getHomePageURL();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setHomePageURL
+	 */
+	public void setHomePageURL(String homePage);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#setIsPermissionControllingGroup
+	 */
+	public void setIsPermissionControllingGroup(boolean isControlling);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#isPermissionControllingGroup
+	 */
+	public boolean isPermissionControllingGroup();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getParentGroups
+	 */
+	public List getParentGroups() throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getParentGroups
+	 */
+	public List getParentGroups(Map cachedParents, Map cachedGroups) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getChildGroups
+	 */
+	public List getChildGroups() throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getChildGroups
+	 */
+	public List getChildGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getChildGroups
+	 */
+	public Collection getChildGroups(Group groupTypeProxy) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getAllGroupsContainingUser
+	 */
+	public Collection getAllGroupsContainingUser(User user) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addGroup
+	 */
+	public void addGroup(Group groupToAdd) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addGroup
+	 */
+	public void addGroup(Group groupToAdd, Timestamp time) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addGroup
+	 */
+	public void addGroup(int groupId, Timestamp time) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addGroup
+	 */
+	public void addGroup(int groupId) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addRelation
+	 */
+	public void addRelation(Group groupToAdd, String relationType) throws CreateException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addRelation
+	 */
+	public void addRelation(Group groupToAdd, GroupRelationType relationType) throws CreateException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addRelation
+	 */
+	public void addRelation(int relatedGroupId, GroupRelationType relationType) throws CreateException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addRelation
+	 */
+	public void addRelation(int relatedGroupId, String relationType) throws CreateException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addUniqueRelation
+	 */
+	public void addUniqueRelation(int relatedGroupId, String relationType, Timestamp time) throws CreateException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addUniqueRelation
+	 */
+	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addUniqueRelation
+	 */
+	public void addUniqueRelation(Group relatedGroup, String relationType) throws CreateException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#removeRelation
+	 */
+	public void removeRelation(Group relatedGroup, String relationType) throws RemoveException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#removeRelation
+	 */
+	public void removeRelation(int relatedGroupId, String relationType) throws RemoveException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#removeRelation
+	 */
+	public void removeRelation(Group relatedGroup, String relationType, User performer) throws RemoveException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#removeRelation
+	 */
+	public void removeRelation(int relatedGroupId, String relationType, User performer) throws RemoveException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getRelatedBy
+	 */
+	public Collection getRelatedBy(GroupRelationType relationType) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getRelatedBy
+	 */
+	public Collection getRelatedBy(String relationType) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getReverseRelatedBy
+	 */
+	public Collection getReverseRelatedBy(String relationType) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#removeUser
+	 */
+	public void removeUser(User user, User currentUser);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#removeUser
+	 */
+	public void removeUser(User user, User currentUser, Timestamp time);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#hasRelationTo
+	 */
+	public boolean hasRelationTo(Group group);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#hasRelationTo
+	 */
+	public boolean hasRelationTo(int groupId);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#hasRelationTo
+	 */
+	public boolean hasRelationTo(int groupId, String relationType);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getChildrenIterator
+	 */
+	public Iterator getChildrenIterator();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getChildren
+	 */
+	public Collection getChildren();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getAllowsChildren
+	 */
+	public boolean getAllowsChildren();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getChildAtIndex
+	 */
+	public ICTreeNode getChildAtIndex(int childIndex);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getChildCount
+	 */
+	public int getChildCount();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getIndex
+	 */
+	public int getIndex(ICTreeNode node);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getParentNode
+	 */
+	public ICTreeNode getParentNode();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#isLeaf
+	 */
+	public boolean isLeaf();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getNodeName
+	 */
+	public String getNodeName();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getNodeName
+	 */
+	public String getNodeName(Locale locale);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getNodeName
+	 */
+	public String getNodeName(Locale locale, IWApplicationContext iwac);
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getNodeID
+	 */
+	public int getNodeID();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getSiblingCount
+	 */
+	public int getSiblingCount();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getNodeType
+	 */
+	public int getNodeType();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#store
+	 */
+	public void store();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#isUser
+	 */
+	public boolean isUser();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addAddress
+	 */
+	public void addAddress(Address address) throws IDOAddRelationshipException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getAddresses
+	 */
+	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException,
+			IDORelationshipException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getPhones
+	 */
+	public Collection getPhones();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getEmails
+	 */
+	public Collection getEmails();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addEmail
+	 */
+	public void addEmail(Email email) throws IDOAddRelationshipException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#addPhone
+	 */
+	public void addPhone(Phone phone) throws IDOAddRelationshipException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#removeGroup
+	 */
+	public void removeGroup(Group entityToRemoveFrom, User currentUser) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#removeGroup
+	 */
+	public void removeGroup(User currentUser) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#removeGroup
+	 */
+	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries, Timestamp time)
+			throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#removeGroup
+	 */
+	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getSelectQueryConstraints
+	 */
+	public SelectQuery getSelectQueryConstraints();
 }

@@ -47,7 +47,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	protected static final String GENERAL_GROUP_COLUMN_ALIAS_TO_GROUP = GroupBMPBean.COLUMN_ALIAS_TO_GROUP;
 	protected static final String GENERAL_GROUP_COLUMN_SHORT_NAME = GroupBMPBean.COLUMN_SHORT_NAME;
 	protected static final String GENERAL_GROUP_COLUMN_ABBREVATION = GroupBMPBean.COLUMN_ABBREVATION;
-
+	
 	protected static final String SQL_JOINT_VARIABLE_GROUP = "t1";
 	protected static final String SQL_JOINT_VARIABLE_RELATED_ABSTRACTGROUP = "t2";
 
@@ -584,6 +584,17 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		return null;
 	}
 	
-	
+	public void addGroup(int groupId, Timestamp time) throws EJBException {
+	    getGeneralGroup().addGroup(groupId,time);
+	}
+
+	public void addUniqueRelation(int relatedGroupId, String relationType, Timestamp time) throws CreateException {
+		getGeneralGroup().addUniqueRelation(relatedGroupId, relationType, time);
+	}
+
+	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries, Timestamp time) throws EJBException {
+		getGeneralGroup().removeGroup(relatedGroupId,currentUser, AllEntries, time);
+	}
+
 
 }

@@ -476,11 +476,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	public void ejbPostCreateGroup() throws CreateException {
 	}
-	public Object ejbFindByName(String name) throws FinderException {
-		return this.idoFindOnePKBySQL("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "'");
+	public Collection ejbFindGroupsByName(String name) throws FinderException {
+		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "'");
 	}
-	public Integer ejbFindGroupByPrimaryKey(Object pk) throws FinderException {
-		return (Integer)this.ejbFindByPrimaryKey(pk);
+	public Integer ejbFindGroupByPrimaryKey(Object primaryKey) throws FinderException {
+		return (Integer)this.ejbFindByPrimaryKey(primaryKey);
 	}
 	//        private List getListOfAllGroupsContainingLegacy(int group_id)throws EJBException{
 	//          String tableToSelectFrom = "IC_GROUP_TREE";

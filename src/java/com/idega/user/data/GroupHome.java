@@ -1,35 +1,152 @@
+/*
+ * $Id: GroupHome.java,v 1.22 2004/09/21 18:55:13 eiki Exp $
+ * Created on Sep 17, 2004
+ *
+ * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.user.data;
 
 import java.util.Collection;
-
+import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.data.IDOException;
+import com.idega.data.IDOHome;
 
 
-public interface GroupHome extends com.idega.data.IDOHome
-{
- public Group create() throws javax.ejb.CreateException;
- public Group findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
- public Group createGroup()throws javax.ejb.CreateException;
- public java.util.Collection findAll()throws javax.ejb.FinderException;
- public java.util.Collection findAllGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.FinderException;
- public Group findByHomePageID(int p0)throws javax.ejb.FinderException;
- public Group findByName(java.lang.String p0)throws javax.ejb.FinderException;
- public Group findGroupByPrimaryKey(java.lang.Object p0)throws javax.ejb.FinderException;
- public Group findGroupByUniqueId(java.lang.String p0)throws javax.ejb.FinderException;
- public java.util.Collection findGroups(java.lang.String[] p0)throws javax.ejb.FinderException;
- public java.util.Collection findGroupsByMetaData(java.lang.String p0,java.lang.String p1)throws javax.ejb.FinderException;
- public java.util.Collection findGroupsByType(java.lang.String p0)throws javax.ejb.FinderException;
- public java.util.Collection findGroupsContained(com.idega.user.data.Group p0,java.util.Collection p1,boolean p2)throws javax.ejb.FinderException;
- public Collection findGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException;
- public java.util.Collection findGroupsRelationshipsByRelatedGroup(int p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException;
- public java.util.Collection findParentGroups(int p0)throws javax.ejb.FinderException;
- public Group findSystemUsersGroup()throws javax.ejb.FinderException;
- public java.util.Collection findTopNodeGroupsContained(com.idega.core.builder.data.ICDomain p0,java.util.Collection p1,boolean p2)throws javax.ejb.FinderException;
- public java.util.Collection findTopNodeVisibleGroupsContained(com.idega.core.builder.data.ICDomain p0)throws javax.ejb.FinderException;
- public java.lang.String getGroupType();
- public int getNumberOfGroupsContained(com.idega.user.data.Group p0,java.util.Collection p1,boolean p2)throws javax.ejb.FinderException,com.idega.data.IDOException;
- public int getNumberOfTopNodeGroupsContained(com.idega.core.builder.data.ICDomain p0,java.util.Collection p1,boolean p2)throws javax.ejb.FinderException,com.idega.data.IDOException;
- public int getNumberOfTopNodeVisibleGroupsContained(com.idega.core.builder.data.ICDomain p0)throws javax.ejb.FinderException,com.idega.data.IDOException;
- public int getNumberOfVisibleGroupsContained(com.idega.user.data.Group p0)throws javax.ejb.FinderException,com.idega.data.IDOException;
- public java.lang.String getRelationTypeGroupParent();
+/**
+ * 
+ *  Last modified: $Date: 2004/09/21 18:55:13 $ by $Author: eiki $
+ * 
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.22 $
+ */
+public interface GroupHome extends IDOHome {
+
+	public Group create() throws javax.ejb.CreateException;
+
+	public Group findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbCreateGroup
+	 */
+	public Group createGroup() throws CreateException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByName
+	 */
+	public Collection findGroupsByName(String name) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupByPrimaryKey
+	 */
+	public Group findGroupByPrimaryKey(Object primaryKey) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContained
+	 */
+	public Collection findGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
+			throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContained
+	 */
+	public Collection findGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbHomeGetNumberOfGroupsContained
+	 */
+	public int getNumberOfGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
+			throws FinderException, IDOException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbHomeGetNumberOfVisibleGroupsContained
+	 */
+	public int getNumberOfVisibleGroupsContained(Group containingGroup) throws FinderException, IDOException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindTopNodeGroupsContained
+	 */
+	public Collection findTopNodeGroupsContained(ICDomain containingDomain, Collection groupTypes, boolean returnTypes)
+			throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbHomeGetNumberOfTopNodeGroupsContained
+	 */
+	public int getNumberOfTopNodeGroupsContained(ICDomain containingDomain, Collection groupTypes, boolean returnTypes)
+			throws FinderException, IDOException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbHomeGetNumberOfTopNodeVisibleGroupsContained
+	 */
+	public int getNumberOfTopNodeVisibleGroupsContained(ICDomain containingDomain) throws FinderException, IDOException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindTopNodeVisibleGroupsContained
+	 */
+	public Collection findTopNodeVisibleGroupsContained(ICDomain containingDomain) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindAllGroups
+	 */
+	public Collection findAllGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindAll
+	 */
+	public Collection findAll() throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbHomeGetGroupType
+	 */
+	public String getGroupType();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbHomeGetRelationTypeGroupParent
+	 */
+	public String getRelationTypeGroupParent();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroups
+	 */
+	public Collection findGroups(String[] groupIDs) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByType
+	 */
+	public Collection findGroupsByType(String type) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByMetaData
+	 */
+	public Collection findGroupsByMetaData(String key, String value) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindSystemUsersGroup
+	 */
+	public Group findSystemUsersGroup() throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsRelationshipsByRelatedGroup
+	 */
+	public Collection findGroupsRelationshipsByRelatedGroup(int groupID, String relationType, String orRelationType)
+			throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindParentGroups
+	 */
+	public Collection findParentGroups(int groupID) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindByHomePageID
+	 */
+	public Group findByHomePageID(int pageID) throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupByUniqueId
+	 */
+	public Group findGroupByUniqueId(String uniqueIdString) throws FinderException;
 }

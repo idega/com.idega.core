@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
+import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import com.idega.core.builder.data.ICPage;
@@ -2125,14 +2126,27 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return idoGetRelatedEntitiesBySQL(Address.class, query.toString());
 	}
 
-  
-	/* (non-Javadoc)
-	 * @see com.idega.user.data.Group#store()
-	 *//*
-	public void store() {
-		this.store();
-		super.store();
-		// TODO Auto-generated method stub
-		
-	}*/
+	
+	/**
+	 * Do not use this method, it is just here because User implements Group
+	 */
+	public void addGroup(int groupId, Timestamp time) throws EJBException {
+	    throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Do not use this method, it is just here because User implements Group
+	 */
+	public void addUniqueRelation(int relatedGroupId, String relationType, Timestamp time) throws CreateException {
+	    throw new UnsupportedOperationException();
+	}
+
+
+	/**
+	 * Do not use this method, it is just here because User implements Group
+	 */
+	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries, Timestamp time) throws EJBException {
+	    throw new UnsupportedOperationException();	
+	}
+
 }
