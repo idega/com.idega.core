@@ -33,7 +33,10 @@ import com.idega.presentation.StatefullPresentation;
 
 public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine {
 
-  private int _historyID = 0;
+
+	private static final String stateMapKey = "iw_global_state_map";  
+		
+	private int _historyID = 0;
 
 	/**
 	 * 
@@ -41,7 +44,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 	 * @uml.associationEnd multiplicity="(0 -1)" ordering="ordered" elementType="com.idega.event.IWPresentationState"
 	 * qualifier="location:com.idega.idegaweb.IWLocation state:com.idega.idegaweb.browser.presentation.IWControlFramePresentationState"
 	 */
-	private Map _stateMap = new Hashtable();
+	private Map _userStatesMap;
 
   public void setHistoryID(int historyId ){
     _historyID = historyId;
@@ -123,8 +126,8 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 //      stateMap = new Hashtable();
 //      getUserContext().setSessionAttribute(mapKey,stateMap);
 //    }
-    if(_stateMap == null){
-      _stateMap = new Hashtable();
+    if(_userStatesMap == null){
+    		_userStatesMap = new Hashtable();
     }
 
 //    if(_stateMap != null){
@@ -139,7 +142,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 //      System.out.println("StateMachine: _stateMap is null");
 //    }
 
-    return _stateMap;
+    return _userStatesMap;
   }
 
   /**
@@ -169,16 +172,22 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 //  }
 
   private Map getGlobalStatesMap(IWApplicationContext iwac){
-    String mapKey = "iw_global_state_map";
-    Map stateMap = (Map)iwac.getApplicationAttribute(mapKey);
+    
+    Map stateMap = (Map)iwac.getApplicationAttribute(stateMapKey);
     if(stateMap == null){
       stateMap = new Hashtable();
-      iwac.setApplicationAttribute(mapKey,stateMap);
+      iwac.setApplicationAttribute(stateMapKey,stateMap);
     }
     return stateMap;
   }
 
+  
+  public void unload(){
+  	this.getIWApplicationContext().removeApplicationAttribute(stateMapKey);
+  	this._userStatesMap=null;
+  }
 
+  
 
 
   public IWPresentationState getStateFor(IWLocation location){

@@ -21,4 +21,6 @@ public interface IWStateMachine extends com.idega.business.IBOSession
 	public java.util.Collection getAllChangeListeners()
 		throws java.rmi.RemoteException;
 
+	
+	public void unload();
 }
