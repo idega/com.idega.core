@@ -73,7 +73,7 @@ public class XMLData {
   }        
     
   
-  public void store() throws IOException  {
+  public ICFile store() throws IOException  {
     // create or fetch existing file
     ICFile xmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
     xmlFile.setMimeType("text/xml");
@@ -81,6 +81,7 @@ public class XMLData {
     XMLOutput xmlOutput = new XMLOutput("  ", true);
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));
     xmlOutput.setTextNormalize(true);
+    xmlOutput.setEncoding("iso-8859-1");
     // do not use document directly use accessor method
     XMLDocument document = getDocument();
     xmlOutput.output(document, output);
@@ -94,11 +95,14 @@ public class XMLData {
         xmlFileId = ((Integer) xmlFile.getPrimaryKey()).intValue();
       }
       else {
-        xmlFile.update();
+        xmlFile.store();
       }
+      return  xmlFile;
     }
     catch (Exception ex)  {
+    	ex.printStackTrace();
     }
+    return null;
   }
  
   private void initialize(ICFile xmlFile) {
@@ -147,5 +151,19 @@ public class XMLData {
       throw new RuntimeException("[XMLData]: Message was: " + ex.getMessage());
     }
   }    
+
+/**
+ * @return
+ */
+public int getXmlFileId() {
+	return xmlFileId;
+}
+
+/**
+ * @param i
+ */
+public void setXmlFileId(int i) {
+	xmlFileId = i;
+}
 
 }
