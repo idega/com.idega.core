@@ -18,8 +18,8 @@ public class ICCategoryBMPBean extends com.idega.data.TreeableEntityBMPBean impl
 
 
 	private String IC_CATEGORY_COLUMN_NAME = ICCategoryBMPBean.getEntityTableName()+"_ID";
-  private String IC_OBJECT_INSTANCE_COLUMN_NAME = "IC_OBJECT_INSTANCE_ID";
-  private String TREE_ORDER_COLUMN_NAME = "TREE_ORDER";
+  private static String IC_OBJECT_INSTANCE_COLUMN_NAME = "IC_OBJECT_INSTANCE_ID";
+  private static String TREE_ORDER_COLUMN_NAME = "TREE_ORDER";
 
   public ICCategoryBMPBean(){
 
