@@ -1,8 +1,6 @@
 //idega 2000 - Tryggvi Larusson
 /*
-
 *Copyright 2000 idega.is All Rights Reserved.
-
 */
 package com.idega.data;
 import java.sql.SQLException;
@@ -498,9 +496,7 @@ public class EntityControl {
 		}
 	}
 	/**
-	
 	*Deletes everything from the table of this entity - use with CAUTION :)
-	
 	**/
 	public static void clear(IDOLegacyEntity entity) throws SQLException {
 		Connection conn = null;
@@ -520,9 +516,7 @@ public class EntityControl {
 		entity.setEntityState(entity.STATE_DELETED);
 	}
 	/**
-	
 	 * Attention: Beta implementation
-	
 	 */
 	public static void addManyToManyRelationShip(
 		IDOLegacyEntity relatingEntity1,
@@ -537,9 +531,7 @@ public class EntityControl {
 		}
 	}
 	/**
-	
 	 * Attention: Beta implementation
-	
 	 */
 	public static void addManyToManyRelationShip(
 		String relatingEntityClassName1,
@@ -559,7 +551,8 @@ public class EntityControl {
 	public static String getTreeRelationShipTableName(IDOLegacyEntity entity) {
 		String treeName = entity.getTableName() + "_tree";
 		if(limitTableNameToThirtyCharacters ){
-			treeName = treeName.substring(0, Math.min(30,treeName.length()));	
+			//treeName = treeName.substring(0, Math.min(30,treeName.length()));	
+			treeName=getTableNameShortenedToThirtyCharacters(treeName);
 		}
 		
 		return treeName;
@@ -578,7 +571,8 @@ public class EntityControl {
 	private static String getCheckedRelatedTableName(String relatedTableName){
 		//this is necessary for Oracle and maybe others!
 		if( limitTableNameToThirtyCharacters ){
-			relatedTableName = relatedTableName.substring(0, Math.min(relatedTableName.length(), 30));	
+			//relatedTableName = relatedTableName.substring(0, Math.min(relatedTableName.length(), 30));	
+			relatedTableName=getTableNameShortenedToThirtyCharacters(relatedTableName);
 		}
 		
 		return relatedTableName;
@@ -611,25 +605,19 @@ public class EntityControl {
 		relationshipClasses.put(relatingEntityClass2, relatingEntityClass1);
 	}
 	/**
-	
 	 * Returns a list of Class Objects
-	
 	 */
 	public static List getManyToManyRelationShipClasses(Class entityClass) {
 		return getManyToManyRelationShipClasses(com.idega.data.GenericEntity.getStaticInstance(entityClass));
 	}
 	/**
-	
 	 * Returns a list of Class Objects
-	
 	 */
 	protected static List getManyToManyRelationShipClasses(IDOLegacyEntity entity) {
 		return relationshipClasses.getList(entity.getClass());
 	}
 	/**
-	
 	 * Returns a list of EntityRelationship Objects
-	
 	 */
 	protected static List getManyToManyRelationShips(IDOLegacyEntity entity) {
 		if (relationshipTables != null) {
@@ -638,9 +626,7 @@ public class EntityControl {
 		return null;
 	}
 	/**@todo : set back to protected
-	
 	 *
-	
 	 */
 	public static String getManyToManyRelationShipTableName(Class entityClass1, Class entityClass2) {
 		return getManyToManyRelationShipName(
@@ -816,5 +802,15 @@ public class EntityControl {
 			}
 		}
 		return theReturn;
+	}
+	
+	protected static String getTableNameShortenedToThirtyCharacters(String originalTableName){
+		try{
+			String theReturn = originalTableName.substring(0, Math.min(30,originalTableName.length()));	
+			return theReturn;
+		}
+		catch(NullPointerException ne){
+			throw new RuntimeException("EntityControl.getTableNameShortenedToThirtyCharacters(). originalTableName is null");
+		}
 	}
 }
