@@ -275,7 +275,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         
         buttonTable.setCellpadding(0);
         buttonTable.setCellspacing(0);
-        buttonTable.setHeight(27);
+        buttonTable.setHeight(37);
         buttonTable.setStyleClass("main");
         buttonTable.setWidth("400");
         
