@@ -1,8 +1,7 @@
 package com.idega.presentation;
 
 import java.io.IOException;
-import com.idega.builder.presentation.InvisibleInBuilder;
-public class Applet extends PresentationObject implements InvisibleInBuilder{
+public class Applet extends PresentationObject {
 	private StringBuffer params = new StringBuffer();
 	private boolean usePlugin = false;
 	public Applet() {
