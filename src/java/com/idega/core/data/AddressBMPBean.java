@@ -44,7 +44,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
   }
 
   public String getName(){
-          return getStreetName();
+          return getStreetName()+" "+getStreetNumber();
   }
 
   public String getStreetName(){
