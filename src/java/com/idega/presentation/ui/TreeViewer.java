@@ -1,5 +1,5 @@
 /*
- * $Id: TreeViewer.java,v 1.4 2001/10/18 20:44:56 laddi Exp $
+ * $Id: TreeViewer.java,v 1.5 2001/10/18 22:43:01 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -231,7 +231,7 @@ public class TreeViewer extends PresentationObjectContainer {
         }
         else{
           //if(this.hasMoreThanOneRoot()){
-            image = bundle.getImage("treeviewer_minus_F.gif");//if it is the top node
+            image = bundle.getImage("transparentcell.gif");//if it is the top node
             image.setWidth(17);
           //}
         }
