@@ -7,6 +7,7 @@ import com.idega.util.datastructures.HashtableDoubleKeyed;
 import com.idega.data.GenericEntity;
 import com.idega.util.FileUtil;
 import com.idega.util.text.TextSoap;
+import com.idega.idegaweb.IWMainApplication;
 
 /**
  * Title: BlobCacher
@@ -73,16 +74,16 @@ public class BlobCacher  {
 
   }
 
-  // not done yet
-  private static void deleteCache(ModuleInfo modinfo){
-    HashtableDoubleKeyed cache = ( HashtableDoubleKeyed )modinfo.getApplicationAttribute(applicationObject);
+  public static void deleteCache(IWMainApplication app){
+    HashtableDoubleKeyed cache = ( HashtableDoubleKeyed )app.getAttribute(applicationObject);
     if ( cache != null ) {
-      String realPath = modinfo.getApplication().getApplicationRealPath();
+      String realPath = app.getApplicationRealPath();
       Enumeration enum = cache.keys();
       while( enum.hasMoreElements() ){
-        FileUtil.delete( realPath + TextSoap.findAndReplace((String)enum.nextElement() ,"/","\\") );
+        String pathAndFile = realPath + TextSoap.findAndReplace((String)enum.nextElement() ,"/",FileUtil.getFileSeparator());
+        System.out.println(pathAndFile);
+        FileUtil.delete( pathAndFile );
       }
-
     }
   }
   // not done yet

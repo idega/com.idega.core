@@ -13,6 +13,8 @@ import com.idega.util.*;
 import com.idega.util.FileUtil;
 import com.idega.util.text.TextSoap;
 import com.idega.util.Executer;
+import com.idega.util.caching.BlobCacher;
+
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
@@ -246,6 +248,7 @@ public class IWMainApplication{//implements ServletContext{
 
   public void unload(){
     storeStatus();
+    BlobCacher.deleteCache(this);
   }
 
 
