@@ -3,6 +3,7 @@ package com.idega.user.data;
 import java.sql.Timestamp;
 import com.idega.builder.data.IBDomain;
 import com.idega.data.*;
+import com.idega.util.IWTimestamp;
 
 import java.util.Date;
 import java.util.Collection;
@@ -28,6 +29,9 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
   private static String STATUS_COLUMN="GROUP_RELATION_STATUS";
   private static String INITIATION_DATE_COLUMN="INITIATION_DATE";
   private static String TERMINATION_DATE_COLUMN="TERMINATION_DATE";
+  
+  private final static String STATUS_ACTIVE="ST_ACTIVE";
+  private final static String STATUS_PASSIVE="ST_PASSIVE";
 
 
   public void initializeAttributes() {
@@ -103,7 +107,8 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
   /**Finders begin**/
 
   public Collection ejbFindGroupsRelationshipsUnder(IBDomain domain)throws FinderException,RemoteException{
-    return this.idoFindAllIDsByColumnOrderedBySQL(this.DOMAIN_ID_COLUMN,domain.getPrimaryKey().toString());
+    //return this.idoFindAllIDsByColumnOrderedBySQL(this.DOMAIN_ID_COLUMN,domain.getPrimaryKey().toString());
+    return idoFindPKsBySQL("select * from "+this.getTableName()+" where "+DOMAIN_ID_COLUMN+"="+ (domain.getPrimaryKey().toString()) +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }
 
   public Collection ejbFindGroupsRelationshipsUnder(IBDomain domain, GroupDomainRelationType type)throws FinderException,RemoteException{
@@ -112,30 +117,47 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
     query.appendWhere(RELATIONSHIP_TYPE_COLUMN);
     query.appendLike();
     query.appendWithinSingleQuotes(type.getPrimaryKey());
+    query.appendAnd();
+    query.append(" GROUP_RELATION_STATUS IS NULL"); 
     return this.idoFindPKsBySQL(query.toString());
 //    return this.idoFindAllIDsByColumnOrderedBySQL(this.DOMAIN_ID_COLUMN,domain.getPrimaryKey().toString());
   }
 
   public Collection ejbFindDomainsRelationshipsContaining(Group group)throws FinderException,RemoteException{
-    return this.idoFindAllIDsByColumnOrderedBySQL(this.RELATED_GROUP_ID_COLUMN,group.getPrimaryKey().toString());
+    //return this.idoFindAllIDsByColumnOrderedBySQL(this.RELATED_GROUP_ID_COLUMN,group.getPrimaryKey().toString());
+    return idoFindPKsBySQL("select * from "+this.getTableName()+" where "+RELATED_GROUP_ID_COLUMN+"="+ (group.getPrimaryKey().toString()) +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }
+  
 
   public Collection ejbFindDomainsRelationshipsContaining(IBDomain domain,Group relatedGroup)throws FinderException,RemoteException{
-    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+domain.getPrimaryKey().toString()+" and "+this.DOMAIN_ID_COLUMN+"="+relatedGroup.getPrimaryKey().toString());
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroup.getPrimaryKey().toString()+" and "+
+      this.DOMAIN_ID_COLUMN+"="+ domain.getPrimaryKey().toString() +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }
 
   public Collection ejbFindGroupsRelationshipsUnder(int domainID)throws FinderException,RemoteException{
-    return this.idoFindAllIDsByColumnOrderedBySQL(this.DOMAIN_ID_COLUMN,domainID);
+    //return this.idoFindAllIDsByColumnOrderedBySQL(this.DOMAIN_ID_COLUMN,domainID);
+    return idoFindPKsBySQL("select * from "+this.getTableName()+" where "+DOMAIN_ID_COLUMN+"="+ (Integer.toString(domainID)) +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }
 
   public Collection ejbFindDomainsRelationshipsContaining(int groupID)throws FinderException,RemoteException{
-    return this.idoFindAllIDsByColumnOrderedBySQL(this.RELATED_GROUP_ID_COLUMN,groupID);
+    //return this.idoFindAllIDsByColumnOrderedBySQL(this.RELATED_GROUP_ID_COLUMN,groupID);
+    return idoFindPKsBySQL("select * from "+this.getTableName()+" where "+RELATED_GROUP_ID_COLUMN+"="+ (Integer.toString(groupID)) +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }
 
   public Collection ejbFindGroupsRelationshipsContaining(int domainID,int relatedGroupID)throws FinderException,RemoteException{
-    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and "+this.DOMAIN_ID_COLUMN+"="+domainID);
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and "
+      +this.DOMAIN_ID_COLUMN+"="+domainID +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }
 
   /**Finders end**/
 
+  /**
+   * Overriding the remove function
+   */
+  public void remove()throws RemoveException{
+    this.setColumn(STATUS_COLUMN,STATUS_PASSIVE);
+    this.setColumn(TERMINATION_DATE_COLUMN, IWTimestamp.getTimestampRightNow());
+    //this.setTerminationDate(IWTimestamp.getTimestampRightNow());
+    store();
+  }
 }
