@@ -1,14 +1,15 @@
 package com.idega.presentation.ui;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Iterator;
 
 import com.idega.business.IBOLookup;
-import com.idega.core.data.*;
 import com.idega.core.location.business.AddressBusiness;
-import com.idega.core.location.data.*;
+import com.idega.core.location.data.Country;
+import com.idega.core.location.data.PostalCode;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
-import java.util.*;
 
 
 /**
