@@ -29,6 +29,7 @@ public interface GroupBusiness extends com.idega.business.IBOService
  public java.util.Collection getParentGroupsInDirect(int p0) throws java.rmi.RemoteException;
  
  public com.idega.user.data.Group createGroup(java.lang.String p0,java.lang.String p1,java.lang.String p2,int p3)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
+ public com.idega.user.data.Group createGroup(java.lang.String p0,java.lang.String p1,java.lang.String p2,int p3,int p4)throws javax.ejb.CreateException,java.rmi.RemoteException, java.rmi.RemoteException;
  
  //public java.util.Collection getGroupsContainedDirectlyRelated(com.idega.user.data.Group p0) throws java.rmi.RemoteException;
  public java.util.Collection getChildGroups(com.idega.user.data.Group p0) throws java.rmi.RemoteException;

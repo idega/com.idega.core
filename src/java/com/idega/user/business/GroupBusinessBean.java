@@ -967,18 +967,25 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
   /**
    * Creates a group and adds it under the default Domain (IBDomain)   * @see com.idega.user.business.GroupBusiness#createGroup(String, String, String, int)   */
   public Group createGroup(String name,String description,String type,int homePageID)throws CreateException,RemoteException{
-    Group newGroup;
-    newGroup = getGroupHome().create();
-    newGroup.setName(name);
-    newGroup.setDescription(description);
-    newGroup.setGroupType(type);
-    if ( homePageID != -1 ) {
-	    newGroup.setHomePageID(homePageID);
-    }
-    newGroup.store();
-
-    addGroupUnderDomain(this.getIWApplicationContext().getDomain(),newGroup,(GroupDomainRelationType)null);
-    return newGroup;
+		return createGroup(name,description,type,-1,-1);
+  }
+  
+  public Group createGroup(String name,String description,String type,int homePageID,int aliasID)throws CreateException,RemoteException{
+		Group newGroup;
+		newGroup = getGroupHome().create();
+		newGroup.setName(name);
+		newGroup.setDescription(description);
+		newGroup.setGroupType(type);
+		if ( homePageID != -1 ) {
+			newGroup.setHomePageID(homePageID);
+		}
+		if (aliasID != -1) {
+			newGroup.setAliasID(aliasID);
+		}
+		newGroup.store(); 
+		
+		addGroupUnderDomain(this.getIWApplicationContext().getDomain(),newGroup,(GroupDomainRelationType)null);
+		return newGroup;
   }
   
   public String getGroupType(Class groupClass)throws RemoteException{
