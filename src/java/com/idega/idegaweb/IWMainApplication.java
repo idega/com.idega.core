@@ -28,7 +28,8 @@ public class IWMainApplication{//implements ServletContext{
   public static String IWEventSessionAddressParameter="iw_event_address";     // added by gummi@idega.is
   public static String windowOpenerURL="/servlet/WindowOpener";
   //public static String windowOpenerParameter="idegaweb_window_for_page";
-  public static final String windowOpenerParameter=Page.IW_FRAME_STORAGE_PARMETER;
+  //public static final String windowOpenerParameter=Page.IW_FRAME_STORAGE_PARMETER;
+  public static final String windowOpenerParameter="idegaweb_frame_page";;
 
   public static String objectInstanciatorURL="/servlet/ObjectInstanciator";
   public static String IMAGE_SERVLET_URL="/servlet/ImageServlet/";
