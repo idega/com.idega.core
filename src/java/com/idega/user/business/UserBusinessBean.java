@@ -2923,6 +2923,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		String uniqueID = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID,attributes);
 		String personalId = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID,attributes);
 		String userName = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_UID,attributes);
+		if(userName==null || "".equals(userName)){
+			//maybe its active directory!
+			userName = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_UID_ACTIVE_DIRECTORY,attributes);	
+		}
+		
 		String userPassword = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_USER_PASSWORD,attributes);
 		String email = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_EMAIL, attributes);
 		//String homePhone =
@@ -3009,7 +3014,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		updateUserMail(user, email);
 		
 		//the login
-		if(userName!=null && userPassword!=null){
+		if(userName!=null){
 			//remove the encryption e.g. {md5} prefix
 			userPassword = userPassword.substring(userPassword.indexOf("}")+1);
 			try {
@@ -3017,7 +3022,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				LoginTable login = LoginDBHandler.getUserLogin(userId);
 				if(login!=null){
 					login.setUserLogin(userName);
-					login.setUserPasswordInClearText(userPassword);
+					if(userPassword!=null){
+						login.setUserPasswordInClearText(userPassword);
+					}
 					login.setLastChanged(IWTimestamp.getTimestampRightNow());
 					login.store();
 				}
@@ -3026,7 +3033,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					login = ((LoginTableHome) com.idega.data.IDOLookup.getHomeLegacy(LoginTable.class)).createLegacy();
 					login.setUserId(userId);
 					login.setUserLogin(userName);
-					login.setUserPasswordInClearText(userPassword);
+					if(userPassword!=null){
+						login.setUserPasswordInClearText(userPassword);
+					}
 					login.setLastChanged(IWTimestamp.getTimestampRightNow());
 					login.store();
 				}
