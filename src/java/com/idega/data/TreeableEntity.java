@@ -1,6 +1,5 @@
-package com.idega.builder.data;
+package com.idega.data;
 
-import com.idega.data.*;
 import com.idega.core.ICTreeNode;
 
 
