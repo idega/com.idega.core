@@ -289,7 +289,7 @@ public class GroupTreeNode implements ICTreeNode {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					if (allAncestors.contains(aliasGroup)) {
+					if (allAncestors != null && allAncestors.contains(aliasGroup)) {
 						System.out.println("Alias with ID = "+this.getNodeID()+" links to an ancestor with ID = "+aliasGroup.getPrimaryKey()+" The relationship is disabled to avoid endless loop");
 						return 0;
 					}
