@@ -33,7 +33,6 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORelationshipException;
-import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
@@ -384,11 +383,16 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 				}	
 			}
 			if (isUser()) {
-				User user = getUserForGroup();
-				Group usersPrimaryGroup = user.getPrimaryGroup();
-				if (usersPrimaryGroup!=null && !theReturn.contains(usersPrimaryGroup)) {
-					theReturn.add(usersPrimaryGroup);
-				}
+				try {
+                    User user = getUserForGroup();
+                    Group usersPrimaryGroup = user.getPrimaryGroup();
+                    if (usersPrimaryGroup!=null && !theReturn.contains(usersPrimaryGroup)) {
+                    	theReturn.add(usersPrimaryGroup);
+                    }
+                } catch (FinderException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
 			}	
 		}
 		catch (Exception e) {
@@ -435,15 +439,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	
 	/**
 	 * Returns the User instance representing the Group if the Group is of type UserGroupRepresentative
+	 * @throws IDOLookupException
+	 * @throws FinderException
 	 **/
-	private User getUserForGroup() {
-		try {
+	private User getUserForGroup() throws IDOLookupException, FinderException {
 			UserHome uHome = (UserHome)IDOLookup.getHome(User.class);
 			return uHome.findUserForUserGroup(this);
-		}
-		catch (Exception e) {
-			throw new IDORuntimeException(e, this);
-		}
 	}
 
 	/**
