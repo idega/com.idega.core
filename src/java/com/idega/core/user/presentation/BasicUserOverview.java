@@ -30,6 +30,7 @@ import com.idega.presentation.ui.Window;
 public class BasicUserOverview extends Page {
 
   private static final String PARAMETER_DELETE_USER =  "delte_ic_user";
+  private String styledLinkClass = "styledLinkGeneral";
 
   public BasicUserOverview(IWContext iwc) throws Exception {
     //this.empty();
@@ -67,6 +68,8 @@ public class BasicUserOverview extends Page {
 
           if(!userIsSuperAdmin){
             Link aLink = new Link(new Text(tempUser.getName()));
+            //added for a new link style
+            aLink.setStyleClass(styledLinkClass);
             aLink.setWindowToOpen(UserPropertyWindow.class);
             aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
             userTable.add(aLink,2,line);
@@ -76,6 +79,8 @@ public class BasicUserOverview extends Page {
 //            Text aText = new Text(tempUser.getName());
 //            userTable.add(aText,2,i+1);
             Link aLink = new Link(new Text(tempUser.getName()));
+            //added for a new link style
+            aLink.setStyleClass(styledLinkClass);
             aLink.setWindowToOpen(AdministratorPropertyWindow.class);
             aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
             userTable.add(aLink,2,line);
@@ -85,6 +90,7 @@ public class BasicUserOverview extends Page {
 
           if(delete && !adminUsers.contains(tempUser) && !userIsSuperAdmin && iwc.getAccessController().isAdmin(iwc)){
             Link delLink = new Link(new Text("Delete"));
+            delLink.setStyleClass(styledLinkClass);
             delLink.setWindowToOpen(ConfirmWindow.class);
             delLink.addParameter(BasicUserOverview.PARAMETER_DELETE_USER , tempUser.getID());
             userTable.add(delLink,3,line-1);
