@@ -18,9 +18,9 @@ public class PostalCode extends GenericEntity{
 
 	public void initializeAttributes(){
 		addAttribute(getIDColumnName());
-		addAttribute("postal_code", "Póstnúmer", true, true, String.class);
+		addAttribute("postal_code", "Postalcode", true, true, String.class);
 		addAttribute("name", "Name", true, true, String.class);
-		addAttribute("ic_country_id", "Land", true, true, Integer.class,"many-to-one", Country.class);
+		addManyToOneRelationship("ic_country_id", "Country", Country.class);
 	}
 
         public void insertStartData()throws Exception{

@@ -53,8 +53,8 @@ public class ICObject extends GenericEntity{
 		addAttribute(getClassNameColumnName(),"Class Name",true,true,java.lang.String.class);
                 addAttribute(getObjectTypeColumnName(),"Class Name",true,true,java.lang.String.class,1000);
                 addAttribute(getBundleColumnName(),"Bundle",true,true,java.lang.String.class,1000);
-                addAttribute(getColumnClassValue(),"Class File",true,true,java.lang.Integer.class,"one-to-one",ICFile.class);
-                addAttribute(getColumnIcon(),"Icon",true,true,java.lang.Integer.class,"many-to-one",ICFile.class);
+                addManyToOneRelationship(getColumnClassValue(),"Class File",ICFile.class);
+                addManyToOneRelationship(getColumnIcon(),"Icon",ICFile.class);
 
                 //addAttribute("settings_url","Slóð stillingasíðu",true,true,"java.lang.String");
 		//addAttribute("class_value","Klasi sjálfur",true,true,"java.sql.Blob");

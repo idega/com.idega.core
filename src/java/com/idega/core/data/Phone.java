@@ -26,10 +26,10 @@ public class Phone extends GenericEntity{
 
     public void initializeAttributes(){
       addAttribute(getIDColumnName());
-      addAttribute(getColumnNamePhoneNumber(),"Númer",true,true,"java.lang.String");
+      addAttribute(getColumnNamePhoneNumber(),"Number",true,true,"java.lang.String");
 //      addAttribute(getColumnNameCountryCodeId(),"Landsnúmer",true,true,Integer.class,"many-to-one",CountryCode.class);
-      addAttribute(getColumnNameAreaCodeId(),"Svæðisnúmer",true,true,Integer.class,"many-to-one",AreaCode.class);
-      addAttribute(getColumnNamePhoneTypeId(),"Tegund",true,true,Integer.class,"many-to-one",PhoneType.class);
+      addManyToOneRelationship(getColumnNameAreaCodeId(),"Area code",AreaCode.class);
+      addManyToOneRelationship(getColumnNamePhoneTypeId(),"Type",PhoneType.class);
 //      this.addManyToManyRelationShip(PhoneType.class,"ic_phone_phone_type");
       this.addManyToManyRelationShip(User.class,"ic_user_phone");
     }
