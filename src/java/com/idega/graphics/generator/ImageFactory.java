@@ -26,16 +26,10 @@ import com.idega.util.FileUtil;
 import com.idega.util.IWColor;
 
 public class ImageFactory {
-	private static IWMainApplication iwma;
 	private static ImageFactory factory;
-	private static IWBundle coreBundle;
-	private static String fontPath;
-	private static Font defaultFont;
-	private static HashMap images;
-	private static Font fontbase;
-	private static String BUTTON_SUFFIX = "_button";
-	private static String TAB_SUFFIX = "_tab";
-
+	
+	private static final String BUTTON_SUFFIX = "_button";
+	private static final String TAB_SUFFIX = "_tab";
 	private static String GENERATED_IMAGES_FOLDER = "iw_generated";
 	
 	public final static String GENERATED_FILL_COLOR = "iw_generated_fill_color";
@@ -44,41 +38,55 @@ public class ImageFactory {
 	public final static String GENERATED_FONT_COLOR = "iw_generated_font_color";
 	public final static String GENERATED_OVER_COLOR = "iw_generated_over_color";
 	public final static String GENERATED_UNDER_COLOR = "iw_generated_under_color";
-	public final static String GENERATED_HIGHLIGHT_COLOR = "iw_generated_highligth_color";
+	public final static String GENERATED_HIGHLIGHT_COLOR = "iw_generated_highligth_color";	
+	
+	//Instance variables:
+	private IWMainApplication iwma;
+	private IWBundle coreBundle;
+	private String fontPath;
+	private Font defaultFont;
+	private HashMap images;
+	private Font fontbase;
+
 
 	ImageFactory(IWMainApplication iwma) {
 		this.iwma = iwma;
 	}
 
-	public static ImageFactory getStaticInstance(IWMainApplication iwma, boolean shutdown) {
+	public static ImageFactory getStaticInstance(IWMainApplication iwma) {
 		if (factory == null) {
 			factory = new ImageFactory(iwma);
-			coreBundle = iwma.getCoreBundle();
-			images = new HashMap();
-			if (!shutdown) {
-				String folderPath = coreBundle.getResourcesRealPath() + FileUtil.getFileSeparator() + iwma.CORE_BUNDLE_FONT_FOLDER_NAME + FileUtil.getFileSeparator();
+			factory.coreBundle = iwma.getCoreBundle();
+			factory.images = new HashMap();
+			//if (!shutdown) {
+				String folderPath = factory.coreBundle.getResourcesRealPath() + FileUtil.getFileSeparator() + iwma.CORE_BUNDLE_FONT_FOLDER_NAME + FileUtil.getFileSeparator();
 				try {
 					//System.out.println(folderPath+iwma.CORE_DEFAULT_FONT);
 					File file = new File(folderPath + iwma.CORE_DEFAULT_FONT);
 					FileInputStream fis = new FileInputStream(file);
 
-					fontbase = Font.createFont(Font.TRUETYPE_FONT, fis);
-					defaultFont = fontbase.deriveFont(Font.PLAIN, getDefaultFontSize());
+					factory.fontbase = Font.createFont(Font.TRUETYPE_FONT, fis);
+					factory.defaultFont = factory.fontbase.deriveFont(Font.PLAIN, getDefaultFontSize());
 
 				}
 				catch (Exception ex) {
 					System.err.println("ImageFactory : default font is missing using default java font instead");
 				}
-			}
+			//}
 
 		}
 
 		return factory;
 	}
 
-	public static ImageFactory getStaticInstance(IWMainApplication iwma) {
-		return getStaticInstance(iwma, false);
+	/**
+	 * Unloads or shutdowns the factory
+	 *
+	 */
+	public void unload(){
+		factory=null;
 	}
+
 
 	public Image createButton(String textOnButton, IWBundle iwb) {
 		return createButton(textOnButton, iwb, null);
@@ -209,7 +217,9 @@ public class ImageFactory {
 			}
 		}
 		
-		images = new HashMap();
+		if(factory!=null){
+			factory.images = new HashMap();
+		}
 	}
 
 	static float getDefaultFontSize() {
