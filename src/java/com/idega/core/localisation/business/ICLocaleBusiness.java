@@ -244,8 +244,7 @@ public class ICLocaleBusiness {
       catch (Exception ex) {
         ex.printStackTrace();
       }
-
-
+      reload();
     }
   }
 }
