@@ -1970,6 +1970,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		if ((isSuperUser && user == null) || (isSuperUser && iwuc.getCurrentUser().equals(user))) {
 			try {
 				topNodes = this.getIWApplicationContext().getDomain().getTopLevelGroupsUnderDomain();
+				return topNodes;
 			}
 			catch (Exception e1) {
 				topNodes = new Vector();
