@@ -29,6 +29,7 @@ public class LoginDBHandler {
 
     List noLogin = EntityFinder.findAllByColumn(LoginTable.getStaticInstance(), LoginTable.getUserIDColumnName(), userID);
 
+
     LoginTable loginTable;
     if(update){
       if(noLogin == null){
@@ -64,8 +65,17 @@ public class LoginDBHandler {
 
     if(update){
       if(userLogin != null && !"".equals(userLogin)){
+        if (!loginTable.getUserLogin().equals(userLogin)) {
+          noLogin = EntityFinder.findAllByColumn(LoginTable.getStaticInstance(), LoginTable.getStaticInstance().getUserLoginColumnName(), userLogin);
+          if (noLogin != null && noLogin.size() > 0) {
+            LoginTable tempLoginTable = (LoginTable) noLogin.get(0);
+            if (tempLoginTable.getUserId() != userID)
+            throw new Exception("login not valid : in use");
+          }
+        }
         if(encryptedPassword != null){
           loginTable.setUserPassword(encryptedPassword);
+          loginTable.setUserLogin(userLogin);
         }else{
           throw new Exception("Password not valid");
         }
