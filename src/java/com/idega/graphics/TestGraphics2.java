@@ -1,3 +1,12 @@
+/*
+ * $Id: TestGraphics2.java,v 1.2 2001/05/17 10:26:38 palli Exp $
+ *
+ * Copyright (C) 2001 Idega hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
+ */
 package com.idega.graphics;
 
 import java.awt.image.BufferedImage;
@@ -12,8 +21,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.FontMetrics;
 
+/**
+ *
+ *
+ * @author <a href="mailto:palli@idega.is">Pall Helgason</a>
+ * @version 1.0alpha
+ */
 public class TestGraphics2 {
-
 
   public TestGraphics2() {
   }
