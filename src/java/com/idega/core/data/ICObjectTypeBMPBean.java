@@ -108,7 +108,7 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 	}
 	
 	public String getFinalReflectionClassName() {
-		return getStringColumnValue(COLUMN_REQUIRED_SUPER_CLASS);
+		return getStringColumnValue(COLUMN_FINAL_REFLECTION_CLASS);
 	}
 	
 	public void setFinalReflectionClassName(String name) {
