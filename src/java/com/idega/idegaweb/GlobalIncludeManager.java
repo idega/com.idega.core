@@ -22,11 +22,14 @@ public class GlobalIncludeManager {
 
 	private static GlobalIncludeManager instance;
 	private String standardIWStyleSheetURL = "/idegaweb/style/style.css";
+	private String coreIWStyleSheetURL = "/idegaweb/bundles/com.idega.core.bundle/resources/style/iw_core.css";
+	
 	private IWMainApplication iwma;
 
 	private List styleSheets;
 
 	private GlobalIncludeManager() {
+		addStyleSheet(coreIWStyleSheetURL);
 		addStyleSheet(standardIWStyleSheetURL);
 	}
 
