@@ -528,7 +528,7 @@ public class IDOTableCreator{
       Vector v = new Vector();
       String tableName = entity.getTableName();
       java.sql.DatabaseMetaData metadata = conn.getMetaData();
-      rs = metadata.getColumns("","",tableName,"%");
+      rs = metadata.getColumns("","",tableName.toLowerCase(),"%");
       //System.out.println("Table: "+tableName+" has the following columns:");
       while (rs.next()) {
         String column = rs.getString("COLUMN_NAME");
@@ -536,6 +536,16 @@ public class IDOTableCreator{
         //System.out.println("\t\t"+column);
       }
       rs.close();
+      if(v.isEmpty()){
+        rs = metadata.getColumns("","",tableName.toUpperCase(),"%");
+        //System.out.println("Table: "+tableName+" has the following columns:");
+        while (rs.next()) {
+          String column = rs.getString("COLUMN_NAME");
+          v.add(column);
+          //System.out.println("\t\t"+column);
+        }
+        rs.close();
+      }
       return (String[])v.toArray(new String[0]);
     }
     catch(SQLException e){
