@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.7 2005/02/01 18:01:28 thomas Exp $
+ * $Id: BaseFilter.java,v 1.8 2005/02/03 11:05:20 thomas Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.util.RequestUtil;
 /**
  *  Class that holds basic functionality used by many filters.<br>
  * 
- *  Last modified: $Date: 2005/02/01 18:01:28 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/02/03 11:05:20 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
@@ -34,19 +34,19 @@ public abstract class BaseFilter implements Filter, MutableClass {
 		checkedCurrentApplicationContext = DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT; 
 	}
 
-	protected static String OLD_BUILDER_SERVLET_URI = "/servlet/IBMainServlet";
-	protected static String OLD_BUILDER_INDEX_JSP_URI = "/index.jsp";
-	protected static String OLD_BUILDER_PAGE_PARAMETER = "ib_page";
-	protected static String OLD_IDEGAWEB_LOGIN = "/idegaweb";
-	protected static String OLD_IDEGAWEB_LOGIN_WITHSLASH = "/idegaweb/";
-	protected static String NEW_IDEGAWEB_LOGIN = "/login/";
-	protected static String NEW_IDEGAWEB_LOGIN_MINUSSLASH = "/login";
-	protected static String NEW_WORKSPACE_URI="/workspace/";
-	protected static String NEW_WORKSPACE_URI_MINUSSLASH="/workspace";
-	protected static String SETUP_URI="/setup/";
-	protected static String PAGES_URI="/pages/";
+	protected static final String OLD_BUILDER_SERVLET_URI = "/servlet/IBMainServlet";
+	protected static final String OLD_BUILDER_INDEX_JSP_URI = "/index.jsp";
+	protected static final String OLD_BUILDER_PAGE_PARAMETER = "ib_page";
+	protected static final String OLD_IDEGAWEB_LOGIN = "/idegaweb";
+	protected static final String OLD_IDEGAWEB_LOGIN_WITHSLASH = "/idegaweb/";
+	protected static final String NEW_IDEGAWEB_LOGIN = "/login/";
+	protected static final String NEW_IDEGAWEB_LOGIN_MINUSSLASH = "/login";
+	protected static final String NEW_WORKSPACE_URI="/workspace/";
+	protected static final String NEW_WORKSPACE_URI_MINUSSLASH="/workspace";
+	protected static final String SETUP_URI="/setup/";
+	protected static final String PAGES_URI="/pages/";
 	
-	static String SLASH = "/";
+	static final String SLASH = "/";
 
 	protected String getNewLoginUri(HttpServletRequest request){
 		IWMainApplication iwma = getIWMainApplication(request);
