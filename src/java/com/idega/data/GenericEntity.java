@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.83 2002/03/09 00:34:28 laddi Exp $
+ * $Id: GenericEntity.java,v 1.84 2002/03/12 22:23:18 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -44,6 +44,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   private Hashtable _updatedColumns;
   private static Hashtable _theAttributes = new Hashtable();
   private static Hashtable _allStaticClasses = new Hashtable();
+  private static NullColumnValue nullColumnValue = new NullColumnValue();
 
   private Hashtable _theMetaDataAttributes;
   private Vector _insertMetaDataVector;
@@ -446,10 +447,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
+        /**
+         * Sets the column null
+         */
 	public void removeFromColumn(String columnName){
 	  //_columns.remove(columnName.toLowerCase());
 	  _columns.remove(columnName.toUpperCase());
-	}
+          this.flagColumnUpdate(columnName);
+          //setValue(columnName,this.getNullColumnValue());
+        }
 
 
 	public void setColumn(String columnName,Object columnValue){
@@ -941,10 +947,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 */
 
 		//if (_columns.get(columnName.toLowerCase())== null){
-		if (_columns.get(columnName.toUpperCase())== null){
+                Object o = _columns.get(columnName.toUpperCase());
+		if (o == null){
 		  return true;
 		}
 		else{
+                  if(o == GenericEntity.getNullColumnValue()){
+                    return true;
+                  }
 		  return false;
 		}
 
@@ -2646,5 +2656,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
    public boolean getIfInsertStartData(){
     return insertStartData;
+   }
+
+   static NullColumnValue getNullColumnValue(){
+    return nullColumnValue;
+   }
+
+   static class NullColumnValue{
    }
 }
