@@ -11,7 +11,9 @@
 package com.idega.presentation.ui;
 
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWApplicationContext;
@@ -383,6 +385,29 @@ public static String getWindowURLWithParameter(Class windowClass,IWApplicationCo
         return url + "&"+parameterName+"="+parameterValue;
     }
   }
+
+/**
+ * Gets the URL to a (popup) Window class of class windowClass with added extra parameters to send to the window.
+ * @param windowClass the Class of the Window to instanciate
+ * @param iwc
+ * @param parameterMap a Map of key=value (parameter=parameterValue) parameters to add to the URL
+ * @return the URL (without http:// and hostname)
+ */
+public static String getWindowURLWithParameters(Class windowClass,IWApplicationContext iwc,Map parameterMap){
+    String url = getWindowURL(windowClass,iwc);
+    Set keySet = parameterMap.keySet();
+    for (Iterator iter = keySet.iterator(); iter.hasNext();) {
+        String parameterName = (String) iter.next();
+        String parameterValue = (String) parameterMap.get(parameterName);
+        if(url.indexOf("?")==-1){
+            url += "?"+parameterName+"="+parameterValue;
+        }
+        else{
+            url += "&"+parameterName+"="+parameterValue;
+        }
+    }
+    return url;
+}
 
 public static String getCallingScriptString(Class windowClass,IWApplicationContext iwac){
   return getCallingScriptString(windowClass,true,iwac);
