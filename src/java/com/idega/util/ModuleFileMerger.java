@@ -13,10 +13,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -43,7 +42,6 @@ public class ModuleFileMerger {
 	private Writer output;
 	private File outputFile;
 	private String rootXMLElement="web-app";
-	private String urlPrefix;
 	private List patterns;
 	//Sources of input Files:
 	private List sources;
@@ -99,6 +97,9 @@ public class ModuleFileMerger {
 	 * @return Returns the sources.
 	 */
 	public List getSources() {
+		if(sources==null){
+			sources = new ArrayList();
+		}
 		return sources;
 	}
 	/**
@@ -153,17 +154,48 @@ public class ModuleFileMerger {
 
 	
 	public static void performWebXmlsTest()throws Exception{
-		HtmlReferenceRewriter instance = new HtmlReferenceRewriter();
-		String fromFile = "/Users/tryggvil/idega/webapps/Reykjavik/rrvk-dtemplate.html";
-		String toFile = "/Users/tryggvil/Documents/Reykjavik/rvktest.html";
-		String urlPrefix = "http://www.rvk.is/";
-		FileReader reader = new FileReader(fromFile);
-		Reader input = new BufferedReader(reader);
+		
+		ModuleFileMerger instance = new ModuleFileMerger();
+		
+		String sBundlesDir = "/idega/eclipse/maven/bundles";
+		File bundlesDir = new File(sBundlesDir);
+		
+		File[] bundles = bundlesDir.listFiles();
+		for (int i = 0; i < bundles.length; i++) {
+			File bundle = bundles[i];
+			String path = bundle.getAbsolutePath();
+			String sWebXml =path+"/WEB-INF/web.xml";
+			File webXml = new File(sWebXml);
+			if(webXml.exists()){
+				String bundleFolderName = bundle.getName();
+				String bundleId = null;
+				if(bundleFolderName.endsWith(".bundle")){
+					bundleId = bundleFolderName.substring(0,bundleFolderName.indexOf(".bundle"));
+				}
+				else{
+					bundleId=bundleFolderName;
+				}
+				instance.addSourceFile(webXml,bundleId);
+			}
+		}
+		
+		
+		String sFromFile = "/tmp/web.xml";
+		String sToFile = "/tmp/web.xml";
+		File toFile = new File(sToFile);
+		if(!toFile.exists()){
+			toFile.createNewFile();
+		}
+		File fromFile = new File(sFromFile);
+		if(fromFile.exists()){
+			FileReader reader = new FileReader(fromFile);
+			Reader input = new BufferedReader(reader);
+			instance.setInput(input);
+		}
+		
 		FileWriter output = new FileWriter(toFile);
-		instance.setInput(input);
+		
 		instance.setOutput(output);
-		instance.setUrlPrefix(urlPrefix);
-		instance.setRewriteOptionValues(true);
 		instance.process();
 	}
 	
@@ -188,65 +220,40 @@ public class ModuleFileMerger {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		StringBuffer outString = null;
+		StringBuffer outString = new StringBuffer();
 		Iterator moduleIter = getSources().iterator();
-		StringBuffer replaceBuffer = sb;
+		//StringBuffer replaceBuffer = sb;
+		
+		outString.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
+		outString.append("<!DOCTYPE web-app\n");
+		outString.append("\tPUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN\"\n");
+		outString.append("\thttp://java.sun.com/dtd/web-app_2_3.dtd\">\n");
+		
+		outString.append("<"+getRootXMLElement()+">\n");
+		
+		
 		while (moduleIter.hasNext()) {
-			outString = new StringBuffer();
-			//ModuleFile module = (ModuleFile)moduleIter.next();
-			//String moduleId = module.getModuleIdentifier();
-			//Pattern p = Pattern.compile("(<a[^>]+href=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			Pattern p = Pattern.compile("(<>)",Pattern.CASE_INSENSITIVE);
-			Matcher m = p.matcher(replaceBuffer);
-			while (m.find()) {
-				// this pattern matches.
-				int groupCount = m.groupCount();
-				for(int i=0;i<=	groupCount;i++){
-					String s = m.group(i);
-					System.out.println(s);
-				}
-				String url = m.group(2);
-				if(getIfRewriteURL(url)){
-					//if this is a relative url:
-					m.appendReplacement(outString,"$1"+getRewrittenURL(url)+"$3");
-				}				
-				else{
-					//Do not replace the url
-					m.appendReplacement(outString,"$0");
-				}
-
-			}
-			m.appendTail(outString);
-			replaceBuffer=new StringBuffer(outString.toString());
+			ModuleFile module = (ModuleFile)moduleIter.next();
+			String moduleId = module.getModuleIdentifier();
+			String moduleVersion = module.getModuleVersion();
+			File inputFile = module.getSourcefile();
+			
+			String modulePartBegin = "<!-- MODULE:BEGIN "+moduleId+" "+moduleVersion+" -->\n";
+			String modulePartEnd = "<!-- MODULE:END "+moduleId+" "+moduleVersion+" -->\n";
+			
+			String moduleContents = module.getContentsWithinRootElement();
+			
+			outString.append(modulePartBegin);
+			outString.append(moduleContents);
+			outString.append(modulePartEnd);
+			
+			//replaceBuffer=new StringBuffer(outString.toString());
 		}
+		outString.append("\n</"+getRootXMLElement()+">");
 		PrintWriter out = new PrintWriter(getOutput());
 		out.write(outString.toString());
 		out.close();
 	}
-	/**
-	 * Gets the rewritten URL. this can be overridden
-	 */
-	public String getRewrittenURL(String relativeURL){
-		String urlPrefix = getUrlPrefix();
-		if(relativeURL.startsWith(SLASH)&&urlPrefix.endsWith(SLASH)){
-			return urlPrefix+relativeURL.substring(1,relativeURL.length());
-		}
-		else{
-			return this.urlPrefix+relativeURL;
-		}
-	}
-	
-	/**
-	 * Gets if th URL is appropriate to be rewritten<br>
-	 * e.g. if it does not contain http:, javascript:,mailto: or # prefixes
-	 * @param url the found url in the source
-	 * @return
-	 */
-	public boolean getIfRewriteURL(String url){
-		// not if it starts with these prefixes::
-		return !(url.startsWith("http:")||url.startsWith("javascript:")||url.startsWith("mailto:")||url.startsWith("#"));
-	}
-	
 	/**
 	 * @return Returns the input.
 	 */
@@ -273,22 +280,7 @@ public class ModuleFileMerger {
 	public void setOutput(Writer output) {
 		this.output = output;
 	}
-	/**
-	 * Returns the set URLPrefix and appends a "/" to the end if it is not set.
-	 * @return Returns the urlPrefix.
-	 */
-	public String getUrlPrefix() {
-		if(!urlPrefix.endsWith(SLASH)){
-			return urlPrefix+SLASH;
-		}
-		return urlPrefix;
-	}
-	/**
-	 * @param urlPrefix The urlPrefix to set.
-	 */
-	public void setUrlPrefix(String urlPrefix) {
-		this.urlPrefix = urlPrefix;
-	}
+
 	
 	
 	private class ModuleFile{
@@ -405,7 +397,7 @@ public class ModuleFileMerger {
 		
 		public String getContentsWithinRootElement(){
 			//Pattern p = Pattern.compile("(<a[^>]+href=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			String fileContents = getRootXMLElement();
+			String fileContents = getFileContents();
 			String split1[] = fileContents.split("<"+getRootXMLElement()+">");
 			String remaining = split1[1];
 			String remainingsplit[] = remaining.split("</"+getRootXMLElement()+">");
