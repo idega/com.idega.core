@@ -278,38 +278,3 @@ public class ImageButton extends ImageLabel {
 
   //----------------------------------------------------
 }
-
-//======================================================
-
-/** Builds an image filter that can be used to gray-out
- *  the image.
- * @see ImageButton
- */
-
-class GrayFilter extends RGBImageFilter {
-
-  //----------------------------------------------------
-
-  private int darkness = 0xffafafaf;
-
-  //----------------------------------------------------
-
-  public GrayFilter() {
-    canFilterIndexColorModel = true;
-  }
-
-  public GrayFilter(int darkness) {
-    this();
-    this.darkness = darkness;
-  }
-
-  //----------------------------------------------------
-
-  public int filterRGB(int x, int y, int rgb) {
-    return(rgb & darkness);
-  }
-
-  //----------------------------------------------------
-}
-
-//======================================================
