@@ -49,6 +49,20 @@ public User findUserFromEmail(java.lang.String p0)throws java.rmi.RemoteExceptio
 	return this.findByPrimaryKey(pk);
 }
 
+public User findUserForUserGroup(int groupID)throws java.rmi.RemoteException,javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((UserBMPBean)entity).ejbFindUserForUserGroup(groupID);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
+
+public User findUserForUserGroup(Group userGroup)throws java.rmi.RemoteException,javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((UserBMPBean)entity).ejbFindUserForUserGroup(userGroup);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
+
 public User findByPersonalID(java.lang.String p0)throws java.rmi.RemoteException,javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((UserBMPBean)entity).ejbFindByPersonalID(p0);

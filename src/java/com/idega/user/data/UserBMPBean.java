@@ -531,11 +531,14 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
       sql.append("and iue.ic_user_id = iu.ic_user_id " );
       sql.append(" and ie.address = ");
       sql.append(emailAddress);
+      return (Integer)super.idoFindOnePKBySQL(sql.toString());
+      /*
       Collection coll =  super.idoFindIDsBySQL(sql.toString());
       if(!coll.isEmpty())
 	return (Integer)coll.iterator().next();
       else
 	throw new FinderException("No user found");
+      */
     }
 
 
@@ -545,6 +548,15 @@ public class UserBMPBean extends com.idega.data.GenericEntity implements User, G
 	return (Integer)users.iterator().next();
       else
 	throw new FinderException("No user found");
+    }
+
+    public Integer ejbFindUserForUserGroup(int userGroupID)throws FinderException{
+      return (Integer)super.idoFindOnePKBySQL("select * from "+getEntityName()+" where "+_COLUMNNAME_USER_GROUP_ID+"='"+userGroupID+"'");
+    }
+
+    public Integer ejbFindUserForUserGroup(Group userGroup)throws FinderException,RemoteException{
+      int groupID = ((Integer)userGroup.getPrimaryKey()).intValue();
+      return this.ejbFindUserForUserGroup(groupID);
     }
 
     /*  Finders end   */

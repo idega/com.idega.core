@@ -21,7 +21,7 @@ public class GroupRelationTypeBMPBean extends GenericEntity implements GroupRela
 
   public void initializeAttributes() {
     //this.addAttribute(getIDColumnName());
-    this.addAttribute(TYPE_COLUMN,"Type",String.class);
+    this.addAttribute(TYPE_COLUMN,"Type",String.class,15);
     this.setAsPrimaryKey(TYPE_COLUMN,true);
     this.addAttribute(DESCRIPTION_COLUMN,"Description",String.class,1000);
   }
