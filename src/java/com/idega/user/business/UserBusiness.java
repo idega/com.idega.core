@@ -1,9 +1,14 @@
 package com.idega.user.business;
 
-import javax.ejb.*;
+import java.rmi.RemoteException;
+
+import javax.ejb.CreateException;
 
 import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
+import com.idega.user.data.Gender;
+import com.idega.user.data.User;
+import com.idega.util.IWTimestamp;
 
 public interface UserBusiness extends com.idega.business.IBOService
 {
@@ -55,6 +60,9 @@ public interface UserBusiness extends com.idega.business.IBOService
  public java.util.Collection getUsersInGroup(int p0) throws java.rmi.RemoteException;
  public com.idega.user.data.User createUser(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws java.rmi.RemoteException,javax.ejb.CreateException, java.rmi.RemoteException;
  public java.util.Collection getUserGroups(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ 
+ public User createUserByPersonalIDIfDoesNotExist(String firstName, String middleName, String lastName,String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException,RemoteException;
+  
 
 public Email getUsersMainEmail(com.idega.user.data.User user)throws NoEmailFoundException,java.rmi.RemoteException;
  public Phone getUsersHomePhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;

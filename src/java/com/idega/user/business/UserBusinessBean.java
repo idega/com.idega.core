@@ -3,13 +3,14 @@ package com.idega.user.business;
 import com.idega.builder.data.IBDomain;
 import java.sql.SQLException;
 import com.idega.user.data.*;
-import com.idega.user.business.GroupBusiness;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.data.*;
 import com.idega.util.IWTimestamp;
 import java.util.Collection;
 import com.idega.core.data.Email;
 import com.idega.data.EntityFinder;
+import com.idega.idegaweb.presentation.DataEmailer;
+
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Hashtable;
@@ -135,6 +136,44 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    */
   public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
       return createUser(firstname,middlename,lastname,displayname,null,description,gender,date_of_birth,primary_group);
+  }
+  
+/**
+ * Method createUserByPersonalIDIfDoesNotExist does what is says.
+ * @param firstName
+ * @param middleName
+ * @param lastName
+ * @param personalID
+ * @param gender
+ * @param dateOfBirth
+ * @return User
+ * @throws CreateException
+ * @throws RemoteException
+ */
+  public User createUserByPersonalIDIfDoesNotExist(String firstName, String middleName, String lastName,String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException,RemoteException{
+    User user;
+    try{
+      user = getUserHome().findByPersonalID(personalID);
+
+      StringBuffer fullName = new StringBuffer();
+
+      firstName = (firstName==null) ? "" : firstName;
+      middleName = (middleName==null) ? "" : middleName;
+      lastName = (lastName==null) ? "" : lastName;
+
+      fullName.append(firstName).append(" ").append(middleName).append(" ").append(lastName);
+
+      user.setFullName(fullName.toString());
+      
+      user.setGender( (Integer)gender.getPrimaryKey() );
+      user.setDateOfBirth(dateOfBirth.getDate());
+      user.store();
+    }
+    catch(FinderException ex){
+      user = createUser(firstName,middleName,lastName,personalID,gender,dateOfBirth);
+    }
+
+    return user;
   }
 
   public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
