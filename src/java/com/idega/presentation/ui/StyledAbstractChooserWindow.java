@@ -6,10 +6,10 @@ package com.idega.presentation.ui;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.idega.idegaweb.presentation.StyledIWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.Script;
-import com.idega.user.presentation.StyledIWAdminWindow;
 
 /**
  * Description: <br>

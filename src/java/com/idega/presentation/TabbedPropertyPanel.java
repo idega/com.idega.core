@@ -16,7 +16,6 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.user.event.CreateGroupEvent;
 import com.idega.util.GenericFormCollector;
 import com.idega.util.datastructures.Collectable;
 
@@ -56,7 +55,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
   public static final String TAB_FORM_NAME = "tab_form";
   public static final String TAB_STORE_WINDOW = "tab_store_window";
   
-	private CreateGroupEvent _createEvent;
 
   private boolean useOkButton=true;
   private boolean useCancelButton=true;

@@ -7,7 +7,7 @@ package com.idega.presentation.ui;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.idega.block.calendar.presentation.SmallCalendar;
+import com.idega.idegaweb.presentation.SmallCalendar;
 import com.idega.presentation.IWContext;
 
 /**
