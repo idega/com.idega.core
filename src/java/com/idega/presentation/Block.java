@@ -737,7 +737,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 	
 	protected void setDefaultWidth() {
-		setWidth(Table.HUNDRED_PERCENT);
+		blockWidth = Table.HUNDRED_PERCENT;
 	}
 	
 }
