@@ -14,8 +14,12 @@ import java.util.Locale;
 
 import com.idega.business.InputHandler;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
+import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
 import com.idega.util.IWTimestamp;
 import com.idega.util.text.TextSoap;
 
@@ -32,14 +36,18 @@ import com.idega.util.text.TextSoap;
  */
 public class DatePicker extends AbstractChooser implements InputHandler {
 
+    private static Boolean jsExists = null;
     private Locale locale = null;
+    private boolean useJSCalendar = true;
 
     private int dateFormatStyle = DateFormat.SHORT;
+    private String dateFormatPattern = "yyyy-MM-dd";
+    private Date date = new Date();
 
     public DatePicker(String pickerName) {
         this(pickerName, null, null, null);
     }
-
+  
     public DatePicker(String pickerName, Locale locale) {
         this(pickerName, null, locale, null);
     }
@@ -61,11 +69,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         if (locale != null) {
             this.locale = locale;
         }
-        if (date != null) {
-            setDate(date);
-        } else {
-            setDate(new Date());
-        }
+        this.date = date;
     }
 
     public void main(IWContext iwc) {
@@ -74,6 +78,11 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         setChooseButtonImage(iwb.getImage("calendar.gif", "Pick date"));
         if (locale == null) {
             locale = iwc.getCurrentLocale();
+        }
+        if (date != null) {
+            setDate(date);
+        } else {
+            setDate(new Date());
         }
         //setParameterValue(SmallCalendar.PRM_SETTINGS,SmallCalendar.getInitializingString(true,null,"#0000FF","#00FF00","#00FFFF","#FFFF00","#FFFFFF","#FFF000"));
     }
@@ -129,10 +138,11 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         String value = new IWTimestamp(date.getTime()).getTimestamp()
                 .toString();
         if (locale != null) {
-            display = DateFormat.getDateInstance(dateFormatStyle, locale)
-                    .format(date);
+            display = new SimpleDateFormat(dateFormatPattern,locale).format(date);
+            //DateFormat.getDateInstance(dateFormatStyle, locale).format(date);
         } else {
-            display = DateFormat.getDateInstance(dateFormatStyle).format(date);
+            display = new SimpleDateFormat(dateFormatPattern).format(date);
+            //DateFormat.getDateInstance(dateFormatStyle).format(date);
         }
         setChooserValue(display, value);
     }
@@ -157,6 +167,14 @@ public class DatePicker extends AbstractChooser implements InputHandler {
      */
     public void setDateFormatStyle(int formatStyle) {
         dateFormatStyle = formatStyle;
+    }
+    
+    /**
+     * Sets the format pattern for date display ( see java.text.SimpleDateFormat)
+     * @param pattern
+     */
+    public void setDateFormatPattern(String pattern){
+        this.dateFormatPattern = pattern;
     }
 
     /*
@@ -243,6 +261,60 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     public Object convertSingleResultingObjectToType(Object value,
             String className) {
         return value;
+    }
+    
+    private boolean useJSCalendar(IWBundle bundle){
+        if(!useJSCalendar)
+            return false;
+        else if(jsExists!=null)
+            return jsExists.booleanValue();
+        else{
+            try {
+                java.io.File jsFile = new java.io.File(IWMainApplication.getDefaultIWMainApplication().getRealPath(bundle.getImageURI("jscalendar/calendar.js")));
+                jsExists = Boolean.valueOf(jsFile.exists());
+                return jsExists.booleanValue();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+    
+    /* (non-Javadoc)
+     * @see com.idega.presentation.ui.AbstractChooser#getTable(com.idega.presentation.IWContext, com.idega.idegaweb.IWBundle)
+     */
+    public PresentationObject getTable(IWContext iwc, IWBundle bundle) {
+        if(!useJSCalendar(bundle))
+          return super.getTable(iwc, bundle);
+        
+        Table table = new Table(2, 2);
+		table.setCellpadding(0);
+		table.setCellspacing(0);
+		
+		PresentationObject object = getPresentationObject(iwc);
+		Parameter value = new Parameter(getChooserParameter(), "");
+		if (getChooserValue() != null) {
+			value.setValue(getChooserValue());
+		}
+		
+		Image button = (bundle.getImage("jscalendar/cal.gif"));
+		button.setOnClick("return showCalendar('"+object.getID()+"', '"+dateFormatPattern+"','"+value.getID()+"');");
+		
+		Page parentPage = getParentPage();
+		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar.js"));
+		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar-"+iwc.getCurrentLocale().getLanguage()+".js" ));
+		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendarHelper.js"));
+		
+		parentPage.addStyleSheetURL(bundle.getImageURI("jscalendar/calendar-win2k-1.css"));
+
+		
+		table.add(value);
+		table.add(new Parameter(VALUE_PARAMETER_NAME, value.getName()));
+		table.add(object, 1, 1);
+		table.add(button,2,1);
+		
+		
+		return table;
     }
 
 }
