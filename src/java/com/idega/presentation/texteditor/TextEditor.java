@@ -1,5 +1,6 @@
 package com.idega.presentation.texteditor;
 
+import com.idega.util.text.TextSoap;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.*;
 import com.idega.presentation.ui.TextArea;
@@ -89,7 +90,7 @@ public class TextEditor extends PresentationObject {
         //HiddenInput html = new HiddenInput("iw_editor2[Text]",""); this is the original name for the hidden html field
         */
 
-        HiddenInput html = new HiddenInput(inputName,text);
+        HiddenInput html = new HiddenInput(inputName,TextSoap.findAndReplace(text,"\"","\\\""));
         html.print(iwc);
 
         String menu = "1";
