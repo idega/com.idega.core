@@ -186,6 +186,7 @@ public class IDOCopier {
 					String fromTableName = getCrossTableName(info.relation,fromConn);
 					String toTableName = getCrossTableName(info.relation,toConn);
 					this.copyManyToManyData(fromTableName,toTableName, fromConn, toConn);
+					info.copied = true;
 				}
 				catch (SQLException e) {
 					e.printStackTrace();
@@ -198,7 +199,7 @@ public class IDOCopier {
 						fromEntity.freeConnection(fromConn);
 					}
 				}
-				info.copied = true;
+				
 			}
 		}
 	}
@@ -266,7 +267,7 @@ public class IDOCopier {
 	private List getManyToManyRelatedAndCopied(IDOLegacyEntity entity) {
 		return entityRelationshipInfos;
 	}
-	private void copyManyToManyData(String fromTableName,String toTableName, Connection fromConnection, Connection toConnection) {
+	private void copyManyToManyData(String fromTableName,String toTableName, Connection fromConnection, Connection toConnection) throws SQLException{
 		System.out.println("[idoCopier] Copying data from cross-table: " + fromTableName+" to cross-table: " + toTableName);
 		Statement stmt = null;
 		PreparedStatement ps = null;
@@ -278,22 +279,23 @@ public class IDOCopier {
 			ResultSetMetaData rsm = RS.getMetaData();
 			int columnCount = rsm.getColumnCount();
 			while (RS.next()) {
-				try {
+				//try {
 					int i1 = RS.getInt(1);
 					int i2 = RS.getInt(2);
 					ps.setInt(1, i1);
 					ps.setInt(2, i2);
 					ps.executeUpdate();
-				}
-				catch (SQLException e) {
-					//e.printStackTrace();
-					System.err.println(e.getMessage());
-				}
+				//}
+				//catch (SQLException e) {
+				//	//e.printStackTrace();
+				//	System.err.println(e.getMessage());
+				//	throw new SQLException();
+				//}
 			}
 		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
+		//catch (SQLException e) {
+		//	e.printStackTrace();
+		//}
 		finally {
 			if (RS != null) {
 				try {
