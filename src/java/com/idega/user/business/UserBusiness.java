@@ -255,4 +255,10 @@ public interface UserBusiness extends com.idega.business.IBOService
 			 * @return
 			 */
 			public User getUserByDirectoryString(DirectoryString dn);
+			public boolean isMale(int genderId) throws RemoteException,FinderException;
+			  
+			  /**
+			   * Returnes true if that genderid refers to the female gender
+			   */
+			  public boolean isFemale(int genderId) throws RemoteException,FinderException;
 }

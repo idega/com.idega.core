@@ -554,15 +554,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
    */
   public Integer getGenderId(String gender) throws Exception{
     try{
-      GenderHome home = (GenderHome) this.getIDOHome(Gender.class);
+      GenderHome home = getGenderHome();
 
-      if(gender == "M" || gender == "male" || gender == "0" ){
+      if(gender.equals("M") || gender.equals("male") || gender.equals("0") ){
         if(male == null){
           male = home.getMaleGender();
         }
         return (Integer) male.getPrimaryKey();
       }
-      else if(gender == "F" || gender == "female" || gender == "1" ){
+      else if(gender.equals("F") || gender.equals("female") || gender.equals("1") ){
         if(female == null){
           female = home.getFemaleGender();
         }
@@ -579,8 +579,32 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
 
   }
+  
+  /**
+   * Returnes true if that genderid refers to the male gender
+   */
+  public boolean isMale(int genderId) throws RemoteException,FinderException{
+  	GenderHome home = getGenderHome();
+  	
+  	if(male == null){
+  		male = home.getMaleGender();
+  	}
+  	return (((Integer) male.getPrimaryKey()).intValue() == genderId);
+  }
+  
+  /**
+   * Returnes true if that genderid refers to the female gender
+   */
+  public boolean isFemale(int genderId) throws RemoteException,FinderException{
+  	return !isMale(genderId);
+  }
 
-  public  Phone[] getUserPhones(int userId)throws RemoteException{
+  private GenderHome getGenderHome() throws RemoteException {
+	GenderHome home = (GenderHome) this.getIDOHome(Gender.class);
+	return home;
+}
+
+public  Phone[] getUserPhones(int userId)throws RemoteException{
     try {
       Collection phones = this.getUser(userId).getPhones();
 //	  if(phones != null){
@@ -2698,8 +2722,25 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		String uniqueID =  ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID,attributes);
 		String personalId = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID,attributes);
 		String email = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_EMAIL,attributes);
+		String homePhone = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);
+		String fax = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_FAX_NUMBER,attributes);
+		String mobile = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_MOBILE_NUMBER,attributes);
+	
+		
+		String gender = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_GENDER,attributes);
+		int genderId=-1;
+		if(gender!=null){
+			try {
+				genderId = getGenderId(gender).intValue();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		//TODO eiki handle addresses
 		//String address = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
-		//String phone = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);
+		
 		
 		
 		User user = null;
@@ -2728,7 +2769,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		
 		if(user==null && firstName!=null){
 			try {
-				Collection users = getUserHome().findUsersByConditions(firstName,middleName,lastName,null,null,null,-1,-1,-1,-1,null,null,true,false);
+				Collection users = getUserHome().findUsersByConditions(firstName,middleName,lastName,null,null,null,genderId,-1,-1,-1,null,null,true,false);
 				if(users!=null && !users.isEmpty() && users.size()==1){
 					//its the only one with this name must be our guy!
 					user = (User)users.iterator().next();
@@ -2746,6 +2787,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			if(uniqueID!=null){
 				user.setUniqueId(uniqueID);
 			}
+			if(genderId>0){
+				user.setGender(genderId);
+			}
+			
+			//TODO Eiki make a method updatePhones(home,fax,mobile) DO in update also
+			//getPhoneHome().findUsersFaxPhone();
 			
 			user.setDescription(description);
 			user.store();
@@ -2763,6 +2810,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			
 			user.setDescription(description);
+			if(genderId>0){
+				user.setGender(genderId);
+			}
 			user.store();
 			updateUserMail(user,email);
 			
