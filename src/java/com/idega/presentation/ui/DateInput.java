@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.18 2002/10/12 19:05:57 laddi Exp $
+ * $Id: DateInput.java,v 1.19 2002/10/12 20:28:52 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -170,7 +170,7 @@ public class DateInput extends InterfaceObject {
 		this._isDisabled = disabled;
 	}
 
-	private Script getScript() {
+	private Script getDateScript() {
 		return this._script;
 	}
 
