@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.104 2004/11/01 21:15:27 tryggvil Exp $
+ * $Id: IWContext.java,v 1.105 2004/11/01 21:17:12 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -67,15 +67,17 @@ import com.idega.util.reflect.MethodInvoker;
  * The role of this class is very similar to that of FacesContext in a JSF application. <br>
  * IWContext will be gradually phased out in future versions in favour of just working with the standard FacesContext.
  * <br>
- * This class gives access to User specific information and Application specific information.
+ * This class gives access to Request specific, User specific and Application specific information.
  * <br>
  * An instance of this class should be used under the interfaces com.idega.idegaweb.IWUserContext and
  * com.idega.idegaweb.IWApplicationContext where it is applicable (i.e. when only working with User scoped
  * functionality or Application scoped functionality).
  *<br>
  *
+ * Last modified: $Date: 2004/11/01 21:17:12 $ by $Author: tryggvil $
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.104 $
+ * @version $Revision: 1.105 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
