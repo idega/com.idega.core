@@ -396,10 +396,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			PKs.add(item.getRelatedGroupPK());
 		}
 		if (groupTypes.size() > 0 && PKs.size() > 0) {
-			IDOQuery query = new IDOQuery();
+			IDOQuery query = idoQuery();
 			query.appendSelectAllFrom(this.getEntityName());
 			query.appendWhere(this.COLUMN_GROUP_TYPE);
-			IDOQuery subQuery = new IDOQuery();
+			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
 			if (returnTypes) {
 				query.appendIn(subQuery);
@@ -408,7 +408,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			}
 			query.appendAnd();
 			query.append(this.COLUMN_GROUP_ID);
-			IDOQuery subQuery2 = new IDOQuery();
+			IDOQuery subQuery2 = idoQuery();
 			subQuery2.appendCommaDelimited(PKs);
 			query.appendIn(subQuery2);
 			query.appendOrderBy(this.COLUMN_NAME);
@@ -428,10 +428,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			PKs.add(item.getRelatedGroupPK());
 		}
 		if (groupTypes.size() > 0 && PKs.size() > 0) {
-			IDOQuery query = new IDOQuery();
+			IDOQuery query = idoQuery();
 			query.appendSelectCountFrom(this.getEntityName());
 			query.appendWhere(this.COLUMN_GROUP_TYPE);
-			IDOQuery subQuery = new IDOQuery();
+			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
 			if (returnTypes) {
 				query.appendIn(subQuery);
@@ -440,7 +440,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			}
 			query.appendAnd();
 			query.append(this.COLUMN_GROUP_ID);
-			IDOQuery subQuery2 = new IDOQuery();
+			IDOQuery subQuery2 = idoQuery();
 			subQuery2.appendCommaDelimited(PKs);
 			query.appendIn(subQuery2);
 			//      System.out.println("[GroupBMPBean](ejbHomeGetNumberOfGroupsContained): "+query.toString());
@@ -462,10 +462,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			PKs.add(item.getRelatedGroupPK());
 		}
 		if (groupTypes.size() > 0 && PKs.size() > 0) {
-			IDOQuery query = new IDOQuery();
+			IDOQuery query = idoQuery();
 			query.appendSelectAllFrom(this.getEntityName());
 			query.appendWhere(this.COLUMN_GROUP_TYPE);
-			IDOQuery subQuery = new IDOQuery();
+			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
 			if (returnTypes) {
 				query.appendIn(subQuery);
@@ -474,7 +474,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			}
 			query.appendAnd();
 			query.append(this.COLUMN_GROUP_ID);
-			IDOQuery subQuery2 = new IDOQuery();
+			IDOQuery subQuery2 = idoQuery();
 			subQuery2.appendCommaDelimited(PKs);
 			query.appendIn(subQuery2);
 			query.appendOrderBy(this.COLUMN_NAME);
@@ -497,10 +497,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			PKs.add(item.getRelatedGroupPK());
 		}
 		if (groupTypes.size() > 0 && PKs.size() > 0) {
-			IDOQuery query = new IDOQuery();
+			IDOQuery query = idoQuery();
 			query.appendSelectCountFrom(this.getEntityName());
 			query.appendWhere(this.COLUMN_GROUP_TYPE);
-			IDOQuery subQuery = new IDOQuery();
+			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
 			if (returnTypes) {
 				query.appendIn(subQuery);
@@ -509,7 +509,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			}
 			query.appendAnd();
 			query.append(this.COLUMN_GROUP_ID);
-			IDOQuery subQuery2 = new IDOQuery();
+			IDOQuery subQuery2 = idoQuery();
 			subQuery2.appendCommaDelimited(PKs);
 			query.appendIn(subQuery2);
 			//      System.out.println("[GroupBMPBean](ejbHomeGetNumberOfGroupsContained): "+query.toString());

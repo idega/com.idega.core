@@ -168,7 +168,7 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
   }
 
   public Collection ejbFindVisibleGroupTypes() throws FinderException{
-    IDOQuery query = new IDOQuery();
+    IDOQuery query = idoQuery();
     query.appendSelectAllFrom();
     query.append(getEntityName());
     query.appendWhere(COLUMN_IS_VISIBLE);
@@ -181,7 +181,7 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
   }
 
   public int ejbHomeGetNumberOfVisibleGroupTypes() throws FinderException, IDOException {
-    IDOQuery query = new IDOQuery();
+    IDOQuery query = idoQuery();
     query.appendSelectCountFrom();
     query.append(getEntityName());
     query.appendWhere(COLUMN_IS_VISIBLE);

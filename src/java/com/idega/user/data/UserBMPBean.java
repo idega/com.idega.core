@@ -567,10 +567,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//      System.out.println("[UserBMPBean]: sGroupList = "+sGroupList);
 		//      System.out.println("[UserBMPBean]: "+"select * from "+getEntityName()+" where "+_COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
 
-		IDOQuery query = new IDOQuery();
+		IDOQuery query = idoQuery();
 		query.appendSelectAllFrom(getEntityName());
 		query.appendWhere(this.getIDColumnName());
-		//		  IDOQuery subQuery = new IDOQuery();
+		//		  IDOQuery subQuery = idoQuery();
 		//		  try{
 		//            subQuery.appendCommaDelimited(groupList);
 		//          }
@@ -581,7 +581,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		query.appendIn(sGroupList);
 		query.appendOrderBy(this.getColumnNameFirstName());
 
-		IDOQuery countQuery = new IDOQuery();
+		IDOQuery countQuery = idoQuery();
 		countQuery.appendSelectCountFrom(getEntityName());
 		countQuery.appendWhere(this.getIDColumnName());
 		countQuery.appendIn(sGroupList);
@@ -618,11 +618,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 
 	public Collection ejbFindAllUsersOrderedByFirstName() throws FinderException {
-		IDOQuery query = new IDOQuery();
+		IDOQuery query = idoQuery();
 		query.appendSelectAllFrom(this.getEntityName());
 		query.appendOrderBy(this.getColumnNameFirstName() + "," + this.getColumnNameLastName() + "," + this.getColumnNameMiddleName());
 
-		IDOQuery countQuery = new IDOQuery();
+		IDOQuery countQuery = idoQuery();
 		countQuery.appendSelectCountFrom(this.getEntityName());
 
 		//	  return super.idoFindPKsBySQL(query.toString());
@@ -951,7 +951,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				return ejbFindUsers(userIds);
 			}
 		}else {
-			IDOQuery query = new IDOQuery();
+			IDOQuery query = idoQuery();
 			query.appendSelectAllFrom(this).appendWhere()
 			.append("(")
 			.append(getColumnNameFirstName()).append(" like '%").append(condition).append("%'")
@@ -999,7 +999,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	//      }
 
   public Collection ejbFindUsers(String[] userIDs) throws FinderException {
-  	IDOQuery query = new IDOQuery();
+  	IDOQuery query = idoQuery();
   	query.appendSelectAllFrom(this).appendWhere().append(getColumnNameUserID()).appendInArray(userIDs);
   	
   	return super.idoFindPKsBySQL(query.toString());
@@ -1014,7 +1014,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 * @throws RemoteException
 	 */
    public Collection ejbFindUsersByYearOfBirth (int minYear, int maxYear)  throws FinderException {
-        final IDOQuery  sql = new IDOQuery ();
+        final IDOQuery  sql = idoQuery ();
         IWTimestamp minStamp = new IWTimestamp(1,1,minYear);
         IWTimestamp maxStamp = new IWTimestamp(31,12,maxYear);
         sql.appendSelectAllFrom(getTableName());

@@ -107,7 +107,7 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
   }
 
   public Collection ejbFindGroupsRelationshipsUnder(IBDomain domain, GroupDomainRelationType type)throws FinderException,RemoteException{
-    IDOQuery query = new IDOQuery();
+    IDOQuery query = idoQuery();
     query.appendSelectAllFrom(getEntityName());
     query.appendWhere(RELATIONSHIP_TYPE_COLUMN);
     query.appendLike();
