@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.43 2004/03/15 10:11:47 sigtryggur Exp $
+ * $Id: DateInput.java,v 1.44 2004/03/17 10:22:48 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -709,8 +709,8 @@ public class DateInput extends InterfaceObject implements InputHandler{
 
     if (_theYear != null)
       _theYear.handleKeepStatus(iwc);
-
-    _setCheck = true;
+    
+    _theWholeDate.handleKeepStatus(iwc);
     initilizeValues();
   }
   
