@@ -372,13 +372,15 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			else {
 				parent = getParentFromParentCollection();
 			}	
-			theReturn.add(parent);
+			if (parent != null) {
+				theReturn.add(parent);
+			}
 			
 			if (isUser()) {
 				User user = getUserForGroup();
-				parent = user.getPrimaryGroup();
-				if (!theReturn.contains(parent)) {
-					theReturn.add(parent);
+				Group usersPrimaryGroup = user.getPrimaryGroup();
+				if (!theReturn.contains(usersPrimaryGroup)) {
+					theReturn.add(usersPrimaryGroup);
 				}
 			}
 		}
@@ -591,6 +593,42 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
 		//return idoFindPKsBySQL(query.toString());
 	}
+
+//	public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
+//
+//		IDOQuery query = idoQuery();
+//		//final String G_ = "g."; // sql alias for groups
+//				final String GR_ = "gr."; // sql alias for group relations 
+//				/*
+//		final String [] tableNames = { ENTITY_NAME, GroupRelationBMPBean.TABLE_NAME };
+//		final String [] tableAliases = { "g", "gr" };
+//				
+//		query.appendSelect().append(G_).appendStar().appendFrom(tableNames, tableAliases)
+//	*/
+//		query.appendSelect().append(GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN).append(" as IC_GROUP_ID ")
+//		.appendFrom().append(GroupRelationBMPBean.TABLE_NAME).append(" gr ")
+//		.appendWhereEquals(GR_ + GroupRelationBMPBean.GROUP_ID_COLUMN, containingGroup.getPrimaryKey())
+//		//.appendAndEquals(G_ + GroupBMPBean.COLUMN_GROUP_ID, GR_ + GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN)
+//		.appendAndEqualsQuoted(GR_ + GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN,RELATION_TYPE_GROUP_PARENT)
+//		.appendAnd().append("(")
+//		.appendEqualsQuoted(GR_ + GroupRelationBMPBean.STATUS_COLUMN,GroupRelation.STATUS_ACTIVE)
+//		.appendOrEqualsQuoted(GR_ + GroupRelationBMPBean.STATUS_COLUMN, GroupRelation.STATUS_PASSIVE_PENDING).append(")");
+//
+//		if (groupTypes != null && !groupTypes.isEmpty()) {
+//			query.appendAnd().append(GroupRelationBMPBean.RELATED_GROUP_TYPE_COLUMN);
+//			IDOQuery subQuery = idoQuery();
+//			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
+//			if (returnTypes) {
+//				query.appendIn(subQuery);
+//			}
+//			else {
+//				query.appendNotIn(subQuery);
+//			}
+//		}
+//		////query.appendOrderBy(G_ + this.COLUMN_NAME);
+//		//return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
+//		return idoFindPKsBySQL(query.toString());
+//	}
 
 	public int ejbHomeGetNumberOfGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException, IDOException {
 		String relatedSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer)containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
@@ -875,6 +913,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		rel.setGroup(this);
 		rel.setRelatedGroup(relatedGroupId);
 		rel.setRelationshipType(relationType);
+		rel.setRelatedGroupType(rel.getRelatedGroup().getGroupType());
 		rel.store();
 		//}
 		//catch(Exception e){
@@ -899,6 +938,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			if(time != null){
 				rel.setInitiationDate(time);			
 			}
+			rel.setRelatedGroupType(rel.getRelatedGroup().getGroupType());
 			rel.store();
 		}
 		//}
