@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.16 2002/01/11 12:33:12 palli Exp $
+ * $Id: PresentationObject.java,v 1.17 2002/01/14 09:31:11 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -596,6 +596,10 @@ public class PresentationObject extends Object implements Cloneable {
 
   public synchronized Object clone(IWContext iwc, boolean askForPermission) {
     PresentationObject obj = null;
+/*    System.err.println("--");
+    System.err.println("Cloning class of type: "+ this.getClassName());
+    System.err.println("--");
+*/
     try {
       //This is forbidden in clone i.e. "new":
       //obj = (PresentationObject)Class.forName(this.getClassName()).newInstance();
@@ -608,6 +612,10 @@ public class PresentationObject extends Object implements Cloneable {
       this.prepareClone(obj);
       Vector vector;
       obj.initializedInMain = this.initializedInMain;
+      obj.ic_object_instance_id = this.ic_object_instance_id;
+      obj.ic_object_id = this.ic_object_id;
+
+
       //obj.defaultState = this.defaultState;  //same object, unnecessary to clone
 
     }
@@ -979,9 +987,15 @@ public class PresentationObject extends Object implements Cloneable {
     String stateString = null;
     if(this instanceof IFrameContent){
       stateString = iwc.getCurrentState(((IFrameContent)this).getOwnerInstance().getICObjectInstanceID());
+      //System.err.println("stateString = iwc.getCurrentState("+((IFrameContent)this).getOwnerInstance().getICObjectInstanceID()+");");
+      //System.err.println(this.getClassName()+" - stateString:"+((stateString==null)?"objectNull":stateString)+" for instance "+((IFrameContent)this).getOwnerInstance().getICObjectInstanceID());
+      //System.err.println("IWContext.hashCode(): "+iwc.hashCode());
     } else {
       stateString = iwc.getCurrentState(this.getICObjectInstanceID());
+      //System.err.println(this.getClassName()+" - stateString:"+((stateString==null)?"objectNull":stateString)+" for instance "+this.getICObjectInstanceID());
+      //System.err.println("IWContext.hashCode(): "+iwc.hashCode());
     }
+
     if(stateString != null){
       state = getStateInstance(iwc);
       if(state != null){
@@ -999,7 +1013,7 @@ public class PresentationObject extends Object implements Cloneable {
   }
 
   public GenericState getDefaultState(){
-    return defaultState;
+    return (GenericState)defaultState.clone();
   }
 
   public boolean equals(PresentationObject obj){

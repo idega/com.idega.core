@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.25 2001/12/17 15:48:39 gummi Exp $
+ * $Id: IWPresentationServlet.java,v 1.26 2002/01/14 09:31:30 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -28,6 +28,10 @@ import java.util.Vector;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.Enumeration;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -162,6 +166,32 @@ long time1 = System.currentTimeMillis();
 long time2 = System.currentTimeMillis();
 PrintWriter writer = iwc.getWriter();
 writer.println("<!--"+ (time2 - time1 )+ " ms-->");
+
+/*
+writer.println("<!--");
+writer.println("---------- Session Attributes -----------");
+Enumeration enum = iwc.getSession().getAttributeNames();
+if(enum != null){
+  writer.println("Session.hashCode() = "+ iwc.getSession().hashCode());
+  while (enum.hasMoreElements()) {
+    String item = (String)enum.nextElement();
+    writer.println("Attribute: "+item+" = "+iwc.getSession().getAttribute(item));
+  }
+
+
+} else {
+  writer.println("Session empty");
+}
+writer.println("-->");
+*/
+
+
+
+
+
+
+
+
 //writer.println("<!-- viewpermission: "+com.idega.core.accesscontrol.business.AccessControl._COUNTER +" -->");
 
             /*if (connectionRequested()){
@@ -195,164 +225,164 @@ writer.println("<!--"+ (time2 - time1 )+ " ms-->");
   }
 
   public void setPage(Page myPage){
-                //System.out.println("Inside setPage()");
-		//storeObject(Page.IW_PAGE_KEY,(Page)myPage.clone());
-                Page.setTopPage(myPage);
-                //storeObject(Page.IW_PAGE_KEY,myPage);
-		//this.page=page;
-                /*String servletName = this.getServletConfig().getServletName();
-                String attributeKey =servletName+"_idega_page";
-                //System.out.println("AttributeKey="+attributeKey+" for setPage()");
-		getServletContext().setAttribute(attributeKey,myPage);*/
+    //System.out.println("Inside setPage()");
+    //storeObject(Page.IW_PAGE_KEY,(Page)myPage.clone());
+    Page.setTopPage(myPage);
+    //storeObject(Page.IW_PAGE_KEY,myPage);
+    //this.page=page;
+    /*String servletName = this.getServletConfig().getServletName();
+    String attributeKey =servletName+"_idega_page";
+    //System.out.println("AttributeKey="+attributeKey+" for setPage()");
+    getServletContext().setAttribute(attributeKey,myPage);*/
 
   }
 
-    public Page getPage(){
-      return Page.getPage(getIWContext());
-    }
+  public Page getPage(){
+    return Page.getPage(getIWContext());
+  }
 
-    public static IWContext getIWContext(){
-          return (IWContext) retrieveObject(IW_MODULEINFO_KEY);
-    }
-
-
-        /**
-         * @deprecated
-         */
-      	public HttpServletRequest getRequest(){
-		return getIWContext().getRequest();
-	}
-
-        /**
-         * @deprecated
-         */
-	public HttpSession getSession(){
-		return getIWContext().getSession();
-	}
-
-        /**
-         * @deprecated
-         */
-	public HttpServletResponse getResponse(){
-		return getIWContext().getResponse();
-	}
-
-	public String getParameter(String parameterName){
-	  return getRequest().getParameter(parameterName);
-	}
-
-	public String[] getParameterValues(String parameterName){
-	  return getRequest().getParameterValues(parameterName);
-	}
-
-	public Object getSessionAttribute(String attributeName){
-	  return getSession().getAttribute(attributeName);
-	}
-
-	public void setSessionAttribute(String attributeName, Object attribute){
-	  getSession().setAttribute(attributeName,attribute);
-	}
-
-	public void removeSessionAttribute(String attributeName){
-          getSession().removeAttribute(attributeName);
-	}
+  public static IWContext getIWContext(){
+        return (IWContext) retrieveObject(IW_MODULEINFO_KEY);
+  }
 
 
- 	public void add(PresentationObject objectToAdd){
-	  getPage().add(objectToAdd);
-	}
+  /**
+   * @deprecated
+   */
+  public HttpServletRequest getRequest(){
+          return getIWContext().getRequest();
+  }
 
-	public void add(String text){
-	  add(new Text(text));
-	}
+  /**
+   * @deprecated
+   */
+  public HttpSession getSession(){
+          return getIWContext().getSession();
+  }
 
+  /**
+   * @deprecated
+   */
+  public HttpServletResponse getResponse(){
+          return getIWContext().getResponse();
+  }
 
-	public void addToTemplate(PresentationObject obj){
+  public String getParameter(String parameterName){
+    return getRequest().getParameter(parameterName);
+  }
 
-	}
+  public String[] getParameterValues(String parameterName){
+    return getRequest().getParameterValues(parameterName);
+  }
 
-	public void _main(IWContext iwc)throws Exception{
-                //getPage().setTreeID("0");
-                //getPage().updateTreeIDs();
-                //String node = iwc.getParameter("idega_special_tree_node");
-                //if( node != null){
-                //  PresentationObject obj = getPage().getContainedObject(node);
-                  //iwc.getResponse().getWriter().println("klasi:"+obj.getClass().getName());
-                //  if(obj!=null){
-               //     obj._main(iwc);
-                //  }
-                //}
+  public Object getSessionAttribute(String attributeName){
+    return getSession().getAttribute(attributeName);
+  }
 
-		getPage()._main(iwc);
-               //System.out.println("Inside _main() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
+  public void setSessionAttribute(String attributeName, Object attribute){
+    getSession().setAttribute(attributeName,attribute);
+  }
 
-	}
-
-	public void __print(IWContext iwc)throws Exception{
-
-
-		if (iwc.getLanguage().equals("WML")){
-			getResponse().setContentType("text/vnd.wap.wml");
-		}
-
-		getPage()._print(iwc);
-                //System.out.println("Inside __print() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
-	}
-
-	private boolean isActionPerformed(HttpServletRequest request, HttpServletResponse response){
-		if(request.getParameter("idega_special_form_event") != null){
-			//if (true){
-				return true;
-			//}
-			//else{
-			//	return false;
-			//}
-		}
-		else{
-			return false;
-		}
-	}
+  public void removeSessionAttribute(String attributeName){
+    getSession().removeAttribute(attributeName);
+  }
 
 
+  public void add(PresentationObject objectToAdd){
+    getPage().add(objectToAdd);
+  }
 
-	//public void actionPerformed(ModuleEvent e)throws Exception{
-		//try{
-		//	__theService(e.getRequest(),e.getResponse());
-		/*}
-		catch(IOException, ex){
-			throw new Exception(ex.getMessage());
-		}*/
-	//}
+  public void add(String text){
+    add(new Text(text));
+  }
 
 
-        public void debug(String debugString){
-          try{
-            getIWContext().getWriter().println(debugString);
+  public void addToTemplate(PresentationObject obj){
+
+  }
+
+  public void _main(IWContext iwc)throws Exception{
+          //getPage().setTreeID("0");
+          //getPage().updateTreeIDs();
+          //String node = iwc.getParameter("idega_special_tree_node");
+          //if( node != null){
+          //  PresentationObject obj = getPage().getContainedObject(node);
+            //iwc.getResponse().getWriter().println("klasi:"+obj.getClass().getName());
+          //  if(obj!=null){
+         //     obj._main(iwc);
+          //  }
+          //}
+
+          getPage()._main(iwc);
+         //System.out.println("Inside _main() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
+
+  }
+
+  public void __print(IWContext iwc)throws Exception{
+
+
+          if (iwc.getLanguage().equals("WML")){
+                  getResponse().setContentType("text/vnd.wap.wml");
           }
-          catch(Exception ex){
-            System.err.println("Error in IWPresentationServlet.debug() : "+ex.getMessage());
-            ex.printStackTrace(System.err);
+
+          getPage()._print(iwc);
+          //System.out.println("Inside __print() for: "+this.getClass().getName()+" - Tread: "+Thread.currentThread().toString());
+  }
+
+  private boolean isActionPerformed(HttpServletRequest request, HttpServletResponse response){
+          if(request.getParameter("idega_special_form_event") != null){
+                  //if (true){
+                          return true;
+                  //}
+                  //else{
+                  //	return false;
+                  //}
           }
-        }
+          else{
+                  return false;
+          }
+  }
 
 
-        public void setPageAttribute(String attributeName,Object object){
-            setSessionAttribute(getServletConfig().getServletName()+attributeName,object);
-        }
 
-        public Object getPageAttribute(String attributeName){
-          return getSessionAttribute(getServletConfig().getServletName()+attributeName);
-        }
-
-        public void removePageAttribute(String attributeName){
-          removeSessionAttribute(getServletConfig().getServletName()+attributeName);
-        }
+  //public void actionPerformed(ModuleEvent e)throws Exception{
+          //try{
+          //	__theService(e.getRequest(),e.getResponse());
+          /*}
+          catch(IOException, ex){
+                  throw new Exception(ex.getMessage());
+          }*/
+  //}
 
 
-        protected void handleException(Exception ex,Object thrower){
-          Text text = new Text(thrower.getClass().getName());
-          add(new ExceptionWrapper(ex,text));
-        }
+  public void debug(String debugString){
+    try{
+      getIWContext().getWriter().println(debugString);
+    }
+    catch(Exception ex){
+      System.err.println("Error in IWPresentationServlet.debug() : "+ex.getMessage());
+      ex.printStackTrace(System.err);
+    }
+  }
+
+
+  public void setPageAttribute(String attributeName,Object object){
+      setSessionAttribute(getServletConfig().getServletName()+attributeName,object);
+  }
+
+  public Object getPageAttribute(String attributeName){
+    return getSessionAttribute(getServletConfig().getServletName()+attributeName);
+  }
+
+  public void removePageAttribute(String attributeName){
+    removeSessionAttribute(getServletConfig().getServletName()+attributeName);
+  }
+
+
+  protected void handleException(Exception ex,Object thrower){
+    Text text = new Text(thrower.getClass().getName());
+    add(new ExceptionWrapper(ex,text));
+  }
 
 
 
@@ -401,6 +431,7 @@ writer.println("<!--"+ (time2 - time1 )+ " ms-->");
   }
 
   public void handleEvent(IWContext  iwc){
+  try {
     //System.err.println("-------------------------------------");
     //System.err.println("handleEvent begin");
     String historyID = iwc.getParameter(BuilderLogic.PRM_HISTORY_ID);
@@ -410,6 +441,7 @@ writer.println("<!--"+ (time2 - time1 )+ " ms-->");
       LinkedList state = (LinkedList)iwc.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
       int historySize = 5;
       boolean listJustConstructed = false;
+      //System.err.println("PresentationServelt - State = "+ state);
       if(state == null){
 
         state = new LinkedList();
@@ -419,13 +451,27 @@ writer.println("<!--"+ (time2 - time1 )+ " ms-->");
         listJustConstructed = true;
       }
       synchronized (state){
+
+        //System.err.println("PresentationServelt - !listJustConstructed = "+ !listJustConstructed);
+        //System.err.println("PresentationServelt - state.contains(historyID) = "+ state.contains(historyID));
+/*
+        ListIterator iter2 = state.listIterator();
+        while (iter2.hasNext()) {
+          Object item = iter2.next();
+          int index = iter2.nextIndex()-1;
+          System.err.println("PresentationServelt - State index : "+index+" = "+item);
+        }
+*/
         if(!listJustConstructed && state.contains(historyID)){
+          // go back in history
           int index = state.indexOf(historyID);
           int size = state.size();
-          for (int i = 0; i < size-(index+1); i++) {
+          for (int i = 0; i <= size-(index+1); i++) {
             state.removeLast();
           }
+        }
 
+        if(!listJustConstructed){
           if(state.size() >= historySize*2){
             state.removeFirst();
             state.removeFirst();
@@ -443,8 +489,30 @@ writer.println("<!--"+ (time2 - time1 )+ " ms-->");
           } else{
             state.addLast(new Hashtable());
           }
+          //System.err.println("PresentationServelt - checking stateList");
           // object geta safnast upp í hashtöflunum því þarf að fjarlægja þau instöns sem ekki eru á nýju síðunni
+          /**
+           * @todo handle pages in frames or iframes with different pageIds
+           */
+          Map newStateMap = (Map)state.getLast();
+          Map pageObjectInstances = logic.getCashedObjectInstancesForPage(iwc.getParameter(logic.IB_PAGE_PARAMETER));
+
+          //System.err.println("PresentationServelt - pageObjects "+pageObjectInstances + " for page "+this.getPage().getPageID());
+
+
+          Iterator iter = newStateMap.keySet().iterator();
+          while (iter.hasNext()) {
+            Object item = iter.next();
+            if(!((pageObjectInstances != null) && pageObjectInstances.containsKey(item))){
+              //System.err.println("PresentationServelt - removing : "+ item);
+              iter.remove();
+              //newStateMap.remove(item);
+            }else{
+              //System.err.println("PresentationServelt - not removing : "+ item);
+            }
+          }
         }
+
       }
       if(listeners != null && listeners.length > 0){
         PresentationObject source = logic.getIWPOEventSource(iwc);
@@ -462,6 +530,13 @@ writer.println("<!--"+ (time2 - time1 )+ " ms-->");
       }
     }
     //System.err.println("handleEvent end");
+
+  }
+  catch (Exception ex) {
+    ex.printStackTrace();
+  }
+
+
   }
 
 }

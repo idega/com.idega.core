@@ -873,15 +873,25 @@ public void setCacheWriter(PrintWriter writer){
   */
   public String getCurrentState(int instanceId){
     String historyId = this.getParameter(BuilderLogic.PRM_HISTORY_ID);
+    //System.err.println("in iwc.getCurrentState()");
     if(historyId != null){
-      List historyList = (List)this.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
+      //System.err.println("historyId != null");
+
+      HttpSession s = this.getSession();
+      //System.err.println(" - from Session.hashCode() -> "+s.hashCode());
+      List historyList = (List)s.getAttribute(BuilderLogic.SESSION_OBJECT_STATE);
+
+      //List historyList = (List)this.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
       if(historyList != null && historyList.contains(historyId)){
         int index = historyList.indexOf(historyId);
+        //System.err.println("current state historyIndex = "+index + " for instance " + instanceId);
         Object ob = ((Hashtable)historyList.get(index+1)).get(Integer.toString(instanceId));
         //System.err.println("current state = "+ob);
+        //System.err.println("iwc.getCurrentState() ends");
         return (String)ob;
       }
     }
+    //System.err.println("iwc.getCurrentState() ends");
     return null;
   }
 
