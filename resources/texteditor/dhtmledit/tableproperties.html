@@ -1,0 +1,160 @@
+<HTML>
+<HEAD>
+<SCRIPT>
+var args = window.dialogArguments;
+</SCRIPT>
+
+<SCRIPT LANGUAGE=JavaScript>
+
+  function IsDigit(){
+    return ((event.keyCode >= 48) && (event.keyCode <= 57))
+  }
+
+  function IsDigitPercent(){
+    return ( ((event.keyCode >= 48) && (event.keyCode <= 57)) || event.keyCode == 37 )
+  }
+
+function getAttribute(html,attrib){
+  var re = new RegExp("^.*"+attrib+"=\"([^\"]+)\".*$","i");
+  if(html.search(re) != -1){
+    return html.replace(re,"$1");
+  }
+  else{
+    re = new RegExp("^.*"+attrib+"=([^ ]+).*$","i");
+    if(html.search(re) != -1){
+      return html.replace(re,"$1");
+    }else{
+      return "";
+    }
+  }
+}
+
+function getAttributeString(attribname,value){
+  return (value != "") ? ' '+attribname+'='+value : '';
+}
+
+function changeBgColor(obj){
+  var args = new Array();
+  args["bgcolor"] = obj.style.background;
+  var arr = showModalDialog( "selectcolor.php",args,"font-family:Verdana; font-size:12; dialogWidth:420px; dialogHeight:380px" );
+  if (arr != null) {
+          obj.style.background = arr;
+  }
+}
+
+function save(){
+  window.returnValue = getAttributeString("cellPadding",Cellpadding.value)
+  +getAttributeString("cellSpacing",Cellspacing.value)
+  +getAttributeString("border",Border.value)
+  +getAttributeString("width",Width.value)
+  +getAttributeString("height",Height.value)
+  +getAttributeString("bgColor",BGColor.value)
+  +getAttributeString("align",Alignment.value);
+  window.close();
+}
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript" FOR="window" EVENT="onload">
+  for ( elem in window.dialogArguments )
+  {
+    switch( elem )
+    {
+    case "TableAttrs":
+    	var attribs =  window.dialogArguments["TableAttrs"];
+
+    	/*var bc = getAttribute(attribs,"bgcolor");
+    	bc = (bc != "none") ? bc : "";
+
+    	if(bc) bgcolor.style.background = bc;*/
+    	foo = getAttribute(attribs,"bgColor");
+    	BGColor.value = (foo == "") ? "" : foo;
+
+    	foo = getAttribute(attribs,"cellpadding");
+    	Cellpadding.value = (foo == "") ? "" : foo;
+   		foo = getAttribute(attribs,"cellspacing");
+    	Cellspacing.value = (foo == "") ? "" : foo;
+   		foo = getAttribute(attribs,"border");
+    	Border.value = (foo == "") ? "" : foo;
+   		foo = getAttribute(attribs,"width");
+    	Width.value = (foo == "") ? "" : foo;
+   		foo = getAttribute(attribs,"height");
+    	Height.value = (foo == "") ? "" : foo;
+   		foo = getAttribute(attribs,"align");
+    	Alignment.value = (foo == "") ? "" : foo;
+
+      break;
+    case "CellAttrs" :
+      var attribs =  window.dialogArguments["TableAttrs"];
+    	foo = getAttribute(attribs,"bgColor");
+    	BGColor.value = (foo == "") ? "" : foo;
+
+    	foo = getAttribute(attribs,"cellpadding");
+    	Cellpadding.value = (foo == "") ? "" : foo;
+   		foo = getAttribute(attribs,"cellspacing");
+    	Cellspacing.value = (foo == "") ? "" : foo;
+   		foo = getAttribute(attribs,"border");
+    	Border.value = (foo == "") ? "" : foo;
+   		foo = getAttribute(attribs,"width");
+    	Width.value = (foo == "") ? "" : foo;
+   		foo = getAttribute(attribs,"height");
+    	Height.value = (foo == "") ? "" : foo;
+   		foo = getAttribute(attribs,"align");
+    	Alignment.value = (foo == "") ? "" : foo;
+
+      break;
+    }
+  }
+</SCRIPT>
+<style type="text/css">
+<!--
+	body { font-family:Arial,Helvetica,sans-serif;font-size:10pt; }
+	A { color:#000000;font-size:10pt;text-decoration:underline; }
+	form { margin-top:0px;margin-bottom:0px }
+	table { font-family:Arial,Helvetica,sans-serif;font-size:10pt; }
+	A:hover { color:#000000;font-size:10pt;text-decoration:underline; }
+   -->
+</style>
+	<title>idegaWeb Edit Table Attributes</title>
+</head>
+<body   marginwidth="0" topmargin="0" leftmargin="0" marginheight="0" >
+<table  height="100%" border="0" width="100%" cellspacing="0" cellpadding="0" >
+
+<tr>
+
+<td  bgcolor="#0E2456" colspan="2" rowspan="1" >
+<table  border="0" width="100%" cellspacing="0" cellpadding="0" >
+
+<tr>
+
+<td  valign="middle" align="left" >
+<img alt="" name="idegaWeb" border="0" alt="idegaWeb" src="/idegaweb/bundles/com.idega.core.bundle/resources//editorwindow/idegaweb.gif" ></td>
+
+<td  valign="middle" align="right" >
+<b><font  color="#FFFFFF" size="3" face="Arial, Helvetica, Sans-serif" >Table Attributes&nbsp;&nbsp;</font></b></td>
+
+</tr>
+
+</table>
+</td>
+
+</tr>
+
+<tr>
+
+<td  height="100%" bgcolor="#FFFFFF" valign="top" colspan="2" rowspan="1" >
+<table border="0">
+<tr><td>bgcolor</td><td><input type="text" name="BGColor" value="white"></td></tr>
+<tr><td>padding</td><td><input type="text" name="Cellpadding" value="Cellpadding"></td></tr>
+<tr><td>spacing</td><td><input type="text" name="Cellspacing" value="Cellspacing"></td></tr>
+<tr><td>border</td><td><input type="text" name="Border" value="Border"></td></tr>
+<tr><td>width</td><td><input type="text" name="Width" value="Width"></td></tr>
+<tr><td>height</td><td><input type="text" name="Height" value="Height"></td></tr>
+<tr><td>alignment</td><td><input type="text" name="Alignment" value="Alignment"></td></tr>
+<tr><td>&nbsp;</td><td><input type="submit" value="Save" onclick="javascript:save()" ></td></tr>
+</table>
+</td>
+</tr>
+</table>
+</BODY>
+</HTML>
+

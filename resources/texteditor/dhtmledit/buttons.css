@@ -1,0 +1,54 @@
+.tbButton
+{
+	border: 0px groove; padding: 1px; 
+ }
+
+.tbButtonMouseOverUp
+{
+    BORDER-BOTTOM: #000000 solid 1px; 
+    BORDER-LEFT: #CCCCCC solid 1px; 
+    BORDER-RIGHT: #000000 solid 1px; 
+    BORDER-TOP:  #CCCCCC solid 1px; 
+    CURSOR:hand;
+}
+.tbButtonMouseOverDown
+{
+    BORDER-BOTTOM: #CCCCCC solid 1px; 
+    BORDER-LEFT: #000000 solid 1px; 
+    BORDER-RIGHT: #CCCCCC solid 1px; 
+    BORDER-TOP:  #000000 solid 1px; 
+    CURSOR:hand;
+}
+.tbButtonDown
+{
+    BACKGROUND-IMAGE: url(/idegaweb/bundles/com.idega.core.bundle/resources/texteditor/menuapplet/bg_dark.gif); 
+    BORDER-BOTTOM: #CCCCCC solid 1px; 
+    BORDER-LEFT: #000000 solid 1px; 
+    BORDER-RIGHT: #CCCCCC solid 1px; 
+    BORDER-TOP:  #000000 solid 1px; 
+}
+
+.tbButtonDisabled
+{
+	FILTER: progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+
+}
+.tbButtonEnabled
+{
+	FILTER: progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+
+}
+
+.tbButtonsHR
+{
+    BORDER-TOP:  #000000 solid 1px; 
+	HEIGHT: 1px;	
+	FONT-SIZE: 0px; 
+}
+.tbSeparator
+{
+	BORDER-RIGHT: #999999 solid 1px; 
+	FONT-SIZE: 0px; 
+	HEIGHT: 22px; 
+	WIDTH: 2px; 
+}

@@ -1,0 +1,82 @@
+<HTML>
+<HEAD>
+<SCRIPT>
+var args = window.dialogArguments;
+
+function getAttributeString(attribname,value){
+  return (value != "") ? ' '+attribname+'='+value : '';
+}
+
+function save(){
+  args['NumRows']=ROWS.value;
+  args['NumCols']=COLS.value;
+  args['Caption']="";
+
+  args['TableAttrs']= getAttributeString("cellPadding",Cellpadding.value)
+  +getAttributeString("cellSpacing",Cellspacing.value)
+  +getAttributeString("border",Border.value)
+  +getAttributeString("width",Width.value)
+  +getAttributeString("height",Height.value)
+  +getAttributeString("bgColor",BGColor.value)
+  +getAttributeString("align",Alignment.value);
+
+  window.returnValue = args;
+  window.close();
+}
+
+</SCRIPT>
+<style type="text/css">
+<!--
+	body { font-family:Arial,Helvetica,sans-serif;font-size:10pt; }
+	A { color:#000000;font-size:10pt;text-decoration:underline; }
+	form { margin-top:0px;margin-bottom:0px }
+	table { font-family:Arial,Helvetica,sans-serif;font-size:10pt; }
+	A:hover { color:#000000;font-size:10pt;text-decoration:underline; }
+   -->
+</style>
+	<title>idegaWeb Create Table</title>
+</head>
+<body   marginwidth="0" topmargin="0" leftmargin="0" marginheight="0" >
+<table  height="100%" border="0" width="100%" cellspacing="0" cellpadding="0" >
+
+<tr>
+
+<td  bgcolor="#0E2456" colspan="2" rowspan="1" >
+<table  border="0" width="100%" cellspacing="0" cellpadding="0" >
+
+<tr>
+
+<td  valign="middle" align="left" >
+<img alt="" name="idegaWeb" border="0" alt="idegaWeb" src="/idegaweb/bundles/com.idega.core.bundle/resources//editorwindow/idegaweb.gif" ></td>
+
+<td  valign="middle" align="right" >
+<b><font  color="#FFFFFF" size="3" face="Arial, Helvetica, Sans-serif" >Create Table&nbsp;&nbsp;</font></b></td>
+
+</tr>
+
+</table>
+</td>
+
+</tr>
+
+<tr>
+
+<td  height="100%" bgcolor="#FFFFFF" valign="top" colspan="2" rowspan="1" >
+<table border="0">
+<tr><td>rows</td><td><input type="text" name="ROWS"></td></tr>
+<tr><td>columns</td><td><input type="text" name="COLS"></td></tr>
+<tr><td>bgcolor</td><td><input type="text" name="BGColor" value=""></td></tr>
+<tr><td>padding</td><td><input type="text" name="Cellpadding" value="2"></td></tr>
+<tr><td>spacing</td><td><input type="text" name="Cellspacing" value="0"></td></tr>
+<tr><td>border</td><td><input type="text" name="Border" value="1"></td></tr>
+<tr><td>width</td><td><input type="text" name="Width" value="75%"></td></tr>
+<tr><td>height</td><td><input type="text" name="Height" value=""></td></tr>
+<tr><td>alignment</td><td><input type="text" name="Alignment" value="center"></td></tr>
+<tr><td>&nbsp;</td><td><input type="submit" value="Save" onclick="javascript:save()" ></td></tr>
+</table>
+</td>
+</tr>
+</table>
+</BODY>
+</HTML>
+

@@ -1,0 +1,17 @@
+#Wed Apr 24 19:05:08 GMT+00:00 2002
+dateinput.day_short=D
+name=Navn
+booleaninput.select=V\u00E6lg\:
+dateinput.year_short=\u00C5
+iw.component.com.idega.presentation.text.Text.name=Tekst
+booleaninput.no=Nei
+elements_header=Element
+dateinput.month_short=M
+dateinput.month_long=M\u00E5ned
+timestampinput.thetime=vid
+dateinput.day_long=Dag
+timeinput.minute=Minut
+booleaninput.yes=Ja
+no=Nei
+dateinput.year_long=\u00C5r
+timeinput.minute_short=M
