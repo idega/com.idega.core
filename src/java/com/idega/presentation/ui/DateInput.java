@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.52 2004/07/14 14:23:27 aron Exp $
+ * $Id: DateInput.java,v 1.53 2004/08/24 11:31:38 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -630,7 +630,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
                         .append("\n\t\t");
                 buffer.append("var difference = oldDate - newDate;").append(
                         "\n\t\t");
-                buffer.append("if (difference >= 0)").append("\n\t\t\t");
+                buffer.append("if (difference > 0)").append("\n\t\t\t");
                 buffer.append("returnBoolean = false;").append("\n\t");
                 buffer.append("}").append("\n\n\t");
                 buffer.append("if (!returnBoolean)").append("\n\t\t");
