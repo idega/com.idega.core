@@ -168,10 +168,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * Can be overrided in subclasses to alter behaviour
 	 * By default this sets the state to "login failed" and does not log in a user
 	 */
-	protected void onLoginFailed(IWContext iwc, int loginState) {
+	protected void onLoginFailed(IWContext iwc, int loginState, String username) {
 		logOutUser(iwc);
-		//internalSetState(iwc, "loginfailed");
 		internalSetState(iwc, loginState);
+		iwc.setSessionAttribute(UserAttributeParameter, username);
 	}
 	/**
 	 * Invoked when the login was succesful
@@ -242,7 +242,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 								BuilderLogic.getInstance().setCurrentPriorityPageID(iwc, iwc.getParameter(LoginFailedRedirectPageParameter));
 								iwc.setSessionAttribute(SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN,username);
 							}*/
-							onLoginFailed(iwc, canLogin);
+							onLoginFailed(iwc, canLogin, username);
 						}
 					}
 				} else if (isTryAgainAction(iwc)) {
