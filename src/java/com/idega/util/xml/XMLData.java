@@ -9,6 +9,8 @@ import com.idega.block.media.business.MediaBusiness;
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICFileHome;
 import com.idega.data.IDOLookup;
+import com.idega.io.MemoryFileBuffer;
+import com.idega.io.MemoryInputStream;
 
 import com.idega.xml.XMLDocument;
 import com.idega.xml.XMLElement;
@@ -143,10 +145,11 @@ public class XMLData {
     try {
       name = xmlFile.getName();
       XMLParser parser = new XMLParser();
-      inputStream = xmlFile.getFileValue();
+      //inputStream = xmlFile.getFileValue();
+      MemoryFileBuffer buffer = MediaBusiness.getMediaBuffer(xmlFile);
+      inputStream = new MemoryInputStream(buffer);
       document = parser.parse(inputStream);
       inputStream.close();
-      inputStream = null;
       xmlFileId = ( (Integer) xmlFile.getPrimaryKey()).intValue();
     }
     catch (Exception ex)  {
