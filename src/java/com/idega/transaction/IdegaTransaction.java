@@ -24,10 +24,10 @@ public class IdegaTransaction implements Transaction{
 private Synchronization syncronization;
 private int status=IdegaTransactionStatus.STATUS_ACTIVE;
 private boolean isRollBackOnly=false;
-private Connection conn;
+private Connection _conn;
 
   protected IdegaTransaction(){
-      conn = getFirstConnection();
+      _conn = getFirstConnection();
   }
 
 
@@ -58,7 +58,7 @@ private Connection conn;
 
       setStatus(IdegaTransactionStatus.STATUS_COMMITTING);
       try{
-        this.conn.commit();
+        getConnection().commit();
       }
       catch(SQLException ex){
           SystemException exeption = new SystemException(ex.getMessage());
@@ -114,7 +114,7 @@ public void registerSynchronization(Synchronization sync)throws RollbackExceptio
 
     setStatus(IdegaTransactionStatus.STATUS_ROLLING_BACK);
     try{
-      this.conn.rollback();
+      getConnection().rollback();
     }
     catch(SQLException ex){
         SystemException exeption = new SystemException(ex.getMessage());
@@ -165,7 +165,7 @@ private Connection getFirstConnection(){
 }
 
 public Connection getConnection(){
- return this.conn;
+ return this._conn;
 }
 
 public void freeConnection(Connection conn){
@@ -181,8 +181,8 @@ public void freeConnection(Connection conn){
 }
 
 protected void end(){
-    freeConnection(this.conn);
-    this.conn=null;
+    freeConnection(this._conn);
+    this._conn=null;
 }
 
 }
