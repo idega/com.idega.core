@@ -1077,22 +1077,22 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
     switch (permissionCategory) {
       case AccessControl._CATEGORY_OBJECT_INSTANCE :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_INSTATNCE_ID + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_INSTATNCE_ID + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+ICPermission.getPermissionValueColumnName() +" = 'Y'");
         break;
       case AccessControl._CATEGORY_OBJECT :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_ID + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_OBJECT_ID + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+ICPermission.getPermissionValueColumnName() +" = 'Y'");
         break;
       case AccessControl._CATEGORY_BUNDLE :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_BUNDLE_IDENTIFIER + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_BUNDLE_IDENTIFIER + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+ICPermission.getPermissionValueColumnName() +" = 'Y'");
         break;
       case AccessControl._CATEGORY_PAGE_INSTANCE :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_PAGE_ID + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_PAGE_ID + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+ICPermission.getPermissionValueColumnName() +" = 'Y'");
         break;
       case AccessControl._CATEGORY_PAGE :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_PAGE + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_PAGE + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+ICPermission.getPermissionValueColumnName() +" = 'Y'");
         break;
       case AccessControl._CATEGORY_JSP_PAGE :
-        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_JSP_PAGE + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+permission.getPermissionValueColumnName() +" = 'Y'");
+        permissions = EntityFinder.findAll(permission,"SELECT * FROM " + permission.getEntityName() + " WHERE " + ICPermission.getContextTypeColumnName() + " = '" + _CATEYGORYSTRING_JSP_PAGE + "' AND " + ICPermission.getContextValueColumnName() + " = '" + identifier + "' AND " + ICPermission.getPermissionStringColumnName() + " = '" + permissionKey +"' AND "+ICPermission.getPermissionValueColumnName() +" = 'Y'");
         break;
     }
 
@@ -1190,7 +1190,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
     try {
       PermissionGroup permission = PermissionGroup.getStaticPermissionGroupInstance();
-      List groups = EntityFinder.findAllByColumn(permission,permission.getGroupTypeColumnName(),permission.getGroupTypeValue());
+      List groups = EntityFinder.findAllByColumn(permission,PermissionGroup.getGroupTypeColumnName(),permission.getGroupTypeValue());
       if(groups != null){
         Iterator iter = groups.iterator();
         while (iter.hasNext()) {
