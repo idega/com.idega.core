@@ -171,7 +171,10 @@ public class IWResourceBundle extends ResourceBundle {
 	return super.getString(key);
       }
       catch(MissingResourceException e){
-	return null;
+      	if ( getIWBundleParent().getApplication().getSettings().isAutoCreatePropertiesActive() ) {
+      		setLocalizedString(key,"");	
+      	}
+		return null;
       }
     }
 
@@ -203,8 +206,7 @@ public class IWResourceBundle extends ResourceBundle {
     }
 
     public Image getLocalizedImageButton(String key, String returnValueIfNull){
-      String text = getLocalizedString(key);
-      if (text == null) text = returnValueIfNull;
+      String text = getLocalizedString(key,returnValueIfNull);
       return this.iwBundleParent.getApplication().getImageFactory().createButton(text,iwBundleParent,getLocale());
     }
 
@@ -223,8 +225,7 @@ public class IWResourceBundle extends ResourceBundle {
     }
 
     public Image getLocalizedImageTab(String key, String returnValueIfNull, boolean flip){
-      String text = getLocalizedString(key);
-      if (text == null) text = returnValueIfNull;
+      String text = getLocalizedString(key,returnValueIfNull);
       return this.iwBundleParent.getApplication().getImageFactory().createTab(text,iwBundleParent,getLocale(),flip);
     }
 
