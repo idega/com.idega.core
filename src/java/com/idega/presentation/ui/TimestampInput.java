@@ -1,6 +1,6 @@
 /*
 
- * $Id: TimestampInput.java,v 1.7 2004/02/26 09:09:53 laddi Exp $
+ * $Id: TimestampInput.java,v 1.8 2004/09/04 19:34:32 eiki Exp $
 
  *
 
@@ -729,7 +729,7 @@ private void init(String name){
 
 
 
-        textInFront.setText(iwrb.getLocalizedString(THETIME_KEY));
+        textInFront.setText(iwrb.getLocalizedString(THETIME_KEY," at "));
 
 
 
@@ -737,29 +737,29 @@ private void init(String name){
 
         if(inShort){
 
-          theDay.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.DAY_KEY_S));
+          theDay.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.DAY_KEY_S,"D"));
 
-          theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY_S));
+          theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY_S,"M"));
 
-          theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY_S));
+          theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY_S,"Y"));
 
-          theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY_S));
+          theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY_S,"H"));
 
-          theMinute.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.MINUTE_KEY_S));
+          theMinute.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.MINUTE_KEY_S,"M"));
 
         }
 
         else{
 
-          theDay.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.DAY_KEY));
+          theDay.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.DAY_KEY,"Day"));
 
-          theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY));
+          theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY,"Month"));
 
-          theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY));
+          theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY,"Year"));
 
-          theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY));
+          theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY,"Hour"));
 
-          theMinute.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.MINUTE_KEY));
+          theMinute.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.MINUTE_KEY,"Minute"));
 
         }
 
