@@ -3,6 +3,7 @@ package com.idega.user.data;
 import java.sql.Timestamp;
 import com.idega.builder.data.IBDomain;
 import com.idega.data.*;
+import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
 
 import java.util.Date;
@@ -29,6 +30,7 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
 	private static final String  STATUS_COLUMN="GROUP_RELATION_STATUS";
 	private static final String  INITIATION_DATE_COLUMN="INITIATION_DATE";
 	private static final String  TERMINATION_DATE_COLUMN="TERMINATION_DATE";
+  private static final String  SET_PASSIVE_BY="SET_PASSIVE_BY";
   
 	private static final String  STATUS_ACTIVE="ST_ACTIVE";
 	private static final String  STATUS_PASSIVE="ST_PASSIVE";
@@ -43,6 +45,7 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
     this.addAttribute(STATUS_COLUMN,"Status",String.class);
     this.addAttribute(INITIATION_DATE_COLUMN,"Relationship Initiation Date",Timestamp.class);
     this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Timestamp.class);
+    this.addAttribute(SET_PASSIVE_BY, "set passive by", true, true, Integer.class, MANY_TO_ONE, User.class);
   }
 
   public String getEntityName() {
@@ -103,6 +106,14 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
       return (GroupDomainRelationType)obj;
     }
   }
+  
+  public void setPassiveBy(int userId)  {
+    setColumn(SET_PASSIVE_BY, userId);
+  }
+
+  public int getPassiveBy() { 
+    return getIntColumnValue(SET_PASSIVE_BY);
+  }
 
   /**Finders begin**/
 
@@ -152,12 +163,28 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
   /**Finders end**/
 
   /**
-   * Overriding the remove function
+   * @deprecated Replaced with removeBy(User)
    */
-  public void remove()throws RemoveException{
+  public void remove()  throws RemoveException  {    
+    User currentUser;
+    try {
+      currentUser = IWContext.getInstance().getCurrentUser();
+    }
+    catch (Exception ex)  {
+    currentUser = null;
+    }
+    removeBy(currentUser);
+  }
+
+  
+  /**
+   * 
+   */
+  public void removeBy(User currentUser) throws RemoveException{
+    int userId = ((Integer) currentUser.getPrimaryKey()).intValue(); 
     this.setColumn(STATUS_COLUMN,STATUS_PASSIVE);
     this.setColumn(TERMINATION_DATE_COLUMN, IWTimestamp.getTimestampRightNow());
-    //this.setTerminationDate(IWTimestamp.getTimestampRightNow());
+    setPassiveBy(userId);
     store();
   }
 }
