@@ -5,7 +5,8 @@ package com.idega.presentation.ui;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+//TODO: Replace to LinkedHashMap when moved to JDK1.4
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
@@ -134,14 +135,14 @@ public class SelectDropdownDouble extends InterfaceObjectContainer {
 		if (_primaryCollection == null)
 			_primaryCollection = new Vector();
 		if (_secondaryMap == null)
-			_secondaryMap = new LinkedHashMap();
+			_secondaryMap = new HashMap();
 		
 		_primaryCollection.add(new SelectOption(name, value));
 		_secondaryMap.put(value, values);
 	}
 	
 	public void addEmptyElement(String primaryDisplayString, String secondaryDisplayString) {
-		Map map = new LinkedHashMap();
+		Map map = new HashMap();
 		map.put("-1", secondaryDisplayString);
 		addMenuElement("-1", primaryDisplayString, map);
 	}
