@@ -1,13 +1,15 @@
 /*
- * Created on 31.7.2004
+ * $Id: IWWelcomeFilter.java,v 1.6 2005/01/14 00:05:41 tryggvil Exp $
+ * Created on 31.7.2004 by tryggvil
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
  */
 package com.idega.servlet.filter;
 
 import java.io.IOException;
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -22,12 +24,16 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 
 /**
- * @author tryggvil
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * <p>
+ * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
+ * </p>
+ * 
+ *  Last modified: $Date: 2005/01/14 00:05:41 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
+ * @version $Revision: 1.6 $
  */
-public class IWWelcomeFilter implements Filter {
+public class IWWelcomeFilter extends BaseFilter {
 
 	private static boolean isInit=false;
 	
@@ -70,10 +76,11 @@ public class IWWelcomeFilter implements Filter {
 		
 		if(requestUri.equals(appUri)){
 			if(START_ON_WORKSPACE){
-				request.getRequestDispatcher("/workspace/").forward(request,response);
+				//request.getRequestDispatcher("/workspace/").forward(request,response);
+				response.sendRedirect(getNewWorkspaceUri(request));
 			}
 			else if(START_ON_PAGES){
-				request.getRequestDispatcher("/pages/").forward(request,response);
+				request.getRequestDispatcher(PAGES_URI).forward(request,response);
 			}
 		}
 		else{

@@ -8,7 +8,6 @@ package com.idega.servlet.filter;
 
 import java.io.IOException;
 import java.util.logging.Logger;
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
