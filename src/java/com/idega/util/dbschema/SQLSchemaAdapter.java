@@ -1,5 +1,5 @@
 /*
- * $Id: SQLSchemaAdapter.java,v 1.2 2004/12/02 21:32:18 tryggvil Exp $
+ * $Id: SQLSchemaAdapter.java,v 1.3 2004/12/02 21:33:06 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -27,9 +27,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.IWTimestamp;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
@@ -37,10 +35,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2004/12/02 21:32:18 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2004/12/02 21:33:06 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class SQLSchemaAdapter {
 
