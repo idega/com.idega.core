@@ -62,7 +62,8 @@ public interface UserBusiness extends com.idega.business.IBOService
  public java.util.Collection getUserGroups(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  
  public User createUserByPersonalIDIfDoesNotExist(String firstName, String middleName, String lastName,String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException,RemoteException;
-  
+ public User createUserByPersonalIDIfDoesNotExist(String fullName,String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException,RemoteException;
+ 
 
 public Email getUsersMainEmail(com.idega.user.data.User user)throws NoEmailFoundException,java.rmi.RemoteException;
  public Phone getUsersHomePhone(com.idega.user.data.User p0)throws NoPhoneFoundException, java.rmi.RemoteException;
