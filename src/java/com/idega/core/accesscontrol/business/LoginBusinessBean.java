@@ -399,7 +399,7 @@ public class LoginBusinessBean implements IWEventListener
 	protected boolean logIn(IWContext iwc, LoginTable loginTable, String login) throws Exception
 	{
 		//New user system
-		com.idega.core.user.data.UserHome uHome = (com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHome(User.class);
+/*		com.idega.core.user.data.UserHome uHome = (com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHome(User.class);
 		User user = uHome.findByPrimaryKey(loginTable.getUserId());
 
 		iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
@@ -410,13 +410,13 @@ public class LoginBusinessBean implements IWEventListener
 				iwc,
 				com.idega.user.business.UserBusiness.class);
 		com.idega.user.data.User newUser = com.idega.user.Converter.convertToNewUser(user);
-		List groups = ListUtil.convertCollectionToList(userbusiness.getUserGroups(newUser));
+		List groups = ListUtil.convertCollectionToList(userbusiness.getUserGroups(newUser));*/
 		
 		//Old user system		
-/*		User user = ((com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(loginTable.getUserId());
+		User user = ((com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(loginTable.getUserId());
 		iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
 		LoginBusinessBean.setUser(iwc, user);
-		List groups = UserBusiness.getUserGroups(user);*/
+		List groups = UserBusiness.getUserGroups(user);
 		
 		if (groups != null)
 		{
