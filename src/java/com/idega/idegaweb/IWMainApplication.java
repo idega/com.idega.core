@@ -18,7 +18,7 @@ import com.idega.util.caching.BlobCacher;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.graphics.generator.ImageFactory;
-
+import com.idega.presentation.PresentationObject;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
@@ -48,6 +48,9 @@ public class IWMainApplication{//implements ServletContext{
 
   public final static String BUNDLES_STANDARD_DIRECTORY = "bundles";
   public final static String IDEGAWEB_SPECIAL_DIRECTORY = "idegaweb";
+  public final static String CORE_BUNDLE_IDENTIFIER = PresentationObject.IW_BUNDLE_IDENTIFIER;
+  public final static String CORE_BUNDLE_FONT_FOLDER_NAME = "iw_fonts";
+
 
   public final static String IW_ACCESSCONTROL_TYPE_PROPERTY="iw_accesscontrol_type";
   public final static String _ADDRESS_ACCESSCONTROLER = "iwmainapplication.ic_accesscontroler";
@@ -526,6 +529,10 @@ public class IWMainApplication{//implements ServletContext{
 
   public ImageFactory getImageFactory(){
     return ImageFactory.getStaticInstance(this);
+  }
+
+  public IWBundle getCoreBundle(){
+   return getBundle(CORE_BUNDLE_IDENTIFIER);
   }
 
 }

@@ -17,12 +17,17 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Image;
 import com.idega.util.FileUtil;
+import java.awt.Font;
+import java.io.FileInputStream;
 
 import java.util.Locale;
 
 public class ImageFactory {
   private static IWMainApplication iwma;
   private static ImageFactory factory;
+  private static IWBundle coreBundle;
+  private static String fontPath;
+  private static Font defaultFont;
 
   private static String GENERATED_IMAGES_FOLDER = "iw_generated";
 
@@ -31,7 +36,19 @@ public class ImageFactory {
   }
 
   public static ImageFactory getStaticInstance(IWMainApplication iwma){
-   if(factory == null) factory = new ImageFactory(iwma);
+   if(factory == null){
+    factory = new ImageFactory(iwma);
+    coreBundle = iwma.getCoreBundle();
+    String folderPath = coreBundle.getResourcesURL()+FileUtil.getFileSeparator()+iwma.CORE_BUNDLE_FONT_FOLDER_NAME+FileUtil.getFileSeparator();
+    try {
+      Font fontbase = Font.createFont(Font.TRUETYPE_FONT,new FileInputStream(folderPath+"Spliffy.ttf"));
+      defaultFont = fontbase.deriveFont(Font.PLAIN,10.f);
+    }
+    catch (Exception ex) {
+      ex.printStackTrace(System.err);
+    }
+
+   }
    return factory;
   }
 
@@ -57,7 +74,7 @@ public class ImageFactory {
 
     FileUtil.createFolder(filePath);
 
-    Button button = new Button(textOnButton);
+    Button button = new Button(textOnButton,defaultFont);
     button.generate(filePath);
 
     image = new Image("iw_generated_"+Integer.toString(button.hashCode()),fileVirtualPath+button.getButtonUpName(),fileVirtualPath+button.getButtonOverName(),fileVirtualPath+button.getButtonDownName());
