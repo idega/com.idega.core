@@ -118,6 +118,27 @@ public class SimpleQuerier{
 	}
 
 
+        public static int executeIntQuery(String sqlQuery, Connection conn)throws Exception{
+		Statement Stmt= null;
+                int theReturn = -1;
+		try{
+			Stmt = conn.createStatement();
+                        ResultSet RS = Stmt.executeQuery(sqlQuery);
+
+                        Vector vector = new Vector();
+                        if(RS.next()){
+                          theReturn = RS.getInt(1);
+                        }
+			RS.close();
+		}
+		finally{
+			if(Stmt != null){
+				Stmt.close();
+			}
+		}
+                return theReturn;
+	}
+
 
 
         public static boolean execute(String sqlString)throws Exception{

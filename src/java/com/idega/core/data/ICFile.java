@@ -321,6 +321,8 @@ public class ICFile extends TreeableEntity {
         item.superDelete();
       }
     }
+    this.removeAllMetaData();
+    this.update();
     super.delete();
   }
 

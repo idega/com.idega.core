@@ -23,6 +23,7 @@ import com.idega.util.StringHandler;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
+import java.util.Set;
 import javax.ejb.EntityContext;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBException;
@@ -2563,6 +2564,30 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       }
     }
   }
+
+
+  public void removeAllMetaData(){
+    if( _theMetaDataAttributes==null ) getMetaData();//get all meta data first if null
+
+    if( _deleteMetaDataVector == null ){
+      _deleteMetaDataVector = new Vector();
+    }
+
+    if(_theMetaDataAttributes != null){
+      Set keySet = _theMetaDataAttributes.keySet();
+      if(keySet != null ){
+        Iterator iter = keySet.iterator();
+        while (iter.hasNext()) {
+          String metaDataKey = (String)iter.next();
+          _deleteMetaDataVector.add(metaDataKey);
+          if( _insertMetaDataVector != null ) _insertMetaDataVector.remove(metaDataKey);
+          if( _updateMetaDataVector != null ) _updateMetaDataVector.remove(metaDataKey);
+        }
+        metaDataHasChanged(true);
+      }
+    }
+  }
+
 
   /**
   * return true if the metadata to delete already exists

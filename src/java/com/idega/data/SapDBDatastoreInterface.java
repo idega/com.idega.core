@@ -290,4 +290,106 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
     }
   }
 
+
+
+
+
+
+
+
+  public static boolean correctSequenceValue(Connection conn){
+    boolean theReturn = true;
+    String[] types = new String[2];
+    types[0] = "TABLE";
+    types[1] = "VIEW";
+
+    try {
+
+      java.sql.ResultSet RS = getInstance(conn).getDatabaseMetaData().getTables(null,null,"%",types);
+
+      while (RS.next()) {
+        try {
+          String tableName = RS.getString("TABLE_NAME");
+          System.err.println("tableName = "+tableName);
+          boolean value = correctSequenceValue(conn, tableName);
+          System.err.println("done = "+value);
+        }
+        catch (Exception ex) {
+          ex.printStackTrace();
+          theReturn = false;
+        }
+      }
+
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      theReturn = false;
+    }
+
+    return theReturn;
+  }
+
+
+  public static boolean correctSequenceValue( Connection conn, String tableName){
+
+    boolean theReturn = false;
+    String startNumberStatement = "select max("+tableName+"_id) from "+tableName;
+    String statement = "drop sequence "+tableName+"_seq";
+    try{
+      int value = SimpleQuerier.executeIntQuery(startNumberStatement,conn);
+      if(value != -1){
+        executeUpdate(conn,statement);
+        createSequence(conn, tableName, value+1);
+        theReturn = true;
+      } else {
+        theReturn = false;
+      }
+    }
+    catch(Exception e){
+      e.printStackTrace();
+      theReturn = false;
+    }
+    return theReturn;
+  }
+
+  private static void createSequence(Connection conn, String tableName, int startNumber)throws Exception{
+
+    Statement Stmt= null;
+    try{
+            Stmt = conn.createStatement();
+            String seqCreate = "create sequence "+tableName+"_seq INCREMENT BY 1 START WITH "+startNumber+" MAXVALUE 1.0E28 MINVALUE 0 NOCYCLE CACHE 20 NOORDER";
+            int i = Stmt.executeUpdate(seqCreate);
+    }
+    finally{
+            if(Stmt != null){
+                    Stmt.close();
+            }
+//            if (conn != null){
+//                    entity.freeConnection(conn);
+//            }
+    }
+  }
+
+   private static int executeUpdate(Connection conn,String SQLCommand)throws Exception{
+      Statement Stmt = null;
+      int theReturn = 0;
+      try{
+
+        Stmt = conn.createStatement();
+        System.out.println(SQLCommand);
+        theReturn= Stmt.executeUpdate(SQLCommand);
+      }
+      finally {
+      if (Stmt != null) {
+        Stmt.close();
+      }
+//      if (conn != null) {
+//        entity.freeConnection(conn);
+//      }
+      }
+      return theReturn;
+
+  }
+
+
 }
