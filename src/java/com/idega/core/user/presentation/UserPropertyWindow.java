@@ -1,4 +1,4 @@
-package com.idega.core.usermodule.presentation;
+package com.idega.core.user.presentation;
 
 import com.idega.jmodule.object.interfaceobject.Window;
 import com.idega.jmodule.object.TabbedPropertyPanel;
@@ -7,8 +7,7 @@ import com.idega.event.IWSubmitListener;
 import com.idega.jmodule.object.ModuleInfo;
 
 /**
- * Title:        UserModule
- * Description:
+ * Title:        User
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
@@ -19,11 +18,11 @@ public class UserPropertyWindow extends Window implements IWSubmitListener {
 
   public TabbedPropertyPanel panel;
   private boolean justConstructed = true;
-  private String attributeString;
+  private String sessionAddressString;
   public static String UserPropertyWindowAttributeString = "-UserPropertyWindow";
 
   public UserPropertyWindow(String key, ModuleInfo modinfo) {
-    super(420,480);
+    super(440,500);
     panel = TabbedPropertyPanel.getInstance(key, modinfo );
     initializePanel(modinfo);
     this.add(panel);
@@ -40,7 +39,7 @@ public class UserPropertyWindow extends Window implements IWSubmitListener {
     }else{
       UserPropertyWindow tempWindow = new UserPropertyWindow(key,modinfo);
       modinfo.setSessionAttribute(key+UserPropertyWindowAttributeString, tempWindow);
-      tempWindow.setAttributeString(key+UserPropertyWindowAttributeString);
+      tempWindow.setSessionAddressString(key+UserPropertyWindowAttributeString);
       return tempWindow;
     }
   }
@@ -54,19 +53,24 @@ public class UserPropertyWindow extends Window implements IWSubmitListener {
     this.panel.justConstructed(justConstructed);
   }
 
-  public void setAttributeString(String attributeString){
-    this.attributeString = attributeString;
+  public void setSessionAddressString(String sessionAddressString){
+    this.sessionAddressString = sessionAddressString;
+  }
+
+  public String getSessionAddressString(){
+    return this.sessionAddressString;
   }
 
   public void dispose(ModuleInfo modinfo){
-    modinfo.getSession().removeAttribute(attributeString);
+    modinfo.getSession().removeAttribute(sessionAddressString);
     panel.dispose(modinfo);
   }
 
 
   public void initializePanel( ModuleInfo modinfo ){
-
-    panel.addTab(new GeneralUserInfoTab(), 0, modinfo);
+    GeneralUserInfoTab genTab = new GeneralUserInfoTab();
+    genTab.setUserID(1);
+    panel.addTab(genTab, 0, modinfo);
     panel.addTab(new AddressInfoTab(), 1, modinfo);
     panel.getOkButton().addIWSubmitListener(this,modinfo);
     panel.getCancelButton().addIWSubmitListener(this,panel,modinfo);

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.7 2001/05/14 14:27:27 palli Exp $
+ * $Id: IWPresentationServlet.java,v 1.8 2001/05/18 14:36:17 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -77,8 +77,8 @@ public class IWPresentationServlet extends IWCoreServlet {
       //begin
       boolean theServiceDone = false;
       String sessionAddress = moduleinfo.getParameter(IWMainApplication.IWEventSessionAddressParameter);
-      System.out.println("EventAddress: " + sessionAddress);
-      if (sessionAddress != null && !"".equals(sessionAddress)) {
+
+      if (sessionAddress != null && !"".equals(sessionAddress)){
         Object obj = moduleinfo.getSessionAttribute(sessionAddress);
         if(obj != null) {
           if(obj instanceof ActiveEvent && obj instanceof AWTEvent ) {

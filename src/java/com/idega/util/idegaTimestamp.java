@@ -918,6 +918,14 @@ public class idegaTimestamp{
     return (int)(diff/86400000);
   }
 
+  public static int getMinutesBetween(idegaTimestamp before, idegaTimestamp after){
+    long lBefore = before.getGregorianCalendar().getTime().getTime();
+    long lAfter = after.getGregorianCalendar().getTime().getTime();
+
+    long diff = lAfter - lBefore;
+
+    return (int)(diff/60000);
+  }
 
 
 }   // class idegaTimestamp

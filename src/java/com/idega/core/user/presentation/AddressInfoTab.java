@@ -1,4 +1,4 @@
-package com.idega.core.usermodule.presentation;
+package com.idega.core.user.presentation;
 
 import com.idega.jmodule.object.Table;
 import com.idega.jmodule.object.interfaceobject.TextInput;
@@ -15,8 +15,7 @@ import java.util.StringTokenizer;
 
 
 /**
- * Title:        UserModule
- * Description:
+ * Title:        User
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
