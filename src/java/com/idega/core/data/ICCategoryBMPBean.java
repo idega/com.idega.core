@@ -225,8 +225,45 @@ public class ICCategoryBMPBean
 				+ category.getID());
 		//    }
 	}
-	
+	/**
+	 * 
+	 * @param Category type
+	 * @return Collection of category roots of the type
+	 * @throws FinderException
+	 */
 	public Collection ejbFindRootsByType(String type)throws FinderException{
+		
+		String sql = getRootsJoinedSQl(type);
+		// String sql = getRootsNestedSQL(type);
+		return super.idoFindPKsBySQL(sql);
+	}
+	/**
+	 * faster method than the nested one, and works on mysql
+	 * SELECT cat.* FROM ic_category cat
+	 *	LEFT JOIN ic_category_tree tree ON cat.ic_category_id=tree.child_ic_category_id
+	 *	where cat.cat_type = 'news'
+	 *	and tree.child_ic_category_id is null
+	 *
+	 * @param type
+	 * @return
+	 */
+	private String getRootsJoinedSQl(String type){
+		StringBuffer sql = new StringBuffer("SELECT cat.* FROM ");
+		sql.append(getEntityTableName()).append(" cat ");
+		sql.append(" LEFT JOIN ").append(getEntityTableName()).append("_tree tree ");
+		sql.append(" ON cat.").append(getIDColumnName()).append("= tree.");
+		sql.append("child_").append(getIDColumnName());
+		sql.append(" where cat.").append(getColumnType()).append(" = '").append(type).append("'");
+		sql.append(" and tree.").append("child_").append(getIDColumnName()).append(" is null ");
+		return sql.toString();
+	}
+	/**
+	 * select * from IC_CATEGORY where CAT_TYPE= 'news'  and IC_CATEGORY_ID not in ( select child_IC_CATEGORY_ID from IC_CATEGORY_tree )"
+	 * 
+	 * @param type
+	 * @return
+	 */
+	private String getRootsNestedSQL(String type){
 		StringBuffer sql = new StringBuffer("select * from " );
 		sql.append(getEntityTableName());
 	
@@ -234,8 +271,7 @@ public class ICCategoryBMPBean
 		sql.append(" and ").append(getIDColumnName()).append(" not in (");
 		sql.append(" select ").append("child_").append(getIDColumnName());
 		sql.append(" from ").append(getEntityTableName()).append("_tree )");
-		//System.err.println(sql.toString());
-		return super.idoFindPKsBySQL(sql.toString());
+		return sql.toString();
 	}
 	
 	public Collection ejbFindAllByObjectInstance(int iObjectInstanceID)throws FinderException{
