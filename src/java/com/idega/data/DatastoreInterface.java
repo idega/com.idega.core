@@ -60,7 +60,8 @@ public abstract class DatastoreInterface{
         className = "com.idega.data.InformixDatastoreInterface";
     }
     else{
-        className = "unimplemented DatastoreInterface";
+        //className = "unimplemented DatastoreInterface";
+        throw new IDONoDatastoreError();
     }
 
     theReturn = (DatastoreInterface)interfacesHashtable.get(className);
