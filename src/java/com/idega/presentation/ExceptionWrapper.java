@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionWrapper.java,v 1.5 2003/05/15 06:17:29 laddi Exp $
+ * $Id: ExceptionWrapper.java,v 1.6 2003/05/21 17:02:51 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -45,8 +45,6 @@ public class ExceptionWrapper extends ExpandContainer {
 		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
 		
 		String errorMessage = iwrb.getLocalizedString("error.exception_thrown","An exception was thrown");
-		if (_thrower != null)
-			errorMessage += ": "+_thrower;
 		Text error = new Text(errorMessage);
 		if (_exception != null) {
 			PreformattedText stackTrace = new PreformattedText(getStackTrace(_exception));
