@@ -51,6 +51,9 @@ private boolean isCaching = false;
 private PrintWriter cacheWriter;
 
 
+public static final String HTML_MARKUP="HTML";
+public static final String WML_MARKUP="WML";
+
 public IWContext(HttpServletRequest Request,HttpServletResponse Response){
 	this.Request=Request;
 	this.Response=Response;
@@ -168,31 +171,31 @@ private String getRightLanguage(HttpServletRequest Request,HttpServletResponse R
 
 		//Sets for WML browser
 		if(user_agent.indexOf("UPG1") != -1){
-			return "WML";
+			return this.WML_MARKUP;
 		}
 		else if(user_agent.toLowerCase().indexOf("wap") != -1){
-			return "WML";
+			return this.WML_MARKUP;
 		}
 		else if(user_agent.toLowerCase().indexOf("nokia") != -1){
-			return "WML";
+			return this.WML_MARKUP;
 		}
 		else if(user_agent.toLowerCase().indexOf("ericsson") != -1){
-			return "WML";
+			return this.WML_MARKUP;
 		}
 		else if(user_agent.toLowerCase().indexOf("symbian") != -1){
-			return "WML";
+			return this.WML_MARKUP;
 		}
                 else if(user_agent.toLowerCase().indexOf("wapman") != -1){
-			return "WML";
+			return this.WML_MARKUP;
 		}
 		else
 		{
-			return "HTML";
+		  return this.HTML_MARKUP;
 		}
 	}
 	else
 	{
-		return "HTML";
+		return this.HTML_MARKUP;
 	}
 }
 
@@ -270,10 +273,10 @@ public void setResponse(HttpServletResponse Response){
 
 public void setLanguage(String language){
 	this.language = language;
-	if (language.equals("WML")){
+	if (language.equals(this.WML_MARKUP)){
 		this.Response.setContentType("text/vnd.wap.wml");
 	}
-	if (language.equals("HTML")){
+	if (language.equals(this.HTML_MARKUP)){
 		this.Response.setContentType("text/html");
 	}
 
