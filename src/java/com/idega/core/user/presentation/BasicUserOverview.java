@@ -67,8 +67,12 @@ public class BasicUserOverview extends Page {
           boolean userIsSuperAdmin = iwc.getAccessController().getAdministratorUser().equals(tempUser);
 
           if(userIsSuperAdmin){
-            Text aText = new Text(tempUser.getName());
-            userTable.add(aText,2,i+1);
+//            Text aText = new Text(tempUser.getName());
+//            userTable.add(aText,2,i+1);
+            Link aLink = new Link(new Text(tempUser.getName()));
+            aLink.setWindowToOpen(AdministratorPropertyWindow.class);
+            aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
+            userTable.add(aLink,2,i+1);
           }else {
             Link aLink = new Link(new Text(tempUser.getName()));
             aLink.setWindowToOpen(UserPropertyWindow.class);
