@@ -3,7 +3,6 @@ package com.idega.io.serialization;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
