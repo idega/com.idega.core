@@ -15,7 +15,7 @@ import com.idega.util.InheritableStaticPropertyHandler;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 0.5
 */
-public class BasicLogicUnit implements IdegaWebEventListener{
+public class BasicLogicUnit implements IWEventListener{
 
 
     private static Hashtable controlParameters;
