@@ -6,6 +6,7 @@ import java.util.Collection;
 import javax.ejb.FinderException;
 
 import com.idega.data.IDOQuery;
+import com.idega.data.IDOUtil;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
@@ -235,6 +236,31 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	public Collection ejbFindAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group,String permissionString, String contextType) throws FinderException{
 		IDOQuery sql = idoQuery();
 		sql.appendSelectAllFrom(this).appendWhereEquals(getGroupIDColumnName(),group.getPrimaryKey().toString())
+		.appendAnd().appendEqualsQuoted(getPermissionStringColumnName(),permissionString)
+		.appendAnd().appendEqualsQuoted(getContextTypeColumnName(),contextType)
+		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )")
+		.appendOrderBy(getContextValueColumnName());
+		
+		return super.idoFindPKsByQuery(sql);
+	}
+	
+	
+	/**
+	 * Finds all permissions of a certain type for the contexttype and the collection of groups
+	 * specifide.
+	 * @param group The group that ownes the records
+	 * @param permissionString A certain type of permission such as "owner"
+	 * @param contextType What type of object the permission is for such a
+	 * ic_group_id
+	 * @return Collection
+	 * @throws FinderException
+	 */
+	public Collection ejbFindAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(Collection groups,String permissionString, String contextType) throws FinderException{
+		IDOQuery sql = idoQuery();
+		IDOUtil util = IDOUtil.getInstance();
+		sql.appendSelectAllFrom(this).appendWhere()
+		.append(getGroupIDColumnName())
+		.appendIn(util.convertListToCommaseparatedString(groups))
 		.appendAnd().appendEqualsQuoted(getPermissionStringColumnName(),permissionString)
 		.appendAnd().appendEqualsQuoted(getContextTypeColumnName(),contextType)
 		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )")

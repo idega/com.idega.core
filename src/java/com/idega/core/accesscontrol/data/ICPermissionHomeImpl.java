@@ -1,5 +1,9 @@
 package com.idega.core.accesscontrol.data;
 
+import java.util.Collection;
+
+import javax.ejb.FinderException;
+
 
 public class ICPermissionHomeImpl extends com.idega.data.IDOFactory implements ICPermissionHome
 {
@@ -63,6 +67,13 @@ public java.util.Collection findAllPermissionsByPermissionGroupAndPermissionStri
 public java.util.Collection findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(java.lang.String p0,com.idega.user.data.Group p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((ICPermissionBMPBean)entity).ejbFindAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(Collection groups,String permissionString, String contextType) throws FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((ICPermissionBMPBean)entity).ejbFindAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups,permissionString,contextType);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
