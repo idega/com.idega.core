@@ -38,7 +38,7 @@ public class MemoryFileBuffer{
       System.arraycopy(this.buffer,off,b,0,len);
       return len;
     }
-    catch(Exception e){
+    catch(RuntimeException e){
       return -1;
     }
   }

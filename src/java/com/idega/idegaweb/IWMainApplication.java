@@ -34,7 +34,7 @@ public class IWMainApplication{//implements ServletContext{
   public static String objectInstanciatorURL="/servlet/ObjectInstanciator";
   public static String IMAGE_SERVLET_URL="/servlet/ImageServlet/";
   public static String FILE_SERVLET_URL="/servlet/FileServlet/";
-  public static String BUILDER_SERVLET_URL="/servlet/BuilderServlet/";
+  public static String BUILDER_SERVLET_URL="/servlet/IBMainServlet/";
 
   public static String templateParameter="idegaweb_template";
   public static String templateClassParameter="idegaweb_template_class";
@@ -43,6 +43,8 @@ public class IWMainApplication{//implements ServletContext{
   private Properties bundlesFile;
   private File bundlesFileFile;
   private String propertiesRealPath;
+
+  public final static String BUNDLES_STANDARD_DIRECTORY = "bundles";
 
 
   private static String SETTINGS_STORAGE_PARAMETER="idegaweb_main_application_settings";
@@ -86,7 +88,8 @@ public class IWMainApplication{//implements ServletContext{
     catch(Exception e){
       e.printStackTrace();
     }
-    System.out.println("Starting the IdegaWEB Application Framework - Version "+this.getVersion());
+    checkForInstalledBundles();
+    System.out.println("Starting the idegaWEB Application Framework - Version "+this.getVersion());
   }
 
   public static String getObjectInstanciatorURL(Class className,String templateName){
@@ -112,7 +115,7 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   /**
-   * TODO: Change this so it encrypts the classToInstanciateName
+   * @todo: Change this so it encrypts the classToInstanciateName
    */
   public static String getEncryptedClassName(String classToInstanciate){
       return classToInstanciate;
@@ -307,7 +310,8 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   private String getBundleVirtualPath(String bundleIdentifier){
-    String sBundle = getBundlesFile().getProperty(bundleIdentifier);
+    //String sBundle = getBundlesFile().getProperty(bundleIdentifier);
+    String sBundle = getInternalBundeVirtualPath(bundleIdentifier);
     if( sBundle!= null ) sBundle = TextSoap.findAndReplace(getBundlesFile().getProperty(bundleIdentifier),"\\","/");
 
     String path = "/"+getApplicationSpecialVirtualPath()+"/"+sBundle;
@@ -316,30 +320,76 @@ public class IWMainApplication{//implements ServletContext{
 
 
   private String getBundleRealPath(String bundleIdentifier){
-    String sBundle = getBundlesFile().getProperty(bundleIdentifier);
+    //String sBundle = getBundlesFile().getProperty(bundleIdentifier);
+    String sBundle = getInternalBundeVirtualPath(bundleIdentifier);
     if( sBundle!=null){
       if( FileUtil.getFileSeparator().equals("/") )
         sBundle = TextSoap.findAndReplace(sBundle,"\\","/");//unix
       else sBundle = TextSoap.findAndReplace(sBundle,"/","\\");//windows
     }
-  //debug
+    //debug
     System.out.println("IWMainApplication : sBundle = "+sBundle);
 
     return getApplicationSpecialRealPath()+FileUtil.getFileSeparator()+sBundle;
   }
 
+
+  private void checkForInstalledBundles(){
+      File theRoot = new File(this.getApplicationSpecialRealPath(),BUNDLES_STANDARD_DIRECTORY);
+      File[] bundles = theRoot.listFiles();
+      for (int i = 0; i < bundles.length; i++) {
+        if(bundles[i].isDirectory() && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)){
+          File properties = new File(bundles[i],"properties");
+          File propertiesFile = new File(properties,IWBundle.propertyFileName);
+          IWPropertyList list = new IWPropertyList(propertiesFile);
+            String bundleIdentifier = list.getProperty(IWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
+            if(bundleIdentifier!=null){
+              String bundleDir = BUNDLES_STANDARD_DIRECTORY+File.separator+bundles[i].getName();
+              this.registerBundle(bundleIdentifier,bundleDir);
+            }
+        }
+      }
+  }
+
+  private String getInternalBundeVirtualPath(String bundleIdentifier){
+    String tryString = getBundlesFile().getProperty(bundleIdentifier);
+    if(tryString==null){
+      File theRoot = new File(this.getApplicationSpecialRealPath(),BUNDLES_STANDARD_DIRECTORY);
+      File[] bundles = theRoot.listFiles();
+      for (int i = 0; i < bundles.length; i++) {
+        if(bundles[i].isDirectory()){
+          File properties = new File(bundles[i],"properties");
+          File propertiesFile = new File(properties,IWBundle.propertyFileName);
+          IWPropertyList list = new IWPropertyList(propertiesFile);
+          if(list.getProperty(IWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY).equalsIgnoreCase(bundleIdentifier)){
+            tryString = BUNDLES_STANDARD_DIRECTORY+File.separator+bundles[i].getName();
+            this.registerBundle(bundleIdentifier,tryString);
+            return tryString;
+          }
+        }
+      }
+    }
+    return tryString;
+
+  }
+
   public IWBundle getBundle(String bundleIdentifier){
     IWBundle bundle = (IWBundle)loadedBundles.get(bundleIdentifier);
     if(bundle == null){
-      System.out.println("BUNDLE IS NULL");
+      System.out.println("Loading bundle "+bundleIdentifier);
       bundle = new IWBundle(getBundleRealPath(bundleIdentifier),getBundleVirtualPath(bundleIdentifier),bundleIdentifier,this);
       loadedBundles.put(bundleIdentifier,bundle);
     }
     return bundle;
   }
 
+  /**
+   * Regsters and loads a IWBundle with the abstact pathname relative to /idegaweb on the WebServer
+   * and the identifier specified by bundleIdentifier
+   */
   public boolean registerBundle(String bundleIdentifier,String bundlesPath){
-    bundlesFile.setProperty(bundleIdentifier,bundlesPath);
+    getBundlesFile().setProperty(bundleIdentifier,bundlesPath);
+    getBundle(bundleIdentifier);
     return true;
   }
 

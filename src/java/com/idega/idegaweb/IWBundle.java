@@ -40,7 +40,7 @@ public class IWBundle{
   private Hashtable localePaths;
   private Hashtable resourceBundles;
   //debug
-  private boolean autoCreate=false;
+  private boolean autoCreate=true;
 
   private Hashtable handlers;
   //private static Hashtable instances;
@@ -53,7 +53,9 @@ public class IWBundle{
 
   private IWPropertyList propertyList;
 
+  static final String propertyFileName = "bundle.pxml";
 
+  final static String BUNDLE_IDENTIFIER_PROPERTY_KEY = "iw_bundle_identifier";
 
 
    protected IWBundle(String rootRealPath,String bundleIdentifier,IWMainApplication superApplication){
@@ -69,7 +71,7 @@ public class IWBundle{
       setRootRealPath(rootRealPath);
       setRootVirtualPath(rootVirtualPath);
       loadBundle();
-
+      this.setProperty(BUNDLE_IDENTIFIER_PROPERTY_KEY,bundleIdentifier);
    }
 
   /**
@@ -117,10 +119,10 @@ public class IWBundle{
       setClassesRealPath();
       if(autoCreate){
         this.initializeStructure();
-        propertyList = new IWPropertyList(getPropertiesRealPath(),"bundle.pxml",true);
+        propertyList = new IWPropertyList(getPropertiesRealPath(),propertyFileName,true);
       }
       else{
-        propertyList = new IWPropertyList(getPropertiesRealPath(),"bundle.pxml",false);
+        propertyList = new IWPropertyList(getPropertiesRealPath(),propertyFileName,false);
       }
 
    }
