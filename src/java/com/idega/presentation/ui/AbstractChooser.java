@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.14 2003/04/03 10:08:17 laddi Exp $
+ * $Id: AbstractChooser.java,v 1.15 2003/05/01 23:39:49 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -32,6 +32,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   static final String VALUE_PARAMETER_NAME = "iw_ch_v_n";
   static final String SCRIPT_PREFIX_PARAMETER = "iw_ch_ch_p";
   static final String SCRIPT_SUFFIX_PARAMETER = "iw_ch_s";
+  public static final String FILTER_PARAMETER = "iw_filter";
 
   public String chooserParameter = VALUE_PARAMETER;
   public String displayInputName = DISPLAYSTRING_PARAMETER;
@@ -44,6 +45,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   protected String _stringDisplay;
   private String _attributeValue;
   private String _attributeName;
+  private String filter = "";
   private Link link = null;
   protected boolean disabled = true;
 
@@ -104,6 +106,11 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
   public String getChooserValue(){
    return _stringValue;
   }
+  
+  public void setFilter(String filter) {
+    this.filter = filter;
+  }
+    
 
   /**
    *
@@ -165,6 +172,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
       _form.addParameter(CHOOSER_SELECTION_PARAMETER,getChooserParameter());
       _form.addParameter(SCRIPT_PREFIX_PARAMETER,"window.opener.document."+_form.getID());
       _form.addParameter(SCRIPT_SUFFIX_PARAMETER,"value");
+      _form.addParameter(FILTER_PARAMETER, filter);
     }
     else {
       getLink();
@@ -187,8 +195,9 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
       link.addParameter(DISPLAYSTRING_PARAMETER_NAME,object.getID());
       link.addParameter(VALUE_PARAMETER_NAME,value.getName());
       if ( _attributeName != null && _attributeValue != null ) {
-	link.addParameter(_attributeName,_attributeValue);
+	      link.addParameter(_attributeName,_attributeValue);
       }
+      link.addParameter(FILTER_PARAMETER, filter);
       table.add(link,2,1);
     }
 
