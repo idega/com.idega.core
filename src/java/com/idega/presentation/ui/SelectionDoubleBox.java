@@ -40,6 +40,10 @@ public SelectionDoubleBox(String nameOfRightBox,String headerOfLeftBox,String he
 public SelectionDoubleBox(String nameOfLeftBox,String nameOfRightBox){
     leftBox = new SelectionBox(nameOfLeftBox);
     rightBox = new SelectionBox(nameOfRightBox);
+    if ( getStyleAttribute() != null ) {
+    	leftBox.setStyleAttribute(getStyleAttribute());
+    	rightBox.setStyleAttribute(getStyleAttribute());
+    }
 
     Table table = new Table(3,1);
     add(table);
