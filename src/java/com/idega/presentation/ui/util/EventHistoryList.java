@@ -9,11 +9,13 @@
 package com.idega.presentation.ui.util;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -38,13 +40,23 @@ public class EventHistoryList extends Block{
      */
     public void main(IWContext iwc) throws Exception {
         if(eventEntries!=null && !eventEntries.isEmpty()){
+            IWBundle iwb = getBundle(iwc);
             IWResourceBundle iwrb = getResourceBundle(iwc);
             Table eventTable = new Table();
             eventTable.setCellspacing(1);
             eventTable.setCellpadding(2);
             eventTable.setNoWrap();
+            String dateFormatString = iwb.getProperty("EventHistoryList.date_format_string","");
+            String timeFormatString = iwb.getProperty("EventHistoryList.time_format_string","");
+            
             DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale());
+            if(dateFormatString!=null && !"".equalsIgnoreCase(dateFormatString)){
+                df =  new SimpleDateFormat(dateFormatString);
+            }
             DateFormat tf = DateFormat.getTimeInstance(DateFormat.MEDIUM,iwc.getCurrentLocale());
+            if(timeFormatString!=null && !"".equals(timeFormatString)){
+                tf = new SimpleDateFormat(timeFormatString);
+            }
             int row = 1;
             int col = 1;
             eventTable.add(getText(iwrb.getLocalizedString("eventhistory.event_type","Type")),col++,row);
