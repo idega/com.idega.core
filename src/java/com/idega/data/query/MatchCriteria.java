@@ -20,8 +20,9 @@ public class MatchCriteria extends Criteria {
     public static final String LIKE = "LIKE";
     public static final String NOTEQUALS = "<>";
     
-    private static final String IS = "IS";
-    private static final String NULL = "NULL";
+    public static final String IS = "IS";
+    public static final String ISNOT = "IS NOT";
+    public static final String NULL = "NULL";
 
     private Column column;
     private String value;
