@@ -312,13 +312,13 @@ public void addCookies(Cookie cookie) {
 
   public boolean isCookieSet(String cookieName) {
     Cookie[] cookies = (Cookie[]) this.getCookies();
-    boolean returner = true;
+    boolean returner = false;
 
     if (cookies != null) {
       if (cookies.length > 0) {
 	for (int i = 0 ; i < cookies.length ; i++) {
 	  if ( cookies[i].getName().equals(cookieName) ) {
-	    returner = false;
+	    returner = true;
 	    continue;
 	  }
 	}
