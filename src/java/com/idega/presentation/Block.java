@@ -5,6 +5,7 @@
 
 package com.idega.presentation;
 
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.text.*;
 import java.util.*;
 import java.io.*;
@@ -225,7 +226,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
   public void endCacheing(IWContext iwc,StringBuffer buffer){
     iwc.setCacheing(false);
-    IWCacheManager.getInstance(iwc.getApplication()).setObject(getOriginalCacheKey(iwc),getDerivedCacheKey(iwc),buffer,cacheInterval);
+    IWCacheManager.getInstance(iwc.getApplication()).setObject(getOriginalCacheKey(),getDerivedCacheKey(),buffer,cacheInterval);
   }
 
   public boolean hasEditPermission(){
@@ -262,7 +263,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   public final void print(IWContext iwc)throws Exception{
     if(this.isCacheable()){
       if(isCacheValid(iwc)){
-        StringBuffer buffer = (StringBuffer)IWCacheManager.getInstance(iwc.getApplication()).getObject(getDerivedCacheKey(iwc));
+        StringBuffer buffer = (StringBuffer)IWCacheManager.getInstance(iwc.getApplication()).getObject(getDerivedCacheKey());
         iwc.getWriter().print(buffer.toString());
       }
       else{
@@ -281,20 +282,20 @@ public class Block extends PresentationObjectContainer implements IWBlock{
   private boolean isCacheValid(IWContext iwc){
     boolean valid = false;
     if( cacheable ){
-      if(getDerivedCacheKey(iwc)!=null){
-        valid = IWCacheManager.getInstance(iwc.getApplication()).isCacheValid(getDerivedCacheKey(iwc));
+      if(getDerivedCacheKey()!=null){
+        valid = IWCacheManager.getInstance(iwc.getApplication()).isCacheValid(getDerivedCacheKey());
       }
     }
 
     return valid;
   }
 
-  private String getDerivedCacheKey(IWContext iwc){
+  private String getDerivedCacheKey(){
     return derivedCacheKey;
   }
 
 
-  private String getOriginalCacheKey(IWContext iwc){
+  private String getOriginalCacheKey(){
     return cacheKey;
   }
 
@@ -341,17 +342,19 @@ public class Block extends PresentationObjectContainer implements IWBlock{
    * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey);
    */
   public void invalidateCache(IWContext iwc){
-    if( getDerivedCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getDerivedCacheKey(iwc));
+    invalidateCache(iwc.getApplication());
     //debug("INVALIDATING : "+getCacheKey(iwc));
   }
 
-
+  public void invalidateCache(IWMainApplication iwma){
+     if( getDerivedCacheKey()!=null ) iwma.getIWCacheManager().invalidateCache(getDerivedCacheKey());
+  }
 
   /**
    * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey+suffix);
    */
   public void invalidateCache(IWContext iwc, String suffix){
-    if( getOriginalCacheKey(iwc)!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getOriginalCacheKey(iwc)+suffix);
+    if( getOriginalCacheKey()!=null ) iwc.getApplication().getIWCacheManager().invalidateCache(getOriginalCacheKey()+suffix);
     //debug("INVALIDATING : "+getCacheKey(iwc)+suffix);
   }
 
