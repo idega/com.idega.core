@@ -19,6 +19,7 @@ import com.idega.business.IBOLookup;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICPage;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
 
 /**
  * @author tryggvil
@@ -97,6 +98,15 @@ public class IWWelcomeFilter implements Filter {
 				START_ON_PAGES=true;
 				START_ON_WORKSPACE=false;
 			}
+			/*String serverName = request.getServerName();
+			int port = request.getLocalPort();
+			if(port!=80){
+				serverName += ":"+port;
+			}
+			iwma.getIWApplicationContext().getDomain().setServerName(serverName);*/
+			IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
+			//This sets the domain by default:
+			iwc.getDomain();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
