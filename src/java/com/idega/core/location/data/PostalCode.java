@@ -1,24 +1,12 @@
-/*
- * $Id: PostalCode.java,v 1.4 2004/09/13 15:09:50 joakim Exp $
- * Created on 13.9.2004
- *
- * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
- */
 package com.idega.core.location.data;
 
 import java.util.Collection;
 import com.idega.data.IDOEntity;
+import com.idega.data.IDOStoreException;
 
 
 /**
- * 
- *  Last modified: $Date: 2004/09/13 15:09:50 $ by $Author: joakim $
- * 
- * @author <a href="mailto:Joakim@idega.com">Joakim</a>
- * @version $Revision: 1.4 $
+ * @author gimmi
  */
 public interface PostalCode extends IDOEntity {
 
@@ -96,4 +84,9 @@ public interface PostalCode extends IDOEntity {
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#isEqualTo
 	 */
 	public boolean isEqualTo(PostalCode postal);
+
+	/**
+	 * @see com.idega.core.location.data.PostalCodeBMPBean#store
+	 */
+	public void store() throws IDOStoreException;
 }

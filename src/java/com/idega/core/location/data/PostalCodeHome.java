@@ -1,12 +1,3 @@
-/*
- * $Id: PostalCodeHome.java,v 1.3 2004/11/23 13:51:03 gimmi Exp $
- * Created on 13.9.2004
- *
- * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
- */
 package com.idega.core.location.data;
 
 import java.rmi.RemoteException;
@@ -16,11 +7,7 @@ import com.idega.data.IDOHome;
 
 
 /**
- * 
- *  Last modified: $Date: 2004/11/23 13:51:03 $ by $Author: gimmi $
- * 
- * @author <a href="mailto:Joakim@idega.com">Joakim</a>
- * @version $Revision: 1.3 $
+ * @author gimmi
  */
 public interface PostalCodeHome extends IDOHome {
 
@@ -31,35 +18,42 @@ public interface PostalCodeHome extends IDOHome {
 	/**
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbFindByPostalCodeAndCountryId
 	 */
-	public PostalCode findByPostalCodeAndCountryId(String code, int countryId) throws FinderException, RemoteException;
+	public PostalCode findByPostalCodeAndCountryId(String code, int countryId) throws FinderException;
 
 	/**
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbFindAllByCountryIdOrderedByPostalCode
 	 */
-	public Collection findAllByCountryIdOrderedByPostalCode(int countryId) throws FinderException, RemoteException;
-
-	
-  public Collection getUniquePostalCodeNamesByCountryIdOrderedByPostalCodeName(int countryId)throws FinderException,RemoteException;
+	public Collection findAllByCountryIdOrderedByPostalCode(int countryId) throws FinderException;
 
 	/**
-	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbHomeFindByName
+	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbHomeGetUniquePostalCodeNamesByCountryIdOrderedByPostalCodeName
+	 */
+	public Collection getUniquePostalCodeNamesByCountryIdOrderedByPostalCodeName(int countryId) throws FinderException;
+
+	/**
+	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbFindByNameAndCountry
 	 */
 	public Collection findByNameAndCountry(String name, Object countryPK) throws FinderException;
 
 	/**
-	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbHomeFindAllUniqueNames
+	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbFindByCountry
+	 */
+	public Collection findByCountry(Object countryPK) throws FinderException;
+
+	/**
+	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbFindAllUniqueNames
 	 */
 	public Collection findAllUniqueNames() throws RemoteException, FinderException;
 
 	/**
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbFindAll
 	 */
-	public Collection findAll() throws FinderException, RemoteException;
+	public Collection findAll() throws FinderException;
 
 	/**
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbFindAllOrdererByCode
 	 */
-	public Collection findAllOrdererByCode() throws FinderException, RemoteException;
+	public Collection findAllOrdererByCode() throws FinderException;
 
 	/**
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbHomeFindByPostalCodeFromTo

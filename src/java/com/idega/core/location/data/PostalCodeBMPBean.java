@@ -151,16 +151,21 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
     }
  
 
-  public Integer ejbFindByPostalCodeAndCountryId(String code,int countryId)throws FinderException,RemoteException{
-  	IDOQuery query = idoQueryGetSelect().appendWhereEquals(COLUMN_COUNTRY_ID,countryId).appendAndEqualsQuoted(COLUMN_POSTAL_CODE,stripWhitespace(code));
-	Collection codes = idoFindPKsByQuery(query);
-    if(!codes.isEmpty()){
-      return (Integer)codes.iterator().next();
-    }
-    else throw new FinderException("PostalCode not found");
+  public Object ejbFindByPostalCodeAndCountryId(String code,int countryId)throws FinderException {
+  	Table table = new Table(this);
+  	Column codeCol = new Column(table, COLUMN_POSTAL_CODE);
+  	Column countryCol = new Column(table,COLUMN_COUNTRY_ID);
+  	
+  	SelectQuery query = new SelectQuery(table);
+  	query.addColumn(new WildCardColumn(table));
+  	
+  	query.addCriteria(new MatchCriteria(codeCol, MatchCriteria.EQUALS, code));
+  	query.addCriteria(new MatchCriteria(countryCol, MatchCriteria.EQUALS, countryId));
+  	
+  	return this.idoFindOnePKByQuery(query);
   }
 
-  public Collection ejbFindAllByCountryIdOrderedByPostalCode(int countryId)throws FinderException,RemoteException{
+  public Collection ejbFindAllByCountryIdOrderedByPostalCode(int countryId)throws FinderException{
   	Table table = new Table(this);
   	Column countryCol = new Column(table, COLUMN_COUNTRY_ID);
   	
@@ -178,7 +183,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
    * @throws FinderException
    * @throws RemoteException
    */
-  public Collection ejbGetUniquePostalCodeNamesByCountryIdOrderedByPostalCodeName(int countryId)throws FinderException,RemoteException{
+  public Collection ejbHomeGetUniquePostalCodeNamesByCountryIdOrderedByPostalCodeName(int countryId)throws FinderException{
   	Table table = new Table(this);
   	Column countryCol = new Column(table, COLUMN_COUNTRY_ID);
   	
@@ -216,6 +221,18 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   	return this.idoFindPKsByQuery(query);
   }
   
+  public Collection ejbFindByCountry(Object countryPK) throws FinderException {
+  	Table table = new Table(this);
+  	Column countryCol = new Column(table,COLUMN_COUNTRY_ID);
+  	
+  	SelectQuery query = new SelectQuery(table);
+  	query.addColumn(new WildCardColumn(table));
+  	
+  	query.addCriteria(new MatchCriteria(countryCol, MatchCriteria.EQUALS, countryPK));
+  	
+  	return this.idoFindPKsByQuery(query);
+  }
+
   public Collection ejbFindAllUniqueNames() throws RemoteException, FinderException {
   	Collection all = ejbFindAll();
   	Collection names = new Vector();
@@ -237,11 +254,11 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   }
 
 
-  public Collection ejbFindAll()throws FinderException,RemoteException{
+  public Collection ejbFindAll()throws FinderException{
     return idoFindAllIDsBySQL();
   }
   
-  public Collection ejbFindAllOrdererByCode()throws FinderException,RemoteException{
+  public Collection ejbFindAllOrdererByCode()throws FinderException{
     return super.idoFindAllIDsOrderedBySQL(COLUMN_POSTAL_CODE);
   }
   
@@ -260,8 +277,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
       return postalAddress;
     }
 
-	public Collection ejbHomeFindByPostalCodeFromTo(String codeFrom, String
-	codeTo) throws FinderException {
+	public Collection ejbFindByPostalCodeFromTo(String codeFrom, String codeTo) throws FinderException {
 	IDOQuery query = this.idoQuery();
 	query.append("Select * from ").append(getEntityName())
 	.append(" where ").append(COLUMN_POSTAL_CODE).append(" >= '").append(codeFrom)
