@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.86 2003/10/30 14:42:03 tryggvil Exp $
+ *  $Id: Page.java,v 1.87 2003/10/30 16:03:04 tryggvil Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -744,7 +744,7 @@ public class Page extends PresentationObjectContainer {
 	 * @param formIndex index of the form in the parent page
 	 */
 	public void setParentPageFormToSubmitOnUnLoad(int formIndex) {
-		setOnUnLoad("window.opener.forms["+formIndex+"].submit()");
+		setOnUnLoad("window.opener.document.forms["+formIndex+"].submit()");
 	}
 	
 	/**
