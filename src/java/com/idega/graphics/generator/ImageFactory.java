@@ -60,7 +60,7 @@ public class ImageFactory {
     Button button = new Button(textOnButton);
     button.generate(filePath);
 
-    image = new Image(Integer.toString(button.hashCode()),fileVirtualPath+button.getButtonUpName(),fileVirtualPath+button.getButtonOverName(),fileVirtualPath+button.getButtonDownName());
+    image = new Image("iw_generated_"+Integer.toString(button.hashCode()),fileVirtualPath+button.getButtonUpName(),fileVirtualPath+button.getButtonOverName(),fileVirtualPath+button.getButtonDownName());
 
     return image;
   }
