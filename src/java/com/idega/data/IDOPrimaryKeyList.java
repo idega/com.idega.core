@@ -73,7 +73,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 //		_Stmt = Stmt;
 //		_RS = RS;
 		_entity = entity;
-		_prefetchSize = _prefetchSize;
+		_prefetchSize = prefetchSize;
 		_size = size;
 		_PKs = new Vector(size);
 		_PKs.setSize(size);
@@ -510,8 +510,8 @@ public class IDOPrimaryKeyList implements List, Runnable {
 
 
 		public LoadTracker(int size, int subsetMinLength){
-		    _size = size;
-			_subsetMinLength = subsetMinLength;
+		    this._size = size;
+			this._subsetMinLength = subsetMinLength;
 		}
 
 		private void debugLoadedSubSets(){
