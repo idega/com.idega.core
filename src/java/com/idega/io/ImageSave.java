@@ -86,6 +86,7 @@ public class ImageSave {
       }
       PS.execute();
       PS.close();
+      Conn.commit();
       Conn.setAutoCommit(true);
 
     }
