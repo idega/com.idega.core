@@ -24,10 +24,10 @@ import com.idega.user.data.User;
 public interface UserGroupPlugInBusiness extends IBOService {
 
     public void beforeUserRemove(User user)throws RemoveException,RemoteException;
-    public void afterUserCreate(User user)throws CreateException,RemoteException;
+    public void afterUserCreateOrUpdate(User user)throws CreateException,RemoteException;
 
     public void beforeGroupRemove(Group group)throws RemoveException,RemoteException;
-    public void afterGroupCreate(Group group)throws CreateException,RemoteException;
+    public void afterGroupCreateOrUpdate(Group group)throws CreateException,RemoteException;
 
     public Class getPresentationObjectClass()throws RemoteException;
     /*
