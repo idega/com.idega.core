@@ -12,8 +12,10 @@ import com.idega.core.business.ICObjectBusiness;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.EntityControl;
 import com.idega.data.EntityFinder;
+import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDORelationshipException;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.SimpleQuerier;
 public class ICCategoryBMPBean
 	extends com.idega.data.TreeableEntityBMPBean
@@ -46,6 +48,8 @@ public class ICCategoryBMPBean
 		addAttribute(getColumnCreated(), "Created", true, true, java.sql.Timestamp.class);
 		addAttribute(getColumnValid(), "Valid", true, true, Boolean.class);
 		addManyToManyRelationShip(com.idega.core.data.ICObjectInstance.class);
+		// Gimmi 8.04.2003
+		addManyToManyRelationShip(com.idega.core.data.ICFile.class);
 	}
 	public void insertStartData() {
 		String table =
@@ -295,5 +299,26 @@ public class ICCategoryBMPBean
 		catch(FinderException ex){
 			throw new RemoteException(ex.getMessage());
 		}
+	}
+	
+	/** Gimmi 8.04.2003*/
+	public void setOwnerGroupId(int ownerGroupId) {
+		this.setColumn(getColumnOwnerGroup(), ownerGroupId);	
+	}
+	
+	public int getOwnerGroupId() {
+		return getIntColumnValue(getColumnOwnerGroup());	
+	}
+	
+	public void addFile(ICFile file) throws IDOAddRelationshipException {
+		this.idoAddTo(file);
+	}
+
+	public void removeFile(ICFile file) throws IDORemoveRelationshipException {
+		this.idoRemoveFrom(file);
+	}
+
+	public Collection getFiles() throws IDORelationshipException {
+		return this.idoGetRelatedEntities(ICFile.class);	
 	}
 }

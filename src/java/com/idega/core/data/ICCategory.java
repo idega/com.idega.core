@@ -1,7 +1,12 @@
 package com.idega.core.data;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.Locale;
+
+import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDORelationshipException;
+import com.idega.data.IDORemoveRelationshipException;
 
 public interface ICCategory extends com.idega.data.TreeableEntity,com.idega.core.business.Category
 {
@@ -26,4 +31,10 @@ public interface ICCategory extends com.idega.data.TreeableEntity,com.idega.core
  public String getName(Locale locale) ;
  public String getDescription(Locale locale);
  public ICCategoryTranslation getCategoryTranslation(Locale locale)throws RemoteException;
+ // Gimmi 8.04.2003
+ public void setOwnerGroupId(int ownerGroupId);
+ public int getOwnerGroupId();
+ public void addFile(ICFile file) throws IDOAddRelationshipException;
+ public void removeFile(ICFile file) throws IDORemoveRelationshipException;
+ public Collection getFiles() throws IDORelationshipException;
 }
