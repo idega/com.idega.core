@@ -77,7 +77,7 @@ private IWResourceBundle iwrb;
         mainTable.setHeight("100%");
         mainTable.setCellspacing(0);
         mainTable.setCellpadding(0);
-        mainTable.setBackgroundImage(iwb.getImage("logintiler.gif"));
+        mainTable.setBackgroundImage(1,1,iwb.getImage("logintiler.gif"));
         mainTable.setAlignment(1,1,"right");
         mainTable.setAlignment(1,2,"right");
         mainTable.setAlignment(1,3,"right");
