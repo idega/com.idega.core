@@ -65,7 +65,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface{
   public String getSQLType(String javaClassName,int maxlength){
     String theReturn;
     if (javaClassName.equals("java.lang.Integer")){
-      theReturn = "NUMBER";
+      theReturn = "INTEGER";
     }
     else if (javaClassName.equals("java.lang.String")){
       	if (maxlength<0){
