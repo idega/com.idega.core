@@ -4,6 +4,7 @@
  */
 package com.idega.presentation.ui;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -38,7 +39,7 @@ public class DatePickerWindow extends AbstractChooserWindow {
 		String selPrm = getSelectionParameter(iwc);
 		String selVal = iwc.getParameter(selPrm);
 		if(selVal==null)
-			selVal = new java.util.Date().toString();
+			selVal = new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
 		
 		SmallCalendar cal = new SmallCalendar();
 		cal.setDaysAsLink(true);

@@ -52,7 +52,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
      * Creates a new DateInput object.
      */
     public DatePicker() {
-        this("datepicker");
+        this(null);
     }
     
     public DatePicker(String pickerName) {
@@ -73,7 +73,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 
     public DatePicker(String name, String style, Locale locale, Date date) {
         addForm(false);
-        setChooserParameter(name);
+        if(name!=null)
+            setChooserParameter(name);
         if (style != null) {
             setInputStyle(style);
         }
@@ -147,12 +148,13 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     public void setDate(Date date) {
     	  this.date = date;
         String display = date.toString();
-        String value = date.toString();
+        String value = new SimpleDateFormat("yyyy-MM-dd").format(date);
         if (locale != null) {
             display = new SimpleDateFormat(dateFormatPattern,locale).format(date);
             //DateFormat.getDateInstance(dateFormatStyle, locale).format(date);
         } else {
             display = new SimpleDateFormat(dateFormatPattern).format(date);
+            
             //DateFormat.getDateInstance(dateFormatStyle).format(date);
         }
         setChooserValue(display, value);
@@ -196,7 +198,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
      */
     public PresentationObject getHandlerObject(String name, String value,
             IWContext iwc) {
-        setName(name);
+        //setName(name);
+        setChooserParameter(name);
         if (value != null) {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             try {
@@ -209,6 +212,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
                         + " could not be parsed");
                 // go further to the default setting
             }
+        }
+        else{
+           setDate(new Date());
         }
         return this;
     }
