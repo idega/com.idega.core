@@ -970,7 +970,7 @@ public class IWMainApplication {//implements ServletContext{
                     APP_CONTEXT_URI_KEY));
             checkedAppContext = true;
         }
-        if (appContext == null) { return this.SLASH; }
+        if (appContext == null) { return SLASH; }
         return appContext;
     }
 
@@ -990,7 +990,7 @@ public class IWMainApplication {//implements ServletContext{
         if (isRunningUnderRootContext()) {
             return url;
         } else {
-            if (url.startsWith(this.SLASH)) {
+            if (url.startsWith(SLASH)) {
                 return appContext + url;
             } else {
                 return appContext + SLASH + url;
