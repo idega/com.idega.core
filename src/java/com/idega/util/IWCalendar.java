@@ -509,7 +509,7 @@ public class IWCalendar {
 	 * @return String		Returns null if the current date has no holiday for the 
 	 * 										given Locale.
 	 */
-	public String getHoliday() {
+	public Holiday getHoliday() {
 		return getHoliday(_locale, getYear(), getMonth(), getDay());
 	}
 
@@ -521,7 +521,7 @@ public class IWCalendar {
 	 * @return String		Returns null if the current date has no holiday for the 
 	 * 										given Locale.
 	 */
-	public String getHoliday(int year, int month, int day) {
+	public Holiday getHoliday(int year, int month, int day) {
 		return getHoliday(_locale, year, month, day);
 	}
 
@@ -534,7 +534,7 @@ public class IWCalendar {
 	 * @return String		Returns null if the current date has no holiday for the 
 	 * 										given Locale.
 	 */
-	public String getHoliday(Locale locale, int year, int month, int day) {
+	public Holiday getHoliday(Locale locale, int year, int month, int day) {
 		GregorianCalendar calendar = new GregorianCalendar(year, month - 1, day + 1);
 
 		Holiday[] holidays = Holiday.getHolidays(locale);
@@ -542,7 +542,7 @@ public class IWCalendar {
 		for (int a = 0; a < holidays.length; a++) {
 			Holiday holiday = holidays[a];
 			if (holiday.isOn(calendar.getTime())) {
-				return holiday.getDisplayName(locale);
+				return holiday;
 			}
 		}
 		return null;
