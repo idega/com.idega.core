@@ -36,7 +36,8 @@ class EntityRelationship {
 	 */
 	String getTableName() {
 		//return tableName;
-		return checkedTableName;
+		//return checkedTableName;
+		return EntityControl.getCheckedRelatedTableName(setTableName);
 	}
 	/**
 	 * Gets the tablename originally set with setTableName
