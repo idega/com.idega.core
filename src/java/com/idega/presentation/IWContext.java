@@ -456,15 +456,6 @@ implements IWUserContext, IWApplicationContext {
 			theParameters.put(parameter.getName(), parameter);
 		}
 	}
-	/**
-	 * @deprecated UNIMPLEMENTED
-	 */
-	public Map getTheMaintainedParameters() {
-		return (Map) this.getSessionAttribute("idega_special_maintained_parameters");
-	}
-	/*public void maintainParameter(String parameterName,String parameterValue){
-	 setSessionAttribute(new Parameter(parameterName,parameterValue));
-	 }*/
 	public String getRequestURI() {
 		return getRequest().getRequestURI();
 	}
