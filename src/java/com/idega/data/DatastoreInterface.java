@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.109 2004/09/07 12:06:32 gummi Exp $
+ * $Id: DatastoreInterface.java,v 1.110 2004/09/09 08:47:54 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -702,7 +702,9 @@ public abstract class DatastoreInterface {
 			statement.append(" set ");
 			statement.append(entity.getLobColumnName());
 			statement.append("=? ");
-			this.appendPrimaryKeyWhereClause(entity, statement);
+			//this.appendPrimaryKeyWhereClause(entity, statement);
+			IDOEntityField[] fields = entity.getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
+			appendPrimaryKeyWhereClauseWithQuestionMarks(fields,statement);
 			/*
 			 * statement.append("where "); statement.append(entity.getIDColumnName());
 			 * statement.append(" = '"); statement.append(entity.getID());
@@ -729,6 +731,7 @@ public abstract class DatastoreInterface {
 					//PS.setBinaryStream(1, bin, 0 );
 					//PS.setBinaryStream(1, instream, instream.available() );
 					this.setBlobstreamForStatement(PS, instream, 1);
+					setForPreparedStatementPrimaryKeyQuestionValues(entity,fields,PS,2);
 					PS.executeUpdate();
 					PS.close();
 					//System.out.println("bin.available(): "+bin.available());
@@ -759,7 +762,11 @@ public abstract class DatastoreInterface {
 		}
 	}
 
-	protected String setForPreparedStatement(int insertOrUpdate, PreparedStatement statement, GenericEntity entity) throws SQLException {
+	protected String setForPreparedStatement(int insertOrUpdate, PreparedStatement statement, GenericEntity entity)throws SQLException{
+	    return setForPreparedStatement(insertOrUpdate,statement,entity,entity.getEntityDefinition().getPrimaryKeyDefinition().getFields());
+	}
+	
+	protected String setForPreparedStatement(int insertOrUpdate, PreparedStatement statement, GenericEntity entity,IDOEntityField[] fields) throws SQLException {
 		String returnString = "";
 		String[] names = entity.getColumnNames();
 		int questionmarkCount = 1;
@@ -778,6 +785,7 @@ public abstract class DatastoreInterface {
 					questionmarkCount++;
 				}
 			}
+			setForPreparedStatementPrimaryKeyQuestionValues(entity,fields,statement,questionmarkCount);
 		}
 		else if (insertOrUpdate == STATEMENT_INSERT) {
 			for (int i = 0; i < names.length; i++) {
@@ -797,6 +805,98 @@ public abstract class DatastoreInterface {
 		}
 		return returnString;
 	}
+
+    public void insert(GenericEntity entity, Connection conn) throws Exception {
+    	executeBeforeInsert(entity);
+    	PreparedStatement Stmt = null;
+    	ResultSet RS = null;
+    	try {
+    		StringBuffer statement = new StringBuffer("");
+    		statement.append("insert into ");
+    		statement.append(entity.getTableName());
+    		statement.append("(");
+    		statement.append(getCommaDelimitedColumnNamesForInsert(entity));
+    		statement.append(") values (");
+    		statement.append(getQuestionmarksForColumns(entity));
+    		statement.append(")");
+    		String sql = statement.toString();
+    		logSQL(sql);
+    		Stmt = conn.prepareStatement(sql);
+    		setForPreparedStatement(STATEMENT_INSERT, Stmt, entity,null);
+    		Stmt.execute();
+    		Stmt.close();
+    		if (updateNumberGeneratedValueAfterInsert()) {
+    			updateNumberGeneratedValue(entity, conn);
+    		}
+    	}
+    	finally {
+    		if (RS != null) {
+    			RS.close();
+    		}
+    		if (Stmt != null) {
+    			try {
+    				Stmt.close();
+    			}
+    			catch (SQLException e) {
+    			}
+    		}
+    	}
+    	executeAfterInsert(entity);
+    	entity.setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
+    }
+    
+    protected void insertIntoPreparedStatement(java.util.List values,PreparedStatement statement, int startIndex)throws SQLException{
+        for (int i = 0; i < values.size(); i++) {
+            insertIntoPreparedStatement(values.get(i),statement,i+startIndex);
+        }
+    }
+    
+    protected void insertIntoPreparedStatement(Object value, PreparedStatement statement, int index) throws SQLException{
+        String storageClassName = value.getClass().getName();
+		if (storageClassName.equals("java.lang.Integer")) {
+			statement.setInt(index,((Integer)value).intValue());
+		}
+		else if (storageClassName.equals("java.lang.Boolean")) {
+			boolean bool = ((Boolean)value).booleanValue();
+			if (bool) {
+				statement.setString(index, "Y");
+			}
+			else {
+				statement.setString(index, "N");
+			}
+		}
+		else if (storageClassName.equals("java.lang.String")) {
+			statement.setString(index,(String)value);
+			//setStringForPreparedStatement(columnName, statement, index, entity);
+		}
+		else if (storageClassName.equals("java.lang.Float")) {
+			statement.setFloat(index, ((Float)value).floatValue());
+		}
+		else if (storageClassName.equals("java.lang.Double")) {
+			statement.setDouble(index, ((Double)value).doubleValue());
+		}
+		else if (storageClassName.equals("java.sql.Timestamp")) {
+			Timestamp stamp = (Timestamp) value;
+			statement.setTimestamp(index, stamp);
+		}
+		else if (storageClassName.equals("java.sql.Time")) {
+			statement.setTime(index, (Time) value);
+		}
+		else if (storageClassName.equals("java.sql.Date")) {
+			statement.setDate(index, (java.sql.Date) value);
+		}
+		else if (storageClassName.equals("com.idega.util.Gender")) {
+			statement.setString(index, value.toString());
+		}
+		else if (storageClassName.equals("com.idega.data.BlobWrapper")) {
+			//handleBlobUpdate(columnName, statement, index, entity);
+			//statement.setDate(index,(java.sql.Date)getColumnValue(columnName));
+		    //statement.setBlob(index,((BlobWrapper)value).)
+		}
+		else {
+			statement.setObject(index, value);
+		}
+    }
 
 	private void insertIntoPreparedStatement(String columnName, PreparedStatement statement, int index, GenericEntity entity) throws SQLException {
 		try {
@@ -908,12 +1008,15 @@ public abstract class DatastoreInterface {
 			statement.append(entity.getTableName());
 			statement.append(" set ");
 			statement.append(getAllColumnsAndQuestionMarks(entity));
-			appendPrimaryKeyWhereClause(entity, statement);
+			IDOEntityField[] fields = entity.getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
+			appendPrimaryKeyWhereClauseWithQuestionMarks(fields,statement);
+			
+			//appendPrimaryKeyWhereClause(entity, statement);
 			String sql = statement.toString();
 			logSQL(sql);
 			Stmt = conn.prepareStatement(sql);
-			setForPreparedStatement(STATEMENT_UPDATE, Stmt, entity);
-			Stmt.execute();
+			setForPreparedStatement(STATEMENT_UPDATE, Stmt, entity,fields);
+			Stmt.executeUpdate();
 		}
 		finally {
 			if (Stmt != null) {
@@ -925,45 +1028,6 @@ public abstract class DatastoreInterface {
 			}
 		}
 		executeAfterUpdate(entity);
-		entity.setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
-	}
-
-	public void insert(GenericEntity entity, Connection conn) throws Exception {
-		executeBeforeInsert(entity);
-		PreparedStatement Stmt = null;
-		ResultSet RS = null;
-		try {
-			StringBuffer statement = new StringBuffer("");
-			statement.append("insert into ");
-			statement.append(entity.getTableName());
-			statement.append("(");
-			statement.append(getCommaDelimitedColumnNamesForInsert(entity));
-			statement.append(") values (");
-			statement.append(getQuestionmarksForColumns(entity));
-			statement.append(")");
-			String sql = statement.toString();
-			logSQL(sql);
-			Stmt = conn.prepareStatement(sql);
-			setForPreparedStatement(STATEMENT_INSERT, Stmt, entity);
-			Stmt.execute();
-			Stmt.close();
-			if (updateNumberGeneratedValueAfterInsert()) {
-				updateNumberGeneratedValue(entity, conn);
-			}
-		}
-		finally {
-			if (RS != null) {
-				RS.close();
-			}
-			if (Stmt != null) {
-				try {
-					Stmt.close();
-				}
-				catch (SQLException e) {
-				}
-			}
-		}
-		executeAfterInsert(entity);
 		entity.setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 
@@ -1439,6 +1503,26 @@ public abstract class DatastoreInterface {
 		StringBuffer statement = new StringBuffer();
 		appendPrimaryKeyWhereClause(entity, statement);
 		return statement.toString();
+	}
+	
+	void appendPrimaryKeyWhereClauseWithQuestionMarks(IDOEntityField[] fields,StringBuffer bufferToAppendTo){
+		bufferToAppendTo.append(" where ");
+		for (int i = 0; i < fields.length; i++) {
+			bufferToAppendTo.append(fields[i].getSQLFieldName());
+			/*if( (fields[i].getDataTypeClass() == Integer.class))
+			    bufferToAppendTo.append("=?");
+			else
+			    bufferToAppendTo.append("='?'");
+			*/
+			bufferToAppendTo.append("=?");
+			if ((i + 1) < fields.length) bufferToAppendTo.append(" and ");
+		}
+	}
+	
+	void setForPreparedStatementPrimaryKeyQuestionValues(GenericEntity entity,IDOEntityField[] fields,PreparedStatement statement,int startIndex)throws SQLException{
+	    for (int i = 0; i < fields.length; i++) {
+		    insertIntoPreparedStatement(fields[i].getSQLFieldName(),statement,i+startIndex,entity);
+	    }
 	}
 
 	void appendPrimaryKeyWhereClause(GenericEntity entity, StringBuffer bufferToAppendTo) {

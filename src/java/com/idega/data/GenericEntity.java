@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -1491,12 +1492,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			throw new EJBException(e.getMessage());
 		}
 	}
+	
+	private void fillPKLoadStatement(PreparedStatement prepStmt){
+	    
+	}
+	
 	private void ejbLoad(Object pk) throws SQLException {
 		Connection conn = null;
-		Statement Stmt = null;
+		PreparedStatement Stmt = null;
 		try {
 			conn = getConnection(getDatasource());
-			Stmt = conn.createStatement();
+			//Stmt = conn.createStatement();
 			StringBuffer buffer = new StringBuffer();
 			//buffer.append("select * from ");
 			buffer.append("select ");
@@ -1510,11 +1516,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			buffer.append("='");
 			buffer.append(pk.toString());
 			buffer.append("'");*/
-			dsi.appendPrimaryKeyWhereClause(this,buffer);
-			
+			//dsi.appendPrimaryKeyWhereClause(this,buffer);
+			IDOEntityField[] fields = getEntityDefinition().getPrimaryKeyDefinition().getFields();
+			dsi.appendPrimaryKeyWhereClauseWithQuestionMarks(fields,buffer);
 			String sql = buffer.toString();
 			logSQL(sql);
-			ResultSet RS = Stmt.executeQuery(sql);
+			Stmt = conn.prepareStatement(sql);
+			dsi.setForPreparedStatementPrimaryKeyQuestionValues(this,fields,Stmt,1);
+			ResultSet RS = Stmt.executeQuery();
 			//ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
 			//eiki added null check
 			if ((RS == null) || !RS.next())
@@ -3515,6 +3524,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry) throws FinderException {
+	    return idoFindPKsBySQLIgnoringCache(sqlQuery,returningNumber,startingEntry,null);
+	}
+	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry,List placeHolderValues) throws FinderException {
 		//if (this.isDebugActive()) {
 			logSQL(sqlQuery);
 		//}
@@ -3526,11 +3538,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 		Connection conn = null;
 		Statement Stmt = null;
+		ResultSet RS = null;
 		Vector vector = new Vector();
 		try {
+		    DatastoreInterface dsi = DatastoreInterface.getInstance(this);
 			conn = getConnection(getDatasource());
-			Stmt = conn.createStatement();
-			ResultSet RS = Stmt.executeQuery(sqlQuery);
+			if(placeHolderValues==null || placeHolderValues.isEmpty()){
+			    Stmt = conn.createStatement();
+			    RS = Stmt.executeQuery(sqlQuery);
+			}
+			// use PreparedStatement
+			else{
+			    Stmt = conn.prepareStatement(sqlQuery);
+			    dsi.insertIntoPreparedStatement(placeHolderValues,(PreparedStatement)Stmt,1);
+			    	RS = ((PreparedStatement)Stmt).executeQuery();
+			}
 			int counter = 0;
 			boolean addEntity = false;
 			while (RS.next()) {
@@ -3804,11 +3826,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords) throws FinderException {
 		return idoFindPKsBySQL(sqlQuery, returningNumberOfRecords, -1);
 	}
+	
+	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry) throws FinderException {
+	    return idoFindPKsBySQL(sqlQuery,returningNumberOfRecords,startingEntry,null);
+	}
 
 	/**
 	 * Finds returningNumberOfRecords Primary keys from the specified sqlQuery
 	 */
-	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry) throws FinderException {
+	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry,List placeHolderValues) throws FinderException {
 		Collection pkColl = null;
 		Class interfaceClass = this.getInterfaceClass();
 		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
@@ -3816,7 +3842,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			pkColl = IDOContainer.getInstance().getBeanCache(interfaceClass).getCachedFindQuery(sqlQuery);
 		}
 		if (pkColl == null) {
-			pkColl = this.idoFindPKsBySQLIgnoringCache(sqlQuery, returningNumberOfRecords, startingEntry);
+			pkColl = this.idoFindPKsBySQLIgnoringCache(sqlQuery, returningNumberOfRecords, startingEntry,placeHolderValues);
 			if (queryCachingActive) {
 				IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery, pkColl);
 			}
@@ -4354,7 +4380,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if there is an error with the query.
 	 */
 	protected Collection idoFindPKsByQuery(IDOQuery query) throws FinderException {
-		return idoFindPKsBySQL(query.toString());
+		return idoFindPKsByQuery(query,-1,-1);
 	}
 
 	/**
@@ -4364,7 +4390,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if there is an error with the query.
 	 */
 	protected Collection idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities) throws FinderException {
-		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities);
+		return idoFindPKsByQuery(query, returningNumberOfEntities);
 	}
 
 	/**
@@ -4374,7 +4400,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException if there is an error with the query.
 	 */
 	protected Collection idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
-		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry);
+		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry,query.getObjectValues());
 	}
 
 	/**

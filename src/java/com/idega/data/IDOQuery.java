@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 import com.idega.data.query.SelectQuery;
 import com.idega.util.IWTimestamp;
@@ -68,8 +70,10 @@ public class IDOQuery implements Cloneable {
 	private static final String DESCENDING = " DESC ";
 	private static final String TRUE = "Y";
 	private static final String FALSE = "N";
+	private static final String QUESTIONMARK = "?";
 
 	private DatastoreInterface dataStore = null;
+	private Vector objectValues = new Vector();
 
 	public static IDOQuery getStaticInstance() {
 		IDOQuery query = new IDOQuery();
@@ -1295,6 +1299,24 @@ public class IDOQuery implements Cloneable {
 		}
 		return this;
 	}
+	
+	public String setInPlaceHolder(Object value){
+	    if(value!=null)
+	        this.objectValues.add(value);
+	    return QUESTIONMARK;
+	}
+	
+	public IDOQuery appendPlaceHolder(Object value){
+	    this.append(QUESTIONMARK);
+	    this.objectValues.add(value);
+	    return this;
+	}
+	
+	protected List getObjectValues(){
+	    return this.objectValues;
+	}
+	
+	
 	
 	protected void setDataStore(DatastoreInterface datastore){
 		this.dataStore = datastore;
