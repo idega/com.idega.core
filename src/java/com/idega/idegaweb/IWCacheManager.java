@@ -8,6 +8,7 @@ package com.idega.idegaweb;
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
+import java.net.URLEncoder;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.*;
@@ -171,7 +172,7 @@ public class IWCacheManager {
         cacheObject = new Cache();
         cacheObject.setEntity(entity);
         cacheObject.setRealPathToFile(realPath+FileUtil.getFileSeparator()+fileName);
-        cacheObject.setVirtualPathToFile(virtualPath+"/"+java.net.URLEncoder.encode(fileName));
+        cacheObject.setVirtualPathToFile(virtualPath+"/"+URLEncoder.encode(fileName));//used to url encode here
         setObject(entityClassString+id,cacheObject,0);
       }
 

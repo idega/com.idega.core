@@ -158,8 +158,9 @@ public String getPluginSpace(String pluginspace){
 public void print(IWContext iwc)throws IOException{
   initVariables(iwc);
   if( doPrint(iwc) ){
-    if(file!=null) setURL(MediaBusiness.getMediaURL(file.getID(),iwc.getApplication()));
-
+    if(file!=null) {
+      setURL(MediaBusiness.getMediaURL(file.getID(),iwc.getApplication()));
+    }
     if (getLanguage().equals("HTML")){
       StringBuffer buffer = new StringBuffer();
       buffer.append("<object classid=\"clsid:");
