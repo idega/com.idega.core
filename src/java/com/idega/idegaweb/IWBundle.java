@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 import com.idega.util.LocaleUtil;
 import com.idega.util.FileUtil;
 import com.idega.core.data.ICObject;
+import com.idega.presentation.Block;
 
 import com.idega.data.IDOFinderException;
 import com.idega.data.EntityFinder;
@@ -176,7 +177,9 @@ public class IWBundle implements java.lang.Comparable {
    }
 
   private void registerBlockPermissionKeys(Class blockClass) throws Exception{
-    ((com.idega.presentation.Block) blockClass.newInstance()).registerPermissionKeys();
+    Object o =  blockClass.newInstance();
+    if(o instanceof Block)
+    ((Block)o).registerPermissionKeys();
   }
 
   private void registerBlockPermisionKeys()throws Exception{
