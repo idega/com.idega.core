@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.76 2003/07/22 19:06:54 thomas Exp $
+ * $Id: DatastoreInterface.java,v 1.77 2003/07/23 12:05:04 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -952,9 +952,6 @@ public abstract class DatastoreInterface {
 				}
 			}
 		}
-    if (returnString.equals(""))  {
-      return "?";
-    }
 		return returnString;
 	}
 	boolean isValidColumnForUpdateList(GenericEntity entity, String columnName) {
@@ -989,7 +986,6 @@ public abstract class DatastoreInterface {
 		}
 	}
 	protected static boolean isValidColumnForInsertList(GenericEntity entity, String columnName) {
-    // columnname of the primary key should be added to the list
 		if (entity.isNull(columnName)) {
 			return false;
 		} else {
@@ -1061,15 +1057,17 @@ public abstract class DatastoreInterface {
 					}
 				}
 			}
-      if (returnString == null) {
-        String idColumnName = entity.getIDColumnName();
-        for (int i = 0; i < names.length; i++) {
-          if (! names[i].equalsIgnoreCase(idColumnName))  {
-            return names[i];
-          }
-        }
-      }     
-			newCachedColumnNameList = returnString.toString();
+      /*TODO thi: Bad implementation:
+       * If there aren't any valid columns the returnString is null,
+       * that is a null pointer exception is thrown (see: returnString.toString()).
+       * That happens if the method doInsertInCreate() of an entity returns true and
+       * if the primary key is not set by the executeBeforeInsert(GenericEntity) method.
+       * (e.g. MySQLServer).
+       * In this case the entity is inserted without any values when the method create() is invoked.
+       * The problem is: what should be returned if the returnString is null?
+       * An empty string or a null value causes a wrong SQLStatement.
+       */
+      newCachedColumnNameList = returnString.toString();
 		}
 		return newCachedColumnNameList;
 	}
