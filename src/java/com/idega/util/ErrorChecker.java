@@ -8,8 +8,15 @@ public class ErrorChecker{
   /**
    * Check your spelling
    */
-  public static boolean isValidSosialSecurityNumber(String sosialSecurityNumber){
-    return isValidIcelandicSocialSecurityNumber(sosialSecurityNumber);
+  public static boolean isValidSosialSecurityNumber(String socialSecurityNumber){
+      boolean check = isValidIcelandicSocialSecurityNumber(socialSecurityNumber);
+      if( check ) return true;
+      else{//for others. example: socialSecurityNumber = "250278"
+        if(socialSecurityNumber.length() == 6) {
+         check = isInteger(socialSecurityNumber);
+        }
+      }
+  return check;
   }
 
 
