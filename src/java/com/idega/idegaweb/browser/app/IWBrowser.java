@@ -2,6 +2,9 @@ package com.idega.idegaweb.browser.app;
 
 import com.idega.event.*;
 import com.idega.idegaweb.browser.presentation.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.event.ChangeListener;
@@ -382,6 +385,15 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
     } else {
       this.add(this.getMainFrame());
     }
+//  get all change listeners
+    Collection changeListeners;
+    try {
+      IWStateMachine stateMachine = (IWStateMachine) IBOLookup.getSessionInstance(iwc, IWStateMachine.class);
+      changeListeners = stateMachine.getAllChangeListeners();
+    }
+    catch (RemoteException e) {
+      changeListeners = new ArrayList();
+    }
 
 
 //    System.out.println("IWBrowser: addChangeListener ...");
@@ -404,7 +416,11 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
               PresentationObject obj = item.getPresentationObject();
               if(obj instanceof StatefullPresentation){
 //                System.out.println("IWBrowser: addChangeListener -> "+ctrlFrameListener);
-                ((StatefullPresentation)obj).getPresentationState(iwc).addChangeListener(ctrlFrameListener);
+                ///////////((StatefullPresentation)obj).getPresentationState(iwc).addChangeListener(ctrlFrameListener);
+                Iterator iterator = changeListeners.iterator();
+                while (iterator.hasNext())  {
+                  ((StatefullPresentation)obj).getPresentationState(iwc).addChangeListener((ChangeListener) iterator.next());
+                }
               }
   //          }
           }
