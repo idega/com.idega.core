@@ -1255,6 +1255,9 @@ private String dataSource;
 		return findAll("select * from "+getTableName()+" where "+columnName+" like '"+toFind+"'");
 	}
 
+        public GenericEntity[] findAllByColumn(String columnName1, String toFind1,String columnName2, String toFind2, String columnName3, String toFind3)throws SQLException{
+ 		return findAll("select * from "+getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"' and "+columnName3+" like '"+toFind3+"'");
+ 	}
 
 	public GenericEntity[] findAllByColumn(String columnName1, String toFind1,String columnName2, String toFind2)throws SQLException{
 		return findAll("select * from "+getTableName()+" where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like '"+toFind2+"'");
