@@ -81,7 +81,7 @@ public Window(String name,int width,int height){
     this.setName(name);
     this.setWidth(width);
     this.setHeight(height);
-		this.setOnLoad("this.getFocus()");
+		this.setOnLoad("focus()");
 	
 }
 
