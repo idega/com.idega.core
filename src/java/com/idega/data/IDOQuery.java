@@ -550,6 +550,22 @@ public class IDOQuery {
   	return this;
   }
 
+  public IDOQuery appendAndEquals(String columnName,int columnValue){
+  	appendAnd();
+  	append(columnName);
+  	this.appendEqualSign();
+  	this.append(columnValue);
+  	return this;
+  }
+
+  public IDOQuery appendAndEquals(String columnName,String columnValue){
+  	appendAnd();
+  	append(columnName);
+  	this.appendEqualSign();
+  	this.append(columnValue);
+  	return this;
+  }
+
   public IDOQuery appendIn(){
     return this.append(IN);
   }
