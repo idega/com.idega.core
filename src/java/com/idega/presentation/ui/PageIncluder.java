@@ -126,189 +126,66 @@ public class PageIncluder extends PresentationObject implements Index{
   protected void process(IWContext iwc)throws IOException{
     serverName = iwc.getServerName();
     instanceId=getICObjectInstanceID();
-    changeURL = ((iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId))) && !iwc.isParameterSet(_sendToPageIfSet);
 
-	StringBuffer location = new StringBuffer();
-	StringBuffer queryBuf = new StringBuffer();
-	String query = null;
+    //pageincluderprefix httpprefix etc...
+    setPrefixes(iwc);
 
-	if (forceFrame ) {
+    //get parameters and change the pageincluders url if needed
+    String loc = getLocation(iwc);
+    //System.out.println("Loc = "+loc);
 
-	  StringBuffer buf = new StringBuffer();
-          String uri = iwc.getRequestURI();
-          if( useSecureLinks ){
-            buf.append("https://");
-            buf.append(iwc.getServerName());
-          }
-	  buf.append(uri);
-	  buf.append('?');
+  if( (sessionURL!=null) && (token!=null) ){
 
-	  if( _sendToPage!=null ){
-
-
-	    if ( (_sendToLabel != null) && (_sendToPageIfSet==null) ){
-	      buf.append(getSendToPageURLString());
-	      buf.append('&');
-	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-	      buf.append(_sendToLabel);
-	      buf.append('=');
-	    }
-	    else{
-	      buf.append(getCurrentIBPageIDToURLString(iwc));
-	      buf.append('&');
-	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-	      buf.append(instanceId);
-	      buf.append('=');
-	    }
-	  }
-	  else{
-	    buf.append(getCurrentIBPageIDToURLString(iwc));
-	    buf.append('&');
-
-	    if ( (_sendToLabel != null) && (_sendToPageIfSet==null) ){
-	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-	      buf.append(_sendToLabel);
-	      buf.append('=');
-	    }
-	    else{
-	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-	      buf.append(instanceId);
-	      buf.append('=');
-	    }
-	  }
-
-	  pageIncluderPrefix = buf.toString();
-
-          StringBuffer buf2 = new StringBuffer();
-          buf2.append("http://").append(serverName).append(pageIncluderPrefix);
-          //.append("http://");
-          httpPrefix = buf2.toString();
-
-          //System.out.println("httpPrefix"+httpPrefix);
-
-          httpsPrefix = "https://"+httpPrefix.substring(7,httpPrefix.length());
-
-          //System.out.println("httpSPrefix"+httpsPrefix);
-
-
-
-	  //System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
+    if( sessionId==null ){
+      sessionId = (String) iwc.getSessionAttribute( PAGE_INCLUDER_SESSION_NAME );
+      if(sessionId==null){
+        sessionId = FileUtil.getStringFromURL(sessionURL);
+        //debug("Sessions id is : "+sessionId);
       }
-      else {
-	pageIncluderPrefix ="";
-      }
+    }
 
-	//after clicking a link and submitting a form
-	// check if the action is for this page includer
-	if ( changeURL ) {
-	  //System.out.println("Changing!");
+    iwc.setSessionAttribute(PAGE_INCLUDER_SESSION_NAME, sessionId);
 
-	  //get all parameters even from post actions
-	  Enumeration enum = iwc.getParameterNames();
-	  while (enum.hasMoreElements()) {
-	    String param = (String) enum.nextElement();
-	    //debug(param+" : "+iwc.getParameter(param));
-
-            if ( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) || param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label)  ){
-	      URL = decodeQueryString(iwc.getParameter(param));
-	      location.append(URL);
-	      //System.out.println("Changing location to:"+location.toString());
-	    }
-	    else{
-	      if (param.indexOf(PAGE_INCLUDER_PARAMETER_NAME) == -1) {
-                String[] values = iwc.getParameterValues(param);
-	        for (int i = 0; i < values.length; i++) {
-                  queryBuf.append(param);
-		  queryBuf.append("=");
-		  queryBuf.append(URLEncoder.encode(values[i]));
-		  queryBuf.append("&");
-                }
-	      }
-	    }
-	  }//while ends
-
-	  query = queryBuf.toString();
-
-	  if( !query.equals("") ){
-	    if(URL.endsWith("/")){//check if the url ends with a slash
-	      location.append("?");
-	    }
-	    else{//no slash at end
-	      if( URL.indexOf("?")==-1 ){//check if the url contains a ?
-		if(URL.indexOf("/",8)!=-1){//check if the url contains a slash
-		  location.append("?");
-		}
-		else{
-		  location.append("/?");
-		}
-	      }
-	      else{//just add to the parameters
-		location.append("&");
-	      }
-	    }
-	    //add the extra parameters
-	    location.append(query);
-	  }
-	}//if iw_uri check ends
-	else {//using starting state url
-	  location.append(URL);
-	}
-
-	String loc = location.toString();
-	//System.out.println("Loc = "+loc);
-
-	if( (sessionURL!=null) && (token!=null) ){
-
-	  if( sessionId==null ){
-	    sessionId = (String) iwc.getSessionAttribute( PAGE_INCLUDER_SESSION_NAME );
-	    if(sessionId==null){
-	      sessionId = FileUtil.getStringFromURL(sessionURL);
-	      //debug("Sessions id is : "+sessionId);
-	    }
-	  }
-
-	  iwc.setSessionAttribute(PAGE_INCLUDER_SESSION_NAME, sessionId);
-
-	  loc = TextSoap.findAndReplace(loc,token,sessionId);
-	  loc = TextSoap.findAndCut(loc,"\r\n");
-	  loc = TextSoap.findAndCut(loc,"\n");
+    loc = TextSoap.findAndReplace(loc,token,sessionId);
+    loc = TextSoap.findAndCut(loc,"\r\n");
+    loc = TextSoap.findAndCut(loc,"\n");
 
 
-	}
-	else if( (sessionId!=null) && (token!=null)){
-	  loc = TextSoap.findAndReplace(loc,token,sessionId);
-	}
+  }
+  else if( (sessionId!=null) && (token!=null)){
+    loc = TextSoap.findAndReplace(loc,token,sessionId);
+  }
 
-	//System.out.println("Location url is: "+loc+" and index is: "+index);
+  //System.out.println("Location url is: "+loc+" and index is: "+index);
 
 
 
 
-	if(loc!=null && !loc.equals("") ){
-	  out = FileUtil.getStringFromURL(loc);
+  if(loc!=null && !loc.equals("") ){
+    out = FileUtil.getStringFromURL(loc);
 
-	  URL url = new URL(loc);
-	  BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
+    URL url = new URL(loc);
+    BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
 
-          BASEURLHTTPS = "https://"+url.getHost()+"/";
+    BASEURLHTTPS = "https://"+url.getHost()+"/";
 
-          if(loc.lastIndexOf("/")==6) loc+="/";
-	  RELATIVEURL = loc.substring(0,loc.lastIndexOf("/")+1);
+    if(loc.lastIndexOf("/")==6) loc+="/";
+    RELATIVEURL = loc.substring(0,loc.lastIndexOf("/")+1);
 
-	  /**
-	   * @todo use expressions to make none case sensitive or implement using HTMLDocumentLoader (Advanced Swing);
-	   * **/
+    /**
+     * @todo use expressions to make none case sensitive or implement using HTMLDocumentLoader (Advanced Swing);
+     * **/
 
-	  out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(out);
-	  out = preProcess(out);
-	  if( forceFrame ){
-	    out = encodeQueryStrings(out);
-	  }
-	  out = changeSrcAttributes(out);
-	  out = changeAHrefAttributes(out);
-	  out = changeFormActionAttributes(out);
-	  out = postProcess(out);
-	}
+    out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(out);
+    out = preProcess(out);
+    if( forceFrame ){
+      out = encodeQueryStrings(out);
+    }
+    out = changeSrcAttributes(out);
+    out = changeAHrefAttributes(out);
+    out = changeFormActionAttributes(out);
+    out = postProcess(out);
+  }
   }
 
 
@@ -621,4 +498,128 @@ public class PageIncluder extends PresentationObject implements Index{
     fromPage.setToRedirect(URL.toString());
     fromPage.empty();
    }
+
+/**
+ * changes the pageincluders url if needed and adds all parameters from the request.
+ */
+   private String getLocation(IWContext iwc){
+    StringBuffer location = new StringBuffer();
+    String query = null;
+    StringBuffer queryBuf = new StringBuffer();
+
+    //get all parameters even from post actions
+    Enumeration enum = iwc.getParameterNames();
+    while (enum.hasMoreElements()) {
+      String param = (String) enum.nextElement();
+      //debug(param+" : "+iwc.getParameter(param));
+      if ( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) || param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label)  ){
+        URL = decodeQueryString(iwc.getParameter(param));
+        //System.out.println("Changing location to:"+location.toString());
+      }
+      else{
+        if (param.indexOf(PAGE_INCLUDER_PARAMETER_NAME) == -1) {
+          String[] values = iwc.getParameterValues(param);
+          for (int i = 0; i < values.length; i++) {
+            queryBuf.append(param);
+            queryBuf.append("=");
+            queryBuf.append(URLEncoder.encode(values[i]));
+            queryBuf.append("&");
+          }
+        }
+      }
+    }//while ends
+
+    query = queryBuf.toString();
+
+    location.append(URL);
+
+    if( !query.equals("") ){
+      if(URL.endsWith("/")){//check if the url ends with a slash
+        location.append("?");
+      }
+      else{//no slash at end
+        if( URL.indexOf("?")==-1 ){//check if the url contains a ?
+          if(URL.indexOf("/",8)!=-1){//check if the url contains a slash
+            location.append("?");
+          }
+          else{
+            location.append("/?");
+          }
+        }
+        else{//just add to the parameters
+          location.append("&");
+        }
+      }
+      //add the extra parameters
+      location.append(query);
+    }
+
+    return location.toString();
+   }
+
+  private void setPrefixes(IWContext iwc){
+    if (forceFrame ) {
+      StringBuffer buf = new StringBuffer();
+      String uri = iwc.getRequestURI();
+      if( useSecureLinks ){
+        buf.append("https://");
+        buf.append(iwc.getServerName());
+      }
+      buf.append(uri);
+      buf.append('?');
+
+      if( _sendToPage!=null ){
+
+
+        if ( (_sendToLabel != null) && (_sendToPageIfSet==null) ){
+          buf.append(getSendToPageURLString());
+          buf.append('&');
+          buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+          buf.append(_sendToLabel);
+          buf.append('=');
+        }
+        else{
+          buf.append(getCurrentIBPageIDToURLString(iwc));
+          buf.append('&');
+          buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+          buf.append(instanceId);
+          buf.append('=');
+        }
+      }
+      else{
+        buf.append(getCurrentIBPageIDToURLString(iwc));
+        buf.append('&');
+
+        if ( (_sendToLabel != null) && (_sendToPageIfSet==null) ){
+          buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+          buf.append(_sendToLabel);
+          buf.append('=');
+        }
+        else{
+          buf.append(PAGE_INCLUDER_PARAMETER_NAME);
+          buf.append(instanceId);
+          buf.append('=');
+        }
+      }
+
+      pageIncluderPrefix = buf.toString();
+
+      StringBuffer buf2 = new StringBuffer();
+      buf2.append("http://").append(serverName).append(pageIncluderPrefix);
+      //.append("http://");
+      httpPrefix = buf2.toString();
+
+      //System.out.println("httpPrefix"+httpPrefix);
+
+      httpsPrefix = "https://"+httpPrefix.substring(7,httpPrefix.length());
+
+      //System.out.println("httpSPrefix"+httpsPrefix);
+      //System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
+    }
+    else {
+      pageIncluderPrefix ="";
+    }
+  }
+
+
 }
