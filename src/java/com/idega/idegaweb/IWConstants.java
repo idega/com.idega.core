@@ -24,4 +24,9 @@ public class IWConstants{
   public final static String DEFAULT_LIGHT_INTERFACE_COLOR="#D4D0C8";
   public final static String DEFAULT_DARK_INTERFACE_COLOR="gray";
 
+  public final static String IW_CONTROLLER_FRAME_NAME="iw_controller_frame";
+  public final static String IW_MAIN_FRAME_NAME="iw_main_frame";
+
+
+
 }
