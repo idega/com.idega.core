@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.109 2004/12/03 03:01:13 tryggvil Exp $
+ * $Id: IWContext.java,v 1.110 2004/12/03 18:35:51 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -11,7 +11,6 @@ package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
@@ -36,7 +34,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
@@ -61,8 +58,6 @@ import com.idega.presentation.ui.Parameter;
 import com.idega.user.business.UserProperties;
 import com.idega.user.util.Converter;
 import com.idega.util.datastructures.HashtableMultivalued;
-import com.idega.util.reflect.MethodFinder;
-import com.idega.util.reflect.MethodInvoker;
 /**
  * This class is a context information that lives through each user request in an idegaWeb application. 
  * The role of this class is very similar to that of FacesContext in a JSF application. <br>
@@ -75,10 +70,10 @@ import com.idega.util.reflect.MethodInvoker;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2004/12/03 03:01:13 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/12/03 18:35:51 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.109 $
+ * @version $Revision: 1.110 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -99,9 +94,6 @@ implements IWUserContext, IWApplicationContext {
 	private PrintWriter writer = null;
 	private HashtableMultivalued _multipartParameters = null;
 	private UploadFile _uploadedFile = null;
-	//Defined as private static variables to speed up reflection:
-	private static Object builderLogicInstance;
-	private static Method methodIsBuilderApplicationRunning;
 	private FacesContext realFacesContext;
 	
 	private static final String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
@@ -807,24 +799,7 @@ implements IWUserContext, IWApplicationContext {
 		return (edit);
 	}
 	private boolean isBuilderApplicationRunning(){
-		//Reflection workaround:
-		try{
-			if(builderLogicInstance==null){
-				MethodInvoker invoker = MethodInvoker.getInstance();
-				MethodFinder finder = MethodFinder.getInstance();
-				Class builderLogicClass = Class.forName("com.idega.builder.business.BuilderLogic");
-				builderLogicInstance = invoker.invokeStaticMethodWithNoParameters(builderLogicClass,"getInstance");
-				methodIsBuilderApplicationRunning = finder.getMethodWithNameAndOneParameter(builderLogicClass,"isBuilderApplicationRunning",IWUserContext.class);
-			}
-			Object[] args = {this};
-			return ((Boolean) methodIsBuilderApplicationRunning.invoke(builderLogicInstance,args)).booleanValue();
-		}
-		catch(Throwable e){
-			e.printStackTrace();
-		}
-		/*return(BuilderLogic.getInstance().isBuilderApplicationRunning(this));
-		 */
-		return false;
+		return getIWMainApplication().isBuilderApplicationRunning(this);
 	}
 	
 	/**
