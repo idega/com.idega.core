@@ -37,7 +37,7 @@ private static String thePropertiesFileLocation;
 	private PrintWriter pw;
 	private Vector drivers = new Vector();
 	private Hashtable pools = new Hashtable();
-	private static IWMainApplication iwma;//added by eiki.
+	private IWMainApplication iwma;
 	
 	private PoolManager()
 	{
