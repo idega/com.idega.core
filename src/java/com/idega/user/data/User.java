@@ -5,6 +5,24 @@ import com.idega.data.IDOReportableEntity;
 
 public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group,com.idega.core.user.data.User, IDOReportableEntity
 {
+ 
+ public static final String FIELD_USER_ID = "IC_USER_ID";
+ public static final String FIELD_FIRST_NAME = "FIRST_NAME";
+ public static final String FIELD_MIDDLE_NAME = "MIDDLE_NAME";
+ public static final String FIELD_LAST_NAME = "LAST_NAME";
+ public static final String FIELD_DISPLAY_NAME = "DISPLAY_NAME";
+ public static final String FIELD_DESCRIPTION = "DESCRIPTION";
+ public static final String FIELD_DATE_OF_BIRTH = "DATE_OF_BIRTH";
+ public static final String FIELD_GENDER = "IC_GENDER_ID";
+ public static final String FIELD_SYSTEM_IMAGE_ID = "SYSTEM_IMAGE_ID";
+ public static final String FIELD_PRIMARY_GROUP_ID = "PRIMARY_GROUP";
+ public static final String FIELD_PERSONAL_ID = "PERSONAL_ID";
+ public static final String FIELD_HOME_PAGE_ID = "HOME_PAGE_ID";
+ public static final String FIELD_DELETED = "DELETED";
+ public static final String FIELD_DELETED_BY = "DELETED_BY";
+ public static final String FIELD_DELETED_WHEN = "DELETED_WHEN";
+  
+	
  public void setPrimaryGroupID(java.lang.Integer p0);
  public int getHomePageID();
  public void setDateOfBirth(java.sql.Date p0);

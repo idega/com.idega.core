@@ -22,8 +22,10 @@ import com.idega.core.data.Phone;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositPrimaryKeyException;
+import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFinderException;
+import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORemoveRelationshipException;
@@ -1385,6 +1387,99 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			e.printStackTrace();
 			return ListUtil.getEmptyList();
 		}
+  }
+  
+  
+  public Collection ejbFindByDateOfBirthAndGroupRelationInitiationTimeAndStatus(Date firstBirthDateInPeriode, Date lastBirthDateInPeriode, Group relatedGroup, Timestamp firstInitiationDateInPeriode, Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException{
+  	//select usr.* from ic_user usr, ic_group_relation gr_rel where usr.date_of_birth >= '23.12.1898' and usr.date_of_birth <= '23.12.1920' and gr_rel.ic_group_id = 3 and gr_rel.related_ic_group_id=usr.ic_user_id and gr_rel.initiation_date >= '11.7.2002 15:17:39' and gr_rel.initiation_date <= '11.7.2002 15:17:40' and gr_rel.group_relation_status in ('ST_ACTIVE')
+	try {
+	  	//preparing
+	  	
+	  	IDOEntityDefinition grRelDef = IDOLookup.getEntityDefinitionForClass(GroupRelation.class);
+		IDOEntityDefinition thisDef = this.getEntityDefinition();
+	  	
+	  	String[] tables = new String[2];
+	  	String[] variables = new String[2];
+	  	//table name
+	  	tables[0] = thisDef.getSQLTableName();
+		//	as variable
+		variables[0] = "usr";
+		//table name
+	  	tables[1] = grRelDef.getSQLTableName();
+		//	as variable
+		variables[1] = "gr_rel";
+	  	
+	  	//constructing query
+		IDOQuery query = idoQuery();
+		//select
+		query.appendSelect();
+		query.append(variables[0]);
+		query.append(".* ");
+		//from
+		query.appendFrom(tables,variables);
+		//where
+		query.appendWhere();
+		query.append(variables[0]);
+		query.append(".");
+		query.append(getColumnNameDateOfBirth());
+		query.appendGreaterThanOrEqualsSign();
+		query.append(firstBirthDateInPeriode);
+		//and
+		query.appendAnd();
+		query.append(variables[0]);
+		query.append(".");
+		query.append(getColumnNameDateOfBirth());
+		query.appendLessThanOrEqualsSign();
+		query.append(lastBirthDateInPeriode);
+		//and
+		query.appendAnd();
+		query.append(variables[1]);
+		query.append(".");
+		query.append(grRelDef.findFieldByUniqueName(GroupRelation.FIELD_GROUP).getSQLFieldName());
+		query.appendEqualSign();
+		query.append(relatedGroup.getPrimaryKey());
+		//and
+		query.appendAnd();
+		query.append(variables[1]);
+		query.append(".");
+		query.append(grRelDef.findFieldByUniqueName(GroupRelation.FIELD_RELATED_GROUP).getSQLFieldName());
+		query.appendEqualSign();
+		query.append(variables[0]);
+		query.append(".");
+		query.append(thisDef.getPrimaryKeyDefinition().getField().getSQLFieldName());
+		//and
+		String groupRelationColumnInitiationDate = grRelDef.findFieldByUniqueName(GroupRelation.FIELD_INITIATION_DATE).getSQLFieldName();
+		query.appendAnd();
+		query.append(variables[1]);
+		query.append(".");
+		query.append(groupRelationColumnInitiationDate);
+		query.appendGreaterThanOrEqualsSign();
+		query.append(firstInitiationDateInPeriode);
+		//and
+		query.appendAnd();
+		query.append(variables[1]);
+		query.append(".");
+		query.append(groupRelationColumnInitiationDate);
+		query.appendLessThanOrEqualsSign();
+		query.append(lastInitiationDateInPeriode);
+		
+		//and if relationstatus
+		if(relationStatus!= null){
+			//and
+			query.appendAnd();
+			query.append(variables[1]);
+			query.append(".");
+			query.append(grRelDef.findFieldByUniqueName(GroupRelation.FIELD_STATUS).getSQLFieldName());
+			query.appendInArrayWithSingleQuotes(relationStatus);		
+		}
+	  	
+		System.out.println("SQL -> "+this.getClass()+":"+query);
+		return idoFindPKsByQuery(query); 
+  	
+	} catch (IDOCompositPrimaryKeyException e) {
+		e.printStackTrace();
+		return ListUtil.getEmptyList();
+	}
   }
   
   

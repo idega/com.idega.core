@@ -3,6 +3,12 @@ package com.idega.user.data;
 
 public interface GroupRelation extends com.idega.data.IDOEntity
 {
+
+ public static final String FIELD_INITIATION_DATE = "INITIATION_DATE";
+ public static final String FIELD_GROUP = "IC_GROUP_ID";
+ public static final String FIELD_RELATED_GROUP = "RELATED_IC_GROUP_ID";
+ public static final String FIELD_STATUS = "GROUP_RELATION_STATUS";
+	
  public com.idega.user.data.Group getGroup();
  public java.sql.Timestamp getInitiationDate();
  public int getPassiveBy();

@@ -1,6 +1,8 @@
 package com.idega.user.data;
 
 import java.rmi.RemoteException;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Collection;
 
 import javax.ejb.FinderException;
@@ -182,6 +184,18 @@ public java.lang.String getGroupType(){
 public java.util.Collection findUsersByCreationTime(IWTimestamp firstCreationTime, IWTimestamp lastCreationTime) throws FinderException, IDOLookupException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByCreationTime(firstCreationTime,lastCreationTime);
+	this.idoCheckInPooledEntity(entity);
+	//return this.getEntityCollectionForPrimaryKeys(ids);
+	return this.getIDOEntityListForPrimaryKeys(ids);
+}
+
+
+/* (non-Javadoc)
+ * @see com.idega.user.data.UserHome#findByDateOfBirthAndGroupRelationInitiationTimeAndStatus(java.sql.Date, java.sql.Date, com.idega.user.data.Group, java.sql.Timestamp, java.sql.Timestamp, java.lang.String[])
+ */
+public Collection findByDateOfBirthAndGroupRelationInitiationTimeAndStatus(Date firstBirthDateInPeriode, Date lastBirthDateInPeriode, Group relatedGroup, Timestamp firstInitiationDateInPeriode, Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindByDateOfBirthAndGroupRelationInitiationTimeAndStatus(firstBirthDateInPeriode,lastBirthDateInPeriode,relatedGroup,firstInitiationDateInPeriode,lastInitiationDateInPeriode,relationStatus);
 	this.idoCheckInPooledEntity(entity);
 	//return this.getEntityCollectionForPrimaryKeys(ids);
 	return this.getIDOEntityListForPrimaryKeys(ids);
