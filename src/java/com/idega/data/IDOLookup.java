@@ -25,7 +25,7 @@ public class IDOLookup{
   private IDOLookup() {
   }
 
-  private static Class getInterfaceClass(Class entityBeanOrInterfaceClass){
+  public static Class getInterfaceClassFor(Class entityBeanOrInterfaceClass){
     if(entityBeanOrInterfaceClass.isInterface()){
       return entityBeanOrInterfaceClass;
     }
@@ -42,7 +42,7 @@ public class IDOLookup{
   }
 
   private static Class getFactoryClassFor(Class entityInterfaceClass)throws Exception{
-    String className = getInterfaceClass(entityInterfaceClass).getName();
+    String className = getInterfaceClassFor(entityInterfaceClass).getName();
     String homeClassName = className + FACTORY_SUFFIX;
     return Class.forName(homeClassName);
   }

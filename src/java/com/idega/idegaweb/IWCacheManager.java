@@ -290,7 +290,7 @@ public class IWCacheManager {
     }
 
 
-    if( entityMaps.get(entity.getClass()) == null ){
+    if( entityMaps.get(getCorrectClassForEntity(entity)) == null ){
       Map entityMap = new HashMap();
       Vector keys = new Vector();
 
@@ -305,7 +305,7 @@ public class IWCacheManager {
             keys.addElement(columnNameForSecondKey);
             hasTwoKeys = true;
           }
-          entityMapsKeys.put(entity.getClass(),keys);
+          entityMapsKeys.put(getCorrectClassForEntity(entity),keys);
 
           //traverse through the table and make the entitymap and put it in the master map
           for (int i = 0; i < e.length; i++) {
@@ -316,7 +316,7 @@ public class IWCacheManager {
                entityMap.put(e[i].getStringColumnValue(columnNameForKey),e[i]);
             }
           }
-          entityMaps.put(entity.getClass(),entityMap);
+          entityMaps.put(getCorrectClassForEntity(entity),entityMap);
           //done!
         }
       }
@@ -347,10 +347,7 @@ public class IWCacheManager {
   public Map getEntityMap(Class entityClass){
     Map entityMap = null;
     if( entityMaps != null ){
-      Class entityBeanClass = entityClass;
-      if(entityClass.isInterface()){
-        entityBeanClass = com.idega.data.IDOLookup.getBeanClassFor(entityClass);
-      }
+      Class entityBeanClass = this.getCorrectClassForEntity(entityClass);
       entityMap = (Map) entityMaps.get(entityBeanClass);
     }//else System.out.println("IWCacheManager entityMaps is null!");
     return entityMap;
@@ -366,27 +363,27 @@ public class IWCacheManager {
 
 
   public void updateFromCachedTable(IDOLegacyEntity entity){
-    Vector keys = getEntityKeyVector(entity.getClass());
+    Vector keys = getEntityKeyVector(getCorrectClassForEntity(entity));
     if( keys!=null ){
       int length = keys.size();
       if(length==2){
-        getEntityMap(entity.getClass()).put(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))),entity);
+        getEntityMap(getCorrectClassForEntity(entity)).put(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))),entity);
       }
       else{
-         getEntityMap(entity.getClass()).put(entity.getStringColumnValue((String) keys.elementAt(0)),entity);
+         getEntityMap(getCorrectClassForEntity(entity)).put(entity.getStringColumnValue((String) keys.elementAt(0)),entity);
       }
     }
   }
 
   public void deleteFromCachedTable(IDOLegacyEntity entity){
-    Vector keys = getEntityKeyVector(entity.getClass());
+    Vector keys = getEntityKeyVector(getCorrectClassForEntity(entity));
     if( keys!=null ){
       int length = keys.size();
       if(length==2){
-         getEntityMap(entity.getClass()).remove(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))));
+         getEntityMap(getCorrectClassForEntity(entity)).remove(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))));
       }
       else{
-         getEntityMap(entity.getClass()).remove(entity.getStringColumnValue((String) keys.elementAt(0)));
+         getEntityMap(getCorrectClassForEntity(entity)).remove(entity.getStringColumnValue((String) keys.elementAt(0)));
       }
     }
   }
@@ -395,4 +392,12 @@ public class IWCacheManager {
     updateFromCachedTable(entity);
   }
 
+
+  private Class getCorrectClassForEntity(IDOLegacyEntity entityInstance){
+    return getCorrectClassForEntity(entityInstance.getClass());
+  }
+
+  private Class getCorrectClassForEntity(Class entityBeanOrInterfaceClass){
+      return com.idega.data.IDOLookup.getInterfaceClassFor(entityBeanOrInterfaceClass);
+  }
 }
