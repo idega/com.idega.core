@@ -6,6 +6,9 @@ package com.idega.presentation.ui;
 
 import java.io.*;
 import java.util.*;
+
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.*;
 
 /**
@@ -15,6 +18,11 @@ import com.idega.presentation.*;
 public class BackButton extends GenericButton {
 
 	private String howFarBackOrForward = "-1";
+	private boolean isImage=false;
+
+	private static final String BACK_KEY = "backbutton.back";
+	private static final String BACK_KEY_DEFAULT_VALUE = "Back";
+
 
 	/**
 	 * Constructs a new <code>BackButton</code> with the the default display label.
@@ -41,6 +49,7 @@ public class BackButton extends GenericButton {
 	 */
 	public BackButton(Image defaultImage) {
 		super();
+		isImage=true;
 		setButtonImage(defaultImage);
 		setOnClick("history.go(" + this.howFarBackOrForward + ")");
 	}
@@ -52,4 +61,15 @@ public class BackButton extends GenericButton {
 	public void setHistoryMove(int steps) {
 		howFarBackOrForward = String.valueOf(steps);
 	}
+	
+
+	public void main(IWContext iwc) throws Exception {
+		super.main(iwc);
+		IWBundle iwb = this.getBundle(iwc);
+		IWResourceBundle iwrb = iwb.getResourceBundle(iwc);
+		if(!isImage){
+			super.setValue(iwrb.getLocalizedString(BACK_KEY,BACK_KEY_DEFAULT_VALUE));	
+		}
+	}
+
 }
