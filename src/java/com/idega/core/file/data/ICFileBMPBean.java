@@ -34,9 +34,9 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.io.ObjectReader;
-import com.idega.io.ObjectWriter;
-import com.idega.io.Storable;
+import com.idega.io.export.ObjectReader;
+import com.idega.io.export.ObjectWriter;
+import com.idega.io.export.Storable;
 import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -489,12 +489,12 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		}
 	}
 
-	public Object write(ObjectWriter writer) throws RemoteException {
-		return writer.write(this);
+	public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
+		return writer.write(this, iwc);
 	}
 
-	public Object read(ObjectReader reader) throws RemoteException {
-		return reader.read(this);
+	public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
+		return reader.read(this, iwc);
 	}
 	
 	public String getNodeName(Locale locale, IWApplicationContext iwac) {
