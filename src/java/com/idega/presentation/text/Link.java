@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.39 2002/01/09 16:03:41 aron Exp $
+ * $Id: Link.java,v 1.40 2002/01/11 17:19:34 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -44,7 +44,7 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
 public class Link extends Text {
 
   private PresentationObject _obj;
-  private Window _myWindow;
+  private Window _myWindow = null;
   private Form _formToSubmit;
   private Class _windowClass = null;
 
@@ -61,7 +61,7 @@ public class Link extends Text {
   private static final String HREF_ATTRIBUTE = "href";
 
 
-  private static final String OBJECT_TYPE_WINDOW = "Window";
+  //private static final String OBJECT_TYPE_WINDOW = "Window";
   private static final String OBJECT_TYPE_MODULEOBJECT="PresentationObject";
   private static final String OBJECT_TYPE_TEXT = "Text";
   private static final String OBJECT_TYPE_IMAGE = "Image";
@@ -116,11 +116,8 @@ public class Link extends Text {
    *
    */
   public Link(PresentationObject mo, Window myWindow) {
-    _myWindow = myWindow;
-    _myWindow.setParentObject(this);
-    _objectType = OBJECT_TYPE_WINDOW;
-    _obj = mo;
-    _obj.setParentObject(this);
+    this.setWindow(myWindow);
+    this.setPresentationObject(mo);
   }
 
   /**
@@ -134,9 +131,7 @@ public class Link extends Text {
    *
    */
   public Link(PresentationObject mo) {
-    _obj = mo;
-    _obj.setParentObject(this);
-    _objectType = OBJECT_TYPE_MODULEOBJECT;
+    this.setPresentationObject(mo);
   }
 
   /**
@@ -218,9 +213,7 @@ public class Link extends Text {
    * @deprecated replaced with com.idega.presentation.ui.FilePresentation
    */
   public Link(int file_id, Window myWindow) {
-    _myWindow = myWindow;
-    _myWindow.setParentObject(this);
-    _objectType = OBJECT_TYPE_WINDOW;
+    setWindow(myWindow);
   }
 
   /**
@@ -264,7 +257,8 @@ public class Link extends Text {
   }
 
   /**
-   *
+   * Opens a new object of type classToInstanciate (has to be a PresentationObject)
+   * in the same window.
    */
   public Link(String displayText, Class classToInstanciate) {
     this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
@@ -274,7 +268,8 @@ public class Link extends Text {
   }
 
   /**
-   *
+   * Opens a new object of type classToInstanciate (has to be a PresentationObject)
+   * in the window of target specified by "target"
    */
   public Link(String displayText, Class classToInstanciate, String target) {
     this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
@@ -285,10 +280,11 @@ public class Link extends Text {
   }
 
   /**
-   *
+   * Opens a new object of type classToInstanciate (has to be a PresentationObject)
+   * in the same window with the template of name templateName
    */
-  public Link(String displayText, String classToInstanciate, String template) {
-    this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
+  public Link(String displayText, String classToInstanciate, String templateName) {
+    this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templateName));
     if(_parameterString == null){
       _parameterString = new StringBuffer();
     }
@@ -299,34 +295,42 @@ public class Link extends Text {
    */
   public void setWindow(Window window) {
     _myWindow = window;
-    _objectType = OBJECT_TYPE_WINDOW;
+    //_objectType = OBJECT_TYPE_WINDOW;
     _myWindow.setParentObject(this);
+    if(_obj==null){
+      setText(_myWindow.getName());
+    }
   }
 
   /**
    *
    */
   public void setPresentationObject(PresentationObject object) {
-    _obj = object;
-    if(_obj instanceof Image)
-      _objectType = OBJECT_TYPE_IMAGE;
-    else
+    if(object instanceof Image){
+      setImage((Image)object);
+    }
+    else if(object instanceof Window){
+      setWindow((Window)object);
+    }
+    else{
       _objectType = OBJECT_TYPE_MODULEOBJECT;
-    object.setParentObject(this);
+      _obj = object;
+      object.setParentObject(this);
+    }
   }
 
   /**
    *
    */
   public void main(IWContext iwc)throws Exception {
-    if (_objectType==(OBJECT_TYPE_WINDOW)) {
+    //if (_objectType==(OBJECT_TYPE_WINDOW)) {
       if (_myWindow != null) {
         if (_myWindow.getURL(iwc).indexOf(IWMainApplication.windowOpenerURL) != -1) {
           String sessionParameterName = com.idega.servlet.WindowOpener.storeWindow(iwc,_myWindow);
           addParameter(_sessionStorageName,sessionParameterName);
         }
       }
-    }
+    //}
 
     if(_obj != null){
       if (_obj instanceof Image) {
@@ -841,8 +845,7 @@ public class Link extends Text {
    */
   public void setImage(Image image) {
     _obj = image;
-    _objectType = OBJECT_TYPE_MODULEOBJECT;
-
+    _objectType = OBJECT_TYPE_IMAGE;
     _obj.setParentObject(this);
   }
 
@@ -1345,7 +1348,8 @@ public class Link extends Text {
     catch (Exception ex) {
 
     }
-    if (_objectType==(OBJECT_TYPE_WINDOW)) {
+    if (isOpeningInNewWindow()) {
+    //if (_objectType==(OBJECT_TYPE_WINDOW)) {
       if (_windowClass == null) {
         return _myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc)));
       }
@@ -1389,17 +1393,16 @@ public class Link extends Text {
     }
 
     if (getLanguage().equals("HTML")) {
-      boolean openInNewWindow=false;
-      if (_objectType==(OBJECT_TYPE_WINDOW)) {
-        openInNewWindow=true;
+      boolean openInNewWindow=isOpeningInNewWindow();
+      if(openInNewWindow){
+      //if (_objectType==(OBJECT_TYPE_WINDOW)) {
+       // openInNewWindow=true;
         if (_windowClass == null) {
           setOnClick(_myWindow.getCallingScriptString(iwc,_myWindow.getURL(iwc)+getParameterString(iwc,_myWindow.getURL(iwc))));
         } else {
           setOnClick(Window.getCallingScriptString(_windowClass,getURL(iwc)+getParameterString(iwc,getURL(iwc)),true));
         }
         setFinalUrl(HASH);
-
-
       }
       else{
         //Should not happen when a new window is opened
@@ -1409,9 +1412,10 @@ public class Link extends Text {
       }//end if (_objectType==(OBJECT_TYPE_WINDOW))
 
         print("<a "+getAttributeString()+" >");
+        /*
         if(openInNewWindow){
         //if (_obj == null) {
-          if(_myWindow==null){
+          if(_obj!=null){
             _obj.print(iwc);
           }
           else{
@@ -1419,6 +1423,7 @@ public class Link extends Text {
             myText.print(iwc);
           }
         } else {
+        */
           //if (_objectType==OBJECT_TYPE_TEXT) {
           if (this.isText()) {
             if ( hasClass ) {
@@ -1450,7 +1455,7 @@ public class Link extends Text {
               _obj.print(iwc);
             }
           }
-        }
+        /*}*/
         print("</a>");
       /*} else {
         if (addParameters) {
@@ -1480,7 +1485,8 @@ public class Link extends Text {
         print("</a>");
       }*/
     } else if (getLanguage().equals("WML")) {
-      if (_objectType.equals(OBJECT_TYPE_WINDOW)) {
+      if(_myWindow!=null){
+      //if (_objectType.equals(OBJECT_TYPE_WINDOW)) {
         setFinalUrl(_myWindow.getURL(iwc)+getParameterString(iwc,oldURL));  // ????????????
         setFinalUrl(HASH);
         print("<a "+getAttributeString()+" >");
@@ -1605,14 +1611,14 @@ public class Link extends Text {
    *
    */
   public void setWindowToOpen(Class windowClass) {
-    _objectType=OBJECT_TYPE_WINDOW;
+    //_objectType=OBJECT_TYPE_WINDOW;
     _windowClass=windowClass;
     setURL(IWMainApplication.windowOpenerURL);
     addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass);
   }
 
   public void setWindowToOpen(Class windowClass, int instanceId) {
-    _objectType=OBJECT_TYPE_WINDOW;
+    //_objectType=OBJECT_TYPE_WINDOW;
     _windowClass=windowClass;
     setURL(IWMainApplication.windowOpenerURL);
     addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass.getName());
@@ -1622,6 +1628,13 @@ public class Link extends Text {
   public void setNoTextObject(boolean noText) {
     if (isText())
       hasClass = noText;
+  }
+
+  private boolean isOpeningInNewWindow(){
+    if(_myWindow!=null  || this._windowClass!=null){
+      return true;
+    }
+    return false;
   }
 
   private boolean isText(){
