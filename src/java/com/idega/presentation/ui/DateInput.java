@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.28 2003/04/22 09:47:37 roar Exp $
+ * $Id: DateInput.java,v 1.29 2003/04/28 09:31:48 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -20,6 +20,7 @@ import com.idega.util.text.TextSoap;
 import java.text.DateFormatSymbols;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
@@ -66,6 +67,8 @@ public class DateInput extends InterfaceObjectContainer {
 
 	private boolean isSetAsNotEmpty;
 	private String notEmptyErrorMessage;
+	private Date _earliestDate;
+	private String _earliestDateErrorMessage;
 	private String _styleClass;
 	
   /**
@@ -490,11 +493,49 @@ public class DateInput extends InterfaceObjectContainer {
 			if (_isShowDay)
 				_theDay.setAsNotEmpty(notEmptyErrorMessage, "00");
 		}
+		if (_earliestDate != null) {
+			if (getParentForm() != null) {
+				Form form = getParentForm();
+				form.setOnSubmit("return checkSubmit(this)");
+				Script script = form.getAssociatedFormScript();
+				if (script == null)
+					script = new Script();
+
+				if (script.getFunction("checkSubmit") == null) {
+					script.addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
+				}
+				script.addToFunction("checkSubmit", "if (checkEarliestDate (findObj('" + getName() + "'),"+_earliestDate.getTime()+", '"+_earliestDateErrorMessage+"') == false ){\nreturn false;\n}\n");
+				
+				StringBuffer buffer = new StringBuffer();
+				buffer.append("function checkEarliestDate(input, date, warnMsg) {").append("\n\t");
+				buffer.append("var returnBoolean = true;").append("\n\t");
+				buffer.append("var dateString = input.value;").append("\n\t");
+				buffer.append("if (dateString.length > 0) {").append("\n\t\t");
+				buffer.append("var oldDate = new Date(date);").append("\n\t\t");
+				buffer.append("var month = dateString.substring(5,7) - 1;").append("\n\t\t");
+				buffer.append("var newDate = new Date(dateString.substring(0,4),month,dateString.substring(8,10));").append("\n\t\t");
+				buffer.append("var difference = oldDate - newDate;").append("\n\t\t");
+				buffer.append("if (difference > 0)").append("\n\t\t\t");
+				buffer.append("returnBoolean = false;").append("\n\t");
+				buffer.append("}").append("\n\n\t");
+				buffer.append("if (!returnBoolean)").append("\n\t\t");
+				buffer.append("alert(warnMsg);").append("\n\t");
+				buffer.append("return returnBoolean;").append("\n}");
+				script.addFunction("checkEarliestDate", buffer.toString());
+				
+				form.setAssociatedFormScript(script);
+			}
+		}
   }
 
 	public void setAsNotEmpty(String errorMessage) {
 		isSetAsNotEmpty = true;
 		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+	}
+	
+	public void setEarliestPossibleDate(Date date, String errorMessage) {
+		_earliestDate = date;
+		_earliestDateErrorMessage = errorMessage;
 	}
 
   private void addLocalized(IWContext iwc) {
