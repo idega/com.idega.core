@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.4 2001/10/16 14:39:47 palli Exp $
+ * $Id: Page.java,v 1.5 2001/10/18 11:32:14 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,9 +9,7 @@
  */
 package com.idega.presentation;
 
-import com.idega.jmodule.*;
 import com.idega.presentation.text.Text;
-import java.io.*;
 import com.idega.servlet.IWCoreServlet;
 import com.idega.util.FrameStorageInfo;
 import java.util.Enumeration;
@@ -44,8 +42,7 @@ public class Page extends PresentationObjectContainer {
   private boolean _isPage = true;
   private boolean _isDraft = false;
   private boolean _isExtendingTemplate = false;
-  private Hashtable styleDefinitions;
-
+  private Hashtable _styleDefinitions;
 
   private static Page NULL_CLONE_PAGE = new Page();
 
@@ -111,10 +108,10 @@ public class Page extends PresentationObjectContainer {
   }
 
   public void setStyleDefinition(String styleName, String styleAttribute) {
-    if (styleDefinitions == null) {
-      styleDefinitions = new Hashtable();
+    if (_styleDefinitions == null) {
+      _styleDefinitions = new Hashtable();
     }
-    styleDefinitions.put(styleName,styleAttribute);
+    _styleDefinitions.put(styleName,styleAttribute);
   }
 
   private void setDefaultValues() {
@@ -128,8 +125,8 @@ public class Page extends PresentationObjectContainer {
     StringBuffer returnString = new StringBuffer();
     String styleName ="";
 
-    if (this.styleDefinitions != null) {
-      Enumeration e = styleDefinitions.keys();
+    if (_styleDefinitions != null) {
+      Enumeration e = _styleDefinitions.keys();
       while (e.hasMoreElements()) {
         styleName = (String)e.nextElement();
         returnString.append("\t");
@@ -148,8 +145,8 @@ public class Page extends PresentationObjectContainer {
   }
 
   public String getStyleAttribute(String styleName) {
-    if (this.styleDefinitions != null){
-      return (String)this.styleDefinitions.get((Object)styleName);
+    if (_styleDefinitions != null){
+      return (String)_styleDefinitions.get((Object)styleName);
     }
     else {
       return null;

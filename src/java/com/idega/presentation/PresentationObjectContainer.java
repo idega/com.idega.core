@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.1 2001/10/05 07:59:08 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.2 2001/10/18 11:32:14 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,6 +21,7 @@ public class PresentationObjectContainer extends PresentationObject {
   protected Vector theObjects;
   protected boolean goneThroughMain = false;
   protected boolean _locked = true;
+  protected String _label = null;
 
   public PresentationObjectContainer() {
   }
@@ -513,5 +514,19 @@ public class PresentationObjectContainer extends PresentationObject {
    */
   public boolean isLocked() {
     return(_locked);
+  }
+
+  /**
+   *
+   */
+  public void setLabel(String label) {
+    _label = label;
+  }
+
+  /**
+   *
+   */
+  public String getLabel() {
+    return(_label);
   }
 }

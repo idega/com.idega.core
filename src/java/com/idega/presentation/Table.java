@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.2 2001/10/15 15:05:38 laddi Exp $
+ * $Id: Table.java,v 1.3 2001/10/18 11:32:14 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -20,13 +20,12 @@ import com.idega.idegaweb.IWMainApplication;
  * A table class. Note xpos is in [1:cols]
  *                     ypos is in [1:rows]
  *
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version 1.2
+ */
 public class Table extends PresentationObjectContainer {
-
   private static Image transparentcell;
-  private static final String IW_BUNDLE_IDENTIFIER="com.idega.core";
+  private static final String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 
   private PresentationObjectContainer theObjects[][];
 
@@ -1130,18 +1129,43 @@ public boolean isEmpty(int x, int y){
     return transparentcell;
   }
 
+  /**
+   *
+   */
   public void lock(int xpos, int ypos) {
     PresentationObjectContainer cont = containerAt(xpos,ypos);
     cont.lock();
   }
 
+  /**
+   *
+   */
   public void unlock(int xpos, int ypos) {
     PresentationObjectContainer cont = containerAt(xpos,ypos);
     cont.unlock();
   }
 
+  /**
+   *
+   */
   public boolean isLocked(int xpos, int ypos) {
     PresentationObjectContainer cont = containerAt(xpos,ypos);
     return(cont.isLocked());
+  }
+
+  /**
+   *
+   */
+  public void setLabel(String label, int xpos, int ypos) {
+    PresentationObjectContainer cont = containerAt(xpos,ypos);
+    cont.setLabel(label);
+  }
+
+  /**
+   *
+   */
+  public String getLabel(int xpos, int ypos) {
+    PresentationObjectContainer cont = containerAt(xpos,ypos);
+    return(cont.getLabel());
   }
 }
