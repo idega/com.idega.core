@@ -611,6 +611,19 @@ public class IDOQuery {
 	}
 
 	/**
+	 * Appends a where (where columnName=columnValue) with single quotemarks
+	 * @param columnName the name of the field
+	 * @param columnValue the value
+	 * @return IDOQuery this Object
+	 */
+	public IDOQuery appendWhereEqualsWithSingleQuotes(String columnName, String columnValue) {
+		appendWhere(columnName);
+		this.appendEqualSign();
+		this.appendWithinSingleQuotes(columnValue);
+		return this;
+	}
+
+	/**
 	 * Appends a where (where columnName=columnValue) without quotemarks
 	 * @param columnName the name of the field
 	 * @param columnValue the value
