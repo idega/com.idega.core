@@ -7,9 +7,11 @@ package com.idega.data;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 public class IDOUtil {
 	private static final String COMMA_AND_SPACE = ", ";
@@ -219,6 +221,26 @@ public class IDOUtil {
 		}
 		else return null;
 		
+	}
+	
+	/**
+	 * Used to convert a Collection (list) of IDOEntities to a list of their primarykeys.
+	 * @param entities
+	 * @return
+	 */
+	public List convertIDOEntityCollectionToListOfPrimaryKeys(Collection entities){
+		if( entities!=null && !entities.isEmpty()){
+			List returnList = new ArrayList();
+			
+			Iterator iter = entities.iterator();
+			while (iter.hasNext()) {
+				IDOEntity entity = (IDOEntity) iter.next();
+				returnList.add(entity.getPrimaryKey());
+			}
+			
+			return returnList;
+		}
+		else return null;
 	}
 
 
