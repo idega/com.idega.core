@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -31,6 +32,8 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.user.data.GroupRelation;
+import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupRelationType;
 import com.idega.user.data.GroupRelationTypeHome;
 import com.idega.util.database.ConnectionBroker;
@@ -45,7 +48,8 @@ import com.idega.util.database.PoolManager;
 public class IWMainApplicationStarter implements ServletContextListener  {
 	
 	IWMainApplication iwma;
-	
+	private Logger log = Logger.getLogger(IWMainApplicationStarter.class.getName());
+
 	public IWMainApplicationStarter(){
 	    
 	}
@@ -352,6 +356,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
         	sendStartMessage("Info: Constructor of "+starterName + " could not be accessed (probably corresponding bundle is not loaded)");
         } catch (ClassNotFoundException e) {
             sendStartMessage("Info: "+starterName + "could not be found (probably corresponding bundle is not loaded)");
+
         }
 	}
 	
@@ -426,7 +431,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		
 	}
 	
-	private void updateStartDataInDatabase() {
+	protected void updateStartDataInDatabase() {
+		/*
+		 * @todo Move to user plugin system
+		 **/
+		//Temporary Fix to make sure GroupRelation table exists:
+		GroupRelation rel = new GroupRelationBMPBean();
 		try {
 			ICObjectTypeHome home = (ICObjectTypeHome) IDOLookup.getHome(ICObjectType.class);
 			home.updateStartData();
