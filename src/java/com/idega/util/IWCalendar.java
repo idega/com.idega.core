@@ -640,12 +640,4 @@ public class IWCalendar {
 	public Date toDate() {
 		return _calendar.getTime();
 	}
-
-	/**
-	 * Returns the current date settings as long
-	 * @return long
-	 */
-	public long toTime() {
-		return _calendar.getTimeInMillis();
-	}
 }
