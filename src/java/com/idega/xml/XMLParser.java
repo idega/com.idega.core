@@ -1,5 +1,5 @@
 /*
- * $Id: XMLParser.java,v 1.3 2002/12/09 18:10:51 palli Exp $
+ * $Id: XMLParser.java,v 1.4 2003/03/14 09:42:37 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,12 +9,14 @@
  */
 package com.idega.xml;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.File;
 
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
@@ -48,7 +50,11 @@ public class XMLParser {
     catch(JDOMException e) {
       throw new XMLException(e.getMessage());
     }
-
+		catch(IOException e) {
+			e.getCause().printStackTrace();
+			throw new XMLException(e.getMessage());
+		}
+    
     XMLDocument xdoc = new XMLDocument(doc);
 
     return(xdoc);
@@ -65,7 +71,11 @@ public class XMLParser {
     catch(JDOMException e) {
       throw new XMLException(e.getMessage());
     }
-
+		catch(IOException e) {
+			e.getCause().printStackTrace();
+			throw new XMLException(e.getMessage());
+		}
+    
     XMLDocument xdoc = new XMLDocument(doc);
 
     return(xdoc);
@@ -82,6 +92,10 @@ public class XMLParser {
     catch(JDOMException e) {
       throw new XMLException(e.getMessage());
     }
+		catch(IOException e) {
+			e.getCause().printStackTrace();
+			throw new XMLException(e.getMessage());
+		}    
 
     XMLDocument xdoc = new XMLDocument(doc);
 
@@ -99,6 +113,10 @@ public class XMLParser {
     catch(JDOMException e) {
     	e.getCause().printStackTrace();
       throw new XMLException(e.getMessage());
+    }
+    catch(IOException e) {
+    	e.getCause().printStackTrace();
+			throw new XMLException(e.getMessage());
     }
 
     XMLDocument xdoc = new XMLDocument(doc);
