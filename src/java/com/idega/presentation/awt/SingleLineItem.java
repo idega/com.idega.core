@@ -188,9 +188,11 @@ public class SingleLineItem extends Panel {
       }
 
 
-      layout();
+//      layout();
+      doLayout();
       repaint();
-      parentContainer.layout();
+//      parentContainer.layout();
+      parentContainer.doLayout();
       parentContainer.repaint();
 
 

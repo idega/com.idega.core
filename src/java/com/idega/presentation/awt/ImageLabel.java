@@ -235,7 +235,8 @@ public class ImageLabel extends Canvas {
       if (((parentContainer = getParent()) != null)
           && doLayout) {
         setBackground(parentContainer.getBackground());
-        parentContainer.layout();
+//        parentContainer.layout();
+        parentContainer.doLayout();
       }
     }
   }
@@ -261,7 +262,8 @@ public class ImageLabel extends Canvas {
   public void centerAt(int x, int y) {
     debug("Placing center of " + imageString + " at ("
           + x + "," + y + ")");
-    move(x - width/2, y - height/2);
+//    move(x - width/2, y - height/2);
+    setLocation(x - width/2, y - height/2);
   }
 
   //----------------------------------------------------
@@ -307,7 +309,8 @@ public class ImageLabel extends Canvas {
   public Dimension preferredSize() {
     if (!doneLoading)
       waitForImage(false);
-    return(super.preferredSize());
+//    return(super.preferredSize());
+    return(super.getPreferredSize());
   }
 
   //----------------------------------------------------
@@ -322,7 +325,8 @@ public class ImageLabel extends Canvas {
    public Dimension minimumSize() {
      if (!doneLoading)
        waitForImage(false);
-     return(super.minimumSize());
+//     return(super.inimumSize());
+     return(super.getMinimumSize());
    }
 
   //----------------------------------------------------
@@ -362,7 +366,8 @@ public class ImageLabel extends Canvas {
       if (height > 0)
         explicitHeight=height;
     }
-    super.resize(width, height);
+//    super.resize(width, height);
+    super.setSize(width, height);
   }
 
   /** Resizes the ImageLabel. If you don't resize the
@@ -396,7 +401,8 @@ public class ImageLabel extends Canvas {
       if (height > 0)
         explicitHeight=height;
     }
-    super.reshape(x, y, width, height);
+//    super.reshape(x, y, width, height);
+    super.setBounds(x, y, width, height);
   }
 
   //----------------------------------------------------

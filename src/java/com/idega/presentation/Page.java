@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.2 2001/10/10 12:34:10 gummi Exp $
+ * $Id: Page.java,v 1.3 2001/10/11 16:13:04 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import java.util.Hashtable;
 import com.idega.idegaweb.IWMainApplication;
 
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
-public class Page extends PresentationObjectContainer{
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version 1.2
+ */
+public class Page extends PresentationObjectContainer {
   private int _ibPageID;
   private String _title;
   private Script _theAssociatedScript;
