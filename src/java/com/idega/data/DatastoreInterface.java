@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.101 2004/06/07 14:19:52 aron Exp $
+ * $Id: DatastoreInterface.java,v 1.102 2004/06/08 11:43:46 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1417,7 +1417,7 @@ public abstract class DatastoreInterface {
 			}
 			bufferToAppendTo.append(fields[i].getSQLFieldName());
 			bufferToAppendTo.append("=");
-			if (fields[0].getDataTypeClass() == Integer.class) {
+			if (fields[i].getDataTypeClass() == Integer.class) {
 				bufferToAppendTo.append(value);
 			}
 			else {
