@@ -170,13 +170,12 @@ private void initFirstConnection(Connection conn){
   try{
     //System.out.println("initFirstConnection() conn.getTransactionIsolation()="+conn.getTransactionIsolation());
     //System.out.println("initFirstConnection() conn.getMetaData().getDefaultTransactionIsolation()="+conn.getMetaData().getDefaultTransactionIsolation());
-    //if(conn.getMetaData().getDefaultTransactionIsolation()!=conn.TRANSACTION_NONE){
+    if(conn.getMetaData().getDefaultTransactionIsolation()!=conn.TRANSACTION_NONE){
       conn.setAutoCommit(false);
-    //}
+    }
   }
   catch(SQLException ex){
-    System.err.println("Error in IdegaTransaction.freeConnection() Message :"+ex.getMessage());
-    //ex.printStackTrace(System.err);
+    ex.printStackTrace(System.err);
   }
 }
 
@@ -189,13 +188,12 @@ public void freeConnection(Connection conn){
     try{
       //System.out.println("freeConnection() conn.getTransactionIsolation()="+conn.getTransactionIsolation());
       //System.out.println("freeConnection() conn.getMetaData().getDefaultTransactionIsolation()="+conn.getMetaData().getDefaultTransactionIsolation());
-      //if(conn.getMetaData().getDefaultTransactionIsolation()!=conn.TRANSACTION_NONE){
+      if(conn.getMetaData().getDefaultTransactionIsolation()!=conn.TRANSACTION_NONE){
         conn.setAutoCommit(true);
-      //}
+      }
     }
     catch(SQLException ex){
-      //ex.printStackTrace(System.err);
-      System.err.println("Error in IdegaTransaction.freeConnection() Message :"+ex.getMessage());
+      ex.printStackTrace(System.err);
     }
     //ConnectionBroker.freeConnection(conn,false);
     ConnectionBroker.freeConnection(this._dataSource,_conn,false);
