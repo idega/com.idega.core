@@ -201,8 +201,13 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
       this.cancelClicked = true;
       this.applyClicked = false;
     } else {
-      this.okClicked = false;
-      this.cancelClicked = false;
+    	boolean success = collector.storeAll(e.getIWContext());
+    	if(success){
+    		this.okClicked = true;
+    	}else{
+    		this.okClicked = false;
+    	}
+    	this.cancelClicked = false;
       this.applyClicked = false;
     }
 
