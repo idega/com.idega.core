@@ -177,7 +177,8 @@
     <dependency>
       <groupId>icu4j</groupId>
       <artifactId>icu4j</artifactId>
-      <version>2.4</version>
+      <version>3.0L1</version>
+      <!-- 3.0L1 is a special version that Laddi built with is_IS and sv_SE special hollidays -->
       <type>jar</type>
       <url>http://oss.software.ibm.com/icu4j/</url>
       <properties>

@@ -21,7 +21,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/servlets.com/jars/cos-05Nov2002.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/icu4j/jars/icu4j-2.4.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/icu4j/jars/icu4j-3.0L1.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/jsf-api-1.0.jar">
   </classpathentry>
