@@ -11,6 +11,7 @@ package com.idega.util.reflect;
 
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class MethodFinder {
 
@@ -234,6 +235,78 @@ public class MethodFinder {
       theReturn[i]=getMethodIdentifier(methods[i]);
     }
     return theReturn;
+  }
+  
+  
+   /**
+   * Gets only the method that is named "name" in class objectClass and takes in no arguments (parameters)
+   * @throws NoSuchMethodException if no mathing method is found.
+   **/
+  public Method getMethodsWithNameAndNoParameters(Class objectClass,String name) throws NoSuchMethodException{
+  	Method[] allMethods = objectClass.getMethods();
+  	for (int i = 0; i < allMethods.length; i++) {
+		Method methodToCheck = allMethods[i];
+		if(methodToCheck.getName().equals(name)){
+			if(methodToCheck.getParameterTypes().length==0){
+				return methodToCheck;
+			}
+		}
+	}
+	throw new NoSuchMethodException("Method "+name+"() not found in "+objectClass.getName());
+  }  
+  
+   /**
+   * Gets all the methods that are named "name" in class objectClass
+   * @return An array with all mathing methods or an array with length 0 if no mathing methods are found.
+   **/
+  public Method[] getMethodsWithName(Class objectClass,String name){
+  	return getMethodsWithName(objectClass,name,-1);
+  } 
+  
+  /**
+   * Gets all the methods that are named "name" in class objectClass
+   * @return An array with all mathing methods or an array with length 0 if no mathing methods are found.
+   * @param maxNumberOfParameters The maximum number of parameters the method can include or -1 of no maximum is specified.
+   **/
+  public Method[] getMethodsWithName(Class objectClass,String name,int maxNumberOfParameters){
+  	Method[] allMethods = objectClass.getMethods();
+  	int returningSize=0;
+  	//Method[] matchedMethods = new Method[returningSize];
+  	Vector matchedMethodsVector = new Vector();
+  	for (int i = 0; i < allMethods.length; i++) {
+		Method methodToCheck = allMethods[i];
+		if(methodToCheck.getName().equals(name)){
+			if(maxNumberOfParameters<0){
+				matchedMethodsVector.add(methodToCheck);
+			}
+			else{
+				if(methodToCheck.getParameterTypes().length<=maxNumberOfParameters){
+					matchedMethodsVector.add(methodToCheck);
+				}
+			}
+		}
+	}
+	//return matchedMethods;
+  	return (Method[])matchedMethodsVector.toArray(new Method[0]);
+  }
+  
+  /**
+   * Test main method
+   **/
+  public static void main(String[] args){
+  	
+  	/*Method[] methods = 	getInstance().getMethodsWithName(MethodFinder.class,"getMethods");
+  	
+  	for (int i = 0; i < methods.length; i++) {
+		System.out.println("Found method: "+methods[i].toString());	
+	}*/
+	/*try{
+		Method method = getInstance().getMethodsWithNameAndNoParameters(MethodFinder.class,"getInstance");
+		System.out.println("Found method: "+method.toString());	
+	}
+	catch(Exception e){
+		e.printStackTrace();	
+	}*/
   }
 
 }
