@@ -156,7 +156,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
     else if (javaClassName.equals("java.lang.Double")){
 
-      theReturn = "FLOAT";
+      theReturn = "FLOAT(15)";
 
     }
 

@@ -50,7 +50,7 @@ public class McKoiDatastoreInterface extends DatastoreInterface {
 			theReturn = "FLOAT";
 		}
 		else if (javaClassName.equals("java.lang.Double")) {
-			theReturn = "FLOAT";
+			theReturn = "FLOAT(15)";
 		}
 		else if (javaClassName.equals("java.sql.Timestamp")) {
 			theReturn = "DATE";

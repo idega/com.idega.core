@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.27 2003/10/14 11:22:34 laddi Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.28 2004/01/12 16:43:52 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -63,7 +63,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		}
 		else if (javaClassName.equals("java.lang.Double"))
 		{
-			theReturn = "FLOAT";
+			theReturn = "FLOAT(15)";
 		}
 		else if (javaClassName.equals("java.sql.Timestamp"))
 		{
