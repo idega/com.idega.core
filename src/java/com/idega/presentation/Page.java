@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.31 2002/02/12 09:47:49 aron Exp $
+ * $Id: Page.java,v 1.32 2002/02/14 13:30:12 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -52,6 +52,7 @@ public class Page extends PresentationObjectContainer {
   private Hashtable _styleDefinitions;
   private Hashtable _metaTags;
 
+  private boolean addGlobalScript=true;
   private static String META_KEYWORDS = "keywords";
   private static String META_DESCRIPTION = "description";
 
@@ -683,6 +684,11 @@ public class Page extends PresentationObjectContainer {
           setDoPrint(false);
         }
         println("\n<head>");
+        if(addGlobalScript){
+          //Print a reference to the global .js script file
+          println("<script src=\""+this.getBundle(iwc).getResourcesURL()+"iw_core.js\">");
+          println("</script>");
+        }
         if (getAssociatedScript() != null) {
           getAssociatedScript()._print(iwc);
         }
