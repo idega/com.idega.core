@@ -78,12 +78,15 @@ public class MenuLink extends Block {
     this.spaceBetween = space;
   }
 
+
   public void initContainer(){
     container.setWidth(width);
     container.setHeight(height);
     container.setWidth(1,1,String.valueOf(spaceBefore));
     container.setWidth(2,1,String.valueOf(imageWidth));
     container.setWidth(3,1,String.valueOf(spaceBetween));
+    container.setCellpadding(0);
+    container.setCellspacing(0);
   }
 
   public void main(IWContext iwc){
@@ -108,7 +111,7 @@ public class MenuLink extends Block {
     if(style != null)
      menuLink2.setFontStyle(style);
     container.add(menuLink1,2,1);
-    container.add(menuLink2,3,1);
+    container.add(menuLink2,4,1);
     add(container);
   }
 
