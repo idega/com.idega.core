@@ -7,8 +7,16 @@ import com.idega.util.idegaTimestamp;
 import com.idega.core.accesscontrol.data.LoginTable;
 
 import com.idega.core.accesscontrol.data.LoginInfo;
+import com.idega.core.accesscontrol.data.LoginInfoHome;
 
 import com.idega.core.accesscontrol.data.LoginRecord;
+import com.idega.core.accesscontrol.data.LoginRecordHome;
+import java.util.Iterator;
+import javax.ejb.FinderException;
+import java.rmi.RemoteException;
+import javax.ejb.RemoveException;
+import com.idega.data.IDORemoveException;
+
 
 import com.idega.data.EntityFinder;
 
@@ -609,9 +617,7 @@ public class LoginDBHandler {
 
 
   public static void deleteUserLogin(int userId)throws SQLException {
-
-      deleteLogin(findUserLogin(userId));
-
+    deleteLogin(findUserLogin(userId));
   }
 
 
@@ -638,34 +644,49 @@ public class LoginDBHandler {
 
 
 
-  public static void deleteLogin(LoginTable login) throws SQLException {
-
+  public static void deleteLogin(LoginTable login){
     if(login != null){
+      try {
+        LoginInfo li = ((com.idega.core.accesscontrol.data.LoginInfoHome)com.idega.data.IDOLookup.getHomeLegacy(LoginInfo.class)).findByPrimaryKeyLegacy(login.getID());
+        try {
+          int id = ((Integer)li.getPrimaryKey()).intValue();
+          java.util.Collection recs = ((com.idega.core.accesscontrol.data.LoginRecordHome)com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class)).findAllLoginRecords(id);
+          Iterator iter = recs.iterator();
+          com.idega.core.accesscontrol.data.LoginRecordHome lr = ((com.idega.core.accesscontrol.data.LoginRecordHome)com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class));
+          while (iter.hasNext()) {
+            lr.remove(iter.next());
+          }
+        } catch (RemoteException ex) {
+          ex.printStackTrace();
+        } catch (RemoveException exc) {
+          exc.printStackTrace();
+        } catch (FinderException e){
+          // assume login record does not exist for this login
+        }
+
+        li.remove();
+
+      } catch (RemoteException e) {
+        e.printStackTrace();
+      } catch (SQLException sql){
+        sql.printStackTrace();
+      } catch (IDORemoveException ex){
+        ex.printStackTrace();
+      } catch (RemoveException ex){
+        ex.printStackTrace();
+      }
+
 
       try {
-
-        LoginInfo li = ((com.idega.core.accesscontrol.data.LoginInfoHome)com.idega.data.IDOLookup.getHomeLegacy(LoginInfo.class)).findByPrimaryKeyLegacy(login.getID());
-
-
-
-        li.delete();
-
+        login.remove();
+      } catch (RemoteException e) {
+        e.printStackTrace();
+      } catch (RemoveException ex){
+        ex.printStackTrace();
       }
-
-      catch (SQLException ex) {
-
-        // assume login info does not exist for this login
-
-      }
-
-
-
-      login.delete();
-
 
 
     }
-
   }
 
 
@@ -679,34 +700,19 @@ public class LoginDBHandler {
    */
 
   public static int recordLogin(int iLoginId,String IPAddress){
-
     try {
-
       LoginRecord inRec =((com.idega.core.accesscontrol.data.LoginRecordHome)com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class)).createLegacy();
-
       inRec.setIPAdress(IPAddress);
-
       inRec.setLoginId(iLoginId);
-
       inRec.setLogInStamp(idegaTimestamp.getTimestampRightNow());
-
-      inRec.insert();
-
-      return inRec.getID();
-
+      inRec.store();
+      Integer id = (Integer)inRec.getPrimaryKey();
+      return id.intValue();
     }
-
-    catch (SQLException ex) {
-
-
-
+    catch (RemoteException ex) {
+      return (-1);
     }
-
-    return -1;
-
-
-
-  }
+ }
 
 
 
@@ -717,51 +723,29 @@ public class LoginDBHandler {
    */
 
   public static boolean recordLogout(int iLoginRecordId){
-
-
-
     try {
-
-      StringBuffer sql = new StringBuffer("update ");
-
-      sql.append(com.idega.core.accesscontrol.data.LoginRecordBMPBean.getEntityTableName());
-
-      sql.append(" set out_stamp = '");
-
-      sql.append(idegaTimestamp.getTimestampRightNow().toString());
-
-      sql.append("'");
-
-      sql.append(" where ");
-
-      sql.append(((com.idega.core.accesscontrol.data.LoginRecordHome)com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class)).createLegacy().getIDColumnName());
-
-      sql.append( " = ");
-
-      sql.append(iLoginRecordId);
-
-      //System.err.println(sql.toString());
-
-
-
-      com.idega.data.SimpleQuerier.execute(sql.toString());
-
+      LoginRecord lr = ((LoginRecordHome)com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class)).findByPrimaryKey(iLoginRecordId);
+      lr.setLogOutStamp(idegaTimestamp.getTimestampRightNow());
+      lr.store();
+//      StringBuffer sql = new StringBuffer("update ");
+//      sql.append(com.idega.core.accesscontrol.data.LoginRecordBMPBean.getEntityTableName());
+//      sql.append(" set out_stamp = '");
+//      sql.append(idegaTimestamp.getTimestampRightNow().toString());
+//      sql.append("'");
+//      sql.append(" where ");
+//      sql.append(((com.idega.core.accesscontrol.data.LoginRecordHome)com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class)).createLegacy().getIDColumnName());
+//      sql.append( " = ");
+//      sql.append(iLoginRecordId);
+//      //System.err.println(sql.toString());
+//
+//      com.idega.data.SimpleQuerier.execute(sql.toString());
       return true;
-
-    }
-
-    catch (Exception ex) {
-
+    } catch (FinderException ex) {
       ex.printStackTrace();
-
+    } catch (RemoteException e){
+      e.printStackTrace();
     }
-
-
-
     return false;
-
-
-
   }
 
 

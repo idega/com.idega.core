@@ -39,5 +39,12 @@ public class LoginRecordHomeImpl extends com.idega.data.IDOFactory implements Lo
 
  }
 
+public java.util.Collection findAllLoginRecords(int p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((LoginRecordBMPBean)entity).ejbFindAllLoginRecords(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
 
 }

@@ -3,6 +3,8 @@ package com.idega.core.accesscontrol.data;
 import com.idega.data.IDOLegacyEntity;
 import java.sql.Timestamp;
 import java.sql.SQLException;
+import java.util.Collection;
+import javax.ejb.FinderException;
 
 /**
  * Title:   idegaclasses
@@ -64,4 +66,11 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
     public void setIPAdress(String ip){
       setColumn(getColumnIPAddress(),ip);
     }
+
+    public Collection ejbFindAllLoginRecords(int loginID)throws FinderException{
+      String sql = "select * from "+this.getTableName()+" where "+this.getColumnLoginId()+" = "+loginID;
+      return super.idoFindIDsBySQL(sql);
+    }
+
+
 }
