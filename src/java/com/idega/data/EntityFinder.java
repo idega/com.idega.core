@@ -258,7 +258,58 @@ public class EntityFinder{
 	}
 
 
-
+        /**
+         * If ascending==true ordering is descending, else it is ascending
+         */
+	public static List findRelatedOrdered(GenericEntity fromEntity,GenericEntity returningEntity,String returningEntityColumnToOrderBy,boolean ascending)throws SQLException{
+		String fromTable = fromEntity.getTableName();
+                String middleTable = EntityControl.getNameOfMiddleTable(returningEntity,fromEntity);
+                String returningTable = returningEntity.getTableName();
+                String comma = ",";
+                String dot = ".";
+                StringBuffer buffer=new StringBuffer();
+                buffer.append("select ");
+                buffer.append(returningTable);
+                buffer.append(dot);
+                buffer.append("* from ");
+                buffer.append(middleTable);
+                buffer.append(comma);
+                buffer.append(returningTable);
+                buffer.append(comma);
+                buffer.append(fromTable);
+                buffer.append(" where ");
+                buffer.append(middleTable);
+                buffer.append(dot);
+                buffer.append(fromEntity.getIDColumnName());
+                buffer.append("=");
+                buffer.append(fromEntity.getID());
+                buffer.append(" and ");
+                buffer.append(middleTable);
+                buffer.append(dot);
+                buffer.append(returningEntity.getIDColumnName());
+                buffer.append("=");
+                buffer.append(returningEntity.getID());
+                buffer.append(" and ");
+                buffer.append(middleTable);
+                buffer.append(dot);
+                buffer.append(returningEntity.getIDColumnName());
+                buffer.append("=");
+                buffer.append(returningTable);
+                buffer.append(dot);
+                buffer.append(returningEntity.getIDColumnName());
+                buffer.append(" order by ");
+                buffer.append(returningTable);
+                buffer.append(".");
+                buffer.append(returningEntityColumnToOrderBy);
+                if(ascending){
+                buffer.append(" asc");
+                }
+                else{
+                buffer.append(" desc");
+                }
+                String SQLString=buffer.toString();
+                return findAll(returningEntity,SQLString);
+	}
 
 
 
@@ -267,8 +318,6 @@ public class EntityFinder{
                 return findByPrimaryKey(entity,primaryKeyID);
 
         }
-
-
 
 	public static GenericEntity findByPrimaryKey(GenericEntity entity,int primaryKeyID)throws Exception{
 
