@@ -436,4 +436,24 @@ private boolean isBlobCached(Cache cache){
   private Class getCorrectClassForEntity(Class entityBeanOrInterfaceClass){
       return com.idega.data.IDOLookup.getInterfaceClassFor(entityBeanOrInterfaceClass);
   }
+  
+  /**
+   * Clears all caching in for all objects
+   */
+  public void clearAllCaches(){
+  	this._keysMap=null;
+  	this.entityMaps=null;
+  	this.entityMapsKeys=null;
+  	this.intervalsMap=null;
+  	this.objectsMap=null;
+  	this.timesMap=null;
+  }
+  
+  /**
+   * Unloads the instance from the application (typically called on shutdown)
+   */
+  public void unload(IWMainApplication iwma){
+  	iwma.removeAttribute(IW_CACHEMANAGER_KEY);
+  	clearAllCaches();
+  }
 }
