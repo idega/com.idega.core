@@ -440,7 +440,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   }
   public String getGroupType() throws java.rmi.RemoteException {
     /**@todo: Implement this com.idega.user.data.Group method*/
-    throw new java.lang.UnsupportedOperationException("Method getGroupType() not yet implemented.");
+    //throw new java.lang.UnsupportedOperationException("Method getGroupType() not yet implemented.");
+    return "user_group_representative";
   }
   public List getListOfAllGroupsContainingThis() throws javax.ejb.EJBException, java.rmi.RemoteException {
     /**@todo: Implement this com.idega.user.data.Group method*/
@@ -448,7 +449,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   }
   public String getExtraInfo() throws java.rmi.RemoteException {
     /**@todo: Implement this com.idega.user.data.Group method*/
-    throw new java.lang.UnsupportedOperationException("Method getExtraInfo() not yet implemented.");
+    //throw new java.lang.UnsupportedOperationException("Method getExtraInfo() not yet implemented.");
+    return this.getGeneralGroup().getExtraInfo();
   }
   public void addUser(User p0) throws java.rmi.RemoteException, java.rmi.RemoteException {
     /**@todo: Implement this com.idega.user.data.Group method*/
