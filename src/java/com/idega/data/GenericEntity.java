@@ -44,7 +44,7 @@ import dori.jasper.engine.JRField;
  * @version 1.4
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  */
-public abstract class GenericEntity implements java.io.Serializable, IDOEntity, IDOEntityBean, EntityRepresentation {
+public abstract class GenericEntity implements java.io.Serializable, IDOEntity, IDOEntityBean, EntityRepresentation, IDOLegacyEntity {
 	public static final String MANY_TO_ONE = "many-to-one";
 	public static final String ONE_TO_MANY = "one-to-many";
 	public static final String MANY_TO_MANY = "many-to-many";
@@ -230,16 +230,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		//does nothing
 	}
 	/**
+	 * Returns the string value of the primary key, or the string "null" if
+	 * there is no primary key set.
 	 * @see java.lang.Object#toString()
-	 * @see com.idega.data.GenericEntity#getName()
 	 */
 	public String toString() {
-//		Object pk = this.getPrimaryKey();
-//		if (pk != null) {
-//			return pk.toString();
-//		} else
-//			return "null";
-		return this.getName();
+		Object pk = this.getPrimaryKey();
+		if (pk != null) {
+			return pk.toString();
+		} else
+			return "null";
 	}
 	/**
 	 * @deprecated Replaced with addAttribute()
@@ -270,7 +270,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	protected void addAttribute(String attributeName, String longName, boolean ifVisible, boolean ifEditable, Class storageClass) {
 		EntityAttribute attribute = new EntityAttribute(attributeName.toLowerCase());
-		attribute.setAsPrimaryKey(this.getIDColumnName().equalsIgnoreCase(attributeName));
 		attribute.setDeclaredEntity(getGenericEntityDefinition());
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
@@ -297,7 +296,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	protected void addAttribute(String attributeName, String longName, boolean ifVisible, boolean ifEditable, Class storageClass, int maxLength) {
 		EntityAttribute attribute = new EntityAttribute(attributeName);
-		attribute.setAsPrimaryKey(this.getIDColumnName().equalsIgnoreCase(attributeName));
 		attribute.setDeclaredEntity(getGenericEntityDefinition());
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
@@ -321,7 +319,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	protected void addAttribute(String attributeName, String longName, boolean ifVisible, boolean ifEditable, Class storageClass, String relationShipType, Class relationShipClass) {
 		EntityAttribute attribute = new EntityAttribute(attributeName);
-		attribute.setAsPrimaryKey(this.getIDColumnName().equalsIgnoreCase(attributeName));
 		attribute.setDeclaredEntity(getGenericEntityDefinition());
 		attribute.setLongName(longName);
 		attribute.setVisible(ifVisible);
