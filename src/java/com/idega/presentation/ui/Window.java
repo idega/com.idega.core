@@ -407,18 +407,20 @@ public static String getWindowURLWithParameter(Class windowClass,IWApplicationCo
  */
 public static String getWindowURLWithParameters(Class windowClass,IWApplicationContext iwc,Map parameterMap){
     String url = getWindowURL(windowClass,iwc);
-    Set keySet = parameterMap.keySet();
-    for (Iterator iter = keySet.iterator(); iter.hasNext();) {
-        String parameterName = (String) iter.next();
-        String parameterValue = (String) parameterMap.get(parameterName);
-        if(url.indexOf("?")==-1){
-            url += "?"+parameterName+"="+parameterValue;
-        }
-        else{
-            url += "&"+parameterName+"="+parameterValue;
-        }
+    if (parameterMap != null) {
+	    Set keySet = parameterMap.keySet();
+	    for (Iterator iter = keySet.iterator(); iter.hasNext();) {
+	        String parameterName = (String) iter.next();
+	        String parameterValue = (String) parameterMap.get(parameterName);
+	        if(url.indexOf("?")==-1){
+	            url += "?"+parameterName+"="+parameterValue;
+	        }
+	        else{
+	            url += "&"+parameterName+"="+parameterValue;
+	        }
+	    }
     }
-    return url;
+	  return url;
 }
 
 public static String getCallingScriptString(Class windowClass,IWApplicationContext iwac){
@@ -460,6 +462,23 @@ public static String getCallingScriptString(Class windowClass,String url,boolean
   }
   //return "window.open('"+theURL+"','"+win.getTarget()+"','resizable="+win.returnCheck(windowInstance.resizable)+",toolbar="+win.returnCheck(windowInstance.toolbar)+",location="+win.returnCheck(win.location)+",directories="+win.returnCheck(win.directories)+",status="+win.returnCheck(win.status)+",scrollbars="+win.returnCheck(win.scrollbar)+",menubar="+win.returnCheck(win.menubar)+",titlebar="+win.returnCheck(win.titlebar)+win.returnFullScreen()+",width="+win.getWidth()+",height="+win.getHeight()+"')";
   return getWindowCallingScript(theURL,win.getTarget(),win.toolbar,win.location,win.directories,win.status,win.menubar,win.titlebar,win.scrollbar,win.resizable,win.fullscreen,win.getWindowWidth(),win.getWindowHeight(),win.getCoordinateX(),win.getCoordinateY());
+}
+
+public static String getCallingScriptString(Class windowClass,String url,String target, boolean includeURL,IWApplicationContext iwac){
+  String theURL=null;
+  Window win = getStaticInstance(windowClass);
+  if(includeURL){
+    theURL=url;
+  }
+  else{
+    theURL="";
+  }
+  if(win==null){
+      //return "window.open('"+theURL+"','tempwindow','resizable=yes,toolbar=yes,location=no,directories=no,status=yes,scrollbars=yes,menubar=yes,titlebar=yes,width=500,height=500')";
+      return getWindowCallingScript(theURL,"tempwindow",true,true,true,true,true,true,true,true,false,500,500,win.getCoordinateX(),win.getCoordinateY());
+  }
+  //return "window.open('"+theURL+"','"+win.getTarget()+"','resizable="+win.returnCheck(windowInstance.resizable)+",toolbar="+win.returnCheck(windowInstance.toolbar)+",location="+win.returnCheck(win.location)+",directories="+win.returnCheck(win.directories)+",status="+win.returnCheck(win.status)+",scrollbars="+win.returnCheck(win.scrollbar)+",menubar="+win.returnCheck(win.menubar)+",titlebar="+win.returnCheck(win.titlebar)+win.returnFullScreen()+",width="+win.getWidth()+",height="+win.getHeight()+"')";
+  return getWindowCallingScript(theURL,target,win.toolbar,win.location,win.directories,win.status,win.menubar,win.titlebar,win.scrollbar,win.resizable,win.fullscreen,win.getWindowWidth(),win.getWindowHeight(),win.getCoordinateX(),win.getCoordinateY());
 }
 
 public static String getCallingScript(String URL, int width, int height) {
@@ -529,6 +548,37 @@ public static String getWindowCallingScript(String url,String name,boolean tool,
   
   return buf.toString();
 }
+
+public static String getWindowArgumentCallingScript(Class windowClass) {
+  Window win = getStaticInstance(windowClass);
+  if(win==null){
+      return getWindowArgumentCallingScript(true,true,true,true,true,true,true,true,false,500,500,win.getCoordinateX(),win.getCoordinateY());
+  }
+  return getWindowArgumentCallingScript(win.toolbar,win.location,win.directories,win.status,win.menubar,win.titlebar,win.scrollbar,win.resizable,win.fullscreen,win.getWindowWidth(),win.getWindowHeight(),win.getCoordinateX(),win.getCoordinateY());
+}
+
+public static String getWindowArgumentCallingScript(boolean tool,
+	      boolean loc,boolean dir,boolean stat,boolean menu,boolean title
+	      ,boolean scroll,boolean resize,boolean fullscr,int theWidth,int theHeight,String xCoordinate,String yCoordinate ){
+	
+  String no = "0";
+  String yes = "1";
+  String sp = "'";
+
+  StringBuffer buf = new StringBuffer(sp).append("toolbar=").append(tool?yes:no).append("','").append("location=").append(loc?yes:no).append("',");
+  buf.append(sp).append("directories=").append(dir?yes:no).append("','").append("status").append(stat?yes:no).append("',");
+  buf.append(sp).append("menubar=").append(menu?yes:no).append("','").append("titlebar=").append(title?yes:no).append("',");
+  buf.append(sp).append("scrollbars=").append(scroll?yes:no).append("','").append("resizable=").append(resize?yes:no).append("',");
+  buf.append(sp).append("width=").append(theWidth).append("','").append("height=").append(theHeight).append("'");
+  if(xCoordinate!=null)
+  	buf.append(",").append("left=").append(xCoordinate);
+  if(yCoordinate!=null)
+  	buf.append(",").append("top=").append(yCoordinate);
+  
+  return buf.toString();
+
+}
+
 
 public static String windowScript(){
   StringBuffer js = new StringBuffer();
