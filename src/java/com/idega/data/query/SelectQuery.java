@@ -20,18 +20,16 @@ public class SelectQuery implements Outputable {
 	private Table baseTable;
 
 	private List columns;
-
 	private List criteria;
-
 	private List order;
-
-	private boolean _countQuery = false;
+	private List groupBy;
 
 	public SelectQuery(Table baseTable) {
 		this.baseTable = baseTable;
 		columns = new ArrayList();
 		criteria = new ArrayList();
 		order = new ArrayList();
+		groupBy = new ArrayList();
 	}
 
 	public Table getBaseTable() {
@@ -60,6 +58,17 @@ public class SelectQuery implements Outputable {
 		addColumn(column);
 	}
 
+	public void addGroupByColumn(Column column) {
+		groupBy.add(column);
+	}
+
+	/**
+	 * Syntax sugar for addColumn(Column).
+	 */
+	public void addGroupByColumn(Table table, String columname) {
+		groupBy.add(table.getColumn(columname));
+	}
+
 	public void removeColumn(Column column) {
 		columns.remove(column);
 	}
@@ -68,8 +77,20 @@ public class SelectQuery implements Outputable {
 		columns.clear();
 	}
 
+	public void removeGroupByColumn(Column column) {
+		groupBy.remove(column);
+	}
+	
+	public void removeAllGroupByColumns() {
+		groupBy.clear();
+	}
+
 	public List listColumns() {
 		return Collections.unmodifiableList(columns);
+	}
+
+	public List listGroupByColumns() {
+		return Collections.unmodifiableList(groupBy);
 	}
 
 	public void addCriteria(Criteria criteria) {
@@ -184,6 +205,10 @@ public class SelectQuery implements Outputable {
 		this.order.remove(order);
 	}
 
+	public void removeAllOrder() {
+		this.order.clear();
+	}
+
 	public List listOrder() {
 		return Collections.unmodifiableList(order);
 	}
@@ -196,20 +221,10 @@ public class SelectQuery implements Outputable {
 
 		out.println("SELECT");
 
-		if (_countQuery) {
-			out.indent();
-			out.println("COUNT(");
-		}
-
 		// Add columns to select
 		out.indent();
 		appendList(out, columns, ",");
 		out.unindent();
-
-		if (_countQuery) {
-			out.println(")");
-			out.unindent();
-		}
 
 		// Add tables to select from
 		out.println("FROM");
@@ -226,7 +241,15 @@ public class SelectQuery implements Outputable {
 			appendList(out, criteria, "AND");
 			out.unindent();
 		}
-
+		
+		// Add group by
+		if (groupBy.size() > 0) {
+			out.println("GROUP BY");
+			out.indent();
+			appendList(out, groupBy, ",");
+			out.unindent();
+		}
+		
 		// Add order
 		if (order.size() > 0) {
 			out.println("ORDER BY");
@@ -273,7 +296,7 @@ public class SelectQuery implements Outputable {
 			Iterator i = columns.iterator();
 			while (i.hasNext()) {
 				Table curr = ((Column) i.next()).getTable();
-				if (!allTables.contains(curr)) {
+				if (curr != null && !allTables.contains(curr)) {
 					allTables.add(curr);
 				}
 			}
@@ -308,13 +331,5 @@ public class SelectQuery implements Outputable {
 		}
 
 		return allTables;
-	}
-
-	/**
-	 * @param countQuery
-	 *          The countQuery to set.
-	 */
-	public void setAsCountQuery(boolean countQuery) {
-		_countQuery = countQuery;
 	}
 }
