@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.105 2004/07/14 11:28:38 gimmi Exp $
+ * $Id: DatastoreInterface.java,v 1.106 2004/08/16 15:42:10 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1965,6 +1965,10 @@ public abstract class DatastoreInterface {
 	
 	public boolean supportsUniqueConstraintInColumnDefinition(){
 		return true;
+	}
+	
+	public boolean isCabableOfRSScroll(){
+		return false;
 	}
 	
 }

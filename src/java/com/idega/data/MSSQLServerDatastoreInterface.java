@@ -392,4 +392,8 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		 */
 	}	
 	
+	public boolean isCabableOfRSScroll(){
+		return true;
+	}
+	
 }
