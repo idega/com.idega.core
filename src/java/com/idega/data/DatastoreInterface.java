@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.122 2004/10/19 12:09:55 gummi Exp $
+ * $Id: DatastoreInterface.java,v 1.123 2004/12/02 21:27:17 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -30,7 +30,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.transaction.TransactionManager;
-import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.Gender;
 import com.idega.util.IWTimestamp;
@@ -2006,7 +2006,11 @@ public abstract class DatastoreInterface {
 	}
 
 	protected boolean isDebugActive() {
-		return IWMainApplicationSettings.isDebugActive();
+		return getIWMainApplication().getSettings().isDebugActive();
+	}
+	
+	public IWMainApplication getIWMainApplication(){
+		return IWMainApplication.getDefaultIWMainApplication();
 	}
 
 	//END STANDARD LOGGING METHODS

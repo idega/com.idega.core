@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.transaction.TransactionManager;
-
-import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.ThreadContext;
 import com.idega.util.Timer;
@@ -19,10 +17,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2004/11/01 10:05:31 $ by $Author: aron $
+ *  Last modified: $Date: 2004/12/02 21:35:09 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public class SQLSchemaCreator{
@@ -922,10 +920,13 @@ public class SQLSchemaCreator{
   	//System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getEntityName());
   	//}
   }
-  
-  protected boolean isDebugActive() {
-  	return IWMainApplicationSettings.isDebugActive();
-  }
+	protected boolean isDebugActive() {
+		return getIWMainApplication().getSettings().isDebugActive();
+	}
+	
+	public IWMainApplication getIWMainApplication(){
+		return IWMainApplication.getDefaultIWMainApplication();
+	}
   //END STANDARD LOGGING METHODS
   
 

@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 import javax.transaction.TransactionManager;
 
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.ThreadContext;
@@ -1106,9 +1107,13 @@ public class IDOTableCreator{
   	//}
   }
   
-  protected boolean isDebugActive() {
-  	return IWMainApplicationSettings.isDebugActive();
-  }
+	protected boolean isDebugActive() {
+		return getIWMainApplication().getSettings().isDebugActive();
+	}
+	
+	public IWMainApplication getIWMainApplication(){
+		return IWMainApplication.getDefaultIWMainApplication();
+	}
   //END STANDARD LOGGING METHODS
   
 

@@ -44,6 +44,7 @@ import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
@@ -4827,8 +4828,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	
 	protected boolean isDebugActive() {
-		return IWMainApplicationSettings.isDebugActive();
+		return getIWMainApplication().getSettings().isDebugActive();
 	}
+	
+	public IWMainApplication getIWMainApplication(){
+		return IWMainApplication.getDefaultIWMainApplication();
+	}
+	
 	//END STANDARD LOGGING METHODS
 	
 	/**
