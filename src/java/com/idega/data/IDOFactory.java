@@ -129,7 +129,7 @@ public abstract class IDOFactory implements IDOHome{
     return theReturn;
   }
 
-  protected IDOLegacyEntity idoCheckOutPooledEntity(){
+  protected IDOEntity idoCheckOutPooledEntity(){
     /**
      * @todo: Change implementation
      */
@@ -137,7 +137,7 @@ public abstract class IDOFactory implements IDOHome{
   }
 
 
-  protected void idoCheckInPooledEntity(IDOLegacyEntity entity){
+  protected void idoCheckInPooledEntity(IDOEntity entity){
     /**
      * @todo: implement
      */
