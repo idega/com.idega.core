@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.126 2005/01/13 23:54:06 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.127 2005/01/14 00:27:53 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/01/13 23:54:06 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/01/14 00:27:53 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.126 $
+ * @version $Revision: 1.127 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -224,14 +224,6 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     public void loadBundles() {
-        bundlesFile = new Properties();
-        try {
-            bundlesFileFile = FileUtil.getFileAndCreateIfNotExists(this
-                    .getPropertiesRealPath(), bundlesFileName);
-            bundlesFile.load(new FileInputStream(bundlesFileFile));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         checkForInstalledBundles();
         loadBundlesLocalizationsForJSF();
     }
@@ -612,6 +604,16 @@ public class IWMainApplication //{//implements ServletContext{
     }
 
     private Properties getBundlesFile() {
+    		if(bundlesFile==null){
+    	        bundlesFile = new Properties();
+    	        try {
+    	            bundlesFileFile = FileUtil.getFileAndCreateIfNotExists(this
+    	                    .getPropertiesRealPath(), bundlesFileName);
+    	            bundlesFile.load(new FileInputStream(bundlesFileFile));
+    	        } catch (Exception e) {
+    	            e.printStackTrace();
+    	        }
+    		}
         return bundlesFile;
     }
 
