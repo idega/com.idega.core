@@ -21,6 +21,7 @@ import javax.ejb.FinderException;
 import com.idega.data.query.Criteria;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.JoinCriteria;
+import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.Order;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
@@ -332,11 +333,29 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		if(_loadQueryBase==null){
 			subsetQuery = new SelectQuery(sqlQueryTable);
 			subsetQuery.addColumn(new WildCardColumn(sqlQueryTable));
-			subsetQuery.addCriteria(new InCriteria(sqlQueryTable,pkColumnName,listOfPrimaryKeys));
+			if(listOfPrimaryKeys.size()==1){
+				Object pk = listOfPrimaryKeys.get(0);
+				if(pk instanceof String){
+					subsetQuery.addCriteria(new MatchCriteria(sqlQueryTable,pkColumnName,MatchCriteria.EQUALS,(String)pk,true));
+				} else {
+					subsetQuery.addCriteria(new MatchCriteria(sqlQueryTable,pkColumnName,MatchCriteria.EQUALS,pk));
+				}
+			} else {
+				subsetQuery.addCriteria(new InCriteria(sqlQueryTable,pkColumnName,listOfPrimaryKeys));
+			}
 		} else {
 			subsetQuery = (SelectQuery)_loadQueryBase.clone();
 			subsetQuery.removeAllCriteria();
-			subsetQuery.addCriteria(new InCriteria(sqlQueryTable,pkColumnName,listOfPrimaryKeys));
+			if(listOfPrimaryKeys.size()==1){
+				Object pk = listOfPrimaryKeys.get(0);
+				if(pk instanceof String){
+					subsetQuery.addCriteria(new MatchCriteria(sqlQueryTable,pkColumnName,MatchCriteria.EQUALS,(String)pk,true));
+				} else {
+					subsetQuery.addCriteria(new MatchCriteria(sqlQueryTable,pkColumnName,MatchCriteria.EQUALS,pk));
+				}
+			} else {
+				subsetQuery.addCriteria(new InCriteria(sqlQueryTable,pkColumnName,listOfPrimaryKeys));
+			}
 			
 			if(_returnProxy!=null){
 				subsetQuery.removeAllColumns();
