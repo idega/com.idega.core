@@ -45,9 +45,12 @@ public class InformixDatastoreInterface extends DatastoreInterface{
 			theReturn = "VARCHAR("+maxlength+")";
 
 		}
-		else{
+		else if (maxlength<=2000){
 			theReturn = "LVARCHAR";
 		}
+        else{
+			theReturn = "TEXT";
+        }
 
 
     }
