@@ -1200,20 +1200,29 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * it will return a date string, if it's a time setting, a time string.
 	 * @return String
 	 */
-	public String toSQLString() {
+	public String toSQLString(boolean cutOfMilliseconds) {
 		if (isDate())
 			return toSQLDateString();
 		else if (isTime())
 			return toSQLTimeString();
 		else{
 			String theTimestampString = getTimestamp().toString();
-			if(CUT_MILLISECONDS_OFF_IN_TOSTRING){
+			if(cutOfMilliseconds){
 				return theTimestampString.substring(0,19);
 			}
 			else{
 				return theTimestampString;
 			}
 		}
+	}
+	
+	/**
+	 * Returns an SQL string for the given settings.  If the IWTimestamp is a date setting
+	 * it will return a date string, if it's a time setting, a time string.
+	 * @return String
+	 */
+	public String toSQLString() {
+		return toSQLString(CUT_MILLISECONDS_OFF_IN_TOSTRING);
 	}
 
 	/**
@@ -1229,9 +1238,9 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return String
 	 * @see java.lang.Object#toString()
 	 */
-	public String toString() {
+	public String toString(boolean cutOfMilliseconds) {
 		String theString = this.getTimestamp().toString();
-		if(CUT_MILLISECONDS_OFF_IN_TOSTRING){
+		if(cutOfMilliseconds){
 			return theString.substring(0,19);
 		}
 		else{
@@ -1239,6 +1248,14 @@ public class IWTimestamp implements Comparable,Cloneable {
 		}
 	}
 	
+	/**
+	 * Returns an SQL string for the given date and time settings.
+	 * @return String
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return toString(CUT_MILLISECONDS_OFF_IN_TOSTRING);
+	}	
 	public Object clone(){
 		try {
 			IWTimestamp obj = (IWTimestamp)super.clone();
