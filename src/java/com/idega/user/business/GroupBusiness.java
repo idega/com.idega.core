@@ -22,6 +22,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.User;
+import com.idega.util.datastructures.NestedSetsContainer;
 
 public interface GroupBusiness extends com.idega.business.IBOService {
 
@@ -508,5 +509,9 @@ public interface GroupBusiness extends com.idega.business.IBOService {
 	  	 */
 	  	public void setMetaDataFromLDAPAttributes(Group group, DN distinguishedName, Attributes attributes);
 		public Collection getGroupsByLDAPAttribute(String key, String value);
-	  	
+		
+		public NestedSetsContainer getLastGroupTreeSnapShot() throws EJBException;
+		public void refreshGroupTreeSnapShotInANewThread();
+		public void refreshGroupTreeSnapShot() throws EJBException;
+		public boolean userGroupTreeImageProcedureTopNodeSearch();
 }

@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -22,7 +21,6 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
-
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
@@ -62,6 +60,7 @@ import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.GroupTypeHome;
+import com.idega.user.data.ParentGroupsRecursiveProcedure;
 import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.data.UserGroupPlugInHome;
@@ -69,6 +68,7 @@ import com.idega.user.data.UserGroupRepresentative;
 import com.idega.user.data.UserGroupRepresentativeHome;
 import com.idega.user.data.UserHome;
 import com.idega.util.ListUtil;
+import com.idega.util.datastructures.NestedSetsContainer;
 
  /**
   * <p>Title: GroupBusinessBean</p>
@@ -93,6 +93,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
   private ICFileHome fileHome;
   private String[] userRepresentativeType;
   private static final String GROUP_HOME_FOLDER_LOCALIZATION_PREFIX = "ic_group.home_folder.";
+  
+  private NestedSetsContainer groupTreeSnapShot = null;
 
 
   public GroupBusinessBean() {
@@ -188,7 +190,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
  */
   public  Collection getGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws Exception {
     Collection result = getGroupHome().findAllGroups(groupTypes,returnSpecifiedGroupTypes);
-    if(result != null){
+    if(result != null){ //TODO move from business level to data level by using 'NOT IN (_list_of_standard_group_ids_)' 
       result.removeAll(getAccessController().getStandardGroups());
     }
     return result;
@@ -375,11 +377,24 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   	return getParentGroupsRecursive(aGroup, groupTypes, returnSpecifiedGroupTypes, null, null);
   }
 
+  
+
+  private  Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes, Map cachedParents, Map cachedGroups) throws EJBException{  	
+  	if(useStoredProsedureGettingParentGroupsRecursive()){
+  		return getParentGroupsRecursiveUsingStoredProcedure(aGroup,groupTypes,returnSpecifiedGroupTypes);
+  	} else {
+  		return getParentGroupsRecursiveNotUsingStoredProcedure(aGroup,groupTypes,returnSpecifiedGroupTypes,cachedParents,cachedGroups);
+  	}
+  }
+  
+  
+  
+  
 /**
  * Optimized version of getParentGroupsRecursive(Group,String[],boolean) by Sigtryggur 22.06.2004
  * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
  */
-  public  Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes, Map cachedParents, Map cachedGroups) throws EJBException{  	
+  private  Collection getParentGroupsRecursiveNotUsingStoredProcedure(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes, Map cachedParents, Map cachedGroups) throws EJBException{  	
   //public  Collection getGroupsContaining(Group groupContained, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws EJBException,RemoteException{
 
 	Collection groups = aGroup.getParentGroups(cachedParents, cachedGroups);
@@ -2107,8 +2122,84 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 		return groups;
 	}
 	
+    private  Collection getParentGroupsRecursiveUsingStoredProcedure(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException{  	
+    		return ParentGroupsRecursiveProcedure.getInstance().findParentGroupsRecursive(aGroup,groupTypes,returnSpecifiedGroupTypes);
+    }
+    
+    private boolean useStoredProsedureGettingParentGroupsRecursive(){
+    		return false; //ParentGroupsRecursiveProcedure.getInstance().isAvailable();
+    }
+	
+	
+	public NestedSetsContainer getLastGroupTreeSnapShot() throws EJBException {
+		if(groupTreeSnapShot==null){
+			refreshGroupTreeSnapShot();
+		}
+		return groupTreeSnapShot;
+	}
+	
+	public void refreshGroupTreeSnapShotInANewThread(){
+		try {
+			GroupTreeRefreshThread thread = new GroupTreeRefreshThread();
+			thread.start();
+		}
+		catch (RuntimeException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void refreshGroupTreeSnapShot() throws EJBException {
+		try {
+			Collection domainTopNodes = this.getIWApplicationContext().getDomain().getTopLevelGroupsUnderDomain();
+			NestedSetsContainer nsc = new NestedSetsContainer();
+			Iterator iter = domainTopNodes.iterator();
+			while(iter.hasNext()){
+				nsc.add(GroupTreeImageProcedure.getInstance().getGroupTree((Group)iter.next()));
+			}
+			groupTreeSnapShot=nsc;
+		}
+		catch (Exception e) {
+			throw new EJBException(e);
+		}
+	}
+	
+	public boolean userGroupTreeImageProcedureTopNodeSearch(){
+		return GroupTreeImageProcedure.getInstance().isAvailable();
+	}
+	
+	/**
+	 * 
+	 *  Last modified: $Date: 2004/09/07 13:21:44 $ by $Author: gummi $
+	 * 
+	 * @author <a href="mailto:gummi@idega.com">gummi</a>
+	 * @version $Revision: 1.69 $
+	 */
+	public class GroupTreeRefreshThread extends Thread {
+		
+		/**
+		 * 
+		 */
+		public GroupTreeRefreshThread() {
+			super();
+		}
+		
+		public void run() {
+			try {
+				refreshGroupTreeSnapShot();
+			}
+			catch (EJBException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+
+	}
+	
 	
 } // Class
+
+
 
 
 
