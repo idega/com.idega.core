@@ -3832,6 +3832,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		else
 			return false;
 	}
+	
+	public void clearMetaDataVectors(){
+		_insertMetaDataVector = null;
+		_updateMetaDataVector = null;
+		_deleteMetaDataVector = null;
+	}
+	
+
+	
+	
+	
 	public Hashtable getMetaDataAttributes()
 	{
 		return _theMetaDataAttributes;
@@ -3859,6 +3870,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	public void metaDataHasChanged(boolean metaDataHasChanged)
 	{
 		_metaDataHasChanged = metaDataHasChanged;
+		
+		if(!_metaDataHasChanged){
+			clearMetaDataVectors();
+		}
 	}
 
 	public void setEJBLocalHome(javax.ejb.EJBLocalHome ejbHome)
