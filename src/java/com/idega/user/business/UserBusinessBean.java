@@ -151,7 +151,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       middleName = (middleName==null) ? "" : middleName;
       lastName = (lastName==null) ? "" : lastName;
 
-      fullName.append(firstName).append("").append(middleName).append("").append(lastName);
+      fullName.append(firstName).append(" ").append(middleName).append(" ").append(lastName);
 
       userToAdd.setFullName(fullName.toString());
 
