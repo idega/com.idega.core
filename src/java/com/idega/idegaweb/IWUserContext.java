@@ -10,6 +10,8 @@ import com.idega.core.accesscontrol.business.AccessController;
 
 
 import com.idega.presentation.PresentationObject;
+import com.idega.user.business.UserProperties;
+
 import java.util.List;
 import com.idega.core.data.ICObject;
 
@@ -33,6 +35,7 @@ public interface IWUserContext extends java.io.Serializable{
   public User getUser();
   public AccessController getAccessController();
   public IWApplicationContext getApplicationContext();
+  public UserProperties getUserProperties();
 
 
 
