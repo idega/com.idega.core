@@ -269,6 +269,17 @@ public class Form extends InterfaceObjectContainer {
 		}
 		maintainedParameters.addElement(parameterName);
 	}
+	
+	/**
+	 * Creates a hidden fields for each param if there is an action on the form again
+	 */
+	public void maintainParameters(List params) {
+		if (maintainedParameters == null) {
+			maintainedParameters = new Vector();
+		}
+		
+		maintainedParameters.addAll(params);
+	}
 
 	/*
 	 *
