@@ -13,6 +13,13 @@ public class GroupRelationTypeHomeImpl extends com.idega.data.IDOFactory impleme
  }
 
 
+public java.util.Collection findAll()throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupRelationTypeBMPBean)entity).ejbFindAll();
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
  public GroupRelationType findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (GroupRelationType) super.findByPrimaryKeyIDO(pk);
  }

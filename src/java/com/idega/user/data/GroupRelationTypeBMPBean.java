@@ -1,5 +1,9 @@
 package com.idega.user.data;
 
+import java.util.Collection;
+
+import javax.ejb.FinderException;
+
 import com.idega.data.*;
 
 
@@ -52,6 +56,10 @@ public class GroupRelationTypeBMPBean extends GenericEntity implements GroupRela
 
   public Class getPrimaryKeyClass(){
     return String.class;
+  }
+  
+  public Collection ejbFindAll() throws FinderException{
+  	return super.idoFindAllIDsBySQL();
   }
 
 
