@@ -30,6 +30,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   boolean showRootNode = false;
   boolean showRootNodeTreeIcons = false;
   int defaultOpenLevel = 1;
+  int _cols = 1;
 
   private static final String TREEVIEW_PREFIX = "treeviewer/ui/";
 
@@ -80,7 +81,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
   private boolean _showSuperRootNode = false;
   private String _superRootNodeName = "Root";
   private Image _superRootNodeIcon = null;
-  private boolean _showTreeIcons = false;
+  private boolean _showTreeIcons = true;
   private boolean _showTreeIcons_changed = false;
 
   public AbstractTreeViewer() {
@@ -131,7 +132,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
     }else {
       for (int i = 0; i < icons.length; i++) {
         if(icons[i] == null){
-          icons[i] = bundle.getImage(TREEVIEW_PREFIX+getUI()+trancparentImageUrl);
+          icons[i] = Table.getTransparentCell(iwc);
         }
       }
     }
@@ -566,6 +567,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer {
 
 
   public void setColumns(int cols){
+    _cols = cols;
     nodeTable.resize(cols+1,nodeTable.getRows());
   }
 
