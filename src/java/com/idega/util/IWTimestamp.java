@@ -813,6 +813,30 @@ public class IWTimestamp implements Comparable {
 	 * See <code>SimpleDateFormat</code> for more details on available pattern symbols.
 	 * 
 	 * @param pattern		The pattern to use to format the current date
+	 * @param locale		The locale to use to format the current date
+	 * @return String
+	 * @see SimpleDateFormat
+	 */
+	public String getDateString(String pattern, Locale locale) {
+		SimpleDateFormat format = new SimpleDateFormat(pattern, locale);
+		return format.format(calendar.getTime());
+	}
+
+	/**
+	 * Returns a date string according to the supplied pattern.<br><br>
+	 * Examples:<br>
+	 * yyyy-MM-dd kk:mm:ss.S => 1970-10-06 03:00:00.0<br>
+	 * "yyyy.MM.dd G 'at' HH:mm:ss z" => 2001.07.04 AD at 12:08:56 PDT<br>
+	 * "EEE, MMM d, ''yy" => Wed, Jul 4, '01<br>
+	 * "h:mm a" => 12:08 PM<br>
+	 * "hh 'o''clock' a, zzzz" => 12 o'clock PM, Pacific Daylight Time<br>
+	 * "K:mm a, z" => 0:08 PM, PDT<br>
+	 * "yyyyy.MMMMM.dd GGG hh:mm aaa" => 02001.July.04 AD 12:08 PM <br>
+	 * "EEE, d MMM yyyy HH:mm:ss Z" => Wed, 4 Jul 2001 12:08:56 -0700<br> 
+	 * "yyMMddHHmmssZ" => 010704120856-0700<br><br>
+	 * See <code>SimpleDateFormat</code> for more details on available pattern symbols.
+	 * 
+	 * @param pattern		The pattern to use to format the current date
 	 * @return String
 	 * @see SimpleDateFormat
 	 */
