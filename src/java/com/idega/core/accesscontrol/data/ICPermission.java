@@ -2,6 +2,8 @@ package com.idega.core.accesscontrol.data;
 
 import javax.ejb.*;
 
+import com.idega.user.data.User;
+
 public interface ICPermission extends com.idega.data.IDOEntity,com.idega.data.IDOLegacyEntity
 {
  public java.lang.String getPermissionStringValue();
@@ -30,6 +32,6 @@ public interface ICPermission extends com.idega.data.IDOEntity,com.idega.data.ID
  public boolean isActive();
  public boolean isPassive();
  public void setActive();
-
+ public void removeBy(User currentUser);
  	
 }
