@@ -12,7 +12,7 @@ import javax.ejb.RemoveException;
 
 import com.idega.core.data.ICTreeNode;
 import com.idega.data.GenericEntity;
-import com.idega.data.IDOCompositPrimaryKeyException;
+import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOLookup;
@@ -471,7 +471,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	 * @throws IDOLookupException
 	 * @throws IDOCompositPrimaryKeyException
 	 */
-	protected IDOQuery idoQueryJointGroupQuery() throws IDOLookupException, IDOCompositPrimaryKeyException{
+	protected IDOQuery idoQueryJointGroupQuery() throws IDOLookupException, IDOCompositePrimaryKeyException{
 		IDOQuery query = idoQuery();
 		query.appendSelect();
 		query.append(SQL_JOINT_VARIABLE_RELATED_ABSTRACTGROUP+".*");

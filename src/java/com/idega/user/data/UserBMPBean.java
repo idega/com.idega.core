@@ -21,7 +21,7 @@ import com.idega.core.contact.data.EmailBMPBean;
 import com.idega.core.contact.data.Phone;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
-import com.idega.data.IDOCompositPrimaryKeyException;
+import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFinderException;
@@ -1409,7 +1409,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			// AND created > '18.11.2002 16:31:06'
 			//select gr.created,usr.* from IC_USER usr, IC_GROUP gr WHERE usr.IC_USER_ID=gr.IC_GROUP_ID AND created > '18.11.2002 16:31:06' ORDER BY gr.CREATED  desc
 					return idoFindPKsByQuery(query); 
-		} catch (IDOCompositPrimaryKeyException e) {
+		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 			return ListUtil.getEmptyList();
 		}
@@ -1509,7 +1509,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		System.out.println("SQL -> "+this.getClass()+":"+query);
 		return idoFindPKsByQuery(query); 
   	
-	} catch (IDOCompositPrimaryKeyException e) {
+	} catch (IDOCompositePrimaryKeyException e) {
 		e.printStackTrace();
 		return ListUtil.getEmptyList();
 	}
@@ -1596,7 +1596,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			System.out.println("SQL -> "+this.getClass()+":"+query);
 			return idoFindPKsByQuery(query); 
 	  	
-		} catch (IDOCompositPrimaryKeyException e) {
+		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 			return ListUtil.getEmptyList();
 		}
