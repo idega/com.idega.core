@@ -199,7 +199,7 @@ public class IDOEntityList implements List {
   public class IDOEntityIterator implements ListIterator {
 
     private IDOEntityList _list;
-	private int _index;
+	private int _index=0;
 	private Object lastObject;
 	private boolean _hasPrevious=false;
 
@@ -269,13 +269,13 @@ public class IDOEntityList implements List {
 
     public void set(Object o) {
     		if (o instanceof IDOEntity)
-	 		_list.set(_index,((IDOEntity)o));
+	 		_list.set(_index-1,((IDOEntity)o));
 	 	else
 	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
     }
     public void add(Object o) {
     		if (o instanceof IDOEntity)
-	 		_list.add(_index+1,((IDOEntity)o));
+	 		_list.add(_index,((IDOEntity)o));
 	 	else
 	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
     }
