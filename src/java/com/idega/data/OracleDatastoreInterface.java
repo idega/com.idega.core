@@ -132,6 +132,37 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			}
 		}
 	}
+	
+	
+	
+	public void createSequence(IDOLegacyEntity entity) throws Exception {
+		createSequence(entity, 1);
+	}
+	public void createSequence(IDOLegacyEntity entity, int startNumber) throws Exception {
+		Connection conn = null;
+		Statement Stmt = null;
+		try {
+			conn = entity.getConnection();
+			Stmt = conn.createStatement();
+			String seqCreate =
+				"create sequence "
+					+ entity.getTableName()
+					+ "_seq INCREMENT BY 1 START WITH "
+					+ startNumber
+					+ " MAXVALUE 1.0E28 MINVALUE 0 NOCYCLE CACHE 20 NOORDER";
+			int i = Stmt.executeUpdate(seqCreate);
+		}
+		finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (conn != null) {
+				entity.freeConnection(conn);
+			}
+		}
+	}
+	
+	/*
 	public void createSequence(IDOLegacyEntity entity) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
@@ -152,7 +183,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 				entity.freeConnection(conn);
 			}
 		}
-	}
+	}*/
 	public void deleteEntityRecord(IDOLegacyEntity entity) throws Exception {
 		super.deleteEntityRecord(entity);
 		deleteTrigger(entity);
@@ -280,6 +311,9 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	protected String getCreateUniqueIDQuery(IDOLegacyEntity entity) {
 		return "SELECT " + getOracleSequenceName(entity) + ".nextval FROM dual";
 	}
+	private static String getSequenceName(IDOLegacyEntity entity) {
+		return getOracleSequenceName(entity);
+	}
 	private static String getOracleSequenceName(IDOLegacyEntity entity) {
 		String entityName = entity.getTableName();
 		return entityName + "_seq";
@@ -290,4 +324,19 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		return entityName+"_seq";
 		}*/
 	}
+
+
+	public void setNumberGeneratorValue(IDOLegacyEntity entity, int value) {
+		//throw new RuntimeException("setSequenceValue() not implemented for "+this.getClass().getName());
+		//String statement = "update sequences set last_number="+value+" where sequence_name='"+this.getSequenceName(entity)+"'";
+		String statement = "drop sequence " + this.getSequenceName(entity);
+		try {
+			this.executeUpdate(entity, statement);
+			this.createSequence(entity, value + 1);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
