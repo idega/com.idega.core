@@ -123,7 +123,7 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
     	sql.append(" and in_stamp < ");
     	sql.append(" (select max(in_stamp) from ic_login_rec r2,ic_login l2 where r2.ic_login_id = l2.ic_login_id  ");
     	sql.append(" and l2.ic_user_id = ").append(userID).append(" ) ");
-    	System.out.println(sql.toString());
+    	
     	try {
 			return getDateTableValue(sql.toString());
 		} catch (SQLException e) {
