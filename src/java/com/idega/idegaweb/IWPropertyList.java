@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.15 2002/09/18 08:29:47 laddi Exp $
+ * $Id: IWPropertyList.java,v 1.16 2003/07/21 10:46:48 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -308,9 +308,14 @@ public class IWPropertyList {
 		XMLParser builder = new XMLParser(false);
 		xmlFile = file;
 		try {
-			xmlDocument = builder.parse(xmlFile);
-			parentElement = xmlDocument.getRootElement();
-			mapElement = getMapElement();
+			if(file.exists()){
+				xmlDocument = builder.parse(xmlFile);
+				parentElement = xmlDocument.getRootElement();
+				mapElement = getMapElement();
+			}
+			else{
+				System.err.println("Property file does not exist : "+xmlFile);
+			}
 
 		}
 		catch (XMLException e) {
