@@ -196,6 +196,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	protected void endIdegaDatabasePool() {
 		PoolManager.getInstance().release();
 	}
+	
 	/**
 	 * Adds the .jar files in /WEB-INF/classes to the ClassPath
 	 */
@@ -542,11 +543,13 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		//IWMainApplication application = IWMainApplication.getIWMainApplication(getServletContext());
 		//IWMainApplication application = iwma;
 		iwma.getSettings().setProperty("last_shutdown", com.idega.util.IWTimestamp.RightNow().toString());
-		endDatabasePool();
 		IWStyleManager iwStyleManager = new IWStyleManager(iwma);
 		sendShutdownMessage("Saving style sheet");
 		iwStyleManager.writeStyleSheet();
 		iwma.unload();
+		// some bundle starters have initialized threads that are using the database
+		// therefore stop first and then end database pool
+		endDatabasePool();
 		sendShutdownMessage("Completed");
 	}
 	public void sendStartMessage(String message) {
