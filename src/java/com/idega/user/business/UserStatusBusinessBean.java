@@ -19,6 +19,7 @@ import com.idega.business.IBOServiceBean;
 public class UserStatusBusinessBean extends IBOServiceBean implements UserStatusBusiness {
 	public boolean setUserGroupStatus(int user_id, int group_id, int status_id) {
 		
+		
 		return true;
 	}
 }
