@@ -6,7 +6,7 @@ import com.idega.user.data.*;
 import com.idega.user.business.GroupBusiness;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.data.*;
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 import java.util.Collection;
 import com.idega.core.data.Email;
 import com.idega.data.EntityFinder;
@@ -133,11 +133,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   /**
    * @deprecated replaced with createUser
    */
-  public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimeStamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
+  public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
       return createUser(firstname,middlename,lastname,displayname,null,description,gender,date_of_birth,primary_group);
   }
 
-  public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimeStamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
+  public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws CreateException,RemoteException{
     try{
       User userToAdd = getUserHome().create();
 
@@ -261,12 +261,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   /**
    * Creates a new user with a firstname,middlename, lastname ,personalID, gender and date of birth where middlename,personalID,gender,dateofbirth can be null
    */
-  public User createUser(String firstname, String middlename, String lastname,String personalID, Gender gender, IWTimeStamp dateOfBirth) throws CreateException,RemoteException{
+  public User createUser(String firstname, String middlename, String lastname,String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException,RemoteException{
       return createUser(firstname,middlename,lastname,null,personalID,null,(Integer)gender.getPrimaryKey(),dateOfBirth,null);
   }
 
 
-  public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimeStamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimeStamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException{
+  public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime,String encryptionType) throws CreateException{
       UserTransaction transaction = this.getSessionContext().getUserTransaction();
       try{
         transaction.begin();
@@ -586,12 +586,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     }
   }
 
-  public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimeStamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
+  public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
     User userToUpdate = this.getUser(user_id);
     this.updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, date_of_birth, primary_group);
   }
 
-  public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimeStamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
+  public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group ) throws EJBException,RemoteException {
 
     if(firstname != null){
       userToUpdate.setFirstName(firstname);

@@ -7,7 +7,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Text;
 import com.idega.core.user.business.UserBusiness;
 //import com.idega.block.staff.data.StaffInfo;
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import com.idega.core.user.presentation.UserTab;

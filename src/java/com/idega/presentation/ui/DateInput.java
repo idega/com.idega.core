@@ -1,6 +1,6 @@
 /*
 
- * $Id: DateInput.java,v 1.16 2002/08/12 12:15:24 palli Exp $
+ * $Id: DateInput.java,v 1.17 2002/08/12 12:59:32 palli Exp $
 
  *
 
@@ -322,7 +322,7 @@ private void addMenuElementsToDropdowns(){
 
 
 
-        IWTimeStamp stamp = IWTimeStamp.RightNow();
+        IWTimestamp stamp = IWTimestamp.RightNow();
 
         int currentYear = stamp.getYear();
 

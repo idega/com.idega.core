@@ -2,7 +2,7 @@ package com.idega.core.accesscontrol.business;
 
 import javax.servlet.http.HttpSession;
 import com.idega.core.user.data.User;
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 
 /**
  * Title:        idegaWeb
@@ -17,7 +17,7 @@ public class LoggedOnInfo {
 
   private User _user = null;
   private HttpSession _session = null;
-  private IWTimeStamp _timeOfLogon = null;
+  private IWTimestamp _timeOfLogon = null;
   private String _login = null;
   private int _loginRecordId = -1;
 
@@ -33,7 +33,7 @@ public class LoggedOnInfo {
     _session = session;
   }
 
-  public void setTimeOfLogon(IWTimeStamp timeOfLogon){
+  public void setTimeOfLogon(IWTimestamp timeOfLogon){
     _timeOfLogon = timeOfLogon;
   }
 
@@ -54,7 +54,7 @@ public class LoggedOnInfo {
     return _session;
   }
 
-  public IWTimeStamp getTimeOfLogon(){
+  public IWTimestamp getTimeOfLogon(){
     return _timeOfLogon;
   }
 

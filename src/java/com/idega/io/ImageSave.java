@@ -8,7 +8,7 @@ import java.sql.*;
 
 import com.idega.presentation.IWContext;
 
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 
 import oracle.sql.*;
 
@@ -118,9 +118,9 @@ public class ImageSave {
 
         id = com.idega.data.EntityControl.createUniqueID(com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity"));
 
-        if( dimensions ) statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id,width,height) values("+id+",?,?,?,'"+IWTimeStamp.getTimestampRightNow().toString()+"','N',"+parentImageId+",?,?)";
+        if( dimensions ) statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id,width,height) values("+id+",?,?,?,'"+IWTimestamp.getTimestampRightNow().toString()+"','N',"+parentImageId+",?,?)";
 
-        else statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,'"+IWTimeStamp.getTimestampRightNow().toString()+"','N',"+parentImageId+")";
+        else statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,'"+IWTimestamp.getTimestampRightNow().toString()+"','N',"+parentImageId+")";
 
       }
 
@@ -212,9 +212,9 @@ System.out.println("ImageSave : height ="+height);
 
         id = com.idega.data.EntityControl.createUniqueID(com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity"));
 
-        if(dimensions) statement = "insert into image (image_id,image_value,content_type,image_name,width,height,date_added,from_file,parent_id) values("+id+",?,?,?,?,?,"+IWTimeStamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
+        if(dimensions) statement = "insert into image (image_id,image_value,content_type,image_name,width,height,date_added,from_file,parent_id) values("+id+",?,?,?,?,?,"+IWTimestamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
 
-        else statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,"+IWTimeStamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
+        else statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,"+IWTimestamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
 
       }
 

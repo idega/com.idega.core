@@ -39,7 +39,7 @@ public abstract class IBOTimedServiceBean extends IBOServiceBean implements Runn
    *
    */
   public java.util.Date getDateOnNextRun(){
-    com.idega.util.IWTimeStamp stamp = com.idega.util.IWTimeStamp.RightNow();
+    com.idega.util.IWTimestamp stamp = com.idega.util.IWTimestamp.RightNow();
     stamp.addMinutes((int)getTimeUntilNextRun()/(1000*60));
     return stamp.getSQLDate();
     //return 1000*60*60;

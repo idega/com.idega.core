@@ -22,7 +22,7 @@ import com.idega.presentation.IWContext;
  * @author idega 2000 - idega team
  * @version 1.0
  */
-public class IWTimeStamp {
+public class IWTimestamp {
 	public static final String FIRST_SECOND_OF_DAY = "00:00:00.0000";
 	public static final String LAST_SECOND_OF_DAY = "23:59:59.9999";
 
@@ -30,29 +30,29 @@ public class IWTimeStamp {
 	private boolean isDate;
 	private boolean isTime;
 
-	public IWTimeStamp() {
+	public IWTimestamp() {
 		Calendar = new GregorianCalendar();
 	}
 
 	/**
 	 * utfærir smiðinn Timestamp(long time).
 	 */
-	public IWTimeStamp(long time) {
+	public IWTimestamp(long time) {
 		this(new Timestamp(time));
 	}
 
-	public IWTimeStamp(IWTimeStamp time) {
+	public IWTimestamp(IWTimestamp time) {
 		Calendar = (GregorianCalendar) time.getGregorianCalendar().clone();
 	}
 
 	/**
-	 * GregorianCalendar geymir manuði frá 0 til 11 en IWTimeStamp frá 1 til 12. Ekki þarf að taka tillit til þess þvi klasinn leiðrettir það sjalfur.
+	 * GregorianCalendar geymir manuði frá 0 til 11 en IWTimestamp frá 1 til 12. Ekki þarf að taka tillit til þess þvi klasinn leiðrettir það sjalfur.
 	 */
-	public IWTimeStamp(GregorianCalendar theCalendar) {
+	public IWTimestamp(GregorianCalendar theCalendar) {
 		Calendar = theCalendar;
 	}
 
-	public IWTimeStamp(Timestamp time) {
+	public IWTimestamp(Timestamp time) {
 		String TimeString = time.toString();
 
 		StringTokenizer tokens = new StringTokenizer(TimeString);
@@ -71,7 +71,7 @@ public class IWTimeStamp {
 	/**
 	 * setur 0 fyrir hour, minute og second og lætur is_SQLDate() skila true. toString() skilar einnig aðeins Date-hlutanum
 	 */
-	public IWTimeStamp(java.sql.Date date) {
+	public IWTimestamp(java.sql.Date date) {
 		isDate = true;
 
 		String TimeString = date.toString();
@@ -83,12 +83,12 @@ public class IWTimeStamp {
 		Calendar = new GregorianCalendar(year, month - 1, day, 0, 0, 0);
 	}
 
-	public IWTimeStamp(int day, int month, int year) {
+	public IWTimestamp(int day, int month, int year) {
 		isDate = true;
 		Calendar = new GregorianCalendar(year, month - 1, day, 0, 0, 0);
 	}
 
-	public IWTimeStamp(String day, String month, String year) {
+	public IWTimestamp(String day, String month, String year) {
 		isDate = true;
 		Calendar = new GregorianCalendar(Integer.parseInt(year), (Integer.parseInt(month) - 1), Integer.parseInt(day), 0, 0, 0);
 	}
@@ -96,7 +96,7 @@ public class IWTimeStamp {
 	/**
 	 * setur 1 fyrir year, month og date og lætur is_SQLTime() skila true. toString() skilar einnig aðeins Time-hlutanum
 	 */
-	public IWTimeStamp(Time time) {
+	public IWTimestamp(Time time) {
 		isTime = true;
 
 		String TimeString = time.toString();
@@ -111,26 +111,26 @@ public class IWTimeStamp {
 	/**
 	 * String-format 'yyyy-mm-dd hh:mm:ss' || 'yyyy-mm-dd' || 'hh:mm:ss'
 	 */
-	public IWTimeStamp(String SQLFormat) {
+	public IWTimestamp(String SQLFormat) {
 		this();
 		String TimeString = SQLFormat;
 
 		if (TimeString.length() == 10) {
-			Calendar = new IWTimeStamp(java.sql.Date.valueOf(SQLFormat)).getGregorianCalendar();
+			Calendar = new IWTimestamp(java.sql.Date.valueOf(SQLFormat)).getGregorianCalendar();
 			isDate = true;
 		}
 		else if (TimeString.length() == 8) {
-			Calendar = new IWTimeStamp(Time.valueOf(SQLFormat)).getGregorianCalendar();
+			Calendar = new IWTimestamp(Time.valueOf(SQLFormat)).getGregorianCalendar();
 			isTime = true;
 		}
 		else
-			Calendar = new IWTimeStamp(Timestamp.valueOf(SQLFormat)).getGregorianCalendar();
+			Calendar = new IWTimestamp(Timestamp.valueOf(SQLFormat)).getGregorianCalendar();
 	}
 
 	/**
 	 *   Her skal skrifa numer manaðar frá 1 til 12
 	 */
-	public IWTimeStamp(int year, int month, int date, int hour, int minute, int second) {
+	public IWTimestamp(int year, int month, int date, int hour, int minute, int second) {
 		Calendar = new GregorianCalendar(year, month - 1, date, hour, minute, second);
 	}
 
@@ -186,14 +186,14 @@ public class IWTimeStamp {
 		isTime = true;
 	}
 	public boolean equals(Object object) {
-		if (object instanceof IWTimeStamp) {
-			return equals((IWTimeStamp) object);
+		if (object instanceof IWTimestamp) {
+			return equals((IWTimestamp) object);
 		}
 		else {
 			return super.equals(object);
 		}
 	}
-	public boolean equals(IWTimeStamp compareStamp) {
+	public boolean equals(IWTimestamp compareStamp) {
 		if (!this.isTime && !this.isDate) {
 			return (this.getYear() == compareStamp.getYear() && this.getMonth() == compareStamp.getMonth() && this.getDay() == compareStamp.getDay() && this.getHour() == compareStamp.getHour() && this.getMinute() == compareStamp.getMinute() && this.getSecond() == compareStamp.getSecond());
 		}
@@ -205,13 +205,13 @@ public class IWTimeStamp {
 		}
 		return false;
 	}
-	public boolean isLaterThanOrEquals(IWTimeStamp compareStamp) {
+	public boolean isLaterThanOrEquals(IWTimestamp compareStamp) {
 		return (isLaterThan(compareStamp) || equals(compareStamp));
 	}
 
-	public boolean isLaterThan(IWTimeStamp compareStamp) {
+	public boolean isLaterThan(IWTimestamp compareStamp) {
 		if (compareStamp == null) {
-			System.err.println("[IWTimeStamp] \"compateStamp == NULL\"");
+			System.err.println("[IWTimestamp] \"compateStamp == NULL\"");
 		}
 
 		if (!this.isTime) {
@@ -246,7 +246,7 @@ public class IWTimeStamp {
 		return false;
 	}
 
-	public IWTimeStamp isLater(IWTimeStamp time, IWTimeStamp time2) {
+	public IWTimestamp isLater(IWTimestamp time, IWTimestamp time2) {
 
 		if (time.getYear() > time2.getYear())
 			return time;
@@ -264,7 +264,7 @@ public class IWTimeStamp {
 		return time2;
 	}
 
-	public IWTimeStamp isEarlier(IWTimeStamp time, IWTimeStamp time2) {
+	public IWTimestamp isEarlier(IWTimestamp time, IWTimestamp time2) {
 
 		if (time.getYear() < time2.getYear())
 			return time;
@@ -283,8 +283,8 @@ public class IWTimeStamp {
 	}
 
 	public Time isEarlier(Time time_, Time time2_) {
-		IWTimeStamp time = new IWTimeStamp(time_);
-		IWTimeStamp time2 = new IWTimeStamp(time2_);
+		IWTimestamp time = new IWTimestamp(time_);
+		IWTimestamp time2 = new IWTimestamp(time2_);
 
 		if (time.getHour() < time2.getHour())
 			return time.getSQLTime();
@@ -297,8 +297,8 @@ public class IWTimeStamp {
 	}
 
 	public java.sql.Date isEarlier(java.sql.Date date, java.sql.Date date2) {
-		IWTimeStamp time = new IWTimeStamp(date);
-		IWTimeStamp time2 = new IWTimeStamp(date2);
+		IWTimestamp time = new IWTimestamp(date);
+		IWTimestamp time2 = new IWTimestamp(date2);
 
 		if (time.getYear() < time2.getYear())
 			return time.getSQLDate();
@@ -451,10 +451,10 @@ public class IWTimeStamp {
 
 	/*
 	  //  Virkar ekki alveg rett, leggur við hlutinn en skilar ekki bara.
-	  public IWTimeStamp getNextDay(){
+	  public IWTimestamp getNextDay(){
 	    GregorianCalendar myCalendar = Calendar;
 	    myCalendar.add(myCalendar.DATE, 1 );
-	    return new IWTimeStamp( myCalendar );
+	    return new IWTimestamp( myCalendar );
 	  }
 	*/
 
@@ -877,14 +877,14 @@ public class IWTimeStamp {
 		}
 	*/
 	public static Timestamp getTimestampRightNow() {
-		IWTimeStamp stamp = RightNow();
+		IWTimestamp stamp = RightNow();
 		return stamp.getTimestamp();
 	}
 
-	public static IWTimeStamp RightNow() {
+	public static IWTimestamp RightNow() {
 		GregorianCalendar myCalendar = new GregorianCalendar();
-		//return new IWTimeStamp(myCalendar.get(myCalendar.YEAR), myCalendar.get(myCalendar.MONTH)+1, myCalendar.get(myCalendar.DATE), myCalendar.get(myCalendar.HOUR_OF_DAY), myCalendar.get(myCalendar.MINUTE), myCalendar.get(myCalendar.SECOND));
-		return new IWTimeStamp(myCalendar);
+		//return new IWTimestamp(myCalendar.get(myCalendar.YEAR), myCalendar.get(myCalendar.MONTH)+1, myCalendar.get(myCalendar.DATE), myCalendar.get(myCalendar.HOUR_OF_DAY), myCalendar.get(myCalendar.MINUTE), myCalendar.get(myCalendar.SECOND));
+		return new IWTimestamp(myCalendar);
 	}
 
 	public String toSQLString() {
@@ -954,7 +954,7 @@ public class IWTimeStamp {
 		return new Locale("is", "IS");
 	}
 
-	public static int getDaysBetween(IWTimeStamp before, IWTimeStamp after) {
+	public static int getDaysBetween(IWTimestamp before, IWTimestamp after) {
 		long lBefore = before.getGregorianCalendar().getTime().getTime();
 		long lAfter = after.getGregorianCalendar().getTime().getTime();
 
@@ -963,7 +963,7 @@ public class IWTimeStamp {
 		return (int) (diff / 86400000);
 	}
 
-	public static int getMinutesBetween(IWTimeStamp before, IWTimeStamp after) {
+	public static int getMinutesBetween(IWTimestamp before, IWTimestamp after) {
 		if (before.isTime || after.isTime) {
 			before.setDate(1);
 			before.setMonth(2);
@@ -980,19 +980,19 @@ public class IWTimeStamp {
 		return (int) (diff / 60000);
 	}
 
-	public static boolean isInTimeframe(IWTimeStamp from, IWTimeStamp to, IWTimeStamp stampToCheck, boolean yearly) {
+	public static boolean isInTimeframe(IWTimestamp from, IWTimestamp to, IWTimestamp stampToCheck, boolean yearly) {
 		return isBetween(from, to, stampToCheck, yearly, true);
 	}
 	/*
-	  public static boolean isBetween(IWTimeStamp from, IWTimeStamp to, IWTimeStamp stampToCheck, boolean yearly) {
+	  public static boolean isBetween(IWTimestamp from, IWTimestamp to, IWTimestamp stampToCheck, boolean yearly) {
 	    return isBetween(from, to, stampToCheck, yearly, false);
 	  }
 	*/
-	private static boolean isBetween(IWTimeStamp from, IWTimeStamp to, IWTimeStamp stampToCheck, boolean yearly, boolean bordersCount) {
+	private static boolean isBetween(IWTimestamp from, IWTimestamp to, IWTimestamp stampToCheck, boolean yearly, boolean bordersCount) {
 		from.setAsDate();
 		to.setAsDate();
 		if (yearly) {
-			IWTimeStamp temp = new IWTimeStamp(stampToCheck);
+			IWTimestamp temp = new IWTimestamp(stampToCheck);
 			temp.setAsDate();
 			if (from.getYear() == to.getYear()) {
 				temp.setYear(from.getYear());
@@ -1041,4 +1041,4 @@ public class IWTimeStamp {
 		}
 		return returner;
 	}
-} // class IWTimeStamp
+} // class IWTimestamp

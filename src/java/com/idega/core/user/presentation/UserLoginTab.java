@@ -9,7 +9,7 @@ import com.idega.presentation.Table;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginInfo;
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 
 
 /**
@@ -198,11 +198,11 @@ public class UserLoginTab extends UserTab {
             LoginDBHandler.updateLogin(this.getUserId(),login,passw);
           }
           if(_displayLoginInfoSettings){
-            LoginDBHandler.updateLoginInfo(loginTable.getID(),accountEnabled,IWTimeStamp.RightNow(),5000,passwExpires,canChangePassw,mustChangePassw,null);
+            LoginDBHandler.updateLoginInfo(loginTable.getID(),accountEnabled,IWTimestamp.RightNow(),5000,passwExpires,canChangePassw,mustChangePassw,null);
           }
         } else if(updateLoginTable){
           if(_displayLoginInfoSettings){
-            LoginDBHandler.createLogin(this.getUserId(),login,passw,accountEnabled,IWTimeStamp.RightNow(),5000,passwExpires,canChangePassw,mustChangePassw,null);
+            LoginDBHandler.createLogin(this.getUserId(),login,passw,accountEnabled,IWTimestamp.RightNow(),5000,passwExpires,canChangePassw,mustChangePassw,null);
           } else {
             LoginDBHandler.createLogin(this.getUserId(),login,passw);
           }

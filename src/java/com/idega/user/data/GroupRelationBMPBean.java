@@ -1,7 +1,7 @@
 package com.idega.user.data;
 
 import com.idega.data.*;
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 
 //import java.util.Date;
 import java.sql.Timestamp;
@@ -48,7 +48,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   }
 
   public void setDefaultValues(){
-    this.setInitiationDate(IWTimeStamp.getTimestampRightNow());
+    this.setInitiationDate(IWTimestamp.getTimestampRightNow());
     this.setStatus(STATUS_ACTIVE);
   }
 
@@ -230,7 +230,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
    */
   public void remove()throws RemoveException{
     this.setPassive();
-    this.setTerminationDate(IWTimeStamp.getTimestampRightNow());
+    this.setTerminationDate(IWTimestamp.getTimestampRightNow());
     store();
   }
 }

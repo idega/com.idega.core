@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import com.idega.core.user.data.*;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.data.*;
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 import java.util.List;
 import com.idega.core.data.Email;
 import com.idega.core.data.GenericGroup;
@@ -38,7 +38,7 @@ public class UserBusiness {
     return new UserBusiness();
   }
 
-  public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimeStamp date_of_birth, Integer primary_group) throws SQLException{
+  public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws SQLException{
     User userToAdd = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).createLegacy();
 
     if(firstname != null){
@@ -332,14 +332,14 @@ public class UserBusiness {
 
   }
 
-  public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimeStamp date_of_birth, Integer primary_group ) throws SQLException {
+  public void updateUser(int user_id, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group ) throws SQLException {
     User userToUpdate = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(user_id);
 
     this.updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, date_of_birth, primary_group);
 
   }
 
-  public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimeStamp date_of_birth, Integer primary_group ) throws SQLException {
+  public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group ) throws SQLException {
 
     if(firstname != null){
       userToUpdate.setFirstName(firstname);

@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import com.idega.data.TreeableEntity;
 import com.idega.core.user.data.User;
 import com.idega.presentation.IWContext;
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 import java.util.Iterator;
 import com.idega.idegaweb.IWCacheManager;
 import java.util.Locale;
@@ -177,12 +177,12 @@ public class ICFileBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
   }
 
   public void insert()throws SQLException{
-    this.setCreationDate(com.idega.util.IWTimeStamp.getTimestampRightNow());
+    this.setCreationDate(com.idega.util.IWTimestamp.getTimestampRightNow());
     super.insert();
   }
 
   public void update()throws SQLException{
-    this.setModificationDate(com.idega.util.IWTimeStamp.getTimestampRightNow());
+    this.setModificationDate(com.idega.util.IWTimestamp.getTimestampRightNow());
     super.update();
   }
 
@@ -259,7 +259,7 @@ public class ICFileBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
    */
   public void delete() throws SQLException {
     setDeleted(true);
-    setDeletedWhen(IWTimeStamp.getTimestampRightNow());
+    setDeletedWhen(IWTimestamp.getTimestampRightNow());
     try{
       IWContext iwc = IWContext.getInstance();
       int userId = iwc.getUserId();
@@ -288,7 +288,7 @@ public class ICFileBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
   /** undeletes this file **/
   public void unDelete(boolean setICRootAsParent) throws SQLException {
     setDeleted(false);
-    setDeletedWhen(IWTimeStamp.getTimestampRightNow());
+    setDeletedWhen(IWTimestamp.getTimestampRightNow());
     try{
       IWContext iwc = IWContext.getInstance();
       setDeletedByUserId(iwc.getUserId());

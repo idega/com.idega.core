@@ -1,6 +1,6 @@
 /*
 
- * $Id: TimestampInput.java,v 1.4 2002/08/12 12:15:24 palli Exp $
+ * $Id: TimestampInput.java,v 1.5 2002/08/12 12:59:32 palli Exp $
 
  *
 
@@ -212,7 +212,7 @@ private void init(String name){
 
 
 
-        IWTimeStamp stamp = IWTimeStamp.RightNow();
+        IWTimestamp stamp = IWTimestamp.RightNow();
 
         int currentYear = stamp.getYear();
 

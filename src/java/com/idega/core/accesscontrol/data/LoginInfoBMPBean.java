@@ -1,7 +1,7 @@
 package com.idega.core.accesscontrol.data;
 
 import com.idega.data.*;
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 import java.sql.SQLException;
 import java.sql.Date;
 import com.idega.util.EncryptionType;
@@ -45,7 +45,7 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
     this.setAllowedToChange(Boolean.TRUE);
     this.setChangeNextTime(Boolean.FALSE);
     this.setDaysOfVality(10000);
-    this.setModified(IWTimeStamp.RightNow());
+    this.setModified(IWTimestamp.RightNow());
     this.setPasswordExpires(Boolean.FALSE);
     this.setEncriptionType(EncryptionType.MD5);
   }
@@ -115,8 +115,8 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
     return this.getBooleanColumnValue(getAccountEnabledColumnName());
   }
 
-  public IWTimeStamp getModified(){
-    return new IWTimeStamp((Date)this.getColumnValue(getModifiedColumnName()));
+  public IWTimestamp getModified(){
+    return new IWTimestamp((Date)this.getColumnValue(getModifiedColumnName()));
   }
 
   public int getDaysOfVality(){
@@ -162,7 +162,7 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
     this.setColumn(getAccountEnabledColumnName(),value);
   }
 
-  public void setModified(IWTimeStamp date){
+  public void setModified(IWTimestamp date){
     this.setColumn(getModifiedColumnName(),date.getSQLDate());
   }
 

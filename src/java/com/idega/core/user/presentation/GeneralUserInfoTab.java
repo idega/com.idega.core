@@ -10,7 +10,7 @@ import com.idega.presentation.text.Text;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
 import com.idega.util.datastructures.Collectable;
-import com.idega.util.IWTimeStamp;
+import com.idega.util.IWTimestamp;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
@@ -150,7 +150,7 @@ public class GeneralUserInfoTab extends UserTab{
     descriptionField.setWrap(true);
 
     dateOfBirthField = new DateInput(dateOfBirthFieldName);
-    IWTimeStamp time = IWTimeStamp.RightNow();
+    IWTimestamp time = IWTimestamp.RightNow();
     dateOfBirthField.setYearRange(time.getYear(),time.getYear()-100);
 
     genderField = new DropdownMenu(genderFieldName);
@@ -289,11 +289,11 @@ public class GeneralUserInfoTab extends UserTab{
   public boolean store(IWContext iwc){
     try{
       if(getUserId() > -1){
-        IWTimeStamp dateOfBirthTS = null;
+        IWTimestamp dateOfBirthTS = null;
         String st = (String)fieldValues.get(this.dateOfBirthFieldName);
         Integer gen = (fieldValues.get(this.genderFieldName).equals(""))? null : new Integer((String)fieldValues.get(this.genderFieldName));
         if( st != null && !st.equals("")){
-          dateOfBirthTS = new IWTimeStamp(st);
+          dateOfBirthTS = new IWTimestamp(st);
         }
         business.updateUser(getUserId(),(String)fieldValues.get(this.firstNameFieldName),
                             (String)fieldValues.get(this.middleNameFieldName),(String)fieldValues.get(this.lastNameFieldName),
@@ -319,7 +319,7 @@ public class GeneralUserInfoTab extends UserTab{
       fieldValues.put(this.lastNameFieldName,(user.getLastName() != null) ? user.getLastName():"" );
       fieldValues.put(this.displayNameFieldName,(user.getDisplayName() != null) ? user.getDisplayName():"" );
       fieldValues.put(this.descriptionFieldName,(user.getDescription() != null) ? user.getDescription():"" );
-      fieldValues.put(this.dateOfBirthFieldName,(user.getDateOfBirth()!= null) ? new IWTimeStamp(user.getDateOfBirth()).toSQLDateString() : "");
+      fieldValues.put(this.dateOfBirthFieldName,(user.getDateOfBirth()!= null) ? new IWTimestamp(user.getDateOfBirth()).toSQLDateString() : "");
       fieldValues.put(this.genderFieldName,(user.getGenderID() != -1) ? Integer.toString(user.getGenderID()):"" );
       this.updateFieldsDisplayStatus();
 
