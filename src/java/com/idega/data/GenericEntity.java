@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.42 2001/09/09 21:51:56 gummi Exp $
+ * $Id: GenericEntity.java,v 1.43 2001/09/13 14:23:25 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -20,7 +20,8 @@ import java.io.OutputStream;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.3
+*@version 1.4
+*@modified <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
 */
 public abstract class GenericEntity implements java.io.Serializable {
 
