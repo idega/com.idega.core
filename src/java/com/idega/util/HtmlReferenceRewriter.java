@@ -1,6 +1,11 @@
 /*
+ * $Id: HtmlReferenceRewriter.java,v 1.10 2005/02/25 15:47:37 tryggvil Exp $ 
  * Created on 3.6.2004
- *
+ * 
+ * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
  */
 package com.idega.util;
 
@@ -24,11 +29,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.idega.core.builder.data.ICPage;
 
-
 /**
- * @author tryggvil
- *
- * A class to rewrite relative URLs in HTML code and rewrite them to an absolute http:// URL.
+ * <p>
+ * This class takes in a source (Reader) of a HTML document parses it and rewrites relative URLs (that are referencing URLs within the same host)
+ * to be an abolute URL with http://[hostname]/[oldurl]
+ * </p>
+ * Last modified: $Date: 2005/02/25 15:47:37 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.10 $
  */
 public class HtmlReferenceRewriter {
 
