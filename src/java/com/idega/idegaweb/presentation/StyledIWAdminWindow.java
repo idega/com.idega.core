@@ -14,7 +14,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.Window;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.business.UserConstants;
+import com.idega.user.presentation.UserConstants;
 
 public class StyledIWAdminWindow extends Window {
 
