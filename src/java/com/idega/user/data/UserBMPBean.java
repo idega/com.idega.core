@@ -29,6 +29,7 @@ import com.idega.data.IDOUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.text.TextSoap;
+import com.sun.rsasign.t;
 
 /**
  * Title:        User
@@ -1094,6 +1095,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 	
 	public Collection ejbFindUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd) throws FinderException, RemoteException {
+		return ejbFindUsersByConditions(userName, userName, userName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd);
+	}
+	
+	public Collection ejbFindUsersByConditions(String firstName, String middleName, String lastName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd) throws FinderException, RemoteException {
 		IDOQuery query = idoQuery();
 		boolean firstOperatorAdded = false;
 		
@@ -1103,9 +1108,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		
 		query.append(" ( ");
 		//name	
-		if(userName!=null && !userName.equals("") ){
+		if(firstName!=null || middleName!=null || lastName!=null ){
 			query.append(" ( ")
-			.append(getUserNameSearchString(userName))
+			.append(getUserNameSearchString(firstName,middleName,lastName,operator))
 			.append(" ) ");
 			
 			firstOperatorAdded = true;
@@ -1201,11 +1206,32 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	 * @param condition
 	 * @return
 	 */
-	private String getUserNameSearchString(String condition) {
+	private String getUserNameSearchString(String firstName, String middleName, String lastName, String ANDOrOR) {
+		boolean firstNameAdded = false;
+		boolean middleNameAdded = false;
+
 		StringBuffer sql = new StringBuffer();
-		sql.append(getColumnNameFirstName()).append(" like '").append(condition).append("%' OR ")
-		.append(getColumnNameMiddleName()).append(" like '").append(condition).append("%' OR ")
-		.append(getColumnNameLastName()).append(" like '").append(condition).append("%'");
+		if(firstName!=null && !firstName.equals("")){
+			sql.append(getColumnNameFirstName()).append(" like '").append(firstName).append("%' ");
+			firstNameAdded = true;
+		}
+		
+		if(middleName!=null && !middleName.equals("") ){
+			if(firstNameAdded){
+				sql.append(ANDOrOR).append(" ");
+			}
+			
+			sql.append(getColumnNameMiddleName()).append(" like '").append(middleName).append("%' ");
+			middleNameAdded = true;
+		}
+		
+		if(lastName!=null  && !lastName.equals("") ){
+			if(middleNameAdded || firstNameAdded){
+				sql.append(ANDOrOR).append(" ");
+			}
+			sql.append(getColumnNameLastName()).append(" like '").append(lastName).append("%'");
+		}
+		
 		
 		return sql.toString();
 	}
