@@ -37,7 +37,8 @@ public class PageIncluder extends PresentationObject implements Index{
   private String sessionId = null;
   private String sessionURL = null;
   private String token = null;
-  private String tokenReplacer;
+  private String tokenReplacer = null;
+  private String serverName = null;
 
   private String out;
   private int index = 1000;
@@ -121,6 +122,7 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   protected void process(IWContext iwc)throws IOException{
+    serverName = iwc.getServerName();
     instanceId=getICObjectInstanceID();
     changeURL = ((iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId))) && !iwc.isParameterSet(_sendToPageIfSet);
 
@@ -174,7 +176,7 @@ public class PageIncluder extends PresentationObject implements Index{
 	  }
 
 	  pageIncluderPrefix = buf.toString();
-	  //System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
+	  System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
       }
       else {
 	pageIncluderPrefix ="";
@@ -190,17 +192,21 @@ public class PageIncluder extends PresentationObject implements Index{
 	  while (enum.hasMoreElements()) {
 	    String param = (String) enum.nextElement();
 	    //debug(param+" : "+iwc.getParameter(param));
-	    if ( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) || param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label)  ){
+
+            if ( param.equals(PAGE_INCLUDER_PARAMETER_NAME+instanceId) || param.equals(PAGE_INCLUDER_PARAMETER_NAME+_label)  ){
 	      URL = decodeQueryString(iwc.getParameter(param));
 	      location.append(URL);
 	      //System.out.println("Changing location to:"+location.toString());
 	    }
 	    else{
 	      if (param.indexOf(PAGE_INCLUDER_PARAMETER_NAME) == -1) {
-		queryBuf.append(param);
-		queryBuf.append("=");
-		queryBuf.append(URLEncoder.encode(iwc.getParameter(param)));
-		queryBuf.append("&");
+                String[] values = iwc.getParameterValues(param);
+	        for (int i = 0; i < values.length; i++) {
+                  queryBuf.append(param);
+		  queryBuf.append("=");
+		  queryBuf.append(URLEncoder.encode(iwc.getParameter(param)));
+		  queryBuf.append("&");
+                }
 	      }
 	    }
 	  }//while ends
@@ -328,20 +334,26 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   protected String insertPageIncludeInTag(String tag,String html){
-    html = TextSoap.findAndReplace(html,tag+"=\"//",tag+"=\""+pageIncluderPrefix+"http://" );// the // case
-    html = TextSoap.findAndReplace(html,tag+"=\"http://",tag+"=\""+pageIncluderPrefix+"http://");// the http:// case
+    StringBuffer buf = new StringBuffer();
+    buf.append(tag).append("=\"").append(pageIncluderPrefix).append("http://");
+    String prefix = buf.toString();
+
+    tag = tag+"=\"";
+
+    html = TextSoap.findAndReplace(html,tag+"//",prefix);// the // case
+    html = TextSoap.findAndReplace(html,tag+"http://",prefix);// the http:// case
 
     if(forceFrame){
-      html = TextSoap.findAndReplace(html,tag+"=\"/",pageIncluderPrefix.substring(1,pageIncluderPrefix.length()),tag+"=\"/",tag+"=\""+pageIncluderPrefix+BASEURL );// the / case
-      html = TextSoap.findAndReplace(html,tag+"=\"",pageIncluderPrefix,tag+"=\""+pageIncluderPrefix+RELATIVEURL);
+      html = TextSoap.findAndReplace(html,tag+"/",pageIncluderPrefix.substring(1,pageIncluderPrefix.length()),tag+"/",tag+pageIncluderPrefix+BASEURL );// the / case
       /**@todo make this a boolean choice
        * special case. changes https to http
        */
-      html = TextSoap.findAndReplace(html,tag+"=\"https://",tag+"=\""+pageIncluderPrefix+"http://");// the http:// case
+      html = TextSoap.findAndReplace(html,tag+"https://",tag+"https://"+serverName+pageIncluderPrefix+"http://");// the http:// case
+      html = TextSoap.findAndReplace(html,tag,pageIncluderPrefix,tag+pageIncluderPrefix+RELATIVEURL);
     }
     else{
-      html = TextSoap.findAndReplace(html,tag+"=\"/",tag+"=\""+BASEURL);
-      html = TextSoap.findAndReplace(html,tag+"=\"","http://",tag+"=\""+RELATIVEURL);
+      html = TextSoap.findAndReplace(html,tag+"/",tag+BASEURL);
+      html = TextSoap.findAndReplace(html,tag,"http://",tag+RELATIVEURL);
     }
     return html;
   }
@@ -542,7 +554,5 @@ public class PageIncluder extends PresentationObject implements Index{
 
     fromPage.setToRedirect(URL.toString());
     fromPage.empty();
-
-
    }
 }
