@@ -511,7 +511,7 @@ public class idegaTimestamp{
    * @Deprecated
    */
   public String getISLDate(){
-    return getDate() + "."+getNameOfMonth(getMonth())+"&nbsp;"+getYear();
+    return getDate() + "."+getNameOfMonth(getMonth())+" "+getYear();
   }
 
   /**
@@ -519,28 +519,28 @@ public class idegaTimestamp{
    */
   public String getENGDate(){
 
-    String englishDate = getEnglishNameOfMonth(getMonth())+"&nbsp;"+getDate();
+    String englishDate = getEnglishNameOfMonth(getMonth())+" "+getDate();
 
     if ( getDate() == 1 ) {
-      englishDate = englishDate + "st&nbsp;"+getYear();
+      englishDate = englishDate + "st "+getYear();
     }
     else if ( getDate() == 2 ) {
-      englishDate = englishDate + "nd&nbsp;"+getYear();
+      englishDate = englishDate + "nd "+getYear();
     }
     else if ( getDate() == 3 ) {
-      englishDate = englishDate + "rd&nbsp;"+getYear();
+      englishDate = englishDate + "rd "+getYear();
     }
     else if ( getDate() == 21 ) {
-      englishDate = englishDate + "st&nbsp;"+getYear();
+      englishDate = englishDate + "st"+getYear();
     }
     else if ( getDate() == 22 ) {
-      englishDate = englishDate + "nd&nbsp;"+getYear();
+      englishDate = englishDate + "nd "+getYear();
     }
     else if ( getDate() == 31 ) {
-      englishDate = englishDate + "st&nbsp;"+getYear();
+      englishDate = englishDate + "st "+getYear();
     }
     else {
-      englishDate = englishDate + "th&nbsp;"+getYear();
+      englishDate = englishDate + "th "+getYear();
     }
 
     return englishDate;
