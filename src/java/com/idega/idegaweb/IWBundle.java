@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.64 2003/10/17 15:34:24 joakim Exp $
+ * $Id: IWBundle.java,v 1.65 2003/10/28 10:54:47 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -52,7 +52,7 @@ import javax.ejb.FinderException;
 public class IWBundle implements java.lang.Comparable
 {
 	//TODO: Tryggvi: Change to true
-	private boolean autoMoveComponentPropertiesToFile = false;
+	private boolean autoMoveComponentPropertiesToFile = true;
 	
 	private HashMap componentPropertyListMap;
 	private static final String slash = "/";
