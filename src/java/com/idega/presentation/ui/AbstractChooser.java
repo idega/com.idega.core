@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.23 2004/07/22 13:38:43 thomas Exp $
+ * $Id: AbstractChooser.java,v 1.24 2004/09/28 16:41:01 eiki Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -182,6 +182,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			_form.addParameter(SCRIPT_PREFIX_PARAMETER, "window.opener.document." + _form.getID());
 			_form.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
 			_form.addParameter(FILTER_PARAMETER, filter);
+			addParametersToForm(_form);
 		}
 		else {
 			getLink(_iwrb);
@@ -189,7 +190,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			link.setWindowToOpen(getChooserWindowClass());
 			link.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
 
-			link.addParameter(SCRIPT_PREFIX_PARAMETER, "window.opener.document." + getParentFormString(this));
+			link.addParameter(SCRIPT_PREFIX_PARAMETER, getParentFormJavascriptPath());
 
 			//TODO Make the javascript work for other objects than form elements,
 			// e.g. a Link
@@ -206,12 +207,33 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 				link.addParameter(_attributeName, _attributeValue);
 			}
 			link.addParameter(FILTER_PARAMETER, filter);
+			
+			addParametersToLink(link);
+			
 			table.add(link, 2, 1);
 		}
 
 		table.add(object, 1, 1);
 		table.add(new Parameter(DISPLAYSTRING_PARAMETER_NAME, "151324213"));
 		return (table);
+	}
+
+	/**
+	 * Override this method to add extra parameters to the chooser link
+	 * @param form
+	 */
+	protected void addParametersToLink(Link link) {
+	}
+
+	/**
+	 * Override this method to add extra parameters to the chooser form
+	 * @param form
+	 */
+	protected void addParametersToForm(Form form) {
+	}
+
+	public String getParentFormJavascriptPath() {
+		return "window.opener.document." + getParentFormString(this);
 	}
 
 	public PresentationObject getPresentationObject(IWContext iwc) {
