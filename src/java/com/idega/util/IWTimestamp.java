@@ -25,7 +25,7 @@ import com.idega.util.text.TextSoap;
  * @author idega 2002 - idega team
  * @version 1.1
  */
-public class IWTimestamp {
+public class IWTimestamp implements Comparable {
 	
 	/**
 	 * A time string representing the time at the first second of a day.
@@ -312,7 +312,58 @@ public class IWTimestamp {
 		if (isTime() || isDate())
 			return false;
 		return true;
-}
+	}
+
+	/**
+	 * Returns true if this <code>IWTimestamp</code> object is equal to the given 
+	 * <code>IWTimestamp</code> object.
+	 * @param compareStamp		The IWTimestamp to compare with this object.
+	 * @return IWTimestamp
+	 */
+	public boolean isEqualTo(IWTimestamp compareStamp) {
+		if (isEarlierThan(compareStamp) || isLaterThan(compareStamp))
+			return false;
+		return true;
+	}
+
+	/**
+	 * Returns true if this <code>IWTimestamp</code> object is earlier than the given 
+	 * <code>IWTimestamp</code> object.
+	 * @param compareStamp		The IWTimestamp to compare with this object.
+	 * @return IWTimestamp
+	 */
+	public boolean isEarlierThan(IWTimestamp compareStamp) {
+		if (!this.isTime()) {
+			if (this.getYear() < compareStamp.getYear())
+				return true;
+			if (this.getYear() > compareStamp.getYear())
+				return false;
+			if (this.getMonth() < compareStamp.getMonth())
+				return true;
+			if (this.getMonth() > compareStamp.getMonth())
+				return false;
+			if (this.getDay() < compareStamp.getDay())
+				return true;
+			if (this.getDay() > compareStamp.getDay())
+				return false;
+		}
+
+		if (!this.isDate()) {
+			if (this.getHour() < compareStamp.getHour())
+				return true;
+			if (this.getHour() > compareStamp.getHour())
+				return false;
+			if (this.getMinute() < compareStamp.getMinute())
+				return true;
+			if (this.getMinute() > compareStamp.getMinute())
+				return false;
+			if (this.getSecond() < compareStamp.getSecond())
+				return true;
+			if (this.getSecond() > compareStamp.getSecond())
+				return false;
+		}
+		return false;
+	}
 
 	/**
 	 * Returns true if this <code>IWTimestamp</code> object is later than or equal to 
@@ -857,4 +908,19 @@ public class IWTimestamp {
 		toReturn.append("','YYYY MM DD HH24:MI') ");
 		return toReturn.toString();
 	}
+	
+	/**
+	 * @see java.lang.Comparable#compareTo(Object)
+	 */
+	public int compareTo(Object object) {
+		IWTimestamp compareStamp = (IWTimestamp) object;
+		
+		if (isEarlierThan(compareStamp))
+			return -1;
+		else if (isLaterThan(compareStamp))
+			return 1;
+		else
+			return 0;
+	}
+
 }
