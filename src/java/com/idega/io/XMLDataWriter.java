@@ -21,7 +21,7 @@ import com.idega.xml.XMLOutput;
  * @version 1.0
  * Created on Mar 18, 2004
  */
-public class XMLDataWriter extends ICFileWriter {
+public class XMLDataWriter extends WriterToFile {
 	
 	private static final String XML_EXTENSION = "xml";
 	
@@ -60,7 +60,7 @@ public class XMLDataWriter extends ICFileWriter {
 		return ((XMLData) storable).getName();
 	}
 	
-	public void writeData(OutputStream destination) throws IOException {  
+	public OutputStream writeData(OutputStream destination) throws IOException {  
     XMLOutput xmlOutput = new XMLOutput("  ", true);
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));
     xmlOutput.setTextNormalize(true);
@@ -68,6 +68,7 @@ public class XMLDataWriter extends ICFileWriter {
     // do not use document directly use accessor method
     XMLDocument myDocument = ((XMLData) storable).getDocument();
     xmlOutput.output(myDocument, destination);
+    return destination;
 	}
 
 
