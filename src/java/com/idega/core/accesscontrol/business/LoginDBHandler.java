@@ -284,9 +284,14 @@ public class LoginDBHandler {
 
   public static void deleteLogin(LoginTable login) throws SQLException {
     if(login != null){
-      LoginInfo li = new LoginInfo(login.getID());
+      try {
+        LoginInfo li = new LoginInfo(login.getID());
 
-      li.delete();
+        li.delete();
+      }
+      catch (SQLException ex) {
+        // assume login info does not exist for this login
+      }
 
       login.delete();
 
