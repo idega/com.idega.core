@@ -474,7 +474,8 @@ public  class EntityControl{
                 rs = stmt.executeQuery(SQLString);
                 if(rs.next())
                     recordCount = rs.getInt(1);
-                rs.close();
+                if ( rs != null )
+                  rs.close();
 
                 //System.out.println(SQLString+"\n");
 
