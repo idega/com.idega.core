@@ -2,7 +2,7 @@
 
 /*
 
- * $Id: DatastoreInterface.java,v 1.44 2002/03/27 19:40:19 eiki Exp $
+ * $Id: DatastoreInterface.java,v 1.45 2002/04/05 18:34:39 tryggvil Exp $
 
  *
 
@@ -21,42 +21,25 @@
 package com.idega.data;
 
 
-
 import java.sql.Connection;
-
 import java.sql.SQLException;
-
 import java.sql.PreparedStatement;
-
 import java.sql.Statement;
-
 import java.sql.ResultSet;
-
 import java.sql.Timestamp;
-
 import java.sql.Time;
-
 import java.sql.DatabaseMetaData;
-
 import java.util.Hashtable;
-
 import java.util.List;
-
 import java.util.Vector;
-
 import java.util.Iterator;
-
 import java.util.Map;
-
 import java.util.HashMap;
-
 import com.idega.util.database.ConnectionBroker;
-
 import java.io.InputStream;
-
 import java.io.IOException;
-
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.util.Gender;
 
 
 
@@ -1250,8 +1233,8 @@ public abstract class DatastoreInterface{
 
 		else if (storageClassName.equals("java.lang.String")){
 
-                    statement.setString(index,entity.getStringColumnValue(columnName));
-
+                    //statement.setString(index,entity.getStringColumnValue(columnName));
+                    setStringForPreparedStatement(columnName,statement,index,entity);
 		}
 
 		else if (storageClassName.equals("java.lang.Float")){
@@ -2033,8 +2016,23 @@ public abstract class DatastoreInterface{
   }
 
 
+  /**
+   * Meant to be overrided in subclasses
+   * @param entity
+   * @param columnName
+   * @return the columnName if there is nothing specific about the select
+   */
+  protected String getColumnStringForSelectList(GenericEntity entity,String columnName){
+    return columnName;
+  }
 
-  protected static String getCommaDelimitedColumnNamesForSelect(GenericEntity entity){
+
+  /**
+   * Constructs the SQL for the select of an entity i.e. select name,id from employee
+   * @param entity
+   * @return the SQL query string
+   */
+  protected String getCommaDelimitedColumnNamesForSelect(GenericEntity entity){
 
     String newCachedColumnNameList = entity.getCachedColumnNamesList();
 
@@ -2052,15 +2050,14 @@ public abstract class DatastoreInterface{
 
             returnString = new StringBuffer("");
 
-            returnString.append(names[i]);
+            returnString.append(getColumnStringForSelectList(entity,names[i]));
 
           }
 
           else{
 
             returnString.append(",");
-
-            returnString.append(names[i]);
+            returnString.append(getColumnStringForSelectList(entity,names[i]));
 
           }
 
@@ -2377,6 +2374,104 @@ public abstract class DatastoreInterface{
    }
 
 
+
+  protected void setStringForPreparedStatement(String columnName,PreparedStatement statement,int index,GenericEntity entity)throws SQLException{
+    statement.setString(index,entity.getStringColumnValue(columnName));
+  }
+
+
+  protected void fillStringColumn(GenericEntity entity,String columnName,ResultSet rs)throws SQLException{
+        if (rs.getString(columnName) != null){
+                entity.setColumn(columnName,rs.getString(columnName));
+        }
+  }
+
+  protected void fillColumn(GenericEntity entity,String columnName,ResultSet RS)throws SQLException{
+
+		int classType = entity.getStorageClassType(columnName);
+
+		if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
+			//if (RS.getInt(columnName) != -1){
+			int theInt = RS.getInt(columnName);
+			boolean wasNull = RS.wasNull();
+			if(!wasNull){
+			    entity.setColumn(columnName,new Integer(theInt));
+			    //setColumn(columnName.toLowerCase(),new Integer(theInt));
+			}
+
+			//}
+		}
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_STRING){
+			/*if (RS.getString(columnName) != null){
+				entity.setColumn(columnName,RS.getString(columnName));
+			}*/
+                        fillStringColumn(entity,columnName,RS);
+		}
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_BOOLEAN){
+			String theString = RS.getString(columnName);
+			if (theString != null){
+				if (theString.equals("Y")){
+					entity.setColumn(columnName,new Boolean(true));
+				}
+				else if (theString.equals("N")){
+					entity.setColumn(columnName,new Boolean(false));
+				}
+			}
+		}
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_FLOAT){
+			float theFloat = RS.getFloat(columnName);
+			boolean wasNull = RS.wasNull();
+			if(!wasNull){
+			    entity.setColumn(columnName,new Float(theFloat));
+			    //setColumn(columnName.toLowerCase(),new Float(theFloat));
+			}
+
+		}
+		else if (classType==EntityAttribute.TYPE_JAVA_LANG_DOUBLE){
+			double theDouble = RS.getFloat(columnName);
+			boolean wasNull = RS.wasNull();
+			if(!wasNull){
+			    entity.setColumn(columnName,new Double(theDouble));
+			    //setColumn(columnName.toLowerCase(),new Double(theDouble));
+			}
+
+			double doble = RS.getDouble(columnName);
+		}
+		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP){
+			if (RS.getTimestamp(columnName) != null){
+				entity.setColumn(columnName,RS.getTimestamp(columnName));
+			}
+		}
+		else if (classType==EntityAttribute.TYPE_JAVA_SQL_DATE){
+			if (RS.getDate(columnName) != null){
+				entity.setColumn(columnName,RS.getDate(columnName));
+			}
+		}
+		else if (classType==EntityAttribute.TYPE_JAVA_SQL_TIME){
+			java.sql.Date date = RS.getDate(columnName);
+			if (date != null){
+				entity.setColumn(columnName,date);
+		//setColumn(columnName.toLowerCase(),date);
+			}
+		}
+		else if (classType==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
+			/*if (RS.getDate(columnName) != null){
+				setColumn(columnName.toLowerCase(),RS.getTime(columnName));
+			}*/
+			entity.setColumn(columnName,entity.getEmptyBlob(columnName));
+			//setColumn(columnName.toLowerCase(),getEmptyBlob(columnName));
+
+		}
+		else if (classType==EntityAttribute.TYPE_COM_IDEGA_UTIL_GENDER){
+			String gender = RS.getString(columnName);
+			if (gender != null){
+				entity.setColumn(columnName,new Gender(gender));
+		//setColumn(columnName.toLowerCase(),new Gender(gender));
+
+			}
+		}
+
+  }
 
 
 

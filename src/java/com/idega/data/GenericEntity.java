@@ -1267,6 +1267,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 
 	public void fillColumn(String columnName,ResultSet RS)throws SQLException{
+
+          DatastoreInterface.getInstance(this).fillColumn(this,columnName,RS);
+            /*
 		int classType = getStorageClassType(columnName);
 
 		if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
@@ -1334,9 +1337,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			}
 		}
 		else if (classType==EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER){
-			/*if (RS.getDate(columnName) != null){
-				setColumn(columnName.toLowerCase(),RS.getTime(columnName));
-			}*/
+			//if (RS.getDate(columnName) != null){
+			//	setColumn(columnName.toLowerCase(),RS.getTime(columnName));
+			//}
 			setColumn(columnName,getEmptyBlob(columnName));
 			//setColumn(columnName.toLowerCase(),getEmptyBlob(columnName));
 
@@ -1349,7 +1352,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 			}
 		}
-
+            */
 	}
 
 
@@ -1376,7 +1379,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       //buffer.append("select * from ");
       buffer.append("select ");
       //System.out.println("COLUMN NAMES : "+DatastoreInterface.getCommaDelimitedColumnNamesForSelect(this));/**@is this where it is supposed to be?**/
-      buffer.append(DatastoreInterface.getCommaDelimitedColumnNamesForSelect(this));
+      buffer.append(DatastoreInterface.getInstance(this).getCommaDelimitedColumnNamesForSelect(this));
       buffer.append(" from ");//skips lob colums
       buffer.append(getEntityName());
       buffer.append(" where ");
