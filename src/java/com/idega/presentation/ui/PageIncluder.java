@@ -144,6 +144,8 @@ public class PageIncluder extends PresentationObject implements Index{
 	      buf.append('=');
 	    }
 	    else{
+	      buf.append(getCurrentIBPageIDToURLString(iwc));
+	      buf.append('&');
 	      buf.append(PAGE_INCLUDER_PARAMETER_NAME);
 	      buf.append(instanceId);
 	      buf.append('=');
