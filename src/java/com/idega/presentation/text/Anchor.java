@@ -15,13 +15,22 @@ import java.io.IOException;
 
 public class Anchor extends Link {
 
-  public Anchor(String anchorName) {
+  public Anchor() {
     super("");
-    setAttribute("name",anchorName);
+  }
+  public Anchor(String anchorName) {
+    this();
+    setAnchorName(anchorName);
   }
 
   public Anchor(Text text, String anchorName) {
     super(text);
+    setAnchorName(anchorName);
+  }
+
+  public void setAnchorName(String anchorName){
     setAttribute("name",anchorName);
   }
+
+
 }
