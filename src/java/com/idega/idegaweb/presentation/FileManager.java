@@ -57,6 +57,7 @@ public class FileManager extends Block {
 	private String currentFolder =null,currentFile =null;
 	private java.util.List maintainParameterNames =null;
 	private boolean filesDeletable = true;
+	private boolean displayFilesInFrame = true;
 	private FileIconSupplier iconSupplier =null;
 	private static final String PRM_FOLDER = "iw_b_r_m_dir";
 	private static final String PRM_SUB_FOLDER ="iw_b_r_m_sdir";
@@ -185,7 +186,22 @@ public class FileManager extends Block {
 		table.add(getHeaderText(iwrb.getLocalizedString("selected_file","Selected file")+" : "+new File(currentFile).getName()),1,2);
 		table.setColor(1,2,headerBackgroundColor);
 		
-		//TODO fix x url
+		
+
+		if(displayFilesInFrame){
+			IFrame frame =new IFrame("fileview",600,600);
+			frame.setSrc(getCurrentFileUrl(iwc,currentFile));
+	//		frame.setSrc(currentFile);
+			frame.setAsTransparent(true);
+			frame.setBorder(0);
+			table.add(frame,1,3);
+		}
+		
+		add(table);
+	}
+	
+	private String getCurrentFileUrl(IWContext iwc,String fileAbsPath){
+//	  TODO fix x url
 		String server = iwc.getServerURL().replace('\\','/');
 		String context = iwc.getIWMainApplication().getApplicationContextURI().replace('\\','/');
 		String appURI = iwc.getIWMainApplication().getApplicationRealPath().replace('\\','/');
@@ -197,7 +213,7 @@ public class FileManager extends Block {
 		System.out.println("context "+context);
 		System.out.println("server "+server);
 */
-		String url = currentFile.substring(appURI.length());
+		String url = fileAbsPath.substring(appURI.length());
 		if(context.endsWith("/"))
 			url = context+url;
 		else
@@ -205,16 +221,9 @@ public class FileManager extends Block {
 			//url ="/"+url;
 		url = server+url;
 //		System.out.println("url "+url);
-
-		IFrame frame =new IFrame("fileview",600,600);
-		frame.setSrc(url);
-//		frame.setSrc(currentFile);
-		frame.setAsTransparent(true);
-		frame.setBorder(0);
-		table.add(frame,1,3);
-		
-		add(table);
+		return url;
 	}
+	
 	
 	/**
 	 * Creates a list of all files and folders in the current folder 
@@ -456,14 +465,21 @@ public class FileManager extends Block {
 	private Link getFileLink(File file, IWContext iwc) {
 		//String url = file.getAbsolutePath().substring(folder.length());
 		//l.setURL(url);
-		Link l = new Link(getText(file.getName()));
-		l.addParameter(PRM_VIEW_FILE,"true");
-		l.addParameter(PRM_FILE, file.getAbsolutePath());
-		l.addParameter(PRM_FOLDER,currentFolder);
+	    if(displayFilesInFrame){
+	        Link l = new Link(getText(file.getName()));
+			l.addParameter(PRM_VIEW_FILE,"true");
+			l.addParameter(PRM_FILE, file.getAbsolutePath());
+			l.addParameter(PRM_FOLDER,currentFolder);
 	
-		addMaintainedParameters(iwc,l);
+			addMaintainedParameters(iwc,l);
+			return l;
+	    }
+	    else{
+	        Link l = new Link(getText(file.getName()),getCurrentFileUrl(iwc,file.getAbsolutePath()));
+	        l.setTarget(Link.TARGET_BLANK_WINDOW);
+	        return l;
+	    }
 		
-		return l;
 	}
 	private Link getDeleteFileLink(File file, IWContext iwc) {
 		Link l = new Link(getDeleteIcon());
@@ -696,4 +712,21 @@ public class FileManager extends Block {
 		}
 	}
 
+    /**
+     * @return Returns the displayFilesInFrame.
+     */
+    public boolean isDisplayFilesInFrame() {
+        return displayFilesInFrame;
+    }
+    /**
+     * @param displayFilesInFrame The displayFilesInFrame to set.
+     */
+    public void setDisplayFilesInFrame(boolean displayFilesInFrame) {
+        this.displayFilesInFrame = displayFilesInFrame;
+    }
+    
+    public void setDisplayFilesInNewWindow(boolean display){
+        this.displayFilesInFrame = !display;
+    }
+    
 }
