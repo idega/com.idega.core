@@ -2,7 +2,8 @@
     <pomVersion>3</pomVersion>
     <groupId>com.idega.core.bundle</groupId>
     <artifactId>com.idega.core.bundle</artifactId>
-    <name>com.idega.core.bundle</name>
+    <name>idegaWeb Core</name>
+    <id>com.idega.core</id>
     <currentVersion>2.0</currentVersion>
     <organization>
         <name>idega software</name>
@@ -175,6 +176,14 @@
             <version>9.0</version>
             <type>jar</type>
             <url>http://www.informix.com/</url>
+            <properties/>
+        </dependency>
+        <dependency>
+            <groupId>poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>1.8.0-dev-20020919</version>
+            <type>jar</type>
+            <url>http://jakarta.apache.org/poi/</url>
             <properties/>
         </dependency>
     </dependencies>
