@@ -1,5 +1,5 @@
 /*
- * $Id: DayOfWeek.java,v 1.1 2004/10/14 12:11:56 laddi Exp $
+ * $Id: DayOfWeek.java,v 1.2 2004/10/26 11:51:33 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -20,7 +20,7 @@ import com.idega.util.IWCalendar;
  * Last modified: 14.10.2004 14:04:38 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DayOfWeek extends Widget {
 
@@ -30,7 +30,7 @@ public class DayOfWeek extends Widget {
 	protected PresentationObject getWidget(IWContext iwc) {
 		IWCalendar calendar = new IWCalendar(getLocale());
 		
-		Text text = new Text(calendar.getDayName(calendar.getDay()));
+		Text text = new Text(calendar.getDayName(calendar.getDayOfWeek()));
 		return text;
 	}
 
