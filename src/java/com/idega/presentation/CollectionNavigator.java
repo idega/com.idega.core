@@ -1,6 +1,8 @@
 package com.idega.presentation;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.text.Link;
@@ -20,6 +22,8 @@ public class CollectionNavigator extends Block {
 	private int _numberOfEntriesPerPage = 0;
 	
 	private int _padding = 0;
+	
+	private java.util.List maintainedPrms = new ArrayList();
 	
 	private IWResourceBundle _iwrb;
 
@@ -49,10 +53,10 @@ public class CollectionNavigator extends Block {
 	public void main(IWContext iwc) throws Exception {
 		parse(iwc);
 		initialize(iwc);
-		drawNavigator();
+		drawNavigator(iwc);
 	}
 	
-	private void drawNavigator() {
+	private void drawNavigator(IWContext iwc) {
 		Table navigationTable = new Table(3, 1);
 		navigationTable.setCellpadding(_padding);
 		navigationTable.setCellspacing(0);
@@ -70,6 +74,7 @@ public class CollectionNavigator extends Block {
 			Link lPrev = getLink(localize("previous", "Previous"));
 			lPrev.addParameter(PARAMETER_CURRENT_PAGE, Integer.toString(_currentPage - 1));
 			navigationTable.add(lPrev, 1, 1);
+			lPrev.setToMaintainParameters(this.maintainedPrms);
 		}
 		else {
 			navigationTable.add(prev, 1, 1);
@@ -80,6 +85,7 @@ public class CollectionNavigator extends Block {
 			Link lNext = getLink(localize("next", "Next"));
 			lNext.addParameter(PARAMETER_CURRENT_PAGE, Integer.toString(_currentPage + 1));
 			navigationTable.add(lNext, 3, 1);
+			lNext.setToMaintainParameters(maintainedPrms);
 		}
 		else {
 			navigationTable.add(next, 3, 1);
@@ -196,6 +202,13 @@ public class CollectionNavigator extends Block {
 	 */
 	public void setPadding(int padding) {
 		_padding = padding;
+	}
+	/**
+	 * Adds a parameter name to maintain if exists in request
+	 * @param prm
+	 */
+	public void addMaintainParameter(String prm){
+		this.maintainedPrms.add(prm);
 	}
 
 }
