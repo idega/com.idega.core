@@ -120,6 +120,7 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   protected void process(IWContext iwc)throws IOException{
+    instanceId=getICObjectInstanceID();
     changeURL = ((iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId))) && !iwc.isParameterSet(_sendToPageIfSet);
 
 	StringBuffer location = new StringBuffer();
