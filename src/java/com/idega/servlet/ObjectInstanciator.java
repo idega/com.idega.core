@@ -12,7 +12,6 @@ import javax.servlet.http.*;
 import java.sql.*;
 import com.idega.util.database.*;
 import javax.sql.*;
-import com.idega.jmodule.*;
 import com.idega.presentation.*;
 import com.idega.presentation.ui.*;
 import com.idega.idegaweb.*;

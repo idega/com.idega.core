@@ -5,18 +5,19 @@
 
 package com.idega.servlet;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+
 import javax.servlet.*;
-import java.sql.*;
+
 import com.idega.util.database.*;
-import javax.sql.*;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.FileUtil;
 import com.idega.idegaweb.IWService;
 import com.idega.data.EntityControl;
 
-import java.io.File;
+
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -25,6 +26,8 @@ import java.io.File;
 public class IWStarterServlet extends GenericServlet
 {
 
+  //debug
+  private static String propertiesfile;
 
 
 	//public PoolManager poolMgr;
@@ -53,7 +56,9 @@ public class IWStarterServlet extends GenericServlet
 
         public void startDatabasePool(){
                 String separator = FileUtil.getFileSeparator();
-                String file = IWMainApplication.getIWMainApplication(this.getServletContext()).getPropertiesRealPath()+separator+"db.properties";
+                ServletContext cont = this.getServletContext();
+                String file = IWMainApplication.getIWMainApplication(cont).getPropertiesRealPath()+separator+"db.properties";
+                this.propertiesfile=file;
                 sendStartMessage("Reading Databases from file: "+file);
                 PoolManager poolMgr;
                 sendStartMessage("Starting Datastore ConnectionPool");
@@ -150,7 +155,7 @@ public class IWStarterServlet extends GenericServlet
 
 
         public void sendStartMessage(String message){
-          System.out.println("idegaWeb : startup : "+message);
+          System.out.println("[idegaWeb] : startup : "+message);
         }
 
         public void sendShutdownMessage(String message){

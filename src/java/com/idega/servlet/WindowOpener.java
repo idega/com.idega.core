@@ -13,7 +13,6 @@ import javax.servlet.http.*;
 import java.sql.*;
 import com.idega.util.database.*;
 import javax.sql.*;
-import com.idega.jmodule.*;
 import com.idega.presentation.*;
 import com.idega.presentation.ui.*;
 import com.idega.idegaweb.*;
@@ -22,7 +21,7 @@ import com.idega.idegaweb.*;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
 */
-public class WindowOpener extends JSPModule
+public class WindowOpener extends IWJSPPresentationServlet
 {
 
       //public static int maxNumberOfWindows=4;
