@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.29 2003/04/28 09:31:48 laddi Exp $
+ * $Id: DateInput.java,v 1.30 2003/05/05 18:33:16 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -39,7 +39,6 @@ public class DateInput extends InterfaceObjectContainer {
   private int _fromYear;
   private int _toYear;
   private int _selectedYear = -1;
-  private String _styleAttribute = "font-size: 8pt";
   private boolean _inShort = false;
   protected boolean _justConstructed = false;
   private boolean _showYear = true;
@@ -63,6 +62,10 @@ public class DateInput extends InterfaceObjectContainer {
   // the method setSetValues is invoked. The problem is that
   // TabbedPropertyWindow seems not to call the main method. 
   private boolean dropDownMenusUpToDate = true;
+  // added by thomas
+  // Flag that indicates if the dropdown menu should contain the null value (no date) or not.
+  // Caution: If this flag is set to true it is not possible to choose not a date.
+  private boolean showNullValue = true;
   private boolean _keepStatusOnAction = false;
 
 	private boolean isSetAsNotEmpty;
@@ -84,10 +87,7 @@ public class DateInput extends InterfaceObjectContainer {
    * @param name Name of the parameter string
    */
   public DateInput(String name) {
-    super();
-    super.setName(name);
-    _justConstructed = true;
-    constructInputs();
+    this(name, false);
   }
 
   /**
@@ -97,12 +97,22 @@ public class DateInput extends InterfaceObjectContainer {
    * @param _inShort True to display dates in shorthand names.
    */
   public DateInput(String name, boolean inShort) {
-    super();
+    this(name, inShort, true);
+  }
+
+  /** Creates a new Dateinput object.
+   * @param name Name of the parameter string
+   * @param _inShort True to display dates in shorthand names.
+   * @param showNullValue True if the null value should be shown (that is, it should be possible to choose no date)
+   */
+  public DateInput(String name, boolean inShort, boolean showNullValue) {
     super.setName(name);
     _justConstructed = true;
+    this.showNullValue = showNullValue;
     this._inShort = inShort;
-    constructInputs();
+    constructInputs(); 
   }
+
 
   public Object clone() {
     DateInput newObject = (DateInput) super.clone();
@@ -170,7 +180,9 @@ public class DateInput extends InterfaceObjectContainer {
       this.setYearRange(currentYear, currentYear + 5);
     }
 
-    _theMonth.addMenuElement("00");
+    if (showNullValue)  {
+      _theMonth.addMenuElement("00");
+    }
     _theMonth.addMenuElement("01");
     _theMonth.addMenuElement("02");
     _theMonth.addMenuElement("03");
@@ -184,7 +196,9 @@ public class DateInput extends InterfaceObjectContainer {
     _theMonth.addMenuElement("11");
     _theMonth.addMenuElement("12");
 
+    if (showNullValue) {
     _theDay.addMenuElement("00", "D");
+    }
     _theDay.addMenuElement("01", "1");
     _theDay.addMenuElement("02", "2");
     _theDay.addMenuElement("03", "3");
@@ -217,17 +231,13 @@ public class DateInput extends InterfaceObjectContainer {
     _theDay.addMenuElement("30", "30");
     _theDay.addMenuElement("31", "31");
 
-    if (this._showYear) {
+    if (this._showYear && showNullValue) {
       _theYear.addMenuElement("YY");
     }
   }
 
   public void setDisabled(boolean disabled) {
     this._isDisabled = disabled;
-  }
-
-  private Script getDateScript() {
-    return this._script;
   }
 
   public void setStyle(String styleAttribute) {
@@ -548,26 +558,27 @@ public class DateInput extends InterfaceObjectContainer {
     String monthString;
     String yearString;
 
-    if (_inShort) {
-      dayString = iwrb.getLocalizedString(DAY_KEY_S, "D");
-      monthString = iwrb.getLocalizedString(MONTH_KEY_S, "M");
-      yearString = iwrb.getLocalizedString(YEAR_KEY_S, "Y");
+    if (showNullValue) {
+      if (_inShort) {
+        dayString = iwrb.getLocalizedString(DAY_KEY_S, "D");
+        monthString = iwrb.getLocalizedString(MONTH_KEY_S, "M");
+        yearString = iwrb.getLocalizedString(YEAR_KEY_S, "Y");
+      } else {
+        dayString = iwrb.getLocalizedString(DAY_KEY, "Day");
+        monthString = iwrb.getLocalizedString(MONTH_KEY, "Month");
+        yearString = iwrb.getLocalizedString(YEAR_KEY, "Year");
+      }
+      _theDay.setMenuElementDisplayString("00", dayString);
+      _theMonth.setMenuElementDisplayString("00", monthString);
+
+      if (this._showYear) {
+        _theYear.setMenuElementDisplayString("YY", yearString);
+      }
+    }
+    if (this._inShort) {
       monthStrings = symbols.getShortMonths();
-    } else {
-      dayString = iwrb.getLocalizedString(DAY_KEY, "Day");
-      monthString = iwrb.getLocalizedString(MONTH_KEY, "Month");
-      yearString = iwrb.getLocalizedString(YEAR_KEY, "Year");
-      monthStrings = symbols.getMonths();
-    }
-
-    _theDay.setMenuElementDisplayString("00", dayString);
-    _theMonth.setMenuElementDisplayString("00", monthString);
-
-    if (this._showYear) {
-      _theYear.setMenuElementDisplayString("YY", yearString);
-    }
-
-    if (!this._inShort) {
+    } 
+    else {
       monthStrings = symbols.getMonths();
     }
 
@@ -680,5 +691,15 @@ public class DateInput extends InterfaceObjectContainer {
 	public String getIDForYear(){
 		return _theYear.getID();	
 	}
+
+  /**
+   * Sets if the drop down menu should contain a null value 
+   * (that is a choice corresponding to no date) or not.
+   * The default value is true.
+   * @param b
+   */
+  public void setShowNullValue(boolean b) {
+    showNullValue = b;
+  }
 
 }
