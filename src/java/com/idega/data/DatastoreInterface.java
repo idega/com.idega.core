@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.36 2002/01/29 22:26:44 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.37 2002/02/04 22:00:44 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -627,7 +627,7 @@ public abstract class DatastoreInterface{
 
         public void handleBlobUpdate(String columnName,PreparedStatement statement, int index,GenericEntity entity){
           BlobWrapper wrapper = entity.getBlobColumnValue(columnName);
-          System.out.println("DatastoreInterface, in handleBlobUpdate, columnName="+columnName+" index="+index);
+          //System.out.println("DatastoreInterface, in handleBlobUpdate, columnName="+columnName+" index="+index);
           if(wrapper!=null){
             InputStream stream = wrapper.getInputStreamForBlobWrite();
             //System.out.println("DatastoreInterface, in handleBlobUpdate wrapper!=null");
@@ -1026,6 +1026,15 @@ public abstract class DatastoreInterface{
                 return returnString.toString();
         }
 
+
+  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+      String SQLCommand = "ALTER TABLE " + baseTableName + " ADD FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
+      executeUpdate(entity,SQLCommand);
+  }
+
+  protected String getCreatePrimaryKeyStatementBeginning(String tableName){
+    return "alter table "+tableName+" add primary key (";
+  }
 
 
   }

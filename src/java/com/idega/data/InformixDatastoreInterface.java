@@ -493,4 +493,17 @@ public class InformixDatastoreInterface extends DatastoreInterface{
     }
   }
 
+
+
+  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+      String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
+      executeUpdate(entity,SQLCommand);
+  }
+
+  protected String getCreatePrimaryKeyStatementBeginning(String tableName){
+    return "alter table "+tableName+" add constraint primary key (";
+  }
+
+
+
 }

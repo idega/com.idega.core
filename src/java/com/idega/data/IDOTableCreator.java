@@ -351,7 +351,7 @@ public class IDOTableCreator{
             creationStatement += tableName;
             creationStatement += "(";
 
-            String primaryKeyStatement = "alter table "+tableName+" add constraint primary key (";
+            String primaryKeyStatement = _dsi.getCreatePrimaryKeyStatementBeginning(tableName);
 
             Set set;
             Iterator iter;
@@ -495,11 +495,22 @@ public class IDOTableCreator{
       createForeignKey(entity,baseTableName,columnName,refrencingTableName,columnName);
   }
 
-  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+  /*protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
       String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
       executeUpdate(entity,SQLCommand);
+  }*/
+
+  protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+      //String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
+      //executeUpdate(entity,SQLCommand);
+      _dsi.createForeignKey(entity,baseTableName,columnName,refrencingTableName,referencingColumnName);
   }
 
+  protected void createPrimaryKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
+      //String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
+      //executeUpdate(entity,SQLCommand);
+      _dsi.createForeignKey(entity,baseTableName,columnName,refrencingTableName,referencingColumnName);
+  }
 
   protected void updateColumns(GenericEntity entity)throws Exception{
     String[] columnArrayFromDB = getColumnArrayFromMetaData(entity);
