@@ -355,11 +355,18 @@ public  class EntityControl{
 
       }
 
+      public static String getTreeRelationShipTableName(GenericEntity entity) {
+        return entity.getTableName()+"_tree";
+      }
+
+      public static String getTreeRelationShipChildColumnName(GenericEntity entity) {
+        return "child_"+entity.getIDColumnName();
+      }
 
       public static void addTreeRelationShip(GenericEntity entity){
-        String relationShipTableName = entity.getTableName()+"_tree";
+        String relationShipTableName = getTreeRelationShipTableName(entity);
         String idColumnName1 = entity.getIDColumnName();
-        String idColumnName2 = "child_"+entity.getIDColumnName();
+        String idColumnName2 = getTreeRelationShipChildColumnName(entity);
         addManyToManyRelationShip(entity,entity,relationShipTableName,idColumnName1,idColumnName2);
       }
 
