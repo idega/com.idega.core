@@ -64,7 +64,7 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 
   public GenericTabbedPaneUI(){
 
-    setMainColor(new IWColor(212,208,200));
+    setMainColor(new IWColor(207,208,210));
 
 //    initFrame();
 
