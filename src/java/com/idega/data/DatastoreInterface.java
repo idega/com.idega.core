@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.75 2003/07/22 17:58:46 thomas Exp $
+ * $Id: DatastoreInterface.java,v 1.76 2003/07/22 19:06:54 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -952,6 +952,9 @@ public abstract class DatastoreInterface {
 				}
 			}
 		}
+    if (returnString.equals(""))  {
+      return "?";
+    }
 		return returnString;
 	}
 	boolean isValidColumnForUpdateList(GenericEntity entity, String columnName) {
@@ -987,7 +990,7 @@ public abstract class DatastoreInterface {
 	}
 	protected static boolean isValidColumnForInsertList(GenericEntity entity, String columnName) {
     // columnname of the primary key should be added to the list
-		if (entity.isNull(columnName) && !(entity.getIDColumnName().equalsIgnoreCase(columnName))) {
+		if (entity.isNull(columnName)) {
 			return false;
 		} else {
 			if (entity.getStorageClassType(columnName) == EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER) {
@@ -1058,6 +1061,14 @@ public abstract class DatastoreInterface {
 					}
 				}
 			}
+      if (returnString == null) {
+        String idColumnName = entity.getIDColumnName();
+        for (int i = 0; i < names.length; i++) {
+          if (! names[i].equalsIgnoreCase(idColumnName))  {
+            return names[i];
+          }
+        }
+      }     
 			newCachedColumnNameList = returnString.toString();
 		}
 		return newCachedColumnNameList;
