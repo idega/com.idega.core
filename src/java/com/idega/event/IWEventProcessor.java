@@ -12,6 +12,7 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +43,7 @@ public class IWEventProcessor {
 	
 	private final static String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
 	private final static String SESSION_OBJECT_STATE = ICBuilderConstants.SESSION_OBJECT_STATE;
+	private static Logger log = Logger.getLogger(IWEventProcessor.class.toString());
 	
 	private static IWEventProcessor instance;
 	
@@ -90,13 +92,20 @@ public class IWEventProcessor {
 			}
 		}
 	}
-	private void processIWEvent(IWContext iwc, String EventListenerClass) throws ClassNotFoundException, IllegalAccessException,
+	private void processIWEvent(IWContext iwc, String EventListenerClass) throws IllegalAccessException,
 			IWException, InstantiationException {
 		if (EventListenerClass != null) {
 			if (iwc.getApplicationSettings().getIfDebug())
 				System.out.println("IWEventListener: " + EventListenerClass);
-			IWPageEventListener listener = (IWPageEventListener) Class.forName(EventListenerClass).newInstance();
-			listener.actionPerformed(iwc);
+			try{
+				Class eventClass = Class.forName(EventListenerClass);
+				IWPageEventListener listener = (IWPageEventListener) eventClass.newInstance();
+				listener.actionPerformed(iwc);
+			}
+			catch(ClassNotFoundException cnfe){
+				log.warning(cnfe.getMessage());
+			}
+
 		}
 	}
 	private void processIWEventEncrypted(IWContext iwc, String EncryptedEventListenerClassName) throws ClassNotFoundException,
