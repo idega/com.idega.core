@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.58 2002/09/20 11:49:54 laddi Exp $
+ * $Id: PresentationObject.java,v 1.59 2002/10/15 10:49:24 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -247,13 +247,7 @@ public class PresentationObject extends Object implements Cloneable {
 	 * <br><br>Preserves previous set values with this method
 	 * */
   public void setStyleAttribute(String style){
-  	String prevStyle = getAttribute("style");
-  	if(prevStyle==null){
-    	setAttribute("style",style);
-  	}
-  	else{
-  		setAttribute("style",prevStyle+";"+style);
-  	}
+  	setAttributeMultivalued("style",style);
   }
 
   public String getStyleAttribute(){
@@ -452,7 +446,9 @@ public class PresentationObject extends Object implements Cloneable {
    * @return The "layout" language used and supplied by the IWContext
    */
   public String getLanguage() {
-    return this.language;
+  	if ( language != null )
+	    return this.language;
+	  return IWConstants.MARKUP_LANGUAGE_HTML;
   }
 
   public void setID(String ID) {
