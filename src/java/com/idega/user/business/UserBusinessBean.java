@@ -102,6 +102,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	private static final String SESSION_KEY_TOP_NODES = "top_nodes_for_user";
 
+	private static final int NUMBER_OF_PERMISSIONS_CACHING_LIMIT = 800;
+
 	private GroupHome groupHome;
 
 	private UserHome userHome;
@@ -2284,7 +2286,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				}
 				totalTime.stop();
 				log("[UserBusinessBean]: topnode....(...) ends " + totalTime.getTimeString());
-				storeUserTopGroupNodes(user, topNodes, allViewAndOwnerPermissionGroups.size(), totalTime.getTimeString(), null);
+				int numberOfPermissions = allViewAndOwnerPermissionGroups.size();
+				if (numberOfPermissions > NUMBER_OF_PERMISSIONS_CACHING_LIMIT) {
+					storeUserTopGroupNodes(user, topNodes, numberOfPermissions, totalTime.getTimeString(), null);
+				}
 			}
 			iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES + user.getPrimaryKey().toString(), topNodes);
 		}
