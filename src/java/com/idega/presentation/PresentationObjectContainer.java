@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.28 2004/05/24 20:22:14 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.29 2004/05/24 23:14:21 gummi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -387,7 +387,13 @@ public class PresentationObjectContainer extends PresentationObject
 				{
 					int xindex = Integer.parseInt(index.substring(0, index.indexOf(".")));
 					int yindex = Integer.parseInt(index.substring(index.indexOf(".") + 1, index.length()));
-					return (((Table) getContainedObject(objectInstanceIDInt)).containerAt(xindex, yindex));
+					try {
+						return (((Table) getContainedObject(objectInstanceIDInt)).containerAt(xindex, yindex));
+					} catch (ClassCastException e1) {
+						e1.printStackTrace();
+						System.out.println(getContainedObject(objectInstanceIDInt));
+						return NULL_CLONE_OBJECT;
+					}
 				}
 			}
 		}
