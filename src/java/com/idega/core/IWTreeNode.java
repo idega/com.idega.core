@@ -13,25 +13,45 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	ICTreeNode parent = null;
 	ArrayList childs = null;
 	String Name = "";
-	String path ="";
+	//Object object = null;
+	String path =null;
 	int ID = -1;
+	static int internalID = 1;
+	
+	public IWTreeNode(String name){
+		this(name,internalID++);
+	}
 	
 	public IWTreeNode(String name,int ID){
 		this(name,ID,null);
 	}
 	
 	public IWTreeNode(String name,int ID,ICTreeNodeAddable parent){
-		childs = new ArrayList();
-		this.Name = name;
-		this.ID = ID;
-		if(parent!=null)
-		parent.addChild(this);
+			childs = new ArrayList();
+			this.Name = name;
+			//this.object = object;
+			this.ID = ID;
+			if(parent!=null)
+				parent.addChild(this);
 	}
 	
+	
 	public static IWTreeNode createRootNode(String name , int ID){
-		IWTreeNode node = new IWTreeNode(name,ID);
-		node.path = "root";
+		IWTreeNode node = new IWTreeNode(name,ID,null);
+		node.setAsRootNode();
 		return node;
+	}
+	
+	public static IWTreeNode createRootNode(String name ){
+		IWTreeNode node = new IWTreeNode(name);
+		node.setAsRootNode();
+		return node;
+	}
+	
+	public void setAsRootNode(){
+		path = "root";
+		parent = null;
+		internalID = 1;
 	}
 	
 	public void setParent(ICTreeNode parent){
@@ -44,7 +64,6 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	public void addChild(ICTreeNodeAddable child) {
 		this.childs.add(child);
 		child.setParent(this);
-		path = this.path + "_" + this.getChildCount() + "#" + child.getNodeID();
 	}
 	
 	public void addChild(String name, int id){
@@ -104,6 +123,7 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	public int getNodeID() {
 		return this.ID;
 	}
+	
 	/**
 	 * @see com.idega.core.ICTreeNode#getSiblingCount()
 	 */
@@ -114,6 +134,45 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	}
 	
 	public String getNodePath(){
-		return this.path;
+		if(path==null)
+			path = generatePath(this);
+		return path;
 	}
+	
+	private String generatePath(ICTreeNode node){
+		if(node.getParentNode()!=null ){
+			return  generatePath(node.getParentNode())+"#"+node.getNodeName();
+		}
+		return  node.getNodeName();
+	}
+
+	
+	/**
+	 * @param i
+	 */
+	public void setNodeID(int i) {
+		ID = i;
+	}
+
+	/**
+	 * @return
+	 */
+	public String getName() {
+		return Name;
+	}
+
+	/**
+	 * @param string
+	 */
+	public void setName(String string) {
+		Name = string;
+	}
+
+	/**
+	 * @param string
+	 */
+	public void setNodePath(String string) {
+		path = string;
+	}
+
 }
