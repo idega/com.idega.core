@@ -29,6 +29,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
   }
 
   public void initializePanel( IWContext iwc, TabbedPropertyPanel panel){
+	System.out.println("UserPropertyWindow ; initPanels");
     GeneralUserInfoTab genTab = new GeneralUserInfoTab();
 
     panel.addTab(genTab, 0, iwc);
@@ -39,12 +40,12 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
     UserLoginTab ult = new UserLoginTab();
     ult.displayLoginInfoSettings();
     panel.addTab(ult,4,iwc);
-
-
   }
 
   public void main(IWContext iwc) throws Exception {
+  	System.out.println("UserPropertyWindow : main(iwc)");
     String id = iwc.getParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID);
+    System.out.println("UserID = "+id);
     if(id != null){
       int newId = Integer.parseInt(id);
       PresentationObject[] obj = this.getAddedTabs();
