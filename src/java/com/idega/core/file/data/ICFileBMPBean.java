@@ -21,6 +21,9 @@ import com.idega.data.MetaDataCapable;
 import com.idega.data.TreeableEntity;
 import com.idega.data.TreeableEntityBMPBean;
 import com.idega.idegaweb.IWCacheManager;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.io.Storable;
+import com.idega.io.Writer;
 import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
 
@@ -33,7 +36,7 @@ import com.idega.util.IWTimestamp;
  * @version 1.0
  */
 
-public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,TreeableEntity,MetaDataCapable {
+public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile,TreeableEntity,MetaDataCapable, Storable {
 
   private static final String ENTITY_NAME = "IC_FILE";
 private static final String FILE_VALUE = "FILE_VALUE";
@@ -114,15 +117,15 @@ private static final String FILE_VALUE = "FILE_VALUE";
   }
 
   public String getMimeType(){
-    return (String) getStringColumnValue(getColumnNameMimeType());
+    return getStringColumnValue(getColumnNameMimeType());
   }
 
   public String getName(){
-    return (String) getStringColumnValue(getColumnNameName());
+    return getStringColumnValue(getColumnNameName());
   }
 
   public String getDescription(){
-    return (String) getStringColumnValue(getColumnNameDescription());
+    return getStringColumnValue(getColumnNameDescription());
   }
 
   public BlobWrapper getBlobWrapperFileValue(){
@@ -210,15 +213,15 @@ private static final String FILE_VALUE = "FILE_VALUE";
   }
 
   public ICLocale getICLocale(){
-    return (ICLocale)super.getColumnValue(this.getColumnNameLocale());
+    return (ICLocale)super.getColumnValue(ICFileBMPBean.getColumnNameLocale());
   }
 
   public int getLocaleId(){
-    return super.getIntColumnValue(this.getColumnNameLocale());
+    return super.getIntColumnValue(ICFileBMPBean.getColumnNameLocale());
   }
 
   public void setLocale(){
-    super.getIntColumnValue(this.getColumnNameLocale());
+    super.getIntColumnValue(ICFileBMPBean.getColumnNameLocale());
   }
 
 // and here are the delete functions
@@ -308,7 +311,7 @@ private static final String FILE_VALUE = "FILE_VALUE";
       IWContext iwc = IWContext.getInstance();
       setDeletedByUserId(iwc.getUserId());
       if( setICRootAsParent ){
-        IWCacheManager cm = iwc.getIWMainApplication().getIWCacheManager();
+        IWCacheManager cm = IWMainApplication.getIWCacheManager();
         ICFile parent = (ICFile) cm.getCachedEntity(com.idega.core.file.data.ICFileBMPBean.IC_ROOT_FOLDER_CACHE_KEY);
         if( parent!= null ) parent.addChild(this);
       }
@@ -343,7 +346,7 @@ private static final String FILE_VALUE = "FILE_VALUE";
   
   
    public Integer ejbFindByFileName(String name)throws FinderException{
-   	Collection files = idoFindIDsBySQL("select * from " + getTableName() + " where " + ICFileBMPBean.getColumnNameName() + " like '" 
+   	Collection files = idoFindPKsBySQL("select * from " + getTableName() + " where " + ICFileBMPBean.getColumnNameName() + " like '" 
    			+ name + "' and (" + ICFileBMPBean.getColumnDeleted() + "='N' or "+ ICFileBMPBean.getColumnDeleted() + " is null)"); 
     if(!files.isEmpty()){
       return (Integer)files.iterator().next();
@@ -390,6 +393,10 @@ public boolean isFolder()
 		return false;
 	}
 }
+
+	public Object write(Writer writer) {
+		return writer.write(this);
+	}
   
 
 }
