@@ -26,10 +26,12 @@ public class IDOQuery implements Cloneable {
 	private static final String SELECT = "SELECT ";
 	private static final String FROM = " FROM ";
 	private static final String SUM = "SUM";
+	private static final String COUNT = "COUNT";
 	private static final String STAR = " * ";
 	private static final String DISTINCT = " DISTINCT ";
 	private static final String ORDER_BY = " ORDER BY ";
 	private static final String GROUP_BY = " GROUP BY ";
+	private static final String HAVING = " HAVING ";
 	private static final String WHERE = " WHERE ";
 	private static final String LIKE = " LIKE ";
 	private static final String NOT_LIKE = " NOT LIKE ";
@@ -601,6 +603,19 @@ public class IDOQuery implements Cloneable {
 	public IDOQuery appendGroupBy(String columnName) {
 		this.append(GROUP_BY);
 		this.append(columnName);
+		return this;
+	}
+	
+	public IDOQuery appendHaving(){
+		this.append(HAVING);
+		return this;
+	}
+	
+	public IDOQuery appendCount(String columnName){
+		this.append(COUNT);
+		this.appendLeftParenthesis();
+		this.append(columnName);
+		this.appendRightParenthesis();
 		return this;
 	}
 
