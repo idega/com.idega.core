@@ -1,11 +1,11 @@
 /*
- * $Id: PresentationObject.java,v 1.105 2004/11/01 19:01:17 gimmi Exp $
- * 
- * Copyright (C) 2001 Idega hf. All Rights Reserved.
- * 
- * This software is the proprietary information of Idega hf. Use is subject to
- * license terms.
- *  
+ * $Id: PresentationObject.java,v 1.106 2004/11/01 21:24:15 tryggvil Exp $
+ * Created in 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
  */
 package com.idega.presentation;
 import java.io.IOException;
@@ -60,11 +60,14 @@ import com.idega.util.StringHandler;
 import com.idega.util.logging.LoggingHelper;
 import com.idega.util.text.TextStyler;
 /**
- * The base class for objects that present themselves to a user on screen in
- * idegaWeb.
+ * This is the base class for all user interface components in old idegaWeb.<br>
+ * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
+ * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.3
+ * Last modified: $Date: 2004/11/01 21:24:15 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.106 $
  */
 public class PresentationObject 
 //implements Cloneable{
