@@ -1,6 +1,6 @@
 /*
 
- *  $Id: Page.java,v 1.50 2002/04/09 21:59:58 laddi Exp $
+ *  $Id: Page.java,v 1.51 2002/04/22 10:32:46 laddi Exp $
 
  *
 
@@ -1324,11 +1324,11 @@ public class Page extends PresentationObjectContainer {
 
   private void setDefaultAttributes(IWContext iwc) {
 
-    if (!isAttributeSet("bgcolor")) {
+    /*if (!isAttributeSet("bgcolor")) {
 
       setBackgroundColor(iwc.getDefaultBackgroundColor());
 
-    }
+    }*/
 
   }
 
