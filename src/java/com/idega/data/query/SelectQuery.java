@@ -487,4 +487,8 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	public void addLeftJoin(LeftJoin join) {
 		leftJoins.add(join);
 	}
+
+	public void clearLeftJoins() {
+	    leftJoins.clear();
+	}
 }
