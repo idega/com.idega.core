@@ -354,14 +354,17 @@ public class IWMainApplication{//implements ServletContext{
     return vector;
   }
 
-
+  /**
+   * Only works when running on Tomcat (3.2)
+   */
   public boolean restartApplication(){
+    String prePath = System.getProperty("tomcat.home");
     try{
       if(System.getProperty("os.name").toLowerCase().indexOf("win")==-1){
-        Runtime.getRuntime().exec(this.getApplicationRealPath()+"/../../bin/restart");
+        Runtime.getRuntime().exec(prePath+"/../../bin/restart");
       }
       else{
-        Runtime.getRuntime().exec(this.getApplicationRealPath()+"\\..\\..\\bin\\restart.bat");
+        Runtime.getRuntime().exec(prePath+"\\..\\..\\bin\\restart.bat");
       }
       return true;
     }
