@@ -140,9 +140,10 @@ public class IWEventProcessor {
 					 * __theService(request, response);
 					 */
 					//theServiceDone = true;
-					/*if (obj instanceof IWModuleEvent) {
+					if (obj instanceof IWModuleEvent) {
 						((IWModuleEvent) obj).setIWContext(iwc);
-					} else {
+					} 
+					/*else {
 						this.getPage()._setIWContext(iwc);
 					}*/
 					((ActiveEvent) obj).dispatch();
