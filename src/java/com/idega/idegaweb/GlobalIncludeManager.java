@@ -19,8 +19,9 @@ import java.util.List;
  * @version 1.0
  */
 public class GlobalIncludeManager {
+	
+	private static final String IW_GLOBAL_INCLUDE_MANAGER_KEY = "iw_globalincludemanager";
 
-	private static GlobalIncludeManager instance;
 	private String standardIWStyleSheetURL = "/idegaweb/style/style.css";
 	private String coreIWStyleSheetURL = "/idegaweb/bundles/com.idega.core.bundle/resources/style/iw_core.css";
 	
@@ -28,7 +29,9 @@ public class GlobalIncludeManager {
 
 	private List styleSheets;
 
-	private GlobalIncludeManager() {
+
+	private GlobalIncludeManager(IWMainApplication iwma) {
+		this.iwma = iwma;
 		addStyleSheet(coreIWStyleSheetURL);
 		addStyleSheet(standardIWStyleSheetURL);
 	}
@@ -38,11 +41,15 @@ public class GlobalIncludeManager {
 	 * @return
 	 */
 	public static GlobalIncludeManager getInstance() {
-		if (instance == null) {
-			instance = new GlobalIncludeManager();
-		}
-		return instance;
-	}
+		IWMainApplication idegaWebMainApplication = IWMainApplication.getDefaultIWMainApplication();
+	    GlobalIncludeManager globalIncludeManager = (GlobalIncludeManager) idegaWebMainApplication.getAttribute(IW_GLOBAL_INCLUDE_MANAGER_KEY);
+	    if(globalIncludeManager==null){
+	      globalIncludeManager = new GlobalIncludeManager(idegaWebMainApplication);
+	      idegaWebMainApplication.setAttribute(IW_GLOBAL_INCLUDE_MANAGER_KEY, globalIncludeManager);
+	    }
+	    return globalIncludeManager;
+	  }
+
 	
 	public List getStyleSheets(){
 		if(styleSheets==null){
@@ -75,9 +82,6 @@ public class GlobalIncludeManager {
 	
 	
 	public IWMainApplication getIWMainApplication(){
-		if(iwma==null){
-			setIWMainApplication(IWMainApplication.getDefaultIWMainApplication());
-		}
 		return iwma;
 	}
 	
