@@ -188,8 +188,8 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	 */
 	public boolean isEqualTo(PostalCode postal) {
 		if(postal!=null){
-			return (this.getPostalCode().equalsIgnoreCase(postal.getPostalCode())
-			&& this.getName().equalsIgnoreCase(postal.getName()));
+			return (this.getPostalCode().equalsIgnoreCase(postal.getPostalCode()));
+			//&& this.getName().equalsIgnoreCase(postal.getName()));
 		}
 		return false;
 	}
