@@ -1107,6 +1107,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			}
       query.appendAnd();
       appendIsNotDeleted(query);
+      query.appendOrderBy(this.getColumnNameFirstName());
 			
 			return this.idoFindIDsBySQL(query.toString());
 		}
