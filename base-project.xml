@@ -14,7 +14,7 @@
         <developerConnection>scm:cvs:ext:${cvs.username}@einstein.idega.is:/idega/cvs:${pom.groupId}/${pom.artifactId}.bundle/</developerConnection>
     </repository>
 
-  <url>http://maven.idega.com/${pom.groupId}/${pom.artifactId}</url>
+  <url>http://developer.idega.com/${pom.groupId}/${pom.artifactId}</url>
   <issueTrackingUrl>http://issues.idega.is/</issueTrackingUrl>
   <siteAddress>developer.idega.com</siteAddress>
   <siteDirectory>/var/www/webs/developer.idega.com/${pom.groupId}/${pom.artifactId}/</siteDirectory>
