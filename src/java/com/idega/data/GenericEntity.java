@@ -3084,12 +3084,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * Returns a collection of returningEntity instances
    */
-  protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass)throws IDOException{
+  protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass)throws IDORelationshipException{
     try{
       return EntityFinder.getInstance().findRelated(this,returningEntityInterfaceClass);
     }
     catch(Exception e){
-      throw new IDOException(e,this);
+      throw new IDORelationshipException(e,this);
     }
   }
 
@@ -3107,7 +3107,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * Returns a collection of returningEntity instances
    */
-  protected Collection idoGetRelatedEntities(IDOEntity returningEntity)throws IDOException{
+  protected Collection idoGetRelatedEntities(IDOEntity returningEntity)throws IDORelationshipException{
 	IDOLegacyEntity legacyEntity = (IDOLegacyEntity)returningEntity;
 	String sqlQuery = this.getFindRelatedSQLQuery(legacyEntity,"","");
         return idoGetRelatedEntities(returningEntity,sqlQuery);
@@ -3117,7 +3117,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * Returns a collection of returningEntity instances
    */
-  private Collection idoGetRelatedEntities(IDOEntity returningEntity,String sqlQuery)throws IDOException{
+  private Collection idoGetRelatedEntities(IDOEntity returningEntity,String sqlQuery)throws IDORelationshipException{
     Vector vector = new Vector();
     Collection ids = idoGetRelatedEntityPKs(returningEntity,sqlQuery);
     Iterator iter = ids.iterator();
@@ -3135,7 +3135,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       }
     }
     catch(Exception e){
-      throw new IDOException("Error in idoGetRelatedEntities()"+e.getMessage());
+      throw new IDORelationshipException("Error in idoGetRelatedEntities()"+e.getMessage());
     }
     return vector;
   }
@@ -3146,7 +3146,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * Returns a collection of returningEntity primary keys
    */
-  protected Collection idoGetRelatedEntityPKs(IDOEntity returningEntity)throws IDOException{
+  protected Collection idoGetRelatedEntityPKs(IDOEntity returningEntity)throws IDORelationshipException{
 	IDOLegacyEntity legacyEntity = (IDOLegacyEntity)returningEntity;
 	String sqlQuery = this.getFindRelatedSQLQuery(legacyEntity,"","");
         return idoGetRelatedEntityPKs(returningEntity,sqlQuery);
@@ -3156,7 +3156,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * Returns a collection of returningEntity primary keys
    */
-  private Collection idoGetRelatedEntityPKs(IDOEntity returningEntity,String sqlQuery)throws IDOException{
+  private Collection idoGetRelatedEntityPKs(IDOEntity returningEntity,String sqlQuery)throws IDORelationshipException{
 		Connection conn= null;
 		Statement Stmt= null;
 		int length;
@@ -3177,7 +3177,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 		}
 		catch(Exception sqle){
-		  throw new IDOException(sqle,this);
+		  throw new IDORelationshipException(sqle,this);
 		}
 		finally{
 			if(Stmt != null){
@@ -3314,8 +3314,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
     }
 
-
-    protected void idoRemoveFrom(Class entityInterfaceClass) throws RemoveException{
+    /**
+    **Default remove behavior with a many-to-many relationship
+    ** Deletes <b>ALL</b> records of relation with all instances of entityInterfaceClass with this entity bean instance
+    *
+    * @throws IDORemoveRelationshipException if there is no relationship with the given entity or there is an error accessing it
+    **/
+    protected void idoRemoveFrom(Class entityInterfaceClass) throws IDORemoveRelationshipException{
       /**
        * @todo Change implementation
        */
@@ -3325,15 +3330,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       }
       catch (SQLException ex) {
         //ex.printStackTrace();
-        throw new RemoveException(ex.getMessage());
+        throw new IDORemoveRelationshipException(ex,this);
       }
     }
 
     /**
     **Default remove behavior with a many-to-many relationship
     ** deletes only one line in middle table if the genericentity wa consructed with a value
+    *
+    * @throws IDORemoveRelationshipException if there is no relationship with the given entity or there is an error accessing it
     **/
-    protected void idoRemoveFrom(IDOEntity entity) throws RemoveException{
+    protected void idoRemoveFrom(IDOEntity entity) throws IDORemoveRelationshipException{
       /**
        * @todo Change implementation
        */
@@ -3342,14 +3349,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       }
       catch (SQLException ex) {
         //ex.printStackTrace();
-        throw new RemoveException(ex.getMessage());
+        throw new IDORemoveRelationshipException(ex,this);
       }
     }
 
     /**
     **Default insert behavior with a many-to-many relationship
+    *
+    * * @throws IDOAddRelationshipException if there is no relationship with the given entity or there is an error accessing it
     **/
-    protected void idoAddTo(IDOEntity entity) throws IDOException{
+    protected void idoAddTo(IDOEntity entity) throws IDOAddRelationshipException{
       /**
        * @todo Change implementation
        */
@@ -3358,7 +3367,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       }
       catch (Exception ex) {
         //ex.printStackTrace();
-        throw new IDOException(ex,this);
+        throw new IDOAddRelationshipException(ex,this);
       }
     }
 
@@ -3366,6 +3375,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * Method to execute an explicit update on the table of this entity bean
    * <br><br>This method then throws away all cache associated with all instances of <b>THIS</b> entity bean class.
+   *
+   * @throws IDOException if there is an error with the query or accessing the datastore
+   *
    */
   protected boolean idoExecuteTableUpdate(String sqlUpdateQuery)throws IDOException{
     try{
@@ -3386,6 +3398,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   /**
    * Method to execute an explicit update on many (undetermined) tables in an SQL datastore.
    * <br><br>This method then flushes all cache associated with all instances of <b>ALL</b> entity bean classes.
+   *
+   * @throws IDOException if there is an error with the query or accessing the datastore
+   *
    */
   protected boolean idoExecuteGlobalUpdate(String sqlUpdateQuery)throws IDOException{
     try{
