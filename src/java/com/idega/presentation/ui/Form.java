@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.data.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.event.IWPresentationEvent;
@@ -25,6 +25,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
+import com.idega.repository.data.ImplementorRepository;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -41,6 +42,8 @@ public class Form extends InterfaceObject {
 	public static final String ACTION_ON_KEY_UP = "onkeyup";
 	public static final String ACTION_ON_SELECT = "onselect";
 	public static final String ACTION_ON_SUBMIT = "onsubmit";
+	
+	private static final String IB_PAGE_PARAMETER = ((ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, Form.class)).getPageParameter();
 
 	private Window window;
 	private Vector maintainedParameters;
@@ -318,7 +321,7 @@ public class Form extends InterfaceObject {
 			while (iter.hasNext()) {
 				String parameterName = (String) iter.next();
 				String parameterValue;
-				if(parameterName.equals(BuilderConstants.IB_PAGE_PARAMETER) && _submitToPage>0) {
+				if(parameterName.equals(IB_PAGE_PARAMETER) && _submitToPage>0) {
 					// fix for multipart forms
 					parameterValue = Integer.toString(_submitToPage);
 				} else {
@@ -346,7 +349,7 @@ public class Form extends InterfaceObject {
 				String parameterName = (String) iter.next();
 				String parameterValue;
 				//System.out.print("parameterName = "+parameterName+" , parameterValue = "+parameterValue+" parameterSet = ");
-				if(parameterName.equals(BuilderConstants.IB_PAGE_PARAMETER) && _submitToPage>0) {
+				if(parameterName.equals(IB_PAGE_PARAMETER) && _submitToPage>0) {
 					// fix for multipart forms
 					parameterValue = Integer.toString(_submitToPage);
 				} else {

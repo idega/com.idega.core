@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.114 2004/06/23 22:59:15 gimmi Exp $
+ * $Id: Link.java,v 1.115 2004/06/24 14:01:51 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import com.idega.core.builder.business.BuilderConstants;
+import com.idega.core.builder.data.ICBuilderConstants;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObjectInstance;
@@ -43,6 +43,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.Window;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -67,6 +68,10 @@ public class Link extends Text {
 	private String windowOpenerJavascriptString = null;
 
 	private static String _sessionStorageName = IWMainApplication.windowOpenerParameter;
+	
+	private static final String IB_PAGE_PARAMETER;
+	private static final String PRM_HISTORY_ID;
+	
 	public static final String HASH = "#";
 	public static final String JAVASCRIPT = "javascript:";
 	public static final String TARGET_ATTRIBUTE = "target";
@@ -119,6 +124,13 @@ public class Link extends Text {
 
 	public static boolean usingEventSystem = false;
 
+	static {
+		ICBuilderConstants constants = (ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, Link.class);
+		IB_PAGE_PARAMETER = constants.getPageParameter();
+		PRM_HISTORY_ID = constants.getHistoryIdParameter();
+	}
+	
+	
 	/**
 	 *
 	 */
@@ -1159,12 +1171,12 @@ public class Link extends Text {
 			url.append('=');
 			url.append(page.getID());
 			setURL(url.toString());*/
-			String value = this.getParameterValue(BuilderConstants.IB_PAGE_PARAMETER);
+			String value = this.getParameterValue(IB_PAGE_PARAMETER);
 			if (value != null) {
-				removeParameter(BuilderConstants.IB_PAGE_PARAMETER);
+				removeParameter(IB_PAGE_PARAMETER);
 			}
 			
-			addParameter(BuilderConstants.IB_PAGE_PARAMETER, Integer.toString(page.getID()));
+			addParameter(IB_PAGE_PARAMETER, Integer.toString(page.getID()));
 		}
 	}
 	
@@ -1181,7 +1193,7 @@ public class Link extends Text {
 	}
 
 	public int getPage() {
-		String value = this.getParameterValue(BuilderConstants.IB_PAGE_PARAMETER);
+		String value = this.getParameterValue(IB_PAGE_PARAMETER);
 		if (value != null && !value.equals("")) {
 			return Integer.parseInt(value);
 		}
@@ -1376,8 +1388,8 @@ public class Link extends Text {
 	protected String getParameterString(IWContext iwc, String URL) {
 		if (usingEventSystem) {
 			//if(!this.isParameterSet(BuilderLogic.PRM_HISTORY_ID)){
-			this.removeParameter(BuilderConstants.PRM_HISTORY_ID);
-			this.addParameter(BuilderConstants.PRM_HISTORY_ID, (String) iwc.getSessionAttribute(BuilderConstants.PRM_HISTORY_ID));
+			this.removeParameter(PRM_HISTORY_ID);
+			this.addParameter(PRM_HISTORY_ID, (String) iwc.getSessionAttribute(PRM_HISTORY_ID));
 			//this.addParameter(BuilderLogic.PRM_HISTORY_ID,"1000");
 			//}
 		}

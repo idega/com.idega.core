@@ -14,13 +14,14 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.idega.core.builder.business.BuilderConstants;
+import com.idega.core.builder.data.ICBuilderConstants;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.util.LocaleUtil;
 /**
  * IWEventProcessor //TODO: tryggvil Describe class 
@@ -30,7 +31,21 @@ import com.idega.util.LocaleUtil;
  * @version 1.0
  */
 public class IWEventProcessor {
+	
+	
+	private final static String PRM_HISTORY_ID;
+	private final static String SESSION_OBJECT_STATE;
+	
 	private static IWEventProcessor instance;
+	
+	static {
+		ICBuilderConstants constants = (ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, IWEventProcessor.class);
+		PRM_HISTORY_ID = constants.getHistoryIdParameter();
+		SESSION_OBJECT_STATE = constants.getSessionObjectInstanceParameter();
+	}
+	
+	
+	
 	private IWEventProcessor() {
 	}
 
@@ -137,10 +152,10 @@ public class IWEventProcessor {
 		try {
 			//    System.err.println("-------------------------------------");
 			//    System.err.println("handleEvent begin");
-			String historyID = iwc.getParameter(BuilderConstants.PRM_HISTORY_ID);
+			String historyID = iwc.getParameter(PRM_HISTORY_ID);
 			if (historyID != null) {
 				PresentationObject[] listeners = EventLogic.getIWPOListeners(iwc);
-				LinkedList state = (LinkedList) iwc.getSessionAttribute(BuilderConstants.SESSION_OBJECT_STATE);
+				LinkedList state = (LinkedList) iwc.getSessionAttribute(SESSION_OBJECT_STATE);
 				int historySize = 5;
 				boolean listJustConstructed = false;
 				//      System.err.println("PresentationServelt - State = "+ state);
@@ -148,7 +163,7 @@ public class IWEventProcessor {
 					state = new LinkedList();
 					state.addLast(historyID);
 					state.addLast(new Hashtable());
-					iwc.setSessionAttribute(BuilderConstants.SESSION_OBJECT_STATE, state);
+					iwc.setSessionAttribute(SESSION_OBJECT_STATE, state);
 					listJustConstructed = true;
 				}
 				synchronized (state) {
@@ -175,7 +190,7 @@ public class IWEventProcessor {
 							state.removeFirst();
 						}
 						int copyFrom = state.size() - 1;
-						state.addLast(iwc.getParameter(BuilderConstants.PRM_HISTORY_ID));
+						state.addLast(iwc.getParameter(PRM_HISTORY_ID));
 						if (copyFrom >= 1) {
 							try {
 								state.addLast(((Hashtable) state.get(copyFrom)).clone());
@@ -248,19 +263,19 @@ public class IWEventProcessor {
 		//IWEventProcessor.getInstance().handleLocaleParameter(iwc);
 	}
 	public void increaseHistoryID(IWContext iwc) {
-		String historyIDSession = (String) iwc.getSessionAttribute(BuilderConstants.PRM_HISTORY_ID);
+		String historyIDSession = (String) iwc.getSessionAttribute(PRM_HISTORY_ID);
 		if (historyIDSession == null) {
 			historyIDSession = Integer.toString((int) (Math.random() * 1000));
-			iwc.setSessionAttribute(BuilderConstants.PRM_HISTORY_ID, historyIDSession);
+			iwc.setSessionAttribute(PRM_HISTORY_ID, historyIDSession);
 		} else {
 			try {
 				historyIDSession = Integer.toString(Integer.parseInt(historyIDSession) + 1);
-				iwc.setSessionAttribute(BuilderConstants.PRM_HISTORY_ID, historyIDSession);
+				iwc.setSessionAttribute(PRM_HISTORY_ID, historyIDSession);
 			} catch (NumberFormatException ex) {
 				//System.err.print("NumberformatException when trying to
 				// increase historyID, historyIDSession:"+historyIDSession);
 				historyIDSession = Integer.toString((int) (Math.random() * 1000));
-				iwc.setSessionAttribute(BuilderConstants.PRM_HISTORY_ID, historyIDSession);
+				iwc.setSessionAttribute(PRM_HISTORY_ID, historyIDSession);
 			}
 		}
 	}

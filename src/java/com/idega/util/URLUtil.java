@@ -9,11 +9,11 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-
-import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.builder.data.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.util.datastructures.MultivaluedHashMap;
 import com.idega.util.text.TextSoap;
 
@@ -21,6 +21,8 @@ import com.idega.util.text.TextSoap;
  * @author laddi
  */
 public class URLUtil {
+
+	private static final String IB_PAGE_PARAMETER = ((ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, URLUtil.class)).getPageParameter();
 
 	private MultivaluedHashMap _parameters;
 	private String _path;
@@ -206,12 +208,12 @@ public class URLUtil {
 	
 	public void setPage(ICPage page) {
 		if ((page != null) && (page.getID() != -1)) {
-			addParameter(BuilderConstants.IB_PAGE_PARAMETER, page.getPrimaryKey().toString());
+			addParameter(IB_PAGE_PARAMETER, page.getPrimaryKey().toString());
 		}
 	}
 
 	public void setPage(int pageID) {
-		addParameter(BuilderConstants.IB_PAGE_PARAMETER, pageID);
+		addParameter(IB_PAGE_PARAMETER, pageID);
 	}
 
 	/**

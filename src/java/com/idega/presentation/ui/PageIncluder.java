@@ -13,12 +13,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.data.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.util.FileUtil;
 import com.idega.util.Index;
 import com.idega.util.IndexComparator;
@@ -30,6 +31,9 @@ import com.idega.util.text.TextSoap;
 *@version 1.0
 */
 public class PageIncluder extends PresentationObject implements Index{
+	
+	private static final String IB_PAGE_PARAMETER = ((ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, PageIncluder.class)).getPageParameter();
+	
   private String URL = null;
   private String BASEURL = null;
   private String BASEURLHTTPS = null;
@@ -335,11 +339,11 @@ public class PageIncluder extends PresentationObject implements Index{
 
   protected String getCurrentIBPageIDToURLString(IWContext iwc)throws Exception{
   	BuilderService bservice = getBuilderService(iwc);
-    return BuilderConstants.IB_PAGE_PARAMETER+"="+bservice.getCurrentPageId(iwc);
+    return IB_PAGE_PARAMETER+"="+bservice.getCurrentPageId(iwc);
   }
 
   protected String getSendToPageURLString(){
-    return BuilderConstants.IB_PAGE_PARAMETER+"="+_sendToPage.getID();
+    return IB_PAGE_PARAMETER+"="+_sendToPage.getID();
   }
 
   protected String changeURLToAbsoluteValueIgnoreCase(String tag,String html){

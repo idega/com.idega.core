@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.16 2004/02/20 16:37:43 tryggvil Exp $
+ * $Id: LinkContainer.java,v 1.17 2004/06/24 14:01:51 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 
-import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.data.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.data.ICFile;
@@ -25,6 +25,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.ui.Window;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.util.StringHandler;
 import com.idega.util.text.TextSoap;
 
@@ -48,6 +49,8 @@ public class LinkContainer extends PresentationObjectContainer {
 	public static final String TARGET_PARENT_WINDOW = "_parent";
 	public static final String TARGET_TOP_WINDOW = "_top";
 
+	private static final  String IB_PAGE_PARAMETER = ((ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, LinkContainer.class)).getPageParameter();
+	
 	private boolean _addSessionId = true;
 
 	private String _windowWidth, _windowHeight, _windowName;
@@ -198,16 +201,16 @@ public class LinkContainer extends PresentationObjectContainer {
 	 */
 	public void setPage(ICPage page) {
 		if ((page != null) && (page.getID() != -1)) {
-			String value = this.getParameterValue(BuilderConstants.IB_PAGE_PARAMETER);
+			String value = this.getParameterValue(IB_PAGE_PARAMETER);
 			if (value != null) {
-				removeParameter(BuilderConstants.IB_PAGE_PARAMETER);
+				removeParameter(IB_PAGE_PARAMETER);
 			}
-			addParameter(BuilderConstants.IB_PAGE_PARAMETER, page.getID());
+			addParameter(IB_PAGE_PARAMETER, page.getID());
 		}
 	}
 
 	public int getPage() {
-		String value = this.getParameterValue(BuilderConstants.IB_PAGE_PARAMETER);
+		String value = this.getParameterValue(IB_PAGE_PARAMETER);
 		if (value != null && !value.equals("")) {
 			return Integer.parseInt(value);
 		}

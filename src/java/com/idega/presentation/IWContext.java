@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
@@ -32,13 +31,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
-import com.idega.core.builder.business.BuilderConstants;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.builder.data.ICBuilderConstants;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
@@ -53,6 +51,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.UserProperties;
 import com.idega.user.util.Converter;
 import com.idega.util.datastructures.HashtableMultivalued;
@@ -100,10 +99,20 @@ implements IWUserContext, IWApplicationContext {
 	private static Method methodIsBuilderApplicationRunning;
 	private FacesContext realFacesContext;
 	
+	private static final String PRM_HISTORY_ID;
+	private static final String SESSION_OBJECT_STATE;
+	
+	
 	protected static final String IWC_SESSION_ATTR_NEW_USER_KEY = "iwc_new_user";
 	public static final String[] WML_USER_AGENTS = new String[] {"nokia", "ericsson", "wapman", "upg1", "symbian", "wap"}; // NB: must be lowercase
 	private boolean isRequestCharacterEncodingSet;
 
+	static {
+		ICBuilderConstants constants = (ICBuilderConstants) ImplementorRepository.getInstance().getImplementorOrNull(ICBuilderConstants.class, IWContext.class);
+		PRM_HISTORY_ID=  constants.getHistoryIdParameter();
+		SESSION_OBJECT_STATE = constants.getSessionObjectInstanceParameter();
+	}
+	
 	/**
 	 *Default constructor
 	 **/
@@ -945,13 +954,13 @@ implements IWUserContext, IWApplicationContext {
 	 * @todo implement
 	 */
 	public String getCurrentState(int instanceId) {
-		String historyId = this.getParameter(BuilderConstants.PRM_HISTORY_ID);
+		String historyId = this.getParameter(PRM_HISTORY_ID);
 		//System.err.println("in iwc.getCurrentState()");
 		if (historyId != null) {
 			//System.err.println("historyId != null");
 			HttpSession s = this.getSession();
 			//System.err.println(" - from Session.hashCode() -> "+s.hashCode());
-			List historyList = (List) s.getAttribute(BuilderConstants.SESSION_OBJECT_STATE);
+			List historyList = (List) s.getAttribute(SESSION_OBJECT_STATE);
 			//List historyList = (List)this.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
 			if (historyList != null && historyList.contains(historyId)) {
 				int index = historyList.indexOf(historyId);
