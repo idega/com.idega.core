@@ -1,13 +1,12 @@
 package com.idega.idegaweb.presentation;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
-import com.ibm.icu.text.SimpleDateFormat;
 import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
