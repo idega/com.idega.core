@@ -50,8 +50,13 @@ public class IWCoreServlet extends HttpServlet
 	public void service(HttpServletRequest _req, HttpServletResponse _res)
 	throws ServletException, IOException{
 	    
-	    //þetta þyrfti að skila object sem að er síðan syncað á í stað this t.d. IBPage
-	    //sami hlutur og er geymdur fyrir checkið. hafa áfram impl. í þessum klasa bara með this
+	    //ï¿½etta ï¿½yrfti aï¿½ skila object sem aï¿½ er sï¿½ï¿½an syncaï¿½ ï¿½ ï¿½ staï¿½ this t.d. IBPage
+	    //sami hlutur og er geymdur fyrir checkiï¿½. hafa ï¿½fram impl. ï¿½ ï¿½essum klasa bara meï¿½ this
+	    
+		// NB: (jonas) moved threadcontext stuff from unSynchronizedService to here because IWContext is instanciated
+		// during call to getIfSyncronizeAccess
+		ThreadContext context = getThreadContext();
+		context.putThread(Thread.currentThread());
 		if(getIfSyncronizeAccess(_req,_res)){
 			synchronized(getObjectToSynchronizeOn(_req,_res)){
 				unSynchronizedService(_req,_res);
@@ -61,6 +66,7 @@ public class IWCoreServlet extends HttpServlet
 		else{
 			unSynchronizedService(_req,_res);
 		}
+		context.releaseThread(Thread.currentThread());
 	}
 	
 	/**
@@ -79,11 +85,14 @@ public class IWCoreServlet extends HttpServlet
 	 */
 	protected void unSynchronizedService(HttpServletRequest _req, HttpServletResponse _res)
 	throws ServletException, IOException{
-				ThreadContext context = getThreadContext();
+		// NB: (jonas) moved the put and releas dudes to service method to handle creation of IWContext object in getIfSyncronizeAccess
+		// (the IBMainServlet method is actually used)
+		
+		// ThreadContext context = getThreadContext();
 		//Thread ct = Thread.currentThread();
-		context.putThread(Thread.currentThread());
+		//context.putThread(Thread.currentThread());
 		super.service(_req,_res);
-		context.releaseThread(Thread.currentThread());
+		//context.releaseThread(Thread.currentThread());
 	}
 	
 	/**
