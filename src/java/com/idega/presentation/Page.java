@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.21 2001/11/30 09:31:26 laddi Exp $
+ * $Id: Page.java,v 1.22 2001/12/10 13:14:41 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -66,11 +66,12 @@ public class Page extends PresentationObjectContainer {
   public static final String IW_FRAME_STORAGE_PARMETER = "idegaweb_frame_page";
   public static final String IW_FRAME_CLASS_PARAMETER = "idegaweb_frame_class";
 
- // private final static String START_TAG="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">\n<html>";
+
  // private final static String START_TAG="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>";
 
   /** By skipping the validation URL XML compliant browser still recognise attributes such as height / width **/
   private final static String START_TAG="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n<html>";
+
   private final static String END_TAG="</html>";
 
   /**
@@ -752,7 +753,20 @@ public class Page extends PresentationObjectContainer {
    *
    */
   public String getMetaInformation(IWContext iwc){
-    String theReturn = "\n<meta http-equiv=\"pragma\" content=\"no-cache\"/>\n<meta http-equiv=\"content-type\" content=\"text/html; charset=iso-8859-1\"/>\n<meta name=\"generator\" content=\"idegaWeb 1.3\"/>\n<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\"/>\n";
+    String theReturn = "\n<meta http-equiv=\"content-type\" content=\"text/html; charset=iso-8859-1\"/>\n<meta name=\"generator\" content=\"idegaWeb 1.3\"/>\n<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\"/>\n";
+
+    //If the user is logged on then there is no caching by proxy servers
+    boolean notUseProxyCaching=true;
+    if(com.idega.block.login.business.LoginBusiness.isLoggedOn(iwc)){
+      notUseProxyCaching=true;
+    }
+    else{
+      notUseProxyCaching=false;
+    }
+
+    if(notUseProxyCaching){
+      theReturn += "\n<meta http-equiv=\"pragma\" content=\"no-cache\"/>";
+    }
     if (getRedirectInfo() != null) {
       theReturn += "<meta http-equiv=\"refresh\" content=\""+getRedirectInfo()+"\"/>";
     }
