@@ -49,6 +49,7 @@ public class IWConstants{
   public static String LINK_STYLE_3 = "font-family: Arial, Helvetica,sans-serif; font-size: 11px; color: #000000; text-decoration: underline;";
   public static String LINK_HOVER_STYLE_3 = "";
   public static final String LINK_STYLE_3_NAME = "Link3";
+  public static final String HOVER = ":hover";
   
   public static String INPUT_STYLE = "font-size: 9px; border: 1 solid #000000;";
   public static final String INPUT_STYLE_NAME = "Input1";
@@ -69,4 +70,16 @@ public class IWConstants{
   public static final String BUILDER_FONT_STYLE_TITLE = "font-family:Verdana,Arial,Helvetica,sans-serif;font-size:9pt;font-weight:bold;color:#FFFFFF;";
   public static final String BUILDER_FONT_STYLE_INTERFACE = "font-size: 8pt; border: 1 solid #000000;";
   public static final String BUILDER_FONT_STYLE_INTERFACE_SMALL = "font-family:Arial,Helvetica,sans-serif;font-size: 7pt; border: 1 solid #000000;";
+  
+  public static HashMap getDefaultStyles() {
+  	HashMap map = new HashMap();
+  	String[] styleNames = {HEADER_STYLE_1_NAME,HEADER_STYLE_2_NAME,HEADER_STYLE_3_NAME,BODY_STYLE_1_NAME,BODY_STYLE_2_NAME,BODY_STYLE_3_NAME,LINK_STYLE_1_NAME,LINK_STYLE_1_NAME+HOVER,LINK_STYLE_2_NAME,LINK_STYLE_2_NAME+HOVER,LINK_STYLE_3_NAME,LINK_STYLE_3_NAME+HOVER,INPUT_STYLE_NAME};
+  	String[] styleValues = {HEADER_STYLE_1,HEADER_STYLE_2,HEADER_STYLE_3,BODY_STYLE_1,BODY_STYLE_2,BODY_STYLE_3,LINK_STYLE_1,LINK_HOVER_STYLE_1,LINK_STYLE_2,LINK_HOVER_STYLE_2,LINK_STYLE_3,LINK_HOVER_STYLE_3,INPUT_STYLE};
+  		
+  	for ( int a = 0; a < styleNames.length; a++ ) {
+  		map.put(styleNames[a], styleValues[a]);	
+  	}
+  	
+  	return map;	
+  }
 }

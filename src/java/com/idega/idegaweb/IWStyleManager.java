@@ -17,10 +17,10 @@ import java.util.Vector;
 /**
  * <p>Title: IdegaWeb Style Manager</p>
  * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2001</p>
+ * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega</p>
  * @author <a href="mailto:laddi@idega.is">Þórhallur "Laddi" Helgason</a>
- * @version 1.0
+ * @version 1.1
  */
 
 public class IWStyleManager {
@@ -71,7 +71,7 @@ public class IWStyleManager {
 		}
 	}
 
-	public void addDefaultValues() {
+	private void addDefaultValues() {
 		setStyle(defaultStyles[0], IWConstants.LINK_STYLE);
 		setStyle(defaultStyles[1], IWConstants.LINK_HOVER_STYLE);
 		setStyle(defaultStyles[2], IWConstants.BODY_STYLE);
@@ -95,8 +95,12 @@ public class IWStyleManager {
 		getStyleMap().remove(name);
 		writeStyleSheet();	
 	}
+	
+	public boolean isStyleSet(String name) {
+		return getStyleMap().containsKey(name);	
+	}
 
-	public void getStylesFromFile(Vector vector) {
+	private void getStylesFromFile(Vector vector) {
 		Iterator iter = vector.iterator();
 		StringTokenizer tokenizer;
 		while (iter.hasNext()) {
