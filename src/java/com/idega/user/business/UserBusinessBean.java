@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -78,6 +79,8 @@ import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.data.UserHome;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.Timer;
+import com.idega.util.datastructures.NestedSetsContainer;
 import com.idega.util.text.Name;
 
  /**
@@ -108,6 +111,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   private TopNodeGroupHome topNodeGroupHome;
   
   private Gender male,female;
+
+  /**
+   * if stored prosedure is not available and users view and owner permissions for groups are more than <code>searchForTopNodesFromTop</code> then the top nodes are searched
+   * from the top of the tree, otherwise the collection of the groups that the user has collection for is used to find which of them are
+   * topnodes
+   */
+  private int searchForTopNodesFromTop = 3000;
 
   public UserBusinessBean() {
   }
@@ -1233,7 +1243,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
   public  Collection getUserGroupsDirectlyRelated(User user){
     try {
-      return getGroupBusiness().getParentGroups(user.getGroupID()); //  EntityFinder.findRelated(user,com.idega.user.data.GroupBMPBean.getStaticInstance());
+      return getGroupBusiness().getParentGroups(user); //  EntityFinder.findRelated(user,com.idega.user.data.GroupBMPBean.getStaticInstance());
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -1592,7 +1602,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * Helper method for {@link #isGroupUnderUsersTopGroupNode(IWUserContext, Group, User)}.
 	 * @see #isGroupUnderUsersTopGroupNode(IWUserContext, Group, User)
 	 */
-	private boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user, Collection topGroupNodes) {
+	public boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user, Collection topGroupNodes) {
 		boolean found = false; // whether ancestry with a top group node is found or not
 		if(group!=null && topGroupNodes.contains(group)) {
 			//System.out.println("found top group ancestor " + group.getName());
@@ -1614,6 +1624,106 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		return found;
 	}
+	
+	private Collection searchForTopNodes(Collection permissions, Collection initialTopNodes) throws EJBException, RemoteException, FinderException{
+		if(permissions==null || permissions.isEmpty()){
+			return ListUtil.getEmptyList();
+		}
+		NestedSetsContainer groupTree = getGroupBusiness().getLastGroupTreeSnapShot();
+		
+		Map topNodesSubTrees = new HashMap();
+		Iterator iter = permissions.iterator();
+		if(initialTopNodes == null || initialTopNodes.isEmpty()){
+			String groupPK = ((ICPermission)iter.next()).getContextValue();  //this group is a topnode until we find topnode that is parent of it
+			topNodesSubTrees.put(groupPK,groupTree.subSet(groupPK));  //get the first topnode's subtree
+		} else {
+			for (Iterator iterator = initialTopNodes.iterator(); iterator.hasNext();) {
+				String groupPK = String.valueOf(((Group) iterator.next()).getPrimaryKey());
+				topNodesSubTrees.put(groupPK,groupTree.subSet(groupPK));
+			}
+		}
+		Set topNodeSubTreesEntrySet = topNodesSubTrees.entrySet();
+		while(iter.hasNext()) {
+			ICPermission perm = (ICPermission) iter.next();
+			if(!perm.getPermissionValue()) {
+			    continue;//we don't want to use this permission if is a negative permission (a NOT permission)
+			}
+			String sGroup = perm.getContextValue();
+			boolean isChild = false;
+			for (Iterator iterator = topNodeSubTreesEntrySet.iterator(); iterator.hasNext();) {
+				Set subTree = (Set)((Map.Entry)iterator.next()).getValue();
+				if(subTree.contains(sGroup)){
+					isChild=true;
+					break;
+				}
+			}
+			if(!isChild && groupTree.contains(sGroup)){
+				Set newSubset = groupTree.subSet(sGroup);
+				for (Iterator keyIter = topNodesSubTrees.keySet().iterator(); keyIter.hasNext();) {
+					String topNode = (String) keyIter.next();
+					if(newSubset.contains(topNode)){  // if the new topnode is parent of another "topnode" then that node is not topnode and is removed
+						keyIter.remove();
+					}
+				}
+				topNodesSubTrees.put(sGroup,newSubset);
+				topNodeSubTreesEntrySet = topNodesSubTrees.entrySet();
+			}
+			
+		}
+		
+		
+		List topNodes = new ArrayList();
+		String[] groupPKs = (String[]) topNodesSubTrees.keySet().toArray(new String[topNodesSubTrees.size()]);
+		topNodes.addAll(getGroupHome().findByPrimaryKeyCollection(getGroupHome().decode(groupPKs)));
+		
+		for (Iterator iterator = topNodes.iterator(); iterator.hasNext();) {
+			Group group = (Group) iterator.next();
+			if(group.isAlias() && topNodes.contains(group.getAlias())){
+				iter.remove();
+			} else if(group.isAlias()){
+				Set subTree = groupTree.subSet(String.valueOf(group.getAliasID()));
+				for (Iterator keyIter = topNodes.iterator(); keyIter.hasNext();) {
+					String topNode = String.valueOf(((Group) keyIter.next()).getPrimaryKey());
+					if(subTree.contains(topNode)){  // if the new topnode is parent of another "topnode" then that node is not topnode and is removed
+						keyIter.remove();
+					}
+				}
+			}
+		}
+		
+		return topNodes;
+	}
+	
+	private Collection searchForTopNodesFromTheTop(Collection possibleGroups) throws IDORelationshipException, RemoteException, FinderException{
+		Collection domainTopNodes = this.getIWApplicationContext().getDomain().getTopLevelGroupsUnderDomain();
+		Collection topNodes = new ArrayList();
+		HashSet prosessedGroups = new HashSet();
+		collectTopNodesForSubtree(domainTopNodes, possibleGroups, topNodes, prosessedGroups);
+		return topNodes;
+	}
+
+	/**
+	 * 
+	 * @param childGroups
+	 * @param possibleGroups collection of prosessed groups to prevent endless recusion
+	 * @param topNodes
+	 * @param prosessedGroups 
+	 */
+	private void collectTopNodesForSubtree(Collection childGroups, Collection possibleGroups, Collection topNodes, Set prosessedGroups){
+		for (Iterator iter = childGroups.iterator(); iter.hasNext();) {
+			Group gr = (Group) iter.next();
+			if(!prosessedGroups.contains(gr)){
+				prosessedGroups.add(gr);
+				if(possibleGroups.contains(gr)){
+					topNodes.add(gr);
+					continue;
+				} else {
+					collectTopNodesForSubtree(gr.getChildGroups(),possibleGroups,topNodes,prosessedGroups);
+				}
+			}
+		}
+	}
+	
 	
 	public boolean hasTopNodes(User user, IWUserContext iwuc) {
 		try {
@@ -1643,34 +1753,88 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)throws RemoteException{
 		Collection topNodes = new ArrayList();
 		if( user != null ){
-			
 			//topNodes = (Collection)iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString());
 			topNodes = getStoredTopNodeGroups(user);
-			if( topNodes != null && !topNodes.isEmpty()){ 
+			if(topNodes != null && !topNodes.isEmpty()){ 
 			    return topNodes;
-			}
-			else{
-
+			}else{
+				log("[UserBusinessBean]: getUsersTopGroupNodesByViewAndOwnerPermissions(...) begins");
+				Timer totalTime = new Timer();
+				totalTime.start();
 				try {
-					
+					GroupBusiness groupBiz = getGroupBusiness();
 					boolean superUser = iwuc.isSuperAdmin();
-					if(superUser){
+					if(superUser && user.equals(iwuc.getCurrentUser())){
 						try {
-							topNodes = ((IWContext) iwuc).getDomain().getTopLevelGroupsUnderDomain();
+							topNodes = this.getIWApplicationContext().getDomain().getTopLevelGroupsUnderDomain();
 						}
 						catch (Exception e1) {
 							topNodes = new Vector();
 							e1.printStackTrace();
 						}
 					}
-					else{
-						System.out.println("TOP NODES fetch starts : "+ IWTimestamp.RightNow().toString());
+					else if (groupBiz.userGroupTreeImageProcedureTopNodeSearch()){
+						log("[UserBusinessBean]: using stored procedure topnode search");
+						Timer time = new Timer();
+						time.start();
+						
+						Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
+						Iterator iterating = directlyRelatedParents.iterator();
+						List additionalGroups = new ArrayList();
+						while (iterating.hasNext()) {
+							Group parent = (Group) iterating.next();
+							if(parent!=null && parent.getPermissionControllingGroupID()>0){
+								additionalGroups.add(parent.getPermissionControllingGroup());
+							}
+							
+						}
+						directlyRelatedParents.addAll(additionalGroups);
+
+						Collection allPermissions = new ArrayList();
+						
+						//get all view permissions for direct parent and put in a list
+						Collection viewPermissions = AccessControl.getAllGroupViewPermissions(directlyRelatedParents);
+						allPermissions.addAll(viewPermissions);
+
+						
+											
+						Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup( user );
+						allPermissions.addAll(ownedPermissions);
+						time.stop();
+						log("[UserBusinessBean]: fetching complete " + time.getTimeString());
+						time.start();						
+						
+		
+						try {
+							topNodes = searchForTopNodes(allPermissions,null);
+//							topNodes = searchForTopNodes(viewPermissions,searchForTopNodes(ownedPermissions,null));
+
+							for (Iterator iter = topNodes.iterator(); iter.hasNext();) {
+								Group gr = (Group) iter.next();
+								if(gr.isAlias() && topNodes.contains(gr.getAlias())){
+									iter.remove();
+								}
+							}
+							time.stop();
+							log("[UserBusinessBean]: searchForTopNodesFromTheTop complete " + time.getTimeString());
+						}
+						catch (RemoteException e1) {
+							throw new EJBException(e1);
+						}
+						catch (FinderException e1) {
+							throw new EJBException(e1);
+						}
+					} else {
+						log("[UserBusinessBean]: not using stored procedure topnode search");
+						Timer time = new Timer();
+						time.start();
+
 						Map parents = new HashMap();
 						Map groupMap = new HashMap();//we need it to be synchronized so we can remove items while in a iterator
 						Map aliasMap = new HashMap();
 						
 						IDOUtil idoUtil = IDOUtil.getInstance();
-						GroupBusiness groupBiz = getGroupBusiness();
+						GroupHome grHome = getGroupHome();
 						
 						Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
 						Iterator iterating = directlyRelatedParents.iterator();
@@ -1684,183 +1848,228 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						}
 						directlyRelatedParents.addAll(additionalGroups);
 						
-						
-						Collection ownedPermissions = null;
-						Collection allViewAndOwnerPermissions = new ArrayList();
+						Collection allViewAndOwnerPermissionGroupPKs = new ArrayList();
 						
 						//get all view permissions for direct parent and put in a list
-						Collection viewPermissions = new ArrayList();
-						viewPermissions.addAll(AccessControl.getAllGroupViewPermissions(directlyRelatedParents));
-						allViewAndOwnerPermissions.addAll(viewPermissions);
-											
-						ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup( user );
+						Collection viewPermissions = AccessControl.getAllGroupViewPermissions(directlyRelatedParents);
+						addGroupPKsToCollectionFromICPermissionCollection(viewPermissions,allViewAndOwnerPermissionGroupPKs);
+								
+						Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup( user );
 						//allViewAndOwnerPermissions.removeAll(ownedPermissions);//no double entries thank you
-						allViewAndOwnerPermissions.addAll(ownedPermissions);
+						addGroupPKsToCollectionFromICPermissionCollection(ownedPermissions,allViewAndOwnerPermissionGroupPKs);
 						
-						System.out.println("TOP NODES done fetching all permissions: "+ IWTimestamp.RightNow().toString());
-						
-						//get all (recursively) parents for permission
-						Iterator permissions = allViewAndOwnerPermissions.iterator();
-						Map cachedParents = new HashMap();
-						Map cachedGroups = new HashMap();
-						while (permissions.hasNext()) {
-							ICPermission perm = (ICPermission) permissions.next();
-							if (perm != null) {
-								try {
-									String groupId = perm.getContextValue();
-									
-									//we don't want to use this permission if is a negative permission (a NOT permission)
-									if(!perm.getPermissionValue()) {
-									   
-									    continue;
-									}
-									
-									Integer primaryKey = new Integer(groupId);
-									
-									if( !groupMap.containsKey(primaryKey) ){
-										Group permissionGroup = groupBiz.getGroupByGroupID(primaryKey.intValue());
-										if( !cachedGroups.containsKey(primaryKey) ) {
-											cachedGroups.put(primaryKey,permissionGroup);
-										}
-										Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup, cachedParents, cachedGroups);
-										Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
-										parents.put(primaryKey,parentMap);
-										groupMap.put(primaryKey,permissionGroup);
-										//if it's an alias we don't need the original group and make a list of those groups to filter out later
-										if(permissionGroup.isAlias()){
-											Integer originalGroupID = new Integer(permissionGroup.getAliasID());
-											aliasMap.put(originalGroupID,primaryKey);
-										}
-									}
-							
-								}
-								catch (NumberFormatException e1) {
-									e1.printStackTrace();
-								}
-								catch (FinderException e1) {
-									System.out.println("UserBusiness: In getUsersTopGroupNodesByViewAndOwnerPermissions. group not found or passive?! "+perm.getContextValue());
-								}
-							}
-							else {
-							    System.out.println("At least one permission is null in UserBusinessBean.getUsersTopGroupNodesByViewAndOwnerPermissions");
-							}
+						Collection allViewAndOwnerPermissionGroups = new ArrayList();
+						try {
+							allViewAndOwnerPermissionGroups = grHome.findByPrimaryKeyCollection(allViewAndOwnerPermissionGroupPKs);
+						} catch (FinderException e) {
+							log("UserBusiness: In getUsersTopGroupNodesByViewAndOwnerPermissions. groups not found");
+							e.printStackTrace();
 						}
+						time.stop();
+						log("[UserBusinessBean]: getting permission groups complete " + time.getTimeString());
+						time.start();
 						
-						debug("TOP NODES fetch ends and sort start : "+ IWTimestamp.RightNow().toString());
-						//Filter out the real top nodes!
-						Map skipThese = new HashMap();
-						Set keys = parents.keySet();
-						Iterator iter = keys.iterator();
-						while (iter.hasNext()) {
-							Integer thePermissionGroupsId = (Integer) iter.next();
-				
-							Iterator iter2 = parents.keySet().iterator();
-							while (iter2.hasNext()) {
-								Integer groupToCompareTo = (Integer) iter2.next();
-								//If this group was already checked or is the same as the comparing group, continue (skip this one)
-								if( thePermissionGroupsId.equals(groupToCompareTo) || skipThese.containsKey(thePermissionGroupsId)){
-									continue;//dont check for self
+						//searchForTopNodesFromTop=3000;  //some suitable value
+						if(allViewAndOwnerPermissionGroups.size() > this.searchForTopNodesFromTop){
+							log("[UserBusinessBean]: using search from the top");
+							try {
+								topNodes = searchForTopNodesFromTheTop(allViewAndOwnerPermissionGroups);
+								
+								for (Iterator iter = topNodes.iterator(); iter.hasNext();) {
+									Group gr = (Group) iter.next();
+									if(gr.isAlias() && topNodes.contains(gr.getAlias())){
+										iter.remove();
+									}
+								}
+								time.stop();
+								log("[UserBusinessBean]: searchForTopNodesFromTheTop complete " + time.getTimeString());
+								time.start();
+							}
+							catch (IDORelationshipException e1) {
+								throw new EJBException(e1);
+							}
+							catch (RemoteException e1) {
+								throw new EJBException(e1);
+							}
+							catch (FinderException e1) {
+								throw new EJBException(e1);
+							}
+						} else {
+							log("[UserBusinessBean]: using old topnode search");
+							//get all (recursively) parents for permission
+							Iterator permissions = allViewAndOwnerPermissionGroups.iterator();
+							Map cachedParents = new HashMap();
+							Map cachedGroups = new HashMap();
+							while (permissions.hasNext()) {
+								Group group = (Group) permissions.next();
+								Integer primaryKey = (Integer)group.getPrimaryKey();
+								if( !groupMap.containsKey(primaryKey) ){
+									Group permissionGroup = group;
+									if( !cachedGroups.containsKey(primaryKey) ) {
+										cachedGroups.put(primaryKey,permissionGroup);
+									}
+									Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup, cachedParents, cachedGroups);
+									Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
+									parents.put(primaryKey,parentMap);
+									groupMap.put(primaryKey,permissionGroup);
+									//if it's an alias we don't need the original group and make a list of those groups to filter out later
+									if(permissionGroup.isAlias()){
+										Integer originalGroupID = new Integer(permissionGroup.getAliasID());
+										aliasMap.put(originalGroupID,primaryKey);
+									}
+								}						
+							}
+							
+							time.stop();
+							log("[UserBusinessBean]: getting all parents (recursively) complete " + time.getTimeString());
+							time.start();
+	
+							//Filter out the real top nodes!
+							Map skipThese = new HashMap();
+							Set keys = parents.keySet();
+							Iterator iter = keys.iterator();
+							while (iter.hasNext()) {
+								Integer thePermissionGroupsId = (Integer) iter.next();
+					
+								Iterator iter2 = parents.keySet().iterator();
+								while (iter2.hasNext()) {
+									Integer groupToCompareTo = (Integer) iter2.next();
+									//If this group was already checked or is the same as the comparing group, continue (skip this one)
+									if( thePermissionGroupsId.equals(groupToCompareTo) || skipThese.containsKey(thePermissionGroupsId)){
+										continue;//dont check for self
+									}
+									
+									//Get the parents to see if thePermissionGroupsId is in it. ergo it is a parent of the comparing group and therefor a higher node 
+									Map theParents = (Map) (parents.get(groupToCompareTo));
+									
+									//or the permissiongroup has a shortcut 
+									if(theParents!=null && theParents.containsKey(thePermissionGroupsId)){
+										//it's a parent of the comparing group so we don't have to check the comparing group again
+										skipThese.put(groupToCompareTo,null);//for the check skip check 
+										groupMap.remove(groupToCompareTo);//the groups that will be left are the top nodes
+										
+									}//remove if this group is a child group of myGroup
+										
+								}//inner while ends
+								
+							}//outer while ends
+							
+							time.stop();
+							log("[UserBusinessBean]: filter out the real topnodes complete " + time.getTimeString());
+							time.start();
+							
+							//Now we have to check if the remaining top nodes have a shortcut 
+							//that is not a top node and if so we need to remove that node 
+							//unless there is only one node left or if the alias and the real group are both top nodes
+							if(groupMap!=null && !groupMap.isEmpty()){
+								List aliasGroupType = new ArrayList();
+								aliasGroupType.add("alias");
+								
+								if(!aliasMap.isEmpty()){
+									Iterator keyIter = groupMap.keySet().iterator();
+									while (keyIter.hasNext()) {
+										Integer topNodeId = (Integer) keyIter.next();
+										
+										Integer aliasGroupsId = (Integer)aliasMap.get(topNodeId);
+										if(aliasGroupsId!=null){
+											if(!groupMap.containsKey(aliasGroupsId)){//only remove if they are not both top nodes
+//												groupMap.remove(topNodeId);
+												System.err.println("Here is the code that once returned concurrentException");
+											}
+										}
+									}
 								}
 								
-								//Get the parents to see if thePermissionGroupsId is in it. ergo it is a parent of the comparing group and therefor a higher node 
-								Map theParents = (Map) (parents.get(groupToCompareTo));
+								time.stop();
+								log("[UserBusinessBean]: some alias complete " + time.getTimeString());
+								time.start();
 								
-								//or the permissiongroup has a shortcut 
-								if(theParents!=null && theParents.containsKey(thePermissionGroupsId)){
-									//it's a parent of the comparing group so we don't have to check the comparing group again
-									skipThese.put(groupToCompareTo,null);//for the check skip check 
-									groupMap.remove(groupToCompareTo);//the groups that will be left are the top nodes
-									
-								}//remove if this group is a child group of myGroup
-									
-							}//inner while ends
-							
-						}//outer while ends
-						
-						//Now we have to check if the remaining top nodes have a shortcut 
-						//that is not a top node and if so we need to remove that node 
-						//unless there is only one node left or if the alias and the real group are both top nodes
-						if(groupMap!=null && !groupMap.isEmpty()){
-							List aliasGroupType = new ArrayList();
-							aliasGroupType.add("alias");
-							
-							if(!aliasMap.isEmpty()){
+								//check the children recursively
+								List groupsToRemove = new ArrayList();
 								Iterator keyIter = groupMap.keySet().iterator();
 								while (keyIter.hasNext()) {
 									Integer topNodeId = (Integer) keyIter.next();
-									
-									Integer aliasGroupsId = (Integer)aliasMap.get(topNodeId);
-									if(aliasGroupsId!=null){
-										if(!groupMap.containsKey(aliasGroupsId)){//only remove if they are not both top nodes
-//											groupMap.remove(topNodeId);
-											System.out.println("Here is the code that once returned concurrentException");
+									if(skipThese.containsKey(topNodeId)){
+										continue;//it's going to be removed later
+									}
+									else{
+										try {
+											//also we need to check the children of the current top nodes recursively for aliases :s
+											Collection aliasesRecursive = getGroupBusiness().getChildGroupsRecursiveResultFiltered(getGroupBusiness().getGroupByGroupID(topNodeId.intValue()),aliasGroupType,true);
+											
+											if( aliasesRecursive!=null && !aliasesRecursive.isEmpty()){
+												Iterator aliasIter = aliasesRecursive.iterator();
+												while (aliasIter.hasNext()) {
+													Group alias = (Group) aliasIter.next();
+													Integer aliasGroupsId = new Integer(alias.getAliasID());
+													if(groupMap.containsKey(aliasGroupsId)){//only remove if they are not both top nodes
+														groupsToRemove.add(aliasGroupsId);
+														skipThese.put(aliasGroupsId,null);
+													}
+												}	
+											}
+										}
+										catch (FinderException e1) {
+											e1.printStackTrace();
 										}
 									}
 								}
-							}
-							
-							//check the children recursively
-							List groupsToRemove = new ArrayList();
-							Iterator keyIter = groupMap.keySet().iterator();
-							while (keyIter.hasNext()) {
-								Integer topNodeId = (Integer) keyIter.next();
-								if(skipThese.containsKey(topNodeId)){
-									continue;//it's going to be removed later
+								
+								time.stop();
+								log("[UserBusinessBean]: check children (recursively) complete " + time.getTimeString());
+								time.start();
+								
+								//remove the top nodes that have aliases under another top node, or itself to avoid crashing the server in an endless loop?
+								Iterator removeIter = groupsToRemove.iterator();
+								while (removeIter.hasNext()) {
+									groupMap.remove(removeIter.next());
 								}
-								else{
-									try {
-										//also we need to check the children of the current top nodes recursively for aliases :s
-										Collection aliasesRecursive = getGroupBusiness().getChildGroupsRecursiveResultFiltered(getGroupBusiness().getGroupByGroupID(topNodeId.intValue()),aliasGroupType,true);
-										
-										if( aliasesRecursive!=null && !aliasesRecursive.isEmpty()){
-											Iterator aliasIter = aliasesRecursive.iterator();
-											while (aliasIter.hasNext()) {
-												Group alias = (Group) aliasIter.next();
-												Integer aliasGroupsId = new Integer(alias.getAliasID());
-												if(groupMap.containsKey(aliasGroupsId)){//only remove if they are not both top nodes
-													groupsToRemove.add(aliasGroupsId);
-													skipThese.put(aliasGroupsId,null);
-												}
-											}	
-										}
-									}
-									catch (FinderException e1) {
-										e1.printStackTrace();
-									}
-								}
-							}
-							
-							//remove the top nodes that have aliases under another top node, or itself to avoid crashing the server in an endless loop?
-							Iterator removeIter = groupsToRemove.iterator();
-							while (removeIter.hasNext()) {
-								groupMap.remove(removeIter.next());
+								
+								time.stop();
+								log("[UserBusinessBean]: remove the aliases undr another top node complete " + time.getTimeString());
+								
 							}
 							
 							
-							
+							//finally done! the remaining nodes are the top nodes
+							topNodes = groupMap.values();
 						}
 						
 						
-						//finally done! the remaining nodes are the top nodes
-						topNodes = groupMap.values();
-						
-						debug("TOP NODES sort ends : "+ IWTimestamp.RightNow().toString());
 					}
-						
 				}
 				catch (EJBException e) {
 					e.printStackTrace();
-				}
-			
-			
+				}	
+				
+				totalTime.stop();
+				log("[UserBusinessBean]: topnode....(...) ends "+ totalTime.getTimeString());
+				log("\n");
+
 			}
 			
 			//iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString(),topNodes);
 			storeUserTopGroupNodes(user,topNodes,null);
 		}
-		
-		return 	topNodes;
+		return topNodes;
+	}
 	
+	public void addGroupPKsToCollectionFromICPermissionCollection(Collection ICPermissionSRC, Collection GroupDEST){
+		GroupHome grHome = getGroupHome();
+		for (Iterator iter = ICPermissionSRC.iterator(); iter.hasNext();) {
+			ICPermission perm = (ICPermission) iter.next();
+			if(!perm.getPermissionValue()) {
+				    continue;//we don't want to use this permission if is a negative permission (a NOT permission)
+				}
+			try {
+				String groupId = perm.getContextValue();
+				Object grPK = grHome.decode(groupId); 
+				GroupDEST.add(grPK);
+			}
+			catch (NumberFormatException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 	
 	
@@ -1872,6 +2081,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     } 
     return null;
   }
+
   
   public Collection getStoredTopGroupNodes(User user){
       try {
