@@ -12,13 +12,13 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 
@@ -63,7 +63,7 @@ public class IWMainApplication{//implements ServletContext{
 
   private static String PARAM_IW_FRAME_CLASS_PARAMETER = com.idega.presentation.Page.IW_FRAME_CLASS_PARAMETER;
 
-  private Hashtable loadedBundles;
+  private Map loadedBundles;
   private Properties bundlesFile;
   private File bundlesFileFile;
   private String propertiesRealPath;
@@ -144,7 +144,7 @@ public class IWMainApplication{//implements ServletContext{
 
   public void loadBundles(){
     bundlesFile = new Properties();
-    loadedBundles = new Hashtable();
+    loadedBundles = new HashMap();
     try{
     bundlesFileFile = FileUtil.getFileAndCreateIfNotExists(this.getPropertiesRealPath(),bundlesFileName);
     bundlesFile.load(new FileInputStream(bundlesFileFile));
@@ -324,8 +324,9 @@ public class IWMainApplication{//implements ServletContext{
       storeStatus();
       //IWCacheManager.deleteCachedBlobs(this);
 //      getImageFactory(true).deleteGeneratedImages(this);
-      for(Enumeration enum = loadedBundles.keys();enum.hasMoreElements();){
-				Object key = enum.nextElement();
+      
+      for(Iterator keyIter = loadedBundles.keySet().iterator();keyIter.hasNext();){
+				Object key = keyIter.next();
 				IWBundle bundle = (IWBundle)loadedBundles.get(key);
 				bundle.unload();
       }     
@@ -498,7 +499,7 @@ public class IWMainApplication{//implements ServletContext{
    * Returns a List of IWBundle Objects
    */
   public List getRegisteredBundles(){
-      Vector vector = new Vector();
+      List vector = new ArrayList();
       Iterator iter = bundlesFile.keySet().iterator();
       while (iter.hasNext()) {
 	String key = (String)iter.next();
@@ -512,7 +513,7 @@ public class IWMainApplication{//implements ServletContext{
    * Returns a List of Locale Objects
    */
   public List getAvailableLocales(){
-    Vector vector = new Vector();
+    List vector = new ArrayList();
     vector.add(LocaleUtil.getIcelandicLocale());
     vector.add(Locale.ENGLISH);
     return vector;
@@ -620,7 +621,7 @@ public class IWMainApplication{//implements ServletContext{
 
 
   // hashcode referencing
-  private static Hashtable hashClasses = null;
+  private static Map hashClasses = null;
   private static Properties cryptoCodesPropertiesKeyedByClassName = null;
   private static Properties cryptoClassNamesPropertiesKeyedByCode = null;
   protected static String USE_CRYPTO_PROPERTIES = "use_crypto_properties";
@@ -952,7 +953,7 @@ public class IWMainApplication{//implements ServletContext{
 	public void addApplicationEventListener(Class eventListenerClass){
     List eventListeners = (List)getAttribute(ApplicationEventListenersParameter);
     if(eventListeners==null)
-      eventListeners = new Vector();
+      eventListeners = new ArrayList();
     if(!eventListeners.contains(eventListenerClass.getName()))
       eventListeners.add(eventListenerClass.getName());
     setAttribute(ApplicationEventListenersParameter,eventListeners);
@@ -961,7 +962,7 @@ public class IWMainApplication{//implements ServletContext{
   public List getApplicationEventListeners(){
     List eventListeners = (List)getAttribute(ApplicationEventListenersParameter);
     if(eventListeners==null)
-      eventListeners = new Vector();
+      eventListeners = new ArrayList();
     return eventListeners;
   }
 }
