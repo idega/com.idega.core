@@ -57,6 +57,11 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     return true;
   }
 
+  public boolean copyBlock(int newInstanceID){
+    System.err.print("method copyBlock(int newInstanceID) not implemented in class "+this.getClass().getName());
+    return true;
+  }
+
   public boolean isAdministrator(IWContext iwc)throws Exception{
     if(usingNewAcessControlSystem){
       return iwc.hasEditPermission(this);
@@ -401,6 +406,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
     }
   }
 
+
   public synchronized Object clone(){
     Block obj = (Block)super.clone(null,false);
 
@@ -413,5 +419,7 @@ public class Block extends PresentationObjectContainer implements IWBlock{
 
     return obj;
   }
+
+
 
 }
