@@ -38,6 +38,8 @@ public class IDOQuery {
 
 	private static final String LESS_THAN_SIGN = "<";
 	private static final String GREATER_THAN_SIGN = ">";
+	private static final String LESS_THAN_OR_EQUAL_SIGN = "<=";
+	private static final String GREATER_THAN_OR_EQUAL_SIGN = ">=";
 	//parenthesis
 	private static final String PARENTHESIS_LEFT = "(";
 	private static final String PARENTHESIS_RIGHT = ")";
@@ -62,6 +64,7 @@ public class IDOQuery {
 	protected IDOQuery() {
 		_buffer = new StringBuffer();
 	}
+	
 
 	protected IDOQuery(int length) {
 		_buffer = new StringBuffer(length);
@@ -511,8 +514,26 @@ public class IDOQuery {
 	}
 
 	public IDOQuery appendFrom() {
-		return this.append(FROM);
+			return this.append(FROM);
 	}
+	
+	public IDOQuery appendFrom(String[] tableNames, String[] prmNames) {
+		if(tableNames != null){
+			this.append(FROM);
+			for (int i = 0; i < tableNames.length; i++) {
+				if(i>0){
+					this.append(", ");
+				}
+				this.append(tableNames[i]);
+				this.append(" ");
+				this.append(prmNames[i]);
+			}	
+		} else {
+			this.append(FROM);
+		}
+		return this;
+	}
+	
 
 	public IDOQuery appendDelete() {
 		return this.append(DELETE);

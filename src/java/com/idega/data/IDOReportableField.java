@@ -6,6 +6,8 @@
  */
 package com.idega.data;
 
+import java.util.Locale;
+
 /**
  * Title:		IDOReportableField
  * Description:
@@ -35,5 +37,8 @@ public interface IDOReportableField{
 	 *
 	 */
 	public Class getValueClass();
+	
+	public String getLocalizedName(Locale locale);
+	public void setLocalizedName(String name, Locale locale);
 
 }
