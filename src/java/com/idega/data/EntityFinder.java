@@ -147,6 +147,7 @@ public class EntityFinder{
       Stmt = conn.createStatement();
       ResultSet RS = Stmt.executeQuery(SQLString);
       metaData = RS.getMetaData();
+
       int count = 1;
       while (RS.next() && check){
         count++;
@@ -170,13 +171,17 @@ public class EntityFinder{
 
             //debug getting an object every time? that sucks tryggvi ;)
             columnName = metaData.getColumnName(i);
-
-            if ( RS.getObject(columnName) != null ){
+            //System.err.print(" real columnName "+columnName);
+            //if ( RS.getObject(columnName) != null ){
                //this must be done if using AS in an sql query
-              if ( "".equals(columnName) )
+              if ( "".equals(columnName) ){
                 columnName = metaData.getColumnLabel(i);
+                //System.err.print("  label columnName "+columnName);
+                //System.err.println();
+              }
+              if ( !"".equals(columnName) )
               tempobj.fillColumn(columnName,RS);
-            }
+           // }
           }
         }
         if(vector==null){
