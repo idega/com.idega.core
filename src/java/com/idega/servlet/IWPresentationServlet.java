@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.40 2002/11/20 20:49:10 eiki Exp $
+ * $Id: IWPresentationServlet.java,v 1.41 2002/12/07 21:13:24 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -140,7 +140,8 @@ public class IWPresentationServlet extends IWCoreServlet {
 	private void processIWEvent(IWContext iwc, String EventListenerClass)
 		throws ClassNotFoundException, IllegalAccessException, IWException, InstantiationException {
 		if (EventListenerClass != null) {
-			System.out.println("IWEventListener: " + EventListenerClass);
+			if (iwc.getApplicationSettings().getIfDebug())
+				System.out.println("IWEventListener: " + EventListenerClass);
 			IWEventListener listener = (IWEventListener) Class.forName(EventListenerClass).newInstance();
 			listener.actionPerformed(iwc);
 		}
