@@ -34,7 +34,7 @@ import com.idega.util.IWTimestamp;
  */
 public class UserStatusBusinessBean extends IBOServiceBean implements UserStatusBusiness {
 	
-	public final static String status_deceased = "deceased"; 
+	public final static String STATUS_DECEASED = "deceased"; 
 	
 	public boolean removeUserFromGroup(int user_id, int group_id) {
 		return setUserGroupStatus(user_id,group_id,-1);
@@ -99,7 +99,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	}
 	
 	public String getDeceasedStatusKey(){
-		return status_deceased;
+		return STATUS_DECEASED;
 	}
 	
 	public StatusHome getStatusHome() throws RemoteException{
@@ -108,7 +108,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	
 	public Status getDeceasedStatus() throws RemoteException{
 		try {
-			return getStatusHome().findByStatusKey(status_deceased);
+			return getStatusHome().findByStatusKey(STATUS_DECEASED);
 		}
 		catch (FinderException e) {
 			
@@ -118,7 +118,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	
 	public Status createDeceasedStatus() throws RemoteException,CreateException{
 		Status status = getStatusHome().create();
-		status.setStatusKey(status_deceased);
+		status.setStatusKey(STATUS_DECEASED);
 		status.store();
 		return status;
 	}
