@@ -78,6 +78,7 @@ implements IWUserContext, IWApplicationContext {
 	private HttpServletResponse _response;
 	private final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
 	private final static String WEAK_HASHMAP_KEY = "idegaweb_weak_hashmap";
+	private final static String CHARACTER_SET_PREFIX = "; charset=";
 	//private HttpSession session;
 	private String language; //Variable to set the language i.e. HTML
 	private String interfaceStyle; //Variable to enable multiple interface looks
@@ -105,7 +106,7 @@ implements IWUserContext, IWApplicationContext {
 	 **/
 	public IWContext() {
 	}
-	public IWContext(HttpServletRequest request, HttpServletResponse response) {
+	/*public IWContext(HttpServletRequest request, HttpServletResponse response) {
 		this.setRequest(request);
 		this.setResponse(response);
 		setLanguage(getRightLanguage(request, response));
@@ -123,14 +124,24 @@ implements IWUserContext, IWApplicationContext {
 		setLanguage(getRightLanguage(request, response));
 		setAllDefault();
 		//this.session=session;
-	}
+	}*/
 	private IWContext(FacesContext fc){
-		this((HttpServletRequest)fc.getExternalContext().getRequest(),(HttpServletResponse)fc.getExternalContext().getResponse());
-		ServletContext sc = (ServletContext)fc.getExternalContext().getContext();
-		this.setServletContext(sc);
+		this((HttpServletRequest)fc.getExternalContext().getRequest(),(HttpServletResponse)fc.getExternalContext().getResponse(),(ServletContext) fc.getExternalContext().getContext());
 		setRealFacesContext(fc);
 	}
 	
+	/**
+	 * @param request
+	 * @param response
+	 * @param context
+	 */
+	public IWContext(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
+		setRequest(request);
+		setResponse(response);
+		setServletContext(context);
+		setLanguage(getRightLanguage(request, response));
+		setAllDefault();
+	}
 	/**
 	 * This is the method to convert/cast a FacesContext instance to a IWContext instance.
 	 * if the FacesContext instance is really a IWContext it upcasts the instance, else it constructs a new.
@@ -783,7 +794,11 @@ implements IWUserContext, IWApplicationContext {
 	}
 	
 	public void setContentType(String contentType) {
-		getResponse().setContentType(contentType);
+		
+		String encoding = getApplicationSettings().getCharacterEncoding();
+		getResponse().setContentType(contentType+CHARACTER_SET_PREFIX+encoding);
+		//getResponse().setContentType(contentType);
+		//text/html;charset=ISO-8859-1
 	}
 	void setCacheing(boolean ifCacheing) {
 		this.isCaching = ifCacheing;

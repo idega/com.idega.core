@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.56 2004/05/05 09:04:15 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.57 2004/05/26 12:53:41 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -87,8 +87,8 @@ public class IWPresentationServlet extends IWCoreServlet {
 				this.getApplication().setApplicationContextURI(request.getContextPath());
 			}
 	
-			iwc = new IWContext(request, response);
-			iwc.setServletContext(getServletContext());
+			iwc = new IWContext(request, response,getServletContext());
+			
 	
 			if (iwc.isMultipartFormData()) {
 				//writer.println("form is multipart");

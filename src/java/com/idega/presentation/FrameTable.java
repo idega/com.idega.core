@@ -480,7 +480,7 @@ public class FrameTable extends Window{
       StringBuffer buf = new StringBuffer();
       boolean isInFrame = isInFrame();
       if( !isInAWindow && !isInFrame ){
-		String characterEncoding = iwc.getApplicationSettings().getProperty(Page.CHARACTER_ENCODING, Page.DEFAULT_CHARACTER_ENCODING);
+		String characterEncoding = iwc.getApplicationSettings().getCharacterEncoding();
 		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
         buf.append(getStartTag(iwc.getCurrentLocale(), markup, characterEncoding));
         buf.append(getMetaInformation(markup, characterEncoding));

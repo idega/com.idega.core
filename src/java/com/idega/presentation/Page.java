@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.106 2004/05/08 14:43:08 gummi Exp $
+ *  $Id: Page.java,v 1.107 2004/05/26 12:53:08 eiki Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -30,6 +30,7 @@ import com.idega.core.file.data.ICFile;
 import com.idega.event.IWFrameBusiness;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWStyleManager;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.text.Link;
@@ -91,8 +92,7 @@ public class Page extends PresentationObjectContainer {
 	private static boolean NULL_CLONE_PAGE_INITIALIZED = false;
 
 	private ICFile styleFile = null;
-	public static final String CHARACTER_ENCODING = "character_encoding";
-	public static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
+
 
 	/**
 	 *  Description of the Field
@@ -1120,7 +1120,8 @@ public class Page extends PresentationObjectContainer {
 
 		if (getLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			if (!isInsideOtherPage) {
-				String characterEncoding = iwc.getApplicationSettings().getProperty(CHARACTER_ENCODING, DEFAULT_CHARACTER_ENCODING);
+				IWMainApplicationSettings settings = iwc.getApplicationSettings();
+				String characterEncoding = settings.getCharacterEncoding(); 
 				String markup = iwc.getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
 				println(getStartTag(iwc.getCurrentLocale(), markup, characterEncoding));
 				if (_zeroWait) {
