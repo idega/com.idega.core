@@ -54,6 +54,13 @@ public class Counter implements Comparable {
 		int minutes = getMinutes();
 		int seconds = getSeconds();
 		
+		if (this.seconds < 0) {
+			hours = Math.abs(hours);
+			minutes = Math.abs(minutes);
+			seconds = Math.abs(seconds);
+			buffer.append("-");
+		}
+		
 		if (hours < 10) {
 			buffer.append("0");
 		}
