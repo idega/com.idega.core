@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.77 2003/05/27 20:35:18 eiki Exp $
+ *  $Id: Page.java,v 1.78 2003/06/13 15:47:05 aron Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -55,6 +55,8 @@ public class Page extends PresentationObjectContainer {
 	private String _pageStyleFontSize = Text.FONT_SIZE_10_STYLE_TAG;
 	private String _pageStyleFontStyle = Text.FONT_FACE_STYLE_NORMAL;
 	private String _styleSheetURL;
+	private String _shortCutIconURL = null;
+	private int _shortCutIconID = -1;
 	private boolean _addStyleSheet = false;
 	private boolean _addBody = true;
 	private Hashtable _frameProperties;
@@ -1040,7 +1042,9 @@ public class Page extends PresentationObjectContainer {
 
 				println("<head>");
 				println("<title>" + getLocalizedTitle(iwc) + "</title>\n");
-
+//				shortcut icon
+				println(getPrintableSchortCutIconURL(iwc));
+				
 				print(getMetaInformation(iwc));
 				print(getMetaTags());
 
@@ -1072,6 +1076,7 @@ public class Page extends PresentationObjectContainer {
 					getAssociatedScript()._print(iwc);
 				}
 
+				
 				print(getStyleSheetURL());
 				print(getStyleDefinition());
 
@@ -1490,4 +1495,51 @@ public class Page extends PresentationObjectContainer {
 	public void addScriptSource(String jsString) {
 		getAssociatedScript().addScriptSource(jsString);
 	}
+	
+	/**
+	 * Gets the file id of the shortcut icon
+	 * @return the shortcut icon file id
+	 */
+	public int getShortCutIconID() {
+		return _shortCutIconID;
+	}
+
+	/**
+	 *  Gets the URL of the shortcut icon
+	 * @return URL to shortcut icon
+	 */
+	public String getShortCutIconURL() {
+		return _shortCutIconURL;
+	}
+
+	/**
+	 * Sets the file id of the shortcut icon
+	 * @param id of the  icon file
+	 */
+	public void setShortCutIconID(int id) {
+		_shortCutIconID = id;
+	}
+
+	/**
+	 * Sets the URL to the shortcut icon
+	 * @param url to the icon file
+	 */
+	public void setShortCutIconURL(String url) {
+		_shortCutIconURL = url;
+	}
+	
+	private String getPrintableSchortCutIconURL(IWContext iwc){
+		String url = null;
+		if(getShortCutIconID()>0){
+			url =  MediaBusiness.getMediaURL(getShortCutIconID(),iwc.getApplication());
+		}
+		else if(getShortCutIconURL()!=null){
+			url = getShortCutIconURL();
+		}
+		if(url!=null)
+			return    "<link type=\"shortcut icon\" href=\""+url+"\">";
+		return "";
+		//<link rel="shortcut icon" href="/favicon.ico">
+	}
+
 }
