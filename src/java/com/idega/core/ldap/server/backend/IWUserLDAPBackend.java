@@ -109,11 +109,19 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	 */
 	public EntrySet get(DirectoryString base, int scope, Filter filter, boolean typesOnly, Vector attributes) throws DirectoryException {
 		EntrySet results = null;
-		
+		//System.out.println("Current encoding: "+System.getProperty("file.encoding"));
 		Vector entries = new Vector();
 			
 		//String filtStr = constructFilter(filter);
-		
+		String uniqueId = null;
+		//switch (currentFilter.choiceId) {
+		if(filter.choiceId==Filter.EQUALITYMATCH_CID){
+			DirectoryString matchType = new DirectoryString(filter.equalityMatch.attributeDesc);
+			DirectoryString matchVal = new DirectoryString(filter.equalityMatch.assertionValue);
+			if(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.equals(matchType.toString())){
+				uniqueId = matchVal.toString();
+			}
+		}
 		
 		if (scope == SearchRequestEnum.WHOLESUBTREE) {
 			//Same as singlelevel only recursive?
@@ -121,17 +129,8 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 			//NOT IMPLEMENTED YET
 			
 		} else if (scope == SearchRequestEnum.SINGLELEVEL) {
+			
 			try {
-				String uniqueId = null;
-				//switch (currentFilter.choiceId) {
-				if(filter.choiceId==Filter.EQUALITYMATCH_CID){
-					DirectoryString matchType = new DirectoryString(filter.equalityMatch.attributeDesc);
-					DirectoryString matchVal = new DirectoryString(filter.equalityMatch.assertionValue);
-					if(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.equals(matchType.toString())){
-						uniqueId = matchVal.toString();
-					}
-				}
-					
 				if(base.getDirectoryString().equals(baseDN) && uniqueId==null) {
 					addTopGroupsToEntries(base, entries);
 				}
@@ -153,29 +152,35 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 							group = getGroupBusiness().getGroupByDirectoryString(base);
 						}
 						//handle when group is not found specially, code to send??
-						
-						Collection groups = group.getChildGroups();
-						Collection users = getUserBusiness().getUsersInGroup(group);
-						
-						if(groups!=null && !groups.isEmpty()) {
-							Iterator groupIter = groups.iterator();
-							while (groupIter.hasNext()) {
-								Group childGroup = (Group) groupIter.next();
-								Entry childEntry = getChildEntry(base,childGroup);
-								entries.add(childEntry);
+						if(group!=null){
+							Collection groups = group.getChildGroups();
+							Collection users = getUserBusiness().getUsersInGroup(group);
+							
+							if(groups!=null && !groups.isEmpty()) {
+								Iterator groupIter = groups.iterator();
+								while (groupIter.hasNext()) {
+									Group childGroup = (Group) groupIter.next();
+									Entry childEntry = getChildEntry(base,childGroup);
+									entries.add(childEntry);
+								}
 							}
-						}
-						
-						if(users!=null && !users.isEmpty()) {
-							Iterator userIter = users.iterator();
-							while (userIter.hasNext()) {
-								User childUser = (User) userIter.next();
-								Entry childEntry = getChildEntry(base,childUser);
-								entries.add(childEntry);
+							
+							if(users!=null && !users.isEmpty()) {
+								Iterator userIter = users.iterator();
+								while (userIter.hasNext()) {
+									User childUser = (User) userIter.next();
+									Entry childEntry = getChildEntry(base,childUser);
+									entries.add(childEntry);
+								}
 							}
-						}
 					}
-					
+					else{
+						//temp
+						System.err.println("[IWUserLDAPBackend] No group found for unique id: "+uniqueId+" OR DN : "+base.toString());
+						
+					}
+						
+					}
 				}
 				
 			} catch (Exception e) {
@@ -184,13 +189,14 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 		} else if(scope == SearchRequestEnum.BASEOBJECT){
 			//THIS is called when we want to get detailed info on a single ENTRY! find again from the DN and return it
 			try {
-				//addTopGroupsToEntries(base, entries);
+				
 				if(base.getDirectoryString().equals(baseDN)) {
+					
 					//addTopGroupsToEntries(base, entries);
 					entries.add(new Entry(base));
 				}
 				else {
-					Entry entry = getEntry(base);
+					Entry entry = getEntry(base,attributes,uniqueId);
 					entries.add(entry);
 				}
 			} catch (Exception e) {
@@ -213,7 +219,7 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	 */
 	public Entry getByDN(DirectoryString dn) throws DirectoryException {
 		try {
-			return getEntry(dn);
+			return getEntry(dn,null,null);
 		} catch (Exception e) {
 			throw new DirectoryException(e.getMessage());
 		}
@@ -263,7 +269,7 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	}
 	
 	
-	private Entry getEntry(DirectoryString base) throws InvalidDNException, RemoteException {
+	private Entry getEntry(DirectoryString base, Vector attributes, String uniqueId) throws InvalidDNException, RemoteException {
 		Entry entry = new Entry(base);
 		try {
 			if(ldapUtil.isUser(base)) {
@@ -284,8 +290,6 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	}
 	
 	private Entry getChildEntry(DirectoryString base,Group group) throws InvalidDNException {
-		
-		String dn = base.getDirectoryString();
 		Entry entry;
 		
 		if(group instanceof User) {
@@ -297,18 +301,19 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 //			facsimileTelephoneNumber: +1 408 555 1992
 //			mobile: +1 408 555 1941
 			User user = (User)group;
-			String identifier = getUserIdentifier(user);
-			
-			DirectoryString childDN = new DirectoryString(identifier+","+dn);
+			String identifier = getUserIdentifier(user,base);
+//			
+//			DirectoryString childDN = new DirectoryString(identifier+","+dn);
+			DirectoryString childDN = new DirectoryString(identifier);
 			entry = new Entry(childDN);
 			
 			fillUserEntry(user,entry);
 			
 		}
 		else {
-			String identifier = getGroupIdentifier(group);
+			String identifier = getGroupIdentifier(group,base);
 			
-			DirectoryString childDN = new DirectoryString(identifier+","+dn);
+			DirectoryString childDN = new DirectoryString(identifier);
 			entry = new Entry(childDN);
 			fillGroupEntry(group, entry);
 			
@@ -321,19 +326,25 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	
 	
 	
-	private String getUserIdentifier(User user) {
+	private String getUserIdentifier(User user,DirectoryString base) {
 		String identifier = "cn="; 
+		String  fullName = user.getName();
 		String personalId = user.getPersonalID();
-		identifier += personalId;
-		return identifier;
+		identifier = identifier+fullName+"-"+personalId+","+base.toString();
+		
+		
+		return IWLDAPUtil.getInstance().getEscapedLDAPString(identifier);
 	}
-	private String getGroupIdentifier(Group group) {
+	
+	private String getGroupIdentifier(Group group,DirectoryString base) {
 		String identifier = "ou=";
 		String name = getGroupName(group);
 		
-		identifier += name;
-		return identifier;
+		identifier = identifier+name+","+base.toString();
+		
+		return IWLDAPUtil.getInstance().getEscapedLDAPString(identifier);
 	}
+	
 	private String getGroupName(Group group) {
 		String name = group.getName();//add abbreviation?;
 		if(name==null && "".equals(name)) {
@@ -354,18 +365,33 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	 */
 	private void fillUserEntry(User user, Entry entry) {
 		String personalId = user.getPersonalID();
-		String fullName = user.getName();
+		
 		String lName = user.getLastName() ;
 		String fName = user.getFirstName();
 		
-		Vector name = getAttributeVectorForSingleEntry(fullName);
+		//should we add the unique id after the name or the pid like in the entry?
+		String cn = user.getName();
+		String uuid = user.getUniqueId();
+		String description = user.getDescription();
+		
+		
+		Vector name = getAttributeVectorForSingleEntry(cn);
 		entry.put(new DirectoryString(LDAP_ATTRIBUTE_COMMON_NAME),name);
 		
 		Vector userPIN = getAttributeVectorForSingleEntry(personalId);
 		entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID),userPIN);
 		
-		Vector uniqueID = getAttributeVectorForSingleEntry(user.getUniqueId());
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID),uniqueID);
+		//SHOULD WE ADD IT EMPTY TO REMOVE THE VALUE ON THE OTHER END?
+		if(uuid!=null){
+			Vector uniqueID = getAttributeVectorForSingleEntry(uuid);
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID),uniqueID);
+		}
+		
+		if(description!=null){
+			Vector descriptionV = getAttributeVectorForSingleEntry(description);
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_DESCRIPTION),descriptionV);
+		}
+		
 		
 		Vector firstName = getAttributeVectorForSingleEntry(fName);
 		entry.put(new DirectoryString(LDAP_ATTRIBUTE_GIVEN_NAME),firstName);
@@ -422,8 +448,7 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 			entry.put(new DirectoryString(LDAP_ATTRIBUTE_TELEPHONE_NUMBER),phoneValues);
 		}
 		
-		Vector description = getAttributeVectorForSingleEntry(user.getDescription());
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_DESCRIPTION),description);
+		
 		
 		Vector objectClasses = new Vector();
 		objectClasses.add(new DirectoryString(LDAP_SCHEMA_PERSON));
@@ -438,16 +463,28 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 	 * @param entry
 	 */
 	private void fillGroupEntry(Group group, Entry entry) {
-		String name = getGroupName(group);
+		String name = IWLDAPUtil.getInstance().getEscapedLDAPString(getGroupName(group));
+		String desc = group.getDescription();
+		String uuid = group.getUniqueId();
 		
+		//could need to escape all values??
 		Vector names = getAttributeVectorForSingleEntry(name);
 		entry.put(new DirectoryString(LDAP_ATTRIBUTE_ORGANIZATION_UNIT),names);
 		
-		Vector uniqueID = getAttributeVectorForSingleEntry(group.getUniqueId());
-		entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID),uniqueID);
+		if(desc!=null) {
+			Vector description = getAttributeVectorForSingleEntry(desc);
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_DESCRIPTION),description);
+		}
+		
+		if(uuid!=null){
+			Vector uniqueID = getAttributeVectorForSingleEntry(group.getUniqueId());
+			entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID),uniqueID);
+		}
 		
 		Vector groupType = getAttributeVectorForSingleEntry(group.getGroupType());
 		entry.put(new DirectoryString(LDAP_ATTRIBUTE_IDEGAWEB_GROUP_TYPE),groupType);
+		
+		
 		
 		
 //		emails
@@ -490,12 +527,6 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 			entry.put(new DirectoryString(LDAP_ATTRIBUTE_TELEPHONE_NUMBER),phoneValues);
 		}
 		
-		String desc = group.getDescription();
-		if(desc!=null) {
-			Vector description = getAttributeVectorForSingleEntry(desc);
-			entry.put(new DirectoryString(LDAP_ATTRIBUTE_DESCRIPTION),description);
-		}
-		
 		Vector objectClasses = new Vector();
 		objectClasses.add(new DirectoryString(LDAP_SCHEMA_ORGANIZATIONAL_UNIT));
 		entry.put(new DirectoryString(LDAP_ATTRIBUTE_OBJECT_CLASS),objectClasses);
@@ -516,9 +547,9 @@ public class IWUserLDAPBackend extends BaseBackend implements Backend,IWLDAPCons
 		Iterator iter = topGroups.iterator();
 		while (iter.hasNext()) {
 			Group group = (Group) iter.next();	
-			DirectoryString dn = new DirectoryString(LDAP_ATTRIBUTE_ORGANIZATION_UNIT+"="+getGroupName(group));
+			String identifier = getGroupIdentifier(group,base);
+			DirectoryString dn = new DirectoryString(identifier);
 			Entry entry = new Entry(dn);
-			entry.setBase(base);
 			
 			fillGroupEntry(group,entry);
 			entries.add(entry);
