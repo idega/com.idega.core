@@ -16,7 +16,7 @@ import com.idega.util.LocaleUtil;
 
 public class LocaleSwitcher implements IWEventListener{
 
-  public static String languageParameterString = "lang";
+  public static String languageParameterString = "language";
   public static String englishParameterString = "en";
   public static String icelandicParameterString = "is_IS";
 
@@ -32,7 +32,7 @@ public class LocaleSwitcher implements IWEventListener{
     if(localeValue!=null){
       Locale locale = LocaleUtil.getLocale(localeValue);
       if(locale!=null){
-        iwc.setCurrentLocale(locale);
+	iwc.setCurrentLocale(locale);
       }
     }
   }
