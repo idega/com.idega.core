@@ -120,6 +120,92 @@ public class UserBusiness {
       }
   }
 
+  public Phone[] getUserPhones(int userId) {
+    try {
+      return (Phone[]) new User(userId).findRelated(Phone.getStaticInstance(Phone.class));
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public Phone getUserPhone(int userId, int phoneTypeId) {
+    try {
+      GenericEntity[] result = new User(userId).findRelated(Phone.getStaticInstance(Phone.class));
+      if(result != null){
+        for (int i = 0; i < result.length; i++) {
+          if(((Phone)result[i]).getPhoneTypeId() == phoneTypeId){
+            return (Phone)result[i];
+          }
+        }
+      }
+      return null;
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public Email getUserMail(int userId) {
+    try {
+      GenericEntity[] result = new User(userId).findRelated(Email.getStaticInstance(Email.class));
+      if(result != null){
+        if ( result.length > 0 )
+          return (Email)result[0];
+      }
+      return null;
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public void updateUserPhone(int userId, int phoneTypeId, String phoneNumber) throws SQLException {
+    Phone phone = getUserPhone(userId,phoneTypeId);
+    boolean insert = false;
+    if ( phone == null ) {
+      phone = new Phone();
+      phone.setPhoneTypeId(phoneTypeId);
+      insert = true;
+    }
+
+    if ( phoneNumber != null ) {
+      phone.setNumber(phoneNumber);
+    }
+
+    if(insert){
+      phone.insert();
+      new User(userId).addTo(phone);
+    }
+    else{
+      phone.update();
+    }
+  }
+
+  public void updateUserMail(int userId, String email) throws SQLException {
+    Email mail = getUserMail(userId);
+    boolean insert = false;
+    if ( mail == null ) {
+      mail = new Email();
+      insert = true;
+    }
+
+    if ( email != null ) {
+      mail.setEmailAddress(email);
+    }
+
+    if(insert){
+      mail.insert();
+      new User(userId).addTo(mail);
+    }
+    else{
+      mail.update();
+    }
+  }
+
   public Address getUserAddress1(int userId) throws SQLException {
     GenericEntity[] result = new User(userId).findRelated(Address.getStaticInstance(Address.class));
     if(result != null){
@@ -282,6 +368,30 @@ public class UserBusiness {
       ex.printStackTrace();
       return null;
     }
+  }
+
+  public static List getUsersInGroup(int iGroupId) {
+    try {
+      return getUsersInGroup(new GenericGroup(iGroupId));
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public static List getUsersInGroup(GenericGroup group) {
+    try {
+      return EntityFinder.findRelated(group,User.getStaticInstance());
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      return null;
+    }
+  }
+
+  public static List getUsersInNoGroup() {
+    return EntityFinder.findNonRelated(GenericGroup.getStaticInstance(),User.getStaticInstance());
   }
 
   public static List getUserGroupsDirectlyRelated(int iUserId){
