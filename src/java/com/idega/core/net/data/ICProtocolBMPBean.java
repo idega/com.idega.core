@@ -3,7 +3,6 @@ package com.idega.core.net.data;
 import java.sql.SQLException;
 
 import com.idega.core.data.GenericGroup;
-import com.idega.core.data.GenericTypeBMPBean;
 
 /**
  * Title:        IW Core

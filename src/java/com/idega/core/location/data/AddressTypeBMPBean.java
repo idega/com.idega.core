@@ -2,12 +2,10 @@ package com.idega.core.location.data;
 
 
 
-import java.sql.*;
+import java.sql.SQLException;
 import java.util.Collection;
 
 import javax.ejb.FinderException;
-
-import com.idega.core.data.GenericTypeBMPBean;
 
 
 /**

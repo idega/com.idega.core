@@ -1,11 +1,11 @@
 package com.idega.core.contact.data;
-import java.sql.*;
+import java.sql.SQLException;
 
 import javax.ejb.FinderException;
 
-import com.idega.data.*;
-import com.idega.core.data.GenericTypeBMPBean;
 import com.idega.core.user.data.User;
+import com.idega.data.EntityControl;
+import com.idega.data.IDOFinderException;
 /**
  * Title:        IW Core
  * Description:

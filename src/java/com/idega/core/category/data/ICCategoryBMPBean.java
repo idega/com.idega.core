@@ -9,11 +9,10 @@ import java.util.Locale;
 import javax.ejb.FinderException;
 
 import com.idega.core.component.business.ICObjectBusiness;
-import com.idega.core.component.data.*;
-import com.idega.core.data.ICBusiness;
-import com.idega.core.file.data.*;
+import com.idega.core.component.data.ICObjectInstance;
+import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.business.ICLocaleBusiness;
-import com.idega.core.localisation.data.*;
+import com.idega.core.localisation.data.ICLocale;
 import com.idega.data.EntityControl;
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOAddRelationshipException;

@@ -1,6 +1,5 @@
 package com.idega.core.file.data;
 
-import com.idega.core.localisation.data.ICLocale;
 
 
 public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity,com.idega.data.MetaDataCapable

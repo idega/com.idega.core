@@ -1,8 +1,6 @@
 package com.idega.core.contact.data;
 
-import java.sql.*;
-
-import com.idega.core.data.GenericTypeBMPBean;
+import java.sql.SQLException;
 
 /**
  * Title:        IW Core

@@ -2,7 +2,6 @@ package com.idega.core.file.data;
 
 import java.sql.SQLException;
 
-import com.idega.core.file.data.*;
 import com.idega.idegaweb.IWMainApplication;
 
 
