@@ -21,7 +21,8 @@ public abstract class IDOFactory implements IDOHome{
   public IDOEntity idoCreate(Class entityInterfaceClass)throws javax.ejb.CreateException{
     Class beanClass = IDOLookup.getBeanClassFor(entityInterfaceClass);
     try{
-      return (IDOEntity)beanClass.newInstance();
+      return IDOContainer.getInstance().createEntity(entityInterfaceClass);
+      //return (IDOEntity)beanClass.newInstance();
     }
     catch(Exception e){
       throw new javax.ejb.CreateException(e.getMessage());

@@ -1,13 +1,4 @@
 /*
-<<<<<<< GenericEntity.java
-<<<<<<< GenericEntity.java
- * $Id: GenericEntity.java,v 1.89 2002/03/25 21:50:49 tryggvil Exp $
-=======
- * $Id: GenericEntity.java,v 1.89 2002/03/25 21:50:49 tryggvil Exp $
->>>>>>> 1.83
-=======
- * $Id: GenericEntity.java,v 1.89 2002/03/25 21:50:49 tryggvil Exp $
->>>>>>> 1.84
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -34,6 +25,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import javax.ejb.EntityContext;
 import javax.ejb.EJBHome;
+import javax.ejb.EJBException;
 
 /**
  * A class to serve as a base class for objects mapped to persistent data.
@@ -43,7 +35,7 @@ import javax.ejb.EJBHome;
  * @version 1.4
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  */
-public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEntity, javax.ejb.EntityBean {
+public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEntity, IDOEntityBean {
   public static final String MANY_TO_ONE = "many-to-one";
   public static final String ONE_TO_MANY = "one-to-many";
   public static final String MANY_TO_MANY = "many-to-many";
@@ -82,6 +74,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   private int _state = STATE_NEW;
   private EntityContext _entityContext;
   private EJBHome _ejbHome;
+  private Object _primaryKey;
 
   public GenericEntity() {
 	  this(DEFAULT_DATASOURCE);
@@ -103,7 +96,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	  //setColumn(getIDColumnName(),new Integer(id));
 	  firstLoadInMemoryCheck();
 	  //findByPrimaryKey(getID());
-	  findByPrimaryKey(id);
+      ejbCreate(new Integer(id));
+      ejbLoad();
   }
 
 
@@ -196,8 +190,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 	public Object getPrimaryKeyValue(){
-	    return getColumnValue(getIDColumnName());
-	}
+
+      if(this._primaryKey!=null){
+        return _primaryKey;
+      }
+      else{
+        return this.getColumnValue(getIDColumnName());
+      }
+  	}
 
 	public Integer getIDInteger() {
 		return (Integer)getPrimaryKeyValue();
@@ -1351,8 +1351,20 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
+  public void ejbLoad()throws EJBException{
+    try{
+      Object pk = this.getPrimaryKey();
+      if(pk instanceof Integer){
+        findByPrimaryKey(((Integer)pk).intValue());
+      }
+    }
+    catch(SQLException e){
+      throw new EJBException(e.getMessage());
+    }
+  }
+
   public void findByPrimaryKey(int id)throws SQLException{
-    setColumn(getIDColumnName(),new Integer(id));
+    setPrimaryKey(id);
     Connection conn= null;
     Statement Stmt= null;
     try{
@@ -2613,7 +2625,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   }
 
   public Object getPrimaryKey(){
-    return new Integer(getID());
+    return getPrimaryKeyValue();
   }
 
   public boolean isIdentical(javax.ejb.EJBObject ejbo){
@@ -2658,7 +2670,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   public void ejbActivate(){}
 
-  public void ejbLoad(){}
 
   public void ejbPassivate(){
     if(_columns!=null){
@@ -2678,8 +2689,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
   public Object ejbPostCreate(){return getPrimaryKey();}
 
-  public Object ejbFindByPrimaryKey(Object pk){return getPrimaryKey();}
+  public Object ejbCreate(Object primaryKey){this.setPrimaryKey(primaryKey);return primaryKey;}
 
+  public Object ejbPostCreate(Object primaryKey){return primaryKey;}
+
+  public Object ejbFindByPrimaryKey(Object pk){return getPrimaryKey();}
 
 
 
@@ -2723,5 +2737,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
     return insertStartData;
    }
 
+   protected void setPrimaryKey(int pk){
+      Integer id = new Integer(pk);
+      this.setPrimaryKey(pk);
+   }
+
+   protected void setPrimaryKey(Object pk){
+      if(pk instanceof Integer){
+        setColumn(getIDColumnName(),(Integer)pk);
+      }
+      this._primaryKey=pk;
+   }
 
 }
