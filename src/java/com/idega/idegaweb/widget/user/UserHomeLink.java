@@ -1,5 +1,5 @@
 /*
- * $Id: UserHomeLink.java,v 1.2 2004/11/02 14:09:22 laddi Exp $
+ * $Id: UserHomeLink.java,v 1.3 2004/11/02 14:10:34 laddi Exp $
  * Created on 1.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -28,13 +28,13 @@ import com.idega.user.business.UserBusiness;
 
 
 /**
- * An object that is a link to the logged in user's home page.  Is a container so it contain any PresentationObject.
+ * An object that is a link to the logged in user's home page.  Is a container so it can contain any PresentationObject.
  * Displays the added objects without a link around it when no user is logged on.
  * 
  * Last modified: 1.11.2004 17:07:07 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class UserHomeLink extends PresentationObjectContainer {
 	
