@@ -1096,10 +1096,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 		    LoggedOnInfo info = this.getLoggedOnInfo(iwc);
 			if (iwc.getUser().equals(user)) {
 				return true;
-			//} else if(LOGINTYPE_AS_ANOTHER_USER.equals(info.getLoginType())){
-			} else if( getLoginSession(iwc).isReserved()){
-				System.out.println("trying to log in as another user faild: log out of current \"other user\"");
-				return false;
 			}
 			if(reserveCurrentUser)
 			    reserveLoginInformation(iwc);
