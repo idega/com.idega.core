@@ -68,7 +68,7 @@ public interface IDOLegacyEntity extends IDOEntity,MetaDataCapable {
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
-	public boolean equals(com.idega.data.IDOLegacyEntity p0);
+	//public boolean equals(com.idega.data.IDOLegacyEntity p0);
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
@@ -472,7 +472,7 @@ public interface IDOLegacyEntity extends IDOEntity,MetaDataCapable {
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
-	public boolean equals(java.lang.Object p0);
+	//public boolean equals(java.lang.Object p0);
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/

@@ -2610,23 +2610,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		}
 	}
-	public boolean equals(Object obj) {
-		if (obj instanceof IDOLegacyEntity) {
-			return equals((IDOLegacyEntity)obj);
-		}
-		else if (obj instanceof IDOEntity) {
-			return equals((IDOEntity)obj);
-		}
-		else {
-			return super.equals(obj);
-		}
-	}
+	
 	
 	public int compareTo(Object obj) {
-		if (obj instanceof IDOEntity) {
-			return compareTo((IDOEntity)obj);
-		}
-		return 0;
+	    try {
+	        return compareTo((IDOEntity)obj);
+	    }
+	    catch(ClassCastException e) {
+	        //the user is comparing apples to oranges of course they are not equal and this is an error too!
+	        e.printStackTrace();
+	        return 0;
+	    }
 	}
 	
 	protected int compareTo(IDOEntity entity) {
@@ -2634,21 +2628,34 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return coll.compare(this.getPrimaryKey(), entity.getPrimaryKey());
 	}
 
-	public boolean equals(IDOLegacyEntity entity) {
-		return equals((IDOEntity)entity);
-	}
 
+	/**
+	 * This method just calls equals(IDOEntity) by casting obj to IDOEntity
+	 */
+	public boolean equals(Object obj) {
+	
+	    boolean isEqual = false;
+	    
+	    try {
+	        isEqual = equals((IDOEntity)obj);
+	    }
+	    catch(ClassCastException e) {
+	        //the user is comparing apples to oranges of course they are not equal and this is an error too!
+	        e.printStackTrace();
+	        return false;
+	    }
+	    return isEqual;
+	}
+	
+/**
+ * The method returns true if the entity primary keys match
+ * @param entity
+ * @return
+ */
 	public boolean equals(IDOEntity entity) {
 		if (entity != null) {
 			if (entity.getEntityDefinition().getSQLTableName().equalsIgnoreCase(this.getEntityDefinition().getSQLTableName())) {
-			//if (entity.getClass().equals(this.getClass())) {
-				Object entityPK = null;
-				//try
-				//{
-				entityPK = entity.getPrimaryKey();
-				//}
-				//catch (RemoteException e)
-				//{}
+				Object entityPK = entity.getPrimaryKey();
 				if (entityPK != null && entityPK.equals(this.getPrimaryKey())) {
 					return true;
 				}
