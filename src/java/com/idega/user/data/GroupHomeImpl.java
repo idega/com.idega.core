@@ -154,4 +154,11 @@ public java.lang.String getRelationTypeGroupParent(){
 }
 
 
+public Group findByHomePageID(int p0)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((GroupBMPBean)entity).ejbFindByHomePageID(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.findByPrimaryKey(pk);
+}
+
 }

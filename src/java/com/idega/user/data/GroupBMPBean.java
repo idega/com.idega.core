@@ -282,7 +282,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		setColumn(getColumnNameHomePageID(), pageID);
 	}
 	public void setHomePage(ICPage page) {
-		setHomePageID((Integer)page.getPrimaryKey());
+		setColumn(getColumnNameHomePageID(), page);
 	}
 	
 	
@@ -1464,6 +1464,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public Object ejbFindByHomePageID(int pageID) throws FinderException {
+		return idoFindOnePKByQuery(idoQueryGetSelect().appendWhereEquals(getColumnNameHomePageID(),pageID));
 	}
 
 } // Class Group

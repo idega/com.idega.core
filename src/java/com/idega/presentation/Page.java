@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.103 2004/04/03 16:29:48 eiki Exp $
+ *  $Id: Page.java,v 1.104 2004/05/05 15:14:00 gummi Exp $
  *
  *  Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -69,6 +69,7 @@ public class Page extends PresentationObjectContainer {
 	private boolean _isDraft = false;
 	private boolean _isExtendingTemplate = false;
 	private String _templateId = null;
+	private int _dpt_root_page = -1;
 	private Hashtable _styleDefinitions;
 	private Hashtable _metaTags;
 	private QueueMap _styleSheets;
@@ -1578,6 +1579,14 @@ public class Page extends PresentationObjectContainer {
 	public void setTemplateId(String id) {
 		_templateId = id;
 	}
+	
+	public void setDPTRootPage(String id) {
+		if(id != null){
+			_dpt_root_page = Integer.parseInt(id);
+		}else {
+			_dpt_root_page = -1;
+		}
+	}
 
 	/**
 	 *  Gets the templateId attribute of the Page object
@@ -1588,6 +1597,12 @@ public class Page extends PresentationObjectContainer {
 		return (_templateId);
 	}
 
+	
+	public int getDPTRootPageID() {
+		return (_dpt_root_page);
+	}
+	
+	
 	/**
 	 *  Used to add source of scriptfiles (JavaScript) The file url should end on
 	 *  the form "scriptfile.js"
