@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.view.ViewManager;
-import com.idega.core.view.ViewNode;
 import com.idega.presentation.IWContext;
 
 /**
@@ -61,7 +60,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 			boolean viewNodeExists = true;
 			try{
 				String uri = getURIMinusContextPath(request);
-				ViewNode node = ViewManager.getInstance(getIWMainApplication(request)).getViewNodeForUrl(uri);
+				ViewManager.getInstance(getIWMainApplication(request)).getViewNodeForUrl(uri);
 				viewNodeExists=true;
 			}
 			catch(Exception e){
