@@ -109,8 +109,6 @@ public class CreateUserGroup extends Window {
   public void lineUpElements(){
 
     Table frameTable = new Table(1,3);
-    frameTable.setAlignment("center");
-    frameTable.setVerticalAlignment("middle");
     frameTable.setCellpadding(0);
     frameTable.setCellspacing(0);
 

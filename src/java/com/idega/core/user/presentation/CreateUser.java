@@ -188,8 +188,6 @@ public class CreateUser extends Window {
 	public void lineUpElements() {
 
 		Table frameTable = new Table(1, 6);
-		frameTable.setAlignment("center");
-		frameTable.setVerticalAlignment("middle");
 		frameTable.setCellpadding(0);
 		frameTable.setCellspacing(0);
 
