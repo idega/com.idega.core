@@ -92,6 +92,7 @@ public class IDOTableCreator{
         trans = com.idega.transaction.IdegaTransactionManager.getInstance();
         if(!((IdegaTransactionManager)trans).hasCurrentThreadBoundTransaction()){
           _dsi.executeBeforeCreateEntityRecord(entity);
+          ((IdegaTransactionManager)trans).setEntity(entity);
           trans.begin();
           canCommit=true;
         }
@@ -154,6 +155,7 @@ public class IDOTableCreator{
       //String message = se.getMessage();
       //if(message.toLowerCase().indexOf("table")!=-1){
         theReturner=false;
+        System.out.println("Table: "+tableName+" does not exist, exception:"+se.getClass().getName());
       //}
       //else{
         //se.printStackTrace();

@@ -74,7 +74,8 @@ public static final int TYPE_COM_IDEGA_DATA_BLOBWRAPPER=10;
         }
 
 	public void setName(String name){
-		this.name=name.toLowerCase();
+        //this.name=name.toLowerCase();
+		this.name=name.toUpperCase();
 	}
 
 	public String getName(){
@@ -255,7 +256,7 @@ public static final int TYPE_COM_IDEGA_DATA_BLOBWRAPPER=10;
 	}
 
     public String getColumnName(){
-    	return getName();
+    	return getName().toUpperCase();
     }
 
       public boolean getIfUnique(){
@@ -264,6 +265,10 @@ public static final int TYPE_COM_IDEGA_DATA_BLOBWRAPPER=10;
 
       public void setUnique(boolean ifUnique){
         isUnique=ifUnique;
+      }
+
+      public boolean isOneToNRelationship(){
+        return(this.relationShipClass!=null);
       }
 
 }

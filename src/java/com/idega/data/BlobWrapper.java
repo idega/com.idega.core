@@ -1,5 +1,5 @@
 /*
- * $Id: BlobWrapper.java,v 1.6 2002/03/14 21:53:22 tryggvil Exp $
+ * $Id: BlobWrapper.java,v 1.7 2002/03/19 18:36:04 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,12 @@ public class BlobWrapper {
   private String columnName;
   private String tableName;
   private String dataSourceName;
-  private Connection conn;
+  private BlobInputStream blobInputStream;
+
+  //private Connection conn;
   private GenericEntity entity;
-  private ResultSet RS;
-  private Statement Stmt;
+  //private ResultSet RS;
+  //private Statement Stmt;
 
   public final static int INSERT_STATUS = 1;
   public final static int SELECT_STATUS = 2;
@@ -49,7 +51,7 @@ public class BlobWrapper {
 	public BlobWrapper(GenericEntity entity, String tableColumnName) {
       this.setEntity(entity);
       this.setTableColumnName(tableColumnName);
-      setDatasource(entity.getDatasource());
+      //setDatasource(entity.getDatasource());
 	}
 
 
@@ -119,7 +121,10 @@ public class BlobWrapper {
 
 
   public BlobInputStream getBlobInputStream() throws SQLException, IOException {
-    return(new BlobInputStream(this.entity,this.getTableColumnName()));
+    if(blobInputStream == null){
+      blobInputStream = (new BlobInputStream(this.entity,this.getTableColumnName()));
+    }
+    return blobInputStream;
   }
 
   //public void populate() {
@@ -166,15 +171,14 @@ public class BlobWrapper {
     return this.dataSourceName;
   }
 
-  protected Connection getConnection() {
+  /*protected Connection getConnection() {
     return conn;
-  }
+  }*/
 
-  /**
-   *<STRONG>Mandatory</STRONG> to call this function after instanciating this class
-   */
+
   public void close() {
     try {
+      /*
       if (entity != null) {
         if (RS != null) {
           RS.close();
@@ -186,6 +190,12 @@ public class BlobWrapper {
           conn.setAutoCommit(true);
           entity.freeConnection(dataSourceName,conn);
         }
+      }*/
+      System.out.println("BlobWrapper.close()");
+      if(blobInputStream!=null){
+        System.out.println("BlobWrapper.blobInputStream.close()");
+        blobInputStream.close();
+        blobInputStream=null;
       }
     }
     catch(Exception ex) {

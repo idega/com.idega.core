@@ -58,12 +58,14 @@ public class BlobInputStream extends InputStream{
 
   public int read() throws IOException {
     if ( in!=null ) return in.read();
-    else throw new IOException("BlobInputStream: read() inputstream is null!");
+    //else throw new IOException("BlobInputStream: read() inputstream is null!");
+    else return -1;
   }
 
   public int read(byte b[], int off, int len) throws IOException {
     if ( in!=null ) return in.read(b, off, len);
-    else throw new IOException("BlobInputStream:  read(byte b[], int off, int len) inputstream is null!");
+    //else throw new IOException("BlobInputStream:  read(byte b[], int off, int len) inputstream is null!");
+    else return -1;
   }
 
   public int read(byte b[]) throws IOException {
@@ -75,12 +77,19 @@ public class BlobInputStream extends InputStream{
   **/
   public void close() throws IOException {
     try{
+      if(in!= null){
+          in.close();
+          in=null;
+      }
       if (RS != null){
           RS.close();
-       }
+          RS=null;
+      }
       if(Stmt!= null){
           Stmt.close();
+          Stmt=null;
       }
+
 
       //debug for interbase...not closing the stream
      // if( in!=null) in.close();
@@ -93,6 +102,11 @@ public class BlobInputStream extends InputStream{
     finally{
       if (conn!= null){
        ConnectionBroker.freeConnection(getDataSource(),conn);
+       conn=null;
+      }
+      if(in!= null){
+          in.close();
+          in=null;
       }
     }
   }
@@ -100,7 +114,10 @@ public class BlobInputStream extends InputStream{
   // basic inputstream functions
   public int available() throws IOException {
     if( in != null) return in.available();
-    else throw new IOException("BlobInputStream:  available() inputstream is null!");
+    //else throw new IOException("BlobInputStream:  available() inputstream is null!");
+    else{
+      return 0;
+    }
   }
 
   public boolean markSupported() {
@@ -114,7 +131,8 @@ public class BlobInputStream extends InputStream{
 
   public long skip(long n) throws IOException {
     if ( in!=null ) return in.skip(n);
-    else throw new IOException("BlobInputStream: skip() inputstream is null!");
+    else return -1;
+    //else throw new IOException("BlobInputStream: skip() inputstream is null!");
   }
 
   private void ensureOpen() throws IOException {
@@ -125,6 +143,10 @@ public class BlobInputStream extends InputStream{
   public synchronized void reset() throws IOException {
     if ( in!=null ) in.reset();
     else throw new IOException("BlobInputStream: reset() inputstream is null!");
+    /*else{
+      close();
+      this.getInputStreamForBlobRead();
+    }*/
   }
 
   public InputStream getInputStreamForBlobRead(){
@@ -136,6 +158,10 @@ public class BlobInputStream extends InputStream{
 
           if ( (RS!=null) && (RS.next()) ) {
             in = RS.getBinaryStream(1);
+            //System.out.println("in is set for "+entity.getClass().getName()+", id="+entity.getID());
+          }
+          else{
+            this.close();
           }
         }
       }

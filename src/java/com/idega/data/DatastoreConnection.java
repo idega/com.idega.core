@@ -69,6 +69,9 @@ public class DatastoreConnection implements Connection{
       this._dataSourceName=datasourceName;
     }
 
+    public String getDatasource(){
+      return this._dataSourceName;
+    }
 
 
     public DatastoreInterface getDatastoreInterface(){

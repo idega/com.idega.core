@@ -11,14 +11,22 @@ import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
+
 import java.util.List;
+import java.util.Vector;
+import java.util.Iterator;
+
 import com.idega.util.datastructures.HashtableDoubleKeyed;
 import com.idega.util.datastructures.HashtableMultivalued;
 
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
+ * Title:        idega Data Objects
+ * Description:  Idega Data Objects is a Framework for Object/Relational mapping and seamless integration between datastores
+ * Copyright:    Copyright (c) 2001
+ * Company:      idega
+ * @author        <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version 1.0
+ */
 public  class EntityControl{
 
     private static HashtableDoubleKeyed relationshipTables=new HashtableDoubleKeyed();
@@ -412,6 +420,15 @@ public  class EntityControl{
           relationshipClasses.put(relatingEntityClass2,relatingEntityClass1);
       }
 
+
+      /**
+       * Returns a list of Class Objects
+       */
+      public static List getManyToManyRelationShipClasses(Class entityClass){
+        return getManyToManyRelationShipClasses(GenericEntity.getEntityInstance(entityClass));
+      }
+
+
       /**
        * Returns a list of Class Objects
        */
@@ -608,4 +625,31 @@ public  class EntityControl{
         public static boolean getIfEntityAutoCreate(){
           return autoCreate;
         }
+
+
+        /**
+         * Returns a list of GenericEntity Class objects that have N:1 relationship with entityClass
+         */
+        public static List getNToOneRelatedClasses(Class entityClass){
+          return getNToOneRelatedClasses(GenericEntity.getEntityInstance(entityClass));
+        }
+
+
+        /**
+         * Returns a list of GenericEntity Class objects that have N:1 relationship with entity
+         */
+        public static List getNToOneRelatedClasses(GenericEntity entity){
+          List theReturn = new java.util.Vector();
+          List attributes = entity.getAttributes();
+          java.util.Iterator iter = attributes.iterator();
+          while (iter.hasNext()) {
+            EntityAttribute item = (EntityAttribute)iter.next();
+            if(item.isOneToNRelationship()){
+              theReturn.add(item.getRelationShipClass());
+            }
+          }
+          return theReturn;
+        }
+
+
 }

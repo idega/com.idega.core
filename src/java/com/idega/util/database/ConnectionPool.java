@@ -34,6 +34,9 @@ public class ConnectionPool
    //private int checkedOut;
    private Vector freeConnections = new Vector();
 
+   private static String DEBUG_RETURNED_CONNECTION = "Returned connection to correct pool";
+   private static String DEBUG_REQUESTING_CONNECTION = "Requested connection";
+
    public ConnectionPool(String name, String URL, String user,
       String password, int maxConns, int initConns, int timeOut,
       PrintWriter pw, int logLevel)
@@ -133,7 +136,7 @@ public class ConnectionPool
 
    public Connection getConnection() throws SQLException
    {
-      logWriter.log("Request for connection received", LogWriter.DEBUG);
+      logWriter.log(DEBUG_REQUESTING_CONNECTION, LogWriter.DEBUG);
       try
       {
          return getConnection(timeOut * 1000);
@@ -193,7 +196,7 @@ public class ConnectionPool
       this.addToCheckedOutList(conn);
       //debug
       //logWriter.log("Delivered connection from pool", LogWriter.INFO);
-      logWriter.log(getStats(), LogWriter.DEBUG);
+      //logWriter.log(getStats(), LogWriter.DEBUG);
       return conn;
    }
 
@@ -282,16 +285,26 @@ public class ConnectionPool
 
    public synchronized void freeConnection(Connection conn)
    {
-      // Put the connection at the end of the Vector
-      addConnectionToPool(conn);
-      //if(checkedOut!=0){
-        //checkedOut--;
-      //}
-      removeFromCheckedOutList(conn);
-      notifyAll();
-     //debug
-     //logWriter.log("Returned connection to pool", LogWriter.INFO);
-      logWriter.log(getStats(), LogWriter.DEBUG);
+
+      DatastoreConnection dsconn = (DatastoreConnection)conn;
+      String datasourceOfConnection = dsconn.getDatasource();
+      if(datasourceOfConnection.equals(this.name)){
+        // Put the connection at the end of the Vector
+        addConnectionToPool(conn);
+        //if(checkedOut!=0){
+          //checkedOut--;
+        //}
+        removeFromCheckedOutList(conn);
+        notifyAll();
+       //debug
+       logWriter.log(DEBUG_RETURNED_CONNECTION, LogWriter.DEBUG);
+       //logWriter.log(getStats(), LogWriter.DEBUG);
+      }
+      else{
+        System.out.println("[ATTENTION!!!] Connection returned to wrong pool - was returned to "+this.name+" should have been returned to "+datasourceOfConnection);
+        PoolManager.getInstance().freeConnection(datasourceOfConnection,conn);
+      }
+
    }
 
    private synchronized void addConnectionToPool(Connection conn)

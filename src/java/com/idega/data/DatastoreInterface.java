@@ -1,6 +1,6 @@
 
 /*
- * $Id: DatastoreInterface.java,v 1.41 2002/03/14 21:46:02 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.42 2002/03/19 18:36:04 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -519,6 +519,7 @@ public abstract class DatastoreInterface{
     StringBuffer statement ;
     Connection Conn = null;
     InputStream instream = null;
+    PreparedStatement PS = null;
 
     try{
 
@@ -545,7 +546,7 @@ public abstract class DatastoreInterface{
           Conn = entity.getConnection();
           //if(Conn== null){ System.out.println("In insertBlob() in DatastoreInterface conn==null"); return;}
           //BufferedInputStream bin = new BufferedInputStream(instream);
-          PreparedStatement PS = Conn.prepareStatement(statement.toString());
+          PS = Conn.prepareStatement(statement.toString());
           //System.out.println("bin.available(): "+bin.available());
           //PS.setBinaryStream(1, bin, 0 );
           //PS.setBinaryStream(1, instream, instream.available() );
@@ -564,6 +565,7 @@ public abstract class DatastoreInterface{
     catch(SQLException ex){ex.printStackTrace(); System.err.println( "error uploading blob to db for "+entity.getClass().getName());}
     catch(Exception ex){ex.printStackTrace();}
     finally{
+      if(PS != null) PS.close();
       if(Conn != null) entity.freeConnection(Conn);
       if(instream !=null ) instream.close();
     }
@@ -1136,7 +1138,7 @@ public abstract class DatastoreInterface{
 
 
   public void setNumberGeneratorValue(GenericEntity entity,int value){
-    throw new RuntimeException("setSequenceValue() not implemented for "+this.getClass().getName());
+    throw new RuntimeException("setNumberGeneratorValue() not implemented for "+this.getClass().getName());
   }
 
 
@@ -1167,7 +1169,7 @@ public abstract class DatastoreInterface{
       _databaseMetaData=meta;
    }
 
-   public DatabaseMetaData getDatabaseMetaData(java.sql.DatabaseMetaData meta){
+   public DatabaseMetaData getDatabaseMetaData(){
       return _databaseMetaData;
    }
 

@@ -147,7 +147,10 @@ public class EntityFinder{
                                 if(vector==null){
                                   vector=new Vector();
                                 }
+                ((GenericEntity)tempobj).setDatasource(entity.getDatasource());
                 ((GenericEntity)tempobj).setEntityState(GenericEntity.STATE_IN_SYNCH_WITH_DATASTORE);
+
+
 				vector.addElement(tempobj);
 
 			}
@@ -545,6 +548,7 @@ public class EntityFinder{
 					System.err.println("Entity "+returningEntity.getEntityName()+ " IdColumnname "+returningEntity.getIDColumnName()) ;
 				  }
 					int id = RS.getInt(returningEntity.getIDColumnName());
+                    tempobj.setDatasource(fromEntity.getDatasource());
 					tempobj.findByPrimaryKey(id);
 				}
 				catch(Exception ex){

@@ -1,12 +1,12 @@
 /*
 <<<<<<< GenericEntity.java
 <<<<<<< GenericEntity.java
- * $Id: GenericEntity.java,v 1.85 2002/03/14 21:46:30 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.86 2002/03/19 18:36:05 tryggvil Exp $
 =======
- * $Id: GenericEntity.java,v 1.85 2002/03/14 21:46:30 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.86 2002/03/19 18:36:05 tryggvil Exp $
 >>>>>>> 1.83
 =======
- * $Id: GenericEntity.java,v 1.85 2002/03/14 21:46:30 tryggvil Exp $
+ * $Id: GenericEntity.java,v 1.86 2002/03/19 18:36:05 tryggvil Exp $
 >>>>>>> 1.84
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
@@ -69,13 +69,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
   private String _lobColumnName;
   private boolean insertStartData=true;
 
-  private int _state;
+
 
   protected static int STATE_NEW = 0;
   protected static int STATE_IN_SYNCH_WITH_DATASTORE = 1;
   protected static int STATE_NOT_IN_SYNCH_WITH_DATASTORE = 2;
   protected static int STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE = 3;
   protected static int STATE_DELETED = 4;
+
+  private int _state = STATE_NEW;
 
   public GenericEntity() {
 	  this(DEFAULT_DATASOURCE);
@@ -848,27 +850,33 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 
 
+    /**
+     * Sets the datasource to another datastore.<br>
+     * Can be used to switch the datasource when the entity has been fetched from another datasource (.e.g. when
+     * this instance is inserted into a new datastore with another datasource).
+     */
 	public void setDatasource(String dataSource){
         if(!dataSource.equals(this._dataSource)){
           try{
             //Connect the blob fields if the datasource is changed
+            //System.out.println("[setDataSource()] "+this.getClass().getName()+" EntityState="+this.getEntityState());
             if(getEntityState()==this.STATE_IN_SYNCH_WITH_DATASTORE && this.hasLobColumn()){
               BlobWrapper wrapper = this.getBlobColumnValue(this.getLobColumnName());
               BlobInputStream inStream = wrapper.getBlobInputStream();
-              inStream.setDataSource(this._dataSource);
+              //inStream.setDataSource(this._dataSource);
+
               wrapper.setInputStreamForBlobWrite(inStream);
 
+              setEntityState(this.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
               //System.out.println(this.getClass().getName()+".setDatasource("+dataSource+"), connecting blob fields");
             }
-            setEntityState(this.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
           }
           catch(Exception e){
             System.err.println("Exception in connecting blob fields for "+this.getClass().getName()+", id="+this.getID());
             e.printStackTrace();
           }
-
         }
-		_dataSource=dataSource;
+		this._dataSource=dataSource;
 	}
 
 	public String getDatasource(){

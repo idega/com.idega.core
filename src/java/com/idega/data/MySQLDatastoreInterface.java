@@ -139,7 +139,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
         theReturn = "DOUBLE";
       }
       else if (javaClassName.equals("java.sql.Timestamp")){
-        theReturn = "DATE";
+        theReturn = "TIMESTAMP";
       }
       else if (javaClassName.equals("java.sql.Date")){
         theReturn = "DATE";
@@ -297,17 +297,17 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
     String statement ;
     Connection Conn = null;
-
+    InputStream instream = null;
     try{
 
       statement = "update " + entity.getEntityName() + " set " + entity.getLobColumnName() + "=? where " + entity.getIDColumnName() + " = '" + entity.getID()+"'";
       //System.out.println(statement);
-      //System.out.println("In insertBlob() in DatastoreInterface");
+      //System.out.println("In insertBlob() in MysqlDatastoreInterface");
       BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
       if(wrapper!=null){
-        //System.out.println("In insertBlob() in DatastoreInterface wrapper!=null");
+        //System.out.println("In insertBlob() in MysqlDatastoreInterface wrapper!=null");
         //Conn.setAutoCommit(false);
-        InputStream instream = wrapper.getInputStreamForBlobWrite();
+        instream = wrapper.getInputStreamForBlobWrite();
         if(instream!=null){
           //System.out.println("In insertBlob() in DatastoreInterface instream != null");
           Conn = entity.getConnection();
@@ -343,6 +343,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
     catch(Exception ex){ex.printStackTrace();}
     finally{
       if(Conn != null) entity.freeConnection(Conn);
+      if(instream!=null) instream.close();
     }
 
 
@@ -351,6 +352,20 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
   public String getIDColumnType(){
     return "INTEGER AUTO_INCREMENT";
+  }
+
+
+
+  public void setNumberGeneratorValue(GenericEntity entity,int value){
+    //throw new RuntimeException("setSequenceValue() not implemented for "+this.getClass().getName());
+    String statement = "insert into "+this.getSequenceTableName(entity)+" values("+value+")";
+    try{
+      this.executeUpdate(entity,statement);
+    }
+    catch(Exception e){
+      //e.printStackTrace();
+      System.err.println("MySQLDatastoreInterface.setNumberGeneratorValue() Exception: "+e.getMessage());
+    }
   }
 
 }
