@@ -2011,6 +2011,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public int getNumberOfRecords(String CountSQLString) throws SQLException {
 		return getIntTableValue(CountSQLString);
 	}
+	
+	protected double idoGetValueFromSingleValueResultSet(IDOQuery query) throws IDOException {
+		return idoGetValueFromSingleValueResultSet(query.toString());
+	}
+	
+	protected double idoGetValueFromSingleValueResultSet(String sqlString) throws IDOException {
+		try {
+			if (isDebugActive())
+				logSQL(sqlString);
+			return this.getDoubleTableValue(sqlString);
+		} catch (SQLException e) {
+			throw new IDOException(e, this);
+		}
+	}
+	
 	public int getNumberOfRecords(String columnName, String Operator, String columnValue) throws SQLException {
 		return getNumberOfRecords("select count(*) from " + getEntityName() + " where " + columnName + " " + Operator + " " + columnValue);
 	}
@@ -2020,6 +2035,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public int getMaxColumnValue(String columnToGetMaxFrom, String columnCondition, String columnConditionValue) throws SQLException {
 		return getIntTableValue("select max(" + columnToGetMaxFrom + ") from " + getEntityName() + " where " + columnCondition + " = '" + columnConditionValue + "'");
 	}
+	
 	public int getIntTableValue(String CountSQLString) throws SQLException {
 		Connection conn = null;
 		Statement stmt = null;
@@ -2047,6 +2063,35 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		return recordCount;
 	}
+	
+	public double getDoubleTableValue(String sqlString) throws SQLException {
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		double value  = 0;
+		try {
+			conn = getConnection(this.getDatasource());
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sqlString);
+			if (rs.next())
+				value = rs.getDouble(1);
+			rs.close();
+			//System.out.println(SQLString+"\n");
+		} catch (SQLException e) {
+			throw new SQLException("There was an error in com.idega.data.GenericEntity.getDoubleTableValue \n" + e.getMessage());
+		} catch (Exception e) {
+			System.err.println("There was an error in com.idega.data.GenericEntity.getDoubleTableValue " + e.getMessage());
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				freeConnection(getDatasource(), conn);
+			}
+		}
+		return value;
+	}	
+	
 	/**
 	 * @deprecated
 	 */
