@@ -1,6 +1,11 @@
-//idega 2000-2001 - Tryggvi Larusson
 /*
- *Copyright 2000-2001 idega.is All Rights Reserved.
+ * $Id: IWContext.java,v 1.104 2004/11/01 21:15:27 tryggvil Exp $
+ * Created 2000 by Tryggvi Larusson
+ *
+ * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
  */
 package com.idega.presentation;
 import java.io.IOException;
@@ -58,7 +63,9 @@ import com.idega.util.datastructures.HashtableMultivalued;
 import com.idega.util.reflect.MethodFinder;
 import com.idega.util.reflect.MethodInvoker;
 /**
- * A class to serve as the context of a user request in an idegaWeb application.
+ * This class is a context information that lives through each user request in an idegaWeb application. 
+ * The role of this class is very similar to that of FacesContext in a JSF application. <br>
+ * IWContext will be gradually phased out in future versions in favour of just working with the standard FacesContext.
  * <br>
  * This class gives access to User specific information and Application specific information.
  * <br>
@@ -67,8 +74,8 @@ import com.idega.util.reflect.MethodInvoker;
  * functionality or Application scoped functionality).
  *<br>
  *
- *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- *@version 1.2
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.104 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
