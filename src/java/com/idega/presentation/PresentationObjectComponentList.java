@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectComponentList.java,v 1.1 2004/11/14 23:21:37 tryggvil Exp $ Created on
+ * $Id: PresentationObjectComponentList.java,v 1.2 2004/11/16 02:20:13 tryggvil Exp $ Created on
  * 14.11.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import javax.faces.component.UIComponent;
 /**
  * Overrided from JSFs standard Children because of the clone() issue.
  * 
- * Last modified: $Date: 2004/11/14 23:21:37 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/11/16 02:20:13 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 class PresentationObjectComponentList extends AbstractList implements Serializable,Cloneable {
 
@@ -70,10 +70,10 @@ class PresentationObjectComponentList extends AbstractList implements Serializab
 	}
 
 	private void setNewParent(UIComponent child) {
-		UIComponent oldParent = child.getParent();
-		if (oldParent != null) {
-			oldParent.getChildren().remove(child);
-		}
+		//UIComponent oldParent = child.getParent();
+		//if (oldParent != null) {
+		//	oldParent.getChildren().remove(child);
+		//}
 		child.setParent(_component);
 	}
 
