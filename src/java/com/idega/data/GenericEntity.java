@@ -1065,6 +1065,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       flushQueryCache();
     }
     catch(Exception ex){
+      try{
+        this.closeBlobConnections();
+      }
+      catch(Exception e){}
       if(ex instanceof SQLException){
 	    //ex.printStackTrace();
 	    throw (SQLException)ex.fillInStackTrace();
@@ -2881,8 +2885,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 
 
   private IDOLegacyEntity findByPrimaryInOtherClass(Class entityInterfaceOrBeanClass,int id)throws java.sql.SQLException{
-    IDOLegacyEntity returnEntity = IDOLookup.findByPrimaryKeyLegacy(entityInterfaceOrBeanClass,id);
-    returnEntity.setDatasource(this.getDatasource());
+    IDOLegacyEntity returnEntity = IDOLookup.findByPrimaryKeyLegacy(entityInterfaceOrBeanClass,id,this.getDatasource());
+    //returnEntity.setDatasource(this.getDatasource());
     return returnEntity;
   }
 
@@ -3061,5 +3065,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
       if(queryCachingActive){
            IDOContainer.getInstance().getBeanCache(interfaceClass).flushAllQueryCache();
       }
+    }
+
+    boolean closeBlobConnections()throws Exception{
+      if(this.hasLobColumn()){
+        BlobWrapper wrapper = this.getBlobColumnValue(this.getLobColumnName());
+        if(wrapper!=null){
+          wrapper.close();
+          return true;
+        }
+      }
+      return false;
     }
 }

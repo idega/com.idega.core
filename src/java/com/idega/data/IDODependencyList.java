@@ -38,8 +38,9 @@ public class IDODependencyList {
 
   public void addEntityClass(Class startingEntityClass){
     if(startingEntityClass!=null){
-      if(!getStartClasses().contains(startingEntityClass)){
-        this.getStartClasses().add(startingEntityClass);
+      Class interfaceClass = this.getInterfaceClassForClass(startingEntityClass);
+      if(!this.listContainsClass(getStartClasses(),interfaceClass)){
+        this.getStartClasses().add(interfaceClass);
       }
     }
   }
@@ -116,12 +117,14 @@ public class IDODependencyList {
 
   private static void compileDependencyList(Class entityClass,List theReturn){
 
-    boolean alreadyInList = theReturn.contains(entityClass);
+    boolean alreadyInList =  listContainsClass(theReturn,entityClass);
 
+    Class interfaceClass = getInterfaceClassForClass(entityClass);
     if(alreadyInList){
       theReturn.remove(entityClass);
+      theReturn.remove(interfaceClass);
     }
-    theReturn.add(entityClass);
+    theReturn.add(interfaceClass);
 
 
     List manyToManies = EntityControl.getManyToManyRelationShipClasses(entityClass);
@@ -134,7 +137,7 @@ public class IDODependencyList {
       for (int i = 0; i < size; i++) {
         Class item = (Class)manyToManies.get(i);
         //Class item = (Class)iter.next();
-        if(!theReturn.contains(item)){
+        if(!listContainsClass(theReturn,item)){
           compileDependencyList(item,theReturn);
           //System.out.println(item.getName());
         }
@@ -149,7 +152,7 @@ public class IDODependencyList {
       Iterator iter2 = nToOnes.iterator();
       while (iter2.hasNext()) {
         Class item = (Class)iter2.next();
-        if(!theReturn.contains(item)){
+        if(!listContainsClass(theReturn,item)){
           compileDependencyList(item,theReturn);
         }
         else{
@@ -167,12 +170,15 @@ public class IDODependencyList {
 
   private static void reshuffleDependencyList(Class entityClass,List theReturn,List checkList){
     System.out.println("[idoDependencyList] Reshuffling for entityClass = "+entityClass.getName());
-    if(checkList.contains(entityClass))
+    if(listContainsClass(checkList,entityClass))
       return;
-    checkList.add(entityClass);
+
+    Class interfaceClass = getInterfaceClassForClass(entityClass);
+    checkList.add(interfaceClass);
 
     theReturn.remove(entityClass);
-    theReturn.add(entityClass);
+    theReturn.remove(interfaceClass);
+    theReturn.add(interfaceClass);
 
     //List manyToManies = EntityControl.getManyToManyRelationShipClasses(entityClass);
     List nToOnes = EntityControl.getNToOneRelatedClasses(entityClass);
@@ -189,11 +195,26 @@ public class IDODependencyList {
       Iterator iter2 = nToOnes.iterator();
       while (iter2.hasNext()) {
         Class item = (Class)iter2.next();
-          reshuffleDependencyList(item,theReturn,checkList);
+        Class newItem = getInterfaceClassForClass(item);
+          reshuffleDependencyList(newItem,theReturn,checkList);
       }
     }
 
   }
 
+
+  private static Class getInterfaceClassForClass(Class entityClass){
+    return IDOLookup.getInterfaceClassFor(entityClass);
+  }
+
+  private static boolean listContainsClass(List list,Class entityClass){
+    if(entityClass.isInterface()){
+      return list.contains(entityClass);
+    }
+    else{
+      Class newClass = getInterfaceClassForClass(entityClass);
+      return list.contains(newClass);
+    }
+  }
 
 }

@@ -125,7 +125,7 @@ public class IDOLookup{
   }
 
 
-   public static IDOLegacyEntity createLegacy(Class entityInterfaceOrBeanClass){
+   public static IDOLegacyEntity createOld(Class entityInterfaceOrBeanClass){
       //return createNew(entityInterfaceClass);
       if(entityInterfaceOrBeanClass.isInterface()){
         return createLegacy(IDOLookup.getBeanClassFor(entityInterfaceOrBeanClass));
@@ -141,7 +141,7 @@ public class IDOLookup{
       }
    }
 
-  private static IDOLegacyEntity createNew(Class entityInterfaceClass){
+  public static IDOLegacyEntity createLegacy(Class entityInterfaceClass){
     try{
       return (IDOLegacyEntity)getHome(entityInterfaceClass).idoCreate();
     }
@@ -151,7 +151,7 @@ public class IDOLookup{
   }
 
 
-  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceOrBeanClass,int id)throws java.sql.SQLException{
+  public static IDOLegacyEntity findByPrimaryKeyLegacyOld(Class entityInterfaceOrBeanClass,int id)throws java.sql.SQLException{
     //return findByPrimaryKeyNew(entityInterfaceOrBeanClass,id);
     try{
       IDOLegacyEntity entity = createLegacy(entityInterfaceOrBeanClass);
@@ -163,7 +163,7 @@ public class IDOLookup{
     }
   }
 
-  private static IDOLegacyEntity findByPrimaryKeyNew(Class entityInterfaceClass,int id)throws java.sql.SQLException{
+  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,int id)throws java.sql.SQLException{
     try{
       return (IDOLegacyEntity)getHome(entityInterfaceClass).idoFindByPrimaryKey(new Integer(id));
     }
@@ -171,6 +171,25 @@ public class IDOLookup{
       throw new java.sql.SQLException(e.getMessage());
     }
   }
+
+  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,int id,String datasource)throws java.sql.SQLException{
+    return findByPrimaryKeyLegacy(entityInterfaceClass,new Integer(id),datasource);
+  }
+
+  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,Integer id,String datasource)throws java.sql.SQLException{
+    try{
+      IDOLegacyEntity entity = (IDOLegacyEntity)getHome(entityInterfaceClass).idoCreate();
+      entity.setDatasource(datasource);
+      ((IDOEntityBean)entity).ejbFindByPrimaryKey(id);
+      ((IDOEntityBean)entity).ejbLoad();
+      return entity;
+      //return (IDOLegacyEntity)getHome(entityInterfaceClass).idoFindByPrimaryKey(new Integer(id));
+    }
+    catch(Exception e){
+      throw new java.sql.SQLException(e.getMessage());
+    }
+  }
+
 
   public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,Integer id)throws java.sql.SQLException{
     try{
