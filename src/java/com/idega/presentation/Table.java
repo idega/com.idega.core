@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.51 2004/02/05 21:47:20 laddi Exp $
+ * $Id: Table.java,v 1.52 2004/02/05 21:57:28 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -40,6 +40,12 @@ public class Table extends PresentationObjectContainer {
 	public static final String FRAME_RIGHT = "rhs";
 	public static final String FRAME_BOX = "box";
 	public static final String FRAME_BORDER = "border";
+	
+	public static final String RULES_NONE = "none";
+	public static final String RULES_GROUPS = "groups";
+	public static final String RULES_ROWS = "rows";
+	public static final String RULES_COLUMNS = "cols";
+	public static final String RULES_ALL = "all";
 	
 	protected static final String HTML_TABLE_TAG_START = "<table ";
 	protected static final String HTML_TABLE_TAG_END = "</table>";
@@ -464,6 +470,10 @@ public class Table extends PresentationObjectContainer {
 	 */
 	public void setFrame(String frame) {
 		setMarkupAttribute("frame", frame);
+	}
+	
+	public void setRules(String rules) {
+		setMarkupAttribute("rules", rules);
 	}
 	
 	public void setCellspacing(int i) {
