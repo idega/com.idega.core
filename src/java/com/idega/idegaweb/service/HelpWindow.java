@@ -5,6 +5,7 @@ import com.idega.jmodule.object.interfaceobject.*;
 import com.idega.jmodule.object.textObject.*;
 import com.idega.jmodule.object.*;
 import com.idega.idegaweb.presentation.IWAdminWindow;
+import com.idega.util.text.TextSoap;
 
 public class HelpWindow extends IWAdminWindow {
 
@@ -18,6 +19,7 @@ public HelpWindow() {
     boolean hasImage = false;
     String headline = modinfo.getParameter(HelpButton.PARAMETERSTRING_HEADLINE);
     String text = modinfo.getParameter(HelpButton.PARAMETERSTRING_TEXT);
+      text = TextSoap.findAndReplace(text,"\r\n\r\n","<br><br>");
     String url = modinfo.getParameter(HelpButton.PARAMETERSTRING_URL);
       if ( url.length() > 0 ) {
         hasImage = true;
