@@ -83,14 +83,6 @@ public class TextInput extends InterfaceObject {
 		setAssociatedScript(script);
 	}
 
-	private Script getScript() {
-		if (getParentForm().getAssociatedFormScript() == null) {
-			getParentForm().setAssociatedFormScript(new Script());
-		}
-		script = getParentForm().getAssociatedFormScript();
-		return script;
-	}
-
 	private void setCheckSubmit() {
 		if (getScript().getFunction("checkSubmit") == null) {
 			getScript().addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
