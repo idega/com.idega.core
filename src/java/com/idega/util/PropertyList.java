@@ -36,7 +36,7 @@ public class PropertyList extends ArrayList {
 	}
 	
 	public void add(Property property){
-		this.add(property);
+		super.add(property);
 	}
 	
 	public void add(String key, String value){
