@@ -19,9 +19,10 @@ import com.idega.util.text.TextSoap;
  */
 public class GenericSelect extends InterfaceObject {
 
-	private boolean isSetAsNotEmpty;
-	private String notEmptyErrorMessage;
-	private String emptyValue;
+	private boolean _isSetToDisable;
+	private boolean _isSetAsNotEmpty;
+	private String _notEmptyErrorMessage;
+	private String _emptyValue;
 
 	private List theElements;
 	private List selectedElements;
@@ -188,8 +189,10 @@ public class GenericSelect extends InterfaceObject {
 	}
 
 	public void main(IWContext iwc) throws Exception {
-		if (isSetAsNotEmpty)
-			setOnSubmitFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", notEmptyErrorMessage, emptyValue);
+		if (_isSetAsNotEmpty)
+			setOnSubmitFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", _notEmptyErrorMessage, _emptyValue);
+		if (_isSetToDisable)
+			getScript().addFunction("disableObjectByDropdown", "function disableObjectByDropdown (dropdown,inputs,value,selectedValue) {\n	if (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue)) {\n \tif (inputs.length > 1) {\n	\t\tfor(var i=0;i<inputs.length;i++)\n	\t\t\tinputs[i].disabled=eval(value);\n	\t\t}\n	\telse\n	\t\tinputs.disabled=eval(value);\n}\n}");
 	}
 
 	/**
@@ -287,15 +290,78 @@ public class GenericSelect extends InterfaceObject {
 	}
 
 	/**
+	 * Disables/Enables an <code>InterfaceObject</code> when the selected value is selected in the <code>GenericSelect</code>.
+	 * Uses Javascript.
+	 * @param objectToDisable	The interface object(s) to disable/enable.
+	 * @param selectedValue		The selected value of the <code>GenericSelect</code> to use.
+	 * @param disable					Disables if boolean is true, enables otherwise.
+	 */
+	public void setToDisableWhenSelected(InterfaceObject objectToDisable, String selectedValue, boolean disable) {
+		setToDisableWhenSelected(objectToDisable.getName(), selectedValue, disable);
+	}
+
+	/**
+	 * Disables/Enables an <code>InterfaceObject</code> when the selected value is selected in the <code>GenericSelect</code>.
+	 * Uses Javascript.
+	 * @param objectToDisableName	The name of the interface object(s) to disable/enable.
+	 * @param selectedValue				The selected value of the <code>GenericSelect</code> to use.
+	 * @param disable							Disables if boolean is true, enables otherwise.
+	 */
+	public void setToDisableWhenSelected(String objectToDisableName, String selectedValue, boolean disable) {
+		_isSetToDisable = true;
+		this.setOnChange("disableObjectByDropdown(this,findObj('"+objectToDisableName+"'),'"+String.valueOf(disable)+"','"+selectedValue+"')");
+	}
+
+	/**
+	 * Disables an <code>InterfaceObject</code> when the selected value is selected in the <code>GenericSelect</code>.
+	 * Uses Javascript.
+	 * @param objectToDisable	The interface object(s) to disable.
+	 * @param selectedValue		The selected value of the <code>GenericSelect</code> to use.
+	 */
+	public void setToDisableWhenSelected(InterfaceObject objectToDisable, String selectedValue) {
+		setToDisableWhenSelected(objectToDisable.getName(), selectedValue, true);
+	}
+
+	/**
+	 * Disables an <code>InterfaceObject</code> when the selected value is selected in the <code>GenericSelect</code>.
+	 * Uses Javascript.
+	 * @param objectToDisableName	The name of the interface object(s) to disable.
+	 * @param selectedValue				The selected value of the <code>GenericSelect</code> to use.
+	 */
+	public void setToDisableWhenSelected(String objectToDisableName, String selectedValue) {
+		setToDisableWhenSelected(objectToDisableName, selectedValue, true);
+	}
+
+	/**
+	 * Enables an <code>InterfaceObject</code> when the selected value is selected in the <code>GenericSelect</code>.
+	 * Uses Javascript.
+	 * @param objectToDisable	The interface object(s) to enable.
+	 * @param selectedValue		The selected value of the <code>GenericSelect</code> to use.
+	 */
+	public void setToEnableWhenSelected(InterfaceObject objectToDisable, String selectedValue) {
+		setToDisableWhenSelected(objectToDisable.getName(), selectedValue, false);
+	}
+
+	/**
+	 * Enables an <code>InterfaceObject</code> when the selected value is selected in the <code>GenericSelect</code>.
+	 * Uses Javascript.
+	 * @param objectToDisableName	The name of the interface object(s) to enable.
+	 * @param selectedValue				The selected value of the <code>GenericSelect</code> to use.
+	 */
+	public void setToEnableWhenSelected(String objectToDisableName, String selectedValue) {
+		setToDisableWhenSelected(objectToDisableName, selectedValue, false);
+	}
+
+	/**
 	 * Sets the selection so that it can not be empty, displays an alert with the given 
 	 * error message if the "error" occurs.  Uses Javascript.
 	 * @param errorMessage	The error message to display.
 	 * @param emptyValue		The value representing the "empty" value.
 	 */
 	public void setAsNotEmpty(String errorMessage, String emptyValue) {
-		isSetAsNotEmpty = true;
-		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
-		this.emptyValue = emptyValue;
+		_isSetAsNotEmpty = true;
+		_notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+		_emptyValue = emptyValue;
 	}
 
 	/**
