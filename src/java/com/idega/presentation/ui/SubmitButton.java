@@ -142,8 +142,8 @@ public class SubmitButton extends GenericButton {
 		}
 		if (isEnclosedByForm()) {
 			if (_confirmSubmit) {
-				getScript().addFunction("confirmSubmit", "function confirmSubmit(message) {\n	submit = confirm(message);\n	if (submit==true)\n		\tfindObj('"+getForm().getName()+"').submit();\n}");
-				setOnClick("confirmSubmit('"+_confirmMessage+"');");
+				//getScript().addFunction("confirmSubmit", "function confirmSubmit(message) {\n	submit = confirm(message);\n	if (submit==true)\n		\tfindObj('"+getForm().getName()+"').submit();\n}");
+				setOnClick("return confirm('"+_confirmMessage+"');return false;");
 			}
 			if (_confirmSingleSubmit) {
 				this.setOnSubmitFunction("confirmSingleSubmit", "function confirmSingleSubmit(input,message) {\n	return confirm(message);\n}", _confirmSingleMessage);
@@ -161,9 +161,6 @@ public class SubmitButton extends GenericButton {
 	 */
 	public void print(IWContext iwc) throws Exception {
 		if (getLanguage().equals("HTML")) {
-			/*if (_confirmSubmit)
-				setInputType(INPUT_TYPE_BUTTON);*/
-			
 			if (encloseByForm) {
 				if (isEnclosedByForm()) {
 					super.print(iwc);
