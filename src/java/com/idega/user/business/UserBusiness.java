@@ -217,4 +217,8 @@ public interface UserBusiness extends com.idega.business.IBOService
 	   * @return true if successfull, else false
 	   */
 	  public boolean removeUserEmails(User user);
+	  
+	  public Collection getStoredTopNodeGroups(User user)throws RemoteException;
+	  public Collection getStoredTopGroupNodes(User user)throws RemoteException;
+	  public void removeStoredTopGroupNodes(User user)throws RemoveException,RemoteException;
 }

@@ -48,6 +48,7 @@ import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDOStoreException;
 import com.idega.data.IDOUtil;
@@ -66,6 +67,8 @@ import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupRelation;
 import com.idega.user.data.GroupRelationHome;
+import com.idega.user.data.TopNodeGroup;
+import com.idega.user.data.TopNodeGroupHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserGroupPlugIn;
 import com.idega.user.data.UserHome;
@@ -97,6 +100,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
   private EmailHome emailHome;
   private AddressHome addressHome;
   private PhoneHome phoneHome;
+  private TopNodeGroupHome topNodeGroupHome;
   
   private Gender male,female;
 
@@ -177,6 +181,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       }
     }
     return phoneHome;
+  }
+  
+  public TopNodeGroupHome getTopNodeGroupHome(){
+	  if(topNodeGroupHome==null){
+	      try{
+	          topNodeGroupHome = (TopNodeGroupHome)IDOLookup.getHome(TopNodeGroup.class);
+	      }
+	      catch(RemoteException rme){
+	        throw new RuntimeException(rme.getMessage());
+	      }
+	    }
+	    return topNodeGroupHome;
   }
 
   /**
@@ -1656,9 +1672,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		Collection topNodes = new ArrayList();
 		if( user != null ){
 			
-			topNodes = (Collection)iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString());
-			
-			if( topNodes != null ) return topNodes;
+			//topNodes = (Collection)iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString());
+			topNodes = getStoredTopNodeGroups(user);
+			if( topNodes != null && !topNodes.isEmpty()){ 
+			    return topNodes;
+			}
 			else{
 
 				try {
@@ -1859,12 +1877,83 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			
 			}
 			
-			iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString(),topNodes);
+			//iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES+user.getPrimaryKey().toString(),topNodes);
+			storeUserTopGroupNodes(user,topNodes,null);
 		}
 		
 		return 	topNodes;
 	
 	}
+	
+	
+  public Collection getStoredTopNodeGroups(User user){
+     try {
+        return getTopNodeGroupHome().getTopNodeGroups(user);
+    } catch (IDORelationshipException e) {
+        e.printStackTrace();
+    } 
+    return null;
+  }
+  
+  public Collection getStoredTopGroupNodes(User user){
+      try {
+        return  getTopNodeGroupHome().findByUser(user);
+    } catch (FinderException e) {
+        e.printStackTrace();
+    }
+    return null;
+  }
+  
+  public void removeStoredTopGroupNodes(User user)throws RemoveException{
+     Collection oldNodes = getStoredTopGroupNodes(user);
+     if(oldNodes!=null && !oldNodes.isEmpty()){
+	     for (Iterator iter = oldNodes.iterator(); iter.hasNext();) {
+	        TopNodeGroup topnode = (TopNodeGroup) iter.next();
+	        topnode.remove();
+	     }
+     }
+  }
+  
+  
+  /**
+   * Stores the given group top nodes to the user, 
+   * by first removing all previously stored top nodes from the user
+   * @param user
+   * @param nodeGroupIds
+   * @param comment
+   */
+  public boolean storeUserTopGroupNodes(User user,Collection nodeGroups,String comment){
+      javax.transaction.TransactionManager transactionManager = com.idega.transaction.IdegaTransactionManager.getInstance();
+      try {
+        transactionManager.begin();
+         removeStoredTopGroupNodes(user);
+	     Integer userID = (Integer)user.getPrimaryKey();
+	     for (Iterator iter = nodeGroups.iterator(); iter.hasNext();) {
+	        Integer groupID = (Integer)((Group) iter.next()).getPrimaryKey();
+	        TopNodeGroup topNode = getTopNodeGroupHome().create(userID,groupID);
+	        if(comment!=null)
+	            topNode.setComment(comment);
+	        topNode.setLastChanged(IWTimestamp.getTimestampRightNow());
+	        topNode.store();
+	     }
+	     
+	     transactionManager.commit();
+	     
+	     return true;
+	     }
+	     catch (Exception e) {
+	       e.printStackTrace(System.err);
+	       try {
+	         transactionManager.rollback();  
+	       }
+	       catch (javax.transaction.SystemException sy) {
+	         sy.printStackTrace(System.err);
+	       }
+	       // this is an unusual error therefore localization is it not necessary 
+	     }
+	     return false;
+      
+  }
   
 
   /**
