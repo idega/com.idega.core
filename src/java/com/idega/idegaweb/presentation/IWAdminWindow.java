@@ -26,6 +26,7 @@ private boolean displayEmpty = false;
 
 private String rightWidth = "160";
 private String method = "post";
+private int _cellPadding = 0;
 
 public static String HEADER_COLOR="#0E2456";
 
@@ -120,12 +121,10 @@ public static String HEADER_COLOR="#0E2456";
       adminTable.add(headerTable,1,1);
 
     leftTable = new Table();
-      leftTable.setCellpadding(8);
+      leftTable.setCellpadding(_cellPadding);
       leftTable.setAlignment("center");
       leftTable.setWidth("100%");
-      if ( !merged ) {
-	adminTable.add(leftTable,1,2);
-      }
+      adminTable.add(leftTable,1,2);
 
     rightTable = new Table();
       rightTable.setCellpadding(8);
@@ -143,10 +142,10 @@ public static String HEADER_COLOR="#0E2456";
   public void add(PresentationObject obj) {
     if( !displayEmpty ){
       if(adminTable==null){
-	adminTable=new Table();
+	makeTables();
 	super.add(adminTable);
       }
-      adminTable.add(obj,1,2);
+      leftTable.add(obj,1,1);
     }
     else super.add(obj);
 
@@ -338,6 +337,7 @@ public static String HEADER_COLOR="#0E2456";
 
   public void setUnMerged() {
     merged = false;
+    _cellPadding = 8;
   }
 
   public void setRightWidth(int rightWidth) {
@@ -350,6 +350,10 @@ public static String HEADER_COLOR="#0E2456";
 
   public void setMethod(String method) {
     this.method = method;
+  }
+
+  public void setCellpadding(int padding) {
+    _cellPadding = padding;
   }
 
   public String getBundleIdentifier(){
