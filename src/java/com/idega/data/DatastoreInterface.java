@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.98 2004/05/22 14:42:48 gimmi Exp $
+ * $Id: DatastoreInterface.java,v 1.99 2004/05/22 15:29:04 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1640,6 +1640,10 @@ public abstract class DatastoreInterface {
 		Vector cols = null;
 		while (rs.next()) {
 			String index = rs.getString("INDEX_NAME");
+			if (index == null) {
+				// null when TYPE is tableIndexStatistic
+				return;
+			}
 			String column = rs.getString("COLUMN_NAME");
 			if (index.equals(prevIndexName)) {
 				cols.add(column);
