@@ -1,5 +1,5 @@
 /*
- * $Id: ExpandContainer.java,v 1.1 2003/05/06 16:30:12 laddi Exp $
+ * $Id: ExpandContainer.java,v 1.2 2003/05/15 08:49:30 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -22,13 +22,14 @@ import com.idega.presentation.text.Text;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.2
  */
-public class ExpandContainer extends PresentationObjectContainer {
+public class ExpandContainer extends Block {
 
 	private PresentationObject _header;
   private List _objects;
   private Image _plusIcon;
   private Image _minusIcon;
   private String _headerStyle;
+  private boolean addContent = true;
   
   private IWBundle _iwb;
 
@@ -46,46 +47,54 @@ public class ExpandContainer extends PresentationObjectContainer {
 	public void main(IWContext iwc) throws Exception {
 		initialize(iwc);
 
-		Table table = new Table(3, 1);
-		table.setWidth(2, 5);
-		table.setCellpaddingAndCellspacing(0);
-		table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
-		
-		if (_headerStyle != null)
-			_header.setStyleAttribute(_headerStyle);
-		table.add(_header, 3, 1);
-		table.add(Text.getBreak(), 3, 1);
-		
-		Layer layer = new Layer(Layer.DIV);
-		layer.setAttribute("display","none");
-		if (_objects != null) {
-			Iterator iter = _objects.iterator();
-			while (iter.hasNext()) {
-				PresentationObject object = (PresentationObject) iter.next();
-				layer.add(object);
+		if (addContent) {
+			Table table = new Table(3, 1);
+			table.setWidth(2, 5);
+			table.setCellpaddingAndCellspacing(0);
+			table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
+
+			if (_headerStyle != null)
+				_header.setStyleAttribute(_headerStyle);
+			table.add(_header, 3, 1);
+			table.add(Text.getBreak(), 3, 1);
+
+			Layer layer = new Layer(Layer.DIV);
+			layer.setAttribute("display", "none");
+			if (_objects != null) {
+				Iterator iter = _objects.iterator();
+				while (iter.hasNext()) {
+					PresentationObject object = (PresentationObject) iter.next();
+					layer.add(object);
+				}
 			}
+			table.add(layer, 3, 1);
+
+			if (getPlusIcon() == null)
+				_plusIcon = _iwb.getImage("shared/plusicon.gif");
+			if (getMinusIcon() == null)
+				_minusIcon = _iwb.getImage("shared/minusicon.gif");
+			_plusIcon.setOnClick("showSection(this, document.getElementById('" + layer.getID() + "'), '" + _plusIcon.getMediaURL(iwc) + "','" + _minusIcon.getMediaURL(iwc) + "')");
+			table.add(_plusIcon, 1, 1);
+
+			super.add(table);
 		}
-		table.add(layer, 3, 1);
-		
-		if (getPlusIcon() == null)
-			_plusIcon = _iwb.getImage("shared/plusicon.gif");
-		if (getMinusIcon() == null)
-			_minusIcon = _iwb.getImage("shared/minusicon.gif");
-		_plusIcon.setOnClick("showSection(this, document.getElementById('"+layer.getID()+"'), '"+_plusIcon.getMediaURL(iwc)+"','"+_minusIcon.getMediaURL(iwc)+"')");
-		table.add(_plusIcon, 1, 1);
-		
-		super.add(table);
 	}
 	
 	protected void initialize(IWContext iwc) {
 		_iwb = this.getBundle(iwc);
 		
-		Script script = getParentPage().getAssociatedScript();
-		if (script == null) {
-			script = new Script();
-			getParentPage().setAssociatedScript(script);
+		try {
+			Script script = getParentPage().getAssociatedScript();
+			if (script == null) {
+				script = new Script();
+				getParentPage().setAssociatedScript(script);
+			}
+			script.addFunction("showSection", getJavascript());			
 		}
-		script.addFunction("showSection", getJavascript());			
+		catch (Exception e) {
+			e.printStackTrace(System.err);
+			addContent = false;
+		}
 	}
 	
 	private String getJavascript() {
