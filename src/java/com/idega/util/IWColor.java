@@ -1,5 +1,6 @@
 package com.idega.util;
 
+import com.idega.util.text.TextSoap;
 import com.idega.util.*;
 import java.awt.Color;
 import java.awt.color.ColorSpace;
@@ -189,8 +190,16 @@ public class IWColor{
   public static String getHexColorString(int R, int G, int B) throws NumberFormatException {
     String colorString = "#";
     if ((R < 256 && R > -1) && (G < 256 && G > -1) && (B < 256 && B > -1)){
+      if ( R < 16 )
+	colorString += "0";
       colorString += Integer.toHexString(R);
+
+      if ( G < 16 )
+	colorString += "0";
       colorString += Integer.toHexString(G);
+
+      if ( B < 16 )
+	colorString += "0";
       colorString += Integer.toHexString(B);
     }else{
       throw new NumberFormatException("Some int not in the range of 0 to 255");
