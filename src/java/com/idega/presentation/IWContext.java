@@ -997,6 +997,19 @@ public void setCacheWriter(PrintWriter writer){
 
     return(preview);
   }
+
+  public boolean isInEditMode() {
+    boolean edit = false;
+    if (isParameterSet("view")) {
+      if (BuilderLogic.getInstance().isBuilderApplicationRunning(this)) {
+	String view = getParameter("view");
+	if (view.equals("builder"))
+	  edit=true;
+      }
+    }
+
+    return(edit);
+  }
 }
 
 

@@ -15,12 +15,14 @@ import com.idega.presentation.text.*;
 */
 public class Layer extends PresentationObjectContainer{
 
-public static String RELATIVE = "relative";
-public static String ABSOLUTE = "absolute";
-public static String DIV = "div";
-public static String SPAN = "span";
-public static String LEFT = "left";
-public static String TOP = "top";
+public static final String RELATIVE = "relative";
+public static final String ABSOLUTE = "absolute";
+public static final String DIV = "div";
+public static final String SPAN = "span";
+public static final String LEFT = "left";
+public static final String TOP = "top";
+public static final String ZINDEX = "z-index";
+public static final String POSITION = "position";
 
 String align;
 String onMouseOut;
@@ -43,7 +45,10 @@ public String getAttributeString(){
 
           Object Attribute=e.nextElement();
           String AttributeString = (String) Attribute;
-          returnString = returnString + " " + AttributeString + ": "+(String) attributes.get(Attribute)+";";
+          returnString = returnString + " " + AttributeString + ": "+(String) attributes.get(Attribute);
+          if ( AttributeString.equals(LEFT) || AttributeString.equals(TOP) )
+            returnString = returnString + "px";
+          returnString = returnString + ";";
   }
 
   return returnString;
@@ -52,7 +57,7 @@ public String getAttributeString(){
 
 
 public void setLeftPosition(String xpos){
-  setAttribute("left",xpos+"px");
+  setAttribute(LEFT,xpos);
   if(absoluteOrRelative==null) setAttribute("position",ABSOLUTE);
 }
 
@@ -62,7 +67,7 @@ public void setLeftPosition(int xpos){
 
 
 public void setTopPosition(String ypos){
-  setAttribute("top",ypos+"px");
+  setAttribute(TOP,ypos);
   if(absoluteOrRelative==null) setAttribute("position",ABSOLUTE);
 }
 
@@ -88,7 +93,11 @@ public void setOverflow(String overflowType){
 }
 
 public void setZIndex(int index){
-  setAttribute("z-index",Integer.toString(index));
+  setZIndex(String.valueOf(index));
+}
+
+public void setZIndex(String index){
+  setAttribute(ZINDEX,index);
 }
 
 
@@ -118,7 +127,7 @@ public void setBorderColor(String color){
 
 public void setPositionType(String absoluteOrRelative){
   this.absoluteOrRelative = absoluteOrRelative;
-  setAttribute("position",absoluteOrRelative);
+  setAttribute(POSITION,absoluteOrRelative);
 }
 
 public void setBackgroundImage(String url){
@@ -148,9 +157,9 @@ public void print(IWContext iwc) throws Exception{
 
             boolean alignSet = isAttributeSet(HORIZONTAL_ALIGNMENT);
 
-            print("<"+layerType+" id=\""+getID()+"\"");
+            print("<"+layerType+" id=\""+getID()+"\" ");
             if(alignSet){
-              print(" align=\""+getHorizontalAlignment()+"\" ");
+              print("align=\""+getHorizontalAlignment()+"\" ");
               removeAttribute(HORIZONTAL_ALIGNMENT);//does this slow things down?
             }
             println("style=\""+getAttributeString()+"\" "+getOnMouseOut()+">");
