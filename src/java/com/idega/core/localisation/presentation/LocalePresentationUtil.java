@@ -6,12 +6,9 @@
  */
 package com.idega.core.localisation.presentation;
 
-import com.idega.core.localisation.business.ICLocaleBusiness;
-import com.idega.idegaweb.IWMainApplication;
-import com.idega.presentation.ui.DropdownMenu;
-
 import java.util.Locale;
 
+import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;

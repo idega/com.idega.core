@@ -1,9 +1,7 @@
 package com.idega.core.localisation.presentation;
 
 import java.util.Enumeration;
-//import java.util.Locale;
 
-import com.idega.development.presentation.*;
 import com.idega.development.presentation.IWDeveloper;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
