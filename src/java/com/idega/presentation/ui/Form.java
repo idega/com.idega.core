@@ -229,6 +229,34 @@ private void addGloballyMaintainedParameters(IWContext iwc){
 }
 
 
+  /*
+   *
+   */
+  private void addTheMaintainedBuilderParameters(IWContext iwc) {
+    List list = com.idega.idegaweb.IWURL.getGloballyMaintainedBuilderParameters(iwc);
+    if (list != null) {
+      Iterator iter = list.iterator();
+      while(iter.hasNext()) {
+        String parameterName = (String)iter.next();
+        String parameterValue = iwc.getParameter(parameterName);
+        if (parameterValue != null) {
+          if(!this.isParameterSet(parameterName)){
+            addParameter(parameterName,parameterValue);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * temp implementation
+   */
+  public boolean isParameterSet(String prmName){
+    return false;
+  }
+
+
+
 /**
  * For printing out the maintained hidden parameters
  *
@@ -248,6 +276,7 @@ private void addTheMaintainedParameters(IWContext iwc){
         }*/
 
         this.addGloballyMaintainedParameters(iwc);
+        this.addTheMaintainedBuilderParameters(iwc);
 
 	if (maintainAllParameters){
 		if (iwc.getParameter("idega_special_form_parameter") != null){
