@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.zip.ZipInputStream;
+import org.jdom.IllegalDataException;
 
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
@@ -274,6 +275,11 @@ public class XMLData implements Storable {
   		XMLParser parser = new XMLParser();
   		document = parser.parse(inputStream);
   	}
+    catch (IllegalDataException illEx) {
+    	document = null;
+    	xmlFileId = -1;
+    	throw new IOException("[XMLData] input stream could not be parsed because of some illegal data within the data. Message is: " + illEx.getMessage());
+    }
   	catch (XMLException ex)  {
       document = null;
       xmlFileId = -1;
@@ -285,6 +291,11 @@ public class XMLData implements Storable {
     try {
       XMLParser parser = new XMLParser();
       document = parser.parse(inputStream);
+    }
+    catch (IllegalDataException illEx) {
+    	document = null;
+    	xmlFileId = -1;
+    	throw new IOException("[XMLData] input stream could not be parsed because of some illegal data within the data. Message is: " + illEx.getMessage());
     }
     catch (XMLException ex)  {
       document = null;
