@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.90 2004/06/09 16:12:58 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.91 2004/06/10 17:53:22 thomas Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -69,7 +69,9 @@ import com.idega.util.text.TextStyler;
 public class PresentationObject 
 //implements Cloneable{
 extends UIComponentBase 
-implements Cloneable{//,UIComponent{
+implements Cloneable, PresentationObjectType
+
+{//,UIComponent{
 	//private final static String IW_BUNDLE_IDENTIFIER="com.idega.idegaweb";
 	public final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 	public final static String WIDTH = "width";
