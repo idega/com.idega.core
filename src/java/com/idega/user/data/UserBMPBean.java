@@ -14,6 +14,7 @@ import com.idega.data.IDOUtil;
 
 import java.rmi.RemoteException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -276,6 +277,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			return null;
 		}
 	}
+	
+	public Timestamp getCreated() {
+		try {
+			return getGeneralGroup().getCreated();
+		}
+		catch (RemoteException e) {
+			return null;
+		}
+	}
 
 	/*  Getters end   */
 
@@ -390,6 +400,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public void setHomePage(IBPage page) throws java.rmi.RemoteException {
 		Group group = getGeneralGroup();
 		group.setHomePage(page);
+		group.store();
+	}
+	
+	public void setCreated(Timestamp stamp) throws java.rmi.RemoteException {
+		Group group = getGeneralGroup();
+		group.setCreated(stamp);
 		group.store();
 	}
 

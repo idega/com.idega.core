@@ -48,4 +48,6 @@ public interface User extends Group//com.idega.data.IDOEntity
  public void removeAllPhones()throws com.idega.data.IDORemoveRelationshipException, java.rmi.RemoteException;
  public String getNameLastFirst() throws java.rmi.RemoteException;
  public String getNameLastFirst(boolean p0) throws java.rmi.RemoteException;
+ public java.sql.Timestamp getCreated() throws java.rmi.RemoteException;
+ public void setCreated(java.sql.Timestamp p0) throws java.rmi.RemoteException;
 }
