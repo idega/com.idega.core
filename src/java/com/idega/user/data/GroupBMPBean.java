@@ -48,7 +48,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public final static String SQL_RELATION_EMAIL = "IC_GROUP_EMAIL";
 	public final static String SQL_RELATION_PHONE = "IC_GROUP_PHONE";
 
-	private static final String ENTITY_NAME = "IC_GROUP";
+	private static final String ENTITY_NAME = "ic_group";
 	static final String COLUMN_GROUP_ID = "IC_GROUP_ID";
 	static final String COLUMN_NAME = "NAME";
 	static final String COLUMN_GROUP_TYPE = "GROUP_TYPE";
@@ -60,7 +60,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	static final String COLUMN_SHORT_NAME = "SHORT_NAME";
 	static final String COLUMN_ABBREVATION = "ABBR";
   
-  static final String META_DATA_HOME_PAGE = "HOMEPAGE";
+  static final String META_DATA_HOME_PAGE = "homepage";
 
 	private static List userGroupTypeSingletonList;
 

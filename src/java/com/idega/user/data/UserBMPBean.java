@@ -48,7 +48,7 @@ import com.idega.util.text.TextSoap;
 public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, com.idega.core.user.data.User {
 
 	private static String sClassName = User.class.getName();
-	static final String USER_GROUP_TYPE="IC_USER_REPRESENTATIVE";
+	static final String USER_GROUP_TYPE="ic_user_representative";
 	
 	public final static String SQL_TABLE_NAME= "IC_USER";
 	public final static String SQL_RELATION_EMAIL = "IC_USER_EMAIL";
@@ -56,7 +56,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public final static String SQL_RELATION_PHONE = "IC_USER_PHONE";
 	public final static String TABLE_NAME = SQL_TABLE_NAME;
   
-  static final String META_DATA_HOME_PAGE = "HOMEPAGE";
+  static final String META_DATA_HOME_PAGE = "homepage";
 
 	//    public UserBMPBean(){
 	//      super();
