@@ -29,6 +29,21 @@ public class ListUtil {
     return emptyVector;
   }
 
+  public static List convertCollectionToList(Collection coll){
+    if(coll instanceof List){
+      return (List)coll;
+    }
+    else{
+      List theReturn = new Vector();
+      Iterator iter = coll.iterator();
+      while (iter.hasNext()) {
+        Object item = iter.next();
+        theReturn.add(item);
+      }
+      return theReturn;
+    }
+  }
+
   public static List reverseList(List list){
     Vector theReturn = new Vector();
     int size = list.size();
