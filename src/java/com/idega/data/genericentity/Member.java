@@ -213,4 +213,20 @@ public int getAge() {
       return this.getName().compareTo(((Member) M).getName());
     }
 
+    public static Member getMember(String socialSecurityNumber) {
+        Member returner = null;
+        try {
+            List members = EntityFinder.findAllByColumn(new Member(),"SOCIAL_SECURITY_NUMBER",socialSecurityNumber);
+            if (members != null) {
+                if (members.size()  > 0) returner = (Member) members.get(0);
+            }
+        }
+        catch (SQLException sq) {
+            sq.printStackTrace(System.err);
+        }
+
+        return returner;
+    }
+
+
 }
