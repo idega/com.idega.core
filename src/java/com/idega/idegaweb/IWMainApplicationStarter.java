@@ -94,9 +94,9 @@ public class IWMainApplicationStarter implements ServletContextListener  {
      * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
      */
     public void contextDestroyed(ServletContextEvent event) {
-        sendShutdownMessage("Destroying IdegaWebStarterServlet");
+        sendShutdownMessage("Destroying IWMainApplicationStarter");
         shutdown();
-        sendShutdownMessage("Destroyed IdegaWebStarterServlet");
+        sendShutdownMessage("Destroyed IWMainApplicationStarter");
     }
     
     //debug
@@ -111,6 +111,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		//poolMgr.release();
 		sendShutdownMessage("Stopping IdegaWeb");
 		endIdegaWebApplication();
+		iwma=null;
 		//super.destroy();
 	}
 	protected void startDatabasePool(){
@@ -527,9 +528,9 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		iwma.getSettings().setProperty("last_shutdown", com.idega.util.IWTimestamp.RightNow().toString());
 		endDatabasePool();
 		IWStyleManager iwStyleManager = new IWStyleManager(iwma);
+		sendShutdownMessage("Saving style sheet");
 		iwStyleManager.writeStyleSheet();
 		iwma.unload();
-		sendShutdownMessage("Saving style sheet");
 		sendShutdownMessage("Completed");
 	}
 	public void sendStartMessage(String message) {
