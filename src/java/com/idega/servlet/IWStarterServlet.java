@@ -161,7 +161,6 @@ public class IWStarterServlet extends GenericServlet
             application.loadBundles();
             application.startAccessController();
             executeServices(application);
-            is.idega.experimental.StartupTest.doLoginTest();
             sendStartMessage("Completed");
         }
 
