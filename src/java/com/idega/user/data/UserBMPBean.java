@@ -1084,6 +1084,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			}
 		}else {
 			IDOQuery query = idoQuery();
+			
+			//name
 			query.appendSelectAllFrom(this).appendWhere()
 			.append("(")
 			.append(getColumnNameFirstName()).append(" like '%").append(condition).append("%'")
@@ -1095,6 +1097,17 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			.append(getColumnNamePersonalID()).append(" like '%").append(condition).append("%'")
 			.append(")");
 			
+		//address
+			query.appendOr().append(getIDColumnName()).appendIn(getUserAddressSearchString(condition));
+			
+			//status
+			//TODO add sql for status
+			
+			//not deleted
+			query.appendAnd();
+			appendIsNotDeleted(query);
+			
+			//filter by users
 			if ( userIds != null) {
 				query.appendAnd().append(getIDColumnName()).append(" IN (");
 				for (int i = 0; i < userIds.length; i++) {
@@ -1105,13 +1118,24 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				}	
 				query.append(")");	
 			}
-      query.appendAnd();
-      appendIsNotDeleted(query);
-      query.appendOrderBy(this.getColumnNameFirstName());
+      
+      query.appendOrderBy(this.getColumnNameFirstName()+","+this.getColumnNameLastName()+","+this.getColumnNameMiddleName());
 			
 			return this.idoFindIDsBySQL(query.toString());
 		}
 	}
+	
+	private String getUserAddressSearchString(String search){
+		StringBuffer sql = new StringBuffer();
+		
+		sql.append("select ua.ic_user_id from ic_address a,ic_user_address ua where a.ic_address_id=ua.ic_address_id")
+		.append(" and a.street_name like '%").append(search.toUpperCase()).append("%' ");
+	
+		return sql.toString();
+		
+	}
+	
+	
 
 
 	public int ejbHomeGetUserCount() throws IDOException {
