@@ -1,7 +1,10 @@
 package com.idega.data;
 
+import java.sql.Date;
 import java.util.Collection;
 import java.util.Iterator;
+
+import com.idega.util.IWTimestamp;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -102,6 +105,12 @@ public class IDOQuery {
     _buffer.append(str);
     return this;
   }
+
+	public IDOQuery append(Date date){
+		IWTimestamp stamp = new IWTimestamp(date);
+		this.appendWithinSingleQuotes(stamp.toSQLString());
+		return this;
+	}
 
   /**
    * @see java.lang.StringBuffer#capacity()
@@ -285,6 +294,8 @@ public class IDOQuery {
   private static final String WHITE_SPACE = " ";
   private static final String QUOTATION_MARK = "'";
   private static final String DOUBLE_QUOTATION_MARK = "\"";
+	private static final String LESS_THAN_SIGN = "<";
+	private static final String GREATER_THAN_SIGN = ">";
   //parenthesis
   private static final String PARENTHESIS_LEFT = "(";
   private static final String PARENTHESIS_RIGHT = ")";
@@ -535,6 +546,13 @@ public class IDOQuery {
   	return this;
   }
   
+	public IDOQuery appendWhereEquals(String columnName,Date date){
+		appendWhere(columnName);
+		this.appendEqualSign();
+		this.append(date);
+		return this;
+	}
+  
   public IDOQuery appendEqualsQuoted(String columnName,String columnValue){
   	this.append(WHITE_SPACE);
   	this.append(columnName);
@@ -552,6 +570,14 @@ public class IDOQuery {
   	this.appendWithinSingleQuotes(columnValue);
   	return this;
   }
+
+	public IDOQuery appendAndEquals(String columnName,Date date){
+		appendAnd();
+		append(columnName);
+		this.appendEqualSign();
+		this.append(date);
+		return this;
+	}
 
   public IDOQuery appendAndEquals(String columnName,int columnValue){
   	appendAnd();
@@ -607,6 +633,24 @@ public class IDOQuery {
   public IDOQuery appendEqualSign(){
     return this.append(EQUAL_SIGN);
   }
+
+	public IDOQuery appendLessThanSign(){
+		return this.append(LESS_THAN_SIGN);
+	}
+
+	public IDOQuery appendGreaterThanSign(){
+		return this.append(GREATER_THAN_SIGN);
+	}
+
+	public IDOQuery appendGreaterThanOrEqualsSign(){
+		this.appendGreaterThanSign();
+		return this.appendEqualSign();
+	}
+
+	public IDOQuery appendLessThanOrEqualsSign(){
+		this.appendLessThanSign();
+		return this.appendEqualSign();
+	}
 
   public IDOQuery appendNOTEqual(){
     return this.append(NOT_EQUAL_SIGN);
