@@ -311,7 +311,7 @@ public class IDOTableCreator{
 		try{
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("drop table "+entity.getTableName());
+			Stmt.executeUpdate("drop table "+entity.getTableName());
 		}
 		finally{
 			if(Stmt != null){
@@ -417,8 +417,6 @@ public class IDOTableCreator{
         EntityRelationship relation = (EntityRelationship)relIter.next();
         Map relMap = relation.getColumnsAndReferencingClasses();
         String tableName = relation.getTableName();
-        IDOLegacyEntity relatingEntity = null;
-
 
         boolean doCreateMiddleTable = !doesTableExist(entity,tableName);
 

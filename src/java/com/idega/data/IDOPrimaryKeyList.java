@@ -138,7 +138,6 @@ public class IDOPrimaryKeyList implements List, Runnable {
 		{
 			Connection conn = null;
 			Statement Stmt = null;
-			int length;
 			try
 			{
 				conn = _entity.getConnection(_entity.getDatasource());
@@ -158,7 +157,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				int RSpos = -1;
 				while (iter.hasNext())
 				{
-					int i = iter.nextIndex();
+					//int i = iter.nextIndex();
 					int[] item = (int[])iter.next();
 					int fIndex = item[LoadTracker.FROM_INDEX_IN_ARRAY];
 //					int tIndex = Math.min(item[LoadTracker.TO_INDEX_IN_ARRAY],_size);
@@ -503,7 +502,7 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				int NumberOfLoadedElements = 0;
 				ListIterator iter = _loadedSubSets.listIterator();
 				while (iter.hasNext()) {
-					int index = iter.nextIndex();
+					//int index = iter.nextIndex();
 					int[] item = (int[])iter.next();
 					NumberOfLoadedElements += item[TO_INDEX_IN_ARRAY] - item[FROM_INDEX_IN_ARRAY];
 				}
@@ -573,7 +572,6 @@ public class IDOPrimaryKeyList implements List, Runnable {
 			}
 			tIndex = Math.max(tIndex,fromIndex+_subsetMinLength);
 			tIndex = Math.min(tIndex,_size);
-			boolean done = false;
 			if(_loadedSubSets.size() == 0){
 				int [] interval = new int[2];
 				interval[FROM_INDEX_IN_ARRAY] = fIndex;
@@ -656,7 +654,6 @@ public class IDOPrimaryKeyList implements List, Runnable {
 				debugLoadedSubSets();
 			}
 
-			List toReturn = new Vector();
 			int fIndex = Math.min(fromIndex,toIndex);
 			fIndex = Math.min(fIndex,_size);
 			int tIndex = Math.max(fromIndex,toIndex);
@@ -669,7 +666,6 @@ public class IDOPrimaryKeyList implements List, Runnable {
 //			}
 			tIndex = Math.max(tIndex,fromIndex+_subsetMinLength);
 			tIndex = Math.min(tIndex,_size);
-			boolean done = false;
 			if(_loadedSubSets.size() == 0){
 				int [] interval = new int[2];
 				interval[FROM_INDEX_IN_ARRAY] = fIndex;

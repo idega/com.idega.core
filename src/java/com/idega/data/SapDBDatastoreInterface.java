@@ -118,7 +118,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 					+ "_seq INCREMENT BY 1 START WITH "
 					+ startNumber
 					+ " MAXVALUE 1.0E28 MINVALUE 0 NOCYCLE CACHE 20 NOORDER";
-			int i = Stmt.executeUpdate(seqCreate);
+			Stmt.executeUpdate(seqCreate);
 		}
 		finally {
 			if (Stmt != null) {
@@ -140,7 +140,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 		try {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("drop trigger " + entity.getTableName() + "_trig");
+			Stmt.executeUpdate("drop trigger " + entity.getTableName() + "_trig");
 		}
 		finally {
 			if (Stmt != null) {
@@ -157,7 +157,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 		try {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("drop sequence " + entity.getTableName() + "_seq");
+			Stmt.executeUpdate("drop sequence " + entity.getTableName() + "_seq");
 		}
 		finally {
 			if (Stmt != null) {
@@ -428,7 +428,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 					+ "_seq INCREMENT BY 1 START WITH "
 					+ startNumber
 					+ " MAXVALUE 1.0E28 MINVALUE 0 NOCYCLE CACHE 20 NOORDER";
-			int i = Stmt.executeUpdate(seqCreate);
+			Stmt.executeUpdate(seqCreate);
 		}
 		finally {
 			if (Stmt != null) {

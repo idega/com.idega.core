@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.22 2003/02/28 12:22:14 tryggvil Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.23 2003/04/03 20:12:44 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -117,7 +117,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 					+ getInterbaseGeneratorName(entity)
 					+ ", 1); END";
 			System.out.println(s);
-			int i = Stmt.executeUpdate(s);
+			Stmt.executeUpdate(s);
 		}
 		finally
 		{
@@ -141,7 +141,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 			Stmt = conn.createStatement();
 			String s = "CREATE GENERATOR " + getInterbaseGeneratorName(entity);
 			System.out.println(s);
-			int i = Stmt.executeUpdate(s);
+			Stmt.executeUpdate(s);
 		}
 		finally
 		{
@@ -189,7 +189,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		{
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("delete from RDB$TRIGGERS where RDB$TRIGGER_NAME='" + entity.getTableName() + "_trig" + "'");
+			Stmt.executeUpdate("delete from RDB$TRIGGERS where RDB$TRIGGER_NAME='" + entity.getTableName() + "_trig" + "'");
 		}
 		finally
 		{
@@ -216,7 +216,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		{
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("delete from RDB$GENERATORS WHERE RDB$GENERATOR_NAME='" + getInterbaseGeneratorName(entity) + "'");
+			Stmt.executeUpdate("delete from RDB$GENERATORS WHERE RDB$GENERATOR_NAME='" + getInterbaseGeneratorName(entity) + "'");
 		}
 		finally
 		{

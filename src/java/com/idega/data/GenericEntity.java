@@ -120,7 +120,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			theReturn = new Vector();
 			_theAttributes.put(this.getClass().getName(), theReturn);
 			//First store a static instance of this class
-			String className = this.getClass().getName();
+			//String className = this.getClass().getName();
 			try
 			{
 				_allStaticClasses.put(this.getClass(), this.instanciateEntity(this.getClass()));
@@ -1758,7 +1758,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		try
 		{
-			Object pk = this.getPrimaryKey();
+			//Object pk = this.getPrimaryKey();
 			if (rs != null)
 			{
 				this.loadFromResultSet(rs);
@@ -2072,7 +2072,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		Connection conn = null;
 		Statement Stmt = null;
 		Vector vector = new Vector();
-		String tableToSelectFrom = "";
+		/*String tableToSelectFrom = "";
 		if (entity.getEntityName().endsWith("_"))
 		{
 			tableToSelectFrom = entity.getEntityName() + this.getEntityName();
@@ -2080,7 +2080,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		else
 		{
 			tableToSelectFrom = entity.getEntityName() + "_" + this.getEntityName();
-		}
+		}*/
+		
 		try
 		{
 			conn = getConnection(getDatasource());
@@ -2185,7 +2186,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		int[] toReturn = null;
 		int length;
 		Vector vector = new Vector();
-		String tableToSelectFrom = "";
+		/*String tableToSelectFrom = "";
 		if (entity.getEntityName().endsWith("_"))
 		{
 			tableToSelectFrom = entity.getEntityName() + this.getEntityName();
@@ -2193,7 +2194,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		else
 		{
 			tableToSelectFrom = entity.getEntityName() + "_" + this.getEntityName();
-		}
+		}*/
 		try
 		{
 			conn = getConnection(getDatasource());
@@ -2754,7 +2755,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			
 			//debug("statement: "+sql);
 			
-			int i = Stmt.executeUpdate(sql);
+			Stmt.executeUpdate(sql);
 		}
 		finally
 		{
@@ -2790,7 +2791,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ getIDColumnName()
 					+ " = "
 					+ getKeyValueSQLString(entityFrom.getPrimaryKeyValue());
-			int i = Stmt.executeUpdate(sql);
+			Stmt.executeUpdate(sql);
 		}
 		finally
 		{
@@ -2827,7 +2828,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ ","
 					+ getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue())
 					+ ")";
-			int i = Stmt.executeUpdate(sql);
+			Stmt.executeUpdate(sql);
 		}
 		finally
 		{
@@ -2862,8 +2863,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ ","
 					+ getKeyValueSQLString(entityToAddTo.getPrimaryKeyValue())
 					+ ")";
-			System.out.println(sql);
-			int i = Stmt.executeUpdate(sql);
+			if (isDebugActive())
+				System.out.println(sql);
+			Stmt.executeUpdate(sql);
 		}
 		finally
 		{
@@ -2895,7 +2897,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ entityToDeleteColumName
 					+ " = "
 					+ getKeyValueSQLString(entityToDelete.getPrimaryKeyValue());
-			int i = Stmt.executeUpdate(sql);
+			Stmt.executeUpdate(sql);
 		}
 		finally
 		{
@@ -2918,8 +2920,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		try
 		{
 			Stmt = conn.createStatement();
-			int i =
-				Stmt.executeUpdate(
+			Stmt.executeUpdate(
 					"insert into "
 						+ getNameOfMiddleTable(entityToAddTo, this)
 						+ "("
@@ -2951,8 +2952,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		{
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			int i =
-				Stmt.executeUpdate(
+			Stmt.executeUpdate(
 					"insert into "
 						+ getNameOfMiddleTable(
 							(IDOLegacyEntity) com.idega.data.GenericEntity.getStaticInstance(entityToAddTo),
@@ -3003,8 +3003,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 				{
 					try
 					{
-						int y =
-							Stmt.executeUpdate(
+						Stmt.executeUpdate(
 								"insert into "
 									+ middleTable
 									+ "("
@@ -3043,8 +3042,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		{
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			int i =
-				Stmt.executeUpdate(
+			Stmt.executeUpdate(
 					"insert into "
 						+ getNameOfMiddleTable(entityToAddTo, this)
 						+ "("
@@ -3087,8 +3085,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		{
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			int i =
-				Stmt.executeUpdate(
+			Stmt.executeUpdate(
 					"insert into "
 						+ getNameOfMiddleTable(entityToAddTo, this)
 						+ "("
@@ -3137,8 +3134,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		{
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			int i =
-				Stmt.executeUpdate(
+			Stmt.executeUpdate(
 					"insert into "
 						+ getNameOfMiddleTable(entityToAddTo, this)
 						+ "("
@@ -3185,7 +3181,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		String qry = "";
 		try
 		{
-			int i = 0;
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			//try
@@ -3217,7 +3212,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 			}*/
 			//  System.out.println("GENERIC ENTITY: "+ qry);
 			
-			i = Stmt.executeUpdate(qry);
+			Stmt.executeUpdate(qry);
 		}
 		finally
 		{
@@ -3241,7 +3236,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		String qry = "";
 		try
 		{
-			int i = 0;
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			qry =
@@ -3257,7 +3251,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ id
 					+ "'";
 			//  System.out.println("GENERIC ENTITY: "+ qry);
-			i = Stmt.executeUpdate(qry);
+			Stmt.executeUpdate(qry);
 		}
 		finally
 		{
@@ -3281,7 +3275,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		String qry = "";
 		try
 		{
-			int i = 0;
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			qry =
@@ -3293,7 +3286,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 					+ getPrimaryKeyValueSQLString();
 			
 			//  System.out.println("GENERIC ENTITY: "+ qry);
-			i = Stmt.executeUpdate(qry);
+			Stmt.executeUpdate(qry);
 		}
 		finally
 		{
@@ -3318,7 +3311,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		String qry = "";
 		try
 		{
-			int i = 0;
 			Stmt = conn.createStatement();
 			if ( isColumnValueNotEmpty( getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue()) )) //removing all in middle table
 				qry =
@@ -3342,7 +3334,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 						+ getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue());
 						
 			//  System.out.println("GENERIC ENTITY: "+ qry);
-			i = Stmt.executeUpdate(qry);
+			Stmt.executeUpdate(qry);
 		}
 		finally
 		{
@@ -3416,8 +3408,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		{
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			int i =
-				Stmt.executeUpdate(
+			Stmt.executeUpdate(
 					"delete from "
 						+ getNameOfMiddleTable(entityToRemoveFrom, this)
 						+ " where "
@@ -3594,7 +3585,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	}
 	public void addManyToManyRelationShip(String relatingEntityClassName)
 	{
-		String relationShipTableName;
 		try{
 			//relationShipTableName = EntityControl.getMiddleTableString(this,instanciateEntity(relatingEntityClassName) );
 			//addManyToManyRelationShip(this.getClass().getName(),relatingEntityClassName);
@@ -4225,8 +4215,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		    this.debug("Going to Datastore for SQL countQuery: " + countQuery);
 
 		}
-		Connection conn = null;
-		Statement Stmt = null;
 		int length = idoGetNumberOfRecords(countQuery);
 		if(length > 0){
 			if(length < 1000){
@@ -4264,7 +4252,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 		
 		Connection conn = null;
 		Statement Stmt = null;
-		int length;
 		Vector vector = new Vector();
 		try
 		{
@@ -4435,11 +4422,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOLegacyEn
 	{
 		Connection conn = null;
 		Statement Stmt = null;
-		int length;
 		Vector vector = new Vector();
 		try
 		{
-			IDOHome home = (IDOHome) returningEntity.getEJBLocalHome();
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			ResultSet RS = Stmt.executeQuery(sqlQuery);

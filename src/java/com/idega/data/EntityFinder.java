@@ -556,13 +556,13 @@ public class EntityFinder{
 		Statement Stmt= null;
 		//Vector vector = new Vector();
 		Vector vector=null;
-		String tableToSelectFrom = "";
+		/*String tableToSelectFrom = "";
 		if (returningEntity.getTableName().endsWith("_")){
 			tableToSelectFrom = returningEntity.getTableName()+fromEntity.getTableName();
 		}
 		else{
 			tableToSelectFrom = returningEntity.getTableName()+"_"+fromEntity.getTableName();
-		}
+		}*/
 
 		try
 		{

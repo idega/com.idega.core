@@ -112,8 +112,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 		try {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			int i =
-				Stmt.executeUpdate(
+			Stmt.executeUpdate(
 					"create table " + this.getInformixSequenceTableName(entity) + "(" + entity.getIDColumnName() + " serial)");
 		}
 		finally {
@@ -139,7 +138,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 		try {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			int i = Stmt.executeUpdate("drop table " + this.getInformixSequenceTableName(entity));
+			Stmt.executeUpdate("drop table " + this.getInformixSequenceTableName(entity));
 		}
 		finally {
 			if (Stmt != null) {
@@ -524,7 +523,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 		}
 	}
 	protected void fillStringColumn(IDOLegacyEntity entity, String columnName, ResultSet rs) throws SQLException {
-		int maxlength = entity.getMaxLength(columnName);
+		//int maxlength = entity.getMaxLength(columnName);
 		if (true) {
 			//if(maxlength<=2000){
 			//System.out.println("Informix: Filling column for varchar field:"+columnName);

@@ -335,7 +335,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
       Stmt = conn.createStatement();
       String s = "CREATE table " + getSequenceTableName(entity)+"("+entity.getIDColumnName()+" integer PRIMARY KEY auto_increment)";
       System.out.println(s);
-      int i = Stmt.executeUpdate(s);
+      Stmt.executeUpdate(s);
     }
     finally {
       if (Stmt != null) {

@@ -106,7 +106,6 @@ public class SimpleQuerier {
         try {
             Stmt= conn.createStatement();
             ResultSet RS= Stmt.executeQuery(sqlQuery);
-            Vector vector= new Vector();
             if (RS.next()) {
                 theReturn= RS.getInt(1);
             }

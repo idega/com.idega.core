@@ -278,7 +278,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 			Stmt = conn.createStatement();
 
-			int i = Stmt.executeUpdate("create sequence "+entity.getTableName()+"_seq INCREMENT BY 1 START WITH 1 MAXVALUE 1.0E28 MINVALUE 1 NOCYCLE CACHE 20 NOORDER");
+			Stmt.executeUpdate("create sequence "+entity.getTableName()+"_seq INCREMENT BY 1 START WITH 1 MAXVALUE 1.0E28 MINVALUE 1 NOCYCLE CACHE 20 NOORDER");
 
 		}
 
@@ -334,7 +334,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 			Stmt = conn.createStatement();
 
-			int i = Stmt.executeUpdate("drop trigger "+entity.getTableName()+"_trig");
+			Stmt.executeUpdate("drop trigger "+entity.getTableName()+"_trig");
 
 		}
 
@@ -370,7 +370,7 @@ public class DB2DatastoreInterface extends DatastoreInterface{
 
 			Stmt = conn.createStatement();
 
-			int i = Stmt.executeUpdate("drop sequence "+entity.getTableName()+"_seq");
+			Stmt.executeUpdate("drop sequence "+entity.getTableName()+"_seq");
 
 		}
 

@@ -3,7 +3,7 @@ package com.idega.data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+//import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
@@ -277,8 +277,8 @@ public class IDOCopier {
 			stmt = fromConnection.createStatement();
 			ps = toConnection.prepareStatement("insert into " + toTableName + " values(?,?)");
 			RS = stmt.executeQuery("select * from " + fromTableName);
-			ResultSetMetaData rsm = RS.getMetaData();
-			int columnCount = rsm.getColumnCount();
+			//ResultSetMetaData rsm = RS.getMetaData();
+			//int columnCount = rsm.getColumnCount();
 			while (RS.next()) {
 				//try {
 					int i1 = RS.getInt(1);

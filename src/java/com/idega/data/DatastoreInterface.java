@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.63 2003/03/25 13:08:19 palli Exp $
+ * $Id: DatastoreInterface.java,v 1.64 2003/04/03 20:12:44 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1204,7 +1204,6 @@ public abstract class DatastoreInterface {
 				entity.setColumn(columnName, new Double(theDouble));
 				//setColumn(columnName.toLowerCase(),new Double(theDouble));
 			}
-			double doble = RS.getDouble(columnName);
 		} else if (classType == EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP) {
 			if (RS.getTimestamp(columnName) != null) {
 				entity.setColumn(columnName, RS.getTimestamp(columnName));

@@ -386,7 +386,7 @@ public class GroupBMPBean extends com.idega.data.GenericEntity implements com.id
 
 			Stmt = conn.createStatement();
 
-			int i = Stmt.executeUpdate("insert into GROUP_TREE ("+getIDColumnName()+", CHILD_GROUP_ID) values("+getID()+","+groupToAddTo.getID()+")");
+			Stmt.executeUpdate("insert into GROUP_TREE ("+getIDColumnName()+", CHILD_GROUP_ID) values("+getID()+","+groupToAddTo.getID()+")");
 
 		}catch (Exception ex) {
 
