@@ -38,7 +38,7 @@ public class Button {
   private static final Color defaultHightlightColor = new Color(221,223,226);
   public static final String BUTTON_UP = "_BUTTON_UP";
   public static final String BUTTON_OVER = "_BUTTON_OVER";
-  public static final String BUTTON_DOWN = "_BUTTON_OVER";
+  public static final String BUTTON_DOWN = "_BUTTON_DOWN";
 
   private Color underColor = defaultUnderColor;
   private Color fillColor = defaultFillColor;
@@ -237,7 +237,9 @@ public class Button {
       else if( effect == BUTTON_UP ){
         buttonDownName = sName;
       }
-      else buttonOverName = sName;
+      else{
+        buttonOverName = sName;
+      }
 
       OutputStream output = new BufferedOutputStream(new FileOutputStream(filename));
 
