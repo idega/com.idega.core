@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.16 2001/11/02 15:14:07 gummi Exp $
+ * $Id: Link.java,v 1.17 2001/11/03 04:07:07 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -117,7 +117,7 @@ public class Link extends Text {
    *
    */
   public Link(Text text) {
-    text.setFontColor("");
+    //text.setFontColor("");
     _obj = (PresentationObject)text;
     _obj.setParentObject(this);
     _objectType = OBJECT_TYPE_TEXT;
@@ -818,7 +818,7 @@ public class Link extends Text {
    *
    */
   private void addTheMaintainedBuilderParameters(IWContext iwc) {
-    List list = com.idega.idegaweb.IWURL.getGloballyMaintainedBuilderParameters(iwc);
+    List list = com.idega.idegaweb.IWURL.getGloballyMaintainedParameters(iwc);
     if (list != null) {
       Iterator iter = list.iterator();
       while(iter.hasNext()) {
