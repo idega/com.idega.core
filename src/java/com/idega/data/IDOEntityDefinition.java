@@ -17,4 +17,5 @@ public interface IDOEntityDefinition {
 	public IDOPrimaryKeyDefinition getPrimaryKeyDefinition();
 	public Class getInterfaceClass();
 	public IDOEntityField findFieldByUniqueName(String name);
+	public String getMiddleTableNameForRelation(String relatedTable);
 }
