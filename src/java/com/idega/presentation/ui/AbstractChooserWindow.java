@@ -30,6 +30,8 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
 
   private boolean isInAFrame = false;
   private boolean onlyScript = false;
+  private boolean noScript = false;
+
 
   public AbstractChooserWindow(){
   }
@@ -40,38 +42,40 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
 
 
   public void main(IWContext iwc){
-    Script script = this.getAssociatedScript();
-    String prefix = iwc.getParameter(SCRIPT_PREFIX_PARAMETER);
-    String suffix = iwc.getParameter(SCRIPT_SUFFIX_PARAMETER);
 
-    String displayString = iwc.getParameter(DISPLAYSTRING_PARAMETER_NAME);
-    String valueString = iwc.getParameter(VALUE_PARAMETER_NAME);
+    if( (!noScript) && (getSelectionParameter(iwc)!=null) ){
+      Script script = this.getAssociatedScript();
+      String prefix = iwc.getParameter(SCRIPT_PREFIX_PARAMETER);
+      String suffix = iwc.getParameter(SCRIPT_SUFFIX_PARAMETER);
 
-    if( prefix == null ) prefix = "";
-    if( suffix == null ) suffix = "";
-    if( displayString == null ) displayString = "";
-    if( valueString == null ) valueString = "";
+      String displayString = iwc.getParameter(DISPLAYSTRING_PARAMETER_NAME);
+      String valueString = iwc.getParameter(VALUE_PARAMETER_NAME);
 
-    if( !onlyScript ){
-      HiddenInput hPrefix = new HiddenInput(SCRIPT_PREFIX_PARAMETER,prefix);
-      HiddenInput hSuffix = new HiddenInput(SCRIPT_SUFFIX_PARAMETER,suffix);
-      HiddenInput hDisplayString = new HiddenInput(DISPLAYSTRING_PARAMETER_NAME,displayString);
-      HiddenInput hValueString = new HiddenInput(VALUE_PARAMETER_NAME,valueString);
+      if( prefix == null ) prefix = "";
+      if( suffix == null ) suffix = "";
+      if( displayString == null ) displayString = "";
+      if( valueString == null ) valueString = "";
 
-      add(hPrefix);
-      add(hSuffix);
-      add(hDisplayString);
-      add(hValueString);
+      if( !onlyScript ){
+        HiddenInput hPrefix = new HiddenInput(SCRIPT_PREFIX_PARAMETER,prefix);
+        HiddenInput hSuffix = new HiddenInput(SCRIPT_SUFFIX_PARAMETER,suffix);
+        HiddenInput hDisplayString = new HiddenInput(DISPLAYSTRING_PARAMETER_NAME,displayString);
+        HiddenInput hValueString = new HiddenInput(VALUE_PARAMETER_NAME,valueString);
+
+        add(hPrefix);
+        add(hSuffix);
+        add(hDisplayString);
+        add(hValueString);
+      }
+
+      //script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+AbstractChooser.DISPLAYSTRING_PARAMETER_NAME+".value=displaystring;"+AbstractChooser.VALUE_PARAMETER_NAME+".value=value;window.close();return false }");
+      if( isInAFrame ){
+        script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+SCRIPT_PREFIX_IN_A_FRAME+ prefix+displayString+"."+suffix+"=displaystring; "+SCRIPT_PREFIX_IN_A_FRAME+prefix+valueString+".value=value;window.close();return false;}");
+      }
+      else{
+        script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+prefix+displayString+"."+suffix+"=displaystring;"+prefix+valueString+".value=value;window.close();return false;}");
+      }
     }
-
-    //script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+AbstractChooser.DISPLAYSTRING_PARAMETER_NAME+".value=displaystring;"+AbstractChooser.VALUE_PARAMETER_NAME+".value=value;window.close();return false }");
-    if( isInAFrame ){
-      script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+SCRIPT_PREFIX_IN_A_FRAME+ prefix+displayString+"."+suffix+"=displaystring; "+SCRIPT_PREFIX_IN_A_FRAME+prefix+valueString+".value=value;window.close();return false;}");
-    }
-    else{
-      script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+prefix+displayString+"."+suffix+"=displaystring;"+prefix+valueString+".value=value;window.close();return false;}");
-    }
-
     displaySelection(iwc);
   }
 
@@ -97,6 +101,10 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
 
   public void setOnlyScript(boolean onlyScript){
     this.onlyScript = onlyScript;
+  }
+
+  public void setNoScript(boolean noScript){
+    this.noScript = noScript;
   }
 
 }
