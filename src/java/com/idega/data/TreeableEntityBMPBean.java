@@ -57,7 +57,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	String idColumnName = this.getIDColumnName();
 	String childIDColumnName=EntityControl.getTreeRelationShipChildColumnName(this);
 	StringBuffer buffer = new StringBuffer();
-	  buffer.append("select "+thisTable+".* from "+thisTable+","+treeTable+" where "+thisTable+"."+idColumnName+"="+treeTable+"."+childIDColumnName+" and "+treeTable+"."+idColumnName+"='"+this.getID()+"'");
+	  buffer.append("select "+thisTable+".* from "+thisTable+","+treeTable+" where "+thisTable+"."+idColumnName+"="+treeTable+"."+childIDColumnName+" and "+treeTable+"."+idColumnName+"='"+this.getPrimaryKey().toString()+"'");
 	  if (orderBy != null && !orderBy.equals("")) {
 	    buffer.append(" order by "+thisTable+"."+orderBy);
 	  }
@@ -110,7 +110,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
      */
     public int getChildCount(){
 	String treeTableName= EntityControl.getTreeRelationShipTableName(this);
-	return EntityControl.returnSingleSQLQuery(this,"select count(*) from "+treeTableName+" where "+this.getIDColumnName()+"='"+this.getID()+"'");
+	return EntityControl.returnSingleSQLQuery(this,"select count(*) from "+treeTableName+" where "+this.getIDColumnName()+"='"+this.getPrimaryKey().toString()+"'");
     }
 
     /**
@@ -125,7 +125,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
    */
   public ICTreeNode getParentNode(){
     try{
-      int parent_id = EntityControl.returnSingleSQLQuery(this,"select "+this.getIDColumnName()+" from "+EntityControl.getTreeRelationShipTableName(this)+" where "+EntityControl.getTreeRelationShipChildColumnName(this)+"='"+this.getID()+"'");
+      int parent_id = EntityControl.returnSingleSQLQuery(this,"select "+this.getIDColumnName()+" from "+EntityControl.getTreeRelationShipTableName(this)+" where "+EntityControl.getTreeRelationShipChildColumnName(this)+"='"+this.getPrimaryKey().toString()+"'");
       if(parent_id!=-1){
 	TreeableEntity entity = (TreeableEntity)this.getClass().newInstance();
 	entity.findByPrimaryKey(parent_id);
