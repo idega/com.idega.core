@@ -1,11 +1,12 @@
 package com.idega.presentation.ui;
 
-import com.idega.presentation.PresentationObjectContainer;
-import com.idega.presentation.PresentationObject;
+import java.util.Vector;
+import javax.faces.component.UIComponent;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
-import java.util.Vector;
 
 /**
  * Title:
@@ -109,7 +110,7 @@ public class DataTable extends PresentationObjectContainer {
     infoTitles = true;
     titlesVertical = !horizontal;
   }
-  public void addTitle(PresentationObject title){
+  public void addTitle(UIComponent title){
     contentTable.add(title,1,1);
   }
   public void addTitle(String title){
@@ -118,10 +119,10 @@ public class DataTable extends PresentationObjectContainer {
     addTitle(T);
     use_top = true;
   }
-  public void add(PresentationObject objectToAdd,int col,int row){
+  public void add(UIComponent objectToAdd,int col,int row){
     contentTable.add(objectToAdd,col,use_top?++row:row);
   }
-  public void addButton(PresentationObject objectToAdd){
+  public void addButton(UIComponent objectToAdd){
     if(buttons ==null)
       buttons = new Vector();
     buttons.add(objectToAdd);
