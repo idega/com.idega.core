@@ -121,5 +121,13 @@ public class GroupTypeBMPBean extends GenericEntity implements GroupType{
     return TYPE_PERMISSION_GROUP;
   }
 
+  public void setGroupTypeAsGeneralGroup(){
+    setType(this.TYPE_GENERAL_GROUP);
+  }
+
+  public void setGroupTypeAsPermissionGroup(){
+    setType(this.TYPE_PERMISSION_GROUP);
+  }
+
 
 }
