@@ -291,7 +291,7 @@ public class ICObjectBusiness {
   public int getRelatedEntityId(ICObjectInstance icObjectInstance, Class entityToGetIdFrom){
     try {
       List L = EntityFinder.getInstance().findRelated(icObjectInstance,entityToGetIdFrom);
-      if(L!= null){
+      if(!L.isEmpty()){
         return ((GenericEntity) L.get(0)).getID();
       }
       else
@@ -302,6 +302,23 @@ public class ICObjectBusiness {
       return -2;
     }
   }
+
+  /**
+   * Returns the related object's id relative to the objectinstance we have
+   * Catches the error if there is any and returns the number -2
+   * @todo cache somehow
+   */
+  public GenericEntity getRelatedEntity(ICObjectInstance icObjectInstance, Class entityToGetIdFrom) throws IDOFinderException{
+      List L = EntityFinder.getInstance().findRelated(icObjectInstance,entityToGetIdFrom);
+      if(!L.isEmpty()){
+        return (GenericEntity) L.get(0);
+      }
+      else{
+        throw new IDOFinderException("Nothing found for ICObjectInstance with id="+icObjectInstance.getID()+" and "+entityToGetIdFrom.getName());
+      }
+  }
+
+
 
 
 
