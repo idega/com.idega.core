@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.112 2004/09/09 10:42:15 aron Exp $
+ * $Id: DatastoreInterface.java,v 1.113 2004/09/09 22:30:02 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1418,7 +1418,7 @@ public abstract class DatastoreInterface {
 	protected void fillStringColumn(GenericEntity entity, String columnName, ResultSet rs) throws SQLException {
 		String value = rs.getString(columnName);
 		if (value != null) {
-			entity.setColumn(columnName, value);
+			entity.initializeColumnValue(columnName, value);
 		}
 	}
 
@@ -1429,7 +1429,7 @@ public abstract class DatastoreInterface {
 			int theInt = RS.getInt(columnName);
 			boolean wasNull = RS.wasNull();
 			if (!wasNull) {
-				entity.setColumn(columnName, new Integer(theInt));
+				entity.initializeColumnValue(columnName, new Integer(theInt));
 				//setColumn(columnName.toLowerCase(),new Integer(theInt));
 			}
 			//}
@@ -1445,10 +1445,10 @@ public abstract class DatastoreInterface {
 			String theString = RS.getString(columnName);
 			if (theString != null) {
 				if (theString.equals("Y")) {
-					entity.setColumn(columnName, new Boolean(true));
+					entity.initializeColumnValue(columnName, new Boolean(true));
 				}
 				else if (theString.equals("N")) {
-					entity.setColumn(columnName, new Boolean(false));
+					entity.initializeColumnValue(columnName, new Boolean(false));
 				}
 			}
 		}
@@ -1456,7 +1456,7 @@ public abstract class DatastoreInterface {
 			float theFloat = RS.getFloat(columnName);
 			boolean wasNull = RS.wasNull();
 			if (!wasNull) {
-				entity.setColumn(columnName, new Float(theFloat));
+				entity.initializeColumnValue(columnName, new Float(theFloat));
 				//setColumn(columnName.toLowerCase(),new Float(theFloat));
 			}
 		}
@@ -1464,26 +1464,26 @@ public abstract class DatastoreInterface {
 			double theDouble = RS.getDouble(columnName);
 			boolean wasNull = RS.wasNull();
 			if (!wasNull) {
-				entity.setColumn(columnName, new Double(theDouble));
+				entity.initializeColumnValue(columnName, new Double(theDouble));
 				//setColumn(columnName.toLowerCase(),new Double(theDouble));
 			}
 		}
 		else if (classType == EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP) {
 			Timestamp ts = RS.getTimestamp(columnName);
 			if (ts != null) {
-				entity.setColumn(columnName, ts);
+				entity.initializeColumnValue(columnName, ts);
 			}
 		}
 		else if (classType == EntityAttribute.TYPE_JAVA_SQL_DATE) {
 			Date date = RS.getDate(columnName);
 			if (date != null) {
-				entity.setColumn(columnName, date);
+				entity.initializeColumnValue(columnName, date);
 			}
 		}
 		else if (classType == EntityAttribute.TYPE_JAVA_SQL_TIME) {
 			java.sql.Date date = RS.getDate(columnName);
 			if (date != null) {
-				entity.setColumn(columnName, date);
+				entity.initializeColumnValue(columnName, date);
 				//setColumn(columnName.toLowerCase(),date);
 			}
 		}
@@ -1492,13 +1492,13 @@ public abstract class DatastoreInterface {
 			 * if (RS.getDate(columnName) != null){
 			 * setColumn(columnName.toLowerCase(),RS.getTime(columnName)); }
 			 */
-			entity.setColumn(columnName, entity.getEmptyBlob(columnName));
-			//setColumn(columnName.toLowerCase(),getEmptyBlob(columnName));
+			entity.initializeColumnValue(columnName, entity.getEmptyBlob(columnName));
+			//setColumn(columnName,getEmptyBlob(columnName));
 		}
 		else if (classType == EntityAttribute.TYPE_COM_IDEGA_UTIL_GENDER) {
 			String gender = RS.getString(columnName);
 			if (gender != null) {
-				entity.setColumn(columnName, new Gender(gender));
+				entity.initializeColumnValue(columnName, new Gender(gender));
 				//setColumn(columnName.toLowerCase(),new Gender(gender));
 			}
 		}

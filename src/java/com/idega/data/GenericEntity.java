@@ -88,6 +88,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	private boolean insertStartData = true;
 	protected static String COLUMN_VALUE_TRUE = "Y";
 	protected static String COLUMN_VALUE_FALSE = "N";
+	private boolean canRegisterColumnsForUpdate = false;
 
 	private Table idoQueryTable = null;
 	
@@ -110,6 +111,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			e.printStackTrace();
 		}
 		setDefaultValues();
+		//this boolean is needed because developers are using setColumn in setDefaultValues() and not initializeColumnValue
+		//it stops the defaultvalues from being considered changed
+		canRegisterColumnsForUpdate = true;
 	}
 	protected GenericEntity(int id) throws SQLException {
 		this(id, DEFAULT_DATASOURCE);
@@ -496,20 +500,40 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		return returnArr;
 	}
-	protected void setValue(String columnName, Object columnValue) {
+	
+	/**
+	 * Sets the colums value or removes the existing value if columnValue == null
+	 * @param columnName
+	 * @param columnValue
+	 * @param needsToUpdate true if this is a column that is changing, false if it is just being loaded from the database
+	 */
+	protected void setValue(String columnName, Object columnValue, boolean needsToUpdate) {
 		if (columnValue != null) {
 			//_columns.put(columnName.toLowerCase(),columnValue);
 			_columns.put(columnName.toUpperCase(), columnValue);
 		} else {
 			removeFromColumn(columnName);
 		}
-		this.flagColumnUpdate(columnName);
+		
+		if(needsToUpdate){
+			flagColumnUpdate(columnName);
+		}
+		
 		if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
 			setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
 		} else {
-			this.setEntityState(IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+			if(needsToUpdate){
+				setEntityState(IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
+			}
 		}
 	}
+	
+	protected void setValue(String columnName, Object columnValue) {
+		setValue(columnName,columnValue,true);
+	}
+	
+
+	
 	protected Object getValue(String columnName) {
 		//return _columns.get(columnName.toLowerCase());
 		return _columns.get(columnName.toUpperCase());
@@ -523,53 +547,73 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		this.flagColumnUpdate(columnName);
 		//setValue(columnName,this.getNullColumnValue());
 	}
-	public void setColumn(String columnName, Object columnValue) {
+	/**
+	 * This method is called when changing a columns value or initilizing it
+	 * @param columnName
+	 * @param columnValue
+	 * @param needsToUpdate true if we are changing the column value, false if just loading from the database
+	 */
+	public void setColumn(String columnName, Object columnValue, boolean needsToUpdate) {
 		if (this.getRelationShipClass(columnName) == null) {
-			setValue(columnName, columnValue);
-		} else {
-			if (columnValue instanceof Integer) {
-				setValue(columnName, (Integer)columnValue);
-			} else if (columnValue instanceof String) {
-				setValue(columnName, (String)columnValue);
-			}
-			//else if (columnValue instanceof IDOLegacyEntity){
-			else if (columnValue == null)  {
-        setValue(columnName, columnValue);
-      }
-      else 
-      {
-				setValue(columnName, ((IDOEntity)columnValue).getPrimaryKey());
-			}
+//			this is the most common case, the column is just a primative type and not a relational column (foreign key)
+			setValue(columnName, columnValue,needsToUpdate);
+		} else if(columnValue instanceof IDOEntity){
+//			this is the second most common case, an IDOEntity is passed into the setColumn method but we save its primarykey as the column value
+			setValue(columnName, ((IDOEntity)columnValue).getPrimaryKey(),needsToUpdate);
+		}
+		else{
+			//lastly this is used for other cases. setting ids directly (foreign keys)
+			setValue(columnName,columnValue,needsToUpdate);
 		}
 	}
+	
+	/**
+	 * Sets the columns value and flags the column as changed
+	 * @param columnName
+	 * @param columnValue
+	 */
+	public void setColumn(String columnName, Object columnValue) {
+		setColumn(columnName,columnValue,true);
+	}
+	
+	/**
+	 * Sets the column value for the first time, the column is NOT flagged as changed
+	 * @param columnName
+	 * @param columnValue
+	 */
+	protected void initializeColumnValue(String columnName, Object columnValue) {
+		setColumn(columnName,columnValue,false);
+	}
+	
+	
 	public void setColumn(String columnName, int columnValue) {
-		setValue(columnName, new Integer(columnValue));
+		setColumn(columnName, new Integer(columnValue),true);
 	}
 	public void setColumn(String columnName, Integer columnValue) {
-		setValue(columnName, columnValue);
+		setColumn(columnName, columnValue,true);
 	}
 	public void setColumn(String columnName, float columnValue) {
-		setValue(columnName, new Float(columnValue));
+		setColumn(columnName, new Float(columnValue),true);
 	}
 	public void setColumn(String columnName, Float columnValue) {
-		setValue(columnName, columnValue);
+		setColumn(columnName, columnValue,true);
 	}
 	public void setColumn(String columnName, boolean columnValue) {
-		setValue(columnName, new Boolean(columnValue));
+		setColumn(columnName, new Boolean(columnValue),true);
 	}
 	public void setColumn(String columnName, Boolean columnValue) {
-		setValue(columnName, columnValue);
+		setColumn(columnName, columnValue,true);
 	}
 	public void setColumn(String columnName, char columnValue) {
-		setValue(columnName, String.valueOf(columnValue));
+		setColumn(columnName, String.valueOf(columnValue),true);
 	}
   
   public void setColumn(String columnName, double columnValue)  {
-    setColumn(columnName, new Double(columnValue));
+    setColumn(columnName, new Double(columnValue),true);
   }
   
   public void setColumn(String columnName, Double columnValue)  {
-    setValue(columnName, columnValue);
+  	setColumn(columnName, columnValue,true);
   }
   
 	/**
@@ -627,7 +671,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		} else {
 			wrapper = new BlobWrapper(this, columnName);
 			wrapper.setInputStreamForBlobWrite(streamForBlobWrite);
-			setColumn(columnName, wrapper);
+			setColumn(columnName, wrapper,true);
 		}
 	}
 
@@ -635,7 +679,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		BlobWrapper wrapper = (BlobWrapper)getColumnValue(columnName);
 		if (wrapper == null) {
 			wrapper = new BlobWrapper(this, columnName);
-			this.setColumn(columnName, wrapper);
+			this.setColumn(columnName, wrapper,false);
 		}
 		return wrapper;
 	}
@@ -1327,49 +1371,49 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		int classType = getStorageClassType(columnName);
 		if (classType == EntityAttribute.TYPE_JAVA_LANG_INTEGER) {
 			if (columnValue != null) {
-				setColumn(columnName, new Integer(columnValue));
+				setColumn(columnName, new Integer(columnValue),true);
 			}
 		} else if (classType == EntityAttribute.TYPE_JAVA_LANG_STRING) {
 			if (columnValue != null) {
-				setColumn(columnName, columnValue);
+				setColumn(columnName, columnValue,true);
 			}
 		} else if (classType == EntityAttribute.TYPE_JAVA_LANG_BOOLEAN) {
 			if (columnValue != null) {
 				if (columnValue.equals("Y")) {
-					setColumn(columnName, new Boolean(true));
+					setColumn(columnName, new Boolean(true),true);
 				} else if (columnValue.equals("N")) {
-					setColumn(columnName, new Boolean(false));
+					setColumn(columnName, new Boolean(false),true);
 				} else {
-					setColumn(columnName, new Boolean(false));
+					setColumn(columnName, new Boolean(false),true);
 				}
 			}
 		} else if (classType == EntityAttribute.TYPE_JAVA_LANG_FLOAT) {
 			if (columnValue != null) {
-				setColumn(columnName, new Float(columnValue));
+				setColumn(columnName, new Float(columnValue),true);
 			}
 		} else if (classType == EntityAttribute.TYPE_JAVA_LANG_DOUBLE) {
 			if (columnValue != null) {
-				setColumn(columnName, new Double(columnValue));
+				setColumn(columnName, new Double(columnValue),true);
 			}
 		} else if (classType == EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP) {
 			if (columnValue != null) {
-				setColumn(columnName, java.sql.Timestamp.valueOf(columnValue));
+				setColumn(columnName, java.sql.Timestamp.valueOf(columnValue),true);
 			}
 		} else if (classType == EntityAttribute.TYPE_JAVA_SQL_DATE) {
 			if (columnValue != null) {
-				setColumn(columnName, java.sql.Date.valueOf(columnValue));
+				setColumn(columnName, java.sql.Date.valueOf(columnValue),true);
 			}
 		} else if (classType == EntityAttribute.TYPE_JAVA_UTIL_DATE) {
 			if (columnValue != null) {
-				setColumn(columnName, java.sql.Date.valueOf(columnValue));
+				setColumn(columnName, java.sql.Date.valueOf(columnValue),true);
 			}
 		} else if (classType == EntityAttribute.TYPE_JAVA_SQL_TIME) {
 			if (columnValue != null) {
-				setColumn(columnName, java.sql.Time.valueOf(columnValue));
+				setColumn(columnName, java.sql.Time.valueOf(columnValue),true);
 			}
 		} else if (classType == EntityAttribute.TYPE_COM_IDEGA_UTIL_GENDER) {
 			if (columnValue != null) {
-				setColumn(columnName, columnValue.toString());
+				setColumn(columnName, columnValue.toString(),true);
 			}
 		}
 	}
@@ -3341,13 +3385,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @param uniqueId
 	 */
 	public void setUniqueId(String uniqueId){
-		if(uniqueId!=null){
-			setColumn(getUniqueIdColumnName(),uniqueId);
-		}
-		else{
-			//removing
-			removeFromColumn(getUniqueIdColumnName());
-		}
+		setColumn(getUniqueIdColumnName(),uniqueId);
 	}
 
 	/**
@@ -3395,10 +3433,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	void flagColumnUpdate(String columnName) {
-		if (this._updatedColumns == null) {
-			_updatedColumns = new HashMap();
+		if(canRegisterColumnsForUpdate){
+			if (this._updatedColumns == null) {
+				_updatedColumns = new HashMap();
+			}
+			_updatedColumns.put(columnName.toUpperCase(), Boolean.TRUE);
 		}
-		_updatedColumns.put(columnName.toUpperCase(), Boolean.TRUE);
 	}
 	boolean hasColumnBeenUpdated(String columnName) {
 		if (this._updatedColumns == null) {
@@ -3425,11 +3465,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			IDOEntityField[] fields = this.getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
 			IDOPrimaryKey primaryKey = (IDOPrimaryKey) pk;
 			for (int i = 0; i < fields.length; i++) {
-				setColumn(fields[i].getSQLFieldName(), primaryKey.getPrimaryKeyValue(fields[i].getSQLFieldName().toUpperCase()));
+				initializeColumnValue(fields[i].getSQLFieldName(), primaryKey.getPrimaryKeyValue(fields[i].getSQLFieldName().toUpperCase()));
 			}
 		}
 		else {
-			setColumn(getIDColumnName(), pk);
+			initializeColumnValue(getIDColumnName(), pk);
 		}
 		this._primaryKey = pk;
 	}
