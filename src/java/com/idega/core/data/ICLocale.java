@@ -34,8 +34,8 @@ public class ICLocale extends GenericEntity {
   }
   public static String getEntityTableName(){return "IC_LOCALE";}
   public static String getColumnNameLocale(){return "LOCALE";}
-  public static String getColumnNameLanguageId(){return "LANGUAGE_ID";}
-  public static String getColumnNameCountryId(){return "COUNTRY_ID";}
+  public static String getColumnNameLanguageId(){return "IC_LANGUAGE_ID";}
+  public static String getColumnNameCountryId(){return "IC_COUNTRY_ID";}
 
   public String getName(){
     return getLocale();
