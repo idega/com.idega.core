@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.26 2003/06/24 13:05:38 tryggvil Exp $
+ * $Id: IWResourceBundle.java,v 1.27 2003/10/28 15:56:44 tryggvil Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -25,6 +25,7 @@ import java.util.TreeMap;
 
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.presentation.Image;
+import com.idega.util.EnumerationIteratorWrapper;
 import com.idega.util.SortedProperties;
 
 /**
@@ -303,22 +304,6 @@ public class IWResourceBundle extends ResourceBundle {
 
 	public String getResourcesURL() {
 		return resourcesURL;
-	}
-
-	private class EnumerationIteratorWrapper implements Enumeration {
-		private Iterator iterator;
-
-		public EnumerationIteratorWrapper(Iterator iter) {
-			this.iterator = iter;
-		}
-
-		public boolean hasMoreElements() {
-			return iterator.hasNext();
-		}
-
-		public Object nextElement() {
-			return iterator.next();
-		}
 	}
 
 	/**
