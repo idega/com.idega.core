@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.74 2003/07/21 17:59:32 thomas Exp $
+ * $Id: DatastoreInterface.java,v 1.75 2003/07/22 17:58:46 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -986,7 +986,8 @@ public abstract class DatastoreInterface {
 		}
 	}
 	protected static boolean isValidColumnForInsertList(GenericEntity entity, String columnName) {
-		if (entity.isNull(columnName)) {
+    // columnname of the primary key should be added to the list
+		if (entity.isNull(columnName) && !(entity.getIDColumnName().equalsIgnoreCase(columnName))) {
 			return false;
 		} else {
 			if (entity.getStorageClassType(columnName) == EntityAttribute.TYPE_COM_IDEGA_DATA_BLOBWRAPPER) {
