@@ -582,9 +582,14 @@ public class IDOQuery {
   public IDOQuery appendOr(){
     return this.append(OR);
   }
+  
+  public IDOQuery appendInArray(String[] array) {
+  	return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertArrayToCommaseparatedString(array));	
+  }
 
-
-
+	public IDOQuery appendNotInArray(String[] array) {
+		return this.appendNotIn().appendWithinParentheses(IDOUtil.getInstance().convertArrayToCommaseparatedString(array));
+	}
 
 
 }
