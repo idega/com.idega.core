@@ -1,25 +1,34 @@
 //idega 2000 - Tryggvi Larusson
 /*
-
 *Copyright 2000 idega.is All Rights Reserved.
-
 */
 package com.idega.presentation.ui;
+
 import java.io.*;
 import java.util.*;
 import com.idega.presentation.*;
+
 /**
-
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
 *@version 1.2
-
 */
 public abstract class InterfaceObject extends PresentationObject {
 
 	protected boolean keepStatus;
+
 	private boolean _checkObject = false;
 	private boolean _disableObject = false;
+	private boolean _checkDisabled = false;
+	private boolean _inFocus = false;
+	
+	public static final String ACTION_ON_BLUR = "onBlur";
+	public static final String ACTION_ON_CHANGE = "onChange";
+	public static final String ACTION_ON_CLICK = "onClick";
+	public static final String ACTION_ON_FOCUS = "onFocus";
+	public static final String ACTION_ON_KEY_DOWN = "onKeyDown";
+	public static final String ACTION_ON_KEY_UP = "onKeyUp";
+	public static final String ACTION_ON_SELECT = "onSelect";
+	public static final String ACTION_ON_SUBMIT = "onSubmit";
 
 	public InterfaceObject() {
 		super();
@@ -40,18 +49,25 @@ public abstract class InterfaceObject extends PresentationObject {
 			obj = obj.getParentObject();
 		}
 		return false;
-
 	}
 
+	/**
+	 * Returns true if the interface object in on a page.
+	 * @return boolean
+	 */
+	protected boolean hasParentPage() {
+		if (getParentPage() != null)
+			return true;
+		return false;
+	}
+
+	/**
+	 * Sets an action event to perform on this object.
+	 * @param actionType	The type of action.
+	 * @param action	The action to perform.
+	 */
 	private void setOnAction(String actionType, String action) {
-		String attributeName = actionType;
-		String previousAttribute = getAttribute(attributeName);
-		if (previousAttribute == null) {
-			setAttribute(attributeName, action);
-		}
-		else {
-			setAttribute(attributeName, previousAttribute + ";" + action);
-		}
+		setAttributeMultivalued(actionType, action);
 	}
 
 	/**
@@ -59,7 +75,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param action	The action to perform.
 	 */
 	public void setOnFocus(String action) {
-		setOnAction("onFocus", action);
+		setOnAction(ACTION_ON_FOCUS, action);
 	}
 
 	/**
@@ -67,7 +83,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param action	The action to perform.
 	 */
 	public void setOnBlur(String action) {
-		setOnAction("onBlur", action);
+		setOnAction(ACTION_ON_BLUR, action);
 	}
 
 	/**
@@ -75,7 +91,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param action	The action to perform.
 	 */
 	public void setOnSelect(String action) {
-		setOnAction("onSelect", action);
+		setOnAction(ACTION_ON_SELECT, action);
 	}
 
 	/**
@@ -83,7 +99,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param action	The action to perform.
 	 */
 	public void setOnChange(String action) {
-		setOnAction("onChange", action);
+		setOnAction(ACTION_ON_CHANGE, action);
 	}
 
 	/**
@@ -91,7 +107,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param action	The action to perform.
 	 */
 	public void setOnClick(String action) {
-		setOnAction("onClick", action);
+		setOnAction(ACTION_ON_CLICK, action);
 	}
 
 	/**
@@ -99,7 +115,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param action	The action to perform.
 	 */
 	public void setOnKeyDown(String action) {
-		setOnAction("onKeyDown", action);
+		setOnAction(ACTION_ON_KEY_DOWN, action);
 	}
 
 	/**
@@ -107,7 +123,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param action	The action to perform.
 	 */
 	public void setOnKeyUp(String action) {
-		setOnAction("onKeyUp", action);
+		setOnAction(ACTION_ON_KEY_UP, action);
 	}
 
 	/**
@@ -115,7 +131,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnFocus() {
-		return getAttribute("onFocus");
+		return getAttribute(ACTION_ON_FOCUS);
 	}
 
 	/**
@@ -123,7 +139,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnBlur() {
-		return getAttribute("onBlur");
+		return getAttribute(ACTION_ON_BLUR);
 	}
 
 	/**
@@ -131,7 +147,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnSelect() {
-		return getAttribute("onSelect");
+		return getAttribute(ACTION_ON_SELECT);
 	}
 
 	/**
@@ -139,7 +155,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnChange() {
-		return getAttribute("onChange");
+		return getAttribute(ACTION_ON_CHANGE);
 	}
 
 	/**
@@ -147,7 +163,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnClick() {
-		return getAttribute("onClick");
+		return getAttribute(ACTION_ON_CLICK);
 	}
 
 	/**
@@ -155,7 +171,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnKeyDown() {
-		return getAttribute("onKeyDown");
+		return getAttribute(ACTION_ON_KEY_DOWN);
 	}
 
 	/**
@@ -163,7 +179,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The action to perform.  Returns null if no action is set.
 	 */
 	public String getOnKeyUp() {
-		return getAttribute("onKeyUp");
+		return getAttribute(ACTION_ON_KEY_UP);
 	}
 
 	/**
@@ -195,7 +211,9 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @return String	The value set.
 	 */
 	public String getValue() {
-		return getAttribute("value");
+		if (isAttributeSet("value"))
+			return getAttribute("value");
+		return "";
 	}
 
 	/**
@@ -223,18 +241,26 @@ public abstract class InterfaceObject extends PresentationObject {
 	}
 
 	/**
+	 * Sets the given interface object(s) to be checked/unchecked when this object is 
+	 * clicked on.
+	 * @param action	The action to perform on.
+	 * @param objectToCheck	The interface object(s) to check.
+	 * @param check	Checks if boolean is true, unchecks otherwise.
+	 */
+	public void setToCheckOnAction(String action, String objectToCheck, boolean check) {
+		setToCheckOnAction(action, objectToCheck, check, true);
+	}
+
+	/**
 	 * Sets the interface object(s) with the given name to be checked/unchecked when this
 	 * object is clicked on.
 	 * @param objectName	The name of the interface object(s) to check.
 	 * @param check	Checks if boolean is true, unchecks otherwise.
 	 */
 	public void setToCheckOnClick(String objectName, boolean check) {
-		_checkObject = true;
-//		this.setOnClick("checkObject(findObj('" + objectName + "'),'"+Boolean.toString(check)+"')");
-		this.setOnClick("checkObject(findObj('" + objectName + "'),'"+String.valueOf( check )+"')");
-
+		setToCheckOnAction(ACTION_ON_CLICK, objectName, check, true);
 	}
-	
+
 	/**
 	 * Sets the given interface object(s) to be checked/unchecked when this object is 
 	 * clicked on.
@@ -242,30 +268,95 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param check	Checks if boolean is true, unchecks otherwise.
 	 */
 	public void setToCheckOnClick(InterfaceObject objectToCheck, boolean check) {
-		setToCheckOnClick(objectToCheck.getName(),check);
+		setToCheckOnAction(ACTION_ON_CLICK, objectToCheck.getName(), check, true);
 	}
-	
+
+	/**
+	 * Sets the interface object(s) with the given name to be checked/unchecked when this
+	 * object receives the action specified.
+	 * @param action	The action to perform on.
+	 * @param objectName	The name of the interface object(s) to check.
+	 * @param check	Checks if boolean is true, unchecks otherwise.
+	 * @param checkDisabled	If true checks all, otherwise not disabled objects.
+	 */
+	public void setToCheckOnAction(String action, String objectName, boolean check, boolean checkDisabled) {
+		_checkObject = true;
+		_checkDisabled = checkDisabled;
+		if (checkDisabled)
+			setOnAction(action, "checkAllObjects(findObj('" + objectName + "'),'" + String.valueOf(check) + "')");
+		else
+			setOnAction(action, "checkEnabledObjects(findObj('" + objectName + "'),'" + String.valueOf(check) + "')");
+	}
+
+	/**
+	 * Sets the interface object(s) with the given name to be checked/unchecked when this
+	 * object is clicked on.
+	 * @param objectName	The name of the interface object(s) to check.
+	 * @param check	Checks if boolean is true, unchecks otherwise.
+	 * @param checkDisabled	If true checks all, otherwise not disabled objects.
+	 */
+	public void setToCheckOnClick(String objectName, boolean check, boolean checkDisabled) {
+		setToCheckOnAction(ACTION_ON_CLICK, objectName, check, checkDisabled);
+	}
+
+	/**
+	 * Sets the given interface object(s) to be checked/unchecked when this object is 
+	 * clicked on.
+	 * @param objectToCheck	The interface object(s) to check.
+	 * @param check	Checks if boolean is true, unchecks otherwise.
+	 * @param checkDisabled	If true checks all, otherwise not disabled objects.
+	 */
+	public void setToCheckOnClick(InterfaceObject objectToCheck, boolean check, boolean checkDisabled) {
+		setToCheckOnAction(ACTION_ON_CLICK, objectToCheck.getName(), check, checkDisabled);
+	}
+
+	/**
+	 * Sets the interface object(s) with the given name to be enabled when this object
+	 * receives the action specified.
+	 * @param action	The action to perform on.
+	 * @param objectToEnable	The name of the interface object(s) to enable.
+	 * @param enable	Set to true to disable, false will enable.
+	 */
+	public void setToDisableOnAction(String action, String objectName, boolean disable) {
+		_disableObject = true;
+		setOnAction(action, "disableObject(findObj('" + objectName + "'),'" + String.valueOf(disable) + "')");
+	}
+
 	/**
 	 * Sets the interface object(s) with the given name to be enabled when this object is 
 	 * clicked on.
 	 * @param objectToEnable	The name of the interface object(s) to enable.
 	 * @param enable	Set to true to disable, false will enable.
 	 */
-	public void setToDisableOnClick(String objectName,boolean disable) {
-		_disableObject = true;
-//		setOnClick("disableObject(findObj('" + objectName + "'),'"+Boolean.toString(disable)+"')");
-		setOnClick("disableObject(findObj('" + objectName + "'),'"+String.valueOf( disable )+"')");
+	public void setToDisableOnClick(String objectName, boolean disable) {
+		setToDisableOnAction(ACTION_ON_CLICK,objectName,disable);
 	}
-	
+
 	/**
 	 * Sets the given interface object to be enabled when this object is clicked on.
 	 * @param objectToEnable	The interface object to enable.
 	 * @param enable	Set to true to disable, false will enable.
 	 */
-	public void setToDisableOnClick(InterfaceObject objectToEnable,boolean disable) {
-		setToDisableOnClick(objectToEnable.getName(),disable);
+	public void setToDisableOnClick(InterfaceObject objectToEnable, boolean disable) {
+		setToDisableOnClick(objectToEnable.getName(), disable);
 	}
-	
+
+	/**
+	 * Sets the interface object in focus on page load.
+	 * @param inFocus	Set to true to set focus on object, false otherwise.
+	 */
+	public void setInFocusOnPageLoad(boolean inFocus) {
+		_inFocus = inFocus;
+	}
+
+	/**
+	 * Sets the interface object to submit its parent form on click.
+	 * Must have a parent form to function correctly.
+	 */
+	public void setToSubmit() {
+		setOnClick("this.form.submit()");
+	}
+
 	/**
 	 * Sets whether the interface object is disabled or not.
 	 * @param disabled	The status to set.
@@ -278,38 +369,70 @@ public abstract class InterfaceObject extends PresentationObject {
 	}
 	
 	/**
+	 * Returns the disabled status of the interface object.
+	 * @return boolean	True if object is disabled, false otherwise.
+	 */
+	public boolean getDisabled() {
+		if (isAttributeSet("disabled"))
+			return true;
+		return false;	
+	}
+
+	/**
 	 * Sets the description for the interface object.
 	 * @param description	The description to set.
 	 */
 	public void setDescription(String description) {
-		setAttribute("alt",description);
+		setAttribute("title", description);
 	}
-	
+
 	/**
 	 * Returns the description set to the interface object.
 	 * @return String	The description set, null otherwise.
 	 */
 	public String getDescription() {
-		if ( isAttributeSet("alt") )
-			return getAttribute("alt");	
+		if (isAttributeSet("title"))
+			return getAttribute("title");
 		return null;
 	}
-	
+
+	/**
+	 * A method that handles the actions to perform to keep the status of the interface
+	 * object on performed actions.  Override if interface object can keep its status on
+	 * actions.
+	 * @param iwc
+	 */
 	public abstract void handleKeepStatus(IWContext iwc);
-	
+
+	/**
+	 * Returns true if interface object is to keep its status when an action is performed.
+	 * @return boolean	True if status is kept, false otherwise.
+	 */
 	public boolean statusKeptOnAction() {
 		return keepStatus;
 	}
-	
-	public void keepStatusOnAction() {
-		keepStatus = true;
+
+	/**
+	 * Sets to keep the status on the interface object when an action is performed.
+	 * @param boolean	True if interface object is to keep status, false otherwise.
+	 */
+	public void keepStatusOnAction(boolean keepStatus) {
+		this.keepStatus = keepStatus;
 	}
-	
+
+	/**
+	 * Sets to keep the status on the interface object when an action is performed.
+	 */
+	public void keepStatusOnAction() {
+		keepStatusOnAction(true);
+	}
+
 	public void print(IWContext iwc) throws Exception {
-		handleKeepStatus(iwc);
+		if (statusKeptOnAction())
+			handleKeepStatus(iwc);
 		super.print(iwc);
 	}
-	
+
 	public Object clone() {
 		InterfaceObject obj = null;
 		try {
@@ -321,24 +444,38 @@ public abstract class InterfaceObject extends PresentationObject {
 		}
 		return obj;
 	}
-	
+
 	public void _main(IWContext iwc) throws Exception {
 		super._main(iwc);
 		if (isEnclosedByForm()) {
 			if (_checkObject) {
-				getScript().addFunction("checkObject", "function checkObject (inputs,value) {\n	for(var i=0;i<inputs.length;i++)\n	\tinputs[i].checked=eval(value);\n	}");
+				if (_checkDisabled)
+					getScript().addFunction("checkAllObjects", "function checkAllObjects (inputs,value) {\n	for(var i=0;i<inputs.length;i++)\n	\tinputs[i].checked=eval(value);\n	}");
+				else
+					getScript().addFunction("checkEnabledObjects", "function checkEnabledObjects (inputs,value) {\n	for(var i=0;i<inputs.length;i++)\n	\tif ( inputs[i].disabled == false )\n	\t\tinputs[i].checked=eval(value);\n	}");
 			}
 			if (_disableObject) {
 				getScript().addFunction("disableObject", "function disableObject (inputs,value) {\n	for(var i=0;i<inputs.length;i++)\n	\tinputs[i].disabled=eval(value);\n	}");
 			}
 		}
+		if (_inFocus && hasParentPage()) {
+			getParentPage().setOnLoad("findObj('" + getName() + "').focus();");
+		}
 	}
 
+	/**
+	 * Returns the <code>Script</code> associated with the parent <code>Form</code>. If the
+	 * interface object has no parent form this method returns null.
+	 * @return Script
+	 */
 	protected Script getScript() {
-		if (getParentForm().getAssociatedFormScript() == null) {
-			getParentForm().setAssociatedFormScript(new Script());
+		if ( getParentForm() != null ) {
+			if (getParentForm().getAssociatedFormScript() == null) {
+				getParentForm().setAssociatedFormScript(new Script());
+			}
+			return getParentForm().getAssociatedFormScript();
 		}
-		return getParentForm().getAssociatedFormScript();
+		return null;
 	}
 
 	/**
@@ -346,34 +483,54 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param width	The width to set.
 	 */
 	public void setWidth(String width) {
-		setWidthStyle(width);	
+		setWidthStyle(width);
 	}
-	
+
 	/**
 	 * Sets the height of the interface object with a style tag.
 	 * @param height	The height to set.
 	 */
 	public void setHeight(String height) {
-		setHeightStyle(height);	
+		setHeightStyle(height);
 	}
-	
+
 	/**
 	 * Sets the tab index for the interface object, that is the index for where in the tab
 	 * row the object is in the parent form.
 	 * @param index	The index to set.
 	 */
 	public void setTabIndex(int index) {
-		setAttribute("tabindex",String.valueOf(index));	
+		setAttribute("tabindex", String.valueOf(index));
 	}
 	
+	/**
+	 * Returns the tab index set for the interface object.  Returns -1 if no value is set.
+	 * @return int
+	 */
+	public int getTabIndex() {
+		if (isAttributeSet("tabindex"))
+			return Integer.parseInt(getAttribute("tabindex"));
+		return -1;
+	}
+
 	/**
 	 * Sets whether the interface object shall be read only or not.
 	 * @param readOnly	The boolean value to set.
 	 */
 	public void setReadOnly(boolean readOnly) {
-		if ( readOnly )
+		if (readOnly)
 			setAttribute("readonly");
 		else
-			removeAttribute("readonly");	
+			removeAttribute("readonly");
+	}
+	
+	/**
+	 * Returns true if interface object is set as read only, false otherwise.
+	 * @return boolean
+	 */
+	public boolean getReadOnly() {
+		if (isAttributeSet("readonly"))
+			return true;
+		return false;	
 	}
 }
