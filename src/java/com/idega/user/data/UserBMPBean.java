@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
