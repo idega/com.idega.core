@@ -31,11 +31,9 @@ import com.idega.core.data.ICLocale;
 
 
 /**
-
+*A wrapper class for presenting plain (formatted) text in idegaWeb Presentaiton Objects.
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
 *@version 1.2
-
 */
 
 public class Text extends PresentationObject{

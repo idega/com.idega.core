@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 
 /**
+ * An abstract data model for implementing Tree structures.
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
 */

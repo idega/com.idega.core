@@ -1,10 +1,12 @@
 //idega 2001 - Tryggvi Larusson
 
-/*
-
-*Copyright 2001 idega.is All Rights Reserved.
-
+/**
+* UNFINISHED -  UNDER DEVELOPMENT
+ *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version 0.5 UNFINISHED -  UNDER DEVELOPMENT
 */
+
+
 
 
 

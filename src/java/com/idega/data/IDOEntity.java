@@ -4,9 +4,9 @@ import javax.ejb.EJBObject;
 import java.rmi.RemoteException;
 
 /**
- * Title:        idegaclasses
- * Description:
- * Copyright:    Copyright (c) 2001
+ * Title:        idega Data Objects
+ * Description:  A class to be used as a base interface for IDO  (BMP EJB Entity) beans
+ * Copyright:    Copyright (c) 2001-2002
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0

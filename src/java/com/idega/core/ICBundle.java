@@ -27,11 +27,9 @@ import java.io.*;
 
 
 /**
-
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
+ * UNFINISHED -  UNDER DEVELOPMENT
+ *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 0.5 UNFINISHED -  UNDER DEVELOPMENT
-
 */
 
 public class ICBundle{
