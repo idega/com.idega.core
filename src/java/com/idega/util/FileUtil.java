@@ -13,6 +13,9 @@ package com.idega.util;
  import java.io.InputStream;
  import java.io.FileOutputStream;
  import java.io.IOException;
+ import java.io.LineNumberReader;
+ import java.io.FileReader;
+ import java.util.Vector;
 
 public class FileUtil {
 
@@ -157,5 +160,25 @@ public class FileUtil {
       return false;
     }
   }
+
+  public static Vector getLinesFromFile(String pathAndFile) throws IOException{
+    Vector strings = new Vector();
+
+    FileReader reader;
+    LineNumberReader lineReader = null;
+
+    reader = new FileReader(pathAndFile);
+    lineReader = new LineNumberReader(reader);
+
+    lineReader.mark(1);
+    while (lineReader.read() != -1) {
+        lineReader.reset();
+        strings.addElement(lineReader.readLine());
+        lineReader.mark(1);
+    }
+
+    return strings;
+  }
+
 
 }

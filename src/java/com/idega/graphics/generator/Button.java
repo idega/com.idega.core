@@ -17,6 +17,7 @@ import java.awt.BasicStroke;
 import java.awt.Font;
 import com.idega.util.FileUtil;
 import com.idega.util.IWColor;
+import com.idega.util.FileUtil;
 
 /**
  * Title:
@@ -62,6 +63,7 @@ public class Button {
   public String buttonOverName;
 
   private String text;
+  private String name = null;
   private Font font;
   private BufferedImage image;
   private Graphics2D g;
@@ -102,27 +104,29 @@ public class Button {
   /**
    * This method allows direct generating of buttons through a command line or cgi script<br/>
    * the allowed parameters in correct order are<br/>
-   * 1:textonbutton 2:fillcolor 3:highlightcolor 4:width 5:height 6:pathtofont
+   * 1:inputfile 2:textonbutton 3:fillcolor 4:highlightcolor 5:width 6:height 7:pathtofont
    */
   public static void main(String[] args) {
-    Button button = new Button();
-    button.text = args[0];
-    button.fillColor = IWColor.getAWTColorFromHex(args[1]);
-    button.highlightColor = IWColor.getAWTColorFromHex(args[2]);
-    button.width = Integer.parseInt(args[3]);
-    button.height = Integer.parseInt(args[4]);
-
     try{
-      File file = new File(args[5]);
+    Vector rows = FileUtil.getLinesFromFile(args[0]);
+    Button button = new Button();
+    button.text = args[1];
+    button.fillColor = IWColor.getAWTColorFromHex(args[2]);
+    button.highlightColor = IWColor.getAWTColorFromHex(args[3]);
+    button.width = Integer.parseInt(args[4]);
+    button.height = Integer.parseInt(args[5]);
+
+
+      File file = new File(args[6]);
       FileInputStream fis = new FileInputStream(file);
       Font font = Font.createFont(Font.TRUETYPE_FONT, fis);
-      button.setFont(font);
+      button.setFont(font.deriveFont(12f));
+      button.generate();
+
     }
     catch(Exception e){
       e.printStackTrace(System.err);
     }
-
-    button.generate();
     System.exit(0);
   }
 
@@ -280,18 +284,28 @@ public class Button {
   public void encode(Image image, String path, String effect){
    try {
       GIFEncoder encode = new GIFEncoder(image);
+      String sName = null;
 
-      StringBuffer name = new StringBuffer();
-      name.append(text);
-      name.append(width);
-      name.append("x");
-      name.append(height);
-      name.append(effect);
-      name.append(".gif");
+      if( name==null ){
+        StringBuffer name = new StringBuffer();
+        name.append(text);
+        name.append(width);
+        name.append("x");
+        name.append(height);
+        name.append(effect);
+        name.append(".gif");
 
-      String sName = name.toString();
+        sName = name.toString();
+      }
+      else {
+        sName = name;
+        if( effect != getStaticButtonUpString() ){
+          sName.concat(effect);
+        }
 
-      path+=name.toString();
+        sName.concat(".gif");
+      }
+      path+=sName;
 
       if( effect == getStaticButtonUpString() ){
         buttonUpName = sName;
