@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.116 2004/12/16 17:04:48 joakim Exp $
+ * $Id: IWMainApplication.java,v 1.117 2004/12/16 17:54:53 eiki Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2004/12/16 17:04:48 $ by $Author: joakim $
+ *  Last modified: $Date: 2004/12/16 17:54:53 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.116 $
+ * @version $Revision: 1.117 $
  */
 public class IWMainApplication //{//implements ServletContext{
 	extends Application{
@@ -1301,6 +1301,19 @@ public class IWMainApplication //{//implements ServletContext{
     public static IWApplicationContext getDefaultIWApplicationContext(){
 		return getDefaultIWMainApplication().getIWApplicationContext();
 	}
+    
+    /**
+     * Removes the application context prefix from a RELATIVE PATH (an URL without the http/servername/port) and returns the URI (url without context)
+     * @param URL
+     */
+    public String getURIFromURL(String URL){
+	    String contextUri = getApplicationContextURI();
+		if(!contextUri.equals("/") ){
+			URL = URL.substring(URL.indexOf(contextUri)+contextUri.length());
+		}
+	
+		return URL;
+    }
 
     /**
      * @param appServer
