@@ -170,7 +170,11 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		allowedPrimaryKeyClass = pkDefinition.getPrimaryKeyClass();
 		pkColumnName = pkFields[0].getSQLFieldName();
 		
-		sqlQueryTable = new Table(_entity);
+		if (_sqlQuery.getBaseTable()!= null) {
+		    sqlQueryTable = _sqlQuery.getBaseTable();
+		} else {
+		    sqlQueryTable = new Table(_entity);
+		}
 		
 		if(_returnProxy!=null){
 			IDOPrimaryKeyDefinition proxyPkDefinition = _returnProxy.getEntityDefinition().getPrimaryKeyDefinition();
@@ -379,6 +383,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		} else {
 			subsetQuery = (SelectQuery)_loadQueryBase.clone();
 			subsetQuery.removeAllCriteria();
+			subsetQuery.clearLeftJoins();
 			if(listOfPrimaryKeys.size()==1){
 				Object pk = listOfPrimaryKeys.get(0);
 				if(pk instanceof String){
