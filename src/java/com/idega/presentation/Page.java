@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.41 2002/03/06 15:27:40 laddi Exp $
+ * $Id: Page.java,v 1.42 2002/03/13 10:30:33 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -624,7 +624,7 @@ public class Page extends PresentationObjectContainer {
 	}else{
 	  pageId = BuilderLogic.getStartPageId(iwc);
 	}
-	NULL_CLONE_PAGE.setOnLoad("document.location='"+BuilderLogic.getInstance().getIBPageURL(pageId)+"'");
+	NULL_CLONE_PAGE.setOnLoad("document.location='"+BuilderLogic.getInstance().getIBPageURL(iwc,pageId)+"'");
       }
       return NULL_CLONE_PAGE;
     }
