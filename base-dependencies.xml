@@ -1,0 +1,47 @@
+<project>
+    <extend>base-project.xml</extend>
+    <!-- all jars are included in the core bundle, these jars are a minimal set of the jars of the core bundle -->
+    <dependencies>
+        <dependency>
+            <groupId>servletapi</groupId>
+            <artifactId>servletapi</artifactId>
+            <version>2.4</version>
+            <type>jar</type>
+            <url>http://java.sun.com/products/servlet/docs.html</url>
+            <properties/>
+        </dependency>
+	    <dependency>
+	      <groupId>myfaces</groupId>
+            <artifactId>myfaces-jsf-api</artifactId>
+            <version>1.0.7</version>
+	      <type>jar</type>
+	      <url>http://java.sun.com/j2ee/javaserverfaces/</url>
+	      <properties />
+	    </dependency>
+		<dependency>
+		    <groupId>jspapi</groupId>
+		    <artifactId>jsp-api</artifactId>
+		    <version>2.0</version>
+		    <type>jar</type>
+		    <url>http://jakarta.apache.org/</url>
+		    <properties/>
+		</dependency>
+        <dependency>
+            <groupId>ejb</groupId>
+            <artifactId>ejb</artifactId>
+            <version>2.0</version>
+            <type>jar</type>
+            <url>http://java.sun.com/products/ejb/docs.html</url>
+            <properties/>
+        </dependency>
+        <dependency>
+            <groupId>jta</groupId>
+            <artifactId>jta</artifactId>
+            <version>spec1_0_1</version>
+            <type>jar</type>
+            <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
+        		<properties/>
+        </dependency>
+    
+    </dependencies>
+</project>

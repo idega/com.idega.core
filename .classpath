@@ -23,7 +23,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/icu4j/jars/icu4j-3.0L1.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/jsf-api-1.0.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-jsf-api-1.0.7.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/oracle_jdbc/jars/oracle_jdbc-9.2.jar">
   </classpathentry>
