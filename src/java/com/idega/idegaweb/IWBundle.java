@@ -50,7 +50,7 @@ public class IWBundle implements java.lang.Comparable {
   private Hashtable localePaths;
   private Hashtable resourceBundles;
   //debug
-  private boolean autoCreate=true;
+  private boolean autoCreate=false;
 
   private Hashtable handlers;
   //private static Hashtable instances;
@@ -80,6 +80,11 @@ public class IWBundle implements java.lang.Comparable {
    }
 
    protected IWBundle(String rootRealPath,String rootVirtualPath,String bundleIdentifier,IWMainApplication superApplication){
+      this(rootRealPath,rootVirtualPath,bundleIdentifier,superApplication,false);
+   }
+
+   protected IWBundle(String rootRealPath,String rootVirtualPath,String bundleIdentifier,IWMainApplication superApplication,boolean autoCreate){
+      this.autoCreate=autoCreate;
       this.superApplication=superApplication;
       this.identifier=bundleIdentifier;
       handlers = new Hashtable();
@@ -87,7 +92,12 @@ public class IWBundle implements java.lang.Comparable {
       resourceBundles = new Hashtable();
       setRootRealPath(rootRealPath);
       setRootVirtualPath(rootVirtualPath);
-      loadBundle();
+      try{
+        loadBundle();
+      }
+      catch(Exception e){
+        throw new com.idega.exception.IWBundleDoesNotExist(bundleIdentifier);
+      }
       this.setProperty(BUNDLE_IDENTIFIER_PROPERTY_KEY,bundleIdentifier);
    }
 

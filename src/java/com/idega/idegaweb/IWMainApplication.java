@@ -39,7 +39,7 @@ public class IWMainApplication{//implements ServletContext{
   public static String IMAGE_SERVLET_URL="/servlet/ImageServlet/";
   public static String FILE_SERVLET_URL="/servlet/FileServlet/";
   public static String MEDIA_SERVLET_URL="/servlet/MediaServlet/";
-  public static String BUILDER_SERVLET_URL="/servlet/IBMainServlet/";
+  private static String BUILDER_SERVLET_URL="/servlet/IBMainServlet/";
   public static String _IFRAME_CONTENT_URL="/servlet/IBIFrameServlet/";
 
   public static String templateParameter="idegaweb_template";
@@ -469,22 +469,38 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   public IWBundle getBundle(String bundleIdentifier){
+    return getBundle(bundleIdentifier,false);
+  }
+
+  public IWBundle getBundle(String bundleIdentifier,boolean autoCreate){
     IWBundle bundle = (IWBundle)loadedBundles.get(bundleIdentifier);
     if(bundle == null){
-      System.out.println("Loading bundle "+bundleIdentifier);
-      bundle = new IWBundle(getBundleRealPath(bundleIdentifier),getBundleVirtualPath(bundleIdentifier),bundleIdentifier,this);
+      sendStartupMessage("Loading bundle "+bundleIdentifier);
+      bundle = new IWBundle(getBundleRealPath(bundleIdentifier),getBundleVirtualPath(bundleIdentifier),bundleIdentifier,this,autoCreate);
       loadedBundles.put(bundleIdentifier,bundle);
     }
     return bundle;
   }
 
+
   /**
    * Regsters and loads a IWBundle with the abstact pathname relative to /idegaweb on the WebServer
    * and the identifier specified by bundleIdentifier
+   * autoCr
    */
   public boolean registerBundle(String bundleIdentifier,String bundlesPath){
+    return registerBundle(bundleIdentifier,bundlesPath,false);
+  }
+
+
+  /**
+   * Regsters and loads a IWBundle with the abstact pathname relative to /idegaweb on the WebServer
+   * and the identifier specified by bundleIdentifier<br><br>
+   * Does automatically create the bundle on disk if autoCreate==true;
+   */
+  public boolean registerBundle(String bundleIdentifier,String bundlesPath,boolean autoCreate){
     getBundlesFile().setProperty(bundleIdentifier,bundlesPath);
-    getBundle(bundleIdentifier);
+    getBundle(bundleIdentifier,autoCreate);
     return true;
   }
 
@@ -710,6 +726,13 @@ public class IWMainApplication{//implements ServletContext{
 
   }
 
+  public void sendStartupMessage(String message){
+    System.out.println("[idegaWebApp] : "+message);
+  }
+
+  public void sendShutdownMessage(String message){
+    System.out.println("[idegaWebApp] : "+message);
+  }
 
   protected String getTranslatedURLWithContext(String url){
     /**
@@ -733,5 +756,7 @@ public class IWMainApplication{//implements ServletContext{
   public String getIFrameContentURL(){
     return getTranslatedURLWithContext(this._IFRAME_CONTENT_URL);
   }
+
+
 
 }
