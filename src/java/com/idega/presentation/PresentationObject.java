@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.53 2002/06/20 19:18:41 gummi Exp $
+ * $Id: PresentationObject.java,v 1.54 2002/07/09 23:51:26 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1115,6 +1115,7 @@ public class PresentationObject extends Object implements Cloneable {
    */
    public void debugParameters(IWContext iwc){
     System.err.println("DEBUG: Parameter debugging : "+this.getClassName());
+    System.err.println("AT  :"+new java.util.Date(System.currentTimeMillis()).toString());
     java.util.Enumeration enum = iwc.getParameterNames();
     String prm;
     while(enum.hasMoreElements()){
