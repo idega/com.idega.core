@@ -28,6 +28,7 @@ private boolean usingControlParameter=false;
 private String parameterName;
 private String parameterValue;
 private String headerText;
+private boolean asImageButton = false;
 
 private static final String emptyString = "";
 
@@ -178,9 +179,15 @@ public void setButtonImage(Image image){
   this.defaultImage=image;
 }
 
+public void setAsImageButton(boolean asImageButton) {
+  this.asImageButton = asImageButton;
+}
+
 
 private void printButton(IWContext iwc) throws IOException{
-
+	if ( asImageButton ) {
+	  defaultImage = iwc.getApplication().getCoreBundle().getImageButton(getValue());
+	}
 
 	if (defaultImage == null){
 
