@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.30 2003/03/19 16:33:13 laddi Exp $
+ * $Id: Table.java,v 1.31 2003/03/20 14:20:43 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -55,6 +55,9 @@ public class Table extends PresentationObjectContainer {
 	protected int lineColspan = 0;
 	protected int[] lineRows = new int[0];
 	protected int[] lineCols = new int[0];
+	
+	protected String _width = "0";
+	protected String _height = "0";
 
 	protected static final String HTML_TR_START = "\n<tr>";
 	protected static final String HTML_TR_END = "\n</tr>";
@@ -203,11 +206,13 @@ public class Table extends PresentationObjectContainer {
 	}
 
 	public void setBackgroundImageURL(String backgroundImageURL) {
-		this.setAttribute("background", backgroundImageURL);
+		//this.setAttribute("background", backgroundImageURL);
+		setStyleAttribute("background: url('"+backgroundImageURL+"');");
 	}
 	
 	public void setBackgroundImageURL(int xpos, int ypos, String backgroundImageURL) {
-		this.setAttribute(xpos, ypos, "background", backgroundImageURL);
+		//this.setAttribute(xpos, ypos, "background", backgroundImageURL);
+		setStyle(xpos, ypos, "background: url('"+backgroundImageURL+"');");
 	}
 	
 	public void setVerticalAlignment(int xpos, int ypos, String alignment) {
@@ -301,8 +306,10 @@ public class Table extends PresentationObjectContainer {
 		}
 	}
 	
-	public void setWidth(String s) {
-		setAttribute("width", s);
+	public void setWidth(String width) {
+		//setAttribute("width", s);
+		_width = width;
+		setWidthStyle(width);
 	}
 	
 	public void setWidth(int width) {
@@ -324,35 +331,61 @@ public class Table extends PresentationObjectContainer {
 	}
 	
 	public String getWidth() {
-		return getAttribute("width");
+		return _width;
 	}
 	
 	public String getHeight() {
-		return getAttribute("height");
+		return _height;
 	}
 	
-	public void setHeight(String s) {
-		setAttribute("height", s);
+	public void setHeight(String height) {
+		//setAttribute("height", s);
+		_height = height;
+		setHeightStyle(height);
 	}
 	
 	public void setHeight(int xpos, int ypos, String height) {
-		setAttribute(xpos, ypos, "height", height);
+		//setAttribute(xpos, ypos, "height", height);
 		/*
 		Image spacer = (Image) transparentcell.clone();
 		spacer.setHeight(height);
 		add(spacer,xpos,ypos);*/
+		getCellAt(xpos, ypos).setHeightStyle(height);
+	}
+	
+	protected PresentationObject getCellAt(int xpos, int ypos) {
+		if (isResizable) {
+			if (xpos > this.getColumns()) {
+				setColumns(xpos);
+			}
+			if (ypos > this.getRows()) {
+				setRows(ypos);
+			}
+		}
+		if (this.theObjects[xpos - 1][ypos - 1] == null) {
+			this.theObjects[xpos - 1][ypos - 1] = new PresentationObjectContainer();
+			// super.add(theObjects);
+		}
+		return this.theObjects[xpos - 1][ypos - 1];
+	}
+	
+	public void setWidth(int xpos, int ypos, int width) {
+		//setAttribute(xpos, ypos, "width", width);
+		setWidth(xpos, ypos, String.valueOf(width));
 	}
 	
 	public void setWidth(int xpos, int ypos, String width) {
-		setAttribute(xpos, ypos, "width", width);
+		//setAttribute(xpos, ypos, "width", width);
+		getCellAt(xpos, ypos).setWidthStyle(width);
 	}
 	
-	public void setColor(String s) {
-		setAttribute("bgcolor", s);
+	public void setColor(String color) {
+		//setAttribute("bgcolor", s);
+		setStyleAttribute("background-color: "+color+";");
 	}
 	
-	public void setColor(IWColor s) {
-		setAttribute("bgcolor", s.getHexColorString());
+	public void setColor(IWColor color) {
+		setColor(color.getHexColorString());
 	}
 	
 	public void setBorder(String border) {
@@ -430,32 +463,43 @@ public class Table extends PresentationObjectContainer {
 		setAttribute("cellpadding", s);
 	}
 	
-	public void setColor(int xpos, int ypos, String s) {
-		setAttribute(xpos, ypos, COLOR_ATTRIBUTE, s);
+	public void setColor(int xpos, int ypos, String color) {
+		//setAttribute(xpos, ypos, COLOR_ATTRIBUTE, s);
+		setStyle(xpos, ypos, "background-color: "+color+";");
 	}
 	
-	public void setColor(int xpos, int ypos, IWColor s) {
-		setAttribute(xpos, ypos, COLOR_ATTRIBUTE, s.getHexColorString());
+	public void setColor(int xpos, int ypos, IWColor color) {
+		setColor(xpos, ypos, color.getHexColorString());
 	}
 	
-	public void setRowColor(int ypos, String s) {
-		setRowAttribute(ypos, COLOR_ATTRIBUTE, s);
+	public void setRowColor(int ypos, String color) {
+		//setRowAttribute(ypos, COLOR_ATTRIBUTE, s);
+		setRowStyle(ypos, "background-color: "+color+";");
 	}
 	
-	public void setColumnColor(int xpos, String s) {
-		setColumnAttribute(xpos, COLOR_ATTRIBUTE, s);
+	public void setColumnColor(int xpos, String color) {
+		//setColumnAttribute(xpos, COLOR_ATTRIBUTE, s);
+		setColumnStyle(xpos, "background-color: "+color+";");
 	}
 	
-	public void setWidth(int xpos, String s) {
-		setColumnAttribute(xpos, "width", s);
+	public void setWidth(int xpos, String width) {
+		//setColumnAttribute(xpos, "width", s);
+		setColumnWidth(xpos, width);
 	}
 	
-	public void setHeight(int ypos, String s) {
-		setRowAttribute(ypos, "height", s);
+	public void setWidth(int xpos, int width) {
+		//setColumnAttribute(xpos, "width", s);
+		setWidth(xpos, String.valueOf(width));
+	}
+	
+	public void setHeight(int ypos, String height) {
+		//setRowAttribute(ypos, "height", s);
+		setRowHeight(ypos, height);
 	}
 	
 	public void setHeight(int ypos, int height) {
-		setRowAttribute(ypos, "height", String.valueOf(height));
+		//setRowAttribute(ypos, "height", String.valueOf(height));
+		setHeight(ypos, String.valueOf(height));
 	}
 	
 	public void setAlignment(String align) {
@@ -480,6 +524,20 @@ public class Table extends PresentationObjectContainer {
 		}
 	}
 	
+	public void setColumnWidth(int xpos, String width) {
+		for (int temp = 1; temp <= rows;) {
+			setWidth(xpos, temp, width);
+			temp++;
+		}
+	}
+	
+	public void setColumnHeight(int xpos, String height) {
+		for (int temp = 1; temp <= rows;) {
+			setHeight(xpos, temp, height);
+			temp++;
+		}
+	}
+	
 	public void setRowAttribute(int ypos, String attributeName, String attributeValue) {
 		for (int temp = 1; temp <= cols;) {
 			setAttribute(temp, ypos, attributeName, attributeValue);
@@ -490,6 +548,20 @@ public class Table extends PresentationObjectContainer {
 	public void setRowStyle(int ypos, String styleValue) {
 		for (int temp = 1; temp <= cols;) {
 			setStyle(temp, ypos, styleValue);
+			temp++;
+		}
+	}
+	
+	public void setRowWidth(int ypos, String width) {
+		for (int temp = 1; temp <= cols;) {
+			setWidth(temp, ypos, width);
+			temp++;
+		}
+	}
+	
+	public void setRowHeight(int ypos, String height) {
+		for (int temp = 1; temp <= cols;) {
+			setHeight(temp, ypos, height);
 			temp++;
 		}
 	}
@@ -544,6 +616,10 @@ public class Table extends PresentationObjectContainer {
 	
 	public void setNoWrap(int xpos, int ypos) {
 		setStyle(xpos, ypos, "white-space:nowrap;");
+	}
+	
+	public void setNoWrap() {
+		setStyleAttribute("white-space:nowrap;");
 	}
 	
 	/*Tells if a cell in a table is merged with another*/
