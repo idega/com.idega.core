@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.7 2002/07/22 10:10:41 palli Exp $
+ * $Id: DropdownMenu.java,v 1.8 2002/08/06 11:27:28 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -284,7 +284,7 @@ public class DropdownMenu extends InterfaceObject {
 			Iterator it = elements.iterator();
 			while (it.hasNext()) {
 				String item = (String) it.next();
-				StringTokenizer tok = new StringTokenizer(item, ",");
+				StringTokenizer tok = new StringTokenizer(item, "~^");
 				String name = null;
 				String value = null;
 				String selected = null;
