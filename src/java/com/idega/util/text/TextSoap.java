@@ -656,8 +656,17 @@ public class TextSoap {
 	 *@exception  Exception  Description of the Exception
 	 */
 	public static String removeWhiteSpace(String string) throws Exception {
-		string = findAndReplace(string, " ", "");
-		return string;
+	    if (string == null) return "";
+	    
+	    StringBuffer stringBuff = new StringBuffer(string);
+	    StringBuffer resultBuff = new StringBuffer();
+		for (int i = 0; i < stringBuff.length(); i++) {
+		    char c = stringBuff.charAt(i);
+		    if (!Character.isWhitespace(c) && !Character.isSpaceChar(c) ) {
+		        resultBuff.append(c);
+		    }
+		}
+		return resultBuff.toString();
 	}
 
 	/**
