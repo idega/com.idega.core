@@ -98,7 +98,11 @@ public void setURL(String url){
 
 }
 
+public void setLoop(boolean loop){
 
+  setParamAndAttribute("loop",String.valueOf(loop));
+
+}
 
 public void setTransparent(){
 
