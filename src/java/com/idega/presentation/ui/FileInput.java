@@ -13,18 +13,14 @@ import com.idega.presentation.IWContext;
 */
 public class FileInput extends InterfaceObject {
 
+	public static final String FILE_INPUT_DEFAULT_PARAMETER_NAME = "fileupload";
+	
 	public FileInput() {
-		this("untitled");
+		this(FILE_INPUT_DEFAULT_PARAMETER_NAME);
 	}
 
 	public FileInput(String name) {
-		this(name, "unspecified");
-	}
-
-	public FileInput(String name, String value) {
-		super();
-		setName(name);
-		setContent(value);
+		this.setName(name);
 	}
 
 	public void print(IWContext iwc) throws IOException {
