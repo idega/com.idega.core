@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.36 2002/03/09 00:52:00 laddi Exp $
+ * $Id: PresentationObject.java,v 1.37 2002/03/09 12:38:30 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -223,6 +223,10 @@ public class PresentationObject extends Object implements Cloneable {
 
   public void setAttribute(String attributeName){
     setAttribute(attributeName,slash);
+  }
+
+  public void setStyleAttribute(String style){
+    setAttribute("style",style);
   }
 
   /** Copies all of the attribute mappings from the specified map to attributes.
