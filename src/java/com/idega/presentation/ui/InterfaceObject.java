@@ -680,6 +680,10 @@ public abstract class InterfaceObject extends PresentationObject {
 		setOnSubmitFunction(functionName, function, value, null);
 	}
 	
+	public void setMaximumChecked(int maximumChecked, String exceedsMaximumErrorMessage) {
+		setOnSubmitFunction("warnIfExceedsMaximum", "function warnIfExceedsMaximum (inputs,warnMsg) {\n\tvar maximum = 0;\n\n\tfor(var i=0;i<inputs.length;i++) {\n	\t\tif(inputs[i].checked == true)\n\t\tmaximum++;\n\t}\n\n\tif (maximum <= "+maximumChecked+")\n\t\treturn true;\n\telse {\n\t\talert(warnMsg);\n\t\treturn false;\n\t}\n}", exceedsMaximumErrorMessage);
+	}
+	
 	/**
 	 * Sets a function to perform on submit of the parent form.  If the function returns
 	 * false the form will not submit.
@@ -689,7 +693,7 @@ public abstract class InterfaceObject extends PresentationObject {
 	 * @param value2				A seconday value to use in the function.
 	 */
 	protected void setOnSubmitFunction(String functionName, String function, String value1, String value2) {
-		if (getParentForm() != null) {
+		if (getForm() != null) {
 			getParentForm().setOnSubmit("return checkSubmit(this)");
 			setCheckSubmit();
 			if (value2 != null)
