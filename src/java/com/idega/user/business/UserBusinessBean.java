@@ -1566,7 +1566,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("checking group " + group.getName() + " for top group ancestor for user " + user.getName());
 		if(topGroupNodes == null || topGroupNodes.isEmpty()) {
 			return false;
 		} else {
