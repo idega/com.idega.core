@@ -264,7 +264,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 				Image[] newCollectedIcons = null;
 				if (isRoot && !_showSuperRootNode) {
 					if (showRootNodeTreeIcons()) {
-						if (i == 0 && !iter.hasNext()) {
+						if (i == 0 && !iter.hasNext()) {  //If there is one and only one rootnode
 							if (hasChild) {
 								if (isOpen) {
 									PresentationObject p = null;
@@ -294,8 +294,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 								treeColumns.add(icons[ICONINDEX_ROOT_LINE], 1, 1);
 								//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 							}
-						} else {
-							if (i == 0) {
+						} else {  // if there are more than one rootnotes
+							if (i == 0) {  // the first rootnode
 								if (hasChild) {
 									if (isOpen) {
 										PresentationObject p = null;
@@ -325,78 +325,78 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									treeColumns.add(icons[ICONINDEX_F_LINE], 1, 1);
 									//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 								}
-							} else
-								if (hasChild) {
-									if (!item.isLeaf()) {
-										if (isOpen) {
-											PresentationObject p = null;
-											if (_showTreeIcons) {
-												p = getOpenCloseLinkClone(icons[ICONINDEX_L_MINUS]);
-												setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-											} else {
-												p = icons[ICONINDEX_L_MINUS];
-											}
-											if (_nowrap)
-												treeColumns.setNoWrap(1, 1);
-											treeColumns.add(p, 1, 1);
-											newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_TRANCPARENT]);
+							} else if(!iter.hasNext()){ // the last rootnode
+								if (hasChild) {  //if this node has a child
+									if (isOpen) { // if this node is open
+										PresentationObject p = null;
+										if (_showTreeIcons) {
+											p = getOpenCloseLinkClone(icons[ICONINDEX_L_MINUS]);
+											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 										} else {
-											PresentationObject p = null;
-											if (_showTreeIcons) {
-												p = getOpenCloseLinkClone(icons[ICONINDEX_L_PLUS]);
-												setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-											} else {
-												p = icons[ICONINDEX_L_PLUS];
-											}
-											if (_nowrap)
-												treeColumns.setNoWrap(1, 1);
-											treeColumns.add(p, 1, 1);
+											p = icons[ICONINDEX_L_MINUS];
 										}
-									} else {
 										if (_nowrap)
 											treeColumns.setNoWrap(1, 1);
-										treeColumns.add(icons[ICONINDEX_L_LINE], 1, 1);
-										//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-									}
-								} else {
-									if (hasChild) {
-										if (isOpen) {
-											PresentationObject p = null;
-											if (_showTreeIcons) {
-												p = getOpenCloseLinkClone(icons[ICONINDEX_M_MINUS]);
-											} else {
-												p = icons[ICONINDEX_M_MINUS];
-											}
+										treeColumns.add(p, 1, 1);
+										newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_TRANCPARENT]);
+									} else { // if this node is closed
+										PresentationObject p = null;
+										if (_showTreeIcons) {
+											p = getOpenCloseLinkClone(icons[ICONINDEX_L_PLUS]);
 											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-											if (_nowrap)
-												treeColumns.setNoWrap(1, 1);
-											treeColumns.add(p, 1, 1);
-											newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_LINE]);
 										} else {
-											PresentationObject p = null;
-											if (_showTreeIcons) {
-												p = getOpenCloseLinkClone(icons[ICONINDEX_M_PLUS]);
-											} else {
-												p = icons[ICONINDEX_M_PLUS];
-											}
-											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-											if (_nowrap)
-												treeColumns.setNoWrap(1, 1);
-											treeColumns.add(p, 1, 1);
+											p = icons[ICONINDEX_L_PLUS];
 										}
-									} else {
 										if (_nowrap)
 											treeColumns.setNoWrap(1, 1);
-										treeColumns.add(icons[ICONINDEX_M_LINE], 1, 1);
-										//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+										treeColumns.add(p, 1, 1);
 									}
+								} else {  //if this node does not have any children
+									if (_nowrap)
+										treeColumns.setNoWrap(1, 1);
+									treeColumns.add(icons[ICONINDEX_L_LINE], 1, 1);
+									//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 								}
+							
+							}else { //all but first and last rootnodes
+								if (hasChild) { // if this node has a child
+									if (isOpen) { // if this node is open
+										PresentationObject p = null;
+										if (_showTreeIcons) {
+											p = getOpenCloseLinkClone(icons[ICONINDEX_M_MINUS]);
+											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
+										} else {
+											p = icons[ICONINDEX_M_MINUS];
+										}
+										if (_nowrap)
+											treeColumns.setNoWrap(1, 1);
+										treeColumns.add(p, 1, 1);
+										newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_LINE]);
+									} else { // if this node is closed
+										PresentationObject p = null;
+										if (_showTreeIcons) {
+											p = getOpenCloseLinkClone(icons[ICONINDEX_M_PLUS]);
+											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
+										} else {
+											p = icons[ICONINDEX_M_PLUS];
+										}
+										if (_nowrap)
+											treeColumns.setNoWrap(1, 1);
+										treeColumns.add(p, 1, 1);
+									}
+								} else { // if this node does not have any children
+									if (_nowrap)
+										treeColumns.setNoWrap(1, 1);
+									treeColumns.add(icons[ICONINDEX_M_LINE], 1, 1);
+									//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+								}
+							}
 						}
 					}
-				} else {
-					if (!iter.hasNext()) {
-						if (hasChild) {
-							if (isOpen) {
+				} else {  // if rootnode tree icons are not shown
+					if (!iter.hasNext()) {  //if this is the last node
+						if (hasChild) {  //if this node has a child
+							if (isOpen) { // if this node is open
 								PresentationObject p = null;
 								if (_showTreeIcons) {
 									p = getOpenCloseLinkClone(icons[ICONINDEX_L_MINUS]);
@@ -408,7 +408,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									treeColumns.setNoWrap(1, 1);
 								treeColumns.add(p, 1, 1);
 								newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_TRANCPARENT]);
-							} else {
+							} else { // if this node is closed
 								PresentationObject p = null;
 								if (_showTreeIcons) {
 									p = getOpenCloseLinkClone(icons[ICONINDEX_L_PLUS]);
@@ -420,15 +420,15 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									treeColumns.setNoWrap(1, 1);
 								treeColumns.add(p, 1, 1);
 							}
-						} else {
+						} else {  //if this node does not have any children
 							if (_nowrap)
 								treeColumns.setNoWrap(1, 1);
 							treeColumns.add(icons[ICONINDEX_L_LINE], 1, 1);
 							//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 						}
-					} else {
-						if (hasChild) {
-							if (isOpen) {
+					} else {  // if this is not the last node
+						if (hasChild) { // if this node has a child
+							if (isOpen) { // if this node is open
 								PresentationObject p = null;
 								if (_showTreeIcons) {
 									p = getOpenCloseLinkClone(icons[ICONINDEX_M_MINUS]);
@@ -440,7 +440,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									treeColumns.setNoWrap(1, 1);
 								treeColumns.add(p, 1, 1);
 								newCollectedIcons = getNewCollectedIconArray(collectedIcons, icons[ICONINDEX_LINE]);
-							} else {
+							} else { // if this node is closed
 								PresentationObject p = null;
 								if (_showTreeIcons) {
 									p = getOpenCloseLinkClone(icons[ICONINDEX_M_PLUS]);
@@ -452,7 +452,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									treeColumns.setNoWrap(1, 1);
 								treeColumns.add(p, 1, 1);
 							}
-						} else {
+						} else { // if this node does not have any children
 							if (_nowrap)
 								treeColumns.setNoWrap(1, 1);
 							treeColumns.add(icons[ICONINDEX_M_LINE], 1, 1);
