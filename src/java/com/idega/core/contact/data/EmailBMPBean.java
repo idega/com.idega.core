@@ -71,7 +71,7 @@ public class EmailBMPBean
 	public Collection ejbFindEmailsForUser(int iUserId) throws FinderException
 	{
 		StringBuffer sql = new StringBuffer("select ie.* ");
-		sql.append(" from ").append(getTableName()).append("ie,").append(UserBMPBean.SQL_RELATION_EMAIL).append(" iue ");
+		sql.append(" from ").append(getTableName()).append(" ie,").append(UserBMPBean.SQL_RELATION_EMAIL).append(" iue ");
 		sql.append(" where ie.").append(getIDColumnName()).append(" =iue.").append(getIDColumnName());
 		sql.append(" and iue.").append(UserBMPBean.SQL_TABLE_NAME).append("_ID = ");
 		sql.append(iUserId);
