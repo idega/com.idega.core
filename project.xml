@@ -4,11 +4,6 @@
     <artifactId>com.idega.core</artifactId>
     <currentVersion>2.0</currentVersion>
     <shortDescription>idegaweb core is the core package of the idegaweb framework</shortDescription>
-    <issueTrackingUrl>http://issues.idega.is</issueTrackingUrl>
-    <repository>
-        <connection>scm:cvs:ext:idegaweb@einstein.idega.is:/idega/cvs:bundles/com.idega.core.bundle</connection>
-        <developerConnection>scm:cvs:ext:idegaweb@einstein.idega.is:/idega/cvs:bundles/com.idega.core.bundle</developerConnection>
-    </repository>
     <versions/>
     <branches/>
     <mailingLists>
