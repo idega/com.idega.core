@@ -178,16 +178,30 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   }
 
   /**
-   * Finds all active relationships specified bidirectionally (in both directions) with groupID and relatedGroupID as specified
+   * Finds all active relationships specified only in one direction with groupID and relatedGroupID and relationshipType as specified
+   */
+  public Collection ejbFindGroupsRelationshipsContaining(int groupID,int relatedGroupID,String relationshipType)throws FinderException,RemoteException{
+    return ejbFindGroupsRelationshipsContainingUniDirectional(groupID,relatedGroupID,relationshipType);
+  }
+
+  /**
+   * Finds all active relationships specified only in one direction with groupID and relatedGroupID as specified
    */
   public Collection ejbFindGroupsRelationshipsContaining(int groupID,int relatedGroupID)throws FinderException,RemoteException{
+    return ejbFindGroupsRelationshipsContainingUniDirectional(groupID,relatedGroupID);
+  }
+
+  /**
+   * Finds all active relationships specified bidirectionally (in both directions) with groupID and relatedGroupID as specified
+   */
+  public Collection ejbFindGroupsRelationshipsContainingBiDirectional(int groupID,int relatedGroupID)throws FinderException,RemoteException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where ("+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+") or ("+this.RELATED_GROUP_ID_COLUMN+"="+groupID+" and "+this.GROUP_ID_COLUMN+"="+relatedGroupID+") and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
 
   /**
    * Finds all active relationships specified bidirectionally (in both directions) with groupID and relatedGroupID and relationshipType as specified
    */
-  public Collection ejbFindGroupsRelationshipsContaining(int groupID,int relatedGroupID,String relationshipType)throws FinderException,RemoteException{
+  public Collection ejbFindGroupsRelationshipsContainingBiDirectional(int groupID,int relatedGroupID,String relationshipType)throws FinderException,RemoteException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where ("+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+") or ("+this.RELATED_GROUP_ID_COLUMN+"="+groupID+" and "+this.GROUP_ID_COLUMN+"="+relatedGroupID+") and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationshipType+"' and "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"'");
   }
 
