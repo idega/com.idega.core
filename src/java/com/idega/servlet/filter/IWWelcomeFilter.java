@@ -59,7 +59,7 @@ public class IWWelcomeFilter implements Filter {
 		}
 		
 		if(requestUri.equals(appUri)){
-			request.getRequestDispatcher("/login").forward(request,response);
+			request.getRequestDispatcher("/workspace").forward(request,response);
 		}
 		else{
 			chain.doFilter(srequest,sresponse);
