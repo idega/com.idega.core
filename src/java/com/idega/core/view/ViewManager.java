@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.8 2005/03/03 06:24:48 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.9 2005/03/03 09:10:35 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -16,11 +16,10 @@ import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
 import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.presentation.IWContext;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
-import com.idega.user.data.User;
 import com.idega.util.FacesUtil;
 
 
@@ -28,10 +27,10 @@ import com.idega.util.FacesUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2005/03/03 06:24:48 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/03/03 09:10:35 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class ViewManager implements Singleton {
 	
@@ -229,7 +228,7 @@ public class ViewManager implements Singleton {
 	 * @param user
 	 * @return
 	 */
-	public boolean hasUserAcess(ViewNode node,IWContext userContext){
+	public boolean hasUserAcess(ViewNode node,IWUserContext userContext){
 		Collection roles = node.getAuthorizedRoles();
 		if(roles!=null){
 			if(roles.size()>0){
