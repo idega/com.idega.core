@@ -24,6 +24,7 @@ public class IDOQuery {
 	private static final String SELECT_COUNT_FROM = "SELECT COUNT(*) FROM ";
 	private static final String SELECT = "SELECT ";
 	private static final String FROM = " FROM ";
+	private static final String SUM = "SUM";
 	private static final String STAR = " * ";
 	private static final String ORDER_BY = " ORDER BY ";
 	private static final String WHERE = " WHERE ";
@@ -493,6 +494,18 @@ public class IDOQuery {
 
 	public IDOQuery appendSelect() {
 		return this.append(SELECT);
+	}
+
+	public IDOQuery appendSum(String columnName) {
+		return this.append(SUM).appendLeftParenthesis().append(columnName).appendRightParenthesis();
+	}
+
+	public IDOQuery appendSelectSumFrom(String columnName, String entityName) {
+		return this.appendSelect().appendSum(columnName).appendFrom().append(entityName);
+	}
+	
+	public IDOQuery appendSelectSumFrom(String columnName, IDOEntity entity) {
+		return this.appendSelectSumFrom(columnName, entity.getEntityDefinition().getSQLTableName());
 	}
 
 	public IDOQuery appendFrom() {
