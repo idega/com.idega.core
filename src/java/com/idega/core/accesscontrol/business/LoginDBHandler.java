@@ -3,6 +3,8 @@ package com.idega.core.accesscontrol.business;
 import com.idega.util.idegaTimestamp;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginInfo;
+import com.idega.core.accesscontrol.data.LoginRecord;
+import com.idega.core.accesscontrol.data.LogoutRecord;
 import com.idega.data.EntityFinder;
 import com.idega.core.user.data.User;
 import java.util.List;
@@ -333,7 +335,51 @@ public class LoginDBHandler {
     }
   }
 
+  // Add-On by Aron 18.01.2001 login/logout tracking
+  /**
+   *  Records a login record, returns true if succeeds
+   */
+  public static int recordLogin(int iLoginId,String IPAddress){
+    try {
+      LoginRecord inRec =new LoginRecord();
+      inRec.setIPAdress(IPAddress);
+      inRec.setLoginId(iLoginId);
+      inRec.setLogInStamp(idegaTimestamp.getTimestampRightNow());
+      inRec.insert();
+      return inRec.getID();
+    }
+    catch (SQLException ex) {
 
+    }
+    return -1;
 
+  }
 
+  /**
+   *  Records a logout record, returns true if succeeds
+   */
+  public static boolean recordLogout(int iLoginRecordId){
+
+    try {
+      StringBuffer sql = new StringBuffer("update ");
+      sql.append(LoginRecord.getEntityTableName());
+      sql.append(" set out_stamp = '");
+      sql.append(idegaTimestamp.getTimestampRightNow().toString());
+      sql.append("'");
+      sql.append(" where ");
+      sql.append(new LoginRecord().getIDColumnName());
+      sql.append( " = ");
+      sql.append(iLoginRecordId);
+      System.err.println(sql.toString());
+
+      com.idega.data.SimpleQuerier.execute(sql.toString());
+      return true;
+    }
+    catch (Exception ex) {
+      ex.printStackTrace();
+    }
+
+    return false;
+
+  }
 }

@@ -19,6 +19,7 @@ public class LoggedOnInfo {
   private HttpSession _session = null;
   private idegaTimestamp _timeOfLogon = null;
   private String _login = null;
+  private int _loginRecordId = -1;
 
   public LoggedOnInfo() {
 
@@ -40,6 +41,10 @@ public class LoggedOnInfo {
     _login = login;
   }
 
+  public void setLoginRecordId(int loginRecordId){
+    _loginRecordId = loginRecordId;
+  }
+
   //getters
   public User getUser(){
     return _user;
@@ -55,6 +60,10 @@ public class LoggedOnInfo {
 
   public String getLogin(){
     return _login;
+  }
+
+  public int getLoginRecordId(){
+    return _loginRecordId;
   }
 
 
