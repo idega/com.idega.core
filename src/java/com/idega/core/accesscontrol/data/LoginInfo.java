@@ -17,7 +17,7 @@ import java.sql.Date;
 
 public class LoginInfo extends GenericEntity {
 
-  public static String className = "com.idega.core.accesscontrol.data.LoginInfo";
+  public static String className = LoginInfo.class.getName();
 
   public LoginInfo() {
     super();
