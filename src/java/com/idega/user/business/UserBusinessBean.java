@@ -1695,9 +1695,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
   public Map moveUsers(Collection groupIds, String parentGroupType, User currentUser) {
     
+    // key groups id, value group
     Map groupIdGroup = new HashMap();
+    // key group id, value users
+    Map groupIdUsers = new HashMap();
+    // key group id, value id of users
+    Map groupIdUsersId = new HashMap();
+    
+    // key user id, value user's parent group 
     Map userParentGroup = new HashMap();
+    // key user id, value user's target group
     Map userTargetGroup = new HashMap();
+
 
     // get all groups 
     try {
@@ -1711,15 +1720,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
         // check if the group id has the specified type 
         // if the type equals to the specified type iterate over the children
         if (parentGroupType != null && (parentGroupType.equals(group.getGroupType())))  {
-          Iterator childIterator = groupBiz.getChildGroups(group).iterator();
+          //Iterator childIterator = groupBiz.getChildGroups(group).iterator();
+          Iterator childIterator = group.getChildren();
           while (childIterator.hasNext()) {
             Group childGroup = (Group) childIterator.next();
             String childGroupId = childGroup.getPrimaryKey().toString();
-            groupIdGroup.put(childGroupId, childGroup);
+            fillMaps(childGroup, childGroupId, groupIdGroup, groupIdUsers, groupIdUsersId);
           }
         }
         else {
-          groupIdGroup.put(groupId, group);
+          fillMaps(group, groupId, groupIdGroup, groupIdUsers, groupIdUsersId);
         }
       }
     }
@@ -1734,7 +1744,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
       Map.Entry entry = (Map.Entry) groupIdsIterator.next();
       String parentGroupId = (String) entry.getKey();
       Group parentGroup = (Group) entry.getValue(); 
-      Collection userInGroup = getUsersInGroup(parentGroup);
+      Collection userInGroup = (Collection) groupIdUsers.get(parentGroupId);
       Iterator userIterator = userInGroup.iterator();
       // iterate over users within a group
       while (userIterator.hasNext())  {
@@ -1747,13 +1757,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
           Map.Entry targetEntry = (Map.Entry) targetGroupIds.next();
           String targetGroupId = (String) targetEntry.getKey();
           Group targetGroup = (Group) targetEntry.getValue();
-          boolean result;
+          boolean result = true;
           // skip the own group
-          if (targetGroupId.equals(parentGroupId)) {
-            result = (isUserSuitedForGroup(user, targetGroup) == null);
+          if (! targetGroupId.equals(parentGroupId)) {
+            // check if the user is already a member of the target group
+            Collection userIdsOfTarget = (Collection) groupIdUsersId.get(targetGroupId);
+            result = ! userIdsOfTarget.contains(user.getPrimaryKey().toString());
           }
-          else {
-            result = (isUserAssignableToGroup(user, parentGroup, targetGroup) == null);
+          // check if the user is suited for the target group when the result is still true
+          if (result) {
+            result = (isUserSuitedForGroup(user, targetGroup) == null);
           }
           if (result) {
             if (! possibleTargetAlreadySet) {
@@ -1803,10 +1816,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
     return result;
   }
 
-
-
-
-
+  private void fillMaps(Group group, String groupId,  Map groupIdGroup, Map groupIdUsers, Map groupIdUsersId) {
+    groupIdGroup.put(groupId, group);
+    Collection usersInGroup = getUsersInGroup(group);
+    groupIdUsers.put(groupId, usersInGroup);
+    Collection userIds = new ArrayList();
+    Iterator iterator = usersInGroup.iterator();
+    while (iterator.hasNext())  {
+      User user = (User) iterator.next();
+      userIds.add(user.getPrimaryKey().toString());
+    }
+    groupIdUsersId.put(groupId, userIds);
+  }
    
   /**
    * @param currentUser user that is responsible for the action
