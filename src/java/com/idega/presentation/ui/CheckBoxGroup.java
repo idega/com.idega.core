@@ -3,8 +3,10 @@
  */
 package com.idega.presentation.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.idega.presentation.IWContext;
@@ -22,6 +24,7 @@ public class CheckBoxGroup extends InterfaceObjectContainer
 	private String parameterName;
 	private Table boxTable;
 	private Map keyValueMapping;
+	private List valueOrderingList;
 	
 	/**
 	 * 
@@ -71,6 +74,13 @@ public class CheckBoxGroup extends InterfaceObjectContainer
 		return keyValueMapping;
 	}
 	
+	protected List getOrdering(){
+		if(valueOrderingList==null){
+			valueOrderingList=new ArrayList();
+		}
+		return valueOrderingList;
+	}
+	
 
 	/**
 	 * Adds an option (a checkbox) to this group with the parametervalue checkValue and descriptiontext (after the checkbox)
@@ -89,13 +99,14 @@ public class CheckBoxGroup extends InterfaceObjectContainer
 	 */
 	public void addOption(String checkValue,String descriptionText,boolean isChecked){
 		getMapping().put(checkValue,new CheckHolder(checkValue,descriptionText,isChecked));
+		getOrdering().add(checkValue);
 	}
 
 
 	public void main(IWContext iwc){
 		Table t = getBoxTable();
 		add(t);
-		Iterator keyIter = getMapping().keySet().iterator();
+		Iterator keyIter = getOrdering().iterator();
 		int ypos = 1;
 		while (keyIter.hasNext())
 		{
