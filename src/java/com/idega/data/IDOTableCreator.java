@@ -300,19 +300,29 @@ public class IDOTableCreator{
 
 
   protected String getCreationStatement(GenericEntity entity){
-		String returnString = "CREATE TABLE "+entity.getTableName()+"(";
+  	IDOEntityField[] pkFields = entity.getEntityDefinition().getPrimaryKeyDefinition().getFields();
+  	StringBuffer returnString = new StringBuffer("CREATE TABLE ").append(entity.getTableName()).append("(");
 		String[] names = entity.getColumnNames();
 		for (int i = 0; i < names.length; i++){
                     String columnName = names[i];
-                    returnString = 	returnString + getColumnSQLDefinition(columnName,entity);
+                    returnString.append(getColumnSQLDefinition(columnName,entity));
 
                     if (i!=names.length-1){
-                      returnString = returnString+",";
+                      returnString.append(",");
+                    } else if (pkFields != null && pkFields.length > 0) {
+	                		returnString.append(", PRIMARY KEY (");
+	                		for (int j = 0; j < pkFields.length; j++) {
+	                			if (j != 0) {
+	                				returnString.append(",");
+	                			}
+	                			returnString.append(pkFields[j].getSQLFieldName());
+	                		}
+	                		returnString.append(")");
                     }
 		}
-                returnString = returnString +")";
+                returnString.append(")");
                 //System.out.println(returnString);
-		return returnString;
+		return returnString.toString();
 }
 
 
@@ -682,9 +692,11 @@ public class IDOTableCreator{
 
   protected String getColumnSQLDefinition(String columnName,GenericEntity entity){
     boolean isPrimaryKey = entity.isPrimaryKey(columnName);
+    boolean isCompositePK = entity.getEntityDefinition().getPrimaryKeyDefinition().isComposite();
 
     String type;
-    if(isPrimaryKey && entity.getStorageClassType(columnName)==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
+    
+    if(isPrimaryKey && !isCompositePK &&entity.getStorageClassType(columnName)==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
       type = _dsi.getIDColumnType();
     }
     else{
@@ -696,9 +708,10 @@ public class IDOTableCreator{
     if (!entity.getIfNullable(columnName)){
       returnString = 	returnString + " NOT NULL";
     }
-    if (isPrimaryKey){
+    /* DOES NOT WORK WITH COMPOSITE PKS, MOVED TO getCreationStatement(entity)
+    if (isPrimaryKey) {
       returnString = 	returnString + " PRIMARY KEY";
-    }
+    }*/
     if (entity.getIfUnique(columnName)){
       returnString = 	returnString + " UNIQUE";
     }
