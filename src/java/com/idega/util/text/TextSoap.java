@@ -56,7 +56,8 @@ public class TextSoap{
 
 		}
 		catch (Exception e){
-			outVector.addElement("TextSoapError" + counter);
+                  outVector.addElement("TextSoapError" + counter);
+                  e.printStackTrace(System.err);
 		}
 
 		outVector.trimToSize();
@@ -534,7 +535,6 @@ public static String decimalFormat(String stringToDecimalFormat, int numberOfDec
   for (int i = 1; i < numberOfDecimals; i++) {
     decimalString.append("0");
   }
-  System.out.print(decimalString.toString());
   DecimalFormat decimalFormat = new DecimalFormat(decimalString.toString());
 
   symbols.setDecimalSeparator('.');
