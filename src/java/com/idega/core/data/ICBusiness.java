@@ -25,7 +25,7 @@ public class ICBusiness extends TreeableEntity{
   public static String getColumnName(){return "NAME";}
   public static String getColumnDescription(){return "DESCRIPTION";}
   public static String getColumnType(){return "CAT_TYPE";}
-  public static String getColumnCreated(){return "CREATED_DATE";}
+  public static String getColumnCreated(){return "CREATED";}
   public static String getColumnValid(){return "VALID";}
 
   public String getEntityName(){

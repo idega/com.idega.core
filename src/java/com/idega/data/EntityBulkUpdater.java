@@ -1,5 +1,5 @@
 /*
- * $Id: EntityBulkUpdater.java,v 1.5 2001/12/05 22:13:18 aron Exp $
+ * $Id: EntityBulkUpdater.java,v 1.6 2002/01/26 00:44:46 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -23,10 +23,14 @@ public class EntityBulkUpdater {
   private Vector insert_ = null;
   private Vector update_ = null;
   private Vector delete_ = null;
+  private Vector addto_ = null;
+  private Vector removefrom_ = null;
 
   public static String insert = "insert";
   public static String update = "update";
   public static String delete = "delete";
+  public static String addto = "addto";
+  public static String removefrom = "removefrom";
 
   private GenericEntity relatedEntity;
 
@@ -62,6 +66,16 @@ public class EntityBulkUpdater {
         delete_ = new Vector();
       delete_.add(entity);
     }
+    else if (action.equalsIgnoreCase(addto)) {
+      if (addto_ == null)
+        addto_ = new Vector();
+      addto_.add(entity);
+    }
+    else if (action.equalsIgnoreCase(removefrom)) {
+      if (removefrom_ == null)
+        removefrom_ = new Vector();
+      removefrom_.add(entity);
+    }
     else
       return(false);
 
@@ -83,6 +97,16 @@ public class EntityBulkUpdater {
       if (delete_ == null)
         delete_ = new Vector();
       delete_.addAll(entityCollection);
+    }
+    else if (action.equalsIgnoreCase(addto)) {
+      if (addto_ == null)
+        addto_ = new Vector();
+      addto_.addAll(entityCollection);
+    }
+    else if (action.equalsIgnoreCase(removefrom)) {
+      if (removefrom_ == null)
+        removefrom_ = new Vector();
+      removefrom_.addAll(entityCollection);
     }
     else
       return(false);
@@ -130,6 +154,27 @@ public class EntityBulkUpdater {
           e.delete(c);
         }
         delete_.clear();
+      }
+
+      if (addto_ != null) {
+        Iterator i = addto_.iterator();
+        while (i.hasNext()) {
+          GenericEntity e = (GenericEntity)i.next();
+          if( relatedEntity != null ){
+            e.addTo(relatedEntity,c);
+          }
+        }
+        addto_.clear();
+      }
+      if (removefrom_ != null) {
+        Iterator i = removefrom_.iterator();
+        while (i.hasNext()) {
+          GenericEntity e = (GenericEntity)i.next();
+          if( relatedEntity != null ){
+            e.removeFrom(relatedEntity,c);
+          }
+        }
+        removefrom_.clear();
       }
 
       c.commit();
