@@ -21,7 +21,7 @@ public class WebXmlMerger extends BundleFileMerger {
 			"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"
 			+"<!DOCTYPE web-app\n"	
 			+"\tPUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN\"\n"
-			+"\thttp://java.sun.com/dtd/web-app_2_3.dtd\">\n";
+			+"\t\"http://java.sun.com/dtd/web-app_2_3.dtd\">\n";
 			//+"<!-- Generated file by idegaWeb please don't modify the module markers -->";
 		
 		setFileHeader(webXmlHeader);
