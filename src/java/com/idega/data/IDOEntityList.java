@@ -275,7 +275,7 @@ public class IDOEntityList implements List {
     }
     public void add(Object o) {
     		if (o instanceof IDOEntity)
-	 		_list.add(((IDOEntity)o));
+	 		_list.add(_index+1,((IDOEntity)o));
 	 	else
 	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
     }
