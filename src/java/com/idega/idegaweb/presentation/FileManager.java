@@ -58,7 +58,7 @@ public class FileManager extends Block {
 	private String currentFolder =null,currentFile =null;
 	private java.util.List maintainParameterNames =null;
 	private boolean filesDeletable = true;
-	private boolean displayFilesInFrame = false;
+	private boolean displayFilesInFrame = true;
 	private FileIconSupplier iconSupplier =null;
 	private static final String PRM_FOLDER = "iw_b_r_m_dir";
 	private static final String PRM_SUB_FOLDER ="iw_b_r_m_sdir";
