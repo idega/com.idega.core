@@ -258,6 +258,26 @@
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
     </dependency>
+    <dependency>
+        <groupId>javaldap</groupId>
+        <artifactId>javaldap-server</artifactId>
+        <version>0.20</version>
+        <type>jar</type>
+        <url>http://sourceforge.net/projects/javaldap/</url>
+        <properties>
+        <idegaweb.bundle.include>true</idegaweb.bundle.include>
+      </properties>
+    </dependency>
+    <dependency>
+        <groupId>snacc</groupId>
+        <artifactId>snacc</artifactId>
+        <version>2.3</version>
+        <type>jar</type>
+        <url>http://www.alphaworks.ibm.com/tech/snaccforjava</url>
+        <properties>
+        <idegaweb.bundle.include>true</idegaweb.bundle.include>
+      </properties>
+    </dependency>
   </dependencies>
   <build>
     <nagEmailAddress>tryggvi@idega.com</nagEmailAddress>
