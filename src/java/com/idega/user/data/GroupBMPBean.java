@@ -413,7 +413,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		
 			IDOQuery query = idoQuery();
 			query.appendSelectAllFrom(getEntityName());
-			if (groupTypes!=null && groupTypes.size()>0) {
+			if (groupTypes!=null && !groupTypes.isEmpty()) {
 				query.appendWhere(COLUMN_GROUP_TYPE);
 				
 				IDOQuery subQuery = idoQuery();
@@ -425,6 +425,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 					query.appendNotIn(subQuery);
 				}
 				query.appendAnd();
+			}else{
+				query.appendWhere();
 			}
 			query.append(this.COLUMN_GROUP_ID);
 			query.appendIn(findGroupRelationsSQL);
