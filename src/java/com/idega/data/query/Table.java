@@ -1,9 +1,12 @@
 package com.idega.data.query;
 
+import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOEntityDefinition;
+import com.idega.data.IDOEntityField;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.data.IDOPrimaryKeyDefinition;
 import com.idega.data.query.output.Outputable;
 import com.idega.data.query.output.Output;
 import com.idega.data.query.output.ToStringer;
@@ -16,6 +19,10 @@ public class Table implements Outputable {
 	private String name;
 
 	private String alias;
+	
+	private String primaryKeyColumnName;
+	private String[] primaryKeyColumnNames;
+	private boolean hasCompositePrimaryKey = false;
 
 	private IDOEntityDefinition _entityDefinition;
 
@@ -32,6 +39,24 @@ public class Table implements Outputable {
 		_entityDefinition = getEntityDefinition(entityClass);
 		if (_entityDefinition != null) {
 			this.name = _entityDefinition.getSQLTableName().toLowerCase();
+			IDOPrimaryKeyDefinition pk = _entityDefinition.getPrimaryKeyDefinition();
+			hasCompositePrimaryKey = pk.isComposite();
+			if (!hasCompositePrimaryKey) {
+				try {
+					primaryKeyColumnName = pk.getField().getSQLFieldName();
+				}
+				catch (IDOCompositePrimaryKeyException icpke) {
+					icpke.printStackTrace();
+				}
+			}
+			else {
+				IDOEntityField[] fields = pk.getFields();
+				primaryKeyColumnNames = new String[fields.length];
+				for (int i = 0; i < fields.length; i++) {
+					IDOEntityField field = fields[i];
+					primaryKeyColumnNames[i] = field.getSQLFieldName();
+				}
+			}
 		}
 		else {
 			this.name = "null";
@@ -69,6 +94,28 @@ public class Table implements Outputable {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	public String getPrimaryKeyColumnName() throws IDOCompositePrimaryKeyException {
+		if (!hasCompositePrimaryKey) {
+			return primaryKeyColumnName;
+		}
+		else {
+			throw new IDOCompositePrimaryKeyException("IDOEntity has a composite primary key.");
+		}
+	}
+	
+	public String[] getPrimaryKeyColumnNames() throws IDOCompositePrimaryKeyException {
+		if (hasCompositePrimaryKey) {
+			return primaryKeyColumnNames;
+		}
+		else {
+			throw new IDOCompositePrimaryKeyException("IDOEntity does not have a composite primary key.");
+		}
+	}
+	
+	public boolean hasCompositePrimaryKey() {
+		return hasCompositePrimaryKey;
 	}
 
 	private IDOEntityDefinition getEntityDefinition(Class entityClass) {
