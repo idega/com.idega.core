@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.112 2004/11/25 00:37:48 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.113 2004/11/25 00:59:25 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -64,10 +64,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2004/11/25 00:37:48 $ by $Author: tryggvil $
+ * Last modified: $Date: 2004/11/25 00:59:25 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.112 $
+ * @version $Revision: 1.113 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -791,6 +791,30 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 	}
 	
+	
+	private void cloneJSFObjects(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
+		//Cloning the JSF Facets:
+		//First clone the facet Map:
+		if(this.facetMap!=null){
+			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
+			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
+			
+			//Iterate over the children to clone each child:
+			for (Iterator iter = getFacets().keySet().iterator(); iter.hasNext();) {
+				String key = (String) iter.next();
+				UIComponent component = getFacet(key);
+				if(component instanceof PresentationObject){
+					PresentationObject newObject = (PresentationObject)((PresentationObject)component).clonePermissionChecked(iwc,askForPermission);
+					newObject.setParentObject(obj);
+					newObject.setLocation(this.getLocation());
+					obj.getFacets().put(key,newObject);
+				}
+			}
+		}
+		//TODO: move the cloning of the childrenList to this class. Now it is inside PresentationObjectContainer
+		
+	}
+	
 	/**
 	 * This clone method checks for permission for "this" instance if askForPermission is true
 	 * This method should generally not be overridden unless there is need to alter the default permission behaviour.
@@ -800,6 +824,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission)
 	{
+		Object object = null;
 		if (iwc != null)
 		{
 			this.setIWApplicationContext(iwc.getApplicationContext());
@@ -810,7 +835,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			if (iwc.hasViewPermission(this))
 			{
 				//return this.clone(iwc,askForPermission);
-				return this.clone();
+				object =  this.clonePermissionChecked(iwc,askForPermission);
+				
 			}
 			else
 			{
@@ -819,8 +845,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		else
 		{
-			return this.clone();
+			object = this.clone();
 		}
+		PresentationObject obj = (PresentationObject)object;
+		cloneJSFObjects(obj,iwc,askForPermission);
+		return object;
 	}
 	/**
 	 * This method calls by default clonePermissionChecked(iwc,askForPermission) with askForPermission=true
@@ -863,27 +892,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 					}
 				}
 			}
-			//Cloning the JSF Facets:
-			//First clone the facet Map:
-			if(this.facetMap!=null){
-				obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
-				((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
-				
-				//Iterate over the children to clone each child:
-				for (Iterator iter = getFacets().keySet().iterator(); iter.hasNext();) {
-					String key = (String) iter.next();
-					UIComponent component = getFacet(key);
-					if(component instanceof PresentationObject){
-						PresentationObject newObject = (PresentationObject)((PresentationObject)component).clone();
-						newObject.setParentObject(obj);
-						newObject.setLocation(this.getLocation());
-						obj.getFacets().put(key,newObject);
-					}
-				}
-			}
-			
-			//TODO: move the cloning of the childrenList to this class. Now it is inside PresentationObjectContainer
-			
+
 			
 			//TODO: Resolve this:
 			//Copying the attributes probably doesn't work like this:
