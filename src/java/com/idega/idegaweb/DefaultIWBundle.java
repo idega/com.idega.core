@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.14 2005/01/13 23:54:06 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.15 2005/01/19 22:14:34 gimmi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -29,6 +29,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.component.html.HtmlOutputText;
 import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
 import com.idega.core.component.business.BundleRegistrationListener;
 import com.idega.core.component.business.RegisterException;
 import com.idega.core.component.data.ICObject;
@@ -1478,14 +1479,18 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		return t;
 	}
 	
-	public String getLocalizedString(String localizationKey) {
+	public ValueBinding getValueBinding(String localizationKey) {
 		String valueBinding = "#{bundles['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
-		return (String) getApplication().createValueBinding(valueBinding).getValue(FacesContext.getCurrentInstance());
+		return getApplication().createValueBinding(valueBinding);
+	}
+	
+	public String getLocalizedString(String localizationKey) {
+		return (String) getValueBinding(localizationKey).getValue(FacesContext.getCurrentInstance());
 	}
 	
 	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component) {
-		String valueBinding = "#{bundles['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
-		component.setValueBinding("value",getApplication().createValueBinding(valueBinding));
+//		String valueBinding = "#{bundles['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
+		component.setValueBinding("value",getValueBinding(localizationKey));
 		return component;
 	}
 	/* (non-Javadoc)
