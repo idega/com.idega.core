@@ -42,6 +42,72 @@ public class Validator
 	}
 	
 	/**
+	 * Checks if the string longToParse is a valid long(integer)*
+	 */
+	public boolean isLong(String longToParse){
+		if(longToParse!=null){
+			try{
+				Long.parseLong(longToParse);
+				return true;	
+			}
+			catch(NumberFormatException e){
+				return false;	
+			}	
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks if the string numberToParse is a valid whole number (with unlimited range)
+	 * @param numberToParse the String to check for if it is a number (sequence of integers)
+	 * @return False if any of the characters in the string is not an integer or the String isNumber is null. True otherwise
+	 */
+	public boolean isNumber(String numberToParse){
+		if(numberToParse!=null){
+			try{
+				for (int i = 0; i < numberToParse.length(); i++) {
+					String substr=numberToParse.substring(i,i+1);
+					Integer.parseInt(substr);
+				}
+				return true;
+			}
+			catch(NumberFormatException e){
+				return false;	
+			}	
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks if the string numberToParse is a valid whole number and is of character length equal or less than maxLength
+	 * @param numberToParse the String to check for if it is a number (sequence of integers)
+	 * @param maxLength the length of the sequence that the length of numberToParse must be less than or equal to
+	 * @return False if any of the characters in the string is not an integer or the String isNumber is null or the length of the string is larger than maxLength. True otherwise
+	 */
+	public boolean isNumberWithMaxLength(String numberToParse,int maxLength){
+		if(numberToParse!=null){
+			try{
+				int strLength=numberToParse.length();
+				if(strLength<=maxLength){
+					for (int i = 0; i <strLength; i++) {
+						String substr=numberToParse.substring(i,i+1);
+						Integer.parseInt(substr);
+					}
+					return true;
+				}
+				else{
+					return false;	
+				}
+				
+			}
+			catch(NumberFormatException e){
+				return false;	
+			}	
+		}
+		return false;
+	}
+	
+	/**
 	 * Checks if the string floatToParse is a valid float number
 	 *
 	 */
