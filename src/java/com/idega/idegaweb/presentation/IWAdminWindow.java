@@ -271,7 +271,6 @@ public class IWAdminWindow extends Window {
 			rightTable.setHeight(1, rows, "100%");
 			rightTable.setVerticalAlignment(1, rows, "bottom");
 			rightTable.setAlignment(1, rows, "center");
-			rightTable.add(obj, 1, rows);
 		}
 
 		if (!rightTable.isEmpty(1, rows)) {
