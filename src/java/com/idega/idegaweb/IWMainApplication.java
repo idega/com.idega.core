@@ -21,6 +21,8 @@ import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.PresentationObject;
 import com.idega.block.media.business.MediaBundleStarter;
 
+import com.idega.util.CrossSum;
+
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
@@ -633,17 +635,24 @@ public class IWMainApplication{//implements ServletContext{
 
   private void loadCryptoProperties(){
     cryptoProps = new Properties();
-    System.out.println("[idegaWeb] : startup : Loading Cryptonium");
+    sendStartupMessage("Loading Cryptonium");
     String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
     try{
       cryptoProps.load(new FileInputStream(file));
+      // temporary property cleaning
+      String clean = cryptoProps.getProperty("clean");
+      if(clean == null){
+        cryptoProps.clear();
+        cryptoProps.setProperty("clean","true");
+      }
+      /////////////////////////////
       cryptoCodes = new Properties();
       if(cryptoProps.size() > 0){
-	Iterator iter = cryptoCodes.entrySet().iterator();
-	while(iter.hasNext()){
-	  Map.Entry me = (Map.Entry) iter.next();
-	  cryptoCodes.put(me.getValue(),me.getKey());
-	}
+        Iterator iter = cryptoCodes.entrySet().iterator();
+        while(iter.hasNext()){
+          Map.Entry me = (Map.Entry) iter.next();
+          cryptoCodes.put(me.getValue(),me.getKey());
+        }
       }
     }
     catch(Exception ex){}
@@ -651,7 +660,7 @@ public class IWMainApplication{//implements ServletContext{
 
    private void storeCryptoProperties(){
     if(cryptoProps!=null){
-      System.err.println("[idegaWeb] : shutdown : Storing Cryptonium");
+      sendShutdownMessage("Storing Cryptonium");
       try{
       String file = getPropertiesRealPath()+FileUtil.getFileSeparator()+"crypto.properties";
       cryptoProps.store(new FileOutputStream(file),"Cryptonium");
@@ -678,26 +687,38 @@ public class IWMainApplication{//implements ServletContext{
     if(cryptoProps == null)
       cryptoProps =new Properties();
 
-    String hashcode;
+    String crypto;
     if(cryptoCodes.containsKey(classObject.getName())){
-      hashcode = (String) cryptoCodes.get(classObject.getName());
+      crypto = (String) cryptoCodes.get(classObject.getName());
     }
     else{
-      hashcode = Integer.toString(classObject.hashCode());
-      cryptoCodes.put(classObject.getName(),hashcode);
+      crypto = Long.toString(calculate(classObject.getName()));
+      cryptoCodes.put(classObject.getName(),crypto);
     }
 
-      cryptoProps.put(hashcode,classObject.getName());
+    cryptoProps.put(crypto,classObject.getName());
 
 
-    return hashcode;
+    return crypto;
   }
 
-  public static String getHashCodedClassName(String hashcode){
-    if(cryptoProps!=null && hashcode!=null && cryptoProps.containsKey(hashcode))
-     return (String)cryptoProps.get(hashcode);
+  public static String getHashCodedClassName(String crypto){
+    if(cryptoProps!=null && crypto!=null && cryptoProps.containsKey(crypto))
+     return (String)cryptoProps.get(crypto);
     else
-     return hashcode;
+     return crypto;
+  }
+
+  /**
+   *  calculates the crosssum of a string
+   */
+  private static int calculate(String s){
+    char[] c = s.toCharArray();
+    int sum = 0;
+    for (int i = 0; i < c.length; i++) {
+      sum += ((int)c[i]);
+    }
+    return sum;
   }
 
 
