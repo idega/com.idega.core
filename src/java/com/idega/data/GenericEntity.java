@@ -4382,7 +4382,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Level getErrorLogLevel(){
 		return Level.WARNING;
 	}
+		
+	public void addIndex(String field) {
+		getGenericEntityDefinition().addIndex(field);
+	}
 	
+	public void addIndex(String name, String field) {
+		getGenericEntityDefinition().addIndex(name, field);
+	}
+	
+	public void addIndex(String name, String[] fields) {
+		getGenericEntityDefinition().addIndex(name, fields);
+	}
 	//ENTITY SPECIFIC LOG MEHTODS:
 	
 	///**

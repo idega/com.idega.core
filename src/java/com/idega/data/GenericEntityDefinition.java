@@ -7,6 +7,7 @@
 package com.idega.data;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -24,6 +25,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	private IDOEntityDefinition[] _manyToManyRelatedEntities = new IDOEntityDefinition[0];
 	private EntityAttribute[] _fields = new EntityAttribute[0];
 	private PrimaryKeyDefinition _pkDefinition = null;
+	private HashMap _indexes = null;
 	private Class _interfaceClass=null;
 	private Class _beanClass = null;
 
@@ -100,6 +102,33 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 
 	public void setSQLTableName(String name) {
 		_sqlTableName = name;
+	}
+	
+	
+	public HashMap getIndexes() throws NoIndexException{
+		if (_indexes == null) {
+			throw new NoIndexException("No Indexes");
+		}
+		return _indexes;
+	}
+
+	public void addIndex(String field) {
+		addIndex(field+"_index", field);
+	}
+	
+	public void addIndex(String name, String field) {
+		addIndex(name, new String[] {field});
+	}
+	
+	public void addIndex(String name, String[] fields) {
+		if (name != null && !name.equals("") && fields != null && fields.length > 0) {
+			if (_indexes == null) {
+				_indexes = new HashMap();
+			}
+			_indexes.put(name, fields);
+		} else {
+			throw new IllegalArgumentException("Name must and fields must bet be set");
+		}
 	}
 	
 	

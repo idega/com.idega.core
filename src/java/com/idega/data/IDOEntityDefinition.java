@@ -1,5 +1,7 @@
 package com.idega.data;
 
+import java.util.HashMap;
+
 /**
  * Title:        idegaclasses
  * Description:
@@ -18,4 +20,10 @@ public interface IDOEntityDefinition {
 	public Class getInterfaceClass();
 	public IDOEntityField findFieldByUniqueName(String name);
 	public String getMiddleTableNameForRelation(String relatedTable);
+	/**
+	 * @return HashMap with the indexes for this Entity, where the KEY is indexName, 
+	 * and VALUE is String[], containing columns
+	 * @throws NoIndexException is no indexes are specified
+	 */
+	public HashMap getIndexes() throws NoIndexException;
 }

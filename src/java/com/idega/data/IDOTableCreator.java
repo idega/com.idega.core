@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -261,7 +262,8 @@ public class IDOTableCreator{
             //System.err.println("Exception in creating Foreign Keys for: "+entity.getClass().getName());
             //System.err.println("  Error was: "+e.getMessage());
           }
-          createMiddleTables(entity);
+          createIndexes(entity);
+					createMiddleTables(entity);
           if(entity.getIfInsertStartData()){
 	      		_entityWithStartData.add(entity);
           }
@@ -563,6 +565,40 @@ public class IDOTableCreator{
 
   }
 
+  protected void createIndexes(GenericEntity entity) throws Exception {
+	  	try {
+	  		HashMap map = entity.getEntityDefinition().getIndexes();
+	  		String tableName = entity.getEntityDefinition().getSQLTableName();
+	  		Set keys = map.keySet();
+	  		if (keys != null) {
+	  			Iterator iter = keys.iterator();
+	  			String key;
+	  			String[] values;
+	  			while (iter.hasNext()) {
+	  				try {
+		  				key = (String) iter.next();
+		  				values = (String[]) map.get(key);
+		  				createIndex(entity, tableName, key, values);
+	  				} catch (Exception e) {
+	  					e.printStackTrace();
+	  				}
+	  			}
+	  		}
+	  	} catch (NoIndexException ignore) {}
+  }
+  
+  private void createIndex(GenericEntity entity, String tableName, String name, String[] fields) throws Exception {
+  		StringBuffer sql = new StringBuffer("CREATE INDEX ")
+		.append(name).append(" ON ").append(tableName).append(" (");
+  		for (int i = 0; i < fields.length; i++) {
+  			if (i > 0) {
+  				sql.append(", ");
+  			}
+  			sql.append(fields[i]);
+  		}
+  		sql.append(")");
+  		executeUpdate(entity, sql.toString());
+  }
 
   protected void createForeignKeys(IDOEntity entity) throws Exception {
     /*Connection conn = null;
