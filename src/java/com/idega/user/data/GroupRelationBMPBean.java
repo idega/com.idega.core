@@ -32,6 +32,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 	protected static final String  INITIATION_DATE_COLUMN="INITIATION_DATE";
 	protected static final String  TERMINATION_DATE_COLUMN="TERMINATION_DATE";
   protected static final String  SET_PASSIVE_BY="SET_PASSIVE_BY";
+  protected static final String CREATED_BY = "CREATED_BY";
   protected static final String RELATED_GROUP_TYPE_COLUMN = "RELATED_GROUP_TYPE";
   
   protected static final String INITIATION_MODIFICATION_DATE_COLUMN="INIT_MODIFICATION_DATE";
@@ -52,6 +53,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     this.addAttribute(INITIATION_DATE_COLUMN,"Relationship Initiation Date",Timestamp.class);
     this.addAttribute(TERMINATION_DATE_COLUMN,"Relationship Termination Date",Timestamp.class);
     this.addAttribute(SET_PASSIVE_BY, "set passive by", true, true, Integer.class, MANY_TO_ONE, User.class);
+    this.addAttribute(CREATED_BY, "Created by", true, true, Integer.class, MANY_TO_ONE, User.class);
     this.addAttribute(INITIATION_MODIFICATION_DATE_COLUMN, "Initiation modification date", Timestamp.class);
     this.addAttribute(RELATED_GROUP_TYPE_COLUMN, "Related group type", String.class);
 		this.addAttribute(TERMINATION_MODIFICATION_DATE_COLUMN, "Termination modification date", Timestamp.class);
@@ -221,8 +223,32 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     setColumn(SET_PASSIVE_BY, userId);
   }
 
-  public int getPassiveBy() { 
+  public int getPassiveById() { 
     return getIntColumnValue(SET_PASSIVE_BY);
+  }
+  
+  public User getPassiveBy(){
+      return (User)getColumnValue(SET_PASSIVE_BY);
+  }
+  
+  public void setCreatedBy(int userId){
+      setColumn(CREATED_BY,userId);
+  }
+  
+  public void setCreatedBy(Integer userId){
+      setColumn(CREATED_BY,userId);
+  }
+  
+  public void setCreatedBy(User user){
+      setColumn(CREATED_BY,user);
+  }
+  
+  public int getCreatedById(){
+      return getIntColumnValue(CREATED_BY);
+  }
+  
+  public User getCreatedBy(){
+      return (User)getColumnValue(CREATED_BY);
   }
 
   public void setRelatedGroupType(String groupType)  {

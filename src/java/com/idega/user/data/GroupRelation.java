@@ -21,7 +21,8 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public int getGroupID();
  public java.sql.Timestamp getInitiationDate();
  public Timestamp getInitiationModificationDate();
- public int getPassiveBy();
+ public User getPassiveBy();
+ public int getPassiveById();
  public com.idega.user.data.Group getRelatedGroup();
  public java.lang.Integer getRelatedGroupPK();
  public com.idega.user.data.GroupRelationType getRelationship();
@@ -53,4 +54,9 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public void setRelationshipType(java.lang.String p0);
  public void setStatus(java.lang.String p0);
  public void setTerminationDate(java.sql.Timestamp p0);
+ public void setCreatedBy(int userId);
+ public void setCreatedBy(Integer userId);
+ public void setCreatedBy(User user);
+ public int getCreatedById();
+ public User getCreatedBy();
 }
