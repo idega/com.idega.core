@@ -263,7 +263,7 @@
         <artifactId>javaldap-server</artifactId>
         <version>0.20</version>
         <type>jar</type>
-        <url>http://sourceforge.net/projects/javaldap/</url>
+        <url>http://codehaus.org/~trygvis/ldap</url>
         <properties>
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
