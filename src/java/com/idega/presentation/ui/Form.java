@@ -28,6 +28,16 @@ import java.util.Vector;
 */
 public class Form extends InterfaceObjectContainer {
 
+	public static final String ACTION_ON_BLUR = "onBlur";
+	public static final String ACTION_ON_CHANGE = "onChange";
+	public static final String ACTION_ON_CLICK = "onClick";
+	public static final String ACTION_ON_FOCUS = "onFocus";
+	public static final String ACTION_ON_KEY_PRESS = "onKeyPress";
+	public static final String ACTION_ON_KEY_DOWN = "onKeyDown";
+	public static final String ACTION_ON_KEY_UP = "onKeyUp";
+	public static final String ACTION_ON_SELECT = "onSelect";
+	public static final String ACTION_ON_SUBMIT = "onSubmit";
+
 	private Window window;
 	private Vector maintainedParameters;
 	private boolean maintainAllParameters;
@@ -46,6 +56,7 @@ public class Form extends InterfaceObjectContainer {
 	private static String COLONSLASHSLASH = "://";
 	private static String SLASH = "/";
 
+	private boolean _disableObject;
 	/**
 	*Defaults to send to the page itself and the POST method
 	**/
@@ -204,6 +215,9 @@ public class Form extends InterfaceObjectContainer {
 		if (window != null) {
 			//iwc.setSessionAttribute(IdegaWebHandler.windowOpenerParameter,window);
 			com.idega.servlet.WindowOpener.storeWindow(iwc, window);
+		}
+		if (_disableObject) {
+			getScript().addFunction("disableObject", "function disableObject (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].disabled=eval(value);\n	\t}\n	else\n	inputs.disabled=eval(value);\n}");
 		}
 
 	}
@@ -512,6 +526,38 @@ public class Form extends InterfaceObjectContainer {
 		}*/
 	}
 
+	/**
+	 * Sets the interface object(s) with the given name to be enabled when this object
+	 * receives the action specified.
+	 * @param action	The action to perform on.
+	 * @param objectToEnable	The name of the interface object(s) to enable.
+	 * @param enable	Set to true to disable, false will enable.
+	 */
+	public void setToDisableOnAction(String action, String objectName, boolean disable) {
+		_disableObject = true;
+		setOnAction(action, "disableObject(findObj('" + objectName + "'),'" + String.valueOf(disable) + "')");
+	}
+	
+	/**
+	 * Sets the interface object(s) to be enabled when this object
+	 * receives the action specified.
+	 * @param action	The action to perform on.
+	 * @param objectToEnable	The interface object(s) to enable.
+	 * @param enable	Set to true to disable, false will enable.
+	 */
+	public void setToDisableOnAction(String action, InterfaceObject object, boolean disable) {
+		setToDisableOnAction(action,object.getName(),disable);
+	}
+	
+	/**
+	 * Sets the interface object(s) to be enabled when this <code>Form</code> is submitted.
+	 * @param objectToEnable	The interface object(s) to enable.
+	 * @param enable	Set to true to disable, false will enable.
+	 */
+	public void setToDisableOnSubmit(InterfaceObject object, boolean disable) {
+		setToDisableOnAction(ACTION_ON_SUBMIT,object.getName(),disable);
+	}
+	
 	protected void addControlParameter(String parameterName, String parameterValue) {
 		addControlParameter(new Parameter(parameterName, parameterValue));
 	}
@@ -603,6 +649,13 @@ public class Form extends InterfaceObjectContainer {
 		return associatedScript;
 	}
 
+	protected Script getScript() {
+		if (getAssociatedFormScript() == null) {
+			setAssociatedFormScript(new Script());
+		}
+		return getAssociatedFormScript();
+	}
+	
 	/**
 	 * Sets the associatedScript.
 	 * @param associatedScript The associatedScript to set
