@@ -20,6 +20,9 @@ import com.idega.util.database.*;
 public class MySQLDatastoreInterface extends DatastoreInterface{
 
 
+  MySQLDatastoreInterface(){
+    useTransactionsInEntityCreation=false;
+  }
 
  /*public String getSQLType(String javaClassName){
     String theReturn;
@@ -66,15 +69,15 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
       }
       else if (javaClassName.equals("java.lang.String")){
         if (maxlength<0){
-  			theReturn = "VARCHAR(255)";
-  		}
-        else if (maxlength<30000){
-  			theReturn = "VARCHAR("+maxlength+")";
+  	    theReturn = "VARCHAR(255)";
+        }
+        else if (maxlength<=255){
+            theReturn = "VARCHAR("+maxlength+")";
+        }
 
-  		}
-  		else{
-  			theReturn = "TEXT";
-  		}
+        else{
+  	    theReturn = "TEXT";
+        }
 
       }
       else if (javaClassName.equals("java.lang.Boolean")){
@@ -153,20 +156,21 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 		return returnString;
 }
 
-  protected void insertBlob(GenericEntity entity)throws Exception{
-  }
+  //protected void insertBlob(GenericEntity entity)throws Exception{
+  //}
 
 
   protected void executeAfterInsert(GenericEntity entity)throws Exception{
+
     Connection conn= null;
     Statement Stmt= null;
 		ResultSet RS = null;
 		try{
 			conn = entity.getConnection();
-      if (entity.getID() == -1){
+                        if (entity.getID() == -1){
 					Stmt = conn.createStatement();
 					RS = Stmt.executeQuery("select last_insert_id()");
-					RS.next();
+					//RS.next();
 					entity.setID(RS.getInt(1));
 			}
 
@@ -182,6 +186,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 				entity.freeConnection(conn);
 			}
 		}
+                super.executeAfterInsert(entity);
   }
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.9 2001/07/16 09:53:22 tryggvil Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.10 2001/08/24 22:33:32 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -26,6 +26,9 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
 
   private static String infoKey="interbase_datastoreinterface_connection_info";
 
+  InterbaseDatastoreInterface(){
+    useTransactionsInEntityCreation=false;
+  }
 
   public String getSQLType(String javaClassName,int maxlength) {
     String theReturn;
@@ -256,6 +259,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface {
           PS.setBinaryStream(1, instream, instream.available() );
           PS.execute();
           PS.close();
+          instream.close();
         }
         //Conn.commit();
         //Conn.setAutoCommit(true);

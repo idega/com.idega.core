@@ -1,5 +1,5 @@
 /*
- * $Id: GenericEntity.java,v 1.37 2001/08/23 19:40:24 eiki Exp $
+ * $Id: GenericEntity.java,v 1.38 2001/08/24 22:33:32 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -87,8 +87,9 @@ public abstract class GenericEntity implements java.io.Serializable {
       catch(Exception ex) {
         ex.printStackTrace();
       }
-      //call the initializeAttributes that stores information about columns and relationships
+      //call the ializeAttributes that stores information about columns and relationships
       initializeAttributes();
+      afterInitializeAttributes();
       setLobColumnName();
       if(EntityControl.getIfEntityAutoCreate()){
          try{
@@ -99,6 +100,12 @@ public abstract class GenericEntity implements java.io.Serializable {
          }
       }
     }
+  }
+
+  /**
+   * Meant to be overrided in subclasses to add default attributes
+   */
+  protected void afterInitializeAttributes(){
   }
 
   /**

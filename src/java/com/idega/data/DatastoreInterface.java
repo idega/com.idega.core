@@ -32,6 +32,8 @@ public abstract class DatastoreInterface{
   private final static int STATEMENT_INSERT=1;
   private final static int STATEMENT_UPDATE=2;
 
+  protected boolean useTransactionsInEntityCreation=true;
+
   public static DatastoreInterface getInstance(String datastoreType){
     DatastoreInterface theReturn = null;
     String className;
@@ -181,21 +183,22 @@ public abstract class DatastoreInterface{
   }
 
   public void createEntityRecord(GenericEntity entity)throws Exception{
-      System.out.println("Trying to create record for "+entity.getClass().getName()+" tablename: "+entity.getTableName());
+      //System.out.println("Trying to create record for "+entity.getClass().getName()+" tablename: "+entity.getTableName());
 
       if(!doesTableExist(entity,entity.getTableName())){
 
           TransactionManager trans=null;
           boolean canCommit=false;
-
-            trans = com.idega.transaction.IdegaTransactionManager.getInstance();
-            if(!((IdegaTransactionManager)trans).hasCurrentThreadBoundTransaction()){
-              executeBeforeCreateEntityRecord(entity);
-              trans.begin();
-              canCommit=true;
-            }
-            else{
-              canCommit=false;
+            if(useTransactionsInEntityCreation){
+              trans = com.idega.transaction.IdegaTransactionManager.getInstance();
+              if(!((IdegaTransactionManager)trans).hasCurrentThreadBoundTransaction()){
+                executeBeforeCreateEntityRecord(entity);
+                trans.begin();
+                canCommit=true;
+              }
+              else{
+                canCommit=false;
+              }
             }
 
             try{
@@ -211,7 +214,14 @@ public abstract class DatastoreInterface{
                    if(!this.doesTableExist(entity,entity.getTableName())){
                       createTable(entity);
                       createTrigger(entity);
-                      createForeignKeys(entity);
+                      try{
+                        createForeignKeys(entity);
+                      }
+                      catch(Exception e){
+                        //e.printStackTrace();
+                        System.err.println("Exception in creating Foreign Keys for: "+entity.getClass().getName());
+                        System.err.println("  Error was: "+e.getMessage());
+                      }
                       createMiddleTables(entity);
                       entity.insertStartData();
                   }
@@ -230,39 +240,41 @@ public abstract class DatastoreInterface{
                       createForeignKeys(entity);
                     }
                     catch(Exception e){
-                      e.printStackTrace();
+                        //e.printStackTrace();
+                        System.err.println("Exception in creating Foreign Keys for: "+entity.getClass().getName());
+                        System.err.println("  Error was: "+e.getMessage());
                     }
                     createMiddleTables(entity);
                     entity.insertStartData();
                   }
                 }
 
-
-
-
-            if(canCommit){
-              trans.commit();
-              ThreadContext.getInstance().removeAttribute(recordCreationKey);
-              executeAfterCreateEntityRecord(entity);
-              //ThreadContext.getInstance().releaseThread(Thread.currentThread());
-
+            if(useTransactionsInEntityCreation){
+              if(canCommit){
+                trans.commit();
+                ThreadContext.getInstance().removeAttribute(recordCreationKey);
+                executeAfterCreateEntityRecord(entity);
+                //ThreadContext.getInstance().releaseThread(Thread.currentThread());
+              }
             }
         }
         catch(Exception ex){
-          if(canCommit){
-            trans.rollback();
-            //ThreadContext.getInstance().releaseThread(Thread.currentThread());
-            ThreadContext.getInstance().removeAttribute(recordCreationKey);
+          if(useTransactionsInEntityCreation){
+            if(canCommit){
+              trans.rollback();
+              //ThreadContext.getInstance().releaseThread(Thread.currentThread());
+              ThreadContext.getInstance().removeAttribute(recordCreationKey);
 
-            System.out.println();
-            System.err.println("Exception and rollback for: "+entity.getClass().getName());
-            System.out.println();
-            ex.printStackTrace();
+              System.out.println();
+              System.err.println("Exception and rollback for: "+entity.getClass().getName());
+              System.out.println();
+              ex.printStackTrace();
 
-            executeAfterCreateEntityRecord(entity);
-          }
-          else{
-            throw (Exception)ex.fillInStackTrace();
+              executeAfterCreateEntityRecord(entity);
+            }
+            else{
+              throw (Exception)ex.fillInStackTrace();
+            }
           }
         }
       }
@@ -565,9 +577,8 @@ public abstract class DatastoreInterface{
       try{
         conn = entity.getConnection();
 
-        //conn.commit();
         Stmt = conn.createStatement();
-        System.out.println(SQLCommand);
+        //System.out.println(SQLCommand);
         Stmt.executeQuery(SQLCommand);
       }
       finally {
@@ -771,8 +782,51 @@ public abstract class DatastoreInterface{
 
   }
 
+  protected void executeAfterUpdate(GenericEntity entity)throws Exception{
+    if( entity.hasLobColumn() ) insertBlob(entity);
+  }
+
   protected void insertBlob(GenericEntity entity)throws Exception{
-    //implemented implentations of datastoreinterface
+    String statement ;
+    Connection Conn = null;
+
+    try{
+
+      statement = "update " + entity.getTableName() + " set " + entity.getLobColumnName() + "=? where " + entity.getIDColumnName() + " = '" + entity.getID()+"'";
+      System.out.println(statement);
+      System.out.println("In insertBlob() in DatastoreInterface");
+      BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
+      if(wrapper!=null){
+        System.out.println("In insertBlob() in DatastoreInterface wrapper!=null");
+        //Conn.setAutoCommit(false);
+        InputStream instream = wrapper.getInputStreamForBlobWrite();
+        if(instream!=null){
+          System.out.println("In insertBlob() in DatastoreInterface instream != null");
+          Conn = entity.getConnection();
+          if(Conn== null){ System.out.println("In insertBlob() in DatastoreInterface conn==null"); return;}
+          BufferedInputStream bin = new BufferedInputStream(instream);
+          PreparedStatement PS = Conn.prepareStatement(statement);
+          System.out.println("bin.available(): "+bin.available());
+          PS.setBinaryStream(1, bin, 0 );
+          //PS.setBinaryStream(1, instream, instream.available() );
+          PS.executeUpdate();
+          PS.close();
+          System.out.println("bin.available(): "+bin.available());
+          instream.close();
+        }
+        //Conn.commit();
+        //Conn.setAutoCommit(true);
+      }
+
+
+    }
+    catch(SQLException ex){ex.printStackTrace(); System.err.println( "error uploading blob to db for "+entity.getClass().getName());}
+    catch(Exception ex){ex.printStackTrace();}
+    finally{
+      if(Conn != null) entity.freeConnection(Conn);
+    }
+
+
   }
 
 
@@ -901,7 +955,9 @@ public abstract class DatastoreInterface{
 				entity.freeConnection(conn);
 			}
 		}
-                entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+                this.executeAfterUpdate(entity);
+                //entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
+
 	}
 
 	public void update(GenericEntity entity, Connection conn)throws Exception{
@@ -917,6 +973,7 @@ public abstract class DatastoreInterface{
 				Stmt.close();
 			}
 		}
+                //this.executeAfterUpdate(entity);
                 entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 
