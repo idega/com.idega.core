@@ -1,11 +1,5 @@
-//idega 2000 - Tryggvi Larusson
-/*
-*Copyright 2000 idega.is All Rights Reserved.
-*/
-
 package com.idega.core.data;
 
-//import java.util.*;
 import java.sql.*;
 import com.idega.data.*;
 import java.util.Vector;
@@ -13,9 +7,13 @@ import com.idega.core.user.data.User;
 import java.util.List;
 
 /**
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-*@version 1.2
-*/
+ * Title:        IW Core
+ * Description:
+ * Copyright:    Copyright (c) 2001
+ * Company:      idega.is
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @version 1.0
+ */
 
 public class GenericGroup extends GenericEntity{
 
@@ -219,6 +217,26 @@ public class GenericGroup extends GenericEntity{
             return null;
           }
         }
+
+
+
+        public void insert()throws SQLException{
+          try {
+            if(SimpleQuerier.executeStringQuery("select * form "+this.getEntityName()+" where "+this.getGroupTypeColumnName()+" = '"+this.getGroupType()+"' and "+this.getNameColumnName()+" = '"+this.getName()+"'") != null){
+              throw new SQLException("group with same name and type already in database");
+            }
+            super.insert();
+          } catch (Exception ex) {
+            if(ex instanceof SQLException ){
+              throw (SQLException)ex;
+            } else {
+              System.err.println(ex.getMessage());
+              ex.printStackTrace();
+            }
+
+          }
+        }
+
 
 
 

@@ -138,7 +138,9 @@ public class LoginDBHandler {
       logInfo.setModified(idegaTimestamp.RightNow());
     }
 
-    logInfo.setDaysOfVality(daysOfVality);
+    if(daysOfVality > -1){
+      logInfo.setDaysOfVality(daysOfVality);
+    }
 
     if(passwordExpires != null){
       logInfo.setPasswordExpires(passwordExpires);

@@ -206,6 +206,14 @@ public class AccessControl{
     }
 
 
+    public static String getOwnerPemissionString(){
+      return "owner";
+    }
+
+    public static boolean hasOwnerPermission(ModuleObject obj,ModuleInfo modinfo)throws SQLException{
+      return hasPermission( getOwnerPemissionString(), obj, modinfo);
+    }
+
 
     public static ICObjectPermission[] getPermissionTypes(ModuleObject obj)throws SQLException{
       int arobjID = obj.getICObject().getID();

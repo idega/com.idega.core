@@ -1,6 +1,7 @@
 package com.idega.core.accesscontrol.data;
 
 import com.idega.data.*;
+import com.idega.core.data.GenericGroup;
 import java.sql.*;
 
 /**
@@ -15,9 +16,7 @@ import java.sql.*;
 public class ICPermission extends GenericEntity {
 
 
-  private static String[] Columns = {"permission_context_type", "permission_context_value", "permission_string", "permission_string_value", "permission_value", "group_id"};
-
-  private static String sClassName = "com.idega.core.accesscontrol.data.ICPermission";
+  private static String sClassName = ICPermission.class.getName();
 
 
   public ICPermission() {
@@ -30,12 +29,12 @@ public class ICPermission extends GenericEntity {
 
   public void initializeAttributes() {
     addAttribute(getIDColumnName());
-    addAttribute(Columns[0],"Context type",true,true,"java.lang.String");
-    addAttribute(Columns[1],"Context value",true,true,"java.lang.String");
-    addAttribute(Columns[2],"Permission string",true,true,"java.lang.String");
-    addAttribute(Columns[3],"Permission string value",true,true,"java.lang.String");
-    addAttribute(Columns[4],"Permission value",true,true,"java.lang.Boolean");
-    addAttribute(Columns[5],"GroupID",true,true,"java.lang.Integer");
+    addAttribute(getContextTypeColumnName(),"Context type",true,true,"java.lang.String");
+    addAttribute(getContextValueColumnName(),"Context value",true,true,"java.lang.String");
+    addAttribute(getPermissionStringColumnName(),"Permission string",true,true,"java.lang.String");
+    addAttribute(getPermissionStringValueColumnName(),"Permission string value",true,true,"java.lang.String");
+    addAttribute(getPermissionValueColumnName(),"Permission value",true,true,"java.lang.Boolean");
+    addAttribute(getGroupIDColumnName(),"GroupID",true,true,"java.lang.Integer");
 
   }
   public String getEntityName() {
@@ -48,88 +47,88 @@ public class ICPermission extends GenericEntity {
 */
 
   public static String getContextTypeColumnName(){
-    return Columns[0];
+    return "permission_context_type";
   }
 
   public String getContextType(){
-    return getStringColumnValue(Columns[0]);
+    return getStringColumnValue(getContextTypeColumnName());
   }
 
   public void setContextType( String ContextType){
-    setColumn(Columns[0],ContextType);
+    setColumn(getContextTypeColumnName(),ContextType);
   }
 
 
   public static String getContextValueColumnName(){
-    return Columns[1];
+    return "permission_context_value";
   }
 
   public String getContextValue(){
-    return getStringColumnValue(Columns[1]);
+    return getStringColumnValue(getContextValueColumnName());
   }
 
   public void setContextValue( String ContextValue){
-    setColumn(Columns[1],ContextValue);
+    setColumn(getContextValueColumnName(),ContextValue);
   }
 
   public static String getPermissionStringColumnName(){
-    return Columns[2];
+    return "permission_string";
   }
 
   public String getPermissionString(){
-    return getStringColumnValue(Columns[2]);
+    return getStringColumnValue(getPermissionStringColumnName());
   }
 
   public void setPermissionString( String PermissionString){
-    setColumn(Columns[2],PermissionString);
+    setColumn(getPermissionStringColumnName(),PermissionString);
   }
 
 
   public static String getPermissionStringValueColumnName(){
-    return Columns[3];
+    return "permission_string_value";
   }
 
   public String getPermissionStringValue(){
-    return getStringColumnValue(Columns[3]);
+    return getStringColumnValue(getPermissionStringValueColumnName());
   }
 
   public void setPermissionStringValue( String PermissionStringValue){
-    setColumn(Columns[3],PermissionStringValue);
+    setColumn(getPermissionStringValueColumnName(),PermissionStringValue);
   }
 
 
   public static String getPermissionValueColumnName(){
-    return Columns[4];
+    return "permission_value";
   }
 
   public boolean getPermissionValue(){
-    return getBooleanColumnValue(Columns[4]);
+    return getBooleanColumnValue(getPermissionValueColumnName());
   }
 
   public void setPermissionValue( Boolean PermissionStringValue){
-    setColumn(Columns[4],PermissionStringValue);
+    setColumn(getPermissionValueColumnName(),PermissionStringValue);
   }
 
 
 
 
   public static String getGroupIDColumnName(){
-    return Columns[5];
+    return "group_id";
   }
 
   public int getGroupID(){
-    return getIntColumnValue(Columns[5]);
+    return getIntColumnValue(getGroupIDColumnName());
   }
 
   public void setGroupID( Integer GroupID){
-    setColumn(Columns[5],GroupID);
+    setColumn(getGroupIDColumnName(),GroupID);
   }
 
 
 
 
   public static ICPermission getStaticInstance(){
-    return (ICPermission)getStaticInstance(sClassName);
+    return (ICPermission)getStaticInstance(ICPermission.class);
   }
 
 

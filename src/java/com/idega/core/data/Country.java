@@ -1,67 +1,63 @@
-//idega 2000 - Eiki
-
 package com.idega.core.data;
 
-//import java.util.*;
 import java.sql.*;
 import com.idega.data.GenericEntity;
 
+/**
+ * Title:        IW Core
+ * Description:
+ * Copyright:    Copyright (c) 2001
+ * Company:      idega.is
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @version 1.0
+ */
+
 public class Country extends GenericEntity{
 
-	public Country(){
-		super();
-	}
+  public Country(){
+          super();
+  }
 
-	public Country(int id)throws SQLException{
-		super(id);
-	}
+  public Country(int id)throws SQLException{
+          super(id);
+  }
 
-	public void initializeAttributes(){
-		addAttribute(getIDColumnName());
-		addAttribute("name", "Nafn", true, true, String.class);
-		addAttribute("internet_suffix", "internet skammstöfun", true, true, String.class);
-                addAttribute("iso_abbreviation","ISO Skammstöfum",true,true, String.class,2);
-	}
+  public void initializeAttributes() {
+    this.addAttribute(this.getIDColumnName());
+    this.addAttribute(getColumnNameName(),"Nafn",true,true,String.class,255);
+    this.addAttribute(getColumnNameDescription(),"Lýsing",true,true,String.class,500);
+  }
+
+  public String getEntityName() {
+    return "ic_country";
+  }
+
+  public static String getColumnNameName(){return "country_name";}
+  public static String getColumnNameDescription(){return "country_description";}
 
 
-        public void insertStartData()throws Exception{
-            Country country = new Country();
-              country.setISOAbbreviation("IS");
-              country.setInternetSuffix("is");
-              country.setName("Iceland");
-            country.insert();
-        }
+  public String getName(){
+    return this.getStringColumnValue(getColumnNameName());
+  }
 
-        public static Country getStaticInstance() {
-            return (Country) getStaticInstance("com.idega.core.data.Country");
-        }
+  public String getDescription(){
+    return this.getStringColumnValue(getColumnNameDescription());
+  }
 
-	public String getEntityName(){
-		return "ic_country";
-	}
 
-	public String getName(){
-		return getStringColumnValue("name");
-	}
 
-	public void setISOAbbreviation(String abbreviation){
-		setColumn("iso_abbreviation", abbreviation);
-	}
+  public void setName(String typeName){
+    this.setColumn(getColumnNameName(),typeName);
+  }
 
-	public String getISOAbbreviation(){
-		return getStringColumnValue("iso_abbreviation");
-	}
+  public void setDescription(String typeDescription){
+    this.setColumn(getColumnNameDescription(),typeDescription);
+  }
 
-	public void setInternetSuffix(String internetSuffix){
-		setColumn("internet_suffix", internetSuffix);
-	}
 
-	public String getInternetSuffix(){
-		return getStringColumnValue("internet_suffix");
-	}
+  public static Country getStaticInstance(){
+    return(Country)getStaticInstance(Country.class);
+  }
 
-	public void setName(String name){
-		setColumn("name", name);
-	}
 
 }

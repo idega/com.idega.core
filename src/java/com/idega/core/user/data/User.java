@@ -17,14 +17,14 @@ import java.sql.*;
 
 public class User extends GenericEntity {
 
-    private static String sClassName = "com.idega.core.user.data.User";
+    private static String sClassName = User.class.getName();
 
     public User(){
-            super();
+      super();
     }
 
     public User(int id)throws SQLException{
-            super(id);
+      super(id);
     }
 
 
@@ -42,8 +42,10 @@ public class User extends GenericEntity {
       addAttribute(getDescriptionColumnName(),"Lýsing",true,true,"java.lang.String");
       addAttribute(getDateOfBirthColumnName(),"Fæðingardagur",true,true,"java.sql.Date");
       addAttribute(getGenderColumnName(),"Kyn",true,true,"java.lang.Integer","many_to_one","com.idega.core.user.data.Gender");
-      addAttribute(getSystemImageColumnName(),"Kerfismynd",true,true,"java.lang.Integer","one_to_one","com.idega.core.data.Image");
-
+      addAttribute(getSystemImageColumnName(),"Kerfismynd",true,true,"java.lang.Integer","one_to_one","com.idega.core.data.ICFile");
+      this.addManyToManyRelationShip(Address.class,"ic_user_address");
+      this.addManyToManyRelationShip(Phone.class,"ic_user_phone");
+      this.addManyToManyRelationShip(Email.class,"ic_user_email");
     }
 
     public void setDefaultValues(){
@@ -205,12 +207,12 @@ public class User extends GenericEntity {
       setColumn(getGenderColumnName(),gender);
     }
 
-    public void setSystemImageID(Integer imageID){
-      setColumn(getSystemImageColumnName(),imageID);
+    public void setSystemImageID(Integer fileID){
+      setColumn(getSystemImageColumnName(),fileID);
     }
 
-    public void setSystemImageID(int imageID){
-      setColumn(getSystemImageColumnName(),imageID);
+    public void setSystemImageID(int fileID){
+      setColumn(getSystemImageColumnName(),fileID);
     }
 
     /*  Setters end   */

@@ -1,58 +1,42 @@
-//idega 2000 - eiki
-
 package com.idega.core.data;
-//import java.util.*;
-import java.sql.*;
-import com.idega.data.*;
 
-public class AddressType extends GenericEntity{
+import java.sql.*;
+
+/**
+ * Title:        IW Core
+ * Description:
+ * Copyright:    Copyright (c) 2001
+ * Company:      idega.is
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @version 1.0
+ */
+
+public class AddressType extends GenericType{
 
 	public AddressType(){
-		super();
+          super();
 	}
 
 	public AddressType(int id)throws SQLException{
-		super(id);
-	}
-
-	public void initializeAttributes(){
-		addAttribute(getIDColumnName());
-		addAttribute("name", "Nafn", true, true, String.class);
-		addAttribute("description", "Lýsing", true, true, String.class);
+          super(id);
 	}
 
 	public String getEntityName(){
-            return "ic_address_type";
+          return "ic_address_type";
 	}
 
         public void insertStartData()throws Exception{
-            AddressType at;
+          AddressType at;
 
-            at = new AddressType();
-              at.setName("Home");
-              at.setDescription("Home");
-            at.insert();
+          at = new AddressType();
+            at.setName("Home");
+            at.setDescription("Home");
+          at.insert();
 
-            at = new AddressType();
-              at.setName("Work");
-              at.setDescription("Work");
-            at.insert();
+          at = new AddressType();
+            at.setName("Work");
+            at.setDescription("Work");
+          at.insert();
         }
-
-
-	public String getName(){
-            return getStringColumnValue("name");
-	}
-
-	public void setName(String name){
-            setColumn("name",name);
-	}
-
-	public void setDescription(String description){
-            setColumn("description",description);
-	}
-	public String getDescription(){
-            return getStringColumnValue("description");
-	}
 
 }
