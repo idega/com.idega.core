@@ -33,13 +33,21 @@
     </developers>
     <dependencies>
         <dependency>
-            <groupId>com.idega.core</groupId>
+            <groupId>bundles</groupId>
             <artifactId>com.idega.core</artifactId>
             <version>2.0</version>
             <type>jar</type>
             <url>http://www.idega.com/</url>
             <properties><eclipse.dependency>true</eclipse.dependency></properties>
         </dependency>
+        <dependency>
+            <groupId>bundles</groupId>
+            <artifactId>com.idega.builder</artifactId>
+            <version>1.1</version>
+            <type>jar</type>
+            <url>http://www.idega.com/</url>
+            <properties><eclipse.dependency>true</eclipse.dependency></properties>
+        </dependency>        
         <dependency>
             <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
@@ -96,6 +104,30 @@
             <url>http://java.sun.com/j2ee/javaserverfaces/</url>
             <properties/>
         </dependency>
+        <dependency>
+            <groupId>myfaces</groupId>
+            <artifactId>myfaces</artifactId>
+            <version>1.0.5</version>
+            <type>jar</type>
+            <url>http://myfaces.org/</url>
+            <properties/>
+        </dependency>
+        <dependency>
+            <groupId>smile</groupId>
+            <artifactId>smile</artifactId>
+            <version>0.3.2</version>
+            <type>jar</type>
+            <url>http://smile.sourceforge.net/</url>
+            <properties/>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.4</version>
+            <type>jar</type>
+            <url>http://jakarta.apache.org/commons/logging</url>
+            <properties/>
+        </dependency>                
     </dependencies>
     <build>
         <sourceDirectory>src/java</sourceDirectory>

@@ -5,8 +5,8 @@ package com.idega.faces;
 
 import javax.faces.component.UIComponent;
 
-import com.idega.block.login.presentation.Login;
-import com.idega.block.news.presentation.News;
+//import com.idega.block.login.presentation.Login;
+//import com.idega.block.news.presentation.News;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.app.IWControlCenter;
@@ -41,6 +41,7 @@ public class TestComponent1 extends IWBaseComponent {
 			Image image = new Image("/smile/idegaweb/bundles/com.idega.core.bundle/resources/en.locale/login/header.jpg");
 			table.add(image,1,1);
 			
+			/*
 			News news = new News();
 			news.setICObjectInstanceID(1);
 			//news.setCategoryId(1);
@@ -53,6 +54,7 @@ public class TestComponent1 extends IWBaseComponent {
 			Login login = new Login();
 			//news.setCategoryId(1);
 			table.add(login,1,3);
+			*/
 			
 	}
 	
