@@ -7,9 +7,9 @@ package com.idega.util;
 
 import java.text.Collator;
 import java.util.Comparator;
-import java.util.Locale;
 
 import com.idega.core.data.GenericGroup;
+import com.idega.presentation.IWContext;
 
 /**
  * @author laddi
@@ -21,17 +21,18 @@ import com.idega.core.data.GenericGroup;
  */
 public class GenericGroupComparator implements Comparator {
 
-	private Locale _locale;
+	protected IWContext _iwc;
+	protected final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	
-	public GenericGroupComparator(Locale locale) {
-		_locale = locale;
+	public GenericGroupComparator(IWContext iwc) {
+		_iwc = iwc;
 	}
 
 	/**
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object o1, Object o2) {
-		Collator collator = Collator.getInstance(_locale);
+		Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
 		
 		GenericGroup g1 = (GenericGroup) o1;
 		GenericGroup g2 = (GenericGroup) o2;

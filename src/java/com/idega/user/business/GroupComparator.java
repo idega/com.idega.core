@@ -1,15 +1,17 @@
 package com.idega.user.business;
 
 import java.rmi.RemoteException;
+import java.text.Collator;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Locale;
 
 import javax.ejb.FinderException;
 
 import com.idega.core.accesscontrol.data.ICPermission;
-import com.idega.core.data.GenericGroup;
+import com.idega.presentation.IWContext;
+import com.idega.user.data.Group;
 import com.idega.util.GenericGroupComparator;
 
 /**
@@ -25,10 +27,12 @@ public class GroupComparator extends GenericGroupComparator{
 
   private GroupBusiness groupBiz;
   private boolean areICPermissions = false;
+  private boolean sortByParents = false;
   private Map cachedGroups = new HashMap();
+  private Map cachedParents = new HashMap();
 
-	public GroupComparator(Locale locale) {
-		super(locale);
+	public GroupComparator(IWContext iwc) {
+		super(iwc);
 	}
 
   public int compare(Object groupAOrCollectionOfGroupA, Object groupBOrCollectionOfGroupB) {
@@ -53,11 +57,30 @@ public class GroupComparator extends GenericGroupComparator{
 	 * @return
 	 */
 	private int compareICPermissionCollections(Object permissionCollectionA, Object permissionCollectionB) {
-		GenericGroup groupA = null;
-		GenericGroup groupB = null;
+	    int comp = 0;
+	    Group groupA = null;
+		Group groupB = null;
 		try {
 			groupA = checkForCachedGroups(permissionCollectionA);
 			groupB = checkForCachedGroups(permissionCollectionB);
+			if (sortByParents) {
+			    Collection parentsA = (Collection) groupBiz.getParentGroupsRecursive(groupA,cachedParents,cachedGroups);
+			    Collection parentsB = (Collection) groupBiz.getParentGroupsRecursive(groupB,cachedParents,cachedGroups);
+			    comp = compareRecursive(parentsA, parentsB);
+			    if (comp == 0) {
+			        Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
+			        String groupType1 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(groupA.getGroupType());
+					String groupType2 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(groupB.getGroupType());
+					
+					if (groupType1 != null && groupType2 == null) {
+					    comp = -1;
+					} else if (groupType1 == null && groupType2 != null) {
+					    comp = 1;
+					} else if (groupType1 != null && groupType2 != null) { 
+					    comp = collator.compare(groupType1, groupType2);
+					}
+			    }
+			}
 		}
 		catch (NumberFormatException e) {
 			e.printStackTrace();
@@ -68,26 +91,65 @@ public class GroupComparator extends GenericGroupComparator{
 		catch (FinderException e) {
 			e.printStackTrace();
 		}
-		
-		return super.compare(groupA,groupB);
+		if (comp == 0){
+		    comp = super.compare(groupA,groupB);
+		}
+		return comp;
 	}
 
 	/**
+     * @param parentsA
+     * @param parentsB
+     */
+    private int compareRecursive(Collection parentsA, Collection parentsB) {
+        int comp = 0;
+        if ((parentsA != null && !parentsA.isEmpty()) && (parentsB == null || parentsB.isEmpty())) {
+            comp = -1;
+        }
+        else if ((parentsA == null || parentsA.isEmpty()) && (parentsB != null && !parentsB.isEmpty())) {
+            comp = 1;
+        }
+        else if ((parentsA != null || !parentsA.isEmpty()) && (parentsB != null && !parentsB.isEmpty())){
+	        Group parentA = null;
+	        Group parentB = null;
+	        Iterator parAIt = parentsA.iterator();
+	        Iterator parBIt = parentsB.iterator();
+	        while (comp == 0) {
+	            if (parAIt.hasNext() && parBIt.hasNext()) {
+	                parentA = (Group)parAIt.next();
+		            parentB = (Group)parBIt.next();
+		            comp = super.compare(parentA,parentB);
+	            }
+	            else if (!parAIt.hasNext() && parBIt.hasNext()) {
+	                comp = -1;
+	            }
+	            else if (parAIt.hasNext() && !parBIt.hasNext()) {
+	                comp = 1;
+	            }
+	            else {
+	                break;
+	            }
+	        }
+        }
+        return comp;
+    }
+
+    /**
 	 * The compatator checks if the two groups being compared have already been loaded
 	 * and then gets them from a HashMap instead of loading them from the database 
 	 * Optimization done by Sigtryggur 6.7.2004  
 	 * @param permissionCollection
 	 * @return group
 	 */
-	private GenericGroup checkForCachedGroups(Object permissionCollection) throws FinderException, RemoteException {
-		GenericGroup group = null;
-		String groupID = ((ICPermission) ((Collection) permissionCollection).iterator().next()).getContextValue();
+	private Group checkForCachedGroups(Object permissionCollection) throws FinderException, RemoteException {
+	    Group group = null;
+	    String groupID = ((ICPermission) ((Collection) permissionCollection).iterator().next()).getContextValue();
 		if (cachedGroups.containsKey(groupID)) {
-			group = (GenericGroup)cachedGroups.get(groupID);
+			group = (Group)cachedGroups.get(groupID);
 		}
 		else
 		{	
-			group = (GenericGroup) groupBiz.getGroupByGroupID(Integer.parseInt(groupID));
+			group = (Group) groupBiz.getGroupByGroupID(Integer.parseInt(groupID));
 			cachedGroups.put(groupID, group);
 		}
 		return group;
@@ -108,7 +170,21 @@ public class GroupComparator extends GenericGroupComparator{
 	public void setGroupBusiness(GroupBusiness groupBiz){
 		this.groupBiz = groupBiz;
 	}
+
+	/**
+	 * 	@param sortByParents The sortByParents to set.
+ 	*/
+	public void setSortByParents(boolean sortByParents) {
+	    this.sortByParents = sortByParents;
+	}
+
+	public Map getCachedGroups() {
+	    return cachedGroups;
+	}
       
+	public Map getCachedParents() {
+	    return cachedParents;
+	}
   
 
 }

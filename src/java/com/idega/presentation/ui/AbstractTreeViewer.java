@@ -483,7 +483,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 				if (hasChild && isOpen) {
 				    Collection children = item.getChildren();
-				    Collections.sort((List)children, new GroupTreeComparator(iwc.getCurrentLocale()) );
+				    Collections.sort((List)children, new GroupTreeComparator(iwc) );
 				    drawTree(children.iterator(), newCollectedIcons, iwc);
 				}
 			}

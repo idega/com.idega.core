@@ -3,7 +3,6 @@ package com.idega.user.business;
 
 import java.text.Collator;
 import java.util.Comparator;
-import java.util.Locale;
 
 import com.idega.presentation.IWContext;
 
@@ -16,24 +15,23 @@ import com.idega.presentation.IWContext;
  */
 public class GroupTreeComparator implements Comparator {
 
-	  private Locale _locale;
+	  private IWContext _iwc;
 	  private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 		
-	  public GroupTreeComparator(Locale locale) {
-	  	_locale = locale;
+	  public GroupTreeComparator(IWContext iwc) {
+	  	_iwc = iwc;
 	  }
 
 	  public int compare(Object o1, Object o2) {
 		int returner = 0;
-	  	Collator collator = Collator.getInstance(_locale);
+	  	Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
 
 	  	if (o1 instanceof GroupTreeNode &&  o2 instanceof GroupTreeNode) {
 			GroupTreeNode g1 = (GroupTreeNode) o1;
 			GroupTreeNode g2 = (GroupTreeNode) o2;
 		
-			IWContext iwc = IWContext.getInstance();
-			String groupType1 = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_locale).getLocalizedString(g1.getGroupType());
-			String groupType2 = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_locale).getLocalizedString(g2.getGroupType());
+			String groupType1 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(g1.getGroupType());
+			String groupType2 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(g2.getGroupType());
 			
 			if (groupType1 != null && groupType2 == null) {
 			    returner = -1;
