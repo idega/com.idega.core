@@ -1,5 +1,5 @@
 /*
- * $Id: GenericProcedure.java,v 1.1 2004/09/07 12:06:32 gummi Exp $
+ * $Id: GenericProcedure.java,v 1.2 2004/09/07 12:48:16 gummi Exp $
  * Created on 31.8.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.util.database.ConnectionBroker;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/07 12:06:32 $ by $Author: gummi $
+ *  Last modified: $Date: 2004/09/07 12:48:16 $ by $Author: gummi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public abstract class GenericProcedure implements IDOProcedure {
 	
@@ -84,7 +84,16 @@ public abstract class GenericProcedure implements IDOProcedure {
 		return new IDOEntityList(new IDOPrimaryKeyList(pks,getIDOEntityInterfaceClass(),DatastoreInterface.getInstance(this).getOptimalEJBLoadFetchSize()));
 	}
 	
-    protected abstract Object executeFallBackProcedure(Object[] parameters) throws Exception ;
+	
+	/**
+	 * Should be overwritten in sub-classes in the way that it returns the same result as <code>executeProcedure(Object[] parameters)</code> but uses java code instead of stored procedure.
+	 * @param parameters
+	 * @return
+	 * @throws Exception
+	 */
+	protected Object executeFallBackProcedure(Object[] parameters) throws Exception {
+		throw new UnsupportedOperationException("The fallback procedure is not implemented yet.  Either you need to implement this method here or call isAvailable() before you try to use this procedure and handle it there.");
+	}	
     protected abstract Object executeProcedure(Object[] parameters) throws Exception ;
 	
 	/**
