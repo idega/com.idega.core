@@ -1,34 +1,35 @@
 package com.idega.core.data;
 
+import java.sql.SQLException;
 import java.util.Collection;
-import java.rmi.RemoteException;
+
 import javax.ejb.FinderException;
-import java.sql.*;
-import com.idega.data.*;
+
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOQuery;
 
 
 public class CommuneBMPBean extends GenericEntity implements Commune {
 
+	private static String COMMUNE_ENTITY_NAME = "ic_commune";
+
 	private static String COLUMN_COMMUNE_NAME = "commune_name";
 	private static String COLUMN_COMMUNE_CODE = "commune_code";
+	private static String COLUMN_PROVINCE_ID = "ic_province_id";
 
   public CommuneBMPBean(){
     super();
-  }
-
-  public CommuneBMPBean(int id)throws SQLException{
-    super(id);
   }
 
   public void initializeAttributes(){
     addAttribute(getIDColumnName());
     addAttribute(COLUMN_COMMUNE_NAME, "Commune", true, true, String.class,50);
     addAttribute(COLUMN_COMMUNE_CODE, "Commune code", true, true, String.class, 20);
-    addManyToOneRelationship("ic_province_id", "Province", Province.class);
+    addManyToOneRelationship(COLUMN_PROVINCE_ID, "Province", Province.class);
   }
 
   public String getEntityName(){
-    return "ic_commune";
+    return COMMUNE_ENTITY_NAME;
   }
 
   /**
@@ -51,27 +52,30 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 	}
 
   public void setProvince(Province province){
-    setColumn("ic_province_id",province);
+    setColumn(COLUMN_PROVINCE_ID,province);
   }
 
   public Province getProvince(){
-    return (Province)getColumnValue("ic_province_id");
+    return (Province)getColumnValue(COLUMN_PROVINCE_ID);
   }
 
   public void setProvinceID(int province_id){
-    setColumn("ic_province_id",province_id);
+    setColumn(COLUMN_PROVINCE_ID,province_id);
   }
 
   public int getProvinceID(){
-    return getIntColumnValue("ic_province_id");
+    return getIntColumnValue(COLUMN_PROVINCE_ID);
   }
 
-  public Integer ejbFindByCommuneNameAndProvinceId(String name,int provinceId)throws FinderException,RemoteException{
-    Collection communes = idoFindAllIDsByColumnsBySQL(COLUMN_COMMUNE_NAME,name, "ic_province_id", Integer.toString(provinceId));
-    if(!communes.isEmpty()){
-      return (Integer)communes.iterator().next();
-    }
-    else throw new FinderException("Commune was not found");
+  public Collection ejbFindAllCommunes() throws FinderException {
+		IDOQuery query = idoQuery();
+		query.appendSelectAllFrom(this);
+		return idoFindPKsByQuery(query);
   }
-
+  
+  public Integer ejbFindByCommuneNameAndProvince(String name, Object provinceID) throws FinderException {
+    IDOQuery query = idoQuery();
+    query.appendSelectAllFrom(this).appendWhereEquals(COLUMN_PROVINCE_ID, provinceID).appendAndEqualsQuoted(COLUMN_COMMUNE_NAME, name);
+    return (Integer) idoFindOnePKByQuery(query);
+  }
 }

@@ -13,9 +13,16 @@ public class CommuneHomeImpl extends com.idega.data.IDOFactory implements Commun
  }
 
 
-public Commune findByCommuneNameAndProvinceId(java.lang.String p0,int p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findAllCommunes()throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	Object pk = ((CommuneBMPBean)entity).ejbFindByCommuneNameAndProvinceId(p0,p1);
+	java.util.Collection ids = ((CommuneBMPBean)entity).ejbFindAllCommunes();
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public Commune findByCommuneNameAndProvince(java.lang.String p0,java.lang.Object p1)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((CommuneBMPBean)entity).ejbFindByCommuneNameAndProvince(p0,p1);
 	this.idoCheckInPooledEntity(entity);
 	return this.findByPrimaryKey(pk);
 }
