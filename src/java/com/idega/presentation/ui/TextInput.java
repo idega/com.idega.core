@@ -56,7 +56,9 @@ public class TextInput extends GenericInput {
 	public TextInput(String name, String content) {
 		super();
 		setName(name);
-		setContent(content);
+		if (content != null){
+			setContent(content);
+		}
 		setInputType(INPUT_TYPE_TEXT);
 
 		isSetAsIntegers = false;
