@@ -535,6 +535,9 @@ public abstract class DatastoreInterface{
             String table1=entity.getTableName();
             GenericEntity entityToReference = (GenericEntity)relationShipClass.newInstance();
             String tableToReference=entityToReference.getTableName();
+            if(!doesTableExist(entity,tableToReference)){
+              createEntityRecord(entityToReference);
+            }
             String columnInTableToReference=entityToReference.getIDColumnName();
             String columnName = names[i];
             createForeignKey(entity,table1,columnName,tableToReference,columnInTableToReference);
