@@ -28,8 +28,10 @@ public class GroupComparator extends GenericGroupComparator{
   private GroupBusiness groupBiz;
   private boolean areICPermissions = false;
   private boolean sortByParents = false;
+  private int topmostParentLevel = -1;
   private Map cachedGroups = new HashMap();
   private Map cachedParents = new HashMap();
+  private Map cachedCollectionsOfParentsRecursivelyPlusCurrentGroup = new HashMap();
 
 	public GroupComparator(IWContext iwc) {
 		super(iwc);
@@ -64,22 +66,9 @@ public class GroupComparator extends GenericGroupComparator{
 			groupA = checkForCachedGroups(permissionCollectionA);
 			groupB = checkForCachedGroups(permissionCollectionB);
 			if (sortByParents) {
-			    Collection parentsA = (Collection) groupBiz.getParentGroupsRecursive(groupA,cachedParents,cachedGroups);
-			    Collection parentsB = (Collection) groupBiz.getParentGroupsRecursive(groupB,cachedParents,cachedGroups);
-			    comp = compareRecursive(parentsA, parentsB);
-			    if (comp == 0) {
-			        Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
-			        String groupType1 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(groupA.getGroupType());
-					String groupType2 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(groupB.getGroupType());
-					
-					if (groupType1 != null && groupType2 == null) {
-					    comp = -1;
-					} else if (groupType1 == null && groupType2 != null) {
-					    comp = 1;
-					} else if (groupType1 != null && groupType2 != null) { 
-					    comp = collator.compare(groupType1, groupType2);
-					}
-			    }
+			    Collection parentsA = getParentGroupsRecursively(groupA);
+			    Collection parentsB = getParentGroupsRecursively(groupB);
+			    comp = compareRecursively(parentsA, parentsB);
 			}
 		}
 		catch (NumberFormatException e) {
@@ -98,18 +87,76 @@ public class GroupComparator extends GenericGroupComparator{
 	}
 
 	/**
+     * @param groupA
+     * @return
+     * @throws RemoteException
+     */
+    private Collection getParentGroupsRecursively(Group group) throws RemoteException {
+        Collection parentGroupsRecursive = null;
+		if (cachedCollectionsOfParentsRecursivelyPlusCurrentGroup!=null) {
+			if (cachedCollectionsOfParentsRecursivelyPlusCurrentGroup.containsKey(group.getPrimaryKey()))
+			    parentGroupsRecursive = (Collection)cachedCollectionsOfParentsRecursivelyPlusCurrentGroup.get(group.getPrimaryKey());
+			else
+			{	
+			    parentGroupsRecursive = groupBiz.getParentGroupsRecursive(group,cachedParents,cachedGroups);;
+			    if (parentGroupsRecursive!=null) {
+			        parentGroupsRecursive.add(group);
+			    }
+			    cachedCollectionsOfParentsRecursivelyPlusCurrentGroup.put(group.getPrimaryKey(), parentGroupsRecursive);
+				if (parentGroupsRecursive == null) {
+				    setTopmostParentLevel(0);
+				}
+				else {
+			    	if (topmostParentLevel == -1 || topmostParentLevel > parentGroupsRecursive.size()) {
+				        setTopmostParentLevel(parentGroupsRecursive.size());
+				    }
+				}	
+			}
+		}
+		else {
+		    parentGroupsRecursive = groupBiz.getParentGroupsRecursive(group,cachedParents,cachedGroups);
+		    if (parentGroupsRecursive!=null) {
+		        parentGroupsRecursive.add(group);
+		    }
+		}
+        return parentGroupsRecursive;
+    }
+
+    /**
+     * @param comp
+     * @param groupA
+     * @param groupB
+     * @return
+     */
+    private int compareGroupTypes(Group groupA, Group groupB) {
+        int comp = 0;
+        Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
+        String groupType1 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(groupA.getGroupType());
+        String groupType2 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(groupB.getGroupType());
+        
+        if (groupType1 != null && groupType2 == null) {
+            comp = -1;
+        } else if (groupType1 == null && groupType2 != null) {
+            comp = 1;
+        } else if (groupType1 != null && groupType2 != null) { 
+            comp = collator.compare(groupType1, groupType2);
+        }
+        return comp;
+    }
+
+    /**
      * @param parentsA
      * @param parentsB
      */
-    private int compareRecursive(Collection parentsA, Collection parentsB) {
+    private int compareRecursively(Collection parentsA, Collection parentsB) {
         int comp = 0;
-        if ((parentsA != null && !parentsA.isEmpty()) && (parentsB == null || parentsB.isEmpty())) {
+        if ((parentsA == null || parentsA.isEmpty()) && (parentsB != null && !parentsB.isEmpty())) {
             comp = -1;
         }
-        else if ((parentsA == null || parentsA.isEmpty()) && (parentsB != null && !parentsB.isEmpty())) {
+        else if ((parentsA != null && !parentsA.isEmpty()) && (parentsB == null || parentsB.isEmpty())) {
             comp = 1;
         }
-        else if ((parentsA != null || !parentsA.isEmpty()) && (parentsB != null && !parentsB.isEmpty())){
+        else if ((parentsA != null && !parentsA.isEmpty()) && (parentsB != null && !parentsB.isEmpty())){
 	        Group parentA = null;
 	        Group parentB = null;
 	        Iterator parAIt = parentsA.iterator();
@@ -118,7 +165,10 @@ public class GroupComparator extends GenericGroupComparator{
 	            if (parAIt.hasNext() && parBIt.hasNext()) {
 	                parentA = (Group)parAIt.next();
 		            parentB = (Group)parBIt.next();
-		            comp = super.compare(parentA,parentB);
+		            comp = compareGroupTypes(parentA, parentB);
+		            if (comp == 0){
+		                comp = super.compare(parentA,parentB);
+		            }
 	            }
 	            else if (!parAIt.hasNext() && parBIt.hasNext()) {
 	                comp = -1;
@@ -155,6 +205,19 @@ public class GroupComparator extends GenericGroupComparator{
 		return group;
 	}
 
+	public String getIndentString(Integer groupID) {
+	    int indent = 0;
+	    String indentString = "";
+	    Object obj = getCachedCollectionsOfParentsRecursivelyPlusCurrentGroup().get(groupID);
+		if (obj != null) {
+		    indent = ((Collection)obj).size();
+		}
+		indent = indent - getTopmostParentLevel();
+		for (int i=0;i<indent;i++)
+			indentString = "&nbsp;&nbsp;" + indentString;
+		return indentString;
+	}
+	
 	/**
 	 * Tells the comparator to check inside the collections and get the group from the ICPermission bean. 
 	 * It is mandatory to set the GroupBusiness also if this is set to true.
@@ -184,6 +247,23 @@ public class GroupComparator extends GenericGroupComparator{
       
 	public Map getCachedParents() {
 	    return cachedParents;
+	}
+
+	public Map getCachedCollectionsOfParentsRecursivelyPlusCurrentGroup() {
+	    return cachedCollectionsOfParentsRecursivelyPlusCurrentGroup;
+	}
+	
+/**
+ * @return Returns the topmostParentLevel.
+ */
+	public int getTopmostParentLevel() {
+    	return topmostParentLevel;
+	}
+	/**
+	 * @param topmostParentLevel The topmostParentLevel to set.
+	 */
+	public void setTopmostParentLevel(int topmostParentLevel) {
+    	this.topmostParentLevel = topmostParentLevel;
 	}
   
 
