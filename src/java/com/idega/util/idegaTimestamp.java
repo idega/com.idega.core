@@ -394,15 +394,36 @@ public class idegaTimestamp{
 
   }
 
+  public boolean equals(Object object) {
+    if (object instanceof idegaTimestamp) {
+      return equals((idegaTimestamp) object);
+    }else {
+      return super.equals(object);
+    }
+  }
 
+  public boolean equals(idegaTimestamp compareStamp) {
+    if (!this.isTime && !this.isDate) {
+      return (this.getYear() == compareStamp.getYear() && this.getMonth() == compareStamp.getMonth() && this.getDay() == compareStamp.getDay() && this.getHour() == compareStamp.getHour() && this.getMinute() == compareStamp.getMinute() && this.getSecond() == compareStamp.getSecond());
+    }
 
+    if (!this.isTime) {
+      return (this.getYear() == compareStamp.getYear() && this.getMonth() == compareStamp.getMonth() && this.getDay() == compareStamp.getDay());
+    }
+
+    if (!this.isDate) {
+      return (this.getHour() == compareStamp.getHour() && this.getMinute() == compareStamp.getMinute() && this.getSecond() == compareStamp.getSecond() );
+    }
+
+    return false;
+  }
+
+  public boolean isLaterThanOrEquals(idegaTimestamp compareStamp) {
+    return (isLaterThan(compareStamp) || equals(compareStamp));
+  }
 
 
   public boolean isLaterThan( idegaTimestamp compareStamp ){
-
-
-
-
 
     if(!this.isTime){
 
@@ -1993,6 +2014,30 @@ public class idegaTimestamp{
   }
 
 
+  public static boolean isBetween(idegaTimestamp from, idegaTimestamp to, idegaTimestamp stampToCheck, boolean yearly) {
+      from.setAsDate();
+      to.setAsDate();
+
+    if (yearly) {
+      idegaTimestamp temp = new idegaTimestamp(stampToCheck);
+        temp.setAsDate();
+      if (from.getYear() == to.getYear()) {
+        temp.setYear(from.getYear());
+        return (temp.isLaterThanOrEquals(from) && to.isLaterThanOrEquals(temp));
+      }else {
+        if (temp.getYear() >= to.getYear()) {
+          if (temp.getMonth() > to.getMonth()) {
+            temp.setYear(from.getYear());
+          }else {
+            temp.setYear(to.getYear() );
+          }
+        }
+        return isBetween(from, to, temp, false);
+      }
+    }else {
+      return (stampToCheck.isLaterThanOrEquals(from) && to.isLaterThanOrEquals(stampToCheck));
+    }
+  }
 
 
 
