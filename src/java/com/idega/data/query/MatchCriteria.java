@@ -3,7 +3,9 @@ package com.idega.data.query;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import com.idega.data.DatastoreInterface;
 import com.idega.data.IDOEntity;
@@ -67,7 +69,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 			this.value = value;
 		} else {
 			this.value = quote(value);
-			if(!matchType.equalsIgnoreCase(LIKE))
+			//if(!matchType.equalsIgnoreCase(LIKE))
 			    this.placeHolderValue = value;
 		}
 		this.matchType = matchType;
@@ -107,13 +109,16 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		this.column = column;
 		if (value) {
 			this.value = quote("Y");
+			if(!matchType.equalsIgnoreCase(LIKE))
+			    this.placeHolderValue = Boolean.TRUE;
 		}
 		else {
 			this.value = quote("N");
+			if(!matchType.equalsIgnoreCase(LIKE))
+			    this.placeHolderValue = Boolean.FALSE;
 		}
 		this.matchType = matchType;
-		if(!matchType.equalsIgnoreCase(LIKE))
-		    this.placeHolderValue = new Boolean(value);
+		
 	}
 
 	public MatchCriteria(Column column, String matchType, Object value) {
@@ -220,5 +225,12 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
      */
     public Object getPlaceValue() {
         return this.placeHolderValue;
+    }
+    
+    public List getValues(){
+        	Vector v = new Vector(1);
+        	if(this.placeHolderValue!=null)
+        	    v.add(this.placeHolderValue);
+        	return v;
     }
 }

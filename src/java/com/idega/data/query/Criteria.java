@@ -34,5 +34,6 @@ public abstract class Criteria implements Outputable {
     }
     
     public abstract Set getTables();
+    
 
 }

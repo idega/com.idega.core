@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import com.idega.data.DatastoreInterface;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOEntityField;
@@ -19,7 +20,7 @@ import com.idega.data.query.output.ToStringer;
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes </a>
  */
-public class SelectQuery implements Outputable, Cloneable {
+public class SelectQuery implements Outputable,PlaceHolder,Cloneable {
 
 	public static final int indentSize = 4;
 
@@ -293,14 +294,21 @@ public class SelectQuery implements Outputable, Cloneable {
 
 	}
 	
-	public List getPlaceHolderValues(){
+	/**
+	 * Recurse through criterias and get the correct order of placement values
+	 * @return
+	 */
+	public List getValues(){
 	    Vector list = new Vector();
-	    for (Iterator iter = criteria.iterator(); iter.hasNext();) {
-            Criteria crit = (Criteria) iter.next();
-            if(crit instanceof PlaceHolder)
-                list.add(((PlaceHolder)crit).getPlaceValue());
-            
-        }
+	    DatastoreInterface dsi = DatastoreInterface.getInstance();
+	    if(dsi.isUsingPreparedStatements()){
+		    for (Iterator iter = criteria.iterator(); iter.hasNext();) {
+	            Criteria crit = (Criteria) iter.next();
+	            if(crit instanceof PlaceHolder)
+	                list.addAll(((PlaceHolder)crit).getValues());
+	            
+	        }
+	    }
 	    return list;
 	}
 

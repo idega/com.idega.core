@@ -3,7 +3,9 @@ package com.idega.data.query;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import com.idega.data.IDOEntity;
 import com.idega.data.query.output.Output;
@@ -11,7 +13,7 @@ import com.idega.data.query.output.Output;
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
  */
-public class InCriteria extends Criteria {
+public class InCriteria extends Criteria implements PlaceHolder {
 
     private Column column;
     private String value;
@@ -212,6 +214,15 @@ public class InCriteria extends Criteria {
 		Set s = new HashSet();
 		s.add(column.getTable());
 		return s; 
+    }
+    
+    public List getValues(){
+        Vector l = new Vector();
+        if(subSelect!=null){
+            l.addAll(subSelect.getValues());
+        }
+        return l;
+        
     }
 
 }

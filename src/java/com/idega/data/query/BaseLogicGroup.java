@@ -1,7 +1,9 @@
 package com.idega.data.query;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 import com.idega.data.query.output.Output;
 
@@ -10,7 +12,7 @@ import com.idega.data.query.output.Output;
  * 
  * @author <a href="mailto:joe@truemesh.com">Joe Walnes</a>
  */
-public abstract class BaseLogicGroup extends Criteria {
+public abstract class BaseLogicGroup extends Criteria implements PlaceHolder {
     private String operator;
     private Criteria left;
     private Criteria right;
@@ -36,6 +38,15 @@ public abstract class BaseLogicGroup extends Criteria {
     		s.addAll(left.getTables());
     		s.addAll(right.getTables());
     		return s; 
+    }
+    
+    public List getValues(){
+        	Vector l = new Vector();
+        if(left instanceof PlaceHolder)
+            l.addAll(((PlaceHolder) left).getValues());
+        if(right instanceof PlaceHolder)
+            l.addAll(((PlaceHolder)right).getValues());
+        return l;
     }
 
 }
