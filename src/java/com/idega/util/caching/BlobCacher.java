@@ -210,11 +210,11 @@ public class BlobCacher  {
 
       String realPath = app.getApplicationRealPath();
 
-      Enumeration enum = cache.elements();
+      Enumeration enumer = cache.elements();
 
-      while( enum.hasMoreElements() ){
+      while( enumer.hasMoreElements() ){
 
-        String pathAndFile = realPath + java.net.URLDecoder.decode(TextSoap.findAndReplace( (String)enum.nextElement() ,"/",FileUtil.getFileSeparator()) );
+        String pathAndFile = realPath + java.net.URLDecoder.decode(TextSoap.findAndReplace( (String)enumer.nextElement() ,"/",FileUtil.getFileSeparator()) );
 
         System.out.println(pathAndFile);
 

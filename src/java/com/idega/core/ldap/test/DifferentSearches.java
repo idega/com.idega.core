@@ -163,11 +163,11 @@ public void doCompareSearch() throws Exception{
 /*
 * Generic method to format the NamingEnumeration returned from a search.
 */
-public  void formatResults(NamingEnumeration enum) throws Exception{
+public  void formatResults(NamingEnumeration enumer) throws Exception{
 	int count=0;
 	try {
-	    while (enum.hasMore()) {
-		SearchResult sr = (SearchResult)enum.next();
+	    while (enumer.hasMore()) {
+		SearchResult sr = (SearchResult)enumer.next();
 		System.out.println("SEARCH RESULT:" + sr.getName());
 		formatAttributes(sr.getAttributes());
 		System.out.println("====================================================");
@@ -190,8 +190,8 @@ public  void formatResults(NamingEnumeration enum) throws Exception{
 	    System.out.println("This result has no attributes");
 	} else {
 	    try {
-		for (NamingEnumeration enum = attrs.getAll(); enum.hasMore();) {
-		    Attribute attrib = (Attribute)enum.next();
+		for (NamingEnumeration enumer = attrs.getAll(); enumer.hasMore();) {
+		    Attribute attrib = (Attribute)enumer.next();
 		    System.out.println("ATTRIBUTE :" + attrib.getID());
 		    for (NamingEnumeration e = attrib.getAll();e.hasMore();)
 			 System.out.println("\t\t        = " + e.next());

@@ -1083,11 +1083,11 @@ public class DXAttributes implements Attributes
         printAttributeList(allatts);
     }
 
-    public static void printAttributeList(NamingEnumeration enum)
+    public static void printAttributeList(NamingEnumeration enumer)
     {
-        while (enum.hasMoreElements())
+        while (enumer.hasMoreElements())
         {
-            Attribute fnord = (Attribute) enum.nextElement();
+            Attribute fnord = (Attribute) enumer.nextElement();
             if (fnord == null)
                 CBUtility.log("bizarre null attribute in element list");
             else

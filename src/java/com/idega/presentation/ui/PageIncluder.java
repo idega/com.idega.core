@@ -586,9 +586,9 @@ public void print(IWContext iwc)throws IOException{
     String labelParam = PAGE_INCLUDER_PARAMETER_NAME+_label;
 
     //get all parameters even from post actions
-    Enumeration enum = iwc.getParameterNames();
-    while (enum.hasMoreElements()) {
-      String param = (String) enum.nextElement();
+    Enumeration enumer = iwc.getParameterNames();
+    while (enumer.hasMoreElements()) {
+      String param = (String) enumer.nextElement();
       //debug(param+" : "+iwc.getParameter(param));
       if ( param.equals(instanceParam) || param.equals(labelParam)  ){
       	boolean canChangeURL = canChangeURLFromRequest(iwc);

@@ -282,11 +282,11 @@ public class CBUtility
     {
         Properties props = readPropertyFile(fileName);
         String[] values = new String[props.size()];
-        Enumeration enum = props.elements();
+        Enumeration enumer = props.elements();
         int count = 0;
-        while (enum.hasMoreElements())
+        while (enumer.hasMoreElements())
         {
-            values[count++] = enum.nextElement().toString();
+            values[count++] = enumer.nextElement().toString();
         }
         return values;
     }

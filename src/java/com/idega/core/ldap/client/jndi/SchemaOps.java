@@ -1269,11 +1269,11 @@ public class SchemaOps
         try
         {
             Attribute attributeTypes = rawSchemaAttributes.get("attributeTypes");
-            NamingEnumeration enum = attributeTypes.getAll();
+            NamingEnumeration enumer = attributeTypes.getAll();
 
-            while(enum.hasMore())
+            while(enumer.hasMore())
             {
-                String attr = (String)enum.next();
+                String attr = (String)enumer.next();
                 String[] attrName = getNames(attr);
 
                 for(int i=0;i<attrName.length;i++)

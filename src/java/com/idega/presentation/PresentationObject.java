@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.104 2004/10/25 14:41:48 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.105 2004/11/01 19:01:17 gimmi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -1407,11 +1407,11 @@ implements Cloneable, PresentationObjectType
 	{
 		System.err.println("DEBUG: Parameter debugging : " + this.getClassName());
 		System.err.println("AT  :" + new java.util.Date(System.currentTimeMillis()).toString());
-		java.util.Enumeration enum = iwc.getParameterNames();
+		java.util.Enumeration enumer = iwc.getParameterNames();
 		String prm;
-		while (enum.hasMoreElements())
+		while (enumer.hasMoreElements())
 		{
-			prm = (String) enum.nextElement();
+			prm = (String) enumer.nextElement();
 			String[] values = iwc.getParameterValues(prm);
 			for (int i = 0; i < values.length; i++)
 			{

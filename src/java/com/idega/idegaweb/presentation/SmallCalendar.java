@@ -213,9 +213,9 @@ public class SmallCalendar extends Block {
 				}
 			}
 		} else if (dayColors != null) {
-			Enumeration enum = dayColors.keys();
-			while (enum.hasMoreElements()) {
-				String dayString = (String) enum.nextElement();
+			Enumeration enumer = dayColors.keys();
+			while (enumer.hasMoreElements()) {
+				String dayString = (String) enumer.nextElement();
 				if (inThisMonth(dayString, year, month)) {
 					IWTimestamp newStamp = new IWTimestamp(dayString);
 					int[] XY = getXYPos(newStamp.getYear(), newStamp.getMonth(), newStamp.getDay());

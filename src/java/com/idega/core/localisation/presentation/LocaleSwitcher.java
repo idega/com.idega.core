@@ -50,9 +50,9 @@ public class LocaleSwitcher extends com.idega.idegaweb.presentation.LocaleChange
 		form.add(getText("Select language:&nbsp;&nbsp;"));
 		form.add(localesDrop);
 
-		Enumeration enum = iwc.getParameterNames();
-		while (enum.hasMoreElements()) {
-			form.maintainParameter((String) enum.nextElement());
+		Enumeration enumer = iwc.getParameterNames();
+		while (enumer.hasMoreElements()) {
+			form.maintainParameter((String) enumer.nextElement());
 		}
 
 		//doBusiness(iwc);

@@ -114,11 +114,11 @@ public class RequestControlFilter implements Filter {
 		System.out.println("[idegaWebApp] : Starting RequestControlFilter");
 		// parse all of the initialization parameters, collecting the exclude
 		// patterns and the max wait parameters
-		Enumeration enum = config.getInitParameterNames();
+		Enumeration enumer = config.getInitParameterNames();
 		excludePatterns = new LinkedList();
 		maxWaitDurations = new HashMap();
-		while (enum.hasMoreElements()) {
-			String paramName = (String) enum.nextElement();
+		while (enumer.hasMoreElements()) {
+			String paramName = (String) enumer.nextElement();
 			String paramValue = config.getInitParameter(paramName);
 			if (paramName.startsWith("excludePattern")) {
 				// compile the pattern only this once

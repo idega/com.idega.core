@@ -500,8 +500,8 @@ public class Form extends InterfaceObject {
 			else {*/
 
 				PresentationObjectContainer cont = new PresentationObjectContainer();
-				for (Enumeration enum = iwc.getParameterNames(); enum.hasMoreElements();) {
-					String tempString = (String) enum.nextElement();
+				for (Enumeration enumer = iwc.getParameterNames(); enumer.hasMoreElements();) {
+					String tempString = (String) enumer.nextElement();
 					cont.add(new Parameter(tempString, iwc.getParameter(tempString)));
 				}
 				cont.add(new Parameter("idega_special_form_parameter", ""));

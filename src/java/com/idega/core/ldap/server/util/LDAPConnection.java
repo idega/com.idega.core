@@ -113,10 +113,10 @@ public class LDAPConnection {
         dump(initDirContext, "");
     }
 
-    public static void dumpNamingEnumeration(NamingEnumeration enum) throws NamingException {
+    public static void dumpNamingEnumeration(NamingEnumeration enumer) throws NamingException {
 
-        while (enum.hasMore()) {
-            Binding bd = (Binding) enum.next();
+        while (enumer.hasMore()) {
+            Binding bd = (Binding) enumer.next();
             //DirContext sctx = (DirContext) bd.getObject();
             System.out.println("  " + bd.getName() + "  ");
 
