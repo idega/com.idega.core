@@ -3,6 +3,7 @@ package com.idega.core.accesscontrol.data;
 import java.sql.Date;
 import java.sql.SQLException;
 
+import com.idega.data.MetaDataCapable;
 import com.idega.util.EncryptionType;
 import com.idega.util.IWTimestamp;
 
@@ -11,11 +12,11 @@ import com.idega.util.IWTimestamp;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
-public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements com.idega.core.accesscontrol.data.LoginInfo {
+public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements com.idega.core.accesscontrol.data.LoginInfo, MetaDataCapable {
 
   private static final String ENTITY_NAME = "IC_LOGIN_INFO";
   private static final String COLUMN_ACCOUNT_ENABLED = "ACCOUNT_ENABLED";
@@ -25,6 +26,9 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
   private static final String COLUMN_ALLOWED_TO_CHANGE = "ALLOWED_TO_CHANGE";
   private static final String COLUMN_CHANGE_NEXT_TIME = "CHANGE_NEXT_TIME";
   private static final String COLUMN_ENCRYPTION_TYPE = "ENCRYPTION_TYPE";
+  private static final String META_DATA_ACCESS_CLOSED = "ACCESS_CLOSED";
+  private static final String META_DATA_FAILED_ATTEMPT_COUNT = "FAILED_ATTEMPT_COUNT";
+  
   public static String className = LoginInfo.class.getName();
 
   public LoginInfoBMPBean() {
@@ -39,13 +43,14 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
 
   public void initializeAttributes() {
     addAttribute(getIDColumnName(),"Notandi",true,true,Integer.class,"one-to-one",LoginTable.class);
-    addAttribute(getAccountEnabledColumnName(),"Aðgangur virkur",true,true,Boolean.class);
-    addAttribute(getModifiedColumnName(),"Síðast breytt",true,true,java.sql.Date.class);
-    addAttribute(getDaysOfValityColumnName(),"Dagar í gildi",true,true,Integer.class);
-    addAttribute(getPasswordExpiresColumnName(),"Lykilorð rennur út",true,true,Boolean.class);
-    addAttribute(getAllowedToChangeColumnName(),"Notandi má breyta",true,true,Boolean.class);
-    addAttribute(getChangeNextTimeColumnName(),"Breyta næst",true,true,Boolean.class);
-    addAttribute(getEncryptionTypeColumnName(),"Kóðunaraðferð",true,true,String.class,30);
+    addAttribute(getAccountEnabledColumnName(),"Aï¿½gangur virkur",true,true,Boolean.class);
+    addAttribute(getModifiedColumnName(),"Sï¿½ï¿½ast breytt",true,true,java.sql.Date.class);
+    addAttribute(getDaysOfValityColumnName(),"Dagar ï¿½ gildi",true,true,Integer.class);
+    addAttribute(getPasswordExpiresColumnName(),"Lykilorï¿½ rennur ï¿½t",true,true,Boolean.class);
+    addAttribute(getAllowedToChangeColumnName(),"Notandi mï¿½ breyta",true,true,Boolean.class);
+    addAttribute(getChangeNextTimeColumnName(),"Breyta nï¿½st",true,true,Boolean.class);
+    addAttribute(getEncryptionTypeColumnName(),"Kï¿½ï¿½unaraï¿½ferï¿½",true,true,String.class,30);
+    addMetaDataRelationship();
   }
 
   public void setDefaultValues(){
@@ -73,11 +78,11 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
 
   /*  ColumNames begin   */
 
-  public static String getLoginTableIdColumnName(){
+  public static String getLoginTableIdColumnName() {
     return com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance().getIDColumnName();
   }
 
-  public static String getAccountEnabledColumnName(){
+  public static String getAccountEnabledColumnName() {
     return COLUMN_ACCOUNT_ENABLED;
   }
 
@@ -153,9 +158,18 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
   public String getEncryprionType(){
     return this.getStringColumnValue(getEncryptionTypeColumnName());
   }
+  
+  public boolean getAccessClosed() {
+  	String value = getMetaData(META_DATA_ACCESS_CLOSED);
+    return value!=null && value.equals("true");
+  }
+  
+  public int getFailedAttemptCount() {
+  	String value = getMetaData(META_DATA_FAILED_ATTEMPT_COUNT);
+    return value==null?0:Integer.parseInt(value);
+  }
+  
   /*  Getters end   */
-
-
 
   /*  Setters begin   */
   public void setLoginTableId(int id){
@@ -237,11 +251,14 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
   public boolean isLoginValid(){
   	return !isLoginExpired();
   }
-
+  
+  public void setAccessClosed(boolean closed) {
+  	setMetaData(META_DATA_ACCESS_CLOSED, closed?"true":"false");
+  }
+  
+  public void setFailedAttemptCount(int attempts) {
+  	setMetaData(META_DATA_FAILED_ATTEMPT_COUNT, Integer.toString(attempts));
+  }
   /*  Setters end   */
-
-
-
-
 
 }// Class end
