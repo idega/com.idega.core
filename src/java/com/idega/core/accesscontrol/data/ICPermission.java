@@ -19,4 +19,17 @@ public interface ICPermission extends com.idega.data.IDOEntity,com.idega.data.ID
  public void setContextType(java.lang.String p0);
  public void setPermissionString(java.lang.String p0);
  public java.lang.String getContextValue();
+ 
+ public void setInitiationDate(java.sql.Timestamp p0);
+ public void setPassive();
+ public void setPassiveBy(int p0);
+ public java.sql.Timestamp getInitiationDate();
+ public int getPassiveBy();
+ public java.lang.String getStatus();
+ public java.sql.Timestamp getTerminationDate();
+ public boolean isActive();
+ public boolean isPassive();
+ public void setActive();
+
+ 	
 }

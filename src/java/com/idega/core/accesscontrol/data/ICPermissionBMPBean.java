@@ -1,11 +1,15 @@
 package com.idega.core.accesscontrol.data;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collection;
 
 import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 
 import com.idega.data.IDOQuery;
 import com.idega.user.data.Group;
+import com.idega.user.data.User;
+import com.idega.util.IWTimestamp;
 
 /**
  * Title:        AccessControl
@@ -18,7 +22,25 @@ import com.idega.user.data.Group;
  */
 
 public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements com.idega.core.accesscontrol.data.ICPermission {
-	private static String sClassName = ICPermission.class.getName();
+	private static final String GROUP_ID_COLUMN = "group_id";
+	private static final String PERMISSION_VALUE_COLUMN = "permission_value";
+	private static final String PERMISSION_STRING_VALUE = "permission_string_value";
+	private static final String PERMISSION_STRING_COLUMN = "permission_string";
+	private static final String CONTEXT_VALUE_COLUMN = "permission_context_value";
+	private static final String ENTITY_NAME = "ic_permission";
+	private static final String CONTEXT_TYPE_COLUMN = "permission_context_type";
+	private static final String sClassName = ICPermission.class.getName();
+	
+	private static final String INITIATION_DATE_COLUMN="INITIATION_DATE";
+	private static final String TERMINATION_DATE_COLUMN="TERMINATION_DATE";
+	private static final String SET_PASSIVE_BY_COLUMN="SET_PASSIVE_BY";
+	private static final String STATUS_COLUMN="STATUS";
+	
+	private final static String STATUS_ACTIVE="ST_ACTIVE";
+	private final static String STATUS_PASSIVE="ST_PASSIVE";
+	
+	
+	
 	public ICPermissionBMPBean() {
 		super();
 	}
@@ -33,9 +55,15 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		addAttribute(getPermissionStringValueColumnName(), "Permission string value", true, true, "java.lang.String");
 		addAttribute(getPermissionValueColumnName(), "Permission value", true, true, "java.lang.Boolean");
 		addAttribute(getGroupIDColumnName(), "GroupID", true, true, Integer.class, "many-to-one", PermissionGroup.class);
+		
+		addAttribute(STATUS_COLUMN,"Status",String.class,10);
+		addAttribute(INITIATION_DATE_COLUMN,"Initiation Date",Timestamp.class);
+	 	addAttribute(TERMINATION_DATE_COLUMN,"Termination Date",Timestamp.class);
+	 	addAttribute(SET_PASSIVE_BY_COLUMN, "Passivated by", true, true, Integer.class, MANY_TO_ONE, User.class);
+ 	
 	}
 	public String getEntityName() {
-		return "ic_permission";
+		return ENTITY_NAME;
 	}
 	/*
 	
@@ -47,7 +75,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	
 	*/
 	public static String getContextTypeColumnName() {
-		return "permission_context_type";
+		return CONTEXT_TYPE_COLUMN;
 	}
 	public String getContextType() {
 		return getStringColumnValue(getContextTypeColumnName());
@@ -56,7 +84,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		setColumn(getContextTypeColumnName(), ContextType);
 	}
 	public static String getContextValueColumnName() {
-		return "permission_context_value";
+		return CONTEXT_VALUE_COLUMN;
 	}
 	public String getContextValue() {
 		return getStringColumnValue(getContextValueColumnName());
@@ -65,7 +93,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		setColumn(getContextValueColumnName(), ContextValue);
 	}
 	public static String getPermissionStringColumnName() {
-		return "permission_string";
+		return PERMISSION_STRING_COLUMN;
 	}
 	public String getPermissionString() {
 		return getStringColumnValue(getPermissionStringColumnName());
@@ -74,7 +102,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		setColumn(getPermissionStringColumnName(), PermissionString);
 	}
 	public static String getPermissionStringValueColumnName() {
-		return "permission_string_value";
+		return PERMISSION_STRING_VALUE;
 	}
 	public String getPermissionStringValue() {
 		return getStringColumnValue(getPermissionStringValueColumnName());
@@ -83,7 +111,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		setColumn(getPermissionStringValueColumnName(), PermissionStringValue);
 	}
 	public static String getPermissionValueColumnName() {
-		return "permission_value";
+		return PERMISSION_VALUE_COLUMN;
 	}
 	public boolean getPermissionValue() {
 		return getBooleanColumnValue(getPermissionValueColumnName());
@@ -95,7 +123,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		setColumn(getPermissionValueColumnName(), PermissionStringValue);
 	}
 	public static String getGroupIDColumnName() {
-		return "group_id";
+		return GROUP_ID_COLUMN;
 	}
 	public int getGroupID() {
 		return getIntColumnValue(getGroupIDColumnName());
@@ -110,13 +138,54 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		return (ICPermission) getStaticInstance(ICPermission.class);
 	}
 	
+	public void setActive(){
+		this.setStatus(STATUS_ACTIVE);
+	}
+
+	public void setPassive(){
+		this.setStatus(STATUS_PASSIVE);
+	}
+
+	public void setInitiationDate(Timestamp stamp){
+		this.setColumn(this.INITIATION_DATE_COLUMN,stamp);
+	}
+
+	public Timestamp getInitiationDate(){
+		return (Timestamp)getColumnValue(this.INITIATION_DATE_COLUMN);
+	}
+
+	public void setTerminationDate(Timestamp stamp){
+		this.setColumn(this.TERMINATION_DATE_COLUMN,stamp);
+	}
+
+	public Timestamp getTerminationDate(){
+		return (Timestamp)getColumnValue(this.TERMINATION_DATE_COLUMN);
+	}
+
+	public void setPassiveBy(int userId)  {
+		setColumn(SET_PASSIVE_BY_COLUMN, userId);
+	}
+
+	public int getPassiveBy() { 
+		return getIntColumnValue(SET_PASSIVE_BY_COLUMN);
+	}
+	
+	public void setStatus(String status){
+		setColumn(this.STATUS_COLUMN,status);
+	}
+
+	public String getStatus(){
+		return getStringColumnValue(this.STATUS_COLUMN);
+	}
+	
 
 	
 	public Collection ejbFindAllPermissionsByContextTypeAndContextValue(String contextType, String contextValue) throws FinderException{
 		IDOQuery sql = idoQuery();
 		sql.appendSelectAllFrom(this)
 		.appendWhereEqualsQuoted(getContextTypeColumnName(),contextType)
-		.appendAnd().appendEqualsQuoted(getContextValueColumnName(),contextType);
+		.appendAnd().appendEqualsQuoted(getContextValueColumnName(),contextType)
+		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )");
 		
 		return super.idoFindPKsByQuery(sql);
 	}
@@ -127,7 +196,8 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		sql.appendSelectAllFrom(this)
 		.appendWhereEqualsQuoted(getContextTypeColumnName(),contextType)
 		.appendAnd().appendEqualsQuoted(getContextValueColumnName(),contextValue)
-		.appendAndEquals(getGroupIDColumnName(),permissionGroup.getPrimaryKey().toString());
+		.appendAndEquals(getGroupIDColumnName(),permissionGroup.getPrimaryKey().toString())
+		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )");
 		
 		return super.idoFindPKsByQuery(sql);
 	}
@@ -147,6 +217,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		sql.appendSelectAllFrom(this)
 		.appendWhereEqualsQuoted(getContextTypeColumnName(),contextType)
 		.appendAndEquals(getGroupIDColumnName(),permissionGroup.getPrimaryKey().toString())
+		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )")
 		.appendOrderBy(getContextValueColumnName());
 		
 		return super.idoFindPKsByQuery(sql);
@@ -167,11 +238,39 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		sql.appendSelectAllFrom(this).appendWhereEquals(getGroupIDColumnName(),group.getPrimaryKey().toString())
 		.appendAnd().appendEqualsQuoted(getPermissionStringColumnName(),permissionString)
 		.appendAnd().appendEqualsQuoted(getContextTypeColumnName(),contextType)
+		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )")
 		.appendOrderBy(getContextValueColumnName());
 		
 		return super.idoFindPKsByQuery(sql);
 	}
 
+	public void removeBy(User currentUser){
+		int userId = ((Integer) currentUser.getPrimaryKey()).intValue(); 
+		this.setPassive();
+		this.setTerminationDate(IWTimestamp.getTimestampRightNow());
+		setPassiveBy(userId);
+		store();
+	}
 	
+	public void setDefaultValues(){
+		this.setInitiationDate(IWTimestamp.getTimestampRightNow());
+		this.setStatus(STATUS_ACTIVE);
+	}
+	
+	public boolean isActive(){
+		String status = this.getStatus();
+		if(status != null && status.equals(STATUS_ACTIVE)){
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isPassive(){
+		String status = this.getStatus();
+		if(status != null && status.equals(STATUS_PASSIVE)){
+			return true;
+		}
+		return false;
+	}
 	
 } // Class ends
