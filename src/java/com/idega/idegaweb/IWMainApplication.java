@@ -122,7 +122,7 @@ public class IWMainApplication{//implements ServletContext{
   }
 
   public static String getObjectInstanciatorURL(String className,String templateName){
-      return objectInstanciatorURL+"?"+classToInstanciateParameter+"="+getEncryptedClassName(className)+"&"+templateParameter+"="+templateName;
+      return objectInstanciatorURL+"?"+classToInstanciateParameter+"="+getEncryptedClassName(className)+"&"+templateParameter+"="+getEncryptedClassName(templateName);
   }
 
 
@@ -162,12 +162,14 @@ public class IWMainApplication{//implements ServletContext{
 
       return String.valueOf(encryptedChars);
       }else{*/
-        return classToInstanciate;
+  //      return classToInstanciate;
 //      }
+    return getHashCode(classToInstanciate);
   }
 
   public static String getEncryptedClassName(Class classToInstanciate){
-      return getEncryptedClassName(classToInstanciate.getName());
+      //return getEncryptedClassName(classToInstanciate.getName());
+      return getHashCode(classToInstanciate);
   }
 
   public static String decryptClassName(String encryptedClassName){
@@ -190,8 +192,10 @@ public class IWMainApplication{//implements ServletContext{
         System.err.println("String.valueOf(characters)"+String.valueOf(characters));
         return String.valueOf(characters);
     }else{*/
-      return encryptedClassName;
+    //  return encryptedClassName;
     //}
+
+    return getHashCodedClassName(encryptedClassName);
   }
 
 
@@ -554,4 +558,42 @@ public class IWMainApplication{//implements ServletContext{
   public static IWCacheManager getIWCacheManager(){
     return cacheManager;
   }
+
+
+  // hashcode referencing
+  private static Hashtable hashClasses = null;
+  private static Hashtable hashCodes = null;
+
+  public static String getHashCode(String className){
+    try{
+      return getHashCode(Class.forName(className));
+    }
+    catch(ClassNotFoundException ex){
+
+    }
+    return String.valueOf(className.hashCode());
+  }
+
+  public static String getHashCode(Class classObject){
+    String hashcode = Integer.toString(classObject.hashCode());
+    System.err.println(classObject.getName()+" "+hashcode);
+    if(hashClasses==null)
+      hashClasses = new Hashtable();
+    if(!hashClasses.containsKey(hashcode) ){
+      hashClasses.put(hashcode,classObject.getName());
+    }
+    if(hashCodes == null)
+      hashCodes = new Hashtable();
+    if(!hashCodes.containsKey(classObject.getName())){
+      hashCodes.put(classObject.getName(),hashcode);
+    }
+    return hashcode;
+  }
+
+  public static String getHashCodedClassName(String hashcode){
+    if(hashClasses!=null && hashcode!=null && hashClasses.containsKey(hashcode))
+     return (String)hashClasses.get(hashcode);
+    return null;
+  }
+
 }

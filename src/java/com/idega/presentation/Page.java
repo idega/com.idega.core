@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.27 2002/02/10 17:23:36 aron Exp $
+ * $Id: Page.java,v 1.28 2002/02/10 21:56:04 aron Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -812,6 +812,8 @@ public class Page extends PresentationObjectContainer {
     String classKey = iwc.getParameter(IW_FRAME_CLASS_PARAMETER);
     String frameKey = iwc.getParameter(IW_FRAME_STORAGE_PARMETER);
 
+    System.err.println("classKey "+classKey);
+    System.err.println("frameKey "+frameKey);
     if(frameKey!=null){
       Page page = getPage(getFrameStorageInfo(iwc),iwc);
       System.out.println("com.idega.presentation.Page: Trying to get page stored in session");
@@ -819,7 +821,8 @@ public class Page extends PresentationObjectContainer {
     }
     else if(classKey!=null){
       try{
-      Page page = (Page)Class.forName(classKey).newInstance();
+      String className = IWMainApplication.getHashCodedClassName(classKey);
+      Page page = (Page)Class.forName(className).newInstance();
       String sID = iwc.getParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID);
       try {
         if(sID != null){
