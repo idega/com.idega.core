@@ -3463,6 +3463,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
+			debug(sqlQuery);
 			ResultSet RS = Stmt.executeQuery(sqlQuery);
 			while (RS.next()) {
 				Object pk = ((GenericEntity)returningEntity).getPrimaryKeyFromResultSet(RS);
