@@ -59,7 +59,7 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 	}
 	
 	public Status getStatus() {
-		return (Status)getColumn(STATUS_ID);
+		return (Status)getColumnValue(STATUS_ID);
 	}
 
 	public void setStatusId(String id) {
@@ -75,7 +75,7 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 	}
 	
 	public User getUser() {
-		return (User)getColumn(IC_USER);
+		return (User)getColumnValue(IC_USER);
 	}
 	
 	public void setUserId(int id) {
@@ -91,7 +91,7 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 	}
 	
 	public Group getGroup() {
-		return (Group)getColumn(IC_GROUP);
+		return (Group)getColumnValue(IC_GROUP);
 	}
 	
 	public void setGroupId(int id) {
