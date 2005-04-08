@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.26 2005/02/01 15:45:43 sigtryggur Exp $
+ * $Id: AbstractChooser.java,v 1.27 2005/04/08 17:38:36 thomas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -179,7 +179,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			SubmitButton button = new SubmitButton(_iwrb.getLocalizedString("choose", "Choose"));
 			table.add(button, 2, 1);
 			_form.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
-			_form.addParameter(SCRIPT_PREFIX_PARAMETER, "window.opener.document." + _form.getID());
+			_form.addParameter(SCRIPT_PREFIX_PARAMETER, "window.opener.document.getElementById(\"" + _form.getID() +")\".");
 			_form.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
 			_form.addParameter(FILTER_PARAMETER, filter);
 			addParametersToForm(_form);
@@ -236,7 +236,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	}
 
 	public String getParentFormJavascriptPath() {
-		return "window.opener.document." + getParentFormString(this);
+		return "window.opener.document.getElementById(\"" + getParentFormString(this) +"\").";
 	}
 
 	public PresentationObject getPresentationObject(IWContext iwc) {
@@ -280,7 +280,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 					returnString = getParentFormString((PresentationObject) parent);
 				}
 				else {
-					returnString = ((PresentationObject) parent).getID() + ".";
+					returnString = ((PresentationObject) parent).getID();
 				}
 			}
 		}
