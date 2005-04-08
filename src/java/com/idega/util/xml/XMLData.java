@@ -292,7 +292,14 @@ public class XMLData implements Storable {
   	
   	
   private void initialize(File file) throws IOException {
-  	InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+  	InputStream inputStream = null;
+   	try {
+  		inputStream = new BufferedInputStream(new FileInputStream(file));
+   	}
+   	catch(FileNotFoundException ex) {
+   		close(inputStream);
+   		throw ex;
+   	}
   	initialize(inputStream);
   }
   	
