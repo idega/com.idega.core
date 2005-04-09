@@ -216,6 +216,22 @@ DIV.LoadLayer .LoadLayerContents{
 	width:45%;
 }
 
+.iw_search_result_extra_attribute_odd{
+	text-align: left;
+	text-decoration: bold;
+	float: left;
+	clear: left;
+	width: 45%;
+}
+
+.iw_search_result_extra_attribute_even{
+	text-align: right;
+	text-decoration: bold;	
+	float:right;
+	clear:right;
+	width:45%;
+}
+
 .iw_searcher{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10px;
