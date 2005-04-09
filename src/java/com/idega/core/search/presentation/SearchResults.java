@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.8 2005/04/09 20:13:22 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.9 2005/04/09 21:11:22 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -31,7 +31,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2005/04/09 20:13:22 $ by $Author: eiki $
+ * Last modified: $Date: 2005/04/09 21:11:22 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -43,7 +43,7 @@ import com.idega.presentation.text.Text;
  * iw_core.css is added and override the styles.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class SearchResults extends Block {
 
@@ -68,7 +68,7 @@ public class SearchResults extends Block {
 	private String rowEvenStyleClass = DEFAULT_ROW_EVEN_STYLE_CLASS;
 	private String rowOddStyleClass = DEFAULT_ROW_ODD_STYLE_CLASS;
 	private String extraAttributeTextOddStyleClass = DEFAULT_EXTRA_ATTRIBUTE_ODD_STYLE_CLASS;
-	private String extraAttributeTextEvenStyleClass = DEFAULT_EXTRA_ATTRIBUTE_ODD_STYLE_CLASS;
+	private String extraAttributeTextEvenStyleClass = DEFAULT_EXTRA_ATTRIBUTE_EVEN_STYLE_CLASS;
 	private String searchParameterName = Searcher.DEFAULT_SEARCH_PARAMETER_NAME;
 	private String advancedSearchParameterName = Searcher.DEFAULT_ADVANCED_SEARCH_PARAMETER_NAME;
 	// todo create handler
@@ -218,7 +218,8 @@ public class SearchResults extends Block {
 					if (getSearchPluginsToUse() != null) {
 						String searchClass = searchPlugin.getClass().getName();
 						String className  = searchClass.substring(searchClass.lastIndexOf('.') + 1);
-						if ( (getSearchPluginsToUse().indexOf(className) < 0) || (getSearchPluginsToUse().indexOf(searchClass) < 0) ) {
+						String pluginNamesOrClasses = getSearchPluginsToUse();
+						if ( (pluginNamesOrClasses.indexOf(className) < 0) && (pluginNamesOrClasses.indexOf(searchClass) < 0) ) {
 							continue;
 						}
 					}
