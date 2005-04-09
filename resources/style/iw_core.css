@@ -218,7 +218,7 @@ DIV.LoadLayer .LoadLayerContents{
 
 .iw_search_result_extra_attribute_odd{
 	text-align: left;
-	text-decoration: bold;
+	font-weight: bold;
 	float: left;
 	clear: left;
 	width: 45%;
@@ -226,7 +226,7 @@ DIV.LoadLayer .LoadLayerContents{
 
 .iw_search_result_extra_attribute_even{
 	text-align: right;
-	text-decoration: bold;	
+	font-weight: bold;	
 	float:right;
 	clear:right;
 	width:45%;
