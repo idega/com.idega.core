@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.9 2005/04/09 21:11:22 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.10 2005/04/09 21:46:01 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -31,7 +31,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2005/04/09 21:11:22 $ by $Author: eiki $
+ * Last modified: $Date: 2005/04/09 21:46:01 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -43,7 +43,7 @@ import com.idega.presentation.text.Text;
  * iw_core.css is added and override the styles.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class SearchResults extends Block {
 
@@ -309,8 +309,8 @@ public class SearchResults extends Block {
 										}
 										
 										extraParams.setText(value);
-										addSearchResultTypeStyleClass(extraParams, type);
-										
+										addSearchResultTypeAndAttributeKeyStyleClass(extraParams, type, key);
+								
 										rowContainer.add(extraParams);
 									}
 								}
@@ -361,9 +361,23 @@ public class SearchResults extends Block {
 	 * @param obj
 	 * @param type
 	 */
-	private void addSearchResultTypeStyleClass(PresentationObject obj, String type) {
+	protected void addSearchResultTypeStyleClass(PresentationObject obj, String type) {
 		String style = obj.getStyleClass();
 		obj.setStyleClass(style + " " + style + "_" + type);
+	}
+	
+
+	/**
+	 * Adds an extra optional style with the search type suffix
+	 * 
+	 * @param obj
+	 * @param type
+	 */
+	protected void addSearchResultTypeAndAttributeKeyStyleClass(PresentationObject obj, String type, String attributeKey) {
+		String style = obj.getStyleClass();
+		StringBuffer newStyle = new StringBuffer();
+		newStyle.append(style).append(" ").append(style).append("_").append(type).append(" ").append(style).append("_").append(type).append("_").append(attributeKey);
+		obj.setStyleClass(newStyle.toString());
 	}
 
 	/**
