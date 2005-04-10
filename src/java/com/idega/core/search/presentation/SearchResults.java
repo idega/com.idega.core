@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.10 2005/04/09 21:46:01 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.11 2005/04/10 21:04:52 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -31,7 +31,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2005/04/09 21:46:01 $ by $Author: eiki $
+ * Last modified: $Date: 2005/04/10 21:04:52 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -43,7 +43,7 @@ import com.idega.presentation.text.Text;
  * iw_core.css is added and override the styles.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class SearchResults extends Block {
 
@@ -376,7 +376,7 @@ public class SearchResults extends Block {
 	protected void addSearchResultTypeAndAttributeKeyStyleClass(PresentationObject obj, String type, String attributeKey) {
 		String style = obj.getStyleClass();
 		StringBuffer newStyle = new StringBuffer();
-		newStyle.append(style).append(" ").append(style).append("_").append(type).append(" ").append(style).append("_").append(type).append("_").append(attributeKey);
+		newStyle.append(style).append(" ").append(style).append("_").append(type).append(" ").append(type).append("_").append(attributeKey);
 		obj.setStyleClass(newStyle.toString());
 	}
 
