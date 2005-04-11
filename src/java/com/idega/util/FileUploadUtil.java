@@ -23,7 +23,7 @@ public class FileUploadUtil {
 	public FileUploadUtil() {
 		super();
 	}
-
+	
 	/**
 	 * A backward compatability method for the "old" UploadFile support in
 	 * IWContext. Only used when JSF rendering is turned on
