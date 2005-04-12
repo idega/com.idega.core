@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.125 2005/02/01 17:45:28 thomas Exp $
+ * $Id: DatastoreInterface.java,v 1.126 2005/04/12 20:30:23 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -59,13 +59,14 @@ public abstract class DatastoreInterface implements MutableClass {
 	public final static String DBTYPE_ORACLE = "oracle";
 	public final static String DBTYPE_INTERBASE = "interbase";
 	public final static String DBTYPE_HSQL = "hsql";
-	public final static String DBTYPE_MAKOI = "mckoi";
+	public final static String DBTYPE_MCKOI = "mckoi";
 	public final static String DBTYPE_MYSQL = "mysql";
 	public final static String DBTYPE_SAPDB = "sapdb";
 	public final static String DBTYPE_DB2 = "db2";
 	public final static String DBTYPE_MSSQLSERVER = "mssqlserver";
 	public final static String DBTYPE_INFORMIX = "informix";
 	public final static String DBTYPE_UNIMPLEMENTED = "unimplemented";
+	public final static String DBTYPE_DERBY = "derby";
 	
 	public static void unload()	{
 		usePreparedStatement = DEFAULT_USE_PREPARED_STATEMENT;
@@ -77,32 +78,35 @@ public abstract class DatastoreInterface implements MutableClass {
 		//if (interfacesHashtable == null) {
 		//	interfacesHashtable = new Hashtable();
 		//}
-		if (datastoreType.equals("oracle")) {
+		if (datastoreType.equals(DBTYPE_ORACLE)) {
 			className = "com.idega.data.OracleDatastoreInterface";
 		}
-		else if (datastoreType.equals("interbase")) {
+		else if (datastoreType.equals(DBTYPE_INTERBASE)) {
 			className = "com.idega.data.InterbaseDatastoreInterface";
 		}
-		else if (datastoreType.equals("mysql")) {
+		else if (datastoreType.equals(DBTYPE_MYSQL)) {
 			className = "com.idega.data.MySQLDatastoreInterface";
 		}
-		else if (datastoreType.equals("sapdb")) {
+		else if (datastoreType.equals(DBTYPE_SAPDB)) {
 			className = "com.idega.data.SapDBDatastoreInterface";
 		}
-		else if (datastoreType.equals("mssqlserver")) {
+		else if (datastoreType.equals(DBTYPE_MSSQLSERVER)) {
 			className = "com.idega.data.MSSQLServerDatastoreInterface";
 		}
-		else if (datastoreType.equals("db2")) {
+		else if (datastoreType.equals(DBTYPE_DB2)) {
 			className = "com.idega.data.DB2DatastoreInterface";
 		}
-		else if (datastoreType.equals("informix")) {
+		else if (datastoreType.equals(DBTYPE_INFORMIX)) {
 			className = "com.idega.data.InformixDatastoreInterface";
 		}
-		else if (datastoreType.equals("hsql")) {
+		else if (datastoreType.equals(DBTYPE_HSQL)) {
 			className = "com.idega.data.HSQLDatastoreInterface";
 		}
-		else if (datastoreType.equals("mckoi")) {
+		else if (datastoreType.equals(DBTYPE_MCKOI)) {
 			className = "com.idega.data.McKoiDatastoreInterface";
+		}
+		else if (datastoreType.equals(DBTYPE_DERBY)) {
+			className = "com.idega.data.DerbyDatastoreInterface";
 		}
 		else {
 			//className = "unimplemented DatastoreInterface";
@@ -284,7 +288,7 @@ public abstract class DatastoreInterface implements MutableClass {
 					dataStoreType = DBTYPE_HSQL;
 				}
 				else if (checkString.indexOf("mckoi") != -1) {
-					dataStoreType = DBTYPE_MAKOI;
+					dataStoreType = DBTYPE_MCKOI;
 				}
 				else if (checkString.indexOf("mysql") != -1) {
 					dataStoreType = DBTYPE_MYSQL;
@@ -300,6 +304,9 @@ public abstract class DatastoreInterface implements MutableClass {
 				}
 				else if (checkString.indexOf("informix") != -1) {
 					dataStoreType = DBTYPE_INFORMIX;
+				}
+				else if (checkString.indexOf("derby") != -1) {
+					dataStoreType = DBTYPE_DERBY;
 				}
 				else if (checkString.indexOf("idega") != -1) {
 					dataStoreType = DBTYPE_UNIMPLEMENTED;

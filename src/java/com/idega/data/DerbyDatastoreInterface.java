@@ -1,0 +1,160 @@
+/*
+ * $Id: DerbyDatastoreInterface.java,v 1.1 2005/04/12 20:30:23 tryggvil Exp $
+ * Created on 12.4.2005 in project com.idega.core
+ *
+ * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
+package com.idega.data;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+
+/**
+ * <p>
+ * This class is for supporting the Apache Derby database in idegaWeb.
+ * </p>
+ *  Last modified: $Date: 2005/04/12 20:30:23 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
+ * @version $Revision: 1.1 $
+ */
+public class DerbyDatastoreInterface extends DatastoreInterface {
+
+	/**
+	 * 
+	 */
+	public DerbyDatastoreInterface() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.DatastoreInterface#getSQLType(java.lang.String, int)
+	 */
+	public String getSQLType(String javaClassName, int maxlength)
+	{
+		String theReturn;
+		if (javaClassName.equals("java.lang.Integer"))
+		{
+			theReturn = "INTEGER";
+		}
+		else if (javaClassName.equals("java.lang.String"))
+		{
+			if (maxlength < 0)
+			{
+				theReturn = "VARCHAR(255)";
+			}
+			else if (maxlength <= 32000)
+			{
+				theReturn = "VARCHAR(" + maxlength + ")";
+			}
+			else
+			{
+				theReturn = "CLOB";
+			}
+		}
+		else if (javaClassName.equals("java.lang.Boolean"))
+		{
+			theReturn = "CHAR(1)";
+		}
+		else if (javaClassName.equals("java.lang.Float"))
+		{
+			theReturn = "FLOAT";
+		}
+		else if (javaClassName.equals("java.lang.Double"))
+		{
+			theReturn = "DOUBLE";
+		}
+		else if (javaClassName.equals("java.sql.Timestamp"))
+		{
+			theReturn = "TIMESTAMP";
+		}
+		else if (javaClassName.equals("java.sql.Date") || javaClassName.equals("java.util.Date"))
+		{
+			theReturn = "DATE";
+		}
+		else if (javaClassName.equals("java.sql.Blob"))
+		{
+			theReturn = "BLOB";
+		}
+		else if (javaClassName.equals("java.sql.Time"))
+		{
+			theReturn = "TIME";
+		}
+		else if (javaClassName.equals("com.idega.util.Gender"))
+		{
+			theReturn = "VARCHAR(1)";
+		}
+		else if (javaClassName.equals("com.idega.data.BlobWrapper"))
+		{
+			theReturn = "BLOB";
+		}
+		else
+		{
+			theReturn = "";
+		}
+		return theReturn;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.DatastoreInterface#createTrigger(com.idega.data.GenericEntity)
+	 */
+	public void createTrigger(GenericEntity entity) throws Exception {
+		// TODO Auto-generated method stub
+	}
+	
+	/**
+	 * @param entity
+	 * @param conn
+	 */
+	protected void updateNumberGeneratedValue(GenericEntity entity, Connection conn)
+	{
+		try
+		{
+			//if (((GenericEntity) entity).getPrimaryKeyClass().equals(Integer.class))
+			//{
+			boolean pkIsNull = entity.isNull(entity.getIDColumnName());
+			if (pkIsNull)
+			{
+				//Object value = this.executeQuery(entity, "select @@IDENTITY");
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery("values IDENTITY_VAL_LOCAL()");
+				rs.next();
+				int id = rs.getInt(1);
+				entity.setID(id);
+				rs.close();
+				stmt.close();
+				//String tableName = entity.getTableName();
+				//Statement stmt2 = conn.createStatement();
+				//stmt2.executeUpdate("set IDENTITY_INSERT " + tableName + " off");
+				//stmt2.close();
+			}
+			//}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * @return boolean
+	 */
+	protected boolean updateNumberGeneratedValueAfterInsert()
+	{
+		return true;
+	}
+	public String getIDColumnType(GenericEntity entity)
+	{
+		if (entity.getIfAutoIncrement()) {
+			return "INTEGER GENERATED ALWAYS AS IDENTITY";
+		} else {
+			return "INTEGER";
+		}
+	}	
+}

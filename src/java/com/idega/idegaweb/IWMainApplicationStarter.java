@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.LogManager;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -209,6 +210,24 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 	}		
 
+	/**
+	 * <p>
+	 * This is a method that is called to set database specific properties bafore loading the Jdbc driver and the pool.
+	 * </p>
+	 */
+	protected void setDatabaseProperties(){
+		//Currently this only does initialization for Apache Derby:
+		Properties p = System.getProperties();
+		if(p.get("derby.system.home")==null){
+			String dbHome = this.iwma.getApplicationRealPath()+"WEB-INF/derby/";
+			p.put("derby.system.home", dbHome);
+		}
+		String osName = p.get("os.name").toString().toLowerCase();
+		if(osName.indexOf("mac os") != -1){
+			//this is a hack for the MacOS X 1.4.x VM:
+			p.put("derby.storage.fileSyncTransactionLog","true");
+		}
+	}
 	
 	/**
 	 * Adds the .jar files in /WEB-INF/classes to the ClassPath
@@ -250,7 +269,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		
 		setApplicationVariables(iwma);
 		iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
-		
+		this.setDatabaseProperties();
 		this.startDatabasePool();
 		this.startLogManager();
 		IWStyleManager iwStyleManager = IWStyleManager.getInstance();

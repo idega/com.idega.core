@@ -1,5 +1,5 @@
 /*
- * $Id: SQLSchemaAdapter.java,v 1.5 2005/02/01 18:04:09 thomas Exp $
+ * $Id: SQLSchemaAdapter.java,v 1.6 2005/04/12 20:30:23 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/02/01 18:04:09 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/04/12 20:30:23 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public abstract class SQLSchemaAdapter implements MutableClass {
 
@@ -66,6 +66,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	public final static String DBTYPE_MSSQLSERVER = "mssqlserver";
 	public final static String DBTYPE_INFORMIX = "informix";
 	public final static String DBTYPE_UNIMPLEMENTED = "unimplemented";
+	public final static String DBTYPE_DERBY = "derby";
 
 	
 	public static void unload()	{
@@ -217,8 +218,11 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 				else if (checkString.indexOf("interbase") != -1 || checkString.indexOf("firebird") != -1) {
 					dataStoreType = DBTYPE_INTERBASE;
 				}
-				else if (checkString.indexOf("hsql") != -1 || checkString.indexOf("hypersonicsql") != -1) {
+				else if (checkString.indexOf(DBTYPE_HSQL) != -1 || checkString.indexOf("hypersonicsql") != -1) {
 					dataStoreType = DBTYPE_HSQL;
+				}
+				else if (checkString.indexOf(DBTYPE_DERBY) != -1) {
+					dataStoreType = DBTYPE_DERBY;
 				}
 				else if (checkString.indexOf("mckoi") != -1) {
 					dataStoreType = DBTYPE_MAKOI;
@@ -238,6 +242,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 				else if (checkString.indexOf("informix") != -1) {
 					dataStoreType = DBTYPE_INFORMIX;
 				}
+
 				else if (checkString.indexOf("idega") != -1) {
 					dataStoreType = DBTYPE_UNIMPLEMENTED;
 				}
