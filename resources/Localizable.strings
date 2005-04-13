@@ -25,6 +25,7 @@ dateinput.month_long=Month
 dateinput.month_short=M
 dateinput.year_long=Year
 dateinput.year_short=Y
+datepicker.pick_date=Pick date
 delete=Delete
 description=Description
 error.exception_occurred=The following exception occurred
