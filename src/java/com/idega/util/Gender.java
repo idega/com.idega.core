@@ -115,7 +115,7 @@ private char gender;
 
 	public boolean isFemale(){
 
-		if((gender=='F') || (gender =='F')){
+		if((gender=='F') || (gender =='f')){
 
 			return true;
 
