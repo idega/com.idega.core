@@ -22,6 +22,7 @@ dateinput.month_long=M\u00E1nu\u00F0ur
 dateinput.month_short=M
 dateinput.year_long=\u00C1r
 dateinput.year_short=\u00C1
+datepicker.pick_date=Veldu dag
 delete=Ey\u00F0a
 description=L\u00FDsing
 elements_header=Element
