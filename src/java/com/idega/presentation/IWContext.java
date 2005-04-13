@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.120 2005/03/07 12:51:20 tryggvil Exp $
+ * $Id: IWContext.java,v 1.121 2005/04/13 11:41:19 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/03/07 12:51:20 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/04/13 11:41:19 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.120 $
+ * @version $Revision: 1.121 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -106,6 +106,7 @@ implements IWUserContext, IWApplicationContext {
 	private UploadFile _uploadedFile = null;
 	private FacesContext realFacesContext;
 	
+	private static final String IWCONTEXT_REQUEST_KEY="iwcontext";
 	private static final String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
 	private static final String SESSION_OBJECT_STATE = ICBuilderConstants.SESSION_OBJECT_STATE;
 	
@@ -160,14 +161,23 @@ implements IWUserContext, IWApplicationContext {
 	
 	/**
 	 * This is the method to convert/cast a FacesContext instance to a IWContext instance.
-	 * if the FacesContext instance is really a IWContext it upcasts the instance, else it constructs a new.
+	 * if the FacesContext instance is really a IWContext it upcasts the instance, else it 
+	 * constructs a new and stores it in the outer facescontext's request map.
 	 */
 	public static IWContext getIWContext(FacesContext fc){
 			if(fc instanceof IWContext){
 				return (IWContext)fc;
 			}
 			else{
-				return new IWContext(fc);
+				IWContext iwc;
+				//try to look up from requestmap
+				iwc = (IWContext)fc.getExternalContext().getRequestMap().get(IWCONTEXT_REQUEST_KEY);
+				if(iwc==null){
+					//put it to the request map if it isn't there already
+					iwc = new IWContext(fc);
+					fc.getExternalContext().getRequestMap().put(IWCONTEXT_REQUEST_KEY,iwc);
+				}
+				return iwc;
 			}
 	}
 	public HttpSession getSession() {
