@@ -1037,7 +1037,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return null;
 	}
 
-	private Address updateUsersAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber,
+	protected Address updateUsersAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber,
 			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID,
 			AddressType addressType) throws CreateException, RemoteException {
 		Address address = null;
