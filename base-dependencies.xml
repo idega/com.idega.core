@@ -13,7 +13,7 @@
 	    <dependency>
 	      <groupId>myfaces</groupId>
             <artifactId>myfaces-jsf-api</artifactId>
-            <version>1.0.7</version>
+            <version>1.0.9</version>
 	      <type>jar</type>
 	      <url>http://java.sun.com/j2ee/javaserverfaces/</url>
 	      <properties />
@@ -42,6 +42,5 @@
             <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
         		<properties/>
         </dependency>
-    
     </dependencies>
 </project>

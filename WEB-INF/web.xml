@@ -163,25 +163,43 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
-     <!-- MyFaces MultiPart Filter -->
+     <!-- MyFaces Extensions Filter -->
     <filter>
-        <filter-name>multipartFilter</filter-name>
-        <filter-class>net.sourceforge.myfaces.custom.fileupload.MultipartFilter</filter-class>
-         <!-- 
-         	<init-param>
-            <param-name>maxFileSize</param-name>
+        <filter-name>extensionsFilter</filter-name>
+        <filter-class>org.apache.myfaces.component.html.util.ExtensionsFilter</filter-class>
+        <init-param>
+            <param-name>uploadMaxFileSize</param-name>
             <param-value>100m</param-value>
             <description>Set the size limit for uploaded files.
                 Format: 10 - 10 bytes
                         10k - 10 KB
                         10m - 10 MB
+                        1g - 1 GB
             </description>
-        </init-param>        
-		-->
+        </init-param>
+        <init-param>
+            <param-name>uploadThresholdSize</param-name>
+            <param-value>100k</param-value>
+            <description>Set the threshold size - files
+                    below this limit are stored in memory, files above
+                    this limit are stored on disk.
+
+                Format: 10 - 10 bytes
+                        10k - 10 KB
+                        10m - 10 MB
+                        1g - 1 GB
+            </description>
+        </init-param>
+<!--        <init-param>
+            <param-name>uploadRepositoryPath</param-name>
+            <param-value>/temp</param-value>
+            <description>Set the path where the intermediary files will be stored.
+            </description>
+        </init-param>-->
     </filter>
     
     <filter-mapping>
-        <filter-name>multipartFilter</filter-name>
+        <filter-name>extensionsFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
