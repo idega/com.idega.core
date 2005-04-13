@@ -3,7 +3,7 @@
  */
 package com.idega.faces.application;
 
-import net.sourceforge.myfaces.application.ApplicationImpl;
+import org.apache.myfaces.application.ApplicationImpl;
 
 
 /**

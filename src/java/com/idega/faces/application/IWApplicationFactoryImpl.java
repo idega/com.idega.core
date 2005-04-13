@@ -6,7 +6,7 @@ package com.idega.faces.application;
 import java.util.logging.Logger;
 
 import javax.faces.application.Application;
-import net.sourceforge.myfaces.application.ApplicationFactoryImpl;
+import org.apache.myfaces.application.ApplicationFactoryImpl;
 
 //import org.apache.log4j.Logger;
 

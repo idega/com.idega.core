@@ -15,7 +15,7 @@ import javax.faces.context.ResponseWriter;
 import javax.faces.render.RenderKit;
 import javax.faces.render.Renderer;
 import javax.faces.render.ResponseStateManager;
-import net.sourceforge.myfaces.renderkit.html.HtmlRenderKitImpl;
+import org.apache.myfaces.renderkit.html.HtmlRenderKitImpl;
 
 
 /**
