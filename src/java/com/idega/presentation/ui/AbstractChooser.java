@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.27 2005/04/08 17:38:36 thomas Exp $
+ * $Id: AbstractChooser.java,v 1.28 2005/04/14 08:27:22 gimmi Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -30,7 +30,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	static final String VALUE_PARAMETER = "iw_ch_v";
 	static final String DISPLAYSTRING_PARAMETER_NAME = "iw_ch_d_n";
 	static final String VALUE_PARAMETER_NAME = "iw_ch_v_n";
-	static final String SCRIPT_PREFIX_PARAMETER = "iw_ch_ch_p";
+	static final String FORM_ID_PARAMETER = "iw_ch_ch_p";
 	static final String SCRIPT_SUFFIX_PARAMETER = "iw_ch_s";
 	public static final String FILTER_PARAMETER = "iw_filter";
 
@@ -179,7 +179,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			SubmitButton button = new SubmitButton(_iwrb.getLocalizedString("choose", "Choose"));
 			table.add(button, 2, 1);
 			_form.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
-			_form.addParameter(SCRIPT_PREFIX_PARAMETER, "window.opener.document.getElementById(\"" + _form.getID() +")\".");
+			_form.addParameter(FORM_ID_PARAMETER, "window.opener.document.getElementById(\"" + _form.getID() +"\").");
 			_form.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
 			_form.addParameter(FILTER_PARAMETER, filter);
 			addParametersToForm(_form);
@@ -190,7 +190,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			link.setWindowToOpen(getChooserWindowClass());
 			link.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
 
-			link.addParameter(SCRIPT_PREFIX_PARAMETER, getParentFormJavascriptPath());
+			link.addParameter(FORM_ID_PARAMETER, getParentFormID());
 
 			//TODO Make the javascript work for other objects than form elements,
 			// e.g. a Link
@@ -235,8 +235,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	protected void addParametersToForm(Form form) {
 	}
 
-	public String getParentFormJavascriptPath() {
-		return "window.opener.document.getElementById(\"" + getParentFormString(this) +"\").";
+	public String getParentFormID() {
+		return getParentFormID(this);
 	}
 
 	public PresentationObject getPresentationObject(IWContext iwc) {
@@ -271,13 +271,13 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	/*
 	 *
 	 */
-	private String getParentFormString(PresentationObject obj) {
+	private String getParentFormID(PresentationObject obj) {
 		String returnString = "";
 		UIComponent parent = obj.getParent();
 		if (parent != null) {
 			if(parent instanceof PresentationObject){
 				if (!(parent instanceof Form)) {
-					returnString = getParentFormString((PresentationObject) parent);
+					returnString = getParentFormID((PresentationObject) parent);
 				}
 				else {
 					returnString = ((PresentationObject) parent).getID();

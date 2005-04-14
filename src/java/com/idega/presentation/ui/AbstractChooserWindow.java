@@ -2,11 +2,11 @@ package com.idega.presentation.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import com.idega.idegaweb.presentation.IWAdminWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.Script;
+import com.idega.presentation.text.Link;
 
 /**
  * Title:        idegaclasses
@@ -25,7 +25,7 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
 
   protected static final String DISPLAYSTRING_PARAMETER_NAME = AbstractChooser.DISPLAYSTRING_PARAMETER_NAME;
   protected static final String VALUE_PARAMETER_NAME = AbstractChooser.VALUE_PARAMETER_NAME;
-  protected static final String SCRIPT_PREFIX_PARAMETER = AbstractChooser.SCRIPT_PREFIX_PARAMETER;
+  protected static final String FORM_ID_PARAMETER = AbstractChooser.FORM_ID_PARAMETER;
   protected static final String SCRIPT_SUFFIX_PARAMETER = AbstractChooser.SCRIPT_SUFFIX_PARAMETER;
 
   protected static final String SCRIPT_PREFIX_IN_A_FRAME = "top.";
@@ -53,7 +53,7 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
       Script script = parent.getAssociatedScript();
       
       
-      String prefix = iwc.getParameter(SCRIPT_PREFIX_PARAMETER);
+      String prefix = iwc.getParameter(FORM_ID_PARAMETER);
       String suffix = iwc.getParameter(SCRIPT_SUFFIX_PARAMETER);
 
       String displayString = iwc.getParameter(DISPLAYSTRING_PARAMETER_NAME);
@@ -65,7 +65,7 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
       if( valueString == null ) valueString = "";
 
       if( !onlyScript ){
-        HiddenInput hPrefix = new HiddenInput(SCRIPT_PREFIX_PARAMETER,prefix);
+        HiddenInput hPrefix = new HiddenInput(FORM_ID_PARAMETER,prefix);
         HiddenInput hSuffix = new HiddenInput(SCRIPT_SUFFIX_PARAMETER,suffix);
         HiddenInput hDisplayString = new HiddenInput(DISPLAYSTRING_PARAMETER_NAME,displayString);
         HiddenInput hValueString = new HiddenInput(VALUE_PARAMETER_NAME,valueString);
@@ -78,10 +78,10 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
 
       //script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+AbstractChooser.DISPLAYSTRING_PARAMETER_NAME+".value=displaystring;"+AbstractChooser.VALUE_PARAMETER_NAME+".value=value;window.close();return false }");
       if( isInAFrame ){
-        script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+SCRIPT_PREFIX_IN_A_FRAME+ prefix+displayString+"."+suffix+"=displaystring; "+SCRIPT_PREFIX_IN_A_FRAME+prefix+valueString+".value=value;window.close();return false;}");
+        script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+SCRIPT_PREFIX_IN_A_FRAME+"window.opener.document.getElementById(\""+prefix+"\")."+displayString+"."+suffix+"=displaystring; "+SCRIPT_PREFIX_IN_A_FRAME+"window.opener.document.getElementById(\""+prefix+"\")."+valueString+".value=value;window.close();return false;}");
       }
       else{
-        script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+prefix+displayString+"."+suffix+"=displaystring;"+prefix+valueString+".value=value;window.close();return false;}");
+        script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ window.opener.document.getElementById(\""+prefix+"\")."+displayString+"."+suffix+"=displaystring;window.opener.document.getElementById(\""+prefix+"\")."+valueString+".value=value;window.close();return false;}");
       }
     }
     displaySelection(iwc);
@@ -116,17 +116,24 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
   }
 
   public Collection getHiddenParameters(IWContext iwc) {
-    String prefix = iwc.getParameter(SCRIPT_PREFIX_PARAMETER);
+    String prefix = iwc.getParameter(FORM_ID_PARAMETER);
     String suffix = iwc.getParameter(SCRIPT_SUFFIX_PARAMETER);
     String displayString = iwc.getParameter(DISPLAYSTRING_PARAMETER_NAME);
     String valueString = iwc.getParameter(VALUE_PARAMETER_NAME);
 
     Collection coll = new ArrayList();
 
-    coll.add(new Parameter(SCRIPT_PREFIX_PARAMETER,prefix));
+    coll.add(new Parameter(FORM_ID_PARAMETER,prefix));
     coll.add(new Parameter(SCRIPT_SUFFIX_PARAMETER,suffix));
     coll.add(new Parameter(DISPLAYSTRING_PARAMETER_NAME,displayString));
     coll.add(new Parameter(VALUE_PARAMETER_NAME,valueString));
     return coll;
+  }
+  
+  protected void maintainParameter(IWContext iwc, Link linkToMaintainParameters) {
+	  linkToMaintainParameters.maintainParameter(FORM_ID_PARAMETER, iwc);
+	  linkToMaintainParameters.maintainParameter(SCRIPT_SUFFIX_PARAMETER, iwc);
+	  linkToMaintainParameters.maintainParameter(DISPLAYSTRING_PARAMETER_NAME, iwc);
+	  linkToMaintainParameters.maintainParameter(VALUE_PARAMETER_NAME, iwc);
   }
 }
