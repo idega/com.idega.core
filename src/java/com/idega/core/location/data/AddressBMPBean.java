@@ -140,8 +140,10 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 
 	public void setPostalCode(PostalCode postalCode) {
 		setColumn(POSTAL_CODE_ID, postalCode);
-		if(postalCode.getCountryID()>0 && getCountry() == null){
-			setColumn(IC_COUNTRY_ID,postalCode.getCountryID());
+		if (postalCode != null) {
+			if(postalCode.getCountryID()>0 && getCountry() == null){
+				setColumn(IC_COUNTRY_ID,postalCode.getCountryID());
+			}
 		}
 	}
 
