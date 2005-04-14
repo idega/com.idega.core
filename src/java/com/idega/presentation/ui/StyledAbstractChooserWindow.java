@@ -26,7 +26,7 @@ public abstract class StyledAbstractChooserWindow extends StyledIWAdminWindow{
 
 	protected static final String DISPLAYSTRING_PARAMETER_NAME = AbstractChooser.DISPLAYSTRING_PARAMETER_NAME;
 	protected static final String VALUE_PARAMETER_NAME = AbstractChooser.VALUE_PARAMETER_NAME;
-	protected static final String SCRIPT_PREFIX_PARAMETER = AbstractChooser.SCRIPT_PREFIX_PARAMETER;
+	protected static final String SCRIPT_PREFIX_PARAMETER = AbstractChooser.FORM_ID_PARAMETER;
 	protected static final String SCRIPT_SUFFIX_PARAMETER = AbstractChooser.SCRIPT_SUFFIX_PARAMETER;
 
 	protected static final String SCRIPT_PREFIX_IN_A_FRAME = "top.";
