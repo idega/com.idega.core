@@ -846,7 +846,7 @@ public class TextSoap {
 					}
 				}
 				catch (Exception e) {
-					e.printStackTrace();
+					System.err.println(e.getMessage());
 				}
 				buf.append(replaceString);
 				index = text.indexOf(stringToFind, index2);
