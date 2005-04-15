@@ -80,15 +80,12 @@ public abstract class StyledAbstractChooserWindow extends StyledIWAdminWindow{
 			//closes the window and can be overridden
 			script.addFunction(PERFORM_AFTER_SELECT_FUNCTION_NAME, "function "+PERFORM_AFTER_SELECT_FUNCTION_NAME+"()"+"{"+getPerformAfterSelectScriptString(iwc)+"}");
 			
-			//script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+AbstractChooser.DISPLAYSTRING_PARAMETER_NAME+".value=displaystring;"+AbstractChooser.VALUE_PARAMETER_NAME+".value=value;window.close();return false }");
-			if( isInAFrame ){
-				script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+SCRIPT_PREFIX_IN_A_FRAME+ prefix+displayString+"."+suffix+"=displaystring; "+SCRIPT_PREFIX_IN_A_FRAME+prefix+valueString+".value=value;\n "+PERFORM_AFTER_SELECT_FUNCTION_NAME+"(); }");
-			}
-			else{
-				script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+prefix+displayString+"."+suffix+"=displaystring;"+prefix+valueString+".value=value;\n "+PERFORM_AFTER_SELECT_FUNCTION_NAME+"(); }");
-			}
-			
-			
+		      if( isInAFrame ){
+		        script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+SCRIPT_PREFIX_IN_A_FRAME+"window.opener.document.getElementById(\""+prefix+"\")."+displayString+"."+suffix+"=displaystring; "+SCRIPT_PREFIX_IN_A_FRAME+"window.opener.document.getElementById(\""+prefix+"\")."+valueString+".value=value;window.close();return false;}");
+		      }
+		      else{
+		        script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ window.opener.document.getElementById(\""+prefix+"\")."+displayString+"."+suffix+"=displaystring;window.opener.document.getElementById(\""+prefix+"\")."+valueString+".value=value;window.close();return false;}");
+		      }
 			
 		}
 		displaySelection(iwc);
