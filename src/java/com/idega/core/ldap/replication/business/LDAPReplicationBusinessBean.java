@@ -14,7 +14,6 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -34,7 +33,6 @@ import com.idega.core.ldap.util.IWLDAPConstants;
 import com.idega.core.ldap.util.IWLDAPUtil;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.business.UserGroupPlugInBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.FileUtil;
@@ -591,16 +589,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			group = getGroupBusiness().createOrUpdateGroup(entryDN, entryAttribs);	
 		}
 		
-//		get plugins and call the methods
-		if(pluginsForGroup==null){
-			pluginsForGroup = getGroupBusiness().getUserGroupPluginsForGroup(group);
-		}
-		
-		Iterator plugs = pluginsForGroup.iterator();
-		while (plugs.hasNext()) {
-			UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
-			plugBiz.afterGroupCreateOrUpdate(group);
-		}
+		getGroupBusiness().callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group);
 		
 		return group;
 	}
@@ -625,16 +614,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			user = getUserBusiness().createOrUpdateUser(childDN, childAttribs);
 		}
 		
-//		get plugins and call the methods
-		if(pluginsForUser==null){
-			pluginsForUser = getGroupBusiness().getUserGroupPluginsForUser(user);
-		}
-		
-		Iterator plugs = pluginsForGroup.iterator();
-		while (plugs.hasNext()) {
-			UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
-			plugBiz.afterUserCreateOrUpdate(user);
-		}
+		getUserBusiness().callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user);
 		
 		return user;
 	}

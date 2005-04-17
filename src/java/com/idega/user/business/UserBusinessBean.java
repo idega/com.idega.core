@@ -24,7 +24,6 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
-
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -3203,4 +3202,44 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		return comments;
 	}
+	
+	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user){
+//		get plugins and call the method
+		Collection allUserPlugins;
+		try {
+			allUserPlugins = getGroupBusiness().getUserGroupPlugins();
+			Iterator plugs = allUserPlugins.iterator();
+			while (plugs.hasNext()) {
+				UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
+				plugBiz.afterUserCreateOrUpdate(user);
+			}
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (CreateException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void callAllUserGroupPluginBeforeUserRemoveMethod(User user){
+//		get plugins and call the method
+		Collection allUserPlugins;
+		try {
+			allUserPlugins = getGroupBusiness().getUserGroupPlugins();
+			Iterator plugs = allUserPlugins.iterator();
+			while (plugs.hasNext()) {
+				UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
+				plugBiz.beforeUserRemove(user);
+			}
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (RemoveException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 } // Class UserBusiness

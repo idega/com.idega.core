@@ -1,7 +1,6 @@
 package com.idega.util;
 
 import java.util.Vector;
-
 import com.idega.presentation.IWContext;
 import com.idega.util.datastructures.Collectable;
 
@@ -34,14 +33,17 @@ public class GenericFormCollector {
     return selectedIndex;
   }
 
-  public boolean setSelectedIndex(int index, IWContext iwc, boolean collect, boolean store){
+  /**
+   * collects the selected index also
+   * @param index
+   * @param iwc
+   * @return
+   */
+  public boolean setSelectedIndex(int index, IWContext iwc){
     boolean collected = true;
     if(this.selectedIndex > -1 && this.selectedIndex < this.addedCollectableObjects.size()){
-      if(collect && selectedIndex != index ){
+      if(selectedIndex != index ){
         collected = ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(iwc);
-      }
-      if(store && selectedIndex != index ){
-        collected = ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).store(iwc);
       }
     }
     if(collected){
@@ -50,14 +52,6 @@ public class GenericFormCollector {
     } else {
       return false;
     }
-  }
-
-  /**
-   * collect : true <br>
-   * store : false
-   */
-  public boolean setSelectedIndex(int index, IWContext iwc){
-    return this.setSelectedIndex(index,iwc,true,false);
   }
 
 /*

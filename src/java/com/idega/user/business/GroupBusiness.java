@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusiness.java,v 1.49 2004/11/23 17:11:08 eiki Exp $
+ * $Id: GroupBusiness.java,v 1.50 2005/04/17 17:04:46 eiki Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -50,10 +50,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2004/11/23 17:11:08 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/04/17 17:04:46 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.49 $
+ * @version $Revision: 1.50 $
  */
 public interface GroupBusiness extends IBOService, IWLDAPConstants {
 
@@ -655,4 +655,14 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	 * @see com.idega.user.business.GroupBusinessBean#userGroupTreeImageProcedureTopNodeSearch
 	 */
 	public boolean userGroupTreeImageProcedureTopNodeSearch() throws java.rmi.RemoteException;
+	
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#callAllUserGroupPluginAfterGroupCreateOrUpdateMethod
+	 */
+	public void callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(Group group);
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#callAllUserGroupPluginBeforeGroupRemoveMethod
+	 */
+	public void callAllUserGroupPluginBeforeGroupRemoveMethod(Group group);
 }

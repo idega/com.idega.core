@@ -12,17 +12,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
-
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
-
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -1554,7 +1552,7 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 
 	return ListUtil.getEmptyList();
   }
-  
+    
   /**
  * Gets a collection of UserGroupPluginBusiness beans that can operate on the supplied user
  * @param user
@@ -1563,7 +1561,8 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
  */
   public Collection getUserGroupPluginsForUser(User user) throws RemoteException{
   	try {
-  		//finna allar gruppur tengdar thessum user og gera find fall sem tekur inn i sig collection a groups 
+  		//TODO finna allar gruppur tengdar thessum user og gera find fall sem tekur inn i sig collection a groups 
+		//THIS METHOD IS NOT FINISHED AND THE FIND METHOD ONLY GETS ALL PLUGINS
 		return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findRegisteredPlugInsForUser(user));
 	}
 	catch (FinderException e) {
@@ -1589,7 +1588,44 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 	  	
 	  	return ListUtil.getEmptyList();
     }
-    
+   
+	public void callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(Group group) {
+		// get plugins and call the method
+		Collection pluginsForGroup;
+		try {
+			pluginsForGroup = getUserGroupPluginsForGroup(group);
+			Iterator plugs = pluginsForGroup.iterator();
+			while (plugs.hasNext()) {
+				UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
+				plugBiz.afterGroupCreateOrUpdate(group);
+			}
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (CreateException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void callAllUserGroupPluginBeforeGroupRemoveMethod(Group group) {
+		// get plugins and call the method
+		Collection pluginsForGroup;
+		try {
+			pluginsForGroup = getUserGroupPluginsForGroup(group);
+			Iterator plugs = pluginsForGroup.iterator();
+			while (plugs.hasNext()) {
+				UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
+				plugBiz.beforeGroupRemove(group);
+			}
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (RemoveException e) {
+			e.printStackTrace();
+		}
+	}
     
   public GroupTypeHome getGroupTypeHome() throws RemoteException{
   	return  (GroupTypeHome) this.getIDOHome(GroupType.class);
@@ -2442,10 +2478,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/01/13 19:51:23 $ by $Author: eiki $
+	 *  Last modified: $Date: 2005/04/17 17:04:44 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.89 $
+	 * @version $Revision: 1.90 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

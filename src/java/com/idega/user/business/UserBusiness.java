@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.84 2005/02/16 11:11:16 laddi Exp $
+ * $Id: UserBusiness.java,v 1.85 2005/04/17 17:04:45 eiki Exp $
  * Created on 2.2.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,16 +14,13 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
-
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
-
 import com.idega.business.IBOService;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.data.LoginTable;
@@ -54,10 +51,10 @@ import com.idega.util.IWTimestamp;
 
 
 /**
- * Last modified: $Date: 2005/02/16 11:11:16 $ by $Author: laddi $
+ * Last modified: $Date: 2005/04/17 17:04:45 $ by $Author: eiki $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.84 $
+ * @version $Revision: 1.85 $
  */
 public interface UserBusiness extends IBOService, IWLDAPConstants {
 
@@ -740,5 +737,15 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	 * @see com.idega.user.business.UserBusinessBean#getUserComments
 	 */
 	public Collection getUserComments(User user) throws FinderException, java.rmi.RemoteException;
+	
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#callAllUserGroupPluginAfterUserCreateOrUpdateMethod
+	 */
+	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user);
+	
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#callAllUserGroupPluginBeforeUserRemoveMethod
+	 */
+	public void callAllUserGroupPluginBeforeUserRemoveMethod(User user);
 
 }

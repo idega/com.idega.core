@@ -102,7 +102,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     }
     
     private TabbedPropertyPanel(String key, IWContext iwc) {
-        collector = new GenericFormCollector();
         
         setName(TAB_FORM_NAME);
         frameTable = new Table();
@@ -135,10 +134,22 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         ok.addIWSubmitListener(this, this,iwc);
         cancel.addIWSubmitListener(this, this,iwc);
     }
+	
+	public void setCollector(GenericFormCollector collector){
+		this.collector = collector;
+	}
+	
+	public GenericFormCollector getCollector(){
+		if(collector==null){
+			collector = new GenericFormCollector();
+		}
+		return collector;
+	}
     
     public void actionPerformed(IWSubmitEvent e){
         if(e.getSource() == ok){
-            boolean success = collector.storeAll(e.getIWContext());
+		
+            boolean success = getCollector().storeAll(e.getIWContext());
             if(success){
                 this.okClicked = true;
             }else{
@@ -153,7 +164,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
             this.applyClicked = false;
         }
         else {
-            boolean success = collector.storeAll(e.getIWContext());
+            boolean success = getCollector().storeAll(e.getIWContext());
             if(success){
                 this.okClicked = true;
             }
@@ -170,7 +181,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     	
         tpane.insertTab( collectable.getName(), collectable, index, iwc);
         if(collectable instanceof Collectable){
-            collector.addCollectable((Collectable)collectable, index);
+			getCollector().addCollectable((Collectable)collectable, index);
             useCollector = true;
         }
     }
@@ -290,9 +301,9 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     
     public void main(IWContext iwc) throws Exception{
         if(stateChanged){
-            boolean success = collector.setSelectedIndex(tpane.getSelectedIndex(),iwc);
+            boolean success = getCollector().setSelectedIndex(tpane.getSelectedIndex(),iwc);
             if(!success){
-                this.getIWTabbedPane().setSelectedIndex(collector.getSelectedIndex());
+                this.getIWTabbedPane().setSelectedIndex(getCollector().getSelectedIndex());
             }
             stateChanged = false;
         }
