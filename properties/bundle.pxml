@@ -576,6 +576,11 @@
       <type>java.lang.String</type>
       <value>hh:mm</value>
     </key>
+    <key>
+      <name>DatePicker.date_format_string</name>
+      <type>java.lang.String</type>
+      <value>yyyy-MM-dd</value>
+    </key>
   </map>
 </pxml>
 
