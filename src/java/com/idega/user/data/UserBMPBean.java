@@ -1644,11 +1644,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	private String getUserInAllowedGroupsSearchString(String condition, String[] allowedGroups) {
 		StringBuffer sql = new StringBuffer();
-		sql.append("select gr.related_ic_group_id from ic_group g, ic_group_relation gr where gr.ic_group_id = g.ic_group_id ");
+		sql.append("select gr.related_ic_group_id from ic_group g, ic_group_relation gr where gr.ic_group_id = g.ic_group_id and (gr.GROUP_RELATION_STATUS='ST_ACTIVE' or gr.GROUP_RELATION_STATUS='PASS_PEND' ) ");
 		if(condition!=null){
 			sql.append(" and g.name like '%")
 			.append(condition)
-			.append("%' and gr.group_relation_status='ST_ACTIVE' ");
+			.append("%' ");
 		}
 		
 		if(allowedGroups!=null && allowedGroups.length>0){
