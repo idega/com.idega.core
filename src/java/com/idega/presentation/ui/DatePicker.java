@@ -88,6 +88,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         empty();
         IWBundle iwb = getBundle(iwc);
         IWResourceBundle iwrb = this.getResourceBundle(iwc);
+        dateFormatPattern = iwb.getProperty("DatePicker.date_format_string","yyyy-MM-dd");
         setChooseButtonImage(iwb.getImage("calendar.gif", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
         if (locale == null) {
             locale = iwc.getCurrentLocale();
