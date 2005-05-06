@@ -36,7 +36,7 @@ class BundleLocalizationMap implements Map {
 			return getResourceBundle().getObject(key.toString());
 		}
 		catch(MissingResourceException msre){
-			msre.printStackTrace();
+			System.err.println(msre.getMessage());
 			return null;
 		}
 	}

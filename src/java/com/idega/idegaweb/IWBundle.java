@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.89 2005/03/07 14:09:44 gummi Exp $
+ * $Id: IWBundle.java,v 1.90 2005/05/06 14:18:33 gummi Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -31,10 +31,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2005/03/07 14:09:44 $ by $Author: gummi $
+ * Last modified: $Date: 2005/05/06 14:18:33 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.89 $
+ * @version $Revision: 1.90 $
  */
 public interface IWBundle {
 	/**
@@ -134,6 +134,8 @@ public interface IWBundle {
 	public abstract String getResourcesURL(Locale locale);
 
 	public abstract String getResourcesURL();
+	
+	public String getResourcesPath();
 
 	public abstract String getResourcesVirtualPath(Locale locale);
 

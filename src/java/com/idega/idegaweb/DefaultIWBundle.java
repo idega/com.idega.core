@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.16 2005/03/07 14:09:44 gummi Exp $
+ * $Id: DefaultIWBundle.java,v 1.17 2005/05/06 14:18:33 gummi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -732,6 +732,14 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	public String getResourcesVirtualPath()
 	{
 		return getApplication().getTranslatedURIWithContext(resourcesVirtualPath);
+	}
+	
+	/**
+	* @returns Returns the virtual path to the resources folder in the bundle, without the context.	
+	**/
+	public String getResourcesPath()
+	{
+		return resourcesVirtualPath;
 	}
 	public String getResourcesRealPath(Locale locale)
 	{
@@ -1492,7 +1500,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	
 	public ValueBinding getValueBinding(FacesContext ctx, String localizationKey, String defaultValue) {
-		String valueBinding = "#{bundles['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
+		String valueBinding = "#{localizedStrings['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
 		ValueBinding vb = getApplication().createValueBinding(valueBinding);
 		Object obj = vb.getValue(ctx);
 		if(obj==null){
