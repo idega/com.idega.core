@@ -1274,8 +1274,16 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 	
 	public Collection ejbFindUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException {
-		Name name = new Name(userName);
-		return ejbFindUsersByConditions(name.getFirstName(), name.getMiddleName(), name.getLastName(), personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
+		
+		if(userName!=null && userName.indexOf(" ")>-1){
+			Name name = new Name(userName);
+			useAnd = true;
+			return ejbFindUsersByConditions(name.getFirstName(), name.getMiddleName(), name.getLastName(), personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
+		}
+		else {
+			return ejbFindUsersByConditions(userName, userName, userName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);	
+		}
+	
 	}
 	
 	public Collection ejbFindUsersByConditions(String firstName, String middleName, String lastName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException {
