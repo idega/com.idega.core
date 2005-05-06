@@ -1278,6 +1278,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		if(userName!=null && userName.indexOf(" ")>-1){
 			Name name = new Name(userName);
 			useAnd = true;
+			if(userName.equals(personalId)){
+				personalId = null;
+			}
 			return ejbFindUsersByConditions(name.getFirstName(), name.getMiddleName(), name.getLastName(), personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
 		}
 		else {
