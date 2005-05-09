@@ -1381,84 +1381,73 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
    * It is allowed and makes sense if the parameter group is null: 
    * In this case alias and general group type is returned.
    */      
-  public Collection getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwuc) {
-    GroupTypeHome groupTypeHome; 
-    GroupType groupType;
-    String groupTypeString;
-    try {
-      groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
-      // super admin: return all group types
-      
-      if (iwuc.isSuperAdmin()){
-      	try {
-			if(groupTypeHome.getNumberOfVisibleGroupTypes()<=0)
-			  	((com.idega.data.GenericEntity)com.idega.data.IDOLookup.instanciateEntity(GroupType.class)).insertStartData();
-		} catch (Exception e) {
-			e.printStackTrace();
+	public Collection getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwuc) {
+		GroupTypeHome groupTypeHome;
+		GroupType groupType;
+		String groupTypeString;
+		try {
+			groupTypeHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
+			// super admin: return all group types
+			if (iwuc.isSuperAdmin()) {
+				try {
+					if (groupTypeHome.getNumberOfVisibleGroupTypes() <= 0)
+						((com.idega.data.GenericEntity) com.idega.data.IDOLookup.instanciateEntity(GroupType.class)).insertStartData();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				return groupTypeHome.findVisibleGroupTypes();
+			}
+			// try to get the corresponding group type
+			if (group != null) {
+				groupTypeString = group.getGroupType();
+				groupType = groupTypeHome.findByPrimaryKey(groupTypeString);
+			}
+			else {
+				// okay, group is null, but we need an instance
+				// to get the alias and general group type
+				groupTypeString = "";
+				groupType = GroupTypeBMPBean.getStaticInstance();
+			}
 		}
-      	return groupTypeHome.findVisibleGroupTypes();
-      }
-      
-      
-      // try to get the corresponding group type
-      if (group != null)  {       
-        groupTypeString = group.getGroupType();
-        groupType = groupTypeHome.findByPrimaryKey(groupTypeString);
-      }
-      else  {
-      // okay, group is null, but we need an instance 
-      // to get the alias and general group type
-        groupTypeString = "";
-        groupType = GroupTypeBMPBean.getStaticInstance();
-
-      }
-    }
-    catch (Exception ex)  {
-      throw new RuntimeException(ex.getMessage());
-    }
-    
-    // get general and alias group type
-    GroupType generalType = findOrCreateGeneralGroupType(groupType, groupTypeHome);
-    GroupType aliasType = findOrCreateAliasGroupType(groupType, groupTypeHome);
-
-    
-    //TODO only add general and alias if allowed.
-    //
-    
-    ArrayList groupTypes = new ArrayList();
-    if (group == null)  {
-      // first case: group is null 
-    	
-      groupTypes.add(generalType);
-      groupTypes.add(aliasType);
-    }
-    else {	
-    	//TODO only adds general group as an option under generalgroups
-    	//TODO watch for circual references in children
-    	//Change the grouptype bean to add allowed stuff
-    	
-      //TODO only add if allowed
-    	if (! generalType.getType().equals(groupTypeString)){	
-        groupTypes.add(generalType);
-      }
-      
-    	//TODO only add if allowed
-      if (! aliasType.getType().equals(groupTypeString)){
-        groupTypes.add(aliasType);
-      }
-      
-      
-      
-      // then add children of type of selected group
-      addGroupTypeChildren(groupTypes, groupType);
-      
-//    hack
-      //add same type
-      groupTypes.add(groupType);
-      
-    }
-    return groupTypes;
-  }
+		catch (Exception ex) {
+			throw new RuntimeException(ex.getMessage());
+		}
+		
+		// get general and alias group type
+		GroupType generalType = findOrCreateGeneralGroupType(groupType, groupTypeHome);
+		GroupType aliasType = findOrCreateAliasGroupType(groupType, groupTypeHome);
+		
+		ArrayList groupTypes = new ArrayList();
+		if (group == null) {
+			// first case: group is null
+			groupTypes.add(generalType);
+			groupTypes.add(aliasType);
+		}
+		else {
+			
+			if(!groupType.getOnlySupportsSameTypeChildGroups()){
+				// add same type
+				if(groupType.getSupportsSameTypeChildGroups()){
+					groupTypes.add(groupType);
+				}
+				
+				if (!generalType.getType().equals(groupTypeString) && !groupTypes.contains(groupType)) {
+					groupTypes.add(generalType);
+				}
+				if (!aliasType.getType().equals(groupTypeString) && !groupTypes.contains(groupType)) {
+					groupTypes.add(aliasType);
+				}
+				
+				// then add children of type of selected group
+				addGroupTypeChildren(groupTypes, groupType);
+			}
+			else{
+				groupTypes.add(groupType);
+			}
+		}
+		return groupTypes;
+	}
 
   public void addGroupTypeChildren(List list, GroupType groupType)  {
     Iterator iterator = groupType.getChildrenIterator();
@@ -2478,10 +2467,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/04/17 17:04:44 $ by $Author: eiki $
+	 *  Last modified: $Date: 2005/05/09 18:16:33 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.90 $
+	 * @version $Revision: 1.91 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
