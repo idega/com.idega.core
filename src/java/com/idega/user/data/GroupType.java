@@ -23,4 +23,8 @@ public interface GroupType extends com.idega.data.IDOEntity,com.idega.data.Treea
  public void setNumberOfInstancesToAutoCreate(java.lang.Integer p0);
  public void setType(java.lang.String p0);
  public void setVisibility(boolean p0);
+ public boolean getOnlySupportsSameTypeChildGroups();
+ public void setOnlySupportsSameTypeChildGroups(Boolean onlySupportsSameTypeChildGroups);
+ public boolean getSupportsSameTypeChildGroups();
+ public void setSupportsSameTypeChildGroups(Boolean supportsSameTypeChildGroups);
 }
