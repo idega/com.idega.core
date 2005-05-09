@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.99 2005/05/04 18:33:48 thomas Exp $
+ * $Id: AccessControl.java,v 1.100 2005/05/09 12:56:50 palli Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -65,12 +65,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2005/05/04 18:33:48 $ by $Author: thomas $
+ * Last modified: $Date: 2005/05/09 12:56:50 $ by $Author: palli $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.99 $
+ * @version $Revision: 1.100 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -199,6 +199,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @todo page ownership
 	 */
 	public boolean isOwner(Object obj, IWUserContext iwc) throws Exception {
+		Boolean returnVal = Boolean.FALSE;
 		User user = iwc.getUser();
 		if (user != null) {
 			List[] permissionOrder = new Vector[2];
@@ -207,9 +208,16 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permissionOrder[1] = new Vector();
 			permissionOrder[1].add(Integer.toString(user.getPrimaryGroupID()));
 
-			return checkForPermission(permissionOrder, obj, AccessController.PERMISSION_KEY_OWNER, iwc);
+			returnVal = checkForPermission(permissionOrder, obj, AccessControl.PERMISSION_KEY_OWNER, iwc);
 		}
-		return false;
+
+		if (returnVal != null) {
+			return returnVal.booleanValue();
+		}
+		else {
+			return false;
+		}
+
 	}
 
 	public boolean isOwner(int category, String identifier, IWUserContext iwc) throws Exception {
@@ -234,9 +242,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	public boolean isOwner(List groupIds, Object obj, IWUserContext iwc) throws Exception {
+		Boolean returnVal = Boolean.FALSE;
 		List[] permissionOrder = new Vector[1];
 		permissionOrder[0] = groupIds;
-		return checkForPermission(permissionOrder, obj, AccessController.PERMISSION_KEY_OWNER, iwc);
+		returnVal = checkForPermission(permissionOrder, obj, AccessControl.PERMISSION_KEY_OWNER, iwc);
+
+		if (returnVal != null) {
+			return returnVal.booleanValue();
+		}
+		else {
+			return false;
+		}
 	}
 
 	public boolean isOwner(ICFile file, IWUserContext iwc) throws Exception {
@@ -498,6 +514,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @see com.idega.core.accesscontrol.business.AccessController#hasPermission(String, PresentationObject, IWUserContext)
 	 */
 	public boolean hasPermission(String permissionKey, Object obj, IWUserContext iwc) throws Exception {
+		Boolean myPermission = null;
 		// Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
 		if (isAdmin(iwc)) { //this is almost a security hole - eiki
@@ -560,8 +577,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			// ([0])Everyone, ([1])users, ([2])user, ([3])primaryGroup, ([4])otherGroups
 		}
 
-		if ( checkForPermission(usersGroupsToCheckAgainstPermissions, obj, permissionKey, iwc)) {
-			return true;
+		myPermission = checkForPermission(usersGroupsToCheckAgainstPermissions, obj, permissionKey, iwc);
+
+		boolean hasPermission = false;
+		if (myPermission != null) {
+			hasPermission = myPermission.booleanValue();
+			if (hasPermission) {
+				return true;
+			}
 		}
 
 		//if the user is an owner these rights are given. double checking really
@@ -605,6 +628,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @see com.idega.core.accesscontrol.business.AccessController#hasPermission(List, String, PresentationObject, IWUserContext)
 	 */
 	public boolean hasPermission(List groupIds, String permissionKey, Object obj, IWUserContext iwc) throws Exception {
+		Boolean myPermission = null;
 		// Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 		//TODO Eiki make one universal haspermission method
 		List[] permissionOrder = null; // Everyone, users, (primaryGroup), otherGroups
@@ -651,9 +675,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else {
 			return false;
 		}
+		myPermission = checkForPermission(permissionOrder, obj, permissionKey, iwc);
 
-		if (checkForPermission(permissionOrder, obj, permissionKey, iwc)) {
-			return true;
+		boolean hasPermission = false;
+		if (myPermission != null) {
+			hasPermission = myPermission.booleanValue();
+			if (hasPermission) {
+				return true;
+			}
 		}
 
 		if (permissionKey.equals(AccessControl.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessControl.PERMISSION_KEY_VIEW)) {
@@ -670,7 +699,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	} // method hasPermission
 
-	private static boolean checkForPermission(List[] permissionGroupLists, Object obj, String permissionKey, IWUserContext iwc) throws Exception {
+	private static Boolean checkForPermission(List[] permissionGroupLists, Object obj, String permissionKey, IWUserContext iwc) throws Exception {
 		Boolean myPermission = Boolean.FALSE;
 		if (permissionGroupLists != null) {
 			int arrayLength = permissionGroupLists.length;
@@ -679,11 +708,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			if (obj == null) {
 				for (int i = 0; i < arrayLength; i++) {
 					myPermission = getPermissionCacherStatic().hasPermissionForJSPPage(iwc, permissionKey, permissionGroupLists[i]);
-					if (myPermission != null && myPermission.booleanValue()) {
-						return true;
+					if (Boolean.TRUE.equals(myPermission)) {
+						return myPermission;
 					}
 				}
-				return false;
+
+				return myPermission;
 			}
 			//JSP PAGE ENDS
 
@@ -693,13 +723,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 					//builder users should always get edit/view permission on pages:
 					if(iwc.getAccessController().hasRole(StandardRoles.ROLE_KEY_BUILDER,iwc)){
-						return true;
+						return Boolean.TRUE;
 					}
 					
 					for (int i = 0; i < arrayLength; i++) {
 						myPermission = getPermissionCacherStatic().hasPermissionForPage( obj, iwc, permissionKey, permissionGroupLists[i]);
-						if (myPermission != null && myPermission.booleanValue()) {
-							return true;
+						if (Boolean.TRUE.equals(myPermission)) {
+							return myPermission;
 						}
 					}
 
@@ -709,23 +739,23 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 						boolean noPermissionsSet = !getPermissionCacherStatic().anyInstancePermissionsDefinedForPage(obj, iwc, permissionKey);
 						//if (!getPermissionCacher().anyInstancePermissionsDefinedForPage(pPage, iwc, permissionKey)) {
 						if(noPermissionsSet){
-							// no permissions are set, try something else
 							ICObject page = getStaticPageICObject();
 							if (page != null) {
 								for (int i = 0; i < arrayLength; i++) {
 									myPermission = getPermissionCacherStatic().hasPermission(page, iwc, permissionKey, permissionGroupLists[i]);
-									if (myPermission != null && myPermission.booleanValue()) {
-										return true;
+
+									if (Boolean.TRUE.equals(myPermission)) {
+										return myPermission;
 									}
+
 								}
 							}
-							return false;
 						}
-						// some permissions are set!
-						return true;
 						// Global - (Page)
 					}
-					return false;
+					
+					
+					return myPermission;
 
 				} //PAGE ENDS
 				else if (obj instanceof Group) { // Group checking
@@ -734,8 +764,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 						myPermission = getPermissionCacherStatic().hasPermissionForGroup((Group) obj, iwc, permissionKey, permissionGroupLists[i]);
 
-						if (myPermission != null && myPermission.booleanValue()) {
-							return true;
+						if (Boolean.TRUE.equals(myPermission)) {
+							return myPermission;
 						}
 					}
 
@@ -744,8 +774,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					for (int i = 0; i < arrayLength; i++) {
 						myPermission = getPermissionCacherStatic().hasPermissionForRole( ((RoleHelperObject) obj).toString(), iwc, permissionKey, permissionGroupLists[i]);
 						
-						if (myPermission != null && myPermission.booleanValue()) {
-							return true;
+						if (Boolean.TRUE.equals(myPermission)) {
+							return myPermission;
 						}
 					}
 					
@@ -754,19 +784,19 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					
 					//editor users should always get edit/view permission on pages:
 					if(iwc.getAccessController().hasRole(StandardRoles.ROLE_KEY_EDITOR,iwc)){
-						return true;
+						return Boolean.TRUE;
 					}
 					//author users should always get edit/view permission on pages:
 					else if(iwc.getAccessController().hasRole(StandardRoles.ROLE_KEY_AUTHOR,iwc)){
-						return true;
+						return Boolean.TRUE;
 					}
 					
 					//Object instance
 					myPermission=Boolean.FALSE; //TODO: should be set to null and the haspermissionForObjectInstance should return null if there is no permission set and then later return false if still null, because permission could be stored as false permission
 					for (int i = 0; i < arrayLength; i++) {
 						myPermission = getPermissionCacherStatic().hasPermissionForObjectInstance((PresentationObject) obj, iwc, permissionKey, permissionGroupLists[i]);
-						if (myPermission != null && myPermission.booleanValue()) {
-							return true;
+						if (Boolean.TRUE.equals(myPermission)) {
+							return myPermission;
 						}
 					}
 					//instance
@@ -787,9 +817,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 //									permissionOrder[0] = groupIDs;
 							//TODO: it might be ncessary to remove everyone and users from permissionGroupLists
 							PresentationObject templateParentObject = currentObject.getTemplateObject();
-							boolean hasPermission = checkForPermission(permissionGroupLists,templateParentObject,permissionKey,iwc);
-							if (hasPermission) {
-								return true;
+							myPermission = checkForPermission(permissionGroupLists,templateParentObject,permissionKey,iwc);
+							if (Boolean.TRUE.equals(myPermission)) {
+								return myPermission;
 							}
 						}
 					}
@@ -811,31 +841,26 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					//
 					if (!permissionKey.equals(AccessController.PERMISSION_KEY_OWNER)) {
 						// Global - (object)
-						boolean noPermissionsSet = !getPermissionCacherStatic().anyInstancePermissionsDefinedForObject((PresentationObject) obj, iwc, permissionKey);
-						if (noPermissionsSet) {
-							// no permissions are set, try something else
+						if (!getPermissionCacherStatic().anyInstancePermissionsDefinedForObject((PresentationObject) obj, iwc, permissionKey)) {
 							for (int i = 0; i < arrayLength; i++) {
 								myPermission =
 									getPermissionCacherStatic().hasPermissionForObject((PresentationObject) obj, iwc, permissionKey, permissionGroupLists[i]);
-								if (myPermission != null && myPermission.booleanValue()) {
-									return true;
+								if (Boolean.TRUE.equals(myPermission)) {
+									return myPermission;
 								}
 							}
-							return false;
 						}
-						// some permissions are set!
-						return true;
 						// Global - (object)
 					}
 
 					if(myPermission==null) {
-						return false;
+						return Boolean.FALSE;
 					}
-					return myPermission.booleanValue();
+					return myPermission;
 				}
 
 		}
-		return myPermission.booleanValue();
+		return myPermission;
 	}
 
 	//temp
@@ -3149,13 +3174,19 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		usersGroupsToCheckAgainstPermissions[0] = new ArrayList(1);
 		usersGroupsToCheckAgainstPermissions[0].add(group.getPrimaryKey().toString());
 		
+		Boolean myPermission;
 		try {
-			return checkForPermission(usersGroupsToCheckAgainstPermissions, RoleHelperObject.getStaticInstance(), roleKey, iwuc);
+			myPermission = checkForPermission(usersGroupsToCheckAgainstPermissions, RoleHelperObject.getStaticInstance(), roleKey, iwuc);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
+		
+		if(myPermission!=null){
+			return myPermission.booleanValue();
+		}
+		else return false;
 	}
 
 	/**

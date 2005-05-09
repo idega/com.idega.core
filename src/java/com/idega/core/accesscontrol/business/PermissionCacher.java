@@ -1,5 +1,5 @@
 /*
- * $Id: PermissionCacher.java,v 1.27 2005/05/03 16:40:07 thomas Exp $ Created
+ * $Id: PermissionCacher.java,v 1.28 2005/05/09 12:56:31 palli Exp $ Created
  * in 2001
  * 
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -28,12 +28,12 @@ import com.idega.user.data.Group;
  * AccessControl.
  * </p>
  * 
- * Last modified: $Date: 2005/05/03 16:40:07 $ by $Author: thomas $
+ * Last modified: $Date: 2005/05/09 12:56:31 $ by $Author: palli $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 class PermissionCacher {
 
@@ -476,9 +476,7 @@ class PermissionCacher {
 		}
 		//
 		List permissions = null;
-		boolean permissionsAreSet = false;
 		if (identifier != null) {
-			permissionsAreSet = true;
 			if (permissionMapKey.equals(PERMISSION_MAP_OBJECT_INSTANCE)) {
 				permissions = EntityFinder.findAllByColumn(
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),
@@ -550,25 +548,25 @@ class PermissionCacher {
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionStringColumnName(),
 						permissionKey);
 			}
-			else {
-				permissionsAreSet = false;
-			}
 		}
 		// TODO ask gummi how this works
-		Map mapToPutTo = new Hashtable();
-		Boolean someViewPermissionSet = Boolean.FALSE;
 		if (permissions != null) {
 			Iterator iter = permissions.iterator();
+			Map mapToPutTo = new Hashtable();
 			while (iter.hasNext()) {
 				ICPermission item = (ICPermission) iter.next();
-				mapToPutTo.put(Integer.toString(item.getGroupID()), (item.getPermissionValue()) ? Boolean.TRUE : Boolean.FALSE);
+				mapToPutTo.put(Integer.toString(item.getGroupID()), (item.getPermissionValue()) ? Boolean.TRUE
+						: Boolean.FALSE);
 			}
+			// THIS IS DONE SO YOU ALWAYS HAVE VIEW PERMISSION IF NO PERMISSION
+			// IS DEFINED
+			mapToPutTo.put(_SOME_VIEW_PERMISSION_SET, Boolean.TRUE);
+			permissionMap.put(identifier, permissionKey, mapToPutTo);
 		}
-		else if (permissionsAreSet) {
-			// permissionMapKey equals one of the keys above but there are not any permissions set
-			someViewPermissionSet = Boolean.TRUE;
+		else {
+			Map mapToPutTo = new Hashtable();
+			mapToPutTo.put(_SOME_VIEW_PERMISSION_SET, Boolean.FALSE);
+			permissionMap.put(identifier, permissionKey, mapToPutTo);
 		}
-		mapToPutTo.put(_SOME_VIEW_PERMISSION_SET, someViewPermissionSet);
-		permissionMap.put(identifier, permissionKey, mapToPutTo);
 	}
 }
