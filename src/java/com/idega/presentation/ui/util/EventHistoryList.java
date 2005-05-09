@@ -11,10 +11,11 @@ package com.idega.presentation.ui.util;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.TreeSet;
-
+import java.util.LinkedList;
+import java.util.List;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
@@ -29,7 +30,9 @@ import com.idega.presentation.text.Text;
  */
 public class EventHistoryList extends Block{
     
-    private TreeSet eventEntries = new TreeSet(new EventEntryComparator());
+    //private TreeSet eventEntries = new TreeSet(new EventEntryComparator());
+	private List eventEntries = new LinkedList();
+
     private String bundleIdentifier = null;
     private boolean showUser = true;
     private boolean showSource = true;
@@ -40,6 +43,8 @@ public class EventHistoryList extends Block{
      */
     public void main(IWContext iwc) throws Exception {
         if(eventEntries!=null && !eventEntries.isEmpty()){
+			Collections.sort(eventEntries,new EventEntryComparator());
+			
             IWBundle iwb = getBundle(iwc);
             IWResourceBundle iwrb = getResourceBundle(iwc);
             Table eventTable = new Table();

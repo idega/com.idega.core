@@ -43,30 +43,35 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	    return setUserGroupStatus(user_id,group_id,status_id,-1);
 	}
 	
-	public boolean setUserGroupStatus(int user_id, int group_id, int status_id,int doneByUserId) {
+	public boolean setUserGroupStatus(int userId, int groupId, int statusId,int doneByUserId) {
 		try {
-			Collection obj = getUserStatusHome().findAllByUserIdAndGroupId(user_id,group_id);
-			
+			Collection obj = getUserStatusHome().findAllByUserIdAndGroupId(userId,groupId);
+			boolean alreadyIsSet = false;
 			IWTimestamp now = new IWTimestamp();
-			if (obj != null) {
+			if (obj != null && !obj.isEmpty()) {
+				//set all older statuses to inactive (that are not the same as the one we are activating)
 				Iterator it = obj.iterator();
 				while (it.hasNext()) {
 					UserStatus uStatus = (UserStatus)it.next();
-					if (uStatus.getDateTo() == null) {
+					if ( (uStatus.getDateTo()==null && uStatus.getStatusId()!=statusId) || statusId<0 ) {
 						uStatus.setDateTo(now.getTimestamp());
 						uStatus.store();
+					}
+					else if(uStatus.getDateTo()==null && uStatus.getStatusId()==statusId ){
+						alreadyIsSet = true;
 					}
 				}
 			}
 			
-			if (status_id > 0) {
+			if (statusId > 0 && !alreadyIsSet) {
 				UserStatus uStatus = getUserStatusHome().create();
-				uStatus.setUserId(user_id);
-				uStatus.setGroupId(group_id);
+				uStatus.setUserId(userId);
+				uStatus.setGroupId(groupId);
 				uStatus.setDateFrom(now.getTimestamp());
-				uStatus.setStatusId(status_id);
-				if(doneByUserId>0)
+				uStatus.setStatusId(statusId);
+				if(doneByUserId>0){
 				   uStatus.setCreatedBy(doneByUserId);
+				}
 				uStatus.store();
 			}
 		}
