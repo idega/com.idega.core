@@ -1432,15 +1432,22 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 					groupTypes.add(groupType);
 				}
 				
-				if (!generalType.getType().equals(groupTypeString) && !groupTypes.contains(groupType)) {
-					groupTypes.add(generalType);
-				}
-				if (!aliasType.getType().equals(groupTypeString) && !groupTypes.contains(groupType)) {
-					groupTypes.add(aliasType);
+
+				int typeSize = groupTypes.size();
+				//add children of type of selected group
+				addGroupTypeChildren(groupTypes, groupType);
+				
+				//we only add general and alias types if there are no child types defined
+				if(groupTypes.size()<=typeSize){
+					if (!generalType.getType().equals(groupTypeString) && !groupTypes.contains(groupType)) {
+						groupTypes.add(generalType);
+					}
+					
+					if (!aliasType.getType().equals(groupTypeString) && !groupTypes.contains(groupType)) {
+						groupTypes.add(aliasType);
+					}
 				}
 				
-				// then add children of type of selected group
-				addGroupTypeChildren(groupTypes, groupType);
 			}
 			else{
 				groupTypes.add(groupType);
@@ -2467,10 +2474,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/05/09 18:16:33 $ by $Author: eiki $
+	 *  Last modified: $Date: 2005/05/09 18:37:15 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.91 $
+	 * @version $Revision: 1.92 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
