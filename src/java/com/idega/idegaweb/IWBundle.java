@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.90 2005/05/06 14:18:33 gummi Exp $
+ * $Id: IWBundle.java,v 1.91 2005/05/10 21:42:16 gimmi Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -31,10 +31,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2005/05/06 14:18:33 $ by $Author: gummi $
+ * Last modified: $Date: 2005/05/10 21:42:16 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.90 $
+ * @version $Revision: 1.91 $
  */
 public interface IWBundle {
 	/**
@@ -339,5 +339,14 @@ public interface IWBundle {
 	 * @return 
 	 */
 	public String getLocalizedString(String localizationKey, String defaultValue);
+	
+	/**
+	 * Returns all the DATA component types registered to this bundle
+	 * @return a collection of ICObjects.
+	 * @throws IDOLookupException
+	 * @throws FinderException
+	 */
+	public Collection getDataObjects() throws IDOLookupException, FinderException;
+
 
 }

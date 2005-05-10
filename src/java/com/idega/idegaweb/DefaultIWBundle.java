@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.17 2005/05/06 14:18:33 gummi Exp $
+ * $Id: DefaultIWBundle.java,v 1.18 2005/05/10 21:43:12 gimmi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -193,8 +193,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	private void createDataRecords() throws Exception
 	{
-		ICObjectHome icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
-		Collection entities = icoHome.findAllByObjectTypeAndBundle(ICObjectBMPBean.COMPONENT_TYPE_DATA, identifier);
+		Collection entities = getDataObjects();
 		//eiki used to be (SLOW!): 
 		//Collection entities = icoHome.findAllByObjectType(ICObjectBMPBean.COMPONENT_TYPE_DATA);
 		
@@ -214,6 +213,17 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 				}
 			}
 		}
+	}
+	/**
+	 * Returns all the DATA component types registered to this bundle
+	 * @return a collection of ICObjects.
+	 * @throws IDOLookupException
+	 * @throws FinderException
+	 */
+	public Collection getDataObjects() throws IDOLookupException, FinderException {
+		ICObjectHome icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
+		Collection entities = icoHome.findAllByObjectTypeAndBundle(ICObjectBMPBean.COMPONENT_TYPE_DATA, identifier);
+		return entities;
 	}
 	private void registerBlockPermissionKeys(Class blockClass) throws InstantiationException, IllegalAccessException
 	{
