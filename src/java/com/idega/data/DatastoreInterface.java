@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.126 2005/04/12 20:30:23 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.127 2005/05/10 22:12:54 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -404,7 +404,7 @@ public abstract class DatastoreInterface implements MutableClass {
 				Stmt.close();
 			}
 			if (conn != null) {
-				ConnectionBroker.freeConnection(conn);
+				ConnectionBroker.freeConnection(dataSourceName, conn);
 			}
 		}
 		return theReturn;
@@ -657,6 +657,8 @@ public abstract class DatastoreInterface implements MutableClass {
 				Map metadata = entity.getMetaDataAttributes();
 				Hashtable ids = entity.getMetaDataIds();
 				Map types = entity.getMetaDataTypes();
+//				Map ordering = entity.getMetaDataOrdering();
+				
 				Vector insert = entity.getMetaDataInsertVector();
 				Vector delete = entity.getMetaDataDeleteVector();
 				Vector update = entity.getMetaDataUpdateVector();
@@ -1114,8 +1116,9 @@ public abstract class DatastoreInterface implements MutableClass {
 			MetaData metadata = (MetaData) com.idega.data.GenericEntity.getStaticInstance(MetaData.class);
 			Stmt = conn.createStatement();
 			String middletable = entity.getNameOfMiddleTable(metadata, entity);
-			String metadataIdColumn = metadata.getIDColumnName();
-			String metadataname = metadata.getTableName();
+			
+			String metadataIdColumn = metadata.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
+			String metadataname = metadata.getEntityDefinition().getSQLTableName();
 			//get all the id's of the metadata
 			StringBuffer statement = new StringBuffer("");
 			statement.append("select ");
@@ -1665,7 +1668,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		}
 		finally {
 			if (conn != null) {
-				ConnectionBroker.freeConnection(conn);
+				ConnectionBroker.freeConnection(dataSourceName, conn);
 			}
 		}
 
@@ -1713,6 +1716,12 @@ public abstract class DatastoreInterface implements MutableClass {
 			while (rs.next()) {
 				String column = rs.getString("COLUMN_NAME");
 				v.add(column);
+//				String colSize = rs.getString("COLUMN_SIZE");
+//				ColumnInfo colInfo = new ColumnInfo(column);
+//				try {
+//					colInfo.setColumnSize(Integer.parseInt(colSize));
+//				} catch (NumberFormatException n) {}
+//				v.add(colInfo);
 				//System.out.println("\t\t"+column);
 			}
 			rs.close();
@@ -1725,6 +1734,12 @@ public abstract class DatastoreInterface implements MutableClass {
 				while (rs.next()) {
 					String column = rs.getString("COLUMN_NAME");
 					v.add(column);
+//					String colSize = rs.getString("COLUMN_SIZE");
+//					ColumnInfo colInfo = new ColumnInfo(column);
+//					try {
+//						colInfo.setColumnSize(Integer.parseInt(colSize));
+//					} catch (NumberFormatException n) {}
+//					v.add(colInfo);
 					//System.out.println("\t\t"+column);
 				}
 				rs.close();
@@ -1739,6 +1754,12 @@ public abstract class DatastoreInterface implements MutableClass {
 				while (rs.next()) {
 					String column = rs.getString("COLUMN_NAME");
 					v.add(column);
+//					String colSize = rs.getString("COLUMN_SIZE");
+//					ColumnInfo colInfo = new ColumnInfo(column);
+//					try {
+//						colInfo.setColumnSize(Integer.parseInt(colSize));
+//					} catch (NumberFormatException n) {}
+//					v.add(colInfo);
 					//System.out.println("\t\t"+column);
 				}
 				rs.close();
@@ -1750,10 +1771,11 @@ public abstract class DatastoreInterface implements MutableClass {
 		}
 		finally {
 			if (conn != null) {
-				ConnectionBroker.freeConnection(conn);
+				ConnectionBroker.freeConnection(dataSourceName, conn);
 			}
 		}
 		if (v != null && !v.isEmpty()) return (String[]) v.toArray(new String[0]);
+//		if (v != null && !v.isEmpty()) return (ColumnInfo[]) v.toArray(new ColumnInfo[0]);
 		return null;
 	}
 
@@ -1809,7 +1831,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		}
 		finally {
 			if (conn != null) {
-				ConnectionBroker.freeConnection(conn);
+				ConnectionBroker.freeConnection(dataSourceName, conn);
 			}
 		}
 
@@ -2206,7 +2228,7 @@ public abstract class DatastoreInterface implements MutableClass {
 				Stmt.close();
 			}
 			if (conn != null) {
-				ConnectionBroker.freeConnection(conn);
+				ConnectionBroker.freeConnection(dataSourceName, conn);
 			}
 		}
 		return theReturn;

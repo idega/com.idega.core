@@ -106,6 +106,9 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 //		_Stmt = Stmt;
 //		_RS = RS;
 		_entity = entity;
+		if (entity != null) {
+			_dataSource = entity.getDatasource();
+		}
 		_prefetchSize = prefetchSize;
 		_returnProxy = returnProxy;
 		_returnProxyQueryConstraints = proxyQueryConstraints;
@@ -118,6 +121,9 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 //		_Stmt = Stmt;
 //		_RS = RS;
 		_entity = entity;
+		if (entity != null) {
+			_dataSource = entity.getDatasource();
+		}
 		_prefetchSize = prefetchSize;
 		initialize(primaryKeyList);
     }
@@ -127,6 +133,9 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 //		_Stmt = Stmt;
 //		_RS = RS;
 		_entity = (GenericEntity)IDOLookup.instanciateEntity(entityInterfaceClass);
+		if (_entity != null) {
+			_dataSource = _entity.getDatasource();
+		}
 		_prefetchSize = prefetchSize;
 		initialize(primaryKeyList);
     }
