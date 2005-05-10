@@ -82,6 +82,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	private Vector _deleteMetaDataVector;
 	private Hashtable _theMetaDataIds;
 	private Hashtable _theMetaDataTypes;
+//	private Hashtable _theMetaDataOrdering;
 	private boolean _hasMetaDataRelationship = false;
 	private boolean _hasUniqueIDColumn = false;
 	private boolean _metaDataHasChanged = false;
@@ -124,7 +125,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		setDatasource(dataSource);
 		//setColumn(getIDColumnName(),new Integer(id));
 		firstLoadInMemoryCheck();
-
 		//ejbCreate(new Integer(id));
 		//ejbLoad();
 		this.findByPrimaryKey(id);
@@ -971,12 +971,23 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public void freeConnection(Connection connection) {
 		ConnectionBroker.freeConnection(getDatasource(), connection);
 	}
+
 	/**
 	 * Sets the datasource to another datastore.<br>
 	 * Can be used to switch the datasource when the entity has been fetched from another datasource (.e.g. when
 	 * this instance is inserted into a new datastore with another datasource).
 	 */
 	public void setDatasource(String dataSource) {
+		setDatasource(dataSource, false);
+	}
+
+	/**
+	 * Sets the datasource to another datastore.<br>
+	 * Can be used to switch the datasource when the entity has been fetched from another datasource (.e.g. when
+	 * this instance is inserted into a new datastore with another datasource).
+	 * @param reloadEntity if TRUE then the entity datatables in the new datasource will be checked for inconsistencies
+	 */
+	public void setDatasource(String dataSource, boolean reloadEntity) {
 		if (!dataSource.equals(this._dataSource)) {
 			try {
 				//Connect the blob fields if the datasource is changed
@@ -995,6 +1006,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		}
 		this._dataSource = dataSource;
+		if (reloadEntity) {
+			getIDOContainer().getEntityDefinitions().put(this.getClass(), null);
+			firstLoadInMemoryCheck();
+		}
 	}
 	public String getDatasource() {
 		return _dataSource;
@@ -3032,6 +3047,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		_theMetaDataAttributes = new Hashtable();
 		_theMetaDataIds = new Hashtable();
 		_theMetaDataTypes = new Hashtable();
+//		_theMetaDataOrdering = new Hashtable();
 
 		if( getEntityState() ==  IDOLegacyEntity.STATE_NEW || getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE){
 			//if it is new then it has no primary key and has no relation to the metdata table
@@ -3046,7 +3062,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				conn = getConnection(getDatasource());
 				Stmt = conn.createStatement();
 				MetaData metadata = (MetaData)getStaticInstance(MetaData.class);
-				String metadataIdColumn = metadata.getIDColumnName();
+				String metadataIdColumn = metadata.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
+				String metadataTableName = metadata.getEntityDefinition().getSQLTableName();
 				String tableToSelectFrom = getNameOfMiddleTable(metadata, this);
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("select ic_metadata.ic_metadata_id,ic_metadata.metadata_name,ic_metadata.metadata_value,ic_metadata.meta_data_type from ");
@@ -3062,9 +3079,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				buffer.append(".");
 				buffer.append(metadataIdColumn);
 				buffer.append("=");
-				buffer.append(metadata.getEntityName());
+				buffer.append(metadataTableName);
 				buffer.append(".");
 				buffer.append(metadataIdColumn);
+//				buffer.append(" order by ");
+//				buffer.append(metadataTableName);
+//				buffer.append(".order_number");
 				String query = buffer.toString();
 				this.logSQL("[MetadataQuery]: "+query);
 				RS = Stmt.executeQuery(query);
@@ -3076,10 +3096,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 					if (RS.getString("meta_data_type") != null) {
 						_theMetaDataTypes.put(RS.getString("metadata_name"), RS.getString("meta_data_type"));
 					}
+//					if (RS.getInt("ordering_number") != -1) {
+//						_theMetaDataOrdering.put(RS.getString("metadata_name"), new Integer(RS.getInt("ordering_number")));
+//					}
 				}
 			} catch (SQLException ex) {
 				System.err.println("Exception in " + this.getClass().getName() + " gettingMetaData " + ex.getMessage());
 				ex.printStackTrace(System.err);
+			}
+			catch (IDOCompositePrimaryKeyException e) {
+				System.err.println("Exception in " + this.getClass().getName() + " gettingMetaData " + e.getMessage());
+				e.printStackTrace(System.err);
 			} finally {
 				try {
 					
@@ -3118,11 +3145,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	public void setMetaData(String metaDataKey, String metaDataValue, String metaDataType) {
-		addMetaData(metaDataKey, metaDataValue, metaDataType);
+		addMetaData(metaDataKey, metaDataValue, metaDataType, -1);
 	}
 
 	public void addMetaData(String metaDataKey, String metaDataValue) {
-		addMetaData(metaDataKey, metaDataValue, null);
+		addMetaData(metaDataKey, metaDataValue, null, -1);
 	}
 
 	public void renameMetaData(String oldKeyName, String newKeyName) {
@@ -3156,6 +3183,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	
 	public void addMetaData(String metaDataKey, String metaDataValue, String metaDataType) {
+		addMetaData(metaDataKey, metaDataValue, metaDataType, -1);
+	}
+	
+	// Ordering not implemented yet
+	private void addMetaData(String metaDataKey, String metaDataValue, String metaDataType, int orderingNumber) {
 		boolean dataHasChanged = false;
 		if (_theMetaDataAttributes == null){
 			getMetaData(); //get all meta data first if null
@@ -3179,7 +3211,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				obj = _theMetaDataAttributes.put(metaDataKey, metaDataValue);
 				dataHasChanged = true;
 			}
-				
+			
+//			Integer oldOrder = (Integer) _theMetaDataOrdering.get(metaDataKey);
+//			if ( ! (oldOrder != null && oldOrder.intValue() == orderingNumber)) {
+//				if (orderingNumber == -1) {
+//					_theMetaDataOrdering.remove(metaDataKey);
+//				} else {
+//					_theMetaDataOrdering.put(metaDataKey, new Integer(orderingNumber));
+//				}
+//				dataHasChanged = true;
+//			}
+			
+			
 			if(dataHasChanged){		
 				if (obj == null) { //is new
 					if (_insertMetaDataVector == null) {
@@ -3291,6 +3334,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			getMetaData();
 		return _theMetaDataTypes;
 	}
+//	public Map getMetaDataOrdering() {
+//		if (_theMetaDataOrdering == null) {
+//			getMetaData();
+//		}
+//		return _theMetaDataOrdering;
+//	}
 	public Vector getMetaDataUpdateVector() {
 		return _updateMetaDataVector;
 	}
@@ -4061,46 +4110,55 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		MetaData metadata = (MetaData)getStaticInstance(MetaData.class);
 		final String middleTableName = getNameOfMiddleTable(metadata, this);
 		final String tableToSelectFrom = getEntityName();
-		final String metadataIdColumnName = metadata.getIDColumnName();
+		final String metadataIdColumnName;
+		final String metadataTableName = metadata.getEntityDefinition().getSQLTableName();
 		final String primaryColumnName = getIDColumnName();
 		final String keyColumn = ((MetaDataBMPBean)metadata).COLUMN_META_KEY;
 		final String valueColumn = ((MetaDataBMPBean)metadata).COLUMN_META_VALUE;
 
-		StringBuffer sql = new StringBuffer();
-		sql
-			.append("select entity.* from ")
-			.append(tableToSelectFrom)
-			.append(" entity ,")
-			.append(middleTableName)
-			.append(" middle ,")
-			.append(metadata.getEntityName())
-			.append(" meta ")
-			.append(" where ")
-			.append("entity.")
-			.append(primaryColumnName)
-			.append("=")
-			.append("middle")
-			.append(".")
-			.append(primaryColumnName)
-			.append(" and ")
-			.append("middle.")
-			.append(metadataIdColumnName)
-			.append("=")
-			.append("meta")
-			.append(".")
-			.append(metadataIdColumnName)
-			.append(" and ")
-			.append("meta.")
-			.append(keyColumn)
-			.append("=")
-			.append("'")
-			.append(key)
-			.append("'");
-		if (value != null) {
-			sql.append(" and ").append("meta.").append(valueColumn).append("=").append("'").append(value).append("'");
+		try {
+			metadataIdColumnName = metadata.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
+			StringBuffer sql = new StringBuffer();
+			sql
+				.append("select entity.* from ")
+				.append(tableToSelectFrom)
+				.append(" entity ,")
+				.append(middleTableName)
+				.append(" middle ,")
+				.append(metadataTableName)
+				.append(" meta ")
+				.append(" where ")
+				.append("entity.")
+				.append(primaryColumnName)
+				.append("=")
+				.append("middle")
+				.append(".")
+				.append(primaryColumnName)
+				.append(" and ")
+				.append("middle.")
+				.append(metadataIdColumnName)
+				.append("=")
+				.append("meta")
+				.append(".")
+				.append(metadataIdColumnName)
+				.append(" and ")
+				.append("meta.")
+				.append(keyColumn)
+				.append("=")
+				.append("'")
+				.append(key)
+				.append("'");
+			if (value != null) {
+				sql.append(" and ").append("meta.").append(valueColumn).append("=").append("'").append(value).append("'");
+			}
+//	TODO use selectquery
+			return idoFindPKsBySQL(sql.toString());
 		}
-//TODO use selectquery
-		return idoFindPKsBySQL(sql.toString());
+		catch (IDOCompositePrimaryKeyException e) {
+			e.printStackTrace();
+			throw new FinderException(e.getMessage());
+		}
+
 
 	}
 	
