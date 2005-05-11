@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.28 2005/04/14 08:27:22 gimmi Exp $
+ * $Id: AbstractChooser.java,v 1.29 2005/05/11 18:12:50 gummi Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -8,6 +8,7 @@ package com.idega.presentation.ui;
 import java.net.URLEncoder;
 
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIComponentBase;
 
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
@@ -71,6 +72,14 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 *
 	 */
 	public AbstractChooser() {}
+	
+	/**
+	 * @see UIComponentBase#setId(java.lang.String)
+	 */
+	public void setId(String id){
+	  super.setId(id);
+	  setChooserParameter(id);
+	}
 
 	/**
 	 *

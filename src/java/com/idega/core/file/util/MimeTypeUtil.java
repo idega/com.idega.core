@@ -466,4 +466,25 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 		return MIME_TYPE_WORD.equals(mimeType);
 	}
 	
+	public String[] getMimeTypesInCategory(String category){
+		if(MIME_TYPE_CATEGORY_AUDIO.equals(category)){
+			return audio;
+		} else if(MIME_TYPE_CATEGORY_BINARY.equals(category)){
+			return binary;
+		} else if(MIME_TYPE_CATEGORY_COMPRESSED.equals(category)){
+			return compressed;
+		} else if(MIME_TYPE_CATEGORY_DOCUMENT.equals(category)){
+			return document;
+		} else if(MIME_TYPE_CATEGORY_FOLDER.equals(category)){
+			return folder;
+		} else if(MIME_TYPE_CATEGORY_IMAGE.equals(category)){
+			return image;
+		} else if(MIME_TYPE_CATEGORY_VECTOR.equals(category)){
+			return vector;
+		} else if(MIME_TYPE_CATEGORY_VIDEO.equals(category)){
+			return video;
+		}
+		return null;
+	}
+	
 }
