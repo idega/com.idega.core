@@ -28,9 +28,13 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   }
 
   public void setDatasource(String dataSource) {
+	  setDatasource(dataSource, true);
+  }
+  
+  public void setDatasource(String dataSource, boolean reloadEntity) {
 	  this.dataSource = dataSource;
 	 GenericEntity ent = ((GenericEntity) this.idoCheckOutPooledEntity());
-	 ent.setDatasource(dataSource, true);
+	 ent.setDatasource(dataSource, reloadEntity);
 	 this.idoCheckInPooledEntity(ent);
   }
   

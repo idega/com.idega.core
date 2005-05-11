@@ -721,7 +721,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				if (value != null) {
 					IDOHome home = (IDOHome)IDOLookup.getHome(relationClass);
 					if (this.getDatasource() != null) {
-						home.setDatasource(this.getDatasource());
+						home.setDatasource(this.getDatasource(), false);
 					}
 					returnObj = home.findByPrimaryKeyIDO(value);
 				}
