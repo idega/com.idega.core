@@ -21,4 +21,5 @@ public interface ICPageHome extends com.idega.data.IDOHome
  * @return
  */
  public Collection findAllPagesWithoutUri()throws FinderException;
+ public Collection findAllSimpleTemplates()throws FinderException;
 }
