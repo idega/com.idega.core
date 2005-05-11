@@ -54,7 +54,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
   private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IdegaTransactionManager();}};
 
-  String datasource = com.idega.util.database.ConnectionBroker.DEFAULT_POOL;
+  private String datasource = com.idega.util.database.ConnectionBroker.DEFAULT_POOL;
 
 
 
@@ -65,17 +65,14 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
    */
 
   private IdegaTransactionManager(){
-
   }
-
-
 
     /**
 
     * The only way to get an instance of the TransactionManager
 
     */
-
+  
   public static TransactionManager getInstance(){
   	return (IdegaTransactionManager) SingletonRepository.getRepository().getInstance(IdegaTransactionManager.class, instantiator);
   }
@@ -167,7 +164,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
   * If no transaction has been begun, it creates a new (unassigned) Transaction object
   */
  public Transaction getTransaction() throws SystemException{
-    Transaction trans = (Transaction)ThreadContext.getInstance().getAttribute(Thread.currentThread(),transaction_attribute_name);
+    Transaction trans = (Transaction)ThreadContext.getInstance().getAttribute(Thread.currentThread(),getTransactionAttributeName());
     if(trans==null){
       /**
        * Changed -- The transactionManager now creates a new (empty) transaction
@@ -275,7 +272,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
   return true;*/
   Transaction obj=null;
   try{
-    obj = (Transaction)ThreadContext.getInstance().getAttribute(Thread.currentThread(),transaction_attribute_name);
+    obj = (Transaction)ThreadContext.getInstance().getAttribute(Thread.currentThread(),getTransactionAttributeName());
     if(obj==null){
       return false;
     }
@@ -297,6 +294,12 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
   public void setEntity(GenericEntity entity){
     this.datasource=entity.getDatasource();
   }
+
+
+	private String getTransactionAttributeName() {
+		return transaction_attribute_name+"_"+this.datasource;
+	}
+
 
 }
 

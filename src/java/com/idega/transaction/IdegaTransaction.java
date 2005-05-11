@@ -29,8 +29,6 @@ import java.sql.*;
 
   public class IdegaTransaction implements Transaction, UserTransaction{
 
-  private static String transaction_attribute_name = IdegaTransactionManager.transaction_attribute_name;
-
 	/**
 	 * 
 	 * @uml.property name="syncronization"
@@ -358,7 +356,7 @@ public void freeConnection(Connection conn){
 protected void end(){
     freeConnection(this._conn);
     this._conn=null;
-    ThreadContext.getInstance().removeAttribute(Thread.currentThread(),transaction_attribute_name);
+    ThreadContext.getInstance().removeAttribute(Thread.currentThread(),getTransactionAttributeName());
 }
 
 
@@ -372,7 +370,7 @@ protected void setDatasource(String datasourceName){
     if(this.transactionCount==0){
       //((IdegaTransactionManager)IdegaTransactionManager.getInstance()).begin(this);
       _conn = getFirstConnection();
-      ThreadContext.getInstance().setAttribute(Thread.currentThread(),transaction_attribute_name,this);
+      ThreadContext.getInstance().setAttribute(Thread.currentThread(),getTransactionAttributeName(),this);
       this.transactionCount=1;
       transactionBegun=System.currentTimeMillis();
       setStatus(IdegaTransactionStatus.STATUS_ACTIVE);
@@ -390,5 +388,9 @@ protected void setDatasource(String datasourceName){
     transactionCount++;
   }
 
+  private String getTransactionAttributeName() {
+	  return IdegaTransactionManager.transaction_attribute_name+"_"+this._dataSource;
+  }
+  
 }
 
