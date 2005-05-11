@@ -20,6 +20,7 @@ public interface IDOHome extends EJBLocalHome{//EJBHome {
   public IDOEntity createIDO() throws CreateException;
   //public IDOEntity createIDO() throws CreateException, RemoteException;
     
+  public void setDatasource(String dataSource);
   
   /*public IDOEntity idoFindByPrimaryKey(int primaryKey) throws RemoteException, FinderException;*/
   public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws FinderException;
