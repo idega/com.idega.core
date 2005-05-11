@@ -29,12 +29,15 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
-
 import com.idega.data.GenericEntity;
+import com.idega.data.IDOHome;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.util.ThreadContext;
+import com.idega.util.database.ConnectionBroker;
 
 
 /**
@@ -52,7 +55,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
   static String transaction_attribute_name = "idega_transaction";
 
-  private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IdegaTransactionManager();}};
+  private static Instantiator instantiator = new Instantiator() { public Object getInstance(Object datasource) { return new IdegaTransactionManager((String)datasource);}};
 
   private String datasource = com.idega.util.database.ConnectionBroker.DEFAULT_POOL;
 
@@ -64,19 +67,44 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
    */
 
-  private IdegaTransactionManager(){
+  private IdegaTransactionManager(String datasource){
+	  if (datasource != null) {
+		  this.datasource = datasource;
+	  }
   }
 
-    /**
+  /**
 
     * The only way to get an instance of the TransactionManager
 
     */
   
+  /** 
+   * @deprecated use getInstance(String datasource) instead
+   */
   public static TransactionManager getInstance(){
-  	return (IdegaTransactionManager) SingletonRepository.getRepository().getInstance(IdegaTransactionManager.class, instantiator);
+	 return getInstance(ConnectionBroker.DEFAULT_POOL);
   }
 
+  
+  public static TransactionManager getInstance(String datasource){
+  	return (IdegaTransactionManager) SingletonRepository.getRepository().getInstance(IdegaTransactionManager.class, instantiator, datasource);
+  }
+
+  /**
+   * Looks up the datasource for the returing entity, and calls getInstance(datasource)
+   * @param returningEntityInterfaceClass
+   * @return
+   */
+  public static TransactionManager getInstance(Class returningEntityInterfaceClass){
+	  try {
+		  IDOHome home = IDOLookup.getHome(returningEntityInterfaceClass);
+		  return getInstance(home.getDatasource());
+	  } catch (IDOLookupException e) {
+		  e.printStackTrace();
+		  return getInstance();
+	  }
+  }
 
 
   /**
