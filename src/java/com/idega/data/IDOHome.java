@@ -19,7 +19,8 @@ public interface IDOHome extends EJBLocalHome{//EJBHome {
 
   public IDOEntity createIDO() throws CreateException;
   //public IDOEntity createIDO() throws CreateException, RemoteException;
-    
+
+  public String getDatasource();
   public void setDatasource(String dataSource);
   public void setDatasource(String dataSource, boolean reloadEntity);
   

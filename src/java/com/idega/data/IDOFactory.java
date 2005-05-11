@@ -27,6 +27,10 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   protected IDOFactory(){
   }
 
+  public String getDatasource() {
+	  return ((GenericEntity)this.idoCheckOutPooledEntity()).getDatasource();
+  }
+  
   public void setDatasource(String dataSource) {
 	  setDatasource(dataSource, true);
   }
