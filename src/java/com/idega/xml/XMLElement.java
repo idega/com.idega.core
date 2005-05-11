@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.19 2005/02/15 17:13:58 joakim Exp $
+ * $Id: XMLElement.java,v 1.20 2005/05/11 18:20:34 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -479,6 +479,10 @@ public class XMLElement {
   
   public void setName(String newName) {
   	_element.setName(newName);
+  }
+  
+  public void addNamespaceDeclaration(XMLNamespace namespace){
+  	_element.addNamespaceDeclaration((Namespace)namespace.getNamespace());
   }
 		
 }
