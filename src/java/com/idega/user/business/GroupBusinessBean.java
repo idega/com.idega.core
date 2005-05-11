@@ -1450,7 +1450,10 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 				
 			}
 			else{
-				groupTypes.add(groupType);
+				//so we can define a type that cannot have children
+				if(groupType.getSupportsSameTypeChildGroups()){
+					groupTypes.add(groupType);
+				}
 			}
 		}
 		return groupTypes;
@@ -2474,10 +2477,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/05/09 18:37:15 $ by $Author: eiki $
+	 *  Last modified: $Date: 2005/05/11 14:44:45 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.92 $
+	 * @version $Revision: 1.93 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
