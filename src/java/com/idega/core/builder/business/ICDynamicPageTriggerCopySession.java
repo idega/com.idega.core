@@ -19,6 +19,5 @@ public interface ICDynamicPageTriggerCopySession extends IBOSession {
 	void setNewValue(Class dataClassKey, Object oldValue, Object newValue) throws RemoteException;
 	
 	boolean hasRootPage() throws RemoteException;
-	
 
 }
