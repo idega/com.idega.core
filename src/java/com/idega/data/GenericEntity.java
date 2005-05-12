@@ -3962,6 +3962,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		Iterator iter = ids.iterator();
 		try {
 			IDOHome home = (IDOHome)returningEntity.getEJBLocalHome();
+			home.setDatasource(this.getDatasource(), false);
 			while (iter.hasNext()) {
 				try {
 					Object pk = iter.next();
