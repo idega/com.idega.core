@@ -92,7 +92,8 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
   
   public static TransactionManager getInstance(String datasource){
-  	return (IdegaTransactionManager) SingletonRepository.getRepository().getInstance(IdegaTransactionManager.class, instantiator, datasource);
+  	// uses datasource as identifier, that is there is a singleton for each datasource!
+  	return (IdegaTransactionManager) SingletonRepository.getRepository().getInstanceUsingIdentifier(IdegaTransactionManager.class, instantiator, datasource, datasource);
   }
 
   /**
