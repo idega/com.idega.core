@@ -73,7 +73,8 @@ public class SingletonRepository {
 	
 	public synchronized Object getInstance(Class singletonClass, Instantiator instantiator, Object parameter) {
 		Object singleton = null;
-		String singletonName = singletonClass.getName();
+		String suffix = parameter != null ? parameter.toString() : "";
+		String singletonName = singletonClass.getName()+"_"+suffix;
 		if (singletonMap.containsKey(singletonName)) {
 			singleton = singletonMap.get(singletonName);
 		}
