@@ -80,7 +80,7 @@ public class HtmlPage extends Page {
 				}
 			}
 		//}þide	
-		findOutPregions();
+		findOutRegions();
 		//return ret;
 	}
 
@@ -171,7 +171,7 @@ public class HtmlPage extends Page {
 		return getRegionIdsMap().keySet();
 	}
 
-	private void findOutPregions(){
+	private void findOutRegions(){
 		String template = getHtml();
 		if(template != null) {
 			String[] parts = template.split("<!-- TemplateBeginEditable");
@@ -400,7 +400,7 @@ public class HtmlPage extends Page {
 	 */
 	public void setHtml(String string) {
 		html = string;
-		findOutPregions();
+		findOutRegions();
 	}
 
 
