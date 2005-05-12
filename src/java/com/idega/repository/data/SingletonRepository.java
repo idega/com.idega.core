@@ -1,4 +1,4 @@
-/*
+/* 
  * Created on Jan 28, 2005
  *
  * TODO To change the template for this generated file go to
@@ -8,6 +8,7 @@ package com.idega.repository.data;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 
 /**
@@ -71,10 +72,44 @@ public class SingletonRepository {
 		return singleton;
 	}
 	
+	
+	public synchronized Object getInstanceUsingIdentifier(Class singletonClass, Instantiator instantiator, Object parameter, Object identfier) {
+		Map instancesOfSingletons = null;
+		Object singleton = null;
+		String singletonName = singletonClass.getName();
+		if (singletonMap.containsKey(singletonName)) {
+			instancesOfSingletons = (Map) singletonMap.get(singletonName);
+		}
+		else {
+			instancesOfSingletons = new HashMap();
+		}
+		if (instancesOfSingletons.containsKey(identfier)) {
+			// existing singleton found
+			singleton = instancesOfSingletons.get(identfier);
+		}
+		// create singleton 
+		else {
+			// create and store singleton
+			singleton = instantiator.getInstance(parameter);
+			instancesOfSingletons.put(identfier, singleton);
+			singletonMap.put(singletonName, instancesOfSingletons);
+			// store instantiator
+			Map instantiators = null;
+			if (instantiatorMap.containsKey(singletonName)) {
+				instantiators = (Map) instantiatorMap.get(singletonName);
+			}
+			else {
+				instantiators = new HashMap();
+			}
+			instantiators.put(identfier, instantiator);
+			instantiatorMap.put(singletonName, instantiators);
+		}
+		return singleton;
+	}
+	
 	public synchronized Object getInstance(Class singletonClass, Instantiator instantiator, Object parameter) {
 		Object singleton = null;
-		String suffix = parameter != null ? parameter.toString() : "";
-		String singletonName = singletonClass.getName()+"_"+suffix;
+		String singletonName = singletonClass.getName();
 		if (singletonMap.containsKey(singletonName)) {
 			singleton = singletonMap.get(singletonName);
 		}
@@ -93,8 +128,9 @@ public class SingletonRepository {
 	public synchronized void unloadInstance(Class singletonClass) {
 		String singletonName = singletonClass.getName();
 		if (singletonMap.containsKey(singletonName)) {
-			Instantiator instantiator = (Instantiator)  instantiatorMap.get(singletonName);
-			instantiator.unload();
+			// can be a map or instantiator
+			Object mapOrInstantiator = instantiatorMap.get(singletonName);
+			unload(mapOrInstantiator);
 			// remove the instance
 			singletonMap.remove(singletonName);
 		}
@@ -103,8 +139,23 @@ public class SingletonRepository {
 	private synchronized void destroy() {
 		Iterator iterator = instantiatorMap.values().iterator();
 		while (iterator.hasNext()) {
-			Instantiator instantiator = (Instantiator) iterator.next();
-			instantiator.unload();
+			// can be a map or instantiator
+			Object mapOrInstantiator = iterator.next();
+			unload(mapOrInstantiator);
+		}
+	}
+	
+	private void unload(Object mapOrInstantiator) {
+		if (mapOrInstantiator instanceof Instantiator) {
+			((Instantiator) mapOrInstantiator).unload();
+		}
+		else {
+			// it is a map, go further
+			Iterator iterator = ((Map) mapOrInstantiator).values().iterator();
+			while (iterator.hasNext()) {
+				Object tempMapOrInstantiator = iterator.next();
+				unload(tempMapOrInstantiator);
+			}
 		}
 	}
 
