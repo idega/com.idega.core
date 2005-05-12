@@ -93,7 +93,7 @@ public class IDOTableCreator{
     boolean canCommit=isPermittedToCommit;
     try{
       if(_dsi.useTransactionsInEntityCreation){
-        trans = com.idega.transaction.IdegaTransactionManager.getInstance();
+        trans = com.idega.transaction.IdegaTransactionManager.getInstance(entity.getClass());
         if(!((IdegaTransactionManager)trans).hasCurrentThreadBoundTransaction()){
           _dsi.executeBeforeCreateEntityRecord(entity);
           ((IdegaTransactionManager)trans).setEntity(entity);
@@ -813,9 +813,38 @@ public class IDOTableCreator{
         catch(Exception e){
           //e.printStackTrace();
         }
+      } else { // Checking size !!!
+//        EntityAttribute att = entity.getAttribute(column);
+//        int size = att.getMaxLength();
+//        int oldSize = getColumnSize(column, columnArrayFromDB); 
+//        if (!att.isUpdated()) {
+//        	// TODO add support to more dataTypes
+//	        if (size != oldSize && size > 0 && att.getStorageClass() == String.class && oldSize < 4000 && size < 4000) {
+//	        	att.setUpdated(true);
+//		        	this._dsi.executeUpdate(entity, "alter table "+entity.getTableName()+" add "+column+"_t varchar("+size+")");
+//		        	this._dsi.executeUpdate(entity, "update "+entity.getTableName()+" set "+column+"_t = "+column);
+//		        	this._dsi.executeUpdate(entity, "alter table "+entity.getTableName()+" drop "+column);
+//		
+//		        	this._dsi.executeUpdate(entity, "alter table "+entity.getTableName()+" add "+column+" varchar("+size+")");
+//		        	this._dsi.executeUpdate(entity, "update "+entity.getTableName()+" set "+column+" = "+column+"_t");
+//		        	this._dsi.executeUpdate(entity, "alter table "+entity.getTableName()+" drop "+column+"_t");
+//	        }
+//        } else {
+//        	System.out.println("Column is updated = "+column);
+//        }
+        
       }
     }
   }
+  
+//  private int getColumnSize(String colName, ColumnInfo[] columnsToSearch) {
+//  	for (int i = 0; i < columnsToSearch.length; i++) {
+//  		if (columnsToSearch[i].getColumnName().equalsIgnoreCase(colName)) {
+//  			return columnsToSearch[i].getColumnSize();
+//  		}
+//  	}
+//  	return -1;
+//  }
   
   private boolean compareIndexColumns(String[] arr1, String[] arr2) {
   		if (arr1 != null && arr2 != null && arr1.length == arr2.length) {
@@ -938,7 +967,7 @@ public class IDOTableCreator{
   }
 
   private boolean hasEntityColumn(String columnName,String[] columnsFromDB){
-    String currentColumn = null;
+  	String currentColumn = null;
     if(columnsFromDB!=null){
       for (int i = 0; i < columnsFromDB.length; i++) {
         currentColumn = columnsFromDB[i];
