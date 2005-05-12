@@ -67,6 +67,10 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
    */
 
+  public String getDatasource() {
+	  return datasource;
+  }
+  
   private IdegaTransactionManager(String datasource){
 	  if (datasource != null) {
 		  this.datasource = datasource;
