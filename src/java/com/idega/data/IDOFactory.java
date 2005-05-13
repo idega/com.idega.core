@@ -36,10 +36,12 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   }
   
   public void setDatasource(String dataSource, boolean reloadEntity) {
-	  this.dataSource = dataSource;
-	 GenericEntity ent = ((GenericEntity) this.idoCheckOutPooledEntity());
-	 ent.setDatasource(dataSource, reloadEntity);
-	 this.idoCheckInPooledEntity(ent);
+	  if (dataSource != null) {
+		 this.dataSource = dataSource;
+		 GenericEntity ent = ((GenericEntity) this.idoCheckOutPooledEntity());
+		 ent.setDatasource(dataSource, reloadEntity);
+		 this.idoCheckInPooledEntity(ent);
+	  }
   }
   
   public IDOEntity idoCreate(Class entityInterfaceClass)throws javax.ejb.CreateException{
