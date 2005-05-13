@@ -133,6 +133,12 @@ public class ICLocaleBMPBean extends com.idega.data.GenericEntity  implements IC
       return idoFindPKsByQuery(query);	
   }
   
-  
+  public Object ejbFindByLocaleName(String locale) throws FinderException {
+	  Table table = new Table(this);
+	  SelectQuery query = new SelectQuery(table);
+	  query.addColumn(new WildCardColumn());
+      query.addCriteria(new MatchCriteria(table,getColumnNameLocale(),MatchCriteria.EQUALS,locale));
+	  return idoFindOnePKByQuery(query);
+  }
 
 }
