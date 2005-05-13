@@ -105,7 +105,7 @@ public class EntityFinder implements Singleton {
 		Class interfaceClass = IDOLookup.getInterfaceClassFor(entity.getClass());
 		if (IDOContainer.getInstance().queryCachingActive(interfaceClass)) {
 			try {
-				Collection c = findAllUsingIDO(interfaceClass, SQLString, returningNumberOfRecords);
+				Collection c = findAllUsingIDO(interfaceClass, SQLString, returningNumberOfRecords, entity.getDatasource());
 				int size = c.size();
 				//System.out.println("CollectionSize="+size);
 				if (size > 0) {
@@ -125,10 +125,13 @@ public class EntityFinder implements Singleton {
 		}
 	}
 
-	static Collection findAllUsingIDO(Class entityInterfaceClass, String SQLString, int returningNumberOfRecords) throws FinderException {
+	static Collection findAllUsingIDO(Class entityInterfaceClass, String SQLString, int returningNumberOfRecords, String datasource) throws FinderException {
 		//return null;
 		try {
 			IDOFactory factory = (IDOFactory) IDOLookup.getHome(entityInterfaceClass);
+			if (datasource != null) {
+				factory.setDatasource(datasource, false);
+			}
 			GenericEntity entityInstance = (GenericEntity) factory.idoCheckOutPooledEntity();
 			Collection pks = entityInstance.idoFindIDsBySQL(SQLString, returningNumberOfRecords);
 			factory.idoCheckInPooledEntity(entityInstance);
