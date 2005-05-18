@@ -1,0 +1,229 @@
+<model>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.idega</groupId>
+  <artifactId>com.idega.core</artifactId>
+  <packaging>jar</packaging>
+  <version>3.1.0-SNAPSHOT</version>
+  <name>idegaWeb Core</name>
+  <build>
+	<sourceDirectory>src/java</sourceDirectory>
+  </build>
+  <repositories>
+  	<repository>
+  		<id>idega1</id>
+  		<name>idega public repository</name>
+  		<url>http://repository.idega.com/maven/</url>
+  		<snapshotPolicy>daily</snapshotPolicy>
+  		<layout>legacy</layout>
+  	</repository>
+  </repositories>
+  
+  <developers>
+    <developer>
+      <name>Tryggvi Larusson</name>
+      <id>tryggvil</id>
+      <email>tryggvi@idega.is</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>
+    <developer>
+      <name>Pall Helgason</name>
+      <id>palli</id>
+      <email>palli@idega.is</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>
+    <developer>
+      <name>Eirikur Sveinn Hrafnsson</name>
+      <id>eiki</id>
+      <email>eiki@idega.is</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>
+    <developer>
+      <name>Thorhallur Helgason</name>
+      <id>laddi</id>
+      <email>laddi@idega.is</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>
+    <developer>
+      <name>Gudmundur Agust Saemundsson</name>
+      <id>gummi</id>
+      <email>gummi@idega.is</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>
+    <developer>
+      <name>Grimur Jonsson</name>
+      <id>gimmi</id>
+      <email>gimmi@idega.is</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>
+    <developer>
+      <name>Thomas Hilbig</name>
+      <id>thomas</id>
+      <email>thomas@idega.is</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>
+  </developers>
+  
+  <dependencies>
+    <dependency>
+      <groupId>jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+      <url>http://www.jdom.org/</url>
+    </dependency>
+    <dependency>
+      <groupId>servletapi</groupId>
+      <artifactId>servletapi</artifactId>
+      <version>2.4</version>
+      <type>jar</type>
+      <url>http://java.sun.com/products/servlet/docs.html</url>
+    </dependency>
+    <dependency>
+      <groupId>jspapi</groupId>
+      <artifactId>jsp-api</artifactId>
+      <version>2.0</version>
+      <type>jar</type>
+      <url>http://jakarta.apache.org/</url>
+    </dependency>
+    <dependency>
+      <groupId>ejb</groupId>
+      <artifactId>ejb</artifactId>
+      <version>2.0</version>
+      <type>jar</type>
+      <url>http://java.sun.com/products/ejb/docs.html</url>
+    </dependency>
+    <dependency>
+      <groupId>jta</groupId>
+      <artifactId>jta</artifactId>
+      <version>spec1_0_1</version>
+      <type>jar</type>
+      <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
+    </dependency>
+    <dependency>
+      <groupId>javamail</groupId>
+      <artifactId>javamail</artifactId>
+      <version>1.3.2</version>
+      <type>jar</type>
+      <url>http://java.sun.com/products/javamail/</url>
+    </dependency>
+    <dependency>
+      <groupId>jaf</groupId>
+      <artifactId>jaf</artifactId>
+      <version>1.0.2</version>
+      <type>jar</type>
+      <url>http://java.sun.com/products/javabeans/glasgow/jaf.html</url>
+    </dependency>
+    <dependency>
+      <!-- cos is short for com.oreilly.servlet -->
+      <groupId>servlets.com</groupId>
+      <artifactId>cos</artifactId>
+      <version>05Nov2002</version>
+      <type>jar</type>
+      <url>http://www.servlets.com/cos/</url>
+    </dependency>
+    <dependency>
+      <groupId>icu4j</groupId>
+      <artifactId>icu4j</artifactId>
+      <version>3.0L1</version>
+      <!-- 3.0L1 is a special version that Laddi built with is_IS and sv_SE special holidays -->
+      <type>jar</type>
+      <url>http://oss.software.ibm.com/icu4j/</url>
+    </dependency>
+    <dependency>
+      <groupId>myfaces</groupId>
+      <artifactId>myfaces-jsf-api</artifactId>
+      <version>1.0.9</version>
+      <type>jar</type>
+      <url>http://java.sun.com/j2ee/javaserverfaces/</url>
+    </dependency>
+    <dependency>
+      <groupId>myfaces</groupId>
+      <artifactId>myfaces-extensions</artifactId>
+      <version>1.0.9</version>
+      <type>jar</type>
+      <url>http://www.myfaces.org/</url>
+    </dependency>
+    <dependency>
+      <groupId>oracle_jdbc</groupId>
+      <artifactId>oracle_jdbc</artifactId>
+      <version>10.1.0.2.0</version>
+      <type>jar</type>
+      <url>http://www.oracle.com/</url>
+    </dependency>
+    <dependency>
+      <groupId>informix_jdbc</groupId>
+      <artifactId>informix_jdbc</artifactId>
+      <version>9.0</version>
+      <type>jar</type>
+      <url>http://www.informix.com/</url>
+    </dependency>
+    <dependency>
+      <groupId>poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>2.5-final-20040428</version>
+      <type>jar</type>
+      <url>http://jakarta.apache.org/poi/</url>
+    </dependency>
+    <dependency>
+      <groupId>jug</groupId>
+      <artifactId>jug</artifactId>
+      <version>1.1</version>
+      <type>jar</type>
+      <url>http://www.doomdark.org/doomdark/proj/jug/</url>
+    </dependency>
+    <!-- jai and jai codec used in bundles com.idega.block.image and is.idega.golf.block.image, not used in core -->
+    <dependency>
+      <groupId>jai</groupId>
+      <artifactId>jai</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+      <url>http://java.sun.com/products/java-media/jai/</url>
+    </dependency>
+    <!-- see comment above -->
+    <dependency>
+      <groupId>jai</groupId>
+      <artifactId>jai_codec</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+      <url>http://java.sun.com/products/java-media/jai/</url>
+    </dependency>
+    <!-- iText used in bundles com.idega.block.reports, com.idega.block.contract, com.idega.block.pdf and campus not used in core -->
+    <dependency>
+      <groupId>itext</groupId>
+      <artifactId>itext</artifactId>
+      <version>0.99</version>
+      <type>jar</type>
+      <url>http://itext.sourceforge.net/</url>
+    </dependency>
+    <!-- commons-logging used in com.idega.faces and com.idega.block.creditcard, not used in core -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.0.4</version>
+      <type>jar</type>
+      <url>http://commons.apache.org/</url>
+    </dependency>
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+      <url>http://jakarta.apache.org/commons/</url>
+    </dependency>
+    <dependency>
+      <groupId>javaldap</groupId>
+      <artifactId>java-ldapserver</artifactId>
+      <version>0.4</version>
+      <type>jar</type>
+      <url>http://codehaus.org/~trygvis/ldap</url>
+    </dependency>
+  </dependencies>
+
+</model>
