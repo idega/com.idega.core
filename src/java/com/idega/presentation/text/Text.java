@@ -9,12 +9,16 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.faces.context.FacesContext;
+import org.apache.myfaces.renderkit.html.util.HTMLEncoder;
 
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.util.StringHandler;
 import com.idega.util.text.StyleConstants;
+import com.idega.util.text.TextSoap;
+import com.lowagie.text.html.HtmlEncoder;
 
 /**
  * A wrapper class for presenting plain (formatted) text in idegaWeb
@@ -326,7 +330,15 @@ public class Text extends PresentationObject {
 		return obj;
 	}
 
-	public String getLocalizedText(IWContext iwc) {
+	/**
+	 * 
+	 * <p>
+	 * Gets the String localized if set or the default string if it is not set as a regular String (unencoded for xhtml)
+	 * </p>
+	 * @param iwc
+	 * @return
+	 */
+	private String getLocalizedTextAsUnencodedString(IWContext iwc) {
 		if (this.localizationMap != null) {
 			Locale currLocale = iwc.getCurrentLocale();
 
@@ -342,6 +354,11 @@ public class Text extends PresentationObject {
 			}
 		}
 		return getText();
+		//return HTMLEncoder.encode(getText());
+	}
+	
+	public String getLocalizedText(IWContext iwc){
+		return xhtmlEncode(getLocalizedTextAsUnencodedString(iwc));
 	}
 
 	public void print(IWContext iwc) throws Exception {

@@ -1,10 +1,8 @@
 package com.idega.presentation.ui;
 
 import java.util.Map;
-
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 
@@ -111,6 +109,10 @@ public class SelectOption extends InterfaceObject {
 			return (GenericSelect) parent;
 		}
 		return null;
+	}
+	
+	public String getName(){
+		return xhtmlEncode(super.getName());
 	}
 
 	public void print(IWContext iwc) throws Exception {

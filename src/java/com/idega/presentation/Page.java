@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.143 2005/03/08 12:59:04 tryggvil Exp $
+ *  $Id: Page.java,v 1.144 2005/05/18 10:55:32 tryggvil Exp $
  *  Created in 2000 by Tryggvi Larusson
  *  Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -56,10 +56,10 @@ import com.idega.util.datastructures.QueueMap;
  * </pre>
  * tags in HTML and renders the children inside the body tags.
  * </p>
- *  Last modified: $Date: 2005/03/08 12:59:04 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/05/18 10:55:32 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.143 $
+ * @version $Revision: 1.144 $
  */
 public class Page extends PresentationObjectContainer {
 	
@@ -86,10 +86,7 @@ public class Page extends PresentationObjectContainer {
 	//private final static String START_TAG = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n<html>";
 	private final static String START_TAG_HTML_4_0="<html>";
 	
-	public final static String MARKUP_LANGUAGE = "markup_language";
-	public final static String HTML = "HTML";
-	public final static String XHTML = "XHTML";
-	public final static String XHTML1_1 = "XHTML1.1";
+
 	private final static String END_TAG = "</html>";
 	private static String META_KEYWORDS = "keywords";
 	private static String META_DESCRIPTION = "description";
@@ -2088,13 +2085,6 @@ public class Page extends PresentationObjectContainer {
 		return getSetApplicationMarkupLanguage();
 	}
 	
-	/**
-	 * Gets the set Markup Language (HTML/XHTML/XHTML11) for the current IW Application.
-	 * @return
-	 */
-	public String getSetApplicationMarkupLanguage(){
-		return IWContext.getInstance().getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
-	}
 	
 	/**
 	 * Add javascript urls to page HEAD, comma separated

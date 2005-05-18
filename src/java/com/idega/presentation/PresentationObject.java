@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.129 2005/05/11 18:12:50 gummi Exp $
+ * $Id: PresentationObject.java,v 1.130 2005/05/18 10:55:32 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -63,16 +63,17 @@ import com.idega.util.StringHandler;
 import com.idega.util.logging.LoggingHelper;
 import com.idega.util.reflect.Property;
 import com.idega.util.reflect.PropertyCache;
+import com.idega.util.text.TextSoap;
 import com.idega.util.text.TextStyler;
 /**
  * This is the base class for all user interface components in old idegaWeb.<br>
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/05/11 18:12:50 $ by $Author: gummi $
+ * Last modified: $Date: 2005/05/18 10:55:32 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.129 $
+ * @version $Revision: 1.130 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -95,6 +96,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public static String COMPOUNDID_COMPONENT_DELIMITER = ":";
 	// constant for compoundId
 	public static String COMPOUNDID_CHILD_NUMBER_DELIMITER = "_";
+	public final static String MARKUP_LANGUAGE = "markup_language";
+	public final static String HTML = "HTML";
+	public final static String XHTML = "XHTML";
+	public final static String XHTML1_1 = "XHTML1.1";
+	
 	//temporary legacy variables:
 	private transient HttpServletRequest _request;
 	private transient HttpServletResponse _response;
@@ -2597,5 +2603,46 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		getChildren().clear();
 		//theObjects.removeAll(theObjects);
 	}
-	 
+	
+/**
+	 * Gets the set Markup Language (HTML/XHTML/XHTML11) for the current IW Application.
+	 * @return
+	 */
+	protected String getSetApplicationMarkupLanguage(){
+		return IWContext.getInstance().getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
+	}
+	
+	/**
+	 * <p>
+	 * Checks if XHTML is set a the default markup language for the application. Returns true if that is the case.
+	 * </p>
+	 * @return true if XHTML is set.
+	 */
+	protected boolean isXhtmlSet(){
+		String markup = getSetApplicationMarkupLanguage();
+		if(markup.equals(XHTML)){
+			return true;
+		}
+		else if(markup.equals(XHTML1_1)){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * <p>
+	 * Encode a string to escape xhtml specific characters to an excaped xml format.<br/>
+	 * For example: '& => &amp;', '< = &lt;'
+	 * </p>
+	 * @param unEncoded	The string to convert.
+	 * @return
+	 */
+	protected String xhtmlEncode(String unEncoded){
+		boolean xhtmlSet=isXhtmlSet();
+		
+		if(xhtmlSet){
+			return TextSoap.convertSpecialCharacters(unEncoded);
+		}
+		return unEncoded;
+	}
 }
