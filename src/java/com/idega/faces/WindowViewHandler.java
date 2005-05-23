@@ -101,6 +101,9 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 		} catch(Throwable t) {
 			//throw new SmileException("Descriptor Class for '" + viewId + "' threw an exception during initialize() !",t);
 			//throw new RuntimeException("Descriptor Class for '" + viewId + "' threw an exception during initialize() !",t);
+			
+			t.printStackTrace();
+			
 			Page page;
 			try {
 				page = new PageWrapper((UIComponent) getDefaultPageClass().newInstance());
@@ -112,6 +115,7 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 			} catch (ClassNotFoundException e1) {
 				log.warning(e1.getMessage());
 			}
+		
 		}
 
 		//set the locale
@@ -141,7 +145,7 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 		//}
 		//else{
 			String[] urlArray= StringHandler.breakDownURL(viewId);
-			if(urlArray.length<1){
+			if(urlArray == null || urlArray.length<1){
 				//encryptedClassName = "6975";
 				Class defaultClass = Class.forName("com.idega.workspace.WorkspaceLoginPage");
 				encryptedClassName = IWMainApplication.getEncryptedClassName(defaultClass);
