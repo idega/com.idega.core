@@ -14,6 +14,8 @@ import com.idega.presentation.IWContext;
 public class CheckBox extends GenericInput {
 	
 	private boolean _mustBeChecked = false;
+	private boolean _enableWhenChecked = false;
+	private boolean _disableWhenUnchecked = false;
 	private String _errorMessage;
 
 	
@@ -90,11 +92,28 @@ public class CheckBox extends GenericInput {
 				buffer.append("return false;").append("\n}");
 				this.setOnSubmitFunction("isChecked", buffer.toString(), _errorMessage);
 			}
+			if (_enableWhenChecked) {
+				getScript().addFunction("enableWhenChecked", "function enableWhenChecked (check, input) {\n\t	if (check.checked == true) input.disabled = false; \n}");
+			}
+			if (_disableWhenUnchecked) {
+				getScript().addFunction("disableWhenUnchecked", "function disableWhenUnchecked (check, input) {\n\t	if (check.checked == false) input.disabled = true; \n}");
+			}
 		}
 	}
+	
 	public void setMustBeChecked(String errorMessage) {
 		_mustBeChecked = true;
 		_errorMessage = errorMessage;
+	}
+	
+	public void setToEnableWhenChecked(InterfaceObject object) {
+		_enableWhenChecked = true;
+		setOnAction(ACTION_ON_CLICK, "enableWhenChecked(this, findObj('" + object.getName() + "'))");
+	}
+	
+	public void setToDisableWhenUnchecked(InterfaceObject object) {
+		_disableWhenUnchecked = true;
+		setOnAction(ACTION_ON_CLICK, "disableWhenUnchecked(this, findObj('" + object.getName() + "'))");
 	}
 	
 	/**

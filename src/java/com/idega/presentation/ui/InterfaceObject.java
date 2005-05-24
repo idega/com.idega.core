@@ -1,5 +1,5 @@
 /*
- * $Id: InterfaceObject.java,v 1.34 2005/03/08 20:46:25 tryggvil Exp $
+ * $Id: InterfaceObject.java,v 1.35 2005/05/24 11:13:08 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.presentation.Script;
  * In JSF there is now a more recent javax.faces.compoent.UIInput that serves a
  * similar purpose and is recommended to use/extend in newer pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/03/08 20:46:25 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/05/24 11:13:08 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
@@ -103,7 +103,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @param actionType	The type of action.
 	 * @param action	The action to perform.
 	 */
-	private void setOnAction(String actionType, String action) {
+	protected void setOnAction(String actionType, String action) {
 		setMarkupAttributeMultivalued(actionType, action);
 	}
 
