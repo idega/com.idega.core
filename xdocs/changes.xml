@@ -4,7 +4,12 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
-
+    <release version="3.0.5" date="2005-05-24">
+      <action dev="tryggvil" type="update">
+      	This version is used for the nacka 24 app.
+      </action>              
+    </release>
+    
     <release version="3.0.4" date="2005-04-06">
       <action dev="tryggvil" type="update">
       	This version is the very first one with a correct iwbar.
