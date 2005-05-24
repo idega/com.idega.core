@@ -300,7 +300,14 @@ public class XMLData implements Storable {
    		close(inputStream);
    		throw ex;
    	}
-  	initialize(inputStream);
+   	try {
+   		initialize(inputStream);
+   	}
+   	catch (IOException ex) {
+   		String message = ex.getMessage();
+   		message = "File: \"" + file.getPath() + "\" caused exception: " + message;
+   		throw new IOException(message);
+   	}
   }
   	
     
@@ -315,7 +322,7 @@ public class XMLData implements Storable {
     }
     // FinderException, RemoteException
     catch(Exception ex){
-      System.err.println("[XMLData]: Can't restrieve file with id "+ fileId + "Message is:" + ex.getMessage());
+      System.err.println("[XMLData]: Can't retrieve file with id "+ fileId + "Message is:" + ex.getMessage());
       ex.printStackTrace(System.err); 
       return null;
     }
