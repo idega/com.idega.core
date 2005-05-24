@@ -123,7 +123,9 @@ public class CountryBMPBean extends GenericEntity implements Country{
   	
   	SelectQuery query = new SelectQuery(table);
   	query.addColumn(table, PostalCodeBMPBean.COLUMN_COUNTRY_ID, true);
-  	query.addCriteria(new InCriteria(postalCol, postalCodes));
+  	if (postalCodes != null && !postalCodes.isEmpty()) {
+  		query.addCriteria(new InCriteria(postalCol, postalCodes));
+  	}
   	
   	return this.idoFindPKsByQuery(query); 
   }
