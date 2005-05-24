@@ -16,6 +16,7 @@ public class CheckBox extends GenericInput {
 	private boolean _mustBeChecked = false;
 	private boolean _enableWhenChecked = false;
 	private boolean _disableWhenUnchecked = false;
+	private boolean _checkWhenCheckedUncheckWhenUnchecked = false;
 	private String _errorMessage;
 
 	
@@ -98,6 +99,9 @@ public class CheckBox extends GenericInput {
 			if (_disableWhenUnchecked) {
 				getScript().addFunction("disableWhenUnchecked", "function disableWhenUnchecked (check, input) {\n\t	if (check.checked == false) input.disabled = true; \n}");
 			}
+			if ( _checkWhenCheckedUncheckWhenUnchecked ) {
+				getScript().addFunction("toggleOnChange", "function toggleOnChange (check, input) {\n\t	if (check.checked == false)  {input.checked = false;} \n\t else if (check.checked == true) { input.checked = true;} \n}");
+			}
 		}
 	}
 	
@@ -114,6 +118,11 @@ public class CheckBox extends GenericInput {
 	public void setToDisableWhenUnchecked(InterfaceObject object) {
 		_disableWhenUnchecked = true;
 		setOnAction(ACTION_ON_CLICK, "disableWhenUnchecked(this, findObj('" + object.getName() + "'))");
+	}
+	
+	public void setToCheckWhenCheckedAndUncheckWhenUnchecked(InterfaceObject object) {
+		_checkWhenCheckedUncheckWhenUnchecked = true;
+		setOnAction(ACTION_ON_CLICK, "toggleOnChange(this, findObj('" + object.getName() + "'))");
 	}
 	
 	/**
