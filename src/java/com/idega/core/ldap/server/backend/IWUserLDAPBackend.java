@@ -4,6 +4,7 @@
 package com.idega.core.ldap.server.backend;
 
 import java.rmi.RemoteException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -618,18 +619,30 @@ LDAPReplicationConstants {
 		//		pager
 		//		destinationIndicator
 		
-		
 		String personalId = user.getPersonalID();
+		Date dateBirth = user.getDateOfBirth();
+		String dateOfBirth = null;
+		if(dateBirth!=null){
+			dateOfBirth = dateBirth.toString();
+		}
+		
 		String lName = user.getLastName();
 		String fName = user.getFirstName() + ( (user.getMiddleName()!=null)? " "+user.getMiddleName() : "");
 		//should we add the unique id after the name or the pid like in the entry?
 		String cn = user.getName();
 		String uuid = user.getUniqueId();
 		String description = user.getDescription();
+		
+		
 		List name = getAttributeListForSingleEntry(cn);
 		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_COMMON_NAME), name);
+		
 		List userPIN = getAttributeListForSingleEntry(personalId);
 		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID), userPIN);
+		
+		List userBirthDate = getAttributeListForSingleEntry(dateOfBirth);
+		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_DATE_OF_BIRTH), userBirthDate);
+		
 		//SHOULD WE ADD IT EMPTY TO REMOVE THE VALUE ON THE OTHER END?
 		if (uuid != null) {
 			List uniqueID = getAttributeListForSingleEntry(uuid);
