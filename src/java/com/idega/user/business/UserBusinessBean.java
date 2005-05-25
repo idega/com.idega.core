@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -22,7 +22,6 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
-
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
@@ -2927,6 +2926,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		String description = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_DESCRIPTION, attributes);
 		String uniqueID = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID,attributes);
 		String personalId = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID,attributes);
+		String dateOfBirth = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_DATE_OF_BIRTH,attributes);
 		String userName = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_UID,attributes);
 		if(userName==null || "".equals(userName)){
 			//maybe its active directory!
@@ -2952,6 +2952,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			catch (Exception e) {
 				e.printStackTrace();
+			}
+		}
+		
+		Date birthDate = null;
+		if(dateOfBirth!=null){
+			try {
+				birthDate = java.sql.Date.valueOf(dateOfBirth);
+			}
+			catch (IllegalArgumentException e) {
+				System.err.println("UserBusiness: date of birth format is invalid.Should be yyyy-MM-dd : " + dateOfBirth);
 			}
 		}
 		
@@ -3010,6 +3020,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			user.setGender(genderId);
 		}
 		
+		if(birthDate!=null && user.getDateOfBirth()==null){
+			user.setDateOfBirth(new IWTimestamp(birthDate).getDate());
+		}
 		//the description
 		user.setDescription(description);
 		
