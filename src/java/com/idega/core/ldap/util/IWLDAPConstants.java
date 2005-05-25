@@ -41,6 +41,10 @@ public interface IWLDAPConstants {
 	 */
 	public static final String LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID= "personalId";
 	
+	/**
+	 * The date of birth
+	 */
+	public static final String LDAP_ATTRIBUTE_IDEGAWEB_DATE_OF_BIRTH= "dateOfBirth";
 	
 	/**
 	 * The users gender, male/female
