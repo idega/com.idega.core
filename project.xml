@@ -3,9 +3,9 @@
   <extend>${base.project.dir}/base-dependencies.xml</extend>
   <name>idegaWeb JavaServer Faces</name>
   <artifactId>com.idega.faces</artifactId>
-  <currentVersion>1.0.2</currentVersion>
+  <!--currentVersion>1.0.2</currentVersion-->
   
-  <!--currentVersion>1.1.0-SNAPSHOT</currentVersion-->
+  <currentVersion>1.1.0-SNAPSHOT</currentVersion>
   <inceptionYear>2003</inceptionYear>
   <shortDescription>idegaWeb Faces is JavaServer Faces implementation</shortDescription>
   <versions>
@@ -44,8 +44,8 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <!--HELPER--><version>3.0.5</version><!--HELPER-->
-      <!--HELPERversion>SNAPSHOT</versionHELPER-->
+      <!--version>3.0.5</version-->
+      <version>SNAPSHOT</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -55,8 +55,8 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.builder</artifactId>
-      <!--HELPER--><version>1.4.2</version><!--HELPER-->
-      <!--HELPERversion>SNAPSHOT</versionHELPER-->
+      <!--version>1.4.2</version-->
+      <version>SNAPSHOT</version>
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
