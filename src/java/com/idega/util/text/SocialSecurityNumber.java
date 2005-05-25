@@ -58,6 +58,9 @@ public class SocialSecurityNumber {
 	}
 
 	public static Date getDateFromSocialSecurityNumber(String socialSecurityNumber) {
+		return getDateFromSocialSecurityNumber(socialSecurityNumber, true);
+	}	
+	public static Date getDateFromSocialSecurityNumber(String socialSecurityNumber, boolean checkForValidity) {
   	if ( isValidIcelandicSocialSecurityNumber(socialSecurityNumber) ) {
       int day = Integer.parseInt(socialSecurityNumber.substring(0, 2));
       int month = Integer.parseInt(socialSecurityNumber.substring(2, 4));
