@@ -151,7 +151,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 			addManyToManyJoin(srcTable, destTable);
 			return;
 		}
-		throw new IDORelationshipException("No relation found between tables!");
+		throw new IDORelationshipException("No relation found between tables " + srcTable.getName().toUpperCase() + " and " + destTable.getName().toUpperCase());
 	}
 
 	public void addJoin(Table srcTable, Table destTable, String columnName) throws IDORelationshipException {
@@ -174,7 +174,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 
 			addManyToManyJoin(srcTable, destTable);
 		}
-		throw new IDORelationshipException("No relation found between tables!");
+		throw new IDORelationshipException("No relation found between tables " + srcTable.getName().toUpperCase() + " and " + destTable.getName().toUpperCase() + " for column = " + columnName.toUpperCase());
 	}
 
 	public void addManyToManyJoin(Table srcTable, Table destTable) throws IDORelationshipException {
@@ -193,7 +193,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 					if (destination.equals(definition)) {
 						try {
 							String middleTableName = source.getMiddleTableNameForRelation(destination.getSQLTableName());
-							if (middleTableName == null) { throw new IDORelationshipException("Middle table not found for tables."); }
+							if (middleTableName == null) { throw new IDORelationshipException("Middle table not found for tables " + srcTable.getName().toUpperCase() + " and " + destTable.getName().toUpperCase()); }
 	
 							Table middleTable = new Table(middleTableName, alias);
 	
@@ -208,6 +208,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 				}
 			}
 		}
+		throw new IDORelationshipException("No relation found between tables " + srcTable.getName().toUpperCase() + " and " + destTable.getName().toUpperCase());
 	}
 
 	public void addOrder(Order order) {
