@@ -66,16 +66,28 @@ public class EventHistoryList extends Block{
             }
             int row = 1;
             int col = 1;
-            eventTable.add(getText(iwrb.getLocalizedString("eventhistory.event_type","Type")),col++,row);
-            eventTable.add(getText(iwrb.getLocalizedString("eventhistory.date","Date")),col++,row);
-            eventTable.add(getText(iwrb.getLocalizedString("eventhistory.time","Time")),col++,row);
+            Text eventTypeText = getText(iwrb.getLocalizedString("eventhistory.event_type","Type"));
+            eventTypeText.setBold();
+            Text dateText = getText(iwrb.getLocalizedString("eventhistory.date","Date"));
+            dateText.setBold();
+            Text timeText = getText(iwrb.getLocalizedString("eventhistory.time","Time"));
+            timeText.setBold();
+            Text eventText = getText(iwrb.getLocalizedString("eventhistory.event","Event"));
+            eventText.setBold();
+            Text sourceText = getText(iwrb.getLocalizedString("eventhistory.source","Source"));
+            sourceText.setBold();
+            Text userText = getText(iwrb.getLocalizedString("eventhistory.user","User"));
+            userText.setBold();
+            eventTable.add(eventTypeText,col++,row);
+            eventTable.add(dateText,col++,row);
+            eventTable.add(timeText,col++,row);
             if(showEvent)
-                eventTable.add(getText(iwrb.getLocalizedString("eventhistory.event","Event")),col++,row);
+                eventTable.add(eventText,col++,row);
             if(showSource)
-                eventTable.add(getText(iwrb.getLocalizedString("eventhistory.source","Source")),col++,row);
+                eventTable.add(sourceText,col++,row);
             if(showUser)
-                eventTable.add(getText(iwrb.getLocalizedString("eventhistory.user","User")),col++,row);
-            eventTable.setCellpadding(1);
+                eventTable.add(userText,col++,row);
+            eventTable.setCellpadding(0);
             eventTable.setLineAfterRow(row);
             row++;
             col = 1;
