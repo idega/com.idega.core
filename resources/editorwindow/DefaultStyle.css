@@ -142,7 +142,7 @@ h1{
 }
 .errorMessage{
 	font-family: verdana,helvetica,arial,sans-serif;
-	font-size: 12px;
+	font-size: 9px;
 	font-weight: bold;
 	color: #ff0000;
 	border: 1px solid #cccccc;
