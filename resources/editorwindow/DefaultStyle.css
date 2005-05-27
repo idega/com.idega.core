@@ -142,10 +142,21 @@ h1{
 }
 .errorMessage{
 	font-family: verdana,helvetica,arial,sans-serif;
-	font-size: 9px;
+	font-size: 12px;
 	font-weight: bold;
 	color: #ff0000;
-	border: 1px solid #cccccc;
+}
+
+a.errorMessage{
+	font-size: 9px;
+	color: #ff0000;
+	text-decoration:underline;
+}
+
+a:hover.errorMessage{
+	font-size: 9px;
+	color: #ff0000;
+	text-decoration:none;
 }
 
 table.selectedBox{
