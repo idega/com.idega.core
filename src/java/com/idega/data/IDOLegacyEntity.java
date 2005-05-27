@@ -228,6 +228,10 @@ public interface IDOLegacyEntity extends IDOEntity,MetaDataCapable {
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
+	public com.idega.data.IDOLegacyEntity[] findAllByColumnEquals(java.lang.String p0, java.lang.String p1, java.lang.String p2, java.lang.String p3) throws java.sql.SQLException;
+	/**
+	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
+	*/
 	public com.idega.data.IDOLegacyEntity[] findAllByColumn(java.lang.String p0, java.lang.String p1, java.lang.String p2, java.lang.String p3, java.lang.String p4, java.lang.String p5) throws java.sql.SQLException;
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
