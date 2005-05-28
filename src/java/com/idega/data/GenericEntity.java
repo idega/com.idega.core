@@ -720,10 +720,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				//returnObj = this.findByPrimaryInOtherClass(getRelationShipClass(columnName),((Integer)value).intValue());
 				if (value != null) {
 					IDOHome home = (IDOHome)IDOLookup.getHome(relationClass);
+					String oldDS = home.getDatasource();
 					if (this.getDatasource() != null) {
 						home.setDatasource(this.getDatasource(), false);
 					}
 					returnObj = home.findByPrimaryKeyIDO(value);
+					home.setDatasource(oldDS, false);
 				}
 			} catch (Exception ex) {
 				System.err.println("Exception in com.idega.data.GenericEntity.getColumnValue(String columnName): of type+ " + ex.getClass().getName() + " , Message = " + ex.getMessage());
