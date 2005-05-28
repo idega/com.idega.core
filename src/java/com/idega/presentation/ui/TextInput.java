@@ -1,5 +1,5 @@
 /*
- * $Id: TextInput.java,v 1.37 2005/03/15 08:12:01 laddi Exp $
+ * $Id: TextInput.java,v 1.38 2005/05/28 11:30:38 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a input element of type text
  * </p>
- *  Last modified: $Date: 2005/03/15 08:12:01 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/05/28 11:30:38 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public class TextInput extends GenericInput {
     private boolean isSetAsIntegers;
@@ -39,6 +39,7 @@ public class TextInput extends GenericInput {
     private boolean isSetAsIcelandicSSNumber;
     private boolean isSetAsCreditCardNumber;
     private boolean isSetMinimumLength;
+    private boolean isSetEmptyConfirm;
     private String integersErrorMessage;
     private String floatErrorMessage;
     private String alphabetErrorMessage;
@@ -48,12 +49,13 @@ public class TextInput extends GenericInput {
     private String icelandicSSNumberErrorMessage;
     private String notCreditCardErrorMessage;
     private String minimumLengthErrorMessage;
+    private String emptyConfirmMessage;
     private int minimumLength;
     private int decimals = -1;
 	
 	
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[23];
+		Object values[] = new Object[25];
 		values[0] = super.saveState(ctx);
 		values[1] = Boolean.valueOf(isSetAsIntegers);
 		values[2] = Boolean.valueOf(isSetAsPosNegIntegers);
@@ -77,6 +79,8 @@ public class TextInput extends GenericInput {
 		values[20] = minimumLengthErrorMessage;
 		values[21] = new Integer(minimumLength);
 		values[22] = new Integer(decimals);
+		values[23] = Boolean.valueOf(isSetEmptyConfirm);
+		values[24] = emptyConfirmMessage;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
@@ -93,6 +97,7 @@ public class TextInput extends GenericInput {
 		isSetAsIcelandicSSNumber = ((Boolean) values[9]).booleanValue();
 		isSetAsCreditCardNumber = ((Boolean) values[10]).booleanValue();
 		isSetMinimumLength = ((Boolean) values[11]).booleanValue();
+		isSetEmptyConfirm = ((Boolean) values[23]).booleanValue();
 		integersErrorMessage = (String) values[12];
 		floatErrorMessage = (String) values[13];
 		alphabetErrorMessage = (String) values[14];
@@ -102,6 +107,7 @@ public class TextInput extends GenericInput {
 		icelandicSSNumberErrorMessage = (String) values[18];
 		notCreditCardErrorMessage = (String) values[19];
 		minimumLengthErrorMessage = (String) values[20];
+		emptyConfirmMessage = (String) values[24];
 		minimumLength = ((Integer)values[21]).intValue();
 		decimals = ((Integer)values[22]).intValue();
 	}	
@@ -196,6 +202,17 @@ public class TextInput extends GenericInput {
     public void setAsNotEmpty(String errorMessage) {
         isSetAsNotEmpty = true;
         notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+    }
+
+    /**
+     * Sets the text input so that if empty a javascript confirmation is shown. Uses Javascript.
+     * 
+     * @param confirmMessage
+     *            The confirm message to display.
+     */
+    public void setEmptyConfirm(String confirmMessage) {
+        isSetEmptyConfirm = true;
+        emptyConfirmMessage = TextSoap.removeLineBreaks(confirmMessage);
     }
 
     /**
@@ -458,6 +475,12 @@ public class TextInput extends GenericInput {
                         "warnIfEmpty",
                         "function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}",
                         notEmptyErrorMessage);
+
+        if (isSetEmptyConfirm)
+          setOnSubmitFunction(
+                  "confirmIfEmpty",
+                  "function confirmIfEmpty(inputbox,confirmMsg) {\n\n		if ( inputbox.value == '' ) { \n		return confirm( confirmMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}",
+                  notEmptyErrorMessage);
 
         if (isSetAsIntegers)
                 setOnSubmitFunction(
