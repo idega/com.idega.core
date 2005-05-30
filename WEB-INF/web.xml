@@ -200,9 +200,29 @@
     
     <filter-mapping>
         <filter-name>extensionsFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/pages/*</url-pattern>
     </filter-mapping>
-    
+	<filter-mapping>
+		<filter-name>extensionsFilter</filter-name>
+		<url-pattern>/workspace/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>extensionsFilter</filter-name>
+		<url-pattern>/window/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>extensionsFilter</filter-name>
+		<url-pattern>/setup/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>extensionsFilter</filter-name>
+		<url-pattern>/faces/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>extensionsFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+	
     <!-- MyFaces MultiPart Filter MUST BE AFTER THE IWEncodingFilter -->
     
     <!-- The IWActionHandlerFilter that redirects "action" urls like "/idegaweb/action/edit/files/cms/article/1.xml"-->
@@ -252,7 +272,6 @@
     <filter-mapping>
     <filter-name>compress</filter-name>
     <url-pattern>/workspace/*</url-pattern>
-    
     </filter-mapping>
     
     -->
