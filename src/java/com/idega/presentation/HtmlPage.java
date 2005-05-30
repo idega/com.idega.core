@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.util.text.AttributeParser;
 
@@ -43,7 +45,9 @@ public class HtmlPage extends Page {
 
 	private String html;
 	//private String family = RenderUtils.SMILE_FAMILY;
-	private HashMap regionMap;
+	private Map regionMap;
+	//This variable sets if regions are treated as facets if set to true. Otherwise they are treated as children
+	private boolean regionAsFacet=false;
 
 	public HtmlPage() {
 		super();
@@ -79,7 +83,7 @@ public class HtmlPage extends Page {
 					throw new RuntimeException("Attribute <resourceName> for component <" + getId() + ">. Could not load the html from named resource <>");
 				}
 			}
-		//}þide	
+		//}
 		findOutRegions();
 		//return ret;
 	}
@@ -128,17 +132,36 @@ public class HtmlPage extends Page {
 	}
 	
 	
-	public HtmlPageRegion getRegion(String regionKey){
-		Integer index = (Integer) getRegionIdsMap().get(regionKey);
-		Object o = getChildren().get(index.intValue());
-		HtmlPageRegion region = (HtmlPageRegion) o;
-		return region;
+	public UIComponent getRegion(String regionKey){
+		if(regionAsFacet){
+			Object o = getFacets().get(regionKey);
+			UIComponent region = (UIComponent) o;
+			return region;
+		}
+		else{
+			Integer index = (Integer) getRegionIdsMap().get(regionKey);
+			Object o = getChildren().get(index.intValue());
+			HtmlPageRegion region = (HtmlPageRegion) o;
+			return region;
+		}
+	}
+	
+	public void setRegion(String regionKey,UIComponent region){
+		if(regionAsFacet){
+			Object previous = getFacets().get(regionKey);
+			if(regionKey!=null){
+				getFacets().put(regionKey,region);
+			}
+		}
+		else{
+			getChildren().add(region);
+		}
 	}
 	
 	
 	public void add(UIComponent component,String regionId){
-		HtmlPageRegion region = getRegion(regionId);
-		region.add(component);
+		UIComponent region = getRegion(regionId);
+		region.getChildren().add(component);
 	}
 
 	
@@ -191,7 +214,8 @@ public class HtmlPage extends Page {
 				//instanciate the region in the children list:
 				HtmlPageRegion region = new HtmlPageRegion();
 				region.setRegionId(regionId);
-				getChildren().add(region);
+				setRegion(regionId,region);
+				//getChildren().add(region);
 				//getChildren().set(regionIndex,region);
 				regionIndex++;
 			}
@@ -226,9 +250,17 @@ public class HtmlPage extends Page {
 	 */
 	//public void encodeChildren(FacesContext ctx) throws IOException {
 	public void print(IWContext ctx) throws IOException {
+		
+		Writer out;
+		
 		//ResponseWriter out = ctx.getResponseWriter();
 		//RenderUtils.ensureAllTagsFinished();
-		PrintWriter out = ctx.getWriter();
+		if(IWMainApplication.useJSF){
+			out = ctx.getResponseWriter();
+		}
+		else{
+			out = ctx.getWriter();
+		}
 		
 		String template = getHtml();
 		if(template != null) {
@@ -346,7 +378,7 @@ public class HtmlPage extends Page {
 				//int childNumber = Integer.parseInt(t[0]) - 1;
 
 				try{
-					HtmlPageRegion region = getRegion(regionId);
+					UIComponent region = getRegion(regionId);
 					renderChild(ctx,region);
 				}
 				catch(ClassCastException cce){
@@ -371,9 +403,11 @@ public class HtmlPage extends Page {
 	 * @see javax.faces.component.UIPanel#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[2];
+		Object values[] = new Object[4];
 		values[0] = super.saveState(ctx);
 		values[1] = getHtml();
+		values[2] = this.regionMap;
+		values[3] = Boolean.valueOf(this.regionAsFacet);
 		//values[2] = getResourceName();
 		return values;
 	}
@@ -385,6 +419,8 @@ public class HtmlPage extends Page {
 		Object values[] = (Object[])state;
 		super.restoreState(ctx, values[0]);
 		setHtml((String)values[1]);
+		regionMap = (Map)values[2];
+		regionAsFacet = ((Boolean)values[3]).booleanValue();
 		//setResourceName((String)values[2]);
 	}
 
@@ -422,7 +458,7 @@ public class HtmlPage extends Page {
 	public Object clone(IWUserContext iwc, boolean askForPermission){
 		HtmlPage newPage = (HtmlPage) super.clone(iwc,askForPermission);
 		if(regionMap!=null){
-			newPage.regionMap=(HashMap) regionMap.clone();
+			newPage.regionMap=(Map)((HashMap) regionMap).clone();
 		}
 		return newPage;
 	}
@@ -437,5 +473,32 @@ public class HtmlPage extends Page {
 	public void _main(IWContext iwc) throws Exception {
 		// TODO Auto-generated method stub
 		super._main(iwc);
+	}
+
+
+	
+	/**
+	 * This variable gets if regions are treated as facets if set to true.
+	 * Default is false.
+	 * @return Returns the regionAsFacet.
+	 */
+	protected boolean isRegionAsFacet() {
+		return regionAsFacet;
+	}
+
+	/**
+	 * This sets if regions are treated as facets if set to true. Otherwise they are treated as children.
+	 * Default value is set to false.
+	 * @param regionAsFacet The regionAsFacet to set.
+	 */
+	protected void setRegionAsFacet(boolean regionAsFacet) {
+		this.regionAsFacet = regionAsFacet;
+	}
+	
+	public Map getFacets(){
+		if(this.facetMap==null){
+			facetMap = new HtmlPageRegionFacetMap(this);
+		}
+		return facetMap;
 	}
 }

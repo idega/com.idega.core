@@ -8,6 +8,8 @@
  */
 package com.idega.presentation;
 
+import java.util.Map;
+import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWUserContext;
 
 
@@ -35,7 +37,7 @@ public class HtmlPageRegion extends PresentationObjectContainer {
 	}
 	private String regionId;
 	
-	HtmlPageRegion(){
+	public HtmlPageRegion(){
 		super();
 	}
 	
@@ -80,4 +82,28 @@ public class HtmlPageRegion extends PresentationObjectContainer {
 	public void main(IWContext iwc) throws Exception {
 		super.main(iwc);
 	}
+	
+	public boolean isTransient(){
+		return false;
+	}
+	
+	/**
+	 * @see javax.faces.component.UIPanel#saveState(javax.faces.context.FacesContext)
+	 */
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[2];
+		values[0] = super.saveState(ctx);
+		values[1] = regionId;
+		return values;
+	}
+	
+	/**
+	 * @see javax.faces.component.UIPanel#restoreState(javax.faces.context.FacesContext, java.lang.Object)
+	 */
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[])state;
+		super.restoreState(ctx, values[0]);
+		regionId = (String)values[1];
+	}
+	
 }
