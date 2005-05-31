@@ -23,6 +23,7 @@ import com.idega.util.text.TextSoap;
 public class SelectionBox extends InterfaceObject
 {
 	private final static String untitled = "untitled";
+	protected final static String PARAM_NUMBER_OF_ELEMENTS_IN_SELECTIONBOX = "number_of_elements_in_selectionbox";
 
 
 	private Vector theElements;
@@ -32,6 +33,7 @@ public class SelectionBox extends InterfaceObject
 	private Table outerTable;
 	private boolean tableAlreadyPrinted = false;
 	private boolean selectAllOnSubmit = false;
+	private boolean selectAllOnSubmitIfNoneSelected = false;
 	private Text textHeading;
 	private boolean headerTable = false;
 	private boolean allSelected = false;
@@ -228,6 +230,10 @@ public class SelectionBox extends InterfaceObject
 	{
 		this.selectAllOnSubmit = true;
 	}
+	public void selectAllOnSubmitIfNoneSelected()
+	{
+		this.selectAllOnSubmitIfNoneSelected = true;
+	}
 	public void main(IWContext iwc)
 	{
 		if (this.headerTable)
@@ -272,6 +278,14 @@ public class SelectionBox extends InterfaceObject
 				"selectAllInSelectionBox",
 				"function selectAllInSelectionBox(input){\n  for( i=0;i<input.length; i++ ) {\n	input[i].selected=1;\n    }\n}");
 			this.getParentForm().setOnSubmit("selectAllInSelectionBox(this." + this.getName() + ")");
+		}
+		if (selectAllOnSubmitIfNoneSelected)
+		{
+			Script script = this.getParentPage().getAssociatedScript();
+			script.addFunction(
+				"selectAllInSelectionBoxIfNoneSelected",
+				"function selectAllInSelectionBoxIfNoneSelected(input){\n  noElementsSelected = true;\n  for( i=0;i<input.length; i++ ) {\n    if(input[i].selected==1) {\n      noElementsSelected=false;\n    }\n  }\n  if (noElementsSelected){\n    for( i=0;i<input.length; i++ ) {\n	input[i].selected=1;\n    }\n  }\n}");
+			this.getParentForm().setOnSubmit("selectAllInSelectionBoxIfNoneSelected(this." + this.getName() + ")");
 		}
 		if (isSetAsNotEmpty) {
 			setOnSubmitFunction("warnIfNonSelected", "function warnIfNonSelected (inputbox,warnMsg) {\n\n		if ( inputbox.length == 0 ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", notEmptyErrorMessage);
@@ -462,6 +476,8 @@ public class SelectionBox extends InterfaceObject
 			}
 			//}
 		}
+		HiddenInput numberOfElements = new HiddenInput(PARAM_NUMBER_OF_ELEMENTS_IN_SELECTIONBOX+"_"+this.getClassName(), String.valueOf(theElements.size()));
+		numberOfElements.print(iwc);
 	}
 	
 	/**
