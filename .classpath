@@ -35,13 +35,21 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jug/jars/jug-1.1.jar">
   </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/lucene/jars/lucene-1.4.1.jar">
+  </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai-1.0.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai_codec-1.0.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/itext/jars/itext-0.99.jar">
   </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-2.0.2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/slide/jars/jakarta-slide-webdavlib-2.2pre1.iwbuild4.jar">
+  </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-codec/jars/commons-codec-1.3.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/commons-fileupload/jars/commons-fileupload-1.0.jar">
   </classpathentry>
