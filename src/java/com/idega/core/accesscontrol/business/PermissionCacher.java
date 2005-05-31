@@ -1,5 +1,5 @@
 /*
- * $Id: PermissionCacher.java,v 1.28 2005/05/09 12:56:31 palli Exp $ Created
+ * $Id: PermissionCacher.java,v 1.29 2005/05/31 11:38:15 eiki Exp $ Created
  * in 2001
  * 
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -17,7 +17,7 @@ import java.util.Map;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.component.data.ICObject;
 import com.idega.data.EntityFinder;
-import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.data.Group;
@@ -28,12 +28,12 @@ import com.idega.user.data.Group;
  * AccessControl.
  * </p>
  * 
- * Last modified: $Date: 2005/05/09 12:56:31 $ by $Author: palli $
+ * Last modified: $Date: 2005/05/31 11:38:15 $ by $Author: eiki $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 class PermissionCacher {
 
@@ -54,55 +54,55 @@ class PermissionCacher {
 	}
 
 	// anyPermissionsDefined
-	public boolean anyInstancePermissionsDefinedForObject(PresentationObject obj, IWUserContext iwc,
+	public boolean anyInstancePermissionsDefinedForObject(PresentationObject obj, IWApplicationContext iwac,
 			String permissionKey) throws SQLException {
 		String[] maps = { PERMISSION_MAP_OBJECT_INSTANCE };
-		return anyPermissionsDefined(obj, iwc, permissionKey, maps);
+		return anyPermissionsDefined(obj, iwac, permissionKey, maps);
 	}
 
-	public boolean anyPermissionsDefinedForObject(PresentationObject obj, IWUserContext iwc, String permissionKey)
+	public boolean anyPermissionsDefinedForObject(PresentationObject obj, IWApplicationContext iwac, String permissionKey)
 			throws SQLException {
 		String[] maps = { PERMISSION_MAP_OBJECT };
-		return anyPermissionsDefined(obj, iwc, permissionKey, maps);
+		return anyPermissionsDefined(obj, iwac, permissionKey, maps);
 	}
 
-	public boolean anyPermissionsDefinedForPage(PresentationObject obj, IWUserContext iwc, String permissionKey)
+	public boolean anyPermissionsDefinedForPage(PresentationObject obj, IWApplicationContext iwac, String permissionKey)
 			throws SQLException {
-		return anyPermissionsDefinedForObject(obj, iwc, permissionKey);
+		return anyPermissionsDefinedForObject(obj, iwac, permissionKey);
 	}
 
-	public boolean anyInstancePermissionsDefinedForPage(Object pageObj, IWUserContext iwc, String permissionKey)
+	public boolean anyInstancePermissionsDefinedForPage(Object pageObj, IWApplicationContext iwac, String permissionKey)
 			throws SQLException {
 		String[] maps = { PERMISSION_MAP_PAGE_INSTANCE };
-		return anyPermissionsDefined(pageObj, iwc, permissionKey, maps);
+		return anyPermissionsDefined(pageObj, iwac, permissionKey, maps);
 	}
 
-	public boolean anyInstancePermissionsDefinedForObject(String identifier, IWUserContext iwc, String permissionKey)
+	public boolean anyInstancePermissionsDefinedForObject(String identifier, IWApplicationContext iwac, String permissionKey)
 			throws SQLException {
-		return anyPermissionsDefined(identifier, iwc, permissionKey, PERMISSION_MAP_OBJECT_INSTANCE);
+		return anyPermissionsDefined(identifier, iwac, permissionKey, PERMISSION_MAP_OBJECT_INSTANCE);
 	}
 
-	public boolean anyPermissionsDefinedForObject(String identifier, IWUserContext iwc, String permissionKey)
+	public boolean anyPermissionsDefinedForObject(String identifier, IWApplicationContext iwac, String permissionKey)
 			throws SQLException {
-		return anyPermissionsDefined(identifier, iwc, permissionKey, PERMISSION_MAP_OBJECT);
+		return anyPermissionsDefined(identifier, iwac, permissionKey, PERMISSION_MAP_OBJECT);
 	}
 
-	public boolean anyPermissionsDefinedForPage(String identifier, IWUserContext iwc, String permissionKey)
+	public boolean anyPermissionsDefinedForPage(String identifier, IWApplicationContext iwac, String permissionKey)
 			throws SQLException {
-		return anyPermissionsDefinedForObject(identifier, iwc, permissionKey);
+		return anyPermissionsDefinedForObject(identifier, iwac, permissionKey);
 	}
 
-	public boolean anyInstancePermissionsDefinedForPage(String identifier, IWUserContext iwc, String permissionKey)
+	public boolean anyInstancePermissionsDefinedForPage(String identifier, IWApplicationContext iwac, String permissionKey)
 			throws SQLException {
-		return anyPermissionsDefined(identifier, iwc, permissionKey, PERMISSION_MAP_PAGE_INSTANCE);
+		return anyPermissionsDefined(identifier, iwac, permissionKey, PERMISSION_MAP_PAGE_INSTANCE);
 	}
 
-	public boolean anyInstancePermissionsDefinedForFile(String identifier, IWUserContext iwc, String permissionKey)
+	public boolean anyInstancePermissionsDefinedForFile(String identifier, IWApplicationContext iwac, String permissionKey)
 			throws SQLException {
-		return anyPermissionsDefined(identifier, iwc, permissionKey, PERMISSION_MAP_FILE);
+		return anyPermissionsDefined(identifier, iwac, permissionKey, PERMISSION_MAP_FILE);
 	}
 
-	private boolean anyPermissionsDefined(Object obj, IWUserContext iwc, String permissionKey, String[] maps)
+	private boolean anyPermissionsDefined(Object obj, IWApplicationContext iwac, String permissionKey, String[] maps)
 			throws SQLException {
 		String identifier = null;
 		Boolean set = null;
@@ -127,16 +127,16 @@ class PermissionCacher {
 				}
 			}
 			if (identifier != null) {
-				PermissionMap permissionMap = (PermissionMap) iwc.getApplicationContext().getApplicationAttribute(
+				PermissionMap permissionMap = (PermissionMap) iwac.getApplicationAttribute(
 						permissionMapKey);
 				if (permissionMap == null) {
-					updatePermissions(permissionMapKey, identifier, permissionKey, iwc);
-					permissionMap = (PermissionMap) iwc.getApplicationContext().getApplicationAttribute(
+					updatePermissions(permissionMapKey, identifier, permissionKey, iwac);
+					permissionMap = (PermissionMap) iwac.getApplicationAttribute(
 							permissionMapKey);
 				}
 				Map permissions = permissionMap.get(identifier, permissionKey);
 				if (permissions == null) {
-					updatePermissions(permissionMapKey, identifier, permissionKey, iwc);
+					updatePermissions(permissionMapKey, identifier, permissionKey, iwac);
 					permissions = permissionMap.get(identifier, permissionKey);
 					set = ((Boolean) permissions.get(_SOME_VIEW_PERMISSION_SET));
 				}
@@ -160,20 +160,20 @@ class PermissionCacher {
 		}
 	}
 
-	private boolean anyPermissionsDefined(String identifier, IWUserContext iwc, String permissionKey, String map)
+	private boolean anyPermissionsDefined(String identifier, IWApplicationContext iwac, String permissionKey, String map)
 			throws SQLException {
 		Boolean set = null;
 		String permissionMapKey = map;
 		if (identifier != null) {
-			PermissionMap permissionMap = (PermissionMap) iwc.getApplicationContext().getApplicationAttribute(
+			PermissionMap permissionMap = (PermissionMap) iwac.getApplicationAttribute(
 					permissionMapKey);
 			if (permissionMap == null) {
-				updatePermissions(permissionMapKey, identifier, permissionKey, iwc);
-				permissionMap = (PermissionMap) iwc.getApplicationContext().getApplicationAttribute(permissionMapKey);
+				updatePermissions(permissionMapKey, identifier, permissionKey, iwac);
+				permissionMap = (PermissionMap) iwac.getApplicationAttribute(permissionMapKey);
 			}
 			Map permissions = permissionMap.get(identifier, permissionKey);
 			if (permissions == null) {
-				updatePermissions(permissionMapKey, identifier, permissionKey, iwc);
+				updatePermissions(permissionMapKey, identifier, permissionKey, iwac);
 				permissions = permissionMap.get(identifier, permissionKey);
 				set = ((Boolean) permissions.get(_SOME_VIEW_PERMISSION_SET));
 			}
@@ -199,89 +199,89 @@ class PermissionCacher {
 	/**
 	 * Does not handle pages or jsp pages
 	 */
-	public boolean somePermissionSet(PresentationObject obj, IWUserContext iwc, String permissionKey)
+	public boolean somePermissionSet(PresentationObject obj, IWApplicationContext iwac, String permissionKey)
 			throws SQLException {
 		String[] maps = { PERMISSION_MAP_OBJECT_INSTANCE, PERMISSION_MAP_OBJECT }; // ,
 																					// APPLICATION_ADDRESS_PERMISSIONMAP_BUNDLE};
-		return anyPermissionsDefined(obj, iwc, permissionKey, maps);
+		return anyPermissionsDefined(obj, iwac, permissionKey, maps);
 	}
 
-	public Boolean hasPermissionForJSPPage(IWUserContext iwc, String permissionKey, List groups) throws SQLException {
-		return hasPermission(PERMISSION_MAP_JSP_PAGE, null, iwc, permissionKey, groups);
+	public Boolean hasPermissionForJSPPage(IWApplicationContext iwac, String permissionKey, List groups) throws SQLException {
+		return hasPermission(PERMISSION_MAP_JSP_PAGE, null, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForObjectInstance(PresentationObject obj, IWUserContext iwc, String permissionKey,
+	public Boolean hasPermissionForObjectInstance(PresentationObject obj, IWApplicationContext iwac, String permissionKey,
 			List groups) throws SQLException {
-		return hasPermission(PERMISSION_MAP_OBJECT_INSTANCE, obj, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_OBJECT_INSTANCE, obj, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForObject(PresentationObject obj, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermissionForObject(PresentationObject obj, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
-		return hasPermission(PERMISSION_MAP_OBJECT, obj, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_OBJECT, obj, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForBundle(PresentationObject obj, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermissionForBundle(PresentationObject obj, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
-		return hasPermission(PERMISSION_MAP_BUNDLE, obj, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_BUNDLE, obj, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForPage(Object obj, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermissionForPage(Object obj, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
-		return hasPermission(PERMISSION_MAP_PAGE_INSTANCE, obj, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_PAGE_INSTANCE, obj, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForGroup(Group group, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermissionForGroup(Group group, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
-		return hasPermission(PERMISSION_MAP_GROUP, group, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_GROUP, group, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForRole(String theRoleIdentifier, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermissionForRole(String theRoleIdentifier, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
-		return hasPermission(PERMISSION_MAP_ROLE, theRoleIdentifier, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_ROLE, theRoleIdentifier, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForJSPPage(String identifier, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermissionForJSPPage(String identifier, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
-		return hasPermission(PERMISSION_MAP_JSP_PAGE, identifier, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_JSP_PAGE, identifier, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForObjectInstance(String identifier, IWUserContext iwc, String permissionKey,
+	public Boolean hasPermissionForObjectInstance(String identifier, IWApplicationContext iwac, String permissionKey,
 			List groups) throws SQLException {
-		return hasPermission(PERMISSION_MAP_OBJECT_INSTANCE, identifier, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_OBJECT_INSTANCE, identifier, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForObject(String identifier, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermissionForObject(String identifier, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
-		return hasPermission(PERMISSION_MAP_OBJECT, identifier, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_OBJECT, identifier, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForBundle(String identifier, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermissionForBundle(String identifier, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
-		return hasPermission(PERMISSION_MAP_BUNDLE, identifier, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_BUNDLE, identifier, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForPage(String identifier, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermissionForPage(String identifier, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
-		return hasPermission(PERMISSION_MAP_PAGE_INSTANCE, identifier, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_PAGE_INSTANCE, identifier, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForFile(String identifier, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermissionForFile(String identifier, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
-		return hasPermission(PERMISSION_MAP_FILE, identifier, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_FILE, identifier, iwac, permissionKey, groups);
 	}
 
-	public Boolean hasPermissionForGroup(String identifier, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermissionForGroup(String identifier, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
-		return hasPermission(PERMISSION_MAP_GROUP, identifier, iwc, permissionKey, groups);
+		return hasPermission(PERMISSION_MAP_GROUP, identifier, iwac, permissionKey, groups);
 	}
 
-	private Boolean hasPermission(String permissionMapKey, Object obj, IWUserContext iwc, String permissionKey,
+	private Boolean hasPermission(String permissionMapKey, Object obj, IWApplicationContext iwac, String permissionKey,
 			List groups) throws SQLException {
-		String identifier = getIdentifier(permissionMapKey, obj, iwc);
-		return hasPermission(permissionMapKey, identifier, iwc, permissionKey, groups);
+		String identifier = getIdentifier(permissionMapKey, obj);
+		return hasPermission(permissionMapKey, identifier, iwac, permissionKey, groups);
 	}
 
-	protected String getIdentifier(String permissionMapKey, Object obj, IWUserContext iwc) {
+	protected String getIdentifier(String permissionMapKey, Object obj) {
 		String identifier = null;
 		if (permissionMapKey.equals(PERMISSION_MAP_OBJECT_INSTANCE)) {
 			identifier = Integer.toString(((PresentationObject) obj).getICObjectInstanceID());
@@ -311,11 +311,11 @@ class PermissionCacher {
 			}
 			// temp
 			// identifier =
-			// com.idega.builder.business.BuilderLogic.getInstance().getCurrentIBPage(iwc);
+			// com.idega.builder.business.BuilderLogic.getInstance().getCurrentIBPage(iwac);
 		}
 		else if (permissionMapKey.equals(PERMISSION_MAP_JSP_PAGE)) {
 			// identifier =
-			// Integer.toString(com.idega.builder.business.IBJspHandler.getJspPageInstanceID(iwc));
+			// Integer.toString(com.idega.builder.business.IBJspHandler.getJspPageInstanceID(iwac));
 			throw new UnsupportedOperationException("PermissionCacher : PermissinonType: " + PERMISSION_MAP_JSP_PAGE
 					+ " is not supported");
 		}
@@ -336,24 +336,24 @@ class PermissionCacher {
 	 * 
 	 * @param permissionMapKey
 	 * @param identifier
-	 * @param iwc
+	 * @param iwac
 	 * @param permissionKey
 	 * @param groups
 	 * @return Boolean
 	 * @throws SQLException
 	 */
-	private Boolean hasPermission(String permissionMapKey, String identifier, IWUserContext iwc, String permissionKey,
+	private Boolean hasPermission(String permissionMapKey, String identifier, IWApplicationContext iwac, String permissionKey,
 			List groups) throws SQLException {
 		if (identifier != null) {
-			PermissionMap permissionMap = (PermissionMap) iwc.getApplicationContext().getApplicationAttribute(
+			PermissionMap permissionMap = (PermissionMap) iwac.getApplicationAttribute(
 					permissionMapKey);
 			if (permissionMap == null) {
-				updatePermissions(permissionMapKey, identifier, permissionKey, iwc);
-				permissionMap = (PermissionMap) iwc.getApplicationContext().getApplicationAttribute(permissionMapKey);
+				updatePermissions(permissionMapKey, identifier, permissionKey, iwac);
+				permissionMap = (PermissionMap) iwac.getApplicationAttribute(permissionMapKey);
 			}
 			List permissions = permissionMap.get(identifier, permissionKey, groups);
 			if (permissions == null) {
-				updatePermissions(permissionMapKey, identifier, permissionKey, iwc);
+				updatePermissions(permissionMapKey, identifier, permissionKey, iwac);
 				permissions = permissionMap.get(identifier, permissionKey, groups);
 			}
 			if (permissions != null) {
@@ -374,7 +374,7 @@ class PermissionCacher {
 		}
 	}
 
-	public Boolean hasPermission(ICObject obj, IWUserContext iwc, String permissionKey, List groups)
+	public Boolean hasPermission(ICObject obj, IWApplicationContext iwac, String permissionKey, List groups)
 			throws SQLException {
 		String permissionMapKey = PERMISSION_MAP_OBJECT;
 		String identifier="-1";
@@ -383,15 +383,15 @@ class PermissionCacher {
 			identifier=primaryKey.toString();
 		}
 		if (identifier != null) {
-			PermissionMap permissionMap = (PermissionMap) iwc.getApplicationContext().getApplicationAttribute(
+			PermissionMap permissionMap = (PermissionMap) iwac.getApplicationAttribute(
 					permissionMapKey);
 			if (permissionMap == null) {
-				updatePermissions(permissionMapKey, identifier, permissionKey, iwc);
-				permissionMap = (PermissionMap) iwc.getApplicationContext().getApplicationAttribute(permissionMapKey);
+				updatePermissions(permissionMapKey, identifier, permissionKey, iwac);
+				permissionMap = (PermissionMap) iwac.getApplicationAttribute(permissionMapKey);
 			}
 			List permissions = permissionMap.get(identifier, permissionKey, groups);
 			if (permissions == null) {
-				updatePermissions(permissionMapKey, identifier, permissionKey, iwc);
+				updatePermissions(permissionMapKey, identifier, permissionKey, iwac);
 				permissions = permissionMap.get(identifier, permissionKey, groups);
 			}
 			if (permissions != null) {
@@ -413,66 +413,66 @@ class PermissionCacher {
 	}
 
 	// Update
-	public void updateObjectInstancePermissions(String instanceId, String permissionKey, IWUserContext iwc)
+	public void updateObjectInstancePermissions(String instanceId, String permissionKey, IWApplicationContext iwac)
 			throws SQLException {
-		updatePermissions(PERMISSION_MAP_OBJECT_INSTANCE, instanceId, permissionKey, iwc);
+		updatePermissions(PERMISSION_MAP_OBJECT_INSTANCE, instanceId, permissionKey, iwac);
 	}
 
-	public void updateObjectPermissions(String objectId, String permissionKey, IWUserContext iwc) throws SQLException {
-		updatePermissions(PERMISSION_MAP_OBJECT, objectId, permissionKey, iwc);
+	public void updateObjectPermissions(String objectId, String permissionKey, IWApplicationContext iwac) throws SQLException {
+		updatePermissions(PERMISSION_MAP_OBJECT, objectId, permissionKey, iwac);
 	}
 
-	public void updateBundlePermissions(String bundleIdentifier, String permissionKey, IWUserContext iwc)
+	public void updateBundlePermissions(String bundleIdentifier, String permissionKey, IWApplicationContext iwac)
 			throws SQLException {
-		updatePermissions(PERMISSION_MAP_BUNDLE, bundleIdentifier, permissionKey, iwc);
+		updatePermissions(PERMISSION_MAP_BUNDLE, bundleIdentifier, permissionKey, iwac);
 	}
 
-	public void updatePagePermissions(String pageId, String permissionKey, IWUserContext iwc) throws SQLException {
-		updatePermissions(PERMISSION_MAP_PAGE_INSTANCE, pageId, permissionKey, iwc);
+	public void updatePagePermissions(String pageId, String permissionKey, IWApplicationContext iwac) throws SQLException {
+		updatePermissions(PERMISSION_MAP_PAGE_INSTANCE, pageId, permissionKey, iwac);
 	}
 
-	public void updateJSPPagePermissions(String jspPageId, String permissionKey, IWUserContext iwc) throws SQLException {
-		updatePermissions(PERMISSION_MAP_JSP_PAGE, jspPageId, permissionKey, iwc);
+	public void updateJSPPagePermissions(String jspPageId, String permissionKey, IWApplicationContext iwac) throws SQLException {
+		updatePermissions(PERMISSION_MAP_JSP_PAGE, jspPageId, permissionKey, iwac);
 	}
 
-	public void updateFilePermissions(String fileId, String permissionKey, IWUserContext iwc) throws SQLException {
-		updatePermissions(PERMISSION_MAP_FILE, fileId, permissionKey, iwc);
+	public void updateFilePermissions(String fileId, String permissionKey, IWApplicationContext iwac) throws SQLException {
+		updatePermissions(PERMISSION_MAP_FILE, fileId, permissionKey, iwac);
 	}
 
-	public void updatePermissions(int permissionCategory, String identifier, String permissionKey, IWUserContext iwc)
+	public void updatePermissions(int permissionCategory, String identifier, String permissionKey, IWApplicationContext iwac)
 			throws SQLException {
 		switch (permissionCategory) {
 			case AccessControl.CATEGORY_OBJECT_INSTANCE:
-				updatePermissions(PERMISSION_MAP_OBJECT_INSTANCE, identifier, permissionKey, iwc);
+				updatePermissions(PERMISSION_MAP_OBJECT_INSTANCE, identifier, permissionKey, iwac);
 				break;
 			case AccessControl.CATEGORY_PAGE:
 			case AccessControl.CATEGORY_OBJECT:
-				updatePermissions(PERMISSION_MAP_OBJECT, identifier, permissionKey, iwc);
+				updatePermissions(PERMISSION_MAP_OBJECT, identifier, permissionKey, iwac);
 				break;
 			case AccessControl.CATEGORY_BUNDLE:
-				updatePermissions(PERMISSION_MAP_BUNDLE, identifier, permissionKey, iwc);
+				updatePermissions(PERMISSION_MAP_BUNDLE, identifier, permissionKey, iwac);
 				break;
 			case AccessControl.CATEGORY_PAGE_INSTANCE:
-				updatePermissions(PERMISSION_MAP_PAGE_INSTANCE, identifier, permissionKey, iwc);
+				updatePermissions(PERMISSION_MAP_PAGE_INSTANCE, identifier, permissionKey, iwac);
 				break;
 			case AccessControl.CATEGORY_GROUP_ID:
-				updatePermissions(PERMISSION_MAP_GROUP, identifier, permissionKey, iwc);
+				updatePermissions(PERMISSION_MAP_GROUP, identifier, permissionKey, iwac);
 				break;
 			case AccessControl.CATEGORY_ROLE:
-				updatePermissions(PERMISSION_MAP_ROLE, identifier, permissionKey, iwc);
+				updatePermissions(PERMISSION_MAP_ROLE, identifier, permissionKey, iwac);
 				break;
 		}
 	}
 
 	private synchronized void updatePermissions(String permissionMapKey, String identifier, String permissionKey,
-			IWUserContext iwc) throws SQLException {
+			IWApplicationContext iwac) throws SQLException {
 		// PermissionMap permissionMap =
-		// (PermissionMap)iwc.getApplicationAttribute(permissionMapKey);
-		PermissionMap permissionMap = (PermissionMap) iwc.getApplicationContext().getApplicationAttribute(
+		// (PermissionMap)iwac.getApplicationAttribute(permissionMapKey);
+		PermissionMap permissionMap = (PermissionMap) iwac.getApplicationAttribute(
 				permissionMapKey);
 		if (permissionMap == null) {
 			permissionMap = new PermissionMap();
-			iwc.getApplicationContext().setApplicationAttribute(permissionMapKey, permissionMap);
+			iwac.setApplicationAttribute(permissionMapKey, permissionMap);
 		}
 		//
 		List permissions = null;

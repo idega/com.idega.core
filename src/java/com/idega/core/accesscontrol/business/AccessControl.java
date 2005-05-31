@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.100 2005/05/09 12:56:50 palli Exp $
+ * $Id: AccessControl.java,v 1.101 2005/05/31 11:38:15 eiki Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -45,6 +45,7 @@ import com.idega.data.EntityFinder;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.SimpleQuerier;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWServiceImpl;
 import com.idega.idegaweb.IWUserContext;
@@ -65,12 +66,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2005/05/09 12:56:50 $ by $Author: palli $
+ * Last modified: $Date: 2005/05/31 11:38:15 $ by $Author: eiki $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.100 $
+ * @version $Revision: 1.101 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -230,7 +231,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permissionOrder[1] = new Vector();
 			permissionOrder[1].add(Integer.toString(user.getPrimaryGroupID()));
 
-			returnVal = checkForPermission(permissionOrder, category, identifier, AccessControl.PERMISSION_KEY_OWNER, iwc);
+			returnVal = checkForPermission(permissionOrder, category, identifier, AccessControl.PERMISSION_KEY_OWNER,  IWMainApplication.getDefaultIWApplicationContext());
 		}
 
 		if (returnVal != null) {
@@ -245,7 +246,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Boolean returnVal = Boolean.FALSE;
 		List[] permissionOrder = new Vector[1];
 		permissionOrder[0] = groupIds;
-		returnVal = checkForPermission(permissionOrder, obj, AccessControl.PERMISSION_KEY_OWNER, iwc);
+		returnVal = checkForPermission(permissionOrder, obj, AccessControl.PERMISSION_KEY_OWNER,  iwc);
 
 		if (returnVal != null) {
 			return returnVal.booleanValue();
@@ -268,7 +269,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		if (!value) { //check parents to see if user is an owner of them
 
-			Collection parents = getGroupBusiness(iwc).getParentGroups(group); //little at at time not all groups recursive
+			Collection parents = getGroupBusiness(iwc.getApplicationContext()).getParentGroups(group); //little at at time not all groups recursive
 
 			if (parents != null && !parents.isEmpty()) {
 
@@ -310,9 +311,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return "administrator";
 	}
 
-	public GroupBusiness getGroupBusiness(IWUserContext iwc) {
+	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
 		try {
-			return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc.getApplicationContext(), GroupBusiness.class);
+			return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
@@ -384,7 +385,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permissionOrder[3].add(Integer.toString(user.getPrimaryGroupID()));
 			// Everyone, user, primaryGroup, otherGroups
 		}
-		myPermission = checkForPermission(permissionOrder, category, identifier, permissionKey, iwc);
+		myPermission = checkForPermission(permissionOrder, category, identifier, permissionKey,  IWMainApplication.getDefaultIWApplicationContext());
 		if (myPermission != null) {
 			return myPermission.booleanValue();
 		}
@@ -398,7 +399,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	}
 
-	private static Boolean checkForPermission(List[] permissionGroupLists, int category, String identifier, String permissionKey, IWUserContext iwc)
+	private static Boolean checkForPermission(List[] permissionGroupLists, int category, String identifier, String permissionKey, IWApplicationContext iwc)
 		throws Exception {
 		Boolean myPermission = null;
 		if (permissionGroupLists != null) {
@@ -577,7 +578,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			// ([0])Everyone, ([1])users, ([2])user, ([3])primaryGroup, ([4])otherGroups
 		}
 
-		myPermission = checkForPermission(usersGroupsToCheckAgainstPermissions, obj, permissionKey, iwc);
+		myPermission = checkForPermission(usersGroupsToCheckAgainstPermissions, obj, permissionKey,  iwc);
 
 		boolean hasPermission = false;
 		if (myPermission != null) {
@@ -607,7 +608,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		//must be slow optimize
 		Map cachedParents = new HashMap();
 		Map cachedGroups = new HashMap();
-		groups = getGroupBusiness(iwc).getParentGroups(iwc.getCurrentUser(), cachedParents, cachedGroups); //com.idega.user.data.User
+		groups = getGroupBusiness(iwc.getApplicationContext()).getParentGroups(iwc.getCurrentUser(), cachedParents, cachedGroups); //com.idega.user.data.User
 
 		Vector groupsToCheckForPermissions = new Vector();
 		Iterator iter = groups.iterator();
@@ -703,11 +704,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Boolean myPermission = Boolean.FALSE;
 		if (permissionGroupLists != null) {
 			int arrayLength = permissionGroupLists.length;
-
+			IWApplicationContext iwac = IWMainApplication.getDefaultIWApplicationContext();
 			//JSP PAGE
 			if (obj == null) {
 				for (int i = 0; i < arrayLength; i++) {
-					myPermission = getPermissionCacherStatic().hasPermissionForJSPPage(iwc, permissionKey, permissionGroupLists[i]);
+					myPermission = getPermissionCacherStatic().hasPermissionForJSPPage(iwac, permissionKey, permissionGroupLists[i]);
 					if (Boolean.TRUE.equals(myPermission)) {
 						return myPermission;
 					}
@@ -722,12 +723,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					
 
 					//builder users should always get edit/view permission on pages:
-					if(iwc.getAccessController().hasRole(StandardRoles.ROLE_KEY_BUILDER,iwc)){
+					if(IWMainApplication.getDefaultIWMainApplication().getAccessController().hasRole(StandardRoles.ROLE_KEY_BUILDER,iwc)){
 						return Boolean.TRUE;
 					}
 					
 					for (int i = 0; i < arrayLength; i++) {
-						myPermission = getPermissionCacherStatic().hasPermissionForPage( obj, iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = getPermissionCacherStatic().hasPermissionForPage( obj, iwac, permissionKey, permissionGroupLists[i]);
 						if (Boolean.TRUE.equals(myPermission)) {
 							return myPermission;
 						}
@@ -736,13 +737,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					if (!permissionKey.equals(AccessController.PERMISSION_KEY_OWNER)) {
 
 						// Global - (Page)
-						boolean noPermissionsSet = !getPermissionCacherStatic().anyInstancePermissionsDefinedForPage(obj, iwc, permissionKey);
+						boolean noPermissionsSet = !getPermissionCacherStatic().anyInstancePermissionsDefinedForPage(obj, iwac, permissionKey);
 						//if (!getPermissionCacher().anyInstancePermissionsDefinedForPage(pPage, iwc, permissionKey)) {
 						if(noPermissionsSet){
 							ICObject page = getStaticPageICObject();
 							if (page != null) {
 								for (int i = 0; i < arrayLength; i++) {
-									myPermission = getPermissionCacherStatic().hasPermission(page, iwc, permissionKey, permissionGroupLists[i]);
+									myPermission = getPermissionCacherStatic().hasPermission(page, iwac, permissionKey, permissionGroupLists[i]);
 
 									if (Boolean.TRUE.equals(myPermission)) {
 										return myPermission;
@@ -762,7 +763,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 					for (int i = 0; i < arrayLength; i++) {
 
-						myPermission = getPermissionCacherStatic().hasPermissionForGroup((Group) obj, iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = getPermissionCacherStatic().hasPermissionForGroup((Group) obj, iwac, permissionKey, permissionGroupLists[i]);
 
 						if (Boolean.TRUE.equals(myPermission)) {
 							return myPermission;
@@ -772,7 +773,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				}
 				else if(obj instanceof RoleHelperObject){
 					for (int i = 0; i < arrayLength; i++) {
-						myPermission = getPermissionCacherStatic().hasPermissionForRole( ((RoleHelperObject) obj).toString(), iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = getPermissionCacherStatic().hasPermissionForRole( ((RoleHelperObject) obj).toString(), iwac, permissionKey, permissionGroupLists[i]);
 						
 						if (Boolean.TRUE.equals(myPermission)) {
 							return myPermission;
@@ -794,7 +795,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					//Object instance
 					myPermission=Boolean.FALSE; //TODO: should be set to null and the haspermissionForObjectInstance should return null if there is no permission set and then later return false if still null, because permission could be stored as false permission
 					for (int i = 0; i < arrayLength; i++) {
-						myPermission = getPermissionCacherStatic().hasPermissionForObjectInstance((PresentationObject) obj, iwc, permissionKey, permissionGroupLists[i]);
+						myPermission = getPermissionCacherStatic().hasPermissionForObjectInstance((PresentationObject) obj, iwac, permissionKey, permissionGroupLists[i]);
 						if (Boolean.TRUE.equals(myPermission)) {
 							return myPermission;
 						}
@@ -841,10 +842,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					//
 					if (!permissionKey.equals(AccessController.PERMISSION_KEY_OWNER)) {
 						// Global - (object)
-						if (!getPermissionCacherStatic().anyInstancePermissionsDefinedForObject((PresentationObject) obj, iwc, permissionKey)) {
+						if (!getPermissionCacherStatic().anyInstancePermissionsDefinedForObject((PresentationObject) obj, iwac, permissionKey)) {
 							for (int i = 0; i < arrayLength; i++) {
 								myPermission =
-									getPermissionCacherStatic().hasPermissionForObject((PresentationObject) obj, iwc, permissionKey, permissionGroupLists[i]);
+									getPermissionCacherStatic().hasPermissionForObject((PresentationObject) obj, iwac, permissionKey, permissionGroupLists[i]);
 								if (Boolean.TRUE.equals(myPermission)) {
 									return myPermission;
 								}
@@ -1033,7 +1034,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permission.setPermissionValue(permissionValue);
 			permission.update();
 		}
-		getPermissionCacher().updateJSPPagePermissions(PageContextValue, permissionType, iwc);
+		getPermissionCacher().updateJSPPagePermissions(PageContextValue, permissionType, IWMainApplication.getDefaultIWApplicationContext());
 	}
 
 	public void setObjectPermission(IWUserContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)
@@ -1081,7 +1082,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permission.setPermissionValue(permissionValue);
 			permission.update();
 		}
-		getPermissionCacher().updateObjectPermissions(Integer.toString(obj.getICObjectID()), permissionType, iwc);
+		getPermissionCacher().updateObjectPermissions(Integer.toString(obj.getICObjectID()), permissionType, IWMainApplication.getDefaultIWApplicationContext());
 	}
 
 	public void setBundlePermission(IWUserContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)
@@ -1129,7 +1130,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permission.setPermissionValue(permissionValue);
 			permission.update();
 		}
-		getPermissionCacher().updateBundlePermissions(obj.getBundleIdentifier(), permissionType, iwc);
+		getPermissionCacher().updateBundlePermissions(obj.getBundleIdentifier(), permissionType, IWMainApplication.getDefaultIWApplicationContext());
 	}
 
 	public void setObjectInstacePermission(
@@ -1186,7 +1187,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 							+ sGroupList
 							+ ")");
 				if (done) {
-					getPermissionCacherStatic().updateObjectInstancePermissions(ObjectInstanceId, permissionKey, iwc);
+					getPermissionCacherStatic().updateObjectInstancePermissions(ObjectInstanceId, permissionKey, IWMainApplication.getDefaultIWApplicationContext());
 				}
 				return done;
 			}
@@ -1363,7 +1364,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 						break;
 				}
 
-				getPermissionCacherStatic().updatePermissions(permissionCategory, identifier, permissionKey, iwc);
+				getPermissionCacherStatic().updatePermissions(permissionCategory, identifier, permissionKey, IWMainApplication.getDefaultIWApplicationContext());
 
 				return true;
 			}
@@ -1380,7 +1381,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	public void setPermission(
 		int permissionCategory,
-		IWUserContext iwc,
+		IWApplicationContext iwac,
 		String permissionGroupId,
 		String identifier,
 		String permissionKey,
@@ -1669,7 +1670,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permission.update();
 		}
 
-		getPermissionCacher().updatePermissions(permissionCategory, identifier, permissionKey, iwc);
+		getPermissionCacher().updatePermissions(permissionCategory, identifier, permissionKey, iwac);
 
 	}
 
@@ -1723,7 +1724,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permission.setPermissionValue(permissionValue);
 			permission.update();
 		}
-		getPermissionCacher().updateObjectInstancePermissions(ObjectInstanceId, permissionType, iwc);
+		getPermissionCacher().updateObjectInstancePermissions(ObjectInstanceId, permissionType, IWMainApplication.getDefaultIWApplicationContext());
 	}
 
 	public int createPermissionGroup(String GroupName, String Description, String ExtraInfo, int[] userIDs, int[] groupIDs) throws Exception {
@@ -2253,7 +2254,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			}
 			//      System.out.println("Group = "+ groupId);
 			if (groupId != -1) {
-				setAsOwner(page, groupId, iwc);
+				setAsOwner(page, groupId, iwc.getApplicationContext());
 				//        setPermission(AccessController._CATEGORY_PAGE,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl._PERMISSIONKEY_EDIT,Boolean.TRUE);
 				//        setPermission(AccessController._CATEGORY_PAGE,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl._PERMISSIONKEY_VIEW,Boolean.TRUE);
 			}
@@ -2267,12 +2268,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	/**
-	 * @todo implement setAsOwner(ICFile file, IWUserContext iwc)throws Exception
+	 * @todo implement setAsOwner(ICFile file, IWApplicationContext iwc)throws Exception
 	 */
-	public void setAsOwner(ICPage page, int groupId, IWUserContext iwc) throws Exception {
+	public void setAsOwner(ICPage page, int groupId, IWApplicationContext iwac) throws Exception {
 		setPermission(
 			AccessController.CATEGORY_PAGE_INSTANCE,
-			iwc,
+			iwac,
 			Integer.toString(groupId),
 			Integer.toString(page.getID()),
 			AccessControl.PERMISSION_KEY_OWNER,
@@ -2280,28 +2281,28 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	/**
-	 * @todo implement setAsOwner(PresentationObject obj , IWUserContext iwc) throws Exception
+	 * @todo implement setAsOwner(PresentationObject obj , IWApplicationContext iwac) throws Exception
 	 */
-	public void setAsOwner(PresentationObject obj, int groupId, IWUserContext iwc) throws Exception {
+	public void setAsOwner(PresentationObject obj, int groupId, IWApplicationContext iwac) throws Exception {
 	}
 
 	/**
 	 * @todo implement setAsOwner(ICFile file, IWUserContext iwc)throws Exception
 	 */
-	public void setAsOwner(ICFile file, int groupId, IWUserContext iwc) throws Exception {
+	public void setAsOwner(ICFile file, int groupId, IWApplicationContext iwac) throws Exception {
 		setPermission(
 			AccessController.CATEGORY_FILE_ID,
-			iwc,
+			iwac,
 			Integer.toString(groupId),
 			file.getPrimaryKey().toString(),
 			AccessControl.PERMISSION_KEY_OWNER,
 			Boolean.TRUE);
 	}
 
-	public void setAsOwner(Group group, int groupId, IWUserContext iwc) throws Exception {
+	public void setAsOwner(Group group, int groupId, IWApplicationContext iwac) throws Exception {
 		setPermission(
 			AccessController.CATEGORY_GROUP_ID,
-			iwc,
+			iwac,
 			Integer.toString(groupId),
 			group.getPrimaryKey().toString(),
 			AccessControl.PERMISSION_KEY_OWNER,
@@ -2311,7 +2312,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
 	 * @todo implement setAsOwner(ICObject obj, int entityRecordId, IWUserContext iwc)throws Exception
 	 */
-	public void setAsOwner(ICObject obj, int entityRecordId, int groupId, IWUserContext iwc) throws Exception {
+	public void setAsOwner(ICObject obj, int entityRecordId, int groupId, IWApplicationContext iwac) throws Exception {
 		throw new Exception(this.getClass().getName() + ".setAsOwner(...) : not implemented");
 	}
 
@@ -2481,8 +2482,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    
 	    //get the parent groups
 	    List permissionControllingGroups = new ArrayList();
-	    Collection parents = getGroupBusiness(iwuc).getParentGroups(iwuc.getCurrentUser());
-	    
+	    Collection parents = getGroupBusiness(iwuc.getApplicationContext()).getParentGroups(iwuc.getCurrentUser());
+	   
 	    if(parents!=null && !parents.isEmpty()) {
 	        Map roleMap= new HashMap();
 	        
@@ -2831,7 +2832,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return returnCol;	
 	}
 	
-	public Collection getAllGroupsForRoleKey(String roleKey, IWUserContext iwuc) {
+	public Collection getAllGroupsForRoleKey(String roleKey, IWApplicationContext iwac) {
 	
 		Collection groups = new Vector();
 		try {
@@ -2842,7 +2843,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				while (permissionsIter.hasNext()) {
 					ICPermission perm = (ICPermission) permissionsIter.next();
 					if(perm.getPermissionValue()){
-						groups.add(getGroupBusiness(iwuc).getGroupByGroupID(perm.getGroupID()));
+						groups.add(getGroupBusiness(iwac).getGroupByGroupID(perm.getGroupID()));
 					}
 				}
 			}
@@ -2858,9 +2859,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return groups;	
 	}
 	
-	public Collection getAllGroupsThatAreRoleMasters(IWUserContext iwuc){
+	public Collection getAllGroupsThatAreRoleMasters(IWApplicationContext iwac){
 		
-		return getAllGroupsForRoleKey(PERMISSION_KEY_ROLE_MASTER,iwuc);
+		return getAllGroupsForRoleKey(PERMISSION_KEY_ROLE_MASTER,iwac);
 	}
 	
 	public Collection getAllRoles() {
@@ -3220,6 +3221,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return true;
 		
 	}
+	
+  public ICRole getRoleByRoleKey(String roleKey) throws FinderException{
+	  return getICRoleHome().findByPrimaryKey(roleKey);
+  }
 
 	public ICRole createRoleWithRoleKey(String roleKey) {
 		try {
@@ -3260,20 +3265,20 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	
-	public void addGroupAsRoleMaster(Group group, IWUserContext iwuc) {
+	public void addGroupAsRoleMaster(Group group, IWApplicationContext iwma) {
 		//role master can give other groups roles and is a role itself
-		addRoleToGroup(AccessController.PERMISSION_KEY_ROLE_MASTER, group, iwuc);
+		addRoleToGroup(AccessController.PERMISSION_KEY_ROLE_MASTER, group, iwma);
 	}
 	
-	public void removeGroupFromRoleMastersList(Group group, IWUserContext iwuc) {
-		removeRoleFromGroup(AccessController.PERMISSION_KEY_ROLE_MASTER, group, iwuc);
+	public void removeGroupFromRoleMastersList(Group group, IWApplicationContext iwma) {
+		removeRoleFromGroup(AccessController.PERMISSION_KEY_ROLE_MASTER, group, iwma);
 	}
 	
 
 	
-	public boolean removeRoleFromGroup(String roleKey, Integer groupId, IWUserContext iwuc) {
+	public boolean removeRoleFromGroup(String roleKey, Integer groupId, IWApplicationContext iwma) {
 		try {
-			setPermission(AccessController.CATEGORY_ROLE, iwuc, groupId.toString(), RoleHelperObject.getStaticInstance().toString(),roleKey,Boolean.FALSE);
+			setPermission(AccessController.CATEGORY_ROLE, iwma, groupId.toString(), RoleHelperObject.getStaticInstance().toString(),roleKey,Boolean.FALSE);
 			return true;
 		}
 		catch (Exception e) { //setPermission throws Exception!? but does it rollback on errors?
@@ -3282,8 +3287,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 	}
 	
-	public boolean removeRoleFromGroup(String roleKey, Group group, IWUserContext iwuc) {
-		return removeRoleFromGroup(roleKey, (Integer)group.getPrimaryKey(), iwuc);
+	public boolean removeRoleFromGroup(String roleKey, Group group, IWApplicationContext iwac) {
+		return removeRoleFromGroup(roleKey, (Integer)group.getPrimaryKey(), iwac);
 	}
 	
 	public String getRoleIdentifier(){
@@ -3294,22 +3299,21 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * (non-Javadoc)
 	 * 
 	 * @see com.idega.core.accesscontrol.business.AccessController#addRoleToGroup(java.lang.String, com.idega.user.data.Group,
-	 *      com.idega.idegaweb.IWUserContext)
+	 *      com.idega.idegaweb.IWApplicationContext)
 	 */
-	public void addRoleToGroup(String roleKey, Group group, IWUserContext iwuc) {
-		addRoleToGroup(roleKey, (Integer)group.getPrimaryKey(), iwuc);
-
+	public void addRoleToGroup(String roleKey, Group group, IWApplicationContext iwac) {
+		addRoleToGroup(roleKey, (Integer)group.getPrimaryKey(), iwac);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see com.idega.core.accesscontrol.business.AccessController#addRoleToGroup(java.lang.String, java.lang.String,
-	 *      com.idega.idegaweb.IWUserContext)
+	 *      com.idega.idegaweb.IWApplicationContext)
 	 */
-	public boolean addRoleToGroup(String roleKey, Integer groupId, IWUserContext iwuc) {
+	public boolean addRoleToGroup(String roleKey, Integer groupId, IWApplicationContext iwac) {
 		try {
-			setPermission(AccessController.CATEGORY_ROLE, iwuc, groupId.toString(), RoleHelperObject.getStaticInstance().toString() ,roleKey, Boolean.TRUE);
+			setPermission(AccessController.CATEGORY_ROLE, iwac, groupId.toString(), RoleHelperObject.getStaticInstance().toString() ,roleKey, Boolean.TRUE);
 			return true;
 		}
 		catch (Exception e) { //setPermission throws Exception!? but does it rollback on errors?
@@ -3321,9 +3325,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
 	 * Add a role with a permission key connection
 	 * */
-	public boolean addRoleToGroup(String roleKey, String permissionKey, Integer groupId, IWUserContext iwuc) {
+	public boolean addRoleToGroup(String roleKey, String permissionKey, Integer groupId, IWApplicationContext iwac) {
 		try {
-			setPermission(AccessController.CATEGORY_ROLE, iwuc, groupId.toString(), permissionKey ,roleKey, Boolean.TRUE);
+			setPermission(AccessController.CATEGORY_ROLE, iwac, groupId.toString(), permissionKey ,roleKey, Boolean.TRUE);
 			return true;
 		}
 		catch (Exception e) { //setPermission throws Exception!? but does it rollback on errors?
@@ -3332,9 +3336,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 	}
 	
-	public boolean removeRoleFromGroup(String roleKey, String permissionKey, Integer groupId, IWUserContext iwuc) {
+	public boolean removeRoleFromGroup(String roleKey, String permissionKey, Integer groupId, IWApplicationContext iwac) {
 		try {
-			setPermission(AccessController.CATEGORY_ROLE, iwuc, groupId.toString(), permissionKey, roleKey,Boolean.FALSE);
+			setPermission(AccessController.CATEGORY_ROLE, iwac, groupId.toString(), permissionKey, roleKey,Boolean.FALSE);
 			return true;
 		}
 		catch (Exception e) { //setPermission throws Exception!? but does it rollback on errors?
