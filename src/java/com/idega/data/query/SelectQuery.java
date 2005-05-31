@@ -370,7 +370,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 			Iterator i = columns.iterator();
 			while (i.hasNext()) {
 				Table curr = ((Column) i.next()).getTable();
-				if (curr != null) {
+				if (curr != null && !curr.getName().equals("")) {
 					allTables.add(curr);
 				}
 			}
@@ -380,7 +380,9 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 			Iterator i = criteria.iterator();
 			while (i.hasNext()) {
 				Criteria curr = (Criteria) i.next();
-				allTables.addAll(curr.getTables());
+				if (curr.getTables() != null) {
+					allTables.addAll(curr.getTables());
+				}
 			}
 		}
 
@@ -389,7 +391,9 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 			while (i.hasNext()) {
 				Order curr = (Order) i.next();
 				Table c = curr.getColumn().getTable();
-				allTables.add(c);
+				if (c != null) {
+					allTables.add(c);
+				}
 			}
 		}
 
