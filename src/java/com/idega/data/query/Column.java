@@ -10,6 +10,8 @@ import com.idega.data.query.output.ToStringer;
 public class Column implements Outputable {
 
 	private boolean distinct = false;
+	private boolean count = false;
+	private String countName;
 	private String name;
 	private Table table;
 	private String prefix;
@@ -44,6 +46,14 @@ public class Column implements Outputable {
 		distinct = true;
 	}
 	
+	public void setAsCount() {
+		count = true;
+	}
+	public void setAsCount(String countName) {
+		setAsCount();
+		this.countName = countName;
+	}
+	
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
@@ -60,6 +70,9 @@ public class Column implements Outputable {
 		if (getPrefix() != null) {
 			out.print(getPrefix());
 		}
+		if (count) {
+			out.println("COUNT(");
+		}
 		if (distinct) {
 			out.println("DISTINCT ");
 		}
@@ -69,6 +82,12 @@ public class Column implements Outputable {
 		out.print(getName());
 		if (getPostfix() != null) {
 			out.print(getPostfix());
+		}
+		if (count) {
+			out.println(")");
+			if (countName != null) {
+				out.println(" AS "+countName);
+			}
 		}
 	}
 
