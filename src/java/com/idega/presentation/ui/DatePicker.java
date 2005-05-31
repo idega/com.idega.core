@@ -307,7 +307,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         if(!useJSCalendar(bundle))
           return super.getTable(iwc, bundle);
         
-        Table table = new Table(2, 2);
+        Table table = new Table(3, 2);
 		table.setCellpadding(0);
 		table.setCellspacing(0);
 		
@@ -340,7 +340,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		table.add(value);
 		table.add(new Parameter(VALUE_PARAMETER_NAME, value.getName()));
 		table.add(object, 1, 1);
-		table.add(button,2,1);
+		table.setWidth(2, 2);
+		table.add(button,3,1);
 		
 		
 		return table;
