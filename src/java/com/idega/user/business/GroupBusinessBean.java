@@ -2034,14 +2034,11 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
    * Gives all parent groups owners' primary groups, permit permission to this group.
    * The permission to give others permissions to this group.
    */
-  public void applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(IWUserContext iwc,
-          Group group) throws RemoteException {
-
-     
+  public void applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(Group group) throws RemoteException {
       UserBusiness userBiz = getUserBusiness();
       String groupId = group.getPrimaryKey().toString();
-      AccessController access = iwc.getAccessController();
-
+	  AccessController access = getAccessController();
+		
       Collection col = getParentGroupsRecursive(group);
       if (col != null && !col.isEmpty()) {
           Iterator iter = col.iterator();
@@ -2061,7 +2058,7 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 	                      try {
 	                          //the owners primary group
 	                          access.setPermission(
-	                                  AccessController.CATEGORY_GROUP_ID, iwc,
+	                                  AccessController.CATEGORY_GROUP_ID, this.getIWApplicationContext(),
 	                                  primaryGroupId, groupId,
 	                                  access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
 	                      } catch (Exception e) {
@@ -2075,17 +2072,16 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
   }
   
   /**
-   * Sets the user as the owner of the group.
-   * @param iwc
+   * Sets the user as an owner of the group.
    * @param group
    * @param user
    */
-  public void applyUserAsGroupsOwner(IWUserContext iwc, Group group, User user) {
-      AccessController access = iwc.getAccessController();
-
+  public void applyUserAsGroupsOwner(Group group, User user) {
+	  AccessController access = getAccessController();
+	
       try {
           access.setAsOwner(group, ((Integer) user.getPrimaryKey())
-                  .intValue(), iwc);
+                  .intValue(), this.getIWApplicationContext());
       } catch (Exception ex) {
           ex.printStackTrace();
 
@@ -2094,7 +2090,7 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
   
   public void applyCurrentUserAsOwnerOfGroup(IWUserContext iwc, Group group) {
       User user = iwc.getCurrentUser();
-      applyUserAsGroupsOwner(iwc, group, user);
+      applyUserAsGroupsOwner(group, user);
   }
   
 
@@ -2107,53 +2103,53 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
           User user = iwuc.getCurrentUser();
           
           Group groupToGetPermissions = user.getPrimaryGroup();
-          applyAllGroupPermissionsForGroupToGroup(iwuc, group, groupToGetPermissions);
+          applyAllGroupPermissionsForGroupToGroup(group, groupToGetPermissions);
       }
       
   /**
    * Give the users primary group all permission except for owner
    * 
    */
-  public void applyAllGroupPermissionsForGroupToUsersPrimaryGroup(IWUserContext iwuc, Group group, User user) {
+  public void applyAllGroupPermissionsForGroupToUsersPrimaryGroup(Group group, User user) {
       
       Group groupToGetPermissions = user.getPrimaryGroup();
-      applyAllGroupPermissionsForGroupToGroup(iwuc, group, groupToGetPermissions);
+      applyAllGroupPermissionsForGroupToGroup(group, groupToGetPermissions);
   }      
 
   /**
    * This methods gives the second group specified all permissions to the other groups except for owner permission (set to users not groups).
    * The permissions include: view,edit,create,remove users, and the permission to give others permissions to it.
-   * @param iwuc
+   * @param iwac
    * @param groupToSetPermissionTo The group the permission apply to.
    * @param groupToGetPermissions The group that will own the permissions e.g. get the rights to do the stuff.
    */
-  public void applyAllGroupPermissionsForGroupToGroup(IWUserContext iwuc, Group groupToSetPermissionTo, Group groupToGetPermissions) {
-      AccessController access = iwuc.getAccessController();
+  public void applyAllGroupPermissionsForGroupToGroup(Group groupToSetPermissionTo, Group groupToGetPermissions) {
+	  AccessController access = getAccessController();
       try {
-          
+		  IWApplicationContext iwac = this.getIWApplicationContext();
           String groupId = groupToGetPermissions.getPrimaryKey()
                   .toString();
           String theGroupIDToSetPermissionTo = groupToSetPermissionTo.getPrimaryKey()
                   .toString();
 
           //create permission
-          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc,
+          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
                   access.PERMISSION_KEY_CREATE, Boolean.TRUE);
           //edit permission
-          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc,
+          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
                   access.PERMISSION_KEY_EDIT, Boolean.TRUE);
           //delete permission
-          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc,
+          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
                   access.PERMISSION_KEY_DELETE, Boolean.TRUE);
           //view permission
-          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc,
+          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
                   access.PERMISSION_KEY_VIEW, Boolean.TRUE);
           //permission to give other permission
-          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc,
+          access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
                   access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
       } catch (Exception ex) {
@@ -2192,21 +2188,20 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
    * Sets the user as the owner of the group and gives his primary group all group permissions to the group. 
    * Also gives all owners' primary groups of the groups parent groups permission to give others permission 
    * to this group. Finally checks the groups parent if any for inherited permissions and sets them.
-   * @param iwc
    * @param newlyCreatedGroup
    * @param user
    * @throws RemoteException
    */
-  public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(IWUserContext iwuc,Group newlyCreatedGroup, User user) throws RemoteException {
+  public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(Group newlyCreatedGroup, User user) throws RemoteException {
 
       //set user as owner of group
-      applyUserAsGroupsOwner(iwuc, newlyCreatedGroup, user);
+      applyUserAsGroupsOwner(newlyCreatedGroup, user);
 
       //give the users primary group all permission except for owner
-      applyAllGroupPermissionsForGroupToUsersPrimaryGroup(iwuc, newlyCreatedGroup, user);
+      applyAllGroupPermissionsForGroupToUsersPrimaryGroup(newlyCreatedGroup, user);
 
       //owners should get the permission to give permission for this group
-      applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(iwuc, newlyCreatedGroup);
+      applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(newlyCreatedGroup);
 
       //check if to parent group is a permissions controlling group or has a reference to a permission controlling group
       Collection parentGroups = newlyCreatedGroup.getParentGroups();
@@ -2216,49 +2211,50 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
       }
       
       //apply permissions that have been marked to be inherited to this group from its parents
-      applyInheritedPermissionsToGroup(iwuc, newlyCreatedGroup);
+      applyInheritedPermissionsToGroup(newlyCreatedGroup);
       
   }
   
   /**
-   * Applies permissions that have been marked to be inherited to this group from its parents
- * @param iwuc
- * @param newlyCreatedGroup
- * @throws RemoteException
- */
-public void applyInheritedPermissionsToGroup(IWUserContext iwuc, Group newlyCreatedGroup) throws RemoteException {
-    //sloppy access to icpermission, frickin sue me! don't have the time. note to self: get slave to refactor
-      AccessController access = iwuc.getAccessController();
-      
-      Collection recursiveParents = getParentGroupsRecursive(newlyCreatedGroup);
-      if(recursiveParents!=null && !recursiveParents.isEmpty()) {
-        try {
-            Collection permissions = AccessControl.getPermissionHome().findAllGroupPermissionsToInheritByGroupCollection(recursiveParents);
-            Iterator iter = permissions.iterator();
-            while (iter.hasNext()) {
-                ICPermission perm = (ICPermission) iter.next();
-                
-                try {
-                    access.setPermission(AccessController.CATEGORY_GROUP_ID, iwuc, Integer.toString(perm.getGroupID()), newlyCreatedGroup.getPrimaryKey().toString(), perm.getPermissionString(), Boolean.TRUE);
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-                
-                
-            }
-        
-        
-        } catch (FinderException e) {
-            e.printStackTrace();//no parents, might happen not really an error
-        }
-      
-      
-      }
-}
+	 * Applies permissions that have been marked to be inherited to this group
+	 * from its parents
+	 * 
+	 * @param newlyCreatedGroup
+	 * @throws RemoteException
+	 */
+	public void applyInheritedPermissionsToGroup(Group newlyCreatedGroup) throws RemoteException {
+		AccessController access = getAccessController();
+		Collection recursiveParents = getParentGroupsRecursive(newlyCreatedGroup);
+		if (recursiveParents != null && !recursiveParents.isEmpty()) {
+			try {
+				Collection permissions = AccessControl.getPermissionHome().findAllGroupPermissionsToInheritByGroupCollection(
+						recursiveParents);
+				Iterator iter = permissions.iterator();
+				while (iter.hasNext()) {
+					ICPermission perm = (ICPermission) iter.next();
+					try {
+						access.setPermission(AccessController.CATEGORY_GROUP_ID, this.getIWApplicationContext(),
+								Integer.toString(perm.getGroupID()), newlyCreatedGroup.getPrimaryKey().toString(),
+								perm.getPermissionString(), Boolean.TRUE);
+					}
+					catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+			catch (FinderException e) {
+				e.printStackTrace();// no parents, might happen not really an
+									// error
+			}
+		}
+	}
 
 /**
-   * Returns a collection (list) of User objects that have owner permission to this group 
- * @param group to get owners for
+ * Returns a collection (list) of User objects that have owner permission to
+ * this group
+ * 
+ * @param group
+ *            to get owners for
  * @return
  * @throws RemoteException
  */
@@ -2477,10 +2473,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/05/11 14:44:45 $ by $Author: eiki $
+	 *  Last modified: $Date: 2005/05/31 11:40:02 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.93 $
+	 * @version $Revision: 1.94 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

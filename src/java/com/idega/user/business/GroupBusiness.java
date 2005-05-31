@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusiness.java,v 1.50 2005/04/17 17:04:46 eiki Exp $
+ * $Id: GroupBusiness.java,v 1.51 2005/05/31 11:40:02 eiki Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -50,10 +50,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2005/04/17 17:04:46 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/05/31 11:40:02 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.50 $
+ * @version $Revision: 1.51 $
  */
 public interface GroupBusiness extends IBOService, IWLDAPConstants {
 
@@ -573,13 +573,13 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups
 	 */
-	public void applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(IWUserContext iwc, Group group)
+	public void applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(Group group)
 			throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyUserAsGroupsOwner
 	 */
-	public void applyUserAsGroupsOwner(IWUserContext iwc, Group group, User user) throws java.rmi.RemoteException;
+	public void applyUserAsGroupsOwner(Group group, User user) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyCurrentUserAsOwnerOfGroup
@@ -595,13 +595,13 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyAllGroupPermissionsForGroupToUsersPrimaryGroup
 	 */
-	public void applyAllGroupPermissionsForGroupToUsersPrimaryGroup(IWUserContext iwuc, Group group, User user)
+	public void applyAllGroupPermissionsForGroupToUsersPrimaryGroup(Group group, User user)
 			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyAllGroupPermissionsForGroupToGroup
 	 */
-	public void applyAllGroupPermissionsForGroupToGroup(IWUserContext iwuc, Group groupToSetPermissionTo,
+	public void applyAllGroupPermissionsForGroupToGroup(Group groupToSetPermissionTo,
 			Group groupToGetPermissions) throws java.rmi.RemoteException;
 
 	/**
@@ -613,13 +613,12 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup
 	 */
-	public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(IWUserContext iwuc,
-			Group newlyCreatedGroup, User user) throws RemoteException;
+	public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(Group newlyCreatedGroup, User user) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#applyInheritedPermissionsToGroup
 	 */
-	public void applyInheritedPermissionsToGroup(IWUserContext iwuc, Group newlyCreatedGroup) throws RemoteException;
+	public void applyInheritedPermissionsToGroup(Group newlyCreatedGroup) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getOwnerUsersForGroup
