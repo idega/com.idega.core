@@ -8,8 +8,8 @@
  */
 package com.idega.presentation;
 
-import java.util.Map;
 import javax.faces.context.FacesContext;
+
 import com.idega.idegaweb.IWUserContext;
 
 

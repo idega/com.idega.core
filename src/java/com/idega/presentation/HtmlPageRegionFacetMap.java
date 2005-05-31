@@ -1,5 +1,5 @@
 /*
- * $Id: HtmlPageRegionFacetMap.java,v 1.1 2005/05/30 15:57:25 tryggvil Exp $
+ * $Id: HtmlPageRegionFacetMap.java,v 1.2 2005/05/31 09:45:09 palli Exp $
  * Created on 19.5.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,7 +9,6 @@
  */
 package com.idega.presentation;
 
-import java.util.Iterator;
 import javax.faces.component.UIComponent;
 
 
@@ -17,10 +16,10 @@ import javax.faces.component.UIComponent;
  * <p>
  * A subclass of BuilderPageFacetMap specifically used by HtmlPage
  * </p>
- *  Last modified: $Date: 2005/05/30 15:57:25 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/05/31 09:45:09 $ by $Author: palli $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class HtmlPageRegionFacetMap extends BuilderPageFacetMap {
 
