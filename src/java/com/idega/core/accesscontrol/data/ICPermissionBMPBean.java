@@ -60,7 +60,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(getContextTypeColumnName(), "Context type", true, true, "java.lang.String");// ic_object_id , group_id, role_permission
-		addAttribute(getContextValueColumnName(), "Context value", true, true, "java.lang.String");		
+		addAttribute(getContextValueColumnName(), "Context value", true, true, "java.lang.String", 30);		
 		addAttribute(getPermissionStringColumnName(), "Permission string", true, true, "java.lang.String");
 		addAttribute(getPermissionValueColumnName(), "Permission value", true, true, "java.lang.Boolean");
 		addAttribute(getGroupIDColumnName(), "GroupID", true, true, Integer.class, "many-to-one", PermissionGroup.class);
