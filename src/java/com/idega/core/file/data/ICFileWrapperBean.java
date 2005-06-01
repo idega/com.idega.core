@@ -433,5 +433,9 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	public void renameMetaData(String oldKeyName, String newKeyName, String value) {
 		((ICFile) this.getMainEntity()).renameMetaData(oldKeyName, newKeyName, value);
 	}
+
+	public String getDatasource() {
+		return ((ICFile) this.getMainEntity()).getDatasource();
+	}
 	
 }
