@@ -61,24 +61,25 @@ public class SocialSecurityNumber {
 		return getDateFromSocialSecurityNumber(socialSecurityNumber, true);
 	}	
 	public static Date getDateFromSocialSecurityNumber(String socialSecurityNumber, boolean checkForValidity) {
-  	if ( isValidIcelandicSocialSecurityNumber(socialSecurityNumber) ) {
-      int day = Integer.parseInt(socialSecurityNumber.substring(0, 2));
-      int month = Integer.parseInt(socialSecurityNumber.substring(2, 4));
-      int year = Integer.parseInt(socialSecurityNumber.substring(4, 6));
-      int century = Integer.parseInt(socialSecurityNumber.substring(9));
-			if (century == 9)
-				year += 1900;
-			if (century == 0)
-				year += 2000;
-			if (century == 1)
-				year += 2100;
-			if (century == 2)
-				year += 2200;
-				
-			IWTimestamp stamp = new IWTimestamp(day,month,year);
-			return stamp.getDate();
-  	}
-  	return null;
+
+		if ( checkForValidity && isValidIcelandicSocialSecurityNumber(socialSecurityNumber) ) {
+	      int day = Integer.parseInt(socialSecurityNumber.substring(0, 2));
+	      int month = Integer.parseInt(socialSecurityNumber.substring(2, 4));
+	      int year = Integer.parseInt(socialSecurityNumber.substring(4, 6));
+	      int century = Integer.parseInt(socialSecurityNumber.substring(9));
+				if (century == 9)
+					year += 1900;
+				if (century == 0)
+					year += 2000;
+				if (century == 1)
+					year += 2100;
+				if (century == 2)
+					year += 2200;
+					
+				IWTimestamp stamp = new IWTimestamp(day,month,year);
+				return stamp.getDate();
+		}
+	  	return null;
 	}
 	
 
