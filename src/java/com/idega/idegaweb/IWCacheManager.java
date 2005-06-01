@@ -18,8 +18,11 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 import com.idega.data.CacheableEntity;
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOEntity;
+import com.idega.data.IDOHome;
 import com.idega.data.IDOLegacyEntity;
+import com.idega.data.IDOLookup;
 import com.idega.repository.data.Singleton;
 import com.idega.util.FileUtil;
 import com.idega.util.StringHandler;
@@ -208,10 +211,14 @@ public class IWCacheManager implements Singleton {
   }
 //added by Eirikur Hrafnsson, eiki@idega.is
   public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma){
+	  return getCachedBlobObject(entityClassString, id, iwma, null);
+  }
+	  
+  public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma, String datasource){
     //check if this blob has already been cached
     Cache cache = (Cache) getObject(entityClassString+id);
     if( cache == null || !isBlobCached(cache)) {//if null cache it for next time
-     cache = cacheBlob(entityClassString,id,iwma);
+     cache = cacheBlob(entityClassString,id,iwma, datasource);
     }
     return cache;
   }
@@ -226,28 +233,36 @@ private boolean isBlobCached(Cache cache){
     return f.exists();
   }
 
-  private Cache cacheBlob(String entityClassString, int id , IWMainApplication iwma){
+  private Cache cacheBlob(String entityClassString, int id , IWMainApplication iwma, String datasource){
     InputStream input = null;
-    IDOLegacyEntity entity;
     Cache cacheObject = null;
     try{
-      entity = com.idega.data.GenericEntity.getEntityInstance(Class.forName(entityClassString),id);
-      input = entity.getInputStreamColumnValue(entity.getLobColumnName());
-      String realPath = iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+IW_ROOT_CACHE_DIRECTORY;
-      String appVPath = iwma.getApplicationContextURI();
+    	IDOHome home = IDOLookup.getHome(Class.forName(entityClassString));
+    	String oldDS = home.getDatasource();
+    	if (datasource != null) {
+    		home.setDatasource(datasource, false);
+    	}
+    	GenericEntity ent = (GenericEntity) home.findByPrimaryKeyIDO(new Integer(id));
+    	
+    	if (datasource != null) {
+    		home.setDatasource(oldDS, false);
+    	}
+    	input = ent.getInputStreamColumnValue(ent.getLobColumnName());
+    	String realPath = iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+IW_ROOT_CACHE_DIRECTORY;
+    	String appVPath = iwma.getApplicationContextURI();
       
       String virtualPath;
       if( appVPath.endsWith("/")) virtualPath = appVPath +IW_ROOT_CACHE_DIRECTORY;
       else virtualPath = appVPath +"/"+IW_ROOT_CACHE_DIRECTORY;
       
       
-      String fileName = entity.getID()+"_"+entity.getName();
+      String fileName = ent.getID()+"_"+ent.getName();
       fileName = TextSoap.findAndCut(fileName," ");//remove spaces
 
       if(input != null ){
         FileUtil.streamToFile(input,realPath,fileName);
         cacheObject = new Cache();
-        cacheObject.setEntity(entity);
+        cacheObject.setEntity(ent);
         cacheObject.setRealPathToFile(realPath+FileUtil.getFileSeparator()+fileName);
         cacheObject.setVirtualPathToFile(virtualPath+"/"+URLEncoder.encode(fileName));//used to url encode here
         setObject(entityClassString+id,cacheObject,0);

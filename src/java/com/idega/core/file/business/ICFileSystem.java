@@ -37,7 +37,16 @@ public interface ICFileSystem extends IBOService
 	 * @throws RemoteException
 	 */
 	public String getFileURI(int fileId)throws RemoteException;
-	
+
+	/**
+	 * Get the URI to a file on the webserver.
+	 * @param fileId The id of the file to get the url to
+	 * @param datasource The datasource of the db to get the file from
+	 * @return A String which is the url to the file
+	 * @throws RemoteException
+	 */
+	public String getFileURI(int fileId, String datasource)throws RemoteException;
+
 	/**
 	 * DRAFT OF METHODS TO BE IN THIS CLASS:
 	 * 
