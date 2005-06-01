@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.86 2005/05/24 11:13:08 laddi Exp $
+ * $Id: Form.java,v 1.87 2005/06/01 14:07:52 gummi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2005/05/24 11:13:08 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/06/01 14:07:52 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.86 $
+ * @version $Revision: 1.87 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -382,8 +382,8 @@ public class Form
 		script.append("<div id=\"busybuddy-contents\" class=\"LoadLayerContents\" >");
 		script.append("<img src=\"" + imageUrl + "\" onError=\"this.width=1;this.height=1;\">&nbsp;");
 		script.append(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString("loading_text", "Loading"));
-		script.append("</div>");
-		script.append("</div>') ").append("\n");
+		script.append("<\\/div>");
+		script.append("<\\/div>') ").append("\n");
 		script.append("loaded = true; ").append("\n");
 		script.append("	} ").append("\n");
 
