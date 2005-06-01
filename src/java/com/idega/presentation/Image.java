@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.81 2005/03/09 02:12:06 tryggvil Exp $
+ * $Id: Image.java,v 1.82 2005/06/01 16:59:01 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -32,11 +32,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/03/09 02:12:06 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/06/01 16:59:01 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.81 $
+ * @version $Revision: 1.82 $
  */
 public class Image extends PresentationObject
 {
@@ -74,9 +74,10 @@ public class Image extends PresentationObject
 	private String zoomImageHeight;
 	protected int imageId = -1;
 	private int maxImageWidth = 140;
+	private String datasource = null;
 	
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[16];
+		Object values[] = new Object[17];
 		values[0] = super.saveState(ctx);
 		values[1] = overImageUrl;
 		values[2] = downImageUrl;
@@ -93,6 +94,7 @@ public class Image extends PresentationObject
 		values[13] = zoomImageHeight;
 		values[14] = new Integer(imageId);
 		values[15] = new Integer(maxImageWidth);
+		values[16] = datasource;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
@@ -113,6 +115,7 @@ public class Image extends PresentationObject
 		zoomImageHeight = (String)values[13];
 		imageId = ((Integer)values[14]).intValue();
 		maxImageWidth = ((Integer)values[15]).intValue();
+		datasource = (String) values[16];
 	}
 	
 	public Image()
@@ -197,7 +200,7 @@ public class Image extends PresentationObject
 
 	
 		String url;
-		url = getICFileSystem(iwc).getFileURI(imageId);
+		url = getICFileSystem(iwc).getFileURI(imageId, datasource);
 		setURL(url);
 	}
 	
@@ -910,7 +913,9 @@ public class Image extends PresentationObject
 		super.setID(name);
 	}
 	
-	
+	public void setDatasource(String source) {
+		this.datasource = source;
+	}
 	 /**
 	  * Returns wheather the "goneThroughMain" variable is reset back to false in the restore phase.
 	  */
