@@ -971,6 +971,15 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		}
 	}
 	
+	public Collection getGroupsByGroupNameAndGroupType(String name, String groupType)throws RemoteException{
+		try {
+			return this.getGroupHome().findGroupsByNameAndGroupType(name, groupType);
+		}
+		catch (FinderException e) {
+			return ListUtil.getEmptyList();
+		}
+	}
+
 	/**
 	 * Gets a collection of groups of the supplied group type and which names start with the supplied name string ('name%')
 	 * @param type the group
@@ -2473,10 +2482,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/05/31 11:40:02 $ by $Author: eiki $
+	 *  Last modified: $Date: 2005/06/01 13:58:00 $ by $Author: sigtryggur $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.94 $
+	 * @version $Revision: 1.95 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
