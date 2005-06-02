@@ -100,7 +100,8 @@ public class CheckBox extends GenericInput {
 				getScript().addFunction("disableWhenUnchecked", "function disableWhenUnchecked (check, input) {\n\t	if (check.checked == false) input.disabled = true; \n}");
 			}
 			if ( _checkWhenCheckedUncheckWhenUnchecked ) {
-				getScript().addFunction("toggleOnChange", "function toggleOnChange (check, input) {\n\t	if (check.checked == false)  {input.checked = false;} \n\t else if (check.checked == true) { input.checked = true;} \n}");
+				//getScript().addFunction("toggleOnChange", "function toggleOnChange (check, input) {\n\t	if (check.checked == false)  {input.checked = false;} \n\t else if (check.checked == true) { input.checked = true;} \n}");
+				getScript().addFunction("toggleOnChange", "function toggleOnChange (check, inputs) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].checked = check.checked;\n	\t}\n	else\n	\tinputs.checked = check.checked;\n}");
 			}
 		}
 	}
@@ -121,8 +122,12 @@ public class CheckBox extends GenericInput {
 	}
 	
 	public void setToCheckWhenCheckedAndUncheckWhenUnchecked(InterfaceObject object) {
+		setToCheckWhenCheckedAndUncheckWhenUnchecked(object.getName());
+	}
+	
+	public void setToCheckWhenCheckedAndUncheckWhenUnchecked(String objectName) {
 		_checkWhenCheckedUncheckWhenUnchecked = true;
-		setOnAction(ACTION_ON_CLICK, "toggleOnChange(this, findObj('" + object.getName() + "'))");
+		setOnAction(ACTION_ON_CLICK, "toggleOnChange(this, findObj('" + objectName + "'))");
 	}
 	
 	/**
