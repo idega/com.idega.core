@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.82 2005/06/01 16:59:01 gimmi Exp $
+ * $Id: Image.java,v 1.83 2005/06/02 13:29:18 gummi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -32,11 +32,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/06/01 16:59:01 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/06/02 13:29:18 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.82 $
+ * @version $Revision: 1.83 $
  */
 public class Image extends PresentationObject
 {
@@ -200,7 +200,11 @@ public class Image extends PresentationObject
 
 	
 		String url;
-		url = getICFileSystem(iwc).getFileURI(imageId, datasource);
+		if(datasource != null){
+			url = getICFileSystem(iwc).getFileURI(imageId, datasource);
+		} else {
+			url = getICFileSystem(iwc).getFileURI(imageId);
+		}
 		setURL(url);
 	}
 	
