@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.10 2005/03/06 12:26:16 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.11 2005/06/02 17:09:30 eiki Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import com.idega.util.FacesUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2005/03/06 12:26:16 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/06/02 17:09:30 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class ViewManager implements Singleton {
 	
@@ -78,6 +78,7 @@ public class ViewManager implements Singleton {
 			builderNode.setAuthorizedRoles(roles);
 			builderNode.setWindowClass(applicationClass);
 			builderNode.setJspUri(getWorkspaceRoot().getResourceURI());
+			builderNode.setKeyboardShortcut(new KeyboardShortcut("2"));
 		}
 		catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -87,6 +88,8 @@ public class ViewManager implements Singleton {
 		try {
 			Class applicationClass = Class.forName("com.idega.user.app.UserApplication");
 			FramedWindowClassViewNode userNode = new FramedWindowClassViewNode("user",getWorkspaceRoot());
+			userNode.setKeyboardShortcut(new KeyboardShortcut("1"));
+			
 			Collection roles = new ArrayList();
 			roles.add(StandardRoles.ROLE_KEY_USERADMIN);
 			userNode.setAuthorizedRoles(roles);
@@ -106,6 +109,7 @@ public class ViewManager implements Singleton {
 			developerNode.setAuthorizedRoles(roles);
 			developerNode.setWindowClass(applicationClass);
 			developerNode.setJspUri(getWorkspaceRoot().getResourceURI());
+			developerNode.setKeyboardShortcut(new KeyboardShortcut("3"));
 		}
 		catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -135,6 +139,7 @@ public class ViewManager implements Singleton {
 		myPageNode.setName("My Page");
 		//TODO: Change this
 		myPageNode.setJspUri("/idegaweb/bundles/com.idega.block.article.bundle/jsp/cmspage.jsp");
+		myPageNode.setKeyboardShortcut(new KeyboardShortcut("5"));
 		
 		//DefaultViewNode loginViewNode = new WindowViewNode("login",getApplicationRoot());
 		

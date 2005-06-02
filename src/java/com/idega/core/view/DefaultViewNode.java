@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.8 2005/03/06 12:26:16 tryggvil Exp $
+ * $Id: DefaultViewNode.java,v 1.9 2005/06/02 17:10:03 eiki Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2005/03/06 12:26:16 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/06/02 17:10:03 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -44,7 +44,7 @@ public class DefaultViewNode implements ViewNode {
 	private static String NODE_SEPARATOR=SLASH;
 	private boolean isRendered = true;
 	private String name;
-	
+	private KeyboardShortcut keyboardShortcut;
 	
 	/**
 	 * @param viewId the ViewId of this node (must be unique under its parent)
@@ -446,8 +446,15 @@ public class DefaultViewNode implements ViewNode {
 	 * @see com.idega.faces.view.ViewNode#getKeyboardShortcut()
 	 */
 	public KeyboardShortcut getKeyboardShortcut() {
-		// TODO Auto-generated method stub
-		return null;
+		return keyboardShortcut;
+	}
+	
+	
+	/**
+	 * @param keyboardShortcut The keyboardShortcut to set.
+	 */
+	public void setKeyboardShortcut(KeyboardShortcut keyboardShortcut) {
+		this.keyboardShortcut = keyboardShortcut;
 	}
 
 	/* (non-Javadoc)
