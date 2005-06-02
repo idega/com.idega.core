@@ -1,3 +1,12 @@
+/*
+ * $Id: PostalCodeHomeImpl.java,v 1.5 2005/06/02 16:14:28 gimmi Exp $
+ * Created on 2.6.2005
+ *
+ * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.core.location.data;
 
 import java.rmi.RemoteException;
@@ -7,7 +16,11 @@ import com.idega.data.IDOFactory;
 
 
 /**
- * @author gimmi
+ * 
+ *  Last modified: $Date: 2005/06/02 16:14:28 $ by $Author: gimmi $
+ * 
+ * @author <a href="mailto:gimmi@idega.com">gimmi</a>
+ * @version $Revision: 1.5 $
  */
 public class PostalCodeHomeImpl extends IDOFactory implements PostalCodeHome {
 
@@ -81,8 +94,15 @@ public class PostalCodeHomeImpl extends IDOFactory implements PostalCodeHome {
 
 	public Collection findByPostalCodeFromTo(String codeFrom, String codeTo) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		Collection theReturn = ((PostalCodeBMPBean) entity).ejbFindByPostalCodeFromTo(codeFrom, codeTo);
+		java.util.Collection ids = ((PostalCodeBMPBean) entity).ejbFindByPostalCodeFromTo(codeFrom, codeTo);
 		this.idoCheckInPooledEntity(entity);
-		return this.getEntityCollectionForPrimaryKeys(theReturn);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public Collection findByPostalCodeFromTo(String[] codeFrom, String[] codeTo) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((PostalCodeBMPBean) entity).ejbFindByPostalCodeFromTo(codeFrom, codeTo);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 }

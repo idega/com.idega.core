@@ -14,11 +14,13 @@ import javax.ejb.FinderException;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-import com.idega.data.IDOQuery;
 import com.idega.data.IDOStoreException;
 import com.idega.data.SimpleQuerier;
+import com.idega.data.query.AND;
 import com.idega.data.query.Column;
+import com.idega.data.query.Criteria;
 import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
@@ -294,12 +296,56 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
     }
 
 	public Collection ejbFindByPostalCodeFromTo(String codeFrom, String codeTo) throws FinderException {
-	IDOQuery query = this.idoQuery();
-	query.append("Select * from ").append(getEntityName())
-	.append(" where ").append(COLUMN_POSTAL_CODE).append(" >= '").append(codeFrom)
-	.append("' and ").append(COLUMN_POSTAL_CODE).append(" <= '").append(codeTo)
-	.append("' order by ").append(COLUMN_POSTAL_CODE);
-	return this.idoFindPKsByQuery(query);
+		return ejbFindByPostalCodeFromTo(new String[]{codeFrom}, new String[]{codeTo});
+	}
+
+	public Collection ejbFindByPostalCodeFromTo(String codeFrom[], String codeTo[]) throws FinderException {
+		int fromLength = codeFrom.length;
+		int toLength = codeTo.length;
+		if (fromLength != toLength) {
+			throw new FinderException("From and To arrays must be of same size");
+		}
+
+		Table postal = new Table(this);
+		Column postalCode = new Column(postal, COLUMN_POSTAL_CODE);
+
+		SelectQuery query = new SelectQuery(postal);
+		query.addColumn(new WildCardColumn(postal));
+
+		if (fromLength > 0) {
+
+			Vector crits = new Vector();
+			for (int i = 0; i < fromLength; i++) {
+				if (codeTo[i] == null) {
+					crits.add(new MatchCriteria(postalCode, MatchCriteria.EQUALS, codeFrom[i]));
+				} else {
+					AND and = new AND(new MatchCriteria(postalCode, MatchCriteria.GREATEREQUAL, codeFrom[i]), new MatchCriteria(postalCode, MatchCriteria.LESSEQUAL, codeTo[i]));
+					crits.add(and);
+				}
+			}
+			if (fromLength == 1) {
+				query.addCriteria( (Criteria) crits.get(0));
+			} else {
+				OR mainOR = new OR( (Criteria) crits.get(0), (Criteria) crits.get(1));
+				
+				for ( int i = 2; i < fromLength; i++) {
+					mainOR = new OR(mainOR, (Criteria) crits.get(i));
+				}
+				
+				query.addCriteria(mainOR);
+			}
+		}
+		
+		query.addOrder(postal, COLUMN_POSTAL_CODE, true);
+		System.out.println(query.toString());
+		return this.idoFindPKsByQuery(query);
+		
+//		IDOQuery query = this.idoQuery();
+//	query.append("Select * from ").append(getEntityName())
+//	.append(" where ").append(COLUMN_POSTAL_CODE).append(" >= '").append(codeFrom)
+//	.append("' and ").append(COLUMN_POSTAL_CODE).append(" <= '").append(codeTo)
+//	.append("' order by ").append(COLUMN_POSTAL_CODE);
+//	return this.idoFindPKsByQuery(query);
 	}
 	
 	/**
