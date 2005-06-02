@@ -1,5 +1,5 @@
 /*
- * $Id: IFrame.java,v 1.18 2005/03/20 11:56:53 gimmi Exp $
+ * $Id: IFrame.java,v 1.19 2005/06/02 18:06:50 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.presentation.IWContext;
  * <p>
  * Component to render out an "iframe" or Inline Frame element.
  * </p>
- *  Last modified: $Date: 2005/03/20 11:56:53 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/06/02 18:06:50 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class IFrame extends InterfaceObject {
 
@@ -234,6 +234,16 @@ public class IFrame extends InterfaceObject {
 				print(content);
 			}
 			println("</iframe>\n");
+			
+			if(getFrameMarginTop()!=null && getFrameMarginBottom()!=null){
+				println("<script type=\"text/javascript\">");
+				String frameId = this.getID();
+				//this is a reference to a method declared in iw_core.js:
+				println("setIframeHeight('"+frameId+"',"+getFrameMarginTop()+","+getFrameMarginBottom()+");");
+				println("window.onresize = function() { setIframeHeight('"+frameId+"',"+getFrameMarginTop()+","+getFrameMarginBottom()+")}");
+				println("</script>");
+			}
+			
 		}
 	}
 
@@ -253,5 +263,51 @@ public class IFrame extends InterfaceObject {
 	 */
 	public boolean isContainer() {
 		return false;
+	}
+	
+	
+	/**
+	 * <p>
+	 * This method is for creating an iframe with 'floating' height, i.e. that the frame with take 
+	 * the height of the window minus the top and bottom margins specified in this function. This is
+	 * implemented by an added javascript call.
+	 * </p>
+	 * @param marginTop space for the margin from the top in pixels;
+	 * @param marginBottom space for the margin from the bottom in pixels
+	 */
+	public void setFrameHeight(int marginTop,int marginBottom){
+		setFrameMarginTop(new Integer(marginTop));
+		setFrameMarginBottom(new Integer(marginBottom));
+	}
+	
+	/**
+	 * @return Returns the frameMarginBottom.
+	 */
+	protected Integer getFrameMarginBottom() {
+		return (Integer)getAttributes().get("iframeMarginBottom");
+	}
+
+	
+	/**
+	 * @param frameMarginBottom The frameMarginBottom to set.
+	 */
+	protected void setFrameMarginBottom(Integer frameMarginBottom) {
+		getAttributes().put("iframeMarginBottom",frameMarginBottom);
+	}
+
+	
+	/**
+	 * @return Returns the frameMarginTop.
+	 */
+	protected Integer getFrameMarginTop() {
+		return (Integer)getAttributes().get("iframeMarginTop");
+	}
+
+	
+	/**
+	 * @param frameMarginTop The frameMarginTop to set.
+	 */
+	protected void setFrameMarginTop(Integer frameMarginTop) {
+		getAttributes().put("iframeMarginTop",frameMarginTop);
 	}
 }

@@ -1,7 +1,7 @@
 //************************************************//
 //
 // idegaWeb Core Javascript Function library
-// (c) Copyright idega hf. 2000-2002 All rights reserved.
+// (c) Copyright idega hf. 2000-2005 All rights reserved.
 //
 // 	This file contains proprietary information owned
 // 	by idega and may not be copied without prior concent.
@@ -204,9 +204,104 @@ function iwSetValueOfHiddenInput(yearValue,monthValue,dayValue,hiddenInput){
 	
 }
 
-
 //************************************************//
 //
 //End Date/TimeInput Functions
+//
+//************************************************//
+
+
+//************************************************//
+//
+// Begin Windowing and iframe methods
+//
+//************************************************//
+
+
+/**
+*This object windowinfo is for obtaining information such as height and width about the open window in a cross-browser manner.
+**/
+var windowinfo = {
+  getWindowWidth: function () {
+    this.width = 0;
+    if (window.innerWidth){
+    	//This is for Firefox and Safari
+	    this.width = window.innerWidth ;
+    	//alert('getWindowWidth: innerWidth');
+    }
+    else if (document.documentElement && document.documentElement.clientWidth) {
+  		this.width = document.documentElement.clientWidth;
+  		//alert('getWindowWidth: documentElement');
+  	}
+    else if (document.body && document.body.clientWidth) {
+    	//This is for IE
+  		this.width = document.body.clientWidth;
+  		//alert('getWindowWidth: body');
+  	}
+  },
+  
+  getWindowHeight: function () {
+    this.height = 0;
+    if (window.innerHeight){
+    	 //This is for Firefox and Safari
+    	 this.height = window.innerHeight;
+    	 //alert('getWindowHeight: innerHeight');
+    }
+  	else if (document.documentElement && document.documentElement.clientHeight){
+  		this.height = document.documentElement.clientHeight;
+  		//alert('getWindowHeight: documentElement');
+  	}
+  	else if (document.body && document.body.clientHeight) {
+  		//This is for IE
+  		this.height = document.body.clientHeight;
+  		//alert('getWindowHeight: body');
+  	}
+  },
+  
+  getScrollX: function () {
+    this.scrollX = 0;
+  	if (typeof window.pageXOffset == "number") this.scrollX = window.pageXOffset;
+  	else if (document.documentElement && document.documentElement.scrollLeft)
+  		this.scrollX = document.documentElement.scrollLeft;
+  	else if (document.body && document.body.scrollLeft) 
+  		this.scrollX = document.body.scrollLeft; 
+  	else if (window.scrollX) this.scrollX = window.scrollX;
+  },
+  
+  getScrollY: function () {
+    this.scrollY = 0;    
+    if (typeof window.pageYOffset == "number") this.scrollY = window.pageYOffset;
+    else if (document.documentElement && document.documentElement.scrollTop)
+  		this.scrollY = document.documentElement.scrollTop;
+  	else if (document.body && document.body.scrollTop) 
+  		this.scrollY = document.body.scrollTop; 
+  	else if (window.scrollY) this.scrollY = window.scrollY;
+  },
+  
+  getAll: function () {
+    this.getWindowWidth(); this.getWindowHeight();
+    this.getScrollX();  this.getScrollY();
+  }
+}
+
+/**
+* This method is for creating an iframe with 'floating' height, i.e. that the frame with take 
+* the height of the window minus the top and bottom margins specified in this function
+**/
+function setIframeHeight(iframeId,topmargin,bottommargin) {
+  var theIframe = document.getElementById? document.getElementById(iframeId): document.all? document.all[iframeId]: null;
+  if (theIframe) {
+    windowinfo.getWindowHeight();
+    //  both theIframe.height and theIframe.style.height seem to work 
+	var iframeHeight = windowinfo.height - topmargin - bottommargin;
+    //alert(iframeHeight);
+    theIframe.style.height = iframeHeight + "px";
+    theIframe.style.marginTop = topmargin + "px";
+  }
+}
+
+//************************************************//
+//
+// End Windowing and iframe methods
 //
 //************************************************//
