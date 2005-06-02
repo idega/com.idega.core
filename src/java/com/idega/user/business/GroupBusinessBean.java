@@ -663,6 +663,26 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
   	}
   }
 
+  public Collection getChildGroupsResultFiltered(Group parentGroup, String groupName, Collection groupTypes, boolean onlyReturnTypesInCollection) throws RemoteException {
+      Group group = null;
+      Collection ancestorsOfGroup = null;
+      Collection allMatchingGroups = getGroupsByGroupNameAndGroupTypes(groupName, groupTypes, onlyReturnTypesInCollection);
+      Collection filteredChildGroups = new ArrayList();
+      Iterator it = allMatchingGroups.iterator();
+      while (it.hasNext()) {
+          try {
+              group = (Group)it.next();
+              ancestorsOfGroup = getParentGroupsRecursive(group);
+          } catch (Exception e) {
+              e.printStackTrace();
+          }
+          if (ancestorsOfGroup != null && ancestorsOfGroup.contains(parentGroup)) {
+              filteredChildGroups.add(group);
+          }
+      }
+      return filteredChildGroups;
+  }
+
   /**
    * @see getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection)
    * @param groupId 
@@ -971,9 +991,9 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 		}
 	}
 	
-	public Collection getGroupsByGroupNameAndGroupType(String name, String groupType)throws RemoteException{
+	public Collection getGroupsByGroupNameAndGroupTypes(String name, Collection groupTypes, boolean onlyReturnTypesInCollection)throws RemoteException{
 		try {
-			return this.getGroupHome().findGroupsByNameAndGroupType(name, groupType);
+			return this.getGroupHome().findGroupsByNameAndGroupTypes(name, groupTypes, onlyReturnTypesInCollection);
 		}
 		catch (FinderException e) {
 			return ListUtil.getEmptyList();
@@ -2482,10 +2502,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/06/01 13:58:00 $ by $Author: sigtryggur $
+	 *  Last modified: $Date: 2005/06/02 09:51:24 $ by $Author: sigtryggur $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.95 $
+	 * @version $Revision: 1.96 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

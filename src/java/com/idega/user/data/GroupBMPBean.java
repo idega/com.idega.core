@@ -498,8 +498,20 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "'");
 	}
 	
-	public Collection ejbFindGroupsByNameAndGroupType(String name, String groupType) throws FinderException {
-		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "' and "+ this.getGroupTypeColumnName() + " = '" + groupType + "'");
+	public Collection ejbFindGroupsByNameAndGroupTypes(String name, Collection groupTypes, boolean onlyReturnTypesInCollection) throws FinderException {
+		String groupTypeValue = null;
+		String notString = null;
+		IDOQuery query = idoQuery();
+		query.append("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "' and "+ this.getGroupTypeColumnName());
+		if (groupTypes != null && groupTypes.size() == 1) {
+		    notString = onlyReturnTypesInCollection?" ":" !";
+		    query.append(notString + "= '" + groupTypes.iterator().next() + "'");
+		} else {
+		    notString = onlyReturnTypesInCollection?" ":" not ";
+		    query.append(notString + "in (");
+		    query.appendCommaDelimitedWithinSingleQuotes(groupTypes).append(")");
+		}
+		return this.idoFindPKsByQuery(query);
 	}
 
 	public Collection ejbFindGroupsByGroupTypeAndLikeName(String groupType, String partOfGroupName) throws FinderException {

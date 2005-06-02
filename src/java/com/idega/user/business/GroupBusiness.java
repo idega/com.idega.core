@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusiness.java,v 1.52 2005/06/01 13:58:01 sigtryggur Exp $
+ * $Id: GroupBusiness.java,v 1.53 2005/06/02 09:51:24 sigtryggur Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -50,10 +50,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2005/06/01 13:58:01 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2005/06/02 09:51:24 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.52 $
+ * @version $Revision: 1.53 $
  */
 public interface GroupBusiness extends IBOService, IWLDAPConstants {
 
@@ -205,6 +205,11 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	public Collection getChildGroups(int groupId) throws EJBException, FinderException, java.rmi.RemoteException;
 
 	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsResultFiltered
+	 */
+	public Collection getChildGroupsResultFiltered(Group parentGroup, String groupName, Collection groupTypes, boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
+
+	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursiveResultFiltered
 	 */
 	public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString,
@@ -292,9 +297,9 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	public Collection getGroupsByGroupName(String name) throws RemoteException;
 
 	/**
-	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByGroupNameAndType
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByGroupNameAndTypes
 	 */
-	public Collection getGroupsByGroupNameAndGroupType(String name, String groupType) throws RemoteException;
+	public Collection getGroupsByGroupNameAndGroupTypes(String name, Collection groupTypes, boolean onlyReturnTypesInCollection) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByGroupTypeAndFirstPartOfName
