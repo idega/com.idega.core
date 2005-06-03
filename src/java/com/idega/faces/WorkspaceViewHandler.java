@@ -7,6 +7,7 @@
 package com.idega.faces;
 
 import javax.faces.application.ViewHandler;
+import com.idega.repository.data.RefactorClassRegistry;
 
 /**
  * @author tryggvil
@@ -24,7 +25,7 @@ public class WorkspaceViewHandler extends WindowViewHandler {
 	}
 	
 	public Class getDefaultPageClass() throws ClassNotFoundException{
-		return Class.forName("com.idega.webface.workspace.WorkspacePage");
+		return RefactorClassRegistry.forName("com.idega.webface.workspace.WorkspacePage");
 	}
 	
 	public String getDefaultPageURL(){

@@ -17,6 +17,7 @@ import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.FrameTable;
 import com.idega.presentation.IWContext;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.faces.smile.CbpViewHandler;
 import com.idega.faces.smile.Page;
 import com.idega.faces.smile.PageWrapper;
@@ -147,7 +148,7 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 			String[] urlArray= StringHandler.breakDownURL(viewId);
 			if(urlArray == null || urlArray.length<1){
 				//encryptedClassName = "6975";
-				Class defaultClass = Class.forName("com.idega.workspace.WorkspaceLoginPage");
+				Class defaultClass = RefactorClassRegistry.forName("com.idega.workspace.WorkspaceLoginPage");
 				encryptedClassName = IWMainApplication.getEncryptedClassName(defaultClass);
 			}
 			else if(urlArray.length==1){
@@ -160,7 +161,7 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 			//String encryptedClassName=urlArray[1];
 		//}
 		String realClassName = IWMainApplication.decryptClassName(encryptedClassName);
-		return Class.forName(realClassName);
+		return RefactorClassRegistry.forName(realClassName);
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#renderView(javax.faces.context.FacesContext, javax.faces.component.UIViewRoot)
@@ -172,7 +173,7 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 	}
 	
 	public Class getDefaultPageClass() throws ClassNotFoundException{
-		return Class.forName("com.idega.workspace.WorkspaceLoginPage");
+		return RefactorClassRegistry.forName("com.idega.workspace.WorkspaceLoginPage");
 		//return defaultPageClass;
 	}
 }

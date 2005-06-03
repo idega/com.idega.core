@@ -24,6 +24,7 @@ import org.apache.myfaces.renderkit.html.HtmlResponseWriterImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.idega.presentation.IWContext;
+import com.idega.repository.data.RefactorClassRegistry;
 //import net.sourceforge.smile.application.CbpViewHandlerImpl;
 
 /**
@@ -288,7 +289,7 @@ public class CbpViewHandler extends ViewHandler {
 			
 			className = getDescriptorPackage(ctx) + shortClassName + getDescriptorPostfix(ctx);
 			try {
-				ret = Class.forName(className);
+				ret = RefactorClassRegistry.forName(className);
 			} catch(ClassNotFoundException e) {
 				ret = null;
 			}
