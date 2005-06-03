@@ -216,7 +216,7 @@ public class IWCacheManager implements Singleton {
 	  
   public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma, String datasource){
     //check if this blob has already been cached
-    Cache cache = (Cache) getObject(entityClassString+id);
+    Cache cache = (Cache) getObject(entityClassString+id+datasource);
     if( cache == null || !isBlobCached(cache)) {//if null cache it for next time
      cache = cacheBlob(entityClassString,id,iwma, datasource);
     }
@@ -265,7 +265,7 @@ private boolean isBlobCached(Cache cache){
         cacheObject.setEntity(ent);
         cacheObject.setRealPathToFile(realPath+FileUtil.getFileSeparator()+fileName);
         cacheObject.setVirtualPathToFile(virtualPath+"/"+URLEncoder.encode(fileName));//used to url encode here
-        setObject(entityClassString+id,cacheObject,0);
+        setObject(entityClassString+id+datasource,cacheObject,0);
       }
 
     }
