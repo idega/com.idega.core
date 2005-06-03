@@ -417,26 +417,31 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	public void startOrStopAllReplicators(String startOrStop) throws IOException {
 		repProps = getReplicationSettings();
 		String num = repProps.getProperty(PROPS_REPLICATION_NUM);
-		int numberOfReplicators = Integer.parseInt(num);
-		for (int i = 1; i <= numberOfReplicators; i++) {
-			//only start autostarters
-			if (startOrStop.equals(START_REPLICATOR)) {
-				String auto = repProps.getProperty(PROPS_REPLICATOR_PREFIX + i + PROPS_REPLICATOR_ACTIVE);
-				boolean autostart = (auto!=null && ("Y".equalsIgnoreCase(auto) || "true".equalsIgnoreCase(auto)));
-				if (autostart) {
-					startReplicator(i);
+		try {
+			int numberOfReplicators = Integer.parseInt(num);
+			for (int i = 1; i <= numberOfReplicators; i++) {
+				//only start autostarters
+				if (startOrStop.equals(START_REPLICATOR)) {
+					String auto = repProps.getProperty(PROPS_REPLICATOR_PREFIX + i + PROPS_REPLICATOR_ACTIVE);
+					boolean autostart = (auto!=null && ("Y".equalsIgnoreCase(auto) || "true".equalsIgnoreCase(auto)));
+					if (autostart) {
+						startReplicator(i);
+					}
+				}
+				else if (startOrStop.equals(STOP_REPLICATOR)) {
+					stopReplicator(i);
 				}
 			}
-			else if (startOrStop.equals(STOP_REPLICATOR)) {
-				stopReplicator(i);
+			
+			if(startOrStop.equals(STOP_REPLICATOR)){
+				if(scheduler!=null){
+					scheduler.removeAllTimers();
+					scheduler = null;
+				}
 			}
 		}
-		
-		if(startOrStop.equals(STOP_REPLICATOR)){
-			if(scheduler!=null){
-				scheduler.removeAllTimers();
-				scheduler = null;
-			}
+		catch (NumberFormatException e) {
+			e.printStackTrace();
 		}
 	}
 
