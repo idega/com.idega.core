@@ -22,12 +22,20 @@ public class RefactorClassRegistry implements Singleton {
 			}
 		};
 	
-	
 	//This constructor should not be called
-	private RefactorClassRegistry(){
+	protected RefactorClassRegistry(){
 		// default constructor
 	}
 
+	public static Class forName(String className) throws ClassNotFoundException {
+		// first try to find the class
+		try {
+			return Class.forName(className);
+		}
+		catch (ClassNotFoundException ex) {
+			return RefactorClassRegistry.getInstance().findClass(className, ex);
+		}
+	}
 	
 	public static RefactorClassRegistry getInstance(){
 		return (RefactorClassRegistry) SingletonRepository.getRepository().getInstance(RefactorClassRegistry.class, instantiator);      
@@ -107,26 +115,24 @@ public class RefactorClassRegistry implements Singleton {
 	}
 	
 	public Class classForName(String className) throws ClassNotFoundException {
-		// first try to find the class
-		try {
-			return Class.forName(className);
+		return RefactorClassRegistry.forName(className);
+	}
+		
+	private Class findClass(String className, ClassNotFoundException classNotFoundEx) throws ClassNotFoundException {
+		// bad luck
+		// is the class refactored?
+		String refactoredClassName = getRefactoredClassName(className);
+		if (refactoredClassName == null) {
+			// nothing found, throw exception
+			throw classNotFoundEx;
 		}
-		catch (ClassNotFoundException classNotFoundEx) {
-			// bad luck
-			// is the class refactored?
-			String refactoredClassName = getRefactoredClassName(className);
-			if (refactoredClassName == null) {
-				// nothing found, throw exception
-				throw classNotFoundEx;
-			}
-			// something was found...but does the class exist?
-			try {
-				return Class.forName(refactoredClassName);
-			}
-			catch (ClassNotFoundException refactoredClassNotFoundEx) {
-				// that is really bad luck (and strange)
-				throw new ClassNotFoundException("[RefactoredClassName] Refactored class ( "+ refactoredClassName+" ) was not found. Original class name: "+className, classNotFoundEx);
-			}
+		// something was found...but does the class exist?
+		try {
+			return Class.forName(refactoredClassName);
+		}
+		catch (ClassNotFoundException refactoredClassNotFoundEx) {
+			// that is really bad luck (and strange)
+			throw new ClassNotFoundException("[RefactoredClassName] Refactored class ( "+ refactoredClassName+" ) was not found. Original class name: "+className, classNotFoundEx);
 		}
 	}
 }

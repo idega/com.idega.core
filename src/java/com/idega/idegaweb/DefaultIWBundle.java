@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.18 2005/05/10 21:43:12 gimmi Exp $
+ * $Id: DefaultIWBundle.java,v 1.19 2005/06/03 15:18:29 thomas Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -281,7 +281,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		{
 			try
 			{
-				IWBundleStartable starter = (IWBundleStartable) Class.forName(starterClassName).newInstance();
+				IWBundleStartable starter = (IWBundleStartable) RefactorClassRegistry.forName(starterClassName).newInstance();
 				starter.start(this);
 				getBundleStartersList().add(starter);
 			}
@@ -307,7 +307,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		buffer.append(IWBundleStartable.DEFAULT_STARTER_CLASS);
 	  	String className = buffer.toString();
 	  	try {
-	  		Class starterClass = Class.forName(className);
+	  		Class starterClass = RefactorClassRegistry.forName(className);
 	  		return (IWBundleStartable) starterClass.newInstance();
 	  	}
 	  	catch (ClassNotFoundException ex) {
@@ -1031,8 +1031,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 					{
 						ICObject ico;
 						ico = icoHome.create();
-						Class c = instanciateClass(className);
-						//Class c = Class.forName(className);
+						Class c = RefactorClassRegistry.forName(className);
 						ico.setObjectClass(c);
 						ico.setName(componentName);
 						ico.setObjectType(componentType);
@@ -1106,34 +1105,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		propNew.setPropertyList(pl);
 		getComponentList().removeProperty(className);
 	}
-	/**
-	 * @param className
-	 * @return
-	 */
-	private Class instanciateClass(String className) throws ClassNotFoundException
-	{
-		try
-		{
-			Class c = Class.forName(className);
-			return c;
-		}
-		catch (ClassNotFoundException e)
-		{
-			try
-			{
-				RefactorClassRegistry rfregistry = RefactorClassRegistry.getInstance();
-				String s2 = rfregistry.getRefactoredClassName(className);
-				return Class.forName(s2);
-			}
-			catch (ClassNotFoundException e2)
-			{
-			}
-			catch (NullPointerException e3)
-			{
-			}
-			throw e;
-		}
-	}
+
 	public void setComponentProperty(String className, String propertyName, String propertyValue)
 	{
 		if (propertyName.equals(COMPONENT_PROPERTY_FILE))

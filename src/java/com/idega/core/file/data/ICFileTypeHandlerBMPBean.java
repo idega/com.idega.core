@@ -1,4 +1,7 @@
 package com.idega.core.file.data;
+
+import com.idega.repository.data.RefactorClassRegistry;
+
 /**
  * Title:        idegaWeb Classes
  * Description:
@@ -96,35 +99,35 @@ public class ICFileTypeHandlerBMPBean extends com.idega.data.CacheableEntityBMPB
 			ICFileTypeHandlerHome ftHome = (ICFileTypeHandlerHome) getIDOHome(ICFileTypeHandler.class);
 			ICFileTypeHandler handler;
 			handler = ftHome.create();
-			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_SYSTEM, Class.forName("com.idega.block.media.business.SystemTypeHandler"));
+			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_SYSTEM, RefactorClassRegistry.forName("com.idega.block.media.business.SystemTypeHandler"));
 			handler.store();
 			handler = ftHome.create();
 			handler.setNameAndHandlerClass(
 				IC_FILE_TYPE_HANDLER_APPLICATION,
-				Class.forName("com.idega.block.media.business.ApplicationTypeHandler"));
+				RefactorClassRegistry.forName("com.idega.block.media.business.ApplicationTypeHandler"));
 			handler.store();
 			handler = ftHome.create();
-			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_AUDIO, Class.forName("com.idega.block.media.business.AudioTypeHandler"));
+			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_AUDIO, RefactorClassRegistry.forName("com.idega.block.media.business.AudioTypeHandler"));
 			handler.store();
 			handler = ftHome.create();
 			handler.setNameAndHandlerClass(
 				IC_FILE_TYPE_HANDLER_DOCUMENT,
-				Class.forName("com.idega.block.media.business.DocumentTypeHandler"));
+				RefactorClassRegistry.forName("com.idega.block.media.business.DocumentTypeHandler"));
 			handler.store();
 			handler = ftHome.create();
-			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_IMAGE, Class.forName("com.idega.block.media.business.ImageTypeHandler"));
+			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_IMAGE, RefactorClassRegistry.forName("com.idega.block.media.business.ImageTypeHandler"));
 			handler.store();
 			handler = ftHome.create();
 			handler.setNameAndHandlerClass(
 				IC_FILE_TYPE_HANDLER_VECTOR_GRAPHICS,
-				Class.forName("com.idega.block.media.business.VectorTypeHandler"));
+				RefactorClassRegistry.forName("com.idega.block.media.business.VectorTypeHandler"));
 			handler.store();
 			handler = ftHome.create();
-			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_VIDEO, Class.forName("com.idega.block.media.business.VideoTypeHandler"));
+			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_VIDEO, RefactorClassRegistry.forName("com.idega.block.media.business.VideoTypeHandler"));
 			handler.store();
 			
 			handler = ftHome.create();
-			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_ZIP, Class.forName("com.idega.block.media.business.ZipTypeHandler"));
+			handler.setNameAndHandlerClass(IC_FILE_TYPE_HANDLER_ZIP, RefactorClassRegistry.forName("com.idega.block.media.business.ZipTypeHandler"));
 			handler.store();
 			handler.cacheEntity();
 		}

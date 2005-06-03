@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.11 2005/06/02 17:09:30 eiki Exp $
+ * $Id: ViewManager.java,v 1.12 2005/06/03 15:18:30 thomas Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,6 +18,7 @@ import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.util.FacesUtil;
@@ -27,10 +28,10 @@ import com.idega.util.FacesUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2005/06/02 17:09:30 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/06/03 15:18:30 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class ViewManager implements Singleton {
 	
@@ -71,7 +72,7 @@ public class ViewManager implements Singleton {
 		
 		try {
 
-			Class applicationClass = Class.forName("com.idega.builder.app.IBApplication");
+			Class applicationClass = RefactorClassRegistry.forName("com.idega.builder.app.IBApplication");
 			FramedWindowClassViewNode builderNode = new FramedWindowClassViewNode("builder",getWorkspaceRoot());
 			Collection roles = new ArrayList();
 			roles.add(StandardRoles.ROLE_KEY_BUILDER);
@@ -86,7 +87,7 @@ public class ViewManager implements Singleton {
 		}
 		
 		try {
-			Class applicationClass = Class.forName("com.idega.user.app.UserApplication");
+			Class applicationClass = RefactorClassRegistry.forName("com.idega.user.app.UserApplication");
 			FramedWindowClassViewNode userNode = new FramedWindowClassViewNode("user",getWorkspaceRoot());
 			userNode.setKeyboardShortcut(new KeyboardShortcut("1"));
 			
@@ -102,7 +103,7 @@ public class ViewManager implements Singleton {
 		}
 		
 		try {
-			Class applicationClass = Class.forName("com.idega.development.presentation.IWDeveloper");
+			Class applicationClass = RefactorClassRegistry.forName("com.idega.development.presentation.IWDeveloper");
 			FramedWindowClassViewNode developerNode = new FramedWindowClassViewNode("developer",getWorkspaceRoot());
 			Collection roles = new ArrayList();
 			roles.add(StandardRoles.ROLE_KEY_DEVELOPER);

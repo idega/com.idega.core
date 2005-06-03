@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.SecureRandom;
 import java.util.*;
+import com.idega.repository.data.RefactorClassRegistry;
 
 /**
  * Title:
@@ -121,7 +122,7 @@ public class MiscUtil {
     public static void runClass(String s, String as[])
         throws Exception
     {
-        Class class1 = Class.forName(s);
+        Class class1 = RefactorClassRegistry.forName(s);
         Class aclass[] = new Class[1];
         String as1[] = new String[0];
         aclass[0] = as1.getClass();

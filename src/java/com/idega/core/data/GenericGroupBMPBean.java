@@ -15,6 +15,7 @@ import com.idega.data.EntityFinder;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.SimpleQuerier;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.ListUtil;
 import com.idega.util.database.ConnectionBroker;
 /**
@@ -201,7 +202,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 				IDOLegacyEntity tempobj = null;
 				try
 				{
-					tempobj = (IDOLegacyEntity) Class.forName(this.getClass().getName()).newInstance();
+					tempobj = (IDOLegacyEntity) RefactorClassRegistry.forName(this.getClass().getName()).newInstance();
 					tempobj.findByPrimaryKey(RS.getInt(this.getIDColumnName()));
 				}
 				catch (Exception ex)
@@ -319,7 +320,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 				IDOLegacyEntity tempobj = null;
 				try
 				{
-					tempobj = (IDOLegacyEntity) Class.forName(this.getClass().getName()).newInstance();
+					tempobj = (IDOLegacyEntity) this.getClass().newInstance();
 					tempobj.findByPrimaryKey(RS.getInt("CHILD_IC_GROUP_ID"));
 				}
 				catch (Exception ex)

@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.35 2005/03/08 13:42:19 tryggvil Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.36 2005/06/03 15:18:30 thomas Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -19,6 +19,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Page;
+import com.idega.repository.data.RefactorClassRegistry;
 
 /**
  * <p>
@@ -26,10 +27,10 @@ import com.idega.presentation.Page;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2005/03/08 13:42:19 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/06/03 15:18:30 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public class Window extends Page {
 
@@ -179,7 +180,7 @@ public class Window extends Page {
 		// this(name,400,400,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
 		this(name, 400, 400);
 		try {
-			this.setClassToInstanciate(Class.forName(classToInstanciate), template);
+			this.setClassToInstanciate(RefactorClassRegistry.forName(classToInstanciate), template);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e.toString() + e.getMessage());

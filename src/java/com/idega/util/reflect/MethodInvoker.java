@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 
@@ -69,7 +70,7 @@ public class MethodInvoker implements Singleton {
    * @throws ClassNotFoundException
    */
   public Object invokeStaticMethodWithNoParameters(String objectClassName,String methodName)throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException{
-	Class objectClass = Class.forName(objectClassName);
+	Class objectClass = RefactorClassRegistry.forName(objectClassName);
 	return invokeStaticMethodWithNoParameters(objectClass,methodName);
   }
   /**
@@ -83,7 +84,7 @@ public class MethodInvoker implements Singleton {
    * @throws ClassNotFoundException
    */
   public Object invokeStaticMethodWithOneParameter(String objectClassName,String methodName,Object argument)throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException{
-	Class objectClass = Class.forName(objectClassName);
+	Class objectClass = RefactorClassRegistry.forName(objectClassName);
 	Method method = MethodFinder.getInstance().getMethodWithNameAndOneParameter(objectClass,methodName,argument.getClass());
 	Object[] params = {argument};
 	return this.invokeStaticMethod(method,params);

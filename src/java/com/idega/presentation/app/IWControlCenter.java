@@ -10,6 +10,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
+import com.idega.repository.data.RefactorClassRegistry;
 
 public class IWControlCenter extends Block {
 
@@ -71,8 +72,7 @@ public class IWControlCenter extends Block {
             while (iter.hasNext()) {
                 ICObject item = (ICObject) iter.next();
                 try {
-                    PresentationObject pObj = (PresentationObject) Class
-                            .forName(item.getClassName()).newInstance();
+                    PresentationObject pObj = (PresentationObject) RefactorClassRegistry.forName(item.getClassName()).newInstance();
                     pObj.setICObject(item);
                     if (iwc.hasViewPermission(pObj)) {
                         anyApp = true;

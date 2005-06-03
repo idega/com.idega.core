@@ -9,6 +9,7 @@ package com.idega.util;
  * @version 1.0
  */
 import com.idega.presentation.Page;
+import com.idega.repository.data.RefactorClassRegistry;
 
   public class FrameStorageInfo{
 
@@ -42,7 +43,7 @@ import com.idega.presentation.Page;
 
     public void setFrameClass(String myClassName){
       try{
-        this.myClass=Class.forName(myClassName);
+        this.myClass=RefactorClassRegistry.forName(myClassName);
       }
       catch(ClassNotFoundException e){
         e.printStackTrace();

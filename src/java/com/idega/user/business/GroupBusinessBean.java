@@ -51,6 +51,7 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
@@ -1525,7 +1526,7 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 		UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
 		UserGroupPlugInBusiness pluginBiz;
 		try {
-			pluginBiz = (UserGroupPlugInBusiness) getServiceInstance(Class.forName(element.getBusinessICObject().getClassName()) );
+			pluginBiz = (UserGroupPlugInBusiness) getServiceInstance(RefactorClassRegistry.forName(element.getBusinessICObject().getClassName()) );
 			list.add(pluginBiz);
 		}
 		catch (IBOLookupException e) {
@@ -2502,10 +2503,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/06/02 09:51:24 $ by $Author: sigtryggur $
+	 *  Last modified: $Date: 2005/06/03 15:18:29 $ by $Author: thomas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.96 $
+	 * @version $Revision: 1.97 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

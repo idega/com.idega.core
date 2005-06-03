@@ -22,6 +22,7 @@ import com.idega.data.GenericEntity;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLegacyEntity;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.data.IDOLookup;
 import com.idega.repository.data.Singleton;
 import com.idega.util.FileUtil;
@@ -237,7 +238,7 @@ private boolean isBlobCached(Cache cache){
     InputStream input = null;
     Cache cacheObject = null;
     try{
-    	IDOHome home = IDOLookup.getHome(Class.forName(entityClassString));
+    	IDOHome home = IDOLookup.getHome(RefactorClassRegistry.forName(entityClassString));
     	String oldDS = home.getDatasource();
     	if (datasource != null) {
     		home.setDatasource(datasource, false);
@@ -250,6 +251,7 @@ private boolean isBlobCached(Cache cache){
     	input = ent.getInputStreamColumnValue(ent.getLobColumnName());
     	String realPath = iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+IW_ROOT_CACHE_DIRECTORY;
     	String appVPath = iwma.getApplicationContextURI();
+
       
       String virtualPath;
       if( appVPath.endsWith("/")) virtualPath = appVPath +IW_ROOT_CACHE_DIRECTORY;

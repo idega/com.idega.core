@@ -16,6 +16,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.util.LogWriter;
 import com.idega.util.text.TextSoap;
@@ -142,7 +143,7 @@ public class PoolManager implements Singleton
 			String driverClassName = st.nextToken().trim();
 			try
 			{
-				Driver driver = (Driver) Class.forName(driverClassName).newInstance();
+				Driver driver = (Driver) RefactorClassRegistry.forName(driverClassName).newInstance();
 				DriverManager.registerDriver(driver);
 				drivers.addElement(driver);
 				logWriter.log("Registered JDBC driver " + driverClassName, LogWriter.INFO);

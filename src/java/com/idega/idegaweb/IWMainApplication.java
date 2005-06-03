@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.140 2005/05/06 14:47:17 gummi Exp $
+ * $Id: IWMainApplication.java,v 1.141 2005/06/03 15:18:29 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -65,6 +65,7 @@ import com.idega.graphics.generator.ImageFactory;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.MutableClass;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.servlet.filter.BaseFilter;
 import com.idega.servlet.filter.IWWelcomeFilter;
@@ -83,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/05/06 14:47:17 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/06/03 15:18:29 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.140 $
+ * @version $Revision: 1.141 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -350,7 +351,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
     public String getObjectInstanciatorURI(String className, String templateName) {
 		try {
-			return getObjectInstanciatorURI(Class.forName(className),templateName);
+			return getObjectInstanciatorURI(RefactorClassRegistry.forName(className),templateName);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -361,7 +362,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public String getObjectInstanciatorURI(String className) {
 		if(useNewURLScheme){
 			try {
-				return this.getWindowOpenerURI(Class.forName(className));
+				return this.getWindowOpenerURI(RefactorClassRegistry.forName(className));
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1094,7 +1095,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
     public static String getHashCode(String className) {
         try {
-            return getHashCode(Class.forName(className));
+            return getHashCode(RefactorClassRegistry.forName(className));
         } catch (ClassNotFoundException ex) {
 
         }
@@ -1509,7 +1510,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			if(builderLogicInstance==null){
 				MethodInvoker invoker = MethodInvoker.getInstance();
 				MethodFinder finder = MethodFinder.getInstance();
-				Class builderLogicClass = Class.forName("com.idega.builder.business.BuilderLogic");
+				Class builderLogicClass = RefactorClassRegistry.forName("com.idega.builder.business.BuilderLogic");
 				builderLogicInstance = invoker.invokeStaticMethodWithNoParameters(builderLogicClass,"getInstance");
 				methodIsBuilderApplicationRunning = finder.getMethodWithNameAndOneParameter(builderLogicClass,"isBuilderApplicationRunning",IWUserContext.class);
 			}
@@ -1704,7 +1705,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
 				
 				try {
-					Object instance = Class.forName(componentClass).newInstance();
+					Object instance = RefactorClassRegistry.forName(componentClass).newInstance();
 					UIComponent uicomp = (UIComponent)instance;
 					uicomp.setId(moduleId);
 					return uicomp;

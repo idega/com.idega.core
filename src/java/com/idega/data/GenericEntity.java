@@ -45,6 +45,7 @@ import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
 
@@ -318,7 +319,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	public void addAttribute(String attributeName, String longName, boolean ifVisible, boolean ifEditable, String storageClassName) {
 		try {
-			addAttribute(attributeName, longName, ifVisible, ifEditable, Class.forName(storageClassName));
+			addAttribute(attributeName, longName, ifVisible, ifEditable, RefactorClassRegistry.forName(storageClassName));
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Exception in " + this.getClass().getName() + e.getMessage());
 		}
@@ -339,7 +340,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	protected void addAttribute(String attributeName, String longName, boolean ifVisible, boolean ifEditable, String storageClassName, int maxLength) {
 		try {
-			addAttribute(attributeName, longName, ifVisible, ifEditable, Class.forName(storageClassName), maxLength);
+			addAttribute(attributeName, longName, ifVisible, ifEditable, RefactorClassRegistry.forName(storageClassName), maxLength);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Exception in " + this.getClass().getName() + e.getMessage());
 		}
@@ -369,7 +370,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	protected void addAttribute(String attributeName, String longName, boolean ifVisible, boolean ifEditable, String storageClassName, String relationShipType, String relationShipClassName) {
 		try {
-			addAttribute(attributeName, longName, ifVisible, ifEditable, Class.forName(storageClassName), relationShipType, Class.forName(relationShipClassName));
+			addAttribute(attributeName, longName, ifVisible, ifEditable, RefactorClassRegistry.forName(storageClassName), relationShipType, RefactorClassRegistry.forName(relationShipClassName));
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Exception in " + this.getClass().getName() + e.getMessage());
 		}
@@ -388,7 +389,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	protected void addAttribute(String attributeName, String longName, boolean ifVisible, boolean ifEditable, String storageClassName, int maxLength, String relationShipType, String relationShipClassName) {
 		try {
-			addAttribute(attributeName, longName, ifVisible, ifEditable, Class.forName(storageClassName), maxLength, relationShipType, Class.forName(relationShipClassName));
+			addAttribute(attributeName, longName, ifVisible, ifEditable, RefactorClassRegistry.forName(storageClassName), maxLength, relationShipType, RefactorClassRegistry.forName(relationShipClassName));
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Exception in " + this.getClass().getName() + e.getMessage());
 		}
@@ -469,7 +470,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			EntityAttribute attribute = new EntityAttribute(getGenericEntityDefinition());
 			attribute.setName(relationshipName);
 			attribute.setAttributeType("relationship");
-			attribute.setRelationShipClass(Class.forName(relationshipClassName));
+			attribute.setRelationShipClass(RefactorClassRegistry.forName(relationshipClassName));
 			addAttribute(attribute);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Exception in " + this.getClass().getName() + e.getMessage());
@@ -876,7 +877,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	public void setStorageClassName(String columnName, String className) {
 		try {
-			getColumn(columnName).setStorageClass(Class.forName(className));
+			getColumn(columnName).setStorageClass(RefactorClassRegistry.forName(className));
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Exception in " + this.getClass().getName() + e.getMessage());
 		}
@@ -923,7 +924,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	public void setRelationShipClassName(String columnName, String className) {
 		try {
-			getColumn(columnName).setRelationShipClass(Class.forName(className));
+			getColumn(columnName).setRelationShipClass(RefactorClassRegistry.forName(className));
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Exception in " + this.getClass().getName() + e.getMessage());
 		}
@@ -2899,7 +2900,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	public static GenericEntity getStaticInstance(String entityClassName) {
 		try {
-			return (GenericEntity)getStaticInstanceIDO(Class.forName(entityClassName));
+			return (GenericEntity)getStaticInstanceIDO(RefactorClassRegistry.forName(entityClassName));
 		} catch (Exception e) {
 			throw new RuntimeException(e.getClass().getName() + ": " + e.getMessage());
 		}
@@ -2993,7 +2994,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	public void addManyToManyRelationShip(String relatingEntityClassName, String relationShipTableName) {
 		try {
-			addManyToManyRelationShip(Class.forName(relatingEntityClassName), relationShipTableName);
+			addManyToManyRelationShip(RefactorClassRegistry.forName(relatingEntityClassName), relationShipTableName);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException("Exception in " + this.getClass().getName() + e.getMessage());
 		}

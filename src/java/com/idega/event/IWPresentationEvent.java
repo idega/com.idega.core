@@ -14,6 +14,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.Parameter;
+import com.idega.repository.data.RefactorClassRegistry;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -213,7 +214,7 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
         boolean ok = false;
         IWPresentationEvent event = null;
         try {
-          event = (IWPresentationEvent)Class.forName(className).newInstance();
+          event = (IWPresentationEvent) RefactorClassRegistry.forName(className).newInstance();
           ok = event.initializeEvent(iwc);
         }
         catch(ClassCastException cce){

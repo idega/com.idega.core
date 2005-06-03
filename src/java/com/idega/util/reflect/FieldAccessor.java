@@ -5,6 +5,7 @@ package com.idega.util.reflect;
 
 import java.lang.reflect.Field;
 import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 
@@ -47,12 +48,12 @@ public class FieldAccessor implements Singleton
 	}
 	
 	public Object getStaticFieldValue(String objectClassName,String fieldName) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, ClassNotFoundException{
-		Class c = Class.forName(objectClassName);
+		Class c = RefactorClassRegistry.forName(objectClassName);
 		return getStaticFieldValue(c,fieldName);
 	}
 	
 	public void setStaticFieldValue(String objectClassName,String fieldName,Object fieldValue) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, ClassNotFoundException{
-		Class c = Class.forName(objectClassName);
+		Class c = RefactorClassRegistry.forName(objectClassName);
 		setStaticFieldValue(c,fieldName,fieldValue);
 	}
 	

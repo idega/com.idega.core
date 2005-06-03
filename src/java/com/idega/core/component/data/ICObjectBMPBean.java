@@ -26,6 +26,7 @@ import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.PresentationObject;
+import com.idega.repository.data.RefactorClassRegistry;
 /**
 
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -33,8 +34,7 @@ import com.idega.presentation.PresentationObject;
 *@version 1.3
 
 */
-public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com.idega.core.component.data.ICObject
-{
+public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
 	public static final String COMPONENT_TYPE_ELEMENT = "iw.element";
 	public static final String COMPONENT_TYPE_BLOCK = "iw.block";
 	public static final String COMPONENT_TYPE_APPLICATION = "iw.application";
@@ -216,7 +216,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 		String className = getClassName();
 		if (className != null)
 		{
-			return Class.forName(className);
+			return RefactorClassRegistry.forName(className);
 		}
 		else
 		{
@@ -260,6 +260,12 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements com
 	{
 		return BUNDLE_COLUMN_NAME;
 	}
+	
+	public Collection ejbFindAll() throws FinderException {
+		return idoFindAllIDsBySQL();
+	}
+	
+	
 	public Collection ejbFindAllByObjectType(String type) throws FinderException
 	{
 		//return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type));

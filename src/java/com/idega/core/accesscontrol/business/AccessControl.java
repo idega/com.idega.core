@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.101 2005/05/31 11:38:15 eiki Exp $
+ * $Id: AccessControl.java,v 1.102 2005/06/03 15:18:29 thomas Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -53,6 +53,7 @@ import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.ImplementorRepository;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.util.EncryptionType;
@@ -66,12 +67,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2005/05/31 11:38:15 $ by $Author: eiki $
+ * Last modified: $Date: 2005/06/03 15:18:29 $ by $Author: thomas $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.101 $
+ * @version $Revision: 1.102 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -1781,7 +1782,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			//groupsToReturn[1] = com.idega.builder.dynamicpagetrigger.data.DPTPermissionGroupBMPBean.getStaticGroupInstance().getGroupTypeValue();
 			groupsToReturn[1] =
 				FieldAccessor.getInstance().getStaticStringFieldValue(
-					Class.forName("com.idega.builder.dynamicpagetrigger.data.DPTPermissionGroupBMPBean"),
+					RefactorClassRegistry.forName("com.idega.builder.dynamicpagetrigger.data.DPTPermissionGroupBMPBean"),
 					"GROUP_TYPE");
 		}
 		catch (IllegalArgumentException e) {

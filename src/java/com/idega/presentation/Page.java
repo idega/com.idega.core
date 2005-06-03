@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.144 2005/05/18 10:55:32 tryggvil Exp $
+ *  $Id: Page.java,v 1.145 2005/06/03 15:18:29 thomas Exp $
  *  Created in 2000 by Tryggvi Larusson
  *  Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -41,6 +41,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
 import com.idega.repository.data.ImplementorRepository;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.servlet.IWCoreServlet;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
@@ -56,10 +57,10 @@ import com.idega.util.datastructures.QueueMap;
  * </pre>
  * tags in HTML and renders the children inside the body tags.
  * </p>
- *  Last modified: $Date: 2005/05/18 10:55:32 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/06/03 15:18:29 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.144 $
+ * @version $Revision: 1.145 $
  */
 public class Page extends PresentationObjectContainer {
 	
@@ -1682,7 +1683,7 @@ public class Page extends PresentationObjectContainer {
 			String className = IWMainApplication.decryptClassName(classKey);
 			Page page = null;
 			try {
-				page = (Page) Class.forName(className).newInstance();
+				page = (Page) RefactorClassRegistry.forName(className).newInstance();
 			}
 			catch (ClassNotFoundException e) {
 				e.printStackTrace();

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -21,6 +22,8 @@ import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.appserver.AppServerDetector;
 import com.idega.core.builder.presentation.ICPropertyHandler;
+import com.idega.core.component.data.ICObject;
+import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.component.data.ICObjectType;
 import com.idega.core.component.data.ICObjectTypeHome;
 import com.idega.core.user.data.OldUserBMPBean;
@@ -308,6 +311,9 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		//create ibdomain
 		long end = System.currentTimeMillis();
 		long time = (end - start) / 1000;
+		
+		// test if all classes are available
+		testReferencedClasses();
 		sendStartMessage("Completed in " + time + " seconds");
 	}
 	
@@ -421,7 +427,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	private void startTemporaryBundleStarter(String starterName) {
 	    IWBundleStartable starter;
         try {
-            starter = (IWBundleStartable) Class.forName(starterName).newInstance();
+            starter = (IWBundleStartable) RefactorClassRegistry.forName(starterName).newInstance();
             starter.start(null);
         } catch (InstantiationException e) {
         	sendStartMessage("Info: "+starterName + " could not be instanciated (probably corresponding bundle is not loaded)");
@@ -606,4 +612,36 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		System.out.println("[idegaWeb] : shutdown : " + message);
 	}
 	
+	private void testReferencedClasses() {
+		ICObjectHome home = null;
+		try {
+			home =(ICObjectHome) IDOLookup.getHome(ICObject.class);
+		}
+		catch (IDOLookupException ex) {
+			sendStartMessage("[IWMainApplicationStarter]: Could not find home of ICObject");
+			return;
+		}
+		// get the current classloader (it is the same that is used for "Class.forName()" )
+		ClassLoader currentClassLoader = getClass().getClassLoader();
+		try {
+			Collection allICObjects = home.findAll();
+			Iterator iterator = allICObjects.iterator();
+			while (iterator.hasNext()) {
+				ICObject object = (ICObject) iterator.next();
+				String className = object.getClassName();
+				try {
+					// delay initialization, we are not using the class here
+					Class.forName(className, false, currentClassLoader);
+				}
+				catch (ClassNotFoundException ex) {
+					// bad luck
+					sendStartMessage("[IWMainApplicationStarter] WARNING: Class " + className+" could not be found but is referenced as ICObject");
+					// go ahead
+				}
+			}
+		}
+		catch (FinderException ex) {
+			sendStartMessage("[IWMainApplicationStarter] Could not find any ICObjects");
+		}
+	}
 }

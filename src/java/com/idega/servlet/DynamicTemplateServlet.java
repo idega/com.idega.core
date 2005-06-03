@@ -9,6 +9,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
+import com.idega.repository.data.RefactorClassRegistry;
 //import com.idega.idegaweb.template.*;
 /**
 
@@ -99,7 +100,7 @@ public class DynamicTemplateServlet extends IWJSPPresentationServlet {
 		//String className = prop.getProperty("idegaweb.default.templatepage.classname");
 		String className = getApplicationSettings().getDefaultTemplateClass();
 		//System.err.println("className="+className);
-		Page page = (Page) Class.forName(className).newInstance();
+		Page page = (Page) RefactorClassRegistry.forName(className).newInstance();
 		return page;
 	}
 	public Page getThisPage(String className) throws Exception {
@@ -111,7 +112,7 @@ public class DynamicTemplateServlet extends IWJSPPresentationServlet {
 			}
 			setTemplateClassName(className);
 		}
-		Page page = (Page) Class.forName(className).newInstance();
+		Page page = (Page) RefactorClassRegistry.forName(className).newInstance();
 		if (page == null) {
 			page = new Page();
 		}

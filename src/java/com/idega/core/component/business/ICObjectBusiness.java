@@ -14,6 +14,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 
@@ -114,7 +115,7 @@ public class ICObjectBusiness implements Singleton {
   public PresentationObject getNewObjectInstance(String icObjectClassName){
       PresentationObject inst = null;
       try{
-        inst = getNewObjectInstance(Class.forName(icObjectClassName));
+        inst = getNewObjectInstance(RefactorClassRegistry.forName(icObjectClassName));
       }
       catch(Exception e){
         e.printStackTrace();

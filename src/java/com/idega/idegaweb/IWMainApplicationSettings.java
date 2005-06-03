@@ -12,6 +12,7 @@ import java.util.Vector;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.EntityControl;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.LocaleUtil;
 /**
 
@@ -172,7 +173,7 @@ public class IWMainApplicationSettings extends IWPropertyList {
 				IWProperty item = (IWProperty) iter.next();
 				String serviceClass = item.getValue();
 				try {
-					l.add(Class.forName(serviceClass));
+					l.add(RefactorClassRegistry.forName(serviceClass));
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

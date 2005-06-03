@@ -30,6 +30,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.util.FileUploadUtil;
@@ -104,7 +105,7 @@ public class IWEventProcessor implements Singleton {
 			if (iwc.getApplicationSettings().getIfDebug())
 				System.out.println("IWEventListener: " + EventListenerClass);
 			try{
-				Class eventClass = Class.forName(EventListenerClass);
+				Class eventClass = RefactorClassRegistry.forName(EventListenerClass);
 				IWPageEventListener listener = (IWPageEventListener) eventClass.newInstance();
 				listener.actionPerformed(iwc);
 			}

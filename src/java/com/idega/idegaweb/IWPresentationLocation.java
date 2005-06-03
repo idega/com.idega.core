@@ -1,5 +1,6 @@
 package com.idega.idegaweb;
 import java.util.StringTokenizer;
+import com.idega.repository.data.RefactorClassRegistry;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -103,7 +104,7 @@ public class IWPresentationLocation implements IWLocation {
   public Class getApplicationClass(){
     try {
       if(_applicationClass != null){
-        return Class.forName(_applicationClass);
+        return RefactorClassRegistry.forName(_applicationClass);
       } else {
         return null;
       }

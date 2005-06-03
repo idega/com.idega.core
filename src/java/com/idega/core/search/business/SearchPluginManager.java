@@ -1,5 +1,5 @@
 /*
- * $Id: SearchPluginManager.java,v 1.2 2005/02/01 17:44:39 thomas Exp $ Created on Jan 18,
+ * $Id: SearchPluginManager.java,v 1.3 2005/06/03 15:18:30 thomas Exp $ Created on Jan 18,
  * 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,15 +21,16 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 
 /**
  * 
- * Last modified: $Date: 2005/02/01 17:44:39 $ by $Author: thomas $
+ * Last modified: $Date: 2005/06/03 15:18:30 $ by $Author: thomas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SearchPluginManager implements Singleton {
 
@@ -62,7 +63,7 @@ public class SearchPluginManager implements Singleton {
 					if (!searchPlugins.containsKey(className)) {
 						SearchPlugin searchPlugin;
 						try {
-							searchPlugin = (SearchPlugin) Class.forName(className).newInstance();
+							searchPlugin = (SearchPlugin) RefactorClassRegistry.forName(className).newInstance();
 							boolean success = searchPlugin.initialize(iwma);
 							if (success) {
 								searchPlugins.put(className, searchPlugin);

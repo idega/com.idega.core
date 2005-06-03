@@ -10,6 +10,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.util.Edit;
+import com.idega.repository.data.RefactorClassRegistry;
 
 /**
  * Title:   idegaclasses
@@ -63,7 +64,7 @@ public class BlockMenu extends Block {
       try{
       if(showLinks)
         T.add(getLinkTable(iwc,className),1,1);
-      Object obj =  Class.forName(IWMainApplication.decryptClassName(className)).newInstance();
+      Object obj =  RefactorClassRegistry.forName(IWMainApplication.decryptClassName(className)).newInstance();
       if(obj instanceof Block)
         T.add((Block)obj,1,2);
       }

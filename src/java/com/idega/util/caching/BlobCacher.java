@@ -8,6 +8,7 @@ import java.util.Enumeration;
 
 import com.idega.data.IDOLegacyEntity;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.FileUtil;
 import com.idega.util.datastructures.HashtableDoubleKeyed;
 import com.idega.util.text.TextSoap;
@@ -88,7 +89,7 @@ public class BlobCacher  {
 
     try{
 
-      entity = com.idega.data.GenericEntity.getEntityInstance(Class.forName(entityClassString),id);
+      entity = com.idega.data.GenericEntity.getEntityInstance(RefactorClassRegistry.forName(entityClassString),id);
 
       // setja inn entitie app.setAttribute();
 

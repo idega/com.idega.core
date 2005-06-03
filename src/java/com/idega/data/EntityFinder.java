@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.util.Map;
 import com.idega.repository.data.Instantiator;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.util.ListUtil;
@@ -169,7 +170,7 @@ public class EntityFinder implements Singleton {
 
 				IDOLegacyEntity tempobj = null;
 				try {
-					tempobj = (IDOLegacyEntity) Class.forName(entity.getClass().getName()).newInstance();
+					tempobj = (IDOLegacyEntity) entity.getClass().newInstance();
 				}
 				catch (Exception ex) {
 					System.err.println("There was an error in com.idega.data.GenericEntity.findAll " + ex.getMessage());
@@ -885,7 +886,7 @@ public class EntityFinder implements Singleton {
 
 				IDOLegacyEntity tempobj = null;
 				try {
-					tempobj = (IDOLegacyEntity) Class.forName(returningEntity.getClass().getName()).newInstance();
+					tempobj = (IDOLegacyEntity) returningEntity.getClass().newInstance();
 					if (debug) {
 						System.err.println("Classname " + returningEntity.getClass().getName());
 						System.err.println(
@@ -1137,7 +1138,7 @@ public class EntityFinder implements Singleton {
 	}
 
 	public static IDOLegacyEntity findByPrimaryKey(String entityClassName, int primaryKeyID) throws Exception {
-		IDOLegacyEntity entity = (IDOLegacyEntity) Class.forName(entityClassName).newInstance();
+		IDOLegacyEntity entity = (IDOLegacyEntity) RefactorClassRegistry.forName(entityClassName).newInstance();
 		return findByPrimaryKey(entity, primaryKeyID);
 
 	}

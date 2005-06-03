@@ -12,6 +12,7 @@ import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.TextInput;
+import com.idega.repository.data.RefactorClassRegistry;
 
 
 
@@ -288,7 +289,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 	
 	private void handleRemoteCall(IWContext iwc) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		String rscClassName = iwc.getParameter(PARAMETER_REMOTE_SCRIPT_HANDLING_CLASS);
-		RemoteScriptCollection rsc = (RemoteScriptCollection) Class.forName(rscClassName).newInstance();
+		RemoteScriptCollection rsc = (RemoteScriptCollection) RefactorClassRegistry.forName(rscClassName).newInstance();
 		this.getParentPage().setOnLoad("if (parent != self) parent.handleResponse_"+iwc.getParameter(PARAMETER_SOURCE_NAME)+"(document)");
 		add(rsc.getResults(iwc));
 	}

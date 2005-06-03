@@ -18,6 +18,7 @@ import com.idega.presentation.app.IWControlCenter;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.reflect.FieldAccessor;
 import com.idega.util.reflect.MethodInvoker;
 
@@ -93,7 +94,7 @@ public class IWApplicationsLogin extends Page {
 			headerImage = iwrb.getImage("login/header_app_suite.jpg", "", 323, 196);
 
 			try {
-				PresentationObject login = (PresentationObject) Class.forName("com.idega.block.login.presentation.Login").newInstance();
+				PresentationObject login = (PresentationObject) RefactorClassRegistry.forName("com.idega.block.login.presentation.Login").newInstance();
 				MethodInvoker invoker = MethodInvoker.getInstance();
 				invoker.invokeMethodWithStringParameter(login, "setLogoutButtonImageURL", iwrb.getImageURI("login/logout.gif"));
 				invoker.invokeMethodWithStringParameter(login, "setHeight", "60");
@@ -116,7 +117,7 @@ public class IWApplicationsLogin extends Page {
 			mainTable.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_RIGHT);
 
 			try {
-				PresentationObject login = (PresentationObject) Class.forName("com.idega.block.login.presentation.Login").newInstance();
+				PresentationObject login = (PresentationObject) RefactorClassRegistry.forName("com.idega.block.login.presentation.Login").newInstance();
 				MethodInvoker invoker = MethodInvoker.getInstance();
 				invoker.invokeMethodWithStringParameter(login, "setLoginButtonImageURL", iwrb.getImageURI("login/login.gif"));
 				invoker.invokeMethodWithStringParameter(login, "setLogoutButtonImageURL", iwrb.getImageURI("login/logout.gif"));

@@ -3,6 +3,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.jsp.JSPModule;
+import com.idega.repository.data.RefactorClassRegistry;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
@@ -23,7 +24,7 @@ public class PageInstanciator extends JSPModule {
 		String className =
 			IWMainApplication.decryptClassName(iwc.getParameter(IWMainApplication.classToInstanciateParameter));
 		try {
-			return (Page) Class.forName(className).newInstance();
+			return (Page) RefactorClassRegistry.forName(className).newInstance();
 		}
 		catch (Exception ex) {
 			ex.printStackTrace(System.err);

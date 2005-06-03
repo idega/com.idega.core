@@ -7,6 +7,7 @@ import com.idega.event.IWPresentationState;
 import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.repository.data.RefactorClassRegistry;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -39,7 +40,7 @@ public class StatefullPresentationImplHandler {
       int childDelimiterPosition = lastElement.lastIndexOf("_");
       String classCode = lastElement.substring(0, childDelimiterPosition);
       String className = IWMainApplication.decryptClassName(classCode);
-      Class presentationClass = Class.forName(className);
+      Class presentationClass = RefactorClassRegistry.forName(className);
       presentationState = stateMachine.getStateFor(compoundId, presentationClass);
     }
     catch (ClassNotFoundException ce)  {

@@ -17,6 +17,7 @@ package com.idega.data.genericentity;
 import java.sql.*;
 
 import com.idega.data.*;
+import com.idega.repository.data.RefactorClassRegistry;
 
 import java.util.Vector;
 
@@ -294,7 +295,7 @@ public class GroupBMPBean extends com.idega.data.GenericEntity implements com.id
 
 				try{
 
-					tempobj = (IDOLegacyEntity)Class.forName(this.getClass().getName()).newInstance();
+					tempobj = (IDOLegacyEntity) RefactorClassRegistry.forName(this.getClass().getName()).newInstance();
 
 					tempobj.findByPrimaryKey(RS.getInt(this.getIDColumnName()));
 

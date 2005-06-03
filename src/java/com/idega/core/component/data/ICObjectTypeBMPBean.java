@@ -22,6 +22,7 @@ import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
 import com.idega.presentation.PresentationObject;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -282,7 +283,7 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 	private Class getClassForName(String className) {
 		if (className != null) {
 			try {
-				return Class.forName(className);
+				return RefactorClassRegistry.forName(className);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}

@@ -19,6 +19,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 import com.idega.presentation.Page;
 import com.idega.presentation.StatefullPresentation;
+import com.idega.repository.data.RefactorClassRegistry;
 
 /**
  * <p>
@@ -112,7 +113,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 	private Class lookupStateClassForInstance(ICObject obj) throws RemoteException, FinderException,
 			ClassNotFoundException, IllegalAccessException, InstantiationException {
 		String className = obj.getClassName();
-		return ((StatefullPresentation) Class.forName(className).newInstance()).getPresentationStateClass();
+		return ((StatefullPresentation) RefactorClassRegistry.forName(className).newInstance()).getPresentationStateClass();
 	}
 
 	//  private Map getUserStatesMap(){

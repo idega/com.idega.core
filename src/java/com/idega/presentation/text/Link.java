@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.146 2005/03/09 01:44:40 tryggvil Exp $
+ * $Id: Link.java,v 1.147 2005/06/03 15:18:29 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -43,6 +43,7 @@ import com.idega.presentation.Script;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.Window;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -288,7 +289,7 @@ public class Link extends Text {
 		//this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
 		this.setPresentationObject(mo);
 		try {
-			this.setClassToInstanciate(Class.forName(classToInstanciate), template);
+			this.setClassToInstanciate(RefactorClassRegistry.forName(classToInstanciate), template);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e.toString() + e.getMessage());
@@ -333,7 +334,7 @@ public class Link extends Text {
 		//this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templateName));
 		this.setText(displayText);
 		try {
-			this.setClassToInstanciate(Class.forName(classToInstanciate), templateName);
+			this.setClassToInstanciate(RefactorClassRegistry.forName(classToInstanciate), templateName);
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e.toString() + e.getMessage());
@@ -2022,7 +2023,7 @@ public class Link extends Text {
 
 public void setWindowToOpen(String className) {
 	try {
-		setWindowToOpen(Class.forName(className));
+		setWindowToOpen(RefactorClassRegistry.forName(className));
 	}
 	catch (ClassNotFoundException e) {
 		e.printStackTrace();

@@ -300,7 +300,7 @@ public class MethodFinder implements Singleton
 			return java.lang.Long.TYPE;
 		} else
 		{
-			return Class.forName(className);
+			return RefactorClassRegistry.forName(className);
 		}
 	}
 	public String getDeclaringClassName(String[] identifierArray)
@@ -309,7 +309,7 @@ public class MethodFinder implements Singleton
 	}
 	public Class getDeclaringClass(String[] identifierArray) throws ClassNotFoundException
 	{
-		return Class.forName(getDeclaringClassName(identifierArray));
+		return RefactorClassRegistry.forName(getDeclaringClassName(identifierArray));
 	}
 	public String getReturnTypeClassName(String[] identifierArray)
 	{

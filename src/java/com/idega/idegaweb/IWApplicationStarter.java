@@ -1,5 +1,5 @@
 /*
- * $Id: IWApplicationStarter.java,v 1.2 2004/12/02 20:34:18 tryggvil Exp $
+ * $Id: IWApplicationStarter.java,v 1.3 2005/06/03 15:18:29 thomas Exp $
  *
  * Created by Tryggvi Larusson in 2004
  *
@@ -22,6 +22,7 @@ import javax.faces.lifecycle.LifecycleFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import com.idega.repository.data.RefactorClassRegistry;
 
 
 /**
@@ -69,7 +70,7 @@ public class IWApplicationStarter implements ServletContextListener {
 		ViewHandler iwViewHandler=origViewHandler;
 		try {
 			//iwViewHandler = (ViewHandler)Class.forName("com.idega.faces.IWViewHandlerImpl").newInstance();
-			Constructor[] css = Class.forName("com.idega.faces.smile.IWViewHandlerImpl").getConstructors();
+			Constructor[] css = RefactorClassRegistry.forName("com.idega.faces.smile.IWViewHandlerImpl").getConstructors();
 			Constructor cs = css[1];
 			Object[] args = {origViewHandler};
 			iwViewHandler = (ViewHandler)cs.newInstance(args);

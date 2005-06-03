@@ -151,7 +151,7 @@ public class ImplementorRepository implements Singleton {
 		while (iterator.hasNext()) {
 			String name = (String) iterator.next();
 			try {
-				Class implementorClass = Class.forName(name);
+				Class implementorClass = RefactorClassRegistry.forName(name);
 				classes.add(implementorClass);
 			}
 			catch (ClassNotFoundException e) {

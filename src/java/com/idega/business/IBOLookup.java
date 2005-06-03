@@ -17,6 +17,7 @@ import javax.rmi.PortableRemoteObject;
 
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.util.reflect.MethodFinder;
 /**
@@ -211,14 +212,14 @@ public class IBOLookup implements Singleton
 			//First try to suffix the Home to the interface class name
 			String baseClassName = getInterfaceClassForNonStatic(entityInterfaceClass).getName();
 			String homeClassName = baseClassName + HOME_SUFFIX;
-			return Class.forName(homeClassName);
+			return RefactorClassRegistry.forName(homeClassName);
 		}
 		catch(ClassNotFoundException cnfe){
 			//If that doesn't work then try to suffix the Home to the bean implementation class name - the bean suffix
 			String beanClassName = getBeanClassForNonStatic(entityInterfaceClass).getName();
 			String baseClassName = beanClassName.substring(0,beanClassName.indexOf(getBeanSuffix()));
 			String homeClassName = baseClassName + HOME_SUFFIX;
-			return Class.forName(homeClassName);
+			return RefactorClassRegistry.forName(homeClassName);
 		}
 		
 	}
@@ -229,13 +230,13 @@ public class IBOLookup implements Singleton
 			String beanClassName = getBeanClassForNonStatic(entityInterfaceClass).getName();
 			String baseClassName = beanClassName.substring(0,beanClassName.indexOf(getBeanSuffix()));
 			String homeClassName = baseClassName + FACTORY_SUFFIX;
-			return Class.forName(homeClassName);
+			return RefactorClassRegistry.forName(homeClassName);
 		}
 		catch(ClassNotFoundException cnfe){
 			//If that doesn't work then try to suffix the FACTORY_SUFFIX to the interface class name
 			String baseClassName = getInterfaceClassForNonStatic(entityInterfaceClass).getName();
 			String homeClassName = baseClassName + FACTORY_SUFFIX;
-			return Class.forName(homeClassName);
+			return RefactorClassRegistry.forName(homeClassName);
 		}
 
 	}
@@ -305,7 +306,7 @@ public class IBOLookup implements Singleton
 				{
 					String className = entityInterfaceClass.getName();
 					String beanClassName = className + getBeanSuffix();
-					beanClass = Class.forName(beanClassName);
+					beanClass = RefactorClassRegistry.forName(beanClassName);
 						
 					getBeanClassesMap().put(entityInterfaceClass, beanClass);
 					getInterfaceClassesMap().put(beanClass, entityInterfaceClass);
@@ -347,7 +348,7 @@ public class IBOLookup implements Singleton
 					if (endIndex != -1)
 					{
 						String interfaceClassName = className.substring(0, endIndex);
-						interfaceClass = Class.forName(interfaceClassName);
+						interfaceClass = RefactorClassRegistry.forName(interfaceClassName);
 						
 						getBeanClassesMap().put(interfaceClass, entityBeanOrInterfaceClass);
 						getInterfaceClassesMap().put(entityBeanOrInterfaceClass, interfaceClass);

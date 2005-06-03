@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.127 2005/05/10 22:12:54 gimmi Exp $
+ * $Id: DatastoreInterface.java,v 1.128 2005/06/03 15:18:29 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 import javax.transaction.TransactionManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.MutableClass;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.util.Gender;
 import com.idega.util.IWTimestamp;
@@ -115,7 +116,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		theReturn = (DatastoreInterface) getDatastoreInterfaceManager().getInterfacesMap().get(className);
 		if (theReturn == null) {
 			try {
-				theReturn = (DatastoreInterface) Class.forName(className).newInstance();
+				theReturn = (DatastoreInterface) RefactorClassRegistry.forName(className).newInstance();
 				getDatastoreInterfaceManager().getInterfacesMap().put(className, theReturn);
 			}
 			catch (Exception ex) {
