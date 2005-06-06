@@ -693,6 +693,9 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
    * @return a collection of groups
    */
   public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
+      return getChildGroupsRecursiveResultFiltered(groupId, groupTypesAsString, onlyReturnTypesInCollection, false);
+  }
+  public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases) {
     Group group = null;
     try{
       group = this.getGroupByGroupID(groupId);
@@ -711,9 +714,12 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
       ex.printStackTrace(System.err);
       throw new RuntimeException("[GroupBusiness]: Can't retrieve group.");
     }
-    return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection);
+    return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection, includeAliases);
   }
     
+  public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
+      return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection, false);
+  }
     
   /** Returns all the groups that are direct and indirect children of the specified group.
    *  If the grouptype collection is not null and none empty the returned groups are filtered to only include or exclude those grouptypes
@@ -726,11 +732,11 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
    * that are contained in the collection groupTypesAsString else false to exclude those group types
    * @return a collection of groups
    */
-  public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
+  public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases) {
     // author: Thomas
     Collection alreadyCheckedGroups = new ArrayList();
     Collection result = new ArrayList();
-    getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection);
+    getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases);
     return result;
   }
   
@@ -759,6 +765,16 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
       Collection result, 
       Collection groupTypesAsString,
       boolean onlyReturnTypesInCollection)  {
+        getChildGroupsRecursive(currentGroup,alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, false);    
+  }
+
+  private void getChildGroupsRecursive
+    ( Group currentGroup, 
+      Collection alreadyCheckedGroups, 
+      Collection result, 
+      Collection groupTypesAsString,
+      boolean onlyReturnTypesInCollection,
+      boolean includeAliases)  {
   	
     Integer currentPrimaryKey = (Integer) currentGroup.getPrimaryKey();
     if (alreadyCheckedGroups.contains(currentPrimaryKey)) {
@@ -781,7 +797,15 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
     Iterator childrenIterator = children.iterator();
     while (childrenIterator.hasNext())  {
       Group child = (Group) childrenIterator.next();
-      getChildGroupsRecursive(child, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection);
+      if (includeAliases) {
+          if (child.isAlias()) {
+              if (child.getAlias() != null){ 
+	              alreadyCheckedGroups.add((Integer)child.getPrimaryKey());
+	              child = child.getAlias();
+	          }
+          }
+      }
+      getChildGroupsRecursive(child, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases);
     }
   }
 
@@ -2503,10 +2527,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/06/03 15:18:29 $ by $Author: thomas $
+	 *  Last modified: $Date: 2005/06/06 09:09:26 $ by $Author: sigtryggur $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.97 $
+	 * @version $Revision: 1.98 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

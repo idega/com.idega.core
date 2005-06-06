@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusiness.java,v 1.53 2005/06/02 09:51:24 sigtryggur Exp $
+ * $Id: GroupBusiness.java,v 1.54 2005/06/06 09:09:26 sigtryggur Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -50,10 +50,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2005/06/02 09:51:24 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2005/06/06 09:09:26 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.53 $
+ * @version $Revision: 1.54 $
  */
 public interface GroupBusiness extends IBOService, IWLDAPConstants {
 
@@ -220,6 +220,12 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	 */
 	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString,
 			boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursiveResultFiltered
+	 */
+	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString,
+			boolean onlyReturnTypesInCollection, boolean includeAliases) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersFromGroupRecursive
