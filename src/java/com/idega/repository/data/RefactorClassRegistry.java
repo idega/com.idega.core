@@ -26,7 +26,7 @@ public class RefactorClassRegistry implements Singleton {
 	protected RefactorClassRegistry(){
 		// default constructor
 	}
-
+	
 	public static Class forName(String className) throws ClassNotFoundException {
 		// first try to find the class
 		try {
@@ -36,6 +36,17 @@ public class RefactorClassRegistry implements Singleton {
 			return RefactorClassRegistry.getInstance().findClass(className, ex);
 		}
 	}
+	
+	public static Class forName(String className, boolean initialize, ClassLoader classLoader) throws ClassNotFoundException {
+		// first try to find the class
+		try {
+			return Class.forName(className, initialize, classLoader);
+		}
+		catch (ClassNotFoundException ex) {
+			return RefactorClassRegistry.getInstance().findClass(className, ex);
+		}
+	}
+
 	
 	public static RefactorClassRegistry getInstance(){
 		return (RefactorClassRegistry) SingletonRepository.getRepository().getInstance(RefactorClassRegistry.class, instantiator);      
@@ -132,7 +143,7 @@ public class RefactorClassRegistry implements Singleton {
 		}
 		catch (ClassNotFoundException refactoredClassNotFoundEx) {
 			// that is really bad luck (and strange)
-			throw new ClassNotFoundException("[RefactoredClassName] Refactored class ( "+ refactoredClassName+" ) was not found. Original class name: "+className, classNotFoundEx);
+			throw new ClassNotFoundException("[RefactorClassRegistry] Refactored class ( "+ refactoredClassName+" ) was not found. Original class name: "+className, classNotFoundEx);
 		}
 	}
 }
