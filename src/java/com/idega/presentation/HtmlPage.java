@@ -149,7 +149,7 @@ public class HtmlPage extends Page {
 	
 	public void setRegion(String regionKey,UIComponent region){
 		if(regionAsFacet){
-			Object previous = getFacets().get(regionKey);
+			/*Object previous = */getFacets().get(regionKey);
 			if(regionKey!=null){
 				getFacets().put(regionKey,region);
 			}

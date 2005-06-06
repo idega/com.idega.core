@@ -499,7 +499,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	
 	public Collection ejbFindGroupsByNameAndGroupTypes(String name, Collection groupTypes, boolean onlyReturnTypesInCollection) throws FinderException {
-		String groupTypeValue = null;
+		//String groupTypeValue = null;
 		String notString = null;
 		IDOQuery query = idoQuery();
 		query.append("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "' and "+ this.getGroupTypeColumnName());
