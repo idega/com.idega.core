@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.LogManager;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -457,7 +459,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICMimeType","com.idega.core.file.data.ICMimeType");
 
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICCategory","com.idega.core.category.data.ICCategory");
-		rfregistry.registerRefactoredClass("com.idega.core.data.ICCategoryBMPBean","com.idega.core.category.data.ICCategoryBMPBean");
+		rfregistry.registerRefactoredClass("com.idega.core.data.ICCategoryBMPBean","com.idega.block.category.data.ICCategoryBMPBean");
+		rfregistry.registerRefactoredClass("com.idega.core.category.data.ICCategoryBMPBean","com.idega.block.category.data.ICCategoryBMPBean");
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICCategoryICObjectInstance","com.idega.core.category.data.ICCategoryICObjectInstance");
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICCategoryTranslation","com.idega.core.category.data.ICCategoryTranslation");
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICInformationCategory","com.idega.core.category.data.ICInformationCategory");
@@ -624,6 +627,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		// get the current classloader (it is the same that is used for "Class.forName()" )
 		ClassLoader currentClassLoader = getClass().getClassLoader();
 		try {
+			SortedSet classNames = new TreeSet();
 			Collection allICObjects = home.findAll();
 			Iterator iterator = allICObjects.iterator();
 			while (iterator.hasNext()) {
@@ -631,14 +635,20 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 				String className = object.getClassName();
 				try {
 					// delay initialization, we are not using the class here
-					Class.forName(className, false, currentClassLoader);
+					RefactorClassRegistry.forName(className, false, currentClassLoader);
 				}
 				catch (ClassNotFoundException ex) {
 					// bad luck
-					sendStartMessage("[IWMainApplicationStarter] WARNING: Class " + className+" could not be found but is referenced as ICObject");
+					classNames.add(className);
 					// go ahead
 				}
 			}
+			Iterator classNameIterator = classNames.iterator();
+			while (classNameIterator.hasNext()) {
+				String className = (String) classNameIterator.next();
+				sendStartMessage("[IWMainApplicationStarter] WARNING: Class " + className+" could not be found but is referenced as ICObject");
+			}
+			
 		}
 		catch (FinderException ex) {
 			sendStartMessage("[IWMainApplicationStarter] Could not find any ICObjects");
