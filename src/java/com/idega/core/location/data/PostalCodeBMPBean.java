@@ -337,7 +337,6 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		}
 		
 		query.addOrder(postal, COLUMN_POSTAL_CODE, true);
-		System.out.println(query.toString());
 		return this.idoFindPKsByQuery(query);
 		
 //		IDOQuery query = this.idoQuery();
