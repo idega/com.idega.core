@@ -43,6 +43,8 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
       addAttribute(getColumnIPAddress(),"IP address",true,true,String.class,16);
       addManyToOneRelationship(getColumnLoginAsUser(),User.class);
       setNullable(getColumnLoginAsUser(),true);
+
+      addIndex("IDX_LOGIN_REC_1", getColumnLoginId());
     }
 
     public String getEntityName(){
