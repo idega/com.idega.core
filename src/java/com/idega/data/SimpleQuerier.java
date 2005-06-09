@@ -100,6 +100,56 @@ public class SimpleQuerier {
         }
         return theReturn;
     }
+    
+    /**
+     * Gets and returns the first int in the resultset from column 'columnInResultSet'
+     * @param sqlQuery
+     * @param columnInResultSet
+     * @param conn
+     * @return
+     * @throws Exception
+     */
+    public static int executeIntQuery(String sqlQuery, String columnInResultSet) throws Exception {
+	    Connection conn= null;
+	    try {
+	        conn= getConnection();
+	        return executeIntQuery(sqlQuery,columnInResultSet,conn);
+	    }
+	    finally {
+	        if (conn != null) {
+	            freeConnection(conn);
+	        }
+	    }
+    }
+    
+    /**
+     * Gets and returns the first int in the resultset from column 'columnInResultSet'
+     * @param sqlQuery
+     * @param columnInResultSet
+     * @param conn
+     * @return
+     * @throws Exception
+     */
+    public static int executeIntQuery(String sqlQuery, String columnInResultSet, Connection conn) throws Exception {
+        Statement Stmt= null;
+        int theReturn= -1;
+        try {
+            Stmt= conn.createStatement();
+            ResultSet RS= Stmt.executeQuery(sqlQuery);
+            if (RS.next()) {
+                theReturn= RS.getInt(columnInResultSet);
+            }
+            RS.close();
+        }
+        finally {
+            if (Stmt != null) {
+                Stmt.close();
+            }
+        }
+        return theReturn;
+    }
+
+    
     public static int executeIntQuery(String sqlQuery, Connection conn) throws Exception {
         Statement Stmt= null;
         int theReturn= -1;
@@ -120,7 +170,16 @@ public class SimpleQuerier {
     }
     
     public static int executeIntQuery(String sqlQuery) throws Exception{
-    	return executeIntQuery(sqlQuery,getConnection());
+        Connection conn= null;
+        try {
+            conn= getConnection();
+            return executeIntQuery(sqlQuery,conn);
+        }
+        finally {
+            if (conn != null) {
+                freeConnection(conn);
+            }
+        }
     }
     /**
      * @deprecated Replaced with idoExecuteTableUpdate/idoExecuteGlobalUpdate in GenericEntity or executeUpdate()

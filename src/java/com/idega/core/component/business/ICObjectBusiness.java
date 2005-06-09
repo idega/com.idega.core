@@ -1,15 +1,20 @@
 package com.idega.core.component.business;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.data.EntityFinder;
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOContainer;
 import com.idega.data.IDOCreateException;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOFinderException;
+import com.idega.data.IDOHome;
 import com.idega.data.IDOLegacyEntity;
+import com.idega.data.IDOLookup;
+import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.PresentationObject;
@@ -293,35 +298,53 @@ public class ICObjectBusiness implements Singleton {
    * Catches the error if there is any and returns the number -2
    * @todo cache somehow
    */
-  public int getRelatedEntityId(ICObjectInstance icObjectInstance, Class entityToGetIdFrom){
+  public int getRelatedEntityId(ICObjectInstance icObjectInstance, Class entityToGetIdFromClass){
     try {
-      List L = EntityFinder.getInstance().findRelated(icObjectInstance,entityToGetIdFrom);
+      
+      IDOEntity entityToGetIdFrom = GenericEntity.getStaticInstanceIDO(entityToGetIdFromClass);
+      String columnName = entityToGetIdFrom.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
+      String SQLQuery = EntityFinder.getInstance().getFindRelatedSQLQuery(icObjectInstance,entityToGetIdFromClass);
+      int theReturn = SimpleQuerier.executeIntQuery(SQLQuery,columnName);
+      return theReturn;
+      /*  
+      List L = EntityFinder.getInstance().findRelated(icObjectInstance,entityToGetIdFromClass);
       if(!L.isEmpty()){
         return ((IDOLegacyEntity) L.get(0)).getID();
       }
       else
         return -1;
-    }
-    catch (IDOFinderException ex) {
-      //ex.printStackTrace();
-      return -2;
+       */
+    } catch (Exception e) {
+        return -2;
     }
   }
 
   /**
    * Returns the related object's id relative to the objectinstance we have
-   * Catches the error if there is any and returns the number -2
+   * Catches the error if there is any and returns null if there was an error
    * @todo cache somehow
    */
-  public IDOLegacyEntity getRelatedEntity(ICObjectInstance icObjectInstance, Class entityToGetIdFrom) throws IDOFinderException{
-      List L = EntityFinder.getInstance().findRelated(icObjectInstance,entityToGetIdFrom);
+  public IDOLegacyEntity getRelatedEntity(ICObjectInstance icObjectInstance, Class entityToGetIdFromClass) throws IDOFinderException{
+      /*List L = EntityFinder.getInstance().findRelated(icObjectInstance,entityToGetIdFrom);
       if(!L.isEmpty()){
         return (IDOLegacyEntity) L.get(0);
       }
       else{
         throw new IDOFinderException("Nothing found for ICObjectInstance with id="+icObjectInstance.getID()+" and "+entityToGetIdFrom.getName());
+      }*/
+      int id = getRelatedEntityId(icObjectInstance,entityToGetIdFromClass);
+      IDOHome entityToGetIdFromHome;
+	    try {
+	        entityToGetIdFromHome = IDOLookup.getHome(entityToGetIdFromClass);
+	        Integer pk = new Integer(id);
+	        return (IDOLegacyEntity) IDOContainer.getInstance().findByPrimaryKey(entityToGetIdFromClass,pk,entityToGetIdFromHome);
+	       
+	    } catch (Exception e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	    }
+	    return null;
       }
-  }
 
 
 

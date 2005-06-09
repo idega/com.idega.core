@@ -933,9 +933,36 @@ public class EntityFinder implements Singleton {
 			return null;
 		}
 	}
+	
+	/**
+	 * Returns an sql query like: 'select * from PO_POLL_IC_OBJECT_INSTANCE where IC_OBJECT_INSTANCE_ID=3565'
+	 * @param fromEntity
+	 * @param returningEntityClass
+	 * @return
+	 */
+	public String getFindRelatedSQLQuery(IDOEntity fromEntity,Class returningEntityClass){
+	    IDOEntity returningEntityInstance = GenericEntity.getStaticInstanceIDO(returningEntityClass);
+		String tableToSelectFrom = EntityControl.getNameOfMiddleTable(returningEntityInstance, fromEntity);
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("select * from ");
+		buffer.append(tableToSelectFrom);
+		buffer.append(" where ");
+		try {
+            buffer.append(fromEntity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
+        } catch (IDOCompositePrimaryKeyException e) {
+           System.err.println("Primary Key is composite for :"+fromEntity.getClass().toString());
+           e.printStackTrace();
+        }
+		buffer.append("=");
+		buffer.append(GenericEntity.getKeyValueSQLString(fromEntity.getPrimaryKey()));
+		//buffer.append(" order by ");
+		//buffer.append(fromEntity.getIDColumnName());
+		String SQLString = buffer.toString();
+		return SQLString;
+	}
 
 	public static List findRelated(IDOLegacyEntity fromEntity, IDOLegacyEntity returningEntity) throws SQLException {
-		String tableToSelectFrom = EntityControl.getNameOfMiddleTable(returningEntity, fromEntity);
+		/*String tableToSelectFrom = EntityControl.getNameOfMiddleTable(returningEntity, fromEntity);
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("select * from ");
 		buffer.append(tableToSelectFrom);
@@ -948,7 +975,8 @@ public class EntityFinder implements Singleton {
 		String SQLString = buffer.toString();
 		//String SQLString="select * from "+tableToSelectFrom+" where
 		// "+fromEntity.getIDColumnName()+"="+GenericEntity.getKeyValueSQLString(fromEntity.getPrimaryKeyValue());
-		//System.out.println("FindRelated SQLString="+SQLString+"crap");
+		//System.out.println("FindRelated SQLString="+SQLString+"crap");*/
+	    String SQLString = getInstance().getFindRelatedSQLQuery(fromEntity,returningEntity.getClass());
 		return findRelated(fromEntity, returningEntity, SQLString);
 	}
 
