@@ -811,6 +811,34 @@ public class EntityFinder implements Singleton {
 				+ "'");
 	}
 
+	public static List findAllByColumnUsingEquals(
+			IDOLegacyEntity fromEntity,
+			String columnName1,
+			String toFind1,
+			String columnName2,
+			String toFind2,
+			String columnName3,
+			String toFind3)
+			throws SQLException {
+			return findAll(
+				fromEntity,
+				"select * from "
+					+ fromEntity.getTableName()
+					+ " where "
+					+ columnName1
+					+ " = '"
+					+ toFind1
+					+ "' and "
+					+ columnName2
+					+ " = '"
+					+ toFind2
+					+ "' and "
+					+ columnName3
+					+ " = '"
+					+ toFind3
+					+ "'");
+		}
+
 	/**
 	 * Finds all instances of the entityClass where columnName1==toFind1 and
 	 * columnName2==toFind2, and columnName3==toFind3 returns empty List if no

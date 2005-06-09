@@ -1,5 +1,5 @@
 /*
- * $Id: PermissionCacher.java,v 1.29 2005/05/31 11:38:15 eiki Exp $ Created
+ * $Id: PermissionCacher.java,v 1.30 2005/06/09 16:59:12 sigtryggur Exp $ Created
  * in 2001
  * 
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -28,12 +28,12 @@ import com.idega.user.data.Group;
  * AccessControl.
  * </p>
  * 
- * Last modified: $Date: 2005/05/31 11:38:15 $ by $Author: eiki $
+ * Last modified: $Date: 2005/06/09 16:59:12 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 class PermissionCacher {
 
@@ -478,7 +478,7 @@ class PermissionCacher {
 		List permissions = null;
 		if (identifier != null) {
 			if (permissionMapKey.equals(PERMISSION_MAP_OBJECT_INSTANCE)) {
-				permissions = EntityFinder.findAllByColumn(
+				permissions = EntityFinder.findAllByColumnUsingEquals(
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),
 						AccessController.CATEGORY_STRING_OBJECT_INSTANCE_ID,
@@ -487,7 +487,7 @@ class PermissionCacher {
 						permissionKey);
 			}
 			else if (permissionMapKey.equals(PERMISSION_MAP_OBJECT)) {
-				permissions = EntityFinder.findAllByColumn(
+				permissions = EntityFinder.findAllByColumnUsingEquals(
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),
 						AccessController.CATEGORY_STRING_IC_OBJECT_ID,
@@ -505,7 +505,7 @@ class PermissionCacher {
 						permissionKey);
 			}
 			else if (permissionMapKey.equals(PERMISSION_MAP_PAGE_INSTANCE)) {
-				permissions = EntityFinder.findAllByColumn(
+				permissions = EntityFinder.findAllByColumnUsingEquals(
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),
 						AccessController.CATEGORY_STRING_PAGE_ID,
