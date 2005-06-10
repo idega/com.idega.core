@@ -127,6 +127,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		addIndex("IDX_IC_GROUP_3", COLUMN_GROUP_ID);
 		addIndex("IDX_IC_GROUP_4", COLUMN_GROUP_TYPE);
 		addIndex("IDX_IC_GROUP_5", new String[]{ COLUMN_GROUP_ID, COLUMN_GROUP_TYPE});
+		addIndex("IDX_IC_GROUP_6", COLUMN_HOME_PAGE_ID);
 	}
 
 	public final String getEntityName() {
