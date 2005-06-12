@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.Collator;
 import java.util.ArrayList;
@@ -831,6 +832,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	public Timestamp getTimestampColumnValue(String columnName) {
 		return (Timestamp)getValue(columnName);
+	}
+	public Time getTimeColumnValue(String columnName) {
+		return (Time)getValue(columnName);
 	}
 	public void setLongName(String columnName, String longName) {
 		getColumn(columnName).setLongName(longName);
