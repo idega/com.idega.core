@@ -2141,6 +2141,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	public IDOLegacyEntity[] findAllByColumnEquals(String columnName1, String toFind1, String columnName2, String toFind2, String columnName3, String toFind3) throws SQLException {
+		return findAll("select * from " + getEntityName() + " where " + columnName1 + " = '" + toFind1 + "' and " + columnName2 + " = '" + toFind2 + "' and " + columnName3 + " = '" + toFind3 + "'");
+	}
+	/**
+	 * @deprecated
+	 */
 	public IDOLegacyEntity[] findAllByColumn(String columnName1, String toFind1, String columnName2, String toFind2) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " like '" + toFind1 + "' and " + columnName2 + " like '" + toFind2 + "'");
 	}

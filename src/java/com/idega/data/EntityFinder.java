@@ -648,6 +648,10 @@ public class EntityFinder implements Singleton {
 		return findAll(fromEntity, "select * from " + fromEntity.getTableName() + " where " + columnName + " like '" + toFind + "'");
 	}
 
+	public static List findAllByColumnEquals(IDOLegacyEntity fromEntity, String columnName, String toFind) throws SQLException {
+		return findAll(fromEntity, "select * from " + fromEntity.getTableName() + " where " + columnName + " = '" + toFind + "'");
+	}
+
 	/**
 	 * Finds all instances of the entityClass where columnName==toFind, returns
 	 * empty List if no match
@@ -702,6 +706,25 @@ public class EntityFinder implements Singleton {
 				+ "' and "
 				+ columnName2
 				+ " like '"
+				+ toFind2
+				+ "'");
+	}
+	public static List findAllByColumnEquals(IDOLegacyEntity fromEntity, String columnName1, String toFind1, String columnName2, String toFind2)
+		throws SQLException {
+		//System.out.println("select * from "+fromEntity.getTableName()+"
+		// where "+columnName1+" like '"+toFind1+"' and "+columnName2+" like
+		// '"+toFind2+"'");
+		return findAll(
+			fromEntity,
+			"select * from "
+				+ fromEntity.getTableName()
+				+ " where "
+				+ columnName1
+				+ " = '"
+				+ toFind1
+				+ "' and "
+				+ columnName2
+				+ " = '"
 				+ toFind2
 				+ "'");
 	}
@@ -811,7 +834,7 @@ public class EntityFinder implements Singleton {
 				+ "'");
 	}
 
-	public static List findAllByColumnUsingEquals(
+	public static List findAllByColumnEquals(
 			IDOLegacyEntity fromEntity,
 			String columnName1,
 			String toFind1,
