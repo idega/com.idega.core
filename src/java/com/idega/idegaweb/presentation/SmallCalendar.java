@@ -725,13 +725,18 @@ public class SmallCalendar extends Block {
 			++startingY;
 		}
 
-		int daynr = cal.getDayOfWeek(year, month, 1) - cal.getCalendar().getFirstDayOfWeek();
+		int dayOfWeek = cal.getDayOfWeek(year, month, 1);
+		int firstDayOfWeek = cal.getCalendar().getFirstDayOfWeek();
+		int daynr = dayOfWeek - firstDayOfWeek;
 		
 		int x = (daynr + day) % 7;
 		int y = ((daynr + day) / 7) + 1;
 		if (x == 0) {
 			x = 7;
 			--y;
+		}
+		if (dayOfWeek == cal.getCalendar().SUNDAY && firstDayOfWeek != cal.getCalendar().SUNDAY) {
+			y++;
 		}
 
 		y += (startingY - 1);
