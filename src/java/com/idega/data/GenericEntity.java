@@ -144,7 +144,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 			//First store a static instance of this class
 			try {
-				getIDOContainer().getEntityStaticInstances().put(this.getClass(), this.instanciateEntity(this.getClass()));
+				getIDOContainer().getEntityStaticInstances().put(this.getClass(), this.instanciateEntity(this.getClass(), getDatasource()));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -503,7 +503,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		try {
 			returnArr = (IDOLegacyEntity[])java.lang.reflect.Array.newInstance(this.getClass(), id_array.length);
 			for (int i = 0; i < id_array.length; i++) {
-				returnArr[i] = (IDOLegacyEntity)instanciateEntity(this.getClass());
+				returnArr[i] = (IDOLegacyEntity)instanciateEntity(this.getClass(), getDatasource());
 				returnArr[i].findByPrimaryKey(Integer.parseInt(id_array[i]));
 			}
 		} catch (Exception ex) {
@@ -722,12 +722,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				//returnObj = this.findByPrimaryInOtherClass(getRelationShipClass(columnName),((Integer)value).intValue());
 				if (value != null) {
 					IDOHome home = (IDOHome)IDOLookup.getHome(relationClass);
-					String oldDS = home.getDatasource();
 					if (this.getDatasource() != null) {
-						home.setDatasource(this.getDatasource(), false);
+						home = (IDOHome)IDOLookup.getHome(relationClass, getDatasource());
 					}
 					returnObj = home.findByPrimaryKeyIDO(value);
-					home.setDatasource(oldDS, false);
 				}
 			} catch (Exception ex) {
 				System.err.println("Exception in com.idega.data.GenericEntity.getColumnValue(String columnName): of type+ " + ex.getClass().getName() + " , Message = " + ex.getMessage());
@@ -2977,22 +2975,26 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		//			}
 		//		}
 		//		return theReturn;
-		return (IDOLegacyEntity)getStaticInstanceIDO(entityClass);
+		return (IDOLegacyEntity)getStaticInstanceIDO(entityClass, GenericEntity.DEFAULT_DATASOURCE);
 	}
-
+	
 	public static IDOEntity getStaticInstanceIDO(Class entityClass) {
+		return GenericEntity.getStaticInstanceIDO(entityClass, GenericEntity.DEFAULT_DATASOURCE);
+	}
+	
+	public static IDOEntity getStaticInstanceIDO(Class entityClass, String datasource) {
 		//return getStaticInstance(entityClass.getName());
 		if (entityClass.isInterface()) {
 			return getStaticInstanceIDO(IDOLookup.getBeanClassFor(entityClass));
 		}
 
 
-		IDOEntity theReturn = (IDOEntity)getIDOContainer().getEntityStaticInstances().get(entityClass);
+		IDOEntity theReturn = (IDOEntity)getIDOContainer().getEntityStaticInstances().get(entityClass+datasource);
 
 		if (theReturn == null) {
 			try {
 
-				theReturn = instanciateEntity(entityClass);
+				theReturn = instanciateEntity(entityClass, datasource);
 				// it might be that the method instanciateEntity(Class) has just put an
 				// initialized instance of the specified entityClass into 
 				// the _allStaticInstances map.
@@ -3002,7 +3004,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				if (correctInstance != null) {
 					theReturn = correctInstance;
 				} else {
-					getIDOContainer().getEntityStaticInstances().put(entityClass, theReturn);
+					getIDOContainer().getEntityStaticInstances().put(entityClass+datasource, theReturn);
 				}
 
 			} catch (Exception ex) {
@@ -3651,15 +3653,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		this._primaryKey = pk;
 	}
 
-	private static GenericEntity instanciateEntity(Class entityInterfaceOrBeanClass) {
+	private static GenericEntity instanciateEntity(Class entityInterfaceOrBeanClass, String datasource) {
 		try {
 			//return IDOLookup.createLegacy(entityInterfaceOrBeanClass);
-			return (GenericEntity)IDOLookup.instanciateEntity(entityInterfaceOrBeanClass);
+			return (GenericEntity)IDOLookup.instanciateEntity(entityInterfaceOrBeanClass, datasource);
 		} catch (Exception e1) {
 			//Only for legacy beans;
 			e1.printStackTrace();
 			try {
-				return (GenericEntity)entityInterfaceOrBeanClass.newInstance();
+				GenericEntity ent =(GenericEntity)entityInterfaceOrBeanClass.newInstance();
+				ent.setDatasource(datasource);
+				return ent;
 			} catch (Exception e2) {
 				e2.printStackTrace();
 				throw new RuntimeException(e1.getMessage());
