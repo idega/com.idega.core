@@ -31,6 +31,8 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
     addAttribute(COLUMN_META_KEY,"The key name",true,true, String.class,255);
     addAttribute(COLUMN_META_VALUE,"The key's value",true,true, String.class,2000);
 		addAttribute(COLUMN_META_TYPE,"The value's type",true,true, String.class,255);
+
+	addIndex("IDX_IC_METADATA_1", new String[]{ COLUMN_META_KEY, COLUMN_META_VALUE });
   }
 
   public String getEntityName() {
