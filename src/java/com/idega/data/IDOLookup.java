@@ -48,17 +48,37 @@ public class IDOLookup extends IBOLookup implements Singleton {
   }
 
 
-
   /**
    * Gets an instance of the implementation of the Home interface for the data bean.
    * <br>The object retured can then needs to be casted to the specific home interface for the bean.
    * @param entityInterfaceClass i the interface of the data bean.
    */
   public static IDOHome getHome(Class entityInterfaceClass)throws IDOLookupException{
+	 return IDOLookup.getHome(entityInterfaceClass, GenericEntity.DEFAULT_DATASOURCE); 
+  }
+  /**
+   * Gets an instance of the implementation of the Home interface for the data bean.
+   * <br>The object retured can then needs to be casted to the specific home interface for the bean.
+   * @param entityInterfaceClass i the interface of the data bean.
+   */
+  public static IDOHome getHome(Class entityInterfaceClass, String datasource)throws IDOLookupException{
 		IDOHome home = null;
 		
-    try {
-			home = (IDOHome)getIDOLookupInstance().getEJBHomeInstance(entityInterfaceClass);
+		try {
+			Class interf = entityInterfaceClass;
+			if (!entityInterfaceClass.isInterface()) {
+				interf = getInterfaceClassFor(entityInterfaceClass);
+			}
+			if (datasource != null && !datasource.equals(GenericEntity.DEFAULT_DATASOURCE)) {
+//				System.out.println("[IDOLookup] getting home for class \""+interf.getName()+"\" for datasource = "+datasource);
+				home = (IDOHome)IDOLookup.getIDOLookupInstance().homesMapLookup(interf, datasource);
+				if (home == null) {
+					home = (IDOHome)IDOLookup.getIDOLookupInstance().getEJBHomeInstance(interf, datasource);
+					home.setDatasource(datasource, false);
+				}
+			} else {
+				home = (IDOHome)IDOLookup.getIDOLookupInstance().getEJBHomeInstance(interf);
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -199,17 +219,27 @@ public class IDOLookup extends IBOLookup implements Singleton {
   }
 
   /**
-   * Sould only be used for LegacyEntities
+   * Calls IDOLookup.instanciateEntity(Class entityBeanOrInterfaceClass, String datasource) with
+   * the defailt datasource
+   * @param entityBeanOrInterfaceClass
+   * @return
    */
   public static IDOEntity instanciateEntity(Class entityBeanOrInterfaceClass){
+	return IDOLookup.instanciateEntity(entityBeanOrInterfaceClass, GenericEntity.DEFAULT_DATASOURCE);  
+  }
+  /**
+   * Sould only be used for LegacyEntities
+   */
+  public static IDOEntity instanciateEntity(Class entityBeanOrInterfaceClass, String datasource){
     try{
       Class beanClass = entityBeanOrInterfaceClass;
       if(beanClass.isInterface()){
         beanClass = getBeanClassFor(entityBeanOrInterfaceClass);
       }
       IDOEntity instance = (IDOEntity)beanClass.newInstance();
+      instance.setDatasource(datasource);
       try{
-      ((IDOEntityBean)instance).setEJBLocalHome(getHome(entityBeanOrInterfaceClass));
+      ((IDOEntityBean)instance).setEJBLocalHome(getHome(entityBeanOrInterfaceClass, datasource));
       }
       catch(Exception e){
       	//do nothing
