@@ -244,17 +244,33 @@ public class IBOLookup implements Singleton
 	{
 		return "IBO." + interfaceClass.getName();
 	}
+
 	/**
 	 * Gets an instance of the implementation of the Home interface for the data bean.
 	 * <br>The object retured can then needs to be casted to the specific home interface for the bean.
 	 * @param entityInterfaceClass i the interface of the data bean.
 	 */
 	protected Object getEJBHomeInstance(Class entityBeanOrInterfaceClass){
+		return getEJBHomeInstance(entityBeanOrInterfaceClass, null);
+	}
+
+	protected Object homesMapLookup(Class entityInterfaceClass, String parameter) {
+		return getHomesMap().get(entityInterfaceClass+parameter);
+	}
+	
+	/**
+	 * Gets an instance of the implementation of the Home interface for the data bean.
+	 * <br>The object retured can then needs to be casted to the specific home interface for the bean.
+	 * @param entityInterfaceClass i the interface of the data bean.
+	 * @param parameter is a parameter used to separete different instances of the same Home class
+	 */
+	protected Object getEJBHomeInstance(Class entityBeanOrInterfaceClass, String parameter){
 		//Double check so it is not the bean class that is sent into the methods below
 		Class entityInterfaceClass = getInterfaceClassForNonStatic(entityBeanOrInterfaceClass);
 			
 		//EJBHome home = (EJBHome) homes.get(entityInterfaceClass);
-		Object home = getHomesMap().get(entityInterfaceClass);
+//		Object home = getHomesMap().get(entityInterfaceClass+parameter);
+		Object home = homesMapLookup(entityInterfaceClass, parameter);
 		
 		if (home == null)
 		{
@@ -269,7 +285,7 @@ public class IBOLookup implements Singleton
 					Class factoryClass = getFactoryClassFor(entityInterfaceClass);
 					home = factoryClass.newInstance();
 				}
-				getHomesMap().put(entityInterfaceClass, home);
+				getHomesMap().put(entityInterfaceClass+parameter, home);
 			}
 			catch (Exception e)
 			{
