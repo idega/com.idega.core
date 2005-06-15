@@ -33,4 +33,5 @@ public interface IDOEntity extends javax.ejb.EJBLocalObject, Comparable {
   public Collection decode(String[] pkString);
   
   public String getDatasource();
+  public void setDatasource(String datasource);
 }
