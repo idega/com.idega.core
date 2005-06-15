@@ -131,7 +131,7 @@ public class EntityFinder implements Singleton {
 		try {
 			IDOFactory factory = (IDOFactory) IDOLookup.getHome(entityInterfaceClass);
 			if (datasource != null) {
-				factory.setDatasource(datasource, false);
+				factory = (IDOFactory) IDOLookup.getHome(entityInterfaceClass, datasource);
 			}
 			GenericEntity entityInstance = (GenericEntity) factory.idoCheckOutPooledEntity();
 			Collection pks = entityInstance.idoFindIDsBySQL(SQLString, returningNumberOfRecords);
