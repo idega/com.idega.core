@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.148 2005/06/15 16:09:43 gummi Exp $
+ * $Id: Link.java,v 1.149 2005/06/16 14:23:08 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1315,18 +1315,11 @@ public class Link extends Text {
 		Link linkObj = null;
 		try {
 			linkObj = (Link) super.clone();
-
-			if (getPresentationObject() != null) {
-				linkObj.setPresentationObject((PresentationObject) getPresentationObject().clone());
+			
+			if(linkObj.getPresentationObject() != null){
+				getPresentationObject().setParentObject(linkObj);
 			}
-			if (getFacetWindow() != null) {
-				linkObj.setFacetWindow((Window) getFacetWindow().clone());
-			}
-
-			if (getFacetFormToSubmit() != null) {
-				linkObj.setFacetFormToSubmit((Form) getFacetFormToSubmit().clone());
-			}
-
+			
 			if (_windowClass != null) {
 				linkObj._windowClass = _windowClass;
 			}

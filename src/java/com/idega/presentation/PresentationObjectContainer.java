@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.46 2005/02/10 10:42:47 thomas Exp $
+ * $Id: PresentationObjectContainer.java,v 1.47 2005/06/16 14:23:08 gummi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -28,10 +28,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2005/02/10 10:42:47 $ by $Author: thomas $
+ * Last modified: $Date: 2005/06/16 14:23:08 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.46 $
+ * @version $Revision: 1.47 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -655,7 +655,7 @@ public class PresentationObjectContainer extends PresentationObject
 					}
 					obj.setChildren(clonedChildren);
 				*/
-			cloneJSFChildrenAndFacets(obj,iwc,askForPermission);
+			cloneJSFChildren(obj,iwc,askForPermission);
 
 				//}
 			//}
@@ -668,13 +668,6 @@ public class PresentationObjectContainer extends PresentationObject
 		return obj;
 	}
 	
-	private void cloneJSFChildrenAndFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
-		//Cloning the JSF Facets:
-		cloneJSFChildren(obj,iwc,askForPermission);
-		cloneJSFFacets(obj,iwc,askForPermission);
-		//TODO: move the cloning of this to PresentationObject. Now it is inside PresentationObjectContainer
-		
-	}
 
 	protected void cloneJSFChildren(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
 		//Cloning the JSF children:
@@ -699,26 +692,6 @@ public class PresentationObjectContainer extends PresentationObject
 					//newObject.setParent(obj);
 				}
 				
-			}
-		}
-	}
-	
-	protected void cloneJSFFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
-		//First clone the facet Map:
-		if(this.facetMap!=null){
-			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
-			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
-			
-			//Iterate over the children to clone each child:
-			for (Iterator iter = getFacets().keySet().iterator(); iter.hasNext();) {
-				String key = (String) iter.next();
-				UIComponent component = getFacet(key);
-				if(component instanceof PresentationObject){
-					PresentationObject newObject = (PresentationObject)((PresentationObject)component).clonePermissionChecked(iwc,askForPermission);
-					newObject.setParentObject(obj);
-					newObject.setLocation(this.getLocation());
-					obj.getFacets().put(key,newObject);
-				}
 			}
 		}
 	}
