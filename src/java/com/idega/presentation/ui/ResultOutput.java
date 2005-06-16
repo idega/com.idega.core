@@ -101,7 +101,7 @@ public class ResultOutput extends GenericInput {
 		
 		this.setDisabled(true);
 		for (int i = 0; i < onChangeVector.size(); i++) {
-			this.setOnChange((String) onChangeVector.get(i));
+			this.setOnKeyUp((String) onChangeVector.get(i));
 		}
 		
 	}
@@ -141,7 +141,7 @@ public class ResultOutput extends GenericInput {
 	public void add(PresentationObject mo, String operatori, String extraText) {
 		if (mo instanceof TextInput) {
 			TextInput temp = (TextInput) mo;
-			temp.setOnChange(functionName + "(this.form)");
+			temp.setOnKeyUp(functionName + "(this.form)");
 			moduleObjects.add(temp);
 			operatorVector.add(operatori);
 			if (extraText == null) { 
@@ -150,7 +150,7 @@ public class ResultOutput extends GenericInput {
 			extraTextVector.add(extraText);
 		} else if (mo instanceof IntegerInput) {
 			IntegerInput temp = (IntegerInput) mo;
-			temp.setOnChange(functionName + "(this.form)");
+			temp.setOnKeyUp(functionName + "(this.form)");
 			moduleObjects.add(temp);
 			operatorVector.add(operatori);
 			if (extraText == null) {
@@ -177,6 +177,7 @@ public class ResultOutput extends GenericInput {
 			extraTextVector.add(extraText);
 		} else if (mo instanceof ResultOutput) {
 			handleAddResultOutput((ResultOutput) mo, operatori);
+			extraTextVector.add(extraText);
 		}
 	}
 	
@@ -185,10 +186,10 @@ public class ResultOutput extends GenericInput {
 		for (int a = 0; a < list.size(); a++) {
 			if (list.get(a) instanceof TextInput) {
 				TextInput text = (TextInput) list.get(a);
-				text.setOnChange(functionName + "(this.form)");
+				text.setOnKeyUp(functionName + "(this.form)");
 			} else if (list.get(a) instanceof IntegerInput) {
 				IntegerInput i = (IntegerInput) list.get(a);
-				i.setOnChange(functionName + "(this.form)");
+				i.setOnKeyUp(functionName + "(this.form)");
 			} else if (list.get(a) instanceof DoubleInput) {
 				DoubleInput f = (DoubleInput) list.get(a);
 				f.setOnChange(functionName + "(this.form)");
