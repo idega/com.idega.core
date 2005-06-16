@@ -37,6 +37,10 @@ public class Label extends InterfaceObject {
 		_label = (String) values[1];
 	}
 	
+	public Label() {
+		super();
+	}
+	
 	public Label(InterfaceObject object) {
 		this("", object);
 	}
