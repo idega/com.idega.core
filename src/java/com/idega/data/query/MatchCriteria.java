@@ -65,14 +65,19 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 
 	public MatchCriteria(Column column, String matchType, String value) {
 		this.column = column;
-		if(NULL==value){
+		this.matchType = matchType;
+		if (value == null) {
+			this.value = value;
+			if (matchType.equals(this.EQUALS)) {
+				this.matchType = IS;
+			}
+		} else if(NULL==value){
 			this.value = value;
 		} else {
 			this.value = quote(value);
 			//if(!matchType.equalsIgnoreCase(LIKE))
 			    this.placeHolderValue = value;
 		}
-		this.matchType = matchType;
 		
 	}
 
