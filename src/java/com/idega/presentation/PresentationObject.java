@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.131 2005/06/16 14:23:08 gummi Exp $
+ * $Id: PresentationObject.java,v 1.132 2005/06/20 12:04:53 gummi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -70,10 +70,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/06/16 14:23:08 $ by $Author: gummi $
+ * Last modified: $Date: 2005/06/20 12:04:53 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.131 $
+ * @version $Revision: 1.132 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -918,8 +918,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			//obj =
 			// (PresentationObject)Class.forName(this.getClassName()).newInstance();
 			obj = (PresentationObject) super.clone();
-			
-			
 			Map markupAttributes = getMarkupAttributes();
 			if (markupAttributes != null)
 			{
@@ -955,9 +953,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			obj._templateObject = null;
 			//obj.defaultState = this.defaultState; //same object, unnecessary
 			// to clone
-			
-			cloneJSFFacets(this);
-			
 		}
 		catch (Exception ex)
 		{
@@ -965,29 +960,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		return obj;
 	}
-	
-	
-	protected void cloneJSFFacets(PresentationObject obj){
-		//First clone the facet Map:
-		if(this.facetMap!=null){
-			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
-			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
-			
-			//Iterate over the facets to clone each facet:
-			for (Iterator iter = getFacets().keySet().iterator(); iter.hasNext();) {
-				String key = (String) iter.next();
-				UIComponent component = getFacet(key);
-				if(component instanceof PresentationObject){
-					PresentationObject newObject = (PresentationObject)((PresentationObject)component).clone();
-					newObject.setParentObject(obj);
-					newObject.setLocation(this.getLocation());
-					obj.getFacets().put(key,newObject);
-				}
-			}
-		}
-	}
-	
-	
 	/*
 	 * protected void initICObjectInstanceId(IWContext iwc){ String sID =
 	 * iwc.getParameter(_PARAMETER_IC_OBJECT_INSTANCE_ID); try { if(sID !=
@@ -2674,5 +2646,28 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		return unEncoded;
 	}
 	
-
+	
+	/**
+	 * Method to use in subclasses if facets should be cloned.  DOES NOT CHECK PERMISSIONS.
+	 * @param obj The clone.
+	 */
+	protected void cloneJSFFacets(PresentationObject obj){
+		//First clone the facet Map:
+		if(this.facetMap!=null){
+			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
+			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
+			
+			//Iterate over the children to clone each child:
+			for (Iterator iter = getFacets().keySet().iterator(); iter.hasNext();) {
+				String key = (String) iter.next();
+				UIComponent component = getFacet(key);
+				if(component instanceof PresentationObject){
+					PresentationObject newObject = (PresentationObject)((PresentationObject)component).clone();
+					newObject.setParentObject(obj);
+					newObject.setLocation(this.getLocation());
+					obj.getFacets().put(key,newObject);
+				}
+			}
+		}
+	}
 }

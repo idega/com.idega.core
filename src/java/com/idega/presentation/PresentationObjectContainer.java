@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.48 2005/06/20 11:15:58 laddi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.49 2005/06/20 12:04:53 gummi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
@@ -27,10 +28,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2005/06/20 11:15:58 $ by $Author: laddi $
+ * Last modified: $Date: 2005/06/20 12:04:53 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.48 $
+ * @version $Revision: 1.49 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -654,7 +655,7 @@ public class PresentationObjectContainer extends PresentationObject
 					}
 					obj.setChildren(clonedChildren);
 				*/
-			cloneJSFChildren(obj,iwc,askForPermission);
+			cloneJSFChildrenAndFacets(obj,iwc,askForPermission);
 
 				//}
 			//}
@@ -667,6 +668,13 @@ public class PresentationObjectContainer extends PresentationObject
 		return obj;
 	}
 	
+	private void cloneJSFChildrenAndFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
+		//Cloning the JSF Facets:
+		cloneJSFChildren(obj,iwc,askForPermission);
+		cloneJSFFacets(obj,iwc,askForPermission);
+		//TODO: move the cloning of this to PresentationObject. Now it is inside PresentationObjectContainer
+		
+	}
 
 	protected void cloneJSFChildren(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
 		//Cloning the JSF children:
@@ -691,6 +699,26 @@ public class PresentationObjectContainer extends PresentationObject
 					//newObject.setParent(obj);
 				}
 				
+			}
+		}
+	}
+	
+	protected void cloneJSFFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
+		//First clone the facet Map:
+		if(this.facetMap!=null){
+			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
+			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
+			
+			//Iterate over the children to clone each child:
+			for (Iterator iter = getFacets().keySet().iterator(); iter.hasNext();) {
+				String key = (String) iter.next();
+				UIComponent component = getFacet(key);
+				if(component instanceof PresentationObject){
+					PresentationObject newObject = (PresentationObject)((PresentationObject)component).clonePermissionChecked(iwc,askForPermission);
+					newObject.setParentObject(obj);
+					newObject.setLocation(this.getLocation());
+					obj.getFacets().put(key,newObject);
+				}
 			}
 		}
 	}

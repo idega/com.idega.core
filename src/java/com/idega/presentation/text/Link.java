@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.150 2005/06/20 11:16:41 laddi Exp $
+ * $Id: Link.java,v 1.151 2005/06/20 12:04:53 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1314,6 +1314,9 @@ public class Link extends Text {
 		Link linkObj = null;
 		try {
 			linkObj = (Link) super.clone();
+			
+			
+			cloneJSFFacets(linkObj);
 			
 			if(linkObj.getPresentationObject() != null){
 				getPresentationObject().setParentObject(linkObj);
