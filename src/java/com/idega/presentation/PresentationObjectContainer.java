@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.47 2005/06/16 14:23:08 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.48 2005/06/20 11:15:58 laddi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
@@ -28,10 +27,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2005/06/16 14:23:08 $ by $Author: gummi $
+ * Last modified: $Date: 2005/06/20 11:15:58 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.47 $
+ * @version $Revision: 1.48 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {

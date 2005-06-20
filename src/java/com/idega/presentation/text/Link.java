@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.149 2005/06/16 14:23:08 gummi Exp $
+ * $Id: Link.java,v 1.150 2005/06/20 11:16:41 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,7 +21,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICDomain;
