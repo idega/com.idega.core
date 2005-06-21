@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.141 2005/06/03 15:18:29 thomas Exp $
+ * $Id: IWMainApplication.java,v 1.142 2005/06/21 14:10:12 gummi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/06/03 15:18:29 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/06/21 14:10:12 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.141 $
+ * @version $Revision: 1.142 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1334,9 +1334,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
     		}
     }
 
-    public String getWindowOpenerURI(Class windowToOpen,
-            int ICObjectInstanceIDToOpen) {
-        return getWindowOpenerURI(windowToOpen) + "&"
+    public String getWindowOpenerURI(Class windowToOpen, int ICObjectInstanceIDToOpen) {
+    		String windowOpenerUri = getWindowOpenerURI(windowToOpen);
+        return windowOpenerUri + ((windowOpenerUri.indexOf('?')<0)?"?":"&")
                 + _PARAMETER_IC_OBJECT_INSTANCE_ID + "="
                 + ICObjectInstanceIDToOpen;
     }
