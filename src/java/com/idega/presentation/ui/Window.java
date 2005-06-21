@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.36 2005/06/03 15:18:30 thomas Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.37 2005/06/21 16:01:51 gummi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -27,10 +27,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2005/06/03 15:18:30 $ by $Author: thomas $
+ * Last modified: $Date: 2005/06/21 16:01:51 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class Window extends Page {
 
@@ -246,18 +246,23 @@ public class Window extends Page {
 		fullscreen = ifFullScreen;
 	}
 
-	/*
-	 * returns if the window is a reference to a new url or is created in the
-	 * same page
+	/**
+	 * <p>
+	 * Returns the URL for the window.<br>
+	 * For new systems (i.e. with IWMainApplication.newUrlScheme set to true) this includes the identifier 
+	 * to the window but in older systems it only contains the base url for the WindowOpener Servlet.<br>
+	 * e.g. in old systems this returns: '/servlet/WindowOpener' <br>
+	 * in new systems it returns '/workspace/window/6CBA9ED8-E26C-11D9-BEAE-000A95AE300E'
+	 * </p>
 	 */
-	// private boolean isNewURL(){
-	// //return newURL;
-	// return true;
-	// }
 	public String getURL(IWContext iwc) {
 		String ret = null;
 		if (url == null) {
-			ret = iwc.getIWMainApplication().getWindowOpenerURI();
+			if(IWMainApplication.useNewURLScheme){
+				ret = iwc.getIWMainApplication().getWindowOpenerURI(this.getClass());
+			} else {
+				ret = iwc.getIWMainApplication().getWindowOpenerURI();
+			}
 		}
 		else {
 			ret = url;
