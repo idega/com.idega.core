@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.151 2005/06/20 12:04:53 gummi Exp $
+ * $Id: Link.java,v 1.152 2005/06/21 01:23:56 gummi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,7 +21,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import javax.faces.context.FacesContext;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
@@ -73,6 +72,9 @@ public class Link extends Text {
 	public static final String TARGET_TOP_WINDOW = "_top";
 	
 	//Instance variables:
+	private PresentationObject _obj;
+	private Window _myWindow = null;
+	private Form _formToSubmit;
 	private Class _windowClass = null;
 	private Window _windowInstance = null;
 	private int icObjectInstanceIDForWindow = -1;
@@ -114,15 +116,6 @@ public class Link extends Text {
 	private Map _overImageLocalizationMap;
 	private Map _ImageLocalizationMap;
 	private Map _toolTipLocalizationMap;
-	
-	private static final String FACET_PRESENTATION_OBJECT = "presentation_object";
-	private static final String FACET_WINDOW = "window";
-	private static final String FACET_FORM_TO_SUBMIT = "form_to_submit";
-	private static final String FACET_WINDOW_INSTANCE = "window_instance";
-	private static final String FACET_ON_MOUSE_OVER_IMAGE = "on_mouse_over_image";
-	private static final String FACET_ON_CLICK_IMAGE = "on_click_image";
-
-	
 	
 	/**
 	 *
@@ -183,7 +176,7 @@ public class Link extends Text {
 	public Link(PresentationObject mo, String url) {
 		/*_obj = mo;
 		setURL(url);
-		getFacetPresentationObject().setParentObject(this);
+		_obj.setParentObject(this);
 		_objectType = OBJECT_TYPE_MODULEOBJECT;
 		*/
 		this.setPresentationObject(mo);
@@ -207,7 +200,7 @@ public class Link extends Text {
 		      System.err.println("noParameters");
 		    }
 		    */
-		getPresentationObject().setParentObject(this);
+		_obj.setParentObject(this);
 		_objectType = OBJECT_TYPE_MODULEOBJECT;
 	}
 
@@ -249,8 +242,8 @@ public class Link extends Text {
 		 */
 	public Link(PresentationObject mo, int icFileId) {
 		this(icFileId);
-		setFacetPresentationObject(mo);
-		getPresentationObject().setParentObject(this);
+		_obj = mo;
+		_obj.setParentObject(this);
 		_objectType = OBJECT_TYPE_MODULEOBJECT;
 	}
 
@@ -355,11 +348,11 @@ public class Link extends Text {
 	 *
 	 */
 	public void setWindow(Window window) {
-		setFacetWindow(window);
+		_myWindow = window;
 		//_objectType = OBJECT_TYPE_WINDOW;
 		//_myWindow.setParentObject(this);
-		if (getPresentationObject() == null) {
-			setText(getFacetWindow().getName());
+		if (_obj == null) {
+			setText(_myWindow.getName());
 		}
 	}
 	
@@ -396,7 +389,7 @@ public class Link extends Text {
 		}
 		else {
 			_objectType = OBJECT_TYPE_MODULEOBJECT;
-			setFacetPresentationObject(object);
+			_obj = object;
 			object.setParentObject(this);
 		}
 	}
@@ -424,44 +417,44 @@ public class Link extends Text {
 		}
 
 		//if (_objectType==(OBJECT_TYPE_WINDOW)) {
-		if (getFacetWindow() != null) {
+		if (_myWindow != null) {
 			String windowOpenerURI = iwc.getIWMainApplication().getWindowOpenerURI();
-			if (getFacetWindow().getURL(iwc).indexOf(windowOpenerURI) != -1) {
-				String sessionParameterName = com.idega.servlet.WindowOpener.storeWindow(iwc, getFacetWindow());
+			if (_myWindow.getURL(iwc).indexOf(windowOpenerURI) != -1) {
+				String sessionParameterName = com.idega.servlet.WindowOpener.storeWindow(iwc, _myWindow);
 				addParameter(_sessionStorageName, sessionParameterName);
 			}
 		}
 		//}
 
-		if (getPresentationObject() != null) {
-			if (getPresentationObject() instanceof Image) {
-				if (getFacetOnMouseOverImage() != null) {
-					((Image) getPresentationObject()).setOverImage(getFacetOnMouseOverImage());
+		if (_obj != null) {
+			if (_obj instanceof Image) {
+				if (_onMouseOverImage != null) {
+					((Image) _obj).setOverImage(_onMouseOverImage);
 				}
 				else if (_onMouseOverImageId > 0) {
-					((Image) getPresentationObject()).setOverImage(new Image(_onMouseOverImageId));
+					((Image) _obj).setOverImage(new Image(_onMouseOverImageId));
 				}
 				
 				//add localizedcrap
-				if (getFacetOnClickImage() != null) {
-					((Image) getPresentationObject()).setOnClickImage(getFacetOnClickImage());
+				if (_onClickImage != null) {
+					((Image) _obj).setOnClickImage(_onClickImage);
 				}
 				else if (_onClickImageId > 0) {
-					((Image) getPresentationObject()).setOnClickImage(new Image(_onClickImageId));
+					((Image) _obj).setOnClickImage(new Image(_onClickImageId));
 				}
 			}
 
 		}
 		else if (_imageId > 0) {
 			Image image = new Image(_imageId);
-			if (getFacetOnMouseOverImage() != null) {
-				image.setOverImage(getFacetOnMouseOverImage());
+			if (_onMouseOverImage != null) {
+				image.setOverImage(_onMouseOverImage);
 			}
 			else if (_onMouseOverImageId > 0) {
 				image.setOverImage(new Image(_onMouseOverImageId));
 			}
-			if (getFacetOnClickImage() != null) {
-				image.setOnClickImage(getFacetOnClickImage());
+			if (_onClickImage != null) {
+				image.setOnClickImage(_onClickImage);
 			}
 			else if (_onClickImageId > 0) {
 				image.setOnClickImage(new Image(_onClickImageId));
@@ -488,12 +481,12 @@ public class Link extends Text {
 
 		if (isImageTab || isImageButton) {
 			if (isSetToSubmitForm()) {
-				((Image) getPresentationObject()).removeMarkupAttribute("onMouseDown"); //so that it doesn't interfere with the link onclick event
+				((Image) _obj).removeMarkupAttribute("onMouseDown"); //so that it doesn't interfere with the link onclick event
 			}
 		}
 
-		if (getPresentationObject() != null) {
-			getPresentationObject().main(iwc);
+		if (_obj != null) {
+			_obj.main(iwc);
 		}
 	}
 
@@ -841,7 +834,7 @@ public class Link extends Text {
 	 */
 	public void setFontSize(String s) {
 		if (isText()) {
-			((Text) getPresentationObject()).setFontSize(s);
+			((Text) _obj).setFontSize(s);
 		}
 	}
 
@@ -857,7 +850,7 @@ public class Link extends Text {
 	 */
 	public void setFontFace(String s) {
 		if (isText()) {
-			((Text) getPresentationObject()).setFontFace(s);
+			((Text) _obj).setFontFace(s);
 		}
 	}
 
@@ -866,7 +859,7 @@ public class Link extends Text {
 	 */
 	public void setFontColor(String color) {
 		if (isText()) {
-			((Text) getPresentationObject()).setFontColor(color);
+			((Text) _obj).setFontColor(color);
 		}
 	}
 
@@ -875,7 +868,7 @@ public class Link extends Text {
 	 */
 	public void setFontStyle(String style) {
 		if (isText()) {
-			((Text) getPresentationObject()).setFontStyle(style);
+			((Text) _obj).setFontStyle(style);
 		}
 	}
 
@@ -884,7 +877,7 @@ public class Link extends Text {
 	 */
 	public void setFontClass(String styleClass) {
 		if (isText()) {
-			((Text) getPresentationObject()).setFontClass(styleClass);
+			((Text) _obj).setFontClass(styleClass);
 		}
 	}
 
@@ -905,7 +898,7 @@ public class Link extends Text {
 	 */
 	public void addBreak() {
 		if (isText()) {
-			((Text) getPresentationObject()).addBreak();
+			((Text) _obj).addBreak();
 		}
 	}
 
@@ -914,7 +907,7 @@ public class Link extends Text {
 	 */
 	public void setTeleType() {
 		if (isText()) {
-			((Text) getPresentationObject()).setTeleType();
+			((Text) _obj).setTeleType();
 		}
 	}
 
@@ -923,7 +916,7 @@ public class Link extends Text {
 	 */
 	public void setBold() {
 		if (isText()) {
-			((Text) getPresentationObject()).setBold();
+			((Text) _obj).setBold();
 		}
 	}
 
@@ -932,7 +925,7 @@ public class Link extends Text {
 	 */
 	public void setItalic() {
 		if (isText()) {
-			((Text) getPresentationObject()).setItalic();
+			((Text) _obj).setItalic();
 		}
 	}
 
@@ -941,7 +934,7 @@ public class Link extends Text {
 	 */
 	public void setUnderline() {
 		if (isText()) {
-			((Text) getPresentationObject()).setUnderline();
+			((Text) _obj).setUnderline();
 		}
 	}
 
@@ -950,7 +943,7 @@ public class Link extends Text {
 	 */
 	public void setText(String text) {
 		if (isText()) {
-			((Text) getPresentationObject()).setText(text);
+			((Text) _obj).setText(text);
 			this.text = text;
 		}
 		else {
@@ -961,8 +954,8 @@ public class Link extends Text {
 
 	public String getText() {
 		String toReturn = this.text;
-		if (toReturn == null && this.getPresentationObject() == null && this.getPresentationObject() instanceof Text && !(this.getPresentationObject() instanceof Link)) {
-			toReturn = ((Text) getPresentationObject()).getText();
+		if (toReturn == null && this._obj == null && this._obj instanceof Text && !(this._obj instanceof Link)) {
+			toReturn = ((Text) _obj).getText();
 		}
 		return toReturn;
 	}
@@ -972,14 +965,14 @@ public class Link extends Text {
 	*/
 	public void setText(Text text) {
 		this.text = text.getText();
-		setFacetPresentationObject((PresentationObject) text);
-		getPresentationObject().setParentObject(this);
+		_obj = (PresentationObject) text;
+		_obj.setParentObject(this);
 		_objectType = OBJECT_TYPE_TEXT;
 	}
 
 	public void setLocalizedText(String localeString, String text) {
 		if (isText()) {
-			((Text) getPresentationObject()).setLocalizedText(localeString, text);
+			((Text) _obj).setLocalizedText(localeString, text);
 		}
 		else {
 			super.setLocalizedText(localeString, text);
@@ -991,7 +984,7 @@ public class Link extends Text {
 	 */
 	public void setLocalizedText(int icLocaleID, String text) {
 		if (isText()) {
-			((Text) getPresentationObject()).setLocalizedText(icLocaleID, text);
+			((Text) _obj).setLocalizedText(icLocaleID, text);
 		}
 		else {
 			super.setLocalizedText(icLocaleID, text);
@@ -1003,7 +996,7 @@ public class Link extends Text {
 	 */
 	public void setLocalizedText(Locale locale, String text) {
 		if (isText()) {
-			((Text) getPresentationObject()).setLocalizedText(locale, text);
+			((Text) _obj).setLocalizedText(locale, text);
 		}
 		else {
 			super.setLocalizedText(locale, text);
@@ -1015,7 +1008,7 @@ public class Link extends Text {
 	 */
 	public void addToText(String text) {
 		if (isText()) {
-			((Text) getPresentationObject()).addToText(text);
+			((Text) _obj).addToText(text);
 		}
 	}
 
@@ -1030,10 +1023,10 @@ public class Link extends Text {
 	 *
 	 */
 	public void setObject(PresentationObject object) {
-		setFacetPresentationObject(object);
+		_obj = object;
 		_objectType = OBJECT_TYPE_MODULEOBJECT;
 
-		getPresentationObject().setParentObject(this);
+		_obj.setParentObject(this);
 	}
 
 	/**
@@ -1055,13 +1048,13 @@ public class Link extends Text {
 	 * method for adding an image to the link
 	 */
 	public void setImage(Image image) {
-		setFacetPresentationObject(image);
+		_obj = image;
 		String toolTip = getToolTip();
 		if (toolTip != null) {
-			((Image) getPresentationObject()).setAlt(toolTip);
+			((Image) _obj).setAlt(toolTip);
 		}
 		_objectType = OBJECT_TYPE_IMAGE;
-		getPresentationObject().setParentObject(this);
+		_obj.setParentObject(this);
 	}
 
 	public void setLocalizedImage(String localeString, int imageID) {
@@ -1099,13 +1092,13 @@ public class Link extends Text {
 			return true;
 		}
 		else {
-			if (this.getPresentationObject() == null) {
+			if (this._obj == null) {
 				if (this._ImageLocalizationMap != null) {
 					return true;
 				}
 			}
 			else {
-				if (this.getPresentationObject() instanceof Image) {
+				if (this._obj instanceof Image) {
 					return true;
 				}
 			}
@@ -1114,7 +1107,7 @@ public class Link extends Text {
 	}
 
 	public boolean isSetToSubmitForm() {
-		if (this.getFacetFormToSubmit() != null)
+		if (this._formToSubmit != null)
 			return true;
 		else
 			return false;
@@ -1126,7 +1119,7 @@ public class Link extends Text {
 	private Image getTheCorrectDefaultImage(IWContext iwc) throws Exception {
 		Integer imageID = getTheCorrectDefaultImageID(iwc);
 		if (imageID == null) {
-			return (Image) getPresentationObject();
+			return (Image) _obj;
 		}
 		else {
 			return new Image(imageID.intValue());
@@ -1160,7 +1153,7 @@ public class Link extends Text {
 	}
 
 	public void setOnMouseOverImage(Image image) {
-		setFacetOnMouseOverImage(image);
+		_onMouseOverImage = image;
 	}
 
 	public void setOnMouseOverImageId(int imageId) {
@@ -1168,7 +1161,7 @@ public class Link extends Text {
 	}
 
 	public void setOnClickImage(Image image) {
-		setFacetOnClickImage(image);
+		_onClickImage = image;
 	}
 
 	public void setOnClickImageId(int imageId) {
@@ -1297,7 +1290,7 @@ public class Link extends Text {
 	 *
 	 */
 	public PresentationObject getObject() {
-		return (getPresentationObject());
+		return (_obj);
 	}
 
 	/*
@@ -1314,14 +1307,18 @@ public class Link extends Text {
 		Link linkObj = null;
 		try {
 			linkObj = (Link) super.clone();
-			
-			
-			cloneJSFFacets(linkObj);
-			
-			if(linkObj.getPresentationObject() != null){
-				getPresentationObject().setParentObject(linkObj);
+
+			if (_obj != null) {
+				linkObj._obj = (PresentationObject) _obj.clone();
 			}
-			
+			if (_myWindow != null) {
+				linkObj._myWindow = (Window) _myWindow.clone();
+			}
+
+			if (_formToSubmit != null) {
+				linkObj._formToSubmit = (Form) _formToSubmit.clone();
+			}
+
 			if (_windowClass != null) {
 				linkObj._windowClass = _windowClass;
 			}
@@ -1624,7 +1621,7 @@ public class Link extends Text {
 		if (isOpeningInNewWindow()) {
 			//if (_objectType==(OBJECT_TYPE_WINDOW)) {
 			if (_windowClass == null) {
-				return getFacetWindow().getCallingScriptString(iwc, getFacetWindow().getURL(iwc) + getParameterString(iwc, getFacetWindow().getURL(iwc)));
+				return _myWindow.getCallingScriptString(iwc, _myWindow.getURL(iwc) + getParameterString(iwc, _myWindow.getURL(iwc)));
 			}
 			else {
 				return Window.getCallingScriptString(_windowClass, getURL(iwc) + getParameterString(iwc, getURL(iwc)), true, iwc);
@@ -1749,8 +1746,8 @@ public class Link extends Text {
 					print(displayString);
 					}
 					else {*/
-					if (getPresentationObject() != null) {
-						String text = ((Text) getPresentationObject()).getLocalizedText(iwc);
+					if (_obj != null) {
+						String text = ((Text) _obj).getLocalizedText(iwc);
 						if (text != null) {
 							print(text);
 						}
@@ -1758,8 +1755,8 @@ public class Link extends Text {
 					/*}*/
 				}
 				else {
-					if (getPresentationObject() != null) {
-						renderChild(iwc,getPresentationObject());
+					if (_obj != null) {
+						renderChild(iwc,_obj);
 					}
 				}
 			}
@@ -1774,8 +1771,8 @@ public class Link extends Text {
 				}
 			}
 			else {
-				if (getPresentationObject() != null) {
-					renderChild(iwc,getPresentationObject());
+				if (_obj != null) {
+					renderChild(iwc,_obj);
 				}
 			}
 			/*}*/
@@ -1800,29 +1797,29 @@ public class Link extends Text {
 			  }
 			}
 			} else {
-			getFacetPresentationObject()._print(iwc);
+			_obj._print(iwc);
 			}
 			}
 			else if (this.isImage()){
 			Image image = this.getTheCorrectDefaultImage(iwc);
 			image._print(iwc);
 			} else {
-			getFacetPresentationObject()._print(iwc);
+			_obj._print(iwc);
 			}
 			print("</a>");
 			}*/
 		}
 		else if (getMarkupLanguage().equals("WML")) {
-			if (getFacetWindow() != null) {
+			if (_myWindow != null) {
 				//if (_objectType.equals(OBJECT_TYPE_WINDOW)) {
-				setFinalUrl(getFacetWindow().getURL(iwc) + getParameterString(iwc, oldURL)); // ????????????
+				setFinalUrl(_myWindow.getURL(iwc) + getParameterString(iwc, oldURL)); // ????????????
 				setFinalUrl(HASH);
 				String url = getURL();
 				url = iwc.getResponse().encodeURL(url);
 				setFinalUrl(url);
 				//System.out.println("Url after setFinalUrl " + getURL());
 				print("<a " + getMarkupAttributesString() + " >");
-				print(getFacetWindow().getName());
+				print(_myWindow.getName());
 				print("</a>");
 			}
 			else {
@@ -1833,7 +1830,7 @@ public class Link extends Text {
 				url = iwc.getResponse().encodeURL(url);
 				setFinalUrl(url);
 				print("<a " + getMarkupAttributesString() + " >");
-				getPresentationObject()._print(iwc);
+				_obj._print(iwc);
 				print("</a>");
 			}
 		}
@@ -1855,7 +1852,7 @@ public class Link extends Text {
 	private void postIWLinkEvent(IWContext iwc) {
 		eventLocationString = getID();
 		IWLinkEvent event = new IWLinkEvent(this, IWLinkEvent.LINK_ACTION_PERFORMED);
-		if (getFacetFormToSubmit() == null) {
+		if (_formToSubmit == null) {
 			addParameter(sessionEventStorageName, eventLocationString);
 		}
 		iwc.setSessionAttribute(eventLocationString, event);
@@ -1883,7 +1880,7 @@ public class Link extends Text {
 	 *
 	 */
 	public void setToFormSubmit(Form form, boolean useEvent) {
-		setFacetFormToSubmit(form);
+		_formToSubmit = form;
 		//setFinalUrl(HASH);
 		String action = "";
 		if ((getIWLinkListeners() != null && getIWLinkListeners().length != 0) || useEvent) {
@@ -2047,7 +2044,7 @@ public void setWindowToOpen(String className) {
 	}
 
 	private boolean isOpeningInNewWindow() {
-		if (getFacetWindow() != null || this._windowClass != null || this.windowOpenerJavascriptString != null) {
+		if (_myWindow != null || this._windowClass != null || this.windowOpenerJavascriptString != null) {
 			return true;
 		}
 		return false;
@@ -2055,8 +2052,8 @@ public void setWindowToOpen(String className) {
 
 	public boolean isText() {
 		if (this._objectType == this.OBJECT_TYPE_TEXT) {
-			if (getPresentationObject() != null) {
-				if (getPresentationObject() instanceof Text) {
+			if (_obj != null) {
+				if (_obj instanceof Text) {
 					return true;
 				}
 			}
@@ -2069,11 +2066,11 @@ public void setWindowToOpen(String className) {
 	}
 
 	public boolean isLabelSet() {
-		if (getPresentationObject() == null)
+		if (_obj == null)
 			return false;
 
-		if (getPresentationObject() instanceof Text) {
-			if (((Text) getPresentationObject()).getText().equals(DEFAULT_TEXT_STRING))
+		if (_obj instanceof Text) {
+			if (((Text) _obj).getText().equals(DEFAULT_TEXT_STRING))
 				return false;
 		}
 
@@ -2209,7 +2206,7 @@ public void setWindowToOpen(String className) {
 	private String getWindowOpenerJavascriptString(IWContext iwc) {
 		if (windowOpenerJavascriptString == null) {
 			if (_windowClass == null) {
-				return ("javascript:" + getFacetWindow().getCallingScriptString(iwc, getFacetWindow().getURL(iwc) + getParameterString(iwc, getFacetWindow().getURL(iwc))));
+				return ("javascript:" + _myWindow.getCallingScriptString(iwc, _myWindow.getURL(iwc) + getParameterString(iwc, _myWindow.getURL(iwc))));
 			}
 			else {
 				if (_windowInstance != null) {
@@ -2331,7 +2328,7 @@ public void setWindowToOpen(String className) {
 	public void setToolTip(String toolTip) 	{
 		super.setToolTip(toolTip);
 		if (_objectType == OBJECT_TYPE_IMAGE) {
-			((Image) getPresentationObject()).setAlt(toolTip);
+			((Image) _obj).setAlt(toolTip);
 		}
 	}
 	
@@ -2353,127 +2350,5 @@ public void setWindowToOpen(String className) {
 		}
 		return _toolTipLocalizationMap;
 	}
-	
-	public void restoreState(FacesContext context, Object state) {
-		Object values[] = (Object[])state;
-		super.restoreState(context, values[0]);
-		
-		_windowClass = (Class)values[1];
-		icObjectInstanceIDForWindow = ((Integer)values[2]).intValue();
-		_parameterString = (StringBuffer)values[3];
-		_objectType = (String)values[4];
-		windowOpenerJavascriptString = (String)values[5];
-		isImageButton = ((Boolean)values[6]).booleanValue();
-		isImageTab = ((Boolean)values[7]).booleanValue();
-		useTextAsLocalizedTextKey = ((Boolean)values[8]).booleanValue();
-		flip = ((Boolean)values[9]).booleanValue();
-		isOutgoing = ((Boolean)values[10]).booleanValue();
-		hasClass =((Boolean)values[11]).booleanValue();
-		_maintainAllGlobalParameters = ((Boolean)values[12]).booleanValue();
-		_maintainBuilderParameters = ((Boolean)values[13]).booleanValue();
-		_addSessionId = ((Boolean)values[14]).booleanValue();
-		_maintainAllParameters = ((Boolean)values[15]).booleanValue();
-		_imageId = ((Integer)values[16]).intValue();
-		_hostname = (String)values[17];
-		_onMouseOverImageId = ((Integer)values[18]).intValue();
-		_onClickImageId = ((Integer)values[19]).intValue();
-		classToInstanciate = (Class)values[20];
-		templateForObjectInstanciation = (String)values[21];
-		maintainedParameters = (List)values[22];
-		https = ((Boolean)values[23]).booleanValue();
-		protocol = (String)values[24];
-		fileId = ((Integer)values[25]).intValue();
-		ibPage = ((Integer)values[26]).intValue();
-		_overImageLocalizationMap = (Map)values[27];
-		_ImageLocalizationMap = (Map)values[28];
-		_toolTipLocalizationMap = (Map)values[29];
-		
-		
-	}
-	/* (non-Javadoc)
-	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
-	 */
-	public Object saveState(FacesContext context) {
-		Object values[] = new Object[30];
-		values[0] = super.saveState(context);
-
-		/*   Facets !!!!
-	?private List listenerInstances = null;?
-	*/
-	
-		values[1] = _windowClass;
-		values[2] = new Integer(icObjectInstanceIDForWindow);
-		values[3] = _parameterString;
-		values[4] = _objectType;
-		values[5] = windowOpenerJavascriptString;
-		values[6] = Boolean.valueOf(isImageButton);
-		values[7] = Boolean.valueOf(isImageTab);
-		values[8] = Boolean.valueOf(useTextAsLocalizedTextKey);
-		values[9] = Boolean.valueOf(flip);
-		values[10] = Boolean.valueOf(isOutgoing);
-		values[11] = Boolean.valueOf(hasClass);
-		values[12] = Boolean.valueOf(_maintainAllGlobalParameters);
-		values[13] = Boolean.valueOf(_maintainBuilderParameters);
-		values[14] = Boolean.valueOf(_addSessionId);
-		values[15] = Boolean.valueOf(_maintainAllParameters);
-		values[16] = new Integer(_imageId);
-		values[17] = _hostname;
-		values[18] = new Integer(_onMouseOverImageId);
-		values[19] = new Integer(_onClickImageId);
-		values[20] = classToInstanciate;
-		values[21] = templateForObjectInstanciation;
-		values[22] = maintainedParameters;
-		values[23] = Boolean.valueOf(https);
-		values[24] = protocol;
-		values[25] = new Integer(fileId);
-		values[26] = new Integer(ibPage);
-		values[27] = _overImageLocalizationMap;
-		values[28] = _ImageLocalizationMap;
-		values[29] = _toolTipLocalizationMap;
-
-		
-		
-		return values;
-	}
-	
-	private Form getFacetFormToSubmit() {
-		return (Form)getFacet(FACET_FORM_TO_SUBMIT);
-	}
-	private void setFacetFormToSubmit(Form component) {
-		getFacets().put(FACET_FORM_TO_SUBMIT,component);
-	}
-	private Image getFacetOnClickImage() {
-		return (Image)getFacet(FACET_ON_CLICK_IMAGE);
-	}
-	private void setFacetOnClickImage(Image component) {
-		getFacets().put(FACET_ON_CLICK_IMAGE,component);
-	}
-	private Image getFacetOnMouseOverImage() {
-		return (Image)getFacet(FACET_ON_MOUSE_OVER_IMAGE);
-	}
-	private void setFacetOnMouseOverImage(Image component) {
-		getFacets().put(FACET_ON_MOUSE_OVER_IMAGE,component);
-	}
-	private PresentationObject getPresentationObject() {
-		return (PresentationObject)getFacet(FACET_PRESENTATION_OBJECT);
-	}
-	private void setFacetPresentationObject(PresentationObject component) {
-		getFacets().put(FACET_PRESENTATION_OBJECT,component);
-	}
-	private Window getFacetWindow() {
-		return (Window)getFacet(FACET_WINDOW);
-	}
-	private void setFacetWindow(Window component) {
-		getFacets().put(FACET_WINDOW,component);
-	}
-
-	
-	//Not cloned and therefor no need to have as facet
-//	private Window getFacetWindowInstance() {
-//		return (Window)getFacet(FACET_WINDOW_INSTANCE);
-//	}
-//	private void setFacetWindowInstance(Window component) {
-//		getFacets().put(FACET_WINDOW_INSTANCE,component);
-//	}
 	
 }
