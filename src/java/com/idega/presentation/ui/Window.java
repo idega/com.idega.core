@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.37 2005/06/21 16:01:51 gummi Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.38 2005/06/21 16:56:58 gimmi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -9,15 +9,19 @@
  */
 package com.idega.presentation.ui;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import javax.faces.context.FacesContext;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.presentation.ImageSlideShow;
 import com.idega.presentation.Page;
 import com.idega.repository.data.RefactorClassRegistry;
 
@@ -27,10 +31,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2005/06/21 16:01:51 $ by $Author: gummi $
+ * Last modified: $Date: 2005/06/21 16:56:58 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public class Window extends Page {
 
@@ -137,6 +141,24 @@ public class Window extends Page {
 		this.setOnLoad("window.resizeTo(document.onlyImage.width +10, document.onlyImage.height +22)");
 	}
 
+	/**
+	 * Opens a window displaying images as a slideshow
+	 * 
+	 * @param image Image to be displayed in the window
+	 */
+	public Window(Collection files) {
+		ImageSlideShow iss = new ImageSlideShow();
+		iss.setFiles((List) new Vector(files));
+		//image.setID("onlyImage");
+		//this.setName(image.getName());
+		iss.setWidth(300);
+		iss.setHeight(300);
+		this.setName("Images");
+		this.setAllMargins(0);
+		add(iss);
+		this.setOnLoad("window.resizeTo(300 +10, 300 +22)");
+	}
+	
 	public Window(String name) {
 		this(name, 400, 400);
 	}
