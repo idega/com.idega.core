@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.143 2005/06/22 12:23:42 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.144 2005/06/22 12:31:32 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/06/22 12:23:42 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/06/22 12:31:32 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.143 $
+ * @version $Revision: 1.144 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -183,7 +183,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private ApplicationProductInfo applicationProductInfo;
     private boolean inDatabaseLessMode=false;
     private boolean inSetupMode=false;
-    
+    private boolean loadBundlesFromJars=false;
     private boolean alreadyUnloaded = false; // for restart application
 
     public static void unload()	{
@@ -272,9 +272,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * </p>
 	 */
 	private void loadBundlesFromJars() {
-		// TODO Auto-generated method stub
-		IWBundleLoader loader = new IWBundleLoader(this,application);
-		loader.loadBundlesFromJars();
+		if(loadBundlesFromJars){
+			IWBundleLoader loader = new IWBundleLoader(this,application);
+			loader.loadBundlesFromJars();
+		}
 	}
 
 	/*
