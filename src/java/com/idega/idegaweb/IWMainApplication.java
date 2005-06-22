@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.142 2005/06/21 14:10:12 gummi Exp $
+ * $Id: IWMainApplication.java,v 1.143 2005/06/22 12:23:42 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/06/21 14:10:12 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/06/22 12:23:42 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.142 $
+ * @version $Revision: 1.143 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -146,6 +146,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private final static String IDEGAWEB_APP_SERVLET_URI = "/servlet/idegaweb";
     
     private final static String NEW_WINDOW_URL="/workspace/window/";
+    private final static String NEW_PUBLIC_WINDOW_URL="/window/";
     private final static String NEW_BUILDER_PAGE_URL="/pages/";
     private final static String WORKSPACE_URI="/workspace/";
     private final static String LOGIN_URI="/login/";
@@ -257,13 +258,26 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     public void loadBundles() {
-        checkForInstalledBundles();
+    		loadBundlesFromJars();
+        loadBundlesLegacy();
         loadBundlesLocalizationsForJSF();
         this.setAttribute("bundles",getLoadedBundles());
         
     }
     
-    /*
+    /**
+	 * <p>
+	 * This method loads the bundle instances from the jar files - this is the newer method 
+	 * instead of loading them from the /idegaweb/bundles folder.
+	 * </p>
+	 */
+	private void loadBundlesFromJars() {
+		// TODO Auto-generated method stub
+		IWBundleLoader loader = new IWBundleLoader(this,application);
+		loader.loadBundlesFromJars();
+	}
+
+	/*
      * Returns a Map over the Loaded bundles:
      * Key is a string (bundle identifier) and value is a IWBundle instance
      */
@@ -770,7 +784,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
                 + sBundle;
     }
 
-    private void checkForInstalledBundles() {
+    /**
+     * <p>
+     * This method loads the bundles from the /idegaweb/bundles folder under the expanded webapp folder.<br>
+     * This is the older way and will be replaced with loading from jars instead.
+     * </p>
+     */
+    private void loadBundlesLegacy() {
         File theRoot = new File(this.getApplicationSpecialRealPath(),
                 BUNDLES_STANDARD_DIRECTORY);
         File[] bundles = theRoot.listFiles();
@@ -1305,9 +1325,22 @@ public class IWMainApplication	extends Application  implements MutableClass {
         }
     }
 
-    /*
-     * protected String getTranslatedURLWithContext(String url){ // // @todo:
-     * implement // return url; }
+    /**
+     * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
+     * For the new platform this is '/window/' but for older versions this is '/servlet/WindowOpener'
+     */
+    public String getPublicWindowOpenerURI() {
+		if(useNewURLScheme){
+			return getTranslatedURIWithContext(NEW_PUBLIC_WINDOW_URL);
+		}
+		else{	
+			return getTranslatedURIWithContext(windowOpenerURL);
+		}
+    }
+    
+    /**
+     * Returns the prefix for the 'window opener' URI, for the new platform this is by default only avaiable for logged in users<br>
+     * For the new platform this is '/window/' but for older versions this is '/servlet/WindowOpener'
      */
     public String getWindowOpenerURI() {
 		if(useNewURLScheme){
@@ -1317,7 +1350,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			return getTranslatedURIWithContext(windowOpenerURL);
 		}
     }
-
+    /**
+     * Returns the prefix for the 'window opener' URI that is meant for windows to be open only for logged in users<br>
+     * For the new platform this is '/workspace/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
+     */
     public String getWindowOpenerURI(Class windowToOpen) {
     		if(useNewURLScheme){
     			return getWindowOpenerURI()+getEncryptedClassName(windowToOpen);
@@ -1333,7 +1370,27 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	        // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
     		}
     }
+    /**
+     * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
+     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
+     */
+    public String getPublicWindowOpenerURI(Class windowToOpen) {
+		if(useNewURLScheme){
+			return getPublicWindowOpenerURI()+getEncryptedClassName(windowToOpen);
+		}
+		else{
+        StringBuffer url = new StringBuffer();
+        url.append(getWindowOpenerURI()).append('?').append(
+                PARAM_IW_FRAME_CLASS_PARAMETER).append('=').append(
+                getEncryptedClassName(windowToOpen));
 
+        return url.toString();
+        //return
+        // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
+		}
+}    
+    
     public String getWindowOpenerURI(Class windowToOpen, int ICObjectInstanceIDToOpen) {
     		String windowOpenerUri = getWindowOpenerURI(windowToOpen);
         return windowOpenerUri + ((windowOpenerUri.indexOf('?')<0)?"?":"&")
