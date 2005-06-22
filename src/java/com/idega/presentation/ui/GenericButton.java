@@ -1,5 +1,5 @@
 /*
- * $Id: GenericButton.java,v 1.30 2005/03/09 02:07:20 tryggvil Exp $
+ * $Id: GenericButton.java,v 1.31 2005/06/22 14:33:21 gummi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * This component is for rendering out a input element of type button.
  * </p>
- *  Last modified: $Date: 2005/03/09 02:07:20 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/06/22 14:33:21 $ by $Author: gummi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class GenericButton extends GenericInput {
 
@@ -252,7 +252,7 @@ public class GenericButton extends GenericInput {
 					super.print(iwc);
 				}
 				else
-					print("<img " + buttonImage.getMarkupAttributesString() + " >");
+					print("<img " + buttonImage.getMarkupAttributesString() + " />");
 			}
 		} 
 		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
