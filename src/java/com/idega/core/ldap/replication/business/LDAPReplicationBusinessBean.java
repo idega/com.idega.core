@@ -441,7 +441,8 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			}
 		}
 		catch (NumberFormatException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			log("No replicators defined.");
 		}
 	}
 
