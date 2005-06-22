@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.12 2005/06/03 15:18:30 thomas Exp $
+ * $Id: ViewManager.java,v 1.13 2005/06/22 14:03:20 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.util.FacesUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2005/06/03 15:18:30 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/06/22 14:03:20 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class ViewManager implements Singleton {
 	
@@ -52,6 +52,7 @@ public class ViewManager implements Singleton {
 	private ViewNode rootNode;
 	private ViewNode workspaceNode;
 	private IWMainApplication iwma;
+	private boolean showMyPage=false;
 	
 	public static ViewManager getInstance(IWMainApplication iwma){
 		return (ViewManager) SingletonRepository.getRepository().getInstance(ViewManager.class, instantiator, iwma);
@@ -116,38 +117,16 @@ public class ViewManager implements Singleton {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		DefaultViewNode contentNode = new ApplicationViewNode("content",getWorkspaceRoot());
-		contentNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/cmspage.jsp");
+
 		
-		//TODO: move these specific views
-		DefaultViewNode articleNode = new DefaultViewNode("article",contentNode);
-		articleNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/articles.jsp");
-		DefaultViewNode createNewArticleNode = new DefaultViewNode("create",articleNode);
-		createNewArticleNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/createarticle.jsp");
-		
-		DefaultViewNode previewArticlesNode = new DefaultViewNode("preview",articleNode);
-		previewArticlesNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/previewarticle.jsp");
-		//DefaultViewNode listArticlesNode = new ApplicationViewNode("listarticles",articleNode);
-		
-		DefaultViewNode documentNode = new DefaultViewNode("document",contentNode);
-		
-		DefaultViewNode searchNode = new DefaultViewNode("search",contentNode);
-		searchNode.setJspUri("/idegaweb/bundles/com.idega.webface.bundle/jsp/searcharticle.jsp");
-		*/
-		
-		DefaultViewNode myPageNode = new ApplicationViewNode("mypage",getWorkspaceRoot());
-		myPageNode.setName("My Page");
-		//TODO: Change this
-		myPageNode.setJspUri("/idegaweb/bundles/com.idega.block.article.bundle/jsp/cmspage.jsp");
-		myPageNode.setKeyboardShortcut(new KeyboardShortcut("5"));
-		
-		//DefaultViewNode loginViewNode = new WindowViewNode("login",getApplicationRoot());
-		
-		//DefaultViewNode pagesViewNode = new BuilderPageViewNode("pages",getApplicationRoot());
-		
-		//DefaultViewNode windowViewNode = new WindowViewNode("window",getApplicationRoot());
-		
+		if(showMyPage){
+			DefaultViewNode myPageNode = new ApplicationViewNode("mypage",getWorkspaceRoot());
+			myPageNode.setName("My Page");
+			//TODO: Change this
+			myPageNode.setJspUri("/idegaweb/bundles/com.idega.block.article.bundle/jsp/cmspage.jsp");
+			myPageNode.setKeyboardShortcut(new KeyboardShortcut("5"));
+		}
+
 	}
 	
 	public ViewNode getWorkspaceRoot(){
