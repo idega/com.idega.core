@@ -9,19 +9,51 @@
 	<sourceDirectory>src/java</sourceDirectory>
   </build>
   <repositories>
-  	<repository>
-  		<id>idega1</id>
-  		<name>idega public repository</name>
-  		<url>http://repository.idega.com/maven/</url>
-  		<snapshotPolicy>daily</snapshotPolicy>
-  		<layout>legacy</layout>
-  	</repository>
-  </repositories>
-  
-  <developers>
-    <developer>
-      <name>Tryggvi Larusson</name>
-      <id>tryggvil</id>
+	<repository>
+        	<id>idega1</id>
+        	<name>idega maven2 repository</name>
+        	<url>http://repository.idega.com/maven2/</url>
+        	<snapshotPolicy>daily</snapshotPolicy>
+	</repository>
+	<repository>
+		<id>idega2</id>
+		<name>idega public repository</name>
+		<url>http://repository.idega.com/maven/</url>
+		<snapshotPolicy>daily</snapshotPolicy>
+		<layout>legacy</layout>
+	</repository>
+</repositories>
+
+<distributionManagement>
+	<repository>
+	<id>idega1</id>
+	<name>idega Maven2 Repository</name>
+	<url>scp://repository.idega.com/var/www/webs/repository.idega.com/maven2</url>
+	</repository>
+	<site>
+	<id>idega1</id>
+	<name>idega Maven2 Documentation site</name>
+	<url>scp://repository.idega.com/var/www/webs/developer.idega.com/bundles</url>
+	</site>
+</distributionManagement>
+
+  <ciManagement>
+    <notifiers>
+      <notifier>
+        <address>idegaweb-dev@idega.com</address>
+      </notifier>
+    </notifiers>
+  </ciManagement>
+
+  <scm>
+        <connection>scm:cvs:ext:tryggvil@einstein.idega.is:/idega/cvs:bundles/${pom.artifactId}.bundle/</connection>
+        <developerConnection>scm:cvs:ext:tryggvil@einstein.idega.is:/idega/cvs:bundles/${pom.artifactId}.bundle/</developerConnection>
+  </scm>
+
+<developers>
+<developer>
+<name>Tryggvi Larusson</name>
+<id>tryggvil</id>
       <email>tryggvi@idega.is</email>
       <organization>idega software</organization>
       <roles/>
