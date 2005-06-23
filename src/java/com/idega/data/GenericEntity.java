@@ -1772,7 +1772,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("select e.* from ");
+		//Optimization by Sigtryggur 23.06.05
+		buffer.append("select e."+entityIDColumnName+" from ");
 		buffer.append(tableToSelectFrom + " middle, " + entity.getEntityDefinition().getSQLTableName() + " e");
 		buffer.append(" where ");
 
