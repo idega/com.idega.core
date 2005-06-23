@@ -1,5 +1,5 @@
 /*
- * $Id: Help.java,v 1.3 2005/03/31 20:10:58 laddi Exp $
+ * $Id: Help.java,v 1.4 2005/06/23 18:16:20 gummi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.idegaweb.help.presentation;
 
+import java.util.Locale;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
@@ -16,8 +17,6 @@ import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.text.Link;
-
-import java.util.Locale;
 
 /**
  * A class to create help for any part of the idegaWeb system. Maintains a set
@@ -148,6 +147,10 @@ public class Help extends Block {
 	public void setImage(Image image) {
 		this.image = image;
 		_helpLink.setImage(image);
+	}
+	
+	public void setImage(String url){
+		setImage(new Image(url));
 	}
 	
 	public void setImageId(int imageId) {

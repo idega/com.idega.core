@@ -10,5 +10,15 @@
 		<component-type>Page</component-type>
 		<component-class>com.idega.presentation.Page</component-class>
 	</component>
+	
+	<component>
+		<component-type>HelpButton</component-type>
+		<component-class>com.idega.presentation.ui.HelpButton</component-class>
+	</component>
+	
+	<component>
+		<component-type>Help</component-type>
+		<component-class>com.idega.idegaweb.help.presentation.Help</component-class>
+	</component>
 
 </faces-config>
