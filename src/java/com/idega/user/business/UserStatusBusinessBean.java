@@ -87,7 +87,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	
 	public int getUserGroupStatus(int user_id, int group_id) {
 		try {
-			Collection obj = getUserStatusHome().findAllByUserIdAndGroupId(user_id,group_id);
+			Collection obj = getUserStatusHome().findAllActiveByUserIdAndGroupId(user_id,group_id);
 			int ret = -1;
 
 			if (obj != null && obj.size() > 0) {
@@ -106,7 +106,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	
 	public Collection getAllUserStatuses(int userId) throws RemoteException {
 		try {
-			return getUserStatusHome().findAllByUserId(userId);
+			return getUserStatusHome().findAllActiveByUserId(userId);
 		}
 		catch (FinderException e) {
 			e.printStackTrace();
@@ -221,7 +221,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	
 	public Collection getAllUsersWithStatus(int statusId){
 		try {
-			Collection userStatuses = getUserStatusHome().findAllByStatusId(statusId);
+			Collection userStatuses = getUserStatusHome().findAllActiveByStatusId(statusId);
 			List users = new ArrayList();
 			Iterator iter = userStatuses.iterator();
 			while (iter.hasNext()) {
