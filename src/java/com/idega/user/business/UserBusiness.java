@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.85 2005/04/17 17:04:45 eiki Exp $
+ * $Id: UserBusiness.java,v 1.86 2005/06/27 23:22:51 sigtryggur Exp $
  * Created on 2.2.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -51,10 +51,10 @@ import com.idega.util.IWTimestamp;
 
 
 /**
- * Last modified: $Date: 2005/04/17 17:04:45 $ by $Author: eiki $
+ * Last modified: $Date: 2005/06/27 23:22:51 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.85 $
+ * @version $Revision: 1.86 $
  */
 public interface UserBusiness extends IBOService, IWLDAPConstants {
 
@@ -662,6 +662,11 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	 * @see com.idega.user.business.UserBusinessBean#moveUsers
 	 */
 	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#moveUsers
+	 */
+	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId, boolean leaveCopyOfUserInCurrentGroup) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#moveUsers

@@ -2528,6 +2528,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId) {
+		return moveUsers(iwuc, userIds, parentGroup, targetGroupId, false);
+	}
+
+	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId, boolean leaveCopyOfUserInCurrentGroup) {
 		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");
 		Locale locale = application.getSettings().getDefaultLocale();
@@ -2790,6 +2794,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	private String moveUserWithoutTest(User user, Group parentGroup, Group targetGroup, User currentUser) {
+	    return moveUserWithoutTest(user, parentGroup, targetGroup, currentUser, false);
+	}
+
+	private String moveUserWithoutTest(User user, Group parentGroup, Group targetGroup, User currentUser, boolean leaveCopyOfUserInCurrentGroup) {
 		int userId = ((Integer) user.getPrimaryKey()).intValue();
 		int targetGroupId = ((Integer) targetGroup.getPrimaryKey()).intValue();
 		int parentGroupId = -1;
@@ -2824,8 +2832,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			// therefore be sure that the method below does not throw an error
 			// if it
 			// is not able to find a group relation.
-			if (parentGroup != null) {
-				parentGroup.removeUser(user, currentUser);
+			if  (!leaveCopyOfUserInCurrentGroup) {
+				if (parentGroup != null) {
+					parentGroup.removeUser(user, currentUser);
+				}
 			}
 			// set target group
 			if (!targetIsSetAsPrimaryGroup) {
