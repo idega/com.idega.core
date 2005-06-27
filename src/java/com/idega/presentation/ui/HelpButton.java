@@ -4,7 +4,6 @@ package com.idega.presentation.ui;
 
 
 
-import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 import com.idega.idegaweb.IWResourceBundle;
