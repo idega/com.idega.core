@@ -1,6 +1,5 @@
 package com.idega.user.data;
 
-import java.rmi.RemoteException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -107,7 +106,7 @@ public User findUserForUserRepresentativeGroup(com.idega.user.data.Group p0)thro
 	return this.findByPrimaryKey(pk);
 }
 
-public java.util.Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersInPrimaryGroup(p0);
 	this.idoCheckInPooledEntity(entity);
@@ -115,7 +114,7 @@ public java.util.Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findUsersBySearchCondition(java.lang.String p0, boolean p1)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findUsersBySearchCondition(java.lang.String p0, boolean p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(p0, p1);
 	this.idoCheckInPooledEntity(entity);
@@ -123,7 +122,7 @@ public java.util.Collection findUsersBySearchCondition(java.lang.String p0, bool
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findUsersBySearchConditionAndAge(java.lang.String p0, boolean p1, int endAge)throws javax.ejb.FinderException,java.rmi.RemoteException{	
+public java.util.Collection findUsersBySearchConditionAndAge(java.lang.String p0, boolean p1, int endAge)throws javax.ejb.FinderException{	
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(p0, p1, endAge);
 	this.idoCheckInPooledEntity(entity);
@@ -131,7 +130,7 @@ public java.util.Collection findUsersBySearchConditionAndAge(java.lang.String p0
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findUsersByYearOfBirth (int minYear, int maxYear)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findUsersByYearOfBirth (int minYear, int maxYear)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByYearOfBirth(minYear,maxYear);
 	this.idoCheckInPooledEntity(entity);
@@ -139,7 +138,7 @@ public java.util.Collection findUsersByYearOfBirth (int minYear, int maxYear)thr
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public Collection findUsersBySearchCondition(String condition, String[] userIds, boolean p2) throws FinderException, RemoteException {
+public Collection findUsersBySearchCondition(String condition, String[] userIds, boolean p2) throws FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(condition, userIds, p2);
 	this.idoCheckInPooledEntity(entity);
@@ -147,7 +146,7 @@ public Collection findUsersBySearchCondition(String condition, String[] userIds,
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public Collection findUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException {
+public Collection findUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByConditions(userName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
 	this.idoCheckInPooledEntity(entity);
@@ -155,7 +154,7 @@ public Collection findUsersByConditions(String userName, String personalId, Stri
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public Collection findUsersByConditions(String firstName, String middleName, String lastName,  String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException, RemoteException {
+public Collection findUsersByConditions(String firstName, String middleName, String lastName,  String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsersByConditions(firstName, middleName, lastName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
 	this.idoCheckInPooledEntity(entity);
@@ -170,7 +169,7 @@ public User findUserForUserGroup(com.idega.user.data.Group p0)throws javax.ejb.F
 	return this.findByPrimaryKey(pk);
 }
 
-public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((UserBMPBean)entity).ejbFindUserFromEmail(p0);
 	this.idoCheckInPooledEntity(entity);
