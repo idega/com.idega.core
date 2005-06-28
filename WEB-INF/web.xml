@@ -277,8 +277,17 @@
     -->
    <!-- End of GZIPFilter -->
     
-  <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>index.html</welcome-file>
-  </welcome-file-list>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+  
+	<!-- Definition of the standard Default DataSource -->
+	<resource-ref>
+		<description>Default DB Connection</description>
+		<res-ref-name>jdbc/DefaultDS</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>
+  
 </web-app>
