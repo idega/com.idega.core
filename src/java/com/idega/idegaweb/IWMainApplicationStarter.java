@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,7 @@ import com.idega.core.component.data.ICObjectType;
 import com.idega.core.component.data.ICObjectTypeHome;
 import com.idega.core.user.data.OldUserBMPBean;
 import com.idega.core.user.data.User;
+import com.idega.data.DatastoreInterface;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOContainer;
 import com.idega.data.IDOException;
@@ -142,6 +144,21 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 				sendStartMessage("No Database found - setting to databaseless mode and setup mode");
 				iwma.setInDatabaseLessMode(true);
 				iwma.setInSetupMode(true);
+			}
+		}
+		
+		Connection conn=null;
+		try{
+			conn = ConnectionBroker.getConnection();
+			DatastoreInterface.getInstance(conn).onApplicationStart(conn);
+			ConnectionBroker.freeConnection(conn);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			if(conn!=null){
+				ConnectionBroker.freeConnection(conn);
 			}
 		}
 	}
