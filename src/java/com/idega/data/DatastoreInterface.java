@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.128 2005/06/03 15:18:29 thomas Exp $
+ * $Id: DatastoreInterface.java,v 1.129 2005/06/28 16:18:17 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1597,13 +1597,23 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	/**
-	 * Override in subclasses
+	 * This is a callback method and is called by the idegaWeb ConnectionPool (PoolManager) 
+	 * whenever a new database connection is created.<br>
+	 * This does nothing here but can be overrided in concrete subclasses.
 	 */
 	public void onConnectionCreate(Connection newConn) {
 		/*
 		 * try{ Statement stmt = newConn.createStatement(); stmt.execute("") }
 		 * catch(SQLException sqle){ }
 		 */
+	}
+	
+	/**
+	 * This is a callback method and is called by the idegaWeb when it starts up and connects to the database first<br>.
+	 * This does nothing here but can be overrided in concrete subclasses.
+	 */
+	public void onApplicationStart(Connection newConn) {
+
 	}
 
 	/**

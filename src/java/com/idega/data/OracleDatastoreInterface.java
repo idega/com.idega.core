@@ -278,6 +278,31 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			sqle.printStackTrace();
 		}
 	}
+	
+	/**
+	 * This is a callback method and is called by the idegaWeb when it starts up and connects to the Oracle database first<br>.
+	 * This is overrided to create the 'set_nls_date_formats' logon trigger.
+	 */
+	public void onApplicationStart(Connection newConn) {
+		try {
+			
+			onConnectionCreate(newConn);
+			
+			Statement stmt = newConn.createStatement();
+			stmt.execute("CREATE OR REPLACE TRIGGER set_nls_date_formats "+
+					"AFTER LOGON ON SCHEMA "+
+					"BEGIN "+
+					"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_DATE_FORMAT=''YYYY-MM-DD HH24:MI:SS'''); "+
+					"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_TIMESTAMP_FORMAT=''YYYY-MM-DD HH24:MI:SS''');"+
+					"END");
+			stmt.close();
+			System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_date_formats' for setting NLS_DATE_FORMAT and NLS_TIMESTAMP_FORMAT");
+		}
+		catch (SQLException sqle) {
+			System.err.println("OracleDatastoreInterface: creating logon trigger: " + sqle.getMessage());
+			sqle.printStackTrace();
+		}
+	}
 
 	/**
 	 * Varchar is limited to 4000 chars need to use clob for larger fields. Great example http://www.experts-exchange.com/Databases/Oracle/Q_20358143.html
