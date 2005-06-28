@@ -7,7 +7,7 @@ import com.idega.data.query.output.ToStringer;
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes </a>
  */
-public class Column implements Outputable {
+public class Column implements Outputable, Cloneable {
 
 	private boolean distinct = false;
 	private boolean count = false;
@@ -89,6 +89,17 @@ public class Column implements Outputable {
 				out.println(" AS "+countName);
 			}
 		}
+	}
+	
+    public Object clone() {
+		Column obj = null;
+		try {
+			obj = (Column)super.clone();
+		}
+		catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return obj;
 	}
 
 }

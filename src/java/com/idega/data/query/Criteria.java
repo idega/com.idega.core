@@ -9,7 +9,7 @@ import com.idega.data.query.output.ToStringer;
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
  */
-public abstract class Criteria implements Outputable {
+public abstract class Criteria implements Outputable, Cloneable{
 
     public abstract void write(Output out);
 
@@ -35,5 +35,15 @@ public abstract class Criteria implements Outputable {
     
     public abstract Set getTables();
     
+    public Object clone(){
+		Criteria obj = null;
+		try {
+			obj = (Criteria)super.clone();
+		}
+		catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}
 
 }

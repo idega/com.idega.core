@@ -48,5 +48,24 @@ public abstract class BaseLogicGroup extends Criteria implements PlaceHolder {
             l.addAll(((PlaceHolder)right).getValues());
         return l;
     }
+    
+    public Object clone(){
+		BaseLogicGroup obj = (BaseLogicGroup)super.clone();
+		if(left!=null){
+			obj.left = (Criteria) this.left.clone();
+		}
+		
+		if(right!=null){
+			obj.right = (Criteria) this.right.clone();
+		}
+		return obj;
+	}
+    
+    public Set getCriterias(){
+    		Set s = new HashSet();
+		s.add(left);
+		s.add(right);
+		return s; 
+    }
 
 }

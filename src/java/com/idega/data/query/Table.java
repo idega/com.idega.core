@@ -14,7 +14,7 @@ import com.idega.data.query.output.ToStringer;
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes</a>
  */
-public class Table implements Outputable {
+public class Table implements Outputable, Cloneable {
 
 	private String name;
 
@@ -197,5 +197,16 @@ public class Table implements Outputable {
 	 */
 	public void setEntityDefinition(IDOEntityDefinition entityDefinition) {
 		_entityDefinition = entityDefinition;
+	}
+	
+    public Object clone() {
+		Table obj = null;
+		try {
+			obj = (Table)super.clone();
+		}
+		catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return obj;
 	}
 }

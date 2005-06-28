@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-
 import com.idega.data.DatastoreInterface;
 import com.idega.data.IDOEntity;
 import com.idega.data.query.output.Output;
@@ -22,6 +21,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	public static final String GREATEREQUAL = ">=";
 	public static final String LESSEQUAL = "<=";
 	public static final String LIKE = "LIKE";
+	public static final String NOTLIKE = "NOT LIKE";
 	public static final String NOTEQUALS = "<>";
 
 	public static final String IS = "IS";
@@ -68,7 +68,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		this.matchType = matchType;
 		if (value == null) {
 			this.value = value;
-			if (matchType.equals(this.EQUALS)) {
+			if (matchType.equals(MatchCriteria.EQUALS)) {
 				this.matchType = IS;
 			}
 		} else if(NULL==value){
@@ -238,4 +238,24 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
         	    v.add(this.placeHolderValue);
         	return v;
     }
+    
+    public Object clone(){
+		MatchCriteria obj = (MatchCriteria)super.clone();
+		if(column!=null){
+			obj.column = (Column) this.column.clone();
+		}
+		
+		return obj;
+	}
+	public String getMatchType() {
+		return matchType;
+	}
+	public void setMatchType(String matchType) {
+		this.matchType = matchType;
+		if (this.value == null) {
+			if (matchType.equals(MatchCriteria.EQUALS)) {
+				this.matchType = IS;
+			}
+		}
+	}
 }

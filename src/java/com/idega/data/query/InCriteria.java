@@ -258,4 +258,17 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		}
 		return l;
 	}
+	
+    public Object clone(){
+		InCriteria obj = (InCriteria)super.clone();
+		if(column!=null){
+			obj.column = (Column) this.column.clone();
+		}
+		
+		if(subSelect!=null){
+			obj.subSelect = (SelectQuery) this.subSelect.clone();
+		}
+		return obj;
+	}
+
 }

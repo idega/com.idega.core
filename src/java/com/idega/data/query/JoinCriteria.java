@@ -103,5 +103,21 @@ public class JoinCriteria extends Criteria {
 		}
 		return s; 
     }
+    
+    public Object clone(){
+		JoinCriteria obj = (JoinCriteria)super.clone();
+		if(source!=null){
+			obj.source = (Column) this.source.clone();
+		}
+		
+		if(dest!=null){
+			obj.dest = (Column) this.dest.clone();
+		}
+		
+		if(middleTable!=null){
+			obj.middleTable = (Table) this.middleTable.clone();
+		}
+		return obj;
+	}
 
 }

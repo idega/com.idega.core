@@ -5,6 +5,6 @@ package com.idega.data.query.output;
  *
  * @author <a href="mailto:joe@truemesh.com">Joe Walnes</a>
  */
-public interface Outputable {
+public interface Outputable extends Cloneable {
     void write(Output out);
 }
