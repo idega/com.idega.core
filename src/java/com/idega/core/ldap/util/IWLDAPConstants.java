@@ -52,6 +52,11 @@ public interface IWLDAPConstants {
 	public static final String LDAP_ATTRIBUTE_IDEGAWEB_GENDER = "gender";
 	
 	/**
+	 * The users status keys (only keys not localized)
+	 */
+	public static final String LDAP_ATTRIBUTE_IDEGAWEB_STATUS = "idegawebStatus";
+	
+	/**
 	 * Primary key
 	 */
 	public static final String LDAP_ATTRIBUTE_IDEGAWEB_PRIMARY_KEY= "idegawebPrimaryKey";

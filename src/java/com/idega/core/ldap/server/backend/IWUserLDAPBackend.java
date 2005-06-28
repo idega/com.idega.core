@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import org.codehaus.plexus.ldapserver.ldapv3.Filter;
 import org.codehaus.plexus.ldapserver.ldapv3.LDAPResultEnum;
@@ -41,8 +42,11 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserStatusBusiness;
 import com.idega.user.data.Group;
+import com.idega.user.data.Status;
 import com.idega.user.data.User;
+import com.idega.user.data.UserStatus;
 
 /**
  * An LDAP backend implementation that exposes the idegaweb user/group/role
@@ -633,6 +637,28 @@ LDAPReplicationConstants {
 		String uuid = user.getUniqueId();
 		String description = user.getDescription();
 		
+		try {
+			Collection statuses = getUserStatusBusiness().getAllUserStatuses(((Integer)user.getPrimaryKey()).intValue());
+			if(!statuses.isEmpty()){
+				List statusKeys = new ArrayList();
+				
+				for (Iterator iter = statuses.iterator(); iter.hasNext();) {
+					UserStatus usrStatus = (UserStatus) iter.next();
+					Status status = usrStatus.getStatus();
+					String statusKey = status.getStatusKey();
+					statusKeys.add(getDirectoryStringForIdentifier(statusKey));
+				}
+			
+				entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_IDEGAWEB_STATUS), statusKeys);	
+			}
+			
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (EJBException e) {
+			e.printStackTrace();
+		}
 		
 		List name = getAttributeListForSingleEntry(cn);
 		entry.put(getDirectoryStringForIdentifier(LDAP_ATTRIBUTE_COMMON_NAME), name);
@@ -962,6 +988,10 @@ LDAPReplicationConstants {
 	protected UserBusiness getUserBusiness() throws RemoteException {
 		return (UserBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),
 				UserBusiness.class);
+	}
+	
+	protected UserStatusBusiness getUserStatusBusiness() throws RemoteException{
+		return (UserStatusBusiness)com.idega.business.IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),UserStatusBusiness.class);
 	}
 	
 	protected GroupBusiness getGroupBusiness() throws RemoteException {
