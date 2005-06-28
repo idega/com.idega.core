@@ -54,7 +54,7 @@ public interface IWLDAPConstants {
 	/**
 	 * The users status keys (only keys not localized)
 	 */
-	public static final String LDAP_ATTRIBUTE_IDEGAWEB_STATUS = "idegawebStatus";
+	public static final String LDAP_ATTRIBUTE_IDEGAWEB_STATUS = "idegawebUserStatus";
 	
 	/**
 	 * Primary key
