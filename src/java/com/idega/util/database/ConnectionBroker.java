@@ -1,5 +1,5 @@
 /*
- * $Id: ConnectionBroker.java,v 1.11 2005/06/28 13:50:06 tryggvil Exp $
+ * $Id: ConnectionBroker.java,v 1.12 2005/06/28 13:52:33 tryggvil Exp $
  *
  * Copyright (C) 2000-2005 Idega hf. All Rights Reserved.
  *
@@ -35,7 +35,7 @@ import com.idega.transaction.IdegaTransactionManager;
  * <br>
  * </p>
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
 */
 public class ConnectionBroker
 {
@@ -371,6 +371,7 @@ public class ConnectionBroker
 				try
 				{
 					defaultDs = (DataSource) getEnvContext().lookup(DEFAULT_JDBC_JNDI_URL);
+					dataSourcesMap.put(DEFAULT_POOL,defaultDs);
 				}
 				catch (NamingException e)
 				{
