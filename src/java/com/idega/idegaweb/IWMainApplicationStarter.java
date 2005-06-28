@@ -125,14 +125,24 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 				this.startPoolManDatabasePool();
 			}
 			else if (poolType.equalsIgnoreCase("IDEGA")) {
-				this.startIdegaDatabasePool();
+				startIdegaDatabasePool();
 			}
 			else if (poolType.equalsIgnoreCase("JDBC_DATASOURCE")) {
-				this.startJDBCDatasourcePool();
+				this.startJNDIDatasourcePool();
 			}
 		}
 		else {
-			startIdegaDatabasePool();
+			if(this.startIdegaDatabasePool()){
+				//db.properties Successful
+			}
+			else if(startJNDIDatasourcePool()){
+				//JNDI Successful
+			}
+			else{
+				sendStartMessage("No Database found - setting to databaseless mode and setup mode");
+				iwma.setInDatabaseLessMode(true);
+				iwma.setInSetupMode(true);
+			}
 		}
 	}
 	
@@ -145,7 +155,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		sendStartMessage("Starting PoolMan Datastore ConnectionPool");
 		//com.codestudio.util.SQLManager.getInstance(file);
 	}
-	protected void startIdegaDatabasePool() {
+	/**
+	 * <p>
+	 * Returns true if a db.properties file is found and old style idegaWeb PoolManager is initialized.
+	 * </p>
+	 */
+	protected boolean startIdegaDatabasePool() {
 		String separator = File.separator;
 		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_IDEGA;
 		String fileName=null;
@@ -159,6 +174,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			sendStartMessage("Starting idega Datastore ConnectionPool");
 			PoolManager.unlock();
 			PoolManager.getInstance(fileName,iwma);	
+			return true;
 		}
 		else if(file2.exists()){
 			fileName=sfile2;
@@ -166,20 +182,34 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			sendStartMessage("Starting idega Datastore ConnectionPool");
 			PoolManager.unlock();
 			PoolManager.getInstance(fileName,iwma);	
+			return true;
 		}
 		else{
-			sendStartMessage("No db.properties found - setting to databaseless mode and setup mode");
-			iwma.setInDatabaseLessMode(true);
-			iwma.setInSetupMode(true);
+			//sendStartMessage("No db.properties found - setting to databaseless mode and setup mode");
+			//iwma.setInDatabaseLessMode(true);
+			//iwma.setInSetupMode(true);
+			sendStartMessage("No db.properties found");
+			return false;
 		}
 	}
-	protected void startJDBCDatasourcePool(){
-		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_JDBC_DATASOURCE;
+	/**
+	 * <p>
+	 * Returns true if a JNDI DataSource is successfully initialized.
+	 * </p>
+	 */
+	protected boolean startJNDIDatasourcePool(){
+		boolean theReturn=false;
 		String url = iwma.getSettings().getProperty("JDBC_DATASOURCE_DEFAULT_URL");
 		if(url!=null){
+			ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_JDBC_DATASOURCE;
 			ConnectionBroker.setDefaultJDBCDatasourceURL(url);
 		}
-		sendStartMessage("Starting JDBC Datastore ConnectionPool from url: "+url);
+		theReturn =  ConnectionBroker.tryDefaultJNDIDataSource();
+		if(theReturn){
+			sendStartMessage("Starting JDBC Datastore ConnectionPool from url: "+ConnectionBroker.getDefaultJNDIUrl());
+		}
+		return theReturn;
+		
 	}
 	
 	public void endDatabasePool() {
