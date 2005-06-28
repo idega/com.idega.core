@@ -1,5 +1,5 @@
 /*
- * $Id: ConnectionBroker.java,v 1.10 2005/06/28 11:23:17 tryggvil Exp $
+ * $Id: ConnectionBroker.java,v 1.11 2005/06/28 13:50:06 tryggvil Exp $
  *
  * Copyright (C) 2000-2005 Idega hf. All Rights Reserved.
  *
@@ -10,13 +10,13 @@
 package com.idega.util.database;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
-
-import javax.naming.InitialContext;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-
 import com.idega.transaction.IdegaTransaction;
 import com.idega.transaction.IdegaTransactionManager;
 /**
@@ -29,9 +29,13 @@ import com.idega.transaction.IdegaTransactionManager;
  * Whenever a connection object is gotten with getConnection(x) there should always follow a call to freeConnection(x) 
  * when the Connection is not used anymore, otherwise the Pool could get empty and unused connections left out in limbo.
  * <br>
+ * The implementation is such that if a db.properties file is found in the webapp under either /idegaweb/properties
+ * or /WEB-INF/idegaweb/properties/ then the idegaWeb Pool is used, if it does not exist then
+ * the ConnectionBroker tries to look up a DataSource with the url 'jdbc/DefaultDS' in the JNDI directory.
+ * <br>
  * </p>
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
 */
 public class ConnectionBroker
 {
@@ -40,11 +44,11 @@ public class ConnectionBroker
 	public final static int POOL_MANAGER_TYPE_IDEGA = 1;
 	public final static int POOL_MANAGER_TYPE_POOLMAN = 2;
 	public final static int POOL_MANAGER_TYPE_JDBC_DATASOURCE = 3;
-	//temprorary - change
-	public static int POOL_MANAGER_TYPE = POOL_MANAGER_TYPE_IDEGA; //POOL_MANAGER_TYPE_JDBC_DATASOURCE;
+	public static int POOL_MANAGER_TYPE = POOL_MANAGER_TYPE_IDEGA;
 	private static String DEFAULT_JDBC_JNDI_URL = "jdbc/DefaultDS";
 	
 	private static DataSource defaultDs;
+	private static Map dataSourcesMap=new HashMap();
 	private static Logger log = Logger.getLogger(ConnectionBroker.class.getName());
 	/**	
 	 * Returns a Datastore connection from the default datasource
@@ -349,26 +353,47 @@ public class ConnectionBroker
 		return false;
 	}
 	
+	
+	/**
+	 * <p>
+	 * Gets the datasource from the string 'datasourceName'<br>
+	 * If dataSourceName is 'default' it returns the default datasource from 'jdbc/DefaultDS' otherwise it tries to look up
+	 * a datasource from jdbc/[datasourceName].
+	 * </p>
+	 * @param datasourceName
+	 * @return
+	 */
 	static DataSource getDataSource(String datasourceName)
 	{
-		/**
-		 * @todo change:
-		* only supports the default datasource now implement support for others
-		*/
-		if (defaultDs == null)
-		{
-			try
+		if(datasourceName == null || datasourceName == DEFAULT_POOL || datasourceName.equals(DEFAULT_POOL)){
+			if (defaultDs == null)
 			{
-				//ds = (DataSource) new InitialContext().lookup("java:comp/env/datasource");
-				
-				defaultDs = (DataSource) getEnvContext().lookup(DEFAULT_JDBC_JNDI_URL);
+				try
+				{
+					defaultDs = (DataSource) getEnvContext().lookup(DEFAULT_JDBC_JNDI_URL);
+				}
+				catch (NamingException e)
+				{
+					throw new RuntimeException("Error initializing datasource: " + datasourceName + ". Error was: " + e.getMessage());
+				}
 			}
-			catch (NamingException e)
-			{
-				throw new RuntimeException("Error initializing datasource: " + datasourceName + ". Error was: " + e.getMessage());
-			}
+			return defaultDs;
 		}
-		return defaultDs;
+		else{
+			DataSource dataSource = (DataSource)dataSourcesMap.get(datasourceName);
+			if(dataSource==null){
+				try
+				{
+					dataSource = (DataSource) getEnvContext().lookup("jdbc/"+datasourceName);
+					dataSourcesMap.put(datasourceName,dataSource);
+				}
+				catch (NamingException e)
+				{
+					throw new RuntimeException("Error initializing datasource: " + datasourceName + ". Error was: " + e.getMessage());
+				}
+			}
+			return dataSource;
+		}
 	}
 	/**
 	 * Sets the url to the default datasource if the JDBC datasource is the current pool type
