@@ -1778,19 +1778,22 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			found = true;
 		}
 		else {
-			Iterator parents = group.getParentGroups().iterator();
-			while (parents.hasNext() && !found) {
-				Group parent = (Group) parents.next();
-				//System.out.println("checking group for top group in ancestors
-				// " + parent.getName());
-				try {
-					found = isGroupUnderUsersTopGroupNode(iwc, parent, user, topGroupNodes);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-				if (found) {
-					break;
+			List parents = group.getParentGroups();
+			if (parents != null) {
+			    Iterator parentIt = parents.iterator();
+				while (parentIt.hasNext() && !found) {
+					Group parent = (Group) parentIt.next();
+					//System.out.println("checking group for top group in ancestors
+					// " + parent.getName());
+					try {
+						found = isGroupUnderUsersTopGroupNode(iwc, parent, user, topGroupNodes);
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (found) {
+						break;
+					}
 				}
 			}
 		}
