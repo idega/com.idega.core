@@ -11,6 +11,10 @@ import com.idega.user.data.GroupTypeConstants;
 public class ICUserConstants extends GroupTypeConstants implements ConstantsPlaceholder {
 
 	public static final String META_DATA_GROUP_NUMBER = "GROUP_NUMBER";
+	
+	//gives you the right to change a users personal id
+	public static final String ROLE_KEY_EDIT_PERSONAL_ID = "PINEdit";
+	
 	// do not set this variable to final
 	// the help bundle identfier might be changed by bundle starters
 	public static String HELP_BUNDLE_IDENTFIER = "com.idega.core";
