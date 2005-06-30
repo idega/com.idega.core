@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.19 2005/06/03 15:18:29 thomas Exp $
+ * $Id: DefaultIWBundle.java,v 1.20 2005/06/30 13:57:24 gummi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -751,6 +751,16 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	{
 		return resourcesVirtualPath;
 	}
+	/**
+	 * Current locale for the user comes from IWContext.
+	 * @return returns vitual path to the current locale resource folder, without the context.
+	 */
+	public String getResourcesPathForCurrentLocale()
+	{
+		IWContext iwc = IWContext.getInstance();
+		return getResourcesPath(iwc.getCurrentLocale());
+	}
+	
 	public String getResourcesRealPath(Locale locale)
 	{
 		String path = (String) getLocaleRealPaths().get(locale);
@@ -761,11 +771,34 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return path;
 	}
+	
+	/**
+	 * 
+	 * @param locale
+	 * @return returns vitual path to the locale resource folder, without the context.
+	 */
+	public String getResourcesPath(Locale locale)
+	{
+		String path = (String) getLocalePaths().get(locale);
+		if (path == null)
+		{
+			path = getResourcesPath() + "/" + locale.toString() + ".locale";
+			getLocalePaths().put(locale, path);
+		}
+		return path;
+	}
+	
 	protected Map getLocaleRealPaths(){
 		if(this.localeRealPathsLookup==null){
 			localeRealPathsLookup=new HashMap();
 		}
 		return localeRealPathsLookup;
+	}
+	protected Map getLocalePaths(){
+		if(this.localePathsLookup==null){
+			localePathsLookup=new HashMap();
+		}
+		return localePathsLookup;
 	}
 	public String getPropertiesRealPath()
 	{
