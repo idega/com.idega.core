@@ -76,6 +76,7 @@ public class IWEventProcessor implements Singleton {
 			processAWTEvent(iwc, iwc.getRequest(), iwc.getResponse());
 			increaseHistoryID(iwc);
 			handleEvent(iwc);
+			handleLocaleParameter(iwc);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
