@@ -1,5 +1,5 @@
 /*
- * $Id: TextInput.java,v 1.39 2005/06/01 11:23:25 laddi Exp $
+ * $Id: TextInput.java,v 1.40 2005/07/04 15:54:30 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a input element of type text
  * </p>
- *  Last modified: $Date: 2005/06/01 11:23:25 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/07/04 15:54:30 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  */
 public class TextInput extends GenericInput {
     private boolean isSetAsIntegers;
@@ -473,7 +473,7 @@ public class TextInput extends GenericInput {
         if (isSetAsNotEmpty)
                 setOnSubmitFunction(
                         "warnIfEmpty",
-                        "function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}",
+                        "function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( !inputbox.disabled && inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}",
                         notEmptyErrorMessage);
 
         if (isSetEmptyConfirm)
