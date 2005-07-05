@@ -948,6 +948,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public List getChildGroups(String[] p0, boolean p1) throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not supported");
 	}
+	public List getChildGroupsIDs(String[] p0, boolean p1) throws javax.ejb.EJBException {
+		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not supported");
+	}
 	public List getListOfAllGroupsContaining(int p0) throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContaining() not yet implemented.");
 	}

@@ -1,5 +1,5 @@
 /*
- * $Id: GroupHome.java,v 1.28 2005/06/02 09:51:24 sigtryggur Exp $
+ * $Id: GroupHome.java,v 1.29 2005/07/05 09:41:23 sigtryggur Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.data.IDOHome;
 
 /**
  * 
- *  Last modified: $Date: 2005/06/02 09:51:24 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2005/07/05 09:41:23 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public interface GroupHome extends IDOHome {
 
@@ -75,6 +75,12 @@ public interface GroupHome extends IDOHome {
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContained
 	 */
 	public Collection findGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
+			throws FinderException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContainedIDs
+	 */
+	public Collection findGroupsContainedIDs(Group containingGroup, Collection groupTypes, boolean returnTypes)
 			throws FinderException;
 
 	/**

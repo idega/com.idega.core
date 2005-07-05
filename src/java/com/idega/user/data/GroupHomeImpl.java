@@ -1,5 +1,5 @@
 /*
- * $Id: GroupHomeImpl.java,v 1.28 2005/06/02 09:51:24 sigtryggur Exp $
+ * $Id: GroupHomeImpl.java,v 1.29 2005/07/05 09:41:23 sigtryggur Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.data.IDOFactory;
 
 /**
  * 
- *  Last modified: $Date: 2005/06/02 09:51:24 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2005/07/05 09:41:23 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class GroupHomeImpl extends IDOFactory implements GroupHome {
 
@@ -114,6 +114,13 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
+
+	public Collection findGroupsContainedIDs(Group containingGroup, Collection groupTypes, boolean returnTypes)
+		throws FinderException {
+	    com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	    Collection ids = ((GroupBMPBean) entity).ejbFindGroupsContained(containingGroup, groupTypes, returnTypes);
+	    return ids;
+}
 
 	public Collection findGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();

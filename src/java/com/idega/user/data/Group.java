@@ -1,5 +1,5 @@
 /*
- * $Id: Group.java,v 1.47 2004/11/16 14:52:42 eiki Exp $
+ * $Id: Group.java,v 1.48 2005/07/05 09:41:23 sigtryggur Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -39,10 +39,10 @@ import com.idega.idegaweb.IWApplicationContext;
 
 /**
  * 
- *  Last modified: $Date: 2004/11/16 14:52:42 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/07/05 09:41:23 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.47 $
+ * @version $Revision: 1.48 $
  */
 public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDCapable {
 
@@ -270,6 +270,11 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	 * @see com.idega.user.data.GroupBMPBean#getChildGroups
 	 */
 	public List getChildGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException;
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getChildGroupsIDs
+	 */
+	public List getChildGroupsIDs(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildGroups

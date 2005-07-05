@@ -925,6 +925,25 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 	
+
+	public List getChildGroupsIDs(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
+		List theReturn = new ArrayList();
+
+		List types = null;
+
+		if (groupTypes != null && groupTypes.length > 0) {
+			types = ListUtil.convertStringArrayToList(groupTypes);
+		}
+
+		try {
+			return ListUtil.convertCollectionToList(getGroupHome().findGroupsContainedIDs(this, types, returnSpecifiedGroupTypes));
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+			return theReturn;
+		}
+	}
+
 	/**
 	 * Returns collection of Childs that match the type of 'groupTypeProxy' and according to groupTypeProxy.getSelectQueryConstrains().
 	 * The objects in the collection will be of the same class as 'groupTypeProxy' i.e. if groupTypeProxy implements User then it will be collection of User elements
