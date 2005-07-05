@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.152 2005/06/21 01:23:56 gummi Exp $
+ * $Id: Link.java,v 1.153 2005/07/05 22:41:26 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1969,16 +1969,14 @@ public class Link extends Text {
 	 *
 	 */
 	public void setEventListener(Class eventListenerClass) {
-		setEventListener(eventListenerClass.getName());
+		String eventListenerEncryptedClassName = IWMainApplication.getEncryptedClassName(eventListenerClass.getName());
+		setEventListener(eventListenerEncryptedClassName);
 	}
 
-	/**
-	 *
-	 */
-	public void setEventListener(String eventListenerClassName) {
-		addParameter(IWMainApplication.IdegaEventListenerClassParameter, IWMainApplication.getEncryptedClassName(eventListenerClassName));
+	public void setEventListener(String encryptedClassName) {
+		addParameter(IWMainApplication.IdegaEventListenerClassParameter, encryptedClassName);
 	}
-
+	
 	/**
 	 *
 	 */
