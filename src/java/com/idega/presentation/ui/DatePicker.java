@@ -47,7 +47,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     private int dateFormatStyle = DateFormat.SHORT;
     private String dateFormatPattern = "yyyy-MM-dd";
     private Date date = new Date();
-
+    private String styleClass = null;
+    private int length = -1;
     /**
      * Creates a new DateInput object.
      */
@@ -106,19 +107,23 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         TextInput input = new TextInput(displayInputName);
         input.setDisabled(disabled);
         int inputLength = 10;
-        switch (dateFormatStyle) {
-        case DateFormat.SHORT:
-            inputLength = 10;
-            break;
-        case DateFormat.MEDIUM:
-            inputLength = 12;
-            break;
-        case DateFormat.LONG:
-            inputLength = 16;
-            break;
-        case DateFormat.FULL:
-            inputLength = 20;
-            break;
+        if (length < 0) {
+	        switch (dateFormatStyle) {
+	        case DateFormat.SHORT:
+	            inputLength = 10;
+	            break;
+	        case DateFormat.MEDIUM:
+	            inputLength = 12;
+	            break;
+	        case DateFormat.LONG:
+	            inputLength = 16;
+	            break;
+	        case DateFormat.FULL:
+	            inputLength = 20;
+	            break;
+	        }
+        } else {
+        	inputLength = length;
         }
         input.setLength(inputLength);
         if (_style != null) {
@@ -127,6 +132,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 
         if (_stringDisplay != null) {
             input.setValue(_stringDisplay);
+        }
+        if (styleClass != null) {
+        	input.setStyleClass(styleClass);
         }
 
         return input;
@@ -425,4 +433,11 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		return script.toString();
     }
 
+    public void setStyleClass(String styleClass) {
+    	this.styleClass = styleClass;
+    }
+    
+    public void setLength(int length) {
+    	this.length = length;
+    }
 }
