@@ -51,13 +51,12 @@
             <url>http://www.servlets.com/cos/</url>
             <properties/>
         </dependency>
-        <dependency>
-            <groupId>itext</groupId>
-            <artifactId>itext</artifactId>
-            <version>0.99</version>
-            <type>jar</type>
-            <url>http://itext.sourceforge.net/</url>
-            <properties/>
-        </dependency>    
+	    <dependency>
+      		<groupId>itextpdf</groupId>
+      		<artifactId>itext-paulo</artifactId>
+      		<version>139</version>
+      		<type>jar</type>
+      		<url>http://itextpdf.sourceforge.net/</url>
+    	</dependency>
     </dependencies>
 </project>

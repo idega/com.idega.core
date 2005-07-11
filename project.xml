@@ -2,9 +2,9 @@
 <project>
   <extend>base-project.xml</extend>
   <name>idegaWeb Core</name>
-  <artifactId>com.idega.core</artifactId>
-    <!--currentVersion>3.0.5</currentVersion-->
-  <currentVersion>3.1.0-SNAPSHOT</currentVersion>
+  <!--artifactId>com.idega.core</artifactId-->
+  <currentVersion>3.0.5</currentVersion>
+  <!--currentVersion>3.1.0-SNAPSHOT</currentVersion-->
   <shortDescription>idegaweb core is the core package of the idegaweb framework</shortDescription>
   <package>com.idega</package>
   <versions>
@@ -301,11 +301,11 @@
     </dependency>
     <!-- iText used in bundles com.idega.block.reports, com.idega.block.contract, com.idega.block.pdf and campus not used in core -->
     <dependency>
-      <groupId>itext</groupId>
-      <artifactId>itext</artifactId>
-      <version>0.99</version>
+      <groupId>itextpdf</groupId>
+      <artifactId>itext-paulo</artifactId>
+      <version>139</version>
       <type>jar</type>
-      <url>http://itext.sourceforge.net/</url>
+      <url>http://itextpdf.sourceforge.net/</url>
       <properties>
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
