@@ -358,10 +358,10 @@ public class Text extends PresentationObject {
 
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
-			if (attributeSet) {
-				print("<span " + getMarkupAttributesString() + " >");
+			if (attributeSet || showTag()) {
+				print("<" + getTag() + " " + getMarkupAttributesString() + " >");
 				print(getLocalizedText(iwc));
-				print("</span>");
+				print("</" + getTag() + ">");
 			}
 			else {
 				print(getLocalizedText(iwc));
@@ -405,6 +405,13 @@ public class Text extends PresentationObject {
 		return size + "px";
 	}
 	
+	protected String getTag() {
+		return "span";
+	}
+	
+	protected boolean showTag() {
+		return false;
+	}
 	
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
