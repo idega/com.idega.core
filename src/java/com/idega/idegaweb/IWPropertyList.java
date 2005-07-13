@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.22 2004/12/02 20:36:16 tryggvil Exp $
+ * $Id: IWPropertyList.java,v 1.23 2005/07/13 22:46:08 sigtryggur Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -266,7 +266,14 @@ public class IWPropertyList {
 	 */
 	public String getProperty(String key) {
 		try {
-			return findKeyElement(key).getChild(valueTag).getText();
+		    XMLElement keyElement = findKeyElement(key);
+		    if (keyElement != null) {
+		        XMLElement childElement = keyElement.getChild(valueTag);
+			    if (childElement != null) {
+			        return childElement.getText();
+			    }
+		    }
+		    return null;
 		}
 		catch (NullPointerException ex) {
 			return null;
