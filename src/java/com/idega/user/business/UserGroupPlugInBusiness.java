@@ -10,7 +10,7 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 
 /**
- * Title:        This inteface defines methods you can implement to customize the behavior of the user system. <br>
+ * Title:        This interface defines methods you can implement to customize the behavior of the user system. <br>
  * Methods returning a boolean should return true by default other methods can return null objects or empty lists where applicable.
  * Description:  idegaWeb User Subsystem
  * Copyright:    Copyright (c) 2002
@@ -21,11 +21,39 @@ import com.idega.user.data.User;
 
 public interface UserGroupPlugInBusiness extends IBOService {
 
-    public void beforeUserRemove(User user)throws RemoveException,RemoteException;
-    public void afterUserCreateOrUpdate(User user)throws CreateException,RemoteException;
+    /**
+     * Called before removing a user from a group, you can stop the removal by throwing a RemoveException
+     * @param group
+     * @param parentGroup can be null
+     * @throws RemoveException
+     * @throws RemoteException
+     */
+    public void beforeUserRemove(User user, Group parentGroup)throws RemoveException,RemoteException;
+    /**
+     * called after creating a new user and/or after adding a user to a group
+     * @param user
+     * @param parentGroup can be null
+     * @throws CreateException
+     * @throws RemoteException
+     */
+    public void afterUserCreateOrUpdate(User user, Group parentGroup)throws CreateException,RemoteException;
 
-    public void beforeGroupRemove(Group group)throws RemoveException,RemoteException;
-    public void afterGroupCreateOrUpdate(Group group)throws CreateException,RemoteException;
+    /**
+     * Called before removing a group, you can stop the removal by throwing a RemoveException
+     * @param group
+     * @param parentGroup can be null
+     * @throws RemoveException
+     * @throws RemoteException
+     */
+    public void beforeGroupRemove(Group group, Group parentGroup)throws RemoveException,RemoteException;
+    /**
+     * called after creating a new group and/or after adding a group to a group
+     * @param group
+     * @param parentGroup can be null
+     * @throws CreateException
+     * @throws RemoteException
+     */
+    public void afterGroupCreateOrUpdate(Group group, Group parentGroup)throws CreateException,RemoteException;
  
 	public PresentationObject instanciateEditor(Group group)throws RemoteException;
     public PresentationObject instanciateViewer(Group group)throws RemoteException;

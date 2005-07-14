@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusiness.java,v 1.54 2005/06/06 09:09:26 sigtryggur Exp $
+ * $Id: GroupBusiness.java,v 1.55 2005/07/14 01:12:16 eiki Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
@@ -50,10 +51,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2005/06/06 09:09:26 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2005/07/14 01:12:16 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.54 $
+ * @version $Revision: 1.55 $
  */
 public interface GroupBusiness extends IBOService, IWLDAPConstants {
 
@@ -556,9 +557,10 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	public PhoneHome getPhoneHome() throws java.rmi.RemoteException;
 
 	/**
+	 * @throws RemoveException 
 	 * @see com.idega.user.business.GroupBusinessBean#isGroupRemovable
 	 */
-	public boolean isGroupRemovable(Group group) throws java.rmi.RemoteException;
+	public boolean isGroupRemovable(Group group,Group parentGroup) throws java.rmi.RemoteException, RemoveException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getNameOfGroupWithParentName
@@ -675,9 +677,15 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	 * @see com.idega.user.business.GroupBusinessBean#callAllUserGroupPluginAfterGroupCreateOrUpdateMethod
 	 */
 	public void callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(Group group);
+	
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#callAllUserGroupPluginAfterGroupCreateOrUpdateMethod
+	 */
+	public void callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(Group group, Group parentGroup);
 
 	/**
+	 * @throws RemoteException 
 	 * @see com.idega.user.business.GroupBusinessBean#callAllUserGroupPluginBeforeGroupRemoveMethod
 	 */
-	public void callAllUserGroupPluginBeforeGroupRemoveMethod(Group group);
+	public void callAllUserGroupPluginBeforeGroupRemoveMethod(Group group, Group parentGroup) throws RemoteException,RemoveException;
 }

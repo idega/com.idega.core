@@ -1642,7 +1642,19 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 	  	return ListUtil.getEmptyList();
     }
    
+    /**
+     * This method will try to find the parent of the group (if only one) and then calls callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group,parentGroup)
+     */
 	public void callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(Group group) {
+		List list = group.getParentGroups();
+		Group parentGroup = null;
+		if(list!=null && list.size()==1){
+			parentGroup = (Group)list.iterator().next();
+		}
+		callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group,parentGroup);
+	}
+	
+	public void callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(Group group, Group parentGroup) {
 		// get plugins and call the method
 		Collection pluginsForGroup;
 		try {
@@ -1650,7 +1662,7 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 			Iterator plugs = pluginsForGroup.iterator();
 			while (plugs.hasNext()) {
 				UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
-				plugBiz.afterGroupCreateOrUpdate(group);
+				plugBiz.afterGroupCreateOrUpdate(group, parentGroup);
 			}
 		}
 		catch (RemoteException e) {
@@ -1661,22 +1673,14 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 		}
 	}
 
-	public void callAllUserGroupPluginBeforeGroupRemoveMethod(Group group) {
+	public void callAllUserGroupPluginBeforeGroupRemoveMethod(Group group, Group parentGroup) throws RemoteException, RemoveException {
 		// get plugins and call the method
 		Collection pluginsForGroup;
-		try {
-			pluginsForGroup = getUserGroupPluginsForGroup(group);
-			Iterator plugs = pluginsForGroup.iterator();
-			while (plugs.hasNext()) {
-				UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
-				plugBiz.beforeGroupRemove(group);
-			}
-		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		catch (RemoveException e) {
-			e.printStackTrace();
+		pluginsForGroup = getUserGroupPluginsForGroup(group);
+		Iterator plugs = pluginsForGroup.iterator();
+		while (plugs.hasNext()) {
+			UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
+			plugBiz.beforeGroupRemove(group, parentGroup);
 		}
 	}
     
@@ -1951,23 +1955,24 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
   }
  
  
-  /** Group is removeable if the group is either an alias or 
-   *  has not any children.
+  /** Group is removable if the group is either an alias or 
+   *  has no children.
    *  Childrens are other groups or users.
    * @param group
+   * @param parentGroup can be null
    * @return boolean 
+ * @throws RemoteException 
+ * @throws RemoveException 
    */
-  public boolean isGroupRemovable(Group group)  { 
-    try {
-      return ( (group.getGroupType().equals("alias"))
-          // childCount checks only groups as children
-          || (group.getChildCount() <= 0 && 
-             ( getUserBusiness().getUsersInGroup(group).isEmpty())));
-    }
-    catch (java.rmi.RemoteException rme) {
-      throw new RuntimeException(rme.getMessage());
-    } 
-  }
+  public boolean isGroupRemovable(Group group, Group parentGroup) throws RemoteException, RemoveException {
+		boolean canRemove = false;
+		// childCount checks only groups as children
+		canRemove = ((group.getGroupType().equals("alias")) || (group.getChildCount() <= 0 && (getUserBusiness().getUsersInGroup(group).isEmpty())));
+		if (canRemove) {
+			callAllUserGroupPluginBeforeGroupRemoveMethod(group, parentGroup);
+		}
+		return canRemove;
+	}
  
   public String getNameOfGroupWithParentName(Group group, Collection parentGroups) {
     StringBuffer buffer = new StringBuffer();    
@@ -2527,10 +2532,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/06/06 09:09:26 $ by $Author: sigtryggur $
+	 *  Last modified: $Date: 2005/07/14 01:12:16 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.98 $
+	 * @version $Revision: 1.99 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

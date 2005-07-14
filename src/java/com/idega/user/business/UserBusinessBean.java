@@ -569,11 +569,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException{
+		//call plugin methods first
+		callAllUserGroupPluginBeforeUserRemoveMethod(user,group);
+		
 		group.removeUser(user, currentUser);
 		Integer primaryGroupId = new Integer(user.getPrimaryGroupID());
 		if(group.getPrimaryKey().equals(primaryGroupId)) {
 			// update primary group for user, since it was the group the user was removed from
-			Collection groups = getUserGroups(user, new String[] {"general"});
+			Collection groups = user.getParentGroups();
 			Iterator iter = groups.iterator();
 			Group newPG = null;
 			if(groups != null && !groups.isEmpty()) {
@@ -2837,6 +2840,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			// is not able to find a group relation.
 			if  (!leaveCopyOfUserInCurrentGroup) {
 				if (parentGroup != null) {
+					callAllUserGroupPluginBeforeUserRemoveMethod(user,parentGroup);
 					parentGroup.removeUser(user, currentUser);
 				}
 			}
@@ -2845,9 +2849,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				targetGroup.addGroup(userId);
 			}
 			else {
-				/**
-				 * TODO solve group relation primary group problem
-				 */
 				// this is a hack. If the target group is already the primary
 				// group
 				// it should not be necessary to add a corresponding group
@@ -2869,6 +2870,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			// this is an unusual error therefore localization is it not
 			// necessary
+			
+			if(e instanceof RemoveException){
+				return e.getMessage();
+			}
+			
 			return "Transaction failed";
 		}
 		return null;
@@ -3230,7 +3236,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return comments;
 	}
 	
+	/**
+     * This method will try to find the parent of the user (if only one) and then calls callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group,parentGroup)
+     */
 	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user){
+		List list = user.getParentGroups();
+		Group parentGroup = null;
+		if(list!=null && list.size()==1){
+			parentGroup = (Group)list.iterator().next();
+		}
+		
+		callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,parentGroup);
+	}
+	
+	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user, Group parentGroup){
 //		get plugins and call the method
 		Collection allUserPlugins;
 		try {
@@ -3238,7 +3257,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			Iterator plugs = allUserPlugins.iterator();
 			while (plugs.hasNext()) {
 				UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
-				plugBiz.afterUserCreateOrUpdate(user);
+				plugBiz.afterUserCreateOrUpdate(user, parentGroup);
 			}
 		}
 		catch (RemoteException e) {
@@ -3249,7 +3268,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
-	public void callAllUserGroupPluginBeforeUserRemoveMethod(User user){
+	public void callAllUserGroupPluginBeforeUserRemoveMethod(User user, Group parentGroup) {
 //		get plugins and call the method
 		Collection allUserPlugins;
 		try {
@@ -3257,7 +3276,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			Iterator plugs = allUserPlugins.iterator();
 			while (plugs.hasNext()) {
 				UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
-				plugBiz.beforeUserRemove(user);
+				plugBiz.beforeUserRemove(user,parentGroup);
 			}
 		}
 		catch (RemoteException e) {

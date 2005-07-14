@@ -595,7 +595,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			group = getGroupBusiness().createOrUpdateGroup(entryDN, entryAttribs);	
 		}
 		
-		getGroupBusiness().callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group);
+		getGroupBusiness().callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group,parentGroup);
 		
 		return group;
 	}
@@ -620,7 +620,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			user = getUserBusiness().createOrUpdateUser(childDN, childAttribs);
 		}
 		
-		getUserBusiness().callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user);
+		getUserBusiness().callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,parentGroup);
 		
 		return user;
 	}
