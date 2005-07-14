@@ -2858,6 +2858,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				// of the target group
 				targetGroup.addGroup(userId);
 			}
+			
+			
+			callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,parentGroup);
+			
 			transactionManager.commit();
 		}
 		catch (Exception e) {
@@ -2875,7 +2879,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				return e.getMessage();
 			}
 			
-			return "Transaction failed";
+			return "User could not be moved because of the error: "
+							+ e.getMessage()
+							+ " please try again or contact the system administrator if you think it is a server error.";
+			
+			
 		}
 		return null;
 	}
