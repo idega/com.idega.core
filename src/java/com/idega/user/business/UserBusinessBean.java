@@ -3238,8 +3238,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	
 	/**
      * This method will try to find the parent of the user (if only one) and then calls callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group,parentGroup)
+	 * @throws CreateException 
+	 * @throws RemoteException 
      */
-	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user){
+	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user) throws CreateException, RemoteException{
 		List list = user.getParentGroups();
 		Group parentGroup = null;
 		if(list!=null && list.size()==1){
@@ -3249,22 +3251,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,parentGroup);
 	}
 	
-	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user, Group parentGroup){
+	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user, Group parentGroup) throws CreateException, RemoteException{
 //		get plugins and call the method
-		Collection allUserPlugins;
-		try {
-			allUserPlugins = getGroupBusiness().getUserGroupPlugins();
-			Iterator plugs = allUserPlugins.iterator();
-			while (plugs.hasNext()) {
-				UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
-				plugBiz.afterUserCreateOrUpdate(user, parentGroup);
-			}
-		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		catch (CreateException e) {
-			e.printStackTrace();
+		Collection allUserPlugins = allUserPlugins = getGroupBusiness().getUserGroupPlugins();
+		Iterator plugs = allUserPlugins.iterator();
+		while (plugs.hasNext()) {
+			UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
+			plugBiz.afterUserCreateOrUpdate(user, parentGroup);
 		}
 	}
 

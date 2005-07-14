@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.87 2005/07/14 01:12:16 eiki Exp $
+ * $Id: UserBusiness.java,v 1.88 2005/07/14 17:15:54 eiki Exp $
  * Created on 2.2.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -51,10 +51,10 @@ import com.idega.util.IWTimestamp;
 
 
 /**
- * Last modified: $Date: 2005/07/14 01:12:16 $ by $Author: eiki $
+ * Last modified: $Date: 2005/07/14 17:15:54 $ by $Author: eiki $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.87 $
+ * @version $Revision: 1.88 $
  */
 public interface UserBusiness extends IBOService, IWLDAPConstants {
 
@@ -746,12 +746,13 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#callAllUserGroupPluginAfterUserCreateOrUpdateMethod
 	 */
-	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user);
+	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user) throws CreateException,RemoteException;
 	
 	/**
+	 * @throws CreateException 
 	 * @see com.idega.user.business.UserBusinessBean#callAllUserGroupPluginAfterUserCreateOrUpdateMethod
 	 */
-	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user,Group parentGroup);
+	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user,Group parentGroup) throws CreateException,RemoteException;
 	
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#callAllUserGroupPluginBeforeUserRemoveMethod
