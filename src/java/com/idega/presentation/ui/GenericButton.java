@@ -1,5 +1,5 @@
 /*
- * $Id: GenericButton.java,v 1.31 2005/06/22 14:33:21 gummi Exp $
+ * $Id: GenericButton.java,v 1.32 2005/07/14 10:44:22 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -9,11 +9,12 @@
  */
 package com.idega.presentation.ui;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import javax.faces.context.FacesContext;
-
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
@@ -30,10 +31,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * This component is for rendering out a input element of type button.
  * </p>
- *  Last modified: $Date: 2005/06/22 14:33:21 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/07/14 10:44:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  */
 public class GenericButton extends GenericInput {
 
@@ -304,9 +305,26 @@ public class GenericButton extends GenericInput {
 	}
 	
 	public void addParameter(String name, String value) {
-		if (parameterMap == null)
+		if (parameterMap == null) {
 			parameterMap = new HashMap();
-		parameterMap.put(name, value);
+		}
+		if (parameterMap.containsKey(name)) {
+			Object oldValue = parameterMap.get(name);
+			if (oldValue instanceof Collection) {
+				Collection valueList = (Collection) oldValue;
+				valueList.add(value);
+				parameterMap.put(name, valueList);
+			}
+			else {
+				Collection valueList = new ArrayList();
+				valueList.add(oldValue);
+				valueList.add(value);
+				parameterMap.put(name, valueList);
+			}
+		}
+		else {
+			parameterMap.put(name, value);
+		}
 	}
 	
 	/**
@@ -314,8 +332,9 @@ public class GenericButton extends GenericInput {
 	 * @param parameterMap 
 	 */
 	public void addParameters(Map prmMap){
-	    if (parameterMap == null)
-			parameterMap = new HashMap();
+	  if (parameterMap == null) {
+	  		parameterMap = new HashMap();
+	  }
 		parameterMap.putAll(prmMap);
 	}
 	
@@ -361,12 +380,25 @@ public class GenericButton extends GenericInput {
 			Iterator iter = parameterMap.keySet().iterator();
 			while (iter.hasNext()) {
 				String name = (String) iter.next();
-				String value = (String) parameterMap.get(name);
+				Object value = parameterMap.get(name);
 				if (name != null && value != null) {
-					returnString.append("&");
-					returnString.append(name);
-					returnString.append("=");
-					returnString.append(value);
+					if (value instanceof Collection) {
+						Collection valueList = (Collection) value;
+						Iterator iterator = valueList.iterator();
+						while (iterator.hasNext()) {
+							Object element = (Object) iterator.next();
+							returnString.append("&");
+							returnString.append(name);
+							returnString.append("=");
+							returnString.append(element);
+						}
+					}
+					else {
+						returnString.append("&");
+						returnString.append(name);
+						returnString.append("=");
+						returnString.append(value);
+					}
 				}
 			}
 		}
