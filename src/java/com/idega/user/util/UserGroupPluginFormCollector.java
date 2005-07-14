@@ -1,5 +1,5 @@
 /*
- * $Id: UserGroupPluginFormCollector.java,v 1.1 2005/04/17 17:01:55 eiki Exp $ Created on
+ * $Id: UserGroupPluginFormCollector.java,v 1.2 2005/07/14 17:07:42 eiki Exp $ Created on
  * Apr 13, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
 package com.idega.user.util;
 
 import java.rmi.RemoteException;
+import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import com.idega.business.IBOLookup;
@@ -26,10 +27,10 @@ import com.idega.util.GenericFormCollector;
  * A simple extend of GenericFormCollector that calls afterCreateOrUpdateUser in
  * all UserGroupPlugins
  * 
- * Last modified: $Date: 2005/04/17 17:01:55 $ by $Author: eiki $
+ * Last modified: $Date: 2005/07/14 17:07:42 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class UserGroupPluginFormCollector extends GenericFormCollector {
 
@@ -73,6 +74,10 @@ public class UserGroupPluginFormCollector extends GenericFormCollector {
 				return false;
 			}
 			catch (FinderException e) {
+				e.printStackTrace();
+				return false;
+			}
+			catch (CreateException e) {
 				e.printStackTrace();
 				return false;
 			}
