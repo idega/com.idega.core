@@ -1,5 +1,5 @@
 /*
- * $Id: DayOfWeek.java,v 1.4 2004/11/02 14:09:22 laddi Exp $
+ * $Id: DayOfWeek.java,v 1.5 2005/07/14 09:39:41 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,6 +14,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWCalendar;
+import com.idega.util.text.TextSoap;
 
 
 /**
@@ -22,17 +23,28 @@ import com.idega.util.IWCalendar;
  * Last modified: 14.10.2004 14:04:38 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class DayOfWeek extends Widget {
 
+	private boolean capitalized = false;
+	
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.widget.Widget#getWidget(com.idega.presentation.IWContext)
 	 */
 	protected PresentationObject getWidget(IWContext iwc) {
 		IWCalendar calendar = new IWCalendar(getLocale());
 		
-		Text text = new Text(calendar.getDayName(calendar.getDayOfWeek()));
+		String dayName = calendar.getDayName(calendar.getDayOfWeek());
+		if (capitalized) {
+			dayName = TextSoap.capitalize(dayName);
+		}
+		
+		Text text = new Text(dayName);
 		return text;
+	}
+	
+	public void setCapitalized(boolean capitalized) {
+		this.capitalized = capitalized;
 	}
 }
