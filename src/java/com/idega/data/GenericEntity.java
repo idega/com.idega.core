@@ -40,6 +40,7 @@ import javax.ejb.RemoveException;
 
 import com.idega.core.idgenerator.business.IdGenerator;
 import com.idega.core.idgenerator.business.IdGeneratorFactory;
+import com.idega.data.query.Column;
 import com.idega.data.query.Criteria;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
@@ -2257,7 +2258,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	private int getNumberOfRecords(Criteria criteria) throws SQLException {
 	    SelectQuery query = new SelectQuery(idoQueryTable());
-	    query.addColumn(new WildCardColumn());
+	    query.addColumn(new Column(idoQueryTable(), getIDColumnName()));
 	    query.setAsCountQuery(true);
 	    if(criteria!=null)
 	        query.addCriteria(criteria);
