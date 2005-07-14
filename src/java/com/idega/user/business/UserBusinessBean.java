@@ -2860,7 +2860,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			
 			
-			callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,parentGroup);
+			callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,targetGroup);
 			
 			transactionManager.commit();
 		}
