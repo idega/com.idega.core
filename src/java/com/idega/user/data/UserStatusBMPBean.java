@@ -243,7 +243,9 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 	}
 
 	public Collection ejbFindAllActiveByUserIdAndGroupId(int user_id, int group_id) throws FinderException {
-		StringBuffer sql = new StringBuffer("select * from ");
+		StringBuffer sql = new StringBuffer("select ");
+		sql.append(getIDColumnName());
+		sql.append(" from ");
 		sql.append(ENTITY_NAME);
 		sql.append(" where ");
 		sql.append(IC_USER);

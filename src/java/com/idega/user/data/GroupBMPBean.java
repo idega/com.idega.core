@@ -1510,7 +1510,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	  }
 
 	  public Collection ejbFindParentGroups(int groupID)throws FinderException{
-	    String sql = "select * from "+GroupRelationBMPBean.TABLE_NAME+" where "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+groupID
+	    String sql = "select " + getIDColumnName() + " from "+GroupRelationBMPBean.TABLE_NAME+" where "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+groupID
 	    +" and ("+GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN+"='GROUP_PARENT' OR "+ GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN+" is null) and ( "+GroupRelationBMPBean.STATUS_COLUMN+"='"+GroupRelation.STATUS_ACTIVE+"' OR "+GroupRelationBMPBean.STATUS_COLUMN+"='"+GroupRelation.STATUS_PASSIVE_PENDING+"' ) ";
 	    return this.idoFindPKsBySQL(sql);
 	  }
