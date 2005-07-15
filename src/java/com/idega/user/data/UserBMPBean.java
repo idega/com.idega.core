@@ -904,6 +904,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return super.idoFindPKsByQueryUsingLoadBalance(query,loadBalancePrefetchSize);
 
 	}
+	
+	public Object ejbFindByDateOfBirthAndName(Date dateOfBirth, String fullName) throws FinderException {
+		SelectQuery query = idoSelectQuery();
+		query.addCriteria(new MatchCriteria(idoQueryTable(), FIELD_DATE_OF_BIRTH, MatchCriteria.EQUALS, dateOfBirth));
+		query.addCriteria(new MatchCriteria(idoQueryTable(), FIELD_DISPLAY_NAME, MatchCriteria.EQUALS, fullName));
+		
+		return idoFindOnePKByQuery(query);
+	}
 
 	public void removeGroup(int p0, boolean p1) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/

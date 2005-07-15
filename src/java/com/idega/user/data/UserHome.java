@@ -13,6 +13,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public User create() throws javax.ejb.CreateException;
  public User findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
  public User findByPersonalID(java.lang.String p0)throws javax.ejb.FinderException;
+ public User findByDateOfBirthAndName(java.sql.Date p0, java.lang.String p1)throws javax.ejb.FinderException;
  public User findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(java.lang.String p0,java.lang.String p1, java.lang.String p2)throws javax.ejb.FinderException;
  public User findUserForUserGroup(int p0)throws javax.ejb.FinderException;
  public java.util.Collection findAllUsers()throws javax.ejb.FinderException;
