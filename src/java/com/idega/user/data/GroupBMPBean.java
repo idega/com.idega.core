@@ -1705,7 +1705,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException {
-		String addressTypeTableName = addressType.getEntityName();
 		String addressTypePrimaryKeyColumn = addressType.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
 		
 		IDOEntityDefinition addressDefinition = IDOLookup.getEntityDefinitionForClass(Address.class);
@@ -1714,9 +1713,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		String groupAddressMiddleTableName = addressDefinition.getMiddleTableNameForRelation(getEntityName());
 		
 		IDOQuery query = idoQuery(); 
-		query.appendSelect().appendDistinct().append("a.*").appendFrom().append(addressTableName).append(" a, ");
-		query.append(groupAddressMiddleTableName).append(" iua, ");
-		query.append(addressTypeTableName).append(" iat ").appendWhere();
+		query.appendSelect().append("a.").append(addressPrimaryKeyColumn).appendFrom().append(addressTableName).append(" a, ");
+		query.append(groupAddressMiddleTableName).append(" iua ").appendWhere();
 		
 		query.append("a.").append(addressPrimaryKeyColumn).appendEqualSign();
 		query.append("iua.").append(addressPrimaryKeyColumn);

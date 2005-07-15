@@ -1149,8 +1149,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		/** @todo Remove backwards compatability  */
 		Integer pk;
 		//try {
-			IDOQuery query = idoQueryGetSelect();
-			query
+			IDOQuery query = idoQuery();
+			query.appendSelect().append(getIDColumnName()).appendFrom().append(getEntityName())
         .appendWhereEquals(_COLUMNNAME_USER_GROUP_ID,userRepGroupID)
         .appendAnd();
       appendIsNotDeleted(query);
@@ -2164,7 +2164,6 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     }
 
 	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException {
-		String addressTypeTableName = addressType.getEntityName();
 		String addressTypePrimaryKeyColumn = addressType.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
 		
 		IDOEntityDefinition addressDefinition = IDOLookup.getEntityDefinitionForClass(Address.class);
@@ -2173,9 +2172,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		String userAddressMiddleTableName = addressDefinition.getMiddleTableNameForRelation(getEntityName());
 		
 		IDOQuery query = idoQuery(); 
-		query.appendSelect().appendDistinct().append("a.*").appendFrom().append(addressTableName).append(" a, ");
-		query.append(userAddressMiddleTableName).append(" iua, ");
-		query.append(addressTypeTableName).append(" iat ").appendWhere();
+		query.appendSelect().append("a.").append(addressPrimaryKeyColumn).appendFrom().append(addressTableName).append(" a, ");
+		query.append(userAddressMiddleTableName).append(" iua ").appendWhere();
 		
 		query.append("a.").append(addressPrimaryKeyColumn).appendEqualSign();
 		query.append("iua.").append(addressPrimaryKeyColumn);
