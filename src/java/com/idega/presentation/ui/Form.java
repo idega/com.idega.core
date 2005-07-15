@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.87 2005/06/01 14:07:52 gummi Exp $
+ * $Id: Form.java,v 1.88 2005/07/15 11:56:16 thomas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2005/06/01 14:07:52 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/07/15 11:56:16 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.87 $
+ * @version $Revision: 1.88 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -952,19 +952,19 @@ public class Form
 		}
 	}
 
-	private void setURIToWindowOpenerClass(IWContext iwc) {
-		if (this.windowClass != null) {
-			// setURL(iwc.getApplication().getWindowOpenerURI());
-			// addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
-			if (this.icObjectInstanceIDForWindow <= 0) {
-				setAction(iwc.getIWMainApplication().getWindowOpenerURI(windowClass));
-			}
-			else {
-				setAction(iwc.getIWMainApplication().getWindowOpenerURI(windowClass, icObjectInstanceIDForWindow));
-				// this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
-			}
-		}
-	}
+//	private void setURIToWindowOpenerClass(IWContext iwc) {
+//		if (this.windowClass != null) {
+//			// setURL(iwc.getApplication().getWindowOpenerURI());
+//			// addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
+//			if (this.icObjectInstanceIDForWindow <= 0) {
+//				setAction(iwc.getIWMainApplication().getWindowOpenerURI(windowClass));
+//			}
+//			else {
+//				setAction(iwc.getIWMainApplication().getWindowOpenerURI(windowClass, icObjectInstanceIDForWindow));
+//				// this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
+//			}
+//		}
+//	}
 
 	public void addEventModel(IWPresentationEvent model, IWContext iwc) {
 		Iterator iter = model.getParameters();
