@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.39 2005/06/21 17:51:39 gimmi Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.40 2005/07/15 12:40:24 thomas Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -11,7 +11,6 @@ package com.idega.presentation.ui;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 import javax.faces.context.FacesContext;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWApplicationContext;
@@ -20,6 +19,8 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Page;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.util.datastructures.list.KeyValueList;
+import com.idega.util.datastructures.list.KeyValuePair;
 
 /**
  * <p>
@@ -27,10 +28,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2005/06/21 17:51:39 $ by $Author: gimmi $
+ * Last modified: $Date: 2005/07/15 12:40:24 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  */
 public class Window extends Page {
 
@@ -457,15 +458,61 @@ public class Window extends Page {
 	 */
 	public static String getWindowURLWithParameter(Class windowClass, IWApplicationContext iwc, String parameterName,
 			String parameterValue) {
-		String url = getWindowURL(windowClass, iwc);
-		if (url.indexOf("?") == -1) {
-			return url + "?" + parameterName + "=" + parameterValue;
+		StringBuffer buffer = new StringBuffer(getWindowURL(windowClass, iwc));
+		if (buffer.indexOf("?") < 0) {
+			buffer.append('?');
 		}
 		else {
-			return url + "&" + parameterName + "=" + parameterValue;
+			buffer.append('&');
 		}
+		buffer.append(parameterName).append('=').append(parameterValue);
+		return buffer.toString();
 	}
 
+	
+	/**
+	 * Gets the URL to a (popup) Window class of class windowClass with added
+	 * extra parameters to send to the window.
+	 * 
+	 * @param windowClass
+	 *            the Class of the Window to instanciate
+	 * @param iwc
+	 * @param parameterMap
+	 *            a Map of key=value (parameter=parameterValue) parameters to
+	 *            add to the URL
+	 * @return the URL (without http:// and hostname)
+	 */
+	public static String getWindowURLWithParameters(Class windowClass, IWApplicationContext iwc, KeyValueList parameterMap) {
+		String url = getWindowURL(windowClass, iwc);
+		if (parameterMap == null || parameterMap.isEmpty()) {
+			return url;
+		}
+		StringBuffer buffer = new StringBuffer(url);
+		if (buffer.indexOf("?") < 0) {
+			buffer.append('?');
+		}
+		else {
+			buffer.append('&');
+		}
+		Iterator iterator = parameterMap.iterator();
+		boolean firstParameter = true;
+		while (iterator.hasNext()) {
+			if (firstParameter) {
+				firstParameter = false;
+			}
+			else {
+				buffer.append('&');
+			}
+			KeyValuePair pair = (KeyValuePair) iterator.next();
+			String parameterName = (String) pair.getKey();
+			String parameterValue = (String) pair.getValue();
+			buffer.append(parameterName).append('=').append(parameterValue);
+		}
+		return buffer.toString();
+
+	}
+	
+	
 	/**
 	 * Gets the URL to a (popup) Window class of class windowClass with added
 	 * extra parameters to send to the window.
@@ -479,21 +526,9 @@ public class Window extends Page {
 	 * @return the URL (without http:// and hostname)
 	 */
 	public static String getWindowURLWithParameters(Class windowClass, IWApplicationContext iwc, Map parameterMap) {
-		String url = getWindowURL(windowClass, iwc);
-		if (parameterMap != null) {
-			Set keySet = parameterMap.keySet();
-			for (Iterator iter = keySet.iterator(); iter.hasNext();) {
-				String parameterName = (String) iter.next();
-				String parameterValue = (String) parameterMap.get(parameterName);
-				if (url.indexOf("?") == -1) {
-					url += "?" + parameterName + "=" + parameterValue;
-				}
-				else {
-					url += "&" + parameterName + "=" + parameterValue;
-				}
-			}
-		}
-		return url;
+		KeyValueList list = new KeyValueList(parameterMap.size());
+		list.putAll(parameterMap);
+		return getWindowURLWithParameters(windowClass, iwc, list);
 	}
 
 	public static String getCallingScriptString(Class windowClass, IWApplicationContext iwac) {

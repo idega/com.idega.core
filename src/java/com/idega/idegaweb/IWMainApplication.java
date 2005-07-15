@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.144 2005/06/22 12:31:32 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.145 2005/07/15 12:40:24 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/06/22 12:31:32 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/07/15 12:40:24 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.144 $
+ * @version $Revision: 1.145 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -353,15 +353,27 @@ public class IWMainApplication	extends Application  implements MutableClass {
     
     public String getObjectInstanciatorURI(Class className, String templateName) {
         //return getObjectInstanciatorURI(className.getName(), templateName);
+    	StringBuffer buffer = new StringBuffer();
 		if(useNewURLScheme){
-			return this.getWindowOpenerURI(className)
-			+ templateParameter + "=" + getEncryptedClassName(templateName);
+			buffer.append(getBufferedWindowOpenerURI(className));
+			if (buffer.indexOf("?") < 0) {
+				// there is no parameter
+				buffer.append('?');
+			}
+			else {
+				// there are already parameters
+				buffer.append('&');
+			}
+			buffer.append(templateParameter).append('=').append(getEncryptedClassName(templateName));
 		}
 		else{
-	        return getObjectInstanciatorURI() + "?" + classToInstanciateParameter
-	                + "=" + getEncryptedClassName(className) + "&"
-	                + templateParameter + "=" + getEncryptedClassName(templateName);
-		}    
+			buffer.append(getObjectInstanciatorURI());
+			buffer.append('?').append(classToInstanciateParameter);
+			buffer.append('=').append(getEncryptedClassName(className));
+			buffer.append('&').append(templateParameter);
+			buffer.append('=').append(getEncryptedClassName(templateName));
+		} 
+		return buffer.toString();
     }
 
     public String getObjectInstanciatorURI(String className, String templateName) {
@@ -384,21 +396,25 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				throw new RuntimeException(e);
 			}
 		}
-		else{
-	        return getObjectInstanciatorURI() + "?" + classToInstanciateParameter
-            + "=" + getEncryptedClassName(className);
-		}
+		return getObjectInstanciatorURIOldURLScheme(className);
     }
 
     public String getObjectInstanciatorURI(Class classToInstanciate) {
-    		if(useNewURLScheme){
-    			return this.getWindowOpenerURI(classToInstanciate);
-    		}
-    		else{
-    			return getObjectInstanciatorURI(classToInstanciate.getName());
-    		}
+    	if(useNewURLScheme){
+    		return getWindowOpenerURI(classToInstanciate);
+    	}
+    	return getObjectInstanciatorURIOldURLScheme(classToInstanciate.getName());
     }
 
+    private String getObjectInstanciatorURIOldURLScheme(String className) {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append(getObjectInstanciatorURI());
+    	buffer.append('?').append(classToInstanciateParameter);
+    	buffer.append('=').append(getEncryptedClassName(className));
+    	return buffer.toString();
+    }
+    
+    
     /*public String getObjectInstanciatorURI(Class classToInstanciate,
             Class templateClass) {
         return this.getObjectInstanciatorURI() + "?"
@@ -1357,20 +1373,24 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
     public String getWindowOpenerURI(Class windowToOpen) {
-    		if(useNewURLScheme){
-    			return getWindowOpenerURI()+getEncryptedClassName(windowToOpen);
-    		}
-    		else{
-	        StringBuffer url = new StringBuffer();
-	        url.append(getWindowOpenerURI()).append('?').append(
-	                PARAM_IW_FRAME_CLASS_PARAMETER).append('=').append(
-	                getEncryptedClassName(windowToOpen));
-	
-	        return url.toString();
-	        //return
-	        // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
-    		}
+    	return getBufferedWindowOpenerURI(windowToOpen).toString();
     }
+    	
+    	
+    private StringBuffer getBufferedWindowOpenerURI(Class windowToOpen) {
+    	StringBuffer buffer = new StringBuffer();
+    	if(useNewURLScheme){
+    		buffer.append(getWindowOpenerURI()).append(getEncryptedClassName(windowToOpen));
+    	}
+    	else{
+    		buffer.append(getWindowOpenerURI()).append('?').append(PARAM_IW_FRAME_CLASS_PARAMETER).append('=');
+			buffer.append( getEncryptedClassName(windowToOpen));
+    	}
+	    return buffer;
+	    //return
+	    // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
+    }
+    
     /**
      * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
      * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
@@ -1393,10 +1413,17 @@ public class IWMainApplication	extends Application  implements MutableClass {
 }    
     
     public String getWindowOpenerURI(Class windowToOpen, int ICObjectInstanceIDToOpen) {
-    		String windowOpenerUri = getWindowOpenerURI(windowToOpen);
-        return windowOpenerUri + ((windowOpenerUri.indexOf('?')<0)?"?":"&")
-                + _PARAMETER_IC_OBJECT_INSTANCE_ID + "="
-                + ICObjectInstanceIDToOpen;
+    	StringBuffer windowOpenerUri = getBufferedWindowOpenerURI(windowToOpen);
+    	if (windowOpenerUri.indexOf("?") < 0) {
+    		// there is no parameter
+    		windowOpenerUri.append('?');
+    	}
+    	else {
+    		// there are already parameters
+    		windowOpenerUri.append('&');
+    	}
+    	windowOpenerUri.append( _PARAMETER_IC_OBJECT_INSTANCE_ID).append('=').append(ICObjectInstanceIDToOpen);
+    	return windowOpenerUri.toString();
     }
 
     public String getObjectInstanciatorURI() {

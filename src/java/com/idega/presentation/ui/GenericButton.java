@@ -1,5 +1,5 @@
 /*
- * $Id: GenericButton.java,v 1.32 2005/07/14 10:44:22 laddi Exp $
+ * $Id: GenericButton.java,v 1.33 2005/07/15 12:40:24 thomas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -9,9 +9,6 @@
  */
 package com.idega.presentation.ui;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import javax.faces.context.FacesContext;
@@ -25,16 +22,18 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Script;
 import com.idega.util.URLUtil;
+import com.idega.util.datastructures.list.KeyValueList;
+import com.idega.util.datastructures.list.KeyValuePair;
 import com.idega.util.text.TextSoap;
 
 /**
  * <p>
  * This component is for rendering out a input element of type button.
  * </p>
- *  Last modified: $Date: 2005/07/14 10:44:22 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/07/15 12:40:24 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 public class GenericButton extends GenericInput {
 
@@ -46,7 +45,7 @@ public class GenericButton extends GenericInput {
 	private int _fileID = -1;
 	private boolean asImageButton = false;
 	private Class _windowClassToOpen;
-	private Map parameterMap;
+	private KeyValueList  parameterList;
 	private boolean _onClickConfirm = false;
 	private String _confirmMessage;
 	private int _parentPageID = -1;
@@ -63,7 +62,7 @@ public class GenericButton extends GenericInput {
 		values[2] = new Integer(_fileID);
 		values[3] = Boolean.valueOf(asImageButton);
 		values[4] = _windowClassToOpen;
-		values[5] = parameterMap;
+		values[5] = parameterList;
 		values[6] = Boolean.valueOf(_onClickConfirm);
 		values[7] = _confirmMessage;
 		values[8] = new Integer(_parentPageID);
@@ -80,7 +79,7 @@ public class GenericButton extends GenericInput {
 		_fileID = ((Integer)values[2]).intValue();
 		asImageButton = ((Boolean)values[3]).booleanValue();
 		_windowClassToOpen = (Class)values[4];
-		parameterMap = (Map)values[5];
+		parameterList = (KeyValueList)values[5];
 		_onClickConfirm = ((Boolean)values[6]).booleanValue();
 		_confirmMessage = (String)values[7];
 		_parentPageID = ((Integer)values[8]).intValue();
@@ -153,7 +152,7 @@ public class GenericButton extends GenericInput {
 			buffer.append("if (submit)").append("\n\t\t");
 					
 			if (_windowClassToOpen != null) {
-				String URL = Window.getWindowURL(_windowClassToOpen, iwc) + getParameters();
+				String URL = Window.getWindowURLWithParameters(_windowClassToOpen, iwc, getConvertedAndCheckedParameterList());
 				buffer.append(Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc)).append(";\n");
 				addFunction = true;
 			}
@@ -196,7 +195,7 @@ public class GenericButton extends GenericInput {
 			}
 			if (!_onClickConfirm) {
 				if (_windowClassToOpen != null) {
-					String URL = Window.getWindowURL(_windowClassToOpen, iwc) + getParameters();
+					String URL =  Window.getWindowURLWithParameters(_windowClassToOpen, iwc, getConvertedAndCheckedParameterList()); 
 					setOnClick("javascript:" + Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc));
 				}
 				if (_pageID != -1) {
@@ -305,26 +304,10 @@ public class GenericButton extends GenericInput {
 	}
 	
 	public void addParameter(String name, String value) {
-		if (parameterMap == null) {
-			parameterMap = new HashMap();
+		if (parameterList == null) {
+			parameterList = new KeyValueList();
 		}
-		if (parameterMap.containsKey(name)) {
-			Object oldValue = parameterMap.get(name);
-			if (oldValue instanceof Collection) {
-				Collection valueList = (Collection) oldValue;
-				valueList.add(value);
-				parameterMap.put(name, valueList);
-			}
-			else {
-				Collection valueList = new ArrayList();
-				valueList.add(oldValue);
-				valueList.add(value);
-				parameterMap.put(name, valueList);
-			}
-		}
-		else {
-			parameterMap.put(name, value);
-		}
+		parameterList.put(name, value);
 	}
 	
 	/**
@@ -332,11 +315,14 @@ public class GenericButton extends GenericInput {
 	 * @param parameterMap 
 	 */
 	public void addParameters(Map prmMap){
-	  if (parameterMap == null) {
-	  		parameterMap = new HashMap();
-	  }
-		parameterMap.putAll(prmMap);
+		Iterator iterator = prmMap.keySet().iterator();
+		while (iterator.hasNext()) {
+			String name = (String) iterator.next();
+			String value = (String) prmMap.get(name);
+			addParameter(name,value);
+		}
 	}
+
 	
 	public void addParameter(String name, int value) {
 		addParameter(name, String.valueOf(value));
@@ -374,51 +360,41 @@ public class GenericButton extends GenericInput {
 		addParameter(name,value);
 	}
 	
-	private String getParameters() {
-		StringBuffer returnString = new StringBuffer();
-		if (parameterMap != null) {
-			Iterator iter = parameterMap.keySet().iterator();
-			while (iter.hasNext()) {
-				String name = (String) iter.next();
-				Object value = parameterMap.get(name);
-				if (name != null && value != null) {
-					if (value instanceof Collection) {
-						Collection valueList = (Collection) value;
-						Iterator iterator = valueList.iterator();
-						while (iterator.hasNext()) {
-							Object element = (Object) iterator.next();
-							returnString.append("&");
-							returnString.append(name);
-							returnString.append("=");
-							returnString.append(element);
-						}
-					}
-					else {
-						returnString.append("&");
-						returnString.append(name);
-						returnString.append("=");
-						returnString.append(value);
-					}
-				}
+	
+	private KeyValueList getConvertedAndCheckedParameterList() {
+		if (parameterList == null) {
+			return null;
+		}
+		KeyValueList convertedList = new KeyValueList(parameterList.size());
+		Iterator iter = parameterList.iterator();
+		while (iter.hasNext()) {
+			KeyValuePair pair = (KeyValuePair) iter.next();
+			String name = (String) pair.getKey();
+			String value = (String) pair.getValue();
+			if (name != null && value != null) {
+				String convertedName = TextSoap.convertSpecialCharacters(name);
+				String convertedValue = TextSoap.convertSpecialCharacters(value);
+				convertedList.put(convertedName, convertedValue);
 			}
 		}
-		return TextSoap.convertSpecialCharacters(returnString.toString());
+		return convertedList;		
 	}
+	
 	
 	private String getURLString(IWContext iwc, int pageID, boolean convert) throws Exception{
 		BuilderService bservice = getBuilderService(iwc);
 		URLUtil url = new URLUtil(bservice.getPageURI(pageID), convert);
-		if (parameterMap != null) {
-			Iterator iter = parameterMap.keySet().iterator();
+		if (parameterList != null) {
+			Iterator iter = parameterList.iterator();
 			while (iter.hasNext()) {
-				String name = (String) iter.next();
-				String value = (String) parameterMap.get(name);
+				KeyValuePair pair = (KeyValuePair) iter.next();
+				String name = (String) pair.getKey();
+				String value = (String) pair.getValue();
 				if (name != null && value != null) {
 					url.addParameter(name, value);
 				}
 			}
 		}
-				
 		return url.toString();
 	}
 
@@ -436,19 +412,46 @@ public class GenericButton extends GenericInput {
 	}
 	
 	private String getURIToClassToInstanciate(IWContext iwc) {
-		if (this.classToInstanciate != null) {
-			if (this.templatePageClass != null) {
+		if (this.classToInstanciate == null) {
+			return "";
+		}
+		String uri = null;
+		if (this.templatePageClass != null) {
 				//return (iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templatePageClass))+getParameters();
-				return(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate))+getParameters();
-			}
-			else if (this.templateForObjectInstanciation != null) {
-				return (iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation))+getParameters();
+			uri = iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate);
+		}
+		else if (this.templateForObjectInstanciation != null) {
+			uri = iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation);
+		}
+		else {
+			uri = iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate);
+		}
+		KeyValueList convertedList = getConvertedAndCheckedParameterList();
+		if (convertedList.isEmpty()) {
+			return uri;
+		}
+		StringBuffer buffer = new StringBuffer(uri);
+		if (buffer.indexOf("?") < 0) {
+			buffer.append('?');
+		}
+		else {
+			buffer.append('=');
+		}
+		Iterator iterator = convertedList.iterator();
+		boolean firstparameter = true;
+		while (iterator.hasNext()) {
+			if (firstparameter) {
+				firstparameter = false;
 			}
 			else {
-				return (iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate))+getParameters();
+				buffer.append('&');
 			}
+			KeyValuePair pair = (KeyValuePair) iterator.next();
+			String name = (String) pair.getKey();
+			String value = (String) pair.getValue();
+			buffer.append(name).append('=').append(value);
 		}
-		return "";
+		return buffer.toString();
 	}
 	
 	public void setClassToInstanciate(Class presentationObjectClass) {
