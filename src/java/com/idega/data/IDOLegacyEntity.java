@@ -269,6 +269,10 @@ public interface IDOLegacyEntity extends IDOEntity,MetaDataCapable {
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
+	public com.idega.data.IDOLegacyEntity[] findAllByColumnEqualsOrdered(java.lang.String p0, int p1, java.lang.String p2, int p3, java.lang.String p4) throws java.sql.SQLException;
+	/**
+	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
+	*/
 	public void setDatasource(java.lang.String p0);
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
