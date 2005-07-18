@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.102 2005/06/03 15:18:29 thomas Exp $
+ * $Id: AccessControl.java,v 1.103 2005/07/18 19:37:52 sigtryggur Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -67,12 +67,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2005/06/03 15:18:29 $ by $Author: thomas $
+ * Last modified: $Date: 2005/07/18 19:37:52 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.102 $
+ * @version $Revision: 1.103 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -2059,7 +2059,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	private void initAdministratorUser() throws Exception {
 		List list =
-			EntityFinder.findAllByColumn(
+			EntityFinder.findAllByColumnEquals(
 				com.idega.core.user.data.UserBMPBean.getStaticInstance(),
 				com.idega.core.user.data.UserBMPBean.getColumnNameFirstName(),
 				_ADMINISTRATOR_NAME);
