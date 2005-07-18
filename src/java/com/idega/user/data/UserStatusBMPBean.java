@@ -55,6 +55,8 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		addManyToOneRelationship(CREATED_BY, User.class);
 		addAttribute(DATE_FROM, "Date from", true, true, java.sql.Timestamp.class);
 		addAttribute(DATE_TO, "Date to", true, true, java.sql.Timestamp.class);
+
+		addIndex("IDX_IC_USERGROUP_STATUS_1", new String[]{IC_USER, DATE_FROM});
 	}
 
 	public int getStatusId() {

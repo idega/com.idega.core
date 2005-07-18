@@ -57,6 +57,8 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
           addAttribute(getLoginTypeColumnName(),"Tegund aðgagns",true,true,String.class,32);
           setNullable(getUserLoginColumnName(), false);
           setUnique(getUserLoginColumnName(),true);
+
+          addIndex("IDX_LOGIN_REC_2", getUserIDColumnName());
 	}
 
 
