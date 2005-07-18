@@ -73,6 +73,8 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	 	
 	 	addIndex("IDX_IC_PERM_1", new String[]{GROUP_ID_COLUMN, PERMISSION_STRING_COLUMN, CONTEXT_TYPE_COLUMN, STATUS_COLUMN});
 	 	addIndex("IDX_IC_PERM_2", CONTEXT_VALUE_COLUMN);
+	 	addIndex("IDX_IC_PERM_3", new String[]{CONTEXT_TYPE_COLUMN, STATUS_COLUMN, CONTEXT_VALUE_COLUMN});
+	 	addIndex("IDX_IC_PERM_4", new String[]{PERMISSION_STRING_COLUMN, CONTEXT_VALUE_COLUMN});
  	
 	}
 	
