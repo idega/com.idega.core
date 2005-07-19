@@ -4032,6 +4032,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		return vector;
 	}
+
+	protected Collection idoGetRelatedEntityPKs(Class returningEntityInterfaceClass) throws IDORelationshipException {
+		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+		String sqlQuery = this.getFindRelatedSQLQuery(returningEntity, "", "");
+		return idoGetRelatedEntityPKs(returningEntity,sqlQuery);
+	}
+
+	protected Collection idoGetRelatedEntityPKs(Class returningEntityInterfaceClass, String sqlQuery) throws IDORelationshipException {
+		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+		return idoGetRelatedEntityPKs(returningEntity,sqlQuery);
+	}
+	
 	/**
 	 * Returns a collection of returningEntity primary keys
 	 *
@@ -4285,7 +4297,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + " = '" + toFind + "' order by " + orderByColumnName);
 	}
 	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, int toFind, String orderByColumnName) throws FinderException {
-		return idoFindAllIDsByColumnOrderedBySQL(columnName, Integer.toString(toFind), orderByColumnName);
+	    return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + " = " + toFind + " order by " + orderByColumnName);
 	}
 	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, String toFind) throws FinderException {
 		return idoFindAllIDsByColumnOrderedBySQL(columnName, toFind, columnName);
