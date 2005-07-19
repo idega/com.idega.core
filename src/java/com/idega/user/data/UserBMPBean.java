@@ -906,9 +906,19 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 	
 	public Object ejbFindByDateOfBirthAndName(Date dateOfBirth, String fullName) throws FinderException {
-		SelectQuery query = idoSelectQuery();
+    Name name = new Name(fullName).capitalize();
+
+    SelectQuery query = idoSelectQuery();
 		query.addCriteria(new MatchCriteria(idoQueryTable(), FIELD_DATE_OF_BIRTH, MatchCriteria.EQUALS, dateOfBirth));
-		query.addCriteria(new MatchCriteria(idoQueryTable(), FIELD_DISPLAY_NAME, MatchCriteria.EQUALS, fullName));
+		if (name.getFirstName() != null && name.getFirstName().length() > 0) {
+			query.addCriteria(new MatchCriteria(idoQueryTable(), FIELD_FIRST_NAME, MatchCriteria.EQUALS, name.getFirstName()));
+		}
+		if (name.getMiddleName() != null && name.getMiddleName().length() > 0) {
+			query.addCriteria(new MatchCriteria(idoQueryTable(), FIELD_MIDDLE_NAME, MatchCriteria.EQUALS, name.getMiddleName()));
+		}
+		if (name.getLastName() != null && name.getLastName().length() > 0) {
+			query.addCriteria(new MatchCriteria(idoQueryTable(), FIELD_LAST_NAME, MatchCriteria.EQUALS, name.getLastName()));
+		}
 		
 		return idoFindOnePKByQuery(query);
 	}
