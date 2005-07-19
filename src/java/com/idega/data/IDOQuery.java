@@ -557,6 +557,15 @@ public class IDOQuery implements Cloneable {
 		return this;
 	}
 
+	public IDOQuery appendSelectCountIDFrom(String entityName, String idColumn) {
+	    return appendSelectCountIDFrom(entityName, idColumn, null);
+	}
+	
+	public IDOQuery appendSelectCountIDFrom(String entityName, String idColumn, String tableAlias) {
+		this.appendSelect().appendCount(idColumn, tableAlias).appendFrom().append(entityName);
+		return this;
+	}
+
 	public IDOQuery appendSelect() {
 		return this.append(SELECT);
 	}
@@ -646,8 +655,15 @@ public class IDOQuery implements Cloneable {
 	}
 	
 	public IDOQuery appendCount(String columnName){
+	    return appendCount(columnName, null);
+	}
+
+	public IDOQuery appendCount(String columnName, String tableAlias){
 		this.append(COUNT);
 		this.appendLeftParenthesis();
+		if (tableAlias != null) {
+		    this.append(tableAlias).append(".");
+		}
 		this.append(columnName);
 		this.appendRightParenthesis();
 		return this;
