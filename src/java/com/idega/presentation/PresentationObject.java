@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.134 2005/07/13 21:25:33 sigtryggur Exp $
+ * $Id: PresentationObject.java,v 1.135 2005/07/19 14:59:11 sigtryggur Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -70,10 +70,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/07/13 21:25:33 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2005/07/19 14:59:11 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.134 $
+ * @version $Revision: 1.135 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -1796,6 +1796,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	    	if (width.charAt(width.length()-1) == '%')  {
 		        this.setStyleAttribute(WIDTH + ":" + width);
 		    }
+		    else if (width.lastIndexOf("px")>-1) {
+	    	    	this.setStyleAttribute(WIDTH + ":" + width);
+	    	}
 		    else {
 				try
 				{
@@ -1803,7 +1806,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				}
 				catch (NumberFormatException e)
 				{
-					e.printStackTrace();
+					this.setStyleAttribute(WIDTH + ":" + width);
 				}
 		    }
 		}
@@ -1818,6 +1821,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	    	if (height.charAt(height.length()-1) == '%')  {
 		        this.setStyleAttribute(HEIGHT + ":" + height);
 		    }
+	    	else if (height.lastIndexOf("px")>-1) {
+	    	    	this.setStyleAttribute(HEIGHT + ":" + height);
+	    	}
 		    else {
 			    try
 				{
@@ -1825,7 +1831,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				}
 				catch (NumberFormatException e)
 				{
-					e.printStackTrace();
+					this.setStyleAttribute(HEIGHT + ":" + height);
 				}
 		    }
 		}
