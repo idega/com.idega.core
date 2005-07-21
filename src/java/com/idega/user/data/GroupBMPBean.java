@@ -1475,7 +1475,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	public Collection ejbFindGroupsByType(String type) throws FinderException {
-		StringBuffer sql = new StringBuffer("select * from ");
+		StringBuffer sql = new StringBuffer("select ").append(getIDColumnName()).append(" from ");
 		sql.append(getEntityName());
 		sql.append(" where ");
 		sql.append(COLUMN_GROUP_TYPE);
