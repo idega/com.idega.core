@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.103 2005/07/18 19:37:52 sigtryggur Exp $
+ * $Id: AccessControl.java,v 1.104 2005/07/22 14:50:26 sigtryggur Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -67,12 +67,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2005/07/18 19:37:52 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2005/07/22 14:50:26 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.103 $
+ * @version $Revision: 1.104 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -2434,7 +2434,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	public static void copyPermissions(String contextType, String identifierToCopyFrom, String identifierToCopyTo) throws SQLException {
 		List permissions =
-			EntityFinder.findAllByColumn(
+			EntityFinder.findAllByColumnEquals(
 				com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),
 				com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),
 				contextType,

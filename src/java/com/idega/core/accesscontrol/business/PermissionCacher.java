@@ -1,5 +1,5 @@
 /*
- * $Id: PermissionCacher.java,v 1.31 2005/06/14 16:48:45 sigtryggur Exp $ Created
+ * $Id: PermissionCacher.java,v 1.32 2005/07/22 14:50:26 sigtryggur Exp $ Created
  * in 2001
  * 
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -28,12 +28,12 @@ import com.idega.user.data.Group;
  * AccessControl.
  * </p>
  * 
- * Last modified: $Date: 2005/06/14 16:48:45 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2005/07/22 14:50:26 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  */
 class PermissionCacher {
 
@@ -496,7 +496,7 @@ class PermissionCacher {
 						permissionKey);
 			}
 			else if (permissionMapKey.equals(PERMISSION_MAP_BUNDLE)) {
-				permissions = EntityFinder.findAllByColumn(
+				permissions = EntityFinder.findAllByColumnEquals(
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),
 						AccessController.CATEGORY_STRING_BUNDLE_IDENTIFIER,
@@ -514,7 +514,7 @@ class PermissionCacher {
 						permissionKey);
 			}
 			else if (permissionMapKey.equals(PERMISSION_MAP_JSP_PAGE)) {
-				permissions = EntityFinder.findAllByColumn(
+				permissions = EntityFinder.findAllByColumnEquals(
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),
 						AccessController.CATEGORY_STRING_JSP_PAGE,
@@ -523,7 +523,7 @@ class PermissionCacher {
 						permissionKey);
 			}
 			else if (permissionMapKey.equals(PERMISSION_MAP_FILE)) {
-				permissions = EntityFinder.findAllByColumn(
+				permissions = EntityFinder.findAllByColumnEquals(
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),
 						AccessController.CATEGORY_STRING_FILE_ID,
@@ -532,7 +532,7 @@ class PermissionCacher {
 						permissionKey);
 			}
 			else if (permissionMapKey.equals(PERMISSION_MAP_GROUP)) {
-				permissions = EntityFinder.findAllByColumn(
+				permissions = EntityFinder.findAllByColumnEquals(
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(),
 						AccessController.CATEGORY_STRING_GROUP_ID,
@@ -541,7 +541,7 @@ class PermissionCacher {
 						permissionKey);
 			}
 			else if (permissionMapKey.equals(PERMISSION_MAP_ROLE)) {
-				permissions = EntityFinder.findAllByColumn(
+				permissions = EntityFinder.findAllByColumnEquals(
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance(),
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextTypeColumnName(), identifier,
 						com.idega.core.accesscontrol.data.ICPermissionBMPBean.getContextValueColumnName(), identifier,
