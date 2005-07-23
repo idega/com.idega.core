@@ -4294,16 +4294,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, String toFind, String orderByColumnName) throws FinderException {
-		return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + " = '" + toFind + "' order by " + orderByColumnName);
+		return idoFindIDsBySQL("select "+ getIDColumnName()+ " from " + getTableName() + " where " + columnName + " = '" + toFind + "' order by " + orderByColumnName);
 	}
 	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, int toFind, String orderByColumnName) throws FinderException {
-	    return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + " = " + toFind + " order by " + orderByColumnName);
+	    return idoFindIDsBySQL("select "+ getIDColumnName()+ " from " + getTableName() + " where " + columnName + " = " + toFind + " order by " + orderByColumnName);
 	}
 	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, String toFind) throws FinderException {
 		return idoFindAllIDsByColumnOrderedBySQL(columnName, toFind, columnName);
 	}
 	protected Collection idoFindAllIDsByColumnOrderedBySQL(String columnName, int toFind) throws FinderException {
-		return idoFindAllIDsByColumnOrderedBySQL(columnName, Integer.toString(toFind), columnName);
+		return idoFindAllIDsByColumnOrderedBySQL(columnName, toFind, columnName);
 	}
 	protected Class getInterfaceClass() {
 		return IDOLookup.getInterfaceClassFor(this.getClass());
