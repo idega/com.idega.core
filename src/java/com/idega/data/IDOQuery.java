@@ -596,6 +596,10 @@ public class IDOQuery implements Cloneable {
 			return this.append(FROM);
 	}
 	
+	public IDOQuery appendFrom(String tableName) {
+		return this.append(FROM).append(" ").append(tableName);
+}
+
 	public IDOQuery appendFrom(String[] tableNames, String[] prmNames) {
 		if(tableNames != null){
 			this.append(FROM);
