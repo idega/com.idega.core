@@ -251,7 +251,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
         else{
 
-  	    theReturn = "TEXT";
+  	    theReturn = "LONGTEXT";
 
         }
 
@@ -291,7 +291,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
       else if (javaClassName.equals("java.sql.Blob")){
 
-        theReturn = "BLOB";
+        theReturn = "LONGBLOB";
 
       }
 
@@ -309,7 +309,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface{
 
     else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
 
-      theReturn = "BLOB";
+      theReturn = "LONGBLOB";
 
     }
 
