@@ -8,10 +8,10 @@ import java.sql.Statement;
 /**
  * 
  * 
- *  Last modified: $Date: 2004/11/01 10:05:31 $ by $Author: aron $
+ *  Last modified: $Date: 2005/07/28 12:44:01 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public class MySQLSchemaAdapter extends SQLSchemaAdapter {
@@ -75,7 +75,7 @@ public class MySQLSchemaAdapter extends SQLSchemaAdapter {
 				theReturn = "VARCHAR(" + maxlength + ")";
 			}
 			else {
-				theReturn = "TEXT";
+				theReturn = "LONGTEXT";
 			}
 		}
 		else if (javaClassName.equals("java.lang.Boolean")) {
@@ -95,7 +95,7 @@ public class MySQLSchemaAdapter extends SQLSchemaAdapter {
 			theReturn = "DATE";
 		}
 		else if (javaClassName.equals("java.sql.Blob")) {
-			theReturn = "BLOB";
+			theReturn = "LONGBLOB";
 		}
 		else if (javaClassName.equals("java.sql.Time")) {
 			theReturn = "TIME";
@@ -104,7 +104,7 @@ public class MySQLSchemaAdapter extends SQLSchemaAdapter {
 			theReturn = "VARCHAR(1)";
 		}
 		else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
-			theReturn = "BLOB";
+			theReturn = "LONGBLOB";
 		}
 		else {
 			theReturn = "";
@@ -207,5 +207,22 @@ public class MySQLSchemaAdapter extends SQLSchemaAdapter {
 			System.err.println("MySQLDatastoreInterface.setNumberGeneratorValue() Exception: "+ e.getMessage());
 		}
 	}
+	
+	/**
+	 * <p>
+	 * This method returns the max length of a column to be part of a (composite) primary key.<br>
+	 * This method by default returns -1 which is no limit, but this is overridden here with the value 255 for longer values for MySQL.
+	 * </p>
+	 * @return
+	 */
+	public int getMaxColumnPrimaryKeyLength(SchemaColumn column){
+		if(column.getMaxLength()>255){
+			return 255;
+		}
+		else{
+			return -1;
+		}
+	}
+	
 }
 

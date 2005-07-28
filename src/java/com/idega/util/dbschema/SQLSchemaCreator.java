@@ -17,10 +17,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2004/12/05 09:48:30 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/07/28 12:44:01 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 
 public class SQLSchemaCreator{
@@ -332,7 +332,14 @@ public class SQLSchemaCreator{
     			if (j != 0) {
     				returnString.append(",");
     			}
-        		returnString.append(pkFields[j].getSQLName());
+    			returnString.append(pkFields[j].getSQLName());
+    			int limit = sa.getMaxColumnPrimaryKeyLength(pkFields[j]);
+    			if(limit==-1){
+    			}else{
+    				returnString.append("(");
+    				returnString.append(limit);
+    				returnString.append(")");
+    			}
         	 }
         	 returnString.append(")");
         }

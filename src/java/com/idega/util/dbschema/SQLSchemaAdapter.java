@@ -1,5 +1,5 @@
 /*
- * $Id: SQLSchemaAdapter.java,v 1.6 2005/04/12 20:30:23 tryggvil Exp $
+ * $Id: SQLSchemaAdapter.java,v 1.7 2005/07/28 12:44:01 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/04/12 20:30:23 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/07/28 12:44:01 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public abstract class SQLSchemaAdapter implements MutableClass {
 
@@ -1268,6 +1268,17 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		sql.append(")");
 		return sql.toString();
 		
+	}
+	
+	/**
+	 * <p>
+	 * This method returns the max length of a column to be part of a (composite) primary key.<br>
+	 * This method by default returns -1 which is no limit, but this is overridden for MySQL.
+	 * </p>
+	 * @return
+	 */
+	public int getMaxColumnPrimaryKeyLength(SchemaColumn column){
+		return -1;
 	}
 	
 	
