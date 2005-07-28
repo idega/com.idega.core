@@ -562,9 +562,17 @@ public class IDOQuery implements Cloneable {
 	}
 	
 	public IDOQuery appendSelectCountIDFrom(String entityName, String idColumn, String tableAlias) {
-		this.appendSelect().appendCount(idColumn, tableAlias).appendFrom().append(entityName);
+	    return appendSelectCountIDFrom(entityName, idColumn, tableAlias, false);
+	}
+
+	public IDOQuery appendSelectCountIDFrom(String entityName, String idColumn, boolean distinct) {
+	    return appendSelectCountIDFrom(entityName, idColumn, null, distinct);
+	}
+
+	public IDOQuery appendSelectCountIDFrom(String entityName, String idColumn, String tableAlias, boolean distinct) {
+		this.appendSelect().appendCount(idColumn, tableAlias, distinct).appendFrom().append(entityName);
 		if (tableAlias != null) {
-		    this.append(" ").append(tableAlias).append(" ");
+		    this.append(" ").append(tableAlias);
 		}
 		return this;
 	}
@@ -666,8 +674,19 @@ public class IDOQuery implements Cloneable {
 	}
 
 	public IDOQuery appendCount(String columnName, String tableAlias){
+	    return appendCount(columnName, tableAlias, false);
+	}
+
+	public IDOQuery appendCount(String columnName, boolean distinct){
+	    return appendCount(columnName, null, distinct);
+	}
+
+	public IDOQuery appendCount(String columnName, String tableAlias, boolean distinct){
 		this.append(COUNT);
 		this.appendLeftParenthesis();
+		if (distinct) {
+		    this.append(DISTINCT);
+		}
 		if (tableAlias != null) {
 		    this.append(tableAlias).append(".");
 		}
