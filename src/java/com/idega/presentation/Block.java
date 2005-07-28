@@ -1,5 +1,5 @@
 /*
- * $Id: Block.java,v 1.68 2005/02/10 10:42:47 thomas Exp $
+ * $Id: Block.java,v 1.69 2005/07/28 18:06:30 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
 
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.idegaweb.IWCacheManager;
@@ -34,10 +35,10 @@ import com.idega.presentation.text.Text;
  * their functionality is done with the main() method in old style idegaWeb.
  * This class has functionality regarding caching and how the main method is processed in JSF.
  * 
- * Last modified: $Date: 2005/02/10 10:42:47 $ by $Author: thomas $
+ * Last modified: $Date: 2005/07/28 18:06:30 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.68 $
+ * @version $Revision: 1.69 $
  */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
@@ -265,7 +266,9 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		PrintWriter servletWriter = iwc.getWriter();
 		iwc.setCacheing(true);
 		PrintWriter writer = new BlockCacheWriter(servletWriter, buffer);
+		ResponseWriter rWriter = new BlockCacheResponseWriter(iwc.getResponseWriter(),buffer);
 		iwc.setCacheWriter(writer);
+		iwc.setCacheResponseWriter(rWriter);
 	}
 	
 	public void endCacheing(IWContext iwc, StringBuffer buffer) {
@@ -310,9 +313,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 			if (isCacheValid(iwc)) {
 			}
 			else {
-				//beginCacheing(iwc);
 				super._main(iwc);
-				//endCacheing(iwc);
 			}
 		}
 		else {
@@ -321,19 +322,34 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 
 	/**
-	 * The default implementation for the print function for Blocks. This implementation is final and therefore can not be overrided.
+	 * <p>
+	 * The default implementation for the print function for Blocks. This method
+	 * implements the default Cache (based on IWCacheManager) functionality for caching
+	 * the rendered output of this Block.<br>
+	 * This implementation is final and therefore can not be overridden.
+	 * </p>
 	 */
 	public final void print(IWContext iwc) throws Exception {
 		if (isCacheable(iwc)) {
 			if (isCacheValid(iwc)) {
-				StringBuffer buffer = (StringBuffer) IWCacheManager.getInstance(iwc.getIWMainApplication()).getObject(getDerivedCacheKey());
-				iwc.getWriter().print(buffer.toString());
+				printPreCachedContent(iwc);
 			}
 			else {
-				StringBuffer buffer = new StringBuffer();
-				beginCacheing(iwc, buffer);
-				super.print(iwc);
-				endCacheing(iwc, buffer);
+				//the threads will wait locked on the class for this Block
+				synchronized(getClass()){
+					if(!isCacheValid(iwc)){
+						//only the first thread should go in here and actually cache:
+						StringBuffer buffer = new StringBuffer();
+						beginCacheing(iwc, buffer);
+						super.print(iwc);
+						endCacheing(iwc, buffer);
+					}
+					else{
+						//the second thread and all after that 
+						//should just print out the cached content.
+						printPreCachedContent(iwc);
+					}
+				}
 			}
 		}
 		else {
@@ -341,6 +357,19 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		}
 	}
 
+	/**
+	 * <p>
+	 * Prints out the content that has already been cached into a StringBuffer in IWCacheManager.
+	 * </p>
+	 * @param iwc
+	 */
+	protected void printPreCachedContent(IWContext iwc){
+		IWCacheManager cacher = iwc.getIWMainApplication().getIWCacheManager();
+		StringBuffer buffer = (StringBuffer) cacher.getObject(getDerivedCacheKey());
+		//iwc.getWriter().print(buffer.toString());
+		print(buffer.toString());
+	}
+	
 	public Text getStyleText(String text, String styleName) {
 		return (Text) getStyleText(new Text(text),styleName);	
 	}
@@ -465,13 +494,13 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	 * @return
 	 */
 	protected boolean isCacheable(IWContext iwc) {
-		if(IWMainApplication.useJSF){
+		//if(IWMainApplication.useJSF){
 			//cache temporarily disabled in JSF while cache bug is resolved
-			return false;
-		}
-		else{
+		//	return false;
+		//}
+		//else{
 			return this.cacheable;
-		}
+		//}
 	}
 
 	/**

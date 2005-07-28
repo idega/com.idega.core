@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.135 2005/07/19 14:59:11 sigtryggur Exp $
+ * $Id: PresentationObject.java,v 1.136 2005/07/28 18:06:30 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -70,10 +70,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/07/19 14:59:11 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2005/07/28 18:06:30 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.135 $
+ * @version $Revision: 1.136 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -568,7 +568,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		if(IWMainApplication.useJSF){
 			try {
 				if(string!=null){
-					FacesContext.getCurrentInstance().getResponseWriter().write(string);
+					// Here we call IWContext.getInstance rather than FacesContext.getCurrentInstance()
+					// because we want to have the overridden method in IWContext for IWCacheManager Cacheing
+					IWContext.getInstance().getResponseWriter().write(string);
 				}
 			}
 			catch (IOException e) {
@@ -588,7 +590,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		if(IWMainApplication.useJSF){
 			try {
-				ResponseWriter writer = FacesContext.getCurrentInstance().getResponseWriter();
+				// Here we call IWContext.getInstance rather than FacesContext.getCurrentInstance()
+				// because we want to have the overridden method in IWContext for IWCacheManager Cacheing
+				ResponseWriter writer = IWContext.getInstance().getResponseWriter();
 				if(string!=null){
 					writer.write(string);
 				}

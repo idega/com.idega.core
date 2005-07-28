@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.121 2005/04/13 11:41:19 tryggvil Exp $
+ * $Id: IWContext.java,v 1.122 2005/07/28 18:06:30 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/04/13 11:41:19 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/07/28 18:06:30 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.121 $
+ * @version $Revision: 1.122 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -101,6 +101,7 @@ implements IWUserContext, IWApplicationContext {
 	private boolean _clientIsHandHeld = false;
 	private boolean isCaching = false;
 	private PrintWriter cacheWriter;
+	private ResponseWriter cacheResponseWriter;
 	private PrintWriter writer = null;
 	private HashtableMultivalued _multipartParameters = null;
 	private UploadFile _uploadedFile = null;
@@ -692,6 +693,9 @@ implements IWUserContext, IWApplicationContext {
 	public void setCacheWriter(PrintWriter writer) {
 		this.cacheWriter = writer;
 	}
+	public void setCacheResponseWriter(ResponseWriter writer) {
+		this.cacheResponseWriter = writer;
+	}
 
 	/**
 	 * @deprecated Replaced with getCurrentUser()
@@ -1196,7 +1200,11 @@ implements IWUserContext, IWApplicationContext {
 	 * @see javax.faces.context.FacesContext#getResponseWriter()
 	 */
 	public ResponseWriter getResponseWriter() {
-		return getRealFacesContext().getResponseWriter();
+		if (this.isCacheing() && cacheResponseWriter!=null) {
+			return cacheResponseWriter;
+		} else {
+			return getRealFacesContext().getResponseWriter();
+		}
 	}
 
 	/* (non-Javadoc)
