@@ -563,6 +563,9 @@ public class IDOQuery implements Cloneable {
 	
 	public IDOQuery appendSelectCountIDFrom(String entityName, String idColumn, String tableAlias) {
 		this.appendSelect().appendCount(idColumn, tableAlias).appendFrom().append(entityName);
+		if (tableAlias != null) {
+		    this.append(" ").append(tableAlias).append(" ");
+		}
 		return this;
 	}
 
