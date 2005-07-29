@@ -8,10 +8,10 @@ import java.sql.Statement;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/07/28 12:44:01 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/07/29 15:51:07 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 
 public class MySQLSchemaAdapter extends SQLSchemaAdapter {
@@ -88,7 +88,7 @@ public class MySQLSchemaAdapter extends SQLSchemaAdapter {
 			theReturn = "DOUBLE";
 		}
 		else if (javaClassName.equals("java.sql.Timestamp")) {
-			theReturn = "TIMESTAMP";
+			theReturn = "DATETIME";
 		}
 		else if (javaClassName.equals("java.sql.Date")
 				|| javaClassName.equals("java.util.Date")) {
