@@ -100,7 +100,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 			theReturn = "DOUBLE";
 		}
 		else if (javaClassName.equals("java.sql.Timestamp")) {
-			theReturn = "TIMESTAMP";
+			theReturn = "DATETIME";
 		}
 		else if (javaClassName.equals("java.sql.Date") || javaClassName.equals("java.util.Date")) {
 			theReturn = "DATE";
