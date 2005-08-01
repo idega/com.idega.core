@@ -41,6 +41,25 @@ public class Age {
 		}
 		return yearAge;
 	}
+	
+	/**
+	 * Gets the exact age on the day specified calculated from birth day.
+	 * @return
+	 */
+	public int getYears(Date date) {
+		IWTimestamp stamp = new IWTimestamp(date);
+		GregorianCalendar now = new GregorianCalendar(stamp.getYear(), stamp.getMonth(), stamp.getDay());
+		int yearAge = now.get(now.YEAR) - startDate.get(startDate.YEAR);
+		if (now.get(now.MONTH) < startDate.get(startDate.MONTH)) {
+			yearAge--;
+		} else if (now.get(now.MONTH) == startDate.get(startDate.MONTH)) {
+			if (now.get(now.DAY_OF_MONTH) < startDate
+					.get(startDate.DAY_OF_MONTH)) {
+				yearAge--;
+			}
+		}
+		return yearAge;
+	}
 
 	public Date getStartDate() {
 		return this.startDate.getTime();
