@@ -345,8 +345,6 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
     isAdmin = iwc.hasEditPermission(this);
 
-    isAdmin = false;
-
     control(iwc);
 
   }
