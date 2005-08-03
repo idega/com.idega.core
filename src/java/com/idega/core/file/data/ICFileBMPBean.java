@@ -407,7 +407,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	}
 
 	public Integer ejbFindByFileName(String name) throws FinderException {
-		Collection files = idoFindPKsBySQL("select * from " + getTableName() + " where " + ICFileBMPBean.getColumnNameName() + " like '" + name + "' and (" + ICFileBMPBean.getColumnDeleted() + "='N' or " + ICFileBMPBean.getColumnDeleted() + " is null)");
+		Collection files = idoFindPKsBySQL("select "+ getIDColumnName() +" from " + getTableName() + " where " + ICFileBMPBean.getColumnNameName() + " = '" + name + "' and (" + ICFileBMPBean.getColumnDeleted() + "='N' or " + ICFileBMPBean.getColumnDeleted() + " is null)");
 		if (!files.isEmpty()) {
 			return (Integer)files.iterator().next();
 		} else
