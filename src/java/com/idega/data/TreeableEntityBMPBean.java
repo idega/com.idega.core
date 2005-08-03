@@ -163,11 +163,12 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	 */
 	public ICTreeNode getParentNode() {
 		
-		
+		boolean isInteger = false;
 		String sql = null;
 		
 		if(this.getPrimaryKey() instanceof Integer){
 			 sql = "select " + this.getIDColumnName() + " from " + EntityControl.getTreeRelationShipTableName(this) + " where " + EntityControl.getTreeRelationShipChildColumnName(this) + "=" + this.getPrimaryKey();
+			 isInteger = true;
 		}
 		else{
 			sql = "select " + this.getIDColumnName() + " from " + EntityControl.getTreeRelationShipTableName(this) + " where " + EntityControl.getTreeRelationShipChildColumnName(this) + "='" + this.getPrimaryKey()+"'";
@@ -180,7 +181,12 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			//well presume that the first result is the primary key of the parent:
 			if(arr.length>0){
 				String parentPk = arr[0];
-				return (ICTreeNode)((IDOHome)getEJBLocalHome()).findByPrimaryKeyIDO(parentPk);
+			    if (isInteger) { 
+			    	return (ICTreeNode)((IDOHome)getEJBLocalHome()).findByPrimaryKeyIDO(Integer.valueOf(parentPk));
+			    } 
+			    else {
+					return (ICTreeNode)((IDOHome)getEJBLocalHome()).findByPrimaryKeyIDO(parentPk);
+			    }
 			}
 			/*
 			if (list != null && !list.isEmpty()) {
