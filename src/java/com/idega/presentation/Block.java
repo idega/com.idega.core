@@ -1,5 +1,5 @@
 /*
- * $Id: Block.java,v 1.69 2005/07/28 18:06:30 tryggvil Exp $
+ * $Id: Block.java,v 1.70 2005/08/04 11:22:24 sigtryggur Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -35,10 +35,10 @@ import com.idega.presentation.text.Text;
  * their functionality is done with the main() method in old style idegaWeb.
  * This class has functionality regarding caching and how the main method is processed in JSF.
  * 
- * Last modified: $Date: 2005/07/28 18:06:30 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/08/04 11:22:24 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.69 $
+ * @version $Revision: 1.70 $
  */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
@@ -266,9 +266,11 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		PrintWriter servletWriter = iwc.getWriter();
 		iwc.setCacheing(true);
 		PrintWriter writer = new BlockCacheWriter(servletWriter, buffer);
-		ResponseWriter rWriter = new BlockCacheResponseWriter(iwc.getResponseWriter(),buffer);
+		if(IWMainApplication.useJSF){
+		    ResponseWriter rWriter = new BlockCacheResponseWriter(iwc.getResponseWriter(),buffer);
+		    iwc.setCacheResponseWriter(rWriter);
+		}
 		iwc.setCacheWriter(writer);
-		iwc.setCacheResponseWriter(rWriter);
 	}
 	
 	public void endCacheing(IWContext iwc, StringBuffer buffer) {
