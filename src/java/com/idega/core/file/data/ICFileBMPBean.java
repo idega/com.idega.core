@@ -407,7 +407,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	}
 
 	public Integer ejbFindByFileName(String name) throws FinderException {
-		Collection files = idoFindPKsBySQL("select "+ getIDColumnName() +" from " + getTableName() + " where " + ICFileBMPBean.getColumnNameName() + " = '" + name + "' and (" + ICFileBMPBean.getColumnDeleted() + "='N' or " + ICFileBMPBean.getColumnDeleted() + " is null)");
+		Collection files = idoFindPKsBySQL("select " + getIDColumnName() + " from " + getTableName() + " where " + ICFileBMPBean.getColumnNameName() + " like '" + name + "' and (" + ICFileBMPBean.getColumnDeleted() + "='N' or " + ICFileBMPBean.getColumnDeleted() + " is null)");
 		if (!files.isEmpty()) {
 			return (Integer)files.iterator().next();
 		} else
@@ -427,7 +427,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	 * @throws FinderException
 	 */
 	public Collection ejbFindAllDescendingOrdered() throws FinderException {
-		String query = "select * from " + this.getTableName() + " order by " + getIDColumnName() + " desc";
+		String query = "select " + getIDColumnName() + " from " + this.getTableName() + " order by " + getIDColumnName() + " desc";
 		return idoFindPKsBySQL(query);
 	}
 
@@ -528,10 +528,10 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 			IDOQuery buffer = idoQuery();
 			
 			if(parent.getPrimaryKey() instanceof Integer){
-				buffer.append("select " ).append( thisTable ).append(".* from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = ").append(parent.getPrimaryKey().toString());	
+				buffer.append("select " ).append( thisTable ).append(".").append(getIDColumnName()).append(" from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = ").append(parent.getPrimaryKey().toString());	
 			}
 			else{//add the ' for strings, dates etc.
-				buffer.append("select " ).append( thisTable ).append(".* from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = '").append(parent.getPrimaryKey().toString()).append("'");
+				buffer.append("select " ).append( thisTable ).append(".").append(getIDColumnName()).append(" from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = '").append(parent.getPrimaryKey().toString()).append("'");
 			}
 			
 			if(visibleMimeTypes != null && !visibleMimeTypes.isEmpty()){
