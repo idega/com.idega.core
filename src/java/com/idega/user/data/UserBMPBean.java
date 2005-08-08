@@ -1113,7 +1113,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public Integer ejbFindByPersonalID(String personalId) throws FinderException {
 	    Table table = new Table(this);
 	    SelectQuery query = new SelectQuery(table);
-	    query.addColumn(new WildCardColumn());
+	    query.addColumn(new Column(getIDColumnName()));
 	    query.addCriteria(new MatchCriteria(table,getColumnNamePersonalID(),MatchCriteria.EQUALS,personalId));
 	    query.addCriteria(getNotDeletedCriteria());
 	    return (Integer)idoFindOnePKByQuery(query);
