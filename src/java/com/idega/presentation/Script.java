@@ -1,5 +1,5 @@
 /*
- * $Id: Script.java,v 1.23 2005/03/08 13:58:07 tryggvil Exp $ 
+ * $Id: Script.java,v 1.24 2005/08/09 16:25:11 thomas Exp $ 
  * Created in 2000 by Tryggvi Larusson
  * 
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.data.IDONoDatastoreError;
  * An instance of this component can be used to define javascript functions and
  * add to a component or a page.
  * </p>
- * Last modified: $Date: 2005/03/08 13:58:07 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/08/09 16:25:11 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public class Script extends PresentationObject {
 
@@ -91,9 +91,7 @@ public class Script extends PresentationObject {
 		if (getScriptCode().get(function) == null) {
 			return false;
 		}
-		else {
-			return true;
-		}
+		return true;
 	}
 
 	public void removeFunction(String functionName) {
@@ -159,7 +157,7 @@ public class Script extends PresentationObject {
 			while (e.hasMoreElements()) {
 				Object function = e.nextElement();
 				String variableName = (String) function;
-				String variableValue = (String) getVariable(variableName);
+				String variableValue = getVariable(variableName);
 				if (variableValue != null)
 					returnString.append("var " + variableName + " = " + variableValue + ";\n");
 				else
@@ -186,7 +184,7 @@ public class Script extends PresentationObject {
 			for (Enumeration e = methods.keys(); e.hasMoreElements();) {
 				Object function = e.nextElement();
 				String methodName = (String) function;
-				String methodValue = (String) getMethod(methodName);
+				String methodValue = getMethod(methodName);
 				returnString.append("" + methodName + " = " + methodValue + ";\n");
 			}
 			returnString.append("\n");
@@ -297,4 +295,48 @@ public class Script extends PresentationObject {
 		values[4] = methods;
 		return values;
 	}
-}// End class
+	
+	public void println(String str) {
+		String convertedString = convertStringToUnicode(str);
+		super.println(convertedString);
+	}
+	
+	public void print(String str) {
+		String convertedString = convertStringToUnicode(str);
+		super.print(convertedString);
+	}
+		
+	private String convertStringToUnicode(String str) {
+		if (str == null) {
+			return null;
+		}
+		StringBuffer sb = new StringBuffer();	
+		char c;
+		for (int i = 0; i < str.length(); ++i) {
+			c = str.charAt(i);
+			if (c >= 0x80) {
+				//encode all non basic latin characters
+				sb.append("\\u");
+				String hexCode = Integer.toHexString(c);
+				// be sure that the unicode is four digits long, that is
+				// add zero digits at the beginning if necessary
+				// the hexcode is already at least two digits long
+				// because c >= 128
+				int length = hexCode.length();
+				// keep it simple....
+				if (length == 2) {
+					sb.append("00");
+				}
+				else if (length == 3) {
+					sb.append('0');
+				}
+				sb.append(hexCode);
+			}
+			else
+			{
+				sb.append(c);
+			}
+		}
+		return sb.toString();
+	}
+}
