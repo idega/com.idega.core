@@ -138,14 +138,14 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
   
 	public Object ejbFindDefaultCommune() throws FinderException {
 		IDOQuery query = idoQuery();
-		query.appendSelectAllFrom(this).appendWhereEqualsQuoted(COLUMN_DEFAULT, "Y")
+		query.appendSelect().append(getIDColumnName()).appendFrom(this.getEntityName()).appendWhereEqualsQuoted(COLUMN_DEFAULT, "Y")
 		.appendAndEqualsQuoted(COLUMN_VALID, "Y");
 		return  idoFindOnePKByQuery(query);
 	}
 
 	public Collection ejbFindAllCommunes() throws FinderException {
 		IDOQuery query = idoQuery();
-		query.appendSelectAllFrom(this)
+		query.appendSelect().append(getIDColumnName()).appendFrom(this.getEntityName())
 		.appendWhereEqualsQuoted(COLUMN_VALID, "Y")
 		.appendOrderBy(COLUMN_COMMUNE);
 		return idoFindPKsByQuery(query);
@@ -153,7 +153,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
   
 	public Integer ejbFindByCommuneName(String name) throws FinderException {
 		IDOQuery query = idoQuery();
-		query.appendSelectAllFrom(this).appendWhere()
+		query.appendSelect().append(getIDColumnName()).appendFrom(this.getEntityName()).appendWhere()
 		.appendEqualsQuoted(COLUMN_COMMUNE_NAME, name)
 		.appendAndEqualsQuoted(COLUMN_VALID, "Y")
 		.appendOrderBy(COLUMN_COMMUNE);
@@ -161,7 +161,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 	}
 	public Integer ejbFindByCommuneNameAndProvince(String name, Object provinceID) throws FinderException {
 		IDOQuery query = idoQuery();
-		query.appendSelectAllFrom(this).appendWhereEquals(COLUMN_PROVINCE_ID, provinceID).appendAndEqualsQuoted(COLUMN_COMMUNE_NAME, name)
+		query.appendSelect().append(getIDColumnName()).appendFrom(this.getEntityName()).appendWhereEquals(COLUMN_PROVINCE_ID, provinceID).appendAndEqualsQuoted(COLUMN_COMMUNE_NAME, name)
 		.appendAndEqualsQuoted(COLUMN_VALID, "Y")
 		.appendOrderBy(COLUMN_COMMUNE);
 		return (Integer) idoFindOnePKByQuery(query);
@@ -169,7 +169,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
   
 	public Integer ejbFindByCommuneCode(String communeCode) throws FinderException {
 		IDOQuery query = idoQuery();
-		query.appendSelectAllFrom(this).appendWhereEqualsWithSingleQuotes(COLUMN_COMMUNE_CODE, communeCode)
+		query.appendSelect().append(getIDColumnName()).appendFrom(this.getEntityName()).appendWhereEqualsWithSingleQuotes(COLUMN_COMMUNE_CODE, communeCode)
 		.appendAndEqualsQuoted(COLUMN_VALID, "Y");
 		return (Integer) idoFindOnePKByQuery(query);
 	}

@@ -361,7 +361,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
    * Finds all active relationships specified only in one direction with groupID and relationType as specified
    */
   public Collection ejbFindGroupsRelationshipsByRelatedGroup(int groupID,String relationType)throws FinderException{
-    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+groupID
+    return this.idoFindPKsBySQL("select "+ getIDColumnName() +" from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+groupID
     +" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationType+"' and ( "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+this.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
   }
   
@@ -411,7 +411,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
    * Finds all active relationships specified bidirectionally (in both directions) with groupID and relatedGroupID and relationshipType as specified
    */
   public Collection ejbFindGroupsRelationshipsContainingBiDirectional(int groupID,int relatedGroupID,String relationshipType)throws FinderException{
-    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where ( ("+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+") or ("+this.RELATED_GROUP_ID_COLUMN+"="+groupID
+    return this.idoFindPKsBySQL("select "+ getIDColumnName() +" from "+this.getTableName()+" where ( ("+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+") or ("+this.RELATED_GROUP_ID_COLUMN+"="+groupID
     +" and "+this.GROUP_ID_COLUMN+"="+relatedGroupID+") ) and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationshipType+"' and ( "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+this.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
   }
 
@@ -419,7 +419,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
    * Finds all active relationships specified only in one direction with groupID and relatedGroupID as specified
    */
   public Collection ejbFindGroupsRelationshipsContainingUniDirectional(int groupID,int relatedGroupID)throws FinderException{
-    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID
+    return this.idoFindPKsBySQL("select "+ getIDColumnName() +" from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID
     +" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and ( "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+this.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
   }
 
@@ -427,7 +427,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
    * Finds all active relationships specified only in one direction with groupID and relatedGroupID and relationshipType as specified
    */
   public Collection ejbFindGroupsRelationshipsContainingUniDirectional(int groupID,int relatedGroupID,String relationshipType)throws FinderException{
-    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID
+    return this.idoFindPKsBySQL("select "+ getIDColumnName() +" from "+this.getTableName()+" where "+this.GROUP_ID_COLUMN+"="+groupID+" and "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID
     +" and "+this.RELATIONSHIP_TYPE_COLUMN+"='"+relationshipType+"' and ( "+this.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+this.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
   }
   
@@ -435,7 +435,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 		* Finds all active relationships specified only in one direction with groupID and relatedGroupID and relationshipType as specified
 		*/
 	 public Collection ejbFindAllPendingGroupRelationships()throws FinderException{
-		 return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.STATUS_COLUMN+" in ('"+STATUS_ACTIVE_PENDING+"','"+STATUS_PASSIVE_PENDING+"')");
+		 return this.idoFindPKsBySQL("select "+ getIDColumnName() +" from "+this.getTableName()+" where "+this.STATUS_COLUMN+" in ('"+STATUS_ACTIVE_PENDING+"','"+STATUS_PASSIVE_PENDING+"')");
 	 }
 	 
 	 /**
