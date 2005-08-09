@@ -4160,14 +4160,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @todo use selectquery in all ido find methods
 	 */
 	protected Collection idoFindAllIDsByColumnBySQL(String columnName, String toFind) throws FinderException {
-		return idoFindIDsBySQL("select * from " + getTableName() + " where " + columnName + "='" + toFind + "'");
+		return idoFindIDsBySQL("select "+ getIDColumnName() +" from " + getTableName() + " where " + columnName + "='" + toFind + "'");
 	}
 
 	/**
 	 * Finds one entity that has this exact column value
 	 */
 	protected Object idoFindOnePKByColumnBySQL(String columnName, String toFind) throws FinderException {
-		return idoFindOnePKBySQL("select * from " + getTableName() + " where " + columnName + "='" + toFind + "'");
+		return idoFindOnePKBySQL("select "+ getIDColumnName() +" from " + getTableName() + " where " + columnName + "='" + toFind + "'");
 	}
 
 	/**
@@ -4659,6 +4659,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return query;
 	}
 	
+	protected SelectQuery idoSelectPKQuery(){
+		SelectQuery query = new SelectQuery(idoQueryTable());
+		query.addColumn(new Column(idoQueryTable(), getIDColumnName()));
+		return query;
+	}
+
 	protected Table idoQueryTable(){
 		if(idoQueryTable == null){
 			idoQueryTable = new Table(this);

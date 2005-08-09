@@ -175,7 +175,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   	Column countryCol = new Column(table,COLUMN_COUNTRY_ID);
   	
   	SelectQuery query = new SelectQuery(table);
-  	query.addColumn(new WildCardColumn(table));
+  	query.addColumn(new Column(table, getIDColumnName()));
   	
   	query.addCriteria(new MatchCriteria(codeCol, MatchCriteria.EQUALS, code));
   	query.addCriteria(new MatchCriteria(countryCol, MatchCriteria.EQUALS, countryId));
@@ -188,7 +188,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   	Column countryCol = new Column(table, COLUMN_COUNTRY_ID);
   	
   	SelectQuery query = new SelectQuery(table);
-  	query.addColumn(new WildCardColumn(table));
+  	query.addColumn(new Column(table,getIDColumnName()));
   	query.addCriteria(new MatchCriteria(countryCol, MatchCriteria.EQUALS, countryId));
   	query.addOrder(table, COLUMN_POSTAL_CODE, true);
   	
@@ -231,7 +231,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   	Column countryCol = new Column(table,COLUMN_COUNTRY_ID);
   	
   	SelectQuery query = new SelectQuery(table);
-  	query.addColumn(new WildCardColumn(table));
+  	query.addColumn(new Column(table, getIDColumnName()));
   	
   	query.addCriteria(new MatchCriteria(nameCol, MatchCriteria.EQUALS, name));
   	query.addCriteria(new MatchCriteria(countryCol, MatchCriteria.EQUALS, countryPK));
@@ -244,7 +244,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
   	Column countryCol = new Column(table,COLUMN_COUNTRY_ID);
   	
   	SelectQuery query = new SelectQuery(table);
-  	query.addColumn(new WildCardColumn(table));
+  	query.addColumn(new Column(table, getIDColumnName()));
   	
   	query.addCriteria(new MatchCriteria(countryCol, MatchCriteria.EQUALS, countryPK));
   	
