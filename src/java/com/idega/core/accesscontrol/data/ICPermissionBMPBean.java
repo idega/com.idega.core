@@ -272,7 +272,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	 */
 	public Collection ejbFindAllPermissionsByContextTypeAndPermissionGroupCollectionOrderedByContextValue(String contextType, Collection groups) throws FinderException{
 		IDOQuery sql = idoQuery();
-		sql.appendSelectAllFrom(this)
+		sql.appendSelect().append(getIDColumnName()).appendFrom(this.getEntityName())
 		.appendWhereEqualsQuoted(getContextTypeColumnName(),contextType)
 		.appendAnd().append(getGroupIDColumnName()).appendInCollection(groups)
 		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )")
