@@ -719,7 +719,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 		if (groupTypes != null && !groupTypes.isEmpty()) {
 			IDOQuery query = idoQuery();
-			query.appendSelectCountFrom(this.getEntityName());
+			query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
 			query.appendWhere(this.COLUMN_GROUP_TYPE);
 			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
@@ -745,7 +745,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		String visibleGroupTypes = getGroupTypeHome().getVisibleGroupTypesSQLString();
 
 		IDOQuery query = idoQuery();
-		query.appendSelectCountFrom(this.getEntityName());
+		query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
 		query.appendWhere(this.COLUMN_GROUP_TYPE);
 		query.appendIn(visibleGroupTypes);
 		query.appendAnd();
@@ -786,7 +786,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 		if (groupTypes != null && !groupTypes.isEmpty()) {
 			IDOQuery query = idoQuery();
-			query.appendSelectCountFrom(this.getEntityName());
+			query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
 			query.appendWhere(this.COLUMN_GROUP_TYPE);
 			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
@@ -813,7 +813,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		String visibleGroupTypes = getGroupTypeHome().getVisibleGroupTypesSQLString();
 
 		IDOQuery query = idoQuery();
-		query.appendSelectCountFrom(this.getEntityName());
+		query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
 		query.appendWhere(this.COLUMN_GROUP_TYPE);
 		query.appendIn(visibleGroupTypes);
 		query.appendAnd();
