@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <project>
   <extend>base-project.xml</extend>
   <name>idegaWeb Core</name>
   <artifactId>com.idega.core</artifactId>
-  <!--currentVersion>3.0.5</currentVersion-->
-  <currentVersion>3.1.0-SNAPSHOT</currentVersion>
+  <currentVersion>3.0.5</currentVersion>
+
+  <!--currentVersion>3.0.5-SNAPSHOT</currentVersion-->
   <shortDescription>idegaweb core is the core package of the idegaweb framework</shortDescription>
   <package>com.idega</package>
   <versions>
@@ -244,6 +246,7 @@
       <properties/>
     </dependency>
     <!-- also used in com.idega.block.importer, org.apache.slide -->
+
     <dependency>
       <groupId>poi</groupId>
       <artifactId>poi</artifactId>
@@ -263,17 +266,18 @@
       <properties>
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
-    <!-- lucene used in bundles com.idega.block.websearch and org apache slide, not used in core -->
+      <!-- lucene used in bundles com.idega.block.websearch and org apache slide, not used in core -->
+
     </dependency>
-	    <dependency>
-    	  	<groupId>lucene</groupId>
-      		<artifactId>lucene</artifactId>
-      		<version>1.4.1</version>
-      		<type>jar</type>
-      		<url>http://jakarta.apache.org/lucene/</url>
-     <properties>
+    <dependency>
+      <groupId>lucene</groupId>
+      <artifactId>lucene</artifactId>
+      <version>1.4.1</version>
+      <type>jar</type>
+      <url>http://jakarta.apache.org/lucene/</url>
+      <properties>
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
-     </properties>
+      </properties>
     </dependency>
     <!-- jai and jai codec used in bundles com.idega.block.image and is.idega.golf.block.image, not used in core -->
 
@@ -300,6 +304,7 @@
       </properties>
     </dependency>
     <!-- iText used in bundles com.idega.block.reports, com.idega.block.contract, com.idega.block.pdf and campus not used in core -->
+
     <dependency>
       <groupId>itextpdf</groupId>
       <artifactId>itext-paulo</artifactId>
@@ -311,6 +316,7 @@
       </properties>
     </dependency>
     <!-- commons-httpclient used in org.apache.slide, com.idega.slide, com.idega.content, com.idega.block.navigation not used in core -->
+
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
@@ -322,16 +328,17 @@
       </properties>
     </dependency>
     <!-- jakarta-slide-webdavlib used in com.idega.block.article, com.idega.block.navigation -->
+
     <dependency>
-        <groupId>slide</groupId>
-        <artifactId>jakarta-slide-webdavlib</artifactId>
-        <version>2.2pre1.iwbuild4</version>
-        <type>jar</type>
-        <url>http://www.slide.com/</url>
-		<properties>
-			<idegaweb.bundle.include>true</idegaweb.bundle.include>
-		</properties>
-    </dependency>  
+      <groupId>slide</groupId>
+      <artifactId>jakarta-slide-webdavlib</artifactId>
+      <version>2.2pre1.iwbuild4</version>
+      <type>jar</type>
+      <url>http://www.slide.com/</url>
+      <properties>
+        <idegaweb.bundle.include>true</idegaweb.bundle.include>
+      </properties>
+    </dependency>
     <!-- commons-logging used in com.idega.faces and com.idega.block.creditcard, not used in core -->
 
     <dependency>
@@ -345,6 +352,7 @@
       </properties>
     </dependency>
     <!-- commons-codec used in org.apache.myFaces, org.apache.slide, not used in core -->
+
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
