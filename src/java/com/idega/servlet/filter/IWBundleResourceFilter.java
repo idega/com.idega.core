@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.4 2005/02/01 00:55:03 tryggvil Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.5 2005/08/10 18:35:51 tryggvil Exp $
  * Created on 27.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -22,6 +22,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.idega.core.file.business.FileIconSupplier;
+import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWBundle;
 import com.idega.util.FileUtil;
 
@@ -33,10 +34,10 @@ import com.idega.util.FileUtil;
  *  (Setting -Didegaweb.bundles.resource.dir=/idega/eclipse/workspace in the tomcat plugin preference pane).
  *  </p>
  * 
- *  Last modified: $Date: 2005/02/01 00:55:03 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/08/10 18:35:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 	
@@ -54,7 +55,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
 	public void init(FilterConfig arg0) throws ServletException {
-		String directory = System.getProperty("idegaweb.bundles.resource.dir");
+		String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 		if(directory!=null){
 			sBundlesDirectory=directory;
 			feedFromSetBundleDir=true;
