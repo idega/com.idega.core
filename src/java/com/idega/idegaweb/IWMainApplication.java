@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.145 2005/07/15 12:40:24 thomas Exp $
+ * $Id: IWMainApplication.java,v 1.146 2005/08/10 18:34:24 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/07/15 12:40:24 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/08/10 18:34:24 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.145 $
+ * @version $Revision: 1.146 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -797,6 +797,24 @@ public class IWMainApplication	extends Application  implements MutableClass {
         //debug
         //System.out.println("IWMainApplication : sBundle = "+sBundle);
 
+        //check for the workpace in eclipse if property is set:
+		String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
+		if(directory!=null){
+			//First try the default name (with .bundle extension)
+			String sBundleDirWithBundleExtension = directory+ FileUtil.getFileSeparator()+sBundle;
+			File bundleDir = new File(sBundleDirWithBundleExtension);
+			if(bundleDir.exists()){
+				return sBundleDirWithBundleExtension;
+			}
+			//Then try the name without the bundleExtension
+			String sBundleDirWithoutBundleExtension = directory+ FileUtil.getFileSeparator()+bundleIdentifier;
+			bundleDir = new File(sBundleDirWithoutBundleExtension);
+			if(bundleDir.exists()){
+				return sBundleDirWithoutBundleExtension;
+			}
+		}
+		
+		//default method:
         return getApplicationSpecialRealPath() + FileUtil.getFileSeparator()
                 + sBundle;
     }
@@ -883,10 +901,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
         			}
         		}
         		if(!throwException){
-	            sendStartupMessage("Loading bundle " + bundleIdentifier);
-	            bundle = new DefaultIWBundle(getBundleRealPath(bundleIdentifier),
+	            
+        			String realBundleDir = getBundleRealPath(bundleIdentifier);
+        			sendStartupMessage("Loading bundle " + bundleIdentifier+" (from "+realBundleDir+")");
+	            
+	            bundle = new DefaultIWBundle(realBundleDir,
 	                    getBundleVirtualPath(bundleIdentifier), bundleIdentifier,
 	                    this, autoCreate);
+	            
 	            getLoadedBundles().put(bundleIdentifier, bundle);
 	            //must be put in the loadedBundles map FIRST to prevent looping if a starter class calls IWMainApplication.getBundle(...) for the same bundleidentifier
 	            bundle.runBundleStarters();
