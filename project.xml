@@ -4,9 +4,9 @@
   <extend>base-project.xml</extend>
   <name>idegaWeb Core</name>
   <artifactId>com.idega.core</artifactId>
-  <currentVersion>3.0.5</currentVersion>
+  <!--currentVersion>3.0.5</currentVersion-->
 
-  <!--currentVersion>3.0.5-SNAPSHOT</currentVersion-->
+  <currentVersion>3.0.5-SNAPSHOT</currentVersion>
   <shortDescription>idegaweb core is the core package of the idegaweb framework</shortDescription>
   <package>com.idega</package>
   <versions>
