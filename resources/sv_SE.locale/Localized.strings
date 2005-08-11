@@ -1,3 +1,4 @@
+ICROOT=Publikt
 ROLE.admin.name=admin
 ROLE.builder.name=builder
 ROLE.can_administer_salaries.name=can_administer_salaries
