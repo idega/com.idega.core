@@ -1,7 +1,7 @@
 /*
- * $Id: IWResourceBundle.java,v 1.34 2004/11/02 14:55:39 tryggvil Exp $
+ * $Id: IWResourceBundle.java,v 1.35 2005/08/11 18:47:20 tryggvil Exp $
  *
- * Copyright (C) 2002 Idega hf. All Rights Reserved.
+ * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
@@ -30,12 +30,15 @@ import com.idega.util.SortedProperties;
 import com.idega.util.StringHandler;
 
 /**
- * Title:        idega Framework
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega
- * @author <a href=mailto:"tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0
+ * <p>
+ * This is an idegaWeb representation of a localization folder/file for each locale in an idegaWeb Bundle.<br/>
+ * There is an instance of this class for each localization file (e.g. com.idega.core.bundle/en.locale/Localized.strings)
+ * and is an extension to the standard Java ResourceBundle.
+ * </p>
+ * Last modified: $Date: 2005/08/11 18:47:20 $ by $Author: tryggvil $<br/>
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.35 $
  */
 public class IWResourceBundle extends ResourceBundle {
 
