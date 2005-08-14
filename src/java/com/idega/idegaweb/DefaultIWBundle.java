@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.21 2005/08/10 18:33:36 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.22 2005/08/14 16:53:07 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -388,7 +388,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			String componentName = getComponentName(className);
 			String componentType = this.getComponentType(className);
 			if(className!=null && componentName != null && componentType!=null){
-				addComponentToDatabase(className, componentType, componentName);
+				try{
+					addComponentToDatabase(className, componentType, componentName);
+				}
+				catch(Throwable e){
+					logError("Error registering component to database: "+e.getMessage());
+				}
 			}
 			else{
 				logError("Error registering component className="+className+",componentName="+componentName+",componentType="+componentType+" in bundle="+this.getBundleIdentifier());
