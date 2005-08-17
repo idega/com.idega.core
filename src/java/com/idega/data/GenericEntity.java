@@ -3964,6 +3964,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		String SQLString = this.getFindRelatedSQLQuery(returningEntity, columnName, entityColumnValue);
 		return this.idoGetRelatedEntitiesBySQL(returningEntity, SQLString);
 	}
+
+	/**
+	 * Returns a collection of returningEntity instances
+	 */
+	protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass, String columnName, String entityColumnValue) throws IDOException {
+	    IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+	    String SQLString = this.getFindRelatedSQLQuery(returningEntity, columnName, entityColumnValue);
+		return this.idoGetRelatedEntitiesBySQL(returningEntity, SQLString);
+	}
 	
 	/**
 	 * Returns a collection of returningEntity instances
