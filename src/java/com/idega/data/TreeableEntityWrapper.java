@@ -80,6 +80,13 @@ public abstract class TreeableEntityWrapper extends IDOEntityWrapper implements 
 	/* (non-Javadoc)
 	 * @see com.idega.data.TreeableEntity#getChildrenItarator<<s(java.lang.String)
 	 */
+	public Iterator getChildrenIterator(String p0, boolean p1) {
+		return ((TreeableEntity)this.getMainEntity()).getChildrenIterator(p0, p1);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.TreeableEntity#getChildrenItarator<<s(java.lang.String)
+	 */
 	public Iterator getChildrenIterator(String p0) {
 		return ((TreeableEntity)this.getMainEntity()).getChildrenIterator(p0);
 	}

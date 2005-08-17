@@ -67,8 +67,11 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 		return getChildrenIterator(null);
 	}
 	public Iterator getChildrenIterator(String orderBy) {
+		return getChildrenIterator(orderBy, false);
+	}
+	public Iterator getChildrenIterator(String orderBy, boolean orderDescending) {
 	    Iterator it = null;
-	    Collection children = getChildren(orderBy);
+	    Collection children = getChildren(orderBy, orderDescending);
 	    if (children != null) {
 	        it = children.iterator();
 	    }
@@ -78,6 +81,9 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	    return getChildren(null);
 	}
 	public Collection getChildren(String orderBy) {
+		return getChildren(orderBy, false);
+	}
+	public Collection getChildren(String orderBy, boolean orderDescending) {
 		try {
 			String thisTable = this.getTableName();
 			String treeTable = EntityControl.getTreeRelationShipTableName(this);
@@ -95,6 +101,9 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			
 			if (orderBy != null && !orderBy.equals("")) {
 				buffer.append(" order by ").append(thisTable).append( ".").append(orderBy);
+				if (orderDescending) {
+					buffer.append(" ").append("desc");
+				}
 			}
 			//System.out.println(buffer.toString());
 			List list = EntityFinder.findAll(this, buffer.toString());
