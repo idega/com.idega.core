@@ -16,6 +16,9 @@ import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailBMPBean;
 import com.idega.core.contact.data.Phone;
+import com.idega.core.contact.data.PhoneBMPBean;
+import com.idega.core.contact.data.PhoneType;
+import com.idega.core.contact.data.PhoneTypeBMPBean;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
@@ -725,6 +728,16 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public Collection getPhones() {
 		try {
 			return super.idoGetRelatedEntities(Phone.class);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error in getPhones() : " + e.getMessage());
+		}
+	}
+
+	public Collection getPhones(String phoneTypeID) {
+		try {
+			return super.idoGetRelatedEntities(Phone.class, PhoneBMPBean.getColumnNamePhoneTypeId(), phoneTypeID);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2221,4 +2234,23 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	    throw new UnsupportedOperationException();	
 	}
 
+	/**
+  	* Finds all users that have duplicated emails
+	*/
+	public Collection ejbFindAllUsersWithDuplicatedEmails()throws FinderException{
+// TODO Implement "HAVING" machanism in the SelectQuery structure 
+//	    Table table = new Table(SQL_RELATION_EMAIL, "e") ;
+//	    SelectQuery query = new SelectQuery(table);
+//	    query.addColumn(new Column(getIDColumnName()));
+//	    query.addGroupByColumn(getIDColumnName());
+//	    query.addHavingColumn()
+	    return this.idoFindPKsBySQL("select ic_user_id from ic_user_email group by ic_user_id having count(ic_user_id)>1");
+	}
+
+	/**
+  	* Finds all users that have duplicated phones
+	*/
+	public Collection ejbFindAllUsersWithDuplicatedPhones(String phoneType)throws FinderException{
+    	return this.idoFindPKsBySQL("select up.ic_user_id from ic_user_phone up, ic_phone p where up.ic_phone_id = p.ic_phone_id and p.ic_phone_type_id = " + phoneType + " group by ic_user_id having count(up.ic_user_id)>1");
+	}
 }

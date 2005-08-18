@@ -1,5 +1,5 @@
 /*
- * $Id: Group.java,v 1.48 2005/07/05 09:41:23 sigtryggur Exp $
+ * $Id: Group.java,v 1.49 2005/08/18 10:23:00 sigtryggur Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -39,10 +39,10 @@ import com.idega.idegaweb.IWApplicationContext;
 
 /**
  * 
- *  Last modified: $Date: 2005/07/05 09:41:23 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2005/08/18 10:23:00 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.48 $
+ * @version $Revision: 1.49 $
  */
 public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDCapable {
 
@@ -501,6 +501,11 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	 * @see com.idega.user.data.GroupBMPBean#getPhones
 	 */
 	public Collection getPhones();
+
+	/**
+	 * @see com.idega.user.data.GroupBMPBean#getPhones
+	 */
+	public Collection getPhones(String phoneTypeID);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getEmails

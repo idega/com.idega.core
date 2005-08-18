@@ -16,6 +16,7 @@ import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
+import com.idega.core.contact.data.PhoneBMPBean;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.location.data.Address;
@@ -1735,6 +1736,16 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public Collection getPhones() {
 		try {
 			return super.idoGetRelatedEntities(Phone.class);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException("Error in getPhones() : " + e.getMessage());
+		}
+	}
+
+	public Collection getPhones(String phoneTypeID) {
+		try {
+			return super.idoGetRelatedEntities(Phone.class, PhoneBMPBean.getColumnNamePhoneTypeId(), phoneTypeID);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

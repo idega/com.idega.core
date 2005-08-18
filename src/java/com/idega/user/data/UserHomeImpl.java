@@ -256,4 +256,17 @@ public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Col
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+    public Collection findAllUsersWithDuplicatedEmails() throws FinderException {
+       	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+       	java.util.Collection ids = ((UserBMPBean)entity).ejbFindAllUsersWithDuplicatedEmails();
+       	this.idoCheckInPooledEntity(entity);
+       	return this.getEntityCollectionForPrimaryKeys(ids);
+    }
+
+    public Collection findAllUsersWithDuplicatedPhones(String phoneType) throws FinderException {
+       	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+       	java.util.Collection ids = ((UserBMPBean)entity).ejbFindAllUsersWithDuplicatedPhones(phoneType);
+       	this.idoCheckInPooledEntity(entity);
+       	return this.getEntityCollectionForPrimaryKeys(ids);
+    }
 }
