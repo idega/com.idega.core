@@ -3,14 +3,29 @@ package com.idega.user.business;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.ejb.FinderException;
+
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.Phone;
+import com.idega.core.contact.data.PhoneType;
+import com.idega.core.contact.data.PhoneTypeBMPBean;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
+import com.idega.idegaweb.IWCacheManager;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
 import com.idega.user.data.GroupRelation;
 import com.idega.user.data.GroupRelationHome;
+import com.idega.user.data.User;
+import com.idega.user.data.UserHome;
 import com.idega.util.EventTimer;
 import com.idega.util.IWTimestamp;
 
@@ -28,6 +43,8 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	private IWBundle bundle;
 	private EventTimer timer;
 	public static final String TIMER_THREAD_NAME = "ic_user_Group_Relation_Daemon";
+	public static final String REMOVE_DUPLICATED_EMAILS_FROM_USERS = "remove_duplicated_emails";
+	public static final String REMOVE_DUPLICATED_PHONES_FROM_USERS = "remove_duplicated_phones";
 	
 //	private EventTimer groupTreeEventTimer;
 //	public static final String GROUP_TREE_TIMER_THREAD_NAME = "user_fetch_grouptree";
@@ -64,6 +81,14 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 		try {	
 			if (event.getActionCommand().equalsIgnoreCase(TIMER_THREAD_NAME)) {
 				System.out.println("[Group Relation Daemon - "+IWTimestamp.RightNow().toString()+" ] - Checking for pending relations");
+				String removeDuplicatedEmails = bundle.getProperty(REMOVE_DUPLICATED_EMAILS_FROM_USERS, "false");
+				if (removeDuplicatedEmails != null && removeDuplicatedEmails.equalsIgnoreCase("true")) {
+				    removeDuplicatedEmailsFromUsers();
+				}
+				String removeDuplicatedPhones = bundle.getProperty(REMOVE_DUPLICATED_PHONES_FROM_USERS, "false");
+				if (removeDuplicatedPhones != null && removeDuplicatedPhones.equalsIgnoreCase("true")) {
+				    removeDuplicatedPhonesFromUsers();
+				}
 				Collection relations = getGroupRelationHome().findAllPendingGroupRelationships();
 				
 				Iterator iter = relations.iterator();
@@ -135,5 +160,66 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 
 	private GroupRelationHome getGroupRelationHome() throws RemoteException{
 		return getGroupBusiness(bundle.getApplication().getIWApplicationContext()).getGroupRelationHome();
+	}
+
+	private UserHome getUserHome() throws RemoteException{
+		return getGroupBusiness(bundle.getApplication().getIWApplicationContext()).getUserHome();
+	}
+
+	private Collection getPhoneTypes() {
+		PhoneType[] phoneTypeArray = null;
+		ArrayList phoneTypes = null;
+		try {
+		    phoneTypeArray = (PhoneType[]) PhoneTypeBMPBean.getStaticInstance(PhoneType.class).findAll();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		if (phoneTypeArray!= null && phoneTypeArray.length > 0) {
+		    phoneTypes = new ArrayList(Arrays.asList(phoneTypeArray));
+		}
+		return phoneTypes;
+	}
+
+	/**
+	 * If user has more than one email saved then this method removes all the emails, except for the latest one
+	 */
+	public void removeDuplicatedEmailsFromUsers() throws FinderException, RemoteException, IDORemoveRelationshipException {
+	    Collection users = getUserHome().findAllUsersWithDuplicatedEmails();
+		Iterator userEmailIt = users.iterator();
+		while (userEmailIt.hasNext()) {
+		    User user = (User)userEmailIt.next();
+		    Collection emails = user.getEmails();
+		    Iterator emIt = emails.iterator();
+		    while (emIt.hasNext()) {
+		        Email email = (Email)emIt.next();
+		        if (emIt.hasNext()) {
+		            user.removeEmail(email);
+		        }
+		    }
+    	}
+    }
+
+	/**
+	 * If user has more than one phone of the same type saved then this method removes all the phones of the same type, except for the latest one
+	 */
+	public void removeDuplicatedPhonesFromUsers() throws FinderException, RemoteException, IDORemoveRelationshipException {
+	    Collection phoneTypes = getPhoneTypes();
+		Iterator phoneTypeIt = phoneTypes.iterator();
+		while (phoneTypeIt.hasNext()) {
+		    PhoneType phoneType = (PhoneType)phoneTypeIt.next();
+		    Collection users = getUserHome().findAllUsersWithDuplicatedPhones(phoneType.getPrimaryKey().toString());
+		    Iterator userphoneIt = users.iterator();
+			while (userphoneIt.hasNext()) {
+			    User user = (User)userphoneIt.next();
+			    Collection phones = user.getPhones(phoneType.getPrimaryKey().toString());
+			    Iterator phIt = phones.iterator();
+			    while (phIt.hasNext()) {
+			        Phone phone = (Phone)phIt.next();
+			        if (phIt.hasNext()) {
+			            user.removePhone(phone);
+			        }
+			    }
+			}
+		}
 	}
 }
