@@ -8,6 +8,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.Script;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.InterfaceObject;
@@ -169,8 +170,9 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("  IFrameDoc.location.replace('"+getRemoteUrl(iwc)+"' + buildQueryString_"+source.getID()+"(document."+source.getForm().getID()+".name));").append("\n")
 		.append("  return false;").append("\n")
 		.append("}").append("\n");		
-
-		getAssociatedScript().addFunction("callToServer_"+iframeName, buff.toString());
+		if (getAssociatedScript() != null) {
+			getAssociatedScript().addFunction("callToServer_"+iframeName, buff.toString());
+		}
 	}
 
 	private void addIFrame() {
@@ -194,20 +196,21 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 			params.append("&").append(name).append("=").append(value);
 		}
 		
-		
-		getAssociatedScript().addFunction("buildQueryString_"+source.getID()+"(theFormName)", "function buildQueryString_"+source.getID()+"(theFormName){ \n"
-				+"  theForm = document.forms[theFormName];\n"
-				+"  var qs = ''\n"
-				+"  for (e=0;e<theForm.elements.length;e++) {\n"
-				+"    if (theForm.elements[e].name != '') {\n"
-				+"      qs+='&'\n"
-				+"      qs+=theForm.elements[e].name+'='+theForm.elements[e].value\n"
-//				+"      qs+=theForm.elements[e].name+'='+escape(theForm.elements[e].value)\n"
-				+"    }\n"
-				+"  } \n"
-				+"  qs+='"+params.toString()+"';"
-				+"  return qs\n"
-				+"}\n");
+		if (getAssociatedScript() != null) {
+			getAssociatedScript().addFunction("buildQueryString_"+source.getID()+"(theFormName)", "function buildQueryString_"+source.getID()+"(theFormName){ \n"
+					+"  theForm = document.forms[theFormName];\n"
+					+"  var qs = ''\n"
+					+"  for (e=0;e<theForm.elements.length;e++) {\n"
+					+"    if (theForm.elements[e].name != '') {\n"
+					+"      qs+='&'\n"
+					+"      qs+=theForm.elements[e].name+'='+theForm.elements[e].value\n"
+//					+"      qs+=theForm.elements[e].name+'='+escape(theForm.elements[e].value)\n"
+					+"    }\n"
+					+"  } \n"
+					+"  qs+='"+params.toString()+"';"
+					+"  return qs\n"
+					+"}\n");
+		}
 	}
 
 	private void addScriptForDropdown() {
@@ -257,7 +260,10 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		buff = addClearMethods(buff);
 		
 		buff.append("}\n");	
-		getAssociatedScript().addFunction("handleResponse_"+source.getID(), buff.toString()); 
+		Script s = getAssociatedScript();
+		if (s != null) {
+			s.addFunction("handleResponse_"+source.getID(), buff.toString());
+		}
 	}
 	
 	private StringBuffer addClearMethods(StringBuffer script) {
