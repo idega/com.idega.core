@@ -62,6 +62,10 @@ public class Label extends InterfaceObject {
 		}
 	}	
 	
+	public void setLabel(String label) {
+		this._label = label;
+	}
+	
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
