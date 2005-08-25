@@ -3451,7 +3451,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public javax.ejb.EJBLocalHome getEJBLocalHome() {
 		if (_ejbHome == null) {
 			try {
-				_ejbHome = IDOLookup.getHome(this.getClass());
+				_ejbHome = IDOLookup.getHome(this.getClass(), getDatasource());
 			} catch (Exception e) {
 				throw new EJBException("Lookup for home for: " + this.getClass().getName() + " failed. Errormessage was: " + e.getMessage());
 			}
@@ -3788,8 +3788,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			conn = getConnection(getDatasource());
 			rsh = prepareResultSet(conn,sqlQuery,query);
 			int counter = 0;
-			boolean addEntity = false;
-			while (rsh.rs.next()) {
+			boolean addEntity = true;
+			while (rsh.rs.next() && addEntity) {
 				if (startingEntry <= counter) {
 					if (returningNumber > 0) {
 						if (counter < (returningNumber + startingEntry))
@@ -3876,7 +3876,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws IDORelationshipException if the returningEntity has no relationship defined with this bean or an error with the query
 	 */
 	protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass) throws IDORelationshipException {
-		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass, getDatasource());
 		return idoGetRelatedEntitiesBySQL(returningEntity, getFindRelatedSQLQuery(returningEntity, "", ""));
 		/*try {
 			//return EntityFinder.getInstance().findRelated((IDOLegacyEntity)this, returningEntityInterfaceClass);
@@ -4026,7 +4026,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		Iterator iter = ids.iterator();
 		try {
 			IDOHome home = (IDOHome)returningEntity.getEJBLocalHome();
-			home.setDatasource(this.getDatasource(), false);
+//			home.setDatasource(this.getDatasource(), false);
 			while (iter.hasNext()) {
 				try {
 					Object pk = iter.next();
