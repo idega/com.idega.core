@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.55 2005/08/26 16:04:40 gimmi Exp $
+ * $Id: DateInput.java,v 1.56 2005/08/26 16:28:14 gimmi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -715,16 +715,31 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	 */
 	public void handleKeepStatus(IWContext iwc) {
 		initilizeValues();
-		if (theDay != null)
-			theDay.handleKeepStatus(iwc);
-
-		theMonth.handleKeepStatus(iwc);
-
-		if (theYear != null) {
-			theYear.handleKeepStatus(iwc);
+		String name = iwc.getParameter(getName());
+		
+		String nameDay = null;
+		String nameMonth = null;
+		String nameYear = null;
+		if (name != null) {
+			nameDay = name.substring(8, 10);
+			nameMonth = name.substring(5, 7);
+			nameYear = name.substring(0, 4);
 		}
 
-		theWholeDate.handleKeepStatus(iwc);
+
+		if (theDay != null && nameDay != null) {
+			theDay.setSelectedElement(nameDay);
+		}
+
+		theMonth.setSelectedElement(nameMonth);
+
+		if (theYear != null && nameYear != null) {
+			theYear.setSelectedElement(nameYear);
+		}
+
+		if (name != null) {
+			theWholeDate.setValue(name);
+		}
 	}
 
 	public void keepStatusOnAction(boolean keepStatus) {
