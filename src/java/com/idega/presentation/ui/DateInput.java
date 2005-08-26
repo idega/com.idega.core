@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.54 2005/02/07 13:22:49 laddi Exp $
+ * $Id: DateInput.java,v 1.55 2005/08/26 16:04:40 gimmi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -714,6 +714,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
+		initilizeValues();
 		if (theDay != null)
 			theDay.handleKeepStatus(iwc);
 
@@ -724,7 +725,6 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		}
 
 		theWholeDate.handleKeepStatus(iwc);
-		initilizeValues();
 	}
 
 	public void keepStatusOnAction(boolean keepStatus) {
