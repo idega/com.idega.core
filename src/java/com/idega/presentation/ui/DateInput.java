@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.56 2005/08/26 16:28:14 gimmi Exp $
+ * $Id: DateInput.java,v 1.57 2005/08/27 16:56:14 gimmi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -731,7 +731,9 @@ public class DateInput extends InterfaceObject implements InputHandler {
 			theDay.setSelectedElement(nameDay);
 		}
 
-		theMonth.setSelectedElement(nameMonth);
+		if (nameMonth != null) {
+			theMonth.setSelectedElement(nameMonth);
+		}
 
 		if (theYear != null && nameYear != null) {
 			theYear.setSelectedElement(nameYear);
