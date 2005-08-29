@@ -294,7 +294,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 					"BEGIN "+
 					"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_DATE_FORMAT=''YYYY-MM-DD HH24:MI:SS'''); "+
 					"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_TIMESTAMP_FORMAT=''YYYY-MM-DD HH24:MI:SS''');"+
-					"END");
+					"END;");
 			stmt.close();
 			System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_date_formats' for setting NLS_DATE_FORMAT and NLS_TIMESTAMP_FORMAT");
 		}
