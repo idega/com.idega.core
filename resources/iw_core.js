@@ -16,21 +16,56 @@
 //
 //************************************************//
 
-function iwOpenWindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height) {  
+	//Coordinate script that sets two variable that track the mouse coordinates
+	var IE = document.all?true:false; 
+	if (!IE){ 
+		document.captureEvents(Event.MOUSEMOVE);
+	}
+	document.onmousemove = getMouseXY;
+	var coordX = 0;
+	var coordY = 0;
+	
+	function getMouseXY(e) { 	
+		if (IE) {       
+			coordX = event.clientX + document.body.scrollLeft;      
+			coordY = event.clientY + document.body.scrollTop;   
+		}
+		else {  	   
+			coordX = e.pageX;      
+			coordY = e.pageY;   
+		}  	
+		if (coordX < 0){
+			coordX = 0;
+		}
+		if (coordY < 0){
+			cordY = 0;
+		}     
+		return true;
+	} 
 
-  // usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height) 
-var option = "toolbar=" + ToolBar 
-+ ",location=" + Location  
-+ ",directories=" + Directories  
-+ ",status=" + Status  
-+ ",menubar=" + Menubar  
-+ ",titlebar=" + Titlebar  
-+ ",scrollbars=" + Scrollbars  
-+ ",resizable="  + Resizable  
-+ ",width=" + Width  
-+ ",height=" + Height; 
-var new_win = window.open(Address, Name, option );
-new_win.focus();
+
+function iwOpenWindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height,Xcoord,Ycoord) {  
+  	// usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height,xcoord,ycoord) 
+	var option = 'toolbar=' + ToolBar 
+	+ ',location=' + Location  
+	+ ',directories=' + Directories  
+	+ ',status=' + Status  
+	+ ',menubar=' + Menubar  
+	+ ',titlebar=' + Titlebar  
+	+ ',scrollbars=' + Scrollbars  
+	+ ',resizable='  + Resizable  
+	+ ',width=' + Width  
+	+ ',height=' + Height; 
+	if(Xcoord) option+=',left=' + Xcoord;
+	if(Ycoord) option+=',top=' + Ycoord;
+	
+	var new_win = window.open(Address,Name,option);
+	new_win.focus();
+}
+
+//backward compatability
+function openWindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height,Xcoord,Ycoord){
+	iwOpenWindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height,Xcoord,Ycoord);
 }
 
 function swapImage(){ var i,j=0,x,a=swapImage.arguments; document.sr=new Array; for(i=0;i<(a.length-2);i+=3) if ((x=findObj(a[i]))!=null){document.sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}}
