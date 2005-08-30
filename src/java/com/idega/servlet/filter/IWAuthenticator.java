@@ -111,7 +111,7 @@ public class IWAuthenticator extends BaseFilter {
 			if (prmg != null) {
 				int homePageID = prmg.getHomePageID();
 				if (homePageID > 0) {
-					srequest.getRequestDispatcher(getBuilderService(iwc).getPageURI(homePageID)).forward(srequest, sresponse);
+					response.sendRedirect(getBuilderService(iwc).getPageURI(homePageID));
 				}
 			}
 		}
