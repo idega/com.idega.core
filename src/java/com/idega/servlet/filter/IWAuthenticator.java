@@ -7,6 +7,7 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.logging.Logger;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -18,10 +19,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.jaas.IWJAASAuthenticationRequestWrapper;
+import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
+import com.idega.user.data.Group;
 import com.idega.util.CypherText;
 
 /**
@@ -37,6 +41,7 @@ import com.idega.util.CypherText;
  */
 public class IWAuthenticator extends BaseFilter {
 
+	public static final String PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE = "redirect_user";
 	private static Logger log = Logger.getLogger(IWAuthenticator.class
 			.getName());
 
@@ -82,7 +87,6 @@ public class IWAuthenticator extends BaseFilter {
 //		}
 //		System.out.println("------------PARAMETERS ENDS-------------");
 		
-		
 		if(useBasicAuthenticationMethod(iwc)){
 			if(!iwc.isLoggedOn()){
 				if (!getLoginBusiness(iwc).authenticateBasicAuthenticationRequest(iwc)) {	
@@ -100,6 +104,16 @@ public class IWAuthenticator extends BaseFilter {
 			
 			performCookieLogin(iwc);
 			addCookie(iwc);
+		}
+		
+		if (iwc.isParameterSet(PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE) && iwc.isLoggedOn()) {
+			Group prmg = iwc.getCurrentUser().getPrimaryGroup(); 
+			if (prmg != null) {
+				int homePageID = prmg.getHomePageID();
+				if (homePageID > 0) {
+					srequest.getRequestDispatcher(getBuilderService(iwc).getPageURI(homePageID)).forward(srequest, sresponse);
+				}
+			}
 		}
 		
 		chain.doFilter(new IWJAASAuthenticationRequestWrapper(iwc), response);
@@ -214,6 +228,10 @@ public class IWAuthenticator extends BaseFilter {
 
 	protected LoginBusinessBean getLoginBusiness(IWContext iwc){
 		return loginBusiness;
+	}
+	
+	protected BuilderService getBuilderService(IWContext iwc) throws RemoteException {
+		return BuilderServiceFactory.getBuilderService(iwc);
 	}
 	
 }
