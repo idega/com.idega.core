@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.137 2005/08/31 02:10:08 eiki Exp $
+ * $Id: PresentationObject.java,v 1.138 2005/08/31 03:26:51 eiki Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -70,10 +70,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
+ * Last modified: $Date: 2005/08/31 03:26:51 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.137 $
+ * @version $Revision: 1.138 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -681,7 +681,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			return this.markupLanguage;
 		return IWConstants.MARKUP_LANGUAGE_HTML;
 	}
-
+	
 	public String setID(String ID){
 		setId(ID);
 		return ID;
