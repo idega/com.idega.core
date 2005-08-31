@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.49 2005/06/20 12:04:53 gummi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.50 2005/08/31 02:10:08 eiki Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -11,6 +11,7 @@
  */
 package com.idega.presentation;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.event.IWPresentationState;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWMainApplication;
@@ -28,10 +30,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2005/06/20 12:04:53 $ by $Author: gummi $
+ * Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.49 $
+ * @version $Revision: 1.50 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -189,14 +191,15 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		addText(Integer.toString(integerToInsert));
 	}
-	public PresentationObject getContainedObject(Class objectClass) {
+	
+	public UIComponent getContainedObject(Class objectClass) {
 		List objects = getChildren();
 		if (objects != null) {
 			Iterator iter = objects.iterator();
 			while (iter.hasNext()) {
 				Object element = (Object) iter.next();
 				if (element.getClass() == objectClass) {
-					return (PresentationObject) element;
+					return (UIComponent) element;
 				}
 			}
 		}
@@ -401,109 +404,94 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 		super.initVariables(iwc);
 	}
+	
 	/**
 	 *  
 	 */
-	public PresentationObject getContainedObject(int objectInstanceID)
-	{
-		//List list = this.getChildren();
-		//if (list != null)
-		//{
-		Iterator iter = this.getFacetsAndChildren();
-			//Iterator iter = list.iterator();
-			while (iter.hasNext())
-			{
-				PresentationObject item = (PresentationObject) iter.next();
-				if (item.getICObjectInstanceID() == objectInstanceID)
-				{
-					return item;
+	public UIComponent getContainedObject(String instanceId){
+
+//			 check for "." an identifier for regions...
+			boolean isRegion = (instanceId.indexOf(".")>=0);
+			if(isRegion){
+				// Try to assume that the objectInstanceID is in format
+				// 1234.2.2 (icobjectinstanceid.xpox.ypos)
+				String objectInstanceID = instanceId.substring(0, instanceId.indexOf("."));
+				String index = instanceId.substring(instanceId.indexOf(".") + 1, instanceId.length());
+				if (index.indexOf(".") == -1){
+					return (((PresentationObjectContainer) getContainedObject(objectInstanceID)).objectAt(Integer.parseInt(index)));
 				}
-				else if (item instanceof PresentationObjectContainer)
-				{
-					PresentationObject theReturn = ((PresentationObjectContainer) item).getContainedObject(objectInstanceID);
-					if (theReturn != null)
-					{
-						return theReturn;
+				else{
+					int xindex = Integer.parseInt(index.substring(0, index.indexOf(".")));
+					int yindex = Integer.parseInt(index.substring(index.indexOf(".") + 1, index.length()));
+					try {
+						//Must be a table...no other (today) POC has coordinates...
+						return (((Table) getContainedObject(objectInstanceID)).containerAt(xindex, yindex));
+					} catch (ClassCastException e1) {
+						System.out.println("PresentationObjectContainer#getContainedObject("+objectInstanceID+") - NumberFormatException");
+						e1.printStackTrace();
+						return (null);
 					}
-				}
-			}
-		//}
-		return null;
-	}
-	/**
-	 *  
-	 */
-	public PresentationObject getContainedObject(String objectInstanceID)
-	{
-		try
-		{
-			try
-			{
-				//Try to interpret the objectInstanceID as an integer
-				return (getContainedObject(Integer.parseInt(objectInstanceID)));
-			}
-			catch (NumberFormatException nfe)
-			{
-				try{
-					//Try to assume that the objectInstanceID is in format 1234.2.2 (icobjectinstanceid.xpox.ypos)
-					int objectInstanceIDInt = Integer.parseInt(objectInstanceID.substring(0, objectInstanceID.indexOf(".")));
-					String index = objectInstanceID.substring(objectInstanceID.indexOf(".") + 1, objectInstanceID.length());
-					if (index.indexOf(".") == -1)
-					{
-						return (PresentationObject)(((PresentationObjectContainer) getContainedObject(objectInstanceIDInt)).objectAt(Integer.parseInt(index)));
-					}
-					else
-					{
-						int xindex = Integer.parseInt(index.substring(0, index.indexOf(".")));
-						int yindex = Integer.parseInt(index.substring(index.indexOf(".") + 1, index.length()));
-						try {
-							return (((Table) getContainedObject(objectInstanceIDInt)).containerAt(xindex, yindex));
-						} catch (ClassCastException e1) {
-							System.out.println("PresentationObjectContainer#getContainedObject("+objectInstanceID+") - NumberFormatException");
-							e1.printStackTrace();
-							System.out.println(getContainedObject(objectInstanceIDInt).getClassName()+": "+getContainedObject(objectInstanceIDInt));
+					 catch (NullPointerException e1) {
+							System.out.println("PresentationObjectContainer#getContainedObject("+objectInstanceID+") - Nullpointer with no harm...could be a nonexisting region or a table within a table...");
+							//e1.printStackTrace();
 							return (null);
 						}
+				}
+			}
+			else{
+				// Try to interpret the objectInstanceID as an integer because
+				// presentationobject still use int id's
+				// this works for presentationobjects and regular containers
+				// (not regions or pure UIComponents)
+				int objectInstanceIdINT = -999;//just a number that will never be in a ibxml
+				boolean isPresentationObject = true;
+				try {
+					objectInstanceIdINT = Integer.parseInt(instanceId);
+				}
+				catch (NumberFormatException e) {
+					//this uses the pretence that icobjectinstanceid is an int! (for now)
+					isPresentationObject = false;
+				}
+				
+				Iterator iter = this.getFacetsAndChildren();
+		
+				while (iter.hasNext()){
+					UIComponent item = (UIComponent) iter.next();
+					if(!isPresentationObject && instanceId.equals(item.getId())){
+						//pure UIComponent
+						return item;
+					}
+					else if ( item instanceof PresentationObject && ((PresentationObject) item).getICObjectInstanceID() == objectInstanceIdINT){
+						return item;
+					}
+					else if (item instanceof PresentationObjectContainer){
+						return ((PresentationObjectContainer) item).getContainedObject(instanceId);
 					}
 				}
-				catch(StringIndexOutOfBoundsException se){
-					return null;
-				}
-			
+				return null;
 			}
-		}
-		catch (NullPointerException ex)
-		{
-			return (null);
-		}
 	}
 	/**
-	 *  
+	 * 
 	 */
-	public PresentationObject getContainedLabeledObject(String label)
-	{
-		//List list = getChildren();
-		//if (list != null)
-		//{
-			//Iterator iter = list.iterator();
+	public UIComponent getContainedLabeledObject(String label){
 			Iterator iter = this.getFacetsAndChildren();
 			while (iter.hasNext())
 			{
-				PresentationObject item = (PresentationObject) iter.next();
+				UIComponent item = (UIComponent) iter.next();
 				if (item instanceof PresentationObjectContainer)
 				{
 					String itemLabel = ((PresentationObjectContainer) item).getLabel();
 					if (itemLabel != null)
 						if (itemLabel.equals(label))
 							return (item);
-					PresentationObject theReturn = ((PresentationObjectContainer) item).getContainedLabeledObject(label);
+					UIComponent theReturn = ((PresentationObjectContainer) item).getContainedLabeledObject(label);
 					if (theReturn != null)
 					{
 						return (theReturn);
 					}
 				}
 			}
-		//}
 		return (null);
 	}
 	/*
@@ -690,15 +678,26 @@ public class PresentationObjectContainer extends PresentationObject
 				int index = iter.nextIndex();
 				Object item = iter.next();
 				//Object item = obj.theObjects.elementAt(index);
-				if (item instanceof PresentationObject)
-				{
+				if (item instanceof PresentationObject){
 					PresentationObject newObject = (PresentationObject) ((PresentationObject) item).clonePermissionChecked(iwc, askForPermission);
 					//newObject.setParentObject(obj);
 					//newObject.setLocation(this.getLocation());
 					obj.getChildren().set(index, newObject);
 					//newObject.setParent(obj);
 				}
-				
+				else if(item instanceof UIComponent){
+					//create a copy from the IBXML
+					try {
+						BuilderService builderService = getBuilderService(IWMainApplication.getDefaultIWApplicationContext());
+						UIComponent newUIObject = builderService.getCopyOfUIComponentFromIBXML((UIComponent)item);
+						//insert the new item
+						obj.getChildren().set(index, newUIObject);
+					}
+					catch (RemoteException e) {
+						e.printStackTrace();
+					}
+					
+				}	
 			}
 		}
 	}
@@ -772,33 +771,7 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		return (_label);
 	}
-	public PresentationObject getContainedICObjectInstance(int id)
-	{
-		/*
-		 * System.err.println("-------------------------------------");
-		 * System.err.println("getContainedICObjectInstance("+id+")"); if(this
-		 * instanceof Page){ System.err.println("ibpageid = "+
-		 * ((Page)this).getPageID()); }else{
-		 * System.err.println("this.instanceId =
-		 * "+this.getICObjectInstanceID()); }
-		 */
-		List l = this.getChildrenRecursive();
-		if (l != null)
-		{
-			Iterator iter = l.iterator();
-			while (iter.hasNext())
-			{
-				Object item = iter.next();
-				//        System.err.println("ObjectinstanceID = "
-				// +((PresentationObject)item).getICObjectInstanceID());
-				if (item instanceof PresentationObject && (((PresentationObject) item).getICObjectInstanceID() == id))
-				{
-					return ((PresentationObject) item);
-				}
-			}
-		}
-		return null;
-	}
+	
 	public void setLocation(IWLocation location, IWUserContext iwuc)
 	{
 		super.setLocation(location, iwuc);

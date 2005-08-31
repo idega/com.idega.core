@@ -1,5 +1,5 @@
 /*
- * $Id: Script.java,v 1.24 2005/08/09 16:25:11 thomas Exp $ 
+ * $Id: Script.java,v 1.25 2005/08/31 02:10:08 eiki Exp $ 
  * Created in 2000 by Tryggvi Larusson
  * 
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.data.IDONoDatastoreError;
  * An instance of this component can be used to define javascript functions and
  * add to a component or a page.
  * </p>
- * Last modified: $Date: 2005/08/09 16:25:11 $ by $Author: thomas $
+ * Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class Script extends PresentationObject {
 
@@ -196,8 +196,14 @@ public class Script extends PresentationObject {
 		if (jsString != null && jsString.endsWith(".js")) {
 			Script js = new Script();
 			js.setScriptSource(jsString);
-			addFunction(jsString.substring(0, jsString.indexOf(".js")),
-					"\tif(document){\n\t\t document.write(\"<script src=" + jsString + " > </script>\")\n\t}");
+			//DOCUMENT.WRITE is illegal in XHTML you must use DOM writing instead
+			addFunction(jsString,
+				"var l=document.createElement('script'); "+
+				  "l.setAttribute('src', '"+jsString+"'); "+
+				  "l.setAttribute('type', 'text/javascript'); "+
+				  "document.getElementsByTagName('head')[0].appendChild(l); \n");
+			
+			
 			// document.write("<scr"+"ipt
 			// src=/js/curtain_menu/menumaker.jsp><"+"/script>")
 		}
@@ -226,7 +232,7 @@ public class Script extends PresentationObject {
 				// }
 				// else{
 				println("<script " + getMarkupAttributesString() + " >");
-				println("<!--//");
+				println("<!--");
 				if (!isMarkupAttributeSet("src")) {
 					print(getVariables());
 					print(getMethods());

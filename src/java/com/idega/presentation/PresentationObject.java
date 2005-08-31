@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.136 2005/07/28 18:06:30 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.137 2005/08/31 02:10:08 eiki Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -70,10 +70,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/07/28 18:06:30 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.136 $
+ * @version $Revision: 1.137 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -190,17 +190,18 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		code = "id" + hashCode;
 		return code;
 	}
-	protected void setID()
+	protected String setID()
 	{
-		setID(generateID());
+		return setID(generateID());
 	}
 	public String getID()
 	{
 		String theReturn = getMarkupAttribute("id");
-		if (theReturn == null || emptyString.equals(theReturn))
-		{
-			setID();
-			theReturn = getMarkupAttribute("id");
+		if (theReturn == null || emptyString.equals(theReturn)){
+			theReturn = getId();
+			if (theReturn == null || emptyString.equals(theReturn)){
+				return setID();
+			}
 		}
 		return theReturn;
 	}
@@ -681,22 +682,21 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		return IWConstants.MARKUP_LANGUAGE_HTML;
 	}
 
-	public void setID(String ID)
-	{
-		setMarkupAttribute("id", ID);
+	public String setID(String ID){
+		setId(ID);
+		return ID;
 	}
 	
 	/**
 	 * @see UIComponentBase#setId(java.lang.String)
 	 */
 	public void setId(String id){
-		setID(id);
+		setMarkupAttribute("id", id);
 		super.setId(id);
 	}
 	
-	public void setID(int ID)
-	{
-		setMarkupAttribute("id", Integer.toString(ID));
+	public void setID(int ID){
+		setID(Integer.toString(ID));
 	}
 
 	/**
@@ -1296,13 +1296,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		return IWContext.getInstance();
 	}
 
-	//public void _setIWContext(IWContext iwc)
-	//{
-	//	setIWContext(iwc);
-	//}
-	public void setProperty(String key, String values[])
-	{
-	}
 	/**
 	 * Needs to be overrided to get the right IWBundle identifier for the
 	 * object
@@ -2389,10 +2382,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	private String getGeneratedIWId(){
 		UIComponent parent = this.getParent();
 		if(parent!=null){
-			int indexOfMe=this.getParent().getChildren().indexOf(this);
+			int indexOfMe=parent.getChildren().indexOf(this);
 			return getParent().getId()+"-"+indexOfMe;
 		}
-		return "iwroot";
+		return setID();//ONLY A BACKUP sets and returns a unique id
 	}
 
 	protected void setRenderedPhaseDone(){
@@ -2546,20 +2539,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 	String cacheKey = Integer.toString(this.getICObjectInstanceID());
 	 	return PropertyCache.getInstance().getPropertyList(cacheKey);
 	 }
-	 
-	 public void addReflectionProperty(Property property){
-	 	/*if(this instanceof Block){
-	 		if(this.getClass().getName().indexOf("Navigation")!=-1){
-	 			boolean check=true;
-	 		}
-	 	}*/
-	 	List properties = getReflectionProperties();
-	 	if(properties!=null){
-	 		properties.add(property);
-	 	}
-	 	property.setPropertyOnInstance(this);
-	 }
-	 
+	 	 
 	 protected void restoreFromReflectionProperties(){
  		/*if(this.getClass().getName().indexOf("Navigation")!=-1){
  			boolean check=true;

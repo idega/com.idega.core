@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.145 2005/06/03 15:18:29 thomas Exp $
+ *  $Id: Page.java,v 1.146 2005/08/31 02:10:08 eiki Exp $
  *  Created in 2000 by Tryggvi Larusson
  *  Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -57,10 +57,10 @@ import com.idega.util.datastructures.QueueMap;
  * </pre>
  * tags in HTML and renders the children inside the body tags.
  * </p>
- *  Last modified: $Date: 2005/06/03 15:18:29 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.145 $
+ * @version $Revision: 1.146 $
  */
 public class Page extends PresentationObjectContainer {
 	
@@ -395,7 +395,8 @@ public class Page extends PresentationObjectContainer {
 	 */
 	private void setDefaultValues() {
 		//addStyleSheetURL(_styleSheetURL);
-		getAssociatedScript().addFunction("windowopen", Window.windowScript());
+		//the script is now a standard script called iwOpenWindow in iw_core.js
+		//getAssociatedScript().addFunction("windowopen", Window.windowScript());
 	}
 
 	/**

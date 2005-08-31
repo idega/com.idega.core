@@ -1,5 +1,5 @@
 /*
- * $Id: PropertyCache.java,v 1.3 2005/02/03 11:06:06 thomas Exp $
+ * $Id: PropertyCache.java,v 1.4 2005/08/31 02:10:08 eiki Exp $
  * Created on 27.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,7 @@ package com.idega.util.reflect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import com.idega.idegaweb.IWMainApplication;
@@ -20,10 +21,10 @@ import com.idega.repository.data.Singleton;
 /**
  * This class holds a cache of lists of Property object keyed by an id (ICObjectInstanceId).
  * 
- *  Last modified: $Date: 2005/02/03 11:06:06 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class PropertyCache implements Singleton {
 	
@@ -58,6 +59,14 @@ public class PropertyCache implements Singleton {
 			getPropertyListCache().put(key,l);
 		}
 		return l;
+	}
+	
+	public void setAllCachedPropertiesOnInstance(String key, Object instance){
+		List props = getPropertyList(key);
+		for (Iterator iter = props.iterator(); iter.hasNext();) {
+			Property prop = (Property) iter.next();
+			prop.setPropertyOnInstance(instance);
+		}
 	}
 	
 	public void addProperty(String key,Property property){

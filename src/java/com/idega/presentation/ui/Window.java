@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.40 2005/07/15 12:40:24 thomas Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.41 2005/08/31 02:10:08 eiki Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -28,10 +28,10 @@ import com.idega.util.datastructures.list.KeyValuePair;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2005/07/15 12:40:24 $ by $Author: thomas $
+ * Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.40 $
+ * @version $Revision: 1.41 $
  */
 public class Window extends Page {
 
@@ -644,7 +644,7 @@ public class Window extends Page {
 
 	/**
 	 * 
-	 * using js function openwindow from global.js
+	 * using js function iwopenwindow from iw_core.js
 	 * (Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height)
 	 */
 	public static String getWindowCallingScript(String url, String name, boolean tool, boolean loc, boolean dir,
@@ -656,7 +656,7 @@ public class Window extends Page {
 
 	/**
 	 * 
-	 * using js function openwindow from global.js
+	 * using js function iwopenwindow from iw_core.js
 	 * (Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height,Xcoord,Ycoord)
 	 */
 	public static String getWindowCallingScript(String url, String name, boolean tool, boolean loc, boolean dir,
@@ -665,7 +665,7 @@ public class Window extends Page {
 		String no = "0";
 		String yes = "1";
 		String sp = "'";
-		StringBuffer buf = new StringBuffer("openwindow('").append(url).append("','").append(name).append("',");
+		StringBuffer buf = new StringBuffer("iwOpenWindow('").append(url).append("','").append(name).append("',");
 		buf.append(sp).append(tool ? yes : no).append("','").append(loc ? yes : no).append("',");
 		buf.append(sp).append(dir ? yes : no).append("','").append(stat ? yes : no).append("',");
 		buf.append(sp).append(menu ? yes : no).append("','").append(title ? yes : no).append("',");
@@ -711,56 +711,57 @@ public class Window extends Page {
 		return buf.toString();
 	}
 
-	public static String windowScript() {
-		StringBuffer js = new StringBuffer();
-		// getCoordinate script tracks the mouse coordinates
-		js.append(getCoordinateScript());
-		js.append("\n\n");
-		js.append("\tfunction openwindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height,Xcoord,Ycoord) {  \n");
-		js.append("\t\t// usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height,xcoord,ycoord) \n");
-		js.append("\t\tvar option = \"toolbar=\" + ToolBar ");
-		js.append("+ \",location=\" + Location  ");
-		js.append("+ \",directories=\" + Directories  ");
-		js.append("+ \",status=\" + Status  ");
-		js.append("+ \",menubar=\" + Menubar  ");
-		js.append("+ \",titlebar=\" + Titlebar  ");
-		js.append("+ \",scrollbars=\" + Scrollbars  ");
-		js.append("+ \",resizable=\"  + Resizable  ");
-		// js.append("+ \",fullscreen=\" + FullScreen \n");
-		js.append("+ \",width=\" + Width  ");
-		js.append("+ \",height=\" + Height; \n");
-		js.append("\t if(Xcoord) option+=\",left=\" + Xcoord; \n");
-		js.append("\t if(Ycoord) option+=\",top=\" + Ycoord; \n");
-		js.append("\t\tvar new_win = window.open(Address, Name, option );\n");
-		// js.append("new_win.document.write(option)");
-		js.append("\t}");
-		return js.toString();
-	}
+//This script is now a standard script called iwOpenWindow in iw_core.js	
+//	public static String windowScript() {
+//		StringBuffer js = new StringBuffer();
+//		// getCoordinate script tracks the mouse coordinates
+//		js.append(getCoordinateScript());
+//		js.append("\n\n");
+//		js.append("\tfunction openwindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height,Xcoord,Ycoord) {  \n");
+//		js.append("\t\t// usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height,xcoord,ycoord) \n");
+//		js.append("\t\tvar option = \"toolbar=\" + ToolBar ");
+//		js.append("+ \",location=\" + Location  ");
+//		js.append("+ \",directories=\" + Directories  ");
+//		js.append("+ \",status=\" + Status  ");
+//		js.append("+ \",menubar=\" + Menubar  ");
+//		js.append("+ \",titlebar=\" + Titlebar  ");
+//		js.append("+ \",scrollbars=\" + Scrollbars  ");
+//		js.append("+ \",resizable=\"  + Resizable  ");
+//		// js.append("+ \",fullscreen=\" + FullScreen \n");
+//		js.append("+ \",width=\" + Width  ");
+//		js.append("+ \",height=\" + Height; \n");
+//		js.append("\t if(Xcoord) option+=\",left=\" + Xcoord; \n");
+//		js.append("\t if(Ycoord) option+=\",top=\" + Ycoord; \n");
+//		js.append("\t\tvar new_win = window.open(Address, Name, option );\n");
+//		// js.append("new_win.document.write(option)");
+//		js.append("\t}");
+//		return js.toString();
+//	}
 
-	public static String getCoordinateScript() {
-		StringBuffer script = new StringBuffer();
-		script.append("var IE = document.all?true:false; ");
-		script.append("if (!IE){ document.captureEvents(Event.MOUSEMOVE)}");
-		script.append("document.onmousemove = getMouseXY;");
-		script.append("var coordX = 0;");
-		script.append("var coordY = 0;");
-		script.append("function getMouseXY(e) { ");
-		script.append("	if (IE) { ");
-		script.append("      coordX = event.clientX + document.body.scrollLeft;");
-		script.append("      coordY = event.clientY + document.body.scrollTop;");
-		script.append("   }");
-		script.append("   else {  ");
-		script.append("	   coordX = e.pageX;");
-		script.append("      coordY = e.pageY;");
-		script.append("   }  ");
-		script.append("	if (coordX < 0){coordX = 0;}");
-		script.append("   if (coordY < 0){cordY = 0;}  ");
-		// script.append("window.defaultStatus =\"x=\"+coordX+ \" y=\"+coordY
-		// ;");
-		script.append("   return true;");
-		script.append("} ");
-		return script.toString();
-	}
+//	public static String getCoordinateScript() {
+//		StringBuffer script = new StringBuffer();
+//		script.append("var IE = document.all?true:false; ");
+//		script.append("if (!IE){ document.captureEvents(Event.MOUSEMOVE);}");
+//		script.append("document.onmousemove = getMouseXY;");
+//		script.append("var coordX = 0;");
+//		script.append("var coordY = 0;");
+//		script.append("function getMouseXY(e) { ");
+//		script.append("	if (IE) { ");
+//		script.append("      coordX = event.clientX + document.body.scrollLeft;");
+//		script.append("      coordY = event.clientY + document.body.scrollTop;");
+//		script.append("   }");
+//		script.append("   else {  ");
+//		script.append("	   coordX = e.pageX;");
+//		script.append("      coordY = e.pageY;");
+//		script.append("   }  ");
+//		script.append("	if (coordX < 0){coordX = 0;}");
+//		script.append("   if (coordY < 0){cordY = 0;}  ");
+//		// script.append("window.defaultStatus =\"x=\"+coordX+ \" y=\"+coordY
+//		// ;");
+//		script.append("   return true;");
+//		script.append("} ");
+//		return script.toString();
+//	}
 
 	public String getMouseCoordinateX() {
 		return "coordX";

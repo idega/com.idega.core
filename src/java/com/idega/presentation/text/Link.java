@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.153 2005/07/05 22:41:26 gimmi Exp $
+ * $Id: Link.java,v 1.154 2005/08/31 02:10:08 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2217,7 +2217,7 @@ public void setWindowToOpen(String className) {
 		else {
 
 			windowOpenerJavascriptString = URLDecoder.decode(windowOpenerJavascriptString);
-			List between = TextSoap.FindAllBetween(windowOpenerJavascriptString, "openwindow('", "'");
+			List between = TextSoap.FindAllBetween(windowOpenerJavascriptString, "iwOpenWindow('", "'");
 			String theUrl = "";
 			if (between != null && between.size() > 0) {
 				theUrl = (String) between.get(0);

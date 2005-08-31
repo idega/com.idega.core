@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.10 2005/02/24 00:13:03 tryggvil Exp $
+ * $Id: BuilderService.java,v 1.11 2005/08/31 02:10:08 eiki Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
 package com.idega.core.builder.business;
 
 import java.rmi.RemoteException;
+import javax.faces.component.UIComponent;
 
 import com.idega.business.IBOService;
 import com.idega.core.builder.data.ICDomain;
@@ -134,8 +135,13 @@ public interface BuilderService extends IBOService
 	 * @throws RemoteException
 	 */	
 	public String getPageKeyByRequestURIAndServerName(String requestUri,String serverName);
-
 	
+	/**
+	 * Gets a copy of a UIComponent by its instanceId (component.getId()) if it is found in the current pages ibxml
+	 * @param component
+	 * @return A reset copy of the component from ibxml
+	 */
+	public UIComponent getCopyOfUIComponentFromIBXML(UIComponent component);
 	
 	/**
 	 * Unloads all the resources associated with the Builder
