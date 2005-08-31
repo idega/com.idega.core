@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.5 2005/08/10 18:35:51 tryggvil Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.6 2005/08/31 14:59:44 tryggvil Exp $
  * Created on 27.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -34,10 +34,10 @@ import com.idega.util.FileUtil;
  *  (Setting -Didegaweb.bundles.resource.dir=/idega/eclipse/workspace in the tomcat plugin preference pane).
  *  </p>
  * 
- *  Last modified: $Date: 2005/08/10 18:35:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/08/31 14:59:44 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 	
@@ -108,6 +108,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	private static String SVG="svg";
 	private static String JSP="jsp";
 	private static String PSVG="psvg";
+	private static String AXIS_JWS="jws";
 	/**
 	 * @param realFile
 	 */
@@ -126,6 +127,10 @@ public class IWBundleResourceFilter extends BaseFilter {
 			copyFileToBundle(request,bundleIdentifier,filePathInBundle,file);
 			return true;
 			
+		}
+		else if(fileEnding.equalsIgnoreCase(AXIS_JWS)){
+			//do nothing: should be handled by axis:
+			return true;
 		}
 		return false;
 	}
