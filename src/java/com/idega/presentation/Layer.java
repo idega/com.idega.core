@@ -65,6 +65,11 @@ public class Layer extends PresentationObjectContainer {
 		}
 	}
 
+	public void setName(String name) {
+		setMarkupAttribute("name", name);
+		super.setName(name);
+	}
+	
 	public void setBackgroundColor(String backgroundColor) {
 		setStyleAttribute(BACKGROUND_COLOR, backgroundColor);
 	}
