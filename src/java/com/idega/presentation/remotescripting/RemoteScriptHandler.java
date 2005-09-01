@@ -54,7 +54,6 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 	}
 	
 	public void main(IWContext iwc) throws Exception{
-		
 		if (isRemoteCall(iwc)) {
 			
 			handleRemoteCall(iwc);
@@ -228,8 +227,8 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("  var ids = '';\n")
 		.append("  for (var q=0; q<numNames; q++) {\n")
 		.append("    if (namesColl[q].nodeType!=1) continue; // it's not an element node, let's skedaddle\n")
-		.append("    str = namesColl[q].id;\n")
-		.append("    ids = idsColl[q].id;\n")
+		.append("    str = namesColl[q].name;\n")
+		.append("    ids = idsColl[q].name;\n")
 		.append("    zipEl.options[zipEl.options.length] = new Option(str, ids);\n")
 		.append("  }\n");
 				
@@ -249,7 +248,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("    var numNames = namesColl.length; \n")
 		.append("    for (var q=0; q<numNames; q++) {\n")
 		.append("      if (namesColl[q].nodeType!=1) continue; // it's not an element node, let's skedaddle\n")
-		.append("      str+= namesColl[q].id;\n")
+		.append("      str+= namesColl[q].name;\n")
 		.append("    }\n")
 		.append("  } else {\n")
 		.append("    str = '';\n")
