@@ -21,7 +21,7 @@ public class PageWrapper implements Page{
 		}
 		else{
 			this.child = new com.idega.presentation.Page();
-			child.getChildren().add(child);
+			this.child.getChildren().add(child);
 		}
 	}
 	
