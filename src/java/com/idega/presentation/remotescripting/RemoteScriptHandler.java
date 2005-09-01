@@ -337,7 +337,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 	 * @return
 	 */
 	public String getSubmitEvent(IWContext iwc) {
-		return "return callToServer_"+iframeName+"(document."+source.getForm().getID()+".name)";
+		return "return callToServer_"+iframeName+"(findObj('"+source.getForm().getID()+"').name)";
 	}
 
 	/**
