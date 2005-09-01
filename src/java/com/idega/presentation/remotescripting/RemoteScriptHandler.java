@@ -166,7 +166,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("    return true;").append("\n")
 		.append("  }").append("\n")
 
-		.append("  IFrameDoc.location.replace('"+getRemoteUrl(iwc)+"' + buildQueryString_"+source.getID()+"(document."+source.getForm().getID()+".name));").append("\n")
+		.append("  IFrameDoc.location.replace('"+getRemoteUrl(iwc)+"' + buildQueryString_"+source.getID()+"(findObj('"+source.getForm().getID()+"').name));").append("\n")
 		.append("  return false;").append("\n")
 		.append("}").append("\n");		
 		if (getAssociatedScript() != null) {
