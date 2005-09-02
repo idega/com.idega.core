@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.24 2005/09/02 04:10:51 gimmi Exp $
+ * $Id: IWPropertyList.java,v 1.25 2005/09/02 05:11:56 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -81,7 +81,7 @@ public class IWPropertyList {
 	public IWPropertyList(String path, String fileNameWithoutFullPath, boolean createFileAndFolder) {
 		File file = null;
 		if (createFileAndFolder) {
-			file = createFile(path, fileNameWithoutFullPath, file);
+			file = createFile(path, fileNameWithoutFullPath);
 		}
 		else {
 			file = new File(path + FileUtil.getFileSeparator() + fileNameWithoutFullPath);
@@ -98,7 +98,8 @@ public class IWPropertyList {
 	 * @param file
 	 * @return
 	 */
-	protected File createFile(String path, String fileNameWithoutFullPath, File file) {
+	protected File createFile(String path, String fileNameWithoutFullPath) {
+		File file = null;
 		try {
 			file = new File(path, fileNameWithoutFullPath);
 			// added 08.02.2002 by aron: was before

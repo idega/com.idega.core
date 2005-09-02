@@ -3,11 +3,11 @@ package com.idega.idegaweb;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Locale;
+import javax.ejb.FinderException;
 import com.idega.core.data.ICApplicationBinding;
 import com.idega.core.data.ICApplicationBindingHome;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
-import com.idega.data.IDOFinderException;
 import com.idega.data.IDOLookup;
 
 /**
@@ -26,6 +26,7 @@ public class IWSystemProperties extends IWPropertyList {
 	private ICFile systemProperties;
 	
 	public IWSystemProperties(IWMainApplication application) {
+//		super();
 		_application = application;
 		loadPropertiesFile(application);
 	}
@@ -37,7 +38,7 @@ public class IWSystemProperties extends IWPropertyList {
 			try {
 				ICApplicationBinding binding = iab.findByPrimaryKey(PROPERTY_NAME);
 				icFileID = binding.getValue();
-			} catch (IDOFinderException e) {
+			} catch (FinderException e) {
 			}
 			
 			if (icFileID != null) {
@@ -46,7 +47,7 @@ public class IWSystemProperties extends IWPropertyList {
 				systemProperties = icFile;
 				super.load(icFile.getFileValue());
 			} else {
-				File file = super.createFile(application.getPropertiesRealPath(), "system_properties.pxml", null);
+				File file = createFile(application.getPropertiesRealPath(), "system_properties.pxml");
 				
 				ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
 				ICFile icFile = home.create();
