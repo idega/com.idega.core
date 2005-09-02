@@ -166,7 +166,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("    return true;").append("\n")
 		.append("  }").append("\n")
 
-		.append("  IFrameDoc.location.replace('"+getRemoteUrl(iwc)+"' + buildQueryString_"+source.getID()+"(findObj('"+source.getForm().getID()+"').name));").append("\n")
+		.append("  IFrameDoc.location.replace('"+getRemoteUrl(iwc)+"' + buildQueryString_"+source.getID()+"(findObj('"+source.getForm().getID()+"')));").append("\n")
 		.append("  return false;").append("\n")
 		.append("}").append("\n");		
 		if (getAssociatedScript() != null) {
@@ -196,8 +196,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		}
 		
 		if (getAssociatedScript() != null) {
-			getAssociatedScript().addFunction("buildQueryString_"+source.getID()+"(theFormName)", "function buildQueryString_"+source.getID()+"(theFormName){ \n"
-					+"  theForm = document.forms[theFormName];\n"
+			getAssociatedScript().addFunction("buildQueryString_"+source.getID()+"(theForm)", "function buildQueryString_"+source.getID()+"(theForm){ \n"
 					+"  var qs = ''\n"
 					+"  for (e=0;e<theForm.elements.length;e++) {\n"
 					+"    if (theForm.elements[e].name != '') {\n"
