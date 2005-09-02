@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.23 2005/07/13 22:46:08 sigtryggur Exp $
+ * $Id: IWPropertyList.java,v 1.24 2005/09/02 04:10:51 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,15 +10,16 @@
 package com.idega.idegaweb;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
 import com.idega.util.FileUtil;
 import com.idega.util.ListUtil;
 import com.idega.xml.XMLDocument;
@@ -80,31 +81,45 @@ public class IWPropertyList {
 	public IWPropertyList(String path, String fileNameWithoutFullPath, boolean createFileAndFolder) {
 		File file = null;
 		if (createFileAndFolder) {
-			try {
-				file = new File(path, fileNameWithoutFullPath);
-				// added 08.02.2002 by aron: was before
-				// if(!file.exists() )
-				if (!file.exists() || file.length() == 0) {
-					System.err.println("Creating new " + fileNameWithoutFullPath);
-					file = FileUtil.getFileAndCreateIfNotExists(path, fileNameWithoutFullPath);
-					FileOutputStream stream = new FileOutputStream(file);
-					char[] array = ((String) "<" + rootElementTag + "></" + rootElementTag + ">").toCharArray();
-					for (int i = 0; i < array.length; i++) {
-						stream.write((int) array[i]);
-					}
-					stream.flush();
-					stream.close();
-				}
-
-			}
-			catch (IOException ex) {
-				ex.printStackTrace();
-			}
+			file = createFile(path, fileNameWithoutFullPath, file);
 		}
 		else {
 			file = new File(path + FileUtil.getFileSeparator() + fileNameWithoutFullPath);
 		}
 		load(file);
+	}
+
+	/**
+	 * <p>
+	 * TODO gimmi describe method createFile
+	 * </p>
+	 * @param path
+	 * @param fileNameWithoutFullPath
+	 * @param file
+	 * @return
+	 */
+	protected File createFile(String path, String fileNameWithoutFullPath, File file) {
+		try {
+			file = new File(path, fileNameWithoutFullPath);
+			// added 08.02.2002 by aron: was before
+			// if(!file.exists() )
+			if (!file.exists() || file.length() == 0) {
+				System.err.println("Creating new " + fileNameWithoutFullPath);
+				file = FileUtil.getFileAndCreateIfNotExists(path, fileNameWithoutFullPath);
+				FileOutputStream stream = new FileOutputStream(file);
+				char[] array = ((String) "<" + rootElementTag + "></" + rootElementTag + ">").toCharArray();
+				for (int i = 0; i < array.length; i++) {
+					stream.write((int) array[i]);
+				}
+				stream.flush();
+				stream.close();
+			}
+
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		return file;
 	}
 
 	public IWPropertyList(File file) {
@@ -342,17 +357,27 @@ public class IWPropertyList {
 	}
 
 	public void load(File file) {
-		XMLParser builder = new XMLParser(false);
 		xmlFile = file;
-		try {
-			if(file.exists()){
-				xmlDocument = builder.parse(xmlFile);
-				parentElement = xmlDocument.getRootElement();
-				mapElement = getMapElement();
+		if(file.exists()){
+			try {
+				load(new FileInputStream(file));
 			}
-			else{
+			catch (FileNotFoundException e) {
 				System.err.println("Property file does not exist : "+xmlFile);
+				e.printStackTrace();
 			}
+		}
+		else{
+			System.err.println("Property file does not exist : "+xmlFile);
+		}
+	}
+	
+	public void load(InputStream stream) {
+		XMLParser builder = new XMLParser(false);
+		try {
+			xmlDocument = builder.parse(stream);
+			parentElement = xmlDocument.getRootElement();
+			mapElement = getMapElement();
 
 		}
 		catch (XMLException e) {
