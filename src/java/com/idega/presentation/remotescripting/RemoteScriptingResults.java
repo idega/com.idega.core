@@ -45,7 +45,8 @@ public class RemoteScriptingResults extends Page {
 				while (itemIter.hasNext()) {
 					Layer l = new Layer();
 					String id = itemIter.next().toString();
-					l.setName(id);
+					l.add(id);
+//					l.setName(id);
 					layer.add(l);
 				}
 				
