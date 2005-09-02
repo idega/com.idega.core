@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.146 2005/08/10 18:34:24 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.147 2005/09/02 05:12:25 gimmi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/08/10 18:34:24 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/09/02 05:12:25 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.146 $
+ * @version $Revision: 1.147 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -248,8 +248,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
         this.setBundlesRealPath();
         IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
         setAttribute(SETTINGS_STORAGE_PARAMETER, settings);
-        IWSystemProperties systemProperties = new IWSystemProperties(this);
-        setAttribute(SYSTEM_PROPERTIES_STORAGE_PARAMETER, systemProperties);
         // log("Starting the idegaWeb Application Framework - Version "
         //        + this.getVersion());
         sendStartupMessage("Starting "+getProductInfo().getFullProductName()+" - Version "
@@ -578,6 +576,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public IWSystemProperties getSystemProperties() {
         IWSystemProperties settings = (IWSystemProperties) application
                 .getAttribute(SYSTEM_PROPERTIES_STORAGE_PARAMETER);
+        if (settings == null) {
+            settings = new IWSystemProperties(this);
+            setAttribute(SYSTEM_PROPERTIES_STORAGE_PARAMETER, settings);
+        }
         return settings;
     }
 
