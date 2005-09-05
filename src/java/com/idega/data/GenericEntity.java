@@ -77,7 +77,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	String[] _cachedColumnNameList;
 	private EntityContext _entityContext;
 	//private EJBHome _ejbHome;
-	private EJBLocalHome _ejbHome;
+	private HashMap _ejbHomes = new HashMap();
+//	private EJBLocalHome _ejbHome;
 	private Object _primaryKey;
 	private Hashtable _theMetaDataAttributes;
 	private Vector _insertMetaDataVector;
@@ -3413,7 +3414,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	public void setEJBLocalHome(javax.ejb.EJBLocalHome ejbHome) {
-		_ejbHome = ejbHome;
+		_ejbHomes.put(this.getClass().getName()+getDatasource(), ejbHome);
 	}
 
 	/*
@@ -3447,16 +3448,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		
 		*/
-
 	public javax.ejb.EJBLocalHome getEJBLocalHome() {
-		if (_ejbHome == null) {
+		return getEJBLocalHome(getDatasource());
+	}
+	public javax.ejb.EJBLocalHome getEJBLocalHome(String datasource) {
+		String key = this.getClass().toString()+datasource;
+		EJBLocalHome ejbHome = (EJBLocalHome) _ejbHomes.get(key);
+		if (ejbHome == null) {
 			try {
-				_ejbHome = IDOLookup.getHome(this.getClass(), getDatasource());
+				ejbHome = IDOLookup.getHome(this.getClass(), datasource);
+				_ejbHomes.put(key, ejbHome);
 			} catch (Exception e) {
 				throw new EJBException("Lookup for home for: " + this.getClass().getName() + " failed. Errormessage was: " + e.getMessage());
 			}
 		}
-		return _ejbHome;
+		return ejbHome;
 	}
 
 	/**
@@ -4025,7 +4031,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		Collection ids = idoGetRelatedEntityPKs(returningEntity, sqlQuery);
 		Iterator iter = ids.iterator();
 		try {
-			IDOHome home = (IDOHome)returningEntity.getEJBLocalHome();
+			IDOHome home = (IDOHome)returningEntity.getEJBLocalHome(this.getDatasource());
 //			home.setDatasource(this.getDatasource(), false);
 			while (iter.hasNext()) {
 				try {
