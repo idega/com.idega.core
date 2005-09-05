@@ -92,7 +92,7 @@ public class ImageSlideShow extends Block
 				}
 				if (fileImage != null)
 				{
-					image = new Image(((Integer) fileImage.getPrimaryKey()).intValue());
+					image = new Image(fileImage);
 					if (image != null)
 					{
 						if (width > 0)

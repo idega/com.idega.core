@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.84 2005/08/31 02:10:08 eiki Exp $
+ * $Id: Image.java,v 1.85 2005/09/05 11:37:19 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -13,10 +13,12 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import javax.ejb.EJBException;
 import javax.faces.context.FacesContext;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.file.business.FileSystemConstants;
+import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
@@ -32,11 +34,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/09/05 11:37:19 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.84 $
+ * @version $Revision: 1.85 $
  */
 public class Image extends PresentationObject
 {
@@ -166,6 +168,15 @@ public class Image extends PresentationObject
 		setWidth(width);
 		setHeight(height);
 		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
+	}
+	/**
+	*Fetches an image from the database through the imageservlet or blobcache
+	 * @throws SQLException 
+	 * @throws EJBException 
+	*/
+	public Image(ICFile file) throws EJBException, SQLException {
+		this(((Integer)file.getPrimaryKey()).intValue());
+		this.datasource = file.getDatasource(); 
 	}
 	/**
 	*Fetches an image from the database through the imageservlet or blobcache
