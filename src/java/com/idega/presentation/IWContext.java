@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.122 2005/07/28 18:06:30 tryggvil Exp $
+ * $Id: IWContext.java,v 1.123 2005/09/05 14:03:57 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/07/28 18:06:30 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/09/05 14:03:57 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.122 $
+ * @version $Revision: 1.123 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -686,6 +686,11 @@ implements IWUserContext, IWApplicationContext {
 	}
 	void setCacheing(boolean ifCacheing) {
 		this.isCaching = ifCacheing;
+		if(ifCacheing==false){
+			//make sure these are nulled when stopping cacheing
+			this.cacheResponseWriter=null;
+			this.cacheWriter=null;
+		}
 	}
 	boolean isCacheing() {
 		return isCaching;
