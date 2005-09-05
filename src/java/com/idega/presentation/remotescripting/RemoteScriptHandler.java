@@ -302,6 +302,8 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		String url = iwc.getIWMainApplication().getObjectInstanciatorURI(getClass().getName());
 		if (url.indexOf("?") < 0) {
 			url += "?";
+		} else {
+			url += "&";
 		}
 		url += PARAMETER_REMOTE_SCRIPT_HANDLING_CLASS+"="+remoteScriptCollection.getClass().getName()+"&"+PARAMETER_SOURCE_NAME+"="+source.getID();
 		return url;
