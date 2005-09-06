@@ -12,10 +12,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.Collator;
 import java.util.Locale;
-
-import javax.ejb.EJBLocalHome;
 import javax.ejb.FinderException;
-
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.data.BlobWrapper;
 import com.idega.data.IDOEntity;
@@ -439,8 +436,4 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 		return ((ICFile) this.getMainEntity()).getDatasource();
 	}
 
-	public EJBLocalHome getEJBLocalHome(String datasource) {
-		return ((ICFile) this.getMainEntity()).getEJBLocalHome(datasource);
-	}
-	
 }

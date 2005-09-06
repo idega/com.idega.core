@@ -1,7 +1,6 @@
 package com.idega.data;
 
 import java.util.Collection;
-import javax.ejb.EJBLocalHome;
 
 //import javax.ejb.EJBObject;
 //import java.rmi.RemoteException;
@@ -32,7 +31,6 @@ public interface IDOEntity extends javax.ejb.EJBLocalObject, Comparable {
   //public IDOEntityDefinition getEntityDefinition() throws RemoteException;
   public Object decode(String pkString);
   public Collection decode(String[] pkString);
-  public EJBLocalHome getEJBLocalHome(String datasource);
   
   public String getDatasource();
   public void setDatasource(String datasource);
