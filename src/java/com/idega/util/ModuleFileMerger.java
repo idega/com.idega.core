@@ -25,8 +25,6 @@ import java.util.regex.Pattern;
 /**
  * @author tryggvil
  * 
- * This class is UNFINISHED<br>
- *
  * A class to merge files from many similar sources to a single file. e.g. to merge web.xml files from many sources into one.<br>
  * The file generates markers around what it merges and can use that to re-merge if changes occur.<br>
  * The merged file will look something like this:<br>
@@ -48,7 +46,6 @@ public class ModuleFileMerger {
 	private String rootXMLElement="web-app";
 	//Sources of input Files:
 	private List sources;
-	private static String SLASH="/";
 	private Map moduleMap;
 	private String fileHeader;
 	private boolean removeOlderModules=true;
@@ -159,12 +156,30 @@ public class ModuleFileMerger {
 	}
 
 	/**
-	 * Execute the processing. Read the input, search/replace and write to the output.
-	 * This method should be called last, after all set methods are called.
+	 * <p>
+	 * Calls first preProcess() and then processFileMerge();
+	 * </p>
 	 */
 	public void process() {
-		
+		preProcess();
+		processFileMerge();
+	}
+	
+	/**
+	 * <p>
+	 * Does all processing before processFileMerge() is called.
+	 * Called first from process();
+	 * </p>
+	 */
+	protected void preProcess(){
 		buildMapfromModules();
+	}
+	
+	/**
+	 * Execute the processing. Read the input files, search/replace and write to the output.
+	 * This method should be called last, after all set methods are called.
+	 */
+	protected void processFileMerge(){
 		StringBuffer outString = new StringBuffer();
 		StringBuffer inString = new StringBuffer();
 		
@@ -221,7 +236,7 @@ public class ModuleFileMerger {
 	 * @param inString
 	 * @param outString
 	 */
-	private void processContents(StringBuffer inString, StringBuffer outString) {
+	protected void processContents(StringBuffer inString, StringBuffer outString) {
 		//outString = new StringBuffer();
 		StringBuffer semiOutBuffer = new StringBuffer();
 		Pattern moduleBeginPattern = (Pattern) Pattern.compile("<!-- MODULE:BEGIN ([\\S]+)\\s([\\S]+)\\s[^\\n\\r]+",Pattern.CASE_INSENSITIVE);
@@ -302,7 +317,7 @@ public class ModuleFileMerger {
 	/**
 	 * 
 	 */
-	private void buildMapfromModules() {
+	protected void buildMapfromModules() {
 		Iterator moduleIter = getMergeInSources().iterator();
 		
 		while (moduleIter.hasNext()) {
@@ -399,7 +414,7 @@ public class ModuleFileMerger {
 	}	
 	
 	
-	private class ModuleFile{
+	public class ModuleFile{
 		private Reader reader;
 		private String moduleIdentifier;
 		private String moduleVersion="1.0";
