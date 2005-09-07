@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.50 2005/08/31 02:10:08 eiki Exp $
+ * $Id: PresentationObjectContainer.java,v 1.51 2005/09/07 21:09:59 eiki Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -30,10 +30,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
+ * Last modified: $Date: 2005/09/07 21:09:59 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.50 $
+ * @version $Revision: 1.51 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -475,25 +475,28 @@ public class PresentationObjectContainer extends PresentationObject
 	 * 
 	 */
 	public UIComponent getContainedLabeledObject(String label){
-			Iterator iter = this.getFacetsAndChildren();
-			while (iter.hasNext())
+		Iterator iter = this.getFacetsAndChildren();
+		while (iter.hasNext())
+		{
+			UIComponent item = (UIComponent) iter.next();
+			if (item instanceof PresentationObjectContainer)
 			{
-				UIComponent item = (UIComponent) iter.next();
-				if (item instanceof PresentationObjectContainer)
-				{
-					String itemLabel = ((PresentationObjectContainer) item).getLabel();
-					if (itemLabel != null)
-						if (itemLabel.equals(label))
-							return (item);
-					UIComponent theReturn = ((PresentationObjectContainer) item).getContainedLabeledObject(label);
-					if (theReturn != null)
-					{
-						return (theReturn);
+				String itemLabel = ((PresentationObjectContainer) item).getLabel();
+				if (itemLabel != null){
+					if (itemLabel.equals(label)){
+						return (item);
 					}
 				}
+				UIComponent theReturn = ((PresentationObjectContainer) item).getContainedLabeledObject(label);
+				if (theReturn != null)
+				{
+					return (theReturn);
+				}
 			}
+		}
 		return (null);
 	}
+	
 	/*
 	 * public PresentationObject getContainedObject(String objectTreeID) { if
 	 * (objectTreeID.indexOf(".") == -1) { return

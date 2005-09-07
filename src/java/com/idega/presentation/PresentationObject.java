@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.138 2005/08/31 03:26:51 eiki Exp $
+ * $Id: PresentationObject.java,v 1.139 2005/09/07 21:09:59 eiki Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -58,6 +58,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.presentation.ui.Form;
+import com.idega.util.ListUtil;
 import com.idega.util.RenderUtils;
 import com.idega.util.StringHandler;
 import com.idega.util.logging.LoggingHelper;
@@ -70,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/08/31 03:26:51 $ by $Author: eiki $
+ * Last modified: $Date: 2005/09/07 21:09:59 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.138 $
+ * @version $Revision: 1.139 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -2553,8 +2554,21 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 	}
 	 }
 	 
+	 
 	 /**
-	  * Gets wheather the object is recreated in JSFs restoreState phase. This is false if the object is just newly created
+	  * Ancient way of setting property, handlers should now register properties with methodinvocation!
+	  * Also if you are calling this method in code just use getAttributes().put(key,values); where values is preferably a List.
+	  * This method is overridden in some old PO's like Image,Table and Page.
+	  * @deprecated
+	  * @param key
+	  * @param values
+	  */
+	 public void setProperty(String key, String[] values){
+		getAttributes().put(key,ListUtil.convertStringArrayToList(values));
+	 }
+	 
+	 /**
+	  * Gets wether the object is recreated in JSFs restoreState phase. This is false if the object is just newly created
 	  * @return
 	  */
 	 protected boolean isRestoredFromState(){
