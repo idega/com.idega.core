@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.139 2005/09/07 21:09:59 eiki Exp $
+ * $Id: PresentationObject.java,v 1.140 2005/09/08 23:59:22 eiki Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/09/07 21:09:59 $ by $Author: eiki $
+ * Last modified: $Date: 2005/09/08 23:59:22 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.139 $
+ * @version $Revision: 1.140 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -195,17 +195,16 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		return setID(generateID());
 	}
-	public String getID()
-	{
+	
+	public String getID(){
 		String theReturn = getMarkupAttribute("id");
 		if (theReturn == null || emptyString.equals(theReturn)){
-			theReturn = getId();
-			if (theReturn == null || emptyString.equals(theReturn)){
-				return setID();
-			}
+			return setID();
 		}
+		
 		return theReturn;
 	}
+	
 	public PresentationObject getRootParent()
 	{
 		PresentationObject tempobj=null;
@@ -2308,7 +2307,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	
 	public String getId(){
 		if(super.getId()==null){
-			setId(getGeneratedIWId());
+			return getID();
 		}
 		return super.getId();
 	}
@@ -2316,8 +2315,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public String getFamily(){
 		return "idegaweb";
 	}
-	
-	
 	
 	
 	/* (non-Javadoc)
