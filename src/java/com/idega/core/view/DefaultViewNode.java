@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.9 2005/06/02 17:10:03 eiki Exp $
+ * $Id: DefaultViewNode.java,v 1.10 2005/09/08 23:13:39 tryggvil Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2005/06/02 17:10:03 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/09/08 23:13:39 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -35,7 +35,6 @@ public class DefaultViewNode implements ViewNode {
 	private ViewHandler viewHandler;
 	private boolean isResourceBased;
 	private boolean isComponentBased;
-	private Class componentClass;
 	private String resourceUri;
 	private ViewNode parent;
 	private Collection roles;
@@ -437,7 +436,12 @@ public class DefaultViewNode implements ViewNode {
 			return name;
 		}
 	}
-	
+	/**
+	 * <p>
+	 * This method supports setting the name as a JSF ValueBinding (that can be localized)
+	 * </p>
+	 * @param name
+	 */
 	public void setName(String name){
 		this.name=name;
 	}
