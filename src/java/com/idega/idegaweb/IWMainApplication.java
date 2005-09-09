@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.147 2005/09/02 05:12:25 gimmi Exp $
+ * $Id: IWMainApplication.java,v 1.148 2005/09/09 18:21:28 gimmi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/09/02 05:12:25 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/09/09 18:21:28 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.147 $
+ * @version $Revision: 1.148 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1421,20 +1421,39 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
     public String getPublicWindowOpenerURI(Class windowToOpen) {
+    	return getPublicWindowOpenerURI(windowToOpen, -1);
+    }    
+    
+    /**
+     * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
+     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
+     */
+    public String getPublicWindowOpenerURI(Class windowToOpen, int ICObjectInstanceIDToOpen) {
 		if(useNewURLScheme){
-			return getPublicWindowOpenerURI()+getEncryptedClassName(windowToOpen);
+			StringBuffer url = new StringBuffer();
+			url.append(getPublicWindowOpenerURI()+getEncryptedClassName(windowToOpen));
+	        if (ICObjectInstanceIDToOpen > 0) {
+	        	url.append("?").append( _PARAMETER_IC_OBJECT_INSTANCE_ID).append('=').append(ICObjectInstanceIDToOpen);
+	
+	        }
+			return url.toString();
 		}
 		else{
-        StringBuffer url = new StringBuffer();
-        url.append(getWindowOpenerURI()).append('?').append(
-                PARAM_IW_FRAME_CLASS_PARAMETER).append('=').append(
-                getEncryptedClassName(windowToOpen));
-
-        return url.toString();
-        //return
-        // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
-		}
-}    
+	        StringBuffer url = new StringBuffer();
+	        url.append(getWindowOpenerURI()).append('?').append(
+	                PARAM_IW_FRAME_CLASS_PARAMETER).append('=').append(
+	                getEncryptedClassName(windowToOpen));
+	
+	        if (ICObjectInstanceIDToOpen > 0) {
+	        	url.append("&").append( _PARAMETER_IC_OBJECT_INSTANCE_ID).append('=').append(ICObjectInstanceIDToOpen);
+	
+	        }
+	        return url.toString();
+	        //return
+	        // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
+			}
+    	}    
     
     public String getWindowOpenerURI(Class windowToOpen, int ICObjectInstanceIDToOpen) {
     	StringBuffer windowOpenerUri = getBufferedWindowOpenerURI(windowToOpen);
