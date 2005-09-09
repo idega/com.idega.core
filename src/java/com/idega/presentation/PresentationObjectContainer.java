@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.51 2005/09/07 21:09:59 eiki Exp $
+ * $Id: PresentationObjectContainer.java,v 1.52 2005/09/09 02:35:25 eiki Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -30,10 +30,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2005/09/07 21:09:59 $ by $Author: eiki $
+ * Last modified: $Date: 2005/09/09 02:35:25 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.51 $
+ * @version $Revision: 1.52 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -404,72 +404,85 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 		super.initVariables(iwc);
 	}
-	
+
 	/**
 	 *  
 	 */
 	public UIComponent getContainedObject(String instanceId){
-
-//			 check for "." an identifier for regions...
-			boolean isRegion = (instanceId.indexOf(".")>=0);
-			if(isRegion){
-				// Try to assume that the objectInstanceID is in format
-				// 1234.2.2 (icobjectinstanceid.xpox.ypos)
-				String objectInstanceID = instanceId.substring(0, instanceId.indexOf("."));
-				String index = instanceId.substring(instanceId.indexOf(".") + 1, instanceId.length());
-				if (index.indexOf(".") == -1){
-					return (((PresentationObjectContainer) getContainedObject(objectInstanceID)).objectAt(Integer.parseInt(index)));
-				}
-				else{
-					int xindex = Integer.parseInt(index.substring(0, index.indexOf(".")));
-					int yindex = Integer.parseInt(index.substring(index.indexOf(".") + 1, index.length()));
-					try {
-						//Must be a table...no other (today) POC has coordinates...
-						return (((Table) getContainedObject(objectInstanceID)).containerAt(xindex, yindex));
-					} catch (ClassCastException e1) {
-						System.out.println("PresentationObjectContainer#getContainedObject("+objectInstanceID+") - NumberFormatException");
-						e1.printStackTrace();
-						return (null);
+		try{
+			try{
+				//is it a region or a pure UIComponent?
+				boolean isRegion = (instanceId.indexOf(".")>=0);
+				if(isRegion){			
+					//Try to assume that the objectInstanceID is in format 1234.2.2 (icobjectinstanceid.xpox.ypos)
+					String regionOwnerInstanceId = instanceId.substring(0, instanceId.indexOf("."));
+					String index = instanceId.substring(instanceId.indexOf(".") + 1, instanceId.length());
+					
+					if (index.indexOf(".") == -1){
+						//not a table...don't actually now what kind of object this might be...eiki
+						return (((PresentationObjectContainer) getContainedObject(regionOwnerInstanceId)).objectAt(Integer.parseInt(index)));
 					}
-					 catch (NullPointerException e1) {
-							System.out.println("PresentationObjectContainer#getContainedObject("+objectInstanceID+") - Nullpointer with no harm...could be a nonexisting region or a table within a table...");
-							//e1.printStackTrace();
+					else{
+						//A region that is a table..
+						int xindex = Integer.parseInt(index.substring(0, index.indexOf(".")));
+						int yindex = Integer.parseInt(index.substring(index.indexOf(".") + 1, index.length()));
+						try {
+							return (((Table) getContainedObject(regionOwnerInstanceId)).containerAt(xindex, yindex));
+						} catch (ClassCastException e1) {
+							e1.printStackTrace();
 							return (null);
 						}
+					}
+				}
+				else{
+//					Not a region
+					try{
+						//Try to interpret the objectInstanceID as an integer
+						//backward compatability for PresentationObjects
+						int instanceIdINT = Integer.parseInt(instanceId);
+						
+						Iterator iter = this.getFacetsAndChildren();
+						
+						while (iter.hasNext()){
+							UIComponent item = (UIComponent) iter.next();
+							if ( item instanceof PresentationObject &&  ((PresentationObject) item).getICObjectInstanceID() == instanceIdINT){
+								return item;
+							}
+							else if (item instanceof PresentationObjectContainer){
+								UIComponent theReturn = ((PresentationObjectContainer) item).getContainedObject(instanceId);
+								if (theReturn != null){
+									return theReturn;
+								}
+							}
+						}
+						return null;
+					}
+					catch (NumberFormatException nfe)
+					{
+						//must be one of those spiffy new UIComponents and what'not's 
+						Iterator iter = this.getFacetsAndChildren();
+						
+						while (iter.hasNext()){
+							UIComponent item = (UIComponent) iter.next();
+							if(instanceId.equals(item.getId())){
+								return item;
+							}	
+						}
+						return null;
+					}
+					
 				}
 			}
-			else{
-				// Try to interpret the objectInstanceID as an integer because
-				// presentationobject still use int id's
-				// this works for presentationobjects and regular containers
-				// (not regions or pure UIComponents)
-				int objectInstanceIdINT = -999;//just a number that will never be in a ibxml
-				boolean isPresentationObject = true;
-				try {
-					objectInstanceIdINT = Integer.parseInt(instanceId);
-				}
-				catch (NumberFormatException e) {
-					//this uses the pretence that icobjectinstanceid is an int! (for now)
-					isPresentationObject = false;
-				}
-				
-				Iterator iter = this.getFacetsAndChildren();
-		
-				while (iter.hasNext()){
-					UIComponent item = (UIComponent) iter.next();
-					if(!isPresentationObject && instanceId.equals(item.getId())){
-						//pure UIComponent
-						return item;
-					}
-					else if ( item instanceof PresentationObject && ((PresentationObject) item).getICObjectInstanceID() == objectInstanceIdINT){
-						return item;
-					}
-					else if (item instanceof PresentationObjectContainer){
-						return ((PresentationObjectContainer) item).getContainedObject(instanceId);
-					}
-				}
+			catch(StringIndexOutOfBoundsException se){
 				return null;
 			}
+			
+			
+		}
+		catch (NullPointerException ex)
+		{
+			return (null);
+		}
 	}
 	/**
 	 * 
