@@ -97,7 +97,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		
 		addBuildQueryScript();
 		
-		addIFrame();
+		addIFrame(iwc);
 	}
 	
 	private void addCallToServer(IWContext iwc) {
@@ -174,13 +174,13 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		}
 	}
 
-	private void addIFrame() {
+	private void addIFrame(IWContext iwc) {
 		IFrame iframe = new IFrame(iframeName);
 		iframe.setID(iframeName);
 		iframe.setHeight(0);
 		iframe.setWidth(0);
 		iframe.setBorder(0);
-		iframe.setSrc("blank.html");
+		iframe.setSrc(iwc.getIWMainApplication().getPublicWindowOpenerURI());
 		add(iframe);
 	}
 
