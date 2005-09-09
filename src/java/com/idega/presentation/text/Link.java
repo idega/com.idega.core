@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.154 2005/08/31 02:10:08 eiki Exp $
+ * $Id: Link.java,v 1.155 2005/09/09 18:22:23 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -98,6 +98,7 @@ public class Link extends Text {
 	private int _onClickImageId;
 	private Image _onMouseOverImage = null;
 	private Image _onClickImage = null;
+	private boolean usePublicWindow = false;
 
 	//If Link is constructed to open an instance of an object in a new page via ObjectInstanciator
 	private Class classToInstanciate;
@@ -1998,6 +1999,20 @@ public class Link extends Text {
 		
 		setWindowToOpen(windowClass);
 	}
+	
+	public void setPublicWindowToOpen(Class windowClass) {
+		_windowClass = windowClass;
+		usePublicWindow = true;
+		/**
+		 * @todo Temporary workaround - Find out why this is needed, copied from setWindowToOpen...
+		 */
+		try {
+			this.setURIToWindowOpenerClass(IWContext.getInstance());
+		}
+		catch (Exception e) {
+
+		}
+	}
 	/**
 	 *
 	 */
@@ -2275,12 +2290,23 @@ public void setWindowToOpen(String className) {
 
 			//setURL(iwc.getApplication().getWindowOpenerURI());
 			//addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
-			if (this.icObjectInstanceIDForWindow <= 0) {
-				setURL(iwc.getIWMainApplication().getWindowOpenerURI(_windowClass));
-			}
-			else {
-				setURL(iwc.getIWMainApplication().getWindowOpenerURI(_windowClass, icObjectInstanceIDForWindow));
-				//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
+			
+			if (usePublicWindow) {
+				if (this.icObjectInstanceIDForWindow <= 0) {
+					setURL(iwc.getIWMainApplication().getPublicWindowOpenerURI(_windowClass));
+				}
+				else {
+					setURL(iwc.getIWMainApplication().getPublicWindowOpenerURI(_windowClass, icObjectInstanceIDForWindow));
+					//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
+				}
+			} else {
+				if (this.icObjectInstanceIDForWindow <= 0) {
+					setURL(iwc.getIWMainApplication().getWindowOpenerURI(_windowClass));
+				}
+				else {
+					setURL(iwc.getIWMainApplication().getWindowOpenerURI(_windowClass, icObjectInstanceIDForWindow));
+					//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
+				}
 			}
 		}
 	}
