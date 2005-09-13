@@ -13,12 +13,16 @@ public class ObjectInstanciator extends DynamicTemplateServlet {
 	public void main(IWContext iwc) throws Exception {
 		String className =
 			IWMainApplication.decryptClassName(iwc.getParameter(IWMainApplication.classToInstanciateParameter));
-		PresentationObject obj = (PresentationObject) RefactorClassRegistry.forName(className).newInstance();
-		if (obj instanceof Page) {
-			this.setPage((Page) obj);
-		}
-		else {
-			add(obj);
+		if ( className != null) {
+			PresentationObject obj = (PresentationObject) RefactorClassRegistry.forName(className).newInstance();
+			if (obj instanceof Page) {
+				this.setPage((Page) obj);
+			}
+			else {
+				add(obj);
+			}
+		} else {
+			log("no class found to instanciate");
 		}
 	}
 }
