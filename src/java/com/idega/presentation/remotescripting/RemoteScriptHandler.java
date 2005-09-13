@@ -180,7 +180,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		iframe.setHeight(0);
 		iframe.setWidth(0);
 		iframe.setBorder(0);
-		iframe.setSrc(iwc.getIWMainApplication().getPublicWindowOpenerURI());
+		iframe.setSrc(iwc.getIWMainApplication().getPublicObjectInstanciatorURI());
 		add(iframe);
 	}
 
@@ -300,7 +300,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 
 	private String getRemoteUrl(IWContext iwc) {
 //		iwc.getIWMainApplication().getw
-		String url = iwc.getIWMainApplication().getPublicWindowOpenerURI(getClass());
+		String url = iwc.getIWMainApplication().getPublicObjectInstanciatorURI(getClass());
 		if (url.indexOf("?") < 0) {
 			url += "?";
 		} else {
