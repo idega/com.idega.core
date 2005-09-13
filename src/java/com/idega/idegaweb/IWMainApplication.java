@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.148 2005/09/09 18:21:28 gimmi Exp $
+ * $Id: IWMainApplication.java,v 1.149 2005/09/13 08:14:08 gimmi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/09/09 18:21:28 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/09/13 08:14:08 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.148 $
+ * @version $Revision: 1.149 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1380,6 +1380,19 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
     
     /**
+     * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
+     * For the new platform this is '/window/' but for older versions this is '/servlet/ObjectInstanciator'
+     */
+    public String getPublicObjectInstanciatorURI() {
+		if(useNewURLScheme){
+			return getTranslatedURIWithContext(NEW_PUBLIC_WINDOW_URL);
+		}
+		else{	
+			return getTranslatedURIWithContext(objectInstanciatorURL);
+		}
+    }
+    
+    /**
      * Returns the prefix for the 'window opener' URI, for the new platform this is by default only avaiable for logged in users<br>
      * For the new platform this is '/window/' but for older versions this is '/servlet/WindowOpener'
      */
@@ -1415,6 +1428,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	    // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
     }
     
+    
     /**
      * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
      * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
@@ -1422,6 +1436,15 @@ public class IWMainApplication	extends Application  implements MutableClass {
      */
     public String getPublicWindowOpenerURI(Class windowToOpen) {
     	return getPublicWindowOpenerURI(windowToOpen, -1);
+    }    
+    
+    /**
+     * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
+     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
+     */
+    public String getPublicObjectInstanciatorURI(Class windowToOpen) {
+    	return getPublicObjectInstanciatorURI(windowToOpen, -1);
     }    
     
     /**
@@ -1444,6 +1467,35 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	        url.append(getWindowOpenerURI()).append('?').append(
 	                PARAM_IW_FRAME_CLASS_PARAMETER).append('=').append(
 	                getEncryptedClassName(windowToOpen));
+	        
+	        if (ICObjectInstanceIDToOpen > 0) {
+	        	url.append("&").append( _PARAMETER_IC_OBJECT_INSTANCE_ID).append('=').append(ICObjectInstanceIDToOpen);
+	
+	        }
+	        return url.toString();
+	        //return
+	        // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
+			}
+    	}    
+    
+    /**
+     * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
+     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * but for older versions this is '/servlet/ObjectInstanciator?idegaweb_frame_class=1234'
+     */
+    public String getPublicObjectInstanciatorURI(Class windowToOpen, int ICObjectInstanceIDToOpen) {
+		if(useNewURLScheme){
+			StringBuffer url = new StringBuffer();
+			url.append(getPublicObjectInstanciatorURI()+getEncryptedClassName(windowToOpen));
+	        if (ICObjectInstanceIDToOpen > 0) {
+	        	url.append("?").append( _PARAMETER_IC_OBJECT_INSTANCE_ID).append('=').append(ICObjectInstanceIDToOpen);
+	
+	        }
+			return url.toString();
+		}
+		else{
+	        StringBuffer url = new StringBuffer();
+	        url.append(getObjectInstanciatorURIOldURLScheme(windowToOpen.getName()));
 	
 	        if (ICObjectInstanceIDToOpen > 0) {
 	        	url.append("&").append( _PARAMETER_IC_OBJECT_INSTANCE_ID).append('=').append(ICObjectInstanceIDToOpen);
