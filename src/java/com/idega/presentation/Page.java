@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.146 2005/08/31 02:10:08 eiki Exp $
+ *  $Id: Page.java,v 1.147 2005/09/14 00:43:01 tryggvil Exp $
  *  Created in 2000 by Tryggvi Larusson
  *  Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -57,10 +57,10 @@ import com.idega.util.datastructures.QueueMap;
  * </pre>
  * tags in HTML and renders the children inside the body tags.
  * </p>
- *  Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/09/14 00:43:01 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.146 $
+ * @version $Revision: 1.147 $
  */
 public class Page extends PresentationObjectContainer {
 	
@@ -141,6 +141,7 @@ public class Page extends PresentationObjectContainer {
 	private int _windowHeight = 600;
 	private ICPage forwardPage;
 	private String docType;
+	private boolean useIE7Extension=false;
 
 
 	/**
@@ -433,6 +434,43 @@ public class Page extends PresentationObjectContainer {
 		return returnString.toString();
 	}
 
+	/**
+	 * <p>
+	 * This method gets the script fragment that calls the javacript for the IE7 (plugin) that makes IE more standards compliant.<br/>
+	 * See: <a href="http://dean.edwards.name/IE7/">http://dean.edwards.name/IE7/</a>
+	 * </p>
+	 * @return
+	 */
+	public String getIE7(){
+		
+		String scriptUrl = IWMainApplication.getDefaultIWMainApplication().getCoreBundle().getResourcesURL()+"/ie7/ie7-standard-p.js";
+		
+		String scriptString = "<!-- compliance patch for microsoft browsers -->\n" +
+				"<!--[if lt IE 7]><script src=\""+scriptUrl+"\" type=\"text/javascript\"></script><![endif]-->";
+		
+		
+		return scriptString;
+	}
+	
+	/**
+	 * <p>
+	 * Gets if the IE7 Code fragment is rendered out in the header of the page. Defaults to false.
+	 * </p>
+	 * @return
+	 */
+	public boolean getUseIE7Extension(){
+		return useIE7Extension;
+	}
+	
+	/**
+	 * <p>
+	 * Sets if the IE7 Extension (http://dean.edwards.name/IE7/) should be used. Default is false.
+	 * </p>
+	 */
+	public void setUseIE7Extension(boolean useIE7Extension){
+		this.useIE7Extension=useIE7Extension;
+	}
+	
 	/**
 	 *  Gets the styleAttribute attribute of the Page object
 	 *
@@ -1248,7 +1286,9 @@ public class Page extends PresentationObjectContainer {
 		StringBuffer buf = new StringBuffer();
 		
 		buf.append(getPrintableSchortCutIconURL(iwc));
-		
+		if(getUseIE7Extension()){
+			buf.append(getIE7());
+		}
 		buf.append(getMetaInformation(markup, characterEncoding));
 		buf.append(getMetaTags(markup));
 		buf.append(getJavaScriptBeforeJavascriptURLs(iwc));
@@ -2154,13 +2194,14 @@ public class Page extends PresentationObjectContainer {
 		this._windowHeight=((Integer)values[41]).intValue();
 		this.forwardPage=(ICPage)values[42];
 		this.docType=(String)values[43];
+		this.useIE7Extension=((Boolean)values[44]).booleanValue();
 	
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[44];
+		Object values[] = new Object[45];
 		values[0] = super.saveState(context);
 		values[1]=new Integer(this._ibPageID);
 		values[2]=this._title;
@@ -2205,6 +2246,7 @@ public class Page extends PresentationObjectContainer {
 		values[41]=new Integer(this._windowHeight);
 		values[42]=this.forwardPage;
 		values[43]=this.docType;
+		values[44]=Boolean.valueOf(this.useIE7Extension);
 		return values;
 	}
 	
