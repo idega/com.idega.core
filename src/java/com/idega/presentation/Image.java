@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.85 2005/09/05 11:37:19 gimmi Exp $
+ * $Id: Image.java,v 1.86 2005/09/14 22:13:58 eiki Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -34,11 +34,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/09/05 11:37:19 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/09/14 22:13:58 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.85 $
+ * @version $Revision: 1.86 $
  */
 public class Image extends PresentationObject
 {
@@ -138,6 +138,7 @@ public class Image extends PresentationObject
 			name = this.generateID();
 		setName(name);
 		setAlt(name);
+		setToolTip(name);
 		setURL(url);
 		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 	}
@@ -146,6 +147,7 @@ public class Image extends PresentationObject
 		super();
 		setName(name);
 		setAlt(name);
+		setToolTip(name);
 		setURL(url);
 		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 		this.overImageUrl = overImageUrl;
@@ -164,6 +166,7 @@ public class Image extends PresentationObject
 		super();
 		setName(name);
 		setAlt(name);
+		setToolTip(name);
 		setURL(url);
 		setWidth(width);
 		setHeight(height);
@@ -193,6 +196,7 @@ public class Image extends PresentationObject
 		this(imageId);
 		setName(name);
 		setAlt(name);
+		setToolTip(name);
 	}
 	public Image(int imageId, int width, int height) throws SQLException
 	{
