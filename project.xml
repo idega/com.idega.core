@@ -5,8 +5,8 @@
   <name>idegaWeb Core</name>
   <artifactId>com.idega.core</artifactId>
   <currentVersion>3.0.6</currentVersion>
-
   <!--currentVersion>3.0.7-SNAPSHOT</currentVersion-->
+
   <shortDescription>idegaweb core is the core package of the idegaweb framework</shortDescription>
   <package>com.idega</package>
   <versions>
@@ -54,6 +54,11 @@
       <id>3.0.5</id>
       <name>3.0.5</name>
       <tag>CORE_3_0_5</tag>
+    </version>
+    <version>
+      <id>3.0.6</id>
+      <name>3.0.6</name>
+      <tag>CORE_3_0_6</tag>
     </version>
   </versions>
   <branches/>
