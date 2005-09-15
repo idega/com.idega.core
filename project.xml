@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <project>
   <extend>${base.project.dir}/base-dependencies.xml</extend>
   <name>idegaWeb JavaServer Faces</name>
   <artifactId>com.idega.faces</artifactId>
   <currentVersion>1.0.3</currentVersion>
-  
   <!--currentVersion>1.0.4-SNAPSHOT</currentVersion-->
+
   <inceptionYear>2003</inceptionYear>
   <shortDescription>idegaWeb Faces is JavaServer Faces implementation</shortDescription>
   <versions>
@@ -24,10 +25,15 @@
       <name>1.0.1</name>
       <tag>FACES_1_0_1</tag>
     </version>
-        <version>
+    <version>
       <id>1.0.2</id>
       <name>1.0.2</name>
       <tag>FACES_1_0_2</tag>
+    </version>
+    <version>
+      <id>1.0.3</id>
+      <name>1.0.3</name>
+      <tag>FACES_1_0_3</tag>
     </version>
   </versions>
   <branches/>
@@ -44,8 +50,12 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.core</artifactId>
-      <!--HELPER--><version>3.0.6</version><!--HELPER-->
+      <!--HELPER-->
+
+      <version>3.0.6</version>
+      <!--HELPER-->
       <!--HELPERversion>SNAPSHOT</versionHELPER-->
+
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -55,8 +65,12 @@
     <dependency>
       <groupId>bundles</groupId>
       <artifactId>com.idega.builder</artifactId>
-      <!--HELPER--><version>1.4.3</version><!--HELPER-->
+      <!--HELPER-->
+
+      <version>1.4.3</version>
+      <!--HELPER-->
       <!--HELPERversion>SNAPSHOT</versionHELPER-->
+
       <type>jar</type>
       <url>http://www.idega.com/</url>
       <properties>
@@ -76,11 +90,12 @@
       <version>0.3.3</version>
       <type>jar</type>
       <url>http://smile.sourceforge.net/</url>
-	  <properties>
-	 <idegaweb.bundle.include>true</idegaweb.bundle.include>
-	 </properties>
+      <properties>
+        <idegaweb.bundle.include>true</idegaweb.bundle.include>
+      </properties>
     </dependency>
     <!-- commons-logging already included in the core bundle (because it is also used by com.idega.block.creditcard) -->
+
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
