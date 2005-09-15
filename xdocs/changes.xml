@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+    <release version="3.0.6" date="2005-09-15">
+      <action dev="thomas" type="update">
+      	This version is used for the ePlatform 3.0.
+      </action>              
+    </release>
     <release version="3.0.5" date="2005-05-24">
       <action dev="tryggvil" type="update">
       	This version is used for the nacka 24 app.
