@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.86 2005/02/10 10:42:47 thomas Exp $
+ * $Id: Table.java,v 1.87 2005/09/19 22:06:56 palli Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1392,11 +1392,15 @@ public class Table extends PresentationObjectContainer implements TableType{
 					//print(Text.getNonBrakingSpace().getText());
 					//print("<img src=\"" + transparentcell.getURL() + "\" width=\""+((withInPercentsOrNoPadding)?width:Integer.toString(getNbspWidthAndHeight(iWidth,iPadding)))+"\" height=\""+((heightInPercentsOrNoPadding)?height:Integer.toString(getNbspWidthAndHeight(iHeight,iPadding)))+"\" alt=\"\" />");
 				}*/
-				print("<img src=\"" + transparentcell.getURL() + "\" width=\""+width+"\" height=\""+height+"\" alt=\"\" />");
+				if (!iwc.getIWMainApplication().useJSF) {
+					print("<img src=\"" + transparentcell.getURL() + "\" width=\""+width+"\" height=\""+height+"\" alt=\"\" />");
+				}
 			}
 		}
 		else {
-			print("<img src=\"" + transparentcell.getURL() + "\" width=\"1\" height=\"1\" alt=\"\" />");
+			if (!iwc.getIWMainApplication().useJSF) {
+				print("<img src=\"" + transparentcell.getURL() + "\" width=\"1\" height=\"1\" alt=\"\" />");
+			}
 			//print(Text.getNonBrakingSpace().getText());
 		}
 	}
