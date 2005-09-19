@@ -1,5 +1,5 @@
 /*
- * $Id: TableCaption.java,v 1.1 2005/08/07 16:07:32 laddi Exp $
+ * $Id: TableCaption.java,v 1.2 2005/09/19 12:48:32 laddi Exp $
  * Created on Aug 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,16 +9,18 @@
  */
 package com.idega.presentation;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import javax.faces.context.FacesContext;
 import com.idega.presentation.text.Text;
 
 
 /**
- * Last modified: $Date: 2005/08/07 16:07:32 $ by $Author: laddi $
+ * Last modified: $Date: 2005/09/19 12:48:32 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TableCaption extends PresentationObjectContainer {
 
@@ -56,5 +58,13 @@ public class TableCaption extends PresentationObjectContainer {
 			
 			println("</caption>");
 		}
+	}
+
+	public void encodeBegin(FacesContext context) throws IOException {
+		print("<caption" + getMarkupAttributesString() + ">");
+	}
+
+	public void encodeEnd(FacesContext arg0) throws IOException {
+		println("</caption>");
 	}
 }

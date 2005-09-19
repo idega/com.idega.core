@@ -1,5 +1,5 @@
 /*
- * $Id: TableRowGroup.java,v 1.1 2005/08/07 16:07:32 laddi Exp $
+ * $Id: TableRowGroup.java,v 1.2 2005/09/19 12:48:32 laddi Exp $
  * Created on Aug 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,15 +9,17 @@
  */
 package com.idega.presentation;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import javax.faces.context.FacesContext;
 
 
 /**
- * Last modified: $Date: 2005/08/07 16:07:32 $ by $Author: laddi $
+ * Last modified: $Date: 2005/09/19 12:48:32 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public abstract class TableRowGroup extends PresentationObject {
 	
@@ -117,5 +119,13 @@ public abstract class TableRowGroup extends PresentationObject {
 			
 			println("</" + getTag() + ">");
 		}
+	}
+
+	public void encodeBegin(FacesContext context) throws IOException {
+		print("<" + getTag() + getMarkupAttributesString() + ">");
+	}
+
+	public void encodeEnd(FacesContext arg0) throws IOException {
+		println("</" + getTag() + ">");
 	}
 }

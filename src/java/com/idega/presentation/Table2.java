@@ -1,5 +1,5 @@
 /*
- * $Id: Table2.java,v 1.1 2005/08/07 16:07:33 laddi Exp $
+ * $Id: Table2.java,v 1.2 2005/09/19 12:48:32 laddi Exp $
  * Created on Aug 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,19 +9,21 @@
  */
 package com.idega.presentation;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 
 
 /**
- * Last modified: $Date: 2005/08/07 16:07:33 $ by $Author: laddi $
+ * Last modified: $Date: 2005/09/19 12:48:32 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Table2 extends PresentationObject {
 	
@@ -546,6 +548,14 @@ public class Table2 extends PresentationObject {
 		}
 	}
 	
+	public void encodeBegin(FacesContext context) throws IOException {
+		print("<table" + getMarkupAttributesString() + ">");
+	}
+
+	public void encodeEnd(FacesContext arg0) throws IOException {
+		println("</table>");
+	}
+
 	public class TableElementComparator implements Comparator {
 
 		public int compare(Object o1, Object o2) {

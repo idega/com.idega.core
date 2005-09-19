@@ -1,5 +1,5 @@
 /*
- * $Id: TableTest.java,v 1.1 2005/08/07 16:07:33 laddi Exp $
+ * $Id: TableTest.java,v 1.2 2005/09/19 12:48:32 laddi Exp $
  * Created on Aug 6, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,10 +13,10 @@ import com.idega.presentation.text.Text;
 
 
 /**
- * Last modified: $Date: 2005/08/07 16:07:33 $ by $Author: laddi $
+ * Last modified: $Date: 2005/09/19 12:48:32 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TableTest extends Block {
 	
@@ -60,14 +60,14 @@ public class TableTest extends Block {
 		bodyRowGroup = table.createBodyRowGroup();
 		row = bodyRowGroup.createRow();
 		cell = row.createCell();
-		cell.add(new Text("Laddi"));
+		cell.add(new Text("Palli"));
 		cell = row.createCell();
-		cell.add(new Text("020277-4919"));
+		cell.add(new Text("061070-3899"));
 		row = bodyRowGroup.createRow();
 		cell = row.createCell();
-		cell.add(new Text("Jonni"));
+		cell.add(new Text("Gimmi"));
 		cell = row.createCell();
-		cell.add(new Text("090577-6119"));
+		cell.add(new Text("231177-2999"));
 		
 		TableFooterRowGroup footerRowGroup = table.createFooterRowGroup();
 		row = footerRowGroup.createRow();
@@ -82,7 +82,7 @@ public class TableTest extends Block {
 		//Very simple 1x1 table construction...
 		Table2 table2 = new Table2();
 		TableCell2 cell2 = table2.createRow().createCell();
-		cell2.add(new Text("Tryggvi"));
+		cell2.add(new Text("This is a test of a 1x1 table..."));
 		add(table2);
 	}
 }

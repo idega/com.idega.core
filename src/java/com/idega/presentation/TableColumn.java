@@ -1,5 +1,5 @@
 /*
- * $Id: TableColumn.java,v 1.1 2005/08/07 16:07:32 laddi Exp $
+ * $Id: TableColumn.java,v 1.2 2005/09/19 12:48:32 laddi Exp $
  * Created on Aug 6, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,13 +9,16 @@
  */
 package com.idega.presentation;
 
+import java.io.IOException;
+import javax.faces.context.FacesContext;
+
 
 
 /**
- * Last modified: $Date: 2005/08/07 16:07:32 $ by $Author: laddi $
+ * Last modified: $Date: 2005/09/19 12:48:32 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TableColumn extends PresentationObject {
 
@@ -115,4 +118,13 @@ public class TableColumn extends PresentationObject {
 			println("<col" + getMarkupAttributesString() + " />");
 		}
 	}
+
+	public void encodeBegin(FacesContext context) throws IOException {
+		super.encodeBegin(context);
+	}
+
+	public void encodeEnd(FacesContext arg0) throws IOException {
+		println("<col" + getMarkupAttributesString() + " />");
+	}
+
 }
