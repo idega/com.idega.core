@@ -1,5 +1,5 @@
 /*
- * $Id: TableRowGroup.java,v 1.2 2005/09/19 12:48:32 laddi Exp $
+ * $Id: TableRowGroup.java,v 1.3 2005/09/19 15:00:22 laddi Exp $
  * Created on Aug 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import javax.faces.context.FacesContext;
 
 
 /**
- * Last modified: $Date: 2005/09/19 12:48:32 $ by $Author: laddi $
+ * Last modified: $Date: 2005/09/19 15:00:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class TableRowGroup extends PresentationObject {
 	
@@ -122,7 +122,7 @@ public abstract class TableRowGroup extends PresentationObject {
 	}
 
 	public void encodeBegin(FacesContext context) throws IOException {
-		print("<" + getTag() + getMarkupAttributesString() + ">");
+		println("<" + getTag() + getMarkupAttributesString() + ">");
 	}
 
 	public void encodeEnd(FacesContext arg0) throws IOException {

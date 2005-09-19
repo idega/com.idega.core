@@ -1,5 +1,5 @@
 /*
- * $Id: TableCaption.java,v 1.2 2005/09/19 12:48:32 laddi Exp $
+ * $Id: TableCaption.java,v 1.3 2005/09/19 15:00:22 laddi Exp $
  * Created on Aug 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,12 +17,12 @@ import com.idega.presentation.text.Text;
 
 
 /**
- * Last modified: $Date: 2005/09/19 12:48:32 $ by $Author: laddi $
+ * Last modified: $Date: 2005/09/19 15:00:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
-public class TableCaption extends PresentationObjectContainer {
+public class TableCaption extends PresentationObject {
 
 	/**
 	 * Sets the caption text.
