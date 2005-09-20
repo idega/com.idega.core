@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultComponentInfo.java,v 1.1 2005/09/20 15:36:49 tryggvil Exp $
+ * $Id: DefaultComponentInfo.java,v 1.2 2005/09/20 16:51:20 tryggvil Exp $
  * Created on 8.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,6 +9,7 @@
  */
 package com.idega.core.component.business;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -17,10 +18,10 @@ import java.util.Locale;
  * <p>
  * TODO tryggvil Describe Type UIComponentInfo
  * </p>
- *  Last modified: $Date: 2005/09/20 15:36:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/09/20 16:51:20 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DefaultComponentInfo implements ComponentInfo {
 
@@ -29,6 +30,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	private String componentType;
 	private String bundleIdentifier;
 	private List properties;
+	private List componentPermissions;
 	
 	/**
 	 * 
@@ -136,5 +138,13 @@ public class DefaultComponentInfo implements ComponentInfo {
 	public String getComponentName(Locale locale) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+
+	public List getComponentPermissions(){
+		if(componentPermissions==null){
+			componentPermissions=new ArrayList();
+		}
+		return componentPermissions;
 	}
 }
