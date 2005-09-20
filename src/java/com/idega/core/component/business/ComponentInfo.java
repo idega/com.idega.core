@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentInfo.java,v 1.1 2005/09/20 15:36:49 tryggvil Exp $
+ * $Id: ComponentInfo.java,v 1.2 2005/09/20 15:39:58 tryggvil Exp $
  * Created on 8.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import java.util.Locale;
  * <p>
  * This class describes a component (JSF UIComponent, IW Element, IW Block etc. ) and holds information about it. 
  * </p>
- *  Last modified: $Date: 2005/09/20 15:36:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/09/20 15:39:58 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface ComponentInfo {
 	
@@ -41,5 +41,13 @@ public interface ComponentInfo {
 	 * @return
 	 */
 	public List getProperties();
+	
+	/**
+	 * <p>
+	 * Get list of component permissions. (that describe who has access to the component)
+	 * </p>
+	 * @return
+	 */
+	public List getComponentPermissions();
 	
 }
