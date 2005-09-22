@@ -1,4 +1,4 @@
-<model>
+<project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.idega.core</groupId>
   <artifactId>com.idega.core</artifactId>
@@ -313,4 +313,4 @@
 	    </resources>
     </build>
 
-</model>
+</project>
