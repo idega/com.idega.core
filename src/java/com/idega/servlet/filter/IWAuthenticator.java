@@ -1,8 +1,11 @@
 /*
- * Created on 31.7.2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * $Id: IWAuthenticator.java,v 1.11 2005/09/23 17:26:07 tryggvil Exp $ Created on 31.7.2004
+ * in project com.idega.core
+ * 
+ * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
  */
 package com.idega.servlet.filter;
 
@@ -29,19 +32,28 @@ import com.idega.user.data.Group;
 import com.idega.util.CypherText;
 
 /**
- * 
- * This class is responsible for authenticating users into the idegaWeb User
- * system. <br>
+ * <p>
+ * This servletFilter is by default mapped early in the filter chain in idegaWeb and 
+ * calls the idegaWeb Accesscontrol system to log the user in to the idegaWeb User system.<br/>
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
+ * </p>
+ * Last modified: $Date: 2005/09/23 17:26:07 $ by $Author: tryggvil $
  * 
- * @author tryggvil
- * 
- *  
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.11 $
  */
 public class IWAuthenticator extends BaseFilter {
 
-	public static final String PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE = "redirect_user";
+	/**
+	 * This parameter can be set
+	 */
+	public static final String PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE = "logon_redirect_user";
+	/**
+	 * This parameter can be set to forward to a certain page when logging in (and it is succesful)
+	 */
+	public static final String PARAMETER_REDIRECT_URI_ONLOGON = "logon_redirect_uri";
+	
 	private static Logger log = Logger.getLogger(IWAuthenticator.class
 			.getName());
 
@@ -52,7 +64,6 @@ public class IWAuthenticator extends BaseFilter {
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
 	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -112,8 +123,18 @@ public class IWAuthenticator extends BaseFilter {
 				int homePageID = prmg.getHomePageID();
 				if (homePageID > 0) {
 					response.sendRedirect(getBuilderService(iwc).getPageURI(homePageID));
+					return;
 				}
 			}
+		}
+		
+		if (iwc.isParameterSet(PARAMETER_REDIRECT_URI_ONLOGON) && iwc.isLoggedOn()) {
+			String uri = iwc.getParameter(PARAMETER_REDIRECT_URI_ONLOGON);
+				if (uri!=null) {
+					response.sendRedirect(uri);
+					return;
+				}
+			
 		}
 		
 		chain.doFilter(new IWJAASAuthenticationRequestWrapper(iwc), response);
@@ -187,7 +208,7 @@ public class IWAuthenticator extends BaseFilter {
 				} catch (Exception ex) {
 					//throw new IWException("Cookie login failed :
 					// "+ex.getMessage());
-					log.warning("Cookie login failed : :" + ex.getMessage());
+					log.warning("Cookie login failed for loginName: "+loginName+" :" + ex.getMessage());
 				}
 			} else {//System.err.println("no cookie found");
 			}

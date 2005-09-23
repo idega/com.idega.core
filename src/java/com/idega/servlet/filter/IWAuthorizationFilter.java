@@ -1,8 +1,11 @@
 /*
- * Created on 31.7.2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * $Id: IWAuthorizationFilter.java,v 1.9 2005/09/23 17:26:07 tryggvil Exp $ Created on 31.7.2004
+ * in project com.idega.core
+ * 
+ * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
  */
 package com.idega.servlet.filter;
 
@@ -23,10 +26,16 @@ import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.IWContext;
 
 /**
- * @author tryggvil
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * <p>
+ * This servletFilter is by default mapped early in the filter chain in idegaWeb and 
+ * checks if the user as sufficient access to a resource and blocks it if the user hasn't 
+ * sufficent priviliges.<br/>
+ * In some instances (when accessing the workspace) it redirects the user to the login page.
+ * </p>
+ * Last modified: $Date: 2005/09/23 17:26:07 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.9 $
  */
 public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
@@ -47,11 +56,15 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 		
 		HttpServletRequest request = (HttpServletRequest)srequest;
 		HttpServletResponse response = (HttpServletResponse)sresponse;
-		
-		boolean hasPermission = getIfUserHasPermission(request,response);
+		IWContext iwc = new IWContext(request,response,request.getSession().getServletContext());
+		boolean isLoggedOn = iwc.isLoggedOn();
+		boolean hasPermission = getIfUserHasPermission(iwc);
 		if(!hasPermission){
-			if(getIfSendToLoginPage(request,response)){
-				String newUrl = getNewLoginUri(request);
+			if(getIfSendToLoginPage(request,response,isLoggedOn)){
+				
+				String requestedUri = request.getRequestURI();
+				
+				String newUrl = getNewLoginUri(request,requestedUri);
 				response.sendRedirect(newUrl);
 			}
 			else{
@@ -81,10 +94,12 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
 	}
 	
-	protected boolean getIfUserHasPermission(HttpServletRequest request,HttpServletResponse response){
+	protected boolean getIfUserHasPermission(IWContext iwc){
+		HttpServletRequest request = iwc.getRequest();
+		HttpServletResponse response = iwc.getResponse();
 		String uri = getURIMinusContextPath(request);
 		if(uri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH)){
-			IWContext iwc = new IWContext(request,response,request.getSession().getServletContext());
+			
 			if(!LoginBusinessBean.isLoggedOn(iwc)){
 				return false;
 			}
@@ -99,13 +114,10 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 				else{
 					return false;
 				}
-				
 			}
 		}
 		else if(uri.startsWith(PAGES_URI)){
-			
 			boolean pageAccess = getIWMainApplication(request).getAccessController().hasViewPermissionForPageURI(uri,request);
-			
 			return pageAccess;
 		}
 		return true;
@@ -117,9 +129,9 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 	 * @param response
 	 * @return
 	 */
-	protected boolean getIfSendToLoginPage(HttpServletRequest request,HttpServletResponse response){
+	protected boolean getIfSendToLoginPage(HttpServletRequest request,HttpServletResponse response,boolean isLoggedOn){
 		String uri = getURIMinusContextPath(request);
-		if(uri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH)){
+		if(uri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH)&&!isLoggedOn){
 			return true;
 		}
 		else{

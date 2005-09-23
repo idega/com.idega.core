@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.9 2005/02/23 19:23:19 tryggvil Exp $
+ * $Id: BaseFilter.java,v 1.10 2005/09/23 17:26:07 tryggvil Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,12 +18,13 @@ import com.idega.util.RequestUtil;
 
 
 /**
+ * <p>
  *  Class that holds basic functionality used by many filters.<br>
- * 
- *  Last modified: $Date: 2005/02/23 19:23:19 $ by $Author: tryggvil $
+ * </p>
+ *  Last modified: $Date: 2005/09/23 17:26:07 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
@@ -51,6 +52,14 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	protected String getNewLoginUri(HttpServletRequest request){
 		IWMainApplication iwma = getIWMainApplication(request);
 		return iwma.getTranslatedURIWithContext(NEW_IDEGAWEB_LOGIN);
+		//return NEW_IDEGAWEB_LOGIN;
+	}
+	
+	protected String getNewLoginUri(HttpServletRequest request,String uriToRedirectTo){
+		IWMainApplication iwma = getIWMainApplication(request);
+		String baseUri = iwma.getTranslatedURIWithContext(NEW_IDEGAWEB_LOGIN);
+		baseUri = baseUri+"?"+IWAuthenticator.PARAMETER_REDIRECT_URI_ONLOGON+"="+uriToRedirectTo;
+		return baseUri;
 		//return NEW_IDEGAWEB_LOGIN;
 	}
 	
