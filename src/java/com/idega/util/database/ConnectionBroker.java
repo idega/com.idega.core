@@ -1,5 +1,5 @@
 /*
- * $Id: ConnectionBroker.java,v 1.12 2005/06/28 13:52:33 tryggvil Exp $
+ * $Id: ConnectionBroker.java,v 1.13 2005/09/23 16:21:29 tryggvil Exp $
  *
  * Copyright (C) 2000-2005 Idega hf. All Rights Reserved.
  *
@@ -35,7 +35,7 @@ import com.idega.transaction.IdegaTransactionManager;
  * <br>
  * </p>
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
 */
 public class ConnectionBroker
 {
@@ -227,7 +227,9 @@ public class ConnectionBroker
 		else if (isUsingJNDIDatasource())
 		{
 			try {
-				connection.close();
+				if(!connection.isClosed()){
+					connection.close();
+				}
 			}
 			catch (SQLException e) {
 				// TODO Auto-generated catch block
