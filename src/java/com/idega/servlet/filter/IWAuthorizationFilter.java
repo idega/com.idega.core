@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthorizationFilter.java,v 1.9 2005/09/23 17:26:07 tryggvil Exp $ Created on 31.7.2004
+ * $Id: IWAuthorizationFilter.java,v 1.10 2005/09/25 12:23:35 laddi Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.presentation.IWContext;
  * sufficent priviliges.<br/>
  * In some instances (when accessing the workspace) it redirects the user to the login page.
  * </p>
- * Last modified: $Date: 2005/09/23 17:26:07 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/09/25 12:23:35 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
@@ -96,7 +96,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 	
 	protected boolean getIfUserHasPermission(IWContext iwc){
 		HttpServletRequest request = iwc.getRequest();
-		HttpServletResponse response = iwc.getResponse();
+		/*HttpServletResponse response = */iwc.getResponse();
 		String uri = getURIMinusContextPath(request);
 		if(uri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH)){
 			
