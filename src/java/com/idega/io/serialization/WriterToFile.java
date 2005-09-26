@@ -45,6 +45,10 @@ public abstract class WriterToFile {
 	public void setSource(Storable storable) {
 		this.storable = storable;
 	}
+	
+	public boolean isMarkedAsDeleted() {
+		return false;
+	}
 		
 
 

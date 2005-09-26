@@ -29,8 +29,8 @@ public class FileObjectWriter extends WriterToFile {
 		super(iwc);
 	}
 	
-	public FileObjectWriter(Storable storable, IWContext iwc) {
-		super(storable, iwc);
+	public FileObjectWriter(File file, IWContext iwc) {
+		super((Storable) file, iwc);
 	}
 	
 	/* (non-Javadoc)

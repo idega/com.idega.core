@@ -2,6 +2,7 @@ package com.idega.io.serialization;
 
 import java.io.File;
 import java.rmi.RemoteException;
+import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.data.ICFile;
 import com.idega.presentation.IWContext;
 import com.idega.util.xml.XMLData;
@@ -61,6 +62,8 @@ public interface ObjectWriter {
 	public Object write(XMLData xmlData, IWContext iwc) throws RemoteException;
 	
 	public Object write(ICFile file, IWContext iwc) throws RemoteException;
+	
+	public Object write(ICPage page, IWContext iwc) throws RemoteException;
 	
 	// add more write methods !!
 }

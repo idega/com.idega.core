@@ -26,8 +26,8 @@ public class ICFileWriter extends WriterToFile {
 		super(iwc);
 	}
 	
-	public ICFileWriter(Storable storable, IWContext iwc) {
-		super(storable, iwc);
+	public ICFileWriter(ICFile file, IWContext iwc) {
+		super((Storable) file, iwc);
 	}
 	
 	public String createContainer() throws IOException {
@@ -60,6 +60,10 @@ public class ICFileWriter extends WriterToFile {
 		return ((ICFile) storable).getMimeType();
 	}
 		
+	public boolean isMarkedAsDeleted() {
+		return ((ICFile) storable).getDeleted();
+	}
+	
 	
   public String getName() {
   	return ((ICFile) storable).getName();
