@@ -484,7 +484,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
         	sendStartMessage("Info: Constructor of "+starterName + " could not be accessed (probably corresponding bundle is not loaded)");
         } catch (ClassNotFoundException e) {
             sendStartMessage("Info: "+starterName + "could not be found (probably corresponding bundle is not loaded)");
-
+        } catch (Exception e) {
+        	sendStartMessage("Info: "+ starterName + "caused the following exception: "+ e.getMessage());
         }
 	}
 	
