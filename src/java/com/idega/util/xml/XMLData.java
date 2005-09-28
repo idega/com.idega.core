@@ -285,7 +285,7 @@ public class XMLData implements Storable {
   private void initialize(String path) throws IOException {
   	File file = new File(path);
   	if (! (file.exists() && file.canRead() && file.isFile())) {
-  		throw new IOException("[XMLData] File could not be opened");
+  		throw new IOException("[XMLData] File: " + path  + " could not be opened");
   	}
   	initialize(file);
   }
