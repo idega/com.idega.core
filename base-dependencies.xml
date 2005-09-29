@@ -13,7 +13,7 @@
 	    <dependency>
 	      <groupId>myfaces</groupId>
             <artifactId>myfaces-jsf-api</artifactId>
-            <version>1.0.9</version>
+            <version>1.1.0</version>
 	      <type>jar</type>
 	      <url>http://java.sun.com/j2ee/javaserverfaces/</url>
 	      <properties />
