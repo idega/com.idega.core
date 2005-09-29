@@ -8,9 +8,11 @@
  */
 package com.idega.faces.renderkit;
 
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import javax.faces.context.ResponseStream;
 import javax.faces.context.ResponseWriter;
 import javax.faces.render.RenderKit;
 import javax.faces.render.Renderer;
@@ -92,6 +94,13 @@ public class BaseRenderKit extends RenderKit {
 			renderers = new HashMap();
 		}
 		return renderers;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.render.RenderKit#createResponseStream(java.io.OutputStream)
+	 */
+	public ResponseStream createResponseStream(OutputStream out) {
+		return backingRenderKit.createResponseStream(out);
 	}
 	
 	
