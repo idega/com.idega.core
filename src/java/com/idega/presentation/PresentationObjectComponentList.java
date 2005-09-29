@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectComponentList.java,v 1.2 2004/11/16 02:20:13 tryggvil Exp $ Created on
+ * $Id: PresentationObjectComponentList.java,v 1.3 2005/09/29 12:17:11 tryggvil Exp $ Created on
  * 14.11.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -12,18 +12,26 @@ package com.idega.presentation;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import javax.faces.component.UIComponent;
 
 /**
  * Overrided from JSFs standard Children because of the clone() issue.
  * 
- * Last modified: $Date: 2004/11/16 02:20:13 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/09/29 12:17:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 class PresentationObjectComponentList extends AbstractList implements Serializable,Cloneable {
+
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = -1682244512314682987L;
 
 	private UIComponent _component;
 
@@ -34,7 +42,12 @@ class PresentationObjectComponentList extends AbstractList implements Serializab
 	}
 
 	public Object get(int index) {
-		return _list.get(index);
+		try{
+			return _list.get(index);
+		}
+		catch(ArrayIndexOutOfBoundsException e){
+			throw new RuntimeException(e);
+		}
 	}
 
 	public int size() {
@@ -111,4 +124,96 @@ class PresentationObjectComponentList extends AbstractList implements Serializab
 	void setComponent(UIComponent _component) {
 		this._component = _component;
 	}
+
+	public Iterator iterator() {
+		//return super.iterator();
+		return this._list.iterator();
+	}
+
+	public ListIterator listIterator() {
+		//return super.listIterator();
+		return this._list.listIterator();
+	}
+
+	public ListIterator listIterator(int index) {
+		//return super.listIterator(index);
+		return this._list.listIterator(index);
+	}
+
+	public boolean addAll(int arg0, Collection arg1) {
+		// TODO Auto-generated method stub
+		return this._list.addAll(arg0, arg1);
+	}
+
+	public void clear() {
+		// TODO Auto-generated method stub
+		this._list.clear();
+	}
+
+	public int indexOf(Object arg0) {
+		// TODO Auto-generated method stub
+		return this._list.indexOf(arg0);
+	}
+
+	public int lastIndexOf(Object arg0) {
+		// TODO Auto-generated method stub
+		return this._list.lastIndexOf(arg0);
+	}
+
+	public List subList(int arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return this._list.subList(arg0, arg1);
+	}
+
+	public boolean addAll(Collection arg0) {
+		// TODO Auto-generated method stub
+		return this._list.addAll(arg0);
+	}
+
+	public boolean contains(Object arg0) {
+		// TODO Auto-generated method stub
+		return this._list.contains(arg0);
+	}
+
+	public boolean containsAll(Collection arg0) {
+		// TODO Auto-generated method stub
+		return this._list.containsAll(arg0);
+	}
+
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return this._list.isEmpty();
+	}
+
+	public boolean remove(Object arg0) {
+		// TODO Auto-generated method stub
+		return this._list.remove(arg0);
+	}
+
+	public boolean removeAll(Collection arg0) {
+		// TODO Auto-generated method stub
+		return this._list.removeAll(arg0);
+	}
+
+	public boolean retainAll(Collection arg0) {
+		// TODO Auto-generated method stub
+		return this._list.retainAll(arg0);
+	}
+
+	public Object[] toArray() {
+		// TODO Auto-generated method stub
+		return this._list.toArray();
+	}
+
+	public Object[] toArray(Object[] arg0) {
+		// TODO Auto-generated method stub
+		return this._list.toArray(arg0);
+	}
+
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this._list.toString();
+	}
+	
+	
 }

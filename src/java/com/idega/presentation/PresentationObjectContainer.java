@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.52 2005/09/09 02:35:25 eiki Exp $
+ * $Id: PresentationObjectContainer.java,v 1.53 2005/09/29 12:17:11 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
@@ -30,10 +32,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2005/09/09 02:35:25 $ by $Author: eiki $
+ * Last modified: $Date: 2005/09/29 12:17:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.52 $
+ * @version $Revision: 1.53 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -308,7 +310,13 @@ public class PresentationObjectContainer extends PresentationObject
 							add(new ExceptionWrapper(ex, this));
 						}
 					}
-					catch(ClassCastException cce){}
+					catch(Exception e){
+						Logger log = getLogger();
+						log.fine("Exception in PressentationObjectContainer._main() catched: "+e.getClass()+" : "+e.getMessage());
+						if(log.isLoggable(Level.FINER)){
+							e.printStackTrace();
+						}
+					}
 				}
 			//}
 			}
