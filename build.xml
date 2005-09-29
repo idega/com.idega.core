@@ -1,0 +1,126 @@
+<project name="com.idega.core" default="jar" basedir=".">
+  <property file="${user.home}/.m2/maven.properties"/>
+  <property name="maven.build.output" value="target/classes"/>
+  <property name="maven.build.directory" value="target"/>
+  <property name="maven.build.final.name" value="com.idega.core-3.1.0-SNAPSHOT"/>
+  <property name="maven.test.reports" value="${maven.build.directory}/test-reports"/>
+  <property name="maven.test.output" value="target/test-classes"/>
+  <property name="maven.repo.local" value="${user.home}/.m2/repository"/>
+  <path id="build.classpath">
+    <fileset dir="${maven.repo.local}">
+      <include name="javaldap/java-ldapserver/0.4/java-ldapserver-0.4.jar"/>
+      <include name="servlets/com/cos/05Nov2002/cos-05Nov2002.jar"/>
+      <include name="junit/junit/3.7/junit-3.7.jar"/>
+      <include name="commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar"/>
+      <include name="logkit/logkit/1.0.1/logkit-1.0.1.jar"/>
+      <include name="jai/jai/1.0/jai-1.0.jar"/>
+      <include name="avalon-framework/avalon-framework/4.1.3/avalon-framework-4.1.3.jar"/>
+      <include name="jdom/jdom/1.0/jdom-1.0.jar"/>
+      <include name="icu4j/icu4j/3.0L1/icu4j-3.0L1.jar"/>
+      <include name="javamail/javamail/1.3.2/javamail-1.3.2.jar"/>
+      <include name="commons-fileupload/commons-fileupload/1.0/commons-fileupload-1.0.jar"/>
+      <include name="log4j/log4j/1.2.6/log4j-1.2.6.jar"/>
+      <include name="servletapi/servletapi/2.4/servletapi-2.4.jar"/>
+      <include name="poi/poi/2.5-final-20040428/poi-2.5-final-20040428.jar"/>
+      <include name="informix_jdbc/informix_jdbc/9.0/informix_jdbc-9.0.jar"/>
+      <include name="myfaces/myfaces-jsf-api/1.0.9rc3/myfaces-jsf-api-1.0.9rc3.jar"/>
+      <include name="jta/jta/spec1_0_1/jta-spec1_0_1.jar"/>
+      <include name="ejb/ejb/2.0/ejb-2.0.jar"/>
+      <include name="myfaces/myfaces-extensions/1.0.9rc3/myfaces-extensions-1.0.9rc3.jar"/>
+      <include name="oracle_jdbc/oracle_jdbc/10.1.0.2.0/oracle_jdbc-10.1.0.2.0.jar"/>
+      <include name="jug/jug/1.1/jug-1.1.jar"/>
+      <include name="itext/itext/0.99/itext-0.99.jar"/>
+      <include name="jspapi/jsp-api/2.0/jsp-api-2.0.jar"/>
+      <include name="activation/activation/1.0.2/activation-1.0.2.jar"/>
+      <include name="jaf/jaf/1.0.2/jaf-1.0.2.jar"/>
+      <include name="jai/jai_codec/1.0/jai_codec-1.0.jar"/>
+    </fileset>
+  </path>
+  <target name="clean" description="Clean the output directory">
+    <delete dir="${maven.build.directory}"/>
+  </target>
+  <target name="compile" depends="get-deps" description="Compile the code">
+    <mkdir dir="${maven.build.output}"/>
+    <javac destdir="${maven.build.output}" excludes="**/package.html" debug="true" deprecation="true" optimize="false">
+      <src>
+        <pathelement location="src/java"/>
+      </src>
+      <classpath refid="build.classpath"/>
+    </javac>
+  </target>
+  <target name="jar" depends="compile,test" description="Clean the JAR">
+    <jar jarfile="${maven.build.directory}/${maven.build.final.name}.jar" basedir="${maven.build.output}" excludes="**/package.html"/>
+  </target>
+  <target name="compile-tests" depends="junit-present, compile" description="Compile the test code" if="junit.present">
+    <mkdir dir="${maven.test.output}"/>
+  </target>
+  <target name="test" depends="junit-present, compile-tests" if="junit.present" description="Run the test cases"/>
+  <target name="test-junit-present">
+    <available classname="junit.framework.Test" property="junit.present"/>
+  </target>
+  <target name="junit-present" depends="test-junit-present" unless="junit.present">
+    <echo>================================= WARNING ================================</echo>
+    <echo> Junit isn't present in your $ANT_HOME/lib directory. Tests not executed. </echo>
+    <echo>==========================================================================</echo>
+  </target>
+  <target name="test-offline">
+    <condition property="maven.mode.offline">
+      <equals arg1="${build.sysclasspath}" arg2="only"/>
+    </condition>
+  </target>
+  <target name="get-deps" depends="test-offline" description="Download all dependencies" unless="maven.mode.offline">
+    <mkdir dir="${maven.repo.local}"/>
+    <get src="http://repository.idega.com/maven//javaldap/java-ldapserver/0.4/java-ldapserver-0.4.jar" dest="${maven.repo.local}/javaldap/java-ldapserver/0.4/java-ldapserver-0.4.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/javaldap/java-ldapserver/0.4/java-ldapserver-0.4.jar" dest="${maven.repo.local}/javaldap/java-ldapserver/0.4/java-ldapserver-0.4.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//servlets/com/cos/05Nov2002/cos-05Nov2002.jar" dest="${maven.repo.local}/servlets/com/cos/05Nov2002/cos-05Nov2002.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/servlets/com/cos/05Nov2002/cos-05Nov2002.jar" dest="${maven.repo.local}/servlets/com/cos/05Nov2002/cos-05Nov2002.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//junit/junit/3.7/junit-3.7.jar" dest="${maven.repo.local}/junit/junit/3.7/junit-3.7.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/junit/junit/3.7/junit-3.7.jar" dest="${maven.repo.local}/junit/junit/3.7/junit-3.7.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar" dest="${maven.repo.local}/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar" dest="${maven.repo.local}/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//logkit/logkit/1.0.1/logkit-1.0.1.jar" dest="${maven.repo.local}/logkit/logkit/1.0.1/logkit-1.0.1.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/logkit/logkit/1.0.1/logkit-1.0.1.jar" dest="${maven.repo.local}/logkit/logkit/1.0.1/logkit-1.0.1.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//jai/jai/1.0/jai-1.0.jar" dest="${maven.repo.local}/jai/jai/1.0/jai-1.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/jai/jai/1.0/jai-1.0.jar" dest="${maven.repo.local}/jai/jai/1.0/jai-1.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//avalon-framework/avalon-framework/4.1.3/avalon-framework-4.1.3.jar" dest="${maven.repo.local}/avalon-framework/avalon-framework/4.1.3/avalon-framework-4.1.3.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/avalon-framework/avalon-framework/4.1.3/avalon-framework-4.1.3.jar" dest="${maven.repo.local}/avalon-framework/avalon-framework/4.1.3/avalon-framework-4.1.3.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//jdom/jdom/1.0/jdom-1.0.jar" dest="${maven.repo.local}/jdom/jdom/1.0/jdom-1.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/jdom/jdom/1.0/jdom-1.0.jar" dest="${maven.repo.local}/jdom/jdom/1.0/jdom-1.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//icu4j/icu4j/3.0L1/icu4j-3.0L1.jar" dest="${maven.repo.local}/icu4j/icu4j/3.0L1/icu4j-3.0L1.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/icu4j/icu4j/3.0L1/icu4j-3.0L1.jar" dest="${maven.repo.local}/icu4j/icu4j/3.0L1/icu4j-3.0L1.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//javamail/javamail/1.3.2/javamail-1.3.2.jar" dest="${maven.repo.local}/javamail/javamail/1.3.2/javamail-1.3.2.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/javamail/javamail/1.3.2/javamail-1.3.2.jar" dest="${maven.repo.local}/javamail/javamail/1.3.2/javamail-1.3.2.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//commons-fileupload/commons-fileupload/1.0/commons-fileupload-1.0.jar" dest="${maven.repo.local}/commons-fileupload/commons-fileupload/1.0/commons-fileupload-1.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/commons-fileupload/commons-fileupload/1.0/commons-fileupload-1.0.jar" dest="${maven.repo.local}/commons-fileupload/commons-fileupload/1.0/commons-fileupload-1.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//log4j/log4j/1.2.6/log4j-1.2.6.jar" dest="${maven.repo.local}/log4j/log4j/1.2.6/log4j-1.2.6.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/log4j/log4j/1.2.6/log4j-1.2.6.jar" dest="${maven.repo.local}/log4j/log4j/1.2.6/log4j-1.2.6.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//servletapi/servletapi/2.4/servletapi-2.4.jar" dest="${maven.repo.local}/servletapi/servletapi/2.4/servletapi-2.4.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/servletapi/servletapi/2.4/servletapi-2.4.jar" dest="${maven.repo.local}/servletapi/servletapi/2.4/servletapi-2.4.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//poi/poi/2.5-final-20040428/poi-2.5-final-20040428.jar" dest="${maven.repo.local}/poi/poi/2.5-final-20040428/poi-2.5-final-20040428.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/poi/poi/2.5-final-20040428/poi-2.5-final-20040428.jar" dest="${maven.repo.local}/poi/poi/2.5-final-20040428/poi-2.5-final-20040428.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//informix_jdbc/informix_jdbc/9.0/informix_jdbc-9.0.jar" dest="${maven.repo.local}/informix_jdbc/informix_jdbc/9.0/informix_jdbc-9.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/informix_jdbc/informix_jdbc/9.0/informix_jdbc-9.0.jar" dest="${maven.repo.local}/informix_jdbc/informix_jdbc/9.0/informix_jdbc-9.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//myfaces/myfaces-jsf-api/1.0.9rc3/myfaces-jsf-api-1.0.9rc3.jar" dest="${maven.repo.local}/myfaces/myfaces-jsf-api/1.0.9rc3/myfaces-jsf-api-1.0.9rc3.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/myfaces/myfaces-jsf-api/1.0.9rc3/myfaces-jsf-api-1.0.9rc3.jar" dest="${maven.repo.local}/myfaces/myfaces-jsf-api/1.0.9rc3/myfaces-jsf-api-1.0.9rc3.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//jta/jta/spec1_0_1/jta-spec1_0_1.jar" dest="${maven.repo.local}/jta/jta/spec1_0_1/jta-spec1_0_1.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/jta/jta/spec1_0_1/jta-spec1_0_1.jar" dest="${maven.repo.local}/jta/jta/spec1_0_1/jta-spec1_0_1.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//ejb/ejb/2.0/ejb-2.0.jar" dest="${maven.repo.local}/ejb/ejb/2.0/ejb-2.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/ejb/ejb/2.0/ejb-2.0.jar" dest="${maven.repo.local}/ejb/ejb/2.0/ejb-2.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//myfaces/myfaces-extensions/1.0.9rc3/myfaces-extensions-1.0.9rc3.jar" dest="${maven.repo.local}/myfaces/myfaces-extensions/1.0.9rc3/myfaces-extensions-1.0.9rc3.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/myfaces/myfaces-extensions/1.0.9rc3/myfaces-extensions-1.0.9rc3.jar" dest="${maven.repo.local}/myfaces/myfaces-extensions/1.0.9rc3/myfaces-extensions-1.0.9rc3.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//oracle_jdbc/oracle_jdbc/10.1.0.2.0/oracle_jdbc-10.1.0.2.0.jar" dest="${maven.repo.local}/oracle_jdbc/oracle_jdbc/10.1.0.2.0/oracle_jdbc-10.1.0.2.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/oracle_jdbc/oracle_jdbc/10.1.0.2.0/oracle_jdbc-10.1.0.2.0.jar" dest="${maven.repo.local}/oracle_jdbc/oracle_jdbc/10.1.0.2.0/oracle_jdbc-10.1.0.2.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//jug/jug/1.1/jug-1.1.jar" dest="${maven.repo.local}/jug/jug/1.1/jug-1.1.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/jug/jug/1.1/jug-1.1.jar" dest="${maven.repo.local}/jug/jug/1.1/jug-1.1.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//itext/itext/0.99/itext-0.99.jar" dest="${maven.repo.local}/itext/itext/0.99/itext-0.99.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/itext/itext/0.99/itext-0.99.jar" dest="${maven.repo.local}/itext/itext/0.99/itext-0.99.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//jspapi/jsp-api/2.0/jsp-api-2.0.jar" dest="${maven.repo.local}/jspapi/jsp-api/2.0/jsp-api-2.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/jspapi/jsp-api/2.0/jsp-api-2.0.jar" dest="${maven.repo.local}/jspapi/jsp-api/2.0/jsp-api-2.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//activation/activation/1.0.2/activation-1.0.2.jar" dest="${maven.repo.local}/activation/activation/1.0.2/activation-1.0.2.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/activation/activation/1.0.2/activation-1.0.2.jar" dest="${maven.repo.local}/activation/activation/1.0.2/activation-1.0.2.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//jaf/jaf/1.0.2/jaf-1.0.2.jar" dest="${maven.repo.local}/jaf/jaf/1.0.2/jaf-1.0.2.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/jaf/jaf/1.0.2/jaf-1.0.2.jar" dest="${maven.repo.local}/jaf/jaf/1.0.2/jaf-1.0.2.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repository.idega.com/maven//jai/jai_codec/1.0/jai_codec-1.0.jar" dest="${maven.repo.local}/jai/jai_codec/1.0/jai_codec-1.0.jar" usetimestamp="true" ignoreerrors="true"/>
+    <get src="http://repo1.maven.org/maven2/jai/jai_codec/1.0/jai_codec-1.0.jar" dest="${maven.repo.local}/jai/jai_codec/1.0/jai_codec-1.0.jar" usetimestamp="true" ignoreerrors="true"/>
+  </target>
+</project>

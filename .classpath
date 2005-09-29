@@ -23,9 +23,9 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/icu4j/jars/icu4j-3.0L1.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-jsf-api-1.0.9.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-jsf-api-1.1.0.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-extensions-1.0.9.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-tomahawk-1.1.0.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/oracle_jdbc/jars/oracle_jdbc-10.1.0.2.0.jar">
   </classpathentry>
