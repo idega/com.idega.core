@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.123 2005/09/05 14:03:57 tryggvil Exp $
+ * $Id: IWContext.java,v 1.124 2005/09/30 09:25:53 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/09/05 14:03:57 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/09/30 09:25:53 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.123 $
+ * @version $Revision: 1.124 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -170,13 +170,13 @@ implements IWUserContext, IWApplicationContext {
 				return (IWContext)fc;
 			}
 			else{
-				IWContext iwc;
+				IWContext iwc=null;
 				//try to look up from requestmap
-				iwc = (IWContext)fc.getExternalContext().getRequestMap().get(IWCONTEXT_REQUEST_KEY);
+				//iwc = (IWContext)fc.getExternalContext().getRequestMap().get(IWCONTEXT_REQUEST_KEY);
 				if(iwc==null){
 					//put it to the request map if it isn't there already
 					iwc = new IWContext(fc);
-					fc.getExternalContext().getRequestMap().put(IWCONTEXT_REQUEST_KEY,iwc);
+					//fc.getExternalContext().getRequestMap().put(IWCONTEXT_REQUEST_KEY,iwc);
 				}
 				return iwc;
 			}
