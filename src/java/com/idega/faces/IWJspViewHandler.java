@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.5 2005/03/04 18:16:53 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.6 2005/09/30 09:26:40 tryggvil Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.FacesUtil;
 
 /**
  * 
- *  Last modified: $Date: 2005/03/04 18:16:53 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/09/30 09:26:40 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -41,7 +41,7 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#renderView(javax.faces.context.FacesContext, javax.faces.component.UIViewRoot)
 	 */
-	public void renderView(FacesContext facesContext, UIViewRoot viewToRender) throws IOException, FacesException {
+	public void renderView(FacesContext context, UIViewRoot viewToRender) throws IOException, FacesException {
        /*
 		ViewNode node = getNode(facesContext);
 		
@@ -83,7 +83,19 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
         if (log.isTraceEnabled()) log.trace("Dispatching to " + viewId);*/
         
 		//externalContext.dispatch(viewId);
-		super.renderView(facesContext,viewToRender);
+		
+		
+		//Changing the ViewId so it is read from the ViewNode structure:
+		ViewNode node = getNode(context);
+		String viewId = viewToRender.getViewId();
+		String newViewId=viewId;
+		if(node.isResourceBased() && nodeCorrespondsToViewId(node, viewId, context)){
+			newViewId=node.getResourceURI();
+		}
+		viewToRender.setViewId(newViewId);
+		
+		
+		super.renderView(context,viewToRender);
 	}
 	/**
 	 * @param facesContext
