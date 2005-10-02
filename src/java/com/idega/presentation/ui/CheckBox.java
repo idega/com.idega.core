@@ -134,9 +134,13 @@ public class CheckBox extends GenericInput {
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
-		if (iwc.getParameter(this.getName()) != null) {
-			if (iwc.getParameter(this.getName()).equals(this.getValueAsString())) {
-				setChecked(true);
+		if (iwc.isParameterSet(this.getName())) {
+			String[] values = iwc.getParameterValues(getName());
+			for (int i = 0; i < values.length; i++) {
+				String value = values[i];
+				if (value.equals(getValueAsString())) {
+					setChecked(true);
+				}
 			}
 		}
 	}
