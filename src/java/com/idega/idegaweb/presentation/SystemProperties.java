@@ -39,7 +39,7 @@ public class SystemProperties extends Block {
 	private final int TYPE_PROPERTY = 1;
 	private final int TYPE_MAP = 2;
 
-	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.idegaweb";
+	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 	protected IWResourceBundle _iwrb;
 	protected IWSystemProperties properties;
 	protected IWPropertyList propertyList;
