@@ -23,6 +23,10 @@ public class MethodFinder implements Singleton
 {
 	static final String separator = ":";
 	static final String methodString = "method";
+	static final int declaringClassIndex = 2;
+	static final int returnedClassIndex = 3;
+	static final int methodIndex = 4;
+	static final int parameterClassStartIndex = 5;
 	
 	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new MethodFinder();}};
 	
@@ -305,7 +309,7 @@ public class MethodFinder implements Singleton
 	}
 	public String getDeclaringClassName(String[] identifierArray)
 	{
-		return identifierArray[2];
+		return identifierArray[declaringClassIndex];
 	}
 	public Class getDeclaringClass(String[] identifierArray) throws ClassNotFoundException
 	{
@@ -313,7 +317,7 @@ public class MethodFinder implements Singleton
 	}
 	public String getReturnTypeClassName(String[] identifierArray)
 	{
-		return identifierArray[3];
+		return identifierArray[returnedClassIndex];
 	}
 	public Class getReturnTypeClass(String[] identifierArray) throws ClassNotFoundException
 	{
@@ -321,15 +325,15 @@ public class MethodFinder implements Singleton
 	}
 	public String getMethodName(String[] identifierArray)
 	{
-		return identifierArray[4];
+		return identifierArray[methodIndex];
 	}
 	public String[] getArgumentClassNames(String[] identifierArray)
 	{
-		int length = identifierArray.length - 5;
+		int length = identifierArray.length - parameterClassStartIndex;
 		String[] theReturn = new String[length];
 		if (length != 0)
 		{
-			System.arraycopy(identifierArray, 5, theReturn, 0, theReturn.length);
+			System.arraycopy(identifierArray, parameterClassStartIndex, theReturn, 0, theReturn.length);
 		}
 		return theReturn;
 	}
@@ -536,6 +540,45 @@ public class MethodFinder implements Singleton
 			methodClass = methodClass.getSuperclass();
 		}
 		return map;
+	}
+	
+	/** Returns an updated methodIdentifier.
+	 * Checks if the declared class, the returned class or the parameter classes are refactored and 
+	 * replaces them by the new ones.
+	 * Returns the same string if no classes are refactored.
+	 * 
+	 * Use this method when handling with old method identifers (e.g. stored in old builder pages).
+	 * See also MethodIdentifierCache.
+	 * 
+	 * @param methodIdentifier
+	 * @return updated methodIdentifer
+	 */
+	public String getUpdatedMethodIdentifier(String methodIdentifier) {
+		RefactorClassRegistry registry =  RefactorClassRegistry.getInstance();
+		StringTokenizer firstTokenizer = new StringTokenizer(methodIdentifier, separator);
+		StringBuffer buffer = new StringBuffer(separator);
+		boolean somethingHasChanged = false;
+		int counter = 0;
+		while (firstTokenizer.hasMoreTokens()) {
+			String token = firstTokenizer.nextToken();
+			if ((counter == declaringClassIndex ||
+				counter == returnedClassIndex ||
+				counter >= parameterClassStartIndex) 
+					&& registry.isClassRefactored(token)) {
+				buffer.append(registry.getRefactoredClassName(token));
+				somethingHasChanged = true;
+			}
+			else {
+				buffer.append(token);
+			}
+			buffer.append(separator);
+			counter++;
+		}
+		// avoid expensive creation of string
+		if (somethingHasChanged) {
+			return buffer.toString();
+		}
+		return methodIdentifier;
 	}
 	
 	/**
