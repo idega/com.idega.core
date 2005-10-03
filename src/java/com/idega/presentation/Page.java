@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.147 2005/09/14 00:43:01 tryggvil Exp $
+ *  $Id: Page.java,v 1.148 2005/10/03 18:25:42 thomas Exp $
  *  Created in 2000 by Tryggvi Larusson
  *  Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -9,8 +9,10 @@
  */
 package com.idega.presentation;
 
+import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -37,10 +39,12 @@ import com.idega.idegaweb.IWStyleManager;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.include.GlobalIncludeManager;
 import com.idega.idegaweb.include.StyleSheetLink;
+import com.idega.io.serialization.FileObjectReader;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
 import com.idega.repository.data.ImplementorRepository;
+import com.idega.repository.data.PropertyDescription;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.servlet.IWCoreServlet;
 import com.idega.util.FrameStorageInfo;
@@ -57,10 +61,10 @@ import com.idega.util.datastructures.QueueMap;
  * </pre>
  * tags in HTML and renders the children inside the body tags.
  * </p>
- *  Last modified: $Date: 2005/09/14 00:43:01 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/10/03 18:25:42 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.147 $
+ * @version $Revision: 1.148 $
  */
 public class Page extends PresentationObjectContainer {
 	
@@ -144,6 +148,8 @@ public class Page extends PresentationObjectContainer {
 	private boolean useIE7Extension=false;
 
 
+
+	
 	/**
 	 */
 	public Page() {
@@ -2249,5 +2255,24 @@ public class Page extends PresentationObjectContainer {
 		values[44]=Boolean.valueOf(this.useIE7Extension);
 		return values;
 	}
+	
+	public List getPropertyDescriptions() {
+		List list = new ArrayList();
+		list.add( 
+			new PropertyDescription(
+					"method:1:implied:void:setStyleSheetURL:java.lang.String:",
+					"1",
+					File.class.getName(),
+					FileObjectReader.class.getName(),
+					false));
+		list.add(
+			new PropertyDescription(
+					":method:1:implied:void:setTemplateId:java.lang.String:",
+					"1",
+					ICPage.class.getName(),
+					ICPage.class.getName(),
+					true));
+		return list;
+	}	
 	
 }
