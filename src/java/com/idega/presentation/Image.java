@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.86 2005/09/14 22:13:58 eiki Exp $
+ * $Id: Image.java,v 1.87 2005/10/03 18:26:53 thomas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -10,7 +10,9 @@
 package com.idega.presentation;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.ejb.EJBException;
@@ -26,6 +28,9 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
+import com.idega.repository.data.NonEJBResource;
+import com.idega.repository.data.PropertyDescription;
+import com.idega.repository.data.ResourceDescription;
 import com.idega.util.text.StyleConstants;
 import com.idega.util.text.TextSoap;
 
@@ -34,13 +39,13 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/09/14 22:13:58 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/10/03 18:26:53 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.86 $
+ * @version $Revision: 1.87 $
  */
-public class Image extends PresentationObject
+public class Image extends PresentationObject implements NonEJBResource
 {
 	//static variables:
 	public static final String ALIGNMENT_BOTTOM = "bottom";
@@ -77,6 +82,8 @@ public class Image extends PresentationObject
 	protected int imageId = -1;
 	private int maxImageWidth = 140;
 	private String datasource = null;
+	
+
 	
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[17];
@@ -941,4 +948,27 @@ public class Image extends PresentationObject
 	 protected boolean resetGoneThroughMainInRestore(){
 	 	return true;
 	 }
+	 
+	 
+	 /** 
+	  * implements NonEJBResource
+	  */
+	public ResourceDescription getResourceDescription() {
+		return new ResourceDescription(ICFile.class.getName(), ICFile.class.getName(), true);
+	}
+
+	/**
+	 * overwrites method in PresentationObject
+	 */
+	public List getPropertyDescriptions() {
+		List list = new ArrayList();
+		list.add( 
+			new PropertyDescription(
+					"image_id",
+					"1",
+					getResourceDescription()));
+		return list;
+	}	
+
+	
 }
