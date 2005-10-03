@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectComponentList.java,v 1.3 2005/09/29 12:17:11 tryggvil Exp $ Created on
+ * $Id: PresentationObjectComponentList.java,v 1.4 2005/10/03 15:09:17 tryggvil Exp $ Created on
  * 14.11.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import javax.faces.component.UIComponent;
 /**
  * Overrided from JSFs standard Children because of the clone() issue.
  * 
- * Last modified: $Date: 2005/09/29 12:17:11 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/10/03 15:09:17 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 class PresentationObjectComponentList extends AbstractList implements Serializable,Cloneable {
 
@@ -125,7 +125,7 @@ class PresentationObjectComponentList extends AbstractList implements Serializab
 		this._component = _component;
 	}
 
-	public Iterator iterator() {
+	/*public Iterator iterator() {
 		//return super.iterator();
 		return this._list.iterator();
 	}
@@ -213,7 +213,7 @@ class PresentationObjectComponentList extends AbstractList implements Serializab
 	public String toString() {
 		// TODO Auto-generated method stub
 		return this._list.toString();
-	}
+	}*/
 	
 	
 }
