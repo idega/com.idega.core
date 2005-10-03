@@ -141,9 +141,14 @@ public class HtmlPage extends Page {
 		}
 		else{
 			Integer index = (Integer) getRegionIdsMap().get(regionKey);
-			Object o = getChildren().get(index.intValue());
-			HtmlPageRegion region = (HtmlPageRegion) o;
-			return region;
+			if(index!=null){
+				Object o = getChildren().get(index.intValue());
+				HtmlPageRegion region = (HtmlPageRegion) o;
+				return region;
+			}
+			else{
+				return null;
+			}
 		}
 	}
 	
@@ -162,7 +167,12 @@ public class HtmlPage extends Page {
 	
 	public void add(UIComponent component,String regionId){
 		UIComponent region = getRegion(regionId);
-		region.getChildren().add(component);
+		if(region!=null){
+			region.getChildren().add(component);
+		}
+		else{
+			getLogger().info("No Region found for regionId="+regionId);
+		}
 	}
 
 	
