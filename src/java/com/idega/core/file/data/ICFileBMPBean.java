@@ -38,6 +38,7 @@ import com.idega.io.serialization.ObjectReader;
 import com.idega.io.serialization.ObjectWriter;
 import com.idega.io.serialization.Storable;
 import com.idega.presentation.IWContext;
+import com.idega.repository.data.Resource;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 
@@ -50,7 +51,7 @@ import com.idega.util.ListUtil;
  * @version 1.0
  */
 
-public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, TreeableEntity, MetaDataCapable, Storable {
+public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, TreeableEntity, MetaDataCapable, Resource, Storable{
 
 	//UFN - UNIQUE_FIELD_NAME
 	//${iConst} public final static String UFN_NAME = "NAME";

@@ -1,8 +1,11 @@
 package com.idega.core.file.data;
 
+import com.idega.io.serialization.Storable;
+import com.idega.repository.data.Resource;
 
 
-public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity,com.idega.data.MetaDataCapable
+
+public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity,com.idega.data.MetaDataCapable, Resource, Storable
 {
  public final static String UFN_NAME = "NAME";
  public java.sql.Timestamp getCreationDate();

@@ -2,9 +2,10 @@ package com.idega.core.builder.data;
 
 import java.util.Locale;
 import com.idega.data.IDOLegacyEntity;
+import com.idega.io.serialization.Storable;
 import com.idega.repository.data.Resource;
 
-public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, Resource {
+public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, Resource, Storable {
 
 	public void delete(int p0) throws java.sql.SQLException;
 
