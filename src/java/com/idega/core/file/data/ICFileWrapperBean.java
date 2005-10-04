@@ -8,6 +8,7 @@ package com.idega.core.file.data;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.Collator;
@@ -18,6 +19,9 @@ import com.idega.data.BlobWrapper;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLookupException;
 import com.idega.data.TreeableEntityWrapper;
+import com.idega.io.serialization.ObjectReader;
+import com.idega.io.serialization.ObjectWriter;
+import com.idega.presentation.IWContext;
 
 /**
  * Title:		ICFileWrapperBean
@@ -436,4 +440,13 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 		return ((ICFile) this.getMainEntity()).getDatasource();
 	}
 
+	// implements Storable
+	public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
+		return writer.write(this, iwc);
+	}
+
+	// implements Storable
+	public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
+		return reader.read(this, iwc);
+	}		
 }
