@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectComponentList.java,v 1.4 2005/10/03 15:09:17 tryggvil Exp $ Created on
+ * $Id: PresentationObjectComponentList.java,v 1.5 2005/10/04 11:47:52 gimmi Exp $ Created on
  * 14.11.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -12,19 +12,16 @@ package com.idega.presentation;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import javax.faces.component.UIComponent;
 
 /**
  * Overrided from JSFs standard Children because of the clone() issue.
  * 
- * Last modified: $Date: 2005/10/03 15:09:17 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/10/04 11:47:52 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 class PresentationObjectComponentList extends AbstractList implements Serializable,Cloneable {
 
