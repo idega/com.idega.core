@@ -49,6 +49,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     private Date date = new Date();
     private String styleClass = null;
     private int length = -1;
+    private boolean keepStatus = false;
     /**
      * Creates a new DateInput object.
      */
@@ -135,6 +136,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         }
         if (styleClass != null) {
         	input.setStyleClass(styleClass);
+        }
+        if (keepStatus) {
+        	input.keepStatusOnAction();
         }
 
         return input;
@@ -435,6 +439,10 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 
     public void setStyleClass(String styleClass) {
     	this.styleClass = styleClass;
+    }
+    
+    public void keepStatusOnAction(boolean keepStatus) {
+    	this.keepStatus = keepStatus;
     }
     
     public void setLength(int length) {
