@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.87 2005/10/03 18:26:53 thomas Exp $
+ * $Id: Image.java,v 1.88 2005/10/05 17:47:05 thomas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -30,6 +30,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
 import com.idega.repository.data.NonEJBResource;
 import com.idega.repository.data.PropertyDescription;
+import com.idega.repository.data.PropertyDescriptionHolder;
 import com.idega.repository.data.ResourceDescription;
 import com.idega.util.text.StyleConstants;
 import com.idega.util.text.TextSoap;
@@ -39,13 +40,13 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/10/03 18:26:53 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/10/05 17:47:05 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.87 $
+ * @version $Revision: 1.88 $
  */
-public class Image extends PresentationObject implements NonEJBResource
+public class Image extends PresentationObject implements NonEJBResource, PropertyDescriptionHolder
 {
 	//static variables:
 	public static final String ALIGNMENT_BOTTOM = "bottom";
@@ -958,7 +959,8 @@ public class Image extends PresentationObject implements NonEJBResource
 	}
 
 	/**
-	 * overwrites method in PresentationObject
+	 * 
+	 * implements PropertyDescriptionHolder
 	 */
 	public List getPropertyDescriptions() {
 		List list = new ArrayList();

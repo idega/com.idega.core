@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.148 2005/10/03 18:25:42 thomas Exp $
+ *  $Id: Page.java,v 1.149 2005/10/05 17:47:05 thomas Exp $
  *  Created in 2000 by Tryggvi Larusson
  *  Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -45,6 +45,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
 import com.idega.repository.data.ImplementorRepository;
 import com.idega.repository.data.PropertyDescription;
+import com.idega.repository.data.PropertyDescriptionHolder;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.servlet.IWCoreServlet;
 import com.idega.util.FrameStorageInfo;
@@ -61,12 +62,12 @@ import com.idega.util.datastructures.QueueMap;
  * </pre>
  * tags in HTML and renders the children inside the body tags.
  * </p>
- *  Last modified: $Date: 2005/10/03 18:25:42 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/10/05 17:47:05 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.148 $
+ * @version $Revision: 1.149 $
  */
-public class Page extends PresentationObjectContainer {
+public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 	
 	//static variables:
 	private static Page NULL_CLONE_PAGE = new Page();
