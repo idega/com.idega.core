@@ -1,5 +1,5 @@
 /*
- * $Id: TimeInput.java,v 1.7 2004/09/23 15:53:28 gimmi Exp $
+ * $Id: TimeInput.java,v 1.8 2005/10/06 18:05:35 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -11,11 +11,11 @@ package com.idega.presentation.ui;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
+import com.idega.util.IWTimestamp;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
@@ -28,6 +28,8 @@ public class TimeInput extends InterfaceObject
 	//private DropdownMenu theSecond;
 	private Parameter theWholeTime;
 	private boolean setCheck = false;
+	private boolean isDisabled = false;
+	
 	final static String HOUR_KEY = "timeinput.hour";
 	final static String MINUTE_KEY = "timeinput.minute";
 	final static String HOUR_KEY_S = "timeinput.hour_short";
@@ -41,6 +43,8 @@ public class TimeInput extends InterfaceObject
 		super();
 		theHour = new DropdownMenu(name + "_hour");
 		theMinute = new DropdownMenu(name + "_minute");
+		
+		
 		//theSecond = new DropdownMenu(name+"_second");
 		theWholeTime = new Parameter(name, "");
 		script = new Script();
@@ -329,6 +333,15 @@ public class TimeInput extends InterfaceObject
 		String emptyString = "";
 		theHour.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.HOUR_KEY));
 		theMinute.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.MINUTE_KEY));
+		
+		if(isDisabled){
+			theHour.setDisabled(true);
+			theMinute.setDisabled(true);
+		}
+		
+		if(keepStatus){
+			handleKeepStatus(iwc);
+		}
 	}
 	public void setTime(java.sql.Time time)
 	{
@@ -371,8 +384,7 @@ public class TimeInput extends InterfaceObject
 	}
 	public void keepStatusOnAction()
 	{
-		theHour.keepStatusOnAction();
-		theMinute.keepStatusOnAction();
+		keepStatus = true;
 		//theSecond.keepStatusOnAction();
 	}
 	public void setStyleAttribute(String style)
@@ -406,6 +418,10 @@ public class TimeInput extends InterfaceObject
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
+		String lastValue = iwc.getParameter(theWholeTime.getName());
+		if(lastValue!=null){
+			setContent(lastValue);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -414,4 +430,23 @@ public class TimeInput extends InterfaceObject
 	public boolean isContainer() {
 		return false;
 	}
+	/* (non-Javadoc)
+	 * @see com.idega.presentation.ui.InterfaceObject#setContent(java.lang.String)
+	 */
+	public void setContent(String content) {
+		if(!"".equals(content)){
+			String dummyDate = "2005-01-01 ";
+			dummyDate+=content;
+			IWTimestamp stamp = new IWTimestamp(dummyDate);
+			if (stamp != null) {
+				setHour(stamp.getHour());
+				setMinute(stamp.getMinute());
+			}
+		}
+	}
+	
+	public void setDisabled(boolean disabled) {
+		isDisabled = disabled;
+	}
+	
 }

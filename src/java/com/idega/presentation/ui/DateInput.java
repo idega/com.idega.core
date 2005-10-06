@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.57 2005/08/27 16:56:14 gimmi Exp $
+ * $Id: DateInput.java,v 1.58 2005/10/06 18:05:35 eiki Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -213,9 +213,11 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	 *          The content to set.
 	 */
 	public void setContent(String content) {
-		IWTimestamp stamp = new IWTimestamp(content);
-		if (stamp != null) {
-			setDate(stamp.getDate());
+		if(!"".equals(content)){
+			IWTimestamp stamp = new IWTimestamp(content);
+			if (stamp != null) {
+				setDate(stamp.getDate());
+			}
 		}
 	}
 
