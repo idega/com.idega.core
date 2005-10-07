@@ -34,6 +34,8 @@ public class ICApplicationBindingBMPBean extends GenericEntity implements ICAppl
 	public final static String COLUMNNAME_VALUE = "BINDING_VALUE";
 	public final static String COLUMNNAME_BINDING_TYPE = "BINDING_TYPE";
 	
+	public final static int MAX_KEY_LENGTH = 30;
+	
 	/**
 	 * 
 	 */
@@ -61,7 +63,7 @@ public class ICApplicationBindingBMPBean extends GenericEntity implements ICAppl
 	 * @see com.idega.data.GenericEntity#initializeAttributes()
 	 */
 	public void initializeAttributes() {
-		addAttribute(COLUMNNAME_KEY,"Key",true,true,String.class,30);
+		addAttribute(COLUMNNAME_KEY,"Key",true,true,String.class, MAX_KEY_LENGTH);
 		setAsPrimaryKey(COLUMNNAME_KEY,true);
 		addAttribute(COLUMNNAME_VALUE,"Value",true,true,String.class);
 		addAttribute(COLUMNNAME_BINDING_TYPE,"Type",true,true,String.class);
