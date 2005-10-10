@@ -1,5 +1,5 @@
 /*
- * $Id: PageTag.java,v 1.3 2005/09/14 00:45:25 tryggvil Exp $
+ * $Id: PageTag.java,v 1.4 2005/10/10 11:40:04 tryggvil Exp $
  * Created on 17.01.2005 by Tryggvi Larusson
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -11,22 +11,26 @@
 package com.idega.presentation;
 
 import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.webapp.UIComponentTag;
+import javax.servlet.jsp.JspException;
+import java.util.Iterator;
 
 /**
  * <p>
  * This is a JSP tag for the Page component.
  * </p>
- * Last modified: $Date: 2005/09/14 00:45:25 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/10/10 11:40:04 $ by $Author: tryggvil $
  *
  * @author tryggvil
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class PageTag extends UIComponentTag {
 	
 	String urls;
 	String onload;
 	String styleClass;
+	boolean logIds=false;
 	
 	/**
 	 * @see javax.faces.webapp.UIComponentTag#getRendererType()
@@ -69,6 +73,62 @@ public class PageTag extends UIComponentTag {
 				page.setStyleClass(styleClass);
 			}
 		}
-	}	
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.webapp.UIComponentTag#doEndTag()
+	 */
+	public int doEndTag() throws JspException {
+		FacesContext context = getFacesContext();
+		UIComponent instance = getComponentInstance();
+		//logClientIds(instance,context);
+		int theReturn = super.doEndTag();
+		logIds(instance,context,"");
+		return theReturn;
+	}
+
+	/**
+	 * <p>
+	 * TODO tryggvil describe method logClientIds
+	 * </p>
+	 * @param componentInstance
+	 */
+	private void logIds(UIComponent componentInstance,FacesContext context,String prefix) {
+		if(getLogIds()){
+			if(componentInstance!=null){
+				System.out.println(prefix+"ComponentClass="+componentInstance.getClass()+":id="+componentInstance.getId()+":clientId="+componentInstance.getClientId(context));
+				Iterator facetsAndChildren = componentInstance.getFacetsAndChildren();
+				while(facetsAndChildren.hasNext()){
+					UIComponent component = (UIComponent) facetsAndChildren.next();
+					logIds(component,context," - "+prefix);
+				}
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.webapp.UIComponentTag#doStartTag()
+	 */
+	public int doStartTag() throws JspException {
+		// TODO Auto-generated method stub
+		return super.doStartTag();
+	}
+
+	
+	/**
+	 * @return Returns the logIds.
+	 */
+	public boolean getLogIds() {
+		return logIds;
+	}
+
+	
+	/**
+	 * @param logIds The logIds to set.
+	 */
+	public void setLogIds(boolean logIds) {
+		this.logIds = logIds;
+	}
 	
 }
