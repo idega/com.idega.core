@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.58 2005/10/06 18:05:35 eiki Exp $
+ * $Id: DateInput.java,v 1.59 2005/10/11 11:40:32 eiki Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-
 import com.idega.business.InputHandler;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -722,7 +721,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		String nameDay = null;
 		String nameMonth = null;
 		String nameYear = null;
-		if (name != null) {
+		if (name != null && !"".equals(name)) {
 			nameDay = name.substring(8, 10);
 			nameMonth = name.substring(5, 7);
 			nameYear = name.substring(0, 4);
