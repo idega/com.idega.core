@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.142 2005/10/05 17:46:26 thomas Exp $
+ * $Id: PresentationObject.java,v 1.143 2005/10/12 22:12:46 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/10/05 17:46:26 $ by $Author: thomas $
+ * Last modified: $Date: 2005/10/12 22:12:46 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.142 $
+ * @version $Revision: 1.143 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -2534,8 +2534,21 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 }
 	 
 	 private List getReflectionProperties(){
-	 	String cacheKey = Integer.toString(this.getICObjectInstanceID());
-	 	return PropertyCache.getInstance().getPropertyList(cacheKey);
+		
+		 int icObjectInstanceId = getICObjectInstanceID();
+		 String cacheKey=null;
+		 if(icObjectInstanceId!=-1){
+			 cacheKey = Integer.toString(icObjectInstanceId);
+		 }
+		 else{
+			 cacheKey = getId();
+		 }
+		 
+		 if(cacheKey!=null){
+			 return PropertyCache.getInstance().getPropertyList(cacheKey); 
+		 }
+		
+		 return null;
 	 }
 	 	 
 	 protected void restoreFromReflectionProperties(){
@@ -2546,7 +2559,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 	if(properties!=null){
 		 	for (Iterator iter = properties.iterator(); iter.hasNext();) {
 				Property property = (Property) iter.next();
-				property.setPropertyOnInstance(this);
+				try{
+					property.setPropertyOnInstance(this);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 	 	}
 	 }
