@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.1 2004/12/28 00:09:45 tryggvil Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.2 2005/10/12 21:52:24 tryggvil Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -23,12 +23,17 @@ import com.idega.user.data.GroupHome;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2004/12/28 00:09:45 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/10/12 21:52:24 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Property implements Serializable{
+
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 4451503674746022678L;
 
 	private String propertyName;
 
@@ -150,7 +155,7 @@ public class Property implements Serializable{
 		catch (Exception e) {
 			if (instance instanceof PresentationObject) {
 				PresentationObject po = (PresentationObject) instance;
-				System.err.println("Error in property '" + getMethod().toString() + "' for ICObjectInstanceId="
+				System.err.println("Error in property '" + getMethod().toString() + "' for "+instance.getClass().getName()+" with ICObjectInstanceId="
 						+ po.getICObjectInstanceID());
 			}
 			else {
