@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.presentation.IWContext;
@@ -40,6 +39,7 @@ public class SelectionBox extends InterfaceObject
 
 	private boolean isSetAsNotEmpty = false;
 	private String notEmptyErrorMessage;
+	private boolean showOnlySelected = false;
 	
 	public SelectionBox()
 	{
@@ -449,9 +449,17 @@ public class SelectionBox extends InterfaceObject
 					while (iter.hasNext())
 					{
 						MenuElement tempobj = (MenuElement) iter.next();
-						if (allSelected)
+						if (allSelected){
 							tempobj.setSelected(true);
-						tempobj._print(iwc);
+						}
+						if(showOnlySelected){
+							if(tempobj.isSelected()){
+								tempobj._print(iwc);
+							}
+						}
+						else{
+							tempobj._print(iwc);
+						}
 					}
 					println("</select>");
 			} else if (getMarkupLanguage().equals("WML"))
@@ -468,9 +476,18 @@ public class SelectionBox extends InterfaceObject
 					while (iter.hasNext())
 					{
 						MenuElement tempobj = (MenuElement) iter.next();
-						if (allSelected)
+						if (allSelected){
 							tempobj.setSelected(true);
-						tempobj._print(iwc);
+						}
+						
+						if(showOnlySelected){
+							if(tempobj.isSelected()){
+								tempobj._print(iwc);
+							}
+						}
+						else{
+							tempobj._print(iwc);
+						}
 					}
 					println("</select>");
 			}
@@ -510,5 +527,9 @@ public class SelectionBox extends InterfaceObject
 	 */
 	public boolean isContainer() {
 		return false;
+	}
+	
+	public void setToShowOnlySelected(boolean showOnlySelected){
+		this.showOnlySelected  = showOnlySelected;
 	}
 }
