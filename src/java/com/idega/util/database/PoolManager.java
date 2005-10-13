@@ -361,6 +361,9 @@ public class PoolManager implements Singleton
 		}
 		return (String[]) sources.toArray(new String[0]);
 	}
+	public boolean hasDatasource(String datasource) {
+		return pools.containsKey(datasource);
+	}
 	public String getPasswordForPool(String datasourceName)
 	{
 		String password = null;
