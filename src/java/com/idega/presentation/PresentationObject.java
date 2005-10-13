@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.143 2005/10/12 22:12:46 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.144 2005/10/13 18:22:29 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/10/12 22:12:46 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/10/13 18:22:29 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.143 $
+ * @version $Revision: 1.144 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -328,14 +328,25 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		setMarkupAttribute(attributeName, Integer.toString(attributeValue));
 	}
+	
 	/**
 	 * Sets the attribute with value attributeValue but, if there was previously a value 
 	 * there old value will be kept and the new value be added with the semicolon separator ; 
 	 * @param attributeName
 	 * @param attributeValue
 	 */
-	public void setMarkupAttributeMultivalued(String attributeName, String attributeValue)
-	{
+	public void setMarkupAttributeMultivalued(String attributeName, String attributeValue) {
+		setMarkupAttributeMultivalued(attributeName, attributeValue, ";");
+	}
+	
+	/**
+	 * Sets the attribute with value attributeValue but, if there was previously a value 
+	 * there old value will be kept and the new value be added with the supplied seperator 
+	 * @param attributeName
+	 * @param attributeValue
+	 * @param seperator
+	 */
+	public void setMarkupAttributeMultivalued(String attributeName, String attributeValue, String seperator) {
 		String previousAttribute = getMarkupAttribute(attributeName);
 		if (previousAttribute == null)
 		{
@@ -346,25 +357,29 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			if (previousAttribute.indexOf(attributeValue) == -1)
 			{
 				String parameterValue = previousAttribute;
-				if (previousAttribute.endsWith(";"))
+				if (previousAttribute.endsWith(seperator))
 					parameterValue = parameterValue + attributeValue;
 				else
-					parameterValue = parameterValue + ";" + attributeValue;
+					parameterValue = parameterValue + seperator + attributeValue;
 				setMarkupAttribute(attributeName, parameterValue);
 			}
 		}
 	}
-	public void setMarkupAttributeMultivalued(String attributeName, boolean attributeValue)
-	{
-		setMarkupAttributeMultivalued(attributeName, String.valueOf(attributeValue));
+	
+	public void setMarkupAttributeMultivalued(String attributeName, boolean attributeValue) {
+		setMarkupAttributeMultivalued(attributeName, attributeValue, ";");
 	}
-	public void setMarkupAttributeWithoutValue(String attributeName)
-	{
+
+	public void setMarkupAttributeMultivalued(String attributeName, boolean attributeValue, String seperator) {
+		setMarkupAttributeMultivalued(attributeName, String.valueOf(attributeValue), seperator);
+	}
+	
+	public void setMarkupAttributeWithoutValue(String attributeName) {
 		setMarkupAttribute(attributeName, slash);
 	}
-	public void setStyleClass(String styleName)
-	{
-		setMarkupAttribute("class", styleName);
+	
+	public void setStyleClass(String styleName) {
+		setMarkupAttributeMultivalued("class", styleName, " ");
 	}
 	
 	public String getStyleClass(){
