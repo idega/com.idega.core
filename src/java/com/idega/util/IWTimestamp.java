@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
@@ -823,6 +824,14 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return GregorianCalendar
 	 */
 	public GregorianCalendar getGregorianCalendar() {
+		return calendar;
+	}
+	
+	/**
+	 * Returns a <code>Calendar</code> object with the current date/time settings.
+	 * @return Calendar
+	 */
+	public Calendar getCalendar() {
 		return calendar;
 	}
 
