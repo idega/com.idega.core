@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.20 2005/05/11 18:20:34 gummi Exp $
+ * $Id: XMLElement.java,v 1.21 2005/10/17 01:08:44 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jdom.Attribute;
 import org.jdom.CDATA;
 import org.jdom.Element;
@@ -485,4 +487,61 @@ public class XMLElement {
   	_element.addNamespaceDeclaration((Namespace)namespace.getNamespace());
   }
 		
+  /**
+   * <p>
+   * Gets the textual contents of this element without xml tags.
+   * This is the same as getText() but traverses down child elements.
+   * </p>
+   * @return
+   */
+  public String getValue(){
+	  return _element.getValue();
+  }
+  
+  /**
+   * <p>
+   * Gets the contents (child elements and text) of this element as a String
+   * </p>
+   * @return
+   */
+  public String getContentAsString(){
+	  XMLOutput output = new XMLOutput();
+	  String xmlString = output.outputString(this);
+	  String tagName = getName();
+	  StringBuffer ret= new StringBuffer();
+	  //These patterns are for the begin and end tags of this element
+	  Pattern beginPattern = Pattern.compile("(<"+tagName+"[^>])([^>]+>\r\n)",Pattern.CASE_INSENSITIVE);
+	  Pattern endPattern = Pattern.compile("(\r\n</"+tagName+">)",Pattern.CASE_INSENSITIVE);
+	  Matcher matcher;
+	  matcher = beginPattern.matcher(xmlString);
+	  if(matcher.find()){
+		  //first check the pattern with a newline end:
+	  }
+	  else{
+		  //if a newline is not found make a pattern without newline:
+		  beginPattern = Pattern.compile("(<"+tagName+"[^>])([^>]+>)",Pattern.CASE_INSENSITIVE);
+		  matcher = beginPattern.matcher(xmlString);
+		  matcher.find();
+	  }
+	  matcher.appendReplacement(ret,"");
+	  matcher.appendTail(ret);
+	  xmlString = ret.toString();
+	  ret = new StringBuffer();
+	  
+
+	  matcher = endPattern.matcher(xmlString);
+	  if(matcher.find()){
+		  //first check the pattern with a newline end:
+	  }
+	  else{
+		  //if a newline is not found make a pattern without newline:
+		  endPattern = Pattern.compile("(</"+tagName+">)",Pattern.CASE_INSENSITIVE);
+		  matcher = endPattern.matcher(xmlString);
+		  matcher.find();
+	  }
+	  matcher.appendReplacement(ret,"");
+	  matcher.appendTail(ret);
+	  xmlString = ret.toString();
+	  return ret.toString();
+  }
 }
