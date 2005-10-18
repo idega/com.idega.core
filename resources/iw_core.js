@@ -340,3 +340,36 @@ function setIframeHeight(iframeId,topmargin,bottommargin) {
 // End Windowing and iframe methods
 //
 //************************************************//
+
+//************************************************//
+//
+//Table ruler Functions
+//
+//************************************************//
+
+
+window.onload=function(){tableruler();}
+
+function tableruler()
+{
+	if (document.getElementById && document.createTextNode)
+	{
+		var tables=document.getElementsByTagName('table');
+		for (var i=0;i<tables.length;i++)
+		{
+			if(tables[i].className.indexOf('ruler') != -1)
+			{
+				var trs=tables[i].getElementsByTagName('tr');
+				for(var j=0;j<trs.length;j++)
+				{
+					if(trs[j].parentNode.nodeName=='TBODY')
+					{
+						var className = trs[j].className;
+						trs[j].onmouseover=function() { this.className=this.className + ' ruled';return false; }
+						trs[j].onmouseout=function() { this.className=this.className.substring(0, this.className.indexOf('ruled') - 1);return false; }
+					}
+				}
+			}
+		}
+	}
+}
