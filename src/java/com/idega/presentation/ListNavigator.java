@@ -1,5 +1,5 @@
 /*
- * $Id: ListNavigator.java,v 1.1 2005/10/16 12:50:53 laddi Exp $
+ * $Id: ListNavigator.java,v 1.2 2005/10/19 12:52:11 laddi Exp $
  * Created on Oct 12, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.presentation.ui.Form;
 
 
 /**
- * Last modified: $Date: 2005/10/16 12:50:53 $ by $Author: laddi $
+ * Last modified: $Date: 2005/10/19 12:52:11 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ListNavigator extends Block implements IWPageEventListener {
 
@@ -88,7 +88,7 @@ public class ListNavigator extends Block implements IWPageEventListener {
 			item.add(link);
 			list.add(item);
 		}
-		if (end != numberOfPages) {
+		if (currentPage < end) {
 			ListItem item = new ListItem();
 			Link link = new Link("&gt;");
 			link.addParameter(getCurrentPageParameter(), (currentPage + 1));
