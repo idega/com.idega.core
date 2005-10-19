@@ -19,6 +19,7 @@ public class CloseButton extends GenericButton {
 	 */
 	public CloseButton() {
 		setAsImageButton(true);
+		setName("close");
 		setOnClick("top.window.close()");
 		setValue("close");
 	}
@@ -29,7 +30,7 @@ public class CloseButton extends GenericButton {
 	 */
 	public CloseButton(String displayString) {
 		super();
-		setName("");
+		setName("close");
 		setValue(displayString);
 		setInputType(INPUT_TYPE_BUTTON);
 		setOnClick("top.window.close()");
@@ -41,6 +42,7 @@ public class CloseButton extends GenericButton {
 	 */
 	public CloseButton(Image image) {
 		super();
+		setName("close");
 		setButtonImage(image);
 		setOnClick("top.window.close()");
 	}
