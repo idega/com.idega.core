@@ -1,5 +1,5 @@
 /*
- * $Id: ICApplicationBindingBusinessBean.java,v 1.2 2005/10/19 18:40:15 thomas Exp $
+ * $Id: ICApplicationBindingBusinessBean.java,v 1.3 2005/10/20 14:47:01 thomas Exp $
  * Created on Oct 7, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -59,30 +59,34 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean   implement
 	 * Puts an entry into the application binding table.
 	 * If the value is null an existing entry is removed.
 	 * 
+	 * @return the old value or null if there was no entry
+	 * 
 	 */
-	public void put(String key, String value) throws CreateException, IDOLookupException, RemoveException {
+	public String put(String key, String value) throws CreateException, IDOLookupException, RemoveException {
 		key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
 		ICApplicationBinding applicationBinding = null;
 		String oldValue = null;
 		// find an existing entry
 		try {
 			applicationBinding = getICApplicationBinding(key);
+			oldValue = applicationBinding.getValue();
 		} 
 		catch (FinderException finderException) {
 			// not found?
 			// create a new entry (does not create an entry if the value is null)
 			createApplicationBindingCheckValue(key, value);
-			return;
+			return null;
 		}
 		// set the value of the existing entry
 		if (value == null) {
 			// remove the entry if the value is set to null
 			applicationBinding.remove();
-			return;
+			return oldValue;
 		}
 		// set the value
 		applicationBinding.setValue(value);
 		applicationBinding.store();
+		return oldValue;
 	}
 	
 	private ICApplicationBinding createApplicationBindingCheckValue(String key, String value) throws IDOLookupException, CreateException {
