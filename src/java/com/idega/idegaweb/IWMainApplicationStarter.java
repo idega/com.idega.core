@@ -583,6 +583,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		insertGroupRelationType("FAM_PARENT");
 		insertGroupRelationType("FAM_SPOUSE");
 		insertGroupRelationType("FAM_CUSTODIAN");
+		insertGroupRelationType("FAM_SIBLING");
 	}
 	
 	private void insertGroupRelationType(String groupRelationType) {
