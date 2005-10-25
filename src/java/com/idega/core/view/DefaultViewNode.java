@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.10 2005/09/08 23:13:39 tryggvil Exp $
+ * $Id: DefaultViewNode.java,v 1.11 2005/10/25 00:24:30 tryggvil Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2005/09/08 23:13:39 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/10/25 00:24:30 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -77,13 +77,14 @@ public class DefaultViewNode implements ViewNode {
 	}
 	
 	public String getURI(){
-		StringBuffer path = new StringBuffer();
+		StringBuffer path = new StringBuffer(NODE_SEPARATOR);
 		String contextURI = getIWMainApplication().getApplicationContextURI();
 		
 		ViewNode view = this;
 		while(view!=null){
 			String viewId = view.getViewId();
 			if(!viewId.equals(NODE_SEPARATOR)){
+				//path.insert(0,NODE_SEPARATOR);
 				path.insert(0,view.getViewId());
 				path.insert(0,NODE_SEPARATOR);
 			}
