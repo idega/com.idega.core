@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.9 2005/10/25 01:05:56 tryggvil Exp $
+ * $Id: CbpViewHandler.java,v 1.10 2005/10/25 01:17:35 tryggvil Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2005/10/25 01:05:56 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/10/25 01:17:35 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class CbpViewHandler extends ViewHandler {
 
@@ -170,7 +170,8 @@ public class CbpViewHandler extends ViewHandler {
 	        catch (Exception e)
 	        {
 	            log.error("Error writing serialized page", e);
-	            e.printStackTrace();
+	            System.err.println(e.getClass()+" : "+e.getMessage());
+	            //e.printStackTrace();
 	            //throw new JspException(e);
                 
                 try {
