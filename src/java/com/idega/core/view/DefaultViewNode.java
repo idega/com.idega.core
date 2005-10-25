@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.11 2005/10/25 00:24:30 tryggvil Exp $
+ * $Id: DefaultViewNode.java,v 1.12 2005/10/25 05:09:40 tryggvil Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2005/10/25 00:24:30 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/10/25 05:09:40 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -39,8 +39,8 @@ public class DefaultViewNode implements ViewNode {
 	private ViewNode parent;
 	private Collection roles;
 	private IWMainApplication iwma;
-	private static String SLASH="/";
-	private static String NODE_SEPARATOR=SLASH;
+	protected static String SLASH="/";
+	static String NODE_SEPARATOR=SLASH;
 	private boolean isRendered = true;
 	private String name;
 	private KeyboardShortcut keyboardShortcut;
