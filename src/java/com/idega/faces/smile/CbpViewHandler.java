@@ -1,17 +1,12 @@
 /*
- * $Id: CbpViewHandler.java,v 1.10 2005/10/25 01:17:35 tryggvil Exp $
- * Created on 21.6.2004 by  tryggvil
+ * Created on 21.6.2004
  *
- * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
+ * TODO To change the template for this generated file go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package com.idega.faces.smile;
 
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Iterator;
 import java.util.Locale;
 import javax.faces.FacesException;
@@ -25,27 +20,16 @@ import javax.faces.context.ResponseWriter;
 import javax.faces.render.RenderKitFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
-import org.apache.myfaces.application.MyfacesStateManager;
-import org.apache.myfaces.application.jsp.JspViewHandlerImpl;
-import org.apache.myfaces.renderkit.html.HtmlLinkRendererBase;
+import org.apache.myfaces.renderkit.html.HtmlResponseWriterImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.RefactorClassRegistry;
+//import net.sourceforge.smile.application.CbpViewHandlerImpl;
 
 /**
- * <p>
- * This is a special implementation of a ViewHandler for "Component-based" Pages.<br/>
- * This ViewHandler is used for example when rendering out Builder pages of type IBXML and HTML.
- * <br>
- * </p>
- * Copyright (C) idega software 2004-2005<br>
- * 
- * Last modified: $Date: 2005/10/25 01:17:35 $ by $Author: tryggvil $
- * 
- * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @author tryggvil
+ *
  */
 public class CbpViewHandler extends ViewHandler {
 
@@ -90,143 +74,9 @@ public class CbpViewHandler extends ViewHandler {
 			out.endDocument();
 			ctx.getResponseWriter().flush();
 
-			try {
-				writeOutResponseAndClientState(ctx);
-			}
-			catch (JspException e) {
-				//e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-
 		//} catch (RuntimeException e) {
-			//throw new SmileRuntimeException(e.getMessage(),e);
+		//	throw new SmileRuntimeException(e.getMessage(),e);
 		//}
-	}
-
-	
-	
-	public void writeOutResponseAndClientState(FacesContext facesContext) throws JspException
-	    {
-	        if (log.isTraceEnabled()) log.trace("entering ViewTag.doAfterBody");
-	        try
-	        {
-	            //BodyContent bodyContent = getBodyContent();
-	            //if (bodyContent != null)
-	            //{
-	                //FacesContext facesContext = FacesContext.getCurrentInstance();
-	                StateManager stateManager = facesContext.getApplication().getStateManager();
-	                StateManager.SerializedView serializedView
-	                        = stateManager.saveSerializedView(facesContext);
-	                if (serializedView != null)
-	                {
-	                    //until now we have written to a buffer
-	                    ResponseWriter bufferWriter = facesContext.getResponseWriter();
-	                    bufferWriter.flush();
-	                    //now we switch to real output
-	                    ResponseWriter realWriter = bufferWriter.cloneWithWriter(getRealResponseWriter(facesContext));
-	                    facesContext.setResponseWriter(realWriter);
-
-	                    //String bodyStr = bodyContent.getString();
-	                    String bodyStr = getOutputAsString(bufferWriter);
-	                    int form_marker = bodyStr.indexOf(JspViewHandlerImpl.FORM_STATE_MARKER);
-	                    int url_marker = bodyStr.indexOf(HtmlLinkRendererBase.URL_STATE_MARKER);
-	                    int lastMarkerEnd = 0;
-	                    while (form_marker != -1 || url_marker != -1)
-	                    {
-	                        if (url_marker == -1 || (form_marker != -1 && form_marker < url_marker))
-	                        {
-	                            //replace form_marker
-	                            realWriter.write(bodyStr, lastMarkerEnd, form_marker - lastMarkerEnd);
-	                            stateManager.writeState(facesContext, serializedView);
-	                            lastMarkerEnd = form_marker + JspViewHandlerImpl.FORM_STATE_MARKER_LEN;
-	                            form_marker = bodyStr.indexOf(JspViewHandlerImpl.FORM_STATE_MARKER, lastMarkerEnd);
-	                        }
-	                        else
-	                        {
-	                            //replace url_marker
-	                            realWriter.write(bodyStr, lastMarkerEnd, url_marker - lastMarkerEnd);
-	                            if (stateManager instanceof MyfacesStateManager)
-	                            {
-	                                ((MyfacesStateManager)stateManager).writeStateAsUrlParams(facesContext,
-	                                                                                          serializedView);
-	                            }
-	                            else
-	                            {
-	                                log.error("Current StateManager is no MyfacesStateManager and does not support saving state in url parameters.");
-	                            }
-	                            lastMarkerEnd = url_marker + HtmlLinkRendererBase.URL_STATE_MARKER_LEN;
-	                            url_marker = bodyStr.indexOf(HtmlLinkRendererBase.URL_STATE_MARKER, lastMarkerEnd);
-	                        }
-	                    }
-	                    realWriter.write(bodyStr, lastMarkerEnd, bodyStr.length() - lastMarkerEnd);
-	                //}
-	               // else
-	                //{
-	                //    bodyContent.writeOut(getPreviousOut());
-	                //}
-
-	            }
-	        }
-	        catch (Exception e)
-	        {
-	            log.error("Error writing serialized page", e);
-	            System.err.println(e.getClass()+" : "+e.getMessage());
-	            //e.printStackTrace();
-	            //throw new JspException(e);
-                
-                try {
-                		ResponseWriter bufferWriter = facesContext.getResponseWriter();
-					bufferWriter.flush();
-	                //now we switch to real output
-	                ResponseWriter realWriter = bufferWriter.cloneWithWriter(getRealResponseWriter(facesContext));
-	                facesContext.setResponseWriter(realWriter);
-	                String bodyStr = getOutputAsString(bufferWriter);
-	                realWriter.write(bodyStr);
-	                
-				}
-				catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-	            
-	        }
-	        if (log.isTraceEnabled()) log.trace("leaving ViewTag.doAfterBody");
-	        //return super.doAfterBody();
-	    }
-
-	
-	/**
-	 * <p>
-	 * Get the content that was buffered to the "fake" writer.
-	 * </p>
-	 * @param bufferWriter
-	 * @return
-	 */
-	private String getOutputAsString(ResponseWriter bufferWriter) {
-		HtmlStringBufferedResponseWriter responseWriter = (HtmlStringBufferedResponseWriter)bufferWriter;
-		StringWriter writer = responseWriter.getStringWriter();
-		//BlockCacheResponseWriter blockWriter = (BlockCacheResponseWriter)bufferWriter;
-		return writer.getBuffer().toString();
-	}
-
-	/**
-	 * <p>
-	 * TODO tryggvil describe method getRealResponseWriter
-	 * </p>
-	 * @param facesContext
-	 * @return
-	 */
-	private Writer getRealResponseWriter(FacesContext facesContext) {
-		HttpServletResponse response = (HttpServletResponse)facesContext.getExternalContext().getResponse();
-		try {
-			return response.getWriter();
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			//return null;
-			throw new RuntimeException(e);
-		}
 	}
 
 	/**
@@ -335,23 +185,22 @@ public class CbpViewHandler extends ViewHandler {
 	 */
 	private void initializeResponseWriter(FacesContext ctx) throws FacesException {
 		//check if running in httpservlet environment
-		//boolean httpServletEnv = true;
-		StringWriter bufferWriter = new StringWriter();
+		boolean httpServletEnv = true;
 		if (!(ctx.getExternalContext().getRequest() instanceof HttpServletRequest)) {
 			throw new RuntimeException("CbpViewHandler: idegaWeb currently does not support environments other than Http Servlet Environment.");
 		}
 		HttpServletRequest request = (HttpServletRequest) ctx.getExternalContext().getRequest();
-		//HttpServletResponse response = (HttpServletResponse) ctx.getExternalContext().getResponse();
+		HttpServletResponse response = (HttpServletResponse) ctx.getExternalContext().getResponse();
 		String contextType = "text/html";
 		String characterEncoding = request.getCharacterEncoding();
-		//try {
-			//This responsewriter is first constructed with a buffer that is later written out.
-			ResponseWriter responseWriter = new HtmlStringBufferedResponseWriter(bufferWriter,contextType,characterEncoding);
+		try {
+			
+			ResponseWriter responseWriter = new HtmlResponseWriterImpl(response.getWriter(),contextType,characterEncoding);
 //			ResponseWriter responseWriter = new ResponseWriterImplDecorated(response.getWriter(),contextType,characterEncoding);
 			ctx.setResponseWriter(responseWriter);
-		//} catch (IOException e) {
-		//	throw new FacesException(e.getMessage(),e);
-		//}		
+		} catch (IOException e) {
+			throw new FacesException(e.getMessage(),e);
+		}		
 	}
 	
 	/**
@@ -382,6 +231,41 @@ public class CbpViewHandler extends ViewHandler {
 			log.error("Component <" + component.getId() + "> could not render ! Continuing rendering of view <" + ctx.getViewRoot().getViewId() + ">...");
 		}
 	}
+	
+	/**
+	 * 
+	 * @param ctx
+	 * @param locale
+	 * @return
+	 */
+	private Locale getMatch(FacesContext ctx, Locale locale)
+	{
+		Locale result = null;
+		for(Iterator it = ctx.getApplication().getSupportedLocales(); it.hasNext();)
+		{
+			Locale supportedLocale = (Locale)it.next();
+			if(locale.equals(supportedLocale))
+			{
+				result = supportedLocale;
+				break;
+			}
+			if(locale.getLanguage().equals(supportedLocale.getLanguage()) && supportedLocale.getCountry().equals(""))
+				result = supportedLocale;
+		}
+
+		return result;
+	}
+
+//	private boolean isPageJSP(UIViewRoot viewRoot) {
+//		boolean ret = false;
+//		
+//		String viewId = viewRoot.getViewId();
+//		if(getDescriptorClassNameForViewId(viewId) == null) {
+//			ret = true;
+//		}
+//		
+//		return ret;
+//	}
 	
 	/**
 	 * This function is responsible for finding the descripto class for a given
@@ -479,7 +363,6 @@ public class CbpViewHandler extends ViewHandler {
 	 */
 	public String getResourceURL(FacesContext ctx, String path) {
 		// TODO Auto-generated method stub
-		String resourceUrl = ctx.getExternalContext().encodeResourceURL(path);
-		return resourceUrl;
+		return ctx.getExternalContext().encodeResourceURL(path);
 	}
 }
