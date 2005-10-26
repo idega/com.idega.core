@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.144 2005/10/13 18:22:29 laddi Exp $
+ * $Id: PresentationObject.java,v 1.145 2005/10/26 17:49:54 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/10/13 18:22:29 $ by $Author: laddi $
+ * Last modified: $Date: 2005/10/26 17:49:54 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.144 $
+ * @version $Revision: 1.145 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -102,7 +102,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public final static String XHTML = "XHTML";
 	public final static String XHTML1_1 = "XHTML1.1";
 	
-	//temporary legacy variables:
+	//temporary legacy variables will be removed in future versions.
 	private transient HttpServletRequest _request;
 	private transient HttpServletResponse _response;
 	private transient PrintWriter out;
@@ -234,14 +234,18 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public void initVariables(IWContext iwc) throws IOException
 	{
-		this._request = iwc.getRequest();
-		this._response = iwc.getResponse();
+		if(!IWMainApplication.useJSF){
+			//These variables are not set when the JSF environment is enabled.
+			this._request = iwc.getRequest();
+			this._response = iwc.getResponse();
+			this.out = iwc.getWriter();
+		}
 		this.markupLanguage = iwc.getMarkupLanguage();
 		if (markupLanguage == null)
 		{
 			markupLanguage = IWConstants.MARKUP_LANGUAGE_HTML;
 		}
-		this.out = iwc.getWriter();
+		
 	}
 	protected void cleanVariables(IWContext iwc){
 		this._request=null;
