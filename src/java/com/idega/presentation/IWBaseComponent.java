@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.5 2004/12/15 14:54:45 gimmi Exp $
+ * $Id: IWBaseComponent.java,v 1.6 2005/10/26 11:39:11 tryggvil Exp $
  * Created on 20.2.2004 by  tryggvil in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -60,11 +60,17 @@ public class IWBaseComponent extends UIComponentBase {
 	 */
 	public void encodeBegin(FacesContext context) throws IOException {
 		if(!isInitialized()){
+			initializeComponent(context);
+			//TODO: Remove call to older method:
 			initializeContent();
 			setInitialized();
 		}
+		else{
+			updateComponent(context);
+		}
 		super.encodeBegin(context);
 	}
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
 	 */
@@ -148,14 +154,38 @@ public class IWBaseComponent extends UIComponentBase {
 	public String getFamily() {
 		return "idegaweb";
 	}
-
-
 	/**
-	 * This is a method that is ensured that is only called once in initalization in a
-	 * state saved component. This method is intended to be implemented in subclasses for example to add components.
+	 * <p>
+	 * This method was refactored and replaced with initializeComponent
+	 * </p>
+	 * @deprecated Replaced with initializeComponent
 	 */
 	protected void initializeContent() {
 		//does nothing by default
+	}
+
+	/**
+	 * <p>
+	 * This is a method that is ensured that is only called once in initalization in a
+	 * state saved component. This method is intended to be implemented in subclasses for example to add components.
+	 * </p>
+	 * @param context the FacesContext for the request
+	 */
+	protected void initializeComponent(FacesContext context) {
+		//does nothing by default
+	}
+	
+	/**
+	 * <p>
+	 * This method is called when the component is already initialized (i.e. the second time and onwards when a faces rendering
+	 * is called upon this component when it is state saved) and usually happens when the component is restored after a "POST".<br/>
+	 * This callback method could be overrided in sublcasses if something is meant to happen when a new
+	 * request is sent on an already initialized component.
+	 * </p>
+	 * @param context
+	 */
+	private void updateComponent(FacesContext context) {
+		//Does nothing by default
 	}
 	
 	protected boolean isInitialized(){
