@@ -1,6 +1,6 @@
 /*
- * $Id: IWBaseComponent.java,v 1.6 2005/10/26 11:39:11 tryggvil Exp $
- * Created on 20.2.2004 by  tryggvil in project com.project
+ * $Id: IWBaseComponent.java,v 1.7 2005/10/26 15:03:42 tryggvil Exp $
+ * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
  *
@@ -18,14 +18,18 @@ import com.idega.util.RenderUtils;
 import com.idega.util.text.TextStyler;
 
 /**
- * This is a base component for JSF that adds IW utility methods.<br>
- * This is supposed to be a convenient replacement for PresentationObject
- * but doesn't have the some of the legacy burdens that PresentationObject has
- * such as the old style idegaWeb event systems.
+ * <p>
+ * This is a base UI component for JSF that adds IW utility methods.<br/>
+ * This is supposed to be a convenient replacement for PresentationObject for new
+ * pure JSF solutions and doesn't have the some of the legacy burdens that PresentationObject has
+ * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
+ * </p>
+ * Copyright (C) idega software 2004-2005 <br/>
+ * Last modified: $Date: 2005/10/26 15:03:42 $ by $Author: tryggvil $
  * 
- * Copyright (C) idega software 2004
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0
+ * @version $Revision: 1.7 $
+ * 
  */
 public class IWBaseComponent extends UIComponentBase {
 	
@@ -92,10 +96,11 @@ public class IWBaseComponent extends UIComponentBase {
 	
 	
 	/**
+	 * <p>
 	 * Renders a child component for the current component. This operation is handy when implementing
 	 * renderes that perform child rendering themselves (eg. a layout renderer/grid renderer/ etc..).
 	 * Passes on any IOExceptions thrown by the child/child renderer.
-	 * 
+	 * </p>
 	 * @param context the current FacesContext
 	 * @param child which child to render
 	 */
@@ -167,7 +172,8 @@ public class IWBaseComponent extends UIComponentBase {
 	/**
 	 * <p>
 	 * This is a method that is ensured that is only called once in initalization in a
-	 * state saved component. This method is intended to be implemented in subclasses for example to add components.
+	 * state saved component. This method is intended to be implemented in subclasses for example to add components.<br/>
+	 * This method is called from the standard encodeBegin() method.
 	 * </p>
 	 * @param context the FacesContext for the request
 	 */
@@ -180,14 +186,21 @@ public class IWBaseComponent extends UIComponentBase {
 	 * This method is called when the component is already initialized (i.e. the second time and onwards when a faces rendering
 	 * is called upon this component when it is state saved) and usually happens when the component is restored after a "POST".<br/>
 	 * This callback method could be overrided in sublcasses if something is meant to happen when a new
-	 * request is sent on an already initialized component.
+	 * request is sent on an already initialized component.<br/>
+	 * This method is called from the standard encodeBegin() method.
 	 * </p>
 	 * @param context
 	 */
-	private void updateComponent(FacesContext context) {
+	protected void updateComponent(FacesContext context) {
 		//Does nothing by default
 	}
 	
+	/**
+	 * <p>
+	 * Returns if this component instance has been initialized, i.e. the initializeComponent() method called.
+	 * </p>
+	 * @return
+	 */
 	protected boolean isInitialized(){
 		return this.isInitialized;
 	}
@@ -201,7 +214,7 @@ public class IWBaseComponent extends UIComponentBase {
 	}
 	
 	/**
-	 * @see javax.faces.component.UIPanel#saveState(javax.faces.context.FacesContext)
+	 * @see javax.faces.component.UIComponentBase#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[4];
@@ -213,7 +226,7 @@ public class IWBaseComponent extends UIComponentBase {
 	}
 
 	/**
-	 * @see javax.faces.component.UIPanel#restoreState(javax.faces.context.FacesContext,
+	 * @see javax.faces.component.UIComponentBase#restoreState(javax.faces.context.FacesContext,
 	 *      java.lang.Object)
 	 */
 	public void restoreState(FacesContext ctx, Object state) {
