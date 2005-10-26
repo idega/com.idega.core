@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.7 2005/10/26 15:03:42 tryggvil Exp $
+ * $Id: IWBaseComponent.java,v 1.8 2005/10/26 15:32:11 tryggvil Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -14,6 +14,9 @@ import java.io.IOException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.util.RenderUtils;
 import com.idega.util.text.TextStyler;
 
@@ -25,10 +28,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2005 <br/>
- * Last modified: $Date: 2005/10/26 15:03:42 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/10/26 15:32:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase {
@@ -237,5 +240,42 @@ public class IWBaseComponent extends UIComponentBase {
 		isInitialized = ((Boolean) values[3]).booleanValue();
 	}
 	
+	/**
+	 * <p>
+	 * Get the IWMainapplication from the context
+	 * </p>
+	 * @param context
+	 * @return
+	 */
+	protected IWMainApplication getIWMainApplication(FacesContext context){
+		return IWMainApplication.getIWMainApplication(context);
+	}
+	
+	/**
+	 * <p>
+	 * Get the IWBundle from the bundleIdentifier.
+	 * </p>
+	 * @param context
+	 * @param bundleIdentifier
+	 * @return
+	 */
+	protected IWBundle getIWBundle(FacesContext context,String bundleIdentifier){
+		IWMainApplication iwma = getIWMainApplication(context);
+		return iwma.getBundle(bundleIdentifier);
+	}
+	
+	/**
+	 * <p>
+	 * Get the IWResourceBundle from the context and bundleIdentifier.
+	 * It gets the locale from the context.
+	 * </p>
+	 * @param context
+	 * @param bundleIdentifier
+	 * @return
+	 */
+	protected IWResourceBundle getIWResourceBundle(FacesContext context,String bundleIdentifier){
+		IWBundle bundle = getIWBundle(context,bundleIdentifier);
+		return bundle.getResourceBundle(context.getExternalContext().getRequestLocale());
+	}
 	
 }
