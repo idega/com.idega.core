@@ -1,5 +1,5 @@
 /*
- * $Id: IWViewHandlerImpl.java,v 1.3 2004/12/30 17:55:16 gummi Exp $
+ * $Id: IWViewHandlerImpl.java,v 1.4 2005/10/26 17:41:34 tryggvil Exp $
  * Created on 12.3.2004 by  tryggvil in project smile
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -13,7 +13,6 @@ package com.idega.faces;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
 import java.util.logging.Logger;
 import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
@@ -38,20 +37,18 @@ import com.idega.presentation.IWContext;
  * 
  * Copyright (C) idega software 2004<br>
  * 
- * Last modified: $Date: 2004/12/30 17:55:16 $ by $Author: gummi $
+ * Last modified: $Date: 2005/10/26 17:41:34 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IWViewHandlerImpl extends ViewHandler{
 	
 	//private static Logger log = Logger.getLogger(IWViewHandlerImpl.class);
 	private static Logger log = Logger.getLogger(IWViewHandlerImpl.class.getName());
 	private ViewHandler parentViewHandler;
-	private Map childHandlerMap;
 	private ViewManager viewManager;
 	private ViewHandler jspViewHandler;
-	private IWMainApplication iwma;
 	
 	public IWViewHandlerImpl(){
 		log.info("Loading IWViewHandlerImpl");
@@ -77,7 +74,6 @@ public class IWViewHandlerImpl extends ViewHandler{
 		addChildViewHandler("/workspace",workspaceViewHandler);
 		addChildViewHandler("/idegaweb/workspace",workspaceViewHandler);
 		*/
-		this.iwma=iwma;
 		
 		updateViewManagerViewHandler(iwma);
 		
@@ -114,6 +110,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	public Locale calculateLocale(FacesContext ctx) {
 		IWContext iwc = IWContext.getIWContext(ctx);
 		Locale locale =  iwc.getCurrentLocale();
+		
 		return locale;
 	}
 	/* (non-Javadoc)
@@ -135,7 +132,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 		ViewHandler realHandler = getViewHandlerForContext(ctx);
 		if(realHandler!=null){
 			UIViewRoot root = realHandler.createView(ctx,viewId);
-			root.setLocale(IWContext.getIWContext(ctx).getCurrentLocale());
+			root.setLocale(calculateLocale(ctx));
 			return root;
 		}
 		else{
@@ -358,7 +355,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 		if(realHandler!=null){
 			UIViewRoot root = realHandler.restoreView(ctx,viewId);
 			if(root != null){
-				root.setLocale(IWContext.getIWContext(ctx).getCurrentLocale());
+				root.setLocale(calculateLocale(ctx));
 			}
 			return root;
 		}
