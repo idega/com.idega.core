@@ -143,8 +143,8 @@ public class HtmlPage extends Page {
 			Integer index = (Integer) getRegionIdsMap().get(regionKey);
 			if(index!=null){
 				Object o = getChildren().get(index.intValue());
-				HtmlPageRegion region = (HtmlPageRegion) o;
-				return region;
+				UIComponent child = (UIComponent) o;
+				return child;
 			}
 			else{
 				return null;
