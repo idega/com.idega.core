@@ -1,5 +1,5 @@
 /*
- * $Id: BackButton.java,v 1.15 2005/03/08 19:09:44 tryggvil Exp $
+ * $Id: BackButton.java,v 1.16 2005/10/26 17:01:24 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.presentation.Image;
  * <p>
  * This component presents a button that can be clicked and the user is sent to the previous page in the browser history.
  * </p>
- *  Last modified: $Date: 2005/03/08 19:09:44 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/10/26 17:01:24 $ by $Author: tryggvil $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class BackButton extends GenericButton {
 
@@ -102,6 +102,14 @@ public class BackButton extends GenericButton {
 		}
 	}
 	
+	/**
+	 * Sets the Button display string on the button.
+	 * @param value	The value to set.
+	 */
+	public void setValue(String value) {
+		setMarkupAttribute("value", value);
+		defaultContent=false;
+	}
 	
 	
 	public void printWML(IWContext main) {	
