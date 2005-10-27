@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.13 2005/10/27 14:57:34 tryggvil Exp $
+ * $Id: CbpViewHandler.java,v 1.14 2005/10/27 15:51:50 tryggvil Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2005/10/27 14:57:34 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/10/27 15:51:50 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class CbpViewHandler extends ViewHandler {
 
@@ -92,7 +92,7 @@ public class CbpViewHandler extends ViewHandler {
 
 			try {
 				writeOutResponseAndClientState(ctx);
-				ctx.getResponseWriter().flush();
+
 			}
 			catch (JspException e) {
 				//e.printStackTrace();
@@ -165,7 +165,10 @@ public class CbpViewHandler extends ViewHandler {
 	                //{
 	                //    bodyContent.writeOut(getPreviousOut());
 	                //}
-
+	                    
+	    				//Now we do endDocument on the real responseWriter.
+	                 realWriter.endDocument();
+	    				realWriter.flush();
 	            }
 	        }
 	        catch (Exception e)
