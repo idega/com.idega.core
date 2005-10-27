@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.12 2005/10/26 00:05:25 tryggvil Exp $
+ * $Id: CbpViewHandler.java,v 1.13 2005/10/27 14:57:34 tryggvil Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2005/10/26 00:05:25 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/10/27 14:57:34 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class CbpViewHandler extends ViewHandler {
 
@@ -88,10 +88,11 @@ public class CbpViewHandler extends ViewHandler {
 			out.startDocument();
 			renderComponent(ctx.getViewRoot(),ctx);
 			out.endDocument();
-			ctx.getResponseWriter().flush();
+			
 
 			try {
 				writeOutResponseAndClientState(ctx);
+				ctx.getResponseWriter().flush();
 			}
 			catch (JspException e) {
 				//e.printStackTrace();
