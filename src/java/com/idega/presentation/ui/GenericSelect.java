@@ -317,12 +317,13 @@ public class GenericSelect extends InterfaceObject {
 			buffer.append("option.selected = true;").append("\n");
 			buffer.append("}");
 			
-			Script script = getScript();
-			if (script == null) {
-				script = new Script();
-				this.getParentPage().add(script);
-			}
+			Script script = new Script();//getScript();
+			//if (script == null) {
+			//	script = new Script();
+			//	this.getParentPage().add(script);
+			//}
 			script.addFunction("navHandler", buffer.toString());
+			renderChild(iwc, script);
 			setOnChange("navHandler(this)");
 		}
 		
