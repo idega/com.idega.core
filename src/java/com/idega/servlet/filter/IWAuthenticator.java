@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.11 2005/09/23 17:26:07 tryggvil Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.12 2005/11/01 18:53:42 eiki Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.util.CypherText;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2005/09/23 17:26:07 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/01 18:53:42 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -53,6 +53,12 @@ public class IWAuthenticator extends BaseFilter {
 	 * This parameter can be set to forward to a certain page when logging in (and it is succesful)
 	 */
 	public static final String PARAMETER_REDIRECT_URI_ONLOGON = "logon_redirect_uri";
+	/**
+	 * This parameter can be set to forward to a certain page when logging off (and it is succesful)
+	 */
+	public static final String PARAMETER_REDIRECT_URI_ONLOGOFF = "logoff_redirect_uri";
+	
+	
 	
 	private static Logger log = Logger.getLogger(IWAuthenticator.class
 			.getName());
@@ -127,14 +133,19 @@ public class IWAuthenticator extends BaseFilter {
 				}
 			}
 		}
-		
-		if (iwc.isParameterSet(PARAMETER_REDIRECT_URI_ONLOGON) && iwc.isLoggedOn()) {
+		else if (iwc.isParameterSet(PARAMETER_REDIRECT_URI_ONLOGON) && iwc.isLoggedOn()) {
 			String uri = iwc.getParameter(PARAMETER_REDIRECT_URI_ONLOGON);
-				if (uri!=null) {
-					response.sendRedirect(uri);
-					return;
-				}
-			
+			if (uri!=null) {
+				response.sendRedirect(uri);
+				return;
+			}
+		}
+		else if (iwc.isParameterSet(PARAMETER_REDIRECT_URI_ONLOGOFF) && !iwc.isLoggedOn()) {
+			String uri = iwc.getParameter(PARAMETER_REDIRECT_URI_ONLOGOFF);
+			if (uri!=null) {
+				response.sendRedirect(uri);
+				return;
+			}
 		}
 		
 		chain.doFilter(new IWJAASAuthenticationRequestWrapper(iwc), response);
