@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.12 2005/11/01 18:53:42 eiki Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.13 2005/11/01 22:22:22 eiki Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -20,6 +20,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
+import com.idega.core.accesscontrol.business.AuthenticationBusiness;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.jaas.IWJAASAuthenticationRequestWrapper;
 import com.idega.core.builder.business.BuilderService;
@@ -29,6 +32,7 @@ import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
+import com.idega.user.data.User;
 import com.idega.util.CypherText;
 
 /**
@@ -38,10 +42,10 @@ import com.idega.util.CypherText;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2005/11/01 18:53:42 $ by $Author: eiki $
+ * Last modified: $Date: 2005/11/01 22:22:22 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -88,6 +92,8 @@ public class IWAuthenticator extends BaseFilter {
 		//IWContext iwc = IWContext.getIWContext(fc);
 		IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
 		
+		authenticationBusiness = getAuthenticationBusiness(iwc);
+		
 //		Enumeration headerNames = request.getHeaderNames();
 //		System.out.println("------------HEADER BEGINS-------------");
 //		while (headerNames.hasMoreElements()) {
@@ -103,6 +109,11 @@ public class IWAuthenticator extends BaseFilter {
 //		System.out.println("\t["+parameterNames+"]: "+request.getParameter(parameterName));
 //		}
 //		System.out.println("------------PARAMETERS ENDS-------------");
+		User lastLoggedOnAsUser = null;
+		if(iwc.isLoggedOn()){
+			lastLoggedOnAsUser = iwc.getCurrentUser();
+		}
+	
 		
 		if(useBasicAuthenticationMethod(iwc)){
 			if(!iwc.isLoggedOn()){
@@ -148,6 +159,15 @@ public class IWAuthenticator extends BaseFilter {
 			}
 		}
 		
+		//TODO support also on basic authentication (e.g. webdav) or is that not necessery?
+		//TODO grab an interrupt exeption and just return; (could be necessery for the methods to be able to use response.sendRedirect)
+		if( loginBusiness.isLogOnAction(iwc) && iwc.isLoggedOn()){
+			authenticationBusiness.callOnLogonMethodInAllAuthenticationListeners(request, response, iwc.getCurrentUser());
+		}
+		else if(loginBusiness.isLogOffAction(iwc) && !iwc.isLoggedOn()){
+			authenticationBusiness.callOnLogoffMethodInAllAuthenticationListeners(request, response, lastLoggedOnAsUser);
+		}
+		
 		chain.doFilter(new IWJAASAuthenticationRequestWrapper(iwc), response);
 	}
 
@@ -171,6 +191,7 @@ public class IWAuthenticator extends BaseFilter {
 
 	//public String IW_BUNDLE_IDENTIFIER = "com.idega.block.login";
 	public static final String PARAMETER_ALLOWS_COOKIE_LOGIN = "icusallows";
+	private AuthenticationBusiness authenticationBusiness;
 
 	
 
@@ -260,6 +281,17 @@ public class IWAuthenticator extends BaseFilter {
 
 	protected LoginBusinessBean getLoginBusiness(IWContext iwc){
 		return loginBusiness;
+	}
+	
+	protected AuthenticationBusiness getAuthenticationBusiness(IWApplicationContext iwac){
+		try {
+			authenticationBusiness = (AuthenticationBusiness) IBOLookup.getServiceInstance(iwac, AuthenticationBusiness.class);
+		}
+		catch (IBOLookupException e) {
+			e.printStackTrace();
+		}
+		
+		return authenticationBusiness;
 	}
 	
 	protected BuilderService getBuilderService(IWContext iwc) throws RemoteException {
