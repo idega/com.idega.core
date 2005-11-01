@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.57 2005/03/24 11:38:30 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.58 2005/11/01 13:20:04 laddi Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -20,18 +20,23 @@ import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
+import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginInfoHome;
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableBMPBean;
+import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.core.user.data.User;
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDORemoveException;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
@@ -602,7 +607,7 @@ public class LoginDBHandler {
 		//String finalPossibility = StringHandler.getRandomString(8);
 		ArrayList userNameList = new ArrayList(200);
 		try {
-			String usePidAsGenerated = IWMainApplication.getDefaultIWMainApplication().getCoreBundle().getProperty(LOGIN_USE_PID_AS_GENERATED,Boolean.toString(false));
+			String usePidAsGenerated = getPropertyValue(IWMainApplication.getDefaultIWMainApplication().getCoreBundle(), LOGIN_USE_PID_AS_GENERATED,Boolean.toString(false));
 			if(new Boolean(usePidAsGenerated).booleanValue()){
 				userNameList.add(user.getPersonalID());
 			}
@@ -766,5 +771,37 @@ public class LoginDBHandler {
 		LoginInfo info = getLoginInfo(login.getID());
 		info.setChangeNextTime(changeValue);
 		info.store();
+	}
+
+	private static String getPropertyValue(IWBundle iwb, String propertyName, String defaultValue) {
+		try {
+			String value = getBindingBusiness().get(propertyName);
+			if (value != null) {
+				return value;
+			}
+			else {
+				value = iwb.getProperty(propertyName);
+				getBindingBusiness().put(propertyName, value != null ? value : defaultValue);
+			}
+		}
+		catch (RemoveException re) {
+			re.printStackTrace();
+		}
+		catch (RemoteException re) {
+			throw new IBORuntimeException(re);
+		}
+		catch (CreateException ce) {
+			ce.printStackTrace();
+		}
+		return defaultValue;
+	}
+
+	private static ICApplicationBindingBusiness getBindingBusiness() {
+		try {
+			return (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), ICApplicationBindingBusiness.class);
+		}
+		catch (IBOLookupException ibe) {
+			throw new IBORuntimeException(ibe);
+		}
 	}
 }
