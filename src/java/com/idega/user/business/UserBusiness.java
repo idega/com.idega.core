@@ -1,6 +1,6 @@
 /*
- * $Id: UserBusiness.java,v 1.88 2005/07/14 17:15:54 eiki Exp $
- * Created on 2.2.2005
+ * $Id: UserBusiness.java,v 1.89 2005/11/01 16:11:58 eiki Exp $
+ * Created on Nov 1, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -51,10 +51,11 @@ import com.idega.util.IWTimestamp;
 
 
 /**
- * Last modified: $Date: 2005/07/14 17:15:54 $ by $Author: eiki $
  * 
- * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.88 $
+ *  Last modified: $Date: 2005/11/01 16:11:58 $ by $Author: eiki $
+ * 
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.89 $
  */
 public interface UserBusiness extends IBOService, IWLDAPConstants {
 
@@ -91,32 +92,41 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#insertUser
 	 */
-	public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws CreateException, RemoteException;
+	public User insertUser(String firstname, String middlename, String lastname, String displayname,
+			String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUserByPersonalIDIfDoesNotExist
 	 */
-	public User createUserByPersonalIDIfDoesNotExist(String fullName, String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException, RemoteException;
+	public User createUserByPersonalIDIfDoesNotExist(String fullName, String personalID, Gender gender,
+			IWTimestamp dateOfBirth) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUserByPersonalIDIfDoesNotExist
 	 */
-	public User createUserByPersonalIDIfDoesNotExist(String firstName, String middleName, String lastName, String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException, RemoteException;
+	public User createUserByPersonalIDIfDoesNotExist(String firstName, String middleName, String lastName,
+			String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUser
 	 */
-	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws CreateException, RemoteException;
+	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID,
+			String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUser
 	 */
-	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName) throws CreateException, RemoteException;
+	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID,
+			String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#setUserUnderDomain
 	 */
-	public void setUserUnderDomain(ICDomain domain, User user, GroupDomainRelationType type) throws CreateException, RemoteException;
+	public void setUserUnderDomain(ICDomain domain, User user, GroupDomainRelationType type) throws CreateException,
+			RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#generateUserLogin
@@ -131,52 +141,71 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUser
 	 */
-	public User createUser(String firstname, String middlename, String lastname) throws CreateException, RemoteException;
+	public User createUser(String firstname, String middlename, String lastname) throws CreateException,
+			RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUser
 	 */
-	public User createUser(String firstname, String middlename, String lastname, String personalID) throws CreateException, RemoteException;
+	public User createUser(String firstname, String middlename, String lastname, String personalID)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUser
 	 */
-	public User createUser(String firstName, String middleName, String lastName, int primary_groupID) throws CreateException, RemoteException;
+	public User createUser(String firstName, String middleName, String lastName, int primary_groupID)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUser
 	 */
-	public User createUser(String firstName, String middleName, String lastName, Group primary_group) throws CreateException, RemoteException;
+	public User createUser(String firstName, String middleName, String lastName, Group primary_group)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUser
 	 */
-	public User createUser(String firstname, String middlename, String lastname, String personalID, Gender gender) throws CreateException, RemoteException;
+	public User createUser(String firstname, String middlename, String lastname, String personalID, Gender gender)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUser
 	 */
-	public User createUser(String firstname, String middlename, String lastname, String personalID, Gender gender, IWTimestamp dateOfBirth, Group primaryGroup) throws CreateException, RemoteException;
+	public User createUser(String firstname, String middlename, String lastname, String personalID, Gender gender,
+			IWTimestamp dateOfBirth, Group primaryGroup) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUser
 	 */
-	public User createUser(String firstname, String middlename, String lastname, String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException, RemoteException;
+	public User createUser(String firstname, String middlename, String lastname, String personalID, Gender gender,
+			IWTimestamp dateOfBirth) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUserWithLogin
 	 */
-	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws CreateException, java.rmi.RemoteException;
+	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN,
+			String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group,
+			String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity,
+			Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType)
+			throws CreateException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUserWithLogin
 	 */
-	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType, String fullName) throws CreateException, java.rmi.RemoteException;
+	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN,
+			String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group,
+			String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity,
+			Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType,
+			String fullName) throws CreateException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUserWithLogin
 	 */
-	public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws CreateException, java.rmi.RemoteException;
+	public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname,
+			String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin,
+			String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires,
+			Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws CreateException,
+			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#deleteUser
@@ -191,12 +220,14 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#removeUserFromGroup
 	 */
-	public void removeUserFromGroup(int userId, Group group, User currentUser) throws RemoveException, java.rmi.RemoteException;
+	public void removeUserFromGroup(int userId, Group group, User currentUser) throws RemoveException,
+			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#removeUserFromGroup
 	 */
-	public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException, java.rmi.RemoteException;
+	public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException,
+			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#setPermissionGroup
@@ -261,12 +292,14 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUserPhone
 	 */
-	public void updateUserPhone(int userId, int phoneTypeId, String phoneNumber) throws EJBException, java.rmi.RemoteException;
+	public void updateUserPhone(int userId, int phoneTypeId, String phoneNumber) throws EJBException,
+			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUserPhone
 	 */
-	public void updateUserPhone(User user, int phoneTypeId, String phoneNumber) throws EJBException, java.rmi.RemoteException;
+	public void updateUserPhone(User user, int phoneTypeId, String phoneNumber) throws EJBException,
+			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUserMail
@@ -351,52 +384,72 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersMainAddressOrCreateIfDoesNotExist
 	 */
-	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException, RemoteException;
+	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber,
+			Integer postalCodeId, String countryName, String city, String province, String poBox)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersMainAddressOrCreateIfDoesNotExist
 	 */
-	public Address updateUsersMainAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException;
+	public Address updateUsersMainAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber,
+			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersMainAddressOrCreateIfDoesNotExist
 	 */
-	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException;
+	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber,
+			Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersCoAddressOrCreateIfDoesNotExist
 	 */
-	public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException, RemoteException;
+	public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber,
+			Integer postalCodeId, String countryName, String city, String province, String poBox)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersCoAddressOrCreateIfDoesNotExist
 	 */
-	public Address updateUsersCoAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException;
+	public Address updateUsersCoAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber,
+			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersCoAddressOrCreateIfDoesNotExist
 	 */
-	public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException;
+	public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber,
+			Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUser
 	 */
-	public void updateUser(int userId, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group) throws EJBException, RemoteException;
+	public void updateUser(int userId, String firstname, String middlename, String lastname, String displayname,
+			String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group)
+			throws EJBException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUser
 	 */
-	public void updateUser(int userId, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group, String fullname) throws EJBException, RemoteException;
+	public void updateUser(int userId, String firstname, String middlename, String lastname, String displayname,
+			String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group,
+			String fullname) throws EJBException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUser
 	 */
-	public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group) throws EJBException, RemoteException;
+	public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname,
+			String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group)
+			throws EJBException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUser
 	 */
-	public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group, String fullname) throws EJBException, RemoteException;
+	public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname,
+			String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group,
+			String fullname) throws EJBException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#listOfUserEmails
@@ -406,12 +459,14 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#storeUserEmail
 	 */
-	public Email storeUserEmail(Integer userID, String emailAddress, boolean replaceExistentRecord) throws java.rmi.RemoteException;
+	public Email storeUserEmail(Integer userID, String emailAddress, boolean replaceExistentRecord)
+			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#storeUserEmail
 	 */
-	public Email storeUserEmail(User user, String emailAddress, boolean replaceExistentRecord) throws java.rmi.RemoteException;
+	public Email storeUserEmail(User user, String emailAddress, boolean replaceExistentRecord)
+			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#removeUserEmails
@@ -471,7 +526,8 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName
 	 */
-	public User findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String personalID, String first_name, String last_name) throws FinderException, java.rmi.RemoteException;
+	public User findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String personalID, String first_name,
+			String last_name) throws FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersInNoGroup
@@ -516,7 +572,8 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroups
 	 */
-	public Collection getUserGroups(User aUser, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws EJBException, java.rmi.RemoteException;
+	public Collection getUserGroups(User aUser, String[] groupTypes, boolean returnSepcifiedGroupTypes)
+			throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getGroupBusiness
@@ -576,7 +633,8 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getHomePageForUser
 	 */
-	public com.idega.core.builder.data.ICPage getHomePageForUser(User user) throws javax.ejb.FinderException, java.rmi.RemoteException;
+	public com.idega.core.builder.data.ICPage getHomePageForUser(User user) throws javax.ejb.FinderException,
+			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getAddressBusiness
@@ -611,7 +669,8 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#isGroupUnderUsersTopGroupNode
 	 */
-	public boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user, Collection topGroupNodes) throws java.rmi.RemoteException;
+	public boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user, Collection topGroupNodes)
+			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#hasTopNodes
@@ -621,12 +680,14 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersTopGroupNodesByViewAndOwnerPermissions
 	 */
-	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc) throws RemoteException;
+	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)
+			throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#addGroupPKsToCollectionFromICPermissionCollection
 	 */
-	public void addGroupPKsToCollectionFromICPermissionCollection(Collection ICPermissionSRC, Collection GroupDEST) throws java.rmi.RemoteException;
+	public void addGroupPKsToCollectionFromICPermissionCollection(Collection ICPermissionSRC, Collection GroupDEST)
+			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getStoredTopNodeGroups
@@ -646,7 +707,8 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#storeUserTopGroupNodes
 	 */
-	public boolean storeUserTopGroupNodes(User user, Collection nodeGroups, int numberOfPermissions, String totalLoginTime, String comment) throws java.rmi.RemoteException;
+	public boolean storeUserTopGroupNodes(User user, Collection nodeGroups, int numberOfPermissions,
+			String totalLoginTime, String comment) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getAllGroupsWithEditPermission
@@ -661,17 +723,20 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#moveUsers
 	 */
-	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId) throws java.rmi.RemoteException;
+	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId)
+			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#moveUsers
 	 */
-	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId, boolean leaveCopyOfUserInCurrentGroup) throws java.rmi.RemoteException;
+	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId,
+			boolean leaveCopyOfUserInCurrentGroup) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#moveUsers
 	 */
-	public Map moveUsers(IWUserContext iwuc, Collection groups, Collection groupTypesToMoveAmong) throws java.rmi.RemoteException;
+	public Map moveUsers(IWUserContext iwuc, Collection groups, Collection groupTypesToMoveAmong)
+			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#isMemberOfGroup
@@ -696,7 +761,14 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createOrUpdateUser
 	 */
-	public User createOrUpdateUser(DN distinguishedName, Attributes attributes) throws CreateException, NamingException, RemoteException;
+	public User createOrUpdateUser(DN distinguishedName, Attributes attributes) throws CreateException,
+			NamingException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#updateUsersMainAddressByFullAddressString
+	 */
+	public void updateUsersMainAddressByFullAddressString(User user, String fullAddressString) throws RemoteException,
+			CreateException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserByUniqueId
@@ -706,12 +778,14 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createOrUpdateUser
 	 */
-	public User createOrUpdateUser(DN distinguishedName, Attributes attributes, Group parentGroup) throws RemoteException, CreateException, NamingException;
+	public User createOrUpdateUser(DN distinguishedName, Attributes attributes, Group parentGroup)
+			throws RemoteException, CreateException, NamingException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#setMetaDataFromLDAPAttributes
 	 */
-	public void setMetaDataFromLDAPAttributes(User user, DN distinguishedName, Attributes attributes) throws java.rmi.RemoteException;
+	public void setMetaDataFromLDAPAttributes(User user, DN distinguishedName, Attributes attributes)
+			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersByLDAPAttribute
@@ -731,7 +805,9 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersBySpecificGroupsUserstatusDateOfBirthAndGender
 	 */
-	public Collection getUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) throws java.rmi.RemoteException;
+	public Collection getUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups,
+			Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender)
+			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#storeUserComment
@@ -742,21 +818,21 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	 * @see com.idega.user.business.UserBusinessBean#getUserComments
 	 */
 	public Collection getUserComments(User user) throws FinderException, java.rmi.RemoteException;
-	
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#callAllUserGroupPluginAfterUserCreateOrUpdateMethod
 	 */
-	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user) throws CreateException,RemoteException;
-	
+	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user) throws CreateException, RemoteException;
+
 	/**
-	 * @throws CreateException 
 	 * @see com.idega.user.business.UserBusinessBean#callAllUserGroupPluginAfterUserCreateOrUpdateMethod
 	 */
-	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user,Group parentGroup) throws CreateException,RemoteException;
-	
+	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user, Group parentGroup)
+			throws CreateException, RemoteException;
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#callAllUserGroupPluginBeforeUserRemoveMethod
 	 */
-	public void callAllUserGroupPluginBeforeUserRemoveMethod(User user, Group parentGroup);
-
+	public void callAllUserGroupPluginBeforeUserRemoveMethod(User user, Group parentGroup)
+			throws java.rmi.RemoteException;
 }

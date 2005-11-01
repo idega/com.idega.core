@@ -1,6 +1,6 @@
 /*
- * $Id: UserBusinessHome.java,v 1.3 2005/02/16 11:11:16 laddi Exp $
- * Created on 2.2.2005
+ * $Id: UserBusinessHome.java,v 1.4 2005/11/01 16:11:58 eiki Exp $
+ * Created on Nov 1, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -9,20 +9,17 @@
  */
 package com.idega.user.business;
 
-
-
-
 import com.idega.business.IBOHome;
 
 
 /**
- * Last modified: $Date: 2005/02/16 11:11:16 $ by $Author: laddi $
  * 
- * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.3 $
+ *  Last modified: $Date: 2005/11/01 16:11:58 $ by $Author: eiki $
+ * 
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.4 $
  */
 public interface UserBusinessHome extends IBOHome {
 
 	public UserBusiness create() throws javax.ejb.CreateException, java.rmi.RemoteException;
-
 }

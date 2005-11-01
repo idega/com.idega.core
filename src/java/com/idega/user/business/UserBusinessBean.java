@@ -2969,9 +2969,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_FAX_NUMBER,attributes);
 		//String mobile =
 		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_MOBILE_NUMBER,attributes);
-//		TODO eiki handle addresses
-		//String address =
-		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
+		String fullAddressString =  ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
+
 		String gender = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_GENDER, attributes);
 		int genderId = -1;
 		if (gender != null) {
@@ -3059,6 +3058,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		//the email
 		updateUserMail(user, email);
 		
+		//the main address
+		try {
+			updateUsersMainAddressByFullAddressString(user,fullAddressString);
+		}
+		catch (CreateException e1) {
+			e1.printStackTrace();
+		}
+		
 		//the login
 		if(userName!=null){
 			try {
@@ -3086,6 +3093,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				e.printStackTrace();
 			}
 		}
+		
 			
 		//set all the attributes as metadata also
 		setMetaDataFromLDAPAttributes(user, distinguishedName, attributes);
@@ -3095,13 +3103,40 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 //			TODO Eiki make a method updatePhones(home,fax,mobile) DO in
 			// update also
 			//getPhoneHome().findUsersFaxPhone();
-		//	  		updateUsersMainAddressOrCreateIfDoesNotExist()
-		//	  		String address =
-		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
 		//			String phone =
 		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);  		
 		
 		return user;
+	}
+
+	/**
+	 * Updates or creates a users main address with a fully qualifying address string (see getFullAddressString(address) in AddressBusiness for the format of the string)
+	 * @param user
+	 * @param fullAddressString e.g. : "Stafnasel 6;107 Reykjavik;Iceland:is_IS;Reykjavik:12345", See javadoc on getFullAddressString(Address address) in AddressBusiness
+	 * @throws RemoteException 
+	 * @throws CreateException 
+	 */
+	public void updateUsersMainAddressByFullAddressString(User user, String fullAddressString) throws RemoteException, CreateException {
+		if(fullAddressString!=null && !"".equals(fullAddressString)){
+			Address mainAddress = getUsersMainAddress(user);
+			boolean addAddress = false;
+			if(mainAddress==null){
+				mainAddress = getAddressHome().create();
+				mainAddress.setAddressType(getAddressBusiness().getMainAddressType());
+				addAddress = true;
+			}
+			
+			mainAddress = getAddressBusiness().getUpdatedAddressByFullAddressString(mainAddress, fullAddressString);
+			
+			if(addAddress){
+				try {
+					user.addAddress(mainAddress);
+				}
+				catch (IDOAddRelationshipException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public User getUserByUniqueId(String uniqueID) throws FinderException {
