@@ -190,7 +190,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 			}
 		}
 
-		return (AddressCoordinate) getColumn(COORDINATE_ID);
+		return (AddressCoordinate) getColumnValue(COORDINATE_ID);
 	}
 	
 	public void setCoordinate(AddressCoordinate coordinate) {
@@ -242,7 +242,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	}
 
 	public Commune getCommune() {
-		return (Commune) getColumn(getColumnNameCommuneID());
+		return (Commune) getColumnValue(getColumnNameCommuneID());
 	}
 
 	public AddressTypeHome getAddressTypeHome() throws RemoteException {
