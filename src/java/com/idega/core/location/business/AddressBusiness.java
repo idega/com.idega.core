@@ -1,8 +1,8 @@
 /*
- * $Id: AddressBusiness.java,v 1.5 2004/09/14 15:04:06 joakim Exp $
- * Created on 14.9.2004
+ * $Id: AddressBusiness.java,v 1.6 2005/11/01 16:10:59 eiki Exp $
+ * Created on Nov 1, 2005
  *
- * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
@@ -16,6 +16,7 @@ import com.idega.business.IBOService;
 import com.idega.core.contact.data.EmailHome;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
+import com.idega.core.location.data.AddressType;
 import com.idega.core.location.data.Commune;
 import com.idega.core.location.data.CommuneHome;
 import com.idega.core.location.data.Country;
@@ -26,10 +27,10 @@ import com.idega.core.location.data.PostalCodeHome;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/14 15:04:06 $ by $Author: joakim $
+ *  Last modified: $Date: 2005/11/01 16:10:59 $ by $Author: eiki $
  * 
- * @author <a href="mailto:Joakim@idega.com">Joakim</a>
- * @version $Revision: 1.5 $
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.6 $
  */
 public interface AddressBusiness extends IBOService {
 
@@ -100,4 +101,32 @@ public interface AddressBusiness extends IBOService {
 	 * @see com.idega.core.location.business.AddressBusinessBean#getFullAddressString
 	 */
 	public String getFullAddressString(Address address) throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getUpdatedAddressByFullAddressString
+	 */
+	public Address getUpdatedAddressByFullAddressString(Address address, String fullAddressString)
+			throws RemoteException, CreateException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getCountryAndCreateIfDoesNotExist
+	 */
+	public Country getCountryAndCreateIfDoesNotExist(String countryName, String countryISOAbbr) throws RemoteException,
+			CreateException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getCommuneAndCreateIfDoesNotExist
+	 */
+	public Commune getCommuneAndCreateIfDoesNotExist(String communeName, String communeCode) throws RemoteException,
+			CreateException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getMainAddressType
+	 */
+	public AddressType getMainAddressType() throws RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getCOAddressType
+	 */
+	public AddressType getCOAddressType() throws RemoteException;
 }
