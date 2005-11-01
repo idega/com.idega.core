@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.125 2005/10/03 15:34:01 tryggvil Exp $
+ * $Id: IWContext.java,v 1.126 2005/11/01 17:07:58 thomas Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/10/03 15:34:01 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/01 17:07:58 $ by $Author: thomas $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.125 $
+ * @version $Revision: 1.126 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -169,17 +169,21 @@ implements IWUserContext, IWApplicationContext {
 			if(fc instanceof IWContext){
 				return (IWContext)fc;
 			}
-			else{
-				IWContext iwc=null;
-				//try to look up from requestmap
-				iwc = (IWContext)fc.getExternalContext().getRequestMap().get(IWCONTEXT_REQUEST_KEY);
-				if(iwc==null){
-					//put it to the request map if it isn't there already
-					iwc = new IWContext(fc);
-					fc.getExternalContext().getRequestMap().put(IWCONTEXT_REQUEST_KEY,iwc);
-				}
-				return iwc;
+			IWContext iwc=null;
+			//try to look up from requestmap
+			iwc = (IWContext)fc.getExternalContext().getRequestMap().get(IWCONTEXT_REQUEST_KEY);
+			// reason for the second condition below: 
+			// After forwarding the faces context has changed, check if the stored iwc holds the same faces context 
+			// or if a new iw context needs to be created.
+			// Forwarding is used when applying navigation rules.
+			// If iwc is holding an old faces context the response writer might not be set 
+			// (that is the response writer is null).
+			if(iwc==null || fc != iwc.getRealFacesContext()){
+				//put it to the request map if it isn't there already
+				iwc = new IWContext(fc);
+				fc.getExternalContext().getRequestMap().put(IWCONTEXT_REQUEST_KEY,iwc);
 			}
+			return iwc;
 	}
 	public HttpSession getSession() {
 		return getRequest().getSession();
