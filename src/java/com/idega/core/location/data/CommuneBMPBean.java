@@ -21,6 +21,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 	private static String COLUMN_PROVINCE_ID = "ic_province_id";
 	private static String COLUMN_GROUP_ID = "ic_group_id";
 	private static String COLUMN_DEFAULT = "default_commune";
+	private static String COLUMN_COMMUNE_WEB_URL = "web_url";
 	private static String COLUMN_VALID = "IS_VALID";
 
 	private static String OTHER = "Other";
@@ -34,6 +35,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 		addAttribute(COLUMN_COMMUNE_NAME, "Commune", true, true, String.class,50);
 		addAttribute(COLUMN_COMMUNE, "Commune name uppercase", true, true, String.class, 50);
 		addAttribute(COLUMN_COMMUNE_CODE, "Commune code", true, true, String.class, 20);
+		addAttribute(COLUMN_COMMUNE_WEB_URL, "Commune website", true, true, String.class,255);
 		addManyToOneRelationship(COLUMN_PROVINCE_ID, "Province", Province.class);
 		addManyToOneRelationship(COLUMN_GROUP_ID, "Group", Group.class);
 		addAttribute(COLUMN_DEFAULT, "Default commune", true, true, Boolean.class);
@@ -58,6 +60,14 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 
 	public String getCommuneName(){
 		return getStringColumnValue(COLUMN_COMMUNE_NAME);
+	}
+	
+	public void setCommuneWebsiteURL(String URL){
+		setColumn(COLUMN_COMMUNE_WEB_URL, URL);
+	}
+
+	public String getCommuneWebsiteURL(){
+		return getStringColumnValue(COLUMN_COMMUNE_WEB_URL);
 	}
 
 	public void setCommuneCode(String code) {

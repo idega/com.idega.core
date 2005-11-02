@@ -1,8 +1,8 @@
 /*
- * $Id: Commune.java,v 1.2 2004/09/14 15:04:06 joakim Exp $
- * Created on 14.9.2004
+ * $Id: Commune.java,v 1.3 2005/11/02 16:40:05 eiki Exp $
+ * Created on Nov 2, 2005
  *
- * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
@@ -15,10 +15,10 @@ import com.idega.user.data.Group;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/14 15:04:06 $ by $Author: joakim $
+ *  Last modified: $Date: 2005/11/02 16:40:05 $ by $Author: eiki $
  * 
- * @author <a href="mailto:Joakim@idega.com">Joakim</a>
- * @version $Revision: 1.2 $
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.3 $
  */
 public interface Commune extends IDOEntity {
 
@@ -31,6 +31,16 @@ public interface Commune extends IDOEntity {
 	 * @see com.idega.core.location.data.CommuneBMPBean#getCommuneName
 	 */
 	public String getCommuneName();
+
+	/**
+	 * @see com.idega.core.location.data.CommuneBMPBean#setCommuneWebsiteURL
+	 */
+	public void setCommuneWebsiteURL(String URL);
+
+	/**
+	 * @see com.idega.core.location.data.CommuneBMPBean#getCommuneWebsiteURL
+	 */
+	public String getCommuneWebsiteURL();
 
 	/**
 	 * @see com.idega.core.location.data.CommuneBMPBean#setCommuneCode

@@ -1,8 +1,8 @@
 /*
- * $Id: CommuneHomeImpl.java,v 1.3 2004/09/14 15:04:06 joakim Exp $
- * Created on 14.9.2004
+ * $Id: CommuneHomeImpl.java,v 1.4 2005/11/02 16:40:05 eiki Exp $
+ * Created on Nov 2, 2005
  *
- * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
@@ -18,10 +18,10 @@ import com.idega.data.IDOLookupException;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/14 15:04:06 $ by $Author: joakim $
+ *  Last modified: $Date: 2005/11/02 16:40:05 $ by $Author: eiki $
  * 
- * @author <a href="mailto:Joakim@idega.com">Joakim</a>
- * @version $Revision: 1.3 $
+ * @author <a href="mailto:eiki@idega.com">eiki</a>
+ * @version $Revision: 1.4 $
  */
 public class CommuneHomeImpl extends IDOFactory implements CommuneHome {
 
