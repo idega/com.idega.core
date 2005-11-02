@@ -1,5 +1,5 @@
 /*
- * $Id: AuthenticationBusinessBean.java,v 1.1 2005/11/01 22:16:59 eiki Exp $
+ * $Id: AuthenticationBusinessBean.java,v 1.2 2005/11/02 15:57:47 eiki Exp $
  * Created on Nov 1, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,10 +13,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import com.idega.business.IBOService;
 import com.idega.business.IBOServiceBean;
+import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 
 /**
@@ -24,12 +22,12 @@ import com.idega.user.data.User;
  * Also provides plugable behavior for objects that want to be notified when a user logs on and off (see AuthenticationListener interface).<br>
  * This bean is supposed to gradually replace LoginBusinessBean and AccessController/AccessControl and weed out static and obsolete methods.
  * 
- *  Last modified: $Date: 2005/11/01 22:16:59 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/11/02 15:57:47 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public class AuthenticationBusinessBean extends IBOServiceBean implements IBOService, AuthenticationBusiness{
+public class AuthenticationBusinessBean extends IBOServiceBean implements AuthenticationBusiness{
 	
 	Map authenticationListeners = new HashMap();
 
@@ -42,24 +40,24 @@ public class AuthenticationBusinessBean extends IBOServiceBean implements IBOSer
 		}
 	}
 		
-	public void callOnLogonMethodInAllAuthenticationListeners(HttpServletRequest request,HttpServletResponse response, User user){
+	public void callOnLogonMethodInAllAuthenticationListeners(IWContext iwc, User user){
 		//do we need to worry about thread problems?
 		Collection listeners = authenticationListeners.values();
 		
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 			AuthenticationListener listener = (AuthenticationListener) iter.next();
-			listener.onLogon(request, response, user);
+			listener.onLogon(iwc, user);
 		}
 		
 	}
 	
-	public void callOnLogoffMethodInAllAuthenticationListeners(HttpServletRequest request,HttpServletResponse response, User user){
+	public void callOnLogoffMethodInAllAuthenticationListeners(IWContext iwc, User user){
 		//do we need to worry about thread problems?
 		Collection listeners = authenticationListeners.values();
 		
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 			AuthenticationListener listener = (AuthenticationListener) iter.next();
-			listener.onLogoff(request, response, user);
+			listener.onLogoff(iwc, user);
 		}
 		
 	}

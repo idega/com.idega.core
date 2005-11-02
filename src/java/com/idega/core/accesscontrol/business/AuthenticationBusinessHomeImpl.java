@@ -1,6 +1,6 @@
 /*
- * $Id: AuthenticationBusinessHomeImpl.java,v 1.1 2005/11/01 22:17:00 eiki Exp $
- * Created on Nov 1, 2005
+ * $Id: AuthenticationBusinessHomeImpl.java,v 1.2 2005/11/02 15:57:47 eiki Exp $
+ * Created on Nov 2, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import com.idega.business.IBOHomeImpl;
 
 /**
  * 
- *  Last modified: $Date: 2005/11/01 22:17:00 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/11/02 15:57:47 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class AuthenticationBusinessHomeImpl extends IBOHomeImpl implements AuthenticationBusinessHome {
 

@@ -1,6 +1,6 @@
 /*
- * $Id: AuthenticationBusiness.java,v 1.1 2005/11/01 22:16:59 eiki Exp $
- * Created on Nov 1, 2005
+ * $Id: AuthenticationBusiness.java,v 1.2 2005/11/02 15:57:47 eiki Exp $
+ * Created on Nov 2, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -9,18 +9,17 @@
  */
 package com.idega.core.accesscontrol.business;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import com.idega.business.IBOService;
+import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 
 
 /**
  * 
- *  Last modified: $Date: 2005/11/01 22:16:59 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/11/02 15:57:47 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface AuthenticationBusiness extends IBOService {
 
@@ -32,12 +31,11 @@ public interface AuthenticationBusiness extends IBOService {
 	/**
 	 * @see com.idega.core.accesscontrol.business.AuthenticationBusinessBean#callOnLogonMethodInAllAuthenticationListeners
 	 */
-	public void callOnLogonMethodInAllAuthenticationListeners(HttpServletRequest request, HttpServletResponse response,
-			User user) throws java.rmi.RemoteException;
+	public void callOnLogonMethodInAllAuthenticationListeners(IWContext iwc, User user) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.core.accesscontrol.business.AuthenticationBusinessBean#callOnLogoffMethodInAllAuthenticationListeners
 	 */
-	public void callOnLogoffMethodInAllAuthenticationListeners(HttpServletRequest request, HttpServletResponse response,
-			User user) throws java.rmi.RemoteException;
+	public void callOnLogoffMethodInAllAuthenticationListeners(IWContext iwc, User user)
+			throws java.rmi.RemoteException;
 }

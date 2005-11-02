@@ -1,5 +1,5 @@
 /*
- * $Id: AuthenticationListener.java,v 1.1 2005/11/01 22:17:00 eiki Exp $
+ * $Id: AuthenticationListener.java,v 1.2 2005/11/02 15:57:47 eiki Exp $
  * Created on Nov 1, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,17 +9,16 @@
  */
 package com.idega.core.accesscontrol.business;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 
 /**
  * Implement this interface and register your class as a listener for login/logout events etc. via AuthenticationBusiness.
  * 
- *  Last modified: $Date: 2005/11/01 22:17:00 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/11/02 15:57:47 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface AuthenticationListener {
 	//the action methods here might need to be able to throw an interrupting exception 
@@ -31,20 +30,18 @@ public interface AuthenticationListener {
 	public String getAuthenticationListenerName();
 	
 	/**
-	 * 
-	 * @param request
-	 * @param response
+	 * Called when a user successfully logs on
+	 * @param iwc request and response wrapper
 	 * @param currentUser
 	 */
-	public void onLogon(HttpServletRequest request,HttpServletResponse response,User currentUser);
+	public void onLogon(IWContext iwc,User currentUser);
 	
 	/**
-	 * 
-	 * @param request
-	 * @param response
+	 * Called when a user successfully logs off
+	 * @param iwc request and response wrapper
 	 * @param lastUser
 	 */
-	public void onLogoff(HttpServletRequest request,HttpServletResponse response,User lastUser);
+	public void onLogoff(IWContext iwc, User lastUser);
 
 	
 }
