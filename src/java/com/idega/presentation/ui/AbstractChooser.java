@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.29 2005/05/11 18:12:50 gummi Exp $
+ * $Id: AbstractChooser.java,v 1.30 2005/11/03 14:15:40 gimmi Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -55,6 +55,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	
 	private String styleClassName;
 	private boolean isStyleClassSet = false;
+	private boolean usePublicWindowOpener = false;
 
 	/**
 	 * @param aDisabled -
@@ -196,7 +197,11 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		else {
 			getLink(_iwrb);
 
-			link.setWindowToOpen(getChooserWindowClass());
+			if (getUsePublicWindowOpener()) {
+				link.setPublicWindowToOpen(getChooserWindowClass());
+			} else {
+				link.setWindowToOpen(getChooserWindowClass());
+			}
 			link.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
 
 			link.addParameter(FORM_ID_PARAMETER, getParentFormID());
@@ -352,5 +357,9 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 */
 	protected IWResourceBundle getResourceBundle() {
 		return this._iwrb;
+	}
+	
+	protected boolean getUsePublicWindowOpener() {
+		return usePublicWindowOpener;
 	}
 }
