@@ -1,30 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <classpath>
-  <classpathentry excluding="" kind="src" path="src/java">
-  </classpathentry>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-  </classpathentry>
-  <classpathentry kind="src" path="/com.idega.core">
-  </classpathentry>
-  <classpathentry kind="src" path="/com.idega.builder">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-impl-1.1.0.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/smile/jars/smile-0.3.3.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-jsf-api-1.1.0.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/jspapi/jars/jsp-api-2.0.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/ejb/jars/ejb-2.0.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-spec1_0_1.jar">
-  </classpathentry>
-  <classpathentry kind="output" path="target/classes">
-  </classpathentry>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="/com.idega.core"/>
+	<classpathentry kind="src" path="/com.idega.builder"/>
+	<classpathentry sourcepath="/MYFACES_1_1_0_SRC_IMPL" kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-impl-1.1.0.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/smile/jars/smile-0.3.3.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-jsf-api-1.1.0.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/jspapi/jars/jsp-api-2.0.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/ejb/jars/ejb-2.0.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-spec1_0_1.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
