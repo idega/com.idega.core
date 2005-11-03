@@ -103,7 +103,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         //setParameterValue(SmallCalendar.PRM_SETTINGS,SmallCalendar.getInitializingString(true,null,"#0000FF","#00FF00","#00FFFF","#FFFF00","#FFFFFF","#FFF000"));
     }
 
-    public PresentationObject getPresentationObject(IWContext iwc) {
+	public PresentationObject getPresentationObject(IWContext iwc) {
 
         TextInput input = new TextInput(displayInputName);
         input.setDisabled(disabled);
@@ -138,12 +138,16 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         	input.setStyleClass(styleClass);
         }
         if (keepStatus) {
-        	input.keepStatusOnAction();
+        	String p = iwc.getParameter(getChooserParameter());
+        	if (p != null) {
+        		input.setValue(p);
+        	}
         }
 
         return input;
     }
 
+    
     /*
      * (non-Javadoc)
      * 
@@ -448,4 +452,12 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     public void setLength(int length) {
     	this.length = length;
     }
+    
+    public void setUseJSCalendar(boolean useJSCalendar) {
+    	this.useJSCalendar = useJSCalendar;
+    }
+    protected boolean getUsePublicWindowOpener() {
+		return true;
+	}
+
 }
