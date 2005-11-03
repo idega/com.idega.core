@@ -1,5 +1,5 @@
 /*
- * $Id: SQLSchemaAdapter.java,v 1.7 2005/07/28 12:44:01 tryggvil Exp $
+ * $Id: SQLSchemaAdapter.java,v 1.8 2005/11/03 23:48:56 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/07/28 12:44:01 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/03 23:48:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public abstract class SQLSchemaAdapter implements MutableClass {
 
@@ -59,7 +59,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	public final static String DBTYPE_ORACLE = "oracle";
 	public final static String DBTYPE_INTERBASE = "interbase";
 	public final static String DBTYPE_HSQL = "hsql";
-	public final static String DBTYPE_MAKOI = "mckoi";
+	public final static String DBTYPE_MCKOI = "mckoi";
 	public final static String DBTYPE_MYSQL = "mysql";
 	public final static String DBTYPE_SAPDB = "sapdb";
 	public final static String DBTYPE_DB2 = "db2";
@@ -86,31 +86,34 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		theReturn = (SQLSchemaAdapter) interfacesHashtable.get(datastoreType);
 		if (theReturn == null) {
 				
-			if (datastoreType.equals("oracle")) {
+			if (datastoreType.equals(DBTYPE_ORACLE)) {
 				className = OracleSchemaAdapter.class;
 			}
-			else if (datastoreType.equals("interbase")) {
+			else if (datastoreType.equals(DBTYPE_INTERBASE)) {
 				className = InterbaseSchemaAdapter.class;
 			}
-			else if (datastoreType.equals("mysql")) {
+			else if (datastoreType.equals(DBTYPE_MYSQL)) {
 				className = MySQLSchemaAdapter.class;
 			}
-			else if (datastoreType.equals("sapdb")) {
+			else if (datastoreType.equals(DBTYPE_SAPDB)) {
 				className = SapDBSchemaAdapter.class;
 			}
-			else if (datastoreType.equals("mssqlserver")) {
+			else if (datastoreType.equals(DBTYPE_MSSQLSERVER)) {
 				className = MSSQLServerSchemaAdapter.class;
 			}
-			else if (datastoreType.equals("db2")) {
+			else if (datastoreType.equals(DBTYPE_DB2)) {
 				className = DB2SchemaAdapter.class;
 			}
-			else if (datastoreType.equals("informix")) {
+			else if (datastoreType.equals(DBTYPE_INFORMIX)) {
 				className = InformixSchemaAdapter.class;
 			}
-			else if (datastoreType.equals("hsql")) {
+			else if (datastoreType.equals(DBTYPE_HSQL)) {
 				className = HSQLSchemaAdapter.class;
 			}
-			else if (datastoreType.equals("mckoi")) {
+			else if (datastoreType.equals(DBTYPE_DERBY)) {
+				className = DerbySchemaAdapter.class;
+			}
+			else if (datastoreType.equals(DBTYPE_MCKOI)) {
 				className = McKoiSchemaAdapter.class;
 			}
 			else {
@@ -225,7 +228,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 					dataStoreType = DBTYPE_DERBY;
 				}
 				else if (checkString.indexOf("mckoi") != -1) {
-					dataStoreType = DBTYPE_MAKOI;
+					dataStoreType = DBTYPE_MCKOI;
 				}
 				else if (checkString.indexOf("mysql") != -1) {
 					dataStoreType = DBTYPE_MYSQL;
