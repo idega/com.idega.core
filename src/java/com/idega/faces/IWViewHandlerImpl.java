@@ -1,5 +1,5 @@
 /*
- * $Id: IWViewHandlerImpl.java,v 1.4 2005/10/26 17:41:34 tryggvil Exp $
+ * $Id: IWViewHandlerImpl.java,v 1.5 2005/11/04 14:08:38 tryggvil Exp $
  * Created on 12.3.2004 by  tryggvil in project smile
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -26,6 +26,7 @@ import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
+import com.idega.util.FacesUtil;
 
 
 /**
@@ -37,10 +38,10 @@ import com.idega.presentation.IWContext;
  * 
  * Copyright (C) idega software 2004<br>
  * 
- * Last modified: $Date: 2005/10/26 17:41:34 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/04 14:08:38 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class IWViewHandlerImpl extends ViewHandler{
 	
@@ -129,6 +130,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 * @see javax.faces.application.ViewHandler#createView(javax.faces.context.FacesContext, java.lang.String)
 	 */
 	public UIViewRoot createView(FacesContext ctx, String viewId) {
+		FacesUtil.registerRequestBegin(ctx);
 		ViewHandler realHandler = getViewHandlerForContext(ctx);
 		if(realHandler!=null){
 			UIViewRoot root = realHandler.createView(ctx,viewId);
@@ -251,6 +253,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 */
 	public void renderView(FacesContext ctx, UIViewRoot viewId)
 			throws IOException, FacesException {
+		FacesUtil.registerRequestBegin(ctx);
 		ViewHandler realHandler = getViewHandlerForContext(ctx);
 		if(realHandler!=null){
 			realHandler.renderView(ctx,viewId);
@@ -258,6 +261,10 @@ public class IWViewHandlerImpl extends ViewHandler{
 		else{
 			throw new RuntimeException ("No ViewHandler Found for getResourceURL");
 		}
+		long l = FacesUtil.registerRequestEnd(ctx);
+		
+		System.out.println("Rendering took: "+l+" ms.");
+		
 		/*String url = getRequestUrl(ctx);
 		ViewHandler childHandler = getViewHandlerForUrl(url);
 		if(childHandler!=null){
@@ -351,6 +358,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 * @see javax.faces.application.ViewHandler#restoreView(javax.faces.context.FacesContext, java.lang.String)
 	 */
 	public UIViewRoot restoreView(FacesContext ctx, String viewId) {
+		FacesUtil.registerRequestBegin(ctx);
 		ViewHandler realHandler = getViewHandlerForContext(ctx);
 		if(realHandler!=null){
 			UIViewRoot root = realHandler.restoreView(ctx,viewId);
@@ -395,4 +403,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	protected ViewManager getViewManager() {
 		return viewManager;
 	}
+	
+	
+
 }
