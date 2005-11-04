@@ -1,5 +1,5 @@
 /*
- * $Id: IWViewHandlerImpl.java,v 1.6 2005/11/04 14:12:35 tryggvil Exp $
+ * $Id: IWViewHandlerImpl.java,v 1.7 2005/11/04 14:14:23 tryggvil Exp $
  * Created on 12.3.2004 by  tryggvil in project smile
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.util.FacesUtil;
  * 
  * Copyright (C) idega software 2004<br>
  * 
- * Last modified: $Date: 2005/11/04 14:12:35 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/04 14:14:23 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class IWViewHandlerImpl extends ViewHandler{
 	
@@ -261,10 +261,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 		else{
 			throw new RuntimeException ("No ViewHandler Found for getResourceURL");
 		}
-		long time = FacesUtil.registerRequestEnd(ctx);
-		
-		String renderingText = time+" ms";
-		ctx.getResponseWriter().writeComment(renderingText);
+
 		
 		//System.out.println("Rendering took: "+l+" ms.");
 		
