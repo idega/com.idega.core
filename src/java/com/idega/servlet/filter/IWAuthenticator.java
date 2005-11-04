@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.16 2005/11/03 17:36:28 eiki Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.17 2005/11/04 14:18:27 eiki Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -24,6 +24,7 @@ import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AuthenticationBusiness;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.accesscontrol.business.ServletFilterChainInterruptException;
 import com.idega.core.accesscontrol.jaas.IWJAASAuthenticationRequestWrapper;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
@@ -42,10 +43,10 @@ import com.idega.util.CypherText;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2005/11/03 17:36:28 $ by $Author: eiki $
+ * Last modified: $Date: 2005/11/04 14:18:27 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -151,8 +152,7 @@ public class IWAuthenticator extends BaseFilter {
 				return;
 			}
 		}
-		//can be done seperately because it is a logoff action
-		if (iwc.isParameterSet(PARAMETER_REDIRECT_URI_ONLOGOFF) && !iwc.isLoggedOn()) {
+		else if (iwc.isParameterSet(PARAMETER_REDIRECT_URI_ONLOGOFF) && !iwc.isLoggedOn()) {
 			String uri = iwc.getParameter(PARAMETER_REDIRECT_URI_ONLOGOFF);
 			if (uri!=null) {
 				response.sendRedirect(uri);
@@ -163,10 +163,24 @@ public class IWAuthenticator extends BaseFilter {
 		//TODO support also on basic authentication (e.g. webdav) or is that not necessery?
 		//TODO grab an interrupt exeption and just return; (could be necessery for the methods to be able to use response.sendRedirect)
 		if( loginBusiness.isLogOnAction(iwc) && iwc.isLoggedOn()){
-			authenticationBusiness.callOnLogonMethodInAllAuthenticationListeners(iwc, iwc.getCurrentUser());
+			try {
+				authenticationBusiness.callOnLogonMethodInAllAuthenticationListeners(iwc, iwc.getCurrentUser());
+			}
+			catch (ServletFilterChainInterruptException e) {
+				//this is normal behaviour if e.g. the listener issues a response.sendRedirect(...)
+				System.out.println("[IWAuthenticator] - Filter chain interrupted. The reason was: "+e.getMessage());
+				return;
+			}
 		}
 		else if(loginBusiness.isLogOffAction(iwc) && !iwc.isLoggedOn() && lastLoggedOnAsUser!=null){
-			authenticationBusiness.callOnLogoffMethodInAllAuthenticationListeners(iwc, lastLoggedOnAsUser);
+			try {
+				authenticationBusiness.callOnLogoffMethodInAllAuthenticationListeners(iwc, lastLoggedOnAsUser);
+			}
+			catch (ServletFilterChainInterruptException e) {
+				//this is normal behaviour if e.g. the listener issues a response.sendRedirect(...)
+				System.out.println("[IWAuthenticator] - Filter chain interrupted. The reason was: "+e.getMessage());
+				return;
+			}
 		}
 		
 		chain.doFilter(new IWJAASAuthenticationRequestWrapper(iwc), response);
