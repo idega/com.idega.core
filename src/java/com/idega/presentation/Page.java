@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.149 2005/10/05 17:47:05 thomas Exp $
+ *  $Id: Page.java,v 1.150 2005/11/04 14:15:56 tryggvil Exp $
  *  Created in 2000 by Tryggvi Larusson
  *  Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -48,6 +48,7 @@ import com.idega.repository.data.PropertyDescription;
 import com.idega.repository.data.PropertyDescriptionHolder;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.servlet.IWCoreServlet;
+import com.idega.util.FacesUtil;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
 import com.idega.util.URLUtil;
@@ -62,10 +63,10 @@ import com.idega.util.datastructures.QueueMap;
  * </pre>
  * tags in HTML and renders the children inside the body tags.
  * </p>
- *  Last modified: $Date: 2005/10/05 17:47:05 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/11/04 14:15:56 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.149 $
+ * @version $Revision: 1.150 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 	
@@ -1549,6 +1550,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	public void encodeEnd(FacesContext context)throws IOException{
 		this.printEnd(IWContext.getIWContext(context));
 		resetGoneThroughMain();
+		long time = FacesUtil.registerRequestEnd(context);
+		String renderingText = time+" ms";
+		context.getResponseWriter().writeComment(renderingText);
 	}
 	/**
 	 * Bridging method for JSF:
