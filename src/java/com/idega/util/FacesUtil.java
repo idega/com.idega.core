@@ -1,5 +1,5 @@
 /*
- * $Id: FacesUtil.java,v 1.1 2004/12/31 02:13:17 tryggvil Exp $
+ * $Id: FacesUtil.java,v 1.2 2005/11/04 14:07:27 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -15,14 +15,15 @@ import javax.faces.context.FacesContext;
 /**
  *  Utility class for various JavaServer Faces functions.
  * 
- *  Last modified: $Date: 2004/12/31 02:13:17 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/04 14:07:27 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class FacesUtil {
 	
 	private static String SLASH="/";
+	public static final String REQUEST_START="request_start_time";
 
 
 	/**
@@ -61,6 +62,36 @@ public class FacesUtil {
 			}
 		}
 	}
-
-
+	
+	/**
+	 * <p>
+	 * Registers the request start time in system time milliseconds and stores as a request variable.
+	 * </p>
+	 * @param context
+	 * @return
+	 */
+	public static Long registerRequestBegin(FacesContext context){
+		Long time = (Long) context.getExternalContext().getRequestMap().get(REQUEST_START);
+		if(time==null){
+			time = new Long(System.currentTimeMillis());
+			context.getExternalContext().getRequestMap().put(REQUEST_START,time);
+		}
+		return time;
+	}
+	/**
+	 * <p>
+	 * Gets difference between the start time and request begin time and removes the request start time variable
+	 * </p>
+	 * @param context
+	 * @return
+	 */
+	public static long registerRequestEnd(FacesContext context){
+		Long time = (Long) context.getExternalContext().getRequestMap().get(REQUEST_START);
+		if(time!=null){
+			long endTime = System.currentTimeMillis();
+			context.getExternalContext().getRequestMap().remove(REQUEST_START);
+			return endTime-time.longValue();
+		}
+		return -1;
+	}
 }
