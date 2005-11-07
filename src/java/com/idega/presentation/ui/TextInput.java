@@ -1,5 +1,5 @@
 /*
- * $Id: TextInput.java,v 1.40 2005/07/04 15:54:30 gimmi Exp $
+ * $Id: TextInput.java,v 1.41 2005/11/07 20:33:13 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a input element of type text
  * </p>
- *  Last modified: $Date: 2005/07/04 15:54:30 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/11/07 20:33:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.40 $
+ * @version $Revision: 1.41 $
  */
 public class TextInput extends GenericInput {
     private boolean isSetAsIntegers;
@@ -40,6 +40,7 @@ public class TextInput extends GenericInput {
     private boolean isSetAsCreditCardNumber;
     private boolean isSetMinimumLength;
     private boolean isSetEmptyConfirm;
+    private boolean isSetToDisableWhenNotEmpty;
     private String integersErrorMessage;
     private String floatErrorMessage;
     private String alphabetErrorMessage;
@@ -55,7 +56,7 @@ public class TextInput extends GenericInput {
 	
 	
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[25];
+		Object values[] = new Object[26];
 		values[0] = super.saveState(ctx);
 		values[1] = Boolean.valueOf(isSetAsIntegers);
 		values[2] = Boolean.valueOf(isSetAsPosNegIntegers);
@@ -81,6 +82,7 @@ public class TextInput extends GenericInput {
 		values[22] = new Integer(decimals);
 		values[23] = Boolean.valueOf(isSetEmptyConfirm);
 		values[24] = emptyConfirmMessage;
+		values[25] = Boolean.valueOf(isSetToDisableWhenNotEmpty);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
@@ -98,6 +100,7 @@ public class TextInput extends GenericInput {
 		isSetAsCreditCardNumber = ((Boolean) values[10]).booleanValue();
 		isSetMinimumLength = ((Boolean) values[11]).booleanValue();
 		isSetEmptyConfirm = ((Boolean) values[23]).booleanValue();
+		isSetToDisableWhenNotEmpty = ((Boolean) values[25]).booleanValue();
 		integersErrorMessage = (String) values[12];
 		floatErrorMessage = (String) values[13];
 		alphabetErrorMessage = (String) values[14];
@@ -561,7 +564,24 @@ public class TextInput extends GenericInput {
                         "warnIfNotEmail",
                         "function warnIfNotEmail (inputbox,message) {\n \tvar strng = inputbox.value;\n \tif (strng.length == 0)\n \t\treturn true;\n\n \tvar emailFilter=/^.+@.+\\..{2,3}$/;\n \tif (!(emailFilter.test(strng))) {\n \t\talert(message);\n \t\treturn false;\n \t}\n\n \tvar illegalChars= /[\\(\\)\\<\\>\\,\\;\\:\\\\\\/\\\"\\[\\]]/;\n \tif (strng.match(illegalChars)) {\n \t\talert(message);\n \t\treturn false;\n \t}\n \treturn true;\n}",
                         emailErrorMessage);
+        
+        if (isSetToDisableWhenNotEmpty) {
+  					getScript().addFunction("disableObjectWhenNotEmpty", "function disableObjectWhenNotEmpty(input, otherInput) {\n	if (input.value.length() > 1) {	otherInput[i].disabled=true; }\n	else	otherInput.disabled=false;\n}");
+        }
     }
+
+  	/**
+  	 * Sets the interface object(s) with the given name to be enabled when this object
+  	 * receives the action specified.
+  	 * @param action	The action to perform on.
+  	 * @param objectToEnable	The name of the interface object(s) to enable.
+  	 * @param enable	Set to true to disable, false will enable.
+  	 */
+  	public void setToDisableOnWhenNotEmpty(InterfaceObject object) {
+  		isSetToDisableWhenNotEmpty = true;
+  		setOnKeyUp("disableObjectWhenNotEmpty(findObj(this, '" + object.getName() + "'))");
+  		setOnKeyDown("disableObjectWhenNotEmpty(findObj(this, '" + object.getName() + "'))");
+  	}
 
     public synchronized Object clone() {
         TextInput obj = null;
