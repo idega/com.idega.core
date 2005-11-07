@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 import com.idega.business.InputHandler;
@@ -40,10 +39,8 @@ import com.idega.util.text.TextSoap;
 public class DatePicker extends AbstractChooser implements InputHandler {
 
     private static Boolean jsExists = null;
-    private static HashMap langFiles = null;
     private Locale locale = null;
     private boolean useJSCalendar = true;
-
     private int dateFormatStyle = DateFormat.SHORT;
     private String dateFormatPattern = "yyyy-MM-dd";
     private Date date = new Date();
