@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.9 2005/02/10 10:42:47 thomas Exp $
+ * $Id: IWUrlRedirector.java,v 1.10 2005/11/08 16:15:27 gimmi Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,8 @@ package com.idega.servlet.filter;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Iterator;
+import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -28,10 +30,10 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2005/02/10 10:42:47 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/11/08 16:15:27 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -90,6 +92,44 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		else if(requestUri.equals(NEW_IDEGAWEB_LOGIN_MINUSSLASH)){
 				return getNewLoginUri(request);
 		}
+		else if (requestUri.startsWith(OLD_OBJECT_INSTANCIATOR)) {
+			String param = request.getParameter(IWMainApplication.classToInstanciateParameter);
+			if (param != null && param.length() == 4) {
+				String object = IWMainApplication.decryptClassName(param);
+				try {
+					Map pMap = request.getParameterMap();
+					StringBuffer newUri = new StringBuffer(getIWMainApplication(request).getPublicObjectInstanciatorURI(Class.forName(object)));
+					if (pMap != null) {
+						Iterator keys = pMap.keySet().iterator();
+						boolean first = true;
+						while (keys.hasNext()) {
+							String key = (String) keys.next();
+							if (!key.equals(IWMainApplication.classToInstanciateParameter)) {
+								String[] values = (String[]) pMap.get(key);
+								if (values != null) {
+									for (int i = 0; i < values.length; i++) {
+										if (first) {
+											newUri.append("?");
+											first = false;
+										} else {
+											newUri.append("&");
+										}
+										newUri.append(key).append("=").append(values[i]);
+									}
+								}
+							}
+						}
+					}
+					return newUri.toString();
+				}
+				catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		throw new RuntimeException("Error handling redirect Url");
 	}
 
@@ -127,6 +167,9 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 				return true;
 			}
 			else if(requestUri.equals(NEW_IDEGAWEB_LOGIN_MINUSSLASH)){
+				return true;
+			}
+			else if(requestUri.equals(OLD_OBJECT_INSTANCIATOR)){
 				return true;
 			}
 		}
