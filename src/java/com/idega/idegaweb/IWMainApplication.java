@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.149 2005/09/13 08:14:08 gimmi Exp $
+ * $Id: IWMainApplication.java,v 1.150 2005/11/08 16:14:44 gimmi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/09/13 08:14:08 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/11/08 16:14:44 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.149 $
+ * @version $Revision: 1.150 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1184,8 +1184,12 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
             // if crypto code for this class has already been created
             if (cryptoCodesPropertiesKeyedByClassName.containsKey(className)) {
-                return (String) cryptoCodesPropertiesKeyedByClassName
-                        .get(className);
+                String code =  (String) cryptoCodesPropertiesKeyedByClassName.get(className);
+                if (code != null && code.length() == 4) {
+                	return createAndStoreCryptoName(className);
+                } else {
+                	return code;
+                }
             } else {// else crypto code for this class has NOT been created
                 return createAndStoreCryptoName(className);
             }
@@ -1199,7 +1203,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         String crypto = (String) cryptoCodesPropertiesKeyedByClassName
                 .get(className);//if someone just beat us to creating it
 
-        if (crypto != null) {
+        if (crypto != null && crypto.length() > 4) {
             return crypto;
         } else {
             crypto = calculateClassId(className);
