@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.10 2005/09/23 17:26:07 tryggvil Exp $
+ * $Id: BaseFilter.java,v 1.11 2005/11/08 16:13:50 gimmi Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.util.RequestUtil;
  * <p>
  *  Class that holds basic functionality used by many filters.<br>
  * </p>
- *  Last modified: $Date: 2005/09/23 17:26:07 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/08 16:13:50 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
@@ -36,6 +36,7 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	}
 
 	protected static final String OLD_BUILDER_SERVLET_URI = "/servlet/IBMainServlet";
+	protected static final String OLD_OBJECT_INSTANCIATOR = "/servlet/ObjectInstanciator";
 	protected static final String OLD_BUILDER_INDEX_JSP_URI = "/index.jsp";
 	protected static final String OLD_BUILDER_PAGE_PARAMETER = "ib_page";
 	protected static final String OLD_IDEGAWEB_LOGIN = "/idegaweb";
