@@ -193,26 +193,26 @@ public class TreeViewer extends AbstractTreeViewer {
 				if (isRootNode && !showRootNodeTreeIcons()) {
 					//Link l = new Link();
 					Link l = getLinkOpenClosePrototype();
-					l.setImage(folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN]);
+					l.setImage((Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN].clone());
 					if (!nodesOpen) {
 						setLinkToOpenOrCloseNode(l, node, nodesOpen);
 					}
 					return l;
 				}
 				else {
-					return folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN];
+					return (Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN].clone();
 				}
 			}
 			else {
 				if (isRootNode && !showRootNodeTreeIcons()) {
 					//Link l = new Link();
 					Link l = getLinkOpenClosePrototype();
-					l.setImage(folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED]);
+					l.setImage((Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED].clone());
 					setLinkToOpenOrCloseNode(l, node, nodesOpen);
 					return l;
 				}
 				else {
-					return folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED];
+					return (Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED].clone();
 				}
 			}
 		}
@@ -220,12 +220,12 @@ public class TreeViewer extends AbstractTreeViewer {
 			if (isRootNode && !showRootNodeTreeIcons()) {
 				//Link l = new Link();
 				Link l = getLinkOpenClosePrototype();
-				l.setImage(folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE]);
+				l.setImage((Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE].clone());
 				setLinkToOpenOrCloseNode(l, node, nodesOpen);
 				return l;
 			}
 			else {
-				return folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE];
+				return (Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE].clone();
 			}
 		}
 	}
