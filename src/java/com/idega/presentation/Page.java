@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.150 2005/11/04 14:15:56 tryggvil Exp $
+ *  $Id: Page.java,v 1.151 2005/11/09 11:50:55 tryggvil Exp $
  *  Created in 2000 by Tryggvi Larusson
  *  Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -63,10 +63,10 @@ import com.idega.util.datastructures.QueueMap;
  * </pre>
  * tags in HTML and renders the children inside the body tags.
  * </p>
- *  Last modified: $Date: 2005/11/04 14:15:56 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/09 11:50:55 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.150 $
+ * @version $Revision: 1.151 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 	
@@ -1550,10 +1550,24 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	public void encodeEnd(FacesContext context)throws IOException{
 		this.printEnd(IWContext.getIWContext(context));
 		resetGoneThroughMain();
+		encodeRenderTime(context);
+	}
+	
+	
+	/**
+	 * <p>
+	 * Prints out the render time in millisconds as a comment. 
+	 * This is by default called last in encodeEnd()
+	 * </p>
+	 * @param context
+	 * @throws IOException 
+	 */
+	protected void encodeRenderTime(FacesContext context) throws IOException{
 		long time = FacesUtil.registerRequestEnd(context);
 		String renderingText = time+" ms";
-		context.getResponseWriter().writeComment(renderingText);
+		context.getResponseWriter().writeComment(renderingText);		
 	}
+	
 	/**
 	 * Bridging method for JSF:
 	 */

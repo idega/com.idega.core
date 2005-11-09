@@ -254,6 +254,7 @@ public class HtmlPage extends Page {
 	 */
 	public void encodeEnd(FacesContext context)throws IOException{
 		//Does nothing here
+		encodeRenderTime(context);
 	}
 	
 	/**
