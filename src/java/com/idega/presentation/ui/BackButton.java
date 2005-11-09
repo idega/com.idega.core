@@ -1,5 +1,5 @@
 /*
- * $Id: BackButton.java,v 1.16 2005/10/26 17:01:24 tryggvil Exp $
+ * $Id: BackButton.java,v 1.17 2005/11/09 10:39:32 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.presentation.Image;
  * <p>
  * This component presents a button that can be clicked and the user is sent to the previous page in the browser history.
  * </p>
- *  Last modified: $Date: 2005/10/26 17:01:24 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/09 10:39:32 $ by $Author: gimmi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class BackButton extends GenericButton {
 
@@ -80,6 +80,7 @@ public class BackButton extends GenericButton {
 	public BackButton(Image defaultImage) {
 		super();
 		isImage=true;
+		defaultImage.setId(getId()+"_im");
 		setButtonImage(defaultImage);
 		setOnClick("history.go(" + this.howFarBackOrForward + ")");
 	}
