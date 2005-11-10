@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.150 2005/11/08 16:14:44 gimmi Exp $
+ * $Id: IWMainApplication.java,v 1.151 2005/11/10 16:05:08 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/11/08 16:14:44 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/11/10 16:05:08 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.150 $
+ * @version $Revision: 1.151 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -185,7 +185,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private boolean inSetupMode=false;
     private boolean loadBundlesFromJars=false;
     private boolean alreadyUnloaded = false; // for restart application
-
+	//Defined as private variables to speed up reflection:
+	private Object builderLogicInstance;
+	private Method methodIsBuilderApplicationRunning;
+	private boolean hasSetLocaleOnFacesApplication=false;
+	
     public static void unload()	{
     	defaultIWMainApplication = null;
     	cacheManager = null;
@@ -1678,11 +1682,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
     		return windowClassesStaticInstances;
     }
 
-
-
-	//Defined as private variables to speed up reflection:
-	private Object builderLogicInstance;
-	private Method methodIsBuilderApplicationRunning;
     /**
      * Returns true if the Builder Application is running for the user.
      * @return
@@ -1737,7 +1736,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * @see javax.faces.application.Application#getDefaultLocale()
 	 */
 	public Locale getDefaultLocale() {
-		return getRealJSFApplication().getDefaultLocale();
+		Locale locale = getRealJSFApplication().getDefaultLocale();
+		if(!hasSetLocaleOnFacesApplication){
+			locale = getSettings().getDefaultLocale();
+			setDefaultLocale(locale);
+			hasSetLocaleOnFacesApplication=true;
+		}
+		return locale;
 	}
 
 	/* (non-Javadoc)
