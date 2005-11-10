@@ -1,5 +1,5 @@
 /*
- * $Id: SQLSchemaAdapter.java,v 1.8 2005/11/03 23:48:56 tryggvil Exp $
+ * $Id: SQLSchemaAdapter.java,v 1.9 2005/11/10 15:55:53 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/11/03 23:48:56 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/10 15:55:53 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public abstract class SQLSchemaAdapter implements MutableClass {
 
@@ -50,6 +50,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	
 	protected boolean useTransactionsInSchemaCreation = true;
 	private boolean useIndexes = true;
+	private boolean supportsSlide = true;
 	protected SQLSchemaCreator _TableCreator;
 	protected DatabaseMetaData _databaseMetaData;
 	private String dataStoreType;
@@ -1283,6 +1284,14 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	public int getMaxColumnPrimaryKeyLength(SchemaColumn column){
 		return -1;
 	}
-	
+	/**
+	 * <p>
+	 * This methods returns true in the Adaptor supports the slide db table, false is it doesnt
+	 * </p>
+	 * @return
+	 */
+	public boolean getSupportsSlide() {
+		return supportsSlide;
+	}
 	
 }

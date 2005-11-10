@@ -10,10 +10,10 @@ import com.idega.util.database.PoolManager;
 /**
  * 
  * 
- *  Last modified: $Date: 2004/11/01 10:05:31 $ by $Author: aron $
+ *  Last modified: $Date: 2005/11/10 15:55:53 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class InterbaseSchemaAdapter extends SQLSchemaAdapter
 {
@@ -373,5 +373,8 @@ public class InterbaseSchemaAdapter extends SQLSchemaAdapter
 			
 	}
 
-	
+	public boolean getSupportsSlide() {
+		return false;
+	}
+
 }
