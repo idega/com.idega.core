@@ -2073,10 +2073,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	      }  
 	  }
 	  if (yearOfBirthFrom != null) {
-	      query.addCriteria(new MatchCriteria(userTable, getColumnNameDateOfBirth(),MatchCriteria.GREATEREQUAL, yearOfBirthFrom));
+	      IWTimestamp yearOfBirthFromStamp = new IWTimestamp(1,1,yearOfBirthFrom.intValue());
+	      query.addCriteria(new MatchCriteria(userTable, getColumnNameDateOfBirth(),MatchCriteria.GREATEREQUAL, yearOfBirthFromStamp.getTimestamp()));
 	  }
 	  if (yearOfBirthTo != null) {
-	      query.addCriteria(new MatchCriteria(userTable, getColumnNameDateOfBirth(),MatchCriteria.LESSEQUAL, yearOfBirthTo));
+	      IWTimestamp yearOfBirthToStamp = new IWTimestamp(31,12,yearOfBirthTo.intValue());
+	      query.addCriteria(new MatchCriteria(userTable, getColumnNameDateOfBirth(),MatchCriteria.LESSEQUAL, yearOfBirthToStamp.getTimestamp()));
 	  }
 	  if (gender != null) {
 	      int genderNumber = -1;
