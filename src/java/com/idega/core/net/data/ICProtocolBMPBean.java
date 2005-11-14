@@ -1,8 +1,7 @@
 package com.idega.core.net.data;
 
 import java.sql.SQLException;
-
-import com.idega.core.data.GenericGroup;
+import com.idega.user.data.Group;
 
 /**
  * Title:        IW Core
@@ -28,7 +27,8 @@ public class ICProtocolBMPBean extends com.idega.core.data.GenericTypeBMPBean im
 
   public void initializeAttributes(){
     super.initializeAttributes();
-    this.addManyToManyRelationShip(GenericGroup.class,"ic_group_protocol");
+    //this.addManyToManyRelationShip(GenericGroup.class,"ic_group_protocol");
+    this.addManyToManyRelationShip(Group.class,"ic_group_protocol");
     this.addManyToManyRelationShip(ICNetwork.class,"ib_protocol_network");
   }
 

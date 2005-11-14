@@ -3,6 +3,7 @@ package com.idega.core.net.data;
 import java.sql.SQLException;
 
 import com.idega.core.data.GenericGroup;
+import com.idega.user.data.Group;
 
 /**
  * Title:        IW Core
@@ -34,7 +35,8 @@ public class ICNetworkBMPBean extends com.idega.data.GenericEntity implements co
     this.addAttribute(this.getIDColumnName());
     this.addAttribute(_COLUMNNAME_IPADDRESS,"IP Address",true,true,String.class,15);
     //this.addAttribute(_COLUMNNAME_SUBNET_MASK,"Subnet Mask",true,true,String.class,15);
-    this.addManyToManyRelationShip(GenericGroup.class,"ic_group_network");
+    //this.addManyToManyRelationShip(GenericGroup.class,"ic_group_network");
+    this.addManyToManyRelationShip(Group.class,"ic_group_network");
     this.addManyToManyRelationShip(ICProtocol.class,"ib_protocol_network");
   }
   public String getEntityName() {
