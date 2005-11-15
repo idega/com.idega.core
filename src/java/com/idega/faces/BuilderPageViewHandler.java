@@ -17,8 +17,8 @@ import javax.faces.context.FacesContext;
 import com.idega.builder.business.BuilderLogic;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
-import com.idega.faces.smile.Page;
-import com.idega.faces.smile.PageWrapper;
+import com.idega.faces.componentbased.Page;
+import com.idega.faces.componentbased.PageWrapper;
 import com.idega.presentation.IWContext;
 
 /**

@@ -18,9 +18,9 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.FrameTable;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.RefactorClassRegistry;
-import com.idega.faces.smile.CbpViewHandler;
-import com.idega.faces.smile.Page;
-import com.idega.faces.smile.PageWrapper;
+import com.idega.faces.componentbased.CbpViewHandler;
+import com.idega.faces.componentbased.Page;
+import com.idega.faces.componentbased.PageWrapper;
 import com.idega.util.StringHandler;
 
 /**

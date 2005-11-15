@@ -4,7 +4,7 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package com.idega.faces.smile;
+package com.idega.faces.componentbased;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;

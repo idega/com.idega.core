@@ -16,7 +16,7 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
-import com.idega.faces.smile.CbpViewHandler;
+import com.idega.faces.componentbased.CbpViewHandler;
 import com.idega.presentation.IWContext;
 
 /**

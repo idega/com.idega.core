@@ -1,5 +1,5 @@
 /*
- * $Id: IWFacesInstaller.java,v 1.1 2004/11/14 23:37:11 tryggvil Exp $
+ * $Id: IWFacesInstaller.java,v 1.2 2005/11/15 23:57:58 tryggvil Exp $
  *
  * Created on 19.5.2004 by Tryggvi Larusson
  *
@@ -67,7 +67,7 @@ public class IWFacesInstaller implements ServletContextListener {
 		ViewHandler iwViewHandler=origViewHandler;
 		/*try {
 			//iwViewHandler = (ViewHandler)Class.forName("com.idega.faces.IWViewHandlerImpl").newInstance();
-			Constructor[] css = Class.forName("com.idega.faces.smile.IWViewHandlerImpl").getConstructors();
+			Constructor[] css = Class.forName("com.idega.faces.componentbased.IWViewHandlerImpl").getConstructors();
 			Constructor cs = css[1];
 			Object[] args = {origViewHandler};
 			iwViewHandler = (ViewHandler)cs.newInstance(args);
