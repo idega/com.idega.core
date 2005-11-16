@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.155 2005/09/09 18:22:23 gimmi Exp $
+ * $Id: Link.java,v 1.156 2005/11/16 17:59:59 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -117,6 +117,7 @@ public class Link extends Text {
 	private Map _overImageLocalizationMap;
 	private Map _ImageLocalizationMap;
 	private Map _toolTipLocalizationMap;
+	private boolean usePublicOjbectInstanciator = false;
 	
 	/**
 	 *
@@ -2277,10 +2278,18 @@ public void setWindowToOpen(String className) {
 			//}
 			//else
 			if (this.templateForObjectInstanciation != null) {
-				this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation));
+				if (usePublicOjbectInstanciator) {
+					this.setURL(iwc.getIWMainApplication().getPublicObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation));
+				} else {
+					this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation));
+				}
 			}
 			else {
-				this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate));
+				if (usePublicOjbectInstanciator) {
+					this.setURL(iwc.getIWMainApplication().getPublicObjectInstanciatorURI(classToInstanciate));
+				} else {
+					this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate));
+				}
 			}
 		}
 	}
@@ -2373,6 +2382,10 @@ public void setWindowToOpen(String className) {
 			_toolTipLocalizationMap = new HashMap();
 		}
 		return _toolTipLocalizationMap;
+	}
+	
+	public void setUsePublicObjectInstanciator(boolean use) {
+		this.usePublicOjbectInstanciator = use;
 	}
 	
 }
