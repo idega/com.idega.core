@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.151 2005/11/10 16:05:08 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.152 2005/11/16 17:59:10 gimmi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/11/10 16:05:08 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/16 17:59:10 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.151 $
+ * @version $Revision: 1.152 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -377,7 +377,31 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		} 
 		return buffer.toString();
     }
-
+    
+    public String getPublicObjectInstanciatorURI(Class className, String templateName) {
+        //return getObjectInstanciatorURI(className.getName(), templateName);
+    	StringBuffer buffer = new StringBuffer();
+		if(useNewURLScheme){
+			buffer.append(getBufferedWindowOpenerURI(className));
+			if (buffer.indexOf("?") < 0) {
+				// there is no parameter
+				buffer.append('?');
+			}
+			else {
+				// there are already parameters
+				buffer.append('&');
+			}
+			buffer.append(templateParameter).append('=').append(getEncryptedClassName(templateName));
+		}
+		else{
+			buffer.append(getPublicObjectInstanciatorURI());
+			buffer.append('?').append(classToInstanciateParameter);
+			buffer.append('=').append(getEncryptedClassName(className));
+			buffer.append('&').append(templateParameter);
+			buffer.append('=').append(getEncryptedClassName(templateName));
+		} 
+		return buffer.toString();
+    }
     public String getObjectInstanciatorURI(String className, String templateName) {
 		try {
 			return getObjectInstanciatorURI(RefactorClassRegistry.forName(className),templateName);
