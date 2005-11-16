@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.11 2005/11/15 01:48:06 gimmi Exp $
+ * $Id: IWUrlRedirector.java,v 1.12 2005/11/16 15:07:20 gimmi Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2005/11/15 01:48:06 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/11/16 15:07:20 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -94,7 +94,13 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		}
 		else if (requestUri.startsWith(OLD_OBJECT_INSTANCIATOR)) {
 			String param = request.getParameter(IWMainApplication.classToInstanciateParameter);
-			if (param != null && param.length() == 4) {
+			boolean isClassName = false;
+			try {
+				Class.forName(param);
+				isClassName = true;
+			} catch (Exception e) {
+			}
+			if (param != null && (isClassName || param.length() == 4)) {
 				String object = IWMainApplication.decryptClassName(param);
 				try {
 					Map pMap = request.getParameterMap();
