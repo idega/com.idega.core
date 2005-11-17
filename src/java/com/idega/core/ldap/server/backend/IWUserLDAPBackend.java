@@ -28,6 +28,8 @@ import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
+import com.idega.core.ldap.business.LDAPGroupBusiness;
+import com.idega.core.ldap.business.LDAPUserBusiness;
 import com.idega.core.ldap.replication.business.LDAPReplicationBusiness;
 import com.idega.core.ldap.replication.business.LDAPReplicationConstants;
 import com.idega.core.ldap.server.business.EmbeddedLDAPServerBusiness;
@@ -543,7 +545,7 @@ LDAPReplicationConstants {
 			System.err.println("[IWUserLDAPBackend] No group found for unique id: " + uniqueId + " trying DN");
 		}
 		if (group == null) {
-			group = getGroupBusiness().getGroupByDirectoryString(base);
+			group = getLDAPGroupBusiness().getGroupByDirectoryString(base);
 		}
 		return group;
 	}
@@ -559,7 +561,7 @@ LDAPReplicationConstants {
 			System.err.println("[IWUserLDAPBackend] No user found for unique id: " + uniqueId + " trying DN");
 		}
 		if (user == null) {
-			user = (User) getUserBusiness().getUserByDirectoryString(base.toString());
+			user = (User) getLDAPUserBusiness().getUserByDirectoryString(base.toString());
 		}
 		return user;
 	}
@@ -997,6 +999,15 @@ LDAPReplicationConstants {
 	protected GroupBusiness getGroupBusiness() throws RemoteException {
 		return (GroupBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),
 				GroupBusiness.class);
+	}
+	
+	protected LDAPUserBusiness getLDAPUserBusiness() throws RemoteException{
+		return (LDAPUserBusiness)com.idega.business.IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),LDAPUserBusiness.class);
+	}
+	
+	protected LDAPGroupBusiness getLDAPGroupBusiness() throws RemoteException {
+		return (LDAPGroupBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),
+				LDAPGroupBusiness.class);
 	}
 	
 	protected AddressBusiness getAddressBusiness() throws RemoteException {

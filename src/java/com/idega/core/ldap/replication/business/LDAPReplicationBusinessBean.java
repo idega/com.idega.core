@@ -25,6 +25,8 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchResult;
 import com.idega.business.IBOServiceBean;
+import com.idega.core.ldap.business.LDAPGroupBusiness;
+import com.idega.core.ldap.business.LDAPUserBusiness;
 import com.idega.core.ldap.client.jndi.JNDIOps;
 import com.idega.core.ldap.client.naming.DN;
 import com.idega.core.ldap.server.business.EmbeddedLDAPServerBusiness;
@@ -50,8 +52,9 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	private Ldap ldap;
 
 	private UserBusiness userBiz;
-
+	private LDAPUserBusiness ldapUserBiz;
 	private GroupBusiness groupBiz;
+	private LDAPGroupBusiness ldapGroupBiz;
 
 	private String thisServersLDAPBase;
 
@@ -589,10 +592,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		}
 		
 		if(parentGroup!=null){
-			group = getGroupBusiness().createOrUpdateGroup(entryDN, entryAttribs,parentGroup);
+			group = getLDAPGroupBusiness().createOrUpdateGroup(entryDN, entryAttribs,parentGroup);
 		}
 		else{
-			group = getGroupBusiness().createOrUpdateGroup(entryDN, entryAttribs);	
+			group = getLDAPGroupBusiness().createOrUpdateGroup(entryDN, entryAttribs);	
 		}
 		
 		getGroupBusiness().callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group,parentGroup);
@@ -614,10 +617,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	protected User createOrUpdateUser(Group parentGroup, Attributes childAttribs, DN childDN) throws RemoteException, CreateException, NamingException {
 		User user = null;
 		if(parentGroup!=null){
-			user = getUserBusiness().createOrUpdateUser(childDN, childAttribs,parentGroup);
+			user = getLDAPUserBusiness().createOrUpdateUser(childDN, childAttribs,parentGroup);
 		}
 		else{
-			user = getUserBusiness().createOrUpdateUser(childDN, childAttribs);
+			user = getLDAPUserBusiness().createOrUpdateUser(childDN, childAttribs);
 		}
 		
 		getUserBusiness().callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user,parentGroup);
@@ -738,6 +741,30 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			}
 		}
 		return userBiz;
+	}
+	
+	private LDAPUserBusiness getLDAPUserBusiness() {
+		if (ldapUserBiz == null) {
+			try {
+				ldapUserBiz = (LDAPUserBusiness)  this.getServiceInstance(LDAPUserBusiness.class);
+			}
+			catch (java.rmi.RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return ldapUserBiz;
+	}
+	
+	private LDAPGroupBusiness getLDAPGroupBusiness() {
+		if (ldapGroupBiz == null) {
+			try {
+				ldapGroupBiz = (LDAPGroupBusiness)  this.getServiceInstance(LDAPGroupBusiness.class);
+			}
+			catch (java.rmi.RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return ldapGroupBiz;
 	}
 
 	private EmbeddedLDAPServerBusiness getEmbeddedLDAPServerBusiness() {

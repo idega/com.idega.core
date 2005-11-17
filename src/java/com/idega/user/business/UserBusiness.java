@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.89 2005/11/01 16:11:58 eiki Exp $
+ * $Id: UserBusiness.java,v 1.90 2005/11/17 15:50:45 tryggvil Exp $
  * Created on Nov 1, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -20,7 +20,7 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
-import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
+//import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import com.idega.business.IBOService;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.data.LoginTable;
@@ -29,8 +29,8 @@ import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneHome;
-import com.idega.core.ldap.client.naming.DN;
-import com.idega.core.ldap.util.IWLDAPConstants;
+//import com.idega.core.ldap.client.naming.DN;
+//import com.idega.core.ldap.util.IWLDAPConstants;
 import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
@@ -52,12 +52,12 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2005/11/01 16:11:58 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/11/17 15:50:45 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.89 $
+ * @version $Revision: 1.90 $
  */
-public interface UserBusiness extends IBOService, IWLDAPConstants {
+public interface UserBusiness extends IBOService {
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserHome
@@ -758,11 +758,6 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	 */
 	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException;
 
-	/**
-	 * @see com.idega.user.business.UserBusinessBean#createOrUpdateUser
-	 */
-	public User createOrUpdateUser(DN distinguishedName, Attributes attributes) throws CreateException,
-			NamingException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersMainAddressByFullAddressString
@@ -775,32 +770,6 @@ public interface UserBusiness extends IBOService, IWLDAPConstants {
 	 */
 	public User getUserByUniqueId(String uniqueID) throws FinderException, java.rmi.RemoteException;
 
-	/**
-	 * @see com.idega.user.business.UserBusinessBean#createOrUpdateUser
-	 */
-	public User createOrUpdateUser(DN distinguishedName, Attributes attributes, Group parentGroup)
-			throws RemoteException, CreateException, NamingException;
-
-	/**
-	 * @see com.idega.user.business.UserBusinessBean#setMetaDataFromLDAPAttributes
-	 */
-	public void setMetaDataFromLDAPAttributes(User user, DN distinguishedName, Attributes attributes)
-			throws java.rmi.RemoteException;
-
-	/**
-	 * @see com.idega.user.business.UserBusinessBean#getUsersByLDAPAttribute
-	 */
-	public Collection getUsersByLDAPAttribute(String key, String value) throws java.rmi.RemoteException;
-
-	/**
-	 * @see com.idega.user.business.UserBusinessBean#getUserByDirectoryString
-	 */
-	public User getUserByDirectoryString(DirectoryString dn) throws java.rmi.RemoteException;
-
-	/**
-	 * @see com.idega.user.business.UserBusinessBean#getUserByDirectoryString
-	 */
-	public User getUserByDirectoryString(String dn) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersBySpecificGroupsUserstatusDateOfBirthAndGender

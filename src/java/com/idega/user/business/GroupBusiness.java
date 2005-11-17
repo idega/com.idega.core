@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusiness.java,v 1.55 2005/07/14 01:12:16 eiki Exp $
+ * $Id: GroupBusiness.java,v 1.56 2005/11/17 15:50:45 tryggvil Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -17,9 +17,6 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import com.idega.business.IBOService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.contact.data.Email;
@@ -28,8 +25,6 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneHome;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
-import com.idega.core.ldap.client.naming.DN;
-import com.idega.core.ldap.util.IWLDAPConstants;
 import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
@@ -51,12 +46,12 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2005/07/14 01:12:16 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/11/17 15:50:45 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.55 $
+ * @version $Revision: 1.56 $
  */
-public interface GroupBusiness extends IBOService, IWLDAPConstants {
+public interface GroupBusiness extends IBOService {
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserHome
@@ -340,38 +335,9 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	public GroupRelationHome getGroupRelationHome() throws java.rmi.RemoteException;
 
 	/**
-	 * @see com.idega.user.business.GroupBusinessBean#createOrUpdateGroup
-	 */
-	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes, boolean createUnderRootDomainGroup,
-			Group parentGroup) throws CreateException, NamingException, RemoteException;
-
-	/**
-	 * @see com.idega.user.business.GroupBusinessBean#getGroupByDNOrUniqueId
-	 */
-	public Group getGroupByDNOrUniqueId(DN distinguishedName, String uniqueID) throws RemoteException;
-
-	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupByUniqueId
 	 */
 	public Group getGroupByUniqueId(String uniqueID) throws FinderException, java.rmi.RemoteException;
-
-	/**
-	 * @see com.idega.user.business.GroupBusinessBean#setMetaDataFromLDAPAttributes
-	 */
-	public void setMetaDataFromLDAPAttributes(Group group, DN distinguishedName, Attributes attributes)
-			throws java.rmi.RemoteException;
-
-	/**
-	 * @see com.idega.user.business.GroupBusinessBean#createOrUpdateGroup
-	 */
-	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes) throws CreateException,
-			NamingException, RemoteException;
-
-	/**
-	 * @see com.idega.user.business.GroupBusinessBean#createOrUpdateGroup
-	 */
-	public Group createOrUpdateGroup(DN distinguishedName, Attributes attributes, Group parentGroup)
-			throws CreateException, NamingException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#createGroup
@@ -644,11 +610,6 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	public Collection getOwnerUsersForGroup(Group group) throws RemoteException;
 
 	/**
-	 * @see com.idega.user.business.GroupBusinessBean#getGroupByDirectoryString
-	 */
-	public Group getGroupByDirectoryString(DirectoryString dn) throws RemoteException;
-
-	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByMetaDataKeyAndValue
 	 */
 	public Collection getGroupsByMetaDataKeyAndValue(String key, String value) throws java.rmi.RemoteException;
@@ -688,4 +649,9 @@ public interface GroupBusiness extends IBOService, IWLDAPConstants {
 	 * @see com.idega.user.business.GroupBusinessBean#callAllUserGroupPluginBeforeGroupRemoveMethod
 	 */
 	public void callAllUserGroupPluginBeforeGroupRemoveMethod(Group group, Group parentGroup) throws RemoteException,RemoveException;
+	
+	public Group createGroup(String name,String description,String type,int homePageID,int aliasID,boolean createUnderDomainRoot,Group parentGroup)throws CreateException,RemoteException;
+		  
+	public Group createGroup(String name,String description,String type,int homePageID,int homeFolderID,int aliasID,boolean createUnderDomainRoot,Group parentGroup)throws CreateException,RemoteException;
+
 }

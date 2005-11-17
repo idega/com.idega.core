@@ -1,10 +1,19 @@
+/*
+ * $Id: UserBusinessBean.java,v 1.196 2005/11/17 15:50:45 tryggvil Exp $
+ * Created in 2002 by gummi
+ * 
+ * Copyright (C) 2002-2005 Idega. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega.
+ * Use is subject to license terms.
+ *
+ */
 package com.idega.user.business;
 
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,11 +27,8 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
-import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -30,7 +36,6 @@ import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.LoginTable;
-import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.builder.data.ICPageHome;
@@ -39,9 +44,6 @@ import com.idega.core.contact.data.EmailHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneBMPBean;
 import com.idega.core.contact.data.PhoneHome;
-import com.idega.core.ldap.client.naming.DN;
-import com.idega.core.ldap.util.IWLDAPConstants;
-import com.idega.core.ldap.util.IWLDAPUtil;
 import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
@@ -87,16 +89,21 @@ import com.idega.util.datastructures.NestedSetsContainer;
 import com.idega.util.text.Name;
 
 /**
- * Title: UserBusinessBean <br>
- * Description: A collection of methods to create, remove, lookup and manipulate
- * a User. See also GroupBusinessBean <br>
- * Copyright: Copyright (c) 2002-2004 <br>
- * Company: Idega Software <br>
+ * <p>
+ * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
+ * </p>
+ * Copyright (C) idega software 2002-2005 <br/>
+ * Last modified: $Date: 2005/11/17 15:50:45 $ by $Author: tryggvil $
  * 
- * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson </a>, <a href="eiki@idega.is">Eirikur S. Hrafnsson </a> <br>
- * @version 1.6
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version $Revision: 1.196 $
  */
-public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness, IWLDAPConstants {
+public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
+
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 5915206628531551728L;
 
 	// remove use of "null" when metadata can be removed
 	private static final String NULL = "null";
@@ -2937,179 +2944,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	/**
-	 * Creates or updates a user from an LDAP DN and its attributes.
-	 * 
-	 * @throws NamingException,RemoteException
-	 * @see com.idega.user.business.UserBusiness#createOrUpdateUser(DN
-	 *      distinguishedName,Attributes attributes)
-	 */
-	public User createOrUpdateUser(DN distinguishedName, Attributes attributes) throws CreateException,
-			NamingException, RemoteException {
-		IWLDAPUtil ldapUtil = IWLDAPUtil.getInstance();
-		String fullName = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_COMMON_NAME, attributes);
-		Name name = new Name(fullName);
-		String firstName = name.getFirstName();
-		String middleName = name.getMiddleName();
-		String lastName = name.getLastName();
-		String description = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_DESCRIPTION, attributes);
-		String uniqueID = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID,attributes);
-		String personalId = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID,attributes);
-		String dateOfBirth = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_DATE_OF_BIRTH,attributes);
-		String userName = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_UID,attributes);
-		if(userName==null || "".equals(userName)){
-			//maybe its active directory!
-			userName = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_UID_ACTIVE_DIRECTORY,attributes);	
-		}
-		
-		String userPassword = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_USER_PASSWORD,attributes);
-		String email = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_EMAIL, attributes);
-		//String homePhone =
-		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);
-		//String fax =
-		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_FAX_NUMBER,attributes);
-		//String mobile =
-		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_MOBILE_NUMBER,attributes);
-		String fullAddressString =  ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_REGISTERED_ADDRESS,attributes);
-
-		String gender = ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_IDEGAWEB_GENDER, attributes);
-		int genderId = -1;
-		if (gender != null) {
-			try {
-				genderId = getGenderId(gender).intValue();
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		Date birthDate = null;
-		if(dateOfBirth!=null){
-			try {
-				birthDate = java.sql.Date.valueOf(dateOfBirth);
-			}
-			catch (IllegalArgumentException e) {
-				System.err.println("UserBusiness: date of birth format is invalid.Should be yyyy-MM-dd : " + dateOfBirth);
-			}
-		}
-		
-		//find the user
-		User user = null;
-		if (uniqueID != null) {
-			try {
-				user = getUserByUniqueId(uniqueID);
-			}
-			catch (FinderException e) {
-				System.out.println("UserBusiness: User not found by unique id:" + uniqueID);
-			}
-		}
-		
-		if (user == null && personalId != null) {
-			try {
-				user = getUser(personalId);
-			}
-			catch (FinderException e) {
-				System.out.println("UserBusiness: User not found by personal id:" + personalId);
-			}
-		}
-		
-		if (user == null) {
-			user = getUserByDirectoryString(distinguishedName.toString());
-		}
-		
-//		if (user == null && firstName != null) {
-//			try {
-//				Collection users = getUserHome().findUsersByConditions(firstName, middleName, lastName, null, null,
-//						null, genderId, -1, -1, -1, null, null, true, false);
-//				if (users != null && !users.isEmpty() && users.size() == 1) {
-//					//its the only one with this name must be our guy!
-//					user = (User) users.iterator().next();
-//				}
-//			}
-//			catch (FinderException e) {
-//				System.out.println("UserBusiness: last try...user not found by firstname,middlename,lastname");
-//			}
-//		}
-		
-		//could not find the person create it
-		if (user == null) {
-			user = createUser(firstName, middleName, lastName, personalId);
-			user.store();
-		}
-		
-		//update stuff
-		//the unique id
-		if (uniqueID != null) {
-			user.setUniqueId(uniqueID);
-		}
-		
-		//the gender id
-		if (genderId > 0) {
-			user.setGender(genderId);
-		}
-		
-		if(birthDate!=null && user.getDateOfBirth()==null){
-			user.setDateOfBirth(new IWTimestamp(birthDate).getDate());
-		}
-		//the description
-		user.setDescription(description);
-		
-		user.store();
-		
-		//the email
-		updateUserMail(user, email);
-		
-		//the main address
-		try {
-			updateUsersMainAddressByFullAddressString(user,fullAddressString);
-		}
-		catch (CreateException e1) {
-			e1.printStackTrace();
-		}
-		
-		//the login
-		if(userName!=null){
-			try {
-				int userId = ((Integer)user.getPrimaryKey()).intValue();
-				LoginTable login = LoginDBHandler.getUserLogin(userId);
-				if(login==null){
-					//no login create one
-					login = ((LoginTableHome) com.idega.data.IDOLookup.getHomeLegacy(LoginTable.class)).createLegacy();
-					login.setUserId(userId);	
-				}
-				
-				login.setUserLogin(userName);
-				if(userPassword!=null){
-//					remove the encryption e.g. {md5} prefix
-					userPassword = userPassword.substring(userPassword.indexOf("}")+1);
-					login.setUserPasswordInClearText(userPassword);
-				}
-				login.setLastChanged(IWTimestamp.getTimestampRightNow());
-				login.store();
-			}
-			catch (IDOStoreException e) {
-				e.printStackTrace();
-			}
-			catch (EJBException e) {
-				e.printStackTrace();
-			}
-		}
-		
-			
-		//set all the attributes as metadata also
-		setMetaDataFromLDAPAttributes(user, distinguishedName, attributes);
-		
-			
-		
-//			TODO Eiki make a method updatePhones(home,fax,mobile) DO in
-			// update also
-			//getPhoneHome().findUsersFaxPhone();
-		//			String phone =
-		// ldapUtil.getSingleValueOfAttributeByAttributeKey(LDAP_ATTRIBUTE_TELEPHONE_NUMBER,attributes);  		
-		
-		return user;
-	}
-
-	/**
 	 * Updates or creates a users main address with a fully qualifying address string (see getFullAddressString(address) in AddressBusiness for the format of the string)
 	 * @param user
 	 * @param fullAddressString e.g. : "Stafnasel 6;107 Reykjavik;Iceland:is_IS;Reykjavik:12345", See javadoc on getFullAddressString(Address address) in AddressBusiness
@@ -3145,100 +2979,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return user;
 	}
 
-	/**
-	 * Creates or updates a user from an LDAP DN and its attributes and adds it
-	 * under the parentGroup supplied
-	 * 
-	 * @throws NamingException
-	 * @throws CreateException
-	 * @throws NamingException
-	 * @throws RemoteException
-	 * @see com.idega.user.business.UserBusiness#createOrUpdateUser(DN
-	 *      distinguishedName,Attributes attributes,Group parentGroup)
-	 */
-	public User createOrUpdateUser(DN distinguishedName, Attributes attributes, Group parentGroup)
-			throws RemoteException, CreateException, NamingException {
-		User user = createOrUpdateUser(distinguishedName, attributes);
-		parentGroup.addGroup(user);
-		return user;
-	}
 
-	/**
-	 * Adds all the ldap attributes as metadata-fields
-	 * 
-	 * @param group
-	 * @param distinguishedName
-	 * @param attributes
-	 */
-	public void setMetaDataFromLDAPAttributes(User user, DN distinguishedName, Attributes attributes) {
-		try {
-			getGroupBusiness().setMetaDataFromLDAPAttributes(user, distinguishedName, attributes);
-		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Gets all the users that have this ldap metadata
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public Collection getUsersByLDAPAttribute(String key, String value) {
-		IWLDAPUtil util = IWLDAPUtil.getInstance();
-		Collection users;
-		try {
-			users = getUserHome().findUsersByMetaData(util.getAttributeKeyWithMetaDataNamePrefix(key), value);
-		}
-		catch (FinderException e) {
-			return ListUtil.getEmptyList();
-		}
-		return users;
-	}
-
-	/**
-	 * Looks for the user by his DN in his metadata
-	 * 
-	 * @param identifier
-	 * @return
-	 */
-	public User getUserByDirectoryString(DirectoryString dn) {
-		return getUserByDirectoryString(dn.toString());
-	}
-
-	/**
-	 * Looks for the user by his DN in his metadata
-	 * 
-	 * @param identifier
-	 * @return
-	 */
-	public User getUserByDirectoryString(String dn) {
-		User user = null;
-		dn = dn.toLowerCase(); 
-		Collection users = getUsersByLDAPAttribute(IWLDAPConstants.LDAP_META_DATA_KEY_DIRECTORY_STRING, dn);
-		if (!users.isEmpty() && users.size() == 1) {
-			user = (User) users.iterator().next();
-		}
-		else {
-			int index = dn.indexOf(IWLDAPConstants.LDAP_USER_DIRECTORY_STRING_SEPARATOR);
-			int commaIndex = dn.indexOf(",");
-			if (index > 0 && index < commaIndex) {
-				String pid = dn.substring(index + 1, commaIndex);
-				try {
-					user = getUser(pid);
-				}
-				catch (FinderException e) {
-				}
-			}
-			else {
-				//TODO find by his name
-				//getUserHome().findUsersByConditions()
-			}
-		}
-		return user;
-	}
 
 	public Collection getUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) {
 	    try {
