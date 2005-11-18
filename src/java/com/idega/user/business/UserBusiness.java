@@ -1,6 +1,6 @@
 /*
- * $Id: UserBusiness.java,v 1.90 2005/11/17 15:50:45 tryggvil Exp $
- * Created on Nov 1, 2005
+ * $Id: UserBusiness.java,v 1.91 2005/11/18 16:20:53 eiki Exp $
+ * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -18,9 +18,6 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-//import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
 import com.idega.business.IBOService;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.data.LoginTable;
@@ -29,8 +26,6 @@ import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneHome;
-//import com.idega.core.ldap.client.naming.DN;
-//import com.idega.core.ldap.util.IWLDAPConstants;
 import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
@@ -52,10 +47,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2005/11/17 15:50:45 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/18 16:20:53 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.90 $
+ * @version $Revision: 1.91 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -107,6 +102,17 @@ public interface UserBusiness extends IBOService {
 	 */
 	public User createUserByPersonalIDIfDoesNotExist(String firstName, String middleName, String lastName,
 			String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#createUserByPersonalIdAndUUIDOrUpdate
+	 */
+	public void createUserByPersonalIdAndUUIDOrUpdate(String pin, String UUID, String fullName, String gender,
+			String dateOfBirth) throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#updateUser
+	 */
+	public void updateUser(User user, String name, String gender, String dateOfBirth) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#createUser
@@ -758,7 +764,6 @@ public interface UserBusiness extends IBOService {
 	 */
 	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException;
 
-
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersMainAddressByFullAddressString
 	 */
@@ -769,7 +774,6 @@ public interface UserBusiness extends IBOService {
 	 * @see com.idega.user.business.UserBusinessBean#getUserByUniqueId
 	 */
 	public User getUserByUniqueId(String uniqueID) throws FinderException, java.rmi.RemoteException;
-
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersBySpecificGroupsUserstatusDateOfBirthAndGender

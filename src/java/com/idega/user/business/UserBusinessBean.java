@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.196 2005/11/17 15:50:45 tryggvil Exp $
+ * $Id: UserBusinessBean.java,v 1.197 2005/11/18 16:20:54 eiki Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -11,6 +11,7 @@
 package com.idega.user.business;
 
 import java.rmi.RemoteException;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,10 +94,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2005/11/17 15:50:45 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/18 16:20:54 $ by $Author: eiki $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.196 $
+ * @version $Revision: 1.197 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -294,6 +295,85 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		String fullName = name.getName();
 		user = createUserByPersonalIDIfDoesNotExist(fullName, personalID, gender, dateOfBirth);
 		return user;
+	}
+	
+	/**
+	 * 
+	 * Creates or update a user with the supplied parameters and then calls callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user);
+	 * @param pin PersonalId e.g. social security number MUST NOT BE NULL
+	 * @param UUID Unique id MUST NOT BE NULL
+	 * @param fullName
+	 * @param gender as a string either "f" for female or "m" for male 
+	 * @param dateOfBirth as a String in the format yyyy-MM-dd
+	 * @throws CreateException
+	 * @throws RemoteException 
+	 */
+	public void createUserByPersonalIdAndUUIDOrUpdate(String pin, String UUID, String fullName, String gender, String dateOfBirth) throws CreateException, RemoteException {
+		
+		if (UUID != null && pin != null) {
+			User user = null;
+			try {
+				user = getUserByUniqueId(pin);
+			}
+			catch (FinderException e) {
+				log("User not found by UUID:"+UUID+" trying pin:"+pin);
+			}
+			try {
+				if (user == null) {
+					user = getUser(pin);
+					user.setUniqueId(UUID);
+				}
+			}
+			catch (FinderException e) {
+				log("User not found by pin:"+pin+" creating a new user...");
+			}
+			
+			if (user == null) {
+				user = createUserByPersonalIDIfDoesNotExist(fullName, pin, null, null);
+				user.setUniqueId(UUID);
+				user.store();
+			}
+			
+			updateUser(user, fullName, gender, dateOfBirth);
+			callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user);
+			
+		}
+	}
+	
+	/**
+	 * Updates the user with fullName,gender (f/m) and date of birth (yyy-MM-dd)
+	 * @param user
+	 * @param name
+	 * @param gender
+	 * @param dateOfBirth
+	 */
+	public void updateUser(User user, String name, String gender, String dateOfBirth) {
+		if (name != null) {
+			user.setFullName(name);
+		}
+		if (dateOfBirth != null) {
+			Date birthDate = null;
+			try {
+				birthDate = java.sql.Date.valueOf(dateOfBirth);
+				user.setDateOfBirth(birthDate);
+			}
+			catch (IllegalArgumentException e) {
+				log("UserBusiness: date of birth format is invalid.Should be yyyy-MM-dd : "
+						+ dateOfBirth);
+			}
+		}
+		if (gender != null) {
+			Integer genderId;
+			try {
+				genderId = getGenderId(gender);
+				user.setGender(genderId);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		user.store();
 	}
 
 	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID,
