@@ -1,5 +1,5 @@
 /*
- * $Id: HiddenInput.java,v 1.5 2005/03/08 20:42:17 tryggvil Exp $
+ * $Id: HiddenInput.java,v 1.6 2005/11/18 15:12:48 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -15,26 +15,29 @@ package com.idega.presentation.ui;
  * This class is mainly preserved for backwards compatability and the newer recommended objects are Parameter 
  * or in JSF javax.faces.component.UIParameter.
  * </p>
- *  Last modified: $Date: 2005/03/08 20:42:17 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/18 15:12:48 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @see Parameter
  */
 public class HiddenInput extends Parameter {
 
+	private static final String DEFAULT_NAME="untitled";
+	private static final String DEFAULT_VALUE="unspecified";
+	
 	/**
 	 * Constructs a new <code>HiddenInput</code> with the name "untitled".
 	 */
 	public HiddenInput() {
-		this("untitled");
+		this(DEFAULT_NAME);
 	}
 
 	/**
 	 * Constructs a new <code>HiddenInput</code> with the given name and the value "unspecified".
 	 */
 	public HiddenInput(String name) {
-		this(name, "unspecified");
+		this(name, DEFAULT_VALUE);
 	}
 
 	/**
