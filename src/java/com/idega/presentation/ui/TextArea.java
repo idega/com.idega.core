@@ -1,5 +1,5 @@
 /*
- * $Id: TextArea.java,v 1.17 2005/03/08 12:51:36 tryggvil Exp $
+ * $Id: TextArea.java,v 1.18 2005/11/18 10:56:53 thomas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a textarea input element.
  * </p>
- *  Last modified: $Date: 2005/03/08 12:51:36 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/18 10:56:53 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class TextArea extends InterfaceObject {
 
@@ -109,7 +109,6 @@ public class TextArea extends InterfaceObject {
 		this(name, content);
 		setColumns(columns);
 		setRows(rows);
-		setTransient(false);
 	}
 
 	public void _main(IWContext iwc) throws Exception {
