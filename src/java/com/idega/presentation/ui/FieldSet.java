@@ -50,7 +50,7 @@ public class FieldSet extends PresentationObjectContainer {
 		_hasLegend = ((Boolean) values[1]).booleanValue();
 	}
 	public FieldSet() {
-		setTransient(false);
+		initialize();
 	}
 	
 	public FieldSet(String legend) {
@@ -61,6 +61,10 @@ public class FieldSet extends PresentationObjectContainer {
 		this();
 		add(legend);
 		_hasLegend = true;
+		initialize();
+	}
+	
+	private void initialize() {
 		setTransient(false);
 	}
 	
