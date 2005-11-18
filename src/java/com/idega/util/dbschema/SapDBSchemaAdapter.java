@@ -11,10 +11,10 @@ import com.idega.util.database.ConnectionBroker;
 /**
  * 
  * 
- *  Last modified: $Date: 2004/11/01 10:05:31 $ by $Author: aron $
+ *  Last modified: $Date: 2005/11/18 11:58:11 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SapDBSchemaAdapter extends SQLSchemaAdapter {
 	SapDBSchemaAdapter() {
@@ -325,5 +325,8 @@ public class SapDBSchemaAdapter extends SQLSchemaAdapter {
 		 * if(v!=null && !v.isEmpty()) return (String[])v.toArray(new String[0]);
 		 * return null;
 		 */
+	}
+	public boolean getSupportsSlide() {
+		return false;
 	}	
 }
