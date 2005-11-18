@@ -1,5 +1,5 @@
 /*
- * $Id: HorizontalRule.java,v 1.8 2005/03/08 19:51:51 tryggvil Exp $
+ * $Id: HorizontalRule.java,v 1.9 2005/11/18 11:03:09 thomas Exp $
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -16,10 +16,10 @@ import com.idega.presentation.PresentationObject;
  * <p>
  * Component to render out a Horizontal Rule or &lt;HR&gt; tag;
  * </p>
- *  Last modified: $Date: 2005/03/08 19:51:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/18 11:03:09 $ by $Author: thomas $
  * 
  * @author <a href="mailto:laddi@idega.is">Þórhallur Helgason</a>,<a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class HorizontalRule extends PresentationObject {
 
@@ -28,7 +28,7 @@ public class HorizontalRule extends PresentationObject {
 	public static final String ALIGN_CENTER = "center";
 
 	public HorizontalRule() {
-		setTransient(false);
+		initialize();
 	}
 
 	public HorizontalRule(int width) {
@@ -37,6 +37,7 @@ public class HorizontalRule extends PresentationObject {
 
 	public HorizontalRule(String width) {
 		setWidth(width);
+		initialize();
 	}
 
 	public HorizontalRule(int width, int height) {
@@ -46,6 +47,7 @@ public class HorizontalRule extends PresentationObject {
 	public HorizontalRule(String width, int height) {
 		setWidth(width);
 		setHeight(height);
+		initialize();
 	}
 
 	public HorizontalRule(int width, int height, String style) {
@@ -56,6 +58,7 @@ public class HorizontalRule extends PresentationObject {
 		setWidth(width);
 		setHeight(height);
 		setStyle(style);
+		initialize();
 	}
 
 	public HorizontalRule(int width, int height, String style, boolean noShade) {
@@ -67,6 +70,11 @@ public class HorizontalRule extends PresentationObject {
 		setHeight(height);
 		setStyle(style);
 		setNoShade(noShade);
+		initialize();
+	}
+	
+	private void initialize() {
+		setTransient(false);
 	}
 
 	public void setTitle(String title) {

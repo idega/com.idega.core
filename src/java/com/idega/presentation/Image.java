@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.88 2005/10/05 17:47:05 thomas Exp $
+ * $Id: Image.java,v 1.89 2005/11/18 11:04:22 thomas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -40,11 +40,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/10/05 17:47:05 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/11/18 11:04:22 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.88 $
+ * @version $Revision: 1.89 $
  */
 public class Image extends PresentationObject implements NonEJBResource, PropertyDescriptionHolder
 {
@@ -140,19 +140,17 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	}
 	public Image(String url, String name)
 	{
-		super();
-		setTransient(false);
 		if ("".equalsIgnoreCase(name))
 			name = this.generateID();
 		setName(name);
 		setAlt(name);
 		setToolTip(name);
 		setURL(url);
+		initialize();
 		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 	}
 	public Image(String name, String url, String overImageUrl)
 	{
-		super();
 		setName(name);
 		setAlt(name);
 		setToolTip(name);
@@ -161,6 +159,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		this.overImageUrl = overImageUrl;
 		setOnMouseOut("swapImgRestore()");
 		setOnMouseOver("swapImage('" + getName() + "','','" + overImageUrl + "',1)");
+		initialize();
 	}
 	public Image(String name, String url, String overImageUrl, String downImageUrl)
 	{
@@ -171,13 +170,13 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	}
 	public Image(String url, String name, int width, int height)
 	{
-		super();
 		setName(name);
 		setAlt(name);
 		setToolTip(name);
 		setURL(url);
 		setWidth(width);
 		setHeight(height);
+		initialize();
 		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 	}
 	/**
@@ -187,17 +186,17 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	*/
 	public Image(ICFile file) throws EJBException, SQLException {
 		this(((Integer)file.getPrimaryKey()).intValue());
-		this.datasource = file.getDatasource(); 
+		this.datasource = file.getDatasource();
 	}
 	/**
 	*Fetches an image from the database through the imageservlet or blobcache
 	*/
 	public Image(int imageId) throws SQLException
 	{
-		super();
 		this.imageId = imageId;
 		//setBorder(BORDER_WIDTH_DEFAULT, BORDER_COLOR_DEFAULT, BORDER_STYLE_DEFAULT);
 		setName(this.generateID());
+		initialize();
 	}
 	public Image(int imageId, String name) throws SQLException
 	{
@@ -217,6 +216,10 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		this(imageId, name);
 		setWidth(width);
 		setHeight(height);
+	}
+	
+	private void initialize() {
+		setTransient(false);
 	}
 	
 	protected void setImageURL(IWContext iwc) throws Exception{
