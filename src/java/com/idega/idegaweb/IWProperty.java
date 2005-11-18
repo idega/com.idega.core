@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.13 2004/11/02 14:54:51 tryggvil Exp $
+ * $Id: IWProperty.java,v 1.14 2005/11/18 14:47:06 tryggvil Exp $
 
  *
 
@@ -20,11 +20,15 @@ import java.text.Collator;
 
 import com.idega.xml.XMLElement;
 /**
-
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
- * @version 0.8 - Under development
-
+ * <p>
+ * This class is used by IWPropertyList to hold each property or each
+ * &lt;key&gt; tag.
+ * </p>
+ * Copyright: Copyright (c) 2001-2005 idega software<br/>
+ * Last modified: $Date: 2005/11/18 14:47:06 $ by $Author: tryggvil $
+ *  
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.14 $
  */
 public class IWProperty implements Comparable
 {

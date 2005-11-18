@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.25 2005/09/02 05:11:56 gimmi Exp $
+ * $Id: IWPropertyList.java,v 1.26 2005/11/18 14:47:06 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -29,8 +29,17 @@ import com.idega.xml.XMLOutput;
 import com.idega.xml.XMLParser;
 
 /**
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 0.8 - Under development
+ * <p>
+ * This is an class for reading idegaweb .pxml files that are
+ * xml files with key-value pairs.<br/>
+ * This class is used and extended for idegaweb.pxml and bundles.pxml 
+ * files and a few others.
+ * </p>
+ * Copyright: Copyright (c) 2001-2005 idega software<br/>
+ * Last modified: $Date: 2005/11/18 14:47:06 $ by $Author: tryggvil $
+ *  
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.26 $
  */
 public class IWPropertyList {
 	private XMLDocument xmlDocument;
