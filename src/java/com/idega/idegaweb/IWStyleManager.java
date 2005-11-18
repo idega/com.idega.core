@@ -164,16 +164,18 @@ public class IWStyleManager implements Singleton {
 	}
 
 	/**
-	 * Gets if the stylesheet file should be written down - this is disabled in some new systems.
+	 * Gets if the stylesheet file should be written down - 
+	 * this is now default disabled on ePlatform 3.0
 	 * @return
 	 */
 	public boolean shouldWriteDownFile(){
 		IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
-		if(iwma.getSettings().getProperty(PROPERTY_WRITE_FILE)!=null){
+		String property = iwma.getSettings().getProperty(PROPERTY_WRITE_FILE);
+		if(property!=null){
 			return iwma.getSettings().getBooleanProperty(PROPERTY_WRITE_FILE);
 		}
 		else{
-			return true;
+			return false;
 		}
 	}
 	
