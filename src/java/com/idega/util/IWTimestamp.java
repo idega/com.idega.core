@@ -575,6 +575,10 @@ public class IWTimestamp implements Comparable,Cloneable {
 	public boolean isLaterThanOrEquals(IWTimestamp compareStamp) {
 		return (isLaterThan(compareStamp) || equals(compareStamp));
 	}
+	
+	public boolean isEarlierThanOrEquals(IWTimestamp compareStamp) {
+		return (isEarlierThan(compareStamp) || equals(compareStamp));		
+	}
 
 	/**
 	 * Returns true if this <code>IWTimestamp</code> object only contains a time setting.
