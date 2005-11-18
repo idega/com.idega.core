@@ -1,13 +1,15 @@
+/*
+ * $Id: IWCacheManager.java,v 1.33 2005/11/18 15:16:39 tryggvil Exp $
+ * Created in 2001 by Tryggvi Larusson
+ * 
+ * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
+ */
 package com.idega.idegaweb;
 
-/**
- * Title:        idegaclasses
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega
- * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0
- */
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -30,7 +32,18 @@ import com.idega.util.StringHandler;
 import com.idega.util.caching.Cache;
 import com.idega.util.text.TextSoap;
 
-
+/**
+ * <p>
+ * Class used to manage caches in idegaWeb. This manages the cache system
+ * that can be used by com.idega.presentation.Block and suclasses to store
+ * fragments of their rendering output in memory.
+ * </p>
+ * Copyright: Copyright (c) 2001-2005 idega software<br/>
+ * Last modified: $Date: 2005/11/18 15:16:39 $ by $Author: tryggvil $
+ *  
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.33 $
+ */
 public class IWCacheManager implements Singleton {
 
   private static final String IW_CACHEMANAGER_KEY = "iw_cachemanager";
@@ -132,7 +145,8 @@ public class IWCacheManager implements Singleton {
   }
 
   public Object getObject(String key){
-    return getObjectsMap().get(key);
+	Object theReturn = getObjectsMap().get(key);
+    return theReturn;
   }
 
   private Long getCurrentTime(){
