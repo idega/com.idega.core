@@ -1,5 +1,5 @@
 /*
- * $Id: IWApplicationStarter.java,v 1.3 2005/06/03 15:18:29 thomas Exp $
+ * $Id: IWApplicationStarter.java,v 1.4 2005/11/18 14:28:32 tryggvil Exp $
  *
  * Created by Tryggvi Larusson in 2004
  *
@@ -26,9 +26,16 @@ import com.idega.repository.data.RefactorClassRegistry;
 
 
 /**
- * This Listener starts up the idegaWeb environment and starts the IWMainApplication.
- * 
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * <p>
+ * This class is the ServletContextListener registered in web.xml and 
+ * is the trigger of the start of the idegaWeb application. Actually
+ * this class calls IWMainApplicationStarter for starting up.
+ * </p>
+ * Copyright: Copyright (c) 2004-2005 idega software<br/>
+ * Last modified: $Date: 2005/11/18 14:28:32 $ by $Author: tryggvil $
+ *  
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.4 $
  */
 public class IWApplicationStarter implements ServletContextListener {
 
