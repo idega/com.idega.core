@@ -38,7 +38,7 @@ public class Label extends InterfaceObject {
 	}
 	
 	public Label() {
-		super();
+		initialize(null);
 	}
 	
 	public Label(InterfaceObject object) {
@@ -46,8 +46,12 @@ public class Label extends InterfaceObject {
 	}
 	
 	public Label(String label, InterfaceObject object) {
-		_label = label;
 		setMarkupAttribute("for", object.getID());
+		initialize(label);
+	}
+	
+	private void initialize(String label) {
+		_label = label;
 		setTransient(false);
 	}
 	
