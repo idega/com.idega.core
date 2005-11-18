@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.41 2005/08/31 02:10:08 eiki Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.42 2005/11/18 10:59:37 thomas Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -28,10 +28,10 @@ import com.idega.util.datastructures.list.KeyValuePair;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
+ * Last modified: $Date: 2005/11/18 10:59:37 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.41 $
+ * @version $Revision: 1.42 $
  */
 public class Window extends Page {
 
@@ -136,6 +136,7 @@ public class Window extends Page {
 		this.setAllMargins(0);
 		add(image);
 		this.setOnLoad("window.resizeTo(document.onlyImage.width +10, document.onlyImage.height +22)");
+		initialize();
 	}
 
 	public Window(String name) {
@@ -159,7 +160,7 @@ public class Window extends Page {
 		this.setName(name);
 		this.setWidth(width);
 		this.setHeight(height);
-		setTransient(false);
+		initialize();
 	}
 
 	public Window(String name, String url) {
@@ -174,8 +175,10 @@ public class Window extends Page {
 		this.url = url;
 		// newURL=true;
 		setSettings();
-		setTransient(false);
+		initialize();
 	}
+	
+
 
 	public Window(String name, String classToInstanciate, String template) {
 		// this(name,400,400,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
@@ -196,6 +199,10 @@ public class Window extends Page {
 	 */
 	public Window(String name, Class classToInstanciate) {
 		// this(name,400,400,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+		initialize();
+	}
+	
+	private void initialize() {
 		setTransient(false);
 	}
 
