@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.13 2005/11/17 23:52:01 tryggvil Exp $
+ * $Id: IWUrlRedirector.java,v 1.14 2005/11/21 17:31:40 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2005/11/17 23:52:01 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/21 17:31:40 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -78,7 +78,31 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 				if(pageId==null){
 					pageId=bs.getRootPageKey();
 				}
-				return bs.getPageURI(pageId);
+				String newPageUri = bs.getPageURI(pageId);
+				Map pMap = request.getParameterMap();
+				StringBuffer newUri = new StringBuffer(newPageUri);
+				if (pMap != null) {
+					Iterator keys = pMap.keySet().iterator();
+					boolean first = true;
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
+						if (!key.equals(OLD_BUILDER_PAGE_PARAMETER)) {
+							String[] values = (String[]) pMap.get(key);
+							if (values != null) {
+								for (int i = 0; i < values.length; i++) {
+									if (first) {
+										newUri.append("?");
+										first = false;
+									} else {
+										newUri.append("&");
+									}
+									newUri.append(key).append("=").append(values[i]);
+								}
+							}
+						}
+					}
+				}
+				return newUri.toString();
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
