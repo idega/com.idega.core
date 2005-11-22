@@ -26,6 +26,11 @@ public interface LDAPReplicationConstants {
 	public static final String PROPS_REPLICATOR_SEARCH_ENTRY_LIMIT= ".returned.entries.limit";
 	public static final String PROPS_REPLICATOR_MATCH_BY_UNIQUE_ID= ".match.by.uniqueid";	
 	public static final String PROPS_REPLICATOR_ACTIVE= ".active";
+	/**
+	 * if this property is active/true then this servers iwldap webservice will be notified when changes happen
+	 * to a user/group and a single replication is initiated from the replication server's side.
+	 */
+	public static final String PROPS_REPLICATOR_ACTIVE_LISTENER= ".active.iwldapws.listener";
 	public static final String PROPS_REPLICATOR_ROOT_USER= ".root.user";
 	public static final String PROPS_REPLICATOR_ROOT_PASSWORD= ".root.password";
 	/**
@@ -36,5 +41,9 @@ public interface LDAPReplicationConstants {
 	public static final String PROPS_REPLICATOR_PARENT_GROUP_ID = ".parent.group.id";
 	/**if we should repeat the replication or should it be a one time thing**/
 	public static final String PROPS_REPLICATOR_REPEAT = ".replication.repeat";	
+	/**
+	 * The URI to the servers IdegaWeb LDAP Webservice, leave empty if we should assume the default URI
+	 */
+	public static final String PROPS_REPLICATOR_IWLDAPWS_URI = ".replication.iwldapws.uri";	
 	
 }

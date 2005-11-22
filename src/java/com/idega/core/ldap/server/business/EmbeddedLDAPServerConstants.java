@@ -18,6 +18,5 @@ public interface EmbeddedLDAPServerConstants {
 	public static final String PROPS_JAVALDAP_ROOTUSER = "javaldap.rootuser";
 	public static final String PROPS_JAVALDAP_ROOTPW = "javaldap.rootpw";
 	public static final String PROPS_JAVALDAP_AUTO_START = "idegaweb.ldap.autostart";
-	
-	
+	public static final String PROPS_JAVALDAP_PROPS_REAL_PATH = "ldap.properties.real.path";
 }
