@@ -721,6 +721,10 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
       return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection, false);
   }
     
+  public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases) {
+      return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection, false, false);
+  }
+
   /** Returns all the groups that are direct and indirect children of the specified group.
    *  If the grouptype collection is not null and none empty the returned groups are filtered to only include or exclude those grouptypes
    * in the returning collection depending on whether the boolean is set to true or false.
@@ -732,11 +736,11 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
    * that are contained in the collection groupTypesAsString else false to exclude those group types
    * @return a collection of groups
    */
-  public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases) {
+  public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases, boolean excludeGroupsWithoutMembers) {
     // author: Thomas
     Collection alreadyCheckedGroups = new ArrayList();
     Collection result = new ArrayList();
-    getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases);
+    getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases, excludeGroupsWithoutMembers);
     return result;
   }
   
@@ -775,6 +779,17 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
       Collection groupTypesAsString,
       boolean onlyReturnTypesInCollection,
       boolean includeAliases)  {
+      getChildGroupsRecursive(currentGroup,alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, false, false);
+  }
+
+  private void getChildGroupsRecursive
+      ( Group currentGroup, 
+        Collection alreadyCheckedGroups, 
+        Collection result, 
+        Collection groupTypesAsString,
+        boolean onlyReturnTypesInCollection,
+        boolean includeAliases,
+        boolean excludeGroupsWithoutMembers)  {
   	
     Integer currentPrimaryKey = (Integer) currentGroup.getPrimaryKey();
     if (alreadyCheckedGroups.contains(currentPrimaryKey)) {
@@ -785,12 +800,27 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
     String currentGroupType = currentGroup.getGroupType();
     // does the current group belong to the result set?
     //if both are true or false then it belongs, otherwise not. (using XOR)
+    String[] userType = new String[]{getUserHome().getGroupType()};
     if(groupTypesAsString==null || groupTypesAsString.isEmpty()){
     		//no specific type, add all
+        if (excludeGroupsWithoutMembers) {
+	        Collection users = currentGroup.getChildGroups(userType, true);
+	        if (!users.isEmpty()) {
+	            result.add(currentGroup);
+	        }
+        } else {
     		result.add(currentGroup);
+        }
     }
     else if (!(groupTypesAsString.contains(currentGroupType) ^ ( onlyReturnTypesInCollection) ) )  {
-      result.add(currentGroup);
+        if (excludeGroupsWithoutMembers) {
+	        Collection users = currentGroup.getChildGroups(userType, true);
+	        if (!users.isEmpty()) {
+	            result.add(currentGroup);
+	        }
+        } else {
+            result.add(currentGroup);
+        }
     }
     // go further
     Collection children = currentGroup.getChildGroups();
@@ -805,7 +835,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	          }
           }
       }
-      getChildGroupsRecursive(child, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases);
+      getChildGroupsRecursive(child, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases, excludeGroupsWithoutMembers);
     }
   }
 
@@ -2532,10 +2562,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/07/14 01:12:16 $ by $Author: eiki $
+	 *  Last modified: $Date: 2005/11/23 00:13:12 $ by $Author: sigtryggur $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.99 $
+	 * @version $Revision: 1.99.2.1 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
