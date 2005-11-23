@@ -39,14 +39,17 @@ public class SelectDropdownDouble extends InterfaceObject {
 	private int layout = 1;
 	private Text primaryLabel = null;
 	private Text secondaryLabel = null;
+	private String scriptName = null;
 	
 	
 	public SelectDropdownDouble() {
+		scriptName = "setDropdownOptions";
 	}
 	
 	public SelectDropdownDouble(String primaryName,String secondaryName) {
 		this.primaryName = primaryName;
 		this.secondaryName = secondaryName;
+		scriptName = "setDropdownOptions_" + primaryName; 
 	}
 
 	public void main(IWContext iwc) throws Exception {
@@ -58,7 +61,7 @@ public class SelectDropdownDouble extends InterfaceObject {
 		}
 		
 		//addElementsToPrimary();
-		getPrimaryDropdown().setOnChange("setDropdownOptions(this, findObj('"+secondaryName+"'), -1);");
+		getPrimaryDropdown().setOnChange(scriptName + "(this, findObj('"+secondaryName+"'), -1);");
 		if (_objectToDisable != null) {
 			getSecondaryDropdown().setToDisableWhenSelected(_objectToDisable.getPrimaryName(), _disableValue);
 			getSecondaryDropdown().setToDisableWhenSelected(_objectToDisable.getSecondaryName(), _disableValue);
@@ -108,11 +111,11 @@ public class SelectDropdownDouble extends InterfaceObject {
 
 		//add the script
 		Script script = getParentPage().getAssociatedScript();
-		script.addFunction("setDropdownOptions", getSelectorScript(iwc));
+		script.addFunction(scriptName, getSelectorScript(iwc));
 		
 		if (_secondarySelected == null)
 			_secondarySelected = "-1";
-		getParentPage().setOnLoad("setDropdownOptions(findObj('"+primaryName+"'),findObj('"+secondaryName+"'), '"+_secondarySelected+"')");
+		getParentPage().setOnLoad(scriptName + "(findObj('"+primaryName+"'),findObj('"+secondaryName+"'), '"+_secondarySelected+"')");
 	}
 	/*
 	private void addElementsToPrimary() {
@@ -134,7 +137,7 @@ public class SelectDropdownDouble extends InterfaceObject {
 
 	private String getSelectorScript(IWContext iwc) {
 		StringBuffer s = new StringBuffer();
-		s.append("function setDropdownOptions(input, inputToChange, selected) {").append("\n\t");
+		s.append("function " + scriptName + "(input, inputToChange, selected) {").append("\n\t");
 		s.append("var dropdownValues = new Array();").append("\n\t");
 		
 		int column = 0;
