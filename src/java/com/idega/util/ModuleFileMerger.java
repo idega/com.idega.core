@@ -49,6 +49,7 @@ public class ModuleFileMerger {
 	private Map moduleMap;
 	private String fileHeader;
 	private boolean removeOlderModules=true;
+	private String initalRootContents=null;
 	
 	/**
 	 * @return Returns the rootXMLElement.
@@ -194,6 +195,12 @@ public class ModuleFileMerger {
 				outString.append(fileHeader);
 			}
 			outString.append("<"+getRootXMLElement()+">\n");
+		}
+		
+		
+		String initialRootContents = getInitalRootContents();
+		if(initialRootContents!=null){
+			outString.append(initialRootContents+"\n");
 		}
 		
 		
@@ -551,5 +558,20 @@ public class ModuleFileMerger {
 			this.hasBeenProcessed = hasBeenProcessed;
 		}
 		
+	}
+	
+	
+	/**
+	 * @return Returns the initalRootContents.
+	 */
+	public String getInitalRootContents() {
+		return initalRootContents;
+	}
+	
+	/**
+	 * @param initalRootContents The initalRootContents to set.
+	 */
+	public void setInitalRootContents(String initalRootContents) {
+		this.initalRootContents = initalRootContents;
 	}
 }
