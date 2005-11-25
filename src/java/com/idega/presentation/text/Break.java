@@ -1,5 +1,6 @@
 package com.idega.presentation.text;
 
+import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
@@ -31,11 +32,11 @@ public class Break extends PresentationObject {
 
 	public void print(IWContext iwc) {
 		for (int a = 1; a <= _numberOfBreaks; a++) {
-			if (getMarkupLanguage().equals("HTML")) {
-				String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
+			if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
+				String markup = iwc.getApplicationSettings().getDefaultMarkupLanguage();
 				print("<br " + (!markup.equals(Page.HTML) ? "/" : "") + ">");
 			}
-			else if (getMarkupLanguage().equals("WML")) {
+			else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 				if(!((this.getParent() instanceof Page) || (this.getParent() instanceof Block))){
 					print("<br />");
 				}
