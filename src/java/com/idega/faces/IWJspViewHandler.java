@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.7 2005/11/24 11:15:30 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.8 2005/11/25 23:45:37 tryggvil Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.FileUtil;
  * This class overrides the default JSF ViewHandler and adds idegaWeb specific way of handling JSP pages
  * that are registered in the ViewNode hierarchy.<br/>
  * </p>
- *  Last modified: $Date: 2005/11/24 11:15:30 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/25 23:45:37 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -228,6 +228,9 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 				long workspaceLastModified = jspFileInWorkspace.lastModified();
 				if(workspaceLastModified>webappModified){
 					try {
+						if(!jspFileInWebapp.exists()){
+							FileUtil.createFileIfNotExistent(jspFileInWebapp);
+						}
 						FileUtil.copyFile(jspFileInWorkspace,jspFileInWebapp);
 					}
 					catch (FileNotFoundException e) {
