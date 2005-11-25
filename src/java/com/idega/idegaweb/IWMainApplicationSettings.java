@@ -1,49 +1,73 @@
-//idega 2001 - Tryggvi Larusson
 /*
-
-*Copyright 2001 idega.is All Rights Reserved.
-
-*/
+ * $Id: IWMainApplicationSettings.java,v 1.29 2005/11/25 15:16:22 tryggvil Exp $
+ * Created in 2001 by Tryggvi Larusson
+ * 
+ * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
+ */
 package com.idega.idegaweb;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
+import java.util.Set;
 import java.util.Vector;
+import javax.ejb.FinderException;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.data.ICApplicationBinding;
+import com.idega.core.data.ICApplicationBindingHome;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.EntityControl;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
+import com.idega.presentation.Page;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.LocaleUtil;
 /**
-
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
-*@version 1.0 - Under development
-
-*/
+ * <p>
+ * This class is used by IWMainApplication as the holder of most properties set
+ * on an application-wide basis. This class is responsible for reading the properties
+ * set in idegaweb.pxml and also holds some default values that don't have to be 
+ * explicitly set in the idegaweb.pxml properties file.
+ * </p>
+ * Copyright: Copyright (c) 2001-2005 idega software<br/>
+ * Last modified: $Date: 2005/11/25 15:16:22 $ by $Author: tryggvil $
+ *  
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.29 $
+ */
 public class IWMainApplicationSettings extends IWPropertyList {
-	public static final String CHARACTER_ENCODING = "character_encoding";
-	public static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
+	private static final String CHARACTER_ENCODING_KEY = "character_encoding";
+	private static String DEFAULT_CHARACTER_ENCODING; //= "ISO-8859-1";
 	//public static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
 	
-	private static String IW_SERVICE_CLASS_NAME = "iw_service_class_name";
 	private static String DEFAULT_TEMPLATE_NAME = "defaulttemplatename";
 	private static String DEFAULT_TEMPLATE_CLASS = "defaulttemplateclass";
 	private static String DEFAULT_FONT = "defaultfont";
 	private static String DEFAULT_FONT_SIZE = "defaultfontsize";
-	private static String DEFAULT_LOCALE = "defaultlocale";
+	private static String DEFAULT_LOCALE_KEY = "defaultlocale";
 	private static String _SERVICE_CLASSES_KEY = "iw_service_class_key";
 	private static final String IDO_ENTITY_BEAN_CACHING_KEY =
 		"ido_entity_bean_caching";
 	private static final String IDO_ENTITY_QUERY_CACHING_KEY =
 		"ido_entity_query_caching";
 	public static final String IW_POOLMANAGER_TYPE = "iw_poolmanager";
+	public static final String AUTO_CREATE_LOCALIZED_STRINGS_KEY="auto-create-localized-strings";
+	public static final String AUTO_CREATE_PROPERTIES_KEY="auto-create-properties";
+	public static final String DEFAULT_MARKUP_LANGUAGE_KEY="markup_language";
+
+	public final static String DEFAULT_MARKUP_LANGUAGE = Page.XHTML;
+	
 	public static boolean DEBUG_FLAG = false;
-	public static boolean CREATE_STRINGS = false;
-	public static boolean CREATE_PROPERTIES = false;
+	public static boolean CREATE_STRINGS = true;
+	public static boolean CREATE_PROPERTIES = true;
 	
 	//instance variables:
 	private IWMainApplication application;
+	private Locale cachedDefaultLocale = null;
 	
 	public IWMainApplicationSettings(IWMainApplication application) {
 		super(application.getPropertiesRealPath(), "idegaweb.pxml", true);
@@ -76,60 +100,113 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	public void setDefaultFontSize(int size) {
 		setProperty(DEFAULT_FONT_SIZE, size);
 	}
-	/*public void setDefaultLocale(Locale locale){
 	
-	setProperty(DEFAULT_LOCALE,locale.toString());
-	
-	}*/
-	public void setDefaultLocale(Locale locale) {
-		setProperty(DEFAULT_LOCALE, locale.toString());
+	/**
+	 * <p>
+	 * Gets the property value if set in the IC_APPLICATION_BINDING table.
+	 * </p>
+	 * @param propertyKey
+	 * @return
+	 */
+	public String getApplicationBindingProperty(String propertyKey){
+		ICApplicationBindingHome bindingHome;
+		try {
+			bindingHome = (ICApplicationBindingHome) IDOLookup.getHome(ICApplicationBinding.class);
+			ICApplicationBinding binding = bindingHome.findByPrimaryKey(propertyKey);
+			if(binding!=null){
+				return binding.getValue();
+			}
+		}
+		catch (Exception e) {
+		}
+		return null;
 	}
-	/*public Locale getDefaultLocale(){
+	/**
+	 * <p>
+	 * Sets the property value or updates in the IC_APPLICATION_BINDING table.
+	 * </p>
+	 * @param propertyKey
+	 * @return
+	 */
+	public void setApplicationBindingProperty(String key,String value) {
+		ICApplicationBindingHome bindingHome;
+		try {
+			bindingHome = (ICApplicationBindingHome) IDOLookup.getHome(ICApplicationBinding.class);
+			ICApplicationBinding binding = null;
+			try{
+				bindingHome.findByPrimaryKey(key);
+			}
+			catch(FinderException fe){
+			}
+			if(binding==null){
+				binding = bindingHome.create();
+			}
+			binding.setKey(key);
+			binding.setValue(value);
+			binding.store();
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
-	  return (new Locale(getProperty(DEFAULT_LOCALE)));
-	
-	}*/
-	
+	public void setDefaultLocale(Locale locale) {
+		//setProperty(DEFAULT_LOCALE_KEY, locale.toString());
+		String sLocale = locale.toString();
+		setApplicationBindingProperty(DEFAULT_LOCALE_KEY,sLocale);
+		cachedDefaultLocale=null;
+	}
 	/**
 	 * Gets the default locale which is assigned to all users if they have not chosen a locale. 
 	 *
 	 * @return The set application default locale. If not set it returns the english locale.
 	 **/
 	public Locale getDefaultLocale() {
-		String localeIdentifier = getProperty(DEFAULT_LOCALE);
-		Locale locale = null;
-		boolean firstTimeSave = false;
-		Locale englishLocal = Locale.ENGLISH;
-		if (localeIdentifier == null) {
-			//Set default to International English
-			locale = englishLocal;
-			firstTimeSave = true;
-		}
-		else{
-			locale = LocaleUtil.getLocale(localeIdentifier);
-		}
-		
-		if(!getApplication().isInDatabaseLessMode()){
-			List localesInUse = ICLocaleBusiness.getListOfLocalesJAVA();
-			//if it is a legal locale depending on the users settings then set that as the default otherwise use the first in the list
-			if(localesInUse.contains(locale)){
-				if(firstTimeSave){
-					setDefaultLocale(locale);
-				}
+		if(cachedDefaultLocale==null){
+			String localeIdentifierFromApplicationBinding = getApplicationBindingProperty(DEFAULT_LOCALE_KEY);
+			String localeIdentifierFromProperty = getProperty(DEFAULT_LOCALE_KEY);
+			Locale locale = null;
+			boolean firstTimeSave = false;
+			Locale englishLocal = Locale.ENGLISH;
+			if (localeIdentifierFromApplicationBinding == null && localeIdentifierFromProperty==null) {
+				//Set default to International English
+				locale = englishLocal;
+				firstTimeSave = true;
+			}
+			else if(localeIdentifierFromApplicationBinding!=null){
+				locale = LocaleUtil.getLocale(localeIdentifierFromApplicationBinding);
 			}
 			else{
-				if(localesInUse.contains(englishLocal)){
-					//try to use the english one
-					locale = englishLocal;
+				locale = LocaleUtil.getLocale(localeIdentifierFromProperty);
+			}
+			
+			if(!getApplication().isInDatabaseLessMode()){
+				List localesInUse = ICLocaleBusiness.getListOfLocalesJAVA();
+				//if it is a legal locale depending on the users settings then set that as the default otherwise use the first in the list
+				if(localesInUse.contains(locale)){
+					if(firstTimeSave){
+						setDefaultLocale(locale);
+					}
 				}
 				else{
-					//else just the first we find
-					locale = (Locale)localesInUse.iterator().next();
+					if(localesInUse.contains(englishLocal)){
+						//try to use the english one
+						locale = englishLocal;
+					}
+					else{
+						//else just the first we find
+						locale = (Locale)localesInUse.iterator().next();
+					}
+					setDefaultLocale(locale);//to fix the default locale or set it for the first time
 				}
-				setDefaultLocale(locale);//to fix the default locale or set it for the first time
 			}
+			cachedDefaultLocale=locale;
+			return locale;
 		}
-		return locale;
+		else{
+			return cachedDefaultLocale;
+		}
 	}
 	
 	
@@ -189,7 +266,7 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	public boolean getIfEntityAutoCreate() {
 		String value = getProperty("entity-auto-create");
 		if (value == null) {
-			return false;
+			return true;
 		} else {
 			return Boolean.valueOf(value).booleanValue();
 		}
@@ -245,13 +322,20 @@ public class IWMainApplicationSettings extends IWPropertyList {
 		return DEBUG_FLAG;
 	}
 	public void setAutoCreateStrings(boolean ifAutoCreate) {
-		this.setProperty("auto-create-localized-strings", ifAutoCreate);
+		this.setProperty(AUTO_CREATE_LOCALIZED_STRINGS_KEY, ifAutoCreate);
 		setAutoCreateStringsMode(ifAutoCreate);
 	}
+	/**
+	 * <p>
+	 * Gets if strings should be automatically created in bundle localization files
+	 * if they do not pre-exist. This defaults to true.
+	 * </p>
+	 * @return
+	 */
 	public boolean getIfAutoCreateStrings() {
-		String value = getProperty("auto-create-localized-strings");
+		String value = getProperty(AUTO_CREATE_LOCALIZED_STRINGS_KEY);
 		if (value == null) {
-			return false;
+			return true;
 		} else {
 			return Boolean.valueOf(value).booleanValue();
 		}
@@ -277,13 +361,13 @@ public class IWMainApplicationSettings extends IWPropertyList {
 		}
 	}
 	public void setAutoCreateProperties(boolean ifAutoCreate) {
-		this.setProperty("auto-create-properties", ifAutoCreate);
+		this.setProperty(AUTO_CREATE_PROPERTIES_KEY, ifAutoCreate);
 		setAutoCreatePropertiesMode(ifAutoCreate);
 	}
 	public boolean getIfAutoCreateProperties() {
-		String value = getProperty("auto-create-properties");
+		String value = getProperty(AUTO_CREATE_PROPERTIES_KEY);
 		if (value == null) {
-			return false;
+			return true;
 		} else {
 			return Boolean.valueOf(value).booleanValue();
 		}
@@ -309,7 +393,22 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	 * @return The character encoding string for example UTF-16 or the default ISO-8859-1
 	 */
 	public String getCharacterEncoding() {
-		return getProperty(CHARACTER_ENCODING, DEFAULT_CHARACTER_ENCODING);
+		String encodingProperty = getProperty(CHARACTER_ENCODING_KEY);
+		//check the encodingproperty and return it if set:
+		if(encodingProperty!=null){
+			return encodingProperty;
+		}
+		//else return the default:
+		if(DEFAULT_CHARACTER_ENCODING==null){
+			//Try first to get the value from the file.encoding system property:
+			String fileEncoding =System.getProperty("file.encoding");
+			DEFAULT_CHARACTER_ENCODING=fileEncoding;
+			if(DEFAULT_CHARACTER_ENCODING==null){
+				//if still there is no character encoding from the jvm, set it as unicode:
+				DEFAULT_CHARACTER_ENCODING="UTF-8";
+			}
+		}
+		return DEFAULT_CHARACTER_ENCODING;
 	}
 	
 	
@@ -332,5 +431,27 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	 */
 	public void setWriteBundleFilesOnShutdown(boolean ifWriteDown){
 		this.setProperty("write_bundle_files_on_shudown", ifWriteDown);
+	}
+	
+	/**
+	 * <p>
+	 * Gets the default markup language for the application.<br/>
+	 * In ePlatform version 3 this is xhtml.
+	 * </p>
+	 * @return
+	 */
+	public String getDefaultMarkupLanguage(){
+		String value = getProperty(DEFAULT_MARKUP_LANGUAGE_KEY);
+		if (value == null) {
+			return DEFAULT_MARKUP_LANGUAGE;
+		} else {
+			return value;
+		}
+	}
+	/**
+	 * 
+	 */
+	public void setDefaultMarkupLanguage(String markupLanguage){
+		this.setProperty(DEFAULT_MARKUP_LANGUAGE_KEY, markupLanguage);
 	}
 }
