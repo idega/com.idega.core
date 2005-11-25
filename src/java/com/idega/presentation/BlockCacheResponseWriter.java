@@ -1,5 +1,5 @@
 /*
- * $Id: BlockCacheResponseWriter.java,v 1.1 2005/07/28 18:06:30 tryggvil Exp $
+ * $Id: BlockCacheResponseWriter.java,v 1.2 2005/11/25 15:23:32 tryggvil Exp $
  * Created on 19.7.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import javax.faces.context.ResponseWriter;
  * A JSF ResponseWriter implementation to work with the Block 
  *  (IWCacheManager) Cache system in JSF.
  * </p>
- *  Last modified: $Date: 2005/07/28 18:06:30 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/25 15:23:32 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class BlockCacheResponseWriter extends ResponseWriter {
 
@@ -202,5 +202,9 @@ public class BlockCacheResponseWriter extends ResponseWriter {
 	public void writeURIAttribute(String arg0, Object arg1, String arg2) throws IOException {
 //		TODO: Implement writing to the cache buffer
 		underlying.writeURIAttribute(arg0, arg1, arg2);
+	}
+	
+	public StringBuffer getBuffer(){
+		return buffer;
 	}
 }
