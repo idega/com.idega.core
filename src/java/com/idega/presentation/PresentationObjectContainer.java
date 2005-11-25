@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.53 2005/09/29 12:17:11 tryggvil Exp $
+ * $Id: PresentationObjectContainer.java,v 1.54 2005/11/25 14:59:21 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -32,10 +32,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2005/09/29 12:17:11 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/25 14:59:21 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.53 $
+ * @version $Revision: 1.54 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -620,7 +620,7 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		if (askForPermission || iwc != null)
 		{
-			if (iwc.hasViewPermission(this))
+			if (iwc.getApplicationContext().getIWMainApplication().getAccessController().hasViewPermission(this,iwc))
 			{
 				return this.clone(iwc, askForPermission);
 			}
