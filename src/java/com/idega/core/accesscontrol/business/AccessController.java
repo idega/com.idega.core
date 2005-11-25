@@ -1,3 +1,14 @@
+/*
+ * $Id: AccessController.java,v 1.29 2005/11/25 14:57:50 tryggvil Exp $
+ * 
+ * Created in 2001 by gummi
+ * 
+ * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
+ *  
+ */
 package com.idega.core.accesscontrol.business;
 
 import java.util.Collection;
@@ -17,14 +28,15 @@ import com.idega.presentation.PresentationObject;
 import com.idega.user.data.Group;
 
 /**
- * Title:        idegaWeb
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega
+ * <p>
+ * This is the main service interface for the old generation permission system
+ * in idegaWeb based around the ICPermission entity (IC_PERMISSION table).
+ * </p>
+ * Last modified: $Date: 2005/11/25 14:57:50 $ by $Author: tryggvil $
+ * 
  * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
- * @version 1.0
+ * @version $Revision: 1.29 $
  */
-
 public interface AccessController extends com.idega.idegaweb.IWService{
 
   public static final String CATEGORY_STRING_OBJECT_INSTANCE_ID = "ic_object_instance_id";
