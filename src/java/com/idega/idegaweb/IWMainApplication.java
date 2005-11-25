@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.152 2005/11/16 17:59:10 gimmi Exp $
+ * $Id: IWMainApplication.java,v 1.153 2005/11/25 15:14:55 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/11/16 17:59:10 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/11/25 15:14:55 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.152 $
+ * @version $Revision: 1.153 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -154,10 +154,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
     //mutable class variables:
     protected static IWMainApplication defaultIWMainApplication = null;
     private static IWCacheManager cacheManager = null;
-    public static final boolean DEFAULT_USE_NEW_URL_SCHEME = false;
+    //This is default set to true for platform 3
+    public static final boolean DEFAULT_USE_NEW_URL_SCHEME = true;
     public static boolean useNewURLScheme= DEFAULT_USE_NEW_URL_SCHEME;
-	//This is a temporary solution should be removed when JSF implementation is done:
-    public static final boolean DEFAULT_USE_JSF = false;
+	//This is default set to true for platform 3
+    public static final boolean DEFAULT_USE_JSF = true;
 	public static boolean useJSF = DEFAULT_USE_JSF;
     public static final boolean DEFAULT_DEBUG_FLAG = false;
     public static boolean debug = DEFAULT_DEBUG_FLAG;
@@ -217,13 +218,19 @@ public class IWMainApplication	extends Application  implements MutableClass {
         load();
     }
 
+    /**
+     * <p>
+     * Returns the version of the underlying platform
+     * </p>
+     * @return
+     */
     public String getVersion() {
         /*String theReturn = this.getSettings().getProperty("version");
         if (theReturn == null) {
             theReturn = "1.4.3";
         }
         return theReturn;*/
-    		return getProductInfo().getVersion();
+    		return getProductInfo().getPlatformVersion();
     }
 
     public String getBuildNumber() {
@@ -732,15 +739,16 @@ public class IWMainApplication	extends Application  implements MutableClass {
     	
     		String privatePath = this.getApplicationPrivateRealPath()
             + FileUtil.getFileSeparator() + PROPERTIES_STANDARD_DIRECTORY;
-    		File privateFile = new File(privatePath+FileUtil.getFileSeparator()+"idegaweb.pxml");
-    		if(privateFile.exists()){
-        		//Setting to the private path if it exists:
-    			this.propertiesRealPath = privatePath;
-    		}
-    		else{
-    			//Setting it to the public path to remain backwards compatible
+    		String publicPath = this.getApplicationSpecialRealPath() + FileUtil.getFileSeparator() + PROPERTIES_STANDARD_DIRECTORY;
+    		File publicFile = new File(publicPath+FileUtil.getFileSeparator()+"idegaweb.pxml");
+    		if(publicFile.exists()){
+    			//Setting it to the public path to remain backwards compatible:
     			this.propertiesRealPath = this.getApplicationSpecialRealPath()
                 + FileUtil.getFileSeparator() + PROPERTIES_STANDARD_DIRECTORY;
+    		}
+    		else{
+        		//Setting to the private path - this is the default in platform 3.0
+    			this.propertiesRealPath = privatePath;    			
     		}    
         //debug
         //sendStartupMessage("setting propertyRealPath to : "+propertiesRealPath);
@@ -765,7 +773,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
     
     
     /**
-     * Returns the real path to the WebApplication
+     * <p>
+     * This method returns the "real" filesystem path in the operating system 
+     * to the ROOT of this WebApplication
+     * </p>
      */
     public String getApplicationRealPath() {
         return application.getRealPath(FileUtil.getFileSeparator());
@@ -1109,9 +1120,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
         return cacheManager;
     }
 
-    // hashcode referencing
-    private static Map hashClasses = null;
-
     private static Properties cryptoCodesPropertiesKeyedByClassName = null;
 
     private static Properties cryptoClassNamesPropertiesKeyedByCode = null;
@@ -1271,21 +1279,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private static String calculateClassId(String s) {
     		//return a plain uuid:
     		return UUIDGenerator.getInstance().generateUUID();
-    }
-    
-    /**
-     * This is the old implementation for crypto properties.
-     * calculates the crosssum of a string
-     */
-    private static String calculateClassIdOld(String s) {
-        char[] c = s.toCharArray();
-        int sum = 0;
-        for (int i = 0; i < c.length; i++) {
-            if (i == 4) sum *= 3;
-            if (i == 10) sum *= 2;
-            sum += ((int) c[i]);
-        }
-        return Integer.toString(sum);
     }
 
     /**

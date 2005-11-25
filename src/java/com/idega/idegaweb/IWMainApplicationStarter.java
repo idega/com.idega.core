@@ -1,3 +1,13 @@
+/*
+ * $Id: IWMainApplication.java,v 1.152 2005/11/16 17:59:10 gimmi Exp $
+ * Created in 2002 by Tryggvi Larusson
+ * 
+ * Copyright (C) 2002-2005 Idega software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
+ */
 package com.idega.idegaweb;
 
 
@@ -45,11 +55,17 @@ import com.idega.user.data.GroupRelationTypeHome;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.database.PoolManager;
 
-
 /**
- * This class is responsible for starting up and initializing an idegaWeb Application
- * Copyright: Copyright (c) 2002-2004 idega software
- * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ * <p>
+ * This class is esponsible for starting up the idegaWeb application,
+ * that is initializing the IWMainApplication instance
+ * and reading and initializing properties and settings on startup.
+ * </p>
+ * Copyright: Copyright (c) 2002-2005 idega software<br/>
+ * Last modified: $Date: 2005/11/16 17:59:10 $ by $Author: gimmi $
+ *  
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.152 $
  */
 public class IWMainApplicationStarter implements ServletContextListener  {
 	
@@ -434,22 +450,31 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			}
 		}
 		String accControlType = application.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
-		if (accControlType != null) {
+		if (accControlType == null) {
 			com.idega.presentation.Block.usingNewAcessControlSystem = true;
+		}
+		else if(!accControlType.equals("iw")){
+			com.idega.presentation.Block.usingNewAcessControlSystem = false;
 		}
 		String usingEvent = application.getSettings().getProperty(IWMainApplication._PROPERTY_USING_EVENTSYSTEM);
 		if (usingEvent != null && !"false".equalsIgnoreCase(usingEvent)) {
 			com.idega.presentation.text.Link.usingEventSystem = true;
 		}
 		String usingNewURLStructure = application.getSettings().getProperty(IWMainApplication.PROPERTY_NEW_URL_STRUCTURE);
-		if (usingNewURLStructure != null && !"false".equalsIgnoreCase(usingNewURLStructure)) {
+		if (usingNewURLStructure != null && "false".equalsIgnoreCase(usingNewURLStructure)) {
+			sendStartMessage("NOT Using new URL Scheme");
+			IWMainApplication.useNewURLScheme=false;
+		}
+		else{
 			sendStartMessage("Using new URL Scheme");
-			IWMainApplication.useNewURLScheme=true;
 		}
 		String usingJSFRendering = application.getSettings().getProperty(IWMainApplication.PROPERTY_JSF_RENDERING);
-		if (usingJSFRendering != null && !"false".equalsIgnoreCase(usingJSFRendering)) {
+		if (usingJSFRendering != null && "false".equalsIgnoreCase(usingJSFRendering)) {
+			sendStartMessage("NOT Using JavaServer Faces Runtime");
+			IWMainApplication.useJSF=false;
+		}
+		else{
 			sendStartMessage("Using JavaServer Faces Runtime");
-			IWMainApplication.useJSF=true;
 		}
 	}
 	
