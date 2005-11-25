@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.145 2005/10/26 17:49:54 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.146 2005/11/25 15:19:40 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/10/26 17:49:54 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/25 15:19:40 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.145 $
+ * @version $Revision: 1.146 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -97,10 +97,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public static String COMPOUNDID_COMPONENT_DELIMITER = ":";
 	// constant for compoundId
 	public static String COMPOUNDID_CHILD_NUMBER_DELIMITER = "_";
-	public final static String MARKUP_LANGUAGE = "markup_language";
-	public final static String HTML = "HTML";
-	public final static String XHTML = "XHTML";
-	public final static String XHTML1_1 = "XHTML1.1";
+
 	
 	//temporary legacy variables will be removed in future versions.
 	private transient HttpServletRequest _request;
@@ -896,7 +893,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		if (askForPermission || iwc != null)
 		{
-			if (iwc.hasViewPermission(this))
+			if (iwc.getApplicationContext().getIWMainApplication().getAccessController().hasViewPermission(this,iwc))
 			{
 				//return this.clone(iwc,askForPermission);
 				object =  this.clone();
@@ -2663,7 +2660,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	protected String getSetApplicationMarkupLanguage(){
 		//changed by Sigtryggur 13.6.2005 IWContext.getInstance() returned null in some instances
 		//return IWContext.getInstance().getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
-	    return IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(MARKUP_LANGUAGE, HTML);
+	    return IWMainApplication.getDefaultIWMainApplication().getSettings().getDefaultMarkupLanguage();
 	}
 	
 	/**
@@ -2674,10 +2671,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	protected boolean isXhtmlSet(){
 		String markup = getSetApplicationMarkupLanguage();
-		if(markup.equals(XHTML)){
+		if(markup.equals(Page.XHTML)){
 			return true;
 		}
-		else if(markup.equals(XHTML1_1)){
+		else if(markup.equals(Page.XHTML1_1)){
 			return true;
 		}
 		return false;
