@@ -104,7 +104,7 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
 	public boolean hasDeletePermissionFor(Group group,IWUserContext iwuc);
 
 //  public boolean hasEditPermission(PresentationObject obj,IWUserContext iwc)throws Exception;
-//  public boolean hasViewPermission(PresentationObject obj,IWUserContext iwc);
+  public boolean hasViewPermission(PresentationObject obj,IWUserContext iwc);
 //  public boolean hasViewPermission(List groupIds, PresentationObject obj,IWUserContext iwc);
   public void setJSPPagePermission(IWUserContext iwc, PermissionGroup group, String PageContextValue, String permissionType, Boolean permissionValue)throws Exception;
   public void setObjectPermission(IWUserContext iwc, PermissionGroup group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception;
