@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationProductInfo.java,v 1.5 2005/02/17 17:52:26 tryggvil Exp $
+ * $Id: ApplicationProductInfo.java,v 1.6 2005/11/25 15:25:07 tryggvil Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.util.IWTimestamp;
 /**
  *  This class holds information about the application product installed.<br>
  * 
- *  Last modified: $Date: 2005/02/17 17:52:26 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/25 15:25:07 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ApplicationProductInfo {
 	
@@ -32,7 +32,8 @@ public class ApplicationProductInfo {
 	
 	//This will be swapped out by reading from /WEB-INF/idegaweb/properties/product.properties
 	private String inceptionYear="2000";
-	private String version="2.0-SNAPSHOT";
+	private String version="3.0-SNAPSHOT";
+	private String platformVersion="3.0-SNAPSHOT";
 	private String buildId="20050101.000000";
 	private String vendor="idega software";
 	private String name="ePlatform";
@@ -191,6 +192,38 @@ public class ApplicationProductInfo {
 	
 	public boolean isMajorVersionEqualOrHigherThan(int version){
 		int majorVersion = getMajorVersion();
+		return (version<=majorVersion);
+	}
+
+	
+	/**
+	 * @return Returns the platformVersion.
+	 */
+	public String getPlatformVersion() {
+		return platformVersion;
+	}
+
+	
+	/**
+	 * @param platformVersion The platformVersion to set.
+	 */
+	public void setPlatformVersion(String platformVersion) {
+		this.platformVersion = platformVersion;
+	}
+	
+	/**
+	 * Gets the major version (the first integer in the version number)
+	 * @return
+	 */
+	public int getMajorPlatformVersion(){
+		String version = getPlatformVersion();
+		int dotIndex = version.indexOf(".");
+		String sMVersion = version.substring(0,dotIndex);
+		return Integer.parseInt(sMVersion);
+	}
+	
+	public boolean isMajorPlatformVersionEqualOrHigherThan(int version){
+		int majorVersion = getMajorPlatformVersion();
 		return (version<=majorVersion);
 	}
 	
