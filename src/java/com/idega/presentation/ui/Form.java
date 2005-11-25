@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.90 2005/11/18 11:01:27 thomas Exp $
+ * $Id: Form.java,v 1.91 2005/11/25 16:19:08 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2005/11/18 11:01:27 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/11/25 16:19:08 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.90 $
+ * @version $Revision: 1.91 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -653,8 +653,8 @@ public class Form
 			convertActionToHTTPS(iwc);
 		}
 
-		if (getMarkupLanguage().equals("HTML")) {
-			String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
+		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
+			String markup = iwc.getApplicationSettings().getDefaultMarkupLanguage();
 			// String Action = getAction();
 			// if (Action.indexOf("idega_session_id") == -1){
 			// setAction(Action+"?idega_session_id="+iwc.getSession().getId());
@@ -674,7 +674,7 @@ public class Form
 			super.print(iwc);
 			print("</form>");
 		}
-		else if (getMarkupLanguage().equals("WML")) {
+		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			if (getAction() == null || _submitToPage != -1) {
 				// setAction(getIdegaSpecialRequestURI(iwc)+"?idega_session_id="+iwc.getSession().getId());
 				setAction(getIdegaSpecialRequestURI(iwc));
