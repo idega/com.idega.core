@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.35 2005/04/05 16:13:54 thomas Exp $ Created on
+ * $Id: StringHandler.java,v 1.36 2005/11/25 15:11:08 gimmi Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,11 +24,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2005/04/05 16:13:54 $ by $Author: thomas $
+ * Last modified: $Date: 2005/11/25 15:11:08 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public class StringHandler {
 
@@ -962,6 +962,10 @@ public class StringHandler {
 		}
 	}
 
+	public static String firstCharacterToUpperCaseRestToLowerCase(String string) {
+		return StringHandler.firstCharacterToUpperCase(string.toLowerCase());
+	}
+	
 	
 	private static char[] allowedcharacters={'1','2','3','4','5','6','7','8','9','0','-'};
 	/**
