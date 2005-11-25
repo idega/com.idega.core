@@ -17,6 +17,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	private static final String COLUMN_IC_COMMUNE_ID = "IC_COMMUNE_ID";
 	private static final String ENTITY_NAME = "IC_ADDRESS";
 	private static final String STREET_NAME = "STREET_NAME";
+	private static final String ORIGINAL_STREET_NAME = "STREET_NAME_ORIGINAL";
 	private static final String STREET_NUMBER = "STREET_NUMBER";
 	private static final String CITY = "CITY";
 	private static final String PROVINCE = "PROVINCE";
@@ -54,8 +55,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		addManyToOneRelationship(IC_COUNTRY_ID, "Country", Country.class);
 		this.addManyToManyRelationShip(User.class, "ic_user_address");
 		this.addManyToOneRelationship(getColumnNameCommuneID(), Commune.class);
-		// Deprecated
-		//addAttribute(COORDINATE, "coordinate", true, true, String.class, 50);
+		addAttribute(ORIGINAL_STREET_NAME, "Original Street Name (before uppercase)", true, true, String.class, 150);
 		
 		this.addManyToOneRelationship(COORDINATE_ID, AddressCoordinate.class);
 		
@@ -83,14 +83,23 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		return getStreetAddress();
 	}
 
+	/**
+	 * @return The street name as it was entered/save, before it was uppercased
+	 */
+	public String getStreetNameOriginal() {
+		return getStringColumnValue(ORIGINAL_STREET_NAME);
+	}
+	
 	public String getStreetName() {
 		return (String) getColumnValue(STREET_NAME);
 	}
 
 	/**
 	 * All names are stored in uppercase, uses String.toUpperCase();
+	 * To get the unchaged street name use the method <code>getStreetNameOriginal()</code>
 	 */
 	public void setStreetName(String street_name) {
+		setColumn(ORIGINAL_STREET_NAME, street_name);
 		setColumn(STREET_NAME, street_name.toUpperCase());
 	}
 
