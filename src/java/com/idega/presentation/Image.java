@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.89 2005/11/18 11:04:22 thomas Exp $
+ * $Id: Image.java,v 1.90 2005/11/25 16:14:47 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -40,11 +40,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/11/18 11:04:22 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/11/25 16:14:47 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.89 $
+ * @version $Revision: 1.90 $
  */
 public class Image extends PresentationObject implements NonEJBResource, PropertyDescriptionHolder
 {
@@ -582,7 +582,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		//Eiki: this does not seem to support over images or anything???
 		
-		String markup = iwc.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
+		String markup = iwc.getApplicationSettings().getDefaultMarkupLanguage();
 		StringBuffer sPrint = new StringBuffer();
 		sPrint.append("<img ");
 		//alt always added for standards compliancy
@@ -603,12 +603,13 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		{
 			BuilderService bs = getBuilderService(iwc);
 			ICDomain d = bs.getCurrentDomain();
-			if (d.getURL() != null)
+			String serverUrl = d.getURLWithoutLastSlash();
+			if (serverUrl != null)
 			{
 				String src = getMarkupAttribute("src");
 				if (src.startsWith("/"))
 				{
-					String protocol;
+					/*String protocol;
 					//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
 					if (iwc.getRequest().isSecure())
 					{
@@ -618,7 +619,10 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 					{
 						protocol = "http://";
 					}
-					setMarkupAttribute("src", protocol + d.getURL() + src);
+					setMarkupAttribute("src", protocol + serverName + src);
+					*/
+					String newSrc = serverUrl + src;
+					setSrc(newSrc);
 				}
 			}
 		}
