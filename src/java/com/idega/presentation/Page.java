@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.151 2005/11/09 11:50:55 tryggvil Exp $
+ *  $Id: Page.java,v 1.152 2005/11/25 16:09:21 tryggvil Exp $
  *  Created in 2000 by Tryggvi Larusson
  *  Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -63,10 +63,10 @@ import com.idega.util.datastructures.QueueMap;
  * </pre>
  * tags in HTML and renders the children inside the body tags.
  * </p>
- *  Last modified: $Date: 2005/11/09 11:50:55 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/25 16:09:21 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.151 $
+ * @version $Revision: 1.152 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 	
@@ -89,6 +89,21 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	public final static String DOCTYPE_HTML_4_0_1_STRICT="<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
 	public final static String DOCTYPE_XHTML_1_0_TRANSITIONAL="<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
 	public final static String DOCTYPE_XHTML_1_1="<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n\t\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">";
+	/**
+	 * Constant used to declare if the rendering should be in HTML 4.0 or lower.<br/>
+	 * This can be set as a property in  IWMainApplicationSettings.getDefaultMarkupLanguage() for backwards compatability.
+	 */
+	public final static String HTML = "HTML";
+	/**
+	 * Constant used to declare if the rendering should be in XHTML 1.0 (transitional).<br/>
+	 * This is used by IWMainApplicationSettings.getDefaultMarkupLanguage() and is the default value in ePlatform 3.0
+	 */
+	public final static String XHTML = "XHTML";
+	/**
+	 * Constant used to declare if the rendering should be in XHTML 1.1 (strict).<br/>
+	 * This can be set as a property in  IWMainApplicationSettings.getDefaultMarkupLanguage().
+	 */
+	public final static String XHTML1_1 = "XHTML1.1";	
 	
 	//private final static String START_TAG = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n<html>";
 	private final static String START_TAG_HTML_4_0="<html>";
@@ -278,18 +293,20 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			String src = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
 			try{
 				ICDomain d = iwc.getDomain();
-	
-				if (d.getURL() != null) {
+				String serverUrl = d.getURL();
+				if (serverUrl != null) {
 					if (src.startsWith("/")) {
-						String protocol;
-						/**@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder**/
+						/*String protocol;
+						//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
 						if (iwc.getRequest().isSecure()) {
 							protocol = "https://";
 						}
 						else {
 							protocol = "http://";
 						}
-						src = protocol + d.getURL() + src;
+						src = protocol + serverName + src;
+						*/
+						src = serverUrl + src;
 					}
 				}
 			}
@@ -1078,7 +1095,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 		//return this.clone(iwc,true);
 		if (askForPermission) {
-			if (iwuc.hasViewPermission(this)) {
+			if (iwuc.getApplicationContext().getIWMainApplication().getAccessController().hasViewPermission(this,iwuc)) {
 
 				return this.clone(iwuc, askForPermission);
 
@@ -1280,7 +1297,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	protected String getHeadContents(IWContext iwc){
 		IWMainApplicationSettings settings = iwc.getApplicationSettings();
 		String characterEncoding = settings.getCharacterEncoding(); 
-		String markup = iwc.getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
+		String markup = iwc.getApplicationSettings().getDefaultMarkupLanguage();
 		return getHeadContents(markup,characterEncoding,iwc);
 	}
 	
