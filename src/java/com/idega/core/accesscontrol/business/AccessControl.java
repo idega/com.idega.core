@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.104 2005/07/22 14:50:26 sigtryggur Exp $
+ * $Id: AccessControl.java,v 1.105 2005/11/25 14:07:11 tryggvil Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -67,12 +67,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2005/07/22 14:50:26 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2005/11/25 14:07:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.104 $
+ * @version $Revision: 1.105 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -785,11 +785,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				else {
 					
 					//editor users should always get edit/view permission on pages:
-					if(iwc.getAccessController().hasRole(StandardRoles.ROLE_KEY_EDITOR,iwc)){
+					if(iwc.getApplicationContext().getIWMainApplication().getAccessController().hasRole(StandardRoles.ROLE_KEY_EDITOR,iwc)){
 						return Boolean.TRUE;
 					}
 					//author users should always get edit/view permission on pages:
-					else if(iwc.getAccessController().hasRole(StandardRoles.ROLE_KEY_AUTHOR,iwc)){
+					else if(iwc.getApplicationContext().getIWMainApplication().getAccessController().hasRole(StandardRoles.ROLE_KEY_AUTHOR,iwc)){
 						return Boolean.TRUE;
 					}
 					
