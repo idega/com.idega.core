@@ -2056,7 +2056,28 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	  subQuery.addColumn(new Column(groupRelationSubTable, GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN));
 	  subQuery.addCriteria(new MatchCriteria(groupRelationSubTable, GroupRelationBMPBean.STATUS_COLUMN, MatchCriteria.EQUALS, GroupRelationBMPBean.STATUS_ACTIVE));
 	  subQuery.addCriteria(new MatchCriteria(groupRelationSubTable, GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN, MatchCriteria.EQUALS, RELATION_TYPE_GROUP_PARENT));
-	  subQuery.addCriteria(new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groups));
+	  int SUBSET_SIZE = 10;
+	  if (groups.size() < SUBSET_SIZE) {
+	  	subQuery.addCriteria(new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groups));
+	  } else {
+		  int numberOfRounds = groups.size()/SUBSET_SIZE;
+		  List groupsList = (List)groups;
+		  InCriteria firstInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(0,SUBSET_SIZE));
+		  InCriteria loopInCriteria = null;
+		  OR orCriteria = null;
+		  for (int i=0;i<numberOfRounds;i++){
+		  	if (i==1) {
+		  		loopInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(i*SUBSET_SIZE,i*SUBSET_SIZE+SUBSET_SIZE));
+		  		orCriteria = new OR(firstInCriteria,loopInCriteria);
+		  	} else if (i>1) {
+		  		loopInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(i*SUBSET_SIZE,i*SUBSET_SIZE+SUBSET_SIZE));
+		  		orCriteria = new OR(orCriteria,loopInCriteria);
+		  	}
+		  }
+		  InCriteria lastInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(groupsList.size()-groupsList.size()%SUBSET_SIZE,groupsList.size()));
+		  orCriteria = new OR(orCriteria,lastInCriteria);
+		  subQuery.addCriteria(orCriteria);
+	  }
 	  
 	  SelectQuery query = new SelectQuery(userTable);
 	  query.addColumn(new WildCardColumn(userTable));
