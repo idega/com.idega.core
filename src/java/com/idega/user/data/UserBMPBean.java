@@ -69,6 +69,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	static final String USER_GROUP_TYPE=User.USER_GROUP_TYPE;
 	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
 	private static final int PREFETCH_SIZE = 100;
+	private static final int SUBLIST_SIZE = 1000;
 	
 	public final static String SQL_TABLE_NAME= "IC_USER";
 	public final static String SQL_RELATION_EMAIL = "IC_USER_EMAIL";
@@ -2056,25 +2057,25 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	  subQuery.addColumn(new Column(groupRelationSubTable, GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN));
 	  subQuery.addCriteria(new MatchCriteria(groupRelationSubTable, GroupRelationBMPBean.STATUS_COLUMN, MatchCriteria.EQUALS, GroupRelationBMPBean.STATUS_ACTIVE));
 	  subQuery.addCriteria(new MatchCriteria(groupRelationSubTable, GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN, MatchCriteria.EQUALS, RELATION_TYPE_GROUP_PARENT));
-	  int SUBSET_SIZE = 10;
-	  if (groups.size() < SUBSET_SIZE) {
+
+	  if (groups.size() < SUBLIST_SIZE) {
 	  	subQuery.addCriteria(new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groups));
 	  } else {
-		  int numberOfRounds = groups.size()/SUBSET_SIZE;
+		  int numberOfRounds = groups.size()/SUBLIST_SIZE;
 		  List groupsList = (List)groups;
-		  InCriteria firstInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(0,SUBSET_SIZE));
+		  InCriteria firstInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(0,SUBLIST_SIZE));
 		  InCriteria loopInCriteria = null;
 		  OR orCriteria = null;
 		  for (int i=0;i<numberOfRounds;i++){
 		  	if (i==1) {
-		  		loopInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(i*SUBSET_SIZE,i*SUBSET_SIZE+SUBSET_SIZE));
+		  		loopInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(i*SUBLIST_SIZE,i*SUBLIST_SIZE+SUBLIST_SIZE));
 		  		orCriteria = new OR(firstInCriteria,loopInCriteria);
 		  	} else if (i>1) {
-		  		loopInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(i*SUBSET_SIZE,i*SUBSET_SIZE+SUBSET_SIZE));
+		  		loopInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(i*SUBLIST_SIZE,i*SUBLIST_SIZE+SUBLIST_SIZE));
 		  		orCriteria = new OR(orCriteria,loopInCriteria);
 		  	}
 		  }
-		  InCriteria lastInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(groupsList.size()-groupsList.size()%SUBSET_SIZE,groupsList.size()));
+		  InCriteria lastInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(groupsList.size()-groupsList.size()%SUBLIST_SIZE,groupsList.size()));
 		  orCriteria = new OR(orCriteria,lastInCriteria);
 		  subQuery.addCriteria(orCriteria);
 	  }
