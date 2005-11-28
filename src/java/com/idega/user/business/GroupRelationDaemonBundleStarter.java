@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.ejb.FinderException;
 
@@ -42,6 +43,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	public static final String TIMER_THREAD_NAME = "ic_user_Group_Relation_Daemon";
 	public static final String REMOVE_DUPLICATED_EMAILS_FROM_USERS = "remove_duplicated_emails";
 	public static final String REMOVE_DUPLICATED_PHONES_FROM_USERS = "remove_duplicated_phones";
+	public static final String REMOVE_DUPLICATED_GROUP_RELATIONS = "remove_duplicated_group_relations";
 	
 //	private EventTimer groupTreeEventTimer;
 //	public static final String GROUP_TREE_TIMER_THREAD_NAME = "user_fetch_grouptree";
@@ -85,6 +87,10 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 				String removeDuplicatedPhones = bundle.getProperty(REMOVE_DUPLICATED_PHONES_FROM_USERS, "false");
 				if (removeDuplicatedPhones != null && removeDuplicatedPhones.equalsIgnoreCase("true")) {
 				    removeDuplicatedPhonesFromUsers();
+				}
+				String removeDuplicatedGroupRelations = bundle.getProperty(REMOVE_DUPLICATED_GROUP_RELATIONS, "false");
+				if (removeDuplicatedGroupRelations != null && removeDuplicatedGroupRelations.equalsIgnoreCase("true")) {
+					removeDuplicatedGroupRelations();
 				}
 				Collection relations = getGroupRelationHome().findAllPendingGroupRelationships();
 				
@@ -216,6 +222,22 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 			            user.removePhone(phone);
 			        }
 			    }
+			}
+		}
+	}
+
+	public void removeDuplicatedGroupRelations() throws FinderException, RemoteException {
+		List duplicatedGroupRelations = (List)getGroupRelationHome().findAllDuplicatedGroupRelations();
+		Iterator duplRelIt = duplicatedGroupRelations.iterator();
+		for (int i=0; i<duplicatedGroupRelations.size(); i++) {
+			GroupRelation relation = (GroupRelation)duplRelIt.next();
+			for (int j=i+1; j<duplicatedGroupRelations.size(); j++) {
+				GroupRelation subRelation = (GroupRelation)duplicatedGroupRelations.get(j);
+				if (relation.equals(subRelation) && !relation.getPrimaryKey().equals(subRelation.getPrimaryKey())) {
+					relation.setStatus(GroupRelation.STATUS_PASSIVE);
+					relation.store();
+					break;
+				}
 			}
 		}
 	}
