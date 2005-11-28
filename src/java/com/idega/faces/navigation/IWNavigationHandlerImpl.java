@@ -1,5 +1,5 @@
 /*
- * $Id: IWNavigationHandlerImpl.java,v 1.1 2005/11/09 17:58:38 thomas Exp $
+ * $Id: IWNavigationHandlerImpl.java,v 1.2 2005/11/28 21:40:46 tryggvil Exp $
  * Created on Nov 8, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -32,11 +32,8 @@ import org.apache.myfaces.config.element.NavigationCase;
 import org.apache.myfaces.config.element.NavigationRule;
 import org.apache.myfaces.portlet.PortletUtil;
 import org.apache.myfaces.util.HashMapUtils;
-import com.idega.builder.IWBundleStarter;
-import com.idega.builder.business.BuilderLogic;
-import com.idega.builder.business.CachedBuilderPage;
-import com.idega.builder.business.JspPage;
-import com.idega.builder.business.PageCacher;
+import com.idega.core.view.ViewManager;
+import com.idega.core.view.ViewNode;
 
 
 public class IWNavigationHandlerImpl extends NavigationHandler {
@@ -63,21 +60,18 @@ public class IWNavigationHandlerImpl extends NavigationHandler {
 	    // switch to page uri if the view id represents a builder page stored as jsp
         String viewId = facesContext.getViewRoot().getViewId();
         
-        String pageKey = JspPage.getPageKey(viewId);
+        ViewManager viewManager = ViewManager.getInstance(facesContext);
+        ViewNode viewNode = viewManager.getViewNodeForContext(facesContext);
+        if(viewNode!=null){
+        		//if viewNode is not null we have a request for an URI in the ViewNode structure
+	        	String pageUri = viewManager.getRequestUriWithoutContext(facesContext);
+	        	if (pageUri != null) {
+	        		//something like "/pages/test/hello/" or "/workspace/builder/"
+	        		viewId=pageUri;
+	        }
         
-        if (pageKey != null) {
-        	PageCacher pageCacher = BuilderLogic.getInstance().getPageCacher();
-        	CachedBuilderPage cachedBuilderPage = pageCacher.getCachedBuilderPage(pageKey);
-        	String pageUri = cachedBuilderPage.getPageUri();
-        	if (pageUri != null) {
-        		StringBuffer buffer = new StringBuffer("/");
-        		buffer.append(IWBundleStarter.BUILDER_ROOT_VIEW_NODE_NAME).append(pageUri);
-        		// something like "/pages/test/hello/"
-        		viewId = buffer.toString();
-        	}
         }
-        
-        
+                
         
         Map casesMap = getNavigationCases(facesContext);
         NavigationCase navigationCase = null;
