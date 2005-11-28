@@ -5,6 +5,7 @@ public interface GroupRelationHome extends com.idega.data.IDOHome
 {
  public GroupRelation create() throws javax.ejb.CreateException;
  public GroupRelation findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
+ public java.util.Collection findAllDuplicatedGroupRelations()throws javax.ejb.FinderException;
  public java.util.Collection findAllGroupsRelationshipsByRelatedGroupOrderedByInitiationDate(int p0,java.lang.String p1)throws javax.ejb.FinderException;
  public java.util.Collection findAllGroupsRelationshipsTerminatedWithinSpecifiedTimePeriod(com.idega.user.data.Group p0,com.idega.user.data.Group p1,java.sql.Timestamp p2,java.sql.Timestamp p3,java.lang.String[] p4)throws javax.ejb.FinderException;
  public java.util.Collection findAllGroupsRelationshipsValidBeforeAndPastSpecifiedTime(com.idega.user.data.Group p0,com.idega.user.data.Group p1,java.sql.Timestamp p2,java.lang.String[] p3)throws javax.ejb.FinderException;

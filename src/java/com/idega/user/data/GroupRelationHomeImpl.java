@@ -186,5 +186,11 @@ public java.lang.String getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(
 	return theReturn;
 }
 
+public java.util.Collection findAllDuplicatedGroupRelations() throws javax.ejb.FinderException {
+   	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+   	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindAllDuplicatedGroupRelations();
+   	this.idoCheckInPooledEntity(entity);
+   	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 
 }

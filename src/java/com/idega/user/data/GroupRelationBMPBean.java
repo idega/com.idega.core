@@ -264,6 +264,19 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   	return getStringColumnValue(RELATED_GROUP_TYPE_COLUMN);
   }
 
+  public boolean equals(Object obj) {
+  	if (obj instanceof GroupRelationBMPBean) {
+	  	GroupRelation compareRelation = (GroupRelationBMPBean)obj;
+	  	if (this.getRelatedGroupPK().equals(compareRelation.getRelatedGroupPK()) &&
+	  		new Integer(this.getGroupID()).equals(new Integer(compareRelation.getGroupID())) &&
+	  		this.getStatus().equals(compareRelation.getStatus()) &&
+			this.getRelationshipType().equals(compareRelation.getRelationshipType())) {
+	  			return true;
+	  	}
+  	}
+  	return false;
+  }
+
   /**Finders begin**/
 
   public Collection ejbFindGroupsRelationshipsUnder(Group group)throws FinderException{
@@ -602,6 +615,14 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 		return idoFindPKsByQuery(query); 
 	
 
+	}
+
+	/**
+  	* Finds all duplicated groupRelations
+	*/
+	public Collection ejbFindAllDuplicatedGroupRelations()throws FinderException{
+    	String subTable = "select ic_group_id, related_ic_group_id from ic_group_relation where relationship_type='GROUP_PARENT' and group_relation_status='ST_ACTIVE' group by ic_group_id, related_ic_group_id having count(*)>1";
+		return this.idoFindPKsBySQL("select r.ic_group_relation_id from ic_group_relation r, ("+subTable+") t where r.ic_group_id=t.ic_group_id and r.related_ic_group_id=t.related_ic_group_id and relationship_type='GROUP_PARENT' and group_relation_status='ST_ACTIVE'");
 	}
   
 }
