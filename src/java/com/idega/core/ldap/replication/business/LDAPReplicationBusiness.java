@@ -1,8 +1,8 @@
 /*
- * $Id: LDAPReplicationBusiness.java,v 1.4 2004/10/31 22:35:21 eiki Exp $
- * Created on Oct 31, 2004
+ * $Id: LDAPReplicationBusiness.java,v 1.5 2005/11/28 17:53:12 eiki Exp $
+ * Created on Nov 28, 2005
  *
- * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
@@ -13,14 +13,15 @@ import java.io.IOException;
 import java.util.Properties;
 import com.idega.business.IBOService;
 import com.idega.core.ldap.util.IWLDAPConstants;
+import com.idega.user.data.User;
 
 
 /**
  * 
- *  Last modified: $Date: 2004/10/31 22:35:21 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/11/28 17:53:12 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface LDAPReplicationBusiness extends IBOService, LDAPReplicationConstants, IWLDAPConstants {
 
@@ -82,6 +83,11 @@ public interface LDAPReplicationBusiness extends IBOService, LDAPReplicationCons
 	public void startOrStopAllReplicators(String startOrStop) throws IOException, java.rmi.RemoteException;
 
 	/**
+	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#getDefaultIWLDAPWebserviceURI
+	 */
+	public String getDefaultIWLDAPWebserviceURI() throws java.rmi.RemoteException;
+
+	/**
 	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#stopAllReplicators
 	 */
 	public void stopAllReplicators() throws IOException, java.rmi.RemoteException;
@@ -100,4 +106,15 @@ public interface LDAPReplicationBusiness extends IBOService, LDAPReplicationCons
 	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#storeReplicationProperties
 	 */
 	public void storeReplicationProperties() throws IOException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#registerReplicationListener
+	 */
+	public boolean registerReplicationListener(String serverName, int portNumber, String IWLDAPWSUri)
+			throws java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#replicateUserByUUID
+	 */
+	public User replicateUserByUUID() throws java.rmi.RemoteException;
 }

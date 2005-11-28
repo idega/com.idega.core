@@ -30,6 +30,7 @@ import com.idega.core.ldap.business.LDAPUserBusiness;
 import com.idega.core.ldap.client.jndi.JNDIOps;
 import com.idega.core.ldap.client.naming.DN;
 import com.idega.core.ldap.server.business.EmbeddedLDAPServerBusiness;
+import com.idega.core.ldap.server.business.EmbeddedLDAPServerConstants;
 import com.idega.core.ldap.server.util.Ldap;
 import com.idega.core.ldap.util.IWLDAPConstants;
 import com.idega.core.ldap.util.IWLDAPUtil;
@@ -76,6 +77,8 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 
 	private Collection pluginsForGroup = null;
 	private Collection pluginsForUser = null;
+
+	private Map replicationListeners;
 	
 	public LDAPReplicationBusinessBean() {
 	}
@@ -113,6 +116,8 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 				copyPropertyBetweenReplicators(PROPS_REPLICATOR_SEARCH_ENTRY_LIMIT, i, previous);
 				copyPropertyBetweenReplicators(PROPS_REPLICATOR_MATCH_BY_UNIQUE_ID, i, previous);
 				copyPropertyBetweenReplicators(PROPS_REPLICATOR_ACTIVE, i, previous);
+				copyPropertyBetweenReplicators(PROPS_REPLICATOR_ACTIVE_LISTENER, i, previous);
+				copyPropertyBetweenReplicators(PROPS_REPLICATOR_IWLDAPWS_URI, i, previous);
 				copyPropertyBetweenReplicators(PROPS_REPLICATOR_ROOT_USER, i, previous);
 				copyPropertyBetweenReplicators(PROPS_REPLICATOR_ROOT_PASSWORD, i, previous);
 			}
@@ -430,6 +435,12 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 					if (autostart) {
 						startReplicator(i);
 					}
+					
+					String autoStartListener = repProps.getProperty(PROPS_REPLICATOR_PREFIX + i + PROPS_REPLICATOR_ACTIVE);
+					boolean activateListener = (autoStartListener!=null && ("Y".equalsIgnoreCase(autoStartListener) || "true".equalsIgnoreCase(autoStartListener)));
+					if (activateListener) {
+						startReplicationListener(i);
+					}
 				}
 				else if (startOrStop.equals(STOP_REPLICATOR)) {
 					stopReplicator(i);
@@ -447,6 +458,54 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			//e.printStackTrace();
 			log("No replicators defined.");
 		}
+	}
+
+	/**
+	 * registeres this ldap directory as a listener for the remote directory
+	 * @param i
+	 */
+	private void startReplicationListener(int replicatorNumber) {
+		Properties repProps;
+		Properties ldapProps;
+		
+		try {
+			repProps = getReplicationSettings();
+			ldapProps = getEmbeddedLDAPServerBusiness().getLDAPSettings();
+			
+			String theServerName = ldapProps.getProperty(EmbeddedLDAPServerConstants.PROPS_JAVALDAP_SERVER_NAME);
+			String theServerPort = ldapProps.getProperty(EmbeddedLDAPServerConstants.PROPS_JAVALDAP_SERVER_PORT);
+			String theServerLDAPWSUri = getDefaultIWLDAPWebserviceURI();
+			
+			String remoteServerName = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_HOST);
+			String iwLdapWsURI = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_IWLDAPWS_URI);
+			
+			if(iwLdapWsURI==null){
+				iwLdapWsURI = getDefaultIWLDAPWebserviceURI();			
+			}
+			
+			if(!iwLdapWsURI.startsWith("/")){
+				iwLdapWsURI = "/"+iwLdapWsURI;
+			}
+			
+			//Call the webservice
+			String webserviceQuery = "method=registerReplicationListener&serverName="+theServerName+"&portNumber="+theServerPort+"&IWLDAPWSUri="+theServerLDAPWSUri;
+			String response = FileUtil.getStringFromURL("http://"+remoteServerName+iwLdapWsURI+"?"+webserviceQuery);
+			log("Adding ldap replication listener to server: "+remoteServerName+" responded with: "+response);
+			//TODO report the response to the GUI?
+			
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	public String getDefaultIWLDAPWebserviceURI() {
+		String iwLdapWsURI;
+		iwLdapWsURI = getBundle().getResourcesVirtualPath()+"/services/IWLDAPWS.jws";
+		return iwLdapWsURI;
 	}
 
 	public void stopAllReplicators() throws IOException {
@@ -900,4 +959,37 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		//now we can run it again
 		entry.setCanRun(true);
 	}
+	
+	
+	
+	/**
+	 * Registers remote idegaweb ldap webservices as a listeners for changes in this directory.<br/>
+	 * The changes are detected by a UserGroupPlugin and it calls the listening webservices that in turn call this directory to get the changes
+	 * This does a similar job as a JNDI NotificationListener but was needed because our ldap store doesn't implement the listener context.
+	 * @param serverName
+	 * @param portNumber
+	 * @param IWLDAPWSUri
+	 * @return Returns true if the listener was added
+	 */
+	public boolean registerReplicationListener(String serverName, int portNumber, String  IWLDAPWSUri){
+		if(replicationListeners==null){
+			replicationListeners = new HashMap();
+		}
+		
+		replicationListeners.put(serverName+portNumber, IWLDAPWSUri);
+		
+		return true;
+	}
+	
+	public User replicateUserByUUID(){
+		
+		return null;
+	}
+	
+	
+	
+	//todo replicateGroupAndUsersByGroupUUID
+	
+	
+	
 }
