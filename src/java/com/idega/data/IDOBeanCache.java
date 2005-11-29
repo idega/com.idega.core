@@ -79,7 +79,7 @@ public class IDOBeanCache {
   }
 
   Object getCachedHomeQuery(String querySQL){
-      return (Collection)getHomeQueryCacheMap().get(querySQL);
+      return getHomeQueryCacheMap().get(querySQL);
   }
 
   boolean isHomeQueryCached(String queryString){

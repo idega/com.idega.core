@@ -177,7 +177,7 @@ public class GenericState extends Object implements Cloneable,Serializable {
       ListIterator lIter = state.listIterator();
       while (lIter.hasNext()) {
         int index = lIter.nextIndex();
-        Object lItem = (Object)lIter.next();
+        Object lItem = lIter.next();
         if(index != 0){
           str += STATESTRING_VALUE_SEPERATOR;
         }
@@ -188,7 +188,7 @@ public class GenericState extends Object implements Cloneable,Serializable {
               str += STATESTRING_MULTIVALUE_ARRAY_ELEMENT_SEPERATOR;
             }
             if(obj[i] != null){
-              str += (String)obj[i];
+              str += obj[i];
             } else {
               str += STATESTRING_NOVALUE;
             }

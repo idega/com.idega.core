@@ -155,7 +155,7 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
       obj._stateHasChanged = false;
       obj.changeEvent = null;
 
-      if(this._location instanceof Cloneable){
+      if(this._location != null){
       obj._location = (IWLocation)this._location.clone();
       }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.21 2005/10/17 01:08:44 tryggvil Exp $
+ * $Id: XMLElement.java,v 1.22 2005/11/29 15:30:04 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -324,7 +324,7 @@ public class XMLElement {
 		while (it.hasNext()) {
 			Object obj = it.next();
 			if (obj instanceof Element) {
-				XMLElement el = new XMLElement((Element)obj);
+				XMLElement el = new XMLElement(obj);
 				ret.add(el);
 			}
 			else if (obj instanceof CDATA) {
@@ -474,7 +474,7 @@ public class XMLElement {
    */
   public XMLElement detach()	{
   	if (_element != null)	{
-  		return new XMLElement((Element)_element.detach());
+  		return new XMLElement(_element.detach());
   	}
   	return null;
   }

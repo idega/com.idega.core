@@ -145,19 +145,19 @@ public class UserBusiness {
     //delUser.removeFrom(com.idega.core.data.GenericGroupBMPBean.getStaticInstance());
     int groupId =delUser.getGroupID();
     try {
-      delUser.removeFrom((Address)com.idega.core.location.data.AddressBMPBean.getStaticInstance(Address.class));
+      delUser.removeFrom(com.idega.core.location.data.AddressBMPBean.getStaticInstance(Address.class));
     }
     catch (SQLException e) {
       e.printStackTrace();
     }
     try {
-      delUser.removeFrom((Email)com.idega.core.contact.data.EmailBMPBean.getStaticInstance(Email.class));
+      delUser.removeFrom(com.idega.core.contact.data.EmailBMPBean.getStaticInstance(Email.class));
     }
     catch (SQLException ex) {
       ex.printStackTrace();
     }
     try {
-      delUser.removeFrom((Phone)com.idega.core.contact.data.PhoneBMPBean.getStaticInstance(Phone.class));
+      delUser.removeFrom(com.idega.core.contact.data.PhoneBMPBean.getStaticInstance(Phone.class));
     }
     catch (SQLException exc) {
       exc.printStackTrace();

@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.126 2005/11/01 17:07:58 thomas Exp $
+ * $Id: IWContext.java,v 1.127 2005/11/29 15:30:02 laddi Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/11/01 17:07:58 $ by $Author: thomas $
+ * Last modified: $Date: 2005/11/29 15:30:02 $ by $Author: laddi $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.126 $
+ * @version $Revision: 1.127 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -435,7 +435,7 @@ implements IWUserContext, IWApplicationContext {
 		this.getResponse().addCookie(cookie);
 	}
 	public boolean isCookieSet(String cookieName) {
-		Cookie[] cookies = (Cookie[]) this.getCookies();
+		Cookie[] cookies = this.getCookies();
 		boolean returner = false;
 		if (cookies != null) {
 			if (cookies.length > 0) {
@@ -607,7 +607,7 @@ implements IWUserContext, IWApplicationContext {
 		return getIWMainApplication().getSystemProperties();
 	}
 	public UserProperties getUserProperties() {
-		return (UserProperties) LoginBusinessBean.getUserProperties(this);
+		return LoginBusinessBean.getUserProperties(this);
 	}
 	public Locale getCurrentLocale() {
 		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
@@ -723,7 +723,7 @@ implements IWUserContext, IWApplicationContext {
 		return -1;
 	}
 	public AccessController getAccessController() {
-		return ((AccessController) this.getIWMainApplication().getAccessController());
+		return this.getIWMainApplication().getAccessController();
 	}
 	public String getRequestContentType() {
 		return getRequest().getContentType();
@@ -1010,7 +1010,7 @@ implements IWUserContext, IWApplicationContext {
 	 *  Returns null if not found
 	 */
 	public Cookie getCookie(String cookieName) {
-		Cookie[] cookies = (Cookie[]) this.getCookies();
+		Cookie[] cookies = this.getCookies();
 
 		if (cookies != null) {
 			if (cookies.length > 0) {

@@ -100,7 +100,7 @@ public class CBClassLoader extends ClassLoader
         Object local = classes.get(className);
         if (local != null)
         {
-            if (local instanceof String && "".equals((String)local))
+            if (local instanceof String && "".equals(local))
             {
                 CBUtility.log("        >>>>>> ignoring '" + className + "' (failed to load previously).", 8);
                 throw new ClassNotFoundException("ignoring class '" + className + "' (failed to load previously).");

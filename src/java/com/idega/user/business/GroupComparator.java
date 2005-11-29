@@ -247,7 +247,7 @@ public class GroupComparator extends GenericGroupComparator{
                      applicationCachedGroups.put(key, cachedParentGroup);
                  }
                  else {
-                     parent = (Group) groupBiz.getGroupByGroupID(parentId.intValue());
+                     parent = groupBiz.getGroupByGroupID(parentId.intValue());
 	                 cachedParentGroup = new CachedGroup(parent);
 	                 cachedGroups.put(key,parent);
 	                 applicationCachedGroups.put(key, cachedParentGroup);
@@ -264,7 +264,7 @@ public class GroupComparator extends GenericGroupComparator{
 	            applicationCachedGroups.put(key, cachedGroup);
             }
             else {
-	            group = (Group) groupBiz.getGroupByGroupID(groupId.intValue());
+	            group = groupBiz.getGroupByGroupID(groupId.intValue());
 	            CachedGroup cachedGroup = new CachedGroup(group);
 	            cachedGroups.put(key, group);
 	            applicationCachedGroups.put(key, cachedGroup);

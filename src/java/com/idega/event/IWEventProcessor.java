@@ -340,7 +340,7 @@ public class IWEventProcessor implements Singleton {
 						if (tokenizer.hasMoreTokens())
 							mimetype = tokenizer.nextToken();
 					}
-					UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, (long) - 1);
+					UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, - 1);
 				    FileUtil.copyFile(f,file);
 					long size = f.length();
 					file.setSize(size);
@@ -384,7 +384,7 @@ public class IWEventProcessor implements Singleton {
 							if (tokenizer.hasMoreTokens())
 								mimetype = tokenizer.nextToken();
 						}
-						UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, (long) - 1);
+						UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, - 1);
 						long size = filePart.writeTo(file);
 						file.setSize(size);
 						iwc.setUploadedFile(file);

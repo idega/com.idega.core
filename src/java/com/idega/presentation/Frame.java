@@ -160,7 +160,7 @@ import com.idega.idegaweb.*;
               Page page = defaultPage;
               page.setLocation(this.getLocation());
               page.add(pObj.clonePermissionChecked(iwc, askForPermission));
-              return (Page)page;
+              return page;
             }
           }
           catch (IllegalAccessException ex) {
@@ -178,7 +178,7 @@ import com.idega.idegaweb.*;
             Page page = defaultPage;
             page.setLocation(this.getLocation());
             page.add(_obj.clonePermissionChecked(iwc,askForPermission));
-            return (Page)page;
+            return page;
           }
         default:
           return null;

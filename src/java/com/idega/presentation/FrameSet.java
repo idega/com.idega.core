@@ -482,7 +482,7 @@ public class FrameSet extends Window{
       }
       if(nothingset){
         if(numberOfFrames!=0){
-          int thePercent = (int)(100/numberOfFrames);
+          int thePercent = (100/numberOfFrames);
           for (int i = 1; i <= numberOfFrames ; i++) {
               setSpanPercent(i,thePercent);
           }

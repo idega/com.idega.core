@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.156 2005/11/16 17:59:59 gimmi Exp $
+ * $Id: Link.java,v 1.157 2005/11/29 15:30:03 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -967,7 +967,7 @@ public class Link extends Text {
 	*/
 	public void setText(Text text) {
 		this.text = text.getText();
-		_obj = (PresentationObject) text;
+		_obj = text;
 		_obj.setParentObject(this);
 		_objectType = OBJECT_TYPE_TEXT;
 	}

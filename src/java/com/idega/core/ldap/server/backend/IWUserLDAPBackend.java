@@ -561,7 +561,7 @@ LDAPReplicationConstants {
 			System.err.println("[IWUserLDAPBackend] No user found for unique id: " + uniqueId + " trying DN");
 		}
 		if (user == null) {
-			user = (User) getLDAPUserBusiness().getUserByDirectoryString(base.toString());
+			user = getLDAPUserBusiness().getUserByDirectoryString(base.toString());
 		}
 		return user;
 	}

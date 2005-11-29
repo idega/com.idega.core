@@ -742,9 +742,9 @@ public class ImageInfo {
 		format = FORMAT_SWF;
 		int bitSize = (int)readUBits( 5 );
 		//int minX = (int)readSBits( bitSize );
-		int maxX = (int)readSBits( bitSize );
+		int maxX = readSBits( bitSize );
 		//int minY = (int)readSBits( bitSize );
-		int maxY = (int)readSBits( bitSize );
+		int maxY = readSBits( bitSize );
 		width = maxX/20; //cause we're in twips
 		height = maxY/20;  //cause we're in twips
 		setPhysicalWidthDpi(72);

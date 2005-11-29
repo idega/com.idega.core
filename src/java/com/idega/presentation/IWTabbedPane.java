@@ -61,7 +61,7 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 
 		setModel(new DefaultSingleSelectionModel());
 		getModel().addChangeListener(this.createChangeListener());
-		setUI((IWTabbedPaneUI) new BasicTabbedPaneUI());
+		setUI(new BasicTabbedPaneUI());
 		this.currentPage = (GenericTabbedPaneUI.GenericTabPagePresentation) this.getUI().getTabPagePresentation();
 		this.addTabePage(this.currentPage);
 		justConstructed = true;
@@ -121,7 +121,7 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 	}
 
 	public IWTabbedPaneUI getUI() {
-		return (IWTabbedPaneUI) ui;
+		return ui;
 	}
 
 	public void setUI(IWTabbedPaneUI ui) {

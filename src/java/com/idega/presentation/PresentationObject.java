@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.146 2005/11/25 15:19:40 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.147 2005/11/29 15:30:02 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/11/25 15:19:40 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/29 15:30:02 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.146 $
+ * @version $Revision: 1.147 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -480,7 +480,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		if (map != null)
 		{
-			return (String) map.get((Object) attributeName);
+			return (String) map.get(attributeName);
 		}
 		else
 		{
@@ -1213,13 +1213,13 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		{
 			this.eventAttributes = new Hashtable();
 		}
-		this.eventAttributes.put((Object) attributeName, (Object) attributeValue);
+		this.eventAttributes.put(attributeName, attributeValue);
 	}
 	public Object getEventAttribute(String attributeName)
 	{
 		if (this.eventAttributes != null)
 		{
-			return this.eventAttributes.get((Object) attributeName);
+			return this.eventAttributes.get(attributeName);
 		}
 		else
 		{
@@ -1254,7 +1254,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		// those that are interested in this event
 		for (int i = listeners.length - 1; i >= 0; i--)
 		{
-			((IWLinkListener) listeners[i]).actionPerformed(e);
+			listeners[i].actionPerformed(e);
 		}
 	}
 	protected void processIWSubmitEvent(IWSubmitEvent e)
@@ -1266,7 +1266,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		// those that are interested in this event
 		for (int i = listeners.length - 1; i >= 0; i--)
 		{
-			((IWSubmitListener) listeners[i]).actionPerformed(e);
+			listeners[i].actionPerformed(e);
 		}
 	}
 	/**
@@ -1789,7 +1789,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		System.out.println("--[DEBUG: " + this +"]: listenerList values:");
 		EventListenerList list = this.getEventListenerList(iwc);
-		Object[] listeners = (Object[]) list.getListenerList();
+		Object[] listeners = list.getListenerList();
 		if (listeners != null)
 		{
 			for (int i = 0; i < listeners.length; i++)

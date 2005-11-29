@@ -1,5 +1,5 @@
 /*
- *  $Id: Page.java,v 1.152 2005/11/25 16:09:21 tryggvil Exp $
+ *  $Id: Page.java,v 1.153 2005/11/29 15:30:02 laddi Exp $
  *  Created in 2000 by Tryggvi Larusson
  *  Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -63,10 +63,10 @@ import com.idega.util.datastructures.QueueMap;
  * </pre>
  * tags in HTML and renders the children inside the body tags.
  * </p>
- *  Last modified: $Date: 2005/11/25 16:09:21 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/29 15:30:02 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.152 $
+ * @version $Revision: 1.153 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 	
@@ -245,7 +245,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		List sheets = GlobalIncludeManager.getInstance().getStyleSheets();
 		for (Iterator iter = sheets.iterator(); iter.hasNext();) {
 			StyleSheetLink sheet = (StyleSheetLink)iter.next();
-			String url = (String) sheet.getUrl();
+			String url = sheet.getUrl();
 			String styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext(url);
 			map.put(styleSheetURL, styleSheetURL);
 //			this.addStyleSheetURL(styleSheetURL);
@@ -504,7 +504,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public String getStyleAttribute(String styleName) {
 		if (_styleDefinitions != null) {
-			return (String) _styleDefinitions.get((Object) styleName);
+			return (String) _styleDefinitions.get(styleName);
 		}
 		else {
 			return null;
@@ -573,7 +573,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public String getHTTPEquivTag(String tagName) {
 		if (_HTTPEquivs != null) {
-			return (String) this._HTTPEquivs.get((Object) tagName);
+			return (String) this._HTTPEquivs.get(tagName);
 		}
 		else {
 			return null;
@@ -588,7 +588,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public String getMetaTag(String tagName) {
 		if (_metaTags != null) {
-			return (String) _metaTags.get((Object) tagName);
+			return (String) _metaTags.get(tagName);
 		}
 		else {
 			return null;
@@ -713,10 +713,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			int currentUserId = -1;
 			if(iwc.isLoggedOn()){
 				currentUserId=iwc.getCurrentUserId();
-				node = (ICTreeNode)bservice.getPageTree(pageId,currentUserId);
+				node = bservice.getPageTree(pageId,currentUserId);
 			}
 			else{
-				node = (ICTreeNode)bservice.getPageTree(pageId);
+				node = bservice.getPageTree(pageId);
 			}
 			
 		}

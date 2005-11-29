@@ -17,7 +17,7 @@ public class IWSubmitEvent extends IWEvent {
   public static final int SUBMIT_PERFORMED = AWTEvent.RESERVED_ID_MAX + 11;
 
   public IWSubmitEvent(SubmitButton source, int id) {
-    super((Object)source,id);
+    super(source,id);
   }
 
 

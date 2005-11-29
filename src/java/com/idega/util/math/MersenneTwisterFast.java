@@ -374,7 +374,7 @@ public class MersenneTwisterFast implements Serializable
 	y ^= (y << 15) & TEMPERING_MASK_C;      // TEMPERING_SHIFT_T(y)
 	y ^= (y >>> 18);                        // TEMPERING_SHIFT_L(y)
 
-	return (boolean)((y >>> 31) != 0);
+	return ((y >>> 31) != 0);
 	}
 
 
@@ -621,7 +621,7 @@ public class MersenneTwisterFast implements Serializable
 	z ^= (z << 15) & TEMPERING_MASK_C;      // TEMPERING_SHIFT_T(z)
 	z ^= (z >>> 18);                        // TEMPERING_SHIFT_L(z)
 	
-	return (((long)y) << 32) + (long)z;
+	return (((long)y) << 32) + z;
 	}
 
 
@@ -691,7 +691,7 @@ public class MersenneTwisterFast implements Serializable
             z ^= (z << 15) & TEMPERING_MASK_C;      // TEMPERING_SHIFT_T(z)
             z ^= (z >>> 18);                        // TEMPERING_SHIFT_L(z)
             
-            bits = (((((long)y) << 32) + (long)z) >>> 1);
+            bits = (((((long)y) << 32) + z) >>> 1);
             val = bits % n;
             } while (bits - val + (n-1) < 0);
         return val;
@@ -1034,7 +1034,7 @@ public class MersenneTwisterFast implements Serializable
 	  for (j=0;j<1000;j++)
 	  {
 	  // first, convert the int from signed to "unsigned"
-	  long l = (long)r.nextInt();
+	  long l = r.nextInt();
 	  if (l < 0 ) l += 4294967296L;  // max int value
 	  String s = String.valueOf(l);
 	  while(s.length() < 10) s = " " + s;  // buffer
@@ -1079,7 +1079,7 @@ public class MersenneTwisterFast implements Serializable
 	  r = new MersenneTwisterFast(SEED);
 	  for (j = 0; j < 1000; j++)
 	      {
-	      System.out.print(r.nextBoolean((double)(j/999.0)) + " ");
+	      System.out.print(r.nextBoolean((j/999.0)) + " ");
 	      if (j%8==7) System.out.println();
 	      }
 	  if (!(j%8==7)) System.out.println();
@@ -1088,7 +1088,7 @@ public class MersenneTwisterFast implements Serializable
 	  r = new MersenneTwisterFast(SEED);
 	  for (j = 0; j < 1000; j++)
 	      {
-	      System.out.print(r.nextBoolean((float)(j/999.0f)) + " ");
+	      System.out.print(r.nextBoolean((j/999.0f)) + " ");
 	      if (j%8==7) System.out.println();
 	      }
 	  if (!(j%8==7)) System.out.println();

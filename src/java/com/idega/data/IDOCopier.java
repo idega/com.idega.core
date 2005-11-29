@@ -78,12 +78,12 @@ public class IDOCopier {
 				Class item = (Class) iter.next();
 				//out.println(item.getName()+"\n<br>");
 				try {
-					GenericEntity toInstance = (GenericEntity) this.createEntityInstance(item);
+					GenericEntity toInstance = this.createEntityInstance(item);
 					//GenericEntity toInstance = (GenericEntity)item.newInstance();
 					toInstance.setDatasource(this.getToDatasource());
 					toInstance.setToInsertStartData(false);
 					//GenericEntity fromInstance = (GenericEntity)item.newInstance();
-					GenericEntity fromInstance = (GenericEntity)this.createEntityInstance(item);
+					GenericEntity fromInstance = this.createEntityInstance(item);
 					fromInstance.setDatasource(this.fromEntity.getDatasource());
 					DatastoreInterface.getInstance(toInstance).createEntityRecord(toInstance);
 					copyAllData(fromInstance, toInstance, true);

@@ -25,7 +25,7 @@ private String _alt;
 	if ( _imageFile.getChildCount() > 0 && _imageFile.getChildrenIterator() != null ) {
 	  Iterator iter = _imageFile.getChildrenIterator();
 	  while (iter.hasNext()) {
-	    imageVector.add((ICFile)iter.next());
+	    imageVector.add(iter.next());
 	  }
 	}
 	else

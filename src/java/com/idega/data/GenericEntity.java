@@ -723,9 +723,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			try {
 				//returnObj = this.findByPrimaryInOtherClass(getRelationShipClass(columnName),((Integer)value).intValue());
 				if (value != null) {
-					IDOHome home = (IDOHome)IDOLookup.getHome(relationClass);
+					IDOHome home = IDOLookup.getHome(relationClass);
 					if (this.getDatasource() != null) {
-						home = (IDOHome)IDOLookup.getHome(relationClass, getDatasource());
+						home = IDOLookup.getHome(relationClass, getDatasource());
 					}
 					returnObj = home.findByPrimaryKeyIDO(value);
 				}
@@ -1103,11 +1103,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	private String[] getCachedColumnNames() {
-		return ((GenericEntity)getIDOEntityStaticInstance())._cachedColumnNameList;
+		return getIDOEntityStaticInstance()._cachedColumnNameList;
 	}
 
 	private void setCachedColumnNames(String[] columnNames) {
-		((GenericEntity)getIDOEntityStaticInstance())._cachedColumnNameList = columnNames;
+		getIDOEntityStaticInstance()._cachedColumnNameList = columnNames;
 	}
 
 	/**@todo this should not be done every time cache!!**/
@@ -1117,7 +1117,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		//for (Enumeration e = getAttributes().elements(); e.hasMoreElements();)
 		for (Iterator iter = getAttributes().iterator(); iter.hasNext();) {
 			//String tempName = (String) ((EntityAttribute) e.nextElement()).getColumnName();
-			String tempName = (String) ((EntityAttribute)iter.next()).getColumnName();
+			String tempName = ((EntityAttribute)iter.next()).getColumnName();
 			if (getIfVisible(tempName)) {
 				theColumns.add(tempName);
 			}
@@ -1132,7 +1132,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		for (Iterator iter = getAttributes().iterator(); iter.hasNext();) {
 			//for (Enumeration e = columns.elements(); e.hasMoreElements();){
 			//String tempName = (String) ((EntityAttribute) e.nextElement()).getColumnName();
-			String tempName = (String) ((EntityAttribute)iter.next()).getColumnName();
+			String tempName = ((EntityAttribute)iter.next()).getColumnName();
 			if (getIfEditable(tempName)) {
 				theColumns.add(tempName);
 			}
@@ -2598,7 +2598,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
-			Stmt.executeUpdate("insert into " + getNameOfMiddleTable((IDOEntity)com.idega.data.GenericEntity.getStaticInstanceIDO(entityToAddTo), this) + "(" + getIDColumnName() + "," + (com.idega.data.GenericEntity.getStaticInstanceIDO(entityToAddTo)).getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName() + ") values(" + getPrimaryKeyValueSQLString() + "," + id + ")");
+			Stmt.executeUpdate("insert into " + getNameOfMiddleTable(com.idega.data.GenericEntity.getStaticInstanceIDO(entityToAddTo), this) + "(" + getIDColumnName() + "," + (com.idega.data.GenericEntity.getStaticInstanceIDO(entityToAddTo)).getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName() + ") values(" + getPrimaryKeyValueSQLString() + "," + id + ")");
 		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 			throw new SQLException(e.getMessage());
@@ -2922,7 +2922,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return true;
 	}
 	private void setLobColumnName(String lobColumnName) {
-		((GenericEntity)this.getIDOEntityStaticInstance())._lobColumnName = lobColumnName;
+		this.getIDOEntityStaticInstance()._lobColumnName = lobColumnName;
 	}
 	private void setLobColumnName() {
 		if (getLobColumnName() == null) {
@@ -2936,7 +2936,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	public String getLobColumnName() {
-		return ((GenericEntity)this.getIDOEntityStaticInstance())._lobColumnName;
+		return this.getIDOEntityStaticInstance()._lobColumnName;
 	}
 
 	public static GenericEntity getStaticInstance(String entityClassName) {
@@ -3092,12 +3092,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public void addMetaDataRelationship() {
 		addManyToManyRelationShip(MetaData.class);
 		//this.getStaticInstance(this.getClass())._hasMetaDataRelationship=true;
-		 ((GenericEntity)this.getIDOEntityStaticInstance())._hasMetaDataRelationship = true;
+		 this.getIDOEntityStaticInstance()._hasMetaDataRelationship = true;
 		// bug in getIDOEntityStaticInstance
 		_hasMetaDataRelationship = true;
 	}
 	public boolean hasMetaDataRelationship() {
-		return ((GenericEntity)this.getIDOEntityStaticInstance())._hasMetaDataRelationship;
+		return this.getIDOEntityStaticInstance()._hasMetaDataRelationship;
 	}
 	// fetches the metadata for this id and puts it in a HashTable
 	private void getMetaData() {

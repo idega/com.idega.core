@@ -378,7 +378,7 @@ public void setUserPasswordInClearText(String password){
             String str = "";
             char[] pass = userPassword.toCharArray();
             for (int i = 0; i < pass.length; i++) {
-              String hex = Integer.toHexString((int)pass[i]);
+              String hex = Integer.toHexString(pass[i]);
               while (hex.length() < 2) {
                 String s = "0";
                 s += hex;

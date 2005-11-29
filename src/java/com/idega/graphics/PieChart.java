@@ -1,5 +1,5 @@
 /*
- * $Id: PieChart.java,v 1.5 2003/04/03 09:48:02 laddi Exp $
+ * $Id: PieChart.java,v 1.6 2005/11/29 15:30:03 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -106,7 +106,7 @@ public class PieChart extends Chart{
 
       g.setColor(Color.black);
       for (int i = 0; i < legend_.length; i++) {
-        g.drawString((String)legend_[i],width-max-10,40+i*20);
+        g.drawString(legend_[i],width-max-10,40+i*20);
       }
 
       g.setTransform(trans);

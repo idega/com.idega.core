@@ -143,7 +143,7 @@ public abstract class Gif89Frame {
     int transflag = itransparent == -1 ? 0 : 1;
     if (transflag == 1 || epluribus)   // using transparency or animating ?
     {
-      os.write((int) '!');             // GIF Extension Introducer
+      os.write('!');             // GIF Extension Introducer
       os.write(0xf9);                  // Graphic Control Label
       os.write(4);                     // subsequent data block size
       os.write((disposalCode << 2) | transflag); // packed fields (1 byte)
@@ -156,7 +156,7 @@ public abstract class Gif89Frame {
   //----------------------------------------------------------------------------
   private void writeImageDescriptor(OutputStream os) throws IOException
   {
-    os.write((int) ',');                // Image Separator
+    os.write(',');                // Image Separator
     Put.leShort(thePosition.x, os);
     Put.leShort(thePosition.y, os);
     Put.leShort(theWidth, os);

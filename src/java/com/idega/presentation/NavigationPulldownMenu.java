@@ -58,7 +58,7 @@ public class NavigationPulldownMenu extends Block {
 			}
 			Iterator iter = node.getChildrenIterator();
 			while (iter.hasNext())
-				nodeVector.add((ICTreeNode) iter.next());
+				nodeVector.add(iter.next());
 			if (withRootAsHome && !left)
 				nodeVector.add(node);
 			Table table = new Table();

@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.101 2005/11/23 00:13:26 sigtryggur Exp $
+ * $Id: GroupBusinessBean.java,v 1.102 2005/11/29 15:30:04 laddi Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -78,10 +78,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Groups.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2005/11/23 00:13:26 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2005/11/29 15:30:04 $ by $Author: laddi $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.101 $
+ * @version $Revision: 1.102 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -835,7 +835,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
       if (includeAliases) {
           if (child.isAlias()) {
               if (child.getAlias() != null){ 
-	              alreadyCheckedGroups.add((Integer)child.getPrimaryKey());
+	              alreadyCheckedGroups.add(child.getPrimaryKey());
 	              child = child.getAlias();
 	          }
           }
@@ -1270,7 +1270,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	}
 
 	public ICFile createGroupHomeFolder(Group group) throws CreateException {
-		ICFile file = (ICFile)getICFileHome().create();
+		ICFile file = getICFileHome().create();
 		file.setName(group.getName());
 		file.setLocalizationKey(GROUP_HOME_FOLDER_LOCALIZATION_PREFIX+group.getGroupType());
 		file.setMimeType(com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
@@ -1793,8 +1793,8 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
       //IDOLegacyEntity[] result = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.data.PhoneBMPBean.getStaticInstance(Phone.class));
       if(result != null){
         for (int i = 0; i < result.length; i++) {
-          if(((Phone)result[i]).getPhoneTypeId() == phoneTypeId){
-            return (Phone)result[i];
+          if(result[i].getPhoneTypeId() == phoneTypeId){
+            return result[i];
           }
         }
       }
@@ -2265,10 +2265,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/11/23 00:13:26 $ by $Author: sigtryggur $
+	 *  Last modified: $Date: 2005/11/29 15:30:04 $ by $Author: laddi $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.101 $
+	 * @version $Revision: 1.102 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

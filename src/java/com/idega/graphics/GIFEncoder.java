@@ -315,7 +315,7 @@ public class GIFEncoder {
     }
 
     static public int Hash(short index, byte lastbyte) {
-	    return ((int)((short)(lastbyte << 8) ^ index) & 0xFFFF) % HASHSIZE;
+	    return (((short)(lastbyte << 8) ^ index) & 0xFFFF) % HASHSIZE;
     }
   }
 
@@ -353,7 +353,7 @@ public class GIFEncoder {
 		        limit = (1 << numbits) - 1;
 		      }
 
-		      prefix = (short)((short)c & 0xFF);
+		      prefix = (short)(c & 0xFF);
 	      }
 	    }
 

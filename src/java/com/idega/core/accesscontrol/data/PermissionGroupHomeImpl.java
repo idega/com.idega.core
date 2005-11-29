@@ -14,7 +14,7 @@ public class PermissionGroupHomeImpl extends com.idega.data.IDOFactory implement
 
  public PermissionGroup createLegacy(){
 	try{
-		return (PermissionGroup)create();
+		return create();
 	}
 	catch(javax.ejb.CreateException ce){
 		throw new RuntimeException("CreateException:"+ce.getMessage());

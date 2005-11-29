@@ -232,12 +232,12 @@ public final class CBJarResource
             CBUtility.log("bizarre size error in zip entry reading = corrupt zip file?"); return null;
         }
 
-        byte[] b=new byte[(int)size];
+        byte[] b=new byte[size];
         int rb=0;
         int chunk=0;
-        while (((int)size - rb) > 0)
+        while ((size - rb) > 0)
         {
-             chunk=is.read(b,rb,(int)size - rb);
+             chunk=is.read(b,rb,size - rb);
              if (chunk==-1) {
                 break;
              }

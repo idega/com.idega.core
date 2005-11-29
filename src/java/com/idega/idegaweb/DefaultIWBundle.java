@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.22 2005/08/14 16:53:07 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.23 2005/11/29 15:30:03 laddi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -530,7 +530,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	public String[] getAvailableProperties()
 	{
-		return ((String[]) ((List) propertyList.getKeys()).toArray(new String[0]));
+		return ((String[]) propertyList.getKeys().toArray(new String[0]));
 	}
 	public String[] getLocalizableStrings()
 	{
@@ -1535,7 +1535,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	
 	public String getLocalizedString(String localizationKey) {
-		return getLocalizedString(localizationKey,(String)localizationKey);
+		return getLocalizedString(localizationKey,localizationKey);
 	}
 
 	

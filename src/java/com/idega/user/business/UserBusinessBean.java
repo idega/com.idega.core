@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.197 2005/11/18 16:20:54 eiki Exp $
+ * $Id: UserBusinessBean.java,v 1.198 2005/11/29 15:30:04 laddi Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -94,10 +94,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2005/11/18 16:20:54 $ by $Author: eiki $
+ * Last modified: $Date: 2005/11/29 15:30:04 $ by $Author: laddi $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.197 $
+ * @version $Revision: 1.198 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -784,8 +784,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			// ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.data.PhoneBMPBean.getStaticInstance(Phone.class));
 			if (result != null) {
 				for (int i = 0; i < result.length; i++) {
-					if (((Phone) result[i]).getPhoneTypeId() == phoneTypeId) {
-						return (Phone) result[i];
+					if (result[i].getPhoneTypeId() == phoneTypeId) {
+						return result[i];
 					}
 				}
 			}
@@ -891,7 +891,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public String getUserJob(User user) {
-		String job = (String) user.getMetaData(JOB_META_DATA_KEY);
+		String job = user.getMetaData(JOB_META_DATA_KEY);
 		if (job == null || NULL.equals(job))
 			return "";
 		else
@@ -907,7 +907,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public String getUserWorkPlace(User user) {
-		String workPlace = (String) user.getMetaData(WORKPLACE_META_DATA_KEY);
+		String workPlace = user.getMetaData(WORKPLACE_META_DATA_KEY);
 		if (workPlace == null || NULL.equals(workPlace))
 			return "";
 		else

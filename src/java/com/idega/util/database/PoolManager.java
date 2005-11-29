@@ -110,7 +110,7 @@ public class PoolManager implements Singleton
 		Properties dbProps = new Properties();
 		try
 		{
-			is = (InputStream) new FileInputStream(propertiesFile);
+			is = new FileInputStream(propertiesFile);
 			dbProps.load(is);
 		}
 		catch (Exception e)

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.26 2005/11/18 14:47:06 tryggvil Exp $
+ * $Id: IWPropertyList.java,v 1.27 2005/11/29 15:30:03 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.xml.XMLParser;
  * files and a few others.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/11/18 14:47:06 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/29 15:30:03 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 public class IWPropertyList {
 	private XMLDocument xmlDocument;
@@ -117,9 +117,9 @@ public class IWPropertyList {
 				System.err.println("Creating new " + fileNameWithoutFullPath);
 				file = FileUtil.getFileAndCreateIfNotExists(path, fileNameWithoutFullPath);
 				FileOutputStream stream = new FileOutputStream(file);
-				char[] array = ((String) "<" + rootElementTag + "></" + rootElementTag + ">").toCharArray();
+				char[] array = ("<" + rootElementTag + "></" + rootElementTag + ">").toCharArray();
 				for (int i = 0; i < array.length; i++) {
-					stream.write((int) array[i]);
+					stream.write(array[i]);
 				}
 				stream.flush();
 				stream.close();

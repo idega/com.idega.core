@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.2 2005/10/12 21:52:24 tryggvil Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.3 2005/11/29 15:30:04 laddi Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -23,10 +23,10 @@ import com.idega.user.data.GroupHome;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2005/10/12 21:52:24 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/29 15:30:04 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Property implements Serializable{
 
@@ -230,7 +230,7 @@ public class Property implements Serializable{
 		//REMOVE AND MAKE GENERIC! ask tryggvi and eiki
 		else if (parameterType.equals(Group.class)) {
 			try {
-				argument = (Group) ((GroupHome) com.idega.data.IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(
+				argument = ((GroupHome) com.idega.data.IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(
 						stringValue.substring(stringValue.lastIndexOf('_') + 1, stringValue.length())));
 			}
 			catch (Exception ex) {

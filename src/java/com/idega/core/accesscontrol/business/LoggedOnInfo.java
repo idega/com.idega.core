@@ -107,7 +107,7 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 
 
   public boolean equals(LoggedOnInfo obj){
-    return this.getUser().equals(((LoggedOnInfo)obj).getUser());
+    return this.getUser().equals(obj.getUser());
   }
 /*
   public boolean equals(HttpSession obj){

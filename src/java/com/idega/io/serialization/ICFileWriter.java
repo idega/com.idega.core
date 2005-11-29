@@ -27,7 +27,7 @@ public class ICFileWriter extends WriterToFile {
 	}
 	
 	public ICFileWriter(ICFile file, IWContext iwc) {
-		super((Storable) file, iwc);
+		super(file, iwc);
 	}
 	
 	public String createContainer() throws IOException {

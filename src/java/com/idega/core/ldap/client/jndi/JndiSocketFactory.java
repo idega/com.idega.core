@@ -455,7 +455,7 @@ public class JndiSocketFactory extends SSLSocketFactory
 	            default_factory = new JndiSocketFactory();
         }
 
-        return (SocketFactory)default_factory;
+        return default_factory;
     }
 
 

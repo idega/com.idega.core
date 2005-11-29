@@ -466,7 +466,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
 	  for (j=0;j<1000;j++)
 	  {
 	  // first, convert the int from signed to "unsigned"
-	  long l = (long)r.nextInt();
+	  long l = r.nextInt();
 	  if (l < 0 ) l += 4294967296L;  // max int value
 	  String s = String.valueOf(l);
 	  while(s.length() < 10) s = " " + s;  // buffer
@@ -510,7 +510,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
 	  r = new MersenneTwister(SEED);
 	  for (j = 0; j < 1000; j++)
 	      {
-	      System.out.print(r.nextBoolean((double)(j/999.0)) + " ");
+	      System.out.print(r.nextBoolean((j/999.0)) + " ");
 	      if (j%8==7) System.out.println();
 	      }
 	  if (!(j%8==7)) System.out.println();
@@ -519,7 +519,7 @@ public class MersenneTwister extends java.util.Random implements Serializable
 	  r = new MersenneTwister(SEED);
 	  for (j = 0; j < 1000; j++)
 	      {
-	      System.out.print(r.nextBoolean((float)(j/999.0f)) + " ");
+	      System.out.print(r.nextBoolean((j/999.0f)) + " ");
 	      if (j%8==7) System.out.println();
 	      }
 	  if (!(j%8==7)) System.out.println();

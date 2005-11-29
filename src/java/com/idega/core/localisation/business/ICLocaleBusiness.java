@@ -169,10 +169,10 @@ public class ICLocaleBusiness  implements MutableClass {
       LocaleHashInUseById = new Hashtable();
       for (int i = 0; i < len; i++) {
         ICLocale ICL = (ICLocale) L.get(i);
-        LocaleHashById.put( (Integer)  ICL.getPrimaryKey(),ICL);
+        LocaleHashById.put(ICL.getPrimaryKey(),ICL);
         LocaleHashByString.put(ICL.getLocale(),ICL);
         if(ICL.getInUse()){
-          LocaleHashInUseById.put((Integer)ICL.getPrimaryKey(),ICL);
+          LocaleHashInUseById.put(ICL.getPrimaryKey(),ICL);
           LocaleHashInUseByString.put(ICL.getLocale(),ICL);
         }
       }

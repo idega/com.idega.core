@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.91 2005/11/25 16:19:08 tryggvil Exp $
+ * $Id: Form.java,v 1.92 2005/11/29 15:30:05 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2005/11/25 16:19:08 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/11/29 15:30:05 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.91 $
+ * @version $Revision: 1.92 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -249,7 +249,7 @@ public class Form
 				PresentationObject mo = (PresentationObject) iter.next();
 				if (mo instanceof PresentationObjectContainer) {
 					if (mo instanceof InterfaceObject) {
-						vector.add((InterfaceObject) mo);
+						vector.add(mo);
 					}
 					else {
 						vector = findAllfindAllInterfaceObjectsHelper(vector, (PresentationObjectContainer) mo);

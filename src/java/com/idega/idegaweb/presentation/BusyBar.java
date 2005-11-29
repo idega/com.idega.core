@@ -102,7 +102,7 @@ public class BusyBar extends Block {
     if(busyObjects!=null){
       java.util.Iterator iter = busyObjects.iterator();
       while(iter.hasNext()){
-        Object o = (Object) iter.next();
+        Object o = iter.next();
         if(o instanceof InterfaceObject ){
           InterfaceObject obj = (InterfaceObject)o;
           if(disabledObjects != null){

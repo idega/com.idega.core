@@ -463,7 +463,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 				}
 	    		Iterator iter = listOfPrimaryKeys.iterator();
 	    		for (int i = firstIndex; iter.hasNext();i++) {
-					Object pk = (Object) iter.next();
+					Object pk = iter.next();
 					Object entity = mapOfEntities.get(pk);
 					_entities.set(i,entity);
 //					_tracker.setAsLoaded(firstIndex+i);
@@ -867,7 +867,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
   public boolean addAll(Collection c) {
   	boolean toReturn=true;
 	for (Iterator iter = c.iterator(); iter.hasNext();) {
-		Object element = (Object) iter.next();
+		Object element = iter.next();
 		if(!add(element)){
 			toReturn = false;
 		}
@@ -877,7 +877,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
   public boolean addAll(int index, Collection c) {
   	int i = index;
   	for (Iterator iter = c.iterator(); iter.hasNext();i++) {
-		Object element = (Object) iter.next();
+		Object element = iter.next();
 		add(i,element);
 	}
   	
@@ -1085,7 +1085,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					int[] item = (int[])iter.next();
 					NumberOfLoadedElements += item[TO_INDEX_IN_ARRAY] - item[FROM_INDEX_IN_ARRAY];
 				}
-				return (float)((float)NumberOfLoadedElements)/((float)_size);
+				return ((float)NumberOfLoadedElements)/((float)_size);
 			} else {
 			    return 1;
 			}
@@ -1600,10 +1600,10 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 //			}
 			
 		    public void set(Object o) {
-			 	_list.set(_index-1,((IDOEntity)o));
+			 	_list.set(_index-1,o);
 		    }
 		    public void add(Object o) {
-			 	_list.add(_index,((IDOEntity)o));
+			 	_list.add(_index,o);
 		    }
 
 }

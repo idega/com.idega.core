@@ -65,7 +65,7 @@ public class Encrypter {
         char[] digestedChars = new char[digestedBytes.length];
         int maxvalue=128;
         for (int i = 0; i < digestedBytes.length; i++) {
-          int myByte = (int)digestedBytes[i]+maxvalue;
+          int myByte = digestedBytes[i]+maxvalue;
           digestedChars[i]=(char)myByte;
         }
 

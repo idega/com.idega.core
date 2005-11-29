@@ -202,8 +202,8 @@ public class EntityFinder implements Singleton {
 				if (vector == null) {
 					vector = new Vector();
 				}
-				((IDOLegacyEntity) tempobj).setDatasource(entity.getDatasource());
-				((IDOLegacyEntity) tempobj).setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
+				tempobj.setDatasource(entity.getDatasource());
+				tempobj.setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 
 				vector.addElement(tempobj);
 

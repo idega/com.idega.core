@@ -151,7 +151,7 @@ public class ImageButton extends ImageLabel {
     if (inside(x,y)) {
       paint(getGraphics());
       event.id = Event.ACTION_EVENT;
-      event.arg = (Object)getImage();
+      event.arg = getImage();
       return(action(event, event.arg));
     } else
       return(false);

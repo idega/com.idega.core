@@ -421,7 +421,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 			return this.equals(((AbstractGroupBMPBean) obj).getGeneralGroup());
 		}
 		else if (obj instanceof Group) {
-			return super.equals((Group) obj);
+			return super.equals(obj);
 		}
 		else {
 			return super.equals(obj);

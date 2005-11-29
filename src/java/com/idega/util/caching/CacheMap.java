@@ -231,8 +231,8 @@ public class CacheMap extends HashMap implements Map
 					Object key =  iter.next();
 					Object value = map.get(key);
 					System.out.print("Key "+key+"="+value);
-					if(map instanceof CacheMap){
-						CacheMap cMap = (CacheMap)map;
+					if(map != null){
+						CacheMap cMap = map;
 						System.out.print(" - With accesses: "+cMap.getAcesses().get(key));
 					}
 					System.out.println("");

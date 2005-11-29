@@ -1,5 +1,5 @@
 /*
- * $Id: GenericProcedure.java,v 1.2 2004/09/07 12:48:16 gummi Exp $
+ * $Id: GenericProcedure.java,v 1.3 2005/11/29 15:30:03 laddi Exp $
  * Created on 31.8.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.util.database.ConnectionBroker;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/07 12:48:16 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/11/29 15:30:03 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class GenericProcedure implements IDOProcedure {
 	
@@ -50,7 +50,7 @@ public abstract class GenericProcedure implements IDOProcedure {
 	
 	protected Collection idoExecuteFindProcedure(Object[] parameters) throws IDOFinderException{
 		try {
-			return (Collection)DatastoreInterface.getInstance(this).executeFindProcedure(getDatasource(),this,parameters);
+			return DatastoreInterface.getInstance(this).executeFindProcedure(getDatasource(),this,parameters);
 		}
 		catch (SQLException e) {
 			throw new IDOFinderException(e);

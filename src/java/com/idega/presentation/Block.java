@@ -1,5 +1,5 @@
 /*
- * $Id: Block.java,v 1.70 2005/08/04 11:22:24 sigtryggur Exp $
+ * $Id: Block.java,v 1.71 2005/11/29 15:30:02 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -35,10 +35,10 @@ import com.idega.presentation.text.Text;
  * their functionality is done with the main() method in old style idegaWeb.
  * This class has functionality regarding caching and how the main method is processed in JSF.
  * 
- * Last modified: $Date: 2005/08/04 11:22:24 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2005/11/29 15:30:02 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.70 $
+ * @version $Revision: 1.71 $
  */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
@@ -373,7 +373,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 	
 	public Text getStyleText(String text, String styleName) {
-		return (Text) getStyleText(new Text(text),styleName);	
+		return getStyleText(new Text(text),styleName);	
 	}
 	
 	public Text getStyleText(Text text, String styleName) {
@@ -381,7 +381,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 	
 	public Link getStyleLink(String link, String styleName) {
-		return (Link) getStyleLink(new Link(link),styleName);	
+		return getStyleLink(new Link(link),styleName);	
 	}
 	
 	public Link getStyleLink(Link link, String styleName) {
@@ -389,7 +389,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 	
 	public PresentationObject getStyleObject(PresentationObject object, String styleName) {
-		return (PresentationObject) setStyle(object, styleName);
+		return setStyle(object, styleName);
 	}
 	
 	/**
@@ -626,7 +626,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[10];
 		values[0] = super.saveState(context);
-		values[1] = (String)cacheKey;
+		values[1] = cacheKey;
 		values[2] = derivedCacheKey;
 		values[3] = Boolean.valueOf(cacheable);
 		values[4] = new Long(cacheInterval);

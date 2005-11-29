@@ -92,7 +92,7 @@ public EmailAddress(Text text){
 
 	text.setFontColor("");
 
-	obj = (PresentationObject)text;
+	obj = text;
 
 	obj.setParentObject(this);
 
@@ -134,7 +134,7 @@ public EmailAddress(Text text,String url){
 
 	text.setFontColor("");
 
-	obj = (PresentationObject)text;
+	obj = text;
 
 	setURL("mailto:"+url);
 

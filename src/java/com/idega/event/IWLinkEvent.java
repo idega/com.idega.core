@@ -17,7 +17,7 @@ public class IWLinkEvent extends IWEvent {
   public final static int LINK_ACTION_PERFORMED = AWTEvent.RESERVED_ID_MAX +1;
 
   public IWLinkEvent(Link source, int id) {
-    super((Object)source,id);
+    super(source,id);
   }
 
 }

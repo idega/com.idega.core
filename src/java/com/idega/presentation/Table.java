@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.87 2005/09/19 22:06:56 palli Exp $
+ * $Id: Table.java,v 1.88 2005/11/29 15:30:02 laddi Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -425,10 +425,10 @@ public class Table extends PresentationObjectContainer implements TableType{
 		cellsAreMerged = true;
 		//Do nothing if the either of the cells are already merged with something else
 		if (!(isInMergedCell(beginxpos, beginypos) && isInMergedCell(endxpos, endypos))) {
-			beginMergedxpos.addElement((Object) new Integer(beginxpos));
-			beginMergedypos.addElement((Object) new Integer(beginypos));
-			endMergedxpos.addElement((Object) new Integer(endxpos));
-			endMergedypos.addElement((Object) new Integer(endypos));
+			beginMergedxpos.addElement(new Integer(beginxpos));
+			beginMergedypos.addElement(new Integer(beginypos));
+			endMergedxpos.addElement(new Integer(endxpos));
+			endMergedypos.addElement(new Integer(endypos));
 		}
 	}
 	
@@ -1924,7 +1924,7 @@ public class Table extends PresentationObjectContainer implements TableType{
 					for (int x = 0; x < theCells.length; x++) {
 						for (int y = (startRow-1); y < endRow; y++) {
 							if (this.theCells[x][y] != null) {
-								obj.theCells[x][y] = (TableCell) ((TableCell) this.theCells[x][y]).clonePermissionChecked(iwc, askForPermission);
+								obj.theCells[x][y] = (TableCell) this.theCells[x][y].clonePermissionChecked(iwc, askForPermission);
 								obj.theCells[x][y].setParentObject(obj);
 								obj.theCells[x][y].setLocation(this.getLocation());
 								//obj.theObjects[x][y].remove(NULL_CLONE_OBJECT);

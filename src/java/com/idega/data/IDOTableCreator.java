@@ -341,7 +341,7 @@ public class IDOTableCreator{
 	        		GenericEntity tmpEnt = (GenericEntity) iter.next();
 	        			try{
 			      		System.out.println("IDOTableCreator : Inserting start data for entity : "+tmpEnt.getEntityName());
-		      			((GenericEntity) tmpEnt).insertStartData();
+		      			tmpEnt.insertStartData();
 	        			}
 	        			catch(Exception e){
 	        				e.printStackTrace();

@@ -1,5 +1,5 @@
 /*
- * $Id: BarChart.java,v 1.5 2003/04/03 09:48:02 laddi Exp $
+ * $Id: BarChart.java,v 1.6 2005/11/29 15:30:03 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -137,7 +137,7 @@ public class BarChart extends Chart {
         int start = height - legend_.length * 20;
         g.setColor(Color.black);
         for (int i = 0; i < legend_.length; i++) {
-          g.drawString((String)legend_[i],xBarStart,start+i*20);
+          g.drawString(legend_[i],xBarStart,start+i*20);
         }
 
         g.setTransform(trans);
@@ -159,7 +159,7 @@ public class BarChart extends Chart {
     g.setColor(Color.black);
     g.drawLine(xBarStart,yBarEnd,xBarLength+xBarStart,yBarEnd);
     g.drawLine(xBarStart,yBarEnd,xBarStart,yBarStart);
-    int step = (int)(yBarStart - yBarEnd) / 5;
+    int step = (yBarStart - yBarEnd) / 5;
     for (int i = 0; i < 6; i++)
       g.drawLine(xBarStart,yBarEnd+i*step,xBarStart-5,yBarEnd+i*step);
 
@@ -188,10 +188,10 @@ public class BarChart extends Chart {
       curr = fm.stringWidth(over);
       float center = 0;
       if (curr < barwidth)
-        center = (float)(barwidth - curr)/(float)2.0;
-      chartText = new AffineTransform((double)1,(double)0,(double)0,(double)1,(double)xBarStart,(double)yBarStart - (data_[i].doubleValue()/maxPlotValue*(yBarStart-yBarEnd))-5 - extraHeight);
+        center = (barwidth - curr)/(float)2.0;
+      chartText = new AffineTransform(1,0,0,1,xBarStart,yBarStart - (data_[i].doubleValue()/maxPlotValue*(yBarStart-yBarEnd))-5 - extraHeight);
       g.setTransform(chartText);
-      g.drawString(over,(float)(i * barwidth+center),(float)0.0);
+      g.drawString(over,(i * barwidth+center),(float)0.0);
       g.setTransform(chart);
     }
 

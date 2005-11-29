@@ -799,7 +799,7 @@ public class FrameTable extends Window{
       }
       if(nothingset){
         if(this.getChildren().size()!=0){
-          int thePercent = (int)(100/this.getChildren().size());
+          int thePercent = (100/this.getChildren().size());
           for (int i = 1; i <= this.getChildren().size() ; i++) {
               setSpanPercent(i,thePercent);
           }

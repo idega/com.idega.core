@@ -221,7 +221,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
 		    while (iter.hasNext()) {
 		      Object pk = iter.next();
 		      if(pk instanceof IDOEntity){
-		      	theReturn.add((IDOEntity)pk);
+		      	theReturn.add(pk);
 		      } else {
 			      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
 			      theReturn.add(entityObject);

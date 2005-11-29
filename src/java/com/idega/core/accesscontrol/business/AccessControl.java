@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.105 2005/11/25 14:07:11 tryggvil Exp $
+ * $Id: AccessControl.java,v 1.106 2005/11/29 15:30:04 laddi Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -67,12 +67,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2005/11/25 14:07:11 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/29 15:30:04 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.105 $
+ * @version $Revision: 1.106 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -872,7 +872,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				staticPageICObject =
 					(ICObject) EntityFinder
 						.findAllByColumn(
-							(ICObject) com.idega.core.component.data.ICObjectBMPBean.getStaticInstance(ICObject.class),
+							com.idega.core.component.data.ICObjectBMPBean.getStaticInstance(ICObject.class),
 							com.idega.core.component.data.ICObjectBMPBean.getClassNameColumnName(),
 							Page.class.getName())
 						.get(0);
@@ -891,7 +891,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				staticFileICObject =
 					(ICObject) EntityFinder
 						.findAllByColumn(
-							(ICObject) com.idega.core.component.data.ICObjectBMPBean.getStaticInstance(ICObject.class),
+							com.idega.core.component.data.ICObjectBMPBean.getStaticInstance(ICObject.class),
 							com.idega.core.component.data.ICObjectBMPBean.getClassNameColumnName(),
 							ICFile.class.getName())
 						.get(0);
@@ -2444,7 +2444,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			Iterator iter = permissions.iterator();
 			while (iter.hasNext()) {
 				ICPermission item = (ICPermission) iter.next();
-				ICPermission perm = (ICPermission) ((ICPermissionHome) com.idega.data.IDOLookup.getHomeLegacy(ICPermission.class)).createLegacy();
+				ICPermission perm = ((ICPermissionHome) com.idega.data.IDOLookup.getHomeLegacy(ICPermission.class)).createLegacy();
 				perm.setContextType(contextType);
 				perm.setContextValue(identifierToCopyTo);
 				perm.setGroupID(item.getGroupID());

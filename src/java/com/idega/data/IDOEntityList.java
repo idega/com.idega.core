@@ -79,14 +79,14 @@ public class IDOEntityList implements List {
   
   public boolean add(Object o) {
   	if (o instanceof IDOEntity)
-  		return _pkLists.add(((IDOEntity)o));
+  		return _pkLists.add(o);
   	else
   		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
 
   }
 
   public boolean remove(Object o) {
-  	return _pkLists.remove(((IDOEntity)o));
+  	return _pkLists.remove(o);
   }
 
   public boolean containsAll(Collection c) {
@@ -111,28 +111,28 @@ public class IDOEntityList implements List {
   
   public Object set(int index, Object element) {
   	if (element instanceof IDOEntity)
-  		return _pkLists.set(index, ((IDOEntity)element));
+  		return _pkLists.set(index, element);
   	else
   		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
 
   public void add(int index, Object element) {
   	if (element instanceof IDOEntity)
-  		_pkLists.add(index, ((IDOEntity)element));
+  		_pkLists.add(index, element);
   	else
   		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
 
   public int indexOf(Object o) {
 	 	if (o instanceof IDOEntity)
-	 		return _pkLists.indexOf(((IDOEntity)o));
+	 		return _pkLists.indexOf(o);
 	 	else
 	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
 
   public int lastIndexOf(Object o) {
   	if (o instanceof IDOEntity)
-  		return _pkLists.lastIndexOf(((IDOEntity)o));
+  		return _pkLists.lastIndexOf(o);
   	else
   		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
   }
@@ -224,13 +224,13 @@ public class IDOEntityList implements List {
 
     public void set(Object o) {
     		if (o instanceof IDOEntity)
-	 		_list.set(_index-1,((IDOEntity)o));
+	 		_list.set(_index-1,o);
 	 	else
 	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
     }
     public void add(Object o) {
     		if (o instanceof IDOEntity)
-	 		_list.add(_index,((IDOEntity)o));
+	 		_list.add(_index,o);
 	 	else
 	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
     }

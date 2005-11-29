@@ -226,7 +226,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	}
 
 	public String getTreeRelationshipTableName(TreeableEntity entity) {
-		return EntityControl.getTreeRelationShipTableName((TreeableEntityBMPBean)entity);
+		return EntityControl.getTreeRelationShipTableName(entity);
 	}
 
 	public String getTreeRelationshipChildColumnName(TreeableEntity entity) {

@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.129 2005/06/28 16:18:17 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.130 2005/11/29 15:30:04 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -667,9 +667,9 @@ public abstract class DatastoreInterface implements MutableClass {
 					length = insert.size();
 					for (int i = 0; i < length; i++) {
 						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
-						data.setMetaDataNameAndValue((String) insert.elementAt(i), (String) metadata.get((String) insert.elementAt(i)));
-						if (types != null && types.containsKey((String) insert.elementAt(i)))
-							data.setMetaDataType((String) types.get((String) insert.elementAt(i)));
+						data.setMetaDataNameAndValue((String) insert.elementAt(i), (String) metadata.get(insert.elementAt(i)));
+						if (types != null && types.containsKey(insert.elementAt(i)))
+							data.setMetaDataType((String) types.get(insert.elementAt(i)));
 						else
 							data.setMetaDataType("java.lang.String");
 						data.store();
@@ -682,13 +682,13 @@ public abstract class DatastoreInterface implements MutableClass {
 					//				System.out.println("update size: " + length);
 					for (int i = 0; i < length; i++) {
 						//System.out.println("updating: "+i);
-						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey((Integer) ids.get(update.elementAt(i)));
+						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(update.elementAt(i)));
 						//do not construct with id to avoid database access
 						if (ids == null) System.out.println("ids is null");
 						//System.out.println("ID: "+data.getID());
-						data.setMetaDataNameAndValue((String) update.elementAt(i), (String) metadata.get((String) update.elementAt(i)));
-						if (types != null && types.containsKey((String) update.elementAt(i)))
-							data.setMetaDataType((String) types.get((String) update.elementAt(i)));
+						data.setMetaDataNameAndValue((String) update.elementAt(i), (String) metadata.get(update.elementAt(i)));
+						if (types != null && types.containsKey(update.elementAt(i)))
+							data.setMetaDataType((String) types.get(update.elementAt(i)));
 						else
 							data.setMetaDataType("java.lang.String");
 						data.store();
@@ -698,7 +698,7 @@ public abstract class DatastoreInterface implements MutableClass {
 				if (delete != null) {
 					length = delete.size();
 					for (int i = 0; i < length; i++) {
-						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey((Integer) ids.get(delete.elementAt(i)));
+						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(delete.elementAt(i)));
 						//data.setID();
 						entity.idoRemoveFrom(data);
 						data.remove();
@@ -1870,7 +1870,7 @@ public abstract class DatastoreInterface implements MutableClass {
 				cols = new Vector();
 				cols.add(column);
 			}
-			hm.put(index, (String[]) cols.toArray(new String[]{}));
+			hm.put(index, cols.toArray(new String[]{}));
 		}
 		
 	}

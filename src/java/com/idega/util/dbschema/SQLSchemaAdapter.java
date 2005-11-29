@@ -1,5 +1,5 @@
 /*
- * $Id: SQLSchemaAdapter.java,v 1.9 2005/11/10 15:55:53 gimmi Exp $
+ * $Id: SQLSchemaAdapter.java,v 1.10 2005/11/29 15:30:04 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/11/10 15:55:53 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/11/29 15:30:04 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public abstract class SQLSchemaAdapter implements MutableClass {
 
@@ -828,7 +828,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 				cols = new Vector();
 				cols.add(column);
 			}
-			hm.put(index, (String[]) cols.toArray(new String[]{}));
+			hm.put(index, cols.toArray(new String[]{}));
 		}
 		
 		

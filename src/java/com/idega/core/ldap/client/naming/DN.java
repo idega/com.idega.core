@@ -468,7 +468,7 @@ public class DN implements Name
         if (o instanceof DN)
             return equals((DN)o);
         else if (o instanceof Name)
-            return (compareTo((Name)o) == 0);
+            return (compareTo(o) == 0);
         else
             return false;  // cannot be equal in any sense if not a name
     }

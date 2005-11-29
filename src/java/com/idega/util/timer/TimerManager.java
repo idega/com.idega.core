@@ -128,7 +128,7 @@ public class TimerManager {
     * @param threadName the name of the waiter thread
     */
   public TimerManager(boolean isDaemon, String threadName) {
-    queue = (SortedSet) new TreeSet(); // PriorityQueue(false);
+    queue = new TreeSet();
     waiter = new TimerThread(this, isDaemon, threadName);
    }
 

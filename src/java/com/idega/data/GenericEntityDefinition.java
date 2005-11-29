@@ -71,9 +71,9 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 				int length = _fields.length;
 				EntityAttribute[] tempArray = new EntityAttribute[length + 1];
 				System.arraycopy(_fields, 0, tempArray, 0, length);
-				tempArray[length] = (EntityAttribute)field;
+				tempArray[length] = field;
 				if(field.getDeclaredEntity()== null){
-					((EntityAttribute)field).setDeclaredEntity(this);
+					field.setDeclaredEntity(this);
 				}
 				_fields = tempArray;
 			} else {

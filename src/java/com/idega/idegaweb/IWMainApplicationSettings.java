@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.30 2005/11/29 12:03:03 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.31 2005/11/29 15:30:03 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -31,10 +31,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/11/29 12:03:03 $ by $Author: laddi $
+ * Last modified: $Date: 2005/11/29 15:30:03 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class IWMainApplicationSettings extends IWPropertyList {
 	private static final String CHARACTER_ENCODING_KEY = "character_encoding";
@@ -209,12 +209,7 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	
 	
 	public AccessController getDefaultAccessController() {
-		return (AccessController) new com
-			.idega
-			.core
-			.accesscontrol
-			.business
-			.AccessControl();
+		return new com.idega.core.accesscontrol.business.AccessControl();
 	}
 	/**
 	

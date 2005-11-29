@@ -246,7 +246,7 @@ public class ModuleFileMerger {
 	protected void processContents(StringBuffer inString, StringBuffer outString) {
 		//outString = new StringBuffer();
 		StringBuffer semiOutBuffer = new StringBuffer();
-		Pattern moduleBeginPattern = (Pattern) Pattern.compile("<!-- MODULE:BEGIN ([\\S]+)\\s([\\S]+)\\s[^\\n\\r]+",Pattern.CASE_INSENSITIVE);
+		Pattern moduleBeginPattern = Pattern.compile("<!-- MODULE:BEGIN ([\\S]+)\\s([\\S]+)\\s[^\\n\\r]+",Pattern.CASE_INSENSITIVE);
 		Matcher moduleBeginMatcher = moduleBeginPattern.matcher(inString);
 
 		//StringBuffer remainder = new StringBuffer();
@@ -265,7 +265,7 @@ public class ModuleFileMerger {
 			moduleBeginMatcher.appendTail(remainder);
 			
 			String regexString = "<!-- MODULE:END "+getRegExEscaped(moduleId)+" "+getRegExEscaped(version)+"[^\\n\\r]+";
-			Pattern moduleEndPattern = (Pattern) Pattern.compile(regexString,Pattern.CASE_INSENSITIVE);
+			Pattern moduleEndPattern = Pattern.compile(regexString,Pattern.CASE_INSENSITIVE);
 			Matcher moduleEndMatcher = moduleEndPattern.matcher(remainder);
 			
 			

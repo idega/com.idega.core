@@ -78,9 +78,9 @@ public class DateBackground extends Block {
 		int greenDifference = beforeColor.getGreen() - afterColor.getGreen();
 		int blueDifference = beforeColor.getBlue() - afterColor.getBlue();
 		
-		int red = beforeColor.getRed() - ((int) ((float) redDifference / (float) daysBetween * (float) daysFrom));
-		int green = beforeColor.getGreen() - ((int) ((float) greenDifference / (float) daysBetween * (float) daysFrom));
-		int blue = beforeColor.getBlue() - ((int) ((float) blueDifference / (float) daysBetween * (float) daysFrom));
+		int red = beforeColor.getRed() - ((int) ((float) redDifference / (float) daysBetween * daysFrom));
+		int green = beforeColor.getGreen() - ((int) ((float) greenDifference / (float) daysBetween * daysFrom));
+		int blue = beforeColor.getBlue() - ((int) ((float) blueDifference / (float) daysBetween * daysFrom));
 		
 		IWColor newColor = new IWColor(red, green, blue);
 		return newColor.getHexColorString();

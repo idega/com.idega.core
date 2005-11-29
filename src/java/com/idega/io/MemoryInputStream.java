@@ -20,7 +20,7 @@ public class MemoryInputStream extends InputStream {
 	public int read() {
 		//System.out.println("Calling read1 on MemoryInputStream");
 		if (position < buffer.length()) {
-			return (int) buffer.read(position++);
+			return buffer.read(position++);
 		} else {
 			return -1;
 		}

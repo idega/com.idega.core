@@ -116,7 +116,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   }
 
   public Integer getRelatedGroupPK(){
-    return (Integer)getIntegerColumnValue(RELATED_GROUP_ID_COLUMN);
+    return getIntegerColumnValue(RELATED_GROUP_ID_COLUMN);
   }
 
   public void setRelationship(GroupRelationType type){

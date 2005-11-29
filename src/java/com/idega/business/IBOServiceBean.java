@@ -174,7 +174,7 @@ public class IBOServiceBean implements IBOService, SessionBean {
   }
   
   	protected AccessController getAccessController() {
-		return ((AccessController) this.getIWApplicationContext().getIWMainApplication().getAccessController());
+		return this.getIWApplicationContext().getIWMainApplication().getAccessController();
 	}
 
   	
@@ -185,7 +185,6 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	 * @param msg The message to log out
 	 */
 	protected void log(String msg) {
-		//System.out.println(string);
 		getLogger().log(getDefaultLogLevel(),msg);
 	}
 
