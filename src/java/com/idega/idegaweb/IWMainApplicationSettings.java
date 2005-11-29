@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.29 2005/11/25 15:16:22 tryggvil Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.30 2005/11/29 12:03:03 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -12,8 +12,6 @@ package com.idega.idegaweb;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
-import java.util.Set;
 import java.util.Vector;
 import javax.ejb.FinderException;
 import com.idega.core.accesscontrol.business.AccessController;
@@ -22,7 +20,6 @@ import com.idega.core.data.ICApplicationBindingHome;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOLookup;
-import com.idega.data.IDOLookupException;
 import com.idega.presentation.Page;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.LocaleUtil;
@@ -34,10 +31,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/11/25 15:16:22 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/11/29 12:03:03 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class IWMainApplicationSettings extends IWPropertyList {
 	private static final String CHARACTER_ENCODING_KEY = "character_encoding";
