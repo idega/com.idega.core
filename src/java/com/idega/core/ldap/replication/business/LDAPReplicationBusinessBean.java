@@ -768,9 +768,13 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			getEmbeddedLDAPServerBusiness().getPropertyAndCreateIfDoesNotExist(replicationProps,
 					PROPS_REPLICATOR_PREFIX + numberOfReplicators + PROPS_REPLICATOR_ACTIVE, "false");
 			getEmbeddedLDAPServerBusiness().getPropertyAndCreateIfDoesNotExist(replicationProps,
+					PROPS_REPLICATOR_PREFIX + numberOfReplicators + PROPS_REPLICATOR_ACTIVE_LISTENER, "false");
+			getEmbeddedLDAPServerBusiness().getPropertyAndCreateIfDoesNotExist(replicationProps,
 					PROPS_REPLICATOR_PREFIX + numberOfReplicators + PROPS_REPLICATOR_ROOT_USER, "cn=Admin");
 			getEmbeddedLDAPServerBusiness().getPropertyAndCreateIfDoesNotExist(replicationProps,
-					PROPS_REPLICATOR_PREFIX + numberOfReplicators + PROPS_REPLICATOR_ROOT_PASSWORD, "manager");		
+					PROPS_REPLICATOR_PREFIX + numberOfReplicators + PROPS_REPLICATOR_ROOT_PASSWORD, "manager");
+			getEmbeddedLDAPServerBusiness().getPropertyAndCreateIfDoesNotExist(replicationProps,
+					PROPS_REPLICATOR_PREFIX + numberOfReplicators + PROPS_REPLICATOR_IWLDAPWS_URI, "");
 			storeReplicationProperties();
 		}
 		catch (NumberFormatException ex) {
