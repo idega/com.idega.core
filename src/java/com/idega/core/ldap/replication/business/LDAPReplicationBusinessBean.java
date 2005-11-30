@@ -436,7 +436,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 						startReplicator(i);
 					}
 					
-					String autoStartListener = repProps.getProperty(PROPS_REPLICATOR_PREFIX + i + PROPS_REPLICATOR_ACTIVE);
+					String autoStartListener = repProps.getProperty(PROPS_REPLICATOR_PREFIX + i + PROPS_REPLICATOR_ACTIVE_LISTENER);
 					boolean activateListener = (autoStartListener!=null && ("Y".equalsIgnoreCase(autoStartListener) || "true".equalsIgnoreCase(autoStartListener)));
 					if (activateListener) {
 						startReplicationListener(i);
@@ -479,7 +479,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			String remoteServerName = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_HOST);
 			String iwLdapWsURI = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_IWLDAPWS_URI);
 			
-			if(iwLdapWsURI==null){
+			if("".equals(iwLdapWsURI) || iwLdapWsURI==null){
 				iwLdapWsURI = getDefaultIWLDAPWebserviceURI();			
 			}
 			
