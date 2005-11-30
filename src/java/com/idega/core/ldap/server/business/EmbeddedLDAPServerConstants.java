@@ -13,6 +13,7 @@ public interface EmbeddedLDAPServerConstants {
 
 	public static final String PROPS_JAVALDAP_SERVER_NAME = "javaldap.server.name";
 	public static final String PROPS_JAVALDAP_SERVER_PORT  = "javaldap.server.port";
+	public static final String PROPS_JAVALDAP_WEBSERVICE_PORT  = "idegaweb.webservice.port";
 	public static final String PROPS_JAVALDAP_SERVER_THREADS = "javaldap.server.threads";
 	public static final String PROPS_JAVALDAP_DEBUG = "javaldap.debug";
 	public static final String PROPS_JAVALDAP_ROOTUSER = "javaldap.rootuser";

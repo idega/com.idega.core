@@ -8,6 +8,9 @@ javaldap.server.port=10389
 #IdegaWeb auto start embedded ldap server on startup
 idegaweb.ldap.autostart=false
 
+#IdegaWeb IWLDAPWS.jws webservice port, the same as the http port of the server
+idegaweb.webservice.port=80
+
 # Not yet used...plan to pool threads soon
 javaldap.server.threads=16
 
