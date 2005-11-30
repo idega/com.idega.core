@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleStarter.java,v 1.5 2005/03/08 14:47:47 laddi Exp $
+ * $Id: IWBundleStarter.java,v 1.6 2005/11/30 09:35:57 laddi Exp $
  * Created on 2.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.idegaweb.IWBundleStartable;
 
 /**
  * 
- *  Last modified: $Date: 2005/03/08 14:47:47 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/11/30 09:35:57 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class IWBundleStarter implements IWBundleStartable {
 
@@ -30,7 +30,6 @@ public class IWBundleStarter implements IWBundleStartable {
 	 */
 	public IWBundleStarter() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
@@ -42,9 +41,8 @@ public class IWBundleStarter implements IWBundleStartable {
 		
 		ViewManager viewManager = ViewManager.getInstance(starterBundle.getApplication());
 		
-		DefaultViewNode loginViewNode = new WindowViewNode("login",viewManager.getApplicationRoot());
-		//DefaultViewNode pagesViewNode = new BuilderRootViewNode("pages",viewManager.getApplicationRoot());
-		DefaultViewNode windowViewNode = new WindowViewNode("window",viewManager.getApplicationRoot());
+		new WindowViewNode("login",viewManager.getApplicationRoot());
+		new WindowViewNode("window",viewManager.getApplicationRoot());
 	
 		//add the window node under workspace:
 		DefaultViewNode windowViewNode2 = new WindowViewNode("window",viewManager.getWorkspaceRoot());
@@ -55,6 +53,5 @@ public class IWBundleStarter implements IWBundleStartable {
 	 * @see com.idega.idegaweb.IWBundleStartable#stop(com.idega.idegaweb.IWBundle)
 	 */
 	public void stop(IWBundle starterBundle) {
-		// TODO Auto-generated method stub
 	}
 }
