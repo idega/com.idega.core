@@ -2,7 +2,7 @@ import com.idega.core.ldap.replication.business.LDAPReplicationBusiness;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWMainApplication;
 
-public class IWBuilderWS {
+public class IWLDAPWS {
 
 	public String registerReplicationListener(String serverName, int portNumber, String  IWLDAPWSUri){
 		try {
