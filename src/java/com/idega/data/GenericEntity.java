@@ -1560,6 +1560,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		} catch (SQLException e) {
 			//e.printStackTrace();
 			throw new EJBException(e.getMessage());
+		} catch (FinderException e) {
+			//e.printStackTrace();
+			throw new EJBException(e.getMessage());
 		}
 	}
 	/**
@@ -1581,9 +1584,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	    
 	}
 	
-	private void ejbLoad(Object pk) throws SQLException {
+	private void ejbLoad(Object pk) throws SQLException, FinderException {
 		Connection conn = null;
 		PreparedStatement Stmt = null;
+		ResultSet RS = null;
 		try {
 			conn = getConnection(getDatasource());
 			//Stmt = conn.createStatement();
@@ -1607,15 +1611,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			logSQL(sql);
 			Stmt = conn.prepareStatement(sql);
 			dsi.setForPreparedStatementPrimaryKeyQuestionValues(this,fields,Stmt,1);
-			ResultSet RS = Stmt.executeQuery();
+			RS = Stmt.executeQuery();
 			//ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
 			//eiki added null check
 			if ((RS == null) || !RS.next())
-				throw new SQLException("Record with Primary Key = '" + pk + "' not found");
+				throw new FinderException("Record with Primary Key = '" + pk + "' not found");
 			loadFromResultSet(RS);
-			if (RS != null)
-				RS.close();
 		} finally {
+			if (RS != null) {
+				RS.close();
+			}
 			if (Stmt != null) {
 				Stmt.close();
 			}
