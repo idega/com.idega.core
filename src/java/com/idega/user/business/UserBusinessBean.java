@@ -594,7 +594,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			if(newPG != null) {
 				user.setPrimaryGroup(newPG);
 			} else {
-				user.setPrimaryGroupID(-1);
+				user.setPrimaryGroupID(null);
 			}
 			user.store();
 		}
