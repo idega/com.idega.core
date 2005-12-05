@@ -1829,6 +1829,23 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return (Integer) idoFindOnePKByUniqueId(uniqueIdString);
 	}
 	
+	public Integer ejbFindBoardGroupByClubIDAndLeagueID(Integer clubID, Integer leagueID) throws FinderException {
+		String sql = "select m.metadata_value as ic_group_id from ic_group_relation rel, ic_group div, ic_group_ic_metadata mg, ic_metadata m, ic_group_ic_metadata mg2, ic_metadata m2 "
+		+"where rel.IC_GROUP_ID = "+clubID
+		+"and  rel.RELATIONSHIP_TYPE='GROUP_PARENT' " 
+		+"and ( rel.GROUP_RELATION_STATUS='ST_ACTIVE' or rel.GROUP_RELATION_STATUS='PASS_PEND' ) " 
+		+"and  div.IC_GROUP_ID=rel.related_IC_GROUP_ID "
+		+"and div.group_type='iwme_club_division' "
+		+"and div.ic_group_id=mg.ic_group_id "
+		+"and mg.ic_metadata_id=m.ic_metadata_id "
+		+"and m.metadata_name='CLUBDIV_BOARD' "
+		+"and div.ic_group_id=mg2.ic_group_id "
+		+"and mg2.ic_metadata_id=m2.ic_metadata_id "
+		+"and m2.metadata_name='CLUBDIV_CONN' "
+		+"and m2.metadata_value='"+leagueID+"'";
+		return (Integer) this.idoFindOnePKBySQL(sql);
+	}
+	
 	public SelectQuery getSelectQueryConstraints(){
 		return null;
 	}

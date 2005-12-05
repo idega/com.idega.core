@@ -1,5 +1,5 @@
 /*
- * $Id: GroupHomeImpl.java,v 1.29 2005/07/05 09:41:23 sigtryggur Exp $
+ * $Id: GroupHomeImpl.java,v 1.30 2005/12/05 17:17:20 sigtryggur Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.data.IDOFactory;
 
 /**
  * 
- *  Last modified: $Date: 2005/07/05 09:41:23 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2005/12/05 17:17:20 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class GroupHomeImpl extends IDOFactory implements GroupHome {
 
@@ -259,6 +259,13 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 	public Group findGroupByUniqueId(String uniqueIdString) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((GroupBMPBean) entity).ejbFindGroupByUniqueId(uniqueIdString);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
+
+	public Group findBoardGroupByClubIDAndLeagueID(Integer clubID, Integer leagueID) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((GroupBMPBean) entity).ejbFindBoardGroupByClubIDAndLeagueID(clubID, leagueID);
 		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
 	}
