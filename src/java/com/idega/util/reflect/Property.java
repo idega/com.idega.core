@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.3 2005/11/29 15:30:04 laddi Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.4 2005/12/05 19:32:40 thomas Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -23,10 +23,10 @@ import com.idega.user.data.GroupHome;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2005/11/29 15:30:04 $ by $Author: laddi $
+ * Last modified: $Date: 2005/12/05 19:32:40 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Property implements Serializable{
 
@@ -40,6 +40,10 @@ public class Property implements Serializable{
 	private Method method;
 
 	private Object[] propertyValues;
+	
+	public Property() {
+		// doing nothing, called by subclass 
+	}
 
 	/**
 	 * Construct a property from a so called methodIdentifier that is used to construct a Method instance.
@@ -56,7 +60,7 @@ public class Property implements Serializable{
 	 */	
 	public Property(String methodIdentifier, Class declaringClass) {
 		if (declaringClass != null) {
-			setMethod(getMethodFinder().getMethod(methodIdentifier, declaringClass));
+			setMethod(getMethodFinder().getMethod(methodIdentifier, declaringClass));		
 		}
 		else {
 			setMethod(getMethodFinder().getMethod(methodIdentifier));
@@ -148,7 +152,7 @@ public class Property implements Serializable{
 	 * 
 	 * @param instance
 	 */
-	public void setPropertyOnInstance(Object instance) {
+	public void setPropertyOnInstance(Object  instance) {
 		try {
 			getMethod().invoke(instance, getPropertyValues());
 		}
@@ -156,16 +160,16 @@ public class Property implements Serializable{
 			if (instance instanceof PresentationObject) {
 				PresentationObject po = (PresentationObject) instance;
 				System.err.println("Error in property '" + getMethod().toString() + "' for "+instance.getClass().getName()+" with ICObjectInstanceId="
-						+ po.getICObjectInstanceID());
+					+ po.getICObjectInstanceID());
 			}
 			else {
 				System.err.println("Error in property '" + getMethod().toString() + "' for instance="
-						+ instance.toString());
+					+ instance.toString());
 			}
 			e.printStackTrace();
 		}
 	}
-
+	
 	//Moved from ComponentPropertyHandler (in builder)
 	protected Object convertStringToObject(Class parameterType, String stringValue) throws Exception {
 		Object argument = null;
@@ -236,6 +240,11 @@ public class Property implements Serializable{
 			catch (Exception ex) {
 				ex.printStackTrace(System.err);
 			}
+		}
+		// added because of JSF methods
+		else if (parameterType.equals(Object.class)) {
+			// nothing to cast
+			argument = stringValue;
 		}
 		return argument;
 	}
