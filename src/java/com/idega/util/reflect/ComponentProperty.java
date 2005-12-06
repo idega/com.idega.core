@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentProperty.java,v 1.4 2005/12/06 19:18:21 tryggvil Exp $
+ * $Id: ComponentProperty.java,v 1.5 2005/12/06 19:35:06 tryggvil Exp $
  * Created on Dec 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -30,25 +30,27 @@ public class ComponentProperty extends Property {
 	 * Comment for <code>serialVersionUID</code>
 	 */
 	private static final long serialVersionUID = 1065802679114981731L;
-
 	public final static String ACTION_LISTENER_ATTR = "actionListener";
-	
 	public final static String VALUE_CHANGED_LISTENER_ATTR = "valueChangedListener";
 	
 	private String name = null;
+	private Class componentClass;
+	private Class propertyType;
 	
 	//private String clazz = null;
 	
 
 	/**
-	 * Constructs a property with the propertyName (Java beans convention)
+	 * Constructs a property with the propertyName (Java beans convention) and the componentClass 
+	 * declaring this property
 	 */
-	public ComponentProperty(String propertyName) {
-		initialize(propertyName);
+	public ComponentProperty(String propertyName,Class componentClass) {
+		initialize(propertyName,componentClass);
 	}
 
-	public void initialize(String componentProperty) {
+	public void initialize(String componentProperty,Class componentClass) {
 		this.name=componentProperty;
+		this.componentClass=componentClass;
 	}
 	
 	/**
@@ -91,23 +93,7 @@ public class ComponentProperty extends Property {
 			UIComponentTagUtils.setValueChangedListenerProperty(facesContext, (UIComponent) instance, value);
 		}
 		else{
-			Class propertyType=null;
-			BeanInfo beanInfo;
-			try {
-				beanInfo = Introspector.getBeanInfo(instance.getClass());
-				PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
-				for (int i = 0; i < descriptors.length; i++) {
-					PropertyDescriptor descriptor = descriptors[i];
-					if(descriptor.getName().equals(this.name)){
-						propertyType=descriptor.getPropertyType();
-						break;
-					}
-				}
-			}
-			catch (IntrospectionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Class propertyType=getPropertyType();
 			
 			if (Integer.class.equals(propertyType) || Integer.TYPE.equals(propertyType)) {
 				UIComponentTagUtils.setIntegerProperty(facesContext, (UIComponent) instance, name, value);
@@ -120,5 +106,27 @@ public class ComponentProperty extends Property {
 				UIComponentTagUtils.setStringProperty(facesContext, (UIComponent) instance, name, value);
 			}
 		}
+	}
+	
+	
+	public Class getPropertyType(){
+		if(propertyType==null){
+			BeanInfo beanInfo;
+			try {
+				beanInfo = Introspector.getBeanInfo(componentClass);
+				PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
+				for (int i = 0; i < descriptors.length; i++) {
+					PropertyDescriptor descriptor = descriptors[i];
+					if(descriptor.getName().equals(this.name)){
+						propertyType=descriptor.getPropertyType();
+						break;
+					}
+				}
+			}
+			catch (IntrospectionException e) {
+				e.printStackTrace();
+			}
+		}
+		return propertyType;
 	}
 }
