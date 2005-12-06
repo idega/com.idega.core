@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentProperty.java,v 1.3 2005/12/06 19:03:22 tryggvil Exp $
+ * $Id: ComponentProperty.java,v 1.4 2005/12/06 19:18:21 tryggvil Exp $
  * Created on Dec 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -115,12 +115,9 @@ public class ComponentProperty extends Property {
 			else if (Boolean.class.equals(propertyType) || Boolean.TYPE.equals(propertyType)) {
 				UIComponentTagUtils.setBooleanProperty(facesContext, (UIComponent) instance, name, value);
 			}
-			else if (String.class.equals(propertyType)) {
+			//Fallback on handling the property as String:
+			else{// if (String.class.equals(propertyType)) {
 				UIComponentTagUtils.setStringProperty(facesContext, (UIComponent) instance, name, value);
-			}
-			else{
-				UIComponent componentInstance = (UIComponent)instance;
-				componentInstance.getAttributes().put(name,value);
 			}
 		}
 	}
