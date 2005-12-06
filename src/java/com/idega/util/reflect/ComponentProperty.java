@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentProperty.java,v 1.1 2005/12/05 19:33:04 thomas Exp $
+ * $Id: ComponentProperty.java,v 1.2 2005/12/06 17:11:15 thomas Exp $
  * Created on Dec 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -23,6 +23,10 @@ import org.apache.myfaces.taglib.UIComponentTagUtils;
  */ 
 
 public class ComponentProperty extends Property {
+	
+	public final static String ACTION_LISTENER_ATTR = "actionListener";
+	
+	public final static String VALUE_CHANGED_LISTENER_ATTR = "valueChangedListener";
 	
 	private String name = null;
 	
@@ -79,17 +83,17 @@ public class ComponentProperty extends Property {
 			UIComponentTagUtils.setValueProperty(facesContext, (UIComponent) instance, value);
 		}
 		// where is actionListener attribute defined?
-		else if ("actionListener".equals(name)) {
+		else if (ACTION_LISTENER_ATTR.equals(name)) {
 			UIComponentTagUtils.setActionListenerProperty(facesContext, (UIComponent) instance, value);
 		}
 		// where is valueChangedListener attribute defined?
-		else if ("valueChangedListener".equals(name)) {
+		else if (VALUE_CHANGED_LISTENER_ATTR.equals(name)) {
 			UIComponentTagUtils.setValueChangedListenerProperty(facesContext, (UIComponent) instance, value);
 		}
-		else if (Integer.class.getName().equals(clazz)) {
+		else if (Integer.class.getName().equals(clazz) || Integer.TYPE.getName().equals(clazz)) {
 			UIComponentTagUtils.setIntegerProperty(facesContext, (UIComponent) instance, name, value);
 		}
-		else if (Boolean.class.getName().equals(clazz)) {
+		else if (Boolean.class.getName().equals(clazz) || Boolean.TYPE.getName().equals(clazz)) {
 			UIComponentTagUtils.setBooleanProperty(facesContext, (UIComponent) instance, name, value);
 		}
 		else if (String.class.getName().equals(clazz)) {
