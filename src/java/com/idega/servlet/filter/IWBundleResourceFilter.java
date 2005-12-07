@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.7 2005/12/07 21:04:18 tryggvil Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.8 2005/12/07 21:05:06 tryggvil Exp $
  * Created on 27.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -23,8 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.idega.core.file.business.FileIconSupplier;
 import com.idega.idegaweb.DefaultIWBundle;
-import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.FileUtil;
 
 
@@ -35,10 +33,10 @@ import com.idega.util.FileUtil;
  *  (Setting -Didegaweb.bundles.resource.dir=/idega/eclipse/workspace in the tomcat plugin preference pane).
  *  </p>
  * 
- *  Last modified: $Date: 2005/12/07 21:04:18 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 21:05:06 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 	
