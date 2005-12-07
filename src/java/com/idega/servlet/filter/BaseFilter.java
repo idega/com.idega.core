@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.13 2005/12/07 11:51:51 tryggvil Exp $
+ * $Id: BaseFilter.java,v 1.14 2005/12/07 15:37:50 tryggvil Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.util.RequestUtil;
  * <p>
  *  Class that holds basic functionality used by many filters.<br>
  * </p>
- *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 15:37:50 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
@@ -129,9 +129,11 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	    			
 	    			domain.setServerContextPath(contextPath);
 	    		}
-	    		if(setPort!=-1){
+	    		if(setPort==-1){
 	    			int port = request.getServerPort();
-	    			domain.setServerPort(port);
+	    			if(port!=80){
+	    				domain.setServerPort(port);
+	    			}
 	    		}
 	    		if(setProtocol==null){
 	    			domain.setServerProtocol(serverProtocol);
