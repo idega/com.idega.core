@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.8 2005/11/25 23:45:37 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.9 2005/12/07 21:07:30 tryggvil Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -9,8 +9,6 @@
  */
 package com.idega.faces;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Logger;
 import javax.faces.FacesException;
@@ -21,8 +19,8 @@ import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.servlet.filter.IWBundleResourceFilter;
 import com.idega.util.FacesUtil;
-import com.idega.util.FileUtil;
 
 
 /**
@@ -30,10 +28,10 @@ import com.idega.util.FileUtil;
  * This class overrides the default JSF ViewHandler and adds idegaWeb specific way of handling JSP pages
  * that are registered in the ViewNode hierarchy.<br/>
  * </p>
- *  Last modified: $Date: 2005/11/25 23:45:37 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 21:07:30 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -194,57 +192,16 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	 */
 	private void checkCopyOfJspToWebapp(FacesContext context,ViewNode node) {
 		if(node.isResourceBased()){
-			String bundlesPropery=System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
-			if(bundlesPropery!=null){
+			String bundlesProperty=System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
+			if(bundlesProperty!=null){
 				String webappDir = IWMainApplication.getIWMainApplication(context).getApplicationRealPath();
-				if(webappDir.endsWith(File.separator)){
-					//cut the slash:
-					webappDir=webappDir.substring(0,webappDir.length()-1);
-				}
-				if(bundlesPropery.endsWith(File.separator)){
-					//cut the slash:
-					bundlesPropery=bundlesPropery.substring(0,bundlesPropery.length()-1);
-				}
+				String workspaceDir = bundlesProperty;
 				String pathToBundleFileInWorkspace = node.getResourceURI();
-				String idegawebStandardBundles = "/idegaweb/bundles/";
-				if(pathToBundleFileInWorkspace.startsWith(idegawebStandardBundles)){
-					//cut it from the string as the bundle is directly under the workspace but keep the last slash:
-					pathToBundleFileInWorkspace=pathToBundleFileInWorkspace.substring(idegawebStandardBundles.length()-1,pathToBundleFileInWorkspace.length());
-				}
-				String sJspFileInWorkspace = bundlesPropery+pathToBundleFileInWorkspace;
-				String sJspFileInWebapp = webappDir+node.getResourceURI();
-				File jspFileInWorkspace = new File(sJspFileInWorkspace);
-				if(!jspFileInWorkspace.exists()){
-					//Hack: trying to remove the .bundle suffix if the suffix doesn't exist on the folder in the workspace:
-					String bundleSuffix = ".bundle";
-					int index = sJspFileInWorkspace.indexOf(bundleSuffix);
-					if(index!=-1){
-						sJspFileInWorkspace=sJspFileInWorkspace.substring(0,index)+sJspFileInWorkspace.substring(index+bundleSuffix.length(),sJspFileInWorkspace.length());
-					}
-					jspFileInWorkspace = new File(sJspFileInWorkspace);
-				}
-				File jspFileInWebapp = new File(sJspFileInWebapp);
-				long webappModified = jspFileInWebapp.lastModified();
-				long workspaceLastModified = jspFileInWorkspace.lastModified();
-				if(workspaceLastModified>webappModified){
-					try {
-						if(!jspFileInWebapp.exists()){
-							FileUtil.createFileIfNotExistent(jspFileInWebapp);
-						}
-						FileUtil.copyFile(jspFileInWorkspace,jspFileInWebapp);
-					}
-					catch (FileNotFoundException e) {
-						e.printStackTrace();
-					}
-					catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
+				IWBundleResourceFilter.copyWorkspaceFileToWebapp(workspaceDir,webappDir,pathToBundleFileInWorkspace);
 			}
 		
 		}
 	}
-	
 	
 }
 
