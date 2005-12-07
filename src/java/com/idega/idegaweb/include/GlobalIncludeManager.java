@@ -86,12 +86,11 @@ public class GlobalIncludeManager implements Singleton {
 	/**
 	 * Adds a stylesheet where the bundleIdentifier is a reference to the bundle where the stylesheet file is located.
 	 * @param bundleIdentifier the bundle where the stylesheet is located
-	 * @param url the URL within the bundle (relative to the resources subfoler)
+	 * @param url the URL within the bundle (relative to the resources subfolder)
 	 */
 	public void addBundleStyleSheet(String bundleIdentifier,String url){
 		IWBundle iwb = getIWMainApplication().getBundle(bundleIdentifier);
-		String resourcesUrl = iwb.getResourcesVirtualPath();
-		String cssRealUrl = resourcesUrl+url;
+		String cssRealUrl = iwb.getResourceURIWithoutContextPath(url);
 		if (cssRealUrl != null && !containsStyleSheet(cssRealUrl)) {
 			addStyleSheet(cssRealUrl);
 		}

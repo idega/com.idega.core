@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.92 2005/06/30 13:57:24 gummi Exp $
+ * $Id: IWBundle.java,v 1.93 2005/12/07 16:50:26 tryggvil Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -31,10 +31,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2005/06/30 13:57:24 $ by $Author: gummi $
+ * Last modified: $Date: 2005/12/07 16:50:26 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.92 $
+ * @version $Revision: 1.93 $
  */
 public interface IWBundle {
 	/**
@@ -355,5 +355,13 @@ public interface IWBundle {
 	 */
 	public String getResourcesPathForCurrentLocale();
 	
-	
+	/**
+	 * <p>
+	 * Returns the URI to a resource inside the '/resources/' folder inside this bundle.<br/>
+	 * This method does not include a potential webapplication context path.
+	 * </p>
+	 * @param pathInResourceFolder path relative to this bundles resource virtual path
+	 * @return
+	 */
+	public String getResourceURIWithoutContextPath(String pathInResourceFolder);
 }

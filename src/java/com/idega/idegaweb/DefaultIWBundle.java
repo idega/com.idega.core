@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.23 2005/11/29 15:30:03 laddi Exp $
+ * $Id: DefaultIWBundle.java,v 1.24 2005/12/07 16:50:26 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -1496,12 +1496,28 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	protected Level getErrorLogLevel(){
 		return Level.WARNING;
 	}
-	/* (non-Javadoc)
-	 * @see com.idega.idegaweb.IWBundle#getJSPURI(java.lang.String)
+	/**
+	 * Returns the path to the jsp inside the bundle structure.<br/>
+	 * The default path is under 'jsp/' relative to the bundle folder.<br/>
+	 * This method does not include a potential webapplication context path.
 	 */
 	public String getJSPURI(String jspInBundle) {
-		return this.rootVirtualPath+"/jsp/"+jspInBundle;
+		String jspPath = "/jsp/"+jspInBundle;
+		return this.rootRealPath+jspPath;
 	}
+
+	/**
+	 * <p>
+	 * Returns the URI to a resource inside the '/resources/' folder inside this bundle.<br/>
+	 * This method does not include a potential webapplication context path.
+	 * </p>
+	 * @param pathInResourceFolder path relative to this bundles resource virtual path
+	 * @return Something like '/idegaweb/bundles/com.idega.core.bundle/resources/style/style.css'
+	 */
+	public String getResourceURIWithoutContextPath(String pathInResourceFolder) {
+		return this.resourcesVirtualPath+pathInResourceFolder;
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundle#getLocalizedText(java.lang.String)
 	 */
