@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.24 2005/12/07 16:50:26 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.25 2005/12/07 17:25:06 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -1503,7 +1503,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 */
 	public String getJSPURI(String jspInBundle) {
 		String jspPath = "/jsp/"+jspInBundle;
-		return this.rootRealPath+jspPath;
+		return this.rootVirtualPath+jspPath;
 	}
 
 	/**
