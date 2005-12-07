@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
+import java.util.Map;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.Image;
@@ -38,7 +38,7 @@ public class ImageFactory implements Singleton {
 	
 	private static final String BUTTON_SUFFIX = "_button";
 	private static final String TAB_SUFFIX = "_tab";
-	private static String GENERATED_IMAGES_FOLDER = "iw_generated";
+	private static String GENERATED_IMAGES_FOLDER = "idegaweb/iw_generated";
 	
 	public final static String GENERATED_FILL_COLOR = "iw_generated_fill_color";
 	public final static String GENERATED_BORDER_COLOR = "iw_generated_border_color";
@@ -51,7 +51,7 @@ public class ImageFactory implements Singleton {
 	//Instance variables:
 	private IWBundle coreBundle;
 	private Font defaultFont;
-	private HashMap images;
+	private Map generatedCache;
 	private Font fontbase;
 
 
@@ -66,7 +66,8 @@ public class ImageFactory implements Singleton {
 
 	private void initialize(IWMainApplication iwma) {
 		coreBundle = iwma.getCoreBundle();
-		images = new HashMap();
+		//images = new HashMap();
+		generatedCache = new HashMap();
 		//if (!shutdown) {
 		String folderPath = coreBundle.getResourcesRealPath() + FileUtil.getFileSeparator() + iwma.CORE_BUNDLE_FONT_FOLDER_NAME + FileUtil.getFileSeparator();
 		try {
@@ -92,24 +93,31 @@ public class ImageFactory implements Singleton {
 	public Image createButton(String textOnButton, IWBundle iwb, Locale local) {
 		String filePath;
 		String fileVirtualPath;
-		Image image;
+		//Image image;
 
 		if (local != null) {
-			image = (Image) images.get(textOnButton + BUTTON_SUFFIX + local.toString());
-			if (image != null)
-				return image;
-			filePath = iwb.getResourcesRealPath(local);
-			fileVirtualPath = iwb.getResourcesURL(local) + "/" + GENERATED_IMAGES_FOLDER + "/";
+			//image = (Image) images.get(textOnButton + BUTTON_SUFFIX + local.toString());
+			GeneratedImageCache cache = (GeneratedImageCache) generatedCache.get(textOnButton + BUTTON_SUFFIX + local.toString());
+			if (cache != null)
+				return cache.createImage();
+			//filePath = iwb.getResourcesRealPath(local);
+			//fileVirtualPath = iwb.getResourcesURL(local) + "/" + GENERATED_IMAGES_FOLDER + "/";
+			filePath = iwb.getApplication().getApplicationRealPath()+"/"+GENERATED_IMAGES_FOLDER+"/"+local.toString()+"/";
+			fileVirtualPath = iwb.getApplication().getTranslatedURIWithContext(GENERATED_IMAGES_FOLDER + "/"+local.toString()+"/");
 		}
 		else {
-			image = (Image) images.get(textOnButton + BUTTON_SUFFIX);
-			if (image != null)
-				return image;
-			filePath = iwb.getResourcesRealPath();
-			fileVirtualPath = iwb.getResourcesURL() + "/" + GENERATED_IMAGES_FOLDER + "/";
+			//image = (Image) images.get(textOnButton + BUTTON_SUFFIX);
+			GeneratedImageCache cache = (GeneratedImageCache) generatedCache.get(textOnButton + BUTTON_SUFFIX);
+			if (cache != null)
+				return cache.createImage();
+			//filePath = iwb.getResourcesRealPath();
+			//fileVirtualPath = iwb.getResourcesURL() + "/" + GENERATED_IMAGES_FOLDER + "/";
+			filePath = iwb.getApplication().getApplicationRealPath()+"/"+GENERATED_IMAGES_FOLDER+"/";
+			fileVirtualPath = iwb.getApplication().getTranslatedURIWithContext(GENERATED_IMAGES_FOLDER + "/");
+
 		}
 
-		filePath = filePath + FileUtil.getFileSeparator() + GENERATED_IMAGES_FOLDER + FileUtil.getFileSeparator();
+		//filePath = filePath + FileUtil.getFileSeparator() + GENERATED_IMAGES_FOLDER + FileUtil.getFileSeparator();
 
 		FileUtil.createFolder(filePath);
 
@@ -123,14 +131,15 @@ public class ImageFactory implements Singleton {
 		String upName = fileVirtualPath + button.getUpName();
 		String downName = fileVirtualPath + button.getDownName();
 		String overName = fileVirtualPath + button.getOverName();
-
+		/*
 		image = new Image(textOnButton, upName, overName, downName);
 		image.setWidth(button.getWidth());
-		image.setHeight(button.getHeight());
+		image.setHeight(button.getHeight());*/
 
-		addToStoredImages(textOnButton + BUTTON_SUFFIX, image, local);
+		GeneratedImageCache cache = new GeneratedImageCache(textOnButton,button.getWidth(),button.getHeight(),upName,downName,overName,local);
+		addToStoredImages(textOnButton + BUTTON_SUFFIX, cache, local);
 
-		return image;
+		return cache.createImage();
 	}
 
 	public Image createTab(String textOnTab, IWBundle iwb, boolean flip) {
@@ -140,21 +149,29 @@ public class ImageFactory implements Singleton {
 	public Image createTab(String textOnTab, IWBundle iwb, Locale local, boolean flip) {
 		String filePath;
 		String fileVirtualPath;
-		Image image;
+		//Image image;
 
 		if (local != null) {
-			image = (Image) images.get(textOnTab + TAB_SUFFIX + flip + local.toString());
-			if (image != null)
-				return image;
-			filePath = iwb.getResourcesRealPath(local);
-			fileVirtualPath = iwb.getResourcesURL(local) + "/" + GENERATED_IMAGES_FOLDER + "/";
+			//image = (Image) images.get(textOnTab + TAB_SUFFIX + flip + local.toString());
+			GeneratedImageCache cache = (GeneratedImageCache) generatedCache.get(textOnTab + TAB_SUFFIX + flip + local.toString());
+			if (cache != null)
+				return cache.createImage();
+			//filePath = iwb.getResourcesRealPath(local);
+			//fileVirtualPath = iwb.getResourcesURL(local) + "/" + GENERATED_IMAGES_FOLDER + "/";
+			filePath = iwb.getApplication().getApplicationRealPath()+"/"+GENERATED_IMAGES_FOLDER+"/"+local.toString()+"/";
+			fileVirtualPath = iwb.getApplication().getTranslatedURIWithContext(GENERATED_IMAGES_FOLDER + "/"+local.toString()+"/");
+
 		}
 		else {
-			image = (Image) images.get(textOnTab + TAB_SUFFIX + flip);
-			if (image != null)
-				return image;
-			filePath = iwb.getResourcesRealPath();
-			fileVirtualPath = iwb.getResourcesURL() + "/" + GENERATED_IMAGES_FOLDER + "/";
+			//image = (Image) images.get(textOnTab + TAB_SUFFIX + flip);
+			GeneratedImageCache cache = (GeneratedImageCache) generatedCache.get(textOnTab + TAB_SUFFIX + flip);
+			if (cache != null)
+				return cache.createImage();
+			//filePath = iwb.getResourcesRealPath();
+			//fileVirtualPath = iwb.getResourcesURL() + "/" + GENERATED_IMAGES_FOLDER + "/";
+			filePath = iwb.getApplication().getApplicationRealPath()+"/"+GENERATED_IMAGES_FOLDER+"/";
+			fileVirtualPath = iwb.getApplication().getTranslatedURIWithContext(GENERATED_IMAGES_FOLDER + "/");
+
 		}
 
 		filePath = filePath + FileUtil.getFileSeparator() + GENERATED_IMAGES_FOLDER + FileUtil.getFileSeparator();
@@ -172,22 +189,23 @@ public class ImageFactory implements Singleton {
 		String upName = fileVirtualPath + flip + tab.getUpName();
 		String downName = fileVirtualPath + flip + tab.getDownName();
 		String overName = fileVirtualPath + flip + tab.getOverName();
-
+		/*
 		image = new Image(textOnTab, upName, overName, downName);
 		image.setWidth(tab.getWidth());
 		image.setHeight(tab.getHeight());
+		*/
+		GeneratedImageCache cache = new GeneratedImageCache(textOnTab,tab.getWidth(),tab.getHeight(),upName,downName,overName,local);
+		addToStoredImages(textOnTab + TAB_SUFFIX + flip, cache, local);
 
-		addToStoredImages(textOnTab + TAB_SUFFIX + flip, image, local);
-
-		return image;
+		return cache.createImage();
 	}
 
-	private void addToStoredImages(String key, Image image, Locale local) {
+	private void addToStoredImages(String key, GeneratedImageCache image, Locale local) {
 		if (local != null) {
-			images.put(key + local.toString(), image);
+			generatedCache.put(key + local.toString(), image);
 		}
 		else {
-			images.put(key, image);
+			generatedCache.put(key, image);
 		}
 	}
 
@@ -216,7 +234,7 @@ public class ImageFactory implements Singleton {
 		
 		ImageFactory factory = (ImageFactory) SingletonRepository.getRepository().getExistingInstanceOrNull(ImageFactory.class);
 		if (factory != null) {
-			factory.images = new HashMap();
+			factory.generatedCache = new HashMap();
 		}
 	}
 
