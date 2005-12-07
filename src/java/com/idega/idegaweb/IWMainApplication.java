@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.154 2005/12/07 11:51:51 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.155 2005/12/07 21:57:21 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 21:57:21 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.154 $
+ * @version $Revision: 1.155 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -364,7 +364,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         //return getObjectInstanciatorURI(className.getName(), templateName);
     	StringBuffer buffer = new StringBuffer();
 		if(useNewURLScheme){
-			buffer.append(getBufferedWindowOpenerURI(className));
+			buffer.append(getBufferedWindowOpenerURI(className,true));
 			if (buffer.indexOf("?") < 0) {
 				// there is no parameter
 				buffer.append('?');
@@ -389,7 +389,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         //return getObjectInstanciatorURI(className.getName(), templateName);
     	StringBuffer buffer = new StringBuffer();
 		if(useNewURLScheme){
-			buffer.append(getBufferedWindowOpenerURI(className));
+			buffer.append(getBufferedWindowOpenerURI(className,true));
 			if (buffer.indexOf("?") < 0) {
 				// there is no parameter
 				buffer.append('?');
@@ -1433,23 +1433,53 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			return getTranslatedURIWithContext(windowOpenerURL);
 		}
     }
+    
+    /**
+     * Returns the prefix for the 'window opener' URI, for the new platform this is by default only avaiable for logged in users<br>
+     * For the new platform this is '/window/' but for older versions this is '/servlet/WindowOpener'
+     */
+    public String getWindowOpenerURIWithoutContextPath() {
+		if(useNewURLScheme){
+			return NEW_WINDOW_URL;
+		}
+		else{	
+			return windowOpenerURL;
+		}
+    }
     /**
      * Returns the prefix for the 'window opener' URI that is meant for windows to be open only for logged in users<br>
      * For the new platform this is '/workspace/window/E0410143-CF32-42B1-A97B-E712AA702962' 
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
     public String getWindowOpenerURI(Class windowToOpen) {
-    	return getBufferedWindowOpenerURI(windowToOpen).toString();
+    	return getBufferedWindowOpenerURI(windowToOpen,true).toString();
     }
     	
-    	
-    private StringBuffer getBufferedWindowOpenerURI(Class windowToOpen) {
+    /**
+     * Returns the prefix for the 'window opener' URI that is meant for windows to be open only for logged in users<br>
+     * For the new platform this is '/workspace/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'<br/>
+     * This Method does not prefix the URI with the webapplication context path if any.
+     * 
+     */
+    public String getWindowOpenerURIWithoutContextPath(Class windowToOpen) {
+    	return getBufferedWindowOpenerURI(windowToOpen,false).toString();
+    }
+    
+    private StringBuffer getBufferedWindowOpenerURI(Class windowToOpen,boolean includeContextPath) {
     	StringBuffer buffer = new StringBuffer();
+	String windowUri = null;
+	if(includeContextPath){
+		windowUri = getWindowOpenerURI();
+	}
+	else{
+		windowUri = getWindowOpenerURIWithoutContextPath();
+	}
     	if(useNewURLScheme){
-    		buffer.append(getWindowOpenerURI()).append(getEncryptedClassName(windowToOpen));
+    		buffer.append(windowUri).append(getEncryptedClassName(windowToOpen));
     	}
     	else{
-    		buffer.append(getWindowOpenerURI()).append('?').append(PARAM_IW_FRAME_CLASS_PARAMETER).append('=');
+    		buffer.append(windowUri).append('?').append(PARAM_IW_FRAME_CLASS_PARAMETER).append('=');
 			buffer.append( getEncryptedClassName(windowToOpen));
     	}
 	    return buffer;
@@ -1537,7 +1567,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     	}    
     
     public String getWindowOpenerURI(Class windowToOpen, int ICObjectInstanceIDToOpen) {
-    	StringBuffer windowOpenerUri = getBufferedWindowOpenerURI(windowToOpen);
+    	StringBuffer windowOpenerUri = getBufferedWindowOpenerURI(windowToOpen,true);
     	if (windowOpenerUri.indexOf("?") < 0) {
     		// there is no parameter
     		windowOpenerUri.append('?');
