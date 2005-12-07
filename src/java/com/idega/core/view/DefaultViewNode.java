@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.13 2005/12/07 11:51:51 tryggvil Exp $
+ * $Id: DefaultViewNode.java,v 1.14 2005/12/07 21:39:16 tryggvil Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 21:39:16 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -84,9 +84,11 @@ public class DefaultViewNode implements ViewNode {
 		return children;
 	}
 	
+	/**
+	 * Returns the primary URI up the tree hierarchy and does NOT include the webapplications context path if any.
+	 */
 	public String getURI(){
 		StringBuffer path = new StringBuffer(NODE_SEPARATOR);
-		String contextURI = getIWMainApplication().getApplicationContextURI();
 		
 		ViewNode view = this;
 		while(view!=null){
@@ -98,7 +100,14 @@ public class DefaultViewNode implements ViewNode {
 			}
 			view = view.getParent();
 		}
-		
+		return path.toString();
+	}
+	/**
+	 * Returns the primary URI up the tree hierarchy and includes the webapplications context path if any.
+	 */
+	public String getURIWithContextPath(){
+		StringBuffer path = new StringBuffer(getURI());
+		String contextURI = getIWMainApplication().getApplicationContextURI();
 		if(contextURI != null ){
 			if(!contextURI.equals(SLASH)){
 				path.insert(0,contextURI);

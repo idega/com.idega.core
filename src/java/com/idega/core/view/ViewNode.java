@@ -1,5 +1,5 @@
 /*
- * $Id: ViewNode.java,v 1.7 2005/12/07 11:51:51 tryggvil Exp $
+ * $Id: ViewNode.java,v 1.8 2005/12/07 21:39:16 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import javax.faces.context.FacesContext;
  * 'workspace' and 'builder parts of the URL. <br>
  * ViewNodes are accessed and managed by the ViewManager instance.<br>
  * </p>
- *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 21:39:16 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public interface ViewNode {
 	
@@ -50,10 +50,16 @@ public interface ViewNode {
 	 * @return
 	 */
 	public Collection getChildren();
+	
+	/**
+	 * Returns the primary URI up the tree hierarchy and does NOT include the webapplications context path if any.
+	 */
+	public String getURI();
+	
 	/**
 	 * Returns the primary URI up the tree hierarchy and includes the webapplications context path if any.
 	 */
-	public String getURI();
+	public String getURIWithContextPath();
 	/**
 	 * This method returns the child ViewNode instance hierarchially down in the tree from this node.<br>
 	 * The '/' character acts as a separator. This means that the value 'idegaweb' will try tro return the direct child of this node. 

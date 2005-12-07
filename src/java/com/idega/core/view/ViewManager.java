@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.14 2005/12/07 11:51:51 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.15 2005/12/07 21:39:16 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.RequestUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 21:39:16 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class ViewManager implements Singleton {
 	
@@ -190,7 +190,7 @@ public class ViewManager implements Singleton {
 	 */
 	public boolean isNodeInHierarchy(ViewNode node,String uri){
 		
-		String nodeUri = node.getURI();
+		String nodeUri = node.getURIWithContextPath();
 		if(uri!=null){
 			if(uri.startsWith(nodeUri)){
 				return true;
