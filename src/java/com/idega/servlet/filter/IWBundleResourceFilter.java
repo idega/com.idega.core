@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.6 2005/08/31 14:59:44 tryggvil Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.7 2005/12/07 21:04:18 tryggvil Exp $
  * Created on 27.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.idega.core.file.business.FileIconSupplier;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.FileUtil;
 
 
@@ -34,10 +35,10 @@ import com.idega.util.FileUtil;
  *  (Setting -Didegaweb.bundles.resource.dir=/idega/eclipse/workspace in the tomcat plugin preference pane).
  *  </p>
  * 
- *  Last modified: $Date: 2005/08/31 14:59:44 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 21:04:18 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 	
@@ -74,18 +75,12 @@ public class IWBundleResourceFilter extends BaseFilter {
 		if(feedFromSetBundleDir){
 			try{
 				String requestUriWithoutContextPath = getURIMinusContextPath(request);
-				String[] parses = parseBundleDir(requestUriWithoutContextPath);
-				String bundleIdentifier = parses[0];
-				String urlWithinBundle = parses[1];
-				
-				//String bundleIdentifier = parseBundleIdentifier(requestUriWithoutContextPath);
-				File bundleDir = getSetBundleDirectory(bundleIdentifier);
-				//String urlWithinBundle = parseUrlWithinBundle(requestUriWithoutContextPath);
-				File realFile = new File(bundleDir,urlWithinBundle);
-				if(speciallyHandleFile(request,bundleIdentifier,urlWithinBundle, realFile)){
+				String webappDir = getIWMainApplication(request).getApplicationRealPath();
+				if(speciallyHandleFile(request,sBundlesDirectory,webappDir,requestUriWithoutContextPath)){//bundleIdentifier,urlWithinBundle, realFile)){
 					chain.doFilter(sreq,sres);
 				}
 				else{
+					File realFile = getFileInWorkspace(sBundlesDirectory,requestUriWithoutContextPath);//bundleDir,urlWithinBundle);
 					if(realFile.exists()){
 						feedOutFile(response,realFile);
 					}
@@ -112,21 +107,21 @@ public class IWBundleResourceFilter extends BaseFilter {
 	/**
 	 * @param realFile
 	 */
-	private boolean speciallyHandleFile(HttpServletRequest request,String bundleIdentifier,String filePathInBundle,File file) {
-		String fileEnding = getFileEnding(file);
+	//private boolean speciallyHandleFile(HttpServletRequest request,String bundleIdentifier,String filePathInBundle,File file) {
+	private boolean speciallyHandleFile(HttpServletRequest request,String workspaceDir,String webappDir,String requestUriWithoutContextPath) {
+		String fileEnding = getFileEnding(requestUriWithoutContextPath);
 		
 		if(fileEnding.equalsIgnoreCase(PSVG)){
-			copyFileToBundle(request,bundleIdentifier,filePathInBundle,file);
+			copyFileToWebapp(request,workspaceDir,webappDir,requestUriWithoutContextPath);
 			return true;
 		}
 		else if(fileEnding.equalsIgnoreCase(SVG)){
-			copyFileToBundle(request,bundleIdentifier,filePathInBundle,file);
+			copyFileToWebapp(request,workspaceDir,webappDir,requestUriWithoutContextPath);
 			return true;
 		}
 		else if(fileEnding.equalsIgnoreCase(JSP)){
-			copyFileToBundle(request,bundleIdentifier,filePathInBundle,file);
+			copyFileToWebapp(request,workspaceDir,webappDir,requestUriWithoutContextPath);
 			return true;
-			
 		}
 		else if(fileEnding.equalsIgnoreCase(AXIS_JWS)){
 			//do nothing: should be handled by axis:
@@ -135,24 +130,13 @@ public class IWBundleResourceFilter extends BaseFilter {
 		return false;
 	}
 	
-	protected void copyFileToBundle(HttpServletRequest request,String bundleIdentifier,String filePathInBundle,File file) {
-		IWBundle iwb = getIWMainApplication(request).getBundle(bundleIdentifier);
-		String bundleRealPath = iwb.getBundleBaseRealPath();
-		File realBundleDir = new File(bundleRealPath);
-		File realBundleFile = new File(realBundleDir,filePathInBundle);
-		try {
-			FileUtil.copyFile(file,realBundleFile);
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+	protected void copyFileToWebapp(HttpServletRequest request,String workspaceDir,String webappDir,String requestUriWithoutContextPath) {
+		copyWorkspaceFileToWebapp(workspaceDir,webappDir,requestUriWithoutContextPath);
 	}
 	
-	private String getFileEnding(File realFile) {
-		String fileName = realFile.getName();
+	private String getFileEnding(String filePath) {
+		//String fileName = realFile.getName();
+		String fileName = filePath;
 		int index = fileName.lastIndexOf(".");
 		if(index!=-1){
 			return fileName.substring(index+1,fileName.length());
@@ -253,5 +237,75 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 */
 	public void destroy() {
 		// TODO Auto-generated method stub
+	}
+	
+	
+
+	/**
+	 * <p>
+	 * Copies a file to a the real webapplication folder from the (eclipse) workspace if the lastmodified timestamp
+	 * is more recent on the file in the workspace.
+	 * </p>
+	 * @param workspaceDir Something like '/home/tryggvil/eclipseworkspace/'
+	 * @param webappDir Something like '/home/tryggvil/eclipseworkspace/applications/mywebapp/target/mywebapp/'
+	 * @param requestUriWithoutContextPath Something like '/idegaweb/bundles/com.idega.core.bundle/jsp/myjsp.jsp'
+	 */
+	public static void copyWorkspaceFileToWebapp(String workspaceDir,String webappDir,String requestUriWithoutContextPath){
+		
+		if(webappDir.endsWith(File.separator)){
+			//cut the slash:
+			webappDir=webappDir.substring(0,webappDir.length()-1);
+		}
+		if(workspaceDir.endsWith(File.separator)){
+			//cut the slash:
+			workspaceDir=workspaceDir.substring(0,workspaceDir.length()-1);
+		}
+		File jspFileInWorkspace = getFileInWorkspace(workspaceDir,requestUriWithoutContextPath);
+		File jspFileInWebapp = new File(webappDir,requestUriWithoutContextPath);
+		long webappModified = jspFileInWebapp.lastModified();
+		long workspaceLastModified = jspFileInWorkspace.lastModified();
+		if(workspaceLastModified>webappModified){
+			try {
+				if(!jspFileInWebapp.exists()){
+					FileUtil.createFileIfNotExistent(jspFileInWebapp);
+				}
+				FileUtil.copyFile(jspFileInWorkspace,jspFileInWebapp);
+			}
+			catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	/**
+	 * <p>
+	 * Gets the file or tries to guess to its location inside in the 'workspace' 
+	 * out from a requestUri.
+	 * </p>
+	 * @param workspaceDir
+	 * @param requestUriWithoutContextPath
+	 * @return
+	 */
+	public static File getFileInWorkspace(String workspaceDir,String requestUriWithoutContextPath){
+		String idegawebStandardBundles = "/idegaweb/bundles/";
+		if(requestUriWithoutContextPath.startsWith(idegawebStandardBundles)){
+			//cut it from the string as the bundle is directly under the workspace but keep the last slash:
+			requestUriWithoutContextPath=requestUriWithoutContextPath.substring(idegawebStandardBundles.length()-1,requestUriWithoutContextPath.length());
+		}
+		String sFileInWorkspace = workspaceDir+requestUriWithoutContextPath;
+		//String sJspFileInWebapp = webappDir+node.getResourceURI();
+		File fileInWorkspace = new File(sFileInWorkspace);
+		if(!fileInWorkspace.exists()){
+			//Hack: trying to remove the .bundle suffix if the suffix doesn't exist on the folder in the workspace:
+			String bundleSuffix = ".bundle";
+			int index = sFileInWorkspace.indexOf(bundleSuffix);
+			if(index!=-1){
+				sFileInWorkspace=sFileInWorkspace.substring(0,index)+sFileInWorkspace.substring(index+bundleSuffix.length(),sFileInWorkspace.length());
+			}
+			fileInWorkspace = new File(sFileInWorkspace);
+		}
+		return fileInWorkspace;
 	}
 }
