@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.12 2005/10/25 05:09:40 tryggvil Exp $
+ * $Id: DefaultViewNode.java,v 1.13 2005/12/07 11:51:51 tryggvil Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2005/10/25 05:09:40 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -44,13 +44,21 @@ public class DefaultViewNode implements ViewNode {
 	private boolean isRendered = true;
 	private String name;
 	private KeyboardShortcut keyboardShortcut;
+	private boolean redirectsToResourceUri=false;
+	
+	/**
+	 * @param viewId the ViewId of this node (must be unique under its parent)
+	 */
+	public DefaultViewNode(String viewId) {
+		setViewId(viewId);
+	}	
 	
 	/**
 	 * @param viewId the ViewId of this node (must be unique under its parent)
 	 * @param parent the Parent of this node. This node will be added as a child under its parent implicitly by this constructor
 	 */
 	public DefaultViewNode(String viewId,ViewNode parent) {
-		this.setViewId(viewId);
+		this(viewId);
 		setParent(parent);	
 	}	
 	
@@ -105,6 +113,7 @@ public class DefaultViewNode implements ViewNode {
 	 */
 	public void addChildViewNode(ViewNode node) {
 		getChildrenMap().put(node.getViewId(),node);
+		//node.setParent(this);
 	}
 
 	/* (non-Javadoc)
@@ -282,7 +291,7 @@ public class DefaultViewNode implements ViewNode {
 						String[] firstSplit = split= childViewId.split(StringHandler.SLASH,3);
 						//So we shift the results that we want
 						if(firstSplit.length==3){
-							if(firstSplit[2].equals("")){
+							if(firstSplit[2].equals(StringHandler.EMPTY_STRING)){
 								//In this case there are empty strings in indexes 0 and 2
 								split = new String[1];
 								split[0]=firstSplit[1];
@@ -389,8 +398,7 @@ public class DefaultViewNode implements ViewNode {
 	 * @see com.idega.faces.view.ViewNode#getComponentClass()
 	 */
 	public UIComponent createComponent(FacesContext context) {
-		//return componentClass;
-		return null;
+		throw new UnsupportedOperationException("DefaultViewNode.createComponent() not implemented");
 	}
 
 
@@ -532,5 +540,20 @@ public class DefaultViewNode implements ViewNode {
 	 */
 	public void setVisibleInMenus(boolean isRendered) {
 		this.isRendered = isRendered;
+	}
+
+	
+	/**
+	 * @return Returns the redirectsToResourceUri.
+	 */
+	public boolean getRedirectsToResourceUri() {
+		return redirectsToResourceUri;
+	}
+	
+	/**
+	 * @param redirectsToResourceUri The redirectsToResourceUri to set.
+	 */
+	public void setRedirectsToResourceUri(boolean redirectsToResourceUri) {
+		this.redirectsToResourceUri = redirectsToResourceUri;
 	}
 }

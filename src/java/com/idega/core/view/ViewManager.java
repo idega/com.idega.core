@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.13 2005/06/22 14:03:20 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.14 2005/12/07 11:51:51 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
@@ -22,19 +23,22 @@ import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.util.FacesUtil;
+import com.idega.util.RequestUtil;
 
 
 /**
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2005/06/22 14:03:20 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class ViewManager implements Singleton {
 	
+	private static final String VIEWNODE_CACHE_KEY = "iw_viewnode_cached";
+
 	private static Instantiator instantiator = new Instantiator() 
 		{ 
 			public Object getInstance(Object parameter) {
@@ -70,7 +74,7 @@ public class ViewManager implements Singleton {
 		
 		setApplicationRoot(iwma,handler);
 		
-		
+		/*
 		try {
 
 			Class applicationClass = RefactorClassRegistry.forName("com.idega.builder.app.IBApplication");
@@ -85,7 +89,7 @@ public class ViewManager implements Singleton {
 		catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
 		try {
 			Class applicationClass = RefactorClassRegistry.forName("com.idega.user.app.UserApplication");
@@ -161,7 +165,7 @@ public class ViewManager implements Singleton {
 	}
 	
 	
-	public ViewNode getViewNodeForUrl(String url){
+	public ViewNode calculateViewNodeForUrl(String url){
 		
 		ViewNode root = this.getApplicationRoot();
 		
@@ -201,28 +205,84 @@ public class ViewManager implements Singleton {
 	 * @return
 	 */
 	public String getRequestUriWithoutContext(FacesContext ctx) {
-		/*HttpServletRequest request = (HttpServletRequest)ctx.getExternalContext().getRequest();
-		//String contextPath = request.getContextPath();
-		//String fullRequestUri = request.getRequestURI();
-		String contextPath = "/";
-		String fullRequestUri = ctx.getExternalContext().getRequestServletPath()+ctx.getExternalContext().getRequestPathInfo();
-		if(contextPath.equals("/")){
-			return fullRequestUri;
-		}
-		else{
-			String subPath = fullRequestUri.substring(contextPath.length());
-			return subPath;
-		}*/
 		return FacesUtil.getRequestUri(ctx,false);
+	}
+	
+	/**
+	 * @param ctx
+	 * @return
+	 */
+	public String getRequestUriWithoutContext(HttpServletRequest request) {
+		return RequestUtil.getURIMinusContextPath(request);
 	}
 	
 	
 	public ViewNode getViewNodeForContext(FacesContext context){
-		String url = getRequestUriWithoutContext(context);
-		return this.getViewNodeForUrl(url);
+		ViewNode cachedNode = getCachedViewNode(context);
+		if(cachedNode==null){
+			String url = getRequestUriWithoutContext(context);
+			cachedNode = this.calculateViewNodeForUrl(url);
+			setCachedViewNode(context,cachedNode);
+		}
+		return cachedNode;
+	}
+	/**
+	 * <p>
+	 * TODO tryggvil describe method setCachedViewNode
+	 * </p>
+	 * @param context
+	 * @param cachedNode
+	 */
+	private void setCachedViewNode(FacesContext context, ViewNode cachedNode) {
+		FacesUtil.putAttribute(context,VIEWNODE_CACHE_KEY,cachedNode);
+	}
+
+	/**
+	 * <p>
+	 * TODO tryggvil describe method getCachedViewNode
+	 * </p>
+	 * @param context
+	 * @return
+	 */
+	private ViewNode getCachedViewNode(FacesContext context) {
+		return (ViewNode) FacesUtil.getAttribute(context,VIEWNODE_CACHE_KEY);
+	}
+	
+	public ViewNode getViewNodeForRequest(HttpServletRequest request){
+		ViewNode cachedNode = getCachedViewNode(request);
+		if(cachedNode==null){
+			String url = getRequestUriWithoutContext(request);
+			cachedNode = this.calculateViewNodeForUrl(url);
+			setCachedViewNode(request,cachedNode);
+		}
+		return cachedNode;
 	}
 	
 	
+	/**
+	 * <p>
+	 * TODO tryggvil describe method setCachedViewNode
+	 * </p>
+	 * @param request
+	 * @param cachedNode
+	 */
+	private void setCachedViewNode(HttpServletRequest request, ViewNode cachedNode) {
+		//This implementation doesn't work for Navigation-Rules:
+		//request.setAttribute(VIEWNODE_CACHE_KEY,cachedNode);
+	}
+
+	/**
+	 * <p>
+	 * TODO tryggvil describe method getCachedViewNode
+	 * </p>
+	 * @param request
+	 * @return
+	 */
+	private ViewNode getCachedViewNode(HttpServletRequest request) {
+		//return (ViewNode) request.getAttribute(VIEWNODE_CACHE_KEY);
+		return null;
+	}
+
 	protected IWMainApplication getIWMainApplication(){
 		return iwma;
 	}

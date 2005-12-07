@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.10 2005/02/23 19:19:25 tryggvil Exp $
+ * $Id: IWWelcomeFilter.java,v 1.11 2005/12/07 11:51:51 tryggvil Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.presentation.IWContext;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2005/02/23 19:19:25 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
@@ -115,10 +115,16 @@ public class IWWelcomeFilter extends BaseFilter {
 		try {
 			BuilderService bService = (BuilderService)IBOLookup.getServiceInstance(iwma.getIWApplicationContext(),BuilderService.class);
 			ICPage rootPage = bService.getRootPage();
-			if(rootPage.getChildCount()>0){
-				//set the filter to forward to /pages if there are any subpages
-				startOnPages=true;
-				startOnWorkspace=false;
+			if(rootPage!=null){
+				if(rootPage.getChildCount()>0){
+					//set the filter to forward to /pages if there are any subpages
+					startOnPages=true;
+					startOnWorkspace=false;
+				}
+			}
+			else{
+				startOnWorkspace=true;
+				startOnPages=false;
 			}
 			/*String serverName = request.getServerName();
 			int port = request.getLocalPort();

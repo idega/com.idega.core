@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.157 2005/11/29 15:30:03 laddi Exp $
+ * $Id: Link.java,v 1.158 2005/12/07 11:51:51 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1720,15 +1720,16 @@ public class Link extends Text {
 			} //end if (_objectType==(OBJECT_TYPE_WINDOW))
 
 			ICDomain d = iwc.getDomain();
-			String strD = d.getURL();
+			String serverUrl = d.getURLWithoutLastSlash();
+			String serverName = d.getServerName();
 			if(_hostname!=null && _hostname.length()>0) {
-				strD = _hostname;
+				serverName = _hostname;
 			}
 
-			if (strD != null) {
+			if (serverUrl != null) {
 				String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 				if (attr.startsWith("/")) {
-					if ((protocol == null) || protocol.equals("")) {
+					/*if ((protocol == null) || protocol.equals("")) {
 						//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
 						if (iwc.getRequest().isSecure()) {
 							protocol = "https://";
@@ -1737,7 +1738,20 @@ public class Link extends Text {
 							protocol = "http://";
 						}
 					}
-					setMarkupAttribute(HREF_ATTRIBUTE, protocol + strD + attr);
+					setMarkupAttribute(HREF_ATTRIBUTE, protocol + serverName + attr);
+					*/
+					String newUrl=null;
+					if ((protocol == null) || protocol.equals("")) {
+						newUrl = serverUrl + attr;
+					}
+					else{
+						int port = iwc.getServerPort();
+						if(port!=80 && port!=443){
+							serverName+=":"+ port;
+						}
+						newUrl = protocol + serverName + attr;
+					}
+					setMarkupAttribute(HREF_ATTRIBUTE, newUrl);
 				}
 			}
 

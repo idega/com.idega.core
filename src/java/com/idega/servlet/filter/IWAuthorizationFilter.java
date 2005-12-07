@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthorizationFilter.java,v 1.10 2005/09/25 12:23:35 laddi Exp $ Created on 31.7.2004
+ * $Id: IWAuthorizationFilter.java,v 1.11 2005/12/07 11:51:51 tryggvil Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.presentation.IWContext;
  * sufficent priviliges.<br/>
  * In some instances (when accessing the workspace) it redirects the user to the login page.
  * </p>
- * Last modified: $Date: 2005/09/25 12:23:35 $ by $Author: laddi $
+ * Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
@@ -75,8 +75,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 		else{
 			boolean viewNodeExists = true;
 			try{
-				String uri = getURIMinusContextPath(request);
-				ViewManager.getInstance(getIWMainApplication(request)).getViewNodeForUrl(uri);
+				ViewManager.getInstance(getIWMainApplication(request)).getViewNodeForRequest(request);
 				viewNodeExists=true;
 			}
 			catch(Exception e){
@@ -105,7 +104,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 			}
 			else{
 				ViewManager vManager = ViewManager.getInstance(getIWMainApplication(request));
-				ViewNode node = vManager.getViewNodeForUrl(uri);
+				ViewNode node = vManager.getViewNodeForRequest(request);
 				IWUserContext iwuc = new IWUserContextImpl(request.getSession(),request.getSession().getServletContext());
 				
 				if(vManager.hasUserAcess(node,iwuc)){

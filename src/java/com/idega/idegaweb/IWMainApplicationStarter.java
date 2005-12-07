@@ -197,7 +197,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		String separator = File.separator;
 		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_IDEGA;
 		String fileName=null;
-		String sfile1 = iwma.getRealPath("/")+"/WEB-INF/idegaweb/properties/db.properties";
+		String sfile1 = iwma.getApplicationRealPath()+"/WEB-INF/idegaweb/properties/db.properties";
 		String sfile2= iwma.getPropertiesRealPath()+separator+"db.properties";
 		File file1 = new File(sfile1);
 		File file2 = new File(sfile2);
@@ -304,7 +304,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		String classPathProperty = "java.class.path";
 		String classPath = System.getProperty(classPathProperty);
 		StringBuffer classes = new StringBuffer(classPath);
-		File webINF = new File(iwma.getRealPath("/WEB-INF/lib"));
+		File webINF = new File(iwma.getApplicationRealPath()+"/WEB-INF/lib");
 		File[] subfiles = webINF.listFiles();
 		if (subfiles != null) {
 			for (int i = 0; i < subfiles.length; i++) {
@@ -338,6 +338,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		setApplicationVariables(iwma);
 		iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 		this.setDatabaseProperties();
+		registerSystemBeans();
 		this.startDatabasePool();
 		this.startLogManager();
 		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
@@ -349,7 +350,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			sendStartMessage("Starting IWStyleManager - writing down style.css is disabled");
 		}
 		
-		registerSystemBeans();
+		
 		if(!iwma.isInDatabaseLessMode()){
 			updateClassReferencesInDatabase();
 			updateStartDataInDatabase();

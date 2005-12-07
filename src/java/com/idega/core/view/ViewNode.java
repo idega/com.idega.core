@@ -1,5 +1,5 @@
 /*
- * $Id: ViewNode.java,v 1.6 2005/03/06 12:26:16 tryggvil Exp $
+ * $Id: ViewNode.java,v 1.7 2005/12/07 11:51:51 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import javax.faces.context.FacesContext;
  * 'workspace' and 'builder parts of the URL. <br>
  * ViewNodes are accessed and managed by the ViewManager instance.<br>
  * </p>
- *  Last modified: $Date: 2005/03/06 12:26:16 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public interface ViewNode {
 	
@@ -65,7 +65,7 @@ public interface ViewNode {
 	 */
 	public ViewNode getChild(String childViewId);
 	public ViewNode getParent();
-	
+	public void setParent(ViewNode parent);
 	//ViewHandler/JSF properties
 	public ViewHandler getViewHandler();
 	/**
@@ -113,5 +113,15 @@ public interface ViewNode {
 	 * @return
 	 */
 	public boolean isVisibleInMenus();
+	
+	/**
+	 * <p>
+	 * Returns if this viewnode sends a redirect to the resourceUri.<br/>
+	 * This is default false as the default behaviour is to send a dispatch to the 
+	 * underlying resource.
+	 * </p>
+	 * @return
+	 */
+	public boolean getRedirectsToResourceUri();
 	
 }

@@ -43,9 +43,15 @@ public interface ICDomain extends com.idega.data.IDOLegacyEntity
  public void setServerPort(int serverPort);
  /**
   * Get the server context path that the server is running under.
+  * Returns something like: '/mywebapp'
   */
  public String getServerContextPath();
  public void setServerContextPath(String contextPath);
+ /**
+  * Get the server port that the http listener is listening on.
+  */ 
+ public String getServerProtocol();
+ public void setServerProtocol(String protocol); 
  /**
   * Get the UUID that uniquely identifies this domain
   */

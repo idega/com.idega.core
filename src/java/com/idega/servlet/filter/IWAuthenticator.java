@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.17 2005/11/04 14:18:27 eiki Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.18 2005/12/07 11:51:51 tryggvil Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -43,10 +43,10 @@ import com.idega.util.CypherText;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2005/11/04 14:18:27 $ by $Author: eiki $
+ * Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -127,7 +127,7 @@ public class IWAuthenticator extends BaseFilter {
 			if(!iwc.isLoggedOn()){
 				getLoginBusiness(iwc).authenticateBasicAuthenticationRequest(iwc);
 			}
-			setApplicationServletContextPath(request);
+			initializeDefaultDomain(request);
 			
 			tryRegularLogin(iwc);
 			
@@ -135,13 +135,15 @@ public class IWAuthenticator extends BaseFilter {
 			addCookie(iwc);
 		}
 		
-		if (iwc.isParameterSet(PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE) && iwc.isLoggedOn()) {
-			Group prmg = iwc.getCurrentUser().getPrimaryGroup(); 
-			if (prmg != null) {
-				int homePageID = prmg.getHomePageID();
-				if (homePageID > 0) {
-					response.sendRedirect(getBuilderService(iwc).getPageURI(homePageID));
-					return;
+		if (iwc.isParameterSet(PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE)){
+			if(iwc.isLoggedOn()) {
+				Group prmg = iwc.getCurrentUser().getPrimaryGroup(); 
+				if (prmg != null) {
+					int homePageID = prmg.getHomePageID();
+					if (homePageID > 0) {
+						response.sendRedirect(getBuilderService(iwc).getPageURI(homePageID));
+						return;
+					}
 				}
 			}
 		}

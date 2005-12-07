@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.153 2005/11/25 15:14:55 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.154 2005/12/07 11:51:51 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/11/25 15:14:55 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.153 $
+ * @version $Revision: 1.154 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -132,7 +132,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public final static String PROPERTY_NEW_URL_STRUCTURE = "new_url_structure";
 	public final static String PROPERTY_JSF_RENDERING = "jsf_rendering";
     
-	private final static String APP_CONTEXT_URI_KEY = "IW_APP_CONTEXT_URI";
+	//private final static String APP_CONTEXT_URI_KEY = "IW_APP_CONTEXT_URI";
     private final static String SLASH = "/";
     private final static String windowOpenerURL = "/servlet/WindowOpener";
     private final static String objectInstanciatorURL = "/servlet/ObjectInstanciator";
@@ -173,8 +173,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private String defaultLightInterfaceColor = IWConstants.DEFAULT_LIGHT_INTERFACE_COLOR;
     private String defaultDarkInterfaceColor = IWConstants.DEFAULT_DARK_INTERFACE_COLOR;    
     private LogWriter lw;
-    private String appContext;
-    private boolean checkedAppContext;
+    //private String appContext;
+    //private boolean checkedAppContext;
     private String cacheDirURI;
     private IWApplicationContext iwappContext;
 	private AppServer applicationServer;
@@ -1338,7 +1338,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * @param uri The uri to set, e.g. "/myapplication" or "/"
      */
     public void setApplicationContextURI(String uri) {
-        if (uri != null) {
+        String appContext = uri;
+    		if (uri != null) {
             if (uri.startsWith(SLASH)) {
                 appContext = uri;
             } else {
@@ -1347,7 +1348,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
         } else {
             appContext = SLASH;
         }
-        checkedAppContext = true;
+        //checkedAppContext = true;
+    		getIWApplicationContext().getDomain().setServerContextPath(appContext);
     }
 
     /**
@@ -1355,11 +1357,12 @@ public class IWMainApplication	extends Application  implements MutableClass {
      *         returns "/" if running under the ROOT context
      */
     public String getApplicationContextURI() {
-        if (!checkedAppContext) {
+        /*if (!checkedAppContext) {
             setApplicationContextURI(this.getSettings().getProperty(
                     APP_CONTEXT_URI_KEY));
             checkedAppContext = true;
-        }
+        }*/
+    		String appContext = getIWApplicationContext().getDomain().getServerContextPath();
         if (appContext == null) { return SLASH; }
         return appContext;
     }
@@ -1368,6 +1371,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * Returns true if the context path the application is "/"
      */
     public boolean isRunningUnderRootContext() {
+    		String appContext = getApplicationContextURI();
         if (appContext == null) {
             return true;
         } else if (appContext.equals(SLASH)) {

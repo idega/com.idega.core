@@ -1,5 +1,5 @@
 /*
- * $Id: Script.java,v 1.25 2005/08/31 02:10:08 eiki Exp $ 
+ * $Id: Script.java,v 1.26 2005/12/07 11:51:50 tryggvil Exp $ 
  * Created in 2000 by Tryggvi Larusson
  * 
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.data.IDONoDatastoreError;
  * An instance of this component can be used to define javascript functions and
  * add to a component or a page.
  * </p>
- * Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
+ * Last modified: $Date: 2005/12/07 11:51:50 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public class Script extends PresentationObject {
 
@@ -218,10 +218,12 @@ public class Script extends PresentationObject {
 			if (getMarkupLanguage().equals("HTML")) {
 				try {
 					com.idega.core.builder.data.ICDomain d = iwc.getDomain();
-					if (d.getURL() != null) {
+					String serverUrl = d.getURL();
+					if (serverUrl != null) {
 						String src = getMarkupAttribute("src");
 						if (src != null && src.startsWith("/")) {
-							setMarkupAttribute("src", d.getURL() + src);
+							String newSrc = serverUrl + src;
+							setMarkupAttribute("src",newSrc);
 						}
 					}
 				}

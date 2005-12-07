@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.12 2005/11/18 00:35:27 tryggvil Exp $
+ * $Id: BaseFilter.java,v 1.13 2005/12/07 11:51:51 tryggvil Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,7 @@ package com.idega.servlet.filter;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.MutableClass;
 import com.idega.util.RequestUtil;
@@ -21,18 +22,18 @@ import com.idega.util.RequestUtil;
  * <p>
  *  Class that holds basic functionality used by many filters.<br>
  * </p>
- *  Last modified: $Date: 2005/11/18 00:35:27 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
-	private static final boolean DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT = false;
-	private static boolean checkedCurrentApplicationContext = DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT;
+	private static final boolean DEFAULT_VALUE_INITIALIZED_DOMAIN = false;
+	private static boolean hasInitializedDefaultDomain = DEFAULT_VALUE_INITIALIZED_DOMAIN;
 
 	public static void unload()	{
-		checkedCurrentApplicationContext = DEFAULT_VALUE_CHECKED_CURRENT_APPCONTEXT; 
+		hasInitializedDefaultDomain = DEFAULT_VALUE_INITIALIZED_DOMAIN; 
 	}
 
 	protected static final String OLD_BUILDER_SERVLET_URI = "/servlet/IBMainServlet";
@@ -97,16 +98,52 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	 * This may be called from several filter subclasses. This should ideally be called by the first filter in the chain.
 	 * @param iwc
 	 */
-	protected void setApplicationServletContextPath(HttpServletRequest request ){
-		if (!hasCheckedCurrentAppContext()) {
+	protected void initializeDefaultDomain(HttpServletRequest request ){
+		if (!hasInitializedDefaultDomain()) {
+
 			String contextPath = request.getContextPath();
-			getIWMainApplication(request).setApplicationContextURI(contextPath);
-			checkedCurrentApplicationContext=true;
+			String serverProtocol = request.getScheme();
+			ICDomain domain = getIWMainApplication(request).getIWApplicationContext().getDomain();
+	    		String setServerName = domain.getServerName();
+	    		String setUrl = domain.getURL();
+	    		String setContextPath = domain.getServerContextPath();
+	    		int setPort = domain.getServerPort();
+	    		String setProtocol = domain.getServerProtocol();
+	    		if(setServerName==null){
+	    			String newServerName = request.getServerName();
+	    			domain.setServerName(newServerName);
+	    		}
+	    		if(setUrl==null){
+	    			String newServerURL = RequestUtil.getServerURL(request);
+	    			domain.setURL(newServerURL);
+	    		}
+	    		if(setContextPath==null){
+	    			
+	    	        if (contextPath != null) {
+	    	            if (!contextPath.startsWith(SLASH)) {
+	    	            	contextPath = SLASH + contextPath;
+	    	            }
+	    	        } else {
+	    	        		contextPath = SLASH;
+	    	        }
+	    			
+	    			domain.setServerContextPath(contextPath);
+	    		}
+	    		if(setPort!=-1){
+	    			int port = request.getServerPort();
+	    			domain.setServerPort(port);
+	    		}
+	    		if(setProtocol==null){
+	    			domain.setServerProtocol(serverProtocol);
+	    		}
+			
+			//getIWMainApplication(request).setApplicationContextURI(contextPath);
+			hasInitializedDefaultDomain=true;
 		}
 	}
 	
-	private boolean hasCheckedCurrentAppContext(){
-		return checkedCurrentApplicationContext;
+	private boolean hasInitializedDefaultDomain(){
+		return hasInitializedDefaultDomain;
 	}
 	
 	protected IWMainApplication getIWMainApplication(HttpServletRequest request) {

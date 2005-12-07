@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.14 2005/11/21 17:31:40 tryggvil Exp $
+ * $Id: IWUrlRedirector.java,v 1.15 2005/12/07 11:51:51 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.view.ViewManager;
+import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
 
 
@@ -30,10 +32,10 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2005/11/21 17:31:40 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -47,7 +49,7 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest)srequest;
 		HttpServletResponse response = (HttpServletResponse)sresponse;
 		
-		setApplicationServletContextPath(request);
+		initializeDefaultDomain(request);
 		
 		boolean doRedirect = getIfDoRedirect(request);
 		if(doRedirect){
@@ -168,6 +170,16 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 				}
 			}
 		}
+		else{
+			ViewManager viewManager = ViewManager.getInstance(getIWMainApplication(request));
+			ViewNode node = viewManager.getViewNodeForRequest(request);
+			if(node!=null){
+				if(node.getRedirectsToResourceUri()){
+					String resourceUri = node.getResourceURI();
+					return resourceUri;
+				}
+			}
+		}
 		throw new RuntimeException("Error handling redirect Url");
 	}
 
@@ -179,6 +191,14 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		if(IWMainApplication.useNewURLScheme){
 			String requestUri = getURIMinusContextPath(request);
 			String oldIdegaWebUriWithSlash = OLD_IDEGAWEB_LOGIN_WITHSLASH;
+			
+			ViewManager viewManager = ViewManager.getInstance(getIWMainApplication(request));
+			ViewNode node = viewManager.getViewNodeForRequest(request);
+			if(node!=null){
+				if(node.getRedirectsToResourceUri()){
+					return true;
+				}
+			}
 			
 			if(getIWMainApplication(request).isInSetupMode()){
 				String fullRequestUri = request.getRequestURI();

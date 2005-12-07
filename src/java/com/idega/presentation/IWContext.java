@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.127 2005/11/29 15:30:02 laddi Exp $
+ * $Id: IWContext.java,v 1.128 2005/12/07 11:51:50 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -61,6 +61,7 @@ import com.idega.presentation.ui.Parameter;
 import com.idega.user.business.UserProperties;
 import com.idega.user.util.Converter;
 import com.idega.util.FacesUtil;
+import com.idega.util.RequestUtil;
 import com.idega.util.datastructures.HashtableMultivalued;
 
 /**
@@ -75,15 +76,15 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/11/29 15:30:02 $ by $Author: laddi $
+ * Last modified: $Date: 2005/12/07 11:51:50 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.127 $
+ * @version $Revision: 1.128 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
 implements IWUserContext, IWApplicationContext {
-
+	
 	/**
 	 * Comment for <code>serialVersionUID</code>
 	 */
@@ -646,22 +647,7 @@ implements IWUserContext, IWApplicationContext {
 	 * @return the servername with port and protocol, e.g. http://www.idega.com:8080/
 	 */
 	public String getServerURL(){
-		StringBuffer buf = new StringBuffer();
-		if(isSecure()){
-			buf.append("https://");
-		}
-		else{
-			buf.append("http://");
-		}
-
-		buf.append(getServerName());
-		if( getServerPort()!=80 ){
-			buf.append(":").append(getServerPort());
-		}
-		
-		buf.append("/");
-		
-		return buf.toString();
+		return RequestUtil.getServerURL(getRequest());
 	}
 	
 	/**
@@ -910,14 +896,6 @@ implements IWUserContext, IWApplicationContext {
 	}
 	public ICDomain getDomain() {
 	    ICDomain domain = getIWMainApplication().getIWApplicationContext().getDomain();
-	    //if(domain!=null &&  domain.getServerName()!=null)
-	    if(domain!=null){
-	    		String setServerName = domain.getServerName();
-	    		if(setServerName==null){
-	    			String newServerURL = getServerURL();
-	    			domain.setServerName(newServerURL);
-	    		}
-	    }
 		return domain;
 	}
 	

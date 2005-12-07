@@ -1,5 +1,5 @@
 /*
- * $Id: RequestUtil.java,v 1.1 2005/01/27 14:16:36 tryggvil Exp $
+ * $Id: RequestUtil.java,v 1.2 2005/12/07 11:51:51 tryggvil Exp $
  * Created on 27.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,10 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 
- *  Last modified: $Date: 2005/01/27 14:16:36 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class RequestUtil {
 	
@@ -47,6 +47,33 @@ public class RequestUtil {
 			String newUri = requestUri.substring(appUri.length()-1);
 			return newUri;
 		}
+	}
+	
+	/**
+	 * Gets a constructed base URL for the server.
+	 * @return the servername with port and protocol, e.g. http://www.idega.com:8080/
+	 */
+	public static String getServerURL(HttpServletRequest request){
+		StringBuffer buf = new StringBuffer();
+		String scheme = request.getScheme();
+		
+		buf.append(scheme);
+		buf.append("://");
+		/*if(request.isSecure()){
+			buf.append("https://");
+		}
+		else{
+			buf.append("http://");
+		}*/
+
+		buf.append(request.getServerName());
+		if( request.getServerPort()!=80 ){
+			buf.append(":").append(request.getServerPort());
+		}
+		
+		buf.append("/");
+		
+		return buf.toString();
 	}
 	
 }

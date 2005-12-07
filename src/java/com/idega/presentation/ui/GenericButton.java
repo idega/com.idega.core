@@ -1,5 +1,5 @@
 /*
- * $Id: GenericButton.java,v 1.33 2005/07/15 12:40:24 thomas Exp $
+ * $Id: GenericButton.java,v 1.34 2005/12/07 11:51:51 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * This component is for rendering out a input element of type button.
  * </p>
- *  Last modified: $Date: 2005/07/15 12:40:24 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public class GenericButton extends GenericInput {
 
@@ -229,16 +229,19 @@ public class GenericButton extends GenericInput {
 				}
 
 				ICDomain d = iwc.getDomain();
-				if (d.getURL() != null) {
+				String serverUrl = d.getURL();
+				if (serverUrl != null) {
 					if (URL.startsWith("/")) {
-						String protocol;
+						/*String protocol;
 						if (iwc.getRequest().isSecure()) {
 							protocol = "https://";
 						}
 						else {
 							protocol = "http://";
 						}
-						URL = protocol + d.getURL() + URL;
+						URL = protocol + serverName + URL;
+						*/
+						URL = serverUrl + URL;
 					}
 				}
 

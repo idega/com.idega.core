@@ -1,5 +1,5 @@
 /*
- * $Id: FacesUtil.java,v 1.2 2005/11/04 14:07:27 tryggvil Exp $
+ * $Id: FacesUtil.java,v 1.3 2005/12/07 11:51:51 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -13,17 +13,19 @@ import javax.faces.context.FacesContext;
 
 
 /**
+ * <p>
  *  Utility class for various JavaServer Faces functions.
- * 
- *  Last modified: $Date: 2005/11/04 14:07:27 $ by $Author: tryggvil $
+ * </p>
+ *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class FacesUtil {
 	
 	private static String SLASH="/";
 	public static final String REQUEST_START="request_start_time";
+	public static final String SEPARATOR="-";
 
 
 	/**
@@ -94,4 +96,46 @@ public class FacesUtil {
 		}
 		return -1;
 	}
+	
+	/**
+	 * <p>
+	 * Method to put an attibute in a Map that lives throughout the FacesContext instance.<br/>
+	 * This actually uses the RequestMap but suffixes an id for the current FacesContext because
+	 * there can be several FacesContext instances in the lifetime of one (HttpServlet)Request, 
+	 * this happens for example in the case of Navigation-Rule, because that is implemented
+	 * as server-side dispatches to a new page with the same Request object.
+	 * </p>
+	 * @param context
+	 * @param key
+	 * @param value
+	 */
+	public static void putAttribute(FacesContext context,String key,Object value){
+		String newKey = getNewFacesContextKey(context,key);
+		context.getExternalContext().getRequestMap().put(newKey,value);
+	}
+	/**
+	 * <p>
+	 * Method to get an attibute in a Map that lives throughout the FacesContext instance.<br/>
+	 * This actually uses the RequestMap but suffixes an id for the current FacesContext because
+	 * there can be several FacesContext instances in the lifetime of one (HttpServlet)Request, 
+	 * this happens for example in the case of Navigation-Rule, because that is implemented
+	 * as server-side dispatches to a new page with the same Request object.
+	 * </p>
+	 * @param context
+	 * @param oldKey
+	 * @return
+	 */
+	public static Object getAttribute(FacesContext context,String key){
+		String newKey = getNewFacesContextKey(context,key);
+		return context.getExternalContext().getRequestMap().get(newKey);
+	}
+	
+	protected static String getNewFacesContextKey(FacesContext context,String oldKey){
+		String facesContextId = context.toString();
+		String newKey = oldKey;
+		newKey += SEPARATOR;
+		newKey+=facesContextId;
+		return newKey;
+	}
+	
 }
