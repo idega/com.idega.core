@@ -109,7 +109,7 @@ public class RootNodeViewHandler extends CbpViewHandler{// extends CbpViewHandle
 		ViewNode node = getViewManager(ctx).getViewNodeForContext(ctx);
 		if(node!=null){
 			//if(node.isComponentBased()){
-				String url = node.getURI();
+				String url = node.getURIWithContextPath();
 				return url;
 			//}
 		}

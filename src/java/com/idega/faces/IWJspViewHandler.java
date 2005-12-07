@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.9 2005/12/07 21:07:30 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.10 2005/12/07 21:38:59 tryggvil Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.util.FacesUtil;
  * This class overrides the default JSF ViewHandler and adds idegaWeb specific way of handling JSP pages
  * that are registered in the ViewNode hierarchy.<br/>
  * </p>
- *  Last modified: $Date: 2005/12/07 21:07:30 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 21:38:59 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -167,7 +167,7 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 		// count the length
 		// e.g. "/cms" + "/workspace"  
 		int length = requestContextPath.length() + requestServletPath.length();
-		String uri = node.getURI();
+		String uri = node.getURIWithContextPath();
 		String uriWithoutContextAndServlet = uri.substring(length);
 		int viewIdLength = viewId.length();
 		// remove the slash at the end if necessary
