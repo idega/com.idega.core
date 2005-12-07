@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.15 2005/12/07 11:51:51 tryggvil Exp $
+ * $Id: IWUrlRedirector.java,v 1.16 2005/12/07 21:56:48 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/07 21:56:48 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -175,7 +175,9 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 			ViewNode node = viewManager.getViewNodeForRequest(request);
 			if(node!=null){
 				if(node.getRedirectsToResourceUri()){
+					IWMainApplication iwma = getIWMainApplication(request);
 					String resourceUri = node.getResourceURI();
+					resourceUri = iwma.getTranslatedURIWithContext(resourceUri);
 					return resourceUri;
 				}
 			}
@@ -202,7 +204,7 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 			
 			if(getIWMainApplication(request).isInSetupMode()){
 				String fullRequestUri = request.getRequestURI();
-				//this is a small hack to make the bundles load:
+				//this is a small hack to force the bundles load:
 				getIWMainApplication(request).registerBundle("com.idega.core",false);
 				getIWMainApplication(request).registerBundle("com.idega.faces",false);
 				getIWMainApplication(request).registerBundle("com.idega.webface",false);
