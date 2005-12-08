@@ -193,4 +193,10 @@ public java.util.Collection findAllDuplicatedGroupRelations() throws javax.ejb.F
    	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findAllDuplicatedAliases() throws javax.ejb.FinderException {
+   	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+   	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindAllDuplicatedAliases();
+   	this.idoCheckInPooledEntity(entity);
+   	return this.getEntityCollectionForPrimaryKeys(ids);
+}
 }
