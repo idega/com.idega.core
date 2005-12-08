@@ -1,5 +1,5 @@
 /*
- * $Id: GeneratedImageCache.java,v 1.1 2005/12/07 23:41:47 tryggvil Exp $
+ * $Id: GeneratedImageCache.java,v 1.2 2005/12/08 17:57:20 laddi Exp $
  * Created on 7.12.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import com.idega.presentation.Image;
  * <p>
  * TODO tryggvil Describe Type GeneratedImageCache
  * </p>
- *  Last modified: $Date: 2005/12/07 23:41:47 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/08 17:57:20 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class GeneratedImageCache {
 
@@ -168,6 +168,6 @@ public class GeneratedImageCache {
 	 * @param width2 The width to set.
 	 */
 	public void setWidth(int width2) {
-		this.width = width;
+		this.width = width2;
 	}
 }
