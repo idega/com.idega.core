@@ -7,8 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.FinderException;
 
@@ -20,6 +22,7 @@ import com.idega.data.IDORemoveRelationshipException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
+import com.idega.user.data.Group;
 import com.idega.user.data.GroupRelation;
 import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.User;
@@ -44,6 +47,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	public static final String REMOVE_DUPLICATED_EMAILS_FROM_USERS = "remove_duplicated_emails";
 	public static final String REMOVE_DUPLICATED_PHONES_FROM_USERS = "remove_duplicated_phones";
 	public static final String REMOVE_DUPLICATED_GROUP_RELATIONS = "remove_duplicated_group_relations";
+	public static final String REMOVE_DUPLICATED_ALIASES = "remove_duplicated_aliases";
 	
 //	private EventTimer groupTreeEventTimer;
 //	public static final String GROUP_TREE_TIMER_THREAD_NAME = "user_fetch_grouptree";
@@ -91,6 +95,10 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 				String removeDuplicatedGroupRelations = bundle.getProperty(REMOVE_DUPLICATED_GROUP_RELATIONS, "false");
 				if (removeDuplicatedGroupRelations != null && removeDuplicatedGroupRelations.equalsIgnoreCase("true")) {
 					removeDuplicatedGroupRelations();
+				}
+				String removeDuplicatedAliases = bundle.getProperty(REMOVE_DUPLICATED_ALIASES, "true");
+				if (removeDuplicatedAliases != null && removeDuplicatedAliases.equalsIgnoreCase("true")) {
+					removeDuplicatedAliases();
 				}
 				Collection relations = getGroupRelationHome().findAllPendingGroupRelationships();
 				
@@ -234,6 +242,41 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 			for (int j=i+1; j<duplicatedGroupRelations.size(); j++) {
 				GroupRelation subRelation = (GroupRelation)duplicatedGroupRelations.get(j);
 				if (relation.equals(subRelation) && !relation.getPrimaryKey().equals(subRelation.getPrimaryKey())) {
+					relation.setStatus(GroupRelation.STATUS_PASSIVE);
+					relation.store();
+					break;
+				}
+			}
+		}
+	}
+
+	public void removeDuplicatedAliases() throws FinderException, RemoteException {
+		List duplicatedAliases = (List)getGroupRelationHome().findAllDuplicatedAliases();
+		Map groupMap = new HashMap();
+		Iterator duplAliaseslIt = duplicatedAliases.iterator();
+		for (int i=0; i<duplicatedAliases.size(); i++) {
+			GroupRelation relation = (GroupRelation)duplAliaseslIt.next();
+			Integer mapKey = relation.getRelatedGroupPK();
+			Group group = null;
+			if (groupMap.containsKey(mapKey)) {
+				group = (Group)groupMap.get(mapKey);
+			}
+			else {
+				group = relation.getRelatedGroup();
+				groupMap.put(mapKey, group);
+			}
+			for (int j=i+1; j<duplicatedAliases.size(); j++) {
+				GroupRelation subRelation = (GroupRelation)duplicatedAliases.get(j);
+				Integer subMapKey = subRelation.getRelatedGroupPK();
+				Group subGroup = null;
+				if (groupMap.containsKey(subMapKey)) {
+					subGroup = (Group)groupMap.get(subMapKey);
+				}
+				else {
+					subGroup = subRelation.getRelatedGroup();
+					groupMap.put(subMapKey, subGroup);
+				}
+				if (relation.getGroupID() == subRelation.getGroupID() && group.getAliasID() == subGroup.getAliasID() && !relation.getPrimaryKey().equals(subRelation.getPrimaryKey())) {
 					relation.setStatus(GroupRelation.STATUS_PASSIVE);
 					relation.store();
 					break;

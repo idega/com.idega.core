@@ -625,4 +625,11 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 		return this.idoFindPKsBySQL("select r.ic_group_relation_id from ic_group_relation r, ("+subTable+") t where r.ic_group_id=t.ic_group_id and r.related_ic_group_id=t.related_ic_group_id and relationship_type='GROUP_PARENT' and group_relation_status='ST_ACTIVE'");
 	}
   
+	/**
+  	* Finds all duplicated aliases
+	*/
+	public Collection ejbFindAllDuplicatedAliases()throws FinderException{
+		String subTable = "select r.ic_group_id, g.alias_id from ic_group_relation r, ic_group g where r.related_ic_group_id=g.ic_group_id and r.relationship_type='GROUP_PARENT' and r.group_relation_status='ST_ACTIVE' and g.group_type='alias' and alias_id is not null group by r.ic_group_id, g.alias_id having count(*)>1";
+		return this.idoFindPKsBySQL("select r.ic_group_relation_id from ic_group_relation r, ic_group g, ("+subTable+") t where r.related_ic_group_id=g.ic_group_id and r.ic_group_id=t.ic_group_id and g.alias_id=t.alias_id and relationship_type='GROUP_PARENT' and group_relation_status='ST_ACTIVE'");
+	}
 }
