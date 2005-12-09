@@ -38,7 +38,7 @@ public class ImageFactory implements Singleton {
 	
 	private static final String BUTTON_SUFFIX = "_button";
 	private static final String TAB_SUFFIX = "_tab";
-	private static String GENERATED_IMAGES_FOLDER = "idegaweb/iw_generated";
+	private static String GENERATED_IMAGES_FOLDER = "/idegaweb/iw_generated";
 	
 	public final static String GENERATED_FILL_COLOR = "iw_generated_fill_color";
 	public final static String GENERATED_BORDER_COLOR = "iw_generated_border_color";
@@ -102,7 +102,7 @@ public class ImageFactory implements Singleton {
 				return cache.createImage();
 			//filePath = iwb.getResourcesRealPath(local);
 			//fileVirtualPath = iwb.getResourcesURL(local) + "/" + GENERATED_IMAGES_FOLDER + "/";
-			filePath = iwb.getApplication().getApplicationRealPath()+"/"+GENERATED_IMAGES_FOLDER+"/"+local.toString()+"/";
+			filePath = iwb.getApplication().getApplicationRealPath()+GENERATED_IMAGES_FOLDER+"/"+local.toString()+"/";
 			fileVirtualPath = iwb.getApplication().getTranslatedURIWithContext(GENERATED_IMAGES_FOLDER + "/"+local.toString()+"/");
 		}
 		else {
@@ -112,7 +112,7 @@ public class ImageFactory implements Singleton {
 				return cache.createImage();
 			//filePath = iwb.getResourcesRealPath();
 			//fileVirtualPath = iwb.getResourcesURL() + "/" + GENERATED_IMAGES_FOLDER + "/";
-			filePath = iwb.getApplication().getApplicationRealPath()+"/"+GENERATED_IMAGES_FOLDER+"/";
+			filePath = iwb.getApplication().getApplicationRealPath()+GENERATED_IMAGES_FOLDER+"/";
 			fileVirtualPath = iwb.getApplication().getTranslatedURIWithContext(GENERATED_IMAGES_FOLDER + "/");
 
 		}
@@ -158,7 +158,7 @@ public class ImageFactory implements Singleton {
 				return cache.createImage();
 			//filePath = iwb.getResourcesRealPath(local);
 			//fileVirtualPath = iwb.getResourcesURL(local) + "/" + GENERATED_IMAGES_FOLDER + "/";
-			filePath = iwb.getApplication().getApplicationRealPath()+"/"+GENERATED_IMAGES_FOLDER+"/"+local.toString()+"/";
+			filePath = iwb.getApplication().getApplicationRealPath()+GENERATED_IMAGES_FOLDER+"/"+local.toString()+"/";
 			fileVirtualPath = iwb.getApplication().getTranslatedURIWithContext(GENERATED_IMAGES_FOLDER + "/"+local.toString()+"/");
 
 		}
@@ -169,12 +169,12 @@ public class ImageFactory implements Singleton {
 				return cache.createImage();
 			//filePath = iwb.getResourcesRealPath();
 			//fileVirtualPath = iwb.getResourcesURL() + "/" + GENERATED_IMAGES_FOLDER + "/";
-			filePath = iwb.getApplication().getApplicationRealPath()+"/"+GENERATED_IMAGES_FOLDER+"/";
+			filePath = iwb.getApplication().getApplicationRealPath()+GENERATED_IMAGES_FOLDER+"/";
 			fileVirtualPath = iwb.getApplication().getTranslatedURIWithContext(GENERATED_IMAGES_FOLDER + "/");
 
 		}
 
-		filePath = filePath + FileUtil.getFileSeparator() + GENERATED_IMAGES_FOLDER + FileUtil.getFileSeparator();
+		//filePath = filePath + GENERATED_IMAGES_FOLDER + FileUtil.getFileSeparator();
 
 		FileUtil.createFolder(filePath);
 		Font tabFont = null;
