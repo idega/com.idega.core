@@ -1108,16 +1108,26 @@ public class LoginBusinessBean implements IWPageEventListener {
 	private boolean logInAsAnotherUser(IWContext iwc, User user,boolean reserveCurrentUser) throws Exception {
 
 		if (isLoggedOn(iwc)) {
-		    LoggedOnInfo info = this.getLoggedOnInfo(iwc);
+//		    LoggedOnInfo info = this.getLoggedOnInfo(iwc);
+			int loginTableId = -1;
+			String login = null;
+			Collection logins = ((LoginTableHome)IDOLookup.getHome(LoginTable.class)).findLoginsForUser(user);
+			if(!logins.isEmpty()) {
+				LoginTable loginTable = (LoginTable)logins.iterator().next();
+				loginTableId = loginTable.getID();
+				login = loginTable.getUserLogin();
+			}
 			if (iwc.getUser().equals(user)) {
 				return true;
 			}
 			if(reserveCurrentUser)
 			    reserveLoginInformation(iwc);
 			storeUserAndGroupInformationInSession(iwc, user);
-			
-			int loginRecordId = LoginDBHandler.recordLogin(info.getLoginTableId(), iwc.getRemoteIpAddress(), user.getID());
-			storeLoggedOnInfoInSession(iwc, info.getLoginTableId(), info.getLogin(), user, loginRecordId, LOGINTYPE_AS_ANOTHER_USER);
+
+//			int loginRecordId = LoginDBHandler.recordLogin(info.getLoginTableId(), iwc.getRemoteIpAddress(), user.getID());
+//			storeLoggedOnInfoInSession(iwc, info.getLoginTableId(), info.getLogin(), user, loginRecordId, LOGINTYPE_AS_ANOTHER_USER);			
+			int loginRecordId = LoginDBHandler.recordLogin(loginTableId, iwc.getRemoteIpAddress(), user.getID());
+			storeLoggedOnInfoInSession(iwc, loginTableId, login, user, loginRecordId, LOGINTYPE_AS_ANOTHER_USER);
 			onLoginSuccessful(iwc);
 			
 			return true;
