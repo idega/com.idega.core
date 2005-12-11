@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.16 2005/12/07 21:56:48 tryggvil Exp $
+ * $Id: IWUrlRedirector.java,v 1.17 2005/12/11 18:03:32 gimmi Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2005/12/07 21:56:48 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/11 18:03:32 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -182,6 +182,8 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 				}
 			}
 		}
+		String referer = request.getHeader("Referer");
+		System.err.println("[IWUrlRedirector] Referer = "+referer);
 		throw new RuntimeException("Error handling redirect Url");
 	}
 
