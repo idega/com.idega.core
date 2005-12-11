@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.155 2005/12/07 21:57:21 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.156 2005/12/11 17:34:02 gimmi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/12/07 21:57:21 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/11 17:34:02 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.155 $
+ * @version $Revision: 1.156 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1144,8 +1144,12 @@ public class IWMainApplication	extends Application  implements MutableClass {
         if (isUsingCryptoProperties()) {
             cryptoClassNamesPropertiesKeyedByCode = new Properties();
             sendStartupMessage("Loading Cryptonium");
-            String file = getPropertiesRealPath() + FileUtil.getFileSeparator()
+    		String file = getApplicationRealPath()+"/WEB-INF/idegaweb/properties/crypto.properties";
+    		File testfile = new File(file);
+    		if (!testfile.exists()) {
+    			file = getPropertiesRealPath() + FileUtil.getFileSeparator()
                     + "crypto.properties";
+    		}
             try {
                 cryptoClassNamesPropertiesKeyedByCode.load(new FileInputStream(
                         file));
@@ -1179,8 +1183,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
             sendShutdownMessage("Storing Cryptonium");
 
             try {
-                String file = getPropertiesRealPath()
-                        + FileUtil.getFileSeparator() + "crypto.properties";
+        		String file = getApplicationRealPath()+"/WEB-INF/idegaweb/properties/crypto.properties";
                 cryptoClassNamesPropertiesKeyedByCode.store(
                         new FileOutputStream(file), "Cryptonium");
             } catch (Exception ex) {
