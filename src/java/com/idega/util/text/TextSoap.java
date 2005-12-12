@@ -607,9 +607,10 @@ public class TextSoap {
 	   *@return                Description of the Return Value
 	   */
 	public static String formatText(String textBody) {
-		textBody = TextSoap.findAndReplaceOnPrefixCondition(textBody, "\r\n", ">","<br/>",true);
-	    textBody = TextSoap.findAndReplace(textBody, "\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-	    return textBody;
+		textBody = TextSoap.findAndReplaceOnPrefixCondition(textBody, "\r\n", ">","<br />",true);
+		textBody = TextSoap.findAndReplaceOnPrefixCondition(textBody, "\n", ">","<br />",true);
+	  textBody = TextSoap.findAndReplace(textBody, "\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+	  return textBody;
 	}	
 	
 	
