@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURIManager.java,v 1.5 2005/03/08 18:29:43 gummi Exp $
+ * $Id: IWActionURIManager.java,v 1.6 2005/12/12 11:38:13 tryggvil Exp $
  * Created on 31.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,7 +19,7 @@ import com.idega.repository.data.Singleton;
 
 /**
  * 
- *  Last modified: $Date: 2005/03/08 18:29:43 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/12/12 11:38:13 $ by $Author: tryggvil $
  * 
  * A singleton business object to get an IWActionURIHandler for an URI or the redirect URI directly.<br>
  * Register you IWActionURIHandlers using the registerHandler methods. <br>
@@ -28,7 +28,7 @@ import com.idega.repository.data.Singleton;
  * and set a low number (0-x) to prioratize your handler before the default one.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class IWActionURIManager implements Singleton {
 	
@@ -129,23 +129,23 @@ public class IWActionURIManager implements Singleton {
 		getHandlerList().add(position,handler);
 	}
 	
-	public String getRedirectURI(String requestURI){
+	public String getRedirectURI(String requestURI,String queryString){
 				
-		IWActionURIHandler handler = getIWActionURIHandler(requestURI);
+		IWActionURIHandler handler = getIWActionURIHandler(requestURI,queryString);
 		
-		IWActionURI actionURI = handler.getIWActionURI(requestURI);
+		IWActionURI actionURI = handler.getIWActionURI(requestURI,queryString);
 	
 		if(actionURI==null){
-			actionURI = new IWActionURI(requestURI);
+			actionURI = new IWActionURI(requestURI,queryString);
 		}
 		
 		return handler.getRedirectURI(actionURI); 
 	}
 	
 	
-	public IWActionURIHandler getIWActionURIHandler(String requestURI){
+	public IWActionURIHandler getIWActionURIHandler(String requestURI,String queryString){
 	//TODO register handlers with regular expressions	, and lookup with regexp instead of iterator	
-		IWActionURI actionURI = new IWActionURI(requestURI);
+		IWActionURI actionURI = new IWActionURI(requestURI,queryString);
 		List handlers = getHandlerList();
 		Iterator iter = handlers.iterator();
 		

@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURIHandler.java,v 1.3 2005/03/08 18:29:43 gummi Exp $
+ * $Id: IWActionURIHandler.java,v 1.4 2005/12/12 11:38:13 tryggvil Exp $
  * Created on 18.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,11 +13,11 @@ package com.idega.core.uri;
 
 /**
  * 
- *  Last modified: $Date: 2005/03/08 18:29:43 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/12/12 11:38:13 $ by $Author: tryggvil $
  * 
  *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface IWActionURIHandler {
 	
@@ -41,7 +41,7 @@ public interface IWActionURIHandler {
 	 * @param requestURI
 	 * @return null if the default IWActionURI "parser" class should be used or your own object
 	 */
-	public IWActionURI getIWActionURI(String requestURI);
+	public IWActionURI getIWActionURI(String requestURI,String queryString);
 	
 	/**
 	 * 

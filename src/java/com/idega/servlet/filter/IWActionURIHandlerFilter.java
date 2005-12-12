@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURIHandlerFilter.java,v 1.4 2005/12/07 11:51:51 tryggvil Exp $
+ * $Id: IWActionURIHandlerFilter.java,v 1.5 2005/12/12 11:41:27 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -25,10 +25,10 @@ import com.idega.core.uri.IWActionURIManager;
  *  Filter that detects incoming "action" urls and redirects the real url of the registered action handler<br>
  *  e.g. "/idegaweb/action/view/files/cms/article/1.xml" would be redirected to a viewer for an article.
  * 
- *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/12 11:41:27 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class IWActionURIHandlerFilter extends BaseFilter implements Filter {
 	
@@ -53,7 +53,7 @@ public class IWActionURIHandlerFilter extends BaseFilter implements Filter {
 	 */
 	String getIWActionRedirectURI(HttpServletRequest request) {
 		IWActionURIManager manager = IWActionURIManager.getInstance();		
-		return manager.getRedirectURI(request.getRequestURI());
+		return manager.getRedirectURI(request.getRequestURI(),request.getQueryString());
 	}
 
 	public void destroy() {

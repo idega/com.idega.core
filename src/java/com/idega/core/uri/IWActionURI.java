@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURI.java,v 1.4 2005/03/08 18:29:43 gummi Exp $
+ * $Id: IWActionURI.java,v 1.5 2005/12/12 11:38:13 tryggvil Exp $
  * Created on Jan 31, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,10 +15,10 @@ import com.idega.idegaweb.IWMainApplication;
 
 /**
  * 
- *  Last modified: $Date: 2005/03/08 18:29:43 $ by $Author: gummi $
+ *  Last modified: $Date: 2005/12/12 11:38:13 $ by $Author: tryggvil $
  * A "parser" class for an action URI that divides an action uri into three parts: action, path and identifier
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class IWActionURI {
 	
@@ -27,6 +27,7 @@ public class IWActionURI {
 	private String identifierPart;
 	private String handlerIdentifierPart;
 	private String contextURI = "/";
+	private String queryString;
 	
 	private final static String UNDEFINED_HANDLER_IDENTIFER = "default";
 	
@@ -40,8 +41,9 @@ public class IWActionURI {
 	/**
 	 * 
 	 */
-	public IWActionURI(String requestURI) {		
+	public IWActionURI(String requestURI,String queryString) {		
 		parseRequestURI(requestURI);
+		this.queryString=queryString;
 	}
 	
 	public void parseRequestURI(String requestURI){
@@ -161,7 +163,7 @@ public class IWActionURI {
 	}
 	
 	public static void main(String[] args){
-		IWActionURI uri = new IWActionURI("/idegaweb/action/edit/default/files/cms/article/01012005.article/en.xml");
+		IWActionURI uri = new IWActionURI("/idegaweb/action/edit/default/files/cms/article/01012005.article/en.xml",null);
 		
 		System.out.println(uri.getContextURI());
 		System.out.println(IWActionURIManager.IDEGAWEB_ACTION_PATH_PREFIX);
@@ -224,5 +226,30 @@ public class IWActionURI {
 	
 	public String toString(){
 		return buildActionURI();
+	}
+
+	
+	/**
+	 * @return Returns the queryString.
+	 */
+	public String getQueryString() {
+		return queryString;
+	}
+
+	
+	/**
+	 * @param queryString The queryString to set.
+	 */
+	public void setQueryString(String queryString) {
+		this.queryString = queryString;
+	}
+	
+	public String getRedirectURI(){
+		String theReturn =  getPathPart();
+		String query = getQueryString();
+		if(query!=null){
+			theReturn+=query;
+		}
+		return theReturn;
 	}
 }
