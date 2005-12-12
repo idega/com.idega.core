@@ -1,5 +1,5 @@
 /*
- * $Id: TimeInput.java,v 1.9 2005/12/11 23:28:05 laddi Exp $
+ * $Id: TimeInput.java,v 1.10 2005/12/12 05:44:37 laddi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -57,21 +57,6 @@ public class TimeInput extends InterfaceObject {
 		super.add(theMinute);
 		super.add(theWholeTime);
 		super.add(script);
-
-		theHour.setOnChange("setValueOfHiddenTime(this.form." + theHour.getName() + ",this.form." + theMinute.getName() + ",this.form." + theWholeTime.getName()+ ")");
-		theMinute.setOnChange("setValueOfHiddenTime(this.form." + theHour.getName() + ",this.form." + theMinute.getName() + ",this.form." + theWholeTime.getName() + ")");
-		theHour.setParentObject(this.getParentObject());
-		theMinute.setParentObject(this.getParentObject());
-
-		for (int a = iFromHour; a <= iToHour; a++) {
-			theHour.addMenuElement(TextSoap.addZero(a), TextSoap.addZero(a));
-		}
-
-		for (int a = 0; a < 60; a = a + iMinuteInterval) {
-			theMinute.addMenuElement(TextSoap.addZero(a), TextSoap.addZero(a));
-		}
-		
-		getJavaScript().addFunction("setValueOfHiddenTime", "function setValueOfHiddenTime(hourInput,minuteInput,hiddenInput){\r\r	var hourValue='00';\r	var minuteValue='00';\r	var secondValue='00';\r	var millisecondValue='000000';\r	\r	\r	if(hourInput.selectedIndex != 0){\r		hourValue=hourInput.options[hourInput.selectedIndex].value;\r	}\r	if(minuteInput.selectedIndex != 0){\r		minuteValue=minuteInput.options[minuteInput.selectedIndex].value;\r	}\r\r\r	if ((hourInput.selectedIndex == 0) || (minuteInput.selectedIndex == 0) ){\r		hiddenInput.value = '';\r	}\r	else{\r		hiddenInput.value = hourValue+':'+minuteValue+':'+secondValue+'.'+millisecondValue;\r	}\r}");
 	}
 
 	public void setMinute(int minute) {
@@ -102,6 +87,21 @@ public class TimeInput extends InterfaceObject {
 	}
 
 	public void main(IWContext iwc) {
+		theHour.setOnChange("setValueOfHiddenTime(this.form." + theHour.getName() + ",this.form." + theMinute.getName() + ",this.form." + theWholeTime.getName()+ ")");
+		theMinute.setOnChange("setValueOfHiddenTime(this.form." + theHour.getName() + ",this.form." + theMinute.getName() + ",this.form." + theWholeTime.getName() + ")");
+		theHour.setParentObject(this.getParentObject());
+		theMinute.setParentObject(this.getParentObject());
+
+		for (int a = iFromHour; a <= iToHour; a++) {
+			theHour.addMenuElement(TextSoap.addZero(a), TextSoap.addZero(a));
+		}
+
+		for (int a = 0; a < 60; a = a + iMinuteInterval) {
+			theMinute.addMenuElement(TextSoap.addZero(a), TextSoap.addZero(a));
+		}
+		
+		getJavaScript().addFunction("setValueOfHiddenTime", "function setValueOfHiddenTime(hourInput,minuteInput,hiddenInput){\r\r	var hourValue='00';\r	var minuteValue='00';\r	var secondValue='00';\r	var millisecondValue='000000';\r	\r	\r	if(hourInput.selectedIndex != 0){\r		hourValue=hourInput.options[hourInput.selectedIndex].value;\r	}\r	if(minuteInput.selectedIndex != 0){\r		minuteValue=minuteInput.options[minuteInput.selectedIndex].value;\r	}\r\r\r	if ((hourInput.selectedIndex == 0) || (minuteInput.selectedIndex == 0) ){\r		hiddenInput.value = '';\r	}\r	else{\r		hiddenInput.value = hourValue+':'+minuteValue+':'+secondValue+'.'+millisecondValue;\r	}\r}");
+
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		String emptyString = "";
 		theHour.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.HOUR_KEY));
