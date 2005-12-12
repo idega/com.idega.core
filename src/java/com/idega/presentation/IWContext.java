@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.128 2005/12/07 11:51:50 tryggvil Exp $
+ * $Id: IWContext.java,v 1.129 2005/12/12 16:18:35 tryggvil Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -76,10 +76,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/12/07 11:51:50 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/12/12 16:18:35 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.128 $
+ * @version $Revision: 1.129 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -785,8 +785,9 @@ implements IWUserContext, IWApplicationContext {
 	 *
 	 */
 	public static IWContext getInstance() throws UnavailableIWContext {
-		IWContext theReturn = com.idega.servlet.IWPresentationServlet.getIWContext();
-		if(theReturn==null){
+		//IWContext theReturn = com.idega.servlet.IWPresentationServlet.getIWContext();
+		IWContext theReturn = null;
+		//if(theReturn==null){
 			try{
 				//If no IWContext is found then try to get the FacesContext:
 				FacesContext fc = FacesContext.getCurrentInstance();
@@ -798,7 +799,7 @@ implements IWUserContext, IWApplicationContext {
 				e.printStackTrace();
 				throw new UnavailableIWContext();
 			}
-		}
+		//}
 		return theReturn;
 	}
 	public String getCurrentState(PresentationObject obj) {
