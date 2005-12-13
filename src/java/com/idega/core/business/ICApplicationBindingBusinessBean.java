@@ -1,5 +1,5 @@
 /*
- * $Id: ICApplicationBindingBusinessBean.java,v 1.3 2005/10/20 14:47:01 thomas Exp $
+ * $Id: ICApplicationBindingBusinessBean.java,v 1.4 2005/12/13 17:09:15 thomas Exp $
  * Created on Oct 7, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -27,6 +27,7 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean   implement
 	private static final int MAX_KEY_LENGTH = ICApplicationBindingBMPBean.MAX_KEY_LENGTH; 
 	
 	private ICApplicationBindingHome applicationBindingHome = null;
+	private IWMainApplicationSettings applicationsSettings = null;
 	
 	/**
 	 * Returns the corresponding value to the specified key elso null if the key is not found.
@@ -102,8 +103,10 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean   implement
 	}
 
 	private String getLegacyPropertyFromApplicationSettings(String key) {
-		IWMainApplicationSettings settings = getIWApplicationContext().getApplicationSettings();
-		return settings.getProperty(key);
+		if (applicationsSettings == null) {
+			applicationsSettings = getIWApplicationContext().getApplicationSettings();
+		}
+		return applicationsSettings.getProperty(key);
 	}
 	
 	private ICApplicationBindingHome getICApplicationBindingHome() throws IDOLookupException {
