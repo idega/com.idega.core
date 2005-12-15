@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.58 2005/11/01 13:20:04 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.59 2005/12/15 17:20:01 thomas Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -9,17 +9,16 @@
  */
 package com.idega.core.accesscontrol.business;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
-
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
@@ -784,14 +783,8 @@ public class LoginDBHandler {
 				getBindingBusiness().put(propertyName, value != null ? value : defaultValue);
 			}
 		}
-		catch (RemoveException re) {
+		catch (IOException re) {
 			re.printStackTrace();
-		}
-		catch (RemoteException re) {
-			throw new IBORuntimeException(re);
-		}
-		catch (CreateException ce) {
-			ce.printStackTrace();
 		}
 		return defaultValue;
 	}
