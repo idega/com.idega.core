@@ -100,5 +100,11 @@ public class ICApplicationBindingBMPBean extends GenericEntity implements ICAppl
 		query.appendWhereEquals(COLUMNNAME_BINDING_TYPE,type);
 		return idoFindPKsByQuery(query);
 	}
+	
+	public Collection ejbFindAll() throws FinderException {
+		IDOQuery sql = idoQuery();
+		sql.appendSelectAllFrom(this.getEntityName());
+		return this.idoFindPKsByQuery(sql);
+	}
 
 }
