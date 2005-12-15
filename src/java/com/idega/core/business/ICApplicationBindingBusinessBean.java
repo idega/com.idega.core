@@ -1,5 +1,5 @@
 /*
- * $Id: ICApplicationBindingBusinessBean.java,v 1.4 2005/12/13 17:09:15 thomas Exp $
+ * $Id: ICApplicationBindingBusinessBean.java,v 1.5 2005/12/15 17:07:03 thomas Exp $
  * Created on Oct 7, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,6 +9,13 @@
  */
 package com.idega.core.business;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
@@ -18,16 +25,24 @@ import com.idega.core.data.ICApplicationBindingBMPBean;
 import com.idega.core.data.ICApplicationBindingHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.idegaweb.IWProperty;
+import com.idega.idegaweb.IWPropertyList;
+import com.idega.util.FileUtil;
 import com.idega.util.StringHandler;
 
 
-public class ICApplicationBindingBusinessBean extends IBOServiceBean   implements ICApplicationBindingBusiness{
+public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements ICApplicationBindingBusiness{
 
 	private static final int MAX_KEY_LENGTH = ICApplicationBindingBMPBean.MAX_KEY_LENGTH; 
 	
+	private static final String LEGACY_PROPERTY_FILE_NAME = "idegaweb.pxml";
+	
 	private ICApplicationBindingHome applicationBindingHome = null;
-	private IWMainApplicationSettings applicationsSettings = null;
+	
+	public void initializeBean() {
+		super.initializeBean();
+		fetchLegacyProperties();
+	}
 	
 	/**
 	 * Returns the corresponding value to the specified key elso null if the key is not found.
@@ -36,26 +51,15 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean   implement
 	 * If not the application settings are looked up: 
 	 * If a value is found a corresponding application binding is created.
 	 */
-	public String get(String key) throws IDOLookupException, CreateException {
-		String shortKey = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
+	public String get(String key) throws IOException {
 		try {
-			// fetch the value
-			return getICApplicationBinding(shortKey).getValue();
+			return getKey(key);
 		}
-		catch (FinderException ex) {
-			// failed?
-			// fetch the value from the applications settings, create a corresponding application binding
-			return getLegacyProperty(key, shortKey);
-		}
+		catch (IDOLookupException ex) {
+			throw new IOException(ex.getMessage());
+		}	
 	}
-	
-	private String getLegacyProperty(String key, String shortKey) throws IDOLookupException, CreateException {
-		String oldValue = getLegacyPropertyFromApplicationSettings(key);
-		// create new entry (does not create a new entry if the value is null)
-		createApplicationBindingCheckValue(shortKey, oldValue);
-		return oldValue;
-	}
-	
+
 	/**
 	 * Puts an entry into the application binding table.
 	 * If the value is null an existing entry is removed.
@@ -63,7 +67,67 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean   implement
 	 * @return the old value or null if there was no entry
 	 * 
 	 */
-	public String put(String key, String value) throws CreateException, IDOLookupException, RemoveException {
+	public String put(String key, String value) throws IOException {
+		try {
+			return putKeyValue(key, value);
+		}
+		catch (IDOLookupException ex) {
+			throw new IOException(ex.getMessage());
+		}
+		catch (CreateException ex) {
+			throw new IOException(ex.getMessage());
+		}
+		catch (RemoveException ex) {
+			throw new IOException(ex.getMessage());
+		}
+	}
+	
+	
+	public String remove(String key) throws IOException {
+		return put(key, null);
+	}
+	
+	
+	/**
+	 * Returns a set of the keys, elements are string objects
+	 */
+	public Set keySet() throws IOException {
+		try {
+			Collection coll = getICApplicationBindingHome().findAll();
+			if (coll == null) {
+				return new TreeSet();
+			}
+			// we are keeping things simple, the list is not very large
+			Set keyList = new TreeSet();
+			Iterator iterator = coll.iterator();
+			while (iterator.hasNext()) {
+				ICApplicationBinding binding = (ICApplicationBinding) iterator.next();
+				keyList.add(binding.getKey());
+			}
+			return keyList;
+		}
+		catch (IDOLookupException ex) {
+			throw new IOException(ex.getMessage());
+		}
+		catch (FinderException ex) {
+			throw new IOException(ex.getMessage());
+		}
+	}
+	
+	
+	private String getKey(String key) throws IDOLookupException {
+		String shortKey = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
+		try {
+			// fetch the value
+			return getICApplicationBinding(shortKey).getValue();
+		}
+		catch (FinderException ex) {
+			// failed?
+			return null;
+		}
+	}
+	
+	private String putKeyValue(String key, String value) throws CreateException, IDOLookupException, RemoveException {
 		key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
 		ICApplicationBinding applicationBinding = null;
 		String oldValue = null;
@@ -102,11 +166,37 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean   implement
 		return applicationBinding;
 	}
 
-	private String getLegacyPropertyFromApplicationSettings(String key) {
-		if (applicationsSettings == null) {
-			applicationsSettings = getIWApplicationContext().getApplicationSettings();
+	private void fetchLegacyProperties() {
+		String propertiesRealPath = getIWApplicationContext().getIWMainApplication().getPropertiesRealPath();
+		List toDelete = new ArrayList();
+		if (FileUtil.exists(propertiesRealPath, LEGACY_PROPERTY_FILE_NAME)) {
+			IWPropertyList legacyPropertyList = new IWPropertyList(propertiesRealPath, LEGACY_PROPERTY_FILE_NAME, false);
+			Iterator iterator = legacyPropertyList.getIWPropertyListIterator();
+			while (iterator.hasNext()) {
+				IWProperty property = (IWProperty) iterator.next();
+				String key = property.getKey();
+				try {
+					String newValue = get(key);
+					if (newValue == null) {
+						String oldValue = property.getValue();
+						// do not delete and store properties that are lists
+						if (oldValue != null && oldValue.length() != 0) {
+							put(key, oldValue);
+							toDelete.add(key);
+						}
+					}
+				}
+				catch (IOException ex) {
+					ex.printStackTrace(System.err);
+				}
+			}
+			Iterator deleteIterator = toDelete.iterator();
+			while (deleteIterator.hasNext()) {
+				String key = (String) deleteIterator.next();
+				///legacyPropertyList.removeProperty(key);
+			}
+			legacyPropertyList.store();
 		}
-		return applicationsSettings.getProperty(key);
 	}
 	
 	private ICApplicationBindingHome getICApplicationBindingHome() throws IDOLookupException {
@@ -120,5 +210,4 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean   implement
 		return getICApplicationBindingHome().findByPrimaryKey(key);
 	}
 		
-
 }

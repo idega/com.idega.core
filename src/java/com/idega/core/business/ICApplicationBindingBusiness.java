@@ -1,6 +1,6 @@
 /*
- * $Id: ICApplicationBindingBusiness.java,v 1.3 2005/10/20 14:47:01 thomas Exp $
- * Created on Oct 20, 2005
+ * $Id: ICApplicationBindingBusiness.java,v 1.4 2005/12/15 17:07:03 thomas Exp $
+ * Created on Dec 15, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -9,29 +9,42 @@
  */
 package com.idega.core.business;
 
-import javax.ejb.CreateException;
-import javax.ejb.RemoveException;
+import java.io.IOException;
+import java.util.Set;
 import com.idega.business.IBOService;
-import com.idega.data.IDOLookupException;
 
 
 /**
  * 
- *  Last modified: $Date: 2005/10/20 14:47:01 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/12/15 17:07:03 $ by $Author: thomas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface ICApplicationBindingBusiness extends IBOService {
 
 	/**
+	 * @see com.idega.core.business.ICApplicationBindingBusinessBean#initializeBean
+	 */
+	public void initializeBean() ;
+
+	/**
 	 * @see com.idega.core.business.ICApplicationBindingBusinessBean#get
 	 */
-	public String get(String key) throws IDOLookupException, CreateException, java.rmi.RemoteException;
+	public String get(String key) throws IOException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.core.business.ICApplicationBindingBusinessBean#put
 	 */
-	public String put(String key, String value) throws CreateException, IDOLookupException, RemoveException,
-			java.rmi.RemoteException;
+	public String put(String key, String value) throws IOException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.core.business.ICApplicationBindingBusinessBean#gremove
+	 */
+	public String remove(String key) throws IOException, java.rmi.RemoteException;
+
+	/**
+	 * @see com.idega.core.business.ICApplicationBindingBusinessBean#keySet
+	 */
+	public Set keySet() throws IOException, java.rmi.RemoteException;
 }
