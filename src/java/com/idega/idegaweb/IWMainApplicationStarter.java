@@ -31,10 +31,13 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.LogFactory;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
+import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.appserver.AppServerDetector;
 import com.idega.core.builder.presentation.ICPropertyHandler;
+import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.component.data.ICObjectType;
@@ -137,7 +140,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		//super.destroy();
 	}
 	protected void startDatabasePool(){
-		String poolType = iwma.getSettings().getProperty(IWMainApplicationSettings.IW_POOLMANAGER_TYPE);
+		String poolType = iwma.getSettings().getLegacyApplicationSettings().getProperty(IWMainApplicationSettings.IW_POOLMANAGER_TYPE);
 		if (poolType != null) {
 			if (poolType.equalsIgnoreCase("POOLMAN")) {
 				this.startPoolManDatabasePool();
@@ -232,7 +235,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	 */
 	protected boolean startJNDIDatasourcePool(){
 		boolean theReturn=false;
-		String url = iwma.getSettings().getProperty("JDBC_DATASOURCE_DEFAULT_URL");
+		String url = iwma.getSettings().getLegacyApplicationSettings().getProperty("JDBC_DATASOURCE_DEFAULT_URL");
 		if(url!=null){
 			ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_JDBC_DATASOURCE;
 			ConnectionBroker.setDefaultJDBCDatasourceURL(url);
@@ -331,15 +334,21 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			e.printStackTrace(System.err);
 		}
 		// reset singletons
-		iwma.shutdownApplicationServices();
+		IWMainApplication.shutdownApplicationServices();
 		// enable singletons
 		SingletonRepository.start();
 		
-		setApplicationVariables(iwma);
-		iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 		this.setDatabaseProperties();
 		registerSystemBeans();
 		this.startDatabasePool();
+		ICApplicationBindingBusiness applicationBindingBusiness = getApplicationBindingBusiness();
+		try {
+			applicationBindingBusiness.put("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
+			setApplicationVariables(applicationBindingBusiness);
+		}
+		catch (IOException ex) {
+			ex.printStackTrace(System.err);
+		}
 		this.startLogManager();
 		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
 		iwStyleManager.getStyleSheet(iwma);
@@ -410,39 +419,39 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 	}
 
-	protected void setApplicationVariables(IWMainApplication application){
-	    if (application.getSettings().getIfUsePreparedStatement()) {
-			application.getSettings().setUsePreparedStatement(true);
+	protected void setApplicationVariables(ICApplicationBindingBusiness applicationBindingBusiness) throws IOException {
+	    if (iwma.getSettings().getIfUsePreparedStatement()) {
+			iwma.getSettings().setUsePreparedStatement(true);
 			sendStartMessage("Using prepared statements");
 	    }
-		if (application.getSettings().getIfDebug()) {
-			application.getSettings().setDebug(true);
+		if (iwma.getSettings().getIfDebug()) {
+			iwma.getSettings().setDebug(true);
 			sendStartMessage("Debug mode is active");
 		}
-		if (application.getSettings().getIfAutoCreateStrings()) {
-			application.getSettings().setAutoCreateStrings(true);
+		if (iwma.getSettings().getIfAutoCreateStrings()) {
+			iwma.getSettings().setAutoCreateStrings(true);
 			sendStartMessage("AutoCreateLocalizedStrings is active");
 		}
-		if (application.getSettings().getIfAutoCreateProperties()) {
-			application.getSettings().setAutoCreateProperties(true);
+		if (iwma.getSettings().getIfAutoCreateProperties()) {
+			iwma.getSettings().setAutoCreateProperties(true);
 			sendStartMessage("AutoCreateProperties is active");
 		}
-		if (application.getSettings().getIfEntityBeanCaching()) {
+		if (iwma.getSettings().getIfEntityBeanCaching()) {
 			IDOContainer.getInstance().setBeanCaching(true);
 			sendStartMessage("EntityBeanCaching Active");
 		}
-		if (application.getSettings().getIfEntityQueryCaching()) {
+		if (iwma.getSettings().getIfEntityQueryCaching()) {
 			IDOContainer.getInstance().setQueryCaching(true);
 			sendStartMessage("EntityQueryCaching Active");
 		}
-		if (application.getSettings().getIfEntityAutoCreate()) {
+		if (iwma.getSettings().getIfEntityAutoCreate()) {
 			EntityControl.setAutoCreationOfEntities(true);
 			sendStartMessage("EntityAutoCreation Active");
 		}
 		else {
 			sendStartMessage("EntityAutoCreation Not Active");
 		}
-		String userSystem = iwma.getSettings().getProperty("IW_USER_SYSTEM");
+		String userSystem = applicationBindingBusiness.get("IW_USER_SYSTEM");
 		if(userSystem!=null){
 			if(userSystem.equalsIgnoreCase("OLD")){
 				sendStartMessage("Using Old idegaWeb User System");
@@ -450,18 +459,18 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 				IBOLookup.registerImplementationForBean(User.class,OldUserBMPBean.class);	
 			}
 		}
-		String accControlType = application.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
+		String accControlType = applicationBindingBusiness.get(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
 		if (accControlType == null) {
 			com.idega.presentation.Block.usingNewAcessControlSystem = true;
 		}
 		else if(!accControlType.equals("iw")){
 			com.idega.presentation.Block.usingNewAcessControlSystem = false;
 		}
-		String usingEvent = application.getSettings().getProperty(IWMainApplication._PROPERTY_USING_EVENTSYSTEM);
+		String usingEvent = applicationBindingBusiness.get(IWMainApplication._PROPERTY_USING_EVENTSYSTEM);
 		if (usingEvent != null && !"false".equalsIgnoreCase(usingEvent)) {
 			com.idega.presentation.text.Link.usingEventSystem = true;
 		}
-		String usingNewURLStructure = application.getSettings().getProperty(IWMainApplication.PROPERTY_NEW_URL_STRUCTURE);
+		String usingNewURLStructure = applicationBindingBusiness.get(IWMainApplication.PROPERTY_NEW_URL_STRUCTURE);
 		if (usingNewURLStructure != null && "false".equalsIgnoreCase(usingNewURLStructure)) {
 			sendStartMessage("NOT Using new URL Scheme");
 			IWMainApplication.useNewURLScheme=false;
@@ -469,7 +478,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		else{
 			sendStartMessage("Using new URL Scheme");
 		}
-		String usingJSFRendering = application.getSettings().getProperty(IWMainApplication.PROPERTY_JSF_RENDERING);
+		String usingJSFRendering = applicationBindingBusiness.get(IWMainApplication.PROPERTY_JSF_RENDERING);
 		if (usingJSFRendering != null && "false".equalsIgnoreCase(usingJSFRendering)) {
 			sendStartMessage("NOT Using JavaServer Faces Runtime");
 			IWMainApplication.useJSF=false;
@@ -662,7 +671,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	public void endIdegaWebApplication() {
 		//IWMainApplication application = IWMainApplication.getIWMainApplication(getServletContext());
 		//IWMainApplication application = iwma;
-		iwma.getSettings().setProperty("last_shutdown", com.idega.util.IWTimestamp.RightNow().toString());
+		try {
+			getApplicationBindingBusiness().put("last_shutdown", com.idega.util.IWTimestamp.RightNow().toString());
+		}
+		catch (IOException ex) {
+			ex.printStackTrace(System.err);
+		}
 		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
 		sendShutdownMessage("Saving style sheet");
 		iwStyleManager.writeStyleSheet();
@@ -727,6 +741,16 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 		catch (FinderException ex) {
 			sendStartMessage("[IWMainApplicationStarter] Could not find any ICObjects");
+		}
+	}
+
+	private ICApplicationBindingBusiness getApplicationBindingBusiness() {
+		IWApplicationContext iwac = iwma.getIWApplicationContext();
+		try {
+			return (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwac, ICApplicationBindingBusiness.class);
+		}
+		catch (IBOLookupException ex) {
+			throw new IBORuntimeException(ex.getMessage());
 		}
 	}
 }
