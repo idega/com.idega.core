@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.logging.Logger;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
@@ -21,6 +22,7 @@ import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
+import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
@@ -88,6 +90,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 	
 	public LoginBusinessBean() {
 	}
+	
+	public static Logger getLogger() {
+		return Logger.getLogger(LoginBusinessBean.class.getName());
+	}
+	
 	public static boolean isLoggedOn(IWUserContext iwc) {
 		return getUser(iwc)!=null;
 	    //if (iwc.getSessionAttribute(LoginAttributeParameter) == null) {
@@ -157,7 +164,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * @return True if logOut was succesful, false if it failed
 	 */
-	protected boolean logOutUser(IWContext iwc) throws RemoteException{
+	protected boolean logOutUser(IWContext iwc) {
 		try {
 
 			logOut(iwc);
@@ -313,17 +320,22 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected boolean isLoginByUUID(IWContext iwc) {
 		if( iwc.isParameterSet(PARAM_LOGIN_BY_UNIQUE_ID)){
 			String referer = iwc.getReferer();
-			String allowedReferers = iwc.getIWMainApplication().getSettings().getProperty(LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST,"");
+			String allowedReferers  = null;
+			try {
+				ICApplicationBindingBusiness applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwc, ICApplicationBindingBusiness.class);
+				allowedReferers = applicationBindingBusiness.get(LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST);
+			}
+			catch (IOException ex) {
+				getLogger().warning("[LoginBuiness] Could not get parameter "+ LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST);
+				allowedReferers = null;
+			}
 			if(allowedReferers==null || "".equals(allowedReferers)){
 				return true;
 			}
-			else{
-				if(referer!=null && allowedReferers.indexOf(referer)>=0){
-					return true;
-				}
+			if(referer!=null && allowedReferers.indexOf(referer)>=0){
+				return true;
 			}
 		}
-		
 		return false;
 	}
 	
