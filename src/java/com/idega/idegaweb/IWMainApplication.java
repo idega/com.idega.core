@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.156 2005/12/11 17:34:02 gimmi Exp $
+ * $Id: IWMainApplication.java,v 1.157 2005/12/15 17:12:56 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -28,7 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
-
+import java.util.logging.Logger;
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
@@ -47,12 +47,12 @@ import javax.faces.el.VariableResolver;
 import javax.faces.event.ActionListener;
 import javax.faces.validator.Validator;
 import javax.servlet.ServletContext;
-
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.idgenerator.business.UUIDGenerator;
@@ -84,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/12/11 17:34:02 $ by $Author: gimmi $
+ *  Last modified: $Date: 2005/12/15 17:12:56 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.156 $
+ * @version $Revision: 1.157 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -198,6 +198,25 @@ public class IWMainApplication	extends Application  implements MutableClass {
     	useJSF = DEFAULT_USE_JSF;
     	debug = DEFAULT_DEBUG_FLAG;
     }
+
+    public static Logger getLogger() {
+    	return Logger.getLogger(IWMainApplication.class.getName());
+    }
+    
+    public static void shutdownApplicationServices(){
+    	// very special singletons
+		IDOLookup.unload();
+		IBOLookup.unload();
+		ThreadContext.unload();
+    	// mutable classes
+    	ICLocaleBusiness.unload();
+		SQLSchemaAdapter.unload();
+		IWWelcomeFilter.unload();
+		BaseFilter.unload();
+		IWMainApplicationSettings.unload();
+		DatastoreInterface.unload();
+    }
+    
     
     public IWMainApplication(ServletContext application,AppServer appserver) {
         this.application = application;
@@ -686,21 +705,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		}
     }
 
-    public void shutdownApplicationServices(){
-    	// very special singletons
-		IDOLookup.unload();
-		IBOLookup.unload();
-		ThreadContext.unload();
-    	// mutable classes
-    	ICLocaleBusiness.unload();
-		SQLSchemaAdapter.unload();
-		IWWelcomeFilter.unload();
-		BaseFilter.unload();
-		DatastoreInterface.unload();
-    }
+
     
     public void storeStatus() {
-        getSettings().store();
         getSystemProperties().store();
         storeCryptoProperties();
         try {
@@ -1021,8 +1028,15 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * Only works when running on Tomcat
      */
     public boolean restartApplication() {
-        String apache = this.getSettings()
-                .getProperty(APACHE_RESTART_PARAMETER);//restart string
+    	String apache = null;
+    	try {
+    		ICApplicationBindingBusiness applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), ICApplicationBindingBusiness.class);
+    		applicationBindingBusiness.get(APACHE_RESTART_PARAMETER);//restart string)  		
+    	}
+    	catch (Exception ex) {
+    		getLogger().warning("[IWMainApplication] Could not fetch parameter " + APACHE_RESTART_PARAMETER + " from database");
+    	}
+
         String restartScript = "/idega/bin/apache_restart.sh";
 
         boolean restartApacheAlso = false;
@@ -1135,7 +1149,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     private void initCryptoUsage() {
-        String isUsed = getSettings().getProperty(USE_CRYPTO_PROPERTIES);
+        String isUsed = getSettings().getLegacyApplicationSettings().getProperty(USE_CRYPTO_PROPERTIES);
         isCryptoUsed = !"false".equals(isUsed);
     }
 
