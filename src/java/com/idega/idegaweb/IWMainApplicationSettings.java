@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.31 2005/11/29 15:30:03 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.32 2005/12/15 17:14:06 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -9,18 +9,21 @@
  *
  */
 package com.idega.idegaweb;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
-import javax.ejb.FinderException;
+import java.util.logging.Logger;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
+import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessController;
-import com.idega.core.data.ICApplicationBinding;
-import com.idega.core.data.ICApplicationBindingHome;
+import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.EntityControl;
-import com.idega.data.IDOLookup;
 import com.idega.presentation.Page;
+import com.idega.repository.data.MutableClass;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.LocaleUtil;
 /**
@@ -31,26 +34,17 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/11/29 15:30:03 $ by $Author: laddi $
+ * Last modified: $Date: 2005/12/15 17:14:06 $ by $Author: thomas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  */
-public class IWMainApplicationSettings extends IWPropertyList {
+
+
+public class IWMainApplicationSettings implements MutableClass {
 	private static final String CHARACTER_ENCODING_KEY = "character_encoding";
-	private static String DEFAULT_CHARACTER_ENCODING; //= "ISO-8859-1";
-	//public static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
-	
-	private static String DEFAULT_TEMPLATE_NAME = "defaulttemplatename";
-	private static String DEFAULT_TEMPLATE_CLASS = "defaulttemplateclass";
-	private static String DEFAULT_FONT = "defaultfont";
-	private static String DEFAULT_FONT_SIZE = "defaultfontsize";
-	private static String DEFAULT_LOCALE_KEY = "defaultlocale";
-	private static String _SERVICE_CLASSES_KEY = "iw_service_class_key";
-	private static final String IDO_ENTITY_BEAN_CACHING_KEY =
-		"ido_entity_bean_caching";
-	private static final String IDO_ENTITY_QUERY_CACHING_KEY =
-		"ido_entity_query_caching";
+	private static final String IDO_ENTITY_BEAN_CACHING_KEY = "ido_entity_bean_caching";
+	private static final String IDO_ENTITY_QUERY_CACHING_KEY = "ido_entity_query_caching";
 	public static final String IW_POOLMANAGER_TYPE = "iw_poolmanager";
 	public static final String AUTO_CREATE_LOCALIZED_STRINGS_KEY="auto-create-localized-strings";
 	public static final String AUTO_CREATE_PROPERTIES_KEY="auto-create-properties";
@@ -58,16 +52,52 @@ public class IWMainApplicationSettings extends IWPropertyList {
 
 	public final static String DEFAULT_MARKUP_LANGUAGE = Page.XHTML;
 	
+	private static String DEFAULT_CHARACTER_ENCODING; //= "ISO-8859-1";
+	//public static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
+	
+	private static String DEFAULT_TEMPLATE_NAME;
+	private static String DEFAULT_TEMPLATE_CLASS;
+	private static String DEFAULT_FONT;
+	private static String DEFAULT_FONT_SIZE;
+	private static String DEFAULT_LOCALE_KEY;
+	private static String _SERVICE_CLASSES_KEY;
+		
 	public static boolean DEBUG_FLAG = false;
 	public static boolean CREATE_STRINGS = true;
 	public static boolean CREATE_PROPERTIES = true;
 	
+	static {
+		// initialize all values
+		initializeClassVariables();
+	}
+	
+	public static void unload() {
+		initializeClassVariables();
+	}
+	
+	private static void initializeClassVariables() {
+		DEBUG_FLAG = false;
+		CREATE_STRINGS = true;
+		CREATE_PROPERTIES = true;
+		DEFAULT_CHARACTER_ENCODING = null;
+		DEFAULT_TEMPLATE_NAME = "defaulttemplatename";
+		DEFAULT_TEMPLATE_CLASS = "defaulttemplateclass";
+		DEFAULT_FONT = "defaultfont";
+		DEFAULT_FONT_SIZE = "defaultfontsize";
+		DEFAULT_LOCALE_KEY = "defaultlocale";
+		_SERVICE_CLASSES_KEY = "iw_service_class_key";
+	}
+	
+	static private Logger getLogger(){
+		 return Logger.getLogger(IWMainApplicationSettings.class.getName());
+	 }
+	
 	//instance variables:
-	private IWMainApplication application;
+	private IWMainApplication application = null;
 	private Locale cachedDefaultLocale = null;
+	private ICApplicationBindingBusiness applicationBindingBusiness = null;
 	
 	public IWMainApplicationSettings(IWMainApplication application) {
-		super(application.getPropertiesRealPath(), "idegaweb.pxml", true);
 		this.application=application;	
 	}
 	
@@ -75,83 +105,84 @@ public class IWMainApplicationSettings extends IWPropertyList {
 		return application;
 	}
 	
-	public void setDefaultTemplate(String templateName, String classname) {
-		setProperty(DEFAULT_TEMPLATE_NAME, templateName);
-		setProperty(DEFAULT_TEMPLATE_CLASS, classname);
-	}
-	public String getDefaultTemplateName() {
-		return getProperty(DEFAULT_TEMPLATE_NAME);
-	}
-	public String getDefaultTemplateClass() {
-		return getProperty(DEFAULT_TEMPLATE_CLASS);
-	}
-	public String getDefaultFont() {
-		return getProperty(DEFAULT_FONT);
-	}
-	public void setDefaultFont(String fontname) {
-		setProperty(DEFAULT_FONT, fontname);
-	}
-	public int getDefaultFontSize() {
-		return Integer.parseInt(getProperty(DEFAULT_FONT_SIZE));
-	}
-	public void setDefaultFontSize(int size) {
-		setProperty(DEFAULT_FONT_SIZE, size);
+	/**
+	 * 
+	 * @deprecated
+	 * 
+	 * Avoid using this method, use ICApplicationBindingBusiness.
+	 * This method points to ICApplicationBindingBusiness.
+	 * 
+	 */
+	public String getProperty(String key) {
+		return getFromApplicationBinding(key);
 	}
 	
 	/**
-	 * <p>
-	 * Gets the property value if set in the IC_APPLICATION_BINDING table.
-	 * </p>
-	 * @param propertyKey
-	 * @return
+	 * @deprecated
+	 * 
+	 * Avoid using this method, use ICApplicationBindingBusiness.
+	 * This method points to ICApplicationBindingBusiness.
+	 * 
+	 * ! No callers were found !
+	 * 
 	 */
-	public String getApplicationBindingProperty(String propertyKey){
-		ICApplicationBindingHome bindingHome;
-		try {
-			bindingHome = (ICApplicationBindingHome) IDOLookup.getHome(ICApplicationBinding.class);
-			ICApplicationBinding binding = bindingHome.findByPrimaryKey(propertyKey);
-			if(binding!=null){
-				return binding.getValue();
-			}
-		}
-		catch (Exception e) {
-		}
-		return null;
-	}
+//	public void setProperty(String key, String value) {
+//		putInApplicationBinding(key, value);
+//	}
+	
 	/**
-	 * <p>
-	 * Sets the property value or updates in the IC_APPLICATION_BINDING table.
-	 * </p>
-	 * @param propertyKey
-	 * @return
+	 * old method, propably not used at all
 	 */
-	public void setApplicationBindingProperty(String key,String value) {
-		ICApplicationBindingHome bindingHome;
-		try {
-			bindingHome = (ICApplicationBindingHome) IDOLookup.getHome(ICApplicationBinding.class);
-			ICApplicationBinding binding = null;
-			try{
-				bindingHome.findByPrimaryKey(key);
-			}
-			catch(FinderException fe){
-			}
-			if(binding==null){
-				binding = bindingHome.create();
-			}
-			binding.setKey(key);
-			binding.setValue(value);
-			binding.store();
-		}
-		catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void setDefaultTemplate(String templateName, String classname) {
+		putInApplicationBinding(DEFAULT_TEMPLATE_NAME, templateName);
+		putInApplicationBinding(DEFAULT_TEMPLATE_CLASS, classname);
+	}
+	
+	/**
+	 * old method, propably not used at all
+	 */
+	public String getDefaultTemplateName() {
+		return getFromApplicationBinding(DEFAULT_TEMPLATE_NAME);
+	}
+	
+	/**
+	 * old method, propably not used at all
+	 */
+	public String getDefaultTemplateClass() {
+		return getFromApplicationBinding(DEFAULT_TEMPLATE_CLASS);
+	}
+	
+	/**
+	 * old method, propably not used at all
+	 */
+	public String getDefaultFont() {
+		return getFromApplicationBinding(DEFAULT_FONT);
+	}
+	
+	/**
+	 * old method, propably not used at all
+	 */
+	public void setDefaultFont(String fontname) {
+		putInApplicationBinding(DEFAULT_FONT, fontname);
+	}
+	
+	/**
+	 * old method, propably not used at all
+	 */
+	public int getDefaultFontSize() {
+		return Integer.parseInt(getFromApplicationBinding(DEFAULT_FONT_SIZE));
+	}
+	
+	/**
+	 * old method, propably not used at all
+	 */
+	public void setDefaultFontSize(int size) {
+		putInApplicationBinding(DEFAULT_FONT_SIZE, Integer.toString(size));
 	}
 	
 	public void setDefaultLocale(Locale locale) {
-		//setProperty(DEFAULT_LOCALE_KEY, locale.toString());
 		String sLocale = locale.toString();
-		setApplicationBindingProperty(DEFAULT_LOCALE_KEY,sLocale);
+		putInApplicationBinding(DEFAULT_LOCALE_KEY,sLocale);
 		cachedDefaultLocale=null;
 	}
 	/**
@@ -161,23 +192,19 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	 **/
 	public Locale getDefaultLocale() {
 		if(cachedDefaultLocale==null){
-			String localeIdentifierFromApplicationBinding = getApplicationBindingProperty(DEFAULT_LOCALE_KEY);
-			String localeIdentifierFromProperty = getProperty(DEFAULT_LOCALE_KEY);
+			// Note: database entry always wins!
+			String localeIdentifier = getFromApplicationBinding(DEFAULT_LOCALE_KEY);
 			Locale locale = null;
 			boolean firstTimeSave = false;
 			Locale englishLocal = Locale.ENGLISH;
-			if (localeIdentifierFromApplicationBinding == null && localeIdentifierFromProperty==null) {
+			if (localeIdentifier ==null) {
 				//Set default to International English
 				locale = englishLocal;
 				firstTimeSave = true;
 			}
-			else if(localeIdentifierFromApplicationBinding!=null){
-				locale = LocaleUtil.getLocale(localeIdentifierFromApplicationBinding);
-			}
 			else{
-				locale = LocaleUtil.getLocale(localeIdentifierFromProperty);
+				locale = LocaleUtil.getLocale(localeIdentifier);
 			}
-			
 			if(!getApplication().isInDatabaseLessMode()){
 				List localesInUse = ICLocaleBusiness.getListOfLocalesJAVA();
 				//if it is a legal locale depending on the users settings then set that as the default otherwise use the first in the list
@@ -211,6 +238,8 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	public AccessController getDefaultAccessController() {
 		return new com.idega.core.accesscontrol.business.AccessControl();
 	}
+	
+	
 	/**
 	
 	 * Returns false if the removing fails
@@ -234,7 +263,7 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	 */
 	public List getServiceClasses() {
 		//return null;
-		IWPropertyList plist = getIWPropertyList(_SERVICE_CLASSES_KEY);
+		IWPropertyList plist = getLegacyApplicationSettings().getIWPropertyList(_SERVICE_CLASSES_KEY);
 		if (plist != null) {
 			List l = new Vector();
 			Iterator iter = plist.iterator();
@@ -251,72 +280,73 @@ public class IWMainApplicationSettings extends IWPropertyList {
 		}
 		return null;
 	}
+	
 	public void setEntityAutoCreation(boolean ifAutoCreate) {
-		this.setProperty("entity-auto-create", ifAutoCreate);
+		putInApplicationBinding("entity-auto-create", Boolean.toString(ifAutoCreate));
 		EntityControl.setAutoCreationOfEntities(ifAutoCreate);
 	}
+	
+	/**
+	 * Returns true if the is no entry.
+	 * 
+	 * @return
+	 */
 	public boolean getIfEntityAutoCreate() {
-		String value = getProperty("entity-auto-create");
+		String value = getFromApplicationBinding("entity-auto-create");
+		// returns true if the value is null!
 		if (value == null) {
 			return true;
 		} else {
-			return Boolean.valueOf(value).booleanValue();
+			return Boolean.getBoolean(value);
 		}
 	}
+	
 	public boolean getIfEntityBeanCaching() {
-		String value = getProperty("ido_entity_bean_caching");
-		if (value == null) {
-			return false;
-		} else {
-			return Boolean.valueOf(value).booleanValue();
-		}
+		String value = getFromApplicationBinding("ido_entity_bean_caching");
+		return Boolean.getBoolean(value);
 	}
+	
 	public boolean getIfEntityQueryCaching() {
-		String value = getProperty("ido_entity_query_caching");
-		if (value == null) {
-			return false;
-		} else {
-			return Boolean.valueOf(value).booleanValue();
-		}
+		String value = getFromApplicationBinding("ido_entity_query_caching");
+		return Boolean.getBoolean(value);
 	}
+	
 	public void setDebug(boolean ifDebug) {
-		this.setProperty("debug", ifDebug);
+		putInApplicationBinding("debug", Boolean.toString(ifDebug));
 		setDebugMode(ifDebug);
 	}
+	
 	public boolean getIfDebug() {
-		String value = getProperty("debug");
-		if (value == null) {
-			return false;
-		} else {
-			return Boolean.valueOf(value).booleanValue();
-		}
+		String value = getFromApplicationBinding("debug");
+		return Boolean.getBoolean(value);
 	}
+	
 	public void setUsePreparedStatement(boolean usage) {
-		this.setProperty("PreparedStatement", usage);
+		putInApplicationBinding("PreparedStatement", Boolean.toString(usage));
 		com.idega.data.DatastoreInterface.usePreparedStatement = usage;
 	}
+	
 	public boolean getIfUsePreparedStatement() {
-		String value = getProperty("PreparedStatement");
-		boolean ret = false;
-		if (value == null) {
-			ret =  false;
-		} else {
-			ret = Boolean.valueOf(value).booleanValue();
-		}
+		String value = getFromApplicationBinding("PreparedStatement");
+		boolean	ret = Boolean.getBoolean(value);
 		com.idega.data.DatastoreInterface.usePreparedStatement = ret;
 		return ret;
 	}
+	
 	public void setDebugMode(boolean debugFlag) {
 		DEBUG_FLAG = debugFlag;
 		com.idega.data.EntityFinder.debug = debugFlag;
 	}
+	
 	public boolean isDebugActive() {
 		return DEBUG_FLAG;
 	}
+	
 	public void setAutoCreateStrings(boolean ifAutoCreate) {
-		this.setProperty(AUTO_CREATE_LOCALIZED_STRINGS_KEY, ifAutoCreate);
+		this.putInApplicationBinding(AUTO_CREATE_LOCALIZED_STRINGS_KEY, Boolean.toString(ifAutoCreate));
 		setAutoCreateStringsMode(ifAutoCreate);
 	}
+	
 	/**
 	 * <p>
 	 * Gets if strings should be automatically created in bundle localization files
@@ -325,48 +355,59 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	 * @return
 	 */
 	public boolean getIfAutoCreateStrings() {
-		String value = getProperty(AUTO_CREATE_LOCALIZED_STRINGS_KEY);
+		String value = getFromApplicationBinding(AUTO_CREATE_LOCALIZED_STRINGS_KEY);
 		if (value == null) {
 			return true;
 		} else {
-			return Boolean.valueOf(value).booleanValue();
+			return Boolean.getBoolean(value);
 		}
 	}
+	
 	public static void setAutoCreateStringsMode(boolean ifAutoCreate) {
 		CREATE_STRINGS = ifAutoCreate;
 	}
+	
 	public static boolean isAutoCreateStringsActive() {
 		return CREATE_STRINGS;
 	}
+	
 	public void setEntityBeanCaching(boolean onOrOff) {
-		this.setProperty(IDO_ENTITY_BEAN_CACHING_KEY, onOrOff);
+		putInApplicationBinding(IDO_ENTITY_BEAN_CACHING_KEY, Boolean.toString(onOrOff));
 		com.idega.data.IDOContainer.getInstance().setBeanCaching(onOrOff);
 		if (!onOrOff) {
 			setEntityQueryCaching(false);
 		}
 	}
+	
 	public void setEntityQueryCaching(boolean onOrOff) {
-		this.setProperty(IDO_ENTITY_QUERY_CACHING_KEY, onOrOff);
+		putInApplicationBinding(IDO_ENTITY_QUERY_CACHING_KEY, Boolean.toString(onOrOff));
 		com.idega.data.IDOContainer.getInstance().setQueryCaching(onOrOff);
 		if (onOrOff) {
 			setEntityBeanCaching(true);
 		}
 	}
 	public void setAutoCreateProperties(boolean ifAutoCreate) {
-		this.setProperty(AUTO_CREATE_PROPERTIES_KEY, ifAutoCreate);
+		putInApplicationBinding(AUTO_CREATE_PROPERTIES_KEY, Boolean.toString(ifAutoCreate));
 		setAutoCreatePropertiesMode(ifAutoCreate);
 	}
+	
+	/**
+	 * Returns true if the is no entry.
+	 * 
+	 * @return
+	 */
 	public boolean getIfAutoCreateProperties() {
-		String value = getProperty(AUTO_CREATE_PROPERTIES_KEY);
+		String value = getFromApplicationBinding(AUTO_CREATE_PROPERTIES_KEY);
 		if (value == null) {
 			return true;
-		} else {
-			return Boolean.valueOf(value).booleanValue();
-		}
+		} 
+		return Boolean.getBoolean(value);
 	}
+	
 	public void setAutoCreatePropertiesMode(boolean ifAutoCreate) {
 		CREATE_PROPERTIES = ifAutoCreate;
 	}
+	
 	public boolean isAutoCreatePropertiesActive() {
 		return CREATE_PROPERTIES;
 	}
@@ -381,11 +422,12 @@ public class IWMainApplicationSettings extends IWPropertyList {
 		 */
 		return this.getDefaultLocale();
 	}
+	
 	/**
 	 * @return The character encoding string for example UTF-16 or the default ISO-8859-1
 	 */
 	public String getCharacterEncoding() {
-		String encodingProperty = getProperty(CHARACTER_ENCODING_KEY);
+		String encodingProperty = getFromApplicationBinding(CHARACTER_ENCODING_KEY);
 		//check the encodingproperty and return it if set:
 		if(encodingProperty!=null){
 			return encodingProperty;
@@ -405,24 +447,27 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	
 	
 	/**
+	 * 
 	 * Gets if the application should automatically write down bundle property files (.pxml) fiiles on shutdown.
 	 * This defaults to true;
 	 */
 	public boolean getWriteBundleFilesOnShutdown(){
-		String value = getProperty("write_bundle_files_on_shudown");
+		String value = getFromApplicationBinding("write_bundle_files_on_shudown");
 		if (value == null) {
 			return true;
 		} else {
-			return Boolean.valueOf(value).booleanValue();
+			return Boolean.getBoolean(value);
 		}
 	}
+	
 	/**
+	 * 
 	 * Sets if the application should automatically write down bundle property files (.pxml) fiiles on shutdown.
 	 * This defaults to true, but can be specified on startup with setting
 	 * the variable write_bundle_files_on_shudown=false in idegaweb.pxml
 	 */
 	public void setWriteBundleFilesOnShutdown(boolean ifWriteDown){
-		this.setProperty("write_bundle_files_on_shudown", ifWriteDown);
+		this.putInApplicationBinding("write_bundle_files_on_shudown", Boolean.toString(ifWriteDown));
 	}
 	
 	/**
@@ -433,7 +478,7 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	 * @return
 	 */
 	public String getDefaultMarkupLanguage(){
-		String value = getProperty(DEFAULT_MARKUP_LANGUAGE_KEY);
+		String value = getFromApplicationBinding(DEFAULT_MARKUP_LANGUAGE_KEY);
 		if (value == null) {
 			return DEFAULT_MARKUP_LANGUAGE;
 		} else {
@@ -444,6 +489,56 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	 * 
 	 */
 	public void setDefaultMarkupLanguage(String markupLanguage){
-		this.setProperty(DEFAULT_MARKUP_LANGUAGE_KEY, markupLanguage);
+		putInApplicationBinding(DEFAULT_MARKUP_LANGUAGE_KEY, markupLanguage);
 	}
+	
+	private String getFromApplicationBinding(String key) {
+		try {
+			return getApplicationBindingBusiness().get(key);
+		}
+		catch (IOException e) {
+			getLogger().warning("[IWMainApplicationSettings] Could not fetch key: " + key);
+		}
+		return null;
+	}
+
+	private String putInApplicationBinding(String key, String value) {
+		try {
+			return getApplicationBindingBusiness().put(key, value);
+		}
+		catch (IOException e) {
+			getLogger().warning("[IWMainApplicationSettings] Could not set key: " + key + " with value: " + value);
+		}
+		return null;
+	}
+	
+	private ICApplicationBindingBusiness getApplicationBindingBusiness() {
+		if (applicationBindingBusiness == null) {
+			IWApplicationContext iwac = getApplication().getIWApplicationContext();
+			try {
+				applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwac, ICApplicationBindingBusiness.class);
+			}
+			catch (IBOLookupException ex) {
+				getLogger().warning("[IWMainApplicationSettings] ICApplicationBindingBusiness could not be found");
+				throw new IBORuntimeException(ex.getMessage());
+			}
+		}
+		return applicationBindingBusiness;
+	}
+	
+	
+	/**
+	 * @deprecated
+	 * 
+	 * Do not use this method. Will be removed pretty soon.
+	 * It is a helper method, caller should store the list immediately, it is not stored anywhere. 
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public IWPropertyList getLegacyApplicationSettings() {
+		String propertiesRealPath = getApplication().getPropertiesRealPath();
+		return new IWPropertyList(propertiesRealPath, "idegaweb.pxml", true);
+	}
+	
 }
