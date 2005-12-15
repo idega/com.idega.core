@@ -42,6 +42,17 @@ public class FileUtil {
   	// empty
   }
 
+  public static boolean exists(String path, String fileNameWithoutFullPath) {
+	  String filePath = getFileNameWithPath(path, fileNameWithoutFullPath);
+	  return exists(filePath);
+  }
+	  
+	public static boolean exists(String fileNameWithFullPath)  {
+	  File file = new File(fileNameWithFullPath);
+	  return file.exists();
+  }
+  
+  
   public static void createFileAndFolder(String path,String fileNameWithoutFullPath){
     createFolder(path);
     String filePath = getFileNameWithPath(path,fileNameWithoutFullPath);
