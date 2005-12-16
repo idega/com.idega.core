@@ -1,5 +1,5 @@
 /*
- * $Id: XMLNamespace.java,v 1.3 2005/05/11 18:20:34 gummi Exp $
+ * $Id: XMLNamespace.java,v 1.4 2005/12/16 17:00:41 tryggvil Exp $
  *
  * Copyright (C) 2004 Idega. All Rights Reserved.
  *
@@ -9,18 +9,23 @@
  */
 package com.idega.xml;
 
+import java.io.Serializable;
 import org.jdom.Namespace;
 
 
 /**
  * A wrapper to hide JDOM in case we want to replace it later on.
  * 
- * Last modified: $Date: 2005/05/11 18:20:34 $ by $Author: gummi $
+ * Last modified: $Date: 2005/12/16 17:00:41 $ by $Author: tryggvil $
  *
  * @author Joakim Johnson
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
-public class XMLNamespace {
+public class XMLNamespace implements Serializable {
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 5808416982189649239L;
 	Namespace namespace;
 	
 	/**

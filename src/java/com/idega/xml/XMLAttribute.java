@@ -1,5 +1,5 @@
 /*
- * $Id: XMLAttribute.java,v 1.2 2002/04/06 19:07:46 tryggvil Exp $
+ * $Id: XMLAttribute.java,v 1.3 2005/12/16 17:00:41 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.xml;
 
+import java.io.Serializable;
 import org.jdom.Attribute;
 import org.jdom.DataConversionException;
 
@@ -16,8 +17,12 @@ import org.jdom.DataConversionException;
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
  * @version 1.0
  */
-public class XMLAttribute {
-  private Attribute _attribute = null;
+public class XMLAttribute implements Serializable{
+  /**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 1883155348794852652L;
+private Attribute _attribute = null;
 
   public XMLAttribute(String name, String value) {
     _attribute = new Attribute(name,value);

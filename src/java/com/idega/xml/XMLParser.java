@@ -1,5 +1,5 @@
 /*
- * $Id: XMLParser.java,v 1.5 2003/03/16 11:23:15 gimmi Exp $
+ * $Id: XMLParser.java,v 1.6 2005/12/16 17:00:41 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ package com.idega.xml;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.io.StringReader;
 
 import org.jdom.Document;
@@ -22,8 +23,12 @@ import org.jdom.input.SAXBuilder;
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
  * @version 1.0
  */
-public class XMLParser {
-  private SAXBuilder _builder = null;
+public class XMLParser implements Serializable{
+  /**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 25401278597901991L;
+private SAXBuilder _builder = null;
 
   /**
    *

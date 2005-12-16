@@ -1,5 +1,5 @@
 /*
- * $Id: XMLDocument.java,v 1.5 2005/01/25 00:38:17 tryggvil Exp $
+ * $Id: XMLDocument.java,v 1.6 2005/12/16 17:00:41 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.xml;
 
+import java.io.Serializable;
 import org.jdom.DocType;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -17,8 +18,12 @@ import org.jdom.Element;
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
  * @version 1.0
  */
-public class XMLDocument {
-  Document _doc = null;
+public class XMLDocument implements Serializable {
+  /**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = -7635890602981794914L;
+Document _doc = null;
   
   public XMLDocument(XMLElement element) {
     Element el = (Element)element.getElement();

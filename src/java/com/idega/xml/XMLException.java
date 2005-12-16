@@ -2,6 +2,7 @@ package com.idega.xml;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 
 /**
  * Title:
@@ -12,9 +13,13 @@ import java.io.PrintWriter;
  * @version 1.0
  */
 
-public class XMLException extends Exception {
+public class XMLException extends Exception implements Serializable{
 	
-  private Throwable _cause = null;
+  /**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = -6366683296379018233L;
+private Throwable _cause = null;
 	
   public XMLException() {
     super();

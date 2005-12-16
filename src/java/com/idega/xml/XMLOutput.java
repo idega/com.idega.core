@@ -1,5 +1,5 @@
 /*
- * $Id: XMLOutput.java,v 1.9 2005/06/06 23:49:50 palli Exp $
+ * $Id: XMLOutput.java,v 1.10 2005/12/16 17:00:41 tryggvil Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -78,8 +78,10 @@ public class XMLOutput {
 	public String outputString(XMLElement element) {
 		if (_output != null) {
 			Element el = (Element) element.getElement();
-			if (el != null)
+			if (el != null){
+				_output.getFormat().setOmitDeclaration(true);
 				return (_output.outputString(el));
+			}
 			else
 				return (null);
 		}

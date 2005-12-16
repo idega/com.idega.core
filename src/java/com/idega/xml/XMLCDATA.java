@@ -9,6 +9,7 @@
  */
 package com.idega.xml;
 
+import java.io.Serializable;
 import org.jdom.CDATA;
 
 /**
@@ -17,7 +18,11 @@ import org.jdom.CDATA;
  * @author <a href="palli@idega.is">Pall Helgason</a>
  * @version 1.0
  */
-public class XMLCDATA {
+public class XMLCDATA implements Serializable{
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 4174364764872333264L;
 	CDATA _data = null;
 	
 	public XMLCDATA(String content) {

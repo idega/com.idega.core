@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.22 2005/11/29 15:30:04 laddi Exp $
+ * $Id: XMLElement.java,v 1.23 2005/12/16 17:00:41 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -9,6 +9,7 @@
  */
 package com.idega.xml;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,8 +27,12 @@ import org.jdom.filter.Filter;
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
  * @version 1.0
  */
-public class XMLElement {
-  private Element _element = null;
+public class XMLElement implements Serializable{
+  /**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 4076776738191516564L;
+private Element _element = null;
 
   public XMLElement(String name) {
     _element = new Element(name);
