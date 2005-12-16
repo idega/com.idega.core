@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.32 2005/12/15 17:14:06 thomas Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.33 2005/12/16 12:43:15 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -34,10 +34,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/12/15 17:14:06 $ by $Author: thomas $
+ * Last modified: $Date: 2005/12/16 12:43:15 $ by $Author: thomas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 
 
@@ -104,31 +104,6 @@ public class IWMainApplicationSettings implements MutableClass {
 	private IWMainApplication getApplication(){
 		return application;
 	}
-	
-	/**
-	 * 
-	 * @deprecated
-	 * 
-	 * Avoid using this method, use ICApplicationBindingBusiness.
-	 * This method points to ICApplicationBindingBusiness.
-	 * 
-	 */
-	public String getProperty(String key) {
-		return getFromApplicationBinding(key);
-	}
-	
-	/**
-	 * @deprecated
-	 * 
-	 * Avoid using this method, use ICApplicationBindingBusiness.
-	 * This method points to ICApplicationBindingBusiness.
-	 * 
-	 * ! No callers were found !
-	 * 
-	 */
-//	public void setProperty(String key, String value) {
-//		putInApplicationBinding(key, value);
-//	}
 	
 	/**
 	 * old method, propably not used at all
@@ -228,9 +203,7 @@ public class IWMainApplicationSettings implements MutableClass {
 			cachedDefaultLocale=locale;
 			return locale;
 		}
-		else{
-			return cachedDefaultLocale;
-		}
+		return cachedDefaultLocale;
 	}
 	
 	
@@ -264,6 +237,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	public List getServiceClasses() {
 		//return null;
 		IWPropertyList plist = getLegacyApplicationSettings().getIWPropertyList(_SERVICE_CLASSES_KEY);
+		// list is not being modified, call of store not necessary
 		if (plist != null) {
 			List l = new Vector();
 			Iterator iter = plist.iterator();
@@ -296,9 +270,8 @@ public class IWMainApplicationSettings implements MutableClass {
 		// returns true if the value is null!
 		if (value == null) {
 			return true;
-		} else {
-			return Boolean.getBoolean(value);
-		}
+		} 
+		return Boolean.getBoolean(value);
 	}
 	
 	public boolean getIfEntityBeanCaching() {
@@ -358,9 +331,8 @@ public class IWMainApplicationSettings implements MutableClass {
 		String value = getFromApplicationBinding(AUTO_CREATE_LOCALIZED_STRINGS_KEY);
 		if (value == null) {
 			return true;
-		} else {
-			return Boolean.getBoolean(value);
-		}
+		} 
+		return Boolean.getBoolean(value);
 	}
 	
 	public static void setAutoCreateStringsMode(boolean ifAutoCreate) {
@@ -455,9 +427,8 @@ public class IWMainApplicationSettings implements MutableClass {
 		String value = getFromApplicationBinding("write_bundle_files_on_shudown");
 		if (value == null) {
 			return true;
-		} else {
-			return Boolean.getBoolean(value);
-		}
+		} 
+		return Boolean.getBoolean(value);
 	}
 	
 	/**
@@ -481,9 +452,8 @@ public class IWMainApplicationSettings implements MutableClass {
 		String value = getFromApplicationBinding(DEFAULT_MARKUP_LANGUAGE_KEY);
 		if (value == null) {
 			return DEFAULT_MARKUP_LANGUAGE;
-		} else {
-			return value;
-		}
+		} 
+		return value;
 	}
 	/**
 	 * 
@@ -530,8 +500,12 @@ public class IWMainApplicationSettings implements MutableClass {
 	/**
 	 * @deprecated
 	 * 
+	 * Use ICApplicationBindingBusiness.
+	 * 
 	 * Do not use this method. Will be removed pretty soon.
-	 * It is a helper method, caller should store the list immediately, it is not stored anywhere. 
+	 * It is a temporary method.
+	 * 
+	 * !!!!!!!!!!!!!! Note: caller should store the list immediately, store method is not called anywhere !!!!!!!!!!!!!!!!!!!!!!!!
 	 * 
 	 * @param key
 	 * @return
