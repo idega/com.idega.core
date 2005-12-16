@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.106 2005/11/29 15:30:04 laddi Exp $
+ * $Id: AccessControl.java,v 1.107 2005/12/16 12:29:29 thomas Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -9,6 +9,7 @@
  */
 package com.idega.core.accesscontrol.business;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,11 +22,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Logger;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
+import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICPermissionHome;
 import com.idega.core.accesscontrol.data.ICRole;
@@ -36,6 +41,7 @@ import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.builder.data.ICDynamicPageTrigger;
 import com.idega.core.builder.data.ICPage;
+import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.file.data.ICFile;
@@ -67,12 +73,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2005/11/29 15:30:04 $ by $Author: laddi $
+ * Last modified: $Date: 2005/12/16 12:29:29 $ by $Author: thomas $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.106 $
+ * @version $Revision: 1.107 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -329,15 +335,15 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * 
 	 * @deprecated only used in idegaWeb Project removed in next major version
 	 */
-	public boolean hasPermission(String permissionKey, int category, String identifier, IWUserContext iwc) throws Exception {
+	public boolean hasPermission(String permissionKey, int category, String identifier, IWUserContext iwuc) throws Exception {
 		Boolean myPermission = null;
 		// Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
-		if (isAdmin(iwc)) {
+		if (isAdmin(iwuc)) {
 			return true;
 		}
 
-		User user = LoginBusinessBean.getUser(iwc);
+		User user = LoginBusinessBean.getUser(iwuc);
 
 		Collection groups = null;
 		List[] permissionOrder = null; // Everyone, users, user, primaryGroup, otherGroups
@@ -349,17 +355,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 		else {
 
-			String recurseParents = iwc.getApplicationContext().getApplicationSettings().getProperty("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
+			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
 			if ( !"true".equals(recurseParents) ) { //old crap
 				//			TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
-				groups = LoginBusinessBean.getPermissionGroups(iwc);
+				groups = LoginBusinessBean.getPermissionGroups(iwuc);
 			}
 			else { //the correct version
-				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwc);
+				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwuc);
 
 			}
 
-			GenericGroup primaryGroup = LoginBusinessBean.getPrimaryGroup(iwc);
+			GenericGroup primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
 
 			if (groups != null && !groups.isEmpty()) {
 				if (primaryGroup != null) {
@@ -392,7 +398,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		if (permissionKey.equals(AccessControl.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessControl.PERMISSION_KEY_VIEW)) {
-			return isOwner(category, identifier, iwc);
+			return isOwner(category, identifier, iwuc);
 		}
 		else {
 			return false;
@@ -515,15 +521,15 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * 
 	 * @see com.idega.core.accesscontrol.business.AccessController#hasPermission(String, PresentationObject, IWUserContext)
 	 */
-	public boolean hasPermission(String permissionKey, Object obj, IWUserContext iwc) throws Exception {
+	public boolean hasPermission(String permissionKey, Object obj, IWUserContext iwuc) throws Exception {
 		Boolean myPermission = null;
 		// Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
-		if (isAdmin(iwc)) { //this is almost a security hole - eiki
+		if (isAdmin(iwuc)) { //this is almost a security hole - eiki
 			return true;
 		}
 
-		User user = LoginBusinessBean.getUser(iwc);
+		User user = LoginBusinessBean.getUser(iwuc);
 
 		Collection groups = null;
 		//The order that is checked for : Everyone Group, Logged on users group, user, primaryGroup, otherGroups
@@ -538,16 +544,16 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 		else { //user check
 
-			String recurseParents = iwc.getApplicationContext().getApplicationSettings().getProperty("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
+			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
 			if ( !"true".equals(recurseParents) )  { //old crap
 				//TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
-				groups = LoginBusinessBean.getPermissionGroups(iwc);
+				groups = LoginBusinessBean.getPermissionGroups(iwuc);
 			}
 			else { //the correct version
-				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwc);
+				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwuc);
 			}
 
-			GenericGroup primaryGroup = LoginBusinessBean.getPrimaryGroup(iwc);
+			GenericGroup primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
 
 			if (groups != null && !groups.isEmpty()) {
 				if (primaryGroup != null) {
@@ -579,7 +585,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			// ([0])Everyone, ([1])users, ([2])user, ([3])primaryGroup, ([4])otherGroups
 		}
 
-		myPermission = checkForPermission(usersGroupsToCheckAgainstPermissions, obj, permissionKey,  iwc);
+		myPermission = checkForPermission(usersGroupsToCheckAgainstPermissions, obj, permissionKey,  iwuc);
 
 		boolean hasPermission = false;
 		if (myPermission != null) {
@@ -592,10 +598,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		//if the user is an owner these rights are given. double checking really
 		if (permissionKey.equals(AccessControl.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessControl.PERMISSION_KEY_VIEW)) {
 			if (obj instanceof Group) {
-				return isGroupOwnerRecursively((Group) obj, iwc); //because owners parents groups always get read/write access
+				return isGroupOwnerRecursively((Group) obj, iwuc); //because owners parents groups always get read/write access
 			}
 			else {
-				return isOwner(obj, iwc);
+				return isOwner(obj, iwuc);
 			}
 		}
 		else {
@@ -3391,6 +3397,23 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
   		//return true;
 	  }
+	  
+	  
+	  private String getRecurseParentsSettings(IWApplicationContext iwac) {
+	       try {
+		      	ICApplicationBindingBusiness applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwac, ICApplicationBindingBusiness.class);
+		      	String access =applicationBindingBusiness.get("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
+		      	// original condition, everything is true if not null
+		      	return access;
+	      }
+	      catch (IBOLookupException ex) {
+	      	throw new IBORuntimeException(ex);
+	      }
+	      catch (IOException ex) {
+	      	Logger.getLogger(AccessControl.class.getName()).warning("[AccessControl] Could not look up parameter TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
+	      	return null;
+	      }
+	}
 	
 	/**
 	 * @author eiki
