@@ -1,5 +1,5 @@
 /*
- * $Id: ICApplicationBindingBusinessBean.java,v 1.5 2005/12/15 17:07:03 thomas Exp $
+ * $Id: ICApplicationBindingBusinessBean.java,v 1.6 2005/12/18 08:23:02 laddi Exp $
  * Created on Oct 7, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -192,7 +192,7 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements
 			}
 			Iterator deleteIterator = toDelete.iterator();
 			while (deleteIterator.hasNext()) {
-				String key = (String) deleteIterator.next();
+				deleteIterator.next();
 				///legacyPropertyList.removeProperty(key);
 			}
 			legacyPropertyList.store();
