@@ -1842,7 +1842,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		+"and div.ic_group_id=mg2.ic_group_id "
 		+"and mg2.ic_metadata_id=m2.ic_metadata_id "
 		+"and m2.metadata_name='CLUBDIV_CONN' "
-		+"and m2.metadata_value in ('"+leagueID+"','1_"+leagueID+"')";
+		+"and m2.metadata_value in ('"+leagueID+"')";
 		return (Integer) this.idoFindOnePKBySQL(sql);
 	}
 	
