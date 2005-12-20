@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURI.java,v 1.5 2005/12/12 11:38:13 tryggvil Exp $
+ * $Id: IWActionURI.java,v 1.6 2005/12/20 16:42:50 tryggvil Exp $
  * Created on Jan 31, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,10 +15,10 @@ import com.idega.idegaweb.IWMainApplication;
 
 /**
  * 
- *  Last modified: $Date: 2005/12/12 11:38:13 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2005/12/20 16:42:50 $ by $Author: tryggvil $
  * A "parser" class for an action URI that divides an action uri into three parts: action, path and identifier
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class IWActionURI {
 	
@@ -220,7 +220,10 @@ public class IWActionURI {
 		buffer.append(getActionPart());
 		buffer.append("/");
 		buffer.append(getHandlerIdentifier());
-		buffer.append(getPathPart());
+		String pathPart = getPathPart();
+		if(pathPart!=null){
+			buffer.append(pathPart);
+		}
 		return buffer.toString();
 	}
 	
