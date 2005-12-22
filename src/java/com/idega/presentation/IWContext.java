@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.129 2005/12/12 16:18:35 tryggvil Exp $
+ * $Id: IWContext.java,v 1.130 2005/12/22 12:16:13 thomas Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -76,10 +76,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/12/12 16:18:35 $ by $Author: tryggvil $
+ * Last modified: $Date: 2005/12/22 12:16:13 $ by $Author: thomas $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.129 $
+ * @version $Revision: 1.130 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -976,7 +976,7 @@ implements IWUserContext, IWApplicationContext {
 				fromPage.setToRedirect(URL.toString(),secondInterval);
 			else
 				fromPage.setToRedirect(URL.toString());
-			fromPage.empty();
+			//fromPage.empty();
 		//}
 		//catch (RemoteException e)
 		//{
