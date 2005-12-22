@@ -1,6 +1,6 @@
 /*
- * $Id: UserBusinessHome.java,v 1.4 2005/11/01 16:11:58 eiki Exp $
- * Created on Nov 1, 2005
+ * $Id: UserBusinessHome.java,v 1.4.2.1 2005/12/22 19:59:57 eiki Exp $
+ * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import com.idega.business.IBOHome;
 
 /**
  * 
- *  Last modified: $Date: 2005/11/01 16:11:58 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/12/22 19:59:57 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.4.2.1 $
  */
 public interface UserBusinessHome extends IBOHome {
 

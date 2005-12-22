@@ -1,3 +1,13 @@
+/*
+ * $Id: UserBusinessBean.java,v 1.195.2.2 2005/12/22 19:59:57 eiki Exp $
+ * Created in 2002 by gummi
+ * 
+ * Copyright (C) 2002-2005 Idega. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega.
+ * Use is subject to license terms.
+ *
+ */
 package com.idega.user.business;
 
 import java.rmi.RemoteException;
@@ -87,16 +97,21 @@ import com.idega.util.datastructures.NestedSetsContainer;
 import com.idega.util.text.Name;
 
 /**
- * Title: UserBusinessBean <br>
- * Description: A collection of methods to create, remove, lookup and manipulate
- * a User. See also GroupBusinessBean <br>
- * Copyright: Copyright (c) 2002-2004 <br>
- * Company: Idega Software <br>
+ * <p>
+ * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
+ * </p>
+ * Copyright (C) idega software 2002-2005 <br/>
+ * Last modified: $Date: 2005/12/22 19:59:57 $ by $Author: eiki $
  * 
- * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson </a>, <a href="eiki@idega.is">Eirikur S. Hrafnsson </a> <br>
- * @version 1.6
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version $Revision: 1.195.2.2 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness, IWLDAPConstants {
+
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 5915206628531551728L;
 
 	// remove use of "null" when metadata can be removed
 	private static final String NULL = "null";
@@ -287,6 +302,85 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		String fullName = name.getName();
 		user = createUserByPersonalIDIfDoesNotExist(fullName, personalID, gender, dateOfBirth);
 		return user;
+	}
+	
+	/**
+	 * 
+	 * Creates or update a user with the supplied parameters and then calls callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user);
+	 * @param pin PersonalId e.g. social security number MUST NOT BE NULL
+	 * @param UUID Unique id MUST NOT BE NULL
+	 * @param fullName
+	 * @param gender as a string either "f" for female or "m" for male 
+	 * @param dateOfBirth as a String in the format yyyy-MM-dd
+	 * @throws CreateException
+	 * @throws RemoteException 
+	 */
+	public void createUserByPersonalIdAndUUIDOrUpdate(String pin, String UUID, String fullName, String gender, String dateOfBirth) throws CreateException, RemoteException {
+		
+		if (UUID != null && pin != null) {
+			User user = null;
+			try {
+				user = getUserByUniqueId(pin);
+			}
+			catch (FinderException e) {
+				log("User not found by UUID:"+UUID+" trying pin:"+pin);
+			}
+			try {
+				if (user == null) {
+					user = getUser(pin);
+					user.setUniqueId(UUID);
+				}
+			}
+			catch (FinderException e) {
+				log("User not found by pin:"+pin+" creating a new user...");
+			}
+			
+			if (user == null) {
+				user = createUserByPersonalIDIfDoesNotExist(fullName, pin, null, null);
+				user.setUniqueId(UUID);
+				user.store();
+			}
+			
+			updateUser(user, fullName, gender, dateOfBirth);
+			callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user);
+			
+		}
+	}
+	
+	/**
+	 * Updates the user with fullName,gender (f/m) and date of birth (yyy-MM-dd)
+	 * @param user
+	 * @param name
+	 * @param gender
+	 * @param dateOfBirth
+	 */
+	public void updateUser(User user, String name, String gender, String dateOfBirth) {
+		if (name != null) {
+			user.setFullName(name);
+		}
+		if (dateOfBirth != null) {
+			java.sql.Date birthDate = null;
+			try {
+				birthDate = java.sql.Date.valueOf(dateOfBirth);
+				user.setDateOfBirth(birthDate);
+			}
+			catch (IllegalArgumentException e) {
+				log("UserBusiness: date of birth format is invalid.Should be yyyy-MM-dd : "
+						+ dateOfBirth);
+			}
+		}
+		if (gender != null) {
+			Integer genderId;
+			try {
+				genderId = getGenderId(gender);
+				user.setGender(genderId);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		user.store();
 	}
 
 	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID,
@@ -697,8 +791,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			// ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.data.PhoneBMPBean.getStaticInstance(Phone.class));
 			if (result != null) {
 				for (int i = 0; i < result.length; i++) {
-					if (((Phone) result[i]).getPhoneTypeId() == phoneTypeId) {
-						return (Phone) result[i];
+					if (result[i].getPhoneTypeId() == phoneTypeId) {
+						return result[i];
 					}
 				}
 			}
@@ -804,7 +898,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public String getUserJob(User user) {
-		String job = (String) user.getMetaData(JOB_META_DATA_KEY);
+		String job = user.getMetaData(JOB_META_DATA_KEY);
 		if (job == null || NULL.equals(job))
 			return "";
 		else
@@ -820,7 +914,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public String getUserWorkPlace(User user) {
-		String workPlace = (String) user.getMetaData(WORKPLACE_META_DATA_KEY);
+		String workPlace = user.getMetaData(WORKPLACE_META_DATA_KEY);
 		if (workPlace == null || NULL.equals(workPlace))
 			return "";
 		else
@@ -2540,7 +2634,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId, boolean leaveCopyOfUserInCurrentGroup) {
 		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");
-		Locale locale = application.getSettings().getDefaultLocale();
+		Locale locale = iwuc.getCurrentLocale();
+		
 		IWResourceBundle iwrb = bundle.getResourceBundle(locale);
 		Map result = new HashMap();
 		// check if the source and the target are the same
@@ -2603,7 +2698,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			// if there aren't any problems the message is null
 			if (message == null) {
-				message = moveUserWithoutTest(user, parentGroup, targetGroup, iwuc.getCurrentUser());
+				message = moveUserWithoutTest(iwrb,user, parentGroup, targetGroup, iwuc.getCurrentUser());
 			}
 			// if the user was sucessfully moved the message is null
 			result.put(userId, message);
@@ -2614,7 +2709,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public Map moveUsers(IWUserContext iwuc, Collection groups, Collection groupTypesToMoveAmong) {
 		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");
-		Locale locale = application.getSettings().getDefaultLocale();
+		Locale locale = iwuc.getCurrentLocale();
 		IWResourceBundle iwrb = bundle.getResourceBundle(locale);
 		String noSuitableGroupMessage = iwrb.getLocalizedString("user_suitable_group_could_not_be_found",
 				"A suitable group for the user could not be found.");
@@ -2725,7 +2820,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					Group targetGr = (Group) target.iterator().next();
 					int target_id = ((Integer) targetGr.getPrimaryKey()).intValue();
 					if (source_id != target_id) {
-						String message = moveUserWithoutTest(user, source, targetGr, iwuc.getCurrentUser());
+						String message = moveUserWithoutTest(iwrb,user, source, targetGr, iwuc.getCurrentUser());
 						// if there is not a transaction error the message is
 						// null!
 						map.put(user.getPrimaryKey(), message);
@@ -2799,11 +2894,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return !coll.isEmpty();
 	}
 
-	private String moveUserWithoutTest(User user, Group parentGroup, Group targetGroup, User currentUser) {
-	    return moveUserWithoutTest(user, parentGroup, targetGroup, currentUser, false);
+	private String moveUserWithoutTest(IWResourceBundle iwrb,User user, Group parentGroup, Group targetGroup, User currentUser) {
+	    return moveUserWithoutTest(iwrb, user, parentGroup, targetGroup, currentUser, false);
 	}
 
-	private String moveUserWithoutTest(User user, Group parentGroup, Group targetGroup, User currentUser, boolean leaveCopyOfUserInCurrentGroup) {
+	private String moveUserWithoutTest(IWResourceBundle iwrb, User user, Group parentGroup, Group targetGroup, User currentUser, boolean leaveCopyOfUserInCurrentGroup) {
+		
 		int userId = ((Integer) user.getPrimaryKey()).intValue();
 		int targetGroupId = ((Integer) targetGroup.getPrimaryKey()).intValue();
 		int parentGroupId = -1;
@@ -2879,15 +2975,24 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				return e.getMessage();
 			}
 			
-			return "User could not be moved because of the error: "
-							+ e.getMessage()
-							+ " please try again or contact the system administrator if you think it is a server error.";
+			String msg = e.getMessage();
 			
+			String errorMessage = iwrb.getLocalizedString(
+					"new_user.transaction_rollback",
+					"User could not be created/added because of the error: ")
+					+ msg
+					+ iwrb.getLocalizedString("new_user.try_again"," Please try again or contact the system administrator if you think it is a server error.");
+			
+			
+			return errorMessage;
 			
 		}
 		return null;
 	}
 
+	/**
+	 * Returns a localized error message (if the UserGroupPlugin localized it!) or null if there was no error.
+	 */
 	public String isUserSuitedForGroup(User user, Group targetGroup) {
 		try {
 			String grouptype = targetGroup.getGroupType();
