@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.199 2005/12/05 11:53:56 sigtryggur Exp $
+ * $Id: UserBusinessBean.java,v 1.200 2005/12/22 19:04:18 eiki Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -94,10 +94,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2005/12/05 11:53:56 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2005/12/22 19:04:18 $ by $Author: eiki $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.199 $
+ * @version $Revision: 1.200 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -2627,7 +2627,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId, boolean leaveCopyOfUserInCurrentGroup) {
 		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");
-		Locale locale = application.getSettings().getDefaultLocale();
+		Locale locale = iwuc.getCurrentLocale();
+		
 		IWResourceBundle iwrb = bundle.getResourceBundle(locale);
 		Map result = new HashMap();
 		// check if the source and the target are the same
@@ -2690,7 +2691,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			// if there aren't any problems the message is null
 			if (message == null) {
-				message = moveUserWithoutTest(user, parentGroup, targetGroup, iwuc.getCurrentUser());
+				message = moveUserWithoutTest(iwrb,user, parentGroup, targetGroup, iwuc.getCurrentUser());
 			}
 			// if the user was sucessfully moved the message is null
 			result.put(userId, message);
@@ -2701,7 +2702,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public Map moveUsers(IWUserContext iwuc, Collection groups, Collection groupTypesToMoveAmong) {
 		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");
-		Locale locale = application.getSettings().getDefaultLocale();
+		Locale locale = iwuc.getCurrentLocale();
 		IWResourceBundle iwrb = bundle.getResourceBundle(locale);
 		String noSuitableGroupMessage = iwrb.getLocalizedString("user_suitable_group_could_not_be_found",
 				"A suitable group for the user could not be found.");
@@ -2812,7 +2813,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					Group targetGr = (Group) target.iterator().next();
 					int target_id = ((Integer) targetGr.getPrimaryKey()).intValue();
 					if (source_id != target_id) {
-						String message = moveUserWithoutTest(user, source, targetGr, iwuc.getCurrentUser());
+						String message = moveUserWithoutTest(iwrb,user, source, targetGr, iwuc.getCurrentUser());
 						// if there is not a transaction error the message is
 						// null!
 						map.put(user.getPrimaryKey(), message);
@@ -2886,11 +2887,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return !coll.isEmpty();
 	}
 
-	private String moveUserWithoutTest(User user, Group parentGroup, Group targetGroup, User currentUser) {
-	    return moveUserWithoutTest(user, parentGroup, targetGroup, currentUser, false);
+	private String moveUserWithoutTest(IWResourceBundle iwrb,User user, Group parentGroup, Group targetGroup, User currentUser) {
+	    return moveUserWithoutTest(iwrb, user, parentGroup, targetGroup, currentUser, false);
 	}
 
-	private String moveUserWithoutTest(User user, Group parentGroup, Group targetGroup, User currentUser, boolean leaveCopyOfUserInCurrentGroup) {
+	private String moveUserWithoutTest(IWResourceBundle iwrb, User user, Group parentGroup, Group targetGroup, User currentUser, boolean leaveCopyOfUserInCurrentGroup) {
+		
 		int userId = ((Integer) user.getPrimaryKey()).intValue();
 		int targetGroupId = ((Integer) targetGroup.getPrimaryKey()).intValue();
 		int parentGroupId = -1;
@@ -2966,15 +2968,24 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				return e.getMessage();
 			}
 			
-			return "User could not be moved because of the error: "
-							+ e.getMessage()
-							+ " please try again or contact the system administrator if you think it is a server error.";
+			String msg = e.getMessage();
 			
+			String errorMessage = iwrb.getLocalizedString(
+					"new_user.transaction_rollback",
+					"User could not be created/added because of the error: ")
+					+ msg
+					+ iwrb.getLocalizedString("new_user.try_again"," Please try again or contact the system administrator if you think it is a server error.");
+			
+			
+			return errorMessage;
 			
 		}
 		return null;
 	}
 
+	/**
+	 * Returns a localized error message (if the UserGroupPlugin localized it!) or null if there was no error.
+	 */
 	public String isUserSuitedForGroup(User user, Group targetGroup) {
 		try {
 			String grouptype = targetGroup.getGroupType();
