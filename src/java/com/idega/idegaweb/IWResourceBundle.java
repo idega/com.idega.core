@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.35 2005/08/11 18:47:20 tryggvil Exp $
+ * $Id: IWResourceBundle.java,v 1.35.2.1 2005/12/22 20:01:00 eiki Exp $
  *
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  *
@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
@@ -22,7 +23,6 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
-
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.presentation.Image;
 import com.idega.util.EnumerationIteratorWrapper;
@@ -35,10 +35,10 @@ import com.idega.util.StringHandler;
  * There is an instance of this class for each localization file (e.g. com.idega.core.bundle/en.locale/Localized.strings)
  * and is an extension to the standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2005/08/11 18:47:20 $ by $Author: tryggvil $<br/>
+ * Last modified: $Date: 2005/12/22 20:01:00 $ by $Author: eiki $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.35.2.1 $
  */
 public class IWResourceBundle extends ResourceBundle {
 
@@ -170,9 +170,11 @@ public class IWResourceBundle extends ResourceBundle {
 		}
 	}
 
-	/**
-	 * Uses getString but returns null if resource is not found
-	 */
+/**
+ * Uses getString but returns null if resource is not found
+ * @param key
+ * @return
+ */
 	public String getLocalizedString(String key) {
 
 		try {
@@ -186,9 +188,12 @@ public class IWResourceBundle extends ResourceBundle {
 		}
 	}
 	
-	/**
-	* Gets a localized stringvalue  and sets the value as returnValueIfNotFound if it is previously not found and returns it.
-	*/
+/**
+ *  Gets a localized stringvalue and sets the value as returnValueIfNotFound if it is previously not found and returns it.
+ * @param key
+ * @param returnValueIfNotFound
+ * @return
+ */
 	public String getLocalizedString(String key, String returnValueIfNotFound) {
 		String returnString = getLocalizedString(key);
 		if ( ( (returnString == null) || StringHandler.EMPTY_STRING.equals(returnString) ) && returnValueIfNotFound!=null ) {//null check on return value IS necessary
@@ -202,6 +207,27 @@ public class IWResourceBundle extends ResourceBundle {
 		}
 		else
 			return returnString;
+	}
+	
+	/**
+	 * 	 * Gets a localized stringvalue and sets the value as returnValueIfNotFound if it is previously not found and <br>
+	 * THEN formats the string using java.text.MessageFormat.format(thestring,arrayofvariables).<br>
+	 * The variables in the array then replace varibles in the localized string <br>
+	 * For example: the localized string : "Hello my name is {0}" and the array contains object that implements the toString() method.<br>
+	 * When we call java.text.MessageFormat.format(thestring,arrayofvariables) the variable {0} is then replaced with the arrayofvariables[0].toString() item of the array.<br>
+	 * @param key
+	 * @param returnValueIfNotFound
+	 * @param messageFormatVariables an Object array of .toString() implementing objects
+	 * @return the string localized and formatted
+	 */
+	public String getLocalizedAndFormattedString(String key, String returnValueIfNotFound, Object[] messageFormatVariables) {
+		String localizedAndFormatted = getLocalizedString(key, returnValueIfNotFound);
+		
+		if(messageFormatVariables!=null){
+			localizedAndFormatted = MessageFormat.format(localizedAndFormatted, messageFormatVariables);
+		}
+		
+		return localizedAndFormatted;
 	}
 
 	/**
