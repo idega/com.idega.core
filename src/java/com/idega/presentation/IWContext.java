@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.130 2005/12/22 12:16:13 thomas Exp $
+ * $Id: IWContext.java,v 1.131 2005/12/23 11:18:40 thomas Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -76,10 +76,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/12/22 12:16:13 $ by $Author: thomas $
+ * Last modified: $Date: 2005/12/23 11:18:40 $ by $Author: thomas $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.130 $
+ * @version $Revision: 1.131 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -976,8 +976,16 @@ implements IWUserContext, IWApplicationContext {
 				fromPage.setToRedirect(URL.toString(),secondInterval);
 			else
 				fromPage.setToRedirect(URL.toString());
-			//fromPage.empty();
-		//}
+			
+			// comment by thomas: 
+			// the call of empty() causes a loop of requests. 
+			// The server might crash. 
+			// This problem appears in platform 3.
+			// do not call empty.
+			// DO NOT CALL: fromPage.empty();
+			// The reason for the problem is not clear, but it works in this way.
+		
+			//}
 		//catch (RemoteException e)
 		//{
 		//	e.printStackTrace();
