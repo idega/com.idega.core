@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.19 2005/12/15 17:19:03 thomas Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.20 2005/12/23 12:40:57 thomas Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -22,16 +22,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
-import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AuthenticationBusiness;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.ServletFilterChainInterruptException;
 import com.idega.core.accesscontrol.jaas.IWJAASAuthenticationRequestWrapper;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
-import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
@@ -44,10 +43,10 @@ import com.idega.util.CypherText;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2005/12/15 17:19:03 $ by $Author: thomas $
+ * Last modified: $Date: 2005/12/23 12:40:57 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -272,19 +271,13 @@ public class IWAuthenticator extends BaseFilter {
 
 	public String getCypherKey(IWApplicationContext iwc) {
 		CypherText cyph = new CypherText();
-		ICApplicationBindingBusiness applicationBindingBusiness = getApplicationBindingBusiness(iwc);
-		try {
-			String cypherKey = applicationBindingBusiness.get("cypherKey");
-			if ((cypherKey == null) || (cypherKey.equalsIgnoreCase(""))) {
-				cypherKey = cyph.getKey(100);
-				applicationBindingBusiness.put("cypherKey", cypherKey);
-			}
-			return (cypherKey);
+		IWMainApplicationSettings settings = iwc.getApplicationSettings();
+		String cypherKey = settings.getProperty("cypherKey");
+		if ((cypherKey == null) || (cypherKey.equalsIgnoreCase(""))) {
+			cypherKey = cyph.getKey(100);
+			settings.setProperty("cypherKey", cypherKey);
 		}
-		catch (IOException ex) {
-			log.warning("[IWAuthenticator] cypherKey could not be found");
-			return null;
-		}
+		return (cypherKey);
 	}
 
 	protected String cypherUserLogin(IWApplicationContext iwc, String userLogin) {
@@ -318,14 +311,4 @@ public class IWAuthenticator extends BaseFilter {
 	protected BuilderService getBuilderService(IWContext iwc) throws RemoteException {
 		return BuilderServiceFactory.getBuilderService(iwc);
 	}
-	
-	private ICApplicationBindingBusiness getApplicationBindingBusiness(IWApplicationContext iwac) {
-		try {
-			return (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwac, ICApplicationBindingBusiness.class);
-		}
-		catch (IBOLookupException ex) {
-			throw new IBORuntimeException(ex.getMessage());
-		}
-	}
-	
 }

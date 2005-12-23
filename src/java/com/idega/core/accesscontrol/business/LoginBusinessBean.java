@@ -22,7 +22,6 @@ import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
-import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
@@ -320,15 +319,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected boolean isLoginByUUID(IWContext iwc) {
 		if( iwc.isParameterSet(PARAM_LOGIN_BY_UNIQUE_ID)){
 			String referer = iwc.getReferer();
-			String allowedReferers  = null;
-			try {
-				ICApplicationBindingBusiness applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwc, ICApplicationBindingBusiness.class);
-				allowedReferers = applicationBindingBusiness.get(LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST);
-			}
-			catch (IOException ex) {
-				getLogger().warning("[LoginBuiness] Could not get parameter "+ LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST);
-				allowedReferers = null;
-			}
+			String allowedReferers  = iwc.getApplicationSettings().getProperty(LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST);
 			if(allowedReferers==null || "".equals(allowedReferers)){
 				return true;
 			}

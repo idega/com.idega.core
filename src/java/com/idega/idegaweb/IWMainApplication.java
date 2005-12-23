@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.157 2005/12/15 17:12:56 thomas Exp $
+ * $Id: IWMainApplication.java,v 1.158 2005/12/23 12:36:24 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -52,7 +52,6 @@ import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
-import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.idgenerator.business.UUIDGenerator;
@@ -84,10 +83,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/12/15 17:12:56 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/12/23 12:36:24 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.157 $
+ * @version $Revision: 1.158 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1028,14 +1027,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * Only works when running on Tomcat
      */
     public boolean restartApplication() {
-    	String apache = null;
-    	try {
-    		ICApplicationBindingBusiness applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), ICApplicationBindingBusiness.class);
-    		applicationBindingBusiness.get(APACHE_RESTART_PARAMETER);//restart string)  		
-    	}
-    	catch (Exception ex) {
-    		getLogger().warning("[IWMainApplication] Could not fetch parameter " + APACHE_RESTART_PARAMETER + " from database");
-    	}
+    	String apache = getSettings().getProperty(APACHE_RESTART_PARAMETER);//restart string)  		
+
 
         String restartScript = "/idega/bin/apache_restart.sh";
 

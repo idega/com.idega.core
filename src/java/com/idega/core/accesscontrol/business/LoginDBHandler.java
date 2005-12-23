@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.59 2005/12/15 17:20:01 thomas Exp $
+ * $Id: LoginDBHandler.java,v 1.60 2005/12/23 12:40:57 thomas Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -9,7 +9,6 @@
  */
 package com.idega.core.accesscontrol.business;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,16 +18,12 @@ import java.util.Random;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
-import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginInfoHome;
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableBMPBean;
-import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.core.user.data.User;
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOException;
@@ -37,6 +32,7 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.IDORemoveException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
@@ -773,28 +769,13 @@ public class LoginDBHandler {
 	}
 
 	private static String getPropertyValue(IWBundle iwb, String propertyName, String defaultValue) {
-		try {
-			String value = getBindingBusiness().get(propertyName);
-			if (value != null) {
-				return value;
-			}
-			else {
-				value = iwb.getProperty(propertyName);
-				getBindingBusiness().put(propertyName, value != null ? value : defaultValue);
-			}
+		IWMainApplicationSettings settings =  IWMainApplication.getDefaultIWMainApplication().getSettings();
+		String value = settings.getProperty(propertyName);
+		if (value != null) {
+			return value;
 		}
-		catch (IOException re) {
-			re.printStackTrace();
-		}
+		value = iwb.getProperty(propertyName);
+		settings.setProperty(propertyName, value != null ? value : defaultValue);
 		return defaultValue;
-	}
-
-	private static ICApplicationBindingBusiness getBindingBusiness() {
-		try {
-			return (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), ICApplicationBindingBusiness.class);
-		}
-		catch (IBOLookupException ibe) {
-			throw new IBORuntimeException(ibe);
-		}
 	}
 }
