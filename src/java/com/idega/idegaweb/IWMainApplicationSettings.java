@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.33 2005/12/16 12:43:15 thomas Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.34 2005/12/23 12:34:57 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -34,10 +34,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/12/16 12:43:15 $ by $Author: thomas $
+ * Last modified: $Date: 2005/12/23 12:34:57 $ by $Author: thomas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 
 
@@ -103,6 +103,16 @@ public class IWMainApplicationSettings implements MutableClass {
 	
 	private IWMainApplication getApplication(){
 		return application;
+	}
+	
+
+	public String getProperty(String key) {
+		return getFromApplicationBinding(key);
+	}
+	
+
+	public void setProperty(String key, String value) {
+		putInApplicationBinding(key, value);
 	}
 	
 	/**
@@ -468,8 +478,8 @@ public class IWMainApplicationSettings implements MutableClass {
 		}
 		catch (IOException e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not fetch key: " + key);
+			throw new IBORuntimeException(e);
 		}
-		return null;
 	}
 
 	private String putInApplicationBinding(String key, String value) {
@@ -478,8 +488,8 @@ public class IWMainApplicationSettings implements MutableClass {
 		}
 		catch (IOException e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not set key: " + key + " with value: " + value);
+			throw new IBORuntimeException(e);
 		}
-		return null;
 	}
 	
 	private ICApplicationBindingBusiness getApplicationBindingBusiness() {
