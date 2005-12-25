@@ -213,7 +213,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		replicatorConnectionsMap = getReplicatorConnectionsMap();
 		replicatorTimerMap = getReplicatorTimerMap();
 		
-		Properties repProps = getReplicationSettings();
+		repProps = getReplicationSettings();
 		final String host = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_HOST);
 		final String port = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_PORT);
 		final String userName = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_ROOT_USER);
@@ -473,7 +473,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			ldapProps = getEmbeddedLDAPServerBusiness().getLDAPSettings();
 			
 			String theServerName = ldapProps.getProperty(EmbeddedLDAPServerConstants.PROPS_JAVALDAP_SERVER_NAME);
-			String theServerPort = ldapProps.getProperty(EmbeddedLDAPServerConstants.PROPS_JAVALDAP_SERVER_PORT);
+			String theServerPort = ldapProps.getProperty(EmbeddedLDAPServerConstants.PROPS_JAVALDAP_WEBSERVICE_PORT);
 			String theServerLDAPWSUri = getDefaultIWLDAPWebserviceURI();
 			
 			String remoteServerName = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_HOST);
@@ -549,6 +549,44 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		}
 		
 		return group;
+		
+	}
+	
+	/**
+	 * Replicates one user entry knowing only his uuid
+	 * @param jndiOps
+	 * @param userUUID
+	 * @return
+	 * @throws RemoteException
+	 * @throws CreateException
+	 * @throws NamingException
+	 */
+	protected User replicateOneUserEntryByUUID(JNDIOps jndiOps, String userUUID) throws RemoteException, CreateException, NamingException {
+		User user = null;
+		NamingEnumeration searchResults = null;
+
+		//uses a Dummy DN since we only have the uuid, still should work because the uuid is checked first
+		//TODO get the DN from the webservice, add that parameter
+		DN entryDN = new DN("cn="+userUUID);
+		String uniqueIdDN = LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+userUUID;
+		searchResults = jndiOps.searchBaseEntry(entryDN,uniqueIdDN, 1, 60);
+		
+		if (searchResults != null) {
+			while (searchResults.hasMore()) {
+				SearchResult result = (SearchResult) searchResults.next();
+				
+				String resultDN = result.getName();
+				//get the attributes for this DN
+				Attributes attribs = result.getAttributes();	
+				if(attribs==null){
+					attribs = jndiOps.read(resultDN);
+				}
+				
+				user = createOrUpdateUser(null, attribs, new DN(resultDN));
+			}
+		}
+		
+		return user;
 		
 	}
 	
@@ -896,8 +934,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		logConfig("[LDAPReplication] " + new Date() + " - Starting replicator nr: "+ repNum+" host:"+host+ " base rdn:"+baseRDN);
 		JNDIOps jndiOps;
 		try {
-			jndiOps = new JNDIOps("ldap://" + host + ":" + port, userName, password.toCharArray());
-			replicatorConnectionsMap.put(repNum, jndiOps);
+			jndiOps = getJNDIConnection(repNum, host, port, userName, password);
 			DN baseDN = new DN(baseRDN);
 			if(replicateBaseRDN){
 				Group updatedParent = replicateOneGroupEntry((DN)baseDN.clone(), jndiOps, parentGroup, baseUniqueId, baseGroupToOverwrite, maxEntrylimit, searchTimeLimit, onlyUseUUID);
@@ -963,6 +1000,24 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		//now we can run it again
 		entry.setCanRun(true);
 	}
+
+	/**
+	 * @param repNum
+	 * @param host
+	 * @param port
+	 * @param userName
+	 * @param password
+	 * @return
+	 * @throws NamingException
+	 */
+	protected JNDIOps getJNDIConnection(final Integer replicatorNumber, final String host, final String port, final String userName, final String password) throws NamingException {
+		JNDIOps jndiOps = (JNDIOps) getReplicatorConnectionsMap().get(replicatorNumber);
+		if(jndiOps==null){
+			jndiOps = new JNDIOps("ldap://" + host + ":" + port, userName, password.toCharArray());
+			replicatorConnectionsMap.put(replicatorNumber, jndiOps);
+		}
+		return jndiOps;
+	}
 	
 	
 	
@@ -970,9 +1025,9 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	 * Registers remote idegaweb ldap webservices as a listeners for changes in this directory.<br/>
 	 * The changes are detected by a UserGroupPlugin and it calls the listening webservices that in turn call this directory to get the changes
 	 * This does a similar job as a JNDI NotificationListener but was needed because our ldap store doesn't implement the listener context.
-	 * @param serverName
-	 * @param portNumber
-	 * @param IWLDAPWSUri
+	 * @param serverName the host name
+	 * @param portNumber http port number the server is ruuning on
+	 * @param IWLDAPWSUri the uri to the idegaweb ldap webservice
 	 * @return Returns true if the listener was added
 	 */
 	public boolean registerReplicationListener(String serverName, int portNumber, String  IWLDAPWSUri){
@@ -980,17 +1035,76 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			replicationListeners = new HashMap();
 		}
 		
-		replicationListeners.put(serverName+portNumber, IWLDAPWSUri);
+		replicationListeners.put(serverName+":"+portNumber, IWLDAPWSUri);
 		
 		return true;
 	}
 	
-	public User replicateUserByUUID(){
+	/**
+	 * 
+	 * @return A map of ldap replication listeners where the key is the servername+":"+portnumber and the value is the URI to the IWLDAP.jws webservice
+	 */
+	public Map getReplicationListenerMap(){
+		return replicationListeners;
+	}
+	
+	
+	/**
+	 * Replicated a user by his UUID and the ldapservername and ldap port IF it is a registered replicator and is an active iwldap listener!
+	 * @param UserUUID
+	 * @param replicationServerHostName
+	 * @param ldapPort
+	 * @return a newly created or updated User
+	 * @throws NamingException 
+	 * @throws CreateException 
+	 * @throws RemoteException 
+	 */
+	public User replicateUserByUUID(String userUUID, String replicationServerHostName, int ldapPort) throws NamingException, RemoteException, CreateException{	
+		
+		int replicatorNumber = getReplicatorNumberByHostNameAndPort(replicationServerHostName,Integer.toString(ldapPort));
+		String listenerStatus = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_ACTIVE_LISTENER);
+		String userName = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_ROOT_USER);
+		String password = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_ROOT_PASSWORD);
+		
+		if(replicatorNumber!=-1){
+			
+			boolean activeListener = (listenerStatus!=null && ("Y".equalsIgnoreCase(listenerStatus) || "true".equalsIgnoreCase(listenerStatus)));
+			if (activeListener) {
+				JNDIOps jndiOps = getJNDIConnection(new Integer(replicatorNumber), replicationServerHostName, Integer.toString(ldapPort), userName, password);
+				return replicateOneUserEntryByUUID(jndiOps, userUUID);
+			}
+			
+		}
+		
 		
 		return null;
 	}
 	
-	
+	/**
+	 * Gets the number of a replicator from its hostname and port number, returns -1 if not found
+	 * @param hostName
+	 * @param ldapPort
+	 * @return The replicator number or -1 if not found
+	 */
+	protected int getReplicatorNumberByHostNameAndPort(String hostName, String ldapPort){
+		try {
+			repProps = getReplicationSettings();
+			String num = repProps.getProperty(PROPS_REPLICATION_NUM);	
+			int numberOfReplicators = Integer.parseInt(num);
+			
+			for (int i = 1; i <= numberOfReplicators; i++) {
+				String host = repProps.getProperty(PROPS_REPLICATOR_PREFIX + i + PROPS_REPLICATOR_HOST);
+				String port = repProps.getProperty(PROPS_REPLICATOR_PREFIX + i + PROPS_REPLICATOR_PORT);
+				if(hostName.equals(host) && ldapPort.equals(port)){
+					return i;
+				}
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return -1;
+}
 	
 	//todo replicateGroupAndUsersByGroupUUID
 	

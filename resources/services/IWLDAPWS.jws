@@ -22,4 +22,24 @@ public class IWLDAPWS {
 			return "Service failed to register the replication listener due to an internal error. The error message was :"+e.getMessage();
 		}
 	}
+	
+	
+	public String notifyOnUserChanged(String UserUUID, String replicationServerHostName, int ldapPort){
+		try {
+		
+			LDAPReplicationBusiness biz = (LDAPReplicationBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),LDAPReplicationBusiness.class);
+			User user = biz.replicateUserByUUID(UserUUID, replicationServerHostName, ldapPort);
+			
+			if(user!=null){
+				return "iwldap-ok";
+			}
+			else{
+				return "failed to find/update the user, is your ldap server running?";
+			}   
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return "Service failed to update the due to an internal error. The error message was :"+e.getMessage();
+		}
+	}
 }

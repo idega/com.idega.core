@@ -1,6 +1,6 @@
 /*
- * $Id: LDAPReplicationBusiness.java,v 1.5 2005/11/28 17:53:12 eiki Exp $
- * Created on Nov 28, 2005
+ * $Id: LDAPReplicationBusiness.java,v 1.6 2005/12/25 17:14:27 eiki Exp $
+ * Created on Nov 30, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -10,18 +10,18 @@
 package com.idega.core.ldap.replication.business;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 import com.idega.business.IBOService;
 import com.idega.core.ldap.util.IWLDAPConstants;
-import com.idega.user.data.User;
 
 
 /**
  * 
- *  Last modified: $Date: 2005/11/28 17:53:12 $ by $Author: eiki $
+ *  Last modified: $Date: 2005/12/25 17:14:27 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public interface LDAPReplicationBusiness extends IBOService, LDAPReplicationConstants, IWLDAPConstants {
 
@@ -114,7 +114,7 @@ public interface LDAPReplicationBusiness extends IBOService, LDAPReplicationCons
 			throws java.rmi.RemoteException;
 
 	/**
-	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#replicateUserByUUID
+	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#getReplicationListenerMap
 	 */
-	public User replicateUserByUUID() throws java.rmi.RemoteException;
+	public Map getReplicationListenerMap() throws java.rmi.RemoteException;
 }
