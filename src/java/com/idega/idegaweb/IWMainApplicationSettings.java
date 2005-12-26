@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.34 2005/12/23 12:34:57 thomas Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.35 2005/12/26 10:18:46 eiki Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -34,10 +34,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/12/23 12:34:57 $ by $Author: thomas $
+ * Last modified: $Date: 2005/12/26 10:18:46 $ by $Author: eiki $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 
 
@@ -276,12 +276,15 @@ public class IWMainApplicationSettings implements MutableClass {
 	 * @return
 	 */
 	public boolean getIfEntityAutoCreate() {
-		String value = getFromApplicationBinding("entity-auto-create");
-		// returns true if the value is null!
-		if (value == null) {
-			return true;
-		} 
-		return Boolean.getBoolean(value);
+		//temporeraly set to true because of a bug!
+		return true;
+		
+		///String value = getFromApplicationBinding("entity-auto-create");
+		//// returns true if the value is null!
+	//	if (value == null) {
+		//	return true;
+		//} 
+	//	return Boolean.getBoolean(value);
 	}
 	
 	public boolean getIfEntityBeanCaching() {
