@@ -1,5 +1,5 @@
 /*
- * $Id: IWLDAPUserGroupPluginBusinessBean.java,v 1.1 2005/12/25 17:14:27 eiki Exp $
+ * $Id: IWLDAPUserGroupPluginBusinessBean.java,v 1.2 2005/12/26 11:44:38 eiki Exp $
  * Created on Jul 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -48,7 +48,7 @@ public class IWLDAPUserGroupPluginBusinessBean extends IBOServiceBean implements
 					
 //				Call the webservice
 					//name the method onUserChanged ?
-					String webserviceQuery = "method=notifyOnUserChanged&UserUUID="+uuid+"&replicationServerHostName="+serverHostName+"&ldapPort="+ldapPort;
+					String webserviceQuery = "method=notifyOnUserChanged&userUUID="+uuid+"&replicationServerHostName="+serverHostName+"&ldapPort="+ldapPort;
 					String response = FileUtil.getStringFromURL("http://"+remoteServerNameAndPort+remoteIwLdapUri+"?"+webserviceQuery);
 					log("Notifying a replication listener about a user change. Remote server and port: "+remoteServerNameAndPort+" responded with: "+response);	
 				}

@@ -1,6 +1,7 @@
 import com.idega.core.ldap.replication.business.LDAPReplicationBusiness;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.user.data.*;
 
 public class IWLDAPWS {
 
@@ -24,11 +25,11 @@ public class IWLDAPWS {
 	}
 	
 	
-	public String notifyOnUserChanged(String UserUUID, String replicationServerHostName, int ldapPort){
+	public String notifyOnUserChanged(String userUUID, String replicationServerHostName, int ldapPort){
 		try {
 		
 			LDAPReplicationBusiness biz = (LDAPReplicationBusiness) IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(),LDAPReplicationBusiness.class);
-			User user = biz.replicateUserByUUID(UserUUID, replicationServerHostName, ldapPort);
+			User user = biz.replicateUserByUUID(userUUID, replicationServerHostName, ldapPort);
 			
 			if(user!=null){
 				return "iwldap-ok";
