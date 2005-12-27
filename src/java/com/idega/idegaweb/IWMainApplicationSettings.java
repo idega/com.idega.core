@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.36 2005/12/27 14:11:16 thomas Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.37 2005/12/27 17:39:00 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 import com.idega.business.IBOLookup;
@@ -34,24 +35,25 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/12/27 14:11:16 $ by $Author: thomas $
+ * Last modified: $Date: 2005/12/27 17:39:00 $ by $Author: thomas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 
 
 public class IWMainApplicationSettings implements MutableClass {
-	private static final String CHARACTER_ENCODING_KEY = "character_encoding";
-	private static final String IDO_ENTITY_BEAN_CACHING_KEY = "ido_entity_bean_caching";
-	private static final String IDO_ENTITY_QUERY_CACHING_KEY = "ido_entity_query_caching";
-	public static final String IW_POOLMANAGER_TYPE = "iw_poolmanager";
+
+
 	public static final String AUTO_CREATE_LOCALIZED_STRINGS_KEY="auto-create-localized-strings";
 	public static final String AUTO_CREATE_PROPERTIES_KEY="auto-create-properties";
 	public static final String DEFAULT_MARKUP_LANGUAGE_KEY="markup_language";
-
-	public final static String DEFAULT_MARKUP_LANGUAGE = Page.XHTML;
+	public static final String DEFAULT_MARKUP_LANGUAGE = Page.XHTML;
 	
+	public static boolean DEBUG_FLAG = false;
+	public static boolean CREATE_STRINGS = true;
+	public static boolean CREATE_PROPERTIES = true;
+
 	private static String DEFAULT_CHARACTER_ENCODING; //= "ISO-8859-1";
 	//public static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
 	
@@ -61,10 +63,19 @@ public class IWMainApplicationSettings implements MutableClass {
 	private static String DEFAULT_FONT_SIZE;
 	private static String DEFAULT_LOCALE_KEY;
 	private static String _SERVICE_CLASSES_KEY;
-		
-	public static boolean DEBUG_FLAG = false;
-	public static boolean CREATE_STRINGS = true;
-	public static boolean CREATE_PROPERTIES = true;
+
+	private static final String IDEGAWEB_PROPERTY_FILE_NAME = "idegaweb.pxml";
+
+	private static final String CHARACTER_ENCODING_KEY = "character_encoding";
+	private static final String IDO_ENTITY_BEAN_CACHING_KEY = "ido_entity_bean_caching";
+	private static final String IDO_ENTITY_QUERY_CACHING_KEY = "ido_entity_query_caching";
+	
+	// the following three properties seem not to be set but  
+	// they are read BEFORE the database is initialized, that is
+	// these values should always be stored in the idegaweb.pxml file.
+    private static final String USE_CRYPTO_PROPERTIES = "use_crypto_properties";
+	private static final String IW_POOLMANAGER_TYPE = "iw_poolmanager";
+	private static final String JDBC_DATASOURCE_DEFAULT_URL = "JDBC_DATASOURCE_DEFAULT_URL";
 	
 	static {
 		// initialize all values
@@ -96,6 +107,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	private IWMainApplication application = null;
 	private Locale cachedDefaultLocale = null;
 	private ICApplicationBindingBusiness applicationBindingBusiness = null;
+	private IWPropertyList idegawebPropertyList = null;
 	
 	public IWMainApplicationSettings(IWMainApplication application) {
 		this.application=application;	
@@ -117,6 +129,28 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	public void setProperty(String key, String value) {
 		putInApplicationBinding(key, value);
+	}
+	
+	public void removeProperty(String key) {
+		removeFromApplicationBinding(key);
+	}
+	
+	public Set keySet() {
+		// merge the keys from idegaweb.pxml file and ICApplicationBinding
+		try {
+			Set keysFromApplicationBinding = getApplicationBindingBusiness().keySet();
+			Iterator iterator = getIdegawebPropertyList().getIWPropertyListIterator();
+			while (iterator.hasNext()) {
+				IWProperty property = (IWProperty) iterator.next();
+				String key = property.getKey();
+				keysFromApplicationBinding.add(key);
+			}
+			return keysFromApplicationBinding;
+		}
+		catch (IOException e) {
+			getLogger().warning("[IWMainApplicationSettings] Could not fetch keys from databse");
+			throw new IBORuntimeException(e);
+		}
 	}
 	
 	/**
@@ -167,6 +201,45 @@ public class IWMainApplicationSettings implements MutableClass {
 	 */
 	public void setDefaultFontSize(int size) {
 		putInApplicationBinding(DEFAULT_FONT_SIZE, Integer.toString(size));
+	}
+	
+	/**
+	 * 
+	 * Special method that is called by IWMainApplicationStarter.
+	 * The value is not used at the moment, returns therefore null.
+	 * Keep in mind that during the call the database is not initialized yet. 
+	 * The value is always fetched from idegaweb.pxml file.
+	 * 
+	 * @return
+	 */
+	public String getPoolManagerType() {
+		return getIdegawebPropertyList().getProperty(IW_POOLMANAGER_TYPE);
+	}
+	
+	/**
+	 * 
+	 * Special method that is called by IWMainApplication.
+	 * The value is not used at the moment, returns therefore null.
+	 * Keep in mind that during the call the database is not initialized yet. 
+	 * The value is always fetched from idegaweb.pxml file.
+	 * 
+	 * @return
+	 */
+	public String getCryptoUsage() {
+		return getIdegawebPropertyList().getProperty(USE_CRYPTO_PROPERTIES);
+	}
+	
+	/**
+	 * 
+	 * Special method that is called by IWMainApplicationStarter.
+	 * The value is not used at the moment, returns therefore null.
+	 * Keep in mind that during the call the database is not initialized yet. 
+	 * The value is always fetched from idegaweb.pxml file.
+	 * 
+	 * @return
+	 */
+	public String getJDBCDatasourceDefaultURL() {
+		return getIdegawebPropertyList().getProperty(JDBC_DATASOURCE_DEFAULT_URL);
 	}
 	
 	public void setDefaultLocale(Locale locale) {
@@ -250,7 +323,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	 */
 	public List getServiceClasses() {
 		//return null;
-		IWPropertyList plist = getLegacyApplicationSettings().getIWPropertyList(_SERVICE_CLASSES_KEY);
+		IWPropertyList plist = getIdegawebPropertyList().getIWPropertyList(_SERVICE_CLASSES_KEY);
 		// list is not being modified, call of store not necessary
 		if (plist != null) {
 			List l = new Vector();
@@ -477,13 +550,18 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	private String getFromApplicationBinding(String key) {
+		String value = null;
 		try {
-			return getApplicationBindingBusiness().get(key);
+			value = getApplicationBindingBusiness().get(key);
 		}
 		catch (IOException e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not fetch key: " + key);
 			throw new IBORuntimeException(e);
 		}
+		if (value == null) {
+			return getIdegawebPropertyList().getProperty(key);
+		}
+		return value;
 	}
 
 	private String putInApplicationBinding(String key, String value) {
@@ -492,6 +570,16 @@ public class IWMainApplicationSettings implements MutableClass {
 		}
 		catch (IOException e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not set key: " + key + " with value: " + value);
+			throw new IBORuntimeException(e);
+		}
+	}
+	
+	private void removeFromApplicationBinding(String key) {
+		try {
+			getApplicationBindingBusiness().remove(key);
+		}
+		catch (IOException e) {
+			getLogger().warning("[IWMainApplicationSettings] Could not remove key: " + key);
 			throw new IBORuntimeException(e);
 		}
 	}
@@ -509,15 +597,24 @@ public class IWMainApplicationSettings implements MutableClass {
 		}
 		return applicationBindingBusiness;
 	}
-	
+
+	private IWPropertyList getIdegawebPropertyList() {
+		if (idegawebPropertyList == null) {
+			String propertiesRealPath = getApplication().getPropertiesRealPath();
+			idegawebPropertyList = new IWPropertyList(propertiesRealPath, IDEGAWEB_PROPERTY_FILE_NAME, true);
+		}
+		return idegawebPropertyList;
+	}
+
 	
 	/**
 	 * @deprecated
 	 * 
-	 * Use ICApplicationBindingBusiness.
+	 * Use setProperty(String, String), getProperty(String), getBoolean(String).
 	 * 
-	 * Do not use this method. Will be removed pretty soon.
+	 * DO NOT USE this method. Will be removed pretty soon.
 	 * It is a temporary method.
+	 * Only used by IBColorChooserWindow.
 	 * 
 	 * !!!!!!!!!!!!!! Note: caller should store the list immediately, store method is not called anywhere !!!!!!!!!!!!!!!!!!!!!!!!
 	 * 
@@ -525,8 +622,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	 * @return
 	 */
 	public IWPropertyList getLegacyApplicationSettings() {
-		String propertiesRealPath = getApplication().getPropertiesRealPath();
-		return new IWPropertyList(propertiesRealPath, "idegaweb.pxml", true);
+		return getIdegawebPropertyList();
 	}
 	
 }
