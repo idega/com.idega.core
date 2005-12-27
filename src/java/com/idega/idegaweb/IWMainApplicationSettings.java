@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.35 2005/12/26 10:18:46 eiki Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.36 2005/12/27 14:11:16 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -34,10 +34,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/12/26 10:18:46 $ by $Author: eiki $
+ * Last modified: $Date: 2005/12/27 14:11:16 $ by $Author: thomas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 
 
@@ -110,6 +110,10 @@ public class IWMainApplicationSettings implements MutableClass {
 		return getFromApplicationBinding(key);
 	}
 	
+	public boolean getBoolean(String key) {
+		String value = getFromApplicationBinding(key);
+		return Boolean.valueOf(value).booleanValue();
+	}
 
 	public void setProperty(String key, String value) {
 		putInApplicationBinding(key, value);
@@ -276,25 +280,22 @@ public class IWMainApplicationSettings implements MutableClass {
 	 * @return
 	 */
 	public boolean getIfEntityAutoCreate() {
-		//temporeraly set to true because of a bug!
-		return true;
-		
-		///String value = getFromApplicationBinding("entity-auto-create");
-		//// returns true if the value is null!
-	//	if (value == null) {
-		//	return true;
-		//} 
-	//	return Boolean.getBoolean(value);
+		String value = getFromApplicationBinding("entity-auto-create");
+		// returns true if the value is null!
+		if (value == null) {
+			return true;
+		} 
+		return Boolean.valueOf(value).booleanValue();
 	}
 	
 	public boolean getIfEntityBeanCaching() {
 		String value = getFromApplicationBinding("ido_entity_bean_caching");
-		return Boolean.getBoolean(value);
+		return Boolean.valueOf(value).booleanValue();
 	}
 	
 	public boolean getIfEntityQueryCaching() {
 		String value = getFromApplicationBinding("ido_entity_query_caching");
-		return Boolean.getBoolean(value);
+		return Boolean.valueOf(value).booleanValue();
 	}
 	
 	public void setDebug(boolean ifDebug) {
@@ -304,7 +305,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	
 	public boolean getIfDebug() {
 		String value = getFromApplicationBinding("debug");
-		return Boolean.getBoolean(value);
+		return Boolean.valueOf(value).booleanValue();
 	}
 	
 	public void setUsePreparedStatement(boolean usage) {
@@ -314,7 +315,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	
 	public boolean getIfUsePreparedStatement() {
 		String value = getFromApplicationBinding("PreparedStatement");
-		boolean	ret = Boolean.getBoolean(value);
+		boolean	ret = Boolean.valueOf(value).booleanValue();
 		com.idega.data.DatastoreInterface.usePreparedStatement = ret;
 		return ret;
 	}
@@ -345,7 +346,7 @@ public class IWMainApplicationSettings implements MutableClass {
 		if (value == null) {
 			return true;
 		} 
-		return Boolean.getBoolean(value);
+		return Boolean.valueOf(value).booleanValue();
 	}
 	
 	public static void setAutoCreateStringsMode(boolean ifAutoCreate) {
@@ -386,7 +387,7 @@ public class IWMainApplicationSettings implements MutableClass {
 		if (value == null) {
 			return true;
 		} 
-		return Boolean.getBoolean(value);
+		return Boolean.valueOf(value).booleanValue();
 	}
 	
 	public void setAutoCreatePropertiesMode(boolean ifAutoCreate) {
@@ -441,7 +442,7 @@ public class IWMainApplicationSettings implements MutableClass {
 		if (value == null) {
 			return true;
 		} 
-		return Boolean.getBoolean(value);
+		return Boolean.valueOf(value).booleanValue();
 	}
 	
 	/**

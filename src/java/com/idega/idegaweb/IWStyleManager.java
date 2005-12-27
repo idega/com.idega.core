@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import com.idega.business.IBOLookup;
-import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
@@ -171,16 +169,8 @@ public class IWStyleManager implements Singleton {
 	 * @return
 	 */
 	public boolean shouldWriteDownFile(){
-		try {
-			IWContext iwc = IWContext.getInstance();
-			ICApplicationBindingBusiness applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwc, ICApplicationBindingBusiness.class);
-			String property = applicationBindingBusiness.get(PROPERTY_WRITE_FILE);
-			return Boolean.getBoolean(property);
-		}
-		catch (IOException ex) {
-			ex.printStackTrace(System.err);
-			return false;
-		}
+		IWContext iwc = IWContext.getInstance();
+		return iwc.getApplicationSettings().getBoolean(PROPERTY_WRITE_FILE);
 	}
 	
 	public void writeStyleSheet() {
