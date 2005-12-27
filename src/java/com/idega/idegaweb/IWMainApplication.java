@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.158 2005/12/23 12:36:24 thomas Exp $
+ * $Id: IWMainApplication.java,v 1.159 2005/12/27 17:40:39 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -83,10 +83,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/12/23 12:36:24 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/12/27 17:40:39 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.158 $
+ * @version $Revision: 1.159 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1131,7 +1131,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
     private static Properties cryptoClassNamesPropertiesKeyedByCode = null;
 
-    protected static String USE_CRYPTO_PROPERTIES = "use_crypto_properties";
+
 
     private static boolean isCryptoUsed = true;
 
@@ -1142,7 +1142,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     private void initCryptoUsage() {
-        String isUsed = getSettings().getLegacyApplicationSettings().getProperty(USE_CRYPTO_PROPERTIES);
+        String isUsed = getSettings().getCryptoUsage();
         isCryptoUsed = !"false".equals(isUsed);
     }
 

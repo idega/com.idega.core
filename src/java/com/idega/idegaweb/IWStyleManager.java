@@ -169,8 +169,8 @@ public class IWStyleManager implements Singleton {
 	 * @return
 	 */
 	public boolean shouldWriteDownFile(){
-		IWContext iwc = IWContext.getInstance();
-		return iwc.getApplicationSettings().getBoolean(PROPERTY_WRITE_FILE);
+		IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
+		return iwma.getSettings().getBoolean(PROPERTY_WRITE_FILE);
 	}
 	
 	public void writeStyleSheet() {
