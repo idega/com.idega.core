@@ -1,5 +1,5 @@
 /*
- * $Id: ICApplicationBindingBusinessBean.java,v 1.6 2005/12/18 08:23:02 laddi Exp $
+ * $Id: ICApplicationBindingBusinessBean.java,v 1.7 2005/12/27 17:45:18 thomas Exp $
  * Created on Oct 7, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,10 +10,8 @@
 package com.idega.core.business;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.ejb.CreateException;
@@ -25,9 +23,6 @@ import com.idega.core.data.ICApplicationBindingBMPBean;
 import com.idega.core.data.ICApplicationBindingHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-import com.idega.idegaweb.IWProperty;
-import com.idega.idegaweb.IWPropertyList;
-import com.idega.util.FileUtil;
 import com.idega.util.StringHandler;
 
 
@@ -35,14 +30,7 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements
 
 	private static final int MAX_KEY_LENGTH = ICApplicationBindingBMPBean.MAX_KEY_LENGTH; 
 	
-	private static final String LEGACY_PROPERTY_FILE_NAME = "idegaweb.pxml";
-	
 	private ICApplicationBindingHome applicationBindingHome = null;
-	
-	public void initializeBean() {
-		super.initializeBean();
-		fetchLegacyProperties();
-	}
 	
 	/**
 	 * Returns the corresponding value to the specified key elso null if the key is not found.
@@ -164,39 +152,6 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements
 		applicationBinding.setValue(value);
 		applicationBinding.store();
 		return applicationBinding;
-	}
-
-	private void fetchLegacyProperties() {
-		String propertiesRealPath = getIWApplicationContext().getIWMainApplication().getPropertiesRealPath();
-		List toDelete = new ArrayList();
-		if (FileUtil.exists(propertiesRealPath, LEGACY_PROPERTY_FILE_NAME)) {
-			IWPropertyList legacyPropertyList = new IWPropertyList(propertiesRealPath, LEGACY_PROPERTY_FILE_NAME, false);
-			Iterator iterator = legacyPropertyList.getIWPropertyListIterator();
-			while (iterator.hasNext()) {
-				IWProperty property = (IWProperty) iterator.next();
-				String key = property.getKey();
-				try {
-					String newValue = get(key);
-					if (newValue == null) {
-						String oldValue = property.getValue();
-						// do not delete and store properties that are lists
-						if (oldValue != null && oldValue.length() != 0) {
-							put(key, oldValue);
-							toDelete.add(key);
-						}
-					}
-				}
-				catch (IOException ex) {
-					ex.printStackTrace(System.err);
-				}
-			}
-			Iterator deleteIterator = toDelete.iterator();
-			while (deleteIterator.hasNext()) {
-				deleteIterator.next();
-				///legacyPropertyList.removeProperty(key);
-			}
-			legacyPropertyList.store();
-		}
 	}
 	
 	private ICApplicationBindingHome getICApplicationBindingHome() throws IDOLookupException {
