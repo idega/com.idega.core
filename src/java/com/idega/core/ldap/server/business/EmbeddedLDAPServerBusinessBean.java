@@ -13,10 +13,9 @@ import java.io.IOException;
 import java.util.Properties;
 import org.codehaus.plexus.ldapserver.server.EmbeddedLDAPServer;
 import org.codehaus.plexus.ldapserver.server.syntax.DirectoryString;
-import com.idega.business.IBOLookupException;
 import com.idega.business.IBOServiceBean;
-import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
 
@@ -40,24 +39,11 @@ public class EmbeddedLDAPServerBusinessBean extends IBOServiceBean implements Em
 	public String getPathToLDAPConfigFiles() {
 		if (pathToConfigFiles == null) {
 			//try the application binding first then fall back to the default location
-			try {
-				ICApplicationBindingBusiness appB = getApplicationBindingBusiness();
-				
-				try {
-					pathToConfigFiles = appB.get(JAVA_LDAP_PROPS_FILE_NAME);
-					if(pathToConfigFiles!=null){
-						return pathToConfigFiles;
-					}
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-				
+			IWMainApplicationSettings settings = getIWApplicationContext().getApplicationSettings();
+			pathToConfigFiles = settings.getProperty(JAVA_LDAP_PROPS_FILE_NAME);
+			if(pathToConfigFiles!=null){
+				return pathToConfigFiles;
 			}
-			catch (IBOLookupException e) {
-				e.printStackTrace();
-			}
-			
 			pathToConfigFiles = IWMainApplication.getDefaultIWMainApplication()
 					.getCoreBundle().getPropertiesRealPath()
 					+ FileUtil.getFileSeparator()
@@ -71,20 +57,8 @@ public class EmbeddedLDAPServerBusinessBean extends IBOServiceBean implements Em
 	public void setPathToLDAPConfigFiles(String path){
 		if(path!=null && !"".equals(path)){
 			pathToConfigFiles = path;
-			
-			try {
-				ICApplicationBindingBusiness appB = getApplicationBindingBusiness();
-				try {
-					appB.put(JAVA_LDAP_PROPS_FILE_NAME,path);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			catch (IBOLookupException e) {
-				e.printStackTrace();
-			}
-			
+			IWMainApplicationSettings settings = getIWApplicationContext().getApplicationSettings();
+			settings.setProperty(JAVA_LDAP_PROPS_FILE_NAME,path);
 		}
 	}
 
@@ -226,10 +200,5 @@ public class EmbeddedLDAPServerBusinessBean extends IBOServiceBean implements Em
 			e.printStackTrace();
 			return null;
 		}
-	}
-	
-	
-	protected ICApplicationBindingBusiness getApplicationBindingBusiness() throws IBOLookupException{
-		return (ICApplicationBindingBusiness) getServiceInstance(ICApplicationBindingBusiness.class);
 	}
 }

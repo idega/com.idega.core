@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.107 2005/12/16 12:29:29 thomas Exp $
+ * $Id: AccessControl.java,v 1.108 2005/12/27 17:46:23 thomas Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -9,7 +9,6 @@
  */
 package com.idega.core.accesscontrol.business;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,15 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import java.util.logging.Logger;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
-import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICPermissionHome;
 import com.idega.core.accesscontrol.data.ICRole;
@@ -41,7 +36,6 @@ import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.builder.data.ICDynamicPageTrigger;
 import com.idega.core.builder.data.ICPage;
-import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.file.data.ICFile;
@@ -73,12 +67,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2005/12/16 12:29:29 $ by $Author: thomas $
+ * Last modified: $Date: 2005/12/27 17:46:23 $ by $Author: thomas $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.107 $
+ * @version $Revision: 1.108 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -3400,20 +3394,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	  
 	  
 	  private String getRecurseParentsSettings(IWApplicationContext iwac) {
-	       try {
-		      	ICApplicationBindingBusiness applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwac, ICApplicationBindingBusiness.class);
-		      	String access =applicationBindingBusiness.get("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
-		      	// original condition, everything is true if not null
-		      	return access;
-	      }
-	      catch (IBOLookupException ex) {
-	      	throw new IBORuntimeException(ex);
-	      }
-	      catch (IOException ex) {
-	      	Logger.getLogger(AccessControl.class.getName()).warning("[AccessControl] Could not look up parameter TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
-	      	return null;
-	      }
-	}
+		  return iwac.getApplicationSettings().getProperty("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
+	  }
 	
 	/**
 	 * @author eiki
