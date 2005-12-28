@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.37 2005/12/27 17:39:00 thomas Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.38 2005/12/28 13:46:07 gimmi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -35,10 +35,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/12/27 17:39:00 $ by $Author: thomas $
+ * Last modified: $Date: 2005/12/28 13:46:07 $ by $Author: gimmi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 
 
@@ -554,9 +554,9 @@ public class IWMainApplicationSettings implements MutableClass {
 		try {
 			value = getApplicationBindingBusiness().get(key);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not fetch key: " + key);
-			throw new IBORuntimeException(e);
+			value = null;
 		}
 		if (value == null) {
 			return getIdegawebPropertyList().getProperty(key);
@@ -568,9 +568,9 @@ public class IWMainApplicationSettings implements MutableClass {
 		try {
 			return getApplicationBindingBusiness().put(key, value);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not set key: " + key + " with value: " + value);
-			throw new IBORuntimeException(e);
+			return null;
 		}
 	}
 	
@@ -578,9 +578,8 @@ public class IWMainApplicationSettings implements MutableClass {
 		try {
 			getApplicationBindingBusiness().remove(key);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not remove key: " + key);
-			throw new IBORuntimeException(e);
 		}
 	}
 	
