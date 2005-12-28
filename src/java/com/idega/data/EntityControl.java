@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
+import com.idega.repository.data.MutableClass;
 import com.idega.util.StringHandler;
 //import com.idega.util.datastructures.HashtableMultivalued;
 /**
@@ -20,12 +21,18 @@ import com.idega.util.StringHandler;
  * @author        <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public class EntityControl {
+public class EntityControl implements MutableClass {
 	
 	
 //	private static HashtableMultivalued relationshipClasses = new HashtableMultivalued();
-	private static boolean autoCreate = false;
+	private static boolean autoCreate = true;
 	protected static boolean limitTableNameToThirtyCharacters = false;
+	
+	public static void unload() {
+		autoCreate = true;
+		limitTableNameToThirtyCharacters = false;
+	}
+	
 	/**
 	**Creates a unique ID for the ID column
 	*@deprecated moved to InterbaseDatastoreInterface. This method will be
