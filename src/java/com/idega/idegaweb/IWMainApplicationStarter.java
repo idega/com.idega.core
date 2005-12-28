@@ -412,6 +412,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	}
 
 	protected void setApplicationVariables() {
+		// get the factory settings for auto create entities and set EntityControl. 
+		// In this way ICApplicationBinding table can be created if necessary and if it is allowed by the factory settings 
+		if (iwma.getSettings().getFactorySettingsForAutoCreateEntities()) {
+			EntityControl.setAutoCreationOfEntities(true);
+			sendStartMessage("EntityAutoCreation switched on temporarily (factory settings)");
+		}
 	    if (iwma.getSettings().getIfUsePreparedStatement()) {
 			iwma.getSettings().setUsePreparedStatement(true);
 			sendStartMessage("Using prepared statements");
@@ -437,6 +443,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			sendStartMessage("EntityQueryCaching Active");
 		}
 		if (iwma.getSettings().getIfEntityAutoCreate()) {
+			// now set what the table ICApplicationBinding says
 			EntityControl.setAutoCreationOfEntities(true);
 			sendStartMessage("EntityAutoCreation Active");
 		}

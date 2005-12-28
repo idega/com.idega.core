@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.38 2005/12/28 13:46:07 gimmi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.39 2005/12/28 17:41:33 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -35,10 +35,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/12/28 13:46:07 $ by $Author: gimmi $
+ * Last modified: $Date: 2005/12/28 17:41:33 $ by $Author: thomas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 
 
@@ -76,6 +76,9 @@ public class IWMainApplicationSettings implements MutableClass {
     private static final String USE_CRYPTO_PROPERTIES = "use_crypto_properties";
 	private static final String IW_POOLMANAGER_TYPE = "iw_poolmanager";
 	private static final String JDBC_DATASOURCE_DEFAULT_URL = "JDBC_DATASOURCE_DEFAULT_URL";
+	
+	// very special property
+	private static final String ENTITY_AUTO_CREATE =  "entity-auto-create";
 	
 	static {
 		// initialize all values
@@ -343,7 +346,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	public void setEntityAutoCreation(boolean ifAutoCreate) {
-		putInApplicationBinding("entity-auto-create", Boolean.toString(ifAutoCreate));
+		putInApplicationBinding(ENTITY_AUTO_CREATE, Boolean.toString(ifAutoCreate));
 		EntityControl.setAutoCreationOfEntities(ifAutoCreate);
 	}
 	
@@ -353,11 +356,20 @@ public class IWMainApplicationSettings implements MutableClass {
 	 * @return
 	 */
 	public boolean getIfEntityAutoCreate() {
-		String value = getFromApplicationBinding("entity-auto-create");
+		String value = getFromApplicationBinding(ENTITY_AUTO_CREATE);
 		// returns true if the value is null!
 		if (value == null) {
 			return true;
 		} 
+		return Boolean.valueOf(value).booleanValue();
+	}
+	
+	public boolean getFactorySettingsForAutoCreateEntities() {
+		String value = 	getIdegawebPropertyList().getProperty(ENTITY_AUTO_CREATE);
+		// returns true if the value is null!
+		if (value == null) {
+			return true;
+		}
 		return Boolean.valueOf(value).booleanValue();
 	}
 	
@@ -463,6 +475,8 @@ public class IWMainApplicationSettings implements MutableClass {
 		return Boolean.valueOf(value).booleanValue();
 	}
 	
+
+	
 	public void setAutoCreatePropertiesMode(boolean ifAutoCreate) {
 		CREATE_PROPERTIES = ifAutoCreate;
 	}
@@ -554,9 +568,9 @@ public class IWMainApplicationSettings implements MutableClass {
 		try {
 			value = getApplicationBindingBusiness().get(key);
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not fetch key: " + key);
-			value = null;
+			throw new IBORuntimeException(e);
 		}
 		if (value == null) {
 			return getIdegawebPropertyList().getProperty(key);
@@ -568,9 +582,9 @@ public class IWMainApplicationSettings implements MutableClass {
 		try {
 			return getApplicationBindingBusiness().put(key, value);
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not set key: " + key + " with value: " + value);
-			return null;
+			throw new IBORuntimeException(e);
 		}
 	}
 	
@@ -578,8 +592,9 @@ public class IWMainApplicationSettings implements MutableClass {
 		try {
 			getApplicationBindingBusiness().remove(key);
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not remove key: " + key);
+			throw new IBORuntimeException(e);
 		}
 	}
 	
