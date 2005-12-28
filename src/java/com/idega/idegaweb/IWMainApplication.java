@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.159 2005/12/27 17:40:39 thomas Exp $
+ * $Id: IWMainApplication.java,v 1.160 2005/12/28 15:15:41 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -58,6 +58,7 @@ import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.view.ViewManager;
 import com.idega.data.DatastoreInterface;
+import com.idega.data.EntityControl;
 import com.idega.data.IDOLookup;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.graphics.generator.ImageFactory;
@@ -83,10 +84,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2005/12/27 17:40:39 $ by $Author: thomas $
+ *  Last modified: $Date: 2005/12/28 15:15:41 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.159 $
+ * @version $Revision: 1.160 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -214,6 +215,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		BaseFilter.unload();
 		IWMainApplicationSettings.unload();
 		DatastoreInterface.unload();
+		EntityControl.unload();
     }
     
     
