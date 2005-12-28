@@ -96,7 +96,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 				if (removeDuplicatedGroupRelations != null && removeDuplicatedGroupRelations.equalsIgnoreCase("true")) {
 					removeDuplicatedGroupRelations();
 				}
-				String removeDuplicatedAliases = bundle.getProperty(REMOVE_DUPLICATED_ALIASES, "true");
+				String removeDuplicatedAliases = bundle.getProperty(REMOVE_DUPLICATED_ALIASES, "false");
 				if (removeDuplicatedAliases != null && removeDuplicatedAliases.equalsIgnoreCase("true")) {
 					removeDuplicatedAliases();
 				}
