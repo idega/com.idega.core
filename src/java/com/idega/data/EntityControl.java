@@ -25,7 +25,7 @@ public class EntityControl implements MutableClass {
 	
 	
 //	private static HashtableMultivalued relationshipClasses = new HashtableMultivalued();
-	private static boolean autoCreate = true;
+	private static boolean autoCreate = false;
 	protected static boolean limitTableNameToThirtyCharacters = false;
 	
 	public static void unload() {
