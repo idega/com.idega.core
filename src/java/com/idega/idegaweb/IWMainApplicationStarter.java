@@ -417,6 +417,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	protected void setApplicationVariables() {
 		// get the factory settings for auto create entities and set EntityControl. 
 		// In this way ICApplicationBinding table can be created if necessary and if it is allowed by the factory settings 
+		// see call of getIfgetIfEntityAutoCreate() below
 		if (iwma.getSettings().getFactorySettingsForAutoCreateEntities()) {
 			EntityControl.setAutoCreationOfEntities(true);
 			sendStartMessage("EntityAutoCreation switched on temporarily (factory settings)");
