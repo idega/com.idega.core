@@ -338,8 +338,11 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		this.setDatabaseProperties();
 		registerSystemBeans();
 		this.startDatabasePool();
-		iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
+		
+		// set application variables first before setting any properties (ICApplicationBinding table might be created first)
 		setApplicationVariables();
+		// now set some properties
+		iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 
 		this.startLogManager();
 		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
