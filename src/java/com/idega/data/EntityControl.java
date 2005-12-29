@@ -28,10 +28,20 @@ public class EntityControl implements MutableClass {
 	private static boolean autoCreate = false;
 	protected static boolean limitTableNameToThirtyCharacters = false;
 	
-	public static void unload() {
-		autoCreate = true;
-		limitTableNameToThirtyCharacters = false;
+	// initialize static variables
+	{
+		initializeClassVariables();
 	}
+	
+	public static void unload() {
+		initializeClassVariables();
+	}	
+	
+	
+	private static void initializeClassVariables() { 
+		autoCreate = false;
+		limitTableNameToThirtyCharacters = false;
+	}	
 	
 	/**
 	**Creates a unique ID for the ID column
