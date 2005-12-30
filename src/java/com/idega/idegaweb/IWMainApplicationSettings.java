@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.39 2005/12/28 17:41:33 thomas Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.40 2005/12/30 12:24:47 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -35,10 +35,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/12/28 17:41:33 $ by $Author: thomas $
+ * Last modified: $Date: 2005/12/30 12:24:47 $ by $Author: thomas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  */
 
 
@@ -123,6 +123,28 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	public String getProperty(String key) {
 		return getFromApplicationBinding(key);
+	}
+	
+	/**
+	 * Returns the corresponding value of the specified key.
+	 * If there is no entry the specified defaultReturnValue is stored and
+	 * returned.
+	 * 
+	 * @param key
+	 * @param defaultReturnValue
+	 * @return
+	 */
+	public String getProperty(String key, String defaultReturnValue) {
+		// try to get a value
+		String value = getProperty(key);
+		// if the value is null store the default value and return that value
+		if (value == null) {
+			setProperty(key, defaultReturnValue);
+			return defaultReturnValue;
+		}
+		// value was not null, return the found value
+		return value;
+		
 	}
 	
 	public boolean getBoolean(String key) {
@@ -624,13 +646,14 @@ public class IWMainApplicationSettings implements MutableClass {
 	/**
 	 * @deprecated
 	 * 
-	 * Use setProperty(String, String), getProperty(String), getBoolean(String).
+	 * Use setProperty(String, String), getProperty(String), getBoolean(String), getProperty(String, String)
 	 * 
 	 * DO NOT USE this method. Will be removed pretty soon.
 	 * It is a temporary method.
-	 * Only used by IBColorChooserWindow.
+	 * Only used by IBColorChooserWindow that is storing a color list.
 	 * 
 	 * !!!!!!!!!!!!!! Note: caller should store the list immediately, store method is not called anywhere !!!!!!!!!!!!!!!!!!!!!!!!
+	 * In the past store was called during shutdown of the application.
 	 * 
 	 * @param key
 	 * @return
