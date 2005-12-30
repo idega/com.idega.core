@@ -1,5 +1,5 @@
 /*
- * $Id: ICApplicationBindingBusinessBean.java,v 1.7 2005/12/27 17:45:18 thomas Exp $
+ * $Id: ICApplicationBindingBusinessBean.java,v 1.8 2005/12/30 12:23:24 thomas Exp $
  * Created on Oct 7, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -25,6 +25,13 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.util.StringHandler;
 
+/**
+ * 
+ * Do not use this class directly, use IWMainApplicationSettings.
+ * 
+ */
+
+
 
 public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements ICApplicationBindingBusiness{
 
@@ -33,6 +40,9 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements
 	private ICApplicationBindingHome applicationBindingHome = null;
 	
 	/**
+	 * 
+	 * Do not use this method, use IWMainApplicationSettings.
+	 * 
 	 * Returns the corresponding value to the specified key elso null if the key is not found.
 	 * 
 	 * Checks first if there is an entry in the application binding table. 
@@ -49,6 +59,9 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements
 	}
 
 	/**
+	 * 
+	 * Do not use this method, use IWMainApplicationSettings.
+	 * 
 	 * Puts an entry into the application binding table.
 	 * If the value is null an existing entry is removed.
 	 * 
@@ -70,13 +83,20 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements
 		}
 	}
 	
-	
+	/**
+	 * 
+	 * Do not use this method, use IWMainApplicationSettings.
+	 * 
+	 */
 	public String remove(String key) throws IOException {
 		return put(key, null);
 	}
 	
 	
 	/**
+	 * 
+	 * Do not use this method, use IWMainApplicationSettings.
+	 *  
 	 * Returns a set of the keys, elements are string objects
 	 */
 	public Set keySet() throws IOException {
