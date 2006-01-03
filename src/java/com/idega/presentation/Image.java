@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.90 2005/11/25 16:14:47 tryggvil Exp $
+ * $Id: Image.java,v 1.91 2006/01/03 20:39:27 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -40,11 +40,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/11/25 16:14:47 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/03 20:39:27 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.90 $
+ * @version $Revision: 1.91 $
  */
 public class Image extends PresentationObject implements NonEJBResource, PropertyDescriptionHolder
 {
@@ -601,7 +601,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		}
 		if (iwc != null)
 		{
-			BuilderService bs = getBuilderService(iwc);
+			/*BuilderService bs = getBuilderService(iwc);
 			ICDomain d = bs.getCurrentDomain();
 			String serverUrl = d.getURLWithoutLastSlash();
 			if (serverUrl != null)
@@ -609,22 +609,21 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 				String src = getMarkupAttribute("src");
 				if (src.startsWith("/"))
 				{
-					/*String protocol;
-					//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
-					if (iwc.getRequest().isSecure())
-					{
-						protocol = "https://";
-					}
-					else
-					{
-						protocol = "http://";
-					}
-					setMarkupAttribute("src", protocol + serverName + src);
-					*/
+//					String protocol;
+//					//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
+//					if (iwc.getRequest().isSecure())
+//					{
+//						protocol = "https://";
+//					}
+//					else
+//					{
+//						protocol = "http://";
+//					}
+//					setMarkupAttribute("src", protocol + serverName + src);
 					String newSrc = serverUrl + src;
 					setSrc(newSrc);
 				}
-			}
+			}*/
 		}
 		sPrint.append(getMarkupAttributesString());
 		if (align != null)

@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.154 2005/12/07 21:06:02 tryggvil Exp $ Created in 2000 by
+ * $Id: Page.java,v 1.155 2006/01/03 20:39:27 tryggvil Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -66,10 +66,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2005/12/07 21:06:02 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/01/03 20:39:27 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.154 $
+ * @version $Revision: 1.155 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -299,19 +299,17 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			StringBuffer buffer = new StringBuffer();
 			// Print a reference to the global .js script file
 			String src = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
-			try {
+			/*try {
 				ICDomain d = iwc.getDomain();
 				String serverUrl = d.getURLWithoutLastSlash();
 				if (serverUrl != null) {
 					if (src.startsWith("/")) {
-						/*
-						 * String protocol; //@todo this is case sensitive and
-						 * could break! move to IWContext. Also done in Link,
-						 * SubmitButton, Image and PageIncluder if
-						 * (iwc.getRequest().isSecure()) { protocol =
-						 * "https://"; } else { protocol = "http://"; } src =
-						 * protocol + serverName + src;
-						 */
+//					  String protocol; //@todo this is case sensitive and
+//					  could break! move to IWContext. Also done in Link,
+//					  SubmitButton, Image and PageIncluder if
+//					  (iwc.getRequest().isSecure()) { protocol =
+//					  "https://"; } else { protocol = "http://"; } src =
+//					  protocol + serverName + src;
 						src = serverUrl + src;
 					}
 				}
@@ -319,6 +317,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			catch (IDONoDatastoreError de) {
 				// de.printStackTrace();
 			}
+			*/
 			buffer.append("<script type=\"text/javascript\" src=\"" + src + "/iw_core.js\">");
 			buffer.append("</script>");
 			if (_javascripts != null && !_javascripts.isEmpty()) {

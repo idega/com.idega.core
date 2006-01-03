@@ -1,5 +1,5 @@
 /*
- * $Id: Script.java,v 1.26 2005/12/07 11:51:50 tryggvil Exp $ 
+ * $Id: Script.java,v 1.27 2006/01/03 20:39:27 tryggvil Exp $ 
  * Created in 2000 by Tryggvi Larusson
  * 
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.data.IDONoDatastoreError;
  * An instance of this component can be used to define javascript functions and
  * add to a component or a page.
  * </p>
- * Last modified: $Date: 2005/12/07 11:51:50 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/01/03 20:39:27 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 public class Script extends PresentationObject {
 
@@ -216,7 +216,7 @@ public class Script extends PresentationObject {
 	public void print(IWContext iwc) throws Exception {
 		if (doPrint(iwc)) {
 			if (getMarkupLanguage().equals("HTML")) {
-				try {
+				/*try {
 					com.idega.core.builder.data.ICDomain d = iwc.getDomain();
 					String serverUrl = d.getURL();
 					if (serverUrl != null) {
@@ -229,7 +229,7 @@ public class Script extends PresentationObject {
 				}
 				catch (IDONoDatastoreError de) {
 					// de.printStackTrace();
-				}
+				}*/
 				// if (getInterfaceStyle().equals("something")){
 				// }
 				// else{
