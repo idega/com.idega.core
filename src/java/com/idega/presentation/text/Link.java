@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.158 2005/12/07 11:51:51 tryggvil Exp $
+ * $Id: Link.java,v 1.159 2006/01/03 20:36:54 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1719,7 +1719,7 @@ public class Link extends Text {
 				}
 			} //end if (_objectType==(OBJECT_TYPE_WINDOW))
 
-			ICDomain d = iwc.getDomain();
+			/*ICDomain d = iwc.getDomain();
 			String serverUrl = d.getURLWithoutLastSlash();
 			String serverName = d.getServerName();
 			if(_hostname!=null && _hostname.length()>0) {
@@ -1729,17 +1729,16 @@ public class Link extends Text {
 			if (serverUrl != null) {
 				String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 				if (attr.startsWith("/")) {
-					/*if ((protocol == null) || protocol.equals("")) {
-						//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
-						if (iwc.getRequest().isSecure()) {
-							protocol = "https://";
-						}
-						else {
-							protocol = "http://";
-						}
-					}
-					setMarkupAttribute(HREF_ATTRIBUTE, protocol + serverName + attr);
-					*/
+//					if ((protocol == null) || protocol.equals("")) {
+//						//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
+//						if (iwc.getRequest().isSecure()) {
+//							protocol = "https://";
+//						}
+//						else {
+//							protocol = "http://";
+//						}
+//					}
+//					setMarkupAttribute(HREF_ATTRIBUTE, protocol + serverName + attr);
 					String newUrl=null;
 					if ((protocol == null) || protocol.equals("")) {
 						newUrl = serverUrl + attr;
@@ -1753,7 +1752,7 @@ public class Link extends Text {
 					}
 					setMarkupAttribute(HREF_ATTRIBUTE, newUrl);
 				}
-			}
+			}*/
 
 			print("<a " + getMarkupAttributesString() + " >");
 			if (this.isText()) {
