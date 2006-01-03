@@ -1,5 +1,5 @@
 /*
- * $Id: FacesUtil.java,v 1.4 2006/01/03 17:04:41 tryggvil Exp $
+ * $Id: FacesUtil.java,v 1.5 2006/01/03 18:20:16 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import javax.faces.context.FacesContext;
  * <p>
  *  Utility class for various JavaServer Faces functions.
  * </p>
- *  Last modified: $Date: 2006/01/03 17:04:41 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/03 18:20:16 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class FacesUtil {
 	
@@ -51,9 +51,10 @@ public class FacesUtil {
 		String contextPath = ctx.getExternalContext().getRequestContextPath();
 		String requestPathInfo = ctx.getExternalContext().getRequestPathInfo();
 		String requestUri = ctx.getExternalContext().getRequestServletPath();
-		if(requestPathInfo!=null){
-			requestUri+=requestPathInfo;
+		if(requestPathInfo==null){
+			requestPathInfo=SLASH;
 		}
+		requestUri+=requestPathInfo;
 		
 		if(contextPath.equals(SLASH) || contextPath.equals(EMPTY_STRING)){
 			return requestUri;
