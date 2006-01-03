@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.10 2005/12/07 21:38:59 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.11 2006/01/03 23:57:20 tryggvil Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.util.FacesUtil;
  * This class overrides the default JSF ViewHandler and adds idegaWeb specific way of handling JSP pages
  * that are registered in the ViewNode hierarchy.<br/>
  * </p>
- *  Last modified: $Date: 2005/12/07 21:38:59 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/03 23:57:20 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -166,19 +166,30 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 		String requestContextPath = context.getExternalContext().getRequestContextPath();
 		// count the length
 		// e.g. "/cms" + "/workspace"  
-		int length = requestContextPath.length() + requestServletPath.length();
+		
 		String uri = node.getURIWithContextPath();
-		String uriWithoutContextAndServlet = uri.substring(length);
+		String uriStripped = null;
+		int stripLength=0;
+		if(viewId.startsWith(requestServletPath)){
+			//this is a special case that happens on Oracle Application Server (oc4j)
+			stripLength = requestContextPath.length();
+		}
+		else{
+			//this is the case on Tomcat (5), i.e. the viewId doesn't contain the servletPath
+			stripLength = requestContextPath.length() + requestServletPath.length();
+		}
+		uriStripped= uri.substring(stripLength);
+		
 		int viewIdLength = viewId.length();
 		// remove the slash at the end if necessary
 		if (viewId.endsWith("/")) {
 			viewId = viewId.substring(0, viewIdLength - 1);
 		}
-		if (uriWithoutContextAndServlet.endsWith("/")) {
-			uriWithoutContextAndServlet = uriWithoutContextAndServlet.substring(0, uriWithoutContextAndServlet.length() - 1);
+		if (uriStripped.endsWith("/")) {
+			uriStripped = uriStripped.substring(0, uriStripped.length() - 1);
 		}
 		
-		return uriWithoutContextAndServlet.equals(viewId);
+		return uriStripped.equals(viewId);
 	}
 
 	
