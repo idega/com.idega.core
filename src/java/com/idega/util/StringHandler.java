@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.36 2005/11/25 15:11:08 gimmi Exp $ Created on
+ * $Id: StringHandler.java,v 1.37 2006/01/04 14:38:03 tryggvil Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,11 +24,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2005/11/25 15:11:08 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/01/04 14:38:03 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class StringHandler {
 
@@ -94,6 +94,12 @@ public class StringHandler {
 	public static final String SLASH = "/";
 
 	public static final String NEWLINE = "\n";
+	
+	public static final String SPACE = " ";
+	
+	public static final String SEMICOLON = ";";
+	
+	public static final String COLON = ":";
 
 	public StringHandler() {
 		// empty blocks
