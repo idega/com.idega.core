@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.44 2006/01/03 20:37:58 tryggvil Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.45 2006/01/05 15:56:48 laddi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -12,7 +12,6 @@ package com.idega.presentation.ui;
 import java.util.Iterator;
 import java.util.Map;
 import javax.faces.context.FacesContext;
-import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
@@ -28,10 +27,10 @@ import com.idega.util.datastructures.list.KeyValuePair;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2006/01/03 20:37:58 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/01/05 15:56:48 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.44 $
+ * @version $Revision: 1.45 $
  */
 public class Window extends Page {
 

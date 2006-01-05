@@ -1,5 +1,5 @@
 /*
- * $Id: Script.java,v 1.27 2006/01/03 20:39:27 tryggvil Exp $ 
+ * $Id: Script.java,v 1.28 2006/01/05 15:56:48 laddi Exp $ 
  * Created in 2000 by Tryggvi Larusson
  * 
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.faces.context.FacesContext;
-import com.idega.data.IDONoDatastoreError;
 
 /**
  * <p>
@@ -23,10 +22,10 @@ import com.idega.data.IDONoDatastoreError;
  * An instance of this component can be used to define javascript functions and
  * add to a component or a page.
  * </p>
- * Last modified: $Date: 2006/01/03 20:39:27 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/01/05 15:56:48 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class Script extends PresentationObject {
 

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import com.idega.presentation.IWContext;
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;

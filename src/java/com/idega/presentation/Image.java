@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.91 2006/01/03 20:39:27 tryggvil Exp $
+ * $Id: Image.java,v 1.92 2006/01/05 15:56:48 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -17,8 +17,6 @@ import java.util.Locale;
 import java.util.Map;
 import javax.ejb.EJBException;
 import javax.faces.context.FacesContext;
-import com.idega.core.builder.business.BuilderService;
-import com.idega.core.builder.data.ICDomain;
 import com.idega.core.file.business.FileSystemConstants;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.business.ICLocaleBusiness;
@@ -40,11 +38,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2006/01/03 20:39:27 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/05 15:56:48 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.91 $
+ * @version $Revision: 1.92 $
  */
 public class Image extends PresentationObject implements NonEJBResource, PropertyDescriptionHolder
 {

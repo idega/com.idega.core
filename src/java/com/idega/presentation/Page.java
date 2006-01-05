@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.155 2006/01/03 20:39:27 tryggvil Exp $ Created in 2000 by
+ * $Id: Page.java,v 1.156 2006/01/05 15:56:48 laddi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -24,7 +24,6 @@ import javax.faces.context.FacesContext;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
-import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICDynamicPageTrigger;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.data.ICTreeNode;
@@ -66,10 +65,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2006/01/03 20:39:27 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/01/05 15:56:48 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.155 $
+ * @version $Revision: 1.156 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 

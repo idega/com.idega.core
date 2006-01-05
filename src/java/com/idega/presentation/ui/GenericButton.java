@@ -1,5 +1,5 @@
 /*
- * $Id: GenericButton.java,v 1.36 2006/01/03 20:37:58 tryggvil Exp $
+ * $Id: GenericButton.java,v 1.37 2006/01/05 15:56:48 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.Map;
 import javax.faces.context.FacesContext;
 import com.idega.core.builder.business.BuilderService;
-import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.idegaweb.IWConstants;
@@ -30,10 +29,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * This component is for rendering out a input element of type button.
  * </p>
- *  Last modified: $Date: 2006/01/03 20:37:58 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/05 15:56:48 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class GenericButton extends GenericInput {
 
