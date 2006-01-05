@@ -69,8 +69,7 @@ DIV.LoadLayerOld {
         left:45%;
 }
 
-DIV.LoadLayer {
-        /*visibility:hidden;*/
+.LoadLayer {
         visibility:hidden;
         position:absolute;
         font-family: Verdana;
@@ -89,12 +88,13 @@ DIV.LoadLayer {
 		
 		/***IE TRANSPARENCY HACKS***/
 		_background-image: none;
-		_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../idegaweb/bundles/com.idega.core.bundle/resources/style/images/loadingmask.png',sizingMethod='scale');
+		/*_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/uppsala/idegaweb/bundles/com.idega.core.bundle/resources/style/images/loadingmask.png',sizingMethod='scale');
+		*/
 		
 		z-index: 1000;
 }
 
-DIV.LoadLayer .LoadLayerContents{
+.LoadLayer .LoadLayerContents{
 
         position:absolute;
         font-family: Verdana;
@@ -110,6 +110,23 @@ DIV.LoadLayer .LoadLayerContents{
 		padding-bottom:4px;
 		top:48%;
 		left:45%;
+		
+		width: 120px;
+		height: 35px;
+}
+
+.LoadLayer .LoadLayerContents #loadingimage{
+	margin: 10px;
+	position: absolute;
+	left: 0px;
+	top: 0px;	
+}
+
+.LoadLayer .LoadLayerContents #loadingtext{
+	margin: 10px;
+	position: absolute;
+	left: 30px;
+	top: 0px;	
 }
 
 /** END: loadlayer **/
