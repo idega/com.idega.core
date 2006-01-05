@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.92 2005/11/29 15:30:05 laddi Exp $
+ * $Id: Form.java,v 1.93 2006/01/05 22:59:49 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2005/11/29 15:30:05 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/01/05 22:59:49 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.92 $
+ * @version $Revision: 1.93 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -317,12 +317,11 @@ public class Form
 		if (getParentPage() != null && showLoadingLayerOnSubmit && getTarget() == null) {// &&
 																																											// !("iw_event_frame").equals(target)){
 
-			if (getParentPage().getAssociatedBodyScript().getFunction("showLoadingLayer") == null)
+			/*if (getParentPage().getAssociatedBodyScript().getFunction("showLoadingLayer") == null)
 				getParentPage().getAssociatedScript().addFunction("showLoadingLayer", getShowLoadingLayerScript(iwc));
 
 			if (getParentPage().getAssociatedBodyScript().getFunction("createLoadingLayer") == null)
 				getParentPage().getAssociatedBodyScript().addFunction("createLoadingLayer", getCreateLoadingLayerScript(iwc));
-
 			// getParentPage().setStyleDefinition("DIV.LoadLayer","visibility:hidden;position:absolute;");
 			IWStyleManager manager = IWStyleManager.getInstance();
 			if (!manager.isStyleSet("DIV.LoadLayer"))
@@ -335,10 +334,11 @@ public class Form
 			// getParentPage().setOnUnLoad("showLoadingLayer();");
 			// /setOnSubmit("showLoadingLayer();");
 			//setCheckSubmit();
+			*/
 			printLoadingLayer = true;
 		}
 	}
-
+/*
 	private String getShowLoadingLayerScript(IWContext iwc) {
 		StringBuffer script = new StringBuffer();
 		// String imageUrl =
@@ -372,7 +372,6 @@ public class Form
 
 		return script.toString();
 	}
-
 	private String getCreateLoadingLayerScript(IWContext iwc) {
 		StringBuffer script = new StringBuffer();
 		String imageUrl = iwc.getIWMainApplication().getCoreBundle().getImageURI("loading_notext.gif");
@@ -381,7 +380,7 @@ public class Form
 		script.append("document.write('<div id=\"busybuddy\" class=\"LoadLayer\" >");
 		script.append("<div id=\"busybuddy-contents\" class=\"LoadLayerContents\" >");
 		script.append("<img src=\"" + imageUrl + "\" onError=\"this.width=1;this.height=1;\">&nbsp;");
-		script.append(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString("loading_text", "Loading"));
+		script.append(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString("loading_text", "Loading..."));
 		script.append("<\\/div>");
 		script.append("<\\/div>') ").append("\n");
 		script.append("loaded = true; ").append("\n");
@@ -389,7 +388,7 @@ public class Form
 
 		return script.toString();
 	}
-
+*/
 	/**
 	 * Set to show a loading image in middle of window, when button pressed
 	 * 
@@ -625,14 +624,16 @@ public class Form
 	}
 
 	public void print(IWContext iwc) throws Exception {
+		String loadingText = iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString("loading_text", "Loading...");
+		String loadingCall = "showLoadingMessage('"+loadingText+"');";
 		if (getScript().doesFunctionExist("checkSubmit")) {
 			if (printLoadingLayer) {
-				getScript().addToFunction("checkSubmit", "showLoadingLayer();");
+				getScript().addToFunction("checkSubmit", loadingCall);
 			}
 			getScript().addToFunction("checkSubmit", "return true;");
 		}
 		else if (printLoadingLayer) {
-			this.setOnSubmit("showLoadingLayer()");
+			this.setOnSubmit(loadingCall);
 		}
 		// if ( doPrint(iwc) ){
 

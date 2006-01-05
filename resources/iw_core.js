@@ -1,20 +1,18 @@
-//************************************************//
+//***********************************************************//
 //
 // idegaWeb Core Javascript Function library
-// (c) Copyright idega hf. 2000-2005 All rights reserved.
+// (c) Copyright idega hf. 2000-2006 All rights reserved.
 //
 // 	This file contains proprietary information owned
 // 	by idega and may not be copied without prior concent.
 //
-//************************************************//
+//***********************************************************//
 
-
-
-//************************************************//
+//***********************************************************//
 //
 //Begin Generic Functions
 //
-//************************************************//
+//***********************************************************//
 
 	//Coordinate script that sets two variable that track the mouse coordinates
 	var IE = document.all?true:false; 
@@ -335,6 +333,55 @@ function setIframeHeight(iframeId,topmargin,bottommargin) {
   }
 }
 
+/**
+*This Function sets the current window to be in given size and center it on screen.
+**/
+function setWindowSizeCentered(width,height){
+
+	window.resizeTo(width,height);
+	var body = document.body;
+	var body_height = 0;
+	if (typeof bottom == "undefined") {
+		var div = document.createElement("div");
+		body.appendChild(div);
+		var pos = getAbsolutePos(div);
+		body_height = pos.y;
+	} else {
+		var pos = getAbsolutePos(bottom);
+		body_height = pos.y + bottom.offsetHeight;
+	}
+	
+	var body_height = 0;
+	if (!document.all) {
+	//For Gecko:
+		//window.sizeToContent();
+		//window.sizeToContent();	// for reasons beyond understanding,
+					// only if we call it twice we get the
+					// correct size.
+		//window.addEventListener("unload", __dlg_onclose, true);
+		window.innerWidth = body.offsetWidth + 5;
+		window.innerHeight = body_height + 2;
+		// center on parent
+		var x = opener.screenX + (opener.outerWidth - window.outerWidth) / 2;
+		var y = opener.screenY + (opener.outerHeight - window.outerHeight) / 2;
+		window.moveTo(x, y);
+	} else {
+	//For IE:
+		// window.dialogHeight = body.offsetHeight + 50 + "px";
+		// window.dialogWidth = body.offsetWidth + "px";
+		//window.resizeTo(body.offsetWidth, body_height);
+		var ch = body.clientHeight;
+		var cw = body.clientWidth;
+		//window.resizeBy(body.offsetWidth - cw, body_height - ch);
+		var W = body.offsetWidth;
+		var H = 2 * body_height - ch;
+		var x = (screen.availWidth - W) / 2;
+		var y = (screen.availHeight - H) / 2;
+		window.moveTo(x, y);
+	}
+
+}
+
 //************************************************//
 //
 // End Windowing and iframe methods
@@ -373,3 +420,49 @@ function tableruler()
 		}
 	}
 }
+
+
+/*Loading Layer function: */
+	
+	var loaded = false;
+	var image1 = new Image();
+	image1.src = '/idegaweb/bundles/com.idega.core.bundle/resources/loading_notext.gif';
+	
+	var image2 = new Image();
+	image2.src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/loadingmask.png';
+
+	function showLoadingMessage(sLoadingText){
+	
+		var l=document.createElement('div');
+		l.setAttribute('id', 'busybuddy'); 
+		l.setAttribute('class', 'LoadLayer');
+		//IE class workaround:
+		l.setAttribute('className', 'LoadLayer');
+		var l2 = document.createElement('div');
+		l2.setAttribute('id', 'busybuddy-contents');
+		l2.setAttribute('class', 'LoadLayerContents');
+		//IE class workaround:
+		l2.setAttribute('className', 'LoadLayerContents');
+		var l3 = document.createElement('img');
+		l3.setAttribute('id', 'loadingimage');
+		l3.setAttribute('src',image1.src);
+		l3.src=image1.src;
+		l3.setAttribute('onError', 'this.width=1;this.height=1;');
+		l.appendChild(l2);
+		l2.appendChild(l3);
+		var span =  document.createElement('span');
+		span.setAttribute('id', 'loadingtext');
+		l2.appendChild(span);
+		var text = document.createTextNode(sLoadingText);
+		span.appendChild(text);
+		var bodyArray = document.getElementsByTagName('body');
+		var bodyTag = bodyArray[0];
+		bodyTag.appendChild(l);
+		//alert('bodyTag:'+bodyTag);
+		if( l.style ) { 
+	      l.style.visibility = 'visible';
+	    } else {
+	      l.visibility = 'show' ;
+	    }
+	}
+
