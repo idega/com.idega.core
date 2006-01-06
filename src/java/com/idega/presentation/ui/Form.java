@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.93 2006/01/05 22:59:49 tryggvil Exp $
+ * $Id: Form.java,v 1.94 2006/01/06 12:32:04 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -25,7 +25,6 @@ import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWStyleManager;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
@@ -38,10 +37,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2006/01/05 22:59:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/06 12:32:04 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.93 $
+ * @version $Revision: 1.94 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -77,9 +76,11 @@ public class Form
 	private boolean showLoadingLayerOnSubmit = true;
 	private boolean printLoadingLayer = false;
 	private static String FACET_ASSOCIATEDSCRIPT="form_associatedscript";
+	private String loadingLayerLocalizationKey = "loading_text";
+	private String loadingLayerTextValue = "Loading...";
 
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[14];
+		Object values[] = new Object[16];
 		values[0] = super.saveState(ctx);
 		values[1] = maintainedParameters;
 		values[2] = Boolean.valueOf(maintainAllParameters);
@@ -94,6 +95,8 @@ public class Form
 		values[11] = Boolean.valueOf(_disableOnSubmit);
 		values[12] = Boolean.valueOf(showLoadingLayerOnSubmit);
 		values[13] = Boolean.valueOf(printLoadingLayer);
+		values[14] = loadingLayerLocalizationKey;
+		values[15] = loadingLayerTextValue;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
@@ -112,6 +115,8 @@ public class Form
 		_disableOnSubmit = ((Boolean)values[11]).booleanValue();
 		showLoadingLayerOnSubmit = ((Boolean)values[12]).booleanValue();
 		printLoadingLayer = ((Boolean)values[13]).booleanValue();
+		loadingLayerLocalizationKey = values[14].toString();
+		loadingLayerTextValue = values[15].toString();
 	}
 	
 	/**
@@ -398,6 +403,12 @@ public class Form
 		this.showLoadingLayerOnSubmit = show;
 	}
 
+	public void setToShowLoadingOnSubmit(boolean show, String localizationKey, String valueIfNull) {
+		this.showLoadingLayerOnSubmit = show;
+		this.loadingLayerLocalizationKey = localizationKey;
+		this.loadingLayerTextValue = valueIfNull;
+	}
+
 	/**
 	 * Converts the set action POST/GET to an HTTPS url
 	 */
@@ -624,7 +635,7 @@ public class Form
 	}
 
 	public void print(IWContext iwc) throws Exception {
-		String loadingText = iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString("loading_text", "Loading...");
+		String loadingText = iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString(loadingLayerLocalizationKey, loadingLayerTextValue);
 		String loadingCall = "showLoadingMessage('"+loadingText+"');";
 		if (getScript().doesFunctionExist("checkSubmit")) {
 			if (printLoadingLayer) {
