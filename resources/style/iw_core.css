@@ -71,7 +71,7 @@ DIV.LoadLayerOld {
 
 .LoadLayer {
         visibility:hidden;
-        position:absolute;
+        position:fixed;
         font-family: Verdana;
         font-size: 9pt;
         font-weight: bold;
