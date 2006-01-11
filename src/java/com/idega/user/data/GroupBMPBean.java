@@ -91,7 +91,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public final void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(getNameColumnName(), "Group name", true, true, "java.lang.String");
-		addAttribute(getGroupTypeColumnName(), "Group type", true, true, String.class, 30, "many-to-one", GroupType.class);
 		addAttribute(getGroupDescriptionColumnName(), "Description", true, true, "java.lang.String");
 		addAttribute(getExtraInfoColumnName(), "Extra information", true, true, "java.lang.String");
 		addAttribute(COLUMN_CREATED, "Created when", Timestamp.class);
