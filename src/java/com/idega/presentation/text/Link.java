@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.160 2006/01/05 15:56:48 laddi Exp $
+ * $Id: Link.java,v 1.161 2006/01/12 11:20:30 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -40,6 +40,7 @@ import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.Window;
 import com.idega.repository.data.RefactorClassRegistry;
@@ -2400,4 +2401,21 @@ public void setWindowToOpen(String className) {
 		this.usePublicOjbectInstanciator = use;
 	}
 	
+	/**
+	 * Sets the value of the given interface object when the link is clicked.
+	 * @param objectToChange	The interface object to change value of.
+	 * @param value	The new value to set.
+	 */
+	public void setValueOnClick(InterfaceObject objectToChange, String value) {
+		setValueOnClick(objectToChange.getName(), value);
+	}
+
+	/**
+	 * Sets the value of the given interface object when the link is clicked.
+	 * @param objectToChange	The interface object to change value of.
+	 * @param value	The new value to set.
+	 */
+	public void setValueOnClick(String objectToChangeName, String value) {
+		setOnClick("changeInputValue(findObj('" + objectToChangeName+ "'), '" + value + "');");
+	}
 }

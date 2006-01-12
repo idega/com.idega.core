@@ -94,6 +94,7 @@ function preLoadImages(){var d=document; if(d.images){ if(!d.p) d.p=new Array();
 
 function swapImgRestore() {var i,x,a=document.sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;}
 
+function changeInputValue (input,newValue) { input.value=newValue; }
 
 //************************************************//
 //

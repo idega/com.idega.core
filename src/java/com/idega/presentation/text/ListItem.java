@@ -1,5 +1,5 @@
 /*
- * $Id: ListItem.java,v 1.2 2005/03/08 19:48:15 tryggvil Exp $
+ * $Id: ListItem.java,v 1.3 2006/01/12 11:20:30 laddi Exp $
  * Created on 16.2.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.presentation.PresentationObjectContainer;
  * An item to render out a "ListItem" or <code>li</code> html tag.
  * This class is used by the Lists class.
  * </p>
- *  Last modified: $Date: 2005/03/08 19:48:15 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/12 11:20:30 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ListItem extends PresentationObjectContainer {
 	
@@ -35,7 +35,7 @@ public class ListItem extends PresentationObjectContainer {
 	
 	public void print(IWContext iwc) throws Exception {
 		
-		println("<li " + getMarkupAttributesString() + ">");
+		print("<li " + getMarkupAttributesString() + ">");
 
 		List theObjects = this.getChildren();
 		if (theObjects != null) {

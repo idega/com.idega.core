@@ -8,9 +8,13 @@
  */
 package com.idega.presentation.ui;
 
+import java.util.Iterator;
+import java.util.List;
 import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.text.Text;
 
 /**
  * <p>
@@ -23,18 +27,14 @@ import com.idega.presentation.IWContext;
  */
 public class Label extends InterfaceObject {
 		
-	private String _label;
-
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[2];
+		Object values[] = new Object[1];
 		values[0] = super.saveState(ctx);
-		values[1] = _label;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		_label = (String) values[1];
 	}
 	
 	public Label() {
@@ -42,7 +42,7 @@ public class Label extends InterfaceObject {
 	}
 	
 	public Label(InterfaceObject object) {
-		this("", object);
+		this(null, object);
 	}
 	
 	public Label(String label, InterfaceObject object) {
@@ -51,14 +51,25 @@ public class Label extends InterfaceObject {
 	}
 	
 	private void initialize(String label) {
-		_label = label;
+		if (label != null) {
+			add(new Text(label));
+		}
 		setTransient(false);
 	}
 	
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
 			print("<label "+getMarkupAttributesString()+" >");
-			print(_label);
+
+			List theObjects = this.getChildren();
+			if (theObjects != null) {
+				Iterator iter = theObjects.iterator();
+				while (iter.hasNext()) {
+					PresentationObject item = (PresentationObject) iter.next();
+					renderChild(iwc,item);
+				}
+			}
+
 			println("</label>");	
 		} else if (IWConstants.MARKUP_LANGUAGE_WML.equals(getMarkupLanguage())) {	
 			print(_label);
@@ -67,7 +78,7 @@ public class Label extends InterfaceObject {
 	}	
 	
 	public void setLabel(String label) {
-		this._label = label;
+		add(new Text(label));
 	}
 	
 	/**
@@ -80,6 +91,6 @@ public class Label extends InterfaceObject {
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
 	public boolean isContainer() {
-		return false;
+		return true;
 	}
 }
