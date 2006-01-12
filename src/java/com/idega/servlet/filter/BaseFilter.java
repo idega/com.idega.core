@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.14 2005/12/07 15:37:50 tryggvil Exp $
+ * $Id: BaseFilter.java,v 1.15 2006/01/12 15:26:07 tryggvil Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,7 @@ package com.idega.servlet.filter;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.MutableClass;
@@ -22,10 +23,10 @@ import com.idega.util.RequestUtil;
  * <p>
  *  Class that holds basic functionality used by many filters.<br>
  * </p>
- *  Last modified: $Date: 2005/12/07 15:37:50 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/12 15:26:07 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
@@ -151,5 +152,10 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	protected IWMainApplication getIWMainApplication(HttpServletRequest request) {
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
 		return iwma;
+	}
+	
+
+	protected LoginBusinessBean getLoginBusiness(HttpServletRequest request){
+		return LoginBusinessBean.getLoginBusinessBean(request);
 	}
 }

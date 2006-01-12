@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthorizationFilter.java,v 1.11 2005/12/07 11:51:51 tryggvil Exp $ Created on 31.7.2004
+ * $Id: IWAuthorizationFilter.java,v 1.12 2006/01/12 15:26:07 tryggvil Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -23,7 +23,6 @@ import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
-import com.idega.presentation.IWContext;
 
 /**
  * <p>
@@ -32,10 +31,10 @@ import com.idega.presentation.IWContext;
  * sufficent priviliges.<br/>
  * In some instances (when accessing the workspace) it redirects the user to the login page.
  * </p>
- * Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/01/12 15:26:07 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
@@ -56,9 +55,11 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 		
 		HttpServletRequest request = (HttpServletRequest)srequest;
 		HttpServletResponse response = (HttpServletResponse)sresponse;
-		IWContext iwc = new IWContext(request,response,request.getSession().getServletContext());
-		boolean isLoggedOn = iwc.isLoggedOn();
-		boolean hasPermission = getIfUserHasPermission(iwc);
+		//IWContext iwc = new IWContext(request,response,request.getSession().getServletContext());
+		//boolean isLoggedOn = iwc.isLoggedOn();
+		LoginBusinessBean loginBusiness = getLoginBusiness(request);
+		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
+		boolean hasPermission = getIfUserHasPermission(request);
 		if(!hasPermission){
 			if(getIfSendToLoginPage(request,response,isLoggedOn)){
 				
@@ -93,13 +94,13 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
 	}
 	
-	protected boolean getIfUserHasPermission(IWContext iwc){
-		HttpServletRequest request = iwc.getRequest();
-		/*HttpServletResponse response = */iwc.getResponse();
+	protected boolean getIfUserHasPermission(HttpServletRequest request){
+		//HttpServletRequest request = iwc.getRequest();
+		/*HttpServletResponse response = iwc.getResponse();*/
 		String uri = getURIMinusContextPath(request);
 		if(uri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH)){
-			
-			if(!LoginBusinessBean.isLoggedOn(iwc)){
+			LoginBusinessBean loginBusiness = getLoginBusiness(request);
+			if(!loginBusiness.isLoggedOn(request)){
 				return false;
 			}
 			else{

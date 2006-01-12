@@ -34,8 +34,10 @@ public class IWEncodingFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse)myResponse;
 		
 		//FIXME move the real methods from the constructor to this filter!
-		IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
-		iwc.getParameter("just forcing the getting of parameters, remove later");
+		//IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
+		IWContext.setCharactersetEncoding(request);
+		request.getParameter("just forcing the getting of parameters, remove later");
+		//iwc.getParameter("just forcing the getting of parameters, remove later");
 		
 		chain.doFilter(request, response);
 	}

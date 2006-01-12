@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.8 2005/12/07 21:05:06 tryggvil Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.9 2006/01/12 15:26:07 tryggvil Exp $
  * Created on 27.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -33,10 +33,10 @@ import com.idega.util.FileUtil;
  *  (Setting -Didegaweb.bundles.resource.dir=/idega/eclipse/workspace in the tomcat plugin preference pane).
  *  </p>
  * 
- *  Last modified: $Date: 2005/12/07 21:05:06 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/12 15:26:07 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 	
@@ -166,10 +166,18 @@ public class IWBundleResourceFilter extends BaseFilter {
 			out.close();
 		}
 		catch (FileNotFoundException e) {
-			e.printStackTrace();
+			String message = e.getMessage();
+			if(message==null){
+				message="";
+			}
+			System.err.println("IWBundleResourceFilter: "+e.getClass().getName()+"  "+message+" for resource: "+realFile.toString());
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			String message = e.getMessage();
+			if(message==null){
+				message="";
+			}
+			System.err.println("IWBundleResourceFilter: "+e.getClass().getName()+" "+message+" for resource: "+realFile.toString());
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.11 2005/12/07 11:51:51 tryggvil Exp $
+ * $Id: IWWelcomeFilter.java,v 1.12 2006/01/12 15:26:07 tryggvil Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.presentation.IWContext;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/12 15:26:07 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
@@ -116,11 +116,9 @@ public class IWWelcomeFilter extends BaseFilter {
 			BuilderService bService = (BuilderService)IBOLookup.getServiceInstance(iwma.getIWApplicationContext(),BuilderService.class);
 			ICPage rootPage = bService.getRootPage();
 			if(rootPage!=null){
-				if(rootPage.getChildCount()>0){
-					//set the filter to forward to /pages if there are any subpages
-					startOnPages=true;
-					startOnWorkspace=false;
-				}
+				//set the filter to forward to /pages if there is a rootPage created
+				startOnPages=true;
+				startOnWorkspace=false;
 			}
 			else{
 				startOnWorkspace=true;
@@ -132,9 +130,10 @@ public class IWWelcomeFilter extends BaseFilter {
 				serverName += ":"+port;
 			}
 			iwma.getIWApplicationContext().getDomain().setServerName(serverName);*/
-			IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
+			//IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
 			//This sets the domain by default:
-			iwc.getDomain();
+			//iwc.getDomain();
+			initializeDefaultDomain(request);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
