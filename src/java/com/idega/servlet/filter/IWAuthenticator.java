@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.20 2005/12/23 12:40:57 thomas Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.21 2006/01/12 15:25:21 tryggvil Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -20,6 +20,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AuthenticationBusiness;
@@ -30,11 +31,13 @@ import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CypherText;
+import com.idega.util.RequestUtil;
 
 /**
  * <p>
@@ -43,10 +46,10 @@ import com.idega.util.CypherText;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2005/12/23 12:40:57 $ by $Author: thomas $
+ * Last modified: $Date: 2006/01/12 15:25:21 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -62,13 +65,13 @@ public class IWAuthenticator extends BaseFilter {
 	 * This parameter can be set to forward to a certain page when logging off (and it is succesful)
 	 */
 	public static final String PARAMETER_REDIRECT_URI_ONLOGOFF = "logoff_redirect_uri";
-	
-	
-	
+	public static final String COOKIE_NAME = "iwrbusid";
+	//public String IW_BUNDLE_IDENTIFIER = "com.idega.block.login";
+	public static final String PARAMETER_ALLOWS_COOKIE_LOGIN = "icusallows";
+
 	private static Logger log = Logger.getLogger(IWAuthenticator.class
 			.getName());
 
-	private LoginBusinessBean loginBusiness = new LoginBusinessBean();
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -89,11 +92,7 @@ public class IWAuthenticator extends BaseFilter {
 
 		HttpServletRequest request = (HttpServletRequest)srequest;
 		HttpServletResponse response = (HttpServletResponse)sresponse;
-		//FacesContext fc = FacesContext.getCurrentInstance();
-		//IWContext iwc = IWContext.getIWContext(fc);
-		IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
-		
-		authenticationBusiness = getAuthenticationBusiness(iwc);
+		HttpSession session = request.getSession();
 		
 //		Enumeration headerNames = request.getHeaderNames();
 //		System.out.println("------------HEADER BEGINS-------------");
@@ -111,51 +110,58 @@ public class IWAuthenticator extends BaseFilter {
 //		}
 //		System.out.println("------------PARAMETERS ENDS-------------");
 		User lastLoggedOnAsUser = null;
-		if(iwc.isLoggedOn()){
-			lastLoggedOnAsUser = iwc.getCurrentUser();
+		LoginBusinessBean loginBusiness = getLoginBusiness(request);
+		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
+		
+		if(isLoggedOn){
+			//lastLoggedOnAsUser = iwc.getCurrentUser();
+			lastLoggedOnAsUser = loginBusiness.getCurrentUser(session);
 		}
 	
 		
-		if(useBasicAuthenticationMethod(iwc)){
-			if(!iwc.isLoggedOn()){
-				if (!getLoginBusiness(iwc).authenticateBasicAuthenticationRequest(iwc)) {	
-					getLoginBusiness(iwc).callForBasicAuthentication(iwc,null);
+		if(useBasicAuthenticationMethod(request)){
+			if(!isLoggedOn){
+				if (!loginBusiness.authenticateBasicAuthenticationRequest(request)) {	
+					loginBusiness.callForBasicAuthentication(request,response,null);
 					return;
 				}
 			}
 		} else {
-			if(!iwc.isLoggedOn()){
-				getLoginBusiness(iwc).authenticateBasicAuthenticationRequest(iwc);
+			if(!isLoggedOn){
+				loginBusiness.authenticateBasicAuthenticationRequest(request);
 			}
 			initializeDefaultDomain(request);
 			
-			tryRegularLogin(iwc);
+			tryRegularLogin(request);
 			
-			performCookieLogin(iwc);
-			addCookie(iwc);
+			tryCookieLogin(request,response,loginBusiness);
+			//addCookie(request,response,loginBusiness);
 		}
-		
-		if (iwc.isParameterSet(PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE)){
-			if(iwc.isLoggedOn()) {
-				Group prmg = iwc.getCurrentUser().getPrimaryGroup(); 
+		//We have to call this method again because the user might have logged on above:
+		isLoggedOn = loginBusiness.isLoggedOn(request);
+		if (RequestUtil.isParameterSet(request,PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE)){
+			if(isLoggedOn) {
+				User user = loginBusiness.getCurrentUser(session);
+				Group prmg = user.getPrimaryGroup(); 
 				if (prmg != null) {
 					int homePageID = prmg.getHomePageID();
 					if (homePageID > 0) {
-						response.sendRedirect(getBuilderService(iwc).getPageURI(homePageID));
+						IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
+						response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
 						return;
 					}
 				}
 			}
 		}
-		else if (iwc.isParameterSet(PARAMETER_REDIRECT_URI_ONLOGON) && iwc.isLoggedOn()) {
-			String uri = iwc.getParameter(PARAMETER_REDIRECT_URI_ONLOGON);
+		if (RequestUtil.isParameterSet(request,PARAMETER_REDIRECT_URI_ONLOGON) && isLoggedOn) {
+			String uri = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGON);
 			if (uri!=null) {
 				response.sendRedirect(uri);
 				return;
 			}
 		}
-		else if (iwc.isParameterSet(PARAMETER_REDIRECT_URI_ONLOGOFF) && !iwc.isLoggedOn()) {
-			String uri = iwc.getParameter(PARAMETER_REDIRECT_URI_ONLOGOFF);
+		if (RequestUtil.isParameterSet(request,PARAMETER_REDIRECT_URI_ONLOGOFF) && !isLoggedOn) {
+			String uri = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGOFF);
 			if (uri!=null) {
 				response.sendRedirect(uri);
 				return;
@@ -164,9 +170,13 @@ public class IWAuthenticator extends BaseFilter {
 		
 		//TODO support also on basic authentication (e.g. webdav) or is that not necessery?
 		//TODO grab an interrupt exeption and just return; (could be necessery for the methods to be able to use response.sendRedirect)
-		if( loginBusiness.isLogOnAction(iwc) && iwc.isLoggedOn()){
+		if( loginBusiness.isLogOnAction(request) && isLoggedOn){
 			try {
-				authenticationBusiness.callOnLogonMethodInAllAuthenticationListeners(iwc, iwc.getCurrentUser());
+				AuthenticationBusiness authenticationBusiness = getAuthenticationBusiness(request);
+				User currentUser = loginBusiness.getCurrentUser(session);
+				//TODO: Remove IWContext
+				IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
+				authenticationBusiness.callOnLogonMethodInAllAuthenticationListeners(iwc, currentUser);
 			}
 			catch (ServletFilterChainInterruptException e) {
 				//this is normal behaviour if e.g. the listener issues a response.sendRedirect(...)
@@ -174,8 +184,11 @@ public class IWAuthenticator extends BaseFilter {
 				return;
 			}
 		}
-		else if(loginBusiness.isLogOffAction(iwc) && !iwc.isLoggedOn() && lastLoggedOnAsUser!=null){
+		else if(loginBusiness.isLogOffAction(request) && !isLoggedOn && lastLoggedOnAsUser!=null){
 			try {
+				AuthenticationBusiness authenticationBusiness = getAuthenticationBusiness(request);
+				//TODO: Remove IWContext
+				IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
 				authenticationBusiness.callOnLogoffMethodInAllAuthenticationListeners(iwc, lastLoggedOnAsUser);
 			}
 			catch (ServletFilterChainInterruptException e) {
@@ -185,15 +198,15 @@ public class IWAuthenticator extends BaseFilter {
 			}
 		}
 		
-		chain.doFilter(new IWJAASAuthenticationRequestWrapper(iwc), response);
+		chain.doFilter(new IWJAASAuthenticationRequestWrapper(request), response);
 	}
 
 	/**
 	 * @param iwc
 	 * @return
 	 */
-	private boolean useBasicAuthenticationMethod(IWContext iwc) {
-		return iwc.isWebDavClient();
+	private boolean useBasicAuthenticationMethod(HttpServletRequest request) {
+		return IWContext.isWebDavClient(request);
 	}
 
 	/*
@@ -203,69 +216,87 @@ public class IWAuthenticator extends BaseFilter {
 	 */
 	public void destroy() {
 	}
-
-	public String userIDCookieName = "iwrbusid";
-
-	//public String IW_BUNDLE_IDENTIFIER = "com.idega.block.login";
-	public static final String PARAMETER_ALLOWS_COOKIE_LOGIN = "icusallows";
-	private AuthenticationBusiness authenticationBusiness;
-
 	
-
-	
-	public void tryRegularLogin(IWContext iwc){
+	public void tryRegularLogin(HttpServletRequest request){
 		try {
-			getLoginBusiness(iwc).actionPerformed(iwc);
+			getLoginBusiness(request).processRequest(request);
 		} catch (IWException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	public void addCookie(IWContext iwc) {
-		Cookie userIDCookie = getCookie(iwc);
-		//System.err.println("actionPerformed in LoginCookieListener");
-		if (getLoginBusiness(iwc).isLogOffAction(iwc) && userIDCookie != null) {
-			userIDCookie.setMaxAge(0);
-			iwc.addCookies(userIDCookie);
-		}
 
-		else if (iwc.isParameterSet(PARAMETER_ALLOWS_COOKIE_LOGIN)
-				&& LoginBusinessBean.isLoggedOn(iwc)) {
-			if (userIDCookie == null) {
-				//System.err.println("adding cookie");
-				String login = getLoginBusiness(iwc).getLoggedOnInfo(iwc)
-						.getLogin();
-				userIDCookie = new Cookie(userIDCookieName, cypherUserLogin(
-						iwc, login));
-				userIDCookie.setMaxAge(60 * 60 * 24 * 30);
-				iwc.addCookies(userIDCookie);
-			}
-		}
-	}
-
-	public void performCookieLogin(IWContext iwc) {
-		Cookie userIDCookie = getCookie(iwc);
-		if (!iwc.isLoggedOn()) {
+	/**
+	 * <p>
+	 * Authenticates in/out with reading existing cookie or creating it on login or removing it on logout
+	 * </p>
+	 * @param request
+	 * @param response
+	 * @param loginBusiness
+	 */
+	public void tryCookieLogin(HttpServletRequest request,HttpServletResponse response,LoginBusinessBean loginBusiness) {
+		if (!loginBusiness.isLoggedOn(request)) {
+			//No user is logged in, try to authenticate with the cookie:
+			Cookie userIDCookie = getCookie(request);
 			//System.err.println("no user is logged on");
 			if (userIDCookie != null) {
 				//System.err.println("found the cookie");
-				String cypheredLoginName = userIDCookie.getValue();
-				String loginName = deCypherUserLogin(iwc, cypheredLoginName);
-				try {
-					getLoginBusiness(iwc).logInUnVerified(iwc, loginName);
-				} catch (Exception ex) {
-					//throw new IWException("Cookie login failed :
-					// "+ex.getMessage());
-					log.warning("Cookie login failed for loginName: "+loginName+" :" + ex.getMessage());
+
+				if(loginBusiness.isLogOffAction(request)) {
+					//A cookie is found
+					//delete it:
+					userIDCookie.setMaxAge(0);
+					response.addCookie(userIDCookie);
 				}
-			} else {//System.err.println("no cookie found");
+				else{
+					String cypheredLoginName = userIDCookie.getValue();
+					IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
+					String loginName = deCypherUserLogin(iwac, cypheredLoginName);
+					try {
+						loginBusiness.logInUnVerified(request, loginName);
+					} catch (Exception ex) {
+						//throw new IWException("Cookie login failed :
+						// "+ex.getMessage());
+						log.warning("Cookie login failed for loginName: "+loginName+" :" + ex.getMessage());
+					}
+				}
+			} else {
+			}
+		}
+		else{
+			//A user is logged in
+			if (loginBusiness.isLogOffAction(request)) {
+				Cookie userIDCookie = getCookie(request);
+				if(userIDCookie != null){
+					//A cookie is found, try to remove it on logout
+					userIDCookie.setMaxAge(0);
+					response.addCookie(userIDCookie);
+				}
+			}
+			else if (RequestUtil.isParameterSet(request,PARAMETER_ALLOWS_COOKIE_LOGIN)) {
+				Cookie userIDCookie = getCookie(request);
+				HttpSession session = request.getSession();
+				String login = loginBusiness.getLoggedOnInfo(session).getLogin();
+				IWMainApplication iwma = getIWMainApplication(request);
+				IWApplicationContext iwac = iwma.getIWApplicationContext();
+				String cypheredLogin = cypherUserLogin(iwac, login);
+				int maxAge = 60 * 60 * 24 * 30;
+				if (userIDCookie == null) {
+					//No cookie exists on logon, try to add it:
+					userIDCookie = new Cookie(COOKIE_NAME,cypheredLogin);
+					userIDCookie.setMaxAge(maxAge);
+					response.addCookie(userIDCookie);
+				}
+				else{
+					userIDCookie.setValue(login);
+					userIDCookie.setMaxAge(maxAge);
+				}
 			}
 		}
 	}
 
-	private Cookie getCookie(IWContext iwc) {
-		Cookie userIDCookie = iwc.getCookie(userIDCookieName);
+	private Cookie getCookie(HttpServletRequest request) {
+		Cookie userIDCookie = RequestUtil.getCookie(request,COOKIE_NAME);
 		return userIDCookie;
 	}
 
@@ -292,23 +323,20 @@ public class IWAuthenticator extends BaseFilter {
 		String key = getCypherKey(iwc);
 		return new CypherText().doDeCypher(cypheredLogin, key);
 	}
-
-	protected LoginBusinessBean getLoginBusiness(IWContext iwc){
-		return loginBusiness;
-	}
 	
-	protected AuthenticationBusiness getAuthenticationBusiness(IWApplicationContext iwac){
+	protected AuthenticationBusiness getAuthenticationBusiness(HttpServletRequest request){
+		AuthenticationBusiness authenticationBusiness = null;
 		try {
+			IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
 			authenticationBusiness = (AuthenticationBusiness) IBOLookup.getServiceInstance(iwac, AuthenticationBusiness.class);
 		}
 		catch (IBOLookupException e) {
 			e.printStackTrace();
 		}
-		
 		return authenticationBusiness;
 	}
 	
-	protected BuilderService getBuilderService(IWContext iwc) throws RemoteException {
-		return BuilderServiceFactory.getBuilderService(iwc);
+	protected BuilderService getBuilderService(IWApplicationContext iwac) throws RemoteException {
+		return BuilderServiceFactory.getBuilderService(iwac);
 	}
 }
