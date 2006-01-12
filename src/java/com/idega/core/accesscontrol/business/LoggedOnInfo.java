@@ -1,22 +1,35 @@
+/*
+ * $Id: LoggedOnInfo.java,v 1.15 2006/01/12 15:30:21 tryggvil Exp $
+ * 
+ * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
+ */
 package com.idega.core.accesscontrol.business;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import com.idega.core.user.data.User;
 import com.idega.util.IWTimestamp;
 
 /**
- * Title:        idegaWeb
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
- * @version 1.0
+ * <p>
+ * An instance of this class is stored in HttpSession for each logged in user in idegaWeb.<br/>
+ * This class implements HttpSessionBindingListener so that the login information is cleaned 
+ * up when the users session times out.
+ * </p>
+ *
+ * Last modified: $Date: 2006/01/12 15:30:21 $ by $Author: tryggvil $
+ *
+ * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
+ * 		   <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version $Revision: 1.15 $
  */
-
 public class LoggedOnInfo implements HttpSessionBindingListener  {
 
   private User _user = null;
@@ -131,8 +144,9 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 		if(_user != null){
 			name = _user.getName();
 		}
-		
-		boolean success = LoginBusinessBean.logOutUserOnSessionTimeout(event.getSession(),this);
+		HttpSession session = event.getSession();
+		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
+		boolean success = loginBean.logOutUserOnSessionTimeout(session,this);
 		System.out.println("LoggedOnInfo: Session has expired logging off user: "+name+". Success = "+ success);
 		
 	}

@@ -31,6 +31,13 @@ public java.util.Collection findLoginsForUser(com.idega.core.user.data.User p0)t
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findByLogin(String login)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((LoginTableBMPBean)entity).ejbFindByLogin(login);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
  public LoginTable findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (LoginTable) super.findByPrimaryKeyIDO(pk);
  }

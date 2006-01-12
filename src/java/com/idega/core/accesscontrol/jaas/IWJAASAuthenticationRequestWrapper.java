@@ -1,5 +1,5 @@
 /*
- * $Id: IWJAASAuthenticationRequestWrapper.java,v 1.1 2004/12/14 21:09:44 gummi Exp $
+ * $Id: IWJAASAuthenticationRequestWrapper.java,v 1.2 2006/01/12 15:30:21 tryggvil Exp $
  * Created on 3.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -11,10 +11,11 @@ package com.idega.core.accesscontrol.jaas;
 
 import java.security.Principal;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpSession;
 import com.idega.core.accesscontrol.business.LoggedOnInfo;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
-import com.idega.presentation.IWContext;
 
 
 /**
@@ -23,25 +24,29 @@ import com.idega.presentation.IWContext;
  * like user is logged on JAAS if he is logged on IdegaWeb.  If the user is logged on 
  * JAAS then the methods use the super implementation.
  * 
- *  Last modified: $Date: 2004/12/14 21:09:44 $ by $Author: gummi $
+ *  Last modified: $Date: 2006/01/12 15:30:21 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class IWJAASAuthenticationRequestWrapper extends HttpServletRequestWrapper {
 
 	private Set userRoles = null;
 	private Principal userPrincipal = null;
+
+	
 	/**
 	 * @param arg0
 	 */
-	public IWJAASAuthenticationRequestWrapper(IWContext iwc) {
-		super(iwc.getRequest());
+	public IWJAASAuthenticationRequestWrapper(HttpServletRequest request) {
+		super(request);
 		
 		Principal user = super.getUserPrincipal();
-		if( user == null && iwc.isLoggedOn()){
+		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(request);
+		if( user == null && loginBean.isLoggedOn(request)){
 			//log on as user.getName()
-			LoggedOnInfo lInfo = LoginBusinessBean.getLoggedOnInfo(iwc);
+			HttpSession session = request.getSession();
+			LoggedOnInfo lInfo = loginBean.getLoggedOnInfo(session);
 			userPrincipal = new IWUserPrincipal(lInfo.getLogin());
 			userRoles = lInfo.getUserRoles();
 		}

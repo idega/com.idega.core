@@ -473,6 +473,24 @@ public void setUserPasswordInClearText(String password){
 
 			return idoFindPKsByQuery(query);	
 		}
+
+
+		/**
+		 * <p>
+		 * TODO tryggvil describe method ejbFindByLogin
+		 * </p>
+		 * @param login
+		 * @return
+		 * @throws FinderException 
+		 */
+		public Collection ejbFindByLogin(String login) throws FinderException {
+			
+			IDOQuery query = idoQuery();
+			query.appendSelectAllFrom(this);
+			query.appendWhereEqualsQuoted(getUserLoginColumnName(),login);
+
+			return idoFindPKsByQuery(query);	
+		}
 			
 		
 		

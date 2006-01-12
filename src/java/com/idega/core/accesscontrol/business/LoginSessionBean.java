@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSessionBean.java,v 1.2 2005/02/08 15:51:07 gimmi Exp $
+ * $Id: LoginSessionBean.java,v 1.3 2006/01/12 15:30:21 tryggvil Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.user.business.UserProperties;
 
 /**
  * 
- *  Last modified: $Date: 2005/02/08 15:51:07 $ by $Author: gimmi $
+ *  Last modified: $Date: 2006/01/12 15:30:21 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
     
@@ -195,4 +195,21 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
         protected Map mapOfExtraAttributes = new Hashtable();
         protected User reserveUser = null;
     }
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.accesscontrol.business.LoginSession#iSuperAdmin()
+	 */
+	public boolean isSuperAdmin() {
+		try {
+		//	if (this.isLoggedOn())
+			User user = getUser();
+			if(user!=null){
+				return user.equals(this.getAccessController().getAdministratorUser());
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return false;
+	}
 }
