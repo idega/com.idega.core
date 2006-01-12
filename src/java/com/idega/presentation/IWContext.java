@@ -1,11 +1,11 @@
 /*
- * $Id: IWContext.java,v 1.131 2005/12/23 11:18:40 thomas Exp $
- * Created 2000 by Tryggvi Larusson
- *
+ * $Id: IWContext.java,v 1.132 2006/01/12 15:26:57 tryggvil Exp $ Created 2000 by
+ * Tryggvi Larusson
+ * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
  */
 package com.idega.presentation;
 
@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
@@ -65,26 +66,25 @@ import com.idega.util.RequestUtil;
 import com.idega.util.datastructures.HashtableMultivalued;
 
 /**
- * This class is a context information that lives through each user request in an idegaWeb application. 
- * The role of this class is very similar to that of FacesContext in a JSF application. <br>
- * IWContext will be gradually phased out in future versions in favour of just working with the standard FacesContext.
- * <br>
- * This class gives access to Request specific, User specific and Application specific information.
- * <br>
- * An instance of this class should be used under the interfaces com.idega.idegaweb.IWUserContext and
- * com.idega.idegaweb.IWApplicationContext where it is applicable (i.e. when only working with User scoped
- * functionality or Application scoped functionality).
- *<br>
- *
- * Last modified: $Date: 2005/12/23 11:18:40 $ by $Author: thomas $
- *
+ * This class is a context information that lives through each user request in
+ * an idegaWeb application. The role of this class is very similar to that of
+ * FacesContext in a JSF application. <br>
+ * IWContext will be gradually phased out in future versions in favour of just
+ * working with the standard FacesContext. <br>
+ * This class gives access to Request specific, User specific and Application
+ * specific information. <br>
+ * An instance of this class should be used under the interfaces
+ * com.idega.idegaweb.IWUserContext and com.idega.idegaweb.IWApplicationContext
+ * where it is applicable (i.e. when only working with User scoped functionality
+ * or Application scoped functionality). <br>
+ * 
+ * Last modified: $Date: 2006/01/12 15:26:57 $ by $Author: tryggvil $
+ * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.131 $
+ * @version $Revision: 1.132 $
  */
-public class IWContext
-extends javax.faces.context.FacesContext
-implements IWUserContext, IWApplicationContext {
-	
+public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
+
 	/**
 	 * Comment for <code>serialVersionUID</code>
 	 */
@@ -92,10 +92,10 @@ implements IWUserContext, IWApplicationContext {
 	private HttpServletRequest _request;
 	private HttpServletResponse _response;
 	private final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
-	public final static String IDEGA_SESSION_KEY="idega_session_id";
+	public final static String IDEGA_SESSION_KEY = "idega_session_id";
 	private final static String WEAK_HASHMAP_KEY = "idegaweb_weak_hashmap";
 	private final static String CHARACTER_SET_PREFIX = "; charset=";
-	private String markupLanguage; //Variable to set the language i.e. HTML
+	private String markupLanguage; // Variable to set the language i.e. HTML
 	private String spokenLanguage;
 	private ServletContext servletContext;
 	private boolean _doneHandHeldCheck = false;
@@ -107,27 +107,26 @@ implements IWUserContext, IWApplicationContext {
 	private HashtableMultivalued _multipartParameters = null;
 	private UploadFile _uploadedFile = null;
 	private FacesContext realFacesContext;
-	
-	private static final String IWCONTEXT_REQUEST_KEY="iwcontext";
+	private static final String IWCONTEXT_REQUEST_KEY = "iwcontext";
 	private static final String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
 	private static final String SESSION_OBJECT_STATE = ICBuilderConstants.SESSION_OBJECT_STATE;
-	
-	
-	protected static final String IWC_SESSION_ATTR_NEW_USER_KEY = "iwc_new_user";
-	public static final String[] WML_USER_AGENTS = new String[] {"nokia", "ericsson", "wapman", "upg1", "symbian", "wap"}; // NB: must be lowercase
-	private boolean isRequestCharacterEncodingSet=false;
+	public static final String[] WML_USER_AGENTS = new String[] { "nokia", "ericsson", "wapman", "upg1", "symbian",
+			"wap" }; // NB: must be lowercase
+	private boolean isRequestCharacterEncodingSet = false;
 
 	/**
-	 *Default constructor
-	 **/
+	 * Default constructor
+	 */
 	public IWContext() {
 	}
 
-	private IWContext(FacesContext fc){
-		this((HttpServletRequest)fc.getExternalContext().getRequest(),(HttpServletResponse)fc.getExternalContext().getResponse(),(ServletContext) fc.getExternalContext().getContext());
+	private IWContext(FacesContext fc) {
+		this((HttpServletRequest) fc.getExternalContext().getRequest(),
+				(HttpServletResponse) fc.getExternalContext().getResponse(),
+				(ServletContext) fc.getExternalContext().getContext());
 		setRealFacesContext(fc);
 	}
-	
+
 	/**
 	 * @param request
 	 * @param response
@@ -137,248 +136,279 @@ implements IWUserContext, IWApplicationContext {
 		setRequest(request);
 		setResponse(response);
 		setServletContext(context);
-		//MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
+		// MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
 		initializeAfterRequestIsSet(request);
 	}
-	
-	protected void initializeAfterRequestIsSet(HttpServletRequest request){
-		//MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
-		if(getIfSetRequestCharacterEncoding()){
+
+	protected void initializeAfterRequestIsSet(HttpServletRequest request) {
+		setCharactersetEncoding(request);
+		isRequestCharacterEncodingSet = true;
+		// CANNOT BE DONE UNTIL AFTER THE CHARACTER ENCODING IS DONE, OTHERWISE
+		// THE ENCODING WILL DEFAULT TO ISO-8859-1 BUT DISPLAY ITSELF AS THE
+		// PREFERRED ENCODING!
+		setMarkupLanguage(getDetectedClientMarkupLanguage(request));
+	}
+
+	/**
+	 * <p>
+	 * Set and initialize the CharacterSet Encoding on the current Request. This
+	 * must be called before any getting of parameters is done (on Tomcat) so
+	 * this is called both from IWEncodingFilter (which is the first mapped
+	 * filter and the IWContext() constructor.
+	 * </p>
+	 * 
+	 * @param request
+	 */
+	public static void setCharactersetEncoding(HttpServletRequest request) {
+		// MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
+		if (getIfSetRequestCharacterEncoding(iwma)) {
 			try {
-				getRequest().setCharacterEncoding(getApplicationSettings().getCharacterEncoding());
-				isRequestCharacterEncodingSet = true;
-			} catch (UnsupportedEncodingException e) {
+				String characterSetEncoding = iwma.getSettings().getCharacterEncoding();
+				request.setCharacterEncoding(characterSetEncoding);
+				// isRequestCharacterEncodingSet = true;
+			}
+			catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 		}
-		//CANNOT BE DONE UNTIL AFTER THE CHARACTER ENCODING IS DONE, OTHERWISE THE ENCODING WILL DEFAULT TO ISO-8859-1 BUT DISPLAY ITSELF AS THE PREFERRED ENCODING!
-		setMarkupLanguage(getDetectedClientMarkupLanguage(request));
+		// CANNOT BE DONE UNTIL AFTER THE CHARACTER ENCODING IS DONE, OTHERWISE
+		// THE ENCODING WILL DEFAULT TO ISO-8859-1 BUT DISPLAY ITSELF AS THE
+		// PREFERRED ENCODING!
+		// setMarkupLanguage(getDetectedClientMarkupLanguage(request));
 	}
-	
-	protected boolean getIfSetRequestCharacterEncoding(){
-	    //TODO: check if this is ok for multipart forms
-	    boolean returner = (!isRequestCharacterEncodingSet)&&this.getIWMainApplication().getApplicationServer().getSupportsSettingCharactersetInRequest();
-	    return returner;
+
+	public static boolean getIfSetRequestCharacterEncoding(IWMainApplication iwma) {
+		// TODO: check if this is ok for multipart forms
+		// boolean returner =
+		// (!isRequestCharacterEncodingSet)&&iwma.getApplicationServer().getSupportsSettingCharactersetInRequest();
+		boolean returner = iwma.getApplicationServer().getSupportsSettingCharactersetInRequest();
+		return returner;
 	}
-	
+
 	/**
-	 * This is the method to convert/cast a FacesContext instance to a IWContext instance.
-	 * if the FacesContext instance is really a IWContext it upcasts the instance, else it 
-	 * constructs a new and stores it in the outer facescontext's request map.
+	 * This is the method to convert/cast a FacesContext instance to a IWContext
+	 * instance. if the FacesContext instance is really a IWContext it upcasts
+	 * the instance, else it constructs a new and stores it in the outer
+	 * facescontext's request map.
 	 */
-	public static IWContext getIWContext(FacesContext fc){
-			if(fc instanceof IWContext){
-				return (IWContext)fc;
-			}
-			IWContext iwc=null;
-			//try to look up from requestmap
-			iwc = (IWContext)fc.getExternalContext().getRequestMap().get(IWCONTEXT_REQUEST_KEY);
-			// reason for the second condition below: 
-			// After forwarding the faces context has changed, check if the stored iwc holds the same faces context 
-			// or if a new iw context needs to be created.
-			// Forwarding is used when applying navigation rules.
-			// If iwc is holding an old faces context the response writer might not be set 
-			// (that is the response writer is null).
-			if(iwc==null || fc != iwc.getRealFacesContext()){
-				//put it to the request map if it isn't there already
-				iwc = new IWContext(fc);
-				fc.getExternalContext().getRequestMap().put(IWCONTEXT_REQUEST_KEY,iwc);
-			}
-			return iwc;
+	public static IWContext getIWContext(FacesContext fc) {
+		if (fc instanceof IWContext) {
+			return (IWContext) fc;
+		}
+		IWContext iwc = null;
+		// try to look up from requestmap
+		iwc = (IWContext) fc.getExternalContext().getRequestMap().get(IWCONTEXT_REQUEST_KEY);
+		// reason for the second condition below:
+		// After forwarding the faces context has changed, check if the stored
+		// iwc holds the same faces context
+		// or if a new iw context needs to be created.
+		// Forwarding is used when applying navigation rules.
+		// If iwc is holding an old faces context the response writer might not
+		// be set
+		// (that is the response writer is null).
+		if (iwc == null || fc != iwc.getRealFacesContext()) {
+			// put it to the request map if it isn't there already
+			iwc = new IWContext(fc);
+			fc.getExternalContext().getRequestMap().put(IWCONTEXT_REQUEST_KEY, iwc);
+		}
+		return iwc;
 	}
+
 	public HttpSession getSession() {
 		return getRequest().getSession();
 	}
+
 	public boolean isMultipartFormData() {
 		String contentType = this.getRequestContentType();
 		if (contentType != null) {
 			return (contentType.indexOf("multipart") != -1);
-		} else {
+		}
+		else {
 			return false;
 		}
 	}
+
 	public void setMultipartParameter(String key, String value) {
 		if (_multipartParameters == null) {
 			_multipartParameters = new HashtableMultivalued();
 		}
 		_multipartParameters.put(key, value);
 	}
+
 	public String getMultipartParameter(String key) {
 		if (_multipartParameters != null) {
 			return (String) _multipartParameters.get(key);
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
+
 	public UploadFile getUploadedFile() {
-	    if(isMultipartFormData() && _uploadedFile==null)
-            try {
-                IWEventProcessor.getInstance().handleMultipartFormData(this);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+		if (isMultipartFormData() && _uploadedFile == null)
+			try {
+				IWEventProcessor.getInstance().handleMultipartFormData(this);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		return _uploadedFile;
 	}
+
 	public void setUploadedFile(UploadFile file) {
 		_uploadedFile = file;
 	}
+
 	public String getUserAgent() {
-		return getRequest().getHeader("User-agent");
+		return RequestUtil.getUserAgent(getRequest());
 	}
+
 	public String getReferer() {
-		return getRequest().getHeader("Referer");
+		return RequestUtil.getReferer(getRequest());
 	}
+
 	public boolean isMacOS() {
 		boolean isMac = false;
 		String userAgent = getUserAgent();
-		if(userAgent!=null){
+		if (userAgent != null) {
 			if (userAgent.indexOf("Mac") != -1) {
 				isMac = true;
-			} else if (userAgent.indexOf("mac") != -1) {
+			}
+			else if (userAgent.indexOf("mac") != -1) {
 				isMac = true;
 			}
 		}
 		return isMac;
 	}
-	
+
 	public boolean isWebDavClient() {
+		return isWebDavClient(getRequest());
+	}
+
+	public static boolean isWebDavClient(HttpServletRequest request) {
 		boolean isDav = false;
-		String userAgent = getUserAgent();
-		if(userAgent!=null){
+		String userAgent = RequestUtil.getUserAgent(request);
+		if (userAgent != null) {
 			if (userAgent.indexOf("DAV") != -1) {
 				isDav = true;
-			} else if (userAgent.indexOf("dav") != -1) {
+			}
+			else if (userAgent.indexOf("dav") != -1) {
 				isDav = true;
-			} else if (userAgent.indexOf("Dav") != -1) {
+			}
+			else if (userAgent.indexOf("Dav") != -1) {
 				isDav = true;
 			}
 		}
 		return isDav;
 	}
-	
+
 	public boolean isNetscape() {
 		String userAgent = getUserAgent();
-		if(userAgent!=null){
+		if (userAgent != null) {
 			if (userAgent.indexOf("Mozilla") != -1) {
-				//if not Internet Explorer then Netscape :)
+				// if not Internet Explorer then Netscape :)
 				if (userAgent.indexOf("MSIE") != -1) {
 					return false;
-				} else {
+				}
+				else {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
+
 	public boolean isIE() {
 		String userAgent = getUserAgent();
-		if(userAgent!=null){
+		if (userAgent != null) {
 			if (userAgent.indexOf("MSIE") != -1) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	public boolean isOpera() {
 		String userAgent = getUserAgent();
-		if(userAgent!=null){
+		if (userAgent != null) {
 			if (userAgent.indexOf("Opera") != -1) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	public boolean isSafari() {
 		String userAgent = getUserAgent();
-		if(userAgent!=null){
+		if (userAgent != null) {
 			if (userAgent.indexOf("Safari") != -1) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	public boolean isSearchEngine() {
 		String userAgent = getUserAgent();
-		if(userAgent!=null){
+		if (userAgent != null) {
 			if (userAgent.indexOf("Ultraseek") != -1) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Gets the output language for the request, either <code>IWConstants.MARKUP_LANGUAGE_HTML</code> or <code>IWConstants.MARKUP_LANGUAGE_WML</code>.
-	 * This methods just checks the User-agent header to see if the device is a known wap device, otherwise html is assumed
-	 * @param request The request, needed to find output
+	 * Gets the output language for the request, either
+	 * <code>IWConstants.MARKUP_LANGUAGE_HTML</code> or
+	 * <code>IWConstants.MARKUP_LANGUAGE_WML</code>. This methods just checks
+	 * the User-agent header to see if the device is a known wap device,
+	 * otherwise html is assumed
+	 * 
+	 * @param request
+	 *            The request, needed to find output
 	 */
 	private String getDetectedClientMarkupLanguage(HttpServletRequest request) {
-		//Todo: set the language to WML when the user-agent is of that type
-		//--only implemented for the UPG1 test WAP browser
-		// @TODO (jonas) use better method to find content types supported by client. Use rdf docs referenced in request headers.x
+		// Todo: set the language to WML when the user-agent is of that type
+		// --only implemented for the UPG1 test WAP browser
+		// @TODO (jonas) use better method to find content types supported by
+		// client. Use rdf docs referenced in request headers.x
 		String mlParam = request.getParameter(IWConstants.PARAM_NAME_OUTPUT_MARKUP_LANGUAGE);
-		if(mlParam!=null && mlParam.length()>0) {
+		if (mlParam != null && mlParam.length() > 0) {
 			return mlParam;
 		}
 		boolean isWMLAgent = false;
 		String user_agent = request.getHeader("User-agent");
 		if (user_agent != null) {
 			user_agent = user_agent.toLowerCase();
-			for(int i=0; i<WML_USER_AGENTS.length; i++) {
-				if(user_agent.indexOf(WML_USER_AGENTS[i]) > -1) {
+			for (int i = 0; i < WML_USER_AGENTS.length; i++) {
+				if (user_agent.indexOf(WML_USER_AGENTS[i]) > -1) {
 					isWMLAgent = true;
 					break;
 				}
 			}
 		}
-		if(isWMLAgent) {
+		if (isWMLAgent) {
 			return IWConstants.MARKUP_LANGUAGE_WML;
-		} else {
+		}
+		else {
 			return IWConstants.MARKUP_LANGUAGE_HTML;
 		}
 	}
-	
+
 	public boolean isParameterSet(String parameterName) {
-		if (parameterName == null)
-			return false;
-		boolean theReturn = false;
-		String value = getParameter(parameterName) ;
-		
-		if (value!= null && value.length() > 0) {
-			theReturn = true;
-		}
-		
-		value = getParameter(parameterName + ".x");
-		
-		if(  value != null && value.length() > 0) {
-			theReturn = true;
-		}
-		return theReturn;
+		return RequestUtil.isParameterSet(getRequest(), parameterName);
 	}
-	
+
 	public boolean isParameterSetAsEmpty(String parameterName) {
-		if (parameterName == null)
-			return false;
-		boolean theReturn = false;
-		String value = getParameter(parameterName) ;
-		
-		if (value!= null && value.length() == 0) {
-			theReturn = true;
-		}
-		
-		value = getParameter(parameterName + ".x");
-		
-		if(  value != null && value.length() == 0) {
-			theReturn = true;
-		}
-		return theReturn;
+		return RequestUtil.isParameterSetAsEmpty(getRequest(), parameterName);
 	}
-	
-	
+
 	public boolean isParameterSet(Parameter parameter) {
-		return isParameterSet( parameter.getName() );
+		return isParameterSet(parameter.getName());
 	}
-	
+
 	public boolean parameterEquals(Parameter parameter) {
 		boolean theReturn = false;
 		if (parameter != null) {
@@ -390,6 +420,7 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return theReturn;
 	}
+
 	public boolean parameterEquals(String parameterName, String parameterValue) {
 		boolean theReturn = false;
 		if (getParameter(parameterName) != null) {
@@ -399,18 +430,21 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return theReturn;
 	}
+
 	public void setRequest(HttpServletRequest request) {
-		if(_request == null){
+		if (_request == null) {
 			this._request = request;
-		} else {
+		}
+		else {
 			this._request = request;
 			initializeAfterRequestIsSet(request);
 		}
-			
 	}
+
 	protected void setResponse(HttpServletResponse response) {
 		this._response = response;
 	}
+
 	public void setMarkupLanguage(String language) {
 		this.markupLanguage = language;
 		if (language.equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
@@ -423,18 +457,23 @@ implements IWUserContext, IWApplicationContext {
 			setContentType("application/pdf");
 		}
 	}
+
 	public void setSpokenLanguage(String spokenLanguage) {
 		this.spokenLanguage = spokenLanguage;
 	}
+
 	public HttpServletRequest getRequest() {
 		return this._request;
 	}
+
 	public Cookie[] getCookies() {
 		return this.getRequest().getCookies();
 	}
+
 	public void addCookies(Cookie cookie) {
 		this.getResponse().addCookie(cookie);
 	}
+
 	public boolean isCookieSet(String cookieName) {
 		Cookie[] cookies = this.getCookies();
 		boolean returner = false;
@@ -450,75 +489,94 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return returner;
 	}
+
 	public String getParameter(String parameterName) {
 		String prm = null;
 		if (_multipartParameters != null) {
 			prm = getMultipartParameter(parameterName);
-		} else {
+		}
+		else {
 			prm = getRequest().getParameter(parameterName);
 		}
 		return prm;
 	}
+
 	public Enumeration getParameterNames() {
 		if (_multipartParameters != null) {
 			return _multipartParameters.keys();
-		} else {
+		}
+		else {
 			return getRequest().getParameterNames();
 		}
 	}
+
 	public String[] getParameterValues(String parameterName) {
 		if (_multipartParameters != null) {
 			Collection values = _multipartParameters.getCollection(parameterName);
 			if (values != null) {
 				return (String[]) values.toArray(new String[values.size()]);
-			} else {
+			}
+			else {
 				return null;
 			}
-		} else {
+		}
+		else {
 			return getRequest().getParameterValues(parameterName);
 		}
 	}
+
 	public String getQueryString() {
 		return getRequest().getQueryString();
 	}
+
 	public HttpServletResponse getResponse() {
 		return this._response;
 	}
+
 	public Object getSessionAttribute(String attributeName) {
 		return getSession().getAttribute(attributeName);
 	}
+
 	public void setSessionAttribute(String attributeName, Object attribute) {
 		getSession().setAttribute(attributeName, attribute);
 	}
+
 	public String getSessionId() {
 		return getSession().getId();
 	}
+
 	/**
 	 * @deprecated Replaced with removeSessionAttribute()
 	 */
 	public void removeAttribute(String attributeName) {
 		removeSessionAttribute(attributeName);
 	}
+
 	public void removeSessionAttribute(String attributeName) {
 		getSession().removeAttribute(attributeName);
 	}
+
 	public String getMarkupLanguage() {
 		return this.markupLanguage;
 	}
+
 	public String getSpokenLanguage() {
 		if (this.spokenLanguage == null)
 			this.setSpokenLanguage("IS");
 		return this.spokenLanguage;
 	}
+
 	/**
 	 * @ deprecated replaced width getApplication
 	 */
 	public ServletContext getServletContext() {
 		return servletContext;
 	}
+
 	public void setServletContext(ServletContext context) {
 		this.servletContext = context;
 	}
+
 	/**
 	 * @deprecated UNIMPLEMENTED
 	 */
@@ -527,89 +585,102 @@ implements IWUserContext, IWApplicationContext {
 		if (theParameters == null) {
 			theParameters = new Hashtable();
 			theParameters.put(parameter.getName(), parameter);
-		} else {
-			//Parameter previousParameter = theParameters.get(parameter.getName());
+		}
+		else {
+			// Parameter previousParameter =
+			// theParameters.get(parameter.getName());
 			theParameters.put(parameter.getName(), parameter);
 		}
 	}
+
 	public String getRequestURI() {
-		if(IWMainApplication.useJSF){
+		if (IWMainApplication.useJSF) {
 			FacesContext facesContext = getRealFacesContext();
-			if(facesContext!=null){
+			if (facesContext != null) {
 				return FacesUtil.getRequestUri(facesContext);
 			}
-			else{
+			else {
 				return getRequest().getRequestURI();
 			}
 		}
-		else{
+		else {
 			return getRequest().getRequestURI();
 		}
 	}
+
 	public String getServerName() {
 		return getRequest().getServerName();
 	}
-	
-	public String getProtocol(){
+
+	public String getProtocol() {
 		return getRequest().getProtocol();
 	}
-	
+
 	public int getServerPort() {
 		return getRequest().getServerPort();
 	}
+
 	public PrintWriter getWriter() throws IOException {
-		if (this.isCacheing() && cacheWriter!=null) {
+		if (this.isCacheing() && cacheWriter != null) {
 			return cacheWriter;
-		} else {
-			if( writer == null ){
-				writer = getResponse().getWriter(); 
+		}
+		else {
+			if (writer == null) {
+				writer = getResponse().getWriter();
 			}
-			
 			return writer;
 		}
-		
 	}
-	
-	public boolean isWriterNull(){
-		return (writer==null);
+
+	public boolean isWriterNull() {
+		return (writer == null);
 	}
-	
-	public void setWriter(PrintWriter writer){
+
+	public void setWriter(PrintWriter writer) {
 		this.writer = writer;
 	}
+
 	public void sendRedirect(String URL) {
 		try {
 			getResponse().sendRedirect(getResponse().encodeRedirectURL(URL));
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace(System.err);
 		}
 	}
+
 	public void setApplicationAttribute(String attributeName, Object attributeValue) {
 		getIWMainApplication().setAttribute(attributeName, attributeValue);
 	}
+
 	public Object getApplicationAttribute(String attributeName) {
 		return getIWMainApplication().getAttribute(attributeName);
 	}
-	
+
 	public Object getApplicationAttribute(String attributeName, Object defaultObjectToReturnIfValueIsNull) {
-		return getIWMainApplication().getAttribute(attributeName,defaultObjectToReturnIfValueIsNull);
+		return getIWMainApplication().getAttribute(attributeName, defaultObjectToReturnIfValueIsNull);
 	}
-	
+
 	public void removeApplicationAttribute(String attributeName) {
 		getIWMainApplication().removeAttribute(attributeName);
 	}
+
 	public IWMainApplication getIWMainApplication() {
 		return IWMainApplication.getIWMainApplication(getServletContext());
 	}
+
 	public IWMainApplicationSettings getApplicationSettings() {
 		return getIWMainApplication().getSettings();
 	}
+
 	public IWSystemProperties getSystemProperties() {
 		return getIWMainApplication().getSystemProperties();
 	}
+
 	public UserProperties getUserProperties() {
 		return LoginBusinessBean.getUserProperties(this);
 	}
+
 	public Locale getCurrentLocale() {
 		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
 		if (theReturn == null) {
@@ -618,21 +689,27 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return theReturn;
 	}
+
 	public int getCurrentLocaleId() {
 		return ICLocaleBusiness.getLocaleId(getCurrentLocale());
 	}
+
 	public void setCurrentLocale(Locale locale) {
 		this.setSessionAttribute(LOCALE_ATTRIBUTE, locale);
 	}
+
 	/**
-	 * Sets the object with Weak reference so that it could be garbagecollected anytime
+	 * Sets the object with Weak reference so that it could be garbagecollected
+	 * anytime
 	 */
 	public void setSessionAttributeWeak(String attributeName, Object attributeValue) {
 		getWeakHashMap().put(attributeName, attributeValue);
 	}
+
 	public Object getSessionAttributeWeak(String propertyName) {
 		return getWeakHashMap().get(propertyName);
 	}
+
 	private Map getWeakHashMap() {
 		WeakHashMap map = (WeakHashMap) getSessionAttribute(WEAK_HASHMAP_KEY);
 		if (map == null) {
@@ -641,203 +718,244 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return map;
 	}
-	
+
 	/**
-	 * Only handles http and https, use getServerURLWithoutProtocol() for other stuff.
-	 * @return the servername with port and protocol, e.g. http://www.idega.com:8080/
+	 * Only handles http and https, use getServerURLWithoutProtocol() for other
+	 * stuff.
+	 * 
+	 * @return the servername with port and protocol, e.g.
+	 *         http://www.idega.com:8080/
 	 */
-	public String getServerURL(){
+	public String getServerURL() {
 		return RequestUtil.getServerURL(getRequest());
 	}
-	
+
 	/**
 	 * 
-	 * @return the servername with port and protocol, e.g. http://www.idega.com:8080/
+	 * @return the servername with port and protocol, e.g.
+	 *         http://www.idega.com:8080/
 	 */
-	public String getServerURLWithoutProtocol(){
+	public String getServerURLWithoutProtocol() {
 		StringBuffer buf = new StringBuffer();
-
 		buf.append(getServerName());
-		if( getServerPort()!=80 ){
+		if (getServerPort() != 80) {
 			buf.append(":").append(getServerPort());
 		}
-		
 		buf.append("/");
-		
 		return buf.toString();
 	}
-	
+
 	public void setContentType(String contentType) {
-		
-		String encoding = getApplicationSettings().getCharacterEncoding();
-		getResponse().setContentType(contentType+CHARACTER_SET_PREFIX+encoding);
-		//getResponse().setContentType(contentType);
-		//text/html;charset=ISO-8859-1
+		HttpServletResponse response = getResponse();
+		if(response!=null){
+			String encoding = getApplicationSettings().getCharacterEncoding();
+			response.setContentType(contentType + CHARACTER_SET_PREFIX + encoding);
+		}
+		// getResponse().setContentType(contentType);
+		// text/html;charset=ISO-8859-1
 	}
+
 	void setCacheing(boolean ifCacheing) {
 		this.isCaching = ifCacheing;
-		if(ifCacheing==false){
-			//make sure these are nulled when stopping cacheing
-			this.cacheResponseWriter=null;
-			this.cacheWriter=null;
+		if (ifCacheing == false) {
+			// make sure these are nulled when stopping cacheing
+			this.cacheResponseWriter = null;
+			this.cacheWriter = null;
 		}
 	}
+
 	boolean isCacheing() {
 		return isCaching;
 	}
+
 	public void setCacheWriter(PrintWriter writer) {
 		this.cacheWriter = writer;
 	}
+
 	public void setCacheResponseWriter(ResponseWriter writer) {
 		this.cacheResponseWriter = writer;
 	}
 
 	/**
 	 * @deprecated Replaced with getCurrentUser()
-	 **/
+	 */
 	public User getUser() {
 		return (LoginBusinessBean.getUser(this));
 	}
+
 	public int getUserId() {
 		User usr = getUser();
 		if (usr != null) {
-		    Number id = (Number)usr.getPrimaryKey();
-		    if(id!=null){
-		        return id.intValue();
-		    }
+			Number id = (Number) usr.getPrimaryKey();
+			if (id != null) {
+				return id.intValue();
+			}
 		}
 		return -1;
 	}
+
 	public AccessController getAccessController() {
 		return this.getIWMainApplication().getAccessController();
 	}
+
 	public String getRequestContentType() {
 		return getRequest().getContentType();
 	}
+
 	public String getRemoteIpAddress() {
 		return getRequest().getRemoteAddr();
 	}
+
 	public String getRemoteHostName() {
 		return getRequest().getRemoteHost();
 	}
+
 	public boolean hasPermission(String permissionKey, PresentationObject obj) {
 		try {
 			return this.getAccessController().hasPermission(permissionKey, obj, this);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
 		}
 	}
+
 	public boolean hasViewPermission(PresentationObject obj) {
 		return this.hasPermission(AccessController.PERMISSION_KEY_VIEW, obj);
 	}
+
 	public boolean hasEditPermission(PresentationObject obj) {
 		return this.hasPermission(AccessController.PERMISSION_KEY_EDIT, obj);
 	}
+
 	public boolean hasPermission(List groupIds, String permissionKey, PresentationObject obj) {
 		try {
 			return this.getAccessController().hasPermission(groupIds, permissionKey, obj, this);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
 		}
 	}
+
 	public boolean hasFilePermission(String permissionKey, int id) {
 		try {
 			return this.getAccessController().hasFilePermission(permissionKey, id, this);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
 		}
 	}
+
 	public boolean hasDataPermission(String permissionKey, ICObject obj, int entityRecordId) {
 		try {
 			return this.getAccessController().hasDataPermission(permissionKey, obj, entityRecordId, this);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			ex.printStackTrace();
 			return false;
 		}
 	}
+
 	public boolean hasViewPermission(List groupIds, PresentationObject obj) {
 		return this.hasPermission(groupIds, AccessController.PERMISSION_KEY_VIEW, obj);
 	}
+
 	public boolean hasEditPermission(List groupIds, PresentationObject obj) {
 		return this.hasPermission(groupIds, AccessController.PERMISSION_KEY_EDIT, obj);
 	}
-	
-	
+
 	public boolean isSuperAdmin() {
-		try {
-			if (this.isLoggedOn())
-				return this.getUser().equals(this.getAccessController().getAdministratorUser());
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		if(isLoggedOn()){
+			LoginSession lSession;
+			try {
+				lSession = LoginBusinessBean.getLoginSession(this);
+				return lSession.isSuperAdmin();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return false;
 	}
+
 	public boolean isLoggedOn() {
 		return com.idega.core.accesscontrol.business.LoginBusinessBean.isLoggedOn(this);
 	}
+
 	/**
 	 * Expensive method, not recommended to use frequently
-	 *
-	 * @throws UnavailableIWContext if the IWContext is not set
-	 *
+	 * 
+	 * @throws UnavailableIWContext
+	 *             if the IWContext is not set
+	 * 
 	 */
 	public static IWContext getInstance() throws UnavailableIWContext {
-		//IWContext theReturn = com.idega.servlet.IWPresentationServlet.getIWContext();
+		// IWContext theReturn =
+		// com.idega.servlet.IWPresentationServlet.getIWContext();
 		IWContext theReturn = null;
-		//if(theReturn==null){
-			try{
-				//If no IWContext is found then try to get the FacesContext:
-				FacesContext fc = FacesContext.getCurrentInstance();
-				if(fc!=null){
-					theReturn = getIWContext(fc);
-				}
+		// if(theReturn==null){
+		try {
+			// If no IWContext is found then try to get the FacesContext:
+			FacesContext fc = FacesContext.getCurrentInstance();
+			if (fc != null) {
+				theReturn = getIWContext(fc);
 			}
-			catch(Exception e){
-				e.printStackTrace();
-				throw new UnavailableIWContext();
-			}
-		//}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new UnavailableIWContext();
+		}
+		// }
 		return theReturn;
 	}
+
 	public String getCurrentState(PresentationObject obj) {
 		if (obj != null) {
 			return getCurrentState(obj.getParentObjectInstanceID());
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
+
 	/**
 	 * @todo implement
 	 */
 	public String getCurrentState(int instanceId) {
 		String historyId = this.getParameter(PRM_HISTORY_ID);
-		//System.err.println("in iwc.getCurrentState()");
+		// System.err.println("in iwc.getCurrentState()");
 		if (historyId != null) {
-			//System.err.println("historyId != null");
+			// System.err.println("historyId != null");
 			HttpSession s = this.getSession();
-			//System.err.println(" - from Session.hashCode() -> "+s.hashCode());
+			// System.err.println(" - from Session.hashCode() ->
+			// "+s.hashCode());
 			List historyList = (List) s.getAttribute(SESSION_OBJECT_STATE);
-			//List historyList = (List)this.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
+			// List historyList =
+			// (List)this.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
 			if (historyList != null && historyList.contains(historyId)) {
 				int index = historyList.indexOf(historyId);
-				//System.err.println("current state historyIndex = "+index + " for instance " + instanceId);
+				// System.err.println("current state historyIndex = "+index + "
+				// for instance " + instanceId);
 				Object ob = ((Hashtable) historyList.get(index + 1)).get(Integer.toString(instanceId));
-				//System.err.println("current state = "+ob);
-				//System.err.println("iwc.getCurrentState() ends");
+				// System.err.println("current state = "+ob);
+				// System.err.println("iwc.getCurrentState() ends");
 				return (String) ob;
 			}
 		}
-		//System.err.println("iwc.getCurrentState() ends");
+		// System.err.println("iwc.getCurrentState() ends");
 		return null;
 	}
+
 	public IWApplicationContext getApplicationContext() {
 		return this.getIWMainApplication().getIWApplicationContext();
 	}
+
 	/**
-	 * Gets if this object is in "Preview" mode in the Builder or in regular view not inside the Builder.
+	 * Gets if this object is in "Preview" mode in the Builder or in regular
+	 * view not inside the Builder.
+	 * 
 	 * @return true if in preview mode
 	 */
 	public boolean isInPreviewMode() {
@@ -851,8 +969,10 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return (preview);
 	}
+
 	/**
 	 * Gets if this object is in "Edit" mode in the Builder
+	 * 
 	 * @return true if in edit mode
 	 */
 	public boolean isInEditMode() {
@@ -866,428 +986,459 @@ implements IWUserContext, IWApplicationContext {
 		}
 		return (edit);
 	}
-	private boolean isBuilderApplicationRunning(){
+
+	private boolean isBuilderApplicationRunning() {
 		return getIWMainApplication().isBuilderApplicationRunning(this);
 	}
-	
+
 	/**
-	 * @return true if the client is a handheld device such as a PalmPilot, a PocketPC device or a phone
+	 * @return true if the client is a handheld device such as a PalmPilot, a
+	 *         PocketPC device or a phone
 	 */
 	public boolean isClientHandheld() {
 		if (!_doneHandHeldCheck) {
 			String user_agent = this.getUserAgent();
 			if (user_agent.indexOf("Windows CE") != -1) {
 				_clientIsHandHeld = true;
-			} else if (user_agent.indexOf("Palm") != -1) {
+			}
+			else if (user_agent.indexOf("Palm") != -1) {
 				_clientIsHandHeld = true;
-			} else if (user_agent.toLowerCase().indexOf("wap") != -1) {
+			}
+			else if (user_agent.toLowerCase().indexOf("wap") != -1) {
 				_clientIsHandHeld = true;
-			} else if (user_agent.toLowerCase().indexOf("nokia") != -1) {
+			}
+			else if (user_agent.toLowerCase().indexOf("nokia") != -1) {
 				_clientIsHandHeld = true;
-			} else if (user_agent.toLowerCase().indexOf("ericsson") != -1) {
+			}
+			else if (user_agent.toLowerCase().indexOf("ericsson") != -1) {
 				_clientIsHandHeld = true;
-			} else if (user_agent.toLowerCase().indexOf("symbian") != -1) {
+			}
+			else if (user_agent.toLowerCase().indexOf("symbian") != -1) {
 				_clientIsHandHeld = true;
-			} else if (user_agent.toLowerCase().indexOf("wapman") != -1) {
+			}
+			else if (user_agent.toLowerCase().indexOf("wapman") != -1) {
 				_clientIsHandHeld = true;
 			}
 			_doneHandHeldCheck = true;
 		}
 		return _clientIsHandHeld;
 	}
+
 	public ICDomain getDomain() {
-	    ICDomain domain = getIWMainApplication().getIWApplicationContext().getDomain();
+		ICDomain domain = getIWMainApplication().getIWApplicationContext().getDomain();
 		return domain;
 	}
-	
+
 	public ICDomain getDomainByServerName(String serverName) {
 		return getIWMainApplication().getIWApplicationContext().getDomainByServerName(serverName);
 	}
-	
-	public void forwardToIBPage(Page fromPage, ICPage page){
-		forwardToIBPage(fromPage,((Integer) page.getPrimaryKey()).intValue());
+
+	public void forwardToIBPage(Page fromPage, ICPage page) {
+		forwardToIBPage(fromPage, ((Integer) page.getPrimaryKey()).intValue());
 	}
-	
-	public void forwardToIBPage(Page fromPage, int pageID){
-		forwardToIBPage(fromPage,pageID,0);
+
+	public void forwardToIBPage(Page fromPage, int pageID) {
+		forwardToIBPage(fromPage, pageID, 0);
 	}
-	
-	public void forwardToIBPage(Page fromPage, int pageID,int secondInterval) {
-		try
-		{
+
+	public void forwardToIBPage(Page fromPage, int pageID, int secondInterval) {
+		try {
 			BuilderService bs;
 			bs = BuilderServiceFactory.getBuilderService(this.getApplicationContext());
 			String url = bs.getPageURI(pageID);
-			forwardToURL(fromPage,url,secondInterval);
+			forwardToURL(fromPage, url, secondInterval);
 		}
-		catch (RemoteException e)
-		{
+		catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
 	}
+
 	/**
-	 * Forwards to the url specified by setting a meta (refresh) header into the page object given by fromPage.
+	 * Forwards to the url specified by setting a meta (refresh) header into the
+	 * page object given by fromPage.
+	 * 
 	 * @param fromPage
 	 * @param url
 	 */
 	public void forwardToURL(Page fromPage, String url) {
-		forwardToURL(fromPage,url,-1);
+		forwardToURL(fromPage, url, -1);
 	}
-	
+
 	/**
-	 * Forwards to the url specified by setting a meta (refresh) header into the page object given by fromPage.
+	 * Forwards to the url specified by setting a meta (refresh) header into the
+	 * page object given by fromPage.
+	 * 
 	 * @param fromPage
 	 * @param url
 	 * @param secondInterval
 	 */
-	public void forwardToURL(Page fromPage, String url,int secondInterval) {
-		/**@todo temporary workaround find out why this doesn't work
-		 * This is supposed to work but I always get: IllegalStateException: cannot forward because writer or stream has been obtained.
+	public void forwardToURL(Page fromPage, String url, int secondInterval) {
+		/**
+		 * @todo temporary workaround find out why this doesn't work This is
+		 *       supposed to work but I always get: IllegalStateException:
+		 *       cannot forward because writer or stream has been obtained.
 		 */
-		/*try{
-		 RequestDispatcher req = this.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
-		 req.forward(this.getRequest(),this.getResponse());
-		 }
-		 catch(Exception e){
-		 e.printStackTrace(System.err);
-		 }
-
-		 this does not work either
-		 sendRedirect(URL.toString());
+		/*
+		 * try{ RequestDispatcher req =
+		 * this.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
+		 * req.forward(this.getRequest(),this.getResponse()); } catch(Exception
+		 * e){ e.printStackTrace(System.err); }
+		 * 
+		 * this does not work either sendRedirect(URL.toString());
 		 */
 		StringBuffer URL = new StringBuffer(url);
-		//try
-		//{
-			//bs = BuilderServiceFactory.getBuilderService(this.getApplicationContext());
-			//URL.append(bs.getPageURI(pageID));
-		
-			String requestString = getRequest().getQueryString();
-			if(requestString!=null){
-				if(url.indexOf("?")==-1){
-					URL.append('?');
-				}
-				else{
-					URL.append('&');
-				}
-				URL.append(requestString);
+		// try
+		// {
+		// bs =
+		// BuilderServiceFactory.getBuilderService(this.getApplicationContext());
+		// URL.append(bs.getPageURI(pageID));
+		String requestString = getRequest().getQueryString();
+		if (requestString != null) {
+			if (url.indexOf("?") == -1) {
+				URL.append('?');
 			}
-			if(secondInterval>0)
-				fromPage.setToRedirect(URL.toString(),secondInterval);
-			else
-				fromPage.setToRedirect(URL.toString());
-			
-			// comment by thomas: 
-			// the call of empty() causes a loop of requests. 
-			// The server might crash. 
-			// This problem appears in platform 3.
-			// do not call empty.
-			// DO NOT CALL: fromPage.empty();
-			// The reason for the problem is not clear, but it works in this way.
-		
-			//}
-		//catch (RemoteException e)
-		//{
-		//	e.printStackTrace();
-		//}
-		//URL.append(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(), pageID));
+			else {
+				URL.append('&');
+			}
+			URL.append(requestString);
+		}
+		if (secondInterval > 0)
+			fromPage.setToRedirect(URL.toString(), secondInterval);
+		else
+			fromPage.setToRedirect(URL.toString());
+		// comment by thomas:
+		// the call of empty() causes a loop of requests.
+		// The server might crash.
+		// This problem appears in platform 3.
+		// do not call empty.
+		// DO NOT CALL: fromPage.empty();
+		// The reason for the problem is not clear, but it works in this way.
+		// }
+		// catch (RemoteException e)
+		// {
+		// e.printStackTrace();
+		// }
+		// URL.append(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),
+		// pageID));
 	}
 
 	/*
-	 *  Returns null if not found
+	 * Returns null if not found
 	 */
 	public Cookie getCookie(String cookieName) {
-		Cookie[] cookies = this.getCookies();
-
-		if (cookies != null) {
-			if (cookies.length > 0) {
-				for (int i = 0 ; i < cookies.length ; i++) {
-					if ( cookies[i].getName().equals(cookieName) ) {
-						return cookies[i];
-					}
-				}
-			}
-		}
-
-		return null;
-	}
-
-
-	/**
-	 * Gets the current user associated with this context
-	 * <br>This method is meant to replace getUser()
-	 * @return The current user if there is one associated with the current context. If there is none the method returns null.
-	 * @throws NotLoggedOnException if no user is logged on.
-	 **/
-	public com.idega.user.data.User getCurrentUser(){
-		com.idega.core.user.data.User user = getUser();
-		if(user!=null){
-			try{
-				String sessKey = IWC_SESSION_ATTR_NEW_USER_KEY+user.getPrimaryKey().toString();
-				com.idega.user.data.User newUser = (com.idega.user.data.User) getSessionAttribute(sessKey);
-				if(newUser==null){
-					newUser = Converter.convertToNewUser(user);
-					setSessionAttribute(sessKey,newUser);
-				}
-				return newUser;
-			}
-			catch(Exception e){
-				throw new RuntimeException("IWContext.getCurrentUser(): Error getting primary key of user. Exception was: "+e.getClass().getName()+" : "+e.getMessage());
-			}
-		}
-		else{
-			throw new NotLoggedOnException();
-		}
-		//return null;
+		return RequestUtil.getCookie(getRequest(), cookieName);
 	}
 
 	/**
-	 * Gets the Id of the current user associated with this context
-	 * <br>This method is meant to replace getUserId()
-	 * @return The Id of the current user. If there is one associated with the current context.
-	 * @throws NotLoggedOnException if no user is logged on
-	 **/
-	public int getCurrentUserId(){
+	 * Gets the current user associated with this context <br>
+	 * This method is meant to replace getUser()
+	 * 
+	 * @return The current user if there is one associated with the current
+	 *         context. If there is none the method returns null.
+	 * @throws NotLoggedOnException
+	 *             if no user is logged on.
+	 */
+	public com.idega.user.data.User getCurrentUser() {
+		HttpSession session = getSession();
+		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
+		return loginBean.getCurrentUser(session);
+	}
+
+	/**
+	 * Gets the Id of the current user associated with this context <br>
+	 * This method is meant to replace getUserId()
+	 * 
+	 * @return The Id of the current user. If there is one associated with the
+	 *         current context.
+	 * @throws NotLoggedOnException
+	 *             if no user is logged on
+	 */
+	public int getCurrentUserId() {
 		com.idega.user.data.User user = getCurrentUser();
-		//if(user!=null){
-			return ((Integer)user.getPrimaryKey()).intValue();
-		//}
+		// if(user!=null){
+		return ((Integer) user.getPrimaryKey()).intValue();
+		// }
 	}
-	
+
 	/**
 	 * TODO reimplement
-	 * @return The pageId for the current IBPage that is being displayed. Returns -1 if an error occurred.
+	 * 
+	 * @return The pageId for the current IBPage that is being displayed.
+	 *         Returns -1 if an error occurred.
 	 */
-	public int getCurrentIBPageID(){
+	public int getCurrentIBPageID() {
 		BuilderService bs;
-		try
-		{
+		try {
 			bs = BuilderServiceFactory.getBuilderService(this.getApplicationContext());
 			return bs.getCurrentPageId(this);
 		}
-		catch (RemoteException e)
-		{
+		catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return -1;
 	}
 
-	public boolean isSecure(){
+	public boolean isSecure() {
 		return getRequest().isSecure();
 	}
-	
+
 	/*
 	 * BEGIN ABSTRACT METHODS FROM FacesContext
 	 */
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getLocale()
 	 */
-	public Locale getLocale()
-	{
+	public Locale getLocale() {
 		return this.getCurrentLocale();
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#release()
 	 */
-	public void release()
-	{
+	public void release() {
 		getRealFacesContext().release();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#renderResponse()
 	 */
-	public void renderResponse()
-	{
+	public void renderResponse() {
 		getRealFacesContext().renderResponse();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#responseComplete()
 	 */
-	public void responseComplete()
-	{
+	public void responseComplete() {
 		getRealFacesContext().responseComplete();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#setLocale(java.util.Locale)
 	 */
-	public void setLocale(Locale arg0)
-	{
+	public void setLocale(Locale arg0) {
 		this.setCurrentLocale(arg0);
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.faces.context.FacesContext#addMessage(java.lang.String, javax.faces.application.FacesMessage)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.faces.context.FacesContext#addMessage(java.lang.String,
+	 *      javax.faces.application.FacesMessage)
 	 */
 	public void addMessage(String arg0, FacesMessage arg1) {
-		getRealFacesContext().addMessage(arg0,arg1);
+		getRealFacesContext().addMessage(arg0, arg1);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getClientIdsWithMessages()
 	 */
 	public Iterator getClientIdsWithMessages() {
 		return getRealFacesContext().getClientIdsWithMessages();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getExternalContext()
 	 */
 	public ExternalContext getExternalContext() {
 		return getRealFacesContext().getExternalContext();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getMaximumSeverity()
 	 */
 	public Severity getMaximumSeverity() {
 		return getRealFacesContext().getMaximumSeverity();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getMessages()
 	 */
 	public Iterator getMessages() {
 		return getRealFacesContext().getMessages();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getMessages(java.lang.String)
 	 */
 	public Iterator getMessages(String arg0) {
 		return getRealFacesContext().getMessages(arg0);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getRenderKit()
 	 */
 	public RenderKit getRenderKit() {
 		return getRealFacesContext().getRenderKit();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getRenderResponse()
 	 */
 	public boolean getRenderResponse() {
 		return getRealFacesContext().getRenderResponse();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getResponseComplete()
 	 */
 	public boolean getResponseComplete() {
 		return getRealFacesContext().getResponseComplete();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getResponseStream()
 	 */
 	public ResponseStream getResponseStream() {
 		return getRealFacesContext().getResponseStream();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getResponseWriter()
 	 */
 	public ResponseWriter getResponseWriter() {
-		if (this.isCacheing() && cacheResponseWriter!=null) {
+		if (this.isCacheing() && cacheResponseWriter != null) {
 			return cacheResponseWriter;
-		} else {
+		}
+		else {
 			return getRealFacesContext().getResponseWriter();
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getViewRoot()
 	 */
 	public UIViewRoot getViewRoot() {
 		return getRealFacesContext().getViewRoot();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#setResponseStream(javax.faces.context.ResponseStream)
 	 */
 	public void setResponseStream(ResponseStream arg0) {
 		getRealFacesContext().setResponseStream(arg0);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#setResponseWriter(javax.faces.context.ResponseWriter)
 	 */
 	public void setResponseWriter(ResponseWriter arg0) {
 		getRealFacesContext().setResponseWriter(arg0);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#setViewRoot(javax.faces.component.UIViewRoot)
 	 */
 	public void setViewRoot(UIViewRoot arg0) {
 		getRealFacesContext().setViewRoot(arg0);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.faces.context.FacesContext#getApplication()
 	 */
 	public Application getApplication() {
 		return getRealFacesContext().getApplication();
 	}
-	
+
 	/**
-	*Gets the real (underlying) FacesContext instance
-	*/
-	private FacesContext getRealFacesContext(){
+	 * Gets the real (underlying) FacesContext instance
+	 */
+	private FacesContext getRealFacesContext() {
 		return realFacesContext;
 	}
+
 	/**
-	 *Sets the real (underlying) FacesContext instance
-	 **/
-	private void setRealFacesContext(FacesContext fc){
-		this.realFacesContext=fc;
-	}
-	
-	/**
-	 * This method gets the header value for the attribute "Authorization" which is
-	 * used e.g. for getting username and password in BASIC Authorization/Authentication request
-	 * @return Returns the header value for "Authorization" attribute
+	 * Sets the real (underlying) FacesContext instance
 	 */
-	public String getAuthorizationHeader(){
-		return getRequest().getHeader("Authorization");
+	private void setRealFacesContext(FacesContext fc) {
+		this.realFacesContext = fc;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * This method gets the header value for the attribute "Authorization" which
+	 * is used e.g. for getting username and password in BASIC
+	 * Authorization/Authentication request
+	 * 
+	 * @return Returns the header value for "Authorization" attribute
+	 */
+	public String getAuthorizationHeader() {
+		return RequestUtil.getAuthorizationHeader(getRequest());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.idega.idegaweb.IWUserContext#getUserPrincipal()
 	 */
 	public Principal getUserPrincipal() {
 		return getRequest().getUserPrincipal();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.idega.idegaweb.IWUserContext#isUserInRole(java.lang.String)
 	 */
 	public boolean isUserInRole(String role) {
 		return getRequest().isUserInRole(role);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.idega.idegaweb.IWUserContext#getRemoteUser()
 	 */
 	public String getRemoteUser() {
 		return getRequest().getRemoteUser();
 	}
 
-	public String getIdegaSessionId(){
+	public String getIdegaSessionId() {
 		String sessionId = (String) getSessionAttribute(IDEGA_SESSION_KEY);
-		if(sessionId==null){
+		if (sessionId == null) {
 			sessionId = UUIDGenerator.getInstance().generateUUID();
-			setSessionAttribute(IDEGA_SESSION_KEY,sessionId);
+			setSessionAttribute(IDEGA_SESSION_KEY, sessionId);
 		}
 		return sessionId;
 	}
-	
 }
