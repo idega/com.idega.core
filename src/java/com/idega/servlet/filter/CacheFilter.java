@@ -1,5 +1,5 @@
 /*
- * $Id: CacheFilter.java,v 1.2 2006/01/12 15:24:22 tryggvil Exp $
+ * $Id: CacheFilter.java,v 1.3 2006/01/12 17:04:29 tryggvil Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,17 +9,18 @@
  */
 package com.idega.servlet.filter;
 
+import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.constructs.web.AlreadyCommittedException;
-import net.sf.ehcache.constructs.web.AlreadyGzippedException;
-import net.sf.ehcache.constructs.web.filter.FilterNonReentrantException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
@@ -32,10 +33,10 @@ import com.idega.idegaweb.IWMainApplication;
  * The rule is that this filter when enabled caches output of all GET requests when the user
  * is not authenticated into the idegaWeb user system.
  * </p>
- * Last modified: $Date: 2006/01/12 15:24:22 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/01/12 17:04:29 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class CacheFilter extends SimplePageCachingFilter {
 	
@@ -59,14 +60,20 @@ public class CacheFilter extends SimplePageCachingFilter {
 	 * @see net.sf.ehcache.constructs.web.filter.CachingFilter#doFilter(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain)
 	 */
-	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-			throws AlreadyGzippedException, AlreadyCommittedException, FilterNonReentrantException, Exception {
-		//if(defaultEnabled){
+	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws ServletException {
+		HttpServletRequest request = (HttpServletRequest)sRequest;
+		HttpServletResponse response = (HttpServletResponse)sResponse;
+		
 		if(cacheRequest(request,response)){
-			super.doFilter(request, response, chain);
+			super.doFilter(sRequest, sResponse, chain);
 		}
 		else{
-			chain.doFilter(request,response);
+			try {
+				chain.doFilter(sRequest,sResponse);
+			}
+			catch (IOException e) {
+				throw new ServletException(e);
+			}
 		}
 	}
 
