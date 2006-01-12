@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.11 2006/01/03 23:57:20 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.12 2006/01/12 22:15:44 tryggvil Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.util.FacesUtil;
  * This class overrides the default JSF ViewHandler and adds idegaWeb specific way of handling JSP pages
  * that are registered in the ViewNode hierarchy.<br/>
  * </p>
- *  Last modified: $Date: 2006/01/03 23:57:20 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/12 22:15:44 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -163,20 +163,24 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	private boolean nodeCorrespondsToViewId(ViewNode node, String viewId, FacesContext context) {
 		// does the viewId correspond to the node?
 		String requestServletPath = context.getExternalContext().getRequestServletPath();
-		String requestContextPath = context.getExternalContext().getRequestContextPath();
+		//String requestContextPath = context.getExternalContext().getRequestContextPath();
+		//String requestContextPath = IWMainApplication.getIWMainApplication(context).getApplicationContextURI();
+		
 		// count the length
 		// e.g. "/cms" + "/workspace"  
 		
-		String uri = node.getURIWithContextPath();
+		String uri = node.getURI();
 		String uriStripped = null;
 		int stripLength=0;
 		if(viewId.startsWith(requestServletPath)){
 			//this is a special case that happens on Oracle Application Server (oc4j)
-			stripLength = requestContextPath.length();
+			//stripLength = requestContextPath.length();
+			stripLength=0;
 		}
 		else{
 			//this is the case on Tomcat (5), i.e. the viewId doesn't contain the servletPath
-			stripLength = requestContextPath.length() + requestServletPath.length();
+			//stripLength = requestContextPath.length() + requestServletPath.length();
+			stripLength=requestServletPath.length();
 		}
 		uriStripped= uri.substring(stripLength);
 		
