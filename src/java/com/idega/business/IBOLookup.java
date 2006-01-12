@@ -8,15 +8,16 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.ejb.CreateException;
 import javax.ejb.RemoveException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.util.reflect.MethodFinder;
@@ -88,7 +89,7 @@ public class IBOLookup implements Singleton
 			try
 			{
 				session = instanciateSessionBean(beanInterfaceClass);
-				iwuc.setSessionAttribute(getSessionKeyForObject(beanInterfaceClass), session);
+			 	iwuc.setSessionAttribute(getSessionKeyForObject(beanInterfaceClass), session);
 				session.setUserContext(iwuc);
 			}
 			catch (CreateException cre)
@@ -118,6 +119,23 @@ public class IBOLookup implements Singleton
 		IBOSession session = getSessionInstance(iwuc, beanInterfaceClass);
 		session.remove();
 		iwuc.removeSessionAttribute(getSessionKeyForObject(beanInterfaceClass));
+	}
+	/**
+	 * Cleans up after an an instance of a IBOSession bean has been used.
+	 * @param iwuc A reference to the user (context) the bean instance is working under.
+	 * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
+	 */
+	public static void removeSessionInstance(HttpSession session, Class beanInterfaceClass)
+		throws RemoteException, RemoveException
+	{
+		getInstance().removeSessionInstanceImpl(session, beanInterfaceClass);
+	}
+	private void removeSessionInstanceImpl(HttpSession session, Class beanInterfaceClass)
+		throws RemoteException, RemoveException
+	{
+		IBOSession sessionBean = getSessionInstance(session, beanInterfaceClass);
+		sessionBean.remove();
+		session.removeAttribute(getSessionKeyForObject(beanInterfaceClass));
 	}
 	private IBOSession instanciateSessionBean(Class beanInterfaceClass) throws IBOLookupException, CreateException
 	{
@@ -468,4 +486,86 @@ public class IBOLookup implements Singleton
   	getInstance().getBeanClassesMap().put(interfaceClass,beanClass);
 	getInstance().getInterfaceClassesMap().put(beanClass,interfaceClass);
   }
+  
+  /**
+   * <p>
+   * Checks if the sessionbean by class beanIntefaceClass has been initialized (and is alive in session).
+   * </p>
+   * @param request
+   * @param beanInterfaceClass
+   * @return
+   */
+  public static boolean isSessionBeanInitialized(HttpServletRequest request,Class beanInterfaceClass){
+	  return isSessionBeanInitialized(request.getSession(),beanInterfaceClass);
+  }
+  
+  /**
+   * <p>
+   * Checks if the sessionbean by class beanIntefaceClass has been initialized (and is alive in session).
+   * </p>
+   * @param request
+   * @param beanInterfaceClass
+   * @return
+   */
+  public static boolean isSessionBeanInitialized(HttpSession session,Class beanInterfaceClass){
+	  String key = getInstance().getSessionKeyForObject(beanInterfaceClass);
+	  Object bean = session.getAttribute(key);
+	  if(bean!=null){
+		  return true;
+	  }
+	  return false;
+  }
+  
+  
+  /**
+   * <p>
+   * Checks if the sessionbean by class beanIntefaceClass has been initialized (and is alive in session).
+   * </p>
+   * @param request
+   * @param beanInterfaceClass
+   * @return
+   */
+  public static boolean isSessionBeanInitialized(IWUserContext iwuc,Class beanInterfaceClass){
+	  String key = getInstance().getSessionKeyForObject(beanInterfaceClass);
+	  Object bean = iwuc.getSessionAttribute(key);
+	  if(bean!=null){
+		  return true;
+	  }
+	  return false;
+  }
+  
+	/**
+	 * Returns an instance of a IBOSession bean.
+	 * The instance is stored in the session for t. After <b>this</b> method is called there should be a corresponding call to removeSessionAttribute() to clean up from the users context.
+	 * @param iwuc A reference to the user (context) the bean instance is working under.
+	 * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
+	 */
+	public static IBOSession getSessionInstance(HttpServletRequest request, Class beanInterfaceClass) throws IBOLookupException
+	{
+		return getInstance().getSessionInstanceImpl(request.getSession(), beanInterfaceClass);
+	}
+	
+	/**
+	 * Returns an instance of a IBOSession bean.
+	 * The instance is stored in the session for t. After <b>this</b> method is called there should be a corresponding call to removeSessionAttribute() to clean up from the users context.
+	 * @param iwuc A reference to the user (context) the bean instance is working under.
+	 * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
+	 */
+	public static IBOSession getSessionInstance(HttpSession session, Class beanInterfaceClass) throws IBOLookupException
+	{
+		return getInstance().getSessionInstanceImpl(session, beanInterfaceClass);
+	}
+	
+	private IBOSession getSessionInstanceImpl(HttpSession session, Class beanInterfaceClass) throws IBOLookupException
+	{
+		IBOSession sessionBean = (IBOSession) session.getAttribute(this.getSessionKeyForObject(beanInterfaceClass));
+		if (sessionBean == null)
+		{
+			IWUserContext iwuc = new IWUserContextImpl(session,session.getServletContext());
+			sessionBean = getSessionInstanceImpl(iwuc,beanInterfaceClass);
+		}
+		return sessionBean;
+
+	}
+	
 }
