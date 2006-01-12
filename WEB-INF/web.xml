@@ -163,6 +163,16 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
+    <!-- The idegaWeb Cache Filter -->
+    <filter>
+        <filter-name>CacheFilter</filter-name>
+        <filter-class>com.idega.servlet.filter.CacheFilter</filter-class>
+    </filter>
+	<filter-mapping>
+        <filter-name>CacheFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
      <!-- MyFaces Extensions Filter -->
     <filter>
         <filter-name>extensionsFilter</filter-name>
