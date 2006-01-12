@@ -1,140 +1,198 @@
+/*
+ * $Id: CacheFilter.java,v 1.2 2006/01/12 15:24:22 tryggvil Exp $
+ * Created on 7.1.2005
+ *
+ * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.servlet.filter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.Locale;
-
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheException;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.constructs.web.AlreadyCommittedException;
+import net.sf.ehcache.constructs.web.AlreadyGzippedException;
+import net.sf.ehcache.constructs.web.filter.FilterNonReentrantException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.cache.filter.SimplePageCachingFilter;
+import com.idega.idegaweb.IWMainApplication;
+
 /**
- * Class to use for generic caching of output from .jsps or Servlets.<br>
- * Accepts the following init parameters:
+ * <p>
+ * Filter that can be enabled to generically cache of output from all .jsps or Servlets.<br>
+ * The rule is that this filter when enabled caches output of all GET requests when the user
+ * is not authenticated into the idegaWeb user system.
+ * </p>
+ * Last modified: $Date: 2006/01/12 15:24:22 $ by $Author: tryggvil $
  * 
- * <filter-mapping>
- *   <filter-name>CacheFilter</filter-name>
- *   <url-pattern>*.jsp</url-pattern>
- *   <init-param>
- *     <param-name>/time.jsp</param-name>
- *     <param-value>nocache</param-value>
- *   </init-param>
- *   <init-param>
- *     <param-name>cacheTimeout</param-name>
- *     <param-value>1</param-value>
- *   </init-param>
- * </filter-mapping>
- * 
- * @author tryggvil
+ * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.2 $
  */
-public class CacheFilter implements Filter {
-  ServletContext sc;
-  FilterConfig fc;
-  long cacheTimeout = Long.MAX_VALUE;
+public class CacheFilter extends SimplePageCachingFilter {
+	
+	private static final Log log = LogFactory.getLog(CacheFilter.class.getName());
 
-  public void doFilter(ServletRequest req, ServletResponse res,
-                       FilterChain chain)
-                       throws IOException, ServletException {
-    HttpServletRequest request = (HttpServletRequest) req;
-    HttpServletResponse response = (HttpServletResponse) res;
+	public static final int DEFAULT_CACHE_SIZE=1000;
+	public static final long DEFAULT_CACHE_TIME_SECONDS=60*20;
+	public static final long DEFAULT_CACHE_TIME_IDLE_SECONDS=60*20;
+	public static final String DEFAULT_CACHE_NAME="CacheFilter";
+	
+	public static boolean defaultEnabled = false;
+	private static final String METHOD_GET="GET";
+	public static final String PROPERTY_CACHE_FILTER_ENABLED = "CACHE_FILTER_ENABLED";
+	public static final String PROPERTY_CACHE_FILTER_SIZE = "CACHE_FILTER_SIZE";
+	public static final String PROPERTY_CACHE_FILTER_TTL = "CACHE_FILTER_TTL";
+	public static final String PROPERTY_CACHE_FILTER_IDLE_TTL = "CACHE_FILTER_IDLE_TTL";
+	private static boolean INITALIZED=false;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.sf.ehcache.constructs.web.filter.CachingFilter#doFilter(javax.servlet.http.HttpServletRequest,
+	 *      javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain)
+	 */
+	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws AlreadyGzippedException, AlreadyCommittedException, FilterNonReentrantException, Exception {
+		//if(defaultEnabled){
+		if(cacheRequest(request,response)){
+			super.doFilter(request, response, chain);
+		}
+		else{
+			chain.doFilter(request,response);
+		}
+	}
 
-    // check if was a resource that shouldn't be cached.
-    String r = sc.getRealPath("");
-    String path = fc.getInitParameter(request.getRequestURI());
-    if (path!= null && path.equals("nocache")) {
-      chain.doFilter(request, response);
-      return;
+	
+    /**
+     * Initialises blockingCache to use
+     *
+     * @throws CacheException The most likely cause is that a cache has not been
+     *                        configured in ehcache's configuration file ehcache.xml for the filter name
+     */
+    public void doInit() throws CacheException {
+    		//overriding from superclass
+
+		int cacheSize = DEFAULT_CACHE_SIZE;
+		long cacheTTLSeconds = DEFAULT_CACHE_TIME_SECONDS;
+		long cacheTTLIdleSeconds = DEFAULT_CACHE_TIME_IDLE_SECONDS;
+		
+		FilterConfig config = this.getFilterConfig();
+		ServletContext context = config.getServletContext();
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
+		
+		try{
+			String propEnabled = iwma.getSettings().getProperty(PROPERTY_CACHE_FILTER_ENABLED);
+			defaultEnabled = Boolean.valueOf(propEnabled).booleanValue();
+			if(defaultEnabled){
+				log.info("CacheFilter is enabled");
+				System.out.println("CacheFilter is enabled");
+			}
+			else{
+				log.info("CacheFilter is disabled");
+				System.out.println("CacheFilter is disabled");
+			}
+		}
+		catch(Exception e){}
+		try{
+			String propCacheSize = iwma.getSettings().getProperty(PROPERTY_CACHE_FILTER_SIZE);
+			cacheSize = Integer.parseInt(propCacheSize);
+		}
+		catch(Exception e){}
+		try{
+			String propTTL = iwma.getSettings().getProperty(PROPERTY_CACHE_FILTER_TTL);
+			cacheTTLSeconds = Long.parseLong(propTTL);
+		}
+		catch(Exception e){}
+		try{
+			String propIdleTTL = iwma.getSettings().getProperty(PROPERTY_CACHE_FILTER_IDLE_TTL);
+			cacheTTLIdleSeconds = Long.parseLong(propIdleTTL);
+		}
+		catch(Exception e){}
+
+		final String cacheName = getCacheName();
+
+    		CacheManager cm = CacheManager.create();
+    		cm.removeCache(cacheName);
+    		Cache cache = new Cache(cacheName, cacheSize, true, false, cacheTTLSeconds, cacheTTLIdleSeconds);
+    		cm.addCache(cache);
+    		
+    		
+    		super.doInit();
+    		INITALIZED=true;
     }
-    path = r+path;
-
-    // customize to match parameters
-    String id = request.getRequestURI()+request.getQueryString();
-    // optionally append i18n sensitivity
-    String localeSensitive = fc.getInitParameter("locale-sensitive");
-    if (localeSensitive != null) {
-      StringWriter ldata = new StringWriter();
-      Enumeration locales = request.getLocales();
-      while (locales.hasMoreElements()) {
-        Locale locale = (Locale)locales.nextElement();
-        ldata.write(locale.getISO3Language());
-      }
-      id = id + ldata.toString();
+    
+    protected void checkInitialization(){
+    		if(!INITALIZED){
+    			try {
+    					synchronized(this){
+    						if(!INITALIZED){
+    							doInit();
+    						}
+    					}
+				}
+				catch (CacheException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
     }
-    File tempDir = (File)sc.getAttribute(
-      "javax.servlet.context.tempdir");
-
-    // get possible cache
-    String temp = tempDir.getAbsolutePath();
-    File file = new File(temp+id);
-
-    // get current resource
-    if (path == null) {
-      path = sc.getRealPath(request.getRequestURI());
+    
+    /**
+     * <p>
+     * Tells the CacheFilter to reload its settings.
+     * </p>
+     */
+    public static void reload(){
+    		INITALIZED=false;
     }
-    File current = new File(path);
+    
+	/**
+	 * <p>
+	 * TODO tryggvil describe method cacheRequest
+	 * </p>
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	protected boolean cacheRequest(HttpServletRequest request, HttpServletResponse response) {
+		checkInitialization();
+		if(defaultEnabled){
+			String method = request.getMethod();
+			if(method.equals(METHOD_GET)){
+				LoginBusinessBean loginBusiness = LoginBusinessBean.getLoginBusinessBean(request);
+				if(loginBusiness.isLoggedOn(request)){
+					//Never cache for a logged on user:
+					return false;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
 
-    try {
-      long now = Calendar.getInstance().getTimeInMillis();
-      //set timestamp check
-      if (!file.exists() || (file.exists() &&
-          current.lastModified() > file.lastModified()) ||
-          cacheTimeout < now - file.lastModified()) {
-        String name = file.getAbsolutePath();
-        name = name.substring(0,name.lastIndexOf("/")==-1?0:name.lastIndexOf("/"));
-        new File(name).mkdirs();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        CacheResponseWrapper wrappedResponse =
-          new CacheResponseWrapper(response, baos);
-        chain.doFilter(req, wrappedResponse);
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.sf.ehcache.constructs.web.filter.CachingFilter#getCacheName()
+	 */
+	protected String getCacheName() {
+		return DEFAULT_CACHE_NAME;
+	}
 
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(baos.toByteArray());
-        fos.flush();
-        fos.close();
-      }
-    } catch (ServletException e) {
-      if (!file.exists()) {
-        throw new ServletException(e);
-      }
-    }
-    catch (IOException e) {
-      if (!file.exists()) {
-        throw e;
-      }
-    }
-
-    FileInputStream fis = new FileInputStream(file);
-    String mt = sc.getMimeType(request.getRequestURI());
-    response.setContentType(mt);
-    ServletOutputStream sos = res.getOutputStream();
-    for (int i = fis.read(); i!= -1; i = fis.read()) {
-      sos.write((byte)i);
-    }
-  }
-
-  public void init(FilterConfig filterConfig) {
-    this.fc = filterConfig;
-    String ct = fc.getInitParameter("cacheTimeout");
-    if (ct != null) {
-      cacheTimeout = 60*1000*Long.parseLong(ct);
-    }
-    this.sc = filterConfig.getServletContext();
-  }
-
-  public void destroy() {
-    this.sc = null;
-    this.fc = null;
-  }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.sf.ehcache.constructs.web.filter.CachingFilter#calculateKey(javax.servlet.http.HttpServletRequest)
+	 */
+	protected String calculateKey(HttpServletRequest request) {
+		return super.calculateKey(request);
+	}
 }
