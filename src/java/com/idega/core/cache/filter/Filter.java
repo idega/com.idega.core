@@ -75,7 +75,7 @@ import java.util.Map;
  * Participates in the Template Method pattern with {@link javax.servlet.Filter}.
  *
  * @author <a href="mailto:gluck@thoughtworks.com">Greg Luck</a>
- * @version $Id: Filter.java,v 1.1 2006/01/12 15:22:18 tryggvil Exp $
+ * @version $Id: Filter.java,v 1.2 2006/01/12 17:03:52 tryggvil Exp $
  */
 public abstract class Filter implements javax.servlet.Filter {
     /**
@@ -117,7 +117,7 @@ public abstract class Filter implements javax.servlet.Filter {
      * This method takes care of error reporting and handling.
      * Errors are reported at {@link Log#warn(Object)} level because http tends to produce lots of errors.
      */
-    public final void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws ServletException {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
         final HttpServletResponse httpResponse = (HttpServletResponse) response;
