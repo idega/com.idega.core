@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.161 2006/01/12 11:20:30 laddi Exp $
+ * $Id: Link.java,v 1.162 2006/01/12 13:18:23 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -730,7 +730,7 @@ public class Link extends Text {
 	 *
 	 */
 	private void setOnEvent(String eventType, String eventString) {
-		setMarkupAttribute(eventType, eventString);
+		setMarkupAttributeMultivalued(eventType, eventString);
 	}
 
 	/**
