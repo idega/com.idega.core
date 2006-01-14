@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.15 2006/01/12 15:26:07 tryggvil Exp $
+ * $Id: BaseFilter.java,v 1.16 2006/01/14 16:04:41 tryggvil Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.RequestUtil;
  * <p>
  *  Class that holds basic functionality used by many filters.<br>
  * </p>
- *  Last modified: $Date: 2006/01/12 15:26:07 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/14 16:04:41 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
@@ -110,15 +110,15 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	    		String setContextPath = domain.getServerContextPath();
 	    		int setPort = domain.getServerPort();
 	    		String setProtocol = domain.getServerProtocol();
-	    		if(setServerName==null){
+	    		if(setServerName==null||setServerName.equals("")){
 	    			String newServerName = request.getServerName();
 	    			domain.setServerName(newServerName);
 	    		}
-	    		if(setUrl==null){
+	    		if(setUrl==null||setUrl.equals("")){
 	    			String newServerURL = RequestUtil.getServerURL(request);
 	    			domain.setURL(newServerURL);
 	    		}
-	    		if(setContextPath==null){
+	    		if(setContextPath==null||setContextPath.equals("")){
 	    			
 	    	        if (contextPath != null) {
 	    	            if (!contextPath.startsWith(SLASH)) {
@@ -136,7 +136,7 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	    				domain.setServerPort(port);
 	    			}
 	    		}
-	    		if(setProtocol==null){
+	    		if(setProtocol==null||setProtocol.equals("")){
 	    			domain.setServerProtocol(serverProtocol);
 	    		}
 			
