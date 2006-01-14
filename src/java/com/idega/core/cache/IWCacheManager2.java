@@ -1,5 +1,5 @@
 /*
- * $Id: IWCacheManager2.java,v 1.1 2006/01/12 15:22:18 tryggvil Exp $
+ * $Id: IWCacheManager2.java,v 1.2 2006/01/14 22:39:12 laddi Exp $
  * Created on 6.1.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 import com.idega.idegaweb.IWMainApplication;
 
 
@@ -22,10 +21,10 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * TODO tryggvil Describe Type IWCacheManager2
  * </p>
- *  Last modified: $Date: 2006/01/12 15:22:18 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/14 22:39:12 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class IWCacheManager2 {
 	
