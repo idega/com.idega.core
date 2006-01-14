@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.132 2006/01/12 15:26:57 tryggvil Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.133 2006/01/14 22:39:46 laddi Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -60,7 +60,6 @@ import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
 import com.idega.user.business.UserProperties;
-import com.idega.user.util.Converter;
 import com.idega.util.FacesUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.datastructures.HashtableMultivalued;
@@ -78,10 +77,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2006/01/12 15:26:57 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/01/14 22:39:46 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.132 $
+ * @version $Revision: 1.133 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 

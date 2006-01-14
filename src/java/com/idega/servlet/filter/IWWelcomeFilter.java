@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.12 2006/01/12 15:26:07 tryggvil Exp $
+ * $Id: IWWelcomeFilter.java,v 1.13 2006/01/14 22:40:18 laddi Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -22,17 +22,16 @@ import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICPage;
 import com.idega.data.IDONoDatastoreError;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.presentation.IWContext;
 
 /**
  * <p>
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2006/01/12 15:26:07 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/14 22:40:18 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
