@@ -1,5 +1,5 @@
 /*
- * $Id: ListNavigator.java,v 1.2 2005/10/19 12:52:11 laddi Exp $
+ * $Id: ListNavigator.java,v 1.3 2006/01/15 19:46:09 laddi Exp $
  * Created on Oct 12, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,21 +14,25 @@ import com.idega.idegaweb.IWException;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.ListItem;
 import com.idega.presentation.text.Lists;
+import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 
 
 /**
- * Last modified: $Date: 2005/10/19 12:52:11 $ by $Author: laddi $
+ * Last modified: $Date: 2006/01/15 19:46:09 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ListNavigator extends Block implements IWPageEventListener {
 
 	public static final String PARAMETER_CURRENT_PAGE = "ln_curr_page";
 	public static final String PARAMETER_NUMBER_OF_ENTRIES = "ln_num_entries";
 	public static final String PARAMETER_UNIQUE_IDENTIFIER = "ln_unique_id";
+	
+	private String firstItemText;
+	private String dropdownEntryName = "";
 
 	private String iUniqueIdentifier;
 	
@@ -51,6 +55,12 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		
 		Lists list = new Lists();
 		form.add(list);
+		
+		if (firstItemText != null) {
+			ListItem item = new ListItem();
+			item.add(new Text(firstItemText));
+			list.add(item);
+		}
 		
 		int currentPage = getCurrentPage(iwc);
 		int numberOfPages = iSize / getNumberOfEntriesPerPage(iwc);
@@ -100,10 +110,10 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		}
 
 		DropdownMenu menu = new DropdownMenu(getNumberOfEntriesParameter());
-		menu.addMenuElement(5, "5 " + "");
-		menu.addMenuElement(10, "10 " + "");
-		menu.addMenuElement(20, "20 " + "");
-		menu.addMenuElement(50, "50 " + "");
+		menu.addMenuElement(5, "5 " + dropdownEntryName);
+		menu.addMenuElement(10, "10 " + dropdownEntryName);
+		menu.addMenuElement(20, "20 " + dropdownEntryName);
+		menu.addMenuElement(50, "50 " + dropdownEntryName);
 		menu.setSelectedElement(getNumberOfEntriesPerPage(iwc));
 		menu.setToSubmit();
 		form.add(menu);
@@ -165,5 +175,15 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	
 	public void setUniqueIdentifier(String identifier) {
 		iUniqueIdentifier = identifier;
+	}
+
+	
+	public void setDropdownEntryName(String dropdownEntryName) {
+		this.dropdownEntryName = dropdownEntryName;
+	}
+
+	
+	public void setFirstItemText(String firstItemText) {
+		this.firstItemText = firstItemText;
 	}
 }
