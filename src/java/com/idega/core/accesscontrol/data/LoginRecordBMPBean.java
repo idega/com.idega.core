@@ -6,6 +6,11 @@ import java.util.Collection;
 import javax.ejb.FinderException;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOException;
+import com.idega.data.IDORelationshipException;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.Order;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
 import com.idega.user.data.User;
 
 /**
@@ -164,5 +169,23 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 		catch (SQLException e) {
 			throw new FinderException(e.getMessage());
 		}
+	}
+	
+	public Object ejbFindLastLoginRecord(User user) throws FinderException {
+		Table table = new Table(this);
+		Table login = new Table(LoginTable.class);
+		
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(table, getIDColumnName());
+		try {
+			query.addJoin(table, login);
+		}
+		catch (IDORelationshipException ire) {
+			throw new FinderException(ire.getMessage());
+		}
+		query.addCriteria(new MatchCriteria(login, "ic_user_id", MatchCriteria.EQUALS, user));
+		query.addOrder(new Order(table.getColumn(getColumnInStamp()), false));
+		
+		return idoFindOnePKByQuery(query);
 	}
 }

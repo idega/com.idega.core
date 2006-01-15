@@ -1,5 +1,5 @@
 /*
- * $Id: LoginRecordHome.java,v 1.6 2006/01/15 17:29:35 laddi Exp $
+ * $Id: LoginRecordHome.java,v 1.7 2006/01/15 21:15:49 laddi Exp $
  * Created on Jan 15, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -13,16 +13,17 @@ import java.util.Collection;
 import javax.ejb.FinderException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOHome;
+import com.idega.user.data.User;
 
 
 /**
  * <p>
  * TODO laddi Describe Type LoginRecordHome
  * </p>
- *  Last modified: $Date: 2006/01/15 17:29:35 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/01/15 21:15:49 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public interface LoginRecordHome extends IDOHome {
 
@@ -54,4 +55,9 @@ public interface LoginRecordHome extends IDOHome {
 	 * @see com.idega.core.accesscontrol.data.LoginRecordBMPBean#ejbHomeGetLastLoginByUserID
 	 */
 	public java.sql.Date getLastLoginByUserID(Integer userID) throws FinderException;
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginRecordBMPBean#ejbFindLastLoginRecord
+	 */
+	public LoginRecord findLastLoginRecord(User user) throws FinderException;
 }

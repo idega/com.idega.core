@@ -1,5 +1,5 @@
 /*
- * $Id: Widget.java,v 1.2 2004/11/02 14:09:22 laddi Exp $
+ * $Id: Widget.java,v 1.3 2006/01/15 21:15:49 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -10,11 +10,11 @@
 package com.idega.idegaweb.widget;
 
 import java.util.Locale;
-
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 
 /**
@@ -23,7 +23,7 @@ import com.idega.presentation.PresentationObject;
  * Last modified: 14.10.2004 10:24:30 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class Widget extends Block {
 	
@@ -40,13 +40,17 @@ public abstract class Widget extends Block {
 		iwrb = getResourceBundle(iwc);
 		locale = iwc.getCurrentLocale();
 
+		Layer layer = new Layer(Layer.DIV);
+		if (styleClass != null) {
+			layer.setStyleClass(styleClass);
+		}
+
 		PresentationObject widget = getWidget(iwc);
 		if (widget != null) {
-			if (styleClass != null) {
-				widget.setStyleClass(styleClass);
-			}
-			add(widget);
+			layer.add(widget);
 		}
+		
+		add(layer);
 	}
 	
 	protected abstract PresentationObject getWidget(IWContext iwc);

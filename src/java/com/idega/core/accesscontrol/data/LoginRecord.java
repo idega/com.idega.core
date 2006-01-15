@@ -1,5 +1,5 @@
 /*
- * $Id: LoginRecord.java,v 1.8 2006/01/15 17:29:35 laddi Exp $
+ * $Id: LoginRecord.java,v 1.9 2006/01/15 21:15:49 laddi Exp $
  * Created on Jan 15, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO laddi Describe Type LoginRecord
  * </p>
- *  Last modified: $Date: 2006/01/15 17:29:35 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/01/15 21:15:49 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public interface LoginRecord extends IDOEntity {
 
