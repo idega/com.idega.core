@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pxml>
+  <map>
+    <key>
+      <name>component_name</name>
+      <type>java.lang.String</type>
+      <value>Heading4</value>
+    </key>
+    <key>
+      <name>component_type</name>
+      <type>java.lang.String</type>
+      <value>iw.element</value>
+    </key>
+  </map>
+</pxml>
+
