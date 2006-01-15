@@ -1,5 +1,5 @@
 /*
- * $Id: LDAPUserBusinessBean.java,v 1.1 2005/11/17 15:50:45 tryggvil Exp $
+ * $Id: LDAPUserBusinessBean.java,v 1.2 2006/01/15 17:29:35 laddi Exp $
  * Created on 16.11.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -26,6 +26,7 @@ import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.ldap.client.naming.DN;
 import com.idega.core.ldap.util.IWLDAPConstants;
 import com.idega.core.ldap.util.IWLDAPUtil;
+import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
@@ -39,10 +40,10 @@ import com.idega.util.text.Name;
  * <p>
  * Service bean class for manipulating Users in LDAP
  * </p>
- *  Last modified: $Date: 2005/11/17 15:50:45 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/01/15 17:29:35 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class LDAPUserBusinessBean extends IBOServiceBean implements LDAPUserBusiness,IWLDAPConstants {
 
@@ -292,7 +293,8 @@ public class LDAPUserBusinessBean extends IBOServiceBean implements LDAPUserBusi
 				LoginTable login = LoginDBHandler.getUserLogin(userId);
 				if(login==null){
 					//no login create one
-					login = ((LoginTableHome) com.idega.data.IDOLookup.getHomeLegacy(LoginTable.class)).createLegacy();
+					LoginTableHome home = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
+					login = home.create();
 					login.setUserId(userId);	
 				}
 				

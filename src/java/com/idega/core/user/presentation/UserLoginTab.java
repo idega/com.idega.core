@@ -78,7 +78,7 @@ public class UserLoginTab extends UserTab {
   public void initFieldContents() {
     try {
       LoginTable lTable = LoginDBHandler.getUserLogin(this.getUserId());
-      LoginInfo lInfo = LoginDBHandler.getLoginInfo(lTable.getID());
+      LoginInfo lInfo = LoginDBHandler.getLoginInfo(lTable);
 
       if(lTable != null){
         fieldValues.put(_PARAM_USER_LOGIN,lTable.getUserLogin());
@@ -198,7 +198,7 @@ public class UserLoginTab extends UserTab {
             LoginDBHandler.updateLogin(this.getUserId(),login,passw);
           }
           if(_displayLoginInfoSettings){
-            LoginDBHandler.updateLoginInfo(loginTable.getID(),accountEnabled,IWTimestamp.RightNow(),5000,passwExpires,canChangePassw,mustChangePassw,null);
+            LoginDBHandler.updateLoginInfo(loginTable,accountEnabled,IWTimestamp.RightNow(),5000,passwExpires,canChangePassw,mustChangePassw,null);
           }
         } else if(updateLoginTable){
           if(_displayLoginInfoSettings){

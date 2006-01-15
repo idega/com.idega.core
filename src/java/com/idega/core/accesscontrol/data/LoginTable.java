@@ -1,39 +1,108 @@
+/*
+ * $Id: LoginTable.java,v 1.24 2006/01/15 17:29:35 laddi Exp $
+ * Created on Jan 15, 2006
+ *
+ * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.core.accesscontrol.data;
 
+import java.sql.Timestamp;
 import com.idega.core.user.data.User;
+import com.idega.data.IDOEntity;
+import com.idega.util.EncryptionType;
 
 
-public interface LoginTable extends com.idega.data.IDOLegacyEntity,com.idega.util.EncryptionType
-{
- public java.sql.Timestamp getLastChanged();
- public int getUserId();
- public User getUser();
- public java.lang.String getUserLogin();
- public java.lang.String getUserPassword();
- public void setDefaultValues();
- public void setLastChanged(java.sql.Timestamp p0);
- public void setUserId(java.lang.Integer p0);
- public void setUserId(int p0);
- public void setUserLogin(java.lang.String p0);
- public void setUserPassword(java.lang.String p0);
- /**
-  * just sets the password column value as this string without encoding.
-  */
- public void setUserPasswordInClearText(String password);
- /**
-  * just returns the password column value as is.
-  */
- public String getUserPasswordInClearText();
- public void setLoginType(String loginType);
- public String getLoginType();
-
-  /**
-  * Sets both the intented encrypted password and the original unencrypted password for temporary retrieval
-  */
- public void setUserPassword(java.lang.String encryptedPassword,String unEncryptedPassword)throws java.rmi.RemoteException;
- /**
- * Gets the original password if the record is newly created, therefore it can be retrieved , if this is not a newly created record the exception PasswordNotKnown is thrown
+/**
+ * <p>
+ * TODO laddi Describe Type LoginTable
+ * </p>
+ *  Last modified: $Date: 2006/01/15 17:29:35 $ by $Author: laddi $
+ * 
+ * @author <a href="mailto:laddi@idega.com">laddi</a>
+ * @version $Revision: 1.24 $
  */
- public String getUnencryptedUserPassword()throws PasswordNotKnown,java.rmi.RemoteException;
+public interface LoginTable extends IDOEntity, EncryptionType {
 
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setUserPasswordInClearText
+	 */
+	public void setUserPasswordInClearText(String password);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getUserPasswordInClearText
+	 */
+	public String getUserPasswordInClearText();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getUserPassword
+	 */
+	public String getUserPassword();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setUserPassword
+	 */
+	public void setUserPassword(String userPassword);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setUserLogin
+	 */
+	public void setUserLogin(String userLogin);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getUserLogin
+	 */
+	public String getUserLogin();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getUserId
+	 */
+	public int getUserId();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getUser
+	 */
+	public User getUser();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setUserId
+	 */
+	public void setUserId(Integer userId);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setUserId
+	 */
+	public void setUserId(int userId);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setLastChanged
+	 */
+	public void setLastChanged(Timestamp when);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getLastChanged
+	 */
+	public Timestamp getLastChanged();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setUserPassword
+	 */
+	public void setUserPassword(String encryptedPassword, String unEncryptedPassword);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getUnencryptedUserPassword
+	 */
+	public String getUnencryptedUserPassword() throws PasswordNotKnown;
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setLoginType
+	 */
+	public void setLoginType(String loginType);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getLoginType
+	 */
+	public String getLoginType();
 }

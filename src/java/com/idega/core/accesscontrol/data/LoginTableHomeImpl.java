@@ -1,63 +1,90 @@
+/*
+ * $Id: LoginTableHomeImpl.java,v 1.4 2006/01/15 17:29:35 laddi Exp $
+ * Created on Jan 15, 2006
+ *
+ * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.core.accesscontrol.data;
 
-
-public class LoginTableHomeImpl extends com.idega.data.IDOFactory implements LoginTableHome
-{
- protected Class getEntityInterfaceClass(){
-  return LoginTable.class;
- }
-
-
- public LoginTable create() throws javax.ejb.CreateException{
-  return (LoginTable) super.createIDO();
- }
+import java.util.Collection;
+import javax.ejb.FinderException;
+import com.idega.core.user.data.User;
+import com.idega.data.IDOException;
+import com.idega.data.IDOFactory;
 
 
- public LoginTable createLegacy(){
-	try{
-		return create();
-	}
-	catch(javax.ejb.CreateException ce){
-		throw new RuntimeException("CreateException:"+ce.getMessage());
-	}
+/**
+ * <p>
+ * TODO laddi Describe Type LoginTableHomeImpl
+ * </p>
+ *  Last modified: $Date: 2006/01/15 17:29:35 $ by $Author: laddi $
+ * 
+ * @author <a href="mailto:laddi@idega.com">laddi</a>
+ * @version $Revision: 1.4 $
+ */
+public class LoginTableHomeImpl extends IDOFactory implements LoginTableHome {
 
- }
-
-
-public java.util.Collection findLoginsForUser(com.idega.core.user.data.User p0)throws javax.ejb.FinderException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((LoginTableBMPBean)entity).ejbFindLoginsForUser(p0);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
-public java.util.Collection findByLogin(String login)throws javax.ejb.FinderException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((LoginTableBMPBean)entity).ejbFindByLogin(login);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
- public LoginTable findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (LoginTable) super.findByPrimaryKeyIDO(pk);
- }
-
-
- public LoginTable findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (LoginTable) super.findByPrimaryKeyIDO(id);
- }
-
-
- public LoginTable findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
-	try{
-		return findByPrimaryKey(id);
-	}
-	catch(javax.ejb.FinderException fe){
-		throw new java.sql.SQLException(fe.getMessage());
+	protected Class getEntityInterfaceClass() {
+		return LoginTable.class;
 	}
 
- }
+	public LoginTable create() throws javax.ejb.CreateException {
+		return (LoginTable) super.createIDO();
+	}
 
+	public LoginTable findByPrimaryKey(Object pk) throws javax.ejb.FinderException {
+		return (LoginTable) super.findByPrimaryKeyIDO(pk);
+	}
 
+	public LoginTable findLoginForUser(User user) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((LoginTableBMPBean) entity).ejbFindLoginForUser(user);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
 
+	public Collection findLoginsForUser(User user) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((LoginTableBMPBean) entity).ejbFindLoginsForUser(user);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public LoginTable findLoginForUser(int userID) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((LoginTableBMPBean) entity).ejbFindLoginForUser(userID);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
+
+	public Collection findLoginsForUser(int userID) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((LoginTableBMPBean) entity).ejbFindLoginsForUser(userID);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public int getNumberOfLogins(String userName) throws IDOException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		int theReturn = ((LoginTableBMPBean) entity).ejbHomeGetNumberOfLogins(userName);
+		this.idoCheckInPooledEntity(entity);
+		return theReturn;
+	}
+
+	public LoginTable findByLogin(String login) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((LoginTableBMPBean) entity).ejbFindByLogin(login);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
+
+	public LoginTable findByUserAndLogin(User user, String login) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((LoginTableBMPBean) entity).ejbFindByUserAndLogin(user, login);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
 }

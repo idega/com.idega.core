@@ -1,5 +1,5 @@
 /*
- * $Id: LoggedOnInfo.java,v 1.15 2006/01/12 15:30:21 tryggvil Exp $
+ * $Id: LoggedOnInfo.java,v 1.16 2006/01/15 17:29:35 laddi Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -14,6 +14,8 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
+import com.idega.core.accesscontrol.data.LoginRecord;
+import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.user.data.User;
 import com.idega.util.IWTimestamp;
 
@@ -24,20 +26,20 @@ import com.idega.util.IWTimestamp;
  * up when the users session times out.
  * </p>
  *
- * Last modified: $Date: 2006/01/12 15:30:21 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/01/15 17:29:35 $ by $Author: laddi $
  *
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
  * 		   <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class LoggedOnInfo implements HttpSessionBindingListener  {
 
   private User _user = null;
 //  private HttpSession _session = null; 
   private IWTimestamp _timeOfLogon = null;
-  private int _loginTableId = -1;
+  private LoginTable _loginTable;
   private String _login = null;
-  private int _loginRecordId = -1;
+  private LoginRecord _loginRecord;
   private String _encryptionType = null;
   private String _loginType = null;
   private Set _userRoles = null;
@@ -65,8 +67,8 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
     _login = login;
   }
 
-  public void setLoginRecordId(int loginRecordId){
-    _loginRecordId = loginRecordId;
+  public void setLoginRecord(LoginRecord loginRecord){
+    _loginRecord = loginRecord;
   }
   
   public void setEncryptionType(String encryptionType){
@@ -93,8 +95,8 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
     return _login;
   }
 
-  public int getLoginRecordId(){
-    return _loginRecordId;
+  public LoginRecord getLoginRecord(){
+    return _loginRecord;
   }
 
   public String getEncryptionType(){
@@ -170,15 +172,15 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 	/**
 	 * @return
 	 */
-	public int getLoginTableId() {
-		return _loginTableId;
+	public LoginTable getLoginTable() {
+		return _loginTable;
 	}
 
 	/**
 	 * @param id
 	 */
-	public void setLoginTableId(int id) {
-		_loginTableId = id;
+	public void setLoginTable(LoginTable login) {
+		_loginTable = login;
 	}
 
 	/**
