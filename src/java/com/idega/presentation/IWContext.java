@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.133 2006/01/14 22:39:46 laddi Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.134 2006/01/16 11:41:43 laddi Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2006/01/14 22:39:46 $ by $Author: laddi $
+ * Last modified: $Date: 2006/01/16 11:41:43 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.133 $
+ * @version $Revision: 1.134 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -1069,56 +1069,59 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @param fromPage
 	 * @param url
+	 * @param includeQueryString
+	 */
+	public void forwardToURL(Page fromPage, String url, boolean includeQueryString) {
+		forwardToURL(fromPage, url, -1, includeQueryString);
+	}
+
+	/**
+	 * Forwards to the url specified by setting a meta (refresh) header into the
+	 * page object given by fromPage.
+	 * 
+	 * @param fromPage
+	 * @param url
 	 * @param secondInterval
 	 */
 	public void forwardToURL(Page fromPage, String url, int secondInterval) {
+		forwardToURL(fromPage, url, secondInterval, true);
+	}
+	
+	/**
+	 * Forwards to the url specified by setting a meta (refresh) header into the
+	 * page object given by fromPage.
+	 * 
+	 * @param fromPage
+	 * @param url
+	 * @param secondInterval
+	 * @param includeQueryString
+	 */
+	public void forwardToURL(Page fromPage, String url, int secondInterval, boolean includeQueryString) {
 		/**
 		 * @todo temporary workaround find out why this doesn't work This is
 		 *       supposed to work but I always get: IllegalStateException:
 		 *       cannot forward because writer or stream has been obtained.
 		 */
-		/*
-		 * try{ RequestDispatcher req =
-		 * this.getRequest().getRequestDispatcher(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),((Integer)page.getPrimaryKeyValue()).intValue()));
-		 * req.forward(this.getRequest(),this.getResponse()); } catch(Exception
-		 * e){ e.printStackTrace(System.err); }
-		 * 
-		 * this does not work either sendRedirect(URL.toString());
-		 */
+
 		StringBuffer URL = new StringBuffer(url);
-		// try
-		// {
-		// bs =
-		// BuilderServiceFactory.getBuilderService(this.getApplicationContext());
-		// URL.append(bs.getPageURI(pageID));
-		String requestString = getRequest().getQueryString();
-		if (requestString != null) {
-			if (url.indexOf("?") == -1) {
-				URL.append('?');
+
+		if (includeQueryString) {
+			String requestString = getRequest().getQueryString();
+			if (requestString != null) {
+				if (url.indexOf("?") == -1) {
+					URL.append('?');
+				}
+				else {
+					URL.append('&');
+				}
+				URL.append(requestString);
 			}
-			else {
-				URL.append('&');
-			}
-			URL.append(requestString);
 		}
+		
 		if (secondInterval > 0)
 			fromPage.setToRedirect(URL.toString(), secondInterval);
 		else
 			fromPage.setToRedirect(URL.toString());
-		// comment by thomas:
-		// the call of empty() causes a loop of requests.
-		// The server might crash.
-		// This problem appears in platform 3.
-		// do not call empty.
-		// DO NOT CALL: fromPage.empty();
-		// The reason for the problem is not clear, but it works in this way.
-		// }
-		// catch (RemoteException e)
-		// {
-		// e.printStackTrace();
-		// }
-		// URL.append(BuilderLogic.getInstance().getIBPageURL(this.getApplicationContext(),
-		// pageID));
 	}
 
 	/*
