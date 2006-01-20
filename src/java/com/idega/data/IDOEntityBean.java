@@ -1,4 +1,4 @@
-/* $Id: IDOEntityBean.java,v 1.12 2006/01/20 16:43:50 tryggvil Exp $ 
+/** $Id: IDOEntityBean.java,v 1.11 2006/01/20 16:43:16 tryggvil Exp $ 
  * 
  * Copyright (C) 2002-2005 Idega Software hf. All Rights Reserved.
  * 
@@ -17,10 +17,10 @@ import javax.ejb.FinderException;
  * Base (implementation) interface for IDO Entity Beans.
  * This is implemented by the default base entity implementation GenericEntity.
  * </p>
- * Last modified: $Date: 2006/01/20 16:43:50 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/01/20 16:43:16 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.11 $
  */
 public interface IDOEntityBean extends EntityBean{
 
