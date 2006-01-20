@@ -1,3 +1,11 @@
+/*
+ * $Id: IDOTableCreator.java,v 1.55 2006/01/20 16:40:15 tryggvil Exp $
+ * 
+ * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
+ */
 package com.idega.data;
 
 import java.sql.Connection;
@@ -24,14 +32,15 @@ import com.idega.util.logging.LoggingHelper;
 
 
 /**
- * Title:        idega Data Objects
- * Description:  Idega Data Objects is a Framework for Object/Relational mapping and seamless integration between datastores
- * Copyright:    Copyright (c) 2001
- * Company:      idega
- * @author        <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0
+ * <p>
+ * Class that handles the creation and generation of the (DDL) commands for creating and
+ * updating database tables for IDO Entity beans.
+ * </p>
+ * Last modified: $Date: 2006/01/20 16:40:15 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.55 $
  */
-
 public class IDOTableCreator{
 
   private static String recordCreationKey="datastoreinterface_entity_record_creation";
@@ -48,6 +57,9 @@ public class IDOTableCreator{
 
   protected int executeUpdate(GenericEntity entity,String SQLCode)throws Exception{
 
+	  if(SQLCode.toLowerCase().startsWith("create table ic_group(")){
+		  System.out.println("creating group");
+	  }
     return _dsi.executeUpdate(entity,SQLCode);
   }
 

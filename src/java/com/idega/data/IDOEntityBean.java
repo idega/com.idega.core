@@ -1,18 +1,27 @@
+/* $Id: IDOEntityBean.java,v 1.12 2006/01/20 16:43:50 tryggvil Exp $ 
+ * 
+ * Copyright (C) 2002-2005 Idega Software hf. All Rights Reserved.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
+ */
 package com.idega.data;
 
 import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
 import javax.ejb.FinderException;
 
-/**
- * Title:        idegaclasses
- * Description:
- * Copyright:    Copyright (c) 2001-2002
- * Company:      idega
- * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 0.5 UNFINISHED - UNDER DEVELOPMENT
- */
 
+/**
+ * <p>
+ * Base (implementation) interface for IDO Entity Beans.
+ * This is implemented by the default base entity implementation GenericEntity.
+ * </p>
+ * Last modified: $Date: 2006/01/20 16:43:50 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
+ * @version $Revision: 1.12 $
+ */
 public interface IDOEntityBean extends EntityBean{
 
   //public Object getId() throws RemoteException;
