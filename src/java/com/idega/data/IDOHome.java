@@ -1,3 +1,11 @@
+/*
+ * $Id: IDOHome.java,v 1.14 2006/01/20 16:27:59 tryggvil Exp $
+ * 
+ * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
+ */
 package com.idega.data;
 
 import java.util.Collection;
@@ -7,14 +15,14 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.FinderException;
 
 /**
- * Title:        idegaclasses
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega
- * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 0.5 UNFINISHED - UNDER DEVELOPMENT
+ * <p>
+ * Base "Home" interface for IDO Entity beans.
+ * </p>
+ * Last modified: $Date: 2006/01/20 16:27:59 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.14 $
  */
-
 public interface IDOHome extends EJBLocalHome{//EJBHome {
 
   public IDOEntity createIDO() throws CreateException;
