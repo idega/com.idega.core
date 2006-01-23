@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.200 2005/12/22 19:04:18 eiki Exp $
+ * $Id: UserBusinessBean.java,v 1.201 2006/01/23 13:00:58 sigtryggur Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -94,10 +94,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2005/12/22 19:04:18 $ by $Author: eiki $
+ * Last modified: $Date: 2006/01/23 13:00:58 $ by $Author: sigtryggur $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.200 $
+ * @version $Revision: 1.201 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -2214,24 +2214,29 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 							Map cachedGroups = new HashMap();
 							while (permissions.hasNext()) {
 								Group group = (Group) permissions.next();
-								Integer primaryKey = (Integer) group.getPrimaryKey();
-								if (!groupMap.containsKey(primaryKey)) {
-									Group permissionGroup = group;
-									if (!cachedGroups.containsKey(primaryKey.toString())) {
-										cachedGroups.put(primaryKey.toString(), permissionGroup);
+								if (group!= null) {
+									Integer primaryKey = (Integer) group.getPrimaryKey();
+									if (!groupMap.containsKey(primaryKey)) {
+										Group permissionGroup = group;
+										if (!cachedGroups.containsKey(primaryKey.toString())) {
+											cachedGroups.put(primaryKey.toString(), permissionGroup);
+										}
+										Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup,
+												cachedParents, cachedGroups);
+										Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
+										parents.put(primaryKey, parentMap);
+										groupMap.put(primaryKey, permissionGroup);
+										//if it's an alias we don't need the
+										// original group and make a list of those
+										// groups to filter out later
+										if (permissionGroup.isAlias()) {
+											Integer originalGroupID = new Integer(permissionGroup.getAliasID());
+											aliasMap.put(originalGroupID, primaryKey);
+										}
 									}
-									Collection recParents = groupBiz.getParentGroupsRecursive(permissionGroup,
-											cachedParents, cachedGroups);
-									Map parentMap = idoUtil.convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(recParents);
-									parents.put(primaryKey, parentMap);
-									groupMap.put(primaryKey, permissionGroup);
-									//if it's an alias we don't need the
-									// original group and make a list of those
-									// groups to filter out later
-									if (permissionGroup.isAlias()) {
-										Integer originalGroupID = new Integer(permissionGroup.getAliasID());
-										aliasMap.put(originalGroupID, primaryKey);
-									}
+								} else {
+									System.out.println("Group in permissions collection = "+group);
+									System.out.println("Content of permissions collection = "+permissions);
 								}
 							}
 							time.stop();
