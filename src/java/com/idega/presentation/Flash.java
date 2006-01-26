@@ -18,9 +18,9 @@ public Flash(){
 
   /**@todo add version parameter**/
 
-  setCodeBase("http://active.macromedia.com/flash5/cabs/swflash.cab#version=5,0,0,0");
+  setCodeBase("https://active.macromedia.com/flash5/cabs/swflash.cab#version=5,0,0,0");
 
-  setPluginSpace("http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash");
+  setPluginSpace("https://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash");
 
   setParam("quality","high");
 
