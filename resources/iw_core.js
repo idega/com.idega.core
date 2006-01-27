@@ -14,33 +14,7 @@
 //
 //***********************************************************//
 
-	//Coordinate script that sets two variable that track the mouse coordinates
-	var IE = document.all?true:false; 
-	if (!IE){ 
-		document.captureEvents(Event.MOUSEMOVE);
-	}
-	document.onmousemove = getMouseXY;
-	var coordX = 0;
-	var coordY = 0;
-	
-	function getMouseXY(e) { 	
-		if (IE) {       
-			coordX = event.clientX + document.body.scrollLeft;      
-			coordY = event.clientY + document.body.scrollTop;   
-		}
-		else {  	   
-			coordX = e.pageX;      
-			coordY = e.pageY;   
-		}  	
-		if (coordX < 0){
-			coordX = 0;
-		}
-		if (coordY < 0){
-			cordY = 0;
-		}     
-		return true;
-	} 
-
+var IE = document.all?true:false; 
 
 function iwOpenWindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height,Xcoord,Ycoord) {  
   	// usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height,xcoord,ycoord) 
