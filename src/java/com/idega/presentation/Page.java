@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.156 2006/01/05 15:56:48 laddi Exp $ Created in 2000 by
+ * $Id: Page.java,v 1.157 2006/01/27 12:05:57 gimmi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -65,10 +65,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2006/01/05 15:56:48 $ by $Author: laddi $
+ * Last modified: $Date: 2006/01/27 12:05:57 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.156 $
+ * @version $Revision: 1.157 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -726,30 +726,32 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	public String getLocalizedTitle(IWContext iwc) {
 		// Map tree = PageTreeNode.getTree(iwc);
-		BuilderService bservice;
-		ICTreeNode node = null;
-		try {
-			bservice = getBuilderService(iwc);
-			int pageId = bservice.getCurrentPageId(iwc);
-			int currentUserId = -1;
-			if (iwc.isLoggedOn()) {
-				currentUserId = iwc.getCurrentUserId();
-				node = bservice.getPageTree(pageId, currentUserId);
+		if (getTitle() == null) {
+			BuilderService bservice;
+			ICTreeNode node = null;
+			try {
+				bservice = getBuilderService(iwc);
+				int pageId = bservice.getCurrentPageId(iwc);
+				int currentUserId = -1;
+				if (iwc.isLoggedOn()) {
+					currentUserId = iwc.getCurrentUserId();
+					node = bservice.getPageTree(pageId, currentUserId);
+				}
+				else {
+					node = bservice.getPageTree(pageId);
+				}
 			}
-			else {
-				node = bservice.getPageTree(pageId);
+			catch (Exception e) {
+				e.printStackTrace();
 			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		catch (IDONoDatastoreError de) {
-			// de.printStackTrace();
-		}
-		if (node != null) {
-			String locName = node.getNodeName(iwc.getCurrentLocale());
-			if (locName != null && !locName.equals("")) {
-				return locName;
+			catch (IDONoDatastoreError de) {
+				// de.printStackTrace();
+			}
+			if (node != null) {
+				String locName = node.getNodeName(iwc.getCurrentLocale());
+				if (locName != null && !locName.equals("")) {
+					return locName;
+				}
 			}
 		}
 		return getTitle();
