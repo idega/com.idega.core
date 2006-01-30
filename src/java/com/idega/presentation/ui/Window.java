@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.45 2006/01/05 15:56:48 laddi Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.46 2006/01/30 14:28:39 gimmi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -27,10 +27,10 @@ import com.idega.util.datastructures.list.KeyValuePair;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2006/01/05 15:56:48 $ by $Author: laddi $
+ * Last modified: $Date: 2006/01/30 14:28:39 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.45 $
+ * @version $Revision: 1.46 $
  */
 public class Window extends Page {
 
@@ -391,9 +391,9 @@ public class Window extends Page {
 		if (xCoordinate != null) {
 			return xCoordinate;
 		}
-		else if (autoPosition) {
-			return getMouseCoordinateX() + "+(" + autoXCoordinateOffset + ")";
-		}
+//		else if (autoPosition) {
+//			return getMouseCoordinateX() + "+(" + autoXCoordinateOffset + ")";
+//		}
 		return null;
 	}
 
@@ -402,12 +402,12 @@ public class Window extends Page {
 	}
 
 	public String getCoordinateY() {
-		if (xCoordinate != null) {
+		if (yCoordinate != null) {
 			return yCoordinate;
 		}
-		else if (autoPosition) {
-			return getMouseCoordinateY() + "+(" + autoYCoordinateOffset + ")";
-		}
+//		else if (autoPosition) {
+//			return getMouseCoordinateY() + "+(" + autoYCoordinateOffset + ")";
+//		}
 		return null;
 	}
 
@@ -770,13 +770,13 @@ public class Window extends Page {
 //		return script.toString();
 //	}
 
-	public String getMouseCoordinateX() {
-		return "coordX";
-	}
-
-	public String getMouseCoordinateY() {
-		return "coordY";
-	}
+//	public String getMouseCoordinateX() {
+//		return "coordX";
+//	}
+//
+//	public String getMouseCoordinateY() {
+//		return "coordY";
+//	}
 
 	public void setBackgroundImage(String imageURL) {
 		setMarkupAttribute("background", imageURL);
@@ -915,6 +915,14 @@ public class Window extends Page {
 		this.autoPosition = flag;
 	}
 
+	/**
+	 * @deprecated
+	 * <p>
+	 * Does not work any more since coordX and coordY no longer exist
+	 * </p>
+	 * @param xCoordinateOffset
+	 * @param yCoordinateOffset
+	 */
 	public void setMousePositionOffsets(int xCoordinateOffset, int yCoordinateOffset) {
 		this.autoPosition = true;
 		this.autoXCoordinateOffset = xCoordinateOffset;

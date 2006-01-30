@@ -27,7 +27,7 @@ public class DatePickerWindow extends AbstractChooserWindow {
 		setTitlebar(false);
 		setHeight(140);
 		setWidth(140);
-		setMousePositionOffsets(-150,-50);
+		//setMousePositionOffsets(-150,-50);
 
 	}
 	
