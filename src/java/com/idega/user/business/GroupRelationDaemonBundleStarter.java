@@ -59,7 +59,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	
 	public void start(IWBundle bundle) {
 		this.bundle = bundle;
-		timer = new EventTimer(EventTimer.THREAD_SLEEP_30_MINUTES, TIMER_THREAD_NAME);
+		timer = new EventTimer(EventTimer.THREAD_SLEEP_5_MINUTES, TIMER_THREAD_NAME);
 		timer.addActionListener(this);
 		//Starts the thread while waiting for 3 mins. before the idegaWebApp starts up.
 		// -- Fix for working properly on Interebase with entity-auto-create-on.
