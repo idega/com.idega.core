@@ -69,9 +69,8 @@ public class EmbeddedLDAPServerBusinessBean extends IBOServiceBean implements Em
 		if (server == null) {
 			String pathToConfigFiles = getPathToLDAPConfigFiles();
 			
-			server = new EmbeddedLDAPServer(pathToConfigFiles);
-
 			try {
+				server = new EmbeddedLDAPServer(pathToConfigFiles);
 				server.start();
 
 			} catch (Exception e) {
