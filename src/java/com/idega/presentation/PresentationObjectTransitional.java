@@ -24,10 +24,10 @@ import com.idega.idegaweb.IWMainApplication;
  * such as the main() and print() methods, but are forced to use JSF standard
  * methods such as encodeBegin(),encodeChildren() and encodeBegin().
  * </p>
- * Last modified: $Date: 2006/01/31 14:10:19 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/02/01 13:54:42 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class PresentationObjectTransitional extends PresentationObjectContainer {
 
@@ -124,7 +124,7 @@ public class PresentationObjectTransitional extends PresentationObjectContainer 
 	 * the restore phase.
 	 */
 	protected boolean resetGoneThroughMainInRestore() {
-		return true;
+		return false;
 	}
 
 	/**
