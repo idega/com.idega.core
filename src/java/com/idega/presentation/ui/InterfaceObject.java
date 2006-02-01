@@ -1,5 +1,5 @@
 /*
- * $Id: InterfaceObject.java,v 1.35 2005/05/24 11:13:08 laddi Exp $
+ * $Id: InterfaceObject.java,v 1.36 2006/02/01 07:47:12 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.presentation.Script;
  * In JSF there is now a more recent javax.faces.compoent.UIInput that serves a
  * similar purpose and is recommended to use/extend in newer pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/05/24 11:13:08 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/01 07:47:12 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
@@ -32,6 +32,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 
 	private boolean _checkObject = false;
 	private boolean _disableObject = false;
+	private boolean _disableSingleObject = false;
 	private boolean _checkDisabled = false;
 	private boolean _inFocus = false;
 	private boolean _changeValue = false;
@@ -405,9 +406,45 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @param objectToEnable	The name of the interface object(s) to enable.
 	 * @param enable	Set to true to disable, false will enable.
 	 */
+	public void setToDisableOnAction(String action, String objectName, boolean disable, boolean multipleObjects) {
+		if (multipleObjects) {
+			_disableObject = true;
+			setOnAction(action, "disableObject(findObj('" + objectName + "'),'" + String.valueOf(disable) + "')");
+		}
+		else {
+			_disableSingleObject = true;
+			setOnAction(action, "disableSingleObject(findObj('" + objectName + "'),'" + String.valueOf(disable) + "')");
+		}
+	}
+
+	/**
+	 * Sets the interface object(s) with the given name to be enabled when this object is 
+	 * clicked on.
+	 * @param objectToEnable	The name of the interface object(s) to enable.
+	 * @param enable	Set to true to disable, false will enable.
+	 */
+	public void setToDisableOnClick(String objectName, boolean disable, boolean multipleObjects) {
+		setToDisableOnAction(ACTION_ON_CLICK,objectName,disable, multipleObjects);
+	}
+
+	/**
+	 * Sets the given interface object to be enabled when this object is clicked on.
+	 * @param objectToEnable	The interface object to enable.
+	 * @param enable	Set to true to disable, false will enable.
+	 */
+	public void setToDisableOnClick(InterfaceObject objectToEnable, boolean disable, boolean multipleObjects) {
+		setToDisableOnClick(objectToEnable.getName(), disable, multipleObjects);
+	}
+
+	/**
+	 * Sets the interface object(s) with the given name to be enabled when this object
+	 * receives the action specified.
+	 * @param action	The action to perform on.
+	 * @param objectToEnable	The name of the interface object(s) to enable.
+	 * @param enable	Set to true to disable, false will enable.
+	 */
 	public void setToDisableOnAction(String action, String objectName, boolean disable) {
-		_disableObject = true;
-		setOnAction(action, "disableObject(findObj('" + objectName + "'),'" + String.valueOf(disable) + "')");
+		setToDisableOnAction(action, objectName, disable, true);
 	}
 
 	/**
@@ -661,6 +698,9 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 			}
 			if (_disableObject) {
 				getScript().addFunction("disableObject", "function disableObject (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].disabled=eval(value);\n	\t}\n	else\n	inputs.disabled=eval(value);\n}");
+			}
+			if (_disableSingleObject) {
+				getScript().addFunction("disableSingleObject", "function disableSingleObject (input,value) {\n	input.disabled=eval(value);\n}");
 			}
 			if (_changeValue) {
 				getScript().addFunction("changeValue", "function changeValue (input,newValue) {\n	input.value=newValue;\n}");
