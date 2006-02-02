@@ -1,5 +1,5 @@
 /*
- * $Id: FacesUtil.java,v 1.5 2006/01/03 18:20:16 tryggvil Exp $
+ * $Id: FacesUtil.java,v 1.6 2006/02/02 13:13:15 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -9,23 +9,29 @@
  */
 package com.idega.util;
 
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
 
 
 /**
  * <p>
  *  Utility class for various JavaServer Faces functions.
  * </p>
- *  Last modified: $Date: 2006/01/03 18:20:16 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/02 13:13:15 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class FacesUtil {
 	
 	private static String SLASH="/";
 	public static final String REQUEST_START="request_start_time";
 	public static final String SEPARATOR="-";
+	
+
+	public static final String EXPRESSION_BEGIN="#{";
+	public static final String EXPRESSION_END="}";
 
 
 	/**
@@ -142,5 +148,77 @@ public class FacesUtil {
 		newKey+=facesContextId;
 		return newKey;
 	}
+	
+	
+	/**
+	 * <p>
+	 * Returns the "nearest" parent of UIComponent component of type ofType if it exists.
+	 * If none is found it returns null.
+	 * </p>
+	 * @param component
+	 * @param ofType
+	 * @return
+	 */
+	public static UIComponent getFirstParentOfType(UIComponent component,Class ofType){
+		if(component!=null){
+			UIComponent parent = component.getParent();
+			while(parent!=null){
+				if(parent.getClass().isAssignableFrom(ofType)){
+					return parent;
+				}
+				parent=parent.getParent();
+			}
+		}
+		return null;
+	}
+
+    /**
+     * <p>
+     * This method finds a bean instance from a given beanId.<br/>
+     * Goes first to request scope, then to session scope and finally to application scope
+     * and returns the first found.
+     * </p>
+     * @param beanId
+     * @return
+     */
+    public static Object getBeanInstance(String beanId) {
+	    	FacesContext context = FacesContext.getCurrentInstance();
+	    	Object bean = context.getExternalContext().getRequestMap().get(beanId);
+		String expr= getExpression(beanId);
+		ValueBinding vb = context.getApplication().createValueBinding(expr);
+		bean = vb.getValue(context);
+	    	return bean;
+    }
+    
+    /**
+     * <p>
+     * Creates the expression syntax, i.e. wraps the beanReference String around with #{ and }
+     * </p>
+     * @param beanReference
+     * @return
+     */
+    public static String getExpression(String beanReference){
+    		return EXPRESSION_BEGIN+beanReference+EXPRESSION_END;
+    }
+    
+	/**
+	 * <p>
+	 * A method to check if the passed String is a valuebinding expression,
+	 * i.e. a string in the format '#{MyBeanId.myProperty}'
+	 * </p>
+	 * @param any String
+	 * @return
+	 */
+    public static boolean isValueBinding(String value)
+    {
+        if (value == null) return false;
+        
+        int start = value.indexOf(EXPRESSION_BEGIN);
+        if (start < 0) return false;
+        
+        int end = value.lastIndexOf('}');
+        return (end >=0 && start < end);
+    }
+    
 	
 }
