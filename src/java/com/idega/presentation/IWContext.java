@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.126 2005/11/01 17:07:58 thomas Exp $
+ * $Id: IWContext.java,v 1.126.2.1 2006/02/03 12:30:16 sigtryggur Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2005/11/01 17:07:58 $ by $Author: thomas $
+ * Last modified: $Date: 2006/02/03 12:30:16 $ by $Author: sigtryggur $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.126 $
+ * @version $Revision: 1.126.2.1 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -221,6 +221,11 @@ implements IWUserContext, IWApplicationContext {
 	public void setUploadedFile(UploadFile file) {
 		_uploadedFile = file;
 	}
+
+	public boolean isUploadedFileSet() {
+		return _uploadedFile != null;
+	}
+
 	public String getUserAgent() {
 		return getRequest().getHeader("User-agent");
 	}
