@@ -71,6 +71,12 @@
 	          <include>faces-config.xml</include>
 	        </includes>
 	      </resource>
+	      <resource>
+	       <directory>${basedir}/src/java</directory>
+	        <includes>
+	          <include>**/*.wsdd</include>
+	        </includes>
+	      </resource>
 	    </resources>
     </build>
   <dependencies>
