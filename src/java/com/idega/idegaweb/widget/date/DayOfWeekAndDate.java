@@ -1,5 +1,5 @@
 /*
- * $Id: DayOfWeekAndDate.java,v 1.1 2005/10/27 10:16:11 laddi Exp $
+ * $Id: DayOfWeekAndDate.java,v 1.2 2006/02/08 16:10:36 laddi Exp $
  * Created on Oct 27, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,14 +14,15 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Text;
 import com.idega.util.IWCalendar;
+import com.idega.util.LocaleUtil;
 import com.idega.util.text.TextSoap;
 
 
 /**
- * Last modified: $Date: 2005/10/27 10:16:11 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/08 16:10:36 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DayOfWeekAndDate extends Widget {
 
@@ -34,7 +35,7 @@ public class DayOfWeekAndDate extends Widget {
 		IWCalendar calendar = new IWCalendar(getLocale());
 		
 		String dayName = TextSoap.capitalize(calendar.getDayName(calendar.getDayOfWeek()));
-		Text text = new Text(dayName + ", " + calendar.getLocaleDate(getLocale(), style));
+		Text text = new Text(dayName + (getLocale().equals(LocaleUtil.getIcelandicLocale()) ? " " : ", ") + calendar.getLocaleDate(getLocale(), style));
 		
 		return text;
 	}
