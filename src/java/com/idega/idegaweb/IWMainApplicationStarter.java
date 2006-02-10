@@ -341,6 +341,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		
 		// set application variables first before setting any properties (ICApplicationBinding table might be created first)
 		setApplicationVariables();
+		iwma.regData();
 		// now set some properties
 		iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 

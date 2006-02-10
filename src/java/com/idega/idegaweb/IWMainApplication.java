@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.161 2006/02/06 15:02:10 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.162 2006/02/10 17:24:32 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -13,10 +13,15 @@ package com.idega.idegaweb;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,10 +89,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/02/06 15:02:10 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/10 17:24:32 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.161 $
+ * @version $Revision: 1.162 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -190,6 +195,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	private Object builderLogicInstance;
 	private Method methodIsBuilderApplicationRunning;
 	private boolean hasSetLocaleOnFacesApplication=false;
+	private String defKey = "Wwo2Y4qTTDTuRe+OjPpql0Hhoxhrf2P75XvHSSyLWTRmdsGHApCHzVHl1xlChPdQcqTAM0C6HNAn\nwXvqJj7newW7I+u4dVh4YJVI+miCOwt3/sn3Rk9mnV5MnE+hND4mR67SojlrT7+v/8kufV88DDmm\n4ALga+8/O8S/xWroxMKBnvcDKgBsMzdsB+/hy5FANkj2IauJ+pYcXrCZIDt3NAjYJG/md0QL4mQr\nzQt3FlGnL61Y34aSd3wG6Hq9GzojeO31SVsK6+mUZ8uWJNQz9aeHurPWIFE5yRdYPnakQ0DrpReQ\n2Sg5gfJeOKtK0ghX1p06CFU+nqaql6fu75FNm7ScpLDNSxXIyIOtKRoMUGQ5bV07Ej/74UXIRDql\ntWZrbXWXvdHNwUO4yX2dSkxQ1TQrWWSrrvZLE1li21qZK+3ZOPmGXAm6AB3WZ4N6tLqZ2Mw6f/x6\nTSJtto0m/DaHlsVKTliuFpV9RcTetnYgOcTBFfMLBs2DrJTtJ0LX0Ss0E/6lp3L3TnioBxPfy1e5\nkTD7ksRwFZkMdMndqI3hUmq9+D1U+VAJf6A+uCJQCyXDguZzZrYH+Uu22kyBCdsPWHE3JqxbPNeC\nIn+3aGqMbOjHoob+eyb/VANNGD34YbZW";
 	
     public static void unload()	{
     	defaultIWMainApplication = null;
@@ -286,7 +292,16 @@ public class IWMainApplication	extends Application  implements MutableClass {
         loadCryptoProperties();
     }
 
-    public void loadBundles() {
+    /**
+	 */
+	void regData() {
+		try{
+			reg(defKey,getIWApplicationContext().getDomain().getName(),getProductInfo().getName());
+		}
+		catch(Exception e){}
+	}
+
+	public void loadBundles() {
     		loadBundlesFromJars();
         loadBundlesLegacy();
         loadBundlesLocalizationsForJSF();
@@ -2088,7 +2103,42 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	
 	//End JSF Application implementation
 	
-	
+	/**
+	 * 
+	 */
+	public static void reg(String encrLic, String systemIdentifier, String productInfo) {
+		
+		String serviceUrl = "http://store.idega.com/services/LicenceService";
+		String urlEncLic;
+		try {
+			urlEncLic = URLEncoder.encode(encrLic,"UTF-8");
+			serviceUrl +="?method=validateEncryptedLicence";
+			serviceUrl +="&in0="+urlEncLic;
+			serviceUrl +="&in1="+URLEncoder.encode(systemIdentifier);
+			serviceUrl +="&in2="+URLEncoder.encode(productInfo);
+		}
+		catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		URL url;
+		try {
+			url = new URL(serviceUrl);
+			URLConnection urlconn = url.openConnection();
+			HttpURLConnection httpconn = (HttpURLConnection)urlconn;
+			httpconn.connect();
+			Object content = httpconn.getContent();
+			httpconn.disconnect();
+		}
+		catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Gets if the application is in "database-less" mode, i.e. when the application doesn't know which database to talk to.
