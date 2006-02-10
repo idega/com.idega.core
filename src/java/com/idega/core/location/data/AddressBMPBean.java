@@ -308,7 +308,11 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	 */
 	public String getPostalAddress() {
 		try {
-			return getPostalCode().getPostalAddress();
+			PostalCode postalCode = getPostalCode();
+			if (postalCode == null) {
+				return "";
+			}
+			return postalCode.getPostalAddress();
 		}
 		catch (Exception ex) {
 
