@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.162 2006/02/10 17:24:32 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.163 2006/02/13 14:32:45 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -89,10 +89,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/02/10 17:24:32 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/13 14:32:45 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.162 $
+ * @version $Revision: 1.163 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2108,7 +2108,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 */
 	public static void reg(String encrLic, String systemIdentifier, String productInfo) {
 		
-		String serviceUrl = "http://store.idega.com/services/LicenceService";
+		byte[] bServUrl = {104, 116, 116, 112, 58, 47, 47, 115, 116, 111, 114, 101, 46, 105, 100, 101, 103, 97, 46, 99, 111, 109, 47, 115, 101, 114, 118, 105, 99, 101, 115, 47, 76, 105, 99, 101, 110, 99, 101, 83, 101, 114, 118, 105, 99, 101};
+		String serviceUrl = null;
+		try {
+			serviceUrl = new String(bServUrl,"UTF-8");
+		}
+		catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
 		String urlEncLic;
 		try {
 			urlEncLic = URLEncoder.encode(encrLic,"UTF-8");
