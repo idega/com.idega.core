@@ -1,5 +1,5 @@
 /*
- * $Id: IWLDAPUserGroupPluginBusinessBean.java,v 1.2 2005/12/26 11:44:38 eiki Exp $
+ * $Id: IWLDAPUserGroupPluginBusinessBean.java,v 1.3 2006/02/13 17:31:30 eiki Exp $
  * Created on Jul 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -41,7 +41,7 @@ public class IWLDAPUserGroupPluginBusinessBean extends IBOServiceBean implements
 			String serverHostName = embeddedBiz.getLDAPSettings().getProperty(PROPS_JAVALDAP_SERVER_NAME);
 			String ldapPort= embeddedBiz.getLDAPSettings().getProperty(PROPS_JAVALDAP_SERVER_PORT);
 			
-			if( uuid!=null && listeners!=null && listeners.isEmpty()){
+			if( uuid!=null && listeners!=null && !listeners.isEmpty()){
 				for ( Iterator keys = listeners.keySet().iterator(); keys.hasNext();) {
 					String remoteServerNameAndPort = (String) keys.next();
 					String remoteIwLdapUri = (String) listeners.get(remoteServerNameAndPort);
