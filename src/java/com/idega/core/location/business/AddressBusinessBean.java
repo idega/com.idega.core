@@ -274,7 +274,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		Commune commune = null;
 		
 		// deserialize the string
-		StringTokenizer nizer = new StringTokenizer(";", fullAddressString);
+		StringTokenizer nizer = new StringTokenizer(fullAddressString,";");
 		String streetNameAndNumber = nizer.nextToken();
 		String postalCodeAndPostalAddress = nizer.nextToken();
 		String countryNameAndISOAbbreviation = nizer.nextToken();
