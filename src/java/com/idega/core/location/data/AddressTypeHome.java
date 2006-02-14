@@ -1,14 +1,36 @@
+/**
+ * 
+ */
 package com.idega.core.location.data;
 
 
-public interface AddressTypeHome extends com.idega.data.IDOHome
-{
- public AddressType create() throws javax.ejb.CreateException;
- public AddressType createLegacy();
- public AddressType findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
- public AddressType findByPrimaryKey(int id) throws javax.ejb.FinderException;
- public AddressType findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
- public AddressType findAddressType2()throws javax.ejb.FinderException;
- public AddressType findAddressType1()throws javax.ejb.FinderException;
+import javax.ejb.FinderException;
+
+import com.idega.data.IDOHome;
+
+/**
+ * @author bluebottle
+ *
+ */
+public interface AddressTypeHome extends IDOHome {
+	public AddressType create() throws javax.ejb.CreateException;
+
+	public AddressType findByPrimaryKey(Object pk)
+			throws javax.ejb.FinderException;
+
+	/**
+	 * @see com.idega.core.location.data.AddressTypeBMPBean#ejbFindAddressType1
+	 */
+	public AddressType findAddressType1() throws FinderException;
+
+	/**
+	 * @see com.idega.core.location.data.AddressTypeBMPBean#ejbFindAddressType2
+	 */
+	public AddressType findAddressType2() throws FinderException;
+
+	/**
+	 * @see com.idega.core.location.data.AddressTypeBMPBean#ejbFindByUniqueName
+	 */
+	public AddressType findByUniqueName(String name) throws FinderException;
 
 }
