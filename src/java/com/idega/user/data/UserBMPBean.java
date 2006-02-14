@@ -2067,10 +2067,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		  InCriteria loopInCriteria = null;
 		  OR orCriteria = null;
 		  for (int i=0;i<numberOfRounds;i++){
-		  	if (i==1) {
+		  	if (i==0) {
 		  		loopInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(i*SUBLIST_SIZE,i*SUBLIST_SIZE+SUBLIST_SIZE));
 		  		orCriteria = new OR(firstInCriteria,loopInCriteria);
-		  	} else if (i>1) {
+		  	} else if (i>0) {
 		  		loopInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(i*SUBLIST_SIZE,i*SUBLIST_SIZE+SUBLIST_SIZE));
 		  		orCriteria = new OR(orCriteria,loopInCriteria);
 		  	}
