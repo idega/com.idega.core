@@ -555,20 +555,22 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	/**
 	 * Replicates one user entry knowing only his uuid
 	 * @param jndiOps
+	 * @param baseRDN 
 	 * @param userUUID
 	 * @return
 	 * @throws RemoteException
 	 * @throws CreateException
 	 * @throws NamingException
 	 */
-	protected User replicateOneUserEntryByUUID(JNDIOps jndiOps, String userUUID) throws RemoteException, CreateException, NamingException {
+	protected User replicateOneUserEntryByUUID(JNDIOps jndiOps, String baseRDN, String userUUID) throws RemoteException, CreateException, NamingException {
 		User user = null;
 		NamingEnumeration searchResults = null;
 
 		//uses a Dummy DN since we only have the uuid, still should work because the uuid is checked first
 		//TODO get the DN from the webservice, add that parameter
-		DN entryDN = new DN("cn="+userUUID);
+		DN entryDN = new DN("cn="+userUUID+","+baseRDN);
 		String uniqueIdDN = LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+userUUID;
+		
 		searchResults = jndiOps.searchBaseEntry(entryDN,uniqueIdDN, 1, 60);
 		
 		if (searchResults != null) {
@@ -1057,21 +1059,22 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	 * @return a newly created or updated User
 	 * @throws NamingException 
 	 * @throws CreateException 
-	 * @throws RemoteException 
+	 * @throws IOException 
 	 */
-	public User replicateUserByUUID(String userUUID, String replicationServerHostName, int ldapPort) throws NamingException, RemoteException, CreateException{	
+	public User replicateUserByUUID(String userUUID, String replicationServerHostName, int ldapPort) throws NamingException, CreateException, IOException{	
 		
 		int replicatorNumber = getReplicatorNumberByHostNameAndPort(replicationServerHostName,Integer.toString(ldapPort));
-		String listenerStatus = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_ACTIVE_LISTENER);
-		String userName = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_ROOT_USER);
-		String password = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_ROOT_PASSWORD);
+		String listenerStatus = getReplicationProperty(PROPS_REPLICATOR_ACTIVE_LISTENER,replicatorNumber);
+		String userName = getReplicationProperty(PROPS_REPLICATOR_ROOT_USER,replicatorNumber);
+		String password = getReplicationProperty(PROPS_REPLICATOR_ROOT_PASSWORD,replicatorNumber);
+		String baseRDN = getReplicationProperty(PROPS_REPLICATOR_BASE_RDN,replicatorNumber);
 		
 		if(replicatorNumber!=-1){
 			
 			boolean activeListener = (listenerStatus!=null && ("Y".equalsIgnoreCase(listenerStatus) || "true".equalsIgnoreCase(listenerStatus)));
 			if (activeListener) {
 				JNDIOps jndiOps = getJNDIConnection(new Integer(replicatorNumber), replicationServerHostName, Integer.toString(ldapPort), userName, password);
-				return replicateOneUserEntryByUUID(jndiOps, userUUID);
+				return replicateOneUserEntryByUUID(jndiOps, baseRDN, userUUID);
 			}
 			
 		}

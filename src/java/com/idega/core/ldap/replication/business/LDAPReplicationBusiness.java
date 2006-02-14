@@ -1,8 +1,8 @@
 /*
- * $Id: LDAPReplicationBusiness.java,v 1.7 2005/12/26 11:49:08 eiki Exp $
- * Created on Dec 26, 2005
+ * $Id: LDAPReplicationBusiness.java,v 1.8 2006/02/14 17:35:50 eiki Exp $
+ * Created on Feb 14, 2006
  *
- * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
+ * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
@@ -10,7 +10,6 @@
 package com.idega.core.ldap.replication.business;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Properties;
 import javax.ejb.CreateException;
@@ -22,10 +21,10 @@ import com.idega.user.data.User;
 
 /**
  * 
- *  Last modified: $Date: 2005/12/26 11:49:08 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/02/14 17:35:50 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public interface LDAPReplicationBusiness extends IBOService, LDAPReplicationConstants, IWLDAPConstants {
 
@@ -126,5 +125,5 @@ public interface LDAPReplicationBusiness extends IBOService, LDAPReplicationCons
 	 * @see com.idega.core.ldap.replication.business.LDAPReplicationBusinessBean#replicateUserByUUID
 	 */
 	public User replicateUserByUUID(String userUUID, String replicationServerHostName, int ldapPort)
-			throws NamingException, RemoteException, CreateException;
+			throws NamingException, CreateException, IOException, java.rmi.RemoteException;
 }
