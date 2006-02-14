@@ -1,5 +1,5 @@
 /*
- * $Id: IWModuleLoader.java,v 1.1 2006/02/06 12:23:49 tryggvil Exp $ Created on
+ * $Id: IWModuleLoader.java,v 1.2 2006/02/14 19:57:36 tryggvil Exp $ Created on
  * 31.5.2005 in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import org.apache.commons.logging.LogFactory;
  * This is the class responsible for loading the bundles (the new jar method)
  * for the IWMainApplication instance.
  * </p>
- * Last modified: $Date: 2006/02/06 12:23:49 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/02/14 19:57:36 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class IWModuleLoader {
 
@@ -134,7 +134,7 @@ public class IWModuleLoader {
 			// generic way:
 			//1. If the container allows to read the jar file directly:
 			if (containerExpandsWebapp()) {
-				String webappDir = iwma.getRealPath("/");
+				String webappDir = iwma.getApplicationRealPath();
 				//File webappDir = new File(iwma.getRealPath("/"));
 				File file = new File(webappDir,jarPath);
 				return file;
