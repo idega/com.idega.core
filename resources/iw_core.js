@@ -441,3 +441,9 @@ function tableruler()
 	    }
 	}
 
+
+//setLinkToBold method. moved here to fix bug in UserApplication
+
+function setLinkToBold(input) {
+	input.style.fontWeight='bold';
+}
