@@ -571,7 +571,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		DN entryDN = new DN("cn="+userUUID+","+baseRDN);
 		String uniqueIdDN = LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID+"="+userUUID;
 		
-		searchResults = jndiOps.searchBaseEntry(entryDN,uniqueIdDN, 1, 60);
+		searchResults = jndiOps.searchBaseEntry(entryDN,uniqueIdDN, 0, 180000,null);
 		
 		if (searchResults != null) {
 			while (searchResults.hasMore()) {
