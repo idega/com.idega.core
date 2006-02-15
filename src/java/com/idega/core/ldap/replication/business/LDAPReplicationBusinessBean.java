@@ -577,14 +577,16 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			while (searchResults.hasMore()) {
 				SearchResult result = (SearchResult) searchResults.next();
 				
-				String resultDN = result.getName();
 				//get the attributes for this DN
 				Attributes attribs = result.getAttributes();	
 				if(attribs==null){
-					attribs = jndiOps.read(resultDN);
+					attribs = jndiOps.read(entryDN);
+					if(attribs==null){
+						attribs = jndiOps.read(result.getName());
+					}
 				}
 				
-				user = createOrUpdateUser(null, attribs, new DN(resultDN));
+				user = createOrUpdateUser(null, attribs, entryDN);
 			}
 		}
 		
