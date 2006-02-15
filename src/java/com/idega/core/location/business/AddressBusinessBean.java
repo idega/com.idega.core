@@ -1,6 +1,7 @@
 package com.idega.core.location.business;
 
 import java.rmi.RemoteException;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -273,12 +274,28 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		Country country = null;
 		Commune commune = null;
 		
+		
+		if(fullAddressString==null || "".equals(fullAddressString)){
+			//no change or should we delete the address? NO CHANGE for now
+			return address;
+		}
+		
 		// deserialize the string
 		StringTokenizer nizer = new StringTokenizer(fullAddressString,";");
-		String streetNameAndNumber = nizer.nextToken();
-		String postalCodeAndPostalAddress = nizer.nextToken();
-		String countryNameAndISOAbbreviation = nizer.nextToken();
-		String communeNameAndCommuneCode = nizer.nextToken();
+		String streetNameAndNumber = NOT_AVAILABLE;
+		String postalCodeAndPostalAddress = NOT_AVAILABLE;
+		String countryNameAndISOAbbreviation = NOT_AVAILABLE;
+		String communeNameAndCommuneCode = NOT_AVAILABLE;
+		try {
+			streetNameAndNumber = nizer.nextToken();
+			postalCodeAndPostalAddress = nizer.nextToken();
+			countryNameAndISOAbbreviation = nizer.nextToken();
+			communeNameAndCommuneCode = nizer.nextToken();
+		}
+		catch (NoSuchElementException e) {
+			//no need to print, we use what we can
+			//e.printStackTrace();
+		}
 		
 		// deserialize the string even more
 		if (!NOT_AVAILABLE.equals(streetNameAndNumber)) {
@@ -319,6 +336,8 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			// Fix when entering unnumbered addresses, something I saw Aron do
 			address.setStreetNumber("");
 		}
+		
+		
 		address.setCountry(country);
 		address.setPostalCode(postal);
 		address.setCommune(commune);
