@@ -1,5 +1,5 @@
 /*
- * $Id: IWCacheManager.java,v 1.33 2005/11/18 15:16:39 tryggvil Exp $
+ * $Id: IWCacheManager.java,v 1.34 2006/02/16 21:38:57 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -39,10 +39,10 @@ import com.idega.util.text.TextSoap;
  * fragments of their rendering output in memory.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/11/18 15:16:39 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/02/16 21:38:57 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public class IWCacheManager implements Singleton {
 
@@ -110,7 +110,11 @@ public class IWCacheManager implements Singleton {
   }
 
   public void invalidateCache(String key){
-    removeCache(key);
+    removeCache(key, null);
+  }
+  
+  public void invalidateCacheWithPartialKey(String key, String partialKey) {
+  		removeCache(key, partialKey);
   }
 
   private Map getKeysMap(){
@@ -183,8 +187,10 @@ public class IWCacheManager implements Singleton {
     }
   }
 
-  private synchronized void removeCache(String key){
-    removeFromGlobalCache(key);
+  private synchronized void removeCache(String key, String partialKey){
+  		if (partialKey == null) {
+	  		removeFromGlobalCache(key);
+	  	}
 
     Map map = getKeysMap();
     List derived = (List)map.get(key);
@@ -192,7 +198,14 @@ public class IWCacheManager implements Singleton {
       Iterator iter = derived.iterator();
       while (iter.hasNext()) {
         String item = (String)iter.next();
-        removeFromGlobalCache(item);
+        if (partialKey == null) {
+        		removeFromGlobalCache(item);
+        }
+        else {
+        		if (item.indexOf(partialKey) != -1) {
+        			removeFromGlobalCache(item);
+        		}
+        }
       }
     }
   }
