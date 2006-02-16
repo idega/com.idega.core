@@ -170,7 +170,7 @@
     </filter>
 	<filter-mapping>
         <filter-name>CacheFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/pages/*</url-pattern>
     </filter-mapping>
     
      <!-- MyFaces Extensions Filter -->
