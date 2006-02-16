@@ -188,4 +188,15 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 		
 		return idoFindOnePKByQuery(query);
 	}
+	
+	public Object ejbFindPreviousLoginRecord(LoginRecord record) throws FinderException {
+		Table table = new Table(this);
+		
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(table, getIDColumnName());
+		query.addCriteria(new MatchCriteria(table, getColumnInStamp(), MatchCriteria.LESS, record.getLogInStamp()));
+		query.addOrder(new Order(table.getColumn(getColumnInStamp()), false));
+		
+		return idoFindOnePKByQuery(query);
+	}
 }

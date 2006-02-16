@@ -40,8 +40,15 @@ public class LastLogin extends Widget {
 			try {
 				LoginRecordHome home = (LoginRecordHome) IDOLookup.getHome(LoginRecord.class);
 				LoginRecord record = home.findLastLoginRecord(user);
-
-				IWTimestamp stamp = new IWTimestamp(record.getLogInStamp());
+				LoginRecord previous = null;
+				try {
+					previous = home.findPreviousLoginRecord(record);
+				}
+				catch (FinderException fe) {
+					//Nothing found...
+				}
+				
+				IWTimestamp stamp = new IWTimestamp(previous != null ? previous.getLogInStamp() : record.getLogInStamp());
 				
 				Text text = new Text(getResourceBundle(iwc).getLocalizedString("last_logged_in_at", "You were last logged in at") + Text.NON_BREAKING_SPACE + stamp.getLocaleDateAndTime(iwc.getCurrentLocale(), dateStyle, timeStyle));
 				return text;

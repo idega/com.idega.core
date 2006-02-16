@@ -1,6 +1,6 @@
 /*
- * $Id: LoginRecordHomeImpl.java,v 1.7 2006/01/15 21:15:49 laddi Exp $
- * Created on Jan 15, 2006
+ * $Id: LoginRecordHomeImpl.java,v 1.8 2006/02/16 12:48:50 laddi Exp $
+ * Created on Feb 16, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO laddi Describe Type LoginRecordHomeImpl
  * </p>
- *  Last modified: $Date: 2006/01/15 21:15:49 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/16 12:48:50 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class LoginRecordHomeImpl extends IDOFactory implements LoginRecordHome {
 
@@ -77,6 +77,13 @@ public class LoginRecordHomeImpl extends IDOFactory implements LoginRecordHome {
 	public LoginRecord findLastLoginRecord(User user) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((LoginRecordBMPBean) entity).ejbFindLastLoginRecord(user);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
+
+	public LoginRecord findPreviousLoginRecord(LoginRecord record) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((LoginRecordBMPBean) entity).ejbFindPreviousLoginRecord(record);
 		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
 	}
