@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.135 2006/02/03 13:21:34 sigtryggur Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.136 2006/02/16 07:49:08 laddi Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2006/02/03 13:21:34 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2006/02/16 07:49:08 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.135 $
+ * @version $Revision: 1.136 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -1040,16 +1040,28 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		forwardToIBPage(fromPage, ((Integer) page.getPrimaryKey()).intValue());
 	}
 
+	public void forwardToIBPage(Page fromPage, ICPage page, int secondInterval) {
+		forwardToIBPage(fromPage, ((Integer) page.getPrimaryKey()).intValue(), secondInterval);
+	}
+
+	public void forwardToIBPage(Page fromPage, ICPage page, int secondInterval, boolean includeQueryString) {
+		forwardToIBPage(fromPage, ((Integer) page.getPrimaryKey()).intValue(), secondInterval, includeQueryString);
+	}
+
 	public void forwardToIBPage(Page fromPage, int pageID) {
 		forwardToIBPage(fromPage, pageID, 0);
 	}
 
 	public void forwardToIBPage(Page fromPage, int pageID, int secondInterval) {
+		forwardToIBPage(fromPage, pageID, secondInterval, false);
+	}
+	
+	public void forwardToIBPage(Page fromPage, int pageID, int secondInterval, boolean includeQueryString) {
 		try {
 			BuilderService bs;
 			bs = BuilderServiceFactory.getBuilderService(this.getApplicationContext());
 			String url = bs.getPageURI(pageID);
-			forwardToURL(fromPage, url, secondInterval);
+			forwardToURL(fromPage, url, secondInterval, includeQueryString);
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
