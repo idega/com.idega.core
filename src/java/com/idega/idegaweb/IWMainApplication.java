@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.163 2006/02/13 14:32:45 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.164 2006/02/17 09:24:22 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -89,10 +89,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/02/13 14:32:45 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/17 09:24:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.163 $
+ * @version $Revision: 1.164 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2135,7 +2135,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			URLConnection urlconn = url.openConnection();
 			HttpURLConnection httpconn = (HttpURLConnection)urlconn;
 			httpconn.connect();
-			Object content = httpconn.getContent();
+			httpconn.getContent();
 			httpconn.disconnect();
 		}
 		catch (MalformedURLException e) {
