@@ -1,5 +1,5 @@
 /*
- * $Id: Block.java,v 1.72 2005/12/07 11:51:50 tryggvil Exp $
+ * $Id: Block.java,v 1.73 2006/02/17 16:11:22 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -35,10 +36,10 @@ import com.idega.presentation.text.Text;
  * their functionality is done with the main() method in old style idegaWeb.
  * This class has functionality regarding caching and how the main method is processed in JSF.
  * 
- * Last modified: $Date: 2005/12/07 11:51:50 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/02/17 16:11:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.72 $
+ * @version $Revision: 1.73 $
  */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
@@ -59,7 +60,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	private boolean editPermission = false;
 	private boolean debugParameters = false;
 	private String blockWidth = null;
-
+	private long iSystemTime = 0;
 	
 	public Block() {
 		setDefaultWidth();
@@ -323,6 +324,21 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		}
 	}
 
+	public void encodeBegin(FacesContext fc)throws IOException{
+		iSystemTime = System.currentTimeMillis();
+		super.encodeBegin(fc);
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#encodeEnd(javax.faces.context.FacesContext)
+	 */
+	public void encodeEnd(FacesContext arg0) throws IOException {
+		long endTime = System.currentTimeMillis();
+		String renderingText = (endTime - iSystemTime) + " ms";
+		castToIWContext(arg0).getResponseWriter().writeComment(renderingText);
+		super.encodeEnd(arg0);
+	}
+	 
 	/**
 	 * <p>
 	 * The default implementation for the print function for Blocks. This method

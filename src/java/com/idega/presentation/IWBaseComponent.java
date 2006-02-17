@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.9 2005/10/26 17:34:35 tryggvil Exp $
+ * $Id: IWBaseComponent.java,v 1.10 2006/02/17 16:11:22 laddi Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2005 <br/>
- * Last modified: $Date: 2005/10/26 17:34:35 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/02/17 16:11:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase {
@@ -41,6 +41,7 @@ public class IWBaseComponent extends UIComponentBase {
 	private TextStyler _styler;
 	private String styleAttribute;
 	private boolean isInitialized = false;
+	private long iSystemTime = 0;
 	
 	/**
 	 * This is an old idegaWeb style add method.
@@ -68,6 +69,7 @@ public class IWBaseComponent extends UIComponentBase {
 	 * @see javax.faces.component.UIComponent#encodeBegin(javax.faces.context.FacesContext)
 	 */
 	public void encodeBegin(FacesContext context) throws IOException {
+		iSystemTime = System.currentTimeMillis();
 		if(!isInitialized()){
 			initializeComponent(context);
 			//TODO: Remove call to older method:
@@ -117,7 +119,10 @@ public class IWBaseComponent extends UIComponentBase {
 	 * @see javax.faces.component.UIComponent#encodeEnd(javax.faces.context.FacesContext)
 	 */
 	public void encodeEnd(FacesContext arg0) throws IOException {
-		// TODO Auto-generated method stub
+		long endTime = System.currentTimeMillis();
+		String renderingText = (endTime - iSystemTime) + " ms";
+		arg0.getResponseWriter().writeComment(renderingText);
+
 		super.encodeEnd(arg0);
 	}
 	/* (non-Javadoc)
