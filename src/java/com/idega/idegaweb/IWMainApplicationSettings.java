@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.40 2005/12/30 12:24:47 thomas Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.41 2006/02/19 17:26:50 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -10,9 +10,11 @@
  */
 package com.idega.idegaweb;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -35,16 +37,17 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/12/30 12:24:47 $ by $Author: thomas $
+ * Last modified: $Date: 2006/02/19 17:26:50 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.40 $
+ * @version $Revision: 1.41 $
  */
 
 
 public class IWMainApplicationSettings implements MutableClass {
 
-
+	private static final String ATTRIBUTE_APPLICATION_BINDING_MAP = "application_binding_map";
+	
 	public static final String AUTO_CREATE_LOCALIZED_STRINGS_KEY="auto-create-localized-strings";
 	public static final String AUTO_CREATE_PROPERTIES_KEY="auto-create-properties";
 	public static final String DEFAULT_MARKUP_LANGUAGE_KEY="markup_language";
@@ -586,22 +589,46 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	private String getFromApplicationBinding(String key) {
-		String value = null;
-		try {
-			value = getApplicationBindingBusiness().get(key);
-		}
-		catch (IOException e) {
-			getLogger().warning("[IWMainApplicationSettings] Could not fetch key: " + key);
-			throw new IBORuntimeException(e);
+		String value = getApplicationBindingFromMap(key);
+		if (value == null) {
+			try {
+				value = getApplicationBindingBusiness().get(key);
+				if (value != null) {
+					setApplicationBindingInMap(key, value);
+				}
+			}
+			catch (IOException e) {
+				getLogger().warning("[IWMainApplicationSettings] Could not fetch key: " + key);
+				throw new IBORuntimeException(e);
+			}
 		}
 		if (value == null) {
-			return getIdegawebPropertyList().getProperty(key);
+			value = getIdegawebPropertyList().getProperty(key);
+			this.putInApplicationBinding(key, value);
 		}
 		return value;
+	}
+	
+	private String getApplicationBindingFromMap(String key) {
+		Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+		if (map != null) {
+			return (String) map.get(key);
+		}
+		return null;
+	}
+	
+	private void setApplicationBindingInMap(String key, String value) {
+		Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+		if (map == null) {
+			map = new HashMap();
+		}
+		map.put(key, value);
+		getApplication().getIWApplicationContext().setApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP, map);
 	}
 
 	private String putInApplicationBinding(String key, String value) {
 		try {
+			setApplicationBindingInMap(key, value);
 			return getApplicationBindingBusiness().put(key, value);
 		}
 		catch (IOException e) {
