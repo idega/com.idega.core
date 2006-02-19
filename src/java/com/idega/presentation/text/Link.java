@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.162 2006/01/12 13:18:23 laddi Exp $
+ * $Id: Link.java,v 1.163 2006/02/19 15:58:58 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1190,18 +1190,15 @@ public class Link extends Text {
 	 * method for adding a link to a page object
 	 */
 	public void setPage(ICPage page) {
-		if ((page != null) && (page.getID() != -1)) {
-			/*StringBuffer url = new StringBuffer();
-			url.append(IWMainApplication.BUILDER_SERVLET_URL);
-			url.append('?');
-			url.append(com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER);
-			url.append('=');
-			url.append(page.getID());
-			setURL(url.toString());*/
-			this.ibPage=((Number)page.getPrimaryKey()).intValue();
+		setPage(new Integer(page.getPrimaryKey().toString()).intValue());
+	}
+	
+	public void setPage(int pageID) {
+		if (pageID != -1) {
+			ibPage = pageID;
 			if(IWMainApplication.useNewURLScheme){
 				try {
-					this.setURL(this.getBuilderService(getIWApplicationContext()).getPageURI(page));
+					this.setURL(this.getBuilderService(getIWApplicationContext()).getPageURI(pageID));
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -1211,21 +1208,9 @@ public class Link extends Text {
 				if (value != null) {
 					removeParameter(IB_PAGE_PARAMETER);
 				}
-				addParameter(IB_PAGE_PARAMETER, page.getPrimaryKey().toString());
+				addParameter(IB_PAGE_PARAMETER, String.valueOf(pageID));
 			}
 		}
-	}
-	
-
-	public void setPage(int pageID) {
-		ICPage page = null;
-		try {
-			page = ((com.idega.core.builder.data.ICPageHome) com.idega.data.IDOLookup.getHomeLegacy(ICPage.class)).findByPrimaryKeyLegacy(pageID);
-		}
-		catch (Exception e) {
-			page = null;
-		}
-		setPage(page);
 	}
 
 	public int getPage() {
