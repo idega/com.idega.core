@@ -38,7 +38,7 @@ public class IWLDAPUtil implements IWLDAPConstants,EmbeddedLDAPServerConstants,L
 	/**
 	 * 
 	 */
-	private IWLDAPUtil() {
+	protected IWLDAPUtil() {
 		super();
 	}
 	

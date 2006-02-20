@@ -25,10 +25,8 @@ public class FieldAccessor implements Singleton
 	/**
 	 * 
 	 */
-	private FieldAccessor()
-	{
+	protected FieldAccessor() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	public static FieldAccessor getInstance(){

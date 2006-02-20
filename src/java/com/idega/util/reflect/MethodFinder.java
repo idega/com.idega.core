@@ -33,8 +33,7 @@ public class MethodFinder implements Singleton
 	private Map methodCache;
 	private Map classMethodCache;
 	
-	private MethodFinder()
-	{
+	protected MethodFinder() {
 	}
 	
 	public static MethodFinder getInstance() {

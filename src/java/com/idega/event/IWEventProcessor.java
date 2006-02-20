@@ -57,7 +57,7 @@ public class IWEventProcessor implements Singleton {
 	
 	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IWEventProcessor();}};
 	
-	private IWEventProcessor() {
+	protected IWEventProcessor() {
 		// default constructor
 	}
 

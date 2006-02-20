@@ -22,9 +22,10 @@ public class MethodInvoker implements Singleton {
 
   private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new MethodInvoker();}};
 
-  private MethodInvoker(){
+  protected MethodInvoker() {
   }
- /**
+
+  /**
   * The default way of getting an instance of this class.
   * @return the singleton instance of this class
   */

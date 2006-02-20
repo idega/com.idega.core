@@ -184,7 +184,7 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	 * Logs out to the default log level (which is by default INFO)
 	 * @param msg The message to log out
 	 */
-	protected void log(String msg) {
+	public void log(String msg) {
 		getLogger().log(getDefaultLogLevel(),msg);
 	}
 

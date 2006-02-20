@@ -43,7 +43,7 @@ public class EntityFinder implements Singleton {
 	};
 
 	//The constructor should only be accessible to this class
-	private EntityFinder() {
+	protected EntityFinder() {
 	}
 
 	public static EntityFinder getInstance() {

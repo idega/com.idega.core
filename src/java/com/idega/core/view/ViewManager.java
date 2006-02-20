@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.15 2005/12/07 21:39:16 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.16 2006/02/20 17:59:45 laddi Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.RequestUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2005/12/07 21:39:16 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/20 17:59:45 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class ViewManager implements Singleton {
 	
@@ -66,7 +66,7 @@ public class ViewManager implements Singleton {
 		return (ViewManager) SingletonRepository.getRepository().getInstance(ViewManager.class, instantiator, context);
 	}
 	
-	private ViewManager(IWMainApplication iwma){
+	protected ViewManager(IWMainApplication iwma){
 		this.iwma=iwma;
 	}
 	

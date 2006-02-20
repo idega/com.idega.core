@@ -36,7 +36,7 @@ public class GlobalIncludeManager implements Singleton {
 	private List styleSheets;
 
 
-	private GlobalIncludeManager() {
+	protected GlobalIncludeManager() {
 		this.iwma =  IWMainApplication.getDefaultIWMainApplication();
 		addStyleSheet(coreIWStyleSheetURL);
 		addStyleSheet(standardIWStyleSheetURL);

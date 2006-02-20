@@ -27,7 +27,7 @@ public class ImplementorRepository implements Singleton {
 	
 	private HashMatrix interfaceCallerImplementor = null;
 	
-	private ImplementorRepository(){
+	protected ImplementorRepository(){
 		// should not be initialized by constructor
 	} 
 	

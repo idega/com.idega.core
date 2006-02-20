@@ -205,7 +205,7 @@ private Image helpImage = null;
 		
 	}
 	
-	protected UserBusiness getUserBusiness(IWApplicationContext iwc) {
+	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
 			if (userBusiness == null) {
 				try {
 					userBusiness = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);

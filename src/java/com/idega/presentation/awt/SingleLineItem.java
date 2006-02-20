@@ -32,11 +32,11 @@ public class SingleLineItem extends Panel {
   private int nextXpos = 0;
   private int nextYpos = 0;
   private int componentOffset = 5;
-  private ActionListener actionListener = null;
-  private boolean isSelected = false;
+  ActionListener actionListener = null;
+  boolean isSelected = false;
   private Window window;
   private GridBagConstraints gbc = null;
-  private Color bgColor = Color.white;
+  Color bgColor = Color.white;
   private Container parentContainer;
   private String ID;
   private boolean fillRight = false;
@@ -133,7 +133,7 @@ public class SingleLineItem extends Panel {
     this.window = window;
   }
 
-  private void openWindow(){
+  void openWindow(){
     if(window!=null) window.setVisible(true);
   }
 

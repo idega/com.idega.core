@@ -40,7 +40,7 @@ public class ICObjectBusiness implements Singleton {
   private  Map icoInstanceMap;
   private  Map icObjectMap;
 
-  private ICObjectBusiness(){
+  protected ICObjectBusiness(){
   	// empty
   }
 

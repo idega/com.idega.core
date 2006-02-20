@@ -21,7 +21,7 @@ public class IDOUtil implements Singleton {
 	private static final String SINGLE_QUOTE = "'";
 	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IDOUtil();}};
 	
-	private IDOUtil() {
+	protected IDOUtil() {
 		// empty
 	}
 	

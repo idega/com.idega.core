@@ -29,7 +29,7 @@ public class UUIDGenerator implements IdGenerator, Singleton {
 	/**
 	 * This constructor should not be used by others
 	 */
-	private UUIDGenerator(){
+	protected UUIDGenerator(){
 		// empty
 	}
 	/**

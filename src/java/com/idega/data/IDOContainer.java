@@ -38,7 +38,7 @@ public class IDOContainer implements Singleton {
   private Map entityStaticInstances;  
   private HashtableDoubleKeyed relationshipTables = new HashtableDoubleKeyed();
   
-  private IDOContainer() {
+  protected IDOContainer() {
   	// unload
   }
 

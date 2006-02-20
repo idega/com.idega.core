@@ -60,7 +60,7 @@ public class ImageFactory implements Singleton {
 	}
 	
 	
-	private ImageFactory(IWMainApplication iwma) {
+	protected ImageFactory(IWMainApplication iwma) {
 		initialize(iwma);
 	}
 

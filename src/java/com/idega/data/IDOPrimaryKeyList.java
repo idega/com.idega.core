@@ -45,7 +45,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	
 	private SelectQuery _sqlQuery;
 	private SelectQuery _loadQueryBase;
-	private GenericEntity _entity;
+	GenericEntity _entity;
 	private Class allowedPrimaryKeyClass; // varaable set in the initialize method where it is fetched ones from the variable _entity for optimizing reasons
 	private String pkColumnName;
 	private Table sqlQueryTable;

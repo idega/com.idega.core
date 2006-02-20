@@ -15,11 +15,11 @@ import com.idega.repository.data.SingletonRepository;
 public class Validator implements Singleton
 {
 	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new Validator();}};
+	
 	/**
 	 * Constructor for Validator.
 	 */
-	private Validator()
-	{
+	protected Validator() {
 		// empty
 	}
 	

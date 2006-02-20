@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.36 2005/12/22 19:04:18 eiki Exp $
+ * $Id: IWResourceBundle.java,v 1.37 2006/02/20 17:59:45 laddi Exp $
  *
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  *
@@ -35,15 +35,15 @@ import com.idega.util.StringHandler;
  * There is an instance of this class for each localization file (e.g. com.idega.core.bundle/en.locale/Localized.strings)
  * and is an extension to the standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2005/12/22 19:04:18 $ by $Author: eiki $<br/>
+ * Last modified: $Date: 2006/02/20 17:59:45 $ by $Author: laddi $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class IWResourceBundle extends ResourceBundle {
 
 	// ==================privates====================
-	private TreeMap lookup;
+	TreeMap lookup;
 	private Properties properties = new SortedProperties();
 	//private Properties properties = new Properties();
 	private Locale locale;

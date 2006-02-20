@@ -43,7 +43,7 @@ public class InheritableStaticPropertyHandler implements Singleton
 
    // so that nobody can accidentally create an InheritableStaticPropertyHandler object
 
-   private InheritableStaticPropertyHandler(){}
+   protected InheritableStaticPropertyHandler(){}
 
 
 

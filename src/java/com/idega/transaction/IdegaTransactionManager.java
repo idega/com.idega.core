@@ -1,5 +1,5 @@
 /*
- * $Id: IdegaTransactionManager.java,v 1.15 2005/06/24 14:42:56 tryggvil Exp $ Created
+ * $Id: IdegaTransactionManager.java,v 1.16 2006/02/20 17:59:45 laddi Exp $ Created
  * in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -35,10 +35,10 @@ import com.idega.util.database.ConnectionBroker;
  * This class works together with ConnectionBroker to mark a Connection for a
  * transaction and associate it with the current Thread.
  * </p>
- * Last modified: $Date: 2005/06/24 14:42:56 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/02/20 17:59:45 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class IdegaTransactionManager implements javax.transaction.TransactionManager, Singleton {
 
@@ -60,7 +60,7 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 		return datasource;
 	}
 
-	private IdegaTransactionManager(String datasource) {
+	protected IdegaTransactionManager(String datasource) {
 		if (datasource != null) {
 			this.datasource = datasource;
 		}

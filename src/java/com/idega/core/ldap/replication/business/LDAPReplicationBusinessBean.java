@@ -931,7 +931,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		return replicatorTimerMap;
 	}
 
-	private void replicate(final int replicatorNumber, final Integer repNum, final String host, final String port, final String userName, final String password, final String baseRDN, final boolean replicateBaseRDN, final String baseUniqueId, final Group parentGroup, final Group baseGroupToOverwrite, final int maxEntrylimit, final int searchTimeLimit, final boolean onlyUseUUID, TimerEntry entry) {
+	protected void replicate(final int replicatorNumber, final Integer repNum, final String host, final String port, final String userName, final String password, final String baseRDN, final boolean replicateBaseRDN, final String baseUniqueId, final Group parentGroup, final Group baseGroupToOverwrite, final int maxEntrylimit, final int searchTimeLimit, final boolean onlyUseUUID, TimerEntry entry) {
 		//so it does not run again until we are done.
 		entry.setCanRun(false);
 		

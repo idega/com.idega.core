@@ -601,7 +601,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 		}
 		return charArray;
 	}
-	private void convertCharArrayToByteArray(char[] charArray, byte[] byteArray) {
+	void convertCharArrayToByteArray(char[] charArray, byte[] byteArray) {
 		for (int i = 0; i < charArray.length; i++) {
 			byteArray[i] = (byte) charArray[i];
 		}

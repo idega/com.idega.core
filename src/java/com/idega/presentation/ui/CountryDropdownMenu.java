@@ -169,9 +169,9 @@ public class CountryDropdownMenu extends DropdownMenu {
 	}
 	
 	private class SmallCountry implements Comparable{
-		private String name;
+		String name;
 		private Integer ID;
-		private String code;
+		String code;
 		private Locale locale;
 		
 		public SmallCountry(Integer ID,String name,String code,Locale locale){

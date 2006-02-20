@@ -155,10 +155,10 @@ public class CheckBoxGroup extends InterfaceObject
 	}
 
 	protected class CheckHolder{
-		private boolean isChecked=false;
-		private String checkValue;
-		private String checkDescription;
-		private CheckHolder(String checkValue,String descriptionText,boolean isChecked){
+		boolean isChecked=false;
+		String checkValue;
+		String checkDescription;
+		protected CheckHolder(String checkValue,String descriptionText,boolean isChecked){
 			this.checkValue=checkValue;
 			this.checkDescription=descriptionText;
 			this.isChecked=isChecked;
