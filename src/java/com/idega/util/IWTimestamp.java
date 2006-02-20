@@ -157,7 +157,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfDays	The number of days to add.
 	 */
 	public void addDays(int numberOfDays) {
-		calendar.add(calendar.DAY_OF_MONTH, numberOfDays);
+		calendar.add(Calendar.DAY_OF_MONTH, numberOfDays);
 	}
 	
 	/**
@@ -173,7 +173,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfHours	The number of hours to add.
 	 */
 	public void addHours(int numberOfHours) {
-		calendar.add(calendar.HOUR_OF_DAY, numberOfHours);
+		calendar.add(Calendar.HOUR_OF_DAY, numberOfHours);
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfMinutes	The number of minutes to add.
 	 */
 	public void addMinutes(int numberOfMinutes) {
-		calendar.add(calendar.MINUTE, numberOfMinutes);
+		calendar.add(Calendar.MINUTE, numberOfMinutes);
 	}
 
 	/**
@@ -189,7 +189,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfMonths	The number of months to add.
 	 */
 	public void addMonths(int numberOfMonths) {
-		calendar.add(calendar.MONTH, numberOfMonths);
+		calendar.add(Calendar.MONTH, numberOfMonths);
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfSeconds	The number of seconds to add.
 	 */
 	public void addSeconds(int numberOfSeconds) {
-		calendar.add(calendar.SECOND, numberOfSeconds);
+		calendar.add(Calendar.SECOND, numberOfSeconds);
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfYears	The number of years to add.
 	 */
 	public void addYears(int numberOfYears) {
-		calendar.add(calendar.YEAR, numberOfYears);
+		calendar.add(Calendar.YEAR, numberOfYears);
 	}
 
 ///////////////////////////////////////////////////
@@ -800,7 +800,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getDay() {
-		return calendar.get(calendar.DAY_OF_MONTH);
+		return calendar.get(Calendar.DAY_OF_MONTH);
 	}
 
 	/**
@@ -808,7 +808,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getDayOfWeek() {
-		return calendar.get(calendar.DAY_OF_WEEK);
+		return calendar.get(Calendar.DAY_OF_WEEK);
 	}
 
 	/**
@@ -816,7 +816,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getDayOfYear() {
-		return calendar.get(calendar.DAY_OF_YEAR);
+		return calendar.get(Calendar.DAY_OF_YEAR);
 	}
 
 	/**
@@ -840,7 +840,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getHour() {
-		return calendar.get(calendar.HOUR_OF_DAY);
+		return calendar.get(Calendar.HOUR_OF_DAY);
 	}
 
 	/**
@@ -932,7 +932,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getMilliSecond() {
-		return calendar.get(calendar.MILLISECOND);
+		return calendar.get(Calendar.MILLISECOND);
 	}
 
 	/**
@@ -940,7 +940,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getMinute() {
-		return calendar.get(calendar.MINUTE);
+		return calendar.get(Calendar.MINUTE);
 	}
 
 	/**
@@ -948,7 +948,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getMonth() {
-		return calendar.get(calendar.MONTH) + 1;
+		return calendar.get(Calendar.MONTH) + 1;
 	}
 
 	/**
@@ -957,7 +957,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 */
 	public IWTimestamp getNextDay() {
 		GregorianCalendar myCalendar = (GregorianCalendar) calendar.clone();
-		myCalendar.add(myCalendar.DATE, 1);
+		myCalendar.add(Calendar.DATE, 1);
 		return new IWTimestamp(myCalendar);
 	}
 
@@ -966,7 +966,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getSecond() {
-		return calendar.get(calendar.SECOND);
+		return calendar.get(Calendar.SECOND);
 	}
 
 	/**
@@ -999,7 +999,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getWeekOfYear() {
-		return calendar.get(calendar.WEEK_OF_YEAR);
+		return calendar.get(Calendar.WEEK_OF_YEAR);
 	}
 
 	/**
@@ -1007,7 +1007,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getYear() {
-		return calendar.get(calendar.YEAR);
+		return calendar.get(Calendar.YEAR);
 	}
 
 ///////////////////////////////////////////////////
@@ -1051,7 +1051,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param day		The day to set
 	 */
 	public void setDay(int day) {
-		calendar.set(calendar.DAY_OF_MONTH, day);
+		calendar.set(Calendar.DAY_OF_MONTH, day);
 	}
 
 	/**
@@ -1059,7 +1059,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param hour		The hour to set
 	 */
 	public void setHour(int hour) {
-		calendar.set(calendar.HOUR_OF_DAY, hour);
+		calendar.set(Calendar.HOUR_OF_DAY, hour);
 	}
 
 	/**
@@ -1067,7 +1067,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param millisecond		The millisecond to set
 	 */
 	public void setMilliSecond(int millisecond) {
-		calendar.set(calendar.MILLISECOND, millisecond);
+		calendar.set(Calendar.MILLISECOND, millisecond);
 	}
 
 	/**
@@ -1075,7 +1075,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param minute		The minute to set
 	 */
 	public void setMinute(int minute) {
-		calendar.set(calendar.MINUTE, minute);
+		calendar.set(Calendar.MINUTE, minute);
 	}
 
 	/**
@@ -1083,7 +1083,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param month		The month to set in the range [1-12]
 	 */
 	public void setMonth(int month) {
-		calendar.set(calendar.MONTH, month - 1);
+		calendar.set(Calendar.MONTH, month - 1);
 	}
 
 	/**
@@ -1091,7 +1091,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param second		The second to set
 	 */
 	public void setSecond(int second) {
-		calendar.set(calendar.SECOND, second);
+		calendar.set(Calendar.SECOND, second);
 	}
 
 	/**
@@ -1114,10 +1114,10 @@ public class IWTimestamp implements Comparable,Cloneable {
 	public void setTime(int hour,int minute,int second,int millisecond) {
 		if(isDate())
 			isDate = false;
-		calendar.set(calendar.HOUR_OF_DAY, hour);
-		calendar.set(calendar.MINUTE, minute);
-		calendar.set(calendar.SECOND, second);
-		calendar.set(calendar.MILLISECOND, millisecond);
+		calendar.set(Calendar.HOUR_OF_DAY, hour);
+		calendar.set(Calendar.MINUTE, minute);
+		calendar.set(Calendar.SECOND, second);
+		calendar.set(Calendar.MILLISECOND, millisecond);
 	}
 
 	/**
@@ -1125,7 +1125,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param year		The year to set
 	 */
 	public void setYear(int year) {
-		calendar.set(calendar.YEAR, year);
+		calendar.set(Calendar.YEAR, year);
 	}
 
 ///////////////////////////////////////////////////

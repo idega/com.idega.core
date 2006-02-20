@@ -156,7 +156,7 @@ public class CreateUser extends Window {
 		goToPropertiesField = new CheckBox(goToPropertiesFieldParameterName);
 		goToPropertiesField.setChecked(true);
 
-		primaryGroupField = new DropdownMenu(this.primaryGroupFieldParameterName);
+		primaryGroupField = new DropdownMenu(CreateUser.primaryGroupFieldParameterName);
 		//primaryGroupField.addMenuElement("","aðalhópur");
 		primaryGroupField.addSeparator();
 
@@ -296,16 +296,16 @@ public class CreateUser extends Window {
 		User newUser;
 		boolean createLogin = false;
 
-		String login = iwc.getParameter(this.userLoginFieldParameterName);
-		String passw = iwc.getParameter(this.passwordFieldParameterName);
-		String cfPassw = iwc.getParameter(this.confirmPasswordFieldParameterName);
+		String login = iwc.getParameter(CreateUser.userLoginFieldParameterName);
+		String passw = iwc.getParameter(CreateUser.passwordFieldParameterName);
+		String cfPassw = iwc.getParameter(CreateUser.confirmPasswordFieldParameterName);
 		String password = null;
 
-		String mustChage = iwc.getParameter(this.mustChangePasswordFieldParameterName);
-		String cannotchangePassw = iwc.getParameter(this.cannotChangePasswordFieldParameterName);
-		String passwNeverExpires = iwc.getParameter(this.passwordNeverExpiresFieldParameterName);
-		String disabledAccount = iwc.getParameter(this.disableAccountFieldParameterName);
-		String primaryGroup = iwc.getParameter(this.primaryGroupFieldParameterName);
+		String mustChage = iwc.getParameter(CreateUser.mustChangePasswordFieldParameterName);
+		String cannotchangePassw = iwc.getParameter(CreateUser.cannotChangePasswordFieldParameterName);
+		String passwNeverExpires = iwc.getParameter(CreateUser.passwordNeverExpiresFieldParameterName);
+		String disabledAccount = iwc.getParameter(CreateUser.disableAccountFieldParameterName);
+		String primaryGroup = iwc.getParameter(CreateUser.primaryGroupFieldParameterName);
 
 		Boolean bMustChage;
 		Boolean bAllowedToChangePassw;

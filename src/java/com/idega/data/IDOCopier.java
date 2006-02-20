@@ -109,17 +109,17 @@ public class IDOCopier {
 					*  @todo change - Shitty mix change this as soon as possible!!!
 					*
 					*/
-					List l1 = EntityFinder.getInstance().findAll((IDOLegacyEntity)fromInstance, "select * from ib_page where template_id is null");
+					List l1 = EntityFinder.findAll((IDOLegacyEntity)fromInstance, "select * from ib_page where template_id is null");
 					l = new Vector();
 					l.addAll(l1);
 					List l2 =
-						EntityFinder.getInstance().findAll((IDOLegacyEntity)
+						EntityFinder.findAll((IDOLegacyEntity)
 							fromInstance,
 							"select * from ib_page where template_id is not null order by template_id asc,ib_page_id asc");
 					l.addAll(l2);
 				}
 				else {
-					l = EntityFinder.getInstance().findAll((IDOLegacyEntity)fromInstance);
+					l = EntityFinder.findAll((IDOLegacyEntity)fromInstance);
 				}
 				if (l != null) {
 					int highestID = 1;
@@ -214,7 +214,7 @@ public class IDOCopier {
 		 * Workaround implementation
 		 * @todo Implement this in a more elegant way
 		 */
-		if(this.isDatasourceOracle(fromConn)){
+		if(IDOCopier.isDatasourceOracle(fromConn)){
 			/**
 			 * Returns the possibly truncated name of the table
 			 */

@@ -624,7 +624,7 @@ public class FrameTable extends Window{
      * Sets the span (in pixels) for each of the Frame Objects. frameIndex starts at 1.
      */
     public void setSpanAdaptive(int frameIndex){
-      setFrameProperty(frameIndex,ROWS_PROPERTY,this.star);
+      setFrameProperty(frameIndex,ROWS_PROPERTY,FrameTable.star);
     }
 
     private String getSpan(int frameIndex){
@@ -715,7 +715,7 @@ public class FrameTable extends Window{
     protected void setFrameProperty(int frameIndex,String propertyName){
       //getPage(frameIndex).setFrameProperty(propertyName);
       //this.getFramesPropertyMap(frameIndex).put(propertyName,this.slash);
-      ((PresentationObject)this.getChildren().get(frameIndex-1)).setMarkupAttribute(propertyName,this.slash);
+      ((PresentationObject)this.getChildren().get(frameIndex-1)).setMarkupAttribute(propertyName,PresentationObject.slash);
     }
 
     protected String getFrameProperty(int frameIndex,String propertyName){

@@ -2,6 +2,7 @@ package com.idega.util.jsp;
 
 
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import java.sql.*;
@@ -314,7 +315,7 @@ private PoolManager poolMgr;
 
 
 
-		int vdagur = calendar.get(calendar.DAY_OF_WEEK);
+		int vdagur = calendar.get(Calendar.DAY_OF_WEEK);
 
 
 
@@ -434,11 +435,11 @@ private PoolManager poolMgr;
 
 
 
-		int	dayM = calendar.get(calendar.DAY_OF_MONTH);
+		int	dayM = calendar.get(Calendar.DAY_OF_MONTH);
 
-		int	monthY = calendar.get(calendar.MONTH)+1;
+		int	monthY = calendar.get(Calendar.MONTH)+1;
 
-		int	year = calendar.get(calendar.YEAR)+000;
+		int	year = calendar.get(Calendar.YEAR)+000;
 
 
 
@@ -468,11 +469,11 @@ private PoolManager poolMgr;
 
 
 
-		int	dayM = calendar.get(calendar.DAY_OF_MONTH);
+		int	dayM = calendar.get(Calendar.DAY_OF_MONTH);
 
-		int	monthY = calendar.get(calendar.MONTH)+1;
+		int	monthY = calendar.get(Calendar.MONTH)+1;
 
-		int	year = calendar.get(calendar.YEAR)+000;
+		int	year = calendar.get(Calendar.YEAR)+000;
 
 
 
@@ -496,7 +497,7 @@ private PoolManager poolMgr;
 
 
 
-		int month = calendar.get(calendar.MONTH)+1;
+		int month = calendar.get(Calendar.MONTH)+1;
 
 
 
@@ -514,7 +515,7 @@ private PoolManager poolMgr;
 
 
 
-		int day = calendar.get(calendar.DAY_OF_MONTH);
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
 
 
 
@@ -532,7 +533,7 @@ private PoolManager poolMgr;
 
 
 
-		int year = calendar.get(calendar.YEAR);
+		int year = calendar.get(Calendar.YEAR);
 
 
 
@@ -604,11 +605,11 @@ private PoolManager poolMgr;
 
 
 
-		int	dayM = calendar.get(calendar.DAY_OF_MONTH);
+		int	dayM = calendar.get(Calendar.DAY_OF_MONTH);
 
-		int	monthY = calendar.get(calendar.MONTH)+1;
+		int	monthY = calendar.get(Calendar.MONTH)+1;
 
-		int	year = calendar.get(calendar.YEAR)+000;
+		int	year = calendar.get(Calendar.YEAR)+000;
 
 
 

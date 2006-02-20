@@ -39,7 +39,7 @@ public class CacheableEntityBMPBean extends com.idega.data.GenericEntity impleme
   public void insert()throws SQLException{
     super.insert();
     cacheEntity();/**@todo this should not happen all the time*/
-    IWMainApplication.getIWCacheManager().insertIntoCachedTable(this);
+    IWMainApplication.getDefaultIWMainApplication().getIWCacheManager().insertIntoCachedTable(this);
   }
 
   /**
@@ -48,7 +48,7 @@ public class CacheableEntityBMPBean extends com.idega.data.GenericEntity impleme
   public void delete()throws SQLException{
     cacheEntity();
     super.delete();
-    IWMainApplication.getIWCacheManager().deleteFromCachedTable(this);
+    IWMainApplication.getDefaultIWMainApplication().getIWCacheManager().deleteFromCachedTable(this);
   }
 
   /**
@@ -57,7 +57,7 @@ public class CacheableEntityBMPBean extends com.idega.data.GenericEntity impleme
   public void update()throws SQLException{
     cacheEntity();
     super.update();
-    IWMainApplication.getIWCacheManager().updateFromCachedTable(this);
+    IWMainApplication.getDefaultIWMainApplication().getIWCacheManager().updateFromCachedTable(this);
   }
 
   /**
@@ -70,13 +70,13 @@ public class CacheableEntityBMPBean extends com.idega.data.GenericEntity impleme
   *and cacheTable(IDOLegacyEntity entity, String columnNameForKey,String columnNameForSecondKey)
   */
   public void cacheEntity(){
-    IWMainApplication.getIWCacheManager().cacheTable(this,getCacheKey());
+    IWMainApplication.getDefaultIWMainApplication().getIWCacheManager().cacheTable(this,getCacheKey());
     //IWMainApplication.getIWCacheManager().cacheTable(this,key1);
     //IWMainApplication.getIWCacheManager().cacheTable(this,key1,key2);
   }
 
   public void cacheEntityByID(){
-    IWMainApplication.getIWCacheManager().cacheTable(this,getIDColumnName());
+    IWMainApplication.getDefaultIWMainApplication().getIWCacheManager().cacheTable(this,getIDColumnName());
   }
 
   public String getCacheKey(){

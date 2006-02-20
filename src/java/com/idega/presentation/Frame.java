@@ -198,7 +198,7 @@ import com.idega.idegaweb.*;
     }
 
     public void setSpanAdaptive(){
-      setMarkupAttribute(ROWS_PROPERTY,this.star);
+      setMarkupAttribute(ROWS_PROPERTY,Frame.star);
     }
 
     private String getSpan(){

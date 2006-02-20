@@ -85,14 +85,14 @@ public class ICMimeTypeBMPBean extends com.idega.data.CacheableEntityBMPBean imp
   */
   public void insert()throws SQLException{
     super.insert();
-    IWMainApplication.getIWCacheManager().cacheEntity(IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileType.class,Integer.toString(getFileTypeID())),getMimeType());
+    IWMainApplication.getDefaultIWMainApplication().getIWCacheManager().cacheEntity(IWMainApplication.getDefaultIWMainApplication().getIWCacheManager().getFromCachedTable(ICFileType.class,Integer.toString(getFileTypeID())),getMimeType());
   }
 
   /**
   *deletes this entity as a record in the datastore and cache
   */
   public void delete()throws SQLException{
-    IWMainApplication.getIWCacheManager().removeCachedEntity(getMimeType());
+    IWMainApplication.getDefaultIWMainApplication().getIWCacheManager().removeCachedEntity(getMimeType());
     super.delete();
   }
 
@@ -100,9 +100,9 @@ public class ICMimeTypeBMPBean extends com.idega.data.CacheableEntityBMPBean imp
   *updates this entity as a record in the datastore and cache
   */
   public void update()throws SQLException{
-    IWMainApplication.getIWCacheManager().removeCachedEntity(getMimeType());
+    IWMainApplication.getDefaultIWMainApplication().getIWCacheManager().removeCachedEntity(getMimeType());
     super.update();
-    IWMainApplication.getIWCacheManager().cacheEntity(IWMainApplication.getIWCacheManager().getFromCachedTable(ICFileType.class,Integer.toString(getFileTypeID())) ,getMimeType());
+    IWMainApplication.getDefaultIWMainApplication().getIWCacheManager().cacheEntity(IWMainApplication.getDefaultIWMainApplication().getIWCacheManager().getFromCachedTable(ICFileType.class,Integer.toString(getFileTypeID())) ,getMimeType());
   }
 
   public Class getPrimaryKeyClass(){

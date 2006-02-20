@@ -8,10 +8,8 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-
 import com.idega.core.data.ICApplicationBinding;
 import com.idega.core.data.ICApplicationBindingHome;
 import com.idega.core.localisation.data.ICLocale;
@@ -33,7 +31,6 @@ import com.idega.data.TreeableEntityBMPBean;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWCacheManager;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.serialization.ObjectReader;
 import com.idega.io.serialization.ObjectWriter;
 import com.idega.io.serialization.Storable;
@@ -373,7 +370,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 			IWContext iwc = IWContext.getInstance();
 			setDeletedByUserId(iwc.getUserId());
 			if (setICRootAsParent) {
-				IWCacheManager cm = IWMainApplication.getIWCacheManager();
+				IWCacheManager cm = iwc.getIWMainApplication().getIWCacheManager();
 				ICFile parent = (ICFile)cm.getCachedEntity(com.idega.core.file.data.ICFileBMPBean.IC_ROOT_FOLDER_CACHE_KEY);
 				if (parent != null)
 					parent.addChild(this);

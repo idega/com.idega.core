@@ -1,5 +1,5 @@
 /*
- * $Id: Block.java,v 1.73 2006/02/17 16:11:22 laddi Exp $
+ * $Id: Block.java,v 1.74 2006/02/20 11:04:34 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -36,10 +36,10 @@ import com.idega.presentation.text.Text;
  * their functionality is done with the main() method in old style idegaWeb.
  * This class has functionality regarding caching and how the main method is processed in JSF.
  * 
- * Last modified: $Date: 2006/02/17 16:11:22 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/20 11:04:34 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.73 $
+ * @version $Revision: 1.74 $
  */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
@@ -299,7 +299,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 
 		if (getStyleNames() != null) {
 			String prefix = getBundle(this.getIWUserContext()).getBundleName();
-			if (prefix != this.IW_CORE_BUNDLE_IDENTIFIER)
+			if (prefix != Builderaware.IW_CORE_BUNDLE_IDENTIFIER)
 				prefix = prefix.substring(prefix.lastIndexOf(".") + 1) + "_";
 
 			Map styles = getStyleNames();
@@ -417,7 +417,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	private String getStyleName(String styleName, boolean isLink){
 		if ( getIWUserContext() != null ) {
 			String prefix = getBundle(getIWUserContext()).getBundleName();
-			if (prefix != this.IW_CORE_BUNDLE_IDENTIFIER) {
+			if (prefix != Builderaware.IW_CORE_BUNDLE_IDENTIFIER) {
 				prefix = prefix.substring(prefix.lastIndexOf(".") + 1) + "_";
 				styleName = prefix+styleName;
 			}

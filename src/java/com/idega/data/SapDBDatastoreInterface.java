@@ -429,7 +429,7 @@ public class SapDBDatastoreInterface extends DatastoreInterface {
 	public void setNumberGeneratorValue(GenericEntity entity, int value) {
 		//throw new RuntimeException("setSequenceValue() not implemented for "+this.getClass().getName());
 		//String statement = "update sequences set last_number="+value+" where sequence_name='"+this.getSequenceName(entity)+"'";
-		String statement = "drop sequence " + this.getSequenceName(entity);
+		String statement = "drop sequence " + SapDBDatastoreInterface.getSequenceName(entity);
 		try {
 			this.executeUpdate(entity, statement);
 			this.createSequence(entity, value + 1);

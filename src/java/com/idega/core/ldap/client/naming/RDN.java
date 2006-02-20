@@ -254,7 +254,7 @@ public class RDN
             System.out.println("element-s 0: " + ldapEscapedRDN);
         }
 
-        Thread.currentThread().dumpStack();
+        Thread.dumpStack();
 
     }
 
@@ -366,7 +366,7 @@ public class RDN
 if (debug)
 {
     System.out.println("Debug = " + debug);
-    Thread.currentThread().dumpStack();
+    Thread.dumpStack();
     System.out.println(" % RDN -> found attribute as '" + element.substring(0,pos) + "'");
 }
 

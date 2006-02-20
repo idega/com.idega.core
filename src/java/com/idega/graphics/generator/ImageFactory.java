@@ -69,10 +69,10 @@ public class ImageFactory implements Singleton {
 		//images = new HashMap();
 		generatedCache = new HashMap();
 		//if (!shutdown) {
-		String folderPath = coreBundle.getResourcesRealPath() + FileUtil.getFileSeparator() + iwma.CORE_BUNDLE_FONT_FOLDER_NAME + FileUtil.getFileSeparator();
+		String folderPath = coreBundle.getResourcesRealPath() + FileUtil.getFileSeparator() + IWMainApplication.CORE_BUNDLE_FONT_FOLDER_NAME + FileUtil.getFileSeparator();
 		try {
 			//System.out.println(folderPath+iwma.CORE_DEFAULT_FONT);
-			File file = new File(folderPath + iwma.CORE_DEFAULT_FONT);
+			File file = new File(folderPath + IWMainApplication.CORE_DEFAULT_FONT);
 			FileInputStream fis = new FileInputStream(file);
 
 			fontbase = Font.createFont(Font.TRUETYPE_FONT, fis);

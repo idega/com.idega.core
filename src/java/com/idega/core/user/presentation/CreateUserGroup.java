@@ -189,9 +189,9 @@ public class CreateUserGroup extends Window {
 
     GenericGroup newGroup;
 
-    String name = iwc.getParameter(this.groupNameFieldParameterName);
-    String description = iwc.getParameter(this.descriptionFieldParameterName);
-    String type = iwc.getParameter(this.groupTypeFieldParameterName);
+    String name = iwc.getParameter(CreateUserGroup.groupNameFieldParameterName);
+    String description = iwc.getParameter(CreateUserGroup.descriptionFieldParameterName);
+    String type = iwc.getParameter(CreateUserGroup.groupTypeFieldParameterName);
 
     if(type == null){
       throw new Exception("no group_type selected");

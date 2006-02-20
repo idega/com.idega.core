@@ -578,11 +578,11 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 			"select * from "
 				+ this.getEntityName()
 				+ " where "
-				+ this.getGroupTypeColumnName()
+				+ GenericGroupBMPBean.getGroupTypeColumnName()
 				+ " = '"
 				+ this.getGroupType()
 				+ "' and "
-				+ this.getNameColumnName()
+				+ GenericGroupBMPBean.getNameColumnName()
 				+ " = '"
 				+ this.getName()
 				+ "'",

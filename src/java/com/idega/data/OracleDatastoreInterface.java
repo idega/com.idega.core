@@ -243,7 +243,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	}
 
 	public void setNumberGeneratorValue(GenericEntity entity, int value) {
-		String statement = "drop sequence " + this.getSequenceName(entity);
+		String statement = "drop sequence " + OracleDatastoreInterface.getSequenceName(entity);
 		try {
 			this.executeUpdate(entity, statement);
 			this.createSequence(entity, value + 1);

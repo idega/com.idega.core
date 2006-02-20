@@ -1,6 +1,7 @@
 package com.idega.core.user.data;
 
 import java.sql.SQLException;
+import com.idega.data.GenericEntity;
 
 
 /**
@@ -72,6 +73,6 @@ public class GenderBMPBean extends com.idega.data.GenericEntity implements com.i
   }
 
   public Gender getStaticInstance(){
-    return (Gender)this.getStaticInstance(Gender.class);
+    return (Gender)GenericEntity.getStaticInstance(Gender.class);
   }
 }

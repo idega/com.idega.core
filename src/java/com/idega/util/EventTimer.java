@@ -65,11 +65,11 @@ public class EventTimer implements Runnable{
     while (runThread) {
       try {
       	if (intervalToSleepOnStart!=0) {
-      		t.sleep(intervalToSleepOnStart);
+      		Thread.sleep(intervalToSleepOnStart);
       		intervalToSleepOnStart=0;
       	}
         if (listener != null) listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, actionCommand));
-        t.sleep(interval);
+        Thread.sleep(interval);
       }
       catch (Exception e) {
       	if (runThread)
@@ -97,7 +97,7 @@ public class EventTimer implements Runnable{
     		//a new thread must be created here because it was null or 
 		//we went out of the run() method. When run is finished the thread is considered dead and cannot be restarted
       t = new Thread(this,"com.idega.util.EventTimer thread");
-      t.setPriority(t.MIN_PRIORITY);
+      t.setPriority(Thread.MIN_PRIORITY);
       t.start();
     }
   }

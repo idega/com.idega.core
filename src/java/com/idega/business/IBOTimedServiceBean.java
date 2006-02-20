@@ -90,7 +90,7 @@ public abstract class IBOTimedServiceBean extends IBOServiceBean implements Runn
     while(thread == thisThread){
 
       try{
-        thread.sleep(getTimeUntilNextRun());
+        Thread.sleep(getTimeUntilNextRun());
         executeTimedService();
       }
       catch(InterruptedException ignored){

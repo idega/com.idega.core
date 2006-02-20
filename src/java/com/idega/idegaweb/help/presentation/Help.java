@@ -1,5 +1,5 @@
 /*
- * $Id: Help.java,v 1.4 2005/06/23 18:16:20 gummi Exp $
+ * $Id: Help.java,v 1.5 2006/02/20 11:04:35 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -74,18 +74,18 @@ public class Help extends Block {
 			if (_helpLink.isImage()) {
 				if (!_helpLink.isLabelSet()) {
 					image = _iwrbCore.getImage(DEFAULT_HELP_IMAGE);
-					image.setAlignment(image.ALIGNMENT_ABSOLUTE_MIDDLE);
+					image.setAlignment(Image.ALIGNMENT_ABSOLUTE_MIDDLE);
 					_helpLink.setImage(image);
 				}
 			}
 			else {
 				if(image != null) {
-					image.setAlignment(image.ALIGNMENT_ABSOLUTE_MIDDLE);
+					image.setAlignment(Image.ALIGNMENT_ABSOLUTE_MIDDLE);
 					_helpLink.setImage(image);
 				}
 				else {
 					image = _iwrbCore.getImage(DEFAULT_HELP_IMAGE);
-					image.setAlignment(image.ALIGNMENT_ABSOLUTE_MIDDLE);
+					image.setAlignment(Image.ALIGNMENT_ABSOLUTE_MIDDLE);
 					_helpLink.setImage(image);
 				}
 			}			

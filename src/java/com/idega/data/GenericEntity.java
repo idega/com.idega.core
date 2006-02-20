@@ -146,7 +146,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 			//First store a static instance of this class
 			try {
-				getIDOContainer().getEntityStaticInstances().put(this.getClass(), this.instanciateEntity(this.getClass(), getDatasource()));
+				getIDOContainer().getEntityStaticInstances().put(this.getClass(), GenericEntity.instanciateEntity(this.getClass(), getDatasource()));
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -1795,7 +1795,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		buffer.append("=");
 		buffer.append("e." + entityIDColumnName);
 
-		primaryValue = this.getKeyValueSQLString(entity.getPrimaryKey());
+		primaryValue = GenericEntity.getKeyValueSQLString(entity.getPrimaryKey());
 
 		if (isColumnValueNotEmpty(primaryValue)) {
 			buffer.append(" and ");
@@ -1845,7 +1845,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		buffer.append("=");
 		buffer.append("e." + this.getIDColumnName());
 
-		primaryValue = this.getKeyValueSQLString(entity.getPrimaryKey());
+		primaryValue = GenericEntity.getKeyValueSQLString(entity.getPrimaryKey());
 
 		try {
 			if (isColumnValueNotEmpty(primaryValue)) {
@@ -4204,8 +4204,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		final String metadataIdColumnName;
 		final String metadataTableName = metadata.getEntityDefinition().getSQLTableName();
 		final String primaryColumnName = getIDColumnName();
-		final String keyColumn = ((MetaDataBMPBean)metadata).COLUMN_META_KEY;
-		final String valueColumn = ((MetaDataBMPBean)metadata).COLUMN_META_VALUE;
+		final String keyColumn = MetaDataBMPBean.COLUMN_META_KEY;
+		final String valueColumn = MetaDataBMPBean.COLUMN_META_VALUE;
 
 		try {
 			metadataIdColumnName = metadata.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();

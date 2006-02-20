@@ -1249,8 +1249,8 @@ public class IDOQuery implements Cloneable {
 	 * @return
 	 */
 	public IDOQuery appendOverlapPeriod(String validFromColumnName,String validToColumnName,Date start,Date end){
-		String before = this.LESS_THAN_OR_EQUAL_SIGN;
-		String after = this.GREATER_THAN_OR_EQUAL_SIGN;
+		String before = IDOQuery.LESS_THAN_OR_EQUAL_SIGN;
+		String after = IDOQuery.GREATER_THAN_OR_EQUAL_SIGN;
 		/*
 		 * 1) starts before selected period, but end within
 		 	2) start  before selected period, but end afterwards
@@ -1327,7 +1327,7 @@ public class IDOQuery implements Cloneable {
 			int index = queryInUpperCase.indexOf(" FROM ");
 
 			if (index > 0) {
-				_buffer.replace(0, index, this.SELECT_COUNT);
+				_buffer.replace(0, index, IDOQuery.SELECT_COUNT);
 
 			}
 

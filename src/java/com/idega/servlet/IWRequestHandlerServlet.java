@@ -139,7 +139,7 @@ public class IWRequestHandlerServlet extends IWCoreServlet {
 	}
 	protected void processNotFoundRequest(HttpServletRequest servReq, HttpServletResponse servRes)
 		throws ServletException, IOException {
-		servRes.sendError(servRes.SC_NOT_FOUND);
+		servRes.sendError(HttpServletResponse.SC_NOT_FOUND);
 	}
 	protected void processIdegaWebApplicationsRequest(HttpServletRequest servReq, HttpServletResponse servRes)
 		throws ServletException, IOException {

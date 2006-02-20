@@ -38,8 +38,8 @@ public class IDODependencyList {
 
   public void addEntityClass(Class startingEntityClass){
     if(startingEntityClass!=null){
-      Class interfaceClass = this.getInterfaceClassForClass(startingEntityClass);
-      if(!this.listContainsClass(getStartClasses(),interfaceClass)){
+      Class interfaceClass = IDODependencyList.getInterfaceClassForClass(startingEntityClass);
+      if(!IDODependencyList.listContainsClass(getStartClasses(),interfaceClass)){
         this.getStartClasses().add(interfaceClass);
       }
     }

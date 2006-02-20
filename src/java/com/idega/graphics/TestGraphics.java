@@ -1,5 +1,5 @@
 /*
- * $Id: TestGraphics.java,v 1.6 2002/11/27 19:15:29 tryggvil Exp $
+ * $Id: TestGraphics.java,v 1.7 2006/02/20 11:04:35 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -23,7 +23,7 @@ public class TestGraphics {
     TestGraphics testGraphics = new TestGraphics();
     testGraphics.invokedStandalone = true;
 
-    testGraphics.test();
+    TestGraphics.test();
   }
   private boolean invokedStandalone = false;
 

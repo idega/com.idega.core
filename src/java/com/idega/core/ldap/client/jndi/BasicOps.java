@@ -128,13 +128,13 @@ public class BasicOps
 
         // general default parameters
         log.log(Level.FINER,"connection protocol = " + connectionData.protocol);
-        if (connectionData.protocol == connectionData.LDAP)
+        if (connectionData.protocol == ConnectionData.LDAP)
         {
             env.put(Context.INITIAL_CONTEXT_FACTORY, DEFAULT_CTX);
             //TE: Set the property to keep RDN
             env.put("java.naming.ldap.deleteRDN", "false");
         }
-        else if (connectionData.protocol == connectionData.DSML)
+        else if (connectionData.protocol == ConnectionData.DSML)
         {
             //TE: Set the property to keep RDN
             env.put("java.naming.ldap.deleteRDN", "false");

@@ -414,7 +414,7 @@ public class AccessControllerApp extends IWApplication {
             right.selectAllOnSubmit();
 
 
-          Map hash = (Map)iwc.getSessionAttribute(this.SessionAddressPermissionMap);
+          Map hash = (Map)iwc.getSessionAttribute(IBPermissionFrame.SessionAddressPermissionMap);
           List directGroups = null;
           if(hash != null && hash.get(permissionType)!=null){
             directGroups = UserGroupBusiness.getGroups((String[])hash.get(permissionType));

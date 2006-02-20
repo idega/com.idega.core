@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.163 2006/02/19 15:58:58 laddi Exp $
+ * $Id: Link.java,v 1.164 2006/02/20 11:04:34 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2063,7 +2063,7 @@ public void setWindowToOpen(String className) {
 	}
 
 	public boolean isText() {
-		if (this._objectType == this.OBJECT_TYPE_TEXT) {
+		if (this._objectType == Link.OBJECT_TYPE_TEXT) {
 			if (_obj != null) {
 				if (_obj instanceof Text) {
 					return true;

@@ -222,11 +222,11 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 	}
 
 	public void setGroupTypeAsGeneralGroup() {
-		setType(this.TYPE_GENERAL_GROUP);
+		setType(GroupTypeBMPBean.TYPE_GENERAL_GROUP);
 	}
 
 	public void setGroupTypeAsPermissionGroup() {
-		setType(this.TYPE_PERMISSION_GROUP);
+		setType(GroupTypeBMPBean.TYPE_PERMISSION_GROUP);
 	}
 
 	public void setGroupTypeAsAliasGroup() {
@@ -275,7 +275,7 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 		query.append(getEntityName());
 		query.appendWhere(COLUMN_IS_VISIBLE);
 		query.appendNOTEqual();
-		query.appendWithinSingleQuotes(super.COLUMN_VALUE_FALSE);
+		query.appendWithinSingleQuotes(COLUMN_VALUE_FALSE);
 		query.appendOrderBy(this.getIDColumnName());
 		// System.out.println("[GroupTypeBMPBean](ejbFindVisibleGroupTypes):
 		// "+query.toString());
@@ -294,7 +294,7 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 		query.append(getEntityName());
 		query.appendWhere(COLUMN_IS_VISIBLE);
 		query.appendNOTEqual();
-		query.appendWithinSingleQuotes(super.COLUMN_VALUE_FALSE);
+		query.appendWithinSingleQuotes(COLUMN_VALUE_FALSE);
 		// System.out.println("[GroupTypeBMPBean](ejbHomeGetNumberOfVisibleGroupTypes):
 		// "+query.toString());
 		return this.idoGetNumberOfRecords(query.toString());
@@ -309,7 +309,7 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 		query.append(getEntityName());
 		query.appendWhere(COLUMN_IS_VISIBLE);
 		query.appendNOTEqual();
-		query.appendWithinSingleQuotes(super.COLUMN_VALUE_FALSE);
+		query.appendWithinSingleQuotes(COLUMN_VALUE_FALSE);
 		return query.toString();
 	}
 

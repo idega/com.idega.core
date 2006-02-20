@@ -1,9 +1,8 @@
 package com.idega.util.text;
 
 import java.sql.Date;
-import java.util.GregorianCalendar;
+import java.util.Calendar;
 import java.util.Locale;
-
 import com.idega.util.IWTimestamp;
 
 /**
@@ -38,7 +37,7 @@ public class SocialSecurityNumber {
 	}
 
 	public static int getAge(String socialSecurityNumber) {
-		int thisYear = new GregorianCalendar().YEAR;
+		int thisYear = Calendar.YEAR;
 		int age;
 		int year = Integer.parseInt(socialSecurityNumber.substring(4, 6));
 		if (socialSecurityNumber.length() == 10) {

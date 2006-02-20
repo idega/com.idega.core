@@ -115,7 +115,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
 			Stmt.executeUpdate(
-					"create table " + this.getInformixSequenceTableName(entity) + "(" + entity.getIDColumnName() + " serial)");
+					"create table " + InformixDatastoreInterface.getInformixSequenceTableName(entity) + "(" + entity.getIDColumnName() + " serial)");
 		}
 		finally {
 			if (Stmt != null) {
@@ -140,7 +140,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 		try {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			Stmt.executeUpdate("drop table " + this.getInformixSequenceTableName(entity));
+			Stmt.executeUpdate("drop table " + InformixDatastoreInterface.getInformixSequenceTableName(entity));
 		}
 		finally {
 			if (Stmt != null) {
@@ -227,7 +227,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 	**/
 	public int createUniqueID(GenericEntity entity) throws Exception {
 		int returnInt = -1;
-		String query = "insert into " + this.getInformixSequenceTableName(entity) + "(" + entity.getIDColumnName() + ") values (0)";
+		String query = "insert into " + InformixDatastoreInterface.getInformixSequenceTableName(entity) + "(" + entity.getIDColumnName() + ") values (0)";
 		Connection conn = null;
 		Statement stmt = null;
 		try {

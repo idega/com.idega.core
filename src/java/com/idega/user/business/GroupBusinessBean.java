@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.102 2005/11/29 15:30:04 laddi Exp $
+ * $Id: GroupBusinessBean.java,v 1.103 2006/02/20 11:04:35 laddi Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -78,10 +78,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Groups.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2005/11/29 15:30:04 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/20 11:04:35 $ by $Author: laddi $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.102 $
+ * @version $Revision: 1.103 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -1983,7 +1983,7 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
 	                          access.setPermission(
 	                                  AccessController.CATEGORY_GROUP_ID, this.getIWApplicationContext(),
 	                                  primaryGroupId, groupId,
-	                                  access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
+	                                  AccessController.PERMISSION_KEY_PERMIT, Boolean.TRUE);
 	                      } catch (Exception e) {
 	                          e.printStackTrace();
 	                      }
@@ -2058,23 +2058,23 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
           //create permission
           access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
-                  access.PERMISSION_KEY_CREATE, Boolean.TRUE);
+                  AccessController.PERMISSION_KEY_CREATE, Boolean.TRUE);
           //edit permission
           access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
-                  access.PERMISSION_KEY_EDIT, Boolean.TRUE);
+                  AccessController.PERMISSION_KEY_EDIT, Boolean.TRUE);
           //delete permission
           access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
-                  access.PERMISSION_KEY_DELETE, Boolean.TRUE);
+                  AccessController.PERMISSION_KEY_DELETE, Boolean.TRUE);
           //view permission
           access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
-                  access.PERMISSION_KEY_VIEW, Boolean.TRUE);
+                  AccessController.PERMISSION_KEY_VIEW, Boolean.TRUE);
           //permission to give other permission
           access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
-                  access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
+                  AccessController.PERMISSION_KEY_PERMIT, Boolean.TRUE);
       } catch (Exception ex) {
           ex.printStackTrace();
       }
@@ -2265,10 +2265,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/11/29 15:30:04 $ by $Author: laddi $
+	 *  Last modified: $Date: 2006/02/20 11:04:35 $ by $Author: laddi $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.102 $
+	 * @version $Revision: 1.103 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		

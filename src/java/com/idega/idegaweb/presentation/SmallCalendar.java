@@ -2,6 +2,7 @@ package com.idega.idegaweb.presentation;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -735,7 +736,7 @@ public class SmallCalendar extends Block {
 			x = 7;
 			--y;
 		}
-		if (dayOfWeek == cal.getCalendar().SUNDAY && firstDayOfWeek != cal.getCalendar().SUNDAY) {
+		if (dayOfWeek == Calendar.SUNDAY && firstDayOfWeek != Calendar.SUNDAY) {
 			y++;
 		}
 

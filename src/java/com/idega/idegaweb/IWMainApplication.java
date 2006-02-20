@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.164 2006/02/17 09:24:22 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.165 2006/02/20 11:04:35 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -89,10 +89,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/02/17 09:24:22 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/20 11:04:35 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.164 $
+ * @version $Revision: 1.165 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1140,7 +1140,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     // this is not multi domain safe
-    public static IWCacheManager getIWCacheManager() {
+    public IWCacheManager getIWCacheManager() {
         return cacheManager;
     }
 

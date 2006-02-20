@@ -296,7 +296,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return ((Timestamp)getColumnValue(COLUMN_CREATED));
 	}
 	public void setCreated(Timestamp created) {
-		setColumn(this.COLUMN_CREATED, created);
+		setColumn(GroupBMPBean.COLUMN_CREATED, created);
 	}
 	public int getHomePageID() {
 		return getIntColumnValue(getColumnNameHomePageID());
@@ -500,14 +500,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public void ejbPostCreateGroup() throws CreateException {
 	}
 	public Collection ejbFindGroupsByName(String name) throws FinderException {
-		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "'");
+		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + GroupBMPBean.getNameColumnName() + " = '" + name + "'");
 	}
 	
 	public Collection ejbFindGroupsByNameAndGroupTypes(String name, Collection groupTypes, boolean onlyReturnTypesInCollection) throws FinderException {
 		//String groupTypeValue = null;
 		String notString = null;
 		IDOQuery query = idoQuery();
-		query.append("select * from " + this.getEntityName() + " where " + this.getNameColumnName() + " = '" + name + "' and "+ this.getGroupTypeColumnName());
+		query.append("select * from " + this.getEntityName() + " where " + GroupBMPBean.getNameColumnName() + " = '" + name + "' and "+ GroupBMPBean.getGroupTypeColumnName());
 		if (groupTypes != null && groupTypes.size() == 1) {
 		    notString = onlyReturnTypesInCollection?" ":" !";
 		    query.append(notString + "= '" + groupTypes.iterator().next() + "'");
@@ -520,7 +520,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	public Collection ejbFindGroupsByGroupTypeAndLikeName(String groupType, String partOfGroupName) throws FinderException {
-		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + this.getGroupTypeColumnName() + " = '" + groupType + "' and "+ this.getNameColumnName() + " like '" + partOfGroupName + "' order by "+this.getNameColumnName());
+		return this.idoFindPKsBySQL("select * from " + this.getEntityName() + " where " + GroupBMPBean.getGroupTypeColumnName() + " = '" + groupType + "' and "+ GroupBMPBean.getNameColumnName() + " like '" + partOfGroupName + "' order by "+GroupBMPBean.getNameColumnName());
 	}
 	
 	public Collection ejbFindGroupsByAbbreviation(String abbreviation) throws FinderException {
@@ -684,7 +684,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 		
 		query.addCriteria(theCriteria);
-		query.addOrder(idoQueryTable(),this.COLUMN_NAME,true);
+		query.addOrder(idoQueryTable(),GroupBMPBean.COLUMN_NAME,true);
 		
 		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
 		//return idoFindPKsBySQL(query.toString());
@@ -720,7 +720,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		if (groupTypes != null && !groupTypes.isEmpty()) {
 			IDOQuery query = idoQuery();
 			query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
-			query.appendWhere(this.COLUMN_GROUP_TYPE);
+			query.appendWhere(GroupBMPBean.COLUMN_GROUP_TYPE);
 			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
 			if (returnTypes) {
@@ -730,7 +730,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 				query.appendNotIn(subQuery);
 			}
 			query.appendAnd();
-			query.append(this.COLUMN_GROUP_ID);
+			query.append(GroupBMPBean.COLUMN_GROUP_ID);
 			query.appendIn(relatedSQL);
 			return this.idoGetNumberOfRecords(query.toString());
 		}
@@ -746,10 +746,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 		IDOQuery query = idoQuery();
 		query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
-		query.appendWhere(this.COLUMN_GROUP_TYPE);
+		query.appendWhere(GroupBMPBean.COLUMN_GROUP_TYPE);
 		query.appendIn(visibleGroupTypes);
 		query.appendAnd();
-		query.append(this.COLUMN_GROUP_ID);
+		query.append(GroupBMPBean.COLUMN_GROUP_ID);
 		query.appendIn(relatedSQL);
 		return this.idoGetNumberOfRecords(query.toString());
 
@@ -761,7 +761,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		if (groupTypes != null && !groupTypes.isEmpty()) {
 			IDOQuery query = idoQuery();
 			query.appendSelectAllFrom(this.getEntityName());
-			query.appendWhere(this.COLUMN_GROUP_TYPE);
+			query.appendWhere(GroupBMPBean.COLUMN_GROUP_TYPE);
 			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
 			if (returnTypes) {
@@ -771,9 +771,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 				query.appendNotIn(subQuery);
 			}
 			query.appendAnd();
-			query.append(this.COLUMN_GROUP_ID);
+			query.append(GroupBMPBean.COLUMN_GROUP_ID);
 			query.appendIn(relationsSQL);
-			query.appendOrderBy(this.COLUMN_NAME);
+			query.appendOrderBy(GroupBMPBean.COLUMN_NAME);
 			//      System.out.println("[GroupBMPBean](ejbFindGroupsContained): "+query.toString());
 			return this.idoFindPKsBySQL(query.toString());
 		}
@@ -787,7 +787,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		if (groupTypes != null && !groupTypes.isEmpty()) {
 			IDOQuery query = idoQuery();
 			query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
-			query.appendWhere(this.COLUMN_GROUP_TYPE);
+			query.appendWhere(GroupBMPBean.COLUMN_GROUP_TYPE);
 			IDOQuery subQuery = idoQuery();
 			subQuery.appendCommaDelimitedWithinSingleQuotes(groupTypes);
 			if (returnTypes) {
@@ -797,7 +797,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 				query.appendNotIn(subQuery);
 			}
 			query.appendAnd();
-			query.append(this.COLUMN_GROUP_ID);
+			query.append(GroupBMPBean.COLUMN_GROUP_ID);
 			query.appendIn(relationsSQL);
 			//      System.out.println("[GroupBMPBean](ejbHomeGetNumberOfGroupsContained): "+query.toString());
 			return this.idoGetNumberOfRecords(query.toString());
@@ -814,10 +814,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 		IDOQuery query = idoQuery();
 		query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
-		query.appendWhere(this.COLUMN_GROUP_TYPE);
+		query.appendWhere(GroupBMPBean.COLUMN_GROUP_TYPE);
 		query.appendIn(visibleGroupTypes);
 		query.appendAnd();
-		query.append(this.COLUMN_GROUP_ID);
+		query.append(GroupBMPBean.COLUMN_GROUP_ID);
 		query.appendIn(relatedSQL);
 		return this.idoGetNumberOfRecords(query.toString());
 
@@ -829,12 +829,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 		IDOQuery query = idoQuery();
 		query.appendSelectAllFrom(this.getEntityName());
-		query.appendWhere(this.COLUMN_GROUP_TYPE);
+		query.appendWhere(GroupBMPBean.COLUMN_GROUP_TYPE);
 		query.appendIn(visibleGroupTypes);
 		query.appendAnd();
-		query.append(this.COLUMN_GROUP_ID);
+		query.append(GroupBMPBean.COLUMN_GROUP_ID);
 		query.appendIn(relationsSQL);
-		query.appendOrderBy(this.COLUMN_NAME);
+		query.appendOrderBy(GroupBMPBean.COLUMN_NAME);
 
 		return this.idoFindPKsBySQL(query.toString());
 	}
@@ -1491,7 +1491,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	public Integer ejbFindSystemUsersGroup() throws FinderException {
-		return new Integer(this.GROUP_ID_USERS);
+		return new Integer(GroupBMPBean.GROUP_ID_USERS);
 	}
 
 	private GroupTypeHome getGroupTypeHome() {
@@ -1592,7 +1592,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		 * @todo: Change implementation this first part may not be needed. (Eiki,gummi)
 		 *
 		 */
-		if (this.getID() == this.GROUP_ID_USERS) {
+		if (this.getID() == GroupBMPBean.GROUP_ID_USERS) {
 			//      String[] groupTypes = {"ic_user_representative"};
 			try {
 				String[] groupTypes = new String[1];
@@ -1619,7 +1619,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 	public int getChildCount() {
-		if (this.getID() == this.GROUP_ID_USERS) {
+		if (this.getID() == GroupBMPBean.GROUP_ID_USERS) {
 			try {
 				String[] groupTypes = new String[1];
 				groupTypes[0] = ((GroupHome)IDOLookup.getHome(User.class)).getGroupType();

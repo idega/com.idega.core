@@ -1,5 +1,6 @@
 package com.idega.util;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -30,12 +31,12 @@ public class Age {
 	 */
 	public int getYears() {
 		GregorianCalendar now = new GregorianCalendar();
-		int yearAge = now.get(now.YEAR) - startDate.get(startDate.YEAR);
-		if (now.get(now.MONTH) < startDate.get(startDate.MONTH)) {
+		int yearAge = now.get(Calendar.YEAR) - startDate.get(Calendar.YEAR);
+		if (now.get(Calendar.MONTH) < startDate.get(Calendar.MONTH)) {
 			yearAge--;
-		} else if (now.get(now.MONTH) == startDate.get(startDate.MONTH)) {
-			if (now.get(now.DAY_OF_MONTH) < startDate
-					.get(startDate.DAY_OF_MONTH)) {
+		} else if (now.get(Calendar.MONTH) == startDate.get(Calendar.MONTH)) {
+			if (now.get(Calendar.DAY_OF_MONTH) < startDate
+					.get(Calendar.DAY_OF_MONTH)) {
 				yearAge--;
 			}
 		}
@@ -49,12 +50,12 @@ public class Age {
 	public int getYears(Date date) {
 		IWTimestamp stamp = new IWTimestamp(date);
 		GregorianCalendar now = new GregorianCalendar(stamp.getYear(), stamp.getMonth(), stamp.getDay());
-		int yearAge = now.get(now.YEAR) - startDate.get(startDate.YEAR);
-		if (now.get(now.MONTH) < startDate.get(startDate.MONTH)) {
+		int yearAge = now.get(Calendar.YEAR) - startDate.get(Calendar.YEAR);
+		if (now.get(Calendar.MONTH) < startDate.get(Calendar.MONTH)) {
 			yearAge--;
-		} else if (now.get(now.MONTH) == startDate.get(startDate.MONTH)) {
-			if (now.get(now.DAY_OF_MONTH) < startDate
-					.get(startDate.DAY_OF_MONTH)) {
+		} else if (now.get(Calendar.MONTH) == startDate.get(Calendar.MONTH)) {
+			if (now.get(Calendar.DAY_OF_MONTH) < startDate
+					.get(Calendar.DAY_OF_MONTH)) {
 				yearAge--;
 			}
 		}

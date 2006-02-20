@@ -262,7 +262,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	}
 
 	public AddressType ejbHomeGetAddressType1() throws RemoteException {
-		if (this.type1 == null) {
+		if (AddressBMPBean.type1 == null) {
 			try {
 				type1 = getAddressTypeHome().findAddressType1();
 			}
@@ -276,7 +276,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	}
 
 	public AddressType ejbHomeGetAddressType2() throws RemoteException {
-		if (this.type2 == null) {
+		if (AddressBMPBean.type2 == null) {
 			try {
 				type2 = getAddressTypeHome().findAddressType2();
 			}

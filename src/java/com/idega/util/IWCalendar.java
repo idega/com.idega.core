@@ -3,6 +3,7 @@ package com.idega.util;
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
@@ -157,7 +158,7 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getDay() {
-		return _calendar.get(_calendar.DAY_OF_MONTH);
+		return _calendar.get(Calendar.DAY_OF_MONTH);
 	}
 
 	/**
@@ -165,7 +166,7 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getMonth() {
-		return _calendar.get(_calendar.MONTH) + 1;
+		return _calendar.get(Calendar.MONTH) + 1;
 	}
 
 	/**
@@ -173,7 +174,7 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getYear() {
-		return _calendar.get(_calendar.YEAR);
+		return _calendar.get(Calendar.YEAR);
 	}
 
 	/**
@@ -181,7 +182,7 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getDayOfWeek() {
-		return _calendar.get(_calendar.DAY_OF_WEEK);
+		return _calendar.get(Calendar.DAY_OF_WEEK);
 	}
 
 	/**
@@ -194,7 +195,7 @@ public class IWCalendar {
 	public int getDayOfWeek(int year, int month, int day) {
 		GregorianCalendar calendar = new GregorianCalendar(_locale);
 		calendar.set(year, month - 1, day);
-		return calendar.get(calendar.DAY_OF_WEEK);
+		return calendar.get(Calendar.DAY_OF_WEEK);
 	}
 
 	/**
@@ -215,7 +216,7 @@ public class IWCalendar {
 	public int getWeekOfYear(int year, int month, int day) {
 		GregorianCalendar calendar = new GregorianCalendar(_locale);
 		calendar.set(year, month - 1, day);
-		return calendar.get(calendar.WEEK_OF_YEAR);
+		return calendar.get(Calendar.WEEK_OF_YEAR);
 	}
 
 	/**
@@ -812,7 +813,7 @@ public class IWCalendar {
 	 * @param day The day to set
 	 */
 	public void setDay(int day) {
-		_calendar.set(_calendar.DATE, day);	
+		_calendar.set(Calendar.DATE, day);	
 	}
 
 	/**
@@ -820,7 +821,7 @@ public class IWCalendar {
 	 * @param month The month to set
 	 */
 	public void setMonth(int month) {
-		_calendar.set(_calendar.MONTH, month - 1);	
+		_calendar.set(Calendar.MONTH, month - 1);	
 	}
 
 	/**
@@ -828,7 +829,7 @@ public class IWCalendar {
 	 * @param year The year to set
 	 */
 	public void setYear(int year) {
-		_calendar.set(_calendar.YEAR, year);	
+		_calendar.set(Calendar.YEAR, year);	
 	}
 
 	/**
@@ -838,9 +839,9 @@ public class IWCalendar {
 	 * @param day The day to set
 	 */
 	public void setDate(int year, int month, int day) {
-		_calendar.set(_calendar.YEAR, year);	
-		_calendar.set(_calendar.MONTH, month - 1);	
-		_calendar.set(_calendar.DATE, day);	
+		_calendar.set(Calendar.YEAR, year);	
+		_calendar.set(Calendar.MONTH, month - 1);	
+		_calendar.set(Calendar.DATE, day);	
 	}
 	
 	/**

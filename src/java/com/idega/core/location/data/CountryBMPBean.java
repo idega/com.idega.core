@@ -105,7 +105,7 @@ public class CountryBMPBean extends GenericEntity implements Country{
   }
   
  public Integer ejbFindByCountryName(String name)throws FinderException{
-    Collection countries = idoFindAllIDsByColumnBySQL(this.getColumnNameName(),name);
+    Collection countries = idoFindAllIDsByColumnBySQL(CountryBMPBean.getColumnNameName(),name);
     if(!countries.isEmpty()){
       return (Integer)countries.iterator().next();
     }

@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.57 2006/01/15 17:29:35 laddi Exp $
+ * $Id: LoginBusinessBean.java,v 1.58 2006/02/20 11:04:35 laddi Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -60,11 +60,11 @@ import com.idega.util.RequestUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2006/01/15 17:29:35 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/20 11:04:35 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.57 $
+ * @version $Revision: 1.58 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -908,7 +908,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 */
 	private boolean isUsingOldUserSystem() {
-		return this.USING_OLD_USER_SYSTEM;
+		return LoginBusinessBean.USING_OLD_USER_SYSTEM;
 	}
 
 	protected void storeLoggedOnInfoInSession(HttpSession session, LoginTable loginTable, String login, User user, LoginRecord loginRecord, String loginType) throws NotLoggedOnException, RemoteException {
@@ -1225,7 +1225,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			String pass = preferredPassword;
 			if (user != null) {
 				if (email != null && email.length() > 0)
-					ub.addNewUserEmail(user.getID(), email);
+					UserBusiness.addNewUserEmail(user.getID(), email);
 				if (login == null)
 					login = LoginCreator.createLogin(user.getName());
 				if (pass == null)

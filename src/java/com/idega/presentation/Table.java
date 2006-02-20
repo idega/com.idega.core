@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.88 2005/11/29 15:30:02 laddi Exp $
+ * $Id: Table.java,v 1.89 2006/02/20 11:04:34 laddi Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1392,13 +1392,13 @@ public class Table extends PresentationObjectContainer implements TableType{
 					//print(Text.getNonBrakingSpace().getText());
 					//print("<img src=\"" + transparentcell.getURL() + "\" width=\""+((withInPercentsOrNoPadding)?width:Integer.toString(getNbspWidthAndHeight(iWidth,iPadding)))+"\" height=\""+((heightInPercentsOrNoPadding)?height:Integer.toString(getNbspWidthAndHeight(iHeight,iPadding)))+"\" alt=\"\" />");
 				}*/
-				if (!iwc.getIWMainApplication().useJSF) {
+				if (!IWMainApplication.useJSF) {
 					print("<img src=\"" + transparentcell.getURL() + "\" width=\""+width+"\" height=\""+height+"\" alt=\"\" />");
 				}
 			}
 		}
 		else {
-			if (!iwc.getIWMainApplication().useJSF) {
+			if (!IWMainApplication.useJSF) {
 				print("<img src=\"" + transparentcell.getURL() + "\" width=\"1\" height=\"1\" alt=\"\" />");
 			}
 			//print(Text.getNonBrakingSpace().getText());
