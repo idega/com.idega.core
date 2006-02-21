@@ -1608,6 +1608,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				return middleNameCriteria;
 			if(lastNameCriteria!=null)
 				return lastNameCriteria;
+			else
+				return null;
 		case 2:
 			if(middleNameCriteria==null){
 				if(andCriteria)
@@ -1627,7 +1629,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				else 
 					return new OR(middleNameCriteria,lastNameCriteria);
 			}
-			
+			else
+				return null;
 		case 3:
 			if(andCriteria){
 				AND cr1 = new AND(firstNameCriteria,middleNameCriteria);

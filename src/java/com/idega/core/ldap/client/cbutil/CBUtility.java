@@ -776,9 +776,9 @@ public class CBUtility
                         CBUtility.log("unable to write to log file\nreverting to console\n" + e + "\n"+S);
                         loggingStyle = CONSOLE;
                     }
-                    if (loggingStyle == FILE) break;
+                    break;
 
-            case CONSOLE:                     // console
+            case CONSOLE:         break;            // console
 
             default:  System.out.println(S);  break;  //  echo to console
          }
