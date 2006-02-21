@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.58 2006/02/20 11:04:35 laddi Exp $
+ * $Id: LoginBusinessBean.java,v 1.59 2006/02/21 09:28:25 laddi Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -60,11 +60,11 @@ import com.idega.util.RequestUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2006/02/20 11:04:35 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/21 09:28:25 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.58 $
+ * @version $Revision: 1.59 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -980,7 +980,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 				LoginState returnCode = LoginState.WrongPassword;
 				int maxFailedLogginAttempts = 0;
 				try {
-					String maxStr = iwma.getBundle("com.idega.core").getProperty("max_failed_login_attempts");
+					String maxStr = iwma.getIWApplicationContext().getApplicationSettings().getProperty("max_failed_login_attempts", "3");
 					maxFailedLogginAttempts = Integer.parseInt(maxStr);
 				}
 				catch (Exception e) {
