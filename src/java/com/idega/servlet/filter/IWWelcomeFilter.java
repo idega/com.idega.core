@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.13 2006/01/14 22:40:18 laddi Exp $
+ * $Id: IWWelcomeFilter.java,v 1.14 2006/02/22 18:13:35 tryggvil Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -22,16 +22,18 @@ import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICPage;
 import com.idega.data.IDONoDatastoreError;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.IWTimestamp;
+import com.idega.util.RequestUtil;
 
 /**
  * <p>
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2006/01/14 22:40:18 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/22 18:13:35 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
@@ -42,6 +44,7 @@ public class IWWelcomeFilter extends BaseFilter {
 	private static boolean startOnWorkspace= DEFAULT_VALUE_START_ON_WORKSPACE;
 	
 	private static final boolean DEFAULT_VALUE_START_ON_PAGES = false;
+	private static final String PROPERTY_LOG_REQUESTS = "com.idega.core.logrequests";
 	private static boolean startOnPages= DEFAULT_VALUE_START_ON_PAGES;
 	
 	
@@ -86,6 +89,11 @@ public class IWWelcomeFilter extends BaseFilter {
 			appUri =appUri+SLASH;
 		}
 		
+		boolean logRequests = getLogRequests(request);
+		if(logRequests){
+			logRequest(request);
+		}
+		
 		if(requestUri.equals(appUri)){
 			if(startOnWorkspace){
 				//request.getRequestDispatcher("/workspace/").forward(request,response);
@@ -102,6 +110,62 @@ public class IWWelcomeFilter extends BaseFilter {
 		}
 
 	}
+
+	/**
+	 * <p>
+	 * TODO tryggvil describe method logRequest
+	 * </p>
+	 * @param request
+	 */
+	private void logRequest(HttpServletRequest request) {
+	
+		String ip = request.getRemoteAddr();
+		String timestamp = IWTimestamp.RightNow().toString();
+		String method = request.getMethod();
+		String scheme = request.getScheme();
+		String requestUri = request.getRequestURI();
+		String userAgent = RequestUtil.getUserAgent(request);
+		String protocol = request.getProtocol();
+
+		//127.0.0.1 - - [22/Feb/2006:09:27:41 +0000] "GET / HTTP/1.1" 200 789 "-" "idegaWeb Web Search Engine Crawler http://www.idega.com"
+		
+		StringBuffer buf = new StringBuffer();
+		buf.append(ip);
+		buf.append(" - - ");
+		buf.append("[");
+		buf.append(timestamp);
+		buf.append("] ");
+		buf.append(method);
+		buf.append(" ");
+		buf.append(requestUri);
+		buf.append(" ");
+		buf.append(protocol);
+		buf.append(" - - \"-\" ");
+		buf.append(" \""+userAgent+"\"");
+		
+		System.out.println(buf);
+	}
+
+
+	/**
+	 * <p>
+	 * TODO tryggvil describe method getLogRequests
+	 * </p>
+	 * @param request
+	 * @return
+	 */
+	private boolean getLogRequests(HttpServletRequest request) {
+		
+		IWMainApplication iwma = getIWMainApplication(request);
+		String prop = iwma.getSettings().getProperty(PROPERTY_LOG_REQUESTS);
+		if(prop==null){
+			return false;
+		}
+		else{
+			return Boolean.valueOf(prop).booleanValue();
+		}
+	}
+
 
 	/**
 	 * @param request
