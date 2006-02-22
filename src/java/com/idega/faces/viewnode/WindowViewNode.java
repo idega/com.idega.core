@@ -1,5 +1,5 @@
 /*
- * $Id: WindowViewNode.java,v 1.2 2004/12/20 08:55:01 tryggvil Exp $
+ * $Id: WindowViewNode.java,v 1.3 2006/02/22 20:50:21 laddi Exp $
  * Created on 4.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,15 +18,14 @@ import com.idega.idegaweb.IWMainApplication;
 
 /**
  * 
- *  Last modified: $Date: 2004/12/20 08:55:01 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/22 20:50:21 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class WindowViewNode extends DefaultViewNode {
 
 	private ViewHandler windowViewHandler;
-	private Class defaultPageClass;
 	/**
 	 * @param viewId
 	 * @param parent

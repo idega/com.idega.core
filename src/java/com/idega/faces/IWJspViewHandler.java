@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.12 2006/01/12 22:15:44 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.13 2006/02/22 20:50:22 laddi Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -10,11 +10,12 @@
 package com.idega.faces;
 
 import java.io.IOException;
-import java.util.logging.Logger;
+
 import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.DefaultIWBundle;
@@ -28,15 +29,12 @@ import com.idega.util.FacesUtil;
  * This class overrides the default JSF ViewHandler and adds idegaWeb specific way of handling JSP pages
  * that are registered in the ViewNode hierarchy.<br/>
  * </p>
- *  Last modified: $Date: 2006/01/12 22:15:44 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/22 20:50:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
-	
-	private static Logger log = Logger.getLogger(IWJspViewHandler.class.toString());
-	
 	
 	public IWJspViewHandler(ViewHandler wrappedHandler){
 		super(wrappedHandler);

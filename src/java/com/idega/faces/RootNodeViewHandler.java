@@ -8,12 +8,13 @@ package com.idega.faces;
 
 import java.io.IOException;
 import java.util.Locale;
-import java.util.logging.Logger;
+
 import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.faces.componentbased.CbpViewHandler;
@@ -27,7 +28,6 @@ import com.idega.presentation.IWContext;
  */
 public class RootNodeViewHandler extends CbpViewHandler{// extends CbpViewHandler {
 	
-	private static Logger log = Logger.getLogger(RootNodeViewHandler.class.getName());
 	private ViewHandler parentViewHandler;
 	
 	/**

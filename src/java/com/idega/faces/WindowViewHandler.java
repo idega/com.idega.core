@@ -32,8 +32,6 @@ import com.idega.util.StringHandler;
 public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 	
 	private static Logger log = Logger.getLogger(WindowViewHandler.class.getName());
-	private Class defaultPageClass;
-	
 	/**
 	 * 
 	 */
