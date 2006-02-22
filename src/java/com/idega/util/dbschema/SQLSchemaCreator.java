@@ -17,10 +17,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/07/28 12:44:01 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/22 20:52:49 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 
 public class SQLSchemaCreator{
@@ -535,11 +535,6 @@ public class SQLSchemaCreator{
     }	
   }
   
-  private void dropIndex(Schema entity, String name) throws Exception {
-  	String sql = "DROP INDEX "+entity.getSQLName()+"."+name;
-  	executeUpdate( sql);
-  }
-  
   private void createIndex( Index index)throws Exception{
 		if (sa.useIndexes()) {
 	  		StringBuffer sql = new StringBuffer("CREATE ");
@@ -641,27 +636,6 @@ public class SQLSchemaCreator{
       }
     }
   }
-  
-  private boolean compareIndexColumns(String[] arr1, String[] arr2) {
-  		if (arr1 != null && arr2 != null && arr1.length == arr2.length) {
-  			boolean returner = true;
-  			for (int i = 0; i < arr1.length && returner; i++) {
-  				returner = false;
-  				for (int j = 0; j < arr2.length && !returner; j++) {
-  					if (arr1[i].equals(arr2[j])) {
-  						returner = true;
-  					}
-  				}
-  				
-  				if (!returner) {
-  					return returner;
-  				}
-  			}
-  			return true;
-  		}
-  		return false;
-  }
-
   
   private void updateTriggers(Schema schema) {
 	try {

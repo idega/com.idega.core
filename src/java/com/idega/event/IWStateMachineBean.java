@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+
 import javax.ejb.FinderException;
 import javax.swing.event.ChangeListener;
-import com.idega.business.IBOLookup;
+
 import com.idega.business.IBOSessionBean;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectInstance;
@@ -17,7 +17,6 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWLocation;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
-import com.idega.presentation.Page;
 import com.idega.presentation.StatefullPresentation;
 import com.idega.repository.data.RefactorClassRegistry;
 
@@ -399,28 +398,6 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 		//}
 	}
 
-	private IWPresentationState initializeState(IWLocation location) throws RuntimeException {
-		try {
-			Class stateClass = lookupStateClassForLocation(location);
-			if (stateClass != null) {
-				return (IWPresentationState) stateClass.newInstance();
-			}
-			else {
-				System.err.println("IWStateMachine.initializeState(location): stateClass == null");
-				return null;
-			}
-		}
-		catch (IllegalAccessException iae) {
-			throw new RuntimeException(iae.getMessage());
-		}
-		catch (InstantiationException ie) {
-			throw new RuntimeException(ie.getMessage());
-		}
-		catch (RemoteException re) {
-			throw new RuntimeException(re.getMessage());
-		}
-	}
-
 	private IWPresentationState initializeState(Class stateClassType) throws RuntimeException {
 		try {
 			Class stateClass = stateClassType;
@@ -438,29 +415,5 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 		catch (InstantiationException ie) {
 			throw new RuntimeException(ie.getMessage());
 		}
-	}
-
-	private Class lookupStateClassForLocation(IWLocation location) throws RemoteException {
-		IWFrameBusiness fb = (IWFrameBusiness) IBOLookup.getSessionInstance(this.getUserContext(),
-				IWFrameBusiness.class);
-		Page page = fb.getFrame(location);
-		if (page != null) {
-			if (page instanceof StatefullPresentation) {
-				return ((StatefullPresentation) page).getPresentationStateClass();
-			}
-			else {
-				List l = page.getChildren();
-				if (l != null) {
-					Iterator iter = l.iterator();
-					while (iter.hasNext()) {
-						Object item = iter.next();
-						if (item instanceof StatefullPresentation) {
-							return ((StatefullPresentation) item).getPresentationStateClass();
-						}
-					}
-				}
-			}
-		}
-		return null;
 	}
 }

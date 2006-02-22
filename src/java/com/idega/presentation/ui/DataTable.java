@@ -21,11 +21,9 @@ public class DataTable extends PresentationObjectContainer {
 
   private Table contentTable;
 
-  private int iBorder = 1;
   private boolean infoTitles = true;
   private boolean titlesVertical =true;
   private boolean use_top = true;
-  private boolean use_bottom = true;
   private String sHeight = "";
   private String sWidth = "";
   private String buttonAlign  = "right";
@@ -167,12 +165,10 @@ public class DataTable extends PresentationObjectContainer {
    */
   public void addBottom(boolean addBottom){
     _addBottom = addBottom;
-    use_bottom = addBottom;
   }
 
   public void setUseBottom(boolean useBottom){
     _addBottom = useBottom;
-    use_bottom = useBottom;
   }
 
   public void setUseTop(boolean useTop){

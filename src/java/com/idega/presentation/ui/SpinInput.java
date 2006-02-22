@@ -25,7 +25,6 @@ import com.idega.presentation.Table;
 
 public class SpinInput extends IntegerInput{
 
-	private IntegerInput spinInput =null;
 	private Integer maximum = null;
 	private Integer minimum = null;
 	private Integer increment = null;

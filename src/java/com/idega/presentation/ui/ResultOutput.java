@@ -28,7 +28,6 @@ public class ResultOutput extends GenericInput {
 	protected List extraTextVector = new Vector();
 	protected List operatorVector = new Vector();
 	
-	private int size = -1;
 	private String content;
 	private String name;
 	private String extraForTotal = "";

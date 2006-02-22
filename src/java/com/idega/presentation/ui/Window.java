@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.46 2006/01/30 14:28:39 gimmi Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.47 2006/02/22 20:52:47 laddi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -27,10 +27,10 @@ import com.idega.util.datastructures.list.KeyValuePair;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2006/01/30 14:28:39 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.46 $
+ * @version $Revision: 1.47 $
  */
 public class Window extends Page {
 
@@ -414,28 +414,6 @@ public class Window extends Page {
 	public void setURL(String url) {
 		this.url = url;
 		// newURL=true;
-	}
-
-	/*
-	 * public void setAssociatedScript(Script myScript){ theAssociatedScript =
-	 * myScript; }
-	 * 
-	 * public Script getAssociatedScript(){ return theAssociatedScript; }
-	 */
-	private String returnCheck(boolean checkBool) {
-		if (checkBool == true) {
-			return "yes";
-		}
-		else {
-			return "no";
-		}
-	}
-
-	private String returnFullScreen() {
-		if (fullscreen == true)
-			return ",fullscreen";
-		else
-			return "";
 	}
 
 	/**

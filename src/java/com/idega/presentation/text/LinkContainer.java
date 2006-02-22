@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.24 2005/03/02 12:04:24 tryggvil Exp $
+ * $Id: LinkContainer.java,v 1.25 2006/02/22 20:52:49 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -577,13 +577,6 @@ public class LinkContainer extends PresentationObjectContainer {
 	 */
 	public void setAsBackLink(int backUpHowManyPages) {
 		setAsBackLink(true, backUpHowManyPages);
-	}
-
-	/**
-	 *
-	 */
-	private void setEventListener(String eventListenerClassName) {
-		addParameter(IWMainApplication.IdegaEventListenerClassParameter, IWMainApplication.getEncryptedClassName(eventListenerClassName));
 	}
 
 	public void setAsPopup(String name, String width, String height) {

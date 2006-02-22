@@ -67,10 +67,6 @@ public class UpdateServiceBean extends IBOServiceBean implements UpdateService
 		return true;
 	}	
 
-	private boolean executeCVSUpdate(String directory){
-		return executeCVSUpdate(directory,false);
-	}
-	
 	private boolean executeCVSUpdate(String directory,boolean cleanCopy){
 		try
 		{

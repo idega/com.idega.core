@@ -1,13 +1,12 @@
 /*
  * Created on 13.7.2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * 
+ * TODO To change the template for this generated file go to Window -
+ * Preferences - Java - Code Style - Code Templates
  */
 package com.idega.idegaweb.presentation;
 
 import com.idega.core.localisation.presentation.LocalePresentationUtil;
-import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -22,22 +21,22 @@ import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.reflect.FieldAccessor;
 import com.idega.util.reflect.MethodInvoker;
 
-
 public class IWApplicationsLogin extends Page {
+
 	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
-	private IWBundle iwb;
 	private IWResourceBundle iwrb;
-	//private final IWApplicationsServlet servlet;
+	// private final IWApplicationsServlet servlet;
 	String backgroundColor = "#B0B29D";
 
 	public IWApplicationsLogin() {
-		//this.servlet = servlet;
+		// this.servlet = servlet;
 	}
+
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
+
 	public void main(IWContext iwc) {
-		iwb = this.getBundle(iwc);
 		iwrb = this.getResourceBundle(iwc);
 
 		Page thePage = this;
@@ -57,7 +56,7 @@ public class IWApplicationsLogin extends Page {
 		Table mainTable = new Table(1, 4);
 		mainTable.setCellspacing(0);
 		mainTable.setCellpadding(0);
-		//mainTable.setBackgroundImage(1,1,iwb.getImage("logintiler.gif"));
+		// mainTable.setBackgroundImage(1,1,iwb.getImage("logintiler.gif"));
 		mainTable.setAlignment(1, 2, "right");
 		mainTable.setAlignment(1, 3, "right");
 		mainTable.setAlignment(1, 4, "center");

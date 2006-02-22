@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.92 2006/01/05 15:56:48 laddi Exp $
+ * $Id: Image.java,v 1.93 2006/02/22 20:52:48 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -30,7 +30,6 @@ import com.idega.repository.data.NonEJBResource;
 import com.idega.repository.data.PropertyDescription;
 import com.idega.repository.data.PropertyDescriptionHolder;
 import com.idega.repository.data.ResourceDescription;
-import com.idega.util.text.StyleConstants;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -38,11 +37,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2006/01/05 15:56:48 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.92 $
+ * @version $Revision: 1.93 $
  */
 public class Image extends PresentationObject implements NonEJBResource, PropertyDescriptionHolder
 {
@@ -57,10 +56,6 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	public static final String ALIGNMENT_BASELINE = "baseline";
 	public static final String ALIGNMENT_TEXT_TOP = "texttop";
 	private static String PARAM_IMAGE_ID = FileSystemConstants.PARAM_FILE_ID;
-	private static final String BORDER_COLOR_DEFAULT = "#000000";
-	private static final String BORDER_STYLE_DEFAULT = StyleConstants.BORDER_SOLID;
-	private static final int BORDER_WIDTH_DEFAULT = 0;
-	
 	//member variables:
 	private String overImageUrl;
 	private String downImageUrl;

@@ -15,7 +15,6 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
-import javax.ejb.EntityContext;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
@@ -52,13 +51,10 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	private IDOHome _translationEntityHome = null;
 	private IDOHome _versionEntityHome = null;
 
-	private EntityContext _entityContext;
 	private EJBLocalHome _ejbHome;
 
 	private ICItem _mainEntityItem = null;
 	
-	private ICVersion _selectedVersion = null;
-
 	public IDOEntityWrapper(Object primaryKey) throws IDOLookupException, FinderException {
 		construct(primaryKey, null, null, null);
 	}
@@ -72,7 +68,6 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 		_locale = locale;
 		
 		if(version != null){
-			_selectedVersion = version;
 		} else if(versionName != null){
 //			ICVersionHome versionHome = (ICVersionHome)IDOLookup.getHome(ICVersion.class);
 //			_selectedVersion = versionHome.
@@ -294,10 +289,8 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	}
 
 	public void setEntityContext(javax.ejb.EntityContext ctx) throws EJBException, RemoteException {
-		this._entityContext = ctx;
 	}
 	public void unsetEntityContext() throws EJBException, RemoteException {
-		this._entityContext = null;
 	}
 
 	//////EntityBean ends //////

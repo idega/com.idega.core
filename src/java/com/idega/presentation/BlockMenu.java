@@ -25,7 +25,6 @@ public class BlockMenu extends Block {
 
   protected IWResourceBundle iwrb;
   protected IWBundle iwb;
-  private IWBundle core ;
   private Collection objects = null;
   private Collection paramtersToMainTain = null;
   private String prmObjectClass = "obj_clss";

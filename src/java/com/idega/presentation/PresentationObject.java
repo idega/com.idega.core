@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.147 2005/11/29 15:30:02 laddi Exp $
+ * $Id: PresentationObject.java,v 1.148 2006/02/22 20:52:48 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2005/11/29 15:30:02 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.147 $
+ * @version $Revision: 1.148 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -92,7 +92,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public static String sessionEventStorageName = IWMainApplication.IWEventSessionAddressParameter;
 	public static final PresentationObject NULL_CLONE_OBJECT = new PresentationObject();
 	public static final String TARGET_OBJ_INS = "tois";
-	private static long InstanceUniqueID;
 	// constant for compoundId
 	public static String COMPOUNDID_COMPONENT_DELIMITER = ":";
 	// constant for compoundId
@@ -2385,23 +2384,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	
 	
-	/*
-	 * END JSF METHODS
-	 *
-
-	/**
-	 * Default idegaWeb JSF id generation mechanism
-	 * @return
-	 */
-	private String getGeneratedIWId(){
-		UIComponent parent = this.getParent();
-		if(parent!=null){
-			int indexOfMe=parent.getChildren().indexOf(this);
-			return getParent().getId()+"-"+indexOfMe;
-		}
-		return setID();//ONLY A BACKUP sets and returns a unique id
-	}
-
 	protected void setRenderedPhaseDone(){
 		goneThroughRenderPhase=true;
 	}

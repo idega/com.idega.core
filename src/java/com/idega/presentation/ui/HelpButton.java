@@ -17,8 +17,6 @@ public class HelpButton extends Link {
 
 
 
-private final static String IW_BUNDLE_IDENTIFIER="com.idega.core";
-
 public static final String PARAMETERSTRING_HEADLINE = "headline";
 
 public static final String PARAMETERSTRING_TEXT = "text";

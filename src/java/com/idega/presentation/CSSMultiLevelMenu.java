@@ -192,7 +192,6 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
 		private static final String UL_START_TAG = "\n<ul>";
 		private static final String LI_END_TAG = "</li>";
 		private static final String LI_START_TAG = "<li>";
-        private List menuItems;
         private String menuName;
         private PresentationObject topMenuItem;
         

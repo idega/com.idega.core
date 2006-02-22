@@ -52,22 +52,6 @@ public class ICLocaleBusiness  implements MutableClass {
     }
   }
 
-  private static List listOfICLocales(boolean inUse){
-    try {
-      /*if(inUse)
-        return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,com.idega.core.localisation.data.ICLocaleBMPBean.getColumnNameInUse(),"Y");
-      else
-        return EntityFinder.getInstance().findAllByColumn(ICLocale.class ,com.idega.core.localisation.data.ICLocaleBMPBean.getColumnNameInUse(),"N");
-       */
-        return new Vector(((ICLocaleHome)IDOLookup.getHome(ICLocale.class)).findByUsage(inUse));
-    }
-    catch (Exception ex) {
-      ex.printStackTrace();
-      return null;
-    }
-  }
-
-
   public static List listLocaleCreateIsEn(){
     List L = listOfLocales();
     if(L == null){

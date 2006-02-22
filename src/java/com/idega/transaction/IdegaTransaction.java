@@ -40,9 +40,7 @@ import java.sql.*;
   private boolean isRollBackOnly=false;
   private Connection _conn;
   private String _dataSource=ConnectionBroker.DEFAULT_POOL;
-  private int transactionTimeOutSeconds=60*60;
   private int transactionCount=0;
-  private long transactionBegun = System.currentTimeMillis();
 
 
   public IdegaTransaction(){
@@ -372,7 +370,6 @@ protected void setDatasource(String datasourceName){
       _conn = getFirstConnection();
       ThreadContext.getInstance().setAttribute(Thread.currentThread(),getTransactionAttributeName(),this);
       this.transactionCount=1;
-      transactionBegun=System.currentTimeMillis();
       setStatus(IdegaTransactionStatus.STATUS_ACTIVE);
     }
     else{
@@ -380,7 +377,6 @@ protected void setDatasource(String datasourceName){
     }
   }
   public void setTransactionTimeout(int parm1) throws javax.transaction.SystemException {
-    transactionTimeOutSeconds=parm1;
   }
 
 

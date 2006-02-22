@@ -24,9 +24,6 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 	private IWMainApplication iwma;
 	private HashMap domainMap = new HashMap();
 	ICDomain domain;
-	private boolean defaultDomainIsInHashmap = false;
-	
-	
 	protected IWApplicationContextImpl(IWMainApplication superApp){
 		this.iwma=superApp;	
 	}

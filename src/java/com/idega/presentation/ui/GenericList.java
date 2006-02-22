@@ -150,13 +150,6 @@ public class GenericList extends InterfaceObject {
 		}
 	}
 
-	private void initializeTable() {
-		theTable = new Table();
-		add(theTable);
-		theTable.setBorder(0);
-		theTable.setCellpadding(2);
-	}
-
 	private void initializeTable(int columns, int rows) {
 		theTable = new Table(columns, rows);
 		add(theTable);

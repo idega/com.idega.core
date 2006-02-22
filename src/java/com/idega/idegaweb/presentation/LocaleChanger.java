@@ -28,7 +28,6 @@ public class LocaleChanger extends Block {
 
 
   public static String localesParameter="iw_localeswitcher_locale";
-  private static String action = "iw_localeswitcher_sub_action";
   private Map ImageLocalizationMap ;
   protected boolean showLinks = false;
 

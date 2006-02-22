@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.165 2006/02/20 11:04:35 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.166 2006/02/22 20:52:47 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -89,10 +89,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/02/20 11:04:35 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.165 $
+ * @version $Revision: 1.166 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1630,10 +1630,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
     
    
-    private String getBuilderServletURI() {
-        return getTranslatedURIWithContext(BUILDER_SERVLET_URL);
-    }
-
     public String getIFrameContentURI() {
         return getTranslatedURIWithContext(_IFRAME_CONTENT_URL);
     }

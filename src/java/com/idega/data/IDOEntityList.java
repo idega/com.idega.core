@@ -155,7 +155,6 @@ public class IDOEntityList implements List {
 
     private IDOEntityList _list;
 	private int _index=0;
-	private Object lastObject;
 	private boolean _hasPrevious=false;
 
     private IDOEntityIterator() {

@@ -1,7 +1,6 @@
 package com.idega.business;
 
 import javax.ejb.SessionBean;
-import javax.ejb.SessionContext;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
@@ -21,7 +20,6 @@ import com.idega.user.data.User;
 
 public class IBOSessionBean extends IBOServiceBean implements IBOSession,SessionBean{
 
-  private SessionContext sessionContext;
   private IWUserContext iwuc;
   private String sessionKey="IBO."+this.getClass().getName();
 
@@ -60,7 +58,6 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
 
   public void ejbRemove(){
     this.getUserContext().removeSessionAttribute(sessionKey);
-    this.sessionContext=null;
     this.iwuc=null;
   }
 

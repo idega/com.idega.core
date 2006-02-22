@@ -1,5 +1,5 @@
 /*
- * $Id: UIComponentWrapper.java,v 1.4 2005/11/29 15:30:02 laddi Exp $
+ * $Id: UIComponentWrapper.java,v 1.5 2006/02/22 20:52:48 laddi Exp $
  * Created on 9.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -48,27 +48,23 @@ import javax.faces.validator.Validator;
  * childrens of this class when the faces servlet restores the component tree. (The same probably goes for 
  * facets but has not been tested)
  * 
- *  Last modified: $Date: 2005/11/29 15:30:02 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class UIComponentWrapper extends UIComponent implements EditableValueHolder {
 
 	private static final String FACETKEY_WRAPPED_COMPONENT = "wf_wrapped_component";
 	private Map _facetMap=null;
-//	private List tmpChildList = null;
-	private boolean isRestored = false;
-	private Map tmpComponentFacetMap;
+private Map tmpComponentFacetMap;
 	
 	/**
 	 * 
 	 */
 	public UIComponentWrapper() {
 		super();
-//		tmpChildList = new ChildrenListWrapper();
-		isRestored = true;
-		tmpComponentFacetMap = new HashMap();
+tmpComponentFacetMap = new HashMap();
 	}
 	
 	public UIComponentWrapper(UIComponent component){

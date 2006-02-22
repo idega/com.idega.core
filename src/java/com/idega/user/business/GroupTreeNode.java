@@ -16,8 +16,6 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
-import com.idega.user.data.GroupType;
-import com.idega.user.data.GroupTypeHome;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -106,10 +104,6 @@ public class GroupTreeNode implements ICTreeNode {
 	public GroupTreeNode(Group group) {
 		_group = group;
 		_nodeType = TYPE_GROUP;
-	}
-
-	private GroupTypeHome getGroupTypeHome() throws RemoteException {
-		return ((GroupTypeHome) IDOLookup.getHome(GroupType.class));
 	}
 
 	private GroupHome getGroupHome() throws RemoteException {

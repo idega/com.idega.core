@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleLoader.java,v 1.3 2006/02/07 09:51:56 laddi Exp $
+ * $Id: IWBundleLoader.java,v 1.4 2006/02/22 20:52:47 laddi Exp $
  * Created on 5.2.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -25,22 +25,18 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * Implementation for loading a IWBundle from a Jar file in WEB-INF/lib.
  * </p>
- *  Last modified: $Date: 2006/02/07 09:51:56 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IWBundleLoader implements JarLoader{
-
-	private IWMainApplication iwma;
 
 	private static final Log log = LogFactory.getLog(IWBundleLoader.class);
 	/**
 	 * 
 	 */
 	public IWBundleLoader(IWMainApplication iwma) {
-		this.iwma=iwma;
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**

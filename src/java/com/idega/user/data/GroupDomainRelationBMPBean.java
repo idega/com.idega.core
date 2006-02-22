@@ -36,7 +36,6 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
 	private static final String  TERMINATION_DATE_COLUMN="TERMINATION_DATE";
   private static final String  SET_PASSIVE_BY="SET_PASSIVE_BY";
   
-	private static final String  STATUS_ACTIVE="ST_ACTIVE";
 	private static final String  STATUS_PASSIVE="ST_PASSIVE";
 
 

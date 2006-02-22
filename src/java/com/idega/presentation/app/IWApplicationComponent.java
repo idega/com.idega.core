@@ -3,7 +3,6 @@ package com.idega.presentation.app;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
-import com.idega.presentation.Table;
 
 /**
  * <p>
@@ -18,22 +17,6 @@ import com.idega.presentation.Table;
 public class IWApplicationComponent extends Page {
 
 
-  private static boolean imagesSet=false;
-
-  /*private static Image topleft;
-  private static Image topright;
-  private static Image bottomleft;
-  private static Image bottomright;
-  private static Image top;
-  private static Image bottom;
-  private static Image left;
-  private static Image right;
-  */
-  private String _lightColor = "#FFFFFF";
-  private String _darkColor = "#999999";
-  
-  //private Table iwacTable;
-
   public IWApplicationComponent(){
     //setBackgroundColor(IWConstants.DEFAULT_LIGHT_INTERFACE_COLOR);
     //super.add(getIWACTable());
@@ -44,23 +27,6 @@ public class IWApplicationComponent extends Page {
   public void add(PresentationObject obj){
     //iwacTable.add(obj,2,2);
   	super.add(obj);
-  }
-
-  private Table getIWACTable(){
-    /*if(iwacTable == null){
-      iwacTable = new Table(3,3);
-      iwacTable.setHeight("100%");
-      iwacTable.setWidth("100%");
-      iwacTable.setCellpadding(0);
-      iwacTable.setCellspacing(0);
-      iwacTable.setHeight(1,"1");
-      iwacTable.setHeight(3,"1");
-      iwacTable.setWidth(2,"100%");
-      iwacTable.setWidth(1,"1");
-      iwacTable.setWidth(3,"1");
-    }
-    return iwacTable;*/
-  	return null;
   }
 
   public void _main(IWContext iwc) throws Exception {
@@ -128,11 +94,9 @@ public void setImages(IWContext iwc){
   }
 
   public void setLightShadowColor(String color) {
-    _lightColor = color;
   }
 
   public void setDarkShadowColor(String color) {
-    _darkColor = color;
   }
 
   static IWApplicationComponent getAppCompInstance(Class componentClass,IWContext iwc){

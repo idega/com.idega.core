@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.14 2005/11/18 14:47:06 tryggvil Exp $
+ * $Id: IWProperty.java,v 1.15 2006/02/22 20:52:47 laddi Exp $
 
  *
 
@@ -25,10 +25,10 @@ import com.idega.xml.XMLElement;
  * &lt;key&gt; tag.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/11/18 14:47:06 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class IWProperty implements Comparable
 {
@@ -321,22 +321,6 @@ public class IWProperty implements Comparable
 		}
 	}
 	
-	private void addProperty(String key, String value)
-	{
-		addProperty(key, value, stringString);
-	}
-	private void addProperty(String key, Object value)
-	{
-		addProperty(key, value.toString(), value.getClass().getName());
-	}
-	private void addProperty(String key, int value)
-	{
-		addProperty(key, new Integer(value));
-	}
-	private void addProperty(String key, Object value, String type)
-	{
-		addProperty(key, value, type, getParentList());
-	}
 	static void addProperty(String key, Object value, String type, IWPropertyList plist)
 	{
 		XMLElement keyElement = createKeyElement(plist);
@@ -409,10 +393,6 @@ public class IWProperty implements Comparable
 		valueElement.addContent(arrayElement);
 		return arrayElement;
 	}
-	private XMLElement getValueElement()
-	{
-		return getValueElement(getKeyElement());
-	}
 	static XMLElement getValueElement(XMLElement keyElement)
 	{
 		XMLElement value = keyElement.getChild(valueTag);
@@ -421,10 +401,6 @@ public class IWProperty implements Comparable
 			value = createValueElement(keyElement);
 		}
 		return value;
-	}
-	private XMLElement createValueElement()
-	{
-		return createValueElement(getKeyElement());
 	}
 	static XMLElement createValueElement(XMLElement parent)
 	{

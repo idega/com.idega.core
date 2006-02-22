@@ -25,7 +25,6 @@ public class URLUtil {
 
 	private MultivaluedHashMap _parameters;
 	private String _path;
-	private String _page;
 	private String _protocol;
 	private String _host;
 	private int _port = -1;

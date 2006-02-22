@@ -3,7 +3,6 @@ package com.idega.presentation;
 import java.io.IOException;
 public class Applet extends PresentationObject {
 	private StringBuffer params = new StringBuffer();
-	private boolean usePlugin = false;
 	public Applet() {
 		setName(this.getID());
 		setWidth(0);

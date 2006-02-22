@@ -26,8 +26,6 @@ public class MenuElement extends PresentationObject {
 	private String onClick = "";
 	private String onMouseOver = "";
 	private String onMouseOut = "";
-	private boolean isRoot = false;
-	
 	private ArrayList children = new ArrayList();
 	/**
 	 * The default constructor
@@ -65,7 +63,6 @@ public class MenuElement extends PresentationObject {
 	 * @param rootName
 	 */
 	public void createRootNode(MenuElement rootNode, String rootName){
-		isRoot = true;
 		rootNode.setName(rootName);
 	}
 	/**

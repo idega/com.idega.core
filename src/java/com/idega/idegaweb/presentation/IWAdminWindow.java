@@ -1,9 +1,9 @@
 package com.idega.idegaweb.presentation;
 
 import javax.faces.component.UIComponent;
+
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWProperty;
-import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -25,7 +25,6 @@ public class IWAdminWindow extends Window {
 
 	private IWBundle iwb;
 	public IWBundle iwbCore;
-	private IWResourceBundle iwrb;
 	private Form adminForm;
 	private Table adminTable;
 	private Table headerTable;
@@ -83,7 +82,6 @@ public class IWAdminWindow extends Window {
 
 	public void _main(IWContext iwc) throws Exception {
 		iwb = getBundle(iwc);
-		iwrb = getResourceBundle(iwc);
 		iwbCore = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 		if (!displayEmpty) {
 			makeTables();

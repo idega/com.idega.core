@@ -183,8 +183,6 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
   public static class GroupList extends Page {
 
-    private List groups = null;
-
     public GroupList(){
       super();
     }

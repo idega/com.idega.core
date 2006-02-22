@@ -138,8 +138,6 @@ public class GroupMembershipTab extends UserGroupTab {
 
   public static class GroupList extends Page {
 
-    private List groups = null;
-
     public GroupList(){
       super();
     }
@@ -206,8 +204,6 @@ public class GroupMembershipTab extends UserGroupTab {
 
 
   public static class UserList extends Page {
-
-    private List groups = null;
 
     public UserList(){
       super();

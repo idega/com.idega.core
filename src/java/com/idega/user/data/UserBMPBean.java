@@ -1555,28 +1555,6 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 
 	
-	private String getUserDateOfBirthSearchString(int startAge, int endAge) {
-		IDOQuery query = idoQuery();
-				
-		IWTimestamp youngerAgeStamp = IWTimestamp.RightNow();
-		IWTimestamp olderAgeStamp = IWTimestamp.RightNow();
-		
-		youngerAgeStamp.addYears(-startAge);
-		youngerAgeStamp.setMonth(12);
-		youngerAgeStamp.setDay(31);
-		
-		olderAgeStamp.addYears(-endAge);
-		olderAgeStamp.setMonth(1);
-		olderAgeStamp.setDay(1);
-		
-		
-		query.append(getColumnNameDateOfBirth()).appendGreaterThanOrEqualsSign().append("'").append(olderAgeStamp.toString()).append("' ");
-		query.appendAnd()
-		.append(getColumnNameDateOfBirth()).appendLessThanOrEqualsSign().append("'").append(youngerAgeStamp.toString()).append("' ");
-		
-		return query.toString();
-	}
-	
 	private Criteria getUserNameSearchCriteria(String firstName, String middleName, String lastName, boolean andCriteria) {
 		int count = 0;
 		Criteria firstNameCriteria = null;
@@ -1715,16 +1693,6 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return sql.toString();
 	}
 
-	private String getUserAddressSearchString(String condition){
-		StringBuffer sql = new StringBuffer();
-		
-		sql.append("select ua.ic_user_id from ic_address a,ic_user_address ua where a.ic_address_id=ua.ic_address_id")
-		.append(" and a.street_name like '%").append(condition.toUpperCase()).append("%' ");
-	
-		return sql.toString();
-		
-	}
-	
 	/**
 	 * 
 	 * 

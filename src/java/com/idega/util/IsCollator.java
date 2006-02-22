@@ -19,15 +19,7 @@ public class IsCollator {
 			+ "< k,K< l,L< m,M< n,N< o,O< ó,Ó< p,P< q,Q< r,R< s,S< t,T"
 			+ "< u,U< ú,Ú< v,V< w,W< x,X< y,Y< ý,Ý< z,Z< þ,Þ< æ,Æ< ö,Ö";
 			
-	private RuleBasedCollator rbc;
-	
 	public IsCollator() {
-		try {
-			rbc = new RuleBasedCollator(isl);
-		}
-		catch (ParseException ex) {
-			rbc = (RuleBasedCollator) Collator.getInstance();
-		}
 	}
 	
 	public static RuleBasedCollator getIsCollator() {

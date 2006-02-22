@@ -32,8 +32,6 @@ public class DataEmailer extends Block {
   private String endData = "";
   private String sql = null;
 
-  private int errorId = 0;
-
   public DataEmailer() {
   }
 

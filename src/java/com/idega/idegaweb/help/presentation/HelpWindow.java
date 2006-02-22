@@ -1,5 +1,5 @@
 /*
- * $Id: HelpWindow.java,v 1.5 2004/03/01 16:54:36 birna Exp $
+ * $Id: HelpWindow.java,v 1.6 2006/02/22 20:52:49 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -81,8 +81,6 @@ public class HelpWindow extends StyledIWAdminWindow {
 	private String _localizedTitle = null;
 	private String _localizedHelpText = null;
 	
-	private String _previousLocale = null;
-
 	private XMLDocument _doc = null;
 
 	protected String _titleStyleAttribute = null;

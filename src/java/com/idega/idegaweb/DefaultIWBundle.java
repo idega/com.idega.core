@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.25 2005/12/07 17:25:06 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.26 2006/02/22 20:52:47 laddi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -66,8 +66,6 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	static final String COMPONENTLIST_KEY = "iw_components";
 	private final static String COMPONENT_NAME_PROPERTY = "component_name";
 	private final static String COMPONENT_TYPE_PROPERTY = "component_type";
-	private final static String COMPONENT_ICON_PROPERTY = "component_icon";
-	private final static String COMPONENT_CLASS_PROPERTY = "component_class";
 	private final static String COMPONENT_PROPERTY_FILE = "component_property_file";
 	private final static String BUNDLE_STARTER_CLASS = "iw_bundle_starter_class";
 	private static final String slash = "/";
@@ -965,10 +963,6 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	private IWPropertyList getPropertyList()
 	{
 		return this.propertyList;
-	}
-	private List getAvailableComponentTypes()
-	{
-		return com.idega.core.component.data.ICObjectBMPBean.getAvailableComponentTypes();
 	}
 	private IWPropertyList getComponentList()
 	{

@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +21,6 @@ import javax.ejb.FinderException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchResult;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.ldap.business.LDAPGroupBusiness;
@@ -31,7 +29,6 @@ import com.idega.core.ldap.client.jndi.JNDIOps;
 import com.idega.core.ldap.client.naming.DN;
 import com.idega.core.ldap.server.business.EmbeddedLDAPServerBusiness;
 import com.idega.core.ldap.server.business.EmbeddedLDAPServerConstants;
-import com.idega.core.ldap.server.util.Ldap;
 import com.idega.core.ldap.util.IWLDAPConstants;
 import com.idega.core.ldap.util.IWLDAPUtil;
 import com.idega.user.business.GroupBusiness;
@@ -48,16 +45,10 @@ import com.idega.util.timer.TimerManager;
 
 public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPReplicationConstants,IWLDAPConstants,LDAPReplicationBusiness {
 
-	private DirContext context;
-
-	private Ldap ldap;
-
 	private UserBusiness userBiz;
 	private LDAPUserBusiness ldapUserBiz;
 	private GroupBusiness groupBiz;
 	private LDAPGroupBusiness ldapGroupBiz;
-
-	private String thisServersLDAPBase;
 
 	private EmbeddedLDAPServerBusiness embeddedLDAPServerBiz;
 
@@ -74,9 +65,6 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	private static String START_REPLICATOR = "start";
 	
 	private IWLDAPUtil ldapUtil = IWLDAPUtil.getInstance();
-
-	private Collection pluginsForGroup = null;
-	private Collection pluginsForUser = null;
 
 	private Map replicationListeners;
 	

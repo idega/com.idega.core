@@ -46,21 +46,15 @@ public class SmallCalendar extends Block {
 	private String backgroundColor = null;
 	private String todayColor = headerColor;
 	private String selectedColor = "#CCCCCC";
-	private String URL;
-	
 	private String textStyleClass;
-	private String highlightedTextStyleClass;
 	private String inactiveTextStyleClass;
 	private String headerTextStyleClass;
-	private String dayTextStyleClass;
 	private String dayCellStyle;
 	private String linkStyle;
 	private String inactiveBackgroundCellStyleClass;
 	private String backgroundStyleClass;
 	private String todayBackgroundStyleClass;
 	private String selectedBackgroundStyleClass;
-	private String monthTextStyleClass;
-	
 	private String width = "110";
 	private String height = "60";
 	private Link _link;
@@ -376,16 +370,6 @@ public class SmallCalendar extends Block {
 		T.setWidth(width);
 	}
 
-	private Text getText(String content) {
-		Text text = new Text(content);
-		if (textStyleClass != null) {
-			text.setStyleClass(textStyleClass);
-		} else {
-			text.setFontStyle("font-family: Verdana,Arial, Helvetica, sans-serif; font-weight: bold; color: " + dayTextColor + "; font-size: 10px; text-decoration: none;");
-		}
-		return text;
-	}
-	
 	private Text getLinkText(String content) {
 		Text text = new Text(content);
 		if (linkStyle != null) {
@@ -403,19 +387,6 @@ public class SmallCalendar extends Block {
 		Text text = new Text(content);
 		if (headerTextStyleClass != null) {
 			text.setStyleClass(headerTextStyleClass);
-		} else {
-			text.setFontColor(headerTextColor);
-			text.setFontSize(2);
-			text.setBold();
-			text.setFontStyle("font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: " + headerTextColor + "; font-size: 8pt; text-decoration: none;");
-		}
-		return text;
-	}
-	
-	private Text getMonthText(String content) {
-		Text text = new Text(content);
-		if (monthTextStyleClass != null) {
-			text.setStyleClass(monthTextStyleClass);
 		} else {
 			text.setFontColor(headerTextColor);
 			text.setFontSize(2);
@@ -585,7 +556,6 @@ public class SmallCalendar extends Block {
 	}
 
 	public void setURL(String url) {
-		this.URL = url;
 		setDaysAsLink(true);
 	}
 
@@ -977,11 +947,9 @@ public class SmallCalendar extends Block {
 	}
 	
 	public void setHighlightedTextStyleName(String style) {
-		this.highlightedTextStyleClass = style;
 	}
 	
 	public void setDayTextStyleName(String style) {
-		this.dayTextStyleClass = style;
 	}
 	
 	public void setLinkStyle(String style) {
@@ -1014,6 +982,5 @@ public class SmallCalendar extends Block {
 		iCellpadding = cellpadding;
 	}
 	public void setMonthTextStyleClass(String monthTextStyleClass) {
-		this.monthTextStyleClass = monthTextStyleClass;
 	}
 }

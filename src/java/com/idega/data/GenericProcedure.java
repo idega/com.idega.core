@@ -1,5 +1,5 @@
 /*
- * $Id: GenericProcedure.java,v 1.3 2005/11/29 15:30:03 laddi Exp $
+ * $Id: GenericProcedure.java,v 1.4 2006/02/22 20:52:47 laddi Exp $
  * Created on 31.8.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,17 +18,14 @@ import com.idega.util.database.ConnectionBroker;
 
 /**
  * 
- *  Last modified: $Date: 2005/11/29 15:30:03 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public abstract class GenericProcedure implements IDOProcedure {
 	
 	private String _dataSource = GenericEntity.DEFAULT_DATASOURCE;
-	private int _defaultPrefetchSize = 500;
-	
-	
 	public GenericProcedure(){
 		super();
 	}

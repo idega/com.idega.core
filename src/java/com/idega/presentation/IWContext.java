@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.136 2006/02/16 07:49:08 laddi Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.137 2006/02/22 20:52:48 laddi Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2006/02/16 07:49:08 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.136 $
+ * @version $Revision: 1.137 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -111,8 +111,6 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	private static final String SESSION_OBJECT_STATE = ICBuilderConstants.SESSION_OBJECT_STATE;
 	public static final String[] WML_USER_AGENTS = new String[] { "nokia", "ericsson", "wapman", "upg1", "symbian",
 			"wap" }; // NB: must be lowercase
-	private boolean isRequestCharacterEncodingSet = false;
-
 	/**
 	 * Default constructor
 	 */
@@ -141,7 +139,6 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	protected void initializeAfterRequestIsSet(HttpServletRequest request) {
 		setCharactersetEncoding(request);
-		isRequestCharacterEncodingSet = true;
 		// CANNOT BE DONE UNTIL AFTER THE CHARACTER ENCODING IS DONE, OTHERWISE
 		// THE ENCODING WILL DEFAULT TO ISO-8859-1 BUT DISPLAY ITSELF AS THE
 		// PREFERRED ENCODING!

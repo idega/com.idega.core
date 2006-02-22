@@ -97,10 +97,6 @@ public class ThreadContext implements Singleton
 	{
 		getThreadAttributes(Thread.currentThread()).remove(attributeName);
 	}
-	private Map getThreadAttributes()
-	{
-		return getThreadAttributes(Thread.currentThread());
-	}
 	private Map getThreadAttributes(Thread thread)
 	{
 		Map theReturn = (Map) getThreadsMap().get(thread);

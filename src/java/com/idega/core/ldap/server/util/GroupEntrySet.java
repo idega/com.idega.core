@@ -17,23 +17,11 @@ public class GroupEntrySet implements EntrySet {
 	
 	private List entries = null;
 	private Iterator entryIter = null;
-	private IWUserLDAPBackend myBackend = null;
-	
-	/**
-	 * This constuctor will only create an empty GroupEntrySet so getNext() will not return anything
-	 *
-	 */
-	/*public GroupEntrySet()
-	 {
-	 super();
-	 }*/
-	
 	/**
 	 * This is the proper constructor to use
 	 */
 	public GroupEntrySet(IWUserLDAPBackend myBackend, List groups) {
 		super();
-		this.myBackend = myBackend;
 		this.entries = groups;
 	}
 	

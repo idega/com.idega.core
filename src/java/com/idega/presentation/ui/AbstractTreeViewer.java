@@ -62,7 +62,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	Image icons[] = null;
 	String iconNames[] = { "treeviewer_trancparent.gif", "treeviewer_line.gif", "treeviewer_R_line.gif", "treeviewer_R_minus.gif", "treeviewer_R_plus.gif", "treeviewer_L_line.gif", "treeviewer_L_minus.gif", "treeviewer_L_plus.gif", "treeviewer_M_line.gif", "treeviewer_M_minus.gif", "treeviewer_M_plus.gif", "treeviewer_F_line.gif", "treeviewer_F_minus.gif", "treeviewer_F_plus.gif" };
 
-	private String trancparentImageUrl = "treeviewer_trancparent.gif";
 	private static final int ICONINDEX_TRANCPARENT = 0;
 	private static final int ICONINDEX_LINE = 1;
 	private static final int ICONINDEX_ROOT_LINE = 2;

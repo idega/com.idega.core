@@ -329,13 +329,6 @@ public class FrameTable extends Window{
       return (Map) getPagesMap().get(c);
     }*/
 
-    private Map getFramesPropertyMap(int frameIndex){
-      //Class c = (Class)this.getIndexesMap().get(Integer.toString(frameIndex));
-      //return getFramesPropertyMap(c);
-//      return (Map) getFramesMap().get(new Integer(frameIndex));
-      return ((PresentationObject)this.getChildren().get(frameIndex-1)).getMarkupAttributes();
-    }
-
     protected void setFrameSetProperty(String name,String value){
       setMarkupAttribute(name,value);
     }

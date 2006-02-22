@@ -60,21 +60,9 @@ public class FrameSet extends Window{
     this.getFramesPropertyMap(frameIndex).put(CLASS_PROPERTY,pageClass);
   }
 
-  private void setPage(Class pageClass){
-    numberOfFrames++;
-    this.getFramesMap().put(new Integer(numberOfFrames),new HashMap());
-    this.getFramesPropertyMap(numberOfFrames).put(CLASS_PROPERTY,pageClass);
-  }
-
   private void setPage(int frameIndex, String url){
     this.getFramesMap().put(new Integer(frameIndex),new HashMap());
     setFrameSource(frameIndex,url);
-  }
-
-  private void setPage(String url){
-    numberOfFrames++;
-    this.getFramesMap().put(new Integer(numberOfFrames),new HashMap());
-    setFrameSource(numberOfFrames,url);
   }
 
   public Class getClass(int frameIndex){

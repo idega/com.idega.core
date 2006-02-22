@@ -59,7 +59,6 @@ public class PageIncluder extends PresentationObject implements Index{
 
   private static final String PAGE_INCLUDER_PARAMETER_NAME="iw_uri_";
   private static final String PAGE_INCLUDER_SESSION_NAME="iw_session_token";
-  private String pageIncluderFinalParamName = null;
   private int instanceId;
   private boolean forceFrame = false;
   private boolean useSecureLinks = false;

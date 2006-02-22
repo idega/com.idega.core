@@ -17,10 +17,7 @@ import com.idega.transaction.IdegaTransactionManager;
 public class IBOSessionContext implements SessionContext, Serializable
 {
 	private EJBObject ejbo;
-	private Identity callerIdentity;
-	private Principal getCallerPrincipal;
 	private EJBHome ejbHome;
-	private UserTransaction userTransaction;
 	private boolean roolbackOnly = false;
 	IBOSessionContext()
 	{

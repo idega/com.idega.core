@@ -32,7 +32,6 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     
     public static final String TAB_FORM_NAME = "tab_form";
     public static final String TAB_STORE_WINDOW = "tab_store_window";
-    private static String TabbedPropertyPanelAttributeString = "-TabbedPropertyPanel";
     private boolean applyClicked = false;
     private String attributeString;
     private Table buttonTable;

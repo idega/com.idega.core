@@ -43,8 +43,6 @@ private String headerFont = "Verdana, Arial, Helvetica, sans-serif";
 
 private int tableWidth = 100;
 
-private int tableHeight = 0;
-
 private String tableColor = "FFFFFF";
 
 private String headlineAlign = "center";
@@ -244,8 +242,6 @@ public HeaderTable(){
 
 
         public void setHeight(int tableHeight){
-
-		this.tableHeight=tableHeight;
 
 	}
 

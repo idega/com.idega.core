@@ -3,7 +3,6 @@ package com.idega.idegaweb.presentation;
 
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.help.presentation.Help;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -25,19 +24,12 @@ public static final String TITLE_STYLECLASS = "windowTitleStyle";
 private IWBundle iwb;
 public IWBundle iwbCore;
 public IWBundle iwbUser;
-private IWResourceBundle iwrb;
 private Table headerTable;
 private Table mainTable;
-private boolean merged = true;
-
-private String rightWidth = "160";
-private String method = "post";
 private int _cellPadding = 0;
 private Page parentPage;
 private String styleSrc = "";
-private String inputTextStyle = "text";
 private String backTableStyle = "back";
-private String mainTableStyle = "main";
 private String bannerTableStyle = "banner";
 
 private UserBusiness userBusiness = null;

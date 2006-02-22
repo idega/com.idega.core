@@ -213,8 +213,6 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
 
   public static class GroupList extends Page {
 
-    private List groups = null;
-
     public GroupList(){
       super();
     }

@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractMenuBlock.java,v 1.3 2003/05/03 00:37:02 tryggvil Exp $
+ * $Id: AbstractMenuBlock.java,v 1.4 2006/02/22 20:52:48 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -28,9 +28,7 @@ import com.idega.presentation.ui.Parameter;
 public abstract class AbstractMenuBlock extends Block implements MenuBlock{
 
   private static String prmClass = "mbl_clss";
-  private Class defaultClass = null;
   private List objects = null;
-  private boolean showLinks = true;
   private PresentationObject links = null;
   private BlockMenu menu;
 
@@ -67,7 +65,6 @@ public abstract class AbstractMenuBlock extends Block implements MenuBlock{
   }
 
   public void setShowLinks(boolean show){
-    showLinks = show;
   }
 
   public PresentationObject getLinks(){

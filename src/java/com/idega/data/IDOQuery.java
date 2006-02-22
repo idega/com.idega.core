@@ -39,7 +39,6 @@ public class IDOQuery implements Cloneable {
 	private static final String LIKE = " LIKE ";
 	private static final String NOT_LIKE = " NOT LIKE ";
 	private static final String EQUAL_SIGN = "=";
-	private static final String EXCLAMATION_MARK = "!";
 	private static final String NOT_EQUAL_SIGN = "!=";
 	private static final String WHITE_SPACE = " ";
 	private static final String QUOTATION_MARK = "'";
@@ -52,21 +51,16 @@ public class IDOQuery implements Cloneable {
 	//parenthesis
 	private static final String PARENTHESIS_LEFT = "(";
 	private static final String PARENTHESIS_RIGHT = ")";
-	private static final String DELETE_FROM = "DELETE FROM ";
-	private static final String INSERT_INTO = "INSERT INTO ";
 	private static final String DELETE = "DELETE ";
-	private static final String INSERT = "INSERT ";
 	private static final String UPDATE = "UPDATE ";
 	private static final String SET = "SET ";
 	private static final String IN = " IN ";
 	private static final String NOT_IN = " NOT IN ";
-	private static final String VALUES = " VALUES ";
 	private static final String COMMA = ",";
 	private static final String AND = " AND ";
 	private static final String OR = " OR ";
 	private static final String IS_NULL = " IS NULL ";
 	private static final String IS_NOT_NULL = " IS NOT NULL ";
-	private static final String ASCENDING = " ASC ";
 	private static final String DESCENDING = " DESC ";
 	private static final String TRUE = "Y";
 	private static final String FALSE = "N";

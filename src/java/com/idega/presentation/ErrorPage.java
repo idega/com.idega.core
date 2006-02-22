@@ -1,8 +1,6 @@
 package com.idega.presentation;
 
 import com.idega.presentation.text.Text;
-import java.io.StringWriter;
-import java.io.PrintWriter;
 
 /**
  * Title:        idegaclasses
@@ -26,23 +24,9 @@ public class ErrorPage extends Page {
     this._errorText.setText(message);
   }
 
-  private void setException(Exception e){
-    this.setErrorMessage(e.getMessage());
-    addBreak();
-    add("<pre>"+this.getStackTraceAsString(e)+"</pre>");
-  }
-
   private Text getErrorText(){
     _errorText.setBold();
     _errorText.setFontSize(Text.FONT_SIZE_14_HTML_4);
     return _errorText;
   }
-
-  private String getStackTraceAsString(Exception e){
-    StringWriter writer = new StringWriter();
-    PrintWriter print = new PrintWriter(writer);
-    e.printStackTrace(print);
-    return writer.toString();
-  }
-
 }

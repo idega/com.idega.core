@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.61 2006/01/15 17:29:35 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.62 2006/02/22 20:52:49 laddi Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -61,15 +61,6 @@ public class LoginDBHandler {
 	private static LoginInfoHome getLoginInfoHome() {
 		try {
 			return (LoginInfoHome) IDOLookup.getHome(LoginInfo.class);
-		}
-		catch (IDOLookupException ile) {
-			throw new IBORuntimeException(ile);
-		}
-	}
-
-	private static LoginRecordHome getLoginRecordHome() {
-		try {
-			return (LoginRecordHome) IDOLookup.getHome(LoginRecordHome.class);
 		}
 		catch (IDOLookupException ile) {
 			throw new IBORuntimeException(ile);

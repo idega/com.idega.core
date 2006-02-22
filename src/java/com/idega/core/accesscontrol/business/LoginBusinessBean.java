@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.59 2006/02/21 09:28:25 laddi Exp $
+ * $Id: LoginBusinessBean.java,v 1.60 2006/02/22 20:52:49 laddi Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -60,29 +60,18 @@ import com.idega.util.RequestUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2006/02/21 09:28:25 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/22 20:52:49 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.59 $
+ * @version $Revision: 1.60 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
 	// public static String UserAttributeParameter = "user_login";
 	// public static String PermissionGroupParameter = "user_permission_groups";
 	public static String LoginStateParameter = "login_state";
-	// public static String LoginStateMsgParameter = "login_state_msg";
-	// public static String LoginRedirectPageParameter = "login_redirect_page";
-	// public static String LoginFailedRedirectPageParameter =
-	// "login_failed_redirect_page";
-	// protected static String LoginAttributeParameter = "login_attributes";
-	// private static String prmReservedLoginSessionAttribute =
-	// "reserved_login_attributes";
-	private static String UserGroupRepresentativeParameter = "ic_user_representative_group";
-	private static String PrimaryGroupsParameter = "ic_user_primarygroups";
-	private static String PrimaryGroupParameter = "ic_user_primarygroup";
 	private static final String _APPADDRESS_LOGGED_ON_LIST = "ic_loggedon_list";
-	private static final String _LOGGINADDRESS_LOGGED_ON_INFO = "ic_loggedon_info";
 	public static final String USER_PROPERTY_PARAMETER = "user_properties";
 	public static final String LOGINTYPE_AS_ANOTHER_USER = "as_another_user";
 	/**

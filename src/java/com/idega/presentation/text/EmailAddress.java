@@ -34,8 +34,6 @@ public class EmailAddress extends Link{
 
 private PresentationObject obj;
 
-private String ObjectType;
-
 private String parameterString;
 
 
@@ -80,8 +78,6 @@ public EmailAddress(PresentationObject mo){
 
 	obj.setParentObject(this);
 
-	ObjectType="PresentationObject";
-
 }
 
 
@@ -95,8 +91,6 @@ public EmailAddress(Text text){
 	obj = text;
 
 	obj.setParentObject(this);
-
-	ObjectType="Text";
 
 
 
@@ -122,8 +116,6 @@ public EmailAddress(PresentationObject mo,String url){
 
 	obj.setParentObject(this);
 
-	ObjectType="PresentationObject";
-
 }
 
 
@@ -139,8 +131,6 @@ public EmailAddress(Text text,String url){
 	setURL("mailto:"+url);
 
 	obj.setParentObject(this);
-
-	ObjectType="Text";
 
 }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.27 2005/11/29 15:30:03 laddi Exp $
+ * $Id: IWPropertyList.java,v 1.28 2006/02/22 20:52:47 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.xml.XMLParser;
  * files and a few others.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/11/29 15:30:03 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class IWPropertyList {
 	private XMLDocument xmlDocument;
@@ -266,20 +266,8 @@ public class IWPropertyList {
 		addProperty(key, value, stringString);
 	}
 
-	private void addProperty(String key, Object value) {
-		addProperty(key, value.toString(), value.getClass().getName());
-	}
-
-	private void addProperty(String key, int value) {
-		addProperty(key, new Integer(value));
-	}
-
 	private void addProperty(String key, Object value, String type) {
 		IWProperty.addProperty(key, value, type, this);
-	}
-
-	private void addNewProperty(XMLElement key, String keyName, Object value, String type) {
-		IWProperty.addNewProperty(key, keyName, value, type);
 	}
 
 	public String getPropertyType(String key) {

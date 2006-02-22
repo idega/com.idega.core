@@ -222,7 +222,6 @@ public class ImageInfo {
 	private int width;
 	private int height;
 	private int bitsPerPixel;
-	private int colorType = COLOR_TYPE_UNKNOWN;
 	private boolean progressive;
 	private int format;
 	private InputStream in;
@@ -1216,18 +1215,6 @@ public class ImageInfo {
         return (int)uBits;        
     }  
    
-	private void synchBits()
-	{
-		bitBuf = 0;
-		bitPos = 0;
-	}
-
-	private String readLine(int firstChar) throws IOException {
-		StringBuffer result = new StringBuffer();
-		result.append((char)firstChar);
-		return readLine(result);
-	}
-
 	private static void run(String sourceName, InputStream in, ImageInfo imageInfo, boolean verbose) {
 		imageInfo.setInput(in);
 		imageInfo.setDetermineImageNumber(false);

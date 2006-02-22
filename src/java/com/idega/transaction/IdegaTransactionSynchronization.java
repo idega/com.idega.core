@@ -28,19 +28,13 @@ public class IdegaTransactionSynchronization implements Synchronization{
 
 
 
-  private int status;
-
-
-
-/**
+  /**
 
  * This method is called by the transaction manager after the transaction is committed or rolled back.
 
  */
 
  public void afterCompletion(int status) {
-
-  this.status=status;
 
  }
 

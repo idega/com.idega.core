@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.201 2006/01/23 13:00:58 sigtryggur Exp $
+ * $Id: UserBusinessBean.java,v 1.202 2006/02/22 20:52:48 laddi Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -94,10 +94,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2006/01/23 13:00:58 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.201 $
+ * @version $Revision: 1.202 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -132,15 +132,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private Gender male, female;
 
 	private Map pluginsForGroupTypeCachMap = new HashMap();
-
-	/**
-	 * if stored prosedure is not available and users view and owner permissions
-	 * for groups are more than <code>searchForTopNodesFromTop</code> then the
-	 * top nodes are searched from the top of the tree, otherwise the collection
-	 * of the groups that the user has collection for is used to find which of
-	 * them are topnodes
-	 */
-	private int searchForTopNodesFromTop = 3000;
 
 	public UserBusinessBean() {
 	}

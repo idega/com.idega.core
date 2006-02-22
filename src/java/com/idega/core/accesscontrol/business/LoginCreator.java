@@ -22,7 +22,7 @@ public class LoginCreator {
 	public static String dega = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789";
 	public static String consonants = "bBcCdDfFgGhHjJkKlLmMnNpPqQrRsStTvVwWxXzZþÞ";
 	public static String vowels = "aAáÁeEéÉiIíÍoOóÓuUúÚyYýÝæÆöÖ";
-	private static final int ONE = 1, TWO = 2, THREE = 3, FOUR = 4;
+	private static final int ONE = 1, TWO = 2, THREE = 3;
 
 	public LoginCreator() {
 	}

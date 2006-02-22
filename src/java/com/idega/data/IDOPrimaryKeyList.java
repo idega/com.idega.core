@@ -54,7 +54,6 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	private Table _returnProxySqlQueryTable; 
 	private SelectQuery _returnProxyQueryConstraints;
 	
-	private int _cursor = 0;
 	//This Vector contains the loaded IDOEntities but the super list of this object contains list of all primary keys
 	private Vector _entities=null;
 	private LoadTracker _tracker;
@@ -70,32 +69,6 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 //	private void reloadResultSet(){
 //
 //	}
-
-	private void debugPKs(){
-	    debug("[IDOPrimaryKeyList]: _PKs content ->");
-		debug("Index\tObject");
-		debug("-----\t------");
-		ListIterator iter = _entities.listIterator();
-		int count=0;
-		boolean showNulls = true;
-		while (iter.hasNext()) {
-			int index = iter.nextIndex();
-			Object item = iter.next();
-			if(item != null || showNulls){
-				debug(index+"\t"+item);
-				if(item != null){
-				    showNulls = true;
-				} else {
-				   showNulls = false;
-				   count++;
-				}
-			} else {
-			    count++;
-			}
-		}
-		debug("Number of null objects: "+count);
-		debug("[IDOPrimaryKeyList]: _PKs content ends");
-	}
 
 	public IDOPrimaryKeyList(SelectQuery sqlQuery, GenericEntity entity, int prefetchSize) throws IDOFinderException {
 		this(sqlQuery,entity,null,null,prefetchSize);
@@ -139,12 +112,6 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		_prefetchSize = prefetchSize;
 		initialize(primaryKeyList);
     }
-
-	private void loadInBackground(){
-	    Thread thread = new Thread(this);
-		thread.setPriority(Thread.MIN_PRIORITY);
-		thread.start();
-	}
 
 	public void run() {
 //		int loadIntervalSize = fetchSize;
@@ -1520,7 +1487,6 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		public class IDOPrimaryKeyListIterator implements ListIterator{
 			private int _index;
 			private List _list;
-			private Object lastObject;
 			private boolean _hasPrevious=false;
 			
 			public IDOPrimaryKeyListIterator(IDOPrimaryKeyList list,int index){

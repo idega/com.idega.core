@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.55 2006/01/20 16:40:15 tryggvil Exp $
+ * $Id: IDOTableCreator.java,v 1.56 2006/02/22 20:52:47 laddi Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -9,9 +9,7 @@
 package com.idega.data;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,10 +34,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2006/01/20 16:40:15 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.55 $
+ * @version $Revision: 1.56 $
  */
 public class IDOTableCreator{
 
@@ -207,59 +205,12 @@ public class IDOTableCreator{
   }
   
   
-  private void doTableCheckSelectStar(GenericEntity entity,String tableName)throws Exception{
-    	String checkQuery = "select * from "+tableName;
-        executeQuery(entity,checkQuery);  	
-  }
-  
   private void doTableCheckDatastoreInterface(GenericEntity entity,String tableName)throws Exception{
 	  if(!_dsi.doesTableExist(entity.getDatasource(),tableName))
 	  	throw new Exception("Table "+tableName+"does not exists");
   }
 
 
-	
-	private void doTableCheckDatabaseMetadata(GenericEntity entity,String tableName)throws Exception{
-		/**
-		 * @todo: Finish implementation
-		 **/
-	    Connection conn = null;
-	    ResultSet rs = null;
-	    boolean tableExists = false;
-	    try{
-	      conn = entity.getConnection();
-	      List v = new ArrayList();
-	      java.sql.DatabaseMetaData metadata = conn.getMetaData();
-	      rs = metadata.getTables("","",tableName.toLowerCase(),null);
-	      //System.out.println("Table: "+tableName+" has the following columns:");
-	      while (rs.next()) {
-	        String table = rs.getString("TABLE_NAME");
-	        v.add(table);
-	        tableExists=true;
-	        //System.out.println("\t\t"+column);
-	      }
-	      rs.close();
-	      if(v.isEmpty()){
-	        rs = metadata.getTables("","",tableName.toUpperCase(),null);
-	        //System.out.println("Table: "+tableName+" has the following columns:");
-	        while (rs.next()) {
-		        String table = rs.getString("TABLE_NAME");
-		        v.add(table);
-		        tableExists=true;
-	        }
-	        rs.close();
-	      }
-	     
-	    }
-	    finally{
-	    	if(conn!=null){
-	    		entity.freeConnection(conn);
-	    	}
-	    }
-	    if(tableExists==false){
-	    	throw new Exception("Table "+tableName+" does not exist");	
-	    }
-	}
 	
 	/**
 	 * Creates an entity record (view) that represents the view entity in the datastore
@@ -679,11 +630,6 @@ public class IDOTableCreator{
 	  			}
 	  		}
 	  	} catch (NoIndexException ignore) {}
-  }
-  
-  private void dropIndex(GenericEntity entity, String name) throws Exception {
-  		String sql = "DROP INDEX "+entity.getTableName()+"."+name;
-  		executeUpdate(entity, sql);
   }
   
   private void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {

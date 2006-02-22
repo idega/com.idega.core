@@ -21,8 +21,6 @@ public class LocaleUtil {
   private static final String ENGLISH_IDENTIFIER="en";
   private static final String US_IDENTIFIER="en_US";
   private static final String UK_IDENTIFIER="en_UK";
-  private static final String SE_IDENTIFIER="sv_SE";
-
   private LocaleUtil() {
   }
 

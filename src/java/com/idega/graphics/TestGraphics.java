@@ -1,5 +1,5 @@
 /*
- * $Id: TestGraphics.java,v 1.7 2006/02/20 11:04:35 laddi Exp $
+ * $Id: TestGraphics.java,v 1.8 2006/02/22 20:52:49 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -20,13 +20,8 @@ public class TestGraphics {
   }
 
   public static void main(String[] args) {
-    TestGraphics testGraphics = new TestGraphics();
-    testGraphics.invokedStandalone = true;
-
     TestGraphics.test();
   }
-  private boolean invokedStandalone = false;
-
   public static void test() {
 //    System.setProperty ("awt.toolkit", "com.eteks.awt.PJAToolkit");
 //    System.setProperty ("java.awt.graphicsenv", "com.eteks.java2d.PJAGraphicsEnvironment");

@@ -31,7 +31,6 @@ public class SingleLineItem extends Panel {
   private int iWidth = 120;
   private int nextXpos = 0;
   private int nextYpos = 0;
-  private int componentOffset = 5;
   ActionListener actionListener = null;
   boolean isSelected = false;
   private Window window;
@@ -52,7 +51,6 @@ public class SingleLineItem extends Panel {
   }
 
   public void setComponentOffset(int componentOffset){
-    this.componentOffset = componentOffset;
   }
 
   public void setComponentOffset(int width, int height){

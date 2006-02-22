@@ -35,11 +35,9 @@ public class ScrollTable extends Block implements TableType {
 	private int scrollLayerWidth = -1;
 	
 	private Table theTable = null;
-	private Table headerTable = null;	
 	
 	public ScrollTable(){
 		theTable = new Table();
-		headerTable = new Table();
 	}
 
 	/**

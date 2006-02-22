@@ -41,7 +41,6 @@ public class TreeViewer extends AbstractTreeViewer {
 	Link _linkOpenClosePrototype = null;
 	String _linkStyle = null;
 	boolean _usesOnClick = false;
-	private boolean _nowrap = true;
 	private Layer _nowrapLayer = null;
 	private int _maxNodeNameLength = -1;
 	private String onNodeClickEvent = null;
@@ -274,10 +273,6 @@ public class TreeViewer extends AbstractTreeViewer {
 			_linkOpenClosePrototype = link;
 	}
 	
-	private Link getLinkOpenClosePrototypeClone() {
-			return (Link) getLinkOpenClosePrototype().clone();
-	}
-
 	private Link getLinkPrototype() {
 		if (_linkPrototype == null) {
 			_linkPrototype = new Link();
@@ -302,30 +297,9 @@ public class TreeViewer extends AbstractTreeViewer {
 		return _nowrapLayer;
 	}
 
-	private Link getLinkPrototypeClone() {
-		return (Link) getLinkPrototype().clone();
-	}
-
 	private Link getLinkPrototypeClone(String text) {
 		Link l = (Link) getLinkPrototype().clone();
 		l.setText(text);
-		return l;
-	}
-
-	private Layer getNoWrapLayerClone() {
-		Layer l = (Layer) getNoWrapLayer().clone();
-		return l;
-	}
-
-	private Layer getNoWrapLayerClone(PresentationObject obj) {
-		Layer l = getNoWrapLayerClone();
-		l.add(obj);
-		return l;
-	}
-
-	private Link getLinkPrototypeClone(Image image) {
-		Link l = (Link) getLinkPrototype().clone();
-		l.setImage(image);
 		return l;
 	}
 

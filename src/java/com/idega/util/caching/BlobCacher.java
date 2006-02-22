@@ -227,14 +227,6 @@ public class BlobCacher  {
 
   }
 
-  // not done yet
-
-  private static void deleteCachedBlobFile(String pathAndFileName){
-
-     FileUtil.delete(pathAndFileName);
-
-  }
-
 
 
 

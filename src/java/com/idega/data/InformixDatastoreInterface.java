@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import com.idega.util.IWTimestamp;
-import com.idega.util.database.ConnectionBroker;
 import com.informix.jdbc.IfxPreparedStatement;
 /**
 *A class for database abstraction for the Informix Database.
@@ -26,7 +25,6 @@ import com.informix.jdbc.IfxPreparedStatement;
 *@version 1.0
 */
 public class InformixDatastoreInterface extends DatastoreInterface {
-	private boolean checkedBlobTable = false;
 	InformixDatastoreInterface() {
 		useTransactionsInEntityCreation = false;
 		IWTimestamp.CUT_MILLISECONDS_OFF_IN_TOSTRING=false;
@@ -335,100 +333,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 	public boolean supportsBlobInUpdate() {
 		return true;
 	}
-	private String getBlobTableName() {
-		return "iw_blobs_temp";
-	}
-	/*protected void insertBlob(IDOLegacyEntity entity)throws Exception{
-	  checkBlobTable();
-	  int id = insertIntoBlobTable(entity);
-	  System.out.print("id from blob = "+id);
-	  //this.updateRealTable(id,entity);
-	}*/
-	private int insertIntoBlobTable(GenericEntity entity) throws Exception {
-		String statement;
-		Connection Conn = null;
-		int returnInt = -1;
-		try {
-			statement = "insert into " + this.getBlobTableName() + "(blob_value) values(?)";
-			System.out.println(statement);
-			//System.out.println("In insertBlob() in DatastoreInterface");
-			BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
-			if (wrapper != null) {
-				//System.out.println("In insertBlob() in DatastoreInterface wrapper!=null");
-				//Conn.setAutoCommit(false);
-				InputStream instream = wrapper.getInputStreamForBlobWrite();
-				if (instream != null) {
-					//System.out.println("In insertBlob() in DatastoreInterface instream != null");
-					Conn = entity.getConnection();
-					//if(Conn== null){ System.out.println("In insertBlob() in DatastoreInterface conn==null"); return;}
-					//BufferedInputStream bin = new BufferedInputStream(instream);
-					PreparedStatement PS = Conn.prepareStatement(statement);
-					//System.out.println("bin.available(): "+bin.available());
-					//PS.setBinaryStream(1, bin, 0 );
-					PS.setBinaryStream(1, instream, instream.available());
-					PS.executeUpdate();
-					com.informix.jdbc.IfxStatement ifxStatement = (com.informix.jdbc.IfxStatement) PS;
-					returnInt = ifxStatement.getSerial();
-					PS.close();
-					//System.out.println("bin.available(): "+bin.available());
-					instream.close();
-					// bin.close();
-				}
-				//Conn.commit();
-				//Conn.setAutoCommit(true);
-			}
-		}
-		catch (SQLException ex) {
-			ex.printStackTrace();
-			System.err.println("error uploading blob to db for " + entity.getClass().getName());
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		finally {
-			if (Conn != null)
-				entity.freeConnection(Conn);
-		}
-		return returnInt;
-	}
-	private void updateRealTable(int blobID, GenericEntity entity) throws Exception {
-		String blobColumn = entity.getLobColumnName();
-		super.executeUpdate(
-			entity,
-			"update " + entity.getTableName() + " n set " + blobColumn + "xxx where " + this.getBlobTableName() + ".id=" + blobID);
-	}
-	private void checkBlobTable() {
-		if (!this.checkedBlobTable) {
-			createBlobTable();
-		}
-		checkedBlobTable = true;
-	}
-	private void createBlobTable() {
-		Connection conn = null;
-		Statement stmt = null;
-		try {
-			conn = ConnectionBroker.getConnection();
-			stmt = conn.createStatement();
-			stmt.executeUpdate("create table " + this.getBlobTableName() + " (id serial,blob_value byte)");
-			stmt.close();
-			System.out.println("Created blob table");
-		}
-		catch (SQLException e) {
-			System.out.println("Did not create blob table");
-		}
-		finally {
-			try {
-				if (stmt != null) {
-					stmt.close();
-				}
-			}
-			catch (SQLException sql) {
-			}
-			if (conn != null) {
-				ConnectionBroker.freeConnection(conn);
-			}
-		}
-	}
+	
 	protected void createForeignKey(
 		GenericEntity entity,
 		String baseTableName,

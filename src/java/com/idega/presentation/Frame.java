@@ -201,14 +201,6 @@ import com.idega.idegaweb.*;
       setMarkupAttribute(ROWS_PROPERTY,Frame.star);
     }
 
-    private String getSpan(){
-      String frameProperty = this.getMarkupAttribute(ROWS_PROPERTY);
-      if(frameProperty==null){
-        frameProperty=star;
-      }
-      return frameProperty;
-    }
-
     public void setNoresize(boolean ifResize){
       if(ifResize){
         this.setMarkupAttributeWithoutValue("noresize");

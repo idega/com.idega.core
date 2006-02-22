@@ -15,8 +15,6 @@ import java.util.StringTokenizer;
 public class TextStyler implements Serializable{
 
 	private HashMap _styleMap;
-	private String _styleString;
-
 	private String[] _styles = StyleConstants.ALL_STYLES;
 
 	public TextStyler() {
@@ -25,7 +23,6 @@ public class TextStyler implements Serializable{
 
 	public TextStyler(String styleString) {
 		this();
-		_styleString = styleString;
 		parseStyleString(styleString);
 	}
 

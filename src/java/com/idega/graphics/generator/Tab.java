@@ -13,7 +13,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.geom.AffineTransform;
 
 public class Tab extends Button {
   public static String BUTTON_UP = "_TAB_UP";
@@ -23,7 +22,6 @@ public class Tab extends Button {
   protected boolean firstRun = true;
   protected int height = 15;
 
-  private AffineTransform flipTransform =  new AffineTransform((double)1,(double)0,(double)0,(double)-1,(double)0,(double)height);
   private boolean flip = false;
 
   public Tab() {

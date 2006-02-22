@@ -1,7 +1,5 @@
 package com.idega.presentation.plaf.basic;
 
-import java.util.Vector;
-
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
@@ -45,8 +43,6 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI {
 
 	//inner class BasicTabPresentation starts
 	public class BasicTabPresentation extends GenericTabPresentation {
-
-		private Vector tabs;
 
 		public BasicTabPresentation() {
 			super();
@@ -130,8 +126,6 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI {
 
 		//inner class Tab starts
 		private class Tab extends Table {
-
-			private String Name;
 
 			private boolean selected;
 

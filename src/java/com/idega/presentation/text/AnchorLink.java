@@ -11,7 +11,6 @@ import com.idega.presentation.PresentationObject;
  */
 
 public class AnchorLink extends Link {
-  private PresentationObject obj;
   private String anchorName;
   private boolean addCurrentURLToLink = false;
 

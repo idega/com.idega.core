@@ -4,7 +4,6 @@ import java.util.Vector;
 
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.data.GenericGroup;
-import com.idega.core.user.business.UserBusiness;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
@@ -30,7 +29,6 @@ public class CreateUserGroup extends Window {
 
   private Text groupNameText;
   private Text descriptionText;
-  private Text groupTypeText;
 
   private TextInput groupNameField;
   private TextArea descriptionField;
@@ -51,8 +49,6 @@ public class CreateUserGroup extends Window {
   public static String descriptionFieldParameterName = "description";
   public static String groupTypeFieldParameterName = "group_type";
 
-  private UserBusiness business;
-
   private String rowHeight = "37";
 
   public CreateUserGroup() {
@@ -64,7 +60,6 @@ public class CreateUserGroup extends Window {
     this.setBackgroundColor("#d4d0c8");
     myForm = new Form();
     this.add(myForm);
-    business = new UserBusiness();
     initializeTexts();
     initializeFields();
     init();
@@ -75,7 +70,6 @@ public class CreateUserGroup extends Window {
 
     groupNameText = new Text("Group name:");
     descriptionText = new Text("Description : ");
-    groupTypeText = new Text("Type: ");
   }
 
   protected void initializeFields(){

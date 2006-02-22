@@ -7,15 +7,9 @@ import java.util.GregorianCalendar;
 
 import java.sql.*;
 
-import com.idega.util.database.PoolManager;
-
 
 
 public class FunctionCollection{
-
-
-
-private PoolManager poolMgr;
 
 
 

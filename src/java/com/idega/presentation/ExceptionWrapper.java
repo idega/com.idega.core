@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionWrapper.java,v 1.8 2003/12/11 15:07:10 tryggvil Exp $
+ * $Id: ExceptionWrapper.java,v 1.9 2006/02/22 20:52:48 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -22,7 +22,6 @@ public class ExceptionWrapper extends ExpandContainer {
 
   private Exception _exception;
   private String _errorStyle;
-  private String _thrower;
 
   public ExceptionWrapper() {
   	super();
@@ -36,8 +35,6 @@ public class ExceptionWrapper extends ExpandContainer {
   public ExceptionWrapper(Exception ex, PresentationObject thrower) {
     super();
     setException(ex);
-    _thrower = thrower.getClassName();
-    //add(thrower);
   }
 
 	protected void initialize(IWContext iwc) {

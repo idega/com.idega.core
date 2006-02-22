@@ -1,5 +1,5 @@
 /*
- * $Id: ConnectionBroker.java,v 1.13 2005/09/23 16:21:29 tryggvil Exp $
+ * $Id: ConnectionBroker.java,v 1.14 2006/02/22 20:52:49 laddi Exp $
  *
  * Copyright (C) 2000-2005 Idega hf. All Rights Reserved.
  *
@@ -35,7 +35,7 @@ import com.idega.transaction.IdegaTransactionManager;
  * <br>
  * </p>
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
 */
 public class ConnectionBroker
 {
@@ -70,47 +70,6 @@ public class ConnectionBroker
 		{
 			return PoolManager.getInstance().getConnection();
 		}
-	}
-	/**
-	 * Returns a Datastore connection from the default datasource
-	 */
-	private static Connection getConnectionOld(boolean doTransactionCheck)
-	{
-		Connection conn = null;
-		IdegaTransactionManager tm = (IdegaTransactionManager) IdegaTransactionManager.getInstance();
-		if (doTransactionCheck && tm.hasCurrentThreadBoundTransaction())
-		{
-			try
-			{
-				conn = ((IdegaTransaction) tm.getTransaction()).getConnection();
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace(System.err);
-			}
-		}
-		else
-		{
-			if (isUsingIdegaPool())
-			{
-				conn = PoolManager.getInstance().getConnection();
-			}
-			else if (isUsingPoolManPool())
-			{
-				//try{
-				//conn = com.codestudio.util.SQLManager.getInstance().requestConnection();
-				/**
-				 * @todo: Commit in support for com.codestudio.util PoolMan
-				 */
-				//}
-				//catch(SQLException e){
-				//  throw new RuntimeException(e.getMessage());
-				//}
-			}
-			else
-				throw new RuntimeException("PoolManager not available");
-		}
-		return conn;
 	}
 	/**
 	 * Does not fully support TransactionManager
@@ -196,24 +155,6 @@ public class ConnectionBroker
 			freePooledConnection(null,connection);
 		}
 	}
-	/**
-	
-	 * Frees (Reallocates) a Datastore connection to the default datasource
-	
-	 */
-	private static void freeConnectionOld(Connection connection, boolean doTransactionCheck)
-	{
-		if (doTransactionCheck && !((IdegaTransactionManager) IdegaTransactionManager.getInstance()).hasCurrentThreadBoundTransaction())
-		{
-			freePooledConnection(null,connection);
-		}
-		else if (!doTransactionCheck)
-		{
-			freePooledConnection(null,connection);
-		}
-	}
-	
-	
 	private static void freePooledConnection(String dataSourceName,Connection connection){
 		if (isUsingIdegaPool())
 		{

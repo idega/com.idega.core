@@ -34,7 +34,6 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
-import javax.ejb.EntityContext;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
@@ -68,14 +67,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	
 
 	static String DEFAULT_DATASOURCE = "default";
-	//private static NullColumnValue nullColumnValue = new NullColumnValue();
-	private String _dataStoreType;
 	private int _state = IDOLegacyEntity.STATE_NEW;
 	private Map _columns = new Hashtable();
 	private Map _updatedColumns;
 	private String _dataSource;
 	String[] _cachedColumnNameList;
-	private EntityContext _entityContext;
 	//private EJBHome _ejbHome;
 	private HashMap _ejbHomes = new HashMap();
 //	private EJBLocalHome _ejbHome;
@@ -88,7 +84,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	private Hashtable _theMetaDataTypes;
 //	private Hashtable _theMetaDataOrdering;
 	private boolean _hasMetaDataRelationship = false;
-	private boolean _hasUniqueIDColumn = false;
 	private boolean _metaDataHasChanged = false;
 	public String _lobColumnName;
 	private boolean insertStartData = true;
@@ -1578,10 +1573,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		} catch (Exception e) {
 			throw new EJBException(e.getMessage());
 		}
-	}
-	
-	private void fillPKLoadStatement(PreparedStatement prepStmt){
-	    
 	}
 	
 	private void ejbLoad(Object pk) throws SQLException, FinderException {
@@ -3518,7 +3509,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		if (_columns != null) {
 			_columns.clear();
 		}
-		_dataStoreType = null;
 		_dataSource = DEFAULT_DATASOURCE;
 		_state = IDOLegacyEntity.STATE_NEW;
 		_updatedColumns = null;
@@ -3539,10 +3529,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		store();
 	}
 	public void setEntityContext(javax.ejb.EntityContext ctx) {
-		this._entityContext = ctx;
 	}
 	public void unsetEntityContext() {
-		this._entityContext = null;
 	}
 	public Object ejbCreate() throws CreateException {
 		
@@ -4363,14 +4351,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return Integer.class;
 	}
 	
-	private String[] getPrimaryKeyColumns() {
-		IDOEntityField[] fields = getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
-		String[] theReturn = new String[fields.length];
-		for (int i = 0; i < theReturn.length; i++) {
-			theReturn[i] = fields[i].getSQLFieldName();
-		}
-		return theReturn;
-	}
 	/**
 	 * The default implementation. Returns the number of all records for this
 	 * entity.
@@ -5004,7 +4984,6 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected void addUniqueIDColumn() {
 		addAttribute(getUniqueIdColumnName(),"A generated unique id do not change manually!",String.class,36);
 		setUnique(getUniqueIdColumnName(), true);
-		_hasUniqueIDColumn = true;
 	}
 	
 	/**

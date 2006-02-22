@@ -14,18 +14,13 @@ import com.idega.presentation.Block;
 
 public class IWBrowseListView extends Block implements IWBrowserView {
 
-  private String _controlTarget = null;
-  private IWPresentationEvent _contolEvent = null;
-
   public IWBrowseListView() {
   }
 
   public void setControlTarget(String controlTarget){
-    _controlTarget = controlTarget;
   }
 
   public void setControlEventModel(IWPresentationEvent model){
-    _contolEvent = model;
   }
 
 

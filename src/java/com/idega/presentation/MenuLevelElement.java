@@ -8,8 +8,6 @@ import java.util.Iterator;
  * consrtucts a Level for the <code>DynamicJSMenu</code> 
  */
 public class MenuLevelElement extends PresentationObject {
-	private DynamicJSMenu menu;
-	
 	private int width = 110;
 	private int height = 25;
 	private String regClass = "";

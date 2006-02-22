@@ -12,7 +12,6 @@ import java.util.Locale;
  * @version 1.0
  */
 public class CustomDateFormat {
-	private static String DASH = "-";
 	private static DateFormat swedishDateFormat;
 	private CustomDateFormat() {
 	}

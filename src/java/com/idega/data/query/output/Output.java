@@ -14,14 +14,10 @@ public class Output implements Flag{
      * @param indent String to be used for indenting (e.g. "", "  ", "       ", "\t")
      */
     public Output(String indent) {
-        this.indent = indent;
     }
 
     private StringBuffer result = new StringBuffer();
-    private StringBuffer currentIndent = new StringBuffer();
     private boolean newLineComing;
-
-    private final String indent;
 
     public String toString() {
         return result.toString();

@@ -16,8 +16,6 @@ import com.idega.util.IWTimestamp;
 
 public class SocialSecurityNumber {
 	private String sSSN = null;
-	private int iSSN = 0;
-
 	public SocialSecurityNumber() {
 	}
 

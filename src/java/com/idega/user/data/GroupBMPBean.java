@@ -86,8 +86,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	private static List userGroupTypeSingletonList;
 
-	private List userRepresentativeGroupTypeList;
-	
 	public final void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(getNameColumnName(), "Group name", true, true, "java.lang.String");
@@ -411,10 +409,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			throw new EJBException(e.getMessage());
 		}
 		return theReturn;
-	}
-
-	private Collection getCollectionOfParents() throws FinderException {		
-		return getCollectionOfParents(null, null);
 	}
 
 	private Collection getCollectionOfParents(Map cachedParents, Map cachedGroups) throws FinderException {		

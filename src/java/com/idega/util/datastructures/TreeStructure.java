@@ -1,82 +1,58 @@
-//idega 2000 - Tryggvi Larusson
+// idega 2000 - Tryggvi Larusson
 
 /*
-
-*Copyright 2000 idega.is All Rights Reserved.
-
-*/
+ * 
+ * Copyright 2000 idega.is All Rights Reserved.
+ * 
+ */
 
 package com.idega.util.datastructures;
 
 
-
-import java.util.*;
-
-
-
-
-
 /**
+ * 
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * 
+ * @version o.5
+ * 
+ * DRAFT - UNFINISHED CLASS
+ * 
+ */
 
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+public class TreeStructure {
 
-*@version o.5
+	int lastNodeid;
 
-*DRAFT - UNFINISHED CLASS
+	int lastParentNodeid;
 
-*/
+	public TreeStructure() {
 
-public class TreeStructure{
+		lastNodeid = 0;
 
+		lastParentNodeid = 0;
 
+	}
 
-private Hashtable theTree;
+	public int addNode() {
 
-int lastNodeid;
+		// lastNodeid
 
-int lastParentNodeid;
+		return -1;
 
+	}
 
+	public int add(idegaTreeNode node) {
 
-public TreeStructure(){
+		return -1;
 
-	theTree = new Hashtable();
+	}
 
-	lastNodeid=0;
-
-	lastParentNodeid=0;
-
-}
-
-
-
-public int addNode(){
-
-	//lastNodeid
-
-        return -1;
-
-}
-
-
-
-public int add(idegaTreeNode node){
-
-  return -1;
+	/*
+	 * 
+	 * public boolean isLeaf(int nodenum){
+	 * 
+	 * return true
+	 *  }
+	 */
 
 }
-
-
-
-/*
-
-public boolean isLeaf(int nodenum){
-
-	return true
-
-}*/
-
-
-
-}
-

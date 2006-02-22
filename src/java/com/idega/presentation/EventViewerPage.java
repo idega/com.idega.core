@@ -1,5 +1,5 @@
 /*
- * $Id: EventViewerPage.java,v 1.1 2004/11/21 16:56:07 tryggvil Exp $
+ * $Id: EventViewerPage.java,v 1.2 2006/02/22 20:52:48 laddi Exp $
  * Created on 21.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,6 @@ import com.idega.idegaweb.browser.presentation.IWControlFramePresentationState;
 
 
 public class EventViewerPage extends Page {
-     private boolean initialized = false;
-
-     private IWControlFramePresentationState _presentationState = null;
-
      public EventViewerPage(){
        if(this.isChildOfOtherPage()){
          Page parent = this.getParentPage();

@@ -1,169 +1,115 @@
 package com.idega.core.accesscontrol.data;
 
-
-
 import java.sql.SQLException;
 
 import com.idega.core.component.data.ICObject;
 
-
-
- /**
-
- * Title:        AccessControl
-
+/**
+ * 
+ * Title: AccessControl
+ * 
  * Description:
-
- * Copyright:    Copyright (c) 2001 idega.is All Rights Reserved
-
- * Company:      idega margmiðlun
-
+ * 
+ * Copyright: Copyright (c) 2001 idega.is All Rights Reserved
+ * 
+ * Company: idega margmiðlun
+ * 
  * @author idega 2001 - <a href="mailto:idega@idega.is">idega team</a>
-
+ * 
  * @version 1.0
-
+ * 
  */
-
-
 
 public class ICObjectPermissionBMPBean extends com.idega.data.GenericEntity implements com.idega.core.accesscontrol.data.ICObjectPermission {
 
+	public ICObjectPermissionBMPBean() {
 
+		super();
 
-  private static String sClassName = ICObjectPermission.class.getName();
+	}
 
+	public ICObjectPermissionBMPBean(int id) throws SQLException {
 
+		super(id);
 
-  public ICObjectPermissionBMPBean() {
+	}
 
-    super();
+	public void initializeAttributes() {
 
-  }
+		addAttribute(getIDColumnName());
 
+		addAttribute(getArObjectIDColumnName(), "Object", true, true, Integer.class, "many-to-one", ICObject.class);
 
+		addAttribute(getPermissionTypeColumnName(), "Permission Type", true, true, "java.lang.String");
 
-  public ICObjectPermissionBMPBean(int id) throws SQLException{
+		addAttribute(getDescripionColumnName(), "Description", true, true, "java.lang.String");
 
-    super(id);
+	}
 
-  }
+	public String getEntityName() {
 
+		return "ic_object_permission";
 
+	}
 
-  public void initializeAttributes() {
+	public static String getArObjectIDColumnName() {
 
-    addAttribute(getIDColumnName());
+		return "ic_object_id";
 
-    addAttribute(getArObjectIDColumnName(),"Object",true,true,Integer.class,"many-to-one",ICObject.class);
+	}
 
-    addAttribute(getPermissionTypeColumnName(),"Permission Type",true,true,"java.lang.String");
+	public int getArObjectID() {
 
-    addAttribute(getDescripionColumnName(),"Description",true,true,"java.lang.String");
+		return getIntColumnValue(getArObjectIDColumnName());
 
+	}
 
+	public void setArObjectID(Integer ObjectID) {
 
-  }
+		setColumn(getArObjectIDColumnName(), ObjectID);
 
+	}
 
+	public static String getPermissionTypeColumnName() {
 
-  public String getEntityName() {
+		return "permission_type";
 
-    return "ic_object_permission";
+	}
 
-  }
+	public String getPermissionType() {
 
+		return getStringColumnValue(getPermissionTypeColumnName());
 
+	}
 
+	public void setPermissionType(String thePermissionType) {
 
+		setColumn(getPermissionTypeColumnName(), thePermissionType);
 
-  public static String getArObjectIDColumnName(){
+	}
 
-    return "ic_object_id";
+	public static String getDescripionColumnName() {
 
-  }
+		return "description";
 
+	}
 
+	public String getDescription() {
 
-  public int getArObjectID(){
+		return getStringColumnValue(getDescripionColumnName());
 
-    return getIntColumnValue(getArObjectIDColumnName());
+	}
 
-  }
+	public void setDescription(String theDescription) {
 
+		setColumn(getDescripionColumnName(), theDescription);
 
+	}
 
-  public void setArObjectID( Integer ObjectID){
+	public static ICObjectPermission getStaticInstance() {
 
-    setColumn(getArObjectIDColumnName(),ObjectID);
+		return (ICObjectPermission) getStaticInstance(ICObjectPermission.class);
 
-  }
-
-
-
-
-
-  public static String getPermissionTypeColumnName(){
-
-    return "permission_type";
-
-  }
-
-
-
-  public String getPermissionType(){
-
-    return getStringColumnValue(getPermissionTypeColumnName());
-
-  }
-
-
-
-  public void setPermissionType( String thePermissionType){
-
-    setColumn(getPermissionTypeColumnName(),thePermissionType);
-
-  }
-
-
-
-
-
-  public static String getDescripionColumnName(){
-
-    return "description";
-
-  }
-
-
-
-  public String getDescription(){
-
-    return getStringColumnValue(getDescripionColumnName());
-
-  }
-
-
-
-  public void setDescription( String theDescription){
-
-    setColumn(getDescripionColumnName(),theDescription);
-
-  }
-
-
-
-
-
-  public static ICObjectPermission getStaticInstance(){
-
-    return (ICObjectPermission)getStaticInstance(ICObjectPermission.class);
-
-  }
-
-
-
-
-
-
+	}
 
 } // Class ArObjectPermission

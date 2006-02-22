@@ -12,13 +12,9 @@ public class HTMLArea extends Block {
 
 	private String height = "100%";
 
-	private String color = "white";
-
 	private int cols = 50;
 
 	private int rows = 50;
-
-	private boolean menues = true;
 
 	private String text = "";
 
@@ -110,11 +106,9 @@ public class HTMLArea extends Block {
 	}
 
 	public void setBackgroundColor(String color) {
-		this.color = color;
 	}
 
 	public void setShowMenues(boolean menues) {
-		this.menues = menues;
 	}
 
 	public void setInputName(String name) {

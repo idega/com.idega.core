@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationViewNode.java,v 1.2 2004/12/05 09:23:40 laddi Exp $
+ * $Id: ApplicationViewNode.java,v 1.3 2006/02/22 20:52:48 laddi Exp $
  * Created on 16.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,15 +14,13 @@ import com.idega.idegaweb.IWMainApplication;
 
 /**
  * 
- *  Last modified: $Date: 2004/12/05 09:23:40 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ApplicationViewNode extends DefaultViewNode {
 
-	private boolean showSideFunctionNavigation=false;
-	
 	/**
 	 * @param viewId
 	 * @param parent

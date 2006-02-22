@@ -1,5 +1,5 @@
 /*
- * $Id: Help.java,v 1.5 2006/02/20 11:04:35 laddi Exp $
+ * $Id: Help.java,v 1.6 2006/02/22 20:52:49 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -30,8 +30,6 @@ public class Help extends Block {
 	
 	private static final String DEFAULT_HELP_TEXT = "hlp_default_text";
 	private static final String DEFAULT_HELP_IMAGE = "/help/help.gif";
-	private static final String DEFAULT_HELP_KEY = "hlp_";
-
 	private static final String CORE_BUNDLE = "com.idega.core";
 	public static final String HELP_KEY = "hlp_key";
 	public static final String HELP_BUNDLE = "hlp_bundle";
@@ -43,7 +41,6 @@ public class Help extends Block {
 	protected boolean _showInNewWindow = true;
 	protected Link _helpLink = null;
 
-	private IWBundle _iwb = null;
 	private IWBundle _iwbCore = null;
 	private IWResourceBundle _iwrbCore = null;
 	

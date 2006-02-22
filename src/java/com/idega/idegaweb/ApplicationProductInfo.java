@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationProductInfo.java,v 1.6 2005/11/25 15:25:07 tryggvil Exp $
+ * $Id: ApplicationProductInfo.java,v 1.7 2006/02/22 20:52:47 laddi Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,14 +21,12 @@ import com.idega.util.IWTimestamp;
 /**
  *  This class holds information about the application product installed.<br>
  * 
- *  Last modified: $Date: 2005/11/25 15:25:07 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class ApplicationProductInfo {
-	
-	private IWMainApplication iwma;
 	
 	//This will be swapped out by reading from /WEB-INF/idegaweb/properties/product.properties
 	private String inceptionYear="2000";
@@ -41,7 +39,6 @@ public class ApplicationProductInfo {
 	
 	
 	public ApplicationProductInfo(IWMainApplication iwma){
-		this.iwma=iwma;
 		String filePath = iwma.getPropertiesRealPath()+FileUtil.getFileSeparator()+"product.properties";
 		File file = new File(filePath);
 		loadFromFile(file);

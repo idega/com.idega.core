@@ -73,8 +73,6 @@ public class MenuBar extends InterfaceObject {
 
   private String scriptCodeInit;
 
-  private String scriptVariables;
-
   private String[] addFunction;
 
   boolean scaleNavBar;

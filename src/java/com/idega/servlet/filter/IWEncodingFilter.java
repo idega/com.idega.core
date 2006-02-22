@@ -1,7 +1,7 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
-import java.util.logging.Logger;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -10,6 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.idega.presentation.IWContext;
 
 /**
@@ -20,7 +21,6 @@ import com.idega.presentation.IWContext;
  */
 public class IWEncodingFilter implements Filter {
 
-	private static Logger log = Logger.getLogger(IWEncodingFilter.class.getName());
 	/*
 	 * (non-Javadoc)
 	 * 

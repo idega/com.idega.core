@@ -1,5 +1,5 @@
 /*
- * $Id: ParentGroupsRecursiveProcedure.java,v 1.1 2004/09/07 13:03:09 gummi Exp $
+ * $Id: ParentGroupsRecursiveProcedure.java,v 1.2 2006/02/22 20:52:48 laddi Exp $
  * Created on 1.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,20 +30,16 @@ import com.idega.util.ListUtil;
 
 /**
  * 
- *  Last modified: $Date: 2004/09/07 13:03:09 $ by $Author: gummi $
+ *  Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">gummi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ParentGroupsRecursiveProcedure extends GenericProcedure {
 
 	private static Class[] parameterType = new Class[] {Integer.class};
 	private String[] _groupTypes = null;
 	private boolean _returnSpecifiedGroupTypes = true;
-	private Group _gr = null;
-	//private boolean _usedFallBackProcedure = false;
-	
-	
 	/**
 	 * 
 	 */
@@ -154,8 +150,6 @@ public class ParentGroupsRecursiveProcedure extends GenericProcedure {
 	public synchronized Collection findParentGroupsRecursive(Group gr, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
 		_groupTypes = groupTypes;
 		_returnSpecifiedGroupTypes = returnSpecifiedGroupTypes;
-		_gr = gr;
-		
 		Collection c;
 		try {
 			c = (Collection) getResult(new Object[] {gr.getPrimaryKey()});
@@ -197,9 +191,6 @@ public class ParentGroupsRecursiveProcedure extends GenericProcedure {
 		
 		_groupTypes=null;
 		_returnSpecifiedGroupTypes=true;
-		_gr=null;
-		//_usedFallBackProcedure = false;
-		
 		return (returnSpecifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
 		
 		

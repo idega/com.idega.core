@@ -71,9 +71,4 @@ public class TextFormat implements Singleton{
     textTemplates[2].setBold(true);
   }
 
-  private void store(){
-
-
-  }
-
 }

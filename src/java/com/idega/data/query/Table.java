@@ -19,8 +19,6 @@ public class Table implements Outputable, Cloneable {
 	private String name;
 
 	private String alias=null;
-	private Outputable query = null;
-	
 	private String primaryKeyColumnName;
 	private String[] primaryKeyColumnNames;
 	private boolean hasCompositePrimaryKey = false;
@@ -37,7 +35,6 @@ public class Table implements Outputable, Cloneable {
 	}
 	
 	public Table(Outputable query, String alias){
-		this.query = query;
 		this.name = "("+query+")";
 		this.alias = alias;
 	}

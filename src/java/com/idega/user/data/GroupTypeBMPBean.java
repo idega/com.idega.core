@@ -35,7 +35,6 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 	private static final String TYPE_COLUMN = "GROUP_TYPE";
 	private static final String DESCRIPTION_COLUMN = "DESCRIPTION";
 	private static final String DEFAULT_GROUP_NAME_COLUMN = "DEFAULT_GROUP_NAME";
-	private static final String COLUMN_HANDLER_CLASS = "HANDLER_CLASS_ID";
 	private static final String COLUMN_IS_VISIBLE = "IS_VISIBLE";
 	private static final String COLUMN_MAX_INSTANCES = "MAX_INSTANCES";
 	private static final String COLUMN_MAX_INSTANCES_PER_PARENT = "MAX_INSTANCES_PER_PARENT";

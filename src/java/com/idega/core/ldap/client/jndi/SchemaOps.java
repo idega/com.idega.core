@@ -728,33 +728,6 @@ public class SchemaOps
 
 
     /**
-     *  Read the next block of text in a single quoted block, e.g. DESC 'some stuff here',
-     *  (assuming that the first quoted string has already been read before the string
-     *  tokenizer has been passed in, e.g. this should get "stuff here'", and return
-     *  "stuff here".
-     * @param st a string tokenizer with a series of tokens one of which ends in a single quote
-     * @return the concatenated string of all tokens up to and including the one suffixed with a single quote.
-     */
-    private static String readQuoteBlock(StringTokenizer st)
-    {
-        StringBuffer returnBuffer = new StringBuffer();
-
-        while (st.hasMoreTokens())
-        {
-            String token = st.nextToken();
-            returnBuffer.append(" ");
-            returnBuffer.append(token);
-            if (token.endsWith("'"))
-            {
-                returnBuffer.deleteCharAt(returnBuffer.length()-1);  // remove final quote
-                return returnBuffer.toString();
-            }
-        }
-        log.log(Level.FINER,"unexpected end of schema text in single quoted block");
-        return returnBuffer.toString();
-    }
-
-    /**
      *   This <i>should</i> probably have a list of keywords extracted from rfc 2252... but I can't be
      *   bothered, so I'll simply test that the token is entirely uppercase, alphabetic characters...
      * @param token the token to test for being an rfc 2252 syntax keyword.
@@ -1044,7 +1017,6 @@ public class SchemaOps
              String[] OCs = (String[]) temp.toArray(new String[temp.size()]);
              Arrays.sort(OCs, new Comparator() {
                  public int compare(Object a, Object b) { return ((String)a).compareToIgnoreCase((String)b); }
-                 public boolean equals(Object a, Object b) { return ((String)a).equalsIgnoreCase((String)b); }
              });
              int size = OCs.length;
              fullObjectClassArray = new ArrayList(size);
@@ -1072,7 +1044,6 @@ public class SchemaOps
              String[] ATs = (String[]) temp.toArray(new String[temp.size()]);
              Arrays.sort(ATs, new Comparator() {
                  public int compare(Object a, Object b) { return ((String)a).compareToIgnoreCase((String)b); }
-                 public boolean equals(Object a, Object b) { return ((String)a).equalsIgnoreCase((String)b); }
              });
              int size = ATs.length;
              fullAttributeNameArray = new ArrayList(size);

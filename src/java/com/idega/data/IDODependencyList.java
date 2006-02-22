@@ -22,11 +22,6 @@ public class IDODependencyList {
   private IDODependencyList() {
   }
 
-  private IDODependencyList(Class entityClass) {
-    this.addEntityClass(entityClass);
-  }
-
-
   List getStartClasses(){
     if(startClasses==null){
       startClasses = new Vector();

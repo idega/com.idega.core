@@ -12,7 +12,6 @@ class EntityRelationship {
 	private boolean isImplementedWithTable = true;
 	private Map columnsMap;
 	private String setTableName;
-	private String checkedTableName;
 	EntityRelationship() {
 	}
 	
@@ -25,7 +24,6 @@ class EntityRelationship {
 	void setTableName(String originalTableName) {
 		//this.tableName=tableName;
 		setTableName = originalTableName;
-		checkedTableName = EntityControl.getCheckedRelatedTableName(originalTableName);
 	}
 	
 	/**

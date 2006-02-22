@@ -34,7 +34,6 @@ public class UserLoginTab extends UserTab {
   private PasswordInput passwordField;
   private PasswordInput confirmPasswordField;
 
-  private Text generatePasswordText;
   private Text mustChangePasswordText;
   private Text cannotChangePasswordText;
   private Text passwordNeverExpiresText;
