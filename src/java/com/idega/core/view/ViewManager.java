@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.16 2006/02/20 17:59:45 laddi Exp $
+ * $Id: ViewManager.java,v 1.17 2006/02/22 18:15:51 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.RequestUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2006/02/20 17:59:45 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/22 18:15:51 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class ViewManager implements Singleton {
 	
@@ -107,7 +107,7 @@ public class ViewManager implements Singleton {
 			e.printStackTrace();
 		}
 		
-		try {
+		/*try {
 			Class applicationClass = RefactorClassRegistry.forName("com.idega.development.presentation.IWDeveloper");
 			FramedWindowClassViewNode developerNode = new FramedWindowClassViewNode("developer",getWorkspaceRoot());
 			Collection roles = new ArrayList();
@@ -120,7 +120,7 @@ public class ViewManager implements Singleton {
 		catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 
 		
 		if(showMyPage){
