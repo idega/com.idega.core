@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.14 2006/02/22 18:13:35 tryggvil Exp $
+ * $Id: IWWelcomeFilter.java,v 1.15 2006/02/22 22:07:28 laddi Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.RequestUtil;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2006/02/22 18:13:35 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/22 22:07:28 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
@@ -122,7 +122,6 @@ public class IWWelcomeFilter extends BaseFilter {
 		String ip = request.getRemoteAddr();
 		String timestamp = IWTimestamp.RightNow().toString();
 		String method = request.getMethod();
-		String scheme = request.getScheme();
 		String requestUri = request.getRequestURI();
 		String userAgent = RequestUtil.getUserAgent(request);
 		String protocol = request.getProtocol();
