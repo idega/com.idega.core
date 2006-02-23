@@ -34,6 +34,7 @@ public class PrintButton extends GenericButton {
 	 */
 	public PrintButton(Image buttonImage) {
 		super();
+		buttonImage.setId(getId()+"_im");
 		setOnClick("javascript:window.print();");
 		setButtonImage(buttonImage);
 	}
