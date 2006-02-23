@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.164 2006/02/20 11:04:34 laddi Exp $
+ * $Id: Link.java,v 1.165 2006/02/23 09:40:01 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObjectInstance;
@@ -1496,13 +1497,13 @@ public class Link extends Text {
 							_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 							_parameterString.append("=");
 							_parameterString.append(iwc.getIdegaSessionId());
-							return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+							//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 						}
 						else if ((URL.indexOf("//") != -1) && (URL.lastIndexOf("/") == URL.lastIndexOf("//") + 1)) {
 							//the case where the URL is etc. http://www.idega.is
 							_parameterString.append("/?"+IWContext.IDEGA_SESSION_KEY+"=");
 							_parameterString.append(iwc.getIdegaSessionId());
-							return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+							//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 						}
 						else {
 							if (URL.indexOf("/") != -1) {
@@ -1512,7 +1513,7 @@ public class Link extends Text {
 									_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 									_parameterString.append("=");
 									_parameterString.append(iwc.getIdegaSessionId());
-									return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+									//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 								}
 								else {
 									//There is a dot after the last "/" interpreted as a file not a directory
@@ -1528,7 +1529,7 @@ public class Link extends Text {
 										_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 										_parameterString.append("=");
 										_parameterString.append(iwc.getIdegaSessionId());
-										return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+										//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 									}
 								}
 							}
@@ -1537,7 +1538,7 @@ public class Link extends Text {
 								_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 								_parameterString.append("=");
 								_parameterString.append(iwc.getIdegaSessionId());
-								return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+								//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 							}
 						}
 					}
@@ -1580,15 +1581,12 @@ public class Link extends Text {
 						}
 					}
 				}
-				return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+				//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 			}
 		}
-		if (_parameterString != null) {
-			return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
-		}
-		else {
-			return ("");
-		}
+		
+		String returner = _parameterString.toString();
+		return returner;
 	}
 
 	/**
@@ -1704,41 +1702,6 @@ public class Link extends Text {
 				}
 			} //end if (_objectType==(OBJECT_TYPE_WINDOW))
 
-			/*ICDomain d = iwc.getDomain();
-			String serverUrl = d.getURLWithoutLastSlash();
-			String serverName = d.getServerName();
-			if(_hostname!=null && _hostname.length()>0) {
-				serverName = _hostname;
-			}
-
-			if (serverUrl != null) {
-				String attr = getMarkupAttribute(HREF_ATTRIBUTE);
-				if (attr.startsWith("/")) {
-//					if ((protocol == null) || protocol.equals("")) {
-//						//@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
-//						if (iwc.getRequest().isSecure()) {
-//							protocol = "https://";
-//						}
-//						else {
-//							protocol = "http://";
-//						}
-//					}
-//					setMarkupAttribute(HREF_ATTRIBUTE, protocol + serverName + attr);
-					String newUrl=null;
-					if ((protocol == null) || protocol.equals("")) {
-						newUrl = serverUrl + attr;
-					}
-					else{
-						int port = iwc.getServerPort();
-						if(port!=80 && port!=443){
-							serverName+=":"+ port;
-						}
-						newUrl = protocol + serverName + attr;
-					}
-					setMarkupAttribute(HREF_ATTRIBUTE, newUrl);
-				}
-			}*/
-
 			print("<a " + getMarkupAttributesString() + " >");
 			if (this.isText()) {
 				if (hasClass) {
@@ -1775,39 +1738,11 @@ public class Link extends Text {
 					renderChild(iwc,_obj);
 				}
 			}
-			/*}*/
 			print("</a>");
 
 			if (alignSet) {
 				print("</div>");
 			}
-			/*} else {
-			if (addParameters) {
-			setFinalUrl(oldURL+getParameterString(iwc,oldURL));
-			}
-			print("<a "+getAttributeString()+" >");
-			//if (_objectType==OBJECT_TYPE_TEXT) {
-			if (isText()) {
-			if ( hasClass ) {
-			if ( displayString != null ) {
-			  print(displayString);
-			} else {
-			  if ( ((Text)_obj).getText() != null ) {
-			print(((Text)_obj).getText());
-			  }
-			}
-			} else {
-			_obj._print(iwc);
-			}
-			}
-			else if (this.isImage()){
-			Image image = this.getTheCorrectDefaultImage(iwc);
-			image._print(iwc);
-			} else {
-			_obj._print(iwc);
-			}
-			print("</a>");
-			}*/
 		}
 		else if (getMarkupLanguage().equals("WML")) {
 			if (_myWindow != null) {
