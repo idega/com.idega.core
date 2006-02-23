@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.25 2006/02/22 20:52:49 laddi Exp $
+ * $Id: LinkContainer.java,v 1.26 2006/02/23 11:54:05 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -346,7 +346,7 @@ public class LinkContainer extends PresentationObjectContainer {
 								_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 								_parameterString.append("=");
 								_parameterString.append(iwc.getIdegaSessionId());
-								return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+								//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 							}
 							else
 								if ((URL.indexOf("//") != -1) && (URL.lastIndexOf("/") == URL.lastIndexOf("//") + 1)) {
@@ -355,7 +355,7 @@ public class LinkContainer extends PresentationObjectContainer {
 									_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 									_parameterString.append("=");
 									_parameterString.append(iwc.getIdegaSessionId());
-									return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+									//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 								}
 								else {
 									if (URL.indexOf("/") != -1) {
@@ -365,7 +365,7 @@ public class LinkContainer extends PresentationObjectContainer {
 											_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 											_parameterString.append("=");
 											_parameterString.append(iwc.getIdegaSessionId());
-											return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+											//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 										}
 										else {
 											//There is a dot after the last "/" interpreted as a file not a directory
@@ -374,14 +374,14 @@ public class LinkContainer extends PresentationObjectContainer {
 												_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 												_parameterString.append("=");
 												_parameterString.append(iwc.getIdegaSessionId());
-												return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+												//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 											}
 											else {
 												_parameterString.append("/?");
 												_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 												_parameterString.append("=");
 												_parameterString.append(iwc.getIdegaSessionId());
-												return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+												//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 											}
 										}
 									}
@@ -390,7 +390,7 @@ public class LinkContainer extends PresentationObjectContainer {
 										_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 										_parameterString.append("=");
 										_parameterString.append(iwc.getIdegaSessionId());
-										return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+										//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 									}
 								}
 						}
@@ -433,11 +433,11 @@ public class LinkContainer extends PresentationObjectContainer {
 						}
 					}
 				}
-				return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+				//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 			}
 		}
 		if (_parameterString != null) {
-			return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+			return _parameterString.toString();
 		}
 		else {
 			return ("");
