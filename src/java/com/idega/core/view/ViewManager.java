@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.18 2006/02/23 15:38:49 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.19 2006/02/23 16:10:11 tryggvil Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.RequestUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2006/02/23 15:38:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/23 16:10:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class ViewManager implements Singleton {
 	
@@ -100,7 +100,10 @@ public class ViewManager implements Singleton {
 			roles.add(StandardRoles.ROLE_KEY_USERADMIN);
 			userNode.setAuthorizedRoles(roles);
 			userNode.setWindowClass(applicationClass);
-			userNode.setJspUri(getWorkspaceRoot().getResourceURI());
+			
+			String jspPath = iwma.getBundle("com.idega.workspace").getJSPURI("workspace.jsp");
+			userNode.setJspUri(jspPath);
+			//userNode.setJspUri(getWorkspaceRoot().getResourceURI());
 		}
 		catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
