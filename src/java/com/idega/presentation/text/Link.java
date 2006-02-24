@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.155 2005/09/09 18:22:23 gimmi Exp $
+ * $Id: Link.java,v 1.155.2.1 2006/02/24 14:40:08 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1510,13 +1510,13 @@ public class Link extends Text {
 							_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 							_parameterString.append("=");
 							_parameterString.append(iwc.getIdegaSessionId());
-							return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+							//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 						}
 						else if ((URL.indexOf("//") != -1) && (URL.lastIndexOf("/") == URL.lastIndexOf("//") + 1)) {
 							//the case where the URL is etc. http://www.idega.is
 							_parameterString.append("/?"+IWContext.IDEGA_SESSION_KEY+"=");
 							_parameterString.append(iwc.getIdegaSessionId());
-							return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+							//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 						}
 						else {
 							if (URL.indexOf("/") != -1) {
@@ -1526,7 +1526,7 @@ public class Link extends Text {
 									_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 									_parameterString.append("=");
 									_parameterString.append(iwc.getIdegaSessionId());
-									return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+									//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 								}
 								else {
 									//There is a dot after the last "/" interpreted as a file not a directory
@@ -1535,14 +1535,14 @@ public class Link extends Text {
 										_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 										_parameterString.append("=");
 										_parameterString.append(iwc.getIdegaSessionId());
-										return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+										//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 									}
 									else {
 										_parameterString.append("/?");
 										_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 										_parameterString.append("=");
 										_parameterString.append(iwc.getIdegaSessionId());
-										return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+										//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 									}
 								}
 							}
@@ -1551,7 +1551,7 @@ public class Link extends Text {
 								_parameterString.append(IWContext.IDEGA_SESSION_KEY);
 								_parameterString.append("=");
 								_parameterString.append(iwc.getIdegaSessionId());
-								return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+								//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 							}
 						}
 					}
@@ -1594,11 +1594,11 @@ public class Link extends Text {
 						}
 					}
 				}
-				return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+				//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 			}
 		}
 		if (_parameterString != null) {
-			return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+			return _parameterString.toString();
 		}
 		else {
 			return ("");
