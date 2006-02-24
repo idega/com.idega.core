@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.41 2006/02/19 17:26:50 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.42 2006/02/24 09:10:56 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -37,10 +37,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/02/19 17:26:50 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/24 09:10:56 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.41 $
+ * @version $Revision: 1.42 $
  */
 
 
@@ -589,8 +589,11 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	private String getFromApplicationBinding(String key) {
-		String value = getApplicationBindingFromMap(key);
-		if (value == null) {
+		String value = null;
+		if (isApplicationBindingInMap(key)) {
+			value = getApplicationBindingFromMap(key);
+		}
+		else {
 			try {
 				value = getApplicationBindingBusiness().get(key);
 				if (value != null) {
@@ -601,12 +604,20 @@ public class IWMainApplicationSettings implements MutableClass {
 				getLogger().warning("[IWMainApplicationSettings] Could not fetch key: " + key);
 				throw new IBORuntimeException(e);
 			}
-		}
-		if (value == null) {
-			value = getIdegawebPropertyList().getProperty(key);
-			this.putInApplicationBinding(key, value);
+			if (value == null) {
+				value = getIdegawebPropertyList().getProperty(key);
+				this.putInApplicationBinding(key, value);
+			}
 		}
 		return value;
+	}
+	
+	private boolean isApplicationBindingInMap(String key) {
+		Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+		if (map != null) {
+			return map.containsKey(key);
+		}
+		return false;
 	}
 	
 	private String getApplicationBindingFromMap(String key) {
