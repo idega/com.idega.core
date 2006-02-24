@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.165 2006/02/23 09:40:01 laddi Exp $
+ * $Id: Link.java,v 1.166 2006/02/24 14:04:16 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2202,6 +2202,10 @@ public void setWindowToOpen(String className) {
 	public void setClassToInstanciate(Class presentationObjectClass, String template) {
 		setClassToInstanciate(presentationObjectClass);
 		this.templateForObjectInstanciation = template;
+	}
+	
+	public void setClickConfirmation(String message) {
+		setOnClick("return confirm('"+message+"');");
 	}
 
 	private void setURIToClassToInstanciate(IWContext iwc) {
