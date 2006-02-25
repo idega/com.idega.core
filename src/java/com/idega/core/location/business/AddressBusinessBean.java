@@ -5,6 +5,8 @@ import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
+import com.idega.business.IBORuntimeException;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailHome;
@@ -46,22 +48,37 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	/**
 	 * @return The Country Beans' home
 	 */
-	public CountryHome getCountryHome() throws RemoteException {
-		return (CountryHome) this.getIDOHome(Country.class);
+	public CountryHome getCountryHome() {
+		try {
+			return (CountryHome) this.getIDOHome(Country.class);
+		}
+		catch (RemoteException re) {
+			throw new IBORuntimeException(re);
+		}
 	}
 
 	/**
 	 * @return The Commune Beans' home
 	 */
-	public CommuneHome getCommuneHome() throws RemoteException {
-		return (CommuneHome) this.getIDOHome(Commune.class);
+	public CommuneHome getCommuneHome() {
+		try {
+			return (CommuneHome) this.getIDOHome(Commune.class);
+		}
+		catch (RemoteException re) {
+			throw new IBORuntimeException(re);
+		}
 	}
 
 	/**
 	 * @return The PostalCode Beans' home
 	 */
-	public PostalCodeHome getPostalCodeHome() throws RemoteException {
-		return (PostalCodeHome) this.getIDOHome(PostalCode.class);
+	public PostalCodeHome getPostalCodeHome() {
+		try {
+			return (PostalCodeHome) this.getIDOHome(PostalCode.class);
+		}
+		catch (RemoteException re) {
+			throw new IBORuntimeException(re);
+		}
 	}
 
 	/**
@@ -74,8 +91,13 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	/**
 	 * @return The Address Beans' home
 	 */
-	public AddressHome getAddressHome() throws RemoteException {
-		return (AddressHome) this.getIDOHome(Address.class);
+	public AddressHome getAddressHome() {
+		try {
+			return (AddressHome) this.getIDOHome(Address.class);
+		}
+		catch (RemoteException re) {
+			throw new IBORuntimeException(re);
+		}
 	}
 
 	/**
@@ -83,15 +105,32 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 * 
 	 * @return A new or updates PostalCode
 	 */
-	public PostalCode getPostalCodeAndCreateIfDoesNotExist(String postCode, String name, Country country)
-			throws CreateException, RemoteException {
+	public PostalCode getPostalCodeAndCreateIfDoesNotExist(String postCode, String name) throws CreateException {
 		PostalCode code;
-		PostalCodeHome home = (PostalCodeHome) this.getIDOHome(PostalCode.class);
 		try {
-			code = home.findByPostalCodeAndCountryId(postCode, ((Integer) country.getPrimaryKey()).intValue());
+			code = getPostalCodeHome().findByPostalCode(postCode);
 		}
 		catch (FinderException ex) {
-			code = home.create();
+			code = getPostalCodeHome().create();
+			code.setPostalCode(postCode);
+			code.setName(name);
+			code.store();
+		}
+		return code;
+	}
+
+	/**
+	 * Finds and updates or Creates a new postal code
+	 * 
+	 * @return A new or updates PostalCode
+	 */
+	public PostalCode getPostalCodeAndCreateIfDoesNotExist(String postCode, String name, Country country) throws CreateException {
+		PostalCode code;
+		try {
+			code = getPostalCodeHome().findByPostalCodeAndCountryId(postCode, ((Integer) country.getPrimaryKey()).intValue());
+		}
+		catch (FinderException ex) {
+			code = getPostalCodeHome().create();
 			code.setPostalCode(postCode);
 			code.setName(name);
 			code.setCountry(country);
@@ -101,12 +140,11 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	}
 
 	/**
-	 * Connects the postal code with the given commune The commune code is set
-	 * to the commune name if it is not already set. This is a simplification
-	 * since we didn't have that data for Iceland
+	 * Connects the postal code with the given commune The commune code is set to
+	 * the commune name if it is not already set. This is a simplification since
+	 * we didn't have that data for Iceland
 	 */
-	public void connectPostalCodeToCommune(PostalCode postalCode, String Commune) throws RemoteException,
-			CreateException {
+	public void connectPostalCodeToCommune(PostalCode postalCode, String Commune) throws CreateException {
 		Commune commune = createCommuneIfNotExisting(Commune);
 		postalCode.setCommune(commune);
 		postalCode.store();
@@ -118,7 +156,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 * @throws RemoteException
 	 * @throws CreateException
 	 */
-	public Commune createCommuneIfNotExisting(String Commune) throws RemoteException, CreateException {
+	public Commune createCommuneIfNotExisting(String Commune) throws CreateException {
 		CommuneHome communeHome = getCommuneHome();
 		Commune commune;
 		try {
@@ -135,13 +173,17 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		return commune;
 	}
 
-	public Commune getOtherCommuneCreateIfNotExist() throws CreateException, FinderException, RemoteException {
-		return getCommuneHome().findOtherCommmuneCreateIfNotExist();
+	public Commune getOtherCommuneCreateIfNotExist() throws CreateException, FinderException {
+		try {
+			return getCommuneHome().findOtherCommmuneCreateIfNotExist();
+		}
+		catch (RemoteException re) {
+			throw new IBORuntimeException(re);
+		}
 	}
 
 	/**
-	 * Change postal code name when only one address is related to the
-	 * postalcode
+	 * Change postal code name when only one address is related to the postalcode
 	 */
 	public PostalCode changePostalCodeNameWhenOnlyOneAddressRelated(PostalCode postalCode, String newName) {
 		java.util.Collection addresses = postalCode.getAddresses();
@@ -158,8 +200,8 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 * Street".<br>
 	 * not very flexibel but handles "my street 24, 982 NY" the same way.
 	 * 
-	 * @return Finds the first number in the string and return a sbustring to
-	 *         that point or the whole string if no number is present
+	 * @return Finds the first number in the string and return a sbustring to that
+	 *         point or the whole string if no number is present
 	 */
 	public String getStreetNameFromAddressString(String addressString) {
 		int index = TextSoap.getIndexOfFirstNumberInString(addressString);
@@ -245,23 +287,21 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 * 
 	 * @param address
 	 * @param fullAddressString
-	 *            A fully qualifying address string with streetname and
-	 *            number,postal code and postal address, country its ISO
-	 *            abbreviation, Commune name and commune code (uid)<br>
-	 *            Each piece is seperated by a semicolon (";") and country and
-	 *            commune info by a ":"<br>
-	 *            e.g. : "Stafnasel 6;107
-	 *            Reykjavik;Iceland:is_IS;Reykjavik:12345" <br>
-	 *            If a piece is missing the string "N/A" (not available) should
-	 *            be added instead e.g. "Stafnasel 6;107
-	 *            Reykjavik;Iceland:is_IS;N/A"
+	 *          A fully qualifying address string with streetname and
+	 *          number,postal code and postal address, country its ISO
+	 *          abbreviation, Commune name and commune code (uid)<br>
+	 *          Each piece is seperated by a semicolon (";") and country and
+	 *          commune info by a ":"<br>
+	 *          e.g. : "Stafnasel 6;107 Reykjavik;Iceland:is_IS;Reykjavik:12345"
+	 *          <br>
+	 *          If a piece is missing the string "N/A" (not available) should be
+	 *          added instead e.g. "Stafnasel 6;107 Reykjavik;Iceland:is_IS;N/A"
 	 * @return Deserialized the fullAddressString and updates the address bean
 	 *         with what it finds and returns the address STORED
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
-	public Address getUpdatedAddressByFullAddressString(Address address, String fullAddressString)
-			throws RemoteException, CreateException {
+	public Address getUpdatedAddressByFullAddressString(Address address, String fullAddressString) throws CreateException {
 		String streetName = null;
 		String streetNumber = null;
 		String postalCode = null;
@@ -273,15 +313,14 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		PostalCode postal = null;
 		Country country = null;
 		Commune commune = null;
-		
-		
-		if(fullAddressString==null || "".equals(fullAddressString)){
-			//no change or should we delete the address? NO CHANGE for now
+
+		if (fullAddressString == null || "".equals(fullAddressString)) {
+			// no change or should we delete the address? NO CHANGE for now
 			return address;
 		}
-		
+
 		// deserialize the string
-		StringTokenizer nizer = new StringTokenizer(fullAddressString,";");
+		StringTokenizer nizer = new StringTokenizer(fullAddressString, ";");
 		String streetNameAndNumber = NOT_AVAILABLE;
 		String postalCodeAndPostalAddress = NOT_AVAILABLE;
 		String countryNameAndISOAbbreviation = NOT_AVAILABLE;
@@ -293,10 +332,10 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			communeNameAndCommuneCode = nizer.nextToken();
 		}
 		catch (NoSuchElementException e) {
-			//no need to print, we use what we can
-			//e.printStackTrace();
+			// no need to print, we use what we can
+			// e.printStackTrace();
 		}
-		
+
 		// deserialize the string even more
 		if (!NOT_AVAILABLE.equals(streetNameAndNumber)) {
 			streetName = getStreetNameFromAddressString(streetNameAndNumber);
@@ -319,16 +358,16 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			postalName = postalCodeAndPostalAddress.substring(postalCodeAndPostalAddress.indexOf(" ") + 1);
 			postal = getPostalCodeAndCreateIfDoesNotExist(postalCode, postalName, country);
 		}
-		
+
 		// Set what we have and erase what we don't have
 		if (streetName != null) {
 			address.setStreetName(streetName);
 		}
 		else {
-			//no nasty nullpointer there please..
+			// no nasty nullpointer there please..
 			address.setStreetName("");
 		}
-		
+
 		if (streetNumber != null) {
 			address.setStreetNumber(streetNumber);
 		}
@@ -336,14 +375,13 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			// Fix when entering unnumbered addresses, something I saw Aron do
 			address.setStreetNumber("");
 		}
-		
-		
+
 		address.setCountry(country);
 		address.setPostalCode(postal);
 		address.setCommune(commune);
 		// and store
 		address.store();
-		
+
 		return address;
 	}
 
@@ -354,8 +392,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 * @throws RemoteException
 	 * @throws CreateException
 	 */
-	public Country getCountryAndCreateIfDoesNotExist(String countryName, String countryISOAbbr) throws RemoteException,
-			CreateException {
+	public Country getCountryAndCreateIfDoesNotExist(String countryName, String countryISOAbbr) throws CreateException {
 		Country country = null;
 		try {
 			country = getCountryHome().findByIsoAbbreviation(countryISOAbbr);
@@ -375,6 +412,10 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		return country;
 	}
 
+	public Country getCountry(String countryISOAbbreviation) throws FinderException {
+		return getCountryHome().findByIsoAbbreviation(countryISOAbbreviation);
+	}
+
 	/**
 	 * @param communeName
 	 * @param communeCode
@@ -382,8 +423,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 * @throws RemoteException
 	 * @throws CreateException
 	 */
-	public Commune getCommuneAndCreateIfDoesNotExist(String communeName, String communeCode) throws RemoteException,
-			CreateException {
+	public Commune getCommuneAndCreateIfDoesNotExist(String communeName, String communeCode) throws CreateException {
 		Commune commune = null;
 		try {
 			commune = getCommuneHome().findByCommuneCode(communeCode);
@@ -402,14 +442,13 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		}
 		return commune;
 	}
-	
-	
-	public AddressType getMainAddressType() throws RemoteException{
+
+	public AddressType getMainAddressType() throws RemoteException {
 		return getAddressHome().getAddressType1();
 	}
-	
-	public AddressType getCOAddressType() throws RemoteException{
+
+	public AddressType getCOAddressType() throws RemoteException {
 		return getAddressHome().getAddressType2();
 	}
-	
+
 } // Class AddressBusinessBean

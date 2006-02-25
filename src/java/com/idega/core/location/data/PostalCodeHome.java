@@ -1,5 +1,5 @@
 /*
- * $Id: PostalCodeHome.java,v 1.5 2005/06/02 16:14:28 gimmi Exp $
+ * $Id: PostalCodeHome.java,v 1.6 2006/02/25 16:18:05 laddi Exp $
  * Created on 2.6.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,16 +17,21 @@ import com.idega.data.IDOHome;
 
 /**
  * 
- *  Last modified: $Date: 2005/06/02 16:14:28 $ by $Author: gimmi $
+ *  Last modified: $Date: 2006/02/25 16:18:05 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gimmi@idega.com">gimmi</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public interface PostalCodeHome extends IDOHome {
 
 	public PostalCode create() throws javax.ejb.CreateException;
 
 	public PostalCode findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
+
+	/**
+	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbFindByPostalCode
+	 */
+	public PostalCode findByPostalCode(String code) throws FinderException;
 
 	/**
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#ejbFindByPostalCodeAndCountryId

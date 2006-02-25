@@ -1,5 +1,5 @@
 /*
- * $Id: AddressBusiness.java,v 1.6 2005/11/01 16:10:59 eiki Exp $
+ * $Id: AddressBusiness.java,v 1.7 2006/02/25 16:18:05 laddi Exp $
  * Created on Nov 1, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import com.idega.core.location.data.PostalCodeHome;
 
 /**
  * 
- *  Last modified: $Date: 2005/11/01 16:10:59 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/02/25 16:18:05 $ by $Author: laddi $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public interface AddressBusiness extends IBOService {
 
@@ -58,6 +58,12 @@ public interface AddressBusiness extends IBOService {
 	 * @see com.idega.core.location.business.AddressBusinessBean#getAddressHome
 	 */
 	public AddressHome getAddressHome() throws RemoteException;
+
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getPostalCodeAndCreateIfDoesNotExist
+	 */
+	public PostalCode getPostalCodeAndCreateIfDoesNotExist(String postCode, String name)
+			throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.core.location.business.AddressBusinessBean#getPostalCodeAndCreateIfDoesNotExist
@@ -108,6 +114,11 @@ public interface AddressBusiness extends IBOService {
 	public Address getUpdatedAddressByFullAddressString(Address address, String fullAddressString)
 			throws RemoteException, CreateException;
 
+	/**
+	 * @see com.idega.core.location.business.AddressBusinessBean#getCountry
+	 */
+	public Country getCountry(String countryISOAbbreviation) throws RemoteException, FinderException;
+	
 	/**
 	 * @see com.idega.core.location.business.AddressBusinessBean#getCountryAndCreateIfDoesNotExist
 	 */
