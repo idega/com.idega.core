@@ -1,5 +1,5 @@
 /*
- * $Id: LoginTableHome.java,v 1.4 2006/01/15 17:29:35 laddi Exp $
+ * $Id: LoginTableHome.java,v 1.5 2006/02/27 23:13:24 tryggvil Exp $
  * Created on Jan 15, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.data.IDOHome;
  * <p>
  * TODO laddi Describe Type LoginTableHome
  * </p>
- *  Last modified: $Date: 2006/01/15 17:29:35 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/27 23:13:24 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface LoginTableHome extends IDOHome {
 
@@ -65,4 +65,17 @@ public interface LoginTableHome extends IDOHome {
 	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#ejbFindByUserAndLogin
 	 */
 	public LoginTable findByUserAndLogin(User user, String login) throws FinderException;
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#ejbFindByUserAndLogin
+	 */
+	public LoginTable findByUserAndType(User user, String loginType) throws FinderException;
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#ejbFindDefaultLoginForUser
+	 */
+	public LoginTable findDefaultLoginForUser(int userID) throws FinderException;
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#ejbFindDefaultLoginForUser
+	 */
+	public LoginTable findDefaultLoginForUser(User user) throws FinderException;
+
 }

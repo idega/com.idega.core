@@ -192,6 +192,11 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		setColumn(getUserIDColumnName(), userId);
 	}
 
+	public void setUser(User user){
+		Integer userId = (Integer)user.getPrimaryKey();
+		setUserId(userId);
+	}
+	
 	public static String getUserIDColumnName() {
 		return com.idega.core.user.data.UserBMPBean.getColumnNameUserID();
 	}
@@ -311,5 +316,40 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameUserID()), MatchCriteria.EQUALS, user));
 
 		return idoFindOnePKByQuery(query);
+	}
+
+	public Object ejbFindByUserAndType(User user, String loginType) throws FinderException {
+		Table table = new Table(this);
+		
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(table.getColumn(getIDColumnName()));
+		query.addCriteria(new MatchCriteria(table.getColumn(getLoginTypeColumnName()), MatchCriteria.EQUALS, loginType));
+		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameUserID()), MatchCriteria.EQUALS, user));
+
+		return idoFindOnePKByQuery(query);
+	}
+
+	/**
+	 * <p>
+	 * Finds the default (i.e. a login with no login type) for the User with id userId
+	 * </p>
+	 * @param userID
+	 * @return
+	 * @throws FinderException 
+	 */
+	public Object ejbFindDefaultLoginForUser(int userID) throws FinderException {
+		Table table = new Table(this);
+		
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(table.getColumn(getIDColumnName()));
+		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameUserID()), MatchCriteria.EQUALS, userID));
+		query.addCriteria(new MatchCriteria(table.getColumn(getLoginTypeColumnName()), MatchCriteria.IS,(String)null));		
+		return idoFindOnePKByQuery(query);
+	}
+
+	public Object ejbFindDefaultLoginForUser(User user) throws FinderException {
+		Integer iUserId = (Integer)user.getPrimaryKey();
+		int userId = iUserId.intValue();
+		return ejbFindDefaultLoginForUser(userId);
 	}
 }

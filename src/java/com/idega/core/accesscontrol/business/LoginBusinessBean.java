@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.60 2006/02/22 20:52:49 laddi Exp $
+ * $Id: LoginBusinessBean.java,v 1.61 2006/02/27 23:13:25 tryggvil Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -60,11 +60,11 @@ import com.idega.util.RequestUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2006/02/22 20:52:49 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/27 23:13:25 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.60 $
+ * @version $Revision: 1.61 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -938,7 +938,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			catch (FinderException fe) {
 				// Nothing done
 			}
-			if (Encrypter.verifyOneWayEncrypted(loginTable.getUserPassword(), password)) {
+			if (verifyPassword(loginTable, password)) {
 				if (loginTable != null) {
 					if (loginInfo != null && !loginInfo.getAccountEnabled() && !isAdmin) {
 						// return STATE_LOGIN_EXPIRED;
@@ -1018,12 +1018,23 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	public boolean verifyPassword(User user, String login, String password) throws FinderException {
-		boolean returner = false;
 		LoginTable loginTable = getLoginTableHome().findByUserAndLogin(user, login);
-		if (Encrypter.verifyOneWayEncrypted(loginTable.getUserPassword(), password)) {
-			returner = true;
+		return verifyPassword(loginTable,password);
+	}
+	
+	/**
+	 * <p>
+	 * Returns true if the password matches the encrypted value in loginTable.
+	 * </p>
+	 * @param loginRecord
+	 * @param password
+	 * @return
+	 */
+	public boolean verifyPassword(LoginTable loginRecord,String password){
+		if (Encrypter.verifyOneWayEncrypted(loginRecord.getUserPassword(), password)) {
+			return true;
 		}
-		return returner;
+		return false;
 	}
 
 	protected void logOut(IWContext iwc) throws Exception {
@@ -1385,21 +1396,64 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return logInByPersonalID(request, personalId);
 	}
 
+	/**
+	 * <p>
+	 * Log in the user with given personalId if the user exists in the IC_USER table<br/>
+	 * This method doesn't take in a loginType which means that the IC_LOGIN record chosen
+	 * to log into will not have a loginType set.
+	 * </p>
+	 * @param request
+	 * @param personalId
+	 * @return
+	 * @throws Exception
+	 */
 	public boolean logInByPersonalID(HttpServletRequest request, String personalId) throws Exception {
+		return logInByPersonalID(request,personalId,null,null,null);
+	}
+	
+	/**
+	 * <p>
+	 * Logs the user in by given personalId and specified loginType.
+	 * </p>
+	 * @param request
+	 * @param personalId
+	 * @param loginType
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean logInByPersonalID(HttpServletRequest request, String personalId,String userName,String password,String loginType) throws Exception {
 		boolean returner = false;
 		try {
 			IWApplicationContext iwac = getIWApplicationContext(request.getSession());
 			com.idega.user.data.User user = getUserBusiness(iwac).getUser(personalId);
 			Collection logins = getLoginTableHome().findLoginsForUser(user);
-			LoginTable lTable = this.chooseLoginRecord(request, logins, user);
+			LoginTable lTable;
+			if(loginType==null){
+				lTable = this.chooseLoginRecord(request, logins, user);
+			}
+			else{
+				lTable = this.chooseLoginRecord(request, logins, user,loginType);
+			}
 			if (lTable != null) {
+				if(userName!=null){
+					if(!lTable.getUserLogin().equals(userName)){
+						return false;
+					}
+				}
+				
+				if(password!=null){
+					if(!verifyPassword(lTable,password)){
+						return false;
+					}
+				}
+				
 				returner = logIn(request, lTable);
 				if (returner)
 					onLoginSuccessful(request);
 			}
 			else {
 				try {
-					throw new LoginCreateException("No record chosen");
+					throw new LoginCreateException("No matching login record found for user");
 				}
 				catch (LoginCreateException e1) {
 					e1.printStackTrace();
@@ -1453,20 +1507,43 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 *          all login records for one user
 	 * @return LoginTable record to log on the system
 	 */
-	public LoginTable chooseLoginRecord(HttpServletRequest request, Collection loginRecords, User user) throws Exception {
+	public LoginTable chooseLoginRecord(HttpServletRequest request, Collection loginRecords, User user,String loginType) throws Exception {
 		LoginTable chosenRecord = null;
 		if (loginRecords != null) {
 			Iterator iter = loginRecords.iterator();
 			while (iter.hasNext()) {
 				LoginTable login = (LoginTable) iter.next();
 				String type = login.getLoginType();
-				if (!(type != null && !type.equals(""))) {
-					chosenRecord = login;
-					break;
+				//if (!(type != null && !type.equals(""))) {
+				if(loginType==null){
+					//searching for the default login where type is not set.
+					if (type == null || type.equals("")) {	
+						chosenRecord = login;
+						break;
+					}
+				}
+				else{
+					if(loginType.equals(type)) {	
+						chosenRecord = login;
+						break;
+					}
 				}
 			}
 		}
 		return chosenRecord;
+	}
+	
+	/**
+	 * <p>
+	 * Chooses a login record with loginType=null or loginType='' 
+	 * for logging a user in.
+	 * </p>
+	 * @param loginRecords -
+	 *          all login records for one user
+	 * @return LoginTable record to log on the system
+	 */
+	public LoginTable chooseLoginRecord(HttpServletRequest request, Collection loginRecords, User user) throws Exception {
+		return chooseLoginRecord(request,loginRecords,user,null);
 	}
 
 	/**

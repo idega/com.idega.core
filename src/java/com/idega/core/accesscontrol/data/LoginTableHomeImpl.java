@@ -1,5 +1,5 @@
 /*
- * $Id: LoginTableHomeImpl.java,v 1.4 2006/01/15 17:29:35 laddi Exp $
+ * $Id: LoginTableHomeImpl.java,v 1.5 2006/02/27 23:13:25 tryggvil Exp $
  * Created on Jan 15, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.data.IDOFactory;
  * <p>
  * TODO laddi Describe Type LoginTableHomeImpl
  * </p>
- *  Last modified: $Date: 2006/01/15 17:29:35 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/27 23:13:25 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class LoginTableHomeImpl extends IDOFactory implements LoginTableHome {
 
@@ -84,6 +84,27 @@ public class LoginTableHomeImpl extends IDOFactory implements LoginTableHome {
 	public LoginTable findByUserAndLogin(User user, String login) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((LoginTableBMPBean) entity).ejbFindByUserAndLogin(user, login);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
+	
+	public LoginTable findByUserAndType(User user, String loginType) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((LoginTableBMPBean) entity).ejbFindByUserAndType(user, loginType);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
+	
+	public LoginTable findDefaultLoginForUser(int userID) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((LoginTableBMPBean) entity).ejbFindDefaultLoginForUser(userID);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
+	
+	public LoginTable findDefaultLoginForUser(User user) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((LoginTableBMPBean) entity).ejbFindDefaultLoginForUser(user);
 		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
 	}

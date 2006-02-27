@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.62 2006/02/22 20:52:49 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.63 2006/02/27 23:13:25 tryggvil Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -24,6 +24,7 @@ import com.idega.core.accesscontrol.data.LoginInfoHome;
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.LoginTableBMPBean;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.user.data.User;
 import com.idega.data.IDOException;
@@ -343,9 +344,53 @@ public class LoginDBHandler {
 		return null;
 	}
 
+	/**
+	 * <p>
+	 * Finds and returns the first found login for user user unregarding
+	 * login type.
+	 * </p>
+	 * @param user
+	 * @return
+	 */
 	public static LoginTable getUserLogin(User user) {
 		try {
 			return getLoginTableHome().findLoginForUser(user);
+		}
+		catch (FinderException ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * <p>
+	 * Finds and returns the first found login for user user 
+	 * with no set loginType.
+	 * </p>
+	 * @param user
+	 * @return
+	 */
+	public static LoginTable getDefaultUserLogin(User user) {
+		try {
+			return getLoginTableHome().findDefaultLoginForUser(user);
+		}
+		catch (FinderException ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * <p>
+	 * Finds and returns the first found login for user user 
+	 * with no set loginType.
+	 * </p>
+	 * @param user
+	 * @return
+	 */
+	public static LoginTable getDefaultUserLogin(int userId) {
+		try {
+			return getLoginTableHome().findDefaultLoginForUser(userId);
 		}
 		catch (FinderException ex) {
 			ex.printStackTrace();
