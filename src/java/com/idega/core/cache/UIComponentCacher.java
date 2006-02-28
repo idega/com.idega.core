@@ -16,10 +16,10 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * Implementation of a general cacher for UIComponents.	
  * </p>
- *  Last modified: $Date: 2006/02/28 15:06:27 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/28 17:44:45 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class UIComponentCacher {
 	
@@ -46,7 +46,7 @@ public class UIComponentCacher {
 	}
 	
 	public void beginCache(UIComponent component,FacesContext context) throws IOException{
-		String cacheKey = getCacheKey(component,context);
+		/*String cacheKey =*/ getCacheKey(component,context);
 		
 		BufferResponseWriterManager manager = BufferResponseWriterManagerFactory.getInstance();
 		StringWriter buffer = new StringWriter();
