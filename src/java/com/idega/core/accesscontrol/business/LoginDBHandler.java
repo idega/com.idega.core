@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.63 2006/02/27 23:13:25 tryggvil Exp $
+ * $Id: LoginDBHandler.java,v 1.64 2006/02/28 10:30:58 laddi Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -15,16 +15,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginInfoHome;
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
-import com.idega.core.accesscontrol.data.LoginTableBMPBean;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.user.data.User;
 import com.idega.data.IDOException;
