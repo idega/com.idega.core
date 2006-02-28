@@ -1,5 +1,5 @@
 /*
- * $Id: TextArea.java,v 1.18 2005/11/18 10:56:53 thomas Exp $
+ * $Id: TextArea.java,v 1.19 2006/02/28 15:06:12 eiki Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a textarea input element.
  * </p>
- *  Last modified: $Date: 2005/11/18 10:56:53 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/02/28 15:06:12 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class TextArea extends InterfaceObject {
 
@@ -241,4 +241,21 @@ public class TextArea extends InterfaceObject {
 	public boolean isContainer() {
 		return false;
 	}
+	
+	/**
+	 * Sets the accesskey html attribute so you can activate this element (causes a "click" on it) with a keyboard command
+	 * @param accessKey
+	 */
+	public void setAccessKey(String accessKey){
+		setMarkupAttribute("accesskey",accessKey);
+	}
+	
+	/**
+	 * 
+	 * @return The access key that has been set for this element
+	 */
+	public String getAccessKey(){
+		return getMarkupAttribute("accesskey");
+	}
+
 }

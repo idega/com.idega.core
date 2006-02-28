@@ -109,4 +109,21 @@ public abstract class GenericInput extends InterfaceObject {
 	public boolean isContainer() {
 		return false;
 	}
+	
+	/**
+	 * Sets the accesskey html attribute so you can activate this element (causes a "click" on it) with a keyboard command
+	 * @param accessKey
+	 */
+	public void setAccessKey(String accessKey){
+		setMarkupAttribute("accesskey",accessKey);
+	}
+	
+	/**
+	 * 
+	 * @return The access key that has been set for this element
+	 */
+	public String getAccessKey(){
+		return getMarkupAttribute("accesskey");
+	}
+
 }

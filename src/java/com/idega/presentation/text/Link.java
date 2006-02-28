@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.166 2006/02/24 14:04:16 gimmi Exp $
+ * $Id: Link.java,v 1.167 2006/02/28 15:06:12 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2341,5 +2341,21 @@ public void setWindowToOpen(String className) {
 	 */
 	public void setValueOnClick(String objectToChangeName, String value) {
 		setOnClick("changeInputValue(findObj('" + objectToChangeName+ "'), '" + value + "');");
+	}
+	
+	/**
+	 * Sets the accesskey html attribute so you can activate this element (causes a "click" on it) with a keyboard command
+	 * @param accessKey
+	 */
+	public void setAccessKey(String accessKey){
+		setMarkupAttribute("accesskey",accessKey);
+	}
+	
+	/**
+	 * 
+	 * @return The access key that has been set for this element
+	 */
+	public String getAccessKey(){
+		return getMarkupAttribute("accesskey");
 	}
 }
