@@ -16,10 +16,10 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * Implementation of a general cacher for UIComponents.	
  * </p>
- *  Last modified: $Date: 2006/02/28 14:47:17 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/02/28 15:06:27 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class UIComponentCacher {
 	
@@ -114,7 +114,11 @@ public class UIComponentCacher {
 	 */
 	protected String getCacheKey(UIComponent component, FacesContext context) {
 		String id = component.getId();
-		
+		String sLocale = context.getViewRoot().getLocale().toString();
+		if(sLocale!=null){
+			id+="_";
+			id+=sLocale;
+		}
 		if(component instanceof CacheableUIComponent){
 			String state = ((CacheableUIComponent)component).getViewState(context);
 			id+="_";
