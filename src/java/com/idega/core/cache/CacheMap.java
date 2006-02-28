@@ -1,5 +1,5 @@
 /*
- * $Id: CacheMap.java,v 1.2 2006/01/14 22:39:12 laddi Exp $
+ * $Id: CacheMap.java,v 1.3 2006/02/28 14:47:17 tryggvil Exp $
  * Created on 6.1.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -27,15 +27,16 @@ import net.sf.ehcache.Element;
  * <p>
  * Wrapper for the Cache implemented as a standard Map
  * </p>
- *  Last modified: $Date: 2006/01/14 22:39:12 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/28 14:47:17 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class CacheMap implements Map {
 
 	private Cache cache;
-	
+	private List cacheListeners;
+
 	/**
 	 * 
 	 */
@@ -96,7 +97,14 @@ public class CacheMap implements Map {
 	public Object get(Object key) {
 		try {
 			Element element = getCache().get((Serializable) key);
-			return element.getValue();
+			Object theRet = element.getValue();
+			if(getCacheListeners()!=null){
+				for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
+					CacheMapListener listener = (CacheMapListener) iterator.next();
+					listener.gotObject((String)key,theRet);
+				}
+			}
+			return theRet;
 		}
 		catch (IllegalStateException e) {
 			throw new RuntimeException(e);
@@ -113,6 +121,12 @@ public class CacheMap implements Map {
 		try {
 			Element element = new Element((Serializable)key,(Serializable)value);
 			getCache().put(element);
+			if(getCacheListeners()!=null){
+				for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
+					CacheMapListener listener = (CacheMapListener) iterator.next();
+					listener.putObject((String)key,value);
+				}
+			}
 			return null;
 		}
 		catch (IllegalStateException e) {
@@ -126,6 +140,12 @@ public class CacheMap implements Map {
 	public Object remove(Object key) {
 		try {
 			getCache().remove((Serializable)key);
+			if(getCacheListeners()!=null){
+				for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
+					CacheMapListener listener = (CacheMapListener) iterator.next();
+					listener.removedObject((String)key);
+				}
+			}
 			return null;
 		}
 		catch (IllegalStateException e) {
@@ -150,6 +170,13 @@ public class CacheMap implements Map {
 	public void clear() {
 		try {
 			getCache().removeAll();
+			if(getCacheListeners()!=null){
+				for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
+					CacheMapListener listener = (CacheMapListener) iterator.next();
+					listener.cleared();
+				}
+			}
+			System.out.println("Clearing cache: "+cache.getName());
 		}
 		catch (IllegalStateException e) {
 			throw new RuntimeException(e);
@@ -196,5 +223,34 @@ public class CacheMap implements Map {
 	 */
 	public Set entrySet() {
 		throw new UnsupportedOperationException("Method entrySet() not implemented");
+	}
+	
+	
+
+	/**
+	 * @return Returns the cacheListeners.
+	 */
+	public List getCacheListeners() {
+		return cacheListeners;
+	}
+
+	
+	/**
+	 * @param cacheListeners The cacheListeners to set.
+	 */
+	public void setCacheListeners(List cacheListeners) {
+		this.cacheListeners = cacheListeners;
+	}
+	
+	/**
+	 * @return Returns the cacheListeners.
+	 */
+	public void addCacheListener(CacheMapListener listener) {
+		List cacheListeners = getCacheListeners();
+		if(cacheListeners==null){
+			cacheListeners=new ArrayList();
+			setCacheListeners(cacheListeners);
+		}
+		cacheListeners.add(listener);
 	}
 }
