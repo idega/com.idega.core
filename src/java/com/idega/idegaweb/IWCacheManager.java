@@ -1,5 +1,5 @@
 /*
- * $Id: IWCacheManager.java,v 1.34 2006/02/16 21:38:57 laddi Exp $
+ * $Id: IWCacheManager.java,v 1.35 2006/02/28 14:52:53 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -39,10 +39,10 @@ import com.idega.util.text.TextSoap;
  * fragments of their rendering output in memory.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/02/16 21:38:57 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/28 14:52:53 $ by $Author: tryggvil $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class IWCacheManager implements Singleton {
 
@@ -499,4 +499,9 @@ private boolean isBlobCached(Cache cache){
   	iwma.removeAttribute(IW_CACHEMANAGER_KEY);
   	clearAllCaches();
   }
+  
+  public Map getCacheMap(){
+	  return getObjectsMap();
+  }
+  
 }
