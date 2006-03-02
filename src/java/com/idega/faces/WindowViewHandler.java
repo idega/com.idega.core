@@ -13,6 +13,7 @@ import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.FrameTable;
@@ -21,6 +22,7 @@ import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.faces.componentbased.CbpViewHandler;
 import com.idega.faces.componentbased.Page;
 import com.idega.faces.componentbased.PageWrapper;
+import com.idega.util.RequestUtil;
 import com.idega.util.StringHandler;
 
 /**
@@ -78,7 +80,19 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 			}
 			else{
 				ret.setViewId(viewId);
-				Class descriptorClazz = getDescriptorClassNameForViewId(viewId);
+				Class descriptorClazz = null;
+				try {
+					descriptorClazz = getDescriptorClassNameForViewId(viewId);
+				} catch (ClassNotFoundException e) {
+					try {
+						HttpServletRequest req = (HttpServletRequest) ctx.getExternalContext().getRequest();
+						String referer = RequestUtil.getReferer(req);
+						System.err.println("[WindowViewHandler] Referer = "+referer);
+					} catch (Exception ex) {
+						System.err.println("[WindowViewHandler] Failed getting referer ("+ex.getMessage()+")");
+					}
+					throw e;
+				}
 				if(descriptorClazz == null) { 
 					// JSP page....
 				} else {
