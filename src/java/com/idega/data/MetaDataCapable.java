@@ -1,8 +1,12 @@
 /*
- * Created on 19.5.2003
+ * $Id: MetaDataCapable.java,v 1.10 2006/03/03 17:03:23 tryggvil Exp $
+ * Created on 19.5.2003 by Tryggvi Larusson
+ * 
+ * Copyright (C) 2003-2006 Idega hf. All Rights Reserved.
  *
- * To change this generated comment go to 
- * Window>Preferences>Java>Code Generation>Code Template
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ *
  */
 package com.idega.data;
 
@@ -11,10 +15,10 @@ package com.idega.data;
  * Entity beans should implement this interfaceto declare that they implement
  * metata property behaviour, i.e. to add and store arbitrary key/value pairs.
  * </p>
- *  Last modified: $Date: 2006/03/03 17:02:14 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/03/03 17:03:23 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public interface MetaDataCapable
 {
