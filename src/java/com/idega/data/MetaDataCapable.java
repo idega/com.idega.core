@@ -6,11 +6,15 @@
  */
 package com.idega.data;
 
-
 /**
- * A class that data classes should implement to declare that they implement metata property behaviour.
- * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0
+ * <p>
+ * Entity beans should implement this interfaceto declare that they implement
+ * metata property behaviour, i.e. to add and store arbitrary key/value pairs.
+ * </p>
+ *  Last modified: $Date: 2006/03/03 17:02:14 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.9 $
  */
 public interface MetaDataCapable
 {
