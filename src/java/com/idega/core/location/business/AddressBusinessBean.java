@@ -206,10 +206,10 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	public String getStreetNameFromAddressString(String addressString) {
 		int index = TextSoap.getIndexOfFirstNumberInString(addressString);
 		if (index == -1) {
-			return addressString;
+			return addressString.trim();
 		}
 		else {
-			return addressString.substring(0, index);
+			return addressString.substring(0, index).trim();
 		}
 	}
 
@@ -223,7 +223,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	public String getStreetNumberFromAddressString(String addressString) {
 		int index = TextSoap.getIndexOfFirstNumberInString(addressString);
 		if (index != -1) {
-			return addressString.substring(index, addressString.length());
+			return addressString.substring(index, addressString.length()).trim();
 		}
 		return null;
 	}
