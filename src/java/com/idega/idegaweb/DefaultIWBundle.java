@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.26 2006/02/22 20:52:47 laddi Exp $
+ * $Id: DefaultIWBundle.java,v 1.27 2006/03/06 12:46:36 gimmi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -664,7 +664,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	{
 		return FileUtil.getFileSeparator();
 	}
-	public synchronized void storeState()
+	public synchronized void storeState(boolean storeAllComponents)
 	{
 		//This method is not called on shutdown if getApplication().getSettings().getWriteBundleFilesOnShutdown() is false
 		debug("Storing State");		
@@ -675,14 +675,19 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			this.storeResourceBundles();
 		}
 
-		Iterator valueIter = getComponentPropertiesListMap().values().iterator();
-		while (valueIter.hasNext())
-		{
-			IWPropertyList element = (IWPropertyList) valueIter.next();
-			element.store();
+		if (storeAllComponents) {
+			Iterator valueIter = getComponentPropertiesListMap().values().iterator();
+			while (valueIter.hasNext())
+			{
+				IWPropertyList element = (IWPropertyList) valueIter.next();
+				element.store();
+			}
 		}
 	}
-	
+	public synchronized void storeState()
+	{
+		storeState(true);
+	}
 	/**
 	 * Gets if to store the resoures in the storeState() method
 	 * @return
@@ -989,6 +994,8 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		//setComponentProperty(prop, COMPONENT_NAME_PROPERTY, componentName);
 		//setComponentProperty(prop, COMPONENT_TYPE_PROPERTY, componentType);
 		addComponentToDatabase(className, componentType, componentName);
+		propertyList.store();
+
 	}
 	/**
 	 * @param className
@@ -1350,6 +1357,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		getComponentPropertiesListMap().remove(className);
 		getComponentList().removeProperty(className);
 		com.idega.core.component.data.ICObjectBMPBean.removeICObject(className);
+		propertyList.store();
 	}
 	public List getComponentKeys()
 	{

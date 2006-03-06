@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.93 2005/12/07 16:50:26 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.94 2006/03/06 12:46:36 gimmi Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -31,10 +31,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2005/12/07 16:50:26 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/03/06 12:46:36 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.93 $
+ * @version $Revision: 1.94 $
  */
 public interface IWBundle {
 	/**
@@ -128,6 +128,8 @@ public interface IWBundle {
 	public abstract String getBundleType();
 
 	public abstract void storeState();
+
+	public abstract void storeState(boolean storeAllComponents);
 
 	public abstract String getResourcesRealPath();
 
