@@ -26,23 +26,24 @@ public class Table implements Outputable, Cloneable {
 	private IDOEntityDefinition _entityDefinition;
 
 	public Table(String name) {
-		this.name = name;
+		setName(name);
 	}
 
 	public Table(String name, String alias) {
-		this.name = name;
+		setName(name);
 		this.alias = alias;
 	}
 	
 	public Table(Outputable query, String alias){
-		this.name = "("+query+")";
+		setName("("+query+")");
 		this.alias = alias;
 	}
 
 	public Table(Class entityClass) {
 		_entityDefinition = getEntityDefinition(entityClass);
 		if (_entityDefinition != null) {
-			this.name = _entityDefinition.getSQLTableName().toLowerCase();
+			
+			setName(_entityDefinition.getSQLTableName());
 			IDOPrimaryKeyDefinition pk = _entityDefinition.getPrimaryKeyDefinition();
 			hasCompositePrimaryKey = pk.isComposite();
 			if (!hasCompositePrimaryKey) {
@@ -63,7 +64,7 @@ public class Table implements Outputable, Cloneable {
 			}
 		}
 		else {
-			this.name = "null";
+			setName("null");
 		}
 	}
 
@@ -83,10 +84,10 @@ public class Table implements Outputable, Cloneable {
 	private Table(IDOEntityDefinition entityDefinition, String alias) {
 		_entityDefinition = entityDefinition;
 		if (_entityDefinition != null) {
-			this.name = _entityDefinition.getSQLTableName().toLowerCase();
+			setName(_entityDefinition.getSQLTableName());
 		}
 		else {
-			this.name = "null";
+			setName("null");
 		}
 		if (alias != null) {
 			this.alias = alias;
@@ -98,6 +99,10 @@ public class Table implements Outputable, Cloneable {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	public void setName(String name){
+		this.name=name;
 	}
 	
 	public String getPrimaryKeyColumnName() throws IDOCompositePrimaryKeyException {
