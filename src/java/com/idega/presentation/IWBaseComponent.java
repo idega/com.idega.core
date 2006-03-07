@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.10 2006/02/17 16:11:22 laddi Exp $
+ * $Id: IWBaseComponent.java,v 1.11 2006/03/07 21:34:26 tryggvil Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -16,6 +16,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import com.idega.core.cache.CacheableUIComponent;
+import com.idega.core.cache.UIComponentCacher;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
@@ -24,19 +26,19 @@ import com.idega.util.text.TextStyler;
 
 /**
  * <p>
- * This is a base UI component for JSF that adds IW utility methods.<br/>
+ * This is a base UI component for JSF that adds extended functionality for idegaWeb.<br/>
  * This is supposed to be a convenient replacement for PresentationObject for new
  * pure JSF solutions and doesn't have the some of the legacy burdens that PresentationObject has
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
- * Copyright (C) idega software 2004-2005 <br/>
- * Last modified: $Date: 2006/02/17 16:11:22 $ by $Author: laddi $
+ * Copyright (C) idega software 2004-2006 <br/>
+ * Last modified: $Date: 2006/03/07 21:34:26 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  * 
  */
-public class IWBaseComponent extends UIComponentBase {
+public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
 	
 	private TextStyler _styler;
 	private String styleAttribute;
@@ -69,17 +71,28 @@ public class IWBaseComponent extends UIComponentBase {
 	 * @see javax.faces.component.UIComponent#encodeBegin(javax.faces.context.FacesContext)
 	 */
 	public void encodeBegin(FacesContext context) throws IOException {
-		iSystemTime = System.currentTimeMillis();
-		if(!isInitialized()){
-			initializeComponent(context);
-			//TODO: Remove call to older method:
-			initializeContent();
-			setInitialized();
+
+		UIComponentCacher cacher = getCacher(context);
+		if(cacher.existsInCache(this,context)){
+			// do nothing:
 		}
 		else{
-			updateComponent(context);
+			if(cacher.isCacheEnbled(this,context)){
+				cacher.beginCache(this,context);
+			}
+			
+			iSystemTime = System.currentTimeMillis();
+			if(!isInitialized()){
+				initializeComponent(context);
+				//TODO: Remove call to older method:
+				initializeContent();
+				setInitialized();
+			}
+			else{
+				updateComponent(context);
+			}
+			super.encodeBegin(context);
 		}
-		super.encodeBegin(context);
 	}
 
 	/* (non-Javadoc)
@@ -98,7 +111,15 @@ public class IWBaseComponent extends UIComponentBase {
 				UIComponent element = (UIComponent) children.next();
 				renderChild(context,element);
 			}*/
-		super.encodeChildren(context);
+		
+		UIComponentCacher cacher = getCacher(context);
+		if(cacher.existsInCache(this,context)){
+			// do nothing:
+		}
+		else{
+			super.encodeChildren(context);	
+		}
+		
 	}
 	
 	
@@ -118,12 +139,25 @@ public class IWBaseComponent extends UIComponentBase {
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeEnd(javax.faces.context.FacesContext)
 	 */
-	public void encodeEnd(FacesContext arg0) throws IOException {
-		long endTime = System.currentTimeMillis();
-		String renderingText = (endTime - iSystemTime) + " ms";
-		arg0.getResponseWriter().writeComment(renderingText);
+	public void encodeEnd(FacesContext context) throws IOException {
+		
 
-		super.encodeEnd(arg0);
+		UIComponentCacher cacher = getCacher(context);
+		if(cacher.existsInCache(this,context)){
+			// do nothing:
+		}
+		else{
+
+			long endTime = System.currentTimeMillis();
+			String renderingText = (endTime - iSystemTime) + " ms";
+			context.getResponseWriter().writeComment(renderingText);
+			super.encodeEnd(context);
+			
+			if(cacher.isCacheEnbled(this,context)){
+				cacher.endCache(this,context);
+			}
+		}
+		
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getRendersChildren()
@@ -291,6 +325,18 @@ public class IWBaseComponent extends UIComponentBase {
 			locale = context.getExternalContext().getRequestLocale();
 		}
 		return bundle.getResourceBundle(locale);
+	}
+
+	
+	public UIComponentCacher getCacher(FacesContext context){
+		return UIComponentCacher.getDefaultCacher(context);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.cache.CacheableUIComponent#getViewState(javax.faces.context.FacesContext)
+	 */
+	public String getViewState(FacesContext context) {
+		return "view";
 	}
 	
 }
