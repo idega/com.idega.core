@@ -16,10 +16,10 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * Implementation of a general cacher for UIComponents.	
  * </p>
- *  Last modified: $Date: 2006/02/28 17:44:45 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/03/08 09:15:22 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class UIComponentCacher {
 	
@@ -30,6 +30,9 @@ public class UIComponentCacher {
 	}
 	
 	public boolean existsInCache(UIComponent component,FacesContext context){
+		if(!isCacheEnbled(component,context)){
+			return false;
+		}
 		String cacheKey = getCacheKey(component,context);
 		Map cacheMap = getCacheMap();
 		if(cacheMap.containsKey(cacheKey)){
@@ -73,7 +76,9 @@ public class UIComponentCacher {
 	 */
 	public void encodeCached(UIComponent component, FacesContext context) throws IOException{
 		String cachedContent = getCachedContent(component,context);
-		context.getResponseWriter().write(cachedContent);
+		if(cachedContent!=null){
+			context.getResponseWriter().write(cachedContent);
+		}
 	}
 
 	/**
