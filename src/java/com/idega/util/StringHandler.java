@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.37 2006/01/04 14:38:03 tryggvil Exp $ Created on
+ * $Id: StringHandler.java,v 1.38 2006/03/09 12:13:00 eiki Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,11 +24,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2006/01/04 14:38:03 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/03/09 12:13:00 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public class StringHandler {
 
@@ -1026,15 +1026,13 @@ public class StringHandler {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	/**
+	 * Uses a regular expression to remove all html tags from the string. Code found at http://www.tivocommunity.com/tivo-vb/archive/index.php/t-229458.html
+	 * @param htmlString
+	 * @return
+	 */
+	public static String removeHtmlTagsFromString(String htmlString){
+		return htmlString.replaceAll("\\<.*?\\>","");
+	}
 	
 }
