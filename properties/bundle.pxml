@@ -685,6 +685,11 @@
       <type>java.lang.String</type>
       <value>yyyy-MM-dd</value>
     </key>
+    <key>
+      <name>iw_bundle_starter_class</name>
+      <type>java.lang.String</type>
+      <value>com.idega.core.ldap.business.IWLDAPBundleStarter</value>
+    </key>
   </map>
 </pxml>
 
