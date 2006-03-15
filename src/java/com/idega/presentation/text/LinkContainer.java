@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.24.2.1 2006/02/24 14:40:08 laddi Exp $
+ * $Id: LinkContainer.java,v 1.24.2.2 2006/03/15 13:33:41 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
@@ -25,7 +26,6 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.ui.Window;
 import com.idega.util.StringHandler;
-import com.idega.util.text.TextSoap;
 
 /**
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
