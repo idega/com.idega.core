@@ -1,5 +1,5 @@
 /*
- * $Id: CacheMap.java,v 1.5 2006/03/16 20:40:35 tryggvil Exp $
+ * $Id: CacheMap.java,v 1.6 2006/03/16 21:04:02 tryggvil Exp $
  * Created on 6.1.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import net.sf.ehcache.Element;
  * <p>
  * Wrapper for the Cache implemented as a standard Map
  * </p>
- *  Last modified: $Date: 2006/03/16 20:40:35 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/03/16 21:04:02 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class CacheMap implements Map {
 
@@ -74,7 +74,9 @@ public class CacheMap implements Map {
 			//return getCache().getKeys().contains(key);
 			Element element = getCache().get((Serializable) key);
 			if(element!=null){
-				return true;
+				if(element.getValue()!=null){
+					return true;
+				}
 			}
 		}
 		catch (IllegalStateException e) {
