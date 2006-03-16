@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.11 2006/03/07 21:34:26 tryggvil Exp $
+ * $Id: IWBaseComponent.java,v 1.12 2006/03/16 15:37:07 tryggvil Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
- * Last modified: $Date: 2006/03/07 21:34:26 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/03/16 15:37:07 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
@@ -144,7 +144,8 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 
 		UIComponentCacher cacher = getCacher(context);
 		if(cacher.existsInCache(this,context)){
-			// do nothing:
+			// encode the cached version:
+			cacher.encodeCached(this,context);
 		}
 		else{
 
