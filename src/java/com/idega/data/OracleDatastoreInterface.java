@@ -321,21 +321,30 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			try {
 				Reader chrInstream; // Unicode clob reader
 				char chrBuffer[]; // Clob buffer
-				CLOB clob = ((OracleResultSet) rs).getCLOB(columnName);
-
-				if (clob != null) {
-					//set buffersize
-					chrBuffer = new char[(int) clob.length()];
-
-					// Now get as a unicode stream.
-					chrInstream = clob.getCharacterStream();
-
-					if (chrInstream != null) {
-						chrInstream.read(chrBuffer);
-
-						String value = new String(chrBuffer);
-						entity.setColumn(columnName, value);
+				try{
+					CLOB clob = ((OracleResultSet) rs).getCLOB(columnName);
+					if (clob != null) {
+						//set buffersize
+						chrBuffer = new char[(int) clob.length()];
+	
+						// Now get as a unicode stream.
+						chrInstream = clob.getCharacterStream();
+	
+						if (chrInstream != null) {
+							chrInstream.read(chrBuffer);
+	
+							String value = new String(chrBuffer);
+							entity.setColumn(columnName, value);
+						}
 					}
+				}
+				catch(ClassCastException cce){
+					String eMessage = cce.getMessage();
+					String message = "Error filling CLOB column for Oracle. Unexpected JDBC Resultset implementation class: ";
+					if(eMessage!=null){
+						message += eMessage;
+					}
+					System.err.println(message);
 				}
 
 			}
