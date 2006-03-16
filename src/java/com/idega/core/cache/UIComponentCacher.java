@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 
@@ -16,10 +17,10 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * Implementation of a general cacher for UIComponents.	
  * </p>
- *  Last modified: $Date: 2006/03/08 09:15:22 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/03/16 15:37:53 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class UIComponentCacher {
 	
@@ -77,7 +78,12 @@ public class UIComponentCacher {
 	public void encodeCached(UIComponent component, FacesContext context) throws IOException{
 		String cachedContent = getCachedContent(component,context);
 		if(cachedContent!=null){
-			context.getResponseWriter().write(cachedContent);
+			ResponseWriter writer = context.getResponseWriter();
+			writer.write(cachedContent);
+		}
+		else{
+			String cacheKey = getCacheKey(component,context);
+			System.err.println("UIComponentCacher Error. Cached content is null, expected value for cacheKey: "+cacheKey);
 		}
 	}
 
