@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.17 2005/12/11 18:03:32 gimmi Exp $
+ * $Id: IWUrlRedirector.java,v 1.18 2006/03/16 15:32:54 tryggvil Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -21,6 +21,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.idega.core.builder.business.BuilderPageException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.view.ViewManager;
@@ -32,10 +33,10 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2005/12/11 18:03:32 $ by $Author: gimmi $
+ *  Last modified: $Date: 2006/03/16 15:32:54 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -51,13 +52,23 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		
 		initializeDefaultDomain(request);
 		
-		boolean doRedirect = getIfDoRedirect(request);
-		if(doRedirect){
-			String newUrl = getNewRedirectURL(request);
-			response.sendRedirect(newUrl);
+		try{
+			boolean doRedirect = getIfDoRedirect(request);
+			if(doRedirect){
+				String newUrl = getNewRedirectURL(request);
+				response.sendRedirect(newUrl);
+			}
+			else{
+				chain.doFilter(srequest,sresponse);
+			}
 		}
-		else{
-			chain.doFilter(srequest,sresponse);
+		catch(BuilderPageException pe){
+			if(pe.getCode().equals(BuilderPageException.CODE_NOT_FOUND)){
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			}
+			else{
+				throw pe;
+			}
 		}
 	}
 
