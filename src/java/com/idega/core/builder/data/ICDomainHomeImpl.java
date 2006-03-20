@@ -1,9 +1,6 @@
 package com.idega.core.builder.data;
 
-import java.util.Collection;
 import javax.ejb.FinderException;
-import com.idega.core.builder.data.ICDomain;
-import com.idega.core.builder.data.ICDomainHome;
 
 
 public class ICDomainHomeImpl extends com.idega.data.IDOFactory implements ICDomainHome
