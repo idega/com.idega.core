@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.42 2006/02/24 09:10:56 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.43 2006/03/20 07:38:56 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -37,10 +37,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/02/24 09:10:56 $ by $Author: laddi $
+ * Last modified: $Date: 2006/03/20 07:38:56 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.42 $
+ * @version $Revision: 1.43 $
  */
 
 
@@ -150,6 +150,16 @@ public class IWMainApplicationSettings implements MutableClass {
 		
 	}
 	
+	public boolean getBoolean(String key, boolean defaultValue) {
+		String value = getFromApplicationBinding(key);
+		if (value != null) {
+			return Boolean.valueOf(value).booleanValue();
+		}
+		else {
+			return defaultValue;
+		}
+	}
+
 	public boolean getBoolean(String key) {
 		String value = getFromApplicationBinding(key);
 		return Boolean.valueOf(value).booleanValue();
