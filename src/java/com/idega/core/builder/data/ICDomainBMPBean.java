@@ -1,5 +1,5 @@
 /*
- * $Id: ICDomainBMPBean.java,v 1.1 2005/12/07 11:51:50 tryggvil Exp $
+ * $Id: ICDomainBMPBean.java,v 1.2 2006/03/20 12:11:55 tryggvil Exp $
  * Created on 25.11.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,6 +21,8 @@ import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORelationshipException;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationHome;
 import com.idega.user.data.GroupDomainRelationTypeBMPBean;
@@ -30,10 +32,10 @@ import com.idega.user.data.GroupDomainRelationTypeBMPBean;
  * <p>
  * Default implementation of ICDomain and mapping of the IB_DOMAIN Table.
  * </p>
- *  Last modified: $Date: 2005/12/07 11:51:50 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/03/20 12:11:55 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  /**
@@ -297,4 +299,18 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  public String getUniqueId(){
 	  	return super.getUniqueId();
 	  }
+
+
+	/**
+	 * <p>
+	 * Finds the first domain (Default Domain) in the table.
+	 * </p>
+	 * @return
+	 */
+	public Object ejbFindFirstDomain() throws FinderException{
+	  	SelectQuery query = idoSelectPKQuery();
+	  	Table t = new Table(this);
+	  	query.addOrder(t,getIDColumnName(),true);
+	  	return idoFindOnePKByQuery(query);
+	}
 }

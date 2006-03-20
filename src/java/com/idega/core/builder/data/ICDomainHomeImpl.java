@@ -1,5 +1,7 @@
 package com.idega.core.builder.data;
 
+import java.util.Collection;
+import javax.ejb.FinderException;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICDomainHome;
 
@@ -60,6 +62,17 @@ public java.util.Collection findAllDomainsByServerName(String serverName)throws 
 	}
 
  }
+
+
+/* (non-Javadoc)
+ * @see com.idega.core.builder.data.ICDomainHome#findFirstDomain()
+ */
+public ICDomain findFirstDomain() throws FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Object pk = ((ICDomainBMPBean)entity).ejbFindFirstDomain();
+	this.idoCheckInPooledEntity(entity);
+	return findByPrimaryKey(pk);
+}
 
 
 
