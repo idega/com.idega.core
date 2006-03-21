@@ -386,16 +386,6 @@
       <url>http://jakarta.apache.org/commons/</url>
     </dependency>
     <dependency>
-      <groupId>javaldap</groupId>
-      <artifactId>java-ldapserver</artifactId>
-      <version>0.4</version>
-      <type>jar</type>
-      <url>http://codehaus.org/~trygvis/ldap</url>
-      <properties>
-        <idegaweb.bundle.include>true</idegaweb.bundle.include>
-      </properties>
-    </dependency>
-    <dependency>
       <groupId>ehcache</groupId>
       <artifactId>ehcache</artifactId>
       <!--

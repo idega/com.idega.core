@@ -1,34 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <classpath>
-	<classpathentry kind="src" path="src/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-1.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jspapi/jars/jsp-api-2.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/ejb/jars/ejb-2.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-spec1_0_1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/javamail/jars/javamail-1.3.2.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jaf/jars/jaf-1.0.2.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/servlets.com/jars/cos-05Nov2002.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/icu4j/jars/icu4j-3.0L1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-jsf-api-1.1.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-tomahawk-1.1.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/oracle_jdbc/jars/oracle_jdbc-10.1.0.2.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/informix_jdbc/jars/informix_jdbc-9.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/poi/jars/poi-2.5-final-20040428.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jug/jars/jug-1.1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/lucene/jars/lucene-1.4.1.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai-1.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai_codec-1.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/itextpdf/jars/itext-paulo-139.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-2.0.2.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/slide/jars/jakarta-slide-webdavlib-2.2pre1.iwbuild4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-codec/jars/commons-codec-1.3.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/commons-fileupload/jars/commons-fileupload-1.0.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/javaldap/jars/java-ldapserver-0.4.jar"/>
-	<classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.1.jar"/>
-	<classpathentry sourcepath="/EHCACHE-CONSTRUCTS" kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-constructs-0.6.jar"/>
-	<classpathentry kind="output" path="target/classes"/>
+  <classpathentry excluding="" kind="src" path="src/java">
+  </classpathentry>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jspapi/jars/jsp-api-2.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/ejb/jars/ejb-2.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-spec1_0_1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/javamail/jars/javamail-1.3.2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jaf/jars/jaf-1.0.2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/servlets.com/jars/cos-05Nov2002.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/icu4j/jars/icu4j-3.0L1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-jsf-api-1.1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-tomahawk-1.1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/oracle_jdbc/jars/oracle_jdbc-10.1.0.2.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/informix_jdbc/jars/informix_jdbc-9.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/poi/jars/poi-2.5-final-20040428.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jug/jars/jug-1.1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/lucene/jars/lucene-1.4.1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai_codec-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/itextpdf/jars/itext-paulo-139.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-2.0.2.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/slide/jars/jakarta-slide-webdavlib-2.2pre1.iwbuild4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-codec/jars/commons-codec-1.3.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/commons-fileupload/jars/commons-fileupload-1.0.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-constructs-0.6.jar">
+  </classpathentry>
+  <classpathentry kind="output" path="target/classes">
+  </classpathentry>
 </classpath>
