@@ -544,19 +544,6 @@
             <type>map</type>
           </key>
           <key>
-            <name>com.idega.core.ldap.business.IWLDAPUserGroupPluginBusiness</name>
-            <value>
-              <map>
-                <key>
-                  <name>component_property_file</name>
-                  <type>java.lang.String</type>
-                  <value>com.idega.core.ldap.business.IWLDAPUserGroupPluginBusiness.pxml</value>
-                </key>
-              </map>
-            </value>
-            <type>map</type>
-          </key>
-          <key>
             <name>com.idega.presentation.text.Heading1</name>
             <value>
               <map>
@@ -616,6 +603,19 @@
                   <name>component_property_file</name>
                   <type>java.lang.String</type>
                   <value>com.idega.presentation.text.Heading6.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.demo.presentation.Demo</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.demo.presentation.Demo.pxml</value>
                 </key>
               </map>
             </value>
@@ -684,11 +684,6 @@
       <name>DatePicker.date_format_string</name>
       <type>java.lang.String</type>
       <value>yyyy-MM-dd</value>
-    </key>
-    <key>
-      <name>iw_bundle_starter_class</name>
-      <type>java.lang.String</type>
-      <value>com.idega.core.ldap.business.IWLDAPBundleStarter</value>
     </key>
   </map>
 </pxml>
