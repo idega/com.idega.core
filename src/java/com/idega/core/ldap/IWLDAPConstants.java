@@ -1,7 +1,7 @@
 /*
  * Created on Jun 30, 2004
  */
-package com.idega.core.ldap.util;
+package com.idega.core.ldap;
 
 /**
  * Contains a list of supported LDAP attributes and schemas by the IdegaWeb
