@@ -38,6 +38,7 @@ dateinput.year_short=Y
 datepicker.pick_date=Pick date
 delete=Delete
 description=Description
+edit.rss.sources.title=Edit Source Definition
 error.exception_occurred=The following exception occurred
 error_not_logged_on=You are not logged on, please go to login page and log in.
 eventhistory.date=Date
