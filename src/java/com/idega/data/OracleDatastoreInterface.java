@@ -273,8 +273,8 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			Locale defaultLocale = Locale.ENGLISH;
 			Locale locale = getDefaultLocale();
 			if (locale != null) {
-				String country = defaultLocale.getDisplayCountry(locale).toUpperCase();
-				String language = defaultLocale.getDisplayLanguage(locale).toUpperCase();
+				String country = locale.getDisplayCountry(defaultLocale).toUpperCase();
+				String language = locale.getDisplayLanguage(defaultLocale).toUpperCase();
 	
 				stmt = newConn.createStatement();
 				stmt.execute("ALTER SESSION SET NLS_LANGUAGE='" + language + "'");
@@ -312,8 +312,8 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			Locale defaultLocale = Locale.ENGLISH;
 			Locale locale = getDefaultLocale();
 			if (locale != null) {
-				String country = defaultLocale.getDisplayCountry(locale).toUpperCase();
-				String language = defaultLocale.getDisplayLanguage(locale).toUpperCase();
+				String country = locale.getDisplayCountry(defaultLocale).toUpperCase();
+				String language = locale.getDisplayLanguage(defaultLocale).toUpperCase();
 				
 				stmt = newConn.createStatement();
 				stmt.execute("CREATE OR REPLACE TRIGGER set_nls_language "+
