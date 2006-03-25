@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.43 2006/03/20 07:38:56 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.44 2006/03/25 15:26:48 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -37,10 +37,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/03/20 07:38:56 $ by $Author: laddi $
+ * Last modified: $Date: 2006/03/25 15:26:48 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.43 $
+ * @version $Revision: 1.44 $
  */
 
 
@@ -285,6 +285,22 @@ public class IWMainApplicationSettings implements MutableClass {
 		putInApplicationBinding(DEFAULT_LOCALE_KEY,sLocale);
 		cachedDefaultLocale=null;
 	}
+	
+	public Locale getDefaultLocaleFromIWPropertyList() {
+		String localeIdentifier = getIdegawebPropertyList().getProperty(DEFAULT_LOCALE_KEY);
+		Locale locale = null;
+		Locale englishLocal = Locale.ENGLISH;
+
+		if (localeIdentifier ==null) {
+			locale = englishLocal;
+		}
+		else{
+			locale = LocaleUtil.getLocale(localeIdentifier);
+		}
+		
+		return locale;
+	}
+	
 	/**
 	 * Gets the default locale which is assigned to all users if they have not chosen a locale. 
 	 *
