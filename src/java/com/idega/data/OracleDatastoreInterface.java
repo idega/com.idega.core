@@ -32,6 +32,8 @@ import com.idega.util.database.ConnectionBroker;
  */
 public class OracleDatastoreInterface extends DatastoreInterface {
 
+	public static Locale oracleLocale = null;
+	
 	protected OracleDatastoreInterface() {
 		super();
 		EntityControl.limitTableNameToThirtyCharacters = true;
@@ -269,24 +271,19 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			System.out.println("OracleDatastoreInterface: Setting date format environment variable for Oracle.");
 			
 			Locale defaultLocale = Locale.ENGLISH;
-			Locale locale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
-			String country = defaultLocale.getDisplayCountry(locale).toUpperCase();
-			String language = defaultLocale.getDisplayLanguage(locale).toUpperCase();
-
-			stmt = newConn.createStatement();
-			stmt.execute("ALTER SESSION SET NLS_LANGUAGE='" + language + "'");
-			stmt.close();
-			stmt = newConn.createStatement();
-			stmt.execute("ALTER SESSION SET NLS_TERRITORY='" + country + "'");
-			stmt.close();
-			System.out.println("OracleDatastoreInterface: Setting language environment variable for Oracle to " + language + "/" + country + ".");
-		/*	
-		 This parameter is set for the OCI driver in a shell script usually but could be set here also
-			stmt = newConn.createStatement();
-			stmt.execute("ALTER SESSION SET NLS_LANG='.AL32UTF8'");
-			stmt.close();
-			System.out.println("OracleDatastoreInterface: Setting language environment variable for Oracle to NLS_LANG=.UTF8 for Unicode support.");
-		*/
+			Locale locale = getDefaultLocale();
+			if (locale != null) {
+				String country = defaultLocale.getDisplayCountry(locale).toUpperCase();
+				String language = defaultLocale.getDisplayLanguage(locale).toUpperCase();
+	
+				stmt = newConn.createStatement();
+				stmt.execute("ALTER SESSION SET NLS_LANGUAGE='" + language + "'");
+				stmt.close();
+				stmt = newConn.createStatement();
+				stmt.execute("ALTER SESSION SET NLS_TERRITORY='" + country + "'");
+				stmt.close();
+				System.out.println("OracleDatastoreInterface: Setting language environment variable for Oracle to " + language + "/" + country + ".");
+			}
 		}
 		catch (SQLException sqle) {
 			System.err.println("OracleDatastoreInterface: Error when changing environment variable: " + sqle.getMessage());
@@ -300,11 +297,6 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	 */
 	public void onApplicationStart(Connection newConn) {
 		try {
-			Locale defaultLocale = Locale.ENGLISH;
-			Locale locale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
-			String country = defaultLocale.getDisplayCountry(locale).toUpperCase();
-			String language = defaultLocale.getDisplayLanguage(locale).toUpperCase();
-			
 			onConnectionCreate(newConn);
 			
 			Statement stmt = newConn.createStatement();
@@ -317,20 +309,34 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			stmt.close();
 			System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_date_formats' for setting NLS_DATE_FORMAT and NLS_TIMESTAMP_FORMAT");
 
-			stmt = newConn.createStatement();
-			stmt.execute("CREATE OR REPLACE TRIGGER set_nls_language "+
-					"AFTER LOGON ON SCHEMA "+
-					"BEGIN "+
-					"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_LANGUAGE=''" + language + "'''); "+
-					"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_TERRITORY=''" + country + "''');"+
-					"END;");
-			stmt.close();
-			System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_language' for setting NLS_LANGUAGE='" + language + "' and NLS_TERRITORY='" + country + "'");
+			Locale defaultLocale = Locale.ENGLISH;
+			Locale locale = getDefaultLocale();
+			if (locale != null) {
+				String country = defaultLocale.getDisplayCountry(locale).toUpperCase();
+				String language = defaultLocale.getDisplayLanguage(locale).toUpperCase();
+				
+				stmt = newConn.createStatement();
+				stmt.execute("CREATE OR REPLACE TRIGGER set_nls_language "+
+						"AFTER LOGON ON SCHEMA "+
+						"BEGIN "+
+						"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_LANGUAGE=''" + language + "'''); "+
+						"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_TERRITORY=''" + country + "''');"+
+						"END;");
+				stmt.close();
+				System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_language' for setting NLS_LANGUAGE='" + language + "' and NLS_TERRITORY='" + country + "'");
+			}
 		}
 		catch (SQLException sqle) {
 			System.err.println("OracleDatastoreInterface: creating logon trigger: " + sqle.getMessage());
 			sqle.printStackTrace();
 		}
+	}
+	
+	private Locale getDefaultLocale() {
+		if (oracleLocale == null) {
+			oracleLocale = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings().getDefaultLocaleFromIWPropertyList();
+		}
+		return oracleLocale;
 	}
 
 	/**
