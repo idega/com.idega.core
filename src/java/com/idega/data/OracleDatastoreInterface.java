@@ -267,6 +267,19 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			stmt.execute("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
 			stmt.close();
 			System.out.println("OracleDatastoreInterface: Setting date format environment variable for Oracle.");
+			
+			Locale defaultLocale = Locale.ENGLISH;
+			Locale locale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
+			String country = defaultLocale.getDisplayCountry(locale).toUpperCase();
+			String language = defaultLocale.getDisplayLanguage(locale).toUpperCase();
+
+			stmt = newConn.createStatement();
+			stmt.execute("ALTER SESSION SET NLS_LANGUAGE='" + language + "'");
+			stmt.close();
+			stmt = newConn.createStatement();
+			stmt.execute("ALTER SESSION SET NLS_TERRITORY='" + country + "'");
+			stmt.close();
+			System.out.println("OracleDatastoreInterface: Setting language environment variable for Oracle to " + language + "/" + country + ".");
 		/*	
 		 This parameter is set for the OCI driver in a shell script usually but could be set here also
 			stmt = newConn.createStatement();
@@ -312,7 +325,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 					"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_TERRITORY=''" + country + "''');"+
 					"END;");
 			stmt.close();
-			System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_language' for setting NLS_LANGUAGE and NLS_TERRITORY");
+			System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_language' for setting NLS_LANGUAGE='" + language + "' and NLS_TERRITORY='" + country + "'");
 		}
 		catch (SQLException sqle) {
 			System.err.println("OracleDatastoreInterface: creating logon trigger: " + sqle.getMessage());
