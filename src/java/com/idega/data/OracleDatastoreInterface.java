@@ -314,6 +314,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			if (locale != null) {
 				String country = locale.getDisplayCountry(defaultLocale).toUpperCase();
 				String language = locale.getDisplayLanguage(defaultLocale).toUpperCase();
+				System.out.println("OracleDatastoreInterface: Found locale settings to use for logon trigger 'set_nsl_language': NLS_LANGUAGE='" + language + "' & NLS_TERRITORY='" + country + "'");
 				
 				stmt = newConn.createStatement();
 				stmt.execute("CREATE OR REPLACE TRIGGER set_nls_language "+
