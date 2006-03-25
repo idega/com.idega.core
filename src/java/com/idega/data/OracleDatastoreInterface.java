@@ -270,11 +270,10 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			stmt.close();
 			System.out.println("OracleDatastoreInterface: Setting date format environment variable for Oracle.");
 			
-			Locale defaultLocale = Locale.ENGLISH;
 			Locale locale = getDefaultLocale();
 			if (locale != null) {
-				String country = locale.getDisplayCountry(defaultLocale).toUpperCase();
-				String language = locale.getDisplayLanguage(defaultLocale).toUpperCase();
+				String country = locale.getDisplayCountry(Locale.ENGLISH).toUpperCase();
+				String language = locale.getDisplayLanguage(Locale.ENGLISH).toUpperCase();
 	
 				stmt = newConn.createStatement();
 				stmt.execute("ALTER SESSION SET NLS_LANGUAGE='" + language + "'");
@@ -309,12 +308,10 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			stmt.close();
 			System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_date_formats' for setting NLS_DATE_FORMAT and NLS_TIMESTAMP_FORMAT");
 
-			Locale defaultLocale = Locale.ENGLISH;
 			Locale locale = getDefaultLocale();
 			if (locale != null) {
-				String country = locale.getDisplayCountry(defaultLocale).toUpperCase();
-				String language = locale.getDisplayLanguage(defaultLocale).toUpperCase();
-				System.out.println("OracleDatastoreInterface: Found locale settings to use for logon trigger 'set_nsl_language': NLS_LANGUAGE='" + language + "' & NLS_TERRITORY='" + country + "'");
+				String country = locale.getDisplayCountry(Locale.ENGLISH).toUpperCase();
+				String language = locale.getDisplayLanguage(Locale.ENGLISH).toUpperCase();
 				
 				stmt = newConn.createStatement();
 				stmt.execute("CREATE OR REPLACE TRIGGER set_nls_language "+
