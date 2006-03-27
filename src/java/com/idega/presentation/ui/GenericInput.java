@@ -126,4 +126,15 @@ public abstract class GenericInput extends InterfaceObject {
 		return getMarkupAttribute("accesskey");
 	}
 
+    /**
+     * Sets if the <code>TextInput</code> should allow autocomplete
+     * IE feature ONLY (HTML does not validate)
+     * @param allowAutoComplete
+     */
+    public void setAutoComplete(boolean allowAutoComplete) {
+    		if (!allowAutoComplete) {
+    			setMarkupAttribute("autocomplete", "off");
+    		}
+    }
+
 }
