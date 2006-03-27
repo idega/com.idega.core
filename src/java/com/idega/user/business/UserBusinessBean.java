@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.195.2.2 2005/12/22 19:59:57 eiki Exp $
+ * $Id: UserBusinessBean.java,v 1.195.2.3 2006/03/27 10:18:35 sigtryggur Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -101,10 +101,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2005/12/22 19:59:57 $ by $Author: eiki $
+ * Last modified: $Date: 2006/03/27 10:18:35 $ by $Author: sigtryggur $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.195.2.2 $
+ * @version $Revision: 1.195.2.3 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness, IWLDAPConstants {
 
@@ -1123,12 +1123,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			PostalCode code = null;
 			if (postalCodeId != null) {
-				code = ((PostalCodeHome) getIDOHome(PostalCode.class)).findByPrimaryKey(postalCodeId);
+				if (postalCodeId.intValue() == -1) {
+				code = ((PostalCodeHome) getIDOHome(PostalCode.class)).create();
+				}
+				else {
+					code = ((PostalCodeHome) getIDOHome(PostalCode.class)).findByPrimaryKey(postalCodeId);
+				}
 			}
 			return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, code, country, city, province,
 					poBox, communeID, addressType);
 		}
 		catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 		return null;
 	}
@@ -1169,7 +1175,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					address.setStreetNumber("");
 				}
 				if (communeID != null) {
-					address.setCommuneID(communeID.intValue());
+					if (communeID.intValue() == -1) {
+						address.setCommune(null);
+					} else {
+						address.setCommuneID(communeID.intValue());
+					}
 				}
 				address.store();
 				if (addAddress) {
