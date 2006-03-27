@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.38 2006/03/09 12:13:00 eiki Exp $ Created on
+ * $Id: StringHandler.java,v 1.39 2006/03/27 11:15:19 thomas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,11 +24,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2006/03/09 12:13:00 $ by $Author: eiki $
+ * Last modified: $Date: 2006/03/27 11:15:19 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 public class StringHandler {
 
@@ -442,6 +442,24 @@ public class StringHandler {
 		return result.toString();
 	}
 
+	/**
+	 * Returns the replacement if the specified string is empty else the
+	 * specified string
+	 * 
+	 * @param aString
+	 * @param replacement
+	 * @return
+	 */
+	
+	public static String replaceIfEmpty(String aString, String replacement) {
+		if (aString == null || aString.length() == 0) {
+			return replacement;
+		}
+		return aString;
+	}
+	
+	
+	
 	/**
 	 * Replaces all occurences of the specified pattern in the specified string
 	 * with the specified replace Example: replace("A cat is not a caterpillar",
