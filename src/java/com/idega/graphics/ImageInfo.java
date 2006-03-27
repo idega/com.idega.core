@@ -435,8 +435,8 @@ public class ImageInfo {
 	private int numberOfImages;
 	private int physicalHeightDpi;
 	private int physicalWidthDpi;
-	private int bitBuf;
-	private int bitPos;
+	//private int bitBuf;
+	//private int bitPos;
 
 	private void addComment(String s) {
 		if (comments == null) {
@@ -1398,7 +1398,7 @@ public class ImageInfo {
 		return sb.toString();
 	}
 
-	private long readUBits(int numBits) throws IOException {
+	/*private long readUBits(int numBits) throws IOException {
 		if (numBits == 0) {
 			return 0;
 		}
@@ -1436,9 +1436,9 @@ public class ImageInfo {
 				return result;
 			}
 		}
-	}
+	}*/
 
-	/**
+	/*
 	 * 
 	 * Read a signed integer value from input.
 	 * 
@@ -1446,7 +1446,7 @@ public class ImageInfo {
 	 *            number of bits to read
 	 * 
 	 */
-	private int readSBits(int numBits) throws IOException {
+	/*private int readSBits(int numBits) throws IOException {
 		// Get the number as an unsigned value.
 		long uBits = readUBits(numBits);
 		// Is the number negative?
@@ -1455,7 +1455,7 @@ public class ImageInfo {
 			uBits |= -1L << numBits;
 		}
 		return (int) uBits;
-	}
+	}*/
 
 	/*
 	 * private void synchBits()
