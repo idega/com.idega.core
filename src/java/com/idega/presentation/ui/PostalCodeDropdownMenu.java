@@ -34,9 +34,6 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 	public void main(IWContext iwc) throws Exception{
 		super.main(iwc);
 		clearChildren();
-		if( countryName!=null && country == null) {
-			country = getAddressBusiness(iwc).getCountryHome().findByCountryName(countryName);			
-		}
 		//TODO extract the following code to a method in CountryDropDownMenu or CountryBMPBean
 		if (country == null) {
 		    try {
@@ -59,10 +56,10 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 			}
 		}
 		if( country!=null ){
-			//TODO add code so id = -1 is submitted and "empty postaldcode" is saved over existing postalcode 
 			if(showCountry){
 				addMenuElement(-1,country.getName());
 			}
+			addMenuElement(-1,"");
 			Collection postals = getAddressBusiness(iwc).getPostalCodeHome().findAllByCountryIdOrderedByPostalCode(((Integer)country.getPrimaryKey()).intValue());
 			Iterator iter = postals.iterator();
 			while (iter.hasNext()) {
