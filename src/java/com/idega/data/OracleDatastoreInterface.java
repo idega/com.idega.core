@@ -262,20 +262,12 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	 **/
 	public void onConnectionCreate(Connection newConn) {
 		try {
-			Statement stmt = newConn.createStatement();
-			stmt.execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
-			stmt.close();
-			stmt = newConn.createStatement();
-			stmt.execute("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
-			stmt.close();
-			System.out.println("OracleDatastoreInterface: Setting date format environment variable for Oracle.");
-			
 			Locale locale = getDefaultLocale();
 			if (locale != null) {
 				String country = locale.getDisplayCountry(Locale.ENGLISH).toUpperCase();
 				String language = locale.getDisplayLanguage(Locale.ENGLISH).toUpperCase();
 	
-				stmt = newConn.createStatement();
+				Statement stmt = newConn.createStatement();
 				stmt.execute("ALTER SESSION SET NLS_LANGUAGE='" + language + "'");
 				stmt.close();
 				stmt = newConn.createStatement();
@@ -283,6 +275,14 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 				stmt.close();
 				System.out.println("OracleDatastoreInterface: Setting language environment variable for Oracle to " + language + "/" + country + ".");
 			}
+			
+			Statement stmt = newConn.createStatement();
+			stmt.execute("ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'");
+			stmt.close();
+			stmt = newConn.createStatement();
+			stmt.execute("ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS'");
+			stmt.close();
+			System.out.println("OracleDatastoreInterface: Setting date format environment variable for Oracle.");
 		}
 		catch (SQLException sqle) {
 			System.err.println("OracleDatastoreInterface: Error when changing environment variable: " + sqle.getMessage());
@@ -297,6 +297,22 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	public void onApplicationStart(Connection newConn) {
 		try {
 			onConnectionCreate(newConn);
+
+			Locale locale = getDefaultLocale();
+			if (locale != null) {
+				String country = locale.getDisplayCountry(Locale.ENGLISH).toUpperCase();
+				String language = locale.getDisplayLanguage(Locale.ENGLISH).toUpperCase();
+				
+				Statement stmt = newConn.createStatement();
+				stmt.execute("CREATE OR REPLACE TRIGGER set_nls_language "+
+						"AFTER LOGON ON SCHEMA "+
+						"BEGIN "+
+						"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_LANGUAGE=''" + language + "'''); "+
+						"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_TERRITORY=''" + country + "''');"+
+						"END;");
+				stmt.close();
+				System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_language' for setting NLS_LANGUAGE='" + language + "' and NLS_TERRITORY='" + country + "'");
+			}
 			
 			Statement stmt = newConn.createStatement();
 			stmt.execute("CREATE OR REPLACE TRIGGER set_nls_date_formats "+
@@ -307,22 +323,6 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 					"END;");
 			stmt.close();
 			System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_date_formats' for setting NLS_DATE_FORMAT and NLS_TIMESTAMP_FORMAT");
-
-			Locale locale = getDefaultLocale();
-			if (locale != null) {
-				String country = locale.getDisplayCountry(Locale.ENGLISH).toUpperCase();
-				String language = locale.getDisplayLanguage(Locale.ENGLISH).toUpperCase();
-				
-				stmt = newConn.createStatement();
-				stmt.execute("CREATE OR REPLACE TRIGGER set_nls_language "+
-						"AFTER LOGON ON SCHEMA "+
-						"BEGIN "+
-						"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_LANGUAGE=''" + language + "'''); "+
-						"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_TERRITORY=''" + country + "''');"+
-						"END;");
-				stmt.close();
-				System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_language' for setting NLS_LANGUAGE='" + language + "' and NLS_TERRITORY='" + country + "'");
-			}
 		}
 		catch (SQLException sqle) {
 			System.err.println("OracleDatastoreInterface: creating logon trigger: " + sqle.getMessage());
