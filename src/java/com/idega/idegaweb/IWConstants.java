@@ -56,9 +56,9 @@ public class IWConstants{
   public static final String INPUT_STYLE_NAME = "Input1";
   
 
-  public final static String DEFAULT_INTERFACE_COLOR="#C1C3B4";
+  public final static String DEFAULT_INTERFACE_COLOR="#F2F2F2";
   public final static String DEFAULT_LIGHT_INTERFACE_COLOR="#FFFFFF";
-  public final static String DEFAULT_DARK_INTERFACE_COLOR="#74858D";
+  public final static String DEFAULT_DARK_INTERFACE_COLOR="#38485C";
 
   public final static String IW_CONTROLLER_FRAME_NAME="iw_controller_frame";
   public final static String IW_MAIN_FRAME_NAME="iw_main_frame";

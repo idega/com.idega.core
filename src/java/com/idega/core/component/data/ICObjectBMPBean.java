@@ -44,6 +44,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	public static final String COMPONENT_TYPE_PROPERTYHANDLER = "iw.propertyhandler";
 	public static final String COMPONENT_TYPE_INPUTHANDLER = "iw.inputhandler";
 	public static final String COMPONENT_TYPE_SEARCH_PLUGIN = "iw.searchplugin";
+	public static final String COMPONENT_TYPE_JSFUICOMPONENT = "jsf.uicomponent";
 	
 	private static final String object_type_column_name = "OBJECT_TYPE";
 	private static final String class_name_column_name = "CLASS_NAME";

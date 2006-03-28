@@ -608,27 +608,9 @@
             </value>
             <type>map</type>
           </key>
-          <key>
-            <name>com.idega.demo.presentation.Demo</name>
-            <value>
-              <map>
-                <key>
-                  <name>component_property_file</name>
-                  <type>java.lang.String</type>
-                  <value>com.idega.demo.presentation.Demo.pxml</value>
-                </key>
-              </map>
-            </value>
-            <type>map</type>
-          </key>
         </map>
       </value>
       <type>map</type>
-    </key>
-    <key>
-      <name>adminHeaderColor</name>
-      <type>java.lang.String</type>
-      <value>#0E2456</value>
     </key>
     <key>
       <name>iw_generated_fill_color</name>
@@ -664,11 +646,6 @@
       <name>iw_generated_font</name>
       <type>java.lang.String</type>
       <value>Mini 7-plain-10</value>
-    </key>
-    <key>
-      <name>max_failed_login_attempts</name>
-      <type>java.lang.String</type>
-      <value>3</value>
     </key>
     <key>
       <name>EventHistoryList.date_format_string</name>

@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import javax.ejb.FinderException;
 
+import com.idega.core.builder.data.CachedDomain;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICDomainHome;
 import com.idega.data.IDOLookup;
@@ -99,7 +100,8 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 					Collection coll = domainHome.findAllDomainsByServerName(serverName);
 					Iterator iter = coll.iterator();
 					if (iter.hasNext()) {
-						toReturn = (ICDomain)iter.next();
+						ICDomain realDomain = (ICDomain)iter.next();
+						toReturn = new CachedDomain(realDomain);
 						domainMap.put(serverName,toReturn);
 						return toReturn;
 					} else {
@@ -129,7 +131,8 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 			}
 			if(domain==null){
 				ICDomainHome domainHome = (ICDomainHome)IDOLookup.getHome(ICDomain.class);
-				domain = domainHome.findByPrimaryKey(domainID);
+				ICDomain realDomain = domainHome.findByPrimaryKey(domainID);
+				domain = new CachedDomain(realDomain);
 			}
 			
 			if(cachDefaultDomainForThisServerURL){

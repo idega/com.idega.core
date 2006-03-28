@@ -14,4 +14,7 @@ public interface ICObjectInstance extends com.idega.data.IDOLegacyEntity
  public void setICObject(com.idega.core.component.data.ICObject p0);
  public void setICObjectID(int p0);
  public void setParentInstanceID(int p0);
+public String getUniqueId();
+public void setUniqueId(String uniqueId);
+public int getID();
 }

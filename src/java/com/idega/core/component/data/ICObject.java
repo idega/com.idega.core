@@ -16,10 +16,10 @@ import com.idega.presentation.PresentationObject;
  * <p>
  * TODO thomas Describe Type ICObject
  * </p>
- *  Last modified: $Date: 2005/06/03 15:18:29 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/03/28 10:20:10 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface ICObject extends com.idega.data.IDOLegacyEntity {
 	
@@ -95,4 +95,5 @@ public interface ICObject extends com.idega.data.IDOLegacyEntity {
 	 * @see com.idega.core.component.data.ICObjectBMPBean#compareTo
 	 */
 	public int compareTo(Object obj);
+	
 }

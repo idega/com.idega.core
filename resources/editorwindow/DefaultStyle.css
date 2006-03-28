@@ -1,5 +1,6 @@
 body{
-	background-color: #ffffff;
+	/*background-color: #ffffff;*/
+	background-color: #F2F2F2;
 	font-size: 60%;
 	margin-top: 1px;
 	margin-right: 0px;
@@ -12,21 +13,18 @@ body, p, h1, h2, h3, table, td, th, textarea, input{
 	color:#303030;
 }
 font.headingFont{
-	font-family: verdana,helvetica,arial,sans-serif;
 	font-size: 12px;
 	color: #5d5d5d;
 	font-weight: bold;
 	text-transform: uppercase;
 }
 font.messageFont{
-	font-family: verdana,helvetica,arial,sans-serif;
 	font-size: 10px;
 	color: #5d5d5d;
 	font-weight: bold;
 }
 
 a.styledLink{
-	font-family: verdana,helvetica,arial,sans-serif;
 	font-size: 9px;
 	color: #5d5d5d;
 	font-weight: bold;
@@ -34,7 +32,6 @@ a.styledLink{
 	text-transform: uppercase;
 }
 a:hover.styledLink{
-	font-family: verdana,helvetica,arial,sans-serif;
 	font-size: 9px;
 	color: 5d5d5d
 	font-weight: bold;
@@ -42,26 +39,22 @@ a:hover.styledLink{
 	text-transform: uppercase;
 }
 a.styledLinkGeneral{
-	font-family: verdana,helvetica,arial,sans-serif;
 	font-size:9px;
 	font-weight:bold;
 	text-decoration:none;
 }
 a:hover.styledLinkGeneral{
-	font-family: verdana,helvetica,arial,sans-serif;
 	font-size:9px;
 	font-weight:bold;
 	text-decoration:none;
 }
 a.styledLinkUnderline{
-	font-family: verdana,helvetica,arial,sans-serif;
 	color:#757575;
 	font-size:9px;
 	font-weight:bold;
 	text-decoration:underline;
 }
 a:hover.styledLinkUnderline{
-	font-family: verdana,helvetica,arial,sans-serif;
 	color:#757575;
 	font-size:9px;
 	font-weight:bold;
@@ -69,7 +62,6 @@ a:hover.styledLinkUnderline{
 }
 
 h1{
-	font-family: verdana,helvetica,arial,sans-serif;
 	font-size: 14pt;
 	color: #000000;
 	font-weight: normal;
@@ -79,23 +71,27 @@ h1{
 	background: #ffffff url(menu_tile.gif) repeat;
 }
 .top_left{
-	background: #0e2456;
+	/*background: #0e2456;
 	background-image: url(idegaweb.gif);
+	*/
+	background: url(images/eplatform.gif) no-repeat;
 	background-repeat: no-repeat;
-	height: 25px;
+	height: 31px;
 	width: 90px;
 }
 .top{
-	background: #0e2456;
-	height: 25px;
+	/*background: #0e2456;
+	*/
+	background: #38485C url(images/bg_head.gif) repeat-x;
+	height: 31px;
 }
 .back{
-	background-color: #f5f5f5;
+	/*background-color: #f5f5f5;*/
 	border: 1px solid #cccccc;
 }
 .main{
 	border: 1px solid #cccccc;
-	background-color: #ffffff;
+	/*background-color: #ffffff;*/
 	font-size: 10px;
 	font-weight: bold;
 }
@@ -186,8 +182,7 @@ textarea{
 }
 
 select {
-	border: 1px solid #bbbbbb; 
-	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	border: 1px solid #bbbbbb;
     font-size: 10px; 
 } 
 

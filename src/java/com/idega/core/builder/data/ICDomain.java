@@ -1,8 +1,8 @@
 package com.idega.core.builder.data;
 
-import javax.ejb.*;
+import javax.ejb.FinderException;
 
-public interface ICDomain extends com.idega.data.IDOLegacyEntity
+public interface ICDomain extends com.idega.data.IDOEntity
 {
  public int getStartTemplateID();
  public void setName(java.lang.String p0);
@@ -56,4 +56,6 @@ public interface ICDomain extends com.idega.data.IDOLegacyEntity
   * Get the UUID that uniquely identifies this domain
   */
  public String getUniqueId();
+ 
+ public int getID();
 }

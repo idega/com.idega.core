@@ -447,3 +447,56 @@ function tableruler()
 function setLinkToBold(input) {
 	input.style.fontWeight='bold';
 }
+
+
+
+
+//SCROLLTABLE:
+
+/*http://www.imaputz.com/cssStuff/bigFourVersion.html*/
+
+/* onload state is fired, append onclick action to the table's DIV */
+/* container. This allows the HTML document to validate correctly. */
+/* addIEonScroll added on 2005-01-28                               */
+/* Terence Ordona, portal[AT]imaputz[DOT]com                       */
+function addIEonScroll() {
+	var thisContainer = document.getElementById('scrollContainer');
+	if (!thisContainer) { return; }
+
+	var onClickAction = 'toggleSelectBoxes();';
+	thisContainer.onscroll = new Function(onClickAction);
+}
+
+/* Only WinIE will fire this function. All other browsers scroll the TBODY element and not the DIV */
+/* This is to hide the SELECT elements from scrolling over the fixed Header. WinIE only.           */
+/* toggleSelectBoxes added on 2005-01-28 */
+/* Terence Ordona, portal[AT]imaputz[DOT]com         */
+function toggleSelectBoxes() {
+	var thisContainer = document.getElementById('scrollContainer');
+	var thisHeader = document.getElementById('fixedHeader');
+	if (!thisContainer || !thisHeader) { return; }
+
+	var selectBoxes = thisContainer.getElementsByTagName('select');
+	if (!selectBoxes) { return; }
+
+	for (var i = 0; i < selectBoxes.length; i++) {
+		if (thisContainer.scrollTop >= eval(selectBoxes[i].parentNode.offsetTop - thisHeader.offsetHeight)) {
+			selectBoxes[i].style.visibility = 'hidden';
+		} else {
+			selectBoxes[i].style.visibility = 'visible';
+		}
+	}
+} 
+
+/*window.onload = function() { stripedTable(); addIEonScroll(); }*/
+/*window.onload = function() { addIEonScroll(); }*/
+
+//ScrollTable end
+
+function openContentEditor(url){
+	iwOpenWindow(url,'contentEditor','0','0','0','0','0','0','0','1','700','600');
+}
+
+
+
+

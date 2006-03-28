@@ -38,8 +38,8 @@ public class IWAdminWindow extends Window {
 	private String rightWidth = "160";
 	private String method = "post";
 	private int _cellPadding = 0;
-
-	public static String HEADER_COLOR = "#0E2456";
+	
+	public static String HEADER_COLOR = "#38485C";
 
 	public IWAdminWindow() {
 		super();
@@ -86,7 +86,10 @@ public class IWAdminWindow extends Window {
 		if (!displayEmpty) {
 			makeTables();
 			setAllMargins(0);
-			HEADER_COLOR = iwbCore.getProperty("adminHeaderColor", HEADER_COLOR);
+			String prop = iwbCore.getProperty("adminHeaderColor");
+			if(prop!=null){
+				HEADER_COLOR=prop;
+			}
 
 			if (merged) {
 				super.add(adminTable);
@@ -116,7 +119,7 @@ public class IWAdminWindow extends Window {
 		adminTable.setHeight("100%");
 		adminTable.setHeight(2, "100%");
 		adminTable.setColor(1, 1, HEADER_COLOR);
-		adminTable.setColor(1, 2, "#FFFFFF");
+		//adminTable.setColor(1, 2, "#FFFFFF");
 		if (!merged) {
 			adminTable.setColor(2, 2, MENU_COLOR);
 			adminTable.setWidth(2, 2, rightWidth);

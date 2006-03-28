@@ -1,5 +1,5 @@
 /*
- * $Id: ICDomainBMPBean.java,v 1.2 2006/03/20 12:11:55 tryggvil Exp $
+ * $Id: ICDomainBMPBean.java,v 1.3 2006/03/28 10:20:10 tryggvil Exp $
  * Created on 25.11.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.user.data.GroupDomainRelationTypeBMPBean;
  * <p>
  * Default implementation of ICDomain and mapping of the IB_DOMAIN Table.
  * </p>
- *  Last modified: $Date: 2006/03/20 12:11:55 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/03/28 10:20:10 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  /**
@@ -209,7 +209,7 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  public Collection getTopLevelGroupsUnderDomain() throws IDORelationshipException, RemoteException, FinderException{
 
 	    Collection relations = ((GroupDomainRelationHome)IDOLookup.getHome(GroupDomainRelation.class)).findGroupsRelationshipsUnderDomainByRelationshipType(this.getID(),GroupDomainRelationTypeBMPBean.RELATION_TYPE_TOP_NODE);
-//	TODO do this in one sql command like in groupbmpbean and grouprelation
+	    //TODO do this in one sql command like in groupbmpbean and grouprelation
 	    Iterator iter = relations.iterator();
 	    Collection groups = new Vector();
 	    while (iter.hasNext()) {

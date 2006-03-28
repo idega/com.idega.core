@@ -10,9 +10,12 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Vector;
+import java.util.logging.Level;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+import javax.faces.component.UIComponent;
+import org.apache.log4j.lf5.LogLevel;
 import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.core.search.business.SearchPlugin;
 import com.idega.data.GenericEntity;
@@ -45,6 +48,7 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
   private static final String[][] startData = {
   		{ "iw.element","Element", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
 		{"iw.block","Block", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
+		{"jsf.uicomponent","JSF UIComponent", UIComponent.class.getName(), null, UIComponent.class.getName(), "set"},
 		{"iw.application","Application", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
 		{"iw.application.component","Application component", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
 		{"iw.data","Data", null, IDOEntity.class.getName(), null, "get,set"},
@@ -193,7 +197,15 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 			// does this object type already exist? if not create it.
 			if (number < 1) {
 				updated = true;
-				insertData(objectType, startData[i][1], startData[i][2], startData[i][3], startData[i][4], startData[i][5]);
+				try{
+					insertData(objectType, startData[i][1], startData[i][2], startData[i][3], startData[i][4], startData[i][5]);
+				}
+				catch(Exception e){
+					getLogger().warning("Error inserting ICObjectType for "+objectType);
+					if(getLogger().isLoggable(Level.FINER)){
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 		return updated;
