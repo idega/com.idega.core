@@ -16,7 +16,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.presentation.FrameTable;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.faces.componentbased.CbpViewHandler;
@@ -71,7 +70,7 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 			if(isFrameRequest(ctx)){
 				IWContext iwc = IWContext.getIWContext(ctx);
 				com.idega.presentation.Page frame = com.idega.presentation.Page.loadPage(iwc);
-				String frameId = (String)ctx.getExternalContext().getRequestParameterMap().get(FrameTable.IW_FRAMESET_PAGE_PARAMETER);
+				String frameId = (String)ctx.getExternalContext().getRequestParameterMap().get(com.idega.presentation.Page.IW_FRAMESET_PAGE_PARAMETER);
 				String newViewId = viewId+frameId;
 				ret.setViewId(newViewId);
 					
@@ -145,7 +144,7 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 	 * @return
 	 */
 	private boolean isFrameRequest(FacesContext ctx) {
-		String value = (String)ctx.getExternalContext().getRequestParameterMap().get(FrameTable.IW_FRAMESET_PAGE_PARAMETER);
+		String value = (String)ctx.getExternalContext().getRequestParameterMap().get(com.idega.presentation.Page.IW_FRAMESET_PAGE_PARAMETER);
 		if(value!=null){
 			return true;
 		}
