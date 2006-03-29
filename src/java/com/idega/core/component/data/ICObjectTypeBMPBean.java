@@ -11,11 +11,12 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Vector;
 import java.util.logging.Level;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.faces.component.UIComponent;
-import org.apache.log4j.lf5.LogLevel;
+
 import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.core.search.business.SearchPlugin;
 import com.idega.data.GenericEntity;
