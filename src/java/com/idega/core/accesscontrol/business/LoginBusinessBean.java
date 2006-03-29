@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.62 2006/03/22 16:11:28 tryggvil Exp $
+ * $Id: LoginBusinessBean.java,v 1.63 2006/03/29 13:10:16 laddi Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginInfoHome;
@@ -34,9 +35,9 @@ import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserBusiness;
-import com.idega.core.user.data.User;
+import com.idega.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
-import com.idega.core.user.data.UserHome;
+import com.idega.user.data.UserHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.event.IWPageEventListener;
@@ -60,11 +61,11 @@ import com.idega.util.RequestUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2006/03/22 16:11:28 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.62 $
+ * @version $Revision: 1.63 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -818,7 +819,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	protected boolean logIn(HttpServletRequest request, LoginTable loginTable) throws Exception {
 		UserHome uHome = (UserHome) IDOLookup.getHome(User.class);
-		User user = uHome.findByPrimaryKey(loginTable.getUserId());
+		User user = uHome.findByPrimaryKey(new Integer(loginTable.getUserId()));
 
 		storeUserAndGroupInformationInSession(request.getSession(), user);
 		LoginRecord loginRecord = LoginDBHandler.recordLogin(loginTable, request.getRemoteAddr());
@@ -1205,8 +1206,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 	}
 
-	public LoginContext createNewUser(String fullName, String email, String preferredUserName, String preferredPassword) {
-		UserBusiness ub = new UserBusiness();
+	public LoginContext createNewUser(IWApplicationContext iwac, String fullName, String email, String preferredUserName, String preferredPassword) {
+		com.idega.user.business.UserBusiness userBusiness = null;
+		try {
+			userBusiness = (com.idega.user.business.UserBusiness) IBOLookup.getServiceInstance(iwac, com.idega.user.business.UserBusiness.class);
+		}
+		catch (IBOLookupException ile) {
+			throw new IBORuntimeException(ile);
+		}
 		StringTokenizer tok = new StringTokenizer(fullName);
 		String first = "";
 		String middle = "";
@@ -1223,12 +1230,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 		LoginContext loginContext = null;
 		try {
-			User user = ub.insertUser(first, middle, last, "", null, null, null, null);
+			User user = userBusiness.createUser(first, middle, last);
 			String login = preferredUserName;
 			String pass = preferredPassword;
 			if (user != null) {
 				if (email != null && email.length() > 0)
-					UserBusiness.addNewUserEmail(user.getID(), email);
+					userBusiness.addNewUserEmail(user.getID(), email);
 				if (login == null)
 					login = LoginCreator.createLogin(user.getName());
 				if (pass == null)

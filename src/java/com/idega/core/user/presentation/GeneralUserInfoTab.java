@@ -4,6 +4,7 @@ import java.util.StringTokenizer;
 
 import com.idega.core.user.data.Gender;
 import com.idega.core.user.data.User;
+import com.idega.data.GenericEntity;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
@@ -155,7 +156,7 @@ public class GeneralUserInfoTab extends UserTab{
 
     Gender[] genders = null;
     try {
-      Gender g = (Gender)com.idega.core.user.data.GenderBMPBean.getStaticInstance(Gender.class);
+      Gender g = (Gender)GenericEntity.getStaticInstance(Gender.class);
       genders = (Gender[])g.findAll();
     }
     catch (Exception ex) {

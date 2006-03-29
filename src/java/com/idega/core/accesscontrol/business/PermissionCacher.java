@@ -1,5 +1,5 @@
 /*
- * $Id: PermissionCacher.java,v 1.32 2005/07/22 14:50:26 sigtryggur Exp $ Created
+ * $Id: PermissionCacher.java,v 1.33 2006/03/29 13:10:16 laddi Exp $ Created
  * in 2001
  * 
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -28,12 +28,12 @@ import com.idega.user.data.Group;
  * AccessControl.
  * </p>
  * 
- * Last modified: $Date: 2005/07/22 14:50:26 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 class PermissionCacher {
 
@@ -442,23 +442,23 @@ class PermissionCacher {
 	public void updatePermissions(int permissionCategory, String identifier, String permissionKey, IWApplicationContext iwac)
 			throws SQLException {
 		switch (permissionCategory) {
-			case AccessControl.CATEGORY_OBJECT_INSTANCE:
+			case AccessController.CATEGORY_OBJECT_INSTANCE:
 				updatePermissions(PERMISSION_MAP_OBJECT_INSTANCE, identifier, permissionKey, iwac);
 				break;
-			case AccessControl.CATEGORY_PAGE:
-			case AccessControl.CATEGORY_OBJECT:
+			case AccessController.CATEGORY_PAGE:
+			case AccessController.CATEGORY_OBJECT:
 				updatePermissions(PERMISSION_MAP_OBJECT, identifier, permissionKey, iwac);
 				break;
-			case AccessControl.CATEGORY_BUNDLE:
+			case AccessController.CATEGORY_BUNDLE:
 				updatePermissions(PERMISSION_MAP_BUNDLE, identifier, permissionKey, iwac);
 				break;
-			case AccessControl.CATEGORY_PAGE_INSTANCE:
+			case AccessController.CATEGORY_PAGE_INSTANCE:
 				updatePermissions(PERMISSION_MAP_PAGE_INSTANCE, identifier, permissionKey, iwac);
 				break;
-			case AccessControl.CATEGORY_GROUP_ID:
+			case AccessController.CATEGORY_GROUP_ID:
 				updatePermissions(PERMISSION_MAP_GROUP, identifier, permissionKey, iwac);
 				break;
-			case AccessControl.CATEGORY_ROLE:
+			case AccessController.CATEGORY_ROLE:
 				updatePermissions(PERMISSION_MAP_ROLE, identifier, permissionKey, iwac);
 				break;
 		}

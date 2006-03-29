@@ -12,6 +12,7 @@ import com.idega.core.component.data.ICObject;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserGroupBusiness;
 import com.idega.data.EntityFinder;
+import com.idega.data.GenericEntity;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
@@ -204,7 +205,7 @@ public class AccessControllerApp extends IWApplication {
       public void main(IWContext iwc) throws Exception {
         IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 
-        ICObject staticICO = (ICObject)com.idega.core.component.data.ICObjectBMPBean.getStaticInstance(ICObject.class);
+        ICObject staticICO = (ICObject) GenericEntity.getStaticInstance(ICObject.class);
 
         //List bundles = iwc.getApplication().getRegisteredBundles();
         //List bundleLinks = tranceformBundleListToLinkList(bundles);
@@ -345,24 +346,24 @@ public class AccessControllerApp extends IWApplication {
 
           Class objectClass = null;
           switch (intPermissionCategory) {
-            case AccessControl.CATEGORY_OBJECT_INSTANCE :
+            case AccessController.CATEGORY_OBJECT_INSTANCE :
               objectClass = ICObjectBusiness.getInstance().getICObjectClassForInstance(Integer.parseInt(identifier));
               keys = iwc.getAccessController().getICObjectPermissionKeys(objectClass);
               break;
-            case AccessControl.CATEGORY_OBJECT :
+            case AccessController.CATEGORY_OBJECT :
               objectClass = ICObjectBusiness.getInstance().getICObjectClass(Integer.parseInt(identifier));
               keys = iwc.getAccessController().getICObjectPermissionKeys(objectClass);
               break;
-            case AccessControl.CATEGORY_BUNDLE :
+            case AccessController.CATEGORY_BUNDLE :
               keys = iwc.getAccessController().getBundlePermissionKeys(identifier);
               break;
-            case AccessControl.CATEGORY_PAGE_INSTANCE :
+            case AccessController.CATEGORY_PAGE_INSTANCE :
               keys = iwc.getAccessController().getPagePermissionKeys();
               break;
-            case AccessControl.CATEGORY_PAGE :
+            case AccessController.CATEGORY_PAGE :
               keys = iwc.getAccessController().getPagePermissionKeys();
               break;
-            case AccessControl.CATEGORY_JSP_PAGE :
+            case AccessController.CATEGORY_JSP_PAGE :
               keys = new String[0];
               break;
           }

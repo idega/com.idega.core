@@ -152,7 +152,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 
 	public static UserBMPBean getStaticInstance() {
-		return (UserBMPBean) com.idega.user.data.UserBMPBean.getStaticInstance(sClassName);
+		return (UserBMPBean) GenericEntity.getStaticInstance(sClassName);
 	}
 
 	public static String getAdminDefaultName() {

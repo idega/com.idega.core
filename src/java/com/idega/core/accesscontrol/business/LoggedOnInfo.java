@@ -1,5 +1,5 @@
 /*
- * $Id: LoggedOnInfo.java,v 1.16 2006/01/15 17:29:35 laddi Exp $
+ * $Id: LoggedOnInfo.java,v 1.17 2006/03/29 13:10:16 laddi Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginTable;
-import com.idega.core.user.data.User;
+import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -26,11 +26,11 @@ import com.idega.util.IWTimestamp;
  * up when the users session times out.
  * </p>
  *
- * Last modified: $Date: 2006/01/15 17:29:35 $ by $Author: laddi $
+ * Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
  *
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
  * 		   <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class LoggedOnInfo implements HttpSessionBindingListener  {
 

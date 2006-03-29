@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.64 2006/02/28 10:30:58 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.65 2006/03/29 13:10:16 laddi Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -27,7 +27,7 @@ import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
-import com.idega.core.user.data.User;
+import com.idega.user.data.User;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -559,8 +559,8 @@ public class LoginDBHandler {
 	}
 
 	protected static User getUser(int userID) throws javax.ejb.FinderException, java.rmi.RemoteException {
-		com.idega.core.user.data.UserHome uHome = (com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHome(User.class);
-		return uHome.findByPrimaryKey(userID);
+		com.idega.user.data.UserHome uHome = (com.idega.user.data.UserHome) com.idega.data.IDOLookup.getHome(User.class);
+		return uHome.findByPrimaryKey(new Integer(userID));
 	}
 
 	/**

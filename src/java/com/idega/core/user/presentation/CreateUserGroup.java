@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.data.GenericGroup;
+import com.idega.data.GenericEntity;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
@@ -131,7 +132,7 @@ public class CreateUserGroup extends Window {
 
 
       for (int i = 0; i < groupType.size(); i++){
-        String value = ((GenericGroup)com.idega.core.data.GenericGroupBMPBean.getStaticInstance((Class)groupType.get(i))).getGroupTypeValue();
+        String value = ((GenericGroup)GenericEntity.getStaticInstance((Class)groupType.get(i))).getGroupTypeValue();
         String text = value.substring(1);
         text = value.substring(0,1).toUpperCase() + text;
 
@@ -147,7 +148,7 @@ public class CreateUserGroup extends Window {
       propertyTable.add(frPane,1,1);
       frameTable.add(propertyTable,1,2);
     }else if (size == 1){
-      frameTable.add(new HiddenInput(((GenericGroup)com.idega.core.data.GenericGroupBMPBean.getStaticInstance((Class)groupType.get(0))).getGroupTypeValue()));
+      frameTable.add(new HiddenInput(((GenericGroup)GenericEntity.getStaticInstance((Class)groupType.get(0))).getGroupTypeValue()));
     }else{
       frameTable.add(new HiddenInput(groupTypeFieldParameterName,com.idega.core.data.GenericGroupBMPBean.getStaticInstance().getGroupTypeValue()));
     }

@@ -1,5 +1,5 @@
 /*
- * $Id: LoginTableHomeImpl.java,v 1.5 2006/02/27 23:13:25 tryggvil Exp $
+ * $Id: LoginTableHomeImpl.java,v 1.6 2006/03/29 13:10:16 laddi Exp $
  * Created on Jan 15, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -11,7 +11,7 @@ package com.idega.core.accesscontrol.data;
 
 import java.util.Collection;
 import javax.ejb.FinderException;
-import com.idega.core.user.data.User;
+import com.idega.user.data.User;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFactory;
 
@@ -20,10 +20,10 @@ import com.idega.data.IDOFactory;
  * <p>
  * TODO laddi Describe Type LoginTableHomeImpl
  * </p>
- *  Last modified: $Date: 2006/02/27 23:13:25 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class LoginTableHomeImpl extends IDOFactory implements LoginTableHome {
 

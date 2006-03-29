@@ -117,7 +117,7 @@ public class ScrollTable extends Block implements TableType {
 			numberOfHeaderRows = numberOfHeaderRows<1?1:numberOfHeaderRows;
 			Table headerTable = (Table) theTable.clone(null,false,1,numberOfHeaderRows);
 			headerTable.resize(theTable.getColumns(),numberOfHeaderRows);
-			headerTable.removeStyleAttribute(Table.HEIGHT);
+			headerTable.removeStyleAttribute(PresentationObject.HEIGHT);
 			
 			StringBuffer scriptSource1 = new StringBuffer("\t if(document.getElementById){");
 			StringBuffer scriptSource2 = new StringBuffer("\t else if(document.all){");

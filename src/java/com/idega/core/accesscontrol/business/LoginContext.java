@@ -1,6 +1,6 @@
 package com.idega.core.accesscontrol.business;
 
-import com.idega.core.user.data.User;
+import com.idega.user.data.User;
 
 
 /**

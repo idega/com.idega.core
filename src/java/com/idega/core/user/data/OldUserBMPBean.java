@@ -8,6 +8,7 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.location.data.Address;
 import com.idega.core.file.data.ICFile;
+import com.idega.data.GenericEntity;
 
 /**
  * This bean is an implementation which is backwards compatible with the old User system and structure.
@@ -70,7 +71,7 @@ public class OldUserBMPBean extends com.idega.data.GenericEntity implements com.
 	}
 
 	public static User getStaticInstance() {
-		return (User) com.idega.core.user.data.UserBMPBean.getStaticInstance(sClassName);
+		return (User) GenericEntity.getStaticInstance(sClassName);
 	}
 
 	public static String getAdminDefaultName() {

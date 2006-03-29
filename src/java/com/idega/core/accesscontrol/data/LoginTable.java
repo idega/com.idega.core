@@ -1,5 +1,5 @@
 /*
- * $Id: LoginTable.java,v 1.25 2006/02/27 23:13:25 tryggvil Exp $
+ * $Id: LoginTable.java,v 1.26 2006/03/29 13:10:16 laddi Exp $
  * Created on Jan 15, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -10,7 +10,7 @@
 package com.idega.core.accesscontrol.data;
 
 import java.sql.Timestamp;
-import com.idega.core.user.data.User;
+import com.idega.user.data.User;
 import com.idega.data.IDOEntity;
 import com.idega.util.EncryptionType;
 
@@ -19,10 +19,10 @@ import com.idega.util.EncryptionType;
  * <p>
  * TODO laddi Describe Type LoginTable
  * </p>
- *  Last modified: $Date: 2006/02/27 23:13:25 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public interface LoginTable extends IDOEntity, EncryptionType {
 

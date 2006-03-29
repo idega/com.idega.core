@@ -7,6 +7,8 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 
+import com.idega.core.data.GenericTypeBMPBean;
+
 
 /**
 
@@ -98,7 +100,7 @@ public class AddressTypeBMPBean extends com.idega.core.data.GenericTypeBMPBean i
 
         public static int getId(String uniqueKey) throws SQLException {
             int returner;
-            AddressType[] addrTypes = (AddressType[]) (((com.idega.core.location.data.AddressTypeHome)com.idega.data.IDOLookup.getHomeLegacy(AddressType.class)).createLegacy()).findAllByColumn(com.idega.core.location.data.AddressTypeBMPBean.getColumnNameUniqueName(),uniqueKey);
+            AddressType[] addrTypes = (AddressType[]) (((com.idega.core.location.data.AddressTypeHome)com.idega.data.IDOLookup.getHomeLegacy(AddressType.class)).createLegacy()).findAllByColumn(GenericTypeBMPBean.getColumnNameUniqueName(),uniqueKey);
             if (addrTypes.length == 0) {
                 AddressType addrType = ((com.idega.core.location.data.AddressTypeHome)com.idega.data.IDOLookup.getHomeLegacy(AddressType.class)).createLegacy();
                   addrType.setUniqueName(uniqueKey);

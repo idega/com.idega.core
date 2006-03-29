@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSessionBean.java,v 1.3 2006/01/12 15:30:21 tryggvil Exp $
+ * $Id: LoginSessionBean.java,v 1.4 2006/03/29 13:10:16 laddi Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -15,16 +15,16 @@ import java.util.Map;
 import java.util.Stack;
 import com.idega.business.IBOSessionBean;
 import com.idega.core.data.GenericGroup;
-import com.idega.core.user.data.User;
+import com.idega.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.user.business.UserProperties;
 
 /**
  * 
- *  Last modified: $Date: 2006/01/12 15:30:21 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
     

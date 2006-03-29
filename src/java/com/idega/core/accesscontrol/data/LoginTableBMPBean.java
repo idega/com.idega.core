@@ -3,7 +3,8 @@ package com.idega.core.accesscontrol.data;
 import java.sql.Timestamp;
 import java.util.Collection;
 import javax.ejb.FinderException;
-import com.idega.core.user.data.User;
+import com.idega.user.data.User;
+import com.idega.user.data.UserBMPBean;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOException;
 import com.idega.data.query.CountColumn;
@@ -74,7 +75,7 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	}
 
 	public static String getColumnNameUserID() {
-		return com.idega.core.user.data.UserBMPBean.getColumnNameUserID();
+		return UserBMPBean.getColumnNameUserID();
 	}
 
 	/**
@@ -198,7 +199,7 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	}
 	
 	public static String getUserIDColumnName() {
-		return com.idega.core.user.data.UserBMPBean.getColumnNameUserID();
+		return UserBMPBean.getColumnNameUserID();
 	}
 
 	public void setLastChanged(Timestamp when) {

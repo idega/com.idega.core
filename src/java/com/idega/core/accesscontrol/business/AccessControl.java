@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.108 2005/12/27 17:46:23 thomas Exp $
+ * $Id: AccessControl.java,v 1.109 2006/03/29 13:10:16 laddi Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -40,8 +40,11 @@ import com.idega.core.component.data.ICObject;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.user.business.UserGroupBusiness;
-import com.idega.core.user.data.User;
+import com.idega.user.data.GroupBMPBean;
+import com.idega.user.data.User;
+import com.idega.user.data.UserHome;
 import com.idega.data.EntityFinder;
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.SimpleQuerier;
@@ -67,12 +70,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2005/12/27 17:46:23 $ by $Author: thomas $
+ * Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.108 $
+ * @version $Revision: 1.109 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -202,7 +205,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	public boolean isOwner(Object obj, IWUserContext iwc) throws Exception {
 		Boolean returnVal = Boolean.FALSE;
-		User user = iwc.getUser();
+		User user = iwc.getCurrentUser();
 		if (user != null) {
 			List[] permissionOrder = new Vector[2];
 			permissionOrder[0] = new Vector();
@@ -210,7 +213,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permissionOrder[1] = new Vector();
 			permissionOrder[1].add(Integer.toString(user.getPrimaryGroupID()));
 
-			returnVal = checkForPermission(permissionOrder, obj, AccessControl.PERMISSION_KEY_OWNER, iwc);
+			returnVal = checkForPermission(permissionOrder, obj, AccessController.PERMISSION_KEY_OWNER, iwc);
 		}
 
 		if (returnVal != null) {
@@ -224,7 +227,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	public boolean isOwner(int category, String identifier, IWUserContext iwc) throws Exception {
 		Boolean returnVal = Boolean.FALSE;
-		User user = iwc.getUser();
+		User user = iwc.getCurrentUser();
 		if (user != null) {
 			List[] permissionOrder = new Vector[2];
 			permissionOrder[0] = new Vector();
@@ -232,7 +235,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permissionOrder[1] = new Vector();
 			permissionOrder[1].add(Integer.toString(user.getPrimaryGroupID()));
 
-			returnVal = checkForPermission(permissionOrder, category, identifier, AccessControl.PERMISSION_KEY_OWNER,  IWMainApplication.getDefaultIWApplicationContext());
+			returnVal = checkForPermission(permissionOrder, category, identifier, AccessController.PERMISSION_KEY_OWNER,  IWMainApplication.getDefaultIWApplicationContext());
 		}
 
 		if (returnVal != null) {
@@ -247,7 +250,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Boolean returnVal = Boolean.FALSE;
 		List[] permissionOrder = new Vector[1];
 		permissionOrder[0] = groupIds;
-		returnVal = checkForPermission(permissionOrder, obj, AccessControl.PERMISSION_KEY_OWNER,  iwc);
+		returnVal = checkForPermission(permissionOrder, obj, AccessController.PERMISSION_KEY_OWNER,  iwc);
 
 		if (returnVal != null) {
 			return returnVal.booleanValue();
@@ -391,7 +394,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			return myPermission.booleanValue();
 		}
 
-		if (permissionKey.equals(AccessControl.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessControl.PERMISSION_KEY_VIEW)) {
+		if (permissionKey.equals(AccessController.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessController.PERMISSION_KEY_VIEW)) {
 			return isOwner(category, identifier, iwuc);
 		}
 		else {
@@ -420,7 +423,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 							}
 						}
 
-						if (!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)) {
+						if (!permissionKey.equals(AccessController.PERMISSION_KEY_OWNER)) {
 							// Global - (Page)
 							if (!getPermissionCacherStatic().anyInstancePermissionsDefinedForPage(identifier, iwc, permissionKey)) {
 								ICObject page = getStaticPageICObject();
@@ -448,7 +451,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 						}
 						//instance
 
-						if (!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)) {
+						if (!permissionKey.equals(AccessController.PERMISSION_KEY_OWNER)) {
 							// Global - (object)
 							if (!getPermissionCacherStatic().anyInstancePermissionsDefinedForObject(identifier, iwc, permissionKey)) {
 								for (int i = 0; i < arrayLength; i++) {
@@ -480,7 +483,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 						}
 					}
 
-					if (!permissionKey.equals(AccessControl.PERMISSION_KEY_OWNER)) {
+					if (!permissionKey.equals(AccessController.PERMISSION_KEY_OWNER)) {
 						// Global - (File)
 						if (!getPermissionCacherStatic().anyInstancePermissionsDefinedForFile(identifier, iwc, permissionKey)) {
 							ICObject file = getStaticFileICObject();
@@ -590,7 +593,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		//if the user is an owner these rights are given. double checking really
-		if (permissionKey.equals(AccessControl.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessControl.PERMISSION_KEY_VIEW)) {
+		if (permissionKey.equals(AccessController.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessController.PERMISSION_KEY_VIEW)) {
 			if (obj instanceof Group) {
 				return isGroupOwnerRecursively((Group) obj, iwuc); //because owners parents groups always get read/write access
 			}
@@ -615,7 +618,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Iterator iter = groups.iterator();
 		while (iter.hasNext()) {
 			Group parent = (Group) iter.next();
-			if (!AccessControl.PERMISSION_KEY_OWNER.equals(permissionKey) && parent!=null && parent.getPermissionControllingGroupID() > 0) {
+			if (!AccessController.PERMISSION_KEY_OWNER.equals(permissionKey) && parent!=null && parent.getPermissionControllingGroupID() > 0) {
 				groupsToCheckForPermissions.add(parent.getPermissionControllingGroup());
 			}
 		}
@@ -687,7 +690,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			}
 		}
 
-		if (permissionKey.equals(AccessControl.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessControl.PERMISSION_KEY_VIEW)) {
+		if (permissionKey.equals(AccessController.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessController.PERMISSION_KEY_VIEW)) {
 			if (obj instanceof Group) {
 				return isGroupOwnerRecursively((Group) obj, iwc); //because owners parents groups always get read/write access
 			}
@@ -872,7 +875,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				staticPageICObject =
 					(ICObject) EntityFinder
 						.findAllByColumn(
-							com.idega.core.component.data.ICObjectBMPBean.getStaticInstance(ICObject.class),
+							GenericEntity.getStaticInstance(ICObject.class),
 							com.idega.core.component.data.ICObjectBMPBean.getClassNameColumnName(),
 							Page.class.getName())
 						.get(0);
@@ -891,7 +894,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				staticFileICObject =
 					(ICObject) EntityFinder
 						.findAllByColumn(
-							com.idega.core.component.data.ICObjectBMPBean.getStaticInstance(ICObject.class),
+							GenericEntity.getStaticInstance(ICObject.class),
 							com.idega.core.component.data.ICObjectBMPBean.getClassNameColumnName(),
 							ICFile.class.getName())
 						.get(0);
@@ -1022,7 +1025,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		if (!update) {
-			permission.setContextType(AccessControl.CATEGORY_STRING_JSP_PAGE);
+			permission.setContextType(AccessController.CATEGORY_STRING_JSP_PAGE);
 			// use 'ICJspHandler.getJspPageInstanceID(iwc)' on the current page and send in as PageContextValue
 			permission.setContextValue(PageContextValue);
 			permission.setGroupID(new Integer(group.getID()));
@@ -1071,7 +1074,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		if (!update) {
-			permission.setContextType(AccessControl.CATEGORY_STRING_IC_OBJECT_ID);
+			permission.setContextType(AccessController.CATEGORY_STRING_IC_OBJECT_ID);
 			permission.setContextValue(Integer.toString(obj.getICObjectID()));
 			permission.setGroupID(new Integer(group.getID()));
 			permission.setPermissionString(permissionType);
@@ -1119,7 +1122,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		if (!update) {
-			permission.setContextType(AccessControl.CATEGORY_STRING_BUNDLE_IDENTIFIER);
+			permission.setContextType(AccessController.CATEGORY_STRING_BUNDLE_IDENTIFIER);
 			permission.setContextValue(obj.getBundleIdentifier());
 			permission.setGroupID(new Integer(group.getID()));
 			permission.setPermissionString(permissionType);
@@ -1231,7 +1234,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			try {
 
 				switch (permissionCategory) {
-					case AccessControl.CATEGORY_OBJECT_INSTANCE :
+					case AccessController.CATEGORY_OBJECT_INSTANCE :
 						SimpleQuerier.execute(
 							"DELETE FROM "
 								+ permission.getEntityName()
@@ -1253,7 +1256,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 								+ sGroupList
 								+ ")");
 						break;
-					case AccessControl.CATEGORY_OBJECT :
+					case AccessController.CATEGORY_OBJECT :
 						SimpleQuerier.execute(
 							"DELETE FROM "
 								+ permission.getEntityName()
@@ -1275,7 +1278,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 								+ sGroupList
 								+ ")");
 						break;
-					case AccessControl.CATEGORY_BUNDLE :
+					case AccessController.CATEGORY_BUNDLE :
 						SimpleQuerier.execute(
 							"DELETE FROM "
 								+ permission.getEntityName()
@@ -1297,7 +1300,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 								+ sGroupList
 								+ ")");
 						break;
-					case AccessControl.CATEGORY_PAGE_INSTANCE :
+					case AccessController.CATEGORY_PAGE_INSTANCE :
 						SimpleQuerier.execute(
 							"DELETE FROM "
 								+ permission.getEntityName()
@@ -1319,7 +1322,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 								+ sGroupList
 								+ ")");
 						break;
-					case AccessControl.CATEGORY_PAGE :
+					case AccessController.CATEGORY_PAGE :
 						SimpleQuerier.execute(
 							"DELETE FROM "
 								+ permission.getEntityName()
@@ -1341,7 +1344,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 								+ sGroupList
 								+ ")");
 						break;
-					case AccessControl.CATEGORY_JSP_PAGE :
+					case AccessController.CATEGORY_JSP_PAGE :
 						SimpleQuerier.execute(
 							"DELETE FROM "
 								+ permission.getEntityName()
@@ -1393,7 +1396,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		boolean update = true;
 		try {
 			switch (permissionCategory) { //todo remove this int category crap just use the strings
-				case AccessControl.CATEGORY_OBJECT_INSTANCE :
+				case AccessController.CATEGORY_OBJECT_INSTANCE :
 					permission =
 						(ICPermission) EntityFinder
 							.findAll(
@@ -1418,7 +1421,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 									+ permissionGroupId)
 							.get(0);
 					break;
-				case AccessControl.CATEGORY_OBJECT :
+				case AccessController.CATEGORY_OBJECT :
 					permission =
 						(ICPermission) EntityFinder
 							.findAll(
@@ -1443,7 +1446,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 									+ permissionGroupId)
 							.get(0);
 					break;
-				case AccessControl.CATEGORY_BUNDLE :
+				case AccessController.CATEGORY_BUNDLE :
 					permission =
 						(ICPermission) EntityFinder
 							.findAll(
@@ -1468,7 +1471,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 									+ permissionGroupId)
 							.get(0);
 					break;
-				case AccessControl.CATEGORY_PAGE_INSTANCE :
+				case AccessController.CATEGORY_PAGE_INSTANCE :
 					permission =
 						(ICPermission) EntityFinder
 							.findAll(
@@ -1493,7 +1496,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 									+ permissionGroupId)
 							.get(0);
 					break;
-				case AccessControl.CATEGORY_PAGE :
+				case AccessController.CATEGORY_PAGE :
 					permission =
 						(ICPermission) EntityFinder
 							.findAll(
@@ -1518,7 +1521,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 									+ permissionGroupId)
 							.get(0);
 					break;
-				case AccessControl.CATEGORY_JSP_PAGE :
+				case AccessController.CATEGORY_JSP_PAGE :
 					permission =
 						(ICPermission) EntityFinder
 							.findAll(
@@ -1543,7 +1546,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 									+ permissionGroupId)
 							.get(0);
 					break;
-				case AccessControl.CATEGORY_FILE_ID :
+				case AccessController.CATEGORY_FILE_ID :
 					permission =
 						(ICPermission) EntityFinder
 							.findAll(
@@ -1568,7 +1571,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 									+ permissionGroupId)
 							.get(0);
 					break;
-				case AccessControl.CATEGORY_GROUP_ID :
+				case AccessController.CATEGORY_GROUP_ID :
 					permission =
 						(ICPermission) EntityFinder
 							.findAll(
@@ -1593,7 +1596,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 									+ permissionGroupId)
 							.get(0);
 					break;
-				case AccessControl.CATEGORY_ROLE :
+				case AccessController.CATEGORY_ROLE :
 					permission =
 						(ICPermission) EntityFinder
 							.findAll(
@@ -1630,31 +1633,31 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (!update) {
 
 			switch (permissionCategory) {
-				case AccessControl.CATEGORY_OBJECT_INSTANCE :
-					permission.setContextType(AccessControl.CATEGORY_STRING_OBJECT_INSTANCE_ID);
+				case AccessController.CATEGORY_OBJECT_INSTANCE :
+					permission.setContextType(AccessController.CATEGORY_STRING_OBJECT_INSTANCE_ID);
 					break;
-				case AccessControl.CATEGORY_OBJECT :
-					permission.setContextType(AccessControl.CATEGORY_STRING_IC_OBJECT_ID);
+				case AccessController.CATEGORY_OBJECT :
+					permission.setContextType(AccessController.CATEGORY_STRING_IC_OBJECT_ID);
 					break;
-				case AccessControl.CATEGORY_BUNDLE :
-					permission.setContextType(AccessControl.CATEGORY_STRING_BUNDLE_IDENTIFIER);
+				case AccessController.CATEGORY_BUNDLE :
+					permission.setContextType(AccessController.CATEGORY_STRING_BUNDLE_IDENTIFIER);
 					break;
-				case AccessControl.CATEGORY_PAGE_INSTANCE :
-					permission.setContextType(AccessControl.CATEGORY_STRING_PAGE_ID);
+				case AccessController.CATEGORY_PAGE_INSTANCE :
+					permission.setContextType(AccessController.CATEGORY_STRING_PAGE_ID);
 					break;
-				case AccessControl.CATEGORY_PAGE :
-					permission.setContextType(AccessControl.CATEGORY_STRING_PAGE);
+				case AccessController.CATEGORY_PAGE :
+					permission.setContextType(AccessController.CATEGORY_STRING_PAGE);
 					break;
-				case AccessControl.CATEGORY_JSP_PAGE :
-					permission.setContextType(AccessControl.CATEGORY_STRING_JSP_PAGE);
+				case AccessController.CATEGORY_JSP_PAGE :
+					permission.setContextType(AccessController.CATEGORY_STRING_JSP_PAGE);
 					break;
-				case AccessControl.CATEGORY_FILE_ID :
-					permission.setContextType(AccessControl.CATEGORY_STRING_FILE_ID);
+				case AccessController.CATEGORY_FILE_ID :
+					permission.setContextType(AccessController.CATEGORY_STRING_FILE_ID);
 					break;
-				case AccessControl.CATEGORY_GROUP_ID :
-					permission.setContextType(AccessControl.CATEGORY_STRING_GROUP_ID);
+				case AccessController.CATEGORY_GROUP_ID :
+					permission.setContextType(AccessController.CATEGORY_STRING_GROUP_ID);
 					break;
-				case AccessControl.CATEGORY_ROLE :
+				case AccessController.CATEGORY_ROLE :
 					permission.setContextType(RoleHelperObject.getStaticInstance().toString());
 					break;
 			}
@@ -1713,7 +1716,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		if (!update) {
-			permission.setContextType(AccessControl.CATEGORY_STRING_OBJECT_INSTANCE_ID);
+			permission.setContextType(AccessController.CATEGORY_STRING_OBJECT_INSTANCE_ID);
 			permission.setContextValue(ObjectInstanceId);
 			permission.setGroupID(new Integer(permissionGroupId));
 			permission.setPermissionString(permissionType);
@@ -1760,7 +1763,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	public static void addUserToPermissionGroup(PermissionGroup group, int userIDtoAdd) throws Exception {
-		User userToAdd = ((com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userIDtoAdd);
+		User userToAdd = ((com.idega.user.data.UserHome) com.idega.data.IDOLookup.getHome(User.class)).findByPrimaryKey(new Integer(userIDtoAdd));
 		group.addUser(userToAdd);
 	}
 
@@ -1834,7 +1837,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		List permissions = null;
 
 		switch (permissionCategory) {
-			case AccessControl.CATEGORY_OBJECT_INSTANCE :
+			case AccessController.CATEGORY_OBJECT_INSTANCE :
 				permissions =
 					EntityFinder.findAll(
 						permission,
@@ -1856,7 +1859,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 							+ com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName()
 							+ " = 'Y'");
 				break;
-			case AccessControl.CATEGORY_OBJECT :
+			case AccessController.CATEGORY_OBJECT :
 				permissions =
 					EntityFinder.findAll(
 						permission,
@@ -1878,7 +1881,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 							+ com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName()
 							+ " = 'Y'");
 				break;
-			case AccessControl.CATEGORY_BUNDLE :
+			case AccessController.CATEGORY_BUNDLE :
 				permissions =
 					EntityFinder.findAll(
 						permission,
@@ -1900,7 +1903,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 							+ com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName()
 							+ " = 'Y'");
 				break;
-			case AccessControl.CATEGORY_PAGE_INSTANCE :
+			case AccessController.CATEGORY_PAGE_INSTANCE :
 				permissions =
 					EntityFinder.findAll(
 						permission,
@@ -1922,7 +1925,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 							+ com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName()
 							+ " = 'Y'");
 				break;
-			case AccessControl.CATEGORY_PAGE :
+			case AccessController.CATEGORY_PAGE :
 				permissions =
 					EntityFinder.findAll(
 						permission,
@@ -1944,7 +1947,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 							+ com.idega.core.accesscontrol.data.ICPermissionBMPBean.getPermissionValueColumnName()
 							+ " = 'Y'");
 				break;
-			case AccessControl.CATEGORY_JSP_PAGE :
+			case AccessController.CATEGORY_JSP_PAGE :
 				permissions =
 					EntityFinder.findAll(
 						permission,
@@ -2032,8 +2035,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	private User createAdministratorUser() throws Exception {
-		User adminUser = ((com.idega.core.user.data.UserHome) com.idega.data.IDOLookup.getHomeLegacy(User.class)).createLegacy();
-		adminUser.setColumn(com.idega.core.user.data.UserBMPBean.getColumnNameFirstName(), _ADMINISTRATOR_NAME);
+		User adminUser = ((com.idega.user.data.UserHome) com.idega.data.IDOLookup.getHome(User.class)).create();
+		adminUser.setFirstName(_ADMINISTRATOR_NAME);
 		adminUser.store();
 		int adminUserID = adminUser.getID();
 //pretty weird, but I guess it is still needed since the super admin is not a role yet
@@ -2058,11 +2061,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	private void initAdministratorUser() throws Exception {
-		List list =
-			EntityFinder.findAllByColumnEquals(
-				com.idega.core.user.data.UserBMPBean.getStaticInstance(),
-				com.idega.core.user.data.UserBMPBean.getColumnNameFirstName(),
-				_ADMINISTRATOR_NAME);
+		UserHome home = (UserHome) IDOLookup.getHome(User.class);
+		List list = new ArrayList(home.findByNames(_ADMINISTRATOR_NAME, null, null));
 		User adminUser = null;
 		if (list == null || list.size() < 1) {
 			adminUser = createAdministratorUser();
@@ -2080,7 +2080,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			List groups =
 				EntityFinder.findAllByColumn(
 					permission,
-					com.idega.core.accesscontrol.data.PermissionGroupBMPBean.getGroupTypeColumnName(),
+					GroupBMPBean.getGroupTypeColumnName(),
 					permission.getGroupTypeValue());
 			if (groups != null) {
 				Iterator iter = groups.iterator();
@@ -2213,10 +2213,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		 * false;
 		 */
 
-		permission.setContextType(AccessControl.CATEGORY_STRING_IC_OBJECT_ID);
+		permission.setContextType(AccessController.CATEGORY_STRING_IC_OBJECT_ID);
 		permission.setContextValue(Integer.toString(obj.getID()));
 		permission.setGroupID(new Integer(AccessControl._GROUP_ID_EVERYONE));
-		permission.setPermissionString(AccessControl.PERMISSION_KEY_VIEW);
+		permission.setPermissionString(AccessController.PERMISSION_KEY_VIEW);
 		//        permission.setPermissionStringValue();
 		permission.setPermissionValue(Boolean.TRUE);
 		permission.insert();
@@ -2245,7 +2245,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 
 	public void setCurrentUserAsOwner(ICPage page, IWUserContext iwc) throws Exception {
-		User user = iwc.getUser();
+		User user = iwc.getCurrentUser();
 		//    System.out.println("User = "+ user);
 		if (user != null) {
 			int groupId = -1;
@@ -2277,7 +2277,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			iwac,
 			Integer.toString(groupId),
 			Integer.toString(page.getID()),
-			AccessControl.PERMISSION_KEY_OWNER,
+			AccessController.PERMISSION_KEY_OWNER,
 			Boolean.TRUE);
 	}
 
@@ -2296,7 +2296,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			iwac,
 			Integer.toString(groupId),
 			file.getPrimaryKey().toString(),
-			AccessControl.PERMISSION_KEY_OWNER,
+			AccessController.PERMISSION_KEY_OWNER,
 			Boolean.TRUE);
 	}
 
@@ -2306,7 +2306,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			iwac,
 			Integer.toString(groupId),
 			group.getPrimaryKey().toString(),
-			AccessControl.PERMISSION_KEY_OWNER,
+			AccessController.PERMISSION_KEY_OWNER,
 			Boolean.TRUE);
 	}
 
@@ -2610,7 +2610,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	public static Collection getAllGroupPermissionsForGroup(Group group) {
-		return getAllPermissions(group, AccessControl.CATEGORY_STRING_GROUP_ID);
+		return getAllPermissions(group, AccessController.CATEGORY_STRING_GROUP_ID);
 	}
 
 	public static Collection getAllPermissionsOwnedByGroup(Group group, String contextType) {
@@ -2619,7 +2619,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
-					AccessControl.PERMISSION_KEY_OWNER,
+					AccessController.PERMISSION_KEY_OWNER,
 					contextType);
 		}
 		catch (FinderException ex) {
@@ -2649,7 +2649,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	public static Collection getAllGroupPermissionsReverseForGroup(Group group) {
-		return getAllPermissionsForContextTypeAndContextValue(AccessControl.CATEGORY_STRING_GROUP_ID, group.getPrimaryKey().toString());
+		return getAllPermissionsForContextTypeAndContextValue(AccessController.CATEGORY_STRING_GROUP_ID, group.getPrimaryKey().toString());
 	}
 
 	/**
@@ -2666,7 +2666,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		try {
 			returnCol =
 				getPermissionHome().findAllPermissionsByContextTypeAndContextValueAndPermissionString(
-					AccessControl.CATEGORY_STRING_GROUP_ID,
+						AccessController.CATEGORY_STRING_GROUP_ID,
 					group.getPrimaryKey().toString(),
 					permissionString);
 		}
@@ -2878,23 +2878,23 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 	
 	public static Collection getAllOwnerGroupPermissionsReverseForGroup(Group group) {
-		return getAllGroupPermissionsReverseForGroupAndPermissionString(group, AccessControl.PERMISSION_KEY_OWNER);
+		return getAllGroupPermissionsReverseForGroupAndPermissionString(group, AccessController.PERMISSION_KEY_OWNER);
 	}
 
 	public static Collection getAllEditGroupPermissionsReverseForGroup(Group group) {
-		return getAllGroupPermissionsReverseForGroupAndPermissionString(group, AccessControl.PERMISSION_KEY_EDIT);
+		return getAllGroupPermissionsReverseForGroupAndPermissionString(group, AccessController.PERMISSION_KEY_EDIT);
 	}
 
 	public static Collection getAllViewGroupPermissionsReverseForGroup(Group group) {
-		return getAllGroupPermissionsReverseForGroupAndPermissionString(group, AccessControl.PERMISSION_KEY_VIEW);
+		return getAllGroupPermissionsReverseForGroupAndPermissionString(group, AccessController.PERMISSION_KEY_VIEW);
 	}
 
 	public static Collection getAllDeleteGroupPermissionsReverseForGroup(Group group) {
-		return getAllGroupPermissionsReverseForGroupAndPermissionString(group, AccessControl.PERMISSION_KEY_DELETE);
+		return getAllGroupPermissionsReverseForGroupAndPermissionString(group, AccessController.PERMISSION_KEY_DELETE);
 	}
 
 	public static Collection getAllCreateGroupPermissionsReverseForGroup(Group group) {
-		return getAllGroupPermissionsReverseForGroupAndPermissionString(group, AccessControl.PERMISSION_KEY_CREATE);
+		return getAllGroupPermissionsReverseForGroupAndPermissionString(group, AccessController.PERMISSION_KEY_CREATE);
 	}
 
 	public static Collection getAllGroupOwnerPermissionsByGroup(Group group) {
@@ -2903,8 +2903,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
-					AccessControl.PERMISSION_KEY_OWNER,
-					AccessControl.CATEGORY_STRING_GROUP_ID);
+					AccessController.PERMISSION_KEY_OWNER,
+					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
 			ex.printStackTrace();
@@ -2923,8 +2923,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
-					AccessControl.PERMISSION_KEY_PERMIT,
-					AccessControl.CATEGORY_STRING_GROUP_ID);
+					AccessController.PERMISSION_KEY_PERMIT,
+					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
 			ex.printStackTrace();
@@ -2947,8 +2947,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					groups,
-					AccessControl.PERMISSION_KEY_PERMIT,
-					AccessControl.CATEGORY_STRING_GROUP_ID);
+					AccessController.PERMISSION_KEY_PERMIT,
+					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
 			returnCol = new Vector(); //empty
@@ -2967,8 +2967,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
-					AccessControl.PERMISSION_KEY_VIEW,
-					AccessControl.CATEGORY_STRING_GROUP_ID);
+					AccessController.PERMISSION_KEY_VIEW,
+					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
 			returnCol = new Vector(); //empty
@@ -2988,8 +2988,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
-					AccessControl.PERMISSION_KEY_DELETE,
-					AccessControl.CATEGORY_STRING_GROUP_ID);
+					AccessController.PERMISSION_KEY_DELETE,
+					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
 			returnCol = new Vector(); //empty
@@ -3009,8 +3009,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
-					AccessControl.PERMISSION_KEY_EDIT,
-					AccessControl.CATEGORY_STRING_GROUP_ID);
+					AccessController.PERMISSION_KEY_EDIT,
+					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
 			returnCol = new Vector(); //empty
@@ -3030,8 +3030,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
 					group,
-					AccessControl.PERMISSION_KEY_CREATE,
-					AccessControl.CATEGORY_STRING_GROUP_ID);
+					AccessController.PERMISSION_KEY_CREATE,
+					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
 			returnCol = new Vector(); //empty
@@ -3055,8 +3055,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					groups,
-					AccessControl.PERMISSION_KEY_EDIT,
-					AccessControl.CATEGORY_STRING_GROUP_ID);
+					AccessController.PERMISSION_KEY_EDIT,
+					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
 			returnCol = new Vector(); //empty
@@ -3078,8 +3078,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					groups,
-					AccessControl.PERMISSION_KEY_VIEW,
-					AccessControl.CATEGORY_STRING_GROUP_ID);
+					AccessController.PERMISSION_KEY_VIEW,
+					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
 			returnCol = new Vector(); //empty
@@ -3101,8 +3101,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					groups,
-					AccessControl.PERMISSION_KEY_CREATE,
-					AccessControl.CATEGORY_STRING_GROUP_ID);
+					AccessController.PERMISSION_KEY_CREATE,
+					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
 			returnCol = new Vector(); //empty
@@ -3124,8 +3124,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					groups,
-					AccessControl.PERMISSION_KEY_DELETE,
-					AccessControl.CATEGORY_STRING_GROUP_ID);
+					AccessController.PERMISSION_KEY_DELETE,
+					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
 			returnCol = new Vector(); //empty

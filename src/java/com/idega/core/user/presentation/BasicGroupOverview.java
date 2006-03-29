@@ -7,6 +7,7 @@ import java.util.Vector;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserGroupBusiness;
 import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.data.GenericEntity;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.Table;
@@ -38,7 +39,7 @@ public class BasicGroupOverview extends Page {
 
   public Table getGroups(IWContext iwc) throws Exception{
     String[] types = new String[1];
-    types[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    types[0] = ((UserGroupRepresentative)GenericEntity.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
     List groups = com.idega.core.data.GenericGroupBMPBean.getAllGroups(types,false);
 
 

@@ -344,7 +344,7 @@ public class MemberBMPBean extends com.idega.data.GenericEntity implements com.i
 
     public static Member getStaticInstance(){
 
-      return (Member)com.idega.data.genericentity.MemberBMPBean.getStaticInstance(sClassName);
+      return (Member)GenericEntity.getStaticInstance(sClassName);
 
     }
 

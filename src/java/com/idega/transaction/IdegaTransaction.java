@@ -36,7 +36,7 @@ import java.sql.*;
 	 */
 	private Synchronization syncronization;
 
-  private int status=IdegaTransactionStatus.STATUS_NO_TRANSACTION;
+  private int status=Status.STATUS_NO_TRANSACTION;
   private boolean isRollBackOnly=false;
   private Connection _conn;
   private String _dataSource=ConnectionBroker.DEFAULT_POOL;
@@ -109,9 +109,9 @@ import java.sql.*;
       if(sync!=null){
         sync.beforeCompletion();
       }
-      setStatus(IdegaTransactionStatus.STATUS_PREPARING);
-      setStatus(IdegaTransactionStatus.STATUS_PREPARED);
-      setStatus(IdegaTransactionStatus.STATUS_COMMITTING);
+      setStatus(Status.STATUS_PREPARING);
+      setStatus(Status.STATUS_PREPARED);
+      setStatus(Status.STATUS_COMMITTING);
       try{
         getConnection().commit();
       }
@@ -119,7 +119,7 @@ import java.sql.*;
           SystemException exeption = new SystemException(ex.getMessage());
           throw (SystemException)exeption.fillInStackTrace();
       }
-      setStatus(IdegaTransactionStatus.STATUS_COMMITTED);
+      setStatus(Status.STATUS_COMMITTED);
 
       if(sync!=null){
         sync.afterCompletion(getStatus());
@@ -221,9 +221,9 @@ public void registerSynchronization(Synchronization sync)throws RollbackExceptio
     if(sync!=null){
       sync.beforeCompletion();
     }
-    setStatus(IdegaTransactionStatus.STATUS_PREPARING);
-    setStatus(IdegaTransactionStatus.STATUS_PREPARED);
-    setStatus(IdegaTransactionStatus.STATUS_ROLLING_BACK);
+    setStatus(Status.STATUS_PREPARING);
+    setStatus(Status.STATUS_PREPARED);
+    setStatus(Status.STATUS_ROLLING_BACK);
     try{
       getConnection().rollback();
     }
@@ -231,7 +231,7 @@ public void registerSynchronization(Synchronization sync)throws RollbackExceptio
         SystemException exeption = new SystemException(ex.getMessage());
         throw (SystemException)exeption.fillInStackTrace();
     }
-    setStatus(IdegaTransactionStatus.STATUS_ROLLEDBACK);
+    setStatus(Status.STATUS_ROLLEDBACK);
     if(sync!=null){
       sync.afterCompletion(getStatus());
     }
@@ -370,7 +370,7 @@ protected void setDatasource(String datasourceName){
       _conn = getFirstConnection();
       ThreadContext.getInstance().setAttribute(Thread.currentThread(),getTransactionAttributeName(),this);
       this.transactionCount=1;
-      setStatus(IdegaTransactionStatus.STATUS_ACTIVE);
+      setStatus(Status.STATUS_ACTIVE);
     }
     else{
       beginSubTransaction();

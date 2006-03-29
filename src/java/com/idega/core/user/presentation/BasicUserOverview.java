@@ -8,6 +8,7 @@ import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.business.UserGroupBusiness;
 import com.idega.core.user.data.User;
 import com.idega.data.EntityFinder;
+import com.idega.data.GenericEntity;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.Table;
@@ -17,6 +18,7 @@ import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Window;
+import com.idega.user.data.UserBMPBean;
 
 /**
  * Title:        User
@@ -42,7 +44,7 @@ public class BasicUserOverview extends Page {
 
 
   public Table getUsers(IWContext iwc) throws Exception{
-    List users = EntityFinder.findAllOrdered(com.idega.core.user.data.UserBMPBean.getStaticInstance(),com.idega.core.user.data.UserBMPBean.getColumnNameFirstName());
+    List users = EntityFinder.findAllOrdered(GenericEntity.getStaticInstance(User.class),UserBMPBean.getColumnNameFirstName());
     Table userTable = null;
     List adminUsers = UserGroupBusiness.getUsersContainedDirectlyRelated(iwc.getAccessController().getPermissionGroupAdministrator());
 
@@ -82,7 +84,7 @@ public class BasicUserOverview extends Page {
             //added for a new link style
             aLink.setStyleClass(styledLinkClass);
             aLink.setWindowToOpen(AdministratorPropertyWindow.class);
-            aLink.addParameter(AdministratorPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
+            aLink.addParameter(UserPropertyWindow.PARAMETERSTRING_USER_ID, tempUser.getID());
             userTable.add(aLink,2,line);
             delete = true;
             line++;

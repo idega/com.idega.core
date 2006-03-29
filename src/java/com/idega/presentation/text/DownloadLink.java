@@ -11,6 +11,7 @@ package com.idega.presentation.text;
 import com.idega.core.file.data.ICFile;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.DownloadWriter;
+import com.idega.io.MediaWritable;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 
@@ -105,7 +106,7 @@ public class DownloadLink extends Link {
         super.main(iwc);
         setURL(iwc.getIWMainApplication().getMediaServletURI());
         if(writerClass!=null){
-            addParameter(DownloadWriter.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(writerClass));
+            addParameter(MediaWritable.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(writerClass));
         }
     }
     

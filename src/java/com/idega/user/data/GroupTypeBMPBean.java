@@ -5,6 +5,8 @@ import java.util.Collection;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
@@ -313,7 +315,7 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 	}
 
 	public static GroupTypeBMPBean getStaticInstance() {
-		return (GroupTypeBMPBean) com.idega.user.data.GroupTypeBMPBean.getStaticInstance(GroupType.class.getName());
+		return (GroupTypeBMPBean) GenericEntity.getStaticInstance(GroupType.class.getName());
 	}
 
 	public String ejbHomeGetGeneralGroupTypeString() {

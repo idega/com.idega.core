@@ -3,6 +3,7 @@ package com.idega.core.user.fix;
 import java.util.List;
 import java.util.Iterator;
 import com.idega.data.EntityFinder;
+import com.idega.data.GenericEntity;
 import com.idega.core.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.core.data.GenericGroup;
@@ -29,7 +30,7 @@ public class DatabaseFix {
   }
 
   public void main() throws Exception {
-    List users = EntityFinder.findAll(com.idega.core.user.data.UserBMPBean.getStaticInstance());
+    List users = EntityFinder.findAll(GenericEntity.getStaticInstance(User.class));
 
     if(users != null){
       Iterator iter = users.iterator();
