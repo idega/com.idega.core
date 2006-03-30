@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.ejb.FinderException;
-import com.idega.core.builder.data.CachedDomain;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICDomainHome;
 import com.idega.data.IDOLookup;
@@ -135,7 +134,8 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 			if(domain==null){
 				ICDomainHome domainHome = (ICDomainHome)IDOLookup.getHome(ICDomain.class);
 				ICDomain realDomain = domainHome.findByPrimaryKey(domainID);
-				domain = new CachedDomain(realDomain);
+				//domain = new CachedDomain(realDomain);
+				domain= realDomain;
 			}
 			
 			if(cachDefaultDomainForThisServerURL){
