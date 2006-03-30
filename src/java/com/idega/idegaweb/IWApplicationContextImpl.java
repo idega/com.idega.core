@@ -3,9 +3,7 @@ package com.idega.idegaweb;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-
 import javax.ejb.FinderException;
-
 import com.idega.core.builder.data.CachedDomain;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICDomainHome;
@@ -21,6 +19,10 @@ import com.idega.data.IDOLookupException;
  * @version 1.0
  */
 public class IWApplicationContextImpl implements IWApplicationContext {
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 5152712252892799540L;
 	private final static String IWAPP_CURRENT_DOMAIN_ID = "iw_current_domain_id";
 	private IWMainApplication iwma;
 	private HashMap domainMap = new HashMap();
@@ -101,7 +103,8 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 					Iterator iter = coll.iterator();
 					if (iter.hasNext()) {
 						ICDomain realDomain = (ICDomain)iter.next();
-						toReturn = new CachedDomain(realDomain);
+						//toReturn = new CachedDomain(realDomain);
+						toReturn = realDomain;
 						domainMap.put(serverName,toReturn);
 						return toReturn;
 					} else {
