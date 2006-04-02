@@ -1,5 +1,5 @@
 /*
- * $Id: TimeInput.java,v 1.10 2005/12/12 05:44:37 laddi Exp $
+ * $Id: TimeInput.java,v 1.11 2006/04/02 18:16:56 laddi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -9,9 +9,6 @@
  */
 package com.idega.presentation.ui;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -116,11 +113,10 @@ public class TimeInput extends InterfaceObject {
 	}
 
 	public void setTime(java.sql.Time time) {
-		GregorianCalendar greg = new GregorianCalendar();
-		greg.setTime(new Date(time.getTime()));
+		IWTimestamp stamp = new IWTimestamp(time);
 
-		setHour(greg.get(Calendar.HOUR_OF_DAY));
-		setMinute(greg.get(Calendar.MINUTE));
+		setHour(TextSoap.addZero(stamp.getHour()));
+		setMinute(TextSoap.addZero(stamp.getMinute()));
 	}
 
 	public String getHourName() {
