@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.109 2006/03/29 13:10:16 laddi Exp $
+ * $Id: AccessControl.java,v 1.110 2006/04/02 11:53:25 laddi Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -70,12 +70,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/02 11:53:25 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.109 $
+ * @version $Revision: 1.110 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -205,8 +205,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	public boolean isOwner(Object obj, IWUserContext iwc) throws Exception {
 		Boolean returnVal = Boolean.FALSE;
-		User user = iwc.getCurrentUser();
-		if (user != null) {
+		if (iwc.isLoggedOn()) {
+			User user = iwc.getCurrentUser();
+			
 			List[] permissionOrder = new Vector[2];
 			permissionOrder[0] = new Vector();
 			permissionOrder[0].add(Integer.toString(user.getGroupID()));
@@ -227,8 +228,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	public boolean isOwner(int category, String identifier, IWUserContext iwc) throws Exception {
 		Boolean returnVal = Boolean.FALSE;
-		User user = iwc.getCurrentUser();
-		if (user != null) {
+		if (iwc.isLoggedOn()) {
+			User user = iwc.getCurrentUser();
+
 			List[] permissionOrder = new Vector[2];
 			permissionOrder[0] = new Vector();
 			permissionOrder[0].add(Integer.toString(user.getGroupID()));
@@ -2239,32 +2241,19 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return true;
 	}
 
-	/*
-	 * public boolean hasPermission(Class someClass, int id, IWUserContext iwc) throws Exception{ if(someClass.equals(ICFile.class)){ return true;
-	 * }else if(someClass.equals(ICObject.class)){ return true; }else { return true; } }
-	 */
-
 	public void setCurrentUserAsOwner(ICPage page, IWUserContext iwc) throws Exception {
-		User user = iwc.getCurrentUser();
-		//    System.out.println("User = "+ user);
-		if (user != null) {
+		if (iwc.isLoggedOn()) {
+			User user = iwc.getCurrentUser();
+
 			int groupId = -1;
 			groupId = user.getPrimaryGroupID();
 			if (groupId == -1) {
 				groupId = user.getGroupID();
 			}
-			//      System.out.println("Group = "+ groupId);
+
 			if (groupId != -1) {
 				setAsOwner(page, groupId, iwc.getApplicationContext());
-				//        setPermission(AccessController._CATEGORY_PAGE,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl._PERMISSIONKEY_EDIT,Boolean.TRUE);
-				//        setPermission(AccessController._CATEGORY_PAGE,iwc,Integer.toString(groupId),Integer.toString(page.getID()),AccessControl._PERMISSIONKEY_VIEW,Boolean.TRUE);
 			}
-			else {
-				// return false;
-			}
-		}
-		else {
-			// return false;
 		}
 	}
 
