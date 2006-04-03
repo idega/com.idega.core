@@ -123,6 +123,9 @@ public class IBOServiceBean implements IBOService, SessionBean {
   }
 
   public IWApplicationContext getIWApplicationContext(){
+	if(this.iwac==null){
+		return IWMainApplication.getDefaultIWApplicationContext();
+	}
     return this.iwac;
   }
   
