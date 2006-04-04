@@ -32,6 +32,8 @@ import com.idega.util.database.ConnectionBroker;
  */
 public class OracleDatastoreInterface extends DatastoreInterface {
 
+	public static Locale oracleLocale = null;
+	
 	protected OracleDatastoreInterface() {
 		super();
 		EntityControl.limitTableNameToThirtyCharacters = true;
@@ -329,7 +331,10 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	}
 	
 	private Locale getDefaultLocale() {
-		return IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings().getDefaultLocale();
+		if (oracleLocale == null) {
+			oracleLocale = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings().getDefaultLocaleFromIWPropertyList();
+		}
+		return oracleLocale;
 	}
 
 	/**
