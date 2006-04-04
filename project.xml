@@ -415,6 +415,13 @@
       <type>jar</type>
       <url>http://hsqldb.org/</url>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <type>jar</type>
+      <url>http://www.junit.org/</url>
+    </dependency>
   </dependencies>
   <properties/>
   <build>
