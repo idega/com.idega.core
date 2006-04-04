@@ -171,6 +171,9 @@ public class ICFileTypeBMPBean extends com.idega.data.CacheableEntityBMPBean imp
     catch (SQLException sql) {
       sql.printStackTrace(System.err);
      }
+	    catch(Exception e){
+	    		System.err.println("ICFileTypeBMPBEan: Error inserting start data: "+e);
+	    }
   }
 
   public String getCacheKey(){

@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.166 2006/02/22 20:52:47 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.167 2006/04/04 11:53:02 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -89,10 +89,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/04/04 11:53:02 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.166 $
+ * @version $Revision: 1.167 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -802,7 +802,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * </p>
      */
     public String getApplicationRealPath() {
-        return application.getRealPath(FileUtil.getFileSeparator());
+        String theRet = application.getRealPath(FileUtil.getFileSeparator());
+        if(!theRet.endsWith(FileUtil.getFileSeparator())){
+        		theRet +=FileUtil.getFileSeparator();
+        }
+        return theRet;
     }
 
     /**
@@ -890,30 +894,33 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * </p>
      */
     private void loadBundlesLegacy() {
-        File theRoot = new File(this.getApplicationSpecialRealPath(),
+    		String appSpRealPath = getApplicationSpecialRealPath();
+        File theRoot = new File(appSpRealPath,
                 BUNDLES_STANDARD_DIRECTORY);
         File[] bundles = theRoot.listFiles();
-        for (int i = 0; i < bundles.length; i++) {
-            if (bundles[i].isDirectory()
-                    && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)) {
-                File properties = new File(bundles[i], "properties");
-                File propertiesFile = new File(properties,
-                        DefaultIWBundle.propertyFileName);
-                IWPropertyList list = new IWPropertyList(propertiesFile);
-                String bundleIdentifier = list
-                        .getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
-                if (bundleIdentifier != null) {
-                    String bundleDir = BUNDLES_STANDARD_DIRECTORY
-                            + File.separator + bundles[i].getName();
-                    try {
-                        this.registerBundle(bundleIdentifier, bundleDir);
-                    } catch (Throwable t) {
-                        this.sendStartupMessage("Error loading bundle "
-                                + bundleIdentifier);
-                        t.printStackTrace();
-                    }
-                }
-            }
+        if(bundles!=null){
+	        for (int i = 0; i < bundles.length; i++) {
+	            if (bundles[i].isDirectory()
+	                    && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)) {
+	                File properties = new File(bundles[i], "properties");
+	                File propertiesFile = new File(properties,
+	                        DefaultIWBundle.propertyFileName);
+	                IWPropertyList list = new IWPropertyList(propertiesFile);
+	                String bundleIdentifier = list
+	                        .getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
+	                if (bundleIdentifier != null) {
+	                    String bundleDir = BUNDLES_STANDARD_DIRECTORY
+	                            + File.separator + bundles[i].getName();
+	                    try {
+	                        this.registerBundle(bundleIdentifier, bundleDir);
+	                    } catch (Throwable t) {
+	                        this.sendStartupMessage("Error loading bundle "
+	                                + bundleIdentifier);
+	                        t.printStackTrace();
+	                    }
+	                }
+	            }
+	        }
         }
     }
 
@@ -1342,8 +1349,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
                     .getIWApplicationContext());
             fs.initialize();
         } catch (Exception e) {
-            System.err
-                    .println("IWMainApplication.startFileSystem() : There was an error, most likely the media bundle is not installed");
+            System.err.println("IWMainApplication.startFileSystem() : There was an error, most likely the media bundle is not installed");
         }
     }
 

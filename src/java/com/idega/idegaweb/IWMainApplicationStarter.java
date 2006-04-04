@@ -370,8 +370,13 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			iwma.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
 		}
 		//if(IWMainApplication.USE_JSF){
-			iwma.loadViewManager();
-			sendStartMessage("Loaded the ViewManager");
+			try{
+				iwma.loadViewManager();
+				sendStartMessage("Loaded the ViewManager");
+			}
+			catch(Exception e){
+				System.err.println("Error starting the ViewManager: "+e);
+			}
 		//}		
 
 		if(!iwma.isInDatabaseLessMode()){

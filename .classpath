@@ -3,6 +3,10 @@
 <classpath>
   <classpathentry excluding="" kind="src" path="src/java">
   </classpathentry>
+  <classpathentry output="target/test-classes" kind="src" path="src/test/java">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/junit/jars/junit-3.8.1.jar">
+  </classpathentry>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jdom/jars/jdom-1.0.jar">
@@ -58,6 +62,8 @@
   <classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.1.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-constructs-0.6.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/hsqldb/jars/hsqldb-1.8.0.2.jar">
   </classpathentry>
   <classpathentry kind="output" path="target/classes">
   </classpathentry>

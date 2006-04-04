@@ -55,6 +55,9 @@ public class SingletonRepository {
 	}
 	
 	public static synchronized SingletonRepository getRepository()	{
+		if(singletonRepository==null){
+			start();
+		}
 		return singletonRepository;
 	}
 	

@@ -131,10 +131,9 @@ public class ICFileTypeHandlerBMPBean extends com.idega.data.CacheableEntityBMPB
 			handler.store();
 			handler.cacheEntity();
 		}
-		catch (Exception e)
-		{
-			e.printStackTrace(System.err);
-		}
+	    catch(Exception e){
+    			System.err.println("ICFileTypeBMPBEan: Error inserting start data: "+e);
+	    }
 	}
 	public String getCacheKey()
 	{
