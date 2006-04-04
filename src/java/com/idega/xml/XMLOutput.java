@@ -1,5 +1,5 @@
 /*
- * $Id: XMLOutput.java,v 1.10 2005/12/16 17:00:41 tryggvil Exp $
+ * $Id: XMLOutput.java,v 1.11 2006/04/04 23:30:15 palli Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -93,6 +93,7 @@ public class XMLOutput {
 		StringWriter writer = new StringWriter();
 		Document doc = (Document) document.getDocument();
 		XMLOutputter outputter = new XMLOutputter();
+		outputter.setFormat(_output.getFormat());
 		outputter.output(doc, writer);
 		return writer.toString();
 	}

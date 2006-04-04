@@ -1,5 +1,5 @@
 /*
- * $Id: XMLDocument.java,v 1.6 2005/12/16 17:00:41 tryggvil Exp $
+ * $Id: XMLDocument.java,v 1.7 2006/04/04 23:30:15 palli Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -30,6 +30,15 @@ Document _doc = null;
     if (el != null)
       _doc = new Document(el);
   }
+
+  public XMLDocument(XMLElement element, XMLDocType type) {
+	    Element el = (Element)element.getElement();
+	    DocType ty = (DocType) type.getDocType();
+	    if (el != null & ty != null)
+	      _doc = new Document(el, ty);
+	  }
+
+  
   /**
    * This object really only accepts a org.jdom.Document type but is declared Object becaluse of jdom dependency issues.
    * @param oDocument a Document instance
