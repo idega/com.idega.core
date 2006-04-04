@@ -1,5 +1,5 @@
 /*
- * $Id: TimeLimitedMap.java,v 1.1 2006/03/30 11:20:37 thomas Exp $
+ * $Id: TimeLimitedMap.java,v 1.2 2006/04/04 18:05:02 thomas Exp $
  * Created on Mar 29, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -35,11 +35,11 @@ import java.util.Set;
  * 
  * This map should not be used to store large number of entries 
  * that should be automatically removed after a while without calling the map at all.
- *  * 
- *  Last modified: $Date: 2006/03/30 11:20:37 $ by $Author: thomas $
+ *  
+ *  Last modified: $Date: 2006/04/04 18:05:02 $ by $Author: thomas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TimeLimitedMap implements Map {
 	
@@ -58,169 +58,285 @@ public class TimeLimitedMap implements Map {
 	}
 	
 	public static TimeLimitedMap getInstanceWithTimeLimitInMilliseconds(long milliseconds) {
-		TimeLimitedMap timeLimitedMap = new TimeLimitedMap();
-		timeLimitedMap.setTimeOut(milliseconds);
+		TimeLimitedMap timeLimitedMap = new TimeLimitedMap(milliseconds);
 		return timeLimitedMap;
 	}
-	
 	
 	/**
 	 * Only for testing the class
 	 */
 	public static void main(String[] args) {
-		TimeLimitedMap myMap = new TimeLimitedMap();
+		TimeLimitedMap myMap = getInstanceWithTimeLimitInSeconds(11);
 		myMap.testImplementation();
+		//myMap.testImplementation();
 	}
 	
-	private void testImplementation() {
-		setTimeOut(6000); // six seconds
-		put("weser1", "hallo1");
-		Object response1 = get("weser1");
-		System.out.println(response1);    
-		try {
-			// set to 4000 and watch what happens
-			Thread.sleep(6000);
+	// noTimeOut is Set if timeout  <= 0
+	private boolean noTimeOut = true;
+	
+	private long timeOut = 0; 
+	
+	// first list contains always valid entries
+	
+	// only the first list is used when there is no timeOut
+		
+	private List firstValues = new ArrayList();
+	
+	private List firstKeys = new ArrayList();
+	
+	private List firstTimestamps = new ArrayList();
+	
+	// second list contains valid and invlaid entries
+	
+	private List secondValues = new ArrayList();
+	
+	private List secondKeys = new ArrayList();
+	
+	private List secondTimestamps = new ArrayList();
+	
+	private long secondLatestTimestampTimeout = -1;
+	
+	private int size = 0;
+	
+	public TimeLimitedMap(long timeOut) {
+		setTimeOut(timeOut);
+		initialize();
+	}
+	
+	private void initialize() {
+		firstValues.clear();
+		firstKeys.clear();
+		firstTimestamps.clear();
+		secondValues.clear();
+		secondKeys.clear();
+		secondTimestamps.clear();
+		calculateSecondLatestTimestamp(System.currentTimeMillis());
+	}
+	
+	
+
+	
+	private void control(long currentTime) {
+		if (noTimeOut) {
+			return;
 		}
-		catch (InterruptedException ex) {
-			// do nothing
-		}
-		put("weser2","hallo2");
-		Set aSet = entrySet();
-		Iterator iterator = aSet.iterator();
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			Object key = entry.getKey();
-			Object value = entry.getValue();
-			System.out.print(key + " " + value);
+		// after call of control the first list is always valid!
+		if (currentTime > secondLatestTimestampTimeout) {
+			// the whole second stack is expired
+			// move first stack to second (that is delete second stack)
+			// create new first stack
+			List tempFirstValues = secondValues;
+			List tempFirstKeys = secondKeys;
+			List tempFirstTimestamps = secondTimestamps;
+			secondValues = firstValues;
+			secondKeys = firstKeys;
+			secondTimestamps = firstTimestamps;
+			firstValues = tempFirstValues;
+			firstKeys = tempFirstKeys;
+			firstTimestamps = tempFirstTimestamps;
+			firstValues.clear();
+			firstKeys.clear();
+			firstTimestamps.clear();
+			calculateSecondLatestTimestamp(currentTime);
 		}
 	}
 	
-	private long timeOut = -1; 
+	private void calculateSecondLatestTimestamp(long currentTime) {
+		int endIndex = secondTimestamps.size() - 1;
+		if (endIndex > -1 ) {
+			// is there an entry?
+			Long tempTimestamp = (Long) secondTimestamps.get(endIndex);
+			// note: tempTimestamp is the "original" timestamp plus timeout !!!!
+			// do not add timeout again
+			secondLatestTimestampTimeout = tempTimestamp.longValue();
+		}
+		else {
+			// take the current time
+			secondLatestTimestampTimeout = currentTime + timeOut;
+		}
+
+	}
 	
-	private boolean noTimeOutSet = true;
+	private int getValidIndexControl(Object object, List firstList, List secondList)	{
+		long currentTime = System.currentTimeMillis();
+		control(currentTime);
+		// after call of control the first list is always valid!
+		// lookup first list
+		int index = firstList.lastIndexOf(object);
+		if (index > -1 ) {
+			index++;
+			return index;
+		}
+		// lookup second list
+		index = secondList.lastIndexOf(object);
+		if (index > -1 && isValid(index, secondTimestamps, currentTime)) {
+			index++;
+			return -index;
+		}
+		return 0;
+	}
 	
-	private long oldestTimestamp = -1;
+	private int getIndexWithoutControl(Object object, List firstList, List secondList) {
+		// lookup first list
+		int index = firstList.lastIndexOf(object);
+		if (index > -1) {
+			index++;
+			return index;
+		}
+		// lookup second list
+		index = secondList.lastIndexOf(object);
+		if (index > -1) {
+			index++;
+			return -index;
+		}
+		return 0;
+}
+
 	
-	private List values = new ArrayList();
+	private boolean isValid(int index, List timestampList, long currentTime) {
+		if (noTimeOut) {
+			return true;
+		}
+		Long timestampLong = (Long) timestampList.get(index);
+		long timestamp = timestampLong.longValue();
+		return (currentTime < timestamp);
+	}
 	
-	private List keys = new ArrayList();
-	
-	private List timestamps = new ArrayList();
-	
-	private int findTimeLimitIndexSetOldestTimestamp(long timeLimit) {
-		int timeLimitIndex = -1;
-		int endIndex = timestamps.size();
-		for (int i = 0; i <  endIndex ; i++) {
-			Long timestamp = (Long) timestamps.get(i);
-			long longTimestamp = timestamp.longValue();
-			if (longTimestamp < timeLimit) {
-				timeLimitIndex = i;
+	private int[] getValidIndicesControl() {
+		long currentTime = System.currentTimeMillis();
+		control(currentTime);
+		// after call of control the first list is always valid!
+		int maxSize = firstKeys.size() + secondKeys.size();
+		int[] validIndices = new int[maxSize];
+		int k = 0;
+		// tricky - index runs down to 1 not 0 !
+		for (int i = firstKeys.size(); i > 0; i--) {
+			validIndices[k++] = i;
+		} 
+		// the second list
+		for (int i = secondKeys.size(); i > 0; i--) {
+			if (isValid(i -1, secondTimestamps, currentTime)) {
+				// tricky - to know that this is the index of the second list the index is negative
+				validIndices[k++] = -i;
 			}
 			else {
-				oldestTimestamp = longTimestamp;
-				return timeLimitIndex;
+				// there can't be any more valid indices
+				size = k;
+				return validIndices;
 			}
-		}
-		oldestTimestamp = -1;
-		return timeLimitIndex;
-	}
-			
-	private void clean() {
-		// first fast check, nothing to do if there is no time limit and if the list is empty
-		if (noTimeOutSet || timestamps.isEmpty()) {
-			return;
-		}
-		// second fast check, nothing to do if the oldest entry is fresh
-		long timeLimit = System.currentTimeMillis() - timeOut;
-		if (oldestTimestamp > timeLimit) {
-			return;
-		}
-		int timeLimitIndex = findTimeLimitIndexSetOldestTimestamp(timeLimit);
-		// shortcut - whole list is too old
-		if (oldestTimestamp == -1) {
-			clear();
-			return;
-		}
-		for (int i = 0; i <= timeLimitIndex ; i++) {
-			values.remove(i);
-			keys.remove(i);
-			timestamps.remove(i);
-		}
-	}
-
-	public long setTimeOut(long milliseconds) {
-		long oldTimeOut = timeOut;
-		noTimeOutSet = (milliseconds <= 0);
-		timeOut = (noTimeOutSet) ? -1 : milliseconds;
-		return oldTimeOut;
+		} 	
+		size = k;
+		return validIndices;
 	}
 	
-	/* (non-Javadoc)
+	public void setTimeOut(long milliseconds) {
+		long currentTime = System.currentTimeMillis();
+		noTimeOut = (milliseconds <= 0);
+		long newTimeOut = (noTimeOut) ? 0 : milliseconds;
+		if (newTimeOut == timeOut) {
+			// nothing to do
+			return;
+		}
+		// timestamp of an entry = original timestamp + timeOut
+		// new timestamp of an entry = original timestamp + timeOut - timeOut + newTimeOut
+		long difference = newTimeOut - timeOut;
+		// set the new timeout
+		timeOut  =newTimeOut;
+		// change timestamps of both lists
+		changeTimestamps(firstTimestamps, difference);
+		changeTimestamps(secondTimestamps, difference);
+		// the secondLatestTimestamp is wrong!!!!
+		calculateSecondLatestTimestamp(currentTime);
+		// note: call calculateSecondLatestTimestamp before call of control !!!
+		control(currentTime);
+	}
+		
+		
+		
+	private void changeTimestamps(List timestampList, long difference) {
+		int listSize = timestampList.size();
+		for (int i = 0; i < listSize; i++) {
+			Long tempLong = (Long) timestampList.get(i);
+			long tempTimestamp = tempLong.longValue();
+			tempTimestamp += difference;
+			tempLong = new Long(tempTimestamp);
+			timestampList.set(i, tempLong);
+		}
+	}
+		
+	/**
+	 * 
+	 * 
+	 * (non-Javadoc)
 	 * @see java.util.Map#size()
 	 */
 	public int size() {
-		clean();
-		return keys.size();
+		getValidIndicesControl();
+		return size;
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Map#clear()
 	 */
 	public void clear() {
-		// we do not need to set the oldestTimestamp to "-1" - it is still "valid" even for new entries!
-		keys.clear();
-		values.clear();
-		timestamps.clear();
-		
-		// TODO Auto-generated method stub
+		initialize();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Map#isEmpty()
 	 */
 	public boolean isEmpty() {
-		clean();
-		return keys.isEmpty();
+		control(System.currentTimeMillis());
+		// sufficient to check the first list 
+		return firstTimestamps.isEmpty();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Map#containsKey(java.lang.Object)
 	 */
 	public boolean containsKey(Object key) {
-		clean();
-		return keys.contains(key);
+		return (getValidIndexControl(key, firstKeys, secondKeys) != 0);
 	}
-
+			
 	/* (non-Javadoc)
 	 * @see java.util.Map#containsValue(java.lang.Object)
 	 */
 	public boolean containsValue(Object value) {
-		clean();
-		return values.contains(value);
+		return (getValidIndexControl(value, firstValues, secondValues) != 0);
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Map#values()
 	 */
 	public Collection values() {
-		clean();
+		int[] validIndices = getValidIndicesControl();
+		List values = new ArrayList(size);
+		for (int i = size -1; i > -1 ; i--) {
+			int index = validIndices[i];
+			// first list positive, second list negative
+			Object value = (index > 0) ? firstValues.get(index - 1) : secondValues.get(-index - 1);
+			values.add(value);
+		}
 		return values;
 	}
+
 
 	/* (non-Javadoc)
 	 * @see java.util.Map#putAll(java.util.Map)
 	 */
 	public void putAll(Map aMap) {
-		clean();
-		long timestamp = System.currentTimeMillis();
+		long currentTime = System.currentTimeMillis();
+		control(currentTime);
+		long timestamp = currentTime + timeOut;
 		Long myTimestamp = new Long(timestamp);
 		Iterator iterator = aMap.keySet().iterator(); 
 		while(iterator.hasNext()) {
 			Object key = iterator.next();
+			removeWithoutControl(key);
 			Object value = aMap.get(key);
-			keys.add(key);
-			values.add(value);
-			timestamps.add( myTimestamp);
+			firstKeys.add(key);
+			firstKeys.add(value);
+			firstKeys.add( myTimestamp);
 		}
 	}
 
@@ -228,12 +344,21 @@ public class TimeLimitedMap implements Map {
 	 * @see java.util.Map#entrySet()
 	 */
 	public Set entrySet() {
-		clean();
-		Set entries = new HashSet();
-		int endIndex = keys.size();
-		for (int i = 0; i <  endIndex ; i++) {
-			Object tempKey = keys.get(i);
-			Object tempValue = values.get(i);
+		int[] validIndices = getValidIndicesControl();
+		Set entries = new HashSet(size);
+		for (int i = size-1; i > -1 ; i--) {
+			int index = validIndices[i];
+			// first list positive, second list negative
+			Object tempKey = null;
+			Object tempValue = null;
+			if (index > 0)  {
+				tempValue = firstValues.get(index - 1);
+				tempKey = firstKeys.get(index - 1);
+			}
+			else {
+				tempValue = secondValues.get(-index - 1);
+				tempKey = secondKeys.get(-index - 1);
+			}
 			Map.Entry entry = new MapEntry(tempKey, tempValue);
 			entries.add(entry);
 		}
@@ -244,56 +369,156 @@ public class TimeLimitedMap implements Map {
 	 * @see java.util.Map#keySet()
 	 */
 	public Set keySet() {
-		clean();
-		return new HashSet(keys);
+		int[] validIndices = getValidIndicesControl();
+		Set keys = new HashSet(size);
+		for (int i = size - 1; i > -1 ; i--) {
+			int index = validIndices[i];
+			// first list positive, second list negative
+			Object key = (index > 0) ? firstKeys.get(index - 1) : secondKeys.get(-index - 1);
+			keys.add(key);
+		}
+		return keys;
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Map#get(java.lang.Object)
 	 */
 	public Object get(Object key) {
-		clean();
-		return getWithoutCleaning(key);
+		int index = getValidIndexControl(key, firstKeys, secondKeys);
+		if (index == 0) {
+			// not found
+			return null;
+		}
+		// first list positive, second list negative
+		return (index > 0) ? firstValues.get(index - 1) : secondValues.get(-index - 1);
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Map#remove(java.lang.Object)
 	 */
 	public Object remove(Object key) {
-		clean();
-		// look up the latest entry !!
-		int index = keys.lastIndexOf(key);
-		if (index < 0 ) {
-			// nothing to remove
+		return removeControl(key, System.currentTimeMillis());
+	}
+		
+	private Object removeControl(Object key, long currentTime) {
+		control(currentTime);
+		return removeWithoutControl(key);
+	}
+			
+	private Object removeWithoutControl(Object key) {
+		int index = getIndexWithoutControl(key, firstKeys, secondKeys);
+		if (index == 0) {
+			// not found
 			return null;
 		}
-		Object oldValue = values.get(index);
-		timestamps.remove(index);
-		keys.remove(index);
-		values.remove(index);
-		return oldValue;
+		// first list positive, second list negative
+		if (index > 0) {
+			int k = index  - 1;
+			firstKeys.remove(k);
+			firstTimestamps.remove(k);
+			return firstValues.remove(k);
+		}
+		int k = -index  - 1;
+		secondKeys.remove(k);
+		secondTimestamps.remove(k);
+		return secondValues.remove(k);
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
 	 */
 	public Object put(Object key, Object value) {
-		clean();
-		Object oldValue = getWithoutCleaning(key);
-		long timestamp = System.currentTimeMillis();
+		long currentTime = System.currentTimeMillis();
+		Object oldValue = removeControl(key, currentTime);
+		long timestamp = currentTime + timeOut;
 		Long myTimestamp = new Long(timestamp);
-		keys.add(key);
-		values.add(value);
-		timestamps.add( myTimestamp);
+		firstKeys.add(key);
+		firstValues.add(value);
+		firstTimestamps.add( myTimestamp);
 		return oldValue;
 	}
 	
-	private Object getWithoutCleaning(Object key) {
-		// look up the latest entry !!
-		int index = keys.lastIndexOf(key);
-		return (index < 0) ? null : values.get(index);
+	private void testImplementation() {
+		put("weser1", "hallo1");
+		Object response1 = get("weser1");
+		System.out.println(response1);    
+		values();
+		keySet();
+		
+		// ++++++++++++++++++++++++++++++++++++++++++++++++++
+		try {
+			Thread.sleep(5000);
+		}
+		catch (InterruptedException ex) {
+			// do nothing
+		}
+		// ++++++++++++++++++++++++++++++++++++++++++++++++++
+
+		
+		System.out.println("5000");
+		put("weser2","hallo2");
+		
+		Set aSet = entrySet();
+		Iterator iterator = aSet.iterator();
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			Object key = entry.getKey();
+			Object value = entry.getValue();
+			System.out.print(key + " " + value);
+		}
+		System.out.println("Loop zuende");
+		values();
+		keySet();
+		
+		remove("weser2");
+		
+		// +++++++++++++++++++++++++++++++++++++++++++++++++++++
+		try {
+			Thread.sleep(5000);
+		}
+		catch (InterruptedException ex) {
+			// do nothing
+		}
+		// ++++++++++++++++++++++++++++++++++++++++++++++++++
+
+		
+		System.out.println("....5000");
+		aSet = entrySet();
+		iterator = aSet.iterator();
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			Object key = entry.getKey();
+			Object value = entry.getValue();
+			System.out.print(key + " " + value);
+		}
+		System.out.println("Loop zuende");
+		values();
+		keySet();
+		
+		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+		try {
+			// set to 4000 and watch what happens
+			Thread.sleep(5000);
+		}
+		catch (InterruptedException ex) {
+			// do nothing
+		}
+		// ++++++++++++++++++++++++++++++++++++++++++++++++++
+
+		
+		System.out.println("");
+		System.out.println("...5000");
+		aSet = entrySet();
+		iterator = aSet.iterator();
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			Object key = entry.getKey();
+			Object value = entry.getValue();
+			System.out.print(key + " " + value);
+		}
+		System.out.println("Loop zuende");
+		values();
+		keySet();
 	}
 	
-	
 }
-
