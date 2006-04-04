@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.1 2006/04/04 11:53:02 tryggvil Exp $
+ * $Id: ICPageBMPBean.java,v 1.2 2006/04/04 12:48:03 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -16,11 +16,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Locale;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-import com.idega.core.builder.data.ICPage;
+
 import com.idega.core.file.data.ICFile;
-import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.net.data.ICProtocol;
 import com.idega.core.user.data.User;
 import com.idega.data.GenericEntity;
