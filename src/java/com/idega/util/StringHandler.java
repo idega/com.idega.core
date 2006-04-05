@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.39 2006/03/27 11:15:19 thomas Exp $ Created on
+ * $Id: StringHandler.java,v 1.40 2006/04/05 12:36:34 thomas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,11 +24,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2006/03/27 11:15:19 $ by $Author: thomas $
+ * Last modified: $Date: 2006/04/05 12:36:34 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  */
 public class StringHandler {
 
@@ -273,6 +273,15 @@ public class StringHandler {
 		return newString.toString();
 	}
 
+	/**
+	 * Returns true if the specified object returns an  empty string or null when the
+	 * toString() method is invoked else false.
+	 */
+	public static boolean isEmpty(Object element) {
+		return ! isNotEmpty(element);
+	}
+	
+	
 	/**
 	 * Returns true if the specified object returns a non empty string when the
 	 * toString() method is invoked else false.
