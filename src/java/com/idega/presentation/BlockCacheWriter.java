@@ -1,16 +1,15 @@
 /*
- * $Id: BlockCacheWriter.java,v 1.1 2004/12/14 00:45:12 tryggvil Exp $
- * Created on 13.12.2004
- *
+ * $Id: BlockCacheWriter.java,v 1.2 2006/04/08 12:14:04 laddi Exp $ Created
+ * on 13.12.2004
+ * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
  */
 package com.idega.presentation;
 
 import java.io.PrintWriter;
-
 
 public class BlockCacheWriter extends java.io.PrintWriter {
 
@@ -103,7 +102,6 @@ public class BlockCacheWriter extends java.io.PrintWriter {
 
 	public void println(long l) {
 		println(String.valueOf(l));
-		;
 	}
 
 	public void println(Object o) {

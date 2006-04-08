@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.104 2006/02/22 20:52:48 laddi Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.105 2006/04/08 12:14:04 laddi Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -85,7 +85,7 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.104 $
+ * @version $Revision: 1.105 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -857,7 +857,6 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			}
 			catch (Exception ex) {
 			}
-			;
 		}
 		return users;
 	}
@@ -2394,10 +2393,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	/**
 	 * 
-	 * Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
+	 * Last modified: $Date: 2006/04/08 12:14:04 $ by $Author: laddi $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.104 $
+	 * @version $Revision: 1.105 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 

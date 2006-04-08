@@ -493,7 +493,7 @@ public class MenuBar extends InterfaceObject {
 
   public void setFonts( String hdrFamily1, String hdrFamily2, String hdrFamily3, String hdrStyle, String hdrWeight, int hdrSize, String itmFamily1, String itmFamily2, String itmFamily3, String itmStyle, String itmWeight, int itmSize){
 
-    NavBar_setFonts = "NavBar1.setFonts(\"" + hdrFamily1 + "," +hdrFamily2+ "," +hdrFamily3+ "\",\"" +hdrStyle+ "\",\"" +hdrWeight+ "\",\"" +hdrSize+ "pt\",\"" +itmFamily1+ "," +itmFamily2+ "," +itmFamily3+ "\",\"" +itmStyle+ "\",\"" +itmWeight+ "\",\"" +itmSize+ "pt\");\r";;
+    NavBar_setFonts = "NavBar1.setFonts(\"" + hdrFamily1 + "," +hdrFamily2+ "," +hdrFamily3+ "\",\"" +hdrStyle+ "\",\"" +hdrWeight+ "\",\"" +hdrSize+ "pt\",\"" +itmFamily1+ "," +itmFamily2+ "," +itmFamily3+ "\",\"" +itmStyle+ "\",\"" +itmWeight+ "\",\"" +itmSize+ "pt\");\r";
 
   }
 

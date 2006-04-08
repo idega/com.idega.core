@@ -68,7 +68,7 @@ public class DynamicTemplateServlet extends IWJSPPresentationServlet {
 	}
 	//TEMPORARY IMPLEMENTATION
 	public void main(IWContext iwc) throws Exception {
-	};
+	}
 	/*public void setFirstTemplatePage(Page page){
 	
 	}*/

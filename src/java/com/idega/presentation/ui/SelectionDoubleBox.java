@@ -113,7 +113,7 @@ public class SelectionDoubleBox extends InterfaceObject {
 	}
 
 	public GenericButton getRightButton() {
-		if( toTheRight == null ) toTheRight = new GenericButton("sdb_right", ">>");;
+		if( toTheRight == null ) toTheRight = new GenericButton("sdb_right", ">>");
 		return toTheRight;
 	}
 

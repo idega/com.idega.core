@@ -101,7 +101,9 @@ public class MiscUtil {
         for(int j = 0; j < i; j++)
             stringtokenizer.nextToken();
 
-        for(; stringtokenizer.hasMoreTokens(); vector.addElement(stringtokenizer.nextToken().substring(4)));
+        while (stringtokenizer.hasMoreTokens()) {
+        	vector.addElement(stringtokenizer.nextToken().substring(4));
+				}
         return vector.elements();
     }
 

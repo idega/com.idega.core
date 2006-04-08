@@ -437,7 +437,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 					if(entity == null) {
 						System.out.println("An entity was not found, id=" + pk);
 					} else if(!this.get(i).equals(((IDOEntity)_entities.get(i)).getPrimaryKey())){
-						no++;;
+						no++;
 						logError("[IDOPrimaryKeyList]: At index "+(i)+" loadSubset set entity with primary key "+pk+" but the primaryKeyList contains primary key "+this.get(i)+" at that index");
 						logError("[IDOPrimaryKeyList]: The right index would have been "+indexOf(pk));
 					} 

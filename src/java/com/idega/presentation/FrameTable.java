@@ -593,11 +593,11 @@ public class FrameTable extends Window{
 
     public void setVertical(){
       alignment=ALIGNMENT_VERTICAL;
-    };
+    }
 
     public void setHorizontal(){
       alignment=ALIGNMENT_HORIZONTAL;
-    };
+    }
 
     /**
      * Sets the span (in percent) for each of the Frame Objects. frameIndex starts at 1.
