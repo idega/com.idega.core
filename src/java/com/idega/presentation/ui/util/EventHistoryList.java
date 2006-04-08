@@ -149,7 +149,7 @@ public class EventHistoryList extends Block{
             return super.getBundleIdentifier();
     }
     
-    private class EventEntryComparator implements Comparator{
+    protected class EventEntryComparator implements Comparator{
 
         /* (non-Javadoc)
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)

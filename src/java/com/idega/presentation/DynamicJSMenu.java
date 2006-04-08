@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class DynamicJSMenu extends PresentationObject {
 
-	private class LinkMenu {
+	protected class LinkMenu {
 
 		public List getTextList() {
 			return _textList;

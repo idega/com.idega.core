@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.35 2006/02/20 11:04:34 laddi Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.36 2006/04/08 10:49:00 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -465,7 +465,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		//System.out.println();
 		ThreadContext.getInstance().removeAttribute(infoKey);
 	}
-	private class InterbaseConnectionInfo
+	protected class InterbaseConnectionInfo
 	{
 		public String datasource;
 		public int size;

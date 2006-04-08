@@ -137,7 +137,7 @@ public class ListUtil {
 		return list;
 	}
 
-  private static class EmptyList extends ArrayList{
+  protected static class EmptyList extends ArrayList{
 
 
     public boolean add(Object o){

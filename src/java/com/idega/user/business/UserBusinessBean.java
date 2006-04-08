@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.203 2006/03/27 12:20:35 sigtryggur Exp $
+ * $Id: UserBusinessBean.java,v 1.204 2006/04/08 10:49:00 laddi Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -94,10 +94,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2006/03/27 12:20:35 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2006/04/08 10:49:00 $ by $Author: laddi $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.203 $
+ * @version $Revision: 1.204 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3134,7 +3134,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	
 	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user, Group parentGroup) throws CreateException, RemoteException{
 //		get plugins and call the method
-		Collection allUserPlugins = allUserPlugins = getGroupBusiness().getUserGroupPlugins();
+		Collection allUserPlugins = getGroupBusiness().getUserGroupPlugins();
 		Iterator plugs = allUserPlugins.iterator();
 		while (plugs.hasNext()) {
 			UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();

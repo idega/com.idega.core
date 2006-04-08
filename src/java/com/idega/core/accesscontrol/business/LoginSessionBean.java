@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSessionBean.java,v 1.4 2006/03/29 13:10:16 laddi Exp $
+ * $Id: LoginSessionBean.java,v 1.5 2006/04/08 10:49:00 laddi Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.user.business.UserProperties;
 
 /**
  * 
- *  Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/04/08 10:49:00 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
     
@@ -183,7 +183,7 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
         reset();
     }
     
-    private class SessionHelper{
+    protected class SessionHelper{
         protected User user = null;
         protected List permissionGroups = null;
         protected GenericGroup primaryGroup = null;

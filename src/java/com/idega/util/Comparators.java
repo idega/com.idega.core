@@ -37,7 +37,7 @@ public class Comparators{
     return new MethodDescriptorComparator();
   }
 
-  private static class MethodDescriptorComparator implements Comparator{
+  protected static class MethodDescriptorComparator implements Comparator{
 
     public int compare(Object parm1, Object parm2) {
         MethodDescriptor methodDesc1 = (MethodDescriptor)parm1;
@@ -49,9 +49,9 @@ public class Comparators{
   }
 
 
-  private static class MethodDescriptionComparator implements Comparator{
+  protected static class MethodDescriptionComparator implements Comparator{
 
-    private MethodDescriptionComparator(IWContext iwc){
+    MethodDescriptionComparator(IWContext iwc){
 
     }
 
@@ -65,9 +65,9 @@ public class Comparators{
   }
 
 
-  private static class MethodComparator implements Comparator{
+  protected static class MethodComparator implements Comparator{
 
-    private MethodComparator(){
+    MethodComparator(){
 
     }
 

@@ -197,7 +197,7 @@ public class SingleLineItem extends Panel {
    this.fillRight = fillRight;
   }
 
-  private final class ClickAdapter extends MouseAdapter {
+  protected final class ClickAdapter extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
       if( e.getClickCount() > 1){
         isSelected = true;
