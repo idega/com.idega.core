@@ -1,5 +1,5 @@
 /*
- * $Id: IWNavigationHandlerImpl.java,v 1.3 2006/04/08 10:47:44 laddi Exp $
+ * $Id: IWNavigationHandlerImpl.java,v 1.4 2006/04/09 11:56:22 laddi Exp $
  * Created on Nov 8, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -45,8 +45,9 @@ public class IWNavigationHandlerImpl extends NavigationHandler {
 	private List _wildcardKeys = new ArrayList();
 
 	public IWNavigationHandlerImpl() {
-		if (log.isTraceEnabled())
+		if (log.isTraceEnabled()) {
 			log.trace("New NavigationHandler instance created");
+		}
 	}
 
 	public void handleNavigation(FacesContext facesContext, String fromAction, String outcome) {
@@ -91,8 +92,9 @@ public class IWNavigationHandlerImpl extends NavigationHandler {
 						casesList = (List) casesMap.get(fromViewId);
 						if (casesList != null) {
 							navigationCase = calcMatchingNavigationCase(casesList, fromAction, outcome);
-							if (navigationCase != null)
+							if (navigationCase != null) {
 								break;
+							}
 						}
 					}
 				}
@@ -100,8 +102,9 @@ public class IWNavigationHandlerImpl extends NavigationHandler {
 					casesList = (List) casesMap.get(fromViewId);
 					if (casesList != null) {
 						navigationCase = calcMatchingNavigationCase(casesList, fromAction, outcome);
-						if (navigationCase != null)
+						if (navigationCase != null) {
 							break;
+						}
 					}
 				}
 			}
@@ -166,16 +169,16 @@ public class IWNavigationHandlerImpl extends NavigationHandler {
 	}
 
 	private List getSortedWildcardKeys() {
-		return _wildcardKeys;
+		return this._wildcardKeys;
 	}
 
 	private Map getNavigationCases(FacesContext facesContext) {
 		ExternalContext externalContext = facesContext.getExternalContext();
 		RuntimeConfig runtimeConfig = RuntimeConfig.getCurrentInstance(externalContext);
 
-		if (_navigationCases == null || runtimeConfig.isNavigationRulesChanged()) {
+		if (this._navigationCases == null || runtimeConfig.isNavigationRulesChanged()) {
 			synchronized (this) {
-				if (_navigationCases == null || runtimeConfig.isNavigationRulesChanged()) {
+				if (this._navigationCases == null || runtimeConfig.isNavigationRulesChanged()) {
 					Collection rules = runtimeConfig.getNavigationRules();
 					int rulesSize = rules.size();
 					Map cases = new HashMap(HashMapUtils.calcCapacity(rulesSize));
@@ -213,15 +216,15 @@ public class IWNavigationHandlerImpl extends NavigationHandler {
 						// gives us the peace of mind that some good optimizing compiler
 						// will not rearrange the execution of the assignment to an
 						// earlier time, before all init code completes
-						_navigationCases = cases;
-						_wildcardKeys = wildcardKeys;
+						this._navigationCases = cases;
+						this._wildcardKeys = wildcardKeys;
 
 						runtimeConfig.setNavigationRulesChanged(false);
 					}
 				}
 			}
 		}
-		return _navigationCases;
+		return this._navigationCases;
 	}
 
 	protected static final class KeyComparator implements Comparator {

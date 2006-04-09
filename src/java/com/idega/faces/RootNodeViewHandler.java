@@ -45,7 +45,7 @@ public class RootNodeViewHandler extends CbpViewHandler{// extends CbpViewHandle
 	}
 
 	protected ViewHandler getParentViewHandler(){
-		return parentViewHandler;
+		return this.parentViewHandler;
 	}
 	
 	protected void setParentViewHandler(ViewHandler viewHandler){

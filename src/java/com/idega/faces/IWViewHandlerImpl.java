@@ -1,5 +1,5 @@
 /*
- * $Id: IWViewHandlerImpl.java,v 1.8 2005/12/07 21:38:59 tryggvil Exp $
+ * $Id: IWViewHandlerImpl.java,v 1.9 2006/04/09 11:56:22 laddi Exp $
  * Created on 12.3.2004 by  tryggvil in project smile
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.util.FacesUtil;
  * 
  * Copyright (C) idega software 2004<br>
  * 
- * Last modified: $Date: 2005/12/07 21:38:59 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/04/09 11:56:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class IWViewHandlerImpl extends ViewHandler{
 	
@@ -84,9 +84,9 @@ public class IWViewHandlerImpl extends ViewHandler{
 		//This updates the viewhandler Instance that the root viewnode has.
 		// the ViewHandler before this is just the system ViewHandler
 		
-		viewManager = ViewManager.getInstance(iwma);
+		this.viewManager = ViewManager.getInstance(iwma);
 		//viewManager.initializeStandardViews(new RootViewHandler(parentViewHandler));
-		ViewNode root = viewManager.getApplicationRoot();
+		ViewNode root = this.viewManager.getApplicationRoot();
 		DefaultViewNode dRoot = (DefaultViewNode)root;
 		dRoot.setViewHandler(new RootNodeViewHandler(this.getParentViewHandler()));
 	}
@@ -160,7 +160,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 					//	}
 					//}
 					//else{
-						return jspViewHandler;
+						return this.jspViewHandler;
 					//}
 				}
 				else{
@@ -398,7 +398,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 * @return Returns the defaultViewHandler.
 	 */
 	public ViewHandler getParentViewHandler() {
-		return parentViewHandler;
+		return this.parentViewHandler;
 	}
 	/**
 	 * @param defaultViewHandler The defaultViewHandler to set.
@@ -412,7 +412,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 * @return Returns the viewManager.
 	 */
 	protected ViewManager getViewManager() {
-		return viewManager;
+		return this.viewManager;
 	}
 	
 	

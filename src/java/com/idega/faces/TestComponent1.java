@@ -25,22 +25,22 @@ public class TestComponent1 extends IWBaseComponent {
 	private Table table;
 	
 	public TestComponent1(){
-			table = new Table(2,3);
-			add(table);
-			table.setBorder(2);
+			this.table = new Table(2,3);
+			add(this.table);
+			this.table.setBorder(2);
 			
 			Text t1 = new Text("Hello from idegaWeb");
 			t1.setFontColor("red");
-			table.add(t1,2,2);
+			this.table.add(t1,2,2);
 			//Text t2 = new Text("idegaWeb Text2");
 			//t2.setFontColor("blue");	
 			//table.add(t2,2,3);
 			
 			IWControlCenter cs = new IWControlCenter();
-			table.add(cs,2,1);
+			this.table.add(cs,2,1);
 			
 			Image image = new Image("/smile/idegaweb/bundles/com.idega.core.bundle/resources/en.locale/login/header.jpg");
-			table.add(image,1,1);
+			this.table.add(image,1,1);
 			
 			/*
 			News news = new News();
@@ -61,7 +61,7 @@ public class TestComponent1 extends IWBaseComponent {
 	
 	
 	public void addToTable(UIComponent component){
-		table.add(component,2,3);
+		this.table.add(component,2,3);
 	}
 	
 }

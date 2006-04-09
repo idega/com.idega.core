@@ -1,5 +1,5 @@
 /*
- * $Id: ViewHandlerWrapper.java,v 1.1 2004/10/25 14:48:52 tryggvil Exp $
+ * $Id: ViewHandlerWrapper.java,v 1.2 2006/04/09 11:56:22 laddi Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import javax.faces.context.FacesContext;
  * This is convenient to override parts of the viewhandler methods.
  * 
  * 
- *  Last modified: $Date: 2004/10/25 14:48:52 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 11:56:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ViewHandlerWrapper extends ViewHandler {
 
@@ -40,7 +40,7 @@ public class ViewHandlerWrapper extends ViewHandler {
 	 * @return Returns the defaultViewHandler.
 	 */
 	public ViewHandler getParentViewHandler() {
-		return parentViewHandler;
+		return this.parentViewHandler;
 	}
 	/**
 	 * @param defaultViewHandler The defaultViewHandler to set.

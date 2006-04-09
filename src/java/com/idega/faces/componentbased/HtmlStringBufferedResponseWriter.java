@@ -1,5 +1,5 @@
 /*
- * $Id: HtmlStringBufferedResponseWriter.java,v 1.2 2006/02/28 14:48:35 tryggvil Exp $
+ * $Id: HtmlStringBufferedResponseWriter.java,v 1.3 2006/04/09 11:56:22 laddi Exp $
  * Created on 24.10.2005 in project com.idega.faces
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import org.apache.myfaces.renderkit.html.HtmlResponseWriterImpl;
  * Class used by the CbpViewHandler to buffer out the written content to a string.<br/>
  * This is done so the state management parrameters can be rewritten when the page has rendered.
  * </p>
- *  Last modified: $Date: 2006/02/28 14:48:35 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 11:56:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class HtmlStringBufferedResponseWriter extends HtmlResponseWriterImpl {
 
@@ -44,7 +44,7 @@ public class HtmlStringBufferedResponseWriter extends HtmlResponseWriterImpl {
 	}
 	
 	public StringWriter getStringWriter(){
-		return stringWriter;
+		return this.stringWriter;
 	}
 	
 	public void setStringWriter(StringWriter writer){
@@ -56,7 +56,7 @@ public class HtmlStringBufferedResponseWriter extends HtmlResponseWriterImpl {
 	 * @return Returns the realResponseWriter.
 	 */
 	public ResponseWriter getRealResponseWriter() {
-		return realResponseWriter;
+		return this.realResponseWriter;
 	}
 
 	

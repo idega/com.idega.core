@@ -29,7 +29,7 @@ public class PageWrapper implements Page{
 	 * @see net.sourceforge.smile.cbp.Page#init(javax.faces.context.FacesContext, javax.faces.component.UIComponent)
 	 */
 	public void init(FacesContext ctx, UIComponent root) {
-		root.getChildren().add(child);
+		root.getChildren().add(this.child);
 	}
 	
 	

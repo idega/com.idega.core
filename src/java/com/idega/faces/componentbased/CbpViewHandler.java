@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.1 2005/11/15 23:57:59 tryggvil Exp $
+ * $Id: CbpViewHandler.java,v 1.2 2006/04/09 11:56:22 laddi Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2005/11/15 23:57:59 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/04/09 11:56:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class CbpViewHandler extends ViewHandler {
 
@@ -108,7 +108,9 @@ public class CbpViewHandler extends ViewHandler {
 	
 	public void writeOutResponseAndClientState(FacesContext facesContext) throws JspException
 	    {
-	        if (log.isTraceEnabled()) log.trace("entering ViewTag.doAfterBody");
+	        if (log.isTraceEnabled()) {
+						log.trace("entering ViewTag.doAfterBody");
+					}
 	        try
 	        {
 	            //BodyContent bodyContent = getBodyContent();
@@ -201,8 +203,10 @@ public class CbpViewHandler extends ViewHandler {
 				}
 	            
 	        }
-	        if (log.isTraceEnabled()) log.trace("leaving ViewTag.doAfterBody");
-	        //return super.doAfterBody();
+	        if (log.isTraceEnabled()) {
+						log.trace("leaving ViewTag.doAfterBody");
+						//return super.doAfterBody();
+					}
 	    }
 
 	

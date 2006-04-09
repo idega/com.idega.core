@@ -57,7 +57,7 @@ public class BaseRenderKit extends RenderKit {
 	 * @return
 	 */
 	public ResponseWriter createResponseWriter(Writer arg0, String arg1, String arg2) {
-		return backingRenderKit.createResponseWriter(arg0, arg1, arg2);
+		return this.backingRenderKit.createResponseWriter(arg0, arg1, arg2);
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -72,7 +72,7 @@ public class BaseRenderKit extends RenderKit {
 	 */
 	public Renderer getRenderer(String family,String rendererType) {
 		//Try first to get the renderer from the backingRenderKit
-		Renderer renderer = backingRenderKit.getRenderer(family,rendererType);
+		Renderer renderer = this.backingRenderKit.getRenderer(family,rendererType);
 		if(renderer==null){
 			return (Renderer)getRendererMap().get(key(family,rendererType));
 		}
@@ -84,23 +84,23 @@ public class BaseRenderKit extends RenderKit {
 	 * @return
 	 */
 	public ResponseStateManager getResponseStateManager() {
-		return backingRenderKit.getResponseStateManager();
+		return this.backingRenderKit.getResponseStateManager();
 	}
 
 	
 	private Map renderers;
 	private Map getRendererMap(){
-		if(renderers==null){
-			renderers = new HashMap();
+		if(this.renderers==null){
+			this.renderers = new HashMap();
 		}
-		return renderers;
+		return this.renderers;
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.render.RenderKit#createResponseStream(java.io.OutputStream)
 	 */
 	public ResponseStream createResponseStream(OutputStream out) {
-		return backingRenderKit.createResponseStream(out);
+		return this.backingRenderKit.createResponseStream(out);
 	}
 	
 	
