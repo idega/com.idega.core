@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.63 2006/03/29 13:10:16 laddi Exp $
+ * $Id: LoginBusinessBean.java,v 1.64 2006/04/09 12:13:20 laddi Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -61,11 +61,11 @@ import com.idega.util.RequestUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.63 $
+ * @version $Revision: 1.64 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -306,8 +306,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 			if (_logOnInfo != null) {
 				LoginDBHandler.recordLogout(_logOnInfo.getLoginRecord());
 			}
-			else
+			else {
 				return false;
+			}
 			return true;
 		}
 		catch (Exception e) {
@@ -847,9 +848,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 			com.idega.user.business.UserBusiness userbusiness = getUserBusiness(iwac);
 			com.idega.user.data.User newUser = com.idega.user.util.Converter.convertToNewUser(user);
 			Collection userGroups = userbusiness.getUserGroups(newUser);
-			if (userGroups != null)
+			if (userGroups != null) {
 				groups = ListUtil.convertCollectionToList(userGroups);
 			// New user system end
+			}
 		}
 		if (groups != null) {
 			// LoginBusinessBean.setPermissionGroups(iwc, groups);
@@ -1218,12 +1220,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 		String first = "";
 		String middle = "";
 		String last = "";
-		if (tok.hasMoreTokens())
+		if (tok.hasMoreTokens()) {
 			first = tok.nextToken();
-		if (tok.hasMoreTokens())
+		}
+		if (tok.hasMoreTokens()) {
 			middle = tok.nextToken();
-		if (tok.hasMoreTokens())
+		}
+		if (tok.hasMoreTokens()) {
 			last = tok.nextToken();
+		}
 		else {
 			last = middle;
 			middle = "";
@@ -1234,12 +1239,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 			String login = preferredUserName;
 			String pass = preferredPassword;
 			if (user != null) {
-				if (email != null && email.length() > 0)
+				if (email != null && email.length() > 0) {
 					userBusiness.addNewUserEmail(user.getID(), email);
-				if (login == null)
+				}
+				if (login == null) {
 					login = LoginCreator.createLogin(user.getName());
-				if (pass == null)
+				}
+				if (pass == null) {
 					pass = LoginCreator.createPasswd(8);
+				}
 				LoginDBHandler.createLogin(user.getID(), login, pass);
 				loginContext = new LoginContext(user, login, pass);
 			}
@@ -1272,8 +1280,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 		if (loginTable != null) {
 			returner = logIn(request, loginTable);
-			if (returner)
+			if (returner) {
 				onLoginSuccessful(request);
+			}
 		}
 
 		return returner;
@@ -1390,8 +1399,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 			if (oldUser.equals(user)) {
 				return true;
 			}
-			if (reserveCurrentUser)
+			if (reserveCurrentUser) {
 				reserveLoginInformation(request);
+			}
 			storeUserAndGroupInformationInSession(session, user);
 			LoginRecord loginRecord = LoginDBHandler.recordLogin(loginTable, request.getRemoteAddr(), user.getID());
 			storeLoggedOnInfoInSession(session, loginTable, login, user, loginRecord, LOGINTYPE_AS_ANOTHER_USER);
@@ -1458,8 +1468,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 				}
 				
 				returner = logIn(request, lTable);
-				if (returner)
+				if (returner) {
 					onLoginSuccessful(request);
+				}
 			}
 			else {
 				try {
@@ -1494,8 +1505,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 			LoginTable lTable = this.chooseLoginRecord(request, logins, user);
 			if (lTable != null) {
 				returner = logIn(request, lTable);
-				if (returner)
+				if (returner) {
 					onLoginSuccessful(request);
+				}
 			}
 			else {
 				try {

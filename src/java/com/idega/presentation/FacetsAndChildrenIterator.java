@@ -1,5 +1,5 @@
 /*
- * $Id: FacetsAndChildrenIterator.java,v 1.3 2006/02/22 20:52:48 laddi Exp $
+ * $Id: FacetsAndChildrenIterator.java,v 1.4 2006/04/09 12:13:13 laddi Exp $
  * Created in 2004 by Tryggvi Larusson
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import java.util.NoSuchElementException;
 /**
  * Class to override the standard iterator for the method getFacetsAndChildren() in UIComponent
  * 
- * Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 class FacetsAndChildrenIterator
         implements Iterator
@@ -31,8 +31,8 @@ class FacetsAndChildrenIterator
     
     FacetsAndChildrenIterator(Map facetMap, List childrenList)
     {
-        _facetsIterator   = facetMap != null ? facetMap.values().iterator() : null;
-        _childrenIterator = childrenList != null ? childrenList.iterator() : null;
+        this._facetsIterator   = facetMap != null ? facetMap.values().iterator() : null;
+        this._childrenIterator = childrenList != null ? childrenList.iterator() : null;
     }
 
     public boolean hasNext()
@@ -40,8 +40,8 @@ class FacetsAndChildrenIterator
     		boolean facetsHasNext = false;
     		boolean childrenHasNext=false;
     		
-    		facetsHasNext = (_facetsIterator != null && _facetsIterator.hasNext());
-    		childrenHasNext = (_childrenIterator != null && _childrenIterator.hasNext());
+    		facetsHasNext = (this._facetsIterator != null && this._facetsIterator.hasNext());
+    		childrenHasNext = (this._childrenIterator != null && this._childrenIterator.hasNext());
     		
     		return ( facetsHasNext || childrenHasNext );
     }
@@ -51,17 +51,17 @@ class FacetsAndChildrenIterator
 		boolean facetsHasNext = false;
 		boolean childrenHasNext=false;
 		
-		facetsHasNext = (_facetsIterator != null && _facetsIterator.hasNext());
-		childrenHasNext = (_childrenIterator != null && _childrenIterator.hasNext());
+		facetsHasNext = (this._facetsIterator != null && this._facetsIterator.hasNext());
+		childrenHasNext = (this._childrenIterator != null && this._childrenIterator.hasNext());
     	
         if (facetsHasNext)
         {
-            return _facetsIterator.next();
+            return this._facetsIterator.next();
         }
         else if (childrenHasNext)
         {
         		try{
-        			return _childrenIterator.next();
+        			return this._childrenIterator.next();
         
         		}
         		catch(NoSuchElementException nse){

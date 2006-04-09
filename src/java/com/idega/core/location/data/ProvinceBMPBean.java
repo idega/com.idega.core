@@ -63,7 +63,9 @@ public class ProvinceBMPBean extends GenericEntity implements Province {
     if(!provinces.isEmpty()){
       return (Integer)provinces.iterator().next();
     }
-    else throw new FinderException("Province was not found");
+		else {
+			throw new FinderException("Province was not found");
+		}
   }
 
 }

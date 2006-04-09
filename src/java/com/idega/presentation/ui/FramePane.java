@@ -72,29 +72,29 @@ public FramePane(){
 
 public FramePane(String headerText){
 
-  table = new Table(3,3);
+  this.table = new Table(3,3);
 
   //table.setWidth("200");
 
   //table.setHeight("200");
 
-  table.setCellpadding(0);
+  this.table.setCellpadding(0);
 
-  table.setCellspacing(0);
+  this.table.setCellspacing(0);
 
-  table.setAlignment(2,2,"center");
+  this.table.setAlignment(2,2,"center");
 
-  table.setVerticalAlignment(2,2,"middle");
+  this.table.setVerticalAlignment(2,2,"middle");
 
-  super.add(table);
+  super.add(this.table);
 
-  table.setHeight(1,"24");
+  this.table.setHeight(1,"24");
 
-  table.setHeight(3,"10");
+  this.table.setHeight(3,"10");
 
-  table.setWidth(1,"10");
+  this.table.setWidth(1,"10");
 
-  table.setWidth(3,"10");
+  this.table.setWidth(3,"10");
 
   //Image topRight=new Image(imagePrefix+"topright.gif");
 
@@ -112,7 +112,7 @@ public FramePane(String headerText){
 
   //table.add(bottomLeft,1,3);
 
-  table.add(Text.emptyString(),1,3);
+  this.table.add(Text.emptyString(),1,3);
 
   //table.setBackgroundImage(1,3,bottomLeft);
 
@@ -122,43 +122,43 @@ public FramePane(String headerText){
 
   //table.setBackgroundImage(3,3,bottomRight);
 
-  table.add(Text.emptyString(),3,3);
+  this.table.add(Text.emptyString(),3,3);
 
   //Image Right=new Image(imagePrefix+"righttiler.gif");
 
   //table.setBackgroundImage(3,2,Right);
 
-  table.add(Text.emptyString(),3,2);
+  this.table.add(Text.emptyString(),3,2);
 
   //Image Left=new Image(imagePrefix+"lefttiler.gif");
 
   //table.setBackgroundImage(1,2,Left);
 
-  table.add(Text.emptyString(),1,2);
+  this.table.add(Text.emptyString(),1,2);
 
   //Image Bottom=new Image(imagePrefix+"bottomtiler.gif");
 
   //table.setBackgroundImage(2,3,Bottom);
 
-  table.add(Text.emptyString(),2,3);
+  this.table.add(Text.emptyString(),2,3);
 
-  InnerTable = new Table(2,1);
+  this.InnerTable = new Table(2,1);
 
-  InnerTable.setHeight("24");
+  this.InnerTable.setHeight("24");
 
-  InnerTable.setWidth(2,1,"100%");
+  this.InnerTable.setWidth(2,1,"100%");
 
-  InnerTable.setCellpadding(0);
+  this.InnerTable.setCellpadding(0);
 
-  InnerTable.setCellspacing(0);
+  this.InnerTable.setCellspacing(0);
 
-  InnerTable.add(headerText,1,1);
+  this.InnerTable.add(headerText,1,1);
 
   //Image Top=new Image(imagePrefix+"toptiler.gif");
 
   //InnerTable.setBackgroundImage(2,1,Top);
 
-  table.add(InnerTable,2,1);
+  this.table.add(this.InnerTable,2,1);
 
 
 
@@ -194,21 +194,21 @@ public void main(IWContext iwc){
 
   }
 
-  table.add(topRight,3,1);
+  this.table.add(topRight,3,1);
 
-  table.add(topLeft,1,1);
+  this.table.add(topLeft,1,1);
 
-  table.setBackgroundImage(1,3,bottomLeft);
+  this.table.setBackgroundImage(1,3,bottomLeft);
 
-  table.setBackgroundImage(3,3,bottomRight);
+  this.table.setBackgroundImage(3,3,bottomRight);
 
-  table.setBackgroundImage(3,2,Right);
+  this.table.setBackgroundImage(3,2,Right);
 
-  table.setBackgroundImage(1,2,Left);
+  this.table.setBackgroundImage(1,2,Left);
 
-  table.setBackgroundImage(2,3,Bottom);
+  this.table.setBackgroundImage(2,3,Bottom);
 
-  InnerTable.setBackgroundImage(2,1,Top);
+  this.InnerTable.setBackgroundImage(2,1,Top);
 
 }
 
@@ -216,7 +216,7 @@ public void main(IWContext iwc){
 
 public void add(PresentationObject obj){
 
-  table.add(obj,2,2);
+  this.table.add(obj,2,2);
 
 }
 
@@ -226,7 +226,7 @@ public void add(PresentationObject obj){
 
 public void setWidth(int width){
 
-  table.setWidth(width);
+  this.table.setWidth(width);
 
 }
 
@@ -234,7 +234,7 @@ public void setWidth(int width){
 
 public void setHeight(int height){
 
-  table.setHeight(height);
+  this.table.setHeight(height);
 
 }
 

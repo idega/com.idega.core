@@ -54,7 +54,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 	private Map _userStatesMap;
 
 	public void setHistoryID(int historyId) {
-		_historyID = historyId;
+		this._historyID = historyId;
 	}
 
 	public void newState() {
@@ -62,7 +62,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 	}
 
 	public void increaseHistoryID() {
-		_historyID++;
+		this._historyID++;
 	}
 
 	//  public IWPresentationState getStateFor(ICObjectInstance instance){
@@ -131,8 +131,8 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 		//      stateMap = new Hashtable();
 		//      getUserContext().setSessionAttribute(mapKey,stateMap);
 		//    }
-		if (_userStatesMap == null) {
-			_userStatesMap = new Hashtable();
+		if (this._userStatesMap == null) {
+			this._userStatesMap = new Hashtable();
 		}
 		//    if(_stateMap != null){
 		//      System.out.println("StateMachine: _stateMap is "+_stateMap);
@@ -145,7 +145,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 		//    } else {
 		//      System.out.println("StateMachine: _stateMap is null");
 		//    }
-		return _userStatesMap;
+		return this._userStatesMap;
 	}
 
 	/**
@@ -228,8 +228,9 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 		Iterator iterator = coll.iterator();
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			if (object instanceof ChangeListener)
+			if (object instanceof ChangeListener) {
 				changeListeners.add(object);
+			}
 		}
 		return changeListeners;
 	}
@@ -242,8 +243,9 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 		Iterator iterator = coll.iterator();
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			if (object instanceof IWControlFramePresentationState)
+			if (object instanceof IWControlFramePresentationState) {
 				controllers.add(object);
+			}
 		}
 		return controllers;
 	}
@@ -258,8 +260,9 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 			while (iterator.hasNext()) {
 				Object object = iterator.next();
 				if (stateClassType.isAssignableFrom(object.getClass())
-						&& ((IWPresentationState) object).getCompoundId().equals(compoundId))
+						&& ((IWPresentationState) object).getCompoundId().equals(compoundId)) {
 					return (IWPresentationState) object;
+				}
 			}
 		}
 		//    System.out.println("IWPresentationState - STATE = "+state);
@@ -312,8 +315,9 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 			Iterator iterator = coll.iterator();
 			while (iterator.hasNext()) {
 				Object object = iterator.next();
-				if (stateClassType.isAssignableFrom(object.getClass()))
+				if (stateClassType.isAssignableFrom(object.getClass())) {
 					return (IWPresentationState) object;
+				}
 			}
 		}
 		//    System.out.println("IWPresentationState - STATE = "+state);

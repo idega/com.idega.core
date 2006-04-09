@@ -67,12 +67,14 @@ public class PersonalIDFormatter {
 		StringBuffer sb = new StringBuffer();
 
 		for (int i=0; i<personalID.length(); i++) {
-  			 if (Character.isDigit(personalID.charAt(i)))
-       			sb.append(personalID.charAt(i));
+  			 if (Character.isDigit(personalID.charAt(i))) {
+					sb.append(personalID.charAt(i));
+				}
 		}
 		sb.insert(0,"%");
-		if(trailingWildCard)
+		if(trailingWildCard) {
 			sb.append("%");
+		}
 		//System.err.println("changing "+s+" to "+sb.toString());
 		return sb.toString();
 		

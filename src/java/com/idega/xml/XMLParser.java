@@ -1,5 +1,5 @@
 /*
- * $Id: XMLParser.java,v 1.6 2005/12/16 17:00:41 tryggvil Exp $
+ * $Id: XMLParser.java,v 1.7 2006/04/09 12:13:14 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -34,14 +34,14 @@ private SAXBuilder _builder = null;
    *
    */
   public XMLParser() {
-    _builder = new SAXBuilder();
+    this._builder = new SAXBuilder();
   }
 
   /**
    *
    */
   public XMLParser(boolean verify) {
-    _builder = new SAXBuilder(verify);
+    this._builder = new SAXBuilder(verify);
   }
 
   /**
@@ -50,7 +50,7 @@ private SAXBuilder _builder = null;
   public XMLDocument parse(String URI) throws XMLException {
     Document doc = null;
     try {
-      doc = _builder.build(URI);
+      doc = this._builder.build(URI);
     }
     catch(JDOMException e) {
       throw new XMLException(e.getMessage());
@@ -71,7 +71,7 @@ private SAXBuilder _builder = null;
   public XMLDocument parse(InputStream stream) throws XMLException {
     Document doc = null;
     try {
-      doc = _builder.build(stream);
+      doc = this._builder.build(stream);
     }
     catch(JDOMException e) {
       throw new XMLException(e.getMessage());
@@ -92,7 +92,7 @@ private SAXBuilder _builder = null;
   public XMLDocument parse(StringReader reader) throws XMLException {
     Document doc = null;
     try {
-      doc = _builder.build(reader);
+      doc = this._builder.build(reader);
     }
     catch(JDOMException e) {
       throw new XMLException(e.getMessage());
@@ -113,7 +113,7 @@ private SAXBuilder _builder = null;
   public XMLDocument parse(File file) throws XMLException {
     Document doc = null;
     try {
-      doc = _builder.build(file);
+      doc = this._builder.build(file);
     }
     catch(JDOMException e) {
     	e.getCause().printStackTrace();

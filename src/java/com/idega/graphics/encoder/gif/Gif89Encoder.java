@@ -120,7 +120,7 @@ public class Gif89Encoder {
 	 */
 	public Gif89Encoder() {
 		// empty color table puts us into "palette autodetect" mode
-		colorTable = new GifColorTable();
+		this.colorTable = new GifColorTable();
 	}
 
 	// ----------------------------------------------------------------------------
@@ -152,7 +152,7 @@ public class Gif89Encoder {
 	 *          that's the limit for a GIF.
 	 */
 	public Gif89Encoder(Color[] colors) {
-		colorTable = new GifColorTable(colors);
+		this.colorTable = new GifColorTable(colors);
 	}
 
 	// ----------------------------------------------------------------------------
@@ -184,7 +184,7 @@ public class Gif89Encoder {
 	 * @return Number of frame items.
 	 */
 	public int getFrameCount() {
-		return vFrames.size();
+		return this.vFrames.size();
 	}
 
 	// ----------------------------------------------------------------------------
@@ -197,7 +197,7 @@ public class Gif89Encoder {
 	 *         frame).
 	 */
 	public Gif89Frame getFrameAt(int index) {
-		return isOk(index) ? (Gif89Frame) vFrames.elementAt(index) : null;
+		return isOk(index) ? (Gif89Frame) this.vFrames.elementAt(index) : null;
 	}
 
 	// ----------------------------------------------------------------------------
@@ -217,7 +217,7 @@ public class Gif89Encoder {
 	 */
 	public void addFrame(Gif89Frame gf) throws IOException {
 		accommodateFrame(gf);
-		vFrames.addElement(gf);
+		this.vFrames.addElement(gf);
 	}
 
 	// ----------------------------------------------------------------------------
@@ -273,7 +273,7 @@ public class Gif89Encoder {
 	 */
 	public void insertFrame(int index, Gif89Frame gf) throws IOException {
 		accommodateFrame(gf);
-		vFrames.insertElementAt(gf, index);
+		this.vFrames.insertElementAt(gf, index);
 	}
 
 	// ----------------------------------------------------------------------------
@@ -285,11 +285,11 @@ public class Gif89Encoder {
 	 *          A value of -1 turns off transparency. (Default: -1)
 	 */
 	public void setTransparentIndex(int index) {
-		colorTable.setTransparent(index);
+		this.colorTable.setTransparent(index);
 	}
 
 	public void setTransparentColor(Color color) {
-		colorTable.setTransparent(color);
+		this.colorTable.setTransparent(color);
 	}
 
 	// ----------------------------------------------------------------------------
@@ -303,8 +303,8 @@ public class Gif89Encoder {
 	 * @see Gif89Frame#setPosition
 	 */
 	public void setLogicalDisplay(Dimension dim, int background) {
-		dispDim = new Dimension(dim);
-		bgIndex = background;
+		this.dispDim = new Dimension(dim);
+		this.bgIndex = background;
 	}
 
 	// ----------------------------------------------------------------------------
@@ -318,7 +318,7 @@ public class Gif89Encoder {
 	 * @uml.property name="loopCount"
 	 */
 	public void setLoopCount(int count) {
-		loopCount = count;
+		this.loopCount = count;
 	}
 
 	// ----------------------------------------------------------------------------
@@ -329,7 +329,7 @@ public class Gif89Encoder {
 	 *          String containing ASCII comments.
 	 */
 	public void setComments(String comments) {
-		theComments = comments;
+		this.theComments = comments;
 	}
 
 	// ----------------------------------------------------------------------------
@@ -343,8 +343,9 @@ public class Gif89Encoder {
 	 *          Interframe interval in centiseconds.
 	 */
 	public void setUniformDelay(int interval) {
-		for (int i = 0; i < vFrames.size(); ++i)
-			((Gif89Frame) vFrames.elementAt(i)).setDelay(interval);
+		for (int i = 0; i < this.vFrames.size(); ++i) {
+			((Gif89Frame) this.vFrames.elementAt(i)).setDelay(interval);
+		}
 	}
 
 	// ----------------------------------------------------------------------------
@@ -365,22 +366,25 @@ public class Gif89Encoder {
 		boolean is_sequence = nframes > 1;
 
 		// N.B. must be called before writing screen descriptor
-		colorTable.closePixelProcessing();
+		this.colorTable.closePixelProcessing();
 
 		// write GIF HEADER
 		Put.ascii("GIF89a", out);
 
 		// write global blocks
 		writeLogicalScreenDescriptor(out);
-		colorTable.encode(out);
-		if (is_sequence && loopCount != 1)
+		this.colorTable.encode(out);
+		if (is_sequence && this.loopCount != 1) {
 			writeNetscapeExtension(out);
-		if (theComments != null && theComments.length() > 0)
+		}
+		if (this.theComments != null && this.theComments.length() > 0) {
 			writeCommentExtension(out);
+		}
 
 		// write out the control and rendering data for each frame
-		for (int i = 0; i < nframes; ++i)
-			((Gif89Frame) vFrames.elementAt(i)).encode(out, is_sequence, colorTable.getDepth(), colorTable.getTransparent());
+		for (int i = 0; i < nframes; ++i) {
+			((Gif89Frame) this.vFrames.elementAt(i)).encode(out, is_sequence, this.colorTable.getDepth(), this.colorTable.getTransparent());
+		}
 
 		// write GIF TRAILER
 		out.write(';');
@@ -412,15 +416,17 @@ public class Gif89Encoder {
 			Toolkit tk = Toolkit.getDefaultToolkit();
 			OutputStream out = new BufferedOutputStream(new FileOutputStream("gif89out.gif"));
 
-			if (args[0].toUpperCase().endsWith(".JPG"))
+			if (args[0].toUpperCase().endsWith(".JPG")) {
 				new Gif89Encoder(tk.getImage(args[0])).encode(out);
+			}
 			else {
 				BufferedReader in = new BufferedReader(new FileReader(args[0]));
 				Gif89Encoder ge = new Gif89Encoder();
 
 				String line;
-				while ((line = in.readLine()) != null)
+				while ((line = in.readLine()) != null) {
 					ge.addFrame(tk.getImage(line.trim()));
+				}
 				ge.setLoopCount(0); // let's loop indefinitely
 				ge.encode(out);
 
@@ -439,25 +445,25 @@ public class Gif89Encoder {
 
 	// ----------------------------------------------------------------------------
 	private void accommodateFrame(Gif89Frame gf) throws IOException {
-		dispDim.width = Math.max(dispDim.width, gf.getWidth());
-		dispDim.height = Math.max(dispDim.height, gf.getHeight());
-		colorTable.processPixels(gf);
+		this.dispDim.width = Math.max(this.dispDim.width, gf.getWidth());
+		this.dispDim.height = Math.max(this.dispDim.height, gf.getHeight());
+		this.colorTable.processPixels(gf);
 	}
 
 	// ----------------------------------------------------------------------------
 	private void writeLogicalScreenDescriptor(OutputStream os) throws IOException {
-		Put.leShort(dispDim.width, os);
-		Put.leShort(dispDim.height, os);
+		Put.leShort(this.dispDim.width, os);
+		Put.leShort(this.dispDim.height, os);
 
 		// write 4 fields, packed into a byte (bitfieldsize:value)
 		// global color map present? (1:1)
 		// bits per primary color less 1 (3:7)
 		// sorted color table? (1:0)
 		// bits per pixel less 1 (3:varies)
-		os.write(0xf0 | colorTable.getDepth() - 1);
+		os.write(0xf0 | this.colorTable.getDepth() - 1);
 
 		// write background color index
-		os.write(bgIndex);
+		os.write(this.bgIndex);
 
 		// Jef Poskanzer's notes on the next field, for our possible edification:
 		// Pixel aspect ratio - 1:1.
@@ -487,7 +493,7 @@ public class Gif89Encoder {
 		os.write(1); // a looping flag? dunno
 
 		// we finally write the relevent data
-		Put.leShort(loopCount > 1 ? loopCount - 1 : 0, os);
+		Put.leShort(this.loopCount > 1 ? this.loopCount - 1 : 0, os);
 
 		os.write(0); // block terminator
 	}
@@ -497,15 +503,15 @@ public class Gif89Encoder {
 		os.write('!'); // GIF Extension Introducer
 		os.write(0xfe); // Comment Extension Label
 
-		int remainder = theComments.length() % 255;
-		int nsubblocks_full = theComments.length() / 255;
+		int remainder = this.theComments.length() % 255;
+		int nsubblocks_full = this.theComments.length() / 255;
 		int nsubblocks = nsubblocks_full + (remainder > 0 ? 1 : 0);
 		int ibyte = 0;
 		for (int isb = 0; isb < nsubblocks; ++isb) {
 			int size = isb < nsubblocks_full ? 255 : remainder;
 
 			os.write(size);
-			Put.ascii(theComments.substring(ibyte, ibyte + size), os);
+			Put.ascii(this.theComments.substring(ibyte, ibyte + size), os);
 			ibyte += size;
 		}
 
@@ -514,7 +520,7 @@ public class Gif89Encoder {
 
 	// ----------------------------------------------------------------------------
 	private boolean isOk(int frame_index) {
-		return frame_index >= 0 && frame_index < vFrames.size();
+		return frame_index >= 0 && frame_index < this.vFrames.size();
 	}
 }
 
@@ -540,38 +546,39 @@ class GifColorTable {
 
 	// ----------------------------------------------------------------------------
 	GifColorTable() {
-		ciLookup = new ReverseColorMap(); // puts us into "auto-detect mode"
+		this.ciLookup = new ReverseColorMap(); // puts us into "auto-detect mode"
 	}
 
 	// ----------------------------------------------------------------------------
 	GifColorTable(Color[] colors) {
-		int n2copy = Math.min(theColors.length, colors.length);
-		for (int i = 0; i < n2copy; ++i)
-			theColors[i] = colors[i].getRGB();
+		int n2copy = Math.min(this.theColors.length, colors.length);
+		for (int i = 0; i < n2copy; ++i) {
+			this.theColors[i] = colors[i].getRGB();
+		}
 	}
 
 	// ----------------------------------------------------------------------------
 	int getDepth() {
-		return colorDepth;
+		return this.colorDepth;
 	}
 
 	// ----------------------------------------------------------------------------
 	int getTransparent() {
-		return transparentIndex;
+		return this.transparentIndex;
 	}
 
 	// ----------------------------------------------------------------------------
 	// default: -1 (no transparency)
 	void setTransparent(int color_index) {
-		transparentIndex = color_index;
+		this.transparentIndex = color_index;
 	}
 
 	// default: -1 (no transparency)
 	void setTransparent(Color color) {
 		int rgbColor = color.getRGB();
-		if (theColors != null) {
-			for (int i = 0; i < theColors.length; i++) {
-				int colorAt = theColors[i];
+		if (this.theColors != null) {
+			for (int i = 0; i < this.theColors.length; i++) {
+				int colorAt = this.theColors[i];
 				if (colorAt == rgbColor) {
 					setTransparent(i);
 				}
@@ -582,16 +589,18 @@ class GifColorTable {
 
 	// ----------------------------------------------------------------------------
 	void processPixels(Gif89Frame gf) throws IOException {
-		if (gf instanceof DirectGif89Frame)
+		if (gf instanceof DirectGif89Frame) {
 			filterPixels((DirectGif89Frame) gf);
-		else
+		}
+		else {
 			trackPixelUsage((IndexGif89Frame) gf);
+		}
 	}
 
 	// ----------------------------------------------------------------------------
 	void closePixelProcessing() // must be called before encode()
 	{
-		colorDepth = computeColorDepth(ciCount);
+		this.colorDepth = computeColorDepth(this.ciCount);
 	}
 
 	// ----------------------------------------------------------------------------
@@ -599,11 +608,11 @@ class GifColorTable {
 		// size of palette written is the smallest power of 2 that can accomdate
 		// the number of RGB colors detected (or largest color index, in case of
 		// index pixels)
-		int palette_size = 1 << colorDepth;
+		int palette_size = 1 << this.colorDepth;
 		for (int i = 0; i < palette_size; ++i) {
-			os.write(theColors[i] >> 16 & 0xff);
-			os.write(theColors[i] >> 8 & 0xff);
-			os.write(theColors[i] & 0xff);
+			os.write(this.theColors[i] >> 16 & 0xff);
+			os.write(this.theColors[i] >> 8 & 0xff);
+			os.write(this.theColors[i] & 0xff);
 		}
 	}
 
@@ -617,8 +626,9 @@ class GifColorTable {
 	// (Note: some of the logic is borrowed from Jef Poskanzer's code.)
 	// ----------------------------------------------------------------------------
 	private void filterPixels(DirectGif89Frame dgf) throws IOException {
-		if (ciLookup == null)
+		if (this.ciLookup == null) {
 			throw new IOException("RGB frames require palette autodetection");
+		}
 
 		int[] argb_pixels = (int[]) dgf.getPixelSource();
 		byte[] ci_pixels = dgf.getPixelSink();
@@ -627,39 +637,43 @@ class GifColorTable {
 			int argb = argb_pixels[i];
 
 			// handle transparency
-			if ((argb >>> 24) < 0x80) // transparent pixel?
-				if (transparentIndex == -1) // first transparent color encountered?
-					transparentIndex = ciCount; // record its index
-				else if (argb != theColors[transparentIndex]) // different pixel value?
+			if ((argb >>> 24) < 0x80) {
+				if (this.transparentIndex == -1) {
+					this.transparentIndex = this.ciCount; // record its index
+				}
+				else if (argb != this.theColors[this.transparentIndex]) // different pixel value?
 				{
 					// collapse all transparent pixels into one color index
-					ci_pixels[i] = (byte) transparentIndex;
+					ci_pixels[i] = (byte) this.transparentIndex;
 					continue; // CONTINUE - index already in table
 				}
+			}
 
 			// try to look up the index in our "reverse" color table
-			int color_index = ciLookup.getPaletteIndex(argb & 0xffffff);
+			int color_index = this.ciLookup.getPaletteIndex(argb & 0xffffff);
 
 			if (color_index == -1) // if it isn't in there yet
 			{
-				if (ciCount == 256)
+				if (this.ciCount == 256) {
 					throw new IOException("can't encode as GIF (> 256 colors)");
+				}
 
 				// store color in our accumulating palette
-				theColors[ciCount] = argb;
+				this.theColors[this.ciCount] = argb;
 
 				// store index in reverse color table
-				ciLookup.put(argb & 0xffffff, ciCount);
+				this.ciLookup.put(argb & 0xffffff, this.ciCount);
 
 				// send color index to our output array
-				ci_pixels[i] = (byte) ciCount;
+				ci_pixels[i] = (byte) this.ciCount;
 
 				// increment count of distinct color indices
-				++ciCount;
+				++this.ciCount;
 			}
-			else
+			else {
 				// we've already snagged color into our palette
 				ci_pixels[i] = (byte) color_index; // just send filtered pixel
+			}
 		}
 	}
 
@@ -667,21 +681,26 @@ class GifColorTable {
 	private void trackPixelUsage(IndexGif89Frame igf) throws IOException {
 		byte[] ci_pixels = (byte[]) igf.getPixelSource();
 		int npixels = ci_pixels.length;
-		for (int i = 0; i < npixels; ++i)
-			if (ci_pixels[i] >= ciCount)
-				ciCount = ci_pixels[i] + 1;
+		for (int i = 0; i < npixels; ++i) {
+			if (ci_pixels[i] >= this.ciCount) {
+				this.ciCount = ci_pixels[i] + 1;
+			}
+		}
 	}
 
 	// ----------------------------------------------------------------------------
 	private int computeColorDepth(int colorcount) {
 		// color depth = log-base-2 of maximum number of simultaneous colors, i.e.
 		// bits per color-index pixel
-		if (colorcount <= 2)
+		if (colorcount <= 2) {
 			return 1;
-		if (colorcount <= 4)
+		}
+		if (colorcount <= 4) {
 			return 2;
-		if (colorcount <= 16)
+		}
+		if (colorcount <= 16) {
 			return 4;
+		}
 		return 8;
 	}
 }
@@ -729,13 +748,14 @@ class ReverseColorMap {
 	int getPaletteIndex(int rgb) {
 		ColorRecord rec;
 
-		int itable = rgb % hTable.length;
-		while ((rec = hTable[itable]) != null && rec.rgb != rgb) {
-			itable = ++itable % hTable.length;
+		int itable = rgb % this.hTable.length;
+		while ((rec = this.hTable[itable]) != null && rec.rgb != rgb) {
+			itable = ++itable % this.hTable.length;
 		}
 
-		if (rec != null)
+		if (rec != null) {
 			return rec.ipalette;
+		}
 
 		return -1;
 	}
@@ -744,12 +764,12 @@ class ReverseColorMap {
 	// Assert: (1) same as above; (2) rgb key not already present
 	// ----------------------------------------------------------------------------
 	void put(int rgb, int ipalette) {
-		int itable = rgb % hTable.length;
+		int itable = rgb % this.hTable.length;
 
-		while (hTable[itable] != null) {
-			itable = ++itable % hTable.length;
+		while (this.hTable[itable] != null) {
+			itable = ++itable % this.hTable.length;
 		}
 
-		hTable[itable] = new ColorRecord(rgb, ipalette);
+		this.hTable[itable] = new ColorRecord(rgb, ipalette);
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: ResourceDescription.java,v 1.1 2005/10/03 18:24:19 thomas Exp $
+ * $Id: ResourceDescription.java,v 1.2 2006/04/09 12:13:17 laddi Exp $
  * Created on Sep 29, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,10 +13,10 @@ package com.idega.repository.data;
 /**
  *  A container that holds metadata for a resource.
  *  <p/>
- *  Last modified: $Date: 2005/10/03 18:24:19 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
  *   
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * 
  * @see com.idega.repository.data.Resource
  */
@@ -34,16 +34,16 @@ public class ResourceDescription {
 
 	
 	public boolean isEjb() {
-		return isEjb;
+		return this.isEjb;
 	}
 
 	
 	public String getProvider() {
-		return provider;
+		return this.provider;
 	}
 
 	
 	public String getSource() {
-		return source;
+		return this.source;
 	}
 }

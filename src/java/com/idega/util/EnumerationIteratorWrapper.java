@@ -20,10 +20,10 @@ public class EnumerationIteratorWrapper implements Enumeration {
 	}
 
 	public boolean hasMoreElements() {
-		return iterator.hasNext();
+		return this.iterator.hasNext();
 	}
 
 	public Object nextElement() {
-		return iterator.next();
+		return this.iterator.next();
 	}
 }

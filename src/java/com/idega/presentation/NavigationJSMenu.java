@@ -49,22 +49,22 @@ public class NavigationJSMenu extends Block {
 	public void main(IWContext iwc) throws Exception {
 		if (!iwc.isInEditMode()) {
 			BuilderService bservice = getBuilderService(iwc);
-			if (rootNode == -1) {
-				rootNode = bservice.getRootPageId();
+			if (this.rootNode == -1) {
+				this.rootNode = bservice.getRootPageId();
 			}
 			
-			getParentPage().setStyleDefinition("A.subMenu", linkStyle);
-			getParentPage().setStyleDefinition("A.subMenu:hover", linkHoverStyle);
+			getParentPage().setStyleDefinition("A.subMenu", this.linkStyle);
+			getParentPage().setStyleDefinition("A.subMenu:hover", this.linkHoverStyle);
 
 			StringBuffer buffer = new StringBuffer();
-			buffer.append("var initX  = ").append(xPosition).append(";").append("\n");
-			buffer.append("var initY  = ").append(yPosition).append(";").append("\n");
-			buffer.append("var backColor  = '").append(backgroundColor).append("';").append("\n");
-			buffer.append("var borderColor  = '").append(borderColor).append("';").append("\n");
-			buffer.append("var borderSize  = '").append(borderWidth).append("';").append("\n");
-			buffer.append("var itemHeight  = ").append(itemHeight).append(";").append("\n");
-			buffer.append("var xOverlap  = ").append(xOffset).append(";").append("\n");
-			buffer.append("var yOverlap  = ").append(yOffset).append(";").append("\n\n");
+			buffer.append("var initX  = ").append(this.xPosition).append(";").append("\n");
+			buffer.append("var initY  = ").append(this.yPosition).append(";").append("\n");
+			buffer.append("var backColor  = '").append(this.backgroundColor).append("';").append("\n");
+			buffer.append("var borderColor  = '").append(this.borderColor).append("';").append("\n");
+			buffer.append("var borderSize  = '").append(this.borderWidth).append("';").append("\n");
+			buffer.append("var itemHeight  = ").append(this.itemHeight).append(";").append("\n");
+			buffer.append("var xOverlap  = ").append(this.xOffset).append(";").append("\n");
+			buffer.append("var yOverlap  = ").append(this.yOffset).append(";").append("\n\n");
 			buffer.append("menuContent = new Array ();\n\n");
 			
 			int userId = -1;
@@ -72,9 +72,9 @@ public class NavigationJSMenu extends Block {
 				userId = iwc.getCurrentUserId();
 			}
 			catch(NotLoggedOnException nle){}
-			ICTreeNode node = bservice.getPageTree(rootNode,userId);
+			ICTreeNode node = bservice.getPageTree(this.rootNode,userId);
 			Iterator iterator = node.getChildrenIterator();
-			row = 0;
+			this.row = 0;
 			int parentRow = -1;
 			while (iterator.hasNext()) {
 				parentRow = -1;
@@ -95,27 +95,35 @@ public class NavigationJSMenu extends Block {
 		int subSubRow = 0;
 		if (parent.getChildCount() > 0) {
 			BuilderService bs = getBuilderService(iwc);
-			buffer.append("menuContent [").append(row++).append("] = new Array(");
+			buffer.append("menuContent [").append(this.row++).append("] = new Array(");
 			buffer.append(parentRow).append(",");
-			if (parentRow == -1)
+			if (parentRow == -1) {
 				buffer.append(0).append(",");
-			else
+			}
+			else {
 				buffer.append(subRow).append(",");
+			}
 			
-			if (menuWidth != null && menuWidth.get(new Integer(row - 1)) != null)
-				buffer.append(menuWidth.get(new Integer(row - 1))).append(",");
-			else
-				buffer.append(itemWidth).append(",");
+			if (this.menuWidth != null && this.menuWidth.get(new Integer(this.row - 1)) != null) {
+				buffer.append(this.menuWidth.get(new Integer(this.row - 1))).append(",");
+			}
+			else {
+				buffer.append(this.itemWidth).append(",");
+			}
 	
-			if (menuXPosition != null && menuXPosition.get(new Integer(row - 1)) != null)
-				buffer.append(menuXPosition.get(new Integer(row - 1))).append(",");
-			else
+			if (this.menuXPosition != null && this.menuXPosition.get(new Integer(this.row - 1)) != null) {
+				buffer.append(this.menuXPosition.get(new Integer(this.row - 1))).append(",");
+			}
+			else {
 				buffer.append(-1).append(",");
+			}
 	
-			if (menuYPosition != null && menuYPosition.get(new Integer(row - 1)) != null)
-				buffer.append(menuYPosition.get(new Integer(row - 1))).append(",");
-			else
+			if (this.menuYPosition != null && this.menuYPosition.get(new Integer(this.row - 1)) != null) {
+				buffer.append(this.menuYPosition.get(new Integer(this.row - 1))).append(",");
+			}
+			else {
 				buffer.append(-1).append(",");
+			}
 	
 			buffer.append("new Array(");
 			
@@ -124,16 +132,18 @@ public class NavigationJSMenu extends Block {
 				ICTreeNode grandChild = (ICTreeNode) iterator.next();
 				buffer.append("'").append(grandChild.getNodeName(iwc.getCurrentLocale())).append("',");
 				buffer.append("'").append(bs.getPageURI(grandChild.getNodeID())).append("'");
-				if (iterator.hasNext())
+				if (iterator.hasNext()) {
 					buffer.append(",");
-				else
+				}
+				else {
 					buffer.append(")");
+				}
 			}
 			buffer.append(");").append("\n");
 	
 			Iterator iterator2 = parent.getChildrenIterator();
 			while (iterator2.hasNext()) {
-				addRow(iwc, (row - 1), subSubRow, (ICTreeNode) iterator2.next(), buffer);
+				addRow(iwc, (this.row - 1), subSubRow, (ICTreeNode) iterator2.next(), buffer);
 				subSubRow++;
 			}
 		}
@@ -144,98 +154,98 @@ public class NavigationJSMenu extends Block {
 	}
 	
 	public void setMenuAttributes(int menu, int width, int xPosition, int yPosition) {
-		if (menuWidth == null) {
-			menuWidth = new HashMap();
-			menuXPosition = new HashMap();
-			menuYPosition = new HashMap();
+		if (this.menuWidth == null) {
+			this.menuWidth = new HashMap();
+			this.menuXPosition = new HashMap();
+			this.menuYPosition = new HashMap();
 		}
-		menuWidth.put(new Integer(menu), String.valueOf(width));
-		menuXPosition.put(new Integer(menu), String.valueOf(xPosition));
-		menuYPosition.put(new Integer(menu), String.valueOf(yPosition));
+		this.menuWidth.put(new Integer(menu), String.valueOf(width));
+		this.menuXPosition.put(new Integer(menu), String.valueOf(xPosition));
+		this.menuYPosition.put(new Integer(menu), String.valueOf(yPosition));
 	}
 	
 	public void setRootNode(ICPage page) {
-		rootNode = page.getID();
+		this.rootNode = page.getID();
 	}
 
 	public void setRootNode(int rootId) {
-		rootNode = rootId;
+		this.rootNode = rootId;
 	}
 	/**
 	 * @param string
 	 */
 	public void setBackgroundColor(String string) {
-		backgroundColor = string;
+		this.backgroundColor = string;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setBorderColor(String string) {
-		borderColor = string;
+		this.borderColor = string;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setBorderWidth(int i) {
-		borderWidth = i;
+		this.borderWidth = i;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setItemHeight(int i) {
-		itemHeight = i;
+		this.itemHeight = i;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setItemWidth(int i) {
-		itemWidth = i;
+		this.itemWidth = i;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setLinkHoverStyle(String string) {
-		linkHoverStyle = string;
+		this.linkHoverStyle = string;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setLinkStyle(String string) {
-		linkStyle = string;
+		this.linkStyle = string;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setXOffset(int i) {
-		xOffset = i;
+		this.xOffset = i;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setXPosition(int i) {
-		xPosition = i;
+		this.xPosition = i;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setYOffset(int i) {
-		yOffset = i;
+		this.yOffset = i;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setYPosition(int i) {
-		yPosition = i;
+		this.yPosition = i;
 	}
 
 }

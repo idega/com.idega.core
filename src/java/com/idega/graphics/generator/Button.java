@@ -62,7 +62,7 @@ public class Button {
   int tWidth = 0;
   int tHeight = 0;
 
-  protected int doubleBorder = (2*borderSize);
+  protected int doubleBorder = (2*this.borderSize);
   protected int textXPos = 5;
   protected int textYPos = 10;
   protected int verticalPadding = 5;
@@ -101,13 +101,13 @@ public class Button {
   public Button(String text, int width, int height, Color fillColor) {
     this(text,width,height);
     this.fillColor = fillColor;
-    highlightColor = fillColor.brighter();
+    this.highlightColor = fillColor.brighter();
   }
 
   public Button(String text, Color fillColor) {
     this(text);
     this.fillColor = fillColor;
-    highlightColor = fillColor.brighter();
+    this.highlightColor = fillColor.brighter();
   }
 
 
@@ -157,7 +157,7 @@ public class Button {
 	 * @uml.property name="fontColor"
 	 */
 	public void setFontColor(Color color) {
-		fontColor = color;
+		this.fontColor = color;
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class Button {
 	 * @uml.property name="font"
 	 */
 	public void setFont(Font theFont) {
-		font = theFont;
+		this.font = theFont;
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class Button {
 	 * @uml.property name="fillColor"
 	 */
 	public void setFillColor(Color color) {
-		fillColor = color;
+		this.fillColor = color;
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class Button {
 	 * @uml.property name="highlightColor"
 	 */
 	public void setHighlightColor(Color color) {
-		highlightColor = color;
+		this.highlightColor = color;
 	}
 
 	/**
@@ -189,7 +189,7 @@ public class Button {
 	 * @uml.property name="borderColor"
 	 */
 	public void setBorderColor(Color color) {
-		borderColor = color;
+		this.borderColor = color;
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class Button {
 	 * @uml.property name="overColor"
 	 */
 	public void setOverColor(Color color) {
-		overColor = color;
+		this.overColor = color;
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class Button {
 	 * @uml.property name="underColor"
 	 */
 	public void setUnderColor(Color color) {
-		underColor = color;
+		this.underColor = color;
 	}
 
 
@@ -214,15 +214,15 @@ public class Button {
   }
 
   public String getUpName(){
-    return buttonUpName;
+    return this.buttonUpName;
   }
 
   public String getOverName(){
-    return buttonOverName;
+    return this.buttonOverName;
   }
 
   public String getDownName(){
-    return buttonDownName;
+    return this.buttonDownName;
   }
 
   public String getStaticButtonDownString(){
@@ -242,7 +242,7 @@ public class Button {
 	 * @uml.property name="width"
 	 */
 	public int getWidth() {
-		return width;
+		return this.width;
 	}
 
 	/**
@@ -250,7 +250,7 @@ public class Button {
 	 * @uml.property name="height"
 	 */
 	public int getHeight() {
-		return height;
+		return this.height;
 	}
 
 
@@ -267,31 +267,35 @@ public class Button {
 
   public void generate(String folderPath) {
 	
-    image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+    this.image = new BufferedImage(this.width,this.height,BufferedImage.TYPE_INT_RGB);
 
-    g = image.createGraphics();
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    this.g = this.image.createGraphics();
+    this.g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-    if( font!= null ){
-      g.setFont(font);
+    if( this.font!= null ){
+      this.g.setFont(this.font);
     }
-    else System.out.println("FONT IS NULL");
+		else {
+			System.out.println("FONT IS NULL");
+		}
 
-    fitText(g);
+    fitText(this.g);
 
-    if( resize ){
-      image = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
-      g = image.createGraphics();
-      g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      if( font!= null ) g.setFont(font);
+    if( this.resize ){
+      this.image = new BufferedImage(this.width,this.height,BufferedImage.TYPE_INT_RGB);
+      this.g = this.image.createGraphics();
+      this.g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      if( this.font!= null ) {
+				this.g.setFont(this.font);
+			}
     }
 
 
-    makeButton(g,text,image,folderPath,getStaticButtonUpString());
+    makeButton(this.g,this.text,this.image,folderPath,getStaticButtonUpString());
 
-    if( !onlyCreateUpState ){
-      makeButton(g,text,image,folderPath,getStaticButtonOverString());
-      makeButton(g,text,image,folderPath,getStaticButtonDownString());
+    if( !this.onlyCreateUpState ){
+      makeButton(this.g,this.text,this.image,folderPath,getStaticButtonOverString());
+      makeButton(this.g,this.text,this.image,folderPath,getStaticButtonDownString());
     }
 
   }
@@ -305,49 +309,63 @@ public class Button {
     System.out.println("string ascend : "+fm.getAscent());*/
 
 
-    tWidth = fm.stringWidth(text);
-    tHeight = fm.getAscent();
+    this.tWidth = fm.stringWidth(this.text);
+    this.tHeight = fm.getAscent();
 
-    if( tWidth >= width ){
-      width = tWidth+(2*verticalPadding);
-      resize = true;
+    if( this.tWidth >= this.width ){
+      this.width = this.tWidth+(2*this.verticalPadding);
+      this.resize = true;
     }
 
-    textXPos = (width-tWidth)/2;
-    textYPos = ((height+tHeight)/2)-1;
+    this.textXPos = (this.width-this.tWidth)/2;
+    this.textYPos = ((this.height+this.tHeight)/2)-1;
   }
 
   public void makeButton(Graphics2D g, String text, Image image, String filename, String effect){
    // g.setStroke(new BasicStroke(0.5f));
 
-   if( drawBorder){
-    g.setColor(borderColor);
-    g.fillRect(0,0,width,height);
+   if( this.drawBorder){
+    g.setColor(this.borderColor);
+    g.fillRect(0,0,this.width,this.height);
    }
 
-    if(effect==BUTTON_DOWN) g.setColor(underColor);
-    else g.setColor(overColor);
+    if(effect==BUTTON_DOWN) {
+			g.setColor(this.underColor);
+		}
+		else {
+			g.setColor(this.overColor);
+		}
 
-    g.fillRect(borderSize,borderSize,width-borderSize-2,height-doubleBorder-1);
+    g.fillRect(this.borderSize,this.borderSize,this.width-this.borderSize-2,this.height-this.doubleBorder-1);
 
-    if(effect==BUTTON_OVER) g.setColor(highlightColor);
-    else g.setColor(fillColor);
+    if(effect==BUTTON_OVER) {
+			g.setColor(this.highlightColor);
+		}
+		else {
+			g.setColor(this.fillColor);
+		}
 
-    g.fillRect(doubleBorder,doubleBorder,width-doubleBorder-2,height-doubleBorder-2);
+    g.fillRect(this.doubleBorder,this.doubleBorder,this.width-this.doubleBorder-2,this.height-this.doubleBorder-2);
 
-    if(effect==BUTTON_DOWN) g.setColor(overColor);
-    else g.setColor(underColor);
+    if(effect==BUTTON_DOWN) {
+			g.setColor(this.overColor);
+		}
+		else {
+			g.setColor(this.underColor);
+		}
 
     //g.setStroke(new BasicStroke(1f));
-    g.drawLine(borderSize,height-doubleBorder,width-borderSize-1,height-doubleBorder);
-    g.drawLine(width-borderSize-1,height-doubleBorder,width-borderSize-1,doubleBorder-1);
+    g.drawLine(this.borderSize,this.height-this.doubleBorder,this.width-this.borderSize-1,this.height-this.doubleBorder);
+    g.drawLine(this.width-this.borderSize-1,this.height-this.doubleBorder,this.width-this.borderSize-1,this.doubleBorder-1);
 
     //g.setStroke(new BasicStroke(2f));
     //g.drawLine(0,height,width,0);
 
-    if( effect==BUTTON_DOWN ) textYPos++;
-    g.setColor(fontColor);
-    g.drawString(text,textXPos,textYPos);
+    if( effect==BUTTON_DOWN ) {
+			this.textYPos++;
+		}
+    g.setColor(this.fontColor);
+    g.drawString(text,this.textXPos,this.textYPos);
 
     encode(image,filename,effect);
 
@@ -362,19 +380,19 @@ public class Button {
       gif89aEncoder.setTransparentColor(this.backgroundColor);
       String sName = null;
 
-      if( name==null ){
+      if( this.name==null ){
         StringBuffer name = new StringBuffer();
-        name.append(TextSoap.findAndReplace(text," ",""));
-        name.append(width);
+        name.append(TextSoap.findAndReplace(this.text," ",""));
+        name.append(this.width);
         name.append("x");
-        name.append(height);
+        name.append(this.height);
         name.append(effect);
         name.append(".gif");
 
         sName = name.toString();
       }
       else {//only used for multiple button generation from localized.strings file.
-        sName = name;
+        sName = this.name;
         if( effect != getStaticButtonUpString() ){
           sName+=effect;
         }
@@ -387,13 +405,13 @@ public class Button {
      // System.out.print("BUTTON NAME : "+sName);
 
       if( effect == getStaticButtonUpString() ){
-        buttonUpName = URLEncoder.encode(sName);
+        this.buttonUpName = URLEncoder.encode(sName);
       }
       else if( effect == getStaticButtonDownString() ){
-        buttonDownName = URLEncoder.encode(sName);
+        this.buttonDownName = URLEncoder.encode(sName);
       }
       else{
-        buttonOverName = URLEncoder.encode(sName);
+        this.buttonOverName = URLEncoder.encode(sName);
       }
 
       //FileUtil.delete(path); why???
@@ -415,7 +433,7 @@ public class Button {
  * @uml.property name="font"
  */
 public Font getFont() {
-	return font;
+	return this.font;
 }
 
 }

@@ -37,11 +37,11 @@ public class AnchorLink extends Link {
   }
 
   protected void setFinalUrl(String url) {
-    if (anchorName != null) {
-    	if (addCurrentURLToLink) {
-    		super.setFinalUrl(url+"#"+anchorName);
+    if (this.anchorName != null) {
+    	if (this.addCurrentURLToLink) {
+    		super.setFinalUrl(url+"#"+this.anchorName);
     	} else {
-        super.setFinalUrl("#"+anchorName);
+        super.setFinalUrl("#"+this.anchorName);
     	}
     }else {
       super.setFinalUrl(url);

@@ -36,21 +36,21 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 	 * @see com.idega.idegaweb.IWApplicationContext#getIWMainApplication()
 	 */
 	public IWMainApplication getIWMainApplication() {
-		return iwma;
+		return this.iwma;
 	}
 
 	/**
 	 * @see com.idega.idegaweb.IWApplicationContext#getApplicationSettings()
 	 */
 	public IWMainApplicationSettings getApplicationSettings() {
-		return iwma.getSettings();
+		return this.iwma.getSettings();
 	}
 
 	/**
 	 * @see com.idega.idegaweb.IWApplicationContext#getSystemProperties()
 	 */
 	public IWSystemProperties getSystemProperties() {
-		return iwma.getSystemProperties();
+		return this.iwma.getSystemProperties();
 	}
 
 	/**
@@ -59,28 +59,28 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 	public void setApplicationAttribute(
 		String attributeName,
 		Object attributeValue) {
-		iwma.setAttribute(attributeName,attributeValue);
+		this.iwma.setAttribute(attributeName,attributeValue);
 	}
 
 	/**
 	 * @see com.idega.idegaweb.IWApplicationContext#getApplicationAttribute(String)
 	 */
 	public Object getApplicationAttribute(String attributeName) {
-		return iwma.getAttribute(attributeName);
+		return this.iwma.getAttribute(attributeName);
 	}
 	
 	/**
 	 * @see com.idega.idegaweb.IWApplicationContext#getApplicationAttribute(String,Object)
 	 */
 	public Object getApplicationAttribute(String attributeName, Object defaultObjectToReturnIfValueIsNull) {
-		return iwma.getAttribute(attributeName,defaultObjectToReturnIfValueIsNull);
+		return this.iwma.getAttribute(attributeName,defaultObjectToReturnIfValueIsNull);
 	}
 
 	/**
 	 * @see com.idega.idegaweb.IWApplicationContext#removeApplicationAttribute(String)
 	 */
 	public void removeApplicationAttribute(String attributeName) {
-		iwma.removeAttribute(attributeName);
+		this.iwma.removeAttribute(attributeName);
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 		boolean cachDefaultDomainForThisServerURL = false;
 		try {
 			if(serverName!=null && !"".equals(serverName)){
-				ICDomain toReturn = (ICDomain)domainMap.get(serverName);
+				ICDomain toReturn = (ICDomain)this.domainMap.get(serverName);
 				if(toReturn==null){
 					ICDomainHome domainHome = (ICDomainHome)IDOLookup.getHome(ICDomain.class);
 					Collection coll = domainHome.findAllDomainsByServerName(serverName);
@@ -104,7 +104,7 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 						ICDomain realDomain = (ICDomain)iter.next();
 						//toReturn = new CachedDomain(realDomain);
 						toReturn = realDomain;
-						domainMap.put(serverName,toReturn);
+						this.domainMap.put(serverName,toReturn);
 						return toReturn;
 					} else {
 						System.out.println("Couldn't find domain record for ServerName : "+ serverName);
@@ -131,18 +131,18 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 				} catch (NumberFormatException nfe) {
 				}
 			}
-			if(domain==null){
+			if(this.domain==null){
 				ICDomainHome domainHome = (ICDomainHome)IDOLookup.getHome(ICDomain.class);
 				ICDomain realDomain = domainHome.findByPrimaryKey(domainID);
 				//domain = new CachedDomain(realDomain);
-				domain= realDomain;
+				this.domain= realDomain;
 			}
 			
 			if(cachDefaultDomainForThisServerURL){
-				domainMap.put(serverName,domain);
+				this.domainMap.put(serverName,this.domain);
 			}
 			
-			return domain;
+			return this.domain;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());

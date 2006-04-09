@@ -68,49 +68,51 @@ public class SetIterator implements ListIterator  {
 	 * @see java.util.Iterator#hasNext()
 	 */
 	public boolean hasNext() {
-    return (indexOfCurrentElement < lastIndex);
+    return (this.indexOfCurrentElement < this.lastIndex);
 	}
 	/**
 	 * @see java.util.Iterator#next()
 	 */
 	public Object next() {
-    if (! hasNext())
-      throw new NoSuchElementException();
-    indexOfCurrentElement++;
-    return getElement(indexOfCurrentElement);
+    if (! hasNext()) {
+			throw new NoSuchElementException();
+		}
+    this.indexOfCurrentElement++;
+    return getElement(this.indexOfCurrentElement);
 	}
   
 	/**
 	 * @see java.util.ListIterator#hasPrevious()
 	 */
 	public boolean hasPrevious() {
-		return (indexOfCurrentElement > firstIndex);
+		return (this.indexOfCurrentElement > this.firstIndex);
 	}
 	/**
 	 * @see java.util.ListIterator#previous()
 	 */
 	public Object previous() {
-    if (! hasPrevious())
-      throw new NoSuchElementException();
-    indexOfCurrentElement--;
-    return getElement(indexOfCurrentElement);
+    if (! hasPrevious()) {
+			throw new NoSuchElementException();
+		}
+    this.indexOfCurrentElement--;
+    return getElement(this.indexOfCurrentElement);
   }
     
 	/**
 	 * @see java.util.ListIterator#nextIndex()
 	 */
 	public int nextIndex() {
-    return indexOfCurrentElement + 1;
+    return this.indexOfCurrentElement + 1;
 	}
 	/**
 	 * @see java.util.ListIterator#previousIndex()
 	 */
 	public int previousIndex() {
-    return indexOfCurrentElement - 1;
+    return this.indexOfCurrentElement - 1;
 	}
   
   public int currentIndex() {
-    return indexOfCurrentElement;
+    return this.indexOfCurrentElement;
   }
   
   //first index is not necessarily zero
@@ -119,7 +121,7 @@ public class SetIterator implements ListIterator  {
   }
   
   public int currentFirstIndexSet() {
-    return ( firstIndexOfCurrentSet < firstIndex) ? firstIndex : firstIndexOfCurrentSet;
+    return ( this.firstIndexOfCurrentSet < this.firstIndex) ? this.firstIndex : this.firstIndexOfCurrentSet;
   }
   
   // first index is not necessarily zero
@@ -128,8 +130,8 @@ public class SetIterator implements ListIterator  {
   }
   
   public int currentLastIndexSet()  {
-    int realLastIndexSet = currentFirstIndexSet() + quantity - 1; 
-    return (realLastIndexSet > lastIndex) ? lastIndex : realLastIndexSet;
+    int realLastIndexSet = currentFirstIndexSet() + this.quantity - 1; 
+    return (realLastIndexSet > this.lastIndex) ? this.lastIndex : realLastIndexSet;
   }
   
   public void setIncrement(int increment) {
@@ -139,7 +141,7 @@ public class SetIterator implements ListIterator  {
   }
   
   public int getIncrement() {
-    return increment;
+    return this.increment;
   }
   
   public void setQuantity(int quantity) {
@@ -147,7 +149,7 @@ public class SetIterator implements ListIterator  {
   }
   
   public int getQuantity()  {
-    return quantity;
+    return this.quantity;
   }
 
   public void previousSet() {
@@ -159,39 +161,42 @@ public class SetIterator implements ListIterator  {
   }
   
   public void goToSetRelativeToCurrentSet(int steps) {
-    int newFirstIndexOfSet = firstIndexOfCurrentSet + (steps * increment);
-    if (newFirstIndexOfSet > lastIndex || newFirstIndexOfSet < firstIndex)  
-      throw new NoSuchElementException("There is not such a subset");
-    firstIndexOfCurrentSet = newFirstIndexOfSet;
+    int newFirstIndexOfSet = this.firstIndexOfCurrentSet + (steps * this.increment);
+    if (newFirstIndexOfSet > this.lastIndex || newFirstIndexOfSet < this.firstIndex) {
+			throw new NoSuchElementException("There is not such a subset");
+		}
+    this.firstIndexOfCurrentSet = newFirstIndexOfSet;
     currentSet();
   }
   
   public int getNegativeNumberOfPreviousSetsRelativeToCurrentSet()  {
-    int position = firstIndexOfCurrentSet - firstIndex + 1;
-    int division =  (position / increment);
-    int mod = position % increment;
-    if (mod == 0)
-      division -= 1;
+    int position = this.firstIndexOfCurrentSet - this.firstIndex + 1;
+    int division =  (position / this.increment);
+    int mod = position % this.increment;
+    if (mod == 0) {
+			division -= 1;
+		}
     return -division; 
   }
   
   public int getPositiveNumberOfNextSetsRelativeToCurrentSet()  {
-    int position = lastIndex - firstIndexOfCurrentSet + 1;
-    int division =  (position / increment);
-    int mod = position % increment;
-    if (mod == 0)
-      division -= 1;
+    int position = this.lastIndex - this.firstIndexOfCurrentSet + 1;
+    int division =  (position / this.increment);
+    int mod = position % this.increment;
+    if (mod == 0) {
+			division -= 1;
+		}
     return division; 
   }
     
 
   public void currentSet()  {
-    indexOfCurrentElement = (firstIndexOfCurrentSet < firstIndex) ? 
-      firstIndex - 1 : firstIndexOfCurrentSet - 1;
+    this.indexOfCurrentElement = (this.firstIndexOfCurrentSet < this.firstIndex) ? 
+      this.firstIndex - 1 : this.firstIndexOfCurrentSet - 1;
   }
 
   public int size()  {
-    return lastIndex - firstIndex + 1;
+    return this.lastIndex - this.firstIndex + 1;
   }
   
   public int sizeSet()  {
@@ -205,7 +210,7 @@ public class SetIterator implements ListIterator  {
    * one element else false
    */
   public boolean hasNextSet() {
-    return (firstIndexOfCurrentSet + increment <= lastIndex);
+    return (this.firstIndexOfCurrentSet + this.increment <= this.lastIndex);
   }
   
   
@@ -213,7 +218,7 @@ public class SetIterator implements ListIterator  {
    * one element else false
    */
   public boolean hasPreviousSet() {        
-    return (firstIndexOfCurrentSet > firstIndex);
+    return (this.firstIndexOfCurrentSet > this.firstIndex);
   }
     
   /** Returns true if the next element is within the current set 
@@ -221,8 +226,8 @@ public class SetIterator implements ListIterator  {
    */
   public boolean hasNextInSet() {
     return (hasNext() &&
-           (indexOfCurrentElement + 1 < firstIndexOfCurrentSet + quantity) &&
-           (indexOfCurrentElement + 1 >= firstIndexOfCurrentSet));    
+           (this.indexOfCurrentElement + 1 < this.firstIndexOfCurrentSet + this.quantity) &&
+           (this.indexOfCurrentElement + 1 >= this.firstIndexOfCurrentSet));    
   }
 
   /** Returns true if the previous element is within the current set
@@ -230,8 +235,8 @@ public class SetIterator implements ListIterator  {
    */  
   public boolean hasPreviousInSet() {
     return (hasPrevious() &&
-           (indexOfCurrentElement - 1 >= firstIndexOfCurrentSet)  &&
-           (indexOfCurrentElement - 1 < firstIndexOfCurrentSet + quantity));
+           (this.indexOfCurrentElement - 1 >= this.firstIndexOfCurrentSet)  &&
+           (this.indexOfCurrentElement - 1 < this.firstIndexOfCurrentSet + this.quantity));
   }
    
   
@@ -256,10 +261,12 @@ public class SetIterator implements ListIterator  {
   public boolean retrieveStateFromRequest(IWContext iwc, int id) {
     String key = SET_ITERATOR_STATE_KEY + Integer.toString(id);
     String stateString;
-      if (iwc.isParameterSet(key)) 
-      stateString = iwc.getParameter(key);
-    else
-      return false;
+      if (iwc.isParameterSet(key)) {
+				stateString = iwc.getParameter(key);
+			}
+			else {
+				return false;
+			}
     return retrieveStateFromString(stateString);  
   }
  
@@ -269,10 +276,12 @@ public class SetIterator implements ListIterator  {
     String stateString = (String) iwuc.getSessionAttribute(SET_ITERATOR_STATE_KEY + id);
     String listIdString = (String) iwuc.getSessionAttribute(SET_ITERATOR_LIST_ID_KEY + id);
     if (stateString == null || listIdString == null || (! listIdString.equals(listId))) {
-      if (stateString != null)
-        iwuc.removeSessionAttribute(SET_ITERATOR_STATE_KEY + id);
-      if (listIdString != null)
-        iwuc.removeSessionAttribute(SET_ITERATOR_LIST_ID_KEY + id);
+      if (stateString != null) {
+				iwuc.removeSessionAttribute(SET_ITERATOR_STATE_KEY + id);
+			}
+      if (listIdString != null) {
+				iwuc.removeSessionAttribute(SET_ITERATOR_LIST_ID_KEY + id);
+			}
       return false;  
     }
     return retrieveStateFromString(stateString);             
@@ -305,7 +314,7 @@ public class SetIterator implements ListIterator  {
 	}
   
   private Object getElement(int index) {
-    return (list == null) ? new Integer(index) :  list.get(index);
+    return (this.list == null) ? new Integer(index) :  this.list.get(index);
   }   
     
 
@@ -315,24 +324,25 @@ public class SetIterator implements ListIterator  {
     // if you change this order or add or remove something do the same with the method
     // retrieveStateFromString
     stateString
-      .append(indexOfCurrentElement)
+      .append(this.indexOfCurrentElement)
       .append(STATE_STRING_DELIMITER)
-      .append(firstIndex)
+      .append(this.firstIndex)
       .append(STATE_STRING_DELIMITER)
-      .append(lastIndex)
+      .append(this.lastIndex)
       .append(STATE_STRING_DELIMITER)
-      .append(firstIndexOfCurrentSet)
+      .append(this.firstIndexOfCurrentSet)
       .append(STATE_STRING_DELIMITER)    
-      .append(increment)
+      .append(this.increment)
       .append(STATE_STRING_DELIMITER)
-      .append(quantity);
+      .append(this.quantity);
     return stateString.toString();  
   }
   
   private boolean retrieveStateFromString(String stateString)  {
     StringTokenizer tokenizer = new StringTokenizer(stateString, STATE_STRING_DELIMITER);
-    if (tokenizer.countTokens() != 6)
-      return false;
+    if (tokenizer.countTokens() != 6) {
+			return false;
+		}
     // if you change this order or add or remove something do the same with the method
     // storeStateIntoString  
     int indexOfCurrentElement = Integer.parseInt(tokenizer.nextToken());  
@@ -341,10 +351,12 @@ public class SetIterator implements ListIterator  {
     int firstIndexOfCurrentSet = Integer.parseInt(tokenizer.nextToken());
     int increment = Integer.parseInt(tokenizer.nextToken());
     int quantity = Integer.parseInt(tokenizer.nextToken());
-    if (increment > 0)
-      this.increment = increment;
-    if (quantity > 0)
-      this.quantity = quantity;
+    if (increment > 0) {
+			this.increment = increment;
+		}
+    if (quantity > 0) {
+			this.quantity = quantity;
+		}
       
     // adjust values (list has changed)
     if (this.firstIndex == firstIndex && this.lastIndex == lastIndex) {
@@ -374,24 +386,25 @@ public class SetIterator implements ListIterator  {
     
     if (size == 0)  {
       // list is empty (compare constructor)
-      firstIndexOfCurrentSet = firstIndex;
-      indexOfCurrentElement = firstIndex - 1;
+      this.firstIndexOfCurrentSet = this.firstIndex;
+      this.indexOfCurrentElement = this.firstIndex - 1;
       return;
     }
           
-    int position = firstIndexOfCurrentSet - firstIndex + 1;
+    int position = this.firstIndexOfCurrentSet - this.firstIndex + 1;
 
     // positionFromZero is now at least 1
-    int division = position / increment;
-    int mod = position % increment;
-    if (mod == 0)
-      division -= 1;
-    firstIndexOfCurrentSet = division * increment;
+    int division = position / this.increment;
+    int mod = position % this.increment;
+    if (mod == 0) {
+			division -= 1;
+		}
+    this.firstIndexOfCurrentSet = division * this.increment;
     currentSet();
     return;  
   }
   
   private int calculateIndexRelativeToZero(int index) {
-    return index - firstIndex;
+    return index - this.firstIndex;
   } 
 }

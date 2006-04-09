@@ -25,7 +25,7 @@ public abstract class DefaultAppServer implements AppServer{
      * @see com.idega.core.appserver.AppServer#getVersion()
      */
     public String getVersion() {
-        return version;
+        return this.version;
     }
     public boolean isOfficiallySupported(){
         return true;

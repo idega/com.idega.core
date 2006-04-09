@@ -15,8 +15,8 @@ public class ImageDateRotater extends Block {
 	IWTimestamp date;
 	
 	public ImageDateRotater() {
-		date = new IWTimestamp();
-		date.setAsDate();
+		this.date = new IWTimestamp();
+		this.date.setAsDate();
 	}
 	
 	/**
@@ -28,13 +28,14 @@ public class ImageDateRotater extends Block {
 	
 	private Image getDateImage() {
 		Image image = new Image();
-		if (imageMap != null) {
-			Iterator iter = imageMap.keySet().iterator();
+		if (this.imageMap != null) {
+			Iterator iter = this.imageMap.keySet().iterator();
 			while (iter.hasNext()) {
 				IWTimestamp element = (IWTimestamp) iter.next();
-				if (date.getMonth() >= element.getMonth()) {
-					if (date.getDay() >= element.getDay())
-						image = (Image) imageMap.get(element);
+				if (this.date.getMonth() >= element.getMonth()) {
+					if (this.date.getDay() >= element.getDay()) {
+						image = (Image) this.imageMap.get(element);
+					}
 				}
 			}	
 		}
@@ -45,16 +46,17 @@ public class ImageDateRotater extends Block {
 		IWTimestamp stamp = new IWTimestamp(day, month, 0);
 		stamp.setAsDate();
 		
-		if (imageMap == null)
-			imageMap = new TreeMap();
-		imageMap.put(stamp, image);
+		if (this.imageMap == null) {
+			this.imageMap = new TreeMap();
+		}
+		this.imageMap.put(stamp, image);
 	}
 	
 	public void setDay(int day) {
-		date.setDay(day);
+		this.date.setDay(day);
 	}
 	
 	public void setMonth(int month) {
-		date.setMonth(month);
+		this.date.setMonth(month);
 	}
 }

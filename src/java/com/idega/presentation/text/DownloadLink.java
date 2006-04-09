@@ -105,8 +105,8 @@ public class DownloadLink extends Link {
     public void main(IWContext iwc)throws Exception{
         super.main(iwc);
         setURL(iwc.getIWMainApplication().getMediaServletURI());
-        if(writerClass!=null){
-            addParameter(MediaWritable.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(writerClass));
+        if(this.writerClass!=null){
+            addParameter(MediaWritable.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(this.writerClass));
         }
     }
     

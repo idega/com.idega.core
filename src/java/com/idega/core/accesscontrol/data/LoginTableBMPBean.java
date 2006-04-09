@@ -225,11 +225,11 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	 * PasswordNotKnown is thrown
 	 */
 	public String getUnencryptedUserPassword() throws PasswordNotKnown {
-		if (unEncryptedUserPassword == null) {
+		if (this.unEncryptedUserPassword == null) {
 			throw new PasswordNotKnown(this.getUserLogin());
 		}
 		else {
-			return unEncryptedUserPassword;
+			return this.unEncryptedUserPassword;
 		}
 	}
 

@@ -19,7 +19,7 @@ public class IWControlCenter extends Block {
 	private int headerHeight = 25;
 	private int border = 3;
 	private String backgroundColor = "#D4D0C8";
-	private String headerColor = backgroundColor;
+	private String headerColor = this.backgroundColor;
 	private String darkerColor = "gray";
 	private String bodyColor = "white";
 	private boolean showLinesIfNoApplications = true;
@@ -59,7 +59,7 @@ public class IWControlCenter extends Block {
 						body.setAlignment(col, row, "center");
 						body.setVerticalAlignment(col, row, "middle");
 						body.add(icon, col, row);
-						switch (layout) {
+						switch (this.layout) {
 							case HORIZONTAL:
 								col++;
 								break;
@@ -93,7 +93,7 @@ public class IWControlCenter extends Block {
 			}
 		}
 
-		if (showLinesIfNoApplications && !anyApp) {
+		if (this.showLinesIfNoApplications && !anyApp) {
 			body.setAlignment(1, 1, "center");
 			body.setVerticalAlignment(1, 1, "middle");
 			body.add(new Text("- - -"), 1, 1);
@@ -114,7 +114,7 @@ public class IWControlCenter extends Block {
 	 * @return Returns the backgroundColor.
 	 */
 	public String getBackgroundColor() {
-		return backgroundColor;
+		return this.backgroundColor;
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class IWControlCenter extends Block {
 	 * @return Returns the bodyColor.
 	 */
 	public String getBodyColor() {
-		return bodyColor;
+		return this.bodyColor;
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class IWControlCenter extends Block {
 	 * @return Returns the border.
 	 */
 	public int getBorder() {
-		return border;
+		return this.border;
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class IWControlCenter extends Block {
 	 * @return Returns the darkerColor.
 	 */
 	public String getDarkerColor() {
-		return darkerColor;
+		return this.darkerColor;
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class IWControlCenter extends Block {
 	 * @return Returns the headerColor.
 	 */
 	public String getHeaderColor() {
-		return headerColor;
+		return this.headerColor;
 	}
 
 	/**
@@ -189,7 +189,7 @@ public class IWControlCenter extends Block {
 	 * @return Returns the headerHeight.
 	 */
 	public int getHeaderHeight() {
-		return headerHeight;
+		return this.headerHeight;
 	}
 
 	/**

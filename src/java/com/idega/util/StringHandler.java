@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.40 2006/04/05 12:36:34 thomas Exp $ Created on
+ * $Id: StringHandler.java,v 1.41 2006/04/09 12:13:13 laddi Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,11 +24,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2006/04/05 12:36:34 $ by $Author: thomas $
+ * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.40 $
+ * @version $Revision: 1.41 $
  */
 public class StringHandler {
 
@@ -172,13 +172,13 @@ public class StringHandler {
 			public Object next() throws NoSuchElementException {
 				String theReturn = null;
 				try {
-					if (hasNext) {
-						if (hasSeparators) {
-							if (theString.length() > 0) {
-								if (!theString.equals(theSeparator)) {
-									theReturn = theString.substring(0, theString.indexOf(separator) + 1);
-									theString = theString.substring(theString.indexOf(separator) + 1,
-											theString.length());
+					if (this.hasNext) {
+						if (this.hasSeparators) {
+							if (this.theString.length() > 0) {
+								if (!this.theString.equals(this.theSeparator)) {
+									theReturn = this.theString.substring(0, this.theString.indexOf(separator) + 1);
+									this.theString = this.theString.substring(this.theString.indexOf(separator) + 1,
+											this.theString.length());
 								}
 							}
 							else {
@@ -186,8 +186,8 @@ public class StringHandler {
 							}
 						}
 						else {
-							if (theString.length() > 0) {
-								return theString;
+							if (this.theString.length() > 0) {
+								return this.theString;
 							}
 							throw new NoSuchElementException();
 						}
@@ -206,28 +206,28 @@ public class StringHandler {
 			}
 
 			public boolean hasNext() {
-				if (theString != null) {
-					if (theString.length() > 0) {
-						int index = theString.indexOf(theSeparator);
+				if (this.theString != null) {
+					if (this.theString.length() > 0) {
+						int index = this.theString.indexOf(this.theSeparator);
 						while (index == 0) {
-							theString = theString.substring(0, theSeparator.length());
-							index = theString.indexOf(theSeparator);
+							this.theString = this.theString.substring(0, this.theSeparator.length());
+							index = this.theString.indexOf(this.theSeparator);
 						}
 						if (index == -1) {
-							hasSeparators = false;
+							this.hasSeparators = false;
 						}
 						else {
-							hasSeparators = true;
+							this.hasSeparators = true;
 						}
 					}
 					else {
-						hasNext = false;
+						this.hasNext = false;
 					}
 				}
 				else {
-					hasNext = false;
+					this.hasNext = false;
 				}
-				return hasNext;
+				return this.hasNext;
 			}
 
 			public void remove() {
@@ -883,8 +883,9 @@ public class StringHandler {
 		}
 		// if the character does not belong to a group return special
 		// substitution
-		if (i == groupsNumber)
+		if (i == groupsNumber) {
 			return NO_LETTER_SUBSTITUTION;
+		}
 		// return substitution string
 		return SUBSTITUTION[i];
 	}

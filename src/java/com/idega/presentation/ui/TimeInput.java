@@ -1,5 +1,5 @@
 /*
- * $Id: TimeInput.java,v 1.11 2006/04/02 18:16:56 laddi Exp $
+ * $Id: TimeInput.java,v 1.12 2006/04/09 12:13:15 laddi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -45,15 +45,15 @@ public class TimeInput extends InterfaceObject {
 
 	public TimeInput(String name) {
 		super();
-		theHour = new DropdownMenu(name + "_hour");
-		theMinute = new DropdownMenu(name + "_minute");
+		this.theHour = new DropdownMenu(name + "_hour");
+		this.theMinute = new DropdownMenu(name + "_minute");
 		
-		theWholeTime = new Parameter(name, "");
-		script = new Script();
-		super.add(theHour);
-		super.add(theMinute);
-		super.add(theWholeTime);
-		super.add(script);
+		this.theWholeTime = new Parameter(name, "");
+		this.script = new Script();
+		super.add(this.theHour);
+		super.add(this.theMinute);
+		super.add(this.theWholeTime);
+		super.add(this.script);
 	}
 
 	public void setMinute(int minute) {
@@ -62,10 +62,10 @@ public class TimeInput extends InterfaceObject {
 
 	public void setMinute(String minute) {
 		if (minute.length() > 1) {
-			theMinute.setSelectedElement(minute);
+			this.theMinute.setSelectedElement(minute);
 		}
 		else {
-			theMinute.setSelectedElement("0" + minute);
+			this.theMinute.setSelectedElement("0" + minute);
 		}
 	}
 
@@ -74,40 +74,40 @@ public class TimeInput extends InterfaceObject {
 	}
 
 	public void setHour(String hour) {
-		setCheck = true;
+		this.setCheck = true;
 		if (hour.length() > 1) {
-			theHour.setSelectedElement(hour);
+			this.theHour.setSelectedElement(hour);
 		}
 		else {
-			theHour.setSelectedElement("0" + hour);
+			this.theHour.setSelectedElement("0" + hour);
 		}
 	}
 
 	public void main(IWContext iwc) {
-		theHour.setOnChange("setValueOfHiddenTime(this.form." + theHour.getName() + ",this.form." + theMinute.getName() + ",this.form." + theWholeTime.getName()+ ")");
-		theMinute.setOnChange("setValueOfHiddenTime(this.form." + theHour.getName() + ",this.form." + theMinute.getName() + ",this.form." + theWholeTime.getName() + ")");
-		theHour.setParentObject(this.getParentObject());
-		theMinute.setParentObject(this.getParentObject());
+		this.theHour.setOnChange("setValueOfHiddenTime(this.form." + this.theHour.getName() + ",this.form." + this.theMinute.getName() + ",this.form." + this.theWholeTime.getName()+ ")");
+		this.theMinute.setOnChange("setValueOfHiddenTime(this.form." + this.theHour.getName() + ",this.form." + this.theMinute.getName() + ",this.form." + this.theWholeTime.getName() + ")");
+		this.theHour.setParentObject(this.getParentObject());
+		this.theMinute.setParentObject(this.getParentObject());
 
-		for (int a = iFromHour; a <= iToHour; a++) {
-			theHour.addMenuElement(TextSoap.addZero(a), TextSoap.addZero(a));
+		for (int a = this.iFromHour; a <= this.iToHour; a++) {
+			this.theHour.addMenuElement(TextSoap.addZero(a), TextSoap.addZero(a));
 		}
 
-		for (int a = 0; a < 60; a = a + iMinuteInterval) {
-			theMinute.addMenuElement(TextSoap.addZero(a), TextSoap.addZero(a));
+		for (int a = 0; a < 60; a = a + this.iMinuteInterval) {
+			this.theMinute.addMenuElement(TextSoap.addZero(a), TextSoap.addZero(a));
 		}
 		
 		getJavaScript().addFunction("setValueOfHiddenTime", "function setValueOfHiddenTime(hourInput,minuteInput,hiddenInput){\r\r	var hourValue='00';\r	var minuteValue='00';\r	var secondValue='00';\r	var millisecondValue='000000';\r	\r	\r	if(hourInput.selectedIndex != 0){\r		hourValue=hourInput.options[hourInput.selectedIndex].value;\r	}\r	if(minuteInput.selectedIndex != 0){\r		minuteValue=minuteInput.options[minuteInput.selectedIndex].value;\r	}\r\r\r	if ((hourInput.selectedIndex == 0) || (minuteInput.selectedIndex == 0) ){\r		hiddenInput.value = '';\r	}\r	else{\r		hiddenInput.value = hourValue+':'+minuteValue+':'+secondValue+'.'+millisecondValue;\r	}\r}");
 
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		String emptyString = "";
-		theHour.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.HOUR_KEY));
-		theMinute.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.MINUTE_KEY));
-		if (isDisabled) {
-			theHour.setDisabled(true);
-			theMinute.setDisabled(true);
+		this.theHour.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.HOUR_KEY));
+		this.theMinute.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.MINUTE_KEY));
+		if (this.isDisabled) {
+			this.theHour.setDisabled(true);
+			this.theMinute.setDisabled(true);
 		}
-		if (keepStatus) {
+		if (this.keepStatus) {
 			handleKeepStatus(iwc);
 		}
 	}
@@ -120,11 +120,11 @@ public class TimeInput extends InterfaceObject {
 	}
 
 	public String getHourName() {
-		return theHour.getName();
+		return this.theHour.getName();
 	}
 
 	public String getMinuteName() {
-		return theMinute.getName();
+		return this.theMinute.getName();
 	}
 
 	private Script getJavaScript() {
@@ -132,13 +132,13 @@ public class TimeInput extends InterfaceObject {
 	}
 
 	public void setStyleAttribute(String style) {
-		theHour.setStyleAttribute(style);
-		theMinute.setStyleAttribute(style);
+		this.theHour.setStyleAttribute(style);
+		this.theMinute.setStyleAttribute(style);
 	}
 
 	public void setStyleClass(String styleName) {
-		theHour.setStyleClass(styleName);
-		theMinute.setStyleClass(styleName);
+		this.theHour.setStyleClass(styleName);
+		this.theMinute.setStyleClass(styleName);
 	}
 
 	/**
@@ -149,8 +149,8 @@ public class TimeInput extends InterfaceObject {
 	}
 
 	public void print(IWContext iwc) throws Exception {
-		if (setCheck == true) {
-			theWholeTime.setValue(theHour.getSelectedElementValue() + ":" + theMinute.getSelectedElementValue() + ":00.000000");
+		if (this.setCheck == true) {
+			this.theWholeTime.setValue(this.theHour.getSelectedElementValue() + ":" + this.theMinute.getSelectedElementValue() + ":00.000000");
 		}
 		super.print(iwc);
 	}
@@ -161,7 +161,7 @@ public class TimeInput extends InterfaceObject {
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
-		String lastValue = iwc.getParameter(theWholeTime.getName());
+		String lastValue = iwc.getParameter(this.theWholeTime.getName());
 		if (lastValue != null) {
 			setContent(lastValue);
 		}
@@ -192,18 +192,18 @@ public class TimeInput extends InterfaceObject {
 	}
 
 	public void setDisabled(boolean disabled) {
-		isDisabled = disabled;
+		this.isDisabled = disabled;
 	}
 
 	public void setFromHour(int fromHour) {
-		iFromHour = fromHour;
+		this.iFromHour = fromHour;
 	}
 	
 	public void setMinuteInterval(int minuteInterval) {
-		iMinuteInterval = minuteInterval;
+		this.iMinuteInterval = minuteInterval;
 	}
 	
 	public void setToHour(int toHour) {
-		iToHour = toHour;
+		this.iToHour = toHour;
 	}
 }

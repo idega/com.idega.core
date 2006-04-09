@@ -21,30 +21,31 @@ public class DateBackground extends Block {
 	IWTimestamp date;
 	
 	public DateBackground() {
-		date = new IWTimestamp();
-		date.setAsDate();
+		this.date = new IWTimestamp();
+		this.date.setAsDate();
 	}
 	
 	public void main(IWContext iwc) throws Exception {
 		String color = getDateColor();
-		if (color != null)
+		if (color != null) {
 			this.getParentPage().setBackgroundColor(color);
+		}
 	}
 	
 	private String getDateColor() {
-		if (colorMap != null) {
+		if (this.colorMap != null) {
 			IWTimestamp beforeStamp = null;
 			IWTimestamp afterStamp = null;
 			IWTimestamp firstStamp = null;
 			IWTimestamp nextYear = null;
 			
-			Iterator iter = colorMap.keySet().iterator();
+			Iterator iter = this.colorMap.keySet().iterator();
 			while (iter.hasNext()) {
 				afterStamp = (IWTimestamp) iter.next();
 				if (beforeStamp != null) {
-					if (date.isBetween(beforeStamp, afterStamp)) {
+					if (this.date.isBetween(beforeStamp, afterStamp)) {
 						int daysBetween = Math.abs(IWTimestamp.getDaysBetween(beforeStamp, afterStamp));
-						int daysFrom = Math.abs(IWTimestamp.getDaysBetween(beforeStamp, date));
+						int daysFrom = Math.abs(IWTimestamp.getDaysBetween(beforeStamp, this.date));
 						return getColor(beforeStamp, afterStamp, daysBetween, daysFrom);	
 					}
 					else {
@@ -59,9 +60,9 @@ public class DateBackground extends Block {
 				}
 				
 				if (!iter.hasNext()) {
-					if (date.isBetween(afterStamp, nextYear)) {
+					if (this.date.isBetween(afterStamp, nextYear)) {
 						int daysBetween = Math.abs(IWTimestamp.getDaysBetween(afterStamp, nextYear));
-						int daysFrom = Math.abs(IWTimestamp.getDaysBetween(afterStamp, date));
+						int daysFrom = Math.abs(IWTimestamp.getDaysBetween(afterStamp, this.date));
 						return getColor(afterStamp, firstStamp, daysBetween, daysFrom);	
 					}
 				}
@@ -71,8 +72,8 @@ public class DateBackground extends Block {
 	}
 	
 	private String getColor(IWTimestamp before, IWTimestamp after, int daysBetween, int daysFrom) {
-		IWColor beforeColor = IWColor.getIWColorFromHex((String) colorMap.get(before));
-		IWColor afterColor = IWColor.getIWColorFromHex((String) colorMap.get(after));
+		IWColor beforeColor = IWColor.getIWColorFromHex((String) this.colorMap.get(before));
+		IWColor afterColor = IWColor.getIWColorFromHex((String) this.colorMap.get(after));
 			
 		int redDifference = beforeColor.getRed() - afterColor.getRed();
 		int greenDifference = beforeColor.getGreen() - afterColor.getGreen();
@@ -92,16 +93,17 @@ public class DateBackground extends Block {
 		stamp.setMonth(month);
 		stamp.setAsDate();
 		
-		if (colorMap == null)
-			colorMap = new TreeMap();
-		colorMap.put(stamp, color);
+		if (this.colorMap == null) {
+			this.colorMap = new TreeMap();
+		}
+		this.colorMap.put(stamp, color);
 	}
 	
 	public void setDay(int day) {
-		date.setDay(day);
+		this.date.setDay(day);
 	}
 	
 	public void setMonth(int month) {
-		date.setMonth(month);
+		this.date.setMonth(month);
 	}
 }

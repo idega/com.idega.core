@@ -1,5 +1,5 @@
 /*
- * $Id: CreateChart.java,v 1.6 2004/06/24 20:12:24 tryggvil Exp $
+ * $Id: CreateChart.java,v 1.7 2006/04/09 12:13:12 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -76,12 +76,14 @@ public class CreateChart {
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
    */
   public boolean setLegend(String legend[]) {
-    if (legend.length == 0)
-      return(false);
+    if (legend.length == 0) {
+			return(false);
+		}
 
-    legend_ = new String[legend.length];
-    for (int i = 0; i < legend.length; i++)
-      legend_[i] = new String(legend[i]);
+    this.legend_ = new String[legend.length];
+    for (int i = 0; i < legend.length; i++) {
+			this.legend_[i] = new String(legend[i]);
+		}
 
     return(true);
   }
@@ -93,12 +95,14 @@ public class CreateChart {
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
    */
   public boolean setData(Double data[]) {
-    if (data.length == 0)
-      return(false);
+    if (data.length == 0) {
+			return(false);
+		}
 
-    data_ = new Double[data.length];
-    for (int i = 0; i < data.length; i++)
-      data_[i] = new Double(data[i].doubleValue());
+    this.data_ = new Double[data.length];
+    for (int i = 0; i < data.length; i++) {
+			this.data_[i] = new Double(data[i].doubleValue());
+		}
 
     return(true);
   }
@@ -110,7 +114,7 @@ public class CreateChart {
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
    */
   public void setBackgroundColour(Color c) {
-    backGround_ = c;
+    this.backGround_ = c;
   }
 
   /**
@@ -120,12 +124,14 @@ public class CreateChart {
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
    */
   public boolean setChartColours(Color colours[]) {
-    if (colours.length == 0)
-      return(false);
+    if (colours.length == 0) {
+			return(false);
+		}
 
-    colours_ = new Color[colours.length];
-    for (int i = 0; i < colours.length; i++)
-      colours_[i] = new Color(colours[i].getRGB());
+    this.colours_ = new Color[colours.length];
+    for (int i = 0; i < colours.length; i++) {
+			this.colours_[i] = new Color(colours[i].getRGB());
+		}
 
     return(true);
   }
@@ -138,7 +144,7 @@ public class CreateChart {
    * @throws class-name description
    */
   public void setWebPrefix(String prefix) {
-    webPrefix_ = prefix;
+    this.webPrefix_ = prefix;
   }
 
   /**
@@ -157,8 +163,9 @@ public class CreateChart {
     else if (type == BARCHART) {
       url = createBarChart();
     }
-    else
-      throw new ChartException("Chart type not supported");
+		else {
+			throw new ChartException("Chart type not supported");
+		}
 
     return(url);
   }
@@ -171,7 +178,7 @@ public class CreateChart {
    * @throws class-name description
    */
   public void setFilePrefix(String prefix) {
-    prefix_ = prefix;
+    this.prefix_ = prefix;
   }
 
   /**
@@ -182,34 +189,41 @@ public class CreateChart {
    * @throws class-name description
    */
   public void setFilePostfix(String postfix) {
-    postfix_ = postfix;
+    this.postfix_ = postfix;
   }
 
   private String createPieChart() throws ChartException {
     String url = null;
 
-    if (data_ == null)
-      throw new ChartException("No data set for chart");
+    if (this.data_ == null) {
+			throw new ChartException("No data set for chart");
+		}
 
-    chart_ = new PieChart();
+    this.chart_ = new PieChart();
     try {
-      if (data_.length != 0)
-        chart_.setData(data_);
-      if ((legend_ != null) && (legend_.length != 0))
-        chart_.setLegend(legend_);
-      if (backGround_ != null)
-        chart_.setBackgroundColour(backGround_);
-      if ((colours_ != null) && (colours_.length != 0))
-        chart_.setChartColours(colours_);
-      chart_.setFilePrefix(prefix_);
-      chart_.setFilePostfix(postfix_);
-      chart_.setWebPrefix(webPrefix_);
-      if (numberOfDigits_ >= 0)
-        chart_.setNumberOfBarLabelDigits(numberOfDigits_);
-      if (addToBarLabel_ != null)
-        chart_.addToBarLabel(addToBarLabel_);
+      if (this.data_.length != 0) {
+				this.chart_.setData(this.data_);
+			}
+      if ((this.legend_ != null) && (this.legend_.length != 0)) {
+				this.chart_.setLegend(this.legend_);
+			}
+      if (this.backGround_ != null) {
+				this.chart_.setBackgroundColour(this.backGround_);
+			}
+      if ((this.colours_ != null) && (this.colours_.length != 0)) {
+				this.chart_.setChartColours(this.colours_);
+			}
+      this.chart_.setFilePrefix(this.prefix_);
+      this.chart_.setFilePostfix(this.postfix_);
+      this.chart_.setWebPrefix(this.webPrefix_);
+      if (this.numberOfDigits_ >= 0) {
+				this.chart_.setNumberOfBarLabelDigits(this.numberOfDigits_);
+			}
+      if (this.addToBarLabel_ != null) {
+				this.chart_.addToBarLabel(this.addToBarLabel_);
+			}
 
-      url = chart_.create();
+      url = this.chart_.create();
     }
     catch (ChartException e) {
       throw(e);
@@ -228,28 +242,35 @@ public class CreateChart {
   private String createBarChart() throws ChartException {
     String url = null;
 
-    if (data_ == null)
-      throw new ChartException("No data set for chart");
+    if (this.data_ == null) {
+			throw new ChartException("No data set for chart");
+		}
 
-    chart_ = new BarChart();
+    this.chart_ = new BarChart();
     try {
-      if (data_.length != 0)
-        chart_.setData(data_);
-      if ((legend_ != null) && (legend_.length != 0))
-        chart_.setLegend(legend_);
-      if (backGround_ != null)
-        chart_.setBackgroundColour(backGround_);
-      if ((colours_ != null) && (colours_.length != 0))
-        chart_.setChartColours(colours_);
-      chart_.setFilePrefix(prefix_);
-      chart_.setFilePostfix(postfix_);
-      chart_.setWebPrefix(webPrefix_);
-      if (numberOfDigits_ >= 0)
-        chart_.setNumberOfBarLabelDigits(numberOfDigits_);
-      if (addToBarLabel_ != null)
-        chart_.addToBarLabel(addToBarLabel_);
+      if (this.data_.length != 0) {
+				this.chart_.setData(this.data_);
+			}
+      if ((this.legend_ != null) && (this.legend_.length != 0)) {
+				this.chart_.setLegend(this.legend_);
+			}
+      if (this.backGround_ != null) {
+				this.chart_.setBackgroundColour(this.backGround_);
+			}
+      if ((this.colours_ != null) && (this.colours_.length != 0)) {
+				this.chart_.setChartColours(this.colours_);
+			}
+      this.chart_.setFilePrefix(this.prefix_);
+      this.chart_.setFilePostfix(this.postfix_);
+      this.chart_.setWebPrefix(this.webPrefix_);
+      if (this.numberOfDigits_ >= 0) {
+				this.chart_.setNumberOfBarLabelDigits(this.numberOfDigits_);
+			}
+      if (this.addToBarLabel_ != null) {
+				this.chart_.addToBarLabel(this.addToBarLabel_);
+			}
 
-      url = chart_.create();
+      url = this.chart_.create();
     }
     catch (ChartException e) {
       throw(e);
@@ -259,11 +280,11 @@ public class CreateChart {
   }
 
   public void setNumberOfBarLabelDigits(int number) {
-    numberOfDigits_ = number;
+    this.numberOfDigits_ = number;
   }
 
   public void addToBarLabel(String stringToAdd) {
-    addToBarLabel_ = stringToAdd;
+    this.addToBarLabel_ = stringToAdd;
   }
 
 }

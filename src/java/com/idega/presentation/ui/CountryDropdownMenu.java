@@ -51,10 +51,12 @@ public class CountryDropdownMenu extends DropdownMenu {
 	}
 	
 	private Country getCountryByISO(String ISO){
-		if(countries==null)
+		if(countries==null) {
 			initCountries();
-		if(countries.containsKey(ISO))
+		}
+		if(countries.containsKey(ISO)) {
 			return (Country) countries.get(ISO);
+		}
 		return null;
 	}
 	
@@ -125,17 +127,18 @@ public class CountryDropdownMenu extends DropdownMenu {
 		for (Iterator iterator = smallCountries.iterator(); iterator.hasNext();) {
 			SmallCountry sCountry = (SmallCountry) iterator.next();
 			// we dont want the ISO code into the list
-			if(!sCountry.name .equalsIgnoreCase(sCountry.code))
+			if(!sCountry.name .equalsIgnoreCase(sCountry.code)) {
 				addMenuElement(sCountry.getID().intValue(),sCountry.getName());
+			}
 		}
 		
 		try {
-			if( selectedCountryName!=null){
-				selectedCountry = getAddressBusiness(iwc).getCountryHome().findByCountryName(selectedCountryName);	
+			if( this.selectedCountryName!=null){
+				this.selectedCountry = getAddressBusiness(iwc).getCountryHome().findByCountryName(this.selectedCountryName);	
 			}
 			// we must ensure no external selected country is set
-			else if(selectedCountry==null){
-				selectedCountry = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(currentLocale.getCountry());	
+			else if(this.selectedCountry==null){
+				this.selectedCountry = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(currentLocale.getCountry());	
 			}
 		}
 		catch (RemoteException e) {
@@ -148,8 +151,8 @@ public class CountryDropdownMenu extends DropdownMenu {
 			e.printStackTrace();
 		}
 		
-		if(selectedCountry!=null){
-			setSelectedElement(((Integer)selectedCountry.getPrimaryKey()).intValue());
+		if(this.selectedCountry!=null){
+			setSelectedElement(((Integer)this.selectedCountry.getPrimaryKey()).intValue());
 		}
 		//System.out.println( "country dropdown main end "+ com.idega.util.IWTimestamp.RightNow().toString());
 	}
@@ -189,7 +192,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 		 */
 		public int compareTo(Object o) {
 			// TODO Auto-generated method stub
-			Collator coll = Collator.getInstance(locale);
+			Collator coll = Collator.getInstance(this.locale);
 			return coll.compare( this.name,((SmallCountry)o).name);
 				
 		}
@@ -198,21 +201,21 @@ public class CountryDropdownMenu extends DropdownMenu {
 		 * @return
 		 */
 		public String getCode() {
-			return code;
+			return this.code;
 		}
 
 		/**
 		 * @return
 		 */
 		public Integer getID() {
-			return ID;
+			return this.ID;
 		}
 
 		/**
 		 * @return
 		 */
 		public String getName() {
-			return name;
+			return this.name;
 		}
 
 	}

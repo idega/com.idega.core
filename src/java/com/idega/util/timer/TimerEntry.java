@@ -28,7 +28,7 @@ public class TimerEntry implements Comparable, java.io.Serializable {
  * @return Returns the dayOfMonth.
  */
 public int getDayOfMonth() {
-	return dayOfMonth;
+	return this.dayOfMonth;
 }
 /**
  * @param dayOfMonth The dayOfMonth to set.
@@ -40,7 +40,7 @@ public void setDayOfMonth(int dayOfMonth) {
  * @return Returns the dayOfWeek.
  */
 public int getDayOfWeek() {
-	return dayOfWeek;
+	return this.dayOfWeek;
 }
 /**
  * @param dayOfWeek The dayOfWeek to set.
@@ -52,7 +52,7 @@ public void setDayOfWeek(int dayOfWeek) {
  * @return Returns the hour.
  */
 public int getHour() {
-	return hour;
+	return this.hour;
 }
 /**
  * @param hour The hour to set.
@@ -64,7 +64,7 @@ public void setHour(int hour) {
  * @return Returns the if the handleTime method can be called.
  */
 public boolean canRun() {
-	return canRun;
+	return this.canRun;
 }
 /**
  * @param canRun
@@ -76,7 +76,7 @@ public void setCanRun(boolean canRun) {
  * @return Returns the isRelative.
  */
 public boolean isRelative() {
-	return isRelative;
+	return this.isRelative;
 }
 /**
  * @param isRelative The isRelative to set.
@@ -88,7 +88,7 @@ public void setRelative(boolean isRelative) {
  * @return Returns the isRepetitive.
  */
 public boolean isRepetitive() {
-	return isRepetitive;
+	return this.isRepetitive;
 }
 /**
  * @param isRepetitive The isRepetitive to set.
@@ -100,7 +100,7 @@ public void setRepetitive(boolean isRepetitive) {
  * @return Returns the minute.
  */
 public int getMinute() {
-	return minute;
+	return this.minute;
 }
 /**
  * @param minute The minute to set.
@@ -112,7 +112,7 @@ public void setMinute(int minute) {
  * @return Returns the month.
  */
 public int getMonth() {
-	return month;
+	return this.month;
 }
 /**
  * @param month The month to set.
@@ -124,7 +124,7 @@ public void setMonth(int month) {
  * @return Returns the timerName.
  */
 public String getTimerName() {
-	return timerName;
+	return this.timerName;
 }
 /**
  * @param timerName The timerName to set.
@@ -136,7 +136,7 @@ public void setTimerName(String timerName) {
  * @return Returns the timerTime.
  */
 public long getTimerTime() {
-	return timerTime;
+	return this.timerTime;
 }
 /**
  * @param timerTime The timerTime to set.
@@ -148,7 +148,7 @@ public void setTimerTime(long timerTime) {
  * @return Returns the year.
  */
 public int getYear() {
-	return year;
+	return this.year;
 }
 /**
  * @param year The year to set.
@@ -159,8 +159,9 @@ public void setYear(int year) {
   private transient boolean debug = false;
 
   private void debug(String s) {
-    if (debug)
-      System.out.println("[" + Thread.currentThread().getName() + "] TimerEntry: " + s);
+    if (this.debug) {
+			System.out.println("[" + Thread.currentThread().getName() + "] TimerEntry: " + s);
+		}
   }
 
   /**
@@ -175,14 +176,14 @@ public void setYear(int year) {
     this.listener = listener;
     Calendar timer = Calendar.getInstance();
     timer.setTime(date);
-    minute = timer.get(Calendar.MINUTE);
-    hour = timer.get(Calendar.HOUR_OF_DAY);
-    dayOfMonth = timer.get(Calendar.DAY_OF_MONTH);
-    month = timer.get(Calendar.MONTH);
-    year = timer.get(Calendar.YEAR);
-    isRepetitive = false;
-    isRelative = false;
-    timerTime = date.getTime();
+    this.minute = timer.get(Calendar.MINUTE);
+    this.hour = timer.get(Calendar.HOUR_OF_DAY);
+    this.dayOfMonth = timer.get(Calendar.DAY_OF_MONTH);
+    this.month = timer.get(Calendar.MONTH);
+    this.year = timer.get(Calendar.YEAR);
+    this.isRepetitive = false;
+    this.isRelative = false;
+    this.timerTime = date.getTime();
     checkTimerTime();
   }
 
@@ -203,13 +204,14 @@ public void setYear(int year) {
       throw new PastDateException();
     }
 
-    minute = delay;
+    this.minute = delay;
     this.listener = listener;
     this.isRepetitive = isRepetitive;
-    if (minute < 1)
-      throw new IllegalArgumentException();
+    if (this.minute < 1) {
+			throw new IllegalArgumentException();
+		}
 
-    isRelative = true;
+    this.isRelative = true;
     updateTimerTime();
   }
  
@@ -246,8 +248,8 @@ public void setYear(int year) {
     this.dayOfWeek = dayOfWeek;
     this.year = year;
     this.listener = listener;
-    isRepetitive = (year == -1);
-    isRelative = false;
+    this.isRepetitive = (year == -1);
+    this.isRelative = false;
     updateTimerTime();
     checkTimerTime();
   }
@@ -268,8 +270,8 @@ public void setYear(int year) {
     * Updates the timer time for repetitive timers.
     */
   public void updateTimerTime() {
-    if (isRelative) {
-      timerTime = System.currentTimeMillis() + (minute * 60000);
+    if (this.isRelative) {
+      this.timerTime = System.currentTimeMillis() + (this.minute * 60000);
       return;
     }
 
@@ -277,91 +279,91 @@ public void setYear(int year) {
     Calendar timer = (Calendar)now.clone();
     debug("now: " + now.getTime());
 
-    if (year != -1) {
-      timer.set(Calendar.YEAR, year);
+    if (this.year != -1) {
+      timer.set(Calendar.YEAR, this.year);
     }
 
-    if (month != -1) {
-      timer.set(Calendar.MONTH, month);
+    if (this.month != -1) {
+      timer.set(Calendar.MONTH, this.month);
     }
 
-    if (hour != -1) {
-	timer.set(Calendar.HOUR_OF_DAY, hour);
+    if (this.hour != -1) {
+	timer.set(Calendar.HOUR_OF_DAY, this.hour);
     }
 
-    if (minute != -1) {
-	timer.set(Calendar.MINUTE, minute);
+    if (this.minute != -1) {
+	timer.set(Calendar.MINUTE, this.minute);
     }
 
     timer.set(Calendar.SECOND, 0);
 
 
     // Increments minute if now >= timer (for every minute timers)
-    if (minute == -1) {
+    if (this.minute == -1) {
       timer.add(Calendar.MINUTE, 1);
     }
 
     // Increments hour if now >= timer (for every hour timers)
-    if (hour == -1 && minute != -1 && now.get(Calendar.MINUTE) >= minute) {
+    if (this.hour == -1 && this.minute != -1 && now.get(Calendar.MINUTE) >= this.minute) {
       timer.add(Calendar.HOUR_OF_DAY, 1);
     }
 
 
    // Incrementes dayOfYear if now >= timer (for everyday timers)
-    if (dayOfMonth == -1 &&
-        dayOfWeek == -1 &&
-        hour != -1 && minute != -1 &&
-        (now.get(Calendar.HOUR_OF_DAY) > hour ||
-         (now.get(Calendar.HOUR_OF_DAY) == hour &&
-          now.get(Calendar.MINUTE) >= minute))) {
+    if (this.dayOfMonth == -1 &&
+        this.dayOfWeek == -1 &&
+        this.hour != -1 && this.minute != -1 &&
+        (now.get(Calendar.HOUR_OF_DAY) > this.hour ||
+         (now.get(Calendar.HOUR_OF_DAY) == this.hour &&
+          now.get(Calendar.MINUTE) >= this.minute))) {
       timer.roll(Calendar.DAY_OF_YEAR, true);
     }
 
     // Incrementes year if now >= timer (for monthly or yearly timers)
-    if (month != -1 && year == -1 &&
-        (now.get(Calendar.MONTH) > month ||
-         (now.get(Calendar.MONTH) == month &&
-          (now.get(Calendar.DAY_OF_MONTH) > dayOfMonth ||
-           (now.get(Calendar.DAY_OF_MONTH) == dayOfMonth &&
-            (now.get(Calendar.HOUR_OF_DAY) > hour ||
-             (now.get(Calendar.HOUR_OF_DAY) == hour &&
-              (now.get(Calendar.MINUTE) >= minute)))))))) {
+    if (this.month != -1 && this.year == -1 &&
+        (now.get(Calendar.MONTH) > this.month ||
+         (now.get(Calendar.MONTH) == this.month &&
+          (now.get(Calendar.DAY_OF_MONTH) > this.dayOfMonth ||
+           (now.get(Calendar.DAY_OF_MONTH) == this.dayOfMonth &&
+            (now.get(Calendar.HOUR_OF_DAY) > this.hour ||
+             (now.get(Calendar.HOUR_OF_DAY) == this.hour &&
+              (now.get(Calendar.MINUTE) >= this.minute)))))))) {
         timer.add(Calendar.YEAR, 1);
       }
 
     // Weekly timers
-    if (dayOfWeek != -1) {
-      int deltaOfDay = (7 + (dayOfWeek - now.get(Calendar.DAY_OF_WEEK))) % 7;
+    if (this.dayOfWeek != -1) {
+      int deltaOfDay = (7 + (this.dayOfWeek - now.get(Calendar.DAY_OF_WEEK))) % 7;
       debug("deltaOfDay: " + deltaOfDay);
       if (deltaOfDay != 0) {
 	timer.add(Calendar.DAY_OF_YEAR, deltaOfDay);
       }
       // Incrementes week if now >= timer
-      else if (now.get(Calendar.HOUR_OF_DAY) > hour ||
-	       (now.get(Calendar.HOUR_OF_DAY) == hour &&
-		now.get(Calendar.MINUTE) >= minute)) {
+      else if (now.get(Calendar.HOUR_OF_DAY) > this.hour ||
+	       (now.get(Calendar.HOUR_OF_DAY) == this.hour &&
+		now.get(Calendar.MINUTE) >= this.minute)) {
 	timer.add(Calendar.WEEK_OF_YEAR, 1);
       }
     }
 
     // Monthly timers
-    else if (dayOfMonth != -1) {
-      timer.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+    else if (this.dayOfMonth != -1) {
+      timer.set(Calendar.DAY_OF_MONTH, this.dayOfMonth);
 
       // Incrementes month if now >= timer (for weekly timers)
-      if (month == -1 &&
-          (now.get(Calendar.DAY_OF_MONTH) > dayOfMonth ||
-           (now.get(Calendar.DAY_OF_MONTH) == dayOfMonth &&
-            (now.get(Calendar.HOUR_OF_DAY) > hour ||
-             (now.get(Calendar.HOUR_OF_DAY) == hour &&
-              now.get(Calendar.MINUTE) >= minute))))) {
+      if (this.month == -1 &&
+          (now.get(Calendar.DAY_OF_MONTH) > this.dayOfMonth ||
+           (now.get(Calendar.DAY_OF_MONTH) == this.dayOfMonth &&
+            (now.get(Calendar.HOUR_OF_DAY) > this.hour ||
+             (now.get(Calendar.HOUR_OF_DAY) == this.hour &&
+              now.get(Calendar.MINUTE) >= this.minute))))) {
         timer.roll(Calendar.MONTH, true);
       }
     }
 
     debug("timer: " + timer.getTime());
 
-    timerTime = timer.getTime().getTime();
+    this.timerTime = timer.getTime().getTime();
   }
 
   /**
@@ -372,7 +374,7 @@ public void setYear(int year) {
     * (or less than 1 second closed to the current date).
     */
   void checkTimerTime() throws PastDateException {
-    long delay = timerTime - System.currentTimeMillis();
+    long delay = this.timerTime - System.currentTimeMillis();
     if (delay <= 1000) {
       throw new PastDateException();
     }
@@ -384,17 +386,17 @@ public void setYear(int year) {
     * @return the string.
     */
   public String toString() {
-    if (year != -1) {
-      return "Timer at " + new Date(timerTime);
+    if (this.year != -1) {
+      return "Timer at " + new Date(this.timerTime);
     }
     StringBuffer sb = new StringBuffer("Timer params");
-    sb.append(" minute="); sb.append(minute);
-    sb.append(" hour="); sb.append(hour);
-    sb.append(" dayOfMonth="); sb.append(dayOfMonth);
-    sb.append(" month="); sb.append(month);
-    sb.append(" dayOfWeek="); sb.append(dayOfWeek);
-    sb.append(" (next timer date=" + new Date(timerTime) + ")");
-    sb.append(" name="+ timerName);
+    sb.append(" minute="); sb.append(this.minute);
+    sb.append(" hour="); sb.append(this.hour);
+    sb.append(" dayOfMonth="); sb.append(this.dayOfMonth);
+    sb.append(" month="); sb.append(this.month);
+    sb.append(" dayOfWeek="); sb.append(this.dayOfWeek);
+    sb.append(" (next timer date=" + new Date(this.timerTime) + ")");
+    sb.append(" name="+ this.timerName);
 
     return sb.toString();
   }
@@ -415,10 +417,12 @@ public void setYear(int year) {
     */
   public int compareTo(Object obj) {
     TimerEntry entry = (TimerEntry)obj;
-    if (timerTime < entry.timerTime)
-      return -1;
-    if (timerTime > entry.timerTime)
-      return 1;
+    if (this.timerTime < entry.timerTime) {
+			return -1;
+		}
+    if (this.timerTime > entry.timerTime) {
+			return 1;
+		}
     return 0;
   }
 
@@ -433,7 +437,7 @@ public void setYear(int year) {
     */
   public boolean equals(Object obj) {
     TimerEntry entry = (TimerEntry)obj;
-    if ( (timerTime == entry.timerTime) && (timerName.equals(entry.timerName)) ){
+    if ( (this.timerTime == entry.timerTime) && (this.timerName.equals(entry.timerName)) ){
       return true;
     }
     return false;

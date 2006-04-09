@@ -137,8 +137,9 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 		if (!loginRecords.isEmpty()) {
 			return (Integer) loginRecords.iterator().next();
 		}
-		else
+		else {
 			throw new FinderException("File was not found");
+		}
 	}
 
 	public java.sql.Date ejbHomeGetLastLoginByLoginID(Integer loginID) throws FinderException {

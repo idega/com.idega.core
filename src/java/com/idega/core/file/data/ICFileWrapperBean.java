@@ -366,10 +366,12 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 		try {
 			IDOEntity entity = (IDOEntity) obj;
 			Collator coll = null;
-			if (getLocale() != null)
+			if (getLocale() != null) {
 				coll = Collator.getInstance(getLocale());
-			else
+			}
+			else {
 				coll = Collator.getInstance();
+			}
 			
 			return coll.compare(this.getPrimaryKey(), entity.getPrimaryKey());
 		}

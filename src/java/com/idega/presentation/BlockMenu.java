@@ -34,23 +34,23 @@ public class BlockMenu extends Block {
   private String fontStyle2 = "color:#942829;font-size:9pt;font-family:Arial,Helvetica,sans-serif;font-weight:bold;" ;
 
   protected void control(IWContext iwc){
-    iwrb = getResourceBundle(iwc);
-    iwb = getBundle(iwc);
+    this.iwrb = getResourceBundle(iwc);
+    this.iwb = getBundle(iwc);
     Table T = new Table();
     T.setWidth("100%");
     T.setCellpadding(0);
     T.setCellspacing(10);
 
     String className = null;
-    if(iwc.isParameterSet(prmObjectClass)){
-      className = iwc.getParameter(prmObjectClass);
-      iwc.setSessionAttribute(prmObjectClass,className);
+    if(iwc.isParameterSet(this.prmObjectClass)){
+      className = iwc.getParameter(this.prmObjectClass);
+      iwc.setSessionAttribute(this.prmObjectClass,className);
     }
-    else if(iwc.getSessionAttribute(prmObjectClass)!=null){
-      className = (String) iwc.getSessionAttribute(prmObjectClass);
+    else if(iwc.getSessionAttribute(this.prmObjectClass)!=null){
+      className = (String) iwc.getSessionAttribute(this.prmObjectClass);
     }
-    else if(defaultClass !=null){
-      className = String.valueOf(defaultClass.hashCode());
+    else if(this.defaultClass !=null){
+      className = String.valueOf(this.defaultClass.hashCode());
     }
 
     /*
@@ -61,11 +61,13 @@ public class BlockMenu extends Block {
 */
     if(className !=null){
       try{
-      if(showLinks)
-        T.add(getLinkTable(iwc,className),1,1);
+      if(this.showLinks) {
+				T.add(getLinkTable(iwc,className),1,1);
+			}
       Object obj =  RefactorClassRegistry.forName(IWMainApplication.decryptClassName(className)).newInstance();
-      if(obj instanceof Block)
-        T.add((Block)obj,1,2);
+      if(obj instanceof Block) {
+				T.add((Block)obj,1,2);
+			}
       }
       catch(Exception e){}
     }
@@ -76,7 +78,7 @@ public class BlockMenu extends Block {
   }
 
   public void setClassParameterName(String parametername){
-    prmObjectClass = parametername;
+    this.prmObjectClass = parametername;
   }
 
   public void setDefaultBlock(Class defaultClass){
@@ -93,8 +95,8 @@ public class BlockMenu extends Block {
     frame.setHeight("100%");
     Table box = new Table();
       int row = 1;
-      if(objects != null){
-        java.util.Iterator I = objects.iterator();
+      if(this.objects != null){
+        java.util.Iterator I = this.objects.iterator();
         Block obj;
         while(I.hasNext()){
           obj = (Block) I.next();
@@ -114,10 +116,10 @@ public class BlockMenu extends Block {
 
         int row = 1;
         int col = 1;
-        if(objects != null){
+        if(this.objects != null){
           frame.add(Edit.formatText("|"),col,row);
           col++;
-          java.util.Iterator I = objects.iterator();
+          java.util.Iterator I = this.objects.iterator();
           Block obj;
           String decryptedClassName ;
           boolean highlight;
@@ -136,9 +138,11 @@ public class BlockMenu extends Block {
   }
 
   private Text formatText(String text){
-    if ( text == null ) text = "";
+    if ( text == null ) {
+			text = "";
+		}
     Text T =new Text(text);
-    T.setFontStyle(fontStyle);
+    T.setFontStyle(this.fontStyle);
 
     return T;
   }
@@ -147,55 +151,59 @@ public class BlockMenu extends Block {
   public Link getLink(Class cl,Text name){
     Link L = new Link(name);
     L.addParameter(getObjectParameter(cl));
-    if(paramtersToMainTain !=null){
-      java.util.Iterator I = paramtersToMainTain.iterator();
+    if(this.paramtersToMainTain !=null){
+      java.util.Iterator I = this.paramtersToMainTain.iterator();
       while(I.hasNext()){
         L.addParameter((Parameter) I.next());
       }
     }
     L.setFontSize(1);
     L.setFontColor(Edit.colorDark);
-    L.setFontStyle(fontStyle);
+    L.setFontStyle(this.fontStyle);
     return L;
   }
 
   public Link getLink(Class cl,Text name,boolean highlighted){
     Link L = new Link(name);
     L.addParameter(getObjectParameter(cl));
-    if(paramtersToMainTain !=null){
-      java.util.Iterator I = paramtersToMainTain.iterator();
+    if(this.paramtersToMainTain !=null){
+      java.util.Iterator I = this.paramtersToMainTain.iterator();
       while(I.hasNext()){
         L.addParameter((Parameter) I.next());
       }
     }
     L.setFontSize(1);
     L.setFontColor(Edit.colorDark);
-    if(highlighted)
-      L.setFontStyle(fontStyle2);
-    else
-      L.setFontStyle(fontStyle);
+    if(highlighted) {
+			L.setFontStyle(this.fontStyle2);
+		}
+		else {
+			L.setFontStyle(this.fontStyle);
+		}
     return L;
   }
 
   public void addParameterToMaintain(Parameter prm){
-    if(paramtersToMainTain==null)
-      paramtersToMainTain = new Vector();
-    paramtersToMainTain.add(prm);
+    if(this.paramtersToMainTain==null) {
+			this.paramtersToMainTain = new Vector();
+		}
+    this.paramtersToMainTain.add(prm);
   }
 
   public Parameter getObjectParameter(Class objectClass){
-    return new Parameter(prmObjectClass,IWMainApplication.getEncryptedClassName(objectClass));
+    return new Parameter(this.prmObjectClass,IWMainApplication.getEncryptedClassName(objectClass));
   }
 
   public void setShowLinks(boolean show){
-    showLinks = show;
+    this.showLinks = show;
   }
 
   public void addBlock(Class obj){
-    if(objects == null)
-      objects = new java.util.Vector();
+    if(this.objects == null) {
+			this.objects = new java.util.Vector();
+		}
     try {
-      objects.add(obj.newInstance());
+      this.objects.add(obj.newInstance());
     }
     catch (Exception ex) {
 
@@ -203,15 +211,17 @@ public class BlockMenu extends Block {
   }
 
   public void addBlock(Block obj){
-    if(objects == null)
-      objects = new java.util.Vector();
-    objects.add(obj);
+    if(this.objects == null) {
+			this.objects = new java.util.Vector();
+		}
+    this.objects.add(obj);
   }
 
   public void addAll(Collection blocks){
-    if(objects == null)
-      objects = new java.util.Vector();
-    objects.addAll(blocks);
+    if(this.objects == null) {
+			this.objects = new java.util.Vector();
+		}
+    this.objects.addAll(blocks);
   }
 
   public void main(IWContext iwc){
@@ -222,8 +232,8 @@ public class BlockMenu extends Block {
     BlockMenu obj = null;
     try {
       obj = (BlockMenu)super.clone();
-      obj.objects  = objects;
-      obj.paramtersToMainTain = paramtersToMainTain;
+      obj.objects  = this.objects;
+      obj.paramtersToMainTain = this.paramtersToMainTain;
     }
     catch(Exception ex) {
       ex.printStackTrace(System.err);

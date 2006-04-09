@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentClassViewNode.java,v 1.1 2005/12/07 11:51:51 tryggvil Exp $
+ * $Id: ComponentClassViewNode.java,v 1.2 2006/04/09 12:13:17 laddi Exp $
  * Created on 28.11.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.idegaweb.IWMainApplication;
  * ViewNode that is 'ComponentBased' and implements the createComponent() method
  * so that it simply creates a new instance of the set UICompoment Class.
  * </p>
- *  Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ComponentClassViewNode extends DefaultViewNode {
 
@@ -58,7 +58,7 @@ public class ComponentClassViewNode extends DefaultViewNode {
 	 * @return Returns the componentClass.
 	 */
 	public Class getComponentClass() {
-		return componentClass;
+		return this.componentClass;
 	}
 
 	

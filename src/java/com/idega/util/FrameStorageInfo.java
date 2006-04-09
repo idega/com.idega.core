@@ -30,7 +30,7 @@ public class FrameStorageInfo {
 	}
 
 	public Class getFrameClass() {
-		return myClass;
+		return this.myClass;
 	}
 
 	public void setFrameClass(Class myClass) {
@@ -47,7 +47,7 @@ public class FrameStorageInfo {
 	}
 
 	public String getStorageKey() {
-		return storageKey;
+		return this.storageKey;
 	}
 
 	public void setStorageKey(String key) {

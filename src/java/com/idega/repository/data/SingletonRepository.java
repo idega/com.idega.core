@@ -64,13 +64,13 @@ public class SingletonRepository {
 	public synchronized Object getInstance(Class singletonClass, Instantiator instantiator) {
 		Object singleton = null;
 		String singletonName = singletonClass.getName();
-		if (singletonMap.containsKey(singletonName)) {
-			singleton = singletonMap.get(singletonName);
+		if (this.singletonMap.containsKey(singletonName)) {
+			singleton = this.singletonMap.get(singletonName);
 		}
 		else {
 			singleton = instantiator.getInstance();
-			singletonMap.put(singletonName, singleton);
-			instantiatorMap.put(singletonName, instantiator);
+			this.singletonMap.put(singletonName, singleton);
+			this.instantiatorMap.put(singletonName, instantiator);
 		}
 		return singleton;
 	}
@@ -80,8 +80,8 @@ public class SingletonRepository {
 		Map instancesOfSingletons = null;
 		Object singleton = null;
 		String singletonName = singletonClass.getName();
-		if (singletonMap.containsKey(singletonName)) {
-			instancesOfSingletons = (Map) singletonMap.get(singletonName);
+		if (this.singletonMap.containsKey(singletonName)) {
+			instancesOfSingletons = (Map) this.singletonMap.get(singletonName);
 		}
 		else {
 			instancesOfSingletons = new HashMap();
@@ -95,17 +95,17 @@ public class SingletonRepository {
 			// create and store singleton
 			singleton = instantiator.getInstance(parameter);
 			instancesOfSingletons.put(identfier, singleton);
-			singletonMap.put(singletonName, instancesOfSingletons);
+			this.singletonMap.put(singletonName, instancesOfSingletons);
 			// store instantiator
 			Map instantiators = null;
-			if (instantiatorMap.containsKey(singletonName)) {
-				instantiators = (Map) instantiatorMap.get(singletonName);
+			if (this.instantiatorMap.containsKey(singletonName)) {
+				instantiators = (Map) this.instantiatorMap.get(singletonName);
 			}
 			else {
 				instantiators = new HashMap();
 			}
 			instantiators.put(identfier, instantiator);
-			instantiatorMap.put(singletonName, instantiators);
+			this.instantiatorMap.put(singletonName, instantiators);
 		}
 		return singleton;
 	}
@@ -113,34 +113,34 @@ public class SingletonRepository {
 	public synchronized Object getInstance(Class singletonClass, Instantiator instantiator, Object parameter) {
 		Object singleton = null;
 		String singletonName = singletonClass.getName();
-		if (singletonMap.containsKey(singletonName)) {
-			singleton = singletonMap.get(singletonName);
+		if (this.singletonMap.containsKey(singletonName)) {
+			singleton = this.singletonMap.get(singletonName);
 		}
 		else {
 			singleton = instantiator.getInstance(parameter);
-			singletonMap.put(singletonName, singleton);
-			instantiatorMap.put(singletonName, instantiator);
+			this.singletonMap.put(singletonName, singleton);
+			this.instantiatorMap.put(singletonName, instantiator);
 		}
 		return singleton;
 	}
 	
 	public synchronized Object getExistingInstanceOrNull(Class singletonClass) {
-		return singletonMap.get(singletonClass.getName());
+		return this.singletonMap.get(singletonClass.getName());
 	}
 	
 	public synchronized void unloadInstance(Class singletonClass) {
 		String singletonName = singletonClass.getName();
-		if (singletonMap.containsKey(singletonName)) {
+		if (this.singletonMap.containsKey(singletonName)) {
 			// can be a map or instantiator
-			Object mapOrInstantiator = instantiatorMap.get(singletonName);
+			Object mapOrInstantiator = this.instantiatorMap.get(singletonName);
 			unload(mapOrInstantiator);
 			// remove the instance
-			singletonMap.remove(singletonName);
+			this.singletonMap.remove(singletonName);
 		}
 	}
 	
 	private synchronized void destroy() {
-		Iterator iterator = instantiatorMap.values().iterator();
+		Iterator iterator = this.instantiatorMap.values().iterator();
 		while (iterator.hasNext()) {
 			// can be a map or instantiator
 			Object mapOrInstantiator = iterator.next();

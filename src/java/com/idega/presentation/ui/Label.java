@@ -96,7 +96,7 @@ public class Label extends InterfaceObject {
 
 			println("</label>");	
 		} else if (IWConstants.MARKUP_LANGUAGE_WML.equals(getMarkupLanguage())) {	
-			print(_label);
+			print(this._label);
 			print("<br/>");	
 		}
 	}	

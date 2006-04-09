@@ -40,11 +40,11 @@ public class IWEvent extends AWTEvent implements ActiveEvent, IWModuleEvent{
   }
 
   public void setIWContext(IWContext iwc){
-    myModinfo = iwc;
+    this.myModinfo = iwc;
   }
 
   public IWContext getIWContext(){
-    return myModinfo;
+    return this.myModinfo;
   }
 
   public void dispatch(){

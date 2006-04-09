@@ -115,15 +115,15 @@ public class RequestControlFilter implements Filter {
 		// parse all of the initialization parameters, collecting the exclude
 		// patterns and the max wait parameters
 		Enumeration enumer = config.getInitParameterNames();
-		excludePatterns = new LinkedList();
-		maxWaitDurations = new HashMap();
+		this.excludePatterns = new LinkedList();
+		this.maxWaitDurations = new HashMap();
 		while (enumer.hasMoreElements()) {
 			String paramName = (String) enumer.nextElement();
 			String paramValue = config.getInitParameter(paramName);
 			if (paramName.startsWith("excludePattern")) {
 				// compile the pattern only this once
 				Pattern excludePattern = Pattern.compile(paramValue);
-				excludePatterns.add(excludePattern);
+				this.excludePatterns.add(excludePattern);
 			}
 			else if (paramName.startsWith("maxWaitMilliseconds.")) {
 				// the delay gets parsed from the parameter name
@@ -137,7 +137,7 @@ public class RequestControlFilter implements Filter {
 				// compile the corresponding pattern, and store it with this delay in
 				// the map
 				Pattern waitPattern = Pattern.compile(paramValue);
-				maxWaitDurations.put(waitPattern, duration);
+				this.maxWaitDurations.put(waitPattern, duration);
 			}
 		}
 	}
@@ -304,13 +304,13 @@ public class RequestControlFilter implements Filter {
 	private long getMaxWaitTime(HttpServletRequest request) {
 		// look for a Pattern that matches the request's path
 		String path = request.getRequestURI();
-		Iterator patternIter = maxWaitDurations.keySet().iterator();
+		Iterator patternIter = this.maxWaitDurations.keySet().iterator();
 		while (patternIter.hasNext()) {
 			Pattern p = (Pattern) patternIter.next();
 			Matcher m = p.matcher(path);
 			if (m.matches()) {
 				// this pattern matches. At most, how long can this request wait?
-				Long maxDuration = (Long) maxWaitDurations.get(p);
+				Long maxDuration = (Long) this.maxWaitDurations.get(p);
 				return maxDuration.longValue();
 			}
 		}
@@ -330,7 +330,7 @@ public class RequestControlFilter implements Filter {
 		// iterate through the exclude patterns. If one matches this path,
 		// then the request is excluded.
 		String path = request.getRequestURI();
-		Iterator patternIter = excludePatterns.iterator();
+		Iterator patternIter = this.excludePatterns.iterator();
 		while (patternIter.hasNext()) {
 			Pattern p = (Pattern) patternIter.next();
 			Matcher m = p.matcher(path);

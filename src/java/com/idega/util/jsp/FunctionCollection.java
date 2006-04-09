@@ -347,66 +347,72 @@ public class FunctionCollection{
 
 
 
-			if (!(svara))
+			if (!(svara)) {
+				switch (manudur) {
 
-			switch (manudur) {
+					case 1:
 
-				case 1:
+						if (dagur==1) {
+							svara=true;
+						}
 
-					if (dagur==1) svara=true;
+						break;
 
-					break;
+					case 2:
 
-				case 2:
+						break;
 
-					break;
+					case 3:
 
-				case 3:
+						break;
 
-					break;
+					case 4:
 
-				case 4:
+						break;
 
-					break;
+					case 5:
 
-				case 5:
+						if (dagur==1) {
+							svara=true;
+						}
 
-					if (dagur==1) svara=true;
+						break;
 
-					break;
+					case 6:
 
-				case 6:
+						if (dagur==17) {
+							svara=true;
+						}
 
-					if (dagur==17) svara=true;
+						break;
 
-					break;
+					case 7:
 
-				case 7:
+						break;
 
-					break;
+					case 8:
 
-				case 8:
+						break;
 
-					break;
+					case 9:
 
-				case 9:
+						break;
 
-					break;
+					case 10:
 
-				case 10:
+						break;
 
-					break;
+					case 11:
 
-				case 11:
+						break;
 
-					break;
+					case 12:
 
-				case 12:
-
-					break;
+						break;
 
 
 
+				}
 			}
 
 

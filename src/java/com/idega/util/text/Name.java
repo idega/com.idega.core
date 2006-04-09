@@ -24,12 +24,15 @@ import com.idega.util.LocaleUtil;
     }
 
     public Name(String first, String middle, String last) {
-        if(first != null)
-            firstName = first;
-        if(middle != null)
-            middleName = middle;
-        if(last != null)
-            lastName = last;
+        if(first != null) {
+					this.firstName = first;
+				}
+        if(middle != null) {
+					this.middleName = middle;
+				}
+        if(last != null) {
+					this.lastName = last;
+				}
     }
 
     public Name(String fullName) {
@@ -37,18 +40,18 @@ import com.idega.util.LocaleUtil;
     }
 
     public String getName() {
-	    	if(fullName==null){
+	    	if(this.fullName==null){
 	    		StringBuffer fullNameBuffer = new StringBuffer();
 
-	    		  firstName = (firstName==null) ? "" : firstName;
-	    		  middleName = (middleName==null) ? "" : middleName;
-	    		  lastName = (lastName==null) ? "" : lastName;
+	    		  this.firstName = (this.firstName==null) ? "" : this.firstName;
+	    		  this.middleName = (this.middleName==null) ? "" : this.middleName;
+	    		  this.lastName = (this.lastName==null) ? "" : this.lastName;
 	    		
 	    		 
-	    		  fullNameBuffer.append(firstName).append(" ").append(middleName).append(" ").append(lastName);
+	    		  fullNameBuffer.append(this.firstName).append(" ").append(this.middleName).append(" ").append(this.lastName);
 	    		  
-	    		  fullName = fullNameBuffer.toString();
-	    		  fullName = TextSoap.findAndReplace(fullName,"  "," ");
+	    		  this.fullName = fullNameBuffer.toString();
+	    		  this.fullName = TextSoap.findAndReplace(this.fullName,"  "," ");
 	    	}
         return this.fullName;
     }
@@ -58,20 +61,20 @@ import com.idega.util.LocaleUtil;
     }
     
     public String getName(Locale locale, boolean commaSeperated) {
-    		if (fullName == null) {
+    		if (this.fullName == null) {
     			StringBuffer buffer = new StringBuffer();
-    			 firstName = (firstName==null) ? "" : firstName;
-	    		 middleName = (middleName==null) ? "" : middleName;
-	    		 lastName = (lastName==null) ? "" : lastName;
+    			 this.firstName = (this.firstName==null) ? "" : this.firstName;
+	    		 this.middleName = (this.middleName==null) ? "" : this.middleName;
+	    		 this.lastName = (this.lastName==null) ? "" : this.lastName;
     			if (locale.equals(LocaleUtil.getIcelandicLocale())) {     
-    				buffer.append(firstName).append(" ").append(middleName).append(" ").append(lastName);
+    				buffer.append(this.firstName).append(" ").append(this.middleName).append(" ").append(this.lastName);
     			}
     			else {
-    				buffer.append(lastName);
+    				buffer.append(this.lastName);
     				if (commaSeperated) {
     					buffer.append(",");
     				}
-    				buffer.append(" ").append(firstName).append(" ").append(middleName);
+    				buffer.append(" ").append(this.firstName).append(" ").append(this.middleName);
     			}
     			return buffer.toString();
     			
@@ -93,27 +96,27 @@ import com.idega.util.LocaleUtil;
     
     public void setMiddleName(String middleName) {
       this.middleName = middleName;
-      fullName = null;
+      this.fullName = null;
     }
 
     public void setFirstName(String firstName) {
     		this.firstName = firstName;
-        fullName = null;
+        this.fullName = null;
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-        fullName = null;
+        this.fullName = null;
     }
 
     public void setName(String name) {
 		if ((name != null) && (name.length() > 0)) {
-		    fullName = name;
+		    this.fullName = name;
 			StringTokenizer token = new StringTokenizer(name);
 			int countWithoutFirstAndLast = token.countTokens() - 2;
 			
 			if( token.hasMoreTokens() ){
-				firstName = token.nextToken();
+				this.firstName = token.nextToken();
 	
 				if (countWithoutFirstAndLast >= 1) {
 					StringBuffer middleName = new StringBuffer();
@@ -121,8 +124,9 @@ import com.idega.util.LocaleUtil;
 					for (int i = 0; i < countWithoutFirstAndLast; i++) {
 						middleName.append(token.nextToken());
 	
-						if (i != (countWithoutFirstAndLast - 1))
+						if (i != (countWithoutFirstAndLast - 1)) {
 							middleName.append(" ");
+						}
 	
 					}
 	
@@ -133,13 +137,15 @@ import com.idega.util.LocaleUtil;
 				}
 	
 				if (countWithoutFirstAndLast >= 0) {
-					lastName = token.nextToken();
+					this.lastName = token.nextToken();
 				}
 				else { //remove last name
 					this.lastName = null;
 				}
 			}
-			else System.out.println("com.idega.util.text.Name fullname is an empty string!");
+			else {
+				System.out.println("com.idega.util.text.Name fullname is an empty string!");
+			}
 		}
 	}
     
@@ -148,12 +154,15 @@ import com.idega.util.LocaleUtil;
      * @return 
      */
     public Name capitalize(){
-        if(this.firstName!=null)
-            this.firstName = TextSoap.capitalize(this.firstName);
-        if(this.lastName!=null)
-            this.lastName = TextSoap.capitalize(this.lastName);
-        if(this.middleName!=null)
-            this.middleName = TextSoap.capitalize(this.middleName," ");
+        if(this.firstName!=null) {
+					this.firstName = TextSoap.capitalize(this.firstName);
+				}
+        if(this.lastName!=null) {
+					this.lastName = TextSoap.capitalize(this.lastName);
+				}
+        if(this.middleName!=null) {
+					this.middleName = TextSoap.capitalize(this.middleName," ");
+				}
         this.fullName = getName();
         return this;
     }

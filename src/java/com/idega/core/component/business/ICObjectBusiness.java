@@ -45,17 +45,17 @@ public class ICObjectBusiness implements Singleton {
   }
 
   private  Map getIcoInstanceMap(){
-    if(icoInstanceMap==null){
-      icoInstanceMap = new HashMap();
+    if(this.icoInstanceMap==null){
+      this.icoInstanceMap = new HashMap();
     }
-    return icoInstanceMap;
+    return this.icoInstanceMap;
   }
 
   private  Map getIcObjectMap(){
-    if(icObjectMap==null){
-      icObjectMap = new HashMap();
+    if(this.icObjectMap==null){
+      this.icObjectMap = new HashMap();
     }
-    return icObjectMap;
+    return this.icObjectMap;
   }
 
   /**
@@ -186,10 +186,12 @@ public class ICObjectBusiness implements Singleton {
    * Returns the Class that the ICObjectInstance is associated with
    */
   public Class getClassForInstance(int icObjectInstanceID)throws ClassNotFoundException{
-    if (icObjectInstanceID == -1)
-      return(com.idega.presentation.Page.class);
-    else
-      return getICObjectInstance(icObjectInstanceID).getObject().getObjectClass();
+    if (icObjectInstanceID == -1) {
+			return(com.idega.presentation.Page.class);
+		}
+		else {
+			return getICObjectInstance(icObjectInstanceID).getObject().getObjectClass();
+		}
   }
 
   /**

@@ -28,30 +28,30 @@ public class Timer {
 	private int counter = 0;
 
 	public void start() {
-		hasStopped = false;
-		startTime = System.currentTimeMillis();
-		breakPointTime = startTime;
-		counter=0;
+		this.hasStopped = false;
+		this.startTime = System.currentTimeMillis();
+		this.breakPointTime = this.startTime;
+		this.counter=0;
 	}
 
 	public void stop() {
-		hasStopped = true;
-		endTime = System.currentTimeMillis();
+		this.hasStopped = true;
+		this.endTime = System.currentTimeMillis();
 	}
 
 	public long getTime() {
-		if(hasStopped){
-			return endTime - startTime;
+		if(this.hasStopped){
+			return this.endTime - this.startTime;
 		}
 		else{
-			return System.currentTimeMillis()-startTime;
+			return System.currentTimeMillis()-this.startTime;
 		}
 	}
 
 	public void reset() {
-		startTime = 0;
-		endTime = 0;
-		hasStopped = false;
+		this.startTime = 0;
+		this.endTime = 0;
+		this.hasStopped = false;
 	}
 
 	public String getTimeString() {
@@ -68,15 +68,15 @@ public class Timer {
 	 * @param identifier The message to log out
 	 */
 	public void logTime(Level level, String identifier) {
-		long current = endTime;
-		if(!hasStopped){
+		long current = this.endTime;
+		if(!this.hasStopped){
 			current = System.currentTimeMillis();
 		}
 		
-		long fromBegining = current-startTime;
-		long fromLastBreak = current-breakPointTime;
-		log(level,"[TIMER-"+identifier+"{"+(counter++)+"}]: "+getTimeString(fromLastBreak)+" since last log, total time "+getTimeString(fromBegining));
-		breakPointTime = current;
+		long fromBegining = current-this.startTime;
+		long fromLastBreak = current-this.breakPointTime;
+		log(level,"[TIMER-"+identifier+"{"+(this.counter++)+"}]: "+getTimeString(fromLastBreak)+" since last log, total time "+getTimeString(fromBegining));
+		this.breakPointTime = current;
 	}
 	
 	/**

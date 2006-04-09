@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.167 2006/02/28 15:06:12 eiki Exp $
+ * $Id: Link.java,v 1.168 2006/04/09 12:13:16 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -203,8 +203,8 @@ public class Link extends Text {
 		      System.err.println("noParameters");
 		    }
 		    */
-		_obj.setParentObject(this);
-		_objectType = OBJECT_TYPE_MODULEOBJECT;
+		this._obj.setParentObject(this);
+		this._objectType = OBJECT_TYPE_MODULEOBJECT;
 	}
 
 	/**
@@ -245,9 +245,9 @@ public class Link extends Text {
 		 */
 	public Link(PresentationObject mo, int icFileId) {
 		this(icFileId);
-		_obj = mo;
-		_obj.setParentObject(this);
-		_objectType = OBJECT_TYPE_MODULEOBJECT;
+		this._obj = mo;
+		this._obj.setParentObject(this);
+		this._objectType = OBJECT_TYPE_MODULEOBJECT;
 	}
 
 
@@ -351,11 +351,11 @@ public class Link extends Text {
 	 *
 	 */
 	public void setWindow(Window window) {
-		_myWindow = window;
+		this._myWindow = window;
 		//_objectType = OBJECT_TYPE_WINDOW;
 		//_myWindow.setParentObject(this);
-		if (_obj == null) {
-			setText(_myWindow.getName());
+		if (this._obj == null) {
+			setText(this._myWindow.getName());
 		}
 	}
 	
@@ -364,7 +364,7 @@ public class Link extends Text {
 	 * @param hostname the hostname
 	 */
 	public void setHostname(String hostname) {
-		_hostname = hostname;
+		this._hostname = hostname;
 	}
 	
 	/**
@@ -373,7 +373,7 @@ public class Link extends Text {
 	 * @return the hostname
 	 */
 	public String getHostname() {
-		return _hostname;
+		return this._hostname;
 	}
 
 	/**
@@ -391,8 +391,8 @@ public class Link extends Text {
 			setWindow((Window) object);
 		}
 		else {
-			_objectType = OBJECT_TYPE_MODULEOBJECT;
-			_obj = object;
+			this._objectType = OBJECT_TYPE_MODULEOBJECT;
+			this._obj = object;
 			object.setParentObject(this);
 		}
 	}
@@ -401,9 +401,9 @@ public class Link extends Text {
 	 *
 	 */
 	public void main(IWContext iwc) throws Exception {
-		if (fileId != -1){
+		if (this.fileId != -1){
 			ICFileSystem fsystem = getICFileSystem(iwc);
-			String fileURL = fsystem.getFileURI(fileId);
+			String fileURL = fsystem.getFileURI(this.fileId);
 			//setURL(MediaBusiness.getMediaURL(fileId, iwc.getApplication()));
 			setURL(fileURL);
 		}
@@ -420,76 +420,76 @@ public class Link extends Text {
 		}
 
 		//if (_objectType==(OBJECT_TYPE_WINDOW)) {
-		if (_myWindow != null) {
+		if (this._myWindow != null) {
 			String windowOpenerURI = iwc.getIWMainApplication().getWindowOpenerURI();
-			if (_myWindow.getURL(iwc).indexOf(windowOpenerURI) != -1) {
-				String sessionParameterName = com.idega.servlet.WindowOpener.storeWindow(iwc, _myWindow);
+			if (this._myWindow.getURL(iwc).indexOf(windowOpenerURI) != -1) {
+				String sessionParameterName = com.idega.servlet.WindowOpener.storeWindow(iwc, this._myWindow);
 				addParameter(_sessionStorageName, sessionParameterName);
 			}
 		}
 		//}
 
-		if (_obj != null) {
-			if (_obj instanceof Image) {
-				if (_onMouseOverImage != null) {
-					((Image) _obj).setOverImage(_onMouseOverImage);
+		if (this._obj != null) {
+			if (this._obj instanceof Image) {
+				if (this._onMouseOverImage != null) {
+					((Image) this._obj).setOverImage(this._onMouseOverImage);
 				}
-				else if (_onMouseOverImageId > 0) {
-					((Image) _obj).setOverImage(new Image(_onMouseOverImageId));
+				else if (this._onMouseOverImageId > 0) {
+					((Image) this._obj).setOverImage(new Image(this._onMouseOverImageId));
 				}
 				
 				//add localizedcrap
-				if (_onClickImage != null) {
-					((Image) _obj).setOnClickImage(_onClickImage);
+				if (this._onClickImage != null) {
+					((Image) this._obj).setOnClickImage(this._onClickImage);
 				}
-				else if (_onClickImageId > 0) {
-					((Image) _obj).setOnClickImage(new Image(_onClickImageId));
+				else if (this._onClickImageId > 0) {
+					((Image) this._obj).setOnClickImage(new Image(this._onClickImageId));
 				}
 			}
 
 		}
-		else if (_imageId > 0) {
-			Image image = new Image(_imageId);
-			if (_onMouseOverImage != null) {
-				image.setOverImage(_onMouseOverImage);
+		else if (this._imageId > 0) {
+			Image image = new Image(this._imageId);
+			if (this._onMouseOverImage != null) {
+				image.setOverImage(this._onMouseOverImage);
 			}
-			else if (_onMouseOverImageId > 0) {
-				image.setOverImage(new Image(_onMouseOverImageId));
+			else if (this._onMouseOverImageId > 0) {
+				image.setOverImage(new Image(this._onMouseOverImageId));
 			}
-			if (_onClickImage != null) {
-				image.setOnClickImage(_onClickImage);
+			if (this._onClickImage != null) {
+				image.setOnClickImage(this._onClickImage);
 			}
-			else if (_onClickImageId > 0) {
-				image.setOnClickImage(new Image(_onClickImageId));
+			else if (this._onClickImageId > 0) {
+				image.setOnClickImage(new Image(this._onClickImageId));
 			}
 			setImage(image);
 		}
 
-		if (isImageButton) { //get a generated button gif image
-			if (useTextAsLocalizedTextKey) { //the text entered is a local key
-				setPresentationObject(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(text, text));
+		if (this.isImageButton) { //get a generated button gif image
+			if (this.useTextAsLocalizedTextKey) { //the text entered is a local key
+				setPresentationObject(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageButton(this.text, this.text));
 			}
 			else {
 				setPresentationObject(iwc.getIWMainApplication().getCoreBundle().getImageButton(getLocalizedText(iwc)));
 			}
 		}
-		else if (isImageTab) { //get a generated button gif image
-			if (useTextAsLocalizedTextKey) { //the text entered is a local key
-				setPresentationObject(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(text, text, flip));
+		else if (this.isImageTab) { //get a generated button gif image
+			if (this.useTextAsLocalizedTextKey) { //the text entered is a local key
+				setPresentationObject(iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedImageTab(this.text, this.text, this.flip));
 			}
 			else {
-				setPresentationObject(iwc.getIWMainApplication().getCoreBundle().getImageTab(getLocalizedText(iwc), flip));
+				setPresentationObject(iwc.getIWMainApplication().getCoreBundle().getImageTab(getLocalizedText(iwc), this.flip));
 			}
 		}
 
-		if (isImageTab || isImageButton) {
+		if (this.isImageTab || this.isImageButton) {
 			if (isSetToSubmitForm()) {
-				((Image) _obj).removeMarkupAttribute("onMouseDown"); //so that it doesn't interfere with the link onclick event
+				((Image) this._obj).removeMarkupAttribute("onMouseDown"); //so that it doesn't interfere with the link onclick event
 			}
 		}
 
-		if (_obj != null) {
-			_obj.main(iwc);
+		if (this._obj != null) {
+			this._obj.main(iwc);
 		}
 	}
 
@@ -526,7 +526,7 @@ public class Link extends Text {
 	 *
 	 */
 	public String getURL(IWContext iwc) {
-		if ((protocol == null) && https) {
+		if ((this.protocol == null) && this.https) {
 			String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 			StringBuffer url = new StringBuffer();
 			url.append("https://").append(iwc.getServerName());
@@ -537,12 +537,13 @@ public class Link extends Text {
 			}
 			return url.toString();
 		}
-		else if (protocol != null) {
+		else if (this.protocol != null) {
 			String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 			StringBuffer url = new StringBuffer();
-			url.append(protocol).append("://").append(iwc.getServerName()).append(slash);
-			if (attr != null)
+			url.append(this.protocol).append("://").append(iwc.getServerName()).append(slash);
+			if (attr != null) {
 				url.append(attr);
+			}
 			return url.toString();
 		}
 		else {
@@ -569,11 +570,11 @@ public class Link extends Text {
 	}
 
 	public boolean isParameterSet(String prmName) {
-		if (_parameterString != null) {
+		if (this._parameterString != null) {
 			if (!(prmName != null && !prmName.equals(""))) {
 				return true;
 			}
-			String prmString = _parameterString.toString();
+			String prmString = this._parameterString.toString();
 			if (prmString.length() > 0) {
 				if ((prmString.charAt(0) == '?') && (prmString.length() > 1)) {
 					prmString = prmString.substring(1, prmString.length());
@@ -636,12 +637,12 @@ public class Link extends Text {
 			parameterName = java.net.URLEncoder.encode(parameterName);
 			parameterValue = java.net.URLEncoder.encode(parameterValue);
 
-			if (_parameterString == null) {
-				_parameterString = new StringBuffer();
-				_parameterString.append("?");
-				_parameterString.append(parameterName);
-				_parameterString.append("=");
-				_parameterString.append(parameterValue);
+			if (this._parameterString == null) {
+				this._parameterString = new StringBuffer();
+				this._parameterString.append("?");
+				this._parameterString.append(parameterName);
+				this._parameterString.append("=");
+				this._parameterString.append(parameterValue);
 			}
 			else {
 				StringBuffer temp = new StringBuffer();
@@ -649,7 +650,7 @@ public class Link extends Text {
 				temp.append("=");
 				temp.append(parameterValue);
 				temp.append("&");
-				_parameterString.insert(1,temp);
+				this._parameterString.insert(1,temp);
 			}
 		}
 		else if (parameterName != null) {
@@ -668,17 +669,17 @@ public class Link extends Text {
 			parameterName = java.net.URLEncoder.encode(parameterName);
 			parameterValue = java.net.URLEncoder.encode(parameterValue);
 
-			if (_parameterString == null) {
-				_parameterString = new StringBuffer();
-				_parameterString.append("?");
+			if (this._parameterString == null) {
+				this._parameterString = new StringBuffer();
+				this._parameterString.append("?");
 			}
 			else {
-				_parameterString.append("&");
+				this._parameterString.append("&");
 			}
 
-			_parameterString.append(parameterName);
-			_parameterString.append("=");
-			_parameterString.append(parameterValue);
+			this._parameterString.append(parameterName);
+			this._parameterString.append("=");
+			this._parameterString.append(parameterValue);
 		}
 		else if (parameterName != null) {
 			parameterName = java.net.URLEncoder.encode(parameterName);
@@ -706,14 +707,16 @@ public class Link extends Text {
 	}
 
 	public void setToMaintainParameter(String name, boolean maintain) {
-		if (this.maintainedParameters == null)
-			maintainedParameters = new Vector();
-		if (maintain)
-			maintainedParameters.add(name);
+		if (this.maintainedParameters == null) {
+			this.maintainedParameters = new Vector();
+		}
+		if (maintain) {
+			this.maintainedParameters.add(name);
+		}
 	}
 	
 	public void setToMaintainAllParameter(boolean value) {
-		_maintainAllParameters = value;
+		this._maintainAllParameters = value;
 	}
 	
 	/**
@@ -722,9 +725,10 @@ public class Link extends Text {
 	 * @param parameterNames
 	 */
 	public void setToMaintainParameters(java.util.Collection parameterNames){
-		if (this.maintainedParameters == null)
-			maintainedParameters = new Vector();
-		maintainedParameters.addAll(parameterNames);
+		if (this.maintainedParameters == null) {
+			this.maintainedParameters = new Vector();
+		}
+		this.maintainedParameters.addAll(parameterNames);
 	}
 
 	/*
@@ -837,7 +841,7 @@ public class Link extends Text {
 	 */
 	public void setFontSize(String s) {
 		if (isText()) {
-			((Text) _obj).setFontSize(s);
+			((Text) this._obj).setFontSize(s);
 		}
 	}
 
@@ -853,7 +857,7 @@ public class Link extends Text {
 	 */
 	public void setFontFace(String s) {
 		if (isText()) {
-			((Text) _obj).setFontFace(s);
+			((Text) this._obj).setFontFace(s);
 		}
 	}
 
@@ -862,7 +866,7 @@ public class Link extends Text {
 	 */
 	public void setFontColor(String color) {
 		if (isText()) {
-			((Text) _obj).setFontColor(color);
+			((Text) this._obj).setFontColor(color);
 		}
 	}
 
@@ -871,7 +875,7 @@ public class Link extends Text {
 	 */
 	public void setFontStyle(String style) {
 		if (isText()) {
-			((Text) _obj).setFontStyle(style);
+			((Text) this._obj).setFontStyle(style);
 		}
 	}
 
@@ -880,7 +884,7 @@ public class Link extends Text {
 	 */
 	public void setFontClass(String styleClass) {
 		if (isText()) {
-			((Text) _obj).setFontClass(styleClass);
+			((Text) this._obj).setFontClass(styleClass);
 		}
 	}
 
@@ -893,7 +897,7 @@ public class Link extends Text {
 	 *
 	 */
 	public void setSessionId(boolean addSessionId) {
-		_addSessionId = addSessionId;
+		this._addSessionId = addSessionId;
 	}
 
 	/**
@@ -901,7 +905,7 @@ public class Link extends Text {
 	 */
 	public void addBreak() {
 		if (isText()) {
-			((Text) _obj).addBreak();
+			((Text) this._obj).addBreak();
 		}
 	}
 
@@ -910,7 +914,7 @@ public class Link extends Text {
 	 */
 	public void setTeleType() {
 		if (isText()) {
-			((Text) _obj).setTeleType();
+			((Text) this._obj).setTeleType();
 		}
 	}
 
@@ -919,7 +923,7 @@ public class Link extends Text {
 	 */
 	public void setBold() {
 		if (isText()) {
-			((Text) _obj).setBold();
+			((Text) this._obj).setBold();
 		}
 	}
 
@@ -928,7 +932,7 @@ public class Link extends Text {
 	 */
 	public void setItalic() {
 		if (isText()) {
-			((Text) _obj).setItalic();
+			((Text) this._obj).setItalic();
 		}
 	}
 
@@ -937,7 +941,7 @@ public class Link extends Text {
 	 */
 	public void setUnderline() {
 		if (isText()) {
-			((Text) _obj).setUnderline();
+			((Text) this._obj).setUnderline();
 		}
 	}
 
@@ -946,7 +950,7 @@ public class Link extends Text {
 	 */
 	public void setText(String text) {
 		if (isText()) {
-			((Text) _obj).setText(text);
+			((Text) this._obj).setText(text);
 			this.text = text;
 		}
 		else {
@@ -958,7 +962,7 @@ public class Link extends Text {
 	public String getText() {
 		String toReturn = this.text;
 		if (toReturn == null && this._obj == null && this._obj instanceof Text && !(this._obj instanceof Link)) {
-			toReturn = ((Text) _obj).getText();
+			toReturn = ((Text) this._obj).getText();
 		}
 		return toReturn;
 	}
@@ -968,14 +972,14 @@ public class Link extends Text {
 	*/
 	public void setText(Text text) {
 		this.text = text.getText();
-		_obj = text;
-		_obj.setParentObject(this);
-		_objectType = OBJECT_TYPE_TEXT;
+		this._obj = text;
+		this._obj.setParentObject(this);
+		this._objectType = OBJECT_TYPE_TEXT;
 	}
 
 	public void setLocalizedText(String localeString, String text) {
 		if (isText()) {
-			((Text) _obj).setLocalizedText(localeString, text);
+			((Text) this._obj).setLocalizedText(localeString, text);
 		}
 		else {
 			super.setLocalizedText(localeString, text);
@@ -987,7 +991,7 @@ public class Link extends Text {
 	 */
 	public void setLocalizedText(int icLocaleID, String text) {
 		if (isText()) {
-			((Text) _obj).setLocalizedText(icLocaleID, text);
+			((Text) this._obj).setLocalizedText(icLocaleID, text);
 		}
 		else {
 			super.setLocalizedText(icLocaleID, text);
@@ -999,7 +1003,7 @@ public class Link extends Text {
 	 */
 	public void setLocalizedText(Locale locale, String text) {
 		if (isText()) {
-			((Text) _obj).setLocalizedText(locale, text);
+			((Text) this._obj).setLocalizedText(locale, text);
 		}
 		else {
 			super.setLocalizedText(locale, text);
@@ -1011,7 +1015,7 @@ public class Link extends Text {
 	 */
 	public void addToText(String text) {
 		if (isText()) {
-			((Text) _obj).addToText(text);
+			((Text) this._obj).addToText(text);
 		}
 	}
 
@@ -1026,10 +1030,10 @@ public class Link extends Text {
 	 *
 	 */
 	public void setObject(PresentationObject object) {
-		_obj = object;
-		_objectType = OBJECT_TYPE_MODULEOBJECT;
+		this._obj = object;
+		this._objectType = OBJECT_TYPE_MODULEOBJECT;
 
-		_obj.setParentObject(this);
+		this._obj.setParentObject(this);
 	}
 
 	/**
@@ -1051,13 +1055,13 @@ public class Link extends Text {
 	 * method for adding an image to the link
 	 */
 	public void setImage(Image image) {
-		_obj = image;
+		this._obj = image;
 		String toolTip = getToolTip();
 		if (toolTip != null) {
-			((Image) _obj).setAlt(toolTip);
+			((Image) this._obj).setAlt(toolTip);
 		}
-		_objectType = OBJECT_TYPE_IMAGE;
-		_obj.setParentObject(this);
+		this._objectType = OBJECT_TYPE_IMAGE;
+		this._obj.setParentObject(this);
 	}
 
 	public void setLocalizedImage(String localeString, int imageID) {
@@ -1075,19 +1079,19 @@ public class Link extends Text {
 	}
 
 	private Map getImageLocalizationMap() {
-		if (_ImageLocalizationMap == null) {
-			_ImageLocalizationMap = new HashMap();
+		if (this._ImageLocalizationMap == null) {
+			this._ImageLocalizationMap = new HashMap();
 		}
-		return _ImageLocalizationMap;
+		return this._ImageLocalizationMap;
 	}
 	
 	
 	
 	private Map getOverImageLocalizationMap() {
-		if (_overImageLocalizationMap == null) {
-			_overImageLocalizationMap = new HashMap();
+		if (this._overImageLocalizationMap == null) {
+			this._overImageLocalizationMap = new HashMap();
 		}
-		return _overImageLocalizationMap;
+		return this._overImageLocalizationMap;
 	}
 
 	public boolean isImage() {
@@ -1110,10 +1114,12 @@ public class Link extends Text {
 	}
 
 	public boolean isSetToSubmitForm() {
-		if (this._formToSubmit != null)
+		if (this._formToSubmit != null) {
 			return true;
-		else
+		}
+		else {
 			return false;
+		}
 	}
 
 	/**
@@ -1122,7 +1128,7 @@ public class Link extends Text {
 	private Image getTheCorrectDefaultImage(IWContext iwc) throws Exception {
 		Integer imageID = getTheCorrectDefaultImageID(iwc);
 		if (imageID == null) {
-			return (Image) _obj;
+			return (Image) this._obj;
 		}
 		else {
 			return new Image(imageID.intValue());
@@ -1152,23 +1158,23 @@ public class Link extends Text {
 	}
 
 	public void setImageId(int imageId) {
-		_imageId = imageId;
+		this._imageId = imageId;
 	}
 
 	public void setOnMouseOverImage(Image image) {
-		_onMouseOverImage = image;
+		this._onMouseOverImage = image;
 	}
 
 	public void setOnMouseOverImageId(int imageId) {
-		_onMouseOverImageId = imageId;
+		this._onMouseOverImageId = imageId;
 	}
 
 	public void setOnClickImage(Image image) {
-		_onClickImage = image;
+		this._onClickImage = image;
 	}
 
 	public void setOnClickImageId(int imageId) {
-		_onClickImageId = imageId;
+		this._onClickImageId = imageId;
 	}
 
 	/**
@@ -1196,7 +1202,7 @@ public class Link extends Text {
 	
 	public void setPage(int pageID) {
 		if (pageID != -1) {
-			ibPage = pageID;
+			this.ibPage = pageID;
 			if(IWMainApplication.useNewURLScheme){
 				try {
 					this.setURL(this.getBuilderService(getIWApplicationContext()).getPageURI(pageID));
@@ -1223,15 +1229,15 @@ public class Link extends Text {
 		else {
 			return 0;
 		}*/
-		return ibPage;
+		return this.ibPage;
 	}
 
 	public String getParameterValue(String prmName) {
-		if (_parameterString != null) {
+		if (this._parameterString != null) {
 			if (!(prmName != null && prmName.endsWith(""))) {
 				return null;
 			}
-			String prmString = _parameterString.toString();
+			String prmString = this._parameterString.toString();
 			if (prmString.length() > 0) {
 				if ((prmString.charAt(0) == '?') && (prmString.length() > 1)) {
 					prmString = prmString.substring(1, prmString.length());
@@ -1278,7 +1284,7 @@ public class Link extends Text {
 	 *
 	 */
 	public PresentationObject getObject() {
-		return (_obj);
+		return (this._obj);
 	}
 
 	/*
@@ -1296,39 +1302,39 @@ public class Link extends Text {
 		try {
 			linkObj = (Link) super.clone();
 
-			if (_obj != null) {
-				linkObj._obj = (PresentationObject) _obj.clone();
+			if (this._obj != null) {
+				linkObj._obj = (PresentationObject) this._obj.clone();
 			}
-			if (_myWindow != null) {
-				linkObj._myWindow = (Window) _myWindow.clone();
-			}
-
-			if (_formToSubmit != null) {
-				linkObj._formToSubmit = (Form) _formToSubmit.clone();
+			if (this._myWindow != null) {
+				linkObj._myWindow = (Window) this._myWindow.clone();
 			}
 
-			if (_windowClass != null) {
-				linkObj._windowClass = _windowClass;
+			if (this._formToSubmit != null) {
+				linkObj._formToSubmit = (Form) this._formToSubmit.clone();
 			}
 
-			linkObj._objectType = _objectType;
-			linkObj._parameterString = _parameterString;
-			linkObj._addSessionId = _addSessionId;
-			linkObj._maintainAllGlobalParameters = _maintainAllGlobalParameters;
-			linkObj._maintainBuilderParameters = _maintainBuilderParameters;
-			linkObj._maintainAllParameters = _maintainAllParameters;
-			linkObj.text = text;
-			linkObj.isImageButton = isImageButton;
-			linkObj.useTextAsLocalizedTextKey = useTextAsLocalizedTextKey;
-			linkObj.isImageTab = isImageTab;
-			linkObj.flip = flip;
+			if (this._windowClass != null) {
+				linkObj._windowClass = this._windowClass;
+			}
+
+			linkObj._objectType = this._objectType;
+			linkObj._parameterString = this._parameterString;
+			linkObj._addSessionId = this._addSessionId;
+			linkObj._maintainAllGlobalParameters = this._maintainAllGlobalParameters;
+			linkObj._maintainBuilderParameters = this._maintainBuilderParameters;
+			linkObj._maintainAllParameters = this._maintainAllParameters;
+			linkObj.text = this.text;
+			linkObj.isImageButton = this.isImageButton;
+			linkObj.useTextAsLocalizedTextKey = this.useTextAsLocalizedTextKey;
+			linkObj.isImageTab = this.isImageTab;
+			linkObj.flip = this.flip;
 			linkObj.classToInstanciate = this.classToInstanciate;
 			linkObj.templateForObjectInstanciation = this.templateForObjectInstanciation;
 			//linkObj.templatePageClass = this.templatePageClass;
 			linkObj.protocol = this.protocol;
 
-			if (_parameterString != null) {
-				linkObj._parameterString = new StringBuffer(_parameterString.toString());
+			if (this._parameterString != null) {
+				linkObj._parameterString = new StringBuffer(this._parameterString.toString());
 			}
 			if (this._ImageLocalizationMap != null) {
 				linkObj._ImageLocalizationMap = this._ImageLocalizationMap;
@@ -1398,11 +1404,11 @@ public class Link extends Text {
 	 *
 	 */
 	public void setToMaintainGlobalParameters() {
-		_maintainAllGlobalParameters = true;
+		this._maintainAllGlobalParameters = true;
 	}
 
 	public void setToMaintainBuilderParameters(boolean value) {
-		_maintainBuilderParameters = value;
+		this._maintainBuilderParameters = value;
 	}
 
 	//  public static String getIWLinkURL(IWContext iwc, String URL){
@@ -1422,7 +1428,7 @@ public class Link extends Text {
 			//}
 		}
 
-		if (_maintainBuilderParameters) {
+		if (this._maintainBuilderParameters) {
 			addTheMaintainedBuilderParameters(iwc);
 		}
 		else {
@@ -1431,7 +1437,7 @@ public class Link extends Text {
 			}
 		}
 
-		if (_maintainAllGlobalParameters) {
+		if (this._maintainAllGlobalParameters) {
 			addTheMaintainedParameters(iwc);
 		}
 		else {
@@ -1485,59 +1491,59 @@ public class Link extends Text {
 			URL = "";
 		}
 		if ((!this.isParameterSet(IWContext.IDEGA_SESSION_KEY))) {
-			if (_parameterString == null) {
-				_parameterString = new StringBuffer();
-				if (_addSessionId && (!iwc.isSearchEngine())) {
+			if (this._parameterString == null) {
+				this._parameterString = new StringBuffer();
+				if (this._addSessionId && (!iwc.isSearchEngine())) {
 					if (URL.equals("#")) {
 						return ("");
 					}
 					else if (URL.indexOf("://") == -1) { //does not include ://
 						if (URL.indexOf("?") != -1) {
-							_parameterString.append("&");
-							_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-							_parameterString.append("=");
-							_parameterString.append(iwc.getIdegaSessionId());
+							this._parameterString.append("&");
+							this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+							this._parameterString.append("=");
+							this._parameterString.append(iwc.getIdegaSessionId());
 							//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 						}
 						else if ((URL.indexOf("//") != -1) && (URL.lastIndexOf("/") == URL.lastIndexOf("//") + 1)) {
 							//the case where the URL is etc. http://www.idega.is
-							_parameterString.append("/?"+IWContext.IDEGA_SESSION_KEY+"=");
-							_parameterString.append(iwc.getIdegaSessionId());
+							this._parameterString.append("/?"+IWContext.IDEGA_SESSION_KEY+"=");
+							this._parameterString.append(iwc.getIdegaSessionId());
 							//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 						}
 						else {
 							if (URL.indexOf("/") != -1) {
 								//If the URL ends with a "/"
 								if (URL.lastIndexOf("/") == (URL.length() - 1)) {
-									_parameterString.append("?");
-									_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-									_parameterString.append("=");
-									_parameterString.append(iwc.getIdegaSessionId());
+									this._parameterString.append("?");
+									this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+									this._parameterString.append("=");
+									this._parameterString.append(iwc.getIdegaSessionId());
 									//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 								}
 								else {
 									//There is a dot after the last "/" interpreted as a file not a directory
 									if (URL.lastIndexOf(".") > URL.lastIndexOf("/")) {
-										_parameterString.append("?");
-										_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-										_parameterString.append("=");
-										_parameterString.append(iwc.getIdegaSessionId());
-										return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
+										this._parameterString.append("?");
+										this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+										this._parameterString.append("=");
+										this._parameterString.append(iwc.getIdegaSessionId());
+										return (TextSoap.convertSpecialCharacters(this._parameterString.toString()));
 									}
 									else {
-										_parameterString.append("/?");
-										_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-										_parameterString.append("=");
-										_parameterString.append(iwc.getIdegaSessionId());
+										this._parameterString.append("/?");
+										this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+										this._parameterString.append("=");
+										this._parameterString.append(iwc.getIdegaSessionId());
 										//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 									}
 								}
 							}
 							else {
-								_parameterString.append("?");
-								_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-								_parameterString.append("=");
-								_parameterString.append(iwc.getIdegaSessionId());
+								this._parameterString.append("?");
+								this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+								this._parameterString.append("=");
+								this._parameterString.append(iwc.getIdegaSessionId());
 								//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 							}
 						}
@@ -1559,25 +1565,25 @@ public class Link extends Text {
 				* @todo Temporary solution??? :// in link then no idega_session_id
 				*/
 				if (URL.indexOf("?") == -1) {
-					if (_addSessionId && (!iwc.isSearchEngine())) {
-						if (_parameterString.toString().indexOf("?") == -1) {
-							_parameterString.insert(0, '?');
+					if (this._addSessionId && (!iwc.isSearchEngine())) {
+						if (this._parameterString.toString().indexOf("?") == -1) {
+							this._parameterString.insert(0, '?');
 						}
-						_parameterString.append("&");
+						this._parameterString.append("&");
 						if (URL.indexOf("://") == -1) {
-							_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-							_parameterString.append("=");
-							_parameterString.append(iwc.getIdegaSessionId());
+							this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+							this._parameterString.append("=");
+							this._parameterString.append(iwc.getIdegaSessionId());
 						}
 					}
 				}
 				else {
-					if (_addSessionId && (!iwc.isSearchEngine())) {
-						_parameterString.append("&");
+					if (this._addSessionId && (!iwc.isSearchEngine())) {
+						this._parameterString.append("&");
 						if (URL.indexOf("://") == -1) {
-							_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-							_parameterString.append("=");
-							_parameterString.append(iwc.getIdegaSessionId());
+							this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+							this._parameterString.append("=");
+							this._parameterString.append(iwc.getIdegaSessionId());
 						}
 					}
 				}
@@ -1585,7 +1591,7 @@ public class Link extends Text {
 			}
 		}
 		
-		String returner = _parameterString.toString();
+		String returner = this._parameterString.toString();
 		return returner;
 	}
 
@@ -1593,7 +1599,7 @@ public class Link extends Text {
 	 *
 	 */
 	public void clearParameters() {
-		_parameterString = null;
+		this._parameterString = null;
 	}
 
 	public String getWindowToOpenCallingScript(IWContext iwc) {
@@ -1605,11 +1611,11 @@ public class Link extends Text {
 		}
 		if (isOpeningInNewWindow()) {
 			//if (_objectType==(OBJECT_TYPE_WINDOW)) {
-			if (_windowClass == null) {
-				return _myWindow.getCallingScriptString(iwc, _myWindow.getURL(iwc) + getParameterString(iwc, _myWindow.getURL(iwc)));
+			if (this._windowClass == null) {
+				return this._myWindow.getCallingScriptString(iwc, this._myWindow.getURL(iwc) + getParameterString(iwc, this._myWindow.getURL(iwc)));
 			}
 			else {
-				return Window.getCallingScriptString(_windowClass, getURL(iwc) + getParameterString(iwc, getURL(iwc)), true, iwc);
+				return Window.getCallingScriptString(this._windowClass, getURL(iwc) + getParameterString(iwc, getURL(iwc)), true, iwc);
 			}
 		}
 		return "";
@@ -1620,12 +1626,13 @@ public class Link extends Text {
 	}
 
 	private void maintainParameters(IWContext iwc) {
-		Iterator iter = maintainedParameters.iterator();
+		Iterator iter = this.maintainedParameters.iterator();
 		while (iter.hasNext()) {
 			String name = (String) iter.next();
 			String value = iwc.getParameter(name);
-			if (value != null)
+			if (value != null) {
 				addParameter(name, value);
+			}
 		}
 	}
 	
@@ -1654,9 +1661,9 @@ public class Link extends Text {
 		boolean addParameters = true;
 		String oldURL = getURL(iwc);
 
-		if(_maintainAllParameters) {
+		if(this._maintainAllParameters) {
 			maintainAllParameters(iwc);
-		}else if (maintainedParameters != null) {
+		}else if (this.maintainedParameters != null) {
 			maintainParameters(iwc);
 		}
 
@@ -1695,7 +1702,7 @@ public class Link extends Text {
 			if (openInNewWindow) {
 				setFinalUrl(this.getWindowOpenerJavascriptString(iwc));
 			}
-			else if (!isOutgoing) {
+			else if (!this.isOutgoing) {
 				//Should not happen when a new window is opened AND not if isOutgoing
 				if (addParameters) {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));
@@ -1704,13 +1711,13 @@ public class Link extends Text {
 
 			print("<a " + getMarkupAttributesString() + " >");
 			if (this.isText()) {
-				if (hasClass) {
+				if (this.hasClass) {
 					/*if ( displayString != null ) {
 					print(displayString);
 					}
 					else {*/
-					if (_obj != null) {
-						String text = ((Text) _obj).getLocalizedText(iwc);
+					if (this._obj != null) {
+						String text = ((Text) this._obj).getLocalizedText(iwc);
 						if (text != null) {
 							print(text);
 						}
@@ -1718,8 +1725,8 @@ public class Link extends Text {
 					/*}*/
 				}
 				else {
-					if (_obj != null) {
-						renderChild(iwc,_obj);
+					if (this._obj != null) {
+						renderChild(iwc,this._obj);
 					}
 				}
 			}
@@ -1727,15 +1734,15 @@ public class Link extends Text {
 				Image image = this.getTheCorrectDefaultImage(iwc);
 				if (image != null) {
 					
-					if(_overImageLocalizationMap!=null){
+					if(this._overImageLocalizationMap!=null){
 						image.setOverImageLocalizationMap(getOverImageLocalizationMap());
 					}
 					renderChild(iwc,image);
 				}
 			}
 			else {
-				if (_obj != null) {
-					renderChild(iwc,_obj);
+				if (this._obj != null) {
+					renderChild(iwc,this._obj);
 				}
 			}
 			print("</a>");
@@ -1745,16 +1752,16 @@ public class Link extends Text {
 			}
 		}
 		else if (getMarkupLanguage().equals("WML")) {
-			if (_myWindow != null) {
+			if (this._myWindow != null) {
 				//if (_objectType.equals(OBJECT_TYPE_WINDOW)) {
-				setFinalUrl(_myWindow.getURL(iwc) + getParameterString(iwc, oldURL)); // ????????????
+				setFinalUrl(this._myWindow.getURL(iwc) + getParameterString(iwc, oldURL)); // ????????????
 				setFinalUrl(HASH);
 				String url = getURL();
 				url = iwc.getResponse().encodeURL(url);
 				setFinalUrl(url);
 				//System.out.println("Url after setFinalUrl " + getURL());
 				print("<a " + getMarkupAttributesString() + " >");
-				print(_myWindow.getName());
+				print(this._myWindow.getName());
 				print("</a>");
 			}
 			else {
@@ -1765,7 +1772,7 @@ public class Link extends Text {
 				url = iwc.getResponse().encodeURL(url);
 				setFinalUrl(url);
 				print("<a " + getMarkupAttributesString() + " >");
-				_obj._print(iwc);
+				this._obj._print(iwc);
 				print("</a>");
 			}
 		}
@@ -1785,12 +1792,12 @@ public class Link extends Text {
 	 *
 	 */
 	private void postIWLinkEvent(IWContext iwc) {
-		eventLocationString = getID();
+		this.eventLocationString = getID();
 		IWLinkEvent event = new IWLinkEvent(this, IWLinkEvent.LINK_ACTION_PERFORMED);
-		if (_formToSubmit == null) {
-			addParameter(sessionEventStorageName, eventLocationString);
+		if (this._formToSubmit == null) {
+			addParameter(sessionEventStorageName, this.eventLocationString);
 		}
-		iwc.setSessionAttribute(eventLocationString, event);
+		iwc.setSessionAttribute(this.eventLocationString, event);
 		listenerAdded(true);
 	}
 
@@ -1815,7 +1822,7 @@ public class Link extends Text {
 	 *
 	 */
 	public void setToFormSubmit(Form form, boolean useEvent) {
-		_formToSubmit = form;
+		this._formToSubmit = form;
 		//setFinalUrl(HASH);
 		String action = "";
 		if ((getIWLinkListeners() != null && getIWLinkListeners().length != 0) || useEvent) {
@@ -1922,11 +1929,11 @@ public class Link extends Text {
 	
 	public void setWindowToOpen(Class windowClass, String width, String height, boolean resizable, boolean scrollbar) {
 		try{
-			_windowInstance = (Window)windowClass.newInstance();
-			_windowInstance.setResizable(resizable);
-			_windowInstance.setScrollbar(scrollbar);
-			_windowInstance.setWidth(width);
-			_windowInstance.setHeight(height);
+			this._windowInstance = (Window)windowClass.newInstance();
+			this._windowInstance.setResizable(resizable);
+			this._windowInstance.setScrollbar(scrollbar);
+			this._windowInstance.setWidth(width);
+			this._windowInstance.setHeight(height);
 		}
 		catch(Exception e){
 		}
@@ -1935,8 +1942,8 @@ public class Link extends Text {
 	}
 	
 	public void setPublicWindowToOpen(Class windowClass) {
-		_windowClass = windowClass;
-		usePublicWindow = true;
+		this._windowClass = windowClass;
+		this.usePublicWindow = true;
 		/**
 		 * @todo Temporary workaround - Find out why this is needed, copied from setWindowToOpen...
 		 */
@@ -1952,7 +1959,7 @@ public class Link extends Text {
 	 */
 	public void setWindowToOpen(Class windowClass) {
 		//_objectType=OBJECT_TYPE_WINDOW;
-		_windowClass = windowClass;
+		this._windowClass = windowClass;
 
 		/**
 		 * @todo Temporary workaround - Find out why this is needed
@@ -1982,16 +1989,17 @@ public void setWindowToOpen(String className) {
 		//setURL(IWMainApplication.windowOpenerURL);
 		//addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass);
 		//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,instanceId);
-		icObjectInstanceIDForWindow = instanceId;
+		this.icObjectInstanceIDForWindow = instanceId;
 	}
 
 	public void setNoTextObject(boolean noText) {
-		if (isText())
-			hasClass = noText;
+		if (isText()) {
+			this.hasClass = noText;
+		}
 	}
 
 	private boolean isOpeningInNewWindow() {
-		if (_myWindow != null || this._windowClass != null || this.windowOpenerJavascriptString != null) {
+		if (this._myWindow != null || this._windowClass != null || this.windowOpenerJavascriptString != null) {
 			return true;
 		}
 		return false;
@@ -1999,8 +2007,8 @@ public void setWindowToOpen(String className) {
 
 	public boolean isText() {
 		if (this._objectType == Link.OBJECT_TYPE_TEXT) {
-			if (_obj != null) {
-				if (_obj instanceof Text) {
+			if (this._obj != null) {
+				if (this._obj instanceof Text) {
 					return true;
 				}
 			}
@@ -2013,12 +2021,14 @@ public void setWindowToOpen(String className) {
 	}
 
 	public boolean isLabelSet() {
-		if (_obj == null)
+		if (this._obj == null) {
 			return false;
+		}
 
-		if (_obj instanceof Text) {
-			if (((Text) _obj).getText().equals(DEFAULT_TEXT_STRING))
+		if (this._obj instanceof Text) {
+			if (((Text) this._obj).getText().equals(DEFAULT_TEXT_STRING)) {
 				return false;
+			}
 		}
 
 		return true;
@@ -2055,31 +2065,31 @@ public void setWindowToOpen(String className) {
 	}
 
 	public void addIWPOListener(PresentationObject obj) {
-		if (listenerInstances == null) {
-			listenerInstances = new Vector();
+		if (this.listenerInstances == null) {
+			this.listenerInstances = new Vector();
 		}
-		if (!listenerInstances.contains(obj)) {
-			listenerInstances.add(obj);
+		if (!this.listenerInstances.contains(obj)) {
+			this.listenerInstances.add(obj);
 		}
 	}
 
 	public void addIWPOListener(String page_instID) {
-		if (listenerInstances == null) {
-			listenerInstances = new Vector();
+		if (this.listenerInstances == null) {
+			this.listenerInstances = new Vector();
 		}
 		if (page_instID != null) {
 			StringTokenizer token = new StringTokenizer(page_instID, ",", false);
 			while (token.hasMoreTokens()) {
 				String pointer = token.nextToken();
-				if (!listenerInstances.contains(pointer)) {
-					listenerInstances.add(pointer);
+				if (!this.listenerInstances.contains(pointer)) {
+					this.listenerInstances.add(pointer);
 				}
 			}
 		}
 	}
 
 	public List getIWPOListeners() {
-		return listenerInstances;
+		return this.listenerInstances;
 	}
 
 	/**
@@ -2099,13 +2109,13 @@ public void setWindowToOpen(String className) {
 	}
 
 	public void removeParameter(String prmName) {
-		if (_parameterString != null) {
+		if (this._parameterString != null) {
 			if (!(prmName != null && !prmName.equals(""))) {
 				return;
 			}
 
 			StringBuffer newBuffer = new StringBuffer();
-			String prmString = _parameterString.toString();
+			String prmString = this._parameterString.toString();
 
 			if (prmString.length() > 0) {
 				if ((prmString.charAt(0) == '?') && (prmString.length() > 1)) {
@@ -2141,7 +2151,7 @@ public void setWindowToOpen(String className) {
 					firstToken = false;
 				}
 			}
-			_parameterString = newBuffer;
+			this._parameterString = newBuffer;
 			return;
 		}
 	}
@@ -2151,22 +2161,22 @@ public void setWindowToOpen(String className) {
 	}
 
 	private String getWindowOpenerJavascriptString(IWContext iwc) {
-		if (windowOpenerJavascriptString == null) {
-			if (_windowClass == null) {
-				return ("javascript:" + _myWindow.getCallingScriptString(iwc, _myWindow.getURL(iwc) + getParameterString(iwc, _myWindow.getURL(iwc))));
+		if (this.windowOpenerJavascriptString == null) {
+			if (this._windowClass == null) {
+				return ("javascript:" + this._myWindow.getCallingScriptString(iwc, this._myWindow.getURL(iwc) + getParameterString(iwc, this._myWindow.getURL(iwc))));
 			}
 			else {
-				if (_windowInstance != null) {
-					return ("javascript:" + _windowInstance.getCallingScriptString(iwc, _windowInstance.getURL(iwc) + getParameterString(iwc, _windowInstance.getURL(iwc))));
+				if (this._windowInstance != null) {
+					return ("javascript:" + this._windowInstance.getCallingScriptString(iwc, this._windowInstance.getURL(iwc) + getParameterString(iwc, this._windowInstance.getURL(iwc))));
 				} else {
-					return ("javascript:" + Window.getCallingScriptString(_windowClass, getURL(iwc) + getParameterString(iwc, getURL(iwc)), true, iwc));
+					return ("javascript:" + Window.getCallingScriptString(this._windowClass, getURL(iwc) + getParameterString(iwc, getURL(iwc)), true, iwc));
 				}
 			}
 		}
 		else {
 
-			windowOpenerJavascriptString = URLDecoder.decode(windowOpenerJavascriptString);
-			List between = TextSoap.FindAllBetween(windowOpenerJavascriptString, "iwOpenWindow('", "'");
+			this.windowOpenerJavascriptString = URLDecoder.decode(this.windowOpenerJavascriptString);
+			List between = TextSoap.FindAllBetween(this.windowOpenerJavascriptString, "iwOpenWindow('", "'");
 			String theUrl = "";
 			if (between != null && between.size() > 0) {
 				theUrl = (String) between.get(0);
@@ -2177,10 +2187,11 @@ public void setWindowToOpen(String className) {
 				paramString = TextSoap.findAndReplace(paramString, "?", "&");
 			}
 
-			if (!paramString.equals("") || !theUrl.equals(""))
-				windowOpenerJavascriptString = TextSoap.findAndInsertAfter(windowOpenerJavascriptString, theUrl, paramString);
+			if (!paramString.equals("") || !theUrl.equals("")) {
+				this.windowOpenerJavascriptString = TextSoap.findAndInsertAfter(this.windowOpenerJavascriptString, theUrl, paramString);
+			}
 
-			return "javascript:" + windowOpenerJavascriptString;
+			return "javascript:" + this.windowOpenerJavascriptString;
 		}
 
 	}
@@ -2215,17 +2226,17 @@ public void setWindowToOpen(String className) {
 			//}
 			//else
 			if (this.templateForObjectInstanciation != null) {
-				if (usePublicOjbectInstanciator) {
-					this.setURL(iwc.getIWMainApplication().getPublicObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation));
+				if (this.usePublicOjbectInstanciator) {
+					this.setURL(iwc.getIWMainApplication().getPublicObjectInstanciatorURI(this.classToInstanciate, this.templateForObjectInstanciation));
 				} else {
-					this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation));
+					this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate, this.templateForObjectInstanciation));
 				}
 			}
 			else {
-				if (usePublicOjbectInstanciator) {
-					this.setURL(iwc.getIWMainApplication().getPublicObjectInstanciatorURI(classToInstanciate));
+				if (this.usePublicOjbectInstanciator) {
+					this.setURL(iwc.getIWMainApplication().getPublicObjectInstanciatorURI(this.classToInstanciate));
 				} else {
-					this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate));
+					this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate));
 				}
 			}
 		}
@@ -2237,20 +2248,20 @@ public void setWindowToOpen(String className) {
 			//setURL(iwc.getApplication().getWindowOpenerURI());
 			//addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
 			
-			if (usePublicWindow) {
+			if (this.usePublicWindow) {
 				if (this.icObjectInstanceIDForWindow <= 0) {
-					setURL(iwc.getIWMainApplication().getPublicWindowOpenerURI(_windowClass));
+					setURL(iwc.getIWMainApplication().getPublicWindowOpenerURI(this._windowClass));
 				}
 				else {
-					setURL(iwc.getIWMainApplication().getPublicWindowOpenerURI(_windowClass, icObjectInstanceIDForWindow));
+					setURL(iwc.getIWMainApplication().getPublicWindowOpenerURI(this._windowClass, this.icObjectInstanceIDForWindow));
 					//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
 				}
 			} else {
 				if (this.icObjectInstanceIDForWindow <= 0) {
-					setURL(iwc.getIWMainApplication().getWindowOpenerURI(_windowClass));
+					setURL(iwc.getIWMainApplication().getWindowOpenerURI(this._windowClass));
 				}
 				else {
-					setURL(iwc.getIWMainApplication().getWindowOpenerURI(_windowClass, icObjectInstanceIDForWindow));
+					setURL(iwc.getIWMainApplication().getWindowOpenerURI(this._windowClass, this.icObjectInstanceIDForWindow));
 					//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
 				}
 			}
@@ -2297,8 +2308,8 @@ public void setWindowToOpen(String className) {
 
 	public void setToolTip(String toolTip) 	{
 		super.setToolTip(toolTip);
-		if (_objectType == OBJECT_TYPE_IMAGE) {
-			((Image) _obj).setAlt(toolTip);
+		if (this._objectType == OBJECT_TYPE_IMAGE) {
+			((Image) this._obj).setAlt(toolTip);
 		}
 	}
 	
@@ -2315,10 +2326,10 @@ public void setWindowToOpen(String className) {
 	}
 	
 	private Map getToolTipLocalizationMap() {
-		if (_toolTipLocalizationMap == null) {
-			_toolTipLocalizationMap = new HashMap();
+		if (this._toolTipLocalizationMap == null) {
+			this._toolTipLocalizationMap = new HashMap();
 		}
-		return _toolTipLocalizationMap;
+		return this._toolTipLocalizationMap;
 	}
 	
 	public void setUsePublicObjectInstanciator(boolean use) {

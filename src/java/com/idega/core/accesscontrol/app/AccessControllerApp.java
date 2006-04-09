@@ -419,10 +419,10 @@ public class AccessControllerApp extends IWApplication {
           List directGroups = null;
           if(hash != null && hash.get(permissionType)!=null){
             directGroups = UserGroupBusiness.getGroups((String[])hash.get(permissionType));
-            collectOld = false;
+            this.collectOld = false;
           } else {
             directGroups = iwc.getAccessController().getAllowedGroups(intPermissionCategory, identifier,permissionType);
-            collectOld = true;
+            this.collectOld = true;
 
           }
 
@@ -431,7 +431,7 @@ public class AccessControllerApp extends IWApplication {
           Iterator iter = null;
           if(directGroups != null){
             iter = directGroups.iterator();
-            if(collectOld){
+            if(this.collectOld){
               List oldValueIDs = new Vector();
               while (iter.hasNext()) {
                 Object item = iter.next();

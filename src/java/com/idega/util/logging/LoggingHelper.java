@@ -82,32 +82,42 @@ public class LoggingHelper {
 	      System.out.println("Logger level: " + logger.getLevel());
 	      
 	      // See if a filter is defined
-	      if (logger.getFilter() != null) 
-	        System.out.println("Using a filter");
-	      else 
-	        System.out.println("No filter used");
+	      if (logger.getFilter() != null) {
+					System.out.println("Using a filter");
+				}
+				else {
+					System.out.println("No filter used");
+				}
 	      
 	      // For each handler: show formatter, level, etc. 
 	      java.util.logging.Handler[] h = logger.getHandlers();
-	      if (h.length == 0) System.out.println("No handlers defined");
+	      if (h.length == 0) {
+					System.out.println("No handlers defined");
+				}
 	      for (int i = 0; i < h.length; i++) {
-	        if (i == 0) System.out.println("Handlers:");
+	        if (i == 0) {
+						System.out.println("Handlers:");
+					}
 	        java.util.logging.Formatter f = h[i].getFormatter();
 	        System.out.println(h[i].getClass().getName());
 	        System.out.println("  using formatter: " + f.getClass().getName());
 	        System.out.println("  using level: " + h[i].getLevel());
-	        if (h[i].getFilter() != null) 
-	          System.out.println("  using a filter");
-	        else 
-	          System.out.println("  no filter");
+	        if (h[i].getFilter() != null) {
+						System.out.println("  using a filter");
+					}
+					else {
+						System.out.println("  no filter");
+					}
 	      }
 	
 	      // See if a parent exists 
 	      java.util.logging.Logger parent = logger.getParent();
-	      if (parent != null) 
-	        System.out.println("Parent: >" + parent.getName() + "<");
-	      else 
-	        System.out.println("No parent");
+	      if (parent != null) {
+					System.out.println("Parent: >" + parent.getName() + "<");
+				}
+				else {
+					System.out.println("No parent");
+				}
 	    }
 	    System.out.println("*** End Logger Information");
 	  }

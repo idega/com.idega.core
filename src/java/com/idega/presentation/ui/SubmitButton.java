@@ -1,5 +1,5 @@
 /*
- * $Id: SubmitButton.java,v 1.37 2005/11/09 09:50:14 gimmi Exp $
+ * $Id: SubmitButton.java,v 1.38 2006/04/09 12:13:15 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.presentation.Image;
  * <p>
  * This is a component for rendering out a button (input) of type submit.
  * </p>
- *  Last modified: $Date: 2005/11/09 09:50:14 $ by $Author: gimmi $
+ *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public class SubmitButton extends GenericButton {
 
@@ -48,33 +48,33 @@ public class SubmitButton extends GenericButton {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[12];
 		values[0] = super.saveState(ctx);
-		values[1] = parameterName;
-		values[2] = parameterValue;
-		values[3] = onClickScript;
-		values[4] = Boolean.valueOf(usingControlParameter);
-		values[5] = Boolean.valueOf(encloseByForm);
-		values[6] = Boolean.valueOf(_enabledWhenChecked);
-		values[7] = Boolean.valueOf(_confirmSubmit);
-		values[8] = Boolean.valueOf(_confirmSingleSubmit);
-		values[9] = _checkedObjectName;
-		values[10] = _confirmMessage;
-		values[11] = _confirmSingleMessage;
+		values[1] = this.parameterName;
+		values[2] = this.parameterValue;
+		values[3] = this.onClickScript;
+		values[4] = Boolean.valueOf(this.usingControlParameter);
+		values[5] = Boolean.valueOf(this.encloseByForm);
+		values[6] = Boolean.valueOf(this._enabledWhenChecked);
+		values[7] = Boolean.valueOf(this._confirmSubmit);
+		values[8] = Boolean.valueOf(this._confirmSingleSubmit);
+		values[9] = this._checkedObjectName;
+		values[10] = this._confirmMessage;
+		values[11] = this._confirmSingleMessage;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		parameterName = (String)values[1];
-		parameterValue = (String)values[2];
-		onClickScript = (String)values[3];
-		usingControlParameter = ((Boolean)values[4]).booleanValue();
-		encloseByForm = ((Boolean)values[5]).booleanValue();
-		_enabledWhenChecked = ((Boolean)values[6]).booleanValue();
-		_confirmSubmit = ((Boolean)values[7]).booleanValue();
-		_confirmSingleSubmit = ((Boolean)values[8]).booleanValue();
-		_checkedObjectName = ((String)values[9]);
-		_confirmMessage = ((String)values[10]);
-		_confirmSingleMessage = ((String)values[11]);
+		this.parameterName = (String)values[1];
+		this.parameterValue = (String)values[2];
+		this.onClickScript = (String)values[3];
+		this.usingControlParameter = ((Boolean)values[4]).booleanValue();
+		this.encloseByForm = ((Boolean)values[5]).booleanValue();
+		this._enabledWhenChecked = ((Boolean)values[6]).booleanValue();
+		this._confirmSubmit = ((Boolean)values[7]).booleanValue();
+		this._confirmSingleSubmit = ((Boolean)values[8]).booleanValue();
+		this._checkedObjectName = ((String)values[9]);
+		this._confirmMessage = ((String)values[10]);
+		this._confirmSingleMessage = ((String)values[11]);
 	}
 
 
@@ -94,7 +94,7 @@ public class SubmitButton extends GenericButton {
 	public SubmitButton(Image defaultImage) {
 		this(defaultImage, "default");
 		setName(getDefaultName());
-		parameterName = getDefaultName();
+		this.parameterName = getDefaultName();
 	}
 
 	/**
@@ -118,9 +118,9 @@ public class SubmitButton extends GenericButton {
 		setButtonImage(defaultImage);
 		setInputType(INPUT_TYPE_IMAGE);
 		setName(getID());
-		parameterName = name;
-		parameterValue = value;
-		usingControlParameter = true;
+		this.parameterName = name;
+		this.parameterValue = value;
+		this.usingControlParameter = true;
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class SubmitButton extends GenericButton {
 		this(displayText);
 		this.parameterName = parameterName;
 		this.parameterValue = parameterValue;
-		usingControlParameter = true;
+		this.usingControlParameter = true;
 	}
 
 	/**
@@ -196,11 +196,11 @@ public class SubmitButton extends GenericButton {
 	 * @deprecated	Do not use this function.
 	 */
 	private void postIWSubmitEvent(IWContext iwc, Form form) {
-		eventLocationString = this.getID();
+		this.eventLocationString = this.getID();
 		IWSubmitEvent event = new IWSubmitEvent(this, IWSubmitEvent.SUBMIT_PERFORMED);
 		//this.setOnClick("javascript:document." + form.getID() + "." + IWMainApplication.IWEventSessionAddressParameter + ".value=this.id ");
 		this.setOnClick("javascript:document.forms['"+form.getID()+"']." + IWMainApplication.IWEventSessionAddressParameter + ".value=this.id ");
-		iwc.setSessionAttribute(eventLocationString, event);
+		iwc.setSessionAttribute(this.eventLocationString, event);
 		listenerAdded(true);
 	}
 
@@ -208,29 +208,29 @@ public class SubmitButton extends GenericButton {
 	 * @see com.idega.presentation.PresentationObject#main(IWContext)
 	 */
 	public void main(IWContext iwc) {
-		if (usingControlParameter) {
-			if (!parameterName.equals(emptyString)) {
-				getParentForm().addControlParameter(parameterName, emptyString);
-				if (onClickScript == null) {
-					setValueOnClick(parameterName, parameterValue);
+		if (this.usingControlParameter) {
+			if (!this.parameterName.equals(emptyString)) {
+				getParentForm().addControlParameter(this.parameterName, emptyString);
+				if (this.onClickScript == null) {
+					setValueOnClick(this.parameterName, this.parameterValue);
 				}
 				else {
-					setValueOnClickFollowedByScript(parameterName, parameterValue, onClickScript);
+					setValueOnClickFollowedByScript(this.parameterName, this.parameterValue, this.onClickScript);
 				}
 			}
 		}
 		if (isEnclosedByForm()) {
-			if (_confirmSubmit) {
+			if (this._confirmSubmit) {
 				//getScript().addFunction("confirmSubmit", "function confirmSubmit(message) {\n	submit = confirm(message);\n	if (submit==true)\n		\tfindObj('"+getForm().getName()+"').submit();\n}");
-				setOnClick("return confirm('"+_confirmMessage+"');return false;");
+				setOnClick("return confirm('"+this._confirmMessage+"');return false;");
 			}
-			if (_confirmSingleSubmit) {
-				this.setOnSubmitFunction("confirmSingleSubmit", "function confirmSingleSubmit(input,message) {\n	return confirm(message);\n}", _confirmSingleMessage);
+			if (this._confirmSingleSubmit) {
+				this.setOnSubmitFunction("confirmSingleSubmit", "function confirmSingleSubmit(input,message) {\n	return confirm(message);\n}", this._confirmSingleMessage);
 			}
-			if (_enabledWhenChecked) {
+			if (this._enabledWhenChecked) {
 				getScript().addFunction("enableButton","function enableButton(inputs,button) {\n	\tif (validateInputs(inputs)) \n	\t\tbutton.disabled=eval('false');\n	\telse\n	\t\tbutton.disabled=eval('true');\n }");
 				getScript().addFunction("validateInputs","function validateInputs(inputs) {\n	if (inputs.length > 1) {\n	\tfor (var a = 0; a < inputs.length; a++) {\n	\t\tif (inputs[a].checked == true)\n	\t\t\treturn true;\n	\t}\n	}\n	else {\n	\tif(inputs.checked == true)\n	\t\treturn true;\n	}\n	return false;\n }");
-				getForm().setOnClick("enableButton(findObj('"+_checkedObjectName+"'),findObj('"+getName()+"'));");
+				getForm().setOnClick("enableButton(findObj('"+this._checkedObjectName+"'),findObj('"+getName()+"'));");
 			}
 			
 		}
@@ -243,7 +243,7 @@ public class SubmitButton extends GenericButton {
 	 */
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
-			if (encloseByForm) {
+			if (this.encloseByForm) {
 				if (isEnclosedByForm()) {
 					super.print(iwc);
 				}
@@ -266,7 +266,7 @@ public class SubmitButton extends GenericButton {
 	 * @param enclose	True to enclose form around button.
 	 */
 	public void setToEncloseByForm(boolean enclose) {
-		encloseByForm = enclose;
+		this.encloseByForm = enclose;
 	}
 
 	/**
@@ -274,8 +274,9 @@ public class SubmitButton extends GenericButton {
 	 */
 	public void setAsImageButton(boolean asImageButton) {
 		super.setAsImageButton(asImageButton);
-		if (asImageButton)
+		if (asImageButton) {
 			setInputType(INPUT_TYPE_IMAGE);
+		}
 	}
 	
 	/**
@@ -284,8 +285,8 @@ public class SubmitButton extends GenericButton {
 	 * @param confirmMessage	The message to display in the confirm window.
 	 */
 	public void setSubmitConfirm(String confirmMessage) {
-		_confirmSubmit = true;
-		_confirmMessage = confirmMessage;
+		this._confirmSubmit = true;
+		this._confirmMessage = confirmMessage;
 	}
 	
 	/**
@@ -294,8 +295,8 @@ public class SubmitButton extends GenericButton {
 	 * @param confirmMessage	The message to display in the confirm window.
 	 */
 	public void setSingleSubmitConfirm(String confirmMessage) {
-		_confirmSingleSubmit = true;
-		_confirmSingleMessage = confirmMessage;
+		this._confirmSingleSubmit = true;
+		this._confirmSingleMessage = confirmMessage;
 	}
 	
 	/**
@@ -304,8 +305,8 @@ public class SubmitButton extends GenericButton {
 	 * @param checkedObjectName	The name of the <code>CheckBox</code> that enables the button when checked.
 	 */
 	public void setToEnableWhenChecked(String checkBoxName) {
-		_enabledWhenChecked = true;
-		_checkedObjectName = checkBoxName;
+		this._enabledWhenChecked = true;
+		this._checkedObjectName = checkBoxName;
 		setDisabled(true);
 	}
 	

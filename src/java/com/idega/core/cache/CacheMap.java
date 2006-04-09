@@ -1,5 +1,5 @@
 /*
- * $Id: CacheMap.java,v 1.6 2006/03/16 21:04:02 tryggvil Exp $
+ * $Id: CacheMap.java,v 1.7 2006/04/09 12:13:17 laddi Exp $
  * Created on 6.1.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import net.sf.ehcache.Element;
  * <p>
  * Wrapper for the Cache implemented as a standard Map
  * </p>
- *  Last modified: $Date: 2006/03/16 21:04:02 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class CacheMap implements Map {
 
@@ -45,7 +45,7 @@ public class CacheMap implements Map {
 	}
 	
 	private Cache getCache(){
-		return cache;
+		return this.cache;
 	}
 	
 
@@ -185,7 +185,7 @@ public class CacheMap implements Map {
 					listener.cleared();
 				}
 			}
-			System.out.println("Clearing cache: "+cache.getName());
+			System.out.println("Clearing cache: "+this.cache.getName());
 		}
 		catch (IllegalStateException e) {
 			throw new RuntimeException(e);
@@ -240,7 +240,7 @@ public class CacheMap implements Map {
 	 * @return Returns the cacheListeners.
 	 */
 	public List getCacheListeners() {
-		return cacheListeners;
+		return this.cacheListeners;
 	}
 
 	

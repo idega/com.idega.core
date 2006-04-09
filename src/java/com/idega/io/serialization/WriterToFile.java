@@ -53,7 +53,7 @@ public abstract class WriterToFile {
 
 
   protected String getRealPathToFile(String fileName, String extension, long folderIdentifier) {
-    IWMainApplication mainApp = iwc.getIWMainApplication();
+    IWMainApplication mainApp = this.iwc.getIWMainApplication();
     String separator = FileUtil.getFileSeparator();
     StringBuffer path = new StringBuffer(mainApp.getApplicationRealPath());
     path.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY)
@@ -76,7 +76,7 @@ public abstract class WriterToFile {
   }
   
   protected String getURLToFile(String reportName, String extension, long folderIdentifier) {
-    IWMainApplication mainApp = iwc.getIWMainApplication();
+    IWMainApplication mainApp = this.iwc.getIWMainApplication();
     String separator = "/";
     String appContextURI = mainApp.getApplicationContextURI();
     StringBuffer uri = new StringBuffer(appContextURI);

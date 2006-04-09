@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderPageException.java,v 1.1 2006/03/16 15:32:14 tryggvil Exp $
+ * $Id: BuilderPageException.java,v 1.2 2006/04/09 12:13:20 laddi Exp $
  * Created on 16.3.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -14,10 +14,10 @@ package com.idega.core.builder.business;
  * <p>
  * Exception thrown on internal errors with Builder Pages.
  * </p>
- *  Last modified: $Date: 2006/03/16 15:32:14 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class BuilderPageException extends RuntimeException {
 
@@ -64,7 +64,7 @@ public class BuilderPageException extends RuntimeException {
 	 * @return Returns the code.
 	 */
 	public String getCode() {
-		return code;
+		return this.code;
 	}
 
 	
@@ -80,7 +80,7 @@ public class BuilderPageException extends RuntimeException {
 	 * @return Returns the pageUri.
 	 */
 	public String getPageUri() {
-		return pageUri;
+		return this.pageUri;
 	}
 
 	

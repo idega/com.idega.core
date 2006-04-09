@@ -98,7 +98,7 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 	}
 
 	public String getAttributeType() {
-		return attributeType;
+		return this.attributeType;
 	}
 
 	public void setLongName(String longName) {
@@ -106,15 +106,15 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 	}
 
 	public String getLongName() {
-		return longName;
+		return this.longName;
 	}
 
 	public void setRelationShipType(String type) {
-		relationShip = type;
+		this.relationShip = type;
 	}
 
 	public String getRelationShipType() {
-		return relationShip;
+		return this.relationShip;
 	}
 
 	public String getStorageClassName() {
@@ -232,7 +232,7 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 	 */
 	public int getStorageClassType() {
 		//return storageClassType;
-		String className = storageClass.getName();
+		String className = this.storageClass.getName();
 		if (className.equals("java.lang.Integer")) {
 			return (TYPE_JAVA_LANG_INTEGER);
 		} else if (className.equals("java.lang.String")) {
@@ -261,24 +261,24 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 	}
 
 	public void setEditable(boolean ifEditable) {
-		editable = ifEditable;
+		this.editable = ifEditable;
 	}
 
 	public boolean getIfEditable() {
-		return editable;
+		return this.editable;
 	}
 
 	public void setVisible(boolean ifVisible) {
-		visible = ifVisible;
+		this.visible = ifVisible;
 	}
 
 	public boolean getIfVisible() {
-		return visible;
+		return this.visible;
 	}
 
 	public String getRelationShipClassName() {
-		if (relationShipClass != null) {
-			return relationShipClass.getName();
+		if (this.relationShipClass != null) {
+			return this.relationShipClass.getName();
 		}
 		return null;
 	}
@@ -287,11 +287,11 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 	 * Returns null if relationshipClass is not set
 	 */
 	public Class getRelationShipClass() {
-		return relationShipClass;
+		return this.relationShipClass;
 	}
 
 	public void setRelationShipClass(Class relClass) {
-		relationShipClass = relClass;
+		this.relationShipClass = relClass;
 	}
 
 	public void setMaxLength(int maxLength) {
@@ -299,20 +299,20 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 	}
 
 	public int getMaxLength() {
-		return maxLength;
+		return this.maxLength;
 	}
 
 	public void setNullable(boolean ifNullable) {
-		nullable = ifNullable;
+		this.nullable = ifNullable;
 	}
 
 	public boolean getIfNullable() {
-		return nullable;
+		return this.nullable;
 	}
 
 	public void setAsPrimaryKey(boolean primaryKey) {
-		if (isPrimaryKey != primaryKey) {
-			isPrimaryKey = primaryKey;
+		if (this.isPrimaryKey != primaryKey) {
+			this.isPrimaryKey = primaryKey;
 			if (primaryKey) {
 				this.setNullable(false);
 				if (this.entityDefinition != null) {
@@ -323,7 +323,7 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 	}
 
 	public boolean isPrimaryKey() {
-		return isPrimaryKey;
+		return this.isPrimaryKey;
 	}
 
 	public String getColumnName() {
@@ -335,11 +335,11 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 	}
 
 	public void setUnique(boolean ifUnique) {
-		isUnique = ifUnique;
+		this.isUnique = ifUnique;
 	}
 	
 	public void setUniqueFieldName(String name) {
-		_uniqueName = name;
+		this._uniqueName = name;
 	}
 
 	public boolean isOneToNRelationship() {
@@ -354,10 +354,10 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 		return this.entityDefinition;
 	}
 	public String getUniqueFieldName() {
-		if(_uniqueName==null){
+		if(this._uniqueName==null){
 			return this.getColumnName();
 		} else {
-			return _uniqueName;
+			return this._uniqueName;
 		}
 
 	}
@@ -371,7 +371,7 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 		return this.nullable;
 	}
 	public boolean isPartOfPrimaryKey() {
-		return isPrimaryKey;
+		return this.isPrimaryKey;
 	}
 	public boolean isPartOfManyToOneRelationship() {
 		return (getRelationShipClass() != null);
@@ -388,14 +388,14 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 	 * @see com.idega.data.IDOReportableField#getDescription()
 	 */
 	public String getDescription() {
-		return _description;
+		return this._description;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOReportableField#setDescription(java.lang.String)
 	 */
 	public void setDescription(String description) {
-		_description = description;
+		this._description = description;
 	}
 
 	/* (non-Javadoc)
@@ -409,18 +409,18 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 	 * @see com.idega.data.IDOReportableField#getLocalizedName(java.util.Locale)
 	 */
 	public String getLocalizedName(Locale locale) {
-		return (String)_localizedNames.get(locale);
+		return (String)this._localizedNames.get(locale);
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOReportableField#setLocalizedName(java.lang.String, java.util.Locale)
 	 */
 	public void setLocalizedName(String name, Locale locale) {
-		_localizedNames.put(locale, name);
+		this._localizedNames.put(locale, name);
 	}
 	
 	public Map getMapOfLocalizedNames(){
-		return (Map)_localizedNames.clone();
+		return (Map)this._localizedNames.clone();
 	}
 	
 }

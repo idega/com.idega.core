@@ -30,21 +30,21 @@ public class StyledButton extends Block {
 	public void main(IWContext iwc) {
 		this.empty();
 		Layer layer = new Layer(Layer.DIV);
-		layer.setStyleClass(layerStyleClass);
-		if (alignment != null) {
-			layer.setHorizontalAlignment(alignment);
+		layer.setStyleClass(this.layerStyleClass);
+		if (this.alignment != null) {
+			layer.setHorizontalAlignment(this.alignment);
 		}
 		
-		if (button != null) {
-			button.setStyleClass(buttonStyleClass);
-			layer.add(button);
+		if (this.button != null) {
+			this.button.setStyleClass(this.buttonStyleClass);
+			layer.add(this.button);
 		}
 		
 		add(layer);
 	}
 	
 	public GenericButton getButton() {
-		return button;
+		return this.button;
 	}
 
 	/**

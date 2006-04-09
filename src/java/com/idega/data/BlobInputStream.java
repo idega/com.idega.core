@@ -42,7 +42,7 @@ public class BlobInputStream extends InputStream {
 	}
 	public BlobInputStream(InputStream in) {
 		setInternalInputStream(in);
-		isClosed=false;
+		this.isClosed=false;
 	}
 	public void setEntity(GenericEntity entity) {
 		this.entity = entity;
@@ -52,8 +52,8 @@ public class BlobInputStream extends InputStream {
 		closeInternalInputStream();
 		closeSQLVariables();
 		
-		readFromEntityBlob=true;
-		isClosed=false;
+		this.readFromEntityBlob=true;
+		this.isClosed=false;
 	}
 	public void setDataSource(String dataSourceName) {
 		this.dataSource = dataSourceName;
@@ -66,19 +66,23 @@ public class BlobInputStream extends InputStream {
 	}
 	public int read() throws IOException {
 		InputStream in = getInternalInputStream();
-		if (in!= null)
+		if (in!= null) {
 			return in.read();
 		//else throw new IOException("BlobInputStream: read() inputstream is null!");
-		else
+		}
+		else {
 			return -1;
+		}
 	}
 	public int read(byte b[], int off, int len) throws IOException {
 		InputStream in =getInternalInputStream();
-		if (in != null)
+		if (in != null) {
 			return in.read(b, off, len);
 		//else throw new IOException("BlobInputStream:  read(byte b[], int off, int len) inputstream is null!");
-		else
+		}
+		else {
 			return -1;
+		}
 	}
 	public int read(byte b[]) throws IOException {
 		return read(b, 0, b.length);
@@ -105,39 +109,45 @@ public class BlobInputStream extends InputStream {
 	// basic inputstream functions
 	public int available() throws IOException {
 		InputStream in = getInternalInputStream();
-		if (in != null)
+		if (in != null) {
 			return in.available();
-		//else throw new IOException("BlobInputStream:  available() inputstream is null!");
+		}
 		else {
 			return 0;
 		}
 	}
 	public boolean markSupported() {
 		InputStream in = getInternalInputStream();
-		if (in != null)
+		if (in != null) {
 			return in.markSupported();
-		else
+		}
+		else {
 			return false;
+		}
 	}
 	public synchronized void mark(int readlimit) {
 		InputStream in = getInternalInputStream();
-		if (in != null)
+		if (in != null) {
 			in.mark(readlimit);
+		}
 	}
 	public long skip(long n) throws IOException {
 		InputStream in = getInternalInputStream();
-		if (in != null)
+		if (in != null) {
 			return in.skip(n);
-		else
+		}
+		else {
 			return -1;
 		//else throw new IOException("BlobInputStream: skip() inputstream is null!");
+		}
 	}
 
 	public synchronized void reset() throws IOException {
 		InputStream in = getInternalInputStream();
-		if (in != null)
+		if (in != null) {
 			in.reset();
-		else
+		}
+		else {
 			throw new IOException("BlobInputStream: reset() inputstream is null!");
 		/*else{
 		
@@ -146,23 +156,24 @@ public class BlobInputStream extends InputStream {
 		  this.getInputStreamForBlobRead();
 		
 		}*/
+		}
 	}
 	protected InputStream getInputStreamForBlobRead() {
 		InputStream in=null;
 		try {
 			if (in == null) {
 				Connection conn = getConnection();
-				if (connection != null) {
+				if (this.connection != null) {
 					DatastoreInterface dsi = DatastoreInterface.getInstance(conn);
-					Stmt = connection.createStatement();
+					this.Stmt = this.connection.createStatement();
 					StringBuffer statement = new StringBuffer();
 					statement.append("select ");
 					statement.append(getTableColumnName());
 					statement.append(" from ");
-					statement.append(entity.getTableName());
-					dsi.appendPrimaryKeyWhereClause(entity,statement);
+					statement.append(this.entity.getTableName());
+					dsi.appendPrimaryKeyWhereClause(this.entity,statement);
 					String sql = statement.toString();
-					RS = Stmt.executeQuery(sql);
+					this.RS = this.Stmt.executeQuery(sql);
 					/*
 					RS = Stmt.executeQuery(
 							"select "
@@ -174,8 +185,8 @@ public class BlobInputStream extends InputStream {
 								+ "='"
 								+ entity.getID()
 								+ "'");*/
-					if ((RS != null) && (RS.next())) {
-						in = RS.getBinaryStream(1);
+					if ((this.RS != null) && (this.RS.next())) {
+						in = this.RS.getBinaryStream(1);
 						//System.out.println("in is set for "+entity.getClass().getName()+", id="+entity.getID());
 					} else {
 						closeSQLVariables();
@@ -189,11 +200,11 @@ public class BlobInputStream extends InputStream {
 		return in;
 	}
 	public GenericEntity getEntity() {
-		return entity;
+		return this.entity;
 	}
 	
 	public boolean isClosed() {
-		return isClosed;
+		return this.isClosed;
 	}
 	
 	private String getTableColumnName() {
@@ -201,61 +212,61 @@ public class BlobInputStream extends InputStream {
 	}
 	
 	private Connection getConnection(){
-		if(connection==null){
-			connection=ConnectionBroker.getConnection(getDataSource());
+		if(this.connection==null){
+			this.connection=ConnectionBroker.getConnection(getDataSource());
 		}
-		return connection;
+		return this.connection;
 	}
 	
 	private InputStream getInternalInputStream(){
-		if(readFromEntityBlob&& (!isClosed) && input==null){
-			input = getInputStreamForBlobRead();
+		if(this.readFromEntityBlob&& (!this.isClosed) && this.input==null){
+			this.input = getInputStreamForBlobRead();
 		}
-		return input;
+		return this.input;
 	}
 	
 	private void setInternalInputStream(InputStream in){
-		input=in;
+		this.input=in;
 	}
 	
 	private void closeInternalInputStream(){
-		if (input != null) {
+		if (this.input != null) {
 			try
 			{
-				input.close();
+				this.input.close();
 			}
 			catch (IOException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			input = null;
+			this.input = null;
 		}
-		isClosed=true;
+		this.isClosed=true;
 	}
 	
 	private void closeSQLVariables(){
-		if (RS != null) {
+		if (this.RS != null) {
 			try {
-				RS.close();
+				this.RS.close();
 			} catch (SQLException sqle) {
 				System.err.println("BlobInputStream : error closing SQL ResultSet");
 				sqle.printStackTrace(System.err);
 			}
-			RS = null;
+			this.RS = null;
 		}
-		if (Stmt != null) {
+		if (this.Stmt != null) {
 			try {
-				Stmt.close();
+				this.Stmt.close();
 			} catch (SQLException sqle) {
 				System.err.println("BlobInputStream : error closing SQL Statement");
 				sqle.printStackTrace(System.err);
 			}
-			Stmt = null;
+			this.Stmt = null;
 		}
-		if (connection != null) {
-			ConnectionBroker.freeConnection(getDataSource(), connection);
-			connection = null;
+		if (this.connection != null) {
+			ConnectionBroker.freeConnection(getDataSource(), this.connection);
+			this.connection = null;
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*
- * $Id: GeneratedImageCache.java,v 1.2 2005/12/08 17:57:20 laddi Exp $
+ * $Id: GeneratedImageCache.java,v 1.3 2006/04/09 12:13:14 laddi Exp $
  * Created on 7.12.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import com.idega.presentation.Image;
  * <p>
  * TODO tryggvil Describe Type GeneratedImageCache
  * </p>
- *  Last modified: $Date: 2005/12/08 17:57:20 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class GeneratedImageCache {
 
@@ -64,7 +64,7 @@ public class GeneratedImageCache {
 	 * @return Returns the downImageUrl.
 	 */
 	public String getDownImageUrl() {
-		return downImageUrl;
+		return this.downImageUrl;
 	}
 
 	
@@ -80,7 +80,7 @@ public class GeneratedImageCache {
 	 * @return Returns the height.
 	 */
 	public int getHeight() {
-		return height;
+		return this.height;
 	}
 
 	
@@ -96,7 +96,7 @@ public class GeneratedImageCache {
 	 * @return Returns the locale.
 	 */
 	public Locale getLocale() {
-		return locale;
+		return this.locale;
 	}
 
 	
@@ -112,7 +112,7 @@ public class GeneratedImageCache {
 	 * @return Returns the overImageUrl.
 	 */
 	public String getOverImageUrl() {
-		return overImageUrl;
+		return this.overImageUrl;
 	}
 
 	
@@ -128,7 +128,7 @@ public class GeneratedImageCache {
 	 * @return Returns the text.
 	 */
 	public String getText() {
-		return text;
+		return this.text;
 	}
 
 	
@@ -144,7 +144,7 @@ public class GeneratedImageCache {
 	 * @return Returns the upImageUrl.
 	 */
 	public String getUpImageUrl() {
-		return upImageUrl;
+		return this.upImageUrl;
 	}
 
 	
@@ -160,7 +160,7 @@ public class GeneratedImageCache {
 	 * @return Returns the width.
 	 */
 	public int getWidth() {
-		return width;
+		return this.width;
 	}
 
 	

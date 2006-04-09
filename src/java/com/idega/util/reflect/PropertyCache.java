@@ -1,5 +1,5 @@
 /*
- * $Id: PropertyCache.java,v 1.4 2005/08/31 02:10:08 eiki Exp $
+ * $Id: PropertyCache.java,v 1.5 2006/04/09 12:13:19 laddi Exp $
  * Created on 27.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.repository.data.Singleton;
 /**
  * This class holds a cache of lists of Property object keyed by an id (ICObjectInstanceId).
  * 
- *  Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class PropertyCache implements Singleton {
 	
@@ -46,10 +46,10 @@ public class PropertyCache implements Singleton {
 	}
 	
 	private Map getPropertyListCache(){
-		if(propertyListCache==null){
-			propertyListCache=new HashMap();
+		if(this.propertyListCache==null){
+			this.propertyListCache=new HashMap();
 		}
-		return propertyListCache;
+		return this.propertyListCache;
 	}
 	
 	public List getPropertyList(String key){

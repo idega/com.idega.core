@@ -56,11 +56,11 @@ public class BorderTable extends PresentationObjectContainer {
 
   public BorderTable(){
 
-    borderTable = new Table(1,1);
+    this.borderTable = new Table(1,1);
 
-    contentTable = new Table(1,1);
+    this.contentTable = new Table(1,1);
 
-    super.add(borderTable);
+    super.add(this.borderTable);
 
   }
 
@@ -74,25 +74,25 @@ public class BorderTable extends PresentationObjectContainer {
 
 
 
-    borderTable.setHeight(this.sHeight);
+    this.borderTable.setHeight(this.sHeight);
 
-    borderTable.setWidth(this.sWidth);
+    this.borderTable.setWidth(this.sWidth);
 
-    borderTable.setCellpadding(this.iBorder);
+    this.borderTable.setCellpadding(this.iBorder);
 
-    borderTable.setColor(this.sBorderColor);
+    this.borderTable.setColor(this.sBorderColor);
 
-    contentTable.setWidth("100%");
+    this.contentTable.setWidth("100%");
 
-    contentTable.setHeight("100%");
+    this.contentTable.setHeight("100%");
 
-    contentTable.setRowVerticalAlignment(1,vAlign);
+    this.contentTable.setRowVerticalAlignment(1,this.vAlign);
 
-    contentTable.setRowAlignment(1,hAlign);
+    this.contentTable.setRowAlignment(1,this.hAlign);
 
-    contentTable.setColor(this.sContentColor);
+    this.contentTable.setColor(this.sContentColor);
 
-    borderTable.add(contentTable);
+    this.borderTable.add(this.contentTable);
 
 
 
@@ -100,13 +100,13 @@ public class BorderTable extends PresentationObjectContainer {
 
   public void add(PresentationObject objectToAdd){
 
-    contentTable.add(objectToAdd,1,1);
+    this.contentTable.add(objectToAdd,1,1);
 
   }
 
   public void add(String stringToAdd){
 
-    contentTable.add(stringToAdd);
+    this.contentTable.add(stringToAdd);
 
   }
 

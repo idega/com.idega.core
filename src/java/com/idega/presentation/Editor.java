@@ -53,19 +53,19 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
   public Editor(String sHeader){
 
-    LightColor = "#D7DADF";
+    this.LightColor = "#D7DADF";
 
-    MiddleColor = "#9fA9B3";
+    this.MiddleColor = "#9fA9B3";
 
-    DarkColor = "#27334B";
+    this.DarkColor = "#27334B";
 
-    WhiteColor = "#FFFFFF";
+    this.WhiteColor = "#FFFFFF";
 
-    TextFontColor = "#000000";
+    this.TextFontColor = "#000000";
 
-    HeaderFontColor = DarkColor;
+    this.HeaderFontColor = this.DarkColor;
 
-    IndexFontColor = "#000000";
+    this.IndexFontColor = "#000000";
 
     this.sHeader = sHeader;
 
@@ -75,19 +75,19 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
   public Editor(){
 
-    LightColor = "#D7DADF";
+    this.LightColor = "#D7DADF";
 
-    MiddleColor = "#9fA9B3";
+    this.MiddleColor = "#9fA9B3";
 
-    DarkColor = "#27334B";
+    this.DarkColor = "#27334B";
 
-    WhiteColor = "#FFFFFF";
+    this.WhiteColor = "#FFFFFF";
 
-    TextFontColor = "#000000";
+    this.TextFontColor = "#000000";
 
-    HeaderFontColor = DarkColor;
+    this.HeaderFontColor = this.DarkColor;
 
-    IndexFontColor = "#000000";
+    this.IndexFontColor = "#000000";
 
     this.sHeader = null;
 
@@ -101,17 +101,17 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
   public void setColors(String LightColor,String MainColor,String DarkColor){
 
-    if(LightColor.startsWith("#"))
+    if(LightColor.startsWith("#")) {
+			this.LightColor = LightColor;
+		}
 
-      this.LightColor = LightColor;
+    if(MainColor.startsWith("#")) {
+			this.MiddleColor = MainColor;
+		}
 
-    if(MainColor.startsWith("#"))
-
-      this.MiddleColor = MainColor;
-
-    if(DarkColor.startsWith("#"))
-
-      this.DarkColor = DarkColor;
+    if(DarkColor.startsWith("#")) {
+			this.DarkColor = DarkColor;
+		}
 
   }
 
@@ -175,31 +175,31 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
   protected void makeMainFrame(){
 
-    MainFrame = new Table(1,2);
+    this.MainFrame = new Table(1,2);
 
-    MainFrame.setWidth("100%");
+    this.MainFrame.setWidth("100%");
 
-    MainFrame.setCellspacing(0);
+    this.MainFrame.setCellspacing(0);
 
-    MainFrame.setCellpadding(0);
+    this.MainFrame.setCellpadding(0);
 
-    MainFrame.setBorder(BORDER);
+    this.MainFrame.setBorder(this.BORDER);
 
-    add(MainFrame);
+    add(this.MainFrame);
 
   }
 
   protected void makeFrame(){
 
-    Frame = new Table(1,2);
+    this.Frame = new Table(1,2);
 
-    Frame.setCellspacing(0);
+    this.Frame.setCellspacing(0);
 
-    Frame.setCellpadding(0);
+    this.Frame.setCellpadding(0);
 
-    Frame.setWidth("100%");
+    this.Frame.setWidth("100%");
 
-    Frame.setBorder(BORDER);
+    this.Frame.setBorder(this.BORDER);
 
     this.addFrame();
 
@@ -207,13 +207,13 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
   protected void makeHeader(){
 
-    HeaderFrame = new Table();
+    this.HeaderFrame = new Table();
 
-    if(sHeader != null){
+    if(this.sHeader != null){
 
-      HeaderFrame = new Table(2,1);
+      this.HeaderFrame = new Table(2,1);
 
-      HeaderFrame.setColumnAlignment(2,"right");
+      this.HeaderFrame.setColumnAlignment(2,"right");
 
       Text T = new Text(this.sHeader);
 
@@ -221,13 +221,13 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
       T.setFontColor(this.DarkColor);
 
-      HeaderFrame.add(T,1,1);
+      this.HeaderFrame.add(T,1,1);
 
     }
 
-    HeaderFrame.setBorder(BORDER);
+    this.HeaderFrame.setBorder(this.BORDER);
 
-    this.addHeader(HeaderFrame);
+    this.addHeader(this.HeaderFrame);
 
   }
 
@@ -235,21 +235,21 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
     Table BorderTable = new Table(1,1);
 
-    BorderTable.setBorder(BORDER);
+    BorderTable.setBorder(this.BORDER);
 
     BorderTable.setCellpadding(this.iBorder);
 
     BorderTable.setCellspacing(0);
 
-    BorderTable.setColor(DarkColor);
+    BorderTable.setColor(this.DarkColor);
 
     BorderTable.setWidth("100%");
 
     Table whiteTable = new Table(1,1);
 
-    whiteTable.setBorder(BORDER);
+    whiteTable.setBorder(this.BORDER);
 
-    whiteTable.setColor(WhiteColor);
+    whiteTable.setColor(this.WhiteColor);
 
     whiteTable.setCellpadding(2);
 
@@ -257,7 +257,7 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
     whiteTable.setWidth("100%");
 
-    whiteTable.add(Frame);
+    whiteTable.add(this.Frame);
 
     BorderTable.add(whiteTable);
 
@@ -293,9 +293,9 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
   protected void addToRightHeader(PresentationObject T){
 
-    if(sHeader != null)
-
-    this.HeaderFrame.add(T,2,1);
+    if(this.sHeader != null) {
+			this.HeaderFrame.add(T,2,1);
+		}
 
   }
 
@@ -313,9 +313,9 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
       T= new Text(s);
 
-      if(this.fontBold)
-
-      T.setBold();
+      if(this.fontBold) {
+				T.setBold();
+			}
 
       T.setFontColor(this.TextFontColor);
 
@@ -343,7 +343,7 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
 
 
-    isAdmin = iwc.hasEditPermission(this);
+    this.isAdmin = iwc.hasEditPermission(this);
 
     control(iwc);
 

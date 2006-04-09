@@ -1,5 +1,5 @@
 /*
- * $Id: Lists.java,v 1.14 2005/03/08 20:09:54 tryggvil Exp $
+ * $Id: Lists.java,v 1.15 2006/04/09 12:13:16 laddi Exp $
  * Created in 2000 Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.presentation.PresentationObjectContainer;
  * <p>
  * A UIComponent class to render out a "List" or <code>ul</code> or <code>ol</code> html tag.
  * </p>
- *  Last modified: $Date: 2005/03/08 20:09:54 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class Lists extends PresentationObjectContainer {
 
@@ -45,15 +45,15 @@ public class Lists extends PresentationObjectContainer {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[3];
 		values[0] = super.saveState(ctx);
-		values[1] = Boolean.valueOf(compact);
-		values[2] = Boolean.valueOf(ordered);
+		values[1] = Boolean.valueOf(this.compact);
+		values[2] = Boolean.valueOf(this.ordered);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		compact = ((Boolean)values[1]).booleanValue();
-		ordered = ((Boolean)values[2]).booleanValue();
+		this.compact = ((Boolean)values[1]).booleanValue();
+		this.ordered = ((Boolean)values[2]).booleanValue();
 	}
 	
 	public Lists() {
@@ -102,7 +102,7 @@ public class Lists extends PresentationObjectContainer {
 			getFacets().put("bulletimage",image);
 		}
 		else{
-			oldBullet=image;
+			this.oldBullet=image;
 		}
 	}
 	protected Image getBulletImage(){
@@ -110,12 +110,12 @@ public class Lists extends PresentationObjectContainer {
 			return (Image)getFacet("bulletimage");
 		}
 		else{
-			return oldBullet;
+			return this.oldBullet;
 		}
 	}
 	
 	private String getListType() {
-		if (ordered) {
+		if (this.ordered) {
 			return "ol";
 		}
 
@@ -138,7 +138,7 @@ public class Lists extends PresentationObjectContainer {
 		initializeBulletImage();
 
 		if (getMarkupLanguage().equals("HTML")) {
-			if (!compact) {
+			if (!this.compact) {
 				println("<" + getListType() + " " + getMarkupAttributesString() + ">");
 			}
 
@@ -156,7 +156,7 @@ public class Lists extends PresentationObjectContainer {
 						renderChild(iwc,item);
 					}
 					else {
-						if (compact) {
+						if (this.compact) {
 							StringBuffer buffer = new StringBuffer();
 							buffer.append("<li");
 							String styleAttributes = getListItemStyleAttributes();
@@ -179,7 +179,7 @@ public class Lists extends PresentationObjectContainer {
 					}
 				}
 			}
-			if (!compact) {
+			if (!this.compact) {
 				println("</" + getListType() + ">");
 			}
 		}

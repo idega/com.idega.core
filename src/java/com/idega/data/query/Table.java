@@ -40,15 +40,15 @@ public class Table implements Outputable, Cloneable {
 	}
 
 	public Table(Class entityClass) {
-		_entityDefinition = getEntityDefinition(entityClass);
-		if (_entityDefinition != null) {
+		this._entityDefinition = getEntityDefinition(entityClass);
+		if (this._entityDefinition != null) {
 			
-			setName(_entityDefinition.getSQLTableName());
-			IDOPrimaryKeyDefinition pk = _entityDefinition.getPrimaryKeyDefinition();
-			hasCompositePrimaryKey = pk.isComposite();
-			if (!hasCompositePrimaryKey) {
+			setName(this._entityDefinition.getSQLTableName());
+			IDOPrimaryKeyDefinition pk = this._entityDefinition.getPrimaryKeyDefinition();
+			this.hasCompositePrimaryKey = pk.isComposite();
+			if (!this.hasCompositePrimaryKey) {
 				try {
-					primaryKeyColumnName = pk.getField().getSQLFieldName();
+					this.primaryKeyColumnName = pk.getField().getSQLFieldName();
 				}
 				catch (IDOCompositePrimaryKeyException icpke) {
 					icpke.printStackTrace();
@@ -56,10 +56,10 @@ public class Table implements Outputable, Cloneable {
 			}
 			else {
 				IDOEntityField[] fields = pk.getFields();
-				primaryKeyColumnNames = new String[fields.length];
+				this.primaryKeyColumnNames = new String[fields.length];
 				for (int i = 0; i < fields.length; i++) {
 					IDOEntityField field = fields[i];
-					primaryKeyColumnNames[i] = field.getSQLFieldName();
+					this.primaryKeyColumnNames[i] = field.getSQLFieldName();
 				}
 			}
 		}
@@ -82,9 +82,9 @@ public class Table implements Outputable, Cloneable {
 	}
 
 	private Table(IDOEntityDefinition entityDefinition, String alias) {
-		_entityDefinition = entityDefinition;
-		if (_entityDefinition != null) {
-			setName(_entityDefinition.getSQLTableName());
+		this._entityDefinition = entityDefinition;
+		if (this._entityDefinition != null) {
+			setName(this._entityDefinition.getSQLTableName());
 		}
 		else {
 			setName("null");
@@ -98,7 +98,7 @@ public class Table implements Outputable, Cloneable {
 	 * Name of table
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	public void setName(String name){
@@ -106,8 +106,8 @@ public class Table implements Outputable, Cloneable {
 	}
 	
 	public String getPrimaryKeyColumnName() throws IDOCompositePrimaryKeyException {
-		if (!hasCompositePrimaryKey) {
-			return primaryKeyColumnName;
+		if (!this.hasCompositePrimaryKey) {
+			return this.primaryKeyColumnName;
 		}
 		else {
 			throw new IDOCompositePrimaryKeyException("IDOEntity has a composite primary key.");
@@ -115,8 +115,8 @@ public class Table implements Outputable, Cloneable {
 	}
 	
 	public String[] getPrimaryKeyColumnNames() throws IDOCompositePrimaryKeyException {
-		if (hasCompositePrimaryKey) {
-			return primaryKeyColumnNames;
+		if (this.hasCompositePrimaryKey) {
+			return this.primaryKeyColumnNames;
 		}
 		else {
 			throw new IDOCompositePrimaryKeyException("IDOEntity does not have a composite primary key.");
@@ -124,7 +124,7 @@ public class Table implements Outputable, Cloneable {
 	}
 	
 	public boolean hasCompositePrimaryKey() {
-		return hasCompositePrimaryKey;
+		return this.hasCompositePrimaryKey;
 	}
 
 	private IDOEntityDefinition getEntityDefinition(Class entityClass) {
@@ -140,14 +140,14 @@ public class Table implements Outputable, Cloneable {
 	 * Whether this table has an alias assigned.
 	 */
 	private boolean hasAlias() {
-		return alias != null;
+		return this.alias != null;
 	}
 
 	/**
 	 * Short alias of table
 	 */
 	public String getAlias() {
-		return hasAlias() ? alias : name;
+		return hasAlias() ? this.alias : this.name;
 	}
 
 	/**
@@ -158,15 +158,19 @@ public class Table implements Outputable, Cloneable {
 	}
 	
     public int hashCode() {
-    		if(alias != null){
-    			return (name+alias).hashCode();
+    		if(this.alias != null){
+    			return (this.name+this.alias).hashCode();
     		} 
-    		return name.hashCode();
+    		return this.name.hashCode();
     }
 
 	public boolean equals(Object o) {
-		if (o == null) return false;
-		if (!(o instanceof Table)) return false;
+		if (o == null) {
+			return false;
+		}
+		if (!(o instanceof Table)) {
+			return false;
+		}
 		return getAlias().equals(((Table) o).getAlias());
 	}
 
@@ -186,7 +190,7 @@ public class Table implements Outputable, Cloneable {
 	 * @return Returns the entityDefinition.
 	 */
 	public IDOEntityDefinition getEntityDefinition() {
-		return _entityDefinition;
+		return this._entityDefinition;
 	}
 	
 	public boolean hasEntityDefinition() {
@@ -198,7 +202,7 @@ public class Table implements Outputable, Cloneable {
 	 *          The entityDefinition to set.
 	 */
 	public void setEntityDefinition(IDOEntityDefinition entityDefinition) {
-		_entityDefinition = entityDefinition;
+		this._entityDefinition = entityDefinition;
 	}
 	
     public Object clone() {

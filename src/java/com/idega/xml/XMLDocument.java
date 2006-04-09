@@ -1,5 +1,5 @@
 /*
- * $Id: XMLDocument.java,v 1.7 2006/04/04 23:30:15 palli Exp $
+ * $Id: XMLDocument.java,v 1.8 2006/04/09 12:13:14 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -27,15 +27,17 @@ Document _doc = null;
   
   public XMLDocument(XMLElement element) {
     Element el = (Element)element.getElement();
-    if (el != null)
-      _doc = new Document(el);
+    if (el != null) {
+			this._doc = new Document(el);
+		}
   }
 
   public XMLDocument(XMLElement element, XMLDocType type) {
 	    Element el = (Element)element.getElement();
 	    DocType ty = (DocType) type.getDocType();
-	    if (el != null & ty != null)
-	      _doc = new Document(el, ty);
+	    if (el != null & ty != null) {
+				this._doc = new Document(el, ty);
+			}
 	  }
 
   
@@ -46,7 +48,7 @@ Document _doc = null;
    */
   public XMLDocument(Object oDocument) {
   	Document doc = (Document)oDocument;
-    _doc = doc;
+    this._doc = doc;
   }
 
   /**
@@ -56,41 +58,44 @@ Document _doc = null;
    */  
   public void setDocument(Object oDocument) {
   	Document doc = (Document)oDocument;
-    _doc = doc;
+    this._doc = doc;
   }
   /**
    * This object really only returns a org.jdom.Document type but is declared Object becaluse of jdom dependency issues.
    * @return the set Document instance
    */
   public Object getDocument() {
-    return(_doc);
+    return(this._doc);
   }
 
   public XMLElement getRootElement() {
-    if (_doc != null)
-      return(new XMLElement(_doc.getRootElement()));
+    if (this._doc != null) {
+			return(new XMLElement(this._doc.getRootElement()));
+		}
 
     return(null);
   }
 
   public void setRootElement(XMLElement element) {
-    if (_doc != null) {
+    if (this._doc != null) {
       Element el = (Element)element.getElement();
-      if (el != null)
-        _doc.setRootElement(el);
+      if (el != null) {
+				this._doc.setRootElement(el);
+			}
     }
   }
   
   public DocType getDocType(){
-	if (_doc != null)
-		return _doc.getDocType();
+	if (this._doc != null) {
+		return this._doc.getDocType();
+	}
 		
 	return(null);
   }
   
   public void setDocType(DocType docType){
-  	if(_doc != null){
-  		_doc.setDocType(docType);
+  	if(this._doc != null){
+  		this._doc.setDocType(docType);
   	}
   }
   

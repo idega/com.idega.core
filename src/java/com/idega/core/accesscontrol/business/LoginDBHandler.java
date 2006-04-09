@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.65 2006/03/29 13:10:16 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.66 2006/04/09 12:13:20 laddi Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -125,8 +125,9 @@ public class LoginDBHandler {
 					}
 					if (loginTable != null && loginTable.getUserId() != userID) {
 						LoginTable tempLoginTable = loginTable;
-						if (tempLoginTable.getUserId() != userID)
+						if (tempLoginTable.getUserId() != userID) {
 							throw new LoginCreateException("login not valid : in use");
+						}
 					}
 				}
 				if (encryptedPassword != null) {
@@ -628,12 +629,15 @@ public class LoginDBHandler {
 				middleName = StringHandler.stripNonRomanCharacters(user.getMiddleName()).toLowerCase();
 			}
 		}
-		if (firstName == null)
+		if (firstName == null) {
 			firstName = "";
-		if (middleName == null)
+		}
+		if (middleName == null) {
 			middleName = "";
-		if (lastName == null)
+		}
+		if (lastName == null) {
 			lastName = "";
+		}
 		// String finalPossibility = StringHandler.getRandomString(8);
 		ArrayList userNameList = new ArrayList(200);
 		try {
@@ -716,17 +720,20 @@ public class LoginDBHandler {
 				}
 			}
 			else {
-				for (int j = 0; j < count2 && index2 + (j) < alfalength && col < namelength; j++)
+				for (int j = 0; j < count2 && index2 + (j) < alfalength && col < namelength; j++) {
 					array[row][col++] = digi[random.nextInt(digilength)];
+				}
 			}
 			// if we havent reached the final length
 			// we increase the letter count
 			if ((count2 + count1) < namelength) {
 				// 
-				if (count1 > count2 && count1 < first.length())
+				if (count1 > count2 && count1 < first.length()) {
 					count1++;
-				else
+				}
+				else {
 					count2++;
+				}
 			}
 			// We have reached the final name length
 			// count equals final length of user name
@@ -754,8 +761,9 @@ public class LoginDBHandler {
 					index2 = first.length() + 1;
 					count2 = 1;
 					count1 = first.length() + 2;
-					if ((first.length() + 1) <= namelength)
+					if ((first.length() + 1) <= namelength) {
 						count1--;
+					}
 					startlettercount--;
 				}/*
 					 * else if (!rand) { rand = true; startlettercount =

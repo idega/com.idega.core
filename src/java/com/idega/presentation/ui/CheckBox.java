@@ -23,15 +23,15 @@ public class CheckBox extends GenericInput {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[3];
 		values[0] = super.saveState(ctx);
-		values[1] = Boolean.valueOf(_mustBeChecked);
-		values[2] = _errorMessage;
+		values[1] = Boolean.valueOf(this._mustBeChecked);
+		values[2] = this._errorMessage;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		_mustBeChecked = ((Boolean) values[1]).booleanValue();
-		_errorMessage = (String)values[2];
+		this._mustBeChecked = ((Boolean) values[1]).booleanValue();
+		this._errorMessage = (String)values[2];
 	}		
 	
 	
@@ -76,7 +76,7 @@ public class CheckBox extends GenericInput {
 	
 	public void main(IWContext iwc) {
 		if (isEnclosedByForm()) {
-			if (_mustBeChecked) {
+			if (this._mustBeChecked) {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("function isChecked(inputs,message) {").append("\n\t");
 				buffer.append("if (inputs.length > 1) {").append("\n\t\t");
@@ -91,15 +91,15 @@ public class CheckBox extends GenericInput {
 				buffer.append("}").append("\n\t");
 				buffer.append("alert(message);").append("\n");
 				buffer.append("return false;").append("\n}");
-				this.setOnSubmitFunction("isChecked", buffer.toString(), _errorMessage);
+				this.setOnSubmitFunction("isChecked", buffer.toString(), this._errorMessage);
 			}
-			if (_enableWhenChecked) {
+			if (this._enableWhenChecked) {
 				getScript().addFunction("enableWhenChecked", "function enableWhenChecked (check, input) {\n\t	if (check.checked == true) input.disabled = false; \n}");
 			}
-			if (_disableWhenUnchecked) {
+			if (this._disableWhenUnchecked) {
 				getScript().addFunction("disableWhenUnchecked", "function disableWhenUnchecked (check, input) {\n\t	if (check.checked == false) input.disabled = true; \n}");
 			}
-			if ( _checkWhenCheckedUncheckWhenUnchecked ) {
+			if ( this._checkWhenCheckedUncheckWhenUnchecked ) {
 				//getScript().addFunction("toggleOnChange", "function toggleOnChange (check, input) {\n\t	if (check.checked == false)  {input.checked = false;} \n\t else if (check.checked == true) { input.checked = true;} \n}");
 				getScript().addFunction("toggleOnChange", "function toggleOnChange (check, inputs) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].checked = check.checked;\n	\t}\n	else\n	\tinputs.checked = check.checked;\n}");
 			}
@@ -107,17 +107,17 @@ public class CheckBox extends GenericInput {
 	}
 	
 	public void setMustBeChecked(String errorMessage) {
-		_mustBeChecked = true;
-		_errorMessage = errorMessage;
+		this._mustBeChecked = true;
+		this._errorMessage = errorMessage;
 	}
 	
 	public void setToEnableWhenChecked(InterfaceObject object) {
-		_enableWhenChecked = true;
+		this._enableWhenChecked = true;
 		setOnAction(ACTION_ON_CLICK, "enableWhenChecked(this, findObj('" + object.getName() + "'))");
 	}
 	
 	public void setToDisableWhenUnchecked(InterfaceObject object) {
-		_disableWhenUnchecked = true;
+		this._disableWhenUnchecked = true;
 		setOnAction(ACTION_ON_CLICK, "disableWhenUnchecked(this, findObj('" + object.getName() + "'))");
 	}
 	
@@ -126,7 +126,7 @@ public class CheckBox extends GenericInput {
 	}
 	
 	public void setToCheckWhenCheckedAndUncheckWhenUnchecked(String objectName) {
-		_checkWhenCheckedUncheckWhenUnchecked = true;
+		this._checkWhenCheckedUncheckWhenUnchecked = true;
 		setOnAction(ACTION_ON_CLICK, "toggleOnChange(this, findObj('" + objectName + "'))");
 	}
 	

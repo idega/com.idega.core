@@ -1,5 +1,5 @@
 /*
- * $Id: TextArea.java,v 1.19 2006/02/28 15:06:12 eiki Exp $
+ * $Id: TextArea.java,v 1.20 2006/04/09 12:13:15 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a textarea input element.
  * </p>
- *  Last modified: $Date: 2006/02/28 15:06:12 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class TextArea extends InterfaceObject {
 
@@ -44,21 +44,21 @@ public class TextArea extends InterfaceObject {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[6];
 		values[0] = super.saveState(ctx);
-		values[1] = Boolean.valueOf(isSetAsNotEmpty);
-		values[2] = notEmptyErrorMessage;
-		values[3] = _content;
-		values[4] = new Integer(maximum);
-		values[5] = Boolean.valueOf(asMaximum);
+		values[1] = Boolean.valueOf(this.isSetAsNotEmpty);
+		values[2] = this.notEmptyErrorMessage;
+		values[3] = this._content;
+		values[4] = new Integer(this.maximum);
+		values[5] = Boolean.valueOf(this.asMaximum);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		isSetAsNotEmpty = ((Boolean) values[1]).booleanValue();
-		notEmptyErrorMessage = (String) values[2];
-		_content = (String) values[3];
-		maximum = ((Integer)values[4]).intValue();
-		asMaximum = ((Boolean) values[5]).booleanValue();
+		this.isSetAsNotEmpty = ((Boolean) values[1]).booleanValue();
+		this.notEmptyErrorMessage = (String) values[2];
+		this._content = (String) values[3];
+		this.maximum = ((Integer)values[4]).intValue();
+		this.asMaximum = ((Boolean) values[5]).booleanValue();
 	}
 
 	/**
@@ -113,18 +113,19 @@ public class TextArea extends InterfaceObject {
 
 	public void _main(IWContext iwc) throws Exception {
 		if (isEnclosedByForm()) {
-			if (asMaximum) {
-				this.setOnChange("countCharacters(findObj('" + getName() + "')," + maximum + ")");
-				this.setOnBlur("countCharacters(findObj('" + getName() + "')," + maximum + ")");
-				this.setOnFocus("countCharacters(findObj('" + getName() + "')," + maximum + ")");
-				this.setOnKeyDown("countCharacters(findObj('" + getName() + "')," + maximum + ")");
-				this.setOnKeyUp("countCharacters(findObj('" + getName() + "')," + maximum + ")");
+			if (this.asMaximum) {
+				this.setOnChange("countCharacters(findObj('" + getName() + "')," + this.maximum + ")");
+				this.setOnBlur("countCharacters(findObj('" + getName() + "')," + this.maximum + ")");
+				this.setOnFocus("countCharacters(findObj('" + getName() + "')," + this.maximum + ")");
+				this.setOnKeyDown("countCharacters(findObj('" + getName() + "')," + this.maximum + ")");
+				this.setOnKeyUp("countCharacters(findObj('" + getName() + "')," + this.maximum + ")");
 				getScript().addFunction("countCharacters", "function countCharacters(msgText,maxChar) {\n	var length = msgText.value.length;\n	if (length > maxChar ) {\n	\tmsgText.value = msgText.value.substr(0,maxChar);\n	}\n	}");
 			}
 		}
 
-		if (isSetAsNotEmpty)
-			setOnSubmitFunction("warnIfEmpty", "function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", notEmptyErrorMessage);
+		if (this.isSetAsNotEmpty) {
+			setOnSubmitFunction("warnIfEmpty", "function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", this.notEmptyErrorMessage);
+		}
 	}
 
 	public void print(IWContext iwc) throws IOException {
@@ -167,10 +168,12 @@ public class TextArea extends InterfaceObject {
 	 * @param wrapping	True if text should wrap, false otherwise.
 	 */
 	public void setWrap(boolean wrapping) {
-		if (wrapping)
+		if (wrapping) {
 			removeMarkupAttribute(WRAP_ATTRIBUTE);
-		else
+		}
+		else {
 			setMarkupAttribute(WRAP_ATTRIBUTE,"OFF");
+		}
 	}
 
 	/**
@@ -193,22 +196,23 @@ public class TextArea extends InterfaceObject {
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
-		if (iwc.isParameterSet(getName()))
+		if (iwc.isParameterSet(getName())) {
 			this.setContent(iwc.getParameter(getName()));
+		}
 	}
 
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#getContent()
 	 */
 	public String getContent() {
-		return _content;
+		return this._content;
 	}
 
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#setContent(String)
 	 */
 	public void setContent(String content) {
-		_content = content;
+		this._content = content;
 	}
 
 	/**
@@ -217,8 +221,8 @@ public class TextArea extends InterfaceObject {
 	 * @param errorMessage	The error message to display.
 	 */
 	public void setAsNotEmpty(String errorMessage) {
-		isSetAsNotEmpty = true;
-		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+		this.isSetAsNotEmpty = true;
+		this.notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 	
 	/**

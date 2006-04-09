@@ -1,5 +1,5 @@
 /*
- * $Id: SQLSchemaAdapter.java,v 1.10 2005/11/29 15:30:04 laddi Exp $
+ * $Id: SQLSchemaAdapter.java,v 1.11 2006/04/09 12:13:19 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/11/29 15:30:04 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public abstract class SQLSchemaAdapter implements MutableClass {
 
@@ -136,7 +136,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	}
 	
 	public String getDataSourceName(){
-		return dataSourceName;
+		return this.dataSourceName;
 	}
 	
 	protected void setDataSourceName(String dataSourceName){
@@ -144,7 +144,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	}
 	
 	public String getDataStoreType(){
-		return dataStoreType;
+		return this.dataStoreType;
 	}
 
 	public static String getDatastoreType(String datasourceName) {
@@ -161,7 +161,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	}
 
 	public boolean useIndexes() {
-		return useIndexes;
+		return this.useIndexes;
 	}
 
 	/**
@@ -283,10 +283,10 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	
 	protected SQLSchemaCreator tableCreator;
 	public SQLSchemaCreator getTableCreator() {
-		if (tableCreator == null) {
-			tableCreator = new SQLSchemaCreator(this);
+		if (this.tableCreator == null) {
+			this.tableCreator = new SQLSchemaCreator(this);
 		}
-		return tableCreator;
+		return this.tableCreator;
 	}
 	
 	public boolean createSchema(Schema schema) throws Exception{
@@ -543,11 +543,11 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	}
 
 	public void setDatabaseMetaData(DatabaseMetaData meta) {
-		_databaseMetaData = meta;
+		this._databaseMetaData = meta;
 	}
 
 	public DatabaseMetaData getDatabaseMetaData() {
-		return _databaseMetaData;
+		return this._databaseMetaData;
 	}
 
 	public static SQLSchemaAdapter getDatastoreInterfaceByDatasource(String datasource) {
@@ -729,7 +729,9 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 				freeConnection(conn);
 			}
 		}
-		if (v != null && !v.isEmpty()) return (String[]) v.toArray(new String[0]);
+		if (v != null && !v.isEmpty()) {
+			return (String[]) v.toArray(new String[0]);
+		}
 		return null;
 	}
 
@@ -1265,8 +1267,9 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	public String getCreateUniqueKeyStatement(Schema schema, SchemaColumn[] columns) {
 		StringBuffer sql = new StringBuffer(" UNIQUE (");
 		for (int i = 0; i < columns.length; i++) {
-			if(i>0)
+			if(i>0) {
 				sql.append(",");
+			}
 			sql.append(columns[i].getSQLName());
 		}
 		sql.append(")");
@@ -1291,7 +1294,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	 * @return
 	 */
 	public boolean getSupportsSlide() {
-		return supportsSlide;
+		return this.supportsSlide;
 	}
 	
 }

@@ -16,14 +16,14 @@ public class StringAlphabeticalComparator implements Comparator {
 	private Locale _locale;
 	
 	public StringAlphabeticalComparator(Locale locale) {
-		_locale = locale;
+		this._locale = locale;
 	}
 
 	/**
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object o1, Object o2) {
-		Collator collator = Collator.getInstance(_locale);		
+		Collator collator = Collator.getInstance(this._locale);		
 		return collator.compare((String)o1,(String)o2);
 	}
 

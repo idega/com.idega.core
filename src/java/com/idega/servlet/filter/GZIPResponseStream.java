@@ -23,41 +23,41 @@ public class GZIPResponseStream extends ServletOutputStream {
 
 	public GZIPResponseStream(HttpServletResponse response) throws IOException {
 		super();
-		closed = false;
+		this.closed = false;
 		this.response = response;
 		this.output = response.getOutputStream();
-		baos = new ByteArrayOutputStream();
-		gzipstream = new GZIPOutputStream(baos);
+		this.baos = new ByteArrayOutputStream();
+		this.gzipstream = new GZIPOutputStream(this.baos);
 	}
 
 	public void close() throws IOException {
-		if (closed) {
+		if (this.closed) {
 			throw new IOException("This output stream has already been closed");
 		}
-		gzipstream.finish();
+		this.gzipstream.finish();
 
-		byte[] bytes = baos.toByteArray();
+		byte[] bytes = this.baos.toByteArray();
 
-		response.addHeader("Content-Length", Integer.toString(bytes.length));
-		response.addHeader("Content-Encoding", "gzip");
-		output.write(bytes);
-		output.flush();
-		output.close();
-		closed = true;
+		this.response.addHeader("Content-Length", Integer.toString(bytes.length));
+		this.response.addHeader("Content-Encoding", "gzip");
+		this.output.write(bytes);
+		this.output.flush();
+		this.output.close();
+		this.closed = true;
 	}
 
 	public void flush() throws IOException {
-		if (closed) {
+		if (this.closed) {
 			throw new IOException("Cannot flush a closed output stream");
 		}
-		gzipstream.flush();
+		this.gzipstream.flush();
 	}
 
 	public void write(int b) throws IOException {
-		if (closed) {
+		if (this.closed) {
 			throw new IOException("Cannot write to a closed output stream");
 		}
-		gzipstream.write((byte) b);
+		this.gzipstream.write((byte) b);
 	}
 
 	public void write(byte b[]) throws IOException {
@@ -66,10 +66,10 @@ public class GZIPResponseStream extends ServletOutputStream {
 
 	public void write(byte b[], int off, int len) throws IOException {
 		//System.out.println("writing...");
-		if (closed) {
+		if (this.closed) {
 			throw new IOException("Cannot write to a closed output stream");
 		}
-		gzipstream.write(b, off, len);
+		this.gzipstream.write(b, off, len);
 	}
 
 	public boolean closed() {

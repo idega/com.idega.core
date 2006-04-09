@@ -55,27 +55,27 @@ public class QueueSet extends HashSet implements Set {
 	}
 	
 	public boolean add(Object obj){
-		_set.add(obj);
+		this._set.add(obj);
 		return super.add(obj);
 	}
 	
 	public boolean addAtBeginning(Object obj){
-		_set.add(0,obj);
+		this._set.add(0,obj);
 		return super.add(obj);
 	}
 	
 	public boolean remove(Object obj){
-		_set.remove(obj);
+		this._set.remove(obj);
 		return super.remove(obj);
 	}
 	
 	public boolean removeAll(Collection c){
-		_set.removeAll(c);
+		this._set.removeAll(c);
 		return super.removeAll(c);
 	}
 	
 	public Iterator iterator(){
-		return _set.iterator();
+		return this._set.iterator();
 	}
 	
 	

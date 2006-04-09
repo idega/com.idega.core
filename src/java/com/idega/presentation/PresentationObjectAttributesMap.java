@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectAttributesMap.java,v 1.1 2004/11/14 23:21:37 tryggvil Exp $
+ * $Id: PresentationObjectAttributesMap.java,v 1.2 2006/04/09 12:13:12 laddi Exp $
  * Created on 14.11.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import javax.faces.context.FacesContext;
 
 /**
  * 
- * Last modified: $Date: 2004/11/14 23:21:37 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/04/09 12:13:12 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 class PresentationObjectAttributesMap implements Map, Serializable, Cloneable {
 
@@ -44,31 +44,31 @@ class PresentationObjectAttributesMap implements Map, Serializable, Cloneable {
 	private transient Map _propertyDescriptorMap = null;
 
 	PresentationObjectAttributesMap(UIComponent component) {
-		_component = component;
-		_attributes = new HashMap();
+		this._component = component;
+		this._attributes = new HashMap();
 	}
 
 	PresentationObjectAttributesMap(UIComponent component, Map attributes) {
-		_component = component;
-		_attributes = attributes;
+		this._component = component;
+		this._attributes = attributes;
 	}
 
 	public int size() {
-		return _attributes.size();
+		return this._attributes.size();
 	}
 
 	public void clear() {
-		_attributes.clear();
+		this._attributes.clear();
 	}
 
 	public boolean isEmpty() {
-		return _attributes.isEmpty();
+		return this._attributes.isEmpty();
 	}
 
 	public boolean containsKey(Object key) {
 		checkKey(key);
 		if (getPropertyDescriptor((String) key) == null) {
-			return _attributes.containsKey(key);
+			return this._attributes.containsKey(key);
 		}
 		else {
 			return false;
@@ -80,11 +80,11 @@ class PresentationObjectAttributesMap implements Map, Serializable, Cloneable {
 	 *            null is allowed
 	 */
 	public boolean containsValue(Object value) {
-		return _attributes.containsValue(value);
+		return this._attributes.containsValue(value);
 	}
 
 	public Collection values() {
-		return _attributes.values();
+		return this._attributes.values();
 	}
 
 	public void putAll(Map t) {
@@ -95,11 +95,11 @@ class PresentationObjectAttributesMap implements Map, Serializable, Cloneable {
 	}
 
 	public Set entrySet() {
-		return _attributes.entrySet();
+		return this._attributes.entrySet();
 	}
 
 	public Set keySet() {
-		return _attributes.keySet();
+		return this._attributes.keySet();
 	}
 
 	public Object get(Object key) {
@@ -109,7 +109,7 @@ class PresentationObjectAttributesMap implements Map, Serializable, Cloneable {
 			return getComponentProperty(propertyDescriptor);
 		}
 		else {
-			return _attributes.get(key);
+			return this._attributes.get(key);
 		}
 	}
 
@@ -119,7 +119,7 @@ class PresentationObjectAttributesMap implements Map, Serializable, Cloneable {
 		if (propertyDescriptor != null) {
 			throw new IllegalArgumentException("Cannot remove component property attribute");
 		}
-		return _attributes.remove(key);
+		return this._attributes.remove(key);
 	}
 
 	/**
@@ -143,29 +143,29 @@ class PresentationObjectAttributesMap implements Map, Serializable, Cloneable {
 			}
 		}
 		else {
-			return _attributes.put(key, value);
+			return this._attributes.put(key, value);
 		}
 	}
 
 	private PropertyDescriptor getPropertyDescriptor(String key) {
-		if (_propertyDescriptorMap == null) {
+		if (this._propertyDescriptorMap == null) {
 			BeanInfo beanInfo;
 			try {
-				beanInfo = Introspector.getBeanInfo(_component.getClass());
+				beanInfo = Introspector.getBeanInfo(this._component.getClass());
 			}
 			catch (IntrospectionException e) {
 				throw new FacesException(e);
 			}
 			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-			_propertyDescriptorMap = new HashMap();
+			this._propertyDescriptorMap = new HashMap();
 			for (int i = 0; i < propertyDescriptors.length; i++) {
 				PropertyDescriptor propertyDescriptor = propertyDescriptors[i];
 				if (propertyDescriptor.getReadMethod() != null) {
-					_propertyDescriptorMap.put(propertyDescriptor.getName(), propertyDescriptor);
+					this._propertyDescriptorMap.put(propertyDescriptor.getName(), propertyDescriptor);
 				}
 			}
 		}
-		return (PropertyDescriptor) _propertyDescriptorMap.get(key);
+		return (PropertyDescriptor) this._propertyDescriptorMap.get(key);
 	}
 
 	private Object getComponentProperty(PropertyDescriptor propertyDescriptor) {
@@ -175,12 +175,12 @@ class PresentationObjectAttributesMap implements Map, Serializable, Cloneable {
 					+ " is not readable");
 		}
 		try {
-			return readMethod.invoke(_component, EMPTY_ARGS);
+			return readMethod.invoke(this._component, EMPTY_ARGS);
 		}
 		catch (Exception e) {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			throw new FacesException("Could not get property " + propertyDescriptor.getName() + " of component "
-					+ _component.getClientId(facesContext), e);
+					+ this._component.getClientId(facesContext), e);
 		}
 	}
 
@@ -191,24 +191,26 @@ class PresentationObjectAttributesMap implements Map, Serializable, Cloneable {
 					+ " is not writable");
 		}
 		try {
-			writeMethod.invoke(_component, new Object[] { value });
+			writeMethod.invoke(this._component, new Object[] { value });
 		}
 		catch (Exception e) {
 			FacesContext facesContext = FacesContext.getCurrentInstance();
 			throw new FacesException("Could not set property " + propertyDescriptor.getName() + " of component "
-					+ _component.getClientId(facesContext), e);
+					+ this._component.getClientId(facesContext), e);
 		}
 	}
 
 	private void checkKey(Object key) {
-		if (key == null)
+		if (key == null) {
 			throw new NullPointerException("key");
-		if (!(key instanceof String))
+		}
+		if (!(key instanceof String)) {
 			throw new ClassCastException("key is not a String");
+		}
 	}
 
 	Map getUnderlyingMap() {
-		return _attributes;
+		return this._attributes;
 	}
 	
 	
@@ -232,7 +234,7 @@ class PresentationObjectAttributesMap implements Map, Serializable, Cloneable {
 	 * @return Returns the _component.
 	 */
 	UIComponent getComponent() {
-		return _component;
+		return this._component;
 	}
 	/**
 	 * @param _component The _component to set.

@@ -1,5 +1,5 @@
 /*
- * $Id: CachedDomain.java,v 1.1 2006/03/28 10:20:10 tryggvil Exp $
+ * $Id: CachedDomain.java,v 1.2 2006/04/09 12:13:15 laddi Exp $
  * Created on 20.3.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.data.IDOStoreException;
  * Implementation of ICDomain that is cached in the application on run-time
  * and stored as an attribute inside IWMainApplicationContext
  * </p>
- *  Last modified: $Date: 2006/03/28 10:20:10 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class CachedDomain implements ICDomain {
 
@@ -80,7 +80,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the domainName.
 	 */
 	public String getDomainName() {
-		return domainName;
+		return this.domainName;
 	}
 
 
@@ -98,7 +98,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the iBPage.
 	 */
 	public ICPage getIBPage() {
-		return iBPage;
+		return this.iBPage;
 	}
 
 
@@ -107,7 +107,7 @@ public class CachedDomain implements ICDomain {
 	 * @param page The iBPage to set.
 	 */
 	public void setIBPage(ICPage page) {
-		iBPage = page;
+		this.iBPage = page;
 	}
 
 
@@ -125,7 +125,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the name.
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 
@@ -143,7 +143,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the serverContextPath.
 	 */
 	public String getServerContextPath() {
-		return serverContextPath;
+		return this.serverContextPath;
 	}
 
 
@@ -161,7 +161,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the serverName.
 	 */
 	public String getServerName() {
-		return serverName;
+		return this.serverName;
 	}
 
 
@@ -179,7 +179,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the serverPort.
 	 */
 	public int getServerPort() {
-		return serverPort;
+		return this.serverPort;
 	}
 
 
@@ -197,7 +197,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the serverProtocol.
 	 */
 	public String getServerProtocol() {
-		return serverProtocol;
+		return this.serverProtocol;
 	}
 
 
@@ -215,7 +215,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the startPage.
 	 */
 	public ICPage getStartPage() {
-		return startPage;
+		return this.startPage;
 	}
 
 
@@ -233,7 +233,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the startPageID.
 	 */
 	public int getStartPageID() {
-		return startPageID;
+		return this.startPageID;
 	}
 
 
@@ -251,7 +251,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the startTemplate.
 	 */
 	public ICPage getStartTemplate() {
-		return startTemplate;
+		return this.startTemplate;
 	}
 
 
@@ -269,7 +269,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the startTemplateID.
 	 */
 	public int getStartTemplateID() {
-		return startTemplateID;
+		return this.startTemplateID;
 	}
 
 
@@ -287,7 +287,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the topLevelGroupsUnderDomain.
 	 */
 	public Collection getTopLevelGroupsUnderDomain() {
-		return topLevelGroupsUnderDomain;
+		return this.topLevelGroupsUnderDomain;
 	}
 
 
@@ -305,7 +305,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the uniqueId.
 	 */
 	public String getUniqueId() {
-		return uniqueId;
+		return this.uniqueId;
 	}
 
 
@@ -323,7 +323,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the uRL.
 	 */
 	public String getURL() {
-		return uRL;
+		return this.uRL;
 	}
 
 
@@ -332,7 +332,7 @@ public class CachedDomain implements ICDomain {
 	 * @param url The uRL to set.
 	 */
 	public void setURL(String url) {
-		uRL = url;
+		this.uRL = url;
 	}
 
 
@@ -341,7 +341,7 @@ public class CachedDomain implements ICDomain {
 	 * @return Returns the uRLWithoutLastSlash.
 	 */
 	public String getURLWithoutLastSlash() {
-		return uRLWithoutLastSlash;
+		return this.uRLWithoutLastSlash;
 	}
 
 
@@ -350,7 +350,7 @@ public class CachedDomain implements ICDomain {
 	 * @param withoutLastSlash The uRLWithoutLastSlash to set.
 	 */
 	public void setURLWithoutLastSlash(String withoutLastSlash) {
-		uRLWithoutLastSlash = withoutLastSlash;
+		this.uRLWithoutLastSlash = withoutLastSlash;
 	}
 
 
@@ -427,7 +427,7 @@ public class CachedDomain implements ICDomain {
 	 * @see javax.ejb.EJBLocalObject#getPrimaryKey()
 	 */
 	public Object getPrimaryKey() throws EJBException {
-		return primaryKey;
+		return this.primaryKey;
 	}
 
 

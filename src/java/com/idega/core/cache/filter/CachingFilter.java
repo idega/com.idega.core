@@ -90,7 +90,7 @@ import java.util.zip.DataFormatException;
  * get could wait indefinitely. This situation is monitored and if it happens, an IllegalStateException will be thrown.
  *
  * @author @author Greg Luck
- * @version $Id: CachingFilter.java,v 1.2 2006/01/16 16:33:23 tryggvil Exp $
+ * @version $Id: CachingFilter.java,v 1.3 2006/04/09 12:13:19 laddi Exp $
  */
 public abstract class CachingFilter extends Filter {
     private static final Log LOG = LogFactory.getLog(CachingFilter.class.getName());
@@ -388,7 +388,7 @@ public abstract class CachingFilter extends Filter {
 	 * @return Returns the blockingCache.
 	 */
 	public BlockingCache getBlockingCache() {
-		return blockingCache;
+		return this.blockingCache;
 	}
 
 

@@ -57,50 +57,50 @@ public class ResultOutput extends GenericInput {
 		//super._main(iwc);
 		Script script = getParentPage().getAssociatedScript();
 		
-		this.setName(name);
-		this.setValue(content);
+		this.setName(this.name);
+		this.setValue(this.content);
 		PresentationObject moduleObject = null;
 		String extraTxt = "";
 		
-		if (moduleObjects.size() > 0) {
+		if (this.moduleObjects.size() > 0) {
 			StringBuffer theScript = new StringBuffer();
-			theScript.append("function " + functionName + "(myForm) {");
+			theScript.append("function " + this.functionName + "(myForm) {");
 			theScript.append("\n  myForm." + this.getName()
 					+ ".value=(");
-			for (int i = 0; i < moduleObjects.size(); i++) {
+			for (int i = 0; i < this.moduleObjects.size(); i++) {
 				if (i != 0) {
-					theScript.append((String) operatorVector.get(i));
+					theScript.append((String) this.operatorVector.get(i));
 				}
-				if (moduleObjects.get(i) instanceof TextInput) {
-					moduleObject = (TextInput) moduleObjects.get(i);
-				} else if (moduleObjects.get(i) instanceof IntegerInput) {
-					moduleObject = (IntegerInput) moduleObjects.get(i);
-				} else if (moduleObjects.get(i) instanceof DoubleInput) {
-					moduleObject = (DoubleInput) moduleObjects.get(i);
-				} else if (moduleObjects.get(i) instanceof FloatInput) {
-					moduleObject = (FloatInput) moduleObjects.get(i);
-				} else if (moduleObjects.get(i) instanceof ResultOutput) {
-					moduleObject = (ResultOutput) moduleObjects.get(i);
+				if (this.moduleObjects.get(i) instanceof TextInput) {
+					moduleObject = (TextInput) this.moduleObjects.get(i);
+				} else if (this.moduleObjects.get(i) instanceof IntegerInput) {
+					moduleObject = (IntegerInput) this.moduleObjects.get(i);
+				} else if (this.moduleObjects.get(i) instanceof DoubleInput) {
+					moduleObject = (DoubleInput) this.moduleObjects.get(i);
+				} else if (this.moduleObjects.get(i) instanceof FloatInput) {
+					moduleObject = (FloatInput) this.moduleObjects.get(i);
+				} else if (this.moduleObjects.get(i) instanceof ResultOutput) {
+					moduleObject = (ResultOutput) this.moduleObjects.get(i);
 				}
-				extraTxt = (String) extraTextVector.get(i);
+				extraTxt = (String) this.extraTextVector.get(i);
 				theScript.append("(1*myForm." + moduleObject.getName()
 						+ ".value");
 				theScript.append(")");
-				theScript.append(extraForEach);
+				theScript.append(this.extraForEach);
 				theScript.append(extraTxt);
 			}
 			theScript.append(")");
-			theScript.append(extraForTotal);
+			theScript.append(this.extraForTotal);
 			theScript.append(";");
 			
 			theScript.append("\n}");
 			
-			script.addFunction(functionName, theScript.toString());
+			script.addFunction(this.functionName, theScript.toString());
 		}
 		
 		this.setDisabled(true);
-		for (int i = 0; i < onChangeVector.size(); i++) {
-			this.setOnKeyUp((String) onChangeVector.get(i));
+		for (int i = 0; i < this.onChangeVector.size(); i++) {
+			this.setOnKeyUp((String) this.onChangeVector.get(i));
 		}
 		
 	}
@@ -110,23 +110,23 @@ public class ResultOutput extends GenericInput {
 	}
 	
 	public void setOnChange(String s) {
-		onChangeVector.add(s);
+		this.onChangeVector.add(s);
 	}
 	
 	public List getAddedObjects() {
-		return moduleObjects;
+		return this.moduleObjects;
 	}
 	
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	public void setExtraForEach(String s) {
-		extraForEach = s;
+		this.extraForEach = s;
 	}
 	
 	public void setExtraForTotal(String s) {
-		extraForTotal = s;
+		this.extraForTotal = s;
 	}
 	
 	public void add(PresentationObject mo) {
@@ -140,43 +140,43 @@ public class ResultOutput extends GenericInput {
 	public void add(PresentationObject mo, String operatori, String extraText) {
 		if (mo instanceof TextInput) {
 			TextInput temp = (TextInput) mo;
-			temp.setOnKeyUp(functionName + "(this.form)");
-			moduleObjects.add(temp);
-			operatorVector.add(operatori);
+			temp.setOnKeyUp(this.functionName + "(this.form)");
+			this.moduleObjects.add(temp);
+			this.operatorVector.add(operatori);
 			if (extraText == null) { 
 				extraText = "";
 			}
-			extraTextVector.add(extraText);
+			this.extraTextVector.add(extraText);
 		} else if (mo instanceof IntegerInput) {
 			IntegerInput temp = (IntegerInput) mo;
-			temp.setOnKeyUp(functionName + "(this.form)");
-			moduleObjects.add(temp);
-			operatorVector.add(operatori);
+			temp.setOnKeyUp(this.functionName + "(this.form)");
+			this.moduleObjects.add(temp);
+			this.operatorVector.add(operatori);
 			if (extraText == null) {
 				extraText = "";
 			}
-			extraTextVector.add(extraText);
+			this.extraTextVector.add(extraText);
 		} else if (mo instanceof DoubleInput) {
 			DoubleInput temp = (DoubleInput) mo;
-			temp.setOnChange(functionName + "(this.form)");
-			moduleObjects.add(temp);
-			operatorVector.add(operatori);
+			temp.setOnChange(this.functionName + "(this.form)");
+			this.moduleObjects.add(temp);
+			this.operatorVector.add(operatori);
 			if (extraText == null) {
 				extraText = "";
 			}
-			extraTextVector.add(extraText);
+			this.extraTextVector.add(extraText);
 		} else if (mo instanceof FloatInput) {
 			FloatInput temp = (FloatInput) mo;
-			temp.setOnChange(functionName + "(this.form)");
-			moduleObjects.add(temp);
-			operatorVector.add(operatori);
+			temp.setOnChange(this.functionName + "(this.form)");
+			this.moduleObjects.add(temp);
+			this.operatorVector.add(operatori);
 			if (extraText == null) {
 				extraText = "";
 			}
-			extraTextVector.add(extraText);
+			this.extraTextVector.add(extraText);
 		} else if (mo instanceof ResultOutput) {
 			handleAddResultOutput((ResultOutput) mo, operatori);
-			extraTextVector.add(extraText);
+			this.extraTextVector.add(extraText);
 		}
 	}
 	
@@ -185,22 +185,22 @@ public class ResultOutput extends GenericInput {
 		for (int a = 0; a < list.size(); a++) {
 			if (list.get(a) instanceof TextInput) {
 				TextInput text = (TextInput) list.get(a);
-				text.setOnKeyUp(functionName + "(this.form)");
+				text.setOnKeyUp(this.functionName + "(this.form)");
 			} else if (list.get(a) instanceof IntegerInput) {
 				IntegerInput i = (IntegerInput) list.get(a);
-				i.setOnKeyUp(functionName + "(this.form)");
+				i.setOnKeyUp(this.functionName + "(this.form)");
 			} else if (list.get(a) instanceof DoubleInput) {
 				DoubleInput f = (DoubleInput) list.get(a);
-				f.setOnChange(functionName + "(this.form)");
+				f.setOnChange(this.functionName + "(this.form)");
 			} else if (list.get(a) instanceof FloatInput) {
 				FloatInput f = (FloatInput) list.get(a);
-				f.setOnChange(functionName + "(this.form)");
+				f.setOnChange(this.functionName + "(this.form)");
 			} else if (list.get(a) instanceof ResultOutput) {
 				handleAddResultOutput((ResultOutput) list.get(a), operatori);
 			}
 		}
-		moduleObjects.add(resOut);
-		operatorVector.add(operatori);
+		this.moduleObjects.add(resOut);
+		this.operatorVector.add(operatori);
 	}
 	
 	public void setContent(String content) {
@@ -208,7 +208,7 @@ public class ResultOutput extends GenericInput {
 	}
 	
 	public void handleKeepStatus(IWContext iwc) {
-		String pname = iwc.getParameter(name);
+		String pname = iwc.getParameter(this.name);
 		if (pname != null) {
 			this.content = pname;
 		}

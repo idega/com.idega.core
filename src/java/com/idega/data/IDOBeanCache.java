@@ -27,27 +27,27 @@ public class IDOBeanCache {
   }
 
   private Map getFindQueryCacheMap(){
-    if(findQueryCacheMap==null){
+    if(this.findQueryCacheMap==null){
       //findQueryCacheMap=new HashMap();
-    	findQueryCacheMap = new CacheMap(200);
+    	this.findQueryCacheMap = new CacheMap(200);
     }
-    return findQueryCacheMap;
+    return this.findQueryCacheMap;
   }
 
   private Map getHomeQueryCacheMap(){
-    if(homeQueryCacheMap==null){
+    if(this.homeQueryCacheMap==null){
       //homeQueryCacheMap=new HashMap();
-    	homeQueryCacheMap = new CacheMap(200);
+    	this.homeQueryCacheMap = new CacheMap(200);
     }
-    return homeQueryCacheMap;
+    return this.homeQueryCacheMap;
   }
 
   private Map getCacheMap(){
-    if(cacheMap==null){
+    if(this.cacheMap==null){
       //cacheMap=new HashMap();
-    	cacheMap = new CacheMap(200);
+    	this.cacheMap = new CacheMap(200);
     }
-    return cacheMap;
+    return this.cacheMap;
   }
 
   IDOEntity getCachedEntity(Object pk){
@@ -87,15 +87,15 @@ public class IDOBeanCache {
   }
 
   synchronized void flushAllHomeQueryCache(){
-    homeQueryCacheMap=null;
+    this.homeQueryCacheMap=null;
   }
 
   synchronized void flushAllFindQueryCache(){
-    findQueryCacheMap=null;
+    this.findQueryCacheMap=null;
   }
 
   synchronized void flushAllBeanCache(){
-    cacheMap=null;
+    this.cacheMap=null;
   }
 
 

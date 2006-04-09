@@ -279,11 +279,13 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		if (postalAddress == null) {
 			StringBuffer addr = new StringBuffer();
 			String code = getPostalCode();
-			if (code != null)
+			if (code != null) {
 				addr.append(code).append(" ");
+			}
 			String name = this.getName();
-			if (name != null)
+			if (name != null) {
 				addr.append(name);
+			}
 			postalAddress = addr.toString();
 		}
 		return postalAddress;

@@ -187,24 +187,24 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
 	// Due to a bug in java.util.Random clear up to 1.2, we're
 	// doing our own Gaussian variable.
-	__haveNextNextGaussian = false;
+	this.__haveNextNextGaussian = false;
 
-	mt = new int[N];
+	this.mt = new int[N];
 	
-	mag01 = new int[2];
-	mag01[0] = 0x0;
-	mag01[1] = MATRIX_A;
+	this.mag01 = new int[2];
+	this.mag01[0] = 0x0;
+	this.mag01[1] = MATRIX_A;
 
-        mt[0]= (int)(seed & 0xfffffff);
-        for (mti=1; mti<N; mti++) 
+        this.mt[0]= (int)(seed & 0xfffffff);
+        for (this.mti=1; this.mti<N; this.mti++) 
             {
-            mt[mti] = 
-	    (1812433253 * (mt[mti-1] ^ (mt[mti-1] >>> 30)) + mti); 
+            this.mt[this.mti] = 
+	    (1812433253 * (this.mt[this.mti-1] ^ (this.mt[this.mti-1] >>> 30)) + this.mti); 
         /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
         /* In the previous versions, MSBs of the seed affect   */
         /* only MSBs of the array mt[].                        */
         /* 2002/01/09 modified by Makoto Matsumoto             */
-            mt[mti] &= 0xffffffff;
+            this.mt[this.mti] &= 0xffffffff;
         /* for >32 bit machines */
             }
         }
@@ -225,24 +225,26 @@ public class MersenneTwister extends java.util.Random implements Serializable
         k = (N>array.length ? N : array.length);
         for (; k!=0; k--) 
             {
-            mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >>> 30)) * 1664525)) + array[j] + j; /* non linear */
-            mt[i] &= 0xffffffff; /* for WORDSIZE > 32 machines */
+            this.mt[i] = (this.mt[i] ^ ((this.mt[i-1] ^ (this.mt[i-1] >>> 30)) * 1664525)) + array[j] + j; /* non linear */
+            this.mt[i] &= 0xffffffff; /* for WORDSIZE > 32 machines */
             i++;
             j++;
-            if (i>=N) { mt[0] = mt[N-1]; i=1; }
-            if (j>=array.length) j=0;
+            if (i>=N) { this.mt[0] = this.mt[N-1]; i=1; }
+            if (j>=array.length) {
+							j=0;
+						}
             }
         for (k=N-1; k!=0; k--) 
             {
-            mt[i] = (mt[i] ^ ((mt[i-1] ^ (mt[i-1] >>> 30)) * 1566083941)) - i; /* non linear */
-            mt[i] &= 0xffffffff; /* for WORDSIZE > 32 machines */
+            this.mt[i] = (this.mt[i] ^ ((this.mt[i-1] ^ (this.mt[i-1] >>> 30)) * 1566083941)) - i; /* non linear */
+            this.mt[i] &= 0xffffffff; /* for WORDSIZE > 32 machines */
             i++;
             if (i>=N) 
                 {
-                mt[0] = mt[N-1]; i=1; 
+                this.mt[0] = this.mt[N-1]; i=1; 
                 }
             }
-        mt[0] = 0x80000000; /* MSB is 1; assuring non-zero initial array */ 
+        this.mt[0] = 0x80000000; /* MSB is 1; assuring non-zero initial array */ 
         }
 
 
@@ -254,27 +256,27 @@ public class MersenneTwister extends java.util.Random implements Serializable
 	{
 	int y;
 	
-	if (mti >= N)   // generate N words at one time
+	if (this.mti >= N)   // generate N words at one time
 	    {
 	    int kk;
 	    
 	    for (kk = 0; kk < N - M; kk++)
 		{
-		y = (mt[kk] & UPPER_MASK) | (mt[kk+1] & LOWER_MASK);
-		mt[kk] = mt[kk+M] ^ (y >>> 1) ^ mag01[y & 0x1];
+		y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk+1] & LOWER_MASK);
+		this.mt[kk] = this.mt[kk+M] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 		}
 	    for (; kk < N-1; kk++)
 		{
-		y = (mt[kk] & UPPER_MASK) | (mt[kk+1] & LOWER_MASK);
-		mt[kk] = mt[kk+(M-N)] ^ (y >>> 1) ^ mag01[y & 0x1];
+		y = (this.mt[kk] & UPPER_MASK) | (this.mt[kk+1] & LOWER_MASK);
+		this.mt[kk] = this.mt[kk+(M-N)] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 		}
-	    y = (mt[N-1] & UPPER_MASK) | (mt[0] & LOWER_MASK);
-	    mt[N-1] = mt[M-1] ^ (y >>> 1) ^ mag01[y & 0x1];
+	    y = (this.mt[N-1] & UPPER_MASK) | (this.mt[0] & LOWER_MASK);
+	    this.mt[N-1] = this.mt[M-1] ^ (y >>> 1) ^ this.mag01[y & 0x1];
 
-	    mti = 0;
+	    this.mti = 0;
 	    }
   
-	y = mt[mti++];
+	y = this.mt[this.mti++];
 	y ^= y >>> 11;                          // TEMPERING_SHIFT_U(y)
 	y ^= (y << 7) & TEMPERING_MASK_B;       // TEMPERING_SHIFT_S(y)
 	y ^= (y << 15) & TEMPERING_MASK_C;      // TEMPERING_SHIFT_T(y)
@@ -312,10 +314,15 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
     public boolean nextBoolean (final float probability)
 	{
-	if (probability < 0.0f || probability > 1.0f)
-	    throw new IllegalArgumentException ("probability must be between 0.0 and 1.0 inclusive.");
-    if (probability==0.0f) return false;		// fix half-open issues
-    else if (probability==1.0f) return true;	// fix half-open issues
+	if (probability < 0.0f || probability > 1.0f) {
+		throw new IllegalArgumentException ("probability must be between 0.0 and 1.0 inclusive.");
+	}
+    if (probability==0.0f) {
+			return false;		// fix half-open issues
+		}
+		else if (probability==1.0f) {
+			return true;	// fix half-open issues
+		}
 	return nextFloat() < probability; 
 	}
 
@@ -325,10 +332,15 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
     public boolean nextBoolean (final double probability)
 	{
-	if (probability < 0.0 || probability > 1.0)
-	    throw new IllegalArgumentException ("probability must be between 0.0 and 1.0 inclusive.");
-    if (probability==0.0) return false;		// fix half-open issues
-    else if (probability==1.0) return true;	// fix half-open issues
+	if (probability < 0.0 || probability > 1.0) {
+		throw new IllegalArgumentException ("probability must be between 0.0 and 1.0 inclusive.");
+	}
+    if (probability==0.0) {
+			return false;		// fix half-open issues
+		}
+		else if (probability==1.0) {
+			return true;	// fix half-open issues
+		}
 	return nextDouble() < probability; 
 	}
     /** This method is missing from JDK 1.1 and below.  JDK 1.2
@@ -336,11 +348,13 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
     public int nextInt(final int n) 
 	{
-	if (n<=0)
-	    throw new IllegalArgumentException("n must be >= 0");
+	if (n<=0) {
+		throw new IllegalArgumentException("n must be >= 0");
+	}
 	
-	if ((n & -n) == n)
-	    return (int)((n * (long)next(31)) >> 31);
+	if ((n & -n) == n) {
+		return (int)((n * (long)next(31)) >> 31);
+	}
 	
 	int bits, val;
 	do 
@@ -358,8 +372,9 @@ public class MersenneTwister extends java.util.Random implements Serializable
     
     public long nextLong(final long n) 
 	{
-	if (n<=0)
-	    throw new IllegalArgumentException("n must be >= 0");
+	if (n<=0) {
+		throw new IllegalArgumentException("n must be >= 0");
+	}
 	
 	long bits, val;
 	do 
@@ -394,7 +409,9 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
     public void nextBytes(final byte[] bytes)    
 	{
-	for (int x=0;x<bytes.length;x++) bytes[x] = (byte)next(8);
+	for (int x=0;x<bytes.length;x++) {
+		bytes[x] = (byte)next(8);
+	}
 	}
 
     /** For completeness' sake, though it's not in java.util.Random.  */
@@ -428,10 +445,10 @@ public class MersenneTwister extends java.util.Random implements Serializable
 
     synchronized public double nextGaussian() 
 	{
-	if (__haveNextNextGaussian) 
+	if (this.__haveNextNextGaussian) 
 	    {
-	    __haveNextNextGaussian = false;
-	    return __nextNextGaussian;
+	    this.__haveNextNextGaussian = false;
+	    return this.__nextNextGaussian;
 	    }
 	else 
 	    {
@@ -443,8 +460,8 @@ public class MersenneTwister extends java.util.Random implements Serializable
 		s = v1 * v1 + v2 * v2;
 		} while (s >= 1 || s==0 );
 	    double multiplier = /*Strict*/Math.sqrt(-2 * /*Strict*/Math.log(s)/s);
-	    __nextNextGaussian = v2 * multiplier;
-	    __haveNextNextGaussian = true;
+	    this.__nextNextGaussian = v2 * multiplier;
+	    this.__haveNextNextGaussian = true;
 	    return v1 * multiplier;
 	    }
 	}
@@ -467,11 +484,17 @@ public class MersenneTwister extends java.util.Random implements Serializable
 	  {
 	  // first, convert the int from signed to "unsigned"
 	  long l = r.nextInt();
-	  if (l < 0 ) l += 4294967296L;  // max int value
+	  if (l < 0 ) {
+			l += 4294967296L;  // max int value
+		}
 	  String s = String.valueOf(l);
-	  while(s.length() < 10) s = " " + s;  // buffer
+	  while(s.length() < 10) {
+			s = " " + s;  // buffer
+		}
 	  System.out.print(s + " ");
-	  if (j%5==4) System.out.println();	    
+	  if (j%5==4) {
+			System.out.println();
+		}	    
 	  }
 
 	// SPEED TEST
@@ -484,8 +507,9 @@ public class MersenneTwister extends java.util.Random implements Serializable
 	  r = new MersenneTwister(SEED);
 	  ms = System.currentTimeMillis();
 	  xx=0;
-	  for (j = 0; j < 100000000; j++)
-	  xx += r.nextInt();
+	  for (j = 0; j < 100000000; j++) {
+			xx += r.nextInt();
+		}
 	  System.out.println("Mersenne Twister: " + (System.currentTimeMillis()-ms) + "          Ignore this: " + xx);
 
           System.out.println("To compare this with java.util.Random, run this same test on MersenneTwisterFast.");
@@ -502,27 +526,39 @@ public class MersenneTwister extends java.util.Random implements Serializable
 	  for (j = 0; j < 1000; j++)
 	  {
 	  System.out.print(r.nextBoolean() + " ");
-	  if (j%8==7) System.out.println();
+	  if (j%8==7) {
+			System.out.println();
+		}
 	  }
-	  if (!(j%8==7)) System.out.println();
+	  if (!(j%8==7)) {
+			System.out.println();
+		}
 	  
 	  System.out.println("\nGrab 1000 booleans of increasing probability using nextBoolean(double)");
 	  r = new MersenneTwister(SEED);
 	  for (j = 0; j < 1000; j++)
 	      {
 	      System.out.print(r.nextBoolean((j/999.0)) + " ");
-	      if (j%8==7) System.out.println();
+	      if (j%8==7) {
+					System.out.println();
+				}
 	      }
-	  if (!(j%8==7)) System.out.println();
+	  if (!(j%8==7)) {
+			System.out.println();
+		}
 	  
 	  System.out.println("\nGrab 1000 booleans of increasing probability using nextBoolean(float)");
 	  r = new MersenneTwister(SEED);
 	  for (j = 0; j < 1000; j++)
 	      {
 	      System.out.print(r.nextBoolean((j/999.0f)) + " ");
-	      if (j%8==7) System.out.println();
+	      if (j%8==7) {
+					System.out.println();
+				}
 	      }
-	  if (!(j%8==7)) System.out.println();
+	  if (!(j%8==7)) {
+			System.out.println();
+		}
 	  
 	  byte[] bytes = new byte[1000];
 	  System.out.println("\nGrab the first 1000 bytes using nextBytes");
@@ -531,9 +567,13 @@ public class MersenneTwister extends java.util.Random implements Serializable
 	  for (j = 0; j < 1000; j++)
 	  {
 	  System.out.print(bytes[j] + " ");
-	  if (j%16==15) System.out.println();
+	  if (j%16==15) {
+			System.out.println();
+		}
 	  }
-	  if (!(j%16==15)) System.out.println();
+	  if (!(j%16==15)) {
+			System.out.println();
+		}
 	
 	  byte b;
 	  System.out.println("\nGrab the first 1000 bytes -- must be same as nextBytes");
@@ -541,28 +581,42 @@ public class MersenneTwister extends java.util.Random implements Serializable
 	  for (j = 0; j < 1000; j++)
 	  {
 	  System.out.print((b = r.nextByte()) + " ");
-	  if (b!=bytes[j]) System.out.print("BAD ");
-	  if (j%16==15) System.out.println();
+	  if (b!=bytes[j]) {
+			System.out.print("BAD ");
+		}
+	  if (j%16==15) {
+			System.out.println();
+		}
 	  }
-	  if (!(j%16==15)) System.out.println();
+	  if (!(j%16==15)) {
+			System.out.println();
+		}
 
 	  System.out.println("\nGrab the first 1000 shorts");
 	  r = new MersenneTwister(SEED);
 	  for (j = 0; j < 1000; j++)
 	  {
 	  System.out.print(r.nextShort() + " ");
-	  if (j%8==7) System.out.println();
+	  if (j%8==7) {
+			System.out.println();
+		}
 	  }
-	  if (!(j%8==7)) System.out.println();
+	  if (!(j%8==7)) {
+			System.out.println();
+		}
 
 	  System.out.println("\nGrab the first 1000 ints");
 	  r = new MersenneTwister(SEED);
 	  for (j = 0; j < 1000; j++)
 	  {
 	  System.out.print(r.nextInt() + " ");
-	  if (j%4==3) System.out.println();
+	  if (j%4==3) {
+			System.out.println();
+		}
 	  }
-	  if (!(j%4==3)) System.out.println();
+	  if (!(j%4==3)) {
+			System.out.println();
+		}
 
 	  System.out.println("\nGrab the first 1000 ints of different sizes");
 	  r = new MersenneTwister(SEED);
@@ -571,19 +625,29 @@ public class MersenneTwister extends java.util.Random implements Serializable
 	  {
 	  System.out.print(r.nextInt(max) + " ");
           max *= 2;
-          if (max <= 0) max = 1;
-	  if (j%4==3) System.out.println();
+          if (max <= 0) {
+						max = 1;
+					}
+	  if (j%4==3) {
+			System.out.println();
+		}
 	  }
-	  if (!(j%4==3)) System.out.println();
+	  if (!(j%4==3)) {
+			System.out.println();
+		}
 
 	  System.out.println("\nGrab the first 1000 longs");
 	  r = new MersenneTwister(SEED);
 	  for (j = 0; j < 1000; j++)
 	  {
 	  System.out.print(r.nextLong() + " ");
-	  if (j%3==2) System.out.println();
+	  if (j%3==2) {
+			System.out.println();
+		}
 	  }
-	  if (!(j%3==2)) System.out.println();
+	  if (!(j%3==2)) {
+			System.out.println();
+		}
 
 	  System.out.println("\nGrab the first 1000 longs of different sizes");
 	  r = new MersenneTwister(SEED);
@@ -592,37 +656,55 @@ public class MersenneTwister extends java.util.Random implements Serializable
 	  {
 	  System.out.print(r.nextLong(max2) + " ");
           max2 *= 2;
-          if (max2 <= 0) max2 = 1;
-	  if (j%4==3) System.out.println();
+          if (max2 <= 0) {
+						max2 = 1;
+					}
+	  if (j%4==3) {
+			System.out.println();
+		}
 	  }
-	  if (!(j%4==3)) System.out.println();
+	  if (!(j%4==3)) {
+			System.out.println();
+		}
           
 	  System.out.println("\nGrab the first 1000 floats");
 	  r = new MersenneTwister(SEED);
 	  for (j = 0; j < 1000; j++)
 	  {
 	  System.out.print(r.nextFloat() + " ");
-	  if (j%4==3) System.out.println();
+	  if (j%4==3) {
+			System.out.println();
+		}
 	  }
-	  if (!(j%4==3)) System.out.println();
+	  if (!(j%4==3)) {
+			System.out.println();
+		}
 
 	  System.out.println("\nGrab the first 1000 doubles");
 	  r = new MersenneTwister(SEED);
 	  for (j = 0; j < 1000; j++)
 	  {
 	  System.out.print(r.nextDouble() + " ");
-	  if (j%3==2) System.out.println();
+	  if (j%3==2) {
+			System.out.println();
+		}
 	  }
-	  if (!(j%3==2)) System.out.println();
+	  if (!(j%3==2)) {
+			System.out.println();
+		}
 
 	  System.out.println("\nGrab the first 1000 gaussian doubles");
 	  r = new MersenneTwister(SEED);
 	  for (j = 0; j < 1000; j++)
 	  {
 	  System.out.print(r.nextGaussian() + " ");
-	  if (j%3==2) System.out.println();
+	  if (j%3==2) {
+			System.out.println();
+		}
 	  }
-	  if (!(j%3==2)) System.out.println();
+	  if (!(j%3==2)) {
+			System.out.println();
+		}
 	
         }
     

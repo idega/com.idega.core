@@ -20,10 +20,10 @@ import javax.servlet.ServletException;
  * <p>
  * Class to simulate a ServletContext
  * </p>
- *  Last modified: $Date: 2006/04/04 11:53:02 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class MockServletContext implements ServletContext {
 
@@ -163,10 +163,10 @@ public class MockServletContext implements ServletContext {
 	public String getRealPath(String path) {
 		if(path!=null){
 			if(path.equals("/")){
-				return baseDir.getAbsolutePath();
+				return this.baseDir.getAbsolutePath();
 			}
 			else{
-				return baseDir.getAbsolutePath()+path;
+				return this.baseDir.getAbsolutePath()+path;
 			}
 		}
 		return null;
@@ -177,7 +177,7 @@ public class MockServletContext implements ServletContext {
 	 */
 	public String getServerInfo() {
 		// TODO Auto-generated method stub
-		return serverInfo;
+		return this.serverInfo;
 	}
 
 	/* (non-Javadoc)
@@ -229,13 +229,13 @@ public class MockServletContext implements ServletContext {
 	 */
 	public String getServletContextName() {
 		// TODO Auto-generated method stub
-		return servletContextName;
+		return this.servletContextName;
 	}
 	
 	protected Hashtable getAttributes(){
-		if(attributes==null){
-			attributes=new Hashtable();
+		if(this.attributes==null){
+			this.attributes=new Hashtable();
 		}
-		return attributes;
+		return this.attributes;
 	}
 }

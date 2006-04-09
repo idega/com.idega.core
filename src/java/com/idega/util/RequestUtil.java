@@ -1,5 +1,5 @@
 /*
- * $Id: RequestUtil.java,v 1.3 2006/01/12 15:23:11 tryggvil Exp $ Created on
+ * $Id: RequestUtil.java,v 1.4 2006/04/09 12:13:13 laddi Exp $ Created on
  * 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,10 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 
- * Last modified: $Date: 2006/01/12 15:23:11 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class RequestUtil {
 
@@ -111,8 +111,9 @@ public class RequestUtil {
 	 * @return
 	 */
 	public static boolean isParameterSet(HttpServletRequest request, String parameterName) {
-		if (parameterName == null)
+		if (parameterName == null) {
 			return false;
+		}
 		boolean theReturn = false;
 		String value = request.getParameter(parameterName);
 		if (value != null && value.length() > 0) {
@@ -137,8 +138,9 @@ public class RequestUtil {
 	 * @return
 	 */
 	public static boolean isParameterSetAsEmpty(HttpServletRequest request, String parameterName) {
-		if (parameterName == null)
+		if (parameterName == null) {
 			return false;
+		}
 		boolean theReturn = false;
 		String value = request.getParameter(parameterName);
 		if (value != null && value.length() == 0) {

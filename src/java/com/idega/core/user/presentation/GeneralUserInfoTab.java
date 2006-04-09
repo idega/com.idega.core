@@ -68,91 +68,91 @@ public class GeneralUserInfoTab extends UserTab{
 
 
   public void initializeFieldNames(){
-    firstNameFieldName = "UMfname";
-    middleNameFieldName = "UMmname";
-    lastNameFieldName = "UMlname";
-    displayNameFieldName = "UMdname";
-    descriptionFieldName = "UMdesc";
-    dateOfBirthFieldName = "UMdateofbirth";
-    genderFieldName = "UMgender";
-    ssnFieldName = "UMssn";
+    this.firstNameFieldName = "UMfname";
+    this.middleNameFieldName = "UMmname";
+    this.lastNameFieldName = "UMlname";
+    this.displayNameFieldName = "UMdname";
+    this.descriptionFieldName = "UMdesc";
+    this.dateOfBirthFieldName = "UMdateofbirth";
+    this.genderFieldName = "UMgender";
+    this.ssnFieldName = "UMssn";
   }
 
   public void initializeFieldValues(){
-    fieldValues.put(this.firstNameFieldName,"");
-    fieldValues.put(this.middleNameFieldName,"");
-    fieldValues.put(this.lastNameFieldName,"");
-    fieldValues.put(this.displayNameFieldName,"");
-    fieldValues.put(this.descriptionFieldName,"");
-    fieldValues.put(this.dateOfBirthFieldName,"");
-    fieldValues.put(this.genderFieldName,"");
-    fieldValues.put(this.ssnFieldName,"");
+    this.fieldValues.put(this.firstNameFieldName,"");
+    this.fieldValues.put(this.middleNameFieldName,"");
+    this.fieldValues.put(this.lastNameFieldName,"");
+    this.fieldValues.put(this.displayNameFieldName,"");
+    this.fieldValues.put(this.descriptionFieldName,"");
+    this.fieldValues.put(this.dateOfBirthFieldName,"");
+    this.fieldValues.put(this.genderFieldName,"");
+    this.fieldValues.put(this.ssnFieldName,"");
 
     this.updateFieldsDisplayStatus();
   }
 
   public void updateFieldsDisplayStatus(){
-    firstNameField.setContent((String)fieldValues.get(this.firstNameFieldName));
+    this.firstNameField.setContent((String)this.fieldValues.get(this.firstNameFieldName));
 
-    middleNameField.setContent((String)fieldValues.get(this.middleNameFieldName));
+    this.middleNameField.setContent((String)this.fieldValues.get(this.middleNameFieldName));
 
-    lastNameField.setContent((String)fieldValues.get(this.lastNameFieldName));
+    this.lastNameField.setContent((String)this.fieldValues.get(this.lastNameFieldName));
 
-    displayNameField.setContent((String)fieldValues.get(this.displayNameFieldName));
+    this.displayNameField.setContent((String)this.fieldValues.get(this.displayNameFieldName));
 
-    descriptionField.setContent((String)fieldValues.get(this.descriptionFieldName));
+    this.descriptionField.setContent((String)this.fieldValues.get(this.descriptionFieldName));
     
-		ssnField.setContent((String)fieldValues.get(this.ssnFieldName));
+		this.ssnField.setContent((String)this.fieldValues.get(this.ssnFieldName));
 
-    StringTokenizer date = new StringTokenizer((String)fieldValues.get(this.dateOfBirthFieldName)," -");
+    StringTokenizer date = new StringTokenizer((String)this.fieldValues.get(this.dateOfBirthFieldName)," -");
 //    StringTokenizer date2 = new StringTokenizer((String)fieldValues.get(this.dateOfBirthFieldName)," -");
 
     if(date.hasMoreTokens()){
 //      System.err.println("Year: "+ date2.nextToken());
-      dateOfBirthField.setYear(date.nextToken());
+      this.dateOfBirthField.setYear(date.nextToken());
     }
     if(date.hasMoreTokens()){
 //      System.err.println("Month: "+ date2.nextToken());
-      dateOfBirthField.setMonth(date.nextToken());
+      this.dateOfBirthField.setMonth(date.nextToken());
     }
     if(date.hasMoreTokens()){
 //      System.err.println("Day: "+ date2.nextToken());
-      dateOfBirthField.setDay(date.nextToken());
+      this.dateOfBirthField.setDay(date.nextToken());
     }
 
-    genderField.setSelectedElement((String)fieldValues.get(this.genderFieldName));    
+    this.genderField.setSelectedElement((String)this.fieldValues.get(this.genderFieldName));    
   }
 
 
   public void initializeFields(){
-    firstNameField = new TextInput(firstNameFieldName);
-    firstNameField.setLength(12);
+    this.firstNameField = new TextInput(this.firstNameFieldName);
+    this.firstNameField.setLength(12);
 
-    middleNameField = new TextInput(middleNameFieldName);
-    middleNameField.setLength(5);
+    this.middleNameField = new TextInput(this.middleNameFieldName);
+    this.middleNameField.setLength(5);
 
-    lastNameField = new TextInput(lastNameFieldName);
-    lastNameField.setLength(12);
+    this.lastNameField = new TextInput(this.lastNameFieldName);
+    this.lastNameField.setLength(12);
 
-    displayNameField = new TextInput(displayNameFieldName);
-    displayNameField.setLength(12);
-    displayNameField.setMaxlength(20);
+    this.displayNameField = new TextInput(this.displayNameFieldName);
+    this.displayNameField.setLength(12);
+    this.displayNameField.setMaxlength(20);
     
-    ssnField = new TextInput(ssnFieldName);
-    ssnField.setLength(10);
-    ssnField.setMaxlength(20);
+    this.ssnField = new TextInput(this.ssnFieldName);
+    this.ssnField.setLength(10);
+    this.ssnField.setMaxlength(20);
 
-    descriptionField = new TextArea(descriptionFieldName);
-    descriptionField.setHeight(7);
-    descriptionField.setWidth(42);
-    descriptionField.setWrap(true);
+    this.descriptionField = new TextArea(this.descriptionFieldName);
+    this.descriptionField.setHeight(7);
+    this.descriptionField.setWidth(42);
+    this.descriptionField.setWrap(true);
 
-    dateOfBirthField = new DateInput(dateOfBirthFieldName);
+    this.dateOfBirthField = new DateInput(this.dateOfBirthFieldName);
     IWTimestamp time = IWTimestamp.RightNow();
-    dateOfBirthField.setYearRange(time.getYear(),time.getYear()-100);
+    this.dateOfBirthField.setYearRange(time.getYear(),time.getYear()-100);
 
-    genderField = new DropdownMenu(genderFieldName);
-    genderField.addMenuElement("","Gender");
+    this.genderField = new DropdownMenu(this.genderFieldName);
+    this.genderField.addMenuElement("","Gender");
 
     Gender[] genders = null;
     try {
@@ -165,36 +165,36 @@ public class GeneralUserInfoTab extends UserTab{
 
     if(genders != null){
       for (int i = 0; i < genders.length; i++) {
-        genderField.addMenuElement(genders[i].getID(),genders[i].getName());
+        this.genderField.addMenuElement(genders[i].getID(),genders[i].getName());
       }
 
     }
   }
 
   public void initializeTexts(){
-    firstNameText = getTextObject();
-    firstNameText.setText("First name");
+    this.firstNameText = getTextObject();
+    this.firstNameText.setText("First name");
 
-    middleNameText = getTextObject();
-    middleNameText.setText("Middle name");
+    this.middleNameText = getTextObject();
+    this.middleNameText.setText("Middle name");
 
-    lastNameText = getTextObject();
-    lastNameText.setText("Last name");
+    this.lastNameText = getTextObject();
+    this.lastNameText.setText("Last name");
 
-    displayNameText = getTextObject();
-    displayNameText.setText("Display name");
+    this.displayNameText = getTextObject();
+    this.displayNameText.setText("Display name");
 
-    descriptionText = getTextObject();
-    descriptionText.setText("Description : ");
+    this.descriptionText = getTextObject();
+    this.descriptionText.setText("Description : ");
 
-    dateOfBirthText = getTextObject();
-    dateOfBirthText.setText("Date of birth : ");
+    this.dateOfBirthText = getTextObject();
+    this.dateOfBirthText.setText("Date of birth : ");
 
-    genderText = getTextObject();
-    genderText.setText("Gender");
+    this.genderText = getTextObject();
+    this.genderText.setText("Gender");
     
-    ssnText = getTextObject();
-    ssnText.setText("Personal ID : ");
+    this.ssnText = getTextObject();
+    this.ssnText.setText("Personal ID : ");
 
   }
 
@@ -207,19 +207,19 @@ public class GeneralUserInfoTab extends UserTab{
     nameTable.setWidth("100%");
     nameTable.setCellpadding(0);
     nameTable.setCellspacing(0);
-    nameTable.setHeight(1,columnHeight);
-    nameTable.setHeight(2,columnHeight);
-    nameTable.setHeight(3,columnHeight);
+    nameTable.setHeight(1,this.columnHeight);
+    nameTable.setHeight(2,this.columnHeight);
+    nameTable.setHeight(3,this.columnHeight);
 
-    nameTable.add(firstNameText,1,1);
+    nameTable.add(this.firstNameText,1,1);
     nameTable.add(this.firstNameField,2,1);
-    nameTable.add(middleNameText,3,1);
+    nameTable.add(this.middleNameText,3,1);
     nameTable.add(this.middleNameField,4,1);
-    nameTable.add(lastNameText,1,2);
+    nameTable.add(this.lastNameText,1,2);
     nameTable.add(this.lastNameField,2,2);
-    nameTable.add(displayNameText,1,3);
+    nameTable.add(this.displayNameText,1,3);
     nameTable.add(this.displayNameField,2,3);
-    nameTable.add(genderText,3,3);
+    nameTable.add(this.genderText,3,3);
     nameTable.add(this.genderField,4,3);
     this.add(nameTable,1,1);
     //First Part ends
@@ -228,11 +228,11 @@ public class GeneralUserInfoTab extends UserTab{
     Table dateofbirthTable = new Table(2,2);
     dateofbirthTable.setCellpadding(0);
     dateofbirthTable.setCellspacing(0);
-    dateofbirthTable.setHeight(1,columnHeight);
-		dateofbirthTable.setHeight(2,columnHeight);
-    dateofbirthTable.add(dateOfBirthText,1,1);
+    dateofbirthTable.setHeight(1,this.columnHeight);
+		dateofbirthTable.setHeight(2,this.columnHeight);
+    dateofbirthTable.add(this.dateOfBirthText,1,1);
     dateofbirthTable.add(this.dateOfBirthField,2,1);
-    dateofbirthTable.add(ssnText,1,2);
+    dateofbirthTable.add(this.ssnText,1,2);
     dateofbirthTable.add(this.ssnField,2,2);
     this.add(dateofbirthTable,1,2);
     //Second Part Ends
@@ -241,8 +241,8 @@ public class GeneralUserInfoTab extends UserTab{
     Table descriptionTable = new Table(1,2);
     descriptionTable.setCellpadding(0);
     descriptionTable.setCellspacing(0);
-    descriptionTable.setHeight(1,columnHeight);
-    descriptionTable.add(descriptionText,1,1);
+    descriptionTable.setHeight(1,this.columnHeight);
+    descriptionTable.add(this.descriptionText,1,1);
     descriptionTable.add(this.descriptionField,1,2);
     this.add(descriptionTable,1,3);
     //Third Part ends
@@ -263,29 +263,29 @@ public class GeneralUserInfoTab extends UserTab{
       String ssn = iwc.getParameter(this.ssnFieldName);
 
       if(fname != null){
-        fieldValues.put(this.firstNameFieldName,fname);
+        this.fieldValues.put(this.firstNameFieldName,fname);
       }
       if(mname != null){
-        fieldValues.put(this.middleNameFieldName,mname);
+        this.fieldValues.put(this.middleNameFieldName,mname);
       }
       if(lname != null){
-        fieldValues.put(this.lastNameFieldName,lname);
+        this.fieldValues.put(this.lastNameFieldName,lname);
       }
       if(dname != null){
-        fieldValues.put(this.displayNameFieldName,dname);
+        this.fieldValues.put(this.displayNameFieldName,dname);
       }
       if(desc != null){
-        fieldValues.put(this.descriptionFieldName,desc);
+        this.fieldValues.put(this.descriptionFieldName,desc);
       }
       if(dateofbirth != null){
-        fieldValues.put(this.dateOfBirthFieldName,dateofbirth);
+        this.fieldValues.put(this.dateOfBirthFieldName,dateofbirth);
       }
       if(gender != null){
-        fieldValues.put(this.genderFieldName,gender);
+        this.fieldValues.put(this.genderFieldName,gender);
       }
       
       if (ssn != null) {	
-				fieldValues.put(this.ssnFieldName,ssn);
+				this.fieldValues.put(this.ssnFieldName,ssn);
       }
 
       this.updateFieldsDisplayStatus();
@@ -299,15 +299,15 @@ public class GeneralUserInfoTab extends UserTab{
     try{
       if(getUserId() > -1){
         IWTimestamp dateOfBirthTS = null;
-        String st = (String)fieldValues.get(this.dateOfBirthFieldName);
-        Integer gen = (fieldValues.get(this.genderFieldName).equals(""))? null : new Integer((String)fieldValues.get(this.genderFieldName));
+        String st = (String)this.fieldValues.get(this.dateOfBirthFieldName);
+        Integer gen = (this.fieldValues.get(this.genderFieldName).equals(""))? null : new Integer((String)this.fieldValues.get(this.genderFieldName));
         if( st != null && !st.equals("")){
           dateOfBirthTS = new IWTimestamp(st);
         }
-        business.updateUser(getUserId(),(String)fieldValues.get(this.firstNameFieldName),
-                            (String)fieldValues.get(this.middleNameFieldName),(String)fieldValues.get(this.lastNameFieldName),
-                            (String)fieldValues.get(this.displayNameFieldName),(String)fieldValues.get(this.descriptionFieldName),
-                            gen,dateOfBirthTS,null,(String)fieldValues.get(this.ssnFieldName));
+        this.business.updateUser(getUserId(),(String)this.fieldValues.get(this.firstNameFieldName),
+                            (String)this.fieldValues.get(this.middleNameFieldName),(String)this.fieldValues.get(this.lastNameFieldName),
+                            (String)this.fieldValues.get(this.displayNameFieldName),(String)this.fieldValues.get(this.descriptionFieldName),
+                            gen,dateOfBirthTS,null,(String)this.fieldValues.get(this.ssnFieldName));
                       
       }
     }catch(Exception e){
@@ -324,14 +324,14 @@ public class GeneralUserInfoTab extends UserTab{
     try{
       User user = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(getUserId());
 
-      fieldValues.put(this.firstNameFieldName,(user.getFirstName() != null) ? user.getFirstName():"" );
-      fieldValues.put(this.middleNameFieldName,(user.getMiddleName() != null) ? user.getMiddleName():"" );
-      fieldValues.put(this.lastNameFieldName,(user.getLastName() != null) ? user.getLastName():"" );
-      fieldValues.put(this.displayNameFieldName,(user.getDisplayName() != null) ? user.getDisplayName():"" );
-      fieldValues.put(this.descriptionFieldName,(user.getDescription() != null) ? user.getDescription():"" );
-      fieldValues.put(this.dateOfBirthFieldName,(user.getDateOfBirth()!= null) ? new IWTimestamp(user.getDateOfBirth()).toSQLDateString() : "");
-      fieldValues.put(this.genderFieldName,(user.getGenderID() != -1) ? Integer.toString(user.getGenderID()):"" );
-			fieldValues.put(this.ssnFieldName,(user.getPersonalID() != null) ? user.getPersonalID():"" );
+      this.fieldValues.put(this.firstNameFieldName,(user.getFirstName() != null) ? user.getFirstName():"" );
+      this.fieldValues.put(this.middleNameFieldName,(user.getMiddleName() != null) ? user.getMiddleName():"" );
+      this.fieldValues.put(this.lastNameFieldName,(user.getLastName() != null) ? user.getLastName():"" );
+      this.fieldValues.put(this.displayNameFieldName,(user.getDisplayName() != null) ? user.getDisplayName():"" );
+      this.fieldValues.put(this.descriptionFieldName,(user.getDescription() != null) ? user.getDescription():"" );
+      this.fieldValues.put(this.dateOfBirthFieldName,(user.getDateOfBirth()!= null) ? new IWTimestamp(user.getDateOfBirth()).toSQLDateString() : "");
+      this.fieldValues.put(this.genderFieldName,(user.getGenderID() != -1) ? Integer.toString(user.getGenderID()):"" );
+			this.fieldValues.put(this.ssnFieldName,(user.getPersonalID() != null) ? user.getPersonalID():"" );
       this.updateFieldsDisplayStatus();
 
     }catch(Exception e){

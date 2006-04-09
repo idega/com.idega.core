@@ -55,7 +55,7 @@ public class ModuleFileMerger {
 	 * @return Returns the rootXMLElement.
 	 */
 	public String getRootXMLElement() {
-		return rootXMLElement;
+		return this.rootXMLElement;
 	}
 	/**
 	 * @param rootXMLElement The rootXMLElement to set.
@@ -67,7 +67,7 @@ public class ModuleFileMerger {
 	 * @return Returns the inputFile.
 	 */
 	public File getInputFile() {
-		return inputFile;
+		return this.inputFile;
 	}
 	/**
 	 * @param inputFile The inputFile to set.
@@ -84,7 +84,7 @@ public class ModuleFileMerger {
 	 * @return Returns the outputFile.
 	 */
 	public File getOutputFile() {
-		return outputFile;
+		return this.outputFile;
 	}
 	/**
 	 * Sets the outputFile. This method creates the file if it does not already exist.
@@ -114,10 +114,10 @@ public class ModuleFileMerger {
 	 * @return Returns the sources.
 	 */
 	public List getMergeInSources() {
-		if(sources==null){
-			sources = new ArrayList();
+		if(this.sources==null){
+			this.sources = new ArrayList();
 		}
-		return sources;
+		return this.sources;
 	}
 	/**
 	 * @param sources The sources to set.
@@ -311,7 +311,7 @@ public class ModuleFileMerger {
 	 */
 	private boolean getIfRemoveOlderModules() {
 		// TODO Auto-generated method stub
-		return removeOlderModules;
+		return this.removeOlderModules;
 	}
 	/**
 	 * Sets if to remove older module parts found 
@@ -338,16 +338,16 @@ public class ModuleFileMerger {
 	 * @return
 	 */
 	private Map getModuleMap() {
-		if(moduleMap==null){
-			moduleMap=new HashMap();
+		if(this.moduleMap==null){
+			this.moduleMap=new HashMap();
 		}
-		return moduleMap;
+		return this.moduleMap;
 	}
 	/**
 	 * @return Returns the input.
 	 */
 	public Reader getInput() {
-		return input;
+		return this.input;
 	}
 	/**
 	 * Set the Input (file or stream)
@@ -360,7 +360,7 @@ public class ModuleFileMerger {
 	 * @return Returns the output.
 	 */
 	public Writer getOutput() {
-		return output;
+		return this.output;
 	}
 	/**
 	 * Set the Output (file or stream) to write the rewritten HTML to.
@@ -375,7 +375,7 @@ public class ModuleFileMerger {
 	 * @return
 	 */
 	public String getFileHeader(){
-		return fileHeader;
+		return this.fileHeader;
 	}
 	
 	public void setFileHeader(String fileHeader){
@@ -452,7 +452,7 @@ public class ModuleFileMerger {
 		 * @return Returns the moduleIdentifier.
 		 */
 		public String getModuleIdentifier() {
-			return moduleIdentifier;
+			return this.moduleIdentifier;
 		}
 		/**
 		 * @param moduleIdentifier The moduleIdentifier to set.
@@ -464,7 +464,7 @@ public class ModuleFileMerger {
 		 * @return Returns the moduleVersion.
 		 */
 		public String getModuleVersion() {
-			return moduleVersion;
+			return this.moduleVersion;
 		}
 		/**
 		 * @param moduleVersion The moduleVersion to set.
@@ -476,7 +476,7 @@ public class ModuleFileMerger {
 		 * @return Returns the reader.
 		 */
 		public Reader getReader() {
-			return reader;
+			return this.reader;
 		}
 		/**
 		 * @param reader The reader to set.
@@ -488,7 +488,7 @@ public class ModuleFileMerger {
 		 * @return Returns the sourcefile.
 		 */
 		public File getSourcefile() {
-			return sourcefile;
+			return this.sourcefile;
 		}
 		/**
 		 * @param sourcefile The sourcefile to set.
@@ -507,7 +507,7 @@ public class ModuleFileMerger {
 		 * @return Returns the rootXmlElement.
 		 */
 		public String getRootXmlElement() {
-			return rootXmlElement;
+			return this.rootXmlElement;
 		}
 		/**
 		 * @param rootXmlElement The rootXmlElement to set.
@@ -549,7 +549,7 @@ public class ModuleFileMerger {
 		 * @return Returns the hasBeenProcessed.
 		 */
 		public boolean isHasBeenProcessed() {
-			return hasBeenProcessed;
+			return this.hasBeenProcessed;
 		}
 		/**
 		 * @param hasBeenProcessed The hasBeenProcessed to set.
@@ -565,7 +565,7 @@ public class ModuleFileMerger {
 	 * @return Returns the initalRootContents.
 	 */
 	public String getInitalRootContents() {
-		return initalRootContents;
+		return this.initalRootContents;
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /*
- * $Id: XMLOutput.java,v 1.11 2006/04/04 23:30:15 palli Exp $
+ * $Id: XMLOutput.java,v 1.12 2006/04/09 12:13:14 laddi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -29,7 +29,7 @@ public class XMLOutput {
 	 * 
 	 */
 	public XMLOutput() {
-		_output = new XMLOutputter();
+		this._output = new XMLOutputter();
 	}
 
 	/**
@@ -38,18 +38,18 @@ public class XMLOutput {
 	public XMLOutput(String indent, boolean newlines) {
 		Format f = (newlines) ? Format.getPrettyFormat() : Format.getCompactFormat();
 		f.setIndent(indent);
-		_output = new XMLOutputter(f);
+		this._output = new XMLOutputter(f);
 	}
 
 	/**
 	 * 
 	 */
 	public void setLineSeparator(String seperator) {
-		if (_output != null) {
-			Format f = _output.getFormat();
+		if (this._output != null) {
+			Format f = this._output.getFormat();
 			if (f != null) {
 				f.setLineSeparator(seperator);
-				_output.setFormat(f);
+				this._output.setFormat(f);
 			}
 		}
 	}
@@ -58,11 +58,11 @@ public class XMLOutput {
 	 * 
 	 */
 	public void setTextNormalize(boolean normalize) {
-		if (_output != null && normalize) {
-			Format f = _output.getFormat();
+		if (this._output != null && normalize) {
+			Format f = this._output.getFormat();
 			if (f != null) {
 				f.setTextMode(Format.TextMode.NORMALIZE);
-				_output.setFormat(f);
+				this._output.setFormat(f);
 			}
 		}
 	}
@@ -71,49 +71,52 @@ public class XMLOutput {
 	 * 
 	 */
 	public void output(XMLDocument document, OutputStream stream) throws IOException {
-		if (_output != null)
-			_output.output((Document) document.getDocument(), stream);
+		if (this._output != null) {
+			this._output.output((Document) document.getDocument(), stream);
+		}
 	}
 
 	public String outputString(XMLElement element) {
-		if (_output != null) {
+		if (this._output != null) {
 			Element el = (Element) element.getElement();
 			if (el != null){
-				_output.getFormat().setOmitDeclaration(true);
-				return (_output.outputString(el));
+				this._output.getFormat().setOmitDeclaration(true);
+				return (this._output.outputString(el));
 			}
-			else
+			else {
 				return (null);
+			}
 		}
-		else
+		else {
 			return (null);
+		}
 	}
 
 	public String outputString(XMLDocument document) throws IOException {
 		StringWriter writer = new StringWriter();
 		Document doc = (Document) document.getDocument();
 		XMLOutputter outputter = new XMLOutputter();
-		outputter.setFormat(_output.getFormat());
+		outputter.setFormat(this._output.getFormat());
 		outputter.output(doc, writer);
 		return writer.toString();
 	}
 
 	public void setEncoding(String encoding) {
-		if (_output != null) {
-			Format f = _output.getFormat();
+		if (this._output != null) {
+			Format f = this._output.getFormat();
 			if (f != null) {
 				f.setEncoding(encoding);
-				_output.setFormat(f);
+				this._output.setFormat(f);
 			}
 		}
 	}
 
 	public void setSkipEncoding(boolean skip) {
-		if (_output != null) {
-			Format f = _output.getFormat();
+		if (this._output != null) {
+			Format f = this._output.getFormat();
 			if (f != null) {
 				f.setOmitEncoding(skip);
-				_output.setFormat(f);
+				this._output.setFormat(f);
 			}
 		}
 	}

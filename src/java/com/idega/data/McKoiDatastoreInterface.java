@@ -350,8 +350,9 @@ public class McKoiDatastoreInterface extends DatastoreInterface {
 			 ConnectionBroker.freeConnection(conn);
 		   }
 		}
-		if(v!=null && !v.isEmpty())
+		if(v!=null && !v.isEmpty()) {
 			return (String[])v.toArray(new String[0]);
+		}
 		return null;
 			   
 	}

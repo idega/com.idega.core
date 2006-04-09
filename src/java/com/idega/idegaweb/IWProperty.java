@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.15 2006/02/22 20:52:47 laddi Exp $
+ * $Id: IWProperty.java,v 1.16 2006/04/09 12:13:14 laddi Exp $
 
  *
 
@@ -25,10 +25,10 @@ import com.idega.xml.XMLElement;
  * &lt;key&gt; tag.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class IWProperty implements Comparable
 {
@@ -54,7 +54,7 @@ public class IWProperty implements Comparable
 	}
 	private IWPropertyList getParentList()
 	{
-		return parentList;
+		return this.parentList;
 	}
 	public String getKey()
 	{
@@ -338,7 +338,7 @@ public class IWProperty implements Comparable
 	private XMLElement createKeyElement()
 	{
 		this.propertyElement = createKeyElement(getParentList());
-		return propertyElement;
+		return this.propertyElement;
 	}
 	static XMLElement createKeyElement(IWPropertyList list)
 	{
@@ -367,8 +367,9 @@ public class IWProperty implements Comparable
 	}
 	static String getPropertyName(XMLElement keyElement)
 	{
-		if (keyElement != null)
+		if (keyElement != null) {
 			return keyElement.getChild(nameTag).getText();
+		}
 		return null;
 	}
 	static String getPropertyType(XMLElement keyElement)
@@ -376,15 +377,17 @@ public class IWProperty implements Comparable
 		if (keyElement != null)
 		{
 			XMLElement child = keyElement.getChild(typeTag);
-			if (child != null)
+			if (child != null) {
 				return child.getText();
+			}
 		}
 		return null;
 	}
 	static String getPropertyValue(XMLElement keyElement)
 	{
-		if (keyElement != null)
+		if (keyElement != null) {
 			return keyElement.getChild(valueTag).getText();
+		}
 		return null;
 	}
 	static XMLElement createArrayElement(XMLElement valueElement)

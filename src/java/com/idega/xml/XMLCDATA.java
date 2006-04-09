@@ -26,36 +26,39 @@ public class XMLCDATA implements Serializable{
 	CDATA _data = null;
 	
 	public XMLCDATA(String content) {
-		_data = new CDATA(content);
+		this._data = new CDATA(content);
 	}
 	
 	public XMLCDATA(CDATA data) {
-		_data = data;	
+		this._data = data;	
 	}
 	
 	CDATA getContentData() {
-		return _data;	
+		return this._data;	
 	}
 	
   public synchronized Object clone() {
-    if (_data == null)
-      return(null);
+    if (this._data == null) {
+			return(null);
+		}
 
-    CDATA data = (CDATA)_data.clone();
+    CDATA data = (CDATA)this._data.clone();
     XMLCDATA xml = new XMLCDATA(data);
     return xml;
   }
   
   public String getText() {
-  	if (_data == null)
-  		return null;
+  	if (this._data == null) {
+			return null;
+		}
   		
-  	return _data.getText();	
+  	return this._data.getText();	
   }
   
   public XMLCDATA setText(String text) {
-  	if (_data != null)
-  		_data.setText(text);
+  	if (this._data != null) {
+			this._data.setText(text);
+		}
   		
   	return this;
   }

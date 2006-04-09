@@ -65,18 +65,18 @@ public class ImageFactory implements Singleton {
 	}
 
 	private void initialize(IWMainApplication iwma) {
-		coreBundle = iwma.getCoreBundle();
+		this.coreBundle = iwma.getCoreBundle();
 		//images = new HashMap();
-		generatedCache = new HashMap();
+		this.generatedCache = new HashMap();
 		//if (!shutdown) {
-		String folderPath = coreBundle.getResourcesRealPath() + FileUtil.getFileSeparator() + IWMainApplication.CORE_BUNDLE_FONT_FOLDER_NAME + FileUtil.getFileSeparator();
+		String folderPath = this.coreBundle.getResourcesRealPath() + FileUtil.getFileSeparator() + IWMainApplication.CORE_BUNDLE_FONT_FOLDER_NAME + FileUtil.getFileSeparator();
 		try {
 			//System.out.println(folderPath+iwma.CORE_DEFAULT_FONT);
 			File file = new File(folderPath + IWMainApplication.CORE_DEFAULT_FONT);
 			FileInputStream fis = new FileInputStream(file);
 
-			fontbase = Font.createFont(Font.TRUETYPE_FONT, fis);
-			defaultFont = fontbase.deriveFont(Font.PLAIN, getDefaultFontSize());
+			this.fontbase = Font.createFont(Font.TRUETYPE_FONT, fis);
+			this.defaultFont = this.fontbase.deriveFont(Font.PLAIN, getDefaultFontSize());
 		}
 		catch (Exception ex) {
 			System.err.println("ImageFactory : default font is missing using default java font instead");
@@ -97,9 +97,10 @@ public class ImageFactory implements Singleton {
 
 		if (local != null) {
 			//image = (Image) images.get(textOnButton + BUTTON_SUFFIX + local.toString());
-			GeneratedImageCache cache = (GeneratedImageCache) generatedCache.get(textOnButton + BUTTON_SUFFIX + local.toString());
-			if (cache != null)
+			GeneratedImageCache cache = (GeneratedImageCache) this.generatedCache.get(textOnButton + BUTTON_SUFFIX + local.toString());
+			if (cache != null) {
 				return cache.createImage();
+			}
 			//filePath = iwb.getResourcesRealPath(local);
 			//fileVirtualPath = iwb.getResourcesURL(local) + "/" + GENERATED_IMAGES_FOLDER + "/";
 			filePath = iwb.getApplication().getApplicationRealPath()+GENERATED_IMAGES_FOLDER+"/"+local.toString()+"/";
@@ -107,9 +108,10 @@ public class ImageFactory implements Singleton {
 		}
 		else {
 			//image = (Image) images.get(textOnButton + BUTTON_SUFFIX);
-			GeneratedImageCache cache = (GeneratedImageCache) generatedCache.get(textOnButton + BUTTON_SUFFIX);
-			if (cache != null)
+			GeneratedImageCache cache = (GeneratedImageCache) this.generatedCache.get(textOnButton + BUTTON_SUFFIX);
+			if (cache != null) {
 				return cache.createImage();
+			}
 			//filePath = iwb.getResourcesRealPath();
 			//fileVirtualPath = iwb.getResourcesURL() + "/" + GENERATED_IMAGES_FOLDER + "/";
 			filePath = iwb.getApplication().getApplicationRealPath()+GENERATED_IMAGES_FOLDER+"/";
@@ -121,12 +123,13 @@ public class ImageFactory implements Singleton {
 
 		FileUtil.createFolder(filePath);
 
-		Button button = new Button(textOnButton, defaultFont);
+		Button button = new Button(textOnButton, this.defaultFont);
 		setButtonAttributesFromBundleProperties(iwb,button);
 		button.generate(filePath);
 
-		if (iwb.getApplication().getSettings().getIfDebug())
+		if (iwb.getApplication().getSettings().getIfDebug()) {
 			System.out.println("fileVirtualPath :" + fileVirtualPath);
+		}
 
 		String upName = fileVirtualPath + button.getUpName();
 		String downName = fileVirtualPath + button.getDownName();
@@ -153,9 +156,10 @@ public class ImageFactory implements Singleton {
 
 		if (local != null) {
 			//image = (Image) images.get(textOnTab + TAB_SUFFIX + flip + local.toString());
-			GeneratedImageCache cache = (GeneratedImageCache) generatedCache.get(textOnTab + TAB_SUFFIX + flip + local.toString());
-			if (cache != null)
+			GeneratedImageCache cache = (GeneratedImageCache) this.generatedCache.get(textOnTab + TAB_SUFFIX + flip + local.toString());
+			if (cache != null) {
 				return cache.createImage();
+			}
 			//filePath = iwb.getResourcesRealPath(local);
 			//fileVirtualPath = iwb.getResourcesURL(local) + "/" + GENERATED_IMAGES_FOLDER + "/";
 			filePath = iwb.getApplication().getApplicationRealPath()+GENERATED_IMAGES_FOLDER+"/"+local.toString()+"/";
@@ -164,9 +168,10 @@ public class ImageFactory implements Singleton {
 		}
 		else {
 			//image = (Image) images.get(textOnTab + TAB_SUFFIX + flip);
-			GeneratedImageCache cache = (GeneratedImageCache) generatedCache.get(textOnTab + TAB_SUFFIX + flip);
-			if (cache != null)
+			GeneratedImageCache cache = (GeneratedImageCache) this.generatedCache.get(textOnTab + TAB_SUFFIX + flip);
+			if (cache != null) {
 				return cache.createImage();
+			}
 			//filePath = iwb.getResourcesRealPath();
 			//fileVirtualPath = iwb.getResourcesURL() + "/" + GENERATED_IMAGES_FOLDER + "/";
 			filePath = iwb.getApplication().getApplicationRealPath()+GENERATED_IMAGES_FOLDER+"/";
@@ -179,7 +184,7 @@ public class ImageFactory implements Singleton {
 		FileUtil.createFolder(filePath);
 		Font tabFont = null;
 
-		tabFont = fontbase.deriveFont(Font.PLAIN, getDefaultFontSize());
+		tabFont = this.fontbase.deriveFont(Font.PLAIN, getDefaultFontSize());
 
 		Tab tab = new Tab(textOnTab, tabFont);
 		setButtonAttributesFromBundleProperties(iwb,tab);
@@ -202,10 +207,10 @@ public class ImageFactory implements Singleton {
 
 	private void addToStoredImages(String key, GeneratedImageCache image, Locale local) {
 		if (local != null) {
-			generatedCache.put(key + local.toString(), image);
+			this.generatedCache.put(key + local.toString(), image);
 		}
 		else {
-			generatedCache.put(key, image);
+			this.generatedCache.put(key, image);
 		}
 	}
 
@@ -256,45 +261,51 @@ public class ImageFactory implements Singleton {
 	
 	private void setButtonAttributesFromBundleProperties(IWBundle iwb, Button button){
 	
-		if(iwb.getProperty(GENERATED_FILL_COLOR)!=null)
+		if(iwb.getProperty(GENERATED_FILL_COLOR)!=null) {
 			button.setFillColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_FILL_COLOR)));
+		}
 		else{
-			String fillColor = coreBundle.getProperty(GENERATED_FILL_COLOR,IWColor.getHexColorString(button.fillColor));
+			String fillColor = this.coreBundle.getProperty(GENERATED_FILL_COLOR,IWColor.getHexColorString(button.fillColor));
 			button.setFillColor(IWColor.getAWTColorFromHex(fillColor));
 		}
 		
-		if(iwb.getProperty(GENERATED_BORDER_COLOR)!=null)
+		if(iwb.getProperty(GENERATED_BORDER_COLOR)!=null) {
 			button.setBorderColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_BORDER_COLOR)));
+		}
 		else{
-			String borderColor = coreBundle.getProperty(GENERATED_BORDER_COLOR,IWColor.getHexColorString(button.borderColor));
+			String borderColor = this.coreBundle.getProperty(GENERATED_BORDER_COLOR,IWColor.getHexColorString(button.borderColor));
 			button.setBorderColor(IWColor.getAWTColorFromHex(borderColor));
 		}
 		
-		if(iwb.getProperty(GENERATED_OVER_COLOR)!=null)
+		if(iwb.getProperty(GENERATED_OVER_COLOR)!=null) {
 			button.setOverColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_OVER_COLOR)));
+		}
 		else{
-			String overColor = coreBundle.getProperty(GENERATED_OVER_COLOR,IWColor.getHexColorString(button.overColor));
+			String overColor = this.coreBundle.getProperty(GENERATED_OVER_COLOR,IWColor.getHexColorString(button.overColor));
 			button.setOverColor(IWColor.getAWTColorFromHex(overColor));
 		}
 		
-		if(iwb.getProperty(GENERATED_UNDER_COLOR)!=null)
+		if(iwb.getProperty(GENERATED_UNDER_COLOR)!=null) {
 			button.setUnderColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_UNDER_COLOR)));
+		}
 		else {
-			String underColor = coreBundle.getProperty(GENERATED_UNDER_COLOR,IWColor.getHexColorString(button.underColor));
+			String underColor = this.coreBundle.getProperty(GENERATED_UNDER_COLOR,IWColor.getHexColorString(button.underColor));
 			button.setUnderColor(IWColor.getAWTColorFromHex(underColor));
 		}
 					
-		if(iwb.getProperty(GENERATED_HIGHLIGHT_COLOR)!=null)
+		if(iwb.getProperty(GENERATED_HIGHLIGHT_COLOR)!=null) {
 			button.setHighlightColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_HIGHLIGHT_COLOR)));
+		}
 		else{
-			String highlightColor = coreBundle.getProperty(GENERATED_HIGHLIGHT_COLOR,IWColor.getHexColorString(button.highlightColor));
+			String highlightColor = this.coreBundle.getProperty(GENERATED_HIGHLIGHT_COLOR,IWColor.getHexColorString(button.highlightColor));
 			button.setHighlightColor(IWColor.getAWTColorFromHex(highlightColor));
 		}
 					
-		if(iwb.getProperty(GENERATED_FONT_COLOR)!=null)
+		if(iwb.getProperty(GENERATED_FONT_COLOR)!=null) {
 			button.setFontColor(IWColor.getAWTColorFromHex(iwb.getProperty(GENERATED_FONT_COLOR)));
+		}
 		else{
-			String fontColor = coreBundle.getProperty(GENERATED_FONT_COLOR,IWColor.getHexColorString(button.fontColor));
+			String fontColor = this.coreBundle.getProperty(GENERATED_FONT_COLOR,IWColor.getHexColorString(button.fontColor));
 			button.setFontColor(IWColor.getAWTColorFromHex(fontColor));
 		}
 					
@@ -302,19 +313,23 @@ public class ImageFactory implements Singleton {
 		Font btnFont = button.getFont();
 		if(btnFont !=null){
 			String styleStr = "plain";
-			if(btnFont.isBold() && btnFont.isItalic())
+			if(btnFont.isBold() && btnFont.isItalic()) {
 				styleStr = "bold-italic";
-			else if(btnFont.isBold())
-					styleStr = "bold";
-			else if(btnFont.isItalic()) 
+			}
+			else if(btnFont.isBold()) {
+				styleStr = "bold";
+			}
+			else if(btnFont.isItalic()) {
 				styleStr = "italic";
+			}
 				
 			fontStr = btnFont.getFamily()+"-"+styleStr+"-"+btnFont.getSize();
 		}
-		if(iwb.getProperty(GENERATED_FONT)!=null)
+		if(iwb.getProperty(GENERATED_FONT)!=null) {
 			button.setFont(Font.decode(iwb.getProperty(GENERATED_FONT)));
+		}
 		else{
-			String font = coreBundle.getProperty(GENERATED_FONT,fontStr);
+			String font = this.coreBundle.getProperty(GENERATED_FONT,fontStr);
 			button.setFont(Font.decode(font));
 		}
 		

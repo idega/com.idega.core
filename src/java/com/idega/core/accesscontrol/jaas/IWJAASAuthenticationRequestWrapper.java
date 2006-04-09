@@ -1,5 +1,5 @@
 /*
- * $Id: IWJAASAuthenticationRequestWrapper.java,v 1.2 2006/01/12 15:30:21 tryggvil Exp $
+ * $Id: IWJAASAuthenticationRequestWrapper.java,v 1.3 2006/04/09 12:13:17 laddi Exp $
  * Created on 3.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -24,10 +24,10 @@ import com.idega.core.accesscontrol.business.LoginBusinessBean;
  * like user is logged on JAAS if he is logged on IdegaWeb.  If the user is logged on 
  * JAAS then the methods use the super implementation.
  * 
- *  Last modified: $Date: 2006/01/12 15:30:21 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class IWJAASAuthenticationRequestWrapper extends HttpServletRequestWrapper {
 
@@ -47,21 +47,21 @@ public class IWJAASAuthenticationRequestWrapper extends HttpServletRequestWrappe
 			//log on as user.getName()
 			HttpSession session = request.getSession();
 			LoggedOnInfo lInfo = loginBean.getLoggedOnInfo(session);
-			userPrincipal = new IWUserPrincipal(lInfo.getLogin());
-			userRoles = lInfo.getUserRoles();
+			this.userPrincipal = new IWUserPrincipal(lInfo.getLogin());
+			this.userRoles = lInfo.getUserRoles();
 		}
 	}
 	
 	public Principal getUserPrincipal(){
-		return (userPrincipal!=null)?userPrincipal:super.getUserPrincipal(); // new IWUserPrincipal("root"); //
+		return (this.userPrincipal!=null)?this.userPrincipal:super.getUserPrincipal(); // new IWUserPrincipal("root"); //
 	}
 	
 	public String getRemoteUser(){
-		return (userPrincipal!=null)?userPrincipal.getName():super.getRemoteUser();
+		return (this.userPrincipal!=null)?this.userPrincipal.getName():super.getRemoteUser();
 	}
 	
 	public boolean isUserInRole(String role){
-		boolean inIWSystem = (userRoles != null)?userRoles.contains(role):false;
+		boolean inIWSystem = (this.userRoles != null)?this.userRoles.contains(role):false;
 		return inIWSystem || super.isUserInRole(role);
 	}
 	

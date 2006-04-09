@@ -1,5 +1,5 @@
 /*
- * $Id: Help.java,v 1.6 2006/02/22 20:52:49 laddi Exp $
+ * $Id: Help.java,v 1.7 2006/04/09 12:13:20 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -47,103 +47,105 @@ public class Help extends Block {
 	private Image image = null;
 
 	public Help() {
-		_helpLink = new Link();
+		this._helpLink = new Link();
 	}
 	
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
-		if (_iwbCore == null) {
-			_iwbCore = iwc.getIWMainApplication().getBundle(CORE_BUNDLE);
-			_iwrbCore = _iwbCore.getResourceBundle(iwc);
+		if (this._iwbCore == null) {
+			this._iwbCore = iwc.getIWMainApplication().getBundle(CORE_BUNDLE);
+			this._iwrbCore = this._iwbCore.getResourceBundle(iwc);
 		}
 
-		if (_showAsText) {
-			if (_helpLink.isText()) {
-				if (!_helpLink.isLabelSet()) {
-					_helpLink.setText(_iwrbCore.getLocalizedString(DEFAULT_HELP_TEXT, "Help"));
+		if (this._showAsText) {
+			if (this._helpLink.isText()) {
+				if (!this._helpLink.isLabelSet()) {
+					this._helpLink.setText(this._iwrbCore.getLocalizedString(DEFAULT_HELP_TEXT, "Help"));
 				}
 			}
 			else {
-				_helpLink.setText(_iwrbCore.getLocalizedString(DEFAULT_HELP_TEXT, "Help"));
+				this._helpLink.setText(this._iwrbCore.getLocalizedString(DEFAULT_HELP_TEXT, "Help"));
 			}
 		}
 		else {
-			if (_helpLink.isImage()) {
-				if (!_helpLink.isLabelSet()) {
-					image = _iwrbCore.getImage(DEFAULT_HELP_IMAGE);
-					image.setAlignment(Image.ALIGNMENT_ABSOLUTE_MIDDLE);
-					_helpLink.setImage(image);
+			if (this._helpLink.isImage()) {
+				if (!this._helpLink.isLabelSet()) {
+					this.image = this._iwrbCore.getImage(DEFAULT_HELP_IMAGE);
+					this.image.setAlignment(Image.ALIGNMENT_ABSOLUTE_MIDDLE);
+					this._helpLink.setImage(this.image);
 				}
 			}
 			else {
-				if(image != null) {
-					image.setAlignment(Image.ALIGNMENT_ABSOLUTE_MIDDLE);
-					_helpLink.setImage(image);
+				if(this.image != null) {
+					this.image.setAlignment(Image.ALIGNMENT_ABSOLUTE_MIDDLE);
+					this._helpLink.setImage(this.image);
 				}
 				else {
-					image = _iwrbCore.getImage(DEFAULT_HELP_IMAGE);
-					image.setAlignment(Image.ALIGNMENT_ABSOLUTE_MIDDLE);
-					_helpLink.setImage(image);
+					this.image = this._iwrbCore.getImage(DEFAULT_HELP_IMAGE);
+					this.image.setAlignment(Image.ALIGNMENT_ABSOLUTE_MIDDLE);
+					this._helpLink.setImage(this.image);
 				}
 			}			
 		}
 
-		if (_showInNewWindow) {
-			_helpLink.setWindowToOpen(HelpWindow.class);
+		if (this._showInNewWindow) {
+			this._helpLink.setWindowToOpen(HelpWindow.class);
 		}
 
-		if (_helpTextKey != null)
-			_helpLink.addParameter(HELP_KEY,_helpTextKey);
+		if (this._helpTextKey != null) {
+			this._helpLink.addParameter(HELP_KEY,this._helpTextKey);
+		}
 			
-		if (_helpTextBundle != null)
-			_helpLink.addParameter(HELP_BUNDLE,_helpTextBundle);
+		if (this._helpTextBundle != null) {
+			this._helpLink.addParameter(HELP_BUNDLE,this._helpTextBundle);
+		}
 			
-		add(_helpLink);	
+		add(this._helpLink);	
 	}
 
 	public void setShowAsText(boolean showAsText) {
-		_showAsText = showAsText;
+		this._showAsText = showAsText;
 	}
 
 	public boolean getShowAsText() {
-		return _showAsText;
+		return this._showAsText;
 	}
 
 	public void setLocalizedLinkText(String localeString, String text) {
-		_helpLink.setLocalizedText(localeString, text);
+		this._helpLink.setLocalizedText(localeString, text);
 	}
 
 	public void setLocalizedLinkText(int icLocaleID, String text) {
-		_helpLink.setLocalizedText(icLocaleID, text);
+		this._helpLink.setLocalizedText(icLocaleID, text);
 	}
 
 	public void setLocalizedLinkText(Locale locale, String text) {
-		_helpLink.setLocalizedText(locale, text);
+		this._helpLink.setLocalizedText(locale, text);
 	}
 
 	public String getLocalizedLinkText(IWContext iwc) {
-		return _helpLink.getLocalizedText(iwc);
+		return this._helpLink.getLocalizedText(iwc);
 	}
 
 	public void setLinkText(String linkText) {
-		_helpLink.setText(linkText);
+		this._helpLink.setText(linkText);
 	}
 
 	public String getLinkText() {
-		return _helpLink.getText();
+		return this._helpLink.getText();
 	}
 
 	public void setLocalizedImage(String localeString, int imageID) {
-		_helpLink.setLocalizedImage(localeString, imageID);
+		this._helpLink.setLocalizedImage(localeString, imageID);
 	}
 
 	public void setLocalizedImage(Locale locale, int imageID) {
-		_helpLink.setLocalizedImage(locale, imageID);
+		this._helpLink.setLocalizedImage(locale, imageID);
 	}
 	
 	public void setImage(Image image) {
 		this.image = image;
-		_helpLink.setImage(image);
+		this._helpLink.setImage(image);
 	}
 	
 	public void setImage(String url){
@@ -151,7 +153,7 @@ public class Help extends Block {
 	}
 	
 	public void setImageId(int imageId) {
-		_helpLink.setImageId(imageId);
+		this._helpLink.setImageId(imageId);
 	}
 	
 //	public void setShowTextInNewWindow(boolean showInNewWindow) {
@@ -167,10 +169,10 @@ public class Help extends Block {
 		try {
 			obj = (Help) super.clone(iwc, askForPermission);
 
-			obj._helpTextKey = _helpTextKey;
+			obj._helpTextKey = this._helpTextKey;
 
-			obj._showAsText = _showAsText;
-			obj._showInNewWindow = _showInNewWindow;
+			obj._showAsText = this._showAsText;
+			obj._showInNewWindow = this._showInNewWindow;
 		}
 		catch (Exception ex) {
 			ex.printStackTrace(System.err);
@@ -179,27 +181,28 @@ public class Help extends Block {
 	}	
 	
 	public String getHelpTextKey() {
-		return _helpTextKey;	
+		return this._helpTextKey;	
 	}
 	
 	public void setHelpTextKey(String key) {
-		_helpTextKey = key;
+		this._helpTextKey = key;
 	}	
 	
 	public String getHelpTextBundle() {
-		return _helpTextBundle;	
+		return this._helpTextBundle;	
 	}
 	
 	public void setHelpTextBundle(String bundleString) {
-		_helpTextBundle = bundleString;	
+		this._helpTextBundle = bundleString;	
 	}
 
 	/**
 	 * @see com.idega.presentation.PresentationObject#getBundleIdentifier()
 	 */
 	public String getBundleIdentifier() {
-		if (_helpTextBundle != null && !_helpTextBundle.equals(""))
-			return _helpTextBundle;
+		if (this._helpTextBundle != null && !this._helpTextBundle.equals("")) {
+			return this._helpTextBundle;
+		}
 			
 		return BUNDLE_IDENTIFIER;
 	}

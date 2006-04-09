@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.204 2006/04/08 10:49:00 laddi Exp $
+ * $Id: UserBusinessBean.java,v 1.205 2006/04/09 12:13:14 laddi Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -94,10 +94,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2006/04/08 10:49:00 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.204 $
+ * @version $Revision: 1.205 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -137,75 +137,75 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public UserHome getUserHome() {
-		if (userHome == null) {
+		if (this.userHome == null) {
 			try {
-				userHome = (UserHome) IDOLookup.getHome(User.class);
+				this.userHome = (UserHome) IDOLookup.getHome(User.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return userHome;
+		return this.userHome;
 	}
 
 	public GroupHome getGroupHome() {
-		if (groupHome == null) {
+		if (this.groupHome == null) {
 			try {
-				groupHome = (GroupHome) IDOLookup.getHome(Group.class);
+				this.groupHome = (GroupHome) IDOLookup.getHome(Group.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return groupHome;
+		return this.groupHome;
 	}
 
 	public EmailHome getEmailHome() {
-		if (emailHome == null) {
+		if (this.emailHome == null) {
 			try {
-				emailHome = (EmailHome) IDOLookup.getHome(Email.class);
+				this.emailHome = (EmailHome) IDOLookup.getHome(Email.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return emailHome;
+		return this.emailHome;
 	}
 
 	public AddressHome getAddressHome() {
-		if (addressHome == null) {
+		if (this.addressHome == null) {
 			try {
-				addressHome = (AddressHome) IDOLookup.getHome(Address.class);
+				this.addressHome = (AddressHome) IDOLookup.getHome(Address.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return addressHome;
+		return this.addressHome;
 	}
 
 	public PhoneHome getPhoneHome() {
-		if (phoneHome == null) {
+		if (this.phoneHome == null) {
 			try {
-				phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
+				this.phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return phoneHome;
+		return this.phoneHome;
 	}
 
 	public TopNodeGroupHome getTopNodeGroupHome() {
-		if (topNodeGroupHome == null) {
+		if (this.topNodeGroupHome == null) {
 			try {
-				topNodeGroupHome = (TopNodeGroupHome) IDOLookup.getHome(TopNodeGroup.class);
+				this.topNodeGroupHome = (TopNodeGroupHome) IDOLookup.getHome(TopNodeGroup.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return topNodeGroupHome;
+		return this.topNodeGroupHome;
 	}
 
 	/**
@@ -250,10 +250,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			if (user.getDisplayName() == null || "".equals(user.getDisplayName().trim())) {
 				user.setDisplayName(fullName);
 			}
-			if (gender != null)
+			if (gender != null) {
 				user.setGender((Integer) gender.getPrimaryKey());
-			if (dateOfBirth != null)
+			}
+			if (dateOfBirth != null) {
 				user.setDateOfBirth(dateOfBirth.getDate());
+			}
 			user.store();
 		}
 		else {
@@ -559,8 +561,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			transaction.begin();
 			User newUser;
 			// added by Aron 07.01.2002 ( aron@idega.is )
-			if (primary_group == null)
+			if (primary_group == null) {
 				primary_group = new Integer(GroupBMPBean.GROUP_ID_USERS);
+			}
 			//newUser = insertUser(firstname,middlename,
 			// lastname,null,null,null,null,primary_group);
 			newUser = createUser(firstname, middlename, lastname, displayname, SSN, description, gender, date_of_birth,
@@ -692,16 +695,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		try {
 			GenderHome home = getGenderHome();
 			if (gender.equalsIgnoreCase("M") || gender.equalsIgnoreCase("male") || gender.equalsIgnoreCase("0")) {
-				if (male == null) {
-					male = home.getMaleGender();
+				if (this.male == null) {
+					this.male = home.getMaleGender();
 				}
-				return (Integer) male.getPrimaryKey();
+				return (Integer) this.male.getPrimaryKey();
 			}
 			else if (gender.equalsIgnoreCase("F") || gender.equalsIgnoreCase("female") || gender.equalsIgnoreCase("1")) {
-				if (female == null) {
-					female = home.getFemaleGender();
+				if (this.female == null) {
+					this.female = home.getFemaleGender();
 				}
-				return (Integer) female.getPrimaryKey();
+				return (Integer) this.female.getPrimaryKey();
 			}
 			else {
 				//throw new RuntimeException("String gender must be: M, male,
@@ -720,10 +723,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	public boolean isMale(int genderId) throws RemoteException, FinderException {
 		GenderHome home = getGenderHome();
-		if (male == null) {
-			male = home.getMaleGender();
+		if (this.male == null) {
+			this.male = home.getMaleGender();
 		}
-		return (((Integer) male.getPrimaryKey()).intValue() == genderId);
+		return (((Integer) this.male.getPrimaryKey()).intValue() == genderId);
 	}
 
 	/**
@@ -796,8 +799,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		try {
 			Collection L = user.getEmails();
 			if (L != null) {
-				if (!L.isEmpty())
+				if (!L.isEmpty()) {
 					return (Email) L.iterator().next();
+				}
 			}
 			return null;
 		}
@@ -874,8 +878,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public void updateUserJob(int userId, String job) {
-		if (job == null || job.length() == 0)
+		if (job == null || job.length() == 0) {
 			job = NULL;
+		}
 		User user = getUser(userId);
 		user.setMetaData(JOB_META_DATA_KEY, job);
 		user.store();
@@ -883,15 +888,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	public String getUserJob(User user) {
 		String job = user.getMetaData(JOB_META_DATA_KEY);
-		if (job == null || NULL.equals(job))
+		if (job == null || NULL.equals(job)) {
 			return "";
-		else
+		}
+		else {
 			return job;
+		}
 	}
 
 	public void updateUserWorkPlace(int userId, String workPlace) {
-		if (workPlace == null || workPlace.length() == 0)
+		if (workPlace == null || workPlace.length() == 0) {
 			workPlace = NULL;
+		}
 		User user = getUser(userId);
 		user.setMetaData(WORKPLACE_META_DATA_KEY, workPlace);
 		user.store();
@@ -899,10 +907,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	public String getUserWorkPlace(User user) {
 		String workPlace = user.getMetaData(WORKPLACE_META_DATA_KEY);
-		if (workPlace == null || NULL.equals(workPlace))
+		if (workPlace == null || NULL.equals(workPlace)) {
 			return "";
-		else
+		}
+		else {
 			return workPlace;
+		}
 	}
 
 	/**
@@ -1141,19 +1151,25 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					address.setAddressType(addressType);
 					addAddress = true;
 				}
-				if (country != null)
+				if (country != null) {
 					address.setCountry(country);
-				if (postalCode != null)
+				}
+				if (postalCode != null) {
 					address.setPostalCode(postalCode);
-				if (province != null)
+				}
+				if (province != null) {
 					address.setProvince(province);
-				if (city != null)
+				}
+				if (city != null) {
 					address.setCity(city);
-				if (poBox != null)
+				}
+				if (poBox != null) {
 					address.setPOBox(poBox);
+				}
 				address.setStreetName(streetName);
-				if (streetNumber != null)
+				if (streetNumber != null) {
 					address.setStreetNumber(streetNumber);
+				}
 				else {
 					// Fix when entering unnumbered addresses (Aron )
 					address.setStreetNumber("");
@@ -1175,8 +1191,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				System.err.println("Failed to update or create address for userid : " + user.getPrimaryKey());
 			}
 		}
-		else
+		else {
 			throw new CreateException("No streetname or user is null!");
+		}
 		return address;
 	}
 
@@ -1275,8 +1292,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	public Email storeUserEmail(User user, String emailAddress, boolean replaceExistentRecord) {
 		try {
-			if (replaceExistentRecord)
+			if (replaceExistentRecord) {
 				removeUserEmails(user);
+			}
 			if (!"".equals(emailAddress)) {
 				Email emailRecord = lookupEmail(emailAddress);
 				if (emailRecord == null) {
@@ -2468,8 +2486,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			for (Iterator iter = nodeGroups.iterator(); iter.hasNext();) {
 				Integer groupID = (Integer) ((Group) iter.next()).getPrimaryKey();
 				TopNodeGroup topNode = getTopNodeGroupHome().create(userID, groupID);
-				if (comment != null)
+				if (comment != null) {
 					topNode.setComment(comment);
+				}
 				topNode.setLastChanged(IWTimestamp.getTimestampRightNow());
 				topNode.setNumberOfPermissions(new Integer(numberOfPermissions));
 				topNode.setLoginDuration(totalLoginTime);
@@ -2995,10 +3014,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public String isUserSuitedForGroup(User user, Group targetGroup) {
 		try {
 			String grouptype = targetGroup.getGroupType();
-			Collection plugins = (Collection) pluginsForGroupTypeCachMap.get(grouptype);
+			Collection plugins = (Collection) this.pluginsForGroupTypeCachMap.get(grouptype);
 			if (plugins == null) {
 				plugins = getGroupBusiness().getUserGroupPluginsForGroupType(grouptype);
-				pluginsForGroupTypeCachMap.put(grouptype, plugins);
+				this.pluginsForGroupTypeCachMap.put(grouptype, plugins);
 			}
 			Iterator iter = plugins.iterator();
 			while (iter.hasNext()) {
@@ -3027,12 +3046,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException {
 		Address address = getUsersMainAddress(user);
 		Commune commune = null;
-		if (address != null)
+		if (address != null) {
 			commune = getCommuneHome().findByPrimaryKey(new Integer(address.getCommuneID()));
-		else
+		}
+		else {
 			return false;
-		if (commune != null)
+		}
+		if (commune != null) {
 			return commune.getIsDefault();
+		}
 		return false;
 	}
 

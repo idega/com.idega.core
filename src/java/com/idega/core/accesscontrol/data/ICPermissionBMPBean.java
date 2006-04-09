@@ -465,12 +465,15 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	    Table table = new Table(this);
 	    SelectQuery query = new SelectQuery(table);
 	    query.addColumn(new WildCardColumn());
-	    if(type!=null)
-	        query.addCriteria(new MatchCriteria(table,getContextTypeColumnName(),MatchCriteria.EQUALS,type,true));
-	    if(value!=null)
-	    query.addCriteria(new MatchCriteria(table,getContextValueColumnName(),MatchCriteria.EQUALS,type,true));
-	    if(key!=null)
-	        query.addCriteria(new MatchCriteria(table,getPermissionStringColumnName(),MatchCriteria.EQUALS,type,true));
+	    if(type!=null) {
+				query.addCriteria(new MatchCriteria(table,getContextTypeColumnName(),MatchCriteria.EQUALS,type,true));
+			}
+	    if(value!=null) {
+				query.addCriteria(new MatchCriteria(table,getContextValueColumnName(),MatchCriteria.EQUALS,type,true));
+			}
+	    if(key!=null) {
+				query.addCriteria(new MatchCriteria(table,getPermissionStringColumnName(),MatchCriteria.EQUALS,type,true));
+			}
 	    return idoFindPKsByQuery(query);
 	    
 	}

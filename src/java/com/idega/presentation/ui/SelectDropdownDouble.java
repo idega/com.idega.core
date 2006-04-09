@@ -43,13 +43,13 @@ public class SelectDropdownDouble extends InterfaceObject {
 	
 	
 	public SelectDropdownDouble() {
-		scriptName = "setDropdownOptions";
+		this.scriptName = "setDropdownOptions";
 	}
 	
 	public SelectDropdownDouble(String primaryName,String secondaryName) {
 		this.primaryName = primaryName;
 		this.secondaryName = secondaryName;
-		scriptName = "setDropdownOptions_" + primaryName; 
+		this.scriptName = "setDropdownOptions_" + primaryName; 
 	}
 
 	public void main(IWContext iwc) throws Exception {
@@ -61,14 +61,14 @@ public class SelectDropdownDouble extends InterfaceObject {
 		}
 		
 		//addElementsToPrimary();
-		getPrimaryDropdown().setOnChange(scriptName + "(this, findObj('"+secondaryName+"'), -1);");
-		if (_objectToDisable != null) {
-			getSecondaryDropdown().setToDisableWhenSelected(_objectToDisable.getPrimaryName(), _disableValue);
-			getSecondaryDropdown().setToDisableWhenSelected(_objectToDisable.getSecondaryName(), _disableValue);
+		getPrimaryDropdown().setOnChange(this.scriptName + "(this, findObj('"+this.secondaryName+"'), -1);");
+		if (this._objectToDisable != null) {
+			getSecondaryDropdown().setToDisableWhenSelected(this._objectToDisable.getPrimaryName(), this._disableValue);
+			getSecondaryDropdown().setToDisableWhenSelected(this._objectToDisable.getSecondaryName(), this._disableValue);
 		}
 		
-		getPrimaryDropdown().setDisabled(_disabled);
-		getSecondaryDropdown().setDisabled(_disabled);
+		getPrimaryDropdown().setDisabled(this._disabled);
+		getSecondaryDropdown().setDisabled(this._disabled);
 
 		if(addPrimary || addSecondary){
 			Table table = new Table();
@@ -77,45 +77,54 @@ public class SelectDropdownDouble extends InterfaceObject {
 			add(table);
 			
 			// Layout:
-			if(layout!=LAYOUT_VERTICAL){
+			if(this.layout!=LAYOUT_VERTICAL){
 				int column = 1;
 				if(addPrimary){
 				    table.add(getPrimaryDropdown(), column++, 1);
-				    if (_spaceBetween > 0)
-				        table.setWidth(column++, _spaceBetween);
+				    if (this._spaceBetween > 0) {
+							table.setWidth(column++, this._spaceBetween);
+						}
 				}
-				if(addSecondary)
-				    table.add(getSecondaryDropdown(), column, 1);
+				if(addSecondary) {
+					table.add(getSecondaryDropdown(), column, 1);
+				}
 			}
 			else {
-				if(addPrimary && primaryLabel!=null)
-					table.add(primaryLabel,1,1);
-				if(addSecondary && secondaryLabel!=null)
-					table.add(secondaryLabel,1,3);
-				if(verticalSpaceBetween>0)
-					table.setHeight(2,verticalSpaceBetween);
-				if (_spaceBetween > 0)
-					table.setWidth(2, _spaceBetween);
-				if(addPrimary)
-				    table.add(getPrimaryDropdown(),3,1);
-				if(addSecondary)
-				    table.add(getSecondaryDropdown(),3,3);
+				if(addPrimary && this.primaryLabel!=null) {
+					table.add(this.primaryLabel,1,1);
+				}
+				if(addSecondary && this.secondaryLabel!=null) {
+					table.add(this.secondaryLabel,1,3);
+				}
+				if(this.verticalSpaceBetween>0) {
+					table.setHeight(2,this.verticalSpaceBetween);
+				}
+				if (this._spaceBetween > 0) {
+					table.setWidth(2, this._spaceBetween);
+				}
+				if(addPrimary) {
+					table.add(getPrimaryDropdown(),3,1);
+				}
+				if(addSecondary) {
+					table.add(getSecondaryDropdown(),3,3);
+				}
 			
 			}
 		}
 		
-		if (_styleClass != null) {
-			getPrimaryDropdown().setStyleClass(_styleClass);
-			getSecondaryDropdown().setStyleClass(_styleClass);
+		if (this._styleClass != null) {
+			getPrimaryDropdown().setStyleClass(this._styleClass);
+			getSecondaryDropdown().setStyleClass(this._styleClass);
 		}
 
 		//add the script
 		Script script = getParentPage().getAssociatedScript();
-		script.addFunction(scriptName, getSelectorScript(iwc));
+		script.addFunction(this.scriptName, getSelectorScript(iwc));
 		
-		if (_secondarySelected == null)
-			_secondarySelected = "-1";
-		getParentPage().setOnLoad(scriptName + "(findObj('"+primaryName+"'),findObj('"+secondaryName+"'), '"+_secondarySelected+"')");
+		if (this._secondarySelected == null) {
+			this._secondarySelected = "-1";
+		}
+		getParentPage().setOnLoad(this.scriptName + "(findObj('"+this.primaryName+"'),findObj('"+this.secondaryName+"'), '"+this._secondarySelected+"')");
 	}
 	/*
 	private void addElementsToPrimary() {
@@ -137,16 +146,16 @@ public class SelectDropdownDouble extends InterfaceObject {
 
 	private String getSelectorScript(IWContext iwc) {
 		StringBuffer s = new StringBuffer();
-		s.append("function " + scriptName + "(input, inputToChange, selected) {").append("\n\t");
+		s.append("function " + this.scriptName + "(input, inputToChange, selected) {").append("\n\t");
 		s.append("var dropdownValues = new Array();").append("\n\t");
 		
 		int column = 0;
-		if (_secondaryMap != null) {
-			Iterator iter = _secondaryMap.keySet().iterator();
+		if (this._secondaryMap != null) {
+			Iterator iter = this._secondaryMap.keySet().iterator();
 			while (iter.hasNext()) {
 				column = 0;
 				String key = (String) iter.next();
-				Map map = (Map) _secondaryMap.get(key);
+				Map map = (Map) this._secondaryMap.get(key);
 				if(map!=null){
 					s.append("\n\t").append("dropdownValues[\""+key+"\"] = new Array();").append("\n\t");
 					
@@ -188,12 +197,13 @@ public class SelectDropdownDouble extends InterfaceObject {
 	public void addMenuElement(String value, String name, Map values) {
 		//if (_primaryCollection == null)
 		//	_primaryCollection = new Vector();
-		if (_secondaryMap == null)
-			_secondaryMap = new HashMap();
+		if (this._secondaryMap == null) {
+			this._secondaryMap = new HashMap();
+		}
 		
 		//_primaryCollection.add(new SelectOption(name, value));
 		getPrimaryDropdown().addOption(new SelectOption(name, value));
-		_secondaryMap.put(value, values);
+		this._secondaryMap.put(value, values);
 	}
 	
 	public void addEmptyElement(String primaryDisplayString, String secondaryDisplayString) {
@@ -203,76 +213,78 @@ public class SelectDropdownDouble extends InterfaceObject {
 	}
 	
 	public DropdownMenu getPrimaryDropdown(){
-	    if( primary == null )
-			primary = new DropdownMenu(primaryName);
-		return primary;
+	    if( this.primary == null ) {
+				this.primary = new DropdownMenu(this.primaryName);
+			}
+		return this.primary;
 	}
 	
 	public DropdownMenu getSecondaryDropdown(){
-	    if( secondary == null )
-			secondary = new DropdownMenu(secondaryName);
-		return secondary;	
+	    if( this.secondary == null ) {
+				this.secondary = new DropdownMenu(this.secondaryName);
+			}
+		return this.secondary;	
 	}
 
 	/**
 	 * @return
 	 */
 	public String getPrimaryName() {
-		return primaryName;
+		return this.primaryName;
 	}
 
 	/**
 	 * @return
 	 */
 	public String getSecondaryName() {
-		return secondaryName;
+		return this.secondaryName;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setSpaceBetween(int spaceBetween) {
-		_spaceBetween = spaceBetween;
+		this._spaceBetween = spaceBetween;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setPrimaryName(String string) {
-		primaryName = string;
+		this.primaryName = string;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setSecondaryName(String string) {
-		secondaryName = string;
+		this.secondaryName = string;
 	}
 
 	public void setSelectedValues(String primaryValue, String secondaryValue) {
-		_primarySelected = primaryValue;
-		getPrimaryDropdown().setSelectedElement(_primarySelected);
-		_secondarySelected = secondaryValue;
+		this._primarySelected = primaryValue;
+		getPrimaryDropdown().setSelectedElement(this._primarySelected);
+		this._secondarySelected = secondaryValue;
 	}
 	
 	public void setToEnableWhenNotSelected(SelectDropdownDouble doubleDropdown, String disableValue) {
-		_objectToDisable = doubleDropdown;
-		_disableValue = disableValue;
+		this._objectToDisable = doubleDropdown;
+		this._disableValue = disableValue;
 	}
 	
 	public void setDisabled(boolean disabled) {
-		_disabled = disabled;
+		this._disabled = disabled;
 	}
 	
 	public void setStyleClass(String styleClass) {
-		_styleClass = styleClass;
+		this._styleClass = styleClass;
 	}
 	
 	/**
 	 * @return
 	 */
 	protected Map getSecondaryMap() {
-		return _secondaryMap;
+		return this._secondaryMap;
 	}
 
 	/* (non-Javadoc)

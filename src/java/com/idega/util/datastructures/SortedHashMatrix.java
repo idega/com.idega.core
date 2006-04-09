@@ -26,13 +26,13 @@ import com.idega.util.text.StringNumberComparator;
 public class SortedHashMatrix extends HashMatrix {
   
  protected Map getYDimension(Object xKey)  {
-    if (xDimension == null) {
-      xDimension = new TreeMap(new StringNumberComparator());
+    if (this.xDimension == null) {
+      this.xDimension = new TreeMap(new StringNumberComparator());
     }
-    SortedMap yDimension = (SortedMap) xDimension.get(xKey);
+    SortedMap yDimension = (SortedMap) this.xDimension.get(xKey);
     if (yDimension == null) {
       yDimension = new TreeMap(new StringNumberComparator());
-      xDimension.put(xKey, yDimension);
+      this.xDimension.put(xKey, yDimension);
     }
     return yDimension;
   }

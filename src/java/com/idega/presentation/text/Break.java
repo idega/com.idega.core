@@ -27,11 +27,11 @@ public class Break extends PresentationObject {
 	 * @param numberOfBreaks
 	 */
 	public Break(int numberOfBreaks) {
-		_numberOfBreaks = numberOfBreaks;
+		this._numberOfBreaks = numberOfBreaks;
 	}
 
 	public void print(IWContext iwc) {
-		for (int a = 1; a <= _numberOfBreaks; a++) {
+		for (int a = 1; a <= this._numberOfBreaks; a++) {
 			if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 				String markup = iwc.getApplicationSettings().getDefaultMarkupLanguage();
 				print("<br " + (!markup.equals(Page.HTML) ? "/" : "") + ">");
@@ -51,7 +51,7 @@ public class Break extends PresentationObject {
 	 *            The number of breaks to add
 	 */
 	public void setNumberOfBreaks(int numberOfBreaks) {
-		_numberOfBreaks = numberOfBreaks;
+		this._numberOfBreaks = numberOfBreaks;
 	}
 
 	/**

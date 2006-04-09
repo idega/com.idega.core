@@ -1,6 +1,6 @@
 /*
 
- * $Id: RadioGroup.java,v 1.10 2004/07/06 10:33:10 gummi Exp $
+ * $Id: RadioGroup.java,v 1.11 2006/04/09 12:13:16 laddi Exp $
 
  *
 
@@ -67,13 +67,13 @@ public class RadioGroup extends InterfaceObject {
 
   private RadioGroup(){
 
-    _buttons = new Vector(0);
+    this._buttons = new Vector(0);
 
-    _texts = new Vector(0);
+    this._texts = new Vector(0);
 
-    _frameTable = new Table();
+    this._frameTable = new Table();
 
-    add(_frameTable);
+    add(this._frameTable);
 
   }
 
@@ -83,7 +83,7 @@ public class RadioGroup extends InterfaceObject {
 
     this();
 
-    _name = name;
+    this._name = name;
 
   }
 
@@ -99,13 +99,13 @@ public class RadioGroup extends InterfaceObject {
 
       for (int i = 0; i < length;i++){
 
-        _buttons.add(new RadioButton(entity[i].getEntityName(),Integer.toString(entity[i].getID())));
+        this._buttons.add(new RadioButton(entity[i].getEntityName(),Integer.toString(entity[i].getID())));
 
         Text temp = new Text(entity[i].getName());
 
         temp.setFontSize(1);
 
-        _texts.add(temp);
+        this._texts.add(temp);
 
       }
 
@@ -117,9 +117,9 @@ public class RadioGroup extends InterfaceObject {
 
   public void keepStatusOnAction() {
 
-    if (_buttons != null) {
+    if (this._buttons != null) {
 
-      Iterator it = _buttons.iterator();
+      Iterator it = this._buttons.iterator();
 
       while (it.hasNext()) {
 
@@ -137,7 +137,7 @@ public class RadioGroup extends InterfaceObject {
 
   public void setVertical(boolean value){
 
-    _fillVertical = value;
+    this._fillVertical = value;
 
   }
 
@@ -199,11 +199,11 @@ public class RadioGroup extends InterfaceObject {
 
   public void addRadioButton(String value, Text DisplayString, boolean isSelected){
 
-    RadioButton button = new RadioButton(_name,value);
+    RadioButton button = new RadioButton(this._name,value);
 
-    _buttons.add(button);
+    this._buttons.add(button);
 
-    _texts.add(DisplayString);
+    this._texts.add(DisplayString);
 
     if (isSelected) {
 
@@ -217,11 +217,11 @@ public class RadioGroup extends InterfaceObject {
 
   public void addRadioButton(int value,Text DisplayString, boolean isSelected){
 
-    RadioButton button = new RadioButton(_name,Integer.toString(value));
+    RadioButton button = new RadioButton(this._name,Integer.toString(value));
 
-    _buttons.add(button);
+    this._buttons.add(button);
 
-    _texts.add(DisplayString);
+    this._texts.add(DisplayString);
 
     if(isSelected){
 
@@ -235,15 +235,15 @@ public class RadioGroup extends InterfaceObject {
 
   public void addRadioButton(int value,Text DisplayString, boolean isSelected, String textStyle, String buttonStyle){
 
-    RadioButton button = new RadioButton(_name,Integer.toString(value));
+    RadioButton button = new RadioButton(this._name,Integer.toString(value));
 
     button.setMarkupAttribute("style",buttonStyle);
 
     DisplayString.setFontStyle(textStyle);
 
-    _buttons.add(button);
+    this._buttons.add(button);
 
-    _texts.add(DisplayString);
+    this._texts.add(DisplayString);
 
     if(isSelected){
 
@@ -257,11 +257,11 @@ public class RadioGroup extends InterfaceObject {
 
   public void addRadioButton(String value, boolean isSelected){
 
-    RadioButton button = new RadioButton(_name,value);
+    RadioButton button = new RadioButton(this._name,value);
 
-    _buttons.add(button);
+    this._buttons.add(button);
 
-    _texts.add(new Text(value));
+    this._texts.add(new Text(value));
 
     if (isSelected) {
 
@@ -275,9 +275,9 @@ public class RadioGroup extends InterfaceObject {
 
   public void addRadioButton(RadioButton radioButton, Text DisplayText, boolean isSelected){
 
-    _buttons.add(radioButton);
+    this._buttons.add(radioButton);
 
-    _texts.add(DisplayText);
+    this._texts.add(DisplayText);
 
     if(isSelected){
 
@@ -293,9 +293,9 @@ public class RadioGroup extends InterfaceObject {
 
     for (int i = 0; i < radioButtons.length; i++) {
 
-      _buttons.add(radioButtons[i]);
+      this._buttons.add(radioButtons[i]);
 
-      _texts.add(DisplayTexts[i]);
+      this._texts.add(DisplayTexts[i]);
 
       if(i == selectedIndex){
 
@@ -315,37 +315,37 @@ public class RadioGroup extends InterfaceObject {
 
   private void heightenIndexes(){
 
-    if(_fillVertical){
+    if(this._fillVertical){
 
-      if(_rows > 0){
+      if(this._rows > 0){
 
-        if (_rowIndex % _rows == 0) {
+        if (this._rowIndex % this._rows == 0) {
 
-          _rowIndex = 0;
+          this._rowIndex = 0;
 
-          _columnIndex++;
+          this._columnIndex++;
 
         }
 
       }
 
-      _rowIndex++;
+      this._rowIndex++;
 
     }else{
 
-      if(_columns > 0){
+      if(this._columns > 0){
 
-        if (_columnIndex % _columns==0){
+        if (this._columnIndex % this._columns==0){
 
-          _columnIndex = 0;
+          this._columnIndex = 0;
 
-          _rowIndex++;
+          this._rowIndex++;
 
         }
 
       }
 
-      _columnIndex++;
+      this._columnIndex++;
 
     }
 
@@ -355,7 +355,7 @@ public class RadioGroup extends InterfaceObject {
 
   public void setHeight(int height){
 
-    _rows = height;
+    this._rows = height;
 
   }
 
@@ -363,7 +363,7 @@ public class RadioGroup extends InterfaceObject {
 
   public void setWidth(int width){
 
-    _columns = width;
+    this._columns = width;
 
   }
 
@@ -371,17 +371,17 @@ public class RadioGroup extends InterfaceObject {
 
   public void main(IWContext iwc) throws Exception {
 
-    if( _columns > 0 && _rows > 0){
+    if( this._columns > 0 && this._rows > 0){
 
-      _frameTable.resize(_columns,_rows);
+      this._frameTable.resize(this._columns,this._rows);
 
-      for (int i = 0; i < _buttons.size(); i++) {
+      for (int i = 0; i < this._buttons.size(); i++) {
 
-        if(!(_rowIndex > _rows) && !(_columnIndex > _columns)){
+        if(!(this._rowIndex > this._rows) && !(this._columnIndex > this._columns)){
 
-          _frameTable.add((RadioButton)_buttons.get(i),_columnIndex*2-1,_rowIndex);
+          this._frameTable.add((RadioButton)this._buttons.get(i),this._columnIndex*2-1,this._rowIndex);
 
-          _frameTable.add((Text)_texts.get(i),_columnIndex*2,_rowIndex);
+          this._frameTable.add((Text)this._texts.get(i),this._columnIndex*2,this._rowIndex);
 
           heightenIndexes();
 
@@ -395,29 +395,29 @@ public class RadioGroup extends InterfaceObject {
 
       }
 
-    }else if(_columns > 0){
+    }else if(this._columns > 0){
 
-      _frameTable.resize(_columns,(int)Math.ceil(_buttons.size()/_columns));
+      this._frameTable.resize(this._columns,(int)Math.ceil(this._buttons.size()/this._columns));
 
-      for (int i = 0; i < _buttons.size(); i++) {
+      for (int i = 0; i < this._buttons.size(); i++) {
 
-          _frameTable.add((RadioButton)_buttons.get(i),_columnIndex*2-1,_rowIndex);
+          this._frameTable.add((RadioButton)this._buttons.get(i),this._columnIndex*2-1,this._rowIndex);
 
-          _frameTable.add((Text)_texts.get(i),_columnIndex*2,_rowIndex);
+          this._frameTable.add((Text)this._texts.get(i),this._columnIndex*2,this._rowIndex);
 
           heightenIndexes();
 
       }
 
-    }else if(_rows > 0){
+    }else if(this._rows > 0){
 
-      _frameTable.resize((int)Math.ceil(_buttons.size()/_rows),_rows);
+      this._frameTable.resize((int)Math.ceil(this._buttons.size()/this._rows),this._rows);
 
-      for (int i = 0; i < _buttons.size(); i++) {
+      for (int i = 0; i < this._buttons.size(); i++) {
 
-          _frameTable.add((RadioButton)_buttons.get(i),_columnIndex*2-1,_rowIndex);
+          this._frameTable.add((RadioButton)this._buttons.get(i),this._columnIndex*2-1,this._rowIndex);
 
-          _frameTable.add((Text)_texts.get(i),_columnIndex*2,_rowIndex);
+          this._frameTable.add((Text)this._texts.get(i),this._columnIndex*2,this._rowIndex);
 
           heightenIndexes();
 
@@ -425,13 +425,13 @@ public class RadioGroup extends InterfaceObject {
 
     }else{  // columnIndex == 0 && rowIndex == 0
 
-      _frameTable.resize(1,_buttons.size());
+      this._frameTable.resize(1,this._buttons.size());
 
-      for (int i = 0; i < _buttons.size(); i++) {
+      for (int i = 0; i < this._buttons.size(); i++) {
 
-          _frameTable.add((RadioButton)_buttons.get(i),_columnIndex*2-1,_rowIndex);
+          this._frameTable.add((RadioButton)this._buttons.get(i),this._columnIndex*2-1,this._rowIndex);
 
-          _frameTable.add((Text)_texts.get(i),_columnIndex*2,_rowIndex);
+          this._frameTable.add((Text)this._texts.get(i),this._columnIndex*2,this._rowIndex);
 
           heightenIndexes();
 
@@ -446,9 +446,9 @@ public class RadioGroup extends InterfaceObject {
 
 	public void print(IWContext iwc) throws Exception {
 		if(IWConstants.MARKUP_LANGUAGE_WML.equals(iwc.getMarkupLanguage())) {
-			print("<select name=\""+_name+"\" >");
-				Iterator buttonIter = _buttons.iterator();
-				Iterator textIterator = _texts.iterator();
+			print("<select name=\""+this._name+"\" >");
+				Iterator buttonIter = this._buttons.iterator();
+				Iterator textIterator = this._texts.iterator();
 				while(buttonIter.hasNext()) {
 					RadioButton button = (RadioButton) buttonIter.next();
 					if(textIterator.hasNext()){
@@ -467,7 +467,7 @@ public class RadioGroup extends InterfaceObject {
 
   public void setBorder(int i){
 
-    _frameTable.setBorder(i);
+    this._frameTable.setBorder(i);
 
   }
 
@@ -491,9 +491,9 @@ public class RadioGroup extends InterfaceObject {
 
   public void setToSubmit() {
 
-    if (_buttons != null) {
+    if (this._buttons != null) {
 
-      Iterator it = _buttons.iterator();
+      Iterator it = this._buttons.iterator();
 
       while (it.hasNext()) {
 
@@ -531,17 +531,17 @@ public class RadioGroup extends InterfaceObject {
 
   public void setSelected(String value) {
 
-    if (_buttons != null) {
+    if (this._buttons != null) {
 
-      Iterator it = _buttons.iterator();
+      Iterator it = this._buttons.iterator();
 
       while (it.hasNext()) {
 
         RadioButton b = (RadioButton)it.next();
 
-        if (b.getValueAsString().equals(value))
-
-          b.setSelected();
+        if (b.getValueAsString().equals(value)) {
+					b.setSelected();
+				}
 
       }
 
@@ -553,9 +553,9 @@ public class RadioGroup extends InterfaceObject {
 
   public String getSelected() {
 
-    if (_buttons != null) {
+    if (this._buttons != null) {
 
-      Iterator it = _buttons.iterator();
+      Iterator it = this._buttons.iterator();
 
       while (it.hasNext()) {
 
@@ -565,9 +565,9 @@ public class RadioGroup extends InterfaceObject {
 
         System.out.println("Button _checked = " + b.getSelected());
 
-        if (b.getSelected())
-
-          return(b.getValueAsString());
+        if (b.getSelected()) {
+					return(b.getValueAsString());
+				}
 
       }
 
@@ -595,13 +595,13 @@ public class RadioGroup extends InterfaceObject {
 
       obj = (RadioGroup)super.clone();
 
-      obj._buttons = (Vector)_buttons.clone();
+      obj._buttons = (Vector)this._buttons.clone();
 
 //      obj._fillVertical = _fillVertical;
 
-      obj._frameTable = (Table)_frameTable.clone();
+      obj._frameTable = (Table)this._frameTable.clone();
 
-      obj._name = _name;
+      obj._name = this._name;
 
     }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.105 2006/04/08 12:14:04 laddi Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.106 2006/04/09 12:13:14 laddi Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -85,7 +85,7 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.105 $
+ * @version $Revision: 1.106 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -111,51 +111,51 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	public UserHome getUserHome() {
-		if (userHome == null) {
+		if (this.userHome == null) {
 			try {
-				userHome = (UserHome) IDOLookup.getHome(User.class);
+				this.userHome = (UserHome) IDOLookup.getHome(User.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return userHome;
+		return this.userHome;
 	}
 
 	public UserGroupRepresentativeHome getUserGroupRepresentativeHome() {
-		if (userRepHome == null) {
+		if (this.userRepHome == null) {
 			try {
-				userRepHome = (UserGroupRepresentativeHome) IDOLookup.getHome(UserGroupRepresentative.class);
+				this.userRepHome = (UserGroupRepresentativeHome) IDOLookup.getHome(UserGroupRepresentative.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return userRepHome;
+		return this.userRepHome;
 	}
 
 	public GroupHome getGroupHome() {
-		if (groupHome == null) {
+		if (this.groupHome == null) {
 			try {
-				groupHome = (GroupHome) IDOLookup.getHome(Group.class);
+				this.groupHome = (GroupHome) IDOLookup.getHome(Group.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return groupHome;
+		return this.groupHome;
 	}
 
 	public GroupHome getPermissionGroupHome() {
-		if (permGroupHome == null) {
+		if (this.permGroupHome == null) {
 			try {
-				permGroupHome = (GroupHome) IDOLookup.getHome(PermissionGroup.class);
+				this.permGroupHome = (GroupHome) IDOLookup.getHome(PermissionGroup.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return permGroupHome;
+		return this.permGroupHome;
 	}
 
 	/**
@@ -418,11 +418,11 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	public String[] getUserRepresentativeGroupTypeStringArray() {
-		if (userRepresentativeType == null) {
-			userRepresentativeType = new String[1];
-			userRepresentativeType[0] = this.getUserGroupRepresentativeHome().getGroupType();
+		if (this.userRepresentativeType == null) {
+			this.userRepresentativeType = new String[1];
+			this.userRepresentativeType[0] = this.getUserGroupRepresentativeHome().getGroupType();
 		}
-		return userRepresentativeType;
+		return this.userRepresentativeType;
 	}
 
 	/**
@@ -534,11 +534,13 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 */
 	private void putGroupsContaining(Group group, Map GroupsContained, String[] groupTypes, boolean returnGroupTypes, Map cachedParents, Map cachedGroups) {
 		Collection pGroups = null;
-		if (cachedParents == null)
+		if (cachedParents == null) {
 			pGroups = group.getParentGroups();// TODO EIKI FINISH THIS
 																				// groupTypes,returnGroupTypes);
-		else
+		}
+		else {
 			pGroups = group.getParentGroups(cachedParents, cachedGroups);
+		}
 		if (pGroups != null) {
 			String key = "";
 			Iterator iter = pGroups.iterator();
@@ -1194,30 +1196,30 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Not yet implemented
 	 */
 	public GroupHome getGroupHome(String groupType) {
-		if (groupHome == null) {
+		if (this.groupHome == null) {
 			try {
 				/**
 				 * @todo: implement
 				 */
-				groupHome = (GroupHome) IDOLookup.getHome(Group.class);
+				this.groupHome = (GroupHome) IDOLookup.getHome(Group.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return groupHome;
+		return this.groupHome;
 	}
 
 	public GroupRelationHome getGroupRelationHome() {
-		if (groupRelationHome == null) {
+		if (this.groupRelationHome == null) {
 			try {
-				groupRelationHome = (GroupRelationHome) IDOLookup.getHome(GroupRelation.class);
+				this.groupRelationHome = (GroupRelationHome) IDOLookup.getHome(GroupRelation.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return groupRelationHome;
+		return this.groupRelationHome;
 	}
 
 	public Group getGroupByUniqueId(String uniqueID) throws FinderException {
@@ -1371,15 +1373,15 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	public ICFileHome getICFileHome() {
-		if (fileHome == null) {
+		if (this.fileHome == null) {
 			try {
-				fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
+				this.fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return fileHome;
+		return this.fileHome;
 	}
 
 	public ICFile createGroupHomeFolder(Group group) throws CreateException {
@@ -1421,8 +1423,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			// super admin: return all group types
 			if (iwuc.isSuperAdmin()) {
 				try {
-					if (groupTypeHome.getNumberOfVisibleGroupTypes() <= 0)
+					if (groupTypeHome.getNumberOfVisibleGroupTypes() <= 0) {
 						((com.idega.data.GenericEntity) com.idega.data.IDOLookup.instanciateEntity(GroupType.class)).insertStartData();
+					}
 				}
 				catch (Exception e) {
 					e.printStackTrace();
@@ -1760,20 +1763,26 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 					addAddress = true;
 				}
 
-				if (country != null)
+				if (country != null) {
 					address.setCountry(country);
-				if (code != null)
+				}
+				if (code != null) {
 					address.setPostalCode(code);
-				if (province != null)
+				}
+				if (province != null) {
 					address.setProvince(province);
-				if (city != null)
+				}
+				if (city != null) {
 					address.setCity(city);
-				if (poBox != null)
+				}
+				if (poBox != null) {
 					address.setPOBox(poBox);
+				}
 
 				address.setStreetName(streetName);
-				if (streetNumber != null)
+				if (streetNumber != null) {
 					address.setStreetNumber(streetNumber);
+				}
 
 				address.store();
 
@@ -1787,8 +1796,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			}
 
 		}
-		else
+		else {
 			throw new CreateException("No streetname or userId is null!");
+		}
 
 		return address;
 	}
@@ -1813,15 +1823,15 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	public AddressHome getAddressHome() {
-		if (addressHome == null) {
+		if (this.addressHome == null) {
 			try {
-				addressHome = (AddressHome) IDOLookup.getHome(Address.class);
+				this.addressHome = (AddressHome) IDOLookup.getHome(Address.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return addressHome;
+		return this.addressHome;
 	}
 
 	public Phone[] getGroupPhones(Group group) throws RemoteException {
@@ -1843,8 +1853,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		try {
 			Collection L = group.getEmails();
 			if (L != null) {
-				if (!L.isEmpty())
+				if (!L.isEmpty()) {
 					return (Email) L.iterator().next();
+				}
 			}
 			return null;
 		}
@@ -1879,15 +1890,15 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	public EmailHome getEmailHome() {
-		if (emailHome == null) {
+		if (this.emailHome == null) {
 			try {
-				emailHome = (EmailHome) IDOLookup.getHome(Email.class);
+				this.emailHome = (EmailHome) IDOLookup.getHome(Email.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return emailHome;
+		return this.emailHome;
 	}
 
 	public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException {
@@ -1939,15 +1950,15 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	public PhoneHome getPhoneHome() {
-		if (phoneHome == null) {
+		if (this.phoneHome == null) {
 			try {
-				phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
+				this.phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
 			}
 			catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return phoneHome;
+		return this.phoneHome;
 	}
 
 	/**
@@ -2356,10 +2367,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	public NestedSetsContainer getLastGroupTreeSnapShot() throws EJBException {
-		if (groupTreeSnapShot == null) {
+		if (this.groupTreeSnapShot == null) {
 			refreshGroupTreeSnapShot();
 		}
-		return groupTreeSnapShot;
+		return this.groupTreeSnapShot;
 	}
 
 	public void refreshGroupTreeSnapShotInANewThread() {
@@ -2380,7 +2391,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			while (iter.hasNext()) {
 				nsc.add(GroupTreeImageProcedure.getInstance().getGroupTree((Group) iter.next()));
 			}
-			groupTreeSnapShot = nsc;
+			this.groupTreeSnapShot = nsc;
 		}
 		catch (Exception e) {
 			throw new EJBException(e);
@@ -2393,10 +2404,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	/**
 	 * 
-	 * Last modified: $Date: 2006/04/08 12:14:04 $ by $Author: laddi $
+	 * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.105 $
+	 * @version $Revision: 1.106 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 
@@ -2411,14 +2422,14 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 		private GroupTreeRefreshThread(String name, int rand) {
 			super(name + rand);
-			randID = rand;
+			this.randID = rand;
 		}
 
 		public void run() {
 			try {
-				log("[GroupBusiness]: fetch grouptree, new thread started 'randID:" + randID + "'");
+				log("[GroupBusiness]: fetch grouptree, new thread started 'randID:" + this.randID + "'");
 				refreshGroupTreeSnapShot();
-				log("[GroupBusiness]: fetch grouptree, thread done 'randID:" + randID + "'");
+				log("[GroupBusiness]: fetch grouptree, thread done 'randID:" + this.randID + "'");
 			}
 			catch (EJBException e) {
 				e.printStackTrace();

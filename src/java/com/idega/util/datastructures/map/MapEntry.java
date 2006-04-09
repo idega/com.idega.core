@@ -1,5 +1,5 @@
 /*
- * $Id: MapEntry.java,v 1.1 2006/03/30 11:20:37 thomas Exp $
+ * $Id: MapEntry.java,v 1.2 2006/04/09 12:13:20 laddi Exp $
  * Created on Mar 30, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import java.util.Map;
  * The equals method checks the interface not the class that is another instance of Map.Entry 
  * is equal if the key and value are equal.
  * 
- *  Last modified: $Date: 2006/03/30 11:20:37 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public class MapEntry implements Map.Entry {
@@ -31,21 +31,21 @@ public class MapEntry implements Map.Entry {
 	Object myValue = null;
 	
 	public MapEntry(Object keyEntry, Object valueEntry) {
-		myKey = keyEntry;
-		myValue = valueEntry;
+		this.myKey = keyEntry;
+		this.myValue = valueEntry;
 	}
 	
 	public Object getKey() {
-		return myKey;
+		return this.myKey;
 	}
 	
 	public Object getValue() {
-		return myValue;
+		return this.myValue;
 	}
 	
 	public Object setValue(Object newValue) {
-		Object oldValue = myValue;
-		myValue = newValue;
+		Object oldValue = this.myValue;
+		this.myValue = newValue;
 		return oldValue;
 	}
 	
@@ -59,27 +59,27 @@ public class MapEntry implements Map.Entry {
 		if (anotherMap instanceof Map.Entry) {
 			Object aKey = ((Map.Entry) anotherMap).getKey();
 			Object aValue = ((Map.Entry) anotherMap).getValue();
-			if (myKey != null && myValue != null) {
-				return myKey.equals(aKey) && myValue.equals(aValue);
+			if (this.myKey != null && this.myValue != null) {
+				return this.myKey.equals(aKey) && this.myValue.equals(aValue);
 			}
-			if (myKey == null && aKey == null && myValue != null) {
-				return myValue.equals(aValue);
+			if (this.myKey == null && aKey == null && this.myValue != null) {
+				return this.myValue.equals(aValue);
 			}
-			if (myValue == null && aValue == null && myKey != null) {
-				return myKey.equals(aKey);
+			if (this.myValue == null && aValue == null && this.myKey != null) {
+				return this.myKey.equals(aKey);
 			}
-			return (myKey == null && aKey == null && myValue == null && aValue == null);
+			return (this.myKey == null && aKey == null && this.myValue == null && aValue == null);
 		}
 		return false;
 	}
 	
 	public int hashCode() {
 		int code = 0;
-		if (myKey != null) {
-			code = myKey.hashCode();
+		if (this.myKey != null) {
+			code = this.myKey.hashCode();
 		}
-		if (myValue != null) {
-			code += myValue.hashCode();
+		if (this.myValue != null) {
+			code += this.myValue.hashCode();
 		}
 		return code;
 	}

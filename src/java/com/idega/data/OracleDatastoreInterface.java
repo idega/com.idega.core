@@ -435,8 +435,9 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 				ConnectionBroker.freeConnection(conn);
 			}
 		}
-		if (columns != null && !columns.isEmpty())
+		if (columns != null && !columns.isEmpty()) {
 			return (String[]) columns.toArray(new String[0]);
+		}
 		return null;
 	}
 	/* (non-Javadoc)

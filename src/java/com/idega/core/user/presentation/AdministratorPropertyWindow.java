@@ -20,7 +20,7 @@ public class AdministratorPropertyWindow extends UserPropertyWindow{
   }
 
   public String getSessionAddressString(){
-    return SESSION_ADDRESS;
+    return this.SESSION_ADDRESS;
   }
 
   public void initializePanel( IWContext iwc, TabbedPropertyPanel panel){

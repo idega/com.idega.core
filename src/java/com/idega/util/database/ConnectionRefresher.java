@@ -24,14 +24,14 @@ public class ConnectionRefresher implements Runnable {
 	protected ConnectionRefresher(ConnectionPool pool, long refreshIntervalMillis) {
 		this.pool = pool;
 		this.setRefreshIntervalMillis=refreshIntervalMillis;
-		setRefreshIntervalMillis = refreshIntervalMillis;
+		this.setRefreshIntervalMillis = refreshIntervalMillis;
 		// lastRun=System.currentTimeMillis();
 		start();
 	}
 	
 	public void run() {
 		//Thread thisThread = Thread.currentThread();
-		while (isRunning) {
+		while (this.isRunning) {
 			try {
 				//refresher.sleep(this.setRefreshIntervalMillis + Math.round((this.setRefreshIntervalMillis / 2) * Math.random()));
 				Thread.sleep(getSleepTime());
@@ -39,8 +39,9 @@ public class ConnectionRefresher implements Runnable {
 			}
 			catch (InterruptedException ex) {
 				System.out.println("Killing ConectionRefresher (caused by interrupt)");
-				if (isRunning)
+				if (this.isRunning) {
 					System.err.println("There was an InterruptedException in ConnectionRefresher.run() The error was: " + ex.getMessage());
+				}
 			}
 		}
 	}
@@ -49,14 +50,14 @@ public class ConnectionRefresher implements Runnable {
 	public synchronized void runRefresh() {
 			//refresher.interrupt();
 		try {
-			pool.refresh();
-			datastoreNotReachable=false;
+			this.pool.refresh();
+			this.datastoreNotReachable=false;
 		}
 		catch (Exception ex) {
 			System.err.println("There was an Exception in ConnectionRefresher.run() The error was: " + ex.getMessage());
 		}
 		catch (IDONoDatastoreError ex) {
-			datastoreNotReachable=true;
+			this.datastoreNotReachable=true;
 			System.err.println("There was an IDONoDatastoreError in ConnectionRefresher.run() The error was: " + ex.getMessage());
 		}
 		//catch (Throwable th) {
@@ -77,7 +78,7 @@ public class ConnectionRefresher implements Runnable {
 	}
 	
 	private long getSleepTime() {
-		if (datastoreNotReachable) {
+		if (this.datastoreNotReachable) {
 			return this.emergencyIntervalMillis;	
 		}
 		return this.setRefreshIntervalMillis + Math.round((this.setRefreshIntervalMillis / 2) * Math.random());	
@@ -85,17 +86,17 @@ public class ConnectionRefresher implements Runnable {
 	
 	public void stop() {
 		System.out.println("Stopping ConnectionRefresher");
-		isRunning = false;
-		refresher.interrupt();
-		refresher= null;
+		this.isRunning = false;
+		this.refresher.interrupt();
+		this.refresher= null;
 	}
 	
 	public void start() {
-		isRunning = true;
-		if (refresher==null) {
-			refresher = new Thread(this, "IWConnectionRefresher["+pool.getName()+"]");
-			refresher.setPriority(Thread.MIN_PRIORITY);
-			refresher.start();
+		this.isRunning = true;
+		if (this.refresher==null) {
+			this.refresher = new Thread(this, "IWConnectionRefresher["+this.pool.getName()+"]");
+			this.refresher.setPriority(Thread.MIN_PRIORITY);
+			this.refresher.start();
 		}
 	}
 }

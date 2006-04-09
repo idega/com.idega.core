@@ -29,53 +29,53 @@ public class IWBrowserPresentationState extends IWPresentationStateImpl implemen
 
 
   public void reset() {
-    _showTopFrame = true;
-    _showMenuFrame = true;
-    _showBottomFrame = false;
-    _showLeftMainFrame = true;
-    _showRightMainFrame = false;
+    this._showTopFrame = true;
+    this._showMenuFrame = true;
+    this._showBottomFrame = false;
+    this._showLeftMainFrame = true;
+    this._showRightMainFrame = false;
   }
 
 
 
   public void showTopFrame(boolean value){
-    _showTopFrame = value;
+    this._showTopFrame = value;
   }
 
   public void showMenuFrame(boolean value){
-    _showMenuFrame = value;
+    this._showMenuFrame = value;
   }
 
   public void showRightMainFrame(boolean value){
-    _showRightMainFrame = value;
+    this._showRightMainFrame = value;
   }
 
   public void showLeftMainFrame(boolean value){
-    _showLeftMainFrame = value;
+    this._showLeftMainFrame = value;
   }
 
   public void showBottomFrame(boolean value){
-    _showBottomFrame = value;
+    this._showBottomFrame = value;
   }
 
   public boolean showBottomFrame(){
-    return _showBottomFrame;
+    return this._showBottomFrame;
   }
 
   public boolean showRightMainFrame(){
-    return _showRightMainFrame;
+    return this._showRightMainFrame;
   }
 
   public boolean showLeftMainFrame(){
-    return _showLeftMainFrame;
+    return this._showLeftMainFrame;
   }
 
   public boolean showTopFrame(){
-    return _showTopFrame;
+    return this._showTopFrame;
   }
 
   public boolean showMenuFrame(){
-    return _showMenuFrame;
+    return this._showMenuFrame;
   }
 
   public void actionPerformed(IWPresentationEvent e)throws IWException{

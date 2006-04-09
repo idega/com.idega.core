@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.10 2006/02/22 20:52:48 laddi Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.11 2006/04/09 12:13:16 laddi Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -35,10 +35,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -55,8 +55,8 @@ public class IWBundleResourceFilter extends BaseFilter {
 	public void init(FilterConfig arg0) throws ServletException {
 		String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 		if (directory != null) {
-			sBundlesDirectory = directory;
-			feedFromSetBundleDir = true;
+			this.sBundlesDirectory = directory;
+			this.feedFromSetBundleDir = true;
 		}
 	}
 
@@ -71,16 +71,16 @@ public class IWBundleResourceFilter extends BaseFilter {
 		HttpServletRequest request = (HttpServletRequest) sreq;
 		HttpServletResponse response = (HttpServletResponse) sres;
 
-		if (feedFromSetBundleDir) {
+		if (this.feedFromSetBundleDir) {
 			try {
 				String requestUriWithoutContextPath = getURIMinusContextPath(request);
 				String webappDir = getIWMainApplication(request).getApplicationRealPath();
-				if (speciallyHandleFile(request, sBundlesDirectory, webappDir, requestUriWithoutContextPath)) {// bundleIdentifier,urlWithinBundle,
+				if (speciallyHandleFile(request, this.sBundlesDirectory, webappDir, requestUriWithoutContextPath)) {// bundleIdentifier,urlWithinBundle,
 																																																				// realFile)){
 					chain.doFilter(sreq, sres);
 				}
 				else {
-					File realFile = getFileInWorkspace(sBundlesDirectory, requestUriWithoutContextPath);// bundleDir,urlWithinBundle);
+					File realFile = getFileInWorkspace(this.sBundlesDirectory, requestUriWithoutContextPath);// bundleDir,urlWithinBundle);
 					if (realFile.exists()) {
 						feedOutFile(response, realFile);
 					}

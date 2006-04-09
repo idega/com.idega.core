@@ -55,14 +55,14 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
   }
 
   public void initFieldContents() {
-    addLink.setWindowToOpen(GeneralGroupInfoTab.GroupGroupSetter.class);
-    addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,this.getGroupId());
+    this.addLink.setWindowToOpen(GeneralGroupInfoTab.GroupGroupSetter.class);
+    this.addLink.addParameter(GeneralGroupInfoTab.PARAMETER_GROUP_ID,this.getGroupId());
 
      try{
       GenericGroup group = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(getGroupId());
 
-      fieldValues.put(this.nameFieldName,(group.getName() != null) ? group.getName():"" );
-      fieldValues.put(this.descriptionFieldName,(group.getDescription() != null) ? group.getDescription():"" );
+      this.fieldValues.put(this.nameFieldName,(group.getName() != null) ? group.getName():"" );
+      this.fieldValues.put(this.descriptionFieldName,(group.getDescription() != null) ? group.getDescription():"" );
       this.updateFieldsDisplayStatus();
 
     }catch(Exception e){
@@ -72,39 +72,39 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
 
   }
   public void updateFieldsDisplayStatus() {
-    nameField.setContent((String)fieldValues.get(this.nameFieldName));
+    this.nameField.setContent((String)this.fieldValues.get(this.nameFieldName));
 
-    descriptionField.setContent((String)fieldValues.get(this.descriptionFieldName));
+    this.descriptionField.setContent((String)this.fieldValues.get(this.descriptionFieldName));
   }
   public void initializeFields() {
 
 
-    nameField = new TextInput(nameFieldName);
-    nameField.setLength(26);
+    this.nameField = new TextInput(this.nameFieldName);
+    this.nameField.setLength(26);
 
-    descriptionField = new TextArea(descriptionFieldName);
-    descriptionField.setHeight(5);
-    descriptionField.setWidth(43);
-    descriptionField.setWrap(true);
+    this.descriptionField = new TextArea(this.descriptionFieldName);
+    this.descriptionField.setHeight(5);
+    this.descriptionField.setWidth(43);
+    this.descriptionField.setWrap(true);
 
-    memberofFrame = new IFrame("ic_user_memberof_ic_group",GeneralGroupInfoTab.GroupList.class);
-    memberofFrame.setHeight(150);
-    memberofFrame.setWidth(367);
-    memberofFrame.setScrolling(IFrame.SCROLLING_YES);
+    this.memberofFrame = new IFrame("ic_user_memberof_ic_group",GeneralGroupInfoTab.GroupList.class);
+    this.memberofFrame.setHeight(150);
+    this.memberofFrame.setWidth(367);
+    this.memberofFrame.setScrolling(IFrame.SCROLLING_YES);
 
-    addLink = new Link("  Add/Remove  ");
+    this.addLink = new Link("  Add/Remove  ");
 
   }
   public void initializeTexts() {
 
-    nameText = this.getTextObject();
-    nameText.setText("Name:");
+    this.nameText = this.getTextObject();
+    this.nameText.setText("Name:");
 
-    descriptionText = getTextObject();
-    descriptionText.setText("Description:");
+    this.descriptionText = getTextObject();
+    this.descriptionText.setText("Description:");
 
-    memberof = this.getTextObject();
-    memberof.setText("Member of:");
+    this.memberof = this.getTextObject();
+    this.memberof.setText("Member of:");
 
 
   }
@@ -113,8 +113,8 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
       if(getGroupId() > -1){
 
         GenericGroup group = ((com.idega.core.data.GenericGroupHome)com.idega.data.IDOLookup.getHomeLegacy(GenericGroup.class)).findByPrimaryKeyLegacy(getGroupId());
-        group.setName((String)fieldValues.get(this.nameFieldName));
-        group.setDescription((String)fieldValues.get(this.descriptionFieldName));
+        group.setName((String)this.fieldValues.get(this.nameFieldName));
+        group.setDescription((String)this.fieldValues.get(this.descriptionFieldName));
 
         group.update();
 
@@ -142,19 +142,19 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
     Table descriptionTable = new Table(1,2);
     descriptionTable.setCellpadding(0);
     descriptionTable.setCellspacing(0);
-    descriptionTable.setHeight(1,rowHeight);
-    descriptionTable.add(descriptionText,1,1);
+    descriptionTable.setHeight(1,this.rowHeight);
+    descriptionTable.add(this.descriptionText,1,1);
     descriptionTable.add(this.descriptionField,1,2);
     this.add(descriptionTable,1,2);
 
-    this.add(memberof,1,3);
-    this.add(memberofFrame,1,4);
+    this.add(this.memberof,1,3);
+    this.add(this.memberofFrame,1,4);
 
     this.setHeight(3,"30");
     this.setHeight(1,super.rowHeight);
     this.setHeight(5,super.rowHeight);
 
-    this.add(addLink,1,5);
+    this.add(this.addLink,1,5);
   }
 
   public boolean collect(IWContext iwc) {
@@ -164,11 +164,11 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
       String desc = iwc.getParameter(this.descriptionFieldName);
 
       if(gname != null){
-        fieldValues.put(this.nameFieldName,gname);
+        this.fieldValues.put(this.nameFieldName,gname);
       }
 
       if(desc != null){
-        fieldValues.put(this.descriptionFieldName,desc);
+        this.fieldValues.put(this.descriptionFieldName,desc);
       }
 
       this.updateFieldsDisplayStatus();
@@ -179,12 +179,12 @@ public class GeneralGroupInfoTab extends UserGroupTab implements Disposable{
 
   }
   public void initializeFieldNames() {
-    descriptionFieldName = "UM_group_desc";
-    nameFieldName = "UM_group_name";
+    this.descriptionFieldName = "UM_group_desc";
+    this.nameFieldName = "UM_group_name";
   }
   public void initializeFieldValues() {
-    fieldValues.put(this.nameFieldName,"");
-    fieldValues.put(this.descriptionFieldName,"");
+    this.fieldValues.put(this.nameFieldName,"");
+    this.fieldValues.put(this.descriptionFieldName,"");
 
     this.updateFieldsDisplayStatus();
   }

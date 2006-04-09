@@ -29,7 +29,7 @@ public class GenericUserComparator implements Comparator {
   private Collator collator;
 
   public GenericUserComparator() {
-      sortBy = NAME;
+      this.sortBy = NAME;
   }
 
   public GenericUserComparator(Locale locale) {
@@ -37,30 +37,32 @@ public class GenericUserComparator implements Comparator {
   }
 
   public GenericUserComparator(int toSortBy) {
-      sortBy = toSortBy;
+      this.sortBy = toSortBy;
   }
 
 	public GenericUserComparator(Locale locale, int toSortBy) {
 		this.locale = locale;
-		sortBy = toSortBy;
+		this.sortBy = toSortBy;
 	}
 
   public void sortBy(int toSortBy) {
-      sortBy = toSortBy;
+      this.sortBy = toSortBy;
   }
 
   public int compare(Object o1, Object o2) {
-  	if ( locale != null )
-  		collator = Collator.getInstance(locale);
-  	else
-  		collator = IsCollator.getIsCollator();
+  	if ( this.locale != null ) {
+			this.collator = Collator.getInstance(this.locale);
+		}
+		else {
+			this.collator = IsCollator.getIsCollator();
+		}
   		
       int result = 0;
 
       switch (this.sortBy) {
         case NAME: 
-	        if ( locale != null ) {
-		        if ( locale.getLanguage().equalsIgnoreCase("is") ) {
+	        if ( this.locale != null ) {
+		        if ( this.locale.getLanguage().equalsIgnoreCase("is") ) {
 			        result = nameSort(o1, o2);
 			       	break; 
 		        }
@@ -90,7 +92,7 @@ public class GenericUserComparator implements Comparator {
       //int result = p1.getFirstName().compareTo(p2.getFirstName());
       String one = p1.getFirstName()!=null?p1.getFirstName():"";
       String two = p2.getFirstName()!=null?p2.getFirstName():"";
-      int result = collator.compare(one,two);
+      int result = this.collator.compare(one,two);
 
       // if equal, check last name...
       if (result == 0){
@@ -104,7 +106,7 @@ public class GenericUserComparator implements Comparator {
           one = p1.getMiddleName()!=null?p1.getMiddleName():"";
           two = p2.getMiddleName()!=null?p2.getMiddleName():"";
           //result = p1.getMiddleName().compareTo(p2.getMiddleName());
-          result = collator.compare(one,two);
+          result = this.collator.compare(one,two);
       }
       return result;
   }
@@ -132,7 +134,7 @@ public class GenericUserComparator implements Comparator {
         //result = p1.getMiddleName().compareTo(p2.getMiddleName());
         one = p1.getMiddleName()!=null?p1.getMiddleName():"";
         two = p2.getMiddleName()!=null?p2.getMiddleName():"";
-        result = collator.compare(one,two);
+        result = this.collator.compare(one,two);
       }
 
       return result;
@@ -156,7 +158,7 @@ public class GenericUserComparator implements Comparator {
       if (result == 0){
         one = p1.getLastName()!=null?p1.getLastName():"";
         two = p2.getLastName()!=null?p2.getLastName():"";
-        result = collator.compare(one,two);
+        result = this.collator.compare(one,two);
       }
       return result;
   }
@@ -166,7 +168,7 @@ public class GenericUserComparator implements Comparator {
   }
 
   public Iterator sort(User[] users, int toSortBy) {
-      sortBy = toSortBy;
+      this.sortBy = toSortBy;
       List list = new LinkedList();
       for(int i = 0; i < users.length; i++) {
           list.add(users[i]);
@@ -185,7 +187,7 @@ public class GenericUserComparator implements Comparator {
   }
 
   public User[] sortedArray(User[] users, int toSortBy) {
-      sortBy = toSortBy;
+      this.sortBy = toSortBy;
       List list = new LinkedList();
       for(int i = 0; i < users.length; i++) {
           list.add(users[i]);
@@ -218,7 +220,7 @@ public class GenericUserComparator implements Comparator {
   }
 
   public User[] reverseSortedArray(User[] users, int toSortBy) {
-      sortBy = toSortBy;
+      this.sortBy = toSortBy;
       List list = new LinkedList();
       for(int i = 0; i < users.length; i++) {
           list.add(users[i]);

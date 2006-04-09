@@ -57,9 +57,9 @@ public class SQLDataDumper {
 		ResultSet rs = null;
 		File file = null;
 		try {
-			conn = ConnectionBroker.getConnection(datasource);
+			conn = ConnectionBroker.getConnection(this.datasource);
 			Stmt = conn.createStatement();
-			rs = Stmt.executeQuery(sql);
+			rs = Stmt.executeQuery(this.sql);
 			file = writeToFile(rs);
 		}
 		finally {
@@ -84,9 +84,9 @@ public class SQLDataDumper {
 	 */
 	private File writeToFile(ResultSet rs) throws IOException, SQLException {
 		
-		File file = FileUtil.getFileAndCreateIfNotExists(dumpFolder,dumpFile);
+		File file = FileUtil.getFileAndCreateIfNotExists(this.dumpFolder,this.dumpFile);
 		PrintWriter writer = new PrintWriter(new FileWriter(file));
-		switch (type) {
+		switch (this.type) {
 			case TYPE_CSV :
 				writeCSV(rs, writer);
 				break;
@@ -120,10 +120,12 @@ public class SQLDataDumper {
 			line = new StringBuffer();
 			for (int i = 1; i < columns; i++) {
 				item = rs.getString(i);
-				if (i != 1)
-					line.append(delimiter);
-				if (item != null)
+				if (i != 1) {
+					line.append(this.delimiter);
+				}
+				if (item != null) {
 					line.append(item);
+				}
 			}
 			writer.println(line.toString());
 		}
@@ -140,8 +142,9 @@ public class SQLDataDumper {
 		StringBuffer line =new StringBuffer();
 		String item;
 		for(int i = 1; i < columns; i++){
-			if(i != 1)
+			if(i != 1) {
 				line.append(", ");
+			}
 			line.append(meta.getColumnName(i));
 		}
 		writer.println(line.toString());
@@ -149,10 +152,12 @@ public class SQLDataDumper {
 			line = new StringBuffer();
 			for (int i = 1; i < columns; i++) {
 				item = rs.getString(i);
-				if (i != 1)
+				if (i != 1) {
 					line.append(", ");
-				if (item != null)
+				}
+				if (item != null) {
 					line.append(item);
+				}
 			}
 			writer.println(line.toString());
 		}
@@ -171,8 +176,9 @@ public class SQLDataDumper {
 		insertInto.append(meta.getTableName(1));
 		insertInto.append("(");
 		for(int i = 1; i < columns; i++){
-			if(i != 1)
+			if(i != 1) {
 				insertInto.append(", ");
+			}
 			insertInto.append(meta.getColumnName(i));
 		}
 		insertInto.append(")");
@@ -183,16 +189,20 @@ public class SQLDataDumper {
 			line = new StringBuffer(insertInto.toString());
 			for (int i = 1; i < columns; i++) {
 				item = rs.getString(i);
-				if (i != 1)
+				if (i != 1) {
 					line.append(", ");
+				}
 				if(item!=null){
 					String className = meta.getColumnClassName(i);
-					if(className.equalsIgnoreCase(Integer.class.getName()))
+					if(className.equalsIgnoreCase(Integer.class.getName())) {
 						line.append(item);
-					else if(className.equalsIgnoreCase(Long.class.getName()))
+					}
+					else if(className.equalsIgnoreCase(Long.class.getName())) {
 						line.append(item);
-					else
+					}
+					else {
 						line.append("'").append(item).append("'");
+					}
 				}
 				else{
 					line.append(item);
@@ -222,10 +232,12 @@ public class SQLDataDumper {
 			line = new StringBuffer(insertInto.toString());
 			for (int i = 1; i < columns; i++) {
 				item = rs.getString(i);
-				if (i != 1)
+				if (i != 1) {
 					line.append(", ");
-				else
+				}
+				else {
 					firstValue = item;
+				}
 				
 				line.append(meta.getColumnName(i)).append(" = ");
 				if(item!=null){
@@ -236,8 +248,9 @@ public class SQLDataDumper {
 					line.append(item);
 				}
 			}
-			if(firstValue!=null)
+			if(firstValue!=null) {
 				line.append(" WHERE ").append(meta.getColumnName(1)).append( " = ").append(firstValue);
+			}
 			firstValue =null;
 			writer.println(line.toString());
 		}
@@ -246,16 +259,21 @@ public class SQLDataDumper {
 	private String getStringPresentation(String className,String value){
 		StringBuffer line = new StringBuffer(value);
 		if(value!=null){
-		if(className.equalsIgnoreCase(Integer.class.getName()))
+		if(className.equalsIgnoreCase(Integer.class.getName())) {
 			return line.toString();
-		else if(className.equalsIgnoreCase(Long.class.getName()))
+		}
+		else if(className.equalsIgnoreCase(Long.class.getName())) {
 			return line.toString();
-		else if(className.equalsIgnoreCase(BigDecimal.class.getName()))
+		}
+		else if(className.equalsIgnoreCase(BigDecimal.class.getName())) {
 			return line.toString();
-		else if(className.equalsIgnoreCase(BigInteger.class.getName()))
+		}
+		else if(className.equalsIgnoreCase(BigInteger.class.getName())) {
 			return line.toString();
-		else
+		}
+		else {
 			line.insert(0,"'").append("'");
+		}
 		}
 		return line.toString();
 	}

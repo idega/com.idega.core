@@ -58,7 +58,7 @@ public class IWApplication extends FrameSet
 	}
 	public String getApplicationName()
 	{
-		return applicationName;
+		return this.applicationName;
 	}
 	public Image getIcon()
 	{

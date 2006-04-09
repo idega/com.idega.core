@@ -657,8 +657,9 @@ public class TextSoap {
 	 *@exception  Exception  Description of the Exception
 	 */
 	public static String removeWhiteSpace(String string) {
-	    if (string == null || string.equals("")) 
-	        return "";
+	    if (string == null || string.equals("")) {
+				return "";
+			}
 	    
 	    StringBuffer stringBuff = new StringBuffer(string);
 	    StringBuffer resultBuff = new StringBuffer();
@@ -672,8 +673,9 @@ public class TextSoap {
 	}
 
 	public static String removeWhiteSpaceFromBeginningOfString(String string) {
-	    if (string == null || string.equals("")) 
-	        return "";
+	    if (string == null || string.equals("")) {
+				return "";
+			}
 	    
 	    StringBuffer stringBuff = new StringBuffer(string);
 	    StringBuffer resultBuff = new StringBuffer();
@@ -688,8 +690,9 @@ public class TextSoap {
 	}
 
 	public static String removeWhiteSpaceFromEndOfString(String string) {
-	    if (string == null || string.equals("")) 
-	        return "";
+	    if (string == null || string.equals("")) {
+				return "";
+			}
 	    StringBuffer stringBuff = new StringBuffer(string);
 	    StringBuffer resultBuff = new StringBuffer();
 		for (int i = stringBuff.length()-1; i > -1; i--) {
@@ -904,8 +907,9 @@ public class TextSoap {
 	public static String capitalize(String stringToCapitalize) throws NullPointerException {
 		String string = stringToCapitalize.toLowerCase();
 		char chars[] = string.toCharArray();
-		if (chars.length > 0)
+		if (chars.length > 0) {
 			chars[0] = Character.toUpperCase(chars[0]);
+		}
 		return new String(chars);
 	}
 
@@ -923,8 +927,9 @@ public class TextSoap {
 		StringBuffer returnString = new StringBuffer();
 		while (tokens.hasMoreTokens()) {
 			returnString.append(capitalize(tokens.nextToken()));
-			if (tokens.hasMoreTokens())
+			if (tokens.hasMoreTokens()) {
 				returnString.append(separator);
+			}
 		}
 		return returnString.toString();
 	}
@@ -943,78 +948,111 @@ public class TextSoap {
 			char c = stringToConvert.charAt(i);
 			String unicode = transliterator.transliterate(String.valueOf(c));
 			
-			if (unicode.equalsIgnoreCase("\\u003C"))
+			if (unicode.equalsIgnoreCase("\\u003C")) {
 				sb.append("&lt;");
-			else if (unicode.equals("\\u003E"))
+			}
+			else if (unicode.equals("\\u003E")) {
 				sb.append("&gt;");
-			else if (unicode.equals("\\u0026"))
+			}
+			else if (unicode.equals("\\u0026")) {
 				sb.append("&amp;");
-			else if (unicode.equals("\\u00E1"))
+			}
+			else if (unicode.equals("\\u00E1")) {
 				sb.append("&aacute;");
-			else if (unicode.equals("\\u00C1"))
+			}
+			else if (unicode.equals("\\u00C1")) {
 				sb.append("&Aacute;");
-			else if (unicode.equals("\\u00F0"))
+			}
+			else if (unicode.equals("\\u00F0")) {
 				sb.append("&eth;");
-			else if (unicode.equals("\\u00D0"))
+			}
+			else if (unicode.equals("\\u00D0")) {
 				sb.append("&ETH;");
-			else if (unicode.equals("\\u00E4"))
+			}
+			else if (unicode.equals("\\u00E4")) {
 				sb.append("&auml;");
-			else if (unicode.equals("\\u00C4"))
+			}
+			else if (unicode.equals("\\u00C4")) {
 				sb.append("&Auml;");
-			else if (unicode.equals("\\u00E5"))
+			}
+			else if (unicode.equals("\\u00E5")) {
 				sb.append("&aring;");
-			else if (unicode.equals("\\u00C5"))
+			}
+			else if (unicode.equals("\\u00C5")) {
 				sb.append("&Aring;");
-			else if (unicode.equals("\\u00E9"))
+			}
+			else if (unicode.equals("\\u00E9")) {
 				sb.append("&eacute;");
-			else if (unicode.equals("\\u00C9"))
+			}
+			else if (unicode.equals("\\u00C9")) {
 				sb.append("&Eacute;");
-			else if (unicode.equals("\\u00ED"))
+			}
+			else if (unicode.equals("\\u00ED")) {
 				sb.append("&iacute;");
-			else if (unicode.equals("\\u00CD"))
+			}
+			else if (unicode.equals("\\u00CD")) {
 				sb.append("&Iacute;");
-			else if (unicode.equals("\\u00F3"))
+			}
+			else if (unicode.equals("\\u00F3")) {
 				sb.append("&oacute;");
-			else if (unicode.equals("\\u00D3"))
+			}
+			else if (unicode.equals("\\u00D3")) {
 				sb.append("&Oacute;");
-			else if (unicode.equals("\\u00F8"))
+			}
+			else if (unicode.equals("\\u00F8")) {
 				sb.append("&oslash;");
-			else if (unicode.equals("\\u00D8"))
+			}
+			else if (unicode.equals("\\u00D8")) {
 				sb.append("&Oslash;");
-			else if (unicode.equals("\\u00DF"))
+			}
+			else if (unicode.equals("\\u00DF")) {
 				sb.append("&szlig;");
-			else if (unicode.equals("\\u00FA"))
+			}
+			else if (unicode.equals("\\u00FA")) {
 				sb.append("&uacute;");
-			else if (unicode.equals("\\u00DA"))
+			}
+			else if (unicode.equals("\\u00DA")) {
 				sb.append("&Uacute;");
-			else if (unicode.equals("\\u00FC"))
+			}
+			else if (unicode.equals("\\u00FC")) {
 				sb.append("&uuml;");
-			else if (unicode.equals("\\u00DC"))
+			}
+			else if (unicode.equals("\\u00DC")) {
 				sb.append("&Uuml;");
-			else if (unicode.equals("\\u00FD"))
+			}
+			else if (unicode.equals("\\u00FD")) {
 				sb.append("&yacute;");
-			else if (unicode.equals("\\u00DD"))
+			}
+			else if (unicode.equals("\\u00DD")) {
 				sb.append("&Yacute;");
-			else if (unicode.equals("\\u00FE"))
+			}
+			else if (unicode.equals("\\u00FE")) {
 				sb.append("&thorn;");
-			else if (unicode.equals("\\u00DE"))
+			}
+			else if (unicode.equals("\\u00DE")) {
 				sb.append("&THORN;");
-			else if (unicode.equals("\\u00E6"))
+			}
+			else if (unicode.equals("\\u00E6")) {
 				sb.append("&aelig;");
-			else if (unicode.equals("\\u00C6"))
+			}
+			else if (unicode.equals("\\u00C6")) {
 				sb.append("&AElig;");
-			else if (unicode.equals("\\u00F6"))
+			}
+			else if (unicode.equals("\\u00F6")) {
 				sb.append("&ouml;");
-			else if (unicode.equals("\\u00D6"))
+			}
+			else if (unicode.equals("\\u00D6")) {
 				sb.append("&Ouml;");
-			//else if (unicode.equals("\\u0020"))
-				//sb.append("&nbsp;");
-			else if (unicode.equals("\\u0022"))
+			}
+			else if (unicode.equals("\\u0022")) {
 				sb.append("&quot;");
-			else if (unicode.equals("\\u0027"))
+			}
+			else if (unicode.equals("\\u0027")) {
 				sb.append("&apos;");
-			else
+			}
+			else {
 				sb.append(c);
+			}
 		}
 		return sb.toString();
 	}

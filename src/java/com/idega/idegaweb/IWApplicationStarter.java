@@ -1,5 +1,5 @@
 /*
- * $Id: IWApplicationStarter.java,v 1.4 2005/11/18 14:28:32 tryggvil Exp $
+ * $Id: IWApplicationStarter.java,v 1.5 2006/04/09 12:13:14 laddi Exp $
  *
  * Created by Tryggvi Larusson in 2004
  *
@@ -32,10 +32,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * this class calls IWMainApplicationStarter for starting up.
  * </p>
  * Copyright: Copyright (c) 2004-2005 idega software<br/>
- * Last modified: $Date: 2005/11/18 14:28:32 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class IWApplicationStarter implements ServletContextListener {
 
@@ -49,7 +49,7 @@ public class IWApplicationStarter implements ServletContextListener {
 		//getDefaultLifecycle().addPhaseListener(new IWPhaseListener());
 		ServletContext sContext = event.getServletContext();
 		//installViewHandler(sContext);
-		starter = new IWMainApplicationStarter(sContext);
+		this.starter = new IWMainApplicationStarter(sContext);
 		
 	}
 	
@@ -65,8 +65,8 @@ public class IWApplicationStarter implements ServletContextListener {
 	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
 	 */
 	public void contextDestroyed(ServletContextEvent arg0) {
-		starter.shutdown();
-		starter=null;
+		this.starter.shutdown();
+		this.starter=null;
 	}
 	
 	public static void installViewHandler(ServletContext context) {

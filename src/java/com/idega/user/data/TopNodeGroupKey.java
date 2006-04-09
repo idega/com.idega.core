@@ -37,19 +37,19 @@ public class TopNodeGroupKey extends PrimaryKey {
     	}
     	
     	public void setUser(Object userID) {
-    		setPrimaryKeyValue(COLUMN_USER_ID, userID);
+    		setPrimaryKeyValue(this.COLUMN_USER_ID, userID);
     	}
 
     	public Object getUser() {
-    		return getPrimaryKeyValue(COLUMN_USER_ID);
+    		return getPrimaryKeyValue(this.COLUMN_USER_ID);
     	}
 
     	public void setGroup(Object groupID) {
-    		setPrimaryKeyValue(COLUMN_GROUP_ID, groupID);
+    		setPrimaryKeyValue(this.COLUMN_GROUP_ID, groupID);
     	}
 
     	public Object getGroup() {
-    		return getPrimaryKeyValue(COLUMN_GROUP_ID);
+    		return getPrimaryKeyValue(this.COLUMN_GROUP_ID);
     	}
     
 }

@@ -29,7 +29,7 @@ public abstract class UserTab extends Table implements Collectable{
   /**
    * @deprecated replaced by rowHeight
    */
-  protected String columnHeight = rowHeight;//"37";
+  protected String columnHeight = this.rowHeight;//"37";
   protected int fontSize = 2;
 
   protected Text proxyText;
@@ -41,9 +41,9 @@ public abstract class UserTab extends Table implements Collectable{
 
   public UserTab() {
     super();
-    errorStrings = new Vector();
-    business = new UserBusiness();
-    fieldValues = new Hashtable();
+    this.errorStrings = new Vector();
+    this.business = new UserBusiness();
+    this.fieldValues = new Hashtable();
     init();
     this.setCellpadding(0);
     this.setCellspacing(0);
@@ -73,47 +73,47 @@ public abstract class UserTab extends Table implements Collectable{
   public abstract void initFieldContents();
 
   private void initProxyText(){
-    proxyText = new Text("");
-    proxyText.setFontSize(fontSize);
+    this.proxyText = new Text("");
+    this.proxyText.setFontSize(this.fontSize);
 
   }
 
   public Text getTextObject(){
-    if(proxyText == null){
+    if(this.proxyText == null){
       initProxyText();
     }
-    return (Text)proxyText.clone();
+    return (Text)this.proxyText.clone();
   }
 
   public void setUserID(int id){
-    userId = id;
+    this.userId = id;
     initFieldContents();
   }
 
   public int getUserId(){
-    return userId;
+    return this.userId;
   }
 
   public void addErrorMessage(String message){
-    errorStrings.add(message);
+    this.errorStrings.add(message);
   }
 
 
   public String[] clearErrorMessages(){
-    String[] st = new String[errorStrings.size()];
+    String[] st = new String[this.errorStrings.size()];
 
-    Iterator iter = errorStrings.iterator();
+    Iterator iter = this.errorStrings.iterator();
     int index = 0;
     while (iter.hasNext()) {
       st[index++] = (String)iter.next();
     }
-    errorStrings.clear();
+    this.errorStrings.clear();
 
     return st;
   }
 
   public boolean someErrors(){
-    return (0 < errorStrings.size());
+    return (0 < this.errorStrings.size());
   }
 
 } // Class GeneralUserInfoTab

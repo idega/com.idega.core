@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURIManager.java,v 1.6 2005/12/12 11:38:13 tryggvil Exp $
+ * $Id: IWActionURIManager.java,v 1.7 2006/04/09 12:13:12 laddi Exp $
  * Created on 31.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,7 +19,7 @@ import com.idega.repository.data.Singleton;
 
 /**
  * 
- *  Last modified: $Date: 2005/12/12 11:38:13 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:12 $ by $Author: laddi $
  * 
  * A singleton business object to get an IWActionURIHandler for an URI or the redirect URI directly.<br>
  * Register you IWActionURIHandlers using the registerHandler methods. <br>
@@ -28,7 +28,7 @@ import com.idega.repository.data.Singleton;
  * and set a low number (0-x) to prioratize your handler before the default one.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class IWActionURIManager implements Singleton {
 	
@@ -105,10 +105,10 @@ public class IWActionURIManager implements Singleton {
 	 * @return the list of IWActionURIHandlers, default impl uses a LinkedList
 	 */
 	public List getHandlerList() {
-		if(handlerList==null){
-			handlerList = new LinkedList();
+		if(this.handlerList==null){
+			this.handlerList = new LinkedList();
 		}
-		return handlerList;
+		return this.handlerList;
 	}
 	
 	public synchronized void setHandlerList(List handlerList) {
@@ -178,10 +178,10 @@ public class IWActionURIManager implements Singleton {
 	}
 	
 	public IWActionURIHandler getDefaultHandler(){
-		if(defaultHandler==null){
-			defaultHandler=new DefaultIWActionURIHandler();
+		if(this.defaultHandler==null){
+			this.defaultHandler=new DefaultIWActionURIHandler();
 		}
-		return defaultHandler;
+		return this.defaultHandler;
 	}
 	
 }

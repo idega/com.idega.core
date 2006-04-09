@@ -72,31 +72,31 @@ private Image helpImage = null;
 	}
 
 	private void createTablesAndAddThemIfNeeded()  {
-		if(headerTable==null){
-			headerTable = new Table();
-			headerTable.setCellpadding(0);
-			headerTable.setCellspacing(0);
-			headerTable.setStyleClass(bannerTableStyle);
-			headerTable.setWidth("100%");
-			headerTable.setAlignment(2,1,"right");
-			headerTable.setVerticalAlignment(1,1,"top");
-			if(titleIsSet) {
-				headerTable.setCellpaddingRight(2, 1, 12);
-				headerTable.add(getAdminTitle(),2,1);
+		if(this.headerTable==null){
+			this.headerTable = new Table();
+			this.headerTable.setCellpadding(0);
+			this.headerTable.setCellspacing(0);
+			this.headerTable.setStyleClass(this.bannerTableStyle);
+			this.headerTable.setWidth("100%");
+			this.headerTable.setAlignment(2,1,"right");
+			this.headerTable.setVerticalAlignment(1,1,"top");
+			if(this.titleIsSet) {
+				this.headerTable.setCellpaddingRight(2, 1, 12);
+				this.headerTable.add(getAdminTitle(),2,1);
 			}
-			add(headerTable);
+			add(this.headerTable);
 		}
 
-		if(mainTable==null){
-			mainTable = new Table();
-			mainTable.setStyleClass(backTableStyle);
-			mainTable.setCellpadding(_cellPadding);
-			mainTable.setWidth("100%");
-			mainTable.setHeight("100%");
-			mainTable.setCellspacing(0);
-			mainTable.setVerticalAlignment(1, 1, "top");
-			mainTable.setCellpadding(1, 1, 6);
-			add(mainTable);	
+		if(this.mainTable==null){
+			this.mainTable = new Table();
+			this.mainTable.setStyleClass(this.backTableStyle);
+			this.mainTable.setCellpadding(this._cellPadding);
+			this.mainTable.setWidth("100%");
+			this.mainTable.setHeight("100%");
+			this.mainTable.setCellspacing(0);
+			this.mainTable.setVerticalAlignment(1, 1, "top");
+			this.mainTable.setCellpadding(1, 1, 6);
+			add(this.mainTable);	
 		}
 		
 		
@@ -105,44 +105,46 @@ private Image helpImage = null;
 
 	public void add(PresentationObject obj, IWContext iwc) {
 		createTablesAndAddThemIfNeeded();	
-		mainTable.add(obj, 1, 1);		
+		this.mainTable.add(obj, 1, 1);		
 	}
 	
 	public void addTitle(String title) {
-	    if(headerTable!=null) {
-		    adminTitle = new Text(title+"&nbsp;&nbsp;");
+	    if(this.headerTable!=null) {
+		    this.adminTitle = new Text(title+"&nbsp;&nbsp;");
 	//		adminTitle.setBold();
-			adminTitle.setFontColor("#FFFFFF");
+			this.adminTitle.setFontColor("#FFFFFF");
 	
-			titleIsSet = true;
+			this.titleIsSet = true;
 
 		
-		    headerTable.add(adminTitle,2,1);
+		    this.headerTable.add(this.adminTitle,2,1);
 		}
 	}
 
 	public void addTitle(String title,String style) {
-		adminTitle = new Text("." + title);
-		adminTitle.setStyleClass(style);
+		this.adminTitle = new Text("." + title);
+		this.adminTitle.setStyleClass(style);
 		super.setTitle(title);
-		titleIsSet = true;
+		this.titleIsSet = true;
 	}
 	public Text getAdminTitle() {
-		return adminTitle;
+		return this.adminTitle;
 	}
 	public Text formatText(String s, boolean bold){
 		Text T= new Text();
 		if ( s != null ) {
 			T= new Text(s);
-			if ( bold )
+			if ( bold ) {
 				T.setBold();
+			}
 		}
 		return T;
 	}
 
 	public void formatText(Text text, boolean bold){
-		if ( bold )
+		if ( bold ) {
 			text.setBold();
+		}
 	}
 
 	public Text formatText(String s) {
@@ -160,11 +162,11 @@ private Image helpImage = null;
 		return T;
 	}
 	public void _main(IWContext iwc)throws Exception{
-		iwb = getBundle(iwc);
-		userBusiness = getUserBusiness(iwc);
-		parentPage = this.getParentPage();
-		styleSrc = userBusiness.getUserApplicationStyleSheetURL();
-		parentPage.addStyleSheetURL(styleSrc);
+		this.iwb = getBundle(iwc);
+		this.userBusiness = getUserBusiness(iwc);
+		this.parentPage = this.getParentPage();
+		this.styleSrc = this.userBusiness.getUserApplicationStyleSheetURL();
+		this.parentPage.addStyleSheetURL(this.styleSrc);
 		
 		super._main(iwc);
 	}
@@ -172,41 +174,41 @@ private Image helpImage = null;
 	}
 	public Help getHelp(String helpTextKey) {
 		IWContext iwc = IWContext.getInstance();
-		iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+		this.iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 	 	Help help = new Help();
-	 	helpImage = iwb.getImage("help.gif");//.setSrc("/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
+	 	this.helpImage = this.iwb.getImage("help.gif");//.setSrc("/idegaweb/bundles/com.idega.user.bundle/resources/help.gif");
  	  help.setHelpTextBundle( ICUserConstants.HELP_BUNDLE_IDENTFIER);
 	  help.setHelpTextKey(helpTextKey);
-	  help.setImage(helpImage);
+	  help.setImage(this.helpImage);
 	  return help;
 	}
 	public Help getHelpWithGrayImage(String helpTextKey, boolean dark) {
 		IWContext iwc = IWContext.getInstance();
-		iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+		this.iwb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 		Help help = new Help();
 		if(dark) {
-			helpImage = iwb.getImage("help_small.gif");
+			this.helpImage = this.iwb.getImage("help_small.gif");
 		}
 		else {
-			helpImage = iwb.getImage("help_lightgray.gif");
+			this.helpImage = this.iwb.getImage("help_lightgray.gif");
 		}
 		help.setHelpTextBundle(ICUserConstants.HELP_BUNDLE_IDENTFIER);
 		help.setHelpTextKey(helpTextKey);
-		help.setImage(helpImage);
+		help.setImage(this.helpImage);
 		return help;
 		
 	}
 	
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
-			if (userBusiness == null) {
+			if (this.userBusiness == null) {
 				try {
-					userBusiness = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+					this.userBusiness = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 				}
 				catch (java.rmi.RemoteException rme) {
 					throw new RuntimeException(rme.getMessage());
 				}
 			}
-			return userBusiness;
+			return this.userBusiness;
 		}
 
 

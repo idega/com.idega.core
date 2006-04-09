@@ -261,10 +261,12 @@ public class OldUserBMPBean extends com.idega.data.GenericEntity implements com.
 		sql.append(emailAddress);
 		sql.append("'");
 		java.util.Collection coll = super.idoFindIDsBySQL(sql.toString());
-		if (!coll.isEmpty())
+		if (!coll.isEmpty()) {
 			return (Integer) coll.iterator().next();
-		else
+		}
+		else {
 			throw new javax.ejb.FinderException("No user found");
+		}
 	}
 	
 	public Integer ejbFindByPersonalID(String personalId) throws javax.ejb.FinderException {
@@ -274,10 +276,12 @@ public class OldUserBMPBean extends com.idega.data.GenericEntity implements com.
 		sql.append(personalId);
 		sql.append("'");
 		java.util.Collection coll = super.idoFindIDsBySQL(sql.toString());
-		if (!coll.isEmpty())
+		if (!coll.isEmpty()) {
 			return (Integer) coll.iterator().next();
-		else
+		}
+		else {
 			throw new javax.ejb.FinderException("No user found");
+		}
 	}
 	
 	

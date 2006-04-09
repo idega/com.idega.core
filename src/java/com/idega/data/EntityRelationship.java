@@ -23,7 +23,7 @@ class EntityRelationship {
 	 */
 	void setTableName(String originalTableName) {
 		//this.tableName=tableName;
-		setTableName = originalTableName;
+		this.setTableName = originalTableName;
 	}
 	
 	/**
@@ -35,14 +35,14 @@ class EntityRelationship {
 	String getTableName() {
 		//return tableName;
 		//return checkedTableName;
-		return EntityControl.getCheckedRelatedTableName(setTableName);
+		return EntityControl.getCheckedRelatedTableName(this.setTableName);
 	}
 	/**
 	 * Gets the tablename originally set with setTableName
 	 * @return String with the original tableName
 	 */
 	public String getSetTableName() {
-		return setTableName;
+		return this.setTableName;
 	}
 	/**
 	 * Gets if the Entity is implemented with a "many-to-many" relationship
@@ -50,15 +50,15 @@ class EntityRelationship {
 	 * @return boolean if the relationship is implemented with a table
 	 */
 	boolean isImplementedWithTable() {
-		return isImplementedWithTable;
+		return this.isImplementedWithTable;
 	}
 	Map getColumnsAndReferencingClasses() {
-		return columnsMap;
+		return this.columnsMap;
 	}
 	void addColumn(String columnName, Class referencingClass) {
-		if (columnsMap == null) {
-			columnsMap = new Hashtable();
+		if (this.columnsMap == null) {
+			this.columnsMap = new Hashtable();
 		}
-		columnsMap.put(columnName, referencingClass);
+		this.columnsMap.put(columnName, referencingClass);
 	}
 }

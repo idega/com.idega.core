@@ -1,5 +1,5 @@
 /*
- * $Id: HelpButtonTag.java,v 1.1 2005/06/23 18:16:20 gummi Exp $
+ * $Id: HelpButtonTag.java,v 1.2 2006/04/09 12:13:15 laddi Exp $
  * Created on 20.6.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import org.apache.myfaces.taglib.UIComponentTagBase;
 
 /**
  * 
- *  Last modified: $Date: 2005/06/23 18:16:20 $ by $Author: gummi $
+ *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class HelpButtonTag extends UIComponentTagBase {
 
@@ -54,49 +54,49 @@ public class HelpButtonTag extends UIComponentTagBase {
 		super.setProperties(component);
 		if (component != null) {
 			HelpButton button = ((HelpButton)component);
-			if(text!=null){
-				if(isValueReference(text)){
-					ValueBinding vb = getFacesContext().getApplication().createValueBinding(text);
+			if(this.text!=null){
+				if(isValueReference(this.text)){
+					ValueBinding vb = getFacesContext().getApplication().createValueBinding(this.text);
 					button.setValueBinding("text", vb);
 				} else {
-					button.setText(text);
+					button.setText(this.text);
 				}
 			}
 			
-			if(headline!=null){
-				if(isValueReference(headline)){
-					ValueBinding vb = getFacesContext().getApplication().createValueBinding(headline);
+			if(this.headline!=null){
+				if(isValueReference(this.headline)){
+					ValueBinding vb = getFacesContext().getApplication().createValueBinding(this.headline);
 					button.setValueBinding("headline", vb);
 				} else {
-					button.setHeadline(headline);
+					button.setHeadline(this.headline);
 				}
 			}
 			
-			if(imageUrl!=null){
-				if(isValueReference(imageUrl)){
-					ValueBinding vb = getFacesContext().getApplication().createValueBinding(imageUrl);
+			if(this.imageUrl!=null){
+				if(isValueReference(this.imageUrl)){
+					ValueBinding vb = getFacesContext().getApplication().createValueBinding(this.imageUrl);
 					button.setValueBinding("imageUrl", vb);
 				} else {
-					button.setImageUrl(imageUrl);
+					button.setImageUrl(this.imageUrl);
 				}
 			}
 		}
 	}
 	
 	public String getHeadline() {
-		return headline;
+		return this.headline;
 	}
 	public void setHeadline(String headline) {
 		this.headline = headline;
 	}
 	public String getImageUrl() {
-		return imageUrl;
+		return this.imageUrl;
 	}
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
 	public String getText() {
-		return text;
+		return this.text;
 	}
 	public void setText(String text) {
 		this.text = text;

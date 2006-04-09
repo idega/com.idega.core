@@ -11,16 +11,16 @@ public class MemoryFileBuffer {
 	private String mimeType;
 
 	protected synchronized void write(byte[] myByteArray) {
-		byte[] newArray = new byte[buffer.length + myByteArray.length];
-		System.arraycopy(buffer, 0, newArray, 0, buffer.length);
-		System.arraycopy(myByteArray, 0, newArray, buffer.length,
+		byte[] newArray = new byte[this.buffer.length + myByteArray.length];
+		System.arraycopy(this.buffer, 0, newArray, 0, this.buffer.length);
+		System.arraycopy(myByteArray, 0, newArray, this.buffer.length,
 				myByteArray.length);
-		buffer = newArray;
+		this.buffer = newArray;
 	}
 
 	protected synchronized byte read(int position) {
 		try {
-			return buffer[position];
+			return this.buffer[position];
 		} catch (ArrayIndexOutOfBoundsException e) {
 			return (byte) -1;
 		}
@@ -72,10 +72,10 @@ public class MemoryFileBuffer {
 	 *  }
 	 */
 	protected synchronized void write(byte[] b, int off, int len) {
-		byte[] newArray = new byte[buffer.length + len];
-		System.arraycopy(buffer, 0, newArray, 0, buffer.length);
-		System.arraycopy(b, 0, newArray, buffer.length, len);
-		buffer = newArray;
+		byte[] newArray = new byte[this.buffer.length + len];
+		System.arraycopy(this.buffer, 0, newArray, 0, this.buffer.length);
+		System.arraycopy(b, 0, newArray, this.buffer.length, len);
+		this.buffer = newArray;
 	}
 
 	/*
@@ -93,11 +93,11 @@ public class MemoryFileBuffer {
 	 *  }
 	 */
 	public void setMimeType(String type) {
-		mimeType = type;
+		this.mimeType = type;
 	}
 
 	public String getMimeType() {
-		return mimeType;
+		return this.mimeType;
 	}
 
 	/**

@@ -72,7 +72,7 @@ public class LogWriter
 
    {
 
-      return logLevel;
+      return this.logLevel;
 
    }
 
@@ -82,7 +82,7 @@ public class LogWriter
 
    {
 
-      return pw;
+      return this.pw;
 
    }
 
@@ -112,19 +112,19 @@ public class LogWriter
 
    {
 
-      if (pw != null)
+      if (this.pw != null)
 
       {
 
-         if (severityLevel <= logLevel)
+         if (severityLevel <= this.logLevel)
 
          {
 
-            pw.println("[" + new Date() + "]  " +
+            this.pw.println("[" + new Date() + "]  " +
 
             getSeverityString(severityLevel) + ": " +
 
-            owner + ": " + msg);
+            this.owner + ": " + msg);
 
          }
 

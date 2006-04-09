@@ -37,7 +37,7 @@ public class XMLDataReader extends ReaderFromFile {
 	 * @see com.idega.io.ReaderFromFile#setName(java.lang.String)
 	 */
 	public void setName(String name) {
-		((XMLData) storable).setName(name);
+		((XMLData) this.storable).setName(name);
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.io.ReaderFromFile#setMimeType(java.lang.String)
@@ -49,7 +49,7 @@ public class XMLDataReader extends ReaderFromFile {
 	 * @see com.idega.io.ReaderFromFile#readData(java.io.InputStream)
 	 */
 	public InputStream readData(InputStream source) throws IOException {
-		((XMLData) storable).initialize(source);
+		((XMLData) this.storable).initialize(source);
 		return source;
 	}
 }

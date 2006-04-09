@@ -23,13 +23,13 @@ public class ResetPresentationEvent extends IWPresentationEvent {
   }
 
   public boolean doReset(){
-    return _doReset;
+    return this._doReset;
   }
 
   public boolean initializeEvent(IWContext iwc) {
-    _doReset = ("1".equals(iwc.getParameter(PRM_DO_RESET)));
+    this._doReset = ("1".equals(iwc.getParameter(PRM_DO_RESET)));
 
-    if(_doReset){
+    if(this._doReset){
       return true;
     }else {
       return false;

@@ -37,7 +37,7 @@ public class Cache {
   }
 
   public IDOEntity getEntity(){
-    return cachedEntity;
+    return this.cachedEntity;
   }
 
   public void setVirtualPathToFile(String virtualPathToFile){
@@ -45,7 +45,7 @@ public class Cache {
   }
 
   public String getVirtualPathToFile(){
-    return virtualPathToFile;
+    return this.virtualPathToFile;
   }
 
   public void setRealPathToFile(String realPathToFile){
@@ -53,7 +53,7 @@ public class Cache {
   }
 
   public String getRealPathToFile(){
-    return realPathToFile;
+    return this.realPathToFile;
   }
 
 }

@@ -38,8 +38,9 @@ public class DatePickerWindow extends AbstractChooserWindow {
 		
 		String selPrm = getSelectionParameter(iwc);
 		String selVal = iwc.getParameter(selPrm);
-		if(selVal==null)
+		if(selVal==null) {
 			selVal = new SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date());
+		}
 		
 		SmallCalendar cal = new SmallCalendar();
 		cal.setDaysAsLink(true);

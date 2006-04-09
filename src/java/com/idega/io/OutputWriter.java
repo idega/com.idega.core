@@ -24,11 +24,11 @@ public class OutputWriter
 
     {
 
-        pathANDfile = new String("");
+        this.pathANDfile = new String("");
 
-        theInput = new String("");
+        this.theInput = new String("");
 
-        errorFlag = 0;
+        this.errorFlag = 0;
 
     }
 
@@ -38,23 +38,23 @@ public class OutputWriter
 
     {
 
-        theInput = string1;
+        this.theInput = string1;
 
-        pathANDfile = new StringBuffer(String.valueOf(string3)).append(string2).toString();
+        this.pathANDfile = new StringBuffer(String.valueOf(string3)).append(string2).toString();
 
         try
 
         {
 
-            output = new DataOutputStream(new FileOutputStream(pathANDfile));
+            this.output = new DataOutputStream(new FileOutputStream(this.pathANDfile));
 
-            output.writeUTF(theInput);
+            this.output.writeUTF(this.theInput);
 
-            output.flush();
+            this.output.flush();
 
-            output.close();
+            this.output.close();
 
-            return errorFlag;
+            return this.errorFlag;
 
         }
 
@@ -62,11 +62,11 @@ public class OutputWriter
 
         {
 
-            errorFlag = -2;
+            this.errorFlag = -2;
 
         }
 
-        return errorFlag;
+        return this.errorFlag;
 
     }
 

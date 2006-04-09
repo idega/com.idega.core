@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.4 2005/12/05 19:32:40 thomas Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.5 2006/04/09 12:13:19 laddi Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -23,10 +23,10 @@ import com.idega.user.data.GroupHome;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2005/12/05 19:32:40 $ by $Author: thomas $
+ * Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class Property implements Serializable{
 
@@ -83,7 +83,7 @@ public class Property implements Serializable{
 	 * @return Returns the method.
 	 */
 	public Method getMethod() {
-		return method;
+		return this.method;
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class Property implements Serializable{
 	 * @return Returns the propertyName.
 	 */
 	public String getPropertyName() {
-		return propertyName;
+		return this.propertyName;
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class Property implements Serializable{
 	 * @return Returns the propertyValues.
 	 */
 	public Object[] getPropertyValues() {
-		return propertyValues;
+		return this.propertyValues;
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class Property implements Serializable{
 					args[i] = convertStringToObject(parameterTypes[i], aString);
 				}
 				catch (Exception e) {
-					System.err.println("Error in property '" + method.toString());
+					System.err.println("Error in property '" + this.method.toString());
 					e.printStackTrace();
 				}
 			}

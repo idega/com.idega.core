@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.37 2006/02/20 17:59:45 laddi Exp $
+ * $Id: IWResourceBundle.java,v 1.38 2006/04/09 12:13:14 laddi Exp $
  *
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  *
@@ -35,10 +35,10 @@ import com.idega.util.StringHandler;
  * There is an instance of this class for each localization file (e.g. com.idega.core.bundle/en.locale/Localized.strings)
  * and is an extension to the standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2006/02/20 17:59:45 $ by $Author: laddi $<br/>
+ * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public class IWResourceBundle extends ResourceBundle {
 
@@ -64,8 +64,8 @@ public class IWResourceBundle extends ResourceBundle {
 		this.file = file;
 
 		try {
-			properties.load(new FileInputStream(file));
-			lookup = new TreeMap(properties);
+			this.properties.load(new FileInputStream(file));
+			this.lookup = new TreeMap(this.properties);
 			setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
 		}
 		catch (FileNotFoundException e) {
@@ -77,8 +77,8 @@ public class IWResourceBundle extends ResourceBundle {
 	 * Override of ResourceBundle, same semantics
 	 */
 	public Object handleGetObject(String key) {
-		if (lookup != null) {
-			Object obj = lookup.get(key);
+		if (this.lookup != null) {
+			Object obj = this.lookup.get(key);
 			return obj; // once serialization is in place, you can do non-strings
 		}
 		else {
@@ -97,28 +97,31 @@ public class IWResourceBundle extends ResourceBundle {
 	 */
 	public Enumeration getKeys() {
 		Enumeration result = null;
-		if (parent != null) {
-			Iterator iter = lookup.keySet().iterator();
+		if (this.parent != null) {
+			Iterator iter = this.lookup.keySet().iterator();
 			final Enumeration myKeys = new EnumerationIteratorWrapper(iter);
-			final Enumeration parentKeys = parent.getKeys();
+			final Enumeration parentKeys = this.parent.getKeys();
 
 			result = new Enumeration() {
 				public boolean hasMoreElements() {
-					if (temp == null)
+					if (this.temp == null) {
 						nextElement();
-					return temp != null;
+					}
+					return this.temp != null;
 				}
 
 				public Object nextElement() {
-					Object returnVal = temp;
-					if (myKeys.hasMoreElements())
-						temp = myKeys.nextElement();
+					Object returnVal = this.temp;
+					if (myKeys.hasMoreElements()) {
+						this.temp = myKeys.nextElement();
+					}
 					else {
-						temp = null;
-						while (temp == null && parentKeys.hasMoreElements()) {
-							temp = parentKeys.nextElement();
-							if (lookup.containsKey(temp))
-								temp = null;
+						this.temp = null;
+						while (this.temp == null && parentKeys.hasMoreElements()) {
+							this.temp = parentKeys.nextElement();
+							if (IWResourceBundle.this.lookup.containsKey(this.temp)) {
+								this.temp = null;
+							}
 						}
 					}
 					return returnVal;
@@ -128,7 +131,7 @@ public class IWResourceBundle extends ResourceBundle {
 			};
 		}
 		else {
-			Iterator iter = lookup.keySet().iterator();
+			Iterator iter = this.lookup.keySet().iterator();
 			result = new EnumerationIteratorWrapper(iter);
 		}
 
@@ -136,7 +139,7 @@ public class IWResourceBundle extends ResourceBundle {
 	}
 
 	public Locale getLocale() {
-		return locale;
+		return this.locale;
 	}
 
 	private void setLocale(Locale locale) {
@@ -145,20 +148,20 @@ public class IWResourceBundle extends ResourceBundle {
 
 	public synchronized void storeState() {
 		try {
-			properties.clear();
-			if (lookup != null) {
-				Iterator iter = lookup.keySet().iterator();
+			this.properties.clear();
+			if (this.lookup != null) {
+				Iterator iter = this.lookup.keySet().iterator();
 				while (iter.hasNext()) {
 					Object key = iter.next();
 					if (key != null) {
-						Object value = lookup.get(key);
+						Object value = this.lookup.get(key);
 						if (value != null) {
-							properties.put(key, value);
+							this.properties.put(key, value);
 						}
 					}
 				}
-				FileOutputStream fos = new FileOutputStream(file);
-				properties.store(fos, null);
+				FileOutputStream fos = new FileOutputStream(this.file);
+				this.properties.store(fos, null);
 				fos.close();
 			}
 		}
@@ -205,8 +208,9 @@ public class IWResourceBundle extends ResourceBundle {
 			}
 			return returnValueIfNotFound;
 		}
-		else
+		else {
 			return returnString;
+		}
 	}
 	
 	/**
@@ -236,7 +240,7 @@ public class IWResourceBundle extends ResourceBundle {
 	public Image getLocalizedImageButton(String key) {
 		try {
 			String text = getLocalizedString(key);
-			return this.iwBundleParent.getApplication().getImageFactory().createButton(text, iwBundleParent, getLocale());
+			return this.iwBundleParent.getApplication().getImageFactory().createButton(text, this.iwBundleParent, getLocale());
 		}
 		catch (MissingResourceException e) {
 			return null;
@@ -245,7 +249,7 @@ public class IWResourceBundle extends ResourceBundle {
 
 	public Image getLocalizedImageButton(String key, String returnValueIfNull) {
 		String text = getLocalizedString(key, returnValueIfNull);
-		return this.iwBundleParent.getApplication().getImageFactory().createButton(text, iwBundleParent, getLocale());
+		return this.iwBundleParent.getApplication().getImageFactory().createButton(text, this.iwBundleParent, getLocale());
 	}
 
 	/**
@@ -254,7 +258,7 @@ public class IWResourceBundle extends ResourceBundle {
 	public Image getLocalizedImageTab(String key, boolean flip) {
 		try {
 			String text = getLocalizedString(key);
-			return this.iwBundleParent.getApplication().getImageFactory().createTab(text, iwBundleParent, getLocale(), flip);
+			return this.iwBundleParent.getApplication().getImageFactory().createTab(text, this.iwBundleParent, getLocale(), flip);
 		}
 		catch (MissingResourceException e) {
 			return null;
@@ -263,7 +267,7 @@ public class IWResourceBundle extends ResourceBundle {
 
 	public Image getLocalizedImageTab(String key, String returnValueIfNull, boolean flip) {
 		String text = getLocalizedString(key, returnValueIfNull);
-		return this.iwBundleParent.getApplication().getImageFactory().createTab(text, iwBundleParent, getLocale(), flip);
+		return this.iwBundleParent.getApplication().getImageFactory().createTab(text, this.iwBundleParent, getLocale(), flip);
 	}
 
 	/**
@@ -272,13 +276,13 @@ public class IWResourceBundle extends ResourceBundle {
 	 * @param value a value to the key
 	 */
 	public void setString(String key, String value) {
-		lookup.put(key, value);
+		this.lookup.put(key, value);
 		checkBundleLocalizedString(key,value);
 		this.storeState();
 	}
 
 	public boolean removeString(String key) {
-		if((String) lookup.remove(key) != null ){
+		if((String) this.lookup.remove(key) != null ){
 			this.storeState();
 			return true;
 		}
@@ -290,7 +294,7 @@ public class IWResourceBundle extends ResourceBundle {
 	}
 
 	public IWBundle getIWBundleParent() {
-		return iwBundleParent;
+		return this.iwBundleParent;
 	}
 
 	/*
@@ -332,11 +336,11 @@ public class IWResourceBundle extends ResourceBundle {
 	}
 
 	private void setResourcesURL(String url) {
-		resourcesURL = url;
+		this.resourcesURL = url;
 	}
 
 	public String getResourcesURL() {
-		return resourcesURL;
+		return this.resourcesURL;
 	}
 
 	/**

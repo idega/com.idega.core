@@ -1,5 +1,5 @@
 /*
- * $Id: PropertyDescription.java,v 1.1 2005/10/03 18:24:19 thomas Exp $
+ * $Id: PropertyDescription.java,v 1.2 2006/04/09 12:13:17 laddi Exp $
  * Created on Sep 29, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -36,17 +36,17 @@ public class PropertyDescription {
 
 	
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	
 	public String getParameterId() {
-		return parameterId;
+		return this.parameterId;
 	}
 
 	
 	public ResourceDescription getResourceDescription() {
-		return resourceDescription;
+		return this.resourceDescription;
 	}
 	
 	

@@ -27,7 +27,7 @@ class GrayFilter extends RGBImageFilter {
   //----------------------------------------------------
 
   public GrayFilter() {
-    canFilterIndexColorModel = true;
+    this.canFilterIndexColorModel = true;
   }
 
   public GrayFilter(int darkness) {
@@ -38,7 +38,7 @@ class GrayFilter extends RGBImageFilter {
   //----------------------------------------------------
 
   public int filterRGB(int x, int y, int rgb) {
-    return(rgb & darkness);
+    return(rgb & this.darkness);
   }
 
   //----------------------------------------------------

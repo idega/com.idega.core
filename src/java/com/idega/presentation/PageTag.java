@@ -1,5 +1,5 @@
 /*
- * $Id: PageTag.java,v 1.4 2005/10/10 11:40:04 tryggvil Exp $
+ * $Id: PageTag.java,v 1.5 2006/04/09 12:13:13 laddi Exp $
  * Created on 17.01.2005 by Tryggvi Larusson
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -20,10 +20,10 @@ import java.util.Iterator;
  * <p>
  * This is a JSP tag for the Page component.
  * </p>
- * Last modified: $Date: 2005/10/10 11:40:04 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
  *
  * @author tryggvil
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class PageTag extends UIComponentTag {
 	
@@ -55,8 +55,8 @@ public class PageTag extends UIComponentTag {
 	}
 	
 	public void release() {
-		urls = null;
-		onload = null;
+		this.urls = null;
+		this.onload = null;
 	}
 
 	public void setStyleClass(String styleClass){
@@ -67,10 +67,10 @@ public class PageTag extends UIComponentTag {
 		super.setProperties(component);
 		if (component != null) {
 			Page page = (Page) component;
-			page.setJavascriptURLs(urls);
-			page.setOnLoad(onload);
-			if(styleClass!=null){
-				page.setStyleClass(styleClass);
+			page.setJavascriptURLs(this.urls);
+			page.setOnLoad(this.onload);
+			if(this.styleClass!=null){
+				page.setStyleClass(this.styleClass);
 			}
 		}
 	}
@@ -120,7 +120,7 @@ public class PageTag extends UIComponentTag {
 	 * @return Returns the logIds.
 	 */
 	public boolean getLogIds() {
-		return logIds;
+		return this.logIds;
 	}
 
 	

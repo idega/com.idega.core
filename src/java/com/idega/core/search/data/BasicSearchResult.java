@@ -1,5 +1,5 @@
 /*
- * $Id: BasicSearchResult.java,v 1.1 2005/01/19 01:48:30 eiki Exp $
+ * $Id: BasicSearchResult.java,v 1.2 2006/04/09 12:13:20 laddi Exp $
  * Created on Jan 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,12 +14,12 @@ import com.idega.core.search.business.SearchResult;
 
 
 /**
- *  Last modified: $Date: 2005/01/19 01:48:30 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
  * 
  * A general implementation of SearchResult with simple get and set methods.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class BasicSearchResult implements SearchResult {
 
@@ -38,42 +38,42 @@ public class BasicSearchResult implements SearchResult {
 	 * @see com.idega.core.search.business.SearchResult#getSearchResultType()
 	 */
 	public String getSearchResultType() {
-		return searchResultType;
+		return this.searchResultType;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchResult#getSearchResultName()
 	 */
 	public String getSearchResultName() {
-		return searchResultName;
+		return this.searchResultName;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchResult#getSearchResultExtraInformation()
 	 */
 	public String getSearchResultExtraInformation() {
-		return searchResultExtraInformation;
+		return this.searchResultExtraInformation;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchResult#getSearchResultAbstract()
 	 */
 	public String getSearchResultAbstract() {
-		return searchResultAbstract;
+		return this.searchResultAbstract;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchResult#getSearchResultURI()
 	 */
 	public String getSearchResultURI() {
-		return searchResultURI;
+		return this.searchResultURI;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchResult#getSearchResultAttributes()
 	 */
 	public Map getSearchResultAttributes() {
-		return searchResultAttributes;
+		return this.searchResultAttributes;
 	}
 	
 	/**

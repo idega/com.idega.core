@@ -27,7 +27,7 @@ public class IWSystemProperties extends IWPropertyList {
 	
 	public IWSystemProperties(IWMainApplication application) {
 //		super();
-		_application = application;
+		this._application = application;
 		loadPropertiesFile(application);
 	}
 	
@@ -44,7 +44,7 @@ public class IWSystemProperties extends IWPropertyList {
 			if (icFileID != null) {
 				ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
 				ICFile icFile = home.findByPrimaryKey(new Integer(icFileID));
-				systemProperties = icFile;
+				this.systemProperties = icFile;
 				super.load(icFile.getFileValue());
 			} else {
 				File file = createFile(application.getPropertiesRealPath(), "system_properties.pxml");
@@ -60,7 +60,7 @@ public class IWSystemProperties extends IWPropertyList {
 				binding.setValue(icFile.getPrimaryKey().toString());
 				binding.store();
 				
-				systemProperties = icFile;
+				this.systemProperties = icFile;
 				file.delete();
 				super.load(icFile.getFileValue());
 			}
@@ -71,29 +71,31 @@ public class IWSystemProperties extends IWPropertyList {
 
 	public String getLocalizedName(Locale locale,String propertyName) {
 		IWProperty property = getIWProperty(propertyName);
-		if ( property != null )
+		if ( property != null ) {
 			return getLocalizedName(locale,property);
+		}
 		return null;
 	}
 	
 	public String getLocalizedName(Locale locale,IWProperty property) {
-		return _application.getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(locale).getLocalizedString(property.getName(), property.getName());
+		return this._application.getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(locale).getLocalizedString(property.getName(), property.getName());
 	}
 	
 	public IWPropertyList getProperties(String propertyListName) {
 		IWPropertyList list = getPropertyList(propertyListName);
-		if ( list == null )
+		if ( list == null ) {
 			list = this.getNewPropertyList(propertyListName);
+		}
 		return list;
 	}
 	
 	public void store() {
-		super.store(systemProperties.getFileValueForWrite());
-		systemProperties.store();
+		super.store(this.systemProperties.getFileValueForWrite());
+		this.systemProperties.store();
 	}
 	
 	public void unload() {
-		systemProperties = null;
+		this.systemProperties = null;
 		super.unload();
 	}
 }

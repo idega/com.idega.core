@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleLoader.java,v 1.4 2006/02/22 20:52:47 laddi Exp $
+ * $Id: IWBundleLoader.java,v 1.5 2006/04/09 12:13:14 laddi Exp $
  * Created on 5.2.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -25,10 +25,10 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * Implementation for loading a IWBundle from a Jar file in WEB-INF/lib.
  * </p>
- *  Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class IWBundleLoader implements JarLoader{
 
@@ -52,8 +52,9 @@ public class IWBundleLoader implements JarLoader{
 		JarEntry bundleConfigFile = jarFile.getJarEntry("properties/bundle.pxml");
 		//JarEntry facesConfigFile = jarFile.getJarEntry("META-INF/faces-config.xml");
 		if (bundleConfigFile != null) {
-			if (log.isDebugEnabled())
+			if (log.isDebugEnabled()) {
 				log.debug("bundle.pxml found in jar " + jarPath);
+			}
 			// InputStream stream = jarFile.getInputStream(configFile);
 			// String systemId = "jar:" + tmp.toURL() + "!/" +
 			// configFile.getName();

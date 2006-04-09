@@ -1,5 +1,5 @@
 /*
- * $Id: MenuElement.java,v 1.10 2004/07/02 02:27:49 tryggvil Exp $
+ * $Id: MenuElement.java,v 1.11 2006/04/09 12:13:16 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -47,19 +47,19 @@ public class MenuElement extends InterfaceObject {
 	}
 
 	public boolean isSelected() {
-		return isSelected;
+		return this.isSelected;
 	}
 
 	public boolean isDisabled() {
-		return isDisabled;
+		return this.isDisabled;
 	}
 
 	public void setSelected(boolean ifSelected) {
-		isSelected = ifSelected;
+		this.isSelected = ifSelected;
 	}
 
 	public void setDisabled(boolean ifDisabled) {
-		isDisabled = ifDisabled;
+		this.isDisabled = ifDisabled;
 	}
 
 	public String getElementValue() {
@@ -94,8 +94,8 @@ public class MenuElement extends InterfaceObject {
 	public synchronized Object clone() {
 		MenuElement obj = null;
 		obj = (MenuElement) super.clone();
-		obj.isDisabled = isDisabled;
-		obj.isSelected = isSelected;
+		obj.isDisabled = this.isDisabled;
+		obj.isSelected = this.isSelected;
 
 		return obj;
 	}

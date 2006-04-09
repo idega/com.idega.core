@@ -79,7 +79,7 @@ private char gender;
 
  	public char getGender(){
 
-		return gender;
+		return this.gender;
 
  	}
 
@@ -87,7 +87,7 @@ private char gender;
 
 	public Character getCharGender(){
 
-		return new Character(gender);
+		return new Character(this.gender);
 
 	}
 
@@ -95,7 +95,7 @@ private char gender;
 
 	public boolean isMale(){
 
-		if((gender=='M') || (gender =='m')){
+		if((this.gender=='M') || (this.gender =='m')){
 
 			return true;
 
@@ -115,7 +115,7 @@ private char gender;
 
 	public boolean isFemale(){
 
-		if((gender=='F') || (gender =='f')){
+		if((this.gender=='F') || (this.gender =='f')){
 
 			return true;
 
@@ -135,7 +135,7 @@ private char gender;
 
 	public String toString(){
 
-		return String.valueOf(gender);
+		return String.valueOf(this.gender);
 
 	}
 

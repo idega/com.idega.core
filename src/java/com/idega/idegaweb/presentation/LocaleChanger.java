@@ -50,12 +50,12 @@ public class LocaleChanger extends Block {
     Iterator iter = ICLocaleBusiness.getListOfLocalesJAVA().iterator();
     Locale locale;
     Locale currentLocale = iwc.getCurrentLocale();
-    if(ImageLocalizationMap !=null){
+    if(this.ImageLocalizationMap !=null){
       while(iter.hasNext()){
 
         locale = (Locale) iter.next();
         if(!locale.equals(currentLocale)){
-          Integer imageId = (Integer)ImageLocalizationMap.get(locale);
+          Integer imageId = (Integer)this.ImageLocalizationMap.get(locale);
           if(imageId !=null){
             try{
             Image image = new Image(imageId.intValue());
@@ -85,18 +85,18 @@ public class LocaleChanger extends Block {
   }
 
   public void setLocalizedImage(Locale locale,int imageID){
-    showLinks = true;
+    this.showLinks = true;
     getImageLocalizationMap().put(locale,new Integer(imageID));
   }
 
   private Map getImageLocalizationMap(){
-    if(ImageLocalizationMap==null){
-      ImageLocalizationMap=new HashMap();
+    if(this.ImageLocalizationMap==null){
+      this.ImageLocalizationMap=new HashMap();
     }
-    return ImageLocalizationMap;
+    return this.ImageLocalizationMap;
   }
 
   public void setUseImageView(boolean view){
-    showLinks = view;
+    this.showLinks = view;
   }
 }

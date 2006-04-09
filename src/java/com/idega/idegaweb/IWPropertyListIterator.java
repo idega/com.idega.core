@@ -8,10 +8,10 @@ import java.util.Iterator;
  * key tags under a map tag.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2005/11/18 14:47:06 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IWPropertyListIterator implements Iterator {
 
@@ -25,7 +25,7 @@ public class IWPropertyListIterator implements Iterator {
   }
 
   public boolean hasNext() {
-    return innerIterator.hasNext();
+    return this.innerIterator.hasNext();
   }
 
   public Object next() {
@@ -33,15 +33,15 @@ public class IWPropertyListIterator implements Iterator {
   }
 
   public void remove(){
-    if(currentKey!=null){
-      list.removeProperty(currentKey);
+    if(this.currentKey!=null){
+      this.list.removeProperty(this.currentKey);
     }
   }
 
   public IWProperty nextProperty(){
-    String key = (String)innerIterator.next();
-    currentKey=key;
-    return list.getIWProperty(key);
+    String key = (String)this.innerIterator.next();
+    this.currentKey=key;
+    return this.list.getIWProperty(key);
   }
 
 }

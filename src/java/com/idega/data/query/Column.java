@@ -27,27 +27,27 @@ public class Column implements Outputable, Cloneable {
 	}
 
 	public Table getTable() {
-		return table;
+		return this.table;
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public String getPrefix() {
-		return prefix;
+		return this.prefix;
 	}
 
 	public String getPostfix() {
-		return postfix;
+		return this.postfix;
 	}
 
 	public void setAsDistinct() {
-		distinct = true;
+		this.distinct = true;
 	}
 	
 	public void setAsCount() {
-		count = true;
+		this.count = true;
 	}
 	public void setAsCount(String countName) {
 		setAsCount();
@@ -70,10 +70,10 @@ public class Column implements Outputable, Cloneable {
 		if (getPrefix() != null) {
 			out.print(getPrefix());
 		}
-		if (count) {
+		if (this.count) {
 			out.println("COUNT(");
 		}
-		if (distinct) {
+		if (this.distinct) {
 			out.println("DISTINCT ");
 		}
 		if (getTable() != null) {
@@ -83,10 +83,10 @@ public class Column implements Outputable, Cloneable {
 		if (getPostfix() != null) {
 			out.print(getPostfix());
 		}
-		if (count) {
+		if (this.count) {
 			out.println(")");
-			if (countName != null) {
-				out.println(" AS "+countName);
+			if (this.countName != null) {
+				out.println(" AS "+this.countName);
 			}
 		}
 	}

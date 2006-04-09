@@ -37,7 +37,7 @@ public HelpWindow() {
 
 	public void main(IWContext iwc) {
 
-    iwrb = getResourceBundle(iwc);
+    this.iwrb = getResourceBundle(iwc);
 
 
 
@@ -71,13 +71,12 @@ public HelpWindow() {
 
       super.main(iwc);
 
-      if ( headline.length() > 0 )
-
-        setTitle(headline);
-
-      else
-
-        setTitle("HelpWindow");
+      if ( headline.length() > 0 ) {
+				setTitle(headline);
+			}
+			else {
+				setTitle("HelpWindow");
+			}
 
 
 
@@ -139,7 +138,7 @@ public HelpWindow() {
 
 
 
-      helpTable.add(new CloseButton(iwrb.getImage("close.gif")),1,3);
+      helpTable.add(new CloseButton(this.iwrb.getImage("close.gif")),1,3);
 
 
 

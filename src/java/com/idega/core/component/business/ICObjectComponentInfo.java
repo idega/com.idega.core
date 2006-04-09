@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectComponentInfo.java,v 1.1 2005/09/20 15:36:49 tryggvil Exp $
+ * $Id: ICObjectComponentInfo.java,v 1.2 2006/04/09 12:13:16 laddi Exp $
  * Created on 8.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,10 +14,10 @@ package com.idega.core.component.business;
  * <p>
  * Implementation of ComponentInfo for ICObject registered objects
  * </p>
- *  Last modified: $Date: 2005/09/20 15:36:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ICObjectComponentInfo extends DefaultComponentInfo {
 
@@ -38,7 +38,7 @@ public class ICObjectComponentInfo extends DefaultComponentInfo {
 	 * @return Returns the icObjectId.
 	 */
 	public int getIcObjectId() {
-		return icObjectId;
+		return this.icObjectId;
 	}
 	
 	/**

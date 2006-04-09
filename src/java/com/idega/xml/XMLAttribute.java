@@ -1,5 +1,5 @@
 /*
- * $Id: XMLAttribute.java,v 1.3 2005/12/16 17:00:41 tryggvil Exp $
+ * $Id: XMLAttribute.java,v 1.4 2006/04/09 12:13:14 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -25,31 +25,34 @@ public class XMLAttribute implements Serializable{
 private Attribute _attribute = null;
 
   public XMLAttribute(String name, String value) {
-    _attribute = new Attribute(name,value);
+    this._attribute = new Attribute(name,value);
   }
 
   XMLAttribute(Attribute attribute) {
-    _attribute = attribute;
+    this._attribute = attribute;
   }
 
   public String getName() {
-    if (_attribute != null)
-      return(_attribute.getName());
+    if (this._attribute != null) {
+			return(this._attribute.getName());
+		}
 
     return(null);
   }
 
   public String getValue() {
-    if (_attribute != null)
-      return(_attribute.getValue());
+    if (this._attribute != null) {
+			return(this._attribute.getValue());
+		}
 
     return(null);
   }
 
   public int getIntValue() throws XMLException {
     try {
-      if (_attribute != null)
-        return(_attribute.getIntValue());
+      if (this._attribute != null) {
+				return(this._attribute.getIntValue());
+			}
     }
     catch(DataConversionException e) {
       throw new XMLException(e.getMessage());
@@ -59,10 +62,10 @@ private Attribute _attribute = null;
   }
 
   Attribute getAttribute() {
-    return(_attribute);
+    return(this._attribute);
   }
 
   void setAttribute(Attribute attribute) {
-    _attribute = attribute;
+    this._attribute = attribute;
   }
 }

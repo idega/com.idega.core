@@ -29,7 +29,7 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
     super();
     this.setName("idegaWeb User");
     //add(UserModule.UserModulePage.class);
-    justConstructed = true;
+    this.justConstructed = true;
     super.setResizable(false);
     super.setScrollbar(false);
     super.setWidth(555);
@@ -38,9 +38,9 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
 
   public void main(IWContext iwc) throws Exception {
     super.main(iwc);
-    if(justConstructed){
+    if(this.justConstructed){
       add(new UserModule.UserModulePage());
-      justConstructed = false;
+      this.justConstructed = false;
     }
   }
 
@@ -71,7 +71,7 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
 
     public void main(IWContext iwc)throws Exception{
 
-		  iwb = getBundle(iwc);
+		  this.iwb = getBundle(iwc);
 
 
       Table tb = new Table(2,4);
@@ -95,13 +95,13 @@ public class UserModule extends com.idega.idegaweb.presentation.IWAdminWindow {/
       tb.add(ifr1,1,2);
       tb.add(ifr,2,2);
 
-			Link tLink12 = new Link(iwb.getImage("group.gif"));
+			Link tLink12 = new Link(this.iwb.getImage("group.gif"));
       tLink12.setWindowToOpen(CreateUserGroup.class);
       tb.add(Text.getNonBrakingSpace(),1,3);
       tb.add(Text.getNonBrakingSpace(),1,3);
       tb.add(tLink12,1,3);
 
-			Link tLink11 = new Link(iwb.getImage("user.gif"));
+			Link tLink11 = new Link(this.iwb.getImage("user.gif"));
       tLink11.setWindowToOpen(CreateUser.class);
       tb.add(Text.getNonBrakingSpace(),2,3);
       tb.add(Text.getNonBrakingSpace(),2,3);

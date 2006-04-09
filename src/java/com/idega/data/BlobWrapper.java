@@ -1,5 +1,5 @@
 /*
- * $Id: BlobWrapper.java,v 1.15 2004/03/19 11:30:17 thomas Exp $
+ * $Id: BlobWrapper.java,v 1.16 2006/04/09 12:13:15 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -42,10 +42,10 @@ public class BlobWrapper {
 		//setDatasource(entity.getDatasource());
 	}
 	public void setInputStreamForBlobWrite(InputStream stream) {
-		writeInputStream = stream;
+		this.writeInputStream = stream;
 	}
 	protected InputStream getInputStreamForBlobWrite() {
-		return writeInputStream;
+		return this.writeInputStream;
 	}
 	/*
 	
@@ -81,17 +81,17 @@ public class BlobWrapper {
 	
 	*/
 	public OutputStream getOutputStreamForBlobWrite() {
-		if (writeOutputStream == null) {
+		if (this.writeOutputStream == null) {
 			/*writeOutputStream=new StreamConnectorOutputStream();
 			
 			writeInputStream = ((StreamConnectorOutputStream)writeOutputStream).getNewConnectedInputStream();
 			
 			*/
 			MemoryFileBuffer buf = new MemoryFileBuffer();
-			writeOutputStream = new MemoryOutputStream(buf);
-			writeInputStream = new MemoryInputStream(buf);
+			this.writeOutputStream = new MemoryOutputStream(buf);
+			this.writeInputStream = new MemoryInputStream(buf);
 		}
-		return writeOutputStream;
+		return this.writeOutputStream;
 	}
 	/*
 	
@@ -143,10 +143,10 @@ public class BlobWrapper {
 	
 	  }*/
 	public BlobInputStream getBlobInputStream(){
-		if (blobInputStream == null || blobInputStream.isClosed()) {
-			blobInputStream = (new BlobInputStream(this.entity, this.getTableColumnName()));
+		if (this.blobInputStream == null || this.blobInputStream.isClosed()) {
+			this.blobInputStream = (new BlobInputStream(this.entity, this.getTableColumnName()));
 		}
-		return blobInputStream;
+		return this.blobInputStream;
 	}
 	//public void populate() {
 	//  DatastoreInterface.getInstance(conn).populateBlob(this);
@@ -161,7 +161,7 @@ public class BlobWrapper {
 		this.status = status;
 	}
 	public int getStatus() {
-		return status;
+		return this.status;
 	}
 	protected void setTableColumnName(String columnName) {
 		this.columnName = columnName;
@@ -218,10 +218,10 @@ public class BlobWrapper {
 			
 			}*/
 			//System.out.println("BlobWrapper.close()");
-			if (blobInputStream != null) {
+			if (this.blobInputStream != null) {
 				//System.out.println("BlobWrapper.blobInputStream.close()");
-				blobInputStream.close();
-				blobInputStream = null;
+				this.blobInputStream.close();
+				this.blobInputStream = null;
 			}
 		} catch (Exception ex) {
 			System.err.println("Error in BlobWrapper close(): " + ex.getMessage());
@@ -493,8 +493,8 @@ public class BlobWrapper {
 	
 	  }*/
 	public String toString() {
-		if (entity != null) {
-			return entity.toString();
+		if (this.entity != null) {
+			return this.entity.toString();
 		} else {
 			return "-1";
 		}
@@ -506,6 +506,6 @@ public class BlobWrapper {
 		super.finalize();
 	}
 	public boolean isReadyForUpdate() {
-		return (!(writeInputStream == null));
+		return (!(this.writeInputStream == null));
 	}
 }

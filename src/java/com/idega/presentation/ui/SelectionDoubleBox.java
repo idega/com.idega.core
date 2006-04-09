@@ -39,82 +39,90 @@ public class SelectionDoubleBox extends InterfaceObject {
 	
 	public SelectionDoubleBox(String nameOfRightBox,String headerOfLeftBox,String headerOfRightBox){
 	  this(nameOfRightBox+"_left",nameOfRightBox);
-	  leftLabel = headerOfLeftBox;
-	  rightLabel = headerOfRightBox;
+	  this.leftLabel = headerOfLeftBox;
+	  this.rightLabel = headerOfRightBox;
 	}
 
 	public SelectionDoubleBox(String nameOfLeftBox, String nameOfRightBox) {
-		leftName = nameOfLeftBox;
-		rightName = nameOfRightBox;
+		this.leftName = nameOfLeftBox;
+		this.rightName = nameOfRightBox;
 	}
 
 	public void main(IWContext iwc) throws Exception {
-	    leftBox = getLeftBox();
-	    rightBox = getRightBox();
-	    toTheRight = getRightButton();
-		toTheLeft = getLeftButton();
+	    this.leftBox = getLeftBox();
+	    this.rightBox = getRightBox();
+	    this.toTheRight = getRightButton();
+		this.toTheLeft = getLeftButton();
 		
 	    
-		if( leftLabel!=null){
-		  leftBox.setTextHeading(leftLabel);
+		if( this.leftLabel!=null){
+		  this.leftBox.setTextHeading(this.leftLabel);
 		}
 		
-		if(rightLabel!=null){
-			rightBox.setTextHeading(rightLabel);
+		if(this.rightLabel!=null){
+			this.rightBox.setTextHeading(this.rightLabel);
 		}
 		
-		if(isSetAsNotEmpty){
-			rightBox.setAsNotEmpty(notEmptyErrorMessage);	
+		if(this.isSetAsNotEmpty){
+			this.rightBox.setAsNotEmpty(this.notEmptyErrorMessage);	
 		}
     
 		if (getStyleAttribute() != null) {
-			leftBox.setStyleAttribute(getStyleAttribute());
-			rightBox.setStyleAttribute(getStyleAttribute());
+			this.leftBox.setStyleAttribute(getStyleAttribute());
+			this.rightBox.setStyleAttribute(getStyleAttribute());
 			if (getWidth() != null) {
-				leftBox.setWidth(getWidth());
-				rightBox.setWidth(getWidth());
+				this.leftBox.setWidth(getWidth());
+				this.rightBox.setWidth(getWidth());
 			}
-			toTheLeft.setStyleAttribute(getStyleAttribute());
-			toTheRight.setStyleAttribute(getStyleAttribute());
+			this.toTheLeft.setStyleAttribute(getStyleAttribute());
+			this.toTheRight.setStyleAttribute(getStyleAttribute());
 		}
 
 		Table table = new Table(3, 1);
 		add(table);
 
-		table.add(leftBox, 1, 1);
+		table.add(this.leftBox, 1, 1);
 
-		toTheRight.setOnClick("move( this.form." + leftBox.getName() + ", this.form." + rightBox.getName() + " )");
-		table.add(toTheRight, 2, 1);
+		this.toTheRight.setOnClick("move( this.form." + this.leftBox.getName() + ", this.form." + this.rightBox.getName() + " )");
+		table.add(this.toTheRight, 2, 1);
 
 		table.addBreak(2, 1);
 
-		toTheLeft.setOnClick("move( this.form." + rightBox.getName() + ", this.form." + leftBox.getName() + " )");
-		table.add(toTheLeft, 2, 1);
+		this.toTheLeft.setOnClick("move( this.form." + this.rightBox.getName() + ", this.form." + this.leftBox.getName() + " )");
+		table.add(this.toTheLeft, 2, 1);
 
-		table.add(rightBox, 3, 1);
+		table.add(this.rightBox, 3, 1);
 		//add the script
 		Script script = this.getParentPage().getAssociatedScript();
 		addToScripts(script);
 	}
 
 	public SelectionBox getLeftBox() {
-		if( leftBox == null ) leftBox = new SelectionBox(leftName);
-		return leftBox;		
+		if( this.leftBox == null ) {
+			this.leftBox = new SelectionBox(this.leftName);
+		}
+		return this.leftBox;		
 	}
 
 	public SelectionBox getRightBox() {
-		if( rightBox == null ) rightBox = new SelectionBox(rightName);
-		return rightBox;
+		if( this.rightBox == null ) {
+			this.rightBox = new SelectionBox(this.rightName);
+		}
+		return this.rightBox;
 	}
 
 	public GenericButton getLeftButton() {
-		if( toTheLeft == null ) toTheLeft = new GenericButton("sdb_left", "<<");
-		return toTheLeft;
+		if( this.toTheLeft == null ) {
+			this.toTheLeft = new GenericButton("sdb_left", "<<");
+		}
+		return this.toTheLeft;
 	}
 
 	public GenericButton getRightButton() {
-		if( toTheRight == null ) toTheRight = new GenericButton("sdb_right", ">>");
-		return toTheRight;
+		if( this.toTheRight == null ) {
+			this.toTheRight = new GenericButton("sdb_right", ">>");
+		}
+		return this.toTheRight;
 	}
 
 	public void addToScripts(Script script) {
@@ -176,21 +184,21 @@ public class SelectionDoubleBox extends InterfaceObject {
 	 * @param errorMessage	The error message to display.
 	 */
 	public void setAsNotEmpty(String errorMessage) {
-		isSetAsNotEmpty = true;
-		notEmptyErrorMessage = errorMessage;
+		this.isSetAsNotEmpty = true;
+		this.notEmptyErrorMessage = errorMessage;
 	}
 	/**
 	 * @param string
 	 */
 	public void setLeftLabel(String string) {
-		leftLabel = string;
+		this.leftLabel = string;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setRightLabel(String string) {
-		rightLabel = string;
+		this.rightLabel = string;
 	}
 
 	/* (non-Javadoc)

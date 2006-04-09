@@ -103,14 +103,14 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     private TabbedPropertyPanel(String key, IWContext iwc) {
         
         setName(TAB_FORM_NAME);
-        frameTable = new Table();
-        frameTable.setCellpadding(0);
-        frameTable.setCellspacing(0);
-        frameTable.setWidth(Table.HUNDRED_PERCENT);
-        frameTable.setHeight(2, 5);
+        this.frameTable = new Table();
+        this.frameTable.setCellpadding(0);
+        this.frameTable.setCellspacing(0);
+        this.frameTable.setWidth(Table.HUNDRED_PERCENT);
+        this.frameTable.setHeight(2, 5);
 
-        tpane = IWTabbedPane.getInstance(key,iwc);
-        tpane.addChangeListener(this);
+        this.tpane = IWTabbedPane.getInstance(key,iwc);
+        this.tpane.addChangeListener(this);
         // add all change listeners
         Collection changeListeners;
         try {
@@ -122,16 +122,16 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
         }
         Iterator iterator = changeListeners.iterator();
         while (iterator.hasNext())  {
-            tpane.addChangeListener((ChangeListener) iterator.next());
+            this.tpane.addChangeListener((ChangeListener) iterator.next());
         }
-        tpane.setTabsToFormSubmit(this);
+        this.tpane.setTabsToFormSubmit(this);
         
         initializeLayout();
         initializeButtons(iwc);
-        this.add(frameTable);
+        this.add(this.frameTable);
         
-        ok.addIWSubmitListener(this, this,iwc);
-        cancel.addIWSubmitListener(this, this,iwc);
+        this.ok.addIWSubmitListener(this, this,iwc);
+        this.cancel.addIWSubmitListener(this, this,iwc);
     }
 	
 	public void setCollector(GenericFormCollector collector){
@@ -139,14 +139,14 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
 	}
 	
 	public GenericFormCollector getCollector(){
-		if(collector==null){
-			collector = new GenericFormCollector();
+		if(this.collector==null){
+			this.collector = new GenericFormCollector();
 		}
-		return collector;
+		return this.collector;
 	}
     
     public void actionPerformed(IWSubmitEvent e){
-        if(e.getSource() == ok){
+        if(e.getSource() == this.ok){
 		
             boolean success = getCollector().storeAll(e.getIWContext());
             if(success){
@@ -157,7 +157,7 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
             this.cancelClicked = false;
             this.applyClicked = false;
         }
-        else if(e.getSource() == cancel){
+        else if(e.getSource() == this.cancel){
             this.okClicked = false;
             this.cancelClicked = true;
             this.applyClicked = false;
@@ -178,10 +178,10 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     public void addTab(PresentationObject collectable, int index, IWContext iwc){
     		collectable.setParent(this);
     	
-        tpane.insertTab( collectable.getName(), collectable, index, iwc);
+        this.tpane.insertTab( collectable.getName(), collectable, index, iwc);
         if(collectable instanceof Collectable){
 			getCollector().addCollectable((Collectable)collectable, index);
-            useCollector = true;
+            this.useCollector = true;
         }
     }
     
@@ -198,73 +198,73 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     }
     
     public boolean isApplyButtonDisabled(){
-		return !useApplyButton;
+		return !this.useApplyButton;
     }
     public boolean isOkButtonDisabled(){
-		return !useOkButton;
+		return !this.useOkButton;
     }
     public boolean isCancelButtonDisabled(){
-		return !useCancelButton;
+		return !this.useCancelButton;
     }
 
     public void disableApplyButton(boolean value){
-        useApplyButton = !value;
+        this.useApplyButton = !value;
     }
     
     public void disableCancelButton(boolean value){
-        useCancelButton = !value;
+        this.useCancelButton = !value;
     }
     
     public void disableOkButton(boolean value){
-        useOkButton = !value;
+        this.useOkButton = !value;
     }
     
     public void dispose(IWContext iwc){
         //this method should also be called if someone presses the "x" close button on a window
         //todo implement by adding a frame around the panel and do a javascript onunload to call this method via an url
-        iwc.getSession().removeAttribute(attributeString);
-        tpane.dispose(iwc);
-        ok.endEvent(iwc);
-        cancel.endEvent(iwc);
+        iwc.getSession().removeAttribute(this.attributeString);
+        this.tpane.dispose(iwc);
+        this.ok.endEvent(iwc);
+        this.cancel.endEvent(iwc);
     }
     
     public PresentationObject[] getAddedTabs(){
-        return tpane.getAddedTabs();
+        return this.tpane.getAddedTabs();
     }
     
     public SubmitButton getCancelButton(){
-        return cancel;
+        return this.cancel;
     }
     
     public IWTabbedPane getIWTabbedPane(){
-        return tpane;
+        return this.tpane;
     }
     
     public SubmitButton getOkButton(){
-        return ok;
+        return this.ok;
     }
     
     public void initializeButtons(IWContext iwc){
         //changed for localized buttons - birna
     			IWResourceBundle iwrb = getResourceBundle(iwc);
-        ok = new SubmitButton(iwrb.getLocalizedString("save", "Save"), iwrb.getLocalizedString("save", "Save"));
-        okButton = new StyledButton(ok);
+        this.ok = new SubmitButton(iwrb.getLocalizedString("save", "Save"), iwrb.getLocalizedString("save", "Save"));
+        this.okButton = new StyledButton(this.ok);
         //ok.setSubmitConfirm(iwrb.getLocalizedString("change.group.details?", "Do you want to save changes to group details?"));
-        cancel = new SubmitButton(iwrb.getLocalizedString("close", "Close"), iwrb.getLocalizedString("close", "Close"));
-        cancelButton = new StyledButton(cancel);
+        this.cancel = new SubmitButton(iwrb.getLocalizedString("close", "Close"), iwrb.getLocalizedString("close", "Close"));
+        this.cancelButton = new StyledButton(this.cancel);
     }
     
     public void initializeLayout(){
-        frameTable.resize(1,3);
-        frameTable.add(tpane,1,1);
-        frameTable.setCellpadding(0);
-        frameTable.setCellspacing(0);
-        frameTable.setBorder(0);
-        frameTable.setWidth(Table.HUNDRED_PERCENT);
+        this.frameTable.resize(1,3);
+        this.frameTable.add(this.tpane,1,1);
+        this.frameTable.setCellpadding(0);
+        this.frameTable.setCellspacing(0);
+        this.frameTable.setBorder(0);
+        this.frameTable.setWidth(Table.HUNDRED_PERCENT);
     }
     
     public boolean justConstructed(){
-        return justConstructed;
+        return this.justConstructed;
     }
     
     public void justConstructed(boolean justConstructed){
@@ -273,38 +273,38 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     }
     
     public void lineUpButtons(){
-        buttonTable = new Table(2, 1);
+        this.buttonTable = new Table(2, 1);
         
-        buttonTable.setCellpadding(5);
-        buttonTable.setCellspacing(0);
-        buttonTable.setStyleClass("main");
-        buttonTable.setWidth(Table.HUNDRED_PERCENT);
-        buttonTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+        this.buttonTable.setCellpadding(5);
+        this.buttonTable.setCellspacing(0);
+        this.buttonTable.setStyleClass("main");
+        this.buttonTable.setWidth(Table.HUNDRED_PERCENT);
+        this.buttonTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
         
         Table buttons = new Table();
         buttons.setCellpadding(0);
         buttons.setCellspacing(0);
 
-				if (useOkButton) {
-          buttons.add(okButton, 1, 1);
+				if (this.useOkButton) {
+          buttons.add(this.okButton, 1, 1);
         }
         
-        if(useCancelButton) {
+        if(this.useCancelButton) {
           buttons.setWidth(2, 5);
-          buttons.add(cancelButton, 3, 1);
+          buttons.add(this.cancelButton, 3, 1);
         }
-        buttonTable.add(buttons, 2, 1);
+        this.buttonTable.add(buttons, 2, 1);
         
-        frameTable.add(buttonTable, 1, 3);
+        this.frameTable.add(this.buttonTable, 1, 3);
     }
     
     public void main(IWContext iwc) throws Exception{
-        if(stateChanged){
-            boolean success = getCollector().setSelectedIndex(tpane.getSelectedIndex(),iwc);
+        if(this.stateChanged){
+            boolean success = getCollector().setSelectedIndex(this.tpane.getSelectedIndex(),iwc);
             if(!success){
                 this.getIWTabbedPane().setSelectedIndex(getCollector().getSelectedIndex());
             }
-            stateChanged = false;
+            this.stateChanged = false;
         }
         super.main(iwc);
     }
@@ -314,14 +314,14 @@ public class TabbedPropertyPanel extends Form implements ChangeListener, IWSubmi
     }
     
     public void stateChanged(ChangeEvent e){
-        if(useCollector && !first){
-            stateChanged = true;
+        if(this.useCollector && !this.first){
+            this.stateChanged = true;
         }
-        first = false;
+        this.first = false;
     }
     
     public void addHelpButton(PresentationObject obj) {
-    		buttonTable.emptyCell(1, 1);
-    		buttonTable.add(obj, 1, 1);
+    		this.buttonTable.emptyCell(1, 1);
+    		this.buttonTable.add(obj, 1, 1);
     }   
 }

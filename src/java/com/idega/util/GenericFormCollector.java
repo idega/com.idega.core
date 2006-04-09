@@ -30,7 +30,7 @@ public class GenericFormCollector {
   }
 
   public int getSelectedIndex(){
-    return selectedIndex;
+    return this.selectedIndex;
   }
 
   /**
@@ -42,7 +42,7 @@ public class GenericFormCollector {
   public boolean setSelectedIndex(int index, IWContext iwc){
     boolean collected = true;
     if(this.selectedIndex > -1 && this.selectedIndex < this.addedCollectableObjects.size()){
-      if(selectedIndex != index ){
+      if(this.selectedIndex != index ){
         collected = ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(iwc);
       }
     }

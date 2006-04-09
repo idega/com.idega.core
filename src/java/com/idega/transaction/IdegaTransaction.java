@@ -258,7 +258,7 @@ private void setRollBackOnly(boolean rollbackOnly)throws java.lang.IllegalStateE
 
 
 private Synchronization getSynchronization(){
-  return syncronization;
+  return this.syncronization;
 }
 
 /**
@@ -342,7 +342,7 @@ public void freeConnection(Connection conn){
 
     //ConnectionBroker.freeConnection(conn,false);
 
-    ConnectionBroker.freeConnection(this._dataSource,_conn,false);
+    ConnectionBroker.freeConnection(this._dataSource,this._conn,false);
 
     this._conn=null;
 
@@ -367,7 +367,7 @@ protected void setDatasource(String datasourceName){
   public void begin() throws javax.transaction.NotSupportedException, javax.transaction.SystemException {
     if(this.transactionCount==0){
       //((IdegaTransactionManager)IdegaTransactionManager.getInstance()).begin(this);
-      _conn = getFirstConnection();
+      this._conn = getFirstConnection();
       ThreadContext.getInstance().setAttribute(Thread.currentThread(),getTransactionAttributeName(),this);
       this.transactionCount=1;
       setStatus(Status.STATUS_ACTIVE);
@@ -381,7 +381,7 @@ protected void setDatasource(String datasourceName){
 
 
   public void beginSubTransaction(){
-    transactionCount++;
+    this.transactionCount++;
   }
 
   private String getTransactionAttributeName() {

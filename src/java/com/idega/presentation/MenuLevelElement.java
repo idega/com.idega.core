@@ -51,20 +51,20 @@ public class MenuLevelElement extends PresentationObject {
 	 * sets the initial values for the <code>MenuLevelElement</code>
 	 */
 	public void initialLevelValues(){
-		setWidth(width);
-		setHeight(height);
-		setRegClass(regClass);
-		setOverClass(overClass);
-		setBorderX(borderX);
-		setBorderY(borderY);
-		setBorderClass(borderClass);
-		setOffsetX(offsetX);
-		setOffsetY(offsetY);
-		setRows(rows);
-		setArrow(arrow);
-		setArrowHeight(arrowHeight);
-		setArrowWidth(arrowWidth);
-		setAlign(align);
+		setWidth(this.width);
+		setHeight(this.height);
+		setRegClass(this.regClass);
+		setOverClass(this.overClass);
+		setBorderX(this.borderX);
+		setBorderY(this.borderY);
+		setBorderClass(this.borderClass);
+		setOffsetX(this.offsetX);
+		setOffsetY(this.offsetY);
+		setRows(this.rows);
+		setArrow(this.arrow);
+		setArrowHeight(this.arrowHeight);
+		setArrowWidth(this.arrowWidth);
+		setAlign(this.align);
 	}
 //	public void addLevel(String l){
 //		MenuLevelElement levelElement = new MenuLevelElement(l);
@@ -80,7 +80,7 @@ public class MenuLevelElement extends PresentationObject {
 	 * @param l
 	 */
 	public void setLevel(String l){
-		menuLevel = l;
+		this.menuLevel = l;
 //		setAttribute("level", l);
 	}
 	/**
@@ -95,7 +95,7 @@ public class MenuLevelElement extends PresentationObject {
 	 * @return the level of the <code> MenuLevelElement </code>
 	 */
 	public String getLevel(){
-		return menuLevel;
+		return this.menuLevel;
 //		return getAttribute("level");
 	}
 	/**

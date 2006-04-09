@@ -71,15 +71,15 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
 
 
   public boolean stateHasChanged(){
-    return _stateHasChanged;
+    return this._stateHasChanged;
   }
 
   public IWLocation getLocation(){
-    return _location;
+    return this._location;
   }
 
   public void setLocation(IWLocation location){
-    _location = location;
+    this._location = location;
   }
 
   /**
@@ -90,7 +90,7 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
    */
   public void fireStateChanged() {
       // Guaranteed to return a non-null array
-      Object[] listeners = listenerList.getListenerList();
+      Object[] listeners = this.listenerList.getListenerList();
 //      System.out.println("ChangeEventListener.listenerList: "+ listenerList);
 //      System.out.println("ChangeEventListener: "+ listeners);
       // Process the listeners last to first, notifying
@@ -98,16 +98,17 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
       for (int i = listeners.length-2; i>=0; i-=2) {
           if (listeners[i]==ChangeListener.class) {
               // Lazily create the event:
-              if (changeEvent == null)
-                changeEvent = new ChangeEvent(this);
-                ((ChangeListener)listeners[i+1]).stateChanged(changeEvent);
+              if (this.changeEvent == null) {
+								this.changeEvent = new ChangeEvent(this);
+							}
+                ((ChangeListener)listeners[i+1]).stateChanged(this.changeEvent);
           }
       }
-      _stateHasChanged = false;
+      this._stateHasChanged = false;
   }
 
   public ChangeListener[] getChangeListener(){
-    return (ChangeListener[])listenerList.getListeners(ChangeListener.class);
+    return (ChangeListener[])this.listenerList.getListeners(ChangeListener.class);
   }
 
   /**
@@ -121,7 +122,7 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
 	    return false;
 	}
 	
-	Object[] tmpList = listenerList.getListenerList(); 
+	Object[] tmpList = this.listenerList.getListenerList(); 
 	for (int i = tmpList.length-2; i>=0; i-=2) {
 	    if ((tmpList[i]==t) && (tmpList[i+1].equals(l) == true)) {
 		return true;
@@ -134,12 +135,12 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
   	//TEMP solution for checking multiple addition of the same listeners
   	// it might not always be right not to add listener again.
   	if(!listenerListContains(ChangeListener.class,listener)){
-  		listenerList.add(ChangeListener.class,listener);
+  		this.listenerList.add(ChangeListener.class,listener);
   	}
   }
 
   public void removeChangeListener(ChangeListener listener){
-    listenerList.remove(ChangeListener.class,listener);
+    this.listenerList.remove(ChangeListener.class,listener);
   }
 
   public Object clone() {
@@ -171,7 +172,7 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
 	 * @return String
 	 */
 	public String getCompoundId() {
-		return compoundId;
+		return this.compoundId;
 	}
 
 	/**
@@ -197,7 +198,7 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
       int i = myCompoundId.lastIndexOf("/");
       anotherCompoundId = myCompoundId.substring(0, i);
     }
-    return StatefullPresentationImplHandler.getPresentationState(anotherCompoundId, iwuc);
+    return StatefullPresentationImplHandler.getPresentationState(anotherCompoundId, this.iwuc);
   }
 
 	/**
@@ -217,7 +218,7 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
 	 * @uml.property name="artificialCompoundId"
 	 */
 	public String getArtificialCompoundId() {
-		return artificialCompoundId;
+		return this.artificialCompoundId;
 	}
 
 }

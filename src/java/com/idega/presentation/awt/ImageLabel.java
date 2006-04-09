@@ -146,7 +146,7 @@ public class ImageLabel extends Canvas {
    */
   public ImageLabel(URL imageURL) {
     this(loadImage(imageURL));
-    imageString = imageURL.toExternalForm();
+    this.imageString = imageURL.toExternalForm();
   }
 
   /** Create an ImageLabel using the image in the file
@@ -157,7 +157,7 @@ public class ImageLabel extends Canvas {
    */
   public ImageLabel(URL imageDirectory, String file) {
     this(makeURL(imageDirectory, file));
-    imageString = file;
+    this.imageString = file;
   }
 
   /** Create an ImageLabel using the image specified.
@@ -170,9 +170,9 @@ public class ImageLabel extends Canvas {
    */
   public ImageLabel(Image image) {
     this.image = image;
-    tracker = new MediaTracker(this);
-    currentTrackerID = lastTrackerID++;
-    tracker.addImage(image, currentTrackerID);
+    this.tracker = new MediaTracker(this);
+    this.currentTrackerID = lastTrackerID++;
+    this.tracker.addImage(image, this.currentTrackerID);
   }
 
   //----------------------------------------------------
@@ -201,42 +201,47 @@ public class ImageLabel extends Canvas {
    *   <B>before</B> calling paint.
    */
   public void waitForImage(boolean doLayout) {
-    if (!doneLoading) {
+    if (!this.doneLoading) {
       debug("[waitForImage] - Resizing and waiting for "
-            + imageString);
-      try { tracker.waitForID(currentTrackerID); }
+            + this.imageString);
+      try { this.tracker.waitForID(this.currentTrackerID); }
       catch (InterruptedException ie) {}
       catch (Exception e) {
         System.out.println("Error loading "
-                           + imageString + ": "
+                           + this.imageString + ": "
                            + e.getMessage());
         e.printStackTrace();
       }
-      if (tracker.isErrorID(0))
-        new Throwable("Error loading image "
-                      + imageString).printStackTrace();
-      doneLoading = true;
-      if (explicitWidth != 0)
-        width = explicitWidth;
-      else
-        width = image.getWidth(this) + 2*border;
-      if (explicitHeight != 0)
-        height = explicitHeight;
-      else
-        height = image.getHeight(this) + 2*border;
-      resize(width, height);
-      debug("[waitForImage] - " + imageString + " is "
-            + width + "x" + height + ".");
+      if (this.tracker.isErrorID(0)) {
+				new Throwable("Error loading image "
+                      + this.imageString).printStackTrace();
+			}
+      this.doneLoading = true;
+      if (this.explicitWidth != 0) {
+				this.width = this.explicitWidth;
+			}
+			else {
+				this.width = this.image.getWidth(this) + 2*this.border;
+			}
+      if (this.explicitHeight != 0) {
+				this.height = this.explicitHeight;
+			}
+			else {
+				this.height = this.image.getHeight(this) + 2*this.border;
+			}
+      resize(this.width, this.height);
+      debug("[waitForImage] - " + this.imageString + " is "
+            + this.width + "x" + this.height + ".");
 
       // If no parent, you are OK, since it will have
       // been resized before being added. But if
       // parent exists, you have already been added,
       // and the change in size requires re-layout.
-      if (((parentContainer = getParent()) != null)
+      if (((this.parentContainer = getParent()) != null)
           && doLayout) {
-        setBackground(parentContainer.getBackground());
+        setBackground(this.parentContainer.getBackground());
 //        parentContainer.layout();
-        parentContainer.doLayout();
+        this.parentContainer.doLayout();
       }
     }
   }
@@ -260,10 +265,10 @@ public class ImageLabel extends Canvas {
    */
 
   public void centerAt(int x, int y) {
-    debug("Placing center of " + imageString + " at ("
+    debug("Placing center of " + this.imageString + " at ("
           + x + "," + y + ")");
 //    move(x - width/2, y - height/2);
-    setLocation(x - width/2, y - height/2);
+    setLocation(x - this.width/2, y - this.height/2);
   }
 
   //----------------------------------------------------
@@ -274,8 +279,8 @@ public class ImageLabel extends Canvas {
    *  locate() tests correctly.
    */
   public synchronized boolean inside(int x, int y) {
-    return((x >= 0) && (x <= width)
-           && (y >= 0) && (y <= height));
+    return((x >= 0) && (x <= this.width)
+           && (y >= 0) && (y <= this.height));
   }
 
   //----------------------------------------------------
@@ -283,17 +288,20 @@ public class ImageLabel extends Canvas {
    *  subclass, be sure to call super.paint.
    */
   public void paint(Graphics g) {
-    if (!doneLoading)
-      waitForImage(true);
-    else {
-      if (explicitSize)
-        g.drawImage(image, border, border,
-                    width-2*border, height-2*border,
+    if (!this.doneLoading) {
+			waitForImage(true);
+		}
+		else {
+      if (this.explicitSize) {
+				g.drawImage(this.image, this.border, this.border,
+                    this.width-2*this.border, this.height-2*this.border,
                     this);
-      else
-        g.drawImage(image, border, border, this);
-      drawRect(g, 0, 0, width-1, height-1,
-               border, borderColor);
+			}
+			else {
+				g.drawImage(this.image, this.border, this.border, this);
+			}
+      drawRect(g, 0, 0, this.width-1, this.height-1,
+               this.border, this.borderColor);
     }
   }
 
@@ -307,8 +315,9 @@ public class ImageLabel extends Canvas {
    *  returned.
    */
   public Dimension preferredSize() {
-    if (!doneLoading)
-      waitForImage(false);
+    if (!this.doneLoading) {
+			waitForImage(false);
+		}
     return(super.preferredSize());
     //return(super.getPreferredSize());
 //  return new Dimension(width,height);
@@ -333,8 +342,9 @@ public class ImageLabel extends Canvas {
    *  returned.
    */
    public Dimension minimumSize() {
-     if (!doneLoading)
-       waitForImage(false);
+     if (!this.doneLoading) {
+			waitForImage(false);
+		}
      return(super.minimumSize());
 //  return new Dimension(width,height);
    }
@@ -405,12 +415,14 @@ public class ImageLabel extends Canvas {
 
   public void reshape(int x, int y,
                       int width, int height) {
-    if (!doneLoading) {
-      explicitSize=true;
-      if (width > 0)
-        explicitWidth=width;
-      if (height > 0)
-        explicitHeight=height;
+    if (!this.doneLoading) {
+      this.explicitSize=true;
+      if (width > 0) {
+				this.explicitWidth=width;
+			}
+      if (height > 0) {
+				this.explicitHeight=height;
+			}
     }
     super.reshape(x, y, width, height);
 //    super.setBounds(x, y, width, height);
@@ -451,8 +463,9 @@ public class ImageLabel extends Canvas {
    * @param message The String to be printed.
    */
   protected void debug(String message) {
-    if (debug)
-      System.out.println(message);
+    if (this.debug) {
+			System.out.println(message);
+		}
   }
 
   //----------------------------------------------------
@@ -493,14 +506,14 @@ public class ImageLabel extends Canvas {
   /** The Image associated with the ImageLabel. */
 
   public Image getImage() {
-    return(image);
+    return(this.image);
   }
 
   //----------------------------------------------------
   /** Gets the border width. */
 
   public int getTheBorder() {
-    return(border);
+    return(this.border);
   }
 
   /** Sets the border thickness. */
@@ -513,7 +526,7 @@ public class ImageLabel extends Canvas {
   /** Gets the border color. */
 
   public Color getBorderColor() {
-    return(borderColor);
+    return(this.borderColor);
   }
 
   /** Sets the border color. */
@@ -530,13 +543,13 @@ public class ImageLabel extends Canvas {
   /** Gets the width (image width plus twice border). */
 
   public int getWidth() {
-    return(width);
+    return(this.width);
   }
 
   /** Gets the height (image height plus 2x border). */
 
   public int getHeight() {
-    return(height);
+    return(this.height);
   }
 
   //----------------------------------------------------
@@ -548,7 +561,7 @@ public class ImageLabel extends Canvas {
    *  otherwise.
    */
   protected boolean hasExplicitSize() {
-    return(explicitSize);
+    return(this.explicitSize);
   }
 
   //----------------------------------------------------
@@ -576,14 +589,14 @@ public class ImageLabel extends Canvas {
    *  of image.
    */
   protected String getImageString() {
-    return(imageString);
+    return(this.imageString);
   }
 
   //----------------------------------------------------
   /** Is the debugging flag set? */
 
   public boolean isDebugging() {
-    return(debug);
+    return(this.debug);
   }
 
   /** Set the debugging flag. Verbose messages

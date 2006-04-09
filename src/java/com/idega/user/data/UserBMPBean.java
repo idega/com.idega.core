@@ -426,7 +426,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if( temp.equals("")){
 				this.removeFromColumn(getColumnNameFirstName());
 			}
-			else setColumn(getColumnNameFirstName(), fName);
+			else {
+				setColumn(getColumnNameFirstName(), fName);
+			}
 		}	
 		//      }
 	}
@@ -440,7 +442,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if( temp.equals("")){
 				this.removeFromColumn(getColumnNameMiddleName());
 			}
-			else setColumn(getColumnNameMiddleName(), mName);
+			else {
+				setColumn(getColumnNameMiddleName(), mName);
+			}
 		}	
 	}
 
@@ -453,7 +457,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if( temp.equals("")){
 				this.removeFromColumn(getColumnNameLastName());
 			}
-			else setColumn(getColumnNameLastName(), lName);
+			else {
+				setColumn(getColumnNameLastName(), lName);
+			}
 		}	
 	}
 	
@@ -1135,8 +1141,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	public Integer ejbFindByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String personalId, String first_name, String last_name) throws FinderException {
     
-    if (personalId.length() < 6)
-	    throw new FinderException("PersonalID shorter than 6 letters");
+    if (personalId.length() < 6) {
+			throw new FinderException("PersonalID shorter than 6 letters");
+		}
 	IDOQuery query = idoQueryGetSelect();
 		 query
 			.appendWhere(getColumnNamePersonalID())
@@ -1154,12 +1161,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		 Collection users = idoFindPKsByQuery(query);
 
 
-		if (users.size() > 1)
+		if (users.size() > 1) {
 			throw new FinderException("More than one user matched the criteria. Couldn't determine which user to choose");
-		else if (!users.isEmpty())
+		}
+		else if (!users.isEmpty()) {
 			return (Integer) users.iterator().next();
-		else
+		}
+		else {
 			throw new FinderException("No user found");
+		}
 	}
 
 	
@@ -1244,7 +1254,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 
 	protected Group getGeneralGroup() {
-		if (_group == null) {
+		if (this._group == null) {
 			try {
 				Integer groupID;
 				Integer userGroupID = this.getIntegerColumnValue(_COLUMNNAME_USER_GROUP_ID);
@@ -1254,14 +1264,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				else {
 					groupID = userGroupID;
 				}
-				_group = getGroupHome().findByPrimaryKey(groupID);
+				this._group = getGroupHome().findByPrimaryKey(groupID);
 				//System.out.println("Getting userGroup "+_group.getName()+",id="+_group.getPrimaryKey()+" for user: "+this.getName()+",id="+this.getID());
 			}
 			catch (FinderException fe) {
 				throw new EJBException(fe.getMessage());
 			}
 		}
-		return _group;
+		return this._group;
 	}
 
 	public void setGroupID(int icGroupId) {
@@ -1335,10 +1345,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				
 		if( (startAge >= 0) && (endAge >=startAge) ){
 			Criteria ageCriteria = getUserDateOfBirthCriteria(startAge, endAge);
-			if(theCriteria==null)
+			if(theCriteria==null) {
 				theCriteria = ageCriteria;
-			else 
+			}
+			else {
 				theCriteria = new AND(theCriteria,ageCriteria);
+			}
 		}		
 		
 		//personalId
@@ -1347,10 +1359,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if(theCriteria==null){
 				theCriteria = personalIdCriteria;
 			} else {
-				if(useAnd)
+				if(useAnd) {
 					theCriteria = new AND(theCriteria,personalIdCriteria);
-				else 
+				}
+				else {
 					theCriteria = new OR(theCriteria,personalIdCriteria);
+				}
 			}	
 		}
 			
@@ -1361,10 +1375,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				if(theCriteria==null){
 					theCriteria = streetNameCriteria;
 				} else {
-					if(useAnd)
+					if(useAnd) {
 						theCriteria = new AND(theCriteria,streetNameCriteria);
-					else 
+					}
+					else {
 						theCriteria = new OR(theCriteria,streetNameCriteria);
+					}
 				}
 			}
 			catch (RemoteException re) {
@@ -1378,10 +1394,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if(theCriteria==null){
 				theCriteria = genderCriteria;
 			} else {
-				if(useAnd)
+				if(useAnd) {
 					theCriteria = new AND(theCriteria,genderCriteria);
-				else 
+				}
+				else {
 					theCriteria = new OR(theCriteria,genderCriteria);
+				}
 			}
 		}
 			
@@ -1392,10 +1410,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if(theCriteria==null){
 				theCriteria = StatusIdCriteria;
 			} else {
-				if(useAnd)
+				if(useAnd) {
 					theCriteria = new AND(theCriteria,StatusIdCriteria);
-				else 
+				}
+				else {
 					theCriteria = new OR(theCriteria,StatusIdCriteria);
+				}
 			}
 		}
 		
@@ -1406,10 +1426,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if(theCriteria==null){
 				theCriteria = groupNameCriteria;
 			} else {
-				if(useAnd)
+				if(useAnd) {
 					theCriteria = new AND(theCriteria,groupNameCriteria);
-				else 
+				}
+				else {
 					theCriteria = new OR(theCriteria,groupNameCriteria);
+				}
 			}
 		}	
 			
@@ -1423,10 +1445,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			}
 		}
 		
-		if(theCriteria==null)
+		if(theCriteria==null) {
 			theCriteria = getNotDeletedCriteria();
-		else 
+		}
+		else {
 			theCriteria = new AND(theCriteria,getNotDeletedCriteria());
+		}
 		
 		query.addCriteria(theCriteria);
 		addOrderByName(query,orderLastFirst,true);
@@ -1580,35 +1604,46 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		
 		switch (count) {
 		case 1:
-			if(firstNameCriteria!=null)
+			if(firstNameCriteria!=null) {
 				return firstNameCriteria;
-			if(middleNameCriteria!=null)
+			}
+			if(middleNameCriteria!=null) {
 				return middleNameCriteria;
-			if(lastNameCriteria!=null)
+			}
+			if(lastNameCriteria!=null) {
 				return lastNameCriteria;
-			else
+			}
+			else {
 				return null;
+			}
 		case 2:
 			if(middleNameCriteria==null){
-				if(andCriteria)
+				if(andCriteria) {
 					return new AND(firstNameCriteria,lastNameCriteria);
-				else 
+				}
+				else {
 					return new OR(firstNameCriteria,lastNameCriteria);
+				}
 			}
 			if(lastNameCriteria==null){
-				if(andCriteria)
+				if(andCriteria) {
 					return new AND(firstNameCriteria,middleNameCriteria);
-				else 
+				}
+				else {
 					return new OR(firstNameCriteria,middleNameCriteria);
+				}
 			}
 			if(firstNameCriteria==null){
-				if(andCriteria)
+				if(andCriteria) {
 					return new AND(middleNameCriteria,lastNameCriteria);
-				else 
+				}
+				else {
 					return new OR(middleNameCriteria,lastNameCriteria);
+				}
 			}
-			else
+			else {
 				return null;
+			}
 		case 3:
 			if(andCriteria){
 				AND cr1 = new AND(firstNameCriteria,middleNameCriteria);

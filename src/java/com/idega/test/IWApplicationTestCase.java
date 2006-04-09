@@ -19,10 +19,10 @@ import com.idega.util.FileUtil;
  * Test case that set-ups an embedded IdegaWeb application and loads up all
  * necessary resources before running a test case.
  * </p>
- *  Last modified: $Date: 2006/04/04 11:53:02 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class IWApplicationTestCase extends TestCase {
 
@@ -43,13 +43,13 @@ public class IWApplicationTestCase extends TestCase {
 	protected void setUp() throws Exception {
 		//super.setUp();
 		
-		baseDir = initializeBaseDir();
+		this.baseDir = initializeBaseDir();
 		
 		initializeDBProperties();
 		
-		ServletContext context = new MockServletContext(baseDir);
-		starter = new IWMainApplicationStarter(context);
-		starter.startup();
+		ServletContext context = new MockServletContext(this.baseDir);
+		this.starter = new IWMainApplicationStarter(context);
+		this.starter.startup();
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class IWApplicationTestCase extends TestCase {
 	 */
 	protected void initializeDBProperties() {
 		
-		File realPropsDir = new File(baseDir,"WEB-INF/idegaweb/properties");
+		File realPropsDir = new File(this.baseDir,"WEB-INF/idegaweb/properties");
 		realPropsDir.mkdirs();
 		File realPropsFile = new File(realPropsDir,"db.properties");
 		
@@ -138,8 +138,8 @@ public class IWApplicationTestCase extends TestCase {
 		// TODO Auto-generated method stub
 		//super.tearDown();
 	
-		starter.shutdown();
-		FileUtil.deleteFileAndChildren(baseDir);
+		this.starter.shutdown();
+		FileUtil.deleteFileAndChildren(this.baseDir);
 	}
 	
 	

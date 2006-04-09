@@ -245,8 +245,9 @@ public class UserBusiness {
     try {
       List L = EntityFinder.getInstance().findRelated(user,Email.class);
       if(L != null){
-        if ( L.size() > 0 )
-          return (Email)L.get(0);
+        if ( L.size() > 0 ) {
+					return (Email)L.get(0);
+				}
       }
       return null;
     }
@@ -411,8 +412,9 @@ public class UserBusiness {
 			userToUpdate.setPrimaryGroupID(primary_group);
 		}
 		
-		if (personalID != null)
+		if (personalID != null) {
 			userToUpdate.setPersonalID(personalID);
+		}
 
 		userToUpdate.update();
 
@@ -456,8 +458,9 @@ public class UserBusiness {
       //EntityFinder.debug = true;
       java.util.List c = EntityFinder.getInstance().findAllByColumn(Email.class,com.idega.core.contact.data.EmailBMPBean.getColumnNameAddress(),EmailAddress);
       //EntityFinder.debug = false;
-      if(c!=null && c.size() > 0)
-        return (Email) c.get(0);
+      if(c!=null && c.size() > 0) {
+				return (Email) c.get(0);
+			}
     }
     catch (Exception ex) {
 

@@ -27,13 +27,13 @@ public class TextStyler implements Serializable{
 	}
 
 	public String getStyleString() {
-		Iterator iter = _styleMap.keySet().iterator();
+		Iterator iter = this._styleMap.keySet().iterator();
 		String attribute;
 		String value;
 		StringBuffer styleString = new StringBuffer();
 		while (iter.hasNext()) {
 			attribute = (String) iter.next();
-			value = (String) _styleMap.get(attribute);
+			value = (String) this._styleMap.get(attribute);
 			if (value != null) {
 				styleString.append(attribute).append(StyleConstants.DELIMITER_COLON).append(value).append(StyleConstants.DELIMITER_SEMICOLON);
 			}
@@ -60,42 +60,50 @@ public class TextStyler implements Serializable{
 						attribute = tokens2.nextToken();
 						a++;
 					}
-					else if (a == 2) value = tokens2.nextToken();
+					else if (a == 2) {
+						value = tokens2.nextToken();
+					}
 				}
-				_styleMap.put(attribute, value);
+				this._styleMap.put(attribute, value);
 			}
 		}
 	}
 
 	private void setDefaultValues() {
-		if (_styleMap == null) _styleMap = new LinkedHashMap();
+		if (this._styleMap == null) {
+			this._styleMap = new LinkedHashMap();
+		}
 
-		if (_styles != null) {
-			for (int a = 0; a < _styles.length; a++) {
-				_styleMap.put(_styles[a], null);
+		if (this._styles != null) {
+			for (int a = 0; a < this._styles.length; a++) {
+				this._styleMap.put(this._styles[a], null);
 			}
 		}
 	}
 
 	public void setStyleValue(String attribute, String value) {
-		_styleMap.put(attribute, value);
+		this._styleMap.put(attribute, value);
 	}
 
 	public String getStyleValue(String attribute) {
-		String value = (String) _styleMap.get(attribute);
-		if (value != null) return value;
+		String value = (String) this._styleMap.get(attribute);
+		if (value != null) {
+			return value;
+		}
 		return "";
 	}
 
 	public boolean isStyleSet(String attribute) {
-		String value = (String) _styleMap.get(attribute);
-		if (value != null) return true;
+		String value = (String) this._styleMap.get(attribute);
+		if (value != null) {
+			return true;
+		}
 		return false;
 	}
 
 	public void removeStyleValue(String attribute) {
 		if (isStyleSet(attribute)) {
-			_styleMap.remove(attribute);
+			this._styleMap.remove(attribute);
 		}
 	}
 }

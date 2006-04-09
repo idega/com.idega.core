@@ -46,27 +46,31 @@ public class BusyBar extends Block {
   }
 
   public void addBusyObject(InterfaceObject obj){
-    if(busyObjects==null)
-      busyObjects = new java.util.Vector();
-    busyObjects.add(obj);
+    if(this.busyObjects==null) {
+			this.busyObjects = new java.util.Vector();
+		}
+    this.busyObjects.add(obj);
   }
 
   public void addDisabledObject(InterfaceObject obj){
-    if(disabledObjects==null)
-      disabledObjects = new java.util.Vector();
-    disabledObjects.add(obj);
+    if(this.disabledObjects==null) {
+			this.disabledObjects = new java.util.Vector();
+		}
+    this.disabledObjects.add(obj);
   }
 
   public void addBusyObject(Link obj){
-    if(busyObjects==null)
-      busyObjects = new java.util.Vector();
-    busyObjects.add(obj);
+    if(this.busyObjects==null) {
+			this.busyObjects = new java.util.Vector();
+		}
+    this.busyObjects.add(obj);
   }
 
   public void addDisabledObject(Link obj){
-    if(disabledObjects==null)
-      disabledObjects = new java.util.Vector();
-    disabledObjects.add(obj);
+    if(this.disabledObjects==null) {
+			this.disabledObjects = new java.util.Vector();
+		}
+    this.disabledObjects.add(obj);
   }
 
 
@@ -80,43 +84,43 @@ public class BusyBar extends Block {
   }
 
   public void setBusyBarUrl(String url){
-    _url = url;
+    this._url = url;
   }
 
   public void setBusyOnChange(){
-    _busyOnChange = true;
+    this._busyOnChange = true;
   }
 
   public void main(IWContext iwc){
-    if(_url == null || "".equals(_url) ){
-      _url = iwc.getIWMainApplication().getCoreBundle().getImage("busy.gif").getURL();
+    if(this._url == null || "".equals(this._url) ){
+      this._url = iwc.getIWMainApplication().getCoreBundle().getImage("busy.gif").getURL();
     }
-    getParentPage().setOnLoad(Image.getPreloadScript(_url));
+    getParentPage().setOnLoad(Image.getPreloadScript(this._url));
     Image busy = iwc.getIWMainApplication().getCoreBundle().getImage("transparentcell.gif");
-    busy.setName(name);
+    busy.setName(this.name);
     setScripts();
     add(busy);
   }
 
   private void setScripts(){
-    if(busyObjects!=null){
-      java.util.Iterator iter = busyObjects.iterator();
+    if(this.busyObjects!=null){
+      java.util.Iterator iter = this.busyObjects.iterator();
       while(iter.hasNext()){
         Object o = iter.next();
         if(o instanceof InterfaceObject ){
           InterfaceObject obj = (InterfaceObject)o;
-          if(disabledObjects != null){
-            Iterator iter2 = disabledObjects.iterator();
+          if(this.disabledObjects != null){
+            Iterator iter2 = this.disabledObjects.iterator();
             while (iter2.hasNext()) {
               PresentationObject item = (PresentationObject)iter2.next();
-              if(_busyOnChange){
+              if(this._busyOnChange){
                 obj.setOnChange(getDisabledScript(item));
               } else {
                 obj.setOnClick(getDisabledScript(item));
               }
             }
           }
-           if(_busyOnChange){
+           if(this._busyOnChange){
             obj.setOnChange("this.form.submit()");
             obj.setOnChange(getCallingScript());
             obj.setOnChange("return false;");
@@ -130,8 +134,8 @@ public class BusyBar extends Block {
         else if(o instanceof Link){
           Link obj = (Link) o;
           obj.setOnClick(getCallingScript());
-          if(disabledObjects != null){
-            Iterator iter2 = disabledObjects.iterator();
+          if(this.disabledObjects != null){
+            Iterator iter2 = this.disabledObjects.iterator();
             while (iter2.hasNext()) {
               PresentationObject item = (PresentationObject)iter2.next();
               obj.setOnClick(getDisabledScript(item));
@@ -152,7 +156,7 @@ public class BusyBar extends Block {
   }
 
   private String getCallingScript(){
-    return "document.getElementById('"+name+"').src='"+_url+"'";
+    return "document.getElementById('"+this.name+"').src='"+this._url+"'";
   }
 
 

@@ -60,14 +60,14 @@ public class Applet extends PresentationObject {
 	
 	
 	public void setParam(String name, String value) {
-		params.append("<param name=\"");
-		params.append(name);
-		params.append("\" value=\"");
-		params.append(value);
-		params.append("\" >\n");
+		this.params.append("<param name=\"");
+		this.params.append(name);
+		this.params.append("\" value=\"");
+		this.params.append(value);
+		this.params.append("\" >\n");
 	}
 	public StringBuffer getParams() {
-		return params;
+		return this.params;
 	}
 	public void setWidth(int width) {
 		setWidth(Integer.toString(width));
@@ -144,9 +144,10 @@ public class Applet extends PresentationObject {
 				print("<APPLET");
 				print(getMarkupAttributesString());
 				print(" >\n");
-				print(params.toString());
-				if (getAlt() != null)
+				print(this.params.toString());
+				if (getAlt() != null) {
 					print(getAlt());
+				}
 				print("</APPLET>");
 			}
 		}

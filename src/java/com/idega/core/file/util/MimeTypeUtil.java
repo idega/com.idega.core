@@ -312,7 +312,7 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 
 	protected MimeTypeUtil() {
 		try {
-			properties = getMimeTypeSettings();
+			this.properties = getMimeTypeSettings();
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -331,27 +331,27 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 	}
 
 	public Properties getMimeTypeSettings() throws IOException {
-		if (properties == null) {
+		if (this.properties == null) {
 			String pathToFile = getRealPathToConfigFiles()+MIME_TYPE_PROPS_FILE_NAME;
 			try {
-				properties = new SortedProperties();
-				properties.load(new FileInputStream(pathToFile));
-				return properties;
+				this.properties = new SortedProperties();
+				this.properties.load(new FileInputStream(pathToFile));
+				return this.properties;
 			}catch (FileNotFoundException e) {
 //				create the file if it does not exist and fill with the data
 				System.out.println("[MimeTypeUtil] - No mime-type.props file. Creating mime type properties file : " + pathToFile);
 				
 				FileUtil.createFile(pathToFile);
-				properties = new SortedProperties();
-				properties.load(new FileInputStream(pathToFile));
+				this.properties = new SortedProperties();
+				this.properties.load(new FileInputStream(pathToFile));
 				
-				fillPropertiesWithMimeTypes(properties);
+				fillPropertiesWithMimeTypes(this.properties);
 				
-				storeProperties(properties,pathToFile);
+				storeProperties(this.properties,pathToFile);
 			}
 		}
 		
-		return properties;
+		return this.properties;
 	}
 
 	/**
@@ -359,14 +359,14 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 	 * @param properties
 	 */
 	protected void fillPropertiesWithMimeTypes(Properties properties) {
-		addToProperties(audio,MIME_TYPE_CATEGORY_AUDIO,properties);
-		addToProperties(binary,MIME_TYPE_CATEGORY_BINARY,properties);
-		addToProperties(compressed,MIME_TYPE_CATEGORY_COMPRESSED,properties);
-		addToProperties(document,MIME_TYPE_CATEGORY_DOCUMENT,properties);
-		addToProperties(folder,MIME_TYPE_CATEGORY_FOLDER,properties);
-		addToProperties(image,MIME_TYPE_CATEGORY_IMAGE,properties);
-		addToProperties(vector,MIME_TYPE_CATEGORY_VECTOR,properties);
-		addToProperties(video,MIME_TYPE_CATEGORY_VIDEO,properties);
+		addToProperties(this.audio,MIME_TYPE_CATEGORY_AUDIO,properties);
+		addToProperties(this.binary,MIME_TYPE_CATEGORY_BINARY,properties);
+		addToProperties(this.compressed,MIME_TYPE_CATEGORY_COMPRESSED,properties);
+		addToProperties(this.document,MIME_TYPE_CATEGORY_DOCUMENT,properties);
+		addToProperties(this.folder,MIME_TYPE_CATEGORY_FOLDER,properties);
+		addToProperties(this.image,MIME_TYPE_CATEGORY_IMAGE,properties);
+		addToProperties(this.vector,MIME_TYPE_CATEGORY_VECTOR,properties);
+		addToProperties(this.video,MIME_TYPE_CATEGORY_VIDEO,properties);
 	}
 
 
@@ -386,12 +386,12 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 	}
 
 	protected String getRealPathToConfigFiles() {
-		if (pathToConfigFile == null) {
-			pathToConfigFile = IWMainApplication.getDefaultIWMainApplication()
+		if (this.pathToConfigFile == null) {
+			this.pathToConfigFile = IWMainApplication.getDefaultIWMainApplication()
 					.getCoreBundle().getPropertiesRealPath()
 					+ FileUtil.getFileSeparator();
 		}
-		return pathToConfigFile;
+		return this.pathToConfigFile;
 	}
 	
 	protected synchronized void storeProperties(Properties props,String pathToSettingsFile) throws IOException {
@@ -421,7 +421,9 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 		if("".equals(mimeType)){
 			return true;
 		}
-		else return isMimeTypeInCategory(mimeType,MIME_TYPE_CATEGORY_FOLDER);
+		else {
+			return isMimeTypeInCategory(mimeType,MIME_TYPE_CATEGORY_FOLDER);
+		}
 	}
 	
 	public boolean isImage(String mimeType){
@@ -468,21 +470,21 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 	
 	public String[] getMimeTypesInCategory(String category){
 		if(MIME_TYPE_CATEGORY_AUDIO.equals(category)){
-			return audio;
+			return this.audio;
 		} else if(MIME_TYPE_CATEGORY_BINARY.equals(category)){
-			return binary;
+			return this.binary;
 		} else if(MIME_TYPE_CATEGORY_COMPRESSED.equals(category)){
-			return compressed;
+			return this.compressed;
 		} else if(MIME_TYPE_CATEGORY_DOCUMENT.equals(category)){
-			return document;
+			return this.document;
 		} else if(MIME_TYPE_CATEGORY_FOLDER.equals(category)){
-			return folder;
+			return this.folder;
 		} else if(MIME_TYPE_CATEGORY_IMAGE.equals(category)){
-			return image;
+			return this.image;
 		} else if(MIME_TYPE_CATEGORY_VECTOR.equals(category)){
-			return vector;
+			return this.vector;
 		} else if(MIME_TYPE_CATEGORY_VIDEO.equals(category)){
-			return video;
+			return this.video;
 		}
 		return null;
 	}

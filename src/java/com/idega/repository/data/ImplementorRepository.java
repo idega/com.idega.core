@@ -32,14 +32,14 @@ public class ImplementorRepository implements Singleton {
 	} 
 	
 	public void  addImplementorForCaller(Class interfaceClass, Class callerClass, Class implementorClass) {
-		if (interfaceCallerImplementor == null) {
-			interfaceCallerImplementor = new HashMatrix();
+		if (this.interfaceCallerImplementor == null) {
+			this.interfaceCallerImplementor = new HashMatrix();
 		}
 		String interfaceClassName = interfaceClass.getName();
 		String callerClassName = (callerClass == null) ? GENERAL : callerClass.getName();
 		String implementorClassName = implementorClass.getName();
-		if (interfaceCallerImplementor.containsKey(interfaceClassName, callerClassName)) {
-			List implementorNames = (List) interfaceCallerImplementor.get(interfaceClassName, callerClassName);
+		if (this.interfaceCallerImplementor.containsKey(interfaceClassName, callerClassName)) {
+			List implementorNames = (List) this.interfaceCallerImplementor.get(interfaceClassName, callerClassName);
 			if (implementorNames.contains(implementorClassName)) {
 				// already added
 				return;
@@ -51,7 +51,7 @@ public class ImplementorRepository implements Singleton {
 			// new entry
 			List implementorNames = new ArrayList(1);
 			implementorNames.add(implementorClassName);
-			interfaceCallerImplementor.put(interfaceClassName, callerClassName, implementorNames);
+			this.interfaceCallerImplementor.put(interfaceClassName, callerClassName, implementorNames);
 		}
 	}
 	
@@ -126,15 +126,15 @@ public class ImplementorRepository implements Singleton {
 	 * @return null or a non-empty list
 	 */
 	private List getImplementorNames(Class interfaceClass, Class callerClass) {
-		if (interfaceCallerImplementor == null) {
+		if (this.interfaceCallerImplementor == null) {
 			return null;
 		}
 		String interfaceClassName = interfaceClass.getName();
 		String callerClassName = callerClass.getName();
-		if (! interfaceCallerImplementor.containsKey(interfaceClassName, callerClassName)) {
+		if (! this.interfaceCallerImplementor.containsKey(interfaceClassName, callerClassName)) {
 			callerClassName = GENERAL;
 		}
-		List implementors = (List) interfaceCallerImplementor.get(interfaceClassName, callerClassName);
+		List implementors = (List) this.interfaceCallerImplementor.get(interfaceClassName, callerClassName);
 		if (implementors == null || implementors.isEmpty()) {
 			return null;
 		}

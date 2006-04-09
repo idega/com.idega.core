@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.27 2006/02/23 11:54:36 laddi Exp $
+ * $Id: LinkContainer.java,v 1.28 2006/04/09 12:13:16 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -91,11 +91,11 @@ public class LinkContainer extends PresentationObjectContainer {
 	}
 
 	public boolean isParameterSet(String prmName) {
-		if (_parameterString != null) {
+		if (this._parameterString != null) {
 			if (!(prmName != null && !prmName.equals(""))) {
 				return true;
 			}
-			String prmString = _parameterString.toString();
+			String prmString = this._parameterString.toString();
 			if (prmString.length() > 0) {
 				if ((prmString.charAt(0) == '?') && (prmString.length() > 1)) {
 					prmString = prmString.substring(1, prmString.length());
@@ -137,17 +137,17 @@ public class LinkContainer extends PresentationObjectContainer {
 			parameterName = java.net.URLEncoder.encode(parameterName);
 			parameterValue = java.net.URLEncoder.encode(parameterValue);
 
-			if (_parameterString == null) {
-				_parameterString = new StringBuffer();
-				_parameterString.append("?");
+			if (this._parameterString == null) {
+				this._parameterString = new StringBuffer();
+				this._parameterString.append("?");
 			}
 			else {
-				_parameterString.append("&");
+				this._parameterString.append("&");
 			}
 
-			_parameterString.append(parameterName);
-			_parameterString.append("=");
-			_parameterString.append(parameterValue);
+			this._parameterString.append(parameterName);
+			this._parameterString.append("=");
+			this._parameterString.append(parameterValue);
 		}
 		else
 			if (parameterName != null) {
@@ -177,15 +177,16 @@ public class LinkContainer extends PresentationObjectContainer {
 	 *
 	 */
 	public void setToOpenInNewWindow(boolean newWindow) {
-		if (newWindow)
+		if (newWindow) {
 			setMarkupAttribute(TARGET_ATTRIBUTE, TARGET_NEW_WINDOW);
+		}
 	}
 
 	/**
 	 *
 	 */
 	private void setSessionId(boolean addSessionId) {
-		_addSessionId = addSessionId;
+		this._addSessionId = addSessionId;
 	}
 
 	/**
@@ -201,7 +202,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	 */
 	public void setPage(ICPage page) {
 		if ((page != null) && (page.getID() != -1)) {
-			ibPage=((Number)page.getPrimaryKey()).intValue();
+			this.ibPage=((Number)page.getPrimaryKey()).intValue();
 			if(IWMainApplication.useNewURLScheme){
 				try {
 					setURL(getBuilderService(this.getIWApplicationContext()).getPageURI(page));
@@ -228,15 +229,15 @@ public class LinkContainer extends PresentationObjectContainer {
 		else {
 			return 0;
 		}*/
-		return ibPage;
+		return this.ibPage;
 	}
 
 	public String getParameterValue(String prmName) {
-		if (_parameterString != null) {
+		if (this._parameterString != null) {
 			if (!(prmName != null && prmName.endsWith(""))) {
 				return null;
 			}
-			String prmString = _parameterString.toString();
+			String prmString = this._parameterString.toString();
 			if (prmString.length() > 0) {
 				if ((prmString.charAt(0) == '?') && (prmString.length() > 1)) {
 					prmString = prmString.substring(1, prmString.length());
@@ -268,7 +269,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	 * method for adding a link to a file object
 	 */
 	public void setFile(ICFile file) {
-		_file = file;
+		this._file = file;
 	}
 
 	/*
@@ -286,11 +287,11 @@ public class LinkContainer extends PresentationObjectContainer {
 		try {
 			linkObj = (LinkContainer) super.clone();
 
-			linkObj._parameterString = _parameterString;
-			linkObj._addSessionId = _addSessionId;
+			linkObj._parameterString = this._parameterString;
+			linkObj._addSessionId = this._addSessionId;
 
-			if (_parameterString != null) {
-				linkObj._parameterString = new StringBuffer(_parameterString.toString());
+			if (this._parameterString != null) {
+				linkObj._parameterString = new StringBuffer(this._parameterString.toString());
 			}
 
 		}
@@ -333,63 +334,63 @@ public class LinkContainer extends PresentationObjectContainer {
 		}
 
 		if ((!this.isParameterSet(IWContext.IDEGA_SESSION_KEY))) {
-			if (_parameterString == null) {
-				_parameterString = new StringBuffer();
-				if (_addSessionId && (!iwc.isSearchEngine())) {
+			if (this._parameterString == null) {
+				this._parameterString = new StringBuffer();
+				if (this._addSessionId && (!iwc.isSearchEngine())) {
 					if (URL.equals("#")) {
 						return ("");
 					}
 					else
 						if (URL.indexOf("://") == -1) { //does not include ://
 							if (URL.indexOf("?") != -1) {
-								_parameterString.append("&");
-								_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-								_parameterString.append("=");
-								_parameterString.append(iwc.getIdegaSessionId());
+								this._parameterString.append("&");
+								this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+								this._parameterString.append("=");
+								this._parameterString.append(iwc.getIdegaSessionId());
 								//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 							}
 							else
 								if ((URL.indexOf("//") != -1) && (URL.lastIndexOf("/") == URL.lastIndexOf("//") + 1)) {
 									//the case where the URL is etc. http://www.idega.is
-									_parameterString.append("/?");
-									_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-									_parameterString.append("=");
-									_parameterString.append(iwc.getIdegaSessionId());
+									this._parameterString.append("/?");
+									this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+									this._parameterString.append("=");
+									this._parameterString.append(iwc.getIdegaSessionId());
 									//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 								}
 								else {
 									if (URL.indexOf("/") != -1) {
 										//If the URL ends with a "/"
 										if (URL.lastIndexOf("/") == (URL.length() - 1)) {
-											_parameterString.append("?");
-											_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-											_parameterString.append("=");
-											_parameterString.append(iwc.getIdegaSessionId());
+											this._parameterString.append("?");
+											this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+											this._parameterString.append("=");
+											this._parameterString.append(iwc.getIdegaSessionId());
 											//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 										}
 										else {
 											//There is a dot after the last "/" interpreted as a file not a directory
 											if (URL.lastIndexOf(".") > URL.lastIndexOf("/")) {
-												_parameterString.append("?");
-												_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-												_parameterString.append("=");
-												_parameterString.append(iwc.getIdegaSessionId());
+												this._parameterString.append("?");
+												this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+												this._parameterString.append("=");
+												this._parameterString.append(iwc.getIdegaSessionId());
 												//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 											}
 											else {
-												_parameterString.append("/?");
-												_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-												_parameterString.append("=");
-												_parameterString.append(iwc.getIdegaSessionId());
+												this._parameterString.append("/?");
+												this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+												this._parameterString.append("=");
+												this._parameterString.append(iwc.getIdegaSessionId());
 												//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 											}
 										}
 									}
 									else {
-										_parameterString.append("?");
-										_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-										_parameterString.append("=");
-										_parameterString.append(iwc.getIdegaSessionId());
+										this._parameterString.append("?");
+										this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+										this._parameterString.append("=");
+										this._parameterString.append(iwc.getIdegaSessionId());
 										//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 									}
 								}
@@ -411,33 +412,33 @@ public class LinkContainer extends PresentationObjectContainer {
 				* @todo Temporary solution??? :// in link then no idega_session_id
 				*/
 				if (URL.indexOf("?") == -1) {
-					if (_addSessionId && (!iwc.isSearchEngine())) {
-						if (_parameterString.toString().indexOf("?") == -1) {
-							_parameterString.insert(0, '?');
+					if (this._addSessionId && (!iwc.isSearchEngine())) {
+						if (this._parameterString.toString().indexOf("?") == -1) {
+							this._parameterString.insert(0, '?');
 						}
-						_parameterString.append("&");
+						this._parameterString.append("&");
 						if (URL.indexOf("://") == -1) {
-							_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-							_parameterString.append("=");
-							_parameterString.append(iwc.getIdegaSessionId());
+							this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+							this._parameterString.append("=");
+							this._parameterString.append(iwc.getIdegaSessionId());
 						}
 					}
 				}
 				else {
-					if (_addSessionId && (!iwc.isSearchEngine())) {
-						_parameterString.append("&");
+					if (this._addSessionId && (!iwc.isSearchEngine())) {
+						this._parameterString.append("&");
 						if (URL.indexOf("://") == -1) {
-							_parameterString.append(IWContext.IDEGA_SESSION_KEY);
-							_parameterString.append("=");
-							_parameterString.append(iwc.getIdegaSessionId());
+							this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
+							this._parameterString.append("=");
+							this._parameterString.append(iwc.getIdegaSessionId());
 						}
 					}
 				}
 				//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 			}
 		}
-		if (_parameterString != null) {
-			return _parameterString.toString();
+		if (this._parameterString != null) {
+			return this._parameterString.toString();
 		}
 		else {
 			return ("");
@@ -448,7 +449,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	 *
 	 */
 	public void clearParameters() {
-		_parameterString = null;
+		this._parameterString = null;
 	}
 
 	protected void setFinalUrl(String url) {
@@ -486,7 +487,7 @@ public class LinkContainer extends PresentationObjectContainer {
 		}
 
 		if (getMarkupLanguage().equals("HTML")) {
-			if (openInNewWindow) {
+			if (this.openInNewWindow) {
 				String URL = getURL();
 				if (getPage() != 0)
 				{
@@ -497,19 +498,22 @@ public class LinkContainer extends PresentationObjectContainer {
 					URL = URL + getParameterString(iwc, URL);
 				}
 				
-				if (_windowName == null)
-					_windowName = "Popup";
-				if (_windowWidth == null)
-					_windowWidth = "400";
-				if (_windowHeight == null)
-					_windowHeight = "400";
+				if (this._windowName == null) {
+					this._windowName = "Popup";
+				}
+				if (this._windowWidth == null) {
+					this._windowWidth = "400";
+				}
+				if (this._windowHeight == null) {
+					this._windowHeight = "400";
+				}
 
-				setFinalUrl("javascript:" + Window.getWindowCallingScript(URL, _windowName, _toolbar, _location, _directories, _status, _menu, _title, _scroll, _resize, _fullscreen, Integer.parseInt(_windowWidth), Integer.parseInt(_windowHeight)));
+				setFinalUrl("javascript:" + Window.getWindowCallingScript(URL, this._windowName, this._toolbar, this._location, this._directories, this._status, this._menu, this._title, this._scroll, this._resize, this._fullscreen, Integer.parseInt(this._windowWidth), Integer.parseInt(this._windowHeight)));
 			}
 			else {
-				if (_file != null) {
+				if (this._file != null) {
 					ICFileSystem fsystem = getICFileSystem(iwc);
-					setFinalUrl(fsystem.getFileURI(_file));
+					setFinalUrl(fsystem.getFileURI(this._file));
 				}
 				else {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));
@@ -584,29 +588,29 @@ public class LinkContainer extends PresentationObjectContainer {
 	}
 
 	public void setAsPopup(String name, String width, String height, boolean toolbar, boolean location, boolean directories, boolean status, boolean menu, boolean title, boolean scroll, boolean resize, boolean fullscreen) {
-		_windowWidth = width;
-		_windowHeight = height;
-		_windowName = name;
-		_toolbar = toolbar;
-		_location = location;
-		_directories = directories;
-		_status = status;
-		_menu = menu;
-		_title = title;
-		_scroll = scroll;
-		_resize = resize;
-		_fullscreen = fullscreen;
-		openInNewWindow = true;
+		this._windowWidth = width;
+		this._windowHeight = height;
+		this._windowName = name;
+		this._toolbar = toolbar;
+		this._location = location;
+		this._directories = directories;
+		this._status = status;
+		this._menu = menu;
+		this._title = title;
+		this._scroll = scroll;
+		this._resize = resize;
+		this._fullscreen = fullscreen;
+		this.openInNewWindow = true;
 	}
 
 	public void removeParameter(String prmName) {
-		if (_parameterString != null) {
+		if (this._parameterString != null) {
 			if (!(prmName != null && !prmName.equals(""))) {
 				return;
 			}
 
 			StringBuffer newBuffer = new StringBuffer();
-			String prmString = _parameterString.toString();
+			String prmString = this._parameterString.toString();
 
 			if (prmString.length() > 0) {
 				if ((prmString.charAt(0) == '?') && (prmString.length() > 1)) {
@@ -640,7 +644,7 @@ public class LinkContainer extends PresentationObjectContainer {
 					firstToken = false;
 				}
 			}
-			_parameterString = newBuffer;
+			this._parameterString = newBuffer;
 			return;
 		}
 	}

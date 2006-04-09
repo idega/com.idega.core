@@ -1,5 +1,5 @@
 /*
- * $Id: FacesUtil.java,v 1.6 2006/02/02 13:13:15 tryggvil Exp $
+ * $Id: FacesUtil.java,v 1.7 2006/04/09 12:13:13 laddi Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import javax.faces.el.ValueBinding;
  * <p>
  *  Utility class for various JavaServer Faces functions.
  * </p>
- *  Last modified: $Date: 2006/02/02 13:13:15 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class FacesUtil {
 	
@@ -211,10 +211,14 @@ public class FacesUtil {
 	 */
     public static boolean isValueBinding(String value)
     {
-        if (value == null) return false;
+        if (value == null) {
+					return false;
+				}
         
         int start = value.indexOf(EXPRESSION_BEGIN);
-        if (start < 0) return false;
+        if (start < 0) {
+					return false;
+				}
         
         int end = value.lastIndexOf('}');
         return (end >=0 && start < end);

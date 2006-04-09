@@ -38,12 +38,15 @@ public class LoginCreator {
 			first = st.nextToken();
 			firstSize = first.length();
 		}
-		if (st.hasMoreTokens())
+		if (st.hasMoreTokens()) {
 			second = st.nextToken();
-		if (st.hasMoreTokens())
+		}
+		if (st.hasMoreTokens()) {
 			third = st.nextToken();
-		if (tokenCount == 2)
+		}
+		if (tokenCount == 2) {
 			third = second;
+		}
 		StringBuffer sb = new StringBuffer();
 		int index = -1;
 		if (firstSize <= 7) {
@@ -79,22 +82,26 @@ public class LoginCreator {
 		else if (tokenCount >= 3) {
 			TYPE = THREE;
 			index = alpha.indexOf(String.valueOf(first.charAt(0)));
-			if (index != -1)
+			if (index != -1) {
 				sb.append(beta.charAt(index));
+			}
 			index = alpha.indexOf(String.valueOf(second.charAt(0)));
-			if (index != -1)
+			if (index != -1) {
 				sb.append(beta.charAt(index));
+			}
 			index = alpha.indexOf(String.valueOf(third.charAt(thirdIndex)));
-			if (index != -1)
+			if (index != -1) {
 				sb.append(beta.charAt(index));
+			}
 		}
 		while (checkLoginExistence(sb.toString())) {
 			switch (TYPE) {
 				case ONE:
 				case TWO:
 				case THREE:
-					if (thirdIndex < third.length())
+					if (thirdIndex < third.length()) {
 						sb.append(third.charAt(thirdIndex++));
+					}
 					break;
 			}
 			// System.err.println(sb.toString());

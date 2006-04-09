@@ -1,5 +1,5 @@
 /*
- * $Id: MoonPhase.java,v 1.4 2004/11/02 15:09:58 laddi Exp $
+ * $Id: MoonPhase.java,v 1.5 2006/04/09 12:13:19 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -25,7 +25,7 @@ import com.idega.util.IWCalendar;
  * Last modified: 02.11.2004 09:39:38 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class MoonPhase extends Widget {
 	
@@ -48,14 +48,14 @@ public class MoonPhase extends Widget {
 		Image image = getBundle().getImage("/moonphase/" + moon + ".gif");
 		
 		if (image != null) {
-			if (iWidth > 0) {
-				image.setWidth(iWidth);
+			if (this.iWidth > 0) {
+				image.setWidth(this.iWidth);
 			}
-			if (iHeight > 0) {
-				image.setHeight(iHeight);
+			if (this.iHeight > 0) {
+				image.setHeight(this.iHeight);
 			}
-			if (iAlignment != null) {
-				image.setAlignment(iAlignment);
+			if (this.iAlignment != null) {
+				image.setAlignment(this.iAlignment);
 			}
 			return image;
 		}
@@ -84,6 +84,6 @@ public class MoonPhase extends Widget {
 	 * @param alignment The alignment to set.
 	 */
 	public void setAlignment(String alignment) {
-		iAlignment = alignment;
+		this.iAlignment = alignment;
 	}
 }

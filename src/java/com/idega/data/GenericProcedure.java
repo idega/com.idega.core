@@ -1,5 +1,5 @@
 /*
- * $Id: GenericProcedure.java,v 1.4 2006/02/22 20:52:47 laddi Exp $
+ * $Id: GenericProcedure.java,v 1.5 2006/04/09 12:13:15 laddi Exp $
  * Created on 31.8.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.util.database.ConnectionBroker;
 
 /**
  * 
- *  Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public abstract class GenericProcedure implements IDOProcedure {
 	
@@ -111,7 +111,7 @@ public abstract class GenericProcedure implements IDOProcedure {
 	
 	
 	public String getDatasource() {
-		return _dataSource;
+		return this._dataSource;
 	}
 	
 	/**

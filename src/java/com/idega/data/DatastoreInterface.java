@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.130 2005/11/29 15:30:04 laddi Exp $
+ * $Id: DatastoreInterface.java,v 1.131 2006/04/09 12:13:15 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -140,7 +140,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	public boolean useIndexes() {
-		return useIndexes;
+		return this.useIndexes;
 	}
 
 	/**
@@ -334,17 +334,19 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	public IDOTableCreator getTableCreator() {
-		if (_TableCreator == null) {
-			_TableCreator = new IDOTableCreator(this);
+		if (this._TableCreator == null) {
+			this._TableCreator = new IDOTableCreator(this);
 		}
-		return _TableCreator;
+		return this._TableCreator;
 	}
 
 	public void createEntityRecord(GenericEntity entity) throws Exception {
-		if(!(entity instanceof GenericView))
+		if(!(entity instanceof GenericView)) {
 			getTableCreator().createEntityRecord(entity);
-		else
+		}
+		else {
 			getTableCreator().createEntityView((GenericView) entity);
+		}
 	}
 
 	public void executeBeforeCreateEntityRecord(GenericEntity entity) throws Exception {
@@ -668,10 +670,12 @@ public abstract class DatastoreInterface implements MutableClass {
 					for (int i = 0; i < length; i++) {
 						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
 						data.setMetaDataNameAndValue((String) insert.elementAt(i), (String) metadata.get(insert.elementAt(i)));
-						if (types != null && types.containsKey(insert.elementAt(i)))
+						if (types != null && types.containsKey(insert.elementAt(i))) {
 							data.setMetaDataType((String) types.get(insert.elementAt(i)));
-						else
+						}
+						else {
 							data.setMetaDataType("java.lang.String");
+						}
 						data.store();
 						entity.idoAddTo(data);
 					}
@@ -684,13 +688,17 @@ public abstract class DatastoreInterface implements MutableClass {
 						//System.out.println("updating: "+i);
 						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(update.elementAt(i)));
 						//do not construct with id to avoid database access
-						if (ids == null) System.out.println("ids is null");
+						if (ids == null) {
+							System.out.println("ids is null");
+						}
 						//System.out.println("ID: "+data.getID());
 						data.setMetaDataNameAndValue((String) update.elementAt(i), (String) metadata.get(update.elementAt(i)));
-						if (types != null && types.containsKey(update.elementAt(i)))
+						if (types != null && types.containsKey(update.elementAt(i))) {
 							data.setMetaDataType((String) types.get(update.elementAt(i)));
-						else
+						}
+						else {
 							data.setMetaDataType("java.lang.String");
+						}
 						data.store();
 					}
 				}
@@ -788,8 +796,12 @@ public abstract class DatastoreInterface implements MutableClass {
 				catch (SQLException sqle) {
 				}
 			}
-			if (Conn != null) entity.freeConnection(Conn);
-			if (instream != null) instream.close();
+			if (Conn != null) {
+				entity.freeConnection(Conn);
+			}
+			if (instream != null) {
+				instream.close();
+			}
 		}
 	}
 
@@ -1158,7 +1170,9 @@ public abstract class DatastoreInterface implements MutableClass {
 				statement2.append(RS.getString(1));
 				stmt2.executeUpdate(statement2.toString());
 			}
-			if (RS != null) RS.close();
+			if (RS != null) {
+				RS.close();
+			}
 			//delete from the middle table
 			Stmt = conn.createStatement();
 			statement = new StringBuffer("");
@@ -1421,11 +1435,11 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	public void setDatabaseMetaData(DatabaseMetaData meta) {
-		_databaseMetaData = meta;
+		this._databaseMetaData = meta;
 	}
 
 	public DatabaseMetaData getDatabaseMetaData() {
-		return _databaseMetaData;
+		return this._databaseMetaData;
 	}
 
 	protected static DatastoreInterface getDatastoreInterfaceByDatasource(String datasource) {
@@ -1553,7 +1567,9 @@ public abstract class DatastoreInterface implements MutableClass {
 			    bufferToAppendTo.append("='?'");
 			*/
 			bufferToAppendTo.append("=?");
-			if ((i + 1) < fields.length) bufferToAppendTo.append(" and ");
+			if ((i + 1) < fields.length) {
+				bufferToAppendTo.append(" and ");
+			}
 		}
 	}
 	
@@ -1587,7 +1603,9 @@ public abstract class DatastoreInterface implements MutableClass {
 				bufferToAppendTo.append(value);
 				bufferToAppendTo.append("'");
 			}
-			if ((i + 1) < fields.length) bufferToAppendTo.append(" and ");
+			if ((i + 1) < fields.length) {
+				bufferToAppendTo.append(" and ");
+			}
 		}
 		//System.out.println(bufferToAppendTo.toString());
 
@@ -1785,7 +1803,9 @@ public abstract class DatastoreInterface implements MutableClass {
 				ConnectionBroker.freeConnection(dataSourceName, conn);
 			}
 		}
-		if (v != null && !v.isEmpty()) return (String[]) v.toArray(new String[0]);
+		if (v != null && !v.isEmpty()) {
+			return (String[]) v.toArray(new String[0]);
+		}
 //		if (v != null && !v.isEmpty()) return (ColumnInfo[]) v.toArray(new ColumnInfo[0]);
 		return null;
 	}

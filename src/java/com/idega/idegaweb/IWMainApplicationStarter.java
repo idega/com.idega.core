@@ -87,7 +87,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
         AppServer appServer = AppServerDetector.setAppServerForApplication(context);
 		IWMainApplication _iwma = new IWMainApplication(context,appServer);
 		_iwma.setApplicationServer(appServer);
-		iwma=_iwma;
+		this.iwma=_iwma;
 		
 		//IWMainApplication iwma = IWMainApplication.getIWMainApplication(getServletContext());
 		//sendStartMessage("Initializing IWMainApplicationStarter");
@@ -133,11 +133,11 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		//poolMgr.release();
 		sendShutdownMessage("Stopping IdegaWeb");
 		endIdegaWebApplication();
-		iwma=null;
+		this.iwma=null;
 		//super.destroy();
 	}
 	protected void startDatabasePool(){
-		String poolType = iwma.getSettings().getPoolManagerType();
+		String poolType = this.iwma.getSettings().getPoolManagerType();
 		if (poolType != null) {
 			if (poolType.equalsIgnoreCase("POOLMAN")) {
 				this.startPoolManDatabasePool();
@@ -158,8 +158,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			}
 			else{
 				sendStartMessage("No Database found - setting to databaseless mode and setup mode");
-				iwma.setInDatabaseLessMode(true);
-				iwma.setInSetupMode(true);
+				this.iwma.setInDatabaseLessMode(true);
+				this.iwma.setInSetupMode(true);
 			}
 		}
 		
@@ -197,8 +197,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		String separator = File.separator;
 		ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_IDEGA;
 		String fileName=null;
-		String sfile1 = iwma.getApplicationRealPath()+"/WEB-INF/idegaweb/properties/db.properties";
-		String sfile2= iwma.getPropertiesRealPath()+separator+"db.properties";
+		String sfile1 = this.iwma.getApplicationRealPath()+"/WEB-INF/idegaweb/properties/db.properties";
+		String sfile2= this.iwma.getPropertiesRealPath()+separator+"db.properties";
 		File file1 = new File(sfile1);
 		File file2 = new File(sfile2);
 		if(file1.exists()){
@@ -206,7 +206,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			sendStartMessage("Reading Databases from file: "+fileName);
 			sendStartMessage("Starting idega Datastore ConnectionPool");
 			PoolManager.unlock();
-			PoolManager.getInstance(fileName,iwma);	
+			PoolManager.getInstance(fileName,this.iwma);	
 			return true;
 		}
 		else if(file2.exists()){
@@ -214,7 +214,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			sendStartMessage("Reading Databases from file: "+fileName);
 			sendStartMessage("Starting idega Datastore ConnectionPool");
 			PoolManager.unlock();
-			PoolManager.getInstance(fileName,iwma);	
+			PoolManager.getInstance(fileName,this.iwma);	
 			return true;
 		}
 		else{
@@ -232,7 +232,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	 */
 	protected boolean startJNDIDatasourcePool(){
 		boolean theReturn=false;
-		String url = iwma.getSettings().getJDBCDatasourceDefaultURL();
+		String url = this.iwma.getSettings().getJDBCDatasourceDefaultURL();
 		if(url!=null){
 			ConnectionBroker.POOL_MANAGER_TYPE=ConnectionBroker.POOL_MANAGER_TYPE_JDBC_DATASOURCE;
 			ConnectionBroker.setDefaultJDBCDatasourceURL(url);
@@ -304,7 +304,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		String classPathProperty = "java.class.path";
 		String classPath = System.getProperty(classPathProperty);
 		StringBuffer classes = new StringBuffer(classPath);
-		File webINF = new File(iwma.getApplicationRealPath()+"/WEB-INF/lib");
+		File webINF = new File(this.iwma.getApplicationRealPath()+"/WEB-INF/lib");
 		File[] subfiles = webINF.listFiles();
 		if (subfiles != null) {
 			for (int i = 0; i < subfiles.length; i++) {
@@ -341,13 +341,13 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		
 		// set application variables first before setting any properties (ICApplicationBinding table might be created first)
 		setApplicationVariables();
-		iwma.regData();
+		this.iwma.regData();
 		// now set some properties
-		iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
+		this.iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 
 		this.startLogManager();
 		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
-		iwStyleManager.getStyleSheet(iwma);
+		iwStyleManager.getStyleSheet(this.iwma);
 		if(iwStyleManager.shouldWriteDownFile()){
 			sendStartMessage("Starting IWStyleManager");
 		}
@@ -356,22 +356,22 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 		
 		
-		if(!iwma.isInDatabaseLessMode()){
+		if(!this.iwma.isInDatabaseLessMode()){
 			updateClassReferencesInDatabase();
 			updateStartDataInDatabase();
 		}
 		startTemporaryBundleStarters();
 		
-		if(!iwma.isInDatabaseLessMode()){
-			iwma.startAccessController();
+		if(!this.iwma.isInDatabaseLessMode()){
+			this.iwma.startAccessController();
 		}
 		
-		if(!iwma.isInDatabaseLessMode()){
-			iwma.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
+		if(!this.iwma.isInDatabaseLessMode()){
+			this.iwma.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
 		}
 		//if(IWMainApplication.USE_JSF){
 			try{
-				iwma.loadViewManager();
+				this.iwma.loadViewManager();
 				sendStartMessage("Loaded the ViewManager");
 			}
 			catch(Exception e){
@@ -379,11 +379,11 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			}
 		//}		
 
-		if(!iwma.isInDatabaseLessMode()){
-			iwma.loadBundles();
+		if(!this.iwma.isInDatabaseLessMode()){
+			this.iwma.loadBundles();
 		}
 
-		executeServices(iwma);
+		executeServices(this.iwma);
 		//create ibdomain
 		long end = System.currentTimeMillis();
 		long time = (end - start) / 1000;
@@ -424,35 +424,35 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		// get the factory settings for auto create entities and set EntityControl. 
 		// In this way ICApplicationBinding table can be created if necessary and if it is allowed by the factory settings 
 		// see call of getIfgetIfEntityAutoCreate() below
-		if (iwma.getSettings().getFactorySettingsForAutoCreateEntities()) {
+		if (this.iwma.getSettings().getFactorySettingsForAutoCreateEntities()) {
 			EntityControl.setAutoCreationOfEntities(true);
 			sendStartMessage("EntityAutoCreation switched on temporarily (factory settings)");
 		}
-	    if (iwma.getSettings().getIfUsePreparedStatement()) {
-			iwma.getSettings().setUsePreparedStatement(true);
+	    if (this.iwma.getSettings().getIfUsePreparedStatement()) {
+			this.iwma.getSettings().setUsePreparedStatement(true);
 			sendStartMessage("Using prepared statements");
 	    }
-		if (iwma.getSettings().getIfDebug()) {
-			iwma.getSettings().setDebug(true);
+		if (this.iwma.getSettings().getIfDebug()) {
+			this.iwma.getSettings().setDebug(true);
 			sendStartMessage("Debug mode is active");
 		}
-		if (iwma.getSettings().getIfAutoCreateStrings()) {
-			iwma.getSettings().setAutoCreateStrings(true);
+		if (this.iwma.getSettings().getIfAutoCreateStrings()) {
+			this.iwma.getSettings().setAutoCreateStrings(true);
 			sendStartMessage("AutoCreateLocalizedStrings is active");
 		}
-		if (iwma.getSettings().getIfAutoCreateProperties()) {
-			iwma.getSettings().setAutoCreateProperties(true);
+		if (this.iwma.getSettings().getIfAutoCreateProperties()) {
+			this.iwma.getSettings().setAutoCreateProperties(true);
 			sendStartMessage("AutoCreateProperties is active");
 		}
-		if (iwma.getSettings().getIfEntityBeanCaching()) {
+		if (this.iwma.getSettings().getIfEntityBeanCaching()) {
 			IDOContainer.getInstance().setBeanCaching(true);
 			sendStartMessage("EntityBeanCaching Active");
 		}
-		if (iwma.getSettings().getIfEntityQueryCaching()) {
+		if (this.iwma.getSettings().getIfEntityQueryCaching()) {
 			IDOContainer.getInstance().setQueryCaching(true);
 			sendStartMessage("EntityQueryCaching Active");
 		}
-		if (iwma.getSettings().getIfEntityAutoCreate()) {
+		if (this.iwma.getSettings().getIfEntityAutoCreate()) {
 			// now set what the table ICApplicationBinding says
 			EntityControl.setAutoCreationOfEntities(true);
 			sendStartMessage("EntityAutoCreation Active");
@@ -460,7 +460,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		else {
 			sendStartMessage("EntityAutoCreation Not Active");
 		}
-		String userSystem = iwma.getSettings().getProperty("IW_USER_SYSTEM");
+		String userSystem = this.iwma.getSettings().getProperty("IW_USER_SYSTEM");
 		if(userSystem!=null){
 			if(userSystem.equalsIgnoreCase("OLD")){
 				sendStartMessage("Using Old idegaWeb User System");
@@ -468,18 +468,18 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 				IBOLookup.registerImplementationForBean(User.class,OldUserBMPBean.class);	
 			}
 		}
-		String accControlType = iwma.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
+		String accControlType = this.iwma.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
 		if (accControlType == null) {
 			com.idega.presentation.Block.usingNewAcessControlSystem = true;
 		}
 		else if(!accControlType.equals("iw")){
 			com.idega.presentation.Block.usingNewAcessControlSystem = false;
 		}
-		String usingEvent = iwma.getSettings().getProperty(IWMainApplication._PROPERTY_USING_EVENTSYSTEM);
+		String usingEvent = this.iwma.getSettings().getProperty(IWMainApplication._PROPERTY_USING_EVENTSYSTEM);
 		if (usingEvent != null && !"false".equalsIgnoreCase(usingEvent)) {
 			com.idega.presentation.text.Link.usingEventSystem = true;
 		}
-		String usingNewURLStructure = iwma.getSettings().getProperty(IWMainApplication.PROPERTY_NEW_URL_STRUCTURE);
+		String usingNewURLStructure = this.iwma.getSettings().getProperty(IWMainApplication.PROPERTY_NEW_URL_STRUCTURE);
 		if (usingNewURLStructure != null && "false".equalsIgnoreCase(usingNewURLStructure)) {
 			sendStartMessage("NOT Using new URL Scheme");
 			IWMainApplication.useNewURLScheme=false;
@@ -487,7 +487,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		else{
 			sendStartMessage("Using new URL Scheme");
 		}
-		String usingJSFRendering = iwma.getSettings().getProperty(IWMainApplication.PROPERTY_JSF_RENDERING);
+		String usingJSFRendering = this.iwma.getSettings().getProperty(IWMainApplication.PROPERTY_JSF_RENDERING);
 		if (usingJSFRendering != null && "false".equalsIgnoreCase(usingJSFRendering)) {
 			sendStartMessage("NOT Using JavaServer Faces Runtime");
 			IWMainApplication.useJSF=false;
@@ -680,12 +680,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	public void endIdegaWebApplication() {
 		//IWMainApplication application = IWMainApplication.getIWMainApplication(getServletContext());
 		//IWMainApplication application = iwma;
-		iwma.getSettings().setProperty("last_shutdown", com.idega.util.IWTimestamp.RightNow().toString());
+		this.iwma.getSettings().setProperty("last_shutdown", com.idega.util.IWTimestamp.RightNow().toString());
 
 		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
 		sendShutdownMessage("Saving style sheet");
 		iwStyleManager.writeStyleSheet();
-		iwma.unloadInstanceAndClass();
+		this.iwma.unloadInstanceAndClass();
 		// some bundle starters have initialized threads that are using the database
 		// therefore stop first and then end database pool
 		endDatabasePool();

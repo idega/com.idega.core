@@ -22,14 +22,16 @@ public class PropertyList extends ArrayList {
 	}
 	
 	public boolean add(Object object){
-		if(!(object instanceof Property))
+		if(!(object instanceof Property)) {
 			throw new UnsupportedOperationException();
+		}
 		return super.add(object);
 	}
 	
 	public void add(int index,Object object){
-		if(!(object instanceof Property))
+		if(!(object instanceof Property)) {
 			throw new UnsupportedOperationException();
+		}
 		super.add(index,object);
 	}
 	

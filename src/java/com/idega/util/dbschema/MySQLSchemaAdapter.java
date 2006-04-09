@@ -8,15 +8,15 @@ import java.sql.Statement;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/07/29 15:51:07 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 
 public class MySQLSchemaAdapter extends SQLSchemaAdapter {
 	MySQLSchemaAdapter() {
-		useTransactionsInSchemaCreation = false;
+		this.useTransactionsInSchemaCreation = false;
 	}
 
 	protected String getCreateUniqueIDQuery(Schema schema) throws Exception{
@@ -190,8 +190,9 @@ public class MySQLSchemaAdapter extends SQLSchemaAdapter {
 
 	public String getIDColumnType(Schema schema) {
 		String s = "INTEGER";
-		if(schema.hasAutoIncrementColumn())
+		if(schema.hasAutoIncrementColumn()) {
 			s+=" AUTO_INCREMENT";
+		}
 		return s;
 	}
 

@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.157 2006/01/27 12:05:57 gimmi Exp $ Created in 2000 by
+ * $Id: Page.java,v 1.158 2006/04/09 12:13:12 laddi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -65,10 +65,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2006/01/27 12:05:57 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/04/09 12:13:12 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.157 $
+ * @version $Revision: 1.158 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -224,7 +224,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public void setHoverColor(String color) {
 		setMarkupAttribute("alink", color);
-		_hoverColor = color;
+		this._hoverColor = color;
 	}
 
 	/**
@@ -236,17 +236,17 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new styleDefinition value
 	 */
 	public void setStyleDefinition(String styleName, String styleAttribute) {
-		if (_styleDefinitions == null) {
-			_styleDefinitions = new Hashtable();
+		if (this._styleDefinitions == null) {
+			this._styleDefinitions = new Hashtable();
 		}
-		_styleDefinitions.put(styleName, styleAttribute);
+		this._styleDefinitions.put(styleName, styleAttribute);
 	}
 
 	public void addStyleSheetURL(String URL) {
-		if (_styleSheets == null) {
-			_styleSheets = new QueueMap();
+		if (this._styleSheets == null) {
+			this._styleSheets = new QueueMap();
 		}
-		_styleSheets.put(URL, URL);
+		this._styleSheets.put(URL, URL);
 	}
 
 	private String getStyleSheetURL(String markup, IWContext iwc) {
@@ -271,8 +271,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			}
 		}
 		// Now the added style
-		if (_styleSheets != null && !_styleSheets.isEmpty()) {
-			Iterator iter = _styleSheets.values().iterator();
+		if (this._styleSheets != null && !this._styleSheets.isEmpty()) {
+			Iterator iter = this._styleSheets.values().iterator();
 			while (iter.hasNext()) {
 				String URL = (String) iter.next();
 				addStyleSheet(buffer, markup, URL);
@@ -287,14 +287,14 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	public void addJavascriptURL(String URL) {
-		if (_javascripts == null) {
-			_javascripts = new QueueMap();
+		if (this._javascripts == null) {
+			this._javascripts = new QueueMap();
 		}
-		_javascripts.put(URL, URL);
+		this._javascripts.put(URL, URL);
 	}
 
 	protected String getJavascriptURLs(IWContext iwc) {
-		if (addGlobalScript) {
+		if (this.addGlobalScript) {
 			StringBuffer buffer = new StringBuffer();
 			// Print a reference to the global .js script file
 			String src = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
@@ -319,8 +319,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			*/
 			buffer.append("<script type=\"text/javascript\" src=\"" + src + "/iw_core.js\">");
 			buffer.append("</script>");
-			if (_javascripts != null && !_javascripts.isEmpty()) {
-				Iterator iter = _javascripts.values().iterator();
+			if (this._javascripts != null && !this._javascripts.isEmpty()) {
+				Iterator iter = this._javascripts.values().iterator();
 				while (iter.hasNext()) {
 					String URL = (String) iter.next();
 					buffer.append("<script type=\"text/javascript\" src=\"" + URL + "\"></script>\n");
@@ -344,8 +344,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	public void setStyleInStyleSheet(String name, String style) {
 		IWStyleManager manager = IWStyleManager.getInstance();
-		if (name != null && style != null)
+		if (name != null && style != null) {
 			manager.setStyle(name, style);
+		}
 	}
 
 	/**
@@ -378,10 +379,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new metaTag value
 	 */
 	public void setMetaTag(String tagName, String tagValue) {
-		if (_metaTags == null) {
-			_metaTags = new Hashtable();
+		if (this._metaTags == null) {
+			this._metaTags = new Hashtable();
 		}
-		_metaTags.put(tagName, tagValue);
+		this._metaTags.put(tagName, tagValue);
 	}
 
 	/**
@@ -393,10 +394,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new hTTPEquivTag value
 	 */
 	public void setHTTPEquivTag(String tagName, String tagValue) {
-		if (_HTTPEquivs == null) {
-			_HTTPEquivs = new Hashtable();
+		if (this._HTTPEquivs == null) {
+			this._HTTPEquivs = new Hashtable();
 		}
-		_HTTPEquivs.put(tagName, tagValue);
+		this._HTTPEquivs.put(tagName, tagValue);
 	}
 
 	/**
@@ -447,9 +448,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	public String getStyleDefinition() {
 		StringBuffer returnString = new StringBuffer();
 		String styleName = "";
-		if (_styleDefinitions != null) {
+		if (this._styleDefinitions != null) {
 			returnString.append("<style type=\"text/css\">\n<!--\n");
-			Iterator keyIter = _styleDefinitions.keySet().iterator();
+			Iterator keyIter = this._styleDefinitions.keySet().iterator();
 			// Enumeration e = _styleDefinitions.keys();
 			// while (e.hasMoreElements()) {
 			while (keyIter.hasNext()) {
@@ -497,7 +498,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @return
 	 */
 	public boolean getUseIE7Extension() {
-		return useIE7Extension;
+		return this.useIE7Extension;
 	}
 
 	/**
@@ -518,8 +519,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @return The styleAttribute value
 	 */
 	public String getStyleAttribute(String styleName) {
-		if (_styleDefinitions != null) {
-			return (String) _styleDefinitions.get(styleName);
+		if (this._styleDefinitions != null) {
+			return (String) this._styleDefinitions.get(styleName);
 		}
 		else {
 			return null;
@@ -534,10 +535,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	public String getMetaTags(String markup) {
 		StringBuffer returnString = new StringBuffer();
 		String tagName = "";
-		if (_metaTags != null) {
+		if (this._metaTags != null) {
 			// Enumeration e = _metaTags.keys();
 			// while (e.hasMoreElements()) {
-			Iterator keyIter = _metaTags.keySet().iterator();
+			Iterator keyIter = this._metaTags.keySet().iterator();
 			while (keyIter.hasNext()) {
 				// tagName = (String) e.nextElement();
 				tagName = (String) keyIter.next();
@@ -557,7 +558,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		if (this._HTTPEquivs != null) {
 			// Enumeration e = _HTTPEquivs.keys();
 			// while (e.hasMoreElements()) {
-			Iterator keyIter = _HTTPEquivs.keySet().iterator();
+			Iterator keyIter = this._HTTPEquivs.keySet().iterator();
 			while (keyIter.hasNext()) {
 				// tagName = (String) e.nextElement();
 				tagName = (String) keyIter.next();
@@ -585,7 +586,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @return The hTTPEquivTag value
 	 */
 	public String getHTTPEquivTag(String tagName) {
-		if (_HTTPEquivs != null) {
+		if (this._HTTPEquivs != null) {
 			return (String) this._HTTPEquivs.get(tagName);
 		}
 		else {
@@ -601,8 +602,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @return The metaTag value
 	 */
 	public String getMetaTag(String tagName) {
-		if (_metaTags != null) {
-			return (String) _metaTags.get(tagName);
+		if (this._metaTags != null) {
+			return (String) this._metaTags.get(tagName);
 		}
 		else {
 			return null;
@@ -614,7 +615,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new textDecoration value
 	 */
 	public void setTextDecoration(String textDecoration) {
-		_textDecoration = textDecoration;
+		this._textDecoration = textDecoration;
 	}
 
 	/**
@@ -622,7 +623,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new hoverDecoration value
 	 */
 	public void setHoverDecoration(String hoverDecoration) {
-		_hoverDecoration = hoverDecoration;
+		this._hoverDecoration = hoverDecoration;
 	}
 
 	/**
@@ -651,7 +652,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public void setVlinkColor(String color) {
 		setMarkupAttribute("vlink", color);
-		_visitedColor = color;
+		this._visitedColor = color;
 	}
 
 	/**
@@ -660,7 +661,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public void setLinkColor(String color) {
 		setMarkupAttribute("link", color);
-		_linkColor = color;
+		this._linkColor = color;
 	}
 
 	/**
@@ -668,7 +669,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new pageFontFace value
 	 */
 	public void setPageFontFace(String textFontFace) {
-		_pageStyleFont = textFontFace;
+		this._pageStyleFont = textFontFace;
 	}
 
 	/**
@@ -676,7 +677,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new pageFontSize value
 	 */
 	public void setPageFontSize(String textFontSize) {
-		_pageStyleFont = textFontSize;
+		this._pageStyleFont = textFontSize;
 	}
 
 	/**
@@ -684,28 +685,28 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new pageFontStyle value
 	 */
 	public void setPageFontStyle(String textFontStyle) {
-		_pageStyleFontStyle = textFontStyle;
+		this._pageStyleFontStyle = textFontStyle;
 	}
 
 	/**
 	 * @return The pageFontFace value
 	 */
 	public String getPageFontFace() {
-		return (_pageStyleFont);
+		return (this._pageStyleFont);
 	}
 
 	/**
 	 * @return The pageFontSize value
 	 */
 	public String getPageFontSize() {
-		return (_pageStyleFont);
+		return (this._pageStyleFont);
 	}
 
 	/**
 	 * @return The pageFontStyle value
 	 */
 	public String getPageFontStyle() {
-		return (_pageStyleFontStyle);
+		return (this._pageStyleFontStyle);
 	}
 
 	/**
@@ -713,7 +714,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new title value
 	 */
 	public void setTitle(String title) {
-		_title = title;
+		this._title = title;
 		setName(title);
 	}
 
@@ -721,7 +722,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	public void setIsCategory(boolean isCategory) {
-		_isCategory = isCategory;
+		this._isCategory = isCategory;
 	}
 
 	public String getLocalizedTitle(IWContext iwc) {
@@ -807,7 +808,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @return The title value
 	 */
 	public String getTitle() {
-		return _title;
+		return this._title;
 	}
 
 	/**
@@ -938,10 +939,12 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @param focusOnparent
 	 */
 	public void close(boolean focusOnParent) {
-		if (focusOnParent)
+		if (focusOnParent) {
 			setOnLoad("if(window.opener && window.opener.focus){ window.opener.focus(); } window.close()");
-		else
+		}
+		else {
 			close();
+		}
 	}
 
 	/**
@@ -1061,7 +1064,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	/**
 	 */
 	public void setToReload() {
-		_doReload = true;
+		this._doReload = true;
 	}
 
 	/**
@@ -1071,7 +1074,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new addBody value
 	 */
 	public void setAddBody(boolean addBodyTag) {
-		_addBody = addBodyTag;
+		this._addBody = addBodyTag;
 	}
 
 	/**
@@ -1079,7 +1082,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new toRedirect value
 	 */
 	public void setToRedirect(String URL) {
-		_zeroWait = true;
+		this._zeroWait = true;
 		setToRedirect(URL, 0);
 	}
 
@@ -1090,20 +1093,20 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new toRedirect value
 	 */
 	public void setToRedirect(String URL, int secondInterval) {
-		_redirectInfo = "" + secondInterval + " ;URL=" + URL;
-		_redirectSecondInterval = secondInterval;
-		_redirectURL = URL;
+		this._redirectInfo = "" + secondInterval + " ;URL=" + URL;
+		this._redirectSecondInterval = secondInterval;
+		this._redirectURL = URL;
 	}
 
 	/**
 	 * @return The redirectInfo value
 	 */
 	public String getRedirectInfo() {
-		return _redirectInfo;
+		return this._redirectInfo;
 	}
 
 	public void setToForwardToPage(ICPage page) {
-		forwardPage = page;
+		this.forwardPage = page;
 	}
 
 	/**
@@ -1126,17 +1129,17 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	protected void prepareClone(PresentationObject newObjToCreate) {
 		super.prepareClone(newObjToCreate);
 		Page newPage = (Page) newObjToCreate;
-		newPage._title = _title;
+		newPage._title = this._title;
 		// Script newScript = (Script) _theAssociatedScript;
 		// if (newScript != null) {
 		// newPage._theAssociatedScript = (Script) newScript.clone();
 		// }
-		newPage._zeroWait = _zeroWait;
-		newPage._redirectInfo = _redirectInfo;
-		newPage._doReload = _doReload;
-		newPage._linkColor = _linkColor;
-		newPage._visitedColor = _visitedColor;
-		newPage._hoverColor = _hoverColor;
+		newPage._zeroWait = this._zeroWait;
+		newPage._redirectInfo = this._redirectInfo;
+		newPage._doReload = this._doReload;
+		newPage._linkColor = this._linkColor;
+		newPage._visitedColor = this._visitedColor;
+		newPage._hoverColor = this._hoverColor;
 	}
 
 	/**
@@ -1210,29 +1213,29 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			// if (_theAssociatedScript != null) {
 			// obj._theAssociatedScript = (Script) _theAssociatedScript.clone();
 			// }
-			obj._title = _title;
-			obj._zeroWait = _zeroWait;
-			obj._redirectInfo = _redirectInfo;
-			obj._doReload = _doReload;
-			obj._linkColor = _linkColor;
-			obj._visitedColor = _visitedColor;
-			obj._hoverColor = _hoverColor;
-			obj._textDecoration = _textDecoration;
+			obj._title = this._title;
+			obj._zeroWait = this._zeroWait;
+			obj._redirectInfo = this._redirectInfo;
+			obj._doReload = this._doReload;
+			obj._linkColor = this._linkColor;
+			obj._visitedColor = this._visitedColor;
+			obj._hoverColor = this._hoverColor;
+			obj._textDecoration = this._textDecoration;
 			// obj._styleSheetURL = _styleSheetURL;
-			obj._addStyleSheet = _addStyleSheet;
-			obj._ibPageID = _ibPageID;
-			obj.styleFile = styleFile;
-			if (_javascripts != null) {
-				obj._javascripts = _javascripts;
+			obj._addStyleSheet = this._addStyleSheet;
+			obj._ibPageID = this._ibPageID;
+			obj.styleFile = this.styleFile;
+			if (this._javascripts != null) {
+				obj._javascripts = this._javascripts;
 			}
-			if (_styleSheets != null) {
-				obj._styleSheets = _styleSheets;
+			if (this._styleSheets != null) {
+				obj._styleSheets = this._styleSheets;
 			}
-			if (_styleDefinitions != null) {
-				obj._styleDefinitions = _styleDefinitions;
+			if (this._styleDefinitions != null) {
+				obj._styleDefinitions = this._styleDefinitions;
 			}
-			if (dynamicPageTrigger != null) {
-				obj.dynamicPageTrigger = (ICDynamicPageTrigger) dynamicPageTrigger.clone();
+			if (this.dynamicPageTrigger != null) {
+				obj.dynamicPageTrigger = (ICDynamicPageTrigger) this.dynamicPageTrigger.clone();
 			}
 		}
 		catch (Exception ex) {
@@ -1260,10 +1263,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *                Description of the Exception
 	 */
 	public void main(IWContext iwc) throws Exception {
-		if (forwardPage != null) {
-			iwc.forwardToIBPage(this, forwardPage);
+		if (this.forwardPage != null) {
+			iwc.forwardToIBPage(this, this.forwardPage);
 		}
-		if (_doReload) {
+		if (this._doReload) {
 			if (iwc.getSession().getAttribute("idega_special_reload") != null) {
 				iwc.getSession().removeAttribute("idega_special_reload");
 			}
@@ -1273,9 +1276,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			}
 		}
 		/* get the files cached url */
-		if (styleFile != null) {
+		if (this.styleFile != null) {
 			ICFileSystem fsystem = getICFileSystem(iwc);
-			String styleSheetURL = fsystem.getFileURI(((Integer) styleFile.getPrimaryKey()).intValue());
+			String styleSheetURL = fsystem.getFileURI(((Integer) this.styleFile.getPrimaryKey()).intValue());
 			setStyleSheetURL(styleSheetURL);
 		}
 	}
@@ -1367,10 +1370,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @param script
 	 */
 	public void addJavaScriptBeforeJavaScriptURLs(String keyInMap, String script) {
-		if (_javascriptStringsBeforeJSUrls == null) {
-			_javascriptStringsBeforeJSUrls = new QueueMap();
+		if (this._javascriptStringsBeforeJSUrls == null) {
+			this._javascriptStringsBeforeJSUrls = new QueueMap();
 		}
-		_javascriptStringsBeforeJSUrls.put(keyInMap, script);
+		this._javascriptStringsBeforeJSUrls.put(keyInMap, script);
 	}
 
 	/**
@@ -1379,21 +1382,21 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @param script
 	 */
 	public void addJavaScriptAfterJavaScriptURLs(String keyInMap, String script) {
-		if (_javascriptStringsAfterJSUrls == null) {
-			_javascriptStringsAfterJSUrls = new QueueMap();
+		if (this._javascriptStringsAfterJSUrls == null) {
+			this._javascriptStringsAfterJSUrls = new QueueMap();
 		}
-		_javascriptStringsAfterJSUrls.put(keyInMap, script);
+		this._javascriptStringsAfterJSUrls.put(keyInMap, script);
 	}
 
 	public void removeJavaScriptFromJavascriptBeforeJavaScriptsUrlsMap(String key) {
-		if (_javascriptStringsBeforeJSUrls != null) {
-			_javascriptStringsBeforeJSUrls.remove(key);
+		if (this._javascriptStringsBeforeJSUrls != null) {
+			this._javascriptStringsBeforeJSUrls.remove(key);
 		}
 	}
 
 	public void removeJavaScriptFromJavascriptAfterJavaScriptsUrlsMap(String key) {
-		if (_javascriptStringsAfterJSUrls != null) {
-			_javascriptStringsAfterJSUrls.remove(key);
+		if (this._javascriptStringsAfterJSUrls != null) {
+			this._javascriptStringsAfterJSUrls.remove(key);
 		}
 	}
 
@@ -1406,9 +1409,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	private String getJavaScriptBeforeJavascriptURLs(IWContext iwc) {
 		StringBuffer buffer = new StringBuffer();
-		if (_javascriptStringsBeforeJSUrls != null && !_javascriptStringsBeforeJSUrls.isEmpty()) {
+		if (this._javascriptStringsBeforeJSUrls != null && !this._javascriptStringsBeforeJSUrls.isEmpty()) {
 			buffer.append("<script type=\"text/javascript\">\n");
-			Iterator iter = _javascriptStringsBeforeJSUrls.values().iterator();
+			Iterator iter = this._javascriptStringsBeforeJSUrls.values().iterator();
 			while (iter.hasNext()) {
 				String value = (String) iter.next();
 				buffer.append(value).append("\n");
@@ -1427,9 +1430,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	private String getJavaScriptAfterJavascriptURLs(IWContext iwc) {
 		StringBuffer buffer = new StringBuffer();
-		if (_javascriptStringsAfterJSUrls != null && !_javascriptStringsAfterJSUrls.isEmpty()) {
+		if (this._javascriptStringsAfterJSUrls != null && !this._javascriptStringsAfterJSUrls.isEmpty()) {
 			buffer.append("<script type=\"text/javascript\">\n");
-			Iterator iter = _javascriptStringsAfterJSUrls.values().iterator();
+			Iterator iter = this._javascriptStringsAfterJSUrls.values().iterator();
 			while (iter.hasNext()) {
 				String value = (String) iter.next();
 				buffer.append(value).append("\n");
@@ -1497,14 +1500,14 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				String markup = getMarkupLanguageForPage();
 				String docType = getDocType();
 				println(getStartTag(iwc.getCurrentLocale(), docType, characterEncoding));
-				if (_zeroWait) {
+				if (this._zeroWait) {
 					setDoPrint(false);
 				}
-				if (_windowToOpenOnLoad != null) {
-					URLUtil url = new URLUtil(iwc, _windowToOpenOnLoad);
+				if (this._windowToOpenOnLoad != null) {
+					URLUtil url = new URLUtil(iwc, this._windowToOpenOnLoad);
 					setOnLoad("javascript:"
 							+ Window.getWindowCallingScript(url.toString(), "Window", false, false, false, false,
-									false, true, true, true, false, _windowWidth, _windowHeight));
+									false, true, true, true, false, this._windowWidth, this._windowHeight));
 				}
 				println("<head>");
 				println("<title>" + getLocalizedTitle(iwc) + "</title>\n");
@@ -1528,7 +1531,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				 * href=\"" + _styleSheetURL + "\" type=\"text/css\">\n"); }
 				 */
 				println("\n</head>");
-				if (_addBody) {
+				if (this._addBody) {
 					println("<body " + getMarkupAttributesString() + ">");
 					if (getAssociatedBodyScript() != null) {
 						// getAssociatedBodyScript()._print(iwc);
@@ -1552,10 +1555,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			println("<meta http-equiv=\"cache-control\" content=\"no-cache\"/>");
 			println("</head>");
 			print("<card title=\"" + getLocalizedTitle(iwc) + "\"");
-			if (_redirectSecondInterval > -1) {
-				print(" ontimer=\"" + _redirectURL + "\"");
+			if (this._redirectSecondInterval > -1) {
+				print(" ontimer=\"" + this._redirectURL + "\"");
 				println(" id=\"card1\">");
-				println("<timer value=\"" + _redirectSecondInterval * 10 + "\"/>");
+				println("<timer value=\"" + this._redirectSecondInterval * 10 + "\"/>");
 			}
 			else {
 				println(" id=\"card1\">");
@@ -1626,7 +1629,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		boolean isInsideOtherPage = this.isChildOfOtherPage();
 		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			if (!isInsideOtherPage) {
-				if (_addBody) {
+				if (this._addBody) {
 					println("\n\n</body>");
 				}
 				println(getEndTag());
@@ -1957,61 +1960,61 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets this page to be a template page
 	 */
 	public void setIsTemplate() {
-		_isTemplate = true;
-		_isPage = false;
-		_isDraft = false;
+		this._isTemplate = true;
+		this._isPage = false;
+		this._isDraft = false;
 	}
 
 	/**
 	 * Sets this page to be a "normal" page
 	 */
 	public void setIsPage() {
-		_isTemplate = false;
-		_isPage = true;
-		_isDraft = false;
+		this._isTemplate = false;
+		this._isPage = true;
+		this._isDraft = false;
 	}
 
 	/**
 	 * Sets this page to be a draft
 	 */
 	public void setIsDraft() {
-		_isTemplate = false;
-		_isPage = false;
-		_isDraft = true;
+		this._isTemplate = false;
+		this._isPage = false;
+		this._isDraft = true;
 	}
 
 	/**
 	 * @return The isTemplate value
 	 */
 	public boolean getIsTemplate() {
-		return (_isTemplate);
+		return (this._isTemplate);
 	}
 
 	/**
 	 * @return The isPage value
 	 */
 	public boolean getIsPage() {
-		return (_isPage);
+		return (this._isPage);
 	}
 
 	/**
 	 * @return The isDraft value
 	 */
 	public boolean getIsDraft() {
-		return (_isDraft);
+		return (this._isDraft);
 	}
 
 	/**
 	 */
 	public void setIsExtendingTemplate() {
-		_isExtendingTemplate = true;
+		this._isExtendingTemplate = true;
 	}
 
 	/**
 	 * @return The isExtendingTemplate value
 	 */
 	public boolean getIsExtendingTemplate() {
-		return (_isExtendingTemplate);
+		return (this._isExtendingTemplate);
 	}
 
 	/**
@@ -2031,9 +2034,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	public void setWindowToOpenOnLoad(ICPage page, int width, int height) {
-		_windowToOpenOnLoad = page;
-		_windowWidth = width;
-		_windowHeight = height;
+		this._windowToOpenOnLoad = page;
+		this._windowWidth = width;
+		this._windowHeight = height;
 	}
 
 	/**
@@ -2043,7 +2046,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            The new templateId value
 	 */
 	public void setTemplateId(String id) {
-		_templateId = id;
+		this._templateId = id;
 	}
 
 	/**
@@ -2052,7 +2055,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @return The templateId value
 	 */
 	public String getTemplateId() {
-		return (_templateId);
+		return (this._templateId);
 	}
 
 	/**
@@ -2072,7 +2075,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @return the shortcut icon file id
 	 */
 	public int getShortCutIconID() {
-		return _shortCutIconID;
+		return this._shortCutIconID;
 	}
 
 	/**
@@ -2081,7 +2084,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @return URL to shortcut icon
 	 */
 	public String getShortCutIconURL() {
-		return _shortCutIconURL;
+		return this._shortCutIconURL;
 	}
 
 	/**
@@ -2091,7 +2094,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            of the icon file
 	 */
 	public void setShortCutIconID(int id) {
-		_shortCutIconID = id;
+		this._shortCutIconID = id;
 	}
 
 	/**
@@ -2101,7 +2104,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *            to the icon file
 	 */
 	public void setShortCutIconURL(String url) {
-		_shortCutIconURL = url;
+		this._shortCutIconURL = url;
 	}
 
 	private String getPrintableSchortCutIconURL(IWContext iwc) {
@@ -2119,22 +2122,23 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		else if (getShortCutIconURL() != null) {
 			url = getShortCutIconURL();
 		}
-		if (url != null)
+		if (url != null) {
 			return "<link type=\"shortcut icon\" href=\"" + url + "\" />";
+		}
 		return "";
 		// <link rel="shortcut icon" href="/favicon.ico">
 	}
 
 	public ICDynamicPageTrigger getDynamicPageTrigger() {
-		if (dynamicPageTrigger == null) {
-			dynamicPageTrigger = (ICDynamicPageTrigger) ImplementorRepository.getInstance().newInstanceOrNull(
+		if (this.dynamicPageTrigger == null) {
+			this.dynamicPageTrigger = (ICDynamicPageTrigger) ImplementorRepository.getInstance().newInstanceOrNull(
 					ICDynamicPageTrigger.class, this.getClass());
-			if (dynamicPageTrigger == null) {
+			if (this.dynamicPageTrigger == null) {
 				throw new RuntimeException(
 						"[Page] Implementation of ICDynamicPageTrigger could not be found. Implementing bundle was not loaded.");
 			}
 		}
-		return dynamicPageTrigger;
+		return this.dynamicPageTrigger;
 	}
 
 	/**
@@ -2180,7 +2184,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @return
 	 */
 	public String getDocType() {
-		if (docType == null) {
+		if (this.docType == null) {
 			String markup = getSetApplicationMarkupLanguage();
 			if (markup.equals(XHTML)) {
 				return DOCTYPE_XHTML_1_0_TRANSITIONAL;
@@ -2193,7 +2197,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			}
 		}
 		else {
-			return docType;
+			return this.docType;
 		}
 	}
 
@@ -2223,11 +2227,11 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @return
 	 */
 	public String getMarkupLanguageForPage() {
-		if (docType != null) {
-			if (docType.equals(DOCTYPE_XHTML_1_0_TRANSITIONAL)) {
+		if (this.docType != null) {
+			if (this.docType.equals(DOCTYPE_XHTML_1_0_TRANSITIONAL)) {
 				return XHTML;
 			}
-			else if (docType.equals(DOCTYPE_XHTML_1_1)) {
+			else if (this.docType.equals(DOCTYPE_XHTML_1_1)) {
 				return XHTML1_1;
 			}
 		}

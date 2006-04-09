@@ -35,51 +35,51 @@ public class UploadFile extends File implements Storable {
   }
 
   public String getName(){
-    return _sName;
+    return this._sName;
   }
 
   public void setName(String name){
-    _sName = name;
+    this._sName = name;
   }
 
   public String getMimeType(){
-    return _sMimeType;
+    return this._sMimeType;
   }
 
   public void setMimeType(String mimetype){
-    _sMimeType = mimetype;
+    this._sMimeType = mimetype;
   }
 
   public String getRealPath(){
-    return _sRealPath;
+    return this._sRealPath;
   }
 
   public void setRealPath(String realPath){
-    _sRealPath = realPath;
+    this._sRealPath = realPath;
   }
 
   public String getWebPath(){
-    return _sWebPath;
+    return this._sWebPath;
   }
 
   public void setWebPath(String webPath){
-    _sWebPath = webPath;
+    this._sWebPath = webPath;
   }
 
   public long getSize(){
-    return lSize;
+    return this.lSize;
   }
 
   public void setSize(long size){
-    lSize = size;
+    this.lSize = size;
   }
 
   public void setId(int fileId){
-    _fileDBId = fileId;
+    this._fileDBId = fileId;
   }
 
   public int getId(){
-    return _fileDBId;
+    return this._fileDBId;
   }
 
 	/* (non-Javadoc)

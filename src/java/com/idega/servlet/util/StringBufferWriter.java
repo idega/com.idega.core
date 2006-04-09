@@ -59,12 +59,12 @@ public class StringBufferWriter extends PrintWriter {
 
 		public void print(String s) {
 			//underlying.print(s);
-			buffer.append(s);
+			this.buffer.append(s);
 		}
 
 		public void println() {
 			//underlying.println();
-			buffer.append(newLine);
+			this.buffer.append(this.newLine);
 		}
 
 		public void println(boolean b) {

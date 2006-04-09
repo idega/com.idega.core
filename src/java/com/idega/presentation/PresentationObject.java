@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.148 2006/02/22 20:52:48 laddi Exp $
+ * $Id: PresentationObject.java,v 1.149 2006/04/09 12:13:13 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.148 $
+ * @version $Revision: 1.149 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -237,9 +237,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			this.out = iwc.getWriter();
 		}
 		this.markupLanguage = iwc.getMarkupLanguage();
-		if (markupLanguage == null)
+		if (this.markupLanguage == null)
 		{
-			markupLanguage = IWConstants.MARKUP_LANGUAGE_HTML;
+			this.markupLanguage = IWConstants.MARKUP_LANGUAGE_HTML;
 		}
 		
 	}
@@ -253,7 +253,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	protected void initInMain(IWContext iwc) throws Exception
 	{
 		initializeInMain(iwc);
-		initializedInMain = true;
+		this.initializedInMain = true;
 	}
 	/**
 	 *  
@@ -357,10 +357,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			if (previousAttribute.indexOf(attributeValue) == -1)
 			{
 				String parameterValue = previousAttribute;
-				if (previousAttribute.endsWith(seperator))
+				if (previousAttribute.endsWith(seperator)) {
 					parameterValue = parameterValue + attributeValue;
-				else
+				}
+				else {
 					parameterValue = parameterValue + seperator + attributeValue;
+				}
 				setMarkupAttribute(attributeName, parameterValue);
 			}
 		}
@@ -391,31 +393,33 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public void setStyleAttribute(String style)
 	{
-		if (_styler == null) {
-			_styler = new TextStyler();
+		if (this._styler == null) {
+			this._styler = new TextStyler();
 		}
-		_styler.parseStyleString(style);
-		setMarkupAttribute("style", _styler.getStyleString());
+		this._styler.parseStyleString(style);
+		setMarkupAttribute("style", this._styler.getStyleString());
 	}
 	public void setStyleAttribute(String attribute, String value) {
-		if (_styler == null) {
-			_styler = new TextStyler();
+		if (this._styler == null) {
+			this._styler = new TextStyler();
 		}
-		_styler.setStyleValue(attribute, value);
-		setMarkupAttribute("style", _styler.getStyleString());
+		this._styler.setStyleValue(attribute, value);
+		setMarkupAttribute("style", this._styler.getStyleString());
 	}
 	public String getStyleAttribute()
 	{
-		if (isMarkupAttributeSet("style"))
+		if (isMarkupAttributeSet("style")) {
 			return this.getMarkupAttribute("style");
+		}
 		return "";
 	}
 	public void removeStyleAttribute(String styleAttribute){
-		if(_styler==null)
-			_styler = new TextStyler();
-		_styler.parseStyleString(getStyleAttribute());
-		_styler.removeStyleValue(styleAttribute);
-		setMarkupAttribute("style",_styler.getStyleString());
+		if(this._styler==null) {
+			this._styler = new TextStyler();
+		}
+		this._styler.parseStyleString(getStyleAttribute());
+		this._styler.removeStyleValue(styleAttribute);
+		setMarkupAttribute("style",this._styler.getStyleString());
 		
 	}
 	public void setToolTip(String toolTip)
@@ -424,8 +428,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public String getToolTip()
 	{
-		if (isMarkupAttributeSet("title"))
+		if (isMarkupAttributeSet("title")) {
 			return this.getMarkupAttribute("title");
+		}
 		return "";
 	}
 	/**
@@ -500,7 +505,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public Map getMarkupAttributes()
 	{
 		if(this.attributes==null){
-			attributes = new Hashtable();
+			this.attributes = new Hashtable();
 		}
 		return this.attributes;
 	}
@@ -692,8 +697,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * 
 	 */
 	public String getMarkupLanguage() {
-		if (markupLanguage != null)
+		if (this.markupLanguage != null) {
 			return this.markupLanguage;
+		}
 		return IWConstants.MARKUP_LANGUAGE_HTML;
 	}
 	
@@ -720,8 +726,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	protected PrintWriter getPrintWriter()
 	{
-		if(out!=null){
-			return out;
+		if(this.out!=null){
+			return this.out;
 		}
 		else{
 			try {
@@ -1000,7 +1006,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 
 		initVariables(iwc);
 
-		if (!initializedInMain)
+		if (!this.initializedInMain)
 		{
 			this.initInMain(iwc);
 		}
@@ -1031,7 +1037,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 
 	public void setAsPrinted(boolean printed)
 	{
-		doPrint = printed;
+		this.doPrint = printed;
 	}
 	/*
 	 * public void setTreeID(String treeID) { this.treeID = treeID; }
@@ -1039,20 +1045,20 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * public String getTreeID() { return treeID;
 	 */
 	public String getTemplateId() {
-		return (_objTemplateID);
+		return (this._objTemplateID);
 	}
 	public PresentationObject getTemplateObject() {
-		if(_templateObject == null) {
-			_templateObject = (PresentationObject)this.clone();
-			_templateObject._objTemplateID = null;
+		if(this._templateObject == null) {
+			this._templateObject = (PresentationObject)this.clone();
+			this._templateObject._objTemplateID = null;
 			try {
-				_templateObject.ic_object_instance_id = Integer.parseInt(this._objTemplateID);
+				this._templateObject.ic_object_instance_id = Integer.parseInt(this._objTemplateID);
 			} catch (NumberFormatException e) {
-				_templateObject.ic_object_instance_id=-1;
+				this._templateObject.ic_object_instance_id=-1;
 				//e.printStackTrace();
 			}
 		}
-		return _templateObject;
+		return this._templateObject;
 	}
 	public void setTemplateId(int id) {
 		if(id!=-1) {
@@ -1062,7 +1068,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 	}
 	public void setTemplateId(String id) {
-		_objTemplateID=id;
+		this._objTemplateID=id;
 	}
 	
 	public void changeInstanceIdForInheritedObject(int id) {
@@ -1120,7 +1126,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public int getICObjectID(IWContext iwc) throws Exception
 	{
-		return ic_object_id;
+		return this.ic_object_id;
 		/*
 		 * ICObjectInstance inst = this.getICObjectInstance();
 		 * 
@@ -1131,7 +1137,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public int getICObjectID()
 	{
-		return ic_object_id;
+		return this.ic_object_id;
 	}	
 	public ICObject getICObject() throws Exception
 	{
@@ -1200,11 +1206,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public IWSubmitListener[] getIWSubmitListeners()
 	{
-		if (listenerList == null)
+		if (this.listenerList == null)
 		{
-			listenerList = new EventListenerList();
+			this.listenerList = new EventListenerList();
 		}
-		return (IWSubmitListener[]) listenerList.getListeners(IWSubmitListener.class);
+		return (IWSubmitListener[]) this.listenerList.getListeners(IWSubmitListener.class);
 	}
 	public void setEventAttribute(String attributeName, Object attributeValue)
 	{
@@ -1276,15 +1282,15 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public void endEvent(IWContext iwc)
 	{
-		iwc.removeSessionAttribute(eventLocationString);
+		iwc.removeSessionAttribute(this.eventLocationString);
 	}
 	public void listenerAdded(boolean added)
 	{
-		listenerAdded = added;
+		this.listenerAdded = added;
 	}
 	public boolean listenerAdded()
 	{
-		return listenerAdded;
+		return this.listenerAdded;
 	}
 	//public void setIWContext(IWContext iwc)
 	//{
@@ -1296,11 +1302,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public EventListenerList getEventListenerList()
 	{
-		if (listenerList == null)
+		if (this.listenerList == null)
 		{
-			listenerList = new EventListenerList();
+			this.listenerList = new EventListenerList();
 		}
-		return listenerList;
+		return this.listenerList;
 	}
 
 	/**
@@ -1362,31 +1368,31 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public void setUseBuilderObjectControl(boolean use)
 	{
-		_useBuilderObjectControl = use;
+		this._useBuilderObjectControl = use;
 	}
 	public boolean getUseBuilderObjectControl()
 	{
-		return (_useBuilderObjectControl);
+		return (this._useBuilderObjectControl);
 	}
 	public void setBelongsToParent(boolean belongs)
 	{
-		_belongsToParent = belongs;
+		this._belongsToParent = belongs;
 	}
 	public boolean getBelongsToParent()
 	{
-		return (_belongsToParent);
+		return (this._belongsToParent);
 	}
 	public boolean getChangeInstanceIDOnInheritance()
 	{
-		return (_changeInstanceIDOnInheritance);
+		return (this._changeInstanceIDOnInheritance);
 	}
 	public void setChangeInstanceIDOnInheritance(boolean change)
 	{
-		_changeInstanceIDOnInheritance = change;
+		this._changeInstanceIDOnInheritance = change;
 	}
 	public boolean allowPagePermissionInheritance()
 	{
-		return _allowPagePermissionInheritance;
+		return this._allowPagePermissionInheritance;
 	}
 	/*
 	 * New Event system
@@ -1440,12 +1446,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public void setDefaultState(GenericState state)
 	{
-		defaultState = state;
+		this.defaultState = state;
 	}
 	public GenericState getDefaultState()
 	{
-		if(defaultState!=null){
-			return (GenericState) defaultState.clone();
+		if(this.defaultState!=null){
+			return (GenericState) this.defaultState.clone();
 		}
 		return null;
 	}
@@ -1506,10 +1512,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public void setVisible(boolean visible)
 	{
-		if (visible)
+		if (visible) {
 			setStyleAttribute("visibility:visible");
-		else
+		}
+		else {
 			setStyleAttribute("visibility:hidden");
+		}
 	}
 	public void setHeight(String height)
 	{
@@ -1519,8 +1527,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		String height = getMarkupAttribute(HEIGHT);
 		if (height == null) {
-			if (_styler != null) {
-				height = _styler.getStyleValue(HEIGHT);
+			if (this._styler != null) {
+				height = this._styler.getStyleValue(HEIGHT);
 				if (height != null && height.indexOf("px") != -1) {
 					height = height.substring(0, height.indexOf("px"));
 				}
@@ -1532,8 +1540,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		String width = getMarkupAttribute(WIDTH);
 		if (width == null) {
-			if (_styler != null) {
-				width = _styler.getStyleValue(WIDTH);
+			if (this._styler != null) {
+				width = this._styler.getStyleValue(WIDTH);
 				if (width != null && width.indexOf("px") != -1) {
 					width = width.substring(0, width.indexOf("px"));
 				}
@@ -1599,7 +1607,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public void setLocation(IWLocation location, IWUserContext iwuc)
 	{
-		_location = location;
+		this._location = location;
 		if (this instanceof StatefullPresentation)
 		{
 			IWPresentationState state = ((StatefullPresentation) this).getPresentationState(iwuc);
@@ -1615,14 +1623,14 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		//      return
 		// ((StatefullPresentation)this).getPresentationState().getLocation();
 		//    } else {
-		return _location;
+		return this._location;
 		//    }
 	}
 	public EventListenerList getEventListenerList(IWUserContext iwuc)
 	{
-		if (_listenerList != null)
+		if (this._listenerList != null)
 		{
-			return _listenerList;
+			return this._listenerList;
 		}
 		else
 		{
@@ -1646,8 +1654,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				{
 					if (this.getLocation() != null)
 					{
-						_listenerList = machine.getListenersFor(this.getLocation());
-						return _listenerList;
+						this._listenerList = machine.getListenersFor(this.getLocation());
+						return this._listenerList;
 					}
 					else
 					{
@@ -1659,8 +1667,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				}
 				else
 				{
-					_listenerList = machine.getListenersFor(this.getICObjectInstance());
-					return _listenerList;
+					this._listenerList = machine.getListenersFor(this.getICObjectInstance());
+					return this._listenerList;
 				}
 				//=======
 				//	System.out.println();
@@ -1700,9 +1708,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public EventListenerList getEventListener(IWUserContext iwuc)
 	{
-		if (_listenerList != null)
+		if (this._listenerList != null)
 		{
-			return _listenerList;
+			return this._listenerList;
 		}
 		else
 		{
@@ -1855,8 +1863,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public String getComponentId()
 	{
 		String id = IWMainApplication.getEncryptedClassName(this.getClass());
-		if (artificialCompoundId != null)
+		if (this.artificialCompoundId != null) {
 			return id;
+		}
 		PresentationObject mother=null;
 		try{
 			mother= getParentObject();
@@ -1891,15 +1900,16 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		StringBuffer buffer = new StringBuffer();
 		// if artificial compound id is set use this one
-		if (artificialCompoundId != null)
+		if (this.artificialCompoundId != null)
 		{
-			buffer.append(artificialCompoundId).append(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER).append(getComponentId());
+			buffer.append(this.artificialCompoundId).append(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER).append(getComponentId());
 			return buffer.toString();
 		}
 		// if there is a object instance id use this one
 		int instanceId;
-		if ((instanceId = getICObjectInstanceID()) > 0)
+		if ((instanceId = getICObjectInstanceID()) > 0) {
 			return Integer.toString(instanceId);
+		}
 		// first fetch my component id
 		buffer.append(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
 		buffer.append(getComponentId());
@@ -1909,8 +1919,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			mother = getParentObject();
 		}
 		catch(ClassCastException cse){}
-		if (mother != null)
+		if (mother != null) {
 			buffer.insert(0, mother.calculateCompoundId());
+		}
 		return buffer.toString();
 	}
 
@@ -1942,14 +1953,14 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		// and then call the getPresentationState() method.
 		// The part of this method that calls the state mashine is only for old
 		// code!
-		if (formerCompoundId != null && this instanceof StatefullPresentation) {
+		if (this.formerCompoundId != null && this instanceof StatefullPresentation) {
 			try {
 				Class stateClass = ((StatefullPresentation) this)
 					.getPresentationStateClass();
 				IWStateMachine stateMachine = (IWStateMachine) IBOLookup
 					.getSessionInstance(iwuc, IWStateMachine.class);
 				IWPresentationState state = stateMachine.getStateFor(
-					formerCompoundId,
+					this.formerCompoundId,
 					stateClass);
 				// update compoundId
 				state.setArtificialCompoundId(artificialCompoundId);
@@ -1965,7 +1976,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		// at the moment there is nothing to do.
 		String calculatedCompoundId = calculateCompoundId();
 		// Do not forget: set former compound id to the new one
-		formerCompoundId = calculatedCompoundId;
+		this.formerCompoundId = calculatedCompoundId;
 		return calculatedCompoundId;
 	}
 	/**
@@ -2172,7 +2183,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				IWContext iwc = castToIWContext(fc);
 				//This should only happen when the component is restored and before main is called the first time on the (restored)component
 				if(isRestoredFromState()){
-					if(!goneThroughMain&&resetGoneThroughMainInRestore()){
+					if(!this.goneThroughMain&&resetGoneThroughMainInRestore()){
 						resetBeforeMain(fc);
 					}
 				}
@@ -2336,16 +2347,16 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * @see javax.faces.component.UIComponent#getFacet(java.lang.String)
 	 */
 	public UIComponent getFacet(String name) {
-		return facetMap == null ? null : (UIComponent)facetMap.get(name);
+		return this.facetMap == null ? null : (UIComponent)this.facetMap.get(name);
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFacets()
 	 */
 	public Map getFacets() {
 		if(this.facetMap==null){
-			facetMap = new PresentationObjectComponentFacetMap(this);
+			this.facetMap = new PresentationObjectComponentFacetMap(this);
 		}
-		return facetMap;
+		return this.facetMap;
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFacetsAndChildren()
@@ -2361,17 +2372,17 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * @see javax.faces.component.UIComponent#getChildCount()
 	 */
 	public int getChildCount() {
-		 return childrenList == null ? 0 : childrenList.size();
+		 return this.childrenList == null ? 0 : this.childrenList.size();
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getChildren()
 	 */
 	public List getChildren() {
-		if (childrenList == null)
+		if (this.childrenList == null)
 		{
-			childrenList = new PresentationObjectComponentList(this);
+			this.childrenList = new PresentationObjectComponentList(this);
 		}
-		return childrenList;
+		return this.childrenList;
 	}
 	
 	/**
@@ -2385,15 +2396,15 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	
 	
 	protected void setRenderedPhaseDone(){
-		goneThroughRenderPhase=true;
+		this.goneThroughRenderPhase=true;
 	}
 
 	protected void setRenderedPhaseNotDone(){
-		goneThroughRenderPhase=false;
+		this.goneThroughRenderPhase=false;
 	}	
 	
 	protected boolean goneThroughRenderPhase(){
-		return goneThroughRenderPhase;
+		return this.goneThroughRenderPhase;
 	}
 	
 	/*

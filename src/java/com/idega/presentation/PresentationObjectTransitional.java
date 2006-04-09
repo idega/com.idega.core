@@ -24,10 +24,10 @@ import com.idega.idegaweb.IWMainApplication;
  * such as the main() and print() methods, but are forced to use JSF standard
  * methods such as encodeBegin(),encodeChildren() and encodeBegin().
  * </p>
- * Last modified: $Date: 2006/02/01 13:54:42 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class PresentationObjectTransitional extends PresentationObjectContainer {
 
@@ -185,7 +185,7 @@ public class PresentationObjectTransitional extends PresentationObjectContainer 
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[2];
 		values[0] = super.saveState(ctx);
-		values[1] = new Boolean(isInitialized);
+		values[1] = new Boolean(this.isInitialized);
 		return values;
 	}
 
@@ -196,7 +196,7 @@ public class PresentationObjectTransitional extends PresentationObjectContainer 
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		isInitialized = ((Boolean) values[1]).booleanValue();
+		this.isInitialized = ((Boolean) values[1]).booleanValue();
 	}
 
 	/**

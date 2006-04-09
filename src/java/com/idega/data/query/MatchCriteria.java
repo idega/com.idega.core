@@ -90,37 +90,42 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 			this.value = value;
 		}
 		this.matchType = matchType;
-		if(!matchType.equalsIgnoreCase(LIKE))
-		    this.placeHolderValue = value;
+		if(!matchType.equalsIgnoreCase(LIKE)) {
+			this.placeHolderValue = value;
+		}
 	}
 
 	public MatchCriteria(Column column, String matchType, float value) {
 		this.column = column;
 		this.value = "" + value;
 		this.matchType = matchType;
-		if(!matchType.equalsIgnoreCase(LIKE))
-		    this.placeHolderValue = new Float(value);
+		if(!matchType.equalsIgnoreCase(LIKE)) {
+			this.placeHolderValue = new Float(value);
+		}
 	}
 
 	public MatchCriteria(Column column, String matchType, int value) {
 		this.column = column;
 		this.value = "" + value;
 		this.matchType = matchType;
-		if(!matchType.equalsIgnoreCase(LIKE))
-		    this.placeHolderValue = new Integer(value);
+		if(!matchType.equalsIgnoreCase(LIKE)) {
+			this.placeHolderValue = new Integer(value);
+		}
 	}
 
 	public MatchCriteria(Column column, String matchType, boolean value) {
 		this.column = column;
 		if (value) {
 			this.value = quote("Y");
-			if(!matchType.equalsIgnoreCase(LIKE))
-			    this.placeHolderValue = Boolean.TRUE;
+			if(!matchType.equalsIgnoreCase(LIKE)) {
+				this.placeHolderValue = Boolean.TRUE;
+			}
 		}
 		else {
 			this.value = quote("N");
-			if(!matchType.equalsIgnoreCase(LIKE))
-			    this.placeHolderValue = Boolean.FALSE;
+			if(!matchType.equalsIgnoreCase(LIKE)) {
+				this.placeHolderValue = Boolean.FALSE;
+			}
 		}
 		this.matchType = matchType;
 		
@@ -130,16 +135,18 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		this.column = column;
 		this.value = value.toString();
 		this.matchType = matchType;
-		if(!matchType.equalsIgnoreCase(LIKE))
-		    this.placeHolderValue = value;
+		if(!matchType.equalsIgnoreCase(LIKE)) {
+			this.placeHolderValue = value;
+		}
 	}
 
 	public MatchCriteria(Column column, String matchType, Date value) {
 		this.column = column;
 		this.value = getDatastore().format(value);
 		this.matchType = matchType;
-		if(!matchType.equalsIgnoreCase(LIKE))
-		    this.placeHolderValue = value;
+		if(!matchType.equalsIgnoreCase(LIKE)) {
+			this.placeHolderValue = value;
+		}
 		
 	}
 
@@ -147,8 +154,9 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		this.column = column;
 		this.value = getDatastore().format(value);
 		this.matchType = matchType;
-		if(!matchType.equalsIgnoreCase(LIKE))
-		    this.placeHolderValue = value;
+		if(!matchType.equalsIgnoreCase(LIKE)) {
+			this.placeHolderValue = value;
+		}
 	}
 
 	public MatchCriteria(Column column, String matchType, IDOEntity value) {
@@ -204,24 +212,28 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	}
 
 	public Column getColumn() {
-		return column;
+		return this.column;
 	}
 
 	public void write(Output out) {
-	    if(out.isFlagged() && getPlaceValue()!=null)
-	        out.print(column).print(' ').print(matchType).print(' ').print("?");
-	    else
-	        out.print(column).print(' ').print(matchType).print(' ').print(value);
+	    if(out.isFlagged() && getPlaceValue()!=null) {
+				out.print(this.column).print(' ').print(this.matchType).print(' ').print("?");
+			}
+			else {
+				out.print(this.column).print(' ').print(this.matchType).print(' ').print(this.value);
+			}
 	}
 
 	protected DatastoreInterface getDatastore() {
-		if (this.dataStore == null) this.dataStore = DatastoreInterface.getInstance();
+		if (this.dataStore == null) {
+			this.dataStore = DatastoreInterface.getInstance();
+		}
 		return this.dataStore;
 	}
 	
     public Set getTables(){
 		Set s = new HashSet();
-		s.add(column.getTable());
+		s.add(this.column.getTable());
 		return s; 
     }
 
@@ -234,21 +246,22 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
     
     public List getValues(){
         	Vector v = new Vector(1);
-        	if(this.placeHolderValue!=null)
-        	    v.add(this.placeHolderValue);
+        	if(this.placeHolderValue!=null) {
+						v.add(this.placeHolderValue);
+					}
         	return v;
     }
     
     public Object clone(){
 		MatchCriteria obj = (MatchCriteria)super.clone();
-		if(column!=null){
+		if(this.column!=null){
 			obj.column = (Column) this.column.clone();
 		}
 		
 		return obj;
 	}
 	public String getMatchType() {
-		return matchType;
+		return this.matchType;
 	}
 	public void setMatchType(String matchType) {
 		this.matchType = matchType;

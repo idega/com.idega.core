@@ -11,10 +11,10 @@ package com.idega.util.datastructures.list;
  * <p>
  * A simple container for storing key value pairs used by KeyValueList
  * </p>
- *  Last modified: $Date: 2005/07/15 11:55:07 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class KeyValuePair {
 	
@@ -27,10 +27,10 @@ public class KeyValuePair {
 	}
 	
 	public Object getKey() {
-		return key;
+		return this.key;
 	}
 	
 	public Object getValue() {
-		return value;
+		return this.value;
 	}
 }

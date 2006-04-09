@@ -1,5 +1,5 @@
 /*
- * $Id: HelpWindow.java,v 1.6 2006/02/22 20:52:49 laddi Exp $
+ * $Id: HelpWindow.java,v 1.7 2006/04/09 12:13:20 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -104,7 +104,7 @@ public class HelpWindow extends StyledIWAdminWindow {
 	
 		Form form = new Form();
 		Table t = new Table(1, 10);
-		t.setStyleClass(mainTableStyle);
+		t.setStyleClass(this.mainTableStyle);
 		t.setCellpadding(4);
 		t.setCellspacing(0);
 		t.setWidth("97%");
@@ -125,35 +125,37 @@ public class HelpWindow extends StyledIWAdminWindow {
     	loc = currentLocale;
     }
 
-		getHelpText(iwc, _helpKey, _helpBundle, loc);
+		getHelpText(iwc, this._helpKey, this._helpBundle, loc);
 
 		TextInput title = new TextInput(TITLE);
 		title.setLength(40);
 		title.setMaxlength(255);
-		if (_localizedTitle != null)
-			title.setContent(_localizedTitle);
+		if (this._localizedTitle != null) {
+			title.setContent(this._localizedTitle);
+		}
 
 		TextEditor editor = new TextEditor();
 		editor.setInputName(BODY);
-		if (_localizedHelpText != null)
-			editor.setContent(_localizedHelpText);
+		if (this._localizedHelpText != null) {
+			editor.setContent(this._localizedHelpText);
+		}
 
-		SubmitButton save = new SubmitButton(_iwrb.getLocalizedImageButton(SAVE, "Save"), SAVE);
-		SubmitButton close = new SubmitButton(_iwrb.getLocalizedImageButton(CLOSE, "Close"), CLOSE);
+		SubmitButton save = new SubmitButton(this._iwrb.getLocalizedImageButton(SAVE, "Save"), SAVE);
+		SubmitButton close = new SubmitButton(this._iwrb.getLocalizedImageButton(CLOSE, "Close"), CLOSE);
 
-		Text titleLabel = new Text(_iwrb.getLocalizedString(TITLE, "Title"));
-		Text localeLabel = new Text(_iwrb.getLocalizedString(LOCALE, "Locale"));
-		Text bodyLabel = new Text(_iwrb.getLocalizedString(BODY, "Help text"));
+		Text titleLabel = new Text(this._iwrb.getLocalizedString(TITLE, "Title"));
+		Text localeLabel = new Text(this._iwrb.getLocalizedString(LOCALE, "Locale"));
+		Text bodyLabel = new Text(this._iwrb.getLocalizedString(BODY, "Help text"));
 		
-		if (_titleStyleAttribute != null) {
-			titleLabel.setStyleAttribute(_titleStyleAttribute);
-			localeLabel.setStyleAttribute(_titleStyleAttribute);
-			bodyLabel.setStyleAttribute(_titleStyleAttribute);
+		if (this._titleStyleAttribute != null) {
+			titleLabel.setStyleAttribute(this._titleStyleAttribute);
+			localeLabel.setStyleAttribute(this._titleStyleAttribute);
+			bodyLabel.setStyleAttribute(this._titleStyleAttribute);
 		}		
-		else if (_titleStyleClass != null) {
-			titleLabel.setStyleClass(_titleStyleClass);
-			localeLabel.setStyleClass(_titleStyleClass);
-			bodyLabel.setStyleClass(_titleStyleClass);
+		else if (this._titleStyleClass != null) {
+			titleLabel.setStyleClass(this._titleStyleClass);
+			localeLabel.setStyleClass(this._titleStyleClass);
+			bodyLabel.setStyleClass(this._titleStyleClass);
 		}
 
 		int row = 1;
@@ -173,27 +175,27 @@ public class HelpWindow extends StyledIWAdminWindow {
 
 		form.add(t);
 		form.add(new HiddenInput(EDIT, "true"));
-		form.add(new HiddenInput(HELP_KEY, _helpKey));
-		form.add(new HiddenInput(HELP_BUNDLE, _helpBundle));
+		form.add(new HiddenInput(HELP_KEY, this._helpKey));
+		form.add(new HiddenInput(HELP_BUNDLE, this._helpBundle));
 		add(form,iwc);
 	}
 
 	private void view(IWContext iwc) {
 
 		Table t = new Table();
-		t.setStyleClass(mainTableStyle);
+		t.setStyleClass(this.mainTableStyle);
 		t.setWidth("97%");
 //		t.setHeight(400);
-		CloseButton close = new CloseButton(_iwrb.getLocalizedImageButton(CLOSE_WINDOW, "Close"));
+		CloseButton close = new CloseButton(this._iwrb.getLocalizedImageButton(CLOSE_WINDOW, "Close"));
 		int row = 1;
-		if (_hasEdit) {
+		if (this._hasEdit) {
 			t.resize(1, 5);
 
 			Link change = new Link();
-			change.setImage(_iwb.getImage(EDIT_IMAGE));
+			change.setImage(this._iwb.getImage(EDIT_IMAGE));
 			change.setParameter(EDIT, "true");
-			change.setParameter(HELP_KEY, _helpKey);
-			change.setParameter(HELP_BUNDLE,_helpBundle);
+			change.setParameter(HELP_KEY, this._helpKey);
+			change.setParameter(HELP_BUNDLE,this._helpBundle);
 			t.add(change, 1, row);
 			row = 3;
 		}
@@ -210,32 +212,36 @@ public class HelpWindow extends StyledIWAdminWindow {
     	loc = iwc.getCurrentLocale();
     }
 
-		getHelpText(iwc, _helpKey, _helpBundle, loc);
+		getHelpText(iwc, this._helpKey, this._helpBundle, loc);
 
 		Text title = null;
-		if (_localizedTitle != null) {
-			title = new Text(_localizedTitle);
+		if (this._localizedTitle != null) {
+			title = new Text(this._localizedTitle);
 			
-			if (_titleStyleAttribute != null)
-				title.setStyleAttribute(_titleStyleAttribute);						
-			else if (_titleStyleClass != null)
-				title.setStyleClass(_titleStyleClass);
+			if (this._titleStyleAttribute != null) {
+				title.setStyleAttribute(this._titleStyleAttribute);
+			}
+			else if (this._titleStyleClass != null) {
+				title.setStyleClass(this._titleStyleClass);
+			}
 		}
 
 		t.add(title, 1, row++);
 		row++;
 		
 		Text body = null;
-		if (_localizedHelpText != null) {
-			body = new Text(_localizedHelpText);
+		if (this._localizedHelpText != null) {
+			body = new Text(this._localizedHelpText);
 			
-			if (_bodyStyleAttribute != null)
-				body.setStyleAttribute(_bodyStyleAttribute);
-			else if (_bodyStyleClass != null)
-				body.setStyleClass(_bodyStyleClass);
+			if (this._bodyStyleAttribute != null) {
+				body.setStyleAttribute(this._bodyStyleAttribute);
+			}
+			else if (this._bodyStyleClass != null) {
+				body.setStyleClass(this._bodyStyleClass);
+			}
 		}
 						
-		t.add(_localizedHelpText, 1, row);
+		t.add(this._localizedHelpText, 1, row);
 		t.add(close,1,++row);
 		t.setAlignment(1,row,"right");
 
@@ -243,10 +249,11 @@ public class HelpWindow extends StyledIWAdminWindow {
 	}
 
 	private void putHelpText(IWContext iwc, String helpKey, String bundle, Locale loc, String title, String body) { 
-		if (_doc == null) 
+		if (this._doc == null) {
 			loadHelpText(iwc,helpKey,bundle,loc);
+		}
 			
-		XMLElement root = _doc.getRootElement();
+		XMLElement root = this._doc.getRootElement();
 		XMLElement help = root.getChild(XML_HELP);
 		if (help == null) {
 			help = new XMLElement(XML_HELP);
@@ -267,8 +274,9 @@ public class HelpWindow extends StyledIWAdminWindow {
 			help.addContent(titleElement);
 		}
 
-		if (title != null)
+		if (title != null) {
 			titleElement.setText(title);
+		}
 			
 		XMLCDATA cdata = help.getXMLCDATAContent();
 		if (cdata != null) {
@@ -283,14 +291,17 @@ public class HelpWindow extends StyledIWAdminWindow {
 	private void saveHelpText(IWContext iwc, String helpKey, String bundle, Locale loc) {
 		try {
 			IWBundle iwb = null;
-			if (bundle == null)
+			if (bundle == null) {
 				iwb = iwc.getIWMainApplication().getBundle(HELP_BUNDLE);
-			else
+			}
+			else {
 				iwb = iwc.getIWMainApplication().getBundle(bundle);
+			}
 
 			StringBuffer fileName = new StringBuffer(iwb.getResourcesRealPath(loc));
-			if (!fileName.toString().endsWith(FileUtil.getFileSeparator()))
+			if (!fileName.toString().endsWith(FileUtil.getFileSeparator())) {
 				fileName.append(FileUtil.getFileSeparator());
+			}
 
 			fileName.append(XML_FOLDER);
 			File file = new File(fileName.toString());
@@ -306,14 +317,15 @@ public class HelpWindow extends StyledIWAdminWindow {
 
 			FileOutputStream out = new FileOutputStream(file);
 		
-			if (_doc == null)
-				_doc = new XMLDocument(new XMLElement(XML_ROOT));
+			if (this._doc == null) {
+				this._doc = new XMLDocument(new XMLElement(XML_ROOT));
+			}
 
 			XMLOutput output = new XMLOutput("  ", true);
 			output.setLineSeparator(System.getProperty("line.separator"));
 			output.setTextNormalize(true);
 			output.setEncoding("UTF-16");
-			output.output(_doc, out);
+			output.output(this._doc, out);
 
 			out.close();
 		}
@@ -323,46 +335,54 @@ public class HelpWindow extends StyledIWAdminWindow {
 	}
 	
 	private void getHelpText(IWContext iwc, String helpKey, String bundle, Locale loc) {
-		_localizedTitle = null;
-		_localizedHelpText = null;
+		this._localizedTitle = null;
+		this._localizedHelpText = null;
 
-		if (_doc == null) 
+		if (this._doc == null) {
 			loadHelpText(iwc,helpKey,bundle,loc);
+		}
 
-		XMLElement root = _doc.getRootElement();
-		if (root == null)
+		XMLElement root = this._doc.getRootElement();
+		if (root == null) {
 			return;
+		}
 			
 		XMLElement help = root.getChild(XML_HELP);
-		if (help == null)
+		if (help == null) {
 			return;
+		}
 			
 		XMLAttribute id = help.getAttribute(XML_ID);
-		if (id == null || !id.getValue().equals(helpKey))
+		if (id == null || !id.getValue().equals(helpKey)) {
 			return;
+		}
 
 		XMLElement title = help.getChild(XML_TITLE);
 		if (title != null) {
-			_localizedTitle = title.getTextTrim();
+			this._localizedTitle = title.getTextTrim();
 		}
 			
 		XMLCDATA cdata = help.getXMLCDATAContent();
-		if (cdata != null) 
-			_localizedHelpText = cdata.getText();		
+		if (cdata != null) {
+			this._localizedHelpText = cdata.getText();
+		}		
 	}
 
 	private void loadHelpText(IWContext iwc, String helpKey, String bundle, Locale loc) {
 		try {
 			IWBundle iwb = null;
-			if (bundle == null)
+			if (bundle == null) {
 				iwb = iwc.getIWMainApplication().getBundle(HELP_BUNDLE);
-			else
+			}
+			else {
 				iwb = iwc.getIWMainApplication().getBundle(bundle);
+			}
 				
 			XMLParser parser = new XMLParser(false);
 			StringBuffer fileName = new StringBuffer(iwb.getResourcesRealPath(loc));
-			if (!fileName.toString().endsWith(FileUtil.getFileSeparator()))
+			if (!fileName.toString().endsWith(FileUtil.getFileSeparator())) {
 				fileName.append(FileUtil.getFileSeparator());
+			}
 
 			fileName.append(XML_FOLDER);
 			File file = new File(fileName.toString());
@@ -376,10 +396,10 @@ public class HelpWindow extends StyledIWAdminWindow {
 			file = new File(fileName.toString());
 			file.createNewFile();
 
-			_doc = parser.parse(file);
+			this._doc = parser.parse(file);
 		}
 		catch (Exception e) {
-			_doc = new XMLDocument(new XMLElement(XML_ROOT));
+			this._doc = new XMLDocument(new XMLElement(XML_ROOT));
 		}
 	}
 
@@ -398,8 +418,8 @@ public class HelpWindow extends StyledIWAdminWindow {
 			String body = iwc.getParameter(BODY);
 			String locale = iwc.getParameter(LOCALE);
 			Locale loc = ICLocaleBusiness.getLocale(Integer.parseInt(locale));
-			putHelpText(iwc,_helpKey,_helpBundle,loc,title,body);
-			saveHelpText(iwc,_helpKey,_helpBundle,loc);
+			putHelpText(iwc,this._helpKey,this._helpBundle,loc,title,body);
+			saveHelpText(iwc,this._helpKey,this._helpBundle,loc);
 		}	
 		
 		if (iwc.isParameterSet(CLOSE)) {
@@ -414,50 +434,53 @@ public class HelpWindow extends StyledIWAdminWindow {
 	}
 
 	public void main(IWContext iwc) {
-		_hasEdit = iwc.hasEditPermission(this);
-		_iwb = iwc.getIWMainApplication().getBundle(BUNDLE_IDENTIFIER);
-		_iwrb = _iwb.getResourceBundle(iwc);
+		this._hasEdit = iwc.hasEditPermission(this);
+		this._iwb = iwc.getIWMainApplication().getBundle(BUNDLE_IDENTIFIER);
+		this._iwrb = this._iwb.getResourceBundle(iwc);
 
-		_helpKey = iwc.getParameter(HELP_KEY);
-		_helpBundle = iwc.getParameter(HELP_BUNDLE);
+		this._helpKey = iwc.getParameter(HELP_KEY);
+		this._helpBundle = iwc.getParameter(HELP_BUNDLE);
 		
-		if (_helpKey == null)
-			add(_iwrb.getLocalizedString(ERROR_NO_HELP_KEY,"No help key specified"));
-		else if (_helpBundle == null)
-			add(_iwrb.getLocalizedString(ERROR_NO_BUNDLE,"No bundle for help text specified"));
-		else
+		if (this._helpKey == null) {
+			add(this._iwrb.getLocalizedString(ERROR_NO_HELP_KEY,"No help key specified"));
+		}
+		else if (this._helpBundle == null) {
+			add(this._iwrb.getLocalizedString(ERROR_NO_BUNDLE,"No bundle for help text specified"));
+		}
+		else {
 			control(iwc);
+		}
 	}
 
 	public void setTitleStyleAttribute(String styleAttribute) {
-		_titleStyleAttribute = styleAttribute;
+		this._titleStyleAttribute = styleAttribute;
 	}
 	
 	public void setTitleStyleClass(String styleClass) {
-		_titleStyleClass = styleClass;	
+		this._titleStyleClass = styleClass;	
 	}
 	
 	public void setBodyStyleAttribute(String styleAttribute) {
-		_bodyStyleAttribute = styleAttribute;		
+		this._bodyStyleAttribute = styleAttribute;		
 	}
 	
 	public void setBodyStyleClass(String styleClass) {
-		_bodyStyleClass = styleClass;			
+		this._bodyStyleClass = styleClass;			
 	}
 	
 	public void setLinkStyleAttribute(String styleAttribute) {
-		_linkStyleAttribute = styleAttribute;
+		this._linkStyleAttribute = styleAttribute;
 	}
 	
 	public void setLinkStyleClass(String styleClass) {
-		_linkStyleClass = styleClass;			
+		this._linkStyleClass = styleClass;			
 	}
 	
 	public void setSeeAlsoStyleAttribute(String styleAttribute) {
-		_seeAlsoStyleAttribute = styleAttribute;		
+		this._seeAlsoStyleAttribute = styleAttribute;		
 	}
 	
 	public void setSeeAlsoStyleClass(String styleClass) {
-		_seeAlsoStyleClass = styleClass;			
+		this._seeAlsoStyleClass = styleClass;			
 	}
 }

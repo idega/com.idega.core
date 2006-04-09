@@ -255,10 +255,10 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	}
 
 	public AddressTypeHome getAddressTypeHome() throws RemoteException {
-		if (addressTypeHome == null) {
-			addressTypeHome = (AddressTypeHome) IDOLookup.getHome(AddressType.class);
+		if (this.addressTypeHome == null) {
+			this.addressTypeHome = (AddressTypeHome) IDOLookup.getHome(AddressType.class);
 		}
-		return addressTypeHome;
+		return this.addressTypeHome;
 	}
 
 	public AddressType ejbHomeGetAddressType1() throws RemoteException {
@@ -295,11 +295,13 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public String getStreetAddress() {
 		StringBuffer addr = new StringBuffer();
 		String street = getStreetName();
-		if (street != null)
+		if (street != null) {
 			addr.append(street).append(" ");
+		}
 		String number = this.getStreetNumber();
-		if (number != null)
+		if (number != null) {
 			addr.append(number);
+		}
 		return TextSoap.capitalize(addr.toString(), " ");
 	}
 

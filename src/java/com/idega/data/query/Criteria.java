@@ -18,7 +18,9 @@ public abstract class Criteria implements Outputable, Cloneable{
     }
 
     protected String quote(String s) {
-        if (s == null) return "null";
+        if (s == null) {
+					return "null";
+				}
         StringBuffer str = new StringBuffer();
         str.append('\'');
         for (int i = 0; i < s.length(); i++) {

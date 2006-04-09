@@ -51,7 +51,7 @@ public class SelectionBox extends InterfaceObject
 		setName(name);
 		this.theElements = new Vector(10);
 		this.keepStatus = false;
-		multipleString = "multiple";
+		this.multipleString = "multiple";
 	}
 	public SelectionBox(String name, String textHeading)
 	{
@@ -65,7 +65,7 @@ public class SelectionBox extends InterfaceObject
 		this.theElements = new Vector(10);
 		this.keepStatus = false;
 		setMarkupAttribute("CLASS", "select");
-		multipleString = "multiple";
+		this.multipleString = "multiple";
 		if (entity != null)
 		{
 			if (entity.length > 0)
@@ -86,7 +86,7 @@ public class SelectionBox extends InterfaceObject
 		this.theElements = new Vector(10);
 		this.keepStatus = false;
 		setMarkupAttribute("CLASS", "select");
-		multipleString = "multiple";
+		this.multipleString = "multiple";
 		
 		setName(untitled);
 		addMenuElements(entityList);
@@ -98,7 +98,7 @@ public class SelectionBox extends InterfaceObject
 	public void setTextHeading(Text textHeading)
 	{
 		this.textHeading = textHeading;
-		headerTable = true;
+		this.headerTable = true;
 	}
 	/**
 	
@@ -107,11 +107,13 @@ public class SelectionBox extends InterfaceObject
 	 */
 	public String getTextHeadingString()
 	{
-		if (textHeading != null)
+		if (this.textHeading != null)
 		{
-			return textHeading.getText();
-		} else
+			return this.textHeading.getText();
+		}
+		else {
 			return null;
+		}
 	}
 	private Text getTextHeading()
 	{
@@ -124,7 +126,7 @@ public class SelectionBox extends InterfaceObject
 	//Here is a possible bug, if there are many elements with the same value
 	public void addMenuElement(String Value, String DisplayString)
 	{
-		theElements.addElement(new MenuElement(DisplayString, Value));
+		this.theElements.addElement(new MenuElement(DisplayString, Value));
 	}
 	public void setMenuElement(String value, String displayString)
 	{
@@ -151,8 +153,9 @@ public class SelectionBox extends InterfaceObject
 				
 				addMenuElement(entity.getPrimaryKey().toString(), entity.toString());
 			}
-			if (getName().equals(untitled) && entity != null)
+			if (getName().equals(untitled) && entity != null) {
 				setName(entity.getEntityDefinition().getUniqueEntityName());
+			}
 		}
 	}	
 
@@ -182,8 +185,9 @@ public class SelectionBox extends InterfaceObject
 				}				
 			}
 			
-			if (getName().equals(untitled) && entity != null)
+			if (getName().equals(untitled) && entity != null) {
 				setName(entity.getEntityDefinition().getUniqueEntityName());
+			}
 		}		
 	}
 	/**
@@ -215,7 +219,7 @@ public class SelectionBox extends InterfaceObject
 	}
 	public void addSeparator()
 	{
-		theElements.addElement(new MenuElement("----------------------------", ""));
+		this.theElements.addElement(new MenuElement("----------------------------", ""));
 	}
 	/**
 	
@@ -224,7 +228,7 @@ public class SelectionBox extends InterfaceObject
 	 */
 	public void addUpAndDownMovers()
 	{
-		movers = true;
+		this.movers = true;
 	}
 	public void selectAllOnSubmit()
 	{
@@ -239,10 +243,10 @@ public class SelectionBox extends InterfaceObject
 		if (this.headerTable)
 		{
 		}
-		if (movers)
+		if (this.movers)
 		{
-			outerTable = new Table(2, 1);
-			outerTable.setParentObject(this.getParentObject());
+			this.outerTable = new Table(2, 1);
+			this.outerTable.setParentObject(this.getParentObject());
 			//Script script = new Script();
 			//outerTable.add(script);
 			Page parentPage = this.getParentPage();
@@ -261,17 +265,17 @@ public class SelectionBox extends InterfaceObject
 			script.addFunction(
 				"moveDown",
 				"function moveDown(YLoad) {  if( YLoad.selectedIndex != YLoad.length-1 &&    YLoad.selectedIndex != -1 &&    YLoad.length > 1) {        var selIdx = YLoad.selectedIndex;    var selVal = YLoad.options[selIdx].value;    var selText = YLoad.options[selIdx].text;      var belowVal = YLoad.options[selIdx+1].value;    var belowText = YLoad.options[selIdx+1].text;      addOpt( YLoad, selVal, selText, selIdx+1, true );    addOpt( YLoad, belowVal, belowText, selIdx );  }}");
-			outerTable.add(this, 1, 1);
+			this.outerTable.add(this, 1, 1);
 			GenericButton up = new GenericButton(this.getName() + "_up", " /\\ ");
 			up.setOnClick("moveUp(this.form." + this.getName() + ")");
 			GenericButton down = new GenericButton(this.getName() + "_down", " \\/ ");
 			down.setOnClick("moveDown(this.form." + this.getName() + ")");
-			outerTable.add(up, 2, 1);
-			outerTable.addBreak(2, 1);
-			outerTable.add(down, 2, 1);
-			outerTable.addBreak(2, 1);
+			this.outerTable.add(up, 2, 1);
+			this.outerTable.addBreak(2, 1);
+			this.outerTable.add(down, 2, 1);
+			this.outerTable.addBreak(2, 1);
 		}
-		if (selectAllOnSubmit)
+		if (this.selectAllOnSubmit)
 		{
 			Script script = this.getParentPage().getAssociatedScript();
 			script.addFunction(
@@ -279,7 +283,7 @@ public class SelectionBox extends InterfaceObject
 				"function selectAllInSelectionBox(input){\n  for( i=0;i<input.length; i++ ) {\n	input[i].selected=1;\n    }\n}");
 			this.getParentForm().setOnSubmit("selectAllInSelectionBox(this." + this.getName() + ")");
 		}
-		if (selectAllOnSubmitIfNoneSelected)
+		if (this.selectAllOnSubmitIfNoneSelected)
 		{
 			Script script = this.getParentPage().getAssociatedScript();
 			script.addFunction(
@@ -287,8 +291,8 @@ public class SelectionBox extends InterfaceObject
 				"function selectAllInSelectionBoxIfNoneSelected(input){\n  noElementsSelected = true;\n  for( i=0;i<input.length; i++ ) {\n    if(input[i].selected==1) {\n      noElementsSelected=false;\n    }\n  }\n  if (noElementsSelected){\n    for( i=0;i<input.length; i++ ) {\n	input[i].selected=1;\n    }\n  }\n}");
 			this.getParentForm().setOnSubmit("selectAllInSelectionBoxIfNoneSelected(this." + this.getName() + ")");
 		}
-		if (isSetAsNotEmpty) {
-			setOnSubmitFunction("warnIfNonSelected", "function warnIfNonSelected (inputbox,warnMsg) {\n\n		if ( inputbox.length == 0 ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", notEmptyErrorMessage);
+		if (this.isSetAsNotEmpty) {
+			setOnSubmitFunction("warnIfNonSelected", "function warnIfNonSelected (inputbox,warnMsg) {\n\n		if ( inputbox.length == 0 ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", this.notEmptyErrorMessage);
 		}
 
 	}
@@ -366,10 +370,10 @@ public class SelectionBox extends InterfaceObject
 	{
 		if (ifMultiple)
 		{
-			multipleString = "multiple";
+			this.multipleString = "multiple";
 		} else
 		{
-			multipleString = "";
+			this.multipleString = "";
 		}
 	}
 	/**
@@ -399,7 +403,7 @@ public class SelectionBox extends InterfaceObject
 	public MenuElement getMenuElement(String ElementValue)
 	{
 		MenuElement theReturn = new MenuElement();
-		Iterator iter = theElements.iterator();
+		Iterator iter = this.theElements.iterator();
 		while (iter.hasNext())
 		{
 			MenuElement tempobj = (MenuElement) iter.next();
@@ -412,18 +416,18 @@ public class SelectionBox extends InterfaceObject
 	}
 	public void print(IWContext iwc) throws Exception
 	{
-		theElements.trimToSize();
-		if (movers)
+		this.theElements.trimToSize();
+		if (this.movers)
 		{
-			if (!tableAlreadyPrinted)
+			if (!this.tableAlreadyPrinted)
 			{
-				tableAlreadyPrinted = true;
-				movers = false;
-				outerTable._print(iwc);
-				movers = false;
+				this.tableAlreadyPrinted = true;
+				this.movers = false;
+				this.outerTable._print(iwc);
+				this.movers = false;
 			} else
 			{
-				tableAlreadyPrinted = false;
+				this.tableAlreadyPrinted = false;
 			}
 		} else
 		{
@@ -444,15 +448,15 @@ public class SelectionBox extends InterfaceObject
 						setSelectedElements(selectedValues);
 					}
 				}
-					println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " " + multipleString + " >");
-					Iterator iter = theElements.iterator();
+					println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " " + this.multipleString + " >");
+					Iterator iter = this.theElements.iterator();
 					while (iter.hasNext())
 					{
 						MenuElement tempobj = (MenuElement) iter.next();
-						if (allSelected){
+						if (this.allSelected){
 							tempobj.setSelected(true);
 						}
-						if(showOnlySelected){
+						if(this.showOnlySelected){
 							if(tempobj.isSelected()){
 								tempobj._print(iwc);
 							}
@@ -472,15 +476,15 @@ public class SelectionBox extends InterfaceObject
 					}
 				}
 					println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
-					Iterator iter = theElements.iterator();
+					Iterator iter = this.theElements.iterator();
 					while (iter.hasNext())
 					{
 						MenuElement tempobj = (MenuElement) iter.next();
-						if (allSelected){
+						if (this.allSelected){
 							tempobj.setSelected(true);
 						}
 						
-						if(showOnlySelected){
+						if(this.showOnlySelected){
 							if(tempobj.isSelected()){
 								tempobj._print(iwc);
 							}
@@ -493,7 +497,7 @@ public class SelectionBox extends InterfaceObject
 			}
 			//}
 		}
-		HiddenInput numberOfElements = new HiddenInput(PARAM_NUMBER_OF_ELEMENTS_IN_SELECTIONBOX+"_"+this.getClassName(), String.valueOf(theElements.size()));
+		HiddenInput numberOfElements = new HiddenInput(PARAM_NUMBER_OF_ELEMENTS_IN_SELECTIONBOX+"_"+this.getClassName(), String.valueOf(this.theElements.size()));
 		numberOfElements.print(iwc);
 	}
 	
@@ -518,8 +522,8 @@ public class SelectionBox extends InterfaceObject
 	 * @param errorMessage	The error message to display.
 	 */
 	public void setAsNotEmpty(String errorMessage) {
-		isSetAsNotEmpty = true;
-		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+		this.isSetAsNotEmpty = true;
+		this.notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
 	/* (non-Javadoc)

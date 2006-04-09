@@ -1,5 +1,5 @@
 /*
- * $Id: PostalAddress.java,v 1.1 2004/10/20 15:00:07 aron Exp $
+ * $Id: PostalAddress.java,v 1.2 2006/04/09 12:13:12 laddi Exp $
  * Created on 20.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -12,10 +12,10 @@ package com.idega.util.text;
 /**
  *  Formats postal addresses
  * 
- *  Last modified: $Date: 2004/10/20 15:00:07 $ by $Author: aron $
+ *  Last modified: $Date: 2006/04/09 12:13:12 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class PostalAddress {
     private String code;
@@ -31,10 +31,12 @@ public class PostalAddress {
      */
     public String toString() {
     		StringBuffer addr = new StringBuffer();
-    		if(code!=null)
-    		    addr.append(code).append(" ");
-    		if(name !=null)
-    		    addr.append(name);
+    		if(this.code!=null) {
+					addr.append(this.code).append(" ");
+				}
+    		if(this.name !=null) {
+					addr.append(this.name);
+				}
     		return addr.toString();
     }
 }

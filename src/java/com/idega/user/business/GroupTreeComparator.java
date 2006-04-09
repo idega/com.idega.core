@@ -19,19 +19,19 @@ public class GroupTreeComparator implements Comparator {
 	  private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 		
 	  public GroupTreeComparator(IWContext iwc) {
-	  	_iwc = iwc;
+	  	this._iwc = iwc;
 	  }
 
 	  public int compare(Object o1, Object o2) {
 		int returner = 0;
-	  	Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
+	  	Collator collator = Collator.getInstance(this._iwc.getCurrentLocale());
 
 	  	if (o1 instanceof GroupTreeNode &&  o2 instanceof GroupTreeNode) {
 			GroupTreeNode g1 = (GroupTreeNode) o1;
 			GroupTreeNode g2 = (GroupTreeNode) o2;
 		
-			String groupType1 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(g1.getGroupType());
-			String groupType2 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(g2.getGroupType());
+			String groupType1 = this._iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(this._iwc.getCurrentLocale()).getLocalizedString(g1.getGroupType());
+			String groupType2 = this._iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(this._iwc.getCurrentLocale()).getLocalizedString(g2.getGroupType());
 			
 			if (groupType1 != null && groupType2 == null) {
 			    returner = -1;
@@ -54,8 +54,9 @@ public class GroupTreeComparator implements Comparator {
 							returner = 1;
 						}
 						
-						if (returner == 0)
-                            returner = compareNodes(collator, g1, g2);
+						if (returner == 0) {
+							returner = compareNodes(collator, g1, g2);
+						}
 					}
 					else {
 					    returner = compareNodes(collator, g1, g2);
@@ -88,7 +89,9 @@ public class GroupTreeComparator implements Comparator {
     }
 
     private Long getLongFromBeginnigOfString(String original) {
-        if (original == null) return null;
+        if (original == null) {
+					return null;
+				}
 
         StringBuffer result = new StringBuffer();
 
@@ -100,8 +103,9 @@ public class GroupTreeComparator implements Comparator {
             	break;
             }
         }
-        if (result.length() > 0)
-        	return Long.valueOf(result.toString());
+        if (result.length() > 0) {
+					return Long.valueOf(result.toString());
+				}
 
         return null;
     }

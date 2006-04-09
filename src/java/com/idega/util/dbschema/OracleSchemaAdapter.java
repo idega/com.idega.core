@@ -14,10 +14,10 @@ import java.util.Vector;
 /**
  * 
  * 
- *  Last modified: $Date: 2004/11/01 10:05:31 $ by $Author: aron $
+ *  Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class OracleSchemaAdapter extends SQLSchemaAdapter {
 
@@ -214,8 +214,9 @@ public class OracleSchemaAdapter extends SQLSchemaAdapter {
 				freeConnection(conn);
 			}
 		}
-		if (columns != null && !columns.isEmpty())
+		if (columns != null && !columns.isEmpty()) {
 			return (String[]) columns.toArray(new String[0]);
+		}
 		return null;
 	}
 

@@ -59,11 +59,11 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	
 	public void start(IWBundle bundle) {
 		this.bundle = bundle;
-		timer = new EventTimer(EventTimer.THREAD_SLEEP_5_MINUTES, TIMER_THREAD_NAME);
-		timer.addActionListener(this);
+		this.timer = new EventTimer(EventTimer.THREAD_SLEEP_5_MINUTES, TIMER_THREAD_NAME);
+		this.timer.addActionListener(this);
 		//Starts the thread while waiting for 3 mins. before the idegaWebApp starts up.
 		// -- Fix for working properly on Interebase with entity-auto-create-on.
-		timer.start(3 * 60 * 1000);
+		this.timer.start(3 * 60 * 1000);
 		System.out.println("Group Relation Daemon Bundle Starter: starting");
 		
 //		try {
@@ -84,19 +84,19 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 		try {	
 			if (event.getActionCommand().equalsIgnoreCase(TIMER_THREAD_NAME)) {
 				System.out.println("[Group Relation Daemon - "+IWTimestamp.RightNow().toString()+" ] - Checking for pending relations");
-				String removeDuplicatedEmails = bundle.getProperty(REMOVE_DUPLICATED_EMAILS_FROM_USERS, "false");
+				String removeDuplicatedEmails = this.bundle.getProperty(REMOVE_DUPLICATED_EMAILS_FROM_USERS, "false");
 				if (removeDuplicatedEmails != null && removeDuplicatedEmails.equalsIgnoreCase("true")) {
 				    removeDuplicatedEmailsFromUsers();
 				}
-				String removeDuplicatedPhones = bundle.getProperty(REMOVE_DUPLICATED_PHONES_FROM_USERS, "false");
+				String removeDuplicatedPhones = this.bundle.getProperty(REMOVE_DUPLICATED_PHONES_FROM_USERS, "false");
 				if (removeDuplicatedPhones != null && removeDuplicatedPhones.equalsIgnoreCase("true")) {
 				    removeDuplicatedPhonesFromUsers();
 				}
-				String removeDuplicatedGroupRelations = bundle.getProperty(REMOVE_DUPLICATED_GROUP_RELATIONS, "false");
+				String removeDuplicatedGroupRelations = this.bundle.getProperty(REMOVE_DUPLICATED_GROUP_RELATIONS, "false");
 				if (removeDuplicatedGroupRelations != null && removeDuplicatedGroupRelations.equalsIgnoreCase("true")) {
 					removeDuplicatedGroupRelations();
 				}
-				String removeDuplicatedAliases = bundle.getProperty(REMOVE_DUPLICATED_ALIASES, "false");
+				String removeDuplicatedAliases = this.bundle.getProperty(REMOVE_DUPLICATED_ALIASES, "false");
 				if (removeDuplicatedAliases != null && removeDuplicatedAliases.equalsIgnoreCase("true")) {
 					removeDuplicatedAliases();
 				}
@@ -147,9 +147,9 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	 * @see com.idega.idegaweb.IWBundleStartable#stop(IWBundle)
 	 */
 	public void stop(IWBundle starterBundle) {
-		if (timer != null) {
-			timer.stop();
-			timer = null;
+		if (this.timer != null) {
+			this.timer.stop();
+			this.timer = null;
 		}
 //		if (groupTreeEventTimer != null) {
 //			groupTreeEventTimer.stop();
@@ -158,23 +158,23 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	}
 	
 	public GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
-		if (groupBiz == null) {
+		if (this.groupBiz == null) {
 			try {
-				groupBiz = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				this.groupBiz = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return groupBiz;
+		return this.groupBiz;
 	}
 
 	private GroupRelationHome getGroupRelationHome() throws RemoteException{
-		return getGroupBusiness(bundle.getApplication().getIWApplicationContext()).getGroupRelationHome();
+		return getGroupBusiness(this.bundle.getApplication().getIWApplicationContext()).getGroupRelationHome();
 	}
 
 	private UserHome getUserHome() throws RemoteException{
-		return getGroupBusiness(bundle.getApplication().getIWApplicationContext()).getUserHome();
+		return getGroupBusiness(this.bundle.getApplication().getIWApplicationContext()).getUserHome();
 	}
 
 	private Collection getPhoneTypes() {

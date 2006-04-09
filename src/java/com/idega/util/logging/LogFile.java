@@ -50,13 +50,13 @@ public class LogFile {
 	private void initialize(String pattern) throws IOException {
 		FileHandler handler = new FileHandler(pattern);
 		handler.setFormatter(new SimpleFormatter());
-		logger = Logger.getAnonymousLogger();
-		logger.setLevel(Level.ALL);
-		logger.addHandler(handler);
+		this.logger = Logger.getAnonymousLogger();
+		this.logger.setLevel(Level.ALL);
+		this.logger.addHandler(handler);
 	}
 		
 	public void log(Level level, String msg) {
-		logger.log(level, msg);
+		this.logger.log(level, msg);
 	}
 	
 	public void logInfo(String msg) {
@@ -64,7 +64,7 @@ public class LogFile {
 	}
 	
 	public void close() {
-		Handler[] handlers = logger.getHandlers();
+		Handler[] handlers = this.logger.getHandlers();
 		for (int i = 0; i < handlers.length; i++) {
 			handlers[i].close();
 		}

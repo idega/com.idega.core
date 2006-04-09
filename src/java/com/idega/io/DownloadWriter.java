@@ -71,25 +71,25 @@ public class DownloadWriter implements MediaWritable {
 			try {
 				ICFileSystem fsystem = ICFileSystemFactory.getFileSystem(iwc);
 				String fileURL = fsystem.getFileURI(Integer.valueOf(fileId).intValue());
-				file = new File(iwc.getIWMainApplication().getRealPath(fileURL));
-				icFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(Integer.valueOf(fileId));
+				this.file = new File(iwc.getIWMainApplication().getRealPath(fileURL));
+				this.icFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(Integer.valueOf(fileId));
 				//setAsDownload(iwc,icFile.getName(),icFile.getFileSize().intValue());
-				setAsDownload(iwc, file.getName(), (int) file.length());
+				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
 			}
 			catch (Exception e) {
-				icFile = null;
+				this.icFile = null;
 			}
 		}
 		else if (absPath != null) {
-			file = new File(absPath);
-			if (file != null && file.exists() && file.canRead()) {
-				setAsDownload(iwc, file.getName(), (int) file.length());
+			this.file = new File(absPath);
+			if (this.file != null && this.file.exists() && this.file.canRead()) {
+				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
 			}
 		}
 		else if (relPath != null && altFileName == null) {
-			file = new File(iwc.getIWMainApplication().getRealPath(relPath));
-			if (file != null && file.exists() && file.canRead()) {
-				setAsDownload(iwc, file.getName(), (int) file.length());
+			this.file = new File(iwc.getIWMainApplication().getRealPath(relPath));
+			if (this.file != null && this.file.exists() && this.file.canRead()) {
+				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
 			}
 		}
 		else if (relPath != null && altFileName != null) {
@@ -97,7 +97,7 @@ public class DownloadWriter implements MediaWritable {
 				if(relPath.startsWith("/")){
 					relPath = relPath.substring(1);
 				}
-				url = new URL(iwc.getServerURL()+relPath);
+				this.url = new URL(iwc.getServerURL()+relPath);
 				setAsDownload(iwc, altFileName, -1);
 			}
 			catch (MalformedURLException e) {
@@ -112,8 +112,8 @@ public class DownloadWriter implements MediaWritable {
 	 * @see com.idega.io.MediaWritable#writeTo(java.io.OutputStream)
 	 */
 	public void writeTo(OutputStream out) throws IOException {
-		if (file != null && file.exists() && file.canRead() && file.length() > 0) {
-			BufferedInputStream fis = new BufferedInputStream(new FileInputStream(file));
+		if (this.file != null && this.file.exists() && this.file.canRead() && this.file.length() > 0) {
+			BufferedInputStream fis = new BufferedInputStream(new FileInputStream(this.file));
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			while (fis.available() > 0) {
 				baos.write(fis.read());
@@ -123,8 +123,8 @@ public class DownloadWriter implements MediaWritable {
 			baos.close();
 			fis.close();
 		}
-		else if (icFile != null) {
-			BufferedInputStream fis = new BufferedInputStream(icFile.getFileValue());
+		else if (this.icFile != null) {
+			BufferedInputStream fis = new BufferedInputStream(this.icFile.getFileValue());
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			while (fis.available() > 0) {
 				baos.write(fis.read());
@@ -134,9 +134,9 @@ public class DownloadWriter implements MediaWritable {
 			baos.close();
 			fis.close();
 		}
-		else if (url != null) {
+		else if (this.url != null) {
 			//added for real relative path streaming
-			BufferedInputStream input = new BufferedInputStream(url.openStream());
+			BufferedInputStream input = new BufferedInputStream(this.url.openStream());
 			byte buffer[] = new byte[1024];
 			int noRead = 0;
 			noRead = input.read(buffer, 0, 1024);

@@ -45,7 +45,7 @@ public class IWApplication extends Page{
 
   public String getApplicationName(){
 
-    return applicationName;
+    return this.applicationName;
 
   }
 

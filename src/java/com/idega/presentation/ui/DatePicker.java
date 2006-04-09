@@ -73,8 +73,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 
     public DatePicker(String name, String style, Locale locale, Date date) {
         addForm(false);
-        if(name!=null)
-            setChooserParameter(name);
+        if(name!=null) {
+					setChooserParameter(name);
+				}
         if (style != null) {
             setInputStyle(style);
         }
@@ -88,13 +89,13 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         empty();
         IWBundle iwb = getBundle(iwc);
         IWResourceBundle iwrb = this.getResourceBundle(iwc);
-        dateFormatPattern = iwb.getProperty("DatePicker.date_format_string","yyyy-MM-dd");
+        this.dateFormatPattern = iwb.getProperty("DatePicker.date_format_string","yyyy-MM-dd");
         setChooseButtonImage(iwb.getImage("calendar.gif", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
-        if (locale == null) {
-            locale = iwc.getCurrentLocale();
+        if (this.locale == null) {
+            this.locale = iwc.getCurrentLocale();
         }
-        if (date != null) {
-            setDate(date);
+        if (this.date != null) {
+            setDate(this.date);
         } else {
             setDate(new Date());
         }
@@ -103,11 +104,11 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 
 	public PresentationObject getPresentationObject(IWContext iwc) {
 
-        TextInput input = new TextInput(displayInputName);
-        input.setDisabled(disabled);
+        TextInput input = new TextInput(this.displayInputName);
+        input.setDisabled(this.disabled);
         int inputLength = 10;
-        if (length < 0) {
-	        switch (dateFormatStyle) {
+        if (this.length < 0) {
+	        switch (this.dateFormatStyle) {
 	        case DateFormat.SHORT:
 	            inputLength = 10;
 	            break;
@@ -122,20 +123,20 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 	            break;
 	        }
         } else {
-        	inputLength = length;
+        	inputLength = this.length;
         }
         input.setLength(inputLength);
-        if (_style != null) {
-            input.setMarkupAttribute("style", _style);
+        if (this._style != null) {
+            input.setMarkupAttribute("style", this._style);
         }
 
-        if (_stringDisplay != null) {
-            input.setValue(_stringDisplay);
+        if (this._stringDisplay != null) {
+            input.setValue(this._stringDisplay);
         }
-        if (styleClass != null) {
-        	input.setStyleClass(styleClass);
+        if (this.styleClass != null) {
+        	input.setStyleClass(this.styleClass);
         }
-        if (keepStatus) {
+        if (this.keepStatus) {
         	String p = iwc.getParameter(getChooserParameter());
         	if (p != null) {
         		input.setValue(p);
@@ -165,11 +166,11 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     	  this.date = date;
         String display = date.toString();
         String value = new SimpleDateFormat("yyyy-MM-dd").format(date);
-        if (locale != null) {
-            display = new SimpleDateFormat(dateFormatPattern,locale).format(date);
+        if (this.locale != null) {
+            display = new SimpleDateFormat(this.dateFormatPattern,this.locale).format(date);
             //DateFormat.getDateInstance(dateFormatStyle, locale).format(date);
         } else {
-            display = new SimpleDateFormat(dateFormatPattern).format(date);
+            display = new SimpleDateFormat(this.dateFormatPattern).format(date);
             
             //DateFormat.getDateInstance(dateFormatStyle).format(date);
         }
@@ -195,7 +196,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
      * @param formatStyle
      */
     public void setDateFormatStyle(int formatStyle) {
-        dateFormatStyle = formatStyle;
+        this.dateFormatStyle = formatStyle;
     }
     
     /**
@@ -265,8 +266,10 @@ public class DatePicker extends AbstractChooser implements InputHandler {
                 java.sql.Date sqlDate = new java.sql.Date(date.getTime());
                 return sqlDate;
             }
-        } else
-            return null;
+        }
+				else {
+					return null;
+				}
     }
 
     /*
@@ -297,11 +300,13 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     }
     
     private boolean useJSCalendar(IWBundle bundle){
-        if(!useJSCalendar)
-            return false;
-        else if(jsExists!=null)
-            return jsExists.booleanValue();
-        else{
+        if(!this.useJSCalendar) {
+					return false;
+				}
+				else if(jsExists!=null) {
+					return jsExists.booleanValue();
+				}
+				else{
             try {
                 java.io.File jsFile = new java.io.File(IWMainApplication.getDefaultIWMainApplication().getRealPath(bundle.getImageURI("jscalendar/calendar.js")));
                 jsExists = Boolean.valueOf(jsFile.exists());
@@ -318,8 +323,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
      */
     public PresentationObject getTable(IWContext iwc, IWBundle bundle) {
         IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
-        if(!useJSCalendar(bundle))
-          return super.getTable(iwc, bundle);
+        if(!useJSCalendar(bundle)) {
+					return super.getTable(iwc, bundle);
+				}
         
         Table table = new Table(3, 2);
 		table.setCellpadding(0);
@@ -332,7 +338,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		}
 		
 		Image button = (bundle.getImage("calendar.gif", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
-		button.setOnClick("return showCalendar('"+object.getID()+"', '"+dateFormatPattern+"','"+value.getID()+"');");
+		button.setOnClick("return showCalendar('"+object.getID()+"', '"+this.dateFormatPattern+"','"+value.getID()+"');");
 		
 		Page parentPage = getParentPage();
 		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar.js"));

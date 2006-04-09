@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionWrapper.java,v 1.9 2006/02/22 20:52:48 laddi Exp $
+ * $Id: ExceptionWrapper.java,v 1.10 2006/04/09 12:13:13 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -43,14 +43,15 @@ public class ExceptionWrapper extends ExpandContainer {
 		
 		String errorMessage = iwrb.getLocalizedString("error.exception_occurred","The following exception occurred");
 		Text error = new Text(errorMessage);
-		if (_exception != null) {
-			PreformattedText stackTrace = new PreformattedText(getStackTrace(_exception));
-			if (_errorStyle != null)
-				stackTrace.setStyleAttribute(_errorStyle);
+		if (this._exception != null) {
+			PreformattedText stackTrace = new PreformattedText(getStackTrace(this._exception));
+			if (this._errorStyle != null) {
+				stackTrace.setStyleAttribute(this._errorStyle);
+			}
 			add(stackTrace);
-			String exceptionFullClassName = _exception.getClass().getName();
+			String exceptionFullClassName = this._exception.getClass().getName();
 			String exceptionShortClassName = exceptionFullClassName.substring(exceptionFullClassName.lastIndexOf(".") + 1);
-			String exceptionMessage = _exception.getMessage();
+			String exceptionMessage = this._exception.getMessage();
 			if(exceptionMessage==null){
 				error.addToText(": "+exceptionShortClassName);
 			}
@@ -67,8 +68,9 @@ public class ExceptionWrapper extends ExpandContainer {
 		StackTraceElement[] elements = exception.getStackTrace();
 		StringBuffer trace = new StringBuffer();
 		for (int i = 0; i < elements.length; i++) {
-			if (i > 0)
+			if (i > 0) {
 				trace.append("\n        ");
+			}
 			trace.append(elements[i].toString());
 		}
 		return trace.toString();
@@ -79,6 +81,6 @@ public class ExceptionWrapper extends ExpandContainer {
   }
 
 	public void setErrorStyle(String style) {
-		_errorStyle = style;
+		this._errorStyle = style;
 	}
 }

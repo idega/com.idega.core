@@ -42,8 +42,8 @@ public class EventHistoryList extends Block{
      * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
      */
     public void main(IWContext iwc) throws Exception {
-        if(eventEntries!=null && !eventEntries.isEmpty()){
-			Collections.sort(eventEntries,new EventEntryComparator());
+        if(this.eventEntries!=null && !this.eventEntries.isEmpty()){
+			Collections.sort(this.eventEntries,new EventEntryComparator());
 			
             IWBundle iwb = getBundle(iwc);
             IWResourceBundle iwrb = getResourceBundle(iwc);
@@ -81,27 +81,33 @@ public class EventHistoryList extends Block{
             eventTable.add(eventTypeText,col++,row);
             eventTable.add(dateText,col++,row);
             eventTable.add(timeText,col++,row);
-            if(showEvent)
-                eventTable.add(eventText,col++,row);
-            if(showSource)
-                eventTable.add(sourceText,col++,row);
-            if(showUser)
-                eventTable.add(userText,col++,row);
+            if(this.showEvent) {
+							eventTable.add(eventText,col++,row);
+						}
+            if(this.showSource) {
+							eventTable.add(sourceText,col++,row);
+						}
+            if(this.showUser) {
+							eventTable.add(userText,col++,row);
+						}
             eventTable.setCellpadding(0);
             eventTable.setLineAfterRow(row);
             row++;
             col = 1;
-            for (Iterator iter = eventEntries.iterator(); iter.hasNext();) {
+            for (Iterator iter = this.eventEntries.iterator(); iter.hasNext();) {
                 EventEntry event = (EventEntry) iter.next();
                 eventTable.add(getText(event.getType()),col++,row);
                 eventTable.add(getText(df.format(event.getDate())),col++,row);
                 eventTable.add(getText(tf.format(event.getDate())),col++,row);
-                if(showEvent)
-                    eventTable.add(getText(event.getEvent()),col++,row);
-                if(showSource)
-                    eventTable.add(getText(event.getSource()),col++,row);
-                if(showUser)
-                    eventTable.add(getText(event.getUser()),col++,row);
+                if(this.showEvent) {
+									eventTable.add(getText(event.getEvent()),col++,row);
+								}
+                if(this.showSource) {
+									eventTable.add(getText(event.getSource()),col++,row);
+								}
+                if(this.showUser) {
+									eventTable.add(getText(event.getUser()),col++,row);
+								}
                 
                 row++;
                 col =1;
@@ -126,7 +132,7 @@ public class EventHistoryList extends Block{
      * @param entry
      */
     public void addEvent(EventEntry entry){
-        eventEntries.add(entry);
+        this.eventEntries.add(entry);
     }
     
     /**
@@ -134,7 +140,7 @@ public class EventHistoryList extends Block{
      * @param events
      */
     public void addEvents(Collection events){
-        eventEntries.addAll(events);
+        this.eventEntries.addAll(events);
     }
     
     
@@ -143,10 +149,12 @@ public class EventHistoryList extends Block{
      */
     public String getBundleIdentifier() {
         // TODO Auto-generated method stub
-        if(bundleIdentifier!=null)
-            return bundleIdentifier;
-        else
-            return super.getBundleIdentifier();
+        if(this.bundleIdentifier!=null) {
+					return this.bundleIdentifier;
+				}
+				else {
+					return super.getBundleIdentifier();
+				}
     }
     
     protected class EventEntryComparator implements Comparator{

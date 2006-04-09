@@ -49,12 +49,12 @@ public class AddressInfoTab extends UserTab{
   }
 
   public void initializeFieldNames(){
-    streetFieldName = "UMstreet";
-    cityFieldName = "UMcity";
-    provinceFieldName = "UMprovince";
-    postalCodeFieldName = "UMpostal";
-    countryFieldName = "UMconty";
-    poBoxFieldName = "UMpoBox";
+    this.streetFieldName = "UMstreet";
+    this.cityFieldName = "UMcity";
+    this.provinceFieldName = "UMprovince";
+    this.postalCodeFieldName = "UMpostal";
+    this.countryFieldName = "UMconty";
+    this.poBoxFieldName = "UMpoBox";
 /*
     streetFieldName += this.getID();
     cityFieldName += this.getID();
@@ -68,75 +68,75 @@ public class AddressInfoTab extends UserTab{
 
   public void initializeFieldValues(){
 
-    fieldValues = new Hashtable();
-    fieldValues.put(this.streetFieldName,"");
-    fieldValues.put(this.cityFieldName,"");
-    fieldValues.put(this.provinceFieldName,"");
-    fieldValues.put(this.postalCodeFieldName,"");
-    fieldValues.put(this.countryFieldName,"");
-    fieldValues.put(this.poBoxFieldName,"");
+    this.fieldValues = new Hashtable();
+    this.fieldValues.put(this.streetFieldName,"");
+    this.fieldValues.put(this.cityFieldName,"");
+    this.fieldValues.put(this.provinceFieldName,"");
+    this.fieldValues.put(this.postalCodeFieldName,"");
+    this.fieldValues.put(this.countryFieldName,"");
+    this.fieldValues.put(this.poBoxFieldName,"");
 
     this.updateFieldsDisplayStatus();
   }
 
   public void updateFieldsDisplayStatus(){
-    streetField.setContent((String)fieldValues.get(this.streetFieldName));
+    this.streetField.setContent((String)this.fieldValues.get(this.streetFieldName));
 
-    cityField.setContent((String)fieldValues.get(this.cityFieldName));
+    this.cityField.setContent((String)this.fieldValues.get(this.cityFieldName));
 
-    provinceField.setContent((String)fieldValues.get(this.provinceFieldName));
+    this.provinceField.setContent((String)this.fieldValues.get(this.provinceFieldName));
 
-    postalCodeField.setContent((String)fieldValues.get(this.postalCodeFieldName));
+    this.postalCodeField.setContent((String)this.fieldValues.get(this.postalCodeFieldName));
 
-    countryField.setContent((String)fieldValues.get(this.countryFieldName));
+    this.countryField.setContent((String)this.fieldValues.get(this.countryFieldName));
 
-    poBoxField.setContent((String)fieldValues.get(this.poBoxFieldName));
+    this.poBoxField.setContent((String)this.fieldValues.get(this.poBoxFieldName));
 
   }
 
 
   public void initializeFields(){
-    streetField = new TextInput(streetFieldName);
-    streetField.setLength(20);
+    this.streetField = new TextInput(this.streetFieldName);
+    this.streetField.setLength(20);
     //streetField.setOnFocus();
 
-    cityField = new TextInput(cityFieldName);
-    cityField.setLength(20);
+    this.cityField = new TextInput(this.cityFieldName);
+    this.cityField.setLength(20);
 
-    provinceField = new TextInput(provinceFieldName);
-    provinceField.setLength(20);
+    this.provinceField = new TextInput(this.provinceFieldName);
+    this.provinceField.setLength(20);
 
-    postalCodeField = new TextInput(postalCodeFieldName);
-    postalCodeField.setLength(4);
-    postalCodeField.setDisabled(true);
+    this.postalCodeField = new TextInput(this.postalCodeFieldName);
+    this.postalCodeField.setLength(4);
+    this.postalCodeField.setDisabled(true);
 
-    countryField = new TextInput(countryFieldName);
-    countryField.setLength(20);
-    countryField.setDisabled(true);
+    this.countryField = new TextInput(this.countryFieldName);
+    this.countryField.setLength(20);
+    this.countryField.setDisabled(true);
 
-    poBoxField = new TextInput(poBoxFieldName);
-    poBoxField.setLength(10);
+    this.poBoxField = new TextInput(this.poBoxFieldName);
+    this.poBoxField.setLength(10);
 
   }
 
   public void initializeTexts(){
-    streetText = new Text("Street");
-    streetText.setFontSize(fontSize);
+    this.streetText = new Text("Street");
+    this.streetText.setFontSize(this.fontSize);
 
-    cityText = new Text("City");
-    cityText.setFontSize(fontSize);
+    this.cityText = new Text("City");
+    this.cityText.setFontSize(this.fontSize);
 
-    provinceText = new Text("Province");
-    provinceText.setFontSize(fontSize);
+    this.provinceText = new Text("Province");
+    this.provinceText.setFontSize(this.fontSize);
 
-    postalCodeText = new Text("Postal");
-    postalCodeText.setFontSize(fontSize);
+    this.postalCodeText = new Text("Postal");
+    this.postalCodeText.setFontSize(this.fontSize);
 
-    countryText = new Text("Country");
-    countryText.setFontSize(fontSize);
+    this.countryText = new Text("Country");
+    this.countryText.setFontSize(this.fontSize);
 
-    poBoxText = new Text("P.O.Box");
-    poBoxText.setFontSize(fontSize);
+    this.poBoxText = new Text("P.O.Box");
+    this.poBoxText.setFontSize(this.fontSize);
 
   }
 
@@ -151,10 +151,10 @@ public class AddressInfoTab extends UserTab{
     addressTable.setWidth("100%");
     addressTable.setCellpadding(0);
     addressTable.setCellspacing(0);
-    addressTable.setHeight(1,columnHeight);
-    addressTable.setHeight(2,columnHeight);
-    addressTable.setHeight(3,columnHeight);
-    addressTable.setHeight(4,columnHeight);
+    addressTable.setHeight(1,this.columnHeight);
+    addressTable.setHeight(2,this.columnHeight);
+    addressTable.setHeight(3,this.columnHeight);
+    addressTable.setHeight(4,this.columnHeight);
     addressTable.setWidth(1,"70");
 
     addressTable.add(this.streetText,1,1);
@@ -174,7 +174,7 @@ public class AddressInfoTab extends UserTab{
     addressTable2.setWidth("100%");
     addressTable2.setCellpadding(0);
     addressTable2.setCellspacing(0);
-    addressTable2.setHeight(1,columnHeight);
+    addressTable2.setHeight(1,this.columnHeight);
     addressTable2.setWidth(1,"70");
     addressTable2.setWidth(2,"70");
     addressTable2.setWidth(3,"70");
@@ -202,22 +202,22 @@ public class AddressInfoTab extends UserTab{
       String poBox = iwc.getParameter(this.poBoxFieldName);
 
       if(street != null){
-        fieldValues.put(this.streetFieldName,street);
+        this.fieldValues.put(this.streetFieldName,street);
       }
       if(city != null){
-        fieldValues.put(this.cityFieldName,city);
+        this.fieldValues.put(this.cityFieldName,city);
       }
       if(province != null){
-        fieldValues.put(this.provinceFieldName,province);
+        this.fieldValues.put(this.provinceFieldName,province);
       }
       if(postal != null){
-        fieldValues.put(this.postalCodeFieldName,postal);
+        this.fieldValues.put(this.postalCodeFieldName,postal);
       }
       if(country != null){
-        fieldValues.put(this.countryFieldName,country);
+        this.fieldValues.put(this.countryFieldName,country);
       }
       if(poBox != null){
-        fieldValues.put(this.poBoxFieldName,poBox);
+        this.fieldValues.put(this.poBoxFieldName,poBox);
       }
 
       this.updateFieldsDisplayStatus();
@@ -230,12 +230,12 @@ public class AddressInfoTab extends UserTab{
   public boolean store(IWContext iwc){
 
     try{
-      StringTokenizer tok = new StringTokenizer((String)fieldValues.get(this.streetFieldName));
+      StringTokenizer tok = new StringTokenizer((String)this.fieldValues.get(this.streetFieldName));
 
       //fieldValues.get(this.postalCodeFieldName);
       //fieldValues.get(this.countryFieldName);
 
-      business.updateUserAddress1(this.getUserId(), (tok.hasMoreTokens())?tok.nextToken():"", (tok.hasMoreTokens())?tok.nextToken():"", (String)fieldValues.get(this.cityFieldName), null, (String)fieldValues.get(this.provinceFieldName), null, (String)fieldValues.get(this.poBoxFieldName));
+      this.business.updateUserAddress1(this.getUserId(), (tok.hasMoreTokens())?tok.nextToken():"", (tok.hasMoreTokens())?tok.nextToken():"", (String)this.fieldValues.get(this.cityFieldName), null, (String)this.fieldValues.get(this.provinceFieldName), null, (String)this.fieldValues.get(this.poBoxFieldName));
 
       return true;
     }catch(Exception e){
@@ -246,19 +246,19 @@ public class AddressInfoTab extends UserTab{
 
   public void initFieldContents(){
     try{
-      Address addr = business.getUserAddress1(this.getUserId());
+      Address addr = this.business.getUserAddress1(this.getUserId());
 
       boolean hasAddress = false;
       if(addr != null){
         hasAddress = true;
       }
 
-      fieldValues.put(this.streetFieldName,(hasAddress) ? addr.getStreetName()+" "+addr.getStreetNumber():"" );
-      fieldValues.put(this.cityFieldName,(hasAddress) ? addr.getCity():"" );
-      fieldValues.put(this.provinceFieldName,(hasAddress) ? addr.getProvince():"" );
-      fieldValues.put(this.postalCodeFieldName,(hasAddress) ? "":"" );
-      fieldValues.put(this.countryFieldName,(hasAddress) ? "":"" );
-      fieldValues.put(this.poBoxFieldName,(hasAddress) ? addr.getPOBox():"");
+      this.fieldValues.put(this.streetFieldName,(hasAddress) ? addr.getStreetName()+" "+addr.getStreetNumber():"" );
+      this.fieldValues.put(this.cityFieldName,(hasAddress) ? addr.getCity():"" );
+      this.fieldValues.put(this.provinceFieldName,(hasAddress) ? addr.getProvince():"" );
+      this.fieldValues.put(this.postalCodeFieldName,(hasAddress) ? "":"" );
+      this.fieldValues.put(this.countryFieldName,(hasAddress) ? "":"" );
+      this.fieldValues.put(this.poBoxFieldName,(hasAddress) ? addr.getPOBox():"");
       this.updateFieldsDisplayStatus();
 
     }catch(Exception e){

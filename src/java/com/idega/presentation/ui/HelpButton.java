@@ -77,11 +77,11 @@ protected IWResourceBundle iwrb;
 
   public void main(IWContext iwc) {
 
-    iwrb = getResourceBundle(iwc);
+    this.iwrb = getResourceBundle(iwc);
 
-		if(iwrb != null)
-
-    this.setPresentationObject(iwrb.getImage("/help/help.gif",text));
+		if(this.iwrb != null) {
+			this.setPresentationObject(this.iwrb.getImage("/help/help.gif",this.text));
+		}
 
 		String hVal = getHeadline();
 	this.addParameter(PARAMETERSTRING_HEADLINE,(hVal == null)?"":hVal);
@@ -107,8 +107,8 @@ protected IWResourceBundle iwrb;
 
 
 public String getHeadline() {
-	if(headline != null){
-		return headline;
+	if(this.headline != null){
+		return this.headline;
 	}
 	ValueBinding vb = getValueBinding("headline");
 	return (String)((vb != null)?vb.getValue(getFacesContext()):null);
@@ -117,8 +117,8 @@ public void setHeadline(String headline) {
 	this.headline = headline;
 }
 public String getText() {
-	if(text != null){
-		return text;
+	if(this.text != null){
+		return this.text;
 	}
 	ValueBinding vb = getValueBinding("text");
 	return (String)((vb != null)?vb.getValue(getFacesContext()):null);
@@ -127,8 +127,8 @@ public void setText(String text) {
 	this.text = text;
 }
 public String getImageUrl() {
-	if(url != null){
-		return url;
+	if(this.url != null){
+		return this.url;
 	}
 	ValueBinding vb = getValueBinding("imageUrl");
 	return (String)((vb != null)?vb.getValue(getFacesContext()):null);
@@ -151,9 +151,9 @@ public void restoreState(FacesContext context, Object state) {
 public Object saveState(FacesContext context) {
 	Object values[] = new Object[4];
 	values[0] = super.saveState(context);
-	values[1] = text;
-	values[2] = headline;
-	values[3] = url;
+	values[1] = this.text;
+	values[2] = this.headline;
+	values[3] = this.url;
 
 	return values;
 }	

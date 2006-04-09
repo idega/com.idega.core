@@ -1,5 +1,5 @@
 /*
- * $Id: Widget.java,v 1.3 2006/01/15 21:15:49 laddi Exp $
+ * $Id: Widget.java,v 1.4 2006/04/09 12:13:20 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,7 +23,7 @@ import com.idega.presentation.PresentationObject;
  * Last modified: 14.10.2004 10:24:30 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public abstract class Widget extends Block {
 	
@@ -36,13 +36,13 @@ public abstract class Widget extends Block {
 	private String styleClass;
 	
 	public void main(IWContext iwc) {
-		iwb = getBundle(iwc);
-		iwrb = getResourceBundle(iwc);
-		locale = iwc.getCurrentLocale();
+		this.iwb = getBundle(iwc);
+		this.iwrb = getResourceBundle(iwc);
+		this.locale = iwc.getCurrentLocale();
 
 		Layer layer = new Layer(Layer.DIV);
-		if (styleClass != null) {
-			layer.setStyleClass(styleClass);
+		if (this.styleClass != null) {
+			layer.setStyleClass(this.styleClass);
 		}
 
 		PresentationObject widget = getWidget(iwc);
@@ -56,15 +56,15 @@ public abstract class Widget extends Block {
 	protected abstract PresentationObject getWidget(IWContext iwc);
 	
 	protected IWBundle getBundle() {
-		return iwb;
+		return this.iwb;
 	}
 	
 	protected IWResourceBundle getResourceBundle() {
-		return iwrb;
+		return this.iwrb;
 	}
 	
 	protected Locale getLocale() {
-		return locale;
+		return this.locale;
 	}
 
 	public String getBundleIdentifier() {

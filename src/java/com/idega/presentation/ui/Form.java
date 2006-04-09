@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.94 2006/01/06 12:32:04 gimmi Exp $
+ * $Id: Form.java,v 1.95 2006/04/09 12:13:16 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -37,10 +37,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2006/01/06 12:32:04 $ by $Author: gimmi $
+ *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.94 $
+ * @version $Revision: 1.95 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -82,41 +82,41 @@ public class Form
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[16];
 		values[0] = super.saveState(ctx);
-		values[1] = maintainedParameters;
-		values[2] = Boolean.valueOf(maintainAllParameters);
-		values[3] = controlParameters;
-		values[4] = windowClass;
-		values[5] = new Integer(icObjectInstanceIDForWindow);
-		values[6] = classToInstanciateAndSubmitTo;
-		values[7] = new Integer(_submitToPage);
-		values[8] = Boolean.valueOf(sendToHTTPS);
-		values[9] = Boolean.valueOf(_disableObject);
-		values[10] = _objectsToDisable;
-		values[11] = Boolean.valueOf(_disableOnSubmit);
-		values[12] = Boolean.valueOf(showLoadingLayerOnSubmit);
-		values[13] = Boolean.valueOf(printLoadingLayer);
-		values[14] = loadingLayerLocalizationKey;
-		values[15] = loadingLayerTextValue;
+		values[1] = this.maintainedParameters;
+		values[2] = Boolean.valueOf(this.maintainAllParameters);
+		values[3] = this.controlParameters;
+		values[4] = this.windowClass;
+		values[5] = new Integer(this.icObjectInstanceIDForWindow);
+		values[6] = this.classToInstanciateAndSubmitTo;
+		values[7] = new Integer(this._submitToPage);
+		values[8] = Boolean.valueOf(this.sendToHTTPS);
+		values[9] = Boolean.valueOf(this._disableObject);
+		values[10] = this._objectsToDisable;
+		values[11] = Boolean.valueOf(this._disableOnSubmit);
+		values[12] = Boolean.valueOf(this.showLoadingLayerOnSubmit);
+		values[13] = Boolean.valueOf(this.printLoadingLayer);
+		values[14] = this.loadingLayerLocalizationKey;
+		values[15] = this.loadingLayerTextValue;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		maintainedParameters = (List)values[1];
-		maintainAllParameters = ((Boolean)values[2]).booleanValue();
-		controlParameters = (Map)values[3];
-		windowClass = (Class)values[4];
-		icObjectInstanceIDForWindow = ((Integer)values[5]).intValue();
-		classToInstanciateAndSubmitTo = (Class)values[6];
-		_submitToPage = ((Integer)values[7]).intValue();
-		sendToHTTPS = ((Boolean)values[8]).booleanValue();
-		_disableObject = ((Boolean)values[9]).booleanValue();
-		_objectsToDisable = (Map)values[10];
-		_disableOnSubmit = ((Boolean)values[11]).booleanValue();
-		showLoadingLayerOnSubmit = ((Boolean)values[12]).booleanValue();
-		printLoadingLayer = ((Boolean)values[13]).booleanValue();
-		loadingLayerLocalizationKey = values[14].toString();
-		loadingLayerTextValue = values[15].toString();
+		this.maintainedParameters = (List)values[1];
+		this.maintainAllParameters = ((Boolean)values[2]).booleanValue();
+		this.controlParameters = (Map)values[3];
+		this.windowClass = (Class)values[4];
+		this.icObjectInstanceIDForWindow = ((Integer)values[5]).intValue();
+		this.classToInstanciateAndSubmitTo = (Class)values[6];
+		this._submitToPage = ((Integer)values[7]).intValue();
+		this.sendToHTTPS = ((Boolean)values[8]).booleanValue();
+		this._disableObject = ((Boolean)values[9]).booleanValue();
+		this._objectsToDisable = (Map)values[10];
+		this._disableOnSubmit = ((Boolean)values[11]).booleanValue();
+		this.showLoadingLayerOnSubmit = ((Boolean)values[12]).booleanValue();
+		this.printLoadingLayer = ((Boolean)values[13]).booleanValue();
+		this.loadingLayerLocalizationKey = values[14].toString();
+		this.loadingLayerTextValue = values[15].toString();
 	}
 	
 	/**
@@ -126,7 +126,7 @@ public class Form
 		// super();
 		setName(getID());
 		setMethod("post");
-		maintainAllParameters = false;
+		this.maintainAllParameters = false;
 		initialize();
 	}
 
@@ -147,7 +147,7 @@ public class Form
 		setName(getID());
 		setMethod(method);
 		setAction(actionURL);
-		maintainAllParameters = false;
+		this.maintainAllParameters = false;
 		initialize();
 	}
 
@@ -164,7 +164,7 @@ public class Form
 	public Form(Window myWindow) {
 		setName(getID());
 		setWindow(myWindow);
-		maintainAllParameters = false;
+		this.maintainAllParameters = false;
 		initialize();
 	}
 
@@ -293,20 +293,20 @@ public class Form
 		if (this._submitToPage != -1) {
 			// Set a builder page as the action
 			BuilderService bservice = getBuilderService(iwc);
-			this.setAction(bservice.getPageURI(_submitToPage));
+			this.setAction(bservice.getPageURI(this._submitToPage));
 		}
 		if (getWindow() != null) {
 			// iwc.setSessionAttribute(IdegaWebHandler.windowOpenerParameter,window);
 			com.idega.servlet.WindowOpener.storeWindow(iwc, getWindow());
 		}
-		if (_disableObject) {
+		if (this._disableObject) {
 			getScript().addFunction("disableObject", "function disableObject (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].disabled=eval(value);\n	\t}\n	else\n	inputs.disabled=eval(value);\n}");
-			if (_disableOnSubmit) {
+			if (this._disableOnSubmit) {
 
-				Iterator iter = _objectsToDisable.keySet().iterator();
+				Iterator iter = this._objectsToDisable.keySet().iterator();
 				while (iter.hasNext()) {
 					String name = (String) iter.next();
-					String values = (String) _objectsToDisable.get(name);
+					String values = (String) this._objectsToDisable.get(name);
 					setCheckSubmit();
 					getScript().addToFunction("checkSubmit", "disableObject(findObj('" + name + "'),'" + String.valueOf(values) + "');");
 				}
@@ -319,7 +319,7 @@ public class Form
 	}
 
 	private void handleLoadingLayer(IWContext iwc) {
-		if (getParentPage() != null && showLoadingLayerOnSubmit && getTarget() == null) {// &&
+		if (getParentPage() != null && this.showLoadingLayerOnSubmit && getTarget() == null) {// &&
 																																											// !("iw_event_frame").equals(target)){
 
 			/*if (getParentPage().getAssociatedBodyScript().getFunction("showLoadingLayer") == null)
@@ -340,7 +340,7 @@ public class Form
 			// /setOnSubmit("showLoadingLayer();");
 			//setCheckSubmit();
 			*/
-			printLoadingLayer = true;
+			this.printLoadingLayer = true;
 		}
 	}
 /*
@@ -441,17 +441,17 @@ public class Form
 	}
 
 	public void maintainAllParameters() {
-		maintainAllParameters = true;
+		this.maintainAllParameters = true;
 	}
 
 	/**
 	 * Creates a hidden field if there is an action on the form again
 	 */
 	public void maintainParameter(String parameterName) {
-		if (maintainedParameters == null) {
-			maintainedParameters = new ArrayList();
+		if (this.maintainedParameters == null) {
+			this.maintainedParameters = new ArrayList();
 		}
-		maintainedParameters.add(parameterName);
+		this.maintainedParameters.add(parameterName);
 	}
 
 	/**
@@ -460,10 +460,10 @@ public class Form
 	 */
 	public void maintainParameters(List params) {
 		if (params != null) {
-			if (maintainedParameters == null) {
-				maintainedParameters = new ArrayList();
+			if (this.maintainedParameters == null) {
+				this.maintainedParameters = new ArrayList();
 			}
-			maintainedParameters.addAll(params);
+			this.maintainedParameters.addAll(params);
 		}
 	}
 
@@ -484,9 +484,9 @@ public class Form
 			while (iter.hasNext()) {
 				String parameterName = (String) iter.next();
 				String parameterValue;
-				if (parameterName.equals(IB_PAGE_PARAMETER) && _submitToPage > 0) {
+				if (parameterName.equals(IB_PAGE_PARAMETER) && this._submitToPage > 0) {
 					// fix for multipart forms
-					parameterValue = Integer.toString(_submitToPage);
+					parameterValue = Integer.toString(this._submitToPage);
 				}
 				else {
 					parameterValue = iwc.getParameter(parameterName);
@@ -514,9 +514,9 @@ public class Form
 				String parameterValue;
 				// System.out.print("parameterName = "+parameterName+" , parameterValue
 				// = "+parameterValue+" parameterSet = ");
-				if (parameterName.equals(IB_PAGE_PARAMETER) && _submitToPage > 0) {
+				if (parameterName.equals(IB_PAGE_PARAMETER) && this._submitToPage > 0) {
 					// fix for multipart forms
-					parameterValue = Integer.toString(_submitToPage);
+					parameterValue = Integer.toString(this._submitToPage);
 				}
 				else {
 					parameterValue = iwc.getParameter(parameterName);
@@ -576,7 +576,7 @@ public class Form
 		this.addGloballyMaintainedParameters(iwc);
 		this.addTheMaintainedBuilderParameters(iwc);
 
-		if (maintainAllParameters) {
+		if (this.maintainAllParameters) {
 			/*
 			 * if (iwc.getParameter("idega_special_form_parameter") != null) {
 			 * PresentationObjectContainer cont = (PresentationObjectContainer)
@@ -594,9 +594,9 @@ public class Form
 			// iwc.setSessionAttribute("idega_special_form_parameters", cont);
 			// }
 		}
-		else if (maintainedParameters != null) {
+		else if (this.maintainedParameters != null) {
 			//for (Enumeration e = maintainedParameters.elements(); e.hasMoreElements();) {
-			for (Iterator iter = maintainedParameters.iterator(); iter.hasNext();) {
+			for (Iterator iter = this.maintainedParameters.iterator(); iter.hasNext();) {
 				String tempParameter = (String) iter.next();
 				if (iwc.getParameter(tempParameter) != null) {
 					String[] strings = iwc.getParameterValues(tempParameter);
@@ -635,15 +635,15 @@ public class Form
 	}
 
 	public void print(IWContext iwc) throws Exception {
-		String loadingText = iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString(loadingLayerLocalizationKey, loadingLayerTextValue);
+		String loadingText = iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString(this.loadingLayerLocalizationKey, this.loadingLayerTextValue);
 		String loadingCall = "showLoadingMessage('"+loadingText+"');";
 		if (getScript().doesFunctionExist("checkSubmit")) {
-			if (printLoadingLayer) {
+			if (this.printLoadingLayer) {
 				getScript().addToFunction("checkSubmit", loadingCall);
 			}
 			getScript().addToFunction("checkSubmit", "return true;");
 		}
-		else if (printLoadingLayer) {
+		else if (this.printLoadingLayer) {
 			this.setOnSubmit(loadingCall);
 		}
 		// if ( doPrint(iwc) ){
@@ -661,7 +661,7 @@ public class Form
 			// setAction(getIdegaSpecialRequestURI(iwc)+"?idega_session_id="+iwc.getSession().getId());
 			setAction(getIdegaSpecialRequestURI(iwc));
 		}
-		if (sendToHTTPS) {
+		if (this.sendToHTTPS) {
 			convertActionToHTTPS(iwc);
 		}
 
@@ -687,7 +687,7 @@ public class Form
 			print("</form>");
 		}
 		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
-			if (getAction() == null || _submitToPage != -1) {
+			if (getAction() == null || this._submitToPage != -1) {
 				// setAction(getIdegaSpecialRequestURI(iwc)+"?idega_session_id="+iwc.getSession().getId());
 				setAction(getIdegaSpecialRequestURI(iwc));
 			}
@@ -768,7 +768,7 @@ public class Form
 				obj.oldPopupWindow = (Window) this.oldPopupWindow.clone();
 			}
 
-			if (maintainedParameters != null) {
+			if (this.maintainedParameters != null) {
 				obj.maintainedParameters = (List) ((ArrayList)this.maintainedParameters).clone();
 			}
 
@@ -776,11 +776,11 @@ public class Form
 			// obj.controlParameter = (Parameter)this.controlParameter.clone();
 			// }
 
-			if (controlParameters != null) {
+			if (this.controlParameters != null) {
 				obj.controlParameters = (Map) ((HashMap) this.controlParameters).clone();
 			}
 
-			if (windowClass != null) {
+			if (this.windowClass != null) {
 				obj.windowClass = this.windowClass;
 			}
 
@@ -799,10 +799,10 @@ public class Form
 	 */
 
 	protected Map getControlParameters() {
-		if (controlParameters == null) {
-			controlParameters = new HashMap();
+		if (this.controlParameters == null) {
+			this.controlParameters = new HashMap();
 		}
-		return controlParameters;
+		return this.controlParameters;
 	}
 
 	/**
@@ -835,7 +835,7 @@ public class Form
 	 *          Set to true to disable, false will enable.
 	 */
 	public void setToDisableOnAction(String action, String objectName, boolean disable) {
-		_disableObject = true;
+		this._disableObject = true;
 		setOnAction(ACTION_ON_SUBMIT, "disableObject(findObj('" + objectName + "'),'" + String.valueOf(objectName) + "')");
 	}
 
@@ -864,11 +864,12 @@ public class Form
 	 *          Set to true to disable, false will enable.
 	 */
 	public void setToDisableOnSubmit(InterfaceObject object, boolean disable) {
-		_disableOnSubmit = true;
-		_disableObject = true;
-		if (_objectsToDisable == null)
-			_objectsToDisable = new HashMap();
-		_objectsToDisable.put(object.getName(), String.valueOf(disable));
+		this._disableOnSubmit = true;
+		this._disableObject = true;
+		if (this._objectsToDisable == null) {
+			this._objectsToDisable = new HashMap();
+		}
+		this._objectsToDisable.put(object.getName(), String.valueOf(disable));
 	}
 
 	protected void addControlParameter(String parameterName, String parameterValue) {
@@ -965,7 +966,7 @@ public class Form
 
 	private void setActionToInstanciatedClass(IWContext iwc) {
 		if (this.classToInstanciateAndSubmitTo != null) {
-			this.setAction(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciateAndSubmitTo));
+			this.setAction(iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciateAndSubmitTo));
 		}
 	}
 
@@ -1007,7 +1008,7 @@ public class Form
 			associatedScript = (Script) getFacet(FACET_ASSOCIATEDSCRIPT);
 		}
 		else{
-			associatedScript = oldAssociatedScript;
+			associatedScript = this.oldAssociatedScript;
 		}
 		if (associatedScript == null) {
 			associatedScript = new Script();
@@ -1025,7 +1026,7 @@ public class Form
 			getFacets().put(FACET_ASSOCIATEDSCRIPT,associatedScript);
 		}
 		else{
-			oldAssociatedScript=associatedScript;
+			this.oldAssociatedScript=associatedScript;
 		}
 	}
 	protected Script getScript() {
@@ -1045,7 +1046,7 @@ public class Form
 	 * address
 	 */
 	public void setToSendToHTTPS(boolean doSendToHTTPS) {
-		sendToHTTPS = doSendToHTTPS;
+		this.sendToHTTPS = doSendToHTTPS;
 	}
 
 	/*

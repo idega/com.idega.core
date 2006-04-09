@@ -31,8 +31,9 @@ public class MiscUtil {
         for(int i = 0; i < aobj1.length; i++)
         {
             int j = securerandom.nextInt();
-            if(j < 0)
-                j = -j;
+            if(j < 0) {
+							j = -j;
+						}
             j %= aobj1.length;
             Object obj = aobj1[i];
             aobj1[i] = aobj1[j];
@@ -47,8 +48,9 @@ public class MiscUtil {
         StringTokenizer stringtokenizer = new StringTokenizer(s1, s);
         String as[] = new String[stringtokenizer.countTokens()];
         int i = 0;
-        while(stringtokenizer.hasMoreTokens())
-            as[i++] = stringtokenizer.nextToken();
+        while(stringtokenizer.hasMoreTokens()) {
+					as[i++] = stringtokenizer.nextToken();
+				}
         return as;
     }
 
@@ -85,8 +87,9 @@ public class MiscUtil {
         {
             String s1 = (String)enumeration.nextElement();
             stringbuffer.append(s1);
-            if(enumeration.hasMoreElements())
-                stringbuffer.append(s);
+            if(enumeration.hasMoreElements()) {
+							stringbuffer.append(s);
+						}
         }
         return stringbuffer.toString();
     }
@@ -98,8 +101,9 @@ public class MiscUtil {
         PrintWriter printwriter = new PrintWriter(bytearrayoutputstream, true);
         exception.printStackTrace(printwriter);
         StringTokenizer stringtokenizer = new StringTokenizer(bytearrayoutputstream.toString(), "\n");
-        for(int j = 0; j < i; j++)
-            stringtokenizer.nextToken();
+        for(int j = 0; j < i; j++) {
+					stringtokenizer.nextToken();
+				}
 
         while (stringtokenizer.hasMoreTokens()) {
         	vector.addElement(stringtokenizer.nextToken().substring(4));
@@ -115,8 +119,9 @@ public class MiscUtil {
     public static void dumpThreads()
     {
         ThreadGroup threadgroup1 = null;
-        for(ThreadGroup threadgroup = Thread.currentThread().getThreadGroup(); threadgroup != null; threadgroup = threadgroup.getParent())
-            threadgroup1 = threadgroup;
+        for(ThreadGroup threadgroup = Thread.currentThread().getThreadGroup(); threadgroup != null; threadgroup = threadgroup.getParent()) {
+					threadgroup1 = threadgroup;
+				}
 
         threadgroup1.list();
     }
@@ -139,8 +144,9 @@ public class MiscUtil {
         {
             invocationtargetexception.printStackTrace();
             Throwable throwable = invocationtargetexception.getTargetException();
-            if(throwable instanceof Exception)
-                throw (Exception)throwable;
+            if(throwable instanceof Exception) {
+							throw (Exception)throwable;
+						}
             throwable.printStackTrace();
         }
     }
@@ -148,8 +154,9 @@ public class MiscUtil {
   public static String array2str(String[] array,String delim){
     StringBuffer s = new StringBuffer();
     for (int i = 0; i < array.length; i++) {
-      if(i != 0)
-        s.append(delim);
+      if(i != 0) {
+				s.append(delim);
+			}
       s.append(array[i]);
     }
     return s.toString();

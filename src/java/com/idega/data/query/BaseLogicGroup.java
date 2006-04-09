@@ -25,37 +25,39 @@ public abstract class BaseLogicGroup extends Criteria implements PlaceHolder {
 
     public void write(Output out) {
         out.print("( ")
-            .print(left)
+            .print(this.left)
             .print(' ')
-            .print(operator)
+            .print(this.operator)
             .print(' ')
-            .print(right)
+            .print(this.right)
             .print(" )");
     }
     
     public Set getTables(){
     		Set s = new HashSet();
-    		s.addAll(left.getTables());
-    		s.addAll(right.getTables());
+    		s.addAll(this.left.getTables());
+    		s.addAll(this.right.getTables());
     		return s; 
     }
     
     public List getValues(){
         	Vector l = new Vector();
-        if(left instanceof PlaceHolder)
-            l.addAll(((PlaceHolder) left).getValues());
-        if(right instanceof PlaceHolder)
-            l.addAll(((PlaceHolder)right).getValues());
+        if(this.left instanceof PlaceHolder) {
+					l.addAll(((PlaceHolder) this.left).getValues());
+				}
+        if(this.right instanceof PlaceHolder) {
+					l.addAll(((PlaceHolder)this.right).getValues());
+				}
         return l;
     }
     
     public Object clone(){
 		BaseLogicGroup obj = (BaseLogicGroup)super.clone();
-		if(left!=null){
+		if(this.left!=null){
 			obj.left = (Criteria) this.left.clone();
 		}
 		
-		if(right!=null){
+		if(this.right!=null){
 			obj.right = (Criteria) this.right.clone();
 		}
 		return obj;
@@ -63,8 +65,8 @@ public abstract class BaseLogicGroup extends Criteria implements PlaceHolder {
     
     public Set getCriterias(){
     		Set s = new HashSet();
-		s.add(left);
-		s.add(right);
+		s.add(this.left);
+		s.add(this.right);
 		return s; 
     }
 

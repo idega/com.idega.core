@@ -1,5 +1,5 @@
 /*
- * $Id: EntityBulkUpdater.java,v 1.9 2003/07/05 17:21:46 gummi Exp $
+ * $Id: EntityBulkUpdater.java,v 1.10 2006/04/09 12:13:15 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -56,64 +56,76 @@ public class EntityBulkUpdater {
    */
   public boolean add(IDOLegacyEntity entity, String action) {
     if ((action == null) || (action.equalsIgnoreCase(update))) {
-      if (update_ == null)
-        update_ = new Vector();
-      update_.add(entity);
+      if (this.update_ == null) {
+				this.update_ = new Vector();
+			}
+      this.update_.add(entity);
     }
     else if (action.equalsIgnoreCase(insert)) {
-      if (insert_ == null)
-        insert_ = new Vector();
-      insert_.add(entity);
+      if (this.insert_ == null) {
+				this.insert_ = new Vector();
+			}
+      this.insert_.add(entity);
     }
     else if (action.equalsIgnoreCase(delete)) {
-      if (delete_ == null)
-        delete_ = new Vector();
-      delete_.add(entity);
+      if (this.delete_ == null) {
+				this.delete_ = new Vector();
+			}
+      this.delete_.add(entity);
     }
     else if (action.equalsIgnoreCase(addto)) {
-      if (addto_ == null)
-        addto_ = new Vector();
-      addto_.add(entity);
+      if (this.addto_ == null) {
+				this.addto_ = new Vector();
+			}
+      this.addto_.add(entity);
     }
     else if (action.equalsIgnoreCase(removefrom)) {
-      if (removefrom_ == null)
-        removefrom_ = new Vector();
-      removefrom_.add(entity);
+      if (this.removefrom_ == null) {
+				this.removefrom_ = new Vector();
+			}
+      this.removefrom_.add(entity);
     }
-    else
-      return(false);
+		else {
+			return(false);
+		}
 
     return(true);
   }
 
    public boolean addAll(Collection entityCollection, String action) {
     if ((action == null) || (action.equalsIgnoreCase(update))) {
-      if (update_ == null)
-        update_ = new Vector();
-      update_.addAll(entityCollection);
+      if (this.update_ == null) {
+				this.update_ = new Vector();
+			}
+      this.update_.addAll(entityCollection);
     }
     else if (action.equalsIgnoreCase(insert)) {
-      if (insert_ == null)
-        insert_ = new Vector();
-      insert_.addAll(entityCollection);
+      if (this.insert_ == null) {
+				this.insert_ = new Vector();
+			}
+      this.insert_.addAll(entityCollection);
     }
     else if (action.equalsIgnoreCase(delete)) {
-      if (delete_ == null)
-        delete_ = new Vector();
-      delete_.addAll(entityCollection);
+      if (this.delete_ == null) {
+				this.delete_ = new Vector();
+			}
+      this.delete_.addAll(entityCollection);
     }
     else if (action.equalsIgnoreCase(addto)) {
-      if (addto_ == null)
-        addto_ = new Vector();
-      addto_.addAll(entityCollection);
+      if (this.addto_ == null) {
+				this.addto_ = new Vector();
+			}
+      this.addto_.addAll(entityCollection);
     }
     else if (action.equalsIgnoreCase(removefrom)) {
-      if (removefrom_ == null)
-        removefrom_ = new Vector();
-      removefrom_.addAll(entityCollection);
+      if (this.removefrom_ == null) {
+				this.removefrom_ = new Vector();
+			}
+      this.removefrom_.addAll(entityCollection);
     }
-    else
-      return(false);
+		else {
+			return(false);
+		}
 
     return(true);
   }
@@ -123,8 +135,9 @@ public class EntityBulkUpdater {
    */
   public void execute() {
     Connection c = null;
-    if ((update_ == null) && (insert_ == null) && (delete_ == null))
-      return;
+    if ((this.update_ == null) && (this.insert_ == null) && (this.delete_ == null)) {
+			return;
+		}
     try {
       c = ConnectionBroker.getConnection();
       if( c.getAutoCommit() ){
@@ -132,58 +145,58 @@ public class EntityBulkUpdater {
       }
 
       
-      if (insert_ != null) {
-        Iterator i = insert_.iterator();
+      if (this.insert_ != null) {
+        Iterator i = this.insert_.iterator();
         while (i.hasNext()) {
           IDOLegacyEntity e = (IDOLegacyEntity)i.next();
           e.insert(c);
-          if( relatedEntity != null ){
-            relatedEntity.addTo(e,c);
+          if( this.relatedEntity != null ){
+            this.relatedEntity.addTo(e,c);
           }
         }
-        insert_.clear();
+        this.insert_.clear();
       }
 
-      if (update_ != null) {
-        Iterator i = update_.iterator();
+      if (this.update_ != null) {
+        Iterator i = this.update_.iterator();
         while (i.hasNext()) {
           GenericEntity e = (GenericEntity)i.next();
           e.update(c);
         }
-        update_.clear();
+        this.update_.clear();
       }
 
-      if (delete_ != null) {
-        Iterator i = delete_.iterator();
+      if (this.delete_ != null) {
+        Iterator i = this.delete_.iterator();
         while (i.hasNext()) {
           IDOLegacyEntity e = (IDOLegacyEntity)i.next();
-          if( relatedEntity != null ){
-            e.removeFrom((IDOLegacyEntity)relatedEntity,c);
+          if( this.relatedEntity != null ){
+            e.removeFrom((IDOLegacyEntity)this.relatedEntity,c);
           }
           e.delete(c);
         }
-        delete_.clear();
+        this.delete_.clear();
       }
 
-      if (addto_ != null) {
-        Iterator i = addto_.iterator();
+      if (this.addto_ != null) {
+        Iterator i = this.addto_.iterator();
         while (i.hasNext()) {
           IDOLegacyEntity e = (IDOLegacyEntity)i.next();
-          if( relatedEntity != null ){
-            e.addTo((IDOLegacyEntity)relatedEntity,c);
+          if( this.relatedEntity != null ){
+            e.addTo((IDOLegacyEntity)this.relatedEntity,c);
           }
         }
-        addto_.clear();
+        this.addto_.clear();
       }
-      if (removefrom_ != null) {
-        Iterator i = removefrom_.iterator();
+      if (this.removefrom_ != null) {
+        Iterator i = this.removefrom_.iterator();
         while (i.hasNext()) {
           IDOLegacyEntity e = (IDOLegacyEntity)i.next();
-          if( relatedEntity != null ){
-            e.removeFrom((IDOLegacyEntity)relatedEntity,c);
+          if( this.relatedEntity != null ){
+            e.removeFrom((IDOLegacyEntity)this.relatedEntity,c);
           }
         }
-        removefrom_.clear();
+        this.removefrom_.clear();
       }
 
       c.commit();

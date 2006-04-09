@@ -1,5 +1,5 @@
 /*
- * $Id: SunOrMoon.java,v 1.1 2005/10/27 10:16:11 laddi Exp $
+ * $Id: SunOrMoon.java,v 1.2 2006/04/09 12:13:19 laddi Exp $
  * Created on Oct 27, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.util.IWTimestamp;
 
 
 /**
- * Last modified: $Date: 2005/10/27 10:16:11 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SunOrMoon extends Widget {
 
@@ -54,11 +54,11 @@ public class SunOrMoon extends Widget {
 		}
 		
 		if (image != null) {
-			if (iWidth > 0) {
-				image.setWidth(iWidth);
+			if (this.iWidth > 0) {
+				image.setWidth(this.iWidth);
 			}
-			if (iHeight > 0) {
-				image.setHeight(iHeight);
+			if (this.iHeight > 0) {
+				image.setHeight(this.iHeight);
 			}
 			return image;
 		}

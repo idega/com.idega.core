@@ -108,8 +108,8 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			//System.out.println(buffer.toString());
 			List list = EntityFinder.findAll(this, buffer.toString());
 			if (list != null) {
-				if (_sortLeafs) {
-					ICTreeNodeLeafComparator c = new ICTreeNodeLeafComparator(_leafsFirst);
+				if (this._sortLeafs) {
+					ICTreeNodeLeafComparator c = new ICTreeNodeLeafComparator(this._leafsFirst);
 					Collections.sort(list, c);
 				}
 				return list;
@@ -250,8 +250,9 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	 */
 	public int getSiblingCount() {
 		ICTreeNode parent = getParentNode();
-		if (parent == null)
+		if (parent == null) {
 			return (0);
+		}
 
 		return (parent.getChildCount() - 1);
 	}
@@ -268,28 +269,28 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	 * @return
 	 */
 	public boolean leafsFirst() {
-		return _leafsFirst;
+		return this._leafsFirst;
 	}
 
 	/**
 	 * @return
 	 */
 	public boolean sortLeafs() {
-		return _sortLeafs;
+		return this._sortLeafs;
 	}
 
 	/**
 	 * @param b
 	 */
 	public void setLeafsFirst(boolean b) {
-		_leafsFirst = b;
+		this._leafsFirst = b;
 	}
 
 	/**
 	 * @param b
 	 */
 	public void setToSortLeafs(boolean b) {
-		_sortLeafs = b;
+		this._sortLeafs = b;
 	}
 
 }

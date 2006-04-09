@@ -57,10 +57,10 @@ public class Layer extends PresentationObjectContainer {
 	public void print(IWContext iwc) throws Exception {
 		if (doPrint(iwc)) {
 			if (getMarkupLanguage().equals("HTML")) {
-				print("<" + layerType + " ");
+				print("<" + this.layerType + " ");
 				print(getMarkupAttributesString() + ">");
 				super.print(iwc);
-				println("</" + layerType + ">");
+				println("</" + this.layerType + ">");
 			}
 		}
 	}
@@ -201,7 +201,7 @@ public class Layer extends PresentationObjectContainer {
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[2];
 		values[0] = super.saveState(context);
-		values[1] = layerType;
+		values[1] = this.layerType;
 		return values;
 	}
 	

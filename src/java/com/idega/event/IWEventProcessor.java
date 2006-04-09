@@ -103,8 +103,9 @@ public class IWEventProcessor implements Singleton {
 	private void processIWEvent(IWContext iwc, String EventListenerClass) throws IllegalAccessException,
 			IWException, InstantiationException {
 		if (EventListenerClass != null) {
-			if (iwc.getApplicationSettings().getIfDebug())
+			if (iwc.getApplicationSettings().getIfDebug()) {
 				System.out.println("IWEventListener: " + EventListenerClass);
+			}
 			try{
 				Class eventClass = RefactorClassRegistry.forName(EventListenerClass);
 				IWPageEventListener listener = (IWPageEventListener) eventClass.newInstance();
@@ -269,8 +270,9 @@ public class IWEventProcessor implements Singleton {
 		String localeValue = iwc.getParameter(LocaleSwitcher.languageParameterString);
 		if (localeValue != null) {
 			Locale newLocale = LocaleUtil.getLocale(localeValue);
-			if (newLocale != null && !newLocale.equals(locale))
+			if (newLocale != null && !newLocale.equals(locale)) {
 				iwc.setCurrentLocale(newLocale);
+			}
 		}
 		//IWEventProcessor.getInstance().handleLocaleParameter(iwc);
 	}
@@ -337,8 +339,9 @@ public class IWEventProcessor implements Singleton {
 					// Opera mimetype fix ( aron@idega.is )
 					if (mimetype != null) {
 						StringTokenizer tokenizer = new StringTokenizer(mimetype, " ;:");
-						if (tokenizer.hasMoreTokens())
+						if (tokenizer.hasMoreTokens()) {
 							mimetype = tokenizer.nextToken();
+						}
 					}
 					UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, - 1);
 				    FileUtil.copyFile(f,file);
@@ -381,8 +384,9 @@ public class IWEventProcessor implements Singleton {
 						String mimetype = filePart.getContentType();
 						if (mimetype != null) {
 							StringTokenizer tokenizer = new StringTokenizer(mimetype, " ;:");
-							if (tokenizer.hasMoreTokens())
+							if (tokenizer.hasMoreTokens()) {
 								mimetype = tokenizer.nextToken();
+							}
 						}
 						UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, - 1);
 						long size = filePart.writeTo(file);

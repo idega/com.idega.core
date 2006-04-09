@@ -21,7 +21,7 @@ public class PrimaryKey implements IDOPrimaryKey {
 	Map _primaryKeyMap;
 	
 	public PrimaryKey() {
-		_primaryKeyMap = new HashMap();
+		this._primaryKeyMap = new HashMap();
 	}
 
 	/* (non-Javadoc)
@@ -32,8 +32,9 @@ public class PrimaryKey implements IDOPrimaryKey {
 	}
 	
 	private boolean isComposite() {
-		if (_primaryKeyMap.size() > 1)
+		if (this._primaryKeyMap.size() > 1) {
 			return true;
+		}
 		return false;
 	}
 
@@ -41,24 +42,25 @@ public class PrimaryKey implements IDOPrimaryKey {
 	 * @see com.idega.data.IDOPrimaryKey#getPrimaryKeyValue(java.lang.String)
 	 */
 	public Object getPrimaryKeyValue(String columnName) {
-		return _primaryKeyMap.get(columnName.toUpperCase());
+		return this._primaryKeyMap.get(columnName.toUpperCase());
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOPrimaryKey#setPrimaryKeyValue(java.lang.String, java.lang.Object)
 	 */
 	public void setPrimaryKeyValue(String columnName, Object PKValue) {
-		_primaryKeyMap.put(columnName.toUpperCase(), PKValue);
+		this._primaryKeyMap.put(columnName.toUpperCase(), PKValue);
 	}
 
 	public boolean equals(Object obj) {
 		if (obj instanceof IDOPrimaryKey) {
 			IDOPrimaryKey comparePK = (IDOPrimaryKey) obj;
-			Iterator iter = _primaryKeyMap.keySet().iterator();
+			Iterator iter = this._primaryKeyMap.keySet().iterator();
 			while (iter.hasNext()) {
 				String columnName = (String) iter.next();
-				if (!_primaryKeyMap.get(columnName).equals(comparePK.getPrimaryKeyValue(columnName)))
+				if (!this._primaryKeyMap.get(columnName).equals(comparePK.getPrimaryKeyValue(columnName))) {
 					return false;
+				}
 			}
 			return true;
 		}
@@ -67,7 +69,7 @@ public class PrimaryKey implements IDOPrimaryKey {
 
 	public int hashCode()  { 
 		StringBuffer buffer = new StringBuffer(); 
-		Iterator iter = _primaryKeyMap.entrySet().iterator();
+		Iterator iter = this._primaryKeyMap.entrySet().iterator();
 		while (iter.hasNext()) {
 			buffer.append(iter.next());
 		}
@@ -80,14 +82,16 @@ public class PrimaryKey implements IDOPrimaryKey {
 		StringBuffer buffer = new StringBuffer();
 		boolean isComposite = isComposite();
 		
-		Iterator iter = _primaryKeyMap.keySet().iterator();
+		Iterator iter = this._primaryKeyMap.keySet().iterator();
 		while (iter.hasNext()) {
 			String columnName = (String) iter.next();
-			if (isComposite)
+			if (isComposite) {
 				buffer.append(columnName).append("=");
-			buffer.append(_primaryKeyMap.get(columnName));
-			if (isComposite && iter.hasNext())
+			}
+			buffer.append(this._primaryKeyMap.get(columnName));
+			if (isComposite && iter.hasNext()) {
 				buffer.append("&");
+			}
 		}
 		
 		return buffer.toString();

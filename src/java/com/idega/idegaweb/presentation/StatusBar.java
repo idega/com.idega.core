@@ -22,7 +22,7 @@ public class StatusBar extends Block {
 
   private String name = "iwstatus";
   private static String input = "input";
-  private String inputname = name+input;
+  private String inputname = this.name+input;
   private String message = "";
   private int length = 40;
   private String style = "";
@@ -51,12 +51,12 @@ public class StatusBar extends Block {
   }
 
   public void main(IWContext iwc){
-    TextInput input = new TextInput(inputname,message);
-    input.setSize(length);
+    TextInput input = new TextInput(this.inputname,this.message);
+    input.setSize(this.length);
     input.setDisabled(true);
     input.setMarkupAttribute("style",this.style);
     Form statusForm = new Form();
-    statusForm.setName(name);
+    statusForm.setName(this.name);
     statusForm.add(input);
 
     add(statusForm);
@@ -72,7 +72,7 @@ public class StatusBar extends Block {
   }
 
   public String getMessageScript(String message){
-    return "javascript:document."+name+"."+inputname+".value ='"+message+"'";
+    return "javascript:document."+this.name+"."+this.inputname+".value ='"+message+"'";
   }
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.28 2006/02/22 20:52:47 laddi Exp $
+ * $Id: IWPropertyList.java,v 1.29 2006/04/09 12:13:14 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.xml.XMLParser;
  * files and a few others.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/02/22 20:52:47 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class IWPropertyList {
 	private XMLDocument xmlDocument;
@@ -137,27 +137,27 @@ public class IWPropertyList {
 	}
 
 	XMLElement getParentElement() {
-		return parentElement;
+		return this.parentElement;
 	}
 
 	XMLElement getMapElement() {
-		if (mapElement == null) {
-			mapElement = parentElement.getChild(mapTag);
-			if (mapElement == null) {
-				XMLElement dictElement = parentElement.getChild(dictTag);
+		if (this.mapElement == null) {
+			this.mapElement = this.parentElement.getChild(mapTag);
+			if (this.mapElement == null) {
+				XMLElement dictElement = this.parentElement.getChild(dictTag);
 				if (dictElement != null) {
-					mapElement = new XMLElement(mapTag);
-					mapElement.setChildren(dictElement.getChildren());
-					parentElement.removeContent(dictElement);
-					setMapElement(mapElement);
+					this.mapElement = new XMLElement(mapTag);
+					this.mapElement.setChildren(dictElement.getChildren());
+					this.parentElement.removeContent(dictElement);
+					setMapElement(this.mapElement);
 				}
 			}
-			if (mapElement == null) {
-				mapElement = new XMLElement(mapTag);
-				setMapElement(mapElement);
+			if (this.mapElement == null) {
+				this.mapElement = new XMLElement(mapTag);
+				setMapElement(this.mapElement);
 			}
 		}
-		return mapElement;
+		return this.mapElement;
 	}
 
 	public void setProperty(String key, Object value) {
@@ -355,27 +355,27 @@ public class IWPropertyList {
 	}
 
 	public void load(File file) {
-		xmlFile = file;
+		this.xmlFile = file;
 		if(file.exists()){
 			try {
 				load(new FileInputStream(file));
 			}
 			catch (FileNotFoundException e) {
-				System.err.println("Property file does not exist : "+xmlFile);
+				System.err.println("Property file does not exist : "+this.xmlFile);
 				e.printStackTrace();
 			}
 		}
 		else{
-			System.err.println("Property file does not exist : "+xmlFile);
+			System.err.println("Property file does not exist : "+this.xmlFile);
 		}
 	}
 	
 	public void load(InputStream stream) {
 		XMLParser builder = new XMLParser(false);
 		try {
-			xmlDocument = builder.parse(stream);
-			parentElement = xmlDocument.getRootElement();
-			mapElement = getMapElement();
+			this.xmlDocument = builder.parse(stream);
+			this.parentElement = this.xmlDocument.getRootElement();
+			this.mapElement = getMapElement();
 
 		}
 		catch (XMLException e) {
@@ -389,8 +389,8 @@ public class IWPropertyList {
 	public void removeProperty(String key) {
 		XMLElement element = this.findKeyElement(key);
 		if (element != null) {
-			if (mapElement != null) {
-				mapElement.removeContent(element);
+			if (this.mapElement != null) {
+				this.mapElement.removeContent(element);
 			}
 		}
 	}
@@ -444,8 +444,8 @@ public class IWPropertyList {
 			}
 			else {
 				if (valueElement.getText().equals(value.toString())) {
-					if (mapElement != null) {
-						mapElement.removeContent(element);
+					if (this.mapElement != null) {
+						this.mapElement.removeContent(element);
 					}
 				}
 			}
@@ -454,18 +454,18 @@ public class IWPropertyList {
 
 	public void store() {
 		try {
-			String fileName = xmlFile.getName();
+			String fileName = this.xmlFile.getName();
 			String fileNameBeginning = fileName.substring(0, fileName.lastIndexOf("."));
 			String fileNameEnding = fileName.substring(fileName.lastIndexOf(".") + 1);
 			String tempFileName = fileNameBeginning + "-temp." + fileNameEnding;
-			File tempXMLFile = new File(xmlFile.getParentFile(), tempFileName);
+			File tempXMLFile = new File(this.xmlFile.getParentFile(), tempFileName);
 			store(new FileOutputStream(tempXMLFile));
 			try {
-				FileUtil.copyFile(tempXMLFile, xmlFile);
+				FileUtil.copyFile(tempXMLFile, this.xmlFile);
 				FileUtil.delete(tempXMLFile);
 			}
 			catch (IOException io) {
-				System.err.println("Error storing " + xmlFile.getAbsolutePath() + xmlFile.getName() + " " + io.getMessage());
+				System.err.println("Error storing " + this.xmlFile.getAbsolutePath() + this.xmlFile.getName() + " " + io.getMessage());
 			}
 		}
 		catch (FileNotFoundException e) {
@@ -475,24 +475,24 @@ public class IWPropertyList {
 
 	public void delete() {
 		try {
-			String fileName = xmlFile.getName();
-			File XMLFile = new File(xmlFile.getParentFile(), fileName);
+			String fileName = this.xmlFile.getName();
+			File XMLFile = new File(this.xmlFile.getParentFile(), fileName);
 			XMLFile.delete();
 		}
 		catch (Exception io) {
-			System.err.println("Error deleting " + xmlFile.getAbsolutePath() + xmlFile.getName() + " " + io.getMessage());
+			System.err.println("Error deleting " + this.xmlFile.getAbsolutePath() + this.xmlFile.getName() + " " + io.getMessage());
 		}
 	}
 			
 
 	public void store(OutputStream stream) {
-		if (xmlDocument != null) {
+		if (this.xmlDocument != null) {
 			try {
 				XMLOutput outputter = new XMLOutput("  ", true);
 				outputter.setLineSeparator(System.getProperty("line.separator"));
 				//        outputter.setTrimText(true);
 				outputter.setTextNormalize(true);
-				outputter.output(xmlDocument, stream);
+				outputter.output(this.xmlDocument, stream);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -510,9 +510,9 @@ public class IWPropertyList {
 
 	public void unload(){
 		this.xmlFile=null;
-		xmlDocument=null;
-		parentElement=null;
-		mapElement=null;
+		this.xmlDocument=null;
+		this.parentElement=null;
+		this.mapElement=null;
 	}
 	
 }

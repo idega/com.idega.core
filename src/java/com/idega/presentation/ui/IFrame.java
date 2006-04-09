@@ -1,5 +1,5 @@
 /*
- * $Id: IFrame.java,v 1.19 2005/06/02 18:06:50 tryggvil Exp $
+ * $Id: IFrame.java,v 1.20 2006/04/09 12:13:16 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.presentation.IWContext;
  * <p>
  * Component to render out an "iframe" or Inline Frame element.
  * </p>
- *  Last modified: $Date: 2005/06/02 18:06:50 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class IFrame extends InterfaceObject {
 
@@ -49,21 +49,21 @@ public class IFrame extends InterfaceObject {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[6];
 		values[0] = super.saveState(ctx);
-		values[1] = Boolean.valueOf(transparent);
-		values[2] = new Integer(ibPageId);
-		values[3] = Boolean.valueOf(addLocaleID);
-		values[4] = classToInstanciate;
-		values[5] = Boolean.valueOf(addLanguageParameter);
+		values[1] = Boolean.valueOf(this.transparent);
+		values[2] = new Integer(this.ibPageId);
+		values[3] = Boolean.valueOf(this.addLocaleID);
+		values[4] = this.classToInstanciate;
+		values[5] = Boolean.valueOf(this.addLanguageParameter);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		transparent = ((Boolean)values[1]).booleanValue();
-		ibPageId = ((Integer)values[2]).intValue();
-		addLocaleID = ((Boolean)values[3]).booleanValue();
-		classToInstanciate = (Class)values[4];
-		addLanguageParameter = ((Boolean) values[5]).booleanValue();
+		this.transparent = ((Boolean)values[1]).booleanValue();
+		this.ibPageId = ((Integer)values[2]).intValue();
+		this.addLocaleID = ((Boolean)values[3]).booleanValue();
+		this.classToInstanciate = (Class)values[4];
+		this.addLanguageParameter = ((Boolean) values[5]).booleanValue();
 	}
 	
 	public IFrame() {
@@ -124,7 +124,7 @@ public class IFrame extends InterfaceObject {
 	}
 
 	public void setIBPage(int id) {
-		ibPageId = id;
+		this.ibPageId = id;
 	}
 
 	public void setSrc(Class classToAdd) {
@@ -133,8 +133,8 @@ public class IFrame extends InterfaceObject {
 	}
 
 	private void setClassToInstanciateAsSource(IWContext iwc) {
-		if (classToInstanciate != null) {
-			this.setSrc(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate));
+		if (this.classToInstanciate != null) {
+			this.setSrc(iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate));
 		}
 	}
 
@@ -208,7 +208,7 @@ public class IFrame extends InterfaceObject {
 		String src = getMarkupAttribute("src");
 		if (src != null) {
 			String langAddition = "";
-			if (addLanguageParameter) {
+			if (this.addLanguageParameter) {
 				if (src.indexOf("?") != -1) {
 					langAddition = "&" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString();
 				}
@@ -219,12 +219,13 @@ public class IFrame extends InterfaceObject {
 			setMarkupAttribute("src", src + langAddition);
 		}
 
-		if (transparent)
+		if (this.transparent) {
 			setMarkupAttribute("ALLOWTRANSPARENCY", "true");
-		if (ibPageId > 0) {
+		}
+		if (this.ibPageId > 0) {
 			BuilderService bservice = getBuilderService(iwc);
 			//setAttribute("src",iwc.getRequestURI()+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageId+"");
-			this.setSrc(bservice.getPageURI(ibPageId));
+			this.setSrc(bservice.getPageURI(this.ibPageId));
 		}
 
 		if (getMarkupLanguage().equals("HTML")) {

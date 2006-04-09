@@ -25,15 +25,15 @@ public class IndexComparator implements Comparator {
   private int sortBy;
 
   public IndexComparator() {
-      sortBy = ORDER_BY_INDEX;
+      this.sortBy = ORDER_BY_INDEX;
   }
 
   public IndexComparator(int toSortBy) {
-      sortBy = toSortBy;
+      this.sortBy = toSortBy;
   }
 
   public void sortBy(int toSortBy) {
-      sortBy = toSortBy;
+      this.sortBy = toSortBy;
   }
 
   public int compare(Object o1, Object o2) {
@@ -62,7 +62,9 @@ public class IndexComparator implements Comparator {
     else if( p1.getIndex() < p2.getIndex() ){
       result = -1;
     }
-    else result = 0;
+		else {
+			result = 0;
+		}
 
     return result;
   }
@@ -80,7 +82,7 @@ public class IndexComparator implements Comparator {
   }
 
   public Iterator sort(Index[] indexes, int toSortBy) {
-      sortBy = toSortBy;
+      this.sortBy = toSortBy;
       List list = new LinkedList();
       for(int i = 0; i < indexes.length; i++) {
           list.add(indexes[i]);
@@ -99,7 +101,7 @@ public class IndexComparator implements Comparator {
   }
 
   public Index[] sortedArray(Index[] indexes, int toSortBy) {
-      sortBy = toSortBy;
+      this.sortBy = toSortBy;
       List list = new LinkedList();
       for(int i = 0; i < indexes.length; i++) {
           list.add(indexes[i]);
@@ -136,7 +138,7 @@ public class IndexComparator implements Comparator {
   }
 
   public Index[] reverseSortedArray(Index[] indexes, int toSortBy) {
-      sortBy = toSortBy;
+      this.sortBy = toSortBy;
       List list = new LinkedList();
       for(int i = 0; i < indexes.length; i++) {
           list.add(indexes[i]);

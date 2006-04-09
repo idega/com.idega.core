@@ -1,5 +1,5 @@
 /*
- * $Id: Script.java,v 1.28 2006/01/05 15:56:48 laddi Exp $ 
+ * $Id: Script.java,v 1.29 2006/04/09 12:13:13 laddi Exp $ 
  * Created in 2000 by Tryggvi Larusson
  * 
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import javax.faces.context.FacesContext;
  * An instance of this component can be used to define javascript functions and
  * add to a component or a page.
  * </p>
- * Last modified: $Date: 2006/01/05 15:56:48 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class Script extends PresentationObject {
 
@@ -50,10 +50,10 @@ public class Script extends PresentationObject {
 	 * setAttribute("language",scriptType); }
 	 */
 	protected Map getScriptCode() {
-		if (scriptCode == null) {
-			scriptCode = new LinkedHashMap();
+		if (this.scriptCode == null) {
+			this.scriptCode = new LinkedHashMap();
 		}
-		return scriptCode;
+		return this.scriptCode;
 	}
 
 	protected void setType() {
@@ -136,9 +136,10 @@ public class Script extends PresentationObject {
 	}
 
 	public void addVariable(String variableName, String variableValue) {
-		if (this.variables == null)
-			variables = new Hashtable();
-		variables.put(variableName, variableValue);
+		if (this.variables == null) {
+			this.variables = new Hashtable();
+		}
+		this.variables.put(variableName, variableValue);
 	}
 
 	public void addVariable(String variableName) {
@@ -146,21 +147,23 @@ public class Script extends PresentationObject {
 	}
 
 	public String getVariable(String variableName) {
-		return (String) variables.get(variableName);
+		return (String) this.variables.get(variableName);
 	}
 
 	public String getVariables() {
 		StringBuffer returnString = new StringBuffer();
-		if (variables != null) {
-			Enumeration e = variables.keys();
+		if (this.variables != null) {
+			Enumeration e = this.variables.keys();
 			while (e.hasMoreElements()) {
 				Object function = e.nextElement();
 				String variableName = (String) function;
 				String variableValue = getVariable(variableName);
-				if (variableValue != null)
+				if (variableValue != null) {
 					returnString.append("var " + variableName + " = " + variableValue + ";\n");
-				else
+				}
+				else {
 					returnString.append("var " + variableName + ";\n");
+				}
 			}
 			returnString.append("\n");
 		}
@@ -168,19 +171,20 @@ public class Script extends PresentationObject {
 	}
 
 	public void addMethod(String methodName, String methodValue) {
-		if (this.methods == null)
-			methods = new Hashtable();
-		methods.put(methodName, methodValue);
+		if (this.methods == null) {
+			this.methods = new Hashtable();
+		}
+		this.methods.put(methodName, methodValue);
 	}
 
 	public String getMethod(String methodName) {
-		return (String) methods.get(methodName);
+		return (String) this.methods.get(methodName);
 	}
 
 	public String getMethods() {
 		StringBuffer returnString = new StringBuffer();
-		if (methods != null) {
-			for (Enumeration e = methods.keys(); e.hasMoreElements();) {
+		if (this.methods != null) {
+			for (Enumeration e = this.methods.keys(); e.hasMoreElements();) {
 				Object function = e.nextElement();
 				String methodName = (String) function;
 				String methodValue = getMethod(methodName);
@@ -296,10 +300,10 @@ public class Script extends PresentationObject {
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[5];
 		values[0] = super.saveState(context);
-		values[1] = scriptType;
-		values[2] = scriptCode;
-		values[3] = variables;
-		values[4] = methods;
+		values[1] = this.scriptType;
+		values[2] = this.scriptCode;
+		values[3] = this.variables;
+		values[4] = this.methods;
 		return values;
 	}
 	

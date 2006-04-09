@@ -42,8 +42,9 @@ public class InCriteria extends Criteria implements PlaceHolder {
 			else {
 				v.append(quote(curr.toString()));
 			}
-			if (hasNext)
+			if (hasNext) {
 				v.append(',');
+			}
 		}
 		this.value = v.toString();
 	}
@@ -69,8 +70,9 @@ public class InCriteria extends Criteria implements PlaceHolder {
 				v.append(quote(value.toString()));
 			}
 
-			if (i < values.length - 1)
+			if (i < values.length - 1) {
 				v.append(',');
+			}
 		}
 		this.value = v.toString();
 	}
@@ -80,8 +82,9 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		StringBuffer v = new StringBuffer();
 		for (int i = 0; i < values.length; i++) {
 			v.append(quote(values[i]));
-			if (i < values.length - 1)
+			if (i < values.length - 1) {
 				v.append(',');
+			}
 		}
 		this.value = v.toString();
 	}
@@ -91,8 +94,9 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		StringBuffer v = new StringBuffer();
 		for (int i = 0; i < values.length; i++) {
 			v.append(values[i]);
-			if (i < values.length - 1)
+			if (i < values.length - 1) {
 				v.append(',');
+			}
 		}
 		this.value = v.toString();
 	}
@@ -102,8 +106,9 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		StringBuffer v = new StringBuffer();
 		for (int i = 0; i < values.length; i++) {
 			v.append(values[i]);
-			if (i < values.length - 1)
+			if (i < values.length - 1) {
 				v.append(',');
+			}
 		}
 		this.value = v.toString();
 	}
@@ -214,7 +219,7 @@ public class InCriteria extends Criteria implements PlaceHolder {
 
 	// ////////
 	public void setAsNotInCriteria(boolean value) {
-		notInCr = value;
+		this.notInCr = value;
 	}
 
 	public void setAsNotInCriteria() {
@@ -222,23 +227,23 @@ public class InCriteria extends Criteria implements PlaceHolder {
 	}
 
 	public Column getColumn() {
-		return column;
+		return this.column;
 	}
 
 	public void write(Output out) {
-		out.print(column);
-		if (notInCr) {
+		out.print(this.column);
+		if (this.notInCr) {
 			out.println(" NOT IN (");
 		}
 		else {
 			out.println(" IN (");
 		}
 		out.indent();
-		if (subSelect != null) {
-			subSelect.write(out);
+		if (this.subSelect != null) {
+			this.subSelect.write(out);
 		}
 		else {
-			out.print(value);
+			out.print(this.value);
 		}
 		out.unindent();
 		out.println();
@@ -247,25 +252,25 @@ public class InCriteria extends Criteria implements PlaceHolder {
 
 	public Set getTables() {
 		Set s = new HashSet();
-		s.add(column.getTable());
+		s.add(this.column.getTable());
 		return s;
 	}
 
 	public List getValues() {
 		Vector l = new Vector();
-		if (subSelect != null) {
-			l.addAll(subSelect.getValues());
+		if (this.subSelect != null) {
+			l.addAll(this.subSelect.getValues());
 		}
 		return l;
 	}
 	
     public Object clone(){
 		InCriteria obj = (InCriteria)super.clone();
-		if(column!=null){
+		if(this.column!=null){
 			obj.column = (Column) this.column.clone();
 		}
 		
-		if(subSelect!=null){
+		if(this.subSelect!=null){
 			obj.subSelect = (SelectQuery) this.subSelect.clone();
 		}
 		return obj;

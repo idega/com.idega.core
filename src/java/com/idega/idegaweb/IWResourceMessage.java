@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceMessage.java,v 1.1 2004/10/05 10:55:09 aron Exp $
+ * $Id: IWResourceMessage.java,v 1.2 2006/04/09 12:13:14 laddi Exp $
  * Created on 5.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -11,10 +11,10 @@ package com.idega.idegaweb;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/05 10:55:09 $ by $Author: aron $
+ *  Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class IWResourceMessage {
     
@@ -37,13 +37,13 @@ public class IWResourceMessage {
     }
     
     public String getKey() {
-        return key;
+        return this.key;
     }
     public void setKey(String key) {
         this.key = key;
     }
     public String getMessage() {
-        return message;
+        return this.message;
     }
     public void setMessage(String message) {
         this.message = message;

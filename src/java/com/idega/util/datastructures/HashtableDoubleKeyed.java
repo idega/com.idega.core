@@ -48,9 +48,9 @@ public class HashtableDoubleKeyed{
 
    public HashtableDoubleKeyed(){
 
-      table = new Hashtable();
+      this.table = new Hashtable();
 
-      tableForKeys=new HashtableMultivalued();
+      this.tableForKeys=new HashtableMultivalued();
 
    }
 
@@ -58,11 +58,11 @@ public class HashtableDoubleKeyed{
 
    public Object put(String key1,String key2,Object value){
 
-      tableForKeys.put(key1,value);
+      this.tableForKeys.put(key1,value);
 
-      tableForKeys.put(key2,value);
+      this.tableForKeys.put(key2,value);
 
-      return table.put(StringHandler.concatAlphabetically(key1,key2),value);
+      return this.table.put(StringHandler.concatAlphabetically(key1,key2),value);
 
    }
 
@@ -70,7 +70,7 @@ public class HashtableDoubleKeyed{
 
    public Object get(String key1,String key2){
 
-      return table.get(StringHandler.concatAlphabetically(key1,key2));
+      return this.table.get(StringHandler.concatAlphabetically(key1,key2));
 
   }
 
@@ -78,7 +78,7 @@ public class HashtableDoubleKeyed{
 
    public Object remove(String key1,String key2){
 
-      return table.remove(StringHandler.concatAlphabetically(key1,key2));
+      return this.table.remove(StringHandler.concatAlphabetically(key1,key2));
 
   }
 
@@ -86,7 +86,7 @@ public class HashtableDoubleKeyed{
 
   public Enumeration keys(){
 
-      return table.keys();
+      return this.table.keys();
 
   }
 
@@ -94,7 +94,7 @@ public class HashtableDoubleKeyed{
 
   public Enumeration elements(){
 
-      return table.elements();
+      return this.table.elements();
 
   }
 
@@ -108,7 +108,7 @@ public class HashtableDoubleKeyed{
 
   public List get(String key){
 
-      return tableForKeys.getList(key);
+      return this.tableForKeys.getList(key);
 
   }
 

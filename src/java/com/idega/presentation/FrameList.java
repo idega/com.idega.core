@@ -29,7 +29,7 @@ private String style = "";
     getParentPage().setAllMargins(0);
     initializeTable();
 
-    add(listTable);
+    add(this.listTable);
     super._main(iwc);
   }
 
@@ -37,25 +37,25 @@ private String style = "";
   }
 
   private void initializeTable() {
-    listTable = new Table();
-      listTable.setCellpadding(3);
-      listTable.setCellspacing(0);
-      listTable.setWidth("100%");
+    this.listTable = new Table();
+      this.listTable.setCellpadding(3);
+      this.listTable.setCellspacing(0);
+      this.listTable.setWidth("100%");
       //listTable.setHeight("100%");
   }
 
   public void addToList(PresentationObject obj, Image displayImage) {
-    int rows = listTable.getRows();
-      if ( !listTable.isEmpty(1,rows) ) {
+    int rows = this.listTable.getRows();
+      if ( !this.listTable.isEmpty(1,rows) ) {
 	rows++;
       }
 
     if ( displayImage != null ) {
-      listTable.add(displayImage,1,rows);
-      listTable.add(obj,2,rows);
+      this.listTable.add(displayImage,1,rows);
+      this.listTable.add(obj,2,rows);
     }
     else {
-      listTable.add(obj,1,rows);
+      this.listTable.add(obj,1,rows);
     }
   }
 
@@ -69,22 +69,22 @@ private String style = "";
 
   public void addToList(Class classToAdd, Image displayImage, String displayString, String target) {
     Text text = new Text(displayString);
-      text.setFontStyle(style);
+      text.setFontStyle(this.style);
 
     Link link = new Link(text,classToAdd);
       link.setTarget(target);
 
-    int rows = listTable.getRows();
-      if ( !listTable.isEmpty(1,rows) ) {
+    int rows = this.listTable.getRows();
+      if ( !this.listTable.isEmpty(1,rows) ) {
 	rows++;
       }
 
     if ( displayImage != null ) {
-      listTable.add(displayImage,1,rows);
-      listTable.add(link,2,rows);
+      this.listTable.add(displayImage,1,rows);
+      this.listTable.add(link,2,rows);
     }
     else {
-      listTable.add(link,1,rows);
+      this.listTable.add(link,1,rows);
     }
   }
 
@@ -113,7 +113,7 @@ private String style = "";
   }
 
   public void setListWidth(String width) {
-    listTable.setWidth(width);
+    this.listTable.setWidth(width);
   }
 
   public void setListWidth(int width) {
@@ -121,7 +121,7 @@ private String style = "";
   }
 
   public void setListHeight(String height) {
-    listTable.setHeight(height);
+    this.listTable.setHeight(height);
   }
 
   public void setListHeight(int height) {
@@ -129,14 +129,14 @@ private String style = "";
   }
 
   public void setZebraColors(String color1, String color2) {
-    listTable.setHorizontalZebraColored(color1,color2);
+    this.listTable.setHorizontalZebraColored(color1,color2);
   }
 
   public void setListpadding(int padding) {
-    listTable.setCellpadding(padding);
+    this.listTable.setCellpadding(padding);
   }
 
   public void setListSpacing(int spacing) {
-    listTable.setCellspacing(spacing);
+    this.listTable.setCellspacing(spacing);
   }
 }

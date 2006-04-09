@@ -1,5 +1,5 @@
 /*
- * $Id: TimeLimitedMap.java,v 1.2 2006/04/04 18:05:02 thomas Exp $
+ * $Id: TimeLimitedMap.java,v 1.3 2006/04/09 12:13:20 laddi Exp $
  * Created on Mar 29, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -36,10 +36,10 @@ import java.util.Set;
  * This map should not be used to store large number of entries 
  * that should be automatically removed after a while without calling the map at all.
  *  
- *  Last modified: $Date: 2006/04/04 18:05:02 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class TimeLimitedMap implements Map {
 	
@@ -104,12 +104,12 @@ public class TimeLimitedMap implements Map {
 	}
 	
 	private void initialize() {
-		firstValues.clear();
-		firstKeys.clear();
-		firstTimestamps.clear();
-		secondValues.clear();
-		secondKeys.clear();
-		secondTimestamps.clear();
+		this.firstValues.clear();
+		this.firstKeys.clear();
+		this.firstTimestamps.clear();
+		this.secondValues.clear();
+		this.secondKeys.clear();
+		this.secondTimestamps.clear();
 		calculateSecondLatestTimestamp(System.currentTimeMillis());
 	}
 	
@@ -117,42 +117,42 @@ public class TimeLimitedMap implements Map {
 
 	
 	private void control(long currentTime) {
-		if (noTimeOut) {
+		if (this.noTimeOut) {
 			return;
 		}
 		// after call of control the first list is always valid!
-		if (currentTime > secondLatestTimestampTimeout) {
+		if (currentTime > this.secondLatestTimestampTimeout) {
 			// the whole second stack is expired
 			// move first stack to second (that is delete second stack)
 			// create new first stack
-			List tempFirstValues = secondValues;
-			List tempFirstKeys = secondKeys;
-			List tempFirstTimestamps = secondTimestamps;
-			secondValues = firstValues;
-			secondKeys = firstKeys;
-			secondTimestamps = firstTimestamps;
-			firstValues = tempFirstValues;
-			firstKeys = tempFirstKeys;
-			firstTimestamps = tempFirstTimestamps;
-			firstValues.clear();
-			firstKeys.clear();
-			firstTimestamps.clear();
+			List tempFirstValues = this.secondValues;
+			List tempFirstKeys = this.secondKeys;
+			List tempFirstTimestamps = this.secondTimestamps;
+			this.secondValues = this.firstValues;
+			this.secondKeys = this.firstKeys;
+			this.secondTimestamps = this.firstTimestamps;
+			this.firstValues = tempFirstValues;
+			this.firstKeys = tempFirstKeys;
+			this.firstTimestamps = tempFirstTimestamps;
+			this.firstValues.clear();
+			this.firstKeys.clear();
+			this.firstTimestamps.clear();
 			calculateSecondLatestTimestamp(currentTime);
 		}
 	}
 	
 	private void calculateSecondLatestTimestamp(long currentTime) {
-		int endIndex = secondTimestamps.size() - 1;
+		int endIndex = this.secondTimestamps.size() - 1;
 		if (endIndex > -1 ) {
 			// is there an entry?
-			Long tempTimestamp = (Long) secondTimestamps.get(endIndex);
+			Long tempTimestamp = (Long) this.secondTimestamps.get(endIndex);
 			// note: tempTimestamp is the "original" timestamp plus timeout !!!!
 			// do not add timeout again
-			secondLatestTimestampTimeout = tempTimestamp.longValue();
+			this.secondLatestTimestampTimeout = tempTimestamp.longValue();
 		}
 		else {
 			// take the current time
-			secondLatestTimestampTimeout = currentTime + timeOut;
+			this.secondLatestTimestampTimeout = currentTime + this.timeOut;
 		}
 
 	}
@@ -169,7 +169,7 @@ public class TimeLimitedMap implements Map {
 		}
 		// lookup second list
 		index = secondList.lastIndexOf(object);
-		if (index > -1 && isValid(index, secondTimestamps, currentTime)) {
+		if (index > -1 && isValid(index, this.secondTimestamps, currentTime)) {
 			index++;
 			return -index;
 		}
@@ -194,7 +194,7 @@ public class TimeLimitedMap implements Map {
 
 	
 	private boolean isValid(int index, List timestampList, long currentTime) {
-		if (noTimeOut) {
+		if (this.noTimeOut) {
 			return true;
 		}
 		Long timestampLong = (Long) timestampList.get(index);
@@ -206,45 +206,45 @@ public class TimeLimitedMap implements Map {
 		long currentTime = System.currentTimeMillis();
 		control(currentTime);
 		// after call of control the first list is always valid!
-		int maxSize = firstKeys.size() + secondKeys.size();
+		int maxSize = this.firstKeys.size() + this.secondKeys.size();
 		int[] validIndices = new int[maxSize];
 		int k = 0;
 		// tricky - index runs down to 1 not 0 !
-		for (int i = firstKeys.size(); i > 0; i--) {
+		for (int i = this.firstKeys.size(); i > 0; i--) {
 			validIndices[k++] = i;
 		} 
 		// the second list
-		for (int i = secondKeys.size(); i > 0; i--) {
-			if (isValid(i -1, secondTimestamps, currentTime)) {
+		for (int i = this.secondKeys.size(); i > 0; i--) {
+			if (isValid(i -1, this.secondTimestamps, currentTime)) {
 				// tricky - to know that this is the index of the second list the index is negative
 				validIndices[k++] = -i;
 			}
 			else {
 				// there can't be any more valid indices
-				size = k;
+				this.size = k;
 				return validIndices;
 			}
 		} 	
-		size = k;
+		this.size = k;
 		return validIndices;
 	}
 	
 	public void setTimeOut(long milliseconds) {
 		long currentTime = System.currentTimeMillis();
-		noTimeOut = (milliseconds <= 0);
-		long newTimeOut = (noTimeOut) ? 0 : milliseconds;
-		if (newTimeOut == timeOut) {
+		this.noTimeOut = (milliseconds <= 0);
+		long newTimeOut = (this.noTimeOut) ? 0 : milliseconds;
+		if (newTimeOut == this.timeOut) {
 			// nothing to do
 			return;
 		}
 		// timestamp of an entry = original timestamp + timeOut
 		// new timestamp of an entry = original timestamp + timeOut - timeOut + newTimeOut
-		long difference = newTimeOut - timeOut;
+		long difference = newTimeOut - this.timeOut;
 		// set the new timeout
-		timeOut  =newTimeOut;
+		this.timeOut  =newTimeOut;
 		// change timestamps of both lists
-		changeTimestamps(firstTimestamps, difference);
-		changeTimestamps(secondTimestamps, difference);
+		changeTimestamps(this.firstTimestamps, difference);
+		changeTimestamps(this.secondTimestamps, difference);
 		// the secondLatestTimestamp is wrong!!!!
 		calculateSecondLatestTimestamp(currentTime);
 		// note: call calculateSecondLatestTimestamp before call of control !!!
@@ -272,7 +272,7 @@ public class TimeLimitedMap implements Map {
 	 */
 	public int size() {
 		getValidIndicesControl();
-		return size;
+		return this.size;
 	}
 
 	/* (non-Javadoc)
@@ -288,21 +288,21 @@ public class TimeLimitedMap implements Map {
 	public boolean isEmpty() {
 		control(System.currentTimeMillis());
 		// sufficient to check the first list 
-		return firstTimestamps.isEmpty();
+		return this.firstTimestamps.isEmpty();
 	}
 
 	/* (non-Javadoc)
 	 * @see java.util.Map#containsKey(java.lang.Object)
 	 */
 	public boolean containsKey(Object key) {
-		return (getValidIndexControl(key, firstKeys, secondKeys) != 0);
+		return (getValidIndexControl(key, this.firstKeys, this.secondKeys) != 0);
 	}
 			
 	/* (non-Javadoc)
 	 * @see java.util.Map#containsValue(java.lang.Object)
 	 */
 	public boolean containsValue(Object value) {
-		return (getValidIndexControl(value, firstValues, secondValues) != 0);
+		return (getValidIndexControl(value, this.firstValues, this.secondValues) != 0);
 	}
 
 	/* (non-Javadoc)
@@ -310,11 +310,11 @@ public class TimeLimitedMap implements Map {
 	 */
 	public Collection values() {
 		int[] validIndices = getValidIndicesControl();
-		List values = new ArrayList(size);
-		for (int i = size -1; i > -1 ; i--) {
+		List values = new ArrayList(this.size);
+		for (int i = this.size -1; i > -1 ; i--) {
 			int index = validIndices[i];
 			// first list positive, second list negative
-			Object value = (index > 0) ? firstValues.get(index - 1) : secondValues.get(-index - 1);
+			Object value = (index > 0) ? this.firstValues.get(index - 1) : this.secondValues.get(-index - 1);
 			values.add(value);
 		}
 		return values;
@@ -327,16 +327,16 @@ public class TimeLimitedMap implements Map {
 	public void putAll(Map aMap) {
 		long currentTime = System.currentTimeMillis();
 		control(currentTime);
-		long timestamp = currentTime + timeOut;
+		long timestamp = currentTime + this.timeOut;
 		Long myTimestamp = new Long(timestamp);
 		Iterator iterator = aMap.keySet().iterator(); 
 		while(iterator.hasNext()) {
 			Object key = iterator.next();
 			removeWithoutControl(key);
 			Object value = aMap.get(key);
-			firstKeys.add(key);
-			firstKeys.add(value);
-			firstKeys.add( myTimestamp);
+			this.firstKeys.add(key);
+			this.firstKeys.add(value);
+			this.firstKeys.add( myTimestamp);
 		}
 	}
 
@@ -345,19 +345,19 @@ public class TimeLimitedMap implements Map {
 	 */
 	public Set entrySet() {
 		int[] validIndices = getValidIndicesControl();
-		Set entries = new HashSet(size);
-		for (int i = size-1; i > -1 ; i--) {
+		Set entries = new HashSet(this.size);
+		for (int i = this.size-1; i > -1 ; i--) {
 			int index = validIndices[i];
 			// first list positive, second list negative
 			Object tempKey = null;
 			Object tempValue = null;
 			if (index > 0)  {
-				tempValue = firstValues.get(index - 1);
-				tempKey = firstKeys.get(index - 1);
+				tempValue = this.firstValues.get(index - 1);
+				tempKey = this.firstKeys.get(index - 1);
 			}
 			else {
-				tempValue = secondValues.get(-index - 1);
-				tempKey = secondKeys.get(-index - 1);
+				tempValue = this.secondValues.get(-index - 1);
+				tempKey = this.secondKeys.get(-index - 1);
 			}
 			Map.Entry entry = new MapEntry(tempKey, tempValue);
 			entries.add(entry);
@@ -370,11 +370,11 @@ public class TimeLimitedMap implements Map {
 	 */
 	public Set keySet() {
 		int[] validIndices = getValidIndicesControl();
-		Set keys = new HashSet(size);
-		for (int i = size - 1; i > -1 ; i--) {
+		Set keys = new HashSet(this.size);
+		for (int i = this.size - 1; i > -1 ; i--) {
 			int index = validIndices[i];
 			// first list positive, second list negative
-			Object key = (index > 0) ? firstKeys.get(index - 1) : secondKeys.get(-index - 1);
+			Object key = (index > 0) ? this.firstKeys.get(index - 1) : this.secondKeys.get(-index - 1);
 			keys.add(key);
 		}
 		return keys;
@@ -384,13 +384,13 @@ public class TimeLimitedMap implements Map {
 	 * @see java.util.Map#get(java.lang.Object)
 	 */
 	public Object get(Object key) {
-		int index = getValidIndexControl(key, firstKeys, secondKeys);
+		int index = getValidIndexControl(key, this.firstKeys, this.secondKeys);
 		if (index == 0) {
 			// not found
 			return null;
 		}
 		// first list positive, second list negative
-		return (index > 0) ? firstValues.get(index - 1) : secondValues.get(-index - 1);
+		return (index > 0) ? this.firstValues.get(index - 1) : this.secondValues.get(-index - 1);
 	}
 
 	/* (non-Javadoc)
@@ -406,7 +406,7 @@ public class TimeLimitedMap implements Map {
 	}
 			
 	private Object removeWithoutControl(Object key) {
-		int index = getIndexWithoutControl(key, firstKeys, secondKeys);
+		int index = getIndexWithoutControl(key, this.firstKeys, this.secondKeys);
 		if (index == 0) {
 			// not found
 			return null;
@@ -414,14 +414,14 @@ public class TimeLimitedMap implements Map {
 		// first list positive, second list negative
 		if (index > 0) {
 			int k = index  - 1;
-			firstKeys.remove(k);
-			firstTimestamps.remove(k);
-			return firstValues.remove(k);
+			this.firstKeys.remove(k);
+			this.firstTimestamps.remove(k);
+			return this.firstValues.remove(k);
 		}
 		int k = -index  - 1;
-		secondKeys.remove(k);
-		secondTimestamps.remove(k);
-		return secondValues.remove(k);
+		this.secondKeys.remove(k);
+		this.secondTimestamps.remove(k);
+		return this.secondValues.remove(k);
 	}
 
 	/* (non-Javadoc)
@@ -430,11 +430,11 @@ public class TimeLimitedMap implements Map {
 	public Object put(Object key, Object value) {
 		long currentTime = System.currentTimeMillis();
 		Object oldValue = removeControl(key, currentTime);
-		long timestamp = currentTime + timeOut;
+		long timestamp = currentTime + this.timeOut;
 		Long myTimestamp = new Long(timestamp);
-		firstKeys.add(key);
-		firstValues.add(value);
-		firstTimestamps.add( myTimestamp);
+		this.firstKeys.add(key);
+		this.firstValues.add(value);
+		this.firstTimestamps.add( myTimestamp);
 		return oldValue;
 	}
 	

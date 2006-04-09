@@ -30,7 +30,9 @@ public class ContentParser {
             if (M.containsKey(token)) {
                 finalText.append(M.get(token));
             }
-            else finalText.append(token);
+						else {
+							finalText.append(token);
+						}
         }
         return finalText.toString();
     }

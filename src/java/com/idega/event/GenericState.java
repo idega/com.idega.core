@@ -45,7 +45,7 @@ public class GenericState extends Object implements Cloneable,Serializable {
 
       obj = (GenericState)super.clone();
 
-      if(state != null){
+      if(this.state != null){
         obj.state = (List)((Vector)this.state).clone();
       }
       obj.pageKey = this.pageKey;
@@ -81,7 +81,7 @@ public class GenericState extends Object implements Cloneable,Serializable {
   }
 
   public GenericState(PresentationObject obj){
-    state = new Vector();
+    this.state = new Vector();
     this.pageKey = obj.getParentPageID();
     this.instanceId = obj.getICObjectInstanceID();
   }
@@ -124,27 +124,27 @@ public class GenericState extends Object implements Cloneable,Serializable {
   }
 */
   public Object getValue(int index){
-    if(state.size() <= index){
-      ((Vector)state).setSize(index+1);
+    if(this.state.size() <= index){
+      ((Vector)this.state).setSize(index+1);
     }
-    return state.get(index);
+    return this.state.get(index);
   }
 
   public void setValue(int index, Object obj){
-    if(state.size() <= index){
-      ((Vector)state).setSize(index+1);
+    if(this.state.size() <= index){
+      ((Vector)this.state).setSize(index+1);
     }
     if(!STATESTRING_NOVALUE.equals(obj)){
-      state.set(index,obj);
+      this.state.set(index,obj);
     } else {
-      state.set(index,null);
+      this.state.set(index,null);
     }
   }
 
   protected void parseStateString(String stateString){
     //System.err.println(this+" string to parse: "+stateString);
     StringTokenizer stoken = new StringTokenizer(stateString,STATESTRING_VALUE_SEPERATOR);
-    state = new Vector();
+    this.state = new Vector();
     while (stoken.hasMoreTokens()) {
       String token = stoken.nextToken();
       StringTokenizer tmpToken = new StringTokenizer(token,STATESTRING_MULTIVALUE_ARRAY_ELEMENT_SEPERATOR);
@@ -159,12 +159,12 @@ public class GenericState extends Object implements Cloneable,Serializable {
             sArray[i] = null;
           }
         }
-        state.add(sArray);
+        this.state.add(sArray);
       } else {
         if(!STATESTRING_NOVALUE.equals(token)){
-          state.add(token);
+          this.state.add(token);
         } else {
-          state.add(STATESTRING_NOVALUE);
+          this.state.add(STATESTRING_NOVALUE);
         }
       }
     }
@@ -173,8 +173,8 @@ public class GenericState extends Object implements Cloneable,Serializable {
   public String getStateString(){
     String str = "";
 
-    if( state != null){
-      ListIterator lIter = state.listIterator();
+    if( this.state != null){
+      ListIterator lIter = this.state.listIterator();
       while (lIter.hasNext()) {
         int index = lIter.nextIndex();
         Object lItem = lIter.next();

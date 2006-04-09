@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.2 2006/04/04 12:48:03 laddi Exp $
+ * $Id: ICPageBMPBean.java,v 1.3 2006/04/09 12:13:15 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -211,12 +211,15 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	public boolean getDeleted() {
 		String deleted = getStringColumnValue(getColumnDeleted());
 
-		if ((deleted == null) || (deleted.equals(NOT_DELETED)))
+		if ((deleted == null) || (deleted.equals(NOT_DELETED))) {
 			return (false);
-		else if (deleted.equals(DELETED))
+		}
+		else if (deleted.equals(DELETED)) {
 			return (true);
-		else
+		}
+		else {
 			return (false);
+		}
 	}
 	
 	public boolean isCategory() {
@@ -277,8 +280,9 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	 *
 	 */
 	public void setType(String type) {
-		if ((type.equals(PAGE)) || (type.equals(TEMPLATE)) || (type.equals(DRAFT)) || (type.equals(DPT_TEMPLATE)) || (type.equals(DPT_PAGE)))
+		if ((type.equals(PAGE)) || (type.equals(TEMPLATE)) || (type.equals(DRAFT)) || (type.equals(DPT_TEMPLATE)) || (type.equals(DPT_PAGE))) {
 			setColumn(getColumnType(), type);
+		}
 	}
 
 	/**
@@ -302,13 +306,13 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		// if we already have an instance of the file we do not
 		// want to loose it, especially not if a filevalue has been
 		// written to it, else the filevalue gets lost.
-		if(_file==null){
+		if(this._file==null){
 			int fileID = getFileID();
 			if ( fileID != -1) {
-				_file = (ICFile)getColumnValue(getColumnFile());
+				this._file = (ICFile)getColumnValue(getColumnFile());
 			}
 		}
-		return (_file);
+		return (this._file);
 	}
 
 	/**
@@ -317,7 +321,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	public void setFile(ICFile file) {
 		file.setMimeType(com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_XML);
 		setColumn(getColumnFile(), file);
-		_file = file;
+		this._file = file;
 	}
 
 	/**
@@ -529,10 +533,12 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	 */
 	public boolean isPage() {
 		String type = getType();
-		if (type.equals(PAGE))
+		if (type.equals(PAGE)) {
 			return (true);
-		else
+		}
+		else {
 			return (false);
+		}
 	}
 
 	/**
@@ -540,10 +546,12 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	 */
 	public boolean isTemplate() {
 		String type = getType();
-		if (type.equals(TEMPLATE))
+		if (type.equals(TEMPLATE)) {
 			return (true);
-		else
+		}
+		else {
 			return (false);
+		}
 	}
 
 	/**
@@ -551,10 +559,12 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	 */
 	public boolean isDraft() {
 		String type = getType();
-		if (type.equals(DRAFT))
+		if (type.equals(DRAFT)) {
 			return (true);
-		else
+		}
+		else {
 			return (false);
+		}
 	}
 
 	/**
@@ -562,10 +572,12 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	 */
 	public boolean isFolder() {
 		String type = getType();
-		if (type.equals(FOLDER))
+		if (type.equals(FOLDER)) {
 			return (true);
-		else
+		}
+		else {
 			return (false);
+		}
 	}
 
 	/**
@@ -573,10 +585,12 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	 */
 	public boolean isDynamicTriggeredPage() {
 		String type = getType();
-		if (type.equals(DPT_PAGE))
+		if (type.equals(DPT_PAGE)) {
 			return (true);
-		else
+		}
+		else {
 			return (false);
+		}
 	}
 
 	/**
@@ -584,20 +598,24 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	 */
 	public boolean isDynamicTriggeredTemplate() {
 		String type = getType();
-		if (type.equals(DPT_TEMPLATE))
+		if (type.equals(DPT_TEMPLATE)) {
 			return (true);
-		else
+		}
+		else {
 			return (false);
+		}
 	}
 
 	/**
 	 *
 	 */
 	public boolean isLeaf() {
-		if (getType().equals(FOLDER))
+		if (getType().equals(FOLDER)) {
 			return false;
-		else
+		}
+		else {
 			return true;
+		}
 	}
 
 	public void setOwner(IWUserContext iwuc) {
@@ -653,8 +671,9 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	public String getFormat(){
 		String format = getStringColumnValue(PAGE_FORMAT);
 		//This is to maintain backwards compatabilty, default is IBXML:
-		if(format==null)
+		if(format==null) {
 			format=FORMAT_IBXML;
+		}
 		setFormat(format);
 		return format;
 	}

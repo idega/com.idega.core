@@ -31,8 +31,9 @@ public class PDFOutput extends HttpServlet
     {
       // take the message from the URL or create default message
       String spath = request.getParameter("dir");
-      if (spath == null || spath.trim().length() <= 0)
-        spath = "[ specify a message in the 'msg' argument on the URL ]";
+      if (spath == null || spath.trim().length() <= 0) {
+				spath = "[ specify a message in the 'msg' argument on the URL ]";
+			}
       new FilePermission(spath,"read,execute");
       // create simple doc and write to a ByteArrayOutputStream
       ByteArrayOutputStream baos = new ByteArrayOutputStream();

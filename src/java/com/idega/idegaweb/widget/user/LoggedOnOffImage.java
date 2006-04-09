@@ -1,5 +1,5 @@
 /*
- * $Id: LoggedOnOffImage.java,v 1.2 2004/11/02 14:09:22 laddi Exp $
+ * $Id: LoggedOnOffImage.java,v 1.3 2006/04/09 12:13:16 laddi Exp $
  * Created on 1.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -21,7 +21,7 @@ import com.idega.presentation.PresentationObject;
  * Last modified: 1.11.2004 18:16:35 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class LoggedOnOffImage extends Widget {
 
@@ -33,13 +33,13 @@ public class LoggedOnOffImage extends Widget {
 	 */
 	protected PresentationObject getWidget(IWContext iwc) {
 		if (iwc.isLoggedOn()) {
-			if (iLoggedOnImage != null) {
-				return iLoggedOnImage;
+			if (this.iLoggedOnImage != null) {
+				return this.iLoggedOnImage;
 			}
 		}
 		else {
-			if (iLoggedOffImage != null) {
-				return iLoggedOffImage;
+			if (this.iLoggedOffImage != null) {
+				return this.iLoggedOffImage;
 			}
 		}
 		return null;
@@ -50,7 +50,7 @@ public class LoggedOnOffImage extends Widget {
 	 * @param loggedOffImage The loggedOffImage to set.
 	 */
 	public void setLoggedOffImage(Image loggedOffImage) {
-		iLoggedOffImage = loggedOffImage;
+		this.iLoggedOffImage = loggedOffImage;
 	}
 	
 	/**
@@ -58,6 +58,6 @@ public class LoggedOnOffImage extends Widget {
 	 * @param loggedOnImage The loggedOnImage to set.
 	 */
 	public void setLoggedOnImage(Image loggedOnImage) {
-		iLoggedOnImage = loggedOnImage;
+		this.iLoggedOnImage = loggedOnImage;
 	}
 }

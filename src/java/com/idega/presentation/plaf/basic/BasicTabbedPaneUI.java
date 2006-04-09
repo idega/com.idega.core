@@ -137,7 +137,7 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI {
 
 			public Tab(IWColor color) {
 				super();
-				selected = false;
+				this.selected = false;
 				this.setCellpadding(1);
 				this.setCellspacing(0);
 				newStyleInitializeTab();
@@ -146,8 +146,8 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI {
 			//a function to initialize the new style for tabbed
 			// UserPropertyWindow
 			public void newStyleInitializeTab() {
-				styleName = isSelected() ? styleSelectedBox : styleBox;
-				this.setStyleClass(styleName);
+				this.styleName = isSelected() ? this.styleSelectedBox : this.styleBox;
+				this.setStyleClass(this.styleName);
 				setWidth(Table.HUNDRED_PERCENT);
 				this.resize(1, 1);
 				this.add(Text.emptyString(), 1, 1);
@@ -171,7 +171,7 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI {
 			}
 
 			public void updateTab() {
-				styleName = isSelected() ? styleSelectedBox : styleBox;
+				this.styleName = isSelected() ? this.styleSelectedBox : this.styleBox;
 				setBorder(0);
 				setCellpaddingLeft(1, 1, 3);
 			}

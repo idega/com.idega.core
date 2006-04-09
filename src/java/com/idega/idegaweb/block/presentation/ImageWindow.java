@@ -32,22 +32,24 @@ public class ImageWindow extends Window{
   }
 
   public void main(IWContext iwc){
-    if(iwc.isParameterSet(prmInfo))
-      info = iwc.getParameter(prmInfo);
+    if(iwc.isParameterSet(prmInfo)) {
+			this.info = iwc.getParameter(prmInfo);
+		}
     if(iwc.isParameterSet(prmImageId)){
       try {
         int id = Integer.parseInt(iwc.getParameter(prmImageId));
-        image = new Image(id);
+        this.image = new Image(id);
       }
       catch (Exception ex) {
 
       }
     }
     Table T = new Table(1,2);
-    if(image !=null){
-      T.add(image,1,1);
-      if(info!=null)
-        T.add(info,1,2);
+    if(this.image !=null){
+      T.add(this.image,1,1);
+      if(this.info!=null) {
+				T.add(this.info,1,2);
+			}
     }
     add(T);
 

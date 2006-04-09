@@ -68,9 +68,9 @@ public class Tab extends Button {
       g.transform(flipTransform);
       if( flip ) textYPos = height-2;
     }*/
-    if(!flip){
+    if(!this.flip){
 
-       textYPos = height-1;
+       this.textYPos = this.height-1;
 
       //defaultOverColor==white
       //defaultHightlightColor = light light gray
@@ -78,74 +78,80 @@ public class Tab extends Button {
       //defaultUnderColor= gray
       //defaultBorderColor= dark gray
 
-      g.setColor(backgroundColor);// delete this when transparencies are supported
-      g.fillRect(0,0,width,height);
+      g.setColor(this.backgroundColor);// delete this when transparencies are supported
+      g.fillRect(0,0,this.width,this.height);
 
       if(effect==BUTTON_OVER) {
-        g.setColor(highlightColor);
+        g.setColor(this.highlightColor);
       }
       else if( effect==BUTTON_DOWN ){
-        g.setColor(highlightColor);
+        g.setColor(this.highlightColor);
       }
-      else g.setColor(fillColor);
+			else {
+				g.setColor(this.fillColor);
+			}
 
-      g.drawRect(2,1,width-4,height);
-      g.fillRect(2,1,width-4,height);
-      g.fillRect(1,2,1,height-2);
+      g.drawRect(2,1,this.width-4,this.height);
+      g.fillRect(2,1,this.width-4,this.height);
+      g.fillRect(1,2,1,this.height-2);
 
-      g.setColor(overColor);
-      g.fillRect(0,2,1,height-2);
+      g.setColor(this.overColor);
+      g.fillRect(0,2,1,this.height-2);
       g.fillRect(1,1,1,1);
-      g.fillRect(2,0,width-4,1);
+      g.fillRect(2,0,this.width-4,1);
 
-      g.setColor(underColor);
-      g.fillRect(width-2,2,1,height-2);
+      g.setColor(this.underColor);
+      g.fillRect(this.width-2,2,1,this.height-2);
 
-      g.setColor(borderColor);
-      g.fillRect(width-2,1,1,1);
-      g.fillRect(width-1,2,1,height-2);
+      g.setColor(this.borderColor);
+      g.fillRect(this.width-2,1,1,1);
+      g.fillRect(this.width-1,2,1,this.height-2);
     }
     else{
-      g.setColor(overColor);// delete this when transparencies are supported
-      g.fillRect(0,0,width,height);
+      g.setColor(this.overColor);// delete this when transparencies are supported
+      g.fillRect(0,0,this.width,this.height);
 
       if(effect==BUTTON_OVER) {
-        g.setColor(highlightColor);
+        g.setColor(this.highlightColor);
       }
       else if( effect==BUTTON_DOWN ){
-        g.setColor(highlightColor);
+        g.setColor(this.highlightColor);
       }
-      else g.setColor(fillColor);
+			else {
+				g.setColor(this.fillColor);
+			}
 
-      g.fillRect(1,0,width-doubleBorder,height-doubleBorder);
+      g.fillRect(1,0,this.width-this.doubleBorder,this.height-this.doubleBorder);
 
-      g.setColor(overColor);
-      g.drawLine(0,0,0,height-doubleBorder-2);
-      g.drawLine(1,height-doubleBorder-1,2,height-doubleBorder-1);
+      g.setColor(this.overColor);
+      g.drawLine(0,0,0,this.height-this.doubleBorder-2);
+      g.drawLine(1,this.height-this.doubleBorder-1,2,this.height-this.doubleBorder-1);
 
-      g.setColor(underColor);
-      g.drawLine(2,height-doubleBorder-1,width-doubleBorder-1,height-doubleBorder-1);
-      g.drawLine(width-2,height-doubleBorder-2,width-2,0);
+      g.setColor(this.underColor);
+      g.drawLine(2,this.height-this.doubleBorder-1,this.width-this.doubleBorder-1,this.height-this.doubleBorder-1);
+      g.drawLine(this.width-2,this.height-this.doubleBorder-2,this.width-2,0);
 
-      g.setColor(borderColor);
-      g.drawLine(2,height-doubleBorder,width-doubleBorder-1,height-doubleBorder);
-      g.drawLine(width-1,height-doubleBorder-2,width-1,0);
-      g.drawLine(width-2,height-doubleBorder-1,width-2,height-doubleBorder-1);
+      g.setColor(this.borderColor);
+      g.drawLine(2,this.height-this.doubleBorder,this.width-this.doubleBorder-1,this.height-this.doubleBorder);
+      g.drawLine(this.width-1,this.height-this.doubleBorder-2,this.width-1,0);
+      g.drawLine(this.width-2,this.height-this.doubleBorder-1,this.width-2,this.height-this.doubleBorder-1);
     }
     if( effect==BUTTON_DOWN ){
       //textYPos++;
-      g.setColor(fontColor);
+      g.setColor(this.fontColor);
     }
     else if( effect==BUTTON_OVER ){
       g.setColor(Color.blue);
     }
-    else  g.setColor(fontColor);
+		else {
+			g.setColor(this.fontColor);
+		}
 
     //if( flip ) g.transform(flipTransform);
 
-    g.drawString(text,textXPos,textYPos-3);
+    g.drawString(text,this.textXPos,this.textYPos-3);
 
-    encode(image,filename+flip,effect);
+    encode(image,filename+this.flip,effect);
 
   }
 

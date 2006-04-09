@@ -70,22 +70,22 @@ public class FileManager extends Block {
 	
 	public void main(IWContext iwc) {
 		//debugParameters(iwc);
-		iwb = getBundle(iwc);
-		iwrb =getResourceBundle(iwc);
+		this.iwb = getBundle(iwc);
+		this.iwrb =getResourceBundle(iwc);
 		if(iwc.isLoggedOn()){
-			iconSupplier =FileIconSupplier.getInstance();
+			this.iconSupplier =FileIconSupplier.getInstance();
 //			currentFolder = folder;
-			if(null==currentFolder){
-				if(null!=folder){
-					if(relativePath == true){
+			if(null==this.currentFolder){
+				if(null!=this.folder){
+					if(this.relativePath == true){
 						String appURI = iwc.getIWMainApplication().getApplicationRealPath();
-						folder = appURI+folder;
-						currentFolder = folder;
+						this.folder = appURI+this.folder;
+						this.currentFolder = this.folder;
 //						System.out.println("Path is relative to: "+appURI);
-						relativePath = false;
+						this.relativePath = false;
 					}else{
 //						System.out.println("Path is absolute");
-						currentFolder = folder;
+						this.currentFolder = this.folder;
 					}
 				}
 			}
@@ -93,29 +93,36 @@ public class FileManager extends Block {
 				currentFolder = topLevelFolder;
 			}
 */
-			if(iwc.isParameterSet(PRM_FOLDER))
-				currentFolder = iwc.getParameter(PRM_FOLDER);
-			if(iwc.isParameterSet(PRM_FILE))
-				currentFile = iwc.getParameter(PRM_FILE);
-			if(iwc.isParameterSet(PRM_SUB_FOLDER))
-				currentFolder = folder+iwc.getParameter(PRM_SUB_FOLDER);
+			if(iwc.isParameterSet(PRM_FOLDER)) {
+				this.currentFolder = iwc.getParameter(PRM_FOLDER);
+			}
+			if(iwc.isParameterSet(PRM_FILE)) {
+				this.currentFile = iwc.getParameter(PRM_FILE);
+			}
+			if(iwc.isParameterSet(PRM_SUB_FOLDER)) {
+				this.currentFolder = this.folder+iwc.getParameter(PRM_SUB_FOLDER);
+			}
 			
-			System.out.println("path:"+currentFolder);
+			System.out.println("path:"+this.currentFolder);
 			
 			if(iwc.isMultipartFormData()){
-				if(processUpload(iwc))
+				if(processUpload(iwc)) {
 					presentateFileView(iwc);
-				else
+				}
+				else {
 					presentateUploadView(iwc);
+				}
 			}
 			else if(iwc.isParameterSet(PRM_VIEW_FILE)){
 				presentateSelectedFile(iwc);
 			}
 			else if(iwc.isParameterSet("folder_name")){
-				if(processFolderCreation(iwc))
+				if(processFolderCreation(iwc)) {
 					presentateFileView(iwc);
-				else
+				}
+				else {
 					presentateCreateNewFolderView(iwc);
+				}
 			}
 			else if(iwc.isParameterSet(PRM_CREATE_FOLDER)){
 				presentateCreateNewFolderView(iwc);
@@ -127,19 +134,21 @@ public class FileManager extends Block {
 				processFileRemoval(iwc);
 				presentateFileView(iwc);
 			}
-			else
+			else {
 				presentateFileView(iwc);
+			}
 		}
 		else{
-			add(iwrb.getLocalizedString("user_not_logged_on","No user is logged on"));
+			add(this.iwrb.getLocalizedString("user_not_logged_on","No user is logged on"));
 		}
 		
 	}
 	
 	public String getBundleIdentifier(){
-		if(this.bundleIdentifier==null)
+		if(this.bundleIdentifier==null) {
 			return super.getBundleIdentifier();
-		return bundleIdentifier;
+		}
+		return this.bundleIdentifier;
 	}
 	
 	private boolean processUpload(IWContext iwc){
@@ -147,10 +156,10 @@ public class FileManager extends Block {
 		boolean overwrite =iwc.isParameterSet("overwrite");
 		File uploadedFile = iwc.getUploadedFile().getAbsoluteFile();
 		try {
-			File newFile = new File(currentFolder,uploadedFile.getName());
+			File newFile = new File(this.currentFolder,uploadedFile.getName());
 			
 			if(newFile.exists() &&  !overwrite){
-				getParentPage().setOnLoad("alert('"+iwrb.getLocalizedString("file_already_exists","File already exists !")+"')");
+				getParentPage().setOnLoad("alert('"+this.iwrb.getLocalizedString("file_already_exists","File already exists !")+"')");
 			}
 			else{
 				FileUtil.copyFile(uploadedFile,newFile);
@@ -169,13 +178,13 @@ public class FileManager extends Block {
 	
 	private boolean processFolderCreation(IWContext iwc){
 		String newFolderName = iwc.getParameter("folder_name");
-		FileUtil.createFolder(new File(currentFolder,newFolderName).getAbsolutePath());
+		FileUtil.createFolder(new File(this.currentFolder,newFolderName).getAbsolutePath());
 		return true;
 	}
 	
 	private boolean processFileRemoval(IWContext iwc){
-		if(currentFile!=null){
-			FileUtil.delete(currentFile);
+		if(this.currentFile!=null){
+			FileUtil.delete(this.currentFile);
 			return true;
 		}
 		return false;
@@ -183,15 +192,15 @@ public class FileManager extends Block {
 	
 	private void presentateSelectedFile(IWContext iwc){
 		Table table = new Table();
-		table.add(getHeaderTable(iwc,new File(currentFolder)),1,1);
-		table.add(getHeaderText(iwrb.getLocalizedString("selected_file","Selected file")+" : "+new File(currentFile).getName()),1,2);
-		table.setColor(1,2,headerBackgroundColor);
+		table.add(getHeaderTable(iwc,new File(this.currentFolder)),1,1);
+		table.add(getHeaderText(this.iwrb.getLocalizedString("selected_file","Selected file")+" : "+new File(this.currentFile).getName()),1,2);
+		table.setColor(1,2,this.headerBackgroundColor);
 		
 		
 
-		if(displayFilesInFrame){
+		if(this.displayFilesInFrame){
 			IFrame frame =new IFrame("fileview",600,600);
-			frame.setSrc(getCurrentFileUrl(iwc,currentFile));
+			frame.setSrc(getCurrentFileUrl(iwc,this.currentFile));
 	//		frame.setSrc(currentFile);
 			frame.setAsTransparent(true);
 			frame.setBorder(0);
@@ -215,10 +224,12 @@ public class FileManager extends Block {
 		System.out.println("server "+server);
 */
 		String url = fileAbsPath.substring(appURI.length());
-		if(context.endsWith("/"))
+		if(context.endsWith("/")) {
 			url = context+url;
-		else
+		}
+		else {
 			url =context+"/"+url;
+		}
 			//url ="/"+url;
 		url = server+url;
 //		System.out.println("url "+url);
@@ -231,18 +242,18 @@ public class FileManager extends Block {
 	 * @param iwc
 	 */
 	private void presentateFileView(IWContext iwc) {
-		if(null==currentFolder){
-			add(iwrb.getLocalizedString("please_set_the_path_for_this_block","Please set the path for this block"));
+		if(null==this.currentFolder){
+			add(this.iwrb.getLocalizedString("please_set_the_path_for_this_block","Please set the path for this block"));
 			return;
 		}
 		Table fileTable = new Table();
 		int row = 1;
-		fileTable.add(getHeaderText(iwrb.getLocalizedString("file","File")), 1, row);
-		fileTable.add(getHeaderText(iwrb.getLocalizedString("size","Size")), 2, row);
-		fileTable.add(getHeaderText(iwrb.getLocalizedString("date","Date")), 3, row);
+		fileTable.add(getHeaderText(this.iwrb.getLocalizedString("file","File")), 1, row);
+		fileTable.add(getHeaderText(this.iwrb.getLocalizedString("size","Size")), 2, row);
+		fileTable.add(getHeaderText(this.iwrb.getLocalizedString("date","Date")), 3, row);
 		row++;
 //		System.out.println("Path in present file "+currentFolder);
-		File dir = new File(currentFolder);
+		File dir = new File(this.currentFolder);
 		Table table = new Table();
 		table.setWidth(Table.HUNDRED_PERCENT);
 		int resourcesLength = 0, foldersLength = 0;
@@ -258,21 +269,23 @@ public class FileManager extends Block {
 		}
 		File[] files = new File[foldersLength + resourcesLength];
 		int numberOfFiles = files.length;
-		if (folders != null)
+		if (folders != null) {
 			System.arraycopy(folders, 0, files, 0, folders.length);
-		if (resources != null)
+		}
+		if (resources != null) {
 			System.arraycopy(resources, 0, files, folders.length, resources.length);
+		}
 		File file;
 		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT, iwc.getCurrentLocale());
 		if (!isTopLevel(dir)) {
 			String dirPath = dir.getAbsolutePath().replace('\\','/');
 			fileTable.add(getFolderIcon(), 1, row);
 			fileTable.add(getUpFolderLink((dirPath.substring(0, dirPath.lastIndexOf("/"))), iwc), 1, row);
-			fileTable.setColor(1, row, fileBackgroundColor);
-			fileTable.setColor(2, row, fileBackgroundColor);
-			fileTable.setColor(3, row, fileBackgroundColor);
-			if(filesDeletable){
-				fileTable.setColor(4, row, fileBackgroundColor);
+			fileTable.setColor(1, row, this.fileBackgroundColor);
+			fileTable.setColor(2, row, this.fileBackgroundColor);
+			fileTable.setColor(3, row, this.fileBackgroundColor);
+			if(this.filesDeletable){
+				fileTable.setColor(4, row, this.fileBackgroundColor);
 			}
 			row++;
 		}
@@ -293,15 +306,15 @@ public class FileManager extends Block {
 					bytes = " kB";
 				}
 				fileTable.add(getText(String.valueOf(length) + bytes), 2, row);
-				if(filesDeletable){
+				if(this.filesDeletable){
 					fileTable.add(getDeleteFileLink(file, iwc), 4, row);
 				}
 			}
-			fileTable.setColor(1, row, fileBackgroundColor);
-			fileTable.setColor(2, row, fileBackgroundColor);
-			fileTable.setColor(3, row, fileBackgroundColor);
-			if(filesDeletable){
-				fileTable.setColor(4, row, fileBackgroundColor);
+			fileTable.setColor(1, row, this.fileBackgroundColor);
+			fileTable.setColor(2, row, this.fileBackgroundColor);
+			fileTable.setColor(3, row, this.fileBackgroundColor);
+			if(this.filesDeletable){
+				fileTable.setColor(4, row, this.fileBackgroundColor);
 			}
 			fileTable.add(getText(df.format(new java.util.Date(file.lastModified()))), 3, row);
 			row++;
@@ -312,11 +325,11 @@ public class FileManager extends Block {
 		fileTable.setWidth(1, "50%");
 		fileTable.setWidth(2, "1%");
 		fileTable.setWidth(3, "1%");
-		if(filesDeletable){
+		if(this.filesDeletable){
 			fileTable.setWidth(4, "1%");
 		}
 		fileTable.setColumnAlignment(3, Table.HORIZONTAL_ALIGN_RIGHT);
-		if(filesDeletable){
+		if(this.filesDeletable){
 			fileTable.setColumnAlignment(4, Table.HORIZONTAL_ALIGN_RIGHT);
 		}
 		fileTable.setRowColor(1, "black");
@@ -334,9 +347,9 @@ public class FileManager extends Block {
 		Table headerTable = new Table();
 		headerTable.setWidth(Table.HUNDRED_PERCENT);
 		headerTable.setCellspacing(2);
-		headerTable.add(getText(iwrb.getLocalizedString("current_folder","Current folder")+": "), 1, 1);
+		headerTable.add(getText(this.iwrb.getLocalizedString("current_folder","Current folder")+": "), 1, 1);
 		String absolute = dir.getAbsolutePath().replace('\\','/');
-		String shortdir = absolute.substring(absolute.indexOf(topLevelFolder)+topLevelFolder.length());
+		String shortdir = absolute.substring(absolute.indexOf(this.topLevelFolder)+this.topLevelFolder.length());
 /*
 		System.out.println("absolute path: "+absolute);
 		System.out.println("top level path: "+topLevelFolder);
@@ -369,7 +382,7 @@ public class FileManager extends Block {
 		footerTable.add(getCreateFolderLink(dir, iwc), 1, 1);
 		footerTable.add(Text.getNonBrakingSpace(),1,1);
 		footerTable.add(getUploadLink(dir, iwc), 1, 1);
-		footerTable.add( String.valueOf(numberOfFiles) +" "+getText(iwrb.getLocalizedString("files","Files")), 3, 1);
+		footerTable.add( String.valueOf(numberOfFiles) +" "+getText(this.iwrb.getLocalizedString("files","Files")), 3, 1);
 		footerTable.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		footerTable.setCellspacing(2);
 		return footerTable;
@@ -379,23 +392,23 @@ public class FileManager extends Block {
 		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setCellspacing(2);
 		table.mergeCells(1, 1, 2, 1);
-		table.add(getHeaderText(iwrb.getLocalizedString("upload_file","Upload file")+ ":"), 1, 1);
-		table.setColor(1, 1, headerBackgroundColor);
+		table.add(getHeaderText(this.iwrb.getLocalizedString("upload_file","Upload file")+ ":"), 1, 1);
+		table.setColor(1, 1, this.headerBackgroundColor);
 		table.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_LEFT);
-		table.add(getBoldText(iwrb.getLocalizedString("file","File")+":"), 1, 2);
+		table.add(getBoldText(this.iwrb.getLocalizedString("file","File")+":"), 1, 2);
 		FileInput fileInput = new FileInput();
 		
 		table.add(fileInput, 2, 2);
 		CheckBox overWriteCheck = new CheckBox("overwrite");
 		table.add(overWriteCheck, 2, 3);
-		table.add(getText(iwrb.getLocalizedString("overwrite_file","Overwrite file with same name if exists")), 2, 3);
-		SubmitButton createFolder = new SubmitButton(iwrb.getLocalizedString("upload" , "Upload") );
+		table.add(getText(this.iwrb.getLocalizedString("overwrite_file","Overwrite file with same name if exists")), 2, 3);
+		SubmitButton createFolder = new SubmitButton(this.iwrb.getLocalizedString("upload" , "Upload") );
 		table.add(createFolder, 2, 4);
 		Form form = new Form();
 		form.add(table);
 		form.setMultiPart();
 		form.maintainParameter(PRM_FOLDER);
-		form.maintainParameters(maintainParameterNames);
+		form.maintainParameters(this.maintainParameterNames);
 		add( form);
 	}
 	private void presentateCreateNewFolderView(IWContext iwc) {
@@ -403,26 +416,26 @@ public class FileManager extends Block {
 		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setCellspacing(2);
 		table.mergeCells(1, 1, 2, 1);
-		table.add(getHeaderText(iwrb.getLocalizedString("create_new_folder","Create new folder")+" :"), 1, 1);
-		table.setColor(1, 1, headerBackgroundColor);
+		table.add(getHeaderText(this.iwrb.getLocalizedString("create_new_folder","Create new folder")+" :"), 1, 1);
+		table.setColor(1, 1, this.headerBackgroundColor);
 		table.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_LEFT);
-		table.add(getBoldText(iwrb.getLocalizedString("folder_name","Folder name")+":"), 1, 2);
+		table.add(getBoldText(this.iwrb.getLocalizedString("folder_name","Folder name")+":"), 1, 2);
 		TextInput folderNameInput = new TextInput("folder_name");
 		folderNameInput.setLength(40);
 		table.add(folderNameInput, 2, 2);
-		SubmitButton createFolder = new SubmitButton(iwrb.getLocalizedString("create_folder","Create folder"));
+		SubmitButton createFolder = new SubmitButton(this.iwrb.getLocalizedString("create_folder","Create folder"));
 		table.add(createFolder, 2, 3);
 		Form form = new Form();
 		form.add(table);
 		form.maintainParameter(PRM_FOLDER);
-		form.maintainParameters(maintainParameterNames);
+		form.maintainParameters(this.maintainParameterNames);
 		add( form);
 	}
 	private boolean isTopLevel(File file) {
 		String absPath = file.getAbsolutePath().replace('\\','/');
-		if(topLevelFolder!=null){
-			int toplevel = topLevelFolder.lastIndexOf("/");
-			String top =topLevelFolder.substring(toplevel);
+		if(this.topLevelFolder!=null){
+			int toplevel = this.topLevelFolder.lastIndexOf("/");
+			String top =this.topLevelFolder.substring(toplevel);
 			int indexOfTopLevel = absPath.indexOf(top);
 			return absPath.lastIndexOf("/") == indexOfTopLevel;
 		}
@@ -430,15 +443,15 @@ public class FileManager extends Block {
 	}
 	
 	private Image getFileIcon(File file) {
-		return new Image(iconSupplier.getFileIconURLByFileName(file.getName()));
+		return new Image(this.iconSupplier.getFileIconURLByFileName(file.getName()));
 		//return iwb.getImage("shared/rugl.gif");
 	}
 	private Image getFolderIcon() {
-		return new Image(iconSupplier.getFolderIconURL());
+		return new Image(this.iconSupplier.getFolderIconURL());
 		//return iwb.getImage("shared/folder.gif");
 	}
 	private Image getDeleteIcon() {
-		return iwb.getImage("shared/delete.gif","delete");
+		return this.iwb.getImage("shared/delete.gif","delete");
 	}
 	private Link getFolderLink(File file, IWContext iwc) {
 		Link l = new Link(getText(file.getName()));
@@ -458,7 +471,7 @@ public class FileManager extends Block {
 		return l;
 	}
 	private Link getUpFolderLink(String path, IWContext iwc) {
-		Text t = getText(".. ("+iwrb.getLocalizedString("up_one_level","Up one level")+")" );
+		Text t = getText(".. ("+this.iwrb.getLocalizedString("up_one_level","Up one level")+")" );
 		Link l = new Link(t);
 		l.addParameter(PRM_FOLDER, path);
 		addMaintainedParameters(iwc,l);
@@ -467,11 +480,11 @@ public class FileManager extends Block {
 	private Link getFileLink(File file, IWContext iwc) {
 		//String url = file.getAbsolutePath().substring(folder.length());
 		//l.setURL(url);
-	    if(displayFilesInFrame){
+	    if(this.displayFilesInFrame){
 	        Link l = new Link(getText(file.getName()));
 			l.addParameter(PRM_VIEW_FILE,"true");
 			l.addParameter(PRM_FILE, file.getAbsolutePath());
-			l.addParameter(PRM_FOLDER,currentFolder);
+			l.addParameter(PRM_FOLDER,this.currentFolder);
 	
 			addMaintainedParameters(iwc,l);
 			return l;
@@ -495,7 +508,7 @@ public class FileManager extends Block {
 	private Link getDeleteFileLink(File file, IWContext iwc) {
 		Link l = new Link(getDeleteIcon());
 		l.addParameter(PRM_DELFILE,"true");
-		String msg =iwrb.getLocalizedString("do_you_want_to_remove_this_file","Do you really want to delete the file");
+		String msg =this.iwrb.getLocalizedString("do_you_want_to_remove_this_file","Do you really want to delete the file");
 		l.setOnClick("return confirm('"+msg+"  \\'" + file.getName() + " \\'?');");
 		l.addParameter(PRM_FILE, file.getAbsolutePath());
 		addMaintainedParameters(iwc,l);
@@ -505,14 +518,14 @@ public class FileManager extends Block {
 	 * if (confirm(" " + msg)){ return true; }else{ return false; }
 	 */
 	private Link getUploadLink(File folder, IWContext iwc) {
-		Link l = new Link(getText(iwrb.getLocalizedString("upload_file","Upload file")));
+		Link l = new Link(getText(this.iwrb.getLocalizedString("upload_file","Upload file")));
 		l.addParameter(PRM_UPLOAD_FILE,"true");
 		l.maintainParameter(PRM_FOLDER,iwc);
 		addMaintainedParameters(iwc,l);
 		return l;
 	}
 	private Link getCreateFolderLink(File parentfolder, IWContext iwc) {
-		Link l = new Link(getText(iwrb.getLocalizedString("create_folder","Create folder")));
+		Link l = new Link(getText(this.iwrb.getLocalizedString("create_folder","Create folder")));
 		l.addParameter(PRM_CREATE_FOLDER,"true");
 		l.maintainParameter(PRM_FOLDER,iwc);
 		addMaintainedParameters(iwc,l);
@@ -520,18 +533,18 @@ public class FileManager extends Block {
 	}
 	private Text getHeaderText(String caption) {
 		Text t = new Text(caption);
-		t.setFontColor(headerFontColor);
+		t.setFontColor(this.headerFontColor);
 		return t;
 	}
 	private Text getBoldText(String caption) {
 		Text t = new Text(caption);
-		t.setFontColor(boldFontColor);
+		t.setFontColor(this.boldFontColor);
 		t.setBold(true);
 		return t;
 	}
 	private Text getText(String caption) {
 		Text t = new Text(caption);
-		t.setFontColor(textFontColor);
+		t.setFontColor(this.textFontColor);
 		return t;
 	}
 	
@@ -541,8 +554,8 @@ public class FileManager extends Block {
 	
 	
 	private void addMaintainedParameters(IWContext iwc,Link link){
-		if(maintainParameterNames!=null){
-			for (Iterator iter = maintainParameterNames.iterator(); iter.hasNext();) {
+		if(this.maintainParameterNames!=null){
+			for (Iterator iter = this.maintainParameterNames.iterator(); iter.hasNext();) {
 				String prm = (String) iter.next();
 				link.maintainParameter(prm,iwc);
 			}
@@ -553,7 +566,7 @@ public class FileManager extends Block {
 	 * @return Returns the skipFiles.
 	 */
 	public String[] getSkipFiles() {
-		return skipFiles;
+		return this.skipFiles;
 	}
 
 	/**
@@ -567,7 +580,7 @@ public class FileManager extends Block {
 	 * @return Returns the skipFolders.
 	 */
 	public String[] getSkipFolders() {
-		return skipFolders;
+		return this.skipFolders;
 	}
 
 	/**
@@ -581,18 +594,20 @@ public class FileManager extends Block {
 	 * @return Returns the sTOPFOLDER.
 	 */
 	public String getSTOPFOLDER() {
-		return topLevelFolder;
+		return this.topLevelFolder;
 	}
 
 	/**
 	 * @param stopfolder The sTOPFOLDER to set.
 	 */
 	public void setTopLevelBrowseFolder(String toplevel) {
-		if(!toplevel.startsWith("/"))
-			topLevelFolder = "/"+toplevel;
-		else
-			topLevelFolder = toplevel;
+		if(!toplevel.startsWith("/")) {
+			this.topLevelFolder = "/"+toplevel;
+		}
+		else {
+			this.topLevelFolder = toplevel;
 //		System.out.println("Toplevel folder set to "+topLevelFolder);
+		}
 	}
 
 	/**
@@ -613,9 +628,9 @@ public class FileManager extends Block {
 	 * @param folder The folder to set.
 	 */
 	public void setStartingFolderRealPath(String folder) {
-		relativePath = false;
+		this.relativePath = false;
 		this.folder = folder;
-		if(topLevelFolder.equalsIgnoreCase("/")){
+		if(this.topLevelFolder.equalsIgnoreCase("/")){
 			setTopLevelBrowseFolder(folder);
 		}
 //		System.out.println("Path set to "+folder);
@@ -625,16 +640,16 @@ public class FileManager extends Block {
 	 * @param folder The folder to set.
 	 */
 	public void setStartingFolderRelativePath(String folder) {
-		relativePath = true;
+		this.relativePath = true;
 		this.folder = folder;
-		if(topLevelFolder.equalsIgnoreCase("/")){
+		if(this.topLevelFolder.equalsIgnoreCase("/")){
 			setTopLevelBrowseFolder(folder);
 		}
 //		System.out.println("Path set to "+folder);
 	}
 
 	public void setFilesDeletable(boolean deletable){
-		filesDeletable = deletable;
+		this.filesDeletable = deletable;
 	}
 
 	
@@ -665,9 +680,10 @@ public class FileManager extends Block {
 	 * @param prmName
 	 */
 	public void addMaintainedParameter(String prmName){
-		if(maintainParameterNames==null)
-			maintainParameterNames =new Vector();
-		maintainParameterNames.add(prmName);
+		if(this.maintainParameterNames==null) {
+			this.maintainParameterNames =new Vector();
+		}
+		this.maintainParameterNames.add(prmName);
 	}
 	
 	private class FolderFilter implements FileFilter {
@@ -684,11 +700,12 @@ public class FileManager extends Block {
 		public boolean accept(File file) {
 			if ((file.isDirectory())) {
 				String name = file.getName();
-				if(refuseFolders!=null){
-					for (int i = 0; i < refuseFolders.length; i++) {
-						int index = name.indexOf(refuseFolders[i]);
-						if (index > -1)
+				if(this.refuseFolders!=null){
+					for (int i = 0; i < this.refuseFolders.length; i++) {
+						int index = name.indexOf(this.refuseFolders[i]);
+						if (index > -1) {
 							return false;
+						}
 					}
 				}
 				return true;
@@ -710,11 +727,12 @@ public class FileManager extends Block {
 		public boolean accept(File file) {
 			if (!file.isDirectory()) {
 				String name = file.getName();
-				if(refuseFiles!=null){
-					for (int i = 0; i < refuseFiles.length; i++) {
-						int index = name.indexOf(refuseFiles[i]);
-						if (index > -1)
+				if(this.refuseFiles!=null){
+					for (int i = 0; i < this.refuseFiles.length; i++) {
+						int index = name.indexOf(this.refuseFiles[i]);
+						if (index > -1) {
 							return false;
+						}
 					}
 				}
 				return true;
@@ -727,7 +745,7 @@ public class FileManager extends Block {
      * @return Returns the displayFilesInFrame.
      */
     public boolean isDisplayFilesInFrame() {
-        return displayFilesInFrame;
+        return this.displayFilesInFrame;
     }
     /**
      * @param displayFilesInFrame The displayFilesInFrame to set.

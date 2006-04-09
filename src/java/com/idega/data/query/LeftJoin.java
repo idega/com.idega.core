@@ -1,5 +1,5 @@
 /*
- * $Id: LeftJoin.java,v 1.1 2004/10/07 14:59:18 gummi Exp $
+ * $Id: LeftJoin.java,v 1.2 2006/04/09 12:13:12 laddi Exp $
  * Created on 5.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.data.query.output.ToStringer;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/07 14:59:18 $ by $Author: gummi $
+ *  Last modified: $Date: 2006/04/09 12:13:12 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class LeftJoin implements Outputable {
 
@@ -35,28 +35,28 @@ public class LeftJoin implements Outputable {
 
 
     public Column getLeftColumn() {
-        return left;
+        return this.left;
     }
 
     public Column getRightColumn() {
-        return right;
+        return this.right;
     }
 
     public void write(Output out) {
-		out.print(left.getTable())
+		out.print(this.left.getTable())
 		.print(" left join ")
-		.print(right.getTable())
+		.print(this.right.getTable())
 		.print(" on ")
-		.print(left)
+		.print(this.left)
 	    	.print(" = ")
-		.print(right);
+		.print(this.right);
         
     }
     
     public Set getTables(){
 		Set s = new HashSet();
-		s.add(left.getTable());
-		s.add(right.getTable());
+		s.add(this.left.getTable());
+		s.add(this.right.getTable());
 		return s; 
     }
     

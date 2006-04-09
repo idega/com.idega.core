@@ -1,5 +1,5 @@
 /*
- * $Id: BooleanInput.java,v 1.11 2005/03/08 19:03:08 tryggvil Exp $
+ * $Id: BooleanInput.java,v 1.12 2006/04/09 12:13:16 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import com.idega.presentation.IWContext;
  * <p>
  * This component presents a selection of a boolean value as a dropdown menu and presents the user with values Yes and No.
  * </p>
- *  Last modified: $Date: 2005/03/08 19:03:08 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class BooleanInput extends DropdownMenu {
 	private static final String NO_KEY = "booleaninput.no";
@@ -32,13 +32,13 @@ public class BooleanInput extends DropdownMenu {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[2];
 		values[0] = super.saveState(ctx);
-		values[1] = Boolean.valueOf(_showSelectOption);
+		values[1] = Boolean.valueOf(this._showSelectOption);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		_showSelectOption = ((Boolean) values[1]).booleanValue();
+		this._showSelectOption = ((Boolean) values[1]).booleanValue();
 	}
 	
 	public BooleanInput() {
@@ -53,7 +53,7 @@ public class BooleanInput extends DropdownMenu {
 		super.main(iwc);
 		IWBundle iwb = this.getBundle(iwc);
 		IWResourceBundle iwrb = iwb.getResourceBundle(iwc);
-		if (_showSelectOption) {
+		if (this._showSelectOption) {
 			this.addMenuElementFirst("", iwrb.getLocalizedString(SELECT_KEY, "Select:"));
 		}
 		setMenuElementDisplayString("N", iwrb.getLocalizedString(NO_KEY,"No"));
@@ -70,7 +70,7 @@ public class BooleanInput extends DropdownMenu {
 		}
 	}
 	public void displayOnlyBooleanOptions() {
-		_showSelectOption = false;
+		this._showSelectOption = false;
 	}
 	public void displaySelectOption() {
 		this._showSelectOption = true;

@@ -78,88 +78,90 @@ public class IDOQuery implements Cloneable {
 	 * @see com.idega.data.GenericEntity.idoQuery()
 	 */
 	protected IDOQuery() {
-		_buffer = new StringBuffer();
+		this._buffer = new StringBuffer();
 	}
 	
 
 	protected IDOQuery(int length) {
-		_buffer = new StringBuffer(length);
+		this._buffer = new StringBuffer(length);
 	}
 
 	protected IDOQuery(String str) {
-		_buffer = new StringBuffer(str);
+		this._buffer = new StringBuffer(str);
 	}
 
 	/**
 	 * Appends an SQL counterpart for a Boolean value (declared by Boolean.class in the BMPBean).
 	 */
 	public IDOQuery append(boolean b) {
-		if (b)
+		if (b) {
 			return this.appendWithinSingleQuotes(TRUE);
-		else
+		}
+		else {
 			return this.appendWithinSingleQuotes(FALSE);
+		}
 	}
 	/**
 	 * @see java.lang.StringBuffer#append(char)
 	 */
 	public IDOQuery append(char c) {
-		_buffer.append(c);
+		this._buffer.append(c);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#append(char[],int,int)
 	 */
 	public IDOQuery append(char[] str, int offset, int len) {
-		_buffer.append(str, offset, len);
+		this._buffer.append(str, offset, len);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#append(char[])
 	 */
 	public IDOQuery append(char[] str) {
-		_buffer.append(str);
+		this._buffer.append(str);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#append(java.lang.String)
 	 */
 	public IDOQuery append(double d) {
-		_buffer.append(d);
+		this._buffer.append(d);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#append(float)
 	 */
 	public IDOQuery append(float f) {
-		_buffer.append(f);
+		this._buffer.append(f);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#append(int)
 	 */
 	public IDOQuery append(int i) {
-		_buffer.append(i);
+		this._buffer.append(i);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#append(long)
 	 */
 	public IDOQuery append(long l) {
-		_buffer.append(l);
+		this._buffer.append(l);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#append(java.lang.Object)
 	 */
 	public IDOQuery append(Object obj) {
-		_buffer.append(obj);
+		this._buffer.append(obj);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#append(java.lang.String)
 	 */
 	public IDOQuery append(String str) {
-		_buffer.append(str);
+		this._buffer.append(str);
 		return this;
 	}
 	
@@ -169,9 +171,9 @@ public class IDOQuery implements Cloneable {
 	 * @return 
 	 */
 	public IDOQuery appendQuoted(Object anObject) {
-		_buffer.append(QUOTATION_MARK);
-		_buffer.append(anObject);
-		_buffer.append(QUOTATION_MARK);
+		this._buffer.append(QUOTATION_MARK);
+		this._buffer.append(anObject);
+		this._buffer.append(QUOTATION_MARK);
 		return this;
 	}
 	
@@ -200,127 +202,129 @@ public class IDOQuery implements Cloneable {
 
 	public IDOQuery append(IDOEntity entity) {
 		Object pk = entity.getPrimaryKey();
-		if (pk instanceof Integer)
+		if (pk instanceof Integer) {
 			return this.append(pk);
-		else
+		}
+		else {
 			return this.appendWithinSingleQuotes(pk);
+		}
 	}
 
 	/**
 	 * @see java.lang.StringBuffer#capacity()
 	 */
 	public int capacity() {
-		return _buffer.capacity();
+		return this._buffer.capacity();
 	}
 	/**
 	 * @see java.lang.StringBuffer#charAt(int)
 	 */
 	public char charAt(int index) {
-		return _buffer.charAt(index);
+		return this._buffer.charAt(index);
 	}
 	/**
 	 * @see java.lang.StringBuffer#delete(int,int){
 	 */
 	public IDOQuery delete(int start, int end) {
-		_buffer.delete(start, end);
+		this._buffer.delete(start, end);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#deleteCharAt(int)
 	 */
 	public IDOQuery deleteCharAt(int index) {
-		_buffer.deleteCharAt(index);
+		this._buffer.deleteCharAt(index);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#ensureCapacity(int)
 	 */
 	public void ensureCapacity(int minimumCapacity) {
-		_buffer.ensureCapacity(minimumCapacity);
+		this._buffer.ensureCapacity(minimumCapacity);
 	}
 
 	public boolean equals(Object obj) {
-		return _buffer.equals(obj);
+		return this._buffer.equals(obj);
 	}
 	/**
 	 * @see java.lang.StringBuffer#getChars(int,int,char[],int)
 	 */
 	public void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin) {
-		_buffer.getChars(srcBegin, srcEnd, dst, dstBegin);
+		this._buffer.getChars(srcBegin, srcEnd, dst, dstBegin);
 	}
 
 	public int hashCode() {
-		return _buffer.hashCode();
+		return this._buffer.hashCode();
 	}
 
 	/**
 	 * @see java.lang.StringBuffer#insert(int,boolean)
 	 */
 	public IDOQuery insert(int offset, boolean b) {
-		_buffer.insert(offset, b);
+		this._buffer.insert(offset, b);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#insert(int,char)
 	 */
 	public IDOQuery insert(int offset, char c) {
-		_buffer.insert(offset, c);
+		this._buffer.insert(offset, c);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#insert(int,char[],int,int)
 	 */
 	public IDOQuery insert(int index, char[] str, int offset, int len) {
-		_buffer.insert(index, str, offset, len);
+		this._buffer.insert(index, str, offset, len);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#insert(int,char[])
 	 */
 	public IDOQuery insert(int offset, char[] str) {
-		_buffer.insert(offset, str);
+		this._buffer.insert(offset, str);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#insert(int,java.lang.String)
 	 */
 	public IDOQuery insert(int offset, double d) {
-		_buffer.insert(offset, d);
+		this._buffer.insert(offset, d);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#insert(int,float)
 	 */
 	public IDOQuery insert(int offset, float f) {
-		_buffer.insert(offset, f);
+		this._buffer.insert(offset, f);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#insert(int,int)
 	 */
 	public IDOQuery insert(int offset, int i) {
-		_buffer.insert(offset, i);
+		this._buffer.insert(offset, i);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#insert(int,long)
 	 */
 	public IDOQuery insert(int offset, long l) {
-		_buffer.insert(offset, l);
+		this._buffer.insert(offset, l);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#insert(int,java.lang.Object)
 	 */
 	public IDOQuery insert(int offset, Object obj) {
-		_buffer.insert(offset, obj);
+		this._buffer.insert(offset, obj);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#insert(int,java.lang.String)
 	 */
 	public IDOQuery insert(int offset, String str) {
-		_buffer.insert(offset, str);
+		this._buffer.insert(offset, str);
 		return this;
 	}
 
@@ -328,45 +332,45 @@ public class IDOQuery implements Cloneable {
 	 * @see java.lang.StringBuffer#replace(int,int,String)
 	 */
 	public IDOQuery replace(int start, int end, String str) {
-		_buffer.replace(start, end, str);
+		this._buffer.replace(start, end, str);
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#reverse()
 	 */
 	public IDOQuery reverse() {
-		_buffer.reverse();
+		this._buffer.reverse();
 		return this;
 	}
 	/**
 	 * @see java.lang.StringBuffer#setCharAt(int,char)
 	 */
 	public void setCharAt(int index, char ch) {
-		_buffer.setCharAt(index, ch);
+		this._buffer.setCharAt(index, ch);
 	}
 	/**
 	 * @see java.lang.StringBuffer#setLength(int)
 	 */
 	public void setLength(int newLength) {
-		_buffer.setLength(newLength);
+		this._buffer.setLength(newLength);
 	}
 	/**
 	 * @see java.lang.StringBuffer#substring(int,int)
 	 */
 	public String substring(int start, int end) {
-		return _buffer.substring(start, end);
+		return this._buffer.substring(start, end);
 	}
 	/**
 	 * @see java.lang.StringBuffer#substring(int)
 	 */
 	public String substring(int start) {
-		return _buffer.substring(start);
+		return this._buffer.substring(start);
 	}
 	/**
 	 * @see java.lang.StringBuffer#toString()
 	 */
 	public String toString() {
-		return _buffer.toString();
+		return this._buffer.toString();
 	}
 
 	public IDOQuery appendLeftParenthesis() {
@@ -1316,20 +1320,20 @@ public class IDOQuery implements Cloneable {
 	}
 	
 	public IDOQuery setToCount() {
-		if (_buffer != null) {
-			String queryInUpperCase = _buffer.toString().toUpperCase();
+		if (this._buffer != null) {
+			String queryInUpperCase = this._buffer.toString().toUpperCase();
 			int index = queryInUpperCase.indexOf(" FROM ");
 
 			if (index > 0) {
-				_buffer.replace(0, index, IDOQuery.SELECT_COUNT);
+				this._buffer.replace(0, index, IDOQuery.SELECT_COUNT);
 
 			}
 
-			queryInUpperCase = _buffer.toString();
+			queryInUpperCase = this._buffer.toString();
 			int index2 = queryInUpperCase.indexOf(" ORDER BY ");
 			
 			if (index2 >0) {
-				_buffer = _buffer.replace(index2,_buffer.length(),"");
+				this._buffer = this._buffer.replace(index2,this._buffer.length(),"");
 			}
 			
 		}
@@ -1337,8 +1341,9 @@ public class IDOQuery implements Cloneable {
 	}
 	
 	public String setInPlaceHolder(Object value){
-	    if(value!=null)
-	        this.objectValues.add(value);
+	    if(value!=null) {
+				this.objectValues.add(value);
+			}
 	    return QUESTIONMARK;
 	}
 	
@@ -1359,8 +1364,9 @@ public class IDOQuery implements Cloneable {
 	}
 	
 	protected DatastoreInterface getDatastore(){
-		if(this.dataStore==null)
+		if(this.dataStore==null) {
 			this.dataStore = DatastoreInterface.getInstance();
+		}
 		return this.dataStore;
 	}
 	

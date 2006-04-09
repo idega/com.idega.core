@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.55 2005/11/29 15:30:02 laddi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.56 2006/04/09 12:13:13 laddi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -32,10 +32,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2005/11/29 15:30:02 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.55 $
+ * @version $Revision: 1.56 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -209,7 +209,7 @@ public class PresentationObjectContainer extends PresentationObject
 	}
 	public List getChildrenRecursive()
 	{
-		if (allObjects == null)
+		if (this.allObjects == null)
 		{
 			List toReturn = null;
 			List children = this.getChildren();
@@ -238,13 +238,13 @@ public class PresentationObjectContainer extends PresentationObject
 					}
 				}
 			}
-			allObjects = toReturn;
+			this.allObjects = toReturn;
 		}
-		return allObjects;
+		return this.allObjects;
 	}
 	public void resetAllContainedObjectsRecursive()
 	{
-		allObjects = null;
+		this.allObjects = null;
 	}
 	public boolean isEmpty()
 	{
@@ -252,7 +252,7 @@ public class PresentationObjectContainer extends PresentationObject
 	}
 	public void _main(IWContext iwc) throws Exception
 	{
-		if (!initializedInMain)
+		if (!this.initializedInMain)
 		{
 			this.initInMain(iwc);
 		}
@@ -765,35 +765,35 @@ public class PresentationObjectContainer extends PresentationObject
 	 */
 	public void lock()
 	{
-		_locked = true;
+		this._locked = true;
 	}
 	/**
 	 *  
 	 */
 	public void unlock()
 	{
-		_locked = false;
+		this._locked = false;
 	}
 	/**
 	 *  
 	 */
 	public boolean isLocked()
 	{
-		return (_locked);
+		return (this._locked);
 	}
 	/**
 	 *  
 	 */
 	public void setLabel(String label)
 	{
-		_label = label;
+		this._label = label;
 	}
 	/**
 	 *  
 	 */
 	public String getLabel()
 	{
-		return (_label);
+		return (this._label);
 	}
 	
 	public void setLocation(IWLocation location, IWUserContext iwuc)
@@ -897,7 +897,7 @@ public class PresentationObjectContainer extends PresentationObject
 		values[0] = super.saveState(context);
 		//values[1] = Boolean.valueOf(this.goneThroughMain);
 		values[1] = Boolean.valueOf(this._locked);
-		values[2] = _label;
+		values[2] = this._label;
 		return values;
 	}
 }

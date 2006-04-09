@@ -59,17 +59,17 @@ public class QueueMap extends HashMap implements Map {
 	
 	public Object put(Object key, Object value){
 		removeKey(key);
-		keyList.add(key);
-		_keySet.add(key);
-		_valueList.add(value);
+		this.keyList.add(key);
+		this._keySet.add(key);
+		this._valueList.add(value);
 		return super.put(key,value);
 	}
 	
 	public Object putAtBeginning(Object key, Object value){
 		removeKey(key);
-		keyList.add(0,key);
-		_keySet.addAtBeginning(key);
-		_valueList.add(0,value);
+		this.keyList.add(0,key);
+		this._keySet.addAtBeginning(key);
+		this._valueList.add(0,value);
 		return super.put(key,value);
 	}
 
@@ -80,25 +80,25 @@ public class QueueMap extends HashMap implements Map {
 	}
 	
 	public Set keySet(){
-		return _keySet;
+		return this._keySet;
 	}
 	
 	public Collection values(){
-		return _valueList;
+		return this._valueList;
 	}
 	
 	public Iterator iterator() {
-		return _valueList.iterator();
+		return this._valueList.iterator();
 	}
 	
 	private void removeKey(Object key) {
-		int oldKeyIndex = keyList.indexOf(key);
+		int oldKeyIndex = this.keyList.indexOf(key);
 		if (oldKeyIndex > -1) {
-			if(_valueList.size()>oldKeyIndex){
-				_valueList.remove(oldKeyIndex);
+			if(this._valueList.size()>oldKeyIndex){
+				this._valueList.remove(oldKeyIndex);
 			}
-			keyList.remove(key);
-			_keySet.remove(key);
+			this.keyList.remove(key);
+			this._keySet.remove(key);
 		}
 	}
 	

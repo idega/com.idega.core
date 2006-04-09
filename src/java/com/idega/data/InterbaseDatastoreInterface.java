@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.36 2006/04/08 10:49:00 laddi Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.37 2006/04/09 12:13:15 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -29,7 +29,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 	private static String infoKey = "interbase_datastoreinterface_connection_info";
 	InterbaseDatastoreInterface()
 	{
-		useTransactionsInEntityCreation = false;
+		this.useTransactionsInEntityCreation = false;
 	}
 	public String getSQLType(String javaClassName, int maxlength)
 	{

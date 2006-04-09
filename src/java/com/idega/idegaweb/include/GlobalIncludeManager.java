@@ -38,8 +38,8 @@ public class GlobalIncludeManager implements Singleton {
 
 	protected GlobalIncludeManager() {
 		this.iwma =  IWMainApplication.getDefaultIWMainApplication();
-		addStyleSheet(coreIWStyleSheetURL);
-		addStyleSheet(standardIWStyleSheetURL);
+		addStyleSheet(this.coreIWStyleSheetURL);
+		addStyleSheet(this.standardIWStyleSheetURL);
 	}
 
 	/**
@@ -56,10 +56,10 @@ public class GlobalIncludeManager implements Singleton {
 	 * @return
 	 */
 	public List getStyleSheets(){
-		if(styleSheets==null){
-			styleSheets=new ArrayList();
+		if(this.styleSheets==null){
+			this.styleSheets=new ArrayList();
 		}
-		return styleSheets;
+		return this.styleSheets;
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public class GlobalIncludeManager implements Singleton {
 	
 	
 	public IWMainApplication getIWMainApplication(){
-		return iwma;
+		return this.iwma;
 	}
 	
 	public void setIWMainApplication(IWMainApplication iwma){

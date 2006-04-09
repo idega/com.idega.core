@@ -228,8 +228,9 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 		    try {
 		    	if (Stmt != null)  {
 		    		Stmt.close();
-					if (conn != null)
+					if (conn != null) {
 						ConnectionBroker.freeConnection(getDatasource(), conn);
+					}
 		    	}
 		    }
 	 	    catch (SQLException statementCloseEx) {
@@ -346,8 +347,9 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 		    try {
 		    	if (Stmt != null)  {
 		    		Stmt.close();
-					if (conn != null)
+					if (conn != null) {
 						ConnectionBroker.freeConnection(getDatasource(), conn);
+					}
 		    	}
 		    }
 	 	    catch (SQLException statementCloseEx) {
@@ -457,10 +459,12 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	}
 	public void removeGroup(GenericGroup entityToRemoveFrom) throws SQLException
 	{
-		if ((entityToRemoveFrom.getID() == -1) || (entityToRemoveFrom.getID() == 0)) //removing all in middle table
+		if ((entityToRemoveFrom.getID() == -1) || (entityToRemoveFrom.getID() == 0)) {
 			this.removeGroup(entityToRemoveFrom.getID(), true);
-		else // just removing this particular one
+		}
+		else {
 			this.removeGroup(entityToRemoveFrom.getID(), false);
+		}
 	}
 	public void removeGroup() throws SQLException
 	{
@@ -475,7 +479,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			String qry;
-			if (AllEntries) //removing all in middle table
+			if (AllEntries) {
 				qry =
 					"delete from IC_GROUP_TREE where "
 						+ this.getIDColumnName()
@@ -484,7 +488,8 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 						+ "' OR CHILD_IC_GROUP_ID ='"
 						+ this.getID()
 						+ "'";
-			else // just removing this particular one
+			}
+			else {
 				qry =
 					"delete from IC_GROUP_TREE where "
 						+ this.getIDColumnName()
@@ -493,6 +498,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 						+ "' AND CHILD_IC_GROUP_ID ='"
 						+ groupId
 						+ "'";
+			}
 			Stmt.executeUpdate(qry);
 		}
 		catch (Exception ex)

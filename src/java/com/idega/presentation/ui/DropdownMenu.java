@@ -1,5 +1,5 @@
 /*
- * $Id: DropdownMenu.java,v 1.26 2004/06/16 16:42:26 thomas Exp $
+ * $Id: DropdownMenu.java,v 1.27 2006/04/09 12:13:15 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -121,8 +121,9 @@ public class DropdownMenu extends GenericSelect {
 				
 				addMenuElement(entity.getPrimaryKey().toString(), entity.toString());
 			}
-			if (getName().equals(untitled) && entity != null)
+			if (getName().equals(untitled) && entity != null) {
 				setName(entity.getEntityDefinition().getUniqueEntityName());
+			}
 		}
 	}
 

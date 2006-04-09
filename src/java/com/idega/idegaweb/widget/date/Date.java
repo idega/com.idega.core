@@ -1,5 +1,5 @@
 /*
- * $Id: Date.java,v 1.3 2004/11/02 14:09:22 laddi Exp $
+ * $Id: Date.java,v 1.4 2006/04/09 12:13:19 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -27,7 +27,7 @@ import com.idega.util.IWCalendar;
  * Last modified: 14.10.2004 11:18:49 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Date extends Widget {
 	
@@ -36,7 +36,7 @@ public class Date extends Widget {
 	protected PresentationObject getWidget(IWContext iwc) {
 		IWCalendar calendar = new IWCalendar();
 		
-		Text text = new Text(calendar.getLocaleDate(getLocale(), style));
+		Text text = new Text(calendar.getLocaleDate(getLocale(), this.style));
 		return text;
 	}
 	

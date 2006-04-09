@@ -24,8 +24,9 @@ final class Put {
   static void ascii(String s, OutputStream os) throws IOException
   {
     byte[] bytes = new byte[s.length()];
-    for (int i = 0; i < bytes.length; ++i)
-      bytes[i] = (byte) s.charAt(i);  // discard the high byte     
+    for (int i = 0; i < bytes.length; ++i) {
+			bytes[i] = (byte) s.charAt(i);  // discard the high byte     
+		}
     os.write(bytes); 
   }
 

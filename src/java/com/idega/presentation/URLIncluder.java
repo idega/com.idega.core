@@ -66,7 +66,7 @@ public void setURL(String URLString){
 
 public String getURL(){
 
-	return URLString;
+	return this.URLString;
 
 }
 

@@ -69,7 +69,7 @@ public class PoolManager implements Singleton {
 	}
 
 	private PoolManager(String propertiesFileLocation, IWMainApplication iwMainApplication) {
-		iwma = iwMainApplication;
+		this.iwma = iwMainApplication;
 
 		init(propertiesFileLocation);
 	}
@@ -108,8 +108,8 @@ public class PoolManager implements Singleton {
 
 	private void init(String propertiesFile) {
 		// Log to System.err until we have read the logfile property
-		pw = new PrintWriter(System.err, true);
-		logWriter = new LogWriter("PoolManager", LogWriter.INFO, pw);
+		this.pw = new PrintWriter(System.err, true);
+		this.logWriter = new LogWriter("PoolManager", LogWriter.INFO, this.pw);
 		// InputStream is = getClass().getResourceAsStream(propertiesFile);
 		InputStream is;
 		Properties dbProps = new Properties();
@@ -118,17 +118,17 @@ public class PoolManager implements Singleton {
 			dbProps.load(is);
 		}
 		catch (Exception e) {
-			logWriter.log("Can't read the properties file from the specified location", LogWriter.ERROR);
+			this.logWriter.log("Can't read the properties file from the specified location", LogWriter.ERROR);
 			return;
 		}
 		String logFile = dbProps.getProperty("logfile");
 		if (logFile != null) {
 			try {
-				pw = new PrintWriter(new FileWriter(logFile, true), true);
-				logWriter.setPrintWriter(pw);
+				this.pw = new PrintWriter(new FileWriter(logFile, true), true);
+				this.logWriter.setPrintWriter(this.pw);
 			}
 			catch (IOException e) {
-				logWriter.log("Can't open the log file: " + logFile + ". Using System.err instead", LogWriter.ERROR);
+				this.logWriter.log("Can't open the log file: " + logFile + ". Using System.err instead", LogWriter.ERROR);
 			}
 		}
 		loadDrivers(dbProps);
@@ -143,11 +143,11 @@ public class PoolManager implements Singleton {
 			try {
 				Driver driver = (Driver) RefactorClassRegistry.forName(driverClassName).newInstance();
 				DriverManager.registerDriver(driver);
-				drivers.addElement(driver);
-				logWriter.log("Registered JDBC driver " + driverClassName, LogWriter.INFO);
+				this.drivers.addElement(driver);
+				this.logWriter.log("Registered JDBC driver " + driverClassName, LogWriter.INFO);
 			}
 			catch (Exception e) {
-				logWriter.log(e, "Can't register JDBC driver: " + driverClassName, LogWriter.ERROR);
+				this.logWriter.log(e, "Can't register JDBC driver: " + driverClassName, LogWriter.ERROR);
 			}
 		}
 	}
@@ -161,19 +161,19 @@ public class PoolManager implements Singleton {
 				String url = props.getProperty(poolName + ".url");
 
 				if (url == null) {
-					logWriter.log("No URL specified for " + poolName, LogWriter.ERROR);
+					this.logWriter.log("No URL specified for " + poolName, LogWriter.ERROR);
 					continue;
 				}
 
-				if (pools.containsKey(poolName)) {
-					logWriter.log("[PoolManager] Pool '" + poolName + "'already exists", LogWriter.ERROR);
+				if (this.pools.containsKey(poolName)) {
+					this.logWriter.log("[PoolManager] Pool '" + poolName + "'already exists", LogWriter.ERROR);
 					continue;
 				}
 				// replace the {iw_application_path} variable with the real path to the
 				// applications we folder
-				if (iwma != null) {
-					String applicationRealPath = iwma.getApplicationRealPath();
-					String bundlesRealPath = iwma.getBundlesRealPath();
+				if (this.iwma != null) {
+					String applicationRealPath = this.iwma.getApplicationRealPath();
+					String bundlesRealPath = this.iwma.getBundlesRealPath();
 					// does not work because the string must be an expression
 					// url.replaceAll(IW_APPLICATION_PATH_PLACE_HOLDER,
 					// applicationRealPath);
@@ -194,7 +194,7 @@ public class PoolManager implements Singleton {
 					max = Integer.valueOf(maxConns).intValue();
 				}
 				catch (NumberFormatException e) {
-					logWriter.log("Invalid maxconns value " + maxConns + " for " + poolName, LogWriter.ERROR);
+					this.logWriter.log("Invalid maxconns value " + maxConns + " for " + poolName, LogWriter.ERROR);
 					max = 0;
 				}
 				String initConns = props.getProperty(poolName + ".initconns", "0");
@@ -203,7 +203,7 @@ public class PoolManager implements Singleton {
 					init = Integer.valueOf(initConns).intValue();
 				}
 				catch (NumberFormatException e) {
-					logWriter.log("Invalid initconns value " + initConns + " for " + poolName, LogWriter.ERROR);
+					this.logWriter.log("Invalid initconns value " + initConns + " for " + poolName, LogWriter.ERROR);
 					init = 0;
 				}
 				String loginTimeOut = props.getProperty(poolName + ".logintimeout", "5");
@@ -212,7 +212,7 @@ public class PoolManager implements Singleton {
 					timeOut = Integer.valueOf(loginTimeOut).intValue();
 				}
 				catch (NumberFormatException e) {
-					logWriter.log("Invalid logintimeout value " + loginTimeOut + " for " + poolName, LogWriter.ERROR);
+					this.logWriter.log("Invalid logintimeout value " + loginTimeOut + " for " + poolName, LogWriter.ERROR);
 					timeOut = 5;
 				}
 				String logLevelProp = props.getProperty(poolName + ".loglevel", String.valueOf(LogWriter.ERROR));
@@ -232,11 +232,11 @@ public class PoolManager implements Singleton {
 				}
 				catch (NumberFormatException e) {
 					lRefreshIntervalMillis = 20 * 1000 * 60;
-					logWriter.log("Invalid refreshminutes value " + sRefreshIntervalMinutes + " for " + poolName, LogWriter.ERROR);
+					this.logWriter.log("Invalid refreshminutes value " + sRefreshIntervalMinutes + " for " + poolName, LogWriter.ERROR);
 					max = 0;
 				}
-				ConnectionPool pool = new ConnectionPool(poolName, url, user, password, max, init, timeOut, pw, logLevel, lRefreshIntervalMillis);
-				pools.put(poolName, pool);
+				ConnectionPool pool = new ConnectionPool(poolName, url, user, password, max, init, timeOut, this.pw, logLevel, lRefreshIntervalMillis);
+				this.pools.put(poolName, pool);
 			}
 		}
 	}
@@ -247,20 +247,20 @@ public class PoolManager implements Singleton {
 
 	public Connection getConnection(String dataSourceName) {
 		Connection conn = null;
-		ConnectionPool pool = (ConnectionPool) pools.get(dataSourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(dataSourceName);
 		if (pool != null) {
 			try {
 				conn = pool.getConnection();
 			}
 			catch (SQLException e) {
-				logWriter.log(e, "Exception getting connection from " + dataSourceName, LogWriter.ERROR);
+				this.logWriter.log(e, "Exception getting connection from " + dataSourceName, LogWriter.ERROR);
 			}
 		}
 		return conn;
 	}
 
 	public void freeConnection(String datasourceName, Connection con) {
-		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
 		if (pool != null) {
 			pool.freeConnection(con);
 		}
@@ -280,20 +280,20 @@ public class PoolManager implements Singleton {
 		// prevent creation
 		PoolManager.lock();
 
-		Enumeration allPools = pools.elements();
+		Enumeration allPools = this.pools.elements();
 		while (allPools.hasMoreElements()) {
 			ConnectionPool pool = (ConnectionPool) allPools.nextElement();
 			pool.release();
 		}
-		Enumeration allDrivers = drivers.elements();
+		Enumeration allDrivers = this.drivers.elements();
 		while (allDrivers.hasMoreElements()) {
 			Driver driver = (Driver) allDrivers.nextElement();
 			try {
 				DriverManager.deregisterDriver(driver);
-				logWriter.log("Deregistered JDBC driver " + driver.getClass().getName(), LogWriter.INFO);
+				this.logWriter.log("Deregistered JDBC driver " + driver.getClass().getName(), LogWriter.INFO);
 			}
 			catch (SQLException e) {
-				logWriter.log(e, "Couldn't deregister JDBC driver: " + driver.getClass().getName(), LogWriter.ERROR);
+				this.logWriter.log(e, "Couldn't deregister JDBC driver: " + driver.getClass().getName(), LogWriter.ERROR);
 			}
 		}
 		instance = null;
@@ -301,16 +301,16 @@ public class PoolManager implements Singleton {
 
 	// debug
 	public String getStats(String name) {
-		ConnectionPool tempPool = (ConnectionPool) pools.get(name);
+		ConnectionPool tempPool = (ConnectionPool) this.pools.get(name);
 		return tempPool.getStats();
 	}
 
 	// Status of all pools:
 	public String getStats() {
 		String returnString = "";
-		for (Enumeration e = pools.keys(); e.hasMoreElements();) {
+		for (Enumeration e = this.pools.keys(); e.hasMoreElements();) {
 			String name = (String) e.nextElement();
-			ConnectionPool tempPool = (ConnectionPool) pools.get(name);
+			ConnectionPool tempPool = (ConnectionPool) this.pools.get(name);
 			returnString = returnString + "\nStatus of datasource " + name + " is: " + tempPool.getStats() + " ";
 		}
 		return returnString;
@@ -318,9 +318,9 @@ public class PoolManager implements Singleton {
 
 	public Hashtable getStatsHashtable() {
 		Hashtable table = new Hashtable();
-		for (Enumeration e = pools.keys(); e.hasMoreElements();) {
+		for (Enumeration e = this.pools.keys(); e.hasMoreElements();) {
 			String name = (String) e.nextElement();
-			ConnectionPool tempPool = (ConnectionPool) pools.get(name);
+			ConnectionPool tempPool = (ConnectionPool) this.pools.get(name);
 			table.put(name, "Status of datasource " + name + " is: " + tempPool.getStats() + " ");
 		}
 		return table;
@@ -328,7 +328,7 @@ public class PoolManager implements Singleton {
 
 	public String[] getDatasources() {
 		Vector sources = new Vector();
-		for (Enumeration e = pools.keys(); e.hasMoreElements();) {
+		for (Enumeration e = this.pools.keys(); e.hasMoreElements();) {
 			String name = (String) e.nextElement();
 			sources.add(name);
 		}
@@ -336,12 +336,12 @@ public class PoolManager implements Singleton {
 	}
 
 	public boolean hasDatasource(String datasource) {
-		return pools.containsKey(datasource);
+		return this.pools.containsKey(datasource);
 	}
 
 	public String getPasswordForPool(String datasourceName) {
 		String password = null;
-		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
 		if (pool != null) {
 			password = pool.getPassword();
 		}
@@ -354,7 +354,7 @@ public class PoolManager implements Singleton {
 
 	public String getUserNameForPool(String datasourceName) {
 		String userName = null;
-		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
 		if (pool != null) {
 			userName = pool.getUserName();
 		}
@@ -367,7 +367,7 @@ public class PoolManager implements Singleton {
 
 	public String getURLForPool(String datasourceName) {
 		String URL = null;
-		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
 		if (pool != null) {
 			URL = pool.getURL();
 		}
@@ -408,8 +408,8 @@ public class PoolManager implements Singleton {
 	public String getDriverClassForPool() {
 		String driverClass = null;
 		// ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
-		if (drivers != null) {
-			driverClass = ((Driver) drivers.elementAt(0)).getClass().getName();
+		if (this.drivers != null) {
+			driverClass = ((Driver) this.drivers.elementAt(0)).getClass().getName();
 		}
 		return driverClass;
 		// return getDriverClassForPool(DEFAULT_DSN);
@@ -420,7 +420,7 @@ public class PoolManager implements Singleton {
 	}
 
 	public Connection recycleConnection(Connection conn, String dataSourceName) {
-		ConnectionPool pool = (ConnectionPool) pools.get(dataSourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(dataSourceName);
 		return pool.recycleConnection(conn);
 	}
 
@@ -439,7 +439,7 @@ public class PoolManager implements Singleton {
 	 * 
 	 */
 	public void trimTo(String datasourceName, int size, int minSize, int maxSize) {
-		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
 		if (pool != null) {
 			pool.trimTo(size, minSize, maxSize);
 		}
@@ -460,14 +460,14 @@ public class PoolManager implements Singleton {
 	 * 
 	 */
 	public void enlargeTo(String datasourceName, int size, int minSize, int maxSize) {
-		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
 		if (pool != null) {
 			pool.enlargeTo(size, minSize, maxSize);
 		}
 	}
 
 	public int getCurrentConnectionCount(String datasourceName) {
-		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
 		if (pool != null) {
 			return pool.getCurrentConnectionCount();
 		}
@@ -475,7 +475,7 @@ public class PoolManager implements Singleton {
 	}
 
 	public int getMaximumConnectionCount(String datasourceName) {
-		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
 		if (pool != null) {
 			return pool.getMaximumConnectionCount();
 		}
@@ -487,7 +487,7 @@ public class PoolManager implements Singleton {
 	}
 
 	public int getMinimumConnectionCount(String datasourceName) {
-		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
 		if (pool != null) {
 			return pool.getMinimumConnectionCount();
 		}
@@ -499,7 +499,7 @@ public class PoolManager implements Singleton {
 	}
 
 	public int getTimeOut(String datasourceName) {
-		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
 		if (pool != null) {
 			return pool.getTimeOut();
 		}
@@ -507,7 +507,7 @@ public class PoolManager implements Singleton {
 	}
 
 	public void setTimeOut(String datasourceName, int timeout) {
-		ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
+		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
 		if (pool != null) {
 			pool.setTimeOut(timeout);
 		}

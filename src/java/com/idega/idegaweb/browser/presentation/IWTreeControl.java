@@ -24,20 +24,20 @@ public abstract class IWTreeControl extends AbstractTreeViewer implements IWBrow
 
   public void setControlTarget(String controlTarget){
     this.setOpenCloseLinkTarget(controlTarget);
-    _controlTarget = controlTarget;
+    this._controlTarget = controlTarget;
   }
 
   public void setControlEventModel(IWPresentationEvent model){
-    _contolEvent = model;
+    this._contolEvent = model;
     this.addEventModel(model);
   }
 
   public IWPresentationEvent getControlEventModel(){
-    return _contolEvent;
+    return this._contolEvent;
   }
 
   public String getControlTarget(){
-    return _controlTarget;
+    return this._controlTarget;
   }
 
 

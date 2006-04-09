@@ -85,10 +85,10 @@ public class IWFrameBusinessBean extends IBOSessionBean implements IWFrameBusine
 
 
   private Hashtable getFrameSetStorage(){
-    if(frameStorage == null){
-      frameStorage = new Hashtable();
+    if(this.frameStorage == null){
+      this.frameStorage = new Hashtable();
     }
-    return frameStorage;
+    return this.frameStorage;
   }
 
   public FrameTable getFrameSet(String identifier){

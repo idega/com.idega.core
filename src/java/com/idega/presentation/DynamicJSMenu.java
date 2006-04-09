@@ -19,11 +19,11 @@ public class DynamicJSMenu extends PresentationObject {
 	protected class LinkMenu {
 
 		public List getTextList() {
-			return _textList;
+			return this._textList;
 		}
 
 		public List getUrlList() {
-			return _urlList;
+			return this._urlList;
 		}
 
 		private List _textList = new ArrayList();
@@ -49,7 +49,7 @@ public class DynamicJSMenu extends PresentationObject {
 	private String coolMenuScript = "coolmenus4.js";
 	private String coolMenuSrc;
 	private String cursor = "";
-	private String divMenuName = "div" + _menuObjectName;
+	private String divMenuName = "div" + this._menuObjectName;
 	private String fillImg = " ";
 	private String fontOverStyle;
 	private String fontStyle;
@@ -58,7 +58,7 @@ public class DynamicJSMenu extends PresentationObject {
 	private String height = "";
 	IWContext iwc = new IWContext();
 	private String layerBackgroundColor = "";
-	private String layerMenuName = "layer" + _menuObjectName;
+	private String layerMenuName = "layer" + this._menuObjectName;
 	private String left = "";
 	private MenuLevelElement levelElement;
 	private String[] levelProps = { "width", "height", "regClass", "overClass", "borderX", "borderY", "borderClass", "offsetX", "offsetY", "rows", "arrow", "arrowWidth", "arrowHeight", "align" };
@@ -102,7 +102,7 @@ public class DynamicJSMenu extends PresentationObject {
 	 */
 	public DynamicJSMenu(String name) {
 		setName(name);
-		theMenuLevelElements = new ArrayList();
+		this.theMenuLevelElements = new ArrayList();
 		initialMenuValues();
 	}
 
@@ -150,12 +150,12 @@ public class DynamicJSMenu extends PresentationObject {
 	 * @param level
 	 */
 	public void addLevel(String level) {
-		levelElement = new MenuLevelElement(level);
+		this.levelElement = new MenuLevelElement(level);
 		// lElement.setLevel(level);
-		levelElement.setRegClass("clLevel" + level);
-		levelElement.setOverClass("clLevel" + level + "over");
-		levelElement.setBorderClass("clLevel" + level + "border");
-		theMenuLevelElements.add(levelElement);
+		this.levelElement.setRegClass("clLevel" + level);
+		this.levelElement.setOverClass("clLevel" + level + "over");
+		this.levelElement.setBorderClass("clLevel" + level + "border");
+		this.theMenuLevelElements.add(this.levelElement);
 	}
 
 	/**
@@ -172,14 +172,14 @@ public class DynamicJSMenu extends PresentationObject {
 	public void addLinkToMenu(int i, String text, String url) {
 		LinkMenu menu = null;
 		try {
-			menu = (LinkMenu) _menus.get(i);
+			menu = (LinkMenu) this._menus.get(i);
 		}
 		catch (Exception e) {
 			// first link being added to menu
 		}
 		if (menu == null) {
 			menu = new LinkMenu();
-			_menus.add(menu);
+			this._menus.add(menu);
 		}
 
 		System.out.println("Adding link \"" + text + "\" to menu #" + i);
@@ -200,8 +200,8 @@ public class DynamicJSMenu extends PresentationObject {
 		StringBuffer attributeString = new StringBuffer();
 		setStylePadding("2px");
 		setStylePosition("absolute");
-		attributeString.append("padding:" + padding + ";");
-		attributeString.append("position:" + position + ";");
+		attributeString.append("padding:" + this.padding + ";");
+		attributeString.append("position:" + this.position + ";");
 		return attributeString.toString();
 	}
 
@@ -209,8 +209,8 @@ public class DynamicJSMenu extends PresentationObject {
 		StringBuffer attributeString = new StringBuffer();
 		setStylePosition("absolute");
 		setStyleVisibility("hidden");
-		attributeString.append("position:" + position + ";");
-		attributeString.append("visibility:" + visibility + ";");
+		attributeString.append("position:" + this.position + ";");
+		attributeString.append("visibility:" + this.visibility + ";");
 		return attributeString.toString();
 	}
 
@@ -218,85 +218,85 @@ public class DynamicJSMenu extends PresentationObject {
 		StringBuffer attributeString = new StringBuffer();
 		setStyleLeft("0");
 		setStyleTop("0");
-		attributeString.append("left:" + left + ";");
-		attributeString.append("top:" + top + ";");
+		attributeString.append("left:" + this.left + ";");
+		attributeString.append("top:" + this.top + ";");
 		return attributeString.toString();
 	}
 
 	public String getBarStyleBackgroundColor() {
-		barLayerBackgroundColor = barBackgroundColor;
-		return barBackgroundColor;
+		this.barLayerBackgroundColor = this.barBackgroundColor;
+		return this.barBackgroundColor;
 	}
 
 	public String getBarStyleLayerBackgroundColor() {
-		return barLayerBackgroundColor;
+		return this.barLayerBackgroundColor;
 	}
 
 	public String getOverStyleBackgroundColor() {
-		overLayerBackgroundColor = overBackgroundColor;
-		return overBackgroundColor;
+		this.overLayerBackgroundColor = this.overBackgroundColor;
+		return this.overBackgroundColor;
 	}
 
 	public String getOverStyleLayerBackgroundColor() {
-		return overLayerBackgroundColor;
+		return this.overLayerBackgroundColor;
 	}
 
 	public String getStyleBackgroundColor() {
-		return backgroundColor;
+		return this.backgroundColor;
 	}
 
 	public String getStyleBorderColor() {
-		return borderColor;
+		return this.borderColor;
 	}
 
 	public String getStyleCursor() {
-		return cursor;
+		return this.cursor;
 	}
 
 	public String getStyleFontOverStyle() {
-		return fontOverStyle;
+		return this.fontOverStyle;
 	}
 
 	public String getStyleFontStyle() {
-		return fontStyle;
+		return this.fontStyle;
 	}
 
 	public String getStyleHeight() {
-		return height;
+		return this.height;
 	}
 
 	public String getStyleLayerBackgroundColor() {
-		layerBackgroundColor = backgroundColor;
-		return layerBackgroundColor;
+		this.layerBackgroundColor = this.backgroundColor;
+		return this.layerBackgroundColor;
 	}
 
 	public String getStyleLayerBorderColor() {
-		borderLayerColor = borderColor;
-		return borderLayerColor;
+		this.borderLayerColor = this.borderColor;
+		return this.borderLayerColor;
 	}
 
 	public String getStyleLeft() {
-		return left;
+		return this.left;
 	}
 
 	public String getStylePadding() {
-		return padding;
+		return this.padding;
 	}
 
 	public String getStylePosition() {
-		return position;
+		return this.position;
 	}
 
 	public String getStyleTop() {
-		return top;
+		return this.top;
 	}
 
 	public String getStyleVisibility() {
-		return visibility;
+		return this.visibility;
 	}
 
 	public String getStyleWidth() {
-		return width;
+		return this.width;
 	}
 
 	/**
@@ -304,81 +304,81 @@ public class DynamicJSMenu extends PresentationObject {
 	 * 
 	 */
 	public void initialMenuValues() {
-		setBarBorderClass(barBorderClass);
-		setBarBorderX(barBorderX);
-		setBarBorderY(barBorderY);
-		setBarClass(barClass);
-		setBarHeight(barHeight);
-		setBarWidth(barWidth);
-		setBarX(barX);
-		setBarY(barY);
-		setFillImg(fillImg);
-		setFromLeft(fromLeft);
-		setFromTop(fromTop);
-		setMenuPlacement(menuPlacement);
-		setOfflineRoot(offlineRoot);
-		setOnlineRoot(onlineRoot);
-		setPxBetween(pxBetween);
-		setResizeCheck(resizeCheck);
-		setRows(rows);
-		setUseBar(useBar);
-		setZIndex(zIndex);
-		setWait(wait);
+		setBarBorderClass(this.barBorderClass);
+		setBarBorderX(this.barBorderX);
+		setBarBorderY(this.barBorderY);
+		setBarClass(this.barClass);
+		setBarHeight(this.barHeight);
+		setBarWidth(this.barWidth);
+		setBarX(this.barX);
+		setBarY(this.barY);
+		setFillImg(this.fillImg);
+		setFromLeft(this.fromLeft);
+		setFromTop(this.fromTop);
+		setMenuPlacement(this.menuPlacement);
+		setOfflineRoot(this.offlineRoot);
+		setOnlineRoot(this.onlineRoot);
+		setPxBetween(this.pxBetween);
+		setResizeCheck(this.resizeCheck);
+		setRows(this.rows);
+		setUseBar(this.useBar);
+		setZIndex(this.zIndex);
+		setWait(this.wait);
 	}
 
 	public void main(IWContext iwc) throws Exception {
 		// get the current page to print the coolMenu4.js and the coolStyle.css src
 		// to it
-		parentPage = this.getParentPage();
-		coolMenuSrc = scriptSource(coolMenuScript, iwc);
-		menuStyleSrc = scriptSource(menuStyleScript, iwc);
-		parentPage.addJavascriptURL(coolMenuSrc);
-		parentPage.addStyleSheetURL(menuStyleSrc);
-		addStyles(parentPage);
+		this.parentPage = this.getParentPage();
+		this.coolMenuSrc = scriptSource(this.coolMenuScript, iwc);
+		this.menuStyleSrc = scriptSource(this.menuStyleScript, iwc);
+		this.parentPage.addJavascriptURL(this.coolMenuSrc);
+		this.parentPage.addStyleSheetURL(this.menuStyleSrc);
+		addStyles(this.parentPage);
 
 	}
 
 	public void print(IWContext main) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
 
-			print(getTableWithLayer(iwc));
+			print(getTableWithLayer(this.iwc));
 
 			print("<script type=\"text/javascript\">\n");
 			print(getFindPositionJavaScript());
 			print("pos = findPos() \n");
 
-			print(_menuObjectName + "=new makeCM(\"" + _menuObjectName + "\")\n");
+			print(this._menuObjectName + "=new makeCM(\"" + this._menuObjectName + "\")\n");
 
-			print(_menuObjectName + ".fromLeft=pos[0]\n");
-			print(_menuObjectName + ".fromTop=pos[1]\n");
+			print(this._menuObjectName + ".fromLeft=pos[0]\n");
+			print(this._menuObjectName + ".fromTop=pos[1]\n");
 
-			if (theMenuLevelElements != null && theMenuLevelElements.size() > 0) {
+			if (this.theMenuLevelElements != null && this.theMenuLevelElements.size() > 0) {
 				print(_getAttributeString());
-				Map levelMap = levelElement.attributes;
+				Map levelMap = this.levelElement.attributes;
 				Map.Entry mapEntry;
 
-				Iterator iter = theMenuLevelElements.iterator();
+				Iterator iter = this.theMenuLevelElements.iterator();
 				while (iter.hasNext()) {
-					levelElement = (MenuLevelElement) iter.next();
-					print(_menuObjectName + ".level[" + levelElement.getLevel() + "]=new cm_makeLevel()\n");
+					this.levelElement = (MenuLevelElement) iter.next();
+					print(this._menuObjectName + ".level[" + this.levelElement.getLevel() + "]=new cm_makeLevel()\n");
 
 					Iterator levelIter = levelMap.entrySet().iterator();
 					while (levelIter.hasNext()) {
 						mapEntry = (Map.Entry) levelIter.next();
-						print(_menuObjectName + ".level[" + levelElement.getLevel() + "]." + (String) mapEntry.getKey() + "=" + (String) mapEntry.getValue() + "\n");
+						print(this._menuObjectName + ".level[" + this.levelElement.getLevel() + "]." + (String) mapEntry.getKey() + "=" + (String) mapEntry.getValue() + "\n");
 					}
 				}
 			}
 			else {
-				printMenuProperties(_menuObjectName);
-				int count = _menus.size();
+				printMenuProperties(this._menuObjectName);
+				int count = this._menus.size();
 				for (int i = 0; i < count; i++) {
-					LinkMenu menu = (LinkMenu) _menus.get(i);
+					LinkMenu menu = (LinkMenu) this._menus.get(i);
 					printMenu(menu, i);
 				}
 			}
 
-			print(_menuObjectName + ".construct()\n\n");
+			print(this._menuObjectName + ".construct()\n\n");
 			print("</script>");
 		}
 		else if (getMarkupLanguage().equals("WML")) {
@@ -444,19 +444,19 @@ public class DynamicJSMenu extends PresentationObject {
 		StringBuffer attributeString = new StringBuffer();
 		setStyleWidth("10");
 		setStyleHeight("10");
-		attributeString.append("width:" + width + ";");
-		attributeString.append("height:" + height + ";");
+		attributeString.append("width:" + this.width + ";");
+		attributeString.append("height:" + this.height + ";");
 		attributeString.append("background-color:" + getBarStyleBackgroundColor() + ";");
 		attributeString.append("layer-background-color:" + getBarStyleLayerBackgroundColor() + ";");
 		return attributeString.toString();
 	}
 
 	public void setBarStyleBackgroundColor(String barBCol) {
-		barBackgroundColor = barBCol;
+		this.barBackgroundColor = barBCol;
 	}
 
 	public void setBarStyleLayerBackgroundColor(String barLBCol) {
-		barLayerBackgroundColor = barLBCol;
+		this.barLayerBackgroundColor = barLBCol;
 	}
 
 	/**
@@ -523,8 +523,8 @@ public class DynamicJSMenu extends PresentationObject {
 		StringBuffer attributeString = new StringBuffer();
 		setStylePosition("absolute");
 		setStyleVisibility("visible");
-		attributeString.append("position:" + position + ";");
-		attributeString.append("visibility:" + visibility + ";");
+		attributeString.append("position:" + this.position + ";");
+		attributeString.append("visibility:" + this.visibility + ";");
 		attributeString.append("background-color:" + getStyleBorderColor() + ";");
 		attributeString.append("layer-background-color:" + getStyleLayerBorderColor() + ";");
 		return attributeString.toString();
@@ -537,7 +537,7 @@ public class DynamicJSMenu extends PresentationObject {
 		attributeString.append("layer-background-color:" + getOverStyleLayerBackgroundColor() + ";");
 		// attributeString.append("color:" + getOverStyleColor() + ";");
 		attributeString.append(getStyleFontOverStyle());
-		attributeString.append("cursor:" + cursor + ";");
+		attributeString.append("cursor:" + this.cursor + ";");
 		return attributeString.toString();
 	}
 
@@ -575,11 +575,11 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	public void setOverStyleBackgroundColor(String overBCol) {
-		overBackgroundColor = overBCol;
+		this.overBackgroundColor = overBCol;
 	}
 
 	public void setOverStyleLayerBackgroundColor(String overLBCol) {
-		overLayerBackgroundColor = overLBCol;
+		this.overLayerBackgroundColor = overLBCol;
 	}
 
 	/**
@@ -609,63 +609,63 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	public void setStyleBackgroundColor(String backgrCol) {
-		backgroundColor = backgrCol;
+		this.backgroundColor = backgrCol;
 	}
 
 	public void setStyleBorderColor(String bColor) {
-		borderColor = bColor;
+		this.borderColor = bColor;
 	}
 
 	public void setStyleCursor(String curs) {
-		cursor = curs;
+		this.cursor = curs;
 	}
 
 	public void setStyleFontOverStyle(String style) {
-		fontOverStyle = style;
+		this.fontOverStyle = style;
 	}
 
 	public void setStyleFontStyle(String style) {
-		fontStyle = style;
+		this.fontStyle = style;
 	}
 
 	public void setStyleHeight(String h) {
-		height = h;
+		this.height = h;
 	}
 
 	public void setStyleLayerBackgroundColor(String lBackgrCol) {
-		layerBackgroundColor = lBackgrCol;
+		this.layerBackgroundColor = lBackgrCol;
 	}
 
 	public void setStyleLayerBorderColor(String blColor) {
-		borderLayerColor = blColor;
+		this.borderLayerColor = blColor;
 	}
 
 	public void setStyleLeft(String l) {
 		// styleObject.setAttribute("left", l);
-		left = l;
+		this.left = l;
 	}
 
 	public void setStylePadding(String pad) {
-		padding = pad;
+		this.padding = pad;
 	}
 
 	public void setStylePosition(String pos) {
 		// styleObject.setAttribute("position", pos);
-		position = pos;
+		this.position = pos;
 	}
 
 	public void setStyleTop(String t) {
 		// setAttribute("top", t);
-		top = t;
+		this.top = t;
 	}
 
 	public void setStyleVisibility(String vis) {
 		// styleObject.setAttribute("visibility", vis);
-		visibility = vis;
+		this.visibility = vis;
 	}
 
 	public void setStyleWidth(String w) {
-		width = w;
+		this.width = w;
 	}
 
 	/**
@@ -698,7 +698,7 @@ public class DynamicJSMenu extends PresentationObject {
 	private String getFindPositionJavaScript() {
 		StringBuffer script = new StringBuffer();
 
-		script.append("//Extra code to find position:\n").append("function findPos(){ \n").append("if(bw.ns4){   //Netscape 4 \n").append("x = document.layers." + layerMenuName + ".pageX \n").append("y = document.layers." + layerMenuName + ".pageY \n").append("}else{ //other browsers \n").append("x=0; y=0; var el,temp \n").append("el = bw.ie4?document.all[\"" + divMenuName + "\"]:document.getElementById(\"" + divMenuName + "\"); \n").append("if(el.offsetParent){ \n").append("temp = el \n").append("while(temp.offsetParent){ //Looping parent elements to get the offset of them as well \n").append("temp=temp.offsetParent;  \n").append("x+=temp.offsetLeft \n").append("y+=temp.offsetTop; \n").append("} \n").append("} \n").append("x+=el.offsetLeft \n").append("y+=el.offsetTop \n").append("} \n").append("//Returning the x and y as an array \n").append("return [x,y] \n").append("} \n");
+		script.append("//Extra code to find position:\n").append("function findPos(){ \n").append("if(bw.ns4){   //Netscape 4 \n").append("x = document.layers." + this.layerMenuName + ".pageX \n").append("y = document.layers." + this.layerMenuName + ".pageY \n").append("}else{ //other browsers \n").append("x=0; y=0; var el,temp \n").append("el = bw.ie4?document.all[\"" + this.divMenuName + "\"]:document.getElementById(\"" + this.divMenuName + "\"); \n").append("if(el.offsetParent){ \n").append("temp = el \n").append("while(temp.offsetParent){ //Looping parent elements to get the offset of them as well \n").append("temp=temp.offsetParent;  \n").append("x+=temp.offsetLeft \n").append("y+=temp.offsetTop; \n").append("} \n").append("} \n").append("x+=el.offsetLeft \n").append("y+=el.offsetTop \n").append("} \n").append("//Returning the x and y as an array \n").append("return [x,y] \n").append("} \n");
 
 		return script.toString();
 	}
@@ -712,7 +712,7 @@ public class DynamicJSMenu extends PresentationObject {
 	private String getTableWithLayer(IWContext iwc) {
 		StringBuffer buf = new StringBuffer();
 
-		buf.append("<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tr><td>\n").append("<!--This is a positioning hack for DynamicJSMenu-->\n").append("<ilayer id=\"" + layerMenuName + "\"><div id=\"" + divMenuName + "\">\n").append("<img src=\"").append(Table.getTransparentCell(iwc).getURL()).append("\" width=\"100%\" height=\"20\" alt=\"\" border=\"0\">\n").append("</div></ilayer>\n").append("<!-- END -->\n").append("</td></tr></table>");
+		buf.append("<table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tr><td>\n").append("<!--This is a positioning hack for DynamicJSMenu-->\n").append("<ilayer id=\"" + this.layerMenuName + "\"><div id=\"" + this.divMenuName + "\">\n").append("<img src=\"").append(Table.getTransparentCell(iwc).getURL()).append("\" width=\"100%\" height=\"20\" alt=\"\" border=\"0\">\n").append("</div></ilayer>\n").append("<!-- END -->\n").append("</td></tr></table>");
 
 		return buf.toString();
 
@@ -728,20 +728,20 @@ public class DynamicJSMenu extends PresentationObject {
 			String menuId = i == 0 ? topId : (subIdPrefix + i);
 			String parentMenuId = i == 0 ? "" : topId;
 			System.out.println("Printing link \"" + texts.get(i) + "\" to menu \"" + topId + "\"");
-			print(_menuObjectName + ".makeMenu('" + menuId + "','" + parentMenuId + "','" + texts.get(i) + "','" + urls.get(i) + "'" + (i == 0 ? ", ''" : "") + ")\n");
+			print(this._menuObjectName + ".makeMenu('" + menuId + "','" + parentMenuId + "','" + texts.get(i) + "','" + urls.get(i) + "'" + (i == 0 ? ", ''" : "") + ")\n");
 		}
 	}
 
 	private void printMenuProperties(String menuName) {
-		for (int i = 0; i < menuProps.length; i++) {
-			print(menuName + "." + menuProps[i] + "=" + menuValues[i] + "\n");
+		for (int i = 0; i < this.menuProps.length; i++) {
+			print(menuName + "." + this.menuProps[i] + "=" + this.menuValues[i] + "\n");
 		}
 
 		// print(menuName + ".level[0]=new
 		// cm_makeLevel(180,22,\"l1\",\"l1over\",0,1,\"clB\",0,\"right\",0,0,\"/images/arrow_closed.gif\",15,11)\n");
 		print(menuName + ".level[0]=new cm_makeLevel()\n");
-		for (int j = 0; j < levelProps.length; j++) {
-			print(menuName + ".level[0]." + levelProps[j] + "=" + levelValues[j] + "\n");
+		for (int j = 0; j < this.levelProps.length; j++) {
+			print(menuName + ".level[0]." + this.levelProps[j] + "=" + this.levelValues[j] + "\n");
 		}
 		print(menuName + ".level[1]=new cm_makeLevel()\n");
 	}

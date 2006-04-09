@@ -1,5 +1,5 @@
 /*
- * $Id: XMLNamespace.java,v 1.5 2005/12/20 16:43:46 tryggvil Exp $
+ * $Id: XMLNamespace.java,v 1.6 2006/04/09 12:13:14 laddi Exp $
  *
  * Copyright (C) 2004 Idega. All Rights Reserved.
  *
@@ -16,10 +16,10 @@ import org.jdom.Namespace;
 /**
  * A wrapper to hide JDOM in case we want to replace it later on.
  * 
- * Last modified: $Date: 2005/12/20 16:43:46 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  *
  * @author Joakim Johnson
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class XMLNamespace implements Serializable {
 	/**
@@ -36,8 +36,8 @@ public class XMLNamespace implements Serializable {
 	 * @param nsStr the namespace string. Typically it will be something like."http://xmlns.idega.com/block/article/document"
 	 */
 	public XMLNamespace(String nsStr) {
-		sNamespace=nsStr;
-		namespace = Namespace.getNamespace(nsStr);
+		this.sNamespace=nsStr;
+		this.namespace = Namespace.getNamespace(nsStr);
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class XMLNamespace implements Serializable {
 	public XMLNamespace(String prefix,String nsStr) {
 		this.prefix=prefix;
 		this.sNamespace=nsStr;
-		namespace = Namespace.getNamespace(prefix,nsStr);
+		this.namespace = Namespace.getNamespace(prefix,nsStr);
 	}
 	
 	/**
@@ -56,16 +56,16 @@ public class XMLNamespace implements Serializable {
 	 * @return the set Namespace instance
 	 */
 	protected Object getNamespace() {
-		if(namespace==null){
+		if(this.namespace==null){
 			//return namespace;
-			if(prefix!=null){
-				namespace=Namespace.getNamespace(prefix,sNamespace);
+			if(this.prefix!=null){
+				this.namespace=Namespace.getNamespace(this.prefix,this.sNamespace);
 			}
 			else{
-				namespace=Namespace.getNamespace(sNamespace);
+				this.namespace=Namespace.getNamespace(this.sNamespace);
 			}
 		}
-		return namespace;
+		return this.namespace;
 	}
 	
 	public boolean equals(Object obj){

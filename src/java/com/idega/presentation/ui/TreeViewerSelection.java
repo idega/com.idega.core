@@ -62,20 +62,20 @@ public class TreeViewerSelection extends TreeViewer {
   
     
   public void main(IWContext iwc) throws Exception {
-    setNodeActionParameter(selectionKey);
-    if (iwc.isParameterSet(selectionKey))  {
+    setNodeActionParameter(this.selectionKey);
+    if (iwc.isParameterSet(this.selectionKey))  {
       try {
-        selectedNodeId = Integer.parseInt(iwc.getParameter(selectionKey));
+        this.selectedNodeId = Integer.parseInt(iwc.getParameter(this.selectionKey));
       }
       catch (NumberFormatException ex)  {
-        selectedNodeId = -1;
+        this.selectedNodeId = -1;
       }
     }
-    if (selectedNodeId != -1)  {
-      addOpenCloseParameter(selectionKey, Integer.toString(selectedNodeId));
+    if (this.selectedNodeId != -1)  {
+      addOpenCloseParameter(this.selectionKey, Integer.toString(this.selectedNodeId));
     }
     // add maintain parameters
-    Iterator iterator = maintainParameterMap.entrySet().iterator();
+    Iterator iterator = this.maintainParameterMap.entrySet().iterator();
     while (iterator.hasNext())  {
       Map.Entry entry = (Map.Entry) iterator.next();
       addOpenCloseParameter((String) entry.getKey(), entry.getValue().toString());
@@ -89,12 +89,12 @@ public class TreeViewerSelection extends TreeViewer {
   public PresentationObject getSecondColumnObject(ICTreeNode node, IWContext iwc, boolean fromEditor) {
     Link link = (Link) super.getSecondColumnObject( node, iwc, fromEditor);
     // add maintain parameters
-    Iterator iterator = maintainParameterMap.entrySet().iterator();
+    Iterator iterator = this.maintainParameterMap.entrySet().iterator();
     while (iterator.hasNext())  {
       Map.Entry entry = (Map.Entry) iterator.next();
       link.addParameter((String) entry.getKey(), entry.getValue().toString());
     }
-    if ( selectedNodeId == node.getNodeID()) {
+    if ( this.selectedNodeId == node.getNodeID()) {
       String name = node.getNodeName(iwc.getCurrentLocale(),iwc);
       Text text = getProxyForSelectedNode();
       text.setText(name);
@@ -104,10 +104,10 @@ public class TreeViewerSelection extends TreeViewer {
   }
     
   private Text getProxyForSelectedNode()  {
-    if (textProxyForSelectedNode == null)   {
-      textProxyForSelectedNode = new Text();
-      textProxyForSelectedNode.setBold();
+    if (this.textProxyForSelectedNode == null)   {
+      this.textProxyForSelectedNode = new Text();
+      this.textProxyForSelectedNode.setBold();
     }
-    return (Text) textProxyForSelectedNode.clone();
+    return (Text) this.textProxyForSelectedNode.clone();
   }
 }

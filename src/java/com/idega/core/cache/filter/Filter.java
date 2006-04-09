@@ -75,7 +75,7 @@ import java.util.Map;
  * Participates in the Template Method pattern with {@link javax.servlet.Filter}.
  *
  * @author <a href="mailto:gluck@thoughtworks.com">Greg Luck</a>
- * @version $Id: Filter.java,v 1.2 2006/01/12 17:03:52 tryggvil Exp $
+ * @version $Id: Filter.java,v 1.3 2006/04/09 12:13:20 laddi Exp $
  */
 public abstract class Filter implements javax.servlet.Filter {
     /**
@@ -158,21 +158,21 @@ public abstract class Filter implements javax.servlet.Filter {
         boolean matchFound = matches(throwable);
         if (matchFound) {
             try {
-                if (suppressStackTraces) {
-                    Method method = Log.class.getMethod(exceptionsToLogDifferentlyLevel, new Class[]{Object.class});
+                if (this.suppressStackTraces) {
+                    Method method = Log.class.getMethod(this.exceptionsToLogDifferentlyLevel, new Class[]{Object.class});
                     method.invoke(LOG, new Object[]{throwable.getMessage()});
                 } else {
-                    Method method = Log.class.getMethod(exceptionsToLogDifferentlyLevel,
+                    Method method = Log.class.getMethod(this.exceptionsToLogDifferentlyLevel,
                             new Class[]{Object.class, Throwable.class});
                     method.invoke(LOG, new Object[]{throwable.getMessage(), throwable});
                 }
             } catch (Exception e) {
-                LOG.fatal("Could not invoke Log method for " + exceptionsToLogDifferentlyLevel, e);
+                LOG.fatal("Could not invoke Log method for " + this.exceptionsToLogDifferentlyLevel, e);
             }
             throw new ServletException(message, throwable);
         } else {
 
-            if (suppressStackTraces) {
+            if (this.suppressStackTraces) {
                 LOG.warn(messageBuffer.append(throwable.getMessage()).append("\nTop StackTraceElement: ")
                         .append(throwable.getStackTrace()[0].toString()));
             } else {
@@ -190,21 +190,21 @@ public abstract class Filter implements javax.servlet.Filter {
      * @return true if the class name of any of the throwables is found in the exceptions to log differently
      */
     private boolean matches(Throwable throwable) {
-        if (exceptionsToLogDifferently == null) {
+        if (this.exceptionsToLogDifferently == null) {
             return false;
         }
-        if (exceptionsToLogDifferently.indexOf(throwable.getClass().getName()) != -1) {
+        if (this.exceptionsToLogDifferently.indexOf(throwable.getClass().getName()) != -1) {
             return true;
         }
         if (throwable instanceof ServletException) {
             Throwable rootCause = (((ServletException) throwable).getRootCause());
-            if (exceptionsToLogDifferently.indexOf(rootCause.getClass().getName()) != -1) {
+            if (this.exceptionsToLogDifferently.indexOf(rootCause.getClass().getName()) != -1) {
                 return true;
             }
         }
         if (throwable.getCause() != null) {
             Throwable cause = throwable.getCause();
-            if (exceptionsToLogDifferently.indexOf(cause.getClass().getName()) != -1) {
+            if (this.exceptionsToLogDifferently.indexOf(cause.getClass().getName()) != -1) {
                 return true;
             }
         }
@@ -233,7 +233,7 @@ public abstract class Filter implements javax.servlet.Filter {
         String exceptions = config.getInitParameter("exceptionsToLogDifferently");
         String level = config.getInitParameter("exceptionsToLogDifferentlyLevel");
         String suppressStackTracesString = config.getInitParameter("suppressStackTraces");
-        suppressStackTraces = Boolean.valueOf(suppressStackTracesString).booleanValue();
+        this.suppressStackTraces = Boolean.valueOf(suppressStackTracesString).booleanValue();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Suppression of stack traces enabled for " + this.getClass().getName());
         }
@@ -241,8 +241,8 @@ public abstract class Filter implements javax.servlet.Filter {
         if (exceptions != null) {
             validateMandatoryParameters(exceptions, level);
             validateLevel(level);
-            exceptionsToLogDifferentlyLevel = level;
-            exceptionsToLogDifferently = exceptions;
+            this.exceptionsToLogDifferentlyLevel = level;
+            this.exceptionsToLogDifferently = exceptions;
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Different logging levels configured for " + this.getClass().getName());
             }
@@ -364,7 +364,7 @@ public abstract class Filter implements javax.servlet.Filter {
      * Returns the filter config.
      */
     public FilterConfig getFilterConfig() {
-        return filterConfig;
+        return this.filterConfig;
     }
 
     /**

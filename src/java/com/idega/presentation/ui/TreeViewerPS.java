@@ -34,25 +34,25 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
   }
 
   public void reset() {
-    _openNodes.clear();
-    _initLevel = true;
-    lastOpenedOrClosedNode = null;
+    this._openNodes.clear();
+    this._initLevel = true;
+    this.lastOpenedOrClosedNode = null;
   }
 
   public List getOpenNodeList(){
-    return _openNodes;
+    return this._openNodes;
   }
 
   public void setOpenNodeList(List list){
     if(list != null){
-      _openNodes = list;
+      this._openNodes = list;
     } else {
       throw new NullPointerException();
     }
   }
 
   public boolean setToInitOpenLevel(){
-    return _initLevel;
+    return this._initLevel;
   }
 
 //  public Iterator getFirstlevelNodes(){
@@ -78,11 +78,11 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
   }
 
   public String getLastOpenedOrClosedNode() {
-  	return lastOpenedOrClosedNode;
+  	return this.lastOpenedOrClosedNode;
   }
 
   public void resetLastOpenedOrClosedNode() {
-  	lastOpenedOrClosedNode = null;
+  	this.lastOpenedOrClosedNode = null;
   }
   
   public void actionPerformed(IWPresentationEvent e)throws IWException{
@@ -92,23 +92,23 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
       this.fireStateChanged();
     }
 
-    _initLevel = false;
+    this._initLevel = false;
     if(e instanceof TreeViewerEvent){
       String open = ((TreeViewerEvent)e).getOpenNodeAction();
       boolean changed = false;
-      if(open != null && !_openNodes.contains(open)){
-        _openNodes.add(open);
+      if(open != null && !this._openNodes.contains(open)){
+        this._openNodes.add(open);
         changed = true;
       }
 
       String close = ((TreeViewerEvent)e).getCloseNodeAction();
       if(close != null){
-        _openNodes.remove(close);
+        this._openNodes.remove(close);
         changed = true;
       }
-      lastOpenedOrClosedNode = ((TreeViewerEvent)e).getOpenNodeAction();
-      if (lastOpenedOrClosedNode == null) { 
-      	lastOpenedOrClosedNode = ((TreeViewerEvent)e).getCloseNodeAction();
+      this.lastOpenedOrClosedNode = ((TreeViewerEvent)e).getOpenNodeAction();
+      if (this.lastOpenedOrClosedNode == null) { 
+      	this.lastOpenedOrClosedNode = ((TreeViewerEvent)e).getCloseNodeAction();
       }
       IWContext iwc = ((TreeViewerEvent)e).getIWContext();
       String refresh = ((TreeViewerEvent)e).getIWContext().getParameter("ic_ref_tn");
@@ -129,7 +129,7 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
         this.fireStateChanged();
       }
 //      System.out.println("TreeViewerPS: initLevel: " + _initLevel);
-      Iterator iter = _openNodes.iterator();
+      Iterator iter = this._openNodes.iterator();
       int counter = 1;
       while (iter.hasNext()) {
         iter.next();

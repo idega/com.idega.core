@@ -11,17 +11,17 @@ import com.idega.util.database.PoolManager;
 /**
  * 
  * 
- * Last modified: $Date: 2006/04/08 10:49:00 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class InterbaseSchemaAdapter extends SQLSchemaAdapter {
 
 	private static String infoKey = "interbase_datastoreinterface_connection_info";
 
 	InterbaseSchemaAdapter() {
-		useTransactionsInSchemaCreation = true;
+		this.useTransactionsInSchemaCreation = true;
 	}
 
 	public String getSQLType(String javaClassName, int maxlength) {

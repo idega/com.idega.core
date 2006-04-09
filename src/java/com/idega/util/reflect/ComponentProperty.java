@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentProperty.java,v 1.5 2005/12/06 19:35:06 tryggvil Exp $
+ * $Id: ComponentProperty.java,v 1.6 2006/04/09 12:13:19 laddi Exp $
  * Created on Dec 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -72,53 +72,53 @@ public class ComponentProperty extends Property {
 		String value = (String) values[0];
 
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-		if (JSFAttr.ACTION_ATTR.equals(name)) {
+		if (JSFAttr.ACTION_ATTR.equals(this.name)) {
 			UIComponentTagUtils.setActionProperty(facesContext, (UIComponent) instance, value);
 		}
-		else if (JSFAttr.CONVERTER_ATTR.equals(name)) {
+		else if (JSFAttr.CONVERTER_ATTR.equals(this.name)) {
 			UIComponentTagUtils.setConverterProperty(facesContext, (UIComponent) instance, value);
 		}
-		else if (JSFAttr.VALIDATOR_ATTR.equals(name)) {
+		else if (JSFAttr.VALIDATOR_ATTR.equals(this.name)) {
 			UIComponentTagUtils.setValidatorProperty(facesContext, (UIComponent) instance, value);
 		}
-		else if (JSFAttr.VALUE_ATTR.equals(name)) {
+		else if (JSFAttr.VALUE_ATTR.equals(this.name)) {
 			UIComponentTagUtils.setValueProperty(facesContext, (UIComponent) instance, value);
 		}
 		// where is actionListener attribute defined?
-		else if (ACTION_LISTENER_ATTR.equals(name)) {
+		else if (ACTION_LISTENER_ATTR.equals(this.name)) {
 			UIComponentTagUtils.setActionListenerProperty(facesContext, (UIComponent) instance, value);
 		}
 		// where is valueChangedListener attribute defined?
-		else if (VALUE_CHANGED_LISTENER_ATTR.equals(name)) {
+		else if (VALUE_CHANGED_LISTENER_ATTR.equals(this.name)) {
 			UIComponentTagUtils.setValueChangedListenerProperty(facesContext, (UIComponent) instance, value);
 		}
 		else{
 			Class propertyType=getPropertyType();
 			
 			if (Integer.class.equals(propertyType) || Integer.TYPE.equals(propertyType)) {
-				UIComponentTagUtils.setIntegerProperty(facesContext, (UIComponent) instance, name, value);
+				UIComponentTagUtils.setIntegerProperty(facesContext, (UIComponent) instance, this.name, value);
 			}
 			else if (Boolean.class.equals(propertyType) || Boolean.TYPE.equals(propertyType)) {
-				UIComponentTagUtils.setBooleanProperty(facesContext, (UIComponent) instance, name, value);
+				UIComponentTagUtils.setBooleanProperty(facesContext, (UIComponent) instance, this.name, value);
 			}
 			//Fallback on handling the property as String:
 			else{// if (String.class.equals(propertyType)) {
-				UIComponentTagUtils.setStringProperty(facesContext, (UIComponent) instance, name, value);
+				UIComponentTagUtils.setStringProperty(facesContext, (UIComponent) instance, this.name, value);
 			}
 		}
 	}
 	
 	
 	public Class getPropertyType(){
-		if(propertyType==null){
+		if(this.propertyType==null){
 			BeanInfo beanInfo;
 			try {
-				beanInfo = Introspector.getBeanInfo(componentClass);
+				beanInfo = Introspector.getBeanInfo(this.componentClass);
 				PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
 				for (int i = 0; i < descriptors.length; i++) {
 					PropertyDescriptor descriptor = descriptors[i];
 					if(descriptor.getName().equals(this.name)){
-						propertyType=descriptor.getPropertyType();
+						this.propertyType=descriptor.getPropertyType();
 						break;
 					}
 				}
@@ -127,6 +127,6 @@ public class ComponentProperty extends Property {
 				e.printStackTrace();
 			}
 		}
-		return propertyType;
+		return this.propertyType;
 	}
 }

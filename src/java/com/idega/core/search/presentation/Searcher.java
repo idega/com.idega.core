@@ -1,5 +1,5 @@
 /*
- * $Id: Searcher.java,v 1.2 2005/01/19 10:06:13 eiki Exp $
+ * $Id: Searcher.java,v 1.3 2006/04/09 12:13:20 laddi Exp $
  * Created on Jan 17, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,14 +21,14 @@ import com.idega.presentation.ui.TextInput;
 
 
 /**
- *  Last modified: $Date: 2005/01/19 10:06:13 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up the search form (simple by default or advanced).<br>
  * To view the actual search results you must have a SearchResults block on the page you want to display the results.<br>
  * Use setInputParameterName if you want to have different searches on the same page, remember to set the same parameter<br>
  * for the SearchResults object.
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Searcher extends Block {
 
@@ -57,7 +57,7 @@ public class Searcher extends Block {
 	 * @return Returns the targetFrame.
 	 */
 	public String getTargetFrame() {
-		return targetFrame;
+		return this.targetFrame;
 	}
 	/**
 	 * @param targetFrame The targetFrame to set.
@@ -70,7 +70,7 @@ public class Searcher extends Block {
 	 * @return Returns the searchParameterName.
 	 */
 	public String getSearchParameterName() {
-		return searchParameterName;
+		return this.searchParameterName;
 	}
 	/**
 	 * @param searchParameterName The searchParameterName to set.
@@ -82,7 +82,7 @@ public class Searcher extends Block {
 	 * @return Returns the buttonStyleClass.
 	 */
 	public String getButtonStyleClass() {
-		return buttonStyleClass;
+		return this.buttonStyleClass;
 	}
 	/**
 	 * @param buttonStyleClass The buttonStyleClass to set.
@@ -94,7 +94,7 @@ public class Searcher extends Block {
 	 * @return Returns the inputStyleClass.
 	 */
 	public String getInputStyleClass() {
-		return inputStyleClass;
+		return this.inputStyleClass;
 	}
 	/**
 	 * @param inputStyleClass The inputStyleClass to set.
@@ -106,7 +106,7 @@ public class Searcher extends Block {
 	 * @return Returns the styleClass.
 	 */
 	public String getStyleClass() {
-		return styleClass;
+		return this.styleClass;
 	}
 	/**
 	 * @param styleClass The styleClass to set.
@@ -127,23 +127,23 @@ public class Searcher extends Block {
 		container.setStyleClass(getStyleClass());
 		
 		Form searchForm = null;
-		if(resultsPageURI!=null){
-			searchForm = new Form(resultsPageURI);
+		if(this.resultsPageURI!=null){
+			searchForm = new Form(this.resultsPageURI);
 		}
 		else{
 			searchForm = new Form();
 		}
 		
-		if(targetFrame!=null){
-			searchForm.setTarget(targetFrame);
+		if(this.targetFrame!=null){
+			searchForm.setTarget(this.targetFrame);
 		}
 		
 		container.add(searchForm);
 		
 		//simple search
 		if(!isAdvancedSearch()){
-			TextInput input = new TextInput(searchParameterName);
-			input.setStyleClass(inputStyleClass);
+			TextInput input = new TextInput(this.searchParameterName);
+			input.setStyleClass(this.inputStyleClass);
 			
 			if(oldSimpleQuery!=null && !oldSimpleQuery.equals("advanced")){
 				input.setContent(oldSimpleQuery);
@@ -151,7 +151,7 @@ public class Searcher extends Block {
 			searchForm.add(input);
 			
 			SubmitButton button = new SubmitButton(iwrb.getLocalizedString(BUTTON_LOCALIZATION_KEY,"Search"));
-			button.setStyleClass(buttonStyleClass);
+			button.setStyleClass(this.buttonStyleClass);
 			searchForm.add(button);
 		}
 		else{
@@ -159,7 +159,7 @@ public class Searcher extends Block {
 			searchForm.add(new HiddenInput(getSearchParameterName(),"advanced"));
 			searchForm.add(new HiddenInput(DEFAULT_ADVANCED_SEARCH_PARAMETER_NAME,"true"));
 			SubmitButton button = new SubmitButton(iwrb.getLocalizedString(BUTTON_LOCALIZATION_KEY,"Search"));
-			button.setStyleClass(buttonStyleClass);
+			button.setStyleClass(this.buttonStyleClass);
 			searchForm.add(button);
 		}
 		
@@ -170,7 +170,7 @@ public class Searcher extends Block {
 	 * @return Returns the resultsPageURI.
 	 */
 	public String getResultsPageURI() {
-		return resultsPageURI;
+		return this.resultsPageURI;
 	}
 	/**
 	 * @param resultsPageURI The resultsPageURI to set.
@@ -183,7 +183,7 @@ public class Searcher extends Block {
 	 * @return Returns the isAdvancedSearch.
 	 */
 	public boolean isAdvancedSearch() {
-		return isAdvancedSearch;
+		return this.isAdvancedSearch;
 	}
 	/**
 	 * @param isAdvancedSearch The isAdvancedSearch to set.

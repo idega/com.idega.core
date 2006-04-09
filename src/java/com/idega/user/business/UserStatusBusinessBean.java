@@ -146,8 +146,9 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	
 	public Status getDeceasedStatusCreateIfNone() throws RemoteException{
 		Status status = getDeceasedStatus();
-		if(status!=null)
+		if(status!=null) {
 			return status;
+		}
 		else{
 			try {
 				status = createDeceasedStatus();
@@ -176,8 +177,9 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		try {
 			Status deceasedStatus = getDeceasedStatusCreateIfNone();
 			Collection coll = getUserStatusHome().findAllByUserIDAndStatusID(userID,(Integer) deceasedStatus.getPrimaryKey());
-			if(coll !=null && !coll.isEmpty())
+			if(coll !=null && !coll.isEmpty()) {
 				return (UserStatus) coll.iterator().next();
+			}
 		}
 		catch (EJBException e) {
 			e.printStackTrace();

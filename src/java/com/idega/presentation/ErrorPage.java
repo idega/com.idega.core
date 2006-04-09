@@ -25,8 +25,8 @@ public class ErrorPage extends Page {
   }
 
   private Text getErrorText(){
-    _errorText.setBold();
-    _errorText.setFontSize(Text.FONT_SIZE_14_HTML_4);
-    return _errorText;
+    this._errorText.setBold();
+    this._errorText.setFontSize(Text.FONT_SIZE_14_HTML_4);
+    return this._errorText;
   }
 }

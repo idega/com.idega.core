@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterfaceManager.java,v 1.1 2004/12/06 16:56:23 tryggvil Exp $
+ * $Id: DatastoreInterfaceManager.java,v 1.2 2006/04/09 12:13:15 laddi Exp $
  * Created on 6.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import java.util.Map;
 /**
  *  Class to hold references to Map of the DatastoreInterface instances.
  * 
- *  Last modified: $Date: 2004/12/06 16:56:23 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DatastoreInterfaceManager {
 	
@@ -40,10 +40,10 @@ public class DatastoreInterfaceManager {
 	 * @return Returns the interfacesByDatasourcesMap.
 	 */
 	public Map getInterfacesByDatasourcesMap() {
-		if(interfacesByDatasourcesMap==null){
-			interfacesByDatasourcesMap=new HashMap();
+		if(this.interfacesByDatasourcesMap==null){
+			this.interfacesByDatasourcesMap=new HashMap();
 		}
-		return interfacesByDatasourcesMap;
+		return this.interfacesByDatasourcesMap;
 	}
 	/**
 	 * @param interfacesByDatasourcesMap The interfacesByDatasourcesMap to set.
@@ -55,10 +55,10 @@ public class DatastoreInterfaceManager {
 	 * @return Returns the interfacesMap.
 	 */
 	public Map getInterfacesMap() {
-		if(interfacesMap==null){
-			interfacesMap = new HashMap();
+		if(this.interfacesMap==null){
+			this.interfacesMap = new HashMap();
 		}
-		return interfacesMap;
+		return this.interfacesMap;
 	}
 	/**
 	 * @param interfacesMap The interfacesMap to set.

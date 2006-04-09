@@ -46,7 +46,7 @@ public abstract class StyledAbstractChooserWindow extends StyledIWAdminWindow{
 
 	public void main(IWContext iwc){
 
-		if( (!noScript) && (getSelectionParameter(iwc)!=null) ){
+		if( (!this.noScript) && (getSelectionParameter(iwc)!=null) ){
 			Page parent = this.getParentPage();
 			parent = (parent!=null) ? parent : this;
       
@@ -60,12 +60,20 @@ public abstract class StyledAbstractChooserWindow extends StyledIWAdminWindow{
 			String displayString = iwc.getParameter(DISPLAYSTRING_PARAMETER_NAME);
 			String valueString = iwc.getParameter(VALUE_PARAMETER_NAME);
 
-			if( prefix == null ) prefix = "";
-			if( suffix == null ) suffix = "";
-			if( displayString == null ) displayString = "";
-			if( valueString == null ) valueString = "";
+			if( prefix == null ) {
+				prefix = "";
+			}
+			if( suffix == null ) {
+				suffix = "";
+			}
+			if( displayString == null ) {
+				displayString = "";
+			}
+			if( valueString == null ) {
+				valueString = "";
+			}
 
-			if( !onlyScript ){
+			if( !this.onlyScript ){
 				HiddenInput hPrefix = new HiddenInput(SCRIPT_PREFIX_PARAMETER,prefix);
 				HiddenInput hSuffix = new HiddenInput(SCRIPT_SUFFIX_PARAMETER,suffix);
 				HiddenInput hDisplayString = new HiddenInput(DISPLAYSTRING_PARAMETER_NAME,displayString);
@@ -80,7 +88,7 @@ public abstract class StyledAbstractChooserWindow extends StyledIWAdminWindow{
 			//closes the window and can be overridden
 			script.addFunction(PERFORM_AFTER_SELECT_FUNCTION_NAME, "function "+PERFORM_AFTER_SELECT_FUNCTION_NAME+"()"+"{"+getPerformAfterSelectScriptString(iwc)+"}");
 			
-		      if( isInAFrame ){
+		      if( this.isInAFrame ){
 		        script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+SCRIPT_PREFIX_IN_A_FRAME+"window.opener.document.getElementById(\""+prefix+"\")."+displayString+"."+suffix+"=displaystring; "+SCRIPT_PREFIX_IN_A_FRAME+"window.opener.document.getElementById(\""+prefix+"\")."+valueString+".value=value;window.close();return false;}");
 		      }
 		      else{
@@ -114,7 +122,7 @@ public abstract class StyledAbstractChooserWindow extends StyledIWAdminWindow{
 
 
 	public String getSelectionParameter(IWContext iwc){
-		return iwc.getParameter(chooserSelectionParameter);
+		return iwc.getParameter(this.chooserSelectionParameter);
 	}
 
 	public void isInAFrame(boolean isInAFrame){

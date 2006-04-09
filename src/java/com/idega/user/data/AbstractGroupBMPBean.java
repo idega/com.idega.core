@@ -83,12 +83,12 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	}
 
 	public Object ejbCreate() throws CreateException {
-			_group = this.getGroupHome().create();
-			_group.setGroupType(this.getGroupTypeKey());
-			_group.setName(this.getName() + "");
-			_group.store();
-			this.setPrimaryKey(_group.getPrimaryKey());
-			this.setUniqueId(_group.getUniqueId());
+			this._group = this.getGroupHome().create();
+			this._group.setGroupType(this.getGroupTypeKey());
+			this._group.setName(this.getName() + "");
+			this._group.store();
+			this.setPrimaryKey(this._group.getPrimaryKey());
+			this.setUniqueId(this._group.getUniqueId());
 
 			return super.ejbCreate();
 	}
@@ -166,15 +166,15 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	}
 
 	protected Group getGeneralGroup(){
-		if (_group == null) {
+		if (this._group == null) {
 			try {
-				_group = getGroupHome().findByPrimaryKey(this.getPrimaryKey());
+				this._group = getGroupHome().findByPrimaryKey(this.getPrimaryKey());
 			}
 			catch (FinderException fe) {
 				throw new EJBException(fe.getMessage());
 			}
 		}
-		return _group;
+		return this._group;
 	}
 
 	//

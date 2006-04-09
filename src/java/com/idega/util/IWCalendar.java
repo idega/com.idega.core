@@ -60,9 +60,9 @@ public class IWCalendar {
 	 * the given date and default locale.
 	 */
 	public IWCalendar(Date date) {
-		_calendar = new GregorianCalendar(LocaleUtil.getIcelandicLocale());
-		_calendar.setTime(date);
-		_locale = LocaleUtil.getIcelandicLocale();
+		this._calendar = new GregorianCalendar(LocaleUtil.getIcelandicLocale());
+		this._calendar.setTime(date);
+		this._locale = LocaleUtil.getIcelandicLocale();
 	}
 
 	/**
@@ -78,8 +78,8 @@ public class IWCalendar {
 	 * the given calendar and locale.
 	 */
 	public IWCalendar(Locale locale, GregorianCalendar calendar) {
-		_calendar = calendar;
-		_locale = locale;
+		this._calendar = calendar;
+		this._locale = locale;
 	}
 
 	/**
@@ -87,9 +87,9 @@ public class IWCalendar {
 	 * the given date and locale.
 	 */
 	public IWCalendar(Locale locale, Date date) {
-		_calendar = new GregorianCalendar(locale);
-		_calendar.setTime(date);
-		_locale = locale;
+		this._calendar = new GregorianCalendar(locale);
+		this._calendar.setTime(date);
+		this._locale = locale;
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getDay() {
-		return _calendar.get(Calendar.DAY_OF_MONTH);
+		return this._calendar.get(Calendar.DAY_OF_MONTH);
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getMonth() {
-		return _calendar.get(Calendar.MONTH) + 1;
+		return this._calendar.get(Calendar.MONTH) + 1;
 	}
 
 	/**
@@ -174,7 +174,7 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getYear() {
-		return _calendar.get(Calendar.YEAR);
+		return this._calendar.get(Calendar.YEAR);
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getDayOfWeek() {
-		return _calendar.get(Calendar.DAY_OF_WEEK);
+		return this._calendar.get(Calendar.DAY_OF_WEEK);
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getDayOfWeek(int year, int month, int day) {
-		GregorianCalendar calendar = new GregorianCalendar(_locale);
+		GregorianCalendar calendar = new GregorianCalendar(this._locale);
 		calendar.set(year, month - 1, day);
 		return calendar.get(Calendar.DAY_OF_WEEK);
 	}
@@ -214,7 +214,7 @@ public class IWCalendar {
 	 * @return int
 	 */
 	public int getWeekOfYear(int year, int month, int day) {
-		GregorianCalendar calendar = new GregorianCalendar(_locale);
+		GregorianCalendar calendar = new GregorianCalendar(this._locale);
 		calendar.set(year, month - 1, day);
 		return calendar.get(Calendar.WEEK_OF_YEAR);
 	}
@@ -236,7 +236,7 @@ public class IWCalendar {
 				daysInMonth = 31;
 				break;
 			case 2 :
-				if (_calendar.isLeapYear(year)) {
+				if (this._calendar.isLeapYear(year)) {
 					daysInMonth = 29;
 				}
 				else {
@@ -288,7 +288,7 @@ public class IWCalendar {
 	 * @return String
 	 */
 	public String getMonthName(int month) {
-		return getMonthName(month, _locale, LONG);
+		return getMonthName(month, this._locale, LONG);
 	}
 
 	/**
@@ -300,7 +300,7 @@ public class IWCalendar {
 	 * @return String
 	 */
 	public String getMonthName(int month, int type) {
-		return getMonthName(month, _locale, type);
+		return getMonthName(month, this._locale, type);
 	}
 
 	/**
@@ -343,7 +343,7 @@ public class IWCalendar {
 	 * @return String
 	 */
 	public String getDayName(int day) {
-		return getDayName(day, _locale, LONG);
+		return getDayName(day, this._locale, LONG);
 	}
 
 	/**
@@ -355,7 +355,7 @@ public class IWCalendar {
 	 * @return String
 	 */
 	public String getDayName(int day, int type) {
-		return getDayName(day, _locale, type);
+		return getDayName(day, this._locale, type);
 	}
 
 	/**
@@ -397,7 +397,7 @@ public class IWCalendar {
 	 * @return String
 	 */
 	public String getLocaleDate() {
-		return getLocaleDate(_locale, DateFormat.LONG, getYear(), getMonth(), getDay());
+		return getLocaleDate(this._locale, DateFormat.LONG, getYear(), getMonth(), getDay());
 	}
 
 	/**
@@ -417,7 +417,7 @@ public class IWCalendar {
 	 * @return String
 	 */
 	public String getLocaleDate(int format) {
-		return getLocaleDate(_locale, format, getYear(), getMonth(), getDay());
+		return getLocaleDate(this._locale, format, getYear(), getMonth(), getDay());
 	}
 
 	/**
@@ -441,7 +441,7 @@ public class IWCalendar {
 	 * @return String
 	 */
 	public String getLocaleDate(int format, int year, int month, int day) {
-		return getLocaleDate(_locale, format, year, month, day);
+		return getLocaleDate(this._locale, format, year, month, day);
 	}
 
 	/**
@@ -468,7 +468,7 @@ public class IWCalendar {
 	 * 										for the given date.
 	 */
 	public boolean isHoliday() {
-		return isHoliday(_locale, getYear(), getMonth(), getDay());
+		return isHoliday(this._locale, getYear(), getMonth(), getDay());
 	}
 
 	/**
@@ -480,7 +480,7 @@ public class IWCalendar {
 	 * 										for the given date.
 	 */
 	public boolean isHoliday(int year, int month, int day) {
-		return isHoliday(_locale, year, month, day);
+		return isHoliday(this._locale, year, month, day);
 	}
 
 	/**
@@ -500,8 +500,9 @@ public class IWCalendar {
 
 		for (int a = 0; a < holidays.length; a++) {
 			Holiday holiday = holidays[a];
-			if (holiday.isOn(calendar.getTime()))
+			if (holiday.isOn(calendar.getTime())) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -515,7 +516,7 @@ public class IWCalendar {
 	 * 										given Locale.
 	 */
 	public Holiday getHoliday() {
-		return getHoliday(_locale, getYear(), getMonth(), getDay());
+		return getHoliday(this._locale, getYear(), getMonth(), getDay());
 	}
 
 	/**
@@ -527,7 +528,7 @@ public class IWCalendar {
 	 * 										given Locale.
 	 */
 	public Holiday getHoliday(int year, int month, int day) {
-		return getHoliday(_locale, year, month, day);
+		return getHoliday(this._locale, year, month, day);
 	}
 
 	/**
@@ -563,7 +564,7 @@ public class IWCalendar {
 	 * @return boolean
 	 */
 	public boolean isFullMoon() {
-		return isFullMoon(_locale, getYear(), getMonth(), getDay());
+		return isFullMoon(this._locale, getYear(), getMonth(), getDay());
 	}
 
 	/**
@@ -574,7 +575,7 @@ public class IWCalendar {
 	 * @return boolean
 	 */
 	public boolean isFullMoon(int year, int month, int day) {
-		return isFullMoon(_locale, year, month, day);
+		return isFullMoon(this._locale, year, month, day);
 	}
 
 	/**
@@ -590,8 +591,9 @@ public class IWCalendar {
 		calendar.set(year, month - 1, day);
 
 		CalendarAstronomer moonCalendar = new CalendarAstronomer(calendar.getTime());
-		if (moonCalendar.getMoonPhase() == FULL_MOON)
+		if (moonCalendar.getMoonPhase() == FULL_MOON) {
 			return true;
+		}
 		return false;
 	}
 
@@ -601,7 +603,7 @@ public class IWCalendar {
 	 * @return Date
 	 */
 	public Date getNextFullMoon() {
-		return getNextFullMoon(_locale, getYear(), getMonth(), getDay());
+		return getNextFullMoon(this._locale, getYear(), getMonth(), getDay());
 
 	}
 
@@ -614,7 +616,7 @@ public class IWCalendar {
 	 * @return Date
 	 */
 	public Date getNextFullMoon(int year, int month, int day) {
-		return getNextFullMoon(_locale, year, month, day);
+		return getNextFullMoon(this._locale, year, month, day);
 	}
 
 	/**
@@ -640,7 +642,7 @@ public class IWCalendar {
 	 * @see IWCalendar#getMoonPhase(Locale locale, int year, int month, int day)
 	 */
 	public double getMoonPhase() {
-		return getMoonPhase(_locale, getYear(), getMonth(), getDay());
+		return getMoonPhase(this._locale, getYear(), getMonth(), getDay());
 	}
 
 	/**
@@ -653,7 +655,7 @@ public class IWCalendar {
 	 * @see IWCalendar#getMoonPhase(Locale locale, int year, int month, int day)
 	 */
 	public double getMoonPhase(int year, int month, int day) {
-		return getMoonPhase(_locale, year, month, day);
+		return getMoonPhase(this._locale, year, month, day);
 	}
 
 	/**
@@ -687,7 +689,7 @@ public class IWCalendar {
 	 * @return Time
 	 */
 	public Time getMoonRiseSet(boolean rise) {
-		return getMoonRiseSet(_locale, rise, getYear(), getMonth(), getDay());
+		return getMoonRiseSet(this._locale, rise, getYear(), getMonth(), getDay());
 	}
 
 	/**
@@ -700,7 +702,7 @@ public class IWCalendar {
 	 * @return Time
 	 */
 	public Time getMoonRiseSet(boolean rise, int year, int month, int day) {
-		return getMoonRiseSet(_locale, rise, year, month, day);
+		return getMoonRiseSet(this._locale, rise, year, month, day);
 	}
 
 	/**
@@ -727,7 +729,7 @@ public class IWCalendar {
 	 * @return Time
 	 */
 	public Time getSunRiseSet(boolean rise) {
-		return getSunRiseSet(_locale, rise, getYear(), getMonth(), getDay());
+		return getSunRiseSet(this._locale, rise, getYear(), getMonth(), getDay());
 	}
 
 	/**
@@ -740,7 +742,7 @@ public class IWCalendar {
 	 * @return Time
 	 */
 	public Time getSunRiseSet(boolean rise, int year, int month, int day) {
-		return getSunRiseSet(_locale, rise, year, month, day);
+		return getSunRiseSet(this._locale, rise, year, month, day);
 	}
 
 	/**
@@ -765,7 +767,7 @@ public class IWCalendar {
 	 * @return Date
 	 */
 	public Date toDate() {
-		return _calendar.getTime();
+		return this._calendar.getTime();
 	}
 
 	/**
@@ -773,7 +775,7 @@ public class IWCalendar {
 	 * @return GregorianCalendar
 	 */
 	public GregorianCalendar getCalendar() {
-		return _calendar;
+		return this._calendar;
 	}
 
 	/**
@@ -781,7 +783,7 @@ public class IWCalendar {
 	 * @return Locale
 	 */
 	public Locale getLocale() {
-		return _locale;
+		return this._locale;
 	}
 
 	/**
@@ -789,7 +791,7 @@ public class IWCalendar {
 	 * @param calendar The calendar to set
 	 */
 	public void setCalendar(GregorianCalendar calendar) {
-		_calendar = calendar;
+		this._calendar = calendar;
 	}
 
 	/**
@@ -797,7 +799,7 @@ public class IWCalendar {
 	 * @param timestamp The timestamp to get the calendar from
 	 */
 	public void setCalendar(IWTimestamp timestamp) {
-		_calendar = timestamp.getGregorianCalendar();
+		this._calendar = timestamp.getGregorianCalendar();
 	}
 
 	/**
@@ -805,7 +807,7 @@ public class IWCalendar {
 	 * @param locale The locale to set
 	 */
 	public void setLocale(Locale locale) {
-		_locale = locale;
+		this._locale = locale;
 	}
 	
 	/**
@@ -813,7 +815,7 @@ public class IWCalendar {
 	 * @param day The day to set
 	 */
 	public void setDay(int day) {
-		_calendar.set(Calendar.DATE, day);	
+		this._calendar.set(Calendar.DATE, day);	
 	}
 
 	/**
@@ -821,7 +823,7 @@ public class IWCalendar {
 	 * @param month The month to set
 	 */
 	public void setMonth(int month) {
-		_calendar.set(Calendar.MONTH, month - 1);	
+		this._calendar.set(Calendar.MONTH, month - 1);	
 	}
 
 	/**
@@ -829,7 +831,7 @@ public class IWCalendar {
 	 * @param year The year to set
 	 */
 	public void setYear(int year) {
-		_calendar.set(Calendar.YEAR, year);	
+		this._calendar.set(Calendar.YEAR, year);	
 	}
 
 	/**
@@ -839,9 +841,9 @@ public class IWCalendar {
 	 * @param day The day to set
 	 */
 	public void setDate(int year, int month, int day) {
-		_calendar.set(Calendar.YEAR, year);	
-		_calendar.set(Calendar.MONTH, month - 1);	
-		_calendar.set(Calendar.DATE, day);	
+		this._calendar.set(Calendar.YEAR, year);	
+		this._calendar.set(Calendar.MONTH, month - 1);	
+		this._calendar.set(Calendar.DATE, day);	
 	}
 	
 	/**
@@ -849,6 +851,6 @@ public class IWCalendar {
 	 * @param date	The date to set
 	 */
 	public void setDate(Date date) {
-		_calendar.setTime(date);	
+		this._calendar.setTime(date);	
 	}
 }

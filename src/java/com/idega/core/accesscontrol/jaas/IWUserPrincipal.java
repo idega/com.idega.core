@@ -1,5 +1,5 @@
 /*
- * $Id: IWUserPrincipal.java,v 1.1 2004/12/13 11:53:38 gummi Exp $
+ * $Id: IWUserPrincipal.java,v 1.2 2006/04/09 12:13:17 laddi Exp $
  * Created on 3.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,21 +14,21 @@ import java.security.Principal;
 
 /**
  * 
- *  Last modified: $Date: 2004/12/13 11:53:38 $ by $Author: gummi $
+ *  Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class IWUserPrincipal implements Principal {
 
     private String _name;
     
     public IWUserPrincipal(String name) {
-        _name = name;
+        this._name = name;
     }
     
     public String getName() {
-        return _name;
+        return this._name;
     }
     
     public int hashCode() {

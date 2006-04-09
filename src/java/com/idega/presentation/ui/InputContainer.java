@@ -31,7 +31,7 @@ public class InputContainer extends InterfaceObject {
 	 * @param obj
 	 */
 	private void setInputObject(PresentationObject inputObject) {
-		inputObj=inputObject;
+		this.inputObj=inputObject;
 	}
 	/**
 	 * @param text
@@ -41,7 +41,7 @@ public class InputContainer extends InterfaceObject {
 			setText(new Text(theText));
 		}
 		else{
-			text.setText(theText);
+			this.text.setText(theText);
 		}
 	}
 	/**
@@ -50,7 +50,7 @@ public class InputContainer extends InterfaceObject {
 	public void _main(IWContext iwc) throws Exception{
 		initTable();
 		super._main(iwc);
-		table._main(iwc);
+		this.table._main(iwc);
 		//this.main(iwc);
 	}
 	
@@ -65,12 +65,12 @@ public class InputContainer extends InterfaceObject {
 		
 		//add(t);
 		
-		if(cellWidth!=-1){
-			getTable().setWidth(1,cellWidth);
-			getTable().setWidth(2,cellWidth);
+		if(this.cellWidth!=-1){
+			getTable().setWidth(1,this.cellWidth);
+			getTable().setWidth(2,this.cellWidth);
 		}
-		getTable().add(text,1,1);
-		getTable().add(inputObj,2,1);
+		getTable().add(this.text,1,1);
+		getTable().add(this.inputObj,2,1);
 	}
 	
 	
@@ -78,7 +78,7 @@ public class InputContainer extends InterfaceObject {
 	 * 
 	 */
 	private Table getTable() {
-		return table;
+		return this.table;
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class InputContainer extends InterfaceObject {
 	 * @param i
 	 */
 	public void setCellWidth(int i) {
-		cellWidth = i;
+		this.cellWidth = i;
 	}
 
 	/**
@@ -126,9 +126,9 @@ public class InputContainer extends InterfaceObject {
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
-		if(inputObj!=null){
-			if(inputObj instanceof InterfaceObject){
-				((InterfaceObject)inputObj).handleKeepStatus(iwc);
+		if(this.inputObj!=null){
+			if(this.inputObj instanceof InterfaceObject){
+				((InterfaceObject)this.inputObj).handleKeepStatus(iwc);
 			}
 			
 		}

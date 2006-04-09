@@ -22,61 +22,62 @@ public class RaisedTable extends PresentationObjectContainer {
   }
 
   public void add(PresentationObject obj){
-    iwacTable.add(obj,2,2);
+    this.iwacTable.add(obj,2,2);
   }
 
   private Table getTable(){
-    if(iwacTable == null){
-      iwacTable = new Table(4,4);
-      iwacTable.setCellpadding(0);
-      iwacTable.setCellspacing(0);
-      iwacTable.setHeight(1,"1");
-      iwacTable.setHeight(3,"1");
-      iwacTable.setHeight(4,"1");
-      iwacTable.setWidth(1,"1");
-      iwacTable.setWidth(3,"1");
-      iwacTable.setWidth(4,"1");
+    if(this.iwacTable == null){
+      this.iwacTable = new Table(4,4);
+      this.iwacTable.setCellpadding(0);
+      this.iwacTable.setCellspacing(0);
+      this.iwacTable.setHeight(1,"1");
+      this.iwacTable.setHeight(3,"1");
+      this.iwacTable.setHeight(4,"1");
+      this.iwacTable.setWidth(1,"1");
+      this.iwacTable.setWidth(3,"1");
+      this.iwacTable.setWidth(4,"1");
 
-      iwacTable.setColor(1,1,_borderColor);
-      iwacTable.setColor(2,1,_borderColor);
-      iwacTable.setColor(3,1,_borderColor);
-      iwacTable.setColor(1,2,_borderColor);
-      iwacTable.setColor(3,2,_borderColor);
-      iwacTable.setColor(1,3,_borderColor);
-      iwacTable.setColor(2,3,_borderColor);
-      iwacTable.setColor(3,3,_borderColor);
+      this.iwacTable.setColor(1,1,this._borderColor);
+      this.iwacTable.setColor(2,1,this._borderColor);
+      this.iwacTable.setColor(3,1,this._borderColor);
+      this.iwacTable.setColor(1,2,this._borderColor);
+      this.iwacTable.setColor(3,2,this._borderColor);
+      this.iwacTable.setColor(1,3,this._borderColor);
+      this.iwacTable.setColor(2,3,this._borderColor);
+      this.iwacTable.setColor(3,3,this._borderColor);
 
-      iwacTable.setColor(4,2,_shadowColor);
-      iwacTable.setColor(4,3,_shadowColor);
-      iwacTable.setColor(4,4,_shadowColor);
-      iwacTable.setColor(2,4,_shadowColor);
-      iwacTable.setColor(3,4,_shadowColor);
+      this.iwacTable.setColor(4,2,this._shadowColor);
+      this.iwacTable.setColor(4,3,this._shadowColor);
+      this.iwacTable.setColor(4,4,this._shadowColor);
+      this.iwacTable.setColor(2,4,this._shadowColor);
+      this.iwacTable.setColor(3,4,this._shadowColor);
     }
-    return iwacTable;
+    return this.iwacTable;
   }
 
   public void setHorizontalAlignment(String alignment) {
-    iwacTable.setAlignment(2,2,alignment);
+    this.iwacTable.setAlignment(2,2,alignment);
   }
 
   public void setVerticalAlignment(String alignment) {
-    iwacTable.setVerticalAlignment(2,2,alignment);
+    this.iwacTable.setVerticalAlignment(2,2,alignment);
   }
 
   public void setBorderColor(String color) {
-    _borderColor = color;
+    this._borderColor = color;
   }
 
   public void setShadowColor(String color) {
-    _shadowColor = color;
+    this._shadowColor = color;
   }
 
   public synchronized Object clone() {
     RaisedTable obj = null;
     try {
       obj = (RaisedTable) super.clone();
-      if ( this.iwacTable != null )
-        obj.iwacTable= (Table)this.iwacTable.clone();
+      if ( this.iwacTable != null ) {
+				obj.iwacTable= (Table)this.iwacTable.clone();
+			}
     }
     catch(Exception ex) {
       ex.printStackTrace(System.err);

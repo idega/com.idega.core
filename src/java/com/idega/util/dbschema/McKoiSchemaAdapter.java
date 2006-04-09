@@ -11,10 +11,10 @@ import com.idega.util.IWTimestamp;
 /**
  * 
  * 
- *  Last modified: $Date: 2004/11/01 10:05:31 $ by $Author: aron $
+ *  Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class McKoiSchemaAdapter extends SQLSchemaAdapter {
 	
@@ -207,8 +207,9 @@ public class McKoiSchemaAdapter extends SQLSchemaAdapter {
 			 freeConnection(conn);
 		   }
 		}
-		if(v!=null && !v.isEmpty())
+		if(v!=null && !v.isEmpty()) {
 			return (String[])v.toArray(new String[0]);
+		}
 		return null;
 			   
 	}

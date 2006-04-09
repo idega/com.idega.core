@@ -1,5 +1,5 @@
 /*
- * $Id: CypherText.java,v 1.3 2002/04/06 19:07:46 tryggvil Exp $
+ * $Id: CypherText.java,v 1.4 2006/04/09 12:13:13 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -48,23 +48,26 @@ public class CypherText {
    * @return
    */
   public String getKey(int length) {
-    if (cypherKey_ == null)
-      createKey(length);
+    if (this.cypherKey_ == null) {
+			createKey(length);
+		}
 
-    if (cypherKey_.length() != length)
-      createKey(length);
+    if (this.cypherKey_.length() != length) {
+			createKey(length);
+		}
 
-    return(cypherKey_);
+    return(this.cypherKey_);
   }
 
   /**
    *
    */
   public void setKey(String key) throws NullPointerException {
-    if (key == null)
-      throw(new NullPointerException("Cypher key is null"));
+    if (key == null) {
+			throw(new NullPointerException("Cypher key is null"));
+		}
 
-    cypherKey_ = key;
+    this.cypherKey_ = key;
   }
 
   /*
@@ -73,35 +76,38 @@ public class CypherText {
   private void createKey(int length) {
     StringBuffer key = new StringBuffer();
     for (int i = 0; i < length; i++) {
-      char rnd = (char)(Math.random() * alphabet_.length());
-      key.append(alphabet_.charAt(rnd));
+      char rnd = (char)(Math.random() * this.alphabet_.length());
+      key.append(this.alphabet_.charAt(rnd));
     }
 
-    cypherKey_ = key.toString();
+    this.cypherKey_ = key.toString();
   }
 
   /*
    *
    */
   private String cypher(String text) throws NullPointerException, IllegalArgumentException {
-    if (text == null)
-      throw(new NullPointerException("No text to cypher"));
+    if (text == null) {
+			throw(new NullPointerException("No text to cypher"));
+		}
 
     boolean isAlphabet = checkAlphabet(text);
-    if (!isAlphabet)
-      throw(new IllegalArgumentException("Text contains characters which are not cypherable. Please use only [a..z][A..Z][0..9]"));
+    if (!isAlphabet) {
+			throw(new IllegalArgumentException("Text contains characters which are not cypherable. Please use only [a..z][A..Z][0..9]"));
+		}
 
     StringBuffer cyphered = new StringBuffer();
 
-    while (cypherKey_.length() < text.length())
-      cypherKey_ = cypherKey_.concat(cypherKey_);
+    while (this.cypherKey_.length() < text.length()) {
+			this.cypherKey_ = this.cypherKey_.concat(this.cypherKey_);
+		}
 
     for (int i = 0; i < text.length(); i++) {
       int a = getIntValue(text.charAt(i));
-      int b = getIntValue(cypherKey_.charAt(i));
-      int c = (a + b) % alphabet_.length();
+      int b = getIntValue(this.cypherKey_.charAt(i));
+      int c = (a + b) % this.alphabet_.length();
 
-      cyphered.append(alphabet_.charAt(c));
+      cyphered.append(this.alphabet_.charAt(c));
     }
 
     String reversed = cyphered.toString();
@@ -115,8 +121,9 @@ public class CypherText {
    */
   public String reverse(String text) {
     String ret = new String();
-    for (int i = text.length() - 1; i >= 0; i--)
-      ret = ret.concat(String.valueOf(text.charAt(i)));
+    for (int i = text.length() - 1; i >= 0; i--) {
+			ret = ret.concat(String.valueOf(text.charAt(i)));
+		}
 
     return(ret);
   }
@@ -125,39 +132,44 @@ public class CypherText {
    *
    */
   private boolean checkAlphabet(String text) {
-    for (int i = 0; i < alphabet_.length(); i++)
-      text = text.replace(alphabet_.charAt(i),' ');
+    for (int i = 0; i < this.alphabet_.length(); i++) {
+			text = text.replace(this.alphabet_.charAt(i),' ');
+		}
 
     text = text.trim();
-    if ((text == null) || (text.equalsIgnoreCase("")))
-      return(true);
-    else
-      return(false);
+    if ((text == null) || (text.equalsIgnoreCase(""))) {
+			return(true);
+		}
+		else {
+			return(false);
+		}
   }
 
   /*
    *
    */
   private String deCypher(String cypherText) throws NullPointerException {
-    if (cypherText == null)
-      throw(new NullPointerException("No text to decypher"));
+    if (cypherText == null) {
+			throw(new NullPointerException("No text to decypher"));
+		}
 
     StringBuffer decyphered = new StringBuffer();
     cypherText = reverse(cypherText);
 
-    while (cypherKey_.length() < cypherText.length())
-      cypherKey_ = cypherKey_.concat(cypherKey_);
+    while (this.cypherKey_.length() < cypherText.length()) {
+			this.cypherKey_ = this.cypherKey_.concat(this.cypherKey_);
+		}
 
     for (int i = 0; i < cypherText.length(); i++) {
       int a = getIntValue(cypherText.charAt(i));
-      int b = getIntValue(cypherKey_.charAt(i));
-      int c = (a - b) % alphabet_.length();
+      int b = getIntValue(this.cypherKey_.charAt(i));
+      int c = (a - b) % this.alphabet_.length();
 
       while (c < 0) {
-        c += alphabet_.length();
+        c += this.alphabet_.length();
       }
 
-      decyphered.append(alphabet_.charAt(c));
+      decyphered.append(this.alphabet_.charAt(c));
     }
 
     return(decyphered.toString());
@@ -167,7 +179,7 @@ public class CypherText {
    *
    */
   private int getIntValue(char a) {
-    int i = alphabet_.indexOf(a);
+    int i = this.alphabet_.indexOf(a);
 
     return(i);
   }

@@ -54,19 +54,19 @@ public class StatefullPresentationImplHandler {
 
 
   public Class getPresentationStateClass(){
-    return _class;
+    return this._class;
   }
 
   public void setPresentationStateClass(Class stateClass){
-    _class = stateClass;
+    this._class = stateClass;
   }
 
   public IWPresentationState getPresentationState(PresentationObject obj, IWUserContext iwuc){
-    if(_presentationState == null){
+    if(this._presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
         //if(obj.getICObjectInstanceID() == 0){
-          _presentationState = stateMachine.getStateFor(obj.getCompoundId(), _class);
+          this._presentationState = stateMachine.getStateFor(obj.getCompoundId(), this._class);
          // _presentationState = stateMachine.getStateFor(obj.getLocation(),_class);
         //} else {
         //  _presentationState = stateMachine.getStateFor(obj.getICObjectInstance());
@@ -76,7 +76,7 @@ public class StatefullPresentationImplHandler {
         throw new RuntimeException(re.getMessage());
       }
     }
-    return _presentationState;
+    return this._presentationState;
   }
 
 

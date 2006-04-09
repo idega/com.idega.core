@@ -25,10 +25,10 @@ import javax.faces.context.FacesContext;
  * The notation is #{localizedStrings['BUNDLE_IDENTIFIER']['LOCALIZATION_KEY']}, example:
  * #{localizedStrings['com.idega.manager']['store']}
  * </p>
- * Last modified: $Date: 2006/02/20 17:59:45 $ by $Author: laddi $<br/>
+ * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class BundleLocalizationMap implements Map {
 
@@ -101,14 +101,14 @@ public class BundleLocalizationMap implements Map {
 	//Unoptimized methods
 
 	public Collection values() {
-		if (_values == null) {
-			_values = new ArrayList();
+		if (this._values == null) {
+			this._values = new ArrayList();
 			for (Enumeration enumer = getResourceBundle().getKeys(); enumer.hasMoreElements();) {
 				String v = getResourceBundle().getString((String)enumer.nextElement());
-				_values.add(v);
+				this._values.add(v);
 			}
 		}
-		return _values;
+		return this._values;
 	}
 
 	public int size() {

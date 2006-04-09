@@ -23,7 +23,7 @@ public class ICTreeNodeLeafComparator implements Comparator {
   }
 
   public ICTreeNodeLeafComparator(boolean leafsFirst){
-    _leafsFirst = leafsFirst;
+    this._leafsFirst = leafsFirst;
   }
 
   public int compare(Object o1, Object o2) {
@@ -37,9 +37,9 @@ public class ICTreeNodeLeafComparator implements Comparator {
       if(p1Leaf == p2Leaf){
         result = 0;
       } else if(p1Leaf){
-        result = (_leafsFirst)?-1:1;
+        result = (this._leafsFirst)?-1:1;
       } else {
-        result = (_leafsFirst)?1:-1;
+        result = (this._leafsFirst)?1:-1;
       }
 
       return result;

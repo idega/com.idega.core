@@ -27,9 +27,9 @@ public class TreeStructure {
 
 	public TreeStructure() {
 
-		lastNodeid = 0;
+		this.lastNodeid = 0;
 
-		lastParentNodeid = 0;
+		this.lastParentNodeid = 0;
 
 	}
 

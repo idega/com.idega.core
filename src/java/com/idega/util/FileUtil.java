@@ -171,10 +171,12 @@ public class FileUtil {
       }
       File file = null;
 
-      if(dirs!=null)
-        file = new File(dirs,name);
-      else
-        file = new File(name);
+      if(dirs!=null) {
+				file = new File(dirs,name);
+			}
+			else {
+				file = new File(name);
+			}
 
       file.createNewFile();
       return file;
@@ -229,7 +231,9 @@ public class FileUtil {
     }
     finally{
       try{
-        if(input!=null) input.close();
+        if(input!=null) {
+					input.close();
+				}
       }
       catch(IOException e){
         //e.printStackTrace(System.err);

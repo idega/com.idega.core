@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.110 2006/04/02 11:53:25 laddi Exp $
+ * $Id: AccessControl.java,v 1.111 2006/04/09 12:13:20 laddi Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -70,12 +70,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2006/04/02 11:53:25 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.110 $
+ * @version $Revision: 1.111 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -103,10 +103,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	
 	private PermissionCacher getPermissionCacher(){
-		if(permissionCacher==null){
-			permissionCacher=new PermissionCacher();
+		if(this.permissionCacher==null){
+			this.permissionCacher=new PermissionCacher();
 		}
-		return permissionCacher;
+		return this.permissionCacher;
 	
 	}
 	
@@ -123,7 +123,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		permission.setName(AccessControl.getAdministratorGroupName());
 		permission.setDescription("Administrator permission");
 		permission.store();
-		AdministratorPermissionGroup = permission;
+		this.AdministratorPermissionGroup = permission;
 	}
 
 	private void initPermissionGroupEveryone() throws Exception {
@@ -132,7 +132,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		permission.setName("Everyone");
 		permission.setDescription("Permission if not logged on");
 		permission.store();
-		PermissionGroupEveryOne = permission;
+		this.PermissionGroupEveryOne = permission;
 	}
 
 	private void initPermissionGroupUsers() throws Exception {
@@ -141,28 +141,28 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		permission.setName("Users");
 		permission.setDescription("Permission if logged on");
 		permission.store();
-		PermissionGroupUsers = permission;
+		this.PermissionGroupUsers = permission;
 	}
 
 	public PermissionGroup getPermissionGroupEveryOne() throws Exception {
-		if (PermissionGroupEveryOne == null) {
+		if (this.PermissionGroupEveryOne == null) {
 			initPermissionGroupEveryone();
 		}
-		return PermissionGroupEveryOne;
+		return this.PermissionGroupEveryOne;
 	}
 
 	public PermissionGroup getPermissionGroupUsers() throws Exception {
-		if (PermissionGroupUsers == null) {
+		if (this.PermissionGroupUsers == null) {
 			initPermissionGroupUsers();
 		}
-		return PermissionGroupUsers;
+		return this.PermissionGroupUsers;
 	}
 
 	public PermissionGroup getPermissionGroupAdministrator() throws Exception {
-		if (AdministratorPermissionGroup == null) {
+		if (this.AdministratorPermissionGroup == null) {
 			initAdministratorPermissionGroup();
 		}
-		return AdministratorPermissionGroup;
+		return this.AdministratorPermissionGroup;
 	}
 
 	public boolean isAdmin(IWUserContext iwc) throws Exception {
@@ -1736,14 +1736,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public int createPermissionGroup(String GroupName, String Description, String ExtraInfo, int[] userIDs, int[] groupIDs) throws Exception {
 		PermissionGroup newGroup = getPermissionGroupHome().create();
 
-		if (GroupName != null)
+		if (GroupName != null) {
 			newGroup.setName(GroupName);
+		}
 
-		if (Description != null)
+		if (Description != null) {
 			newGroup.setDescription(Description);
+		}
 
-		if (ExtraInfo != null)
+		if (ExtraInfo != null) {
 			newGroup.setExtraInfo(ExtraInfo);
+		}
 
 		newGroup.store();
 
@@ -1990,7 +1993,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 			}
 		}
-		toReturn.remove(AdministratorPermissionGroup);
+		toReturn.remove(this.AdministratorPermissionGroup);
 		return toReturn;
 	}
 
@@ -2005,17 +2008,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	public List getStandardGroups() throws Exception {
-		if (standardGroups == null) {
+		if (this.standardGroups == null) {
 			initStandardGroups();
 		}
-		return standardGroups;
+		return this.standardGroups;
 	}
 
 	private void initStandardGroups() throws Exception {
-		standardGroups = new Vector();
+		this.standardGroups = new Vector();
 		//standardGroups.add(AccessControl.getPermissionGroupAdministrator());
-		standardGroups.add(this.getPermissionGroupEveryOne());
-		standardGroups.add(this.getPermissionGroupUsers());
+		this.standardGroups.add(this.getPermissionGroupEveryOne());
+		this.standardGroups.add(this.getPermissionGroupUsers());
 	}
 
 	public User getAdministratorUser() throws Exception {
@@ -2089,11 +2092,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				while (iter.hasNext()) {
 					Object item = iter.next();
 					if (getAdministratorGroupName().equals(((GenericGroup) item).getName())) {
-						AdministratorPermissionGroup = (PermissionGroup) item;
+						this.AdministratorPermissionGroup = (PermissionGroup) item;
 					}
 				}
 			}
-			if (AdministratorPermissionGroup == null) {
+			if (this.AdministratorPermissionGroup == null) {
 				initAdministratorPermissionGroup();
 			}
 		}
@@ -2103,7 +2106,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		try {
-			PermissionGroupEveryOne =
+			this.PermissionGroupEveryOne =
 				(
 					(com.idega.core.accesscontrol.data.PermissionGroupHome) com.idega.data.IDOLookup.getHomeLegacy(
 						PermissionGroup.class)).findByPrimaryKeyLegacy(
@@ -2119,7 +2122,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		try {
-			PermissionGroupUsers =
+			this.PermissionGroupUsers =
 				(
 					(com.idega.core.accesscontrol.data.PermissionGroupHome) com.idega.data.IDOLookup.getHomeLegacy(
 						PermissionGroup.class)).findByPrimaryKeyLegacy(
@@ -3177,7 +3180,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if(myPermission!=null){
 			return myPermission.booleanValue();
 		}
-		else return false;
+		else {
+			return false;
+		}
 	}
 
 	/**
@@ -3185,14 +3190,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @param roleKey
 	 */
 	private boolean checkIfRoleExistsInDataBaseAndCreateIfMissing(String roleKey) {
-		if(rolesList==null){
-			rolesList = new ArrayList();
+		if(this.rolesList==null){
+			this.rolesList = new ArrayList();
 		}
 		
-		if(!rolesList.contains(roleKey)){
+		if(!this.rolesList.contains(roleKey)){
 			try {
 				getICRoleHome().findByPrimaryKey(roleKey);
-				rolesList.add(roleKey);
+				this.rolesList.add(roleKey);
 				return true;
 			}
 			catch (FinderException e) {
@@ -3200,10 +3205,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					System.out.println("AccessControl: the role "+roleKey+" does not exist creating it!");
 					
 					if(createRoleWithRoleKey(roleKey)!=null){
-						rolesList.add(roleKey);
+						this.rolesList.add(roleKey);
 						return true;
 					}
-					else return false;
+					else {
+						return false;
+					}
 					
 				}
 			}
@@ -3423,7 +3430,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			this.pageKey=pageKey;
 		}
 		public String getPageKey(){
-			return pageKey;
+			return this.pageKey;
 		}
 
 	}

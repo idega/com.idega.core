@@ -34,7 +34,7 @@ public class ICFileWriter extends WriterToFile {
 
 		
 		long folderIdentifier = System.currentTimeMillis();
-		String name = ((ICFile) storable).getName();
+		String name = ((ICFile) this.storable).getName();
 		String path = getRealPathToFile(name, null, folderIdentifier);
 		
 		File realFile = new File(path);
@@ -57,20 +57,20 @@ public class ICFileWriter extends WriterToFile {
 	}
 
 	public String getMimeType() {
-		return ((ICFile) storable).getMimeType();
+		return ((ICFile) this.storable).getMimeType();
 	}
 		
 	public boolean isMarkedAsDeleted() {
-		return ((ICFile) storable).getDeleted();
+		return ((ICFile) this.storable).getDeleted();
 	}
 	
 	
   public String getName() {
-  	return ((ICFile) storable).getName();
+  	return ((ICFile) this.storable).getName();
   }
 
 	public OutputStream writeData(OutputStream destination) throws IOException {
-		InputStream source = ((ICFile) storable).getFileValue();
+		InputStream source = ((ICFile) this.storable).getFileValue();
 		try {
 			writeFromStreamToStream(source, destination);
 		}

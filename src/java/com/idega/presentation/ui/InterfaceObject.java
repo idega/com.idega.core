@@ -1,5 +1,5 @@
 /*
- * $Id: InterfaceObject.java,v 1.36 2006/02/01 07:47:12 laddi Exp $
+ * $Id: InterfaceObject.java,v 1.37 2006/04/09 12:13:15 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.presentation.Script;
  * In JSF there is now a more recent javax.faces.compoent.UIInput that serves a
  * similar purpose and is recommended to use/extend in newer pure JSF applications.
  * </p>
- *  Last modified: $Date: 2006/02/01 07:47:12 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
@@ -52,31 +52,31 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[8];
 		values[0] = super.saveState(ctx);
-		values[1] = new Boolean(keepStatus);
-		values[2] = new Boolean(_checkObject);
-		values[3] = new Boolean(_disableObject);
-		values[4] = new Boolean(_checkDisabled);
-		values[5] = new Boolean(_inFocus);
-		values[6] = new Boolean(_changeValue);
-		values[7] = new Boolean(_selectValues);
+		values[1] = new Boolean(this.keepStatus);
+		values[2] = new Boolean(this._checkObject);
+		values[3] = new Boolean(this._disableObject);
+		values[4] = new Boolean(this._checkDisabled);
+		values[5] = new Boolean(this._inFocus);
+		values[6] = new Boolean(this._changeValue);
+		values[7] = new Boolean(this._selectValues);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		keepStatus = ((Boolean) values[1]).booleanValue();
-		_checkObject = ((Boolean) values[2]).booleanValue();
-		_disableObject = ((Boolean) values[3]).booleanValue();
-		_checkDisabled = ((Boolean) values[4]).booleanValue();
-		_inFocus = ((Boolean) values[5]).booleanValue();
-		_changeValue = ((Boolean) values[6]).booleanValue();
-		_selectValues = ((Boolean) values[7]).booleanValue();
+		this.keepStatus = ((Boolean) values[1]).booleanValue();
+		this._checkObject = ((Boolean) values[2]).booleanValue();
+		this._disableObject = ((Boolean) values[3]).booleanValue();
+		this._checkDisabled = ((Boolean) values[4]).booleanValue();
+		this._inFocus = ((Boolean) values[5]).booleanValue();
+		this._changeValue = ((Boolean) values[6]).booleanValue();
+		this._selectValues = ((Boolean) values[7]).booleanValue();
 	}
 
 	public InterfaceObject() {
 		super();
 		setID();
-		keepStatus = false;
+		this.keepStatus = false;
 	}
 
 	/**
@@ -84,8 +84,9 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @return boolean
 	 */
 	protected boolean isEnclosedByForm() {
-		if (getForm() != null)
+		if (getForm() != null) {
 			return true;
+		}
 		return false;
 	}
 
@@ -94,8 +95,9 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @return boolean
 	 */
 	protected boolean hasParentPage() {
-		if (getParentPage() != null)
+		if (getParentPage() != null) {
 			return true;
+		}
 		return false;
 	}
 
@@ -265,8 +267,9 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @return String	The value set.
 	 */
 	public String getValueAsString() {
-		if (isMarkupAttributeSet("value"))
+		if (isMarkupAttributeSet("value")) {
 			return getMarkupAttribute("value");
+		}
 		return "";
 	}
 
@@ -369,12 +372,14 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		 * @param checkDisabled	If true checks all, otherwise not disabled objects.
 		 */
 		public void setToCheckOnAction(String action, String objectName, String checkValue, boolean checkDisabled) {
-			_checkObject = true;
-			_checkDisabled = checkDisabled;
-			if (checkDisabled)
+			this._checkObject = true;
+			this._checkDisabled = checkDisabled;
+			if (checkDisabled) {
 				setOnAction(action, "checkAllObjects(findObj('" + objectName + "')," + checkValue + ")");
-			else
+			}
+			else {
 				setOnAction(action, "checkEnabledObjects(findObj('" + objectName + "')," +checkValue + ")");
+			}
 		}
 
 	/**
@@ -408,11 +413,11 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 */
 	public void setToDisableOnAction(String action, String objectName, boolean disable, boolean multipleObjects) {
 		if (multipleObjects) {
-			_disableObject = true;
+			this._disableObject = true;
 			setOnAction(action, "disableObject(findObj('" + objectName + "'),'" + String.valueOf(disable) + "')");
 		}
 		else {
-			_disableSingleObject = true;
+			this._disableSingleObject = true;
 			setOnAction(action, "disableSingleObject(findObj('" + objectName + "'),'" + String.valueOf(disable) + "')");
 		}
 	}
@@ -486,7 +491,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @param script the sript to be added
 	 */
 	public void setValueOnActionFollowedByScript(String action, String objectName, String value, String script) {
-		_changeValue = true;
+		this._changeValue = true;
 		StringBuffer buffer = new StringBuffer("changeValue(findObj('");
 		buffer.append(objectName).append("'),'").append(value).append("');").append(script);
 		setOnAction(action, buffer.toString());
@@ -500,7 +505,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @param value	The new value to set.
 	 */
 	public void setValueOnAction(String action, String objectName, String value) {
-		_changeValue = true;
+		this._changeValue = true;
 		setOnAction(action, "changeValue(findObj('"+objectName+"'),'"+value+"');");
 	}
 	
@@ -570,7 +575,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @param selected	Set true to select, false otherwise.
 	 */
 	public void setSelectedOnAction(String action, String objectName, boolean selected) {
-		_selectValues = true;
+		this._selectValues = true;
 		setOnAction(action, "selectValues(findObj('"+objectName+"'),'"+selected+"');");
 	}
 	
@@ -579,7 +584,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @param inFocus	Set to true to set focus on object, false otherwise.
 	 */
 	public void setInFocusOnPageLoad(boolean inFocus) {
-		_inFocus = inFocus;
+		this._inFocus = inFocus;
 	}
 
 	/**
@@ -595,10 +600,12 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @param disabled	The status to set.
 	 */
 	public void setDisabled(boolean disabled) {
-		if (disabled)
+		if (disabled) {
 			setMarkupAttribute("disabled", "disabled");
-		else
+		}
+		else {
 			this.removeMarkupAttribute("disabled");
+		}
 	}
 	
 	/**
@@ -606,8 +613,9 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @return boolean	True if object is disabled, false otherwise.
 	 */
 	public boolean getDisabled() {
-		if (isMarkupAttributeSet("disabled"))
+		if (isMarkupAttributeSet("disabled")) {
 			return true;
+		}
 		return false;	
 	}
 
@@ -624,8 +632,9 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @return String	The description set, null otherwise.
 	 */
 	public String getDescription() {
-		if (isMarkupAttributeSet("title"))
+		if (isMarkupAttributeSet("title")) {
 			return getMarkupAttribute("title");
+		}
 		return null;
 	}
 
@@ -642,7 +651,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @return boolean	True if status is kept, false otherwise.
 	 */
 	public boolean statusKeptOnAction() {
-		return keepStatus;
+		return this.keepStatus;
 	}
 
 	/**
@@ -664,14 +673,16 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	protected void callPrint(FacesContext fc)throws IOException{
 		//Overridden here to call the same methods as _print():
 		IWContext iwc = castToIWContext(fc);
-		if (statusKeptOnAction())
+		if (statusKeptOnAction()) {
 			handleKeepStatus(iwc);
+		}
 		super.callPrint(fc);
 	}
 		
 	public void _print(IWContext iwc) throws Exception {
-		if (statusKeptOnAction())
+		if (statusKeptOnAction()) {
 			handleKeepStatus(iwc);
+		}
 		super._print(iwc);
 	}
 
@@ -690,26 +701,28 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void _main(IWContext iwc) throws Exception {
 		super._main(iwc);
 		if (isEnclosedByForm()) {
-			if (_checkObject) {
-				if (_checkDisabled)
+			if (this._checkObject) {
+				if (this._checkDisabled) {
 					getScript().addFunction("checkAllObjects", "function checkAllObjects (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].checked=eval(value);\n	\t}\n	else\n	\tinputs.checked=eval(value);\n}");
-				else
+				}
+				else {
 					getScript().addFunction("checkEnabledObjects", "function checkEnabledObjects (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\tif ( inputs[i].disabled == false )\n	\t\tinputs[i].checked=eval(value);\n	\t}\n	else\n	\tif (inputs.disabled == false)\n	\t\tinputs.checked=eval(value);\n}");
+				}
 			}
-			if (_disableObject) {
+			if (this._disableObject) {
 				getScript().addFunction("disableObject", "function disableObject (inputs,value) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].disabled=eval(value);\n	\t}\n	else\n	inputs.disabled=eval(value);\n}");
 			}
-			if (_disableSingleObject) {
+			if (this._disableSingleObject) {
 				getScript().addFunction("disableSingleObject", "function disableSingleObject (input,value) {\n	input.disabled=eval(value);\n}");
 			}
-			if (_changeValue) {
+			if (this._changeValue) {
 				getScript().addFunction("changeValue", "function changeValue (input,newValue) {\n	input.value=newValue;\n}");
 			}
-			if (_selectValues) {
+			if (this._selectValues) {
 				getScript().addFunction("selectValues", "function selectValues (inputs,value) {\n	if (inputs.length > 0) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].selected=eval(value);\n	}\n	}");
 			}
 		}
-		if (_inFocus && hasParentPage()) {
+		if (this._inFocus && hasParentPage()) {
 			getParentPage().setOnLoad("findObj('" + getName() + "').focus();");
 		}
 	}
@@ -767,8 +780,9 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @return int
 	 */
 	public int getTabIndex() {
-		if (isMarkupAttributeSet("tabindex"))
+		if (isMarkupAttributeSet("tabindex")) {
 			return Integer.parseInt(getMarkupAttribute("tabindex"));
+		}
 		return -1;
 	}
 
@@ -777,10 +791,12 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @param readOnly	The boolean value to set.
 	 */
 	public void setReadOnly(boolean readOnly) {
-		if (readOnly)
+		if (readOnly) {
 			setMarkupAttributeWithoutValue("readonly");
-		else
+		}
+		else {
 			removeMarkupAttribute("readonly");
+		}
 	}
 	
 	/**
@@ -788,8 +804,9 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @return boolean
 	 */
 	public boolean getReadOnly() {
-		if (isMarkupAttributeSet("readonly"))
+		if (isMarkupAttributeSet("readonly")) {
 			return true;
+		}
 		return false;	
 	}
 
@@ -841,10 +858,12 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		if (getForm() != null) {
 			getParentForm().setOnSubmit("return checkSubmit(this)");
 			setCheckSubmit();
-			if (value2 != null)
+			if (value2 != null) {
 				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "', '"+value2+"') == false ){\nreturn false;\n}\n");
-			else
+			}
+			else {
 				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "') == false ){\nreturn false;\n}\n");
+			}
 			getScript().addFunction(functionName, function);
 		}
 	}

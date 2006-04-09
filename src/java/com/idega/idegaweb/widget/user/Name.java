@@ -1,5 +1,5 @@
 /*
- * $Id: Name.java,v 1.3 2006/01/15 21:15:49 laddi Exp $
+ * $Id: Name.java,v 1.4 2006/04/09 12:13:16 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,7 +23,7 @@ import com.idega.user.data.User;
  * Last modified: 14.10.2004 13:53:25 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Name extends Widget {
 
@@ -39,13 +39,13 @@ public class Name extends Widget {
 			User user = iwc.getCurrentUser();
 			
 			com.idega.util.text.Name name = new com.idega.util.text.Name();
-			if (showFirstName) {
+			if (this.showFirstName) {
 				name.setFirstName(user.getFirstName());
 			}
-			if (showMiddleName) {
+			if (this.showMiddleName) {
 				name.setMiddleName(user.getMiddleName());
 			}
-			if (showLastName) {
+			if (this.showLastName) {
 				name.setLastName(user.getLastName());
 			}
 			

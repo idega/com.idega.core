@@ -50,7 +50,7 @@ public class SpinInput extends IntegerInput{
 	 * @return increment size
 	 */
 	public Integer getIncrement() {
-		return increment;
+		return this.increment;
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class SpinInput extends IntegerInput{
 	 * @return maximum limit
 	 */
 	public Integer getMaximum() {
-		return maximum;
+		return this.maximum;
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class SpinInput extends IntegerInput{
 	 * @return minimum limit
 	 */
 	public Integer getMinimum() {
-		return minimum;
+		return this.minimum;
 	}
 
 	/**
@@ -98,15 +98,15 @@ public class SpinInput extends IntegerInput{
 	*/
 	public void main(IWContext iwc){
 	
-		table = new Table(3,1);
-		table.setCellpadding(0);
-		table.setCellspacing(0);
-		table.setParentObject(this.getParentObject());
-		table.add(this, 1, 1);
+		this.table = new Table(3,1);
+		this.table.setCellpadding(0);
+		this.table.setCellspacing(0);
+		this.table.setParentObject(this.getParentObject());
+		this.table.add(this, 1, 1);
 		
-			int inc = increment!=null?increment.intValue():1;
-			int min = minimum!=null?minimum.intValue():0;
-			int max = maximum!=null?maximum.intValue():100;
+			int inc = this.increment!=null?this.increment.intValue():1;
+			int min = this.minimum!=null?this.minimum.intValue():0;
+			int max = this.maximum!=null?this.maximum.intValue():100;
 			//this.getParentPage().addsty
 			//String buttonStyle = "color: black; background:white; font-size:7";
 			GenericButton up = new GenericButton(this.getName() + "_up", " /\\ ");
@@ -115,8 +115,8 @@ public class SpinInput extends IntegerInput{
 			//up.setStyleAttribute(buttonStyle+";vertical-align:super");
 			//down.setStyleAttribute(buttonStyle+";vertical-align:sub");
 			down.setOnClick("var spin = findObj('" + this.getName() + "'); if(spin){ var spinValue = parseInt(spin.value); if(spinValue -"+inc+" <= "+min+"){ spinValue="+min+" } else{spinValue-="+inc+" } spin.value = spinValue; }else window.status='no spin found'; return");
-			table.add(up, 2, 1);
-			table.add(down, 2, 1);
+			this.table.add(up, 2, 1);
+			this.table.add(down, 2, 1);
 			setOnChange("if (typeof this.value == 'string'){ this.value="+getValueAsString()+"}else{ var SpinValue = parseInt(this.value); if(SpinValue >"+max+") {this.value="+max+"; }else if(SpinValue < "+min+"){ this.value="+min+";  }  }");
 			setStyleAttribute("font-size:10; background:white");
 	}
@@ -126,10 +126,10 @@ public class SpinInput extends IntegerInput{
 	 * @see com.idega.presentation.PresentationObject#print(com.idega.presentation.IWContext)
 	 */
 	public void print(IWContext iwc) throws IOException {
-		if(!tablePrinted){
-			tablePrinted = true;
+		if(!this.tablePrinted){
+			this.tablePrinted = true;
 			try {
-				table._print(iwc);
+				this.table._print(iwc);
 			}
 			catch (Exception e) {
 				throw new IOException(e.getMessage());

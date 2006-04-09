@@ -43,36 +43,39 @@ import com.idega.idegaweb.*;
  		*/
     public static String getFrameName(String compoundId) {
       int i = compoundId.lastIndexOf(Frame.COMPOUND_ID_FRAME_NAME_KEY);
-      if (i < 0)
-        return null;
+      if (i < 0) {
+				return null;
+			}
       i += Frame.COMPOUND_ID_FRAME_NAME_KEY.length();
       String frameName = compoundId.substring(i);
       i = frameName.indexOf(PresentationObject.COMPOUNDID_COMPONENT_DELIMITER);
       // the compoundId points to a frame
-      if (i < 0)
-        return frameName;
-      else
-      // the compoundId does not point to a frame
+      if (i < 0) {
+				return frameName;
+			}
+			else {
+				// the compoundId does not point to a frame
         return frameName.substring(0, i);
+			}
     }
 
 
     public void setUrlProperty(String url){
-      type = URL;
-      _url = url;
+      this.type = URL;
+      this._url = url;
     }
 
     public String getUrlProperty(){
-      return _url;
+      return this._url;
     }
 
     public void setClassProperty(Class pageClass){
-      type = CLASS;
-      myClass = pageClass;
+      this.type = CLASS;
+      this.myClass = pageClass;
     }
 
     public Class getClassProperty(){
-      return myClass;
+      return this.myClass;
     }
 
     public void setNameProperty(String frameName){
@@ -105,8 +108,8 @@ import com.idega.idegaweb.*;
   public void setLocation(IWLocation location){
     location.isInFrameSet(true);
     super.setLocation(location);
-    if(_obj != null && !(_obj instanceof FrameTable)){
-      _obj.setLocation(location);
+    if(this._obj != null && !(this._obj instanceof FrameTable)){
+      this._obj.setLocation(location);
     }
   }
 
@@ -117,18 +120,18 @@ import com.idega.idegaweb.*;
     public void setPresentationObject(PresentationObject obj){
       //type = (obj instanceof FrameTable)? FRAMESET:OBJ;
       if(obj instanceof FrameTable){
-        type = FRAMESET;
+        this.type = FRAMESET;
         obj.setParentObject(this);
-        _obj = obj;
+        this._obj = obj;
       } else {
-        type = OBJ;
+        this.type = OBJ;
 
-        _obj = obj;
+        this._obj = obj;
 
 //        System.out.println("Frame.setPresentationObject().this.location: "+this.getLocation()+" ->"+this.getLocation().getLocationString());
 //        System.out.println("Frame.setPresentationObject()._obj.location: "+_obj.getLocation()+" ->"+_obj.getLocation().getLocationString());
 
-        _obj.setLocation(this.getLocation());
+        this._obj.setLocation(this.getLocation());
 
 //        System.out.println("And then");
 //        System.out.println("Frame.setPresentationObject().this.location: "+this.getLocation()+" ->"+this.getLocation().getLocationString());
@@ -138,21 +141,21 @@ import com.idega.idegaweb.*;
     }
 
     public PresentationObject getPresentationObject(){
-      return _obj;
+      return this._obj;
     }
 
     public int getFrameType(){
-      return type;
+      return this.type;
     }
 
     public Page getPage(IWUserContext iwc, boolean askForPermission){
 
       Page defaultPage = new Page();
       //defaultPage.setBackgroundColor("#336699");
-      switch (type) {
+      switch (this.type) {
         case CLASS:
           try {
-            PresentationObject pObj = (PresentationObject)myClass.newInstance();
+            PresentationObject pObj = (PresentationObject)this.myClass.newInstance();
             if(pObj instanceof Page){
               return (Page)pObj.clonePermissionChecked(iwc, askForPermission);
             } else {
@@ -171,13 +174,13 @@ import com.idega.idegaweb.*;
           }
           return null;
         case OBJ:
-          if(_obj instanceof Page){
-            return (Page)_obj.clonePermissionChecked(iwc, askForPermission);
+          if(this._obj instanceof Page){
+            return (Page)this._obj.clonePermissionChecked(iwc, askForPermission);
           } else {
             //Page page = new Page();
             Page page = defaultPage;
             page.setLocation(this.getLocation());
-            page.add(_obj.clonePermissionChecked(iwc,askForPermission));
+            page.add(this._obj.clonePermissionChecked(iwc,askForPermission));
             return page;
           }
         default:
@@ -258,7 +261,7 @@ import com.idega.idegaweb.*;
 
   public void _main(IWContext iwc) throws Exception{
     if(this.getFrameType()== Frame.FRAMESET){
-      _obj._main(iwc);
+      this._obj._main(iwc);
     }
   }
   

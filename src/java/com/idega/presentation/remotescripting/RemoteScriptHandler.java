@@ -50,7 +50,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		this.source = source;
 		this.target = target;
 		
-		iframeName = source.getName()+"_"+target.getName();
+		this.iframeName = source.getName()+"_"+target.getName();
 	}
 	
 	public void main(IWContext iwc) throws Exception{
@@ -61,20 +61,20 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		} else {
 
 			// Adding object if they are not added already
-			if (source.getParent() == null) {
-				add(source);
+			if (this.source.getParent() == null) {
+				add(this.source);
 			}
 			
-			if (target.getParent() == null) {
-				add(target);
+			if (this.target.getParent() == null) {
+				add(this.target);
 			}
 
 			// source MUST BE added to something before these methods are called
-			if (sourceIsTrigger) {
-				if (source instanceof TextInput) {
-					source.setOnKeyUp(getSubmitEvent(iwc));
+			if (this.sourceIsTrigger) {
+				if (this.source instanceof TextInput) {
+					this.source.setOnKeyUp(getSubmitEvent(iwc));
 				} else {
-					source.setOnChange(getSubmitEvent(iwc));
+					this.source.setOnChange(getSubmitEvent(iwc));
 				}
 			}
 			
@@ -85,12 +85,12 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 	}
 		
 	private void addRemoteScriptingScripts(IWContext iwc) {
-		if (target instanceof DropdownMenu) {
+		if (this.target instanceof DropdownMenu) {
 			addScriptForDropdown();
-		} else if (target instanceof Layer) {
+		} else if (this.target instanceof Layer) {
 			addScriptForLayer();
 		} else {
-			throw new IllegalArgumentException("Unsupported target instance "+target.getClass().getName());
+			throw new IllegalArgumentException("Unsupported target instance "+this.target.getClass().getName());
 		}
 		
 		addCallToServer(iwc);
@@ -104,7 +104,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		
 		StringBuffer buff = new StringBuffer();
 		buff.append("var IFrameObj; // our IFrame object").append("\n")
-		.append("function callToServer_"+iframeName+"(theFormName) {").append("\n")
+		.append("function callToServer_"+this.iframeName+"(theFormName) {").append("\n")
 		.append("  if (!document.createElement) {return true};").append("\n")
 		.append("  var IFrameDoc;").append("\n")
 		.append("  if (!IFrameObj && document.createElement) {").append("\n")
@@ -114,7 +114,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("    // callToServer() is called").append("\n")
 		.append("	   try {").append("\n")
 		.append("      var tempIFrame=document.createElement('iframe');").append("\n")
-		.append("      tempIFrame.setAttribute('id','"+iframeName+"');").append("\n")
+		.append("      tempIFrame.setAttribute('id','"+this.iframeName+"');").append("\n")
 		.append("      tempIFrame.style.border='0px';").append("\n")
 		.append("      tempIFrame.style.width='0px';").append("\n")
 		.append("      tempIFrame.style.height='0px';").append("\n")
@@ -125,13 +125,13 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("        // allow access to the document object").append("\n")
 		.append("        // of the IFrame if we access it through").append("\n")
 		.append("        // the document.frames array").append("\n")
-		.append("        IFrameObj = document.frames['"+iframeName+"'];").append("\n")
+		.append("        IFrameObj = document.frames['"+this.iframeName+"'];").append("\n")
 		.append("      }").append("\n")
 		.append("    } catch(exception) {").append("\n")
 		.append("      // This is for IE5 PC, which does not allow dynamic creation").append("\n")
 		.append("      // and manipulation of an iframe object. Instead, we'll fake").append("\n")
 		.append("      // it up by creating our own objects.").append("\n")
-		.append("      iframeHTML='<iframe id=\""+iframeName+"\" style=\"';").append("\n")
+		.append("      iframeHTML='<iframe id=\""+this.iframeName+"\" style=\"';").append("\n")
 		.append("      iframeHTML+='border:0px;';").append("\n")
 		.append("      iframeHTML+='width:0px;';").append("\n")
 		.append("      iframeHTML+='height:0px;';").append("\n")
@@ -140,7 +140,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("      IFrameObj = new Object();").append("\n")
 		.append("      IFrameObj.document = new Object();").append("\n")
 		.append("      IFrameObj.document.location = new Object();").append("\n")
-		.append("      IFrameObj.document.location.iframe = document.getElementById('"+iframeName+"');").append("\n")
+		.append("      IFrameObj.document.location.iframe = document.getElementById('"+this.iframeName+"');").append("\n")
 		.append("      IFrameObj.document.location.replace = function(location) {").append("\n")
 		.append("	      this.iframe.src = location;").append("\n")
 		.append(" 	   }").append("\n")
@@ -149,7 +149,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("	 if (navigator.userAgent.indexOf('Gecko') !=-1 && !IFrameObj.contentDocument) {").append("\n")
 		.append("	   // we have to give NS6 a fraction of a second").append("\n")
 		.append("	   // to recognize the new IFrame").append("\n")
-		.append("	   setTimeout('callToServer_"+iframeName+"(\"'+theFormName+'\")',10);").append("\n")
+		.append("	   setTimeout('callToServer_"+this.iframeName+"(\"'+theFormName+'\")',10);").append("\n")
 		.append("	   return false;").append("\n")
 		.append("	 }").append("\n")
 
@@ -166,17 +166,17 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("    return true;").append("\n")
 		.append("  }").append("\n")
 
-		.append("  IFrameDoc.location.replace('"+getRemoteUrl(iwc)+"' + buildQueryString_"+source.getID()+"(findObj('"+source.getForm().getID()+"')));").append("\n")
+		.append("  IFrameDoc.location.replace('"+getRemoteUrl(iwc)+"' + buildQueryString_"+this.source.getID()+"(findObj('"+this.source.getForm().getID()+"')));").append("\n")
 		.append("  return false;").append("\n")
 		.append("}").append("\n");		
 		if (getAssociatedScript() != null) {
-			getAssociatedScript().addFunction("callToServer_"+iframeName, buff.toString());
+			getAssociatedScript().addFunction("callToServer_"+this.iframeName, buff.toString());
 		}
 	}
 
 	private void addIFrame(IWContext iwc) {
-		IFrame iframe = new IFrame(iframeName);
-		iframe.setID(iframeName);
+		IFrame iframe = new IFrame(this.iframeName);
+		iframe.setID(this.iframeName);
 		iframe.setHeight(0);
 		iframe.setWidth(0);
 		iframe.setBorder(0);
@@ -186,17 +186,17 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 
 	private void addBuildQueryScript() {
 		StringBuffer params = new StringBuffer();
-		params.append("&").append(PARAMETER_SOURCE_PARAMETER_NAME).append("=").append(source.getName());
-		Set parNames = parameters.keySet();
+		params.append("&").append(PARAMETER_SOURCE_PARAMETER_NAME).append("=").append(this.source.getName());
+		Set parNames = this.parameters.keySet();
 		Iterator iter = parNames.iterator();
 		while (iter.hasNext()) {
 			String name = (String) iter.next();
-			String value = (String) parameters.get(name);
+			String value = (String) this.parameters.get(name);
 			params.append("&").append(name).append("=").append(value);
 		}
 		
 		if (getAssociatedScript() != null) {
-			getAssociatedScript().addFunction("buildQueryString_"+source.getID()+"(theForm)", "function buildQueryString_"+source.getID()+"(theForm){ \n"
+			getAssociatedScript().addFunction("buildQueryString_"+this.source.getID()+"(theForm)", "function buildQueryString_"+this.source.getID()+"(theForm){ \n"
 					+"  var qs = ''\n"
 					+"  for (e=0;e<theForm.elements.length;e++) {\n"
 					+"    if (theForm.elements[e].name != '') {\n"
@@ -213,12 +213,12 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 
 	private void addScriptForDropdown() {
 		StringBuffer buff = new StringBuffer();
-		buff.append("function handleResponse_"+source.getID()+"(doc) {\n")
-		.append("  var namesEl = document.getElementById('"+source.getID()+"');\n")
-		.append("  var zipEl = document.getElementById('"+target.getID()+"');\n") 
+		buff.append("function handleResponse_"+this.source.getID()+"(doc) {\n")
+		.append("  var namesEl = document.getElementById('"+this.source.getID()+"');\n")
+		.append("  var zipEl = document.getElementById('"+this.target.getID()+"');\n") 
 		.append("  zipEl.options.length = 0; \n")
-		.append("  var dataElID = doc.getElementById('"+RemoteScriptHandler.getLayerName(source.getName(), "id")+"');\n") 
-		.append("  var dataElName = doc.getElementById('"+RemoteScriptHandler.getLayerName(source.getName(), "name")+"');\n") 
+		.append("  var dataElID = doc.getElementById('"+RemoteScriptHandler.getLayerName(this.source.getName(), "id")+"');\n") 
+		.append("  var dataElName = doc.getElementById('"+RemoteScriptHandler.getLayerName(this.source.getName(), "name")+"');\n") 
 		.append("  namesColl = dataElName.childNodes; \n")
 		.append("  idsColl = dataElID.childNodes; \n")
 		.append("  var numNames = namesColl.length; \n")
@@ -234,13 +234,13 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		buff = addClearMethods(buff);
 				
 		buff.append("}\n");
-		getAssociatedScript().addFunction("handleResponse_"+source.getID(), buff.toString()); 
+		getAssociatedScript().addFunction("handleResponse_"+this.source.getID(), buff.toString()); 
 	}
 	
 	private void addScriptForLayer() {
 		StringBuffer buff = new StringBuffer();
-		buff.append("function handleResponse_"+source.getID()+"(doc) {\n")
-		.append("  var dataEl = doc.getElementById('"+RemoteScriptHandler.getLayerName(source.getName())+"');\n") 
+		buff.append("function handleResponse_"+this.source.getID()+"(doc) {\n")
+		.append("  var dataEl = doc.getElementById('"+RemoteScriptHandler.getLayerName(this.source.getName())+"');\n") 
 		.append("  var str = '';\n")
 		.append("  if (dataEl != null) {\n")
 		.append("    namesColl = dataEl.childNodes; \n")
@@ -252,7 +252,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("  } else {\n")
 		.append("    str = '';\n")
 		.append("  }\n")
-		.append("  var resultText = this.document.getElementById('"+target.getID()+"');\n")
+		.append("  var resultText = this.document.getElementById('"+this.target.getID()+"');\n")
 		.append("  resultText.innerHTML = str;\n");
 		
 		buff = addClearMethods(buff);
@@ -260,18 +260,18 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		buff.append("}\n");	
 		Script s = getAssociatedScript();
 		if (s != null) {
-			s.addFunction("handleResponse_"+source.getID(), buff.toString());
+			s.addFunction("handleResponse_"+this.source.getID(), buff.toString());
 		}
 	}
 	
 	private StringBuffer addClearMethods(StringBuffer script) {
-		Set keySet = toClear.keySet();
+		Set keySet = this.toClear.keySet();
 		Iterator iter = keySet.iterator();
 		PresentationObject po;
 		String value;
 		while (iter.hasNext()) {
 			po = (InterfaceObject) iter.next();
-			value = (String) toClear.get(po);
+			value = (String) this.toClear.get(po);
 			if (po instanceof DropdownMenu) {
 				script.append( 
 				"  var zipEl = document.getElementById('"+po.getID()+"');\n"+ 
@@ -285,7 +285,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 				"  var resultText = this.document.getElementById('"+po.getID()+"');\n"+
 				"  resultText.innerHTML = '"+value+"';\n");
 			} else {
-				throw new IllegalArgumentException("Unsupported target instance "+target.getClass().getName());
+				throw new IllegalArgumentException("Unsupported target instance "+this.target.getClass().getName());
 			}
 		}
 		return script;
@@ -306,7 +306,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		} else {
 			url += "&";
 		}
-		url += PARAMETER_REMOTE_SCRIPT_HANDLING_CLASS+"="+remoteScriptCollection.getClass().getName()+"&"+PARAMETER_SOURCE_NAME+"="+source.getID();
+		url += PARAMETER_REMOTE_SCRIPT_HANDLING_CLASS+"="+this.remoteScriptCollection.getClass().getName()+"&"+PARAMETER_SOURCE_NAME+"="+this.source.getID();
 		return url;
 	}
 
@@ -339,7 +339,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 	 * @return
 	 */
 	public String getSubmitEvent(IWContext iwc) {
-		return "return callToServer_"+iframeName+"(findObj('"+source.getForm().getID()+"').name)";
+		return "return callToServer_"+this.iframeName+"(findObj('"+this.source.getForm().getID()+"').name)";
 	}
 
 	/**
@@ -368,7 +368,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 	 * @param value Value of the parameter
 	 */
 	public void addParameter(String name, String value) {
-		parameters.put(name, value);
+		this.parameters.put(name, value);
 	}
 	/**
 	 * Set if the event is supposed to clear an object 
@@ -376,7 +376,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 	 * @param emptyValue A value to use instead of nothing
 	 */
 	public void setToClear(PresentationObject po, String emptyValue) {
-		toClear.put(po, emptyValue);
+		this.toClear.put(po, emptyValue);
 	}
 	
 }

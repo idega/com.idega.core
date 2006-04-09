@@ -61,23 +61,26 @@ public class EventTimer implements Runnable{
   }
 
   public void run(){
-  	isRunning = true;
-    while (runThread) {
+  	this.isRunning = true;
+    while (this.runThread) {
       try {
-      	if (intervalToSleepOnStart!=0) {
-      		Thread.sleep(intervalToSleepOnStart);
-      		intervalToSleepOnStart=0;
+      	if (this.intervalToSleepOnStart!=0) {
+      		Thread.sleep(this.intervalToSleepOnStart);
+      		this.intervalToSleepOnStart=0;
       	}
-        if (listener != null) listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, actionCommand));
-        Thread.sleep(interval);
+        if (this.listener != null) {
+					this.listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, this.actionCommand));
+				}
+        Thread.sleep(this.interval);
       }
       catch (Exception e) {
-      	if (runThread)
-	        e.printStackTrace(System.out);
+      	if (this.runThread) {
+					e.printStackTrace(System.out);
+				}
       }
     }
     
-    isRunning = false;
+    this.isRunning = false;
   }
 
 
@@ -92,27 +95,27 @@ public class EventTimer implements Runnable{
 
 
   public void start(){
-    runThread = true;
-    if( t == null || !isRunning){
+    this.runThread = true;
+    if( this.t == null || !this.isRunning){
     		//a new thread must be created here because it was null or 
 		//we went out of the run() method. When run is finished the thread is considered dead and cannot be restarted
-      t = new Thread(this,"com.idega.util.EventTimer thread");
-      t.setPriority(Thread.MIN_PRIORITY);
-      t.start();
+      this.t = new Thread(this,"com.idega.util.EventTimer thread");
+      this.t.setPriority(Thread.MIN_PRIORITY);
+      this.t.start();
     }
   }
 
   public void stop(){
-    if ( t != null ){
-      runThread = false;
-      t.interrupt();
+    if ( this.t != null ){
+      this.runThread = false;
+      this.t.interrupt();
     }
   }
 
    /**Destroy the thread*/
   public void destroy() {
     stop();
-    t = null;
+    this.t = null;
   }
 
   public void setInterval(long interval){
@@ -124,19 +127,19 @@ public class EventTimer implements Runnable{
   }
 
   public long getInterval(){
-    return interval;
+    return this.interval;
   }
 
   public String getActionCommand(){
-    return actionCommand;
+    return this.actionCommand;
   }
 
   public void addActionListener(ActionListener l) {
-    listener = AWTEventMulticaster.add(listener, l);
+    this.listener = AWTEventMulticaster.add(this.listener, l);
   }
 
   public void removeActionListener(ActionListener l) {
-    listener = AWTEventMulticaster.remove(listener, l);
+    this.listener = AWTEventMulticaster.remove(this.listener, l);
   }
 
 }

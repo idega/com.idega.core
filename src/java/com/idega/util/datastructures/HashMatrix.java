@@ -33,7 +33,7 @@ public class HashMatrix {
   }
   
   public boolean containsKey(Object xKey, Object yKey) {
-  	return (! isEmpty()) && xDimension.containsKey(xKey) && 	(get(xKey).containsKey(yKey));
+  	return (! isEmpty()) && this.xDimension.containsKey(xKey) && 	(get(xKey).containsKey(yKey));
   }
   
   public Object get(Object xKey, Object yKey) {
@@ -44,7 +44,7 @@ public class HashMatrix {
     Map yMap = getYDimension(xKey);
     Object oldObject = yMap.remove(yKey);
     if (yMap.isEmpty()) {
-      xDimension.remove(xKey);
+      this.xDimension.remove(xKey);
     }
     return oldObject;
   }
@@ -55,10 +55,10 @@ public class HashMatrix {
   
   public List getCopiedListOfValues() {
     List values = new ArrayList();
-    if (xDimension == null) {
+    if (this.xDimension == null) {
       return values;
     }
-    Iterator xIterator = xDimension.values().iterator();
+    Iterator xIterator = this.xDimension.values().iterator();
     while (xIterator.hasNext())  {
       Map yDimension = (Map) xIterator.next();
       Iterator yIterator = yDimension.values().iterator();
@@ -71,11 +71,11 @@ public class HashMatrix {
   }
   
   public Set firstKeySet()  {
-    return (xDimension == null) ? new HashSet(0) : xDimension.keySet();
+    return (this.xDimension == null) ? new HashSet(0) : this.xDimension.keySet();
   }
   
   public int sizeOfFirstKeySet() {
-  	return (xDimension == null) ? 0 : xDimension.size();
+  	return (this.xDimension == null) ? 0 : this.xDimension.size();
   }
 		
   
@@ -84,17 +84,17 @@ public class HashMatrix {
    * @return true if this matrix contains no key-key-value-mappings
    */
   public boolean isEmpty()  {
-    return ( (xDimension == null)  || ( xDimension.isEmpty() ) );    
+    return ( (this.xDimension == null)  || ( this.xDimension.isEmpty() ) );    
   }
  
   protected Map getYDimension(Object xKey)  {
-    if (xDimension == null) {
-      xDimension = new HashMap();
+    if (this.xDimension == null) {
+      this.xDimension = new HashMap();
     }
-    Map yDimension = (Map) xDimension.get(xKey);
+    Map yDimension = (Map) this.xDimension.get(xKey);
     if (yDimension == null) {
       yDimension = new HashMap();
-      xDimension.put(xKey, yDimension);
+      this.xDimension.put(xKey, yDimension);
     }
     return yDimension;
   }

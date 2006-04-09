@@ -47,22 +47,22 @@ public class ICFileReader extends ReaderFromFile {
 	 * @see com.idega.io.ReaderFromFile#setName(java.lang.String)
 	 */
 	public void setName(String name) {
-		((ICFile) storable).setName(name);
-		((ICFile) storable).store();
+		((ICFile) this.storable).setName(name);
+		((ICFile) this.storable).store();
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.io.ReaderFromFile#setMimeType(java.lang.String)
 	 */
 	public void setMimeType(String mimeType) {
-		((ICFile) storable).setMimeType(mimeType);
-		((ICFile) storable).store();
+		((ICFile) this.storable).setMimeType(mimeType);
+		((ICFile) this.storable).store();
 	}
 
 /* (non-Javadoc)
 	 * @see com.idega.io.ReaderFromFile#readData(java.io.InputStream)
 	 */
 	public InputStream readData(InputStream source) throws IOException {
-    String fileId = ((ICFile) storable).getPrimaryKey().toString();
+    String fileId = ((ICFile) this.storable).getPrimaryKey().toString();
     // To avoid problems with databases (e.g. MySQL) 
     // we do not write directly to the ICFile object but
     // create an auxiliary file on the hard disk and write the xml file to that file.
@@ -72,7 +72,7 @@ public class ICFileReader extends ReaderFromFile {
     // write the output first to a file object  
     // get the output stream      
     String separator = FileUtil.getFileSeparator();
-    StringBuffer path = new StringBuffer(iwc.getIWMainApplication().getApplicationRealPath());
+    StringBuffer path = new StringBuffer(this.iwc.getIWMainApplication().getApplicationRealPath());
            
     path.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY)
       .append(separator)
@@ -115,10 +115,10 @@ public class ICFileReader extends ReaderFromFile {
     }
     // now we have an input stream of the auxiliary file
     // write to the ICFile object
-    ((ICFile) storable).setFileSize(size);
+    ((ICFile) this.storable).setFileSize(size);
     try {
-    	((ICFile) storable).setFileValue(auxInputStream);
-    	((ICFile) storable).store();
+    	((ICFile) this.storable).setFileValue(auxInputStream);
+    	((ICFile) this.storable).store();
     }
     finally {
     	close(auxInputStream);

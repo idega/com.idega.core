@@ -40,19 +40,19 @@ public class FrameSet extends Window{
   }
 
   public void add(String frameURL){
-    numberOfFrames++;
-    setPage(numberOfFrames, frameURL);
+    this.numberOfFrames++;
+    setPage(this.numberOfFrames, frameURL);
   }
 
   public void add(Class pageClass){
-    numberOfFrames++;
-    setPage(numberOfFrames, pageClass);
+    this.numberOfFrames++;
+    setPage(this.numberOfFrames, pageClass);
   }
 
   public void add(Class pageClass, String frameName ){
-    numberOfFrames++;
-    setPage(numberOfFrames, pageClass);
-    this.setFrameName(numberOfFrames, frameName);
+    this.numberOfFrames++;
+    setPage(this.numberOfFrames, pageClass);
+    this.setFrameName(this.numberOfFrames, frameName);
   }
 
   private void setPage(int frameIndex, Class pageClass){
@@ -131,10 +131,10 @@ public class FrameSet extends Window{
     }*/
 
     private Map getFramesMap(){
-      if(framesMap==null){
-        framesMap = new HashMap();
+      if(this.framesMap==null){
+        this.framesMap = new HashMap();
       }
-      return framesMap;
+      return this.framesMap;
     }
 
     /*private Map getFramesPropertyMap(Class c){
@@ -156,8 +156,8 @@ public class FrameSet extends Window{
     }
 
     public void _main(IWContext iwc)throws Exception{
-      isInAWindow = isChildOfOtherPage();
-      if( isInAWindow ){
+      this.isInAWindow = isChildOfOtherPage();
+      if( this.isInAWindow ){
         this.getParentPage().setAddBody(false);
       }
 
@@ -166,7 +166,7 @@ public class FrameSet extends Window{
     }
 
     private void adaptFrames(IWContext iwc){
-      if(numberOfFrames==1){
+      if(this.numberOfFrames==1){
         add(com.idega.presentation.Page.class);
         setSpanPercent(1,100);
         setSpanAdaptive(2);
@@ -174,7 +174,7 @@ public class FrameSet extends Window{
       setSpanAttribute();
 
       int i = 1;
-      while (i<=numberOfFrames) {
+      while (i<=this.numberOfFrames) {
 
         Class item = this.getClass(i);
         if(item!=null){
@@ -197,7 +197,7 @@ public class FrameSet extends Window{
     public void printBegin(IWContext iwc){
         StringBuffer buf = new StringBuffer();
 
-        if( !isInAWindow ){
+        if( !this.isInAWindow ){
   		String characterEncoding = iwc.getApplicationSettings().getCharacterEncoding();
 		String markup = getMarkupLanguageForPage();
 		String docType = getDocType();
@@ -227,7 +227,7 @@ public class FrameSet extends Window{
     		
         buf.append("\n</frameset>\n");
 
-        if( !isInAWindow ){
+        if( !this.isInAWindow ){
           buf.append(getEndTag());
         }
 
@@ -274,11 +274,11 @@ public class FrameSet extends Window{
     }
 
     public void setVertical(){
-      alignment=ALIGNMENT_VERTICAL;
+      this.alignment=ALIGNMENT_VERTICAL;
     }
 
     public void setHorizontal(){
-      alignment=ALIGNMENT_HORIZONTAL;
+      this.alignment=ALIGNMENT_HORIZONTAL;
     }
 
     /**
@@ -436,7 +436,7 @@ public class FrameSet extends Window{
       String property = "";
       String comma = ",";
       int i;
-      for (i = 1; i < numberOfFrames; i++) {
+      for (i = 1; i < this.numberOfFrames; i++) {
         property += getSpan(i);
         property += comma;
       }
@@ -452,16 +452,16 @@ public class FrameSet extends Window{
     }
 
     public boolean isVertical(){
-      return (ALIGNMENT_VERTICAL==alignment);
+      return (ALIGNMENT_VERTICAL==this.alignment);
     }
 
     public boolean isHorizontal(){
-      return (ALIGNMENT_HORIZONTAL==alignment);
+      return (ALIGNMENT_HORIZONTAL==this.alignment);
     }
 
     public void setSpan(){
       boolean nothingset=true;
-      for (int i = 1; i <= numberOfFrames ; i++){
+      for (int i = 1; i <= this.numberOfFrames ; i++){
 
         String span= getSpan(i);
         if(!span.equals(star)){
@@ -469,9 +469,9 @@ public class FrameSet extends Window{
         }
       }
       if(nothingset){
-        if(numberOfFrames!=0){
-          int thePercent = (100/numberOfFrames);
-          for (int i = 1; i <= numberOfFrames ; i++) {
+        if(this.numberOfFrames!=0){
+          int thePercent = (100/this.numberOfFrames);
+          for (int i = 1; i <= this.numberOfFrames ; i++) {
               setSpanPercent(i,thePercent);
           }
         }

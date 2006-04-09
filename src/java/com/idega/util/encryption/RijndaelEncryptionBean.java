@@ -24,10 +24,10 @@ import com.idega.idegaweb.IWMainApplication;
  * This encryption implementation is extended and used by MentorEncryptionBean 
  * in module is.mentor.
  * </p>
- * Last modified: $Date: 2006/01/27 15:48:37 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class RijndaelEncryptionBean {
 
@@ -63,8 +63,9 @@ public class RijndaelEncryptionBean {
 		byte[] keyBytes = new byte[getKeySize()];
 		byte[] b = password.getBytes("UTF-8");
 		int len = b.length;
-		if (len > keyBytes.length)
+		if (len > keyBytes.length) {
 			len = keyBytes.length;
+		}
 		System.arraycopy(b, 0, keyBytes, 0, len);
 		SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
 		
@@ -73,7 +74,7 @@ public class RijndaelEncryptionBean {
 		cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
 		byte[] results = cipher.doFinal(text.getBytes("UTF-8"));
 		//BASE64Encoder encoder = new BASE64Encoder();
-		return base64Encoder.encode(results);
+		return this.base64Encoder.encode(results);
 	}
 	
 	/**
@@ -97,14 +98,15 @@ public class RijndaelEncryptionBean {
 		byte[] keyBytes = new byte[getKeySize()];
 		byte[] b = password.getBytes("UTF-8");
 		int len = b.length;
-		if (len > keyBytes.length)
+		if (len > keyBytes.length) {
 			len = keyBytes.length;
+		}
 		System.arraycopy(b, 0, keyBytes, 0, len);
 		SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
 		IvParameterSpec ivSpec = new IvParameterSpec(getIV());
 		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
 		//BASE64Decoder decoder = new BASE64Decoder();
-		byte[] results = cipher.doFinal(base64Decoder.decodeBuffer(text));
+		byte[] results = cipher.doFinal(this.base64Decoder.decodeBuffer(text));
 		return new String(results, "UTF-8");
 	}
 /*
@@ -287,7 +289,7 @@ public class RijndaelEncryptionBean {
 	 * @return Returns the iV.
 	 */
 	public byte[] getIV() {
-		return IV;
+		return this.IV;
 	}
 
 	
@@ -295,7 +297,7 @@ public class RijndaelEncryptionBean {
 	 * @param iv The iV to set.
 	 */
 	public void setIV(byte[] iv) {
-		IV = iv;
+		this.IV = iv;
 	}
 
 	
@@ -304,7 +306,7 @@ public class RijndaelEncryptionBean {
 	 * @return Returns the keySize.
 	 */
 	public int getKeySize() {
-		return keySize;
+		return this.keySize;
 	}
 
 	
@@ -321,10 +323,10 @@ public class RijndaelEncryptionBean {
 	 * @return Returns the secretKey.
 	 */
 	private String getSecretKey() {
-		if(secretKey==null){
+		if(this.secretKey==null){
 			throw new RuntimeException("Secret key is not set");
 		}
-		return secretKey;
+		return this.secretKey;
 	}
 
 	

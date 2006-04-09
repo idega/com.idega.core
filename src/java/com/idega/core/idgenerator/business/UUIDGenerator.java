@@ -40,7 +40,7 @@ public class UUIDGenerator implements IdGenerator, Singleton {
 	 * An example uid: ac483688-b6ed-4f45-ac64-c105e599d482 <br>
 	 */
 	public String generateUUID(){
-		return uidGenerator.generateTimeBasedUUID().toString();
+		return this.uidGenerator.generateTimeBasedUUID().toString();
 	}
 
 	/* (non-Javadoc)

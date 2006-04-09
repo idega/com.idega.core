@@ -55,10 +55,10 @@ public class IWStyleManager implements Singleton {
 			String lines = null;
 	
 			try {
-				file = FileUtil.getFileAndCreateRecursiveIfNotExists(URL);
+				this.file = FileUtil.getFileAndCreateRecursiveIfNotExists(URL);
 			}
 			catch (IOException e) {
-				file = null;
+				this.file = null;
 			}
 			
 			try {
@@ -175,7 +175,7 @@ public class IWStyleManager implements Singleton {
 	public void writeStyleSheet() {
 		if(shouldWriteDownFile()){
 			try {
-				BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+				BufferedWriter writer = new BufferedWriter(new FileWriter(this.file));
 				Iterator iter = getStyleMap().keySet().iterator();
 				while (iter.hasNext()) {
 					String name = (String) iter.next();
@@ -214,14 +214,15 @@ public class IWStyleManager implements Singleton {
 	}
 
 	private Map getStyleMap() {
-		if ( map == null )
-			map = new LinkedHashMap();	
-		return map;
+		if ( this.map == null ) {
+			this.map = new LinkedHashMap();
+		}	
+		return this.map;
 	}
 
 	public List getStyleList() {
 		List list = new Vector();
-		if (map != null) {
+		if (this.map != null) {
 			Iterator iter = getStyleMap().keySet().iterator();
 			while (iter.hasNext()) {
 				String name = (String) iter.next();
@@ -239,8 +240,9 @@ public class IWStyleManager implements Singleton {
 
 	private boolean isDefaultStyle(String styleName) {
 		for (int a = 0; a < defaultStyles.length; a++) {
-			if (defaultStyles[a].equalsIgnoreCase(styleName))
+			if (defaultStyles[a].equalsIgnoreCase(styleName)) {
 				return true;
+			}
 		}
 		return false;
 	}

@@ -41,7 +41,7 @@ public class DataTable extends PresentationObjectContainer {
   private String TITLE_FONT_COLOR = "#FFFFFF";
 
   public DataTable(){
-    contentTable = new Table();
+    this.contentTable = new Table();
   }
   public void main(IWContext iwc){
     drawTables(iwc);
@@ -49,81 +49,87 @@ public class DataTable extends PresentationObjectContainer {
 
   private void drawTables(IWContext iwc){
     com.idega.presentation.Image image = Table.getTransparentCell(iwc);
-    image.setHeight(bottomHeight);
+    image.setHeight(this.bottomHeight);
 
-    contentTable.setWidth(this.sWidth);
-    contentTable.setHeight(this.sHeight);
-    contentTable.setCellpadding(3);
-    contentTable.setCellspacing(1);
-    if ( _columns != -1 )
-      contentTable.setColumns(_columns);
-    if ( _rows != -1 )
-      contentTable.setRows(_rows);
-    contentTable.setHorizontalZebraColored(ZEBRA_LIGHT_COLOR,ZEBRA_DARK_COLOR);
+    this.contentTable.setWidth(this.sWidth);
+    this.contentTable.setHeight(this.sHeight);
+    this.contentTable.setCellpadding(3);
+    this.contentTable.setCellspacing(1);
+    if ( this._columns != -1 ) {
+			this.contentTable.setColumns(this._columns);
+		}
+    if ( this._rows != -1 ) {
+			this.contentTable.setRows(this._rows);
+		}
+    this.contentTable.setHorizontalZebraColored(this.ZEBRA_LIGHT_COLOR,this.ZEBRA_DARK_COLOR);
 
-    if(infoTitles){
-      if(titlesVertical)
-        contentTable.setColumnColor(1,HEADING_COLOR);
-      else
-        contentTable.setRowColor(use_top?2:1,HEADING_COLOR);
+    if(this.infoTitles){
+      if(this.titlesVertical) {
+				this.contentTable.setColumnColor(1,this.HEADING_COLOR);
+			}
+			else {
+				this.contentTable.setRowColor(this.use_top?2:1,this.HEADING_COLOR);
+			}
     }
 
-    int lastrow = contentTable.getRows();
-    int lastcol = contentTable.getColumns();
-    if(use_top){
-      contentTable.mergeCells(1,1,contentTable.getColumns(),1);
-      contentTable.setColor(1,1,TOP_COLOR);
+    int lastrow = this.contentTable.getRows();
+    int lastcol = this.contentTable.getColumns();
+    if(this.use_top){
+      this.contentTable.mergeCells(1,1,this.contentTable.getColumns(),1);
+      this.contentTable.setColor(1,1,this.TOP_COLOR);
     }
 
-    if ( _addBottom ) {
+    if ( this._addBottom ) {
       lastrow++;
-      contentTable.mergeCells(1,lastrow,lastcol,lastrow);
-      contentTable.add(image,1,lastrow);
-      contentTable.setColor(1,lastrow,BOTTOM_COLOR);
+      this.contentTable.mergeCells(1,lastrow,lastcol,lastrow);
+      this.contentTable.add(image,1,lastrow);
+      this.contentTable.setColor(1,lastrow,this.BOTTOM_COLOR);
     }
 
-    if(buttons!=null){
+    if(this.buttons!=null){
       lastrow++;
-      contentTable.mergeCells(1,lastrow,lastcol,lastrow);
-      contentTable.setAlignment(1,lastrow,buttonAlign);
-      while(buttons.size()>0){
-        contentTable.add((PresentationObject)buttons.remove(0),1,lastrow);
-        if (buttons.size()>0)
-        	contentTable.add(Text.NON_BREAKING_SPACE,1,lastrow);
+      this.contentTable.mergeCells(1,lastrow,lastcol,lastrow);
+      this.contentTable.setAlignment(1,lastrow,this.buttonAlign);
+      while(this.buttons.size()>0){
+        this.contentTable.add((PresentationObject)this.buttons.remove(0),1,lastrow);
+        if (this.buttons.size()>0) {
+					this.contentTable.add(Text.NON_BREAKING_SPACE,1,lastrow);
+				}
       }
     }
 
-    add(contentTable);
+    add(this.contentTable);
   }
 
   public void setUseTitles(boolean titles){
-    infoTitles = true;
-    infoTitles = titles;
+    this.infoTitles = true;
+    this.infoTitles = titles;
   }
 
   public void setTitlesVertical(boolean vertical){
-    titlesVertical = vertical;
+    this.titlesVertical = vertical;
   }
   public void setTitlesHorizontal(boolean horizontal){
-    infoTitles = true;
-    titlesVertical = !horizontal;
+    this.infoTitles = true;
+    this.titlesVertical = !horizontal;
   }
   public void addTitle(UIComponent title){
-    contentTable.add(title,1,1);
+    this.contentTable.add(title,1,1);
   }
   public void addTitle(String title){
     Text T = new Text(title,true,false,false);
-    T.setFontColor(TITLE_FONT_COLOR);
+    T.setFontColor(this.TITLE_FONT_COLOR);
     addTitle(T);
-    use_top = true;
+    this.use_top = true;
   }
   public void add(UIComponent objectToAdd,int col,int row){
-    contentTable.add(objectToAdd,col,use_top?++row:row);
+    this.contentTable.add(objectToAdd,col,this.use_top?++row:row);
   }
   public void addButton(UIComponent objectToAdd){
-    if(buttons ==null)
-      buttons = new Vector();
-    buttons.add(objectToAdd);
+    if(this.buttons ==null) {
+			this.buttons = new Vector();
+		}
+    this.buttons.add(objectToAdd);
   }
    public void setBottomHeight(int height){
     this.bottomHeight=height;
@@ -141,41 +147,41 @@ public class DataTable extends PresentationObjectContainer {
     this.sHeight = String.valueOf(tableHeight);
   }
   public void setTableRows(int rows){
-    _rows = rows;
+    this._rows = rows;
   }
   public void setTableColumns(int columns){
-    _columns = columns;
+    this._columns = columns;
   }
   public void setHeaderColor(String color){
-    TOP_COLOR=color;
+    this.TOP_COLOR=color;
   }
   public void setTitleColor(String color){
-    HEADING_COLOR=color;
+    this.HEADING_COLOR=color;
   }
   public void setZebraColors(String color1,String color2){
-    ZEBRA_LIGHT_COLOR=color1;
-    ZEBRA_DARK_COLOR=color2;
+    this.ZEBRA_LIGHT_COLOR=color1;
+    this.ZEBRA_DARK_COLOR=color2;
   }
   public void setBottomColor(String color){
-    BOTTOM_COLOR=color;
+    this.BOTTOM_COLOR=color;
   }
 
   /**
    * @deprecated  Replaced by {@link #setUseBottom(boolean)}
    */
   public void addBottom(boolean addBottom){
-    _addBottom = addBottom;
+    this._addBottom = addBottom;
   }
 
   public void setUseBottom(boolean useBottom){
-    _addBottom = useBottom;
+    this._addBottom = useBottom;
   }
 
   public void setUseTop(boolean useTop){
-    use_top = useTop;
+    this.use_top = useTop;
   }
 
   public Table getContentTable(){
-    return contentTable;
+    return this.contentTable;
   }
 }

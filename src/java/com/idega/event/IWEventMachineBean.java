@@ -108,8 +108,8 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
 
 
 
-    if(!_stateMap.isEmpty()){
-      Set set = _stateMap.keySet();
+    if(!this._stateMap.isEmpty()){
+      Set set = this._stateMap.keySet();
       Iterator iter = set.iterator();
       int counter = 1;
       while (iter.hasNext()) {
@@ -120,7 +120,7 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
         counter++;
       }
     }
-    return _stateMap;
+    return this._stateMap;
   }
 
 

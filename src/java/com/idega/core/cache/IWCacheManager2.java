@@ -1,5 +1,5 @@
 /*
- * $Id: IWCacheManager2.java,v 1.6 2006/03/16 21:19:18 tryggvil Exp $ Created on
+ * $Id: IWCacheManager2.java,v 1.7 2006/04/09 12:13:17 laddi Exp $ Created on
  * 6.1.2006 in project com.idega.core
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * TODO tryggvil Describe Type IWCacheManager2
  * </p>
- * Last modified: $Date: 2006/03/16 21:19:18 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class IWCacheManager2 {
 
@@ -48,15 +48,15 @@ public class IWCacheManager2 {
 	 * @return Returns the ehCacheManager.
 	 */
 	private CacheManager getInternalCacheManager() {
-		if (internalCacheManager == null) {
+		if (this.internalCacheManager == null) {
 			try {
-				internalCacheManager = CacheManager.create();
+				this.internalCacheManager = CacheManager.create();
 			}
 			catch (CacheException e) {
 				e.printStackTrace();
 			}
 		}
-		return internalCacheManager;
+		return this.internalCacheManager;
 	}
 	
 	private Cache getInternalCache(String cacheName){
@@ -77,10 +77,10 @@ public class IWCacheManager2 {
 	 * @return Returns the cacheMapsMap.
 	 */
 	private Map getCacheMapsMap() {
-		if(cacheMapsMap==null){
-			cacheMapsMap=new HashMap();
+		if(this.cacheMapsMap==null){
+			this.cacheMapsMap=new HashMap();
 		}
-		return cacheMapsMap;
+		return this.cacheMapsMap;
 	}
 
 	
@@ -124,8 +124,8 @@ public class IWCacheManager2 {
 	
 	public void reset(){
 		synchronized(this){
-			internalCacheManager=null;
-			cacheMapsMap=null;
+			this.internalCacheManager=null;
+			this.cacheMapsMap=null;
 		}
 	}
 	

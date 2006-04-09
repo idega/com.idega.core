@@ -116,8 +116,9 @@ public class TimerManager {
   private boolean debug = false;
 
   private void debug(String s) {
-    if (debug)
-      System.out.println("[" + Thread.currentThread().getName() + "] TimerManager: " + s);
+    if (this.debug) {
+			System.out.println("[" + Thread.currentThread().getName() + "] TimerManager: " + s);
+		}
   }
 
   /**
@@ -128,8 +129,8 @@ public class TimerManager {
     * @param threadName the name of the waiter thread
     */
   public TimerManager(boolean isDaemon, String threadName) {
-    queue = new TreeSet();
-    waiter = new TimerThread(this, isDaemon, threadName);
+    this.queue = new TreeSet();
+    this.waiter = new TimerThread(this, isDaemon, threadName);
    }
 
   /**
@@ -304,9 +305,9 @@ public class TimerManager {
     */
    public synchronized void addTimer(TimerEntry entry) throws PastDateException {
      debug("Add a new timer entry : " + entry);
-     if (queue.add(entry)) {
+     if (this.queue.add(entry)) {
        debug("This new timer is the top one, update the waiter thread");
-       waiter.update(((TimerEntry)queue.first()).timerTime);
+       this.waiter.update(((TimerEntry)this.queue.first()).timerTime);
 //         waiter.update(((TimerEntry)queue.getTop()).timerTime);
      }
   }
@@ -320,15 +321,15 @@ public class TimerManager {
     * <code>false</code> otherwise.
     */
   public synchronized boolean removeTimer(TimerEntry entry) {
-    if (!queue.contains(entry)) {
+    if (!this.queue.contains(entry)) {
       return false;
     } // if
 
     // remove the item from the queue
-    if (queue.remove(entry)) {
+    if (this.queue.remove(entry)) {
       // do not update the waiter if there are no more items in the queue
-      if (queue.size() > 0) {
-        waiter.update(( (TimerEntry) queue.first()).timerTime);
+      if (this.queue.size() > 0) {
+        this.waiter.update(( (TimerEntry) this.queue.first()).timerTime);
       } // if
       //        waiter.update(((TimerEntry)queue.getTop()).timerTime);
     } // if
@@ -341,11 +342,11 @@ public class TimerManager {
     * be fired.
     */
   public synchronized void removeAllTimers() {
-  	if(waiter!=null){
-	    waiter.stop();
-	    waiter = null;
+  	if(this.waiter!=null){
+	    this.waiter.stop();
+	    this.waiter = null;
   	}
-    queue.clear();
+    this.queue.clear();
   }
 
   /**
@@ -355,7 +356,7 @@ public class TimerManager {
     @return boolean whether TimerEntry is contained within the manager
     */
   public synchronized boolean containsTimer(TimerEntry timerEntry) {
-    return queue.contains(timerEntry);
+    return this.queue.contains(timerEntry);
   } // containsTimer()
 
   /**
@@ -364,7 +365,7 @@ public class TimerManager {
   public synchronized List /* TimerEntry */ getAllTimers() {
     final LinkedList result = new LinkedList();
 
-    Iterator iterator = queue.iterator();
+    Iterator iterator = this.queue.iterator();
     while (iterator.hasNext()) {
       result.add(iterator.next());
     } // while
@@ -381,13 +382,13 @@ public class TimerManager {
     debug("I receive an timer notification");
 
     // if the queue is empty, there's nothing to do
-    if (queue.isEmpty()) {
+    if (this.queue.isEmpty()) {
       return;
     } // if
 
     // Removes this timer and notifies the listener IF they previous run is finished ( use entry.isDone() )
-    TimerEntry entry = (TimerEntry) queue.first();
-    queue.remove(entry);
+    TimerEntry entry = (TimerEntry) this.queue.first();
+    this.queue.remove(entry);
     if(entry.canRun()){
 	    try {
 	      entry.listener.handleTimer(entry);
@@ -400,22 +401,22 @@ public class TimerManager {
     // Reactivates the timer if it is repetitive
     if (entry.isRepetitive) {
       entry.updateTimerTime();
-      queue.add(entry);
+      this.queue.add(entry);
     }
 
     // Notifies the TimerThread thread for the next timer
-    if (queue.isEmpty()) {
+    if (this.queue.isEmpty()) {
       debug("There is no more timer to manage");
     }
     else {
-      long timerTime = ((TimerEntry)queue.first()).timerTime;
+      long timerTime = ((TimerEntry)this.queue.first()).timerTime;
       if (timerTime - System.currentTimeMillis() < 1000) {
         debug("The next timer is very close, I notify the listeners now");
         notifyListeners();
       }
       else {
-        debug("I update the waiter for " + queue.first());
-        waiter.restart(timerTime);
+        debug("I update the waiter for " + this.queue.first());
+        this.waiter.restart(timerTime);
       }
     } // else
   } // notifyListeners()
@@ -424,7 +425,8 @@ public class TimerManager {
     * Stops the waiter thread before ending.
     */
   public void finalize() {
-    if (waiter != null)
-      waiter.stop();
+    if (this.waiter != null) {
+			this.waiter.stop();
+		}
   }
 }

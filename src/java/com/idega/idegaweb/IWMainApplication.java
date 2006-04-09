@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.167 2006/04/04 11:53:02 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.168 2006/04/09 12:13:14 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -89,10 +89,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/04/04 11:53:02 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.167 $
+ * @version $Revision: 1.168 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -273,14 +273,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * @return
      */
     public ApplicationProductInfo getProductInfo(){
-    		if(applicationProductInfo==null){
-    			applicationProductInfo = new ApplicationProductInfo(this);
+    		if(this.applicationProductInfo==null){
+    			this.applicationProductInfo = new ApplicationProductInfo(this);
     		}
-    		return applicationProductInfo;
+    		return this.applicationProductInfo;
     }
     
     private void load() {
-        lw = new LogWriter(this.getApplicationRealPath(), LogWriter.INFO);
+        this.lw = new LogWriter(this.getApplicationRealPath(), LogWriter.INFO);
         this.setPropertiesRealPath();
         this.setBundlesRealPath();
         IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
@@ -296,7 +296,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 */
 	void regData() {
 		try{
-			reg(defKey,getIWApplicationContext().getDomain().getName(),getProductInfo().getName());
+			reg(this.defKey,getIWApplicationContext().getDomain().getName(),getProductInfo().getName());
 		}
 		catch(Exception e){}
 	}
@@ -316,8 +316,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * </p>
 	 */
 	private void loadBundlesFromJars() {
-		if(loadBundlesFromJars){
-			IWModuleLoader loader = new IWModuleLoader(this,application);
+		if(this.loadBundlesFromJars){
+			IWModuleLoader loader = new IWModuleLoader(this,this.application);
 			loader.loadBundlesFromJars();
 		}
 	}
@@ -327,10 +327,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * Key is a string (bundle identifier) and value is a IWBundle instance
      */
     protected Map getLoadedBundles() {
-    	if(loadedBundles==null) {
-    		 loadedBundles = new HashMap();
+    	if(this.loadedBundles==null) {
+    		 this.loadedBundles = new HashMap();
     	}
-    	return loadedBundles;
+    	return this.loadedBundles;
     }
     
     /*
@@ -512,23 +512,23 @@ public class IWMainApplication	extends Application  implements MutableClass {
     //}
 
     public int getMajorVersion() {
-        return application.getMajorVersion();
+        return this.application.getMajorVersion();
     }
 
     public int getMinorVersion() {
-        return application.getMinorVersion();
+        return this.application.getMinorVersion();
     }
 
     public String getMimeType(String p0) {
-        return application.getMimeType(p0);
+        return this.application.getMimeType(p0);
     }
 
     public URL getResource(String p0) throws MalformedURLException {
-        return application.getResource(p0);
+        return this.application.getResource(p0);
     }
 
     public InputStream getResourceAsStream(String p0) {
-        return application.getResourceAsStream(p0);
+        return this.application.getResourceAsStream(p0);
     }
 
     //public RequestDispatcher getRequestDispatcher(String p0){
@@ -540,27 +540,27 @@ public class IWMainApplication	extends Application  implements MutableClass {
     //}
 
     public void log(String p0) {
-        application.log(p0);
+        this.application.log(p0);
     }
 
     public void log(String p0, Throwable p1) {
-        application.log(p0, p1);
+        this.application.log(p0, p1);
     }
 
     public String getServerInfo() {
-        return application.getServerInfo();
+        return this.application.getServerInfo();
     }
 
     public String getInitParameter(String p0) {
-        return application.getInitParameter(p0);
+        return this.application.getInitParameter(p0);
     }
 
     public Enumeration getInitParameterNames() {
-        return application.getInitParameterNames();
+        return this.application.getInitParameterNames();
     }
 
     public Object getAttribute(String parameterName) {
-        return application.getAttribute(parameterName);
+        return this.application.getAttribute(parameterName);
     }
     
     public Object getAttribute(String parameterName, Object defaultObjectToReturnIfValueIsNull){
@@ -572,15 +572,15 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
     
     public Enumeration getAttributeNames() {
-        return application.getAttributeNames();
+        return this.application.getAttributeNames();
     }
 
     public void setAttribute(String parameterName, Object objectToStore) {
-        application.setAttribute(parameterName, objectToStore);
+        this.application.setAttribute(parameterName, objectToStore);
     }
 
     public void removeAttribute(String parameterName) {
-        application.removeAttribute(parameterName);
+        this.application.removeAttribute(parameterName);
     }
 
     /**
@@ -613,19 +613,19 @@ public class IWMainApplication	extends Application  implements MutableClass {
     
     
     public String getDefaultDarkInterfaceColor() {
-        return defaultDarkInterfaceColor;
+        return this.defaultDarkInterfaceColor;
     }
 
     public void setDefaultDarkInterfaceColor(String color) {
-        defaultDarkInterfaceColor = color;
+        this.defaultDarkInterfaceColor = color;
     }
 
     public String getDefaultLightInterfaceColor() {
-        return defaultLightInterfaceColor;
+        return this.defaultLightInterfaceColor;
     }
 
     public void setDefaultLightInterfaceColor(String color) {
-        defaultLightInterfaceColor = color;
+        this.defaultLightInterfaceColor = color;
     }
 
     /*
@@ -638,17 +638,17 @@ public class IWMainApplication	extends Application  implements MutableClass {
      */
 
     public IWMainApplicationSettings getSettings() {
-        IWMainApplicationSettings settings = (IWMainApplicationSettings) application
+        IWMainApplicationSettings settings = (IWMainApplicationSettings) this.application
                 .getAttribute(SETTINGS_STORAGE_PARAMETER);
         return settings;
     }
 
     public IWSystemProperties getSystemProperties() {
-        IWSystemProperties settings = (IWSystemProperties) application
-                .getAttribute(SYSTEM_PROPERTIES_STORAGE_PARAMETER);
+        IWSystemProperties settings = (IWSystemProperties) this.application
+                .getAttribute(this.SYSTEM_PROPERTIES_STORAGE_PARAMETER);
         if (settings == null) {
             settings = new IWSystemProperties(this);
-            setAttribute(SYSTEM_PROPERTIES_STORAGE_PARAMETER, settings);
+            setAttribute(this.SYSTEM_PROPERTIES_STORAGE_PARAMETER, settings);
         }
         return settings;
     }
@@ -662,14 +662,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
      */
 
     public LogWriter getLogWriter() {
-        return lw;
+        return this.lw;
     }
     
     public synchronized void unloadInstanceAndClass() {
-        if (!alreadyUnloaded) {
+        if (!this.alreadyUnloaded) {
         	unloadInstance();
         	IWMainApplication.unload();
-        	alreadyUnloaded = true;
+        	this.alreadyUnloaded = true;
         }
     }
     
@@ -685,8 +685,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
             IWBundle bundle = (IWBundle) getLoadedBundles().get(key);
             bundle.unload();
         }
-        loadedBundles=null;
-        bundlesFile=null;
+        this.loadedBundles=null;
+        this.bundlesFile=null;
         
         // see comment above!
         if(cacheManager!=null){
@@ -694,21 +694,21 @@ public class IWMainApplication	extends Application  implements MutableClass {
         }
         cacheManager=null;
         
-        windowClassesStaticInstances=null;
+        this.windowClassesStaticInstances=null;
         
         shutdownApplicationServices();
         SingletonRepository.stop();
         
-        application.removeAttribute(APPLICATION_BEAN_ID);
+        this.application.removeAttribute(APPLICATION_BEAN_ID);
 
         removeAllApplicationAttributes();
         
-        application=null;
+        this.application=null;
     }
     
     protected void removeAllApplicationAttributes(){
         //Temp: removing all application attributes:
-        Enumeration enumeration = application.getAttributeNames();
+        Enumeration enumeration = this.application.getAttributeNames();
         List attributes = new ArrayList();
         while (enumeration.hasMoreElements()) {
 			String applicationKey = (String) enumeration.nextElement();
@@ -717,7 +717,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         }
         for (Iterator iter = attributes.iterator(); iter.hasNext();) {
 			String applicationKey = (String) iter.next();
-			application.removeAttribute(applicationKey);
+			this.application.removeAttribute(applicationKey);
 		}
     }
 
@@ -727,7 +727,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         getSystemProperties().store();
         storeCryptoProperties();
         try {
-            getBundlesFile().store(new FileOutputStream(bundlesFileFile), null);
+            getBundlesFile().store(new FileOutputStream(this.bundlesFileFile), null);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -735,17 +735,17 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     private Properties getBundlesFile() {
-    		if(bundlesFile==null){
-    	        bundlesFile = new Properties();
+    		if(this.bundlesFile==null){
+    	        this.bundlesFile = new Properties();
     	        try {
-    	            bundlesFileFile = FileUtil.getFileAndCreateIfNotExists(this
+    	            this.bundlesFileFile = FileUtil.getFileAndCreateIfNotExists(this
     	                    .getPropertiesRealPath(), bundlesFileName);
-    	            bundlesFile.load(new FileInputStream(bundlesFileFile));
+    	            this.bundlesFile.load(new FileInputStream(this.bundlesFileFile));
     	        } catch (Exception e) {
     	            e.printStackTrace();
     	        }
     		}
-        return bundlesFile;
+        return this.bundlesFile;
     }
 
     
@@ -755,7 +755,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * @return the path as a String
      */    
     public String getPropertiesRealPath() {
-        return propertiesRealPath;
+        return this.propertiesRealPath;
     }
 
     private void setPropertiesRealPath() {
@@ -784,7 +784,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * @return the path as a String
      */
     public String getBundlesRealPath() {
-        return bundlesRealPath;
+        return this.bundlesRealPath;
     }
 
     private void setBundlesRealPath() {
@@ -802,7 +802,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * </p>
      */
     public String getApplicationRealPath() {
-        String theRet = application.getRealPath(FileUtil.getFileSeparator());
+        String theRet = this.application.getRealPath(FileUtil.getFileSeparator());
         if(!theRet.endsWith(FileUtil.getFileSeparator())){
         		theRet +=FileUtil.getFileSeparator();
         }
@@ -844,9 +844,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private String getBundleVirtualPath(String bundleIdentifier) {
         //String sBundle = getBundlesFile().getProperty(bundleIdentifier);
         String sBundle = getInternalBundleVirtualPath(bundleIdentifier);
-        if (sBundle != null)
-                sBundle = TextSoap.findAndReplace(getBundlesFile().getProperty(
-                        bundleIdentifier), "\\", "/");
+        if (sBundle != null) {
+					sBundle = TextSoap.findAndReplace(getBundlesFile().getProperty(
+					        bundleIdentifier), "\\", "/");
+				}
 
         String path = "/" + getApplicationSpecialVirtualPath() + "/" + sBundle;
         return path;
@@ -1245,10 +1246,12 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public static String getHashCode(Class classObject) {
 
         if (isUsingCryptoProperties()) {
-            if (cryptoCodesPropertiesKeyedByClassName == null)
-                    cryptoCodesPropertiesKeyedByClassName = new Properties();
-            if (cryptoClassNamesPropertiesKeyedByCode == null)
-                    cryptoClassNamesPropertiesKeyedByCode = new Properties();
+            if (cryptoCodesPropertiesKeyedByClassName == null) {
+							cryptoCodesPropertiesKeyedByClassName = new Properties();
+						}
+            if (cryptoClassNamesPropertiesKeyedByCode == null) {
+							cryptoClassNamesPropertiesKeyedByCode = new Properties();
+						}
 
             final String className = classObject.getName();
 
@@ -1264,8 +1267,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
                 return createAndStoreCryptoName(className);
             }
 
-        } else
-            return classObject.getName();
+        }
+				else {
+					return classObject.getName();
+				}
     }
 
     private synchronized static String createAndStoreCryptoName(String className) {
@@ -1282,10 +1287,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	            int iCrypto = Integer.parseInt(crypto);
 	            while (cryptoClassNamesPropertiesKeyedByCode.containsKey(crypto)) {
 	                crypto = Integer.toString(++iCrypto);
-	                if (isDebugActive())
-	                        System.out
-	                                .println("Conflicting cryptos: creating new crypto number : "
-	                                        + iCrypto);
+	                if (isDebugActive()) {
+										System.out
+										        .println("Conflicting cryptos: creating new crypto number : "
+										                + iCrypto);
+									}
 	            }
             }
             catch(NumberFormatException nfe){}
@@ -1300,10 +1306,12 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
     public static String getHashCodedClassName(String crypto) {
         if (cryptoClassNamesPropertiesKeyedByCode != null && crypto != null
-                && cryptoClassNamesPropertiesKeyedByCode.containsKey(crypto))
-            return (String) cryptoClassNamesPropertiesKeyedByCode.get(crypto);
-        else
-            return crypto;
+                && cryptoClassNamesPropertiesKeyedByCode.containsKey(crypto)) {
+					return (String) cryptoClassNamesPropertiesKeyedByCode.get(crypto);
+				}
+				else {
+					return crypto;
+				}
     }
 
     
@@ -1325,10 +1333,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
     public IWApplicationContext getIWApplicationContext() {
         //IWContext iwc = new IWContext(
-        if (iwappContext == null) {
-            iwappContext = new IWApplicationContextImpl(this);
+        if (this.iwappContext == null) {
+            this.iwappContext = new IWApplicationContextImpl(this);
         }
-        return iwappContext;
+        return this.iwappContext;
     }
 
     void setContextURL(String contextURL) {
@@ -1681,28 +1689,33 @@ public class IWMainApplication	extends Application  implements MutableClass {
         } else {
             String uri = requestURI.substring(this.getApplicationContextURI()
                     .length(), requestURI.length());
-            return application.getRealPath(uri);
+            return this.application.getRealPath(uri);
         }
     }
 
     public String getCacheDirectoryURI() {
-        if (cacheDirURI == null) {
-            cacheDirURI = getTranslatedURIWithContext(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
+        if (this.cacheDirURI == null) {
+            this.cacheDirURI = getTranslatedURIWithContext(IWCacheManager.IW_ROOT_CACHE_DIRECTORY);
         }
-        return cacheDirURI;
+        return this.cacheDirURI;
     }
 
     public void addApplicationEventListener(Class eventListenerClass) {
         List eventListeners = (List) getAttribute(ApplicationEventListenersParameter);
-        if (eventListeners == null) eventListeners = new ArrayList();
-        if (!eventListeners.contains(eventListenerClass.getName()))
-                eventListeners.add(eventListenerClass.getName());
+        if (eventListeners == null) {
+					eventListeners = new ArrayList();
+				}
+        if (!eventListeners.contains(eventListenerClass.getName())) {
+					eventListeners.add(eventListenerClass.getName());
+				}
         setAttribute(ApplicationEventListenersParameter, eventListeners);
     }
 
     public List getApplicationEventListeners() {
         List eventListeners = (List) getAttribute(ApplicationEventListenersParameter);
-        if (eventListeners == null) eventListeners = new ArrayList();
+        if (eventListeners == null) {
+					eventListeners = new ArrayList();
+				}
         return eventListeners;
     }
     /**
@@ -1757,9 +1770,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
      */
     public Map getStaticWindowInstances(){
     		if(this.windowClassesStaticInstances==null){
-    			windowClassesStaticInstances=new WeakHashMap();
+    			this.windowClassesStaticInstances=new WeakHashMap();
     		}
-    		return windowClassesStaticInstances;
+    		return this.windowClassesStaticInstances;
     }
 
     /**
@@ -1770,15 +1783,15 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		//This method was moved from IWContext but moved here because of static references
 		//Reflection workaround:
 		try{
-			if(builderLogicInstance==null){
+			if(this.builderLogicInstance==null){
 				MethodInvoker invoker = MethodInvoker.getInstance();
 				MethodFinder finder = MethodFinder.getInstance();
 				Class builderLogicClass = RefactorClassRegistry.forName("com.idega.builder.business.BuilderLogic");
-				builderLogicInstance = invoker.invokeStaticMethodWithNoParameters(builderLogicClass,"getInstance");
-				methodIsBuilderApplicationRunning = finder.getMethodWithNameAndOneParameter(builderLogicClass,"isBuilderApplicationRunning",IWUserContext.class);
+				this.builderLogicInstance = invoker.invokeStaticMethodWithNoParameters(builderLogicClass,"getInstance");
+				this.methodIsBuilderApplicationRunning = finder.getMethodWithNameAndOneParameter(builderLogicClass,"isBuilderApplicationRunning",IWUserContext.class);
 			}
 			Object[] args = {iwuc};
-			return ((Boolean) methodIsBuilderApplicationRunning.invoke(builderLogicInstance,args)).booleanValue();
+			return ((Boolean) this.methodIsBuilderApplicationRunning.invoke(this.builderLogicInstance,args)).booleanValue();
 		}
 		catch(Throwable e){
 			e.printStackTrace();
@@ -1789,7 +1802,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	}
 
 	protected Application getRealJSFApplication(){
-		return realJSFApplication;
+		return this.realJSFApplication;
 	}
 	protected void setRealJSFApplication(Application jsfApplication){
 		this.realJSFApplication=jsfApplication;
@@ -1817,10 +1830,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 */
 	public Locale getDefaultLocale() {
 		Locale locale = getRealJSFApplication().getDefaultLocale();
-		if(!hasSetLocaleOnFacesApplication){
+		if(!this.hasSetLocaleOnFacesApplication){
 			locale = getSettings().getDefaultLocale();
 			setDefaultLocale(locale);
-			hasSetLocaleOnFacesApplication=true;
+			this.hasSetLocaleOnFacesApplication=true;
 		}
 		return locale;
 	}
@@ -2154,7 +2167,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * This is set to true when no db.properties is found.
 	 */
 	public boolean isInDatabaseLessMode() {
-		return inDatabaseLessMode;
+		return this.inDatabaseLessMode;
 	}
 	public void setInDatabaseLessMode(boolean inDatabaseLessMode) {
 		this.inDatabaseLessMode = inDatabaseLessMode;
@@ -2165,7 +2178,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * This is set to true when no db.properties and installation.properties is found.
 	 */
 	public boolean isInSetupMode() {
-		return inSetupMode;
+		return this.inSetupMode;
 	}
 	public void setInSetupMode(boolean inSetupMode) {
 		this.inSetupMode = inSetupMode;

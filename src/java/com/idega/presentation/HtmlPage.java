@@ -134,7 +134,7 @@ public class HtmlPage extends Page {
 	
 	
 	public UIComponent getRegion(String regionKey){
-		if(regionAsFacet){
+		if(this.regionAsFacet){
 			Object o = getFacets().get(regionKey);
 			UIComponent region = (UIComponent) o;
 			return region;
@@ -153,7 +153,7 @@ public class HtmlPage extends Page {
 	}
 	
 	public void setRegion(String regionKey,UIComponent region){
-		if(regionAsFacet){
+		if(this.regionAsFacet){
 			/*Object previous = */getFacets().get(regionKey);
 			if(regionKey!=null){
 				getFacets().put(regionKey,region);
@@ -191,10 +191,10 @@ public class HtmlPage extends Page {
 	 * @return
 	 */
 	private Map getRegionIdsMap() {
-		if (regionMap==null){
-			regionMap=new HashMap();
+		if (this.regionMap==null){
+			this.regionMap=new HashMap();
 		}
-		return regionMap;
+		return this.regionMap;
 	}
 
 	/**
@@ -431,8 +431,8 @@ public class HtmlPage extends Page {
 		Object values[] = (Object[])state;
 		super.restoreState(ctx, values[0]);
 		setHtml((String)values[1]);
-		regionMap = (Map)values[2];
-		regionAsFacet = ((Boolean)values[3]).booleanValue();
+		this.regionMap = (Map)values[2];
+		this.regionAsFacet = ((Boolean)values[3]).booleanValue();
 		//setResourceName((String)values[2]);
 	}
 
@@ -440,14 +440,14 @@ public class HtmlPage extends Page {
 	 * @return
 	 */
 	public String getHtml() {
-		return html;
+		return this.html;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setHtml(String string) {
-		html = string;
+		this.html = string;
 		findOutRegions();
 	}
 
@@ -469,8 +469,8 @@ public class HtmlPage extends Page {
 	
 	public Object clone(IWUserContext iwc, boolean askForPermission){
 		HtmlPage newPage = (HtmlPage) super.clone(iwc,askForPermission);
-		if(regionMap!=null){
-			newPage.regionMap=(Map)((HashMap) regionMap).clone();
+		if(this.regionMap!=null){
+			newPage.regionMap=(Map)((HashMap) this.regionMap).clone();
 		}
 		return newPage;
 	}
@@ -495,7 +495,7 @@ public class HtmlPage extends Page {
 	 * @return Returns the regionAsFacet.
 	 */
 	protected boolean isRegionAsFacet() {
-		return regionAsFacet;
+		return this.regionAsFacet;
 	}
 
 	/**
@@ -509,8 +509,8 @@ public class HtmlPage extends Page {
 	
 	public Map getFacets(){
 		if(this.facetMap==null){
-			facetMap = new HtmlPageRegionFacetMap(this);
+			this.facetMap = new HtmlPageRegionFacetMap(this);
 		}
-		return facetMap;
+		return this.facetMap;
 	}
 }

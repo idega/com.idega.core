@@ -1,5 +1,5 @@
 /*
- * $Id: HelpTag.java,v 1.1 2005/06/23 18:16:20 gummi Exp $
+ * $Id: HelpTag.java,v 1.2 2006/04/09 12:13:20 laddi Exp $
  * Created on 23.6.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import org.apache.myfaces.taglib.UIComponentTagBase;
 
 /**
  * 
- *  Last modified: $Date: 2005/06/23 18:16:20 $ by $Author: gummi $
+ *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class HelpTag extends UIComponentTagBase {
 
@@ -54,49 +54,49 @@ public class HelpTag extends UIComponentTagBase {
 		super.setProperties(component);
 		if (component != null) {
 			Help help = ((Help)component);
-			if(helpTextBundle!=null){
-				if(isValueReference(helpTextBundle)){
-					ValueBinding vb = getFacesContext().getApplication().createValueBinding(helpTextBundle);
+			if(this.helpTextBundle!=null){
+				if(isValueReference(this.helpTextBundle)){
+					ValueBinding vb = getFacesContext().getApplication().createValueBinding(this.helpTextBundle);
 					help.setValueBinding("helpTextBundle", vb);
 				} else {
-					help.setHelpTextBundle(helpTextBundle);
+					help.setHelpTextBundle(this.helpTextBundle);
 				}
 			}
 			
-			if(helpTextKey!=null){
-				if(isValueReference(helpTextKey)){
-					ValueBinding vb = getFacesContext().getApplication().createValueBinding(helpTextKey);
+			if(this.helpTextKey!=null){
+				if(isValueReference(this.helpTextKey)){
+					ValueBinding vb = getFacesContext().getApplication().createValueBinding(this.helpTextKey);
 					help.setValueBinding("helpTextKey", vb);
 				} else {
-					help.setHelpTextKey(helpTextKey);
+					help.setHelpTextKey(this.helpTextKey);
 				}
 			}
 			
-			if(image!=null){
-				if(isValueReference(image)){
-					ValueBinding vb = getFacesContext().getApplication().createValueBinding(image);
+			if(this.image!=null){
+				if(isValueReference(this.image)){
+					ValueBinding vb = getFacesContext().getApplication().createValueBinding(this.image);
 					help.setValueBinding("image", vb);
 				} else {
-					help.setImage(image);
+					help.setImage(this.image);
 				}
 			}
 		}
 	}
 	
 	public String getHelpTextBundle() {
-		return helpTextBundle;
+		return this.helpTextBundle;
 	}
 	public void setHelpTextBundle(String helpTextBundle) {
 		this.helpTextBundle = helpTextBundle;
 	}
 	public String getHelpTextKey() {
-		return helpTextKey;
+		return this.helpTextKey;
 	}
 	public void setHelpTextKey(String helpTextKey) {
 		this.helpTextKey = helpTextKey;
 	}
 	public String getImage() {
-		return image;
+		return this.image;
 	}
 	public void setImage(String image) {
 		this.image = image;

@@ -256,9 +256,12 @@ public void setTARGETCACHE(boolean value){
 
 public void setToOpenInQuicktimePlayer(boolean value){
 
-  if( value ) setTarget("QUICKTIMEPLAYER");
-
-  else setTarget("");
+  if( value ) {
+		setTarget("QUICKTIMEPLAYER");
+	}
+	else {
+		setTarget("");
+	}
 
 }
 

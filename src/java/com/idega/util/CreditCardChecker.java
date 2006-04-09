@@ -15,8 +15,9 @@ package com.idega.util;
 public class CreditCardChecker {
 
 	public static boolean isValid(String cardnumber) throws NumberFormatException {
-		if ((cardnumber == null) || (cardnumber.length() != 16))
+		if ((cardnumber == null) || (cardnumber.length() != 16)) {
 			return false;
+		}
 
 		int sum = 0;
 		int multiplier = 1;
@@ -35,20 +36,26 @@ public class CreditCardChecker {
 				return false;
 			}
 			
-			if (numberProduct >= 10)
+			if (numberProduct >= 10) {
 				sum += (numberProduct % 10) + 1;
-			else
+			}
+			else {
 				sum += numberProduct;
+			}
 			
-			if (multiplier == 1)
+			if (multiplier == 1) {
 				multiplier++;
-			else
+			}
+			else {
 				multiplier--;
+			}
 		}
 
-		if ((sum % 10) == 0)
+		if ((sum % 10) == 0) {
 			return true;
-		else
+		}
+		else {
 			return false;
+		}
 	}
 }

@@ -51,7 +51,7 @@ public class TreeViewer extends AbstractTreeViewer {
 
 	public TreeViewer() {
 		super();
-		folderAndFileIcons = new Image[3];
+		this.folderAndFileIcons = new Image[3];
 		setColumns(2);
 		setTreeColumnWidth(1, "16");
 		setWrap(false);
@@ -65,13 +65,13 @@ public class TreeViewer extends AbstractTreeViewer {
 
 	protected void updateIconDimensions() {
 		super.updateIconDimensions();
-		for (int i = 0; i < folderAndFileIcons.length; i++) {
-			Image tmp = folderAndFileIcons[i];
+		for (int i = 0; i < this.folderAndFileIcons.length; i++) {
+			Image tmp = this.folderAndFileIcons[i];
 			if (tmp != null) {
 				//tmp.setWidth(iconWidth);
-				tmp.setHeight(iconHeight);
+				tmp.setHeight(this.iconHeight);
 				//tmp.setAlignment("top");
-				folderAndFileIcons[i] = tmp;
+				this.folderAndFileIcons[i] = tmp;
 			}
 		}
 	}
@@ -80,9 +80,9 @@ public class TreeViewer extends AbstractTreeViewer {
 		super.initIcons(iwc);
 
 		IWBundle bundle = getBundle(iwc);
-		for (int i = 0; i < folderAndFileIcons.length; i++) {
-			if (folderAndFileIcons[i] == null) {
-				folderAndFileIcons[i] = bundle.getImage(TREEVIEW_PREFIX + getUI() + folderAndFileIconNames[i]);
+		for (int i = 0; i < this.folderAndFileIcons.length; i++) {
+			if (this.folderAndFileIcons[i] == null) {
+				this.folderAndFileIcons[i] = bundle.getImage(TREEVIEW_PREFIX + getUI() + this.folderAndFileIconNames[i]);
 			}
 		}
 
@@ -112,9 +112,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 	
 	public boolean getShortenedNodeName(String nodeName){
-		if (_maxNodeNameLength > 0) {
-			if (nodeName.length() > _maxNodeNameLength) {
-				nodeName = nodeName.substring(0,_maxNodeNameLength-3) + "...";
+		if (this._maxNodeNameLength > 0) {
+			if (nodeName.length() > this._maxNodeNameLength) {
+				nodeName = nodeName.substring(0,this._maxNodeNameLength-3) + "...";
 				return true;
 			} 
 		}
@@ -130,7 +130,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			nodeName = node.getNodeName(iwc.getCurrentLocale(),iwc);
 			
 		titleName = nodeName;
-		if(!getShortenedNodeName(nodeName))
+		if(!getShortenedNodeName(nodeName)) {
 			titleName = null;
 		/*	
 		if (_maxNodeNameLength > 0) {
@@ -140,18 +140,20 @@ public class TreeViewer extends AbstractTreeViewer {
 			} 
 		}
 		*/
+		}
 		
 		Link l = getLinkPrototypeClone(nodeName);
-		if (titleName != null)
+		if (titleName != null) {
 			l.setMarkupAttribute("title",titleName);
+		}
 
-		if (onNodeClickEvent != null) {
+		if (this.onNodeClickEvent != null) {
 			BuilderService bservice;
 			// Currently a bit of a crap hack
 			try
 			{
 				bservice = getBuilderService(iwc);
-				l.setOnClick(onNodeClickEvent+"('"+bservice.getPageURI(node.getNodeID())+"');return false;");
+				l.setOnClick(this.onNodeClickEvent+"('"+bservice.getPageURI(node.getNodeID())+"');return false;");
 			}
 			catch (RemoteException e)
 			{
@@ -160,7 +162,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			}
 		}
 		
-		if (_usesOnClick) {
+		if (this._usesOnClick) {
 			l.setURL("#");
 			if (fromEditor){
 				BuilderService bservice;
@@ -179,8 +181,8 @@ public class TreeViewer extends AbstractTreeViewer {
 				l.setOnClick(ONCLICK_FUNCTION_NAME + "('" + nodeName + "','" + node.getNodeID() + "')");
 			}
 		}
-		else if (nodeActionPrm != null) {
-			l.addParameter(nodeActionPrm, node.getNodeID());
+		else if (this.nodeActionPrm != null) {
+			l.addParameter(this.nodeActionPrm, node.getNodeID());
 		}
 		setLinkToMaintainOpenAndClosedNodes(l);
 		return l;
@@ -192,26 +194,26 @@ public class TreeViewer extends AbstractTreeViewer {
 				if (isRootNode && !showRootNodeTreeIcons()) {
 					//Link l = new Link();
 					Link l = getLinkOpenClosePrototype();
-					l.setImage((Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN].clone());
+					l.setImage((Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN].clone());
 					if (!nodesOpen) {
 						setLinkToOpenOrCloseNode(l, node, nodesOpen);
 					}
 					return l;
 				}
 				else {
-					return (Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN].clone();
+					return (Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN].clone();
 				}
 			}
 			else {
 				if (isRootNode && !showRootNodeTreeIcons()) {
 					//Link l = new Link();
 					Link l = getLinkOpenClosePrototype();
-					l.setImage((Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED].clone());
+					l.setImage((Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED].clone());
 					setLinkToOpenOrCloseNode(l, node, nodesOpen);
 					return l;
 				}
 				else {
-					return (Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED].clone();
+					return (Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED].clone();
 				}
 			}
 		}
@@ -219,12 +221,12 @@ public class TreeViewer extends AbstractTreeViewer {
 			if (isRootNode && !showRootNodeTreeIcons()) {
 				//Link l = new Link();
 				Link l = getLinkOpenClosePrototype();
-				l.setImage((Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE].clone());
+				l.setImage((Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE].clone());
 				setLinkToOpenOrCloseNode(l, node, nodesOpen);
 				return l;
 			}
 			else {
-				return (Image) folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE].clone();
+				return (Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE].clone();
 			}
 		}
 	}
@@ -238,15 +240,15 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	public void setNodeActionParameter(String prm) {
-		nodeActionPrm = prm;
+		this.nodeActionPrm = prm;
 	}
 
 	public void setTarget(String target) {
-		nodeNameTarget = target;
+		this.nodeNameTarget = target;
 	}
 
 	public void setTreeStyle(String style) {
-		_linkStyle = style;
+		this._linkStyle = style;
 	}
 
 	/** Note: Do not forget to set the desired parameter 
@@ -259,42 +261,42 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	// above comment added by Thomas
 	public void setLinkPrototype(Link link) {
-		_linkPrototype = link;
+		this._linkPrototype = link;
 	}
 	
 	private Link getLinkOpenClosePrototype() {
-		if (_linkOpenClosePrototype == null) {
-			_linkOpenClosePrototype = new Link();
+		if (this._linkOpenClosePrototype == null) {
+			this._linkOpenClosePrototype = new Link();
 		}
-		return _linkOpenClosePrototype;
+		return this._linkOpenClosePrototype;
 	}
 	
 	public void setLinkOpenClosePrototype(Link link) {
-			_linkOpenClosePrototype = link;
+			this._linkOpenClosePrototype = link;
 	}
 	
 	private Link getLinkPrototype() {
-		if (_linkPrototype == null) {
-			_linkPrototype = new Link();
+		if (this._linkPrototype == null) {
+			this._linkPrototype = new Link();
 		}
 
-		if (nodeNameTarget != null) {
-			_linkPrototype.setTarget(nodeNameTarget);
+		if (this.nodeNameTarget != null) {
+			this._linkPrototype.setTarget(this.nodeNameTarget);
 		}
 
-		if (_linkStyle != null) {
-			_linkPrototype.setFontStyle(_linkStyle);
+		if (this._linkStyle != null) {
+			this._linkPrototype.setFontStyle(this._linkStyle);
 		}
 
-		return _linkPrototype;
+		return this._linkPrototype;
 	}
 
 	public Layer getNoWrapLayer() {
-		if (_nowrapLayer == null) {
-			_nowrapLayer = new Layer();
-			_nowrapLayer.setNoWrap();
+		if (this._nowrapLayer == null) {
+			this._nowrapLayer = new Layer();
+			this._nowrapLayer.setNoWrap();
 		}
-		return _nowrapLayer;
+		return this._nowrapLayer;
 	}
 
 	private Link getLinkPrototypeClone(String text) {
@@ -308,7 +310,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	public void setToUseOnClick(String NodeNameParameterName, String NodeIDParameterName) {
-		_usesOnClick = true;
+		this._usesOnClick = true;
 		getAssociatedScript().addFunction(ONCLICK_FUNCTION_NAME, "function " + ONCLICK_FUNCTION_NAME + "(" + NodeNameParameterName + "," + NodeIDParameterName + "){ }");
 
 	}
@@ -322,11 +324,11 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 	
 	public void setMaxNodeNameLength(int length) {
-		_maxNodeNameLength = length;
+		this._maxNodeNameLength = length;
 	}
 	
 	public int getMaxNodeNameLength() {
-		return _maxNodeNameLength;
+		return this._maxNodeNameLength;
 	}
 	
 	public void setToMaintainParameter(String parameterName, IWContext iwc) {

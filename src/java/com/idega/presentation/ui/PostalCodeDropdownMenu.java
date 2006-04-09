@@ -35,14 +35,14 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 		super.main(iwc);
 		clearChildren();
 		//TODO extract the following code to a method in CountryDropDownMenu or CountryBMPBean
-		if (country == null) {
+		if (this.country == null) {
 		    try {
-				if( countryName!=null){
-				    country = getAddressBusiness(iwc).getCountryHome().findByCountryName(countryName);	
+				if( this.countryName!=null){
+				    this.country = getAddressBusiness(iwc).getCountryHome().findByCountryName(this.countryName);	
 				}
 				// we must ensure no external selected country is set
-				else if(country==null){
-				    country = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(iwc.getCurrentLocale().getCountry());	
+				else if(this.country==null){
+				    this.country = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(iwc.getCurrentLocale().getCountry());	
 				}
 			}
 			catch (RemoteException e) {
@@ -55,21 +55,25 @@ public class PostalCodeDropdownMenu extends DropdownMenu {
 				e.printStackTrace();
 			}
 		}
-		if( country!=null ){
-			if(showCountry){
-				addMenuElement(-1,country.getName());
+		if( this.country!=null ){
+			if(this.showCountry){
+				addMenuElement(-1,this.country.getName());
 			}
 			addMenuElement(-1,"");
-			Collection postals = getAddressBusiness(iwc).getPostalCodeHome().findAllByCountryIdOrderedByPostalCode(((Integer)country.getPrimaryKey()).intValue());
+			Collection postals = getAddressBusiness(iwc).getPostalCodeHome().findAllByCountryIdOrderedByPostalCode(((Integer)this.country.getPrimaryKey()).intValue());
 			Iterator iter = postals.iterator();
 			while (iter.hasNext()) {
 				PostalCode element = (PostalCode) iter.next();
 				int id = ((Integer)element.getPrimaryKey()).intValue();
 				String code = element.getPostalAddress();
-				if( code!=null ) addMenuElement(id,code);						
+				if( code!=null ) {
+					addMenuElement(id,code);
+				}						
 			}
 		}
-		else addMenuElement("No country selected");
+		else {
+			addMenuElement("No country selected");
+		}
 				
 	}
 	

@@ -57,14 +57,14 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 
 		setTabPlacement(tabPlacement);
 
-		pages = new Vector(1);
+		this.pages = new Vector(1);
 
 		setModel(new DefaultSingleSelectionModel());
 		getModel().addChangeListener(this.createChangeListener());
 		setUI(new BasicTabbedPaneUI());
 		this.currentPage = (GenericTabbedPaneUI.GenericTabPagePresentation) this.getUI().getTabPagePresentation();
 		this.addTabePage(this.currentPage);
-		justConstructed = true;
+		this.justConstructed = true;
 	}
 
 	public static IWTabbedPane getInstance(String key, IWContext iwc, int tabPlacement) {
@@ -83,7 +83,7 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 	}
 
 	public boolean justConstructed() {
-		return justConstructed;
+		return this.justConstructed;
 	}
 
 	public void justConstructed(boolean justConstructed) {
@@ -91,7 +91,7 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 	}
 
 	public String getAttributesString() {
-		return attributeString;
+		return this.attributeString;
 	}
 
 	public void setAttributeString(String attributeString) {
@@ -99,7 +99,7 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 	}
 
 	public void dispose(IWContext iwc) {
-		iwc.getSession().removeAttribute(attributeString);
+		iwc.getSession().removeAttribute(this.attributeString);
 		PresentationObject[] obs = this.getAddedTabs();
 
 		for (int i = 0; i < obs.length; i++) {
@@ -121,7 +121,7 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 	}
 
 	public IWTabbedPaneUI getUI() {
-		return ui;
+		return this.ui;
 	}
 
 	public void setUI(IWTabbedPaneUI ui) {
@@ -178,29 +178,29 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			if (listeners[i] == ChangeListener.class) {
 				// Lazily create the event:
-				if (changeEvent == null) {
-					changeEvent = new ChangeEvent(this);
+				if (this.changeEvent == null) {
+					this.changeEvent = new ChangeEvent(this);
 				}
-				((ChangeListener) listeners[i + 1]).stateChanged(changeEvent);
+				((ChangeListener) listeners[i + 1]).stateChanged(this.changeEvent);
 			}
 		}
 	}
 
 	public SingleSelectionModel getModel() {
-		return model;
+		return this.model;
 	}
 
 	public void setModel(SingleSelectionModel model) {
 		SingleSelectionModel oldModel = getModel();
 		if (oldModel != null) {
-			oldModel.removeChangeListener(changeListener);
-			changeListener = null;
+			oldModel.removeChangeListener(this.changeListener);
+			this.changeListener = null;
 		}
 
 		this.model = model;
 		if (model != null) {
-			changeListener = createChangeListener();
-			model.addChangeListener(changeListener);
+			this.changeListener = createChangeListener();
+			model.addChangeListener(this.changeListener);
 		}
 
 		firePropertyChange("model", oldModel, model);
@@ -214,7 +214,7 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 	}
 
 	public int getTabPlacement() {
-		return tabPlacement;
+		return this.tabPlacement;
 	}
 
 	public void setTabPlacement(int tabPlacement) {
@@ -237,14 +237,14 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 	}
 
 	public int getSelectedIndex() {
-		return model.getSelectedIndex();
+		return this.model.getSelectedIndex();
 	}
 
 	public void setSelectedIndex(int index) {
-		model.setSelectedIndex(index);
+		this.model.setSelectedIndex(index);
 
-		currentPage.empty();
-		currentPage.add(this.getComponentAt(this.getSelectedIndex()));
+		this.currentPage.empty();
+		this.currentPage.add(this.getComponentAt(this.getSelectedIndex()));
 
 		this.getUI().getTabPresentation().setSelectedIndex(this.getSelectedIndex());
 	}
@@ -273,12 +273,12 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 			removeTabAt(i);
 		}
 
-		pages.insertElementAt(new Page(this, title != null ? title : " --- ", moduleobject, iwc), index);
-		if (pages.size() == 1) {
+		this.pages.insertElementAt(new Page(this, title != null ? title : " --- ", moduleobject, iwc), index);
+		if (this.pages.size() == 1) {
 			setSelectedIndex(0);
 		}
 
-		this.getUI().getTabPresentation().add(((Page) pages.elementAt(index)).getTabLink(), index);
+		this.getUI().getTabPresentation().add(((Page) this.pages.elementAt(index)).getTabLink(), index);
 	}
 
 	public void removeTabAt(int index) {
@@ -292,7 +292,7 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 			setSelectedIndex(selected - 1);
 		}
 
-		pages.removeElementAt(index);
+		this.pages.removeElementAt(index);
 	}
 
 	public boolean remove(PresentationObject moduleobject) {
@@ -320,24 +320,24 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 			}
 		}
 
-		pages.removeAllElements();
+		this.pages.removeAllElements();
 	}
 
 	public int getTabCount() {
-		return pages.size();
+		return this.pages.size();
 	}
 
 	public PresentationObject[] getAddedTabs() {
-		PresentationObject obj[] = new PresentationObject[pages.size()];
-		for (int i = 0; i < pages.size(); i++) {
-			obj[i] = ((Page) pages.get(i)).content;
+		PresentationObject obj[] = new PresentationObject[this.pages.size()];
+		for (int i = 0; i < this.pages.size(); i++) {
+			obj[i] = ((Page) this.pages.get(i)).content;
 		}
 
 		return obj;
 	}
 
 	public int getTabRunCount() {
-		if (ui != null) {
+		if (this.ui != null) {
 			//            return ((IWTabbedPaneUI)ui).getTabRunCount(this);
 		}
 
@@ -346,17 +346,17 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 
 	// Getters for the Pages
 	public String getTitleAt(int index) {
-		return ((Page) pages.elementAt(index)).title;
+		return ((Page) this.pages.elementAt(index)).title;
 	}
 
 	public PresentationObject getComponentAt(int index) {
-		return ((Page) pages.elementAt(index)).content;
+		return ((Page) this.pages.elementAt(index)).content;
 	}
 
 	// Setters for the Pages
 	public void setTitleAt(int index, String title) {
-		String oldTitle = ((Page) pages.elementAt(index)).title;
-		((Page) pages.elementAt(index)).title = title;
+		String oldTitle = ((Page) this.pages.elementAt(index)).title;
+		((Page) this.pages.elementAt(index)).title = title;
 		if (title == null || oldTitle == null || !title.equals(oldTitle)) {
 
 		}
@@ -398,8 +398,8 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 		}
 
 		public void UpdateUI(IWTabbedPaneUI ui, IWContext iwc) {
-			tabLink = ui.getTabPresentation().getTabLink(this.content);
-			tabLink.addIWLinkListener(createLinkListener(), iwc);
+			this.tabLink = ui.getTabPresentation().getTabLink(this.content);
+			this.tabLink.addIWLinkListener(createLinkListener(), iwc);
 			this.needsUIUpdate(false);
 		}
 
@@ -408,7 +408,7 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 		}
 
 		public Link getTabLink() {
-			return tabLink;
+			return this.tabLink;
 		}
 
 		public PresentationObject getContent() {

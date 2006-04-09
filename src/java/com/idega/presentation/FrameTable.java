@@ -100,7 +100,7 @@ public class FrameTable extends Window{
 
       frame.setLocation(location);
       frame.setPresentationObject(obj);
-      frame.setNameProperty(frameNameCounter++);
+      frame.setNameProperty(this.frameNameCounter++);
       // super.add() but does not set Location = this.location;
       super.add(obj);
       /*try {
@@ -146,7 +146,7 @@ public class FrameTable extends Window{
 
       frame.setLocation(location);
       frame.setPresentationObject(obj);
-      frame.setNameProperty(frameNameCounter++);
+      frame.setNameProperty(this.frameNameCounter++);
 
       // super.add() but does not set Location = this.location;
       super.add(index,obj);
@@ -192,7 +192,7 @@ public class FrameTable extends Window{
 
       frame.setLocation(location);
       frame.setPresentationObject(obj);
-      frame.setNameProperty(frameNameCounter++);
+      frame.setNameProperty(this.frameNameCounter++);
 
       // super.addAtBeginning() but does not set Location = this.location;
 
@@ -232,7 +232,7 @@ public class FrameTable extends Window{
 //    this.getFramesPropertyMap(numberOfFrames).put(CLASS_PROPERTY,pageClass);
       Frame frame = new Frame();
       frame.setClassProperty(pageClass);
-      frame.setNameProperty(frameNameCounter++);
+      frame.setNameProperty(this.frameNameCounter++);
       this.add(frame);
   }
 
@@ -247,7 +247,7 @@ public class FrameTable extends Window{
 //    setFrameSource(numberOfFrames,url);
       Frame frame = new Frame();
       frame.setUrlProperty(url);
-      frame.setNameProperty(frameNameCounter++);
+      frame.setNameProperty(this.frameNameCounter++);
       this.add(frame);
   }
 
@@ -373,8 +373,8 @@ public class FrameTable extends Window{
         }
 
         //System.out.println("in _main()");
-        isInAWindow = isChildOfOtherPage();
-        if( isInAWindow ){
+        this.isInAWindow = isChildOfOtherPage();
+        if( this.isInAWindow ){
           this.getParentPage().setAddBody(false);
         }
 
@@ -486,7 +486,7 @@ public class FrameTable extends Window{
 
         StringBuffer buf = new StringBuffer();
         boolean isInFrame = isInFrame();
-        if( !isInAWindow && !isInFrame ){
+        if( !this.isInAWindow && !isInFrame ){
   		String characterEncoding = iwc.getApplicationSettings().getCharacterEncoding();
 		String markup = getMarkupLanguageForPage();
 		String docType = getDocType();
@@ -546,7 +546,7 @@ public class FrameTable extends Window{
     		
          buf.append("\n</frameset>\n");
 
-        if( !isInAWindow && !isInFrame ){
+        if( !this.isInAWindow && !isInFrame ){
           buf.append(getEndTag());
         }
         //System.out.println(buf.toString());
@@ -592,11 +592,11 @@ public class FrameTable extends Window{
     }
 
     public void setVertical(){
-      alignment=ALIGNMENT_VERTICAL;
+      this.alignment=ALIGNMENT_VERTICAL;
     }
 
     public void setHorizontal(){
-      alignment=ALIGNMENT_HORIZONTAL;
+      this.alignment=ALIGNMENT_HORIZONTAL;
     }
 
     /**
@@ -774,11 +774,11 @@ public class FrameTable extends Window{
     }
 
     public boolean isVertical(){
-      return (ALIGNMENT_VERTICAL==alignment);
+      return (ALIGNMENT_VERTICAL==this.alignment);
     }
 
     public boolean isHorizontal(){
-      return (ALIGNMENT_HORIZONTAL==alignment);
+      return (ALIGNMENT_HORIZONTAL==this.alignment);
     }
 
     public void setSpan(){

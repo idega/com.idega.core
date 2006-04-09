@@ -1,5 +1,5 @@
 /*
- * $Id: ParentGroupsRecursiveProcedure.java,v 1.2 2006/02/22 20:52:48 laddi Exp $
+ * $Id: ParentGroupsRecursiveProcedure.java,v 1.3 2006/04/09 12:13:19 laddi Exp $
  * Created on 1.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.ListUtil;
 
 /**
  * 
- *  Last modified: $Date: 2006/02/22 20:52:48 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">gummi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ParentGroupsRecursiveProcedure extends GenericProcedure {
 
@@ -91,7 +91,7 @@ public class ParentGroupsRecursiveProcedure extends GenericProcedure {
 	 */
 	protected Object executeFallBackProcedure(Object[] parameters) throws Exception {
 		//_usedFallBackProcedure=true;
-		return getParentGroupsRecursive(parameters[0],_groupTypes,_returnSpecifiedGroupTypes,new HashMap(),new HashMap()); //Using temporary local variables set in the method findParentGroupsRecursive and there again 
+		return getParentGroupsRecursive(parameters[0],this._groupTypes,this._returnSpecifiedGroupTypes,new HashMap(),new HashMap()); //Using temporary local variables set in the method findParentGroupsRecursive and there again 
 	}
 
 	/* (non-Javadoc)
@@ -148,8 +148,8 @@ public class ParentGroupsRecursiveProcedure extends GenericProcedure {
 	}
 	
 	public synchronized Collection findParentGroupsRecursive(Group gr, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
-		_groupTypes = groupTypes;
-		_returnSpecifiedGroupTypes = returnSpecifiedGroupTypes;
+		this._groupTypes = groupTypes;
+		this._returnSpecifiedGroupTypes = returnSpecifiedGroupTypes;
 		Collection c;
 		try {
 			c = (Collection) getResult(new Object[] {gr.getPrimaryKey()});
@@ -189,8 +189,8 @@ public class ParentGroupsRecursiveProcedure extends GenericProcedure {
 			returnSpecifiedGroupTypes = false;
 		}
 		
-		_groupTypes=null;
-		_returnSpecifiedGroupTypes=true;
+		this._groupTypes=null;
+		this._returnSpecifiedGroupTypes=true;
 		return (returnSpecifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
 		
 		
@@ -248,10 +248,12 @@ public class ParentGroupsRecursiveProcedure extends GenericProcedure {
 	 */
 	  private void putGroupsContaining(Group group, Map GroupsContained , String[] groupTypes, boolean returnGroupTypes, Map cachedParents, Map cachedGroups ) {
 	  	Collection pGroups = null;
-	  	if (cachedParents == null)
-	  		pGroups = group.getParentGroups();//TODO EIKI FINISH THIS groupTypes,returnGroupTypes);
-	  	else 
-	  		pGroups = group.getParentGroups(cachedParents, cachedGroups);
+	  	if (cachedParents == null) {
+				pGroups = group.getParentGroups();//TODO EIKI FINISH THIS groupTypes,returnGroupTypes);
+			}
+			else {
+				pGroups = group.getParentGroups(cachedParents, cachedGroups);
+			}
 			if (pGroups != null ){
 			  String key = "";
 			  Iterator iter = pGroups.iterator();

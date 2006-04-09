@@ -31,15 +31,15 @@ public class NavigationPulldownMenu extends Block {
 	public void main(IWContext iwc) throws Exception {
 		if (!iwc.isInEditMode()) {
 			BuilderService bservice = getBuilderService(iwc);
-			if (rootNode == -1) {
-				rootNode = bservice.getRootPageId();
+			if (this.rootNode == -1) {
+				this.rootNode = bservice.getRootPageId();
 			}
 			int currentUserId = -1;
 			try {
 				currentUserId = iwc.getCurrentUserId();
 			} catch (NotLoggedOnException nle) {
 			}
-			ICTreeNode node = bservice.getPageTree(rootNode, currentUserId);
+			ICTreeNode node = bservice.getPageTree(this.rootNode, currentUserId);
 			if (iwc.isIE()) {
 				getParentPage().setOnLoad("InitMenu()");
 				getParentPage().setMarkupAttribute("onClick", "HideMenu(menuBar)");
@@ -52,15 +52,17 @@ public class NavigationPulldownMenu extends Block {
 					iwc.getIWMainApplication().getBundle("com.idega.core").getResourcesVirtualPath()
 							+ "/navigation_menu/CascadeMenu.js");
 			Vector nodeVector = new Vector();
-			if (withRootAsHome && left) {
+			if (this.withRootAsHome && this.left) {
 				nodeVector.add(node);
-				withRootAsHome = false;
+				this.withRootAsHome = false;
 			}
 			Iterator iter = node.getChildrenIterator();
-			while (iter.hasNext())
+			while (iter.hasNext()) {
 				nodeVector.add(iter.next());
-			if (withRootAsHome && !left)
+			}
+			if (this.withRootAsHome && !this.left) {
 				nodeVector.add(node);
+			}
 			Table table = new Table();
 			table.setCellpaddingAndCellspacing(0);
 			add(table);
@@ -80,16 +82,16 @@ public class NavigationPulldownMenu extends Block {
 				subLayer.setMarkupAttribute("class", "Bar");
 				subLayer.setMarkupAttribute("title", n.getNodeName(iwc.getCurrentLocale()));
 				subLayer.setMarkupAttribute("cmd", bservice.getPageURI(n.getNodeID()));
-				if (rootLinks) {
+				if (this.rootLinks) {
 					Link link = new Link(n.getNodeName(iwc.getCurrentLocale()));
 					link.setPage(n.getNodeID());
-					link.setFontStyle(_fontStyle);
+					link.setFontStyle(this._fontStyle);
 					subLayer.add(link);
 				} else {
 					subLayer.add(n.getNodeName(iwc.getCurrentLocale()));
 				}
 				if (iwc.isIE()) {
-					if (n.getChildCount() > 0 && n.getNodeID() != rootNode) {
+					if (n.getChildCount() > 0 && n.getNodeID() != this.rootNode) {
 						subLayer.setMarkupAttribute("menu", "menu" + String.valueOf(n.getNodeID()));
 						addSubMenu(iwc, table, n);
 					}
@@ -125,26 +127,26 @@ public class NavigationPulldownMenu extends Block {
 	}
 
 	public void setRootNode(ICPage page) {
-		rootNode = page.getID();
+		this.rootNode = page.getID();
 	}
 
 	public void setRootNode(int rootId) {
-		rootNode = rootId;
+		this.rootNode = rootId;
 	}
 
 	public void setRootAsHome(boolean rootAsHome) {
-		withRootAsHome = rootAsHome;
+		this.withRootAsHome = rootAsHome;
 	}
 
 	public void setHomeAtLeft(boolean homeAtLeft) {
-		left = homeAtLeft;
+		this.left = homeAtLeft;
 	}
 
 	public void setFontStyle(String style) {
-		_fontStyle = style;
+		this._fontStyle = style;
 	}
 
 	public void setRootsAsLinks(boolean rootsAsLinks) {
-		rootLinks = rootsAsLinks;
+		this.rootLinks = rootsAsLinks;
 	}
 }

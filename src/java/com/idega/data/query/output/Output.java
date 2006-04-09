@@ -20,7 +20,7 @@ public class Output implements Flag{
     private boolean newLineComing;
 
     public String toString() {
-        return result.toString();
+        return this.result.toString();
     }
     
     public Output print(Outputable o){
@@ -28,32 +28,32 @@ public class Output implements Flag{
         Output out = new Output("");
         out.flag(this.isFlagged());
         o.write(out);
-        result.append(out.toString());
+        this.result.append(out.toString());
         return this;
     }
 
     
     public Output print(Object o) {
         writeNewLineIfNeeded();
-        result.append(o);
+        this.result.append(o);
         return this;
     }
 
     public Output print(char c) {
         writeNewLineIfNeeded();
-        result.append(c);
+        this.result.append(c);
         return this;
     }
 
     public Output println(Object o) {
         writeNewLineIfNeeded();
-        result.append(o);
-        newLineComing = true;
+        this.result.append(o);
+        this.newLineComing = true;
         return this;
     }
 
     public Output println() {
-        newLineComing = true;
+        this.newLineComing = true;
         return this;
     }
 
@@ -66,15 +66,15 @@ public class Output implements Flag{
     }
 
     private void writeNewLineIfNeeded() {
-        if (newLineComing) {
+        if (this.newLineComing) {
             //result.append('\n').append(currentIndent);
-        	   result.append(' ');//.append(currentIndent);
-            newLineComing = false;
+        	   this.result.append(' ');//.append(currentIndent);
+            this.newLineComing = false;
         }
     }
     
     public boolean isFlagged(){
-        return flag;
+        return this.flag;
     }
     public void flag(boolean flag){
         this.flag = flag;

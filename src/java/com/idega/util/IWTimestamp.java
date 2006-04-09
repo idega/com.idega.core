@@ -157,7 +157,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfDays	The number of days to add.
 	 */
 	public void addDays(int numberOfDays) {
-		calendar.add(Calendar.DAY_OF_MONTH, numberOfDays);
+		this.calendar.add(Calendar.DAY_OF_MONTH, numberOfDays);
 	}
 	
 	/**
@@ -173,7 +173,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfHours	The number of hours to add.
 	 */
 	public void addHours(int numberOfHours) {
-		calendar.add(Calendar.HOUR_OF_DAY, numberOfHours);
+		this.calendar.add(Calendar.HOUR_OF_DAY, numberOfHours);
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfMinutes	The number of minutes to add.
 	 */
 	public void addMinutes(int numberOfMinutes) {
-		calendar.add(Calendar.MINUTE, numberOfMinutes);
+		this.calendar.add(Calendar.MINUTE, numberOfMinutes);
 	}
 
 	/**
@@ -189,7 +189,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfMonths	The number of months to add.
 	 */
 	public void addMonths(int numberOfMonths) {
-		calendar.add(Calendar.MONTH, numberOfMonths);
+		this.calendar.add(Calendar.MONTH, numberOfMonths);
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfSeconds	The number of seconds to add.
 	 */
 	public void addSeconds(int numberOfSeconds) {
-		calendar.add(Calendar.SECOND, numberOfSeconds);
+		this.calendar.add(Calendar.SECOND, numberOfSeconds);
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param numberOfYears	The number of years to add.
 	 */
 	public void addYears(int numberOfYears) {
-		calendar.add(Calendar.YEAR, numberOfYears);
+		this.calendar.add(Calendar.YEAR, numberOfYears);
 	}
 
 ///////////////////////////////////////////////////
@@ -218,12 +218,15 @@ public class IWTimestamp implements Comparable,Cloneable {
 	public int compareTo(Object object) {
 	  IWTimestamp compareStamp = (IWTimestamp) object;
 	  
-	  if (isEarlierThan(compareStamp))
-	    return -1;
-	  else if (isLaterThan(compareStamp))
-	    return 1;
-	  else
-	    return 0;
+	  if (isEarlierThan(compareStamp)) {
+			return -1;
+		}
+		else if (isLaterThan(compareStamp)) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
 	}
 
 	/**
@@ -286,8 +289,9 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return boolean	True if this object is between the given objects, false otherwise.
 	 */
 	public boolean isBetween(IWTimestamp stampBefore, IWTimestamp stampAfter) {
-		if (this.isLaterThanOrEquals(stampBefore) && this.isEarlierThan(stampAfter))
+		if (this.isLaterThanOrEquals(stampBefore) && this.isEarlierThan(stampAfter)) {
 			return true;
+		}
 		return false;
 	}
 
@@ -296,8 +300,9 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return boolean
 	 */
 	public boolean isDate() {
-		if (isDate)
+		if (this.isDate) {
 			return true;
+		}
 		return false;
 	}
 
@@ -321,20 +326,26 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 */
 	public IWTimestamp isEarlier(IWTimestamp timestamp1, IWTimestamp timestamp2) {
 		if ( isDate() ) {
-			if (timestamp1.getYear() < timestamp2.getYear())
+			if (timestamp1.getYear() < timestamp2.getYear()) {
 				return timestamp1;
-			if (timestamp1.getMonth() < timestamp2.getMonth())
+			}
+			if (timestamp1.getMonth() < timestamp2.getMonth()) {
 				return timestamp1;
-			if (this.getDay() < timestamp2.getDay())
+			}
+			if (this.getDay() < timestamp2.getDay()) {
 				return timestamp1;
+			}
 		}
 		if ( isTime() ) {
-			if (timestamp1.getHour() < timestamp2.getHour())
+			if (timestamp1.getHour() < timestamp2.getHour()) {
 				return timestamp1;
-			if (timestamp1.getMinute() < timestamp2.getMinute())
+			}
+			if (timestamp1.getMinute() < timestamp2.getMinute()) {
 				return timestamp1;
-			if (timestamp1.getSecond() < timestamp2.getSecond())
+			}
+			if (timestamp1.getSecond() < timestamp2.getSecond()) {
 				return timestamp1;
+			}
 		}
 
 		return timestamp2;
@@ -359,33 +370,45 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 */
 	public boolean isEarlierThan(IWTimestamp compareStamp) {
 		if (!this.isTime()) {
-			if (this.getYear() < compareStamp.getYear())
+			if (this.getYear() < compareStamp.getYear()) {
 				return true;
-			if (this.getYear() > compareStamp.getYear())
+			}
+			if (this.getYear() > compareStamp.getYear()) {
 				return false;
-			if (this.getMonth() < compareStamp.getMonth())
+			}
+			if (this.getMonth() < compareStamp.getMonth()) {
 				return true;
-			if (this.getMonth() > compareStamp.getMonth())
+			}
+			if (this.getMonth() > compareStamp.getMonth()) {
 				return false;
-			if (this.getDay() < compareStamp.getDay())
+			}
+			if (this.getDay() < compareStamp.getDay()) {
 				return true;
-			if (this.getDay() > compareStamp.getDay())
+			}
+			if (this.getDay() > compareStamp.getDay()) {
 				return false;
+			}
 		}
 
 		if (!this.isDate()) {
-			if (this.getHour() < compareStamp.getHour())
+			if (this.getHour() < compareStamp.getHour()) {
 				return true;
-			if (this.getHour() > compareStamp.getHour())
+			}
+			if (this.getHour() > compareStamp.getHour()) {
 				return false;
-			if (this.getMinute() < compareStamp.getMinute())
+			}
+			if (this.getMinute() < compareStamp.getMinute()) {
 				return true;
-			if (this.getMinute() > compareStamp.getMinute())
+			}
+			if (this.getMinute() > compareStamp.getMinute()) {
 				return false;
-			if (this.getSecond() < compareStamp.getSecond())
+			}
+			if (this.getSecond() < compareStamp.getSecond()) {
 				return true;
-			if (this.getSecond() > compareStamp.getSecond())
+			}
+			if (this.getSecond() > compareStamp.getSecond()) {
 				return false;
+			}
 		}
 		return false;
 	}
@@ -398,18 +421,24 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return IWTimestamp
 	 */
 	public boolean isDatePartEarlierThan(IWTimestamp compareStamp) {
-		if (this.getYear() < compareStamp.getYear())
+		if (this.getYear() < compareStamp.getYear()) {
 			return true;
-		if (this.getYear() > compareStamp.getYear())
+		}
+		if (this.getYear() > compareStamp.getYear()) {
 			return false;
-		if (this.getMonth() < compareStamp.getMonth())
+		}
+		if (this.getMonth() < compareStamp.getMonth()) {
 			return true;
-		if (this.getMonth() > compareStamp.getMonth())
+		}
+		if (this.getMonth() > compareStamp.getMonth()) {
 			return false;
-		if (this.getDay() < compareStamp.getDay())
+		}
+		if (this.getDay() < compareStamp.getDay()) {
 			return true;
-		if (this.getDay() > compareStamp.getDay())
+		}
+		if (this.getDay() > compareStamp.getDay()) {
 			return false;
+		}
 		return false;
 	}
 	
@@ -420,18 +449,24 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return IWTimestamp
 	 */
 	public boolean isTimePartEarlierThan(IWTimestamp compareStamp) {
-		if (this.getHour() < compareStamp.getHour())
+		if (this.getHour() < compareStamp.getHour()) {
 			return true;
-		if (this.getHour() > compareStamp.getHour())
+		}
+		if (this.getHour() > compareStamp.getHour()) {
 			return false;
-		if (this.getMinute() < compareStamp.getMinute())
+		}
+		if (this.getMinute() < compareStamp.getMinute()) {
 			return true;
-		if (this.getMinute() > compareStamp.getMinute())
+		}
+		if (this.getMinute() > compareStamp.getMinute()) {
 			return false;
-		if (this.getSecond() < compareStamp.getSecond())
+		}
+		if (this.getSecond() < compareStamp.getSecond()) {
 			return true;
-		if (this.getSecond() > compareStamp.getSecond())
+		}
+		if (this.getSecond() > compareStamp.getSecond()) {
 			return false;
+		}
 		return false;
 	}
 	
@@ -443,8 +478,9 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return IWTimestamp
 	 */
 	public boolean isEqualTo(IWTimestamp compareStamp) {
-		if (isEarlierThan(compareStamp) || isLaterThan(compareStamp))
+		if (isEarlierThan(compareStamp) || isLaterThan(compareStamp)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -454,8 +490,9 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return boolean
 	 */
 	public boolean isIWTimestamp() {
-		if (isTime() || isDate())
+		if (isTime() || isDate()) {
 			return false;
+		}
 		return true;
 	}
 
@@ -467,18 +504,24 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return IWTimestamp
 	 */
 	public IWTimestamp isLater(IWTimestamp timestamp1, IWTimestamp timestamp2) {
-		if (timestamp1.getYear() > timestamp2.getYear())
+		if (timestamp1.getYear() > timestamp2.getYear()) {
 			return timestamp1;
-		if (timestamp1.getMonth() > timestamp2.getMonth())
+		}
+		if (timestamp1.getMonth() > timestamp2.getMonth()) {
 			return timestamp1;
-		if (this.getDay() > timestamp2.getDay())
+		}
+		if (this.getDay() > timestamp2.getDay()) {
 			return timestamp1;
-		if (timestamp1.getHour() > timestamp2.getHour())
+		}
+		if (timestamp1.getHour() > timestamp2.getHour()) {
 			return timestamp1;
-		if (timestamp1.getMinute() > timestamp2.getMinute())
+		}
+		if (timestamp1.getMinute() > timestamp2.getMinute()) {
 			return timestamp1;
-		if (timestamp1.getSecond() > timestamp2.getSecond())
+		}
+		if (timestamp1.getSecond() > timestamp2.getSecond()) {
 			return timestamp1;
+		}
 
 		return timestamp2;
 	}
@@ -491,33 +534,45 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 */
 	public boolean isLaterThan(IWTimestamp compareStamp) {
 		if (!this.isTime()) {
-			if (this.getYear() > compareStamp.getYear())
+			if (this.getYear() > compareStamp.getYear()) {
 				return true;
-			if (this.getYear() < compareStamp.getYear())
+			}
+			if (this.getYear() < compareStamp.getYear()) {
 				return false;
-			if (this.getMonth() > compareStamp.getMonth())
+			}
+			if (this.getMonth() > compareStamp.getMonth()) {
 				return true;
-			if (this.getMonth() < compareStamp.getMonth())
+			}
+			if (this.getMonth() < compareStamp.getMonth()) {
 				return false;
-			if (this.getDay() > compareStamp.getDay())
+			}
+			if (this.getDay() > compareStamp.getDay()) {
 				return true;
-			if (this.getDay() < compareStamp.getDay())
+			}
+			if (this.getDay() < compareStamp.getDay()) {
 				return false;
+			}
 		}
 
 		if (!this.isDate()) {
-			if (this.getHour() > compareStamp.getHour())
+			if (this.getHour() > compareStamp.getHour()) {
 				return true;
-			if (this.getHour() < compareStamp.getHour())
+			}
+			if (this.getHour() < compareStamp.getHour()) {
 				return false;
-			if (this.getMinute() > compareStamp.getMinute())
+			}
+			if (this.getMinute() > compareStamp.getMinute()) {
 				return true;
-			if (this.getMinute() < compareStamp.getMinute())
+			}
+			if (this.getMinute() < compareStamp.getMinute()) {
 				return false;
-			if (this.getSecond() > compareStamp.getSecond())
+			}
+			if (this.getSecond() > compareStamp.getSecond()) {
 				return true;
-			if (this.getSecond() < compareStamp.getSecond())
+			}
+			if (this.getSecond() < compareStamp.getSecond()) {
 				return false;
+			}
 		}
 		return false;
 	}
@@ -529,18 +584,24 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return IWTimestamp
 	 */
 	public boolean isDatePartLaterThan(IWTimestamp compareStamp) {
-		if (this.getYear() > compareStamp.getYear())
+		if (this.getYear() > compareStamp.getYear()) {
 			return true;
-		if (this.getYear() < compareStamp.getYear())
+		}
+		if (this.getYear() < compareStamp.getYear()) {
 			return false;
-		if (this.getMonth() > compareStamp.getMonth())
+		}
+		if (this.getMonth() > compareStamp.getMonth()) {
 			return true;
-		if (this.getMonth() < compareStamp.getMonth())
+		}
+		if (this.getMonth() < compareStamp.getMonth()) {
 			return false;
-		if (this.getDay() > compareStamp.getDay())
+		}
+		if (this.getDay() > compareStamp.getDay()) {
 			return true;
-		if (this.getDay() < compareStamp.getDay())
+		}
+		if (this.getDay() < compareStamp.getDay()) {
 			return false;
+		}
 		return false;
 	}
 	
@@ -551,18 +612,24 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return IWTimestamp
 	 */
 	public boolean isTimePartLaterThan(IWTimestamp compareStamp) {
-		if (this.getHour() > compareStamp.getHour())
+		if (this.getHour() > compareStamp.getHour()) {
 			return true;
-		if (this.getHour() < compareStamp.getHour())
+		}
+		if (this.getHour() < compareStamp.getHour()) {
 			return false;
-		if (this.getMinute() > compareStamp.getMinute())
+		}
+		if (this.getMinute() > compareStamp.getMinute()) {
 			return true;
-		if (this.getMinute() < compareStamp.getMinute())
+		}
+		if (this.getMinute() < compareStamp.getMinute()) {
 			return false;
-		if (this.getSecond() > compareStamp.getSecond())
+		}
+		if (this.getSecond() > compareStamp.getSecond()) {
 			return true;
-		if (this.getSecond() < compareStamp.getSecond())
+		}
+		if (this.getSecond() < compareStamp.getSecond()) {
 			return false;
+		}
 		return false;
 	}
 
@@ -581,8 +648,9 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return boolean
 	 */
 	public boolean isTime() {
-		if (isTime)
+		if (this.isTime) {
 			return true;
+		}
 		return false;
 	}
 
@@ -595,7 +663,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * the current date and time settings.
 	 */
 	public IWTimestamp() {
-		calendar = new GregorianCalendar();
+		this.calendar = new GregorianCalendar();
 	}
 
 	/**
@@ -604,10 +672,10 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 */
 	public IWTimestamp(Locale locale) {
 		if (locale != null) {
-			calendar = new GregorianCalendar(locale);
+			this.calendar = new GregorianCalendar(locale);
 		}
 		else {
-			calendar = new GregorianCalendar();
+			this.calendar = new GregorianCalendar();
 		}
 	}
 
@@ -619,7 +687,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	public IWTimestamp(java.util.Date date) {
 		this();
 		setAsDate();
-		calendar.setTime(date);
+		this.calendar.setTime(date);
 	}
 
 	/**
@@ -630,7 +698,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	public IWTimestamp(Locale locale, java.util.Date date) {
 		this(locale);
 		setAsDate();
-		calendar.setTime(date);
+		this.calendar.setTime(date);
 	}
 
 	/**
@@ -638,7 +706,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * the date and time settings of the given <code>GregorianCalendar</code> object.
 	 */
 	public IWTimestamp(GregorianCalendar theCalendar) {
-		calendar = theCalendar;
+		this.calendar = theCalendar;
 	}
 
 	/**
@@ -647,7 +715,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 */
 	public IWTimestamp(int day, int month, int year) {
 		setAsDate();
-		calendar = new GregorianCalendar(year, month - 1, day, 0, 0, 0);
+		this.calendar = new GregorianCalendar(year, month - 1, day, 0, 0, 0);
 	}
 
 	/**
@@ -655,7 +723,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * the date and time settings given in the constructor.
 	 */
 	public IWTimestamp(int year, int month, int date, int hour, int minute, int second) {
-		calendar = new GregorianCalendar(year, month - 1, date, hour, minute, second);
+		this.calendar = new GregorianCalendar(year, month - 1, date, hour, minute, second);
 	}
 
 	/**
@@ -663,9 +731,9 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * the date and/or time settings of the given <code>IWTimestamp</code> object.
 	 */
 	public IWTimestamp(IWTimestamp time) {
-		calendar = (GregorianCalendar) time.getGregorianCalendar().clone();
-		isDate=time.isDate;
-		isTime=time.isTime;
+		this.calendar = (GregorianCalendar) time.getGregorianCalendar().clone();
+		this.isDate=time.isDate;
+		this.isTime=time.isTime;
 	}
 
 	/**
@@ -695,25 +763,26 @@ public class IWTimestamp implements Comparable,Cloneable {
 		
 		if (SQLFormat.length() == 10) {
 			//SQLFormat = SQLFormat + " " + getDateString(TIME_PATTERN);
-			calendar.setTime(Date.valueOf(SQLFormat));
+			this.calendar.setTime(Date.valueOf(SQLFormat));
 			setAsDate();
 		}
 		else if (SQLFormat.length() == 8) {
 			//SQLFormat = getDateString(DATE_PATTERN) + " " + SQLFormat;
-			calendar.setTime(Time.valueOf(SQLFormat));
+			this.calendar.setTime(Time.valueOf(SQLFormat));
 			setAsTime();
 		}
 		else if(SQLFormat.length() == 6) {
 			DateFormat dateFormatddmmyy = new SimpleDateFormat("ddMMyy");
 			try {
-				calendar.setTime(dateFormatddmmyy.parse(SQLFormat));
+				this.calendar.setTime(dateFormatddmmyy.parse(SQLFormat));
 			}
 			catch (ParseException e) {
 				throw (IllegalArgumentException)new IllegalArgumentException().initCause(e);
 			}
 		}
-		else
-			calendar.setTime(Timestamp.valueOf(SQLFormat));
+		else {
+			this.calendar.setTime(Timestamp.valueOf(SQLFormat));
+		}
 	}
 
 	/**
@@ -724,7 +793,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	public IWTimestamp(Time time) {
 		this();
 		setAsTime();
-		calendar.setTime(time);
+		this.calendar.setTime(time);
 	}
 
 	/**
@@ -733,7 +802,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 */
 	public IWTimestamp(Timestamp time) {
 		this();
-		calendar.setTime(time);
+		this.calendar.setTime(time);
 	}
 
 ///////////////////////////////////////////////////
@@ -768,7 +837,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 */
 	public String getDateString(String pattern) {
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
-		return format.format(calendar.getTime());
+		return format.format(this.calendar.getTime());
 	}
 
 	/**
@@ -792,7 +861,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 */
 	public String getDateString(String pattern, Locale locale) {
 		SimpleDateFormat format = new SimpleDateFormat(pattern, locale);
-		return format.format(calendar.getTime());
+		return format.format(this.calendar.getTime());
 	}
 
 	/**
@@ -800,7 +869,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getDay() {
-		return calendar.get(Calendar.DAY_OF_MONTH);
+		return this.calendar.get(Calendar.DAY_OF_MONTH);
 	}
 
 	/**
@@ -808,7 +877,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getDayOfWeek() {
-		return calendar.get(Calendar.DAY_OF_WEEK);
+		return this.calendar.get(Calendar.DAY_OF_WEEK);
 	}
 
 	/**
@@ -816,7 +885,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getDayOfYear() {
-		return calendar.get(Calendar.DAY_OF_YEAR);
+		return this.calendar.get(Calendar.DAY_OF_YEAR);
 	}
 
 	/**
@@ -824,7 +893,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return GregorianCalendar
 	 */
 	public GregorianCalendar getGregorianCalendar() {
-		return calendar;
+		return this.calendar;
 	}
 	
 	/**
@@ -832,7 +901,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return Calendar
 	 */
 	public Calendar getCalendar() {
-		return calendar;
+		return this.calendar;
 	}
 
 	/**
@@ -840,7 +909,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getHour() {
-		return calendar.get(Calendar.HOUR_OF_DAY);
+		return this.calendar.get(Calendar.HOUR_OF_DAY);
 	}
 
 	/**
@@ -850,8 +919,9 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 */
 	public String getISLDate(String spacer, boolean withYear) {
 		String pattern = DAY + spacer + MONTH;
-		if (withYear)
+		if (withYear) {
 			pattern = pattern + spacer + YEAR;
+		}
 		return getDateString(pattern);
 	}
 
@@ -932,7 +1002,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getMilliSecond() {
-		return calendar.get(Calendar.MILLISECOND);
+		return this.calendar.get(Calendar.MILLISECOND);
 	}
 
 	/**
@@ -940,7 +1010,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getMinute() {
-		return calendar.get(Calendar.MINUTE);
+		return this.calendar.get(Calendar.MINUTE);
 	}
 
 	/**
@@ -948,7 +1018,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getMonth() {
-		return calendar.get(Calendar.MONTH) + 1;
+		return this.calendar.get(Calendar.MONTH) + 1;
 	}
 
 	/**
@@ -956,7 +1026,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return IWTimestamp
 	 */
 	public IWTimestamp getNextDay() {
-		GregorianCalendar myCalendar = (GregorianCalendar) calendar.clone();
+		GregorianCalendar myCalendar = (GregorianCalendar) this.calendar.clone();
 		myCalendar.add(Calendar.DATE, 1);
 		return new IWTimestamp(myCalendar);
 	}
@@ -966,7 +1036,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getSecond() {
-		return calendar.get(Calendar.SECOND);
+		return this.calendar.get(Calendar.SECOND);
 	}
 
 	/**
@@ -999,7 +1069,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getWeekOfYear() {
-		return calendar.get(Calendar.WEEK_OF_YEAR);
+		return this.calendar.get(Calendar.WEEK_OF_YEAR);
 	}
 
 	/**
@@ -1007,7 +1077,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return int
 	 */
 	public int getYear() {
-		return calendar.get(Calendar.YEAR);
+		return this.calendar.get(Calendar.YEAR);
 	}
 
 ///////////////////////////////////////////////////
@@ -1018,16 +1088,16 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * Sets the <code>IWTimestamp</code> to use only the date settings.
 	 */
 	public void setAsDate() {
-		isDate = true;
-		isTime = false;
+		this.isDate = true;
+		this.isTime = false;
 	}
 
 	/**
 	 * Sets the <code>IWTimestamp</code> to use only the time settings.
 	 */
 	public void setAsTime() {
-		isDate = false;
-		isTime = true;
+		this.isDate = false;
+		this.isTime = true;
 	}
 
 	/**
@@ -1051,7 +1121,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param day		The day to set
 	 */
 	public void setDay(int day) {
-		calendar.set(Calendar.DAY_OF_MONTH, day);
+		this.calendar.set(Calendar.DAY_OF_MONTH, day);
 	}
 
 	/**
@@ -1059,7 +1129,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param hour		The hour to set
 	 */
 	public void setHour(int hour) {
-		calendar.set(Calendar.HOUR_OF_DAY, hour);
+		this.calendar.set(Calendar.HOUR_OF_DAY, hour);
 	}
 
 	/**
@@ -1067,7 +1137,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param millisecond		The millisecond to set
 	 */
 	public void setMilliSecond(int millisecond) {
-		calendar.set(Calendar.MILLISECOND, millisecond);
+		this.calendar.set(Calendar.MILLISECOND, millisecond);
 	}
 
 	/**
@@ -1075,7 +1145,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param minute		The minute to set
 	 */
 	public void setMinute(int minute) {
-		calendar.set(Calendar.MINUTE, minute);
+		this.calendar.set(Calendar.MINUTE, minute);
 	}
 
 	/**
@@ -1083,7 +1153,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param month		The month to set in the range [1-12]
 	 */
 	public void setMonth(int month) {
-		calendar.set(Calendar.MONTH, month - 1);
+		this.calendar.set(Calendar.MONTH, month - 1);
 	}
 
 	/**
@@ -1091,7 +1161,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param second		The second to set
 	 */
 	public void setSecond(int second) {
-		calendar.set(Calendar.SECOND, second);
+		this.calendar.set(Calendar.SECOND, second);
 	}
 
 	/**
@@ -1112,12 +1182,13 @@ public class IWTimestamp implements Comparable,Cloneable {
 		 * @param millisecond	The millisecond to set
 		 */
 	public void setTime(int hour,int minute,int second,int millisecond) {
-		if(isDate())
-			isDate = false;
-		calendar.set(Calendar.HOUR_OF_DAY, hour);
-		calendar.set(Calendar.MINUTE, minute);
-		calendar.set(Calendar.SECOND, second);
-		calendar.set(Calendar.MILLISECOND, millisecond);
+		if(isDate()) {
+			this.isDate = false;
+		}
+		this.calendar.set(Calendar.HOUR_OF_DAY, hour);
+		this.calendar.set(Calendar.MINUTE, minute);
+		this.calendar.set(Calendar.SECOND, second);
+		this.calendar.set(Calendar.MILLISECOND, millisecond);
 	}
 
 	/**
@@ -1125,7 +1196,7 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @param year		The year to set
 	 */
 	public void setYear(int year) {
-		calendar.set(Calendar.YEAR, year);
+		this.calendar.set(Calendar.YEAR, year);
 	}
 
 ///////////////////////////////////////////////////
@@ -1243,10 +1314,12 @@ public class IWTimestamp implements Comparable,Cloneable {
 	 * @return String
 	 */
 	public String toSQLString(boolean cutOfMilliseconds) {
-		if (isDate())
+		if (isDate()) {
 			return toSQLDateString();
-		else if (isTime())
+		}
+		else if (isTime()) {
 			return toSQLTimeString();
+		}
 		else{
 			String theTimestampString = getTimestamp().toString();
 			if(cutOfMilliseconds){
@@ -1302,8 +1375,8 @@ public class IWTimestamp implements Comparable,Cloneable {
 		try {
 			IWTimestamp obj = (IWTimestamp)super.clone();
 			obj.calendar = (GregorianCalendar) getGregorianCalendar().clone();
-			obj.isDate=isDate;
-			obj.isTime=isTime;
+			obj.isDate=this.isDate;
+			obj.isTime=this.isTime;
 			return obj;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();

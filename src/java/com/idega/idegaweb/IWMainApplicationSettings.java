@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.44 2006/03/25 15:26:48 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.45 2006/04/09 12:13:14 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -37,10 +37,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/03/25 15:26:48 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.44 $
+ * @version $Revision: 1.45 $
  */
 
 
@@ -120,7 +120,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	private IWMainApplication getApplication(){
-		return application;
+		return this.application;
 	}
 	
 
@@ -283,7 +283,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	public void setDefaultLocale(Locale locale) {
 		String sLocale = locale.toString();
 		putInApplicationBinding(DEFAULT_LOCALE_KEY,sLocale);
-		cachedDefaultLocale=null;
+		this.cachedDefaultLocale=null;
 	}
 	
 	public Locale getDefaultLocaleFromIWPropertyList() {
@@ -307,7 +307,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	 * @return The set application default locale. If not set it returns the english locale.
 	 **/
 	public Locale getDefaultLocale() {
-		if(cachedDefaultLocale==null){
+		if(this.cachedDefaultLocale==null){
 			// Note: database entry always wins!
 			String localeIdentifier = getFromApplicationBinding(DEFAULT_LOCALE_KEY);
 			Locale locale = null;
@@ -341,10 +341,10 @@ public class IWMainApplicationSettings implements MutableClass {
 					setDefaultLocale(locale);//to fix the default locale or set it for the first time
 				}
 			}
-			cachedDefaultLocale=locale;
+			this.cachedDefaultLocale=locale;
 			return locale;
 		}
-		return cachedDefaultLocale;
+		return this.cachedDefaultLocale;
 	}
 	
 	
@@ -685,25 +685,25 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	private ICApplicationBindingBusiness getApplicationBindingBusiness() {
-		if (applicationBindingBusiness == null) {
+		if (this.applicationBindingBusiness == null) {
 			IWApplicationContext iwac = getApplication().getIWApplicationContext();
 			try {
-				applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwac, ICApplicationBindingBusiness.class);
+				this.applicationBindingBusiness = (ICApplicationBindingBusiness) IBOLookup.getServiceInstance(iwac, ICApplicationBindingBusiness.class);
 			}
 			catch (IBOLookupException ex) {
 				getLogger().warning("[IWMainApplicationSettings] ICApplicationBindingBusiness could not be found");
 				throw new IBORuntimeException(ex.getMessage());
 			}
 		}
-		return applicationBindingBusiness;
+		return this.applicationBindingBusiness;
 	}
 
 	private IWPropertyList getIdegawebPropertyList() {
-		if (idegawebPropertyList == null) {
+		if (this.idegawebPropertyList == null) {
 			String propertiesRealPath = getApplication().getPropertiesRealPath();
-			idegawebPropertyList = new IWPropertyList(propertiesRealPath, IDEGAWEB_PROPERTY_FILE_NAME, true);
+			this.idegawebPropertyList = new IWPropertyList(propertiesRealPath, IDEGAWEB_PROPERTY_FILE_NAME, true);
 		}
-		return idegawebPropertyList;
+		return this.idegawebPropertyList;
 	}
 
 	

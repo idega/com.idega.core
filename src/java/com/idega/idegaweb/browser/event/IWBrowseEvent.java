@@ -59,23 +59,23 @@ public class IWBrowseEvent extends IWPresentationEvent {
 
 
   public String getApplicationIdentifier(){
-    return _appId;
+    return this._appId;
   }
   public String getSourceTarget(){
-    return _src;
+    return this._src;
   }
   public String getControlFrameTarget(){
-    return _ctrlTarget;
+    return this._ctrlTarget;
   }
 
 
 
   public boolean initializeEvent(IWContext iwc){
-    _appId = iwc.getParameter(IW_FRAMESET_PAGE_PARAMETER);
-    _src = iwc.getParameter(PRM_IW_BROWSE_EVENT_SOURCE);
-    _ctrlTarget = iwc.getParameter(IW_FRAME_NAME_PARAMETER);
+    this._appId = iwc.getParameter(IW_FRAMESET_PAGE_PARAMETER);
+    this._src = iwc.getParameter(PRM_IW_BROWSE_EVENT_SOURCE);
+    this._ctrlTarget = iwc.getParameter(IW_FRAME_NAME_PARAMETER);
 
-    return (_appId != null && _src != null && _ctrlTarget != null);
+    return (this._appId != null && this._src != null && this._ctrlTarget != null);
   }
 
 
