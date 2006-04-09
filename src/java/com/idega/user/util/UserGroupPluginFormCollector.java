@@ -1,5 +1,5 @@
 /*
- * $Id: UserGroupPluginFormCollector.java,v 1.2 2005/07/14 17:07:42 eiki Exp $ Created on
+ * $Id: UserGroupPluginFormCollector.java,v 1.3 2006/04/09 11:40:41 laddi Exp $ Created on
  * Apr 13, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import com.idega.util.GenericFormCollector;
  * A simple extend of GenericFormCollector that calls afterCreateOrUpdateUser in
  * all UserGroupPlugins
  * 
- * Last modified: $Date: 2005/07/14 17:07:42 $ by $Author: eiki $
+ * Last modified: $Date: 2006/04/09 11:40:41 $ by $Author: laddi $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class UserGroupPluginFormCollector extends GenericFormCollector {
 
@@ -50,15 +50,15 @@ public class UserGroupPluginFormCollector extends GenericFormCollector {
 	public boolean storeAll(IWContext iwc) {
 		if (super.storeAll(iwc)) {
 			try {
-				if (user != null) {
+				if (this.user != null) {
 					//MUST BE SURE WE HAVE THE LATEST DATA
-					user = getUserBusiness(iwc).getUser((Integer)user.getPrimaryKey());
-					getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user);
+					this.user = getUserBusiness(iwc).getUser((Integer)this.user.getPrimaryKey());
+					getUserBusiness(iwc).callAllUserGroupPluginAfterUserCreateOrUpdateMethod(this.user);
 				}
-				if (group != null) {
+				if (this.group != null) {
 					//MUST BE SURE WE HAVE THE LATEST DATA
-					group = getGroupBusiness(iwc).getGroupByGroupID(((Integer)group.getPrimaryKey()).intValue());
-					getGroupBusiness(iwc).callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group);
+					this.group = getGroupBusiness(iwc).getGroupByGroupID(((Integer)this.group.getPrimaryKey()).intValue());
+					getGroupBusiness(iwc).callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(this.group);
 				}
 			}
 			catch (IBOLookupException e) {
@@ -100,7 +100,7 @@ public class UserGroupPluginFormCollector extends GenericFormCollector {
 	 * @return Returns the group.
 	 */
 	public Group getGroup() {
-		return group;
+		return this.group;
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class UserGroupPluginFormCollector extends GenericFormCollector {
 	 * @return Returns the user.
 	 */
 	public User getUser() {
-		return user;
+		return this.user;
 	}
 
 	/**
