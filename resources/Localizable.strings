@@ -53,6 +53,7 @@ info=Info
 iw.component.com.idega.block.filter.presentation.Filter.name=
 iw.component.com.idega.core.search.presentation.SearchResults.name=SearchResults
 iw.component.com.idega.core.search.presentation.Searcher.name=Searcher
+iw.component.com.idega.demo.presentation.Demo.name=Demo
 iw.component.com.idega.presentation.Quicktime.name=Quicktime
 iw.component.com.idega.presentation.text.Anchor.name=Anchor
 iw.component.com.idega.presentation.text.AnchorLink.name=AnchorLink
@@ -104,9 +105,13 @@ save=Save
 search_results.no_results=Din s\u00F6kning gav inget resultat
 searcher.button=S\u00F6k
 select_all=Select all
+<<<<<<< Localizable.strings
+slide_role_root=slide_role_root
+=======
 slide_role_root=slide_role_root
 slide_role_user=slide_role_user
 system_properties=System properties
+>>>>>>> 1.23
 timeinput.hour=Hours
 timeinput.hour_short=h
 timeinput.minute=Minutes

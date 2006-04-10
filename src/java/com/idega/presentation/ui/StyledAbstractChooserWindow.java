@@ -37,6 +37,7 @@ public abstract class StyledAbstractChooserWindow extends StyledIWAdminWindow{
 
 
 	public StyledAbstractChooserWindow(){
+		setStyleClass("chooserwindow");
 	}
 
 	public StyledAbstractChooserWindow(boolean isInAFrame){
