@@ -105,13 +105,9 @@ save=Save
 search_results.no_results=Din s\u00F6kning gav inget resultat
 searcher.button=S\u00F6k
 select_all=Select all
-<<<<<<< Localizable.strings
-slide_role_root=slide_role_root
-=======
 slide_role_root=slide_role_root
 slide_role_user=slide_role_user
 system_properties=System properties
->>>>>>> 1.23
 timeinput.hour=Hours
 timeinput.hour_short=h
 timeinput.minute=Minutes
