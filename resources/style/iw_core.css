@@ -51,7 +51,7 @@ iframe{
 /** BEGIN: loadLayer: **/
 
 
-DIV.LoadLayerOld {
+DIV.LoadLayer {
         visibility:hidden;
         position:absolute;
         font-family: arial;
@@ -69,48 +69,6 @@ DIV.LoadLayerOld {
         left:45%;
 }
 
-DIV.LoadLayer {
-        /*visibility:hidden;*/
-        visibility:hidden;
-        position:absolute;
-        font-family: Verdana;
-        font-size: 9pt;
-        font-weight: bold;
-        border-width: 0px;
-        top:0%;
-        left:0%;
-        
-        width:100%;
-        height:100%;
-        
-		background-image: url(images/loadingmask.png);
-		background-position: center center;
-		background-repeat: no-repeat;
-		
-		/***IE TRANSPARENCY HACKS***/
-		_background-image: none;
-		_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../idegaweb/bundles/com.idega.core.bundle/resources/style/images/loadingmask.png',sizingMethod='scale');
-		
-		z-index: 1000;
-}
-
-DIV.LoadLayer .LoadLayerContents{
-
-        position:absolute;
-        font-family: Verdana;
-        font-size: 9pt;
-        font-weight: bold;
-        background: #ffffff;
-        border-width: 0px;
-
-		position:absolute;
-		padding-top: 4px;
-		padding-left: 8px;
-		padding-right: 12px;
-		padding-bottom:4px;
-		top:48%;
-		left:45%;
-}
 
 /** END: loadlayer **/
 
