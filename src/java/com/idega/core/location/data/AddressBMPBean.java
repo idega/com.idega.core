@@ -26,6 +26,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	private static final String IC_COUNTRY_ID = "IC_COUNTRY_ID";
 	private static final String COORDINATE = "COORDINATE";
 	private static final String COORDINATE_ID = "IC_ADDRESS_COORDINATE_ID";
+	private static final String COORDINATE_DATE = "COORDINATE_DATE";
 	private transient AddressTypeHome addressTypeHome;
 	private static AddressType type1; //for caching
 	private static AddressType type2; //for caching
@@ -54,10 +55,9 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		addManyToOneRelationship(IC_COUNTRY_ID, "Country", Country.class);
 		this.addManyToManyRelationShip(User.class, "ic_user_address");
 		this.addManyToOneRelationship(getColumnNameCommuneID(), Commune.class);
-		// Deprecated
-		//addAttribute(COORDINATE, "coordinate", true, true, String.class, 50);
 		
 		this.addManyToOneRelationship(COORDINATE_ID, AddressCoordinate.class);
+		this.addAttribute(COORDINATE_DATE, "Cooardinate date", String.class);
 		
 		addIndex("IDX_ADDRESS_TYPE", getColumnNameAddressTypeId());
 		addIndex("IDX_ADDRESS_STREET_NAME", STREET_NAME);
@@ -195,6 +195,14 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	
 	public void setCoordinate(AddressCoordinate coordinate) {
 		this.setColumn(COORDINATE_ID, coordinate);
+	}
+	
+	public String getCoordinateDate() {
+		return getStringColumnValue(COORDINATE_DATE);
+	}
+	
+	public void setCoordinateDate(String coordinateDate) {
+		setColumn(COORDINATE_DATE, coordinateDate);
 	}
 	
 	public Country getCountry() {
