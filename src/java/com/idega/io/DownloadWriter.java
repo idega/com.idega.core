@@ -74,7 +74,12 @@ public class DownloadWriter implements MediaWritable {
 				file = new File(iwc.getIWMainApplication().getRealPath(fileURL));
 				icFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(Integer.valueOf(fileId));
 				//setAsDownload(iwc,icFile.getName(),icFile.getFileSize().intValue());
-				setAsDownload(iwc, file.getName(), (int) file.length());
+				if (altFileName != null) {
+					setAsDownload(iwc, altFileName, (int) file.length());
+				}
+				else {
+					setAsDownload(iwc, file.getName(), (int) file.length());					
+				}
 			}
 			catch (Exception e) {
 				icFile = null;
