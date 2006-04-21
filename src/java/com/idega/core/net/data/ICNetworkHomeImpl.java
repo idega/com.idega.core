@@ -1,43 +1,21 @@
 package com.idega.core.net.data;
 
 
-public class ICNetworkHomeImpl extends com.idega.data.IDOFactory implements ICNetworkHome
-{
- protected Class getEntityInterfaceClass(){
-  return ICNetwork.class;
- }
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
+import com.idega.data.IDOFactory;
 
- public ICNetwork create() throws javax.ejb.CreateException{
-  return (ICNetwork) super.idoCreate();
- }
+public class ICNetworkHomeImpl extends IDOFactory implements ICNetworkHome {
 
- public ICNetwork createLegacy(){
-	try{
-		return create();
-	}
-	catch(javax.ejb.CreateException ce){
-		throw new RuntimeException("CreateException:"+ce.getMessage());
+	public Class getEntityInterfaceClass() {
+		return ICNetwork.class;
 	}
 
- }
-
- public ICNetwork findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (ICNetwork) super.idoFindByPrimaryKey(id);
- }
-
- public ICNetwork findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (ICNetwork) super.idoFindByPrimaryKey(pk);
- }
-
- public ICNetwork findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
-	try{
-		return findByPrimaryKey(id);
-	}
-	catch(javax.ejb.FinderException fe){
-		throw new java.sql.SQLException(fe.getMessage());
+	public ICNetwork create() throws CreateException {
+		return (ICNetwork) super.createIDO();
 	}
 
- }
-
-
+	public ICNetwork findByPrimaryKey(Object pk) throws FinderException {
+		return (ICNetwork) super.findByPrimaryKeyIDO(pk);
+	}
 }

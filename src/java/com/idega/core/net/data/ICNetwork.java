@@ -1,6 +1,7 @@
 package com.idega.core.net.data;
 
 
-public interface ICNetwork extends com.idega.data.IDOLegacyEntity
-{
+import com.idega.data.IDOEntity;
+
+public interface ICNetwork extends IDOEntity {
 }
