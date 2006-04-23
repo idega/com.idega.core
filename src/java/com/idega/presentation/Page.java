@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.158 2006/04/09 12:13:12 laddi Exp $ Created in 2000 by
+ * $Id: Page.java,v 1.159 2006/04/23 14:29:59 gimmi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -65,10 +65,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:12 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/23 14:29:59 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.158 $
+ * @version $Revision: 1.159 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -153,6 +153,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	private String _templateId = null;
 	private Map _styleDefinitions;
 	private Map _metaTags;
+	private QueueMap _styleSheetsForPrint;
 	private QueueMap _styleSheets;
 	private QueueMap _javascripts;
 	private QueueMap _javascriptStringsBeforeJSUrls;
@@ -242,6 +243,13 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		this._styleDefinitions.put(styleName, styleAttribute);
 	}
 
+	public void addStyleSheetURLForPrint(String URL) {
+		if (this._styleSheetsForPrint == null) {
+			this._styleSheetsForPrint = new QueueMap();
+		}
+		this._styleSheetsForPrint.put(URL, URL);
+	}
+
 	public void addStyleSheetURL(String URL) {
 		if (this._styleSheets == null) {
 			this._styleSheets = new QueueMap();
@@ -278,7 +286,21 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				addStyleSheet(buffer, markup, URL);
 			}
 		}
+		// Now the added style for print
+		if (this._styleSheetsForPrint != null && !this._styleSheetsForPrint.isEmpty()) {
+			Iterator iter = this._styleSheetsForPrint.values().iterator();
+			while (iter.hasNext()) {
+				String URL = (String) iter.next();
+				addStyleSheetForPrint(buffer, markup, URL);
+			}
+		}
 		return buffer.toString();
+	}
+
+
+	private StringBuffer addStyleSheetForPrint(StringBuffer buffer, String markup, String URL) {
+		return buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" media=\"print\" "
+				+ (!markup.equals(HTML) ? "/" : "") + ">\n");
 	}
 
 	private StringBuffer addStyleSheet(StringBuffer buffer, String markup, String URL) {
