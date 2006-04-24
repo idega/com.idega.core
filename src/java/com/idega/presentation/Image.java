@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.96 2006/04/22 14:05:32 gimmi Exp $
+ * $Id: Image.java,v 1.97 2006/04/24 01:41:26 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -37,11 +37,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2006/04/22 14:05:32 $ by $Author: gimmi $
+ *  Last modified: $Date: 2006/04/24 01:41:26 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.96 $
+ * @version $Revision: 1.97 $
  */
 public class Image extends PresentationObject implements NonEJBResource, PropertyDescriptionHolder
 {
@@ -57,7 +57,6 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	public static final String ALIGNMENT_TEXT_TOP = "texttop";
 	public static String PARAM_IMAGE_ID = FileSystemConstants.PARAM_FILE_ID;
 	public static String PARAM_IMAGE_URL = "iw_image_url";
-	public static long counterForClone = 0;
 	//member variables:
 	private String overImageUrl;
 	private String downImageUrl;
@@ -851,13 +850,6 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			obj.maxImageWidth = this.maxImageWidth;
 			obj._ImageLocalizationMap = this._ImageLocalizationMap;
 			obj._overImageLocalizationMap = this._overImageLocalizationMap;
-			try {
-				counterForClone++;
-			} catch (Exception e) {
-				// Resetting if too many clones occur
-				counterForClone = 1;
-			}
-			obj.setId(getId()+"_"+counterForClone);
 			
 		}
 		catch (Exception ex)
