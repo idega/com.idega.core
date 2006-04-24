@@ -34,6 +34,7 @@ public class ResetButton extends GenericButton {
 	 */
 	public ResetButton(Image defaultImage) {
 		super();
+		defaultImage.setId(getId()+"_img");
 		setButtonImage(defaultImage);
 		setOnClick("this.form.reset();");
 	}
