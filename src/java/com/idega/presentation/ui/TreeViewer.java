@@ -269,7 +269,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		if (this._linkOpenClosePrototype == null) {
 			this._linkOpenClosePrototype = new Link();
 		}
-		return this._linkOpenClosePrototype;
+		return (Link) this._linkOpenClosePrototype.clone();
 	}
 	
 	public void setLinkOpenClosePrototype(Link link) {
@@ -289,7 +289,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			this._linkPrototype.setFontStyle(this._linkStyle);
 		}
 
-		return this._linkPrototype;
+		return (Link) this._linkPrototype.clone();
 	}
 
 	public Layer getNoWrapLayer() {
@@ -301,7 +301,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	private Link getLinkPrototypeClone(String text) {
-		Link l = (Link) getLinkPrototype().clone();
+		Link l = getLinkPrototype();
 		l.setText(text);
 		return l;
 	}
