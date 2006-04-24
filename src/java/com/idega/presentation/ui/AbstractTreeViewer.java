@@ -539,13 +539,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 			if (oldIcons == null) {
 				newArray = new Image[1];
 				newArray[0] = newIcon;
-				System.out.println("AbstractTreeViewer : "+newIcon.getId());
 				return newArray;
 			} else {
 				newArray = new Image[oldIcons.length + 1];
-				for (int i = 0; i<newArray.length; i++) {
-					System.out.println("AbstractTreeViewer : "+oldIcons[i].getId());
-				}
 				System.arraycopy(oldIcons, 0, newArray, 0, oldIcons.length);
 				newArray[newArray.length - 1] = newIcon;
 			}
