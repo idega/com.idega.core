@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.149 2006/04/09 12:13:13 laddi Exp $
+ * $Id: PresentationObject.java,v 1.150 2006/04/24 01:45:26 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/24 01:45:26 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.149 $
+ * @version $Revision: 1.150 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -142,7 +142,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	private String formerCompoundId = null;
 	private TextStyler _styler;
 	private String _objTemplateID = null;
-	
+	private static long cloneCounter = 1;
+
 	//JSF variables duplicated and overridden because of cloning:
 	protected Map facetMap;
 	protected List childrenList;
@@ -976,6 +977,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			obj._location = this._location;
 			obj._objTemplateID=this._objTemplateID;
 			obj._templateObject = null;
+
+			if (cloneCounter == Long.MAX_VALUE) {
+				cloneCounter = 1;
+			}
+			obj.setId(getId()+"_"+cloneCounter++);
 			//obj.defaultState = this.defaultState; //same object, unnecessary
 			// to clone
 		}
