@@ -303,7 +303,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 						treeColumns.setNoWrap(1, 1);
 					}
 					for (int j = 0; j < collectedIconslength; j++) {
-						treeColumns.add(collectedIcons[j], 1, 1);
+						treeColumns.add((Image) collectedIcons[j].clone(), 1, 1);
 					}
 				}
 				Image[] newCollectedIcons = null;
@@ -314,23 +314,23 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 								if (isOpen) {
 									PresentationObject p = null;
 									if (this._showTreeIcons) {
-										p = getOpenCloseLinkClone(this.icons[ICONINDEX_ROOT_MINUS], anchorName);
+										p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_ROOT_MINUS].clone(), anchorName);
 										setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 									} else {
-										p = this.icons[ICONINDEX_ROOT_MINUS];
+										p = (Image) this.icons[ICONINDEX_ROOT_MINUS].clone();
 									}
 									if (this._nowrap) {
 										treeColumns.setNoWrap(1, 1);
 									}
 									treeColumns.add(p, 1, 1);
-									newCollectedIcons = getNewCollectedIconArray(collectedIcons, this.icons[ICONINDEX_TRANCPARENT]);
+									newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_TRANCPARENT].clone());
 								} else {
 									PresentationObject p = null;
 									if (this._showTreeIcons) {
-										p = getOpenCloseLinkClone(this.icons[ICONINDEX_ROOT_PLUS], anchorName);
+										p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_ROOT_PLUS].clone(), anchorName);
 										setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 									} else {
-										p = this.icons[ICONINDEX_ROOT_PLUS];
+										p = (Image) this.icons[ICONINDEX_ROOT_PLUS].clone();
 									}
 									if (this._nowrap) {
 										treeColumns.setNoWrap(1, 1);
@@ -338,7 +338,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									treeColumns.add(p, 1, 1);
 								}
 							} else {
-								treeColumns.add(this.icons[ICONINDEX_ROOT_LINE], 1, 1);
+								treeColumns.add((Image) this.icons[ICONINDEX_ROOT_LINE].clone(), 1, 1);
 								//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 							}
 						} else {  // if there are more than one rootnotes
@@ -347,20 +347,20 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									if (isOpen) {
 										PresentationObject p = null;
 										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone(this.icons[ICONINDEX_F_MINUS], anchorName);
+											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_F_MINUS].clone(), anchorName);
 											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 										} else {
-											p = this.icons[ICONINDEX_F_MINUS];
+											p = (Image) this.icons[ICONINDEX_F_MINUS].clone();
 										}
 										treeColumns.add(p, 1, 1);
-										newCollectedIcons = getNewCollectedIconArray(collectedIcons, this.icons[ICONINDEX_LINE]);
+										newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_LINE].clone());
 									} else {
 										PresentationObject p = null;
 										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone(this.icons[ICONINDEX_F_PLUS], anchorName);
+											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_F_PLUS].clone(), anchorName);
 											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 										} else {
-											p = this.icons[ICONINDEX_F_PLUS];
+											p = (Image) this.icons[ICONINDEX_F_PLUS].clone();
 										}
 										if (this._nowrap) {
 											treeColumns.setNoWrap(1, 1);
@@ -371,7 +371,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									if (this._nowrap) {
 										treeColumns.setNoWrap(1, 1);
 									}
-									treeColumns.add(this.icons[ICONINDEX_F_LINE], 1, 1);
+									treeColumns.add((Image) this.icons[ICONINDEX_F_LINE].clone(), 1, 1);
 									//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 								}
 							} else if(!iter.hasNext()){ // the last rootnode
@@ -379,23 +379,23 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									if (isOpen) { // if this node is open
 										PresentationObject p = null;
 										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone(this.icons[ICONINDEX_L_MINUS], anchorName);
+											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_MINUS].clone(), anchorName);
 											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 										} else {
-											p = this.icons[ICONINDEX_L_MINUS];
+											p = (Image) this.icons[ICONINDEX_L_MINUS].clone();
 										}
 										if (this._nowrap) {
 											treeColumns.setNoWrap(1, 1);
 										}
 										treeColumns.add(p, 1, 1);
-										newCollectedIcons = getNewCollectedIconArray(collectedIcons, this.icons[ICONINDEX_TRANCPARENT]);
+										newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_TRANCPARENT].clone());
 									} else { // if this node is closed
 										PresentationObject p = null;
 										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone(this.icons[ICONINDEX_L_PLUS], anchorName);
+											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_PLUS].clone(), anchorName);
 											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 										} else {
-											p = this.icons[ICONINDEX_L_PLUS];
+											p = (Image) this.icons[ICONINDEX_L_PLUS].clone();
 										}
 										if (this._nowrap) {
 											treeColumns.setNoWrap(1, 1);
@@ -406,7 +406,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									if (this._nowrap) {
 										treeColumns.setNoWrap(1, 1);
 									}
-									treeColumns.add(this.icons[ICONINDEX_L_LINE], 1, 1);
+									treeColumns.add((Image) this.icons[ICONINDEX_L_LINE].clone(), 1, 1);
 									//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 								}
 							
@@ -415,23 +415,23 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									if (isOpen) { // if this node is open
 										PresentationObject p = null;
 										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone(this.icons[ICONINDEX_M_MINUS], anchorName);
+											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_MINUS].clone(), anchorName);
 											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 										} else {
-											p = this.icons[ICONINDEX_M_MINUS];
+											p = (Image) this.icons[ICONINDEX_M_MINUS].clone();
 										}
 										if (this._nowrap) {
 											treeColumns.setNoWrap(1, 1);
 										}
 										treeColumns.add(p, 1, 1);
-										newCollectedIcons = getNewCollectedIconArray(collectedIcons, this.icons[ICONINDEX_LINE]);
+										newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_LINE].clone());
 									} else { // if this node is closed
 										PresentationObject p = null;
 										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone(this.icons[ICONINDEX_M_PLUS], anchorName);
+											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_PLUS].clone(), anchorName);
 											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 										} else {
-											p = this.icons[ICONINDEX_M_PLUS];
+											p = (Image) this.icons[ICONINDEX_M_PLUS].clone();
 										}
 										if (this._nowrap) {
 											treeColumns.setNoWrap(1, 1);
@@ -442,7 +442,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									if (this._nowrap) {
 										treeColumns.setNoWrap(1, 1);
 									}
-									treeColumns.add(this.icons[ICONINDEX_M_LINE], 1, 1);
+									treeColumns.add((Image) this.icons[ICONINDEX_M_LINE].clone(), 1, 1);
 									//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 								}
 							}
@@ -454,23 +454,23 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 							if (isOpen) { // if this node is open
 								PresentationObject p = null;
 								if (this._showTreeIcons) {
-									p = getOpenCloseLinkClone(this.icons[ICONINDEX_L_MINUS], anchorName);
+									p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_MINUS].clone(), anchorName);
 									setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 								} else {
-									p = this.icons[ICONINDEX_L_MINUS];
+									p = (Image) this.icons[ICONINDEX_L_MINUS].clone();
 								}
 								if (this._nowrap) {
 									treeColumns.setNoWrap(1, 1);
 								}
 								treeColumns.add(p, 1, 1);
-								newCollectedIcons = getNewCollectedIconArray(collectedIcons, this.icons[ICONINDEX_TRANCPARENT]);
+								newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_TRANCPARENT].clone());
 							} else { // if this node is closed
 								PresentationObject p = null;
 								if (this._showTreeIcons) {
-									p = getOpenCloseLinkClone(this.icons[ICONINDEX_L_PLUS], anchorName);
+									p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_PLUS].clone(), anchorName);
 									setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 								} else {
-									p = this.icons[ICONINDEX_L_PLUS];
+									p = (Image) this.icons[ICONINDEX_L_PLUS].clone();
 								}
 								if (this._nowrap) {
 									treeColumns.setNoWrap(1, 1);
@@ -481,7 +481,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 							if (this._nowrap) {
 								treeColumns.setNoWrap(1, 1);
 							}
-							treeColumns.add(this.icons[ICONINDEX_L_LINE], 1, 1);
+							treeColumns.add((Image) this.icons[ICONINDEX_L_LINE].clone(), 1, 1);
 							//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 						}
 					} else {  // if this is not the last node
@@ -489,23 +489,23 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 							if (isOpen) { // if this node is open
 								PresentationObject p = null;
 								if (this._showTreeIcons) {
-									p = getOpenCloseLinkClone(this.icons[ICONINDEX_M_MINUS], anchorName);
+									p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_MINUS].clone(), anchorName);
 									setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 								} else {
-									p = this.icons[ICONINDEX_M_MINUS];
+									p = (Image) this.icons[ICONINDEX_M_MINUS].clone();
 								}
 								if (this._nowrap) {
 									treeColumns.setNoWrap(1, 1);
 								}
 								treeColumns.add(p, 1, 1);
-								newCollectedIcons = getNewCollectedIconArray(collectedIcons, this.icons[ICONINDEX_LINE]);
+								newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_LINE].clone());
 							} else { // if this node is closed
 								PresentationObject p = null;
 								if (this._showTreeIcons) {
-									p = getOpenCloseLinkClone(this.icons[ICONINDEX_M_PLUS], anchorName);
+									p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_PLUS].clone(), anchorName);
 									setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 								} else {
-									p = this.icons[ICONINDEX_M_PLUS];
+									p = (Image) this.icons[ICONINDEX_M_PLUS].clone();
 								}
 								if (this._nowrap) {
 									treeColumns.setNoWrap(1, 1);
@@ -516,7 +516,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 							if (this._nowrap) {
 								treeColumns.setNoWrap(1, 1);
 							}
-							treeColumns.add(this.icons[ICONINDEX_M_LINE], 1, 1);
+							treeColumns.add((Image) this.icons[ICONINDEX_M_LINE].clone(), 1, 1);
 							//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 						}
 					}
@@ -539,9 +539,13 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 			if (oldIcons == null) {
 				newArray = new Image[1];
 				newArray[0] = newIcon;
+				System.out.println("AbstractTreeViewer : "+newIcon.getId());
 				return newArray;
 			} else {
 				newArray = new Image[oldIcons.length + 1];
+				for (int i = 0; i<newArray.length; i++) {
+					System.out.println("AbstractTreeViewer : "+oldIcons[i].getId());
+				}
 				System.arraycopy(oldIcons, 0, newArray, 0, oldIcons.length);
 				newArray[newArray.length - 1] = newIcon;
 			}
