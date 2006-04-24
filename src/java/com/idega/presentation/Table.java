@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.90 2006/04/09 12:13:13 laddi Exp $
+ * $Id: Table.java,v 1.91 2006/04/24 01:42:55 gimmi Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -2062,7 +2062,10 @@ public class Table extends PresentationObjectContainer implements TableType{
 		if (transparentcell == null) {
 			transparentcell = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getImage("transparentcell.gif");
 		}
-		return (Image) transparentcell.clone();
+		String id = transparentcell.getId();
+		Image img = (Image) transparentcell.clone();
+		img.setId(id);
+		return img;
 	}
 
 	/**
