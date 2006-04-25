@@ -241,6 +241,7 @@ public class IBOLookup implements Singleton
 		}
 		
 	}
+	
 	protected Class getFactoryClassFor(Class entityInterfaceClass) throws Exception
 	{
 		try{
@@ -482,9 +483,32 @@ public class IBOLookup implements Singleton
   	return this.homes;
   }
 
+  /**
+   * Registers an implementation for a bean.
+   * 
+   * @param interfaceClass
+   * @param beanClass
+   * @see #isImplementationRegistered(Class) 
+   */
   public static void registerImplementationForBean(Class interfaceClass, Class beanClass) {
   	getInstance().getBeanClassesMap().put(interfaceClass,beanClass);
 	getInstance().getInterfaceClassesMap().put(beanClass,interfaceClass);
+  }
+  
+  /**
+   * Checks if an implementation of the specified bean is registered.
+   * This method should be called if the caller is not sure if an implementation exists.
+   * If an implementation does not exist call of the getServiceInstance method 
+   * returns a RuntimeException when tryng to get the bean.
+   * 
+   * Returns true if there is an entry else false
+   * 
+   * @param interfaceClass
+   * @return true if an implementation is registered else false
+   * @see  #registerImplementationForBean(Class, Class)
+   */
+  public static boolean isImplementationRegistered(Class interfaceClass) {
+	  return getInstance().getBeanClassesMap().containsKey(interfaceClass);
   }
   
   /**
