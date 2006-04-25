@@ -504,12 +504,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		startTemporaryBundleStarter("com.idega.block.category.IWBundleStarter");
 		startTemporaryBundleStarter("com.idega.block.media.IWBundleStarter");
 		startTemporaryBundleStarter("com.idega.builder.IWBundleStarter");
-		startTemporaryBundleStarter("is.idega.idegaweb.member.IWBundleStarter");
-		startTemporaryBundleStarter("se.idega.idegaweb.commune.childcare.IWBundleStarter");
-		startTemporaryBundleStarter("se.idega.idegaweb.commune.school.IWBundleStarter");
-		startTemporaryBundleStarter("se.idega.idegaweb.commune.accounting.IWBundleStarter");
-		startTemporaryBundleStarter("is.idega.idegaweb.egov.musicschool.IWBundleStarter");
-		startTemporaryBundleStarter("se.idega.idegaweb.commune.adulteducation.IWBundleStarter");
+		//startTemporaryBundleStarter("is.idega.idegaweb.member.IWBundleStarter");
+		//startTemporaryBundleStarter("se.idega.idegaweb.commune.childcare.IWBundleStarter");
+		//startTemporaryBundleStarter("se.idega.idegaweb.commune.school.IWBundleStarter");
+		//startTemporaryBundleStarter("se.idega.idegaweb.commune.accounting.IWBundleStarter");
+		//startTemporaryBundleStarter("is.idega.idegaweb.egov.musicschool.IWBundleStarter");
+		//startTemporaryBundleStarter("se.idega.idegaweb.commune.adulteducation.IWBundleStarter");
 	}
 	
 	
