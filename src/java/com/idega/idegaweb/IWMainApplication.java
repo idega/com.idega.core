@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.168 2006/04/09 12:13:14 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.169 2006/04/26 19:08:12 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -89,10 +89,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/04/26 19:08:12 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.168 $
+ * @version $Revision: 1.169 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -927,33 +927,35 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
     private String getInternalBundleVirtualPath(String bundleIdentifier) {
         String tryString = getBundlesFile().getProperty(bundleIdentifier);
-        if (tryString == null) {
-            File theRoot = new File(this.getApplicationSpecialRealPath(),
-                    BUNDLES_STANDARD_DIRECTORY);
-            File[] bundles = theRoot.listFiles();
-            for (int i = 0; i < bundles.length; i++) {
-                if (bundles[i].isDirectory()) {
-                    File properties = new File(bundles[i], "properties");
-                    File propertiesFile = new File(properties,
-                            DefaultIWBundle.propertyFileName);
-                    try {
-                        IWPropertyList list = new IWPropertyList(propertiesFile);
-                        if (list.getProperty(
-                        		DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY)
-                                .equalsIgnoreCase(bundleIdentifier)) {
-                            tryString = BUNDLES_STANDARD_DIRECTORY
-                                    + File.separator + bundles[i].getName();
-                            this.registerBundle(bundleIdentifier, tryString);
-                            return tryString;
-                        }
-                    } catch (Exception e) {
-                        throw new IWBundleDoesNotExist(bundleIdentifier);
+        if (tryString != null) {
+        	return tryString;
+        }
+        // tryString is now null
+        File theRoot = new File(this.getApplicationSpecialRealPath(),
+                BUNDLES_STANDARD_DIRECTORY);
+        File[] bundles = theRoot.listFiles();
+        for (int i = 0; i < bundles.length; i++) {
+            if (bundles[i].isDirectory()) {
+                File properties = new File(bundles[i], "properties");
+                File propertiesFile = new File(properties,
+                        DefaultIWBundle.propertyFileName);
+                try {
+                    IWPropertyList list = new IWPropertyList(propertiesFile);
+                    if (list.getProperty(
+                    		DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY)
+                            .equalsIgnoreCase(bundleIdentifier)) {
+                        tryString = BUNDLES_STANDARD_DIRECTORY
+                                + File.separator + bundles[i].getName();
+                        this.registerBundle(bundleIdentifier, tryString);
+                        return tryString;
                     }
+                } 
+                catch (Exception e) {
+                	sendStartupMessage("Error reading property file of bundle: " + bundles[i].getName());
                 }
             }
         }
-        return tryString;
-
+        throw new IWBundleDoesNotExist(bundleIdentifier);
     }
 
     public IWBundle getBundle(String bundleIdentifier)throws IWBundleDoesNotExist{
