@@ -83,7 +83,6 @@ public class TreeViewer extends AbstractTreeViewer {
 		for (int i = 0; i < this.folderAndFileIcons.length; i++) {
 			if (this.folderAndFileIcons[i] == null) {
 				this.folderAndFileIcons[i] = bundle.getImage(TREEVIEW_PREFIX + getUI() + this.folderAndFileIconNames[i]);
-				this.folderAndFileIcons[i].setId(this.getId()+"_icon_"+i);
 			}
 		}
 
