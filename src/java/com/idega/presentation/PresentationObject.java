@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.150 2006/04/24 01:45:26 gimmi Exp $
+ * $Id: PresentationObject.java,v 1.151 2006/04/26 09:51:14 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2006/04/24 01:45:26 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/04/26 09:51:14 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.150 $
+ * @version $Revision: 1.151 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -143,6 +143,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	private TextStyler _styler;
 	private String _objTemplateID = null;
 	private static long cloneCounter = 1;
+	private boolean manualId = false;
 
 	//JSF variables duplicated and overridden because of cloning:
 	protected Map facetMap;
@@ -713,6 +714,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * @see UIComponentBase#setId(java.lang.String)
 	 */
 	public void setId(String id){
+		manualId = true;
 		setMarkupAttribute("id", id);
 		super.setId(id);
 	}
@@ -978,10 +980,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			obj._objTemplateID=this._objTemplateID;
 			obj._templateObject = null;
 
-			if (cloneCounter == Long.MAX_VALUE) {
-				cloneCounter = 1;
+			if (!manualId) {
+				if (cloneCounter == Long.MAX_VALUE) {
+					cloneCounter = 1;
+				}
+				obj.setId(getId()+"_"+cloneCounter++);
 			}
-			obj.setId(getId()+"_"+cloneCounter++);
 			//obj.defaultState = this.defaultState; //same object, unnecessary
 			// to clone
 		}
@@ -2108,6 +2112,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		this.formerCompoundId=(String)values[24];
 		this._styler=(TextStyler)values[25];
 		this._objTemplateID=(String)values[26];
+		this.manualId=((Boolean)values[27]).booleanValue();
 		//This variable is set only to know that the object is recreated from serialized state
 		this.isStateRestored=true;
 	}
@@ -2116,7 +2121,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[27];
+		Object values[] = new Object[28];
 		values[0]=super.saveState(context);
 		values[1]=this.attributes;
 		values[2]=this.name;
@@ -2144,6 +2149,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		values[24]=this.formerCompoundId;
 		values[25]=this._styler;
 		values[26]=this._objTemplateID;
+		values[27]=Boolean.valueOf(manualId);
 		return values;
 	}
 
