@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.151 2006/04/26 09:51:14 gimmi Exp $
+ * $Id: PresentationObject.java,v 1.152 2006/04/26 09:59:31 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2006/04/26 09:51:14 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/04/26 09:59:31 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.151 $
+ * @version $Revision: 1.152 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -714,7 +714,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * @see UIComponentBase#setId(java.lang.String)
 	 */
 	public void setId(String id){
-		manualId = true;
+		this.manualId = true;
 		setMarkupAttribute("id", id);
 		super.setId(id);
 	}
@@ -980,7 +980,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			obj._objTemplateID=this._objTemplateID;
 			obj._templateObject = null;
 
-			if (!manualId) {
+			if (!this.manualId) {
 				if (cloneCounter == Long.MAX_VALUE) {
 					cloneCounter = 1;
 				}
@@ -2149,7 +2149,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		values[24]=this.formerCompoundId;
 		values[25]=this._styler;
 		values[26]=this._objTemplateID;
-		values[27]=Boolean.valueOf(manualId);
+		values[27]=Boolean.valueOf(this.manualId);
 		return values;
 	}
 
