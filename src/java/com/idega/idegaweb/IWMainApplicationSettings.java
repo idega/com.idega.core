@@ -333,4 +333,20 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	public void setWriteBundleFilesOnShutdown(boolean ifWriteDown){
 		this.setProperty("write_bundle_files_on_shudown", ifWriteDown);
 	}
+	
+	public boolean getBoolean(String key, boolean defaultValue) {
+		String value = getProperty(key);
+		if (value != null) {
+			return Boolean.valueOf(value).booleanValue();
+		}
+		else {
+			return defaultValue;
+		}
+	}
+
+	public boolean getBoolean(String key) {
+		String value = getProperty(key);
+		return Boolean.valueOf(value).booleanValue();
+	}
+
 }
