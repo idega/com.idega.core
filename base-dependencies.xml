@@ -42,5 +42,13 @@
             <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
         		<properties/>
         </dependency>
+        <dependency>
+	        <groupId>bundles</groupId>
+	        <artifactId>com.idega.block.web2.0</artifactId>
+	        <version>SNAPSHOT</version>
+	        <type>jar</type>
+	        <url>http://www.idega.com</url>
+	        <properties/>
+    		</dependency>
     </dependencies>
 </project>
