@@ -48,7 +48,9 @@
 	        <version>SNAPSHOT</version>
 	        <type>jar</type>
 	        <url>http://www.idega.com</url>
-	        <properties/>
+	        <properties>
+        		<eclipse.dependency>true</eclipse.dependency>
+      		</properties>
     		</dependency>
     </dependencies>
 </project>
