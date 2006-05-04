@@ -55,6 +55,7 @@ iw.component.com.idega.core.search.presentation.SearchResults.name=SearchResults
 iw.component.com.idega.core.search.presentation.Searcher.name=Searcher
 iw.component.com.idega.demo.presentation.Demo.name=Demo
 iw.component.com.idega.presentation.Quicktime.name=Quicktime
+iw.component.com.idega.presentation.Span.name=Span
 iw.component.com.idega.presentation.text.Anchor.name=Anchor
 iw.component.com.idega.presentation.text.AnchorLink.name=AnchorLink
 iw.component.com.idega.presentation.text.Heading1.name=Heading1
