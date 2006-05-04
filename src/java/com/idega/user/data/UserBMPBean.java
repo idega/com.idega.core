@@ -1686,7 +1686,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		
 		sql.append("select distinct(ic_user_id) from ic_usergroup_status where status_id = ")
 		.append(statusId);
-		sql.appendAnd().append("date_from").appendGreaterThanOrEqualsSign().append(currentTime)
+		sql.appendAnd().append("date_from").appendLessThanOrEqualsSign().append(currentTime)
 		.appendAnd().appendLeftParenthesis().append("date_to").appendIsNull().appendOr().append("date_to").appendLessThanSign().append(currentTime).appendRightParenthesis();
 		
 		return sql.toString();
