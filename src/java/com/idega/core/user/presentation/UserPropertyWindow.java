@@ -17,7 +17,7 @@ public class UserPropertyWindow extends TabbedPropertyWindow{
 
   public static final String PARAMETERSTRING_USER_ID = "ic_user_id";
   
-  public static final String SESSION_ADDRESS = "ic_user_property_window";
+  private static final String SESSION_ADDRESS = "ic_user_property_window";
 
   public UserPropertyWindow(){
     super();

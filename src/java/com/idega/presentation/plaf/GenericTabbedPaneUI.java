@@ -71,7 +71,7 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 		private IWColor tabPageColor;
 		protected Vector tabs;
 		protected ChangeEvent changeEvent = null;
-		protected EventListenerList listenerList = new EventListenerList();
+		protected EventListenerList iListenerList = new EventListenerList();
 		protected Form linkForm = null;
 
 		private int index = -1;
@@ -149,16 +149,16 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 		}
 
 		public void addChangeListener(ChangeListener l) {
-			this.listenerList.add(ChangeListener.class, l);
+			this.iListenerList.add(ChangeListener.class, l);
 		}
 
 		public void removeChangeListener(ChangeListener l) {
-			this.listenerList.remove(ChangeListener.class, l);
+			this.iListenerList.remove(ChangeListener.class, l);
 		}
 
 		public void fireStateChanged() {
 			// Guaranteed to return a non-null array
-			Object[] listeners = this.listenerList.getListenerList();
+			Object[] listeners = this.iListenerList.getListenerList();
 
 			// Process the listeners last to first, notifying
 			// those that are interested in this event
@@ -174,7 +174,7 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 		}
 
 		public EventListener[] getListeners(Class listenerType) {
-			return this.listenerList.getListeners(listenerType);
+			return this.iListenerList.getListeners(listenerType);
 		}
 	} // InnerClass GenericTabPresentation
 

@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.95 2006/04/09 12:13:16 laddi Exp $
+ * $Id: Form.java,v 1.96 2006/05/08 13:51:09 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -37,10 +37,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/08 13:51:09 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.95 $
+ * @version $Revision: 1.96 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -48,15 +48,6 @@ public class Form
 		extends InterfaceObject {
 
 	//static constants:
-	public static final String ACTION_ON_BLUR = "onblur";
-	public static final String ACTION_ON_CHANGE = "onchange";
-	public static final String ACTION_ON_CLICK = "onclick";
-	public static final String ACTION_ON_FOCUS = "onfocus";
-	public static final String ACTION_ON_KEY_PRESS = "onkeypress";
-	public static final String ACTION_ON_KEY_DOWN = "onkeydown";
-	public static final String ACTION_ON_KEY_UP = "onkeyup";
-	public static final String ACTION_ON_SELECT = "onselect";
-	public static final String ACTION_ON_SUBMIT = "onsubmit";
 	private static final String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER;
 	private static String COLONSLASHSLASH = "://";
 	private static String HTTP = "http";

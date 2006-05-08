@@ -26,7 +26,6 @@ public class SelectionBox extends InterfaceObject
 
 
 	private Vector theElements;
-	private boolean keepStatus;
 	private String multipleString;
 	private boolean movers = false;
 	private Table outerTable;

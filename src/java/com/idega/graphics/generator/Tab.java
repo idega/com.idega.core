@@ -15,17 +15,17 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 
 public class Tab extends Button {
-  public static String BUTTON_UP = "_TAB_UP";
-  public static  String BUTTON_OVER = "_TAB_OVER";
-  public static  String BUTTON_DOWN = "_TAB_DOWN";
-  protected boolean drawBorder = false;
+  private static String BUTTON_UP = "_TAB_UP";
+  private static  String BUTTON_OVER = "_TAB_OVER";
+  private static  String BUTTON_DOWN = "_TAB_DOWN";
   protected boolean firstRun = true;
-  protected int height = 15;
 
   private boolean flip = false;
 
   public Tab() {
     super();
+    this.drawBorder = false;
+    this.height = 15;
   }
 
   public Tab(String text) {

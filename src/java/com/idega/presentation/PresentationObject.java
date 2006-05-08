@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.155 2006/04/28 18:51:06 laddi Exp $
+ * $Id: PresentationObject.java,v 1.156 2006/05/08 13:51:09 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2006/04/28 18:51:06 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/08 13:51:09 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.155 $
+ * @version $Revision: 1.156 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -83,7 +83,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	//private final static String IW_BUNDLE_IDENTIFIER="com.idega.idegaweb";
 	
 	//Static variables
-	public final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
+	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
+	public final static String CORE_IW_BUNDLE_IDENTIFIER = IW_BUNDLE_IDENTIFIER;
 	public final static String WIDTH = "width";
 	public final static String HEIGHT = "height";
 	public final static String HORIZONTAL_ALIGNMENT = "align";

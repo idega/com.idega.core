@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.92 2006/04/26 10:33:37 gimmi Exp $
+ * $Id: Table.java,v 1.93 2006/05/08 13:51:09 laddi Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -87,7 +87,6 @@ public class Table extends PresentationObjectContainer implements TableType{
 	protected static final String TAG_END = ">";
 	
 	protected static Image transparentcell;
-	protected static final String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 
 	protected static final String COLOR_ATTRIBUTE = "bgcolor";
 	public static final String HUNDRED_PERCENT = "100%";
@@ -2060,7 +2059,7 @@ public class Table extends PresentationObjectContainer implements TableType{
 
 	public static Image getTransparentCell(IWContext iwc) {
 		if (transparentcell == null) {
-			transparentcell = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getImage("transparentcell.gif");
+			transparentcell = iwc.getIWMainApplication().getBundle(PresentationObject.CORE_IW_BUNDLE_IDENTIFIER).getImage("transparentcell.gif");
 		}
 		return (Image) transparentcell.clone();
 	}

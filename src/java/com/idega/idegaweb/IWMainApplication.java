@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.169 2006/04/26 19:08:12 thomas Exp $
+ * $Id: IWMainApplication.java,v 1.170 2006/05/08 13:51:09 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -89,10 +89,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/04/26 19:08:12 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/05/08 13:51:09 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.169 $
+ * @version $Revision: 1.170 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -120,7 +120,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private final static String IDEGAWEB_PRIVATE_DIRECTORY = "WEB-INF/idegaweb";
     private final static String PROPERTIES_STANDARD_DIRECTORY = "properties";
     
-    public final static String CORE_BUNDLE_IDENTIFIER = PresentationObject.IW_BUNDLE_IDENTIFIER;
+    public final static String CORE_BUNDLE_IDENTIFIER = PresentationObject.CORE_IW_BUNDLE_IDENTIFIER;
     public final static String CORE_BUNDLE_FONT_FOLDER_NAME = "iw_fonts";
     public final static String CORE_DEFAULT_FONT = "default.ttf";
     public final static String IW_ACCESSCONTROL_TYPE_PROPERTY = "iw_accesscontrol_type";

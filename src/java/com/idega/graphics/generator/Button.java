@@ -40,9 +40,9 @@ public class Button {
   private static Color defaultFillColor = new Color(201,203,206);
   private static Color defaultFontColor = Color.black;
   private static Color defaultHightlightColor = new Color(221,223,226);
-  public static String BUTTON_UP = "_BUTTON_UP";
-  public static String BUTTON_OVER = "_BUTTON_OVER";
-  public static String BUTTON_DOWN = "_BUTTON_DOWN";
+  private static String BUTTON_UP = "_BUTTON_UP";
+  private static String BUTTON_OVER = "_BUTTON_OVER";
+  private static String BUTTON_DOWN = "_BUTTON_DOWN";
 
   protected Color underColor = defaultUnderColor;
   protected Color fillColor = defaultFillColor;

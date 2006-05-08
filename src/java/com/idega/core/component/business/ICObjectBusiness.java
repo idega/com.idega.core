@@ -162,7 +162,7 @@ public class ICObjectBusiness implements Singleton {
   public  IWBundle getBundleForInstance(int icObjectInstanceID,IWMainApplication iwma){
     try{
       if(icObjectInstanceID==-1){
-        return iwma.getBundle(PresentationObject.IW_BUNDLE_IDENTIFIER);
+        return iwma.getBundle(PresentationObject.CORE_IW_BUNDLE_IDENTIFIER);
       }
       else{
         ICObjectInstance instance = getICObjectInstance(icObjectInstanceID);
