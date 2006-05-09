@@ -2,6 +2,7 @@ package com.idega.core.component.business;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.ejb.CreateException;
 
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectInstance;
@@ -14,6 +15,7 @@ import com.idega.data.IDOFinderException;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
@@ -209,7 +211,7 @@ public class ICObjectBusiness implements Singleton {
       Integer key = new Integer(icObjectID);
       ICObject theReturn = (ICObject)getIcObjectMap().get(key);
       if(theReturn == null){
-        theReturn =  ((com.idega.core.component.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).findByPrimaryKeyLegacy(icObjectID);
+        theReturn =  ((com.idega.core.component.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).findByPrimaryKey(new Integer(icObjectID));
         getIcObjectMap().put(key,theReturn);
       }
       return theReturn;
@@ -258,11 +260,17 @@ public class ICObjectBusiness implements Singleton {
    */
   public ICObject createICObject()throws IDOCreateException{
     try{
-      return ((com.idega.core.component.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
+      return ((com.idega.core.component.data.ICObjectHome)com.idega.data.IDOLookup.getHome(ICObject.class)).create();
     }
     catch(RuntimeException re){
       throw new IDOCreateException(re);
     }
+	catch (IDOLookupException e) {
+		throw new IDOCreateException(e);
+	}
+	catch (CreateException e) {
+		throw new IDOCreateException(e);
+	}
   }
 
 

@@ -4,6 +4,7 @@ package com.idega.data;
 import java.util.Collection;
 import java.util.Map;
 
+import com.idega.core.component.data.ICObject;
 import com.idega.util.caching.CacheMap;
 
 /**
@@ -45,7 +46,15 @@ public class IDOBeanCache {
   private Map getCacheMap(){
     if(this.cacheMap==null){
       //cacheMap=new HashMap();
-    	this.cacheMap = new CacheMap(200);
+    	int maxCachedBeans = 200;
+    	IDOEntityDefinition entityDef = (IDOEntityDefinition) IDOContainer.getInstance().getEntityDefinitions().get(this.entityInterfaceClass);
+    	if(entityDef!=null){
+    		maxCachedBeans=entityDef.getMaxCachedBeans();
+    	}
+    	if(this.entityInterfaceClass.equals(ICObject.class)){
+    		boolean test=true;
+    	}
+    	this.cacheMap = new CacheMap(maxCachedBeans);
     }
     return this.cacheMap;
   }

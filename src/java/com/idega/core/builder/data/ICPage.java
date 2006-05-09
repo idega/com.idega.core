@@ -33,6 +33,11 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 
 	public int getTemplateId();
 
+	/**
+	 * Gets the id/key of the template of this page as a String.
+	 * Returns null if no template is set (templateId<=0)
+	 * @return
+	 */
 	public String getTemplateKey();
 
 	public java.lang.String getType();
@@ -77,6 +82,10 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 
 	public void setTemplateId(int p0);
 
+	/**
+	 * Sets the id/key of the template of this page as a String
+	 * @return
+	 */
 	public void setTemplateKey(String templateKey);
 
 	public void setType(java.lang.String p0);

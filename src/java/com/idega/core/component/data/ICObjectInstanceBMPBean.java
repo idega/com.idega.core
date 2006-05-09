@@ -46,6 +46,8 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		addManyToOneRelationship(IBPAGEID, "Page", com.idega.core.builder.data.ICPage.class);
 		addManyToOneRelationship(COLUMNNAME_PARENTID, "ParentId", ICObjectInstance.class);
 		addUniqueIDColumn();
+		
+		getEntityDefinition().setBeanCachingActiveByDefault(true,10000);
 	}
 
 	public String getEntityName() {

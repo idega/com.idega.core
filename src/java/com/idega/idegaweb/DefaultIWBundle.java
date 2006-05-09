@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.28 2006/04/09 12:13:14 laddi Exp $
+ * $Id: DefaultIWBundle.java,v 1.29 2006/05/09 14:47:19 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -31,6 +31,7 @@ import javax.faces.component.html.HtmlOutputText;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 import com.idega.core.component.business.BundleRegistrationListener;
+import com.idega.core.component.business.ComponentRegistry;
 import com.idega.core.component.business.RegisterException;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectBMPBean;
@@ -1040,30 +1041,34 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
 			try
 			{
-			    ICObject ico = icoHome.findByClassName(className);
+				ComponentRegistry registry = ComponentRegistry.getInstance(this.getApplication());
 				if (classIsRefactored)
 				{
-					try
-					{
-						ico.setObjectClass(Class.forName(newRefactoredClassName));
-						ico.store();
-					}
-					catch (Exception e)
-					{
-						log(e);
-					}
-					changeComponentInBundleRegistry(className, newRefactoredClassName);
-					if (!ico.getBundleIdentifier().equals(this.getBundleIdentifier()))
-					{
-						log(
-							"[DefaultIWBundle] : Updating bundle registry for component: "
-								+ ico.getClassName()
-								+ " from "
-								+ ico.getBundleIdentifier()
-								+ " to "
-								+ this.getBundleIdentifier());
-						ico.setBundleIdentifier(getBundleIdentifier());
-						ico.store();
+					if(registry.getComponentByClassName(className)==null){
+						
+					    ICObject ico = icoHome.findByClassName(className);
+						try
+						{
+							ico.setObjectClass(Class.forName(newRefactoredClassName));
+							ico.store();
+						}
+						catch (Exception e)
+						{
+							log(e);
+						}
+						changeComponentInBundleRegistry(className, newRefactoredClassName);
+						if (!ico.getBundleIdentifier().equals(this.getBundleIdentifier()))
+						{
+							log(
+								"[DefaultIWBundle] : Updating bundle registry for component: "
+									+ ico.getClassName()
+									+ " from "
+									+ ico.getBundleIdentifier()
+									+ " to "
+									+ this.getBundleIdentifier());
+							ico.setBundleIdentifier(getBundleIdentifier());
+							ico.store();
+						}
 					}
 				}
 			}
@@ -1363,7 +1368,19 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		pl.delete();
 		getComponentPropertiesListMap().remove(className);
 		getComponentList().removeProperty(className);
-		com.idega.core.component.data.ICObjectBMPBean.removeICObject(className);
+		//com.idega.core.component.data.ICObjectBMPBean.removeICObject(className);
+		
+		ICObjectHome home;
+		try {
+			home = (ICObjectHome)IDOLookup.getHome(ICObject.class);
+			ICObject ico = home.findByClassName(className);
+			ico.remove();
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		this.propertyList.store();
 	}
 	public List getComponentKeys()

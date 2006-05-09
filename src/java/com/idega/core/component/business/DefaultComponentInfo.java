@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultComponentInfo.java,v 1.3 2006/04/09 12:13:16 laddi Exp $
+ * $Id: DefaultComponentInfo.java,v 1.4 2006/05/09 14:47:18 tryggvil Exp $
  * Created on 8.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import java.util.Locale;
  * <p>
  * TODO tryggvil Describe Type UIComponentInfo
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class DefaultComponentInfo implements ComponentInfo {
 
@@ -45,7 +45,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	/**
 	 * @return Returns the bundleIdentifier.
 	 */
-	public String getBundleIdentifier() {
+	public String getModuleIdentifier() {
 		return this.bundleIdentifier;
 	}
 
@@ -118,6 +118,9 @@ public class DefaultComponentInfo implements ComponentInfo {
 	 * @return Returns the properties.
 	 */
 	public List getProperties() {
+		if(properties==null){
+			properties=new ArrayList();
+		}
 		return this.properties;
 	}
 

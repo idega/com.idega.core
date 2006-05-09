@@ -34,4 +34,10 @@ public interface IDOEntityDefinition {
 	 */
 	public Boolean isBeanCachingActive();
 	public void setBeanCachingActiveByDefault(boolean value);
+	public void setBeanCachingActiveByDefault(boolean value,int maxCachedBeans);
+	
+	/**
+	 * Gets the default max-cached bean instances if beancaching is set active.
+	 */
+	public int getMaxCachedBeans();
 }

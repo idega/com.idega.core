@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.3 2006/04/09 12:13:15 laddi Exp $
+ * $Id: ICPageBMPBean.java,v 1.4 2006/05/09 14:47:18 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -105,7 +105,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		addAttribute(getColumnDeleted(), "Deleted", true, true, String.class, 1);
 		addAttribute(getColumnDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
 		addAttribute(getColumnDeletedWhen(), "Deleted when", true, true, Timestamp.class);
-		addAttribute(TREE_ORDER, "Ordering of pages in a level in the page tree", true, true, Integer.class);
+		addAttribute(getColumnTreeOrder(), "Ordering of pages in a level in the page tree", true, true, Integer.class);
 		addAttribute(IS_CATEGORY, "Is used as a page category", true, true, Boolean.class);
 		addManyToManyRelationShip(ICProtocol.class, "ib_page_ic_protocol");
 		addAttribute(PAGE_FORMAT, "Format", true, true, String.class, 30);
@@ -636,6 +636,10 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 
 	public int getTreeOrder() {
 		return getIntColumnValue(TREE_ORDER);
+	}
+	
+	public static String getColumnTreeOrder() {
+		return (TREE_ORDER);
 	}
 	
 	public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {

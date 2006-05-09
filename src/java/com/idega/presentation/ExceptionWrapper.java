@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionWrapper.java,v 1.10 2006/04/09 12:13:13 laddi Exp $
+ * $Id: ExceptionWrapper.java,v 1.11 2006/05/09 14:47:18 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -25,21 +25,22 @@ public class ExceptionWrapper extends ExpandContainer {
 
   public ExceptionWrapper() {
   	super();
+	setStyleClass("errormessage");
   }
 
 	public ExceptionWrapper(Exception ex) {
-		super();
+		this();
 		setException(ex);
 	}
 
   public ExceptionWrapper(Exception ex, PresentationObject thrower) {
-    super();
+    this();
     setException(ex);
   }
 
 	protected void initialize(IWContext iwc) {
 		super.initialize(iwc);
-		IWResourceBundle iwrb = getBundle().getResourceBundle(iwc);
+		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		String errorMessage = iwrb.getLocalizedString("error.exception_occurred","The following exception occurred");
 		Text error = new Text(errorMessage);

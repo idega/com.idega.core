@@ -1,29 +1,13 @@
-/*
- * Created on Jun 2, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package com.idega.core.component.data;
 
-import com.idega.exception.IWBundleDoesNotExist;
+
 import com.idega.idegaweb.IWBundle;
+import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.PresentationObject;
+import com.idega.data.IDOEntity;
 
-
-/**
- * <p>
- * TODO thomas Describe Type ICObject
- * </p>
- *  Last modified: $Date: 2006/03/28 10:20:10 $ by $Author: tryggvil $
- * 
- * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.4 $
- */
-public interface ICObject extends com.idega.data.IDOLegacyEntity {
-	
-	public void initializeAttributes();
+public interface ICObject extends IDOEntity {
 
 	/**
 	 * @see com.idega.core.component.data.ICObjectBMPBean#getName
@@ -58,8 +42,7 @@ public interface ICObject extends com.idega.data.IDOLegacyEntity {
 	/**
 	 * @see com.idega.core.component.data.ICObjectBMPBean#getNewInstance
 	 */
-	public PresentationObject getNewInstance() throws ClassNotFoundException, IllegalAccessException,
-			InstantiationException;
+	public PresentationObject getNewInstance() throws ClassNotFoundException, IllegalAccessException, InstantiationException;
 
 	/**
 	 * @see com.idega.core.component.data.ICObjectBMPBean#getObjectType
@@ -95,5 +78,9 @@ public interface ICObject extends com.idega.data.IDOLegacyEntity {
 	 * @see com.idega.core.component.data.ICObjectBMPBean#compareTo
 	 */
 	public int compareTo(Object obj);
-	
+
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#getID
+	 */
+	public int getID();
 }

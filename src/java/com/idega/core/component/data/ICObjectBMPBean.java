@@ -1,21 +1,21 @@
-//idega 2001 - Tryggvi Larusson
 /*
-
-*Copyright 2001 idega.is All Rights Reserved.
-
-*/
+ * $Id: ICObjectBMPBean.java,v 1.14 2006/05/09 14:47:18 tryggvil Exp $
+ * Created in 2001 by Tryggvi Larusson
+ *
+ * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.core.component.data;
-//import java.util.*;
+
 import java.sql.SQLException;
 import java.text.Collator;
 import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
-
 import javax.ejb.FinderException;
-
 import com.idega.core.file.data.ICFile;
-import com.idega.data.EntityFinder;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.query.MatchCriteria;
@@ -28,13 +28,26 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.RefactorClassRegistry;
 /**
-
-*@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
-
-*@version 1.3
-
-*/
+ * <p>
+ * This is a bean implementation for the ICObject entity and is backed by the IC_OBJECT
+ * table in the SQL database.<br/>
+ * The purpose of this entity is to serve as a component registry for an idegaWeb
+ * application. This table can hold a registry of different components such as
+ * Elements,Blocks and JSF UIComponents.<br/>
+ * This table is updated and synchronized with the IWBundle system, i.e. that every
+ * time the application starts it updates the IC_OBJECT table with all components
+ * registered in all idegaWeb bundles installed in the web-application.
+ * </p>
+ * Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.14 $
+ */
 public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = -7531187796468485951L;
 	public static final String COMPONENT_TYPE_ELEMENT = "iw.element";
 	public static final String COMPONENT_TYPE_BLOCK = "iw.block";
 	public static final String COMPONENT_TYPE_APPLICATION = "iw.application";
@@ -75,7 +88,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer","many-to-one","com.idega.data.genericentity.Image");
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,java.lang.Integer.class);
 		//addAttribute("image_id","MyndN?mer",false,false,"java.lang.Integer","one-to-many","com.idega.projects.golf.entity.ImageEntity");
-		getEntityDefinition().setBeanCachingActiveByDefault(true);
+		getEntityDefinition().setBeanCachingActiveByDefault(true,10000);
 	}
 	private String getColumnObjectName() {
 		return COLUMN_OBJECT_NAME;
@@ -135,15 +148,17 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	{
 		try
 		{
-			List l = EntityFinder.findAllByColumn(getStaticInstance(ICObject.class), getClassNameColumnName(), className);
-			return (ICObject) l.get(0);
+			/*List l = EntityFinder.findAllByColumn(getStaticInstance(ICObject.class), getClassNameColumnName(), className);
+			return (ICObject) l.get(0);*/
+			ICObjectHome home = (ICObjectHome)IDOLookup.getHome(ICObject.class);
+			return home.findByClassName(className);
 		}
 		catch (Exception e)
 		{
 			return null;
 		}
 	}
-	public static void removeICObject(String className)
+	/*public static void removeICObject(String className)
 	{
 		try
 		{
@@ -153,7 +168,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		catch (Exception e)
 		{
 		}
-	}
+	}*/
 	public void insertStartData() throws Exception
 	{
 		/*ICObject obj = ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
@@ -276,6 +291,16 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
 	    return idoFindPKsByQuery(query);
 	}
+	public Collection ejbFindAllByObjectTypeOrdered(String type) throws FinderException
+	{
+		//return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type));
+	    Table table = new Table(this);
+	    SelectQuery query = new SelectQuery(table);
+	    query.addColumn(new WildCardColumn());
+	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
+	    query.addOrder(table,ICObjectBMPBean.getObjectTypeColumnName(),true);
+	    return idoFindPKsByQuery(query);
+	}
 	public Collection ejbFindAllByObjectTypeAndBundle(String type, String bundle) throws FinderException
 	{
 	    Table table = new Table(this);
@@ -332,5 +357,9 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 			return Collator.getInstance().compare(this.getName(), ((ICObject)obj).getName());
 		}
 		return super.compareTo(obj);
+	}
+	
+	public int getID(){
+		return super.getID();
 	}
 }

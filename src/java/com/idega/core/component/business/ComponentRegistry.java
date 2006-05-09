@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.2 2006/04/09 12:13:16 laddi Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.3 2006/05/09 14:47:18 tryggvil Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,10 +13,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import javax.servlet.ServletContext;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWModuleLoader;
 
 /**
  * <p>
@@ -24,32 +26,49 @@ import com.idega.idegaweb.IWMainApplication;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ComponentRegistry {
 
 	public final static String BEAN_KEY = "ComponentRegistry";
 	private ArrayList allComponents;
-	private boolean loadedOldIWComponents;
+	private boolean loadedOldIWComponents=false;
+	private boolean loadedFacesConfig=false;
+	private IWMainApplication iwma;
+	private ServletContext context;
 	public static final String COMPONENT_TYPE_ELEMENT = "iw.element";
 	public static final String COMPONENT_TYPE_BLOCK = "iw.block";
 	public static final String COMPONENT_TYPE_JSF_UICOMPONENT = "jsf.uicomponent";
 
 	/**
+	 * @param iwma 
 	 * 
 	 */
-	public ComponentRegistry() {
-		super();
+	public ComponentRegistry(IWMainApplication iwma,ServletContext context) {
+		this.iwma=iwma;
+		this.context=context;
 	}
 
-	public static ComponentRegistry getInstance() {
-		IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
+	public static ComponentRegistry loadRegistry(IWMainApplication iwma, ServletContext context) {
+		//IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
+		ComponentRegistry registry = null;
+		//if (registry != null) {
+			registry = new ComponentRegistry(iwma,context);
+			registry.getAllComponents();
+			iwma.setAttribute(BEAN_KEY, registry);
+		//}
+		return registry;
+	}
+	
+	public static ComponentRegistry getInstance(IWMainApplication iwma) {
+		//IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
 		ComponentRegistry registry = (ComponentRegistry) iwma.getAttribute(BEAN_KEY);
-		if (registry != null) {
-			registry = new ComponentRegistry();
+		if (registry == null) {
+			throw new RuntimeException("ComponentRegistry not initialized");
+			//registry = new ComponentRegistry(iwma);
 		}
 		return registry;
 	}
@@ -57,7 +76,25 @@ public class ComponentRegistry {
 	public List getAllComponents(){
 		//this method sees to it to load first all components:
 		loadOldIWComponents();
+		loadFacesConfig();
 		return internalGetComponentList();
+		
+	}
+
+	/**
+	 * <p>
+	 * TODO tryggvil describe method loadFacesConfig
+	 * </p>
+	 */
+	private void loadFacesConfig() {
+		if(!loadedFacesConfig){
+
+			loadedFacesConfig=true;
+			IWModuleLoader loader = new IWModuleLoader(iwma,context);
+			loader.getJarLoaders().add(new FacesConfigDeployer(this));
+			loader.loadBundlesFromJars();
+			
+		}
 	}
 
 	private List internalGetComponentList() {
@@ -103,15 +140,33 @@ public class ComponentRegistry {
 
 	private void registerComponent(ICObject ico) {
 		try {
-			Class clazz = ico.getObjectClass();
-			String name = ico.getName();
-			String type = ico.getObjectType();
-			int icObjectId = ((Integer)ico.getPrimaryKey()).intValue();
-			ICObjectComponentInfo info = new ICObjectComponentInfo(clazz, name, type,icObjectId);
+			//Class clazz = ico.getObjectClass();
+			//String name = ico.getName();
+			//String type = ico.getObjectType();
+			//int icObjectId = ((Integer)ico.getPrimaryKey()).intValue();
+			ICObjectComponentInfo info = new ICObjectComponentInfo(ico);
 			registerComponent(info);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * <p>
+	 * TODO tryggvil describe method getComponentByClassName
+	 * </p>
+	 * @param componentClass
+	 * @return
+	 */
+	public ComponentInfo getComponentByClassName(String componentClassName) {
+		List componentList = getAllComponents();
+		for (Iterator iter = componentList.iterator(); iter.hasNext();) {
+			ComponentInfo info = (ComponentInfo) iter.next();
+			if(info.getComponentClass().getName().equals(componentClassName)){
+				return info;
+			}
+		}
+		return null;
 	}
 }

@@ -31,6 +31,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	private Class _beanClass = null;
 	private boolean _hasAutoIncrementColumn = true;
 	private Boolean _isBeanCachingActive = null;
+	private int maxBeanCachedEntities=-1;
 	/**
 	 * 
 	 */
@@ -288,6 +289,15 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	}
 	
 	public void setBeanCachingActiveByDefault(boolean value){
+		setBeanCachingActiveByDefault(value,200);
+	}
+	
+	public void setBeanCachingActiveByDefault(boolean value, int maxBeanCachedEntities){
 		this._isBeanCachingActive = ((value)?Boolean.TRUE:Boolean.FALSE);
+		this.maxBeanCachedEntities=maxBeanCachedEntities;
+	}
+	
+	public int getMaxCachedBeans(){
+		return maxBeanCachedEntities;
 	}
 }

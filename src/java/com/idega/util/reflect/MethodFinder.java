@@ -36,6 +36,22 @@ public class MethodFinder implements Singleton
 	protected MethodFinder() {
 	}
 	
+	/**
+	 * <p>
+	 * Checks if the string 'methodIdentifierOrProperty' has a methodIdentifier format or not.
+	 * </p>
+	 * @param methodIdentifierOrProperty
+	 * @return
+	 */
+	public boolean isMethodIdentifier(String methodIdentifierOrProperty){
+		if(methodIdentifierOrProperty!=null){
+			if(methodIdentifierOrProperty.startsWith(separator+methodString)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static MethodFinder getInstance() {
 		return (MethodFinder) SingletonRepository.getRepository().getInstance(MethodFinder.class, instantiator);
 	}

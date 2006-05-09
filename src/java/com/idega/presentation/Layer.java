@@ -4,7 +4,11 @@
  */
 package com.idega.presentation;
 
+import java.io.IOException;
+import java.util.Iterator;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import com.idega.idegaweb.IWConstants;
 import com.idega.util.text.TextStyler;
 
 /**
@@ -55,14 +59,44 @@ public class Layer extends PresentationObjectContainer {
 	}
 
 	public void print(IWContext iwc) throws Exception {
-		if (doPrint(iwc)) {
+		/*if (doPrint(iwc)) {
 			if (getMarkupLanguage().equals("HTML")) {
 				print("<" + this.layerType + " ");
 				print(getMarkupAttributesString() + ">");
 				super.print(iwc);
 				println("</" + this.layerType + ">");
 			}
+		}*/
+		encodeBegin(iwc);
+		encodeChildren(iwc);
+		encodeEnd(iwc);
+	}
+	
+	public void encodeBegin(FacesContext context)throws IOException{
+		//if (doPrint(iwc)) {
+			if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
+				print("<" + this.layerType + " ");
+				print(getMarkupAttributesString() + ">");
+			}
+		//}
+	}
+	
+	public void encodeChildren(FacesContext context) throws IOException{
+		if(!goneThroughRenderPhase()){
+			Iterator children = this.getChildren().iterator();
+			while (children.hasNext()) {
+				UIComponent element = (UIComponent) children.next();
+				renderChild(context,element);
+			}
 		}
+	}
+	
+	public void encodeEnd(FacesContext context)throws IOException{
+		//if (doPrint(iwc)) {
+			if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
+				println("</" + this.layerType + ">");
+			}
+		//}
 	}
 
 	public void setName(String name) {

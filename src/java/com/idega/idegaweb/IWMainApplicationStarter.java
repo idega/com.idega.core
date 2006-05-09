@@ -35,6 +35,7 @@ import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.appserver.AppServerDetector;
 import com.idega.core.builder.presentation.ICPropertyHandler;
+import com.idega.core.component.business.ComponentRegistry;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.component.data.ICObjectType;
@@ -70,6 +71,7 @@ import com.idega.util.database.PoolManager;
 public class IWMainApplicationStarter implements ServletContextListener  {
 	
 	IWMainApplication iwma = null;
+	private ServletContext context;
 	// not used
 	//private Logger log = Logger.getLogger(IWMainApplicationStarter.class.getName());
 
@@ -88,6 +90,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		IWMainApplication _iwma = new IWMainApplication(context,appServer);
 		_iwma.setApplicationServer(appServer);
 		this.iwma=_iwma;
+		this.context=context;
 		
 		//IWMainApplication iwma = IWMainApplication.getIWMainApplication(getServletContext());
 		//sendStartMessage("Initializing IWMainApplicationStarter");
@@ -362,6 +365,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 		startTemporaryBundleStarters();
 		
+		startComponentRegistry();
+		
 		if(!this.iwma.isInDatabaseLessMode()){
 			this.iwma.startAccessController();
 		}
@@ -393,6 +398,15 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		sendStartMessage("Completed in " + time + " seconds");
 	}
 	
+	/**
+	 * <p>
+	 * TODO tryggvil describe method startComponentRegistry
+	 * </p>
+	 */
+	private void startComponentRegistry() {
+		ComponentRegistry.loadRegistry(iwma,context);
+	}
+
 	/**
 	 * 
 	 */

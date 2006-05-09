@@ -498,5 +498,31 @@ function openContentEditor(url){
 }
 
 
+function expandMinimizeContents(container){
+	var expander;
+	var contents;
+	var divs = container.getElementsByTagName('div');
+	for (var i=0;i<divs.length;i++)
+	{
+			if(divs[i].className.indexOf('contents') != -1)
+			{
+				contents = divs[i];
+			}
+			else if(divs[i].className.indexOf('expander') != -1)
+			{
+				expander = divs[i];
+			}
+	}
+	var expanderClass = expander.getAttribute('class');
+	var contentsClass = contents.getAttribute('class');
+	if(contentsClass=='contents expanded'){
+		expander.className='expander minimized';
+		contents.className='contents minimized';
+	}
+	else if(contentsClass=='contents minimized'){
+		expander.className='expander expanded';
+		contents.className='contents expanded';
+	}
+}
 
 

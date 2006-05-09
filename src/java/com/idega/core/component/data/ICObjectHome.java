@@ -1,34 +1,16 @@
-/*
- * Created on Jun 2, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package com.idega.core.component.data;
 
+
 import java.util.Collection;
-import javax.ejb.FinderException;
+import javax.ejb.CreateException;
 import com.idega.data.IDOHome;
+import javax.ejb.FinderException;
 
-
-/**
- * <p>
- * TODO thomas Describe Type ICObjectHome
- * </p>
- *  Last modified: $Date: 2005/06/03 15:18:29 $ by $Author: thomas $
- * 
- * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.2 $
- */
 public interface ICObjectHome extends IDOHome {
-	
-	public ICObject findByPrimaryKey(int id) throws javax.ejb.FinderException;
-	public ICObject findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
-	public ICObject createLegacy();
 
-	public ICObject create() throws javax.ejb.CreateException;
+	public ICObject create() throws CreateException;
 
-	public ICObject findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
+	public ICObject findByPrimaryKey(Object pk) throws FinderException;
 
 	/**
 	 * @see com.idega.core.component.data.ICObjectBMPBean#ejbFindAll
@@ -39,6 +21,11 @@ public interface ICObjectHome extends IDOHome {
 	 * @see com.idega.core.component.data.ICObjectBMPBean#ejbFindAllByObjectType
 	 */
 	public Collection findAllByObjectType(String type) throws FinderException;
+
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#ejbFindAllByObjectTypeOrdered
+	 */
+	public Collection findAllByObjectTypeOrdered(String type) throws FinderException;
 
 	/**
 	 * @see com.idega.core.component.data.ICObjectBMPBean#ejbFindAllByObjectTypeAndBundle

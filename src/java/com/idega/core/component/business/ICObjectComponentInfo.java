@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectComponentInfo.java,v 1.2 2006/04/09 12:13:16 laddi Exp $
+ * $Id: ICObjectComponentInfo.java,v 1.3 2006/05/09 14:47:18 tryggvil Exp $
  * Created on 8.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,43 +9,48 @@
  */
 package com.idega.core.component.business;
 
+import com.idega.core.component.data.ICObject;
+
 
 /**
  * <p>
  * Implementation of ComponentInfo for ICObject registered objects
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ICObjectComponentInfo extends DefaultComponentInfo {
 
-	int icObjectId;
+	ICObject icObject;
 
 	/**
 	 * @param componentClass
 	 * @param componentName
 	 * @param componentType
+	 * @throws ClassNotFoundException 
 	 */
-	public ICObjectComponentInfo(Class componentClass, String componentName, String componentType,int icObjectId) {
-		super(componentClass, componentName, componentType);
-		// TODO Auto-generated constructor stub
-		setIcObjectId(icObjectId);
+	public ICObjectComponentInfo(ICObject icObject) throws ClassNotFoundException {
+		super(icObject.getObjectClass(), icObject.getName(), icObject.getObjectType());
+		setIcObject(icObject);
 	}
+
 	
 	/**
-	 * @return Returns the icObjectId.
+	 * @return the icObject
 	 */
-	public int getIcObjectId() {
-		return this.icObjectId;
+	ICObject getIcObject() {
+		return icObject;
 	}
+
 	
 	/**
-	 * @param icObjectId The icObjectId to set.
+	 * @param icObject the icObject to set
 	 */
-	public void setIcObjectId(int icObjectId) {
-		this.icObjectId = icObjectId;
+	void setIcObject(ICObject icObject) {
+		this.icObject = icObject;
 	}
+	
 	
 }

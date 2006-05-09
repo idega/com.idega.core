@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.156 2006/05/08 13:51:09 laddi Exp $
+ * $Id: PresentationObject.java,v 1.157 2006/05/09 14:47:18 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2006/05/08 13:51:09 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.156 $
+ * @version $Revision: 1.157 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -150,6 +150,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 
 	//Marker to mark if this component instance is restored via the JSF state restoring mechanism
 	private boolean isStateRestored=false;
+	private String xmlId;
 
 	/**
 	 * Default constructor.
@@ -722,6 +723,37 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 
 	/**
+	 * <p>
+	 * Called by the Builder to set all id's on the object from the IBXML page
+	 * to maintain backwards compatibility.
+	 * </p>
+	 * @param xmlId the id of the module tag
+	 * @param icObjectInstanceId
+	 * @param icObjectId
+	 */
+	public void setBuilderIds(String xmlId, int icObjectInstanceId,int icObjectId){
+		setICObjectID(icObjectId);
+		setICObjectInstanceID(icObjectInstanceId);
+		this.xmlId=xmlId;
+		try{
+			setId(xmlId);
+		}
+		catch(Exception e){}
+	}
+	
+	/**
+	 * <p>
+	 * Returns the id set in xml (by Builder).<br/>
+	 * This Id can be either an ICObjectInstanceId (an integer) if the older
+	 * method is used or a string like: 'uuid_a4cd4fd...' if the newer
+	 * method is used.
+	 * </p>
+	 */
+	public String getXmlId(){
+		return xmlId;
+	}
+	
+	/**
 	 * This method is deprecated and only used for old style (pre-JSF) style rendering.
 	 * Get the printWriter for the current render response.
 	 */
@@ -977,6 +1009,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			obj._location = this._location;
 			obj._objTemplateID=this._objTemplateID;
 			obj._templateObject = null;
+			obj.xmlId=this.xmlId;
 			//obj.defaultState = this.defaultState; //same object, unnecessary
 			// to clone
 		}
@@ -2103,6 +2136,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		this.formerCompoundId=(String)values[24];
 		this._styler=(TextStyler)values[25];
 		this._objTemplateID=(String)values[26];
+		this.xmlId=(String)values[27];
 		//This variable is set only to know that the object is recreated from serialized state
 		this.isStateRestored=true;
 	}
@@ -2111,7 +2145,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[27];
+		Object values[] = new Object[28];
 		values[0]=super.saveState(context);
 		values[1]=this.attributes;
 		values[2]=this.name;
@@ -2139,6 +2173,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		values[24]=this.formerCompoundId;
 		values[25]=this._styler;
 		values[26]=this._objTemplateID;
+		values[27]=xmlId;
 		return values;
 	}
 
@@ -2173,7 +2208,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 
 	/**
-	 * Bridging method to call the old idegaWeb _main(IWContext method) to work inside JavaServerFaces.
+	 * Bridging method to call the old idegaWeb _main(IWContext method) to work inside JavaServerFaces.			
 	 * This can be done in three ways, from the IWPhaseListener, from encodeBegin(FacesContext) or from encodeChildren(FacesContext)
 	 * @param fc
 	 * @throws IOException
@@ -2203,14 +2238,15 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			throw noex;
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			if(e instanceof IOException){
 				throw (IOException)e;
 			}
 			else{
-				e.printStackTrace();
+				//e.printStackTrace();
 				//throw new IOException(e.getMessage());
 			}
+			getChildren().add(new ExceptionWrapper(e));
 		}
 	}
 	
