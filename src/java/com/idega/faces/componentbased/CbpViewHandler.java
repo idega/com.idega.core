@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.2 2006/04/09 11:56:22 laddi Exp $
+ * $Id: CbpViewHandler.java,v 1.3 2006/05/09 14:53:11 tryggvil Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2006/04/09 11:56:22 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/09 14:53:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class CbpViewHandler extends ViewHandler {
 
@@ -298,7 +298,7 @@ public class CbpViewHandler extends ViewHandler {
 		ret.setLocale(calculateLocale(ctx));
 
 		//set the view on the session
-		ctx.getExternalContext().getSessionMap().put(net.sourceforge.smile.application.CbpStateManagerImpl.SESSION_KEY_CURRENT_VIEW,ret);
+		//ctx.getExternalContext().getSessionMap().put(net.sourceforge.smile.application.CbpStateManagerImpl.SESSION_KEY_CURRENT_VIEW,ret);
 		
 		return ret;
 	}
