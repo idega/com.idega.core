@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.29 2006/05/09 14:47:19 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.30 2006/05/09 18:01:57 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -32,6 +32,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 import com.idega.core.component.business.BundleRegistrationListener;
 import com.idega.core.component.business.ComponentRegistry;
+import com.idega.core.component.business.ICObjectComponentInfo;
 import com.idega.core.component.business.RegisterException;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectBMPBean;
@@ -1041,12 +1042,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
 			try
 			{
+				ICObject ico = icoHome.findByClassName(className);
 				ComponentRegistry registry = ComponentRegistry.getInstance(this.getApplication());
 				if (classIsRefactored)
 				{
 					if(registry.getComponentByClassName(className)==null){
-						
-					    ICObject ico = icoHome.findByClassName(className);
+					    //ICObject ico = icoHome.findByClassName(className);
 						try
 						{
 							ico.setObjectClass(Class.forName(newRefactoredClassName));
@@ -1092,6 +1093,10 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 						ico.setObjectType(componentType);
 						ico.setBundle(this);
 						ico.store();
+						//Update the ComponentRegistry with the new component
+						ComponentRegistry registry = ComponentRegistry.getInstance(this.getApplication());
+						registry.registerComponent(new ICObjectComponentInfo(ico));
+						
 						if (componentType.equals(ICObjectBMPBean.COMPONENT_TYPE_ELEMENT)
 							|| componentType.equals(ICObjectBMPBean.COMPONENT_TYPE_BLOCK))
 						{
