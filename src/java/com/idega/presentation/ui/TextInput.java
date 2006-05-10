@@ -1,5 +1,5 @@
 /*
- * $Id: TextInput.java,v 1.42 2006/04/09 12:13:16 laddi Exp $
+ * $Id: TextInput.java,v 1.43 2006/05/10 08:13:33 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a input element of type text
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/10 08:13:33 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.42 $
+ * @version $Revision: 1.43 $
  */
 public class TextInput extends GenericInput {
     private boolean isSetAsIntegers;
@@ -619,9 +619,17 @@ public class TextInput extends GenericInput {
      * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
      */
     public void handleKeepStatus(IWContext iwc) {
+    	if (getIndex() > 0) {
+    		String[] parameters = iwc.getParameterValues(getName());
+    		if (parameters != null && parameters.length >= getIndex()) {
+    			setContent(parameters[getIndex()]);
+    		}
+    	}
+    	else {
         if (iwc.getParameter(getName()) != null) {
             setContent(iwc.getParameter(getName()));
         }
+    	}
     }
 
     /**

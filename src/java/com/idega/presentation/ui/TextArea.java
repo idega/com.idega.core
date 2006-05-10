@@ -1,5 +1,5 @@
 /*
- * $Id: TextArea.java,v 1.20 2006/04/09 12:13:15 laddi Exp $
+ * $Id: TextArea.java,v 1.21 2006/05/10 08:13:33 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a textarea input element.
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/10 08:13:33 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class TextArea extends InterfaceObject {
 
@@ -196,9 +196,17 @@ public class TextArea extends InterfaceObject {
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
-		if (iwc.isParameterSet(getName())) {
-			this.setContent(iwc.getParameter(getName()));
-		}
+  	if (getIndex() > 0) {
+  		String[] parameters = iwc.getParameterValues(getName());
+  		if (parameters != null && parameters.length >= getIndex()) {
+  			setContent(parameters[getIndex()]);
+  		}
+  	}
+  	else {
+      if (iwc.getParameter(getName()) != null) {
+          setContent(iwc.getParameter(getName()));
+      }
+  	}
 	}
 
 	/**

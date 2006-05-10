@@ -392,13 +392,28 @@ public class GenericSelect extends InterfaceObject {
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
-		if (iwc.isParameterSet(getName())) {
-			String[] values = iwc.getParameterValues(getName());
-			if (values != null) {
-				for (int a = 0; a < values.length; a++) {
-					setSelectedOption(values[a]);
+		if (this._isMultiple) {
+			if (iwc.isParameterSet(getName())) {
+				String[] values = iwc.getParameterValues(getName());
+				if (values != null) {
+					for (int a = 0; a < values.length; a++) {
+						setSelectedOption(values[a]);
+					}
 				}
 			}
+		}
+		else {
+    	if (getIndex() > 0) {
+    		String[] parameters = iwc.getParameterValues(getName());
+    		if (parameters != null && parameters.length >= getIndex()) {
+    			setContent(parameters[getIndex()]);
+    		}
+    	}
+    	else {
+        if (iwc.getParameter(getName()) != null) {
+            setContent(iwc.getParameter(getName()));
+        }
+    	}
 		}
 	}
 

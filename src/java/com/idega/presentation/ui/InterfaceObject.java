@@ -1,5 +1,5 @@
 /*
- * $Id: InterfaceObject.java,v 1.37 2006/04/09 12:13:15 laddi Exp $
+ * $Id: InterfaceObject.java,v 1.38 2006/05/10 08:13:33 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -21,14 +21,15 @@ import com.idega.presentation.Script;
  * In JSF there is now a more recent javax.faces.compoent.UIInput that serves a
  * similar purpose and is recommended to use/extend in newer pure JSF applications.
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/10 08:13:33 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
 	protected boolean keepStatus = false;
+	protected int index = -1;
 
 	private boolean _checkObject = false;
 	private boolean _disableObject = false;
@@ -50,7 +51,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 
 	
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[8];
+		Object values[] = new Object[9];
 		values[0] = super.saveState(ctx);
 		values[1] = new Boolean(this.keepStatus);
 		values[2] = new Boolean(this._checkObject);
@@ -59,6 +60,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		values[5] = new Boolean(this._inFocus);
 		values[6] = new Boolean(this._changeValue);
 		values[7] = new Boolean(this._selectValues);
+		values[7] = new Integer(this.index);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
@@ -71,6 +73,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		this._inFocus = ((Boolean) values[5]).booleanValue();
 		this._changeValue = ((Boolean) values[6]).booleanValue();
 		this._selectValues = ((Boolean) values[7]).booleanValue();
+		this.index = ((Integer) values[7]).intValue();
 	}
 
 	public InterfaceObject() {
@@ -655,11 +658,29 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	}
 
 	/**
+	 * Returns the index of the interface object if set to keep status and is multivalued parameter.
+	 * @return int
+	 */
+	public int getIndex() {
+		return this.index;
+	}
+
+	/**
 	 * Sets to keep the status on the interface object when an action is performed.
 	 * @param boolean	True if interface object is to keep status, false otherwise.
 	 */
 	public void keepStatusOnAction(boolean keepStatus) {
 		this.keepStatus = keepStatus;
+	}
+
+	/**
+	 * Sets to keep the status on the interface object when an action is performed.
+	 * @param boolean	True if interface object is to keep status, false otherwise.
+	 * @param int	The number of the input if used with multiple parameters.
+	 */
+	public void keepStatusOnAction(boolean keepStatus, int index) {
+		this.keepStatus = keepStatus;
+		this.index = index;
 	}
 
 	/**
