@@ -403,9 +403,9 @@ public class GenericSelect extends InterfaceObject {
 			}
 		}
 		else {
-    	if (getIndex() > 0) {
+    	if (getIndex() > -1) {
     		String[] parameters = iwc.getParameterValues(getName());
-    		if (parameters != null && parameters.length >= getIndex()) {
+    		if (parameters != null && parameters.length >= getIndex() + 1) {
     			setSelectedOption(parameters[getIndex()]);
     		}
     	}
