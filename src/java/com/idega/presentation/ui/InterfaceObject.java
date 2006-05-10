@@ -1,5 +1,5 @@
 /*
- * $Id: InterfaceObject.java,v 1.38 2006/05/10 08:13:33 laddi Exp $
+ * $Id: InterfaceObject.java,v 1.39 2006/05/10 11:24:35 eiki Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.presentation.Script;
  * In JSF there is now a more recent javax.faces.compoent.UIInput that serves a
  * similar purpose and is recommended to use/extend in newer pure JSF applications.
  * </p>
- *  Last modified: $Date: 2006/05/10 08:13:33 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/10 11:24:35 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
@@ -60,7 +60,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		values[5] = new Boolean(this._inFocus);
 		values[6] = new Boolean(this._changeValue);
 		values[7] = new Boolean(this._selectValues);
-		values[7] = new Integer(this.index);
+		values[8] = new Integer(this.index);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
@@ -73,7 +73,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		this._inFocus = ((Boolean) values[5]).booleanValue();
 		this._changeValue = ((Boolean) values[6]).booleanValue();
 		this._selectValues = ((Boolean) values[7]).booleanValue();
-		this.index = ((Integer) values[7]).intValue();
+		this.index = ((Integer) values[8]).intValue();
 	}
 
 	public InterfaceObject() {
