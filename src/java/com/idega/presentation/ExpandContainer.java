@@ -1,5 +1,5 @@
 /*
- * $Id: ExpandContainer.java,v 1.5 2006/05/09 14:47:18 tryggvil Exp $
+ * $Id: ExpandContainer.java,v 1.6 2006/05/10 08:27:16 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -49,9 +49,9 @@ public ExpandContainer() {
 	 */
 	public void main(IWContext iwc) throws Exception {
 		
-		if(!initialized){
+		if(!this.initialized){
 			initialize(iwc);
-			initialized=true;
+			this.initialized=true;
 		}
 
 		/*if (this.addContent) {
@@ -128,7 +128,7 @@ public ExpandContainer() {
 		}*/
 		if(header instanceof PresentationObject){
 			PresentationObject pHeader = (PresentationObject)header;
-			pHeader.setStyleAttribute(_headerStyle);
+			pHeader.setStyleAttribute(this._headerStyle);
 		}
 		renderChild(context, header);
 		
@@ -262,7 +262,7 @@ public ExpandContainer() {
 	 * @return the expanded
 	 */
 	boolean isExpanded() {
-		return expanded;
+		return this.expanded;
 	}
 
 	

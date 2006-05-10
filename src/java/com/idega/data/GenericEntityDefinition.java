@@ -298,6 +298,6 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	}
 	
 	public int getMaxCachedBeans(){
-		return maxBeanCachedEntities;
+		return this.maxBeanCachedEntities;
 	}
 }

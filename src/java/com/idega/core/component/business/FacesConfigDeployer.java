@@ -1,11 +1,11 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.1 2006/05/09 14:47:18 tryggvil Exp $
+ * $Id: FacesConfigDeployer.java,v 1.2 2006/05/10 08:27:16 laddi Exp $
  * Created on 5.2.2006 in project org.apache.axis
- *
+ * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
  */
 package com.idega.core.component.business;
 
@@ -26,48 +26,49 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import com.idega.idegaweb.JarLoader;
 
-
 /**
  * <p>
- * Implementation of JarLoader to automatically scan all faces-config.xml files in all
- * installed Jar files, parse them, and read into the componentRegistry.
+ * Implementation of JarLoader to automatically scan all faces-config.xml files
+ * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- *  Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/05/10 08:27:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public class FacesConfigDeployer implements JarLoader{
+public class FacesConfigDeployer implements JarLoader {
 
 	private static Logger log = Logger.getLogger(FacesConfigDeployer.class.getName());
 	private ComponentRegistry registry;
-	
-	
+
 	/**
-	 * @param registry 
+	 * @param registry
 	 * 
 	 */
 	public FacesConfigDeployer(ComponentRegistry registry) {
-		this.registry=registry;
+		this.registry = registry;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.idega.idegaweb.JarLoader#loadJar(java.io.File, java.util.jar.JarFile, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.idega.idegaweb.JarLoader#loadJar(java.io.File,
+	 *      java.util.jar.JarFile, java.lang.String)
 	 */
 	public void loadJar(File bundleJarFile, JarFile jarFile, String jarPath) {
 		Enumeration entries = jarFile.entries();
 		while (entries.hasMoreElements()) {
 			JarEntry entry = (JarEntry) entries.nextElement();
-			//JarFileEntry entryName = (JarFileEntry)entries.nextElement();
+			// JarFileEntry entryName = (JarFileEntry)entries.nextElement();
 			String entryName = entry.getName();
-			if(entryName.equals("META-INF/faces-config.xml")){
+			if (entryName.equals("META-INF/faces-config.xml")) {
 				try {
-					//if(!entryName.endsWith("undeploy.wsdd")){
-						log.info("Found JSF Description file: "+entryName);
-						InputStream stream = jarFile.getInputStream(entry);
-						processFacesConfig(stream);
-					//}
-					//}
+					// if(!entryName.endsWith("undeploy.wsdd")){
+					log.info("Found JSF Description file: " + entryName);
+					InputStream stream = jarFile.getInputStream(entry);
+					processFacesConfig(stream);
+					// }
+					// }
 				}
 				catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -84,89 +85,84 @@ public class FacesConfigDeployer implements JarLoader{
 			}
 		}
 	}
-	
 
-	public void processFacesConfig(InputStream stream) throws ParserConfigurationException, SAXException, IOException{
-        DocumentBuilderFactory factory =
-            DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(false);
-        factory.setValidating(false);
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(stream);
-        processDocument(document);
+	public void processFacesConfig(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(false);
+		factory.setValidating(false);
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document document = builder.parse(stream);
+		processDocument(document);
 	}
-	
-	
-	public void processDocument(Document document){
-		
+
+	public void processDocument(Document document) {
+
 		Element rootElement = document.getDocumentElement();
 		try {
-			//processWSDD(null,engine,rootElement);
+			// processWSDD(null,engine,rootElement);
 			NodeList childList = rootElement.getChildNodes();
 			for (int i = 0; i < childList.getLength(); i++) {
 				Node child = childList.item(i);
-				if(child instanceof Element){
-					Element elem = (Element)child;
-					if(elem.getNodeName().equals("component")){
+				if (child instanceof Element) {
+					Element elem = (Element) child;
+					if (elem.getNodeName().equals("component")) {
 						processComponentElement(elem);
 					}
 				}
 			}
-			
-			
+
 		}
 		catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-    protected void processComponentElement(Element element)
-    throws Exception
-	{
-    		NodeList children = element.getChildNodes();
-    		String componentClass = null;
-    		String componentType=null;
-    		int childrenCount = children.getLength();
+
+	protected void processComponentElement(Element element) throws Exception {
+		NodeList children = element.getChildNodes();
+		String componentClass = null;
+		//String componentType = null;
+		int childrenCount = children.getLength();
 		for (int i = 0; i < childrenCount; i++) {
 			Node child = children.item(i);
-			if(child instanceof Element){
-				Element elem = (Element)child;
-				if(elem.getNodeName().equals("component-class")){
+			if (child instanceof Element) {
+				Element elem = (Element) child;
+				if (elem.getNodeName().equals("component-class")) {
 					componentClass = getNodeTextValue(elem);
 				}
-				else	 if(elem.getNodeName().equals("component-type")){
-					componentType = getNodeTextValue(elem);
+				else if (elem.getNodeName().equals("component-type")) {
+					/*componentType =*/ getNodeTextValue(elem);
 				}
 			}
 		}
-		if(componentClass!=null){
-			ComponentInfo info = registry.getComponentByClassName(componentClass);
-			if(info!=null){
+		if (componentClass != null) {
+			ComponentInfo info = this.registry.getComponentByClassName(componentClass);
+			if (info != null) {
 				processProperties(element, info);
 			}
 		}
 	}
 
-    private String getNodeTextValue(Node node){
+	private String getNodeTextValue(Node node) {
 		String value = node.getNodeValue();
-		if(value!=null){
+		if (value != null) {
 			return value;
 		}
-		else{
+		else {
 			NodeList values = node.getChildNodes();
 			Node child0 = values.item(0);
-			if(child0!=null){
+			if (child0 != null) {
 				value = child0.getNodeValue();
 			}
 		}
 		return value;
-    }
-    
+	}
+
 	/**
 	 * <p>
 	 * TODO tryggvil describe method processProperties
 	 * </p>
+	 * 
 	 * @param element
 	 * @param info
 	 */
@@ -174,35 +170,35 @@ public class FacesConfigDeployer implements JarLoader{
 		NodeList propertiesList = componentElement.getElementsByTagName("property");
 		for (int i = 0; i < propertiesList.getLength(); i++) {
 			Node nProperty = propertiesList.item(i);
-			String propertyName=null;
-			String propertyClass=null;
-			String displayName=null;
-			String description=null;
-			String icon=null;
+			String propertyName = null;
+			String propertyClass = null;
+			String displayName = null;
+			String description = null;
+			String icon = null;
 			String suggestedValue = null;
-			if(nProperty instanceof Element){
-				Element property = (Element)nProperty;
+			if (nProperty instanceof Element) {
+				Element property = (Element) nProperty;
 				NodeList lPropertyAttributes = property.getChildNodes();
 				for (int j = 0; j < lPropertyAttributes.getLength(); j++) {
 					Node nPropertyAttr = lPropertyAttributes.item(j);
-					if(nPropertyAttr instanceof Element){
-						Element elem = (Element)nPropertyAttr;
-						if(elem.getNodeName().equals("property-name")){
+					if (nPropertyAttr instanceof Element) {
+						Element elem = (Element) nPropertyAttr;
+						if (elem.getNodeName().equals("property-name")) {
 							propertyName = getNodeTextValue(elem);
 						}
-						else	 if(elem.getNodeName().equals("property-class")){
-							propertyClass =  getNodeTextValue(elem);
+						else if (elem.getNodeName().equals("property-class")) {
+							propertyClass = getNodeTextValue(elem);
 						}
-						else	 if(elem.getNodeName().equals("display-name")){
-							displayName =  getNodeTextValue(elem);
+						else if (elem.getNodeName().equals("display-name")) {
+							displayName = getNodeTextValue(elem);
 						}
-						else	 if(elem.getNodeName().equals("description")){
-							description =  getNodeTextValue(elem);
+						else if (elem.getNodeName().equals("description")) {
+							description = getNodeTextValue(elem);
 						}
-						else	 if(elem.getNodeName().equals("icon")){
-							icon =  getNodeTextValue(elem);
+						else if (elem.getNodeName().equals("icon")) {
+							icon = getNodeTextValue(elem);
 						}
-						else	 if(elem.getNodeName().equals("suggested-value")){
+						else if (elem.getNodeName().equals("suggested-value")) {
 							suggestedValue = getNodeTextValue(elem);
 						}
 					}
@@ -214,12 +210,11 @@ public class FacesConfigDeployer implements JarLoader{
 				prop.setDescription(description);
 				prop.setIcon(icon);
 				prop.setSuggestedValue(suggestedValue);
-				
+
 				info.getProperties().add(prop);
-				
+
 			}
 		}
 	}
 
-    
 }

@@ -52,7 +52,6 @@ public class IDOBeanCache {
     		maxCachedBeans=entityDef.getMaxCachedBeans();
     	}
     	if(this.entityInterfaceClass.equals(ICObject.class)){
-    		boolean test=true;
     	}
     	this.cacheMap = new CacheMap(maxCachedBeans);
     }

@@ -404,7 +404,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	 * </p>
 	 */
 	private void startComponentRegistry() {
-		ComponentRegistry.loadRegistry(iwma,context);
+		ComponentRegistry.loadRegistry(this.iwma,this.context);
 	}
 
 	/**

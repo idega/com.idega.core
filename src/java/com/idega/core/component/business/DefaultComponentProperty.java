@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultComponentProperty.java,v 1.1 2006/05/09 14:47:18 tryggvil Exp $
+ * $Id: DefaultComponentProperty.java,v 1.2 2006/05/10 08:27:16 laddi Exp $
  * Created on 25.4.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import java.util.Map;
  * <p>
  * Default implementation of the ComponentProperty
  * </p>
- *  Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/05/10 08:27:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DefaultComponentProperty implements ComponentProperty {
 
@@ -67,7 +67,7 @@ public class DefaultComponentProperty implements ComponentProperty {
 	 * @return the className
 	 */
 	public String getClassName() {
-		return className;
+		return this.className;
 	}
 
 
@@ -85,7 +85,7 @@ public class DefaultComponentProperty implements ComponentProperty {
 	 * @return the description
 	 */
 	public String getDescription() {
-		return description;
+		return this.description;
 	}
 
 
@@ -103,7 +103,7 @@ public class DefaultComponentProperty implements ComponentProperty {
 	 * @return the extensions
 	 */
 	public Map getExtensions() {
-		return extensions;
+		return this.extensions;
 	}
 
 
@@ -121,7 +121,7 @@ public class DefaultComponentProperty implements ComponentProperty {
 	 * @return the icon
 	 */
 	public String getIcon() {
-		return icon;
+		return this.icon;
 	}
 
 
@@ -139,7 +139,7 @@ public class DefaultComponentProperty implements ComponentProperty {
 	 * @return the name
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 
@@ -157,7 +157,7 @@ public class DefaultComponentProperty implements ComponentProperty {
 	 * @return the suggestedValue
 	 */
 	public String getSuggestedValue() {
-		return suggestedValue;
+		return this.suggestedValue;
 	}
 
 
@@ -175,7 +175,7 @@ public class DefaultComponentProperty implements ComponentProperty {
 	 * @return the componentInfo
 	 */
 	public ComponentInfo getComponentInfo() {
-		return componentInfo;
+		return this.componentInfo;
 	}
 
 
@@ -193,7 +193,7 @@ public class DefaultComponentProperty implements ComponentProperty {
 	 * @return the displayName
 	 */
 	public String getDisplayName() {
-		return displayName;
+		return this.displayName;
 	}
 
 

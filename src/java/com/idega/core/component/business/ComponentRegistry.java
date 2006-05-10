@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.3 2006/05/09 14:47:18 tryggvil Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.4 2006/05/10 08:27:16 laddi Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import com.idega.idegaweb.IWModuleLoader;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/05/10 08:27:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ComponentRegistry {
 
@@ -87,10 +87,10 @@ public class ComponentRegistry {
 	 * </p>
 	 */
 	private void loadFacesConfig() {
-		if(!loadedFacesConfig){
+		if(!this.loadedFacesConfig){
 
-			loadedFacesConfig=true;
-			IWModuleLoader loader = new IWModuleLoader(iwma,context);
+			this.loadedFacesConfig=true;
+			IWModuleLoader loader = new IWModuleLoader(this.iwma,this.context);
 			loader.getJarLoaders().add(new FacesConfigDeployer(this));
 			loader.loadBundlesFromJars();
 			

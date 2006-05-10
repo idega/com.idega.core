@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.157 2006/05/09 14:47:18 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.158 2006/05/10 08:27:16 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/05/10 08:27:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.157 $
+ * @version $Revision: 1.158 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -750,7 +750,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * </p>
 	 */
 	public String getXmlId(){
-		return xmlId;
+		return this.xmlId;
 	}
 	
 	/**
@@ -2173,7 +2173,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		values[24]=this.formerCompoundId;
 		values[25]=this._styler;
 		values[26]=this._objTemplateID;
-		values[27]=xmlId;
+		values[27]=this.xmlId;
 		return values;
 	}
 
