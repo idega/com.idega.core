@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.111 2006/04/09 12:13:20 laddi Exp $
+ * $Id: AccessControl.java,v 1.112 2006/05/10 11:36:51 eiki Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -37,14 +37,11 @@ import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.builder.data.ICDynamicPageTrigger;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
+import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.user.business.UserGroupBusiness;
-import com.idega.user.data.GroupBMPBean;
-import com.idega.user.data.User;
-import com.idega.user.data.UserHome;
 import com.idega.data.EntityFinder;
-import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.SimpleQuerier;
@@ -59,6 +56,9 @@ import com.idega.repository.data.ImplementorRepository;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
+import com.idega.user.data.GroupBMPBean;
+import com.idega.user.data.User;
+import com.idega.user.data.UserHome;
 import com.idega.util.EncryptionType;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -70,12 +70,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/10 11:36:51 $ by $Author: eiki $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.111 $
+ * @version $Revision: 1.112 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -873,42 +873,42 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	//temp
 	private static ICObject getStaticPageICObject() {
 		if (staticPageICObject == null) {
+			// changed from legacy to IDOEntity in may 2006
+			ICObjectHome icoh;
 			try {
-				staticPageICObject =
-					(ICObject) EntityFinder
-						.findAllByColumn(
-							GenericEntity.getStaticInstance(ICObject.class),
-							com.idega.core.component.data.ICObjectBMPBean.getClassNameColumnName(),
-							Page.class.getName())
-						.get(0);
+				icoh = (ICObjectHome) IDOLookup.getHome(ICObject.class);
+				staticPageICObject = icoh.findByClassName(Page.class.getName());
 			}
-			catch (Exception ex) {
-				ex.printStackTrace();
+			catch (IDOLookupException e) {
+				e.printStackTrace();
+			}
+			catch (FinderException e) {
+				e.printStackTrace();
 			}
 		}
 		return staticPageICObject;
 	}
 
-	//temp
+	// temp
 	private static ICObject getStaticFileICObject() {
 		if (staticFileICObject == null) {
+			// changed from legacy to IDOEntity in may 2006
+			ICObjectHome icoh;
 			try {
-				staticFileICObject =
-					(ICObject) EntityFinder
-						.findAllByColumn(
-							GenericEntity.getStaticInstance(ICObject.class),
-							com.idega.core.component.data.ICObjectBMPBean.getClassNameColumnName(),
-							ICFile.class.getName())
-						.get(0);
+				icoh = (ICObjectHome) IDOLookup.getHome(ICObject.class);
+				staticFileICObject = icoh.findByClassName(ICFile.class.getName());
 			}
-			catch (Exception ex) {
-				ex.printStackTrace();
+			catch (IDOLookupException e) {
+				e.printStackTrace();
+			}
+			catch (FinderException e) {
+				e.printStackTrace();
 			}
 		}
 		return staticFileICObject;
 	}
 
-	//  /**
+	// /**
 	//   * use this method when writing to database to avoid errors in database.
 	//   * If the name-string changes this will be the only method to change.
 	//   */
