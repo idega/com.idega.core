@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.4 2006/05/10 08:27:16 laddi Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.5 2006/05/11 13:11:31 gimmi Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import com.idega.idegaweb.IWModuleLoader;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2006/05/10 08:27:16 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/11 13:11:31 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ComponentRegistry {
 
@@ -146,6 +146,9 @@ public class ComponentRegistry {
 			//int icObjectId = ((Integer)ico.getPrimaryKey()).intValue();
 			ICObjectComponentInfo info = new ICObjectComponentInfo(ico);
 			registerComponent(info);
+		} 
+		catch (ClassNotFoundException e) {
+			System.out.println("[ComponentRegistry] Class not found : "+ico.getClassName());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
