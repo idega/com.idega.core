@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.30 2006/05/09 18:01:57 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.31 2006/05/11 16:59:54 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -628,7 +628,36 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 				{
 					file = new File(getResourcesRealPath(locale) + FileUtil.getFileSeparator() + "Localized.strings");
 				}
-				theReturn = new IWResourceBundle(this, file, locale);
+				IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, file, locale);
+				String localeVariant = getApplication().getSettings().getProperty("com.idega.core.localevariant");
+				if(localeVariant!=null){
+					//Locale variants are used:
+					
+					File variantFile;
+					String variantfileName = "Localized_"+localeVariant+".strings";
+					//if (this.autoCreateLocalizedResources)
+					//{
+					//	variantFile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(locale), variantfileName);
+					//}
+					//else
+					//{
+						variantFile = new File(getResourcesRealPath(locale) + FileUtil.getFileSeparator() + variantfileName);
+					//}
+					
+					/*String slVariant = locale.getVariant();
+					if(slVariant==null){
+						slVariant=localeVariant;
+					}
+					else{
+						slVariant=slVariant+"_"+localeVariant;
+					}
+					Locale locVariant = new Locale(locale.getLanguage(),locale.getCountry(),slVariant);
+					*/
+					theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantFile, locale);
+				}
+				else{
+					theReturn = defaultLocalizedResourceBundle;
+				}
 				getResourceBundles().put(locale, theReturn);
 			}
 		}

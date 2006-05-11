@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.38 2006/04/09 12:13:14 laddi Exp $
+ * $Id: IWResourceBundle.java,v 1.39 2006/05/11 16:59:54 tryggvil Exp $
  *
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  *
@@ -35,10 +35,10 @@ import com.idega.util.StringHandler;
  * There is an instance of this class for each localization file (e.g. com.idega.core.bundle/en.locale/Localized.strings)
  * and is an extension to the standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $<br/>
+ * Last modified: $Date: 2006/05/11 16:59:54 $ by $Author: tryggvil $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 public class IWResourceBundle extends ResourceBundle {
 
@@ -51,6 +51,7 @@ public class IWResourceBundle extends ResourceBundle {
 	private IWBundle iwBundleParent;
 	private String resourcesURL;
 	private static String slash = "/";
+	//private IWResourceBundle parentResourceBundle;
 
 	/**
 	 * Creates a IWResourceBundle for a specific Locale
@@ -62,17 +63,26 @@ public class IWResourceBundle extends ResourceBundle {
 		setIWBundleParent(parent);
 		setLocale(locale);
 		this.file = file;
-
 		try {
 			this.properties.load(new FileInputStream(file));
-			this.lookup = new TreeMap(this.properties);
-			setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
 		}
 		catch (FileNotFoundException e) {
-			e.printStackTrace(System.err);
+			//System.err.println("IWResourceBundle: File Not Found:"+file.getAbsolutePath());
 		}
+		this.lookup = new TreeMap(this.properties);
+		setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
 	}
-
+	
+	/**
+	 * <p>
+	 * This constructor is used for locale variants, and the parent resourceBundle includes the default localizations.
+	 * </p>
+	 */
+	public IWResourceBundle(IWResourceBundle parent, File file, Locale locale) throws IOException {
+		this(parent.getIWBundleParent(),file,locale);
+		setParent(parent);
+	}
+	
 	/**
 	 * Override of ResourceBundle, same semantics
 	 */
@@ -159,6 +169,10 @@ public class IWResourceBundle extends ResourceBundle {
 							this.properties.put(key, value);
 						}
 					}
+				}
+				if(!this.file.exists()){
+					file.createNewFile();
+					System.out.println("IWResourceBundle: Created new file: "+file.getAbsolutePath());
 				}
 				FileOutputStream fos = new FileOutputStream(this.file);
 				this.properties.store(fos, null);
@@ -374,5 +388,21 @@ public class IWResourceBundle extends ResourceBundle {
 		else{
 			return this.locale.toString();
 		}
+	}
+
+	
+	/**
+	 * @return the parentResourceBundle
+	 */
+	public IWResourceBundle getParentResourceBundle() {
+		return (IWResourceBundle)parent;
+	}
+
+	
+	/**
+	 * @param parentResourceBundle the parentResourceBundle to set
+	 */
+	public void setParentResourceBundle(IWResourceBundle parentResourceBundle) {
+		super.setParent(parentResourceBundle);
 	}
 }
