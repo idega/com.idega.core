@@ -18,6 +18,16 @@
 	      <url>http://java.sun.com/j2ee/javaserverfaces/</url>
 	      <properties />
 	    </dependency>
+	    <dependency>
+      		<groupId>myfaces</groupId>
+		     <artifactId>myfaces-tomahawk</artifactId>
+		     <version>1.1.2</version>
+		     <type>jar</type>
+		     <url>http://www.myfaces.org/</url>
+		     <properties>
+		     	<idegaweb.bundle.include>true</idegaweb.bundle.include>
+		     </properties>
+    		</dependency>
 		<dependency>
 		    <groupId>jspapi</groupId>
 		    <artifactId>jsp-api</artifactId>
