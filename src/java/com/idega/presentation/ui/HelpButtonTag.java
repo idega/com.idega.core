@@ -1,5 +1,5 @@
 /*
- * $Id: HelpButtonTag.java,v 1.2 2006/04/09 12:13:15 laddi Exp $
+ * $Id: HelpButtonTag.java,v 1.3 2006/05/11 14:58:32 eiki Exp $
  * Created on 20.6.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -11,16 +11,16 @@ package com.idega.presentation.ui;
 
 import javax.faces.component.UIComponent;
 import javax.faces.el.ValueBinding;
-import org.apache.myfaces.taglib.UIComponentTagBase;
+import org.apache.myfaces.shared_tomahawk.taglib.UIComponentTagBase;
 
 
 
 /**
  * 
- *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/11 14:58:32 $ by $Author: eiki $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class HelpButtonTag extends UIComponentTagBase {
 

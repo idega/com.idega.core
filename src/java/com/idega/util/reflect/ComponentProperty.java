@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentProperty.java,v 1.6 2006/04/09 12:13:19 laddi Exp $
+ * $Id: ComponentProperty.java,v 1.7 2006/05/11 14:59:14 eiki Exp $
  * Created on Dec 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,8 +15,8 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import org.apache.myfaces.renderkit.JSFAttr;
-import org.apache.myfaces.taglib.UIComponentTagUtils;
+import org.apache.myfaces.shared_tomahawk.renderkit.JSFAttr;
+import org.apache.myfaces.shared_tomahawk.taglib.UIComponentTagUtils;
 
 /**
  * This class holds an instance of a property with its value(s).
