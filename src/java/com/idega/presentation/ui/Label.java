@@ -45,7 +45,7 @@ public class Label extends InterfaceObject {
 	}
 	
 	public Label(InterfaceObject object) {
-		this(null, object);
+		this((String) null, object);
 	}
 	
 	public Label(UIInput inputObject){
@@ -60,6 +60,11 @@ public class Label extends InterfaceObject {
 	public Label(String label, InterfaceObject object) {
 		setFor(object.getID());
 		initialize(label);
+	}
+	
+	public Label(UIComponent labelObject, InterfaceObject object) {
+		this((String) null, object);
+		add(labelObject);
 	}
 	
 	private void initialize(String label) {
