@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.3 2006/05/09 14:53:11 tryggvil Exp $
+ * $Id: CbpViewHandler.java,v 1.4 2006/05/11 17:06:38 eiki Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -26,11 +26,11 @@ import javax.faces.render.RenderKitFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
-import org.apache.myfaces.application.MyfacesStateManager;
-import org.apache.myfaces.application.jsp.JspViewHandlerImpl;
-import org.apache.myfaces.renderkit.html.HtmlLinkRendererBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.myfaces.application.MyfacesStateManager;
+import org.apache.myfaces.application.jsp.JspViewHandlerImpl;
+import org.apache.myfaces.shared_impl.renderkit.html.HtmlLinkRendererBase;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.RefactorClassRegistry;
 
@@ -42,10 +42,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2006/05/09 14:53:11 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/05/11 17:06:38 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class CbpViewHandler extends ViewHandler {
 

@@ -1,5 +1,5 @@
 /*
- * $Id: IWNavigationHandlerImpl.java,v 1.4 2006/04/09 11:56:22 laddi Exp $
+ * $Id: IWNavigationHandlerImpl.java,v 1.5 2006/05/11 17:06:38 eiki Exp $
  * Created on Nov 8, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -31,7 +31,7 @@ import org.apache.myfaces.config.RuntimeConfig;
 import org.apache.myfaces.config.element.NavigationCase;
 import org.apache.myfaces.config.element.NavigationRule;
 import org.apache.myfaces.portlet.PortletUtil;
-import org.apache.myfaces.util.HashMapUtils;
+import org.apache.myfaces.shared_impl.util.HashMapUtils;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 
