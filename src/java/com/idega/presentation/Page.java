@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.159 2006/04/23 14:29:59 gimmi Exp $ Created in 2000 by
+ * $Id: Page.java,v 1.160 2006/05/11 10:50:11 laddi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -60,15 +60,15 @@ import com.idega.util.datastructures.QueueMap;
  * renders the
  * 
  * <pre>
- *  &lt;HTML&gt;&lt;HEAD&gt;...&lt;/HEAD&gt; &lt;BODY&gt;... &lt;/BODY&gt;&lt;/HTML&gt;
+ *   &lt;HTML&gt;&lt;HEAD&gt;...&lt;/HEAD&gt; &lt;BODY&gt;... &lt;/BODY&gt;&lt;/HTML&gt;
  * </pre>
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2006/04/23 14:29:59 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/05/11 10:50:11 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.159 $
+ * @version $Revision: 1.160 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -108,8 +108,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public final static String XHTML = "XHTML";
 	/**
-	 * Constant used to declare if the rendering should be in XHTML 1.1
-	 * (strict).<br/> This can be set as a property in
+	 * Constant used to declare if the rendering should be in XHTML 1.1 (strict).<br/>
+	 * This can be set as a property in
 	 * IWMainApplicationSettings.getDefaultMarkupLanguage().
 	 */
 	public final static String XHTML1_1 = "XHTML1.1";
@@ -164,9 +164,6 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	private ICFile styleFile = null;
 	private ICDynamicPageTrigger dynamicPageTrigger = null;
 	private boolean _isCategory = false;
-	private ICPage _windowToOpenOnLoad;
-	private int _windowWidth = 800;
-	private int _windowHeight = 600;
 	private ICPage forwardPage;
 	private String docType;
 	private boolean useIE7Extension = false;
@@ -179,7 +176,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param s
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 */
 	public Page(String s) {
 		super();
@@ -189,7 +186,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param color
-	 *            The new backgroundColor value
+	 *          The new backgroundColor value
 	 */
 	public void setBackgroundColor(String color) {
 		setStyleAttribute("background-color:" + color);
@@ -197,7 +194,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param color
-	 *            The new backgroundColor value
+	 *          The new backgroundColor value
 	 */
 	public void setBackgroundColor(IWColor color) {
 		setBackgroundColor(color.getHexColorString());
@@ -205,7 +202,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param color
-	 *            The new textColor value
+	 *          The new textColor value
 	 */
 	public void setTextColor(String color) {
 		setMarkupAttribute("text", color);
@@ -213,7 +210,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param color
-	 *            The new alinkColor value
+	 *          The new alinkColor value
 	 */
 	public void setAlinkColor(String color) {
 		setMarkupAttribute("alink", color);
@@ -221,7 +218,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param color
-	 *            The new hoverColor value
+	 *          The new hoverColor value
 	 */
 	public void setHoverColor(String color) {
 		setMarkupAttribute("alink", color);
@@ -232,9 +229,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the styleDefinition attribute of the Page object
 	 * 
 	 * @param styleName
-	 *            The new styleDefinition value
+	 *          The new styleDefinition value
 	 * @param styleAttribute
-	 *            The new styleDefinition value
+	 *          The new styleDefinition value
 	 */
 	public void setStyleDefinition(String styleName, String styleAttribute) {
 		if (this._styleDefinitions == null) {
@@ -297,15 +294,12 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		return buffer.toString();
 	}
 
-
 	private StringBuffer addStyleSheetForPrint(StringBuffer buffer, String markup, String URL) {
-		return buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" media=\"print\" "
-				+ (!markup.equals(HTML) ? "/" : "") + ">\n");
+		return buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" media=\"print\" " + (!markup.equals(HTML) ? "/" : "") + ">\n");
 	}
 
 	private StringBuffer addStyleSheet(StringBuffer buffer, String markup, String URL) {
-		return buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" "
-				+ (!markup.equals(HTML) ? "/" : "") + ">\n");
+		return buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" " + (!markup.equals(HTML) ? "/" : "") + ">\n");
 	}
 
 	public void addJavascriptURL(String URL) {
@@ -320,25 +314,17 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			StringBuffer buffer = new StringBuffer();
 			// Print a reference to the global .js script file
 			String src = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
-			/*try {
-				ICDomain d = iwc.getDomain();
-				String serverUrl = d.getURLWithoutLastSlash();
-				if (serverUrl != null) {
-					if (src.startsWith("/")) {
-//					  String protocol; //@todo this is case sensitive and
-//					  could break! move to IWContext. Also done in Link,
-//					  SubmitButton, Image and PageIncluder if
-//					  (iwc.getRequest().isSecure()) { protocol =
-//					  "https://"; } else { protocol = "http://"; } src =
-//					  protocol + serverName + src;
-						src = serverUrl + src;
-					}
-				}
-			}
-			catch (IDONoDatastoreError de) {
-				// de.printStackTrace();
-			}
-			*/
+			/*
+			 * try { ICDomain d = iwc.getDomain(); String serverUrl =
+			 * d.getURLWithoutLastSlash(); if (serverUrl != null) { if
+			 * (src.startsWith("/")) { // String protocol; //@todo this is case
+			 * sensitive and // could break! move to IWContext. Also done in Link, //
+			 * SubmitButton, Image and PageIncluder if //
+			 * (iwc.getRequest().isSecure()) { protocol = // "https://"; } else {
+			 * protocol = "http://"; } src = // protocol + serverName + src; src =
+			 * serverUrl + src; } } } catch (IDONoDatastoreError de) { //
+			 * de.printStackTrace(); }
+			 */
 			buffer.append("<script type=\"text/javascript\" src=\"" + src + "/iw_core.js\">");
 			buffer.append("</script>");
 			if (this._javascripts != null && !this._javascripts.isEmpty()) {
@@ -358,7 +344,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the linkStyle attribute of the Page object
 	 * 
 	 * @param style
-	 *            The new linkStyle value
+	 *          The new linkStyle value
 	 */
 	public void setLinkStyle(String style) {
 		setStyleDefinition("A", style);
@@ -375,7 +361,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the linkHoverStyle attribute of the Page object
 	 * 
 	 * @param style
-	 *            The new linkHoverStyle value
+	 *          The new linkHoverStyle value
 	 */
 	public void setLinkHoverStyle(String style) {
 		setStyleDefinition("A:hover", style);
@@ -385,7 +371,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the pageStyle attribute of the Page object
 	 * 
 	 * @param style
-	 *            The new pageStyle value
+	 *          The new pageStyle value
 	 */
 	public void setPageStyle(String style) {
 		setStyleDefinition("body", style);
@@ -396,9 +382,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the metaTag attribute of the Page object
 	 * 
 	 * @param tagName
-	 *            The new metaTag value
+	 *          The new metaTag value
 	 * @param tagValue
-	 *            The new metaTag value
+	 *          The new metaTag value
 	 */
 	public void setMetaTag(String tagName, String tagValue) {
 		if (this._metaTags == null) {
@@ -411,9 +397,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the hTTPEquivTag attribute of the Page object
 	 * 
 	 * @param tagName
-	 *            The new hTTPEquivTag value
+	 *          The new hTTPEquivTag value
 	 * @param tagValue
-	 *            The new hTTPEquivTag value
+	 *          The new hTTPEquivTag value
 	 */
 	public void setHTTPEquivTag(String tagName, String tagValue) {
 		if (this._HTTPEquivs == null) {
@@ -426,7 +412,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the keywordsMetaTag attribute of the Page object
 	 * 
 	 * @param wordsCommaSeparated
-	 *            The new keywordsMetaTag value
+	 *          The new keywordsMetaTag value
 	 */
 	public void setKeywordsMetaTag(String wordsCommaSeparated) {
 		setMetaTag(META_KEYWORDS, wordsCommaSeparated);
@@ -436,7 +422,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the descriptionMetaTag attribute of the Page object
 	 * 
 	 * @param wordsCommaSeparated
-	 *            The new descriptionMetaTag value
+	 *          The new descriptionMetaTag value
 	 */
 	public void setDescriptionMetaTag(String wordsCommaSeparated) {
 		setMetaTag(META_DESCRIPTION, wordsCommaSeparated);
@@ -446,7 +432,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the expiryDate attribute of the Page object
 	 * 
 	 * @param dateString
-	 *            The new expiryDate value
+	 *          The new expiryDate value
 	 */
 	public void setExpiryDate(String dateString) {
 		this.setHTTPEquivTag(META_HTTP_EQUIV_EXPIRES, dateString);
@@ -504,10 +490,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @return
 	 */
 	public String getIE7() {
-		String scriptUrl = IWMainApplication.getDefaultIWMainApplication().getCoreBundle().getResourcesURL()
-				+ "/ie7/ie7-standard-p.js";
-		String scriptString = "<!-- compliance patch for microsoft browsers -->\n" + "<!--[if lt IE 7]><script src=\""
-				+ scriptUrl + "\" type=\"text/javascript\"></script><![endif]-->";
+		String scriptUrl = IWMainApplication.getDefaultIWMainApplication().getCoreBundle().getResourcesURL() + "/ie7/ie7-standard-p.js";
+		String scriptString = "<!-- compliance patch for microsoft browsers -->\n" + "<!--[if lt IE 7]><script src=\"" + scriptUrl + "\" type=\"text/javascript\"></script><![endif]-->";
 		return scriptString;
 	}
 
@@ -537,7 +521,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Gets the styleAttribute attribute of the Page object
 	 * 
 	 * @param styleName
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return The styleAttribute value
 	 */
 	public String getStyleAttribute(String styleName) {
@@ -604,7 +588,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Gets the hTTPEquivTag attribute of the Page object
 	 * 
 	 * @param tagName
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return The hTTPEquivTag value
 	 */
 	public String getHTTPEquivTag(String tagName) {
@@ -620,7 +604,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Gets the metaTag attribute of the Page object
 	 * 
 	 * @param tagName
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return The metaTag value
 	 */
 	public String getMetaTag(String tagName) {
@@ -634,7 +618,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param textDecoration
-	 *            The new textDecoration value
+	 *          The new textDecoration value
 	 */
 	public void setTextDecoration(String textDecoration) {
 		this._textDecoration = textDecoration;
@@ -642,7 +626,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param hoverDecoration
-	 *            The new hoverDecoration value
+	 *          The new hoverDecoration value
 	 */
 	public void setHoverDecoration(String hoverDecoration) {
 		this._hoverDecoration = hoverDecoration;
@@ -650,7 +634,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param styleSheetURL
-	 *            The new styleSheetURL value
+	 *          The new styleSheetURL value
 	 */
 	public void setStyleSheetURL(String styleSheetURL) {
 		int index = styleSheetURL.indexOf(",");
@@ -670,7 +654,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param color
-	 *            The new vlinkColor value
+	 *          The new vlinkColor value
 	 */
 	public void setVlinkColor(String color) {
 		setMarkupAttribute("vlink", color);
@@ -679,7 +663,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param color
-	 *            The new linkColor value
+	 *          The new linkColor value
 	 */
 	public void setLinkColor(String color) {
 		setMarkupAttribute("link", color);
@@ -688,7 +672,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param textFontFace
-	 *            The new pageFontFace value
+	 *          The new pageFontFace value
 	 */
 	public void setPageFontFace(String textFontFace) {
 		this._pageStyleFont = textFontFace;
@@ -696,7 +680,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param textFontSize
-	 *            The new pageFontSize value
+	 *          The new pageFontSize value
 	 */
 	public void setPageFontSize(String textFontSize) {
 		this._pageStyleFont = textFontSize;
@@ -704,7 +688,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param textFontStyle
-	 *            The new pageFontStyle value
+	 *          The new pageFontStyle value
 	 */
 	public void setPageFontStyle(String textFontStyle) {
 		this._pageStyleFontStyle = textFontStyle;
@@ -733,7 +717,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param title
-	 *            The new title value
+	 *          The new title value
 	 */
 	public void setTitle(String title) {
 		this._title = title;
@@ -782,7 +766,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param width
-	 *            The new marginWidth value
+	 *          The new marginWidth value
 	 */
 	public void setMarginWidth(int width) {
 		setLeftMargin(width);
@@ -791,7 +775,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param height
-	 *            The new marginHeight value
+	 *          The new marginHeight value
 	 */
 	public void setMarginHeight(int height) {
 		setTopMargin(height);
@@ -800,7 +784,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param leftmargin
-	 *            The new leftMargin value
+	 *          The new leftMargin value
 	 */
 	public void setLeftMargin(int leftmargin) {
 		setStyleAttribute("margin-left:" + leftmargin + "px");
@@ -809,7 +793,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param topmargin
-	 *            The new topMargin value
+	 *          The new topMargin value
 	 */
 	public void setTopMargin(int topmargin) {
 		setStyleAttribute("margin-top:" + topmargin + "px");
@@ -818,7 +802,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param allMargins
-	 *            The new allMargins value
+	 *          The new allMargins value
 	 */
 	public void setAllMargins(int allMargins) {
 		// setMarginWidth(allMargins);
@@ -835,7 +819,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param myScript
-	 *            The new associatedScript value
+	 *          The new associatedScript value
 	 */
 	public void setAssociatedScript(Script myScript) {
 		getFacets().put("page_associated_script", myScript);
@@ -867,7 +851,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param imageURL
-	 *            The new backgroundImage value
+	 *          The new backgroundImage value
 	 */
 	public void setBackgroundImage(String imageURL) {
 		setStyleAttribute("background:url('" + imageURL + "')");
@@ -875,10 +859,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param backgroundImage
-	 *            The new backgroundImage value
-	 * @todo : this must implemented in the print method...like in the Link
-	 *       class IMPORTANT! for this to work you must have an application
-	 *       property called IW_USES_OLD_MEDIA_TABLES (set to anything)
+	 *          The new backgroundImage value
+	 * @todo : this must implemented in the print method...like in the Link class
+	 *       IMPORTANT! for this to work you must have an application property
+	 *       called IW_USES_OLD_MEDIA_TABLES (set to anything)
 	 */
 	public void setBackgroundImage(Image backgroundImage) {
 		if (backgroundImage != null) {
@@ -888,10 +872,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param image
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return The imageUrl value
-	 * @todo : replace this with a implementation in print IMPORTANT! for this
-	 *       to work you must have an application property called
+	 * @todo : replace this with a implementation in print IMPORTANT! for this to
+	 *       work you must have an application property called
 	 *       IW_USES_OLD_MEDIA_TABLES (set to anything)
 	 */
 	private String getImageUrl(Image image) {
@@ -905,7 +889,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param action
-	 *            The new onLoad value
+	 *          The new onLoad value
 	 */
 	public void setOnLoad(String action) {
 		setMarkupAttributeMultivalued("onload", action);
@@ -915,7 +899,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets an alert that is displayed on page load,
 	 * 
 	 * @param alert
-	 *            The alert to display.
+	 *          The alert to display.
 	 */
 	public void setAlertOnLoad(String alert) {
 		setOnLoad("alert('" + alert + "');");
@@ -923,7 +907,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param action
-	 *            The new onBlur value
+	 *          The new onBlur value
 	 */
 	public void setOnBlur(String action) {
 		setMarkupAttributeMultivalued("onblur", action);
@@ -931,7 +915,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param action
-	 *            The new onUnLoad value
+	 *          The new onUnLoad value
 	 */
 	public void setOnUnLoad(String action) {
 		setMarkupAttributeMultivalued("onunload", action);
@@ -941,7 +925,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets an alert that is displayed on page unload,
 	 * 
 	 * @param alert
-	 *            The alert to display.
+	 *          The alert to display.
 	 */
 	public void setAlertOnUnLoad(String alert) {
 		setOnUnLoad("alert('" + alert + "');");
@@ -977,8 +961,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Sets the page to go directly back in history one step on load of this
-	 * page
+	 * Sets the page to go directly back in history one step on load of this page
 	 */
 	public void setToGoBack() {
 		setOnLoad("history.go(-1)");
@@ -1008,7 +991,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * there is one, on unload of this page.
 	 * 
 	 * @param formIndex
-	 *            index of the form in the parent page
+	 *          index of the form in the parent page
 	 */
 	public void setParentPageFormToSubmitOnUnLoad(int formIndex) {
 		setOnUnLoad("window.opener.document.forms[" + formIndex + "].submit()");
@@ -1019,7 +1002,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * there is one, on unload of this page.
 	 * 
 	 * @param formIndex
-	 *            index of the form in the parent page
+	 *          index of the form in the parent page
 	 */
 	public void setParentPageFormToSubmitOnUnLoad(String formName) {
 		setOnUnLoad("javascript:window.opener.document.getElementById('" + formName + "').submit()");
@@ -1030,7 +1013,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * unloads
 	 * 
 	 * @param URL
-	 *            The new toRedirect value
+	 *          The new toRedirect value
 	 */
 	public void setParentToRedirect(String URL) {
 		setOnUnLoad("javascript:window.opener.location = '" + URL + "';");
@@ -1041,7 +1024,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * 
 	 * @author aron@idega.is
 	 * @param sMessage
-	 *            The new toLoadAlert value
+	 *          The new toLoadAlert value
 	 */
 	public void setToLoadAlert(String sMessage) {
 		setOnLoad("alert('" + sMessage + "')");
@@ -1049,7 +1032,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return Description of the Return Value
 	 */
 	public boolean doPrint(IWContext iwc) {
@@ -1057,8 +1040,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		if (iwc.getParameter("idegaspecialrequesttype") == null) {
 			returnBoole = true;
 		}
-		else if (iwc.getParameter("idegaspecialrequesttype").equals("page")
-				&& iwc.getParameter("idegaspecialrequestname").equals(this.getName())) {
+		else if (iwc.getParameter("idegaspecialrequesttype").equals("page") && iwc.getParameter("idegaspecialrequestname").equals(this.getName())) {
 			returnBoole = true;
 		}
 		else {
@@ -1074,7 +1056,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the defaultAttributes attribute of the Page object
 	 * 
 	 * @param iwc
-	 *            The new defaultAttributes value
+	 *          The new defaultAttributes value
 	 */
 	private void setDefaultAttributes(IWContext iwc) {
 		/*
@@ -1093,7 +1075,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the addBody attribute of the Page object
 	 * 
 	 * @param addBodyTag
-	 *            The new addBody value
+	 *          The new addBody value
 	 */
 	public void setAddBody(boolean addBodyTag) {
 		this._addBody = addBodyTag;
@@ -1101,7 +1083,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param URL
-	 *            The new toRedirect value
+	 *          The new toRedirect value
 	 */
 	public void setToRedirect(String URL) {
 		this._zeroWait = true;
@@ -1110,9 +1092,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param URL
-	 *            The new toRedirect value
+	 *          The new toRedirect value
 	 * @param secondInterval
-	 *            The new toRedirect value
+	 *          The new toRedirect value
 	 */
 	public void setToRedirect(String URL, int secondInterval) {
 		this._redirectInfo = "" + secondInterval + " ;URL=" + URL;
@@ -1133,7 +1115,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param milliseconds
-	 *            The new toClose value
+	 *          The new toClose value
 	 */
 	public void setToClose(int milliseconds) {
 		getAssociatedScript().addFunction("close_time", "setTimeout(\"window.close()\"," + milliseconds + ")");
@@ -1146,7 +1128,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Description of the Method
 	 * 
 	 * @param newObjToCreate
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 */
 	protected void prepareClone(PresentationObject newObjToCreate) {
 		super.prepareClone(newObjToCreate);
@@ -1168,9 +1150,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Description of the Method
 	 * 
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @param askForPermission
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return Description of the Return Value
 	 */
 	public Object clonePermissionChecked(IWUserContext iwuc, boolean askForPermission) {
@@ -1223,9 +1205,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @param askForPermission
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return Description of the Return Value
 	 */
 	public Object clone(IWUserContext iwc, boolean askForPermission) {
@@ -1275,14 +1257,14 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * this.linkColor; obj.visitedColor = this.visitedColor; obj.hoverColor =
 	 * this.hoverColor; obj.textDecoration = this.textDecoration;
 	 * obj.styleSheetURL = this.styleSheetURL; obj.addStyleSheet =
-	 * this.addStyleSheet; } catch(Exception ex) {
-	 * ex.printStackTrace(System.err); } return obj; }
+	 * this.addStyleSheet; } catch(Exception ex) { ex.printStackTrace(System.err); }
+	 * return obj; }
 	 */
 	/**
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @exception Exception
-	 *                Description of the Exception
+	 *              Description of the Exception
 	 */
 	public void main(IWContext iwc) throws Exception {
 		if (this.forwardPage != null) {
@@ -1477,9 +1459,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @exception Exception
-	 *                Description of the Exception
+	 *              Description of the Exception
 	 */
 	public void print(IWContext iwc) throws Exception {
 		this.printBegin(iwc);
@@ -1525,20 +1507,13 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				if (this._zeroWait) {
 					setDoPrint(false);
 				}
-				if (this._windowToOpenOnLoad != null) {
-					URLUtil url = new URLUtil(iwc, this._windowToOpenOnLoad);
-					setOnLoad("javascript:"
-							+ Window.getWindowCallingScript(url.toString(), "Window", false, false, false, false,
-									false, true, true, true, false, this._windowWidth, this._windowHeight));
-				}
 				println("<head>");
 				println("<title>" + getLocalizedTitle(iwc) + "</title>\n");
 				/*
 				 * //shortcut icon println(getPrintableSchortCutIconURL(iwc));
 				 * print(getMetaInformation(markup, characterEncoding));
 				 * print(getMetaTags(markup)); print(getJavascriptURLs(iwc)); if
-				 * (getAssociatedScript() != null) {
-				 * getAssociatedScript()._print(iwc); }
+				 * (getAssociatedScript() != null) { getAssociatedScript()._print(iwc); }
 				 * print(getStyleSheetURL(markup)); print(getStyleDefinition());
 				 */
 				print(getHeadContents(markup, characterEncoding, iwc));
@@ -1549,8 +1524,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				}
 				// Laddi: Made obsolete with default style sheet
 				/*
-				 * if (_addStyleSheet) { println("<link rel=\"stylesheet\"
-				 * href=\"" + _styleSheetURL + "\" type=\"text/css\">\n"); }
+				 * if (_addStyleSheet) { println("<link rel=\"stylesheet\" href=\"" +
+				 * _styleSheetURL + "\" type=\"text/css\">\n"); }
 				 */
 				println("\n</head>");
 				if (this._addBody) {
@@ -1611,8 +1586,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			// TODO: Change this, this is a workaround till a better not logged
 			// on error page is created:
 			IWContext iwc = castToIWContext(context);
-			String notLoggedOnString = getResourceBundle(iwc).getLocalizedString("error_not_logged_on",
-					"You are not logged on, please go to login page and log in.");
+			String notLoggedOnString = getResourceBundle(iwc).getLocalizedString("error_not_logged_on", "You are not logged on, please go to login page and log in.");
 			println("<h2>" + notLoggedOnString + "</h2>");
 		}
 		/*
@@ -1631,8 +1605,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * <p>
-	 * Prints out the render time in millisconds as a comment. This is by
-	 * default called last in encodeEnd()
+	 * Prints out the render time in millisconds as a comment. This is by default
+	 * called last in encodeEnd()
 	 * </p>
 	 * 
 	 * @param context
@@ -1668,9 +1642,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param key
-	 *            The new property value
+	 *          The new property value
 	 * @param values
-	 *            The new property value
+	 *          The new property value
 	 */
 	public void setProperty(String key, String values[]) {
 		if (key.equalsIgnoreCase("title")) {
@@ -1684,8 +1658,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	public static String getStartTag(Locale locale, String docType, String encoding) {
 		StringBuffer buffer = new StringBuffer();
 		if (docType.equals(DOCTYPE_XHTML_1_0_TRANSITIONAL)) {
-			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append(
-					"\"?>").append("\n");
+			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
 			buffer.append(docType);
 			buffer.append(NEWLINE);
 			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"");
@@ -1696,8 +1669,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			return buffer.toString();
 		}
 		else if (docType.equals(DOCTYPE_XHTML_1_1)) {
-			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append(
-					"\"?>").append("\n");
+			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
 			buffer.append(docType);
 			buffer.append(NEWLINE);
 			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"");
@@ -1722,12 +1694,12 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		 * buffer.append(DOCTYPE_XHTML_1_0_TRANSITIONAL); buffer.append("<html
 		 * xmlns=\"http://www.w3.org/1999/xhtml\"
 		 * xml:lang=\""+locale.getLanguage()+"\"
-		 * lang=\""+locale.getLanguage()+"\">"); return buffer.toString(); }
-		 * else if (markup.equals(XHTML1_1)) { StringBuffer buffer = new
-		 * StringBuffer(); buffer.append("<?xml version=\"1.0\"
-		 * encoding=\"").append(encoding != null ? encoding :
-		 * "ISO-8859-1").append("\"?>").append("\n"); //buffer.append("<!DOCTYPE
-		 * html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"").append("\n");
+		 * lang=\""+locale.getLanguage()+"\">"); return buffer.toString(); } else if
+		 * (markup.equals(XHTML1_1)) { StringBuffer buffer = new StringBuffer();
+		 * buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding !=
+		 * null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
+		 * //buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML
+		 * 1.1//EN\"").append("\n");
 		 * //buffer.append("\t\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">").append("\n");
 		 * buffer.append(DOCTYPE_XHTML_1_1); buffer.append("<html
 		 * xmlns=\"http://www.w3.org/1999/xhtml\"
@@ -1745,28 +1717,22 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return The metaInformation value
 	 */
 	public String getMetaInformation(String markup, String characterEncoding) {
 		boolean addIdegaAuthorAndCopyRight = false;
-		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset=" + characterEncoding
-				+ "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n<meta name=\"generator\" content=\"idegaWeb "
-				+ IWContext.getInstance().getIWMainApplication().getProductInfo().getVersion() + "\" "
-				+ (!markup.equals(HTML) ? "/" : "") + ">\n";
+		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset=" + characterEncoding + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n<meta name=\"generator\" content=\"idegaWeb " + IWContext.getInstance().getIWMainApplication().getProductInfo().getVersion() + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		// If the user is logged on then there is no caching by proxy servers
 		boolean notUseProxyCaching = true;
 		if (notUseProxyCaching) {
-			theReturn += "<meta http-equiv=\"pragma\" content=\"no-cache\" " + (!markup.equals(HTML) ? "/" : "")
-					+ ">\n";
+			theReturn += "<meta http-equiv=\"pragma\" content=\"no-cache\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		}
 		if (getRedirectInfo() != null) {
-			theReturn += "<meta http-equiv=\"refresh\" content=\"" + getRedirectInfo() + "\" "
-					+ (!markup.equals(HTML) ? "/" : "") + ">\n";
+			theReturn += "<meta http-equiv=\"refresh\" content=\"" + getRedirectInfo() + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		}
 		if (addIdegaAuthorAndCopyRight) {
-			theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\" "
-					+ (!markup.equals(HTML) ? "/" : "") + ">\n";
+			theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		}
 		return theReturn;
 	}
@@ -1775,7 +1741,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Used to find the Page object to be printed in top of the current page
 	 * 
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return The page value
 	 */
 	public static Page getPage(IWContext iwc) {
@@ -1785,10 +1751,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return Description of the Return Value
 	 * @exception Exception
-	 *                Description of the Exception
+	 *              Description of the Exception
 	 */
 	public static Page loadPage(IWContext iwc) throws Exception {
 		String classKey = iwc.getParameter(IW_FRAME_CLASS_PARAMETER);
@@ -1874,7 +1840,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Gets the frameStorageInfo attribute of the Page class
 	 * 
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return The frameStorageInfo value
 	 */
 	private static FrameStorageInfo getFrameStorageInfo(IWContext iwc) {
@@ -1893,9 +1859,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Gets the page attribute of the Page class
 	 * 
 	 * @param info
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return The page value
 	 */
 	private static Page getPage(FrameStorageInfo info, IWContext iwc) {
@@ -1919,9 +1885,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param page
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 */
 	public static void storePage(Page page, IWContext iwc) {
 		String storageKey = page.getID();
@@ -1933,7 +1899,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param page
-	 *            The new topPage value
+	 *          The new topPage value
 	 */
 	public static void setTopPage(Page page) {
 		IWCoreServlet.storeObject(IW_PAGE_KEY, page);
@@ -1941,7 +1907,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * @param iwc
-	 *            Description of the Parameter
+	 *          Description of the Parameter
 	 * @return The requestingTopPage value
 	 */
 	public static boolean isRequestingTopPage(IWContext iwc) {
@@ -1952,18 +1918,18 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the ID (BuilderPage ID)
 	 * 
 	 * @param id
-	 *            The new pageID value
+	 *          The new pageID value
 	 */
 	public void setPageID(int id) {
 		this._ibPageID = id;
 	}
 
 	/**
-	 * method for adding a style sheet file the url generating is done in the
-	 * main method
+	 * method for adding a style sheet file the url generating is done in the main
+	 * method
 	 * 
 	 * @param file
-	 *            The new styleSheet value
+	 *          The new styleSheet value
 	 */
 	public void setStyleSheet(ICFile file) {
 		this.styleFile = file;
@@ -2043,9 +2009,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the windowToOpenOnLoad attribute of the Page object
 	 * 
 	 * @param link
-	 *            The new windowToOpenOnLoad value
+	 *          The new windowToOpenOnLoad value
 	 * @param iwc
-	 *            The new windowToOpenOnLoad value
+	 *          The new windowToOpenOnLoad value
 	 */
 	public void setWindowToOpenOnLoad(Link link, IWContext iwc) {
 		this.setOnLoad(link.getWindowToOpenCallingScript(iwc));
@@ -2056,16 +2022,15 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	public void setWindowToOpenOnLoad(ICPage page, int width, int height) {
-		this._windowToOpenOnLoad = page;
-		this._windowWidth = width;
-		this._windowHeight = height;
+		URLUtil url = new URLUtil(getIWApplicationContext(), page);
+		setOnLoad("javascript:" + Window.getWindowCallingScript(url.toString(), "Window", false, false, false, false, false, true, true, true, false, width, height));
 	}
 
 	/**
 	 * Sets the templateId attribute of the Page object
 	 * 
 	 * @param id
-	 *            The new templateId value
+	 *          The new templateId value
 	 */
 	public void setTemplateId(String id) {
 		this._templateId = id;
@@ -2085,7 +2050,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * the form "scriptfile.js"
 	 * 
 	 * @param jsString
-	 *            The feature to be added to the ScriptSource attribute
+	 *          The feature to be added to the ScriptSource attribute
 	 */
 	public void addScriptSource(String jsString) {
 		getAssociatedScript().addScriptSource(jsString);
@@ -2113,7 +2078,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the file id of the shortcut icon
 	 * 
 	 * @param id
-	 *            of the icon file
+	 *          of the icon file
 	 */
 	public void setShortCutIconID(int id) {
 		this._shortCutIconID = id;
@@ -2123,7 +2088,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the URL to the shortcut icon
 	 * 
 	 * @param url
-	 *            to the icon file
+	 *          to the icon file
 	 */
 	public void setShortCutIconURL(String url) {
 		this._shortCutIconURL = url;
@@ -2153,11 +2118,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	public ICDynamicPageTrigger getDynamicPageTrigger() {
 		if (this.dynamicPageTrigger == null) {
-			this.dynamicPageTrigger = (ICDynamicPageTrigger) ImplementorRepository.getInstance().newInstanceOrNull(
-					ICDynamicPageTrigger.class, this.getClass());
+			this.dynamicPageTrigger = (ICDynamicPageTrigger) ImplementorRepository.getInstance().newInstanceOrNull(ICDynamicPageTrigger.class, this.getClass());
 			if (this.dynamicPageTrigger == null) {
-				throw new RuntimeException(
-						"[Page] Implementation of ICDynamicPageTrigger could not be found. Implementing bundle was not loaded.");
+				throw new RuntimeException("[Page] Implementation of ICDynamicPageTrigger could not be found. Implementing bundle was not loaded.");
 			}
 		}
 		return this.dynamicPageTrigger;
@@ -2181,7 +2144,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Sets the associatedScript.
 	 * 
 	 * @param associatedScript
-	 *            The associatedScript to set
+	 *          The associatedScript to set
 	 */
 	public void setAssociatedBodyScript(Script script) {
 		// this.associatedBodyScript = script;
@@ -2200,8 +2163,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Get the set docType. If no doctype/markupLanguage is set in the
-	 * page/system then this method returns the HTML 4.0.1 Transitional.
+	 * Get the set docType. If no doctype/markupLanguage is set in the page/system
+	 * then this method returns the HTML 4.0.1 Transitional.
 	 * 
 	 * @return
 	 */
@@ -2243,8 +2206,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Gets if the Markup Language for the Page. This method uses the set
-	 * DocType (if any) to calculate the used MarkupLanguage String.
+	 * Gets if the Markup Language for the Page. This method uses the set DocType
+	 * (if any) to calculate the used MarkupLanguage String.
 	 * 
 	 * @return
 	 */
@@ -2325,12 +2288,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		this.styleFile = (ICFile) values[36];
 		// this.dynamicPageTrigger=(ICDynamicPageTrigger)values[37];
 		this._isCategory = ((Boolean) values[38]).booleanValue();
-		this._windowToOpenOnLoad = (ICPage) values[39];
-		this._windowWidth = ((Integer) values[40]).intValue();
-		this._windowHeight = ((Integer) values[41]).intValue();
-		this.forwardPage = (ICPage) values[42];
-		this.docType = (String) values[43];
-		this.useIE7Extension = ((Boolean) values[44]).booleanValue();
+		this.forwardPage = (ICPage) values[39];
+		this.docType = (String) values[40];
+		this.useIE7Extension = ((Boolean) values[41]).booleanValue();
 	}
 
 	/*
@@ -2339,7 +2299,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[45];
+		Object values[] = new Object[42];
 		values[0] = super.saveState(context);
 		values[1] = new Integer(this._ibPageID);
 		values[2] = this._title;
@@ -2379,21 +2339,16 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		values[36] = this.styleFile;
 		// values[37]=this.dynamicPageTrigger;
 		values[38] = Boolean.valueOf(this._isCategory);
-		values[39] = this._windowToOpenOnLoad;
-		values[40] = new Integer(this._windowWidth);
-		values[41] = new Integer(this._windowHeight);
-		values[42] = this.forwardPage;
-		values[43] = this.docType;
-		values[44] = Boolean.valueOf(this.useIE7Extension);
+		values[39] = this.forwardPage;
+		values[40] = this.docType;
+		values[41] = Boolean.valueOf(this.useIE7Extension);
 		return values;
 	}
 
 	public List getPropertyDescriptions() {
 		List list = new ArrayList();
-		list.add(new PropertyDescription("method:1:implied:void:setStyleSheetURL:java.lang.String:", "1",
-				File.class.getName(), FileObjectReader.class.getName(), false));
-		list.add(new PropertyDescription(":method:1:implied:void:setTemplateId:java.lang.String:", "1",
-				ICPage.class.getName(), ICPage.class.getName(), true));
+		list.add(new PropertyDescription("method:1:implied:void:setStyleSheetURL:java.lang.String:", "1", File.class.getName(), FileObjectReader.class.getName(), false));
+		list.add(new PropertyDescription(":method:1:implied:void:setTemplateId:java.lang.String:", "1", ICPage.class.getName(), ICPage.class.getName(), true));
 		return list;
 	}
 }
