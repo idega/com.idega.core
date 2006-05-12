@@ -1,6 +1,5 @@
 package com.idega.util;
 import java.io.File;
-
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -13,11 +12,15 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import com.idega.idegaweb.IWMainApplication;
 public class SendMail {
 	public SendMail() {
 	}
 	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text, File attachedFile)
 		throws MessagingException {
+		// charset usually either "UTF-8" or "ISO-8859-1"
+		// if not set the system default set is taken 
+		String charset = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings().getCharSetForSendMail();
 		// Start a session
 		java.util.Properties properties = System.getProperties();
 		Session session = Session.getInstance(properties, null);
@@ -40,13 +43,13 @@ public class SendMail {
 			message.setText(parseCharacters(text));
 		
 		*/
-		message.setSubject((subject));
+		message.setSubject(subject, charset);
 		if (attachedFile == null) {
-			message.setText((text));
+			message.setText(text, charset);
 		}
 		else {
-			BodyPart body = new MimeBodyPart();
-			body.setText(text);
+			MimeBodyPart body = new MimeBodyPart();
+			body.setText(text, charset);
 			BodyPart attachment = new MimeBodyPart();
 			DataSource attachmentSource = new FileDataSource(attachedFile);
 			DataHandler attachmentHandler = new DataHandler(attachmentSource);
