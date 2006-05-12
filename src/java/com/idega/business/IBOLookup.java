@@ -152,12 +152,12 @@ public class IBOLookup implements Singleton
 		catch(InvocationTargetException ite){
 			//ite.printStackTrace();
 			Throwable e = ite.getTargetException();
-			e.printStackTrace();
-			throw new CreateException("Exception invoking create method for: "+beanInterfaceClass.getName()+". Error was:"+e.getClass().getName()+":"+e.getMessage());	
+			//e.printStackTrace();
+			throw new CreateException("Exception invoking create method for: "+beanInterfaceClass.getName()+". Error was:"+e.getClass().getName()+" : "+e.getMessage());	
 		}
 		catch(Exception e){
-			e.printStackTrace();
-			throw new CreateException("Exception invoking create method for: "+beanInterfaceClass.getName()+". Error was:"+e.getMessage());	
+			//e.printStackTrace();
+			throw new CreateException("Exception invoking create method for: "+beanInterfaceClass.getName()+". Error was:"+e.getClass().getName()+" : "+e.getMessage());	
 		}
 		//session = home.createIBO();
 		return session;
@@ -308,12 +308,12 @@ public class IBOLookup implements Singleton
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				//e.printStackTrace();
 				throw new RuntimeException(
 					"Error initializing Home for EJB Bean Interface class:"
 						+ entityInterfaceClass.getName()
 						+ " - Message: "
-						+ e.getMessage());
+						+ e.getMessage(),e);
 			}
 		}
 		return home;
@@ -356,8 +356,8 @@ public class IBOLookup implements Singleton
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
-			throw new RuntimeException(e.getClass().getName() + ": " + e.getMessage());
+			//e.printStackTrace();
+			throw new RuntimeException(e.getClass().getName() + " : " + e.getMessage());
 		}
 		//return null;
 	}
