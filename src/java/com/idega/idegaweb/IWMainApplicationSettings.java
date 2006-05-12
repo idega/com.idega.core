@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.45 2006/04/09 12:13:14 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.46 2006/05/12 16:27:34 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
+import javax.mail.internet.MimeUtility;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
@@ -29,6 +30,7 @@ import com.idega.presentation.Page;
 import com.idega.repository.data.MutableClass;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.LocaleUtil;
+import com.idega.util.StringHandler;
 /**
  * <p>
  * This class is used by IWMainApplication as the holder of most properties set
@@ -37,10 +39,10 @@ import com.idega.util.LocaleUtil;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/12 16:27:34 $ by $Author: thomas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.45 $
+ * @version $Revision: 1.46 $
  */
 
 
@@ -67,6 +69,8 @@ public class IWMainApplicationSettings implements MutableClass {
 	private static String DEFAULT_LOCALE_KEY;
 	private static String _SERVICE_CLASSES_KEY;
 
+	private static final String CHARSET_SEND_MAIL = "charset_sendmail";
+	
 	private static final String IDEGAWEB_PROPERTY_FILE_NAME = "idegaweb.pxml";
 
 	private static final String CHARACTER_ENCODING_KEY = "character_encoding";
@@ -546,6 +550,16 @@ public class IWMainApplicationSettings implements MutableClass {
 		 */
 		return this.getDefaultLocale();
 	}
+	
+	
+	public String getCharSetForSendMail() {
+		String charSet = getFromApplicationBinding(CHARSET_SEND_MAIL);
+		if (StringHandler.isEmpty(charSet)) {
+			charSet = MimeUtility.getDefaultJavaCharset();
+		}
+		return charSet;
+	}
+	
 	
 	/**
 	 * @return The character encoding string for example UTF-16 or the default ISO-8859-1
