@@ -964,7 +964,7 @@ public class TextSoap {
 	  	replacements.put("\"", "&quot;");
 	  	replacements.put("\'", "&#039;");
 	  	replacements.put("\\", "&#092;");
-	  	replacements.put("&",  "&amp");
+	  	replacements.put("&",  "&amp;");
 	  	 
 	  	Pattern p = Pattern.compile("[<>\"']|&(?!#)");
 	  	Matcher m = p.matcher(string);
