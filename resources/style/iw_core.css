@@ -30,10 +30,10 @@ form {
 }
 
 img {
-        border:0px solid #000000;
+        border: 0;
 }
 
-iframe{
+iframe {
 	border: 1px solid #7c7c7c;
 }
 
@@ -54,10 +54,11 @@ iframe{
 DIV.LoadLayerOld {
         visibility:hidden;
         position:absolute;
-        font-family: arial;
+        font-family: Arial, Helvetica, sans-serif;
         font-size: 9pt;
         font-weight: bold;
-        background: #ffffff;
+        background-color: #FFFFFF;
+        color: inherit;
         border-style: ridge;
         border-color: #cbcbcb;
         border-width: 2px;
@@ -72,7 +73,7 @@ DIV.LoadLayerOld {
 .LoadLayer {
         visibility:hidden;
         position:fixed;
-        font-family: Verdana;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
         font-size: 9pt;
         font-weight: bold;
         border-width: 0px;
@@ -82,35 +83,33 @@ DIV.LoadLayerOld {
         width:100%;
         height:100%;
         
-		background-image: url(images/loadingmask.png);
-		background-position: center center;
-		background-repeat: no-repeat;
-		
 		/***IE TRANSPARENCY HACKS***/
-		_background-image: none;
 		/*_filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/uppsala/idegaweb/bundles/com.idega.core.bundle/resources/style/images/loadingmask.png',sizingMethod='scale');
 		*/
 		
 		z-index: 1000;
 }
 
-.LoadLayer .LoadLayerContents{
+html>body .LoadLayer {
+		background-image: url(images/loadingmask.png);
+		background-position: center center;
+		background-repeat: no-repeat;
+}
 
+.LoadLayer .LoadLayerContents{
         position:absolute;
-        font-family: Verdana;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
         font-size: 9pt;
         font-weight: bold;
         background: #ffffff;
+        color: inherit;
         border-width: 0px;
-
-		position:absolute;
 		padding-top: 4px;
 		padding-left: 8px;
 		padding-right: 12px;
 		padding-bottom:4px;
 		top:48%;
 		left:45%;
-		
 		width: 120px;
 		height: 35px;
 }
@@ -137,6 +136,7 @@ DIV.LoadLayerOld {
 	font-family:Verdana,Sans-serif;
 	font-size: 10px;
 	background-color: #E1E1E1;
+	color: inherit;
 	margin: 0px;
 
 	border-color: black;
@@ -156,19 +156,18 @@ DIV.LoadLayerOld {
 }
 
 .iw_search_name{
-	#margin-left:5px;
 	margin-top:2px;
 	padding:3px;
 	font-size: 11px;
 	font-weight: bold;
 	background-color: #DFDFDF;
+    color: inherit;
  	display:block;
     clear: both;
 }
 
 .iw_search_results_row_odd{
-	#background-color: #DEDEDE;
- 	border-bottom: 1px dotted;
+ 	border-bottom: 1px #000 dotted;
  	border-color: black;
     padding-top:2px;
     padding-bottom:2px;
@@ -177,8 +176,7 @@ DIV.LoadLayerOld {
 }
 
 .iw_search_results_row_even{
-	#background-color: #EDEDED;
-	border-bottom: 1px dotted;
+	border-bottom: 1px #000 dotted;
     padding-top:2px;
     padding-bottom:2px;
 	margin: 0px;
@@ -204,8 +202,8 @@ DIV.LoadLayerOld {
  	display: inline;
 	float:left;
  	color: red;
+	background-color: inherit;
 	width:45%;
-
 }
 
 .iw_search_result_link:hover{
@@ -217,6 +215,7 @@ DIV.LoadLayerOld {
  	display:inline;
     float:left;
  	color: red;
+	background-color: inherit;
 	width:45%;
 }
 
@@ -259,20 +258,19 @@ DIV.LoadLayerOld {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10px;
 	width:100px;
-	border: 1 solid #000000;
+	border: 1px solid #000000;
 }
 
 .iw_searcher_button{	
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10px;
 	font-weight:bold;
-	#background-image: url(images/search.gif);
 }
 
 .expandcontainer{
 	position: relative;
 	border: 1px solid #BBBBBB;
-	padding 10px;
+	padding: 10px;
 	width: auto;
 	height: auto;
 	margin: 10px;
@@ -283,11 +281,12 @@ DIV.LoadLayerOld {
 	left: 15px;
 	top: -5px;
 	font-weight: bold;
-	padding 10px;
+	padding: 10px;
 	margin: 10px;
 }
 
 .errormessage .info{
+	background-color: inherit;
 	color: red;
 }
 
@@ -309,7 +308,7 @@ DIV.LoadLayerOld {
 }
 
 .expandcontainer .contents.minimized{
-	padding 10px;
+	padding: 10px;
 	margin: 10px;
 	height: 5px;
 }
@@ -319,14 +318,14 @@ DIV.LoadLayerOld {
 
 .expandcontainer .contents.expanded{
 	border: 1px solid #BBBBBB;
-	padding 10px;
+	padding: 10px;
 	margin: 10px;
 }
 
 .expandcontainer.errormessage .contents.expanded pre{
 	height: 150px;
 	overflow: scroll;
-	padding 2px;
+	padding: 2px;
 	margin: 2px;
 }
 
