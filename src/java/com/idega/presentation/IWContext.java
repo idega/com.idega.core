@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.138 2006/04/09 12:13:13 laddi Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.139 2006/05/13 11:26:18 gimmi Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/13 11:26:18 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.138 $
+ * @version $Revision: 1.139 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -242,7 +242,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	}
 
 	public UploadFile getUploadedFile() {
-		if (isMultipartFormData() && this._uploadedFile == null) {
+		if (this._uploadedFile == null) {
 			try {
 				IWEventProcessor.getInstance().handleMultipartFormData(this);
 			}
