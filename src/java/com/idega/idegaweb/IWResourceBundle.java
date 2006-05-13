@@ -1,14 +1,13 @@
 /*
- * $Id: IWResourceBundle.java,v 1.39 2006/05/11 16:59:54 tryggvil Exp $
- *
+ * $Id: IWResourceBundle.java,v 1.40 2006/05/13 12:31:59 laddi Exp $
+ * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
- *
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to
+ * license terms.
+ * 
  */
 package com.idega.idegaweb;
-
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,33 +30,40 @@ import com.idega.util.StringHandler;
 
 /**
  * <p>
- * This is an idegaWeb representation of a localization folder/file for each locale in an idegaWeb Bundle.<br/>
- * There is an instance of this class for each localization file (e.g. com.idega.core.bundle/en.locale/Localized.strings)
- * and is an extension to the standard Java ResourceBundle.
+ * This is an idegaWeb representation of a localization folder/file for each
+ * locale in an idegaWeb Bundle.<br/> There is an instance of this class for
+ * each localization file (e.g.
+ * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
+ * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2006/05/11 16:59:54 $ by $Author: tryggvil $<br/>
+ * Last modified: $Date: 2006/05/13 12:31:59 $ by $Author: laddi $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  */
 public class IWResourceBundle extends ResourceBundle {
 
 	// ==================privates====================
 	TreeMap lookup;
 	private Properties properties = new SortedProperties();
-	//private Properties properties = new Properties();
+	// private Properties properties = new Properties();
 	private Locale locale;
 	private File file;
 	private IWBundle iwBundleParent;
 	private String resourcesURL;
 	private static String slash = "/";
-	//private IWResourceBundle parentResourceBundle;
+
+	// private IWResourceBundle parentResourceBundle;
 
 	/**
 	 * Creates a IWResourceBundle for a specific Locale
-	 * @param file file to read from.
-	 * @param parent Parent IWBundle to instanciate from
-	 * @param locale Locale to create from
+	 * 
+	 * @param file
+	 *          file to read from.
+	 * @param parent
+	 *          Parent IWBundle to instanciate from
+	 * @param locale
+	 *          Locale to create from
 	 */
 	public IWResourceBundle(IWBundle parent, File file, Locale locale) throws IOException {
 		setIWBundleParent(parent);
@@ -67,22 +73,24 @@ public class IWResourceBundle extends ResourceBundle {
 			this.properties.load(new FileInputStream(file));
 		}
 		catch (FileNotFoundException e) {
-			//System.err.println("IWResourceBundle: File Not Found:"+file.getAbsolutePath());
+			// System.err.println("IWResourceBundle: File Not
+			// Found:"+file.getAbsolutePath());
 		}
 		this.lookup = new TreeMap(this.properties);
 		setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
 	}
-	
+
 	/**
 	 * <p>
-	 * This constructor is used for locale variants, and the parent resourceBundle includes the default localizations.
+	 * This constructor is used for locale variants, and the parent resourceBundle
+	 * includes the default localizations.
 	 * </p>
 	 */
 	public IWResourceBundle(IWResourceBundle parent, File file, Locale locale) throws IOException {
-		this(parent.getIWBundleParent(),file,locale);
+		this(parent.getIWBundleParent(), file, locale);
 		setParent(parent);
 	}
-	
+
 	/**
 	 * Override of ResourceBundle, same semantics
 	 */
@@ -113,6 +121,7 @@ public class IWResourceBundle extends ResourceBundle {
 			final Enumeration parentKeys = this.parent.getKeys();
 
 			result = new Enumeration() {
+
 				public boolean hasMoreElements() {
 					if (this.temp == null) {
 						nextElement();
@@ -170,9 +179,9 @@ public class IWResourceBundle extends ResourceBundle {
 						}
 					}
 				}
-				if(!this.file.exists()){
-					file.createNewFile();
-					System.out.println("IWResourceBundle: Created new file: "+file.getAbsolutePath());
+				if (!this.file.exists()) {
+					this.file.createNewFile();
+					System.out.println("IWResourceBundle: Created new file: " + this.file.getAbsolutePath());
 				}
 				FileOutputStream fos = new FileOutputStream(this.file);
 				this.properties.store(fos, null);
@@ -187,38 +196,50 @@ public class IWResourceBundle extends ResourceBundle {
 		}
 	}
 
-/**
- * Uses getString but returns null if resource is not found
- * @param key
- * @return
- */
+	/**
+	 * Uses getString but returns null if resource is not found
+	 * 
+	 * @param key
+	 * @return
+	 */
 	public String getLocalizedString(String key) {
 
 		try {
 			return super.getString(key);
 		}
 		catch (MissingResourceException e) {
-			//if (getIWBundleParent().getApplication().getSettings().isAutoCreatePropertiesActive()) {
-			//	setLocalizedString(key, "");
-			//}
+			// if
+			// (getIWBundleParent().getApplication().getSettings().isAutoCreatePropertiesActive())
+			// {
+			// setLocalizedString(key, "");
+			// }
 			return null;
 		}
 	}
-	
-/**
- *  Gets a localized stringvalue and sets the value as returnValueIfNotFound if it is previously not found and returns it.
- * @param key
- * @param returnValueIfNotFound
- * @return
- */
+
+	/**
+	 * Gets a localized stringvalue and sets the value as returnValueIfNotFound if
+	 * it is previously not found and returns it.
+	 * 
+	 * @param key
+	 * @param returnValueIfNotFound
+	 * @return
+	 */
 	public String getLocalizedString(String key, String returnValueIfNotFound) {
 		String returnString = getLocalizedString(key);
-		if ( ( (returnString == null) || StringHandler.EMPTY_STRING.equals(returnString) ) && returnValueIfNotFound!=null ) {//null check on return value IS necessary
+		if (((returnString == null) || StringHandler.EMPTY_STRING.equals(returnString)) && returnValueIfNotFound != null) {// null
+																																																												// check
+																																																												// on
+																																																												// return
+																																																												// value
+																																																												// IS
+																																																												// necessary
 			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
-				//if (getIWBundleParent().getApplication().getSettings().isDebugActive())
-				//	System.out.println("Storing localized string: " + key);
-				//setLocalizedString(key, returnValueIfNotFound);
-				this.checkBundleLocalizedString(key,returnValueIfNotFound);
+				// if
+				// (getIWBundleParent().getApplication().getSettings().isDebugActive())
+				// System.out.println("Storing localized string: " + key);
+				// setLocalizedString(key, returnValueIfNotFound);
+				this.checkBundleLocalizedString(key, returnValueIfNotFound);
 			}
 			return returnValueIfNotFound;
 		}
@@ -226,31 +247,39 @@ public class IWResourceBundle extends ResourceBundle {
 			return returnString;
 		}
 	}
-	
+
 	/**
-	 * 	 * Gets a localized stringvalue and sets the value as returnValueIfNotFound if it is previously not found and <br>
-	 * THEN formats the string using java.text.MessageFormat.format(thestring,arrayofvariables).<br>
-	 * The variables in the array then replace varibles in the localized string <br>
-	 * For example: the localized string : "Hello my name is {0}" and the array contains object that implements the toString() method.<br>
-	 * When we call java.text.MessageFormat.format(thestring,arrayofvariables) the variable {0} is then replaced with the arrayofvariables[0].toString() item of the array.<br>
+	 * * Gets a localized stringvalue and sets the value as returnValueIfNotFound
+	 * if it is previously not found and <br>
+	 * THEN formats the string using
+	 * java.text.MessageFormat.format(thestring,arrayofvariables).<br>
+	 * The variables in the array then replace varibles in the localized string
+	 * <br>
+	 * For example: the localized string : "Hello my name is {0}" and the array
+	 * contains object that implements the toString() method.<br>
+	 * When we call java.text.MessageFormat.format(thestring,arrayofvariables) the
+	 * variable {0} is then replaced with the arrayofvariables[0].toString() item
+	 * of the array.<br>
+	 * 
 	 * @param key
 	 * @param returnValueIfNotFound
-	 * @param messageFormatVariables an Object array of .toString() implementing objects
+	 * @param messageFormatVariables
+	 *          an Object array of .toString() implementing objects
 	 * @return the string localized and formatted
 	 */
 	public String getLocalizedAndFormattedString(String key, String returnValueIfNotFound, Object[] messageFormatVariables) {
 		String localizedAndFormatted = getLocalizedString(key, returnValueIfNotFound);
-		
-		if(messageFormatVariables!=null){
+
+		if (messageFormatVariables != null) {
 			localizedAndFormatted = MessageFormat.format(localizedAndFormatted, messageFormatVariables);
 		}
-		
+
 		return localizedAndFormatted;
 	}
 
 	/**
-	* Uses getLocalizedString but returns null if resource is not found
-	*/
+	 * Uses getLocalizedString but returns null if resource is not found
+	 */
 	public Image getLocalizedImageButton(String key) {
 		try {
 			String text = getLocalizedString(key);
@@ -267,8 +296,8 @@ public class IWResourceBundle extends ResourceBundle {
 	}
 
 	/**
-	  * Uses getLocalizedString but returns null if resource is not found
-	  */
+	 * Uses getLocalizedString but returns null if resource is not found
+	 */
 	public Image getLocalizedImageTab(String key, boolean flip) {
 		try {
 			String text = getLocalizedString(key);
@@ -285,18 +314,22 @@ public class IWResourceBundle extends ResourceBundle {
 	}
 
 	/**
-	 * Sets a value of a string key in this ResourceBundle. Stores the files implicitly (storeState()) to the diskafter a call to this method.
-	 * @param key a String key
-	 * @param value a value to the key
+	 * Sets a value of a string key in this ResourceBundle. Stores the files
+	 * implicitly (storeState()) to the diskafter a call to this method.
+	 * 
+	 * @param key
+	 *          a String key
+	 * @param value
+	 *          a value to the key
 	 */
 	public void setString(String key, String value) {
 		this.lookup.put(key, value);
-		checkBundleLocalizedString(key,value);
+		checkBundleLocalizedString(key, value);
 		this.storeState();
 	}
 
 	public boolean removeString(String key) {
-		if((String) this.lookup.remove(key) != null ){
+		if ((String) this.lookup.remove(key) != null) {
 			this.storeState();
 			return true;
 		}
@@ -312,7 +345,8 @@ public class IWResourceBundle extends ResourceBundle {
 	}
 
 	/*
-	 * Returns the Resource URI for the image with the internal url urlInBundle inside the resource bundle
+	 * Returns the Resource URI for the image with the internal url urlInBundle
+	 * inside the resource bundle
 	 */
 	public String getImageURI(String urlInBundle) {
 		return getResourcesURL() + slash + urlInBundle;
@@ -358,49 +392,48 @@ public class IWResourceBundle extends ResourceBundle {
 	}
 
 	/**
-	 *
+	 * 
 	 */
 	public void setLocalizedString(String key, String value) {
-		this.setString(key,value);
+		this.setString(key, value);
 	}
 
 	protected boolean checkBundleLocalizedString(String key, String value) {
 		IWBundle bundle = getIWBundleParent();
 		if (!bundle.containsLocalizedString(key)) {
 			bundle.addLocalizableString(key, value);
-			try{
-				((DefaultIWBundle)bundle).storeLocalizableStrings();
+			try {
+				((DefaultIWBundle) bundle).storeLocalizableStrings();
 			}
-			catch(ClassCastException ce){
-				System.err.println("Cant store LocalizableStrings becauase bundle "+bundle.getBundleIdentifier()+" is not subclass of DefaultIWBundle");
+			catch (ClassCastException ce) {
+				System.err.println("Cant store LocalizableStrings becauase bundle " + bundle.getBundleIdentifier() + " is not subclass of DefaultIWBundle");
 				ce.printStackTrace();
 			}
 			return true;
 		}
 		return false;
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		IWBundle bundleParent = this.getIWBundleParent();
-		if(bundleParent!=null){
-			return bundleParent+"/"+this.locale;
+		if (bundleParent != null) {
+			return bundleParent + "/" + this.locale;
 		}
-		else{
+		else {
 			return this.locale.toString();
 		}
 	}
 
-	
 	/**
 	 * @return the parentResourceBundle
 	 */
 	public IWResourceBundle getParentResourceBundle() {
-		return (IWResourceBundle)parent;
+		return (IWResourceBundle) this.parent;
 	}
 
-	
 	/**
-	 * @param parentResourceBundle the parentResourceBundle to set
+	 * @param parentResourceBundle
+	 *          the parentResourceBundle to set
 	 */
 	public void setParentResourceBundle(IWResourceBundle parentResourceBundle) {
 		super.setParent(parentResourceBundle);
