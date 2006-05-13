@@ -5,11 +5,14 @@ package com.idega.util.text;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.ibm.icu.text.Transliterator;
-//@todo use regular expressions such as import com.stevesoft.pat.*;
 
 /**
  *  General class for text manipulation
@@ -934,7 +937,48 @@ public class TextSoap {
 		return returnString.toString();
 	}
 
-	/**
+	 /**
+	  * Replace characters having special meaning <em>inside</em> HTML tags
+	  * with their escaped equivalents, using character entities such as <tt>'&amp;'</tt>.
+	  *
+	  * <P>The escaped characters are :
+	  * <ul>
+	  * <li> <
+	  * <li> >
+	  * <li> "
+	  * <li> '
+	  * <li> \
+	  * <li> &
+	  * </ul>
+	  *
+	  * <P>This method ensures that arbitrary text appearing inside a tag does not "confuse"
+	  * the tag. For example, <tt>HREF='Blah.do?Page=1&Sort=ASC'</tt>
+	  * does not comply with strict HTML because of the ampersand, and should be changed to
+	  * <tt>HREF='Blah.do?Page=1&amp;Sort=ASC'</tt>. This is commonly seen in building
+	  * query strings. (In JSTL, the c:url tag performs this task automatically.)
+	  */
+	  public static String forHTMLTag(String string){
+	  	Map replacements = new HashMap();
+	  	replacements.put("<",  "&lt;");
+	  	replacements.put(">",  "&gt;");
+	  	replacements.put("\"", "&quot;");
+	  	replacements.put("\'", "&#039;");
+	  	replacements.put("\\", "&#092;");
+	  	replacements.put("&",  "&amp");
+	  	 
+	  	Pattern p = Pattern.compile("[<>\"']|&(?!#)");
+	  	Matcher m = p.matcher(string);
+	  	StringBuffer buffer = new StringBuffer();
+	  	 
+	  	while (m.find()) {
+	  	    String specialChar = m.group();
+	  	    m.appendReplacement(buffer, (String) replacements.get(specialChar));
+	  	}
+	  	m.appendTail(buffer);
+	  	 
+	  	return buffer.toString();	  }
+	  
+	  /**
 	 * Changes all the special characters in the given string to their corresponding symbolic value.
 	 * For example: '& => &amp;', '< = &lt;'
 	 * @param stringToConvert	The string to convert.
