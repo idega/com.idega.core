@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.168 2006/04/09 12:13:16 laddi Exp $
+ * $Id: Link.java,v 1.169 2006/05/13 14:39:05 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1592,7 +1592,7 @@ public class Link extends Text {
 		}
 		
 		String returner = this._parameterString.toString();
-		return returner;
+		return TextSoap.forHTMLTag(returner);
 	}
 
 	/**

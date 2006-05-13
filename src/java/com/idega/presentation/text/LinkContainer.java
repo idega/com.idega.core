@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.28 2006/04/09 12:13:16 laddi Exp $
+ * $Id: LinkContainer.java,v 1.29 2006/05/13 14:39:05 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -26,6 +26,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.ui.Window;
 import com.idega.util.StringHandler;
+import com.idega.util.text.TextSoap;
 
 /**
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -438,7 +439,7 @@ public class LinkContainer extends PresentationObjectContainer {
 			}
 		}
 		if (this._parameterString != null) {
-			return this._parameterString.toString();
+			return TextSoap.forHTMLTag(this._parameterString.toString());
 		}
 		else {
 			return ("");
