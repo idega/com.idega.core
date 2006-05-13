@@ -1,5 +1,5 @@
 /*
- * $Id: IWJAASAuthenticationRequestWrapper.java,v 1.4 2006/05/12 17:13:46 tryggvil Exp $
+ * $Id: IWJAASAuthenticationRequestWrapper.java,v 1.5 2006/05/13 09:40:32 laddi Exp $
  * Created on 3.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -24,10 +24,10 @@ import com.idega.core.accesscontrol.business.LoginBusinessBean;
  * like user is logged on JAAS if he is logged on IdegaWeb.  If the user is logged on 
  * JAAS then the methods use the super implementation.
  * 
- *  Last modified: $Date: 2006/05/12 17:13:46 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/05/13 09:40:32 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class IWJAASAuthenticationRequestWrapper extends HttpServletRequestWrapper {
 
@@ -63,41 +63,6 @@ public class IWJAASAuthenticationRequestWrapper extends HttpServletRequestWrappe
 	public boolean isUserInRole(String role){
 		boolean inIWSystem = (this.userRoles != null)?this.userRoles.contains(role):false;
 		return inIWSystem || super.isUserInRole(role);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletRequestWrapper#getPathInfo()
-	 */
-	public String getPathInfo() {
-		String superPathInfo = super.getPathInfo();
-		if(superPathInfo==null){
-			return "/";
-		}
-		return superPathInfo;
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletRequestWrapper#getPathTranslated()
-	 */
-	public String getPathTranslated() {
-		// TODO Auto-generated method stub
-		return super.getPathTranslated();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletRequestWrapper#getRequestURI()
-	 */
-	public String getRequestURI() {
-		// TODO Auto-generated method stub
-		return super.getRequestURI();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletRequestWrapper#getRequestURL()
-	 */
-	public StringBuffer getRequestURL() {
-		// TODO Auto-generated method stub
-		return super.getRequestURL();
 	}
 	
 }
