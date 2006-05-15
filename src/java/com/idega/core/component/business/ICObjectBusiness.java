@@ -3,9 +3,9 @@ package com.idega.core.component.business;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ejb.CreateException;
-
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectInstance;
+import com.idega.core.component.data.ICObjectInstanceHome;
 import com.idega.data.EntityFinder;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOContainer;
@@ -41,6 +41,8 @@ public class ICObjectBusiness implements Singleton {
 
   private  Map icoInstanceMap;
   private  Map icObjectMap;
+  
+  public static String UUID_PREFIX = "uuid_";
 
   protected ICObjectBusiness(){
   	// empty
@@ -70,7 +72,7 @@ public class ICObjectBusiness implements Singleton {
  /**
    * Returns the Class associated with the ICObjectInstance
    */
-  public Class getICObjectClassForInstance(int ICObjectInstanceId) {
+  public Class getICObjectClassForInstance(String ICObjectInstanceId) {
     ICObjectInstance instance = this.getICObjectInstance(ICObjectInstanceId);
     ICObject obj = instance.getObject();
     if(obj != null){
@@ -84,6 +86,13 @@ public class ICObjectBusiness implements Singleton {
     } else {
       return null;
     }
+  }
+  
+  /**
+   * Returns the Class associated with the ICObjectInstance
+   */
+  public Class getICObjectClassForInstance(int ICObjectInstanceId) {
+    return getICObjectClassForInstance(Integer.toString(ICObjectInstanceId));
   }
 
 
@@ -134,74 +143,51 @@ public class ICObjectBusiness implements Singleton {
   /**
    * Constructs a new PresentationObject with the class associated with the ICObjectInstance
    */
-  public  PresentationObject getNewObjectInstance(int icObjectInstanceID){
-      PresentationObject inst = null;
-      if (icObjectInstanceID > -1) {
-	      try{
-  	      ICObjectInstance ico = this.getICObjectInstance(icObjectInstanceID);
-    	    inst = ico.getNewInstance();
-      	  inst.setICObjectInstance(ico);
-	      }
-  	    catch(Exception e){
-    	    e.printStackTrace();
-      	}
-      }
-      return inst;
+  public Object getNewObjectInstance(int icObjectInstanceID){
+	  Object inst = null;
+	  if (icObjectInstanceID > -1) {
+		  try{
+			  ICObjectInstance ico = this.getICObjectInstance(Integer.toString(icObjectInstanceID));
+			  String className = ico.getObject().getClassName();
+			  inst =  RefactorClassRegistry.forName(className);
+			  if(inst instanceof PresentationObject){
+				  ((PresentationObject)inst).setICObjectInstance(ico);
+			  }
+		  }
+		  catch(Exception e){
+			  e.printStackTrace();
+		  }
+	  }
+	  
+	  return inst;
   }
 
 
 
   /**
-   * Returns the IWBundle that the ICObjectInstance is registered to, icObjectInstanceID must be of the form of an int
+   * Returns the IWBundle that the ICObjectInstance is registered to, icObjectInstanceID can be an int or a UUID
    */
   public  IWBundle getBundleForInstance(String icObjectInstanceID,IWMainApplication iwma){
-    return getBundleForInstance(Integer.parseInt(icObjectInstanceID),iwma);
-  }
-
-  /**
-   * Returns the IWBundle that the ICObjectInstance is registered to
-   */
-  public  IWBundle getBundleForInstance(int icObjectInstanceID,IWMainApplication iwma){
-    try{
-      if(icObjectInstanceID==-1){
-        return iwma.getBundle(PresentationObject.CORE_IW_BUNDLE_IDENTIFIER);
-      }
-      else{
-        ICObjectInstance instance = getICObjectInstance(icObjectInstanceID);
-        return instance.getObject().getBundle(iwma);
-      }
-    }
-    catch(Exception e){
-      e.printStackTrace();
-      return null;
-    }
-  }
-
-  /**
-   * Returns the Class that the ICObjectInstance is associated with, icObjectInstanceID must be of the form of an int
-   */
-  public Class getClassForInstance(String icObjectInstanceID)throws ClassNotFoundException{
-    return getClassForInstance(Integer.parseInt(icObjectInstanceID));
+	  ICObjectInstance icoi = getICObjectInstance(icObjectInstanceID);
+	  if(icoi!=null){
+		  return icoi.getObject().getBundle(iwma);
+	  }
+	  else{
+		  return iwma.getCoreBundle();
+	  }
   }
 
   /**
    * Returns the Class that the ICObjectInstance is associated with
    */
-  public Class getClassForInstance(int icObjectInstanceID)throws ClassNotFoundException{
-    if (icObjectInstanceID == -1) {
-			return(com.idega.presentation.Page.class);
-		}
-		else {
-			return getICObjectInstance(icObjectInstanceID).getObject().getObjectClass();
-		}
-  }
-
-  /**
-   * Returns ICObjectInstance that has the specific icObjectInstanceID
-   */
-  public ICObjectInstance getICObjectInstance(String icObjectInstanceID) {
-    return getICObjectInstance(Integer.parseInt(icObjectInstanceID));
-  }
+public Class getClassForInstance(String icObjectInstanceID)throws ClassNotFoundException{
+	if (icObjectInstanceID.equals("1")) {
+		return(com.idega.presentation.Page.class);
+	}
+	else {
+		return getICObjectInstance(icObjectInstanceID).getObject().getObjectClass();
+	}
+}
 
   /**
    * Returns ICObject that has the specific icObjectID
@@ -222,28 +208,46 @@ public class ICObjectBusiness implements Singleton {
   }
 
   /**
-   * Returns ICObjectInstance that has the specific icObjectInstanceID
+   * Returns ICObjectInstance that has the specific icObjectInstanceID from cache (and puts in cache if feteched from the database)
    */
-  public  ICObjectInstance getICObjectInstance(int icObjectInstanceID){
-    try{
-      Integer key = new Integer(icObjectInstanceID);
-      ICObjectInstance theReturn = (ICObjectInstance)getIcoInstanceMap().get(key);
-      if(theReturn == null){
-        theReturn =  ((com.idega.core.component.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).findByPrimaryKeyLegacy(icObjectInstanceID);
-        getIcoInstanceMap().put(key,theReturn);
-      }
-      return theReturn;
-    }
-    catch(Exception e){
-      throw new RuntimeException("Error getting ICObjectInstance for id="+icObjectInstanceID+" - message: "+e.getMessage());
-    }
+  public ICObjectInstance getICObjectInstance(int icObjectInstanceID) {
+	  return getICObjectInstance(Integer.toString(icObjectInstanceID));  
   }
+  
+  /**
+   * Returns ICObjectInstance that has the specific icObjectInstanceID from cache (and puts in cache if feteched from the database)
+   */
+  public ICObjectInstance getICObjectInstance(String icObjectInstanceID) {
+		try {
+			ICObjectInstance theReturn = (ICObjectInstance) getIcoInstanceMap().get(icObjectInstanceID);
+			if (theReturn == null) {
+				ICObjectInstanceHome icoHome = getICObjectInstanceHome();
+				try {
+					int id = Integer.parseInt(icObjectInstanceID);
+					theReturn = icoHome.findByPrimaryKey(id);
+				}
+				catch (NumberFormatException e) {
+					String uniqueId = icObjectInstanceID;
+					if (uniqueId.startsWith(UUID_PREFIX)) {
+						uniqueId = uniqueId.substring(UUID_PREFIX.length(), uniqueId.length());
+					}
+					theReturn = icoHome.findByUniqueId(uniqueId);
+				}
+				getIcoInstanceMap().put(icObjectInstanceID, theReturn);
+			}
+			return theReturn;
+		}
+		catch (Exception e) {
+			throw new RuntimeException("Error getting ICObjectInstance for id=" + icObjectInstanceID + " - message: "
+					+ e.getMessage());
+		}
+	}
 
 
   /**
-   * Creates a new empty ICObjectInstance
-   * Catches any possible Exceptions and throws a RuntimeException if anything occurres
-   */
+	 * Creates a new empty ICObjectInstance Catches any possible Exceptions and
+	 * throws a RuntimeException if anything occurres
+	 */
   public  ICObjectInstance createICObjectInstance() throws IDOCreateException{
     try{
       return ((com.idega.core.component.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).createLegacy();
@@ -359,6 +363,13 @@ public class ICObjectBusiness implements Singleton {
 
 
 
-
+	public static ICObjectInstanceHome getICObjectInstanceHome() {
+		try {
+			return (ICObjectInstanceHome) IDOLookup.getHome(ICObjectInstance.class);
+		}
+		catch (IDOLookupException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 } // Class
