@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.149.2.1 2006/02/12 19:27:48 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.149.2.2 2006/05/16 15:29:54 sigtryggur Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -89,10 +89,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/02/12 19:27:48 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/05/16 15:29:54 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.149.2.1 $
+ * @version $Revision: 1.149.2.2 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -268,7 +268,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		try{
 			reg(defKey,getIWApplicationContext().getDomain().getName(),getProductInfo().getName());
 		}
-		catch(Exception e){}
+		catch(Exception e){
+			System.out.println(e.getMessage());
+		}
 	}
 
 	public void loadBundles() {

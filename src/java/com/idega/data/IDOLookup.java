@@ -81,7 +81,7 @@ public class IDOLookup extends IBOLookup implements Singleton {
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new IDOLookupException(e);
 		}
 		

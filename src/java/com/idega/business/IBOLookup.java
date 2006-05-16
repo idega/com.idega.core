@@ -289,7 +289,7 @@ public class IBOLookup implements Singleton
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				//e.printStackTrace();
 				throw new RuntimeException(
 					"Error initializing Home for EJB Bean Interface class:"
 						+ entityInterfaceClass.getName()
@@ -337,7 +337,7 @@ public class IBOLookup implements Singleton
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			//e.printStackTrace();
 			throw new RuntimeException(e.getClass().getName() + ": " + e.getMessage());
 		}
 		//return null;
