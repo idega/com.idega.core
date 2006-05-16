@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.46 2006/05/12 16:27:34 thomas Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.47 2006/05/16 17:25:07 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -39,10 +39,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/05/12 16:27:34 $ by $Author: thomas $
+ * Last modified: $Date: 2006/05/16 17:25:07 $ by $Author: tryggvil $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.46 $
+ * @version $Revision: 1.47 $
  */
 
 
@@ -677,6 +677,13 @@ public class IWMainApplicationSettings implements MutableClass {
 		getApplication().getIWApplicationContext().setApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP, map);
 	}
 
+	private void removeApplicationBindingFromMap(String key) {
+		Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+		if (map != null) {
+			map.remove(key);
+		}
+	}
+	
 	private String putInApplicationBinding(String key, String value) {
 		try {
 			setApplicationBindingInMap(key, value);
@@ -691,6 +698,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	private void removeFromApplicationBinding(String key) {
 		try {
 			getApplicationBindingBusiness().remove(key);
+			removeApplicationBindingFromMap(key);
 		}
 		catch (IOException e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not remove key: " + key);
