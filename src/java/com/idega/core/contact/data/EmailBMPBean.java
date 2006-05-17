@@ -2,9 +2,16 @@ package com.idega.core.contact.data;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import javax.ejb.FinderException;
+import com.idega.core.data.GenericTypeBMPBean;
 import com.idega.core.user.data.User;
+import com.idega.data.IDOCompositePrimaryKeyException;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOQuery;
+import com.idega.data.query.Table;
+import com.idega.user.data.Group;
+import com.idega.user.data.GroupBMPBean;
 import com.idega.user.data.UserBMPBean;
 /**
  * Title:        IW Core
@@ -16,8 +23,7 @@ import com.idega.user.data.UserBMPBean;
  */
 public class EmailBMPBean
 	extends com.idega.data.GenericEntity
-	implements com.idega.core.contact.data.Email, com.idega.core.contact.data.EmailDataView
-{
+	implements com.idega.core.contact.data.Email, com.idega.core.contact.data.EmailDataView{
 	public final static String SQL_TABLE_NAME = "IC_EMAIL";
 	public final static String SQL_COLUMN_EMAIL = "ADDRESS";
 	public final static String SQL_COLUMN_TYPE = "IC_EMAIL_TYPE_ID";
@@ -56,6 +62,15 @@ public class EmailBMPBean
 	{
 		return getStringColumnValue(getColumnNameAddress());
 	}
+	
+	public void setEmailType(EmailType emailType) {
+		setColumn(getColumnNameEmailTypeId(), emailType);
+	}
+	
+	public EmailType getEmailType() {
+		return (EmailType) getColumnValue(getColumnNameEmailTypeId());
+	}
+	
 	public void setEmailTypeId(int id)
 	{
 		setColumn(getColumnNameEmailTypeId(), id);
@@ -64,20 +79,152 @@ public class EmailBMPBean
 	{
 		return getIntColumnValue(getColumnNameEmailTypeId());
 	}
-	public Collection ejbFindEmailsForUser(com.idega.user.data.User user) throws FinderException, RemoteException
+	
+	/**
+	 * 
+	 * @param user
+	 * @return
+	 * @throws FinderException
+	 * @throws RemoteException
+	 * 
+	 */
+	public Collection ejbFindEmailsForUser(com.idega.user.data.User user) throws FinderException
 	{
-		int userId = ((Integer) user.getPrimaryKey()).intValue();
-		return ejbFindEmailsForUser(userId);
+		return executeQuery(com.idega.user.data.User.class, UserBMPBean.SQL_RELATION_EMAIL, user);
 	}
+	
+	/**
+	 * 
+	 * @param iUserId
+	 * @return
+	 * @throws FinderException
+	 * 
+	 */
 	public Collection ejbFindEmailsForUser(int iUserId) throws FinderException
 	{
-		StringBuffer sql = new StringBuffer("select ie.* ");
-		sql.append(" from ").append(getTableName()).append(" ie,").append(UserBMPBean.SQL_RELATION_EMAIL).append(" iue ");
-		sql.append(" where ie.").append(getIDColumnName()).append(" =iue.").append(getIDColumnName());
-		sql.append(" and iue.").append(UserBMPBean.SQL_TABLE_NAME).append("_ID = ");
-		sql.append(iUserId);
-		return super.idoFindIDsBySQL(sql.toString());
+		Object userId = new Integer(iUserId);
+		return executeQuery(com.idega.user.data.User.class, UserBMPBean.SQL_RELATION_EMAIL, userId);
 	}
+	
+	public Object ejbFindEmailForUser(com.idega.user.data.User user, EmailType emailType) throws FinderException {
+		return findEmailForUser(user, emailType.getUniqueName());
+	}
+	
+	public Object ejbFindEmailForGroup(Group group, EmailType emailType) throws FinderException {
+		return findEmailForGroup(group, emailType.getUniqueName());
+	}
+
+	/**
+	 * Just a shortcut for the main email type.
+	 * 
+	 * @param user
+	 * @return
+	 * @throws FinderException
+	 * @throws RemoteException
+	 */
+	public Object ejbFindMainEmailForUser(com.idega.user.data.User user) throws FinderException {
+		return findEmailForUser(user,EmailTypeBMPBean.MAIN_EMAIL);
+	}
+	
+	/**
+	 * Just a shortcut for the main email type.
+	 * 
+	 * @param user
+	 * @return
+	 * @throws FinderException
+	 * @throws RemoteException
+	 */
+	public Object ejbFindMainEmailForGroup(Group group) throws FinderException {
+		return findEmailForGroup(group, EmailTypeBMPBean.MAIN_EMAIL);
+	}
+	
+	private Object findEmailForGroup(Group group, String uniqueNameOfEmailType) throws FinderException {
+		return findEmailForUserOrGroup(Group.class, GroupBMPBean.SQL_RELATION_EMAIL, group, uniqueNameOfEmailType);
+	} 
+	
+	private Object findEmailForUser(com.idega.user.data.User user, String uniqueNameOfEmailType) throws FinderException  {
+		return findEmailForUserOrGroup(com.idega.user.data.User.class, UserBMPBean.SQL_RELATION_EMAIL, user, uniqueNameOfEmailType);
+	}
+		
+	
+	private Object findEmailForUserOrGroup(Class userOrGroupClass, String relationTableName, IDOEntity userOrGroup, String uniqueNameOfEmailType) throws FinderException {
+		Object userOrGroupId = userOrGroup.getPrimaryKey();
+		Object pk = null;
+		try {
+			pk = executeQuery(userOrGroupClass, relationTableName, userOrGroupId, uniqueNameOfEmailType);
+		}
+		catch (FinderException ex) {
+			pk  = null;
+		}
+		if (pk == null) {
+			// choose the latest email that is the email with the greatest primary key
+			Collection coll = executeQuery(userOrGroupClass, relationTableName, userOrGroupId);
+			if (coll == null || coll.isEmpty()) {
+				throw new FinderException();
+			}
+			return Collections.max(coll);
+		}
+		return pk;
+	}
+
+	
+	private Collection executeQuery(Class userOrGroupClass, String relationTableName, Object userOrGroupId) throws FinderException {
+		IDOQuery query = getFromQuery(relationTableName);
+		appendWhere(query, userOrGroupClass, userOrGroupId);
+		return idoFindPKsByQuery(query);
+	}
+	
+	private Object executeQuery(Class userOrGroupClass, String relationTableName, Object userOrGroupId, String uniqueNameOfEmailType) throws FinderException {
+		IDOQuery query = getFromQuery(relationTableName);
+		
+		query.append(",");
+		Table emailTypeTable = new Table(EmailType.class);
+		query.append(emailTypeTable).append(" type ");
+		
+		appendWhere(query, userOrGroupClass, userOrGroupId);
+		
+		String emailTypePrimaryKey = null;
+		String emailTypeUniqueName = GenericTypeBMPBean.getColumnNameUniqueName();
+		try {
+			emailTypePrimaryKey = emailTypeTable.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
+		}
+		catch (IDOCompositePrimaryKeyException e) {
+			throw new FinderException(e.getMessage());
+		}
+		query.appendAnd();
+		query.append(" email.").append(getColumnNameEmailTypeId()).appendEqualSign().append("type.").append(emailTypePrimaryKey);
+		query.appendAnd();
+		query.append("type.").append(emailTypeUniqueName).appendEqualSign().appendQuoted(uniqueNameOfEmailType);
+		
+		return idoFindOnePKByQuery(query);
+	}
+	
+	private IDOQuery getFromQuery(String relationTableName) {
+		IDOQuery query = idoQuery();
+		query.appendSelect();
+		query.append("email.*");
+		query.append(" from ");
+		query.append(getTableName()).append(" email,");
+		query.append(relationTableName).append(" iue ");
+		return query;
+	}
+	
+	private void appendWhere(IDOQuery query, Class userOrGroupClass, Object userOrGroupId) throws FinderException {
+		Table userOrGroupTable = new Table(userOrGroupClass);
+		String userOrGroupPrimaryKey = null;
+		try {
+			userOrGroupPrimaryKey = userOrGroupTable.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
+		}
+		catch (IDOCompositePrimaryKeyException e) {
+			throw new FinderException(e.getMessage());
+		}
+		query.appendWhere();
+		query.append(" email.").append(getIDColumnName()).appendEqualSign().append("iue.").append(getIDColumnName());
+		query.appendAnd();
+		query.append("iue.").append(userOrGroupPrimaryKey).appendEqualSign().append(userOrGroupId);
+	}
+	
+	
 	public Integer ejbFindEmailByAddress(String address) throws FinderException
 	{
 		IDOQuery query = idoQueryGetSelect().appendWhereEqualsQuoted(getColumnNameAddress(),address );
@@ -85,8 +232,7 @@ public class EmailBMPBean
 		if (!coll.isEmpty()) {
 			return (Integer) coll.iterator().next();
 		}
-		else {
-			throw new FinderException("No email found");
-		}
+		throw new FinderException("No email found");
 	}
+
 }
