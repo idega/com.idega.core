@@ -9,21 +9,25 @@
   	<name>idega software</name>
   	<url>http://www.idega.com/</url>
   </organization>
-  <build>
-	<sourceDirectory>src/java</sourceDirectory>
-  </build>
   <repositories>
+        <repository>
+                <id>java.net</id>
+                <name>Sun Java Net Maven Repository</name>
+                <url>https://maven-repository.dev.java.net/nonav/repository/</url>
+                <!--snapshotPolicy>daily</snapshotPolicy-->
+		<layout>legacy</layout>
+        </repository>
 	<repository>
         	<id>idega1</id>
         	<name>idega maven2 repository</name>
         	<url>http://repository.idega.com/maven2/</url>
-        	<snapshotPolicy>daily</snapshotPolicy>
+        	<!--snapshotPolicy>daily</snapshotPolicy-->
 	</repository>
 	<repository>
 		<id>idega2</id>
 		<name>idega public repository</name>
 		<url>http://repository.idega.com/maven/</url>
-		<snapshotPolicy>daily</snapshotPolicy>
+		<!--snapshotPolicy>daily</snapshotPolicy-->
 		<layout>legacy</layout>
 	</repository>
 </repositories>
@@ -112,49 +116,42 @@
       <artifactId>jdom</artifactId>
       <version>1.0</version>
       <type>jar</type>
-      <url>http://www.jdom.org/</url>
     </dependency>
     <dependency>
-      <groupId>servletapi</groupId>
-      <artifactId>servletapi</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
       <version>2.4</version>
       <type>jar</type>
-      <url>http://java.sun.com/products/servlet/docs.html</url>
     </dependency>
     <dependency>
-      <groupId>jspapi</groupId>
+      <groupId>javax.servlet.jsp</groupId>
       <artifactId>jsp-api</artifactId>
       <version>2.0</version>
       <type>jar</type>
-      <url>http://jakarta.apache.org/</url>
     </dependency>
     <dependency>
-      <groupId>ejb</groupId>
+      <groupId>javax.ejb</groupId>
       <artifactId>ejb</artifactId>
       <version>2.0</version>
       <type>jar</type>
-      <url>http://java.sun.com/products/ejb/docs.html</url>
     </dependency>
     <dependency>
-      <groupId>jta</groupId>
+      <groupId>javax.transaction.jta</groupId>
       <artifactId>jta</artifactId>
-      <version>spec1_0_1</version>
+      <version>1.0.1B</version>
       <type>jar</type>
-      <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
     </dependency>
     <dependency>
-      <groupId>javamail</groupId>
-      <artifactId>javamail</artifactId>
-      <version>1.3.2</version>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.3.3</version>
       <type>jar</type>
-      <url>http://java.sun.com/products/javamail/</url>
     </dependency>
     <dependency>
-      <groupId>jaf</groupId>
-      <artifactId>jaf</artifactId>
-      <version>1.0.2</version>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>1.1</version>
       <type>jar</type>
-      <url>http://java.sun.com/products/javabeans/glasgow/jaf.html</url>
     </dependency>
     <dependency>
       <!-- cos is short for com.oreilly.servlet -->
@@ -162,7 +159,6 @@
       <artifactId>cos</artifactId>
       <version>05Nov2002</version>
       <type>jar</type>
-      <url>http://www.servlets.com/cos/</url>
     </dependency>
     <dependency>
       <groupId>icu4j</groupId>
@@ -170,73 +166,63 @@
       <version>3.0L1</version>
       <!-- 3.0L1 is a special version that Laddi built with is_IS and sv_SE special holidays -->
       <type>jar</type>
-      <url>http://oss.software.ibm.com/icu4j/</url>
     </dependency>
     <dependency>
       <groupId>myfaces</groupId>
       <artifactId>myfaces-jsf-api</artifactId>
       <version>1.1.3</version>
       <type>jar</type>
-      <url>http://java.sun.com/j2ee/javaserverfaces/</url>
     </dependency>
    <dependency>
       <groupId>myfaces</groupId>
       <artifactId>myfaces-tomahawk</artifactId>
       <version>1.1.2</version>
       <type>jar</type>
-      <url>http://www.myfaces.org/</url>
     </dependency>
     <dependency>
       <groupId>oracle_jdbc</groupId>
       <artifactId>oracle_jdbc</artifactId>
       <version>10.1.0.2.0</version>
       <type>jar</type>
-      <url>http://www.oracle.com/</url>
     </dependency>
     <dependency>
       <groupId>informix_jdbc</groupId>
       <artifactId>informix_jdbc</artifactId>
       <version>9.0</version>
       <type>jar</type>
-      <url>http://www.informix.com/</url>
     </dependency>
     <dependency>
       <groupId>poi</groupId>
       <artifactId>poi</artifactId>
       <version>2.5-final-20040428</version>
       <type>jar</type>
-      <url>http://jakarta.apache.org/poi/</url>
     </dependency>
     <dependency>
       <groupId>jug</groupId>
       <artifactId>jug</artifactId>
       <version>1.1</version>
       <type>jar</type>
-      <url>http://www.doomdark.org/doomdark/proj/jug/</url>
     </dependency>
     <!-- jai and jai codec used in bundles com.idega.block.image and is.idega.golf.block.image, not used in core -->
     <dependency>
-      <groupId>jai</groupId>
-      <artifactId>jai</artifactId>
-      <version>1.0</version>
+      <groupId>javax.media</groupId>
+      <artifactId>jai_core</artifactId>
+      <version>1.1.3-dr-b01</version>
       <type>jar</type>
-      <url>http://java.sun.com/products/java-media/jai/</url>
     </dependency>
     <!-- see comment above -->
     <dependency>
-      <groupId>jai</groupId>
+      <groupId>javax.media</groupId>
       <artifactId>jai_codec</artifactId>
-      <version>1.0</version>
+      <version>1.1.3-dr-b01</version>
       <type>jar</type>
-      <url>http://java.sun.com/products/java-media/jai/</url>
     </dependency>
     <!-- iText used in bundles com.idega.block.reports, com.idega.block.contract, com.idega.block.pdf and campus not used in core -->
     <dependency>
-      <groupId>itext</groupId>
+      <groupId>com.lowagie</groupId>
       <artifactId>itext</artifactId>
       <version>0.99</version>
       <type>jar</type>
-      <url>http://itext.sourceforge.net/</url>
     </dependency>
     <!-- commons-logging used in com.idega.faces and com.idega.block.creditcard, not used in core -->
     <dependency>
@@ -244,29 +230,38 @@
       <artifactId>commons-logging</artifactId>
       <version>1.0.4</version>
       <type>jar</type>
-      <url>http://commons.apache.org/</url>
     </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>1.0</version>
       <type>jar</type>
-      <url>http://jakarta.apache.org/commons/</url>
     </dependency>
     <dependency>
       <groupId>javaldap</groupId>
       <artifactId>java-ldapserver</artifactId>
       <version>0.4</version>
       <type>jar</type>
-      <url>http://codehaus.org/~trygvis/ldap</url>
     </dependency>
+    <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>1.8.0.2</version>
+      <type>jar</type>
+    </dependency>
+    <!--dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <type>jar</type>
+    </dependency-->
   </dependencies>
 
 
     <build>
-		<nagEmailAddress>tryggvi@idega.com</nagEmailAddress>
+	<!--nagEmailAddress>tryggvi@idega.com</nagEmailAddress-->
         <sourceDirectory>src/java</sourceDirectory>
-        <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+        <!--unitTestSourceDirectory>src/test</unitTestSourceDirectory-->
 	    <resources>
 	      <resource>
 	       <directory>${basedir}/resources</directory>
