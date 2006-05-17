@@ -1,43 +1,60 @@
+/*
+ * $Id: EmailTypeHomeImpl.java,v 1.2 2006/05/17 16:40:00 thomas Exp $
+ * Created on May 16, 2006
+ *
+ * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package com.idega.core.contact.data;
 
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
+import com.idega.data.IDOException;
+import com.idega.data.IDOFactory;
+import com.idega.data.IDOLookupException;
 
-public class EmailTypeHomeImpl extends com.idega.data.IDOFactory implements EmailTypeHome
-{
- protected Class getEntityInterfaceClass(){
-  return EmailType.class;
- }
 
- public EmailType create() throws javax.ejb.CreateException{
-  return (EmailType) super.idoCreate();
- }
+/**
+ * 
+ *  Last modified: $Date: 2006/05/17 16:40:00 $ by $Author: thomas $
+ * 
+ * @author <a href="mailto:thomas@idega.com">thomas</a>
+ * @version $Revision: 1.2 $
+ */
+public class EmailTypeHomeImpl extends IDOFactory implements EmailTypeHome {
 
- public EmailType createLegacy(){
-	try{
-		return create();
-	}
-	catch(javax.ejb.CreateException ce){
-		throw new RuntimeException("CreateException:"+ce.getMessage());
-	}
-
- }
-
- public EmailType findByPrimaryKey(int id) throws javax.ejb.FinderException{
-  return (EmailType) super.idoFindByPrimaryKey(id);
- }
-
- public EmailType findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (EmailType) super.idoFindByPrimaryKey(pk);
- }
-
- public EmailType findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
-	try{
-		return findByPrimaryKey(id);
-	}
-	catch(javax.ejb.FinderException fe){
-		throw new java.sql.SQLException(fe.getMessage());
+	protected Class getEntityInterfaceClass() {
+		return EmailType.class;
 	}
 
- }
+	public EmailType create() throws javax.ejb.CreateException {
+		return (EmailType) super.createIDO();
+	}
 
+	public EmailType findByPrimaryKey(Object pk) throws javax.ejb.FinderException {
+		return (EmailType) super.findByPrimaryKeyIDO(pk);
+	}
+	
+	public EmailType findEmailTypeByUniqueName(String  uniqueName) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((EmailTypeBMPBean) entity).ejbFindEmailTypeByUniqueName(uniqueName);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}	
+	
+	public EmailType findMainEmailType() throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((EmailTypeBMPBean) entity).ejbFindMainEmailType();
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
 
+	public boolean updateStartData() throws IDOException, IDOLookupException, CreateException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		boolean theReturn = ((EmailTypeBMPBean) entity).ejbHomeUpdateStartData();
+		this.idoCheckInPooledEntity(entity);
+		return theReturn;
+	}
 }
