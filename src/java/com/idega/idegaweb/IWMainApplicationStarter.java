@@ -40,6 +40,8 @@ import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.component.data.ICObjectType;
 import com.idega.core.component.data.ICObjectTypeHome;
+import com.idega.core.contact.data.EmailType;
+import com.idega.core.contact.data.EmailTypeHome;
 import com.idega.core.user.data.OldUserBMPBean;
 import com.idega.core.user.data.User;
 import com.idega.data.DatastoreInterface;
@@ -620,6 +622,11 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	}
 	
 	protected void updateStartDataInDatabase() {
+		updateStartDataGroupRelationType();
+		updateStartTypeEmailType();
+	}
+		
+	private void updateStartDataGroupRelationType() {
 		/*
 		 * @todo Move to user plugin system
 		 **/
@@ -642,6 +649,24 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		insertGroupRelationType("FAM_SPOUSE");
 		insertGroupRelationType("FAM_CUSTODIAN");
 		insertGroupRelationType("FAM_SIBLING");
+	}
+	
+	private void updateStartTypeEmailType() {
+		EmailTypeHome home;
+		try {
+			home = (EmailTypeHome) IDOLookup.getHome(EmailType.class);
+			home.updateStartData();
+		}
+		catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		catch (IDOException e) {
+			e.printStackTrace();
+		}
+		catch (CreateException e) {
+			e.printStackTrace();
+		}
+
 	}
 	
 	private void insertGroupRelationType(String groupRelationType) {
