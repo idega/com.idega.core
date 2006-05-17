@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.106 2006/04/09 12:13:14 laddi Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.107 2006/05/17 16:43:13 thomas Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -35,6 +35,8 @@ import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailHome;
+import com.idega.core.contact.data.EmailType;
+import com.idega.core.contact.data.EmailTypeHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneHome;
 import com.idega.core.file.data.ICFile;
@@ -80,12 +82,12 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * removing, lookups and manipulating Groups.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2006/02/20
- * 11:04:35 $ by $Author: laddi $
+ * 11:04:35 $ by $Author: thomas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.106 $
+ * @version $Revision: 1.107 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -100,6 +102,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	private GroupHome permGroupHome;
 	private AddressHome addressHome;
 	private EmailHome emailHome;
+	private EmailTypeHome emailTypeHome;
 	private PhoneHome phoneHome;
 	private ICFileHome fileHome;
 	private String[] userRepresentativeType;
@@ -1851,13 +1854,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	public Email getGroupEmail(Group group) {
 		try {
-			Collection L = group.getEmails();
-			if (L != null) {
-				if (!L.isEmpty()) {
-					return (Email) L.iterator().next();
-				}
-			}
-			return null;
+			return getEmailHome().findMainEmailForGroup(group);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -1865,28 +1862,48 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 	}
 
+	/**
+	 * updates or creates the main email address (that is the email with type "main"l)
+	 */
 	public void updateGroupMail(Group group, String email) throws CreateException, RemoteException {
-		Email mail = getGroupEmail(group);
+		if (email == null) {
+			return;
+		}
+		Email mainEmail = getGroupEmail(group);
 		boolean insert = false;
-		if (mail == null) {
-			mail = this.getEmailHome().create();
+		if (mainEmail == null) {
+			mainEmail = this.getEmailHome().create();
+			try {
+				EmailType emailType = getEmailTypeHome().findMainEmailType();
+				mainEmail.setEmailType(emailType);
+			}
+			catch (FinderException ex) {
+				throw new CreateException("Main email type could not be found"); 
+			}
 			insert = true;
 		}
-
-		if (email != null) {
-			mail.setEmailAddress(email);
+		// repairing old data
+		// some old emails do not have an email type set
+		else if (mainEmail.getEmailType() == null) {
+			try {
+				EmailType emailType = getEmailTypeHome().findMainEmailType();
+				mainEmail.setEmailType(emailType);
+			}
+			catch (FinderException ex) {
+				throw new CreateException("Main email type could not be found"); 
+			}
 		}
-		mail.store();
+		mainEmail.setEmailAddress(email);
+		mainEmail.store();
 		if (insert) {
 			// ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(mail);
 			try {
-				group.addEmail(mail);
+				group.addEmail(mainEmail);
 			}
 			catch (Exception e) {
 				throw new RemoteException(e.getMessage());
 			}
 		}
-
 	}
 
 	public EmailHome getEmailHome() {
@@ -1899,6 +1916,18 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			}
 		}
 		return this.emailHome;
+	}
+	
+	public EmailTypeHome getEmailTypeHome() {
+		if (this.emailTypeHome == null) {
+			try {
+				this.emailTypeHome = (EmailTypeHome) IDOLookup.getHome(EmailType.class);
+			}
+			catch (RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return this.emailTypeHome;
 	}
 
 	public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException {
@@ -2404,10 +2433,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	/**
 	 * 
-	 * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
+	 * Last modified: $Date: 2006/05/17 16:43:13 $ by $Author: thomas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.106 $
+	 * @version $Revision: 1.107 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 

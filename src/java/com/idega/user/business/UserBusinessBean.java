@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.205 2006/04/09 12:13:14 laddi Exp $
+ * $Id: UserBusinessBean.java,v 1.206 2006/05/17 16:43:13 thomas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -42,6 +42,8 @@ import com.idega.core.builder.data.ICPage;
 import com.idega.core.builder.data.ICPageHome;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailHome;
+import com.idega.core.contact.data.EmailType;
+import com.idega.core.contact.data.EmailTypeHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneBMPBean;
 import com.idega.core.contact.data.PhoneHome;
@@ -94,10 +96,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/17 16:43:13 $ by $Author: thomas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.205 $
+ * @version $Revision: 1.206 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -122,6 +124,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private UserHome userHome;
 
 	private EmailHome emailHome;
+	
+	private EmailTypeHome emailTypeHome;
 
 	private AddressHome addressHome;
 
@@ -170,6 +174,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		return this.emailHome;
+	}
+	
+	public EmailTypeHome getEmailTypeHome() {
+		if (this.emailTypeHome == null) {
+			try {
+				this.emailTypeHome = (EmailTypeHome) IDOLookup.getHome(EmailType.class);
+			}
+			catch (RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return this.emailTypeHome;
 	}
 
 	public AddressHome getAddressHome() {
@@ -797,13 +813,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	public Email getUserMail(User user) {
 		try {
-			Collection L = user.getEmails();
-			if (L != null) {
-				if (!L.isEmpty()) {
-					return (Email) L.iterator().next();
-				}
-			}
-			return null;
+			return getUsersMainEmail(user);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -855,24 +865,52 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		updateUserMail(getUser(userId), email);
 	}
 
+	/**
+	 * updates or creates the main email address (that is the email with type "main"l)
+	 */
 	public void updateUserMail(User user, String email) throws CreateException, RemoteException {
-		if (email != null) {
-			Email mail = getUserMail(((Integer) user.getPrimaryKey()).intValue());
-			boolean insert = false;
-			if (mail == null) {
-				mail = this.getEmailHome().create();
-				insert = true;
+		if (email == null) {
+			return;
+		}
+		Email mainEmail = null;
+		boolean insert = false;
+		try {
+			mainEmail = getUsersMainEmail(user);
+		}
+		catch (NoEmailFoundException ex) {
+			mainEmail = null;
+		}
+		if (mainEmail == null) {
+			mainEmail = this.getEmailHome().create();
+			try {
+				EmailType mainEmailType = getEmailTypeHome().findMainEmailType();
+				mainEmail.setEmailType(mainEmailType);
 			}
-			mail.setEmailAddress(email);
-			mail.store();
-			if (insert) {
-				//((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(mail);
-				try {
-					user.addEmail(mail);
-				}
-				catch (Exception e) {
-					throw new RemoteException(e.getMessage());
-				}
+			catch (FinderException ex) {
+				throw new CreateException("Main email type could not be found");
+			}
+			insert = true;
+		}
+		// repairing old data
+		// some old emails do not have an email type set
+		else if (mainEmail.getEmailType() == null){
+			try {
+				EmailType mainEmailType = getEmailTypeHome().findMainEmailType();
+				mainEmail.setEmailType(mainEmailType);
+			}
+			catch (FinderException ex) {
+				throw new CreateException("Main email type could not be found");
+			}
+		}
+		mainEmail.setEmailAddress(email);
+		mainEmail.store();
+		if (insert) {
+			//((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(mail);
+			try {
+				user.addEmail(mainEmail);
+			}
+			catch (Exception e) {
+				throw new RemoteException(e.getMessage());
 			}
 		}
 	}
@@ -1633,18 +1671,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public Email getUsersMainEmail(User user) throws NoEmailFoundException {
-		String userString = null;
+		EmailHome home = getEmailHome();
 		try {
-			userString = user.getName();
-			Collection collection = user.getEmails();
-			for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
-				Email element = (Email) iterator.next();
-				return element;
+		 return home.findMainEmailForUser(user);
+		}
+		catch (FinderException e) {
+			String message = null;
+			if (user != null) {
+				message = user.getName();
 			}
+			throw new NoEmailFoundException(message);
 		}
-		catch (Exception e) {
+		catch (RemoteException e) {
+			throw new IBORuntimeException();
 		}
-		throw new NoEmailFoundException(userString);
 	}
 
 	public Phone getUsersHomePhone(User user) throws NoPhoneFoundException {
