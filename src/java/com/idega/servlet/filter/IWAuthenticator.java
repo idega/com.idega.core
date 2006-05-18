@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.24 2006/04/23 17:43:02 gimmi Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.25 2006/05/18 16:18:33 thomas Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -11,7 +11,17 @@ package com.idega.servlet.filter;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -34,6 +44,7 @@ import com.idega.idegaweb.IWException;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CypherText;
@@ -46,10 +57,10 @@ import com.idega.util.RequestUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2006/04/23 17:43:02 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/05/18 16:18:33 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -69,17 +80,20 @@ public class IWAuthenticator extends BaseFilter {
 	public static final String COOKIE_NAME = "iwrbusid";
 	//public String IW_BUNDLE_IDENTIFIER = "com.idega.block.login";
 	public static final String PARAMETER_ALLOWS_COOKIE_LOGIN = "icusallows";
-
+	
+	// following string are used as keys in the sharedState map used by LoginModules
+	public static final String SESSION_KEY = "session"; // a HttpSession
+	public static final String REQUEST_KEY = "request"; // a HttpRequest
+	
 	private static Logger log = Logger.getLogger(IWAuthenticator.class
 			.getName());
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
 	public void init(FilterConfig arg0) throws ServletException {
-
 	}
 
 	/*
@@ -206,9 +220,13 @@ public class IWAuthenticator extends BaseFilter {
 				return;
 			}
 		}
-		
+		doLogin(request);
 		chain.doFilter(new IWJAASAuthenticationRequestWrapper(request), response);
+
+		
 	}
+	
+	
 
 	/**
 	 * <p>
@@ -379,4 +397,75 @@ public class IWAuthenticator extends BaseFilter {
 	protected BuilderService getBuilderService(IWApplicationContext iwac) throws RemoteException {
 		return BuilderServiceFactory.getBuilderService(iwac);
 	}
+
+	private void doLogin(HttpServletRequest request)  {
+		List loginModules = ImplementorRepository.getInstance().newInstances(LoginModule.class, this.getClass());
+		// just a shortcut 
+		if (loginModules.isEmpty()) {
+			return;
+		}
+		CallbackHandler callbackHandler = new IWCallbackHandler(request);
+		Map sharedState = new HashMap(3);
+		HttpSession session = request.getSession();
+		sharedState.put(IWAuthenticator.REQUEST_KEY, request);
+		sharedState.put(IWAuthenticator.SESSION_KEY, session);
+		Iterator iteratorFirst = loginModules.iterator();
+		while (iteratorFirst.hasNext()) {
+			LoginModule loginModule = (LoginModule) iteratorFirst.next();
+			try {
+				loginModule.initialize(null, callbackHandler, sharedState, null);
+				loginModule.login();
+			}
+			catch (LoginException e) {
+				e.printStackTrace();
+			}
+		}
+		Iterator iteratorSecond = loginModules.iterator();
+		while (iteratorSecond.hasNext()) {
+			LoginModule loginModule = (LoginModule) iteratorSecond.next();
+			try {
+				loginModule.commit();
+			}
+			catch (LoginException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 }
+		
+
+
+class IWCallbackHandler implements CallbackHandler {
+		
+	private HttpServletRequest request = null;
+	
+	IWCallbackHandler(HttpServletRequest request) {
+		this.request = request; 
+	}
+		
+	public void handle(Callback[] callbacks) {
+		for (int i = 0; i < callbacks.length; i++) {
+			Callback callback = callbacks[i];
+			if (callback instanceof PasswordCallback) {
+				// prompt the user for sensitive information
+				PasswordCallback pc = (PasswordCallback)callback;
+				String prompt = pc.getPrompt();
+				String password = request.getParameter(prompt);
+				pc.setPassword((password == null) ? null : password.toCharArray());
+			}
+			else if (callback instanceof NameCallback) {
+				NameCallback nc = (NameCallback) callback;
+				String prompt = nc.getPrompt();
+				String name = request.getParameter(prompt);
+				nc.setName(name);
+			}
+		}
+	}
+}
+	
+	
+	
+	
+	
+	

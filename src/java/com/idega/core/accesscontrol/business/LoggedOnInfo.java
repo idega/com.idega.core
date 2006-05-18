@@ -1,5 +1,5 @@
 /*
- * $Id: LoggedOnInfo.java,v 1.18 2006/04/09 12:13:20 laddi Exp $
+ * $Id: LoggedOnInfo.java,v 1.19 2006/05/18 16:18:33 thomas Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.jaas.IWCredential;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 
@@ -26,11 +27,11 @@ import com.idega.util.IWTimestamp;
  * up when the users session times out.
  * </p>
  *
- * Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/18 16:18:33 $ by $Author: thomas $
  *
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
  * 		   <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class LoggedOnInfo implements HttpSessionBindingListener  {
 
@@ -44,9 +45,12 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
   private String _loginType = null;
   private Set _userRoles = null;
   private Map _loggedOnInfoAttribute = new HashMap();
+  private Map credentials = new HashMap(0);
 
-  public LoggedOnInfo() {
+  
 
+public LoggedOnInfo() {
+	// empty
   }
   //setters
   public void setUser(User user){
@@ -203,4 +207,16 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 	public Object getAttribute(Object key){
 		return this._loggedOnInfoAttribute.get(key);
 	}
+	
+	public IWCredential putCredential(String originator, IWCredential credential) {
+		return (IWCredential) credentials.put(originator, credential);
+	}
+	
+	/**
+	 * @return Returns the credentials.
+	 */
+	public Map getCredentials() {
+		return credentials;
+	}
+
 }
