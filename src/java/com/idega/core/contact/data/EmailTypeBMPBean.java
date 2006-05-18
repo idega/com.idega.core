@@ -1,9 +1,10 @@
 package com.idega.core.contact.data;
 
 import java.sql.SQLException;
-import java.util.Collection;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;

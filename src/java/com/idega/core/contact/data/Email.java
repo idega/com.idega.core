@@ -1,5 +1,5 @@
 /*
- * $Id: Email.java,v 1.2 2006/05/17 16:40:53 thomas Exp $
+ * $Id: Email.java,v 1.3 2006/05/18 11:43:43 laddi Exp $
  * Created on May 16, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -9,15 +9,14 @@
  */
 package com.idega.core.contact.data;
 
-import com.idega.data.IDOEntity;
 
 
 /**
  * 
- *  Last modified: $Date: 2006/05/17 16:40:53 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/05/18 11:43:43 $ by $Author: laddi $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface Email extends com.idega.data.IDOLegacyEntity, EmailDataView {
 
