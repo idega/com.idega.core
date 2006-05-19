@@ -1,5 +1,5 @@
 /*
- * $Id: LoggedOnInfo.java,v 1.19 2006/05/18 16:18:33 thomas Exp $
+ * $Id: LoggedOnInfo.java,v 1.20 2006/05/19 07:39:45 laddi Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -27,11 +27,11 @@ import com.idega.util.IWTimestamp;
  * up when the users session times out.
  * </p>
  *
- * Last modified: $Date: 2006/05/18 16:18:33 $ by $Author: thomas $
+ * Last modified: $Date: 2006/05/19 07:39:45 $ by $Author: laddi $
  *
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
  * 		   <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class LoggedOnInfo implements HttpSessionBindingListener  {
 
@@ -209,14 +209,14 @@ public LoggedOnInfo() {
 	}
 	
 	public IWCredential putCredential(String originator, IWCredential credential) {
-		return (IWCredential) credentials.put(originator, credential);
+		return (IWCredential) this.credentials.put(originator, credential);
 	}
 	
 	/**
 	 * @return Returns the credentials.
 	 */
 	public Map getCredentials() {
-		return credentials;
+		return this.credentials;
 	}
 
 }

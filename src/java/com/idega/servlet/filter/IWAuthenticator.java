@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.25 2006/05/18 16:18:33 thomas Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.26 2006/05/19 07:39:18 laddi Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -57,10 +57,10 @@ import com.idega.util.RequestUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2006/05/18 16:18:33 $ by $Author: thomas $
+ * Last modified: $Date: 2006/05/19 07:39:18 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -451,13 +451,13 @@ class IWCallbackHandler implements CallbackHandler {
 				// prompt the user for sensitive information
 				PasswordCallback pc = (PasswordCallback)callback;
 				String prompt = pc.getPrompt();
-				String password = request.getParameter(prompt);
+				String password = this.request.getParameter(prompt);
 				pc.setPassword((password == null) ? null : password.toCharArray());
 			}
 			else if (callback instanceof NameCallback) {
 				NameCallback nc = (NameCallback) callback;
 				String prompt = nc.getPrompt();
-				String name = request.getParameter(prompt);
+				String name = this.request.getParameter(prompt);
 				nc.setName(name);
 			}
 		}
