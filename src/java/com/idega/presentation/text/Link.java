@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.169 2006/05/13 14:39:05 laddi Exp $
+ * $Id: Link.java,v 1.170 2006/05/22 11:34:52 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -501,16 +501,21 @@ public class Link extends Text {
 		String newUrl = urlplusprm.nextToken();
 		if (urlplusprm.hasMoreTokens()) {
 			String prm = urlplusprm.nextToken();
-			StringTokenizer param = new StringTokenizer(prm, "=&");
-			while (param.hasMoreTokens()) {
-				String p = param.nextToken();
-				String v = "";
-				if (param.hasMoreTokens()) {
-					v = param.nextToken();
+			StringTokenizer tokens = new StringTokenizer(prm, "&");
+			while (tokens.hasMoreTokens()) {
+				String parameter = tokens.nextToken();
+				StringTokenizer token = new StringTokenizer(parameter, "=");
+				while (token.hasMoreTokens()) {
+					String name = token.nextToken();
+					String value = null;
+					if (token.hasMoreTokens()) {
+						value = token.nextToken();
+					}
+					else if (name.length() + 1 == parameter.length()) {
+						value = "";
+					}
+					addParameter(name, value);
 				}
-				//if(v != null){
-				this.addParameter(p, v);
-				//}
 			}
 		}
 		setMarkupAttribute(HREF_ATTRIBUTE, newUrl);
@@ -665,9 +670,11 @@ public class Link extends Text {
 	 *
 	 */
 	public void addParameter(String parameterName, String parameterValue) {
-		if ((parameterName != null) && (parameterValue != null)) {
+		if ((parameterName != null)) {
 			parameterName = java.net.URLEncoder.encode(parameterName);
-			parameterValue = java.net.URLEncoder.encode(parameterValue);
+			if (parameterValue != null) {
+				parameterValue = java.net.URLEncoder.encode(parameterValue);
+			}
 
 			if (this._parameterString == null) {
 				this._parameterString = new StringBuffer();
@@ -678,11 +685,10 @@ public class Link extends Text {
 			}
 
 			this._parameterString.append(parameterName);
-			this._parameterString.append("=");
-			this._parameterString.append(parameterValue);
-		}
-		else if (parameterName != null) {
-			parameterName = java.net.URLEncoder.encode(parameterName);
+			if (parameterValue != null) {
+				this._parameterString.append("=");
+				this._parameterString.append(parameterValue);
+			}
 		}
 		else if (parameterValue != null) {
 			parameterValue = java.net.URLEncoder.encode(parameterValue);
@@ -1569,8 +1575,8 @@ public class Link extends Text {
 						if (this._parameterString.toString().indexOf("?") == -1) {
 							this._parameterString.insert(0, '?');
 						}
-						this._parameterString.append("&");
 						if (URL.indexOf("://") == -1) {
+							this._parameterString.append("&");
 							this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
 							this._parameterString.append("=");
 							this._parameterString.append(iwc.getIdegaSessionId());
@@ -1579,8 +1585,8 @@ public class Link extends Text {
 				}
 				else {
 					if (this._addSessionId && (!iwc.isSearchEngine())) {
-						this._parameterString.append("&");
 						if (URL.indexOf("://") == -1) {
+							this._parameterString.append("&");
 							this._parameterString.append(IWContext.IDEGA_SESSION_KEY);
 							this._parameterString.append("=");
 							this._parameterString.append(iwc.getIdegaSessionId());
