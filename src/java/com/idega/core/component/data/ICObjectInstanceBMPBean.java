@@ -47,6 +47,8 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		addManyToOneRelationship(COLUMNNAME_PARENTID, "ParentId", ICObjectInstance.class);
 		addUniqueIDColumn();
 		
+		addIndex(getUniqueIdColumnName());
+		
 		getEntityDefinition().setBeanCachingActiveByDefault(true,10000);
 	}
 
