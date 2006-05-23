@@ -1,5 +1,5 @@
 /*
- * $Id: RequestUtil.java,v 1.4 2006/04/09 12:13:13 laddi Exp $ Created on
+ * $Id: RequestUtil.java,v 1.5 2006/05/23 14:41:11 tryggvil Exp $ Created on
  * 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,10 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 
- * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/23 14:41:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class RequestUtil {
 
@@ -70,6 +70,9 @@ public class RequestUtil {
 		 */
 		buf.append(request.getServerName());
 		if (request.getServerPort() != 80) {
+			buf.append(":").append(request.getServerPort());
+		}
+		else if (request.getServerPort() != 443) {
 			buf.append(":").append(request.getServerPort());
 		}
 		buf.append("/");
