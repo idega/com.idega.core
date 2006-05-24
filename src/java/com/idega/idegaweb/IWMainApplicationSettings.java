@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.47 2006/05/16 17:25:07 tryggvil Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.48 2006/05/24 11:07:58 palli Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -39,10 +39,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/05/16 17:25:07 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/05/24 11:07:58 $ by $Author: palli $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.47 $
+ * @version $Revision: 1.48 $
  */
 
 
@@ -160,6 +160,8 @@ public class IWMainApplicationSettings implements MutableClass {
 			return Boolean.valueOf(value).booleanValue();
 		}
 		else {
+			setProperty(key, Boolean.toString(defaultValue));
+
 			return defaultValue;
 		}
 	}
