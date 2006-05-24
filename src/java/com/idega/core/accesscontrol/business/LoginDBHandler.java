@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.66 2006/04/09 12:13:20 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.67 2006/05/24 07:46:54 laddi Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -533,6 +533,10 @@ public class LoginDBHandler {
 		catch (RemoteException ex) {
 			return (0);
 		}
+	}
+	
+	public static boolean hasLoggedIn(LoginTable loginTable) {
+		return getNumberOfSuccessfulLogins(new Integer(loginTable.getPrimaryKey().toString()).intValue()) > 0;
 	}
 
 	/**
