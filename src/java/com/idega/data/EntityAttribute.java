@@ -14,6 +14,8 @@ import java.util.Map;
 *@version 1.2
 */
 public class EntityAttribute implements IDOEntityField, IDOReportableField {
+	
+	public final static int UNLIMITED_LENGTH = Integer.MAX_VALUE;
 
 	private String name;
 	private String _uniqueName = null;
@@ -298,6 +300,10 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 		this.maxLength = maxLength;
 	}
 
+	public void setUnlimitedLength() {
+		setMaxLength(EntityAttribute.UNLIMITED_LENGTH);
+	}
+	
 	public int getMaxLength() {
 		return this.maxLength;
 	}
