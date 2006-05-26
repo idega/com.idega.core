@@ -422,6 +422,13 @@
       <type>jar</type>
       <url>http://www.junit.org/</url>
     </dependency>
+    <dependency>
+      <groupId>net.rkbloom</groupId>
+      <artifactId>logdriver</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+      <url>http://rkbloom.net/logdriver/</url>
+    </dependency>    
   </dependencies>
   <properties/>
   <build>

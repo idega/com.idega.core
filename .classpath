@@ -65,6 +65,8 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/hsqldb/jars/hsqldb-1.8.0.2.jar">
   </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/net.rkbloom/jars/logdriver-1.0.jar">
+  </classpathentry>
   <classpathentry kind="output" path="target/classes">
   </classpathentry>
 </classpath>
