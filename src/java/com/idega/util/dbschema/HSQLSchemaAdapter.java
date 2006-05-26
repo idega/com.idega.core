@@ -3,6 +3,7 @@ package com.idega.util.dbschema;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import com.idega.data.EntityAttribute;
 
 
 /**
@@ -15,47 +16,56 @@ import java.sql.Statement;
 public class HSQLSchemaAdapter extends SQLSchemaAdapter { //implements
 	// org.hsqldb.Trigger{
 	public String getSQLType(String javaClassName, int maxlength) {
-		String theReturn;
 		if (javaClassName.equals("java.lang.Integer")) {
+			if (maxlength == EntityAttribute.UNLIMITED_LENGTH) {
+				return "BIGINT";
+			}
 			if(maxlength>10){
-				theReturn = "BIGINT";
+				return "BIGINT";
 			}
-			else{
-				theReturn = "INTEGER";
-			}
-		} else if (javaClassName.equals("java.lang.String")) {
-			if (maxlength <= 0) {
-				theReturn = "VARCHAR(255)";
-			}
-			else if (maxlength<=4000){
-				theReturn = "VARCHAR("+maxlength+")";
-			}
-			else {
-				theReturn = "LONGVARCHAR";
-			}
-		} else if (javaClassName.equals("java.lang.Boolean")) {
-			theReturn = "CHAR(1)";
-		} else if (javaClassName.equals("java.lang.Float")) {
-			theReturn = "DOUBLE";
-		} else if (javaClassName.equals("java.lang.Double")) {
-			theReturn = "DOUBLE";
-		} else if (javaClassName.equals("java.sql.Timestamp")) {
-			theReturn = "TIMESTAMP";
-		} else if (javaClassName.equals("java.sql.Date")
-				|| javaClassName.equals("java.util.Date")) {
-			theReturn = "DATE";
-		} else if (javaClassName.equals("java.sql.Blob")) {
-			theReturn = "LONGVARBINARY";
-		} else if (javaClassName.equals("java.sql.Time")) {
-			theReturn = "TIME";
-		} else if (javaClassName.equals("com.idega.util.Gender")) {
-			theReturn = "VARCHAR(1)";
-		} else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
-			theReturn = "LONGVARBINARY";
-		} else {
-			theReturn = "";
+			return "INTEGER";
 		}
-		return theReturn;
+		if (javaClassName.equals("java.lang.String")) {
+			if (maxlength == EntityAttribute.UNLIMITED_LENGTH) {
+				return "LONGVARCHAR";
+			}
+			if (maxlength <= 0) {
+				return "VARCHAR(255)";
+			}
+			if (maxlength<=4000){
+				return "VARCHAR("+maxlength+")";
+			}
+			return "LONGVARCHAR";
+		}
+		if (javaClassName.equals("java.lang.Boolean")) {
+			return "CHAR(1)";
+		}
+		if (javaClassName.equals("java.lang.Float")) {
+			return "DOUBLE";
+		} 
+		if (javaClassName.equals("java.lang.Double")) {
+			return "DOUBLE";
+		} 
+		if (javaClassName.equals("java.sql.Timestamp")) {
+			return "TIMESTAMP";
+		} 
+		if (javaClassName.equals("java.sql.Date")
+				|| javaClassName.equals("java.util.Date")) {
+			return "DATE";
+		} 
+		if (javaClassName.equals("java.sql.Blob")) {
+			return "LONGVARBINARY";
+		} 
+		if (javaClassName.equals("java.sql.Time")) {
+			return "TIME";
+		} 
+		if (javaClassName.equals("com.idega.util.Gender")) {
+			return "VARCHAR(1)";
+		} 
+		if (javaClassName.equals("com.idega.data.BlobWrapper")) {
+			return "LONGVARBINARY";
+		} 
+		return "";
 	}
 /*
 	protected void createForeignKey(GenericEntity entity, String baseTableName,

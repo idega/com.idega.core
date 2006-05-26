@@ -3,14 +3,15 @@ package com.idega.util.dbschema;
 import java.sql.Connection;
 import java.sql.Statement;
 
+import com.idega.data.EntityAttribute;
 import com.idega.util.IWTimestamp;
 /**
  * 
  * 
- *  Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/26 16:51:49 $ by $Author: thomas $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class InformixSchemaAdapter extends SQLSchemaAdapter {
 	
@@ -19,55 +20,52 @@ public class InformixSchemaAdapter extends SQLSchemaAdapter {
 		IWTimestamp.CUT_MILLISECONDS_OFF_IN_TOSTRING=false;
 	}
 	public String getSQLType(String javaClassName, int maxlength) {
-		String theReturn;
 		if (javaClassName.equals("java.lang.Integer")) {
-			theReturn = "INTEGER";
+			return "INTEGER";
 		}
-		else if (javaClassName.equals("java.lang.String")) {
+		if (javaClassName.equals("java.lang.String")) {
+			if (maxlength == EntityAttribute.UNLIMITED_LENGTH) {
+				return "TEXT";
+			}
 			if (maxlength < 0) {
-				theReturn = "VARCHAR(255)";
+				return "VARCHAR(255)";
 			}
-			else if (maxlength <= 255) {
-				theReturn = "VARCHAR(" + maxlength + ")";
+			if (maxlength <= 255) {
+				return "VARCHAR(" + maxlength + ")";
 			}
-			else if (maxlength <= 2000) {
-				theReturn = "LVARCHAR";
+			if (maxlength <= 2000) {
+				return "LVARCHAR";
 			}
-			else {
-				theReturn = "TEXT";
-			}
+			return "TEXT";
 		}
-		else if (javaClassName.equals("java.lang.Boolean")) {
-			theReturn = "CHAR(1)";
+		if (javaClassName.equals("java.lang.Boolean")) {
+			return "CHAR(1)";
 		}
-		else if (javaClassName.equals("java.lang.Float")) {
-			theReturn = "FLOAT";
+		if (javaClassName.equals("java.lang.Float")) {
+			return "FLOAT";
 		}
-		else if (javaClassName.equals("java.lang.Double")) {
-			theReturn = "FLOAT(15)";
+		if (javaClassName.equals("java.lang.Double")) {
+			return "FLOAT(15)";
 		}
-		else if (javaClassName.equals("java.sql.Timestamp")) {
-			theReturn = "DATETIME YEAR TO FRACTION";
+		if (javaClassName.equals("java.sql.Timestamp")) {
+			return "DATETIME YEAR TO FRACTION";
 		}
-		else if (javaClassName.equals("java.sql.Date") || javaClassName.equals("java.util.Date")) {
-			theReturn = "DATE";
+		if (javaClassName.equals("java.sql.Date") || javaClassName.equals("java.util.Date")) {
+			return "DATE";
 		}
-		else if (javaClassName.equals("java.sql.Blob")) {
-			theReturn = "BYTE";
+		if (javaClassName.equals("java.sql.Blob")) {
+			return "BYTE";
 		}
-		else if (javaClassName.equals("java.sql.Time")) {
-			theReturn = "DATETIME HOUR TO FRACTION";
+		if (javaClassName.equals("java.sql.Time")) {
+			return "DATETIME HOUR TO FRACTION";
 		}
-		else if (javaClassName.equals("com.idega.util.Gender")) {
-			theReturn = "VARCHAR(1)";
+		if (javaClassName.equals("com.idega.util.Gender")) {
+			return "VARCHAR(1)";
 		}
-		else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
-			theReturn = "BYTE";
+		if (javaClassName.equals("com.idega.data.BlobWrapper")) {
+			return "BYTE";
 		}
-		else {
-			theReturn = "";
-		}
-		return theReturn;
+		return "";
 	}
 	public String getIDColumnType(Schema entity) {
 		return "SERIAL";

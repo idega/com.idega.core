@@ -6,67 +6,65 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.idega.data.EntityAttribute;
 import com.idega.data.SimpleQuerier;
 import com.idega.util.database.ConnectionBroker;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/11/18 11:58:11 $ by $Author: gimmi $
+ *  Last modified: $Date: 2006/05/26 16:51:49 $ by $Author: thomas $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SapDBSchemaAdapter extends SQLSchemaAdapter {
 	SapDBSchemaAdapter() {
 		super.useTransactionsInSchemaCreation = false;
 	}
 	public String getSQLType(String javaClassName, int maxlength) {
-		String theReturn;
 		if (javaClassName.equals("java.lang.Integer")) {
-			theReturn = "INTEGER";
+			return "INTEGER";
 		}
-		else if (javaClassName.equals("java.lang.String")) {
+		if (javaClassName.equals("java.lang.String")) {
+			if (maxlength == EntityAttribute.UNLIMITED_LENGTH) { 
+				return "LONG VARCHAR";
+			}
 			if (maxlength < 0) {
-				theReturn = "VARCHAR(255)";
+				return "VARCHAR(255)";
 			}
-			else if (maxlength <= 8000) {
-				theReturn = "VARCHAR(" + maxlength + ")";
+			if (maxlength <= 8000) {
+				return "VARCHAR(" + maxlength + ")";
 			}
-			else {
-				theReturn = "LONG VARCHAR";
-			}
+			return "LONG VARCHAR";
 		}
-		else if (javaClassName.equals("java.lang.Boolean")) {
-			theReturn = "CHAR(1)";
+		if (javaClassName.equals("java.lang.Boolean")) {
+			return "CHAR(1)";
 		}
-		else if (javaClassName.equals("java.lang.Float")) {
-			theReturn = "FLOAT";
+		if (javaClassName.equals("java.lang.Float")) {
+			return "FLOAT";
 		}
-		else if (javaClassName.equals("java.lang.Double")) {
-			theReturn = "FLOAT(15)";
+		if (javaClassName.equals("java.lang.Double")) {
+			return "FLOAT(15)";
 		}
-		else if (javaClassName.equals("java.sql.Timestamp")) {
-			theReturn = "TIMESTAMP";
+		if (javaClassName.equals("java.sql.Timestamp")) {
+			return "TIMESTAMP";
 		}
-		else if (javaClassName.equals("java.sql.Date") || javaClassName.equals("java.util.Date")) {
-			theReturn = "DATE";
+		if (javaClassName.equals("java.sql.Date") || javaClassName.equals("java.util.Date")) {
+			return "DATE";
 		}
-		else if (javaClassName.equals("java.sql.Blob")) {
-			theReturn = "BLOB";
+		if (javaClassName.equals("java.sql.Blob")) {
+			return "BLOB";
 		}
-		else if (javaClassName.equals("java.sql.Time")) {
-			theReturn = "TIME";
+		if (javaClassName.equals("java.sql.Time")) {
+			return "TIME";
 		}
-		else if (javaClassName.equals("com.idega.util.Gender")) {
-			theReturn = "VARCHAR(1)";
+		if (javaClassName.equals("com.idega.util.Gender")) {
+			return "VARCHAR(1)";
 		}
-		else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
-			theReturn = "LONG BYTE";
+		if (javaClassName.equals("com.idega.data.BlobWrapper")) {
+			return "LONG BYTE";
 		}
-		else {
-			theReturn = "";
-		}
-		return theReturn;
+		return "";
 	}
 	
 	/* (non-Javadoc)

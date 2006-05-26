@@ -3,15 +3,16 @@ package com.idega.util.dbschema;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import com.idega.data.EntityAttribute;
 
 
 /**
  * 
  * 
- *  Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/26 16:51:49 $ by $Author: thomas $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 
 public class MySQLSchemaAdapter extends SQLSchemaAdapter {
@@ -63,54 +64,50 @@ public class MySQLSchemaAdapter extends SQLSchemaAdapter {
 	}
 
 	public String getSQLType(String javaClassName, int maxlength) {
-		String theReturn;
 		if (javaClassName.equals("java.lang.Integer")) {
-			theReturn = "INTEGER";
+			return "INTEGER";
 		}
-		else if (javaClassName.equals("java.lang.String")) {
+		if (javaClassName.equals("java.lang.String")) {
+			if (maxlength == EntityAttribute.UNLIMITED_LENGTH) {
+				return "LONGTEXT";
+			}
 			if (maxlength < 0) {
-				theReturn = "VARCHAR(255)";
+				return "VARCHAR(255)";
 			}
-			else if (maxlength <= 255) {
-				theReturn = "VARCHAR(" + maxlength + ")";
+			if (maxlength <= 255) {
+				return "VARCHAR(" + maxlength + ")";
 			}
-			else {
-				theReturn = "LONGTEXT";
-			}
+			return "LONGTEXT";
 		}
-		else if (javaClassName.equals("java.lang.Boolean")) {
-			theReturn = "CHAR(1)";
+		if (javaClassName.equals("java.lang.Boolean")) {
+			return "CHAR(1)";
 		}
-		else if (javaClassName.equals("java.lang.Float")) {
-			theReturn = "DOUBLE";
+		if (javaClassName.equals("java.lang.Float")) {
+			return "DOUBLE";
 		}
-		else if (javaClassName.equals("java.lang.Double")) {
-			theReturn = "DOUBLE";
+		if (javaClassName.equals("java.lang.Double")) {
+			return "DOUBLE";
 		}
-		else if (javaClassName.equals("java.sql.Timestamp")) {
-			theReturn = "DATETIME";
+		if (javaClassName.equals("java.sql.Timestamp")) {
+			return "DATETIME";
 		}
-		else if (javaClassName.equals("java.sql.Date")
+		if (javaClassName.equals("java.sql.Date")
 				|| javaClassName.equals("java.util.Date")) {
-			theReturn = "DATE";
+			return "DATE";
 		}
-		else if (javaClassName.equals("java.sql.Blob")) {
-			theReturn = "LONGBLOB";
+		if (javaClassName.equals("java.sql.Blob")) {
+			return "LONGBLOB";
 		}
-		else if (javaClassName.equals("java.sql.Time")) {
-			theReturn = "TIME";
+		if (javaClassName.equals("java.sql.Time")) {
+			return "TIME";
 		}
-		else if (javaClassName.equals("com.idega.util.Gender")) {
-			theReturn = "VARCHAR(1)";
+		if (javaClassName.equals("com.idega.util.Gender")) {
+			return "VARCHAR(1)";
 		}
-		else if (javaClassName.equals("com.idega.data.BlobWrapper")) {
-			theReturn = "LONGBLOB";
+		if (javaClassName.equals("com.idega.data.BlobWrapper")) {
+			return "LONGBLOB";
 		}
-		else {
-			theReturn = "";
-		}
-		return theReturn;
-
+		return "";
 	}
 
 	/*

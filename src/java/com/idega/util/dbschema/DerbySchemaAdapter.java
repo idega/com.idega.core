@@ -1,5 +1,5 @@
 /*
- * $Id: DerbySchemaAdapter.java,v 1.1 2005/11/03 23:48:56 tryggvil Exp $
+ * $Id: DerbySchemaAdapter.java,v 1.2 2006/05/26 16:51:49 thomas Exp $
  * Created on 12.4.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,16 +9,18 @@
  */
 package com.idega.util.dbschema;
 
+import com.idega.data.EntityAttribute;
+
 
 
 /**
  * <p>
  * This class is for supporting the Apache Derby database in idegaWeb.
  * </p>
- *  Last modified: $Date: 2005/11/03 23:48:56 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/05/26 16:51:49 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DerbySchemaAdapter extends SQLSchemaAdapter {
 
@@ -33,69 +35,50 @@ public class DerbySchemaAdapter extends SQLSchemaAdapter {
 	/* (non-Javadoc)
 	 * @see com.idega.data.DatastoreInterface#getSQLType(java.lang.String, int)
 	 */
-	public String getSQLType(String javaClassName, int maxlength)
-	{
-		String theReturn;
-		if (javaClassName.equals("java.lang.Integer"))
-		{
-			theReturn = "INTEGER";
-		}
-		else if (javaClassName.equals("java.lang.String"))
-		{
-			if (maxlength < 0)
-			{
-				theReturn = "VARCHAR(255)";
+	public String getSQLType(String javaClassName, int maxlength) {
+		if (javaClassName.equals("java.lang.Integer")) 		{
+			return "INTEGER";
+		}	
+		if (javaClassName.equals("java.lang.String")) 		{
+			if (maxlength == EntityAttribute.UNLIMITED_LENGTH) {
+				return "CLOB";
 			}
-			else if (maxlength <= 32000)
-			{
-				theReturn = "VARCHAR(" + maxlength + ")";
+			if (maxlength < 0) 			{
+				return "VARCHAR(255)";
 			}
-			else
-			{
-				theReturn = "CLOB";
+			if (maxlength <= 32000) 			{
+				return "VARCHAR(" + maxlength + ")";
 			}
+			return "CLOB";
 		}
-		else if (javaClassName.equals("java.lang.Boolean"))
-		{
-			theReturn = "CHAR(1)";
+		if (javaClassName.equals("java.lang.Boolean")) {
+			return "CHAR(1)";
 		}
-		else if (javaClassName.equals("java.lang.Float"))
-		{
-			theReturn = "FLOAT";
+		if (javaClassName.equals("java.lang.Float")) {
+			return "FLOAT";
 		}
-		else if (javaClassName.equals("java.lang.Double"))
-		{
-			theReturn = "DOUBLE";
+		if (javaClassName.equals("java.lang.Double")) {
+			return "DOUBLE";
 		}
-		else if (javaClassName.equals("java.sql.Timestamp"))
-		{
-			theReturn = "TIMESTAMP";
+		if (javaClassName.equals("java.sql.Timestamp")) {
+			return "TIMESTAMP";
 		}
-		else if (javaClassName.equals("java.sql.Date") || javaClassName.equals("java.util.Date"))
-		{
-			theReturn = "DATE";
+		if (javaClassName.equals("java.sql.Date") || javaClassName.equals("java.util.Date")) {
+			return "DATE";
 		}
-		else if (javaClassName.equals("java.sql.Blob"))
-		{
-			theReturn = "BLOB";
+		if (javaClassName.equals("java.sql.Blob")) {
+			return "BLOB";
 		}
-		else if (javaClassName.equals("java.sql.Time"))
-		{
-			theReturn = "TIME";
+		if (javaClassName.equals("java.sql.Time")) 	{
+			return "TIME";
 		}
-		else if (javaClassName.equals("com.idega.util.Gender"))
-		{
-			theReturn = "VARCHAR(1)";
+		if (javaClassName.equals("com.idega.util.Gender")) {
+			return "VARCHAR(1)";
 		}
-		else if (javaClassName.equals("com.idega.data.BlobWrapper"))
-		{
-			theReturn = "BLOB";
+		if (javaClassName.equals("com.idega.data.BlobWrapper")) {
+			return "BLOB";
 		}
-		else
-		{
-			theReturn = "";
-		}
-		return theReturn;
+		return "";
 	}
 
 
