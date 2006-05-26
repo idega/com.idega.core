@@ -15,7 +15,7 @@
       <name>1.9</name>
       <tag>CORE_1_9</tag>
     </version>
-    <version>
+    <version>logi
       <id>1.9.1</id>
       <name>1.9.1</name>
       <tag>CORE_1_9_1</tag>
@@ -428,6 +428,9 @@
       <version>1.0</version>
       <type>jar</type>
       <url>http://rkbloom.net/logdriver/</url>
+      <properties>
+        <idegaweb.bundle.include>true</idegaweb.bundle.include>
+      </properties>
     </dependency>    
   </dependencies>
   <properties/>
