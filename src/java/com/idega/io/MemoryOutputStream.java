@@ -1,5 +1,6 @@
 package com.idega.io;
 
+import java.io.IOException;
 import java.io.OutputStream;
 /**
  * A utility class to use for temporary buffering and connecting streams in memory.
@@ -17,7 +18,7 @@ public class MemoryOutputStream extends OutputStream {
 		this.buffer = buffer;
 	}
 
-	public void close() {
+	public void close() throws IOException {
 		//System.out.println("Calling close on MemoryOutputStream");
 		this.isClosed = true;
 	}
@@ -51,5 +52,21 @@ public class MemoryOutputStream extends OutputStream {
 			myByte[0] = (byte) b;
 			write(myByte);
 		}
+	}
+
+	
+	/**
+	 * @return the buffer
+	 */
+	public MemoryFileBuffer getBuffer() {
+		return buffer;
+	}
+
+	
+	/**
+	 * @param buffer the buffer to set
+	 */
+	public void setBuffer(MemoryFileBuffer buffer) {
+		this.buffer = buffer;
 	}
 }
