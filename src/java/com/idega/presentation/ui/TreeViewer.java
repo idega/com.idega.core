@@ -153,7 +153,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			try
 			{
 				bservice = getBuilderService(iwc);
-				l.setOnClick(this.onNodeClickEvent+"('"+bservice.getPageURI(node.getNodeID())+"');return false;");
+				l.setOnClick(this.onNodeClickEvent+"('"+bservice.getPageURI(node.getId())+"');return false;");
 			}
 			catch (RemoteException e)
 			{
@@ -169,7 +169,7 @@ public class TreeViewer extends AbstractTreeViewer {
 				try
 				{
 					bservice = getBuilderService(iwc);
-					l.setOnClick("save('http://" + iwc.getServerName() + bservice.getPageURI(node.getNodeID()) + "','_self')");
+					l.setOnClick("save('http://" + iwc.getServerName() + bservice.getPageURI(node.getId()) + "','_self')");
 				}
 				catch (RemoteException e)
 				{
@@ -178,11 +178,11 @@ public class TreeViewer extends AbstractTreeViewer {
 				}
 			}
 			else{
-				l.setOnClick(ONCLICK_FUNCTION_NAME + "('" + nodeName + "','" + node.getNodeID() + "')");
+				l.setOnClick(ONCLICK_FUNCTION_NAME + "('" + nodeName + "','" + node.getId() + "')");
 			}
 		}
 		else if (this.nodeActionPrm != null) {
-			l.addParameter(this.nodeActionPrm, node.getNodeID());
+			l.addParameter(this.nodeActionPrm, node.getId());
 		}
 		setLinkToMaintainOpenAndClosedNodes(l);
 		return l;

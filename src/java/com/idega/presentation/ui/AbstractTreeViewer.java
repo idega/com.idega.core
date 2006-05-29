@@ -5,14 +5,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
+import com.idega.core.data.DefaultTreeNode;
 import com.idega.core.data.ICTreeNode;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationState;
-import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
@@ -259,12 +258,12 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 				boolean isOpen = false;
 				int rowIndex = getRowIndex();
 				Table treeColumns = this.getTreeTableClone();
-				String anchorName = Integer.toString(item.getNodeID());
+				String anchorName =item.getId();
 				treeColumns.add(new Anchor(anchorName), 1, 1);
 //				treeColumns.setBorder(1);
 //				frameTable.setBorder(1);
 				if (hasChild) {
-					isOpen = this.openNodes.contains(Integer.toString(item.getNodeID()));
+					isOpen = this.openNodes.contains(item.getId());
 				}
 				boolean isRoot = (this.defaultRoot.getIndex(item) >= 0);
 
@@ -564,7 +563,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		if (iter != null) {
 			for (int i = 0; iter.hasNext(); i++) {
 				ICTreeNode node = (ICTreeNode) iter.next();
-				Object item = Integer.toString(node.getNodeID());
+				Object item = node.getId();
 				if (!this.openNodes.contains(item)) {
 					this.openNodes.add(item);
 				}
@@ -916,149 +915,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		return this._stateHandler;
 	}
 
-	public class DefaultTreeNode implements ICTreeNode {
-
-		Vector childrens = new Vector();
-		ICTreeNode parentNode = null;
-		String name;
-		int id;
-
-		public DefaultTreeNode() {
-			this("untitled", 0);
-		}
-
-		public DefaultTreeNode(String nodeName, int id) {
-			this.name = nodeName;
-			this.id = id;
-		}
-
-		/**
-		 * Returns the children of the reciever as an Iterator.
-		 */
-		public Iterator getChildrenIterator() {
-		    Iterator it = null;
-		    Collection children = getChildren();
-		    if (children != null) {
-		        it = children.iterator();
-		    }
-		    return it;
-		}
-
-		/**
-		 * Returns the children of the reciever as a Collection.
-		 */
-		public Collection getChildren() {
-			if (this.childrens != null) {
-				return this.childrens;
-			} else {
-				return null;
-			}
-		}
-
-		/**
-		 *  Returns true if the receiver allows children.
-		 */
-		public boolean getAllowsChildren() {
-			if (this.childrens != null) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		/**
-		 *  Returns the child TreeNode at index childIndex.
-		 */
-		public ICTreeNode getChildAtIndex(int childIndex) {
-			return (ICTreeNode) this.childrens.get(childIndex);
-		}
-
-		/**
-		 *    Returns the number of children TreeNodes the receiver contains.
-		 */
-		public int getChildCount() {
-			return this.childrens.size();
-		}
-
-		/**
-		 * Returns the index of node in the receivers children.
-		 */
-		public int getIndex(ICTreeNode node) {
-			return this.childrens.indexOf(node);
-		}
-
-		/**
-		 *  Returns the parent TreeNode of the receiver.
-		 */
-		public ICTreeNode getParentNode() {
-			return this.parentNode;
-		}
-
-		/**
-		 *  Returns true if the receiver is a leaf.
-		 */
-		public boolean isLeaf() {
-			return (this.getChildCount() == 0);
-		}
-
-		/**
-		 *  Returns the name of the Node
-		 */
-		public String getNodeName() {
-			return this.name;
-		}
-		
-		/**
-		 *  Returns the name of the Node
-		 */
-		public String getNodeName(Locale locale ) {
-			return getNodeName();
-		}
-		
-		/**
-		 *  Returns the name of the Node
-		 */
-		public String getNodeName(Locale locale, IWApplicationContext iwac ) {
-			return getNodeName(locale);
-		}
-
-		/**
-		 * Returns the unique ID of the Node in the tree
-		 */
-		public int getNodeID() {
-			return this.id;
-		}
-
-		/**
-		 * @return the number of siblings this node has
-		 */
-		public int getSiblingCount() {
-			try {
-				return this.getParentNode().getChildCount() - 1;
-			} catch (Exception ex) {
-				return -1;
-			}
-		}
-		
-
-		public void addTreeNode(ICTreeNode node) {
-			if (node instanceof DefaultTreeNode) {
-				((DefaultTreeNode) node).setParentNode(this);
-			}
-			this.childrens.add(node);
-		}
-
-		public void setParentNode(ICTreeNode node) {
-			this.parentNode = node;
-		}
-
-		public void clear() {
-			if (this.childrens != null) {
-				this.childrens.clear();
-			}
-		}
-
-	}
 
 	public void addEventModel(IWPresentationEvent model) {
 		this.openCloseLink.addEventModel(model);
