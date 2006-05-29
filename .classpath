@@ -7,8 +7,6 @@
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.core">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.builder">
-  </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-impl-1.1.3.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar">

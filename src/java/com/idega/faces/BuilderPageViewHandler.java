@@ -14,12 +14,8 @@ import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import com.idega.builder.business.BuilderLogic;
-import com.idega.core.builder.business.BuilderService;
-import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.faces.componentbased.Page;
 import com.idega.faces.componentbased.PageWrapper;
-import com.idega.presentation.IWContext;
 
 /**
  * @author tryggvil
@@ -138,23 +134,12 @@ public class BuilderPageViewHandler extends ViewHandlerWrapper{//CbpViewHandler 
 	}
 	
 	protected UIComponent getPage() throws RemoteException{
-		IWContext iwc = IWContext.getInstance();
+		/*IWContext iwc = IWContext.getInstance();
 	  	BuilderLogic blogic = BuilderLogic.getInstance();
 	  	BuilderService bs = BuilderServiceFactory.getBuilderService(iwc);
-	    
-
-	    /*boolean builderview = false;
-	    if (iwc.isParameterSet("view")) {
-	      if(blogic.isBuilderApplicationRunning(iwc)){
-	        String view = iwc.getParameter("view");
-	        if(view.equals("builder"))
-	          builderview=true;
-	      }
-	    }*/
-	    //int i_page_id = bs.getCurrentPageId(iwc);
 	    String pageKey = bs.getCurrentPageKey(iwc);
-	    //return(blogic.getPage(i_page_id,builderview,iwc));
-	    return blogic.getPage(pageKey,iwc);
+	    return blogic.getPage(pageKey,iwc);*/
+		throw new UnsupportedOperationException("method getPage() deprecated");
 	}
 	
 	/* (non-Javadoc)
