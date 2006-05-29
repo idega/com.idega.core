@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.48 2006/05/24 11:07:58 palli Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.49 2006/05/29 18:18:51 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
  */
 package com.idega.idegaweb;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,10 +40,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/05/24 11:07:58 $ by $Author: palli $
+ * Last modified: $Date: 2006/05/29 18:18:51 $ by $Author: tryggvil $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.48 $
+ * @version $Revision: 1.49 $
  */
 
 
@@ -118,17 +119,44 @@ public class IWMainApplicationSettings implements MutableClass {
 	private Locale cachedDefaultLocale = null;
 	private ICApplicationBindingBusiness applicationBindingBusiness = null;
 	private IWPropertyList idegawebPropertyList = null;
+
+	private boolean preloadedCache=false;
 	
 	public IWMainApplicationSettings(IWMainApplication application) {
 		this.application=application;	
 	}
 	
+	/**
+	 * <p>
+	 * Preloads the instances of ICApplicationBinding to the bean cache
+	 * </p>
+	 */
+	private void preloadCache() {
+		if(!preloadedCache){
+			Collection keys;
+			try {
+				keys = getApplicationBindingBusiness().keySet();
+				for (Iterator iter = keys.iterator(); iter.hasNext();) {
+					String key = (String) iter.next();
+					//cache
+					if(key!=null){}
+				}
+				preloadedCache=true;
+			}
+			catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	private IWMainApplication getApplication(){
 		return this.application;
 	}
 	
 
 	public String getProperty(String key) {
+		preloadCache();
 		return getFromApplicationBinding(key);
 	}
 	
