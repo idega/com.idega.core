@@ -1,5 +1,5 @@
 /*
- * $Id: IWCacheManager2.java,v 1.7 2006/04/09 12:13:17 laddi Exp $ Created on
+ * $Id: IWCacheManager2.java,v 1.8 2006/05/29 18:17:11 tryggvil Exp $ Created on
  * 6.1.2006 in project com.idega.core
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -9,8 +9,11 @@
  */
 package com.idega.core.cache;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
@@ -21,10 +24,10 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * TODO tryggvil Describe Type IWCacheManager2
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/29 18:17:11 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class IWCacheManager2 {
 
@@ -99,7 +102,7 @@ public class IWCacheManager2 {
 					int cacheSize=1000;
 					long cacheTTLIdleSeconds = 1000;
 					long cacheTTLSeconds=10000;
-					cache = new Cache(cacheName, cacheSize, true, false, cacheTTLSeconds, cacheTTLIdleSeconds);
+					cache = new IWCache(cacheName, cacheSize, true, false, cacheTTLSeconds, cacheTTLIdleSeconds);
 	    			try {
 						getInternalCacheManager().addCache(cache);
 					}
@@ -119,13 +122,35 @@ public class IWCacheManager2 {
 			cm = new CacheMap(cache);
 			getCacheMapsMap().put(cacheName,cm);
 		}
+		else{
+			CacheMap ccm = (CacheMap)cm;
+			//the status must be alive
+			if(ccm.getCache().getStatus()==Cache.STATUS_ALIVE){
+				return cm;
+			}
+			else{
+				//if status is not alive try to re-create tha cache
+				synchronized (this) {
+					getCacheMapsMap().remove(cacheName);
+					getInternalCacheManager().removeCache(cacheName);
+					return getCache(cacheName);
+				}
+			}
+		}
 		return cm;
 	}
 	
 	public void reset(){
 		synchronized(this){
-			this.internalCacheManager=null;
-			this.cacheMapsMap=null;
+			Map internalCaches = getCacheMapsMap();
+			Set cacheKeys = internalCaches.keySet();
+			for (Iterator iter = cacheKeys.iterator(); iter.hasNext();) {
+				String key = (String) iter.next();
+				Map cm = (Map) internalCaches.get(key);
+				cm.clear();
+			}
+			//this.internalCacheManager=null;
+			//this.cacheMapsMap=null;
 		}
 	}
 	
