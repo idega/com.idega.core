@@ -53,11 +53,38 @@ public class IDOContainer implements Singleton {
     return this.emptyBeanInstances;
   }
 
-  protected Map getBeanCacheMap(){
+  /**
+   * <p>
+   * Map with all datasources and hashmaps for beancache for
+   * each datasource.<br/>
+   * Keys are datasourceNames and values are Maps for each datasource.
+   * </p>
+   * @return
+   */
+  protected Map getDatasourcesBeanCacheMaps(){
     if(this.beanCacheMap==null){
-      this.beanCacheMap = new HashMap();
-    }
-    return this.beanCacheMap;
+        this.beanCacheMap = new HashMap();
+      }
+    return beanCacheMap;
+  }
+  
+  /**
+   * <p>
+   * Gets a BeanCacheMap for each datasource, where
+   * the key is a entityInterfacesClass (Class) and value is
+   * a IDOBeanCache instance.
+   * </p>
+   * @param dataSource
+   * @return
+   */
+  protected Map getBeanCacheMap(String dataSource){
+	  Map bCacheMap = getDatasourcesBeanCacheMaps();
+      Map dataSourceMap = (Map) bCacheMap.get(dataSource);
+      if(dataSourceMap==null){
+    	  dataSourceMap=new HashMap();
+    	  bCacheMap.put(dataSource, dataSourceMap);
+      }
+      return dataSourceMap;
   }
 
   protected Map getIsBeanCachActiveMap(){
@@ -67,11 +94,11 @@ public class IDOContainer implements Singleton {
   	return this.isBeanCacheActive;
   }
 
-  protected IDOBeanCache getBeanCache(Class entityInterfaceClass){
-    IDOBeanCache idobc = (IDOBeanCache)getBeanCacheMap().get(entityInterfaceClass);
+  protected IDOBeanCache getBeanCache(String datasource,Class entityInterfaceClass){
+    IDOBeanCache idobc = (IDOBeanCache)getBeanCacheMap(datasource).get(entityInterfaceClass);
     if(idobc==null){
       idobc = new IDOBeanCache(entityInterfaceClass);
-      getBeanCacheMap().put(entityInterfaceClass,idobc);
+      getBeanCacheMap(datasource).put(entityInterfaceClass,idobc);
     }
     return idobc;
   }
@@ -168,9 +195,10 @@ public class IDOContainer implements Singleton {
       try{
       IDOEntity entity=null;
       IDOBeanCache cache = null;
-      boolean useBeanCaching = (dataSourceName==null) && beanCachingActive(entityInterfaceClass);
+      //boolean useBeanCaching = (dataSourceName==null) && beanCachingActive(entityInterfaceClass);
+      boolean useBeanCaching = beanCachingActive(entityInterfaceClass);
       if(useBeanCaching){
-        cache = this.getBeanCache(entityInterfaceClass);
+        cache = this.getBeanCache(dataSourceName,entityInterfaceClass);
         entity = cache.getCachedEntity(pk);
       }
       if(entity==null){
@@ -260,24 +288,33 @@ public class IDOContainer implements Singleton {
 
   public synchronized void flushAllBeanCache(){
     if(this.beanCachingActive){
-      Iterator iter = getBeanCacheMap().keySet().iterator();
-      while (iter.hasNext()) {
-        Class interfaceClass = (Class)iter.next();
-        this.getBeanCache(interfaceClass).flushAllBeanCache();
-      }
-      System.out.println("[idoContainer] Flushing all Bean Cache");
+    	Iterator dsIterator = getDatasourcesBeanCacheMaps().keySet().iterator();
+    	while(dsIterator.hasNext()){
+    		String dataSource = (String) dsIterator.next();
+	      Iterator iter = getBeanCacheMap(dataSource).keySet().iterator();
+	      while (iter.hasNext()) {
+	        Class interfaceClass = (Class)iter.next();
+	        this.getBeanCache(dataSource,interfaceClass).flushAllBeanCache();
+	      }
+    	}
+	    System.out.println("[idoContainer] Flushed all Bean Cache");
     }
   }
 
 
   public synchronized void flushAllQueryCache(){
     if(this.queryCachingActive){
-      Iterator iter = getBeanCacheMap().keySet().iterator();
-      while (iter.hasNext()) {
-        Class interfaceClass = (Class)iter.next();
-        this.getBeanCache(interfaceClass).flushAllQueryCache();
-      }
-      System.out.println("[idoContainer] Flushing all Query Cache");
+    	Iterator dsIterator = getDatasourcesBeanCacheMaps().keySet().iterator();
+    	while(dsIterator.hasNext()){
+    		String dataSource = (String) dsIterator.next();
+	      Iterator iter = getBeanCacheMap(dataSource).keySet().iterator();
+	      while (iter.hasNext()) {
+	        Class interfaceClass = (Class)iter.next();
+	        this.getBeanCache(dataSource,interfaceClass).flushAllQueryCache();
+	      }
+    	}
+
+        System.out.println("[idoContainer] Flushed all Query Cache");
     }
   }
 

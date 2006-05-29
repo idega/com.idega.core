@@ -565,7 +565,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	 * @param msg The message to log out
 	 */
 	protected void logDebug(String msg) {
-		//System.err.println(msg);
+		System.err.println(msg);
 		getLogger().log(getDebugLogLevel(),msg);
 	}
 	
@@ -584,7 +584,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	 * @param msg The message to log out
 	 */
 	protected void logWarning(String msg) {
-		//System.err.println(msg);
+		System.err.println(msg);
 		getLogger().log(Level.WARNING,msg);
 	}
 	
@@ -593,7 +593,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	 * @param msg The message to log out
 	 */
 	protected void logConfig(String msg) {
-		//System.err.println(msg);
+		System.err.println(msg);
 		getLogger().log(Level.CONFIG,msg);
 	}	
 	

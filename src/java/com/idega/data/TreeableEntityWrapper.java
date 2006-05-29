@@ -197,4 +197,8 @@ public abstract class TreeableEntityWrapper extends IDOEntityWrapper implements 
 		((TreeableEntity)this.getMainEntity()).removeChild(p0);
 	}
 
+	public String getId() {
+		return ((TreeableEntity)this.getMainEntity()).getId();
+	}
+	
 }

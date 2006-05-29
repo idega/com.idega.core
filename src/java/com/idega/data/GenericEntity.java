@@ -1355,7 +1355,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		try {
 			DatastoreInterface.getInstance(this).insert(this);
 			if (isBeanCachingActive()) {
-				IDOContainer.getInstance().getBeanCache(this.getInterfaceClass()).putCachedEntity(getPrimaryKey(), this);
+				IDOContainer.getInstance().getBeanCache(getDatasource(),this.getInterfaceClass()).putCachedEntity(getPrimaryKey(), this);
 			}
 			flushQueryCache();
 		}
@@ -1473,7 +1473,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			DatastoreInterface.getInstance(c).update(this, c);
 			flushQueryCache();
 			if (IDOContainer.getInstance().beanCachingActive(this.getInterfaceClass())) {
-				IDOContainer.getInstance().getBeanCache(this.getInterfaceClass()).removeCachedEntity(this.getPrimaryKey());
+				IDOContainer.getInstance().getBeanCache(getDatasource(),this.getInterfaceClass()).removeCachedEntity(this.getPrimaryKey());
 			}
 			this.empty();
 		}
@@ -1490,7 +1490,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			DatastoreInterface.getInstance(this).delete(this);
 			flushQueryCache();
 			if (IDOContainer.getInstance().beanCachingActive(this.getInterfaceClass())) {
-				IDOContainer.getInstance().getBeanCache(this.getInterfaceClass()).removeCachedEntity(this.getPrimaryKey());
+				IDOContainer.getInstance().getBeanCache(getDatasource(),this.getInterfaceClass()).removeCachedEntity(this.getPrimaryKey());
 			}
 			this.empty();
 		}
@@ -4060,12 +4060,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		Class interfaceClass = this.getInterfaceClass();
 		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
 		if (queryCachingActive) {
-			pkColl = IDOContainer.getInstance().getBeanCache(interfaceClass).getCachedFindQuery(sqlQuery.toString());
+			pkColl = IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).getCachedFindQuery(sqlQuery.toString());
 		}
 		if (pkColl == null) {
 			pkColl = this.idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(sqlQuery, prefetchSize);
 			if (queryCachingActive) {
-				IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery.toString(), pkColl);
+				IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).putCachedFindQuery(sqlQuery.toString(), pkColl);
 			}
 		}
 		else {
@@ -4508,12 +4508,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		Class interfaceClass = this.getInterfaceClass();
 		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
 		if (queryCachingActive) {
-			pkColl = IDOContainer.getInstance().getBeanCache(interfaceClass).getCachedFindQuery(sqlQuery);
+			pkColl = IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).getCachedFindQuery(sqlQuery);
 		}
 		if (pkColl == null) {
 			pkColl = this.idoFindPKsBySQLIgnoringCache(sqlQuery, returningNumberOfRecords, startingEntry, selectQuery);
 			if (queryCachingActive) {
-				IDOContainer.getInstance().getBeanCache(interfaceClass).putCachedFindQuery(sqlQuery, pkColl);
+				IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).putCachedFindQuery(sqlQuery, pkColl);
 			}
 		}
 		else {
@@ -4669,7 +4669,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		Class interfaceClass = this.getInterfaceClass();
 		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
 		if (queryCachingActive) {
-			IDOContainer.getInstance().getBeanCache(interfaceClass).flushAllQueryCache();
+			IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).flushAllQueryCache();
 		}
 	}
 
@@ -4677,7 +4677,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		Class interfaceClass = this.getInterfaceClass();
 		boolean beanCachingActive = IDOContainer.getInstance().beanCachingActive(interfaceClass);
 		if (beanCachingActive) {
-			IDOContainer.getInstance().getBeanCache(interfaceClass).flushAllBeanCache();
+			IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).flushAllBeanCache();
 		}
 	}
 
@@ -4931,7 +4931,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected boolean idoExecuteTableUpdate(String sqlUpdateQuery) throws IDOException {
 		try {
 			if (SimpleQuerier.executeUpdate(sqlUpdateQuery, this.getDatasource(), false)) {
-				synchronized (IDOContainer.getInstance().getBeanCache(this.getInterfaceClass())) {
+				synchronized (IDOContainer.getInstance().getBeanCache(getDatasource(),this.getInterfaceClass())) {
 					flushQueryCache();
 					flushBeanCache();
 				}
@@ -5501,4 +5501,22 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return null;
 	}
 
+	/**
+	 * <p>
+	 * Gets the BeanCache instance for this entity and datasource.
+	 * </p>
+	 * @return
+	 */
+	protected IDOBeanCache getBeanCache(){
+		return IDOContainer.getInstance().getBeanCache(getDatasource(), getInterfaceClass());
+	}
+	/**
+	 * <p>
+	 * Gets the collection of cached entities for this entity and datasource
+	 * </p>
+	 * @return
+	 */
+	protected Collection getCachedEntities(){
+		return getBeanCache().getCachedEntities();
+	}
 }

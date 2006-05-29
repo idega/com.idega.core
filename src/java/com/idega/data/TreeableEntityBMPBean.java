@@ -292,5 +292,9 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	public void setToSortLeafs(boolean b) {
 		this._sortLeafs = b;
 	}
+	
+	public String getId(){
+		return getPrimaryKey().toString();
+	}
 
 }
