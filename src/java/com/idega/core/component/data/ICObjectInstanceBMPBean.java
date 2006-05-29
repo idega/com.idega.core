@@ -7,8 +7,13 @@
 package com.idega.core.component.data;
 
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Iterator;
 import javax.ejb.FinderException;
 import com.idega.core.component.business.ICObjectBusiness;
+import com.idega.data.IDOBeanCache;
+import com.idega.data.IDOContainer;
+import com.idega.data.IDOFinderException;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
@@ -131,9 +136,33 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 	}
 
 	public Integer ejbFindByUniqueId(String uuid) throws FinderException {
+		
+		Collection cachedList = getCachedEntities();
+		for (Iterator iter = cachedList.iterator(); iter.hasNext();) {
+			ICObjectInstance instance = (ICObjectInstance) iter.next();
+			if(instance.getUniqueId().equals(uuid)){
+				return (Integer) instance.getPrimaryKey();
+			}
+		}
+		//if not found in cache try to find in database
 		SelectQuery sql = idoSelectPKQuery();
 		Table thisTable = new Table(getEntityDefinition().getSQLTableName());
 		sql.addCriteria(new MatchCriteria(thisTable, getUniqueIdColumnName(), MatchCriteria.EQUALS, uuid));
 		return (Integer) idoFindOnePKByQuery(sql);
+	}
+	
+	public Collection ejbFindByPageKey(String pageKey) throws FinderException{
+		try{
+			int pageId = Integer.parseInt(pageKey);
+			SelectQuery query = idoSelectQuery();
+			Table thisTable = new Table(getEntityDefinition().getSQLTableName());
+			query.addCriteria(new MatchCriteria(thisTable, IBPAGEID, MatchCriteria.EQUALS, pageId));
+			Collection list = idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query,1000);
+			return list;
+		}
+		catch(NumberFormatException nfe){
+			throw new IDOFinderException(nfe);
+		}
+
 	}
 }

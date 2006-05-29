@@ -1,11 +1,11 @@
 package com.idega.core.component.data;
 
 
-import com.idega.idegaweb.IWBundle;
+import com.idega.data.IDOEntity;
 import com.idega.exception.IWBundleDoesNotExist;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.PresentationObject;
-import com.idega.data.IDOEntity;
 
 public interface ICObject extends IDOEntity {
 

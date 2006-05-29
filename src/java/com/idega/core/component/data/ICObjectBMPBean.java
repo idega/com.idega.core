@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectBMPBean.java,v 1.14 2006/05/09 14:47:18 tryggvil Exp $
+ * $Id: ICObjectBMPBean.java,v 1.15 2006/05/29 18:15:09 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  *
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
@@ -11,7 +11,9 @@ package com.idega.core.component.data;
 
 import java.sql.SQLException;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import javax.ejb.FinderException;
@@ -38,10 +40,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * time the application starts it updates the IC_OBJECT table with all components
  * registered in all idegaWeb bundles installed in the web-application.
  * </p>
- * Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/05/29 18:15:09 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
 	/**
@@ -65,6 +67,10 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	private final static String class_value_column_name = "CLASS_VALUE";
 	private final static String icon_file = "ICON_FILE";
 	private static final String COLUMN_OBJECT_NAME = "OBJECT_NAME";
+	
+	private static boolean cached=true;
+	private static Collection cachedList;
+	
 	public ICObjectBMPBean()
 	{
 		super();
@@ -88,7 +94,9 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer","many-to-one","com.idega.data.genericentity.Image");
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,java.lang.Integer.class);
 		//addAttribute("image_id","MyndN?mer",false,false,"java.lang.Integer","one-to-many","com.idega.projects.golf.entity.ImageEntity");
-		getEntityDefinition().setBeanCachingActiveByDefault(true,10000);
+		if(cached){
+			getEntityDefinition().setBeanCachingActiveByDefault(true,10000);
+		}
 	}
 	private String getColumnObjectName() {
 		return COLUMN_OBJECT_NAME;
@@ -278,60 +286,147 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	}
 	
 	public Collection ejbFindAll() throws FinderException {
-		return idoFindAllIDsBySQL();
+		if(cached){
+			SelectQuery query = idoSelectQuery();
+			if(cachedList==null){
+				cachedList = idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query,10000);
+			}
+			return cachedList;
+		}
+		else{
+			return idoFindAllIDsBySQL();
+		}
 	}
 	
 	
 	public Collection ejbFindAllByObjectType(String type) throws FinderException
 	{
 		//return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type));
-	    Table table = new Table(this);
-	    SelectQuery query = new SelectQuery(table);
-	    query.addColumn(new WildCardColumn());
-	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
-	    return idoFindPKsByQuery(query);
+		if(cached){
+			Collection allPKs = ejbFindAll();
+			Collection newPKs = new ArrayList();
+			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
+			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
+				Object pk = (Object) iter.next();
+				ICObject ico = home.findByPrimaryKey(pk);
+				if(ico.getObjectType().equals(type)){
+					newPKs.add(pk);
+				}
+			}
+			return newPKs;
+		}
+		else{
+		    Table table = new Table(this);
+		    SelectQuery query = new SelectQuery(table);
+		    query.addColumn(new WildCardColumn());
+		    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
+		    return idoFindPKsByQuery(query);
+		    //return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query,10000);
+		}
 	}
 	public Collection ejbFindAllByObjectTypeOrdered(String type) throws FinderException
 	{
-		//return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type));
-	    Table table = new Table(this);
-	    SelectQuery query = new SelectQuery(table);
-	    query.addColumn(new WildCardColumn());
-	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
-	    query.addOrder(table,ICObjectBMPBean.getObjectTypeColumnName(),true);
-	    return idoFindPKsByQuery(query);
+		if(cached){
+			Collection allPKs = ejbFindAll();
+			Collection newPKs = new ArrayList();
+			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
+			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
+				Object pk = (Object) iter.next();
+				ICObject ico = home.findByPrimaryKey(pk);
+				if(ico.getObjectType().equals(type)){
+					newPKs.add(pk);
+				}
+			}
+			return newPKs;
+		}
+		else{
+			//return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type));
+		    Table table = new Table(this);
+		    SelectQuery query = new SelectQuery(table);
+		    query.addColumn(new WildCardColumn());
+		    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
+		    query.addOrder(table,ICObjectBMPBean.getObjectTypeColumnName(),true);
+		    //return idoFindPKsByQuery(query);
+		    return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query,10000);
+		}
 	}
 	public Collection ejbFindAllByObjectTypeAndBundle(String type, String bundle) throws FinderException
 	{
-	    Table table = new Table(this);
-	    SelectQuery query = new SelectQuery(table);
-	    query.addColumn(new WildCardColumn());
-	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
-	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getBundleColumnName(),MatchCriteria.EQUALS,bundle,true));
-	    
-	    /*
-		IDOQuery query =
-			super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type)
-			.appendAndEqualsQuoted(this.getBundleColumnName(),bundle);
-		*/
-		//System.out.println(query.toString());
-		return super.idoFindPKsByQuery(query);
+		if(cached){
+			Collection allPKs = ejbFindAll();
+			Collection newPKs = new ArrayList();
+			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
+			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
+				Object pk = (Object) iter.next();
+				ICObject ico = home.findByPrimaryKey(pk);
+				if(ico.getObjectType().equals(type)&&ico.getBundleIdentifier().equals(bundle)){
+					newPKs.add(pk);
+				}
+			}
+			return newPKs;
+		}
+		else{
+		    Table table = new Table(this);
+		    SelectQuery query = new SelectQuery(table);
+		    query.addColumn(new WildCardColumn());
+		    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
+		    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getBundleColumnName(),MatchCriteria.EQUALS,bundle,true));
+		    
+		    /*
+			IDOQuery query =
+				super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type)
+				.appendAndEqualsQuoted(this.getBundleColumnName(),bundle);
+			*/
+			//System.out.println(query.toString());
+			//return super.idoFindPKsByQuery(query);
+		    return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query,10000);
+		}
 	}
 	public Collection ejbFindAllByBundle(String bundle) throws FinderException{
-		//return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getBundleColumnName(), bundle));
-	    Table table = new Table(this);
-	    SelectQuery query = new SelectQuery(table);
-	    query.addColumn(new WildCardColumn());
-	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getBundleColumnName(),MatchCriteria.EQUALS,bundle,true));
-	    return idoFindPKsByQuery(query);
+		if(cached){
+			Collection allPKs = ejbFindAll();
+			Collection newPKs = new ArrayList();
+			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
+			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
+				Object pk = (Object) iter.next();
+				ICObject ico = home.findByPrimaryKey(pk);
+				if(ico.getBundleIdentifier().equals(bundle)){
+					newPKs.add(pk);
+				}
+			}
+			return newPKs;
+		}
+		else{
+			//return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getBundleColumnName(), bundle));
+		    Table table = new Table(this);
+		    SelectQuery query = new SelectQuery(table);
+		    query.addColumn(new WildCardColumn());
+		    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getBundleColumnName(),MatchCriteria.EQUALS,bundle,true));
+		    //return idoFindPKsByQuery(query);
+		    return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query,10000);
+		}
 	}
 	public Object ejbFindByClassName(String className) throws FinderException{
-		//return super.idoFindOnePKByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(getClassNameColumnName(), className));
-	    Table table = new Table(this);
-	    SelectQuery query = new SelectQuery(table);
-	    query.addColumn(new WildCardColumn());
-	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getClassNameColumnName(),MatchCriteria.EQUALS,className,true));
-	    return idoFindOnePKByQuery(query);
+		if(cached){
+			Collection allPKs = ejbFindAll();
+			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
+			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
+				Object pk = (Object) iter.next();
+				ICObject ico = home.findByPrimaryKey(pk);
+				if(ico.getClassName().equals(className)){
+					return pk;
+				}
+			}
+			throw new FinderException("Object "+className+" not found");
+		}
+		else{
+			//return super.idoFindOnePKByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(getClassNameColumnName(), className));
+		    Table table = new Table(this);
+		    SelectQuery query = new SelectQuery(table);
+		    query.addColumn(new WildCardColumn());
+		    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getClassNameColumnName(),MatchCriteria.EQUALS,className,true));
+		    return idoFindOnePKByQuery(query);
+		}
 	}
 	public Collection ejbFindAllBlocksByBundle(String bundle) throws FinderException
 	{

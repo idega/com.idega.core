@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectInstanceHomeImpl.java,v 1.3 2006/03/28 10:20:10 tryggvil Exp $
+ * $Id: ICObjectInstanceHomeImpl.java,v 1.4 2006/05/29 18:15:09 tryggvil Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -10,16 +10,18 @@
 package com.idega.core.component.data;
 
 
+import java.util.Collection;
 import javax.ejb.FinderException;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOFactory;
 import com.idega.data.IDORemoveRelationshipException;
 
 /**
  * 
- *  Last modified: $Date: 2006/03/28 10:20:10 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/05/29 18:15:09 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ICObjectInstanceHomeImpl extends IDOFactory implements
         ICObjectInstanceHome {
@@ -74,5 +76,15 @@ public class ICObjectInstanceHomeImpl extends IDOFactory implements
 		Integer id = ((ICObjectInstanceBMPBean) entity).ejbFindByUniqueId(uuid);
 		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(id);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.component.data.ICObjectInstanceHome#findByPageKey(java.lang.String)
+	 */
+	public Collection findByPageKey(String pageKey) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection ids = ((ICObjectInstanceBMPBean) entity).ejbFindByPageKey(pageKey);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 }

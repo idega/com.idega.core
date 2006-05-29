@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectInstanceHome.java,v 1.3 2006/03/28 10:20:10 tryggvil Exp $
+ * $Id: ICObjectInstanceHome.java,v 1.4 2006/05/29 18:15:09 tryggvil Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -10,16 +10,17 @@
 package com.idega.core.component.data;
 
 
+import java.util.Collection;
 import javax.ejb.FinderException;
 import com.idega.data.IDOHome;
 import com.idega.data.IDORemoveRelationshipException;
 
 /**
  * 
- *  Last modified: $Date: 2006/03/28 10:20:10 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/05/29 18:15:09 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface ICObjectInstanceHome extends IDOHome {
     public ICObjectInstance create() throws javax.ejb.CreateException;
@@ -40,4 +41,6 @@ public interface ICObjectInstanceHome extends IDOHome {
             throws IDORemoveRelationshipException;
 
     public ICObjectInstance findByUniqueId(String uuid) throws FinderException;
+    
+    public Collection findByPageKey(String pageKey) throws FinderException;
 }
