@@ -120,7 +120,8 @@ public class ICLocaleBMPBean extends com.idega.data.GenericEntity  implements IC
       Table table = new Table(this);
       SelectQuery query = new SelectQuery(table);
       query.addColumn(new WildCardColumn());
-      return idoFindPKsByQuery(query);
+      //return idoFindPKsByQuery(query);
+      return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query,1000);
   }
   
   public Collection ejbFindAllInUse()throws FinderException{
