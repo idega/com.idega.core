@@ -427,4 +427,8 @@ public class GroupTreeNode implements ICTreeNode {
 		}
 		return this.groupBiz;
 	}
+	
+	public String getId(){
+		return Integer.toString(getNodeID());
+	}
 }

@@ -2283,4 +2283,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public Collection ejbFindAllUsersWithDuplicatedPhones(String phoneType)throws FinderException{
     	return this.idoFindPKsBySQL("select up.ic_user_id from ic_user_phone up, ic_phone p where up.ic_phone_id = p.ic_phone_id and p.ic_phone_type_id = " + phoneType + " group by ic_user_id having count(up.ic_user_id)>1");
 	}
+	
+	public String getId(){
+		return getPrimaryKey().toString();
+	}
+	
+	
 }

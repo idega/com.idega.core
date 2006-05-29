@@ -1959,4 +1959,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return null;
 	}
 
+	public String getId(){
+		return getPrimaryKey().toString();
+	}
+	
 } // Class Group
