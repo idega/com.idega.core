@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultComponentInfo.java,v 1.5 2006/05/10 08:27:16 laddi Exp $
+ * $Id: DefaultComponentInfo.java,v 1.6 2006/05/29 18:15:50 tryggvil Exp $
  * Created on 8.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -16,29 +16,32 @@ import java.util.Locale;
 
 /**
  * <p>
- * TODO tryggvil Describe Type UIComponentInfo
+ * Default Implementation of the ComponentInfo interface.
  * </p>
- *  Last modified: $Date: 2006/05/10 08:27:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/29 18:15:50 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class DefaultComponentInfo implements ComponentInfo {
 
 	private Class componentClass;
 	private String componentName;
-	private String componentType;
+	private String objectType;
 	private String bundleIdentifier;
 	private List properties;
 	private List componentPermissions;
+	private boolean deprecated=false;
+	private boolean expert=false;
+	private String group;
 	
 	/**
 	 * 
 	 */
-	public DefaultComponentInfo(Class componentClass, String componentName,String componentType) {
+	public DefaultComponentInfo(Class componentClass, String componentName,String objectType) {
 		setComponentClass(componentClass);
 		setComponentName(componentName);
-		setComponentType(componentType);
+		setObjectType(objectType);
 	}
 
 	
@@ -99,8 +102,8 @@ public class DefaultComponentInfo implements ComponentInfo {
 	/**
 	 * @return Returns the componentType.
 	 */
-	public String getComponentType() {
-		return this.componentType;
+	public String getObjectType() {
+		return this.objectType;
 	}
 
 
@@ -108,8 +111,8 @@ public class DefaultComponentInfo implements ComponentInfo {
 	/**
 	 * @param componentType The componentType to set.
 	 */
-	public void setComponentType(String componentType) {
-		this.componentType = componentType;
+	public void setObjectType(String componentType) {
+		this.objectType = componentType;
 	}
 
 
@@ -149,5 +152,59 @@ public class DefaultComponentInfo implements ComponentInfo {
 			this.componentPermissions=new ArrayList();
 		}
 		return this.componentPermissions;
+	}
+
+
+	
+	/**
+	 * @return the deprecated
+	 */
+	public boolean isDeprecated() {
+		return deprecated;
+	}
+
+
+	
+	/**
+	 * @param deprecated the deprecated to set
+	 */
+	public void setDeprecated(boolean deprecated) {
+		this.deprecated = deprecated;
+	}
+
+
+	
+	/**
+	 * @return the expert
+	 */
+	public boolean isExpert() {
+		return expert;
+	}
+
+
+	
+	/**
+	 * @param expert the expert to set
+	 */
+	public void setExpert(boolean expert) {
+		this.expert = expert;
+	}
+
+
+	
+	/**
+	 * @return the group
+	 */
+	public String getGroup() {
+		return group;
+	}
+
+
+	
+	/**
+	 * @param group the group to set
+	 */
+	public void setGroup(String group) {
+		this.group = group;
 	}
 }

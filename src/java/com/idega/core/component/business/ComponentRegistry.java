@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.5 2006/05/11 13:11:31 gimmi Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.6 2006/05/29 18:15:50 tryggvil Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import com.idega.idegaweb.IWModuleLoader;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2006/05/11 13:11:31 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/05/29 18:15:50 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ComponentRegistry {
 
@@ -108,12 +108,19 @@ public class ComponentRegistry {
 		internalGetComponentList().add(info);
 	}
 
+	/**
+	 * <p>
+	 * Gets a list of all components with the objectType of type
+	 * </p>
+	 * @param type
+	 * @return
+	 */
 	public List getComponentsByType(String type) {
 		List componentList = getAllComponents();
 		ArrayList list = new ArrayList();
 		for (Iterator iter = componentList.iterator(); iter.hasNext();) {
 			ComponentInfo component = (ComponentInfo) iter.next();
-			if (component.getComponentType().equals(type)) {
+			if (component.getObjectType().equals(type)) {
 				list.add(component);
 			}
 		}
@@ -138,6 +145,12 @@ public class ComponentRegistry {
 		}
 	}
 
+	/**
+	 * <p>
+	 * TODO tryggvil describe method registerComponent
+	 * </p>
+	 * @param ico
+	 */
 	private void registerComponent(ICObject ico) {
 		try {
 			//Class clazz = ico.getObjectClass();
@@ -151,7 +164,8 @@ public class ComponentRegistry {
 			System.out.println("[ComponentRegistry] Class not found : "+ico.getClassName());
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.err.println("ComponentRegistry Error: "+e.getClass().getName()+" "+e.getMessage());
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentInfo.java,v 1.3 2006/05/09 14:47:18 tryggvil Exp $
+ * $Id: ComponentInfo.java,v 1.4 2006/05/29 18:15:50 tryggvil Exp $
  * Created on 8.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import java.util.Locale;
  * <p>
  * This class describes a component (JSF UIComponent, IW Element, IW Block etc. ) and holds information about it. 
  * </p>
- *  Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/05/29 18:15:50 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface ComponentInfo {
 	
@@ -30,7 +30,7 @@ public interface ComponentInfo {
 	
 	public String getComponentName(Locale locale);
 	
-	public String getComponentType();
+	public String getObjectType();
 	
 	public String getModuleIdentifier();
 	
@@ -49,5 +49,20 @@ public interface ComponentInfo {
 	 * @return
 	 */
 	public List getComponentPermissions();
+
+	/**
+	 * @return the deprecated
+	 */
+	public boolean isDeprecated();
+
+	/**
+	 * @return the expert
+	 */
+	public boolean isExpert();
+
+	/**
+	 * @return the group
+	 */
+	public String getGroup();
 	
 }

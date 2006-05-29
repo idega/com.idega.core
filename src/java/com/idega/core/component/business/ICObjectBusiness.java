@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.ejb.CreateException;
 import com.idega.core.component.data.ICObject;
+import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.core.component.data.ICObjectInstanceHome;
 import com.idega.data.EntityFinder;
@@ -197,7 +198,8 @@ public Class getClassForInstance(String icObjectInstanceID)throws ClassNotFoundE
       Integer key = new Integer(icObjectID);
       ICObject theReturn = (ICObject)getIcObjectMap().get(key);
       if(theReturn == null){
-        theReturn =  ((com.idega.core.component.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).findByPrimaryKey(new Integer(icObjectID));
+    	ICObjectHome home = (ICObjectHome) IDOLookup.getHome(ICObject.class);
+        theReturn =  home.findByPrimaryKey(new Integer(icObjectID));
         getIcObjectMap().put(key,theReturn);
       }
       return theReturn;
@@ -250,9 +252,9 @@ public Class getClassForInstance(String icObjectInstanceID)throws ClassNotFoundE
 	 */
   public  ICObjectInstance createICObjectInstance() throws IDOCreateException{
     try{
-      return ((com.idega.core.component.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).createLegacy();
+      return ((com.idega.core.component.data.ICObjectInstanceHome)com.idega.data.IDOLookup.getHomeLegacy(ICObjectInstance.class)).create();
     }
-    catch(RuntimeException re){
+    catch(Exception re){
       throw new IDOCreateException(re);
     }
   }
