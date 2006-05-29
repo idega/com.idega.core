@@ -380,6 +380,12 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 		return (this.getParentVersion().getChildCount() - 1);
 	}
 	
+	/**
+	 * @return the number of siblings this node has
+	 */
+	public String getId(){
+		return getPrimaryKey().toString();
+	}
 	//ICTreeNode methods end
 	
 }
