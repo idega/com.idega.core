@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.159 2006/05/22 11:35:35 laddi Exp $
+ * $Id: PresentationObject.java,v 1.160 2006/05/29 18:13:39 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2006/05/22 11:35:35 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/29 18:13:39 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.159 $
+ * @version $Revision: 1.160 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -100,9 +100,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 
 	
 	//temporary legacy variables will be removed in future versions.
-	private transient HttpServletRequest _request;
-	private transient HttpServletResponse _response;
-	private transient PrintWriter out;
+	//private transient HttpServletRequest _request;
+	//private transient HttpServletResponse _response;
+	//private transient PrintWriter out;
 	private transient String markupLanguage;
 	//private transient IWApplicationContext _iwac;
 	//private transient IWUserContext _iwuc;
@@ -151,6 +151,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	//Marker to mark if this component instance is restored via the JSF state restoring mechanism
 	private boolean isStateRestored=false;
 	private String xmlId;
+	private boolean resetGoneThroughMainInRestore=false;
+	private boolean supportsMultipleMainCalls=false;
+	
 
 	/**
 	 * Default constructor.
@@ -232,12 +235,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public void initVariables(IWContext iwc) throws IOException
 	{
-		if(!IWMainApplication.useJSF){
+		/*if(!IWMainApplication.useJSF){
 			//These variables are not set when the JSF environment is enabled.
 			this._request = iwc.getRequest();
 			this._response = iwc.getResponse();
 			this.out = iwc.getWriter();
-		}
+		}*/
 		this.markupLanguage = iwc.getMarkupLanguage();
 		if (this.markupLanguage == null)
 		{
@@ -246,10 +249,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		
 	}
 	protected void cleanVariables(IWContext iwc){
-		this._request=null;
+		/*this._request=null;
 		this._response=null;
 		this.markupLanguage=null;
-		this.out=null;
+		this.out=null;*/
 	}
 	
 	protected void initInMain(IWContext iwc) throws Exception
@@ -666,12 +669,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	protected HttpServletRequest getRequest()
 	{
-		if(this._request!=null){
+		/*if(this._request!=null){
 			return this._request;
 		}
-		else{
+		else{*/
 			return IWContext.getInstance().getRequest();
-		}
+		/*}*/
 	}
 	/**
 	 * This method is only used for old idegaWeb style rendering
@@ -679,12 +682,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	protected HttpServletResponse getResponse()
 	{
-		if(this._response!=null){
+		/*if(this._response!=null){
 			return this._response;
 		}
-		else{
+		else{*/
 			return IWContext.getInstance().getResponse();
-		}
+		/*}*/
 	}
 	/**
 	 * @deprecated Replaced with getMarkupLanguage().
@@ -762,10 +765,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	protected PrintWriter getPrintWriter()
 	{
-		if(this.out!=null){
+		/*if(this.out!=null){
 			return this.out;
 		}
-		else{
+		else{*/
 			try {
 				return IWContext.getInstance().getWriter();
 			}
@@ -776,7 +779,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				e.printStackTrace();
 			}
 			return null;
-		}
+		/*}*/
 	}
 	/**
 	 * @return The Class name of the Object
@@ -1013,6 +1016,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			obj._objTemplateID=this._objTemplateID;
 			obj._templateObject = null;
 			obj.xmlId=this.xmlId;
+			obj.resetGoneThroughMainInRestore=this.resetGoneThroughMainInRestore;
+			obj.supportsMultipleMainCalls=this.supportsMultipleMainCalls;
 			//obj.defaultState = this.defaultState; //same object, unnecessary
 			// to clone
 		}
@@ -2114,6 +2119,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		this.errorMessage=(String)values[4];
 		this.hasBeenAdded=((Boolean)values[5]).booleanValue();
 		this.treeID=(String)values[6];
+		this.resetGoneThroughMainInRestore=((Boolean)values[28]).booleanValue();
+		
 		if(resetGoneThroughMainInRestore()){
 			this.goneThroughMain=false;
 		}
@@ -2140,6 +2147,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		this._styler=(TextStyler)values[25];
 		this._objTemplateID=(String)values[26];
 		this.xmlId=(String)values[27];
+		//28 is handled above because it needs to be handled before 7
+		this.supportsMultipleMainCalls=((Boolean)values[29]).booleanValue();
 		//This variable is set only to know that the object is recreated from serialized state
 		this.isStateRestored=true;
 	}
@@ -2148,7 +2157,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[28];
+		Object values[] = new Object[30];
 		values[0]=super.saveState(context);
 		values[1]=this.attributes;
 		values[2]=this.name;
@@ -2177,6 +2186,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		values[25]=this._styler;
 		values[26]=this._objTemplateID;
 		values[27]=this.xmlId;
+		values[28]=Boolean.valueOf(resetGoneThroughMainInRestore);
+		values[29]=Boolean.valueOf(supportsMultipleMainCalls);
 		return values;
 	}
 
@@ -2643,7 +2654,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	  * Returns wheather the "goneThroughMain" variable is reset back to false in the restore phase.
 	  */
 	 protected boolean resetGoneThroughMainInRestore(){
-	 	return false;
+	 	return resetGoneThroughMainInRestore;
+	 }
+	 
+	 protected void setResetGoneThroughMainInRestore(boolean ifReset){
+		 resetGoneThroughMainInRestore=ifReset;
 	 }
 	 
 	 /**
@@ -2663,7 +2678,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	  * @return
 	  */
 	 protected boolean supportsMultipleMainCalls(){
-	 	return false;
+	 	return supportsMultipleMainCalls;
+	 }
+	 
+	 protected void setSupportsMultipleMainCalls(boolean ifSupports){
+		 supportsMultipleMainCalls=ifSupports;
 	 }
 	 /**
 	  * Gets if the main(iwcontext) method has been called for this object
