@@ -213,23 +213,16 @@ public class HSQLDatastoreInterface extends DatastoreInterface { //implements
 	 * Override in subclasses
 	 **/
 	public void onConnectionCreate(Connection newConn) {
-		try {
+		/*try {
 			Statement stmt = newConn.createStatement();
 			stmt.execute("SET PROPERTY \"hsqldb.first_identity\" 1");
 			stmt.close();
 			System.out.println("HSQLDatastoreInterface: Setting first_identity property to 1 for HSQLDB");
-		/*	
-		 This parameter is set for the OCI driver in a shell script usually but could be set here also
-			stmt = newConn.createStatement();
-			stmt.execute("ALTER SESSION SET NLS_LANG='.AL32UTF8'");
-			stmt.close();
-			System.out.println("OracleDatastoreInterface: Setting language environment variable for Oracle to NLS_LANG=.UTF8 for Unicode support.");
-		*/
 		}
 		catch (SQLException sqle) {
 			System.err.println("HSQLDatastoreInterface: Error when changing property: " + sqle.getMessage());
 			sqle.printStackTrace();
-		}
+		}*/
 	}	
 	
 	
