@@ -144,6 +144,17 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 			
 			return this.domain;
 		} catch (Exception e) {
+			try {
+				ICDomainHome domainHome = (ICDomainHome)IDOLookup.getHome(ICDomain.class);
+				ICDomain realDomain = domainHome.findFirstDomain();
+				this.domain= realDomain;
+				
+				return this.domain;
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
 		}
