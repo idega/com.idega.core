@@ -12,6 +12,7 @@ import javax.ejb.FinderException;
 
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOQuery;
+import com.idega.data.query.SelectQuery;
 
 /**
  * Title:		ICApplicationBindingBMPBean
@@ -67,6 +68,8 @@ public class ICApplicationBindingBMPBean extends GenericEntity implements ICAppl
 		setAsPrimaryKey(COLUMNNAME_KEY,true);
 		addAttribute(COLUMNNAME_VALUE,"Value",true,true,String.class);
 		addAttribute(COLUMNNAME_BINDING_TYPE,"Type",true,true,String.class);
+		
+		getEntityDefinition().setBeanCachingActiveByDefault(true,1000);
 	}
 	
 	
@@ -102,9 +105,10 @@ public class ICApplicationBindingBMPBean extends GenericEntity implements ICAppl
 	}
 	
 	public Collection ejbFindAll() throws FinderException {
-		IDOQuery sql = idoQuery();
-		sql.appendSelectAllFrom(this.getEntityName());
-		return this.idoFindPKsByQuery(sql);
+		SelectQuery sql = idoSelectQuery();
+		//sql.appendSelectAllFrom(this.getEntityName());
+		//return this.idoFindPKsByQuery(sql);
+		return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(sql,1000);
 	}
 
 }

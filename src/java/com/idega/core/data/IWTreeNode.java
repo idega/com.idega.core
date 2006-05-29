@@ -6,22 +6,19 @@ import java.util.Locale;
 
 import com.idega.idegaweb.IWApplicationContext;
 /**
- * 
  * <p>Company: idegaweb </p>
  * @author aron
- * 
- *
  */
 public class IWTreeNode implements ICTreeNodeAddable {
   
-  protected static final String PATH_DELIMITER = "#"; 
+	protected static final String PATH_DELIMITER = "#"; 
 	
 	ICTreeNode parent = null;
 	ArrayList childs = null;
 	String Name = "";
 	//Object object = null;
-	String path =null;
-	int ID = -1;
+	String path = null;
+	String ID = null;
 	static int internalID = 1;
 	
 	public IWTreeNode(String name){
@@ -32,11 +29,16 @@ public class IWTreeNode implements ICTreeNodeAddable {
 		this(name,ID,null);
 	}
 	
-	public IWTreeNode(String name,int ID,ICTreeNodeAddable parent){
+	public IWTreeNode(String name,int iID,ICTreeNodeAddable parent){
+		this(name,Integer.toString(iID),parent);
+	}
+	
+	public IWTreeNode(String name,String sID,ICTreeNodeAddable parent){
 			this.childs = new ArrayList();
 			this.Name = name;
 			//this.object = object;
-			this.ID = ID;
+			//this.ID = ID;
+			this.ID=sID;
 			if(parent!=null) {
 				parent.addChild(this);
 			}
@@ -53,7 +55,7 @@ public class IWTreeNode implements ICTreeNodeAddable {
 		IWTreeNode node = new IWTreeNode(name);
 		node.setAsRootNode();
 		return node;
-	}
+	}	
 	
 	public void setAsRootNode(){
 		this.path = "root";
@@ -139,7 +141,13 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	 * @see com.idega.core.ICTreeNode#getNodeID()
 	 */
 	public int getNodeID() {
-		return this.ID;
+		String id=getId();
+		if(id==null){
+			return -1;
+		}
+		else{
+			return Integer.parseInt(id);
+		}
 	}
 	
 	/**
@@ -171,7 +179,7 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	 * @param i
 	 */
 	public void setNodeID(int i) {
-		this.ID = i;
+		this.ID = Integer.toString(i);
 	}
 
 	/**
@@ -206,4 +214,12 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	public String getNodeName(Locale locale, IWApplicationContext iwac) {
 		return getNodeName(locale);
 	}
+	
+	/**
+	 * @return the number of siblings this node has
+	 */
+	public String getId(){
+		return this.ID;
+	}
+
 }

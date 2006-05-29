@@ -72,7 +72,7 @@ public interface ICTreeNode {
 	
 
 	/**
-	 * Returns the unique ID of the Node in the tree
+	 * @deprecated Replaced with getId()
 	 */
 	public int getNodeID();
 
@@ -80,6 +80,12 @@ public interface ICTreeNode {
 	 * @return the number of siblings this node has
 	 */
 	public int getSiblingCount();
+	
+	/**
+	 * Returns the unique ID of the Node in the tree
+	 * @return the id as a string
+	 */
+	public String getId();
 	
 //	/**
 //	 * @return returns an int identifier for the node type
