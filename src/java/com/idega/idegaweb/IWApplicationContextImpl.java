@@ -22,7 +22,7 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 	 * Comment for <code>serialVersionUID</code>
 	 */
 	private static final long serialVersionUID = 5152712252892799540L;
-	private final static String IWAPP_CURRENT_DOMAIN_ID = "iw_current_domain_id";
+	//private final static String IWAPP_CURRENT_DOMAIN_ID = "iw_current_domain_id";
 	private IWMainApplication iwma;
 	private HashMap domainMap = new HashMap();
 	ICDomain domain;
@@ -123,17 +123,18 @@ public class IWApplicationContextImpl implements IWApplicationContext {
 		}
 		
 		try {
-			String id = (String) this.getApplicationAttribute(IWAPP_CURRENT_DOMAIN_ID);
+			/*String id = (String) this.getApplicationAttribute(IWAPP_CURRENT_DOMAIN_ID);
 			int domainID = 1;
 			if (id != null) {
 				try {
 					domainID = Integer.parseInt(id);
 				} catch (NumberFormatException nfe) {
 				}
-			}
+			}*/
 			if(this.domain==null){
 				ICDomainHome domainHome = (ICDomainHome)IDOLookup.getHome(ICDomain.class);
-				ICDomain realDomain = domainHome.findByPrimaryKey(domainID);
+				ICDomain realDomain = domainHome.findFirstDomain();
+				//ICDomain realDomain = domainHome.findByPrimaryKey(domainID);
 				//domain = new CachedDomain(realDomain);
 				this.domain= realDomain;
 			}
