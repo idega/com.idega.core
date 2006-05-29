@@ -1,5 +1,5 @@
 /*
- * $Id: ConnectionBroker.java,v 1.14 2006/02/22 20:52:49 laddi Exp $
+ * $Id: ConnectionBroker.java,v 1.15 2006/05/29 18:04:10 tryggvil Exp $
  *
  * Copyright (C) 2000-2005 Idega hf. All Rights Reserved.
  *
@@ -35,7 +35,7 @@ import com.idega.transaction.IdegaTransactionManager;
  * <br>
  * </p>
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
 */
 public class ConnectionBroker
 {
@@ -50,6 +50,9 @@ public class ConnectionBroker
 	private static DataSource defaultDs;
 	private static Map dataSourcesMap=new HashMap();
 	private static Logger log = Logger.getLogger(ConnectionBroker.class.getName());
+	public static int gottenConns=0;
+	public static boolean debug=false;
+	
 	/**	
 	 * Returns a Datastore connection from the default datasource
 	 */
@@ -77,6 +80,11 @@ public class ConnectionBroker
 	 */
 	public static Connection getConnection(String dataSourceName)
 	{
+		String logString = "Getting database connection from: "+dataSourceName+" for "+(++gottenConns)+" time";
+		log.fine(logString);
+		if(debug){
+			System.out.println(logString);
+		}
 		if (dataSourceName == null)
 		{
 			return getConnection();
