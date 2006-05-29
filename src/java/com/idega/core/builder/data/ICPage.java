@@ -2,10 +2,11 @@ package com.idega.core.builder.data;
 
 import java.util.Locale;
 import com.idega.data.IDOLegacyEntity;
+import com.idega.data.UniqueIDCapable;
 import com.idega.io.serialization.Storable;
 import com.idega.repository.data.Resource;
 
-public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, Resource, Storable {
+public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, Resource, Storable,UniqueIDCapable {
 
 	public void delete(int p0) throws java.sql.SQLException;
 
@@ -120,4 +121,14 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 	public String getDefaultPageURI();
 
 	public void setDefaultPageURI(String pageUri);
+	
+	public String getWebDavUri();
+	public void setWebDavUri(String fileUri);
+	
+	public ICDomain getDomain();
+	
+	public int getDomainId();
+	
+	public void setDomain(ICDomain domain);
+	
 }

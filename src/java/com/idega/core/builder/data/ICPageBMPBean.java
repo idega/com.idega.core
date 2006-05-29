@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.4 2006/05/09 14:47:18 tryggvil Exp $
+ * $Id: ICPageBMPBean.java,v 1.5 2006/05/29 18:16:33 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -25,6 +25,7 @@ import com.idega.core.net.data.ICProtocol;
 import com.idega.core.user.data.User;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookupException;
+import com.idega.data.UniqueIDCapable;
 import com.idega.data.query.Column;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
@@ -41,7 +42,7 @@ import com.idega.util.IWTimestamp;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.3
  */
-public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implements com.idega.core.builder.data.ICPage, Storable, Resource {
+public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implements com.idega.core.builder.data.ICPage, Storable, Resource, UniqueIDCapable {
 	/**
 	 * Comment for <code>serialVersionUID</code>
 	 */
@@ -60,6 +61,8 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	private final static String IS_CATEGORY = "IS_CATEGORY";
 	private final static String PAGE_FORMAT="PAGE_FORMAT";
 	private final static String PAGE_URI="PAGE_URI";
+	private static final String DOMAIN_ID = "IB_DOMAIN_ID";
+	private static final String WEBDAV_URI = "WEBDAV_URI";
 	private ICFile _file;
 	
 
@@ -77,6 +80,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	private static final String FORMAT_IBXML = "IBXML";
 	private static final String FORMAT_HTML = "HTML";
 	private static final String FORMAT_JSP_1_2 = "JSP_1_2";
+
 	/**
 	 *
 	 */
@@ -110,6 +114,13 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		addManyToManyRelationShip(ICProtocol.class, "ib_page_ic_protocol");
 		addAttribute(PAGE_FORMAT, "Format", true, true, String.class, 30);
 		addAttribute(PAGE_URI, "URI", String.class);
+		
+		addManyToOneRelationship(DOMAIN_ID,ICDomain.class);
+		addUniqueIDColumn();
+		addIndex(getUniqueIdColumnName());
+		
+		addAttribute(WEBDAV_URI, "Webdav/Slide path", String.class);
+		
 	}
 
 	/**
@@ -777,6 +788,29 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		setColumn(PAGE_URI,pageUri);
 	}
 
+	public String getWebDavUri(){
+		String uri = getStringColumnValue(WEBDAV_URI);
+		return uri;
+	}
+	
+	public void setWebDavUri(String fileUri){
+		setColumn(WEBDAV_URI,fileUri);
+	}
+	
+	public ICDomain getDomain(){
+		ICDomain domain = (ICDomain) getColumnValue(DOMAIN_ID);
+		return domain;
+	}
+	
+	public int getDomainId(){
+		int domainId = getIntColumnValue(DOMAIN_ID);
+		return domainId;
+	}
+	
+	public void setDomain(ICDomain domain){
+		setColumn(DOMAIN_ID,domain);
+	}
+	
 	/**
 	 * @return
 	 */
