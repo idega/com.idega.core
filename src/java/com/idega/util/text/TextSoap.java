@@ -11,7 +11,6 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import com.ibm.icu.text.Transliterator;
 
 /**
@@ -25,7 +24,8 @@ public class TextSoap {
 
 	private static DecimalFormat singleDecimalFormat = new DecimalFormat("0.0");
 	private static DecimalFormatSymbols symbols = singleDecimalFormat.getDecimalFormatSymbols();
-
+	private static Transliterator transliterator = Transliterator.getInstance("Any-Hex");
+	
 	/**
 	 *  Function to cut out all the text between two tokens in a larger string and
 	 *  return the results as a Vector of strings
@@ -985,7 +985,6 @@ public class TextSoap {
 	 * @return String
 	 */
 	public static String convertSpecialCharacters(String stringToConvert) {
-		Transliterator transliterator = Transliterator.getInstance("Any-Hex");
 		StringBuffer sb = new StringBuffer();
 		int n = stringToConvert.length();
 		for (int i = 0; i < n; i++) {
