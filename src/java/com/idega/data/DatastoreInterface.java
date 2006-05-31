@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.131 2006/04/09 12:13:15 laddi Exp $
+ * $Id: DatastoreInterface.java,v 1.132 2006/05/31 10:52:32 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -68,6 +68,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	public final static String DBTYPE_INFORMIX = "informix";
 	public final static String DBTYPE_UNIMPLEMENTED = "unimplemented";
 	public final static String DBTYPE_DERBY = "derby";
+	public final static String DBTYPE_H2 = "h2";
 	
 	public static void unload()	{
 		usePreparedStatement = DEFAULT_USE_PREPARED_STATEMENT;
@@ -108,6 +109,9 @@ public abstract class DatastoreInterface implements MutableClass {
 		}
 		else if (datastoreType.equals(DBTYPE_DERBY)) {
 			className = "com.idega.data.DerbyDatastoreInterface";
+		}
+		else if (datastoreType.equals(DBTYPE_H2)) {
+			className = "com.idega.data.H2DatastoreInterface";
 		}
 		else {
 			//className = "unimplemented DatastoreInterface";
@@ -308,6 +312,9 @@ public abstract class DatastoreInterface implements MutableClass {
 				}
 				else if (checkString.indexOf("derby") != -1) {
 					dataStoreType = DBTYPE_DERBY;
+				}
+				else if (checkString.indexOf("h2") != -1) {
+					dataStoreType = DBTYPE_H2;
 				}
 				else if (checkString.indexOf("idega") != -1) {
 					dataStoreType = DBTYPE_UNIMPLEMENTED;

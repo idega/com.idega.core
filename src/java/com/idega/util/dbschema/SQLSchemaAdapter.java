@@ -1,5 +1,5 @@
 /*
- * $Id: SQLSchemaAdapter.java,v 1.11 2006/04/09 12:13:19 laddi Exp $
+ * $Id: SQLSchemaAdapter.java,v 1.12 2006/05/31 10:51:36 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/05/31 10:51:36 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public abstract class SQLSchemaAdapter implements MutableClass {
 
@@ -68,6 +68,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	public final static String DBTYPE_INFORMIX = "informix";
 	public final static String DBTYPE_UNIMPLEMENTED = "unimplemented";
 	public final static String DBTYPE_DERBY = "derby";
+	public final static String DBTYPE_H2 = "h2";
 
 	
 	public static void unload()	{
@@ -116,6 +117,9 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 			}
 			else if (datastoreType.equals(DBTYPE_MCKOI)) {
 				className = McKoiSchemaAdapter.class;
+			}
+			else if (datastoreType.equals(DBTYPE_H2)) {
+				className = H2SchemaAdapter.class;
 			}
 			else {
 				//className = "unimplemented DatastoreInterface";
@@ -246,7 +250,9 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 				else if (checkString.indexOf("informix") != -1) {
 					dataStoreType = DBTYPE_INFORMIX;
 				}
-
+				else if (checkString.indexOf("h2") != -1) {
+					dataStoreType = DBTYPE_H2;
+				}
 				else if (checkString.indexOf("idega") != -1) {
 					dataStoreType = DBTYPE_UNIMPLEMENTED;
 				}
