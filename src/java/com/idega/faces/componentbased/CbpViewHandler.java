@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.4 2006/05/11 17:06:38 eiki Exp $
+ * $Id: CbpViewHandler.java,v 1.5 2006/05/31 11:18:43 tryggvil Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2006/05/11 17:06:38 $ by $Author: eiki $
+ * Last modified: $Date: 2006/05/31 11:18:43 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class CbpViewHandler extends ViewHandler {
 
@@ -127,6 +127,9 @@ public class CbpViewHandler extends ViewHandler {
 	                		ar.printStackTrace();
 	                		throw new JspException(ar);
 	                }
+	                //catch(IllegalStateException se){
+	                //	System.err.println("CbpViewHandler.writeOutResponseAndClientState : IllegalStateException : "+se.getMessage());
+	                //}
 	                if (serializedView != null)
 	                {
 	                    //until now we have written to a buffer
@@ -182,8 +185,10 @@ public class CbpViewHandler extends ViewHandler {
 	        }
 	        catch (Exception e)
 	        {
-	            log.error("Error writing serialized page", e);
-	            System.err.println("CbpViewHandler.writeOutResponseAndClientState(): "+e.getClass().getName()+" : "+e.getMessage());
+	            log.debug("Error writing serialized page", e);
+	            //System.err.println("CbpViewHandler.writeOutResponseAndClientState(): "+e.getClass().getName()+" : "+e.getMessage());
+	            log.error(""+e.getClass().getName()+" : "+e.getMessage());
+	            
 	            //e.printStackTrace();
 	            //throw new JspException(e);
                 
