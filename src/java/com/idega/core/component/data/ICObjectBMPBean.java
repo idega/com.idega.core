@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectBMPBean.java,v 1.15 2006/05/29 18:15:09 tryggvil Exp $
+ * $Id: ICObjectBMPBean.java,v 1.16 2006/05/31 11:12:02 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  *
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
@@ -40,10 +40,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * time the application starts it updates the IC_OBJECT table with all components
  * registered in all idegaWeb bundles installed in the web-application.
  * </p>
- * Last modified: $Date: 2006/05/29 18:15:09 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/05/31 11:12:02 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
 	/**
@@ -307,7 +307,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 			Collection newPKs = new ArrayList();
 			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
 			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
-				Object pk = (Object) iter.next();
+				Object pk = iter.next();
 				ICObject ico = home.findByPrimaryKey(pk);
 				if(ico.getObjectType().equals(type)){
 					newPKs.add(pk);
@@ -331,7 +331,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 			Collection newPKs = new ArrayList();
 			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
 			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
-				Object pk = (Object) iter.next();
+				Object pk = iter.next();
 				ICObject ico = home.findByPrimaryKey(pk);
 				if(ico.getObjectType().equals(type)){
 					newPKs.add(pk);
@@ -357,7 +357,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 			Collection newPKs = new ArrayList();
 			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
 			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
-				Object pk = (Object) iter.next();
+				Object pk = iter.next();
 				ICObject ico = home.findByPrimaryKey(pk);
 				if(ico.getObjectType().equals(type)&&ico.getBundleIdentifier().equals(bundle)){
 					newPKs.add(pk);
@@ -388,7 +388,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 			Collection newPKs = new ArrayList();
 			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
 			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
-				Object pk = (Object) iter.next();
+				Object pk = iter.next();
 				ICObject ico = home.findByPrimaryKey(pk);
 				if(ico.getBundleIdentifier().equals(bundle)){
 					newPKs.add(pk);
@@ -411,7 +411,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 			Collection allPKs = ejbFindAll();
 			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
 			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
-				Object pk = (Object) iter.next();
+				Object pk = iter.next();
 				ICObject ico = home.findByPrimaryKey(pk);
 				if(ico.getClassName().equals(className)){
 					return pk;

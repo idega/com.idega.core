@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultComponentInfo.java,v 1.6 2006/05/29 18:15:50 tryggvil Exp $
+ * $Id: DefaultComponentInfo.java,v 1.7 2006/05/31 11:12:02 laddi Exp $
  * Created on 8.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import java.util.Locale;
  * <p>
  * Default Implementation of the ComponentInfo interface.
  * </p>
- *  Last modified: $Date: 2006/05/29 18:15:50 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/05/31 11:12:02 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class DefaultComponentInfo implements ComponentInfo {
 
@@ -160,7 +160,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	 * @return the deprecated
 	 */
 	public boolean isDeprecated() {
-		return deprecated;
+		return this.deprecated;
 	}
 
 
@@ -178,7 +178,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	 * @return the expert
 	 */
 	public boolean isExpert() {
-		return expert;
+		return this.expert;
 	}
 
 
@@ -196,7 +196,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	 * @return the group
 	 */
 	public String getGroup() {
-		return group;
+		return this.group;
 	}
 
 

@@ -351,15 +351,15 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		this.iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 
 		this.startLogManager();
-		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
+		
+		/*IWStyleManager iwStyleManager = IWStyleManager.getInstance();
 		iwStyleManager.getStyleSheet(this.iwma);
 		if(iwStyleManager.shouldWriteDownFile()){
 			sendStartMessage("Starting IWStyleManager");
 		}
 		else{
 			sendStartMessage("Starting IWStyleManager - writing down style.css is disabled");
-		}
-		
+		}*/
 		
 		if(!this.iwma.isInDatabaseLessMode()){
 			updateClassReferencesInDatabase();

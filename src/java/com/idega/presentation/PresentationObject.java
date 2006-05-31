@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.160 2006/05/29 18:13:39 tryggvil Exp $
+ * $Id: PresentationObject.java,v 1.161 2006/05/31 11:12:02 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2006/05/29 18:13:39 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/05/31 11:12:02 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.160 $
+ * @version $Revision: 1.161 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -2186,8 +2186,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		values[25]=this._styler;
 		values[26]=this._objTemplateID;
 		values[27]=this.xmlId;
-		values[28]=Boolean.valueOf(resetGoneThroughMainInRestore);
-		values[29]=Boolean.valueOf(supportsMultipleMainCalls);
+		values[28]=Boolean.valueOf(this.resetGoneThroughMainInRestore);
+		values[29]=Boolean.valueOf(this.supportsMultipleMainCalls);
 		return values;
 	}
 
@@ -2654,11 +2654,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	  * Returns wheather the "goneThroughMain" variable is reset back to false in the restore phase.
 	  */
 	 protected boolean resetGoneThroughMainInRestore(){
-	 	return resetGoneThroughMainInRestore;
+	 	return this.resetGoneThroughMainInRestore;
 	 }
 	 
 	 protected void setResetGoneThroughMainInRestore(boolean ifReset){
-		 resetGoneThroughMainInRestore=ifReset;
+		 this.resetGoneThroughMainInRestore=ifReset;
 	 }
 	 
 	 /**
@@ -2678,11 +2678,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	  * @return
 	  */
 	 protected boolean supportsMultipleMainCalls(){
-	 	return supportsMultipleMainCalls;
+	 	return this.supportsMultipleMainCalls;
 	 }
 	 
 	 protected void setSupportsMultipleMainCalls(boolean ifSupports){
-		 supportsMultipleMainCalls=ifSupports;
+		 this.supportsMultipleMainCalls=ifSupports;
 	 }
 	 /**
 	  * Gets if the main(iwcontext) method has been called for this object

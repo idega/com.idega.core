@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.49 2006/05/29 18:18:51 tryggvil Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.50 2006/05/31 11:12:02 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -40,10 +40,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/05/29 18:18:51 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/05/31 11:12:02 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.49 $
+ * @version $Revision: 1.50 $
  */
 
 
@@ -132,7 +132,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	 * </p>
 	 */
 	private void preloadCache() {
-		if(!preloadedCache){
+		if(!this.preloadedCache){
 			Collection keys;
 			try {
 				keys = getApplicationBindingBusiness().keySet();
@@ -141,7 +141,7 @@ public class IWMainApplicationSettings implements MutableClass {
 					//cache
 					if(key!=null){}
 				}
-				preloadedCache=true;
+				this.preloadedCache=true;
 			}
 			catch (Exception e) {
 				// TODO Auto-generated catch block

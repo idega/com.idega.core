@@ -1,5 +1,5 @@
 /*
- * $Id: IWCacheManager2.java,v 1.8 2006/05/29 18:17:11 tryggvil Exp $ Created on
+ * $Id: IWCacheManager2.java,v 1.9 2006/05/31 11:12:03 laddi Exp $ Created on
  * 6.1.2006 in project com.idega.core
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -9,25 +9,26 @@
  */
 package com.idega.core.cache;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.ObjectExistsException;
+
 import com.idega.idegaweb.IWMainApplication;
 
 /**
  * <p>
  * TODO tryggvil Describe Type IWCacheManager2
  * </p>
- * Last modified: $Date: 2006/05/29 18:17:11 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/05/31 11:12:03 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class IWCacheManager2 {
 

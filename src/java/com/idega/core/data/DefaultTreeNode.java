@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultTreeNode.java,v 1.1 2006/05/29 18:07:06 tryggvil Exp $
+ * $Id: DefaultTreeNode.java,v 1.2 2006/05/31 11:12:02 laddi Exp $
  * Created on 26.5.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.idegaweb.IWApplicationContext;
  * <p>
  * Default implementation of the ICTreeNode interface
  * </p>
- *  Last modified: $Date: 2006/05/29 18:07:06 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/05/31 11:12:02 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class DefaultTreeNode implements ICTreeNode {
 
@@ -173,7 +173,7 @@ public class DefaultTreeNode implements ICTreeNode {
 	}
 	
 	public String getId(){
-		return id;
+		return this.id;
 	}
 
 }

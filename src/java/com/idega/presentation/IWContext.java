@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.139 2006/05/13 11:26:18 gimmi Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.140 2006/05/31 11:12:02 laddi Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2006/05/13 11:26:18 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/05/31 11:12:02 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.139 $
+ * @version $Revision: 1.140 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -500,6 +500,39 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			prm = getRequest().getParameter(parameterName);
 		}
 		return prm;
+	}
+	
+	public Boolean getBooleanParameter(String parameterName) {
+		if (isParameterSet(parameterName)) {
+			return new Boolean(getParameter(parameterName));
+		}
+		return null;
+	}
+	
+	public Integer getIntegerParameter(String parameterName) {
+		if (isParameterSet(parameterName)) {
+			try {
+				return new Integer(getParameter(parameterName));
+			}
+			catch (NumberFormatException nfe) {
+				nfe.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
+	
+	public Float getFloatParameter(String parameterName) {
+		if (isParameterSet(parameterName)) {
+			try {
+				return new Float(getParameter(parameterName));
+			}
+			catch (NumberFormatException nfe) {
+				nfe.printStackTrace();
+			}
+		}
+		
+		return null;
 	}
 
 	public Enumeration getParameterNames() {

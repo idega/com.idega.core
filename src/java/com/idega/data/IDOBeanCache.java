@@ -53,7 +53,7 @@ public class IDOBeanCache {
     	int maxCachedBeans = 200;
     	IDOEntityDefinition entityDef;
 		try {
-			entityDef = (IDOEntityDefinition) IDOLookup.getEntityDefinitionForClass(entityInterfaceClass);
+			entityDef = IDOLookup.getEntityDefinitionForClass(this.entityInterfaceClass);
 	    	if(entityDef!=null){
 	    		maxCachedBeans=entityDef.getMaxCachedBeans();
 	    	}

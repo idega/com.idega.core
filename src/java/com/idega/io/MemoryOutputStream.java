@@ -59,7 +59,7 @@ public class MemoryOutputStream extends OutputStream {
 	 * @return the buffer
 	 */
 	public MemoryFileBuffer getBuffer() {
-		return buffer;
+		return this.buffer;
 	}
 
 	

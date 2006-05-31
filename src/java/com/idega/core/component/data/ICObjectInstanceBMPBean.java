@@ -9,10 +9,10 @@ package com.idega.core.component.data;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
+
 import javax.ejb.FinderException;
+
 import com.idega.core.component.business.ICObjectBusiness;
-import com.idega.data.IDOBeanCache;
-import com.idega.data.IDOContainer;
 import com.idega.data.IDOFinderException;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.query.MatchCriteria;

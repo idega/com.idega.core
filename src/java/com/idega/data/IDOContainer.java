@@ -65,7 +65,7 @@ public class IDOContainer implements Singleton {
     if(this.beanCacheMap==null){
         this.beanCacheMap = new HashMap();
       }
-    return beanCacheMap;
+    return this.beanCacheMap;
   }
   
   /**
