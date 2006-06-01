@@ -31,6 +31,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.LogFactory;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.appserver.AppServerDetector;
@@ -52,6 +53,7 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.SingletonRepository;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupRelationType;
 import com.idega.user.data.GroupRelationTypeHome;
@@ -359,11 +361,15 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 		else{
 			sendStartMessage("Starting IWStyleManager - writing down style.css is disabled");
-		}*/
-		
+		}
+		*/		
+		// cleaning, maintaining, updating
 		if(!this.iwma.isInDatabaseLessMode()){
+			sendStartMessage("Cleaning and updating database...");
 			updateClassReferencesInDatabase();
 			updateStartDataInDatabase();
+			cleanEmailData();
+			sendStartMessage("...cleaning and updating database done");
 		}
 		startTemporaryBundleStarters();
 		
@@ -668,6 +674,18 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 
 	}
+	
+	private void cleanEmailData() {
+		try {
+			IWApplicationContext iwac = iwma.getIWApplicationContext();
+			UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+			userBusiness.cleanUserEmails();
+		}
+		catch (IBOLookupException ile) {
+			ile.printStackTrace();
+		}
+	}
+
 	
 	private void insertGroupRelationType(String groupRelationType) {
 		/**
