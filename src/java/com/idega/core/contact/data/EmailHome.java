@@ -1,5 +1,5 @@
 /*
- * $Id: EmailHome.java,v 1.2 2006/05/17 16:40:53 thomas Exp $
+ * $Id: EmailHome.java,v 1.3 2006/06/01 15:20:02 thomas Exp $
  * Created on May 16, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import com.idega.user.data.Group;
 
 /**
  * 
- *  Last modified: $Date: 2006/05/17 16:40:53 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/06/01 15:20:02 $ by $Author: thomas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface EmailHome extends IDOHome {
 
@@ -31,7 +31,6 @@ public interface EmailHome extends IDOHome {
 	 public Email findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
 	 public java.util.Collection findEmailsForUser(com.idega.user.data.User p0)throws java.rmi.RemoteException,javax.ejb.FinderException;
 	 public java.util.Collection findEmailsForUser(int p0)throws javax.ejb.FinderException;
-	 public Email findEmailByAddress(java.lang.String p0)throws javax.ejb.FinderException;
 
 	/**
 	 * 

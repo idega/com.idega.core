@@ -2,12 +2,15 @@ package com.idega.core.contact.data;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Iterator;
 import javax.ejb.FinderException;
+import com.idega.business.IBORuntimeException;
 import com.idega.core.data.GenericTypeBMPBean;
 import com.idega.core.user.data.User;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntity;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.query.Table;
 import com.idega.user.data.Group;
@@ -90,7 +93,8 @@ public class EmailBMPBean
 	 */
 	public Collection ejbFindEmailsForUser(com.idega.user.data.User user) throws FinderException
 	{
-		return executeQuery(com.idega.user.data.User.class, UserBMPBean.SQL_RELATION_EMAIL, user);
+		Object userId = user.getPrimaryKey();
+		return executeQuery(com.idega.user.data.User.class, UserBMPBean.SQL_RELATION_EMAIL, userId);
 	}
 	
 	/**
@@ -156,15 +160,67 @@ public class EmailBMPBean
 		catch (FinderException ex) {
 			pk  = null;
 		}
-		if (pk == null) {
-			// choose the latest email that is the email with the greatest primary key
-			Collection coll = executeQuery(userOrGroupClass, relationTableName, userOrGroupId);
-			if (coll == null || coll.isEmpty()) {
-				throw new FinderException();
-			}
-			return Collections.max(coll);
+		if (pk != null) {
+			return pk;
 		}
-		return pk;
+		// nothing found?
+		// repairing email stuff - that usually done only one time per user
+		// choose the latest email (that is the email with the greatest primary key) that has no email type
+		// try to trepair data only for main email type
+		if (! EmailTypeBMPBean.MAIN_EMAIL.equals(uniqueNameOfEmailType)) {
+			throw new FinderException();
+		}
+		Collection coll = executeQuery(userOrGroupClass, relationTableName, userOrGroupId);
+		// if coll is null there are not any emails
+		if (coll == null || coll.isEmpty()) {
+			throw new FinderException();
+		}
+		Email resultEmail = null;
+		Integer resultEmailPrimaryKey = null;
+		EmailHome home = (EmailHome) getEJBLocalHome();
+		Iterator allEmailsIterator = coll.iterator();
+		while (allEmailsIterator.hasNext()) {
+			Integer anEmailPrimaryKey = (Integer) allEmailsIterator.next();
+			Email anEmail = home.findByPrimaryKey(anEmailPrimaryKey);
+			EmailType emailType = anEmail.getEmailType();
+			// do not find emails with a set type
+			if (emailType == null) {
+				// choose the one with the greatest primary key
+				if (resultEmailPrimaryKey == null || ( anEmailPrimaryKey.compareTo(resultEmailPrimaryKey)) > 0) {
+					resultEmailPrimaryKey = anEmailPrimaryKey;
+					resultEmail = anEmail;
+				}
+			}
+		}
+		// hopefully we found something - maybe not
+		if (resultEmail == null) {
+			// that means there are only emails with a different type than "main" - quite strange....
+			throw new FinderException();
+		}
+		// the found email has no type yet
+		// set the type to main email
+		EmailTypeHome emailTypeHome;
+		try {
+			emailTypeHome = (EmailTypeHome) IDOLookup.getHome(EmailType.class);
+			EmailType mainEmailType = emailTypeHome.findMainEmailType();
+			resultEmail.setEmailType(mainEmailType);
+			resultEmail.store();
+			return resultEmailPrimaryKey;
+		}
+		catch (IDOLookupException e) {
+			e.printStackTrace();
+			throw new IBORuntimeException();
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+			throw new IBORuntimeException();
+		}
+		catch (FinderException e) {
+			// ! main email type is always set !
+			e.printStackTrace();
+			throw new IBORuntimeException();
+		}
+
 	}
 
 	
@@ -223,16 +279,4 @@ public class EmailBMPBean
 		query.appendAnd();
 		query.append("iue.").append(userOrGroupPrimaryKey).appendEqualSign().append(userOrGroupId);
 	}
-	
-	
-	public Integer ejbFindEmailByAddress(String address) throws FinderException
-	{
-		IDOQuery query = idoQueryGetSelect().appendWhereEqualsQuoted(getColumnNameAddress(),address );
-		Collection coll = super.idoFindPKsByQuery(query);
-		if (!coll.isEmpty()) {
-			return (Integer) coll.iterator().next();
-		}
-		throw new FinderException("No email found");
-	}
-
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: EmailHomeImpl.java,v 1.2 2006/05/17 16:40:53 thomas Exp $
+ * $Id: EmailHomeImpl.java,v 1.3 2006/06/01 15:20:02 thomas Exp $
  * Created on May 16, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.user.data.Group;
 
 /**
  * 
- *  Last modified: $Date: 2006/05/17 16:40:53 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/06/01 15:20:02 $ by $Author: thomas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class EmailHomeImpl extends IDOFactory implements EmailHome {
 
@@ -81,15 +81,6 @@ public class EmailHomeImpl extends IDOFactory implements EmailHome {
 	public Email findMainEmailForGroup(Group group) throws FinderException, RemoteException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((EmailBMPBean) entity).ejbFindMainEmailForGroup(group);
-		this.idoCheckInPooledEntity(entity);
-		return this.findByPrimaryKey(pk);
-	}
-	
-	
-	
-	public Email findEmailByAddress(String address) throws FinderException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		Object pk = ((EmailBMPBean) entity).ejbFindEmailByAddress(address);
 		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
 	}
