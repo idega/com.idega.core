@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.12 2006/04/09 12:13:20 laddi Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.13 2006/06/01 17:07:13 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -31,7 +31,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
+ * Last modified: $Date: 2006/06/01 17:07:13 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -43,7 +43,7 @@ import com.idega.presentation.text.Text;
  * iw_core.css is added and override the styles.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class SearchResults extends Block {
 
@@ -463,8 +463,8 @@ public class SearchResults extends Block {
 	}
 
 	/**
+	 * Set a CVS list of the classnames of search plugins, e.g. WebCrawlerSearchPlugin, ContentSearch, etc.
 	 * @param searchPluginsToUse
-	 *            The searchPluginsToUse to set.
 	 */
 	public void setSearchPluginsToUse(String searchPluginsToUse) {
 		this.searchPluginsToUse = searchPluginsToUse;
