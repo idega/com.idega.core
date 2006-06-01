@@ -140,7 +140,7 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		Collection cachedList = getCachedEntities();
 		for (Iterator iter = cachedList.iterator(); iter.hasNext();) {
 			ICObjectInstance instance = (ICObjectInstance) iter.next();
-			if(instance.getUniqueId().equals(uuid)){
+			if(instance != null && instance.getUniqueId() != null && uuid != null && instance.getUniqueId().equals(uuid)){
 				return (Integer) instance.getPrimaryKey();
 			}
 		}
