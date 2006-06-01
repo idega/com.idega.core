@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.91 2005/11/18 16:20:53 eiki Exp $
+ * $Id: UserBusiness.java,v 1.92 2006/06/01 15:28:23 thomas Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -47,10 +47,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2005/11/18 16:20:53 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/06/01 15:28:23 $ by $Author: thomas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.91 $
+ * @version $Revision: 1.92 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -310,12 +310,12 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUserMail
 	 */
-	public void updateUserMail(int userId, String email) throws CreateException, RemoteException;
+	public Email updateUserMail(int userId, String email) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUserMail
 	 */
-	public void updateUserMail(User user, String email) throws CreateException, RemoteException;
+	public Email updateUserMail(User user, String email) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUserJob
@@ -483,11 +483,6 @@ public interface UserBusiness extends IBOService {
 	 * @see com.idega.user.business.UserBusinessBean#addNewUserEmail
 	 */
 	public void addNewUserEmail(int iUserId, String sNewEmailAddress) throws java.rmi.RemoteException;
-
-	/**
-	 * @see com.idega.user.business.UserBusinessBean#lookupEmail
-	 */
-	public Email lookupEmail(String EmailAddress) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#listOfUserGroups
@@ -808,4 +803,7 @@ public interface UserBusiness extends IBOService {
 	 */
 	public void callAllUserGroupPluginBeforeUserRemoveMethod(User user, Group parentGroup)
 			throws java.rmi.RemoteException;
+	
+	public void cleanUserEmails();
+	
 }

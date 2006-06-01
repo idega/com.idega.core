@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.206 2006/05/17 16:43:13 thomas Exp $
+ * $Id: UserBusinessBean.java,v 1.207 2006/06/01 15:28:23 thomas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -87,6 +87,7 @@ import com.idega.user.data.UserCommentHome;
 import com.idega.user.data.UserHome;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.StringHandler;
 import com.idega.util.Timer;
 import com.idega.util.datastructures.NestedSetsContainer;
 import com.idega.util.text.Name;
@@ -96,10 +97,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2006/05/17 16:43:13 $ by $Author: thomas $
+ * Last modified: $Date: 2006/06/01 15:28:23 $ by $Author: thomas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.206 $
+ * @version $Revision: 1.207 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -807,10 +808,26 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	/*
+	 * Deprecated
+	 * 
+	 *  (non-Javadoc)
+	 * @see com.idega.user.business.UserBusiness#getUserMail(int)
+	 * 
+	 * @deprecated use getUserMainMail
+	 */
 	public Email getUserMail(int userId) {
 		return getUserMail(this.getUser(userId));
 	}
 
+	/*
+	 * Deprecated
+	 * 
+	 *  (non-Javadoc)
+	 * @see com.idega.user.business.UserBusiness#getUserMail(com.idega.user.data.User)
+	 * 
+	 * @deprecated use getUserMainMail
+	 */
 	public Email getUserMail(User user) {
 		try {
 			return getUsersMainEmail(user);
@@ -861,57 +878,52 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
-	public void updateUserMail(int userId, String email) throws CreateException, RemoteException {
-		updateUserMail(getUser(userId), email);
+	public Email updateUserMail(int userId, String email) throws CreateException, RemoteException {
+		return updateUserMail(getUser(userId), email);
 	}
 
 	/**
-	 * updates or creates the main email address (that is the email with type "main"l)
+	 * Updates or creates the main email address (that is the email with type "main"l)
+	 * if the specifield email is empty (that is null or empty) nothing happens.
 	 */
-	public void updateUserMail(User user, String email) throws CreateException, RemoteException {
-		if (email == null) {
-			return;
+	public Email updateUserMail(User user, String email) throws CreateException, RemoteException {
+		if (StringHandler.isEmpty(email)) {
+			return null;
 		}
 		Email mainEmail = null;
-		boolean insert = false;
 		try {
+			// note: call of the following method does some repairing
+			// + if main mail is not set yet a main email is figured out
 			mainEmail = getUsersMainEmail(user);
 		}
 		catch (NoEmailFoundException ex) {
 			mainEmail = null;
 		}
-		if (mainEmail == null) {
+		// email was found
+		if (mainEmail != null) {
+			String oldAddress = mainEmail.getEmailAddress();
+			// is it an update at all?
+			if (! email.equals(oldAddress)) {
+				mainEmail.setEmailAddress(email);
+				mainEmail.store();
+			}
+			return mainEmail;
+		}
+		// not found? create a new one!
+		try {
 			mainEmail = this.getEmailHome().create();
-			try {
-				EmailType mainEmailType = getEmailTypeHome().findMainEmailType();
-				mainEmail.setEmailType(mainEmailType);
-			}
-			catch (FinderException ex) {
-				throw new CreateException("Main email type could not be found");
-			}
-			insert = true;
+			EmailType mainEmailType = getEmailTypeHome().findMainEmailType();
+			mainEmail.setEmailType(mainEmailType);
+			mainEmail.setEmailAddress(email);
+			mainEmail.store();
+			user.addEmail(mainEmail);
+			return mainEmail;
 		}
-		// repairing old data
-		// some old emails do not have an email type set
-		else if (mainEmail.getEmailType() == null){
-			try {
-				EmailType mainEmailType = getEmailTypeHome().findMainEmailType();
-				mainEmail.setEmailType(mainEmailType);
-			}
-			catch (FinderException ex) {
-				throw new CreateException("Main email type could not be found");
-			}
+		catch (FinderException ex) {
+			throw new CreateException("Main email type could not be found");
 		}
-		mainEmail.setEmailAddress(email);
-		mainEmail.store();
-		if (insert) {
-			//((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(mail);
-			try {
-				user.addEmail(mainEmail);
-			}
-			catch (Exception e) {
-				throw new RemoteException(e.getMessage());
-			}
+		catch (Exception e) {
+			throw new RemoteException(e.getMessage());
 		}
 	}
 
@@ -1316,44 +1328,66 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	/**
+	 * DEPRECATED
 	 * Adds email to the given user, and removes older emails if requested
+	 * 
+	 * @deprecated use updateUserMail
 	 */
 	public Email storeUserEmail(Integer userID, String emailAddress, boolean replaceExistentRecord) {
 		return storeUserEmail(getUser(userID), emailAddress, replaceExistentRecord);
 	}
 
 	/**
+	 * DEPRECATED
 	 * Adds email to the given user, and removes older emails if requested if
 	 * addres is null or empty the no email vill exist any more for the user
 	 * 
 	 * @return null if no email was stored
+	 * 
+	 * @deprecated use updateuserMail
 	 */
 	public Email storeUserEmail(User user, String emailAddress, boolean replaceExistentRecord) {
-		try {
-			if (replaceExistentRecord) {
-				removeUserEmails(user);
-			}
-			if (!"".equals(emailAddress)) {
-				Email emailRecord = lookupEmail(emailAddress);
-				if (emailRecord == null) {
-					emailRecord = this.getEmailHome().create();
-					emailRecord.setEmailAddress(emailAddress);
-					emailRecord.store();
-				}
-				user.addEmail(emailRecord);
-				return emailRecord;
-			}
-		}
-		catch (IDOStoreException e) {
-			e.printStackTrace();
-		}
-		catch (IDOAddRelationshipException e) {
-			e.printStackTrace();
+		try { 
+			return updateUserMail(user, emailAddress);
 		}
 		catch (CreateException e) {
 			e.printStackTrace();
+			return null;
 		}
-		return null;
+		catch (RemoteException e) {
+			e.printStackTrace();
+			return null;
+		}
+//
+//  NOTE: the code below was causing corrupted databases and is left here only for documentation what happened.
+//             (the code below is sharing emails among users)
+//				Do not use this code.
+// 
+//		try {
+//			if (replaceExistentRecord) {
+//				removeUserEmails(user);
+//			}
+//			if (!"".equals(emailAddress)) {
+//				Email emailRecord = lookupEmail(emailAddress);
+//				if (emailRecord == null) {
+//					emailRecord = this.getEmailHome().create();
+//					emailRecord.setEmailAddress(emailAddress);
+//					emailRecord.store();
+//				}
+//				user.addEmail(emailRecord);
+//				return emailRecord;
+//			}
+//		}
+//		catch (IDOStoreException e) {
+//			e.printStackTrace();
+//		}
+//		catch (IDOAddRelationshipException e) {
+//			e.printStackTrace();
+//		}
+//		catch (CreateException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
 	}
 
 	/**
@@ -1373,21 +1407,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return false;
 	}
 
+	/**
+	 * @deprecated use updateUserMail
+	 */
 	public void addNewUserEmail(int iUserId, String sNewEmailAddress) {
 		storeUserEmail(getUser(iUserId), sNewEmailAddress, false);
-	}
-
-	public Email lookupEmail(String EmailAddress) {
-		try {
-			//EntityFinder.debug = true;
-			//java.util.Collection c =
-			// EntityFinder.getInstance().findAllByColumn(Email.class,com.idega.core.data.EmailBMPBean.getColumnNameAddress(),EmailAddress);
-			Email email = getEmailHome().findEmailByAddress(EmailAddress);
-			return email;
-		}
-		catch (Exception ex) {
-		}
-		return null;
 	}
 
 	/**
@@ -1673,7 +1697,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public Email getUsersMainEmail(User user) throws NoEmailFoundException {
 		EmailHome home = getEmailHome();
 		try {
-		 return home.findMainEmailForUser(user);
+			return home.findMainEmailForUser(user);
 		}
 		catch (FinderException e) {
 			String message = null;
@@ -3220,6 +3244,54 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		catch (RemoveException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Use this method for getting rid of shared emails 
+	 */
+	public void cleanUserEmails() {
+		IDOQuery query = IDOQuery.getStaticInstance();
+		// get all users that are sharing emails
+		query.append("select ic_user_id from ic_user_email where ic_email_id in ( select ic_email_id from ic_user_email group by  ic_email_id having (count(ic_user_id) > 1))");
+		try {
+			Collection coll = getUserHome().findUsersInQuery(query);
+			Iterator iterator = coll.iterator();
+			while (iterator.hasNext()) {
+				// "delete" main mail (cut the link)
+				User user = (User) iterator.next();
+				Email mainEmail = getUsersMainEmail(user);
+				String mainEmailAddress = mainEmail.getEmailAddress();
+				user.removeEmail(mainEmail);
+				// "delete" other mails (cut the links)
+				List list = new ArrayList();
+				Collection otherEmails = getEmailHome().findEmailsForUser(user);
+				Iterator firstOtherEmailsIterator = otherEmails.iterator();
+				while (firstOtherEmailsIterator.hasNext()) {
+					Email otherEmail = (Email) firstOtherEmailsIterator.next();
+					String otherEmailAddress = otherEmail.getEmailAddress();
+					list.add(otherEmailAddress);
+					user.removeEmail(otherEmail);
+				}
+				// create main email
+				updateUserMail(user, mainEmailAddress);
+				// create other mails
+				Iterator secondOtherEmailsIterator = list.iterator();
+				while (secondOtherEmailsIterator.hasNext()) {
+					String otherEmailAddress = (String) secondOtherEmailsIterator.next();
+					if (StringHandler.isNotEmpty(otherEmailAddress)) {
+						// we should not store emails without a type but the list of old emails does not have a type,
+						// what else could we do?  
+						Email otherEmail = this.getEmailHome().create();
+						otherEmail.setEmailAddress(otherEmailAddress);
+						otherEmail.store();
+						user.addEmail(otherEmail);
+					}
+				}
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 	
