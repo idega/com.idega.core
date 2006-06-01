@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusiness.java,v 1.57 2005/11/23 00:13:26 sigtryggur Exp $
+ * $Id: GroupBusiness.java,v 1.58 2006/06/01 15:22:10 thomas Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -46,10 +46,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2005/11/23 00:13:26 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2006/06/01 15:22:10 $ by $Author: thomas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.57 $
+ * @version $Revision: 1.58 $
  */
 public interface GroupBusiness extends IBOService {
 
@@ -502,10 +502,12 @@ public interface GroupBusiness extends IBOService {
 	 */
 	public Email getGroupEmail(Group group) throws java.rmi.RemoteException;
 
+	public Email getGroupMainEmail(Group group) throws NoEmailFoundException;
+	
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#updateGroupMail
 	 */
-	public void updateGroupMail(Group group, String email) throws CreateException, RemoteException;
+	public Email updateGroupMail(Group group, String email) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getEmailHome

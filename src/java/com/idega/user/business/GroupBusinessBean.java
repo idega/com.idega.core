@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.107 2006/05/17 16:43:13 thomas Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.108 2006/06/01 15:22:10 thomas Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -74,6 +74,7 @@ import com.idega.user.data.UserGroupRepresentative;
 import com.idega.user.data.UserGroupRepresentativeHome;
 import com.idega.user.data.UserHome;
 import com.idega.util.ListUtil;
+import com.idega.util.StringHandler;
 import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
@@ -87,7 +88,7 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.107 $
+ * @version $Revision: 1.108 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -1852,9 +1853,18 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 	}
 
+	/**
+	 * deprecated
+	 * 
+	 *  (non-Javadoc)
+	 * @see com.idega.user.business.GroupBusiness#getGroupEmail(com.idega.user.data.Group)
+	 * 
+	 * @deprecated use getGroupMainEmail
+	 * 
+	 */
 	public Email getGroupEmail(Group group) {
 		try {
-			return getEmailHome().findMainEmailForGroup(group);
+			return getGroupMainEmail(group);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -1862,47 +1872,68 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 	}
 
+	public Email getGroupMainEmail(Group group) throws NoEmailFoundException {
+		EmailHome home = getEmailHome();
+		try {
+			return home.findMainEmailForGroup(group);
+		}
+		catch (FinderException e) {
+			String message = null;
+			if (group != null) {
+				message = group.getName();
+			}
+			throw new NoEmailFoundException(message);
+		}
+		catch (RemoteException e) {
+			throw new IBORuntimeException();
+		}
+	}	
+	
 	/**
 	 * updates or creates the main email address (that is the email with type "main"l)
 	 */
-	public void updateGroupMail(Group group, String email) throws CreateException, RemoteException {
-		if (email == null) {
-			return;
+	public Email updateGroupMail(Group group, String email) throws CreateException, RemoteException {
+		/**
+		 * Updates or creates the main email address (that is the email with type "main"l)
+		 * if the specifield email is empty (that is null or empty) nothing happens.
+		 */
+		if (StringHandler.isEmpty(email)) {
+			return null;
 		}
-		Email mainEmail = getGroupEmail(group);
-		boolean insert = false;
-		if (mainEmail == null) {
+		Email mainEmail = null;
+		try {
+			// note: call of the following method does some repairing
+			// + if main mail is not set yet a main email is figured out
+			mainEmail = getGroupMainEmail(group);
+		}
+		catch (NoEmailFoundException ex) {
+			mainEmail = null;
+		}
+		// email was found
+		if (mainEmail != null) {
+			String oldAddress = mainEmail.getEmailAddress();
+			// is it an update at all?
+			if (! email.equals(oldAddress)) {
+				mainEmail.setEmailAddress(email);
+				mainEmail.store();
+			}
+			return mainEmail;
+		}
+		// not found? create a new one!
+		try {
 			mainEmail = this.getEmailHome().create();
-			try {
-				EmailType emailType = getEmailTypeHome().findMainEmailType();
-				mainEmail.setEmailType(emailType);
-			}
-			catch (FinderException ex) {
-				throw new CreateException("Main email type could not be found"); 
-			}
-			insert = true;
+			EmailType mainEmailType = getEmailTypeHome().findMainEmailType();
+			mainEmail.setEmailType(mainEmailType);
+			mainEmail.setEmailAddress(email);
+			mainEmail.store();
+			group.addEmail(mainEmail);
+			return mainEmail;
 		}
-		// repairing old data
-		// some old emails do not have an email type set
-		else if (mainEmail.getEmailType() == null) {
-			try {
-				EmailType emailType = getEmailTypeHome().findMainEmailType();
-				mainEmail.setEmailType(emailType);
-			}
-			catch (FinderException ex) {
-				throw new CreateException("Main email type could not be found"); 
-			}
+		catch (FinderException ex) {
+			throw new CreateException("Main email type could not be found");
 		}
-		mainEmail.setEmailAddress(email);
-		mainEmail.store();
-		if (insert) {
-			// ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(mail);
-			try {
-				group.addEmail(mainEmail);
-			}
-			catch (Exception e) {
-				throw new RemoteException(e.getMessage());
-			}
+		catch (Exception e) {
+			throw new RemoteException(e.getMessage());
 		}
 	}
 
@@ -2433,10 +2464,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	/**
 	 * 
-	 * Last modified: $Date: 2006/05/17 16:43:13 $ by $Author: thomas $
+	 * Last modified: $Date: 2006/06/01 15:22:10 $ by $Author: thomas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.107 $
+	 * @version $Revision: 1.108 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 
