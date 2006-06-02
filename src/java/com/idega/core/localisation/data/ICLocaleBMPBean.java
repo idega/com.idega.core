@@ -12,17 +12,20 @@ import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 
 /**
- * Title:        IW Core
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega.is
+ * <p>
+ * Entity bean for the IC_LOCALE table for storing all existing Locales.
+ * </p>
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
  */
-
 public class ICLocaleBMPBean extends com.idega.data.GenericEntity  implements ICLocale{
 
-  public ICLocaleBMPBean() {
+  /**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 2393090935124729715L;
+
+public ICLocaleBMPBean() {
   }
 
   public ICLocaleBMPBean(int id)throws java.sql.SQLException {
@@ -35,7 +38,7 @@ public class ICLocaleBMPBean extends com.idega.data.GenericEntity  implements IC
     this.addAttribute(getColumnNameLanguageId(),"Language",true,true,Integer.class,"many-to-one",ICLanguage.class);
     this.addAttribute(getColumnNameCountryId(),"Country",true,true,Integer.class,"many-to-one",Country.class);
     this.addAttribute(getColumnNameInUse(),"In use",true,true,Boolean.class);
-    this.getEntityDefinition().setBeanCachingActiveByDefault(true);
+    this.getEntityDefinition().setBeanCachingActiveByDefault(true,true);
     this.getEntityDefinition().setUseFinderCollectionPrefetch(true);
   }
 
