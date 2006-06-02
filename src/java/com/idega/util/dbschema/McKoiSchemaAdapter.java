@@ -12,10 +12,10 @@ import com.idega.util.IWTimestamp;
 /**
  * 
  * 
- *  Last modified: $Date: 2006/05/26 16:51:49 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/06/02 10:19:13 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class McKoiSchemaAdapter extends SQLSchemaAdapter {
 	
@@ -231,5 +231,8 @@ public class McKoiSchemaAdapter extends SQLSchemaAdapter {
 		IWTimestamp stamp = new IWTimestamp(timestamp);
 		return " {d '"+(stamp.toSQLString())+"'} ";
 	}
-
+	
+	public boolean getSupportsSlide() {
+		return false;
+	}
 }

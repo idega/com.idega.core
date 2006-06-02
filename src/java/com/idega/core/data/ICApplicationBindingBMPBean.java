@@ -70,6 +70,7 @@ public class ICApplicationBindingBMPBean extends GenericEntity implements ICAppl
 		addAttribute(COLUMNNAME_BINDING_TYPE,"Type",true,true,String.class);
 		
 		getEntityDefinition().setBeanCachingActiveByDefault(true,1000);
+		getEntityDefinition().setUseFinderCollectionPrefetch(true);
 	}
 	
 	
@@ -108,7 +109,7 @@ public class ICApplicationBindingBMPBean extends GenericEntity implements ICAppl
 		SelectQuery sql = idoSelectQuery();
 		//sql.appendSelectAllFrom(this.getEntityName());
 		//return this.idoFindPKsByQuery(sql);
-		return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(sql,1000);
+		return idoFindPKsByQuery(sql);
 	}
 
 }

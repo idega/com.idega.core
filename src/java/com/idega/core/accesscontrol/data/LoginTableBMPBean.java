@@ -2,6 +2,7 @@ package com.idega.core.accesscontrol.data;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Iterator;
 import javax.ejb.FinderException;
 import com.idega.user.data.User;
 import com.idega.user.data.UserBMPBean;
@@ -36,6 +37,9 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		setNullable(getUserLoginColumnName(), false);
 		setUnique(getUserLoginColumnName(), true);
 		addIndex("IDX_LOGIN_REC_2", getUserIDColumnName());
+		
+		getEntityDefinition().setBeanCachingActiveByDefault(true);
+		
 	}
 
 	public void setDefaultValues() {
@@ -299,8 +303,23 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	 * @throws FinderException
 	 */
 	public Object ejbFindByLogin(String login) throws FinderException {
-		Table table = new Table(this);
 		
+		//try to find it cached:
+		Collection cachedEntities = this.getCachedEntities();
+		for (Iterator iter = cachedEntities.iterator(); iter.hasNext();) {
+			LoginTable loginEntity = (LoginTable) iter.next();
+			if(loginEntity!=null){
+				String userLogin = loginEntity.getUserLogin();
+				if(userLogin!=null){
+					if(userLogin.equals(login)){
+						return loginEntity.getPrimaryKey();
+					}
+				}
+			}
+		}
+		
+		//if it is not found in the cache query the database:
+		Table table = new Table(this);
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(table.getColumn(getIDColumnName()));
 		query.addCriteria(new MatchCriteria(table.getColumn(getUserLoginColumnName()), MatchCriteria.EQUALS, login));
@@ -312,7 +331,7 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		Table table = new Table(this);
 		
 		SelectQuery query = new SelectQuery(table);
-		query.addColumn(table.getColumn(getIDColumnName()));
+		query.addColumn(table.getColumn(getIDColumnName()));	
 		query.addCriteria(new MatchCriteria(table.getColumn(getUserLoginColumnName()), MatchCriteria.EQUALS, login));
 		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameUserID()), MatchCriteria.EQUALS, user));
 

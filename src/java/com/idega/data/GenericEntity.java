@@ -5159,7 +5159,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 *           if there is an error with the query.
 	 */
 	protected Collection idoFindPKsByQuery(SelectQuery query) throws FinderException {
-		return idoFindPKsByQuery(query, -1, -1);
+		if(getEntityDefinition().isUseFinderCollectionPrefetch()){
+			int prefetchSize = getEntityDefinition().getFinderCollectionPrefetchSize();
+			return idoFindPKsByQueryUsingLoadBalance(query, prefetchSize);
+		}
+		else{	
+			return idoFindPKsByQuery(query, -1, -1);
+		}
 	}
 
 	/**

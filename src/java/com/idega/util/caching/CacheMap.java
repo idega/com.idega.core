@@ -3,13 +3,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 /**
- * Title:        idegaWeb Utility classes
- * Description:  This class is to be used as a java.util.Map as a convenient way of caching objects.
-                  The maximum number of cached objects can be set and increased an decreased (default number is 100)
-                  The Map removes the least used objects in favour of newly inserted ones and keeps the most accessed objects.
- * Copyright:    Copyright (c) 2000-2002
- * Company:      idega
- * @author        <a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ *<p>
+ *This class is to be used as a java.util.Map as a convenient way of caching objects.
+ *The maximum number of cached objects can be set and increased an decreased (default number is 100)
+ *The Map removes the least used objects in favour of newly inserted ones and keeps the most accessed objects.<br/>
+ *This Cache Map is deprecated as of platform 3.1 as now is more recommended to use IWCacheManager2.getCache()
+ *<p>
+ * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 0.5
  */
 public class CacheMap extends HashMap implements Map

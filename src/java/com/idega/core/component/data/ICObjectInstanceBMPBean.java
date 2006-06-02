@@ -55,6 +55,7 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		addIndex(getUniqueIdColumnName());
 		
 		getEntityDefinition().setBeanCachingActiveByDefault(true,10000);
+		getEntityDefinition().setUseFinderCollectionPrefetch(true);
 	}
 
 	public String getEntityName() {
@@ -157,7 +158,7 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 			SelectQuery query = idoSelectQuery();
 			Table thisTable = new Table(getEntityDefinition().getSQLTableName());
 			query.addCriteria(new MatchCriteria(thisTable, IBPAGEID, MatchCriteria.EQUALS, pageId));
-			Collection list = idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query,1000);
+			Collection list = idoFindPKsByQuery(query);
 			return list;
 		}
 		catch(NumberFormatException nfe){

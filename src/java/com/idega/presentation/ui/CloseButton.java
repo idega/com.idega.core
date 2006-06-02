@@ -42,6 +42,9 @@ public class CloseButton extends GenericButton {
 	 */
 	public CloseButton(Image image) {
 		super();
+		if(image.getId().startsWith("id")){
+			image.setId(getId()+"_imagebutton");
+		}
 		setName("close");
 		setButtonImage(image);
 		setOnClick("top.window.close()");

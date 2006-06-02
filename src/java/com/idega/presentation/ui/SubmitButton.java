@@ -1,5 +1,5 @@
 /*
- * $Id: SubmitButton.java,v 1.38 2006/04/09 12:13:15 laddi Exp $
+ * $Id: SubmitButton.java,v 1.39 2006/06/02 10:19:13 tryggvil Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import com.idega.presentation.Image;
  * <p>
  * This is a component for rendering out a button (input) of type submit.
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/06/02 10:19:13 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 public class SubmitButton extends GenericButton {
 
@@ -344,6 +344,9 @@ public class SubmitButton extends GenericButton {
 	 * @see com.idega.presentation.ui.GenericButton#setButtonImage(Image)
 	 */
 	public void setButtonImage(Image image) {
+		if(image.getId().startsWith("id")){
+			image.setId(this.getId()+"_image");
+		}
 		super.setButtonImage(image);
 		setInputType(INPUT_TYPE_IMAGE);
 	}

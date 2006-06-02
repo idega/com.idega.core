@@ -32,6 +32,9 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	private boolean _hasAutoIncrementColumn = true;
 	private Boolean _isBeanCachingActive = null;
 	private int maxBeanCachedEntities=-1;
+	private boolean allRecordsCached=false;
+	private boolean useFinderCollectionPrefetch=false;
+	private int finderCollectionPrefetchSize=1000;
 	/**
 	 * 
 	 */
@@ -299,5 +302,81 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	
 	public int getMaxCachedBeans(){
 		return this.maxBeanCachedEntities;
+	}
+
+	
+	/**
+	 * @return the allRecordsCached
+	 */
+	public boolean isAllRecordsCached() {
+		return allRecordsCached;
+	}
+
+	
+	/**
+	 * @param allRecordsCached the allRecordsCached to set
+	 */
+	public void setAllRecordsCached(boolean allRecordsCached) {
+		this.allRecordsCached = allRecordsCached;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.data.IDOEntityDefinition#setBeanCachingActiveByDefault(boolean, boolean)
+	 */
+	public void setBeanCachingActiveByDefault(boolean beanCachingEnabled, boolean allRecordsCached) {
+		this.setBeanCachingActiveByDefault(beanCachingEnabled);
+		if(beanCachingEnabled&&allRecordsCached){
+			setAllRecordsCached(allRecordsCached);
+			int maxBeanCachedEntities = 2000000000;
+			setMaxBeanCachedEntities(maxBeanCachedEntities);
+		}
+	}
+
+	
+	/**
+	 * @return the maxBeanCachedEntities
+	 */
+	protected int getMaxBeanCachedEntities() {
+		return maxBeanCachedEntities;
+	}
+
+	
+	/**
+	 * @param maxBeanCachedEntities the maxBeanCachedEntities to set
+	 */
+	protected void setMaxBeanCachedEntities(int maxBeanCachedEntities) {
+		this.maxBeanCachedEntities = maxBeanCachedEntities;
+	}
+
+	
+	/**
+	 * @return the finderCollectionPrefetchSize
+	 */
+	public int getFinderCollectionPrefetchSize() {
+		return finderCollectionPrefetchSize;
+	}
+
+	
+	/**
+	 * @param finderCollectionPrefetchSize the finderCollectionPrefetchSize to set
+	 */
+	public void setFinderCollectionPrefetchSize(int finderCollectionPrefetchSize) {
+		this.finderCollectionPrefetchSize = finderCollectionPrefetchSize;
+	}
+
+	
+	/**
+	 * @return the useFinderCollectionPrefetch
+	 */
+	public boolean isUseFinderCollectionPrefetch() {
+		return useFinderCollectionPrefetch;
+	}
+
+	
+	/**
+	 * @param useFinderCollectionPrefetch the useFinderCollectionPrefetch to set
+	 */
+	public void setUseFinderCollectionPrefetch(boolean useFinderCollectionPrefetch) {
+		this.useFinderCollectionPrefetch = useFinderCollectionPrefetch;
 	}
 }

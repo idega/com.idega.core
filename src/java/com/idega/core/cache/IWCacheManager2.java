@@ -1,5 +1,5 @@
 /*
- * $Id: IWCacheManager2.java,v 1.9 2006/05/31 11:12:03 laddi Exp $ Created on
+ * $Id: IWCacheManager2.java,v 1.10 2006/06/02 10:19:13 tryggvil Exp $ Created on
  * 6.1.2006 in project com.idega.core
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -18,17 +18,18 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.ObjectExistsException;
-
+import net.sf.ehcache.Status;
 import com.idega.idegaweb.IWMainApplication;
 
 /**
  * <p>
- * TODO tryggvil Describe Type IWCacheManager2
+ * IWCacheManager2 is a newer replacement for the older IWCacheManager class
+ * and is implemented on top of the ehCache framework.
  * </p>
- * Last modified: $Date: 2006/05/31 11:12:03 $ by $Author: laddi $
+ * Last modified: $Date: 2006/06/02 10:19:13 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class IWCacheManager2 {
 
@@ -96,15 +97,26 @@ public class IWCacheManager2 {
 	}*/
 
 	public Map getCache(String cacheName){
+		int cacheSize=1000;
+		boolean overFlowToDisk=true;
+		boolean isEternal=false;
+		return getCache(cacheName,cacheSize,overFlowToDisk,isEternal);
+	}
+	
+	public Map getCache(String cacheName,int cacheSize,boolean overFlowToDisk,boolean isEternal){
+		long cacheTTLIdleSeconds = 1000;
+		long cacheTTLSeconds=10000;
+		return getCache(cacheName,cacheSize,overFlowToDisk,isEternal,cacheTTLSeconds,cacheTTLIdleSeconds);
+	}
+	
+	public Map getCache(String cacheName,int cacheSize,boolean overFlowToDisk,boolean isEternal,long cacheTTLIdleSeconds,long cacheTTLSeconds){
 		Map cm = (Map) getCacheMapsMap().get(cacheName);
 		if(cm==null){
 			Cache cache = getInternalCache(cacheName);
 			if(cache==null){
-					int cacheSize=1000;
-					long cacheTTLIdleSeconds = 1000;
-					long cacheTTLSeconds=10000;
-					cache = new IWCache(cacheName, cacheSize, true, false, cacheTTLSeconds, cacheTTLIdleSeconds);
-	    			try {
+					//cache = new IWCache(cacheName, cacheSize, overFlowToDisk, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds);
+					cache = new Cache(cacheName, cacheSize, overFlowToDisk, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds);
+					try {
 						getInternalCacheManager().addCache(cache);
 					}
 					catch (IllegalStateException e) {
@@ -126,7 +138,8 @@ public class IWCacheManager2 {
 		else{
 			CacheMap ccm = (CacheMap)cm;
 			//the status must be alive
-			if(ccm.getCache().getStatus()==Cache.STATUS_ALIVE){
+			if(ccm.getCache().getStatus()==Status.STATUS_ALIVE){
+			//if(ccm.getCache().getStatus()==Cache.STATUS_ALIVE){
 				return cm;
 			}
 			else{

@@ -467,7 +467,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			sendStartMessage("AutoCreateProperties is active");
 		}
 		if (this.iwma.getSettings().getIfEntityBeanCaching()) {
-			IDOContainer.getInstance().setBeanCaching(true);
+			IDOContainer.getInstance().setBeanCachingActiveByDefault(true);
 			sendStartMessage("EntityBeanCaching Active");
 		}
 		if (this.iwma.getSettings().getIfEntityQueryCaching()) {

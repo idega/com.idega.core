@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.50 2006/05/31 11:12:02 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.51 2006/06/02 10:19:14 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -40,10 +40,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/05/31 11:12:02 $ by $Author: laddi $
+ * Last modified: $Date: 2006/06/02 10:19:14 $ by $Author: tryggvil $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.50 $
+ * @version $Revision: 1.51 $
  */
 
 
@@ -87,6 +87,9 @@ public class IWMainApplicationSettings implements MutableClass {
 	
 	// very special property
 	private static final String ENTITY_AUTO_CREATE =  "entity-auto-create";
+	
+	//sets if to cache the properties into an application map
+	private boolean cache=true;
 	
 	static {
 		// initialize all values
@@ -529,7 +532,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	
 	public void setEntityBeanCaching(boolean onOrOff) {
 		putInApplicationBinding(IDO_ENTITY_BEAN_CACHING_KEY, Boolean.toString(onOrOff));
-		com.idega.data.IDOContainer.getInstance().setBeanCaching(onOrOff);
+		com.idega.data.IDOContainer.getInstance().setBeanCachingActiveByDefault(onOrOff);
 		if (!onOrOff) {
 			setEntityQueryCaching(false);
 		}
@@ -683,34 +686,42 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	private boolean isApplicationBindingInMap(String key) {
-		Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
-		if (map != null) {
-			return map.containsKey(key);
+		if(cache){
+			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+			if (map != null) {
+				return map.containsKey(key);
+			}
 		}
 		return false;
 	}
 	
 	private String getApplicationBindingFromMap(String key) {
-		Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
-		if (map != null) {
-			return (String) map.get(key);
+		if(cache){
+			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+			if (map != null) {
+				return (String) map.get(key);
+			}
 		}
 		return null;
 	}
 	
 	private void setApplicationBindingInMap(String key, String value) {
-		Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
-		if (map == null) {
-			map = new HashMap();
+		if(cache){
+			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+			if (map == null) {
+				map = new HashMap();
+			}
+			map.put(key, value);
+			getApplication().getIWApplicationContext().setApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP, map);
 		}
-		map.put(key, value);
-		getApplication().getIWApplicationContext().setApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP, map);
 	}
 
 	private void removeApplicationBindingFromMap(String key) {
-		Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
-		if (map != null) {
-			map.remove(key);
+		if(cache){
+			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+			if (map != null) {
+				map.remove(key);
+			}
 		}
 	}
 	

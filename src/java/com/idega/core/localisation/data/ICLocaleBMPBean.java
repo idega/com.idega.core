@@ -36,6 +36,7 @@ public class ICLocaleBMPBean extends com.idega.data.GenericEntity  implements IC
     this.addAttribute(getColumnNameCountryId(),"Country",true,true,Integer.class,"many-to-one",Country.class);
     this.addAttribute(getColumnNameInUse(),"In use",true,true,Boolean.class);
     this.getEntityDefinition().setBeanCachingActiveByDefault(true);
+    this.getEntityDefinition().setUseFinderCollectionPrefetch(true);
   }
 
   public void insertStartData() throws Exception{
@@ -121,7 +122,7 @@ public class ICLocaleBMPBean extends com.idega.data.GenericEntity  implements IC
       SelectQuery query = new SelectQuery(table);
       query.addColumn(new WildCardColumn());
       //return idoFindPKsByQuery(query);
-      return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query,1000);
+      return idoFindPKsByQuery(query);
   }
   
   public Collection ejbFindAllInUse()throws FinderException{

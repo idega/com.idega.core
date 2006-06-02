@@ -183,5 +183,9 @@ public class H2SchemaAdapter extends SQLSchemaAdapter { //implements
 		//TODO: Implement support for UNIQUE for HSQLDB
 		return false;
 	}
+	
+	public boolean getSupportsSlide() {
+		return false;
+	}
 
 }

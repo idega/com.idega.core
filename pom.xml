@@ -237,6 +237,20 @@
       <version>1.0</version>
       <type>jar</type>
     </dependency>
+    <!-- commons-httpclient used in org.apache.slide, com.idega.slide, com.idega.content, com.idega.block.navigation not used in core -->
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>2.0.2</version>
+      <type>jar</type>
+    </dependency>
+    <!-- This Commons-Collections Dependecy is requred by ehcache, and is also used in org.apache.myfaces and org.apache.slide -->
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.1</version>
+      <type>jar</type>
+    </dependency>
     <dependency>
       <groupId>javaldap</groupId>
       <artifactId>java-ldapserver</artifactId>
@@ -255,6 +269,24 @@
       <version>3.8.1</version>
       <type>jar</type>
     </dependency-->
+    <dependency>
+      <groupId>net.rkbloom</groupId>
+      <artifactId>logdriver</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+      <version>1.2</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>ehcache</groupId>
+      <artifactId>ehcache-constructs</artifactId>
+      <version>0.6</version>
+      <type>jar</type>
+    </dependency>
   </dependencies>
 
 

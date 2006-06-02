@@ -385,13 +385,24 @@
       <type>jar</type>
       <url>http://jakarta.apache.org/commons/</url>
     </dependency>
+   	<!-- This Commons-Collections Dependecy is requred by ehcache, and is also used in org.apache.myfaces and org.apache.slide -->
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.1</version>
+      <type>jar</type>
+      <url>http://jakarta.apache.org/commons/</url>
+      <properties>
+        <idegaweb.bundle.include>true</idegaweb.bundle.include>
+      </properties>
+    </dependency>
     <dependency>
       <groupId>ehcache</groupId>
       <artifactId>ehcache</artifactId>
       <!--
-            <version>0.8</version>
+      <version>0.8</version>
       -->
-      <version>1.1</version>
+      <version>1.2</version>
       <type>jar</type>
       <url>http://ehcache.sourceforge.net/</url>
       <properties>

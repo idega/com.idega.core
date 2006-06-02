@@ -59,7 +59,9 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/commons-fileupload/jars/commons-fileupload-1.0.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.1.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/commons-collections/jars/commons-collections-3.1.jar">
+  </classpathentry>
+  <classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-1.2.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/ehcache/jars/ehcache-constructs-0.6.jar">
   </classpathentry>
