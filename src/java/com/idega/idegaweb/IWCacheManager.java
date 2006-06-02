@@ -1,5 +1,5 @@
 /*
- * $Id: IWCacheManager.java,v 1.36 2006/04/09 12:13:14 laddi Exp $
+ * $Id: IWCacheManager.java,v 1.37 2006/06/02 11:48:34 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -39,10 +39,11 @@ import com.idega.util.text.TextSoap;
  * fragments of their rendering output in memory.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
+ * Last modified: $Date: 2006/06/02 11:48:34 $ by $Author: tryggvil $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.36 $
+ * @deprecated Replaced with IWCacheManager2
+ * @version $Revision: 1.37 $
  */
 public class IWCacheManager implements Singleton {
 
