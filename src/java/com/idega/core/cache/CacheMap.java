@@ -1,5 +1,5 @@
 /*
- * $Id: CacheMap.java,v 1.9 2006/06/06 13:07:49 tryggvil Exp $
+ * $Id: CacheMap.java,v 1.10 2006/06/06 13:09:48 tryggvil Exp $
  * Created on 6.1.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import net.sf.ehcache.Element;
  * <p>
  * Wrapper for the Cache implemented as a standard Map
  * </p>
- *  Last modified: $Date: 2006/06/06 13:07:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/06/06 13:09:48 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class CacheMap implements Map {
 
@@ -169,7 +169,9 @@ public class CacheMap implements Map {
 		for (Iterator iter = map.keySet().iterator(); iter.hasNext();) {
 			Object key = iter.next();
 			Object value = map.get(key);
-			put(key,value);
+			if(key!=null&&value!=null){
+				put(key,value);
+			}
 		}
 	}
 
