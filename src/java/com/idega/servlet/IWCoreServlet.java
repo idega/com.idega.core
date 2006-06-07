@@ -13,13 +13,21 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.ThreadContext;
 import com.idega.util.database.ConnectionBroker;
 /**
+ * <p>
  * This servlet is an abstract servlet and is meant to be extended by other servlets in idegaWeb.
+ * The functionality of this class is replaced with the standard FacesServlet in platform 3.
+ * </p>
 * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 * @version 1.3
+* @deprecated Replaced with FacesServlet
 */
 public class IWCoreServlet extends HttpServlet 
 //implements SingleThreadModel 
 {
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 7103712335057404244L;
 	//public  class IWCoreServlet extends HttpServlet{
 	//protected Hashtable objects;
 	//private ThreadContext threadcontext;

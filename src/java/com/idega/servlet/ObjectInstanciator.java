@@ -7,8 +7,14 @@ import com.idega.repository.data.RefactorClassRegistry;
 /**
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  *@version 1.0
+ * @deprecated Replaced with FacesServlet
  */
 public class ObjectInstanciator extends DynamicTemplateServlet {
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 8974280767665490773L;
+
 	//TEMPORARY IMPLEMENTATION - See DynamicTemplateServlet
 	public void main(IWContext iwc) throws Exception {
 		String className =IWMainApplication.decryptClassName(iwc.getParameter(IWMainApplication.classToInstanciateParameter));
