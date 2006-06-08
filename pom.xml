@@ -1,36 +1,16 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.idega.core</groupId>
-  <artifactId>com.idega.core</artifactId>
+  <parent>
+  	<groupId>com.idega.block.platform</groupId>
+  	<artifactId>com.idega.block.base</artifactId>
+  	<version>3.1.0</version>
+  </parent>
   <packaging>jar</packaging>
+  <groupId>com.idega.block.platform</groupId>
+  <artifactId>com.idega.core</artifactId>
   <version>3.1.0-SNAPSHOT</version>
   <name>idegaWeb Core</name>
-  <organization>
-  	<name>idega software</name>
-  	<url>http://www.idega.com/</url>
-  </organization>
-  <repositories>
-        <repository>
-                <id>java.net</id>
-                <name>Sun Java Net Maven Repository</name>
-                <url>https://maven-repository.dev.java.net/nonav/repository/</url>
-                <!--snapshotPolicy>daily</snapshotPolicy-->
-		<layout>legacy</layout>
-        </repository>
-	<repository>
-        	<id>idega1</id>
-        	<name>idega maven2 repository</name>
-        	<url>http://repository.idega.com/maven2/</url>
-        	<!--snapshotPolicy>daily</snapshotPolicy-->
-	</repository>
-	<repository>
-		<id>idega2</id>
-		<name>idega public repository</name>
-		<url>http://repository.idega.com/maven/</url>
-		<!--snapshotPolicy>daily</snapshotPolicy-->
-		<layout>legacy</layout>
-	</repository>
-</repositories>
+
 
 <distributionManagement>
 	<repository>
@@ -53,11 +33,6 @@
     </notifiers>
   </ciManagement>
   
-  <scm>
-        <connection>scm:cvs:ext:tryggvil@einstein.idega.is:/idega/cvs:bundles/${pom.artifactId}.bundle/</connection>
-        <developerConnection>scm:cvs:ext:tryggvil@einstein.idega.is:/idega/cvs:bundles/${pom.artifactId}.bundle/</developerConnection>
-  </scm>
-
 	<developers>
 		<developer>
 		<name>Tryggvi Larusson</name>
@@ -263,12 +238,12 @@
       <version>1.8.0.2</version>
       <type>jar</type>
     </dependency>
-    <!--dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.0</version>
       <type>jar</type>
-    </dependency-->
+    </dependency>
     <dependency>
       <groupId>net.rkbloom</groupId>
       <artifactId>logdriver</artifactId>
@@ -276,7 +251,7 @@
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>ehcache</groupId>
+      <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
       <version>1.2</version>
       <type>jar</type>
@@ -288,56 +263,5 @@
       <type>jar</type>
     </dependency>
   </dependencies>
-
-
-    <build>
-	<!--nagEmailAddress>tryggvi@idega.com</nagEmailAddress-->
-        <sourceDirectory>src/java</sourceDirectory>
-        <!--unitTestSourceDirectory>src/test</unitTestSourceDirectory-->
-	    <resources>
-	      <resource>
-	       <directory>${basedir}/resources</directory>
-	       <targetPath>resources</targetPath>
-	        <includes>
-	          <include>**/**</include>
-	        </includes>
-	      </resource>
-	      <resource>
-	       <directory>${basedir}/properties</directory>
-	       <targetPath>properties</targetPath>
-	        <includes>
-	          <include>**/**</include>
-	        </includes>
-	      </resource>
-	      <resource>
-	       <directory>${basedir}/WEB-INF</directory>
-	       <targetPath>WEB-INF</targetPath>
-	        <includes>
-	          <include>**/**</include>
-	        </includes>
-	      </resource>
-	      <resource>
-	       <directory>${basedir}/jsp</directory>
-	       <targetPath>jsp</targetPath>
-	        <includes>
-	          <include>**/**</include>
-	        </includes>
-	      </resource>
-	      <resource>
-	       <directory>${basedir}/WEB-INF/tld</directory>
-	       <targetPath>META-INF</targetPath>
-	        <includes>
-	          <include>**/*.tld</include>
-	        </includes>
-	      </resource>
-	      <resource>
-	       <directory>${basedir}/WEB-INF</directory>
-	       <targetPath>META-INF</targetPath>
-	        <includes>
-	          <include>faces-config.xml</include>
-	        </includes>
-	      </resource>
-	    </resources>
-    </build>
 
 </project>
