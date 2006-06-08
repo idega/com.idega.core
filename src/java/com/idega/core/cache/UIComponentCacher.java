@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
-import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 
 
@@ -17,13 +16,15 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * Implementation of a general cacher for UIComponents.	
  * </p>
- *  Last modified: $Date: 2006/03/16 15:37:53 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/06/08 15:36:54 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class UIComponentCacher {
 	
+	public static final String UNDERSCORE = "_";
+	private static final String DEFAULT_CACHE_NAME = "content";
 	private static UIComponentCacher instance = new UIComponentCacher();
 	
 	public static UIComponentCacher getDefaultCacher(FacesContext context){
@@ -110,11 +111,14 @@ public class UIComponentCacher {
 	 * @return
 	 */
 	public Map getCacheMap() {
-		
-		IWCacheManager cm = IWCacheManager.getInstance(IWMainApplication.getDefaultIWMainApplication());
-		return cm.getCacheMap();
+		IWCacheManager2 iwcm = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
+		return iwcm.getCache(DEFAULT_CACHE_NAME);
 	}
 
+	protected String getCacheKey(UIComponent component, FacesContext context) {
+		return getCacheKeyStringBuffer(component, context).toString();
+	}
+	
 	/**
 	 * <p>
 	 * TODO tryggvil describe method getCacheKey
@@ -123,20 +127,19 @@ public class UIComponentCacher {
 	 * @param context
 	 * @return
 	 */
-	protected String getCacheKey(UIComponent component, FacesContext context) {
-		String id = component.getId();
+	protected StringBuffer getCacheKeyStringBuffer(UIComponent component, FacesContext context) {
+		StringBuffer buf = new StringBuffer(component.getId());
 		String sLocale = context.getViewRoot().getLocale().toString();
 		if(sLocale!=null){
-			id+="_";
-			id+=sLocale;
+			buf.append(UNDERSCORE);
+			buf.append(sLocale);
 		}
 		if(component instanceof CacheableUIComponent){
 			String state = ((CacheableUIComponent)component).getViewState(context);
-			id+="_";
-			id+=state;
+			buf.append(UNDERSCORE);
+			buf.append(state);
 		}
-		
-		return id;
+		return buf;
 	}
 	
 	
