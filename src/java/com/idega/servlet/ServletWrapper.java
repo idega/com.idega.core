@@ -1,5 +1,5 @@
 /*
- * $Id: ServletWrapper.java,v 1.2 2006/06/08 07:47:42 laddi Exp $
+ * $Id: ServletWrapper.java,v 1.3 2006/06/08 15:06:04 tryggvil Exp $
  * Created on 31.5.2006 in project com.idega.slide
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import javax.servlet.http.HttpServlet;
  * <p>
  * Wrapper around a contained Servlet instance
  * </p>
- *  Last modified: $Date: 2006/06/08 07:47:42 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/06/08 15:06:04 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ServletWrapper extends HttpServlet {
 	
@@ -122,8 +122,8 @@ public class ServletWrapper extends HttpServlet {
 	 */
 	public void init(ServletConfig config) throws ServletException {
 		initializeServletWrapper(config);
-		super.init(config);
 		this.servlet.init(config);
+		super.init(config);
 		init();
 	}
 
@@ -142,7 +142,12 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#log(java.lang.String, java.lang.Throwable)
 	 */
 	public void log(String arg0, Throwable arg1) {
-		this.servlet.log(arg0, arg1);
+		try{
+			this.servlet.log(arg0, arg1);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -150,7 +155,12 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#log(java.lang.String)
 	 */
 	public void log(String arg0) {
-		this.servlet.log(arg0);
+		try{
+			this.servlet.log(arg0);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	/**
