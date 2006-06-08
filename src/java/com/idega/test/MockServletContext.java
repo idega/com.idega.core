@@ -20,10 +20,10 @@ import javax.servlet.ServletException;
  * <p>
  * Class to simulate a ServletContext
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/06/08 18:54:55 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class MockServletContext implements ServletContext {
 
@@ -31,6 +31,7 @@ public class MockServletContext implements ServletContext {
 	private String serverInfo="IdegaWeb Mock-Server";
 	private File baseDir;
 	private String servletContextName = "IdegaWeb Test Context";
+	private String contextPath;
 	
 	/**
 	 * @param baseDir
@@ -237,5 +238,21 @@ public class MockServletContext implements ServletContext {
 			this.attributes=new Hashtable();
 		}
 		return this.attributes;
+	}
+
+	
+	/**
+	 * @return the contextPath
+	 */
+	public String getContextPath() {
+		return contextPath;
+	}
+
+	
+	/**
+	 * @param contextPath the contextPath to set
+	 */
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
 	}
 }
