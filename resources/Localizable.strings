@@ -73,6 +73,7 @@ iw.component.com.idega.presentation.ui.SelectionBox.name=SelectionBox
 iw.component.com.idega.user.block.homepage.presentation.OwnerGroupInformationLink.name=
 iw.component.com.idega.user.block.homepage.presentation.OwnerGroupInformationText.name=
 iw_updateman_execupdate=Update
+iwapplication_name.AccessControllerApp=AccessControllerApp
 jscal.tooltip.=Prev. year (hold for menu)
 jscal.tooltip.close=Close
 jscal.tooltip.display_monday_first=Display Monday first
