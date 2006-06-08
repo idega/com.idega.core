@@ -309,7 +309,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 * @return the allRecordsCached
 	 */
 	public boolean isAllRecordsCached() {
-		return allRecordsCached;
+		return this.allRecordsCached;
 	}
 
 	
@@ -337,7 +337,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 * @return the maxBeanCachedEntities
 	 */
 	protected int getMaxBeanCachedEntities() {
-		return maxBeanCachedEntities;
+		return this.maxBeanCachedEntities;
 	}
 
 	
@@ -353,7 +353,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 * @return the finderCollectionPrefetchSize
 	 */
 	public int getFinderCollectionPrefetchSize() {
-		return finderCollectionPrefetchSize;
+		return this.finderCollectionPrefetchSize;
 	}
 
 	
@@ -369,7 +369,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 * @return the useFinderCollectionPrefetch
 	 */
 	public boolean isUseFinderCollectionPrefetch() {
-		return useFinderCollectionPrefetch;
+		return this.useFinderCollectionPrefetch;
 	}
 
 	

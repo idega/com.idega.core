@@ -1,5 +1,5 @@
 /*
- * $Id: ServletWrapper.java,v 1.1 2006/06/02 10:19:13 tryggvil Exp $
+ * $Id: ServletWrapper.java,v 1.2 2006/06/08 07:47:42 laddi Exp $
  * Created on 31.5.2006 in project com.idega.slide
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import javax.servlet.http.HttpServlet;
  * <p>
  * Wrapper around a contained Servlet instance
  * </p>
- *  Last modified: $Date: 2006/06/02 10:19:13 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/06/08 07:47:42 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ServletWrapper extends HttpServlet {
 	
@@ -34,21 +34,19 @@ public class ServletWrapper extends HttpServlet {
 	 * Comment for <code>serialVersionUID</code>
 	 */
 	private static final long serialVersionUID = 6863799972247973901L;
+
 	private HttpServlet servlet;
 	private ServletConfig servletConfig;
-
 	
 	public ServletWrapper(){
-		
 	}
-	
 	
 	/**
 	 * 
 	 * @see javax.servlet.GenericServlet#destroy()
 	 */
 	public void destroy() {
-		servlet.destroy();
+		this.servlet.destroy();
 	}
 
 	/**
@@ -57,7 +55,7 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#getInitParameter(java.lang.String)
 	 */
 	public String getInitParameter(String arg0) {
-		return servlet.getInitParameter(arg0);
+		return this.servlet.getInitParameter(arg0);
 	}
 
 	/**
@@ -65,7 +63,7 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#getInitParameterNames()
 	 */
 	public Enumeration getInitParameterNames() {
-		return servlet.getInitParameterNames();
+		return this.servlet.getInitParameterNames();
 	}
 
 	/**
@@ -73,11 +71,11 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#getServletConfig()
 	 */
 	public ServletConfig getServletConfig() {
-		if(servletConfig==null){
-			return servlet.getServletConfig();
+		if(this.servletConfig==null){
+			return this.servlet.getServletConfig();
 		}
 		else{
-			return servletConfig;
+			return this.servletConfig;
 		}
 	}
 	
@@ -90,7 +88,7 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#getServletContext()
 	 */
 	public ServletContext getServletContext() {
-		return servlet.getServletContext();
+		return this.servlet.getServletContext();
 	}
 
 	/**
@@ -98,7 +96,7 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#getServletInfo()
 	 */
 	public String getServletInfo() {
-		return servlet.getServletInfo();
+		return this.servlet.getServletInfo();
 	}
 
 	/**
@@ -106,7 +104,7 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#getServletName()
 	 */
 	public String getServletName() {
-		return servlet.getServletName();
+		return this.servlet.getServletName();
 	}
 
 	/**
@@ -125,7 +123,7 @@ public class ServletWrapper extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		initializeServletWrapper(config);
 		super.init(config);
-		servlet.init(config);
+		this.servlet.init(config);
 		init();
 	}
 
@@ -136,10 +134,7 @@ public class ServletWrapper extends HttpServlet {
 	 * @param arg0
 	 */
 	protected void initializeServletWrapper(ServletConfig arg0) {
-		// TODO Auto-generated method stub
-		
 	}
-
 
 	/**
 	 * @param arg0
@@ -147,7 +142,7 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#log(java.lang.String, java.lang.Throwable)
 	 */
 	public void log(String arg0, Throwable arg1) {
-		servlet.log(arg0, arg1);
+		this.servlet.log(arg0, arg1);
 	}
 
 	/**
@@ -155,7 +150,7 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#log(java.lang.String)
 	 */
 	public void log(String arg0) {
-		servlet.log(arg0);
+		this.servlet.log(arg0);
 	}
 
 	/**
@@ -166,19 +161,15 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
 	 */
 	public void service(ServletRequest arg0, ServletResponse arg1) throws ServletException, IOException {
-		servlet.service(arg0, arg1);
+		this.servlet.service(arg0, arg1);
 	}
-
-
 	
 	/**
 	 * @return the servlet
 	 */
 	protected HttpServlet getServlet() {
-		return servlet;
+		return this.servlet;
 	}
-
-
 	
 	/**
 	 * @param servlet the servlet to set
@@ -187,20 +178,15 @@ public class ServletWrapper extends HttpServlet {
 		this.servlet = servlet;
 	}
 	
-	
-	public void reload(){
-		
+	public void reload() {
 		destroy();
-		servlet=null;
+		this.servlet=null;
 		initializeServletWrapper(getServletConfig());
 		try {
 			init(getServletConfig());
 		}
 		catch (ServletException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
-	
 }

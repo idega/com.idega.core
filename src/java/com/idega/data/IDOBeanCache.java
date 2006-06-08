@@ -1,5 +1,5 @@
 /*
- * $Id: IDOBeanCache.java,v 1.14 2006/06/02 10:19:13 tryggvil Exp $ Crated in
+ * $Id: IDOBeanCache.java,v 1.15 2006/06/08 07:47:42 laddi Exp $ Crated in
  * 2002 by tryggvil
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.util.caching.CacheMap;
  * <p>
  * This class holds a cache for each entity (class) and datasource.
  * </p>
- * Last modified: $Date: 2006/06/02 10:19:13 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/06/08 07:47:42 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class IDOBeanCache {
 
@@ -92,10 +92,10 @@ public class IDOBeanCache {
 	 * @return
 	 */
 	private String getCacheName() {
-		if (cacheName == null) {
-			cacheName = "BeanCache_" + getEntityInterfaceClass().getName();
+		if (this.cacheName == null) {
+			this.cacheName = "BeanCache_" + getEntityInterfaceClass().getName();
 		}
-		return cacheName;
+		return this.cacheName;
 	}
 
 	protected IWCacheManager2 getCacheManger() {
@@ -172,7 +172,7 @@ public class IDOBeanCache {
 	 * @return the entityInterfaceClass
 	 */
 	protected Class getEntityInterfaceClass() {
-		return entityInterfaceClass;
+		return this.entityInterfaceClass;
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class IDOBeanCache {
 	 * @return the dataSource
 	 */
 	protected String getDatasource() {
-		return datasource;
+		return this.datasource;
 	}
 
 	

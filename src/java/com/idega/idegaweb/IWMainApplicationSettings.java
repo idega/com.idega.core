@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.51 2006/06/02 10:19:14 tryggvil Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.52 2006/06/08 07:47:42 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -40,10 +40,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/06/02 10:19:14 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/06/08 07:47:42 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.51 $
+ * @version $Revision: 1.52 $
  */
 
 
@@ -686,7 +686,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	private boolean isApplicationBindingInMap(String key) {
-		if(cache){
+		if(this.cache){
 			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
 			if (map != null) {
 				return map.containsKey(key);
@@ -696,7 +696,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	private String getApplicationBindingFromMap(String key) {
-		if(cache){
+		if(this.cache){
 			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
 			if (map != null) {
 				return (String) map.get(key);
@@ -706,7 +706,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	private void setApplicationBindingInMap(String key, String value) {
-		if(cache){
+		if(this.cache){
 			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
 			if (map == null) {
 				map = new HashMap();
@@ -717,7 +717,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	private void removeApplicationBindingFromMap(String key) {
-		if(cache){
+		if(this.cache){
 			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
 			if (map != null) {
 				map.remove(key);

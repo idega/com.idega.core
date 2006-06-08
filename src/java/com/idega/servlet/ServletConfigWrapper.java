@@ -1,5 +1,5 @@
 /*
- * $Id: ServletConfigWrapper.java,v 1.1 2006/06/02 10:19:13 tryggvil Exp $
+ * $Id: ServletConfigWrapper.java,v 1.2 2006/06/08 07:47:42 laddi Exp $
  * Created on 31.5.2006 in project com.idega.slide
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import javax.servlet.ServletContext;
  * <p>
  * TODO tryggvil Describe Type ServletConfigWrapper
  * </p>
- *  Last modified: $Date: 2006/06/02 10:19:13 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/06/08 07:47:42 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ServletConfigWrapper implements ServletConfig {
 	
@@ -33,12 +33,12 @@ public class ServletConfigWrapper implements ServletConfig {
 	public ServletConfigWrapper(ServletConfig config){
 		this.context=config.getServletContext();
 		this.servletName=config.getServletName();
-		parameters = new Hashtable();
+		this.parameters = new Hashtable();
 		Enumeration params = config.getInitParameterNames();
 		while (params.hasMoreElements()) {
 			String param = (String) params.nextElement();
 			String paramValue = config.getInitParameter(param);
-			parameters.put(param, paramValue);
+			this.parameters.put(param, paramValue);
 		}
 	}
 	
@@ -47,16 +47,16 @@ public class ServletConfigWrapper implements ServletConfig {
 	 * @see javax.servlet.ServletConfig#getInitParameter(java.lang.String)
 	 */
 	public String getInitParameter(String arg0) {
-		return (String) parameters.get(arg0);
+		return (String) this.parameters.get(arg0);
 	}
 
 	public void setInitParameter(String key,String value){
-		parameters.put(key, value);
+		this.parameters.put(key, value);
 	}
 	
 	public void setInitParameterIfNotSet(String key,String value){
-		if(parameters.get(key)==null){
-			parameters.put(key, value);
+		if(this.parameters.get(key)==null){
+			this.parameters.put(key, value);
 		}
 	}
 	
@@ -64,22 +64,20 @@ public class ServletConfigWrapper implements ServletConfig {
 	 * @see javax.servlet.ServletConfig#getInitParameterNames()
 	 */
 	public Enumeration getInitParameterNames() {
-		return parameters.keys();
+		return this.parameters.keys();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.ServletConfig#getServletContext()
 	 */
 	public ServletContext getServletContext() {
-		// TODO Auto-generated method stub
-		return context;
+		return this.context;
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.ServletConfig#getServletName()
 	 */
 	public String getServletName() {
-		// TODO Auto-generated method stub
-		return servletName;
+		return this.servletName;
 	}
 }

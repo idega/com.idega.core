@@ -677,7 +677,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	
 	private void cleanEmailData() {
 		try {
-			IWApplicationContext iwac = iwma.getIWApplicationContext();
+			IWApplicationContext iwac = this.iwma.getIWApplicationContext();
 			UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
 			userBusiness.cleanUserEmails();
 		}
