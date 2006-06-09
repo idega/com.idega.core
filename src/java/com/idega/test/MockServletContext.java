@@ -20,10 +20,10 @@ import javax.servlet.ServletException;
  * <p>
  * Class to simulate a ServletContext
  * </p>
- *  Last modified: $Date: 2006/06/08 18:54:55 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/06/09 07:50:36 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class MockServletContext implements ServletContext {
 
@@ -245,7 +245,7 @@ public class MockServletContext implements ServletContext {
 	 * @return the contextPath
 	 */
 	public String getContextPath() {
-		return contextPath;
+		return this.contextPath;
 	}
 
 	
