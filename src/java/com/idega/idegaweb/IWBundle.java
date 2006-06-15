@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.94 2006/03/06 12:46:36 gimmi Exp $
+ * $Id: IWBundle.java,v 1.95 2006/06/15 17:53:23 tryggvil Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -31,12 +31,12 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2006/03/06 12:46:36 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/06/15 17:53:23 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.94 $
+ * @version $Revision: 1.95 $
  */
-public interface IWBundle {
+public interface IWBundle extends IWModule{
 	/**
 	 * Discards all unsaved changes to this bundle and loads it up again 
 	 */

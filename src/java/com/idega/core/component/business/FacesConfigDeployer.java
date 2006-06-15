@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.2 2006/05/10 08:27:16 laddi Exp $
+ * $Id: FacesConfigDeployer.java,v 1.3 2006/06/15 17:53:23 tryggvil Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import com.idega.idegaweb.IWModule;
 import com.idega.idegaweb.JarLoader;
 
 /**
@@ -31,10 +32,10 @@ import com.idega.idegaweb.JarLoader;
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2006/05/10 08:27:16 $ by $Author: laddi $
+ * Last modified: $Date: 2006/06/15 17:53:23 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
@@ -66,7 +67,7 @@ public class FacesConfigDeployer implements JarLoader {
 					// if(!entryName.endsWith("undeploy.wsdd")){
 					log.info("Found JSF Description file: " + entryName);
 					InputStream stream = jarFile.getInputStream(entry);
-					processFacesConfig(stream);
+					processFacesConfig(jarFile,stream);
 					// }
 					// }
 				}
@@ -86,16 +87,16 @@ public class FacesConfigDeployer implements JarLoader {
 		}
 	}
 
-	public void processFacesConfig(InputStream stream) throws ParserConfigurationException, SAXException, IOException {
+	public void processFacesConfig(JarFile jarFile,InputStream stream) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(false);
 		factory.setValidating(false);
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document document = builder.parse(stream);
-		processDocument(document);
+		processDocument(jarFile,document);
 	}
 
-	public void processDocument(Document document) {
+	public void processDocument(JarFile jarFile,Document document) {
 
 		Element rootElement = document.getDocumentElement();
 		try {
@@ -106,7 +107,7 @@ public class FacesConfigDeployer implements JarLoader {
 				if (child instanceof Element) {
 					Element elem = (Element) child;
 					if (elem.getNodeName().equals("component")) {
-						processComponentElement(elem);
+						processComponentElement(jarFile,elem);
 					}
 				}
 			}
@@ -118,10 +119,10 @@ public class FacesConfigDeployer implements JarLoader {
 		}
 	}
 
-	protected void processComponentElement(Element element) throws Exception {
+	protected void processComponentElement(JarFile jarFile,Element element) throws Exception {
 		NodeList children = element.getChildNodes();
 		String componentClass = null;
-		//String componentType = null;
+		String componentType = null;
 		int childrenCount = children.getLength();
 		for (int i = 0; i < childrenCount; i++) {
 			Node child = children.item(i);
@@ -131,16 +132,68 @@ public class FacesConfigDeployer implements JarLoader {
 					componentClass = getNodeTextValue(elem);
 				}
 				else if (elem.getNodeName().equals("component-type")) {
-					/*componentType =*/ getNodeTextValue(elem);
+					componentType = getNodeTextValue(elem);
 				}
 			}
 		}
 		if (componentClass != null) {
 			ComponentInfo info = this.registry.getComponentByClassName(componentClass);
+			info = processComponentExtension(jarFile,element,info,componentClass,componentType);
 			if (info != null) {
 				processProperties(element, info);
 			}
 		}
+	}
+
+	/**
+	 * <p>
+	 * TODO tryggvil describe method processComponentExtension
+	 * </p>
+	 * @param element
+	 * @param info
+	 * @param componentType 
+	 * @param componentClass 
+	 */
+	private ComponentInfo processComponentExtension(JarFile jarFile,Element componentElement, ComponentInfo info, String componentClass, String componentType) {
+		NodeList componentExtensions= componentElement.getElementsByTagName("component-extension");
+		String objectType=null;
+		boolean builderVisible = false;
+		if(componentExtensions!=null){
+			for (int i = 0; i < componentExtensions.getLength(); i++) {
+				Node componentExtension = componentExtensions.item(i);
+				if(componentExtension instanceof Element){
+					NodeList idegaWebInfos = ((Element) componentExtension).getElementsByTagName("idegaweb-info");
+					for (int j = 0; j < idegaWebInfos.getLength(); j++) {
+						Node idegaWebInfo = idegaWebInfos.item(j);
+						if(idegaWebInfo instanceof Element){
+							NodeList iwChildren = idegaWebInfo.getChildNodes();
+							for (int k = 0; k < iwChildren.getLength(); k++) {
+								Node nChild = iwChildren.item(k);
+								if(nChild instanceof Element){
+									Element child = (Element)nChild;
+									if (child.getNodeName().equals("builder-visible")) {
+										builderVisible = Boolean.valueOf(getNodeTextValue(child)).booleanValue();
+									}
+									else if (child.getNodeName().equals("object-type")) {
+										objectType = getNodeTextValue(child);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		if(builderVisible&&objectType!=null&&info==null){
+			String moduleIdentifier=null;
+			if(jarFile instanceof IWModule){
+				IWModule module = (IWModule)jarFile;
+				moduleIdentifier=module.getModuleIdentifier();
+			}
+			String componentName = componentType;
+			info = registry.registerComponentPersistent(componentName,componentClass,componentType,objectType,moduleIdentifier);
+		}
+		return info;
 	}
 
 	private String getNodeTextValue(Node node) {

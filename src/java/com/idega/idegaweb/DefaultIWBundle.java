@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.31 2006/05/11 16:59:54 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.32 2006/06/15 17:53:23 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -1643,6 +1643,49 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		// Removing the context // copied from WebDAVListManagedBean (create by Eiki)
 		t.setUrl(context.getIWMainApplication().getURIFromURL(getResourcesVirtualPath(locale)+pathAndName));
 		return t;
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWModule#canLoadLazily()
+	 */
+	public boolean canLoadLazily() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWModule#getModuleIdentifier()
+	 */
+	public String getModuleIdentifier() {
+		return getBundleIdentifier();
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWModule#getModuleName()
+	 */
+	public String getModuleName() {
+		return getBundleName();
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWModule#getModuleVendor()
+	 */
+	public String getModuleVendor() {
+		return "idega Software";
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWModule#getModuleVersion()
+	 */
+	public String getModuleVersion() {
+		return getVersion();
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWModule#load()
+	 */
+	public void load() {
+		this.loadBundle();
+	}
+	/* (non-Javadoc)
+	 * @see com.idega.idegaweb.IWModule#reload()
+	 */
+	public void reload() {
+		this.reloadBundle();
 	}
 	
 	//ENTITY SPECIFIC LOG MEHTODS:

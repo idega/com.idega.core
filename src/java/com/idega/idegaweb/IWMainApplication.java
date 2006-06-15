@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.170 2006/05/08 13:51:09 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.171 2006/06/15 17:53:23 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -57,6 +57,7 @@ import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.cache.IWCacheManager2;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.idgenerator.business.UUIDGenerator;
@@ -89,10 +90,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/05/08 13:51:09 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/06/15 17:53:23 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.170 $
+ * @version $Revision: 1.171 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1152,6 +1153,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
     // this is not multi domain safe
     public IWCacheManager getIWCacheManager() {
         return cacheManager;
+    }
+    
+    public IWCacheManager2 getIWCacheManager2(){
+    	return IWCacheManager2.getInstance(this);
     }
 
     private static Properties cryptoCodesPropertiesKeyedByClassName = null;

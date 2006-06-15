@@ -1,5 +1,5 @@
 /*
- * $Id: IWModuleLoader.java,v 1.3 2006/04/09 12:13:14 laddi Exp $ Created on
+ * $Id: IWModuleLoader.java,v 1.4 2006/06/15 17:53:23 tryggvil Exp $ Created on
  * 31.5.2005 in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import org.apache.commons.logging.LogFactory;
  * This is the class responsible for loading the bundles (the new jar method)
  * for the IWMainApplication instance.
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
+ * Last modified: $Date: 2006/06/15 17:53:23 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IWModuleLoader {
 
@@ -83,7 +83,7 @@ public class IWModuleLoader {
 					File file = getJarFile(path);
 					JarFile jarFile;
 					try {
-						jarFile = new JarFile(file);
+						jarFile = new JarModule(file);
 						loadJar(file, jarFile, path);
 					}
 					catch (IOException e) {
