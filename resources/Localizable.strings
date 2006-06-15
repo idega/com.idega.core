@@ -29,6 +29,7 @@ categories=Categories
 change.group.details?=Do you want to save changes to group details?
 clear_all=Clear all
 close=Close
+create_child_category_under=Create child under
 create_root_category=Create new root category
 dateinput.day_long=Day
 dateinput.day_short=D
