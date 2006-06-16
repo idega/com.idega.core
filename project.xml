@@ -5,8 +5,8 @@
   <name>idegaWeb Core</name>
   <artifactId>com.idega.core</artifactId>
   <!--currentVersion>3.0.6</currentVersion-->
-  <currentVersion>3.1.0</currentVersion>
 
+  <currentVersion>3.1.0</currentVersion>
   <shortDescription>idegaweb core is the core package of the idegaweb framework</shortDescription>
   <package>com.idega</package>
   <versions>
@@ -59,6 +59,11 @@
       <id>3.0.6</id>
       <name>3.0.6</name>
       <tag>CORE_3_0_6</tag>
+    </version>
+    <version>
+      <id>3.1.0</id>
+      <name>3.1.0</name>
+      <tag>CORE_3_1_0</tag>
     </version>
   </versions>
   <branches/>
@@ -345,6 +350,7 @@
       </properties>
     </dependency>
     <!-- log4j used in org.apache.slide and org.apache.axis -->
+
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -354,8 +360,9 @@
       <properties>
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
-    </dependency>    
+    </dependency>
     <!-- commons-logging used in com.idega.faces and com.idega.block.creditcard, not used in core -->
+
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
@@ -385,7 +392,8 @@
       <type>jar</type>
       <url>http://jakarta.apache.org/commons/</url>
     </dependency>
-   	<!-- This Commons-Collections Dependecy is requred by ehcache, and is also used in org.apache.myfaces and org.apache.slide -->
+    <!-- This Commons-Collections Dependecy is requred by ehcache, and is also used in org.apache.myfaces and org.apache.slide -->
+
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
@@ -402,6 +410,7 @@
       <!--
       <version>0.8</version>
       -->
+
       <version>1.2</version>
       <type>jar</type>
       <url>http://ehcache.sourceforge.net/</url>
@@ -442,7 +451,7 @@
       <properties>
         <idegaweb.bundle.include>true</idegaweb.bundle.include>
       </properties>
-    </dependency>    
+    </dependency>
   </dependencies>
   <properties/>
   <build>
