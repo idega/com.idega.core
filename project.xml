@@ -5,7 +5,6 @@
   <name>idegaWeb JavaServer Faces</name>
   <artifactId>com.idega.faces</artifactId>
   <currentVersion>3.1.0</currentVersion>
-
   <inceptionYear>2003</inceptionYear>
   <shortDescription>idegaWeb Faces is JavaServer Faces implementation</shortDescription>
   <versions>
@@ -34,6 +33,11 @@
       <name>1.0.3</name>
       <tag>FACES_1_0_3</tag>
     </version>
+    <version>
+      <id>3.1.0</id>
+      <name>3.1.0</name>
+      <tag>FACES_3_1_0</tag>
+    </version>
   </versions>
   <branches/>
   <developers>
@@ -56,7 +60,6 @@
         <eclipse.dependency>true</eclipse.dependency>
       </properties>
     </dependency>
-
     <dependency>
       <groupId>myfaces</groupId>
       <artifactId>myfaces-impl</artifactId>
