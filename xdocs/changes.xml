@@ -5,7 +5,7 @@
   </properties>
   <body>
   
-    <release version="3.1.0-SNAPSHOT" date="2006-16-13">
+    <release version="3.1.0" date="2006-16-13">
       <action dev="tryggvil" type="update">
       	 New Cache sub-system. IWCacheManager2, which builds on the Open source ehCache project.
       </action>
