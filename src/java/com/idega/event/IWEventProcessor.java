@@ -111,7 +111,7 @@ public class IWEventProcessor implements Singleton {
 				listener.actionPerformed(iwc);
 			}
 			catch(ClassNotFoundException cnfe){
-				log.warning(cnfe.getMessage());
+				log.warning("ClassNotFoundException : "+cnfe.getMessage()+" : referer "+iwc.getReferer());
 			}
 
 		}
