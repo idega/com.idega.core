@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.160 2006/05/11 10:50:11 laddi Exp $ Created in 2000 by
+ * $Id: Page.java,v 1.161 2006/06/19 16:45:34 eiki Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -65,10 +65,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2006/05/11 10:50:11 $ by $Author: laddi $
+ * Last modified: $Date: 2006/06/19 16:45:34 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.160 $
+ * @version $Revision: 1.161 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -122,7 +122,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	private static String META_HTTP_EQUIV_EXPIRES = "Expires";
 	private final static String NEWLINE = "\n";
 	// State held variables:
-	private int _ibPageID;
+	private int _ibPageID = -1;
 	private String _title;
 	// private Script _theAssociatedScript;
 	// private Script associatedBodyScript = null;
@@ -1936,7 +1936,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Returns set the (BuilderPage) ID set to this page
+	 * Returns set the (BuilderPage) ID set to this page or -1 if not a builder page
 	 * 
 	 * @return The pageID value
 	 */
@@ -2351,4 +2351,12 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		list.add(new PropertyDescription(":method:1:implied:void:setTemplateId:java.lang.String:", "1", ICPage.class.getName(), ICPage.class.getName(), true));
 		return list;
 	}
+	
+//	public void addWeb2JSLibrariesToPage(){
+//		this.addScriptSource(web2.getBundleURIToPrototypeLib(Web2BusinessBean.SCRIPTACULOUS_VERSION_1_6_1));
+//		this.addScriptSource(web2.getBundleURIToScriptaculousLib(Web2BusinessBean.SCRIPTACULOUS_VERSION_1_6_1));
+//		this.addScriptSource(web2.getBundleURIToBehaviourLib());
+//	}
+	
+	
 }

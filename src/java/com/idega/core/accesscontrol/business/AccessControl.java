@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.112 2006/05/10 11:36:51 eiki Exp $
+ * $Id: AccessControl.java,v 1.113 2006/06/19 16:45:34 eiki Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -70,12 +70,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2006/05/10 11:36:51 $ by $Author: eiki $
+ * Last modified: $Date: 2006/06/19 16:45:34 $ by $Author: eiki $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.112 $
+ * @version $Revision: 1.113 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -92,7 +92,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	private static final int _GROUP_ID_EVERYONE = com.idega.user.data.GroupBMPBean.GROUP_ID_EVERYONE;
 	private static final int _GROUP_ID_USERS = com.idega.user.data.GroupBMPBean.GROUP_ID_USERS;
 
-	private static final int _notBuilderPageID = 0;
+	private static final int _notBuilderPageID = -1;
 	private PermissionCacher permissionCacher;
 	
 
