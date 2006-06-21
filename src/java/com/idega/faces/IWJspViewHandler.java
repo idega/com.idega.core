@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.13 2006/02/22 20:50:22 laddi Exp $
+ * $Id: IWJspViewHandler.java,v 1.14 2006/06/21 18:05:58 tryggvil Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.util.FacesUtil;
  * This class overrides the default JSF ViewHandler and adds idegaWeb specific way of handling JSP pages
  * that are registered in the ViewNode hierarchy.<br/>
  * </p>
- *  Last modified: $Date: 2006/02/22 20:50:22 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/06/21 18:05:58 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -206,11 +206,16 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	private void checkCopyOfJspToWebapp(FacesContext context,ViewNode node) {
 		if(node.isResourceBased()){
 			String bundlesProperty=System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
+			IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
 			if(bundlesProperty!=null){
-				String webappDir = IWMainApplication.getIWMainApplication(context).getApplicationRealPath();
+				String webappDir = iwma.getApplicationRealPath();
 				String workspaceDir = bundlesProperty;
 				String pathToBundleFileInWorkspace = node.getResourceURI();
 				IWBundleResourceFilter.copyWorkspaceFileToWebapp(workspaceDir,webappDir,pathToBundleFileInWorkspace);
+			}
+			else if(IWMainApplication.loadBundlesFromJars){
+				String jspUri = node.getResourceURI();
+				IWBundleResourceFilter.copyResourceFromJarToWebapp(iwma,jspUri);
 			}
 		
 		}
