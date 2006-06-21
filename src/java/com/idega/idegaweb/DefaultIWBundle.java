@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.32 2006/06/15 17:53:23 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.33 2006/06/21 18:08:49 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -100,6 +100,15 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	private IWPropertyList propertyList;
 	private List bundleStarters;
 	
+	/**
+	 * <p>
+	 * Empty initialization, does nothing
+	 * </p>
+	 *
+	 */
+	protected DefaultIWBundle(){
+	}
+	
 	protected DefaultIWBundle(String rootRealPath, String bundleIdentifier, IWMainApplication superApplication)
 	{
 		this(rootRealPath, rootRealPath, bundleIdentifier, superApplication);
@@ -115,6 +124,20 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		IWMainApplication superApplication,
 		boolean autoCreate)
 	{
+		initialize(rootRealPath, rootVirtualPath, bundleIdentifier, superApplication, autoCreate);
+	}
+
+	/**
+	 * <p>
+	 * Called from the constructors to initialize
+	 * </p>
+	 * @param rootRealPath
+	 * @param rootVirtualPath
+	 * @param bundleIdentifier
+	 * @param superApplication
+	 * @param autoCreate
+	 */
+	protected void initialize(String rootRealPath, String rootVirtualPath, String bundleIdentifier, IWMainApplication superApplication, boolean autoCreate) {
 		this.autoCreate = autoCreate;
 		this.superApplication = superApplication;
 		this.identifier = bundleIdentifier;
@@ -133,6 +156,8 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		this.setProperty(BUNDLE_IDENTIFIER_PROPERTY_KEY, bundleIdentifier);
 	}
+	
+	
 	/**
 	 * Discards all unsaved changes to this bundle and loads it up again 
 	 */
@@ -158,15 +183,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		setResourcesRealPath(getBundleBaseRealPath() + FileUtil.getFileSeparator() + "resources");
 		setPropertiesRealPath(getBundleBaseRealPath() + FileUtil.getFileSeparator() + "properties");
 		setClassesRealPath();
-		if (this.autoCreate)
-		{
-			this.initializeStructure();
-			this.propertyList = new IWPropertyList(getPropertiesRealPath(), propertyFileName, true);
-		}
-		else
-		{
-			this.propertyList = new IWPropertyList(getPropertiesRealPath(), propertyFileName, false);
-		}
+		this.propertyList=initializePropertyList();
 		StringBuffer SystemClassPath = new StringBuffer(System.getProperty("java.class.path"));
 		SystemClassPath.append(File.pathSeparator);
 		SystemClassPath.append(getClassesRealPath());
@@ -195,6 +212,25 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		
 	}
+	/**
+	 * <p>
+	 * Initializes the base 'bundle.pxml' file for this bundle
+	 * </p>
+	 */
+	protected IWPropertyList initializePropertyList() {
+		IWPropertyList propList = null;
+		if (this.autoCreate)
+		{
+			this.initializeStructure();
+			propList = initializePropertyList(propertyFileName);
+		}
+		else
+		{
+			propList = initializePropertyList(propertyFileName, false);
+		}
+		return propList;
+	}
+	
 	private void createDataRecords() throws Exception
 	{
 		Collection entities = getDataObjects();
@@ -554,7 +590,9 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	protected Properties getLocalizableStringsProperties()
 	{
-		initializePropertiesStrings();
+		if (this.localizableStringsProperties == null){
+			this.localizableStringsProperties=initializeLocalizableStrings();
+		}
 		return this.localizableStringsProperties;
 	}
 	public String getLocalizableStringDefaultValue(String key)
@@ -566,21 +604,22 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		initializePropertiesStrings();
 		return localizableStringsMap;
 	}*/
-	private void initializePropertiesStrings()
+	protected Properties initializeLocalizableStrings()
 	{
-		if (this.localizableStringsProperties == null)
-		{
-			this.localizableStringsProperties = new SortedProperties();
+		//if (this.localizableStringsProperties == null)
+		//{
+			Properties locProps = new SortedProperties();
 			try
 			{
-				this.localizableStringsProperties.load(new FileInputStream(getLocalizableStringsFile()));
+				locProps.load(new FileInputStream(getLocalizableStringsFile()));
 				//localizableStringsMap = new TreeMap(localizableStringsProperties);
 			}
 			catch (IOException ex)
 			{
 				log(ex);
 			}
-		}
+			return locProps;
+		//}
 	}
 	private File getLocalizableStringsFile()
 	{
@@ -588,7 +627,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		{
 			try
 			{
-				this.localizableStringsFile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(), "Localizable.strings");
+				this.localizableStringsFile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(), getLocalizableStringsFileName() );
 			}
 			catch (IOException ex)
 			{
@@ -596,6 +635,9 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			}
 		}
 		return this.localizableStringsFile;
+	}
+	protected String getLocalizableStringsFileName(){
+		return "Localizable.strings";
 	}
 	public IWPropertyList getUserProperties(IWUserContext iwuc)
 	{
@@ -616,48 +658,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		{
 			if (theReturn == null)
 			{
-				File file;
-				/**
-				   * @todo: Look into this autoCreateLocalizedResources is always set true
-				   */
-				if (this.autoCreateLocalizedResources)
-				{
-					file = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(locale), "Localized.strings");
-				}
-				else
-				{
-					file = new File(getResourcesRealPath(locale) + FileUtil.getFileSeparator() + "Localized.strings");
-				}
-				IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, file, locale);
-				String localeVariant = getApplication().getSettings().getProperty("com.idega.core.localevariant");
-				if(localeVariant!=null){
-					//Locale variants are used:
-					
-					File variantFile;
-					String variantfileName = "Localized_"+localeVariant+".strings";
-					//if (this.autoCreateLocalizedResources)
-					//{
-					//	variantFile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(locale), variantfileName);
-					//}
-					//else
-					//{
-						variantFile = new File(getResourcesRealPath(locale) + FileUtil.getFileSeparator() + variantfileName);
-					//}
-					
-					/*String slVariant = locale.getVariant();
-					if(slVariant==null){
-						slVariant=localeVariant;
-					}
-					else{
-						slVariant=slVariant+"_"+localeVariant;
-					}
-					Locale locVariant = new Locale(locale.getLanguage(),locale.getCountry(),slVariant);
-					*/
-					theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantFile, locale);
-				}
-				else{
-					theReturn = defaultLocalizedResourceBundle;
-				}
+				theReturn = initializeResourceBundle(locale);
 				getResourceBundles().put(locale, theReturn);
 			}
 		}
@@ -666,6 +667,61 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			log(ex);
 		}
 		return theReturn;
+	}
+
+	/**
+	 * <p>
+	 * TODO tryggvil describe method initializeResourceBundle
+	 * </p>
+	 * @param locale
+	 * @return
+	 * @throws IOException
+	 */
+	protected IWResourceBundle initializeResourceBundle(Locale locale) throws IOException {
+		IWResourceBundle theReturn;
+		File file;
+		/**
+		   * @todo: Look into this autoCreateLocalizedResources is always set true
+		   */
+		if (this.autoCreateLocalizedResources)
+		{
+			file = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(locale), getLocalizedStringsFileName());
+		}
+		else
+		{
+			file = new File(getResourcesRealPath(locale) + FileUtil.getFileSeparator() + getLocalizedStringsFileName());
+		}
+		IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, file, locale);
+		if(isUsingLocalVariants()){
+			//Locale variants are used:
+			File variantFile;
+			String variantfileName = getLocalizedStringsVariantFileName();
+			variantFile = new File(getResourcesRealPath(locale) + FileUtil.getFileSeparator() + variantfileName);
+			theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantFile, locale);
+		}
+		else{
+			theReturn = defaultLocalizedResourceBundle;
+		}
+		return theReturn;
+	}
+	
+	protected boolean isUsingLocalVariants(){
+		String localeVariant = getApplication().getSettings().getProperty("com.idega.core.localevariant");
+		if(localeVariant!=null){
+			return true;
+		}
+		return false;
+	}
+	
+	protected String getLocalizedStringsFileName(){
+		return "Localized.strings";
+	}
+	
+	protected String getLocalizedStringsVariantFileName(){
+
+		String localeVariant = getApplication().getSettings().getProperty("com.idega.core.localevariant");
+		String variantfileName = "Localized_"+localeVariant+".strings";
+		return variantfileName;
 	}
 	
 	/**
@@ -824,7 +880,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	/**
 	 * 
 	 * @param locale
-	 * @return returns vitual path to the locale resource folder, without the context.
+	 * @return returns the veirtual path to the locale resource folder within the webapplication, without the context.
 	 */
 	public String getResourcesPath(Locale locale)
 	{
@@ -1039,11 +1095,33 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * @param componentPropertyFileName
 	 * @return
 	 */
-	private IWPropertyList initializeComponentPropertyList(String className, String componentPropertyFileName)
+	protected IWPropertyList initializeComponentPropertyList(String className, String componentPropertyFileName)
 	{
-		IWPropertyList pl = new IWPropertyList(this.getPropertiesRealPath(), componentPropertyFileName, true);
+		IWPropertyList pl = initializePropertyList(componentPropertyFileName);
 		getComponentPropertiesListMap().put(className, pl);
 		return pl;
+	}
+	
+	/**
+	 * <p>
+	 * Initializes a IWPropertyList relative to the 'properties' folder within the bundle
+	 * </p>
+	 * @param pathWitinPropertiesFolder
+	 * @return
+	 */
+	protected IWPropertyList initializePropertyList(String pathWitinPropertiesFolder) {
+		return initializePropertyList(pathWitinPropertiesFolder, true);
+	}
+	
+	/**
+	 * <p>
+	 * Initializes a IWPropertyList relative to the 'properties' folder within the bundle
+	 * </p>
+	 * @param pathWitinPropertiesFolder
+	 * @return
+	 */
+	protected IWPropertyList initializePropertyList(String pathWitinPropertiesFolder,boolean autocreate) {
+		return  new IWPropertyList(getPropertiesRealPath(), pathWitinPropertiesFolder, autocreate);
 	}
 	/**
 	 * @param className

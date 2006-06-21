@@ -1,5 +1,5 @@
 /*
- * $Id: IWModuleLoader.java,v 1.4 2006/06/15 17:53:23 tryggvil Exp $ Created on
+ * $Id: IWModuleLoader.java,v 1.5 2006/06/21 18:08:49 tryggvil Exp $ Created on
  * 31.5.2005 in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import org.apache.commons.logging.LogFactory;
  * This is the class responsible for loading the bundles (the new jar method)
  * for the IWMainApplication instance.
  * </p>
- * Last modified: $Date: 2006/06/15 17:53:23 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/06/21 18:08:49 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class IWModuleLoader {
 
@@ -40,6 +40,8 @@ public class IWModuleLoader {
 	ServletContext _externalContext;
 	private List jarLoaders;
 
+	private String defaultLibPath = "/WEB-INF/lib/";
+	
 	/**
 	 * 
 	 */
@@ -73,25 +75,56 @@ public class IWModuleLoader {
 		return this._externalContext;
 	}
 
+	/**
+	 * Tries to load a bundle from a jar, it assumes that the jar file-name begins with the bundleIdentifier
+	 */
+	public void tryBundleLoad(String bundleIdentifier){
+		Set jars = getJarSet();
+		if (jars != null) {
+			for (Iterator it = jars.iterator(); it.hasNext();) {
+				String path = (String) it.next();
+				String pathMinusPrefix = path.substring(defaultLibPath.length(),path.length());
+				if (pathMinusPrefix.startsWith(bundleIdentifier)&&pathMinusPrefix.toLowerCase().endsWith(".jar")) {
+					loadJar(path);
+				}
+			}
+		}
+	}
+	
 	public void loadBundlesFromJars() {
-		Set jars = getExternalContext().getResourcePaths("/WEB-INF/lib/");
+		Set jars = getJarSet();
 		if (jars != null) {
 			for (Iterator it = jars.iterator(); it.hasNext();) {
 				String path = (String) it.next();
 				if (path.toLowerCase().endsWith(".jar")) {
-					// feedJarConfig(path);
-					File file = getJarFile(path);
-					JarFile jarFile;
-					try {
-						jarFile = new JarModule(file);
-						loadJar(file, jarFile, path);
-					}
-					catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					loadJar(path);
 				}
 			}
+		}
+	}
+	
+	protected Set getJarSet(){
+		Set jars = getExternalContext().getResourcePaths(defaultLibPath);
+		return jars;
+	}
+
+	/**
+	 * <p>
+	 * TODO tryggvil describe method loadJar
+	 * </p>
+	 * @param path
+	 */
+	protected void loadJar(String path) {
+		// feedJarConfig(path);
+		File file = getJarFile(path);
+		JarFile jarFile;
+		try {
+			jarFile = new JarModule(file);
+			loadJar(file, jarFile, path);
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

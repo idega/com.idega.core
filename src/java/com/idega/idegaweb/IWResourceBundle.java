@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.40 2006/05/13 12:31:59 laddi Exp $
+ * $Id: IWResourceBundle.java,v 1.41 2006/06/21 18:08:49 tryggvil Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -36,10 +37,10 @@ import com.idega.util.StringHandler;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2006/05/13 12:31:59 $ by $Author: laddi $<br/>
+ * Last modified: $Date: 2006/06/21 18:08:49 $ by $Author: tryggvil $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.40 $
+ * @version $Revision: 1.41 $
  */
 public class IWResourceBundle extends ResourceBundle {
 
@@ -66,18 +67,12 @@ public class IWResourceBundle extends ResourceBundle {
 	 *          Locale to create from
 	 */
 	public IWResourceBundle(IWBundle parent, File file, Locale locale) throws IOException {
-		setIWBundleParent(parent);
-		setLocale(locale);
-		this.file = file;
-		try {
-			this.properties.load(new FileInputStream(file));
-		}
-		catch (FileNotFoundException e) {
-			// System.err.println("IWResourceBundle: File Not
-			// Found:"+file.getAbsolutePath());
-		}
-		this.lookup = new TreeMap(this.properties);
-		setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
+		initialize(parent, new FileInputStream(file), file, locale);
+	}
+
+	
+	public IWResourceBundle(IWBundle parent, InputStream stream, Locale locale) throws IOException {
+		initialize(parent,stream,null,locale);
 	}
 
 	/**
@@ -90,6 +85,42 @@ public class IWResourceBundle extends ResourceBundle {
 		this(parent.getIWBundleParent(), file, locale);
 		setParent(parent);
 	}
+
+	/**
+	 * <p>
+	 * This constructor is used for locale variants, and the parent resourceBundle
+	 * includes the default localizations.
+	 * </p>
+	 */
+	public IWResourceBundle(IWResourceBundle parent, InputStream inputStream, Locale locale) throws IOException {
+		this(parent.getIWBundleParent(), inputStream, locale);
+		setParent(parent);
+	}
+	
+	/**
+	 * <p>
+	 * TODO tryggvil describe method initialize
+	 * </p>
+	 * @param parent
+	 * @param file
+	 * @param locale
+	 * @throws IOException
+	 */
+	protected void initialize(IWBundle parent, InputStream streamForRead, File file, Locale locale) throws IOException {
+		setIWBundleParent(parent);
+		setLocale(locale);
+		this.file = file;
+		try {
+			this.properties.load(streamForRead);
+		}
+		catch (FileNotFoundException e) {
+			// System.err.println("IWResourceBundle: File Not
+			// Found:"+file.getAbsolutePath());
+		}
+		this.lookup = new TreeMap(this.properties);
+		setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
+	}
+	
 
 	/**
 	 * Override of ResourceBundle, same semantics
@@ -166,33 +197,38 @@ public class IWResourceBundle extends ResourceBundle {
 	}
 
 	public synchronized void storeState() {
-		try {
-			this.properties.clear();
-			if (this.lookup != null) {
-				Iterator iter = this.lookup.keySet().iterator();
-				while (iter.hasNext()) {
-					Object key = iter.next();
-					if (key != null) {
-						Object value = this.lookup.get(key);
-						if (value != null) {
-							this.properties.put(key, value);
+		if(file!=null){
+			try {
+				this.properties.clear();
+				if (this.lookup != null) {
+					Iterator iter = this.lookup.keySet().iterator();
+					while (iter.hasNext()) {
+						Object key = iter.next();
+						if (key != null) {
+							Object value = this.lookup.get(key);
+							if (value != null) {
+								this.properties.put(key, value);
+							}
 						}
 					}
+					if (!this.file.exists()) {
+						this.file.createNewFile();
+						System.out.println("IWResourceBundle: Created new file: " + this.file.getAbsolutePath());
+					}
+					FileOutputStream fos = new FileOutputStream(this.file);
+					this.properties.store(fos, null);
+					fos.close();
 				}
-				if (!this.file.exists()) {
-					this.file.createNewFile();
-					System.out.println("IWResourceBundle: Created new file: " + this.file.getAbsolutePath());
-				}
-				FileOutputStream fos = new FileOutputStream(this.file);
-				this.properties.store(fos, null);
-				fos.close();
+			}
+			catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			catch (IOException ex) {
+				ex.printStackTrace();
 			}
 		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		catch (IOException ex) {
-			ex.printStackTrace();
+		else{
+			System.out.println("IWResourceBundle: Cannot save, was nat read from file ");
 		}
 	}
 

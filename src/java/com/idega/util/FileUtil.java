@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
@@ -199,49 +200,75 @@ public class FileUtil {
     return file.delete();
 }
 
+  
+  /*
+  * streams an inputstream to a file
+  */
+    public static void streamToFile(InputStream input, File toFile) throws IOException{
+    	FileOutputStream out = new FileOutputStream(toFile);
+    	streamToOutputStream(input, out);
+    }
+  
+    
+
+    /*
+    * streams an inputstream to a file
+    */
+      public static File streamToFile( InputStream input, String filePath, String fileName){
+      	File file = null;
+        try{
+          if(input!=null){
+            input.available();//this casts an ioexception if the stream is null
+            file = getFileAndCreateIfNotExists(filePath,fileName);
+            FileOutputStream fileOut = new FileOutputStream(file);
+            streamToOutputStream(input,fileOut);
+          }
+        }
+        catch(IOException e){
+            //e.printStackTrace(System.err);
+            System.err.println("FileUtil : Error or skipping (for folders) writing to file");
+         }
+
+        return file;
+      }
+    
 /*
 * streams an inputstream to a file
 */
-  public static File streamToFile( InputStream input, String filePath, String fileName){
-  	File file = null;
+  public static void streamToOutputStream( InputStream input, OutputStream out)throws IOException{
     try{
       if(input!=null){
-        input.available();//this casts an ioexception if the stream is null
-        file = getFileAndCreateIfNotExists(filePath,fileName);
-        FileOutputStream fileOut = new FileOutputStream(file);
-
+        input.available();
         byte buffer[]= new byte[1024];
         int	noRead	= 0;
 
         noRead = input.read( buffer, 0, 1024 );
         //Write out the stream to the file
         while ( noRead != -1 ){
-          fileOut.write( buffer, 0, noRead );
+          out.write( buffer, 0, noRead );
           noRead = input.read( buffer, 0, 1024 );
         }
 
-        fileOut.flush();
-        fileOut.close();
+        out.flush();
+        out.close();
       }
 
     }
-    catch(IOException e){
-      //e.printStackTrace(System.err);
-      System.err.println("FileUtil : Error or skipping (for folders) writing to file");
-    }
+    //catch(IOException e){
+    //  //e.printStackTrace(System.err);
+    //  System.err.println("FileUtil : Error or skipping (for folders) writing to file");
+    //}
     finally{
       try{
         if(input!=null) {
-					input.close();
-				}
+        	input.close();
+        }
       }
       catch(IOException e){
         //e.printStackTrace(System.err);
         System.err.println("FileUtil : Error closing the inputstream");
       }
     }
-
-    return file;
   }
 
   /** 
