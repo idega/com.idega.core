@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.3 2006/06/15 17:53:23 tryggvil Exp $
+ * $Id: FacesConfigDeployer.java,v 1.4 2006/06/21 11:24:20 laddi Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.idegaweb.JarLoader;
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2006/06/15 17:53:23 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/06/21 11:24:20 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
@@ -191,7 +191,7 @@ public class FacesConfigDeployer implements JarLoader {
 				moduleIdentifier=module.getModuleIdentifier();
 			}
 			String componentName = componentType;
-			info = registry.registerComponentPersistent(componentName,componentClass,componentType,objectType,moduleIdentifier);
+			info = this.registry.registerComponentPersistent(componentName,componentClass,componentType,objectType,moduleIdentifier);
 		}
 		return info;
 	}
