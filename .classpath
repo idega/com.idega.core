@@ -1,30 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <classpath>
-  <classpathentry excluding="" kind="src" path="src/java">
-  </classpathentry>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-  </classpathentry>
-  <classpathentry kind="src" path="/com.idega.core">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-impl-1.1.3.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/commons-logging/jars/commons-logging-1.0.4.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.4.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-jsf-api-1.1.3.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/myfaces/jars/myfaces-tomahawk-1.1.3.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/jspapi/jars/jsp-api-2.0.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/ejb/jars/ejb-2.0.jar">
-  </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-spec1_0_1.jar">
-  </classpathentry>
-  <classpathentry kind="src" path="/com.idega.block.web2.0">
-  </classpathentry>
-  <classpathentry kind="output" path="target/classes">
-  </classpathentry>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry excluding="**" output="properties" kind="src" path="properties"/>
+	<classpathentry excluding="**" output="WEB-INF" kind="src" path="WEB-INF"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
