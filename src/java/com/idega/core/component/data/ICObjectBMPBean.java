@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectBMPBean.java,v 1.17 2006/06/02 10:19:13 tryggvil Exp $
+ * $Id: ICObjectBMPBean.java,v 1.17.2.1 2006/06/28 10:18:53 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  *
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
@@ -40,10 +40,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * time the application starts it updates the IC_OBJECT table with all components
  * registered in all idegaWeb bundles installed in the web-application.
  * </p>
- * Last modified: $Date: 2006/06/02 10:19:13 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/06/28 10:18:53 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.17.2.1 $
  */
 public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
 	/**
@@ -368,8 +368,12 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
 				Object pk = iter.next();
 				ICObject ico = home.findByPrimaryKey(pk);
-				if(ico.getObjectType().equals(type)&&ico.getBundleIdentifier().equals(bundle)){
-					newPKs.add(pk);
+				String objectType = ico.getObjectType();
+				String bundleIdentifier = ico.getBundleIdentifier();
+				if(objectType!=null && bundleIdentifier !=null){
+					if(objectType.equals(type)&&bundleIdentifier.equals(bundle)){
+						newPKs.add(pk);
+					}
 				}
 			}
 			return newPKs;
