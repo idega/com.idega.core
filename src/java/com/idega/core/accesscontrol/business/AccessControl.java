@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.113 2006/06/19 16:45:34 eiki Exp $
+ * $Id: AccessControl.java,v 1.112.2.1 2006/06/28 10:20:06 tryggvil Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -70,12 +70,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2006/06/19 16:45:34 $ by $Author: eiki $
+ * Last modified: $Date: 2006/06/28 10:20:06 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.113 $
+ * @version $Revision: 1.112.2.1 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**

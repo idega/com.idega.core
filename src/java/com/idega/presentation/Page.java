@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.161 2006/06/19 16:45:34 eiki Exp $ Created in 2000 by
+ * $Id: Page.java,v 1.160.2.1 2006/06/28 10:20:06 tryggvil Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -65,10 +65,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2006/06/19 16:45:34 $ by $Author: eiki $
+ * Last modified: $Date: 2006/06/28 10:20:06 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.161 $
+ * @version $Revision: 1.160.2.1 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
