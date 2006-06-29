@@ -6,6 +6,13 @@
       <type>java.lang.String</type>
       <value>com.idega.faces</value>
     </key>
+    <key>
+      <name>iw_components</name>
+      <value>
+        <map />
+      </value>
+      <type>map</type>
+    </key>
   </map>
 </pxml>
 
