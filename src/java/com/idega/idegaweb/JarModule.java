@@ -1,5 +1,5 @@
 /*
- * $Id: JarModule.java,v 1.1.2.1 2006/06/23 11:12:45 gimmi Exp $
+ * $Id: JarModule.java,v 1.1.2.2 2006/06/29 12:38:20 laddi Exp $
  * Created on 12.6.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import java.util.jar.Manifest;
  * <p>
  * TODO tryggvil Describe Type JarModule
  * </p>
- *  Last modified: $Date: 2006/06/23 11:12:45 $ by $Author: gimmi $
+ *  Last modified: $Date: 2006/06/29 12:38:20 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  */
 public class JarModule extends JarFile implements IWModule {
 
@@ -123,28 +123,28 @@ public class JarModule extends JarFile implements IWModule {
 	 * @see com.idega.idegaweb.IWModule#getModuleIdentifier()
 	 */
 	public String getModuleIdentifier() {
-		return moduleIdentifier;
+		return this.moduleIdentifier;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleName()
 	 */
 	public String getModuleName() {
-		return moduleName;
+		return this.moduleName;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleVendor()
 	 */
 	public String getModuleVendor() {
-		return moduleVendor;
+		return this.moduleVendor;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleVersion()
 	 */
 	public String getModuleVersion() {
-		return moduleVersion;
+		return this.moduleVersion;
 	}
 
 	/* (non-Javadoc)
