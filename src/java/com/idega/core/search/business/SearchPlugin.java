@@ -1,5 +1,5 @@
 /*
- * $Id: SearchPlugin.java,v 1.2 2005/03/20 11:22:37 eiki Exp $
+ * $Id: SearchPlugin.java,v 1.3 2006/06/29 11:18:33 eiki Exp $
  * Created on Jan 17, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,7 +15,7 @@ import com.idega.idegaweb.IWMainApplication;
 
 /**
  * 
- *  Last modified: $Date: 2005/03/20 11:22:37 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/06/29 11:18:33 $ by $Author: eiki $
  * 
  * This interface defines methods that have to be implemented to make "collection" searchable e.g. users/files/websites etc.<br>
  * Objects implementing this interface should be registered to their bundle as "iw.searchplugin" if you want to use the default<br>
@@ -26,10 +26,10 @@ import com.idega.idegaweb.IWMainApplication;
  * in the package com.idega.search.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>,<a href="mailto:tryggvi@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
-public interface SearchPlugin {
-	
+public interface SearchPlugin extends Cloneable{
+
 	/**
 	 * This method is called once in the lifetime of the context for each searchable object before any search is done.
 	 * @param iwc
