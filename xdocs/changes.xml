@@ -5,6 +5,12 @@
   </properties>
   <body>
    <release version="3.1.1" date="2006-06-30">
+      <action dev="tryggvil" type="fix">
+      	Fix for HSQLDB database where front page with ib_page_id=0 was causing a permission bug (not displayed).
+      </action>
+      <action dev="tryggvil" type="fix">
+     	Bugfix for NullpointerException caused in ICObjectBMPBean where objectType or bundle was null. (Travel)
+      </action>
       <action dev="eiki" type="update">
       	Refactored and improved SearchResult to be more extendable. See new module WhatIsNew in the com.idega.content bundle for an example.
       </action>
