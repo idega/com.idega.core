@@ -4,7 +4,8 @@
   <extend>base-project.xml</extend>
   <name>idegaWeb Core</name>
   <artifactId>com.idega.core</artifactId>
- <!-- DONT FORGET to change the current version when decalring a new one -->
+  <!-- DONT FORGET to change the current version when decalring a new one -->
+
   <currentVersion>3.1.1</currentVersion>
   <shortDescription>idegaweb core is the core package of the idegaweb framework</shortDescription>
   <package>com.idega</package>
@@ -63,6 +64,11 @@
       <id>3.1.0</id>
       <name>3.1.0</name>
       <tag>CORE_3_1_0</tag>
+    </version>
+    <version>
+      <id>3.1.1</id>
+      <name>3.1.1</name>
+      <tag>CORE_3_1_1</tag>
     </version>
   </versions>
   <branches/>
