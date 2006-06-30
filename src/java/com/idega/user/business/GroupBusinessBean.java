@@ -1811,7 +1811,8 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
           
           address.setStreetName(streetName);
           if( streetNumber!=null ) address.setStreetNumber(streetNumber);
-  
+          else address.setStreetNumber("");
+
           address.store();
   
           if(addAddress){
@@ -2562,10 +2563,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2005/11/23 00:13:12 $ by $Author: sigtryggur $
+	 *  Last modified: $Date: 2006/06/30 18:10:51 $ by $Author: sigtryggur $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.99.2.1 $
+	 * @version $Revision: 1.99.2.2 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
