@@ -152,10 +152,10 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 		String treeTableName = EntityControl.getTreeRelationShipTableName(this);
 		
 		if(this.getPrimaryKey() instanceof Integer){
-			return EntityControl.returnSingleSQLQuery(this, "select count(*) from " + treeTableName + " where " + this.getIDColumnName() + "=" + this.getPrimaryKey().toString() + "");
+			return EntityControl.returnSingleSQLQuery(this, "select count(" + this.getIDColumnName() + ") from " + treeTableName + " where " + this.getIDColumnName() + "=" + this.getPrimaryKey().toString() + "");
 		}
 		else{//string etc
-			return EntityControl.returnSingleSQLQuery(this, "select count(*) from " + treeTableName + " where " + this.getIDColumnName() + "='" + this.getPrimaryKey().toString() + "'");
+			return EntityControl.returnSingleSQLQuery(this, "select count(" + this.getIDColumnName() + ") from " + treeTableName + " where " + this.getIDColumnName() + "='" + this.getPrimaryKey().toString() + "'");
 		}
 	}
 
