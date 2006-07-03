@@ -7,7 +7,7 @@
   
    <release version="3.1.2" date="2006-07-03">
       <action dev="tryggvil" type="fix">
-        	Fixed and addons for SmallCalendar (HTML bug "<" and ">", setting class and dateParameterName)
+        	Fixed and addons for SmallCalendar (HTML, setting class and dateParameterName)
       </action>
     </release>
   
