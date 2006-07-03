@@ -26,6 +26,7 @@ public class SmallCalendar extends Block {
 	private IWTimestamp stamp;
 	private IWCalendar cal;
 	private ICPage _page;
+	private Class _class;
 	private Image iNextImage;
 	private Image iPreviousImage;
 
@@ -71,6 +72,7 @@ public class SmallCalendar extends Block {
 	private boolean useTarget = false;
 	private String onClickMessageFormat = null;
 	private int displayFormat = DateFormat.MEDIUM;
+	private String dateParameterName = null;
 	
 	public static final String PRM_SETTINGS = "settings";
 
@@ -141,7 +143,7 @@ public class SmallCalendar extends Block {
 			right = new Link(this.iNextImage);
 		}
 		else {
-			right = new Link(getLinkText(">"));
+			right = new Link(getLinkText("&gt;"));
 		}
 
 		for (int i = 0; i < this.parameterName.size(); i++) {
@@ -156,7 +158,7 @@ public class SmallCalendar extends Block {
 			left = new Link(this.iPreviousImage);
 		}
 		else {
-			left = new Link(getLinkText("<"));
+			left = new Link(getLinkText("&lt;"));
 		}
 		for (int i = 0; i < this.parameterName.size(); i++) {
 			left.addParameter((String) this.parameterName.get(i), (String) this.parameterValue.get(i));
@@ -306,6 +308,12 @@ public class SmallCalendar extends Block {
 				}
 				if (this._page != null) {
 					theLink.setPage(this._page);
+				}
+				if (this._class != null) {
+					theLink.setClassToInstanciate(this._class);
+				}
+				if (dateParameterName != null) {
+					theLink.addParameter(dateParameterName, new IWTimestamp(n, stamp.getMonth(), stamp.getYear()).toSQLDateString());
 				}
 				theLink.addParameter(CalendarParameters.PARAMETER_DAY, n);
 				theLink.addParameter(CalendarParameters.PARAMETER_MONTH, this.stamp.getMonth());
@@ -1003,5 +1011,13 @@ public class SmallCalendar extends Block {
 		this.iCellpadding = cellpadding;
 	}
 	public void setMonthTextStyleClass(String monthTextStyleClass) {
+	}
+
+	public void setClassToLinkTo(Class classToLinkTo) {
+		this._class = classToLinkTo;
+	}
+
+	public void setDateParameterName(String dateParameterName) {
+		this.dateParameterName = dateParameterName;
 	}
 }
