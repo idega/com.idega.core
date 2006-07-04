@@ -312,8 +312,8 @@ public class SmallCalendar extends Block {
 				if (this._class != null) {
 					theLink.setClassToInstanciate(this._class);
 				}
-				if (dateParameterName != null) {
-					theLink.addParameter(dateParameterName, new IWTimestamp(n, stamp.getMonth(), stamp.getYear()).toSQLDateString());
+				if (this.dateParameterName != null) {
+					theLink.addParameter(this.dateParameterName, new IWTimestamp(n, this.stamp.getMonth(), this.stamp.getYear()).toSQLDateString());
 				}
 				theLink.addParameter(CalendarParameters.PARAMETER_DAY, n);
 				theLink.addParameter(CalendarParameters.PARAMETER_MONTH, this.stamp.getMonth());
