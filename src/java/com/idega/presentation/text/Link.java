@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.170 2006/05/22 11:34:52 laddi Exp $
+ * $Id: Link.java,v 1.170.2.1 2006/07/05 16:01:50 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -75,7 +75,7 @@ public class Link extends Text {
 	//Instance variables:
 	private PresentationObject _obj;
 	private Window _myWindow = null;
-	private Form _formToSubmit;
+	private boolean iFormToSubmit = false;
 	private Class _windowClass = null;
 	private Window _windowInstance = null;
 	private int icObjectInstanceIDForWindow = -1;
@@ -1120,12 +1120,7 @@ public class Link extends Text {
 	}
 
 	public boolean isSetToSubmitForm() {
-		if (this._formToSubmit != null) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return this.iFormToSubmit;
 	}
 
 	/**
@@ -1313,10 +1308,6 @@ public class Link extends Text {
 			}
 			if (this._myWindow != null) {
 				linkObj._myWindow = (Window) this._myWindow.clone();
-			}
-
-			if (this._formToSubmit != null) {
-				linkObj._formToSubmit = (Form) this._formToSubmit.clone();
 			}
 
 			if (this._windowClass != null) {
@@ -1800,7 +1791,7 @@ public class Link extends Text {
 	private void postIWLinkEvent(IWContext iwc) {
 		this.eventLocationString = getID();
 		IWLinkEvent event = new IWLinkEvent(this, IWLinkEvent.LINK_ACTION_PERFORMED);
-		if (this._formToSubmit == null) {
+		if (!this.iFormToSubmit) {
 			addParameter(sessionEventStorageName, this.eventLocationString);
 		}
 		iwc.setSessionAttribute(this.eventLocationString, event);
@@ -1814,6 +1805,13 @@ public class Link extends Text {
 		setToFormSubmit(form, false);
 	}
 
+	/**
+	 *
+	 */
+	public void setToFormSubmit(String formID) {
+		setToFormSubmit(formID, false);
+	}
+
 	public void setImageToOpenInPopUp(Image image) {
 		this.setOnClick("img_wnd=window.open('','','width=100,height=100,left='+((screen.width/2)-50)+',top='+((screen.height/2)-50)+',resizable=yes,scrollbars=no'); doopen('" + image.getMediaURL() + "'); return true;");
 		setFinalUrl("javascript:void(0)");
@@ -1824,20 +1822,24 @@ public class Link extends Text {
 		setFinalUrl(JAVASCRIPT + "alert('" + TextSoap.cleanText(message) + "')");
 	}
 
+	public void setToFormSubmit(Form form, boolean useEvent) {
+		setToFormSubmit(form.getID(), useEvent);
+	}
+	
 	/**
 	 *
 	 */
-	public void setToFormSubmit(Form form, boolean useEvent) {
-		this._formToSubmit = form;
+	public void setToFormSubmit(String formID, boolean useEvent) {
+		this.iFormToSubmit = true;
 		//setFinalUrl(HASH);
 		String action = "";
 		if ((getIWLinkListeners() != null && getIWLinkListeners().length != 0) || useEvent) {
 			//setOnClick("document."+form.getID()+"."+IWMainApplication.IWEventSessionAddressParameter+".value=this.id ;document."+form.getID()+".submit()");
 
-			action = ("document.forms['" + form.getID() + "']." + IWMainApplication.IWEventSessionAddressParameter + ".value='" + this.getID() + "';document.forms['" + form.getID() + "'].submit();");
+			action = ("document.forms['" + formID + "']." + IWMainApplication.IWEventSessionAddressParameter + ".value='" + this.getID() + "';document.forms['" + formID + "'].submit();");
 		}
 		else {
-			action = ("document.forms['" + form.getID() + "'].submit()");
+			action = ("document.forms['" + formID + "'].submit()");
 		}
 		//setOnClick(action);
 		setFinalUrl(JAVASCRIPT + action);
