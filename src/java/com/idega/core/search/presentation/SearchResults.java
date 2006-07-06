@@ -1,6 +1,6 @@
 /*
- * $Id: SearchResults.java,v 1.13.2.2 2006/07/03 14:55:56 laddi Exp $ Created on
- * Jan 17, 2005
+ * $Id: SearchResults.java,v 1.13.2.3 2006/07/06 15:48:08 eiki Exp $ Created on Jan
+ * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  * 
@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import com.idega.core.search.business.Search;
 import com.idega.core.search.business.SearchPlugin;
 import com.idega.core.search.business.SearchPluginManager;
@@ -31,7 +32,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2006/07/03 14:55:56 $ by $Author: laddi $
+ * Last modified: $Date: 2006/07/06 15:48:08 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -45,7 +46,7 @@ import com.idega.presentation.text.Text;
  * some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.13.2.2 $
+ * @version $Revision: 1.13.2.3 $
  */
 public class SearchResults extends Block {
 
@@ -75,6 +76,7 @@ public class SearchResults extends Block {
 	// todo create handler
 	protected String searchPluginsToUse;
 	protected String searchQueryString;
+	protected boolean showAllResultProperties = false;
 
 	public SearchResults() {
 		super();
@@ -214,22 +216,24 @@ public class SearchResults extends Block {
 				while (iter.hasNext()) {
 					SearchPlugin searchPlugin = (SearchPlugin) iter.next();
 					searchPlugin = configureSearchPlugin(searchPlugin);
-
+					
 					// odd or even row
 					Layer rowContainer;
 					// todo get from handler
 					if (getSearchPluginsToUse() != null) {
 						String searchClass = searchPlugin.getClass().getName();
-						String className = searchClass.substring(searchClass.lastIndexOf('.') + 1);
+						String className  = searchClass.substring(searchClass.lastIndexOf('.') + 1);
 						String pluginNamesOrClasses = getSearchPluginsToUse();
-						if ((pluginNamesOrClasses.indexOf(className) < 0) && (pluginNamesOrClasses.indexOf(searchClass) < 0)) {
+						if ( (pluginNamesOrClasses.indexOf(className) < 0) && (pluginNamesOrClasses.indexOf(searchClass) < 0) ) {
 							continue;
 						}
 					}
 					//
-
+					
+					
 					//
-					if ((isAdvancedSearch && searchPlugin.getSupportsAdvancedSearch()) || (!isAdvancedSearch && searchPlugin.getSupportsSimpleSearch())) {
+					if ((isAdvancedSearch && searchPlugin.getSupportsAdvancedSearch())
+							|| (!isAdvancedSearch && searchPlugin.getSupportsSimpleSearch())) {
 						if (isAdvancedSearch && searchPlugin.getSupportsAdvancedSearch()) {
 							fillAdvancedSearch(iwc, query, searchPlugin);
 						}
@@ -296,7 +300,8 @@ public class SearchResults extends Block {
 									addSearchResultTypeStyleClass(abstractT, type);
 									rowContainer.add(abstractT);
 								}
-								if (extraParameters != null && !extraParameters.isEmpty()) {
+								
+								if (extraParameters != null && !extraParameters.isEmpty() && isSetToShowAllResultProperties()) {
 									Iterator keys = extraParameters.keySet().iterator();
 									int counter = 0;
 									while (keys.hasNext()) {
@@ -304,20 +309,22 @@ public class SearchResults extends Block {
 										String key = (String) keys.next();
 										String value = (String) extraParameters.get(key);
 										Text extraParams;
-
+										
 										if (counter % 2 == 0) {
-											extraParams = (Text) extraAttributeEvenProtoType.clone();
+											extraParams = (Text)extraAttributeEvenProtoType.clone();
 										}
 										else {
-											extraParams = (Text) extraAttributeOddProtoType.clone();
+											extraParams = (Text)extraAttributeOddProtoType.clone();
 										}
-
+										
 										extraParams.setText(value);
 										addSearchResultTypeAndAttributeKeyStyleClass(extraParams, type, key);
-
+								
 										rowContainer.add(extraParams);
 									}
 								}
+								
+								
 								// adding spacer to force the row container
 								// around all floating elements
 								rowContainer.add(spacer.clone());
@@ -329,7 +336,8 @@ public class SearchResults extends Block {
 				}
 			}
 			if (noResult) {
-				Text noResults = new Text(iwrb.getLocalizedString("search_results.no_results", "The search found no results matching your query."));
+				Text noResults = new Text(iwrb.getLocalizedString("search_results.no_results",
+						"The search found no results matching your query."));
 				noResults.setStyleClass(getSearchNameStyleClass());
 				container.add(noResults);
 			}
@@ -338,10 +346,8 @@ public class SearchResults extends Block {
 	}
 
 	/**
-	 * Allows subclasses to cast the search plugin to its true class and
-	 * manipulate it. Remember this is a global plugin so clone it if you don't
-	 * want to mess with other searches.
-	 * 
+	 * Allows subclasses to cast the search plugin to its true class and manipulate it.
+	 * Remember this is a global plugin so clone it if you don't want to mess with other searches.
 	 * @param searchPlugin
 	 */
 	protected SearchPlugin configureSearchPlugin(SearchPlugin searchPlugin) {
@@ -354,8 +360,8 @@ public class SearchResults extends Block {
 	 */
 	protected String getSearchQueryString(IWContext iwc) {
 		String query = iwc.getParameter(getSimpleSearchParameterName());
-		if (query == null) {
-			query = this.searchQueryString;
+		if(query==null){
+			query = searchQueryString;
 		}
 		return query;
 	}
@@ -407,6 +413,7 @@ public class SearchResults extends Block {
 		String style = obj.getStyleClass();
 		obj.setStyleClass(style + " " + style + "_" + type);
 	}
+	
 
 	/**
 	 * Adds an extra optional style with the search type suffix
@@ -430,7 +437,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param linkStyleClass
-	 *          The linkStyleClass to set.
+	 *            The linkStyleClass to set.
 	 */
 	public void setLinkStyleClass(String linkStyleClass) {
 		this.linkStyleClass = linkStyleClass;
@@ -445,7 +452,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param abstractTextStyleClass
-	 *          The abstractTextStyleClass to set.
+	 *            The abstractTextStyleClass to set.
 	 */
 	public void setAbstractTextStyleClass(String abstractTextStyleClass) {
 		this.abstractTextStyleClass = abstractTextStyleClass;
@@ -460,7 +467,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param extraInformationTextStyleClass
-	 *          The extraInformationTextStyleClass to set.
+	 *            The extraInformationTextStyleClass to set.
 	 */
 	public void setExtraInformationTextStyleClass(String extraInformationTextStyleClass) {
 		this.extraInformationTextStyleClass = extraInformationTextStyleClass;
@@ -475,7 +482,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param searchNameStyleClass
-	 *          The searchNameStyleClass to set.
+	 *            The searchNameStyleClass to set.
 	 */
 	public void setSearchNameStyleClass(String searchNameStyleClass) {
 		this.searchNameStyleClass = searchNameStyleClass;
@@ -490,7 +497,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param iconStyleClass
-	 *          The iconStyleClass to set.
+	 *            The iconStyleClass to set.
 	 */
 	public void setIconStyleClass(String iconStyleClass) {
 		this.iconStyleClass = iconStyleClass;
@@ -504,9 +511,7 @@ public class SearchResults extends Block {
 	}
 
 	/**
-	 * Set a CVS list of the classnames of search plugins, e.g.
-	 * WebCrawlerSearchPlugin, ContentSearch, etc.
-	 * 
+	 * Set a CVS list of the classnames of search plugins, e.g. WebCrawlerSearchPlugin, ContentSearch, etc.
 	 * @param searchPluginsToUse
 	 */
 	public void setSearchPluginsToUse(String searchPluginsToUse) {
@@ -522,7 +527,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param extraAttributeTextEvenStyleClass
-	 *          The extraAttributeTextEvenStyleClass to set.
+	 *            The extraAttributeTextEvenStyleClass to set.
 	 */
 	public void setExtraAttributeTextEvenStyleClass(String extraAttributeEvenStyleClass) {
 		this.extraAttributeTextEvenStyleClass = extraAttributeEvenStyleClass;
@@ -537,17 +542,32 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param extraAttributeTextOddStyleClass
-	 *          The extraAttributeTextOddStyleClass to set.
+	 *            The extraAttributeTextOddStyleClass to set.
 	 */
 	public void setExtraAttributeTextOddStyleClass(String extraAttributeOddStyleClass) {
 		this.extraAttributeTextOddStyleClass = extraAttributeOddStyleClass;
 	}
 
+	
 	/**
-	 * @param searchQueryString
-	 *          the searchQueryString to set
+	 * @param searchQueryString the searchQueryString to set
 	 */
 	public void setSearchQueryString(String searchQueryString) {
 		this.searchQueryString = searchQueryString;
+	}
+
+	/**
+	 * @return the showAllResultProperties
+	 */
+	public boolean isSetToShowAllResultProperties() {
+		return showAllResultProperties;
+	}
+
+	/**
+	 * If true then the result properties map of a result is added, each key and value pair gets its own layer with style class
+	 * @param showAllResultProperties
+	 */
+	public void setToShowAllResultProperties(boolean showAllResultProperties) {
+		this.showAllResultProperties = showAllResultProperties;
 	}
 }
