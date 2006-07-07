@@ -75,6 +75,11 @@
       <name>3.1.3</name>
       <tag>CORE_3_1_3</tag>
     </version>
+    <version>
+      <id>3.1.4</id>
+      <name>3.1.4</name>
+      <tag>CORE_3_1_4</tag>
+    </version>
   </versions>
   <branches/>
   <mailingLists>
