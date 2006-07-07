@@ -4,8 +4,32 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+   <release version="3.1.3" date="2006-07-06">
+      <action dev="eiki" type="fix">
+      	Fixes and addons for SearchResults so you can show or hide extra search result parameters.
+      </action>
+    </release>
+    
+   <release version="3.1.2" date="2006-07-03">
+      <action dev="tryggvil" type="fix">
+        	Fixed and addons for SmallCalendar (HTML, setting class and dateParameterName)
+      </action>
+    </release>
   
-    <release version="3.1.0" date="2006-16-16">
+  
+   <release version="3.1.1" date="2006-06-30">
+      <action dev="tryggvil" type="fix">
+      	Fix for HSQLDB database where front page with ib_page_id=0 was causing a permission bug (not displayed).
+      </action>
+      <action dev="tryggvil" type="fix">
+     	Bugfix for NullpointerException caused in ICObjectBMPBean where objectType or bundle was null. (Travel)
+      </action>
+      <action dev="eiki" type="update">
+      	Refactored and improved SearchResult to be more extendable. See new module WhatIsNew in the com.idega.content bundle for an example.
+      </action>
+    </release>
+      
+    <release version="3.1.0" date="2006-06-16">
       <action dev="tryggvil" type="update">
       	 New Cache sub-system. IWCacheManager2, which builds on the Open source ehCache project.
       </action>

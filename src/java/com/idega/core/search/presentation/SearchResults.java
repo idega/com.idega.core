@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.14 2006/06/29 11:18:33 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.15 2006/07/07 12:44:03 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -31,7 +31,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2006/06/29 11:18:33 $ by $Author: eiki $
+ * Last modified: $Date: 2006/07/07 12:44:03 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -44,7 +44,7 @@ import com.idega.presentation.text.Text;
  * This class can also be EXTENDED like e.g. WhatIsNew block does by overriding some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class SearchResults extends Block {
 
@@ -58,8 +58,7 @@ public class SearchResults extends Block {
 	public static final String DEFAULT_EXTRA_ATTRIBUTE_ODD_STYLE_CLASS = "iw_search_result_extra_attribute_odd";
 	public static final String DEFAULT_EXTRA_ATTRIBUTE_EVEN_STYLE_CLASS = "iw_search_result_extra_attribute_even";
 	private static final String DEFAULT_SEARCH_NAME_STYLE_CLASS = "iw_search_name";
-	
-	
+
 	private String linkStyleClass = DEFAULT_LINK_STYLE_CLASS;
 	private String abstractTextStyleClass = DEFAULT_ABSTRACT_TEXT_STYLE_CLASS;
 	private String extraInformationTextStyleClass = DEFAULT_EXTRA_INFO_TEXT_STYLE_CLASS;
@@ -75,6 +74,7 @@ public class SearchResults extends Block {
 	// todo create handler
 	protected String searchPluginsToUse;
 	protected String searchQueryString;
+	protected boolean showAllResultProperties = false;
 
 	public SearchResults() {
 		super();
@@ -89,7 +89,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param searchParameterName
-	 *            The searchParameterName to set.
+	 *          The searchParameterName to set.
 	 */
 	public void setSimpleSearchParameterName(String searchParameterName) {
 		this.searchParameterName = searchParameterName;
@@ -104,7 +104,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param searchParameterName
-	 *            The advancedSearchParameterName to set.
+	 *          The advancedSearchParameterName to set.
 	 */
 	public void setAdvancedSearchParameterName(String advancedSearchParameterName) {
 		this.advancedSearchParameterName = advancedSearchParameterName;
@@ -119,7 +119,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param rowOddStyleClass
-	 *            The rowOddStyleClass to set.
+	 *          The rowOddStyleClass to set.
 	 */
 	public void setRowOddStyleClass(String buttonStyleClass) {
 		this.rowOddStyleClass = buttonStyleClass;
@@ -134,7 +134,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param rowEvenStyleClass
-	 *            The rowEvenStyleClass to set.
+	 *          The rowEvenStyleClass to set.
 	 */
 	public void setRowEvenStyleClass(String inputStyleClass) {
 		this.rowEvenStyleClass = inputStyleClass;
@@ -149,7 +149,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * @param styleClass
-	 *            The styleClass to set.
+	 *          The styleClass to set.
 	 */
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
@@ -170,28 +170,28 @@ public class SearchResults extends Block {
 			// prototypes
 			Layer evenRowProtoType = new Layer();
 			evenRowProtoType.setStyleClass(getRowEvenStyleClass());
-			
+
 			Layer oddRowProtoType = new Layer();
 			oddRowProtoType.setStyleClass(getRowOddStyleClass());
-			
+
 			Layer iconPrototype = new Layer();
 			iconPrototype.setStyleClass(getIconStyleClass());
-			
+
 			Link linkProtoType = new Link();
 			linkProtoType.setStyleClass(getLinkStyleClass());
-			
+
 			Text abstractTextProtoType = new Text();
 			abstractTextProtoType.setStyleClass(getAbstractTextStyleClass());
-			
+
 			Text extraInfoTextProtoType = new Text();
 			extraInfoTextProtoType.setStyleClass(getExtraInformationTextStyleClass());
-			
+
 			Text extraAttributeOddProtoType = new Text();
 			extraAttributeOddProtoType.setStyleClass(getExtraAttributeTextOddStyleClass());
-			
+
 			Text extraAttributeEvenProtoType = new Text();
 			extraAttributeEvenProtoType.setStyleClass(getExtraAttributeTextEvenStyleClass());
-			
+
 			// ////
 			// If the query is advanced then the query object is created later
 			boolean isAdvancedSearch = false;
@@ -208,8 +208,7 @@ public class SearchResults extends Block {
 			}
 			// /
 			boolean noResult = true;
-			Collection plugins = SearchPluginManager.getInstance().getAllSearchPluginsInitialized(
-					iwc.getIWMainApplication());
+			Collection plugins = SearchPluginManager.getInstance().getAllSearchPluginsInitialized(iwc.getIWMainApplication());
 			if (!plugins.isEmpty()) {
 				Iterator iter = plugins.iterator();
 				while (iter.hasNext()) {
@@ -299,7 +298,8 @@ public class SearchResults extends Block {
 									addSearchResultTypeStyleClass(abstractT, type);
 									rowContainer.add(abstractT);
 								}
-								if (extraParameters != null && !extraParameters.isEmpty()) {
+								
+								if (extraParameters != null && !extraParameters.isEmpty() && isSetToShowAllResultProperties()) {
 									Iterator keys = extraParameters.keySet().iterator();
 									int counter = 0;
 									while (keys.hasNext()) {
@@ -321,6 +321,8 @@ public class SearchResults extends Block {
 										rowContainer.add(extraParams);
 									}
 								}
+								
+								
 								// adding spacer to force the row container
 								// around all floating elements
 								rowContainer.add(spacer.clone());
@@ -550,5 +552,20 @@ public class SearchResults extends Block {
 	 */
 	public void setSearchQueryString(String searchQueryString) {
 		this.searchQueryString = searchQueryString;
+	}
+
+	/**
+	 * @return the showAllResultProperties
+	 */
+	public boolean isSetToShowAllResultProperties() {
+		return showAllResultProperties;
+	}
+
+	/**
+	 * If true then the result properties map of a result is added, each key and value pair gets its own layer with style class
+	 * @param showAllResultProperties
+	 */
+	public void setToShowAllResultProperties(boolean showAllResultProperties) {
+		this.showAllResultProperties = showAllResultProperties;
 	}
 }

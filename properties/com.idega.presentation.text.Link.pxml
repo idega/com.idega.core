@@ -402,6 +402,55 @@
             <type>map</type>
           </key>
           <key>
+            <name>:method:1:implied:void:setToFormSubmit:java.lang.String:</name>
+            <value>
+              <map>
+                <key>
+                  <name>iw_method_params</name>
+                  <value>
+                    <map>
+                      <key>
+                        <name>0</name>
+                        <value>
+                          <map>
+                            <key>
+                              <name>iw_method_param_handler</name>
+                              <type>java.lang.String</type>
+                              <value/>
+                            </key>
+                            <key>
+                              <name>iw_method_param_desc</name>
+                              <type>java.lang.String</type>
+                              <value>Form ID</value>
+                            </key>
+                          </map>
+                        </value>
+                        <type>map</type>
+                      </key>
+                    </map>
+                  </value>
+                  <type>map</type>
+                </key>
+                <key>
+                  <name>iw_method_option_multiv</name>
+                  <type>java.lang.Boolean</type>
+                  <value>false</value>
+                </key>
+                <key>
+                  <name>iw_method_description</name>
+                  <type>java.lang.String</type>
+                  <value>Submit form</value>
+                </key>
+                <key>
+                  <name>iw_method_identifier</name>
+                  <type>java.lang.String</type>
+                  <value>:method:1:implied:void:setToFormSubmit:java.lang.String:</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
             <name>:method:1:implied:void:setFontColor:java.lang.String:</name>
             <value>
               <map>
