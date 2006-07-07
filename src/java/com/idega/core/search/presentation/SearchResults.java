@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.13.2.3 2006/07/06 15:48:08 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.13.2.4 2006/07/07 16:25:56 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -32,7 +32,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2006/07/06 15:48:08 $ by $Author: eiki $
+ * Last modified: $Date: 2006/07/07 16:25:56 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -46,7 +46,7 @@ import com.idega.presentation.text.Text;
  * some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.13.2.3 $
+ * @version $Revision: 1.13.2.4 $
  */
 public class SearchResults extends Block {
 
@@ -307,7 +307,7 @@ public class SearchResults extends Block {
 									while (keys.hasNext()) {
 										counter++;
 										String key = (String) keys.next();
-										String value = (String) extraParameters.get(key);
+										String value = extraParameters.get(key).toString();
 										Text extraParams;
 										
 										if (counter % 2 == 0) {
