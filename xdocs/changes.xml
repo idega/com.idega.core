@@ -4,6 +4,16 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  
+  	<release version="3.1.4" date="2006-07-07">
+     <action dev="eiki" type="add">
+      Added new class, SearchResultComparator, a comparator that can sort by any property in SearchResult and its attribute map properties (String,Number and Date).
+     </action>
+      <action dev="eiki" type="fix">
+      	SearchResults , bugfix uses toString now instead of requiring searchresult attributes to be strings
+		</action>
+    </release>
+    
    <release version="3.1.3" date="2006-07-06">
       <action dev="eiki" type="fix">
       	Fixes and addons for SearchResults so you can show or hide extra search result parameters.
