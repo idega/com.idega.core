@@ -6,6 +6,7 @@ package com.idega.core.builder.business;
 import java.rmi.RemoteException;
 
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.idegaweb.IWApplicationContext;
 
 /**
@@ -43,6 +44,10 @@ public final class BuilderServiceFactory
 			throw new RemoteException("BuilderServiceFactory.getBuilderService:"+e.getClass()+":"+e.getMessage());
 		}*/
 		return (BuilderService)IBOLookup.getServiceInstance(iwac,BuilderService.class);
+	}
+	
+	public static BuilderPageWriterService getBuilderPageWriterService(IWApplicationContext iwac) throws IBOLookupException {
+		return (BuilderPageWriterService)IBOLookup.getServiceInstance(iwac,BuilderPageWriterService.class);
 	}
 	
 }

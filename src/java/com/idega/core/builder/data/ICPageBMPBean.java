@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.5 2006/05/29 18:16:33 tryggvil Exp $
+ * $Id: ICPageBMPBean.java,v 1.5.2.1 2006/07/20 09:17:52 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -20,6 +20,7 @@ import java.util.Locale;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
+import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.net.data.ICProtocol;
 import com.idega.core.user.data.User;
@@ -654,25 +655,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	}
 	
 	public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
-		/*ICFile file = getFile();
-		// special case: file is empty 
-		// do not create files of deleted pages
-		if (file.isEmpty() && ! getDeleted()) {
-			// file value is empty get a xml description of the page
-			IBXMLPage xmlPage = getBuilderLogic().getPageCacher().getIBXML(this.getPrimaryKey().toString());
-			XMLElement rootElement = xmlPage.getRootElement();
-			// remove connection to document
-			rootElement.detach();
-			// convert to xml data, because for that class a writer already exists
-			XMLData pageData = XMLData.getInstanceWithoutExistingFile();
-			pageData.getDocument().setRootElement(rootElement);
-			pageData.setName(getName());
-			return writer.write(pageData, iwc);
-		}
-		// normal way to handle pages 
-		return writer.write(this, iwc);
-		*/
-		throw new UnsupportedOperationException("write() is unimplemented");
+		return BuilderServiceFactory.getBuilderPageWriterService(iwc).write(this, writer, iwc);
 	}
 	
 	public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
