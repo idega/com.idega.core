@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+	<release version="3.1.5" date="2006-07-20">
+		<action dev="gimmi" type="fix">
+			Reimplemented exporting pages
+		</action>
+	</release>
+  
   	<release version="3.1.4" date="2006-07-07">
      <action dev="eiki" type="add">
       Added new class, SearchResultComparator, a comparator that can sort by any property in SearchResult and its attribute map properties (String,Number and Date).
