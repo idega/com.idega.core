@@ -9,10 +9,10 @@ import java.util.Map;
 /**
  * A comparator that can sort by any property in SearchResult and its attribute
  * map properties (String,Number and Date) Last modified: $Date: 2006/04/09
- * 12:01:55 $ by $Author: eiki $
+ * 12:01:55 $ by $Author: laddi $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  */
 public class SearchResultComparator implements Comparator {
 
@@ -52,13 +52,13 @@ public class SearchResultComparator implements Comparator {
 
 	public SearchResultComparator() {
 		super();
-		collator = Collator.getInstance();
-		sortBy = SearchResultComparator.SORT_BY_RESULT_NAME;
+		this.collator = Collator.getInstance();
+		this.sortBy = SearchResultComparator.SORT_BY_RESULT_NAME;
 	}
 
 	public SearchResultComparator(Locale locale, int sortBy, boolean descending) {
 		this.locale = locale;
-		collator = Collator.getInstance(locale);
+		this.collator = Collator.getInstance(locale);
 		this.sortBy = sortBy;
 		if (descending) {
 			this.multiplier = -1;
@@ -109,7 +109,7 @@ public class SearchResultComparator implements Comparator {
 					* compare(o1.getSearchResultType(), o2
 							.getSearchResultType());
 		case SearchResultComparator.SORT_BY_RESULT_ATTRIBUTE_MAP_KEY:
-			return this.multiplier * mapKeyCompare(o1, o2, mapKey);
+			return this.multiplier * mapKeyCompare(o1, o2, this.mapKey);
 		default:
 			return 0;
 		}

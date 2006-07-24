@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.32 2006/04/24 15:39:25 gimmi Exp $
+ * $Id: AbstractChooser.java,v 1.32.2.1 2006/07/24 10:52:50 laddi Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -8,7 +8,6 @@ package com.idega.presentation.ui;
 import java.net.URLEncoder;
 
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIComponentBase;
 
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;

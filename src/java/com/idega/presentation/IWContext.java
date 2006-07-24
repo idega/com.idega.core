@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.140 2006/05/31 11:12:02 laddi Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.140.2.1 2006/07/24 10:52:50 laddi Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
+
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
@@ -36,10 +37,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginSession;
-import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.builder.business.ICBuilderConstants;
@@ -77,10 +78,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2006/05/31 11:12:02 $ by $Author: laddi $
+ * Last modified: $Date: 2006/07/24 10:52:50 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.140 $
+ * @version $Revision: 1.140.2.1 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 

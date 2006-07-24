@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.13.2.4 2006/07/07 16:25:56 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.13.2.5 2006/07/24 10:52:50 laddi Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -32,7 +32,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2006/07/07 16:25:56 $ by $Author: eiki $
+ * Last modified: $Date: 2006/07/24 10:52:50 $ by $Author: laddi $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -46,7 +46,7 @@ import com.idega.presentation.text.Text;
  * some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.13.2.4 $
+ * @version $Revision: 1.13.2.5 $
  */
 public class SearchResults extends Block {
 
@@ -361,7 +361,7 @@ public class SearchResults extends Block {
 	protected String getSearchQueryString(IWContext iwc) {
 		String query = iwc.getParameter(getSimpleSearchParameterName());
 		if(query==null){
-			query = searchQueryString;
+			query = this.searchQueryString;
 		}
 		return query;
 	}
@@ -560,7 +560,7 @@ public class SearchResults extends Block {
 	 * @return the showAllResultProperties
 	 */
 	public boolean isSetToShowAllResultProperties() {
-		return showAllResultProperties;
+		return this.showAllResultProperties;
 	}
 
 	/**
