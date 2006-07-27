@@ -1,5 +1,5 @@
 /*
- * $Id: Help.java,v 1.7 2006/04/09 12:13:20 laddi Exp $
+ * $Id: Help.java,v 1.7.2.1 2006/07/27 15:49:25 laddi Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -89,7 +89,7 @@ public class Help extends Block {
 		}
 
 		if (this._showInNewWindow) {
-			this._helpLink.setWindowToOpen(HelpWindow.class);
+			this._helpLink.setPublicWindowToOpen(HelpWindow.class);
 		}
 
 		if (this._helpTextKey != null) {
@@ -155,14 +155,6 @@ public class Help extends Block {
 	public void setImageId(int imageId) {
 		this._helpLink.setImageId(imageId);
 	}
-	
-//	public void setShowTextInNewWindow(boolean showInNewWindow) {
-//		_showInNewWindow = showInNewWindow;
-//	}
-//
-//	public boolean getShowTextInNewWindow() {
-//		return _showInNewWindow;
-//	}
 	
 	public Object clone(IWUserContext iwc, boolean askForPermission) {
 		Help obj = null;
