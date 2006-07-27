@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+	<release version="3.1.6" date="2006-07-27">
+		<action dev="laddi" type="fix">
+			Changed pop up window in Help to public window.
+		</action>
+	</release>
+  
 	<release version="3.1.5" date="2006-07-20">
 		<action dev="gimmi" type="fix">
 			Reimplemented exporting pages
