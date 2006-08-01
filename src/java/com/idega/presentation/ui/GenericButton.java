@@ -1,5 +1,5 @@
 /*
- * $Id: GenericButton.java,v 1.38 2006/04/09 12:13:15 laddi Exp $
+ * $Id: GenericButton.java,v 1.39 2006/08/01 15:47:06 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * This component is for rendering out a input element of type button.
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/08/01 15:47:06 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 public class GenericButton extends GenericInput {
 
@@ -44,6 +44,7 @@ public class GenericButton extends GenericInput {
 	private int _fileID = -1;
 	private boolean asImageButton = false;
 	private Class _windowClassToOpen;
+	private Class _publicWindowClassToOpen;
 	private KeyValueList  parameterList;
 	private boolean _onClickConfirm = false;
 	private String _confirmMessage;
@@ -55,7 +56,7 @@ public class GenericButton extends GenericInput {
 
 	
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[13];
+		Object values[] = new Object[14];
 		values[0] = super.saveState(ctx);
 		values[1] = new Integer(this._pageID);
 		values[2] = new Integer(this._fileID);
@@ -69,6 +70,7 @@ public class GenericButton extends GenericInput {
 		values[10] = this.templatePageClass;
 		values[11] = this.templateForObjectInstanciation;
 		values[12] = this._URL;
+		values[13] = this._publicWindowClassToOpen;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
@@ -86,6 +88,7 @@ public class GenericButton extends GenericInput {
 		this.templatePageClass = (Class)values[10];
 		this.templateForObjectInstanciation = (String) values[11];
 		this._URL = (String)values[12];
+		this._publicWindowClassToOpen = (Class)values[13];
 	}
 	
 	public GenericButton() {
@@ -156,6 +159,11 @@ public class GenericButton extends GenericInput {
 				buffer.append(Window.getCallingScriptString(this._windowClassToOpen, URL, true, iwc)).append(";\n");
 				addFunction = true;
 			}
+			if (this._publicWindowClassToOpen != null) {
+				String URL = Window.getWindowURLWithParameters(this._publicWindowClassToOpen, iwc, getConvertedAndCheckedParameterList());
+				buffer.append(Window.getCallingScriptString(this._publicWindowClassToOpen, URL, true, iwc)).append(";\n");
+				addFunction = true;
+			}
 			if (this._pageID != -1) {
 				buffer.append("window.location='"+getURLString(iwc, this._pageID, false)+"';").append("\n");
 				addFunction = true;
@@ -197,6 +205,10 @@ public class GenericButton extends GenericInput {
 				if (this._windowClassToOpen != null) {
 					String URL =  Window.getWindowURLWithParameters(this._windowClassToOpen, iwc, getConvertedAndCheckedParameterList()); 
 					setOnClick("javascript:" + Window.getCallingScriptString(this._windowClassToOpen, URL, true, iwc));
+				}
+				if (this._publicWindowClassToOpen != null) {
+					String URL =  Window.getPublicWindowURLWithParameters(this._publicWindowClassToOpen, iwc, getConvertedAndCheckedParameterList()); 
+					setOnClick("javascript:" + Window.getCallingScriptString(this._publicWindowClassToOpen, URL, true, iwc));
 				}
 				if (this._pageID != -1) {
 					setOnClick("javascript:window.location='"+getURLString(iwc, this._pageID, true)+"';");
@@ -283,6 +295,10 @@ public class GenericButton extends GenericInput {
 	
 	public void setWindowToOpen(Class windowClassToOpen) {
 		this._windowClassToOpen = windowClassToOpen;
+	}
+
+	public void setPublicWindowToOpen(Class windowClassToOpen) {
+		this._publicWindowClassToOpen = windowClassToOpen;
 	}
 	
 	public void setPageToOpen(int pageID) {
