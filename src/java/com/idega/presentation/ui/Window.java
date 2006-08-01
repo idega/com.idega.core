@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.48 2006/04/09 12:13:15 laddi Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.48.2.1 2006/08/01 15:42:54 gimmi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -27,10 +27,10 @@ import com.idega.util.datastructures.list.KeyValuePair;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
+ * Last modified: $Date: 2006/08/01 15:42:54 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.48 $
+ * @version $Revision: 1.48.2.1 $
  */
 public class Window extends Page {
 
@@ -427,6 +427,18 @@ public class Window extends Page {
 	public static String getWindowURL(Class windowClass, IWApplicationContext iwc) {
 		return iwc.getIWMainApplication().getWindowOpenerURI(windowClass);
 	}
+	
+	/**
+	 * Gets the URL to a (popup) Window class of class windowClass that does not require the used to be logged it
+	 * 
+	 * @param windowClass
+	 *            the Class of the Window to instanciate
+	 * @param iwc
+	 * @return the URL (without http:// and hostname)
+	 */
+	public static String getPublicWindowURL(Class windowClass, IWApplicationContext iwc) {
+		return iwc.getIWMainApplication().getPublicWindowOpenerURI(windowClass);
+	}
 
 	/**
 	 * Gets the URL to a (popup) Window class of class windowClass with added
@@ -467,8 +479,21 @@ public class Window extends Page {
 	 *            add to the URL
 	 * @return the URL (without http:// and hostname)
 	 */
+	public static String getPublicWindowURLWithParameters(Class windowClass, IWApplicationContext iwc, KeyValueList parameterMap) {
+		return getWindowURLWithParameters(windowClass, iwc, parameterMap, true);
+	}	
 	public static String getWindowURLWithParameters(Class windowClass, IWApplicationContext iwc, KeyValueList parameterMap) {
-		String url = getWindowURL(windowClass, iwc);
+		return getWindowURLWithParameters(windowClass, iwc, parameterMap, false);
+	}
+
+	private static String getWindowURLWithParameters(Class windowClass, IWApplicationContext iwc, KeyValueList parameterMap, boolean publicWindow) {
+		String url = null;
+		if (publicWindow) {
+			getPublicWindowURL(windowClass, iwc);
+		} else {
+			getWindowURL(windowClass, iwc);
+		}
+
 		if (parameterMap == null || parameterMap.isEmpty()) {
 			return url;
 		}
