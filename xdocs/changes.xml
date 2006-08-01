@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+	<release version="3.1.8" date="2006-08-01">
+		<action dev="gimmi" type="add">
+			New class, PageInfoWriter prints page info into the out log
+		</action>
+	</release>
+
 	<release version="3.1.7" date="2006-08-01">
 		<action dev="gimmi" type="add">
 			Added some getPublicWindow methods to Window and GenericButton
