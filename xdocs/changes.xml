@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+	<release version="3.1.7" date="2006-08-01">
+		<action dev="gimmi" type="add">
+			Added some getPublicWindow methods to Window and GenericButton
+		</action>
+	</release>
+
 	<release version="3.1.6" date="2006-07-27">
 		<action dev="laddi" type="fix">
 			Changed pop up window in Help to public window.
