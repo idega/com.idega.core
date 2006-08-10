@@ -3,12 +3,12 @@
   <parent>
   	<groupId>com.idega.block.platform</groupId>
   	<artifactId>com.idega.block.base</artifactId>
-  	<version>3.1.0</version>
+  	<version>3.5.0</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.core</artifactId>
-  <version>3.1.0</version>
+  <version>3.5.0</version>
   <name>idegaWeb Core</name>
 
   <ciManagement>
@@ -231,6 +231,12 @@
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache-constructs</artifactId>
       <version>0.6</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>commons-vfs</groupId>
+      <artifactId>commons-vfs</artifactId>
+      <version>20050307052300</version>
       <type>jar</type>
     </dependency>
   </dependencies>
