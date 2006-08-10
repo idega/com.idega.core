@@ -10,7 +10,41 @@
   <artifactId>com.idega.core</artifactId>
   <version>3.5.0</version>
   <name>idegaWeb Core</name>
+  <repositories>
+        <repository>
+                <id>java.net</id>
+                <name>Sun Java Net Maven Repository</name>
+                <url>https://maven-repository.dev.java.net/nonav/repository/</url>
+                <!--snapshotPolicy>daily</snapshotPolicy-->
+		<layout>legacy</layout>
+        </repository>
+	<repository>
+        	<id>idega1</id>
+        	<name>idega maven2 repository</name>
+        	<url>http://repository.idega.com/maven2/</url>
+        	<!--snapshotPolicy>daily</snapshotPolicy-->
+	</repository>
+	<repository>
+		<id>idega2</id>
+		<name>idega public repository</name>
+		<url>http://repository.idega.com/maven/</url>
+		<!--snapshotPolicy>daily</snapshotPolicy-->
+		<layout>legacy</layout>
+	</repository>
+</repositories>
 
+<distributionManagement>
+	<repository>
+	<id>idega1</id>
+	<name>idega Maven2 Repository</name>
+	<url>scp://repository.idega.com/var/www/webs/repository.idega.com/maven2</url>
+	</repository>
+	<site>
+	<id>idega1</id>
+	<name>idega Maven2 Documentation site</name>
+	<url>scp://repository.idega.com/var/www/webs/developer.idega.com/bundles</url>
+	</site>
+</distributionManagement>
   <ciManagement>
     <notifiers>
       <notifier>
