@@ -3,12 +3,12 @@
   <parent>
   	<groupId>com.idega.block.platform</groupId>
   	<artifactId>com.idega.block.base</artifactId>
-  	<version>3.1.0</version>
+  	<version>3.5.0</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.faces</artifactId>
-  <version>3.1.0</version>
+  <version>3.5.0</version>
   <name>idegaWeb JavaServer Faces</name>
   
   <developers>
@@ -25,7 +25,7 @@
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>3.1.0</version>
+      <version>3.5.0</version>
       <type>jar</type>
     </dependency>
 	<dependency>
