@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleLoader.java,v 1.6 2006/06/21 18:08:49 tryggvil Exp $
+ * $Id: IWBundleLoader.java,v 1.7 2006/08/11 09:53:55 tryggvil Exp $
  * Created on 5.2.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -25,10 +25,10 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * Implementation for loading a IWBundle from a Jar file in WEB-INF/lib.
  * </p>
- *  Last modified: $Date: 2006/06/21 18:08:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/08/11 09:53:55 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class IWBundleLoader implements JarLoader{
 
@@ -97,7 +97,7 @@ public class IWBundleLoader implements JarLoader{
 					else if (sKey.equals("Implementation-Vendor")) {
 						implementationVendor = sValue;
 					}
-					System.out.println(key + ":" + value);
+					//System.out.println(key + ":" + value);
 				}
 				// bundleIdentifier = (String) entries.get("Extension-Name");
 				// version = (String) entries.get("Implementation-Version");
