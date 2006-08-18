@@ -323,6 +323,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 		this.setDatabaseProperties();
 		this.startDatabasePool();
+
+		registerSystemBeans();
 		iwma.regData();
 		this.startLogManager();
 		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
@@ -334,7 +336,6 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			sendStartMessage("Starting IWStyleManager - writing down style.css is disabled");
 		}
 		
-		registerSystemBeans();
 		if(!iwma.isInDatabaseLessMode()){
 			updateClassReferencesInDatabase();
 			updateStartDataInDatabase();
