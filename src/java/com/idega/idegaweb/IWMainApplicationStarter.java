@@ -324,8 +324,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		this.setDatabaseProperties();
 		this.startDatabasePool();
 
-		registerSystemBeans();
-		iwma.regData();
+
 		this.startLogManager();
 		IWStyleManager iwStyleManager = IWStyleManager.getInstance();
 		iwStyleManager.getStyleSheet(iwma);
@@ -335,12 +334,14 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		else{
 			sendStartMessage("Starting IWStyleManager - writing down style.css is disabled");
 		}
-		
+
+		registerSystemBeans();
 		if(!iwma.isInDatabaseLessMode()){
 			updateClassReferencesInDatabase();
 			updateStartDataInDatabase();
 		}
 		startTemporaryBundleStarters();
+		iwma.regData();
 		
 		if(!iwma.isInDatabaseLessMode()){
 			iwma.startAccessController();

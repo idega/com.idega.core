@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.149.2.2 2006/05/16 15:29:54 sigtryggur Exp $
+ * $Id: IWMainApplication.java,v 1.149.2.3 2006/08/18 16:55:23 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -89,10 +89,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/05/16 15:29:54 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2006/08/18 16:55:23 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.149.2.2 $
+ * @version $Revision: 1.149.2.3 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -269,7 +269,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			reg(defKey,getIWApplicationContext().getDomain().getName(),getProductInfo().getName());
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
 		}
 	}
 
@@ -2049,8 +2048,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			serviceUrl +="&in2="+URLEncoder.encode(productInfo);
 		}
 		catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
 		
 		URL url;
@@ -2063,11 +2060,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			httpconn.disconnect();
 		}
 		catch (MalformedURLException e) {
-			e.printStackTrace();
 		}
 		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
