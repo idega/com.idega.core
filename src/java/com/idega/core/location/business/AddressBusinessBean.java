@@ -1,6 +1,7 @@
 package com.idega.core.location.business;
 
 import java.rmi.RemoteException;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -274,11 +275,18 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		Commune commune = null;
 		
 		// deserialize the string
-		StringTokenizer nizer = new StringTokenizer(";", fullAddressString);
-		String streetNameAndNumber = nizer.nextToken();
-		String postalCodeAndPostalAddress = nizer.nextToken();
-		String countryNameAndISOAbbreviation = nizer.nextToken();
-		String communeNameAndCommuneCode = nizer.nextToken();
+		StringTokenizer nizer = new StringTokenizer(fullAddressString, ";");
+		String streetNameAndNumber = NOT_AVAILABLE;
+		String postalCodeAndPostalAddress = NOT_AVAILABLE;
+		String countryNameAndISOAbbreviation = NOT_AVAILABLE;
+		String communeNameAndCommuneCode = NOT_AVAILABLE;
+		try {
+			streetNameAndNumber = nizer.nextToken();
+			postalCodeAndPostalAddress = nizer.nextToken();
+			countryNameAndISOAbbreviation = nizer.nextToken();
+			communeNameAndCommuneCode = nizer.nextToken();
+		} catch (NoSuchElementException e) {
+		}
 		
 		// deserialize the string even more
 		if (!NOT_AVAILABLE.equals(streetNameAndNumber)) {
