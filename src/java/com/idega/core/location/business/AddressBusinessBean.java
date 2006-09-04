@@ -293,6 +293,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			streetName = getStreetNameFromAddressString(streetNameAndNumber);
 			streetNumber = getStreetNumberFromAddressString(streetNameAndNumber);
 		}
+		try {
 		if (!NOT_AVAILABLE.equals(countryNameAndISOAbbreviation)) {
 			countryName = countryNameAndISOAbbreviation.substring(0, countryNameAndISOAbbreviation.indexOf(":"));
 			countryISOAbbr = countryNameAndISOAbbreviation.substring(countryNameAndISOAbbreviation.indexOf(":") + 1);
@@ -309,6 +310,9 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			postalCode = postalCodeAndPostalAddress.substring(0, postalCodeAndPostalAddress.indexOf(" "));
 			postalName = postalCodeAndPostalAddress.substring(postalCodeAndPostalAddress.indexOf(" ") + 1);
 			postal = getPostalCodeAndCreateIfDoesNotExist(postalCode, postalName, country);
+		}
+		} catch (StringIndexOutOfBoundsException e) {
+			System.err.println("[AddressBusiness] Error parsing address : "+fullAddressString);
 		}
 		
 		// Set what we have and erase what we don't have
