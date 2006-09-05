@@ -294,48 +294,50 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			streetNumber = getStreetNumberFromAddressString(streetNameAndNumber);
 		}
 		try {
-		if (!NOT_AVAILABLE.equals(countryNameAndISOAbbreviation)) {
-			countryName = countryNameAndISOAbbreviation.substring(0, countryNameAndISOAbbreviation.indexOf(":"));
-			countryISOAbbr = countryNameAndISOAbbreviation.substring(countryNameAndISOAbbreviation.indexOf(":") + 1);
-			// get country by iso...or name
-			country = getCountryAndCreateIfDoesNotExist(countryName, countryISOAbbr);
-		}
-		if (!NOT_AVAILABLE.equals(communeNameAndCommuneCode)) {
-			communeName = communeNameAndCommuneCode.substring(0, communeNameAndCommuneCode.indexOf(":"));
-			communeCode = communeNameAndCommuneCode.substring(communeNameAndCommuneCode.indexOf(":") + 1);
-			// get commune by code or name
-			commune = getCommuneAndCreateIfDoesNotExist(communeName, communeCode);
-		}
-		if (!NOT_AVAILABLE.equals(postalCodeAndPostalAddress) && country != null) {
-			postalCode = postalCodeAndPostalAddress.substring(0, postalCodeAndPostalAddress.indexOf(" "));
-			postalName = postalCodeAndPostalAddress.substring(postalCodeAndPostalAddress.indexOf(" ") + 1);
-			postal = getPostalCodeAndCreateIfDoesNotExist(postalCode, postalName, country);
-		}
+			if (!NOT_AVAILABLE.equals(countryNameAndISOAbbreviation)) {
+				countryName = countryNameAndISOAbbreviation.substring(0, countryNameAndISOAbbreviation.indexOf(":"));
+				countryISOAbbr = countryNameAndISOAbbreviation.substring(countryNameAndISOAbbreviation.indexOf(":") + 1);
+				// get country by iso...or name
+				country = getCountryAndCreateIfDoesNotExist(countryName, countryISOAbbr);
+			}
+			if (!NOT_AVAILABLE.equals(communeNameAndCommuneCode)) {
+				communeName = communeNameAndCommuneCode.substring(0, communeNameAndCommuneCode.indexOf(":"));
+				communeCode = communeNameAndCommuneCode.substring(communeNameAndCommuneCode.indexOf(":") + 1);
+				// get commune by code or name
+				commune = getCommuneAndCreateIfDoesNotExist(communeName, communeCode);
+			}
+			if (!NOT_AVAILABLE.equals(postalCodeAndPostalAddress) && country != null) {
+				postalCode = postalCodeAndPostalAddress.substring(0, postalCodeAndPostalAddress.indexOf(" "));
+				postalName = postalCodeAndPostalAddress.substring(postalCodeAndPostalAddress.indexOf(" ") + 1);
+				postal = getPostalCodeAndCreateIfDoesNotExist(postalCode, postalName, country);
+			}
 		} catch (StringIndexOutOfBoundsException e) {
 			System.err.println("[AddressBusiness] Error parsing address : "+fullAddressString);
 		}
-		
-		// Set what we have and erase what we don't have
-		if (streetName != null) {
-			address.setStreetName(streetName);
+
+		if (country != null) {
+			// Set what we have and erase what we don't have
+			if (streetName != null) {
+				address.setStreetName(streetName);
+			}
+			else {
+				//no nasty nullpointer there please..
+				address.setStreetName("");
+			}
+			
+			if (streetNumber != null) {
+				address.setStreetNumber(streetNumber);
+			}
+			else {
+				// Fix when entering unnumbered addresses, something I saw Aron do
+				address.setStreetNumber("");
+			}
+			address.setCountry(country);
+			address.setPostalCode(postal);
+			address.setCommune(commune);
+			// and store
+			address.store();
 		}
-		else {
-			//no nasty nullpointer there please..
-			address.setStreetName("");
-		}
-		
-		if (streetNumber != null) {
-			address.setStreetNumber(streetNumber);
-		}
-		else {
-			// Fix when entering unnumbered addresses, something I saw Aron do
-			address.setStreetNumber("");
-		}
-		address.setCountry(country);
-		address.setPostalCode(postal);
-		address.setCommune(commune);
-		// and store
-		address.store();
 		
 		return address;
 	}
