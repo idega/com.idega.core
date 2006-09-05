@@ -295,14 +295,14 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		}
 		try {
 			if (!NOT_AVAILABLE.equals(countryNameAndISOAbbreviation)) {
-				countryName = countryNameAndISOAbbreviation.substring(0, countryNameAndISOAbbreviation.indexOf(":"));
-				countryISOAbbr = countryNameAndISOAbbreviation.substring(countryNameAndISOAbbreviation.indexOf(":") + 1);
+				countryName = countryNameAndISOAbbreviation.substring(0, countryNameAndISOAbbreviation.indexOf(" "));
+				countryISOAbbr = countryNameAndISOAbbreviation.substring(countryNameAndISOAbbreviation.indexOf(" ") + 1);
 				// get country by iso...or name
 				country = getCountryAndCreateIfDoesNotExist(countryName, countryISOAbbr);
 			}
 			if (!NOT_AVAILABLE.equals(communeNameAndCommuneCode)) {
-				communeName = communeNameAndCommuneCode.substring(0, communeNameAndCommuneCode.indexOf(":"));
-				communeCode = communeNameAndCommuneCode.substring(communeNameAndCommuneCode.indexOf(":") + 1);
+				communeName = communeNameAndCommuneCode.substring(0, communeNameAndCommuneCode.indexOf(" "));
+				communeCode = communeNameAndCommuneCode.substring(communeNameAndCommuneCode.indexOf(" ") + 1);
 				// get commune by code or name
 				commune = getCommuneAndCreateIfDoesNotExist(communeName, communeCode);
 			}
@@ -315,29 +315,27 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			System.err.println("[AddressBusiness] Error parsing address : "+fullAddressString);
 		}
 
-		if (country != null) {
-			// Set what we have and erase what we don't have
-			if (streetName != null) {
-				address.setStreetName(streetName);
-			}
-			else {
-				//no nasty nullpointer there please..
-				address.setStreetName("");
-			}
-			
-			if (streetNumber != null) {
-				address.setStreetNumber(streetNumber);
-			}
-			else {
-				// Fix when entering unnumbered addresses, something I saw Aron do
-				address.setStreetNumber("");
-			}
-			address.setCountry(country);
-			address.setPostalCode(postal);
-			address.setCommune(commune);
-			// and store
-			address.store();
+		// Set what we have and erase what we don't have
+		if (streetName != null) {
+			address.setStreetName(streetName);
 		}
+		else {
+			//no nasty nullpointer there please..
+			address.setStreetName("");
+		}
+		
+		if (streetNumber != null) {
+			address.setStreetNumber(streetNumber);
+		}
+		else {
+			// Fix when entering unnumbered addresses, something I saw Aron do
+			address.setStreetNumber("");
+		}
+		address.setCountry(country);
+		address.setPostalCode(postal);
+		address.setCommune(commune);
+		// and store
+		address.store();
 		
 		return address;
 	}
