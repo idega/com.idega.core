@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/java"/>
-	<classpathentry excluding="**" output="resources" kind="src" path="resources"/>
-	<classpathentry excluding="**" output="properties" kind="src" path="properties"/>
-	<classpathentry excluding="**" output="WEB-INF" kind="src" path="WEB-INF"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="output" path="target/classes"/>
