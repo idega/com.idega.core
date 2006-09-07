@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+	<release version="3.1.9" date="2006-09-07">
+		<action dev="gimmi" type="fix">
+			Fixed for and InterfaceObject to allow for 2 forms in the same page with different form input checks.
+		</action>
+	</release>
+
 	<release version="3.1.8" date="2006-08-01">
 		<action dev="gimmi" type="add">
 			New class, PageInfoWriter prints page info into the out log
