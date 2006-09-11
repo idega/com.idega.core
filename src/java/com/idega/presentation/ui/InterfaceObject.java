@@ -1,5 +1,5 @@
 /*
- * $Id: InterfaceObject.java,v 1.39.2.1 2006/09/07 13:54:36 gimmi Exp $
+ * $Id: InterfaceObject.java,v 1.39.2.2 2006/09/11 14:18:00 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.presentation.Script;
  * In JSF there is now a more recent javax.faces.compoent.UIInput that serves a
  * similar purpose and is recommended to use/extend in newer pure JSF applications.
  * </p>
- *  Last modified: $Date: 2006/09/07 13:54:36 $ by $Author: gimmi $
+ *  Last modified: $Date: 2006/09/11 14:18:00 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.39.2.1 $
+ * @version $Revision: 1.39.2.2 $
  */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
@@ -378,10 +378,10 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 			this._checkObject = true;
 			this._checkDisabled = checkDisabled;
 			if (checkDisabled) {
-				setOnAction(action, "checkAllObjects(findObj('" + objectName + "')," + checkValue + ")");
+				setOnAction(action, "checkAllObjects(this.form['" + objectName + "']," + checkValue + ")");
 			}
 			else {
-				setOnAction(action, "checkEnabledObjects(findObj('" + objectName + "')," +checkValue + ")");
+				setOnAction(action, "checkEnabledObjects(this.form['" + objectName + "']," +checkValue + ")");
 			}
 		}
 
@@ -417,11 +417,11 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setToDisableOnAction(String action, String objectName, boolean disable, boolean multipleObjects) {
 		if (multipleObjects) {
 			this._disableObject = true;
-			setOnAction(action, "disableObject(findObj('" + objectName + "'),'" + String.valueOf(disable) + "')");
+			setOnAction(action, "disableObject(this.form['" + objectName + "'],'" + String.valueOf(disable) + "')");
 		}
 		else {
 			this._disableSingleObject = true;
-			setOnAction(action, "disableSingleObject(findObj('" + objectName + "'),'" + String.valueOf(disable) + "')");
+			setOnAction(action, "disableSingleObject(this.form['" + objectName + "'],'" + String.valueOf(disable) + "')");
 		}
 	}
 
@@ -495,8 +495,8 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 */
 	public void setValueOnActionFollowedByScript(String action, String objectName, String value, String script) {
 		this._changeValue = true;
-		StringBuffer buffer = new StringBuffer("changeValue(findObj('");
-		buffer.append(objectName).append("'),'").append(value).append("');").append(script);
+		StringBuffer buffer = new StringBuffer("changeValue(this.form['");
+		buffer.append(objectName).append("'],'").append(value).append("');").append(script);
 		setOnAction(action, buffer.toString());
 	}
 	
@@ -509,7 +509,8 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 */
 	public void setValueOnAction(String action, String objectName, String value) {
 		this._changeValue = true;
-		setOnAction(action, "changeValue(findObj('"+objectName+"'),'"+value+"');");
+		setOnAction(action, "changeValue(this.form['"+objectName+"'],'"+value+"');");
+//			setOnAction(action, "changeValue(findObj('"+objectName+"'),'"+value+"');");
 	}
 	
 	/**
@@ -579,7 +580,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 */
 	public void setSelectedOnAction(String action, String objectName, boolean selected) {
 		this._selectValues = true;
-		setOnAction(action, "selectValues(findObj('"+objectName+"'),'"+selected+"');");
+		setOnAction(action, "selectValues(this.form['"+objectName+"'],'"+selected+"');");
 	}
 	
 	/**
@@ -744,7 +745,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 			}
 		}
 		if (this._inFocus && hasParentPage()) {
-			getParentPage().setOnLoad("findObj('" + getName() + "').focus();");
+			getParentPage().setOnLoad("this.form['" + getName() + "'].focus();");
 		}
 	}
 
@@ -880,10 +881,10 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 			getParentForm().setOnSubmit("return checkSubmit"+getForm().getId()+"(this)");
 			setCheckSubmit();
 			if (value2 != null) {
-				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "', '"+value2+"') == false ){\nreturn false;\n}\n");
+				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (this.form['" + getName() + "'],'" + value1 + "', '"+value2+"') == false ){\nreturn false;\n}\n");
 			}
 			else {
-				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "') == false ){\nreturn false;\n}\n");
+				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (this.form['" + getName() + "'],'" + value1 + "') == false ){\nreturn false;\n}\n");
 			}
 			getScript().addFunction(functionName, function);
 		}
