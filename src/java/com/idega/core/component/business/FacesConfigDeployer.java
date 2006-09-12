@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.5 2006/09/08 19:12:28 gediminas Exp $
+ * $Id: FacesConfigDeployer.java,v 1.6 2006/09/12 13:28:53 gediminas Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.idegaweb.JarLoader;
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2006/09/08 19:12:28 $ by $Author: gediminas $
+ * Last modified: $Date: 2006/09/12 13:28:53 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
@@ -129,10 +129,10 @@ public class FacesConfigDeployer implements JarLoader {
 			if (child instanceof Element) {
 				Element elem = (Element) child;
 				if (elem.getNodeName().equals("component-class")) {
-					componentClass = elem.getTextContent().trim();
+					componentClass = getNodeTextValue(elem);
 				}
 				else if (elem.getNodeName().equals("component-type")) {
-					componentType = elem.getTextContent().trim();
+					componentType = getNodeTextValue(elem);
 				}
 			}
 		}
@@ -172,10 +172,10 @@ public class FacesConfigDeployer implements JarLoader {
 								if(nChild instanceof Element){
 									Element child = (Element)nChild;
 									if (child.getNodeName().equals("builder-visible")) {
-										builderVisible = Boolean.valueOf(child.getTextContent().trim()).booleanValue();
+										builderVisible = Boolean.valueOf(getNodeTextValue(child)).booleanValue();
 									}
 									else if (child.getNodeName().equals("object-type")) {
-										objectType = child.getTextContent().trim();
+										objectType = getNodeTextValue(child);
 									}
 								}
 							}
@@ -194,6 +194,18 @@ public class FacesConfigDeployer implements JarLoader {
 			info = this.registry.registerComponentPersistent(componentName,componentClass,componentType,objectType,moduleIdentifier);
 		}
 		return info;
+	}
+
+	private String getNodeTextValue(Node node) {
+		String value = node.getNodeValue();
+		if (value == null) {
+			NodeList values = node.getChildNodes();
+			Node child0 = values.item(0);
+			if (child0 != null) {
+				value = child0.getNodeValue();
+			}
+		}
+		return value != null ? value.trim() : null;
 	}
 
 	/**
@@ -222,22 +234,22 @@ public class FacesConfigDeployer implements JarLoader {
 					if (nPropertyAttr instanceof Element) {
 						Element elem = (Element) nPropertyAttr;
 						if (elem.getNodeName().equals("property-name")) {
-							propertyName = elem.getTextContent().trim();
+							propertyName = getNodeTextValue(elem);
 						}
 						else if (elem.getNodeName().equals("property-class")) {
-							propertyClass = elem.getTextContent().trim();
+							propertyClass = getNodeTextValue(elem);
 						}
 						else if (elem.getNodeName().equals("display-name")) {
-							displayName = elem.getTextContent().trim();
+							displayName = getNodeTextValue(elem);
 						}
 						else if (elem.getNodeName().equals("description")) {
-							description = elem.getTextContent().trim();
+							description = getNodeTextValue(elem);
 						}
 						else if (elem.getNodeName().equals("icon")) {
-							icon = elem.getTextContent().trim();
+							icon = getNodeTextValue(elem);
 						}
 						else if (elem.getNodeName().equals("suggested-value")) {
-							suggestedValue = elem.getTextContent().trim();
+							suggestedValue = getNodeTextValue(elem);
 						}
 					}
 				}
