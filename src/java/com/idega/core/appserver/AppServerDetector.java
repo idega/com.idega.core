@@ -64,8 +64,29 @@ public class AppServerDetector {
             if (indexBeginPar != -1 && indexEndPar != -1) {
                 String version = serverInfo.substring(indexBeginPar + 1,indexEndPar);
                 oas.setVersion(version);
-            }            
-        }else{
+            }        
+        }
+        else if (lowerServerString.indexOf("jetty") != -1) {
+            Jetty jetty = new Jetty();
+            appserver = jetty;
+            /*int indexBeginPar = serverInfo.indexOf("(");
+            int indexEndPar = serverInfo.indexOf(")");
+            if (indexBeginPar != -1 && indexEndPar != -1) {
+                String version = serverInfo.substring(indexBeginPar + 1,indexEndPar);
+                jetty.setVersion(version);
+            }*/
+        }
+        else if (lowerServerString.indexOf("resin") != -1) {
+            Resin resin = new Resin();
+            appserver = resin;
+            /*int indexBeginPar = serverInfo.indexOf("(");
+            int indexEndPar = serverInfo.indexOf(")");
+            if (indexBeginPar != -1 && indexEndPar != -1) {
+                String version = serverInfo.substring(indexBeginPar + 1,indexEndPar);
+                resin.setVersion(version);
+            }*/
+        }
+        else{
             appserver = new UnknownUnsupportedAppServer();
         }
         context.setAttribute(contextKey, appserver);
