@@ -3,13 +3,15 @@
 <!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
 <taglib xmlns="http://java.sun.com/JSP/TagLibraryDescriptor">
 
-    <tlib-version>0.9.0</tlib-version>
-    <jsp-version>1.2</jsp-version>
-    <short-name>iwc</short-name>
-    <uri>http://xmlns.idega.com/com.idega.core</uri>
-	<display-name>Builder Tag Library</display-name>
-	<description>This library implements special tags for the Builder</description>
-    
+	<tlib-version>0.9.0</tlib-version>
+	<jsp-version>1.2</jsp-version>
+	<short-name>iwc</short-name>
+	<uri>http://xmlns.idega.com/com.idega.core</uri>
+	<display-name>Core Tag Library</display-name>
+	<description>
+		This library implements special JSP tags for the Core module
+	</description>
+
 	<tag>
 		<name>page</name>
 		<tag-class>com.idega.presentation.PageTag</tag-class>
@@ -34,7 +36,7 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
 	<tag>
 		<name>helpButton</name>
 		<tag-class>com.idega.presentation.ui.HelpButtonTag</tag-class>
@@ -59,10 +61,12 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
 	<tag>
 		<name>help</name>
-		<tag-class>com.idega.idegaweb.help.presentation.HelpTag</tag-class>
+		<tag-class>
+			com.idega.idegaweb.help.presentation.HelpTag
+		</tag-class>
 		<attribute>
 			<name>id</name>
 			<required>false</required>
