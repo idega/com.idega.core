@@ -537,7 +537,7 @@ public class ModuleFileMerger {
 		public String getContentsWithinRootElement(){
 			//Pattern p = Pattern.compile("(<a[^>]+href=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
 			String fileContents = getFileContents();
-			String split1[] = fileContents.split("(<"+getRootXMLElement()+"[^>]+)([^>]+>)");
+			String split1[] = fileContents.split("<"+getRootXMLElement()+"[^>]*>");
 			String remaining = split1[1];
 			String remainingsplit[] = remaining.split("</"+getRootXMLElement()+">");
 			String contents = remainingsplit[0];
