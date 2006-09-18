@@ -15,10 +15,10 @@ import com.idega.util.SortedProperties;
  * <p>
  * Implementation of an IWBundle loaded from a jar file instead of a folder
  * </p>
- *  Last modified: $Date: 2006/06/21 18:08:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/09/18 12:47:11 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class JarLoadedIWBundle extends DefaultIWBundle {
 
@@ -32,7 +32,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	public JarLoadedIWBundle(JarModule module,IWMainApplication superApplication) {
 		this.jarModule=module;
 		String virtualPath = "/idegaweb/bundles/"+module.getModuleIdentifier()+".bundle";
-		initialize(module.getFileURI(),virtualPath, module.getModuleIdentifier(), superApplication,false);
+		initialize(module.getAbsolutePath(),virtualPath, module.getModuleIdentifier(), superApplication,false);
 	}
 	
 	/**
@@ -50,9 +50,8 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 			InputStream inStream = getResourceInputStream(filePathWithinBundle);
 			propList=new IWPropertyList(inStream);
 		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		catch (IOException ex) {
+			log(ex);
 		}
 		return propList;
 	}
@@ -65,7 +64,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		return false;
 	}
 	
-	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException{
+	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException {
 		JarEntry entry = jarModule.getJarEntry(pathWithinBundle);
 		InputStream inStream;
 		inStream = jarModule.getInputStream(entry);
@@ -115,20 +114,16 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		return theReturn;
 	}
 	
-	protected Properties initializeLocalizableStrings()
-	{
+	protected Properties initializeLocalizableStrings() {
 		Properties locProps = new SortedProperties();
-		try
-		{
-			locProps.load(getResourceInputStream("resources/"+getLocalizableStringsFileName()));
-			//localizableStringsMap = new TreeMap(localizableStringsProperties);
+		try {
+			locProps.load(getResourceInputStream("resources/" + getLocalizableStringsFileName()));
+			// localizableStringsMap = new TreeMap(localizableStringsProperties);
 		}
-		catch (IOException ex)
-		{
+		catch (IOException ex) {
 			log(ex);
 		}
 		return locProps;
 	}
-	
 	
 }
