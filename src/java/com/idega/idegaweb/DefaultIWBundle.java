@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.33 2006/06/21 18:08:49 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.34 2006/09/18 13:34:43 gediminas Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -61,6 +61,8 @@ import com.idega.xml.XMLElement;
  */
 public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 {
+	private static final Logger LOGGER = Logger.getLogger(DefaultIWBundle.class.getName());
+	
 	//Static final constants:
 	private static final String DOT = "."; 
 	static final String propertyFileName = "bundle" + IWPropertyList.DEFAULT_FILE_ENDING;
@@ -149,12 +151,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		try
 		{
 			loadBundle();
+			setProperty(BUNDLE_IDENTIFIER_PROPERTY_KEY, bundleIdentifier);
 		}
-		catch (RuntimeException e)
+		catch (Exception e)
 		{
-		    log(e);
+		    LOGGER.log(Level.WARNING, "Error loading bundle " + bundleIdentifier, e);
 		}
-		this.setProperty(BUNDLE_IDENTIFIER_PROPERTY_KEY, bundleIdentifier);
 	}
 	
 	
@@ -200,17 +202,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		catch (IDOLookupException e)
 		{
-			log(e);
+			LOGGER.log(Level.WARNING, null, e);
 		}
 		catch (FinderException e)
 		{
-			debug("No bundle components found for " + getBundleIdentifier());
+			LOGGER.fine("No bundle components found for " + getBundleIdentifier());
 		}
-		catch (Exception e)
-		{
-			log(e);
-		}
-		
 	}
 	/**
 	 * <p>
@@ -231,7 +228,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		return propList;
 	}
 	
-	private void createDataRecords() throws Exception
+	private void createDataRecords() throws IDOLookupException, FinderException
 	{
 		Collection entities = getDataObjects();
 		//eiki used to be (SLOW!): 
@@ -249,7 +246,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 				}
 				catch (ClassNotFoundException e)
 				{
-					logError("Loading bundle: " + this.getBundleIdentifier() + " : Class " + e.getMessage() + " not found");
+					LOGGER.warning("Loading bundle: " + this.getBundleIdentifier() + " : Class " + e.getMessage() + " not found");
 				}
 			}
 		}
@@ -289,15 +286,15 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 				}
 				catch (ClassNotFoundException e)
 				{
-					getLogger().info("Class not found for Block: " + ico.getName());
+					LOGGER.info("Class not found for Block: " + ico.getName());
 				}
 				catch (InstantiationException e)
 				{
-					log(e);
+					LOGGER.log(Level.WARNING, null, e);
 				}
 				catch (IllegalAccessException e)
 				{
-					log(e);
+					LOGGER.log(Level.WARNING, null, e);
 				}
 			}
 		}
@@ -328,7 +325,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			}
 			catch (Exception e)
 			{
-				log(e);
+				LOGGER.log(Level.WARNING, "Error running additional bundle starter " + starterClassName, e);
 			}
 		}
 
@@ -355,13 +352,13 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	  		// nothing to worry about, some bundles don't have a starter class
 	  	}
 	  	catch (InstantiationException ex) {
-	  		logError("[IWBundle] Instantiation of bundle starter class failed: "+ className);
+	  		LOGGER.warning("Instantiation of bundle starter class failed: "+ className);
 	  	}
 	  	catch (IllegalAccessException ex) {
-	  		logError("[IWBundle] Instantiation of bundle starter class failed, access problem: "+ className);
+	  		LOGGER.warning("Instantiation of bundle starter class failed, access problem: "+ className);
 	  	}
 	  	return null;
-	  }
+	}
 	
 	/**
 	 *Stores this bundle and unloads all resources;
@@ -429,11 +426,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 					addComponentToDatabase(className, componentType, componentName);
 				}
 				catch(Throwable e){
-					logError("Error registering component to database: "+e.getMessage());
+					LOGGER.warning("Error registering component to database: "+e.getMessage());
 				}
 			}
 			else{
-				logError("Error registering component className="+className+",componentName="+componentName+",componentType="+componentType+" in bundle="+this.getBundleIdentifier());
+				LOGGER.warning("Error registering component className="+className+",componentName="+componentName+",componentType="+componentType+" in bundle="+this.getBundleIdentifier());
 			}
 			
 		}
@@ -466,7 +463,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			if (getApplication().getSettings().isAutoCreatePropertiesActive())
 			{
 				if (getApplication().getSettings().isDebugActive()) {
-					log("Storing property: " + propertyName);
+					LOGGER.fine("Storing property: " + propertyName);
 				}
 				setProperty(propertyName, returnValueIfNull);
 			}
@@ -488,7 +485,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			if (getApplication().getSettings().isAutoCreatePropertiesActive())
 			{
 				if (getApplication().getSettings().isDebugActive()) {
-					log("Storing property: " + propertyName);
+					LOGGER.fine("Storing property: " + propertyName);
 				}
 				setBooleanProperty(propertyName, returnValueIfNull);
 			}
@@ -616,7 +613,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			}
 			catch (IOException ex)
 			{
-				log(ex);
+				LOGGER.log(Level.WARNING, null, ex);
 			}
 			return locProps;
 		//}
@@ -631,7 +628,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			}
 			catch (IOException ex)
 			{
-				log(ex);
+				LOGGER.log(Level.WARNING, null, ex);
 			}
 		}
 		return this.localizableStringsFile;
@@ -664,7 +661,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		catch (Exception ex)
 		{
-			log(ex);
+			LOGGER.log(Level.WARNING, null, ex);
 		}
 		return theReturn;
 	}
@@ -760,7 +757,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	public synchronized void storeState(boolean storeAllComponents)
 	{
 		//This method is not called on shutdown if getApplication().getSettings().getWriteBundleFilesOnShutdown() is false
-		debug("Storing State");		
+		LOGGER.fine("Storing state of bundle " + getBundleIdentifier());		
 		this.propertyList.store();
 		boolean storeResourcesOnStore=getIfStoreResourcesOnStore();
 		if(storeResourcesOnStore){
@@ -813,7 +810,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		catch (IOException ex)
 		{
-			log(ex);
+			LOGGER.log(Level.WARNING, null, ex);
 			return false;
 		}
 		return true;
@@ -1162,18 +1159,17 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 						}
 						catch (Exception e)
 						{
-							log(e);
+							LOGGER.log(Level.WARNING, null, e);
 						}
 						changeComponentInBundleRegistry(className, newRefactoredClassName);
 						if (!ico.getBundleIdentifier().equals(this.getBundleIdentifier()))
 						{
-							log(
-								"[DefaultIWBundle] : Updating bundle registry for component: "
-									+ ico.getClassName()
-									+ " from "
-									+ ico.getBundleIdentifier()
-									+ " to "
-									+ this.getBundleIdentifier());
+							LOGGER.info("Updating bundle registry for component: "
+							+ ico.getClassName()
+							+ " from "
+							+ ico.getBundleIdentifier()
+							+ " to "
+							+ this.getBundleIdentifier());
 							ico.setBundleIdentifier(getBundleIdentifier());
 							ico.store();
 						}
@@ -1228,35 +1224,34 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 					}
 					catch (ClassNotFoundException e)
 					{
-						logWarning(
-							"[IWBundle] : Loading bundle: "
-								+ this.getBundleIdentifier()
-								+ " : Class "
-								+ e.getMessage()
-								+ " not found. Could be deprecated");
+						LOGGER.warning("Loading bundle: "
+														+ this.getBundleIdentifier()
+														+ " : Class "
+														+ e.getMessage()
+														+ " not found. Could be deprecated");
 					}
 					catch (InstantiationException e)
 					{
-						log(e);
+						LOGGER.log(Level.WARNING, null, e);
 					}
 					catch (IllegalAccessException e)
 					{
-						log(e);
+						LOGGER.log(Level.WARNING, null, e);
 					}
 					catch (RegisterException e)
 					{
-						log(e);
+						LOGGER.log(Level.WARNING, null, e);
 					}
 					catch (Exception e)
 					{
-						log(e);
+						LOGGER.log(Level.WARNING, null, e);
 					}
 				}
 			}
 		}
 		catch (IDOLookupException e1)
 		{
-			log(e1);
+			LOGGER.log(Level.WARNING, null, e1);
 		}
 	}
 	/**
@@ -1370,7 +1365,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		catch (Exception e)
 		{
-			log(e);
+			LOGGER.log(Level.WARNING, null, e);
 		}
 	}
 	private Map getComponentPropertiesListMap()
@@ -1489,8 +1484,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			ico.remove();
 		}
 		catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, null, e);
 		}
 		
 		this.propertyList.store();
@@ -1521,119 +1515,6 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		return this.getBundleIdentifier();
 	}
 	
-	
-	//STANDARD LOGGING METHODS:
-	
-	/**
-	 * Logs out to the default log level (which is by default INFO)
-	 * @param msg The message to log out
-	 */
-	protected void log(String msg) {
-		getLogger().log(getDefaultLogLevel(),msg);
-	}
-
-	/**
-	 * Logs out to the error log level (which is by default WARNING) to the default Logger
-	 * @param e The Exception to log out
-	 */
-	protected void log(Exception e) {
-		LoggingHelper.logException(e,this,getLogger(),getErrorLogLevel());
-	}
-	
-	/**
-	 * Logs out to the specified log level to the default Logger
-	 * @param level The log level
-	 * @param msg The message to log out
-	 */
-	protected void log(Level level,String msg) {
-		getLogger().log(level,msg);
-	}
-	
-	/**
-	 * Logs out to the error log level (which is by default WARNING) to the default Logger
-	 * @param msg The message to log out
-	 */
-	protected void logError(String msg) {
-		//System.err.println(msg);
-		getLogger().log(getErrorLogLevel(),msg);
-	}
-
-	/**
-	 * Logs out to the debug log level (which is by default FINER) to the default Logger
-	 * @param msg The message to log out
-	 */
-	protected void logDebug(String msg) {
-		//System.err.println(msg);
-		getLogger().log(getDebugLogLevel(),msg);
-	}
-	
-	/**
-	 * Logs out to the SEVERE log level to the default Logger
-	 * @param msg The message to log out
-	 */
-	protected void logSevere(String msg) {
-		//System.err.println(msg);
-		getLogger().log(Level.SEVERE,msg);
-	}	
-	
-	
-	/**
-	 * Logs out to the WARNING log level to the default Logger
-	 * @param msg The message to log out
-	 */
-	protected void logWarning(String msg) {
-		//System.err.println(msg);
-		getLogger().log(Level.WARNING,msg);
-	}
-	
-	/**
-	 * Logs out to the CONFIG log level to the default Logger
-	 * @param msg The message to log out
-	 */
-	protected void logConfig(String msg) {
-		//System.err.println(msg);
-		getLogger().log(Level.CONFIG,msg);
-	}	
-	
-	/**
-	 * Logs out to the debug log level to the default Logger
-	 * @param msg The message to log out
-	 */
-	protected void debug(String msg) {
-		String logMsg = "[IWBundle] : "+getBundleIdentifier()+" : "+msg;
-		logDebug(logMsg);
-	}	
-	
-	/**
-	 * Gets the default Logger. By default it uses the package and the class name to get the logger.<br>
-	 * This behaviour can be overridden in subclasses.
-	 * @return the default Logger
-	 */
-	protected Logger getLogger(){
-		return Logger.getLogger(this.getClass().getName());
-	}
-	
-	/**
-	 * Gets the log level which messages are sent to when no log level is given.
-	 * @return the Level
-	 */
-	protected Level getDefaultLogLevel(){
-		return Level.INFO;
-	}
-	/**
-	 * Gets the log level which debug messages are sent to.
-	 * @return the Level
-	 */
-	protected Level getDebugLogLevel(){
-		return Level.FINER;
-	}
-	/**
-	 * Gets the log level which error messages are sent to.
-	 * @return the Level
-	 */
-	protected Level getErrorLogLevel(){
-		return Level.WARNING;
-	}
 	/**
 	 * Returns the path to the jsp inside the bundle structure.<br/>
 	 * The default path is under 'jsp/' relative to the bundle folder.<br/>
@@ -1766,5 +1647,4 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		this.reloadBundle();
 	}
 	
-	//ENTITY SPECIFIC LOG MEHTODS:
 }
