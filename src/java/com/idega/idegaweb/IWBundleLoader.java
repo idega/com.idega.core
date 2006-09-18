@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleLoader.java,v 1.7 2006/08/11 09:53:55 tryggvil Exp $
+ * $Id: IWBundleLoader.java,v 1.8 2006/09/18 13:38:22 gediminas Exp $
  * Created on 5.2.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -10,119 +10,56 @@
 package com.idega.idegaweb;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <p>
  * Implementation for loading a IWBundle from a Jar file in WEB-INF/lib.
  * </p>
- *  Last modified: $Date: 2006/08/11 09:53:55 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/09/18 13:38:22 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
-public class IWBundleLoader implements JarLoader{
+public class IWBundleLoader implements JarLoader {
 
-	private static final Log log = LogFactory.getLog(IWBundleLoader.class);
+	private static final Logger LOGGER = Logger.getLogger(IWBundleLoader.class.getName());
+
 	private IWMainApplication iwma;
-	/**
-	 * 
-	 */
+	
 	public IWBundleLoader(IWMainApplication iwma) {
 		this.iwma=iwma;
 	}
 	
-	/**
-	 * <p>
-	 * TODO tryggvil describe method loadBundle
-	 * </p>
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param stream
-	 * @param jarPath
-	 * @param systemId
+	 * @see com.idega.idegaweb.JarLoader#loadJar(java.io.File,
+	 *      java.util.jar.JarFile, java.lang.String)
 	 */
 	public void loadJar(File bundleJarFile, JarFile jarFile, String jarPath) {
 		JarEntry bundleConfigFile = jarFile.getJarEntry("properties/bundle.pxml");
-		//JarEntry facesConfigFile = jarFile.getJarEntry("META-INF/faces-config.xml");
-		JarModule module = (JarModule)jarFile;
 		if (bundleConfigFile != null) {
-			if (log.isDebugEnabled()) {
-				log.debug("bundle.pxml found in jar " + jarPath);
-			}
-			// InputStream stream = jarFile.getInputStream(configFile);
-			// String systemId = "jar:" + tmp.toURL() + "!/" +
-			// configFile.getName();
-			// if (log.isInfoEnabled()) log.info("Reading config " + systemId);
-			// _dispenser.feed(_unmarshaller.getFacesConfig(stream, systemId));
-			// loadBundle(tmp,jarFile);
-			// InputStream stream = jarFile.getInputStream(configFile);
-			// String systemId = "jar:" + tmp.toURL() + "!/" +
-			// configFile.getName();
-			// if (log.isInfoEnabled()) log.info("Reading config " + systemId);
-			// _dispenser.feed(_unmarshaller.getFacesConfig(stream, systemId));
-			String bundleIdentifier = null;
-			String version = null;
-			String implementationVendor = null;
-			// IWBundle bundle = new DefaultIWBundle(stream,jarPath,systemId);
-			// System.out.println("Found idegaweb bundle in jar: "+jarPath+" and
-			// systemId: "+systemId);
-			try {
-				Manifest mf = jarFile.getManifest();
-				Attributes attributes = mf.getMainAttributes();
-				Set keySet = attributes.keySet();
-				// Map entries = mf.getEntries();
-				// Set keySet = entries.keySet();
-				for (Iterator iter = keySet.iterator(); iter.hasNext();) {
-					Object key = iter.next();
-					Object value = attributes.get(key);
-					String sKey = key.toString();
-					String sValue = value.toString();
-					// String key = (String) iter.next();
-					// String value = (String) attributes.get(key);
-					if (sKey.equals("Extension-Name")) {
-						bundleIdentifier = sValue;
-					}
-					else if (sKey.equals("Implementation-Version")) {
-						version = sValue;
-					}
-					else if (sKey.equals("Implementation-Vendor")) {
-						implementationVendor = sValue;
-					}
-					//System.out.println(key + ":" + value);
-				}
-				// bundleIdentifier = (String) entries.get("Extension-Name");
-				// version = (String) entries.get("Implementation-Version");
-				// implementationVendor = (String)
-				// entries.get("Implementation-Vendor");
-			}
-			catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("Found idegaweb bundle in jar: " + bundleJarFile);
-			if (bundleIdentifier != null) {
-				
-				boolean alreadyLoaded = this.iwma.isBundleLoaded(bundleIdentifier);
-				
-				if(!alreadyLoaded){
-					IWBundle bundle = new JarLoadedIWBundle(module,this.iwma);
-					if (version != null) {
-						// bundle.setVersion(version);
-					}
-					if (implementationVendor != null) {
-						// bundle.setImplementationVendor(implementatioVendor);
+			LOGGER.info("Found bundle at " + jarPath);
+			JarModule module = (JarModule) jarFile;
+			String moduleIdentifier = module.getModuleIdentifier();
+			if (moduleIdentifier != null) {
+				if (!iwma.isBundleLoaded(moduleIdentifier)) {
+					IWBundle bundle = new JarLoadedIWBundle(module, this.iwma);
+					if (LOGGER.isLoggable(Level.FINE)) {
+						LOGGER.fine("Loading budle " + moduleIdentifier + " into main app");
 					}
 					iwma.loadBundle(bundle);
+				} else {
+					if (LOGGER.isLoggable(Level.FINE)) {
+						LOGGER.fine("Bundle " + moduleIdentifier + " was already loaded");
+					}
 				}
+			} else {
+				LOGGER.warning("Not loading " + jarPath + " because it has no moduleIdentifier");
 			}
 		}
 	}
