@@ -1,5 +1,5 @@
 /*
- * $Id: IWModuleLoader.java,v 1.5 2006/06/21 18:08:49 tryggvil Exp $ Created on
+ * $Id: IWModuleLoader.java,v 1.6 2006/09/18 12:55:04 gediminas Exp $ Created on
  * 31.5.2005 in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,24 +18,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
-import javax.faces.FacesException;
+import java.util.logging.Logger;
 import javax.servlet.ServletContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>
  * This is the class responsible for loading the bundles (the new jar method)
  * for the IWMainApplication instance.
  * </p>
- * Last modified: $Date: 2006/06/21 18:08:49 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/09/18 12:55:04 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class IWModuleLoader {
 
-	private static final Log log = LogFactory.getLog(IWModuleLoader.class);
+	private static final Logger LOGGER = Logger.getLogger(IWBundleLoader.class.getName());
+
 	IWMainApplication iwma;
 	ServletContext _externalContext;
 	private List jarLoaders;
@@ -48,27 +47,6 @@ public class IWModuleLoader {
 	public IWModuleLoader(IWMainApplication iwma, ServletContext sContext) {
 		this.iwma = iwma;
 		this._externalContext = sContext;
-		
-		//IWBundleLoader bundleLoader = new IWBundleLoader(iwma);
-		//getJarLoaders().add(bundleLoader);
-		
-		/*JarLoader axisLoader;
-		try {
-			axisLoader = (JarLoader) Class.forName("com.idega.axis.deployment.WSDDAutoDeployer").newInstance();
-			getJarLoaders().add(axisLoader);
-		}
-		catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 	}
 
 	private ServletContext getExternalContext() {
@@ -110,16 +88,15 @@ public class IWModuleLoader {
 
 	/**
 	 * <p>
-	 * TODO tryggvil describe method loadJar
+	 * Loads jar file from path
 	 * </p>
 	 * @param path
 	 */
 	protected void loadJar(String path) {
 		// feedJarConfig(path);
-		File file = getJarFile(path);
-		JarFile jarFile;
 		try {
-			jarFile = new JarModule(file);
+			File file = getJarFile(path);
+			JarFile jarFile = new JarModule(file);
 			loadJar(file, jarFile, path);
 		}
 		catch (IOException e) {
@@ -135,16 +112,18 @@ public class IWModuleLoader {
 
 
 	/**
-	 * <p>
-	 * TODO tryggvil describe method loadBundle
-	 * </p>
+	 * Loads jar file with each defined jarLoader
 	 * 
-	 * @param stream
+	 * @param bundleJarFile
+	 * @param jarFile
 	 * @param jarPath
-	 * @param systemId
 	 */
 	public void loadJar(File bundleJarFile, JarFile jarFile, String jarPath) {
 		List loaders = getJarLoaders();
+		if (loaders.isEmpty()) {
+			LOGGER.warning("No Jar Loaders defined");
+			return;
+		}
 		for (Iterator iter = loaders.iterator(); iter.hasNext();) {
 			JarLoader loader = (JarLoader) iter.next();
 			loader.loadJar(bundleJarFile,jarFile,jarPath);
@@ -159,10 +138,10 @@ public class IWModuleLoader {
 	 * 
 	 * @param jarPath
 	 * @return
-	 * @throws FacesException
+	 * @throws IOException
 	 */
-	private File getJarFile(String jarPath) throws FacesException {
-		try {
+	private File getJarFile(String jarPath) throws IOException {
+//		try {
 			// not all containers expand archives, so we have to do it the
 			// generic way:
 			//1. If the container allows to read the jar file directly:
@@ -184,7 +163,7 @@ public class IWModuleLoader {
 					}
 				}
 				if (in == null) {
-					log.error("Resource " + jarPath + " not found");
+					LOGGER.warning("Resource " + jarPath + " not found in webapp archive");
 					return null;
 				}
 				// 2. search the jar stream for META-INF/faces-config.xml
@@ -206,7 +185,6 @@ public class IWModuleLoader {
 				// if (found)
 				// {
 				tmp = File.createTempFile("idegaweb", ".jar");
-				in = getExternalContext().getResourceAsStream(jarPath);
 				FileOutputStream out = new FileOutputStream(tmp);
 				byte[] buffer = new byte[4096];
 				int r;
@@ -225,10 +203,10 @@ public class IWModuleLoader {
 				// }
 				return tmp;
 			}
-		}
-		catch (Exception e) {
-			throw new FacesException(e);
-		}
+//		}
+//		catch (Exception e) {
+//			throw new FacesException(e);
+//		}
 	}
 
 	
