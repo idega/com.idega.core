@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.6 2006/09/12 13:28:53 gediminas Exp $
+ * $Id: FacesConfigDeployer.java,v 1.7 2006/09/18 12:36:59 gediminas Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -12,9 +12,9 @@ package com.idega.core.component.business;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,14 +32,14 @@ import com.idega.idegaweb.JarLoader;
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2006/09/12 13:28:53 $ by $Author: gediminas $
+ * Last modified: $Date: 2006/09/18 12:36:59 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
-	private static Logger log = Logger.getLogger(FacesConfigDeployer.class.getName());
+	private static Logger LOGGER = Logger.getLogger(FacesConfigDeployer.class.getName());
 	private ComponentRegistry registry;
 
 	/**
@@ -57,32 +57,22 @@ public class FacesConfigDeployer implements JarLoader {
 	 *      java.util.jar.JarFile, java.lang.String)
 	 */
 	public void loadJar(File bundleJarFile, JarFile jarFile, String jarPath) {
-		Enumeration entries = jarFile.entries();
-		while (entries.hasMoreElements()) {
-			JarEntry entry = (JarEntry) entries.nextElement();
-			// JarFileEntry entryName = (JarFileEntry)entries.nextElement();
-			String entryName = entry.getName();
-			if (entryName.equals("META-INF/faces-config.xml")) {
-				try {
-					// if(!entryName.endsWith("undeploy.wsdd")){
-					log.info("Found JSF Description file: " + entryName);
-					InputStream stream = jarFile.getInputStream(entry);
-					processFacesConfig(jarFile,stream);
-					// }
-					// }
-				}
-				catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (ParserConfigurationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (SAXException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		JarEntry entry = jarFile.getJarEntry("META-INF/faces-config.xml");
+		
+		if (entry != null) {
+			LOGGER.fine("Loading components from " + jarPath);
+			try {
+				InputStream stream = jarFile.getInputStream(entry);
+				processFacesConfig(jarFile, stream);
+			}
+			catch (IOException e) {
+				LOGGER.log(Level.WARNING, null, e);
+			}
+			catch (ParserConfigurationException e) {
+				LOGGER.log(Level.WARNING, null, e);
+			}
+			catch (SAXException e) {
+				LOGGER.log(Level.WARNING, null, e);
 			}
 		}
 	}
@@ -96,30 +86,21 @@ public class FacesConfigDeployer implements JarLoader {
 		processDocument(jarFile,document);
 	}
 
-	public void processDocument(JarFile jarFile,Document document) {
-
+	public void processDocument(JarFile jarFile, Document document) {
 		Element rootElement = document.getDocumentElement();
-		try {
-			// processWSDD(null,engine,rootElement);
-			NodeList childList = rootElement.getChildNodes();
-			for (int i = 0; i < childList.getLength(); i++) {
-				Node child = childList.item(i);
-				if (child instanceof Element) {
-					Element elem = (Element) child;
-					if (elem.getNodeName().equals("component")) {
-						processComponentElement(jarFile,elem);
-					}
+		NodeList childList = rootElement.getChildNodes();
+		for (int i = 0; i < childList.getLength(); i++) {
+			Node child = childList.item(i);
+			if (child instanceof Element) {
+				Element elem = (Element) child;
+				if (elem.getNodeName().equals("component")) {
+					processComponentElement(jarFile, elem);
 				}
 			}
-
-		}
-		catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
-	protected void processComponentElement(JarFile jarFile,Element element) throws Exception {
+	protected void processComponentElement(JarFile jarFile,Element element) {
 		NodeList children = element.getChildNodes();
 		String componentClass = null;
 		String componentType = null;
@@ -155,10 +136,10 @@ public class FacesConfigDeployer implements JarLoader {
 	 * @param componentClass 
 	 */
 	private ComponentInfo processComponentExtension(JarFile jarFile,Element componentElement, ComponentInfo info, String componentClass, String componentType) {
-		NodeList componentExtensions= componentElement.getElementsByTagName("component-extension");
-		String objectType=null;
+		NodeList componentExtensions = componentElement.getElementsByTagName("component-extension");
+		String objectType = null;
 		boolean builderVisible = false;
-		if(componentExtensions!=null){
+		if (componentExtensions != null) {
 			for (int i = 0; i < componentExtensions.getLength(); i++) {
 				Node componentExtension = componentExtensions.item(i);
 				if(componentExtension instanceof Element){
@@ -184,13 +165,14 @@ public class FacesConfigDeployer implements JarLoader {
 				}
 			}
 		}
-		if(builderVisible&&objectType!=null&&info==null){
-			String moduleIdentifier=null;
-			if(jarFile instanceof IWModule){
-				IWModule module = (IWModule)jarFile;
-				moduleIdentifier=module.getModuleIdentifier();
+		if (builderVisible && objectType != null && info == null) {
+			String moduleIdentifier = null;
+			if (jarFile instanceof IWModule) {
+				IWModule module = (IWModule) jarFile;
+				moduleIdentifier = module.getModuleIdentifier();
 			}
 			String componentName = componentType;
+			LOGGER.fine("Registering component " + componentName);
 			info = this.registry.registerComponentPersistent(componentName,componentClass,componentType,objectType,moduleIdentifier);
 		}
 		return info;
