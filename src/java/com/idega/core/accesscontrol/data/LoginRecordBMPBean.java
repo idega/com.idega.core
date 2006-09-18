@@ -40,7 +40,7 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
       addAttribute(getColumnLoginId(),"Login id",true,true,Integer.class,"many-to-one",LoginTable.class);
       addAttribute(getColumnInStamp(),"Login Stamp",true,true,Timestamp.class);
       addAttribute(getColumnOutStamp(),"Logout Stamp",true,true,Timestamp.class);
-      addAttribute(getColumnIPAddress(),"IP address",true,true,String.class,16);
+      addAttribute(getColumnIPAddress(),"IP address",true,true,String.class,40);
       addManyToOneRelationship(getColumnLoginAsUser(),User.class);
       setNullable(getColumnLoginAsUser(),true);
 
