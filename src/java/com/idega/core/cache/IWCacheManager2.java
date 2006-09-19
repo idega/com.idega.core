@@ -1,5 +1,5 @@
 /*
- * $Id: IWCacheManager2.java,v 1.10 2006/06/02 10:19:13 tryggvil Exp $ Created on
+ * $Id: IWCacheManager2.java,v 1.11 2006/09/19 23:52:24 tryggvil Exp $ Created on
  * 6.1.2006 in project com.idega.core
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import com.idega.idegaweb.IWMainApplication;
  * IWCacheManager2 is a newer replacement for the older IWCacheManager class
  * and is implemented on top of the ehCache framework.
  * </p>
- * Last modified: $Date: 2006/06/02 10:19:13 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/09/19 23:52:24 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class IWCacheManager2 {
 
@@ -52,7 +52,7 @@ public class IWCacheManager2 {
 	/**
 	 * @return Returns the ehCacheManager.
 	 */
-	private CacheManager getInternalCacheManager() {
+	public CacheManager getInternalCacheManager() {
 		if (this.internalCacheManager == null) {
 			try {
 				this.internalCacheManager = CacheManager.create();
