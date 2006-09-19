@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.11 2005/08/31 02:10:08 eiki Exp $
+ * $Id: BuilderService.java,v 1.12 2006/09/19 11:03:32 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -170,5 +170,11 @@ public interface BuilderService extends IBOService
 	 * public void deletePage(IBPage page,ICUser committer);
 	 * public void movePageUnder(IBPage thePageToMove,IBPage oldParent,IBPage newParent,ICUser committer);
 	 */
+	
+	/**
+	 * Saving page structure after moving (drag & drop) tree nodes
+	 * @param IDs Tree nodes' IDs
+	 */
+	public boolean moveTreeNodes(String IDs);
 	
 }
