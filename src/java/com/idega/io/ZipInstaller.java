@@ -1,5 +1,5 @@
 /*
- * $Id: ZipInstaller.java,v 1.1 2004/12/06 18:04:28 thomas Exp $
+ * $Id: ZipInstaller.java,v 1.2 2006/09/19 14:13:22 valdas Exp $
  * Created on Dec 6, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.util.FileUtil;
  * Extracts zip files and keeps the original timestamps. 
  * E.g. used fo extracting idegaweb archive bundles.
  * 
- *  Last modified: $Date: 2004/12/06 18:04:28 $ by $Author: thomas $
+ *  Last modified: $Date: 2006/09/19 14:13:22 $ by $Author: valdas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ZipInstaller {
 	
@@ -83,11 +83,11 @@ public class ZipInstaller {
 		return true;
 	}
 	
-	private OutputStream getOutputStream(File file) throws FileNotFoundException { 			
+	public OutputStream getOutputStream(File file) throws FileNotFoundException { 			
 		return new BufferedOutputStream(new FileOutputStream(file));
 	} 
 	
-	private void writeFromStreamToStream(InputStream source, OutputStream destination) throws IOException { 
+	public void writeFromStreamToStream(InputStream source, OutputStream destination) throws IOException { 
 		// parts of this method  were copied from "Java in a nutshell" by David Flanagan
 		byte[] buffer = new byte[4096];  // A buffer to hold file contents
 		int bytesRead;                       
@@ -97,17 +97,17 @@ public class ZipInstaller {
 	}
 	
 	
-	private void setTimestamp(File file, long time) {
+	public void setTimestamp(File file, long time) {
 		if (file != null) {
 			file.setLastModified(time);
 		}
 	}
 	
-	private void setTimestamp(File file, Long time) {
+	public void setTimestamp(File file, Long time) {
 		setTimestamp(file, time.longValue());
 	}
 	
-	private void closeEntry(ZipInputStream input) {
+	public void closeEntry(ZipInputStream input) {
 	  	try {
 	  		if (input != null) {
 	  			input.closeEntry();
@@ -119,19 +119,19 @@ public class ZipInstaller {
 	}
 	
 	
-	 private void close(InputStream input) {
-	  	try {
-	  		if (input != null) {
-	  			input.close();
-	  		}
+	public void close(InputStream input) {
+		try {
+			if (input != null) {
+				input.close();
+			}
 	  	}
 	  	catch (IOException io) {
 	  	  	// do not hide an existing exception
 	  	}
-	  }	
+	}	
 	
-	 private void close(OutputStream output) {
-	  	try {
+	public void close(OutputStream output) {
+		try {
 	  		if (output != null) {
 	  			output.close();
 	  		}
@@ -139,5 +139,5 @@ public class ZipInstaller {
 	  	catch (IOException io) {
 	  	  	// do not hide an existing exception
 	  	}
-	  }
+	}
 }
