@@ -180,6 +180,20 @@ public class ResultOutput extends GenericInput {
 		}
 	}
 	
+	public void addTrigger(InterfaceObject obj) {
+		if (obj instanceof TextInput) {
+			TextInput temp = (TextInput) obj;
+			temp.setOnKeyUp(this.functionName + "(this.form)");
+		} else if (obj instanceof DropdownMenu) {
+			DropdownMenu temp = (DropdownMenu) obj;
+			temp.setOnChange(this.functionName + "(this.form)");
+		} else if (obj instanceof CheckBox) {
+			((CheckBox) obj).setOnClick(this.functionName + "(this.form)");
+		} else {
+			obj.setOnChange(this.functionName + "(this.form)");
+		}
+	}
+	
 	private void handleAddResultOutput(ResultOutput resOut, String operatori) {
 		List list = resOut.getAddedObjects();
 		for (int a = 0; a < list.size(); a++) {
