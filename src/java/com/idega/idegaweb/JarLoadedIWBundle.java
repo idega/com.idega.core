@@ -3,6 +3,8 @@
  */
 package com.idega.idegaweb;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
@@ -17,10 +19,10 @@ import com.idega.util.SortedProperties;
  * <p>
  * Implementation of an IWBundle loaded from a jar file instead of a folder
  * </p>
- *  Last modified: $Date: 2006/09/18 13:34:43 $ by $Author: gediminas $
+ *  Last modified: $Date: 2006/09/20 11:23:08 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class JarLoadedIWBundle extends DefaultIWBundle {
 
@@ -34,8 +36,9 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	 */
 	public JarLoadedIWBundle(JarModule module, IWMainApplication superApplication) {
 		this.jarModule=module;
+		String realPath = superApplication.getBundlesRealPath() + File.separator + module.getModuleIdentifier()+".bundle";
 		String virtualPath = "/idegaweb/bundles/"+module.getModuleIdentifier()+".bundle";
-		initialize(module.getAbsolutePath(), virtualPath, module.getModuleIdentifier(), superApplication, false);
+		initialize(realPath, virtualPath, module.getModuleIdentifier(), superApplication, false);
 	}
 	
 	/**
@@ -69,6 +72,9 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	
 	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException {
 		JarEntry entry = jarModule.getJarEntry(pathWithinBundle);
+		if (entry == null) {
+			throw new FileNotFoundException("File not found inside jar module " + jarModule.getModuleIdentifier() + ": " + pathWithinBundle);
+		}
 		InputStream inStream = jarModule.getInputStream(entry);
 		return inStream;
 	}
