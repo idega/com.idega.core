@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.132 2006/05/31 10:52:32 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.133 2006/09/22 11:08:14 gediminas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -428,7 +428,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			conn = entity.getConnection();
 			//conn.commit();
 			Stmt = conn.createStatement();
-			log(SQLCommand);
+			logSQL(SQLCommand);
 			theReturn = Stmt.executeUpdate(SQLCommand);
 		}
 		finally {
