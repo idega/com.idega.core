@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.34 2006/09/18 13:34:43 gediminas Exp $
+ * $Id: DefaultIWBundle.java,v 1.35 2006/09/26 13:13:15 gediminas Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -12,8 +12,10 @@
 package com.idega.idegaweb;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,10 +46,8 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.business.UserProperties;
-import com.idega.util.FileUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
-import com.idega.util.logging.LoggingHelper;
 import com.idega.xml.XMLElement;
 /**
  * The Default implementation if the IWBundle class to serve as a wrapper for an idegaWeb Bundle.
@@ -182,8 +182,8 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	protected void loadBundle()
 	{
 		setResourcesVirtualPath(getRootVirtualPath() + "/" + "resources");
-		setResourcesRealPath(getBundleBaseRealPath() + FileUtil.getFileSeparator() + "resources");
-		setPropertiesRealPath(getBundleBaseRealPath() + FileUtil.getFileSeparator() + "properties");
+		setResourcesRealPath(getBundleBaseRealPath() + File.separator + "resources");
+		setPropertiesRealPath(getBundleBaseRealPath() + File.separator + "properties");
 		setClassesRealPath();
 		this.propertyList=initializePropertyList();
 		StringBuffer SystemClassPath = new StringBuffer(System.getProperty("java.class.path"));
@@ -310,6 +310,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		// 
 		IWBundleStartable defaultStarter = getNewDefaultBundleStarterInstance();
 		if(defaultStarter!=null){
+			LOGGER.fine("Running default bundle starter " + defaultStarter.getClass().getName());
 			defaultStarter.start(this);
 			getBundleStartersList().add(defaultStarter);
 		}
@@ -320,6 +321,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			try
 			{
 				IWBundleStartable starter = (IWBundleStartable) RefactorClassRegistry.forName(starterClassName).newInstance();
+				LOGGER.fine("Running additional bundle starter " + starter.getClass().getName());
 				starter.start(this);
 				getBundleStartersList().add(starter);
 			}
@@ -564,7 +566,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	private void setClassesRealPath()
 	{
-		this.classesRealPath = this.getBundleBaseRealPath() + FileUtil.getFileSeparator() + "classes";
+		this.classesRealPath = this.getBundleBaseRealPath() + File.separator + "classes";
 	}
 	public String[] getAvailableProperties()
 	{
@@ -686,14 +688,14 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		else
 		{
-			file = new File(getResourcesRealPath(locale) + FileUtil.getFileSeparator() + getLocalizedStringsFileName());
+			file = new File(getResourcesRealPath(locale) + File.separator + getLocalizedStringsFileName());
 		}
 		IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, file, locale);
 		if(isUsingLocalVariants()){
 			//Locale variants are used:
 			File variantFile;
 			String variantfileName = getLocalizedStringsVariantFileName();
-			variantFile = new File(getResourcesRealPath(locale) + FileUtil.getFileSeparator() + variantfileName);
+			variantFile = new File(getResourcesRealPath(locale) + File.separator + variantfileName);
 			theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantFile, locale);
 		}
 		else{
@@ -749,10 +751,6 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			theReturn = "bundle";
 		}
 		return theReturn;
-	}
-	public static String getFileSeparator()
-	{
-		return FileUtil.getFileSeparator();
 	}
 	public synchronized void storeState(boolean storeAllComponents)
 	{
@@ -868,7 +866,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		String path = (String) getLocaleRealPaths().get(locale);
 		if (path == null)
 		{
-			path = getResourcesRealPath() + FileUtil.getFileSeparator() + locale.toString() + ".locale";
+			path = getResourcesRealPath() + File.separator + locale.toString() + ".locale";
 			getLocaleRealPaths().put(locale, path);
 		}
 		return path;
@@ -962,7 +960,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	public String getRealPathWithFileNameString(String filename)
 	{
-		return getResourcesRealPath() + FileUtil.getFileSeparator() + filename;
+		return getResourcesRealPath() + File.separator + filename;
 	}
 	public String getRealPath()
 	{
@@ -1647,4 +1645,28 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		this.reloadBundle();
 	}
 	
+	/**
+	 * Returns input stream for a file inside the bundle real path.
+	 * @param pathWithinBundle
+	 * @return FileInputStream
+	 */
+	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException {
+		File file = new File(getBundleBaseRealPath(), pathWithinBundle);
+		if (!file.exists()) {
+			throw new FileNotFoundException("File not found within bundle " + getBundleIdentifier() + ": " + pathWithinBundle);
+		}
+		InputStream inStream = new FileInputStream(file);
+		return inStream;
+	}
+
+	/**
+	 * Returns last modified time for a file inside the bundle real path.
+	 * @param pathWithinBundle
+	 * @return miliseconds since Epoch, or 0 if not found
+	 */
+	public long getResourceTime(String pathWithinBundle) {
+		File file = new File(getBundleBaseRealPath(), pathWithinBundle);
+		return file.lastModified();
+	}
+
 }

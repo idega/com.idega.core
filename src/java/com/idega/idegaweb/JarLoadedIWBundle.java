@@ -19,10 +19,10 @@ import com.idega.util.SortedProperties;
  * <p>
  * Implementation of an IWBundle loaded from a jar file instead of a folder
  * </p>
- *  Last modified: $Date: 2006/09/20 11:23:08 $ by $Author: gediminas $
+ *  Last modified: $Date: 2006/09/26 13:13:15 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class JarLoadedIWBundle extends DefaultIWBundle {
 
@@ -72,6 +72,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	
 	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException {
 		JarEntry entry = jarModule.getJarEntry(pathWithinBundle);
+		
 		if (entry == null) {
 			throw new FileNotFoundException("File not found inside jar module " + jarModule.getModuleIdentifier() + ": " + pathWithinBundle);
 		}
@@ -79,6 +80,16 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		return inStream;
 	}
 	
+	/**
+	 * Returns time of jar entry identified by <code>pathWithinBundle</code>.
+	 * @param pathWithinBundle resource path within jar file
+	 * @return modification time of an entry, 0 if not found, or -1 if not specified
+	 */
+	public long getResourceTime(String pathWithinBundle) {
+		JarEntry entry = jarModule.getJarEntry(pathWithinBundle);
+		return (entry != null ? entry.getTime() : 0);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.idegaweb.DefaultIWBundle#unload(boolean)
