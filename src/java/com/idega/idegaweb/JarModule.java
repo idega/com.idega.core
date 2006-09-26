@@ -1,5 +1,5 @@
 /*
- * $Id: JarModule.java,v 1.4 2006/09/18 12:47:11 gediminas Exp $
+ * $Id: JarModule.java,v 1.5 2006/09/26 13:14:31 gediminas Exp $
  * Created on 12.6.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -24,15 +24,13 @@ import java.util.jar.Manifest;
  * Extension of JarFile which implements IWModule by reading module information from
  * jar manifest.
  * </p>
- *  Last modified: $Date: 2006/09/18 12:47:11 $ by $Author: gediminas $
+ *  Last modified: $Date: 2006/09/26 13:14:31 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class JarModule extends JarFile implements IWModule {
 
-	private File jarFile;
-	
 	private String moduleIdentifier;
 	private String moduleName;
 	private String moduleVendor;
@@ -44,7 +42,6 @@ public class JarModule extends JarFile implements IWModule {
 	 */
 	public JarModule(File jarFile) throws IOException {
 		super(jarFile);
-		this.jarFile=jarFile;
 		initialize();
 	}
 
@@ -132,12 +129,5 @@ public class JarModule extends JarFile implements IWModule {
 	 */
 	public void unload() {
 		// TODO Auto-generated method stub
-	}
-	
-	/**
-	 * Returns absolute path of the file this JarModule was loaded from
-	 */
-	public String getAbsolutePath() {
-		return jarFile.getAbsolutePath();
 	}
 }
