@@ -14,6 +14,7 @@ import java.util.Map;
  */
 public class CacheMap extends HashMap implements Map
 {
+	private static final long serialVersionUID = -2566778836998184283L;
 	private int maxNumberOfObjectsInMap = 100;
 	private Map accesses;
 	
