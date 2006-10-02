@@ -1,5 +1,5 @@
 /*
- * $Id: CacheMap.java,v 1.11 2006/09/28 13:59:34 civilis Exp $
+ * $Id: CacheMap.java,v 1.12 2006/10/02 10:44:55 civilis Exp $
  * Created on 6.1.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import net.sf.ehcache.Element;
  * <p>
  * Wrapper for the Cache implemented as a standard Map
  * </p>
- *  Last modified: $Date: 2006/09/28 13:59:34 $ by $Author: civilis $
+ *  Last modified: $Date: 2006/10/02 10:44:55 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class CacheMap implements Map {
 
@@ -101,15 +101,20 @@ public class CacheMap implements Map {
 	 * @see java.util.Map#get(java.lang.Object)
 	 */
 	public Object get(Object key) {
-		Object theRet=null;
+		
+		Object theRet = null;
 		try {
-			Element element = getCache().get((Serializable) key);
-			if(element!=null){
-				theRet = element.getValue();
-				if(getCacheListeners()!=null){
+			
+			Element element = getCache().get(key);
+		
+			if(element != null) {
+				
+				theRet = element.getObjectValue();
+				
+				if(getCacheListeners() != null){
 					for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
 						CacheMapListener listener = (CacheMapListener) iterator.next();
-						listener.gotObject((String)key,theRet);
+						listener.gotObject((String)key, theRet);
 					}
 				}
 			}
@@ -122,7 +127,7 @@ public class CacheMap implements Map {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
 	 */
