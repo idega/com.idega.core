@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.13 2006/04/09 12:13:12 laddi Exp $
+ * $Id: IWBaseComponent.java,v 1.14 2006/10/03 11:28:11 gediminas Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
- * Last modified: $Date: 2006/04/09 12:13:12 $ by $Author: laddi $
+ * Last modified: $Date: 2006/10/03 11:28:11 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
@@ -289,7 +289,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	 * @param context
 	 * @return
 	 */
-	protected IWMainApplication getIWMainApplication(FacesContext context){
+	protected static IWMainApplication getIWMainApplication(FacesContext context){
 		return IWMainApplication.getIWMainApplication(context);
 	}
 	
@@ -301,7 +301,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	 * @param bundleIdentifier
 	 * @return
 	 */
-	protected IWBundle getIWBundle(FacesContext context,String bundleIdentifier){
+	protected static IWBundle getIWBundle(FacesContext context,String bundleIdentifier){
 		IWMainApplication iwma = getIWMainApplication(context);
 		return iwma.getBundle(bundleIdentifier);
 	}
@@ -315,7 +315,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	 * @param bundleIdentifier
 	 * @return
 	 */
-	protected IWResourceBundle getIWResourceBundle(FacesContext context,String bundleIdentifier){
+	protected static IWResourceBundle getIWResourceBundle(FacesContext context,String bundleIdentifier){
 		IWBundle bundle = getIWBundle(context,bundleIdentifier);
 		Locale locale = null;
 		UIViewRoot viewRoot = context.getViewRoot();
