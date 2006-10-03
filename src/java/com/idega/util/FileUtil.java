@@ -36,9 +36,6 @@ public class FileUtil {
   public static final char WINDOWS_FILE_SEPARATOR = '\\';
   public static final String BACKUP_SUFFIX = "backup~";
   
-  private static String systemSeparatorString =  "file.separator";
-
-
   private FileUtil() {
   	// empty
   }
@@ -123,13 +120,15 @@ public class FileUtil {
   
   /**
    * Gets the System wide path separator
+   * 
+   * @deprecated Use File.separator
    */
   public static String getFileSeparator(){
-    return System.getProperty(systemSeparatorString);
+    return File.separator;
   }
 
   public static String getFileNameWithPath(String path,String fileNameWithoutFullPath){
-    return path+getFileSeparator()+fileNameWithoutFullPath;
+    return path+File.separator+fileNameWithoutFullPath;
   }
 
   /**
