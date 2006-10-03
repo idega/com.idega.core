@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207 2006/06/01 15:28:23 thomas Exp $
+ * $Id: UserBusinessBean.java,v 1.208 2006/10/03 11:44:25 gediminas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -97,10 +97,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2006/06/01 15:28:23 $ by $Author: thomas $
+ * Last modified: $Date: 2006/10/03 11:44:25 $ by $Author: gediminas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207 $
+ * @version $Revision: 1.208 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3101,9 +3101,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public String getUserApplicationStyleSheetURL() {
 		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");
-		String styleScript = "DefaultStyle.css";
-		String styleSrc = bundle.getVirtualPathWithFileNameString(application.getBundle("com.idega.user").getProperty(
-				"styleSheet_name", styleScript));
+		String styleScript = bundle.getProperty("styleSheet_name", "DefaultStyle.css");
+		String styleSrc = bundle.getVirtualPathWithFileNameString(styleScript);
 		return styleSrc;
 	}
 
