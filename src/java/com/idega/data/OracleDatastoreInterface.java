@@ -96,13 +96,18 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	}
 	
 	public void createTrigger(GenericEntity entity) throws Exception {
-		createSequence(entity);
+		createTrigger(entity, 1);
+	}
+	
+	public void createTrigger(GenericEntity entity, int valueToSet) throws Exception {
+		createSequence(entity, valueToSet);
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
 			Stmt.executeUpdate("CREATE TRIGGER " + entity.getTableName() + "_trig BEFORE INSERT ON " + entity.getTableName() + " FOR EACH ROW WHEN (NEW." + entity.getIDColumnName() + " is null) DECLARE TEMP INTEGER; BEGIN SELECT " + entity.getTableName() + "_seq.NEXTVAL INTO TEMP FROM DUAL; :NEW." + entity.getIDColumnName() + ":=TEMP;END;");
+			System.out.println("CREATE TRIGGER " + entity.getTableName()+"_trig");
 		}
 		finally {
 			if (Stmt != null) {
@@ -114,7 +119,6 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		}
 	}
 	
-	/* Not Tested
 	public boolean updateTriggers(GenericEntity entity, boolean createIfNot) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
@@ -124,21 +128,29 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		try {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			String seqSQL = "select LAST_NUMBER from user_sequences where SEQUENCE_NAME like '" + entity.getTableName() + "'";
-			rs = Stmt.executeQuery(seqSQL);
+			String seqSQL = "select LAST_NUMBER from user_sequences where SEQUENCE_NAME = '" + entity.getTableName() + "_seq'";
+			rs = Stmt.executeQuery(seqSQL.toUpperCase());
 			if (rs != null && rs.next()) {
 				returner = true;
 			}
 			if (!returner && createIfNot) {
-				String maxSQL = "select max ("+entity.getIDColumnName()+" as MAX from "+entity.getEntityName();
+				String maxSQL = "select max ("+entity.getIDColumnName()+") as MAX from "+entity.getEntityName();
 				int valueToSet = 1;
 				rs2 = Stmt.executeQuery(maxSQL);
-				if (rs2 != null && rs2.next()) {
-					valueToSet = Integer.parseInt(rs2.getString("MAX"));
+				String maxValue = null;
+				try {
+					if (rs2 != null && rs2.next()) {
+						maxValue = rs2.getString("MAX");
+						if (maxValue != null) {
+							valueToSet = Integer.parseInt(maxValue);
+						}
+					}
+					createTrigger(entity, valueToSet + 1);
+					returner = true;
+				} catch (NumberFormatException e) {
+					System.out.println("Did not create sequence for table "+entity.getEntityName()+" on primary key column "+entity.getIDColumnName()+" with value = '"+maxValue+"'");
+					returner = false;
 				}
-				
-				createSequence(entity, valueToSet);
-				returner = true;
 			}
 		}
 		finally {
@@ -156,7 +168,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			}
 		}
 		return returner;
-	}*/
+	}
 	
 	public void createSequence(GenericEntity entity) throws Exception {
 		createSequence(entity, 1);
@@ -170,6 +182,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			Stmt = conn.createStatement();
 			String seqCreate = "create sequence " + entity.getTableName() + "_seq INCREMENT BY 1 START WITH " + startNumber + " MAXVALUE 1.0E28 MINVALUE 0 NOCYCLE CACHE 20 NOORDER";
 			Stmt.executeUpdate(seqCreate);
+			System.out.println("CREATING SEQUENCE with value "+ startNumber +" for "+ entity.getTableName());
 		}
 		finally {
 			if (Stmt != null) {
@@ -243,7 +256,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	}
 
 	public void setNumberGeneratorValue(GenericEntity entity, int value) {
-		String statement = "drop sequence " + this.getSequenceName(entity);
+		String statement = "drop sequence " + getSequenceName(entity);
 		try {
 			this.executeUpdate(entity, statement);
 			this.createSequence(entity, value + 1);
