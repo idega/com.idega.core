@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.170.2.1 2006/07/05 16:01:50 laddi Exp $
+ * $Id: Link.java,v 1.170.2.2 2006/10/04 10:31:33 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1841,6 +1841,7 @@ public class Link extends Text {
 		else {
 			action = ("document.forms['" + formID + "'].submit()");
 		}
+		action += ";this.href='#';";
 		//setOnClick(action);
 		setFinalUrl(JAVASCRIPT + action);
 	}

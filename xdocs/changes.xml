@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+	<release version="3.1.12" date="2006-10-04">
+		<action dev="laddi" type="update">
+			Changed so that when using Link to submit a Form it is impossible to double click (only works when using setToFormSubmit method).
+		</action>
+	</release>
+
 	<release version="3.1.11" date="2006-09-20">
 		<action dev="gimmi" type="fix">
 			Added an addTrigger to ResultOutput
