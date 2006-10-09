@@ -673,7 +673,7 @@
     <key>
       <name>DatePicker.date_format_string</name>
       <type>java.lang.String</type>
-      <value>yyyy-MM-dd</value>
+      <value>dd.MM.yyyy</value>
     </key>
   </map>
 </pxml>
