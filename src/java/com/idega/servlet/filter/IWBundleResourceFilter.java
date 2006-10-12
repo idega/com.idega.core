@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.12 2006/06/21 18:08:49 tryggvil Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.13 2006/10/12 12:44:15 gediminas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -39,10 +39,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2006/06/21 18:08:49 $ by $Author: tryggvil $
+ * Last modified: $Date: 2006/10/12 12:44:15 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -98,24 +98,28 @@ public class IWBundleResourceFilter extends BaseFilter {
 				chain.doFilter(sreq, sres);
 			}
 		}
-		else if(feedFromJarFiles){
-
-			String requestUriWithoutContextPath = getURIMinusContextPath(request);
-			if(requestUriWithoutContextPath.startsWith("/idegaweb/bundles")){
-				String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
-				String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
-				IWBundle bundle = getIWMainApplication(request).getBundle(bundleIdentifier);
-				if(bundle instanceof JarLoadedIWBundle){
-					JarLoadedIWBundle jarBundle = (JarLoadedIWBundle)bundle;
-					InputStream stream = jarBundle.getResourceInputStream(pathWithinBundle);
-					String mimeType = getMimeType(pathWithinBundle);
-					feedOutFile(request,response, mimeType,stream);
+		else if (feedFromJarFiles) {
+			try {
+				String requestUriWithoutContextPath = getURIMinusContextPath(request);
+				if(requestUriWithoutContextPath.startsWith("/idegaweb/bundles")){
+					String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
+					String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
+					IWBundle bundle = getIWMainApplication(request).getBundle(bundleIdentifier);
+					if(bundle instanceof JarLoadedIWBundle){
+						JarLoadedIWBundle jarBundle = (JarLoadedIWBundle)bundle;
+						InputStream stream = jarBundle.getResourceInputStream(pathWithinBundle);
+						String mimeType = getMimeType(pathWithinBundle);
+						feedOutFile(request,response, mimeType,stream);
+					}
+				}
+				else{
+					chain.doFilter(sreq, sres);
 				}
 			}
-			else{
+			catch (Exception e) {
+				e.printStackTrace();
 				chain.doFilter(sreq, sres);
-			}
-			
+			}			
 		}
 		else {
 			chain.doFilter(sreq, sres);
@@ -185,15 +189,15 @@ public class IWBundleResourceFilter extends BaseFilter {
 		String fileEnding = getFileEnding(requestUriWithoutContextPath);
 
 		if (fileEnding.equalsIgnoreCase(PSVG)) {
-			copyFileToWebapp(request, workspaceDir, webappDir, requestUriWithoutContextPath);
+			copyWorkspaceFileToWebapp(workspaceDir, webappDir, requestUriWithoutContextPath);
 			return true;
 		}
 		else if (fileEnding.equalsIgnoreCase(SVG)) {
-			copyFileToWebapp(request, workspaceDir, webappDir, requestUriWithoutContextPath);
+			copyWorkspaceFileToWebapp(workspaceDir, webappDir, requestUriWithoutContextPath);
 			return true;
 		}
 		else if (fileEnding.equalsIgnoreCase(JSP)) {
-			copyFileToWebapp(request, workspaceDir, webappDir, requestUriWithoutContextPath);
+			copyWorkspaceFileToWebapp(workspaceDir, webappDir, requestUriWithoutContextPath);
 			return true;
 		}
 		else if (fileEnding.equalsIgnoreCase(AXIS_JWS)) {
@@ -201,10 +205,6 @@ public class IWBundleResourceFilter extends BaseFilter {
 			return true;
 		}
 		return false;
-	}
-
-	protected void copyFileToWebapp(HttpServletRequest request, String workspaceDir, String webappDir, String requestUriWithoutContextPath) {
-		copyWorkspaceFileToWebapp(workspaceDir, webappDir, requestUriWithoutContextPath);
 	}
 
 	private String getFileEnding(String filePath) {
@@ -261,13 +261,6 @@ public class IWBundleResourceFilter extends BaseFilter {
 			out.flush();
 			out.close();
 		}
-		catch (FileNotFoundException e) {
-			String message = e.getMessage();
-			if (message == null) {
-				message = "";
-			}
-			System.err.println("IWBundleResourceFilter: " + e.getClass().getName() + "  " + message + " for resource: " +request.getRequestURI());
-		}
 		catch (IOException e) {
 			String message = e.getMessage();
 			if (message == null) {
@@ -286,22 +279,6 @@ public class IWBundleResourceFilter extends BaseFilter {
 	protected String getMimeType(File realFile) {
 		String mimeType = getMimeType(realFile.getName());
 		return mimeType;
-	}
-
-	protected String[] parseBundleDir(String requestUri) {
-		String urlBeginningWithBundle = requestUri.substring(BUNDLES_STANDARD_DIR.length(), requestUri.length());
-		String bundleDir = urlBeginningWithBundle.substring(0, urlBeginningWithBundle.indexOf(SLASH));
-		String bundleIdentifier = bundleDir;
-		if (bundleDir.endsWith(BUNDLE_SUFFIX)) {
-			bundleIdentifier = bundleDir.substring(0, bundleDir.indexOf(BUNDLE_SUFFIX));
-		}
-		// String start = BUNDLES_STANDARD_DIR+bundleDir;
-		String restUrl = urlBeginningWithBundle.substring(bundleDir.length(), urlBeginningWithBundle.length());
-
-		String[] theReturn = { bundleIdentifier, restUrl };
-
-		return theReturn;
-
 	}
 
 	/*
@@ -339,16 +316,16 @@ public class IWBundleResourceFilter extends BaseFilter {
 			// cut the slash:
 			workspaceDir = workspaceDir.substring(0, workspaceDir.length() - 1);
 		}
-		File jspFileInWorkspace = getFileInWorkspace(workspaceDir, requestUriWithoutContextPath);
-		File jspFileInWebapp = new File(webappDir, requestUriWithoutContextPath);
-		long webappModified = jspFileInWebapp.lastModified();
-		long workspaceLastModified = jspFileInWorkspace.lastModified();
+		File fileInWorkspace = getFileInWorkspace(workspaceDir, requestUriWithoutContextPath);
+		File fileInWebapp = new File(webappDir, requestUriWithoutContextPath);
+		long webappModified = fileInWebapp.lastModified();
+		long workspaceLastModified = fileInWorkspace.lastModified();
 		if (workspaceLastModified > webappModified) {
 			try {
-				if (!jspFileInWebapp.exists()) {
-					FileUtil.createFileIfNotExistent(jspFileInWebapp);
+				if (!fileInWebapp.exists()) {
+					FileUtil.createFileIfNotExistent(fileInWebapp);
 				}
-				FileUtil.copyFile(jspFileInWorkspace, jspFileInWebapp);
+				FileUtil.copyFile(fileInWorkspace, fileInWebapp);
 			}
 			catch (FileNotFoundException e) {
 				e.printStackTrace();
