@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.12 2006/09/19 11:03:32 valdas Exp $
+ * $Id: BuilderService.java,v 1.13 2006/10/12 17:51:33 justinas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
 package com.idega.core.builder.business;
 
 import java.rmi.RemoteException;
+
 import javax.faces.component.UIComponent;
 
 import com.idega.business.IBOService;
@@ -172,9 +173,18 @@ public interface BuilderService extends IBOService
 	 */
 	
 	/**
-	 * Saving page structure after moving (drag & drop) tree nodes
-	 * @param IDs Tree nodes' IDs
+	 * Move a page to another parent e.g. when saving the page structure after moving (drag & drop) tree nodes
+	 * @param newParentId The id of the new parent page
+	 * @param pageId The id of the page to move
 	 */
-	public boolean moveTreeNodes(String IDs);
+	public boolean movePage(int newParentId, int pageId);
+	
+	/**
+	 * Changes the default locale name for the page to the new value
+	 * @param ID of the page in the database
+	 * @param newName the default local name
+	 * @return true if successful
+	 */
+	public boolean changePageName(int ID, String newName);
 	
 }
