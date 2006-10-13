@@ -56,6 +56,25 @@ public class EmailBMPBean
 	{
 		return getStringColumnValue(getColumnNameAddress());
 	}
+
+	public String getEmailAddressMailtoFormatted()
+	{
+		return getEmailAddressMailtoFormattedWithSubject(null);
+	}
+
+	
+	public String getEmailAddressMailtoFormattedWithSubject(String subject) {
+		String emailAddress = getStringColumnValue(getColumnNameAddress());
+		if (emailAddress != null && !emailAddress.equals("")) {
+			String subjectString = "";
+			if (subject != null && !subject.equals("")) {
+				subjectString = "?subject="+subject;
+			}
+			emailAddress = "<a href=\"mailto:"+emailAddress+ subjectString +"\">"+emailAddress+"</a>";
+		}
+		return emailAddress;
+	} 
+	
 	public void setEmailTypeId(int id)
 	{
 		setColumn(getColumnNameEmailTypeId(), id);
