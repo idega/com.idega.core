@@ -6,6 +6,9 @@
   <body>
   
   	<release version="3.1.4" date="2006-07-07">
+     <action dev="sigtryggur" type="add">
+      Added a link to open aliased group in the GroupInfoTab in the GroupPropertyWindow, when a group of the type alias is viewed
+     </action>
      <action dev="eiki" type="add">
       Added new class, SearchResultComparator, a comparator that can sort by any property in SearchResult and its attribute map properties (String,Number and Date).
      </action>
