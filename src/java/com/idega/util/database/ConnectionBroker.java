@@ -1,5 +1,5 @@
 /*
- * $Id: ConnectionBroker.java,v 1.15 2006/05/29 18:04:10 tryggvil Exp $
+ * $Id: ConnectionBroker.java,v 1.16 2006/10/18 13:11:33 gediminas Exp $
  *
  * Copyright (C) 2000-2005 Idega hf. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -35,7 +36,7 @@ import com.idega.transaction.IdegaTransactionManager;
  * <br>
  * </p>
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
 */
 public class ConnectionBroker
 {
@@ -51,8 +52,6 @@ public class ConnectionBroker
 	private static Map dataSourcesMap=new HashMap();
 	private static Logger log = Logger.getLogger(ConnectionBroker.class.getName());
 	public static int gottenConns=0;
-	public static boolean debug=false;
-	
 	/**	
 	 * Returns a Datastore connection from the default datasource
 	 */
@@ -80,10 +79,8 @@ public class ConnectionBroker
 	 */
 	public static Connection getConnection(String dataSourceName)
 	{
-		String logString = "Getting database connection from: "+dataSourceName+" for "+(++gottenConns)+" time";
-		log.fine(logString);
-		if(debug){
-			System.out.println(logString);
+		if (log.isLoggable(Level.FINEST)) {
+			log.finest("Getting database connection from: "+dataSourceName+" for "+(++gottenConns)+" time");
 		}
 		if (dataSourceName == null)
 		{

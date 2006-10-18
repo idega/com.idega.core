@@ -2,10 +2,7 @@
 package com.idega.util.database;
 
 import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -15,11 +12,12 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
-import com.idega.util.LogWriter;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -30,23 +28,11 @@ import com.idega.util.text.TextSoap;
  */
 public class PoolManager implements Singleton {
 
+	private static final Logger log = Logger.getLogger(PoolManager.class.getName());
+	
 	private static final String IW_APPLICATION_PATH_PLACE_HOLDER = "{iw_application_path}";// a
-																																													// string
-																																													// you
-																																													// can
-																																													// use
-																																													// in a
-																																													// connection
-																																													// url
 	private static final String IW_BUNDLES_PATH_PLACE_HOLDER = "{iw_bundles_path}";// a
-																																									// string
-																																									// you
-																																									// can
-																																									// use
-																																									// in a
-																																									// connection
-																																									// url
-
+	
 	private static String DEFAULT_DSN = "default";
 
 	static private PoolManager instance;
@@ -54,8 +40,6 @@ public class PoolManager implements Singleton {
 
 	private static boolean isUnlocked = true;
 
-	private LogWriter logWriter;
-	private PrintWriter pw;
 	private Vector drivers = new Vector();
 	private Hashtable pools = new Hashtable();
 	private IWMainApplication iwma;
@@ -107,9 +91,6 @@ public class PoolManager implements Singleton {
 	}
 
 	private void init(String propertiesFile) {
-		// Log to System.err until we have read the logfile property
-		this.pw = new PrintWriter(System.err, true);
-		this.logWriter = new LogWriter("PoolManager", LogWriter.INFO, this.pw);
 		// InputStream is = getClass().getResourceAsStream(propertiesFile);
 		InputStream is;
 		Properties dbProps = new Properties();
@@ -118,18 +99,8 @@ public class PoolManager implements Singleton {
 			dbProps.load(is);
 		}
 		catch (Exception e) {
-			this.logWriter.log("Can't read the properties file from the specified location", LogWriter.ERROR);
+			log.warning("Can't read the properties file from the specified location");
 			return;
-		}
-		String logFile = dbProps.getProperty("logfile");
-		if (logFile != null) {
-			try {
-				this.pw = new PrintWriter(new FileWriter(logFile, true), true);
-				this.logWriter.setPrintWriter(this.pw);
-			}
-			catch (IOException e) {
-				this.logWriter.log("Can't open the log file: " + logFile + ". Using System.err instead", LogWriter.ERROR);
-			}
 		}
 		loadDrivers(dbProps);
 		createPools(dbProps);
@@ -144,10 +115,10 @@ public class PoolManager implements Singleton {
 				Driver driver = (Driver) RefactorClassRegistry.forName(driverClassName).newInstance();
 				DriverManager.registerDriver(driver);
 				this.drivers.addElement(driver);
-				this.logWriter.log("Registered JDBC driver " + driverClassName, LogWriter.INFO);
+				log.info( "Registered JDBC driver " + driverClassName);
 			}
 			catch (Exception e) {
-				this.logWriter.log(e, "Can't register JDBC driver: " + driverClassName, LogWriter.ERROR);
+				log.log(Level.WARNING, "Can't register JDBC driver: " + driverClassName, e);
 			}
 		}
 	}
@@ -161,12 +132,12 @@ public class PoolManager implements Singleton {
 				String url = props.getProperty(poolName + ".url");
 
 				if (url == null) {
-					this.logWriter.log("No URL specified for " + poolName, LogWriter.ERROR);
+					log.warning("No URL specified for " + poolName);
 					continue;
 				}
 
 				if (this.pools.containsKey(poolName)) {
-					this.logWriter.log("[PoolManager] Pool '" + poolName + "'already exists", LogWriter.ERROR);
+					log.warning("Pool '" + poolName + "'already exists");
 					continue;
 				}
 				// replace the {iw_application_path} variable with the real path to the
@@ -194,7 +165,7 @@ public class PoolManager implements Singleton {
 					max = Integer.valueOf(maxConns).intValue();
 				}
 				catch (NumberFormatException e) {
-					this.logWriter.log("Invalid maxconns value " + maxConns + " for " + poolName, LogWriter.ERROR);
+					log.warning("Invalid maxconns value " + maxConns + " for " + poolName);
 					max = 0;
 				}
 				String initConns = props.getProperty(poolName + ".initconns", "0");
@@ -203,7 +174,7 @@ public class PoolManager implements Singleton {
 					init = Integer.valueOf(initConns).intValue();
 				}
 				catch (NumberFormatException e) {
-					this.logWriter.log("Invalid initconns value " + initConns + " for " + poolName, LogWriter.ERROR);
+					log.warning("Invalid initconns value " + initConns + " for " + poolName);
 					init = 0;
 				}
 				String loginTimeOut = props.getProperty(poolName + ".logintimeout", "5");
@@ -212,19 +183,8 @@ public class PoolManager implements Singleton {
 					timeOut = Integer.valueOf(loginTimeOut).intValue();
 				}
 				catch (NumberFormatException e) {
-					this.logWriter.log("Invalid logintimeout value " + loginTimeOut + " for " + poolName, LogWriter.ERROR);
+					log.warning("Invalid logintimeout value " + loginTimeOut + " for " + poolName);
 					timeOut = 5;
-				}
-				String logLevelProp = props.getProperty(poolName + ".loglevel", String.valueOf(LogWriter.ERROR));
-				int logLevel = LogWriter.INFO;
-				if (logLevelProp.equalsIgnoreCase("none")) {
-					logLevel = LogWriter.NONE;
-				}
-				else if (logLevelProp.equalsIgnoreCase("error")) {
-					logLevel = LogWriter.ERROR;
-				}
-				else if (logLevelProp.equalsIgnoreCase("debug")) {
-					logLevel = LogWriter.DEBUG;
 				}
 				try {
 					int iRefreshIntervalMinutes = Long.valueOf(sRefreshIntervalMinutes).intValue();
@@ -232,10 +192,10 @@ public class PoolManager implements Singleton {
 				}
 				catch (NumberFormatException e) {
 					lRefreshIntervalMillis = 20 * 1000 * 60;
-					this.logWriter.log("Invalid refreshminutes value " + sRefreshIntervalMinutes + " for " + poolName, LogWriter.ERROR);
+					log.warning("Invalid refreshminutes value " + sRefreshIntervalMinutes + " for " + poolName);
 					max = 0;
 				}
-				ConnectionPool pool = new ConnectionPool(poolName, url, user, password, max, init, timeOut, this.pw, logLevel, lRefreshIntervalMillis);
+				ConnectionPool pool = new ConnectionPool(poolName, url, user, password, max, init, timeOut, lRefreshIntervalMillis);
 				this.pools.put(poolName, pool);
 			}
 		}
@@ -253,7 +213,7 @@ public class PoolManager implements Singleton {
 				conn = pool.getConnection();
 			}
 			catch (SQLException e) {
-				this.logWriter.log(e, "Exception getting connection from " + dataSourceName, LogWriter.ERROR);
+				log.log(Level.WARNING, "Exception getting connection from " + dataSourceName, e);
 			}
 		}
 		return conn;
@@ -290,10 +250,10 @@ public class PoolManager implements Singleton {
 			Driver driver = (Driver) allDrivers.nextElement();
 			try {
 				DriverManager.deregisterDriver(driver);
-				this.logWriter.log("Deregistered JDBC driver " + driver.getClass().getName(), LogWriter.INFO);
+				log.info("Deregistered JDBC driver " + driver.getClass().getName());
 			}
 			catch (SQLException e) {
-				this.logWriter.log(e, "Couldn't deregister JDBC driver: " + driver.getClass().getName(), LogWriter.ERROR);
+				log.log(Level.WARNING, "Couldn't deregister JDBC driver: " + driver.getClass().getName(), e);
 			}
 		}
 		instance = null;

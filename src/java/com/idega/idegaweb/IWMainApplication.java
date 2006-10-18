@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.173 2006/06/21 18:08:49 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.174 2006/10/18 13:11:33 gediminas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.WeakHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
@@ -77,7 +78,6 @@ import com.idega.servlet.filter.BaseFilter;
 import com.idega.servlet.filter.IWWelcomeFilter;
 import com.idega.util.Executer;
 import com.idega.util.FileUtil;
-import com.idega.util.LogWriter;
 import com.idega.util.ThreadContext;
 import com.idega.util.dbschema.SQLSchemaAdapter;
 import com.idega.util.reflect.MethodFinder;
@@ -90,12 +90,14 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/06/21 18:08:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/10/18 13:11:33 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.173 $
+ * @version $Revision: 1.174 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
+
+	private static final Logger log = Logger.getLogger(IWMainApplication.class.getName());
 
 	//Static final Contstants:
 	/**
@@ -178,8 +180,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private String bundlesRealPath;
     private String defaultLightInterfaceColor = IWConstants.DEFAULT_LIGHT_INTERFACE_COLOR;
     private String defaultDarkInterfaceColor = IWConstants.DEFAULT_DARK_INTERFACE_COLOR;    
-    private LogWriter lw;
-    //private String appContext;
+     //private String appContext;
     //private boolean checkedAppContext;
     private String cacheDirURI;
     private IWApplicationContext iwappContext;
@@ -210,10 +211,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
     	debug = DEFAULT_DEBUG_FLAG;
     }
 
-    public static Logger getLogger() {
-    	return Logger.getLogger(IWMainApplication.class.getName());
-    }
-    
     public static void shutdownApplicationServices(){
     	// very special singletons
 		IDOLookup.unload();
@@ -285,15 +282,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
     
     private void load() {
-        this.lw = new LogWriter(this.getApplicationRealPath(), LogWriter.INFO);
         this.setPropertiesRealPath();
         this.setBundlesRealPath();
         IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
         setAttribute(SETTINGS_STORAGE_PARAMETER, settings);
         // log("Starting the idegaWeb Application Framework - Version "
         //        + this.getVersion());
-        sendStartupMessage("Starting "+getProductInfo().getFullProductName()+" - Version "
-                + this.getVersion());
+        log.info("Starting "+getProductInfo().getFullProductName()+" - Version "
+		+ this.getVersion());
         loadCryptoProperties();
     }
 
@@ -354,11 +350,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
      */
     private void loadBundlesLocalizationsForJSF() {
     	Map bundleForLocalizations = new HashMap();
-    	for (Iterator iter = getLoadedBundles().keySet().iterator(); iter.hasNext();) {
-			String bundleIdentifier = (String) iter.next();
-			IWBundle bundle = getBundle(bundleIdentifier);
+    	for (Iterator iter = getLoadedBundles().values().iterator(); iter.hasNext();) {
+    		IWBundle bundle = (IWBundle) iter.next();
 			BundleLocalizationMap bLocalizationMap = new BundleLocalizationMap(bundle);
-			bundleForLocalizations.put(bundleIdentifier,bLocalizationMap);
+			bundleForLocalizations.put(bundle.getBundleIdentifier(),bLocalizationMap);
     	}
     	this.setAttribute("localizedStrings",bundleForLocalizations);
     }
@@ -672,14 +667,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
     //public IWBundleList getBundlesRegistered(){
     //
     //}
-
-    /**
-     * Should be called before the application is put out of service
-     */
-
-    public LogWriter getLogWriter() {
-        return this.lw;
-    }
     
     public synchronized void unloadInstanceAndClass() {
         if (!this.alreadyUnloaded) {
@@ -695,10 +682,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
         //IWCacheManager.deleteCachedBlobs(this);
         //      getImageFactory(true).deleteGeneratedImages(this);
 
-        for (Iterator keyIter = getLoadedBundles().keySet().iterator(); keyIter
-                .hasNext();) {
-            Object key = keyIter.next();
-            IWBundle bundle = (IWBundle) getLoadedBundles().get(key);
+        for (Iterator iter = getLoadedBundles().values().iterator(); iter.hasNext();) {
+            IWBundle bundle = (IWBundle) iter.next();
             bundle.unload();
         }
         this.loadedBundles=null;
@@ -777,20 +762,18 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private void setPropertiesRealPath() {
     	
     		String privatePath = this.getApplicationPrivateRealPath()
-            + FileUtil.getFileSeparator() + PROPERTIES_STANDARD_DIRECTORY;
-    		String publicPath = this.getApplicationSpecialRealPath() + FileUtil.getFileSeparator() + PROPERTIES_STANDARD_DIRECTORY;
-    		File publicFile = new File(publicPath+FileUtil.getFileSeparator()+"idegaweb.pxml");
+            + File.separator + PROPERTIES_STANDARD_DIRECTORY;
+    		String publicPath = this.getApplicationSpecialRealPath() + File.separator + PROPERTIES_STANDARD_DIRECTORY;
+    		File publicFile = new File(publicPath+File.separator+"idegaweb.pxml");
     		if(publicFile.exists()){
     			//Setting it to the public path to remain backwards compatible:
     			this.propertiesRealPath = this.getApplicationSpecialRealPath()
-                + FileUtil.getFileSeparator() + PROPERTIES_STANDARD_DIRECTORY;
+                + File.separator + PROPERTIES_STANDARD_DIRECTORY;
     		}
     		else{
         		//Setting to the private path - this is the default in platform 3.0
     			this.propertiesRealPath = privatePath;    			
-    		}    
-        //debug
-        //sendStartupMessage("setting propertyRealPath to : "+propertiesRealPath);
+    		}
     }
 
     
@@ -804,23 +787,20 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     private void setBundlesRealPath() {
-        this.bundlesRealPath = this.getApplicationSpecialRealPath()
-                + FileUtil.getFileSeparator() + BUNDLES_STANDARD_DIRECTORY;
-        //debug
-        //System.out.println("setPropertiesRealPath : "+propertiesRealPath);
-    }
+		this.bundlesRealPath = this.getApplicationSpecialRealPath() + File.separator + BUNDLES_STANDARD_DIRECTORY;
+	}
     
     
     /**
-     * <p>
-     * This method returns the "real" filesystem path in the operating system 
-     * to the ROOT of this WebApplication
-     * </p>
-     */
+	 * <p>
+	 * This method returns the "real" filesystem path in the operating system to
+	 * the ROOT of this WebApplication
+	 * </p>
+	 */
     public String getApplicationRealPath() {
-        String theRet = this.application.getRealPath(FileUtil.getFileSeparator());
-        if(!theRet.endsWith(FileUtil.getFileSeparator())){
-        		theRet +=FileUtil.getFileSeparator();
+        String theRet = this.application.getRealPath("/");
+        if(!theRet.endsWith(File.separator)){
+        		theRet +=File.separator;
         }
         return theRet;
     }
@@ -873,7 +853,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         //String sBundle = getBundlesFile().getProperty(bundleIdentifier);
         String sBundle = getInternalBundleVirtualPath(bundleIdentifier);
         if (sBundle != null) {
-            if (FileUtil.getFileSeparator().equals("/")) {
+            if (File.separator.equals("/")) {
                 sBundle = TextSoap.findAndReplace(sBundle, "\\", "/");//unix
             } else {
                 sBundle = TextSoap.findAndReplace(sBundle, "/", "\\");//windows
@@ -886,13 +866,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 		if(directory!=null){
 			//First try the default name (with .bundle extension)
-			String sBundleDirWithBundleExtension = directory+ FileUtil.getFileSeparator()+sBundle;
+			String sBundleDirWithBundleExtension = directory+ File.separator+sBundle;
 			File bundleDir = new File(sBundleDirWithBundleExtension);
 			if(bundleDir.exists()){
 				return sBundleDirWithBundleExtension;
 			}
 			//Then try the name without the bundleExtension
-			String sBundleDirWithoutBundleExtension = directory+ FileUtil.getFileSeparator()+bundleIdentifier;
+			String sBundleDirWithoutBundleExtension = directory+ File.separator+bundleIdentifier;
 			bundleDir = new File(sBundleDirWithoutBundleExtension);
 			if(bundleDir.exists()){
 				return sBundleDirWithoutBundleExtension;
@@ -900,8 +880,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		}
 		
 		//default method:
-        return getApplicationSpecialRealPath() + FileUtil.getFileSeparator()
-                + sBundle;
+        return getApplicationSpecialRealPath() + File.separator + sBundle;
     }
 
     /**
@@ -911,70 +890,59 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * </p>
      */
     private void loadBundlesLegacy() {
-    	if(this.loadBundlesLegacy){
-	    		String appSpRealPath = getApplicationSpecialRealPath();
-	        File theRoot = new File(appSpRealPath,
-	                BUNDLES_STANDARD_DIRECTORY);
-	        File[] bundles = theRoot.listFiles();
-	        if(bundles!=null){
-		        for (int i = 0; i < bundles.length; i++) {
-		            if (bundles[i].isDirectory()
-		                    && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)) {
-		                File properties = new File(bundles[i], "properties");
-		                File propertiesFile = new File(properties,
-		                        DefaultIWBundle.propertyFileName);
-		                IWPropertyList list = new IWPropertyList(propertiesFile);
-		                String bundleIdentifier = list
-		                        .getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
-		                if (bundleIdentifier != null) {
-		                    String bundleDir = BUNDLES_STANDARD_DIRECTORY
-		                            + File.separator + bundles[i].getName();
-		                    try {
-		                        this.registerBundle(bundleIdentifier, bundleDir);
-		                    } catch (Throwable t) {
-		                        this.sendStartupMessage("Error loading bundle "
-		                                + bundleIdentifier);
-		                        t.printStackTrace();
-		                    }
-		                }
-		            }
-		        }
-	        }
-    	}
-    }
+		if (this.loadBundlesLegacy) {
+			File theRoot = new File(getApplicationSpecialRealPath(), BUNDLES_STANDARD_DIRECTORY);
+			File[] bundles = theRoot.listFiles();
+			if (bundles != null) {
+				for (int i = 0; i < bundles.length; i++) {
+					if (bundles[i].isDirectory() && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)) {
+						File properties = new File(bundles[i], "properties");
+						File propertiesFile = new File(properties, DefaultIWBundle.propertyFileName);
+						IWPropertyList list = new IWPropertyList(propertiesFile);
+						String bundleIdentifier = list.getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
+						if (bundleIdentifier != null) {
+							String bundleDir = BUNDLES_STANDARD_DIRECTORY + File.separator + bundles[i].getName();
+							try {
+								this.registerBundle(bundleIdentifier, bundleDir);
+							}
+							catch (Throwable t) {
+								log.log(Level.WARNING, "Error loading bundle " + bundleIdentifier, t);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
     private String getInternalBundleVirtualPath(String bundleIdentifier) {
-        String tryString = getBundlesFile().getProperty(bundleIdentifier);
-        if (tryString != null) {
-        	return tryString;
-        }
-        // tryString is now null
-        File theRoot = new File(this.getApplicationSpecialRealPath(),
-                BUNDLES_STANDARD_DIRECTORY);
-        File[] bundles = theRoot.listFiles();
-        for (int i = 0; i < bundles.length; i++) {
-            if (bundles[i].isDirectory()) {
-                File properties = new File(bundles[i], "properties");
-                File propertiesFile = new File(properties,
-                        DefaultIWBundle.propertyFileName);
-                try {
-                    IWPropertyList list = new IWPropertyList(propertiesFile);
-                    if (list.getProperty(
-                    		DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY)
-                            .equalsIgnoreCase(bundleIdentifier)) {
-                        tryString = BUNDLES_STANDARD_DIRECTORY
-                                + File.separator + bundles[i].getName();
-                        this.registerBundle(bundleIdentifier, tryString);
-                        return tryString;
-                    }
-                } 
-                catch (Exception e) {
-                	sendStartupMessage("Error reading property file of bundle: " + bundles[i].getName());
-                }
-            }
-        }
-        throw new IWBundleDoesNotExist(bundleIdentifier);
-    }
+		String tryString = getBundlesFile().getProperty(bundleIdentifier);
+		if (tryString != null) {
+			return tryString;
+		}
+		// tryString is now null
+		File theRoot = new File(this.getApplicationSpecialRealPath(), BUNDLES_STANDARD_DIRECTORY);
+		File[] bundles = theRoot.listFiles();
+		for (int i = 0; i < bundles.length; i++) {
+			if (bundles[i].isDirectory()) {
+				File properties = new File(bundles[i], "properties");
+				File propertiesFile = new File(properties, DefaultIWBundle.propertyFileName);
+				try {
+					IWPropertyList list = new IWPropertyList(propertiesFile);
+					if (list.getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY).equalsIgnoreCase(
+							bundleIdentifier)) {
+						tryString = BUNDLES_STANDARD_DIRECTORY + File.separator + bundles[i].getName();
+						this.registerBundle(bundleIdentifier, tryString);
+						return tryString;
+					}
+				}
+				catch (Exception e) {
+					log.info("Error reading property file of bundle: " + bundles[i].getName());
+				}
+			}
+		}
+		throw new IWBundleDoesNotExist(bundleIdentifier);
+	}
 
     public IWBundle getBundle(String bundleIdentifier)throws IWBundleDoesNotExist{
         return getBundle(bundleIdentifier, false);
@@ -988,8 +956,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
         	}
         	else if (loadBundlesLegacy){
             	bundle = loadBundleLegacy(bundleIdentifier, autoCreate);
+            	loadBundle(bundle);
         	}
-        	loadBundle(bundle);
         }
         return bundle;
     }
@@ -1008,6 +976,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * <p>
 	 * TODO tryggvil describe method loadBundleLegacy
 	 * </p>
+	 * 
 	 * @param bundleIdentifier
 	 * @param autoCreate
 	 * @param bundle
@@ -1015,37 +984,24 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 */
 	protected IWBundle loadBundleLegacy(String bundleIdentifier, boolean autoCreate) {
 		IWBundle bundle = null;
-		//if to throw out the IWBundleDoesNotExist exception:
-		boolean throwException=false;
-		if(!autoCreate){
-			//Check if bundle does exist only if autocreate is false:
+		if (!autoCreate) {
+			// Check if bundle does exist only if autocreate is false:
 			File file = new File(getBundleRealPath(bundleIdentifier));
-			if(!file.exists()){
-				throwException=true;
+			if (!file.exists()) {
+				throw new IWBundleDoesNotExist(bundleIdentifier);
 			}
 		}
-		if(!throwException){
-		
-			String realBundleDir = getBundleRealPath(bundleIdentifier);
-			sendStartupMessage("Loading bundle " + bundleIdentifier+" (from "+realBundleDir+")");
-		
-		bundle = new DefaultIWBundle(realBundleDir,
-		        getBundleVirtualPath(bundleIdentifier), bundleIdentifier,
-		        this, autoCreate);
-		}
-		else{
-			throw new IWBundleDoesNotExist(bundleIdentifier);
-		}
+		String realBundleDir = getBundleRealPath(bundleIdentifier);
+		log.info("Loading bundle " + bundleIdentifier + " (from " + realBundleDir + ")");
+		bundle = new DefaultIWBundle(realBundleDir, getBundleVirtualPath(bundleIdentifier), bundleIdentifier, this,
+				autoCreate);
 		return bundle;
 	}
     
-    
-
-    
     /**
-     * Regsters and loads a IWBundle with the default bundlePath and the bundle
-     * is automatically created if it does not exist and autoCreate==true
-     */
+	 * Regsters and loads a IWBundle with the default bundlePath and the bundle
+	 * is automatically created if it does not exist and autoCreate==true
+	 */
     public boolean registerBundle(String bundleIdentifier, boolean autoCreate) {
 		String bundleDir = bundleIdentifier + ".bundle";
 		if (bundleDir.indexOf(BUNDLES_STANDARD_DIRECTORY) == -1) {
@@ -1155,7 +1111,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public void startAccessController() {
         this.setAccessController(this.getSettings()
                 .getDefaultAccessController());
-        System.out.println("Starting service "
+        log.info("Starting service "
                 + this.getAccessController().getServiceName());
         this.getAccessController().startService(this);
     }
@@ -1228,12 +1184,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
         initCryptoUsage();
         if (isUsingCryptoProperties()) {
             cryptoClassNamesPropertiesKeyedByCode = new Properties();
-            sendStartupMessage("Loading Cryptonium");
+            log.info("Loading Cryptonium");
     		String file = getApplicationRealPath()+"/WEB-INF/idegaweb/properties/crypto.properties";
     		File testfile = new File(file);
     		if (!testfile.exists()) {
-    			file = getPropertiesRealPath() + FileUtil.getFileSeparator()
-                    + "crypto.properties";
+    			file = getPropertiesRealPath() + File.separator + "crypto.properties";
     		}
             try {
                 cryptoClassNamesPropertiesKeyedByCode.load(new FileInputStream(
@@ -1265,7 +1220,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private void storeCryptoProperties() {
         if (isUsingCryptoProperties()
                 && cryptoClassNamesPropertiesKeyedByCode != null) {
-            sendShutdownMessage("Storing Cryptonium");
+            log.info("Storing Cryptonium");
 
             try {
         		String file = getApplicationRealPath()+"/WEB-INF/idegaweb/properties/crypto.properties";
@@ -1412,18 +1367,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
         } catch (Exception e) {
             System.err.println("IWMainApplication.startFileSystem() : There was an error, most likely the media bundle is not installed");
         }
-    }
-
-    public void sendStartupMessage(String message) {
-    		String newString = "[idegaWeb] : startup : " + message;
-    		log(newString);
-    		System.out.println(newString);
-    }
-
-    public void sendShutdownMessage(String message) {
-    		String newString = "[idegaWeb] : shutdown : " + message;
-    		log(newString);
-    		System.out.println(newString);
     }
 
     /**
@@ -2257,8 +2200,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	public void loadBundle(IWBundle bundle) {
 		String bundleIdentifier = bundle.getBundleIdentifier();
 		getLoadedBundles().put(bundleIdentifier, bundle);
-		//must be put in the loadedBundles map FIRST to prevent looping if a starter class calls IWMainApplication.getBundle(...) for the same bundleidentifier
+		// must be put in the loadedBundles map FIRST to prevent looping if
+		// a starter class calls IWMainApplication.getBundle(...) for the
+		// same bundleidentifier
 		bundle.runBundleStarters();
-		
 	}
+
 }

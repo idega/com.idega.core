@@ -1,5 +1,5 @@
 package com.idega.util.database;
-import java.io.PrintWriter;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -8,9 +8,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.idega.data.DatastoreConnection;
-import com.idega.util.LogWriter;
 
 /**
  * <code>ConnectionPool</code> is the default ConnectilPool implementation for
@@ -34,11 +35,6 @@ import com.idega.util.LogWriter;
  * initially<br> 
  * [poolname].maxconns The number of connections that the pool should hold
  * maximally at any time<br>
- * [poolname].loglevel The level of logging for the pool. Possible values
- * are: 0 (NONE - no logging), 1 (INFO - only information messages), 2
- * (ERROR - show error messages), 3 (DEBUG - show all info,error and debug
- * messages). The default is 1 (INFO).<br> 
- * 
  * [poolname].logintimeout The timout (in
  * seconds) that the pool will wait for a connection before throwing an
  * SQLException. The default is 5.<br>
@@ -53,8 +49,10 @@ import com.idega.util.LogWriter;
  *href="mailto: tryggvi@idega.is">Tryggvi Larusson</a>
  *@version 1.3
  */
-public class ConnectionPool
-{
+public class ConnectionPool {
+	
+	private static final Logger log = Logger.getLogger(ConnectionPool.class.getName());
+
 	/**
 	 * Constructor ConnectionPool.
 	 * @param poolName
@@ -64,8 +62,6 @@ public class ConnectionPool
 	 * @param max
 	 * @param init
 	 * @param timeOut
-	 * @param pw
-	 * @param logLevel
 	 * @param lRefreshIntervalMillis
 	 */
 	public ConnectionPool(
@@ -75,10 +71,8 @@ public class ConnectionPool
 		String password,
 		int max,
 		int init,
-		int timeOut,
-		PrintWriter pw,
-		int logLevel) {
-			this(poolName,url,user,password,max,init,timeOut,pw,logLevel,-1);			
+		int timeOut) {
+			this(poolName,url,user,password,max,init,timeOut,-1);			
 	}
 	private String name;
 	private String URL;
@@ -87,7 +81,6 @@ public class ConnectionPool
 	private int minConns;
 	private int maxConns;
 	private int timeOut;
-	private LogWriter logWriter;
 	private long lConnectionTimeOut = 10 * 60 * 1000; //10 minutes
 	private Map checkedOutInfoMap;
 	//private long lastRefresh;
@@ -107,8 +100,6 @@ public class ConnectionPool
 		int maxConns,
 		int initConns,
 		int timeOut,
-		PrintWriter pw,
-		int logLevel,
 		long refreshIntervalMilis)
 	{
 		this.name = name;
@@ -130,31 +121,28 @@ public class ConnectionPool
 		}
 		this.maxConns = maxConns;
 		this.timeOut = timeOut > 0 ? timeOut : 5;
-		this.logWriter = new LogWriter(name, logLevel, pw);
 		initPool(initConns);
-		this.logWriter.log("New pool created", LogWriter.INFO);
+		log.info("New pool created");
 		String lf = System.getProperty("line.separator");
-		this.logWriter.log(
-			lf
-				+ " url="
-				+ URL
-				+ lf
-				+ " user="
-				+ user
-				+ lf
-				+ " password="
-				+ password
-				+ lf
-				+ " initconns="
-				+ initConns
-				+ lf
-				+ " maxconns="
-				+ maxConns
-				+ lf
-				+ " logintimeout="
-				+ this.timeOut,
-			LogWriter.DEBUG);
-		this.logWriter.log(getStats(), LogWriter.DEBUG);
+		log.fine(lf
+		+ " url="
+		+ URL
+		+ lf
+		+ " user="
+		+ user
+		+ lf
+		+ " password="
+		+ password
+		+ lf
+		+ " initconns="
+		+ initConns
+		+ lf
+		+ " maxconns="
+		+ maxConns
+		+ lf
+		+ " logintimeout="
+		+ this.timeOut);
+		log.fine(getStats());
 	}
 	public void initializeRefresher(long refreshIntervalMillis)
 	{
@@ -167,7 +155,7 @@ public class ConnectionPool
 		this.cleanUpCheckedOut();
 		int size = this.freeConnections.size();
 		int conns = getCurrentConnectionCount();
-		debug("[ConnectionPool.refresh()] : size=" + size + ", conns=" + conns + ", getCheckedOutCount()=" + this.getCheckedOutCount());
+		log.fine("size=" + size + ", conns=" + conns + ", getCheckedOutCount()=" + this.getCheckedOutCount());
 		if(conns==0){
 			//This should only happen if the datastore has become unreachable
 			initPool(this.minConns);	
@@ -200,7 +188,7 @@ public class ConnectionPool
 			try
 			{
 				freeConnection(this.newConnection());
-				this.debug("Refreshed the databaseConnections for ConnectionPool: " + this.name + " i=" + i + ",size=" + size);
+				log.fine("Refreshed the databaseConnections for ConnectionPool: " + this.name + " i=" + i + ",size=" + size);
 			}
 			catch (Exception ex)
 			{
@@ -236,14 +224,14 @@ public class ConnectionPool
 	}
 	public Connection getConnection() throws SQLException
 	{
-		this.logWriter.log(DEBUG_REQUESTING_CONNECTION, LogWriter.DEBUG);
+		log.fine(DEBUG_REQUESTING_CONNECTION);
 		try
 		{
 			return getConnection(this.timeOut * 1000);
 		}
 		catch (SQLException e)
 		{
-			this.logWriter.log(e, "Exception getting connection", LogWriter.ERROR);
+			log.log(Level.WARNING, "Exception getting connection", e);
 			throw e;
 		}
 	}
@@ -259,7 +247,7 @@ public class ConnectionPool
 		{
 			try
 			{
-				this.logWriter.log("Waiting for connection. Timeout=" + remaining, LogWriter.DEBUG);
+				log.fine("Waiting for connection. Timeout=" + remaining);
 				wait(remaining);
 			}
 			catch (InterruptedException e)
@@ -269,7 +257,7 @@ public class ConnectionPool
 			if (remaining <= 0)
 			{
 				// Timeout has expired
-				this.logWriter.log("Time-out while waiting for connection", LogWriter.DEBUG);
+				log.fine("Time-out while waiting for connection");
 				throw new SQLException("getConnection() timed-out");
 			}
 		}
@@ -284,7 +272,7 @@ public class ConnectionPool
 			catch (SQLException ex)
 			{
 			}
-			this.logWriter.log("Removed selected bad connection from pool", LogWriter.ERROR);
+			log.log(Level.WARNING, "Removed selected bad connection from pool");
 			return getConnection(remaining);
 		}
 		//checkedOut++;
@@ -401,7 +389,7 @@ public class ConnectionPool
 				conn = DriverManager.getConnection(this.URL, this.user, this.password);
 				dsc = new DatastoreConnection(conn, this.name);
 			}
-			this.logWriter.log("Opened a new connection", LogWriter.INFO);
+			log.fine("Opened a new connection");
 			return dsc;
 		}
 		catch (SQLException e)
@@ -423,7 +411,7 @@ public class ConnectionPool
 			removeFromCheckedOutList(conn);
 			notifyAll();
 			//debug
-			this.logWriter.log(DEBUG_RETURNED_CONNECTION, LogWriter.DEBUG);
+			log.fine(DEBUG_RETURNED_CONNECTION);
 			//logWriter.log(getStats(), LogWriter.DEBUG);
 		}
 		else
@@ -454,11 +442,11 @@ public class ConnectionPool
 			try
 			{
 				con.close();
-				this.logWriter.log("Closed connection", LogWriter.INFO);
+				log.fine("Closed connection");
 			}
 			catch (SQLException e)
 			{
-				this.logWriter.log(e, "Couldn't close connection", LogWriter.ERROR);
+				log.log(Level.WARNING, "Couldn't close connection", e);
 			}
 		}
 		this.freeConnections.removeAllElements();
@@ -495,7 +483,7 @@ public class ConnectionPool
 		}
 		catch (SQLException ex)
 		{
-			this.logWriter.log(ex, ex.getMessage(), LogWriter.ERROR);
+			log.log(Level.WARNING, ex.getMessage(), ex);
 			return null;
 		}
 	}
@@ -720,11 +708,6 @@ public class ConnectionPool
 			}
 		}
 	}
-	protected void debug(String debug)
-	{
-		this.logWriter.log("[ConnectionPool-Debug] : " + debug, LogWriter.DEBUG);
-		//System.out.println("[ConnectionPool-Debug] : "+debug);
-	}
 	
 	/**
 	 * Returns the name.
@@ -733,4 +716,5 @@ public class ConnectionPool
 	public String getName() {
 		return this.name;
 	}
+
 }
