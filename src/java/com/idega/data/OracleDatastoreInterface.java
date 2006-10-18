@@ -148,7 +148,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 					createTrigger(entity, valueToSet + 1);
 					returner = true;
 				} catch (NumberFormatException e) {
-					System.out.println("Did not create sequence for table "+entity.getEntityName()+" on primary key column "+entity.getIDColumnName()+" with value = '"+maxValue+"'");
+					//System.out.println("Did not create sequence for table "+entity.getEntityName()+" on primary key column "+entity.getIDColumnName()+" with value = '"+maxValue+"'");
 					returner = false;
 				}
 			}
