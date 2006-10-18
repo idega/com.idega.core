@@ -64,7 +64,6 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 		//Starts the thread while waiting for 3 mins. before the idegaWebApp starts up.
 		// -- Fix for working properly on Interebase with entity-auto-create-on.
 		this.timer.start(3 * 60 * 1000);
-		System.out.println("Group Relation Daemon Bundle Starter: starting");
 		
 //		try {
 //			//System.out.println("[USER]: com.idega.user bundle starter starting...");
@@ -83,7 +82,6 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	public void actionPerformed(ActionEvent event) {
 		try {	
 			if (event.getActionCommand().equalsIgnoreCase(TIMER_THREAD_NAME)) {
-				System.out.println("[Group Relation Daemon - "+IWTimestamp.RightNow().toString()+" ] - Checking for pending relations");
 				String removeDuplicatedEmails = this.bundle.getProperty(REMOVE_DUPLICATED_EMAILS_FROM_USERS, "false");
 				if (removeDuplicatedEmails != null && removeDuplicatedEmails.equalsIgnoreCase("true")) {
 				    removeDuplicatedEmailsFromUsers();
