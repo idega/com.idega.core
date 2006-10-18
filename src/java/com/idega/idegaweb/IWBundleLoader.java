@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleLoader.java,v 1.9 2006/09/26 13:15:36 gediminas Exp $
+ * $Id: IWBundleLoader.java,v 1.10 2006/10/18 13:12:34 gediminas Exp $
  * Created on 5.2.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import java.util.logging.Logger;
  * <p>
  * Implementation for loading a IWBundle from a Jar file in WEB-INF/lib.
  * </p>
- *  Last modified: $Date: 2006/09/26 13:15:36 $ by $Author: gediminas $
+ *  Last modified: $Date: 2006/10/18 13:12:34 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class IWBundleLoader implements JarLoader {
 
@@ -49,9 +49,6 @@ public class IWBundleLoader implements JarLoader {
 			if (moduleIdentifier != null) {
 				if (!iwma.isBundleLoaded(moduleIdentifier)) {
 					IWBundle bundle = new JarLoadedIWBundle(module, this.iwma);
-					if (LOGGER.isLoggable(Level.FINE)) {
-						LOGGER.fine("Loading budle " + moduleIdentifier + " into main app");
-					}
 					iwma.loadBundle(bundle);
 					iwma.registerBundle(moduleIdentifier, false);
 				} else {
