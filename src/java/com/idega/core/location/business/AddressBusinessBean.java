@@ -191,9 +191,9 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 *         number,postal code and postal address, country its ISO
 	 *         abbreviation, Commune name and commune code (uid)<br>
 	 *         Each piece is seperated by a semicolon (";") e.g. : "Stafnasel
-	 *         6;107 Reykjavik;Iceland is_IS;Reykjavik 12345" <br>
+	 *         6;107 Reykjavik;Iceland:is_IS;Reykjavik 12345" <br>
 	 *         If a piece is missing the string "N/A" (not available) is added
-	 *         instead e.g. "Stafnasel 6;107 Reykjavik;Iceland is_IS;N/A"
+	 *         instead e.g. "Stafnasel 6;107 Reykjavik;Iceland:is_IS;N/A"
 	 */
 	public String getFullAddressString(Address address) {
 		StringBuffer fullAddress = new StringBuffer();
@@ -219,7 +219,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			String countryName = country.getName();
 			String isoAbbr = country.getIsoAbbreviation();
 			fullAddress.append(countryName);
-			fullAddress.append(" ");
+			fullAddress.append(":");
 			fullAddress.append(isoAbbr);
 		}
 		else {
@@ -230,7 +230,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			String communeName = commune.getCommuneName();
 			String code = commune.getCommuneCode();
 			fullAddress.append(communeName);
-			fullAddress.append(" ");
+			fullAddress.append(":");
 			fullAddress.append(code);
 		}
 		else {
@@ -295,14 +295,14 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		}
 		try {
 			if (!NOT_AVAILABLE.equals(countryNameAndISOAbbreviation)) {
-				countryName = countryNameAndISOAbbreviation.substring(0, countryNameAndISOAbbreviation.indexOf(" "));
-				countryISOAbbr = countryNameAndISOAbbreviation.substring(countryNameAndISOAbbreviation.indexOf(" ") + 1);
+				countryName = countryNameAndISOAbbreviation.substring(0, countryNameAndISOAbbreviation.indexOf(":"));
+				countryISOAbbr = countryNameAndISOAbbreviation.substring(countryNameAndISOAbbreviation.indexOf(":") + 1);
 				// get country by iso...or name
 				country = getCountryAndCreateIfDoesNotExist(countryName, countryISOAbbr);
 			}
 			if (!NOT_AVAILABLE.equals(communeNameAndCommuneCode)) {
-				communeName = communeNameAndCommuneCode.substring(0, communeNameAndCommuneCode.indexOf(" "));
-				communeCode = communeNameAndCommuneCode.substring(communeNameAndCommuneCode.indexOf(" ") + 1);
+				communeName = communeNameAndCommuneCode.substring(0, communeNameAndCommuneCode.indexOf(":"));
+				communeCode = communeNameAndCommuneCode.substring(communeNameAndCommuneCode.indexOf(":") + 1);
 				// get commune by code or name
 				commune = getCommuneAndCreateIfDoesNotExist(communeName, communeCode);
 			}
