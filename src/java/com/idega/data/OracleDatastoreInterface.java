@@ -6,6 +6,7 @@ package com.idega.data;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -340,6 +341,32 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	/**
 	 * Varchar is limited to 4000 chars need to use clob for larger fields. Great example http://www.experts-exchange.com/Databases/Oracle/Q_20358143.html
 	 * @see com.idega.data.DatastoreInterface#fillStringColumn(GenericEntity, String, ResultSet)
+	 * 
+	 * This class can handle connections  
+	 * + without JNDI: JDBC drivers standard 1.22 and JDBC drivers standard 2.0 
+	 * + with JNDI: JDBC drivers 2.0
+	 * 
+	 * Note that when using JNDI only methods of the corresponding  JDBC standard can be used, 
+	 * there is no way to use oracle extensions. That means when using JNDI there must be JDBC standard 2.0.
+	 * 
+	 * Oracle says:
+	 * 
+	 * Oracle provides two implementations of its JDBC drivers --
+	 * one that supports Sun Microsystems JDK versions 1.2.x through 1.4 and complies with the Sun JDBC 2.0 standard, 
+	 * and one that supports JDK 1.1.x and complies with the Sun JDBC 1.22 standard.
+	 * Beyond standard features, Oracle JDBC drivers provide Oracle-specific type extensions and performance extensions.
+	 * 
+	 * Note:
+	 * The JDBC OCI, Thin, and server-side internal drivers support the same functionality and all Oracle extensions.
+	 * Both implementations include the following Java packages:
+	 * - oracle.sql (classes to support all Oracle type extensions)
+	 * - oracle.jdbc (interfaces to support database access and updates in Oracle type formats)
+	 * 
+	 * In addition to these packages, the implementation for JDK 1.1.x includes the following Java package. 
+	 * This package supports some JDBC 2.0 and JDBC 3.0 features by providing interfaces 
+	 * that mimic the new interfaces in the standard java.sql package:
+	 * oracle.jdbc2 (interfaces equivalent to standard JDBC 2.0 interfaces)
+	 * 
 	 */
 	protected void fillStringColumn(GenericEntity entity, String columnName, ResultSet rs) throws SQLException {
 
@@ -351,41 +378,84 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			}
 		}
 		else {
+			Reader chrInstream = null; // Unicode clob reader
 			try {
-				Reader chrInstream; // Unicode clob reader
-				char chrBuffer[]; // Clob buffer
-				try{
-					CLOB clob = ((OracleResultSet) rs).getCLOB(columnName);
-					if (clob != null) {
+				long length = 0;
+				//
+				// here starts the fork.................................................................................................
+				//
+				if (rs instanceof OracleResultSet) {
+					// we go this way if JDBC 1.22 or JDBC 2.0 without JNDI is used 
+					// (note that the returned ResultSet of the database is not wrapped)
+					OracleResultSet oracleResultSet = (OracleResultSet) rs;
+					// cast to oracle extension oracle.sql.CLOB
+					// this class was introduced by Oracle since JDBC 1.22 standard is not supporting LOBs
+					// getCLOB() is not JDBC standard
+					CLOB oracleClob = oracleResultSet.getCLOB(columnName);
+					if (oracleClob != null) {
 						//set buffersize
-						chrBuffer = new char[(int) clob.length()];
-	
+						length = oracleClob.length();
 						// Now get as a unicode stream.
-						chrInstream = clob.getCharacterStream();
-	
-						if (chrInstream != null) {
-							chrInstream.read(chrBuffer);
-	
-							String value = new String(chrBuffer);
-							entity.setColumn(columnName, value);
+						chrInstream = oracleClob.getCharacterStream(); 
+					}
+				}
+				else {
+					// we go this way if JNDI with JDBC 2.0 standard is used 
+					try {
+						// method getClob() does not exist in JDBC 1.22
+						// (note that the returned ResultSet of the database is wrapped when using JNDI
+						// that means the ResultSet cannot be cast to OracleResultSet)
+						Clob clob = rs.getClob(columnName);
+						// java.sql.Clob belongs to JDBC standard 2.0 but not to JDBC standard 1.22
+						if (clob != null) {
+							//set buffersize
+							length = clob.length();
+							// Now get as a unicode stream.
+							chrInstream = clob.getCharacterStream();
 						}
 					}
-				}
-				catch(ClassCastException cce){
-					String eMessage = cce.getMessage();
-					String message = "Error filling CLOB column for Oracle. Unexpected JDBC Resultset implementation class: ";
-					if(eMessage!=null){
-						message += eMessage;
+					catch (NoSuchMethodError ex) {
+						// failed...is JNDI with JDBC standard 1.22 used?
+						String eMessage = ex.getMessage();
+						String message = "Error filling CLOB column for Oracle. JDBC Resultset implementation class does not "+
+						"support CLOB values. Use db.properties instead of JNDI for looking up the database or use JDBC standard 2.0";
+						if(eMessage!=null){
+							message += eMessage;
+						}
+						logError(message);
+						length = 0;
+						chrInstream = null;
 					}
-					System.err.println(message);
 				}
-
+				//				
+				// ....................................................................................................end of the fork
+				//
+				if (chrInstream != null) {
+					// avoiding catastrophe
+					int intLength = (length < Integer.MAX_VALUE) ? (int) length : Integer.MAX_VALUE; 
+					char chrBuffer[] = new char[intLength]; // Clob buffer
+					chrInstream.read(chrBuffer);
+					String value = new String(chrBuffer);
+					entity.setColumn(columnName, value);
+				}
 			}
 			catch (IOException io) {
 				throw new SQLException("IOException: " + io.getMessage());
 			}
 			catch (Exception e) {
 				e.printStackTrace();
+			}
+			finally {
+				// do not forget to close the stream
+				if (chrInstream != null) {
+					try {
+						chrInstream.close();
+					}
+					// do not hide an existing exception!
+					catch (IOException ex) {
+						logError("[OracleDatastoreInterface] Character input stream could not be closed" );
+					}
+				}
 			}
 		}
 	}
