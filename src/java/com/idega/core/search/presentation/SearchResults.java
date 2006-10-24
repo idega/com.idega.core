@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.13.2.5 2006/07/24 10:52:50 laddi Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.13.2.6 2006/10/24 09:57:26 gimmi Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.faces.component.UIComponent;
 
 import com.idega.core.search.business.Search;
 import com.idega.core.search.business.SearchPlugin;
@@ -32,7 +34,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2006/07/24 10:52:50 $ by $Author: laddi $
+ * Last modified: $Date: 2006/10/24 09:57:26 $ by $Author: gimmi $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -46,7 +48,7 @@ import com.idega.presentation.text.Text;
  * some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.13.2.5 $
+ * @version $Revision: 1.13.2.6 $
  */
 public class SearchResults extends Block {
 
@@ -324,6 +326,14 @@ public class SearchResults extends Block {
 									}
 								}
 								
+								// extraRowElements
+								Collection rowElements = searchPlugin.getExtraRowElements(result, iwrb);
+								if (rowElements != null && !rowElements.isEmpty()) {
+									Iterator reiter = rowElements.iterator();
+									while (reiter.hasNext()) {
+										rowContainer.add((UIComponent) reiter.next());
+									}
+								}
 								
 								// adding spacer to force the row container
 								// around all floating elements

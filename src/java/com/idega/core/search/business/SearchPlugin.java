@@ -1,5 +1,5 @@
 /*
- * $Id: SearchPlugin.java,v 1.2.4.1 2006/06/30 12:20:22 eiki Exp $
+ * $Id: SearchPlugin.java,v 1.2.4.2 2006/10/24 09:57:26 gimmi Exp $
  * Created on Jan 17, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,13 +9,16 @@
  */
 package com.idega.core.search.business;
 
+import java.util.Collection;
 import java.util.List;
+
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 
 
 /**
  * 
- *  Last modified: $Date: 2006/06/30 12:20:22 $ by $Author: eiki $
+ *  Last modified: $Date: 2006/10/24 09:57:26 $ by $Author: gimmi $
  * 
  * This interface defines methods that have to be implemented to make "collection" searchable e.g. users/files/websites etc.<br>
  * Objects implementing this interface should be registered to their bundle as "iw.searchplugin" if you want to use the default<br>
@@ -26,7 +29,7 @@ import com.idega.idegaweb.IWMainApplication;
  * in the package com.idega.search.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>,<a href="mailto:tryggvi@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.2.4.1 $
+ * @version $Revision: 1.2.4.2 $
  */
 public interface SearchPlugin extends Cloneable{
 
@@ -78,4 +81,8 @@ public interface SearchPlugin extends Cloneable{
 	 */
 	public String getSearchDescription();
 	
+	/**
+	 * @return A collection of UIComponents. 
+	 */
+	public Collection getExtraRowElements(SearchResult result, IWResourceBundle iwrb);
 }
