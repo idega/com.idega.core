@@ -431,7 +431,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 				// ....................................................................................................end of the fork
 				//
 				if (chrInstream != null) {
-					// avoiding catastrophe
+					// avoiding long to int cast overflow catastrophe
 					int intLength = (length < Integer.MAX_VALUE) ? (int) length : Integer.MAX_VALUE; 
 					char chrBuffer[] = new char[intLength]; // Clob buffer
 					chrInstream.read(chrBuffer);
