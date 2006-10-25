@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.170.2.2 2006/10/04 10:31:33 laddi Exp $
+ * $Id: Link.java,v 1.170.2.3 2006/10/25 14:25:06 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -21,6 +21,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import javax.faces.context.FacesContext;
 
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
@@ -2378,4 +2380,186 @@ public void setWindowToOpen(String className) {
 	public String getAccessKey(){
 		return getMarkupAttribute("accesskey");
 	}
+	
+	
+	public void restoreState(FacesContext context, Object state) {
+		Object values[] = (Object[])state;
+		super.restoreState(context, values[0]);
+		try {
+			String className = (String) values[1];
+			if (className != null) {
+				Object objState = values[2];
+				PresentationObject t = (PresentationObject) Class.forName(className).newInstance();
+				t.restoreState(context, objState);
+				_obj = t;
+			}
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		try {
+			String className = (String) values[3];
+			if (className != null) {
+				Object objState = values[4];
+				Window t = (Window) Class.forName(className).newInstance();
+				t.restoreState(context, objState);
+				_myWindow = t;
+			}
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	
+		iFormToSubmit = ((Boolean) values[5]).booleanValue();
+		_windowClass = (Class) values[6];
+		try {
+			String className = (String) values[7];
+			if (className != null) {
+				Object objState = values[8];
+				Window t = (Window) Class.forName(className).newInstance();
+				t.restoreState(context, objState);
+				_windowInstance = t;
+			}
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	
+		icObjectInstanceIDForWindow = ((Integer) values[9]).intValue();
+		_parameterString = (StringBuffer) values[10];
+		_objectType = (String) values[11];
+		windowOpenerJavascriptString = (String) values[12];
+		isImageButton = ((Boolean) values[13]).booleanValue();
+		isImageTab = ((Boolean) values[14]).booleanValue();
+		useTextAsLocalizedTextKey = ((Boolean) values[15]).booleanValue();
+		flip = ((Boolean) values[16]).booleanValue();
+		isOutgoing = ((Boolean) values[17]).booleanValue();
+		hasClass = ((Boolean) values[18]).booleanValue();
+		_maintainAllGlobalParameters = ((Boolean) values[19]).booleanValue();
+		_maintainBuilderParameters = ((Boolean) values[20]).booleanValue();
+		_addSessionId = ((Boolean) values[21]).booleanValue();
+		_maintainAllParameters = ((Boolean) values[22]).booleanValue();
+		_imageId = ((Integer) values[23]).intValue();
+		_hostname = (String) values[24];
+		_onMouseOverImageId = ((Integer) values[25]).intValue();
+		_onClickImageId = ((Integer) values[26]).intValue();
+
+		try {
+			String className = (String) values[27];
+			if (className != null) {
+				Object objState = values[28];
+				Image t = (Image) Class.forName(className).newInstance();
+				t.restoreState(context, objState);
+				_onMouseOverImage = t;
+			}
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}		
+		
+		try {
+			String className = (String) values[29];
+			if (className != null) {
+				Object objState = values[30];
+				Image t = (Image) Class.forName(className).newInstance();
+				t.restoreState(context, objState);
+				_onClickImage = t;
+			}
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}		
+		usePublicWindow = ((Boolean) values[31]).booleanValue();
+		classToInstanciate = (Class) values[32];
+		templateForObjectInstanciation = (String) values[33];
+		listenerInstances = (List) values[34];
+		maintainedParameters = (List) values[35];
+		https = ((Boolean) values[36]).booleanValue();
+		protocol = (String) values[37];
+		fileId = ((Integer) values[38]).intValue();
+		ibPage = ((Integer) values[39]).intValue();
+		_overImageLocalizationMap = (Map) values[40];
+		_ImageLocalizationMap = (Map) values[41];
+		_toolTipLocalizationMap = (Map) values[42];
+		usePublicOjbectInstanciator = ((Boolean) values[43]).booleanValue();
+	}
+
+	public Object saveState(FacesContext context) {
+		Object values[] = new Object[44];
+		values[0] = super.saveState(context);
+		if (_obj != null) {
+			Object objState = _obj.saveState(context);
+			values[1] = this._obj.getClass().getName();
+			values[2] = objState;
+		}
+		if (_myWindow != null) {
+			Object objState = _myWindow.saveState(context);
+			values[3] = this._myWindow.getClass().getName();
+			values[4] = objState;
+		}
+		values[5] = new Boolean(iFormToSubmit);
+		values[6] = _windowClass;
+		if (_windowInstance != null) {
+			Object objState = _windowInstance.saveState(context);
+			values[7] = this._windowInstance.getClass().getName();
+			values[8] = objState;
+		}
+		values[9] = new Integer(icObjectInstanceIDForWindow);
+		values[10] = _parameterString;
+		values[11] = _objectType;
+		values[12] = windowOpenerJavascriptString;
+		values[13] = new Boolean(isImageButton);
+		values[14] = new Boolean(isImageTab);
+		values[15] = new Boolean(useTextAsLocalizedTextKey);
+		values[16] = new Boolean(flip);
+		values[17] = new Boolean(isOutgoing);
+		values[18] = new Boolean(hasClass);
+		values[19] = new Boolean(_maintainAllGlobalParameters);
+		values[20] = new Boolean(_maintainBuilderParameters);
+		values[21] = new Boolean(_addSessionId);
+		values[22] = new Boolean(_maintainAllParameters);
+		values[23] = new Integer(_imageId);
+		values[24] = _hostname;
+		values[25] = new Integer(_onMouseOverImageId);
+		values[26] = new Integer(_onClickImageId);
+		if (_onMouseOverImage != null) {
+			Object objState = _onMouseOverImage.saveState(context);
+			values[27] = this._onMouseOverImage.getClass().getName();
+			values[28] = objState;
+		}
+		if (_onClickImage != null) {
+			Object objState = _onClickImage.saveState(context);
+			values[29] = this._onClickImage.getClass().getName();
+			values[30] = objState;
+		}
+		values[31] = new Boolean(usePublicWindow);
+		values[32] = classToInstanciate;
+		values[33] = templateForObjectInstanciation;
+		values[34] = listenerInstances;
+		values[35] = maintainedParameters;
+		values[36] = new Boolean(https);
+		values[37] = protocol;
+		values[38] = new Integer(fileId);
+		values[39] = new Integer(ibPage);
+		values[40] = _overImageLocalizationMap;
+		values[41] = _ImageLocalizationMap;
+		values[42] = _toolTipLocalizationMap;
+		values[43] = new Boolean(usePublicOjbectInstanciator);
+		return values;
+	}	
 }
