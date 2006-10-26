@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.13 2006/10/12 12:44:15 gediminas Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.14 2006/10/26 15:27:13 gediminas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Logger;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -26,7 +27,6 @@ import com.idega.core.file.business.FileIconSupplier;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.JarLoadedIWBundle;
 import com.idega.util.FileUtil;
 
 /**
@@ -39,13 +39,15 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2006/10/12 12:44:15 $ by $Author: gediminas $
+ * Last modified: $Date: 2006/10/26 15:27:13 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
+	private static final Logger log = Logger.getLogger(IWBundleResourceFilter.class.getName());
+	
 	private boolean feedFromSetBundleDir = false;
 	private boolean feedFromJarFiles = IWMainApplication.loadBundlesFromJars;
 	private String sBundlesDirectory;
@@ -105,12 +107,9 @@ public class IWBundleResourceFilter extends BaseFilter {
 					String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 					String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
 					IWBundle bundle = getIWMainApplication(request).getBundle(bundleIdentifier);
-					if(bundle instanceof JarLoadedIWBundle){
-						JarLoadedIWBundle jarBundle = (JarLoadedIWBundle)bundle;
-						InputStream stream = jarBundle.getResourceInputStream(pathWithinBundle);
-						String mimeType = getMimeType(pathWithinBundle);
-						feedOutFile(request,response, mimeType,stream);
-					}
+					InputStream stream = bundle.getResourceInputStream(pathWithinBundle);
+					String mimeType = getMimeType(pathWithinBundle);
+					feedOutFile(request,response, mimeType,stream);
 				}
 				else{
 					chain.doFilter(sreq, sres);
@@ -155,23 +154,25 @@ public class IWBundleResourceFilter extends BaseFilter {
 		String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
 		IWBundle bundle = iwma.getBundle(bundleIdentifier);
-		if(bundle instanceof JarLoadedIWBundle){
-			JarLoadedIWBundle jarBundle = (JarLoadedIWBundle)bundle;
-			
-			String newFilePath = iwma.getApplicationRealPath()+requestUriWithoutContextPath;
-			File newFile = new File(newFilePath);
-			if(!newFile.exists()){
-				try {
-					newFile = FileUtil.getFileAndCreateRecursiveIfNotExists(newFilePath);
-					InputStream input = jarBundle.getResourceInputStream(pathWithinBundle);
-					FileUtil.streamToFile(input, newFile);
-				}
-				catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		long bundleLastModified = bundle.getResourceTime(pathWithinBundle);
+		
+		String webappFilePath = iwma.getApplicationRealPath() + requestUriWithoutContextPath;
+		File webappFile = new File(webappFilePath);
+		if (webappFile.exists()) {
+			long webappLastModified = webappFile.lastModified();
+			if (webappLastModified > bundleLastModified) {
+				return;
 			}
-			
+		}
+		
+		try {
+			webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
+			InputStream input = bundle.getResourceInputStream(pathWithinBundle);
+			FileUtil.streamToFile(input, webappFile);
+			webappFile.setLastModified(bundleLastModified);
+		}
+		catch (IOException e) {
+			log.warning("Could not copy resource from jar to " + requestUriWithoutContextPath);
 		}
 	}
 	
@@ -230,11 +231,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 			feedOutFile(request, response, mimeType,fis);
 		}
 		catch (FileNotFoundException e) {
-			String message = e.getMessage();
-			if (message == null) {
-				message = "";
-			}
-			System.err.println("IWBundleResourceFilter: " + e.getClass().getName() + "  " + message + " for resource: " +realFile.getPath());
+			log.warning("File not found: " + realFile.getPath());
 		}
 	}
 	
@@ -262,11 +259,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 			out.close();
 		}
 		catch (IOException e) {
-			String message = e.getMessage();
-			if (message == null) {
-				message = "";
-			}
-			System.err.println("IWBundleResourceFilter: " + e.getClass().getName() + " " + message + " for resource: " +request.getRequestURI());
+			log.warning("Error streaming resource to " + request.getRequestURI());
 		}
 	}
 
@@ -326,12 +319,13 @@ public class IWBundleResourceFilter extends BaseFilter {
 					FileUtil.createFileIfNotExistent(fileInWebapp);
 				}
 				FileUtil.copyFile(fileInWorkspace, fileInWebapp);
+				fileInWebapp.setLastModified(workspaceLastModified);
 			}
 			catch (FileNotFoundException e) {
-				e.printStackTrace();
+				log.warning("File not found: " + fileInWorkspace.getPath());
 			}
 			catch (IOException e) {
-				e.printStackTrace();
+				log.warning("Error copying file: " + fileInWorkspace.getPath());
 			}
 		}
 	}
