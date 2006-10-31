@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.32.2.1 2006/07/24 10:52:50 laddi Exp $
+ * $Id: AbstractChooser.java,v 1.32.2.2 2006/10/31 14:54:27 laddi Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -10,7 +10,6 @@ import java.net.URLEncoder;
 import javax.faces.component.UIComponent;
 
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -40,7 +39,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	private boolean _addTextInput = true;
 	private Form _form = null;
 	private Image _buttonImage = null;
-	protected String _style = IWConstants.BUILDER_FONT_STYLE_INTERFACE;
+	protected String _style = null;
 	protected String _stringValue;
 	protected String _stringDisplay;
 	private String _attributeValue;
@@ -255,6 +254,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	public PresentationObject getPresentationObject(IWContext iwc) {
 		if (this._addTextInput) {
 			TextInput input = new TextInput(this.displayInputName+"_chooser");
+			input.setStyleClass("chooser");
 			input.setDisabled(this.disabled);
 			if (this._inputLength > 0) {
 				input.setLength(this._inputLength);
