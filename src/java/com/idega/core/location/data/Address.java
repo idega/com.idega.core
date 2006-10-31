@@ -1,19 +1,13 @@
-/**
- * 
- */
 package com.idega.core.location.data;
-
-import java.rmi.RemoteException;
 
 
 import com.idega.data.IDOLegacyEntity;
+import java.rmi.RemoteException;
 
-/**
- * @author bluebottle
- *
- */
 public interface Address extends IDOLegacyEntity {
+	
 	String FIELD_STREET_NAME = "StreetName";
+	
 	/**
 	 * @see com.idega.core.location.data.AddressBMPBean#setDefaulValues
 	 */
@@ -195,8 +189,12 @@ public interface Address extends IDOLegacyEntity {
 	public String getPostalAddress();
 
 	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getUserCountForAddress
+	 */
+	public int getUserCountForAddress();
+
+	/**
 	 * @see com.idega.core.location.data.AddressBMPBean#isEqualTo
 	 */
 	public boolean isEqualTo(Address address);
-
 }

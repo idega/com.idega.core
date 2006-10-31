@@ -105,7 +105,7 @@ public class AddressTypeBMPBean extends GenericTypeBMPBean implements
 
 	public Object ejbFindByUniqueName(String name) throws FinderException {
 		IDOQuery query = this.idoQueryGetSelect();
-		query.appendWhereEquals(getColumnNameUniqueName(), name);
+		query.appendWhereEqualsQuoted(getColumnNameUniqueName(), name);
 
 		return idoFindOnePKByQuery(query);
 	}
