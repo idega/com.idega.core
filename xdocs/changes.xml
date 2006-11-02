@@ -5,6 +5,15 @@
   </properties>
   <body>
  
+   	<release version="3.1.16" date="2006-11-02">
+		<action dev="laddi" type="fix">
+			Fixed incorrect cache handling of application bindings with keys larger than max value.
+		</action>
+		<action dev="laddi" type="update">
+			Added possibility to include style sheets with specific media type through GlobalIncludeManager.
+		</action>
+	</release>
+   
    	<release version="3.1.15" date="2006-10-25">
 		<action dev="gimmi" type="fix">
 			Added saveState and restoreState to Link.

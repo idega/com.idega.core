@@ -66,9 +66,18 @@ public class GlobalIncludeManager implements Singleton {
 	 * Adds a StyleSheet file url that is relative to the webapp root.
 	 * @param url
 	 */
-	public void addStyleSheet(String url){
-		StyleSheetLink link = new StyleSheetLink(url);
+	public void addStyleSheet(String url, String media){
+		StyleSheetLink link = new StyleSheetLink(url, media);
 		getStyleSheets().add(link);
+	}
+	
+	
+	/**
+	 * Adds a StyleSheet file url that is relative to the webapp root.
+	 * @param url
+	 */
+	public void addStyleSheet(String url){
+		addStyleSheet(url, null);
 	}
 	
 	
@@ -88,14 +97,22 @@ public class GlobalIncludeManager implements Singleton {
 	 * @param bundleIdentifier the bundle where the stylesheet is located
 	 * @param url the URL within the bundle (relative to the resources subfolder)
 	 */
-	public void addBundleStyleSheet(String bundleIdentifier,String url){
+	public void addBundleStyleSheet(String bundleIdentifier, String url){
+		addBundleStyleSheet(bundleIdentifier, url, null);
+	}
+	
+	/**
+	 * Adds a stylesheet where the bundleIdentifier is a reference to the bundle where the stylesheet file is located.
+	 * @param bundleIdentifier the bundle where the stylesheet is located
+	 * @param url the URL within the bundle (relative to the resources subfolder)
+	 */
+	public void addBundleStyleSheet(String bundleIdentifier , String url, String media){
 		IWBundle iwb = getIWMainApplication().getBundle(bundleIdentifier);
 		String cssRealUrl = iwb.getResourceURIWithoutContextPath(url);
 		if (cssRealUrl != null && !containsStyleSheet(cssRealUrl)) {
-			addStyleSheet(cssRealUrl);
+			addStyleSheet(cssRealUrl, media);
 		}
 	}
-	
 	
 	public IWMainApplication getIWMainApplication(){
 		return this.iwma;
