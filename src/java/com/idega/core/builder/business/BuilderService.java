@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.13 2006/10/12 17:51:33 justinas Exp $
+ * $Id: BuilderService.java,v 1.14 2006/11/03 14:34:41 justinas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
 package com.idega.core.builder.business;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 
 import javax.faces.component.UIComponent;
 
@@ -187,4 +188,7 @@ public interface BuilderService extends IBOService
 	 */
 	public boolean changePageName(int ID, String newName);
 	
+	public Collection getTopLevelPages(IWContext iwc);
+	
+	public Collection getTopLevelTemplates(IWContext iwc);
 }

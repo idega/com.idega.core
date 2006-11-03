@@ -86,7 +86,7 @@ public interface ICTreeNode {
 	 * @return the id as a string
 	 */
 	public String getId();
-	
+
 //	/**
 //	 * @return returns an int identifier for the node type
 //	 * @deprecated
