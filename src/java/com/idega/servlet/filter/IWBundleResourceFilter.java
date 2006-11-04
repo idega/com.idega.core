@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.14 2006/10/26 15:27:13 gediminas Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.15 2006/11/04 14:07:23 gediminas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -39,10 +40,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2006/10/26 15:27:13 $ by $Author: gediminas $
+ * Last modified: $Date: 2006/11/04 14:07:23 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -77,68 +78,56 @@ public class IWBundleResourceFilter extends BaseFilter {
 
 		HttpServletRequest request = (HttpServletRequest) sreq;
 		HttpServletResponse response = (HttpServletResponse) sres;
+		String requestUriWithoutContextPath = getURIMinusContextPath(request);
 		if (this.feedFromSetBundleDir) {
 			try {
-				String requestUriWithoutContextPath = getURIMinusContextPath(request);
 				String webappDir = getIWMainApplication(request).getApplicationRealPath();
-				if (speciallyHandleFile(request, this.sBundlesDirectory, webappDir, requestUriWithoutContextPath)) {// bundleIdentifier,urlWithinBundle,
-																																																				// realFile)){
-					chain.doFilter(sreq, sres);
-				}
-				else {
-					File realFile = getFileInWorkspace(this.sBundlesDirectory, requestUriWithoutContextPath);// bundleDir,urlWithinBundle);
+				if (!speciallyHandleFile(request, this.sBundlesDirectory, webappDir, requestUriWithoutContextPath)) {
+					File realFile = getFileInWorkspace(this.sBundlesDirectory, requestUriWithoutContextPath);
 					if (realFile.exists()) {
 						feedOutFile(request,response, realFile);
-					}
-					else {
-						// if the file doesn't exist try to use the default:
-						chain.doFilter(sreq, sres);
+						return;
 					}
 				}
 			}
 			catch (Exception e) {
-				chain.doFilter(sreq, sres);
+				log.log(Level.WARNING, "Error serving file from workspace", e);
 			}
 		}
 		else if (feedFromJarFiles) {
-			try {
-				String requestUriWithoutContextPath = getURIMinusContextPath(request);
-				if(requestUriWithoutContextPath.startsWith("/idegaweb/bundles")){
+			if (requestUriWithoutContextPath.startsWith(BUNDLES_STANDARD_DIR)) {
+				try {
 					String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 					String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
 					IWBundle bundle = getIWMainApplication(request).getBundle(bundleIdentifier);
 					InputStream stream = bundle.getResourceInputStream(pathWithinBundle);
 					String mimeType = getMimeType(pathWithinBundle);
-					feedOutFile(request,response, mimeType,stream);
+					feedOutFile(request, response, mimeType, stream);
+					return;
 				}
-				else{
-					chain.doFilter(sreq, sres);
+				catch (FileNotFoundException e) {
+					log.warning("File not found: " + requestUriWithoutContextPath);
+				}
+				catch (Exception e) {
+					log.log(Level.WARNING, "Error serving file from jar", e);
 				}
 			}
-			catch (Exception e) {
-				e.printStackTrace();
-				chain.doFilter(sreq, sres);
-			}			
 		}
-		else {
-			chain.doFilter(sreq, sres);
-		}
+		
+		// if file is specially handled, or any error occurs, fall back to the default
+		chain.doFilter(sreq, sres);
 	}
 
 	protected static String getBundleFromRequest(String requestUriWithoutContextPath) {
-		String prefix = "/idegaweb/bundles/";
-		String suffix = ".bundle";
-		String strip = requestUriWithoutContextPath.substring(prefix.length(),requestUriWithoutContextPath.length());
-		int index = strip.indexOf(suffix);
-		String bundle = strip.substring(0,index);
+		int index = requestUriWithoutContextPath.indexOf(BUNDLE_SUFFIX);
+		String bundle = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length(), index);
 		return bundle;
 		
 	}
 
 	protected static String getResourceWithinBundle(String requestUriWithoutContextPath) {
-		String suffix = ".bundle";
-		int index = requestUriWithoutContextPath.indexOf(suffix);
-		String rest = requestUriWithoutContextPath.substring(index+suffix.length()+1,requestUriWithoutContextPath.length());
+		int index = requestUriWithoutContextPath.indexOf(BUNDLE_SUFFIX);
+		String rest = requestUriWithoutContextPath.substring(index+BUNDLE_SUFFIX.length()+1);
 		return rest;
 	}
 	
@@ -341,22 +330,19 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * @return
 	 */
 	public static File getFileInWorkspace(String workspaceDir, String requestUriWithoutContextPath) {
-		String idegawebStandardBundles = "/idegaweb/bundles/";
-		if (requestUriWithoutContextPath.startsWith(idegawebStandardBundles)) {
+		if (requestUriWithoutContextPath.startsWith(BUNDLES_STANDARD_DIR)) {
 			// cut it from the string as the bundle is directly under the workspace
 			// but keep the last slash:
-			requestUriWithoutContextPath = requestUriWithoutContextPath.substring(idegawebStandardBundles.length() - 1, requestUriWithoutContextPath.length());
+			requestUriWithoutContextPath = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length() - 1);
 		}
 		String sFileInWorkspace = workspaceDir + requestUriWithoutContextPath;
-		// String sJspFileInWebapp = webappDir+node.getResourceURI();
 		File fileInWorkspace = new File(sFileInWorkspace);
 		if (!fileInWorkspace.exists()) {
 			// Hack: trying to remove the .bundle suffix if the suffix doesn't exist
 			// on the folder in the workspace:
-			String bundleSuffix = ".bundle";
-			int index = sFileInWorkspace.indexOf(bundleSuffix);
+			int index = sFileInWorkspace.indexOf(BUNDLE_SUFFIX);
 			if (index != -1) {
-				sFileInWorkspace = sFileInWorkspace.substring(0, index) + sFileInWorkspace.substring(index + bundleSuffix.length(), sFileInWorkspace.length());
+				sFileInWorkspace = sFileInWorkspace.substring(0, index) + sFileInWorkspace.substring(index + BUNDLE_SUFFIX.length());
 			}
 			fileInWorkspace = new File(sFileInWorkspace);
 		}
