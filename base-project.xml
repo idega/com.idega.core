@@ -10,8 +10,8 @@
     <groupId>bundles</groupId>
 	<package>${pom.artifactId}</package>
     <repository>
-        <connection>scm:cvs:ext:${cvs.username}@einstein.idega.is:/idega/cvs:${pom.groupId}/${pom.artifactId}.bundle/</connection>
-        <developerConnection>scm:cvs:ext:${cvs.username}@einstein.idega.is:/idega/cvs:${pom.groupId}/${pom.artifactId}.bundle/</developerConnection>
+        <connection>scm:cvs:ext:${cvs.username}@code.idega.com:/idega/cvs:${pom.groupId}/${pom.artifactId}.bundle/</connection>
+        <developerConnection>scm:cvs:ext:${cvs.username}@code.idega.com:/idega/cvs:${pom.groupId}/${pom.artifactId}.bundle/</developerConnection>
     </repository>
 
   <url>http://developer.idega.com/${pom.groupId}/${pom.artifactId}/</url>
