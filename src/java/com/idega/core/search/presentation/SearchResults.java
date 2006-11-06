@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.17 2006/10/24 14:11:51 gimmi Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.18 2006/11/06 11:25:50 gimmi Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -34,7 +34,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2006/10/24 14:11:51 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/11/06 11:25:50 $ by $Author: gimmi $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -47,7 +47,7 @@ import com.idega.presentation.text.Text;
  * This class can also be EXTENDED like e.g. WhatIsNew block does by overriding some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class SearchResults extends Block {
 
@@ -170,6 +170,7 @@ public class SearchResults extends Block {
 			CSSSpacer spacer = new CSSSpacer();
 			Layer container = new Layer();
 			container.setStyleClass(getStyleClass());
+			beforeAddingResultRows(container);
 			// prototypes
 			Layer evenRowProtoType = new Layer();
 			evenRowProtoType.setStyleClass(getRowEvenStyleClass());
@@ -339,7 +340,7 @@ public class SearchResults extends Block {
 								// adding spacer to force the row container
 								// around all floating elements
 								rowContainer.add(spacer.clone());
-								container.add(rowContainer);
+								addResultRow(container, rowContainer, extraInfo);
 								row++;
 							}
 						}
@@ -352,8 +353,19 @@ public class SearchResults extends Block {
 				noResults.setStyleClass(getSearchNameStyleClass());
 				container.add(noResults);
 			}
+			afterAddingResultRows(container);
 			add(container);
 		}
+	}
+
+	protected void beforeAddingResultRows(Layer container) {
+	}
+
+	protected void addResultRow(Layer container, Layer rowContainer, String rowKey) {
+		container.add(rowContainer);
+	}
+	
+	protected void afterAddingResultRows(Layer container) {
 	}
 
 	/**
