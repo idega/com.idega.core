@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.19 2006/11/09 10:07:56 gimmi Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.20 2006/11/09 15:53:29 gimmi Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -34,7 +34,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2006/11/09 10:07:56 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/11/09 15:53:29 $ by $Author: gimmi $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -47,7 +47,7 @@ import com.idega.presentation.text.Text;
  * This class can also be EXTENDED like e.g. WhatIsNew block does by overriding some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class SearchResults extends Block {
 
@@ -286,7 +286,7 @@ public class SearchResults extends Block {
 										link.setURL(uri);
 									}
 									if (openLinksInAnotherWindow) {
-										link.setTarget(Link.TARGET_NEW_WINDOW);
+										link.setTarget(Link.TARGET_BLANK_WINDOW);
 									}
 									rowContainer.add(link);
 								}
