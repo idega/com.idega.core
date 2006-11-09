@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.170.2.3 2006/10/25 14:25:06 gimmi Exp $
+ * $Id: Link.java,v 1.170.2.4 2006/11/09 08:40:08 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -122,6 +122,9 @@ public class Link extends Text {
 	private Map _toolTipLocalizationMap;
 	private boolean usePublicOjbectInstanciator = false;
 	
+	private String loadingLayerLocalizationKey = "loading_text";
+	private String loadingLayerTextValue = "Loading...";
+
 	/**
 	 *
 	 */
@@ -1623,7 +1626,7 @@ public class Link extends Text {
 	protected void setFinalUrl(String url) {
 		setMarkupAttribute(HREF_ATTRIBUTE, url);
 	}
-
+	
 	private void maintainParameters(IWContext iwc) {
 		Iterator iter = this.maintainedParameters.iterator();
 		while (iter.hasNext()) {
@@ -1656,7 +1659,6 @@ public class Link extends Text {
 	 *
 	 */
 	public void print(IWContext iwc) throws Exception {
-
 		boolean addParameters = true;
 		String oldURL = getURL(iwc);
 
@@ -1665,7 +1667,7 @@ public class Link extends Text {
 		}else if (this.maintainedParameters != null) {
 			maintainParameters(iwc);
 		}
-
+		
 		/**
 		 * @todo: Is this the right solution? - If the user is not logged on then do not add a session id to the link
 		 */
@@ -1690,6 +1692,13 @@ public class Link extends Text {
 		}
 
 		if (getMarkupLanguage().equals("HTML")) {
+			if (this.iFormToSubmit) {
+				String loadingText = iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString(this.loadingLayerLocalizationKey, this.loadingLayerTextValue);
+				String loadingCall = "showLoadingMessage('"+loadingText+"');";
+
+				setOnClick(loadingCall);
+			}
+			
 			boolean openInNewWindow = isOpeningInNewWindow();
 			boolean alignSet = isMarkupAttributeSet(HORIZONTAL_ALIGNMENT);
 
@@ -1843,7 +1852,6 @@ public class Link extends Text {
 		else {
 			action = ("document.forms['" + formID + "'].submit()");
 		}
-		action += ";this.href='#';";
 		//setOnClick(action);
 		setFinalUrl(JAVASCRIPT + action);
 	}
@@ -2497,10 +2505,12 @@ public void setWindowToOpen(String className) {
 		_ImageLocalizationMap = (Map) values[41];
 		_toolTipLocalizationMap = (Map) values[42];
 		usePublicOjbectInstanciator = ((Boolean) values[43]).booleanValue();
+		loadingLayerLocalizationKey = (String) values[44];
+		loadingLayerTextValue = (String) values[45];
 	}
 
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[44];
+		Object values[] = new Object[46];
 		values[0] = super.saveState(context);
 		if (_obj != null) {
 			Object objState = _obj.saveState(context);
@@ -2560,6 +2570,8 @@ public void setWindowToOpen(String className) {
 		values[41] = _ImageLocalizationMap;
 		values[42] = _toolTipLocalizationMap;
 		values[43] = new Boolean(usePublicOjbectInstanciator);
+		values[44] = loadingLayerLocalizationKey;
+		values[45] = loadingLayerTextValue;
 		return values;
 	}	
 }
