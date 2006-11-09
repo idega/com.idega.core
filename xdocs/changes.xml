@@ -5,6 +5,12 @@
   </properties>
   <body>
  
+	<release version="3.1.18" date="2006-11-09">
+		<action dev="laddi" type="update">
+			Added displaying of Loading Layer on click when using Link to submit Form.
+		</action>
+	</release>
+
    	<release version="3.1.17" date="2006-11-06">
 		<action dev="gimmi" type="update">
 			Small update to SearchResults, making is more flexible to being extended
