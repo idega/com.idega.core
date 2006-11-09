@@ -150,6 +150,11 @@
       <name>3.1.18</name>
       <tag>CORE_3_1_18</tag>
     </version>
+    <version>
+      <id>3.1.19</id>
+      <name>3.1.19</name>
+      <tag>CORE_3_1_19</tag>
+    </version>
   </versions>
   <branches/>
   <mailingLists>
