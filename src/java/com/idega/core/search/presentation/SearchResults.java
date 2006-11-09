@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.18 2006/11/06 11:25:50 gimmi Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.19 2006/11/09 10:07:56 gimmi Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -34,7 +34,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2006/11/06 11:25:50 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/11/09 10:07:56 $ by $Author: gimmi $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -47,7 +47,7 @@ import com.idega.presentation.text.Text;
  * This class can also be EXTENDED like e.g. WhatIsNew block does by overriding some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class SearchResults extends Block {
 
@@ -78,6 +78,7 @@ public class SearchResults extends Block {
 	protected String searchPluginsToUse;
 	protected String searchQueryString;
 	protected boolean showAllResultProperties = false;
+	protected boolean openLinksInAnotherWindow = false;
 
 	public SearchResults() {
 		super();
@@ -283,6 +284,9 @@ public class SearchResults extends Block {
 									addSearchResultTypeStyleClass(link, type);
 									if (uri != null) {
 										link.setURL(uri);
+									}
+									if (openLinksInAnotherWindow) {
+										link.setTarget(Link.TARGET_NEW_WINDOW);
 									}
 									rowContainer.add(link);
 								}
@@ -592,5 +596,13 @@ public class SearchResults extends Block {
 	 */
 	public void setToShowAllResultProperties(boolean showAllResultProperties) {
 		this.showAllResultProperties = showAllResultProperties;
+	}
+	
+	public boolean getOpenLinksInAnotherWindow() {
+		return openLinksInAnotherWindow;
+	}
+
+	public void setOpenLinksInAnotherWindow(boolean openLinksInAnotherWindow) {
+		this.openLinksInAnotherWindow = openLinksInAnotherWindow;
 	}
 }
