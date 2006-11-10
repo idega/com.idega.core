@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.52 2006/06/08 07:47:42 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.53 2006/11/10 12:06:54 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -25,6 +25,7 @@ import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.business.ICApplicationBindingBusiness;
+import com.idega.core.data.ICApplicationBindingBMPBean;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.EntityControl;
 import com.idega.presentation.Page;
@@ -40,15 +41,17 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/06/08 07:47:42 $ by $Author: laddi $
+ * Last modified: $Date: 2006/11/10 12:06:54 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.52 $
+ * @version $Revision: 1.53 $
  */
 
 
 public class IWMainApplicationSettings implements MutableClass {
 
+	private static final int MAX_KEY_LENGTH = ICApplicationBindingBMPBean.MAX_KEY_LENGTH; 
+	
 	private static final String ATTRIBUTE_APPLICATION_BINDING_MAP = "application_binding_map";
 	
 	public static final String AUTO_CREATE_LOCALIZED_STRINGS_KEY="auto-create-localized-strings";
@@ -160,6 +163,7 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	public String getProperty(String key) {
 		preloadCache();
+		key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
 		return getFromApplicationBinding(key);
 	}
 	
@@ -186,7 +190,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	public boolean getBoolean(String key, boolean defaultValue) {
-		String value = getFromApplicationBinding(key);
+		String value = getProperty(key);
 		if (value != null) {
 			return Boolean.valueOf(value).booleanValue();
 		}
@@ -198,15 +202,17 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	public boolean getBoolean(String key) {
-		String value = getFromApplicationBinding(key);
+		String value = getProperty(key);
 		return Boolean.valueOf(value).booleanValue();
 	}
 
 	public void setProperty(String key, String value) {
+		key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
 		putInApplicationBinding(key, value);
 	}
 	
 	public void removeProperty(String key) {
+		key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
 		removeFromApplicationBinding(key);
 	}
 	
