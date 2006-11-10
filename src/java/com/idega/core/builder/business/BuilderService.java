@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.15 2006/11/09 07:55:45 valdas Exp $
+ * $Id: BuilderService.java,v 1.16 2006/11/10 14:43:21 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -19,6 +19,7 @@ import com.idega.business.IBOService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.data.ICTreeNode;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
@@ -205,4 +206,6 @@ public interface BuilderService extends IBOService
 	public int createNewPage(String parentId, String name, String type, String templateId, String pageUri, Map tree, IWUserContext creatorContext, String subType, int domainId, String format, String sourceMarkup);
 	
 	public int createPageOrTemplateToplevelOrWithParent(String name, String parentId, String type, String templateId, Map tree, IWContext creatorContext);
+
+	public boolean setProperty(String pageKey, String instanceId, String propertyName, String[] propertyValues, IWMainApplication iwma);
 }
