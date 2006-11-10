@@ -1,5 +1,5 @@
 /*
- * $Id: ExternalLink.java,v 1.2 2006/04/09 12:13:20 laddi Exp $
+ * $Id: ExternalLink.java,v 1.3 2006/11/10 12:02:46 laddi Exp $
  * Created on 12.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -16,23 +16,23 @@ package com.idega.idegaweb.include;
  *  a <code>&lt;link&gt;</code> tag used to define resources such ass CSS links.
  *  This class is used by the GlobalIncludeManager for managing resources included in all pages.
  *  </p>
- *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/11/10 12:02:46 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ExternalLink {
 	
 	//static contants
-	protected final static String MEDIA_SCREEN="screen";
-	protected final static String MEDIA_TTY="tty";
-	protected final static String MEDIA_TV="tv";
-	protected final static String MEDIA_PROJECTION="projection";
-	protected final static String MEDIA_HANDHELD="handheld";
-	protected final static String MEDIA_PRINT="print";
-	protected final static String MEDIA_BRAILLE="braille";
-	protected final static String MEDIA_AURAL="aural";
-	protected final static String MEDIA_ALL="all";
+	public final static String MEDIA_SCREEN="screen";
+	public final static String MEDIA_TTY="tty";
+	public final static String MEDIA_TV="tv";
+	public final static String MEDIA_PROJECTION="projection";
+	public final static String MEDIA_HANDHELD="handheld";
+	public final static String MEDIA_PRINT="print";
+	public final static String MEDIA_BRAILLE="braille";
+	public final static String MEDIA_AURAL="aural";
+	public final static String MEDIA_ALL="all";
 	
 	protected final static String TYPE_CSS="text/css";
 	protected final static String TYPE_RSS="application/rss+xml";
