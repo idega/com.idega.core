@@ -1,5 +1,5 @@
 /*
- * $Id: UserInfoColumnsBusinessBean.java,v 1.1.2.1 2006/11/14 15:06:24 idegaweb Exp $
+ * $Id: UserInfoColumnsBusinessBean.java,v 1.1.2.2 2006/11/15 13:23:14 idegaweb Exp $
  * Created on Nov 14, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -48,17 +48,19 @@ public class UserInfoColumnsBusinessBean extends IBOServiceBean implements UserI
 	}
 	
 	public String getUserInfo(int userId, int groupId) {
-		UserInfoColumns userInfo = null;
+		UserInfoColumns userInfoColumns = null;
+		String userInfoString = null;
 		try {
 			Collection obj = getUserInfoColumnsHome().findAllByUserIdAndGroupId(userId,groupId);
 			Iterator infoIter = obj.iterator();
 			if (infoIter.hasNext()) {
-				userInfo = (UserInfoColumns)infoIter.next();
+				userInfoColumns = (UserInfoColumns)infoIter.next();
+				userInfoString = userInfoColumns.getUserInfo();
 			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();	
 		}
-		return userInfo.getUserInfo();
+		return userInfoString;
 	}
 }
