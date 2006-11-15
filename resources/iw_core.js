@@ -408,36 +408,49 @@ function tableruler()
 
 	function showLoadingMessage(sLoadingText){
 	
-		var l=document.createElement('div');
-		l.setAttribute('id', 'busybuddy'); 
-		l.setAttribute('class', 'LoadLayer');
+		var outer = document.createElement('div');
+		outer.setAttribute('id', 'busybuddy'); 
+		outer.setAttribute('class', 'LoadLayer');
 		//IE class workaround:
-		l.setAttribute('className', 'LoadLayer');
-		var l2 = document.createElement('div');
-		l2.setAttribute('id', 'busybuddy-contents');
-		l2.setAttribute('class', 'LoadLayerContents');
+		outer.setAttribute('className', 'LoadLayer');
+		
+		var middle = document.createElement('div');
+		middle.setAttribute('id', 'busybuddy-middle');
+		middle.setAttribute('class', 'LoadLayerMiddle');
 		//IE class workaround:
-		l2.setAttribute('className', 'LoadLayerContents');
-		var l3 = document.createElement('img');
-		l3.setAttribute('id', 'loadingimage');
-		l3.setAttribute('src',image1.src);
-		l3.src=image1.src;
-		l3.setAttribute('onError', 'this.width=1;this.height=1;');
-		l.appendChild(l2);
-		l2.appendChild(l3);
+		middle.setAttribute('className', 'LoadLayerMiddle');
+		outer.appendChild(middle);
+		
+		var inner = document.createElement('div');
+		inner.setAttribute('id', 'busybuddy-contents');
+		inner.setAttribute('class', 'LoadLayerContents');
+		//IE class workaround:
+		inner.setAttribute('className', 'LoadLayerContents');
+		middle.appendChild(inner);
+		
+		var image = document.createElement('img');
+		image.setAttribute('id', 'loadingimage');
+		image.setAttribute('src',image1.src);
+		image.src=image1.src;
+		inner.appendChild(image);
+		
 		var span =  document.createElement('span');
 		span.setAttribute('id', 'loadingtext');
-		l2.appendChild(span);
+		inner.appendChild(span);
+		
 		var text = document.createTextNode(sLoadingText);
 		span.appendChild(text);
+		
 		var bodyArray = document.getElementsByTagName('body');
 		var bodyTag = bodyArray[0];
-		bodyTag.appendChild(l);
+		bodyTag.appendChild(outer);
 		//alert('bodyTag:'+bodyTag);
-		if( l.style ) { 
-	      l.style.visibility = 'visible';
-	    } else {
-	      l.visibility = 'show' ;
+		
+		if( outer.style ) { 
+	      outer.style.visibility = 'visible';
+	    }
+	    else {
+	      outer.visibility = 'show' ;
 	    }
 	}
 
