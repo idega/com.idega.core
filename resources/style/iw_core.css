@@ -1,10 +1,7 @@
 /*** idegaWeb Core CSS classes ***/
-	/** BEGIN: General CSS definitions: **/
-	
-html, body {
-	height: 100%;	
-}
 
+/** BEGIN: General CSS definitions: **/
+	
 body {
 	margin: 0;
 	padding: 0;	
@@ -24,13 +21,17 @@ iframe {
 }
 
 /** END: General CSS definitions: **/
-	/** BEGIN: Style for com.idega.presentation.CSSSpacer element used in the beginning and end of containers that use float-ing elements**/
+
+/** BEGIN: Style for com.idega.presentation.CSSSpacer element used in the beginning and end of containers that use float-ing elements**/
+
 .spacer {
 	clear: both;
 }
 
 /** END: Style for com.idega.presentation.CSSSpacer **/
-	/** BEGIN: loadLayer: **/
+
+/** BEGIN: loadLayer: **/
+
 DIV.LoadLayerOld {
 	visibility: hidden;
 	position: absolute;
@@ -53,18 +54,22 @@ DIV.LoadLayerOld {
 .LoadLayer {
 	height: 100%;
 	width: 100%;
-	top: 0;
-	left: 0;
+
+	left: expression( document.body.scrollLeft + 'px' );
+	top: expression( document.body.scrollTop + 'px' );
+
 	visibility: hidden;
 	position: absolute;
-	overflow: visible;
-	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/loadingmask.png',sizingMethod='scale');
-	z-index: 1000;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/transparent.png',sizingMethod='scale');
+	z-index: 9999 !important;
 }
 
 html>body .LoadLayer {
+	top: 0;
+	left: 0;
+	position: fixed;
 	filter: none;
-	background: url(/idegaweb/bundles/com.idega.core.bundle/resources/style/images/loadingmask.png) center center no-repeat;
+	background: url(/idegaweb/bundles/com.idega.core.bundle/resources/style/images/transparent.png);
 }
 
 .LoadLayer .LoadLayerMiddle {
@@ -72,18 +77,23 @@ html>body .LoadLayer {
 	width: 100%;
 	top: 50%;
 	text-align: center;
-}
-
-html>body .LoadLayer .LoadLayerMiddle {
-	margin-top: -12px;
+	height: 74px;
 }
 
 .LoadLayer .LoadLayerMiddle .LoadLayerContents {
-	width: auto;
-	margin: auto;
+	width: 231px;
+	height: 54px;
+	margin: 0 auto;
 	position: relative;
 	top: -50%;
-	height: 35px;
+	padding: 10px 20px;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/whitetransparent.png',sizingMethod='scale');
+}
+
+html>body .LoadLayer .LoadLayerMiddle .LoadLayerContents {
+	width: 191px;
+	filter: none;
+	background: url(/idegaweb/bundles/com.idega.core.bundle/resources/style/images/whitetransparent.png);
 }
 
 .LoadLayer .LoadLayerMiddle .LoadLayerContents #loadingimage {
@@ -91,17 +101,19 @@ html>body .LoadLayer .LoadLayerMiddle {
 }
 
 .LoadLayer .LoadLayerMiddle .LoadLayerContents #loadingtext {
-	line-height: 35px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 9pt;
+	line-height: 54px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12pt;
 	font-weight: bold;
-	background: #ffffff;
 	color: inherit;
+	padding-left: 22px;
+	background: url(/idegaweb/bundles/com.idega.core.bundle/resources/loading_notext.gif) left no-repeat;
 }
 
 /** END: loadlayer **/
 
 /** BEGIN: IWApplicationComponent classes **/
+
 .iw_applicationcomponent {
 	font-family: Verdana, Sans-serif;
 	font-size: 10px;
@@ -115,7 +127,9 @@ html>body .LoadLayer .LoadLayerMiddle {
 }
 
 /** END: IWApplicationComponent classes **/
-	/** BEGIN: Searcher and SearchResults classes (com.idega.core.search) **/
+
+/** BEGIN: Searcher and SearchResults classes (com.idega.core.search) **/
+
 .iw_search_results {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10px;
