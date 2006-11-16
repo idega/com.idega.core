@@ -404,7 +404,10 @@ function tableruler()
 	image1.src = '/idegaweb/bundles/com.idega.core.bundle/resources/loading_notext.gif';
 	
 	var image2 = new Image();
-	image2.src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/loadingmask.png';
+	image2.src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/transparent.png';
+
+	var image3 = new Image();
+	image3.src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/whitetransparent.png';
 
 	function showLoadingMessage(sLoadingText){
 	
