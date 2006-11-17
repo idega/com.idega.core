@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+	<release version="3.1.?" date="2006-11-17">
+		<action dev="palli" type="update">
+			Added a reply to parameter to the send methods in SendMail.
+		</action>
+	</release>
+    
 	<release version="3.1.20" date="2006-11-15">
 		<action dev="laddi" type="fix">
 			Fixed loading layer so that it displays correctly cross-browser.
