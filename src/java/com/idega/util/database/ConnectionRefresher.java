@@ -95,6 +95,7 @@ public class ConnectionRefresher implements Runnable {
 		this.isRunning = true;
 		if (this.refresher==null) {
 			this.refresher = new Thread(this, "IWConnectionRefresher["+this.pool.getName()+"]");
+			this.refresher.setDaemon(true);
 			this.refresher.setPriority(Thread.MIN_PRIORITY);
 			this.refresher.start();
 		}

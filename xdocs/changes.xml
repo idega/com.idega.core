@@ -5,9 +5,13 @@
   </properties>
   <body>
   
-	<release version="3.1.?" date="2006-11-17">
+	<release version="3.1.21" date="2006-11-20">
 		<action dev="palli" type="update">
 			Added a reply to parameter to the send methods in SendMail.
+		</action>
+		<action dev="eiki" type="update">
+			Changed all timed threads I found to daemon threads to ensure that they can be killed on a shutdown. 
+			Classes changed: IBOTimedServiceBean, EventTimer,ConnectionRefresher and TimerManager.
 		</action>
 	</release>
     

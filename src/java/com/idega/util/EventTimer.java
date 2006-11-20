@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.AWTEventMulticaster;
 
 /**
- * Description:  A threaded event dispatcher class. add an actionlistener to it and it calls
+ * Description:  A threaded (daemon thread) event dispatcher class. add an actionlistener to it and it calls
  * it's public synchronized void actionPerformed(ActionEvent e) method with a named actioncommand (default name
  * is "iw_event_timer" and default time is 5 seconds). Just add this line in your actionPerformed method and then parse the string to match your set
  * action command. example (code in your ActionListener implementor class) :
@@ -101,6 +101,7 @@ public class EventTimer implements Runnable{
 		//we went out of the run() method. When run is finished the thread is considered dead and cannot be restarted
       this.t = new Thread(this,"com.idega.util.EventTimer thread");
       this.t.setPriority(Thread.MIN_PRIORITY);
+      this.t.setDaemon(true);
       this.t.start();
     }
   }
