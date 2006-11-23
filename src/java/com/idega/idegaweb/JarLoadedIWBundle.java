@@ -19,10 +19,10 @@ import com.idega.util.SortedProperties;
  * <p>
  * Implementation of an IWBundle loaded from a jar file instead of a folder
  * </p>
- *  Last modified: $Date: 2006/10/12 12:46:01 $ by $Author: gediminas $
+ *  Last modified: $Date: 2006/11/23 11:18:12 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class JarLoadedIWBundle extends DefaultIWBundle {
 
@@ -52,12 +52,17 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	protected IWPropertyList initializePropertyList(String pathWithinPropertiesFolder, boolean autocreate) {
 		IWPropertyList propList = null;
 		String filePathWithinBundle = "properties/"+pathWithinPropertiesFolder;
+		InputStream inStream = null;
 		try {
-			InputStream inStream = getResourceInputStream(filePathWithinBundle);
-			propList = new IWPropertyList(inStream);
+			inStream = getResourceInputStream(filePathWithinBundle);
+		} catch (IOException e) {
+			LOGGER.warning(e.getMessage());
 		}
-		catch (IOException ex) {
-			LOGGER.warning(ex.getMessage());
+		if (inStream == null) {
+			propList = new IWPropertyList(getPropertiesRealPath(), pathWithinPropertiesFolder, true);
+		}
+		else {
+			propList = new IWPropertyList(inStream);
 		}
 		return propList;
 	}

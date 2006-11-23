@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.35 2006/09/26 13:13:15 gediminas Exp $
+ * $Id: DefaultIWBundle.java,v 1.36 2006/11/23 11:18:12 valdas Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -1115,8 +1115,8 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * @param pathWitinPropertiesFolder
 	 * @return
 	 */
-	protected IWPropertyList initializePropertyList(String pathWitinPropertiesFolder,boolean autocreate) {
-		return  new IWPropertyList(getPropertiesRealPath(), pathWitinPropertiesFolder, autocreate);
+	protected IWPropertyList initializePropertyList(String pathWithinPropertiesFolder, boolean autocreate) {
+		return new IWPropertyList(getPropertiesRealPath(), pathWithinPropertiesFolder, autocreate);
 	}
 	/**
 	 * @param className
