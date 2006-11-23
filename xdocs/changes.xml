@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+	<release version="3.1.22" date="2006-11-23">
+		<action dev="laddi" type="update">
+			Changed print implementation in Page to accomodate for different types of bundle style sheets.
+		</action>
+	</release>
+    
 	<release version="3.1.21" date="2006-11-20">
 		<action dev="palli" type="update">
 			Added a reply to parameter to the send methods in SendMail.
