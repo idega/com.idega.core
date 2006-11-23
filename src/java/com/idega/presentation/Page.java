@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.161 2006/06/19 16:45:34 eiki Exp $ Created in 2000 by
+ * $Id: Page.java,v 1.162 2006/11/23 10:45:30 laddi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -36,6 +36,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWStyleManager;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.include.ExternalLink;
 import com.idega.idegaweb.include.GlobalIncludeManager;
 import com.idega.idegaweb.include.StyleSheetLink;
 import com.idega.io.serialization.FileObjectReader;
@@ -65,10 +66,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2006/06/19 16:45:34 $ by $Author: eiki $
+ * Last modified: $Date: 2006/11/23 10:45:30 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.161 $
+ * @version $Revision: 1.162 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -255,7 +256,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	private String getStyleSheetURL(String markup, IWContext iwc) {
-		QueueMap map = new QueueMap();
+		StringBuffer buffer = new StringBuffer();
+
 		// The default style sheet MUST come first so we can override it in
 		// latter sheets!
 		List sheets = GlobalIncludeManager.getInstance().getStyleSheets();
@@ -263,16 +265,12 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			StyleSheetLink sheet = (StyleSheetLink) iter.next();
 			String url = sheet.getUrl();
 			String styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext(url);
-			map.put(styleSheetURL, styleSheetURL);
-			// this.addStyleSheetURL(styleSheetURL);
-		}
-		StringBuffer buffer = new StringBuffer();
-		// First the default and global style sheets
-		if (!map.isEmpty()) {
-			Iterator iter = map.values().iterator();
-			while (iter.hasNext()) {
-				String URL = (String) iter.next();
-				addStyleSheet(buffer, markup, URL);
+
+			if (sheet.getMedia() != null) {
+				addStyleSheet(buffer, markup, styleSheetURL, sheet.getMedia());
+			}
+			else {
+				addStyleSheet(buffer, markup, styleSheetURL);
 			}
 		}
 		// Now the added style
@@ -280,7 +278,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			Iterator iter = this._styleSheets.values().iterator();
 			while (iter.hasNext()) {
 				String URL = (String) iter.next();
-				addStyleSheet(buffer, markup, URL);
+				addStyleSheet(buffer, markup, URL, ExternalLink.MEDIA_SCREEN);
 			}
 		}
 		// Now the added style for print
@@ -288,18 +286,18 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			Iterator iter = this._styleSheetsForPrint.values().iterator();
 			while (iter.hasNext()) {
 				String URL = (String) iter.next();
-				addStyleSheetForPrint(buffer, markup, URL);
+				addStyleSheet(buffer, markup, URL, ExternalLink.MEDIA_PRINT);
 			}
 		}
 		return buffer.toString();
 	}
 
-	private StringBuffer addStyleSheetForPrint(StringBuffer buffer, String markup, String URL) {
-		return buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" media=\"print\" " + (!markup.equals(HTML) ? "/" : "") + ">\n");
+	private StringBuffer addStyleSheet(StringBuffer buffer, String markup, String URL) {
+		return addStyleSheet(buffer, markup, URL, ExternalLink.MEDIA_SCREEN);
 	}
 
-	private StringBuffer addStyleSheet(StringBuffer buffer, String markup, String URL) {
-		return buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" " + (!markup.equals(HTML) ? "/" : "") + ">\n");
+	private StringBuffer addStyleSheet(StringBuffer buffer, String markup, String URL, String media) {
+		return buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" media=\"" + media + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n");
 	}
 
 	public void addJavascriptURL(String URL) {
