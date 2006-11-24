@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.16 2006/11/10 14:43:21 valdas Exp $
+ * $Id: BuilderService.java,v 1.17 2006/11/24 14:57:32 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -208,4 +208,8 @@ public interface BuilderService extends IBOService
 	public int createPageOrTemplateToplevelOrWithParent(String name, String parentId, String type, String templateId, Map tree, IWContext creatorContext);
 
 	public boolean setProperty(String pageKey, String instanceId, String propertyName, String[] propertyValues, IWMainApplication iwma);
+	
+	public boolean deletePage(String pageId, boolean deleteChildren, Map tree, int userId, ICDomain domain);
+	
+	public boolean checkDeletePage(String pageId, ICDomain domain);
 }
