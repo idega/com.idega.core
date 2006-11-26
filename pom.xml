@@ -234,7 +234,7 @@
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
       <type>jar</type>
     </dependency>
     <!-- commons-httpclient used in org.apache.slide, com.idega.slide, com.idega.content, com.idega.block.navigation not used in core -->
