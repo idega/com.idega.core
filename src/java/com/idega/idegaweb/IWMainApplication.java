@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.175 2006/11/07 18:24:53 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.176 2006/11/28 18:43:13 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -90,10 +90,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/11/07 18:24:53 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/11/28 18:43:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.175 $
+ * @version $Revision: 1.176 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -317,7 +317,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * </p>
 	 */
 	private void loadBundlesFromJars() {
-		if(this.loadBundlesFromJars){
+		if(loadBundlesFromJars){
 			IWModuleLoader loader = getModuleLoader();
 			loader.loadBundlesFromJars();
 		}
@@ -326,7 +326,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	protected IWModuleLoader getModuleLoader(){
 		if(moduleLoader==null){
 			moduleLoader = new IWModuleLoader(this,this.application);
-			if(this.loadBundlesFromJars){
+			if(loadBundlesFromJars){
 				moduleLoader.getJarLoaders().add(new IWBundleLoader(this));
 				
 			}
@@ -892,7 +892,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * </p>
      */
     private void loadBundlesLegacy() {
-		if (this.loadBundlesLegacy) {
+		if (loadBundlesLegacy) {
 			File theRoot = new File(getApplicationSpecialRealPath(), BUNDLES_STANDARD_DIRECTORY);
 			File[] bundles = theRoot.listFiles();
 			if (bundles != null) {

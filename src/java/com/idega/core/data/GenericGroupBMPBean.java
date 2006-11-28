@@ -321,7 +321,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 				IDOLegacyEntity tempobj = null;
 				try
 				{
-					tempobj = (IDOLegacyEntity) this.getClass().newInstance();
+					tempobj = this.getClass().newInstance();
 					tempobj.findByPrimaryKey(RS.getInt("CHILD_IC_GROUP_ID"));
 				}
 				catch (Exception ex)

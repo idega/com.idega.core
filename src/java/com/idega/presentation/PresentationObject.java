@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.163 2006/10/19 14:13:43 gimmi Exp $
+ * $Id: PresentationObject.java,v 1.164 2006/11/28 18:43:11 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -71,10 +71,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2006/10/19 14:13:43 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/11/28 18:43:11 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.163 $
+ * @version $Revision: 1.164 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -1234,7 +1234,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public IWLinkListener[] getIWLinkListeners()
 	{
-		return (IWLinkListener[]) getEventListenerList().getListeners(IWLinkListener.class);
+		return getEventListenerList().getListeners(IWLinkListener.class);
 	}
 	/**
 	 * @deprecated Do not use this function
@@ -1252,7 +1252,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		{
 			this.listenerList = new EventListenerList();
 		}
-		return (IWSubmitListener[]) this.listenerList.getListeners(IWSubmitListener.class);
+		return this.listenerList.getListeners(IWSubmitListener.class);
 	}
 	public void setEventAttribute(String attributeName, Object attributeValue)
 	{

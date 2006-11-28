@@ -151,7 +151,7 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
       EventListenerList list = this.getListenersFor(id);
 //      System.out.println("EventListenerList: " + list);
       if(list != null){
-        IWActionListener[] listeners = (IWActionListener[])list.getListeners(IWActionListener.class);
+        IWActionListener[] listeners = list.getListeners(IWActionListener.class);
 //        System.out.println("listeners: " + listeners);
 //        System.out.println("listeners.length: " + listeners.length);
         for (int i = 0; i < listeners.length; i++) {

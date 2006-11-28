@@ -207,7 +207,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 				throw new RuntimeException("IWPresentationState class not initialized for this location: " + location);
 			}
 			try {
-				state = (IWPresentationState) globalState.getClass().newInstance();
+				state = globalState.getClass().newInstance();
 			}
 			catch (IllegalAccessException iae) {
 				throw new RuntimeException(iae.getMessage());
@@ -286,7 +286,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 				}
 			}
 			try {
-				state = (IWPresentationState) globalState.getClass().newInstance();
+				state = globalState.getClass().newInstance();
 				state.setCompoundId(compoundId);
 				IWUserContext iwuc = getUserContext();
 				state.setUserContext(iwuc);
@@ -338,7 +338,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 				}
 			}
 			try {
-				state = (IWPresentationState) globalState.getClass().newInstance();
+				state = globalState.getClass().newInstance();
 			}
 			catch (IllegalAccessException iae) {
 				throw new RuntimeException(iae.getMessage());
@@ -385,7 +385,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 				}
 			}
 			try {
-				state = (IWPresentationState) globalState.getClass().newInstance();
+				state = globalState.getClass().newInstance();
 			}
 			catch (IllegalAccessException iae) {
 				throw new RuntimeException(iae.getMessage());

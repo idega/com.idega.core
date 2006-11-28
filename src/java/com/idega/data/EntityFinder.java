@@ -937,7 +937,7 @@ public class EntityFinder implements Singleton {
 
 				IDOLegacyEntity tempobj = null;
 				try {
-					tempobj = (IDOLegacyEntity) returningEntity.getClass().newInstance();
+					tempobj = returningEntity.getClass().newInstance();
 					if (debug) {
 						System.err.println("Classname " + returningEntity.getClass().getName());
 						System.err.println(

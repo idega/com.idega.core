@@ -108,7 +108,7 @@ public abstract class IWPresentationStateImpl implements IWPresentationState {
   }
 
   public ChangeListener[] getChangeListener(){
-    return (ChangeListener[])this.listenerList.getListeners(ChangeListener.class);
+    return this.listenerList.getListeners(ChangeListener.class);
   }
 
   /**

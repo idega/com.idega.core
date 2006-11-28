@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.36 2006/11/23 11:18:12 valdas Exp $
+ * $Id: DefaultIWBundle.java,v 1.37 2006/11/28 18:43:14 laddi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -575,7 +575,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	public String[] getLocalizableStrings()
 	{
 		//return (String[]) getLocalizableStringsMap().keySet().toArray(new String[0]);
-		return (String[]) getLocalizableStringsProperties().keySet().toArray(new String[0]);
+		return getLocalizableStringsProperties().keySet().toArray(new String[0]);
 	}
 	public boolean removeLocalizableString(String key)
 	{
