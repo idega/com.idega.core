@@ -147,7 +147,7 @@ public class IBOLookup implements Singleton
 		IBOHome home = getIBOHomeForClass(beanInterfaceClass);
 		try{
 			Method defaultCreateMethod = getCreateMethod(home);
-			session = (IBOService)defaultCreateMethod.invoke(home,(Object) null);
+			session = (IBOService)defaultCreateMethod.invoke(home, null);
 		}
 		catch(InvocationTargetException ite){
 			//ite.printStackTrace();
@@ -156,7 +156,7 @@ public class IBOLookup implements Singleton
 			throw new CreateException("Exception invoking create method for: "+beanInterfaceClass.getName()+". Error was:"+e.getClass().getName()+" : "+e.getMessage());	
 		}
 		catch(Exception e){
-			//e.printStackTrace();
+			
 			throw new CreateException("Exception invoking create method for: "+beanInterfaceClass.getName()+". Error was:"+e.getClass().getName()+" : "+e.getMessage());	
 		}
 		//session = home.createIBO();
