@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.18 2006/11/29 17:36:11 valdas Exp $
+ * $Id: BuilderService.java,v 1.19 2006/12/04 09:40:22 justinas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -213,7 +213,10 @@ public interface BuilderService extends IBOService
 	
 	public boolean checkDeletePage(String pageId, ICDomain domain);
 	
+	public ICPage getICPage(String key);
+	
 	public void clearAllCachedPages();
 	
 	public void setTemplateId(String pageKey, String newTemplateId);
+	
 }
