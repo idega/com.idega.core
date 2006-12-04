@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.155.2.1 2006/02/24 14:40:08 laddi Exp $
+ * $Id: Link.java,v 1.155.2.2 2006/12/04 20:15:17 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -78,7 +78,7 @@ public class Link extends Text {
 	private Class _windowClass = null;
 	private Window _windowInstance = null;
 	private int icObjectInstanceIDForWindow = -1;
-	private StringBuffer _parameterString;
+	protected StringBuffer _parameterString;
 	//private String displayString;
 	private String _objectType;
 	private String windowOpenerJavascriptString = null;
