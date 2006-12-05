@@ -1,5 +1,5 @@
 /*
- * $Id: UserInfoColumnsBusinessBean.java,v 1.1.2.2 2006/11/15 13:23:14 idegaweb Exp $
+ * $Id: UserInfoColumnsBusinessBean.java,v 1.1.2.3 2006/12/05 23:17:25 idegaweb Exp $
  * Created on Nov 14, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -23,7 +23,7 @@ public class UserInfoColumnsBusinessBean extends IBOServiceBean implements UserI
 		return (UserInfoColumnsHome) getIDOHome(UserInfoColumns.class);
 	}
 	
-	public boolean setUserInfo(int userId, int groupId, String userInfo) {
+	public boolean setUserInfo(int userId, int groupId, String userInfo1, String userInfo2, String userInfo3) {
 		try {
 			UserInfoColumns userInfoColumns = null;
 			Collection obj = getUserInfoColumnsHome().findAllByUserIdAndGroupId(userId,groupId);
@@ -36,7 +36,9 @@ public class UserInfoColumnsBusinessBean extends IBOServiceBean implements UserI
 			}
 			userInfoColumns.setUserId(userId);
 			userInfoColumns.setGroupId(groupId);
-			userInfoColumns.setUserInfo(userInfo);
+			userInfoColumns.setUserInfo1(userInfo1);
+			userInfoColumns.setUserInfo2(userInfo2);
+			userInfoColumns.setUserInfo3(userInfo3);
 			userInfoColumns.store();
 		}
 		catch(Exception e) {
@@ -47,20 +49,45 @@ public class UserInfoColumnsBusinessBean extends IBOServiceBean implements UserI
 		return true;
 	}
 	
-	public String getUserInfo(int userId, int groupId) {
+	public UserInfoColumns getUserInfo(int userId, int groupId) {
 		UserInfoColumns userInfoColumns = null;
-		String userInfoString = null;
 		try {
 			Collection obj = getUserInfoColumnsHome().findAllByUserIdAndGroupId(userId,groupId);
 			Iterator infoIter = obj.iterator();
 			if (infoIter.hasNext()) {
 				userInfoColumns = (UserInfoColumns)infoIter.next();
-				userInfoString = userInfoColumns.getUserInfo();
 			}
 		}
 		catch(Exception e) {
 			e.printStackTrace();	
 		}
-		return userInfoString;
+		return userInfoColumns;
+	}
+
+	public String getUserInfo1(int userId, int groupId) {
+		String infoString = null;
+		UserInfoColumns columns = getUserInfo(userId, groupId);
+		if (columns != null) {
+			infoString = columns.getUserInfo1();
+		}
+		return infoString;
+	}
+
+	public String getUserInfo2(int userId, int groupId) {
+		String infoString = null;
+		UserInfoColumns columns = getUserInfo(userId, groupId);
+		if (columns != null) {
+			infoString = columns.getUserInfo2();
+		}
+		return infoString;
+	}
+
+	public String getUserInfo3(int userId, int groupId) {
+		String infoString = null;
+		UserInfoColumns columns = getUserInfo(userId, groupId);
+		if (columns != null) {
+			infoString = columns.getUserInfo3();
+		}
+		return infoString;
 	}
 }

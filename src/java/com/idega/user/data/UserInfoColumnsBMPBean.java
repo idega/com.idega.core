@@ -1,5 +1,5 @@
 /*
- * $Id: UserInfoColumnsBMPBean.java,v 1.1.2.1 2006/11/14 15:06:24 idegaweb Exp $
+ * $Id: UserInfoColumnsBMPBean.java,v 1.1.2.2 2006/12/05 23:17:25 idegaweb Exp $
  * Created on Nov 14, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -18,7 +18,9 @@ public class UserInfoColumnsBMPBean extends GenericEntity implements UserInfoCol
 	protected static final String ENTITY_NAME = "ic_user_info_columns";
 	protected static final String IC_USER_ID_COLUMN = "ic_user_id";
 	protected static final String IC_GROUP_ID_COLUMN = "ic_group_id";
-	protected static final String INFO_COLUMN = "user_info";
+	protected static final String INFO_COLUMN_1 = "user_info_1";
+	protected static final String INFO_COLUMN_2 = "user_info_2";
+	protected static final String INFO_COLUMN_3 = "user_info_3";
 
 	public UserInfoColumnsBMPBean() {
 		super();
@@ -32,7 +34,9 @@ public class UserInfoColumnsBMPBean extends GenericEntity implements UserInfoCol
 		addAttribute(getIDColumnName());
 		addManyToOneRelationship(IC_USER_ID_COLUMN, User.class);
 		addManyToOneRelationship(IC_GROUP_ID_COLUMN, Group.class);
-		addAttribute(INFO_COLUMN, "User info", true, true, String.class);
+		addAttribute(INFO_COLUMN_1, "User info 1", true, true, String.class);
+		addAttribute(INFO_COLUMN_2, "User info 2", true, true, String.class);
+		addAttribute(INFO_COLUMN_3, "User info 3", true, true, String.class);
 	}
 
 	public int getUserId() {
@@ -67,12 +71,28 @@ public class UserInfoColumnsBMPBean extends GenericEntity implements UserInfoCol
 		setColumn(IC_GROUP_ID_COLUMN, group);
 	}
 
-	public String getUserInfo() {
-		return (String) getColumnValue(INFO_COLUMN);
+	public String getUserInfo1() {
+		return (String) getColumnValue(INFO_COLUMN_1);
 	}
 
-	public void setUserInfo(String userInfo) {
-		setColumn(INFO_COLUMN, userInfo);
+	public void setUserInfo1(String userInfo) {
+		setColumn(INFO_COLUMN_1, userInfo);
+	}
+
+	public String getUserInfo2() {
+		return (String) getColumnValue(INFO_COLUMN_2);
+	}
+
+	public void setUserInfo2(String userInfo) {
+		setColumn(INFO_COLUMN_2, userInfo);
+	}
+
+	public String getUserInfo3() {
+		return (String) getColumnValue(INFO_COLUMN_3);
+	}
+
+	public void setUserInfo3(String userInfo) {
+		setColumn(INFO_COLUMN_3, userInfo);
 	}
 
 	//public Collection ejbFindAll() throws FinderException {

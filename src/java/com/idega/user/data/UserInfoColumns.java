@@ -46,12 +46,33 @@ public interface UserInfoColumns extends IDOEntity {
 	public void setGroup(Group group);
 
 	/**
-	 * @see com.idega.user.data.UserInfoColumnsBMPBean#getUserInfo
+	 * @see com.idega.user.data.UserInfoColumnsBMPBean#getUserInfo1
 	 */
-	public String getUserInfo();
+	public String getUserInfo1();
 
 	/**
-	 * @see com.idega.user.data.UserInfoColumnsBMPBean#setUserInfo
+	 * @see com.idega.user.data.UserInfoColumnsBMPBean#setUserInfo1
 	 */
-	public void setUserInfo(String userInfo);
+	public void setUserInfo1(String userInfo);
+
+	/**
+	 * @see com.idega.user.data.UserInfoColumnsBMPBean#getUserInfo2
+	 */
+	public String getUserInfo2();
+
+	/**
+	 * @see com.idega.user.data.UserInfoColumnsBMPBean#setUserInfo2
+	 */
+	public void setUserInfo2(String userInfo);
+
+	/**
+	 * @see com.idega.user.data.UserInfoColumnsBMPBean#getUserInfo3
+	 */
+
+	public String getUserInfo3();
+
+	/**
+	 * @see com.idega.user.data.UserInfoColumnsBMPBean#setUserInfo3
+	 */
+	public void setUserInfo3(String userInfo);
 }
