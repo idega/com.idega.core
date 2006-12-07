@@ -65,8 +65,11 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements
 				.findFieldByUniqueName(STREET_NAME);
 		streetNameAttr.setUniqueFieldName(Address.FIELD_STREET_NAME);
 
-		addAttribute(STREET_NUMBER, "Street number", true, true, String.class,
-				30);
+		addAttribute(STREET_NUMBER, "Street number", true, true, String.class, 30);
+		EntityAttribute streetNumberAttr = (EntityAttribute) getEntityDefinition()
+				.findFieldByUniqueName(STREET_NUMBER);
+		streetNumberAttr.setUniqueFieldName(Address.FIELD_STREET_NUMBER);
+
 		addAttribute(CITY, "City", true, true, String.class, 50);
 		addAttribute(PROVINCE, "Province", true, true, String.class, 50);
 		addAttribute(P_O_BOX, "PostBox", true, true, String.class, 50);

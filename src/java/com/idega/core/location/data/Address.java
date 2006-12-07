@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 public interface Address extends IDOLegacyEntity {
 	
 	String FIELD_STREET_NAME = "StreetName";
+	String FIELD_STREET_NUMBER = "StreetNumber";
 	
 	/**
 	 * @see com.idega.core.location.data.AddressBMPBean#setDefaulValues
