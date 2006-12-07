@@ -1745,10 +1745,22 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 		
 		Criteria join = new JoinCriteria(new Column(addressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())),new Column(userAddressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())));
-		IDOEntityField addressField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
-		Criteria match = new MatchCriteria(addressTable,addressField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
-
-		query.addCriteria(new AND(join,match));
+		if (streetName.indexOf(" ") == -1) {
+			IDOEntityField addressField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
+			Criteria match = new MatchCriteria(addressTable,addressField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
+			query.addCriteria(new AND(join,match));
+		} else {
+			String streetNumber = streetName.substring(streetName.lastIndexOf(" ") + 1);
+			streetName = streetName.substring(0, streetName.lastIndexOf(" "));
+			
+			IDOEntityField streetNameField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
+			Criteria matchStreetName = new MatchCriteria(addressTable,streetNameField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
+			query.addCriteria(new AND(join,matchStreetName));
+			
+			IDOEntityField streetNumberField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NUMBER);
+			Criteria matchStreetNumber = new MatchCriteria(addressTable,streetNumberField.getSQLFieldName(),MatchCriteria.LIKE,streetNumber.toUpperCase()+"%");
+			query.addCriteria(new AND(join,matchStreetNumber));
+		}
 		
 //		sql.append("select ua.ic_user_id from ic_address a,ic_user_address ua where a.ic_address_id=ua.ic_address_id").append(" and a.street_name like '%").append(condition.toUpperCase()).append("%' ");
 	
