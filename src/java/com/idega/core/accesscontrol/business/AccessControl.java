@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.104 2005/07/22 14:50:26 sigtryggur Exp $
+ * $Id: AccessControl.java,v 1.104.2.1 2006/12/07 12:24:49 idegaweb Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -67,12 +67,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2005/07/22 14:50:26 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2006/12/07 12:24:49 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.104 $
+ * @version $Revision: 1.104.2.1 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -350,7 +350,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else {
 
 			String recurseParents = iwc.getApplicationContext().getApplicationSettings().getProperty("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
-			if ( !"true".equals(recurseParents) ) { //old crap
+			if ( !"true".equalsIgnoreCase(recurseParents) ) { //old crap
 				//			TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
 				groups = LoginBusinessBean.getPermissionGroups(iwc);
 			}
@@ -539,7 +539,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else { //user check
 
 			String recurseParents = iwc.getApplicationContext().getApplicationSettings().getProperty("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
-			if ( !"true".equals(recurseParents) )  { //old crap
+			if ( !"true".equalsIgnoreCase(recurseParents) )  { //old crap
 				//TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
 				groups = LoginBusinessBean.getPermissionGroups(iwc);
 			}
