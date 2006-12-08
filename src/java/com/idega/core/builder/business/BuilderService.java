@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.20 2006/12/06 13:38:58 valdas Exp $
+ * $Id: BuilderService.java,v 1.21 2006/12/08 14:28:49 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -223,4 +223,9 @@ public interface BuilderService extends IBOService
 	
 	public String getIBXMLFormat();
 	
+	public String[] getPropertyValues(IWMainApplication iwma, String pageKey, String instanceId, String propertyName, String[] selectedValues, boolean returnSelectedValueIfNothingFound);
+	
+	public boolean removeProperty(IWMainApplication iwma, String pageKey, String instanceId, String propertyName, String[] values);
+	
+	public boolean changePageUriByTitle(String parentId, ICPage page, String pageTitle, int domainId);
 }
