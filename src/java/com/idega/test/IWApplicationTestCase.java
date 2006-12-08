@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.Properties;
 import javax.servlet.ServletContext;
 import junit.framework.TestCase;
-import junit.framework.TestResult;
 import com.idega.idegaweb.IWMainApplicationStarter;
 import com.idega.util.FileUtil;
 
@@ -19,24 +18,16 @@ import com.idega.util.FileUtil;
  * Test case that set-ups an embedded IdegaWeb application and loads up all
  * necessary resources before running a test case.
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/12/08 10:32:12 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class IWApplicationTestCase extends TestCase {
 
 	IWMainApplicationStarter starter;
 	File baseDir;
 	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#run()
-	 */
-	public TestResult run() {
-		// TODO Auto-generated method stub
-		return super.run();
-	}
-
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
@@ -157,68 +148,4 @@ public class IWApplicationTestCase extends TestCase {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#countTestCases()
-	 */
-	public int countTestCases() {
-		// TODO Auto-generated method stub
-		return super.countTestCases();
-	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#createResult()
-	 */
-	protected TestResult createResult() {
-		// TODO Auto-generated method stub
-		return super.createResult();
-	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#getName()
-	 */
-	public String getName() {
-		// TODO Auto-generated method stub
-		return super.getName();
-	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#run(junit.framework.TestResult)
-	 */
-	public void run(TestResult arg0) {
-		// TODO Auto-generated method stub
-		super.run(arg0);
-	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#runBare()
-	 */
-	public void runBare() throws Throwable {
-		// TODO Auto-generated method stub
-		super.runBare();
-	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#runTest()
-	 */
-	protected void runTest() throws Throwable {
-		// TODO Auto-generated method stub
-		super.runTest();
-	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setName(java.lang.String)
-	 */
-	public void setName(String arg0) {
-		// TODO Auto-generated method stub
-		super.setName(arg0);
-	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#toString()
-	 */
-	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
-	}
-	
 }
