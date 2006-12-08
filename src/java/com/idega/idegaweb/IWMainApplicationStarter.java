@@ -329,6 +329,9 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	
 	public void startIdegaWebApplication() {
 		long start = System.currentTimeMillis();
+
+		this.startLogManager();
+		
 		try {
 			addToClassPath();
 		}
@@ -350,8 +353,6 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		// now set some properties
 		this.iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 
-		this.startLogManager();
-		
 		/*IWStyleManager iwStyleManager = IWStyleManager.getInstance();
 		iwStyleManager.getStyleSheet(this.iwma);
 		if(iwStyleManager.shouldWriteDownFile()){
@@ -419,8 +420,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	 */
 	private void startLogManager() {
 		String propertiesRealPath = this.iwma.getPropertiesRealPath();
-		File propertiesDir = new File(propertiesRealPath);
-		File propertiesFile = new File(propertiesDir,"logging.properties");
+		File propertiesFile = new File(propertiesRealPath,"logging.properties");
 		boolean propertiesFileExists = propertiesFile.exists();
 		if(propertiesFileExists){
 			try {
