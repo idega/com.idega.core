@@ -48,6 +48,7 @@ import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
+import com.idega.user.business.UserStatusBusinessBean;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
@@ -2095,16 +2096,36 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	  SelectQuery query = new SelectQuery(userTable);
 	  query.addColumn(new WildCardColumn(userTable));
 	  query.addCriteria(new InCriteria(userTable, getColumnNameUserID(), subQuery));
+	  SelectQuery statusSubQueryDeceased = null;
+	  SelectQuery statusSubQuery = null;
 	  if (userStatuses != null && !userStatuses.isEmpty()) {
-	      query.addJoin(userTable, getColumnNameUserID(), userStatusTable,UserStatusBMPBean.IC_USER);
-	      query.addJoin(userStatusTable, UserStatusBMPBean.STATUS_ID, statusTable, StatusBMPBean.ENTITY_NAME+"_id");
-		  query.addCriteria(new MatchCriteria(userStatusTable,UserStatusBMPBean.DATE_TO,MatchCriteria.IS,MatchCriteria.NULL));
-		  query.addCriteria(new InCriteria(userStatusTable, UserStatusBMPBean.IC_GROUP, groups));
+		  if (userStatuses.contains(UserStatusBusinessBean.STATUS_DECEASED)) {
+			  Table userStatusTableDeceased = new Table(UserStatusBMPBean.ENTITY_NAME, "us1");
+			  Table statusTableDeceased = new Table(StatusBMPBean.ENTITY_NAME, "s1");
+			  statusSubQueryDeceased = new SelectQuery(userStatusTableDeceased);
+			  statusSubQueryDeceased.addColumn(userStatusTableDeceased,UserStatusBMPBean.IC_USER);
+			  statusSubQueryDeceased.addJoin(userStatusTableDeceased, UserStatusBMPBean.STATUS_ID, statusTableDeceased, StatusBMPBean.ENTITY_NAME+"_id");
+			  statusSubQueryDeceased.addCriteria(new MatchCriteria(userStatusTableDeceased,UserStatusBMPBean.DATE_TO,MatchCriteria.IS,MatchCriteria.NULL));
+			  statusSubQueryDeceased.addCriteria(new MatchCriteria(statusTableDeceased, StatusBMPBean.STATUS_LOC_KEY, MatchCriteria.EQUALS, UserStatusBusinessBean.STATUS_DECEASED));
+		  }
+		  statusSubQuery = new SelectQuery(userStatusTable);
+		  statusSubQuery.addColumn(userStatusTable,UserStatusBMPBean.IC_USER);
+		  statusSubQuery.addJoin(userStatusTable, UserStatusBMPBean.STATUS_ID, statusTable, StatusBMPBean.ENTITY_NAME+"_id");
+		  statusSubQuery.addCriteria(new MatchCriteria(userStatusTable,UserStatusBMPBean.DATE_TO,MatchCriteria.IS,MatchCriteria.NULL));
+		  statusSubQuery.addCriteria(new InCriteria(userStatusTable, UserStatusBMPBean.IC_GROUP, groups));
 		  if (userStatuses.size() == 1){
-	          query.addCriteria(new MatchCriteria(statusTable, StatusBMPBean.STATUS_LOC_KEY, MatchCriteria.EQUALS, userStatuses.iterator().next().toString()));
+			  statusSubQuery.addCriteria(new MatchCriteria(statusTable, StatusBMPBean.STATUS_LOC_KEY, MatchCriteria.EQUALS, userStatuses.iterator().next().toString()));
 	      } else {
-	          query.addCriteria(new InCriteria(statusTable,StatusBMPBean.STATUS_LOC_KEY, userStatuses));
-	      }  
+	    	  statusSubQuery.addCriteria(new InCriteria(statusTable,StatusBMPBean.STATUS_LOC_KEY, userStatuses));
+	      }
+	  }
+	  if (statusSubQueryDeceased != null) {
+		  InCriteria statusIn = new InCriteria(userTable, getColumnNameUserID(), statusSubQuery);
+		  InCriteria statusInDeceased = new InCriteria(userTable, getColumnNameUserID(), statusSubQueryDeceased);
+		  OR statusOR = new OR(statusIn,statusInDeceased);
+		  query.addCriteria(statusOR);
+	  } else {
+	  	query.addCriteria(new InCriteria(userTable, getColumnNameUserID(), statusSubQuery));
 	  }
 	  if (yearOfBirthFrom != null) {
 	      IWTimestamp yearOfBirthFromStamp = new IWTimestamp(1,1,yearOfBirthFrom.intValue());
