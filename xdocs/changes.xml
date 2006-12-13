@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+	<release version="3.1.23" date="2006-12-13">
+		<action dev="laddi" type="update">
+			Fixed implementation of compareTo(IDOEntity) in GenericEntity so that it doesn't throw a ClassCastException when primary key is not a String.
+		</action>
+	</release>
+    
 	<release version="3.1.22" date="2006-11-23">
 		<action dev="laddi" type="update">
 			Changed print implementation in Page to accomodate for different types of bundle style sheets.
