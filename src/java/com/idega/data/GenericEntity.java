@@ -3123,7 +3123,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	protected int compareTo(IDOEntity entity) {
 		Collator coll = Collator.getInstance();
-		return coll.compare(this.getPrimaryKey(), entity.getPrimaryKey());
+		return coll.compare(this.getPrimaryKey().toString(), entity.getPrimaryKey().toString());
 	}
 
 	/**
