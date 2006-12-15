@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.195.2.5 2006/09/12 10:33:33 palli Exp $
+ * $Id: UserBusinessBean.java,v 1.195.2.6 2006/12/15 15:38:51 idegaweb Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -101,10 +101,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2006/09/12 10:33:33 $ by $Author: palli $
+ * Last modified: $Date: 2006/12/15 15:38:51 $ by $Author: idegaweb $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.195.2.5 $
+ * @version $Revision: 1.195.2.6 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness, IWLDAPConstants {
 
@@ -1170,12 +1170,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					// Fix when entering unnumbered addresses (Aron )
 					address.setStreetNumber("");
 				}
-				if (communeID != null) {
-					if (communeID.intValue() == -1) {
-						address.setCommune(null);
-					} else {
-						address.setCommuneID(communeID.intValue());
-					}
+				if (communeID == null || communeID.intValue() == -1) {
+					address.setCommune(null);
+				} else {
+					address.setCommuneID(communeID.intValue());
 				}
 				address.store();
 				if (addAddress) {
