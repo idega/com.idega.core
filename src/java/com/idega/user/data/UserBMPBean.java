@@ -2124,7 +2124,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		  InCriteria statusInDeceased = new InCriteria(userTable, getColumnNameUserID(), statusSubQueryDeceased);
 		  OR statusOR = new OR(statusIn,statusInDeceased);
 		  query.addCriteria(statusOR);
-	  } else {
+	  } else  if (statusSubQuery != null) {
 	  	query.addCriteria(new InCriteria(userTable, getColumnNameUserID(), statusSubQuery));
 	  }
 	  if (yearOfBirthFrom != null) {
