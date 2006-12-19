@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.21 2006/12/08 14:28:49 valdas Exp $
+ * $Id: BuilderService.java,v 1.22 2006/12/19 15:22:19 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -228,4 +228,6 @@ public interface BuilderService extends IBOService
 	public boolean removeProperty(IWMainApplication iwma, String pageKey, String instanceId, String propertyName, String[] values);
 	
 	public boolean changePageUriByTitle(String parentId, ICPage page, String pageTitle, int domainId);
+	
+	public boolean movePageToTopLevel(int pageID, IWUserContext creatorContext);
 }
