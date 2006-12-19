@@ -203,45 +203,10 @@
       <version>1.1.2</version>
       <type>jar</type>
     </dependency>
-    <!-- jai and jai codec used in bundles com.idega.block.image and is.idega.golf.block.image, not used in core -->
-    <dependency>
-      <groupId>javax.media</groupId>
-      <artifactId>jai_core</artifactId>
-      <version>1.1.3-dr-b01</version>
-      <type>jar</type>
-    </dependency>
-    <!-- see comment above -->
-    <dependency>
-      <groupId>javax.media</groupId>
-      <artifactId>jai_codec</artifactId>
-      <version>1.1.3-dr-b01</version>
-      <type>jar</type>
-    </dependency>
-    <!-- iText used in bundles com.idega.block.reports, com.idega.block.contract, com.idega.block.pdf and campus not used in core -->
-    <dependency>
-      <groupId>com.lowagie</groupId>
-      <artifactId>itext</artifactId>
-      <version>0.99</version>
-      <type>jar</type>
-    </dependency>
-    <!-- commons-logging used in com.idega.faces and com.idega.block.creditcard, not used in core -->
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>1.0.4</version>
-      <type>jar</type>
-    </dependency>
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
       <version>1.1</version>
-      <type>jar</type>
-    </dependency>
-    <!-- commons-httpclient used in org.apache.slide, com.idega.slide, com.idega.content, com.idega.block.navigation not used in core -->
-    <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-      <version>2.0.2</version>
       <type>jar</type>
     </dependency>
     <!-- This Commons-Collections Dependecy is requred by ehcache, and is also used in org.apache.myfaces and org.apache.slide -->
@@ -262,12 +227,7 @@
       <artifactId>junit</artifactId>
       <version>4.0</version>
       <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>net.rkbloom</groupId>
-      <artifactId>logdriver</artifactId>
-      <version>1.0</version>
-      <type>jar</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
@@ -286,12 +246,6 @@
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache-constructs</artifactId>
       <version>0.6</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>commons-vfs</groupId>
-      <artifactId>commons-vfs</artifactId>
-      <version>20050307052300</version>
       <type>jar</type>
     </dependency>
 	<dependency>
