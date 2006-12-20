@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.23 2006/12/20 09:31:04 valdas Exp $
+ * $Id: BuilderService.java,v 1.24 2006/12/20 12:47:25 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -231,5 +231,7 @@ public interface BuilderService extends IBOService
 	
 	public boolean movePageToTopLevel(int pageID, IWContext iwc);
 	
-	public void createTopLevelPageFromExistingPage(int pageID, int domainID, IWUserContext creatorContext);
+	public void createTopLevelPageFromExistingPage(int pageID, ICDomain domain, IWUserContext creatorContext);
+	
+	public boolean isPageTopLevelPage(int pageID, ICDomain domain);
 }
