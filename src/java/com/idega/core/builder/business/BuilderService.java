@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.22 2006/12/19 15:22:19 valdas Exp $
+ * $Id: BuilderService.java,v 1.23 2006/12/20 09:31:04 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -181,7 +181,7 @@ public interface BuilderService extends IBOService
 	 * @param newParentId The id of the new parent page
 	 * @param pageId The id of the page to move
 	 */
-	public boolean movePage(int newParentId, int pageId);
+	public boolean movePage(int newParentId, int pageId, ICDomain domain);
 	
 	/**
 	 * Changes the default locale name for the page to the new value
@@ -229,5 +229,7 @@ public interface BuilderService extends IBOService
 	
 	public boolean changePageUriByTitle(String parentId, ICPage page, String pageTitle, int domainId);
 	
-	public boolean movePageToTopLevel(int pageID, IWUserContext creatorContext);
+	public boolean movePageToTopLevel(int pageID, IWContext iwc);
+	
+	public void createTopLevelPageFromExistingPage(int pageID, int domainID, IWUserContext creatorContext);
 }
