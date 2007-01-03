@@ -456,6 +456,17 @@ function tableruler()
 	      outer.visibility = 'show' ;
 	    }
 	}
+	
+function closeLoadingMessage() {
+	var elem = document.getElementById('busybuddy');
+	if (elem) {
+		if(elem.style) { 
+	      elem.style.display = 'none';
+	    } else {
+	      elem.display = 'none' ;
+	    }
+	}
+}
 
 
 //setLinkToBold method. moved here to fix bug in UserApplication
