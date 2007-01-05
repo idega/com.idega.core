@@ -1,5 +1,5 @@
 /*
- * $Id: Widget.java,v 1.4 2006/04/09 12:13:20 laddi Exp $
+ * $Id: Widget.java,v 1.4.2.1 2007/01/05 10:40:07 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,7 +23,7 @@ import com.idega.presentation.PresentationObject;
  * Last modified: 14.10.2004 10:24:30 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.4.2.1 $
  */
 public abstract class Widget extends Block {
 	
@@ -44,6 +44,7 @@ public abstract class Widget extends Block {
 		if (this.styleClass != null) {
 			layer.setStyleClass(this.styleClass);
 		}
+		layer.setStyleClass(this.locale.toString());
 
 		PresentationObject widget = getWidget(iwc);
 		if (widget != null) {

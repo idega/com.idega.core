@@ -5,6 +5,15 @@
   </properties>
   <body>
   
+	<release version="3.1.24" date="2007-01-05">
+		<action dev="laddi" type="update">
+			Changed DayOfWeekAndDate so that it doesn't display the day of week twice for locales other than Icelandic.
+		</action>
+		<action dev="laddi" type="update">
+			Added locale as style class for all widgets.
+		</action>
+	</release>
+    
 	<release version="3.1.23" date="2006-12-13">
 		<action dev="laddi" type="update">
 			Fixed implementation of compareTo(IDOEntity) in GenericEntity so that it doesn't throw a ClassCastException when primary key is not a String.
