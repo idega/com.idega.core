@@ -5,6 +5,7 @@ package com.idega.core.location.data;
 public interface Address extends com.idega.data.IDOLegacyEntity
 {
 	String FIELD_STREET_NAME = "StreetName";
+	String FIELD_STREET_NUMBER = "StreetNumber";
 	public void setPOBox(java.lang.String p0);
 	public java.lang.String getPOBox();
 	public int getAddressTypeID();
