@@ -54,7 +54,7 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 		
 		addAttribute(getColumnInStamp(), "Login Stamp", Timestamp.class);
 		addAttribute(getColumnOutStamp(), "Logout Stamp", Timestamp.class);
-		addAttribute(getColumnIPAddress(), "IP address", String.class, 16);
+		addAttribute(getColumnIPAddress(), "IP address", String.class, 40);
 
 		addIndex("IDX_LOGIN_REC_1", getColumnLoginId());
 	}
