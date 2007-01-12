@@ -1145,8 +1145,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public Integer ejbFindByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String personalId, String first_name, String last_name) throws FinderException {
     
     if (personalId.length() < 6) {
-			throw new FinderException("PersonalID shorter than 6 letters");
-		}
+		throw new FinderException("PersonalID shorter than 6 letters");
+	}
 	IDOQuery query = idoQueryGetSelect();
 		 query
 			.appendWhere(getColumnNamePersonalID())
@@ -1705,7 +1705,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		
 		sql.append("select distinct(ic_user_id) from ic_usergroup_status where status_id = ")
 		.append(statusId);
-		sql.appendAnd().append("date_from").appendGreaterThanOrEqualsSign().append(currentTime)
+		sql.appendAnd().append("date_from").appendLessThanOrEqualsSign().append(currentTime)
 		.appendAnd().appendLeftParenthesis().append("date_to").appendIsNull().appendOr().append("date_to").appendLessThanSign().append(currentTime).appendRightParenthesis();
 		
 		return sql.toString();
@@ -1754,10 +1754,22 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 		
 		Criteria join = new JoinCriteria(new Column(addressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())),new Column(userAddressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())));
-		IDOEntityField addressField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
-		Criteria match = new MatchCriteria(addressTable,addressField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
-
-		query.addCriteria(new AND(join,match));
+		if (streetName.indexOf(" ") == -1) {
+			IDOEntityField addressField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
+			Criteria match = new MatchCriteria(addressTable,addressField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
+			query.addCriteria(new AND(join,match));
+		} else {
+			String streetNumber = streetName.substring(streetName.lastIndexOf(" ") + 1);
+			streetName = streetName.substring(0, streetName.lastIndexOf(" "));
+			
+			IDOEntityField streetNameField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
+			Criteria matchStreetName = new MatchCriteria(addressTable,streetNameField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
+			query.addCriteria(new AND(join,matchStreetName));
+			
+			IDOEntityField streetNumberField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NUMBER);
+			Criteria matchStreetNumber = new MatchCriteria(addressTable,streetNumberField.getSQLFieldName(),MatchCriteria.LIKE,streetNumber.toUpperCase()+"%");
+			query.addCriteria(new AND(join,matchStreetNumber));
+		}
 		
 //		sql.append("select ua.ic_user_id from ic_address a,ic_user_address ua where a.ic_address_id=ua.ic_address_id").append(" and a.street_name like '%").append(condition.toUpperCase()).append("%' ");
 	
@@ -2311,5 +2323,102 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return getPrimaryKey().toString();
 	}
 	
+	private boolean validateSSN(String ssn) {
+        int sum = 0; 
+        boolean validSSN = false; 
+        if (ssn.length() == 10) { 
+            try {
+	            sum = sum + Integer.parseInt(ssn.substring(0,1)) * 3; 
+	            sum = sum + Integer.parseInt(ssn.substring(1,2)) * 2; 
+	            sum = sum + Integer.parseInt(ssn.substring(2,3)) * 7; 
+	            sum = sum + Integer.parseInt(ssn.substring(3,4)) * 6; 
+	            sum = sum + Integer.parseInt(ssn.substring(4,5)) * 5; 
+	            sum = sum + Integer.parseInt(ssn.substring(5,6)) * 4; 
+	            sum = sum + Integer.parseInt(ssn.substring(6,7)) * 3; 
+	            sum = sum + Integer.parseInt(ssn.substring(7,8)) * 2; 
+	            sum = sum + Integer.parseInt(ssn.substring(8,9)) * 1; 
+	            sum = sum + Integer.parseInt(ssn.substring(9,10)) * 0; 
+            	if ((sum%11) == 0) {
+            	    validSSN = true; 
+            	} else {
+            	    System.out.println(ssn + " is not a valid SSN. If fails validation test.");
+            	}
+            }
+            catch (NumberFormatException e) {
+                System.out.println(ssn + " is not a valid SSN. It contains characters other than digits.");
+            }
+        } else {
+            System.out.println(ssn + " is not a valid SSN. It is not 10 characters.");
+        }
+        return validSSN;
+    }
+
+	public boolean hasValidSSN() {
+		if (getPersonalID() == null) {
+			return false;
+		}
+		return validateSSN(getPersonalID());
+	}
+
+//	public boolean isDeceased() {
+//		boolean isDeceased = false;
+//		try {
+//			UserStatus userStatus = getUserStatusBusiness().getDeceasedUserStatus((Integer)getPrimaryKey());
+//			isDeceased = userStatus != null;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//   	 	return isDeceased;
+//	}
+
+	public boolean isDeceased()  {
+		Status deceasedStatus = null;
+		try {
+			deceasedStatus = getStatusHome().findByStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
+		}
+		catch (FinderException e) {
+			try {
+				deceasedStatus = getStatusHome().create();
+				deceasedStatus.setStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
+				deceasedStatus.store();
+			}
+			catch (CreateException e1) {
+				e1.printStackTrace();
+			}
+		}
+		Collection coll = null;
+		try {
+			coll = getUserStatusHome().findAllByUserIDAndStatusID((Integer)getPrimaryKey(),(Integer) deceasedStatus.getPrimaryKey());
+		} 
+		catch (FinderException e) {
+			e.printStackTrace();
+		}
+		if (coll != null && !coll.isEmpty()) {
+			System.out.println("User with SSN = " + getPersonalID() + " is deceased"); 
+		} 
+		return coll != null && !coll.isEmpty();
+	}
+
+	protected UserStatusHome getUserStatusHome(){
+		UserStatusHome home = null;
+		try {
+		 home = (UserStatusHome) com.idega.data.IDOLookup.getHome(UserStatus.class);
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return home;
+	}
+
+	protected StatusHome getStatusHome(){
+		StatusHome home = null;
+		try {
+		 home = (StatusHome) com.idega.data.IDOLookup.getHome(Status.class);
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return home;
+	}
 	
 }
