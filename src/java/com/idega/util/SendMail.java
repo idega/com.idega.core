@@ -1,5 +1,6 @@
 package com.idega.util;
 import java.io.File;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -27,7 +28,7 @@ public class SendMail {
 		// Construct a message
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
-		message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+		message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
 		//process cc and bcc
 		//this Address[] ccAddressess = InternetAddress.parse(cc); or similar
 		if ((cc != null) && !("".equals(cc))) {
