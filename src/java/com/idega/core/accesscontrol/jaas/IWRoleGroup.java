@@ -1,5 +1,5 @@
 /*
- * $Id: IWRoleGroup.java,v 1.1 2004/12/13 11:53:38 gummi Exp $
+ * $Id: IWRoleGroup.java,v 1.1.2.1 2007/01/12 19:31:30 idegaweb Exp $
  * Created on 8.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import java.util.Iterator;
 
 /**
  * 
- *  Last modified: $Date: 2004/12/13 11:53:38 $ by $Author: gummi $
+ *  Last modified: $Date: 2007/01/12 19:31:30 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class IWRoleGroup extends HashSet implements Group {
 	    
@@ -37,13 +37,13 @@ public class IWRoleGroup extends HashSet implements Group {
 	        class MembersEnumeration implements Enumeration {
 	            private Iterator m_iter;
 	            public MembersEnumeration(Iterator iter) {
-	                m_iter = iter;
+	                this.m_iter = iter;
 	            }
 	            public boolean hasMoreElements () {
-	                return m_iter.hasNext();
+	                return this.m_iter.hasNext();
 	            }
 	            public Object nextElement () {
-	                return m_iter.next();
+	                return this.m_iter.next();
 	            }
 	        }
 

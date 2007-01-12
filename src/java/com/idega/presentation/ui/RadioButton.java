@@ -1,5 +1,5 @@
 /*
- * $Id: RadioButton.java,v 1.13 2005/03/08 20:21:13 tryggvil Exp $
+ * $Id: RadioButton.java,v 1.13.2.1 2007/01/12 19:32:06 idegaweb Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import com.idega.presentation.IWContext;
  * <p>
  * This component renders out an input of type radiobutton.
  * </p>
- *  Last modified: $Date: 2005/03/08 20:21:13 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:32:06 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.13.2.1 $
  */
 public class RadioButton extends GenericInput {
 
@@ -29,15 +29,15 @@ public class RadioButton extends GenericInput {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[3];
 		values[0] = super.saveState(ctx);
-		values[1] = Boolean.valueOf(_mustBeSelected);
-		values[2] = _errorMessage;
+		values[1] = Boolean.valueOf(this._mustBeSelected);
+		values[2] = this._errorMessage;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		_mustBeSelected = ((Boolean) values[1]).booleanValue();
-		_errorMessage = (String) values[2];
+		this._mustBeSelected = ((Boolean) values[1]).booleanValue();
+		this._errorMessage = (String) values[2];
 	}
 
 	/**
@@ -77,10 +77,12 @@ public class RadioButton extends GenericInput {
 	 * Sets the radio button as selected.
 	 */
 	public void setSelected(boolean selected) {
-		if (selected)
+		if (selected) {
 			setMarkupAttributeWithoutValue("checked");
-		else
+		}
+		else {
 			removeMarkupAttribute("checked");
+		}
 	}
 
 	/**
@@ -88,14 +90,15 @@ public class RadioButton extends GenericInput {
 	 * @return boolean	True if selected, false otherwise.
 	 */
 	public boolean getSelected() {
-		if (isMarkupAttributeSet("checked"))
+		if (isMarkupAttributeSet("checked")) {
 			return true;
+		}
 		return false;
 	}
 
 	public void main(IWContext iwc) {
 		if (isEnclosedByForm()) {
-			if (_mustBeSelected) {
+			if (this._mustBeSelected) {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("function isSelected(inputs,message) {").append("\n\t");
 				buffer.append("if (inputs.length > 1) {").append("\n\t\t");
@@ -110,13 +113,13 @@ public class RadioButton extends GenericInput {
 				buffer.append("}").append("\n\t");
 				buffer.append("alert(message);").append("\n");
 				buffer.append("return false;").append("\n}");
-				this.setOnSubmitFunction("isSelected", buffer.toString(), _errorMessage);
+				this.setOnSubmitFunction("isSelected", buffer.toString(), this._errorMessage);
 			}
 		}
 	}
 	public void setMustBeSelected(String errorMessage) {
-		_mustBeSelected = true;
-		_errorMessage = errorMessage;
+		this._mustBeSelected = true;
+		this._errorMessage = errorMessage;
 	}
 	
 	public void handleKeepStatus(IWContext iwc) {

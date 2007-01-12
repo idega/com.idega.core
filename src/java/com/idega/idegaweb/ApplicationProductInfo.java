@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationProductInfo.java,v 1.5 2005/02/17 17:52:26 tryggvil Exp $
+ * $Id: ApplicationProductInfo.java,v 1.5.2.1 2007/01/12 19:32:00 idegaweb Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.util.IWTimestamp;
 /**
  *  This class holds information about the application product installed.<br>
  * 
- *  Last modified: $Date: 2005/02/17 17:52:26 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:32:00 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.5.2.1 $
  */
 public class ApplicationProductInfo {
 	
@@ -97,7 +97,7 @@ public class ApplicationProductInfo {
 	 * @return Returns the buildId.
 	 */
 	public String getBuildId() {
-		return buildId;
+		return this.buildId;
 	}
 	/**
 	 * @param buildId The buildId to set.
@@ -109,7 +109,7 @@ public class ApplicationProductInfo {
 	 * @return Returns the family.
 	 */
 	public String getFamily() {
-		return family;
+		return this.family;
 	}
 	/**
 	 * @param family The family to set.
@@ -121,7 +121,7 @@ public class ApplicationProductInfo {
 	 * @return Returns the inceptionYear.
 	 */
 	public String getInceptionYear() {
-		return inceptionYear;
+		return this.inceptionYear;
 	}
 	/**
 	 * @param inceptionYear The inceptionYear to set.
@@ -133,7 +133,7 @@ public class ApplicationProductInfo {
 	 * @return Returns the name.
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	/**
 	 * @param name The name to set.
@@ -153,7 +153,7 @@ public class ApplicationProductInfo {
 	 * @return Returns the vendor.
 	 */
 	public String getVendor() {
-		return vendor;
+		return this.vendor;
 	}
 	/**
 	 * @param vendor The vendor to set.
@@ -165,7 +165,7 @@ public class ApplicationProductInfo {
 	 * @return Returns the version.
 	 */
 	public String getVersion() {
-		return version;
+		return this.version;
 	}
 	/**
 	 * @param version The version to set.

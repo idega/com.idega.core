@@ -25,7 +25,7 @@ public class IWJSPPresentationServlet extends IWPresentationServlet implements J
 		throws ServletException, IOException {
 		try {
 			
-			if(handleJSPTags){
+			if(this.handleJSPTags){
 				_jspService(request, response);
 			}
 		}
@@ -44,7 +44,7 @@ public class IWJSPPresentationServlet extends IWPresentationServlet implements J
 	 * @return boolean
 	 */
 	public boolean canHandleJSPTags() {
-		return handleJSPTags;
+		return this.handleJSPTags;
 	}
 
 	/**

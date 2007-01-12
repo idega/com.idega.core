@@ -1,5 +1,5 @@
 /*
- * $Id: ConnectionBroker.java,v 1.13 2005/09/23 16:21:29 tryggvil Exp $
+ * $Id: ConnectionBroker.java,v 1.13.2.1 2007/01/12 19:32:58 idegaweb Exp $
  *
  * Copyright (C) 2000-2005 Idega hf. All Rights Reserved.
  *
@@ -35,7 +35,7 @@ import com.idega.transaction.IdegaTransactionManager;
  * <br>
  * </p>
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.13.2.1 $
 */
 public class ConnectionBroker
 {
@@ -107,8 +107,9 @@ public class ConnectionBroker
 				//  throw new RuntimeException(e.getMessage());
 				//}
 			}
-			else
+			else {
 				throw new RuntimeException("PoolManager not available");
+			}
 		}
 		return conn;
 	}

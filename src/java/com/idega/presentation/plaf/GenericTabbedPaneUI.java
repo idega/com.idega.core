@@ -45,15 +45,17 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 	}
 
 	public TabPresentation getTabPresentation() {
-		if (tab == null)
+		if (this.tab == null) {
 			initTab();
-		return tab;
+		}
+		return this.tab;
 	}
 
 	public TabPagePresentation getTabPagePresentation() {
-		if (tabpage == null)
+		if (this.tabpage == null) {
 			initTabPage();
-		return tabpage;
+		}
+		return this.tabpage;
 	}
 
 	public void setMainColor(IWColor color) {
@@ -61,7 +63,7 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 	}
 
 	public IWColor getMainColor() {
-		return MainColor;
+		return this.MainColor;
 	}
 
 	public abstract class GenericTabPresentation extends Table implements TabPresentation {
@@ -80,15 +82,15 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 			setCellspacing(0);
 			setBorder(1);
 			//setWidth(Table.HUNDRED_PERCENT);
-			tabs = new Vector();
+			this.tabs = new Vector();
 		}
 
 		public void setForm(Form form) {
-			linkForm = form;
+			this.linkForm = form;
 		}
 
 		public Form getForm() {
-			return linkForm;
+			return this.linkForm;
 		}
 
 		public void add(PresentationObject obj, int index) {
@@ -106,7 +108,7 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 		public abstract void SetHeight(String height);
 
 		public Vector getAddedTabs() {
-			return tabs;
+			return this.tabs;
 		}
 
 		public void setAddedTabs(Vector tabs) {
@@ -123,7 +125,7 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 
 		// SingleSelectionModel methods
 		public int getSelectedIndex() {
-			return index;
+			return this.index;
 		}
 
 		public void setSelectedIndex(int index) {
@@ -147,31 +149,32 @@ public abstract class GenericTabbedPaneUI implements IWTabbedPaneUI {
 		}
 
 		public void addChangeListener(ChangeListener l) {
-			listenerList.add(ChangeListener.class, l);
+			this.listenerList.add(ChangeListener.class, l);
 		}
 
 		public void removeChangeListener(ChangeListener l) {
-			listenerList.remove(ChangeListener.class, l);
+			this.listenerList.remove(ChangeListener.class, l);
 		}
 
 		public void fireStateChanged() {
 			// Guaranteed to return a non-null array
-			Object[] listeners = listenerList.getListenerList();
+			Object[] listeners = this.listenerList.getListenerList();
 
 			// Process the listeners last to first, notifying
 			// those that are interested in this event
 			for (int i = listeners.length - 2; i >= 0; i -= 2) {
 				if (listeners[i] == ChangeListener.class) {
 					// Lazily create the event:
-					if (changeEvent == null)
-						changeEvent = new ChangeEvent(this);
-					((ChangeListener) listeners[i + 1]).stateChanged(changeEvent);
+					if (this.changeEvent == null) {
+						this.changeEvent = new ChangeEvent(this);
+					}
+					((ChangeListener) listeners[i + 1]).stateChanged(this.changeEvent);
 				}
 			}
 		}
 
 		public EventListener[] getListeners(Class listenerType) {
-			return listenerList.getListeners(listenerType);
+			return this.listenerList.getListeners(listenerType);
 		}
 	} // InnerClass GenericTabPresentation
 

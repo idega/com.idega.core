@@ -223,7 +223,9 @@ public class IDOUtil implements Singleton {
 			
 			return map;
 		}
-		else return null;
+		else {
+			return null;
+		}
 		
 	}
 	
@@ -244,7 +246,9 @@ public class IDOUtil implements Singleton {
 			
 			return returnList;
 		}
-		else return null;
+		else {
+			return null;
+		}
 	}
 
 

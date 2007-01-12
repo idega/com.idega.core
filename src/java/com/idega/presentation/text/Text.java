@@ -81,8 +81,8 @@ public class Text extends PresentationObject {
 		super();
 		setTransient(false);
 		setText(text);
-		attributeSet = false;
-		teletype = false;
+		this.attributeSet = false;
+		this.teletype = false;
 	}
 
 	public Text(String text, boolean bold, boolean italic, boolean underline) {
@@ -99,7 +99,7 @@ public class Text extends PresentationObject {
 	}
 
 	public void setMarkupAttribute(String name, String value) {
-		attributeSet = true;
+		this.attributeSet = true;
 		super.setMarkupAttribute(name, value);
 	}
 	
@@ -107,7 +107,7 @@ public class Text extends PresentationObject {
 	 * @see com.idega.presentation.PresentationObject#setStyleAttribute(java.lang.String, java.lang.String)
 	 */
 	public void setStyleAttribute(String attribute, String value) {
-		attributeSet = true;
+		this.attributeSet = true;
 		super.setStyleAttribute(attribute, value);
 	}
 
@@ -151,12 +151,12 @@ public class Text extends PresentationObject {
 	}
 
 	public void setFontClass(String styleClass) {
-		attributeSet = true;
+		this.attributeSet = true;
 		setStyle(styleClass);
 	}
 
 	public void setStyle(String style) {
-		attributeSet = true;
+		this.attributeSet = true;
 		setStyleClass(style);
 	}
 
@@ -195,10 +195,10 @@ public class Text extends PresentationObject {
 	 * @uml.property name="localizationMap"
 	 */
 	private Map getLocalizationMap() {
-		if (localizationMap == null) {
-			localizationMap = new HashMap();
+		if (this.localizationMap == null) {
+			this.localizationMap = new HashMap();
 		}
-		return localizationMap;
+		return this.localizationMap;
 	}
 
 
@@ -207,7 +207,7 @@ public class Text extends PresentationObject {
 	}
 
 	public void setTeleType() {
-		teletype = true;
+		this.teletype = true;
 	}
 
 	public void setBold() {
@@ -358,7 +358,7 @@ public class Text extends PresentationObject {
 
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
-			if (attributeSet || showTag()) {
+			if (this.attributeSet || showTag()) {
 				print("<" + getTag() + " " + getMarkupAttributesString() + " >");
 				print(getLocalizedText(iwc));
 				print("</" + getTag() + ">");
@@ -428,11 +428,11 @@ public class Text extends PresentationObject {
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[6];
 		values[0] = super.saveState(context);
-		values[1] = text;
-		values[2] = localizationMap;
-		values[3] = Boolean.valueOf(attributeSet);
-		values[4] = Boolean.valueOf(teletype);
-		values[5] = Boolean.valueOf(addHTMLFontTag);
+		values[1] = this.text;
+		values[2] = this.localizationMap;
+		values[3] = Boolean.valueOf(this.attributeSet);
+		values[4] = Boolean.valueOf(this.teletype);
+		values[5] = Boolean.valueOf(this.addHTMLFontTag);
 		return values;
 	}	
 	

@@ -66,7 +66,7 @@ public class FileObjectReader extends ReaderFromFile implements StorableProvider
 	public InputStream readData(InputStream source) throws IOException {
 		BufferedOutputStream outputStream = null;
     try {
-      outputStream = new BufferedOutputStream(new FileOutputStream((File) storable));
+      outputStream = new BufferedOutputStream(new FileOutputStream((File) this.storable));
     }
     catch (FileNotFoundException ex)  {
     	//logError("FileBusiness] problem creating file. Message is: "+ex.getMessage());

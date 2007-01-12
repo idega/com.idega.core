@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.1 2005/09/20 15:36:49 tryggvil Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.1.2.1 2007/01/12 19:32:50 idegaweb Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -24,10 +24,10 @@ import com.idega.idegaweb.IWMainApplication;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2005/09/20 15:36:49 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/01/12 19:32:50 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class ComponentRegistry {
 
@@ -61,10 +61,10 @@ public class ComponentRegistry {
 	}
 
 	private List internalGetComponentList() {
-		if (allComponents == null) {
-			allComponents = new ArrayList();
+		if (this.allComponents == null) {
+			this.allComponents = new ArrayList();
 		}
-		return allComponents;
+		return this.allComponents;
 	}
 
 	public void registerComponent(ComponentInfo info) {
@@ -84,7 +84,7 @@ public class ComponentRegistry {
 	}
 
 	private void loadOldIWComponents() {
-		if (!loadedOldIWComponents) {
+		if (!this.loadedOldIWComponents) {
 			// this is so that the components list is loaded lazily
 			try {
 				ICObjectHome icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
@@ -97,7 +97,7 @@ public class ComponentRegistry {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
-			loadedOldIWComponents = true;
+			this.loadedOldIWComponents = true;
 		}
 	}
 

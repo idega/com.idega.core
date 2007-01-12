@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.41 2005/08/31 02:10:08 eiki Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.41.2.1 2007/01/12 19:32:08 idegaweb Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -28,10 +28,10 @@ import com.idega.util.datastructures.list.KeyValuePair;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2005/08/31 02:10:08 $ by $Author: eiki $
+ * Last modified: $Date: 2007/01/12 19:32:08 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.41 $
+ * @version $Revision: 1.41.2.1 $
  */
 public class Window extends Page {
 
@@ -67,55 +67,55 @@ public class Window extends Page {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[23];
 		values[0] = super.saveState(ctx);
-		values[1] = title;
-		values[2] = new Integer(width);
-		values[3] = new Integer(height);
-		values[4] = url;
-		values[5] = xCoordinate;
-		values[6] = yCoordinate;
-		values[7] = Boolean.valueOf(toolbar);
-		values[8] = Boolean.valueOf(location);
-		values[9] = Boolean.valueOf(scrollbar);
-		values[10] = Boolean.valueOf(directories);
-		values[11] = Boolean.valueOf(menubar);
-		values[12] = Boolean.valueOf(status);
-		values[13] = Boolean.valueOf(titlebar);
-		values[14] = Boolean.valueOf(resizable);
-		values[15] = Boolean.valueOf(fullscreen);
-		values[16] = Boolean.valueOf(autoResize);
-		values[17] = Boolean.valueOf(autoPosition);
-		values[18] = new Integer(autoXCoordinateOffset);
-		values[19] = new Integer(autoYCoordinateOffset);
-		values[20] = classToInstanciate;
-		values[21] = templatePageClass;
-		values[22] = templateForObjectInstanciation;
+		values[1] = this.title;
+		values[2] = new Integer(this.width);
+		values[3] = new Integer(this.height);
+		values[4] = this.url;
+		values[5] = this.xCoordinate;
+		values[6] = this.yCoordinate;
+		values[7] = Boolean.valueOf(this.toolbar);
+		values[8] = Boolean.valueOf(this.location);
+		values[9] = Boolean.valueOf(this.scrollbar);
+		values[10] = Boolean.valueOf(this.directories);
+		values[11] = Boolean.valueOf(this.menubar);
+		values[12] = Boolean.valueOf(this.status);
+		values[13] = Boolean.valueOf(this.titlebar);
+		values[14] = Boolean.valueOf(this.resizable);
+		values[15] = Boolean.valueOf(this.fullscreen);
+		values[16] = Boolean.valueOf(this.autoResize);
+		values[17] = Boolean.valueOf(this.autoPosition);
+		values[18] = new Integer(this.autoXCoordinateOffset);
+		values[19] = new Integer(this.autoYCoordinateOffset);
+		values[20] = this.classToInstanciate;
+		values[21] = this.templatePageClass;
+		values[22] = this.templateForObjectInstanciation;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		title = (String)values[1];
-		width = ((Integer)values[2]).intValue();
-		height = ((Integer)values[3]).intValue();
-		url = (String)values[4];
-		xCoordinate= (String)values[5];
-		yCoordinate = (String)values[6];
-		toolbar = ((Boolean)values[7]).booleanValue();
-		location = ((Boolean)values[8]).booleanValue();
-		scrollbar = ((Boolean)values[9]).booleanValue();
-		directories = ((Boolean)values[10]).booleanValue();
-		menubar = ((Boolean)values[11]).booleanValue();
-		status = ((Boolean)values[12]).booleanValue();
-		titlebar = ((Boolean)values[13]).booleanValue();
-		resizable = ((Boolean)values[14]).booleanValue();
-		fullscreen = ((Boolean)values[15]).booleanValue();
-		autoResize = ((Boolean)values[16]).booleanValue();
-		autoPosition = ((Boolean)values[17]).booleanValue();
-		autoXCoordinateOffset = ((Integer)values[18]).intValue();
-		autoYCoordinateOffset = ((Integer)values[19]).intValue();
-		classToInstanciate = (Class)values[20];
-		templatePageClass = (Class)values[21];
-		templateForObjectInstanciation = (String)values[22];
+		this.title = (String)values[1];
+		this.width = ((Integer)values[2]).intValue();
+		this.height = ((Integer)values[3]).intValue();
+		this.url = (String)values[4];
+		this.xCoordinate= (String)values[5];
+		this.yCoordinate = (String)values[6];
+		this.toolbar = ((Boolean)values[7]).booleanValue();
+		this.location = ((Boolean)values[8]).booleanValue();
+		this.scrollbar = ((Boolean)values[9]).booleanValue();
+		this.directories = ((Boolean)values[10]).booleanValue();
+		this.menubar = ((Boolean)values[11]).booleanValue();
+		this.status = ((Boolean)values[12]).booleanValue();
+		this.titlebar = ((Boolean)values[13]).booleanValue();
+		this.resizable = ((Boolean)values[14]).booleanValue();
+		this.fullscreen = ((Boolean)values[15]).booleanValue();
+		this.autoResize = ((Boolean)values[16]).booleanValue();
+		this.autoPosition = ((Boolean)values[17]).booleanValue();
+		this.autoXCoordinateOffset = ((Integer)values[18]).intValue();
+		this.autoYCoordinateOffset = ((Integer)values[19]).intValue();
+		this.classToInstanciate = (Class)values[20];
+		this.templatePageClass = (Class)values[21];
+		this.templateForObjectInstanciation = (String)values[22];
 	}
 	
 	
@@ -212,39 +212,39 @@ public class Window extends Page {
 	}
 
 	public void setToolbar(boolean ifToolbar) {
-		toolbar = ifToolbar;
+		this.toolbar = ifToolbar;
 	}
 
 	public void setLocation(boolean ifLocation) {
-		location = ifLocation;
+		this.location = ifLocation;
 	}
 
 	public void setScrollbar(boolean ifScrollbar) {
-		scrollbar = ifScrollbar;
+		this.scrollbar = ifScrollbar;
 	}
 
 	public void setDirectories(boolean ifDirectories) {
-		directories = ifDirectories;
+		this.directories = ifDirectories;
 	}
 
 	public void setMenubar(boolean ifMenubar) {
-		menubar = ifMenubar;
+		this.menubar = ifMenubar;
 	}
 
 	public void setStatus(boolean ifStatus) {
-		status = ifStatus;
+		this.status = ifStatus;
 	}
 
 	public void setTitlebar(boolean ifTitlebar) {
-		titlebar = ifTitlebar;
+		this.titlebar = ifTitlebar;
 	}
 
 	public void setResizable(boolean ifResizable) {
-		resizable = ifResizable;
+		this.resizable = ifResizable;
 	}
 
 	public void setFullScreen(boolean ifFullScreen) {
-		fullscreen = ifFullScreen;
+		this.fullscreen = ifFullScreen;
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class Window extends Page {
 	 */
 	public String getURL(IWContext iwc) {
 		String ret = null;
-		if (url == null) {
+		if (this.url == null) {
 			if(IWMainApplication.useNewURLScheme){
 				ret = iwc.getIWMainApplication().getWindowOpenerURI(this.getClass());
 			} else {
@@ -266,7 +266,7 @@ public class Window extends Page {
 			}
 		}
 		else {
-			ret = url;
+			ret = this.url;
 		}
 		// System.out.println("ret1 = " + ret);
 		ICDomain d = iwc.getDomain();
@@ -332,7 +332,7 @@ public class Window extends Page {
 	}
 
 	public String getWidth() {
-		return String.valueOf(width);
+		return String.valueOf(this.width);
 	}
 
 	public void setWidth(int width) {
@@ -355,7 +355,7 @@ public class Window extends Page {
 	}
 
 	public String getHeight() {
-		return String.valueOf(height);
+		return String.valueOf(this.height);
 	}
 
 	public void setHeight(int height) {
@@ -381,11 +381,11 @@ public class Window extends Page {
 	}
 
 	public String getCoordinateX() {
-		if (xCoordinate != null) {
-			return xCoordinate;
+		if (this.xCoordinate != null) {
+			return this.xCoordinate;
 		}
-		else if (autoPosition) {
-			return getMouseCoordinateX() + "+(" + autoXCoordinateOffset + ")";
+		else if (this.autoPosition) {
+			return getMouseCoordinateX() + "+(" + this.autoXCoordinateOffset + ")";
 		}
 		return null;
 	}
@@ -395,11 +395,11 @@ public class Window extends Page {
 	}
 
 	public String getCoordinateY() {
-		if (xCoordinate != null) {
-			return yCoordinate;
+		if (this.xCoordinate != null) {
+			return this.yCoordinate;
 		}
-		else if (autoPosition) {
-			return getMouseCoordinateY() + "+(" + autoYCoordinateOffset + ")";
+		else if (this.autoPosition) {
+			return getMouseCoordinateY() + "+(" + this.autoYCoordinateOffset + ")";
 		}
 		return null;
 	}
@@ -425,10 +425,12 @@ public class Window extends Page {
 	}
 
 	private String returnFullScreen() {
-		if (fullscreen == true)
+		if (this.fullscreen == true) {
 			return ",fullscreen";
-		else
+		}
+		else {
 			return "";
+		}
 	}
 
 	/**
@@ -620,8 +622,8 @@ public class Window extends Page {
 	public String getCallingScriptString(IWContext iwc, String url) {
 		// return
 		// "window.open('"+url+"','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
-		return getWindowCallingScript(url, getTarget(), toolbar, location, directories, status, menubar, titlebar,
-				scrollbar, resizable, fullscreen, getWindowWidth(), getWindowHeight(), getCoordinateX(),
+		return getWindowCallingScript(url, getTarget(), this.toolbar, this.location, this.directories, this.status, this.menubar, this.titlebar,
+				this.scrollbar, this.resizable, this.fullscreen, getWindowWidth(), getWindowHeight(), getCoordinateX(),
 				getCoordinateY());
 	}
 
@@ -638,8 +640,8 @@ public class Window extends Page {
 		 */
 		// return
 		// "window.open('','"+getTarget()+"','resizable="+returnCheck(resizable)+",toolbar="+returnCheck(toolbar)+",location="+returnCheck(location)+",directories="+returnCheck(directories)+",status="+returnCheck(status)+",scrollbars="+returnCheck(scrollbar)+",menubar="+returnCheck(menubar)+",titlebar="+returnCheck(titlebar)+returnFullScreen()+",width="+getWidth()+",height="+getHeight()+"')";
-		return getWindowCallingScript("", getTarget(), toolbar, location, directories, status, menubar, titlebar,
-				scrollbar, resizable, fullscreen, getWindowWidth(), getWindowHeight(), xCoordinate, yCoordinate);
+		return getWindowCallingScript("", getTarget(), this.toolbar, this.location, this.directories, this.status, this.menubar, this.titlebar,
+				this.scrollbar, this.resizable, this.fullscreen, getWindowWidth(), getWindowHeight(), this.xCoordinate, this.yCoordinate);
 	}
 
 	/**
@@ -671,10 +673,12 @@ public class Window extends Page {
 		buf.append(sp).append(menu ? yes : no).append("','").append(title ? yes : no).append("',");
 		buf.append(sp).append(scroll ? yes : no).append("','").append(resize ? yes : no).append("',");
 		buf.append(sp).append(theWidth).append("','").append(theHeight).append("'");
-		if (xCoordinate != null)
+		if (xCoordinate != null) {
 			buf.append(",").append(xCoordinate);
-		if (yCoordinate != null)
+		}
+		if (yCoordinate != null) {
 			buf.append(",").append(yCoordinate);
+		}
 		buf.append(")");
 		return buf.toString();
 	}
@@ -704,10 +708,12 @@ public class Window extends Page {
 		buf.append("scrollbars=").append(scroll ? yes : no).append(",").append("resizable=").append(resize ? yes : no).append(
 				",");
 		buf.append("width=").append(theWidth).append(",").append("height=").append(theHeight).append("");
-		if (xCoordinate != null)
+		if (xCoordinate != null) {
 			buf.append(",").append("left=").append(xCoordinate);
-		if (yCoordinate != null)
+		}
+		if (yCoordinate != null) {
 			buf.append(",").append("top=").append(yCoordinate);
+		}
 		return buf.toString();
 	}
 

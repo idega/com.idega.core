@@ -247,19 +247,22 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 				System.out.println("checking req "+requiredInterfaces[i].getName());
 				for (int j = 0; j < implementedInterfaces.length; j++) {
 					System.out.println("checking imp"+implementedInterfaces[i].getName());
-					if (requiredInterfaces[i].getName().equals(implementedInterfaces[i].getName()))
+					if (requiredInterfaces[i].getName().equals(implementedInterfaces[i].getName())) {
 						returner = true;
+					}
 					else {
 						Class[] superInterfaces = implementedInterfaces[i].getInterfaces();
 						for (int k = 0; k < superInterfaces.length; k++) {
-							if (requiredInterfaces[i].getName().equals(superInterfaces[i].getName()))
+							if (requiredInterfaces[i].getName().equals(superInterfaces[i].getName())) {
 								returner = true;
+							}
 						}
 					}
 				}
 				// if we don't have a match after for this round we exit
-				if (!returner)
+				if (!returner) {
 					return returner;
+				}
 			}
 		}
 		else{

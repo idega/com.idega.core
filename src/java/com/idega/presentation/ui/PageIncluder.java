@@ -115,23 +115,25 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
   public int getIndex(){
-   return index;
+   return this.index;
   }
 
 
   public void main(IWContext iwc) throws Exception {
     Page fromPage = this.getParentPage();
-    instanceId=getICObjectInstanceID();
-    changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
+    this.instanceId=getICObjectInstanceID();
+    this.changeURL = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+this._label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+this.instanceId));
 
-    if(changeURL){
-    	 changeURL = canChangeURLFromRequest(iwc);	
+    if(this.changeURL){
+    	 this.changeURL = canChangeURLFromRequest(iwc);	
     }
     
-    if( changeURL && (_sendToPage != null) && iwc.isParameterSet(_sendToPageIfSet) ) {//forwarding
-      forwardToIBPage(fromPage,_sendToPage,iwc);
+    if( this.changeURL && (this._sendToPage != null) && iwc.isParameterSet(this._sendToPageIfSet) ) {//forwarding
+      forwardToIBPage(fromPage,this._sendToPage,iwc);
     }
-    else if(out==null) sortAndProcess(iwc);//ususal
+    else if(this.out==null) {
+		sortAndProcess(iwc);//ususal
+	}
 
   }
 
@@ -140,16 +142,16 @@ public class PageIncluder extends PresentationObject implements Index{
  * @param iwc
  */
   private boolean canChangeURLFromRequest(IWContext iwc) {
-  	if(allowedDomainsAndIPNumberMap!=null){
-  		boolean changingTheURLFromRequest = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+_label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+instanceId));
+  	if(this.allowedDomainsAndIPNumberMap!=null){
+  		boolean changingTheURLFromRequest = (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+this._label)) || (iwc.isParameterSet(PAGE_INCLUDER_PARAMETER_NAME+this.instanceId));
   		if(changingTheURLFromRequest){
-  			String url = iwc.getParameter(PAGE_INCLUDER_PARAMETER_NAME+_label);
+  			String url = iwc.getParameter(PAGE_INCLUDER_PARAMETER_NAME+this._label);
   			if(url==null || "".equals(url)){
-  				url = iwc.getParameter(PAGE_INCLUDER_PARAMETER_NAME+instanceId);
+  				url = iwc.getParameter(PAGE_INCLUDER_PARAMETER_NAME+this.instanceId);
   			}
 			URLUtil util = new URLUtil(url);
 			String domainOrIpPart = util.getHost();
-			if(!allowedDomainsAndIPNumberMap.containsKey(domainOrIpPart)){
+			if(!this.allowedDomainsAndIPNumberMap.containsKey(domainOrIpPart)){
 				return false;//if the domain is not allowed to ask for pageincluding then return false
 			}
   		}
@@ -158,15 +160,17 @@ public class PageIncluder extends PresentationObject implements Index{
   }
 
 public void print(IWContext iwc)throws IOException{
-    if(URL!=null){
-      if(out!=null) println(out);
-      out = null;
+    if(this.URL!=null){
+      if(this.out!=null) {
+		println(this.out);
+	}
+      this.out = null;
     }
   }
 
   protected void process(IWContext iwc)throws Exception{
-    serverName = iwc.getServerName();
-    instanceId=getICObjectInstanceID();
+    this.serverName = iwc.getServerName();
+    this.instanceId=getICObjectInstanceID();
 
     //pageincluderprefix httpprefix etc...
     setPrefixes(iwc);
@@ -176,40 +180,42 @@ public void print(IWContext iwc)throws IOException{
     //System.out.println("Loc before = "+loc);
 
     //get a session id from a session creating page
-  if( (sessionURL!=null) && (token!=null) ){
+  if( (this.sessionURL!=null) && (this.token!=null) ){
       
-    if( sessionId==null ){
-      sessionId = (String) iwc.getSessionAttribute( PAGE_INCLUDER_SESSION_NAME );
-      if(sessionId==null){
-        sessionId = FileUtil.getStringFromURL(sessionURL);
+    if( this.sessionId==null ){
+      this.sessionId = (String) iwc.getSessionAttribute( PAGE_INCLUDER_SESSION_NAME );
+      if(this.sessionId==null){
+        this.sessionId = FileUtil.getStringFromURL(this.sessionURL);
         //debug("Sessions id is : "+sessionId);
       }
     }
 
-    iwc.setSessionAttribute(PAGE_INCLUDER_SESSION_NAME, sessionId);
+    iwc.setSessionAttribute(PAGE_INCLUDER_SESSION_NAME, this.sessionId);
 
-    loc = TextSoap.findAndReplace(loc,token,sessionId);
+    loc = TextSoap.findAndReplace(loc,this.token,this.sessionId);
     loc = TextSoap.findAndCut(loc,"\r\n");
     loc = TextSoap.findAndCut(loc,"\n");
 
 
   }
-  else if( (sessionId!=null) && (token!=null)){
-    loc = TextSoap.findAndReplace(loc,token,sessionId);
+  else if( (this.sessionId!=null) && (this.token!=null)){
+    loc = TextSoap.findAndReplace(loc,this.token,this.sessionId);
   }
 
   //System.out.println("Location url is: "+loc+" and index is: "+index);
 
   if(loc!=null && !loc.equals("") ){
-    out = FileUtil.getStringFromURL(loc);
+    this.out = FileUtil.getStringFromURL(loc);
 
     URL url = new URL(loc);
-    BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
+    this.BASEURL = url.getProtocol()+"://"+url.getHost()+"/";
 
-    BASEURLHTTPS = "https://"+url.getHost()+"/";
+    this.BASEURLHTTPS = "https://"+url.getHost()+"/";
 
-    if(loc.lastIndexOf("/")==6) loc+="/";
-    RELATIVEURL = loc.substring(0,loc.lastIndexOf("/")+1);
+    if(loc.lastIndexOf("/")==6) {
+		loc+="/";
+	}
+    this.RELATIVEURL = loc.substring(0,loc.lastIndexOf("/")+1);
 
     /**
      * @todo use expressions to make none case sensitive or implement using HTMLDocumentLoader (Advanced Swing);
@@ -227,18 +233,18 @@ public void print(IWContext iwc)throws IOException{
     }
     */
     
-    out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(out);
-    out = preProcess(out,iwc);
-    if( forceFrame ){
-      out = encodeQueryStrings(out);
+    this.out = TextSoap.stripHTMLTagAndChangeBodyTagToTable(this.out);
+    this.out = preProcess(this.out,iwc);
+    if( this.forceFrame ){
+      this.out = encodeQueryStrings(this.out);
     }
-    out = changeAHrefAttributes(out);
-    out = changeFormActionAttributes(out);
-    out = changeSrcAttributes(out);
+    this.out = changeAHrefAttributes(this.out);
+    this.out = changeFormActionAttributes(this.out);
+    this.out = changeSrcAttributes(this.out);
     
-    out = changeJSOpenWindowURL(out);
+    this.out = changeJSOpenWindowURL(this.out);
 
-    out = postProcess(out,iwc);
+    this.out = postProcess(this.out,iwc);
     
     
   }
@@ -257,7 +263,7 @@ public void print(IWContext iwc)throws IOException{
     //Make images from this server (idegaweb) always follow the protocol being used http/https
     //@todo this is case sensitive and could break! move to IWContext. Also done in Link, SubmitButton, Image and PageIncluder
     if( iwc.getRequest().isSecure()  ){
-      html = TextSoap.findAndReplace(html,"src=\"http://"+serverName,"src=\"https://"+serverName);
+      html = TextSoap.findAndReplace(html,"src=\"http://"+this.serverName,"src=\"https://"+this.serverName);
     }
 
 
@@ -272,13 +278,13 @@ public void print(IWContext iwc)throws IOException{
    */
 
   private String findAndReplaceStrings(String html){
-    if( findReplaceStrings != null ){
-      Set keys = findReplaceStrings.keySet();
+    if( this.findReplaceStrings != null ){
+      Set keys = this.findReplaceStrings.keySet();
       Iterator iter = keys.iterator();
       String key;
       while (iter.hasNext()) {
         key = (String)iter.next();
-        html = TextSoap.findAndReplace(html,key,(String)findReplaceStrings.get(key));
+        html = TextSoap.findAndReplace(html,key,(String)this.findReplaceStrings.get(key));
       }
 
     }
@@ -287,8 +293,10 @@ public void print(IWContext iwc)throws IOException{
   }
 
   public void setFindAndReplaceString(String stringToFind, String stringToReplace){
-    if( findReplaceStrings == null ) findReplaceStrings = new HashMap();
-    findReplaceStrings.put(stringToFind,stringToReplace);
+    if( this.findReplaceStrings == null ) {
+		this.findReplaceStrings = new HashMap();
+	}
+    this.findReplaceStrings.put(stringToFind,stringToReplace);
   }
 
   protected String changeAHrefAttributes(String html){
@@ -345,21 +353,21 @@ public void print(IWContext iwc)throws IOException{
 */
 
     tag = tag+"=\"";
-    String prefixHttp= tag+httpPrefix;
-    String prefixHttps= tag+httpsPrefix;
+    String prefixHttp= tag+this.httpPrefix;
+    String prefixHttps= tag+this.httpsPrefix;
 
-    html = TextSoap.findAndReplace(html,tag+"//", tag+BASEURL);// the // case
-    html = TextSoap.findAndReplace(html,tag+"/", tag+BASEURL);
+    html = TextSoap.findAndReplace(html,tag+"//", tag+this.BASEURL);// the // case
+    html = TextSoap.findAndReplace(html,tag+"/", tag+this.BASEURL);
     String[] unchangedUrlsPrefixes = new String[] {"http:", "ftp:", "mailto:", "https:"}; // prefixes of urls not to modify, add as needed
-    html = TextSoap.findAndReplace(html,tag, unchangedUrlsPrefixes,tag+RELATIVEURL);
+    html = TextSoap.findAndReplace(html,tag, unchangedUrlsPrefixes,tag+this.RELATIVEURL);
 
     //System.out.println("tag+BASEURL"+tag+BASEURL);
     //System.out.println("tag+RELATIVEURL"+tag+RELATIVEURL);
 
 
-    if(forceFrame){
-      html = TextSoap.findAndReplace(html,tag+BASEURL,prefixHttp+BASEURL);// the http://baseurl case skipped the tailing /
-      html = TextSoap.findAndReplace(html,tag+BASEURLHTTPS,prefixHttps+BASEURL);// the https:// case
+    if(this.forceFrame){
+      html = TextSoap.findAndReplace(html,tag+this.BASEURL,prefixHttp+this.BASEURL);// the http://baseurl case skipped the tailing /
+      html = TextSoap.findAndReplace(html,tag+this.BASEURLHTTPS,prefixHttps+this.BASEURL);// the https:// case
     }
 
 
@@ -372,7 +380,7 @@ public void print(IWContext iwc)throws IOException{
   }
 
   protected String getSendToPageURLString(){
-    return IB_PAGE_PARAMETER+"="+_sendToPage.getID();
+    return IB_PAGE_PARAMETER+"="+this._sendToPage.getID();
   }
 
   protected String changeURLToAbsoluteValueIgnoreCase(String tag,String html){
@@ -383,13 +391,13 @@ public void print(IWContext iwc)throws IOException{
 
   protected String changeURLToAbsoluteValue(String tag,String html){
     html = TextSoap.findAndReplace(html,tag+"=\"//",tag+"=\""+"http://");// the // case
-    html = TextSoap.findAndReplace(html,tag+"=\"/",tag+"=\""+BASEURL );// the / case
-    html = TextSoap.findAndReplace(html,tag+"=\"","http://",tag+"=\""+RELATIVEURL);
+    html = TextSoap.findAndReplace(html,tag+"=\"/",tag+"=\""+this.BASEURL );// the / case
+    html = TextSoap.findAndReplace(html,tag+"=\"","http://",tag+"=\""+this.RELATIVEURL);
     return html;
   }
 
   private String symbolReplace(String html, String tag){
-    return TextSoap.findAndReplace(html,symbol+tag,"&"+tag);
+    return TextSoap.findAndReplace(html,this.symbol+tag,"&"+tag);
   }
 
   protected String encodeQueryStrings(String html){
@@ -398,7 +406,7 @@ public void print(IWContext iwc)throws IOException{
     html = TextSoap.findAndReplace(html,"&amp;","&");
     
     //laddi again, only replacing single &, a javascript issue
-    html = TextSoap.findAndReplace(html,"&","&",symbol);
+    html = TextSoap.findAndReplace(html,"&","&",this.symbol);
 
     
     //fixing this should be done with a HTMLEditor object OR
@@ -443,8 +451,8 @@ public void print(IWContext iwc)throws IOException{
     html = symbolReplace(html,"oslash;");
     html = symbolReplace(html,"Oslash;");
 
-    html = TextSoap.findAndReplace(html," "+symbol+" "," & ");
-    html = TextSoap.findAndReplace(html,symbol+" ","& ");
+    html = TextSoap.findAndReplace(html," "+this.symbol+" "," & ");
+    html = TextSoap.findAndReplace(html,this.symbol+" ","& ");
 
 //islenskir broddstafir
     html = symbolReplace(html,"aacute;");
@@ -465,7 +473,7 @@ public void print(IWContext iwc)throws IOException{
   }
 
   protected String decodeQueryString(String query){
-   return TextSoap.findAndReplace(query,symbol,"&");
+   return TextSoap.findAndReplace(query,this.symbol,"&");
   }
 
   protected String copyJavaScript(String html,IWContext iwc){
@@ -523,7 +531,7 @@ public void print(IWContext iwc)throws IOException{
   }
 
   public void setLabel(String label) {
-    _label = label;
+    this._label = label;
   }
 
   /**
@@ -533,31 +541,31 @@ public void print(IWContext iwc)throws IOException{
    * @param label The label of the PageIncluder which we want to redirect to.
    */
   public void setRedirectTo(String label) {
-    _sendToLabel = label;
+    this._sendToLabel = label;
   }
 
   public String getLabel() {
-    return _label;
+    return this._label;
   }
 
   public String getRedirectTo() {
-    return _sendToLabel;
+    return this._sendToLabel;
   }
 
   public void setSendToPage(ICPage page) {
-    _sendToPage = page;
+    this._sendToPage = page;
   }
 
   public ICPage getSendToPage() {
-    return _sendToPage;
+    return this._sendToPage;
   }
 
   public void setSendToPageIfSet(String condition) {
-    _sendToPageIfSet = condition;
+    this._sendToPageIfSet = condition;
   }
 
   public String getSendToPageIfSet() {
-    return _sendToPageIfSet;
+    return this._sendToPageIfSet;
   }
 
   public void forwardToIBPage(Page fromPage ,ICPage page, IWContext iwc) throws Exception{
@@ -566,8 +574,8 @@ public void print(IWContext iwc)throws IOException{
     URL.append(bservice.getPageURI(((Integer)page.getPrimaryKeyValue()).intValue()));
     URL.append('&');
     String query = getRequest().getQueryString();
-    if( _sendToLabel != null ){
-      query = TextSoap.findAndReplace(query,PAGE_INCLUDER_PARAMETER_NAME+instanceId,PAGE_INCLUDER_PARAMETER_NAME+_sendToLabel);
+    if( this._sendToLabel != null ){
+      query = TextSoap.findAndReplace(query,PAGE_INCLUDER_PARAMETER_NAME+this.instanceId,PAGE_INCLUDER_PARAMETER_NAME+this._sendToLabel);
     }
     URL.append(query);
 
@@ -582,8 +590,8 @@ public void print(IWContext iwc)throws IOException{
     StringBuffer location = new StringBuffer();
     String query = null;
     StringBuffer queryBuf = new StringBuffer();
-    String instanceParam = PAGE_INCLUDER_PARAMETER_NAME+instanceId;
-    String labelParam = PAGE_INCLUDER_PARAMETER_NAME+_label;
+    String instanceParam = PAGE_INCLUDER_PARAMETER_NAME+this.instanceId;
+    String labelParam = PAGE_INCLUDER_PARAMETER_NAME+this._label;
 
     //get all parameters even from post actions
     Enumeration enumer = iwc.getParameterNames();
@@ -593,7 +601,7 @@ public void print(IWContext iwc)throws IOException{
       if ( param.equals(instanceParam) || param.equals(labelParam)  ){
       	boolean canChangeURL = canChangeURLFromRequest(iwc);
       	if(canChangeURL){
-      		URL = decodeQueryString(iwc.getParameter(param));
+      		this.URL = decodeQueryString(iwc.getParameter(param));
       	}
         //System.out.println("Changing location to:"+location.toString());
       }
@@ -612,15 +620,15 @@ public void print(IWContext iwc)throws IOException{
 
     query = queryBuf.toString();
 
-    location.append(URL);
+    location.append(this.URL);
 
     if( !query.equals("") ){
-      if(URL.endsWith("/")){//check if the url ends with a slash
+      if(this.URL.endsWith("/")){//check if the url ends with a slash
         location.append("?");
       }
       else{//no slash at end
-        if( URL.indexOf("?")==-1 ){//check if the url contains a ?
-          if(URL.indexOf("/",8)!=-1){//check if the url contains a slash
+        if( this.URL.indexOf("?")==-1 ){//check if the url contains a ?
+          if(this.URL.indexOf("/",8)!=-1){//check if the url contains a slash
             location.append("?");
           }
           else{
@@ -652,28 +660,28 @@ protected String finalizeLocationString(String location, IWContext iwc) {
 }
 
 private void setPrefixes(IWContext iwc)throws Exception{
-    if (forceFrame ) {
+    if (this.forceFrame ) {
       StringBuffer buf = new StringBuffer();
       String uri = iwc.getRequestURI();
 
       buf.append(uri);
       buf.append('?');
 
-      if( _sendToPage!=null ){
+      if( this._sendToPage!=null ){
 
 
-        if ( (_sendToLabel != null) && (_sendToPageIfSet==null) ){
+        if ( (this._sendToLabel != null) && (this._sendToPageIfSet==null) ){
           buf.append(getSendToPageURLString());
           buf.append('&');
           buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-          buf.append(_sendToLabel);
+          buf.append(this._sendToLabel);
           buf.append('=');
         }
         else{
           buf.append(getCurrentIBPageIDToURLString(iwc));
           buf.append('&');
           buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-          buf.append(instanceId);
+          buf.append(this.instanceId);
           buf.append('=');
         }
       }
@@ -681,21 +689,21 @@ private void setPrefixes(IWContext iwc)throws Exception{
         buf.append(getCurrentIBPageIDToURLString(iwc));
         buf.append('&');
 
-        if ( (_sendToLabel != null) && (_sendToPageIfSet==null) ){
+        if ( (this._sendToLabel != null) && (this._sendToPageIfSet==null) ){
           buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-          buf.append(_sendToLabel);
+          buf.append(this._sendToLabel);
           buf.append('=');
         }
         else{
           buf.append(PAGE_INCLUDER_PARAMETER_NAME);
-          buf.append(instanceId);
+          buf.append(this.instanceId);
           buf.append('=');
         }
       }
 
-      pageIncluderPrefix = buf.toString();
+      this.pageIncluderPrefix = buf.toString();
 
-      if( useSecureLinks ){
+      if( this.useSecureLinks ){
         buf.append("https://");
         buf.append(iwc.getServerName());
       }
@@ -703,24 +711,24 @@ private void setPrefixes(IWContext iwc)throws Exception{
       
       StringBuffer buf2 = new StringBuffer();
       
-      buf2.append("http://").append(serverName).append(pageIncluderPrefix);
+      buf2.append("http://").append(this.serverName).append(this.pageIncluderPrefix);
       //.append("http://");
-      httpPrefix = buf2.toString();
+      this.httpPrefix = buf2.toString();
 
       //System.out.println("httpPrefix"+httpPrefix);
 
-      httpsPrefix = "https://"+httpPrefix.substring(7,httpPrefix.length());
+      this.httpsPrefix = "https://"+this.httpPrefix.substring(7,this.httpPrefix.length());
 
       //System.out.println("httpSPrefix"+httpsPrefix);
       //System.out.println("PAGEINCLUDER PREFIX = "+pageIncluderPrefix);
     }
     else {
-      pageIncluderPrefix ="";
+      this.pageIncluderPrefix ="";
     }
   }
 
 	private String changeJSOpenWindowURL(String html) {
-		String regex = ":openwindow\\(\\\'\\/servlet\\/WindowOpener\\??[\\w+\\=\\-?.+\\"+symbol+"?]*\\\',";
+		String regex = ":openwindow\\(\\\'\\/servlet\\/WindowOpener\\??[\\w+\\=\\-?.+\\"+this.symbol+"?]*\\\',";
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(html);	
 		StringBuffer sb = new StringBuffer();
@@ -731,10 +739,10 @@ private void setPrefixes(IWContext iwc)throws Exception{
 			Pattern pURL = Pattern.compile(rURL);
 			Matcher mURL = pURL.matcher(matcher.group());
 			while(mURL.find()) {
-				mURL.appendReplacement(sbURL,"('"+BASEURL+"servlet");
+				mURL.appendReplacement(sbURL,"('"+this.BASEURL+"servlet");
 			}
 			mURL.appendTail(sbURL);
-			String rSymbol = "\\"+symbol;
+			String rSymbol = "\\"+this.symbol;
 			Pattern pSymbol = Pattern.compile(rSymbol);
 			Matcher mSymbol = pSymbol.matcher(sbURL.toString());
 			while(mSymbol.find()) {
@@ -751,11 +759,11 @@ private void setPrefixes(IWContext iwc)throws Exception{
 	
 	public void setToAddRequiredIPOrDomain(String allowedIpOrDomain){
 		
-		if(allowedDomainsAndIPNumberMap==null){
-			allowedDomainsAndIPNumberMap = new HashMap();
+		if(this.allowedDomainsAndIPNumberMap==null){
+			this.allowedDomainsAndIPNumberMap = new HashMap();
 		}
 		
-		allowedDomainsAndIPNumberMap.put(allowedIpOrDomain,allowedIpOrDomain);//map to avoid adding endlessly into a list in the builder
+		this.allowedDomainsAndIPNumberMap.put(allowedIpOrDomain,allowedIpOrDomain);//map to avoid adding endlessly into a list in the builder
 		
 	}
 	

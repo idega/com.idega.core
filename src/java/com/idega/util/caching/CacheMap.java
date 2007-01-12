@@ -43,15 +43,15 @@ public class CacheMap extends HashMap implements Map
 	}
 	public int getMaxNumberOfObjects()
 	{
-		return maxNumberOfObjectsInMap;
+		return this.maxNumberOfObjectsInMap;
 	}
 	private Map getAcesses()
 	{
-		if (accesses == null)
+		if (this.accesses == null)
 		{
-			accesses = new HashMap();
+			this.accesses = new HashMap();
 		}
-		return accesses;
+		return this.accesses;
 	}
 
 	protected synchronized void reduce(int byCount)
@@ -158,21 +158,21 @@ public class CacheMap extends HashMap implements Map
 	public synchronized void clear()
 	{
 		super.clear();
-		accesses.clear();
+		this.accesses.clear();
 	}
 	
 	protected class AccessCount implements Comparable{
 		int intValue=0;
 		Object oKey;
 		protected AccessCount(Object key){
-			oKey=key;
+			this.oKey=key;
 		}
 
 		public void increment(){
-			intValue++;
+			this.intValue++;
 		}
 		public int getCount(){
-			return intValue;
+			return this.intValue;
 		}
 		
 		public int compareTo(Object o){
@@ -184,7 +184,7 @@ public class CacheMap extends HashMap implements Map
 		}
 		
 		public Object getKey(){
-			return oKey;	
+			return this.oKey;	
 		}
 	}
 	
@@ -232,7 +232,7 @@ public class CacheMap extends HashMap implements Map
 					Object value = map.get(key);
 					System.out.print("Key "+key+"="+value);
 					if(map instanceof CacheMap){
-						CacheMap cMap = (CacheMap)map;
+						CacheMap cMap = map;
 						System.out.print(" - With accesses: "+cMap.getAcesses().get(key));
 					}
 					System.out.println("");

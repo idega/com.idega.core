@@ -36,24 +36,24 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 */
 	public GenericEntityDefinition() {
 		super();
-		_pkDefinition = new PrimaryKeyDefinition(this);
+		this._pkDefinition = new PrimaryKeyDefinition(this);
 	}
 
 	public void addManyToManyRelatedEntity(IDOEntityDefinition def) {
 		if (!containsEquivalentRelation(def)) {
-			int length = _manyToManyRelatedEntities.length;
+			int length = this._manyToManyRelatedEntities.length;
 			IDOEntityDefinition[] tempArray = new IDOEntityDefinition[length + 1];
-			System.arraycopy(_manyToManyRelatedEntities, 0, tempArray, 0, length);
+			System.arraycopy(this._manyToManyRelatedEntities, 0, tempArray, 0, length);
 			tempArray[length] = def;
-			_manyToManyRelatedEntities = tempArray;
+			this._manyToManyRelatedEntities = tempArray;
 		} else {
 			//System.err.println(this.getUniqueEntityName() + ": already contains relation to " + def.getUniqueEntityName());
 		}
 	}
 
 	protected boolean containsEquivalentRelation(IDOEntityDefinition def) {
-		for (int i = 0; i < _manyToManyRelatedEntities.length; i++) {
-			if (_manyToManyRelatedEntities[i].getSQLTableName().equals(def.getSQLTableName())) {
+		for (int i = 0; i < this._manyToManyRelatedEntities.length; i++) {
+			if (this._manyToManyRelatedEntities[i].getSQLTableName().equals(def.getSQLTableName())) {
 				return true;
 			}
 		}
@@ -68,14 +68,14 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 				setFieldAsPartOfPrimaryKey(field);
 			}
 			if (!containsEquivalentField(field)) {
-				int length = _fields.length;
+				int length = this._fields.length;
 				EntityAttribute[] tempArray = new EntityAttribute[length + 1];
-				System.arraycopy(_fields, 0, tempArray, 0, length);
-				tempArray[length] = (EntityAttribute)field;
+				System.arraycopy(this._fields, 0, tempArray, 0, length);
+				tempArray[length] = field;
 				if(field.getDeclaredEntity()== null){
-					((EntityAttribute)field).setDeclaredEntity(this);
+					(field).setDeclaredEntity(this);
 				}
-				_fields = tempArray;
+				this._fields = tempArray;
 			} else {
 				System.err.println(this.getUniqueEntityName() + ": already contains equivalent field \"" + field.getSQLFieldName() + "\"");
 			}
@@ -86,8 +86,8 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	}
 
 	protected boolean containsEquivalentField(IDOEntityField field) {
-		for (int i = 0; i < _fields.length; i++) {
-			if (_fields[i].getSQLFieldName().equals(field.getSQLFieldName())) {
+		for (int i = 0; i < this._fields.length; i++) {
+			if (this._fields[i].getSQLFieldName().equals(field.getSQLFieldName())) {
 				return true;
 			}
 		}
@@ -95,23 +95,23 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	}
 	
 	public void setFieldAsPartOfPrimaryKey(IDOEntityField field){
-		_pkDefinition.addFieldEntity(field);
+		this._pkDefinition.addFieldEntity(field);
 	}
 
 	public void setUniqueEntityName(String name) {
-		_uniqueEntityName = name;
+		this._uniqueEntityName = name;
 	}
 
 	public void setSQLTableName(String name) {
-		_sqlTableName = name;
+		this._sqlTableName = name;
 	}
 	
 	
 	public HashMap getIndexes() throws NoIndexException{
-		if (_indexes == null) {
+		if (this._indexes == null) {
 			throw new NoIndexException("No Indexes");
 		}
-		return _indexes;
+		return this._indexes;
 	}
 
 	public void addIndex(String field) {
@@ -124,10 +124,10 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	
 	public void addIndex(String name, String[] fields) {
 		if (name != null && !name.equals("") && fields != null && fields.length > 0) {
-			if (_indexes == null) {
-				_indexes = new HashMap();
+			if (this._indexes == null) {
+				this._indexes = new HashMap();
 			}
-			_indexes.put(name, fields);
+			this._indexes.put(name, fields);
 		} else {
 			throw new IllegalArgumentException("Name must and fields must bet be set");
 		}
@@ -135,25 +135,25 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	
 	
 	public EntityAttribute getEntityAttribute(String attributeName){
-		for (int i = 0; i < _fields.length; i++) {
-			if (_fields[i].getSQLFieldName().equals(attributeName)) {
-				return _fields[i];
+		for (int i = 0; i < this._fields.length; i++) {
+			if (this._fields[i].getSQLFieldName().equals(attributeName)) {
+				return this._fields[i];
 			}
 		}
 		return null;
 	}
 	
 	public Collection getEntityFieldsCollection(){
-		Vector coll = new Vector(_fields.length);
-		for (int i = 0; i < _fields.length; i++) {
-			coll.add(_fields[i]);
+		Vector coll = new Vector(this._fields.length);
+		for (int i = 0; i < this._fields.length; i++) {
+			coll.add(this._fields[i]);
 		}
 		return coll;
 	}
 	
 	
 	public void setInterfaceClass(Class interfaceClass){
-		_interfaceClass = interfaceClass;
+		this._interfaceClass = interfaceClass;
 	}
 	
 
@@ -163,28 +163,28 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 * @see com.idega.data.IDOEntityDefinition#getUniqueEntityName()
 	 */
 	public String getUniqueEntityName() {
-		return _uniqueEntityName;
+		return this._uniqueEntityName;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityDefinition#getSQLTableName()
 	 */
 	public String getSQLTableName() {
-		return _sqlTableName;
+		return this._sqlTableName;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityDefinition#getManyToManyRelatedEntities()
 	 */
 	public IDOEntityDefinition[] getManyToManyRelatedEntities() {
-		return _manyToManyRelatedEntities;
+		return this._manyToManyRelatedEntities;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityDefinition#getFields()
 	 */
 	public IDOEntityField[] getFields() {
-		return _fields;
+		return this._fields;
 	}
 
 	/* (non-Javadoc)
@@ -192,42 +192,44 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 */
 
 	public IDOPrimaryKeyDefinition getPrimaryKeyDefinition() {
-		return _pkDefinition;
+		return this._pkDefinition;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityDefinition#getInterfaceClass()
 	 */
 	public Class getInterfaceClass() {
-		return _interfaceClass;
+		return this._interfaceClass;
 	}
 	
 	public Class getBeanClass() {
-		if(_beanClass == null){
-			_beanClass = IDOLookup.getBeanClassFor(_interfaceClass);
+		if(this._beanClass == null){
+			this._beanClass = IDOLookup.getBeanClassFor(this._interfaceClass);
 		}
-		return _beanClass;
+		return this._beanClass;
 	}
 	
 	public IDOEntityField[] findFieldByRelation(Class interfaceClass){
 		ArrayList list = new ArrayList();
-		for (int i = 0; i < _fields.length; i++) {
-			if(_fields[i].getRelationShipClass().equals(interfaceClass)){
-				list.add(_fields[i]);
+		for (int i = 0; i < this._fields.length; i++) {
+			if(this._fields[i].getRelationShipClass().equals(interfaceClass)){
+				list.add(this._fields[i]);
 			}
 		}
-		if(list.size() > 0)
+		if(list.size() > 0) {
 			return (IDOEntityField[])list.toArray(new IDOEntityField[list.size()]);
-		else
+		}
+		else {
 			return new IDOEntityField[0];
+		}
 	}
 
 	// IDOEntityDefinition ends //
 
 	public IDOEntityField findFieldByUniqueName(String name){
-		for (int i = 0; i < _fields.length; i++) {
-			if(_fields[i].getUniqueFieldName().equalsIgnoreCase(name)){
-				return 	_fields[i];
+		for (int i = 0; i < this._fields.length; i++) {
+			if(this._fields[i].getUniqueFieldName().equalsIgnoreCase(name)){
+				return 	this._fields[i];
 			}
 		}
 		return null;
@@ -238,7 +240,9 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		if(field!=null){
 			return true;
 		}
-		else return false;
+		else {
+			return false;
+		}
 	}
 	
 	/* 
@@ -247,7 +251,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	public boolean equals(Object obj) {
 		if (obj instanceof IDOEntityDefinition) {
 			IDOEntityDefinition compareObject = (IDOEntityDefinition) obj;
-			return compareObject.getSQLTableName().equals(_sqlTableName) && _interfaceClass.equals(compareObject.getInterfaceClass());
+			return compareObject.getSQLTableName().equals(this._sqlTableName) && this._interfaceClass.equals(compareObject.getInterfaceClass());
 		}
 		return false;
 	}
@@ -256,7 +260,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 * @see com.idega.data.IDOEntityDefinition#getMiddleTableNameForRelation(java.lang.String)
 	 */
 	public String getMiddleTableNameForRelation(String relatedTable) {
-		EntityRelationship rel = EntityControl.getManyToManyRelationShip(_sqlTableName, relatedTable);
+		EntityRelationship rel = EntityControl.getManyToManyRelationShip(this._sqlTableName, relatedTable);
 		if (rel != null) {
 			return rel.getTableName();
 		} else {
@@ -267,23 +271,23 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 * @return Returns the _hasAutoIncrementColumn.
 	 */
 	public boolean hasAutoIncrementColumn() {
-		return _hasAutoIncrementColumn;
+		return this._hasAutoIncrementColumn;
 	}
 	/**
 	 * @param autoIncrementColumn The _hasAutoIncrementColumn to set.
 	 */
 	public void setHasAutoIncrementColumn(boolean autoIncrementColumn) {
-		_hasAutoIncrementColumn = autoIncrementColumn;
+		this._hasAutoIncrementColumn = autoIncrementColumn;
 	}
 
 	/**
 	 * @return Boolean.TRUE if active by default, Boolean.FALSE if inactive by default, null if system-default
 	 */
 	public Boolean isBeanCachingActive() {
-		return _isBeanCachingActive;
+		return this._isBeanCachingActive;
 	}
 	
 	public void setBeanCachingActiveByDefault(boolean value){
-		_isBeanCachingActive = ((value)?Boolean.TRUE:Boolean.FALSE);
+		this._isBeanCachingActive = ((value)?Boolean.TRUE:Boolean.FALSE);
 	}
 }

@@ -87,10 +87,10 @@ public class DXAttributes implements Attributes
     // common code run by all the more basic constructors.
     void basicInit()
     {
-        id = ID++;
+        this.id = ID++;
 
-        atts = new Hashtable();
-        must = new HashSet();
+        this.atts = new Hashtable();
+        this.must = new HashSet();
 
 //        schema = null;
     }
@@ -123,13 +123,13 @@ public class DXAttributes implements Attributes
 
         if (a==null)
         {
-            atts = new Hashtable();
-            must = new HashSet();
+            this.atts = new Hashtable();
+            this.must = new HashSet();
         }
         else
         {
-            atts = new Hashtable(a.size()+10);
-            must = new HashSet(a.size());   // overkill, but what the heck...
+            this.atts = new Hashtable(a.size()+10);
+            this.must = new HashSet(a.size());   // overkill, but what the heck...
             
             Enumeration e = a.getAll();
             while (e.hasMoreElements())
@@ -149,7 +149,7 @@ public class DXAttributes implements Attributes
 
     public DXAttributes(Hashtable newAtts)
     {
-        atts = (Hashtable) newAtts.clone();
+        this.atts = (Hashtable) newAtts.clone();
     }
 
 
@@ -162,11 +162,11 @@ public class DXAttributes implements Attributes
 
     public DXAttributes(NamingEnumeration newAtts)
     {
-        atts = new Hashtable();
+        this.atts = new Hashtable();
         while (newAtts.hasMoreElements())
         {
             Attribute current = (Attribute) newAtts.nextElement();
-            atts.put(current.getID().toLowerCase(), current);
+            this.atts.put(current.getID().toLowerCase(), current);
         }
     }
 
@@ -182,7 +182,7 @@ public class DXAttributes implements Attributes
     }
 
 
-    public int getID() { return id; }
+    public int getID() { return this.id; }
 
     /**
      *    creates a new DXAttributes, copying each Attribute object.
@@ -191,7 +191,7 @@ public class DXAttributes implements Attributes
 
     public Object clone()
     {
-        return new DXAttributes(atts);
+        return new DXAttributes(this.atts);
     }
 
     /**
@@ -203,10 +203,10 @@ public class DXAttributes implements Attributes
 
     public Attribute get(java.lang.String attrID)
     {
-        Attribute ret = (Attribute) atts.get(attrID.toLowerCase());
+        Attribute ret = (Attribute) this.atts.get(attrID.toLowerCase());
         if (ret==null)
         {
-            ret = (Attribute) atts.get(attrID.toLowerCase() + ";binary");
+            ret = (Attribute) this.atts.get(attrID.toLowerCase() + ";binary");
         }
 
         return ret;
@@ -219,7 +219,7 @@ public class DXAttributes implements Attributes
      */
     public NamingEnumeration getAll()
     {
-        return (new DXNamingEnumeration (atts.elements())).sort();
+        return (new DXNamingEnumeration (this.atts.elements())).sort();
     }
 
     /**
@@ -259,8 +259,9 @@ public class DXAttributes implements Attributes
             {
                 try
                 {
-                    if (fnord.get() != null)            // if there is at least one non-null value...
-                        returnEnumeration.add(fnord);   // add it to the list
+                    if (fnord.get() != null) {
+						returnEnumeration.add(fnord);   // add it to the list
+					}
                 }
                 catch (NoSuchElementException e)        // 'expected' exception (love that jndi)
                 {
@@ -287,9 +288,11 @@ public class DXAttributes implements Attributes
     {
         DXNamingEnumeration returnEnumeration = new DXNamingEnumeration ();
 
-        if (must==null) return returnEnumeration;  // return empty enumeration if not initialised...
+        if (this.must==null) {
+			return returnEnumeration;  // return empty enumeration if not initialised...
+		}
 
-        Iterator musts = must.iterator();
+        Iterator musts = this.must.iterator();
         while (musts.hasNext())
         {
             String s = (String)musts.next();
@@ -309,7 +312,7 @@ public class DXAttributes implements Attributes
 
     public HashSet getMandatoryIDs()
     {
-        return must;
+        return this.must;
     }
 
 
@@ -322,12 +325,13 @@ public class DXAttributes implements Attributes
     public NamingEnumeration getOptional()
     {
         DXNamingEnumeration returnEnumeration = new DXNamingEnumeration ();
-        Enumeration allIDs = atts.keys();
+        Enumeration allIDs = this.atts.keys();
         while (allIDs.hasMoreElements())
         {
             String id = (String) allIDs.nextElement();
-            if (must.contains(id)==false)    // if it's *not* mandatory
-                returnEnumeration.add(get(id)); // add it to the optional list
+            if (this.must.contains(id)==false) {
+				returnEnumeration.add(get(id)); // add it to the optional list
+			}
         }
         returnEnumeration.sort();
 
@@ -346,8 +350,9 @@ public class DXAttributes implements Attributes
         // cannot simply return hash keys, as they are standardised to lower case.
         DXNamingEnumeration ret = new DXNamingEnumeration();
         NamingEnumeration allAtts = getAll();
-        while (allAtts.hasMoreElements())
-            ret.add(((Attribute)allAtts.nextElement()).getID());
+        while (allAtts.hasMoreElements()) {
+			ret.add(((Attribute)allAtts.nextElement()).getID());
+		}
 
         return ret;
 
@@ -364,7 +369,7 @@ public class DXAttributes implements Attributes
 
     public boolean isCaseIgnored()
     {
-        return ignoreCase;
+        return this.ignoreCase;
     }
 
     /**
@@ -379,21 +384,25 @@ public class DXAttributes implements Attributes
 
     public Attribute put(Attribute attr)
     {
-        if (attr == null) return null; // sanity check - can't add a null attribute...
+        if (attr == null) {
+			return null; // sanity check - can't add a null attribute...
+		}
 
         Attribute old = get(attr.getID().toLowerCase());
-        schemaChecked = false;
+        this.schemaChecked = false;
 
         if (old!=null)
         {
-            atts.remove(old.getID().toLowerCase()); // code for *replacing* existing attribute values
+            this.atts.remove(old.getID().toLowerCase()); // code for *replacing* existing attribute values
         }
 
         String ID = attr.getID().toLowerCase();
-        if (attr instanceof DXAttribute)
-            atts.put(ID, attr);
-        else
-            atts.put(ID, new DXAttribute(attr));
+        if (attr instanceof DXAttribute) {
+			this.atts.put(ID, attr);
+		}
+		else {
+			this.atts.put(ID, new DXAttribute(attr));
+		}
 
         return old;
     }
@@ -414,7 +423,7 @@ public class DXAttributes implements Attributes
 
     public Attribute put(java.lang.String attrID, java.lang.Object val)
     {
-        schemaChecked = false;
+        this.schemaChecked = false;
         return put(new DXAttribute(attrID.toLowerCase(), val));
     }
 
@@ -429,10 +438,12 @@ public class DXAttributes implements Attributes
         while (attributeList.hasMoreElements())
         {
             Attribute a = (Attribute)attributeList.nextElement();
-            if (a instanceof DXAttribute)
-                put(a);
-            else
-                put(new DXAttribute(a));
+            if (a instanceof DXAttribute) {
+				put(a);
+			}
+			else {
+				put(new DXAttribute(a));
+			}
         }
     }
 
@@ -444,8 +455,8 @@ public class DXAttributes implements Attributes
 
     public Attribute remove(java.lang.String attrID)
     {
-        schemaChecked = false;
-        return (Attribute) atts.remove(attrID.toLowerCase());
+        this.schemaChecked = false;
+        return (Attribute) this.atts.remove(attrID.toLowerCase());
     }
 
     /**
@@ -455,7 +466,7 @@ public class DXAttributes implements Attributes
      */
     public int size()
     {
-        return atts.size();
+        return this.atts.size();
     }
 
     /**
@@ -501,7 +512,7 @@ public class DXAttributes implements Attributes
 */
     public void setAllObjectClasses()
     {
-        allObjectClasses = getAllObjectClasses();
+        this.allObjectClasses = getAllObjectClasses();
     }
 
     /**
@@ -513,8 +524,9 @@ public class DXAttributes implements Attributes
         try
         {
             Attribute oc = getAllObjectClasses();
-            if (oc == null) 
-                return null;
+            if (oc == null) {
+				return null;
+			}
                 
             ret = new Vector(oc.size());
             NamingEnumeration vals = oc.getAll();
@@ -537,10 +549,12 @@ public class DXAttributes implements Attributes
         
 		if (att != null)	//TE: check that the attribute is set.
 		{
-	        if (att instanceof DXAttribute)
-	            return getAllObjectClasses((DXAttribute)att);
-	        else
-	            return getAllObjectClasses(new DXAttribute(att));			
+	        if (att instanceof DXAttribute) {
+				return getAllObjectClasses((DXAttribute)att);
+			}
+			else {
+				return getAllObjectClasses(new DXAttribute(att));
+			}			
 		}
 		return null;	//TE: return null if att is null.
     }
@@ -559,10 +573,13 @@ public class DXAttributes implements Attributes
 
     public static DXAttribute getAllObjectClasses(DXAttribute oc)
     {
-        if (oc==null) return null; // no object classes (may be virtual entry such as DSA prefix)
+        if (oc==null) {
+			return null; // no object classes (may be virtual entry such as DSA prefix)
+		}
 
-        if (knownSubSets.containsKey(oc))
-            return(DXAttribute) knownSubSets.get(oc);
+        if (knownSubSets.containsKey(oc)) {
+			return(DXAttribute) knownSubSets.get(oc);
+		}
 
         try
         {
@@ -620,8 +637,9 @@ public class DXAttributes implements Attributes
                 {
                 	getParentObjectClasses(val);  // try again to set the objectClassDepths hash for this value. (probably won't work).
                 	myInt = (Integer)objectClassDepths.get(val); // and try to reget the value.
-                	if (myInt == null) 			  // if still null, give up and set to zero.
-                		myInt = new Integer(0);
+                	if (myInt == null) {
+						myInt = new Integer(0);
+					}
                 }
                 int depth = myInt.intValue();
                 int i;
@@ -634,8 +652,9 @@ public class DXAttributes implements Attributes
                         break;
                     }
                 }
-                if (i == -1)
-                    ret.add(0, val);
+                if (i == -1) {
+					ret.add(0, val);
+				}
             }
             return ret;
         }
@@ -665,7 +684,9 @@ public class DXAttributes implements Attributes
             return null;
         }
 
-        if ("schema attributedefinition classdefinition syntaxdefinition matchingrule".indexOf(childOC.toLowerCase()) != -1) return null;  // don't bother looking up synthetic object classes.
+        if ("schema attributedefinition classdefinition syntaxdefinition matchingrule".indexOf(childOC.toLowerCase()) != -1) {
+			return null;  // don't bother looking up synthetic object classes.
+		}
 
         if (knownParents.containsKey(childOC))
         {
@@ -682,8 +703,9 @@ public class DXAttributes implements Attributes
             if (schemaDef!=null)
             {
                 Attribute sup = schemaDef.get("SUP");
-                if (sup!=null)
-                    schemaParent = (String)sup.get();
+                if (sup!=null) {
+					schemaParent = (String)sup.get();
+				}
             }
         }
         catch (NamingException e) // easily throws a name-not-found exception
@@ -718,8 +740,9 @@ public class DXAttributes implements Attributes
             else
             {
                 int oldDepth = ((Integer)objectClassDepths.get(childOC)).intValue();
-                if (oldDepth <= depth)
-                    objectClassDepths.put(childOC, new Integer(depth+1));
+                if (oldDepth <= depth) {
+					objectClassDepths.put(childOC, new Integer(depth+1));
+				}
             }
         }
         else  // no schemaParents
@@ -767,9 +790,11 @@ public class DXAttributes implements Attributes
     void setOrderedSOCs(String oc)
         throws NamingException
     {
-        orderedSOCs.add(oc);
+        this.orderedSOCs.add(oc);
 
-        if (oc.equalsIgnoreCase("top")) return;  // recursive search finished.
+        if (oc.equalsIgnoreCase("top")) {
+			return;  // recursive search finished.
+		}
 
 
         String parent = schema.schemaLookup("ClassDefinition/" + oc, "SUP");
@@ -822,10 +847,16 @@ public class DXAttributes implements Attributes
         }
 
         // XXX ;binary hack.
-        if (oid.endsWith(";binary")) oid = oid.substring(0,oid.indexOf(";binary"));
-        if (ldapName.endsWith(";binary")) ldapName = ldapName.substring(0,ldapName.indexOf(";binary"));
+        if (oid.endsWith(";binary")) {
+			oid = oid.substring(0,oid.indexOf(";binary"));
+		}
+        if (ldapName.endsWith(";binary")) {
+			ldapName = ldapName.substring(0,ldapName.indexOf(";binary"));
+		}
 
-        if (attOIDs.contains(oid)==true) return false;
+        if (attOIDs.contains(oid)==true) {
+			return false;
+		}
         attOIDs.put(oid, ldapName);    // add it to the list...
         return true;
     }
@@ -841,8 +872,9 @@ public class DXAttributes implements Attributes
         while (atts.hasMoreElements())
         {
             Attribute att = (Attribute)atts.nextElement();
-            if (att.size() == 0)
-                remove(att.getID());
+            if (att.size() == 0) {
+				remove(att.getID());
+			}
         }
     }
 
@@ -866,7 +898,9 @@ public class DXAttributes implements Attributes
 
     public void expandAllAttributes()
     {
-        if (schema == null) return;
+        if (schema == null) {
+			return;
+		}
 
         Attribute oc = null;
         oc = getAllObjectClasses();
@@ -876,8 +910,9 @@ public class DXAttributes implements Attributes
         // Quick Hack to eliminate 'fake attributes' used for top level of syntaxes...
         //XXX Might want to redo if efficiency is ever a concern :-)
 
-            if (oc.contains(SchemaOps.SCHEMA_FAKE_OBJECT_CLASS_NAME) )
-                return;  // ignore the synthetic 'schema' object classes...
+            if (oc.contains(SchemaOps.SCHEMA_FAKE_OBJECT_CLASS_NAME) ) {
+				return;  // ignore the synthetic 'schema' object classes...
+			}
 
             NamingEnumeration ocs = oc.getAll();
 
@@ -897,7 +932,9 @@ public class DXAttributes implements Attributes
                         String attOID = (String) musts.next();
 
                         //XXX binary hack
-                        if (attOID.indexOf(";binary")>0) attOID = attOID.substring(0,attOID.indexOf(";binary"));
+                        if (attOID.indexOf(";binary")>0) {
+							attOID = attOID.substring(0,attOID.indexOf(";binary"));
+						}
 
                         String ldapName = getldapName(attOID);
 
@@ -908,9 +945,9 @@ public class DXAttributes implements Attributes
                             //CB empty atts now. put(new DXAttribute(getldapName(attOID), null));   // ... add it to the list
                         }
 
-                        if (must.contains(ldapName.toLowerCase())==false)            // and if it isn't already mandatory
+                        if (this.must.contains(ldapName.toLowerCase())==false)            // and if it isn't already mandatory
                         {
-                            must.add(ldapName.toLowerCase());                        // ... add it to the mandatory list as well
+                            this.must.add(ldapName.toLowerCase());                        // ... add it to the mandatory list as well
                         }
                     }
                 }
@@ -922,7 +959,9 @@ public class DXAttributes implements Attributes
                     {
                         String attOID = (String) mays.next();
                         //XXX binary hack
-                        if (attOID.indexOf(";binary")>0) attOID = attOID.substring(0,attOID.indexOf(";binary"));
+                        if (attOID.indexOf(";binary")>0) {
+							attOID = attOID.substring(0,attOID.indexOf(";binary"));
+						}
 
                         String ldapName = getldapName(attOID);
                         registerOID(attOID, ldapName);
@@ -954,8 +993,9 @@ public class DXAttributes implements Attributes
         {
             CBUtility.log("ERROR: unable to read list of object classes from schema - some functionality will not be available");
             StackTraceElement trace[] = e.getStackTrace();
-            for (int i=0; i<trace.length; i++)
-                CBUtility.log("   " + trace[i].toString());
+            for (int i=0; i<trace.length; i++) {
+				CBUtility.log("   " + trace[i].toString());
+			}
         }
     }
 
@@ -1028,24 +1068,28 @@ public class DXAttributes implements Attributes
         while (allatts.hasMoreElements())
         {
             Attribute fnord = (Attribute) allatts.nextElement();
-            if (fnord == null)
-                CBUtility.log("bizarre null attribute in element list");
-            else
+            if (fnord == null) {
+				CBUtility.log("bizarre null attribute in element list");
+			}
+			else
             {
-                if (must != null && must.contains(fnord.getID()))
-                    text.append("must ");
+                if (this.must != null && this.must.contains(fnord.getID())) {
+					text.append("must ");
+				}
 
-                if (fnord instanceof DXAttribute)
-                    text.append("dx " + fnord.toString());
-                else
+                if (fnord instanceof DXAttribute) {
+					text.append("dx " + fnord.toString());
+				}
+				else
                 {
                     String ID = fnord.getID();
                     text.append("\n    " + ID + " (not DXAttribute)" );
                     try
                     {
-                        if (fnord.size() == 0)
-                            text.append("        " + " (empty) ");
-                        else
+                        if (fnord.size() == 0) {
+							text.append("        " + " (empty) ");
+						}
+						else
                         {
                             Enumeration vals = fnord.getAll();
 
@@ -1071,13 +1115,17 @@ public class DXAttributes implements Attributes
 
     public void print(String msg)
     {
-        if (msg!=null) System.out.println(msg);
+        if (msg!=null) {
+			System.out.println(msg);
+		}
         printAttributes(this);
     }
 
     public static void printAttributes(Attributes a)
     {
-        if (a==null) System.out.println("null attributes set");
+        if (a==null) {
+			System.out.println("null attributes set");
+		}
         NamingEnumeration allatts = a.getAll();
 
         printAttributeList(allatts);
@@ -1088,9 +1136,10 @@ public class DXAttributes implements Attributes
         while (enumer.hasMoreElements())
         {
             Attribute fnord = (Attribute) enumer.nextElement();
-            if (fnord == null)
-                CBUtility.log("bizarre null attribute in element list");
-            else
+            if (fnord == null) {
+				CBUtility.log("bizarre null attribute in element list");
+			}
+			else
             {
                 String ID = fnord.getID();
                 System.out.println("    " + ID);
@@ -1189,11 +1238,13 @@ public class DXAttributes implements Attributes
                     DXNamingEnumeration valuesToAdd = getMissingValues(oldAtt.getAll(), newAtt.getAll());
                     
                     // check for distinguished value, and ignore it...
-                    if (isNamingAttribute)
-                    	removeAnyDistinguishedValues(newRDN, attributeName, valuesToAdd);
+                    if (isNamingAttribute) {
+						removeAnyDistinguishedValues(newRDN, attributeName, valuesToAdd);
+					}
 
-                    if (valuesToAdd.size()>0)  
-                        additionSet.put(new DXAttribute(attributeName, valuesToAdd));
+                    if (valuesToAdd.size()>0) {
+						additionSet.put(new DXAttribute(attributeName, valuesToAdd));
+					}
                 }    
             }            
         }
@@ -1248,8 +1299,9 @@ public class DXAttributes implements Attributes
 		            if (oldAtt != null && oldAtt.size() == 1)	// only look at changed single valued attributes.
 		            {
 		                // if  a single valued attribute has changed, make it a 'replace' op.
-		                if (attributesEqual(newAtt, oldAtt)==false)
-		                    replacementSet.put(newAtt);    
+		                if (attributesEqual(newAtt, oldAtt)==false) {
+							replacementSet.put(newAtt);
+						}    
 		            }					
 	            }
 			}				
@@ -1297,8 +1349,9 @@ public class DXAttributes implements Attributes
 
 	            Attribute newAtt = newSet.get(attributeName);
 
-                if (newAtt == null)             
-               		newAtt = new DXAttribute(attributeName);
+                if (newAtt == null) {
+					newAtt = new DXAttribute(attributeName);
+				}
 				
                 /*
                  *    Check for simple "whole attribute" deletes
@@ -1318,11 +1371,13 @@ public class DXAttributes implements Attributes
                 {
                     DXNamingEnumeration valuesToDelete = getMissingValues(newAtt.getAll(), oldAtt.getAll());
                     // check for distinguished value, and ignore it...
-                    if (isNamingAttribute)
-                    	removeAnyDistinguishedValues(newRDN, attributeName, valuesToDelete);
+                    if (isNamingAttribute) {
+						removeAnyDistinguishedValues(newRDN, attributeName, valuesToDelete);
+					}
 
-                    if (valuesToDelete.size()>0)  
-                        deletionSet.put(new DXAttribute(attributeName, valuesToDelete));
+                    if (valuesToDelete.size()>0) {
+						deletionSet.put(new DXAttribute(attributeName, valuesToDelete));
+					}
                 } 				
             }
         }
@@ -1340,13 +1395,27 @@ public class DXAttributes implements Attributes
 	    throws NamingException
 	{
 	    // sanity checks...
-	    if (a == null && b == null) return true;
-	    if (a == null || b == null) return false;
-	    if (a.size() == 0 && b.size() == 0) return true;
-	    if (a.size() != b.size()) return false;
-	    if (a.get() == null && b.get() == null) return true;
-	    if (a.get() == null || b.get() == null) return false;
-	    if (a.getID().equalsIgnoreCase(b.getID())==false) return false;
+	    if (a == null && b == null) {
+			return true;
+		}
+	    if (a == null || b == null) {
+			return false;
+		}
+	    if (a.size() == 0 && b.size() == 0) {
+			return true;
+		}
+	    if (a.size() != b.size()) {
+			return false;
+		}
+	    if (a.get() == null && b.get() == null) {
+			return true;
+		}
+	    if (a.get() == null || b.get() == null) {
+			return false;
+		}
+	    if (a.getID().equalsIgnoreCase(b.getID())==false) {
+			return false;
+		}
 
 
 	    try
@@ -1368,19 +1437,26 @@ public class DXAttributes implements Attributes
 	 
 	public static boolean attributesEqual(Attributes a, Attributes b)
 	{
-        if (a == null && b == null) return true;
-        if (a == null || b == null) return false;
+        if (a == null && b == null) {
+			return true;
+		}
+        if (a == null || b == null) {
+			return false;
+		}
         return a.equals(b);
     }
 
     public boolean equals(Object o)
     {
-        if (o == null) return false;
+        if (o == null) {
+			return false;
+		}
 
         try
         {
-            if (o instanceof Attributes)
-                return this.equals((Attributes) o);
+            if (o instanceof Attributes) {
+				return this.equals((Attributes) o);
+			}
         }
         catch (NamingException e)
         {
@@ -1393,9 +1469,15 @@ public class DXAttributes implements Attributes
     public boolean equals(Attributes atts) throws NamingException
     {
         // some quick and simple equality checks
-        if (atts == null) return false;
-        if (size() == 0 && atts.size() == 0) return true;
-        if (size() != atts.size()) return false;
+        if (atts == null) {
+			return false;
+		}
+        if (size() == 0 && atts.size() == 0) {
+			return true;
+		}
+        if (size() != atts.size()) {
+			return false;
+		}
 
         // at this stage, we have equality candidates - two equally sized attributes...
 
@@ -1407,9 +1489,13 @@ public class DXAttributes implements Attributes
 
             Attribute bAtt = atts.get(ID);
 
-            if ( emptyAtt(bAtt) ^ emptyAtt(testAtt) ) return false;
+            if ( emptyAtt(bAtt) ^ emptyAtt(testAtt) ) {
+				return false;
+			}
 
-            if (attributesEqual(testAtt, bAtt) == false) return false;
+            if (attributesEqual(testAtt, bAtt) == false) {
+				return false;
+			}
         }
 
         // if we're here, the attributes must be equal!
@@ -1444,7 +1530,9 @@ public class DXAttributes implements Attributes
     {
         DXNamingEnumeration ret = new DXNamingEnumeration(B);
 
-        if (A == null) return ret;
+        if (A == null) {
+			return ret;
+		}
         
         while (A.hasMore())
         {

@@ -1,5 +1,5 @@
 /*
- * $Id: ExpandContainer.java,v 1.3 2003/11/21 19:01:11 tryggvil Exp $
+ * $Id: ExpandContainer.java,v 1.3.4.1 2007/01/12 19:31:35 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -47,21 +47,22 @@ public class ExpandContainer extends Block {
 	public void main(IWContext iwc) throws Exception {
 		initialize(iwc);
 
-		if (addContent) {
+		if (this.addContent) {
 			Table table = new Table(3, 1);
 			table.setWidth(2, 5);
 			table.setCellpaddingAndCellspacing(0);
 			table.setVerticalAlignment(1, 1, Table.VERTICAL_ALIGN_TOP);
 
-			if (_headerStyle != null)
-				_header.setStyleAttribute(_headerStyle);
-			table.add(_header, 3, 1);
+			if (this._headerStyle != null) {
+				this._header.setStyleAttribute(this._headerStyle);
+			}
+			table.add(this._header, 3, 1);
 			table.add(Text.getBreak(), 3, 1);
 
 			Layer layer = new Layer(Layer.DIV);
 			layer.setMarkupAttribute("display", "none");
-			if (_objects != null) {
-				Iterator iter = _objects.iterator();
+			if (this._objects != null) {
+				Iterator iter = this._objects.iterator();
 				while (iter.hasNext()) {
 					PresentationObject object = (PresentationObject) iter.next();
 					layer.add(object);
@@ -69,19 +70,21 @@ public class ExpandContainer extends Block {
 			}
 			table.add(layer, 3, 1);
 
-			if (getPlusIcon() == null)
-				_plusIcon = _iwb.getImage("shared/plusicon.gif");
-			if (getMinusIcon() == null)
-				_minusIcon = _iwb.getImage("shared/minusicon.gif");
-			_plusIcon.setOnClick("showSection(this, document.getElementById('" + layer.getID() + "'), '" + _plusIcon.getMediaURL(iwc) + "','" + _minusIcon.getMediaURL(iwc) + "')");
-			table.add(_plusIcon, 1, 1);
+			if (getPlusIcon() == null) {
+				this._plusIcon = this._iwb.getImage("shared/plusicon.gif");
+			}
+			if (getMinusIcon() == null) {
+				this._minusIcon = this._iwb.getImage("shared/minusicon.gif");
+			}
+			this._plusIcon.setOnClick("showSection(this, document.getElementById('" + layer.getID() + "'), '" + this._plusIcon.getMediaURL(iwc) + "','" + this._minusIcon.getMediaURL(iwc) + "')");
+			table.add(this._plusIcon, 1, 1);
 
 			super.add(table);
 		}
 	}
 	
 	protected void initialize(IWContext iwc) {
-		_iwb = this.getBundle(iwc);
+		this._iwb = this.getBundle(iwc);
 		
 		try {
 			Script script = getParentPage().getAssociatedScript();
@@ -93,7 +96,7 @@ public class ExpandContainer extends Block {
 		}
 		catch (Exception e) {
 			e.printStackTrace(System.err);
-			addContent = false;
+			this.addContent = false;
 		}
 	}
 	
@@ -111,7 +114,7 @@ public class ExpandContainer extends Block {
 	}
 	
   protected IWBundle getBundle() {
-  	return _iwb;
+  	return this._iwb;
   }
   
   public void setHeader(PresentationObject header) {
@@ -126,43 +129,44 @@ public class ExpandContainer extends Block {
 	 * @see com.idega.presentation.PresentationObjectContainer#add(com.idega.presentation.PresentationObject)
 	 */
 	public void add(PresentationObject object) {
-		if (_objects == null)
-			_objects = new ArrayList();
-		_objects.add(object);
+		if (this._objects == null) {
+			this._objects = new ArrayList();
+		}
+		this._objects.add(object);
 	}
 
 	/**
 	 * @return
 	 */
 	public Image getMinusIcon() {
-		return _minusIcon;
+		return this._minusIcon;
 	}
 
 	/**
 	 * @return
 	 */
 	public Image getPlusIcon() {
-		return _plusIcon;
+		return this._plusIcon;
 	}
 
 	/**
 	 * @param image
 	 */
 	public void setMinusIcon(Image image) {
-		_minusIcon = image;
+		this._minusIcon = image;
 	}
 
 	/**
 	 * @param image
 	 */
 	public void setPlusIcon(Image image) {
-		_plusIcon = image;
+		this._plusIcon = image;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setHeaderStyle(String string) {
-		_headerStyle = string;
+		this._headerStyle = string;
 	}
 }

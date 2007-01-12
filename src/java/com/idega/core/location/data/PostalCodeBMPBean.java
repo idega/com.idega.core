@@ -74,12 +74,12 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
             pCode.insert();
           pCode = ((com.idega.core.data.PostalCodeHome)com.idega.data.IDOLookup.getHomeLegacy(PostalCode.class)).createLegacy();
             pCode.setPostalCode("200");
-            pCode.setName("Kópavogur");
+            pCode.setName("Kï¿½pavogur");
             pCode.setCountryID(country.getID());
             pCode.insert();
           pCode = ((com.idega.core.data.PostalCodeHome)com.idega.data.IDOLookup.getHomeLegacy(PostalCode.class)).createLegacy();
             pCode.setPostalCode("201");<
-            pCode.setName("Kópavogur");
+            pCode.setName("Kï¿½pavogur");
            pCode.setCountryID(country.getID());
             pCode.insert();
       }
@@ -285,11 +285,13 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
       if (postalAddress == null) {
 	        StringBuffer addr = new StringBuffer();
 	    	String code = getPostalCode();
-	    	if(code!=null)
-	    		addr.append(code).append(" ");
+	    	if(code!=null) {
+				addr.append(code).append(" ");
+			}
 	    	String name = this.getName();
-	    	if(name !=null)
-	    		addr.append(name);
+	    	if(name !=null) {
+				addr.append(name);
+			}
 	    	postalAddress = addr.toString();
       }
       return postalAddress;

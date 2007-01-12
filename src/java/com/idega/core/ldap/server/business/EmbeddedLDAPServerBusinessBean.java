@@ -38,28 +38,28 @@ public class EmbeddedLDAPServerBusinessBean extends IBOServiceBean implements Em
 	 * @return
 	 */
 	public String getPathToLDAPConfigFiles() {
-		if (pathToConfigFiles == null) {
-			pathToConfigFiles = IWMainApplication.getDefaultIWMainApplication()
+		if (this.pathToConfigFiles == null) {
+			this.pathToConfigFiles = IWMainApplication.getDefaultIWMainApplication()
 					.getCoreBundle().getPropertiesRealPath()
 					+ FileUtil.getFileSeparator()
 					+ LDAP_CONFIG_DIRECTORY_NAME
 					+ FileUtil.getFileSeparator();
 		}
 
-		return pathToConfigFiles;
+		return this.pathToConfigFiles;
 	}
 
 	/**
 	 * Starts the ldap server
 	 */
 	public boolean startEmbeddedLDAPServer() {
-		if (server == null) {
+		if (this.server == null) {
 			String pathToConfigFiles = getPathToLDAPConfigFiles();
 			
-			server = new EmbeddedLDAPServer(pathToConfigFiles);
+			this.server = new EmbeddedLDAPServer(pathToConfigFiles);
 
 			try {
-				server.start();
+				this.server.start();
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -76,12 +76,12 @@ public class EmbeddedLDAPServerBusinessBean extends IBOServiceBean implements Em
 	 * Stops the ldap server (10 seconds wait for shutdown)
 	 */
 	public boolean stopEmbeddedLDAPServer() {
-		if (server != null) {
-			server.sendStopSignal();
-			server.waitForShutdown(10000);
+		if (this.server != null) {
+			this.server.sendStopSignal();
+			this.server.waitForShutdown(10000);
 		}
 
-		server = null;
+		this.server = null;
 		return true;
 	}
 
@@ -90,7 +90,7 @@ public class EmbeddedLDAPServerBusinessBean extends IBOServiceBean implements Em
 	 * @return Returnes true if the server is running, otherwise false
 	 */
 	public boolean isServerStarted() {
-		if (server != null) {
+		if (this.server != null) {
 			return true;
 		} else {
 			return false;
@@ -114,28 +114,28 @@ public class EmbeddedLDAPServerBusinessBean extends IBOServiceBean implements Em
 
 	public Properties getLDAPSettings() throws IOException {
 
-		if (ldapProps == null) {
+		if (this.ldapProps == null) {
 
 			String pathToFile = getPathToLDAPConfigFiles()
 					+ JAVA_LDAP_PROPS_FILE_NAME;
-			ldapProps = loadProperties(pathToFile);
+			this.ldapProps = loadProperties(pathToFile);
 
 		}
 
-		return ldapProps;
+		return this.ldapProps;
 	}
 
 	public Properties getBackendSettings() throws IOException {
 
-		if (backendProps == null) {
+		if (this.backendProps == null) {
 
 			String pathToFile = getPathToLDAPConfigFiles()
 					+ BACKENDS_PROPS_FILE_NAME;
-			backendProps = loadProperties(pathToFile);
+			this.backendProps = loadProperties(pathToFile);
 
 		}
 
-		return backendProps;
+		return this.backendProps;
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class EmbeddedLDAPServerBusinessBean extends IBOServiceBean implements Em
 	 */
 	public void storeLDAPProperties() throws IOException {
 		Properties props = getLDAPSettings();
-		String pathToFile = pathToConfigFiles+JAVA_LDAP_PROPS_FILE_NAME;
+		String pathToFile = this.pathToConfigFiles+JAVA_LDAP_PROPS_FILE_NAME;
 		storeProperties(props,pathToFile);	
 	}
 	
@@ -156,7 +156,7 @@ public class EmbeddedLDAPServerBusinessBean extends IBOServiceBean implements Em
 	 */
 	public void storeBackendProperties() throws IOException {
 		Properties props = getBackendSettings();
-		String pathToFile = pathToConfigFiles+BACKENDS_PROPS_FILE_NAME;
+		String pathToFile = this.pathToConfigFiles+BACKENDS_PROPS_FILE_NAME;
 		storeProperties(props,pathToFile);	
 	}
 	

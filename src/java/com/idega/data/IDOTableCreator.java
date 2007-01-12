@@ -43,12 +43,12 @@ public class IDOTableCreator{
   }
 
   protected void executeQuery(GenericEntity entity,String SQLCode)throws Exception{
-    _dsi.executeQuery(entity,SQLCode);
+    this._dsi.executeQuery(entity,SQLCode);
   }
 
   protected int executeUpdate(GenericEntity entity,String SQLCode)throws Exception{
 
-    return _dsi.executeUpdate(entity,SQLCode);
+    return this._dsi.executeUpdate(entity,SQLCode);
   }
 
   /**
@@ -92,10 +92,10 @@ public class IDOTableCreator{
     TransactionManager trans=null;
     boolean canCommit=isPermittedToCommit;
     try{
-      if(_dsi.useTransactionsInEntityCreation){
+      if(this._dsi.useTransactionsInEntityCreation){
         trans = com.idega.transaction.IdegaTransactionManager.getInstance(entity.getClass());
         if(!((IdegaTransactionManager)trans).hasCurrentThreadBoundTransaction()){
-          _dsi.executeBeforeCreateEntityRecord(entity);
+          this._dsi.executeBeforeCreateEntityRecord(entity);
           ((IdegaTransactionManager)trans).setEntity(entity);
           trans.begin();
           canCommit=true;
@@ -117,7 +117,7 @@ public class IDOTableCreator{
       boolean canCommit = isPermittedToCommit;
       try{
         TransactionManager trans = com.idega.transaction.IdegaTransactionManager.getInstance();
-        if(_dsi.useTransactionsInEntityCreation){
+        if(this._dsi.useTransactionsInEntityCreation){
           if(canCommit){
             if(transactionSuccessful){
               //System.out.println("\t\t\tCommitting!!!!");
@@ -130,7 +130,7 @@ public class IDOTableCreator{
               registerEndOfCreatingEntity(entity);
             }
             ThreadContext.getInstance().removeAttribute(recordCreationKey);
-            _dsi.executeAfterCreateEntityRecord(entity);
+            this._dsi.executeAfterCreateEntityRecord(entity);
             //ThreadContext.getInstance().releaseThread(Thread.currentThread());
           }
           else{
@@ -155,8 +155,9 @@ public class IDOTableCreator{
   	Timer timer = new Timer();
   	timer.start();
   	try {
-		if(!_dsi.doesViewExist(entityView.getDatasource(),viewName))
+		if(!this._dsi.doesViewExist(entityView.getDatasource(),viewName)) {
 			throw new Exception("View "+viewName+"does not exists");
+		}
 	}
 	catch (Exception e) {
 		returner =false;
@@ -201,8 +202,9 @@ public class IDOTableCreator{
   }
   
   private void doTableCheckDatastoreInterface(GenericEntity entity,String tableName)throws Exception{
-	  if(!_dsi.doesTableExist(entity.getDatasource(),tableName))
-	  	throw new Exception("Table "+tableName+"does not exists");
+	  if(!this._dsi.doesTableExist(entity.getDatasource(),tableName)) {
+		throw new Exception("Table "+tableName+"does not exists");
+	}
   }
 
 
@@ -323,7 +325,7 @@ public class IDOTableCreator{
           
           createMiddleTables(entity);
           if(entity.getIfInsertStartData()){
-	      		_entityWithStartData.add(entity);
+	      		this._entityWithStartData.add(entity);
           }
         }
         
@@ -332,22 +334,22 @@ public class IDOTableCreator{
 
       	try {
       		//boolean notUseTransactions = !_dsi.useTransactionsInEntityCreation;
-      		boolean entitiesInList = !_entityWithStartData.isEmpty();
+      		boolean entitiesInList = !this._entityWithStartData.isEmpty();
       		
       		if (entitiesInList) {
 	      	//if (canCommit || notUseTransactions && entitiesInList) {
-	      		Iterator iter = _entityWithStartData.iterator();
+	      		Iterator iter = this._entityWithStartData.iterator();
 	      		while (iter.hasNext()) {
 	        		GenericEntity tmpEnt = (GenericEntity) iter.next();
 	        			try{
 			      		System.out.println("IDOTableCreator : Inserting start data for entity : "+tmpEnt.getEntityName());
-		      			((GenericEntity) tmpEnt).insertStartData();
+		      			(tmpEnt).insertStartData();
 	        			}
 	        			catch(Exception e){
 	        				e.printStackTrace();
 	        			}
 	      		}
-	      		_entityWithStartData = new Stack();
+	      		this._entityWithStartData = new Stack();
 	      	}
         } catch (Exception e) {
         	System.out.println("===========================================");
@@ -396,7 +398,7 @@ public class IDOTableCreator{
   	IDOEntityField[] pkFields = entity.getEntityDefinition().getPrimaryKeyDefinition().getFields();
   	//StringBuffer returnString = new StringBuffer("CREATE TABLE ").append(entity.getTableName()).append("(");
 	String tableName = entity.getEntityDefinition().getSQLTableName();
-  	StringBuffer returnString = new StringBuffer(_dsi.getCreateTableCommand(tableName)).append("(");
+  	StringBuffer returnString = new StringBuffer(this._dsi.getCreateTableCommand(tableName)).append("(");
   		String[] names = entity.getColumnNames();
 		for (int i = 0; i < names.length; i++){
                     String columnName = names[i];
@@ -572,10 +574,10 @@ public class IDOTableCreator{
           if(doCreateMiddleTable){
             //String creationStatement = "CREATE TABLE ";
             //creationStatement += tableName;
-            String creationStatement = _dsi.getCreateTableCommand(tableName);
+            String creationStatement = this._dsi.getCreateTableCommand(tableName);
             creationStatement += "(";
 
-            String primaryKeyStatement = _dsi.getCreatePrimaryKeyStatementBeginning(tableName);
+            String primaryKeyStatement = this._dsi.getCreatePrimaryKeyStatementBeginning(tableName);
 
             Set set;
             Iterator iter;
@@ -675,7 +677,7 @@ public class IDOTableCreator{
   }
   
   private void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
-		if (_dsi.useIndexes()) {
+		if (this._dsi.useIndexes()) {
 	  		StringBuffer sql = new StringBuffer("CREATE INDEX ")
 			.append(name).append(" ON ").append(entity.getTableName()).append(" (");
 	  		for (int i = 0; i < fields.length; i++) {
@@ -788,13 +790,13 @@ public class IDOTableCreator{
   protected void createForeignKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
       //String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
       //executeUpdate(entity,SQLCommand);
-      _dsi.createForeignKey(entity,baseTableName,columnName,refrencingTableName,referencingColumnName);
+      this._dsi.createForeignKey(entity,baseTableName,columnName,refrencingTableName,referencingColumnName);
   }
 
   protected void createPrimaryKey(GenericEntity entity,String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
       //String SQLCommand = "ALTER TABLE " + baseTableName + " ADD CONSTRAINT FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
       //executeUpdate(entity,SQLCommand);
-      _dsi.createForeignKey(entity,baseTableName,columnName,refrencingTableName,referencingColumnName);
+      this._dsi.createForeignKey(entity,baseTableName,columnName,refrencingTableName,referencingColumnName);
   }
 
   protected void updateColumns(GenericEntity entity)throws Exception{
@@ -868,7 +870,7 @@ public class IDOTableCreator{
 
   private void updateTriggers(GenericEntity entity) {
 		try {
-		_dsi.updateTriggers(entity, true);
+		this._dsi.updateTriggers(entity, true);
 	}
 	catch (Exception e) {
 		e.printStackTrace();
@@ -876,8 +878,8 @@ public class IDOTableCreator{
 }
 
   private void updateIndexes(GenericEntity entity) {
-  		if (_dsi.useIndexes()) {
-  			HashMap indexesFromDB = _dsi.getTableIndexes(entity.getDatasource(), entity.getTableName());
+  		if (this._dsi.useIndexes()) {
+  			HashMap indexesFromDB = this._dsi.getTableIndexes(entity.getDatasource(), entity.getTableName());
 	  		try {
 					HashMap map = entity.getEntityDefinition().getIndexes();
 					Set indexesFromEntity = map.keySet();
@@ -963,7 +965,7 @@ public class IDOTableCreator{
 
   
   private String[] getColumnArrayFromDataBase(GenericEntity entity){
-  	return _dsi.getTableColumnNames(entity.getDatasource(),entity.getTableName());
+  	return this._dsi.getTableColumnNames(entity.getDatasource(),entity.getTableName());
   }
 
   private boolean hasEntityColumn(String columnName,String[] columnsFromDB){
@@ -981,12 +983,12 @@ public class IDOTableCreator{
 
   private void addColumn(String columnName,GenericEntity entity)throws Exception{
     //String SQLString = "alter table "+entity.getTableName()+" add "+getColumnSQLDefinition(columnName,entity);
-    String SQLString = _dsi.getAddColumnCommand(columnName,entity);
+    String SQLString = this._dsi.getAddColumnCommand(columnName,entity);
   	executeUpdate(entity,SQLString);
   }
 
   protected String getColumnSQLDefinition(String columnName,GenericEntity entity){
-  	return _dsi.getColumnSQLDefinition(columnName,entity);
+  	return this._dsi.getColumnSQLDefinition(columnName,entity);
   }
 
   private boolean doesColumnHaveRelationship(String columnName,GenericEntity entity){

@@ -40,7 +40,7 @@ public class CBClassLoader extends ClassLoader
     {
         CBUtility.log("Started CBClassLoader", 7);
 
-        resourceLoader = loader;
+        this.resourceLoader = loader;
     }
 
     /**
@@ -50,10 +50,12 @@ public class CBClassLoader extends ClassLoader
 
     protected String translateClassName(String name)
     {
-        if (name.endsWith(".class"))
-           name = name.replace('.','/');
-        else
-            name = name.replace('.','/') + ".class";
+        if (name.endsWith(".class")) {
+			name = name.replace('.','/');
+		}
+		else {
+			name = name.replace('.','/') + ".class";
+		}
 
         CBUtility.log("looking for class: " + name, 8);
         return name;
@@ -68,7 +70,7 @@ public class CBClassLoader extends ClassLoader
         throws ZipException
     {
         className = translateClassName(className);
-        return resourceLoader.getResource(className);
+        return this.resourceLoader.getResource(className);
     }
 
     /**
@@ -97,10 +99,10 @@ public class CBClassLoader extends ClassLoader
         CBUtility.log("        >>>>>> Load class : "+className,8);
 
         /* Check our local cache of classes */
-        Object local = classes.get(className);
+        Object local = this.classes.get(className);
         if (local != null)
         {
-            if (local instanceof String && "".equals((String)local))
+            if (local instanceof String && "".equals(local))
             {
                 CBUtility.log("        >>>>>> ignoring '" + className + "' (failed to load previously).", 8);
                 throw new ClassNotFoundException("ignoring class '" + className + "' (failed to load previously).");
@@ -125,23 +127,23 @@ public class CBClassLoader extends ClassLoader
         }
         catch (ZipException e)
         {
-            classes.put(className, "");   // stick a dummy entry in as a warning to others...
-            lowerCaseClasses.put(className.toLowerCase(), "");
+            this.classes.put(className, "");   // stick a dummy entry in as a warning to others...
+            this.lowerCaseClasses.put(className.toLowerCase(), "");
             throw new ClassNotFoundException("Error getting className: '" + className + "' : " + e);
         }
 
         if (classData == null)
         {
-            classes.put(className, "");   // stick a dummy entry in as a warning to others...
-            lowerCaseClasses.put(className.toLowerCase(), "");
+            this.classes.put(className, "");   // stick a dummy entry in as a warning to others...
+            this.lowerCaseClasses.put(className.toLowerCase(), "");
             throw new ClassNotFoundException();
         }
 
         /* Define it (parse the class file) */
         result = defineClass(className, classData, 0, classData.length);
         if (result == null) {
-            classes.put(className, "");   // stick a dummy entry in as a warning to others...
-            lowerCaseClasses.put(className.toLowerCase(), "");
+            this.classes.put(className, "");   // stick a dummy entry in as a warning to others...
+            this.lowerCaseClasses.put(className.toLowerCase(), "");
             throw new ClassFormatError();
         }
 
@@ -149,8 +151,8 @@ public class CBClassLoader extends ClassLoader
             resolveClass(result);
         }
 
-        classes.put(className, result);
-        lowerCaseClasses.put(className.toLowerCase(), result);
+        this.classes.put(className, result);
+        this.lowerCaseClasses.put(className.toLowerCase(), result);
         CBUtility.log("        >>>>>> Returning newly loaded zipped class. " + className, 8);
         return result;
     }
@@ -172,10 +174,11 @@ public class CBClassLoader extends ClassLoader
     protected URL findResource(String name)
     {
         CBUtility.log("CLASSLOADER MAGIC: looking for: " + name,8);
-        CBJarResource container = resourceLoader.getJarContainingResource(name);
+        CBJarResource container = this.resourceLoader.getJarContainingResource(name);
         CBUtility.log("CLASSLOADER MAGIC: found container: " + ((container==null)?"null":container.getZipFileName()), 8);
-        if (container==null) 
-            return null;
+        if (container==null) {
+			return null;
+		}
             
         String zipFile = container.getZipFileName();
         String url = "jar:file:" + zipFile + "!/" + name;

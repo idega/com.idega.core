@@ -21,7 +21,7 @@ import com.idega.repository.data.RefactorClassRegistry;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2001</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -68,23 +68,23 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
   }
 
   public void setIWContext(IWContext iwc){
-    _iwc = iwc;
+    this._iwc = iwc;
   }
 
   public IWContext getIWContext(){
-    return _iwc;
+    return this._iwc;
   }
 
   public Page getPage(){
-    return _page;
+    return this._page;
   }
 
   public void setPage(Page page){
-    _page = page;
+    this._page = page;
   }
 
   public boolean containsParameter(Parameter prm){
-    return _parameters.contains(prm);
+    return this._parameters.contains(prm);
   }
 
   public IWPresentationEvent(PresentationObject source){
@@ -117,28 +117,28 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
   }
   
   public String getSourceParameterValue() {
-  	return sourceParameterValue;
+  	return this.sourceParameterValue;
   }
 
   public void setSource(IWLocation source){
-  	sourceParameterValue = source.getLocationString();
-    this.addParameter(PRM_IW_EVENT_SOURCE, sourceParameterValue);
+  	this.sourceParameterValue = source.getLocationString();
+    this.addParameter(PRM_IW_EVENT_SOURCE, this.sourceParameterValue);
 
   }
 
   public void setSource(int instanceId){
-  	sourceParameterValue = Integer.toString(instanceId);
-    this.addParameter(PRM_IW_EVENT_SOURCE, sourceParameterValue);
+  	this.sourceParameterValue = Integer.toString(instanceId);
+    this.addParameter(PRM_IW_EVENT_SOURCE, this.sourceParameterValue);
   }
 
   public void setSource(ICObjectInstance instance) throws RemoteException {
-  	sourceParameterValue = ((Integer)instance.getPrimaryKey()).toString();
-    this.addParameter(PRM_IW_EVENT_SOURCE, sourceParameterValue);
+  	this.sourceParameterValue = ((Integer)instance.getPrimaryKey()).toString();
+    this.addParameter(PRM_IW_EVENT_SOURCE, this.sourceParameterValue);
   }
 
   public void setSource(String compoundId) {
-  	sourceParameterValue = compoundId;
-    this.addParameter(PRM_IW_EVENT_SOURCE, sourceParameterValue);
+  	this.sourceParameterValue = compoundId;
+    this.addParameter(PRM_IW_EVENT_SOURCE, this.sourceParameterValue);
   }
 
 
@@ -167,12 +167,12 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 
 
   protected void addParameter(Parameter prm){
-    _parameters.add(prm);
+    this._parameters.add(prm);
   }
 
 
   public Iterator getParameters(){
-    return _parameters.iterator();
+    return this._parameters.iterator();
   }
   
   public abstract boolean initializeEvent(IWContext iwc);
@@ -285,9 +285,10 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	 * @return String
 	 */
 	public String getEventHandlerURL(IWContext iwc) {
-    if (eventHandlerURL == null)
-      eventHandlerURL = getEventHandlerFrameURL(iwc);
-    return eventHandlerURL;
+    if (this.eventHandlerURL == null) {
+		this.eventHandlerURL = getEventHandlerFrameURL(iwc);
+	}
+    return this.eventHandlerURL;
 	}
 	
 	/**
@@ -320,9 +321,10 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	 * @uml.property name="eventTarget"
 	 */
 	public String getEventTarget() {
-		if (eventTarget == null)
-			eventTarget = DEFAULT_IW_EVENT_TARGET;
-		return eventTarget;
+		if (this.eventTarget == null) {
+			this.eventTarget = DEFAULT_IW_EVENT_TARGET;
+		}
+		return this.eventTarget;
 	}
 
 	/**

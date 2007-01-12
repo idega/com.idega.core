@@ -113,8 +113,9 @@ public class ImageButton extends ImageLabel {
    */
   public void paint(Graphics g) {
     super.paint(g);
-    if (grayImage == null)
-      createGrayImage(g);
+    if (this.grayImage == null) {
+		createGrayImage(g);
+	}
     drawBorder(true);
   }
 
@@ -127,16 +128,18 @@ public class ImageButton extends ImageLabel {
    *  The action is not triggered until mouseUp.
    */
   public boolean mouseDown(Event event, int x, int y) {
-    mouseIsDown = true;
+    this.mouseIsDown = true;
     Graphics g = getGraphics();
     int border = getTheBorder();
-    if (hasExplicitSize())
-      g.drawImage(grayImage, border, border,
-                  getWidth()-2*border,
-                  getHeight()-2*border,
-                  this);
-    else
-      g.drawImage(grayImage, border, border, this);
+    if (hasExplicitSize()) {
+		g.drawImage(this.grayImage, border, border,
+		              getWidth()-2*border,
+		              getHeight()-2*border,
+		              this);
+	}
+	else {
+		g.drawImage(this.grayImage, border, border, this);
+	}
     drawBorder(false);
     return(true);
   }
@@ -147,14 +150,16 @@ public class ImageButton extends ImageLabel {
    *  "out"). Otherwise ignore this.
    */
   public boolean mouseUp(Event event, int x, int y) {
-    mouseIsDown = false;
+    this.mouseIsDown = false;
     if (inside(x,y)) {
       paint(getGraphics());
       event.id = Event.ACTION_EVENT;
-      event.arg = (Object)getImage();
+      event.arg = getImage();
       return(action(event, event.arg));
-    } else
-      return(false);
+    }
+	else {
+		return(false);
+	}
   }
 
   //----------------------------------------------------
@@ -180,8 +185,9 @@ public class ImageButton extends ImageLabel {
    *  already down.
    */
   public boolean mouseExit(Event event, int x, int y) {
-    if (mouseIsDown)
-      paint(getGraphics());
+    if (this.mouseIsDown) {
+		paint(getGraphics());
+	}
     return(true);
   }
 
@@ -191,7 +197,7 @@ public class ImageButton extends ImageLabel {
    * @see #setDarkness
    */
   public int getDarkness() {
-    return(darkness);
+    return(this.darkness);
   }
 
   /** An int whose bits are combined via "and" ("&")
@@ -216,7 +222,7 @@ public class ImageButton extends ImageLabel {
    */
 
   public Image getGrayImage() {
-    return(grayImage);
+    return(this.grayImage);
   }
 
   /** Sets gray image created automatically from regular
@@ -262,17 +268,19 @@ public class ImageButton extends ImageLabel {
   // by real, non-gray image.
 
   private void createGrayImage(Graphics g) {
-    ImageFilter filter = new GrayFilter(darkness);
+    ImageFilter filter = new GrayFilter(this.darkness);
     ImageProducer producer =
       new FilteredImageSource(getImage().getSource(),
                               filter);
-    grayImage = createImage(producer);
+    this.grayImage = createImage(producer);
     int border = getTheBorder();
-    if (hasExplicitSize())
-      prepareImage(grayImage, getWidth()-2*border,
-                   getHeight()-2*border, this);
-    else
-      prepareImage(grayImage, this);
+    if (hasExplicitSize()) {
+		prepareImage(this.grayImage, getWidth()-2*border,
+		               getHeight()-2*border, this);
+	}
+	else {
+		prepareImage(this.grayImage, this);
+	}
     super.paint(g);
   }
 

@@ -1,5 +1,5 @@
 /*
- * $Id: TimeInput.java,v 1.8 2005/10/06 18:05:35 eiki Exp $
+ * $Id: TimeInput.java,v 1.8.2.1 2007/01/12 19:32:08 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -41,123 +41,123 @@ public class TimeInput extends InterfaceObject
 	public TimeInput(String name)
 	{
 		super();
-		theHour = new DropdownMenu(name + "_hour");
-		theMinute = new DropdownMenu(name + "_minute");
+		this.theHour = new DropdownMenu(name + "_hour");
+		this.theMinute = new DropdownMenu(name + "_minute");
 		
 		
 		//theSecond = new DropdownMenu(name+"_second");
-		theWholeTime = new Parameter(name, "");
-		script = new Script();
-		super.add(theHour);
-		super.add(theMinute);
-		super.add(theWholeTime);
-		super.add(script);
+		this.theWholeTime = new Parameter(name, "");
+		this.script = new Script();
+		super.add(this.theHour);
+		super.add(this.theMinute);
+		super.add(this.theWholeTime);
+		super.add(this.script);
 		//super.add(theSecond);
-		theHour.setOnChange(
+		this.theHour.setOnChange(
 			"setValueOfHiddenTime(this.form."
-				+ theHour.getName()
+				+ this.theHour.getName()
 				+ ",this.form."
-				+ theMinute.getName()
+				+ this.theMinute.getName()
 				+ ",this.form."
-				+ theWholeTime.getName()
+				+ this.theWholeTime.getName()
 				+ ")");
-		theMinute.setOnChange(
+		this.theMinute.setOnChange(
 			"setValueOfHiddenTime(this.form."
-				+ theHour.getName()
+				+ this.theHour.getName()
 				+ ",this.form."
-				+ theMinute.getName()
+				+ this.theMinute.getName()
 				+ ",this.form."
-				+ theWholeTime.getName()
+				+ this.theWholeTime.getName()
 				+ ")");
-		theHour.setParentObject(this.getParentObject());
-		theMinute.setParentObject(this.getParentObject());
+		this.theHour.setParentObject(this.getParentObject());
+		this.theMinute.setParentObject(this.getParentObject());
 		//theSecond.setParentObject(this.getParentObject());
 		//theHour.addMenuElement("","Klst");
-		theHour.addMenuElement("00", "00");
-		theHour.addMenuElement("01", "01");
-		theHour.addMenuElement("02", "02");
-		theHour.addMenuElement("03", "03");
-		theHour.addMenuElement("04", "04");
-		theHour.addMenuElement("05", "05");
-		theHour.addMenuElement("06", "06");
-		theHour.addMenuElement("07", "07");
-		theHour.addMenuElement("08", "08");
-		theHour.addMenuElement("09", "09");
-		theHour.addMenuElement("10", "10");
-		theHour.addMenuElement("11", "11");
-		theHour.addMenuElement("12", "12");
-		theHour.addMenuElement("13", "13");
-		theHour.addMenuElement("14", "14");
-		theHour.addMenuElement("15", "15");
-		theHour.addMenuElement("16", "16");
-		theHour.addMenuElement("17", "17");
-		theHour.addMenuElement("18", "18");
-		theHour.addMenuElement("19", "19");
-		theHour.addMenuElement("20", "20");
-		theHour.addMenuElement("21", "21");
-		theHour.addMenuElement("22", "22");
-		theHour.addMenuElement("23", "23");
-		//theMinute.addMenuElement("","Mínútur");
-		theMinute.addMenuElement("00", "00");
-		theMinute.addMenuElement("01", "01");
-		theMinute.addMenuElement("02", "02");
-		theMinute.addMenuElement("03", "03");
-		theMinute.addMenuElement("04", "04");
-		theMinute.addMenuElement("05", "05");
-		theMinute.addMenuElement("06", "06");
-		theMinute.addMenuElement("07", "07");
-		theMinute.addMenuElement("08", "08");
-		theMinute.addMenuElement("09", "09");
-		theMinute.addMenuElement("10", "10");
-		theMinute.addMenuElement("11", "11");
-		theMinute.addMenuElement("12", "12");
-		theMinute.addMenuElement("13", "13");
-		theMinute.addMenuElement("14", "14");
-		theMinute.addMenuElement("15", "15");
-		theMinute.addMenuElement("16", "16");
-		theMinute.addMenuElement("17", "17");
-		theMinute.addMenuElement("18", "18");
-		theMinute.addMenuElement("19", "19");
-		theMinute.addMenuElement("20", "20");
-		theMinute.addMenuElement("21", "21");
-		theMinute.addMenuElement("22", "22");
-		theMinute.addMenuElement("23", "23");
-		theMinute.addMenuElement("24", "24");
-		theMinute.addMenuElement("25", "25");
-		theMinute.addMenuElement("26", "26");
-		theMinute.addMenuElement("27", "27");
-		theMinute.addMenuElement("28", "28");
-		theMinute.addMenuElement("29", "29");
-		theMinute.addMenuElement("30", "30");
-		theMinute.addMenuElement("31", "31");
-		theMinute.addMenuElement("32", "32");
-		theMinute.addMenuElement("33", "33");
-		theMinute.addMenuElement("34", "34");
-		theMinute.addMenuElement("35", "35");
-		theMinute.addMenuElement("36", "36");
-		theMinute.addMenuElement("37", "37");
-		theMinute.addMenuElement("38", "38");
-		theMinute.addMenuElement("39", "39");
-		theMinute.addMenuElement("40", "40");
-		theMinute.addMenuElement("41", "41");
-		theMinute.addMenuElement("42", "42");
-		theMinute.addMenuElement("43", "43");
-		theMinute.addMenuElement("44", "44");
-		theMinute.addMenuElement("45", "45");
-		theMinute.addMenuElement("46", "46");
-		theMinute.addMenuElement("47", "47");
-		theMinute.addMenuElement("48", "48");
-		theMinute.addMenuElement("49", "49");
-		theMinute.addMenuElement("50", "50");
-		theMinute.addMenuElement("51", "51");
-		theMinute.addMenuElement("52", "52");
-		theMinute.addMenuElement("53", "53");
-		theMinute.addMenuElement("54", "54");
-		theMinute.addMenuElement("55", "55");
-		theMinute.addMenuElement("56", "56");
-		theMinute.addMenuElement("57", "57");
-		theMinute.addMenuElement("58", "58");
-		theMinute.addMenuElement("59", "59");
+		this.theHour.addMenuElement("00", "00");
+		this.theHour.addMenuElement("01", "01");
+		this.theHour.addMenuElement("02", "02");
+		this.theHour.addMenuElement("03", "03");
+		this.theHour.addMenuElement("04", "04");
+		this.theHour.addMenuElement("05", "05");
+		this.theHour.addMenuElement("06", "06");
+		this.theHour.addMenuElement("07", "07");
+		this.theHour.addMenuElement("08", "08");
+		this.theHour.addMenuElement("09", "09");
+		this.theHour.addMenuElement("10", "10");
+		this.theHour.addMenuElement("11", "11");
+		this.theHour.addMenuElement("12", "12");
+		this.theHour.addMenuElement("13", "13");
+		this.theHour.addMenuElement("14", "14");
+		this.theHour.addMenuElement("15", "15");
+		this.theHour.addMenuElement("16", "16");
+		this.theHour.addMenuElement("17", "17");
+		this.theHour.addMenuElement("18", "18");
+		this.theHour.addMenuElement("19", "19");
+		this.theHour.addMenuElement("20", "20");
+		this.theHour.addMenuElement("21", "21");
+		this.theHour.addMenuElement("22", "22");
+		this.theHour.addMenuElement("23", "23");
+		//theMinute.addMenuElement("","Mï¿½nï¿½tur");
+		this.theMinute.addMenuElement("00", "00");
+		this.theMinute.addMenuElement("01", "01");
+		this.theMinute.addMenuElement("02", "02");
+		this.theMinute.addMenuElement("03", "03");
+		this.theMinute.addMenuElement("04", "04");
+		this.theMinute.addMenuElement("05", "05");
+		this.theMinute.addMenuElement("06", "06");
+		this.theMinute.addMenuElement("07", "07");
+		this.theMinute.addMenuElement("08", "08");
+		this.theMinute.addMenuElement("09", "09");
+		this.theMinute.addMenuElement("10", "10");
+		this.theMinute.addMenuElement("11", "11");
+		this.theMinute.addMenuElement("12", "12");
+		this.theMinute.addMenuElement("13", "13");
+		this.theMinute.addMenuElement("14", "14");
+		this.theMinute.addMenuElement("15", "15");
+		this.theMinute.addMenuElement("16", "16");
+		this.theMinute.addMenuElement("17", "17");
+		this.theMinute.addMenuElement("18", "18");
+		this.theMinute.addMenuElement("19", "19");
+		this.theMinute.addMenuElement("20", "20");
+		this.theMinute.addMenuElement("21", "21");
+		this.theMinute.addMenuElement("22", "22");
+		this.theMinute.addMenuElement("23", "23");
+		this.theMinute.addMenuElement("24", "24");
+		this.theMinute.addMenuElement("25", "25");
+		this.theMinute.addMenuElement("26", "26");
+		this.theMinute.addMenuElement("27", "27");
+		this.theMinute.addMenuElement("28", "28");
+		this.theMinute.addMenuElement("29", "29");
+		this.theMinute.addMenuElement("30", "30");
+		this.theMinute.addMenuElement("31", "31");
+		this.theMinute.addMenuElement("32", "32");
+		this.theMinute.addMenuElement("33", "33");
+		this.theMinute.addMenuElement("34", "34");
+		this.theMinute.addMenuElement("35", "35");
+		this.theMinute.addMenuElement("36", "36");
+		this.theMinute.addMenuElement("37", "37");
+		this.theMinute.addMenuElement("38", "38");
+		this.theMinute.addMenuElement("39", "39");
+		this.theMinute.addMenuElement("40", "40");
+		this.theMinute.addMenuElement("41", "41");
+		this.theMinute.addMenuElement("42", "42");
+		this.theMinute.addMenuElement("43", "43");
+		this.theMinute.addMenuElement("44", "44");
+		this.theMinute.addMenuElement("45", "45");
+		this.theMinute.addMenuElement("46", "46");
+		this.theMinute.addMenuElement("47", "47");
+		this.theMinute.addMenuElement("48", "48");
+		this.theMinute.addMenuElement("49", "49");
+		this.theMinute.addMenuElement("50", "50");
+		this.theMinute.addMenuElement("51", "51");
+		this.theMinute.addMenuElement("52", "52");
+		this.theMinute.addMenuElement("53", "53");
+		this.theMinute.addMenuElement("54", "54");
+		this.theMinute.addMenuElement("55", "55");
+		this.theMinute.addMenuElement("56", "56");
+		this.theMinute.addMenuElement("57", "57");
+		this.theMinute.addMenuElement("58", "58");
+		this.theMinute.addMenuElement("59", "59");
 		/*
 		
 		theSecond.addMenuElement("00","00");
@@ -304,11 +304,11 @@ public class TimeInput extends InterfaceObject
 	{
 		if (minute.length() > 1)
 		{
-			theMinute.setSelectedElement(minute);
+			this.theMinute.setSelectedElement(minute);
 		}
 		else
 		{
-			theMinute.setSelectedElement("0" + minute);
+			this.theMinute.setSelectedElement("0" + minute);
 		}
 	}
 	public void setHour(int hour)
@@ -317,29 +317,29 @@ public class TimeInput extends InterfaceObject
 	}
 	public void setHour(String hour)
 	{
-		setCheck = true;
+		this.setCheck = true;
 		if (hour.length() > 1)
 		{
-			theHour.setSelectedElement(hour);
+			this.theHour.setSelectedElement(hour);
 		}
 		else
 		{
-			theHour.setSelectedElement("0" + hour);
+			this.theHour.setSelectedElement("0" + hour);
 		}
 	}
 	public void main(IWContext iwc)
 	{
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
 		String emptyString = "";
-		theHour.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.HOUR_KEY));
-		theMinute.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.MINUTE_KEY));
+		this.theHour.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.HOUR_KEY));
+		this.theMinute.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.MINUTE_KEY));
 		
-		if(isDisabled){
-			theHour.setDisabled(true);
-			theMinute.setDisabled(true);
+		if(this.isDisabled){
+			this.theHour.setDisabled(true);
+			this.theMinute.setDisabled(true);
 		}
 		
-		if(keepStatus){
+		if(this.keepStatus){
 			handleKeepStatus(iwc);
 		}
 	}
@@ -372,11 +372,11 @@ public class TimeInput extends InterfaceObject
 	*/
 	public String getHourName()
 	{
-		return theHour.getName();
+		return this.theHour.getName();
 	}
 	public String getMinuteName()
 	{
-		return theMinute.getName();
+		return this.theMinute.getName();
 	}
 	private Script getJavaScript()
 	{
@@ -384,18 +384,18 @@ public class TimeInput extends InterfaceObject
 	}
 	public void keepStatusOnAction()
 	{
-		keepStatus = true;
+		this.keepStatus = true;
 		//theSecond.keepStatusOnAction();
 	}
 	public void setStyleAttribute(String style)
 	{
-		theHour.setStyleAttribute(style);
-		theMinute.setStyleAttribute(style);
+		this.theHour.setStyleAttribute(style);
+		this.theMinute.setStyleAttribute(style);
 	}
 	public void setStyleClass(String styleName) 
 	{
-		theHour.setStyleClass(styleName);
-		theMinute.setStyleClass(styleName);
+		this.theHour.setStyleClass(styleName);
+		this.theMinute.setStyleClass(styleName);
 	}
 	
 	/**
@@ -407,10 +407,10 @@ public class TimeInput extends InterfaceObject
 	}
 	public void print(IWContext iwc) throws Exception
 	{
-		if (setCheck == true)
+		if (this.setCheck == true)
 		{
-			theWholeTime.setValue(
-				theHour.getSelectedElementValue() + ":" + theMinute.getSelectedElementValue() + ":00.000000");
+			this.theWholeTime.setValue(
+				this.theHour.getSelectedElementValue() + ":" + this.theMinute.getSelectedElementValue() + ":00.000000");
 		}
 		super.print(iwc);
 	}
@@ -418,7 +418,7 @@ public class TimeInput extends InterfaceObject
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
 	 */
 	public void handleKeepStatus(IWContext iwc) {
-		String lastValue = iwc.getParameter(theWholeTime.getName());
+		String lastValue = iwc.getParameter(this.theWholeTime.getName());
 		if(lastValue!=null){
 			setContent(lastValue);
 		}
@@ -446,7 +446,7 @@ public class TimeInput extends InterfaceObject
 	}
 	
 	public void setDisabled(boolean disabled) {
-		isDisabled = disabled;
+		this.isDisabled = disabled;
 	}
 	
 }

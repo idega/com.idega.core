@@ -12,46 +12,46 @@ public class StringInputStream extends InputStream {
 	private int available;
 	
 	public StringInputStream(String stringValue) {
-		reader = new StringReader(stringValue);
-		available = stringValue.length();
+		this.reader = new StringReader(stringValue);
+		this.available = stringValue.length();
 	}
 	public int available() {
-		return available;
+		return this.available;
 	}
 	public void close() throws IOException {
-		reader.close();
+		this.reader.close();
 	}
 	public void mark(int readlimit) {
 		try {
-			reader.mark(readlimit);
+			this.reader.mark(readlimit);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	public boolean markSupported() {
-		return reader.markSupported();
+		return this.reader.markSupported();
 	}
 	public int read() throws IOException {
-		return reader.read();
+		return this.reader.read();
 	}
 	public int read(byte[] b) throws IOException {
 		char[] c = new char[b.length];
-		int theReturn = reader.read(c);
+		int theReturn = this.reader.read(c);
 		convertCharArrayToByteArray(c, b);
 		return theReturn;
 	}
 	public int read(byte[] b, int off, int len) throws IOException {
 		char[] c = new char[b.length];
-		int theReturn = reader.read(c, off, len);
+		int theReturn = this.reader.read(c, off, len);
 		convertCharArrayToByteArray(c, b);
 		return theReturn;
 	}
 	public void reset() throws IOException {
-		reader.reset();
+		this.reader.reset();
 	}
 	public long skip(long n) throws IOException {
-		return reader.skip(n);
+		return this.reader.skip(n);
 	}
 	
 	public char[] convertToCharArray(byte[] byteArray) {

@@ -19,17 +19,17 @@ public class GroupTypeComparator implements Comparator {
 	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";	
 
     public GroupTypeComparator(IWContext iwc) {
-	  	_iwc = iwc;
+	  	this._iwc = iwc;
 	}
 
     public int compare(Object o1, Object o2) {
-        Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
+        Collator collator = Collator.getInstance(this._iwc.getCurrentLocale());
         
         GroupType groupType1 = (GroupType)o1;
         GroupType groupType2 = (GroupType)o2;
         
-        String localizedGroupType1 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(groupType1.getType());
-        String localizedGroupType2 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(groupType2.getType());
+        String localizedGroupType1 = this._iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(this._iwc.getCurrentLocale()).getLocalizedString(groupType1.getType());
+        String localizedGroupType2 = this._iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(this._iwc.getCurrentLocale()).getLocalizedString(groupType2.getType());
         return  collator.compare(localizedGroupType1, localizedGroupType2);
     }
 }

@@ -127,7 +127,9 @@ public class BlobCacher  {
 
       try{
 
-       if (input != null ) input.close();
+       if (input != null ) {
+		input.close();
+	}
 
       }
 
@@ -149,7 +151,9 @@ public class BlobCacher  {
 
  public static boolean isCached(String entityClassString, int id, IWMainApplication app){
 
-    if(!cacheTableExists( entityClassString, id, app)) return false;
+    if(!cacheTableExists( entityClassString, id, app)) {
+		return false;
+	}
 
 
 
@@ -162,8 +166,9 @@ public class BlobCacher  {
      return false;
 
     }
-
-    else return true;
+	else {
+		return true;
+	}
 
 
 
@@ -186,8 +191,9 @@ public class BlobCacher  {
      return false;
 
     }
-
-    else return true;
+	else {
+		return true;
+	}
 
   }
 

@@ -50,37 +50,40 @@ public class DXNamingEnumeration implements NamingEnumeration
         
         public SimpleComparator(Object o) 
         {
-            myObject = (o==null)?"null":o;
+            this.myObject = (o==null)?"null":o;
             
-            if (myObject instanceof DXAttribute)
-                compareString = ((DXAttribute)myObject).getID().toLowerCase();
-            else
-                compareString = myObject.toString().toLowerCase();    
+            if (this.myObject instanceof DXAttribute) {
+				this.compareString = ((DXAttribute)this.myObject).getID().toLowerCase();
+			}
+			else {
+				this.compareString = this.myObject.toString().toLowerCase();
+			}    
         }
         
         public int compareTo(Object compObject) 
         { 
-            return compareString.compareTo(compObject.toString()); 
+            return this.compareString.compareTo(compObject.toString()); 
         }
         
-        public String toString() { return compareString; }
+        public String toString() { return this.compareString; }
         
-        public Object getObject() {return myObject; }
+        public Object getObject() {return this.myObject; }
     }
                                 // with this if needed in future...
     /**
      *    The constructor does nothing except initialise class variables.
      */        
-    public DXNamingEnumeration() { data = new ArrayList(); }
+    public DXNamingEnumeration() { this.data = new ArrayList(); }
 
     /**
      *    A quicky to wrap normal enumerations with as well...
      */
     public DXNamingEnumeration(Enumeration ne) 
     { 
-        data = new ArrayList();
-        while (ne.hasMoreElements())
-            add(ne.nextElement());
+        this.data = new ArrayList();
+        while (ne.hasMoreElements()) {
+			add(ne.nextElement());
+		}
     }
 
 
@@ -92,10 +95,12 @@ public class DXNamingEnumeration implements NamingEnumeration
      
     public DXNamingEnumeration(NamingEnumeration ne) 
     { 
-        data = new ArrayList();
-        if (ne!=null)
-            while (ne.hasMoreElements())
-                add(ne.nextElement());
+        this.data = new ArrayList();
+        if (ne!=null) {
+			while (ne.hasMoreElements()) {
+				add(ne.nextElement());
+			}
+		}
     }
 
     /**
@@ -106,20 +111,20 @@ public class DXNamingEnumeration implements NamingEnumeration
 
     public DXNamingEnumeration(ArrayList listData)
     {
-        data = listData;
+        this.data = listData;
     }
 
     /**
      *    Adds an object to the enumeration.
      *    @param o object to be added.
      */        
-    public void add(Object o)        { data.add(o); }
+    public void add(Object o)        { this.data.add(o); }
 
     /**
      *    Removes an object from the enumeration.
      *    @param o the object to be removed.
      */        
-    public void remove(Object o)        { data.remove(o); }
+    public void remove(Object o)        { this.data.remove(o); }
     
     
     /** 
@@ -127,21 +132,21 @@ public class DXNamingEnumeration implements NamingEnumeration
      *    nice though... this resets the enumeration so you can reread it,
      *    which is useful for debugging (i.e. you can print it before use...)
      */
-    public void reset()              { pointer = 0; }
+    public void reset()              { this.pointer = 0; }
     
     /**
      *    Not really necessary, this returns the number of elements in the
      *    enumeration.
      *    @return number of objects in enumeration
      */
-    public int size()                { return data.size(); }
+    public int size()                { return this.data.size(); }
     
     /* 
      *    identical in ftn to hasMoreElements().  In future, this may
      *    throw NamingEnumerationExceptions.
      *    @return true if more elements are available.
      */
-    public boolean hasMore()         { return (pointer < data.size()); }
+    public boolean hasMore()         { return (this.pointer < this.data.size()); }
     
     /*
      *    standard enumeration ftn.
@@ -157,7 +162,7 @@ public class DXNamingEnumeration implements NamingEnumeration
     public Object next() throws NoSuchElementException
     {
         try
-        { return data.get(pointer++); }
+        { return this.data.get(this.pointer++); }
         catch (ArrayIndexOutOfBoundsException e)
         { throw new NoSuchElementException(); }
     }    
@@ -180,20 +185,22 @@ public class DXNamingEnumeration implements NamingEnumeration
      
     public DXNamingEnumeration sort()
     {
-        int size = data.size();
+        int size = this.data.size();
         // wrap the contents of the data ArrayList in SimpleComparators, and
         // dump them to an array...
         SimpleComparator[] a = new SimpleComparator[size];
-        for (int i=0; i<size; i++)
-            a[i] = new SimpleComparator(data.get(i));
+        for (int i=0; i<size; i++) {
+			a[i] = new SimpleComparator(this.data.get(i));
+		}
 
         // use the built in static Arrays.sort method
         Arrays.sort(a);
         
         // reload the ArrayList with the sorted data
-        data.clear();
-        for (int i=0; i<size; i++)
-            data.add(a[i].getObject());
+        this.data.clear();
+        for (int i=0; i<size; i++) {
+			this.data.add(a[i].getObject());
+		}
 
         return this;            
     }
@@ -205,7 +212,7 @@ public class DXNamingEnumeration implements NamingEnumeration
       
     public boolean contains(Object test)
     {
-        return data.contains(test);
+        return this.data.contains(test);
     }
     
     /** 
@@ -218,9 +225,9 @@ public class DXNamingEnumeration implements NamingEnumeration
     public String toString()  // mainly used for debugging
     {
         StringBuffer ret = new StringBuffer();
-        for (int i=0; i<data.size(); i++)
+        for (int i=0; i<this.data.size(); i++)
         {
-            Object o = data.get(i);
+            Object o = this.data.get(i);
             ret.append((o==null)?"null":o.toString() + "\n");
         }    
         return ret.toString();   
@@ -228,20 +235,20 @@ public class DXNamingEnumeration implements NamingEnumeration
     
     public Object[] toArray()
     {
-        return data.toArray();
+        return this.data.toArray();
     } 
      
     
     public String[] toStringArray()
     {
-        String[] ret = new String[data.size()];
-        for (int i=0; i<data.size(); i++)
+        String[] ret = new String[this.data.size()];
+        for (int i=0; i<this.data.size(); i++)
         {
-            Object o = data.get(i);
+            Object o = this.data.get(i);
             ret[i] = ((o==null)?null:o.toString());
         }   
         return ret; 
     } 
  
-    public ArrayList getArrayList() { return data; }
+    public ArrayList getArrayList() { return this.data; }
 }

@@ -158,7 +158,7 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	}
 
 	public void setInitiationDate(Timestamp stamp){
-		this.setColumn(this.INITIATION_DATE_COLUMN,stamp);
+		this.setColumn(ICPermissionBMPBean.INITIATION_DATE_COLUMN,stamp);
 	}
 	
 	public boolean doesInheritToChildren() {
@@ -166,15 +166,15 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	}
 
 	public Timestamp getInitiationDate(){
-		return (Timestamp)getColumnValue(this.INITIATION_DATE_COLUMN);
+		return (Timestamp)getColumnValue(ICPermissionBMPBean.INITIATION_DATE_COLUMN);
 	}
 
 	public void setTerminationDate(Timestamp stamp){
-		this.setColumn(this.TERMINATION_DATE_COLUMN,stamp);
+		this.setColumn(ICPermissionBMPBean.TERMINATION_DATE_COLUMN,stamp);
 	}
 
 	public Timestamp getTerminationDate(){
-		return (Timestamp)getColumnValue(this.TERMINATION_DATE_COLUMN);
+		return (Timestamp)getColumnValue(ICPermissionBMPBean.TERMINATION_DATE_COLUMN);
 	}
 
 	public void setPassiveBy(int userId)  {
@@ -186,11 +186,11 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	}
 	
 	public void setStatus(String status){
-		setColumn(this.STATUS_COLUMN,status);
+		setColumn(ICPermissionBMPBean.STATUS_COLUMN,status);
 	}
 
 	public String getStatus(){
-		return getStringColumnValue(this.STATUS_COLUMN);
+		return getStringColumnValue(ICPermissionBMPBean.STATUS_COLUMN);
 	}
 	
 	public Collection ejbFindAllPermissionsByContextTypeAndContextValue(String contextType, String contextValue) throws FinderException{
@@ -465,12 +465,15 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 	    Table table = new Table(this);
 	    SelectQuery query = new SelectQuery(table);
 	    query.addColumn(new WildCardColumn());
-	    if(type!=null)
-	        query.addCriteria(new MatchCriteria(table,getContextTypeColumnName(),MatchCriteria.EQUALS,type,true));
-	    if(value!=null)
-	    query.addCriteria(new MatchCriteria(table,getContextValueColumnName(),MatchCriteria.EQUALS,type,true));
-	    if(key!=null)
-	        query.addCriteria(new MatchCriteria(table,getPermissionStringColumnName(),MatchCriteria.EQUALS,type,true));
+	    if(type!=null) {
+			query.addCriteria(new MatchCriteria(table,getContextTypeColumnName(),MatchCriteria.EQUALS,type,true));
+		}
+	    if(value!=null) {
+			query.addCriteria(new MatchCriteria(table,getContextValueColumnName(),MatchCriteria.EQUALS,type,true));
+		}
+	    if(key!=null) {
+			query.addCriteria(new MatchCriteria(table,getPermissionStringColumnName(),MatchCriteria.EQUALS,type,true));
+		}
 	    return idoFindPKsByQuery(query);
 	    
 	}

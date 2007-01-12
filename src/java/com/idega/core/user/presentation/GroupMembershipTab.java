@@ -17,7 +17,7 @@ import com.idega.presentation.ui.IFrame;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -49,24 +49,24 @@ public class GroupMembershipTab extends UserGroupTab {
     /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
   }
   public void initializeFields() {
-    groupMembersFrame = new IFrame("ic_group_group_members",GroupMembershipTab.GroupList.class);
-    groupMembersFrame.setHeight(140);
-    groupMembersFrame.setWidth(370);
-    groupMembersFrame.setScrolling(IFrame.SCROLLING_YES);
+    this.groupMembersFrame = new IFrame("ic_group_group_members",GroupMembershipTab.GroupList.class);
+    this.groupMembersFrame.setHeight(140);
+    this.groupMembersFrame.setWidth(370);
+    this.groupMembersFrame.setScrolling(IFrame.SCROLLING_YES);
 
-    userMembersFrame = new IFrame("ic_user_group_members",GroupMembershipTab.UserList.class);
-    userMembersFrame.setHeight(140);
-    userMembersFrame.setWidth(370);
-    userMembersFrame.setScrolling(IFrame.SCROLLING_YES);
+    this.userMembersFrame = new IFrame("ic_user_group_members",GroupMembershipTab.UserList.class);
+    this.userMembersFrame.setHeight(140);
+    this.userMembersFrame.setWidth(370);
+    this.userMembersFrame.setScrolling(IFrame.SCROLLING_YES);
 
     //addLink = new Link("  Add  ");
 
   }
   public void initializeTexts() {
-    groupMembers = this.getTextObject();
-    groupMembers.setText("Groups :");
-    userMembers = this.getTextObject();
-    userMembers.setText("Users :");
+    this.groupMembers = this.getTextObject();
+    this.groupMembers.setText("Groups :");
+    this.userMembers = this.getTextObject();
+    this.userMembers.setText("Users :");
   }
   public boolean store(IWContext iwc) {
     return true;
@@ -74,10 +74,10 @@ public class GroupMembershipTab extends UserGroupTab {
   public void lineUpFields() {
     this.resize(1,4);
 
-    this.add(groupMembers,1,1);
-    this.add(groupMembersFrame,1,2);
-    this.add(userMembers,1,3);
-    this.add(userMembersFrame,1,4);
+    this.add(this.groupMembers,1,1);
+    this.add(this.groupMembersFrame,1,2);
+    this.add(this.userMembers,1,3);
+    this.add(this.userMembersFrame,1,4);
 
     this.setHeight(1,"30");
     this.setHeight(3,super.rowHeight);

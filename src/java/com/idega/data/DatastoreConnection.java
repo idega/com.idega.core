@@ -38,11 +38,11 @@ public class DatastoreConnection implements Connection {
 		 * this.TRANSACTION_SERIALIZABLE=conn.TRANSACTION_SERIALIZABLE;
 		 */
 		this.conn = conn;
-		dsi = DatastoreInterface.getInstance(conn);
-		dsi.setDatabaseMetaData(conn.getMetaData());
+		this.dsi = DatastoreInterface.getInstance(conn);
+		this.dsi.setDatabaseMetaData(conn.getMetaData());
 		setDatasource(datasourceName);
-		DatastoreInterface.setDatastoreInterfaceByDatasource(datasourceName, dsi);
-		dsi.onConnectionCreate(this);
+		DatastoreInterface.setDatastoreInterfaceByDatasource(datasourceName, this.dsi);
+		this.dsi.onConnectionCreate(this);
 	}
 
 	public void setDatasource(String datasourceName) {
@@ -54,11 +54,11 @@ public class DatastoreConnection implements Connection {
 	}
 
 	public DatastoreInterface getDatastoreInterface() {
-		return dsi;
+		return this.dsi;
 	}
 
 	protected Connection getUnderLyingConnection() {
-		return conn;
+		return this.conn;
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public Statement createStatement() throws SQLException {
-		return conn.createStatement();
+		return this.conn.createStatement();
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public PreparedStatement prepareStatement(String sql) throws SQLException {
-		return conn.prepareStatement(sql);
+		return this.conn.prepareStatement(sql);
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public CallableStatement prepareCall(String sql) throws SQLException {
-		return conn.prepareCall(sql);
+		return this.conn.prepareCall(sql);
 	}
 
 	/**
@@ -243,7 +243,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public String nativeSQL(String sql) throws SQLException {
-		return conn.nativeSQL(sql);
+		return this.conn.nativeSQL(sql);
 	}
 
 	/**
@@ -294,7 +294,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public void setAutoCommit(boolean autoCommit) throws SQLException {
-		conn.setAutoCommit(autoCommit);
+		this.conn.setAutoCommit(autoCommit);
 	}
 
 	/**
@@ -312,7 +312,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public boolean getAutoCommit() throws SQLException {
-		return conn.getAutoCommit();
+		return this.conn.getAutoCommit();
 	}
 
 	/**
@@ -334,7 +334,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public void commit() throws SQLException {
-		conn.commit();
+		this.conn.commit();
 	}
 
 	/**
@@ -356,7 +356,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public void rollback() throws SQLException {
-		conn.rollback();
+		this.conn.rollback();
 	}
 
 	/**
@@ -383,7 +383,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public void close() throws SQLException {
-		conn.close();
+		this.conn.close();
 	}
 
 	/**
@@ -399,7 +399,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public boolean isClosed() throws SQLException {
-		return conn.isClosed();
+		return this.conn.isClosed();
 	}
 
 	//======================================================================
@@ -427,7 +427,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public DatabaseMetaData getMetaData() throws SQLException {
-		return conn.getMetaData();
+		return this.conn.getMetaData();
 	}
 
 	/**
@@ -455,7 +455,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public void setReadOnly(boolean readOnly) throws SQLException {
-		conn.setReadOnly(readOnly);
+		this.conn.setReadOnly(readOnly);
 	}
 
 	/**
@@ -471,7 +471,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public boolean isReadOnly() throws SQLException {
-		return conn.isReadOnly();
+		return this.conn.isReadOnly();
 	}
 
 	/**
@@ -491,7 +491,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public void setCatalog(String catalog) throws SQLException {
-		conn.setCatalog(catalog);
+		this.conn.setCatalog(catalog);
 	}
 
 	/**
@@ -507,7 +507,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public String getCatalog() throws SQLException {
-		return conn.getCatalog();
+		return this.conn.getCatalog();
 	}
 
 	/**
@@ -623,7 +623,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public void setTransactionIsolation(int level) throws SQLException {
-		conn.setTransactionIsolation(level);
+		this.conn.setTransactionIsolation(level);
 	}
 
 	/**
@@ -639,7 +639,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public int getTransactionIsolation() throws SQLException {
-		return conn.getTransactionIsolation();
+		return this.conn.getTransactionIsolation();
 	}
 
 	/**
@@ -662,7 +662,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public SQLWarning getWarnings() throws SQLException {
-		return conn.getWarnings();
+		return this.conn.getWarnings();
 	}
 
 	/**
@@ -682,7 +682,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public void clearWarnings() throws SQLException {
-		conn.clearWarnings();
+		this.conn.clearWarnings();
 	}
 
 	//--------------------------JDBC 2.0-----------------------------
@@ -720,7 +720,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-		return conn.createStatement(resultSetType, resultSetConcurrency);
+		return this.conn.createStatement(resultSetType, resultSetConcurrency);
 	}
 
 	/**
@@ -759,7 +759,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-		return conn.prepareStatement(sql, resultSetType, resultSetConcurrency);
+		return this.conn.prepareStatement(sql, resultSetType, resultSetConcurrency);
 	}
 
 	/**
@@ -798,7 +798,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-		return conn.prepareCall(sql, resultSetType, resultSetConcurrency);
+		return this.conn.prepareCall(sql, resultSetType, resultSetConcurrency);
 	}
 
 	/**
@@ -824,7 +824,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public java.util.Map getTypeMap() throws SQLException {
-		return conn.getTypeMap();
+		return this.conn.getTypeMap();
 	}
 
 	/**
@@ -851,7 +851,7 @@ public class DatastoreConnection implements Connection {
 	 *  
 	 */
 	public void setTypeMap(java.util.Map map) throws SQLException {
-		conn.setTypeMap(map);
+		this.conn.setTypeMap(map);
 	}
 
 	/**

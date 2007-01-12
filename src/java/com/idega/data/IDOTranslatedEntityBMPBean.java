@@ -34,15 +34,15 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 	public abstract Class getTranslationEntityClass();
 	
 	public IDOEntityDefinition getTranslationEntityDefinition() throws IDOLookupException{
-		if(trEntityDef ==null){
-			trEntityDef = IDOLookup.getEntityDefinitionForClass(getTranslationEntityClass());
+		if(this.trEntityDef ==null){
+			this.trEntityDef = IDOLookup.getEntityDefinitionForClass(getTranslationEntityClass());
 		}
-		return trEntityDef;
+		return this.trEntityDef;
 	}
 	
 	protected String getStringColumnValue(IDOEntityField field, ICLocale locale) throws IDOLookupException, FinderException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -62,7 +62,7 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 	
 	protected void setColumn(IDOEntityField field, Object value, ICLocale locale) throws IDOLookupException, CreateException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -75,14 +75,14 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 					this.setCreationLocale(locale);
 				}
 			}
-			storeMap.put(locale,tr);
+			this.storeMap.put(locale,tr);
 		}
 		tr.setColumn(field, value);
 	}
 	
 	protected void setColumn(IDOEntityField field, Boolean value, ICLocale locale) throws IDOLookupException, CreateException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -95,14 +95,14 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 					this.setCreationLocale(locale);
 				}
 			}
-			storeMap.put(locale,tr);
+			this.storeMap.put(locale,tr);
 		}
 		tr.setColumn(field, value);
 	}
 	
 	protected void setColumn(IDOEntityField field, boolean value, ICLocale locale) throws IDOLookupException, CreateException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -115,14 +115,14 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 					this.setCreationLocale(locale);
 				}
 			}
-			storeMap.put(locale,tr);
+			this.storeMap.put(locale,tr);
 		}
 		tr.setColumn(field, value);
 	}
 	
 	protected void setColumn(IDOEntityField field, Double value, ICLocale locale) throws IDOLookupException, CreateException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -135,14 +135,14 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 					this.setCreationLocale(locale);
 				}
 			}
-			storeMap.put(locale,tr);
+			this.storeMap.put(locale,tr);
 		}
 		tr.setColumn(field, value);
 	}
 	
 	protected void setColumn(IDOEntityField field, double value, ICLocale locale) throws IDOLookupException, CreateException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -155,14 +155,14 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 					this.setCreationLocale(locale);
 				}
 			}
-			storeMap.put(locale,tr);
+			this.storeMap.put(locale,tr);
 		}
 		tr.setColumn(field, value);
 	}
 	
 	protected void setColumn(IDOEntityField field, char value, ICLocale locale) throws IDOLookupException, CreateException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -175,14 +175,14 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 					this.setCreationLocale(locale);
 				}
 			}
-			storeMap.put(locale,tr);
+			this.storeMap.put(locale,tr);
 		}
 		tr.setColumn(field, value);
 	}
 	
 	protected void setColumn(IDOEntityField field, Float value, ICLocale locale) throws IDOLookupException, CreateException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -195,14 +195,14 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 					this.setCreationLocale(locale);
 				}
 			}
-			storeMap.put(locale,tr);
+			this.storeMap.put(locale,tr);
 		}
 		tr.setColumn(field, value);
 	}
 	
 	protected void setColumn(IDOEntityField field, float value, ICLocale locale) throws IDOLookupException, CreateException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -215,14 +215,14 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 					this.setCreationLocale(locale);
 				}
 			}
-			storeMap.put(locale,tr);
+			this.storeMap.put(locale,tr);
 		}
 		tr.setColumn(field, value);
 	}
 	
 	protected void setColumn(IDOEntityField field, InputStream value, ICLocale locale) throws IDOLookupException, CreateException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -235,14 +235,14 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 					this.setCreationLocale(locale);
 				}
 			}
-			storeMap.put(locale,tr);
+			this.storeMap.put(locale,tr);
 		}
 		tr.setColumn(field, value);
 	}
 	
 	protected void setColumn(IDOEntityField field, Integer value, ICLocale locale) throws IDOLookupException, CreateException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -255,14 +255,14 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 					this.setCreationLocale(locale);
 				}
 			}
-			storeMap.put(locale,tr);
+			this.storeMap.put(locale,tr);
 		}
 		tr.setColumn(field, value);
 	}
 	
 	protected void setColumn(IDOEntityField field, int value, ICLocale locale) throws IDOLookupException, CreateException{
 		IDOTranslationEntity tr = null;
-		tr = (IDOTranslationEntity)storeMap.get(locale);
+		tr = (IDOTranslationEntity)this.storeMap.get(locale);
 		if(tr == null){
 			IDOTranslationEntityHome translationHome = (IDOTranslationEntityHome)IDOLookup.getHome(getTranslationEntityClass());
 			
@@ -275,7 +275,7 @@ public abstract class IDOTranslatedEntityBMPBean extends GenericEntity {
 					this.setCreationLocale(locale);
 				}
 			}
-			storeMap.put(locale,tr);
+			this.storeMap.put(locale,tr);
 		}
 		tr.setColumn(field, value);
 	}

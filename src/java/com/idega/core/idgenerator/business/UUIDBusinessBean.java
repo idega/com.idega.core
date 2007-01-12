@@ -53,7 +53,7 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 		if (group.getUniqueId() == null) {
 			String uniqueId;
 			if (uniqueIdToCopy == null) {
-				uniqueId = uidGenerator.generateId();
+				uniqueId = this.uidGenerator.generateId();
 			}
 			else {
 				uniqueId = uniqueIdToCopy;

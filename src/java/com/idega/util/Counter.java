@@ -34,16 +34,16 @@ public class Counter implements Comparable {
 	}
 	
 	public int getHours() {
-		return seconds / SECONDS_IN_HOUR;
+		return this.seconds / SECONDS_IN_HOUR;
 	}
 	
 	public int getMinutes() {
-		int remainder = seconds % SECONDS_IN_HOUR;
+		int remainder = this.seconds % SECONDS_IN_HOUR;
 		return remainder / SECONDS_IN_MINUTE;
 	}
 	
 	public int getSeconds() {
-		int remainder = seconds % SECONDS_IN_HOUR;
+		int remainder = this.seconds % SECONDS_IN_HOUR;
 		return remainder % SECONDS_IN_MINUTE;
 	}
 	

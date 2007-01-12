@@ -17,10 +17,10 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * 
  * 
- *  Last modified: $Date: 2005/07/28 12:44:01 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:31:31 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.4.2.1 $
  */
 
 public class SQLSchemaCreator{
@@ -33,11 +33,11 @@ public class SQLSchemaCreator{
   }
   	
   protected void executeQuery(String SQLCode)throws Exception{
-    sa.executeQuery(SQLCode);
+    this.sa.executeQuery(SQLCode);
   }
 
   protected int executeUpdate(String SQLCode)throws Exception{
-    return sa.executeUpdate(SQLCode);
+    return this.sa.executeUpdate(SQLCode);
   }
 
   /**
@@ -81,10 +81,10 @@ public class SQLSchemaCreator{
     TransactionManager trans=null;
     boolean canCommit=isPermittedToCommit;
     try{
-      if(sa.useTransactionsInSchemaCreation){
+      if(this.sa.useTransactionsInSchemaCreation){
         trans = com.idega.transaction.IdegaTransactionManager.getInstance();
         if(!((IdegaTransactionManager)trans).hasCurrentThreadBoundTransaction()){
-          sa.executeBeforeSchemaCreation(schema);
+          this.sa.executeBeforeSchemaCreation(schema);
           //((IdegaTransactionManager)trans).setEntity(entity);
           trans.begin();
           canCommit=true;
@@ -105,7 +105,7 @@ public class SQLSchemaCreator{
     boolean canCommit = isPermittedToCommit;
     try{
       TransactionManager trans = com.idega.transaction.IdegaTransactionManager.getInstance();
-      if(sa.useTransactionsInSchemaCreation){
+      if(this.sa.useTransactionsInSchemaCreation){
         if(canCommit){
           if(transactionSuccessful){
             //System.out.println("\t\t\tCommitting!!!!");
@@ -118,7 +118,7 @@ public class SQLSchemaCreator{
             //registerEndOfCreatingEntity(entity);
           }
           ThreadContext.getInstance().removeAttribute(recordCreationKey);
-          sa.executeAfterSchemaCreation( schema);
+          this.sa.executeAfterSchemaCreation( schema);
           //ThreadContext.getInstance().releaseThread(Thread.currentThread());
         }
         else{
@@ -142,8 +142,9 @@ public class SQLSchemaCreator{
   	Timer timer = new Timer();
   	timer.start();
   	try {
-		if(!sa.doesViewExist(viewName))
+		if(!this.sa.doesViewExist(viewName)) {
 			throw new Exception("View "+viewName+"does not exists");
+		}
 	}
 	catch (Exception e) {
 		returner =false;
@@ -173,8 +174,9 @@ public class SQLSchemaCreator{
   
   
   private void doTableCheckAdapter(String tableName)throws Exception{
-	  if(!sa.doesTableExist(tableName))
-	  	throw new Exception("Table "+tableName+"does not exists");
+	  if(!this.sa.doesTableExist(tableName)) {
+		throw new Exception("Table "+tableName+"does not exists");
+	}
 }
 
 
@@ -198,8 +200,9 @@ public class SQLSchemaCreator{
         //Check again if table exists because it could be created through createRefrencedTables(entity)
         if(!this.doesTableExist(schema.getSQLName())){
           createTable(schema);
-          if(schema.hasAutoIncrementColumn())
-          	createTrigger(schema);
+          if(schema.hasAutoIncrementColumn()) {
+			createTrigger(schema);
+		}
           try{
             createForeignKeys(schema);
           }
@@ -317,7 +320,7 @@ public class SQLSchemaCreator{
   	//StringBuffer returnString = new StringBuffer("CREATE TABLE ").append(entity.getTableName()).append("(");
   	// */String tableName = entity.getEntityDefinition().getSQLTableName();
   	String tableName = schema.getSQLName();
-  	StringBuffer returnString = new StringBuffer(sa.getCreateTableCommand(tableName)).append(" (");
+  	StringBuffer returnString = new StringBuffer(this.sa.getCreateTableCommand(tableName)).append(" (");
   	
   	SchemaColumn[] fields = schema.getColumns();
 	for (int i = 0; i < fields.length; i++){
@@ -333,7 +336,7 @@ public class SQLSchemaCreator{
     				returnString.append(",");
     			}
     			returnString.append(pkFields[j].getSQLName());
-    			int limit = sa.getMaxColumnPrimaryKeyLength(pkFields[j]);
+    			int limit = this.sa.getMaxColumnPrimaryKeyLength(pkFields[j]);
     			if(limit==-1){
     			}else{
     				returnString.append("(");
@@ -370,7 +373,7 @@ public class SQLSchemaCreator{
 		Connection conn= null;
 		Statement Stmt= null;
 		try{
-			conn = sa.getConnection();
+			conn = this.sa.getConnection();
 			Stmt = conn.createStatement();
 			Stmt.executeUpdate("drop table "+schema.getSQLName());
 		}
@@ -379,7 +382,7 @@ public class SQLSchemaCreator{
 				Stmt.close();
 			}
 			if (conn != null){
-				sa.freeConnection(conn);
+				this.sa.freeConnection(conn);
 			}
 		}
   }
@@ -389,9 +392,11 @@ public class SQLSchemaCreator{
     
     SchemaColumn[] fields  = schema.getColumns();
     for (int i = 0; i < fields.length; i++) {
-		if(fields[i].isPartOfManyToOneRelationship())
-			if(!fields[i].getManyToOneRelated().getUniqueName().equals(schema.getUniqueName()))
+		if(fields[i].isPartOfManyToOneRelationship()) {
+			if(!fields[i].getManyToOneRelated().getUniqueName().equals(schema.getUniqueName())) {
 				generateSchema(fields[i].getManyToOneRelated());
+			}
+		}
 	}
     /*
     Schema defs[] = entityDefinition.getManyToManyRelatedEntities();
@@ -541,10 +546,11 @@ public class SQLSchemaCreator{
   }
   
   private void createIndex( Index index)throws Exception{
-		if (sa.useIndexes()) {
+		if (this.sa.useIndexes()) {
 	  		StringBuffer sql = new StringBuffer("CREATE ");
-	  		if(index.isUnique())
-	  		    sql.append(" UNIQUE ");
+	  		if(index.isUnique()) {
+				sql.append(" UNIQUE ");
+			}
 	  		sql.append(" INDEX ");
 			sql.append(index.getIndexName()).append(" ON ").append(index.getSchemaName()).append(" (");
 			IndexColumn[] columns = index.getColumns();
@@ -553,8 +559,9 @@ public class SQLSchemaCreator{
 	  				sql.append(", ");
 	  			}
 	  			sql.append(columns[i].getName());
-	  			if(columns[i].isDescending())
-	  			    sql.append(" DESC ");
+	  			if(columns[i].isDescending()) {
+					sql.append(" DESC ");
+				}
 	  		}
 	  		sql.append(")");
 	  		
@@ -581,7 +588,7 @@ public class SQLSchemaCreator{
   }
   
   protected String getUniqueKeyCreationStatement(Schema schema,SchemaColumn[] columns)throws Exception{
-  	return sa.getCreateUniqueKeyStatement(schema,columns);
+  	return this.sa.getCreateUniqueKeyStatement(schema,columns);
   }
   
   /*
@@ -613,13 +620,13 @@ public class SQLSchemaCreator{
   
   
   protected void createForeignKey(String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
-    sa.createForeignKey(baseTableName,columnName,refrencingTableName,referencingColumnName);
+    this.sa.createForeignKey(baseTableName,columnName,refrencingTableName,referencingColumnName);
 }
 
  
   
   protected void createPrimaryKey(String baseTableName,String columnName, String refrencingTableName,String referencingColumnName)throws Exception{
-    sa.createForeignKey(baseTableName,columnName,refrencingTableName,referencingColumnName);
+    this.sa.createForeignKey(baseTableName,columnName,refrencingTableName,referencingColumnName);
 }
 
   
@@ -665,7 +672,7 @@ public class SQLSchemaCreator{
   
   private void updateTriggers(Schema schema) {
 	try {
-		sa.updateTriggers(schema, true);
+		this.sa.updateTriggers(schema, true);
 	}
 	catch (Exception e) {
 		e.printStackTrace();
@@ -743,7 +750,7 @@ public class SQLSchemaCreator{
   
  
   private String[] getColumnArrayFromDataBase( String sqlTablename ){
-  	return sa.getTableColumnNames(sqlTablename);
+  	return this.sa.getTableColumnNames(sqlTablename);
   }
 
   private boolean hasEntityColumn(String columnName,String[] columnsFromDB){
@@ -761,14 +768,14 @@ public class SQLSchemaCreator{
 
  
   private void addColumn(SchemaColumn column,Schema schema)throws Exception{
-    String SQLString = sa.getAddColumnCommand(column,schema);
+    String SQLString = this.sa.getAddColumnCommand(column,schema);
   	executeUpdate(SQLString);
   }
 
   
   
   protected String getColumnSQLDefinition(SchemaColumn column,Schema schema){
-  	return sa.getColumnSQLDefinition(column, schema);
+  	return this.sa.getColumnSQLDefinition(column, schema);
   }
 
   

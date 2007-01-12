@@ -48,7 +48,7 @@ public class SystemProperties extends Block {
 	private String systemProperty;
 	private String propertyName;
 	private String propertyValue;
-	private int action = NO_ACTION;
+	private int action = this.NO_ACTION;
 
 	private String _width = Table.HUNDRED_PERCENT;
 
@@ -56,16 +56,18 @@ public class SystemProperties extends Block {
 	}
 
 	public void main(IWContext iwc) throws Exception {
-		_iwrb = getResourceBundle(iwc);
-		_locale = iwc.getCurrentLocale();
-		properties = iwc.getSystemProperties();
-		propertyList = properties;
-		systemProperty = iwc.getParameter(SYSTEM_PROPERTY);
-		if (systemProperty != null) {
-			if (systemProperty.length() == 0)
-				systemProperty = null;
-			else
-				propertyList = properties.getProperties(systemProperty);
+		this._iwrb = getResourceBundle(iwc);
+		this._locale = iwc.getCurrentLocale();
+		this.properties = iwc.getSystemProperties();
+		this.propertyList = this.properties;
+		this.systemProperty = iwc.getParameter(this.SYSTEM_PROPERTY);
+		if (this.systemProperty != null) {
+			if (this.systemProperty.length() == 0) {
+				this.systemProperty = null;
+			}
+			else {
+				this.propertyList = this.properties.getProperties(this.systemProperty);
+			}
 		}
 
 		doBusiness(iwc);
@@ -91,7 +93,7 @@ public class SystemProperties extends Block {
 		table.setWidth(1,"100");
 		form.add(table);
 
-		table.add(getTitleText(_iwrb.getLocalizedString("category", "Category") + ":"), 1, 1);
+		table.add(getTitleText(this._iwrb.getLocalizedString("category", "Category") + ":"), 1, 1);
 		table.add(getInterfaceObject(getPropertiesMenu()), 2, 1);
 
 		return form;
@@ -99,30 +101,31 @@ public class SystemProperties extends Block {
 
 	private Form getPropertyForm() {
 		Form form = new Form();
-		form.add(new HiddenInput(PARAMETER_ACTION, String.valueOf(ACTION_SAVE)));
-		if (systemProperty != null)
-			form.add(new HiddenInput(SYSTEM_PROPERTY, systemProperty));
+		form.add(new HiddenInput(this.PARAMETER_ACTION, String.valueOf(this.ACTION_SAVE)));
+		if (this.systemProperty != null) {
+			form.add(new HiddenInput(this.SYSTEM_PROPERTY, this.systemProperty));
+		}
 
 		Table table = new Table(2, 4);
 		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setWidth(1,"100");
 		form.add(table);
 
-		TextInput nameInput = new TextInput(PROPERTY);
-		TextInput valueInput = new TextInput(PROPERTY_VALUE);
-		if (_property != null && action != ACTION_DELETE) {
-			nameInput.setValue(_property.getName());
-			valueInput.setValue(_property.getValue());
+		TextInput nameInput = new TextInput(this.PROPERTY);
+		TextInput valueInput = new TextInput(this.PROPERTY_VALUE);
+		if (this._property != null && this.action != this.ACTION_DELETE) {
+			nameInput.setValue(this._property.getName());
+			valueInput.setValue(this._property.getValue());
 		}
 
-		table.add(getTitleText(_iwrb.getLocalizedString("property_name", "Name") + ":"), 1, 1);
-		table.add(getTitleText(_iwrb.getLocalizedString("property_value", "Value") + ":"), 1, 2);
-		table.add(getTitleText(_iwrb.getLocalizedString("property_type", "Type") + ":"), 1, 3);
+		table.add(getTitleText(this._iwrb.getLocalizedString("property_name", "Name") + ":"), 1, 1);
+		table.add(getTitleText(this._iwrb.getLocalizedString("property_value", "Value") + ":"), 1, 2);
+		table.add(getTitleText(this._iwrb.getLocalizedString("property_type", "Type") + ":"), 1, 3);
 		table.add(getInterfaceObject(nameInput), 2, 1);
 		table.add(getInterfaceObject(valueInput), 2, 2);
 		table.add(getInterfaceObject(getPropertyTypeMenu()), 2, 3);
 
-		SubmitButton button = new SubmitButton(_iwrb.getLocalizedString("save", "Save"));
+		SubmitButton button = new SubmitButton(this._iwrb.getLocalizedString("save", "Save"));
 		button.setAsImageButton(true);
 		table.mergeCells(1, 4, 2, 4);
 		table.add(button, 1, 4);
@@ -132,32 +135,33 @@ public class SystemProperties extends Block {
 
 	private Form getPropertiesForm() {
 		Form form = new Form();
-		form.add(new HiddenInput(PARAMETER_ACTION, String.valueOf(ACTION_DELETE)));
-		if (systemProperty != null)
-			form.add(new HiddenInput(SYSTEM_PROPERTY, systemProperty));
+		form.add(new HiddenInput(this.PARAMETER_ACTION, String.valueOf(this.ACTION_DELETE)));
+		if (this.systemProperty != null) {
+			form.add(new HiddenInput(this.SYSTEM_PROPERTY, this.systemProperty));
+		}
 
 		Table table = new Table();
-		table.add(getTitleText(_iwrb.getLocalizedString("property", "Property")), 2, 1);
-		table.add(getTitleText(_iwrb.getLocalizedString("value", "Value")), 3, 1);
+		table.add(getTitleText(this._iwrb.getLocalizedString("property", "Property")), 2, 1);
+		table.add(getTitleText(this._iwrb.getLocalizedString("value", "Value")), 3, 1);
 		table.setRows(3);
 		table.setWidth(Table.HUNDRED_PERCENT);
 		table.setWidth(2, "50%");
 		table.setWidth(3, "50%");
 		form.add(table);
 
-		Iterator iter = propertyList.iterator();
+		Iterator iter = this.propertyList.iterator();
 		int row = 2;
 		CheckBox checkBox;
 		IWProperty iwProperty;
 		while (iter.hasNext()) {
 			iwProperty = (IWProperty) iter.next();
-			checkBox = new CheckBox(PROPERTY, iwProperty.getName());
+			checkBox = new CheckBox(this.PROPERTY, iwProperty.getName());
 			table.add(checkBox, 1, row);
 			table.add(getPropertyLink(iwProperty), 2, row);
 			table.add(getText(iwProperty.getValue()), 3, row++);
 		}
 
-		SubmitButton button = new SubmitButton(_iwrb.getLocalizedString("delete", "Delete"));
+		SubmitButton button = new SubmitButton(this._iwrb.getLocalizedString("delete", "Delete"));
 		button.setAsImageButton(true);
 		table.mergeCells(1, row, 3, row);
 		table.add(button, 1, row);
@@ -166,54 +170,57 @@ public class SystemProperties extends Block {
 	}
 
 	private Link getPropertyLink(IWProperty property) {
-		Link link = new Link(properties.getLocalizedName(_locale, property));
+		Link link = new Link(this.properties.getLocalizedName(this._locale, property));
 		link.setFontStyle(IWConstants.BUILDER_FONT_STYLE_SMALL);
 
-		if (property.getType().equalsIgnoreCase(PROPERTY_TYPE_MAP)) {
-			link.addParameter(SYSTEM_PROPERTY, property.getName());
+		if (property.getType().equalsIgnoreCase(this.PROPERTY_TYPE_MAP)) {
+			link.addParameter(this.SYSTEM_PROPERTY, property.getName());
 		}
 		else {
-			if (systemProperty != null)
-				link.addParameter(SYSTEM_PROPERTY, systemProperty);
-			link.addParameter(PROPERTY, property.getName());
+			if (this.systemProperty != null) {
+				link.addParameter(this.SYSTEM_PROPERTY, this.systemProperty);
+			}
+			link.addParameter(this.PROPERTY, property.getName());
 		}
 
 		return link;
 	}
 
 	private DropdownMenu getPropertiesMenu() {
-		DropdownMenu menu = new DropdownMenu(SYSTEM_PROPERTY);
-		menu.addMenuElementFirst("", _iwrb.getLocalizedString("system_properties", "System properties"));
+		DropdownMenu menu = new DropdownMenu(this.SYSTEM_PROPERTY);
+		menu.addMenuElementFirst("", this._iwrb.getLocalizedString("system_properties", "System properties"));
 		menu.setToSubmit();
 
-		Iterator iter = properties.iterator();
+		Iterator iter = this.properties.iterator();
 		while (iter.hasNext()) {
 			IWProperty property = (IWProperty) iter.next();
-			if (property.getType().equals(PROPERTY_TYPE_MAP)) {
-				menu.addMenuElement(property.getName(), "- " + properties.getLocalizedName(_locale, property));
+			if (property.getType().equals(this.PROPERTY_TYPE_MAP)) {
+				menu.addMenuElement(property.getName(), "- " + this.properties.getLocalizedName(this._locale, property));
 			}
 		}
-		if (systemProperty != null)
-			menu.setSelectedElement(systemProperty);
+		if (this.systemProperty != null) {
+			menu.setSelectedElement(this.systemProperty);
+		}
 
 		return menu;
 	}
 
 	private DropdownMenu getPropertyTypeMenu() {
 		DropdownMenu menu = new DropdownMenu(this.PROPERTY_TYPE);
-		menu.addMenuElement(TYPE_PROPERTY, _iwrb.getLocalizedString("type_property", "Property"));
-		menu.addMenuElement(TYPE_MAP, _iwrb.getLocalizedString("type_map", "Category"));
+		menu.addMenuElement(this.TYPE_PROPERTY, this._iwrb.getLocalizedString("type_property", "Property"));
+		menu.addMenuElement(this.TYPE_MAP, this._iwrb.getLocalizedString("type_map", "Category"));
 		return menu;
 	}
 
 	private void doBusiness(IWContext iwc) {
-		action = getAction(iwc);
-		propertyName = iwc.getParameter(PROPERTY);
-		if (propertyName != null && propertyName.length() > 0)
-			_property = propertyList.getIWProperty(propertyName);
-		propertyValue = iwc.getParameter(PROPERTY_VALUE);
+		this.action = getAction(iwc);
+		this.propertyName = iwc.getParameter(this.PROPERTY);
+		if (this.propertyName != null && this.propertyName.length() > 0) {
+			this._property = this.propertyList.getIWProperty(this.propertyName);
+		}
+		this.propertyValue = iwc.getParameter(this.PROPERTY_VALUE);
 
-		switch (action) {
+		switch (this.action) {
 			case ACTION_DELETE :
 				deleteProperties(iwc);
 				break;
@@ -224,25 +231,26 @@ public class SystemProperties extends Block {
 	}
 
 	private void deleteProperties(IWContext iwc) {
-		String[] propertyNames = iwc.getParameterValues(PROPERTY);
+		String[] propertyNames = iwc.getParameterValues(this.PROPERTY);
 		if (propertyNames != null) {
 			for (int a = 0; a < propertyNames.length; a++) {
-				propertyList.removeProperty(propertyNames[a]);
+				this.propertyList.removeProperty(propertyNames[a]);
 			}
 		}
 	}
 
 	private void saveProperty(IWContext iwc) {
 		int type = getPropertyType(iwc);
-		if (propertyName != null && propertyValue != null) {
-			if (propertyName.length() > 0) {
+		if (this.propertyName != null && this.propertyValue != null) {
+			if (this.propertyName.length() > 0) {
 				switch (type) {
 					case TYPE_PROPERTY :
-						propertyList.setProperty(propertyName, propertyValue);
+						this.propertyList.setProperty(this.propertyName, this.propertyValue);
 						break;
 					case TYPE_MAP :
-						if (systemProperty == null)
-							propertyList.getNewPropertyList(propertyName);
+						if (this.systemProperty == null) {
+							this.propertyList.getNewPropertyList(this.propertyName);
+						}
 						break;
 				}
 			}
@@ -251,19 +259,19 @@ public class SystemProperties extends Block {
 
 	private int getAction(IWContext iwc) {
 		try {
-			return Integer.parseInt(iwc.getParameter(PARAMETER_ACTION));
+			return Integer.parseInt(iwc.getParameter(this.PARAMETER_ACTION));
 		}
 		catch (NumberFormatException nfe) {
-			return NO_ACTION;
+			return this.NO_ACTION;
 		}
 	}
 
 	private int getPropertyType(IWContext iwc) {
 		try {
-			return Integer.parseInt(iwc.getParameter(PROPERTY_TYPE));
+			return Integer.parseInt(iwc.getParameter(this.PROPERTY_TYPE));
 		}
 		catch (NumberFormatException nfe) {
-			return TYPE_PROPERTY;
+			return this.TYPE_PROPERTY;
 		}
 	}
 
@@ -293,7 +301,7 @@ public class SystemProperties extends Block {
 	 * @return String
 	 */
 	public String getWidth() {
-		return _width;
+		return this._width;
 	}
 
 	/**
@@ -301,6 +309,6 @@ public class SystemProperties extends Block {
 	 * @param width The width to set
 	 */
 	public void setWidth(String width) {
-		_width = width;
+		this._width = width;
 	}
 }

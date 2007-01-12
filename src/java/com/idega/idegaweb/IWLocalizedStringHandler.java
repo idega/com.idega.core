@@ -55,13 +55,13 @@ public class IWLocalizedStringHandler{
 
       this.locale=locale;
 
-      stringsFile=new File(filePath);
+      this.stringsFile=new File(filePath);
 
-      FileInputStream stream = new FileInputStream(stringsFile);
+      FileInputStream stream = new FileInputStream(this.stringsFile);
 
-      properties = new Properties();
+      this.properties = new Properties();
 
-      properties.load(stream);
+      this.properties.load(stream);
 
     }
 
@@ -79,7 +79,7 @@ public class IWLocalizedStringHandler{
 
    public Enumeration getKeys(){
 
-     return properties.keys();
+     return this.properties.keys();
 
    }
 
@@ -87,7 +87,7 @@ public class IWLocalizedStringHandler{
 
     public String getString(String key){
 
-      return properties.getProperty(key);
+      return this.properties.getProperty(key);
 
     }
 
@@ -97,13 +97,13 @@ public class IWLocalizedStringHandler{
 
     public void setString(String key,String theString){
 
-      properties.setProperty(key,theString);
+      this.properties.setProperty(key,theString);
 
       try{
 
-        FileOutputStream outStream = new FileOutputStream(stringsFile);
+        FileOutputStream outStream = new FileOutputStream(this.stringsFile);
 
-        properties.store(outStream,"");
+        this.properties.store(outStream,"");
 
       }
 
@@ -127,7 +127,7 @@ public class IWLocalizedStringHandler{
 
     public Locale getLocale(){
 
-      return locale;
+      return this.locale;
 
     }
 

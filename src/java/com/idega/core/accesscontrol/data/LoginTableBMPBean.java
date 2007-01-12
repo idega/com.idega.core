@@ -17,7 +17,9 @@ import java.util.Collection;
 import javax.ejb.FinderException;
 
 import com.idega.core.user.data.User;
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOQuery;
+import com.idega.user.data.UserBMPBean;
 
 
 
@@ -50,11 +52,11 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
           addAttribute(this.getIDColumnName());
           addAttribute(getColumnNameUserID(),"Notandi",true,true,Integer.class,"many-to-one",User.class);
           addAttribute(getUserLoginColumnName(),"Notandanafn",true,true,String.class,32);
-          addAttribute(getNewUserPasswordColumnName(),"Lykilorð",true,true,String.class,255);
+          addAttribute(getNewUserPasswordColumnName(),"Lykilorï¿½",true,true,String.class,255);
           //deprecated column
-          addAttribute(getOldUserPasswordColumnName(),"Lykilorð",true,true,String.class,20);
-          addAttribute(getLastChangedColumnName(),"Síðast breytt",true,true,Timestamp.class);
-          addAttribute(getLoginTypeColumnName(),"Tegund aðgagns",true,true,String.class,32);
+          addAttribute(getOldUserPasswordColumnName(),"Lykilorï¿½",true,true,String.class,20);
+          addAttribute(getLastChangedColumnName(),"Sï¿½ï¿½ast breytt",true,true,Timestamp.class);
+          addAttribute(getLoginTypeColumnName(),"Tegund aï¿½gagns",true,true,String.class,32);
           setNullable(getUserLoginColumnName(), false);
           setUnique(getUserLoginColumnName(),true);
 
@@ -131,7 +133,7 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
         public static String getColumnNameUserID(){
 
-          return com.idega.core.user.data.UserBMPBean.getColumnNameUserID();
+          return UserBMPBean.getColumnNameUserID();
 
         }
 
@@ -221,7 +223,7 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
         public static LoginTable getStaticInstance(){
 
-          return (LoginTable)com.idega.core.accesscontrol.data.LoginTableBMPBean.getStaticInstance(LoginTable.class);
+          return (LoginTable)GenericEntity.getStaticInstance(LoginTable.class);
 
         }
 
@@ -378,7 +380,7 @@ public void setUserPasswordInClearText(String password){
             String str = "";
             char[] pass = userPassword.toCharArray();
             for (int i = 0; i < pass.length; i++) {
-              String hex = Integer.toHexString((int)pass[i]);
+              String hex = Integer.toHexString(pass[i]);
               while (hex.length() < 2) {
                 String s = "0";
                 s += hex;
@@ -424,7 +426,7 @@ public void setUserPasswordInClearText(String password){
 	}
 
         public static String getUserIDColumnName(){
-          return com.idega.core.user.data.UserBMPBean.getColumnNameUserID();
+          return UserBMPBean.getColumnNameUserID();
         }
 
         public void setLastChanged(Timestamp when) {
@@ -447,11 +449,11 @@ public void setUserPasswordInClearText(String password){
          * Gets the original password if the record is newly created, therefore it can be retrieved , if this is not a newly created record the exception PasswordNotKnown is thrown
          */
         public String getUnencryptedUserPassword()throws PasswordNotKnown{
-          if(unEncryptedUserPassword==null){
+          if(this.unEncryptedUserPassword==null){
             throw new PasswordNotKnown(this.getUserLogin());
           }
           else{
-            return unEncryptedUserPassword;
+            return this.unEncryptedUserPassword;
           }
         }
         

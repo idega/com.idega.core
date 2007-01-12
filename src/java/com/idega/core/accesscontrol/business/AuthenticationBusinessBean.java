@@ -1,5 +1,5 @@
 /*
- * $Id: AuthenticationBusinessBean.java,v 1.3 2005/11/04 14:18:27 eiki Exp $
+ * $Id: AuthenticationBusinessBean.java,v 1.3.2.1 2007/01/12 19:31:56 idegaweb Exp $
  * Created on Nov 1, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.user.data.User;
  * Also provides plugable behavior for objects that want to be notified when a user logs on and off (see AuthenticationListener interface).<br>
  * This bean is supposed to gradually replace LoginBusinessBean and AccessController/AccessControl and weed out static and obsolete methods.
  * 
- *  Last modified: $Date: 2005/11/04 14:18:27 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/01/12 19:31:56 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.3.2.1 $
  */
 public class AuthenticationBusinessBean extends IBOServiceBean implements AuthenticationBusiness{
 	
@@ -38,8 +38,8 @@ public class AuthenticationBusinessBean extends IBOServiceBean implements Authen
 	 */
 	public void addAuthenticationListener(AuthenticationListener listener){
 		String listenerName = listener.getAuthenticationListenerName();
-		if(!authenticationListeners.containsKey(listenerName)){
-			authenticationListeners.put(listenerName, listener);
+		if(!this.authenticationListeners.containsKey(listenerName)){
+			this.authenticationListeners.put(listenerName, listener);
 		}
 	}
 		
@@ -48,7 +48,7 @@ public class AuthenticationBusinessBean extends IBOServiceBean implements Authen
 	 */
 	public void callOnLogonMethodInAllAuthenticationListeners(IWContext iwc, User user) throws ServletFilterChainInterruptException{
 		//do we need to worry about thread problems?
-		Collection listeners = authenticationListeners.values();
+		Collection listeners = this.authenticationListeners.values();
 		
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 			AuthenticationListener listener = (AuthenticationListener) iter.next();
@@ -62,7 +62,7 @@ public class AuthenticationBusinessBean extends IBOServiceBean implements Authen
 	 */
 	public void callOnLogoffMethodInAllAuthenticationListeners(IWContext iwc, User user) throws ServletFilterChainInterruptException{
 		//do we need to worry about thread problems?
-		Collection listeners = authenticationListeners.values();
+		Collection listeners = this.authenticationListeners.values();
 		
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 			AuthenticationListener listener = (AuthenticationListener) iter.next();

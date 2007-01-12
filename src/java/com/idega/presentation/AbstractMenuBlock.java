@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractMenuBlock.java,v 1.3 2003/05/03 00:37:02 tryggvil Exp $
+ * $Id: AbstractMenuBlock.java,v 1.3.6.1 2007/01/12 19:31:33 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,14 +36,14 @@ public abstract class AbstractMenuBlock extends Block implements MenuBlock{
 
    public void _main(IWContext iwc) throws Exception{
 
-    menu = new BlockMenu();
-    menu.setClassParameterName(getMenuClassParameterName());
+    this.menu = new BlockMenu();
+    this.menu.setClassParameterName(getMenuClassParameterName());
     addStandardObjects();
-    menu.addAll(objects);
-    menu.setDefaultBlock(getDefaultBlockClass());
-    links = menu.getLinkTable(iwc,"");
+    this.menu.addAll(this.objects);
+    this.menu.setDefaultBlock(getDefaultBlockClass());
+    this.links = this.menu.getLinkTable(iwc,"");
     //menu.setShowLinks(showLinks);
-    add(menu);
+    add(this.menu);
     super._main(iwc);
   }
 
@@ -51,15 +51,17 @@ public abstract class AbstractMenuBlock extends Block implements MenuBlock{
   public abstract Class getDefaultBlockClass();
 
   public void addBlockObject(Builderaware obj){
-    if(objects == null)
-      objects = new Vector();
-    objects.add(obj);
+    if(this.objects == null) {
+		this.objects = new Vector();
+	}
+    this.objects.add(obj);
   }
 
   public void addBlockObjectAll(java.util.Collection coll){
-    if(objects == null)
-      objects = new Vector();
-    objects.addAll(coll);
+    if(this.objects == null) {
+		this.objects = new Vector();
+	}
+    this.objects.addAll(coll);
   }
 
   public String getMenuClassParameterName(){
@@ -67,19 +69,19 @@ public abstract class AbstractMenuBlock extends Block implements MenuBlock{
   }
 
   public void setShowLinks(boolean show){
-    showLinks = show;
+    this.showLinks = show;
   }
 
   public PresentationObject getLinks(){
-    return links;
+    return this.links;
   }
 
   public synchronized Object clone() {
     AbstractMenuBlock obj = null;
     try {
       obj = (AbstractMenuBlock)super.clone();
-      obj.objects  = objects;
-      obj.menu = menu;
+      obj.objects  = this.objects;
+      obj.menu = this.menu;
 
     }
     catch(Exception ex) {
@@ -89,7 +91,7 @@ public abstract class AbstractMenuBlock extends Block implements MenuBlock{
   }
 
   public void addParameterToMaintain(Parameter prm){
-    menu.addParameterToMaintain(prm);
+    this.menu.addParameterToMaintain(prm);
   }
 
   public Parameter getMenuLinkParameter(Class classToOpen){

@@ -51,7 +51,7 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	}
 	
 	private IWMainApplication getApplication(){
-		return application;
+		return this.application;
 	}
 	
 	public void setDefaultTemplate(String templateName, String classname) {
@@ -135,7 +135,7 @@ public class IWMainApplicationSettings extends IWPropertyList {
 	
 	
 	public AccessController getDefaultAccessController() {
-		return (AccessController) new com
+		return new com
 			.idega
 			.core
 			.accesscontrol

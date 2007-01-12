@@ -1,5 +1,5 @@
 /*
- * $Id: HtmlReferenceRewriter.java,v 1.10 2005/02/25 15:47:37 tryggvil Exp $ 
+ * $Id: HtmlReferenceRewriter.java,v 1.10.2.1 2007/01/12 19:31:41 idegaweb Exp $ 
  * Created on 3.6.2004
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -34,10 +34,10 @@ import com.idega.core.builder.data.ICPage;
  * This class takes in a source (Reader) of a HTML document parses it and rewrites relative URLs (that are referencing URLs within the same host)
  * to be an abolute URL with http://[hostname]/[oldurl]
  * </p>
- * Last modified: $Date: 2005/02/25 15:47:37 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/01/12 19:31:41 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.10.2.1 $
  */
 public class HtmlReferenceRewriter {
 
@@ -52,7 +52,7 @@ public class HtmlReferenceRewriter {
 	 * @return Returns the rewriteOptionValues.
 	 */
 	public boolean isRewriteOptionValues() {
-		return rewriteOptionValues;
+		return this.rewriteOptionValues;
 	}
 	/**
 	 * Sets if to treat option values (in a select tag) as URLs and rewrite them also
@@ -65,30 +65,30 @@ public class HtmlReferenceRewriter {
 	 * @return Returns the patterns.
 	 */
 	public List getPatterns() {
-		if(patterns==null){
-			patterns = new ArrayList();
+		if(this.patterns==null){
+			this.patterns = new ArrayList();
 			Pattern p1 = Pattern.compile("(<a[^>]+href=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p1);
+			this.patterns.add(p1);
 			Pattern p2 = Pattern.compile("(<link[^>]+href=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p2);
+			this.patterns.add(p2);
 			Pattern p3 = Pattern.compile("(<img[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p3);
+			this.patterns.add(p3);
 			Pattern p4 = Pattern.compile("(<script[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p4);
+			this.patterns.add(p4);
 			Pattern p5 = Pattern.compile("(<input[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p5);
+			this.patterns.add(p5);
 			Pattern p6 = Pattern.compile("(<form[^>]+action=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p6);
+			this.patterns.add(p6);
 			Pattern p7 = Pattern.compile("(<embed[^>]+src=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p7);
+			this.patterns.add(p7);
 			if(this.isRewriteOptionValues()){
 				Pattern p8 = Pattern.compile("(<option[^>]+value=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-				patterns.add(p8);
+				this.patterns.add(p8);
 			}
 			Pattern p9 = Pattern.compile("(<div[^>]+url\\()([^#][^\\)]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
-			patterns.add(p9);
+			this.patterns.add(p9);
 		}
-		return patterns;
+		return this.patterns;
 	}
 	/**
 	 * @param patterns The patterns to set.
@@ -293,7 +293,7 @@ public class HtmlReferenceRewriter {
 	 * @return Returns the input.
 	 */
 	public Reader getInput() {
-		return input;
+		return this.input;
 	}
 	/**
 	 * Set the Input (file or stream)
@@ -306,7 +306,7 @@ public class HtmlReferenceRewriter {
 	 * @return Returns the output.
 	 */
 	public Writer getOutput() {
-		return output;
+		return this.output;
 	}
 	/**
 	 * Set the Output (file or stream) to write the rewritten HTML to.
@@ -320,10 +320,10 @@ public class HtmlReferenceRewriter {
 	 * @return Returns the urlPrefix.
 	 */
 	public String getUrlPrefix() {
-		if(!urlPrefix.endsWith(SLASH)){
-			return urlPrefix+SLASH;
+		if(!this.urlPrefix.endsWith(SLASH)){
+			return this.urlPrefix+SLASH;
 		}
-		return urlPrefix;
+		return this.urlPrefix;
 	}
 	/**
 	 * @param urlPrefix The urlPrefix to set.

@@ -31,20 +31,27 @@ public class CBArray
 //System.out.println("union starting; lengths " + a.length + " and " + b.length);    
         Object[] temp = new Object[a.length + b.length];
         int i= 0;
-        for (i=0; i<a.length; i++) temp[i] = a[i];
-        for (int j=0; j<b.length; j++)
-            if (contains(a, b[j])==false)   // no duplicates
-                temp[i++] = b[j];
+        for (i=0; i<a.length; i++) {
+			temp[i] = a[i];
+		}
+        for (int j=0; j<b.length; j++) {
+			if (contains(a, b[j])==false) {
+				temp[i++] = b[j];
+			}
+		}
                 
 //for (int k=0; k<i; k++)
 //    System.out.println("   " + k + " " + temp[k].toString());                
                 
-        if (a.length+b.length==i)
-            return temp;      
-        else
+        if (a.length+b.length==i) {
+			return temp;
+		}
+		else
         {
             Object[] ret = new Object[i];
-            for (int k=0; k<i; k++) ret[k] = temp[k];
+            for (int k=0; k<i; k++) {
+				ret[k] = temp[k];
+			}
               
             return ret;
         }    
@@ -63,18 +70,28 @@ public class CBArray
     public static Object[] difference(Object[] a, Object[] b)
     {
 //System.out.println("difference starting; lengths " + a.length + " and " + b.length);    
-        if (a==null||b==null) return null;
-        if (a.length==0 ) return ((Object[])a.clone());  
-        if (b.length==0 ) return ((Object[])a.clone());  
+        if (a==null||b==null) {
+			return null;
+		}
+        if (a.length==0 ) {
+			return ((Object[])a.clone());
+		}  
+        if (b.length==0 ) {
+			return ((Object[])a.clone());
+		}  
         
         Object[] temp = new Object[a.length];
         int len=0;
-        for (int i=0; i<a.length; i++)
-            if (contains(b, a[i])==false)
-                temp[len++] = a[i];
+        for (int i=0; i<a.length; i++) {
+			if (contains(b, a[i])==false) {
+				temp[len++] = a[i];
+			}
+		}
                 
         Object ret[] = new Object[len];
-        for (int i=0; i<len; i++) ret[i] = temp[i];
+        for (int i=0; i<len; i++) {
+			ret[i] = temp[i];
+		}
         
 //for (int k=0; k<len; k++)
 //    System.out.println("   " + k + " " + ret[k].toString() + " (" + ret.getClass().toString() + ")");         
@@ -96,9 +113,15 @@ public class CBArray
     public static Object[] intersection(Object[] a, Object[] b)
     {
 //System.out.println("intersection starting; lengths " + a.length + " and " + b.length);    
-        if (a==null||b==null) return null;
-        if (a.length==0) return ((Object[])a.clone());
-        if (b.length==0) return ((Object[])b.clone());
+        if (a==null||b==null) {
+			return null;
+		}
+        if (a.length==0) {
+			return ((Object[])a.clone());
+		}
+        if (b.length==0) {
+			return ((Object[])b.clone());
+		}
         
         if (a.length>b.length)            // make a the smallest array
         {
@@ -108,11 +131,16 @@ public class CBArray
         Object[] temp = new Object[a.length];
         
         int len=0;
-        for (int i=0; i<a.length; i++)
-            if (contains(b, a[i])==true) temp[len++] = a[i];
+        for (int i=0; i<a.length; i++) {
+			if (contains(b, a[i])==true) {
+				temp[len++] = a[i];
+			}
+		}
             
         Object[] ret = new Object[len];    
-        for (int i=0; i<len; i++) ret[i] = temp[i];
+        for (int i=0; i<len; i++) {
+			ret[i] = temp[i];
+		}
         return ret;
     }
 
@@ -123,11 +151,20 @@ public class CBArray
     
     public static boolean isOrderedEqual(Object[] a, Object[] b)
     {
-        if (a==null&&b==null) return true;
-        if (a==null||b==null) return false;
-        if (a.length != b.length) return false;
-        for (int i=0; i<a.length; i++)
-            if (a[i].equals(b[i])==false) return false;
+        if (a==null&&b==null) {
+			return true;
+		}
+        if (a==null||b==null) {
+			return false;
+		}
+        if (a.length != b.length) {
+			return false;
+		}
+        for (int i=0; i<a.length; i++) {
+			if (a[i].equals(b[i])==false) {
+				return false;
+			}
+		}
         return true;    
     }
     
@@ -138,11 +175,20 @@ public class CBArray
      */
     public static boolean isUnorderedEqual(Object[] a, Object[] b)
     {
-        if (a==null&&b==null) return true;
-        if (a==null||b==null) return false;
-        if (a.length != b.length) return false;
-        for (int i=0; i<a.length;i++)
-            if (contains(b,a[i])==false) return false;
+        if (a==null&&b==null) {
+			return true;
+		}
+        if (a==null||b==null) {
+			return false;
+		}
+        if (a.length != b.length) {
+			return false;
+		}
+        for (int i=0; i<a.length;i++) {
+			if (contains(b,a[i])==false) {
+				return false;
+			}
+		}
         return true;                
     } 
      
@@ -154,9 +200,14 @@ public class CBArray
      */
     public static boolean contains(Object array[], Object o)
     {
-        if (o==null) return false;
-        for (int i=0; i<array.length; i++)
-            if (o.equals(array[i])) return true;
+        if (o==null) {
+			return false;
+		}
+        for (int i=0; i<array.length; i++) {
+			if (o.equals(array[i])) {
+				return true;
+			}
+		}
         return false;
     }
        
@@ -166,31 +217,38 @@ public class CBArray
 
     public static void print(Object array[])
     {
-        for(int i=0; i<array.length; i++)
-            System.out.println(i + ": " + array[i].toString());
+        for(int i=0; i<array.length; i++) {
+			System.out.println(i + ": " + array[i].toString());
+		}
     }
     
     
     public static Object[] enumerationToArray(Enumeration e)
     {
         Vector v = new Vector();
-        while(e.hasMoreElements()) v.add(e.nextElement());
+        while(e.hasMoreElements()) {
+			v.add(e.nextElement());
+		}
         return v.toArray();
     }
     
     public static Enumeration arrayToEnumeration(Object[] o)
     {
         Vector v = new Vector(o.length);
-        for (int i=0; i<o.length; i++) v.add(o[i]);
+        for (int i=0; i<o.length; i++) {
+			v.add(o[i]);
+		}
         return v.elements();    
     }
     
     public static Object[] trimNulls(Object[] o)
     {
         Vector v = new Vector(o.length);
-        for (int i=0; i<o.length; i++)
-            if (o[i] != null) 
-                v.add(o[i]);    
+        for (int i=0; i<o.length; i++) {
+			if (o[i] != null) {
+				v.add(o[i]);
+			}
+		}    
         return v.toArray();        
     }
 }    

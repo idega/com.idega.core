@@ -1,5 +1,5 @@
 /*
- * $Id: FramedApplicationViewNode.java,v 1.1 2004/11/14 23:24:47 tryggvil Exp $
+ * $Id: FramedApplicationViewNode.java,v 1.1.2.1 2007/01/12 19:32:12 idegaweb Exp $
  * Created on 20.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,10 +14,10 @@ import com.idega.idegaweb.IWMainApplication;
 
 /**
  * 
- *  Last modified: $Date: 2004/11/14 23:24:47 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:32:12 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class FramedApplicationViewNode extends ApplicationViewNode {
 
@@ -44,7 +44,7 @@ public class FramedApplicationViewNode extends ApplicationViewNode {
 	 * @return Returns the frameUrl.
 	 */
 	public String getFrameUrl() {
-		return frameUrl;
+		return this.frameUrl;
 	}
 	/**
 	 * @param frameUrl The frameUrl to set.

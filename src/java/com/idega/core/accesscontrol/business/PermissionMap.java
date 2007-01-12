@@ -13,7 +13,7 @@ import java.util.Vector;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -22,7 +22,7 @@ public class PermissionMap {
   private Map firstKey;
 
   public PermissionMap() {
-    firstKey = new Hashtable();
+    this.firstKey = new Hashtable();
 /*
     firstKey.clear();
     firstKey.containsKey(object);
@@ -42,10 +42,10 @@ public class PermissionMap {
   }
 
   public void put(Object key1, Object key2, Object key3, Object value){
-    Map secondKey = (Map)firstKey.get(key1);
+    Map secondKey = (Map)this.firstKey.get(key1);
     if(secondKey == null){
       secondKey = new Hashtable();
-      firstKey.put(key1,secondKey);
+      this.firstKey.put(key1,secondKey);
     }
     Map thirdKey = (Map)secondKey.get(key2);
     if(thirdKey == null){
@@ -56,17 +56,17 @@ public class PermissionMap {
   }
 
   public void put(Object key1, Object key2, Map value){
-    Map secondKey = (Map)firstKey.get(key1);
+    Map secondKey = (Map)this.firstKey.get(key1);
     if(secondKey == null){
       secondKey = new Hashtable();
-      firstKey.put(key1,secondKey);
+      this.firstKey.put(key1,secondKey);
     }
     secondKey.put(key2,value);
   }
 
 
   public void clear(){
-    firstKey.clear();
+    this.firstKey.clear();
   }
 
   public List get(Object key1, Object key2, List key3){
@@ -89,7 +89,7 @@ public class PermissionMap {
   }
 
   public Map get(Object key1, Object key2){
-    Map secondKey = (Map)firstKey.get(key1);
+    Map secondKey = (Map)this.firstKey.get(key1);
     if(secondKey != null){
       return (Map)secondKey.get(key2);
     }else{

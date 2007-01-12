@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.6 2005/08/31 14:59:44 tryggvil Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.6.2.1 2007/01/12 19:32:46 idegaweb Exp $
  * Created on 27.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -34,10 +34,10 @@ import com.idega.util.FileUtil;
  *  (Setting -Didegaweb.bundles.resource.dir=/idega/eclipse/workspace in the tomcat plugin preference pane).
  *  </p>
  * 
- *  Last modified: $Date: 2005/08/31 14:59:44 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:32:46 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.6.2.1 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 	
@@ -57,8 +57,8 @@ public class IWBundleResourceFilter extends BaseFilter {
 	public void init(FilterConfig arg0) throws ServletException {
 		String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 		if(directory!=null){
-			sBundlesDirectory=directory;
-			feedFromSetBundleDir=true;
+			this.sBundlesDirectory=directory;
+			this.feedFromSetBundleDir=true;
 		}
 	}
 
@@ -71,7 +71,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 		HttpServletRequest request = (HttpServletRequest)sreq;
 		HttpServletResponse response = (HttpServletResponse)sres;
 		
-		if(feedFromSetBundleDir){
+		if(this.feedFromSetBundleDir){
 			try{
 				String requestUriWithoutContextPath = getURIMinusContextPath(request);
 				String[] parses = parseBundleDir(requestUriWithoutContextPath);
@@ -204,14 +204,14 @@ public class IWBundleResourceFilter extends BaseFilter {
 	}
 	
 	private File getSetBundlesDirectory(){
-		if(fBundlesDirectory==null){
-			fBundlesDirectory=new File(getSetBundlesDirectoryAsString());
+		if(this.fBundlesDirectory==null){
+			this.fBundlesDirectory=new File(getSetBundlesDirectoryAsString());
 		}
-		return fBundlesDirectory;
+		return this.fBundlesDirectory;
 	}
 	
 	private String getSetBundlesDirectoryAsString(){
-		return sBundlesDirectory;
+		return this.sBundlesDirectory;
 	}
 	
 	private File getSetBundleDirectory(String bundleIdentifier){

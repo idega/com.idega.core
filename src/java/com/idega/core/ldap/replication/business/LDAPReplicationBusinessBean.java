@@ -198,12 +198,12 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	private boolean startOrStopReplicator(final int replicatorNumber, String startOrStop) throws IOException {
 		//initilize all variables
 		final Integer repNum = new Integer(replicatorNumber);
-		if (scheduler == null) {
-			scheduler = new TimerManager();
+		if (this.scheduler == null) {
+			this.scheduler = new TimerManager();
 		}
 		
-		replicatorConnectionsMap = getReplicatorConnectionsMap();
-		replicatorTimerMap = getReplicatorTimerMap();
+		this.replicatorConnectionsMap = getReplicatorConnectionsMap();
+		this.replicatorTimerMap = getReplicatorTimerMap();
 		
 		Properties repProps = getReplicationSettings();
 		final String host = repProps.getProperty(PROPS_REPLICATOR_PREFIX + replicatorNumber + PROPS_REPLICATOR_HOST);
@@ -237,7 +237,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		try {
 			if (startOrStop.equals(START_REPLICATOR)) {
 				//START REPLICATOR
-				if (replicatorConnectionsMap.get(repNum) == null) {
+				if (this.replicatorConnectionsMap.get(repNum) == null) {
 					//todo add parentgroup
 					Group parentGroup = null;
 					Group baseGroup = null;
@@ -267,21 +267,21 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			}
 			else if (startOrStop.equals(STOP_REPLICATOR)) {
 				//STOP THE REPLICATOR
-				JNDIOps connection = (JNDIOps) replicatorConnectionsMap.get(repNum);
+				JNDIOps connection = (JNDIOps) this.replicatorConnectionsMap.get(repNum);
 				if(connection!=null){
 					try {
 						connection.close();
-						replicatorConnectionsMap.remove(repNum);
+						this.replicatorConnectionsMap.remove(repNum);
 						connection = null;
 					}
 					catch (NamingException e1) {
 						e1.printStackTrace();
 					}
 				}
-				TimerEntry timerEntry = (TimerEntry) replicatorTimerMap.get(repNum);
+				TimerEntry timerEntry = (TimerEntry) this.replicatorTimerMap.get(repNum);
 				if(timerEntry!=null){
-					scheduler.removeTimer(timerEntry);
-					replicatorTimerMap.remove(repNum);
+					this.scheduler.removeTimer(timerEntry);
+					this.replicatorTimerMap.remove(repNum);
 					timerEntry = null;
 				}
 				return true;
@@ -395,8 +395,8 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 					
 			}
 			if(entry!=null){
-				scheduler.addTimer(entry);
-				replicatorTimerMap.put(repNum, entry);
+				this.scheduler.addTimer(entry);
+				this.replicatorTimerMap.put(repNum, entry);
 				return true;
 			}
 			else{
@@ -415,14 +415,14 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	}
 
 	public void startOrStopAllReplicators(String startOrStop) throws IOException {
-		repProps = getReplicationSettings();
-		String num = repProps.getProperty(PROPS_REPLICATION_NUM);
+		this.repProps = getReplicationSettings();
+		String num = this.repProps.getProperty(PROPS_REPLICATION_NUM);
 		try {
 			int numberOfReplicators = Integer.parseInt(num);
 			for (int i = 1; i <= numberOfReplicators; i++) {
 				//only start autostarters
 				if (startOrStop.equals(START_REPLICATOR)) {
-					String auto = repProps.getProperty(PROPS_REPLICATOR_PREFIX + i + PROPS_REPLICATOR_ACTIVE);
+					String auto = this.repProps.getProperty(PROPS_REPLICATOR_PREFIX + i + PROPS_REPLICATOR_ACTIVE);
 					boolean autostart = (auto!=null && ("Y".equalsIgnoreCase(auto) || "true".equalsIgnoreCase(auto)));
 					if (autostart) {
 						startReplicator(i);
@@ -434,9 +434,9 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 			}
 			
 			if(startOrStop.equals(STOP_REPLICATOR)){
-				if(scheduler!=null){
-					scheduler.removeAllTimers();
-					scheduler = null;
+				if(this.scheduler!=null){
+					this.scheduler.removeAllTimers();
+					this.scheduler = null;
 				}
 			}
 		}
@@ -480,7 +480,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 				//just set the unique id and entry dn to that group if no other group has it already
 				
 				
-				if(ldapUtil.isGroup(entryDN)){
+				if(this.ldapUtil.isGroup(entryDN)){
 					group = createOrUpdateGroup(parentGroup,baseGroupToOverwrite,attribs,entryDN,baseUniqueId);
 				}
 			}
@@ -537,10 +537,10 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 				}
 				
 				Group childGroup = null;
-					if(ldapUtil.isUser(childDN)){
+					if(this.ldapUtil.isUser(childDN)){
 						createOrUpdateUser(parentGroup, childAttribs, childDN);
 					}
-					else if(ldapUtil.isGroup(childDN)){
+					else if(this.ldapUtil.isGroup(childDN)){
 						childGroup = createOrUpdateGroup(parentGroup, null, childAttribs, childDN, baseUniqueId);
 					}
 					
@@ -717,56 +717,56 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 	}
 
 	private GroupBusiness getGroupBusiness() {
-		if (groupBiz == null) {
+		if (this.groupBiz == null) {
 			try {
-				groupBiz = (GroupBusiness) this.getServiceInstance(GroupBusiness.class);
+				this.groupBiz = (GroupBusiness) this.getServiceInstance(GroupBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return groupBiz;
+		return this.groupBiz;
 	}
 
 	private UserBusiness getUserBusiness() {
-		if (userBiz == null) {
+		if (this.userBiz == null) {
 			try {
-				userBiz = (UserBusiness)  this.getServiceInstance(UserBusiness.class);
+				this.userBiz = (UserBusiness)  this.getServiceInstance(UserBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return userBiz;
+		return this.userBiz;
 	}
 
 	private EmbeddedLDAPServerBusiness getEmbeddedLDAPServerBusiness() {
-		if (embeddedLDAPServerBiz == null) {
+		if (this.embeddedLDAPServerBiz == null) {
 			try {
-				embeddedLDAPServerBiz = (EmbeddedLDAPServerBusiness) this.getServiceInstance(EmbeddedLDAPServerBusiness.class);
+				this.embeddedLDAPServerBiz = (EmbeddedLDAPServerBusiness) this.getServiceInstance(EmbeddedLDAPServerBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return embeddedLDAPServerBiz;
+		return this.embeddedLDAPServerBiz;
 	}
 
 	public Properties getReplicationSettings() throws IOException {
-		if (repProps == null) {
+		if (this.repProps == null) {
 			String pathToFile = getEmbeddedLDAPServerBusiness().getPathToLDAPConfigFiles()
 					+ REPLICATION_PROPS_FILE_NAME;
 			try {
-				repProps = getEmbeddedLDAPServerBusiness().loadProperties(pathToFile);
+				this.repProps = getEmbeddedLDAPServerBusiness().loadProperties(pathToFile);
 			}
 			catch (FileNotFoundException e) {
 				FileUtil.createFile(pathToFile);//create the file if it does
 				// not exist;
 				logConfig("LDAPManager: creating replication settings file : " + pathToFile);
-				repProps = getEmbeddedLDAPServerBusiness().loadProperties(pathToFile);
+				this.repProps = getEmbeddedLDAPServerBusiness().loadProperties(pathToFile);
 			}
 		}
-		return repProps;
+		return this.repProps;
 	}
 
 	/**
@@ -779,24 +779,24 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		Properties props = getReplicationSettings();
 		String pathToFile = getEmbeddedLDAPServerBusiness().getPathToLDAPConfigFiles() + REPLICATION_PROPS_FILE_NAME;
 		getEmbeddedLDAPServerBusiness().storeProperties(props, pathToFile);
-		repProps = null;//force reload
+		this.repProps = null;//force reload
 		getReplicationSettings();
 	}
 	
 	private Map getReplicatorConnectionsMap(){
-		if (replicatorConnectionsMap == null) {
-			replicatorConnectionsMap = new HashMap();
+		if (this.replicatorConnectionsMap == null) {
+			this.replicatorConnectionsMap = new HashMap();
 		}
 		
-		return replicatorConnectionsMap;
+		return this.replicatorConnectionsMap;
 	}
 	
 	private Map getReplicatorTimerMap(){
-		if (replicatorTimerMap == null) {
-			replicatorTimerMap = new HashMap();
+		if (this.replicatorTimerMap == null) {
+			this.replicatorTimerMap = new HashMap();
 		}
 		
-		return replicatorTimerMap;
+		return this.replicatorTimerMap;
 	}
 
 	private void replicate(final int replicatorNumber, final Integer repNum, final String host, final String port, final String userName, final String password, final String baseRDN, final boolean replicateBaseRDN, final String baseUniqueId, final Group parentGroup, final Group baseGroupToOverwrite, final int maxEntrylimit, final int searchTimeLimit, final boolean onlyUseUUID, TimerEntry entry) {
@@ -807,7 +807,7 @@ public class LDAPReplicationBusinessBean extends IBOServiceBean implements LDAPR
 		JNDIOps jndiOps;
 		try {
 			jndiOps = new JNDIOps("ldap://" + host + ":" + port, userName, password.toCharArray());
-			replicatorConnectionsMap.put(repNum, jndiOps);
+			this.replicatorConnectionsMap.put(repNum, jndiOps);
 			DN baseDN = new DN(baseRDN);
 			if(replicateBaseRDN){
 				Group updatedParent = replicateOneGroupEntry((DN)baseDN.clone(), jndiOps, parentGroup, baseUniqueId, baseGroupToOverwrite, maxEntrylimit, searchTimeLimit, onlyUseUUID);

@@ -27,7 +27,7 @@ public class Order implements Outputable {
     }
 
     public Column getColumn() {
-        return column;
+        return this.column;
     }
 
     public String toString() {
@@ -35,8 +35,8 @@ public class Order implements Outputable {
     }
 
     public void write(Output out) {
-        column.write(out);
-        if (!ascending) {
+        this.column.write(out);
+        if (!this.ascending) {
             out.print(" DESC");
         }
     }

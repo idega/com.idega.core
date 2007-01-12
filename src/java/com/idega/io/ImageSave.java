@@ -43,13 +43,17 @@ public class ImageSave {
 
       String dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
 
-      if( !dataBaseType.equalsIgnoreCase("oracle")  ) return saveImageToDB(imageId,-1,in,ContentType,FileName,"-1", "-1",NewImage);
-
-      else return saveImageToOracleDB(imageId,-1,in,ContentType,FileName,"-1","-1",NewImage);
+      if( !dataBaseType.equalsIgnoreCase("oracle")  ) {
+		return saveImageToDB(imageId,-1,in,ContentType,FileName,"-1", "-1",NewImage);
+	}
+	else {
+		return saveImageToOracleDB(imageId,-1,in,ContentType,FileName,"-1","-1",NewImage);
+	}
 
     }
-
-    else return -1;
+	else {
+		return -1;
+	}
 
   }
 
@@ -65,9 +69,12 @@ public class ImageSave {
 
       String dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
 
-      if( !dataBaseType.equalsIgnoreCase("oracle")  ) return saveImageToDB(imageId,parentImageId,in,ContentType,FileName,width, height,NewImage);
-
-      else return saveImageToOracleDB(imageId,parentImageId,in,ContentType,FileName,width, height,NewImage);
+      if( !dataBaseType.equalsIgnoreCase("oracle")  ) {
+		return saveImageToDB(imageId,parentImageId,in,ContentType,FileName,width, height,NewImage);
+	}
+	else {
+		return saveImageToOracleDB(imageId,parentImageId,in,ContentType,FileName,width, height,NewImage);
+	}
 
     }
 
@@ -81,7 +88,9 @@ public class ImageSave {
 
     finally{
 
-      if(Conn != null ) com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").freeConnection(Conn);
+      if(Conn != null ) {
+		com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").freeConnection(Conn);
+	}
 
     }
 
@@ -101,7 +110,9 @@ public class ImageSave {
 
     boolean dimensions = true;
 
-    if(width.equalsIgnoreCase("-1")) dimensions = false;
+    if(width.equalsIgnoreCase("-1")) {
+		dimensions = false;
+	}
 
 
 
@@ -109,7 +120,9 @@ public class ImageSave {
 
       Conn = com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").getConnection();
 
-      if(Conn== null) return id;
+      if(Conn== null) {
+		return id;
+	}
 
 
 
@@ -117,17 +130,23 @@ public class ImageSave {
 
         id = com.idega.data.EntityControl.createUniqueID(com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity"));
 
-        if( dimensions ) statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id,width,height) values("+id+",?,?,?,'"+IWTimestamp.getTimestampRightNow().toString()+"','N',"+parentImageId+",?,?)";
-
-        else statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,'"+IWTimestamp.getTimestampRightNow().toString()+"','N',"+parentImageId+")";
+        if( dimensions ) {
+			statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id,width,height) values("+id+",?,?,?,'"+IWTimestamp.getTimestampRightNow().toString()+"','N',"+parentImageId+",?,?)";
+		}
+		else {
+			statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,'"+IWTimestamp.getTimestampRightNow().toString()+"','N',"+parentImageId+")";
+		}
 
       }
 
       else{
 
-        if( dimensions ) statement = "update image set image_value=?,content_type=?,image_name=?,width=?,height=? where image_id="+imageId;
-
-        else statement = "update image set image_value=?,content_type=?,image_name=? where image_id="+imageId;
+        if( dimensions ) {
+			statement = "update image set image_value=?,content_type=?,image_name=?,width=?,height=? where image_id="+imageId;
+		}
+		else {
+			statement = "update image set image_value=?,content_type=?,image_name=? where image_id="+imageId;
+		}
 
       }
 
@@ -169,7 +188,9 @@ public class ImageSave {
 
     finally{
 
-      if(Conn != null) com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").freeConnection(Conn);
+      if(Conn != null) {
+		com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").freeConnection(Conn);
+	}
 
     }
 
@@ -189,7 +210,9 @@ public class ImageSave {
 
     boolean dimensions = false;
 
-    if(width.equalsIgnoreCase("-1")) dimensions = false;
+    if(width.equalsIgnoreCase("-1")) {
+		dimensions = false;
+	}
 
 System.out.println("ImageSave : width ="+width);
 
@@ -203,7 +226,9 @@ System.out.println("ImageSave : height ="+height);
 
       Conn = com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").getConnection();
 
-      if(Conn == null) return id;
+      if(Conn == null) {
+		return id;
+	}
 
 
 
@@ -211,17 +236,23 @@ System.out.println("ImageSave : height ="+height);
 
         id = com.idega.data.EntityControl.createUniqueID(com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity"));
 
-        if(dimensions) statement = "insert into image (image_id,image_value,content_type,image_name,width,height,date_added,from_file,parent_id) values("+id+",?,?,?,?,?,"+IWTimestamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
-
-        else statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,"+IWTimestamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
+        if(dimensions) {
+			statement = "insert into image (image_id,image_value,content_type,image_name,width,height,date_added,from_file,parent_id) values("+id+",?,?,?,?,?,"+IWTimestamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
+		}
+		else {
+			statement = "insert into image (image_id,image_value,content_type,image_name,date_added,from_file,parent_id) values("+id+",?,?,?,"+IWTimestamp.RightNow().toOracleString()+",'N',"+parentImageId+")";
+		}
 
       }
 
       else{
 
-        if(dimensions) statement = "update image set image_value=?,content_type=?,image_name=?,width=?,height=? where image_id='"+imageId+"'";
-
-        else statement = "update image set image_value=?,content_type=?,image_name=? where image_id='"+imageId+"'";
+        if(dimensions) {
+			statement = "update image set image_value=?,content_type=?,image_name=?,width=?,height=? where image_id='"+imageId+"'";
+		}
+		else {
+			statement = "update image set image_value=?,content_type=?,image_name=? where image_id='"+imageId+"'";
+		}
 
       }
 
@@ -237,7 +268,7 @@ System.out.println("ImageSave : height ="+height);
 
 	PreparedStatement myPreparedStatement = Conn.prepareStatement ( statement );
 
-        myPreparedStatement.setString(1, "00000001");// 00000001 i stað hins venjulega empty_blob()
+        myPreparedStatement.setString(1, "00000001");// 00000001 i staï¿½ hins venjulega empty_blob()
 
         myPreparedStatement.setString(2, ContentType );
 
@@ -265,7 +296,9 @@ System.out.println("ImageSave : height ="+height);
 
         Statement stmt2 = Conn.createStatement();
 
-        if(!NewImage) id = imageId;
+        if(!NewImage) {
+			id = imageId;
+		}
 
         String cmd = "SELECT image_value FROM image WHERE image_id ='"+id+"' FOR UPDATE ";
 
@@ -293,9 +326,9 @@ System.out.println("ImageSave : height ="+height);
 
 
 
-        while ((length = in.read(buffer)) != -1)
-
-            outstream.write(buffer, 0, length );
+        while ((length = in.read(buffer)) != -1) {
+			outstream.write(buffer, 0, length );
+		}
 
 
 
@@ -327,7 +360,9 @@ System.out.println("ImageSave : height ="+height);
 
     finally{
 
-      if(Conn != null) com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").freeConnection(Conn);
+      if(Conn != null) {
+		com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").freeConnection(Conn);
+	}
 
     }
 

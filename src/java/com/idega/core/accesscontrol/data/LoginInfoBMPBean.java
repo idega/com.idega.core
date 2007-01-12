@@ -3,6 +3,7 @@ package com.idega.core.accesscontrol.data;
 import java.sql.Date;
 import java.sql.SQLException;
 
+import com.idega.data.GenericEntity;
 import com.idega.data.MetaDataCapable;
 import com.idega.util.EncryptionType;
 import com.idega.util.IWTimestamp;
@@ -73,7 +74,7 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
   }
 
   public static LoginInfo getStaticInstance(){
-    return (LoginInfo)com.idega.core.accesscontrol.data.LoginInfoBMPBean.getStaticInstance(className);
+    return (LoginInfo)GenericEntity.getStaticInstance(className);
   }
 
 
@@ -174,7 +175,7 @@ public class LoginInfoBMPBean extends com.idega.data.GenericEntity implements co
 
   /*  Setters begin   */
   public void setLoginTableId(int id){
-    this.setColumn(this.getLoginTableIdColumnName(),id);
+    this.setColumn(LoginInfoBMPBean.getLoginTableIdColumnName(),id);
   }
 
   public void setAccountEnabled(boolean value){

@@ -1,6 +1,7 @@
 package com.idega.util.text;
 
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
@@ -31,28 +32,35 @@ public class SocialSecurityNumber {
 	}
 
 	public int getAge() {
-		if (this.sSSN != null)
+		if (this.sSSN != null) {
 			return getAge(this.sSSN);
-		else
+		}
+		else {
 			return 0;
+		}
 	}
 
 	public static int getAge(String socialSecurityNumber) {
-		int thisYear = new GregorianCalendar().YEAR;
+		int thisYear = Calendar.YEAR;
 		int age;
 		int year = Integer.parseInt(socialSecurityNumber.substring(4, 6));
 		if (socialSecurityNumber.length() == 10) {
-			if (socialSecurityNumber.endsWith("9"))
+			if (socialSecurityNumber.endsWith("9")) {
 				year += 1900;
-			if (socialSecurityNumber.endsWith("0"))
+			}
+			if (socialSecurityNumber.endsWith("0")) {
 				year += 2000;
-			if (socialSecurityNumber.endsWith("1"))
+			}
+			if (socialSecurityNumber.endsWith("1")) {
 				year += 2100; // in the future
-			if (socialSecurityNumber.endsWith("2"))
+			}
+			if (socialSecurityNumber.endsWith("2")) {
 				year += 2200;
+			}
 		}
-		else
+		else {
 			year += 1900;
+		}
 		age = thisYear - year;
 		return age;
 	}
@@ -67,14 +75,18 @@ public class SocialSecurityNumber {
 	      int month = Integer.parseInt(socialSecurityNumber.substring(2, 4));
 	      int year = Integer.parseInt(socialSecurityNumber.substring(4, 6));
 	      int century = Integer.parseInt(socialSecurityNumber.substring(9));
-				if (century == 9)
+				if (century == 9) {
 					year += 1900;
-				if (century == 0)
+				}
+				if (century == 0) {
 					year += 2000;
-				if (century == 1)
+				}
+				if (century == 1) {
 					year += 2100;
-				if (century == 2)
+				}
+				if (century == 2) {
 					year += 2200;
+				}
 					
 				IWTimestamp stamp = new IWTimestamp(day,month,year);
 				return stamp.getDate();
@@ -88,8 +100,9 @@ public class SocialSecurityNumber {
 			return isValidIcelandicSocialSecurityNumber(ssn);
 		}
 		// TODO handle other system locales
-		else
+		else {
 			return false;
+		}
 		
 	}
 

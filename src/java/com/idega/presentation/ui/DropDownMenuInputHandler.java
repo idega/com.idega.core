@@ -45,8 +45,9 @@ public abstract class DropDownMenuInputHandler extends DropdownMenu 	implements	
 		if (values != null && values.length > 0) {
 			return values[0];
 		}
-		else
+		else {
 			return null;
+		}
 	}
 
 	public Object convertSingleResultingObjectToType(Object value, String className) {

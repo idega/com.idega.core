@@ -34,7 +34,7 @@ import com.idega.repository.data.RefactorClassRegistry;
 
 
     public Class getFrameClass(){
-      return myClass;
+      return this.myClass;
     }
 
     public void setFrameClass(Class myClass){
@@ -51,7 +51,7 @@ import com.idega.repository.data.RefactorClassRegistry;
     }
 
     public String getStorageKey(){
-      return storageKey;
+      return this.storageKey;
     }
 
     public void setStorageKey(String key){

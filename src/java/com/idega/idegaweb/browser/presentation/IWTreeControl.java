@@ -8,7 +8,7 @@ import com.idega.presentation.ui.AbstractTreeViewer;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -24,20 +24,20 @@ public abstract class IWTreeControl extends AbstractTreeViewer implements IWBrow
 
   public void setControlTarget(String controlTarget){
     this.setOpenCloseLinkTarget(controlTarget);
-    _controlTarget = controlTarget;
+    this._controlTarget = controlTarget;
   }
 
   public void setControlEventModel(IWPresentationEvent model){
-    _contolEvent = model;
+    this._contolEvent = model;
     this.addEventModel(model);
   }
 
   public IWPresentationEvent getControlEventModel(){
-    return _contolEvent;
+    return this._contolEvent;
   }
 
   public String getControlTarget(){
-    return _controlTarget;
+    return this._controlTarget;
   }
 
 

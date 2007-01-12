@@ -1,5 +1,5 @@
 /*
- * $Id: ICTreeNodeComparator.java,v 1.1 2005/01/08 14:28:33 laddi Exp $
+ * $Id: ICTreeNodeComparator.java,v 1.1.2.1 2007/01/12 19:32:32 idegaweb Exp $
  * Created on 8.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.core.data.ICTreeNode;
 /**
  * A comparator to compare ICTreeNodes by their name.
  * 
- * Last modified: $Date: 2005/01/08 14:28:33 $ by $Author: laddi $
+ * Last modified: $Date: 2007/01/12 19:32:32 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class ICTreeNodeComparator implements Comparator {
 
@@ -33,7 +33,7 @@ public class ICTreeNodeComparator implements Comparator {
 	}
 	
 	public ICTreeNodeComparator(Locale locale) {
-		iLocale = locale;
+		this.iLocale = locale;
 	}
 	
 	/* (non-Javadoc)
@@ -43,13 +43,13 @@ public class ICTreeNodeComparator implements Comparator {
     ICTreeNode p1 = (ICTreeNode) o1;
     ICTreeNode p2 = (ICTreeNode) o2;
 		
-		if (iLocale != null) {
-			collator = Collator.getInstance(iLocale);
-	    return collator.compare(p1.getNodeName(iLocale), p2.getNodeName(iLocale));
+		if (this.iLocale != null) {
+			this.collator = Collator.getInstance(this.iLocale);
+	    return this.collator.compare(p1.getNodeName(this.iLocale), p2.getNodeName(this.iLocale));
 		}
 		else {
-			collator = Collator.getInstance();
-			return collator.compare(p1.getNodeName(), p2.getNodeName());
+			this.collator = Collator.getInstance();
+			return this.collator.compare(p1.getNodeName(), p2.getNodeName());
 		}
 	}
 }

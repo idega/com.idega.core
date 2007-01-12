@@ -28,9 +28,10 @@ public class MultivaluedHashMap extends HashMap {
 			Collection element = (Collection) iter.next();
 			Iterator iterator = element.iterator();
 			while (iterator.hasNext()) {
-				Object object = (Object) iterator.next();
-				if (object.equals(value))
+				Object object = iterator.next();
+				if (object.equals(value)) {
 					return true;
+				}
 			}
 		}
 		return false;

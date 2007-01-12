@@ -47,24 +47,24 @@ public class IDOContainer implements Singleton {
   }
   
   protected Map getBeanMap(){
-    if(emptyBeanInstances==null){
-      emptyBeanInstances = new HashMap();
+    if(this.emptyBeanInstances==null){
+      this.emptyBeanInstances = new HashMap();
     }
-    return emptyBeanInstances;
+    return this.emptyBeanInstances;
   }
 
   protected Map getBeanCacheMap(){
-    if(beanCacheMap==null){
-      beanCacheMap = new HashMap();
+    if(this.beanCacheMap==null){
+      this.beanCacheMap = new HashMap();
     }
-    return beanCacheMap;
+    return this.beanCacheMap;
   }
 
   protected Map getIsBeanCachActiveMap(){
-  	if(isBeanCacheActive==null){
-  		isBeanCacheActive=new HashMap();
+  	if(this.isBeanCacheActive==null){
+  		this.isBeanCacheActive=new HashMap();
   	}
-  	return isBeanCacheActive;
+  	return this.isBeanCacheActive;
   }
 
   protected IDOBeanCache getBeanCache(Class entityInterfaceClass){
@@ -229,7 +229,7 @@ public class IDOContainer implements Singleton {
 		}
 		
 		if(isActive==null){ // still null, use system-default
-			isActive = ((beanCachingActive)?Boolean.TRUE:Boolean.FALSE);
+			isActive = ((this.beanCachingActive)?Boolean.TRUE:Boolean.FALSE);
 		}
 		getIsBeanCachActiveMap().put(entityInterfaceClass,isActive);
     }
@@ -240,7 +240,7 @@ public class IDOContainer implements Singleton {
     if(!onOrOff){
       this.flushAllQueryCache();
     }
-    isBeanCacheActive=null;  //remove at least all elements useing system-default (queryCachingActive)
+    this.isBeanCacheActive=null;  //remove at least all elements useing system-default (queryCachingActive)
     this.queryCachingActive=onOrOff;
   }
 
@@ -287,20 +287,20 @@ public class IDOContainer implements Singleton {
    * @return Returns the entityAttributes.
    */
   Map getEntityDefinitions() {
-  	if(entityAttributes==null){
-  		entityAttributes=new HashMap();
+  	if(this.entityAttributes==null){
+  		this.entityAttributes=new HashMap();
   	}
-  	return entityAttributes;
+  	return this.entityAttributes;
   }
   /**
    * Map Used by the IDO Framework and stores a static instance of a IDOEntity.
    * This map has as a key a Class instance and a value a IDOEntity instance.
    */
   Map getEntityStaticInstances() {
-  	if(entityStaticInstances==null){
-  		entityStaticInstances=new HashMap();
+  	if(this.entityStaticInstances==null){
+  		this.entityStaticInstances=new HashMap();
   	}
-  	return entityStaticInstances;
+  	return this.entityStaticInstances;
   }  
   
   /**
@@ -311,9 +311,9 @@ public class IDOContainer implements Singleton {
    */
   HashtableDoubleKeyed getRelationshipTableMap(){
   	if(this.relationshipTables==null){
-  		relationshipTables=new HashtableDoubleKeyed();
+  		this.relationshipTables=new HashtableDoubleKeyed();
   	}
-  	return relationshipTables;
+  	return this.relationshipTables;
   }
   
   private DatastoreInterfaceManager datastoreInterfaceManager;
@@ -322,10 +322,10 @@ public class IDOContainer implements Singleton {
  * @return Returns the datastoreInterfaceManager.
  */
 public DatastoreInterfaceManager getDatastoreInterfaceManager() {
-	if(datastoreInterfaceManager==null){
-		datastoreInterfaceManager = new DatastoreInterfaceManager();
+	if(this.datastoreInterfaceManager==null){
+		this.datastoreInterfaceManager = new DatastoreInterfaceManager();
 	}
-	return datastoreInterfaceManager;
+	return this.datastoreInterfaceManager;
 }
 /**
  * @param datastoreInterfaceManager The datastoreInterfaceManager to set.

@@ -40,11 +40,12 @@ public class DataEmailer extends Block {
   public void main(IWContext iwc){
     int icid = getICObjectInstanceID();
     String action = "send"+icid;
-    if( iwc.isParameterSet(action) )
-      sendLetter();
-    if(emailAddress!=null && sql !=null){
+    if( iwc.isParameterSet(action) ) {
+		sendLetter();
+	}
+    if(this.emailAddress!=null && this.sql !=null){
       Form myForm = new Form();
-      myForm.add(new SubmitButton(action,"Mail to: "+emailAddress));
+      myForm.add(new SubmitButton(action,"Mail to: "+this.emailAddress));
       add(myForm);
     }
   }
@@ -85,7 +86,7 @@ public class DataEmailer extends Block {
    *  sends letter and returns error id
    */
   private void sendLetter(){
-    if(emailAddress!=null && host!=null){
+    if(this.emailAddress!=null && this.host!=null){
       String letter = createLetter();
       if(letter !=null){
         try{
@@ -96,40 +97,42 @@ public class DataEmailer extends Block {
           System.err.println("subj :"+subject);
           //System.err.println(letter);
           */
-          SendMail.send(from,emailAddress,"","",host,subject,letter);
+          SendMail.send(this.from,this.emailAddress,"","",this.host,this.subject,letter);
           //System.err.println("mail sent");
         }
         catch(Exception ex){
           ex.printStackTrace();
         }
       }
-      else
-        System.err.println("letter was null");
+	else {
+		System.err.println("letter was null");
+	}
     }
-    else
-      System.err.println("did not send");
+	else {
+		System.err.println("did not send");
+	}
   }
 
   private String createLetter(){
-    if(sql !=null){
+    if(this.sql !=null){
       Statement Stmt= null;
       Connection conn = null;
       try{
         System.err.println("trying to fetch data");
         conn = ConnectionBroker.getConnection();
 			  Stmt = conn.createStatement();
-        ResultSet RS = Stmt.executeQuery(sql);
+        ResultSet RS = Stmt.executeQuery(this.sql);
         int count = RS.getMetaData().getColumnCount();
         StringBuffer letter = new StringBuffer();
         String newLine = System.getProperty("line.separator");
-        letter.append(startData).append(newLine);
+        letter.append(this.startData).append(newLine);
         while(RS.next()){
           for (int i = 1; i <= count; i++) {
-            letter.append(RS.getString(i)).append(delimiter);
+            letter.append(RS.getString(i)).append(this.delimiter);
           }
           letter.append(newLine);
         }
-        letter.append(endData).append(newLine);
+        letter.append(this.endData).append(newLine);
 			  RS.close();
 
         return letter.toString();
@@ -140,10 +143,12 @@ public class DataEmailer extends Block {
 		  finally{
 
         try{
-          if(Stmt != null)
-            Stmt.close();
-          if(conn !=null)
-            ConnectionBroker.freeConnection(conn);
+          if(Stmt != null) {
+			Stmt.close();
+		}
+          if(conn !=null) {
+			ConnectionBroker.freeConnection(conn);
+		}
         }
         catch(SQLException sql){
           sql.printStackTrace();
@@ -151,8 +156,9 @@ public class DataEmailer extends Block {
 
 		  }
     }
-    else
-      System.err.println("sql is  null");
+	else {
+		System.err.println("sql is  null");
+	}
     return null;
   }
 

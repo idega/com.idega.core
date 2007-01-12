@@ -685,11 +685,13 @@ public class EntityControl {
 			conn = entity.getConnection(entity.getDatasource());
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(SQLString);
-			if (rs.next())
+			if (rs.next()) {
 				recordCount = rs.getInt(1);
-			if (rs != null)
+			}
+			if (rs != null) {
 				rs.close();
 			//System.out.println(SQLString+"\n");
+			}
 		} catch (SQLException e) {
 			System.err.println("There was an error in EntityControl.returnSingleSQLQuery " + e.getMessage());
 			e.printStackTrace(System.err);

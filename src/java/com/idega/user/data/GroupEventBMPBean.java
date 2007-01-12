@@ -69,7 +69,7 @@ public class GroupEventBMPBean extends GenericEntity implements GroupEvent{
   }
 
   public String getDescription(){
-    return (String)getColumnValue(this.EVENT_DESCRIPTION);
+    return (String)getColumnValue(GroupEventBMPBean.EVENT_DESCRIPTION);
   }
 
   public void setDescription(String description){
@@ -81,7 +81,7 @@ public class GroupEventBMPBean extends GenericEntity implements GroupEvent{
   }
 
   public Group getRegistrant(){
-    return (Group)getColumnValue(this.REGISTERED_BY_GROUP);
+    return (Group)getColumnValue(GroupEventBMPBean.REGISTERED_BY_GROUP);
   }
 
 }

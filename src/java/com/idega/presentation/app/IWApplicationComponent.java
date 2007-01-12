@@ -128,11 +128,11 @@ public void setImages(IWContext iwc){
   }
 
   public void setLightShadowColor(String color) {
-    _lightColor = color;
+    this._lightColor = color;
   }
 
   public void setDarkShadowColor(String color) {
-    _darkColor = color;
+    this._darkColor = color;
   }
 
   static IWApplicationComponent getAppCompInstance(Class componentClass,IWContext iwc){

@@ -20,44 +20,46 @@ public class CellCounter
 
     public CellCounter(int Columns, int Rows)
     {
-        totalRows = 1;
-        totalCols = 1;
-        row = 0;
-        col = 0;
-        count = 0;
-        fillVertical = false;
-        totalRows = Rows;
-        totalCols = Columns;
+        this.totalRows = 1;
+        this.totalCols = 1;
+        this.row = 0;
+        this.col = 0;
+        this.count = 0;
+        this.fillVertical = false;
+        this.totalRows = Rows;
+        this.totalCols = Columns;
     }
 
     public void setFillVertical(boolean fill)
     {
-        fillVertical = fill;
+        this.fillVertical = fill;
     }
 
     public int getColumn()
     {
-        return col;
+        return this.col;
     }
 
     public int getRow()
     {
-        return row;
+        return this.row;
     }
 
     public void reset()
     {
-        row = 0;
-        col = 0;
-        count = 0;
+        this.row = 0;
+        this.col = 0;
+        this.count = 0;
     }
 
     public boolean hasNext()
     {
-        if (count < totalRows * totalCols)
-            return true;
-        else
-            return false;
+        if (this.count < this.totalRows * this.totalCols) {
+			return true;
+		}
+		else {
+			return false;
+		}
     }
 
     public void next()
@@ -67,28 +69,30 @@ public class CellCounter
 
     private void calculateNext()
     {
-        if (fillVertical)
+        if (this.fillVertical)
         {
-            row++;
-            if (row > totalRows)
+            this.row++;
+            if (this.row > this.totalRows)
             {
-                row = 1;
-                col++;
+                this.row = 1;
+                this.col++;
             }
-            if (count == 0)
-                col = 1;
+            if (this.count == 0) {
+				this.col = 1;
+			}
         }
         else
         {
-            col++;
-            if (col > totalCols)
+            this.col++;
+            if (this.col > this.totalCols)
             {
-                col = 1;
-                row++;
+                this.col = 1;
+                this.row++;
             }
-            if (count == 0)
-                row = 1;
+            if (this.count == 0) {
+				this.row = 1;
+			}
         }
-        count++;
+        this.count++;
     }
 }

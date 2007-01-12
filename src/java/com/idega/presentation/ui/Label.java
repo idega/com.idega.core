@@ -28,13 +28,13 @@ public class Label extends InterfaceObject {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[2];
 		values[0] = super.saveState(ctx);
-		values[1] = _label;
+		values[1] = this._label;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		_label = (String) values[1];
+		this._label = (String) values[1];
 	}
 	
 	public Label() {
@@ -46,7 +46,7 @@ public class Label extends InterfaceObject {
 	}
 	
 	public Label(String label, InterfaceObject object) {
-		_label = label;
+		this._label = label;
 		setMarkupAttribute("for", object.getID());
 		setTransient(false);
 	}
@@ -54,10 +54,10 @@ public class Label extends InterfaceObject {
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
 			print("<label "+getMarkupAttributesString()+" >");
-			print(_label);
+			print(this._label);
 			println("</label>");	
 		} else if (IWConstants.MARKUP_LANGUAGE_WML.equals(getMarkupLanguage())) {	
-			print(_label);
+			print(this._label);
 			print("<br/>");	
 		}
 	}	

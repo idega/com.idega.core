@@ -117,8 +117,11 @@ public class CBSecurity
     
         // find the byte!
         
-        for (int i=fromIndex; i<len; i++)
-            if (mainArray[i] == searchByte) return i;
+        for (int i=fromIndex; i<len; i++) {
+			if (mainArray[i] == searchByte) {
+				return i;
+			}
+		}
             
         return -1;                     // didn't find anything...
     }
@@ -235,11 +238,13 @@ public class CBSecurity
     public static boolean isPEM(byte[] test)
     {
     
-        if (indexOf(test, PEM_BEGIN) == -1)
-            return false;   // no PEM start string
+        if (indexOf(test, PEM_BEGIN) == -1) {
+			return false;   // no PEM start string
+		}
             
-        if (indexOf(test, PEM_END) == -1)
-            return false;   // no PEM end string
+        if (indexOf(test, PEM_END) == -1) {
+			return false;   // no PEM end string
+		}
             
         return true;  // has PEM begin and end tags - probably a PEM!            
     }
@@ -325,7 +330,9 @@ public class CBSecurity
         
         end = indexOf(pem, footer);
         
-        if (start == -1 || end == -1) return null;  // Something wrong - no headers!
+        if (start == -1 || end == -1) {
+			return null;  // Something wrong - no headers!
+		}
         
         start = indexOf(pem, (byte) '\n', start) + 1;
 
@@ -334,14 +341,16 @@ public class CBSecurity
         int next;
         while ((next = indexOf(pem, (byte) '\n', start)) < start+64)
         {
-            if (next == -1)                         // really shouldn't ever happen... 
-                break;                              // - maybe for a very, very short file?
+            if (next == -1) {
+				break;                              // - maybe for a very, very short file?
+			}
             
             start = next + 1;                       // keep looking for short lines...
         }
         
-        if (start == -1)                            // something wrong - no end of line after '-----BEGIN...'
-            return null; 
+        if (start == -1) {
+			return null;
+		} 
         
         int len = end - start;
         

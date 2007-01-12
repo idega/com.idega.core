@@ -17,9 +17,9 @@ public abstract class ObjectPool
 
   public ObjectPool()
   {
-   expirationTime = 30000; // 30 seconds
-   locked = new Hashtable();
-   unlocked = new Hashtable();
+   this.expirationTime = 30000; // 30 seconds
+   this.locked = new Hashtable();
+   this.unlocked = new Hashtable();
   }
 
    private long expirationTime;
@@ -33,16 +33,16 @@ public abstract class ObjectPool
     {
        long now = System.currentTimeMillis();
        Object o;
-       if( unlocked.size() > 0 )
+       if( this.unlocked.size() > 0 )
        {
-          Enumeration e = unlocked.keys();
+          Enumeration e = this.unlocked.keys();
           while( e.hasMoreElements() )
           {
              o = e.nextElement();
-             if( ( now - ( ( Long ) unlocked.get( o ) ).longValue() ) > expirationTime )
+             if( ( now - ( ( Long ) this.unlocked.get( o ) ).longValue() ) > this.expirationTime )
              {
                 // object has expired
-                unlocked.remove( o );
+                this.unlocked.remove( o );
                 expire( o );
                 o = null;
              }
@@ -50,14 +50,14 @@ public abstract class ObjectPool
              {
                 if( validate( o ) )
                 {
-                   unlocked.remove( o );
-                   locked.put( o, new Long( now ) );
+                   this.unlocked.remove( o );
+                   this.locked.put( o, new Long( now ) );
                    return( o );
                 }
                 else
                 {
                    // object failed validation
-                   unlocked.remove( o );
+                   this.unlocked.remove( o );
                    expire( o );
                    o = null;
                 }
@@ -66,15 +66,15 @@ public abstract class ObjectPool
        }
        // no objects available, create a new one
        o = create();
-       locked.put( o, new Long( now ) );
+       this.locked.put( o, new Long( now ) );
        return( o );
     }
 
 
     synchronized void checkIn( Object o )
     {
-       locked.remove( o );
-       unlocked.put( o, new Long( System.currentTimeMillis() ) );
+       this.locked.remove( o );
+       this.unlocked.put( o, new Long( System.currentTimeMillis() ) );
     }
 
     /**

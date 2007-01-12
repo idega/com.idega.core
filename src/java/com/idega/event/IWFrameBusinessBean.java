@@ -14,7 +14,7 @@ import com.idega.presentation.Page;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -85,10 +85,10 @@ public class IWFrameBusinessBean extends IBOSessionBean implements IWFrameBusine
 
 
   private Hashtable getFrameSetStorage(){
-    if(frameStorage == null){
-      frameStorage = new Hashtable();
+    if(this.frameStorage == null){
+      this.frameStorage = new Hashtable();
     }
-    return frameStorage;
+    return this.frameStorage;
   }
 
   public FrameTable getFrameSet(String identifier){

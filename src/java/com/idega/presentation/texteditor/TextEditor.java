@@ -78,7 +78,9 @@ public class TextEditor extends PresentationObject {
      if( iwc.isIE() && (!iwc.isMacOS()) && (!iwc.isOpera()) ){//IE5.5,windows and not Opera (faking as IE)
       return "HTML";
      }
-     else return null;
+	else {
+		return null;
+	}
   }
 
   public void print(IWContext iwc)throws Exception{
@@ -93,19 +95,19 @@ public class TextEditor extends PresentationObject {
         source.setLeftPosition(-500);
         source.setTopPosition(-500);
 
-        TextArea sourceView = new TextArea(inputName,TextSoap.findAndReplace(text, "<br/>","\r\n"),65,18);
+        TextArea sourceView = new TextArea(this.inputName,TextSoap.findAndReplace(this.text, "<br/>","\r\n"),65,18);
         source.add(sourceView);
 
         String menu = "1";
-        if(!menues ){
+        if(!this.menues ){
           menu = "0";
         }
 
 
         StringBuffer buf = new StringBuffer();
         buf.append("<script language=\"JavaScript1.2\">");
-        buf.append("new DHTMLEdit(\"").append(inputName).append("\",").append(width).append(",").append(height)
-            .append(",\"\",").append(menu).append(",\"").append(color).append("\"")
+        buf.append("new DHTMLEdit(\"").append(this.inputName).append("\",").append(this.width).append(",").append(this.height)
+            .append(",\"\",").append(menu).append(",\"").append(this.color).append("\"")
             .append(",\"").append(Window.getWindowURLWithParameter(RefactorClassRegistry.forName("com.idega.builder.presentation.IBColorChooserWindow"),iwc,"from_editor","true")).append("\"")
             .append(",\"").append(Window.getWindowURLWithParameter(RefactorClassRegistry.forName("com.idega.builder.presentation.IBPageChooserWindow"),iwc,"from_editor","true")).append("\");");
 
@@ -126,9 +128,9 @@ public class TextEditor extends PresentationObject {
 
       }
       else{
-       TextArea area = new TextArea(inputName,cols,rows);
-       text = TextSoap.findAndReplace(text, "<br/>","\r\n");
-       area.setContent(text);
+       TextArea area = new TextArea(this.inputName,this.cols,this.rows);
+       this.text = TextSoap.findAndReplace(this.text, "<br/>","\r\n");
+       area.setContent(this.text);
        renderChild(iwc,area);
       }
     }
@@ -137,7 +139,7 @@ public class TextEditor extends PresentationObject {
  * @return Returns the number rows of rows for textarea shown if client does not handle editor.
  */
 public int getRows() {
-	return rows;
+	return this.rows;
 }
 
 /**
@@ -151,7 +153,7 @@ public void setRows(int rows) {
  * @return Returns the number of columns for textarea to show if client does not handle editor.
  */
 public int getColumns() {
-	return cols;
+	return this.cols;
 }
 
 /**

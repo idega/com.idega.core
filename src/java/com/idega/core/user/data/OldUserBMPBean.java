@@ -8,6 +8,7 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.location.data.Address;
 import com.idega.core.file.data.ICFile;
+import com.idega.data.GenericEntity;
 
 /**
  * This bean is an implementation which is backwards compatible with the old User system and structure.
@@ -70,7 +71,7 @@ public class OldUserBMPBean extends com.idega.data.GenericEntity implements com.
 	}
 
 	public static User getStaticInstance() {
-		return (User) com.idega.core.user.data.UserBMPBean.getStaticInstance(sClassName);
+		return (User) GenericEntity.getStaticInstance(sClassName);
 	}
 
 	public static String getAdminDefaultName() {
@@ -260,10 +261,12 @@ public class OldUserBMPBean extends com.idega.data.GenericEntity implements com.
 		sql.append(emailAddress);
 		sql.append("'");
 		java.util.Collection coll = super.idoFindIDsBySQL(sql.toString());
-		if (!coll.isEmpty())
+		if (!coll.isEmpty()) {
 			return (Integer) coll.iterator().next();
-		else
+		}
+		else {
 			throw new javax.ejb.FinderException("No user found");
+		}
 	}
 	
 	public Integer ejbFindByPersonalID(String personalId) throws javax.ejb.FinderException {
@@ -273,10 +276,12 @@ public class OldUserBMPBean extends com.idega.data.GenericEntity implements com.
 		sql.append(personalId);
 		sql.append("'");
 		java.util.Collection coll = super.idoFindIDsBySQL(sql.toString());
-		if (!coll.isEmpty())
+		if (!coll.isEmpty()) {
 			return (Integer) coll.iterator().next();
-		else
+		}
+		else {
 			throw new javax.ejb.FinderException("No user found");
+		}
 	}
 	
 	

@@ -1,5 +1,5 @@
 /*
- * $Id: BlockCacheWriter.java,v 1.1 2004/12/14 00:45:12 tryggvil Exp $
+ * $Id: BlockCacheWriter.java,v 1.1.2.1 2007/01/12 19:31:35 idegaweb Exp $
  * Created on 13.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -24,15 +24,15 @@ public class BlockCacheWriter extends java.io.PrintWriter {
 	}
 
 	public boolean checkError() {
-		return underlying.checkError();
+		return this.underlying.checkError();
 	}
 
 	public void close() {
-		underlying.close();
+		this.underlying.close();
 	}
 
 	public void flush() {
-		underlying.flush();
+		this.underlying.flush();
 	}
 
 	public void print(boolean b) {
@@ -68,13 +68,13 @@ public class BlockCacheWriter extends java.io.PrintWriter {
 	}
 
 	public void print(String s) {
-		underlying.print(s);
-		buffer.append(s);
+		this.underlying.print(s);
+		this.buffer.append(s);
 	}
 
 	public void println() {
-		underlying.println();
-		buffer.append(Block.newline);
+		this.underlying.println();
+		this.buffer.append(Block.newline);
 	}
 
 	public void println(boolean b) {

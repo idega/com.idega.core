@@ -71,15 +71,15 @@ public class TreeViewerEvent extends IWPresentationEvent {
   }
 
   public String getOpenNodeAction(){
-    return _toOpen;
+    return this._toOpen;
   }
 
   public String getCloseNodeAction(){
-    return _toClose;
+    return this._toClose;
   }
   
   public String getRefreshTNAction() {
-  		return _refreshTN;
+  		return this._refreshTN;
   }
 
 //  public void setOpenNodes(List openNodes){
@@ -109,8 +109,8 @@ public class TreeViewerEvent extends IWPresentationEvent {
 
 
     if(iwc.getParameter(PRM_TREE_CHANGED) != null || iwc.getParameter(PRM_REFRESH_TN) != null){
-      _toOpen = iwc.getParameter(PRM_OPEN_TREENODES);
-      _toClose = iwc.getParameter(PRM_TREENODE_TO_CLOSE);
+      this._toOpen = iwc.getParameter(PRM_OPEN_TREENODES);
+      this._toClose = iwc.getParameter(PRM_TREENODE_TO_CLOSE);
     } else {
       return false;
     }

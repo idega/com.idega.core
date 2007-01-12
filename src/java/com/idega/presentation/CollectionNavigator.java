@@ -39,14 +39,14 @@ public class CollectionNavigator extends Block {
 	 * 
 	 */
 	public CollectionNavigator(Collection collection) {
-		_size = collection.size();
+		this._size = collection.size();
 	}
 
 	/**
 	 * 
 	 */
 	public CollectionNavigator(int size) {
-		_size = size;
+		this._size = size;
 	}
 
 	/**
@@ -60,9 +60,9 @@ public class CollectionNavigator extends Block {
 	
 	private void drawNavigator(IWContext iwc) {
 		Table navigationTable = new Table(3, 1);
-		navigationTable.setCellpadding(_padding);
+		navigationTable.setCellpadding(this._padding);
 		navigationTable.setCellspacing(0);
-		navigationTable.setWidth(_width);
+		navigationTable.setWidth(this._width);
 		navigationTable.setWidth(1, "33%");
 		navigationTable.setWidth(2, "33%");
 		navigationTable.setWidth(3, "33%");
@@ -72,15 +72,15 @@ public class CollectionNavigator extends Block {
 		Text prev = getText(localize("previous", "Previous"));
 		Text next = getText(localize("next", "Next"));
 		Text info = null;
-		if (useShortText) {
-			info = getText((_currentPage + 1) + "/" + (_maxPage + 1));
+		if (this.useShortText) {
+			info = getText((this._currentPage + 1) + "/" + (this._maxPage + 1));
 		}
 		else {
-			info = getText(localize("page", "Page") + " " + (_currentPage + 1) + " " + localize("of", "of") + " " + (_maxPage + 1));
+			info = getText(localize("page", "Page") + " " + (this._currentPage + 1) + " " + localize("of", "of") + " " + (this._maxPage + 1));
 		}
-		if (_currentPage > 0) {
+		if (this._currentPage > 0) {
 			Link lPrev = getLink(localize("previous", "Previous"));
-			lPrev.addParameter(getUniqueParameterName(), Integer.toString(_currentPage - 1));
+			lPrev.addParameter(getUniqueParameterName(), Integer.toString(this._currentPage - 1));
 			navigationTable.add(lPrev, 1, 1);
 			lPrev.setToMaintainParameters(this.maintainedPrms);
 		}
@@ -89,11 +89,11 @@ public class CollectionNavigator extends Block {
 		}
 		navigationTable.add(info, 2, 1);
 
-		if (_currentPage < _maxPage) {
+		if (this._currentPage < this._maxPage) {
 			Link lNext = getLink(localize("next", "Next"));
-			lNext.addParameter(getUniqueParameterName(), Integer.toString(_currentPage + 1));
+			lNext.addParameter(getUniqueParameterName(), Integer.toString(this._currentPage + 1));
 			navigationTable.add(lNext, 3, 1);
-			lNext.setToMaintainParameters(maintainedPrms);
+			lNext.setToMaintainParameters(this.maintainedPrms);
 		}
 		else {
 			navigationTable.add(next, 3, 1);
@@ -104,42 +104,45 @@ public class CollectionNavigator extends Block {
 	
 	private Text getText(String string) {
 		Text text = new Text(string);
-		if (_textStyle != null) {
-			text.setStyleClass(_textStyle);
+		if (this._textStyle != null) {
+			text.setStyleClass(this._textStyle);
 		}
 		return text;
 	}
 	
 	private Link getLink(String string) {
 		Link link = new Link(string);
-		if (_linkStyle != null) {
-			link.setStyleClass(_linkStyle);
+		if (this._linkStyle != null) {
+			link.setStyleClass(this._linkStyle);
 		}
-		if (_eventListener != null)
-			link.setEventListener(_eventListener);
+		if (this._eventListener != null) {
+			link.setEventListener(this._eventListener);
+		}
 		return link;
 	}
 	
 	private String localize(String key, String defaultValue) {
-		return _iwrb.getLocalizedString(key, defaultValue);
+		return this._iwrb.getLocalizedString(key, defaultValue);
 	}
 	
 	private void parse(IWContext iwc) {
-		if (iwc.isParameterSet(getUniqueParameterName()))
-			_currentPage = Integer.parseInt(iwc.getParameter(getUniqueParameterName()));
+		if (iwc.isParameterSet(getUniqueParameterName())) {
+			this._currentPage = Integer.parseInt(iwc.getParameter(getUniqueParameterName()));
+		}
 	}
 	
 	private void initialize(IWContext iwc) {
-		_iwrb = getResourceBundle(iwc);
-		_maxPage = (int) Math.ceil(_size / _numberOfEntriesPerPage);
-		if (_currentPage > _maxPage)
-			_currentPage = 0;
-		_start = _currentPage * _numberOfEntriesPerPage;
+		this._iwrb = getResourceBundle(iwc);
+		this._maxPage = (int) Math.ceil(this._size / this._numberOfEntriesPerPage);
+		if (this._currentPage > this._maxPage) {
+			this._currentPage = 0;
+		}
+		this._start = this._currentPage * this._numberOfEntriesPerPage;
 		
 	}
 	
 	public void setEventListener(Class eventListener) {
-		_eventListener = eventListener;
+		this._eventListener = eventListener;
 	}
 
 	/**
@@ -148,7 +151,7 @@ public class CollectionNavigator extends Block {
 	public int getStart(IWContext iwc) {
 		parse(iwc);
 		initialize(iwc);
-		return _start;
+		return this._start;
 	}
 
 	/**
@@ -156,7 +159,7 @@ public class CollectionNavigator extends Block {
 	 * @param numberOfEntriesPerPage The numberOfEntriesPerPage to set
 	 */
 	public void setNumberOfEntriesPerPage(int numberOfEntriesPerPage) {
-		_numberOfEntriesPerPage = numberOfEntriesPerPage;
+		this._numberOfEntriesPerPage = numberOfEntriesPerPage;
 	}
 
 	/**
@@ -164,14 +167,14 @@ public class CollectionNavigator extends Block {
 	 * @param size The size to set
 	 */
 	public void setSize(int size) {
-		_size = size;
+		this._size = size;
 	}
 	/**
 	 * Sets the linkStyle.
 	 * @param linkStyle The linkStyle to set
 	 */
 	public void setLinkStyle(String linkStyle) {
-		_linkStyle = linkStyle;
+		this._linkStyle = linkStyle;
 	}
 
 	/**
@@ -179,7 +182,7 @@ public class CollectionNavigator extends Block {
 	 * @param textStyle The textStyle to set
 	 */
 	public void setTextStyle(String textStyle) {
-		_textStyle = textStyle;
+		this._textStyle = textStyle;
 	}
 
 	/**
@@ -187,7 +190,7 @@ public class CollectionNavigator extends Block {
 	 * @param width The width to set
 	 */
 	public void setWidth(String width) {
-		_width = width;
+		this._width = width;
 	}
 
 	/**
@@ -209,7 +212,7 @@ public class CollectionNavigator extends Block {
 	 * @param padding The padding to set
 	 */
 	public void setPadding(int padding) {
-		_padding = padding;
+		this._padding = padding;
 	}
 	/**
 	 * Adds a parameter name to maintain if exists in request
@@ -235,6 +238,6 @@ public class CollectionNavigator extends Block {
 	}
 	
 	private String getUniqueParameterName(){
-	    return PARAMETER_CURRENT_PAGE + uniqueIdentifier;
+	    return PARAMETER_CURRENT_PAGE + this.uniqueIdentifier;
 	}
 }

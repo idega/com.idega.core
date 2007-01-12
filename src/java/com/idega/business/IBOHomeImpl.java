@@ -24,7 +24,7 @@ public abstract class IBOHomeImpl implements IBOHome,Serializable{
       IBOSessionContext context = new IBOSessionContext();
       context.setEJBHome(this);
       ((IBOServiceBean)bean).setSessionContext(context);
-      return (IBOService)bean;
+      return bean;
       //return (IDOEntity)beanClass.newInstance();
     }
     catch(Exception e){

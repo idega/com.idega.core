@@ -174,7 +174,7 @@ public class IBOServiceBean implements IBOService, SessionBean {
   }
   
   	protected AccessController getAccessController() {
-		return ((AccessController) this.getIWApplicationContext().getIWMainApplication().getAccessController());
+		return (this.getIWApplicationContext().getIWMainApplication().getAccessController());
 	}
 
   	
@@ -293,8 +293,8 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	}
 	
 	public void addActionListener(ActionListener listener) {
-		if (!actionListeners.contains(listener)) {
-			actionListeners.add(listener);
+		if (!this.actionListeners.contains(listener)) {
+			this.actionListeners.add(listener);
 		}
 	}
 	
@@ -304,7 +304,7 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	
 	public void triggerActionEvent(String command, int id) {
 		ActionEvent e = new ActionEvent(this, id, command);
-		Iterator iter = actionListeners.iterator();
+		Iterator iter = this.actionListeners.iterator();
 		while (iter.hasNext()) {
 			((ActionListener) iter.next()).actionPerformed(e);
 		}

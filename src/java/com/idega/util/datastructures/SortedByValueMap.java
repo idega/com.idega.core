@@ -82,9 +82,9 @@ public class SortedByValueMap extends LinkedHashMap {
     	}
 
     	public int compare(Object o1, Object o2) {
-    	    String s1 = (map.get(o1)).toString();
-    	    String s2 = (map.get(o2)).toString();
-    	    return collator.compare(s1,s2);
+    	    String s1 = (this.map.get(o1)).toString();
+    	    String s2 = (this.map.get(o2)).toString();
+    	    return this.collator.compare(s1,s2);
     	}
     }
 }

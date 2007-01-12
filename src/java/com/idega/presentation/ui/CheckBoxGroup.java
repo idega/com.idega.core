@@ -48,7 +48,7 @@ public class CheckBoxGroup extends InterfaceObject
 	 */
 	public String getParameterName()
 	{
-		return parameterName;
+		return this.parameterName;
 	}
 
 	/**
@@ -57,29 +57,29 @@ public class CheckBoxGroup extends InterfaceObject
 	 */
 	public void setParameterName(String string)
 	{
-		parameterName = string;
+		this.parameterName = string;
 	}
 
 
 	protected Table getBoxTable(){
-		if(boxTable==null){
-			boxTable=new Table();
+		if(this.boxTable==null){
+			this.boxTable=new Table();
 		}
-		return boxTable;
+		return this.boxTable;
 	}
 
 	protected Map getMapping(){
-		if(keyValueMapping==null){
-			keyValueMapping=new HashMap();
+		if(this.keyValueMapping==null){
+			this.keyValueMapping=new HashMap();
 		}
-		return keyValueMapping;
+		return this.keyValueMapping;
 	}
 	
 	protected List getOrdering(){
-		if(valueOrderingList==null){
-			valueOrderingList=new ArrayList();
+		if(this.valueOrderingList==null){
+			this.valueOrderingList=new ArrayList();
 		}
-		return valueOrderingList;
+		return this.valueOrderingList;
 	}
 	
 

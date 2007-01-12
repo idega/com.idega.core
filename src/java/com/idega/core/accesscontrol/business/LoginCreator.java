@@ -17,11 +17,11 @@ import java.util.List;
 
 public class LoginCreator {
 
-    public static String alpha = "aAáÁbBcCdDðÐeEéÉfFgGhHiIíÍjJkKlLmMnNoOóÓpPqQrRsStTuUúÚvVwWxXyYýÝzZþÞæÆöÖ";
+    public static String alpha = "aAï¿½ï¿½bBcCdDï¿½ï¿½eEï¿½ï¿½fFgGhHiIï¿½ï¿½jJkKlLmMnNoOï¿½ï¿½pPqQrRsStTuUï¿½ï¿½vVwWxXyYï¿½ï¿½zZï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
     public static String beta = "aaaabbccddddeeeeffgghhiiiijjkkllmmnnooooppqqrrssttuuuuvvwwxxyyyyzzttaaoo";
     public static String dega = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789";
-    public static String consonants = "bBcCdDfFgGhHjJkKlLmMnNpPqQrRsStTvVwWxXzZþÞ";
-    public static String vowels = "aAáÁeEéÉiIíÍoOóÓuUúÚyYýÝæÆöÖ";
+    public static String consonants = "bBcCdDfFgGhHjJkKlLmMnNpPqQrRsStTvVwWxXzZï¿½ï¿½";
+    public static String vowels = "aAï¿½ï¿½eEï¿½ï¿½iIï¿½ï¿½oOï¿½ï¿½uUï¿½ï¿½yYï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
     private static final int ONE = 1,TWO = 2,THREE=3,FOUR=4;
     public LoginCreator(){}
 
@@ -36,13 +36,16 @@ public class LoginCreator {
         first = st.nextToken();
         firstSize = first.length();
       }
-      if(st.hasMoreTokens())
-        second =  st.nextToken();
-      if(st.hasMoreTokens())
-        third =  st.nextToken();
+      if(st.hasMoreTokens()) {
+		second =  st.nextToken();
+	}
+      if(st.hasMoreTokens()) {
+		third =  st.nextToken();
+	}
 
-      if(tokenCount == 2 )
-        third = second;
+      if(tokenCount == 2 ) {
+		third = second;
+	}
 
       StringBuffer sb = new StringBuffer();
       int index = -1;
@@ -79,22 +82,26 @@ public class LoginCreator {
       else if(tokenCount >= 3){
         TYPE = THREE;
         index = alpha.indexOf(String.valueOf(first.charAt(0)));
-        if(index!=-1)
-          sb.append(beta.charAt(index));
+        if(index!=-1) {
+			sb.append(beta.charAt(index));
+		}
         index = alpha.indexOf(String.valueOf(second.charAt(0)));
-        if(index!=-1)
-          sb.append(beta.charAt(index));
+        if(index!=-1) {
+			sb.append(beta.charAt(index));
+		}
         index = alpha.indexOf(String.valueOf(third.charAt(thirdIndex)));
-        if(index!=-1)
-          sb.append(beta.charAt(index));
+        if(index!=-1) {
+			sb.append(beta.charAt(index));
+		}
       }
       while (checkLoginExistence(sb.toString())){
         switch (TYPE) {
           case ONE:
           case TWO:
           case THREE:
-            if(thirdIndex < third.length())
-            sb.append(third.charAt(thirdIndex++));
+            if(thirdIndex < third.length()) {
+				sb.append(third.charAt(thirdIndex++));
+			}
             break;
         }
         //System.err.println(sb.toString());
@@ -106,10 +113,12 @@ public class LoginCreator {
     public static boolean checkLoginExistence(String login){
       try{
         List L = EntityFinder.findAllByColumn(((com.idega.core.accesscontrol.data.LoginTableHome)com.idega.data.IDOLookup.getHomeLegacy(LoginTable.class)).createLegacy(),com.idega.core.accesscontrol.data.LoginTableBMPBean.getUserLoginColumnName(),login);
-      if(L ==null)
-        return false;
-      else
-        return true;
+      if(L ==null) {
+		return false;
+	}
+	else {
+		return true;
+	}
       }
       catch(java.sql.SQLException ex){
         return false;

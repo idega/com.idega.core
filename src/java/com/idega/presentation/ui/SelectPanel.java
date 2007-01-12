@@ -61,8 +61,9 @@ public class SelectPanel extends GenericSelect {
 	 * @return The number of rows to display.
 	 */
 	public int getSize() {
-		if (isMarkupAttributeSet("size"))
+		if (isMarkupAttributeSet("size")) {
 			return Integer.parseInt(getMarkupAttribute("size"));
+		}
 		return 1;
 	}
 
@@ -72,8 +73,9 @@ public class SelectPanel extends GenericSelect {
 	 * @see com.idega.presentation.PresentationObject#print(com.idega.presentation.IWContext)
 	 */
 	public void print(IWContext iwc) throws Exception {
-		if (!getMultiple() && getSize() <= 1)
+		if (!getMultiple() && getSize() <= 1) {
 			setSize(DEFAULT_SIZE);
+		}
 		super.print(iwc);
 	}
 

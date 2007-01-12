@@ -59,11 +59,11 @@ private Table outlineTable;
 
 public HeaderTable(){
 
-	outlineTable = new Table(1,1);
+	this.outlineTable = new Table(1,1);
 
-	contentTable = new Table(1,2);
+	this.contentTable = new Table(1,2);
 
-	super.add(contentTable);
+	super.add(this.contentTable);
 
 
 
@@ -85,27 +85,27 @@ public HeaderTable(){
 
 
 
-			contentTable.setCellpadding(0);
+			this.contentTable.setCellpadding(0);
 
-			contentTable.setCellspacing(0);
+			this.contentTable.setCellspacing(0);
 
-			contentTable.setColor("#FFFFFF");
+			this.contentTable.setColor("#FFFFFF");
 
-			contentTable.setWidth(tableWidth);
+			this.contentTable.setWidth(this.tableWidth);
 
                        // if( tableHeight!=0 ) contentTable.setHeight(tableHeight);
 
 
 
-			outlineTable.setCellpadding(0);
+			this.outlineTable.setCellpadding(0);
 
-			outlineTable.setCellspacing(1);
+			this.outlineTable.setCellspacing(1);
 
-			outlineTable.setColor(borderColor);
+			this.outlineTable.setColor(this.borderColor);
 
-			outlineTable.setColor(1,1,tableColor);
+			this.outlineTable.setColor(1,1,this.tableColor);
 
-			outlineTable.setWidth("100%");
+			this.outlineTable.setWidth("100%");
 
 
 
@@ -115,7 +115,7 @@ public HeaderTable(){
 
 			headerTable.setCellspacing(0);
 
-			headerTable.setColor(borderColor);
+			headerTable.setColor(this.borderColor);
 
 			headerTable.setWidth(1,"17");
 
@@ -123,7 +123,7 @@ public HeaderTable(){
 
 			headerTable.setWidth("100%");
 
-			headerTable.setHeight(String.valueOf(headerSize));
+			headerTable.setHeight(String.valueOf(this.headerSize));
 
 			headerTable.setVerticalAlignment(1,1,"top");
 
@@ -133,13 +133,13 @@ public HeaderTable(){
 
 			headerTable.setAlignment(1,1,"left");
 
-			headerTable.setAlignment(2,1,headlineAlign);
+			headerTable.setAlignment(2,1,this.headlineAlign);
 
 			headerTable.setAlignment(3,1,"right");
 
 
 
-			if ( leftHeader ) {
+			if ( this.leftHeader ) {
 
 				headerTable.add(new Image("/pics/jmodules/headerTable/leftcorner.gif","",17,17),1,1);
 
@@ -147,13 +147,13 @@ public HeaderTable(){
 
 
 
-			Text header = new Text(headerText);
+			Text header = new Text(this.headerText);
 
 
 
-			if ( headerLeft ) {
+			if ( this.headerLeft ) {
 
-				header = new Text("&nbsp;"+headerText);
+				header = new Text("&nbsp;"+this.headerText);
 
 				headerTable.empty();
 
@@ -169,9 +169,9 @@ public HeaderTable(){
 
 
 
-			else if ( headerRight ) {
+			else if ( this.headerRight ) {
 
-				header = new Text(headerText+"&nbsp;");
+				header = new Text(this.headerText+"&nbsp;");
 
 				headerTable.empty();
 
@@ -199,17 +199,17 @@ public HeaderTable(){
 
 				header.setBold();
 
-				header.setFontColor(headlineColor);
+				header.setFontColor(this.headlineColor);
 
-				header.setFontSize(headlineSize);
+				header.setFontSize(this.headlineSize);
 
-				header.setFontFace(headerFont);
-
-
+				header.setFontFace(this.headerFont);
 
 
 
-			if ( rightHeader ) {
+
+
+			if ( this.rightHeader ) {
 
 				headerTable.add(new Image("/pics/jmodules/headerTable/rightcorner.gif",""),3,1);
 
@@ -217,9 +217,9 @@ public HeaderTable(){
 
 
 
-		contentTable.add(headerTable,1,1);
+		this.contentTable.add(headerTable,1,1);
 
-		contentTable.add(outlineTable,1,2);
+		this.contentTable.add(this.outlineTable,1,2);
 
 
 
@@ -229,7 +229,7 @@ public HeaderTable(){
 
 	public void add(PresentationObject objectToAdd){
 
-		outlineTable.add(objectToAdd,1,1);
+		this.outlineTable.add(objectToAdd,1,1);
 
 	}
 

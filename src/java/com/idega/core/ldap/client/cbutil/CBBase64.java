@@ -75,14 +75,18 @@ public class CBBase64
 
     public static String binaryToString(byte[] byteArray, int offset)
     {
-        if (byteArray == null) return null;  // XXX correct behaviour?
+        if (byteArray == null) {
+			return null;  // XXX correct behaviour?
+		}
         
         //int arraySize = byteArray.length;
         //int thirdSize = arraySize/3;
         
         byte[] base64Data = encode(byteArray);
         
-        if (base64Data == null) return null;  // Exception occurred.
+        if (base64Data == null) {
+			return null;  // Exception occurred.
+		}
         
         return format(base64Data, offset);
         
@@ -213,8 +217,9 @@ public class CBBase64
             
             // iterate through array, reading off byte triplets and converting to base64
         
-            for (int i=0; i<start; i++)
-                output[i] = (byte) ' ';   // pad to 'start' with spaces.
+            for (int i=0; i<start; i++) {
+				output[i] = (byte) ' ';   // pad to 'start' with spaces.
+			}
     
             int bufferLength = start;
             
@@ -278,7 +283,9 @@ public class CBBase64
      
     public static byte[] stringToBinary(String chars)
     {
-        if (chars == null) return null;
+        if (chars == null) {
+			return null;
+		}
         
         byte charArray[];
         
@@ -454,17 +461,22 @@ public class CBBase64
     {
         //byte c;
         
-        if (b < 26)
-            return (byte)('A' + b);           // 'A' -> 'Z'
-        else if (b < 52)
-            return (byte)(('a' - 26 ) + b );  // 'a' -> 'z'
-        else if (b < 62)
-            return (byte)(('0' - 52 ) + b );  // '0' -> '9'      
-        else if (b == 62)
-            return ((byte)'+');
-        else if (b == 63)
-            return ((byte)'/');        
-        else                // error - should never happen
+        if (b < 26) {
+			return (byte)('A' + b);           // 'A' -> 'Z'
+		}
+		else if (b < 52) {
+			return (byte)(('a' - 26 ) + b );  // 'a' -> 'z'
+		}
+		else if (b < 62) {
+			return (byte)(('0' - 52 ) + b );  // '0' -> '9'      
+		}
+		else if (b == 62) {
+			return ((byte)'+');
+		}
+		else if (b == 63) {
+			return ((byte)'/');
+		}
+		else                // error - should never happen
         {
             throw new Base64EncodingException ("erroroneous value " + (char)b + " passed in convertFrom6bit");
         }    
@@ -480,19 +492,25 @@ public class CBBase64
     private static byte convertTo6Bit(byte c)
         throws Base64EncodingException
     {
-        if (c == (byte)'+')
-            return 62;
-        else if (c == (byte)'/')
-            return 63;
-        else if (c == (byte)'=')  // this result not actually used by calling program...
-            return 0;    
-        else if (c <= (byte)'9')
-            return (byte)( c - (byte)'0' + 52 );
-        else if (c <= (byte)'Z')
-            return (byte)( c - (byte)'A'); 
-        else if (c <= (byte)'z')
-            return (byte)( c - (byte)'a' + 26);
-        else                // error - should never happen
+        if (c == (byte)'+') {
+			return 62;
+		}
+		else if (c == (byte)'/') {
+			return 63;
+		}
+		else if (c == (byte)'=') {
+			return 0;
+		}
+		else if (c <= (byte)'9') {
+			return (byte)( c - (byte)'0' + 52 );
+		}
+		else if (c <= (byte)'Z') {
+			return (byte)( c - (byte)'A');
+		}
+		else if (c <= (byte)'z') {
+			return (byte)( c - (byte)'a' + 26);
+		}
+		else                // error - should never happen
         {
             throw new Base64EncodingException("erroroneous value " + (char)c + " passed in convertTo6bit");
         }    

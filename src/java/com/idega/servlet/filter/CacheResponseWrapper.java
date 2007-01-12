@@ -19,43 +19,44 @@ public class CacheResponseWrapper
   public CacheResponseWrapper(HttpServletResponse response,
       OutputStream cache) {
     super(response);
-    origResponse = response;
+    this.origResponse = response;
     this.cache = cache;
   }
 
   public ServletOutputStream createOutputStream()
       throws IOException {
-    return (new CacheResponseStream(origResponse, cache));
+    return (new CacheResponseStream(this.origResponse, this.cache));
   }
 
   public void flushBuffer() throws IOException {
-    stream.flush();
+    this.stream.flush();
   }
 
   public ServletOutputStream getOutputStream()
       throws IOException {
-    if (writer != null) {
+    if (this.writer != null) {
       throw new IllegalStateException(
         "getWriter() has already been called!");
     }
 
-    if (stream == null)
-      stream = createOutputStream();
-    return (stream);
+    if (this.stream == null) {
+		this.stream = createOutputStream();
+	}
+    return (this.stream);
   }
 
   public PrintWriter getWriter() throws IOException {
-    if (writer != null) {
-      return (writer);
+    if (this.writer != null) {
+      return (this.writer);
     }
 
-    if (stream != null) {
+    if (this.stream != null) {
       throw new IllegalStateException(
         "getOutputStream() has already been called!");
     }
 
-   stream = createOutputStream();
-   writer = new PrintWriter(new OutputStreamWriter(stream, "UTF-8"));
-   return (writer);
+   this.stream = createOutputStream();
+   this.writer = new PrintWriter(new OutputStreamWriter(this.stream, "UTF-8"));
+   return (this.writer);
   }
 }

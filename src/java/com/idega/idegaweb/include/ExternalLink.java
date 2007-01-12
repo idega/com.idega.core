@@ -1,5 +1,5 @@
 /*
- * $Id: ExternalLink.java,v 1.1 2005/03/06 13:17:37 tryggvil Exp $
+ * $Id: ExternalLink.java,v 1.1.2.1 2007/01/12 19:32:43 idegaweb Exp $
  * Created on 12.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ package com.idega.idegaweb.include;
  *  a <code>&lt;link&gt;</code> tag used to define resources such ass CSS links.
  *  This class is used by the GlobalIncludeManager for managing resources included in all pages.
  *  </p>
- *  Last modified: $Date: 2005/03/06 13:17:37 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:32:43 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class ExternalLink {
 	
@@ -61,7 +61,7 @@ public class ExternalLink {
 	 * @return Returns the characterset.
 	 */
 	public String getCharacterset() {
-		return characterset;
+		return this.characterset;
 	}
 	/**
 	 * @param characterset The characterset to set.
@@ -73,7 +73,7 @@ public class ExternalLink {
 	 * @return Returns the media.
 	 */
 	public String getMedia() {
-		return media;
+		return this.media;
 	}
 	/**
 	 * @param media The media to set.
@@ -85,7 +85,7 @@ public class ExternalLink {
 	 * @return Returns the relationship.
 	 */
 	public String getRelationship() {
-		return relationship;
+		return this.relationship;
 	}
 	/**
 	 * @param relationship The relationship to set.
@@ -97,7 +97,7 @@ public class ExternalLink {
 	 * @return Returns the reverseRelationship.
 	 */
 	public String getReverseRelationship() {
-		return reverseRelationship;
+		return this.reverseRelationship;
 	}
 	/**
 	 * @param reverseRelationship The reverseRelationship to set.
@@ -109,7 +109,7 @@ public class ExternalLink {
 	 * @return Returns the type.
 	 */
 	public String getType() {
-		return type;
+		return this.type;
 	}
 	/**
 	 * @param type The type to set.
@@ -121,7 +121,7 @@ public class ExternalLink {
 	 * @return Returns the url.
 	 */
 	public String getUrl() {
-		return url;
+		return this.url;
 	}
 	/**
 	 * @param url The url to set.
@@ -133,7 +133,7 @@ public class ExternalLink {
 	 * @return Returns the urllanguage.
 	 */
 	public String getUrllanguage() {
-		return urllanguage;
+		return this.urllanguage;
 	}
 	/**
 	 * @param urllanguage The urllanguage to set.
@@ -145,7 +145,7 @@ public class ExternalLink {
 	 * @return Returns the title.
 	 */
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
 	/**
 	 * @param title The title to set.

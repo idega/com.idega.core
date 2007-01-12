@@ -23,40 +23,40 @@ public class IDOEntityList implements List {
   }
 
   public IDOEntityList(Collection idoPrimaryKeyList) {
-    _pkLists = (IDOPrimaryKeyList)idoPrimaryKeyList;
+    this._pkLists = (IDOPrimaryKeyList)idoPrimaryKeyList;
   }
 
 
   public int size() {
-    return _pkLists.size();
+    return this._pkLists.size();
   }
   public boolean isEmpty() {
-    return _pkLists.isEmpty();
+    return this._pkLists.isEmpty();
   }
   public Iterator iterator() {
     return new IDOEntityIterator(this);
   }
 
   public void clear() {
-    _pkLists.clear();
+    this._pkLists.clear();
   }
   public boolean equals(Object o) {
     if(o instanceof IDOEntityList){
-      return _pkLists.equals(((IDOEntityList)o)._pkLists);
+      return this._pkLists.equals(((IDOEntityList)o)._pkLists);
     }
     return false;
   }
 
   public List subList(int fromIndex, int toIndex){
-    return new IDOEntityList(_pkLists.subList(fromIndex,toIndex));
+    return new IDOEntityList(this._pkLists.subList(fromIndex,toIndex));
   }
 
   public Object get(int index) {
-      return _pkLists.getIDOEntity(index);
+      return this._pkLists.getIDOEntity(index);
   }
 
   public Object remove(int index) {
-    return _pkLists.remove(index);
+    return this._pkLists.remove(index);
   }
   public ListIterator listIterator() {
     return new IDOEntityIterator(this);
@@ -66,75 +66,85 @@ public class IDOEntityList implements List {
   }
 
   public boolean contains(Object o) {
-  	return _pkLists.containsIDOEntity(o);
+  	return this._pkLists.containsIDOEntity(o);
   }
 
   public Object[] toArray() {
-  	return _pkLists.toIDOEntityArray();
+  	return this._pkLists.toIDOEntityArray();
   }
   
   public Object[] toArray(Object[] a) {
-  	return _pkLists.toIDOEntityArray(a);
+  	return this._pkLists.toIDOEntityArray(a);
   }
   
   public boolean add(Object o) {
-  	if (o instanceof IDOEntity)
-  		return _pkLists.add(((IDOEntity)o));
-  	else
-  		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+  	if (o instanceof IDOEntity) {
+		return this._pkLists.add((o));
+	}
+	else {
+		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+	}
 
   }
 
   public boolean remove(Object o) {
-  	return _pkLists.remove(((IDOEntity)o));
+  	return this._pkLists.remove((o));
   }
 
   public boolean containsAll(Collection c) {
-  	return _pkLists.containsAll(c);
+  	return this._pkLists.containsAll(c);
   }
 
   public boolean addAll(Collection c) {
-  	return _pkLists.addAll(c);
+  	return this._pkLists.addAll(c);
   }
 
   public boolean addAll(int index, Collection c) {
-  	return _pkLists.addAll(index,c);
+  	return this._pkLists.addAll(index,c);
   }
   
   public boolean removeAll(Collection c) {
-  	return _pkLists.removeAll(c);
+  	return this._pkLists.removeAll(c);
   }
   
   public boolean retainAll(Collection c) {
-  	return _pkLists.removeAll(c);
+  	return this._pkLists.removeAll(c);
   }
   
   public Object set(int index, Object element) {
-  	if (element instanceof IDOEntity)
-  		return _pkLists.set(index, ((IDOEntity)element));
-  	else
-  		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+  	if (element instanceof IDOEntity) {
+		return this._pkLists.set(index, (element));
+	}
+	else {
+		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+	}
   }
 
   public void add(int index, Object element) {
-  	if (element instanceof IDOEntity)
-  		_pkLists.add(index, ((IDOEntity)element));
-  	else
-  		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+  	if (element instanceof IDOEntity) {
+		this._pkLists.add(index, (element));
+	}
+	else {
+		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+	}
   }
 
   public int indexOf(Object o) {
-	 	if (o instanceof IDOEntity)
-	 		return _pkLists.indexOf(((IDOEntity)o));
-	 	else
-	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+	 	if (o instanceof IDOEntity) {
+			return this._pkLists.indexOf((o));
+		}
+		else {
+			throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+		}
   }
 
   public int lastIndexOf(Object o) {
-  	if (o instanceof IDOEntity)
-  		return _pkLists.lastIndexOf(((IDOEntity)o));
-  	else
-  		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+  	if (o instanceof IDOEntity) {
+		return this._pkLists.lastIndexOf((o));
+	}
+	else {
+		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+	}
   }
   
   
@@ -162,30 +172,30 @@ public class IDOEntityList implements List {
     }
 
     public IDOEntityIterator( IDOEntityList entities) {
-    	_list = entities;
+    	this._list = entities;
     }
 
 	/**
 	 * @see java.util.Iterator#hasNext()
 	 */
 	public boolean hasNext() {
-		return _list.size()>_index;
+		return this._list.size()>this._index;
 	}
 
 	/**
 	 * @see java.util.ListIterator#hasPrevious()
 	 */
 	public boolean hasPrevious() {
-		return _hasPrevious;
+		return this._hasPrevious;
 	}
 
 	/**
 	 * @see java.util.Iterator#next()
 	 */
 	public Object next() {
-		Object o =  _list.get(nextIndex());
-		_index++;
-		_hasPrevious=true;
+		Object o =  this._list.get(nextIndex());
+		this._index++;
+		this._hasPrevious=true;
 		return o;
 	}
 
@@ -193,17 +203,17 @@ public class IDOEntityList implements List {
 	 * @see java.util.ListIterator#nextIndex()
 	 */
 	public int nextIndex() {
-		return _index;
+		return this._index;
 	}
 
 	/**
 	 * @see java.util.ListIterator#previous()
 	 */
 	public Object previous() {
-		Object o = _list.get(previousIndex());
-		_index=_index-1;
-		if(_index==0){
-			_hasPrevious=false;
+		Object o = this._list.get(previousIndex());
+		this._index=this._index-1;
+		if(this._index==0){
+			this._hasPrevious=false;
 		}
 		return o;
 	}
@@ -212,27 +222,31 @@ public class IDOEntityList implements List {
 	 * @see java.util.ListIterator#previousIndex()
 	 */
 	public int previousIndex() {
-		return _index-1;
+		return this._index-1;
 	}
 
 	/**
 	 * @see java.util.Iterator#remove()
 	 */
 	public void remove() {
-		_list.remove(previousIndex());
+		this._list.remove(previousIndex());
 	}
 
     public void set(Object o) {
-    		if (o instanceof IDOEntity)
-	 		_list.set(_index-1,((IDOEntity)o));
-	 	else
-	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+    		if (o instanceof IDOEntity) {
+				this._list.set(this._index-1,(o));
+			}
+			else {
+				throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+			}
     }
     public void add(Object o) {
-    		if (o instanceof IDOEntity)
-	 		_list.add(_index,((IDOEntity)o));
-	 	else
-	 		throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+    		if (o instanceof IDOEntity) {
+				this._list.add(this._index,(o));
+			}
+			else {
+				throw new RuntimeException(this.getClass()+": element is not IDOEntity");
+			}
     }
 
   }

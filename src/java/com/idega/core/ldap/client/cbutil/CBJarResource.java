@@ -67,7 +67,7 @@ public final class CBJarResource
     
     public String getZipFileName() 
     {
-        return zipFileName;
+        return this.zipFileName;
     }
 
     /**
@@ -76,11 +76,13 @@ public final class CBJarResource
 
     public long getLastModified()
     {
-        File zip = new File(zipFileName);
-        if (zip == null)
-            return 0;
-        else
-            return zip.lastModified();
+        File zip = new File(this.zipFileName);
+        if (zip == null) {
+			return 0;
+		}
+		else {
+			return zip.lastModified();
+		}
     }
 
    /**
@@ -92,7 +94,7 @@ public final class CBJarResource
 
    public CBJarResource(String zipFileName, boolean Debug)
    {
-      debug = Debug;
+      this.debug = Debug;
       this.zipFileName=zipFileName;
       init();
    }
@@ -103,7 +105,7 @@ public final class CBJarResource
 
     public String toString()
     {
-        return "CBJarResource (" + zipFileName + ")";
+        return "CBJarResource (" + this.zipFileName + ")";
     }
 
     /**
@@ -114,7 +116,7 @@ public final class CBJarResource
 
     public boolean hasResource(String name)
     {
-        return entries.containsKey(name);
+        return this.entries.containsKey(name);
     }
 
    /**
@@ -136,12 +138,12 @@ public final class CBJarResource
     {
         try
         {
-            ZipEntry entry = (ZipEntry)entries.get(name);
-            InputStream in = zipFile.getInputStream(entry);
+            ZipEntry entry = (ZipEntry)this.entries.get(name);
+            InputStream in = this.zipFile.getInputStream(entry);
 
             if (entry == null)
             {
-                throw new ZipException("Unable to find: " + name + " in zip file " + zipFileName);
+                throw new ZipException("Unable to find: " + name + " in zip file " + this.zipFileName);
             }
 
             return readZipEntryData(in, entry);
@@ -163,8 +165,9 @@ public final class CBJarResource
     public Image getImage(String imageName, Toolkit imageCreator)
         throws ZipException
     {
-        if (hasResource(imageName) == false)
-            throw new ZipException("resource: " + imageName + " not found in zip file: " + zipFileName);
+        if (hasResource(imageName) == false) {
+			throw new ZipException("resource: " + imageName + " not found in zip file: " + this.zipFileName);
+		}
 
 
         Image ret = imageCreator.createImage(getRawResource(imageName));
@@ -181,8 +184,8 @@ public final class CBJarResource
     {
         try
         {
-            ZipEntry entry = (ZipEntry)entries.get(resourceName);
-            InputStream in = zipFile.getInputStream(entry);
+            ZipEntry entry = (ZipEntry)this.entries.get(resourceName);
+            InputStream in = this.zipFile.getInputStream(entry);
             return in;
         }
         catch (IOException e)
@@ -198,13 +201,15 @@ public final class CBJarResource
       try
       {
           // extracts just sizes only.
-          zipFile = new ZipFile(zipFileName);
-          Enumeration e=zipFile.entries();
+          this.zipFile = new ZipFile(this.zipFileName);
+          Enumeration e=this.zipFile.entries();
           while (e.hasMoreElements())
           {
               ZipEntry ze=(ZipEntry)e.nextElement();
-              if (debug) System.out.println("zip entry: " + ze);              
-              entries.put(ze.getName(), ze);
+              if (this.debug) {
+				System.out.println("zip entry: " + ze);
+			}              
+              this.entries.put(ze.getName(), ze);
           }
        } catch (NullPointerException e) {
           CBUtility.log("unable to init zip file - no entries?",1);
@@ -232,12 +237,12 @@ public final class CBJarResource
             CBUtility.log("bizarre size error in zip entry reading = corrupt zip file?"); return null;
         }
 
-        byte[] b=new byte[(int)size];
+        byte[] b=new byte[size];
         int rb=0;
         int chunk=0;
-        while (((int)size - rb) > 0)
+        while ((size - rb) > 0)
         {
-             chunk=is.read(b,rb,(int)size - rb);
+             chunk=is.read(b,rb,size - rb);
              if (chunk==-1) {
                 break;
              }
@@ -315,7 +320,7 @@ public final class CBJarResource
 
     protected void finalize()
     {
-        try { zipFile.close(); } catch (Exception e) {}
+        try { this.zipFile.close(); } catch (Exception e) {}
     }
 
 	/**
@@ -328,7 +333,7 @@ public final class CBJarResource
     {
     	prefix = prefix.toLowerCase();
     	Vector results = new Vector();
-		Enumeration keys = entries.keys();
+		Enumeration keys = this.entries.keys();
 		
 		// cycle through all available entry names (keys) looking for prefixed entries
 		while (keys.hasMoreElements())

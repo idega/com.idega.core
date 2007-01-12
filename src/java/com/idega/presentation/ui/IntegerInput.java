@@ -111,7 +111,7 @@ public void print(IWContext iwc)throws IOException{
 
 
 
-		if (keepStatus){
+		if (this.keepStatus){
 
 			if(iwc.getParameter(this.getName()) != null){
 

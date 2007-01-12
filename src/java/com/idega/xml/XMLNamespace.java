@@ -1,5 +1,5 @@
 /*
- * $Id: XMLNamespace.java,v 1.3 2005/05/11 18:20:34 gummi Exp $
+ * $Id: XMLNamespace.java,v 1.3.2.1 2007/01/12 19:32:21 idegaweb Exp $
  *
  * Copyright (C) 2004 Idega. All Rights Reserved.
  *
@@ -15,10 +15,10 @@ import org.jdom.Namespace;
 /**
  * A wrapper to hide JDOM in case we want to replace it later on.
  * 
- * Last modified: $Date: 2005/05/11 18:20:34 $ by $Author: gummi $
+ * Last modified: $Date: 2007/01/12 19:32:21 $ by $Author: idegaweb $
  *
  * @author Joakim Johnson
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.3.2.1 $
  */
 public class XMLNamespace {
 	Namespace namespace;
@@ -28,7 +28,7 @@ public class XMLNamespace {
 	 * @param nsStr the namespace string. Typically it will be something like."http://xmlns.idega.com/block/article/document"
 	 */
 	public XMLNamespace(String nsStr) {
-		namespace = Namespace.getNamespace(nsStr);
+		this.namespace = Namespace.getNamespace(nsStr);
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class XMLNamespace {
 	 * @param prefix the prefix string.
 	 */
 	public XMLNamespace(String prefix,String nsStr) {
-		namespace = Namespace.getNamespace(prefix,nsStr);
+		this.namespace = Namespace.getNamespace(prefix,nsStr);
 	}
 	
 	/**
@@ -45,10 +45,10 @@ public class XMLNamespace {
 	 * @return the set Namespace instance
 	 */
 	protected Object getNamespace() {
-		return namespace;
+		return this.namespace;
 	}
 	
 	public boolean equals(Object obj){
-		return namespace.equals(obj);
+		return this.namespace.equals(obj);
 	}
 }

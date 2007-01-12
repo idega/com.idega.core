@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.13 2005/06/22 14:03:20 tryggvil Exp $
+ * $Id: ViewManager.java,v 1.13.2.1 2007/01/12 19:32:12 idegaweb Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.util.FacesUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2005/06/22 14:03:20 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:32:12 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.13.2.1 $
  */
 public class ViewManager implements Singleton {
 	
@@ -68,7 +68,7 @@ public class ViewManager implements Singleton {
 	
 	public void initializeStandardViews(ViewHandler handler){
 		
-		setApplicationRoot(iwma,handler);
+		setApplicationRoot(this.iwma,handler);
 		
 		
 		try {
@@ -119,7 +119,7 @@ public class ViewManager implements Singleton {
 		}
 
 		
-		if(showMyPage){
+		if(this.showMyPage){
 			DefaultViewNode myPageNode = new ApplicationViewNode("mypage",getWorkspaceRoot());
 			myPageNode.setName("My Page");
 			//TODO: Change this
@@ -131,17 +131,17 @@ public class ViewManager implements Singleton {
 	
 	public ViewNode getWorkspaceRoot(){
 		//ViewNode workspaceNode = getApplicationRoot().getChild("workspace");
-		if(workspaceNode==null){
-			DefaultViewNode node = new DefaultViewNode(iwma);
+		if(this.workspaceNode==null){
+			DefaultViewNode node = new DefaultViewNode(this.iwma);
 			node.setViewId("workspace");
 			//getApplicationRoot().addChildViewNode(node);
 			node.setParent(getApplicationRoot());
 			//String jspUri = iwma.getBundle("com.idega.webface").getJSPURI("workspace.jsp");
 			String jspUri = "/idegaweb/bundles/com.idega.workspace.bundle/jsp/workspace.jsp";
 			node.setJspUri(jspUri);
-			workspaceNode = node;
+			this.workspaceNode = node;
 		}
-		return workspaceNode;
+		return this.workspaceNode;
 	}
 
 	public ViewNode getApplicationRoot(){
@@ -150,14 +150,14 @@ public class ViewManager implements Singleton {
 		//	node.setViewId("/");
 		//	rootNode = node;
 		//}
-		return rootNode;
+		return this.rootNode;
 	}
 	
 	protected void setApplicationRoot(IWMainApplication iwma,ViewHandler rootViewhandler){
 		DefaultViewNode node = new DefaultViewNode(iwma);
 		node.setViewId("/");
 		node.setViewHandler(rootViewhandler);
-		rootNode = node;
+		this.rootNode = node;
 	}
 	
 	
@@ -224,7 +224,7 @@ public class ViewManager implements Singleton {
 	
 	
 	protected IWMainApplication getIWMainApplication(){
-		return iwma;
+		return this.iwma;
 	}
 	
 	/**

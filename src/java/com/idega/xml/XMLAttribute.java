@@ -1,5 +1,5 @@
 /*
- * $Id: XMLAttribute.java,v 1.2 2002/04/06 19:07:46 tryggvil Exp $
+ * $Id: XMLAttribute.java,v 1.2.6.1 2007/01/12 19:32:21 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -20,31 +20,34 @@ public class XMLAttribute {
   private Attribute _attribute = null;
 
   public XMLAttribute(String name, String value) {
-    _attribute = new Attribute(name,value);
+    this._attribute = new Attribute(name,value);
   }
 
   XMLAttribute(Attribute attribute) {
-    _attribute = attribute;
+    this._attribute = attribute;
   }
 
   public String getName() {
-    if (_attribute != null)
-      return(_attribute.getName());
+    if (this._attribute != null) {
+		return(this._attribute.getName());
+	}
 
     return(null);
   }
 
   public String getValue() {
-    if (_attribute != null)
-      return(_attribute.getValue());
+    if (this._attribute != null) {
+		return(this._attribute.getValue());
+	}
 
     return(null);
   }
 
   public int getIntValue() throws XMLException {
     try {
-      if (_attribute != null)
-        return(_attribute.getIntValue());
+      if (this._attribute != null) {
+		return(this._attribute.getIntValue());
+	}
     }
     catch(DataConversionException e) {
       throw new XMLException(e.getMessage());
@@ -54,10 +57,10 @@ public class XMLAttribute {
   }
 
   Attribute getAttribute() {
-    return(_attribute);
+    return(this._attribute);
   }
 
   void setAttribute(Attribute attribute) {
-    _attribute = attribute;
+    this._attribute = attribute;
   }
 }

@@ -31,19 +31,19 @@ public class TimePeriod {
 	}
 	
 	public IWTimestamp getFirstTimestamp(){
-		return firstTimestamp;
+		return this.firstTimestamp;
 	}
 	
 	public IWTimestamp getLastTimestamp(){
-		return lastTimestamp;
+		return this.lastTimestamp;
 	}
 
 	public void setFirstTimestamp(IWTimestamp stamp){
-		firstTimestamp=stamp;
+		this.firstTimestamp=stamp;
 	}
 	
 	public void setLastTimestamp(IWTimestamp stamp){
-		lastTimestamp=stamp;
+		this.lastTimestamp=stamp;
 	}
 	
 	public boolean beginsBefore(IWTimestamp otherTimestamp){

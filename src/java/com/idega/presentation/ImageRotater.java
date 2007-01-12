@@ -15,21 +15,22 @@ private String _height;
 private String _alt;
 
   public void main(IWContext iwc) {
-    if ( _imageFile != null ) {
+    if ( this._imageFile != null ) {
       boolean folder = true;
       int icObjectInstanceID = getICObjectInstanceID();
       Vector imageVector = (Vector) iwc.getApplicationAttribute(IMAGE_ROTATER+"_"+Integer.toString(icObjectInstanceID));
 
       if ( imageVector == null ) {
 	imageVector = new Vector();
-	if ( _imageFile.getChildCount() > 0 && _imageFile.getChildrenIterator() != null ) {
-	  Iterator iter = _imageFile.getChildrenIterator();
+	if ( this._imageFile.getChildCount() > 0 && this._imageFile.getChildrenIterator() != null ) {
+	  Iterator iter = this._imageFile.getChildrenIterator();
 	  while (iter.hasNext()) {
-	    imageVector.add((ICFile)iter.next());
+	    imageVector.add(iter.next());
 	  }
 	}
-	else
-	  folder = false;
+	else {
+		folder = false;
+	}
 	iwc.setApplicationAttribute(IMAGE_ROTATER+"_"+Integer.toString(icObjectInstanceID),imageVector);
       }
 
@@ -38,38 +39,46 @@ private String _alt;
       Image image = null;
 
       try {
-	if ( folder )
-	  image = new Image(((Integer)((ICFile)(imageVector.elementAt(num))).getPrimaryKey()).intValue());
-	else
-	  image = new Image(((Integer)_imageFile.getPrimaryKey()).intValue());
+	if ( folder ) {
+		image = new Image(((Integer)((ICFile)(imageVector.elementAt(num))).getPrimaryKey()).intValue());
+	}
+	else {
+		image = new Image(((Integer)this._imageFile.getPrimaryKey()).intValue());
+	}
       }
       catch (SQLException e) {
 	e.printStackTrace(System.err);
       }
 
       if ( image != null ) {
-	if ( _width != null ) image.setWidth(_width);
-	if ( _height != null ) image.setHeight(_height);
-	if ( _alt != null ) image.setName(_alt);
+	if ( this._width != null ) {
+		image.setWidth(this._width);
+	}
+	if ( this._height != null ) {
+		image.setHeight(this._height);
+	}
+	if ( this._alt != null ) {
+		image.setName(this._alt);
+	}
 	add(image);
       }
     }
   }
 
   public void setFileFolder(ICFile file) {
-    _imageFile = file;
+    this._imageFile = file;
     getIWApplicationContext().removeApplicationAttribute(IMAGE_ROTATER+"_"+Integer.toString(getICObjectInstanceID()));
   }
 
   public void setWidth(String width) {
-    _width = width;
+    this._width = width;
   }
 
   public void setHeight(String height) {
-    _height = height;
+    this._height = height;
   }
 
   public void setAlt(String alt) {
-    _alt = alt;
+    this._alt = alt;
   }
 }// class ImageRotater

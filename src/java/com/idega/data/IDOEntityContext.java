@@ -36,11 +36,11 @@ public class IDOEntityContext implements EntityContext {
 
 
   public EJBObject getEJBObject() throws java.lang.IllegalStateException {
-    return _ejbo;
+    return this._ejbo;
   }
 
   public EJBLocalObject getEJBLocalObject() throws java.lang.IllegalStateException {
-    return (EJBLocalObject)_ejbo;
+    return (EJBLocalObject)this._ejbo;
   }
 
   public javax.ejb.EJBLocalHome getEJBLocalHome() throws java.lang.IllegalStateException {

@@ -56,7 +56,7 @@ public class BasicOps
 
     public BasicOps(DirContext c)
     {
-        ctx = c;
+        this.ctx = c;
     }
 
    /**
@@ -87,7 +87,7 @@ public class BasicOps
 
 	public void setConnectionData(ConnectionData cData)
 	{
-		connectionData = cData;
+		this.connectionData = cData;
 	}
 
 
@@ -105,21 +105,29 @@ public class BasicOps
     {
 
         // sanity check
-        if (connectionData.url == null)
-            throw new NamingException("URL not specified in openContext()!");
+        if (connectionData.url == null) {
+			throw new NamingException("URL not specified in openContext()!");
+		}
 
-        if (connectionData.version <2 || connectionData.version>3)
-            throw new NamingException("Incorrect ldap Version! (was " + connectionData.version + ")");
+        if (connectionData.version <2 || connectionData.version>3) {
+			throw new NamingException("Incorrect ldap Version! (was " + connectionData.version + ")");
+		}
 
-        if (connectionData.useSSL && (connectionData.cacerts == null))
-            throw new NamingException("Cannot use SSL without a trusted CA certificates JKS file.");
+        if (connectionData.useSSL && (connectionData.cacerts == null)) {
+			throw new NamingException("Cannot use SSL without a trusted CA certificates JKS file.");
+		}
 
-        if (connectionData.referralType == null) connectionData.referralType = "follow";  // not an error not to specify this.
+        if (connectionData.referralType == null) {
+			connectionData.referralType = "follow";  // not an error not to specify this.
+		}
 
-        if (connectionData.aliasType == null) connectionData.aliasType = "finding"; // not an error not to specify this
+        if (connectionData.aliasType == null) {
+			connectionData.aliasType = "finding"; // not an error not to specify this
+		}
 
-        if ("followthrowignore".indexOf(connectionData.referralType) == -1)
-            throw new NamingException("unknown referral type: " + connectionData.referralType + " (setting to 'follow')");
+        if ("followthrowignore".indexOf(connectionData.referralType) == -1) {
+			throw new NamingException("unknown referral type: " + connectionData.referralType + " (setting to 'follow')");
+		}
 
         Properties env = new Properties();
 
@@ -141,8 +149,9 @@ public class BasicOps
             env.put(Context.INITIAL_CONTEXT_FACTORY, DEFAULT_DSML_CTX);
 //            env.put(Context.PROVIDER_URL, "http://betch01:6666/axis/services/DSML");  // could add a baseDN here if desired
         }
-        else
-            throw new NamingException("Unknown protocol '" + connectionData.protocol + "' encountered in com.ca.commons.jndi.BasicOps");
+		else {
+			throw new NamingException("Unknown protocol '" + connectionData.protocol + "' encountered in com.ca.commons.jndi.BasicOps");
+		}
 
         env.put(Context.PROVIDER_URL, connectionData.url);  // could add a baseDN here if desired
 
@@ -158,8 +167,9 @@ public class BasicOps
         env.put("java.naming.ldap.derefAliases", connectionData.aliasType);
 
 
-        if (connectionData.tracing)                             // nb. Changing this during a connection
-            env.put("com.sun.jndi.ldap.trace.ber", System.err); // would be attractive, but doesn't seem to work...
+        if (connectionData.tracing) {
+			env.put("com.sun.jndi.ldap.trace.ber", System.err); // would be attractive, but doesn't seem to work...
+		}
 
         if (connectionData.userDN != null && connectionData.pwd != null)               // Set up for simple authentication
         {                                                       // if the user is a Manager
@@ -196,7 +206,9 @@ public class BasicOps
                 catch (Exception e)
                 {
                     String msg = "Error opening SSL connection: ";
-                    if (e.getMessage() != null) msg += e.getMessage();
+                    if (e.getMessage() != null) {
+						msg += e.getMessage();
+					}
                     e.printStackTrace();
                     throw new NamingException(msg);
                 }
@@ -230,10 +242,13 @@ public class BasicOps
                         boolean tracing, String referralType, String aliasHandling)
         throws NamingException
     {
-        if (host == null)
-            throw new NamingException("Host not specified in openContext()!");
+        if (host == null) {
+			throw new NamingException("Host not specified in openContext()!");
+		}
 
-        if (port == 0) port = 389;
+        if (port == 0) {
+			port = 389;
+		}
 
         return openContext(version, ("ldap://" + host + ":" + port), user, pwd, tracing, referralType, aliasHandling);
     }
@@ -391,17 +406,18 @@ public class BasicOps
 
     public DirContext getSchema() throws NamingException
     {
-        if (ctx == null)
-            throw new NamingException("No context open to retrieve Schema from");
+        if (this.ctx == null) {
+			throw new NamingException("No context open to retrieve Schema from");
+		}
 
         log.log(Level.FINER,"getSchema() call");
 
-        return ctx.getSchema("");
+        return this.ctx.getSchema("");
     }
 
     public void setSchemaAttributes(Attributes newSchema)
     {
-        schema = newSchema;
+        this.schema = newSchema;
     }
 
     /**
@@ -416,11 +432,13 @@ public class BasicOps
         // every v3 ldap directory *should* have a special 'schema entry', that is named by the 'subschemaSubentry'
         // attribute of the directory.
 
-        if (schema != null) return schema;  // 'cache' schema.
+        if (this.schema != null) {
+			return this.schema;  // 'cache' schema.
+		}
 
         String subschemaSubentry = "cn=schema";  // default - it usually *is* this though...
 
-        Attributes atts = ctx.getAttributes("", new String[] {"subschemaSubentry"});
+        Attributes atts = this.ctx.getAttributes("", new String[] {"subschemaSubentry"});
 
         if (atts != null)
         {
@@ -428,14 +446,15 @@ public class BasicOps
             if (subschema != null && subschema.get() != null)
             {
                 subschemaSubentry = subschema.get().toString();
-                if (subschemaSubentry.length() == 0)                // probably not a necessary check, but you never know...
-                    subschemaSubentry = "cn=schema";
+                if (subschemaSubentry.length() == 0) {
+					subschemaSubentry = "cn=schema";
+				}
             }
         }
 
-        schema = ctx.getAttributes(subschemaSubentry);             // sets object variable 'schema'
+        this.schema = this.ctx.getAttributes(subschemaSubentry);             // sets object variable 'schema'
 
-        return schema;
+        return this.schema;
 
     }
 
@@ -449,10 +468,11 @@ public class BasicOps
     public Attribute getObjectClasses()
         throws NamingException
     {
-        if (schema == null)
-            schema = getSchemaAttributes();
+        if (this.schema == null) {
+			this.schema = getSchemaAttributes();
+		}
 
-        return (schema == null)?null:schema.get("objectClasses");
+        return (this.schema == null)?null:this.schema.get("objectClasses");
     }
 
     /**
@@ -465,10 +485,11 @@ public class BasicOps
     public Attribute getLdapSyntaxes()
             throws NamingException
     {
-        if (schema == null)
-            schema = getSchemaAttributes();
+        if (this.schema == null) {
+			this.schema = getSchemaAttributes();
+		}
 
-        return (schema == null)?null:schema.get("ldapSyntaxes");
+        return (this.schema == null)?null:this.schema.get("ldapSyntaxes");
     }
 
     /**
@@ -482,10 +503,11 @@ public class BasicOps
     public Attribute getAttributeTypes()
             throws NamingException
     {
-        if (schema == null)
-            schema = getSchemaAttributes();
+        if (this.schema == null) {
+			this.schema = getSchemaAttributes();
+		}
 
-        return (schema == null)?null:schema.get("attributeTypes");
+        return (this.schema == null)?null:this.schema.get("attributeTypes");
     }
 
 
@@ -510,17 +532,20 @@ public class BasicOps
         Name oldDN = preParse(OldDN);
         Name newDN = preParse(NewDN);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.renameObject()\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.renameObject()\n  (so can't do anything!)", null);
+		}
 
         Name rdn = newDN.getSuffix(newDN.size()-1);
         Name oldRdn = oldDN.getSuffix(oldDN.size()-1);
 
-        if (oldRdn.toString().equals(rdn.toString()))
-            return true;                                // nothing to do, rdns are identical.
+        if (oldRdn.toString().equals(rdn.toString())) {
+			return true;                                // nothing to do, rdns are identical.
+		}
 
         try
         {
-            ctx.rename (oldDN, rdn);
+            this.ctx.rename (oldDN, rdn);
         }
         catch (NamingException e)
         {
@@ -547,7 +572,9 @@ public class BasicOps
         Name fromDN = preParse(FromDN);
         Name toDN = preParse(ToDN);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.copyObject\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.copyObject\n  (so can't do anything!)", null);
+		}
 
         return (addObject(toDN, read(fromDN)));
     }
@@ -568,16 +595,24 @@ public class BasicOps
         log.log(Level.FINER,"add object " + Dn.toString());
         Name dn = preParse(Dn);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.addObject()\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.addObject()\n  (so can't do anything!)", null);
+		}
 
         // Sanity check
-        if (dn==null) return error("null DN in BasicOps.addObject()", null);
-        if (atts==null) return error("null atts in BasicOps.addObject()", null);
-        if (dn.size()==0) return error("DN has no elements in BasicOps.addObject()", null);
+        if (dn==null) {
+			return error("null DN in BasicOps.addObject()", null);
+		}
+        if (atts==null) {
+			return error("null atts in BasicOps.addObject()", null);
+		}
+        if (dn.size()==0) {
+			return error("DN has no elements in BasicOps.addObject()", null);
+		}
 
         try
         {
-            ctx.createSubcontext (dn, atts);
+            this.ctx.createSubcontext (dn, atts);
         }
         catch (NamingException e)
         {
@@ -601,15 +636,21 @@ public class BasicOps
 
         Name dn = preParse(Dn);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.deleteObject()\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.deleteObject()\n  (so can't do anything!)", null);
+		}
 
         // Sanity check
-        if (dn==null) return error("null DN in BasicOps.deleteObject()", null);
-        if (dn.size()==0) return error("DN has no elements in BasicOps.deleteObject()", null);
+        if (dn==null) {
+			return error("null DN in BasicOps.deleteObject()", null);
+		}
+        if (dn.size()==0) {
+			return error("DN has no elements in BasicOps.deleteObject()", null);
+		}
 
         try
         {
-            ctx.destroySubcontext (dn);
+            this.ctx.destroySubcontext (dn);
         }
         catch (NamingException e)
         {
@@ -636,7 +677,7 @@ public class BasicOps
         Name nodeDN = preParse(NodeDN);
         try
         {
-            Object o = ctx.lookup(nodeDN);
+            Object o = this.ctx.lookup(nodeDN);
             return (o!=null);
         }
         catch (NamingException e)    // this is normal - implies object not found.
@@ -677,13 +718,13 @@ public class BasicOps
 
         Name dn = preParse(Dn);
 
-        if (ctx == null) {error("Null Directory Context\n  in BasicOps.read()\n  (so can't do anything!)", null); return null; }
+        if (this.ctx == null) {error("Null Directory Context\n  in BasicOps.read()\n  (so can't do anything!)", null); return null; }
 
         if (dn==null) {error("Null DN in BasicOps.read()",null);return null;}
 
         try
         {
-            Attributes atts = ctx.getAttributes(dn, returnAttributes);
+            Attributes atts = this.ctx.getAttributes(dn, returnAttributes);
 
             return atts;
         }
@@ -712,11 +753,13 @@ public class BasicOps
 
         Name dn = preParse(Dn);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.modifyAttributes\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.modifyAttributes\n  (so can't do anything!)", null);
+		}
 
         try
         {
-            ctx.modifyAttributes(dn, mod_type, attr);
+            this.ctx.modifyAttributes(dn, mod_type, attr);
         }
         catch (NamingException e)
         {
@@ -740,11 +783,13 @@ public class BasicOps
         log.log(Level.FINER,"modifying object " + Dn.toString() + " with list of mod items ");
         Name dn = preParse(Dn);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.modifyAttributes\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.modifyAttributes\n  (so can't do anything!)", null);
+		}
 
         try
         {
-            ctx.modifyAttributes(dn, modList);
+            this.ctx.modifyAttributes(dn, modList);
         }
         catch (NamingException e)
         {
@@ -765,7 +810,9 @@ public class BasicOps
     {
         Name dn = preParse(Dn);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.updateObject()\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.updateObject()\n  (so can't do anything!)", null);
+		}
 
         return modifyAttributes(dn, DirContext.REPLACE_ATTRIBUTE, atts);
     }
@@ -783,7 +830,9 @@ public class BasicOps
     {
         Name dn = preParse(Dn);
 
-        if (ctx == null) return error("Null Directory Context in BasicOps.deleteAttribute\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context in BasicOps.deleteAttribute\n  (so can't do anything!)", null);
+		}
 
         BasicAttributes atts = new BasicAttributes();
         atts.put(a);
@@ -804,7 +853,9 @@ public class BasicOps
     {
         Name dn = preParse(Dn);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.deleteAttributes\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.deleteAttributes\n  (so can't do anything!)", null);
+		}
 
         return modifyAttributes(dn, DirContext.REMOVE_ATTRIBUTE, a);
     }
@@ -821,7 +872,9 @@ public class BasicOps
     {
         Name dn = preParse(Dn);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.updateAttribute\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.updateAttribute\n  (so can't do anything!)", null);
+		}
 
         BasicAttributes atts = new BasicAttributes();
         atts.put(a);
@@ -840,7 +893,9 @@ public class BasicOps
     {
         Name dn = preParse(Dn);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.updateAttributes\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.updateAttributes\n  (so can't do anything!)", null);
+		}
 
         return modifyAttributes(dn, DirContext.REPLACE_ATTRIBUTE, a);
     }
@@ -857,7 +912,9 @@ public class BasicOps
     {
         Name dn = preParse(Dn);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.addAttribute()\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.addAttribute()\n  (so can't do anything!)", null);
+		}
 
         BasicAttributes atts = new BasicAttributes();
         atts.put(a);
@@ -876,7 +933,9 @@ public class BasicOps
     {
         Name dn = preParse(Dn);
 
-        if (ctx == null) return error("Null Directory Context\n  in BasicOps.addAttribute()\n  (so can't do anything!)", null);
+        if (this.ctx == null) {
+			return error("Null Directory Context\n  in BasicOps.addAttribute()\n  (so can't do anything!)", null);
+		}
 
         return modifyAttributes(dn, DirContext.ADD_ATTRIBUTE, a);
     }
@@ -950,10 +1009,11 @@ public class BasicOps
     {
         Name searchbase = preParse(Searchbase);
 
-        if (ctx == null) { error("Null Directory Context\n  in BasicOps.searchOneLevel()\n  (so can't do anything!)", null); return null; }
+        if (this.ctx == null) { error("Null Directory Context\n  in BasicOps.searchOneLevel()\n  (so can't do anything!)", null); return null; }
 //XXX
-        if (returnAttributes != null  &&  returnAttributes.length == 0)
-            returnAttributes = new String[] {"objectClass"};
+        if (returnAttributes != null  &&  returnAttributes.length == 0) {
+			returnAttributes = new String[] {"objectClass"};
+		}
 
         try
         {
@@ -980,7 +1040,7 @@ public class BasicOps
 
         constraints.setReturningAttributes(returnAttributes);
 
-        NamingEnumeration results = ctx.search(searchbase, filter, null);
+        NamingEnumeration results = this.ctx.search(searchbase, filter, null);
 
         log.log(Level.FINER,"finished next level search; results exist? " + results.hasMoreElements());
         results = postParseNameClassPairs(results, searchbase);
@@ -1020,12 +1080,13 @@ public class BasicOps
 
         Name searchbase = preParse(Searchbase);
 
-        if (ctx == null) {error("Null Directory Context\n  in BasicOps.searchSubTree()\n  (so can't do anything!)", null); return null; }
+        if (this.ctx == null) {error("Null Directory Context\n  in BasicOps.searchSubTree()\n  (so can't do anything!)", null); return null; }
 
         NamingEnumeration result = null;
 
-        if (returnAttributes != null  &&  returnAttributes.length == 0)
-            returnAttributes = new String[] {"objectClass"};
+        if (returnAttributes != null  &&  returnAttributes.length == 0) {
+			returnAttributes = new String[] {"objectClass"};
+		}
 
         try
         {
@@ -1038,7 +1099,7 @@ public class BasicOps
 
             constraints.setReturningAttributes(returnAttributes);
 
-            result = ctx.search(searchbase, filter, constraints);
+            result = this.ctx.search(searchbase, filter, constraints);
 
             return postParseNameClassPairs(result, searchbase);
 
@@ -1088,12 +1149,13 @@ public class BasicOps
 
         Name searchbase = preParse(Searchbase);
 
-        if (ctx == null) {error("Null Directory Context\n  in BasicOps.searchSubTree()\n  (so can't do anything!)", null); return null; }
+        if (this.ctx == null) {error("Null Directory Context\n  in BasicOps.searchSubTree()\n  (so can't do anything!)", null); return null; }
 
         NamingEnumeration result = null;
 //XXX
-        if (returnAttributes != null  &&  returnAttributes.length == 0)
-            returnAttributes = new String[] {"objectClass"};
+        if (returnAttributes != null  &&  returnAttributes.length == 0) {
+			returnAttributes = new String[] {"objectClass"};
+		}
 
         try
         {
@@ -1106,7 +1168,7 @@ public class BasicOps
 
             constraints.setReturningAttributes(returnAttributes);
 
-            result = ctx.search(searchbase, filter, constraints);
+            result = this.ctx.search(searchbase, filter, constraints);
 
             return postParseNameClassPairs(result, searchbase);
 
@@ -1129,13 +1191,15 @@ public class BasicOps
     {
         log.log(Level.FINER,"closing context");
 
-        if (ctx == null) return;  // it is not an error to multiply disconnect.
+        if (this.ctx == null) {
+			return;  // it is not an error to multiply disconnect.
+		}
 
         setSchemaAttributes(null); // clear the schema
 
         try
         {
-            ctx.close();
+            this.ctx.close();
             ldapVersion = -1;
         }
         catch (NamingException e)
@@ -1154,11 +1218,11 @@ public class BasicOps
     {
         log.log(Level.FINER,"getting base name parser");
 
-        if (ctx == null) {error("Null Directory Context\n  in BasicOps.searchSubTree()\n  (so can't do anything!)", null); return null; }
+        if (this.ctx == null) {error("Null Directory Context\n  in BasicOps.searchSubTree()\n  (so can't do anything!)", null); return null; }
 
         try
         {
-            return ctx.getNameParser("");
+            return this.ctx.getNameParser("");
         }
         catch (NamingException e)
         {
@@ -1181,8 +1245,8 @@ public class BasicOps
 
     public boolean error(String msg, Exception e)
     {
-        errorMsg = msg;         //TE: set the error msg.
-        errorException = e;     //TE: set the exception.
+        this.errorMsg = msg;         //TE: set the error msg.
+        this.errorException = e;     //TE: set the exception.
 
         log.log(Level.WARNING,"BasicOps error: " + msg + "\n  ", e);
         return false;
@@ -1198,7 +1262,7 @@ public class BasicOps
 
     public String getError()
     {
-        return errorException == null ? errorMsg : errorMsg + errorException;
+        return this.errorException == null ? this.errorMsg : this.errorMsg + this.errorException;
     }
 
     /**
@@ -1261,10 +1325,12 @@ public class BasicOps
                 while (e.hasMoreElements())
                 {
                     SearchResult bloop = (SearchResult)e.nextElement();
-                    if (bloop == null)
-                        log.log(Level.FINER,"NULL RESULT");
-                    else
-                        log.log(Level.FINER,"next result: " + bloop.getName());
+                    if (bloop == null) {
+						log.log(Level.FINER,"NULL RESULT");
+					}
+					else {
+						log.log(Level.FINER,"next result: " + bloop.getName());
+					}
                 }
             }
             catch (Exception e2)
@@ -1290,7 +1356,7 @@ public class BasicOps
      *    jndi operations must be performed.
      */
 
-    public DirContext getContext() { return ctx; }
+    public DirContext getContext() { return this.ctx; }
 
 
 
@@ -1299,11 +1365,11 @@ public class BasicOps
         String value = (deleteOldRDN) ? "true" : "false" ;
         try
         {
-            ctx.addToEnvironment("java.naming.ldap.deleteRDN", value);
+            this.ctx.addToEnvironment("java.naming.ldap.deleteRDN", value);
 
             boolean retValue = renameObject(OldDN, NewDN);
 
-            ctx.addToEnvironment("java.naming.ldap.deleteRDN", "false");  // reset to default of 'false' afterwards.
+            this.ctx.addToEnvironment("java.naming.ldap.deleteRDN", "false");  // reset to default of 'false' afterwards.
 
             return retValue;
         }

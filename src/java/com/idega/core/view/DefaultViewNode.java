@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.12 2005/10/25 05:09:40 tryggvil Exp $
+ * $Id: DefaultViewNode.java,v 1.12.2.1 2007/01/12 19:32:12 idegaweb Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2005/10/25 05:09:40 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:32:12 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.12.2.1 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -62,7 +62,7 @@ public class DefaultViewNode implements ViewNode {
 	}
 	
 	public String getViewId() {
-		return viewId;
+		return this.viewId;
 	}
 	
 	public void setViewId(String viewId){
@@ -70,10 +70,10 @@ public class DefaultViewNode implements ViewNode {
 	}
 
 	protected Map getChildrenMap(){
-		if(children==null){
-			children=new HashMap();
+		if(this.children==null){
+			this.children=new HashMap();
 		}
-		return children;
+		return this.children;
 	}
 	
 	public String getURI(){
@@ -351,13 +351,13 @@ public class DefaultViewNode implements ViewNode {
 	 * the ViewHandler from the parent ViewNode
 	 */
 	public ViewHandler getViewHandler() {
-		if(viewHandler==null){
+		if(this.viewHandler==null){
 			ViewNode parent = getParent();
 			if(parent!=null){
 				return parent.getViewHandler();
 			}
 		}
-		return viewHandler;
+		return this.viewHandler;
 	}
 
 	public void setViewHandler(ViewHandler viewHandler) {
@@ -368,21 +368,21 @@ public class DefaultViewNode implements ViewNode {
 	 * @see com.idega.faces.view.ViewNode#isJSP()
 	 */
 	public boolean isResourceBased() {
-		return isResourceBased;
+		return this.isResourceBased;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#isCBP()
 	 */
 	public boolean isComponentBased() {
-		return isComponentBased;
+		return this.isComponentBased;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getJSPURI()
 	 */
 	public String getResourceURI() {
-		return resourceUri;
+		return this.resourceUri;
 	}
 
 	/* (non-Javadoc)
@@ -399,13 +399,13 @@ public class DefaultViewNode implements ViewNode {
 	 * the roles from the parent ViewNode
 	 */
 	public Collection getAuthorizedRoles() {
-		if(roles==null){
+		if(this.roles==null){
 			ViewNode parent = getParent();
 			if(parent!=null){
 				return parent.getAuthorizedRoles();
 			}
 		}
-		return roles;
+		return this.roles;
 	}
 	
 	public void setAuthorizedRoles(Collection coll){
@@ -434,7 +434,7 @@ public class DefaultViewNode implements ViewNode {
 			return StringHandler.firstCharacterToUpperCase(getViewId());
 		}
 		else{
-			return name;
+			return this.name;
 		}
 	}
 	/**
@@ -451,7 +451,7 @@ public class DefaultViewNode implements ViewNode {
 	 * @see com.idega.faces.view.ViewNode#getKeyboardShortcut()
 	 */
 	public KeyboardShortcut getKeyboardShortcut() {
-		return keyboardShortcut;
+		return this.keyboardShortcut;
 	}
 	
 	
@@ -493,7 +493,7 @@ public class DefaultViewNode implements ViewNode {
 	 * @return Returns the parent.
 	 */
 	public ViewNode getParent() {
-		return parent;
+		return this.parent;
 	}
 	/**
 	 * @param parent The parent to set.
@@ -507,13 +507,13 @@ public class DefaultViewNode implements ViewNode {
 	 * the IWMainApplication from the parent ViewNode
 	 */
 	public IWMainApplication getIWMainApplication() {
-			if(iwma==null){
+			if(this.iwma==null){
 				DefaultViewNode parent = (DefaultViewNode)getParent();
 				if(parent!=null){
 					return parent.getIWMainApplication();
 				}
 			}
-			return iwma;
+			return this.iwma;
 	}
 	/**
 	 * @param iwma The iwma to set.
@@ -525,7 +525,7 @@ public class DefaultViewNode implements ViewNode {
 	 * @return Returns the isRendered.
 	 */
 	public boolean isVisibleInMenus() {
-		return isRendered;
+		return this.isRendered;
 	}
 	/**
 	 * @param isRendered The isRendered to set.

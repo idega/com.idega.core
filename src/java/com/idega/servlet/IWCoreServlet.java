@@ -102,7 +102,7 @@ public class IWCoreServlet extends HttpServlet
 	 * @return true if the current service access sould be synchronized, false otherwise.
 	 */
 	protected boolean getIfSyncronizeAccess(HttpServletRequest _req, HttpServletResponse _res){
-		return synchronizeFirstAccess&&isFirstAccessor;
+		return this.synchronizeFirstAccess&&this.isFirstAccessor;
 	}
 	/**
 	 * This method can be overrided in sublcasses. Unsets syncronization for the current access to service.
@@ -111,7 +111,7 @@ public class IWCoreServlet extends HttpServlet
 	 * @return true if successfully unSet.
 	 */
 	protected boolean unSetSyncronizedAccess(HttpServletRequest _req, HttpServletResponse _res){
-		return isFirstAccessor=false;
+		return this.isFirstAccessor=false;
 	}
 	
 	

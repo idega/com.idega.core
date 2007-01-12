@@ -308,7 +308,7 @@ public class McKoiDatastoreInterface extends DatastoreInterface {
 	public void setNumberGeneratorValue(GenericEntity entity, int value) {
 		//throw new RuntimeException("setSequenceValue() not implemented for "+this.getClass().getName());
 		//String statement = "update sequences set last_number="+value+" where sequence_name='"+this.getSequenceName(entity)+"'";
-		String statement = "drop sequence " + this.getSequenceName(entity);
+		String statement = "drop sequence " + McKoiDatastoreInterface.getSequenceName(entity);
 		try {
 			this.executeUpdate(entity, statement);
 			this.createSequence(entity, value + 1);
@@ -350,8 +350,9 @@ public class McKoiDatastoreInterface extends DatastoreInterface {
 			 ConnectionBroker.freeConnection(conn);
 		   }
 		}
-		if(v!=null && !v.isEmpty())
+		if(v!=null && !v.isEmpty()) {
 			return (String[])v.toArray(new String[0]);
+		}
 		return null;
 			   
 	}

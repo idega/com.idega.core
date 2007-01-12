@@ -1,5 +1,5 @@
 /*
- * $Id: Chart.java,v 1.6 2004/06/24 20:12:24 tryggvil Exp $
+ * $Id: Chart.java,v 1.6.2.1 2007/01/12 19:32:26 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -70,121 +70,130 @@ public abstract class Chart {
    * @throws class-name description
    */
   public void setLegend(String legend[]) throws ChartException {
-    if (data_ != null) {
-      if (data_.length != legend.length) {
+    if (this.data_ != null) {
+      if (this.data_.length != legend.length) {
         throw new ChartException("The number of data elements do not match the number of legend elements");
       }
     }
 
-    if (legend == null)
-      throw new ChartException("Legend is null");
+    if (legend == null) {
+		throw new ChartException("Legend is null");
+	}
 
-    if (legend.length == 0)
-      throw new ChartException("Legend is empty");
+    if (legend.length == 0) {
+		throw new ChartException("Legend is empty");
+	}
 
-    legend_ = new String[legend.length];
-    for (int i = 0; i < legend.length; i++)
-      legend_[i] = new String(legend[i]);
+    this.legend_ = new String[legend.length];
+    for (int i = 0; i < legend.length; i++) {
+		this.legend_[i] = new String(legend[i]);
+	}
   }
 
   /**
-   * Lýsing á falli
+   * Lï¿½sing ï¿½ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
    * @throws class-name description
    */
   public void setData(Double data[]) throws ChartException {
-    if (legend_ != null) {
-      if (legend_.length != data.length) {
+    if (this.legend_ != null) {
+      if (this.legend_.length != data.length) {
         throw new ChartException("The number of data elements do not match the number of legend elements");
       }
     }
 
-    if (data == null)
-      throw new ChartException("Data is null");
+    if (data == null) {
+		throw new ChartException("Data is null");
+	}
 
-    if (data.length == 0)
-      throw new ChartException("Empty data");
+    if (data.length == 0) {
+		throw new ChartException("Empty data");
+	}
 
-    data_ = new Double[data.length];
-    for (int i = 0; i < data.length; i++)
-      data_[i] = new Double(data[i].doubleValue());
+    this.data_ = new Double[data.length];
+    for (int i = 0; i < data.length; i++) {
+		this.data_[i] = new Double(data[i].doubleValue());
+	}
   }
 
   /**
-   * Lýsing á falli
+   * Lï¿½sing ï¿½ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
    * @throws class-name description
    */
   public void setBackgroundColour(Color c) {
-    backGround_ = c;
+    this.backGround_ = c;
   }
 
   /**
-   * Lýsing á falli
+   * Lï¿½sing ï¿½ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
    * @throws class-name description
    */
   public void setChartColours(Color colours[]) throws ChartException {
-    if (colours == null)
-      throw new ChartException("Colours is null");
+    if (colours == null) {
+		throw new ChartException("Colours is null");
+	}
 
-    if (colours.length == 0)
-      throw new ChartException("Colours is empty");
+    if (colours.length == 0) {
+		throw new ChartException("Colours is empty");
+	}
 
-    colours_ = new Color[colours.length];
-    for (int i = 0; i < colours.length; i++)
-      colours_[i] = new Color(colours[i].getRGB());
+    this.colours_ = new Color[colours.length];
+    for (int i = 0; i < colours.length; i++) {
+		this.colours_[i] = new Color(colours[i].getRGB());
+	}
   }
 
   /**
-   * Lýsing á falli
+   * Lï¿½sing ï¿½ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
    * @throws class-name description
    */
   public void setFilePrefix(String prefix) {
-    prefix_ = prefix;
+    this.prefix_ = prefix;
   }
 
   /**
-   * Lýsing á falli
+   * Lï¿½sing ï¿½ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
    * @throws class-name description
    */
   public void setWebPrefix(String prefix) {
-    webPrefix_ = prefix;
+    this.webPrefix_ = prefix;
   }
 
   /**
-   * Lýsing á falli
+   * Lï¿½sing ï¿½ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
    * @throws class-name description
    */
   public void setFilePostfix(String postfix) {
-    postfix_ = postfix;
+    this.postfix_ = postfix;
   }
 
   public void setNumberOfBarLabelDigits(int number) {
-    numberOfDigits_ = number;
+    this.numberOfDigits_ = number;
   }
 
   public void addToBarLabel(String stringToAdd) {
-    addToBarLabel_ = stringToAdd;
+    this.addToBarLabel_ = stringToAdd;
   }
 
   /**
-   * Lýsing á falli
+   * Lï¿½sing ï¿½ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.

@@ -120,17 +120,17 @@ public class XMLData implements Storable {
   
   public String getName()  {
     // name is set
-    if (name != null && name.length() > 0) {
-      return name;
+    if (this.name != null && this.name.length() > 0) {
+      return this.name;
     }
     // name is not set, file id is set
-    if (xmlFileId > -1) { 
-      StringBuffer buffer = new StringBuffer(DEFAULT_NAME);
-      buffer.append('_').append(xmlFileId);
+    if (this.xmlFileId > -1) { 
+      StringBuffer buffer = new StringBuffer(this.DEFAULT_NAME);
+      buffer.append('_').append(this.xmlFileId);
       return buffer.toString();
     }
     // neither name nor file id is set
-    return DEFAULT_NAME;
+    return this.DEFAULT_NAME;
   }   
 
   
@@ -139,12 +139,12 @@ public class XMLData implements Storable {
   }
    
   public XMLDocument getDocument()  {
-    if (document == null)  {
+    if (this.document == null)  {
       // create an empty document
-    	String tempRootName = (rootName == null) ? DEFAULT_ROOT : rootName;
-      document = new XMLDocument(new XMLElement(tempRootName));
+    	String tempRootName = (this.rootName == null) ? this.DEFAULT_ROOT : this.rootName;
+      this.document = new XMLDocument(new XMLElement(tempRootName));
     }  
-    return document;
+    return this.document;
   }
   
   public void setDocument(XMLDocument document) {
@@ -153,7 +153,7 @@ public class XMLData implements Storable {
   
   public ICFile store() throws IOException {
     // create or fetch existing ICFile
-    ICFile tempXmlFile = (xmlFileId < 0) ? getNewXMLFile() : getXMLFile(xmlFileId);
+    ICFile tempXmlFile = (this.xmlFileId < 0) ? getNewXMLFile() : getXMLFile(this.xmlFileId);
     tempXmlFile.setMimeType("text/xml");
     tempXmlFile.setName(getName());
     try {
@@ -164,10 +164,10 @@ public class XMLData implements Storable {
       ex.printStackTrace(System.err);
       throw new IOException("xml file could not be stored");
     }
-    if (xmlFileId < 0) {
-      xmlFileId = ((Integer)tempXmlFile.getPrimaryKey()).intValue();
+    if (this.xmlFileId < 0) {
+      this.xmlFileId = ((Integer)tempXmlFile.getPrimaryKey()).intValue();
       // the default name uses the id, therefore set again and store again
-      if (name == null) {
+      if (this.name == null) {
         tempXmlFile.setName(getName());
       }
     }
@@ -186,13 +186,13 @@ public class XMLData implements Storable {
            
     path.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY)
       .append(separator)
-      .append(AUXILIARY_FOLDER);
+      .append(this.AUXILIARY_FOLDER);
     // check if the folder exists create it if necessary
     // usually the folder should be already be there.
     // the folder is never deleted by this class
     FileUtil.createFolder(path.toString());
     // set name of auxiliary file
-    path.append(separator).append(AUXILIARY_FILE).append(xmlFileId).append(XML_EXTENSION);
+    path.append(separator).append(this.AUXILIARY_FILE).append(this.xmlFileId).append(this.XML_EXTENSION);
 
     File auxiliaryFile =  new File(path.toString());
     writeToFile(auxiliaryFile);
@@ -238,7 +238,7 @@ public class XMLData implements Storable {
   
 
   private void initialize(ICFile aXmlFile) throws IOException {
-  	 name = aXmlFile.getName();
+  	 this.name = aXmlFile.getName();
   	 setXmlFile(aXmlFile);
   	 InputStream inputStream = aXmlFile.getFileValue();
   	 initialize(inputStream);
@@ -248,16 +248,16 @@ public class XMLData implements Storable {
   	// do not close zip input streams
   	try {
   		XMLParser parser = new XMLParser();
-  		document = parser.parse(inputStream);
+  		this.document = parser.parse(inputStream);
   	}
     catch (IllegalDataException illEx) {
-    	document = null;
-    	xmlFileId = -1;
+    	this.document = null;
+    	this.xmlFileId = -1;
     	throw new IOException("[XMLData] input stream could not be parsed because of some illegal data within the data. Message is: " + illEx.getMessage());
     }
   	catch (XMLException ex)  {
-      document = null;
-      xmlFileId = -1;
+      this.document = null;
+      this.xmlFileId = -1;
       throw new IOException("[XMLData] input stream could not be parsed. Message is: " + ex.getMessage());
   	}
   }
@@ -265,16 +265,16 @@ public class XMLData implements Storable {
   public void initialize(InputStream inputStream) throws IOException {
     try {
       XMLParser parser = new XMLParser();
-      document = parser.parse(inputStream);
+      this.document = parser.parse(inputStream);
     }
     catch (IllegalDataException illEx) {
-    	document = null;
-    	xmlFileId = -1;
+    	this.document = null;
+    	this.xmlFileId = -1;
     	throw new IOException("[XMLData] input stream could not be parsed because of some illegal data within the data. Message is: " + illEx.getMessage());
     }
     catch (XMLException ex)  {
-      document = null;
-      xmlFileId = -1;
+      this.document = null;
+      this.xmlFileId = -1;
       throw new IOException("[XMLData] input stream could not be parsed. Message is: " + ex.getMessage());
     }
      finally { 
@@ -312,8 +312,8 @@ public class XMLData implements Storable {
   	
     
   private ICFile getXMLFile(int fileId)  {
-  	if (xmlFile != null) {
-  		return xmlFile;
+  	if (this.xmlFile != null) {
+  		return this.xmlFile;
   	}
     try {
       ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
@@ -367,24 +367,24 @@ public class XMLData implements Storable {
   * @return
   */
   public int getXmlFileId() {
-   return xmlFileId;
+   return this.xmlFileId;
   }
 
   /**
   * @param i
   */
   public void setXmlFileId(int i) {
-   xmlFileId = i;
+   this.xmlFileId = i;
    // check existing file 
-   if ((xmlFile != null) && (((Integer)xmlFile.getPrimaryKey()).intValue() != i)) {
+   if ((this.xmlFile != null) && (((Integer)this.xmlFile.getPrimaryKey()).intValue() != i)) {
    	// different file is set therefore set existing xmlFile to null
-   	xmlFile = null;
+   	this.xmlFile = null;
    }
   }
 
   public void setXmlFile(ICFile file) {
   	this.xmlFile = file;
-  	xmlFileId = ((Integer)xmlFile.getPrimaryKey()).intValue();
+  	this.xmlFileId = ((Integer)this.xmlFile.getPrimaryKey()).intValue();
   }
   
   

@@ -15,7 +15,7 @@ import com.idega.presentation.Frame;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -27,34 +27,36 @@ public class IWControlFramePresentationState extends IWPresentationStateImpl imp
   }
 
   public void setOnLoad(String action){
-    onLoadSet.add(action);
+    this.onLoadSet.add(action);
   }
 
   public void removeOnLoad(String action){
-    onLoadSet.remove(action);
+    this.onLoadSet.remove(action);
   }
 
   public void clearOnLoad(){
-    onLoadSet.clear();
+    this.onLoadSet.clear();
   }
 
   public Set getOnLoadSet(){
-    return onLoadSet;
+    return this.onLoadSet;
   }
 
 
   public void stateChanged(ChangeEvent e){
       Object object = e.getSource();
       // refuse objects that you can not handle
-      if (! (object instanceof IWPresentationState))  
-        return;
+      if (! (object instanceof IWPresentationState)) {
+		return;
+	}
       IWPresentationState state = (IWPresentationState) object;
       String compoundId = state.getArtificialCompoundId();
-      if (compoundId == null)
-        compoundId = state.getCompoundId();
+      if (compoundId == null) {
+		compoundId = state.getCompoundId();
+	}
       String frameName = Frame.getFrameName(compoundId);
-      if (frameName != null)
-        this.setOnLoad("parent.frames['" + frameName + "'].location.reload()");
+      if (frameName != null) {
+		this.setOnLoad("parent.frames['" + frameName + "'].location.reload()");
 //      if(location.isInFrameSet()){
 //        this.setOnLoad("parent.frames['" + location.getTarget() + "'].location.reload()");
 //      } else if (location.isInPopUpWindow()) {
@@ -62,6 +64,7 @@ public class IWControlFramePresentationState extends IWPresentationStateImpl imp
 //      } else{
 //        // is in controlframe hence is reloading.
 //      }
+	}
         
 
     }

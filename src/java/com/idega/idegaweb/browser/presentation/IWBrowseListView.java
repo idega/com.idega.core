@@ -8,7 +8,7 @@ import com.idega.presentation.Block;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -21,11 +21,11 @@ public class IWBrowseListView extends Block implements IWBrowserView {
   }
 
   public void setControlTarget(String controlTarget){
-    _controlTarget = controlTarget;
+    this._controlTarget = controlTarget;
   }
 
   public void setControlEventModel(IWPresentationEvent model){
-    _contolEvent = model;
+    this._contolEvent = model;
   }
 
 

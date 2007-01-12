@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.9 2005/10/26 17:34:35 tryggvil Exp $
+ * $Id: IWBaseComponent.java,v 1.9.2.1 2007/01/12 19:31:35 idegaweb Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2005 <br/>
- * Last modified: $Date: 2005/10/26 17:34:35 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/01/12 19:31:35 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.9.2.1 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase {
@@ -133,21 +133,21 @@ public class IWBaseComponent extends UIComponentBase {
 	 * @uml.property name="styleAttribute"
 	 */
 	public void setStyleAttribute(String style) {
-		if (_styler == null) {
-			_styler = new TextStyler();
+		if (this._styler == null) {
+			this._styler = new TextStyler();
 		}
-		_styler.parseStyleString(style);
-		styleAttribute = style;
+		this._styler.parseStyleString(style);
+		this.styleAttribute = style;
 		//this.set("style", _styler.getStyleString());
 
 	}
 
 	public void setStyleAttribute(String attribute, String value) {
-		if (_styler == null) {
-			_styler = new TextStyler();
+		if (this._styler == null) {
+			this._styler = new TextStyler();
 		}
-		_styler.setStyleValue(attribute, value);
-		setStyleAttribute( _styler.getStyleString());
+		this._styler.setStyleValue(attribute, value);
+		setStyleAttribute( this._styler.getStyleString());
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class IWBaseComponent extends UIComponentBase {
 	 * @uml.property name="styleAttribute"
 	 */
 	public String getStyleAttribute() {
-		return styleAttribute;
+		return this.styleAttribute;
 	}
 
 	/* (non-Javadoc)
@@ -224,9 +224,9 @@ public class IWBaseComponent extends UIComponentBase {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[4];
 		values[0] = super.saveState(ctx);
-		values[1] = styleAttribute;
-		values[2] = _styler;
-		values[3] = new Boolean(isInitialized);
+		values[1] = this.styleAttribute;
+		values[2] = this._styler;
+		values[3] = new Boolean(this.isInitialized);
 		return values;
 	}
 
@@ -237,9 +237,9 @@ public class IWBaseComponent extends UIComponentBase {
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		styleAttribute = ((String) values[1]);
-		_styler = (TextStyler) values[2];
-		isInitialized = ((Boolean) values[3]).booleanValue();
+		this.styleAttribute = ((String) values[1]);
+		this._styler = (TextStyler) values[2];
+		this.isInitialized = ((Boolean) values[3]).booleanValue();
 	}
 	
 	/**

@@ -21,27 +21,39 @@ public class NameUtility
 
     public static int next(String searchMe, int startpos, char c)
     {
-        if (c=='\\') return -1; // can't have an unescaped slash.
+        if (c=='\\') {
+			return -1; // can't have an unescaped slash.
+		}
         
-        if (startpos < 0 || startpos > searchMe.length()) return -1; // can't search outside string.
+        if (startpos < 0 || startpos > searchMe.length()) {
+			return -1; // can't search outside string.
+		}
         
         int escape=-1, quotes=-1, nextC=-1;
         
         while (true)
         {
-            if (escape<startpos) escape = searchMe.indexOf('\\', startpos);
-            if (quotes<startpos) quotes = searchMe.indexOf('"', startpos);
-            if (nextC<startpos)  nextC  = searchMe.indexOf(c, startpos);
+            if (escape<startpos) {
+				escape = searchMe.indexOf('\\', startpos);
+			}
+            if (quotes<startpos) {
+				quotes = searchMe.indexOf('"', startpos);
+			}
+            if (nextC<startpos) {
+				nextC  = searchMe.indexOf(c, startpos);
+			}
 
             // check for trivial case - no escaped characters...
-            if (escape==-1 && quotes==-1)  
-                return nextC;
+            if (escape==-1 && quotes==-1) {
+				return nextC;
+			}
     
             // second trivial case - char occurs before any possible escaping
             // NOTE - if the search char is a quote, this will return the first quote
             //        (rather than treat it as an escape character).
-            if (   ((escape == -1) || (nextC < escape)) && ((quotes == -1) || (nextC <= quotes)) )
-                return nextC;
+            if (   ((escape == -1) || (nextC < escape)) && ((quotes == -1) || (nextC <= quotes)) ) {
+				return nextC;
+			}
     
             // if a slash escape is the next thing, then move past it...
     
@@ -56,11 +68,14 @@ public class NameUtility
                 while (escaped)
                 {
                     quotes = searchMe.indexOf('"', quotes+1);  // find next quote
-                    if (quotes == -1) return -1;  // ERROR;
+                    if (quotes == -1) {
+						return -1;  // ERROR;
+					}
         
                     int backcheck = quotes-1;                    // make sure we only
-                    while (searchMe.charAt(backcheck--) == '\\') // count unescaped quotes
-                        escaped = !escaped;
+                    while (searchMe.charAt(backcheck--) == '\\') {
+						escaped = !escaped;
+					}
                         
                     escaped = !escaped;                    
                 }   
@@ -103,8 +118,9 @@ public class NameUtility
                 {
                     foundUTF = true;
                     char c2 = utfString.charAt(pos+2); 
-                    if ("01234567890ABCDEFabcdef".indexOf(c2) == -1)
-                        throw new InvalidNameException("second char of escaped hex couplet wasn't hex; was '" + c2 + "'");
+                    if ("01234567890ABCDEFabcdef".indexOf(c2) == -1) {
+						throw new InvalidNameException("second char of escaped hex couplet wasn't hex; was '" + c2 + "'");
+					}
                         
                     char utf8 = (char)Integer.parseInt("" + c + c2, 16);
                     utfString = utfString.substring(0,pos) + utf8 + utfString.substring(pos+3); 
@@ -160,12 +176,15 @@ public class NameUtility
         throws InvalidNameException
     {
         int len = string.length();
-        if (len == 0) return string;
+        if (len == 0) {
+			return string;
+		}
     
         if (string.charAt(0)=='\"')
         {
-            if (string.charAt(string.length()-1)!='\"')  // whole string *must* be quoted
-                throw new InvalidNameException("RDN.unescape(): invalid rdn fragment '" + ((string==null)?"<null>":string) + "'");
+            if (string.charAt(string.length()-1)!='\"') {
+				throw new InvalidNameException("RDN.unescape(): invalid rdn fragment '" + ((string==null)?"<null>":string) + "'");
+			}
                 
             string = string.substring(1,string.length()-1);
         }
@@ -187,8 +206,9 @@ public class NameUtility
     private static String handleEscapedCharacters(String string)
 		throws InvalidNameException
     {
-		if (string.indexOf('\\') == -1)
+		if (string.indexOf('\\') == -1) {
 			return string;
+		}
 
 		boolean hasUTF8 = false; // whether a utf8 string has been found...
 		int pos;  // position of most recently found slash
@@ -231,10 +251,12 @@ public class NameUtility
 	        throw new InvalidNameException("unparsable string '" + string + "' in NameUtility");
 	    }                
 			
-		if (hasUTF8)
+		if (hasUTF8) {
 			return removeEscapedUTF(buffy.toString());
-		else			
-    		return buffy.toString();
+		}
+		else {
+			return buffy.toString();
+		}
     }
 
 
@@ -248,10 +270,12 @@ public class NameUtility
     {
         int pos = string.indexOf('\"');
         int pos2 = string.lastIndexOf('\"');
-        if (pos == -1 || pos == pos2)
-            System.out.println("RDN.trimQuotes(): rare error parsing rdn fragment:   " + string); // return string unchanged.
-        else    
-            string = string.substring(0,pos) + string.substring(pos+1,pos2) + string.substring(pos2+1);
+        if (pos == -1 || pos == pos2) {
+			System.out.println("RDN.trimQuotes(): rare error parsing rdn fragment:   " + string); // return string unchanged.
+		}
+		else {
+			string = string.substring(0,pos) + string.substring(pos+1,pos2) + string.substring(pos2+1);
+		}
         return string;
     }
 
@@ -303,8 +327,9 @@ public class NameUtility
      
     public static String escape(String string)
     {
-		if (string == null || string.length() == 0)
-				return string;
+		if (string == null || string.length() == 0) {
+			return string;
+		}
 				
         StringBuffer buffy = new StringBuffer(string);
 

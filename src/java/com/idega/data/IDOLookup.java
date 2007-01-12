@@ -41,7 +41,7 @@ public class IDOLookup extends IBOLookup implements Singleton {
 
   private final String BMP_BEAN_SUFFIX = "BMPBean";
   protected String getBeanSuffix(){
-    return BMP_BEAN_SUFFIX;
+    return this.BMP_BEAN_SUFFIX;
   }
 
   private IDOLookup() {

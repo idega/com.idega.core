@@ -19,7 +19,7 @@ public class MemoryOutputStream extends OutputStream {
 
 	public void close() {
 		//System.out.println("Calling close on MemoryOutputStream");
-		isClosed = true;
+		this.isClosed = true;
 	}
 
 	/**
@@ -30,23 +30,23 @@ public class MemoryOutputStream extends OutputStream {
 
 	public void write(byte[] b) {
 		//System.out.println("Calling write0 on MemoryOutputStream");
-		if (!isClosed) {
-			int oldPos = position;
-			position += b.length;
+		if (!this.isClosed) {
+			int oldPos = this.position;
+			this.position += b.length;
 			write(b, oldPos, b.length);
 		}
 	}
 
 	public void write(byte[] b, int off, int len) {
 		//System.out.println("Calling write1 on MemoryOutputStream");
-		if (!isClosed) {
-			buffer.write(b, off, len);
+		if (!this.isClosed) {
+			this.buffer.write(b, off, len);
 		}
 	}
 
 	public void write(int b) {
 		//System.out.println("Calling write2 on MemoryOutputStream");
-		if (!isClosed) {
+		if (!this.isClosed) {
 			byte[] myByte = new byte[1];
 			myByte[0] = (byte) b;
 			write(myByte);

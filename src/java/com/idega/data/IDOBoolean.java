@@ -19,12 +19,15 @@ public class IDOBoolean {
 	}
 	
 	public static IDOBoolean getIDOBoolean(String bool){
-		if(bool.equals(TRUE))
+		if(bool.equals(TRUE)) {
 			return new IDOBoolean(true);
-		else if(bool.equals(FALSE))
+		}
+		else if(bool.equals(FALSE)) {
 			return new IDOBoolean(false);
-		else
+		}
+		else {
 			throw new IllegalArgumentException(bool+"is not "+TRUE+" or "+FALSE);
+		}
 	}
 	
 	public static boolean getBoolean(String bool){
@@ -32,7 +35,7 @@ public class IDOBoolean {
 	}
 		
 	public boolean booleanValue(){
-		return myBoolean.booleanValue();
+		return this.myBoolean.booleanValue();
 	}
 	
 	public static String toString(boolean bool){
@@ -41,7 +44,7 @@ public class IDOBoolean {
 	}
 	
 	public String toString(){
-		return myBoolean.booleanValue()?TRUE:FALSE;
+		return this.myBoolean.booleanValue()?TRUE:FALSE;
 	}
 	
 

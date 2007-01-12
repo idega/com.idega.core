@@ -25,7 +25,7 @@ import com.idega.util.database.ConnectionBroker;
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
  * @deprecated Class replaced with com.idega.user.data.GroupBMPBean
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements com.idega.core.data.GenericGroup
@@ -42,10 +42,10 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	public void initializeAttributes()
 	{
 		addAttribute(getIDColumnName());
-		addAttribute(getNameColumnName(), "Hópnafn", true, true, "java.lang.String");
-		addAttribute(getGroupTypeColumnName(), "Hópgerð", true, true, "java.lang.String");
-		addAttribute(getGroupDescriptionColumnName(), "Lýsing", true, true, "java.lang.String");
-		addAttribute(getExtraInfoColumnName(), "Auka upplýsingar", true, true, "java.lang.String");
+		addAttribute(getNameColumnName(), "Hï¿½pnafn", true, true, "java.lang.String");
+		addAttribute(getGroupTypeColumnName(), "Hï¿½pgerï¿½", true, true, "java.lang.String");
+		addAttribute(getGroupDescriptionColumnName(), "Lï¿½sing", true, true, "java.lang.String");
+		addAttribute(getExtraInfoColumnName(), "Auka upplï¿½singar", true, true, "java.lang.String");
 		this.addTreeRelationShip();
 		this.addManyToManyRelationShip(ICNetwork.class, "ic_group_network");
 		this.addManyToManyRelationShip(ICProtocol.class, "ic_group_protocol");
@@ -228,8 +228,9 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 		    try {
 		    	if (Stmt != null)  {
 		    		Stmt.close();
-					if (conn != null)
+					if (conn != null) {
 						ConnectionBroker.freeConnection(getDatasource(), conn);
+					}
 		    	}
 		    }
 	 	    catch (SQLException statementCloseEx) {
@@ -346,8 +347,9 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 		    try {
 		    	if (Stmt != null)  {
 		    		Stmt.close();
-					if (conn != null)
+					if (conn != null) {
 						ConnectionBroker.freeConnection(getDatasource(), conn);
+					}
 		    	}
 		    }
 	 	    catch (SQLException statementCloseEx) {
@@ -457,10 +459,12 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	}
 	public void removeGroup(GenericGroup entityToRemoveFrom) throws SQLException
 	{
-		if ((entityToRemoveFrom.getID() == -1) || (entityToRemoveFrom.getID() == 0)) //removing all in middle table
+		if ((entityToRemoveFrom.getID() == -1) || (entityToRemoveFrom.getID() == 0)) {
 			this.removeGroup(entityToRemoveFrom.getID(), true);
-		else // just removing this particular one
+		}
+		else {
 			this.removeGroup(entityToRemoveFrom.getID(), false);
+		}
 	}
 	public void removeGroup() throws SQLException
 	{
@@ -475,7 +479,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
 			String qry;
-			if (AllEntries) //removing all in middle table
+			if (AllEntries) {
 				qry =
 					"delete from IC_GROUP_TREE where "
 						+ this.getIDColumnName()
@@ -484,7 +488,8 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 						+ "' OR CHILD_IC_GROUP_ID ='"
 						+ this.getID()
 						+ "'";
-			else // just removing this particular one
+			}
+			else {
 				qry =
 					"delete from IC_GROUP_TREE where "
 						+ this.getIDColumnName()
@@ -493,6 +498,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 						+ "' AND CHILD_IC_GROUP_ID ='"
 						+ groupId
 						+ "'";
+			}
 			Stmt.executeUpdate(qry);
 		}
 		catch (Exception ex)
@@ -578,11 +584,11 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 			"select * from "
 				+ this.getEntityName()
 				+ " where "
-				+ this.getGroupTypeColumnName()
+				+ GenericGroupBMPBean.getGroupTypeColumnName()
 				+ " = '"
 				+ this.getGroupType()
 				+ "' and "
-				+ this.getNameColumnName()
+				+ GenericGroupBMPBean.getNameColumnName()
 				+ " = '"
 				+ this.getName()
 				+ "'",

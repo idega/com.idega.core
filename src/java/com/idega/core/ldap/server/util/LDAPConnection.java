@@ -26,8 +26,8 @@ public class LDAPConnection {
 
     Hashtable environment = new Hashtable();
     public LDAPConnection() {
-        environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        environment.put("com.sun.jndi.ldap.connect.pool", "true");
+        this.environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        this.environment.put("com.sun.jndi.ldap.connect.pool", "true");
 
     }
 
@@ -38,25 +38,27 @@ public class LDAPConnection {
 
     InitialDirContext initDirContext = null;
     public void connect() throws NamingException {
-        environment.put(
+        this.environment.put(
             Context.PROVIDER_URL,
-            "ldap://" + ldap.getServer() + ":" + ldap.getPort() + "/" + ldap.getBaseDN());
+            "ldap://" + this.ldap.getServer() + ":" + this.ldap.getPort() + "/" + this.ldap.getBaseDN());
         
-        if(ldap.getUser() != null)
-            environment.put(Context.SECURITY_PRINCIPAL, ldap.getUser());
-        if(ldap.getPassword() != null)
-            environment.put(Context.SECURITY_CREDENTIALS, ldap.getPassword());
+        if(this.ldap.getUser() != null) {
+			this.environment.put(Context.SECURITY_PRINCIPAL, this.ldap.getUser());
+		}
+        if(this.ldap.getPassword() != null) {
+			this.environment.put(Context.SECURITY_CREDENTIALS, this.ldap.getPassword());
+		}
 
-        Enumeration keys = environment.keys();
+        Enumeration keys = this.environment.keys();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
-            System.out.println("Environment[" + key + "] = " + environment.get(key));
+            System.out.println("Environment[" + key + "] = " + this.environment.get(key));
 
         }
 
         System.out.println("Connecting...");
 
-        initDirContext = new InitialDirContext(environment);
+        this.initDirContext = new InitialDirContext(this.environment);
 
     }
 
@@ -88,7 +90,7 @@ public class LDAPConnection {
 
         cons.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-        NamingEnumeration searchResults = initDirContext.search("", "(ou=zfd)", cons);
+        NamingEnumeration searchResults = this.initDirContext.search("", "(ou=zfd)", cons);
 
         while (searchResults.hasMore()) {
             Binding bd = (Binding) searchResults.next();
@@ -96,7 +98,7 @@ public class LDAPConnection {
             System.out.println("bd:" + bd.getName());
             //System.out.println("Binding : " + bd.getClassName());
             //	System.out.println("  " + bd.getName() + "  ");
-            Attributes a = initDirContext.getAttributes(bd.getName());
+            Attributes a = this.initDirContext.getAttributes(bd.getName());
 
             if (a != null) {
                 NamingEnumeration attrlist = a.getAll();
@@ -110,7 +112,7 @@ public class LDAPConnection {
     }
 
     public void dump() throws NamingException {
-        dump(initDirContext, "");
+        dump(this.initDirContext, "");
     }
 
     public static void dumpNamingEnumeration(NamingEnumeration enumer) throws NamingException {

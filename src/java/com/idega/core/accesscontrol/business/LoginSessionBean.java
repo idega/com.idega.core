@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSessionBean.java,v 1.2 2005/02/08 15:51:07 gimmi Exp $
+ * $Id: LoginSessionBean.java,v 1.2.2.1 2007/01/12 19:31:55 idegaweb Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.user.business.UserProperties;
 
 /**
  * 
- *  Last modified: $Date: 2005/02/08 15:51:07 $ by $Author: gimmi $
+ *  Last modified: $Date: 2007/01/12 19:31:55 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.2.2.1 $
  */
 public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
     
@@ -33,8 +33,8 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
     private Stack reservedSessionHelpers = new Stack();
     
     private void reset(){
-        sessionHelper = null;
-        sessionHelper = new SessionHelper();
+        this.sessionHelper = null;
+        this.sessionHelper = new SessionHelper();
         /*
         sessionHelper.user=null;
         sessionHelper.permissionGroups = null;
@@ -53,7 +53,7 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
      * @return Returns the permissionGroups.
      */
     public List getPermissionGroups() {
-        return sessionHelper.permissionGroups;
+        return this.sessionHelper.permissionGroups;
     }
     /**
      * @param permissionGroups The permissionGroups to set.
@@ -65,7 +65,7 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
      * @return Returns the primaryGroup.
      */
     public GenericGroup getPrimaryGroup() {
-        return sessionHelper.primaryGroup;
+        return this.sessionHelper.primaryGroup;
     }
     /**
      * @param primaryGroup The primaryGroup to set.
@@ -77,7 +77,7 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
      * @return Returns the repGroup.
      */
     public UserGroupRepresentative getRepresentativeGroup() {
-        return sessionHelper.repGroup;
+        return this.sessionHelper.repGroup;
     }
     /**
      * @param repGroup The repGroup to set.
@@ -89,7 +89,7 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
      * @return Returns the user.
      */
     public User getUser() {
-        return sessionHelper.user;
+        return this.sessionHelper.user;
     }
     /**
      * @param user The user to set.
@@ -101,7 +101,7 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
      * @return Returns the loggedOnInfo.
      */
     public LoggedOnInfo getLoggedOnInfo() {
-        return sessionHelper.loggedOnInfo;
+        return this.sessionHelper.loggedOnInfo;
     }
     /**
      * @param loggedOnInfo The loggedOnInfo to set.
@@ -113,7 +113,7 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
      * @return Returns the loginState.
      */
     public LoginState getLoginState() {
-        return sessionHelper.loginState;
+        return this.sessionHelper.loginState;
     }
     /**
      * @param loginState The loginState to set.
@@ -125,7 +125,7 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
      * @return Returns the userLoginName.
      */
     public String getUserLoginName() {
-        return sessionHelper.userLoginName;
+        return this.sessionHelper.userLoginName;
     }
     /**
      * @param userLoginName The userLoginName to set.
@@ -135,23 +135,24 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
     }
     
     public void setLoginAttribute(String key, Object value){
-        sessionHelper.mapOfExtraAttributes.put(key,value);
+        this.sessionHelper.mapOfExtraAttributes.put(key,value);
     }
     
     public Object getLoginAttribute(String key){
-        if(sessionHelper.mapOfExtraAttributes==null)
-            sessionHelper.mapOfExtraAttributes = new Hashtable();
-        return sessionHelper.mapOfExtraAttributes.get(key);
+        if(this.sessionHelper.mapOfExtraAttributes==null) {
+			this.sessionHelper.mapOfExtraAttributes = new Hashtable();
+		}
+        return this.sessionHelper.mapOfExtraAttributes.get(key);
     }
     
     public void removeLoginAttribute(String key){
-        sessionHelper.mapOfExtraAttributes.remove(key);
+        this.sessionHelper.mapOfExtraAttributes.remove(key);
     }
     /**
      * @return Returns the mapOfExtraAttributes.
      */
     protected Map getMapOfExtraAttributes() {
-        return sessionHelper.mapOfExtraAttributes;
+        return this.sessionHelper.mapOfExtraAttributes;
     }
     /**
      * @param mapOfExtraAttributes The mapOfExtraAttributes to set.
@@ -163,7 +164,7 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
      * @return Returns the userProperties.
      */
     public UserProperties getUserProperties() {
-        return sessionHelper.userProperties;
+        return this.sessionHelper.userProperties;
     }
     /**
      * @param userProperties The userProperties to set.
@@ -173,13 +174,13 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
     }
   
     public void retrieve(){
-    	if (reservedSessionHelpers != null && !reservedSessionHelpers.isEmpty()) {
-    		sessionHelper = (SessionHelper) reservedSessionHelpers.pop();
+    	if (this.reservedSessionHelpers != null && !this.reservedSessionHelpers.isEmpty()) {
+    		this.sessionHelper = (SessionHelper) this.reservedSessionHelpers.pop();
     	}
     }
     
     public void reserve(){
-    	reservedSessionHelpers.push(sessionHelper);
+    	this.reservedSessionHelpers.push(this.sessionHelper);
         reset();
     }
     

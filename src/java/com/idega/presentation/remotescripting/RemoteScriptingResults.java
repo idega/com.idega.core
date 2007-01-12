@@ -18,17 +18,17 @@ public class RemoteScriptingResults extends Page {
 	private Map map = new HashMap();
 	
 	public RemoteScriptingResults(String layerID, Collection items) {
-		map.put(layerID, items);
+		this.map.put(layerID, items);
 	}
 	
 	public void addLayer(String layerID, Collection items) {
-		map.put(layerID, items);
+		this.map.put(layerID, items);
 	}
 	
 	public void main(IWContext iwc) {
 		
-		if (map != null) {
-			Set layerIDSet = map.keySet();
+		if (this.map != null) {
+			Set layerIDSet = this.map.keySet();
 			Iterator layerIDIter = layerIDSet.iterator();
 			Collection items;
 			Iterator itemIter;
@@ -40,7 +40,7 @@ public class RemoteScriptingResults extends Page {
 
 				layer.setID(layerID.toString());
 				
-				items = (Collection) map.get(layerID);
+				items = (Collection) this.map.get(layerID);
 				itemIter = items.iterator();
 				while (itemIter.hasNext()) {
 					Layer l = new Layer();

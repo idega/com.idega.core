@@ -64,9 +64,9 @@ public abstract class IBOTimedServiceBean extends IBOServiceBean implements Runn
 
 
     public final void executeService(){
-        thread = new Thread(this);
-        thread.setPriority(Thread.MIN_PRIORITY);
-        thread.start();
+        this.thread = new Thread(this);
+        this.thread.setPriority(Thread.MIN_PRIORITY);
+        this.thread.start();
     }
 
 
@@ -81,16 +81,16 @@ public abstract class IBOTimedServiceBean extends IBOServiceBean implements Runn
 
 
   public void stop(){
-    thread = null;
+    this.thread = null;
   }
 
   public void run(){
 
     Thread thisThread = Thread.currentThread();
-    while(thread == thisThread){
+    while(this.thread == thisThread){
 
       try{
-        thread.sleep(getTimeUntilNextRun());
+        Thread.sleep(getTimeUntilNextRun());
         executeTimedService();
       }
       catch(InterruptedException ignored){

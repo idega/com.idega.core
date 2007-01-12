@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultComponentInfo.java,v 1.2 2005/09/20 16:51:20 tryggvil Exp $
+ * $Id: DefaultComponentInfo.java,v 1.2.2.1 2007/01/12 19:32:50 idegaweb Exp $
  * Created on 8.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import java.util.Locale;
  * <p>
  * TODO tryggvil Describe Type UIComponentInfo
  * </p>
- *  Last modified: $Date: 2005/09/20 16:51:20 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:32:50 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.2.2.1 $
  */
 public class DefaultComponentInfo implements ComponentInfo {
 
@@ -46,7 +46,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	 * @return Returns the bundleIdentifier.
 	 */
 	public String getBundleIdentifier() {
-		return bundleIdentifier;
+		return this.bundleIdentifier;
 	}
 
 
@@ -64,7 +64,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	 * @return Returns the componentClass.
 	 */
 	public Class getComponentClass() {
-		return componentClass;
+		return this.componentClass;
 	}
 
 
@@ -82,7 +82,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	 * @return Returns the componentName.
 	 */
 	public String getComponentName() {
-		return componentName;
+		return this.componentName;
 	}
 
 
@@ -100,7 +100,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	 * @return Returns the componentType.
 	 */
 	public String getComponentType() {
-		return componentType;
+		return this.componentType;
 	}
 
 
@@ -118,7 +118,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	 * @return Returns the properties.
 	 */
 	public List getProperties() {
-		return properties;
+		return this.properties;
 	}
 
 
@@ -142,9 +142,9 @@ public class DefaultComponentInfo implements ComponentInfo {
 	
 
 	public List getComponentPermissions(){
-		if(componentPermissions==null){
-			componentPermissions=new ArrayList();
+		if(this.componentPermissions==null){
+			this.componentPermissions=new ArrayList();
 		}
-		return componentPermissions;
+		return this.componentPermissions;
 	}
 }

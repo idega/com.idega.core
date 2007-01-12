@@ -1,5 +1,5 @@
 /*
- * $Id: Sunrise.java,v 1.3 2004/11/02 14:09:22 laddi Exp $
+ * $Id: Sunrise.java,v 1.3.2.1 2007/01/12 19:32:39 idegaweb Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -29,7 +29,7 @@ import com.idega.util.IWTimestamp;
  * Last modified: 14.10.2004 13:37:28 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.3.2.1 $
  */
 public class Sunrise extends Widget {
 
@@ -42,7 +42,7 @@ public class Sunrise extends Widget {
 		IWCalendar calendar = new IWCalendar(getLocale());
 		IWTimestamp stamp = new IWTimestamp(calendar.getSunRiseSet(true));
 		
-		Text text = new Text(stamp.getLocaleTime(getLocale(), style));
+		Text text = new Text(stamp.getLocaleTime(getLocale(), this.style));
 		return text;
 	}
 

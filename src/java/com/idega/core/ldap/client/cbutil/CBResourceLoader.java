@@ -54,17 +54,18 @@ public class CBResourceLoader
 
     public void addResource(CBJarResource resource)
     {
-        int size = (resourceFiles == null)?0:(resourceFiles.length);
+        int size = (this.resourceFiles == null)?0:(this.resourceFiles.length);
 
         // The clumsiness of using an array is balanced by the need for quick
         // access, and the fact that normally only a small number of resources are added,
         // and only at the start of program operation.
 
         CBJarResource[] newArray = new CBJarResource[size+1];
-        for (int i=0; i<size; i++)
-            newArray[i] = resourceFiles[i];
+        for (int i=0; i<size; i++) {
+			newArray[i] = this.resourceFiles[i];
+		}
         newArray[size] = resource;
-        resourceFiles = newArray;
+        this.resourceFiles = newArray;
 
         CBUtility.log("Added CBJarResource: " + resource.toString(), 7);
     }
@@ -77,8 +78,9 @@ public class CBResourceLoader
     public InputStream getInputStream(String resourceName) throws ZipException
     {
         CBJarResource resourceFile = getJarContainingResource(resourceName);
-        if (resourceFile != null)
-            return resourceFile.getInputStream(resourceName);
+        if (resourceFile != null) {
+			return resourceFile.getInputStream(resourceName);
+		}
 
         throw new ZipException("File: '" + resourceName + "' not found");
     }
@@ -91,8 +93,9 @@ public class CBResourceLoader
     public Image getImage(String imageName, Toolkit imageCreator) throws ZipException
     {
         CBJarResource resourceFile = getJarContainingResource(imageName);
-        if (resourceFile != null)
-            return resourceFile.getImage(imageName, imageCreator);
+        if (resourceFile != null) {
+			return resourceFile.getImage(imageName, imageCreator);
+		}
 
         throw new ZipException("Image File: '" + imageName + "' not found");
     }
@@ -133,19 +136,25 @@ public class CBResourceLoader
      */
     public CBJarResource getJarContainingResource(String resourceName)
     {
-        if (resourceFiles == null) return null;  // we don't have any resources...
+        if (this.resourceFiles == null) {
+			return null;  // we don't have any resources...
+		}
     
         // check to see if we've already looked for this resource.
-        if (unknownResources.contains(resourceName)) return null;
+        if (this.unknownResources.contains(resourceName)) {
+			return null;
+		}
 
-        for (int i=0; i<resourceFiles.length; i++)
-            if (resourceFiles[i].hasResource(resourceName))
-                return resourceFiles[i];
+        for (int i=0; i<this.resourceFiles.length; i++) {
+			if (this.resourceFiles[i].hasResource(resourceName)) {
+				return this.resourceFiles[i];
+			}
+		}
 
         // nothing found!  Add an entry to the unknownResources hashset so that we don't look for
         // it again.
 
-        unknownResources.add(resourceName);
+        this.unknownResources.add(resourceName);
 
         return null; // nothing found
     }
@@ -157,16 +166,18 @@ public class CBResourceLoader
     
     public String[] getPrefixedResources(String prefix)
     {
-        if (resourceFiles == null) return new String[] {};  // don't have anything.
+        if (this.resourceFiles == null) {
+			return new String[] {};  // don't have anything.
+		}
     
     	Vector resources = new Vector();
 
 		// cycle through all resource files, gathering prefixed resources.
 		// name clashes are simply included twice :-)
 		    	
-        for (int i=0; i<resourceFiles.length; i++)
+        for (int i=0; i<this.resourceFiles.length; i++)
         {
-            resources.addAll(Arrays.asList(resourceFiles[i].getPrefixedResources(prefix)));
+            resources.addAll(Arrays.asList(this.resourceFiles[i].getPrefixedResources(prefix)));
         } 
         
         // cast stuff back to string for return.
@@ -189,13 +200,18 @@ public class CBResourceLoader
     
     public String[] getWildCardResources(String exp)
     {
-        if (resourceFiles == null) return new String[] {};  // don't have anything.to search
+        if (this.resourceFiles == null) {
+			return new String[] {};  // don't have anything.to search
+		}
         
         int wildpos = exp.indexOf('*');
-        if (wildpos == -1) return new String[] {exp};
+        if (wildpos == -1) {
+			return new String[] {exp};
+		}
         
-        if (wildpos == exp.length()-1) // i.e. last character
-            return getPrefixedResources(exp.substring(0,exp.length()-1));
+        if (wildpos == exp.length()-1) {
+			return getPrefixedResources(exp.substring(0,exp.length()-1));
+		}
             
         //String prefix = exp.substring(0,wildpos);
         //String suffix = exp.substring(wildpos+1);
@@ -205,7 +221,7 @@ public class CBResourceLoader
         // cycle through all resource files, gathering prefixed resources.
         // name clashes are simply included twice :-)
                 
-        for (int i=0; i<resourceFiles.length; i++)
+        for (int i=0; i<this.resourceFiles.length; i++)
         {
 //            resources.addAll(Arrays.asList(resourceFiles[i].getBoundedResources(prefix, suffix)));
         } 

@@ -52,10 +52,10 @@ public class SortedProperties extends Properties implements SortedMap
 	 */
 	 
 	 private SortedMap getInternalSortedMap(){
-	 	if(internalSortedMap==null){
-			internalSortedMap=new TreeMap();
+	 	if(this.internalSortedMap==null){
+			this.internalSortedMap=new TreeMap();
 	 	}
-	 	return internalSortedMap;
+	 	return this.internalSortedMap;
 	 }
 	 
 	public Comparator comparator()
@@ -325,10 +325,12 @@ public class SortedProperties extends Properties implements SortedMap
 		//TODO change javadoc comment
 		awriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
 		
-		if (header != null)
+		if (header != null) {
 			writeln(awriter, "#" + header);
-		if(getAddDateHeader())
+		}
+		if(getAddDateHeader()) {
 			writeln(awriter, "#" + new Date().toString());
+		}
 		for (Enumeration e = keys(); e.hasMoreElements();) {
 			String key = (String)e.nextElement();
 			String val = (String)get(key);
@@ -348,7 +350,7 @@ public class SortedProperties extends Properties implements SortedMap
 	 * Default value is false.
 	 */
 	public boolean getAddDateHeader(){
-		return addDateHeader;
+		return this.addDateHeader;
 	}
 
 	/**
@@ -379,8 +381,9 @@ public class SortedProperties extends Properties implements SortedMap
 			char aChar = theString.charAt(x);
 			switch(aChar) {
 		case ' ':
-			if (x == 0 || escapeSpace) 
-			outBuffer.append('\\');
+			if (x == 0 || escapeSpace) {
+				outBuffer.append('\\');
+			}
 
 			outBuffer.append(' ');
 			break;
@@ -403,8 +406,9 @@ public class SortedProperties extends Properties implements SortedMap
 						outBuffer.append(toHex((aChar >>  4) & 0xF));
 						outBuffer.append(toHex( aChar        & 0xF));
 					} else {
-						if (specialSaveChars.indexOf(aChar) != -1)
+						if (specialSaveChars.indexOf(aChar) != -1) {
 							outBuffer.append('\\');
+						}
 						outBuffer.append(aChar);
 					}
 			}

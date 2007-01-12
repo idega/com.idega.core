@@ -1,5 +1,5 @@
 /*
- * $Id: MethodIdentifierCache.java,v 1.1 2005/10/03 18:23:53 thomas Exp $
+ * $Id: MethodIdentifierCache.java,v 1.1.2.1 2007/01/12 19:33:00 idegaweb Exp $
  * Created on Sep 29, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import java.util.Map;
  * Do not keep this cache for a long time or do not change this class into an ever living singleton.
  * 
  * <p/>
- *  Last modified: $Date: 2005/10/03 18:23:53 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/01/12 19:33:00 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class MethodIdentifierCache {
 	
@@ -42,17 +42,17 @@ public class MethodIdentifierCache {
 	private MethodFinder methodFinder = null;
 	
 	private Map getCache() {
-		if (oldNewMethodIdentifier == null) {
-			oldNewMethodIdentifier = new HashMap();
+		if (this.oldNewMethodIdentifier == null) {
+			this.oldNewMethodIdentifier = new HashMap();
 		}
-		return oldNewMethodIdentifier;
+		return this.oldNewMethodIdentifier;
 	}
 	
 	private MethodFinder getMethodFinder() {
-		if (methodFinder == null) {
-			methodFinder = MethodFinder.getInstance();
+		if (this.methodFinder == null) {
+			this.methodFinder = MethodFinder.getInstance();
 		}
-		return methodFinder;
+		return this.methodFinder;
 	}
 	
 	public String getUpdatedMethodIdentifier(String methodIdentifier) {

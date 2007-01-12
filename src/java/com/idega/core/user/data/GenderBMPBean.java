@@ -1,6 +1,7 @@
 package com.idega.core.user.data;
 
 import java.sql.SQLException;
+import com.idega.data.GenericEntity;
 
 
 /**
@@ -8,7 +9,7 @@ import java.sql.SQLException;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -72,6 +73,6 @@ public class GenderBMPBean extends com.idega.data.GenericEntity implements com.i
   }
 
   public Gender getStaticInstance(){
-    return (Gender)this.getStaticInstance(Gender.class);
+    return (Gender)GenericEntity.getStaticInstance(Gender.class);
   }
 }

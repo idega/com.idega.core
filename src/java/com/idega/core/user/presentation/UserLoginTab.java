@@ -17,7 +17,7 @@ import com.idega.util.IWTimestamp;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -57,11 +57,11 @@ public class UserLoginTab extends UserTab {
   private boolean _displayLoginInfoSettings = true;
 
   public void doNotDisplayLoginInfoSettings(){
-    _displayLoginInfoSettings = false;
+    this._displayLoginInfoSettings = false;
   }
 
   public void displayLoginInfoSettings(){
-    _displayLoginInfoSettings = true;
+    this._displayLoginInfoSettings = true;
   }
 
   public UserLoginTab() {
@@ -70,9 +70,9 @@ public class UserLoginTab extends UserTab {
   }
 
   public void init(){
-    errorMessageTable = new Table();
-    errorText = new Text();
-    errorText.setFontColor("red");
+    this.errorMessageTable = new Table();
+    this.errorText = new Text();
+    this.errorText.setFontColor("red");
   }
 
   public void initFieldContents() {
@@ -81,13 +81,13 @@ public class UserLoginTab extends UserTab {
       LoginInfo lInfo = LoginDBHandler.getLoginInfo(lTable.getID());
 
       if(lTable != null){
-        fieldValues.put(_PARAM_USER_LOGIN,lTable.getUserLogin());
+        this.fieldValues.put(_PARAM_USER_LOGIN,lTable.getUserLogin());
       }
       if(lInfo != null){
-        fieldValues.put(_PARAM_MUST_CHANGE_PASSWORD,new Boolean(lInfo.getChangeNextTime()));
-        fieldValues.put(_PARAM_CANNOT_CHANGE_PASSWORD,new Boolean(!lInfo.getAllowedToChange()));
-        fieldValues.put(_PARAM_PASSWORD_NEVER_EXPIRES,new Boolean(lInfo.getPasswordExpires()));
-        fieldValues.put(_PARAM_DISABLE_ACCOUNT,new Boolean(!lInfo.getAccountEnabled()));
+        this.fieldValues.put(_PARAM_MUST_CHANGE_PASSWORD,new Boolean(lInfo.getChangeNextTime()));
+        this.fieldValues.put(_PARAM_CANNOT_CHANGE_PASSWORD,new Boolean(!lInfo.getAllowedToChange()));
+        this.fieldValues.put(_PARAM_PASSWORD_NEVER_EXPIRES,new Boolean(lInfo.getPasswordExpires()));
+        this.fieldValues.put(_PARAM_DISABLE_ACCOUNT,new Boolean(!lInfo.getAccountEnabled()));
       }
       this.updateFieldsDisplayStatus();
     }
@@ -98,58 +98,58 @@ public class UserLoginTab extends UserTab {
 
 
   public void updateFieldsDisplayStatus() {
-    userLoginField.setContent((String)fieldValues.get(_PARAM_USER_LOGIN));
+    this.userLoginField.setContent((String)this.fieldValues.get(_PARAM_USER_LOGIN));
 
-    passwordField.setContent((String)fieldValues.get(_PARAM_PASSWORD));
-    confirmPasswordField.setContent((String)fieldValues.get(_PARAM_PASSWORD));
+    this.passwordField.setContent((String)this.fieldValues.get(_PARAM_PASSWORD));
+    this.confirmPasswordField.setContent((String)this.fieldValues.get(_PARAM_PASSWORD));
 
 
-    mustChangePasswordField.setChecked(((Boolean)fieldValues.get(_PARAM_MUST_CHANGE_PASSWORD)).booleanValue());
-    cannotChangePasswordField.setChecked(((Boolean)fieldValues.get(_PARAM_CANNOT_CHANGE_PASSWORD)).booleanValue());
-    passwordNeverExpiresField.setChecked(((Boolean)fieldValues.get(_PARAM_PASSWORD_NEVER_EXPIRES)).booleanValue());
-    disableAccountField.setChecked(((Boolean)fieldValues.get(_PARAM_DISABLE_ACCOUNT)).booleanValue());
+    this.mustChangePasswordField.setChecked(((Boolean)this.fieldValues.get(_PARAM_MUST_CHANGE_PASSWORD)).booleanValue());
+    this.cannotChangePasswordField.setChecked(((Boolean)this.fieldValues.get(_PARAM_CANNOT_CHANGE_PASSWORD)).booleanValue());
+    this.passwordNeverExpiresField.setChecked(((Boolean)this.fieldValues.get(_PARAM_PASSWORD_NEVER_EXPIRES)).booleanValue());
+    this.disableAccountField.setChecked(((Boolean)this.fieldValues.get(_PARAM_DISABLE_ACCOUNT)).booleanValue());
   }
 
   public void initializeFields() {
-    userLoginField = new TextInput(_PARAM_USER_LOGIN);
-    userLoginField.setLength(14);
+    this.userLoginField = new TextInput(_PARAM_USER_LOGIN);
+    this.userLoginField.setLength(14);
     //userLoginField.setDisabled(true);
     //userLoginField.setContent("userlogin");
 
-    passwordField = new PasswordInput(_PARAM_PASSWORD);
-    passwordField.setLength(14);
-    confirmPasswordField = new PasswordInput(_PARAM_CONFIRM_PASSWORD);
-    confirmPasswordField.setLength(14);
+    this.passwordField = new PasswordInput(_PARAM_PASSWORD);
+    this.passwordField.setLength(14);
+    this.confirmPasswordField = new PasswordInput(_PARAM_CONFIRM_PASSWORD);
+    this.confirmPasswordField.setLength(14);
 
-    mustChangePasswordField = new CheckBox(_PARAM_MUST_CHANGE_PASSWORD);
-    cannotChangePasswordField = new CheckBox(_PARAM_CANNOT_CHANGE_PASSWORD);
-    passwordNeverExpiresField = new CheckBox(_PARAM_PASSWORD_NEVER_EXPIRES);
-    disableAccountField = new CheckBox(_PARAM_DISABLE_ACCOUNT);
+    this.mustChangePasswordField = new CheckBox(_PARAM_MUST_CHANGE_PASSWORD);
+    this.cannotChangePasswordField = new CheckBox(_PARAM_CANNOT_CHANGE_PASSWORD);
+    this.passwordNeverExpiresField = new CheckBox(_PARAM_PASSWORD_NEVER_EXPIRES);
+    this.disableAccountField = new CheckBox(_PARAM_DISABLE_ACCOUNT);
 
   }
   public void initializeTexts() {
-    userLoginText = new Text("User login");
-    passwordText = new Text("New password");
-    confirmPasswordText = new Text("Confirm password");
+    this.userLoginText = new Text("User login");
+    this.passwordText = new Text("New password");
+    this.confirmPasswordText = new Text("Confirm password");
 
-    mustChangePasswordText = new Text("User must change password at next login");
-    cannotChangePasswordText = new Text("User cannot change password");
-    passwordNeverExpiresText = new Text("Password never expires");
-    disableAccountText = new Text("Account is disabled");
+    this.mustChangePasswordText = new Text("User must change password at next login");
+    this.cannotChangePasswordText = new Text("User cannot change password");
+    this.passwordNeverExpiresText = new Text("Password never expires");
+    this.disableAccountText = new Text("Account is disabled");
   }
 
   public boolean store(IWContext iwc) {
     boolean updateLoginTable = true;
-    String login = (String)fieldValues.get(_PARAM_USER_LOGIN);
+    String login = (String)this.fieldValues.get(_PARAM_USER_LOGIN);
 
-    String passw = ((String)fieldValues.get(_PARAM_PASSWORD));
-    String confirmedpassw = ((String)fieldValues.get(_PARAM_PASSWORD));
+    String passw = ((String)this.fieldValues.get(_PARAM_PASSWORD));
+    String confirmedpassw = ((String)this.fieldValues.get(_PARAM_PASSWORD));
 
 
-    Boolean mustChangePassw = ((Boolean)fieldValues.get(_PARAM_MUST_CHANGE_PASSWORD));//.booleanValue();
-    Boolean canChangePassw = ((Boolean)fieldValues.get(_PARAM_CANNOT_CHANGE_PASSWORD)).booleanValue()? Boolean.FALSE:Boolean.TRUE;
-    Boolean passwExpires = ((Boolean)fieldValues.get(_PARAM_PASSWORD_NEVER_EXPIRES));//.booleanValue();
-    Boolean accountEnabled = ((Boolean)fieldValues.get(_PARAM_DISABLE_ACCOUNT)).booleanValue()? Boolean.FALSE:Boolean.TRUE;
+    Boolean mustChangePassw = ((Boolean)this.fieldValues.get(_PARAM_MUST_CHANGE_PASSWORD));//.booleanValue();
+    Boolean canChangePassw = ((Boolean)this.fieldValues.get(_PARAM_CANNOT_CHANGE_PASSWORD)).booleanValue()? Boolean.FALSE:Boolean.TRUE;
+    Boolean passwExpires = ((Boolean)this.fieldValues.get(_PARAM_PASSWORD_NEVER_EXPIRES));//.booleanValue();
+    Boolean accountEnabled = ((Boolean)this.fieldValues.get(_PARAM_DISABLE_ACCOUNT)).booleanValue()? Boolean.FALSE:Boolean.TRUE;
 
     try {
 
@@ -165,13 +165,13 @@ public class UserLoginTab extends UserTab {
             if(inUse && !oldLogin.equals(login)){
               this.addErrorMessage("login in use");
             } else {
-              fieldValues.put(this._PARAM_USER_LOGIN,login);
+              this.fieldValues.put(UserLoginTab._PARAM_USER_LOGIN,login);
             }
           }else{
             if(inUse){
               this.addErrorMessage("login in use");
             } else {
-              fieldValues.put(this._PARAM_USER_LOGIN,login);
+              this.fieldValues.put(UserLoginTab._PARAM_USER_LOGIN,login);
             }
           }
         } else {
@@ -190,18 +190,18 @@ public class UserLoginTab extends UserTab {
       presentErrorMessage(this.clearErrorMessages());
       return false;
     }else{
-      errorMessageTable.empty();
+      this.errorMessageTable.empty();
       try {
         LoginTable loginTable = LoginDBHandler.getUserLogin(this.getUserId());
         if(loginTable != null){
           if(updateLoginTable){
             LoginDBHandler.updateLogin(this.getUserId(),login,passw);
           }
-          if(_displayLoginInfoSettings){
+          if(this._displayLoginInfoSettings){
             LoginDBHandler.updateLoginInfo(loginTable.getID(),accountEnabled,IWTimestamp.RightNow(),5000,passwExpires,canChangePassw,mustChangePassw,null);
           }
         } else if(updateLoginTable){
-          if(_displayLoginInfoSettings){
+          if(this._displayLoginInfoSettings){
             LoginDBHandler.createLogin(this.getUserId(),login,passw,accountEnabled,IWTimestamp.RightNow(),5000,passwExpires,canChangePassw,mustChangePassw,null);
           } else {
             LoginDBHandler.createLogin(this.getUserId(),login,passw);
@@ -226,9 +226,9 @@ public class UserLoginTab extends UserTab {
     Table loginTable = new Table(2,3);
     loginTable.setCellpadding(0);
     loginTable.setCellspacing(0);
-    loginTable.setHeight(1,rowHeight);
-    loginTable.setHeight(2,rowHeight);
-    loginTable.setHeight(3,rowHeight);
+    loginTable.setHeight(1,this.rowHeight);
+    loginTable.setHeight(2,this.rowHeight);
+    loginTable.setHeight(3,this.rowHeight);
     loginTable.setWidth(1,"120");
 
     loginTable.add(this.userLoginText,1,1);
@@ -243,10 +243,10 @@ public class UserLoginTab extends UserTab {
     Table AccountPropertyTable = new Table(2,4);
     AccountPropertyTable.setCellpadding(0);
     AccountPropertyTable.setCellspacing(0);
-    AccountPropertyTable.setHeight(1,rowHeight);
-    AccountPropertyTable.setHeight(2,rowHeight);
-    AccountPropertyTable.setHeight(3,rowHeight);
-    AccountPropertyTable.setHeight(4,rowHeight);
+    AccountPropertyTable.setHeight(1,this.rowHeight);
+    AccountPropertyTable.setHeight(2,this.rowHeight);
+    AccountPropertyTable.setHeight(3,this.rowHeight);
+    AccountPropertyTable.setHeight(4,this.rowHeight);
 
     AccountPropertyTable.add(this.mustChangePasswordField,1,1);
     AccountPropertyTable.add(this.mustChangePasswordText,2,1);
@@ -258,18 +258,18 @@ public class UserLoginTab extends UserTab {
     AccountPropertyTable.add(this.disableAccountText,2,4);
     // AccountPropertyTable end
 
-    errorMessageTable.setHeight(1);
-    errorMessageTable.setCellpadding(0);
-    errorMessageTable.setCellspacing(0);
+    this.errorMessageTable.setHeight(1);
+    this.errorMessageTable.setCellpadding(0);
+    this.errorMessageTable.setCellspacing(0);
 
 
     frameTable.add(Text.getBreak(),2,1);
     frameTable.add(loginTable,2,1);
     frameTable.add(Text.getBreak(),2,1);
-    if(_displayLoginInfoSettings){
+    if(this._displayLoginInfoSettings){
       frameTable.add(AccountPropertyTable,2,1);
     }
-    frameTable.add(errorMessageTable,2,1);
+    frameTable.add(this.errorMessageTable,2,1);
 
     this.add(frameTable);
 
@@ -277,14 +277,14 @@ public class UserLoginTab extends UserTab {
   public boolean collect(IWContext iwc) {
     if(iwc != null){
 
-      String login = iwc.getParameter(this._PARAM_USER_LOGIN);
-      String passw = iwc.getParameter(this._PARAM_PASSWORD);
-      String confirmedpassw = iwc.getParameter(this._PARAM_CONFIRM_PASSWORD);
+      String login = iwc.getParameter(UserLoginTab._PARAM_USER_LOGIN);
+      String passw = iwc.getParameter(UserLoginTab._PARAM_PASSWORD);
+      String confirmedpassw = iwc.getParameter(UserLoginTab._PARAM_CONFIRM_PASSWORD);
 
-      String mustChangePassw = iwc.getParameter(this._PARAM_MUST_CHANGE_PASSWORD);
-      String cannotChangePassw = iwc.getParameter(this._PARAM_CANNOT_CHANGE_PASSWORD);
-      String passwExpires = iwc.getParameter(this._PARAM_PASSWORD_NEVER_EXPIRES);
-      String accountDisabled = iwc.getParameter(this._PARAM_DISABLE_ACCOUNT);
+      String mustChangePassw = iwc.getParameter(UserLoginTab._PARAM_MUST_CHANGE_PASSWORD);
+      String cannotChangePassw = iwc.getParameter(UserLoginTab._PARAM_CANNOT_CHANGE_PASSWORD);
+      String passwExpires = iwc.getParameter(UserLoginTab._PARAM_PASSWORD_NEVER_EXPIRES);
+      String accountDisabled = iwc.getParameter(UserLoginTab._PARAM_DISABLE_ACCOUNT);
 
       if(((passw != null && !passw.equals("")) || ((confirmedpassw != null && !confirmedpassw.equals("")))) ){
         if(login != null && !login.equals("")){
@@ -298,13 +298,13 @@ public class UserLoginTab extends UserTab {
             if(inUse && !oldLogin.equals(login)){
               this.addErrorMessage("login in use");
             } else {
-              fieldValues.put(this._PARAM_USER_LOGIN,login);
+              this.fieldValues.put(UserLoginTab._PARAM_USER_LOGIN,login);
             }
           }else{
             if(inUse){
               this.addErrorMessage("login in use");
             } else {
-              fieldValues.put(this._PARAM_USER_LOGIN,login);
+              this.fieldValues.put(UserLoginTab._PARAM_USER_LOGIN,login);
             }
           }
         } else {
@@ -312,83 +312,83 @@ public class UserLoginTab extends UserTab {
         }
 
         if(passw != null && confirmedpassw != null && passw.equals(confirmedpassw)){
-          fieldValues.put(this._PARAM_PASSWORD,passw);
-          fieldValues.put(this._PARAM_CONFIRM_PASSWORD,confirmedpassw);
+          this.fieldValues.put(UserLoginTab._PARAM_PASSWORD,passw);
+          this.fieldValues.put(UserLoginTab._PARAM_CONFIRM_PASSWORD,confirmedpassw);
         } else {
           this.addErrorMessage("password and confirmed password not valid or not the same");
-          fieldValues.put(this._PARAM_PASSWORD,"");
-          fieldValues.put(this._PARAM_CONFIRM_PASSWORD,"");
+          this.fieldValues.put(UserLoginTab._PARAM_PASSWORD,"");
+          this.fieldValues.put(UserLoginTab._PARAM_CONFIRM_PASSWORD,"");
         }
       }else{
-        fieldValues.put(this._PARAM_PASSWORD,"");
-        fieldValues.put(this._PARAM_CONFIRM_PASSWORD,"");
+        this.fieldValues.put(UserLoginTab._PARAM_PASSWORD,"");
+        this.fieldValues.put(UserLoginTab._PARAM_CONFIRM_PASSWORD,"");
       }
 
 
-      if(_displayLoginInfoSettings){
+      if(this._displayLoginInfoSettings){
         if(cannotChangePassw != null && mustChangePassw != null){
           this.addErrorMessage("'User must change password at next login' and 'User cannot change password' cannot both be checked");
-          fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.TRUE);
-          fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.FALSE);
+          this.fieldValues.put(UserLoginTab._PARAM_MUST_CHANGE_PASSWORD,Boolean.TRUE);
+          this.fieldValues.put(UserLoginTab._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.FALSE);
         } else {
           if(mustChangePassw != null){
-            fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.TRUE);
+            this.fieldValues.put(UserLoginTab._PARAM_MUST_CHANGE_PASSWORD,Boolean.TRUE);
           } else {
-            fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.FALSE);
+            this.fieldValues.put(UserLoginTab._PARAM_MUST_CHANGE_PASSWORD,Boolean.FALSE);
           }
 
           if(cannotChangePassw != null){
-            fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.TRUE);
+            this.fieldValues.put(UserLoginTab._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.TRUE);
           }else {
-            fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.FALSE);
+            this.fieldValues.put(UserLoginTab._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.FALSE);
           }
         }
 
         if(passwExpires != null){
-          fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES,Boolean.TRUE);
+          this.fieldValues.put(UserLoginTab._PARAM_PASSWORD_NEVER_EXPIRES,Boolean.TRUE);
         }else {
-          fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES,Boolean.FALSE);
+          this.fieldValues.put(UserLoginTab._PARAM_PASSWORD_NEVER_EXPIRES,Boolean.FALSE);
         }
 
         if(accountDisabled != null){
-          fieldValues.put(this._PARAM_DISABLE_ACCOUNT,Boolean.TRUE);
+          this.fieldValues.put(UserLoginTab._PARAM_DISABLE_ACCOUNT,Boolean.TRUE);
         }else {
-          fieldValues.put(this._PARAM_DISABLE_ACCOUNT,Boolean.FALSE);
+          this.fieldValues.put(UserLoginTab._PARAM_DISABLE_ACCOUNT,Boolean.FALSE);
         }
       }
 
       this.updateFieldsDisplayStatus();
 
       if(someErrors()){
-        fieldValues.put(this._PARAM_PASSWORD,"");
-        fieldValues.put(this._PARAM_CONFIRM_PASSWORD,"");
+        this.fieldValues.put(UserLoginTab._PARAM_PASSWORD,"");
+        this.fieldValues.put(UserLoginTab._PARAM_CONFIRM_PASSWORD,"");
         presentErrorMessage(this.clearErrorMessages());
         return false;
       }else{
-        errorMessageTable.empty();
+        this.errorMessageTable.empty();
         return true;
       }
     }
     this.addErrorMessage("IWContext is null");
     if(someErrors()){
-      fieldValues.put(this._PARAM_PASSWORD,"");
-      fieldValues.put(this._PARAM_CONFIRM_PASSWORD,"");
+      this.fieldValues.put(UserLoginTab._PARAM_PASSWORD,"");
+      this.fieldValues.put(UserLoginTab._PARAM_CONFIRM_PASSWORD,"");
       presentErrorMessage(this.clearErrorMessages());
       return false;
     }else{
-      errorMessageTable.empty();
+      this.errorMessageTable.empty();
       return true;
     }
   }
 
   public void presentErrorMessage(String[] messages){
-    errorMessageTable.empty();
+    this.errorMessageTable.empty();
     if(messages != null){
       for (int i = 0; i < messages.length; i++) {
-        Text message = (Text)errorText.clone();
+        Text message = (Text)this.errorText.clone();
         message.setText("* "+messages[i]+Text.BREAK);
 
-        errorMessageTable.add(message);
+        this.errorMessageTable.add(message);
       }
 
     }
@@ -399,13 +399,13 @@ public class UserLoginTab extends UserTab {
     /**@todo: implement this com.idega.core.user.presentation.UserTab abstract method*/
   }
   public void initializeFieldValues() {
-    fieldValues.put(this._PARAM_USER_LOGIN,"");
-    fieldValues.put(this._PARAM_PASSWORD,"");
-    fieldValues.put(this._PARAM_CONFIRM_PASSWORD,"");
-    fieldValues.put(this._PARAM_MUST_CHANGE_PASSWORD,Boolean.FALSE);
-    fieldValues.put(this._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.FALSE);
-    fieldValues.put(this._PARAM_PASSWORD_NEVER_EXPIRES,Boolean.FALSE);
-    fieldValues.put(this._PARAM_DISABLE_ACCOUNT,Boolean.FALSE);
+    this.fieldValues.put(UserLoginTab._PARAM_USER_LOGIN,"");
+    this.fieldValues.put(UserLoginTab._PARAM_PASSWORD,"");
+    this.fieldValues.put(UserLoginTab._PARAM_CONFIRM_PASSWORD,"");
+    this.fieldValues.put(UserLoginTab._PARAM_MUST_CHANGE_PASSWORD,Boolean.FALSE);
+    this.fieldValues.put(UserLoginTab._PARAM_CANNOT_CHANGE_PASSWORD,Boolean.FALSE);
+    this.fieldValues.put(UserLoginTab._PARAM_PASSWORD_NEVER_EXPIRES,Boolean.FALSE);
+    this.fieldValues.put(UserLoginTab._PARAM_DISABLE_ACCOUNT,Boolean.FALSE);
 
     this.updateFieldsDisplayStatus();
   }

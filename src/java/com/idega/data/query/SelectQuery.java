@@ -36,19 +36,19 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 
 	public SelectQuery(Table baseTable) {
 		this.baseTable = baseTable;
-		columns = new Vector();
-		leftJoins = new Vector();
-		criteria = new Vector();
-		order = new Vector();
-		groupBy = new Vector();
+		this.columns = new Vector();
+		this.leftJoins = new Vector();
+		this.criteria = new Vector();
+		this.order = new Vector();
+		this.groupBy = new Vector();
 	}
 
 	public Table getBaseTable() {
-		return baseTable;
+		return this.baseTable;
 	}
 
 	public void addColumn(Column column) {
-		columns.add(column);
+		this.columns.add(column);
 	}
 
 	/**
@@ -70,38 +70,38 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	}
 
 	public void addGroupByColumn(Column column) {
-		groupBy.add(column);
+		this.groupBy.add(column);
 	}
 
 	/**
 	 * Syntax sugar for addColumn(Column).
 	 */
 	public void addGroupByColumn(Table table, String columname) {
-		groupBy.add(table.getColumn(columname));
+		this.groupBy.add(table.getColumn(columname));
 	}
 
 	public void removeColumn(Column column) {
-		columns.remove(column);
+		this.columns.remove(column);
 	}
 	
 	public void removeAllColumns() {
-		columns.clear();
+		this.columns.clear();
 	}
 
 	public void removeGroupByColumn(Column column) {
-		groupBy.remove(column);
+		this.groupBy.remove(column);
 	}
 	
 	public void removeAllGroupByColumns() {
-		groupBy.clear();
+		this.groupBy.clear();
 	}
 
 	public List listColumns() {
-		return Collections.unmodifiableList(columns);
+		return Collections.unmodifiableList(this.columns);
 	}
 
 	public List listGroupByColumns() {
-		return Collections.unmodifiableList(groupBy);
+		return Collections.unmodifiableList(this.groupBy);
 	}
 
 	public void addCriteria(Criteria criteria) {
@@ -117,7 +117,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	}
 
 	public List listCriteria() {
-		return Collections.unmodifiableList(criteria);
+		return Collections.unmodifiableList(this.criteria);
 	}
 
 	/**
@@ -231,7 +231,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	}
 
 	public List listOrder() {
-		return Collections.unmodifiableList(order);
+		return Collections.unmodifiableList(this.order);
 	}
 
 	public String toString() {
@@ -253,22 +253,22 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 
 		out.println("SELECT");
 		
-		 if (_countQuery) {
+		 if (this._countQuery) {
         	out.indent();
         	out.println("COUNT(");
         }
         
-        if(_distinct){
+        if(this._distinct){
         	out.indent();
         	out.print(" distinct ");
         }
 
 		// Add columns to select
 		out.indent();
-		appendList(out, columns, ",");
+		appendList(out, this.columns, ",");
 		out.unindent();
 		
-		if (_countQuery) {
+		if (this._countQuery) {
         	out.println(")");
         	out.unindent();
         }
@@ -278,12 +278,12 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 
 		// Determine all tables used in query
 		out.indent();
-		if(leftJoins.isEmpty()){
+		if(this.leftJoins.isEmpty()){
 			appendList(out,findAllUsedTables(), ",");
 		} else {
 			Vector v = new Vector();
 			v.addAll( findAllUsedTables());
-			for (Iterator iter = leftJoins.iterator(); iter.hasNext();) {
+			for (Iterator iter = this.leftJoins.iterator(); iter.hasNext();) {
 				LeftJoin join = (LeftJoin) iter.next();
 				v.removeAll(join.getTables());
 				v.add(join);
@@ -293,26 +293,26 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 		out.unindent();
 
 		// Add criteria
-		if (criteria.size() > 0) {
+		if (this.criteria.size() > 0) {
 			out.println("WHERE");
 			out.indent();
-			appendList(out, criteria, "AND");
+			appendList(out, this.criteria, "AND");
 			out.unindent();
 		}
 		
 		// Add group by
-		if (groupBy.size() > 0) {
+		if (this.groupBy.size() > 0) {
 			out.println("GROUP BY");
 			out.indent();
-			appendList(out, groupBy, ",");
+			appendList(out, this.groupBy, ",");
 			out.unindent();
 		}
 		
 		// Add order
-		if (order.size() > 0) {
+		if (this.order.size() > 0) {
 			out.println("ORDER BY");
 			out.indent();
-			appendList(out, order, ",");
+			appendList(out, this.order, ",");
 			out.unindent();
 		}
 
@@ -324,10 +324,11 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	 */
 	public List getValues(){
 	    Vector list = new Vector();
-	    for (Iterator iter = criteria.iterator(); iter.hasNext();) {
+	    for (Iterator iter = this.criteria.iterator(); iter.hasNext();) {
             Criteria crit = (Criteria) iter.next();
-            if(crit instanceof PlaceHolder)
-                list.addAll(((PlaceHolder)crit).getValues());
+            if(crit instanceof PlaceHolder) {
+				list.addAll(((PlaceHolder)crit).getValues());
+			}
             
         }
 	    return list;
@@ -364,10 +365,10 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	private Set findAllUsedTables() {
 
 		Set allTables = new HashSet();
-		allTables.add(baseTable);
+		allTables.add(this.baseTable);
 
 		{ // Get all tables used by columns
-			Iterator i = columns.iterator();
+			Iterator i = this.columns.iterator();
 			while (i.hasNext()) {
 				Table curr = ((Column) i.next()).getTable();
 				if (curr != null && !curr.getName().equals("")) {
@@ -377,7 +378,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 		}
 
 		{ // Get all tables used by criteria
-			Iterator i = criteria.iterator();
+			Iterator i = this.criteria.iterator();
 			while (i.hasNext()) {
 				Criteria curr = (Criteria) i.next();
 				if (curr.getTables() != null) {
@@ -387,7 +388,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 		}
 
 		{ // Get all tables used by columns
-			Iterator i = order.iterator();
+			Iterator i = this.order.iterator();
 			while (i.hasNext()) {
 				Order curr = (Order) i.next();
 				Table c = curr.getColumn().getTable();
@@ -404,7 +405,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	 * @param countQuery The countQuery to set.
 	 */
 	public void setAsCountQuery(boolean countQuery) {
-		_countQuery = countQuery;
+		this._countQuery = countQuery;
 	}
 	
 	/**
@@ -412,7 +413,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	 * @param distinct The distinct to set
 	 */
 	public void setAsDistinct(boolean distinct){
-		_distinct = distinct;
+		this._distinct = distinct;
 	}
 	
 	public Object clone(){
@@ -421,7 +422,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 		try {
 			obj = (SelectQuery) super.clone();		
 			
-			obj.baseTable = baseTable;
+			obj.baseTable = this.baseTable;
 			
 			//obj.columns = (Vector)columns.clone();
 			//obj.criteria = (Vector)criteria.clone();
@@ -454,8 +455,8 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 				Collections.copy(obj.groupBy,this.groupBy);
 			}
 			
-			obj._countQuery = _countQuery;
-			obj._distinct = _distinct;
+			obj._countQuery = this._countQuery;
+			obj._distinct = this._distinct;
 
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
@@ -465,11 +466,11 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	}
 	
 	public Collection getCriteria(){
-		return criteria;
+		return this.criteria;
 	}
 	
 	public Collection getOrder(){
-		return order;
+		return this.order;
 	}
 	
     public void flag(boolean flag) {
@@ -491,10 +492,10 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 
 
 	public void addLeftJoin(LeftJoin join) {
-		leftJoins.add(join);
+		this.leftJoins.add(join);
 	}
 
 	public void clearLeftJoins() {
-	    leftJoins.clear();
+	    this.leftJoins.clear();
 	}
 }

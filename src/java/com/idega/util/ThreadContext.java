@@ -39,11 +39,11 @@ public class ThreadContext implements Singleton
 	}
 
 	private Map getThreadsMap(){
-		if (threadsMap == null)
+		if (this.threadsMap == null)
 		{
-			threadsMap = new HashMap();
+			this.threadsMap = new HashMap();
 		}
-		return threadsMap;
+		return this.threadsMap;
 	}
 	/**
 	 * initializes a Map for the Thread thread to associate objects

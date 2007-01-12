@@ -1,6 +1,6 @@
 /*
 
- * $Id: TimestampInput.java,v 1.8 2004/09/04 19:34:32 eiki Exp $
+ * $Id: TimestampInput.java,v 1.8.2.1 2007/01/12 19:32:06 idegaweb Exp $
 
  *
 
@@ -117,87 +117,87 @@ public TimestampInput(String name,boolean inShort){
 
 private void init(String name){
 
-	theDay = new DropdownMenu(name+"_day");
+	this.theDay = new DropdownMenu(name+"_day");
 
-	theMonth = new DropdownMenu(name+"_month");
+	this.theMonth = new DropdownMenu(name+"_month");
 
-	theYear = new DropdownMenu(name+"_year");
+	this.theYear = new DropdownMenu(name+"_year");
 
 
 
-	theHour = new DropdownMenu(name+"_hour");
+	this.theHour = new DropdownMenu(name+"_hour");
 
-	theMinute = new DropdownMenu(name+"_minute");
+	this.theMinute = new DropdownMenu(name+"_minute");
 
 	//theSecond = new DropdownMenu(name+"_second");
 
-	theWholeTimestamp = new Parameter(name,"");
+	this.theWholeTimestamp = new Parameter(name,"");
 
 
 
-        script = new Script();
+        this.script = new Script();
 
 
 
-	super.add(theDay);
+	super.add(this.theDay);
 
-	super.add(theMonth);
+	super.add(this.theMonth);
 
-	super.add(theYear);
+	super.add(this.theYear);
 
 
 
-        super.add(textInFront);
+        super.add(this.textInFront);
 
 	//super.add(new Text("klukkan"));
 
 
 
-	super.add(theHour);
+	super.add(this.theHour);
 
-	super.add(theMinute);
+	super.add(this.theMinute);
 
-	super.add(theWholeTimestamp);
+	super.add(this.theWholeTimestamp);
 
-	super.add(script);
+	super.add(this.script);
 
 	//super.add(theSecond);
 
 
 
-	theYear.setOnChange("populateDays(this,this.form."+theMonth.getName()+",this.form."+theDay.getName()+");setValueOfHiddenTimestamp(this.form."+theYear.getName()+",this.form."+theMonth.getName()+",this.form."+theDay.getName()+",this.form."+theHour.getName()+",this.form."+theMinute.getName()+",this.form."+theWholeTimestamp.getName()+");");
+	this.theYear.setOnChange("populateDays(this,this.form."+this.theMonth.getName()+",this.form."+this.theDay.getName()+");setValueOfHiddenTimestamp(this.form."+this.theYear.getName()+",this.form."+this.theMonth.getName()+",this.form."+this.theDay.getName()+",this.form."+this.theHour.getName()+",this.form."+this.theMinute.getName()+",this.form."+this.theWholeTimestamp.getName()+");");
 
-	theMonth.setOnChange("populateDays(this.form."+theYear.getName()+",this,this.form."+theDay.getName()+");setValueOfHiddenTimestamp(this.form."+theYear.getName()+",this.form."+theMonth.getName()+",this.form."+theDay.getName()+",this.form."+theHour.getName()+",this.form."+theMinute.getName()+",this.form."+theWholeTimestamp.getName()+");");
+	this.theMonth.setOnChange("populateDays(this.form."+this.theYear.getName()+",this,this.form."+this.theDay.getName()+");setValueOfHiddenTimestamp(this.form."+this.theYear.getName()+",this.form."+this.theMonth.getName()+",this.form."+this.theDay.getName()+",this.form."+this.theHour.getName()+",this.form."+this.theMinute.getName()+",this.form."+this.theWholeTimestamp.getName()+");");
 
-	theDay.setOnChange("setValueOfHiddenTimestamp(this.form."+theYear.getName()+",this.form."+theMonth.getName()+",this.form."+theDay.getName()+",this.form."+theHour.getName()+",this.form."+theMinute.getName()+",this.form."+theWholeTimestamp.getName()+")");
-
-
-
-
-
-	theHour.setOnChange("setValueOfHiddenTimestamp(this.form."+theYear.getName()+",this.form."+theMonth.getName()+",this.form."+theDay.getName()+",this.form."+theHour.getName()+",this.form."+theMinute.getName()+",this.form."+theWholeTimestamp.getName()+")");
-
-	theMinute.setOnChange("setValueOfHiddenTimestamp(this.form."+theYear.getName()+",this.form."+theMonth.getName()+",this.form."+theDay.getName()+",this.form."+theHour.getName()+",this.form."+theMinute.getName()+",this.form."+theWholeTimestamp.getName()+")");
+	this.theDay.setOnChange("setValueOfHiddenTimestamp(this.form."+this.theYear.getName()+",this.form."+this.theMonth.getName()+",this.form."+this.theDay.getName()+",this.form."+this.theHour.getName()+",this.form."+this.theMinute.getName()+",this.form."+this.theWholeTimestamp.getName()+")");
 
 
 
 
 
+	this.theHour.setOnChange("setValueOfHiddenTimestamp(this.form."+this.theYear.getName()+",this.form."+this.theMonth.getName()+",this.form."+this.theDay.getName()+",this.form."+this.theHour.getName()+",this.form."+this.theMinute.getName()+",this.form."+this.theWholeTimestamp.getName()+")");
 
-
-	theDay.setParentObject(this.getParentObject());
-
-	theMonth.setParentObject(this.getParentObject());
-
-	theYear.setParentObject(this.getParentObject());
+	this.theMinute.setOnChange("setValueOfHiddenTimestamp(this.form."+this.theYear.getName()+",this.form."+this.theMonth.getName()+",this.form."+this.theDay.getName()+",this.form."+this.theHour.getName()+",this.form."+this.theMinute.getName()+",this.form."+this.theWholeTimestamp.getName()+")");
 
 
 
 
 
-	theHour.setParentObject(this.getParentObject());
 
-	theMinute.setParentObject(this.getParentObject());
+
+	this.theDay.setParentObject(this.getParentObject());
+
+	this.theMonth.setParentObject(this.getParentObject());
+
+	this.theYear.setParentObject(this.getParentObject());
+
+
+
+
+
+	this.theHour.setParentObject(this.getParentObject());
+
+	this.theMinute.setParentObject(this.getParentObject());
 
 	//theSecond.setParentObject(this.getParentObject());
 
@@ -205,7 +205,7 @@ private void init(String name){
 
 
 
-	//theYear.addMenuElement("","Ár");
+	//theYear.addMenuElement("","ï¿½r");
 
 
 
@@ -225,33 +225,33 @@ private void init(String name){
 
 
 
-	//theMonth.addMenuElement("","Mánuður");
+	//theMonth.addMenuElement("","Mï¿½nuï¿½ur");
 
 
 
         /*
 
-	theMonth.addMenuElement("01","janúar");
+	theMonth.addMenuElement("01","janï¿½ar");
 
-	theMonth.addMenuElement("02","febrúar");
+	theMonth.addMenuElement("02","febrï¿½ar");
 
 	theMonth.addMenuElement("03","mars");
 
-	theMonth.addMenuElement("04","apríl");
+	theMonth.addMenuElement("04","aprï¿½l");
 
-	theMonth.addMenuElement("05","maí");
+	theMonth.addMenuElement("05","maï¿½");
 
-	theMonth.addMenuElement("06","júní");
+	theMonth.addMenuElement("06","jï¿½nï¿½");
 
-	theMonth.addMenuElement("07","júlí");
+	theMonth.addMenuElement("07","jï¿½lï¿½");
 
-	theMonth.addMenuElement("08","ágúst");
+	theMonth.addMenuElement("08","ï¿½gï¿½st");
 
 	theMonth.addMenuElement("09","september");
 
-	theMonth.addMenuElement("10","október");
+	theMonth.addMenuElement("10","oktï¿½ber");
 
-	theMonth.addMenuElement("11","nóvember");
+	theMonth.addMenuElement("11","nï¿½vember");
 
 	theMonth.addMenuElement("12","desember");
 
@@ -259,29 +259,29 @@ private void init(String name){
 
 
 
-	theMonth.addMenuElement("01");
+	this.theMonth.addMenuElement("01");
 
-	theMonth.addMenuElement("02");
+	this.theMonth.addMenuElement("02");
 
-	theMonth.addMenuElement("03");
+	this.theMonth.addMenuElement("03");
 
-	theMonth.addMenuElement("04");
+	this.theMonth.addMenuElement("04");
 
-	theMonth.addMenuElement("05");
+	this.theMonth.addMenuElement("05");
 
-	theMonth.addMenuElement("06");
+	this.theMonth.addMenuElement("06");
 
-	theMonth.addMenuElement("07");
+	this.theMonth.addMenuElement("07");
 
-	theMonth.addMenuElement("08");
+	this.theMonth.addMenuElement("08");
 
-	theMonth.addMenuElement("09");
+	this.theMonth.addMenuElement("09");
 
-	theMonth.addMenuElement("10");
+	this.theMonth.addMenuElement("10");
 
-	theMonth.addMenuElement("11");
+	this.theMonth.addMenuElement("11");
 
-	theMonth.addMenuElement("12");
+	this.theMonth.addMenuElement("12");
 
 
 
@@ -289,73 +289,73 @@ private void init(String name){
 
 
 
-	theDay.addMenuElement("01","1");
+	this.theDay.addMenuElement("01","1");
 
-	theDay.addMenuElement("02","2");
+	this.theDay.addMenuElement("02","2");
 
-	theDay.addMenuElement("03","3");
+	this.theDay.addMenuElement("03","3");
 
-	theDay.addMenuElement("04","4");
+	this.theDay.addMenuElement("04","4");
 
-	theDay.addMenuElement("05","5");
+	this.theDay.addMenuElement("05","5");
 
-	theDay.addMenuElement("06","6");
+	this.theDay.addMenuElement("06","6");
 
-	theDay.addMenuElement("07","7");
+	this.theDay.addMenuElement("07","7");
 
-	theDay.addMenuElement("08","8");
+	this.theDay.addMenuElement("08","8");
 
-	theDay.addMenuElement("09","9");
-
-
-
-	theDay.addMenuElement("10","10");
-
-	theDay.addMenuElement("11","11");
-
-	theDay.addMenuElement("12","12");
-
-	theDay.addMenuElement("13","13");
-
-	theDay.addMenuElement("14","14");
-
-	theDay.addMenuElement("15","15");
-
-	theDay.addMenuElement("16","16");
-
-	theDay.addMenuElement("17","17");
-
-	theDay.addMenuElement("18","18");
-
-	theDay.addMenuElement("19","19");
+	this.theDay.addMenuElement("09","9");
 
 
 
-	theDay.addMenuElement("20","20");
+	this.theDay.addMenuElement("10","10");
 
-	theDay.addMenuElement("21","21");
+	this.theDay.addMenuElement("11","11");
 
-	theDay.addMenuElement("22","22");
+	this.theDay.addMenuElement("12","12");
 
-	theDay.addMenuElement("23","23");
+	this.theDay.addMenuElement("13","13");
 
-	theDay.addMenuElement("24","24");
+	this.theDay.addMenuElement("14","14");
 
-	theDay.addMenuElement("25","25");
+	this.theDay.addMenuElement("15","15");
 
-	theDay.addMenuElement("26","26");
+	this.theDay.addMenuElement("16","16");
 
-	theDay.addMenuElement("27","27");
+	this.theDay.addMenuElement("17","17");
 
-	theDay.addMenuElement("28","28");
+	this.theDay.addMenuElement("18","18");
 
-	theDay.addMenuElement("29","29");
+	this.theDay.addMenuElement("19","19");
 
 
 
-	theDay.addMenuElement("30","30");
+	this.theDay.addMenuElement("20","20");
 
-	theDay.addMenuElement("31","31");
+	this.theDay.addMenuElement("21","21");
+
+	this.theDay.addMenuElement("22","22");
+
+	this.theDay.addMenuElement("23","23");
+
+	this.theDay.addMenuElement("24","24");
+
+	this.theDay.addMenuElement("25","25");
+
+	this.theDay.addMenuElement("26","26");
+
+	this.theDay.addMenuElement("27","27");
+
+	this.theDay.addMenuElement("28","28");
+
+	this.theDay.addMenuElement("29","29");
+
+
+
+	this.theDay.addMenuElement("30","30");
+
+	this.theDay.addMenuElement("31","31");
 
 
 
@@ -365,193 +365,193 @@ private void init(String name){
 
 
 
-	theHour.addMenuElement("00","00");
+	this.theHour.addMenuElement("00","00");
 
-	theHour.addMenuElement("01","01");
+	this.theHour.addMenuElement("01","01");
 
-	theHour.addMenuElement("02","02");
+	this.theHour.addMenuElement("02","02");
 
-	theHour.addMenuElement("03","03");
+	this.theHour.addMenuElement("03","03");
 
-	theHour.addMenuElement("04","04");
+	this.theHour.addMenuElement("04","04");
 
-	theHour.addMenuElement("05","05");
+	this.theHour.addMenuElement("05","05");
 
-	theHour.addMenuElement("06","06");
+	this.theHour.addMenuElement("06","06");
 
-	theHour.addMenuElement("07","07");
+	this.theHour.addMenuElement("07","07");
 
-	theHour.addMenuElement("08","08");
+	this.theHour.addMenuElement("08","08");
 
-	theHour.addMenuElement("09","09");
+	this.theHour.addMenuElement("09","09");
 
-	theHour.addMenuElement("10","10");
+	this.theHour.addMenuElement("10","10");
 
-	theHour.addMenuElement("11","11");
+	this.theHour.addMenuElement("11","11");
 
-	theHour.addMenuElement("12","12");
+	this.theHour.addMenuElement("12","12");
 
-	theHour.addMenuElement("13","13");
+	this.theHour.addMenuElement("13","13");
 
-	theHour.addMenuElement("14","14");
+	this.theHour.addMenuElement("14","14");
 
-	theHour.addMenuElement("15","15");
+	this.theHour.addMenuElement("15","15");
 
-	theHour.addMenuElement("16","16");
+	this.theHour.addMenuElement("16","16");
 
-	theHour.addMenuElement("17","17");
+	this.theHour.addMenuElement("17","17");
 
-	theHour.addMenuElement("18","18");
+	this.theHour.addMenuElement("18","18");
 
-	theHour.addMenuElement("19","19");
+	this.theHour.addMenuElement("19","19");
 
 
 
-	theHour.addMenuElement("20","20");
+	this.theHour.addMenuElement("20","20");
 
-	theHour.addMenuElement("21","21");
+	this.theHour.addMenuElement("21","21");
 
-	theHour.addMenuElement("22","22");
+	this.theHour.addMenuElement("22","22");
 
-	theHour.addMenuElement("23","23");
+	this.theHour.addMenuElement("23","23");
 
 
 
 
 
-	//theMinute.addMenuElement("","Mínútur");
+	//theMinute.addMenuElement("","Mï¿½nï¿½tur");
 
 
 
-	theMinute.addMenuElement("00","00");
+	this.theMinute.addMenuElement("00","00");
 
-	theMinute.addMenuElement("01","01");
+	this.theMinute.addMenuElement("01","01");
 
-	theMinute.addMenuElement("02","02");
+	this.theMinute.addMenuElement("02","02");
 
-	theMinute.addMenuElement("03","03");
+	this.theMinute.addMenuElement("03","03");
 
-	theMinute.addMenuElement("04","04");
+	this.theMinute.addMenuElement("04","04");
 
-	theMinute.addMenuElement("05","05");
+	this.theMinute.addMenuElement("05","05");
 
-	theMinute.addMenuElement("06","06");
+	this.theMinute.addMenuElement("06","06");
 
-	theMinute.addMenuElement("07","07");
+	this.theMinute.addMenuElement("07","07");
 
-	theMinute.addMenuElement("08","08");
+	this.theMinute.addMenuElement("08","08");
 
-	theMinute.addMenuElement("09","09");
+	this.theMinute.addMenuElement("09","09");
 
 
 
-	theMinute.addMenuElement("10","10");
+	this.theMinute.addMenuElement("10","10");
 
-	theMinute.addMenuElement("11","11");
+	this.theMinute.addMenuElement("11","11");
 
-	theMinute.addMenuElement("12","12");
+	this.theMinute.addMenuElement("12","12");
 
-	theMinute.addMenuElement("13","13");
+	this.theMinute.addMenuElement("13","13");
 
-	theMinute.addMenuElement("14","14");
+	this.theMinute.addMenuElement("14","14");
 
-	theMinute.addMenuElement("15","15");
+	this.theMinute.addMenuElement("15","15");
 
-	theMinute.addMenuElement("16","16");
+	this.theMinute.addMenuElement("16","16");
 
-	theMinute.addMenuElement("17","17");
+	this.theMinute.addMenuElement("17","17");
 
-	theMinute.addMenuElement("18","18");
+	this.theMinute.addMenuElement("18","18");
 
-	theMinute.addMenuElement("19","19");
+	this.theMinute.addMenuElement("19","19");
 
 
 
-	theMinute.addMenuElement("20","20");
+	this.theMinute.addMenuElement("20","20");
 
-	theMinute.addMenuElement("21","21");
+	this.theMinute.addMenuElement("21","21");
 
-	theMinute.addMenuElement("22","22");
+	this.theMinute.addMenuElement("22","22");
 
-	theMinute.addMenuElement("23","23");
+	this.theMinute.addMenuElement("23","23");
 
-	theMinute.addMenuElement("24","24");
+	this.theMinute.addMenuElement("24","24");
 
-	theMinute.addMenuElement("25","25");
+	this.theMinute.addMenuElement("25","25");
 
-	theMinute.addMenuElement("26","26");
+	this.theMinute.addMenuElement("26","26");
 
-	theMinute.addMenuElement("27","27");
+	this.theMinute.addMenuElement("27","27");
 
-	theMinute.addMenuElement("28","28");
+	this.theMinute.addMenuElement("28","28");
 
-	theMinute.addMenuElement("29","29");
+	this.theMinute.addMenuElement("29","29");
 
 
 
-	theMinute.addMenuElement("30","30");
+	this.theMinute.addMenuElement("30","30");
 
-	theMinute.addMenuElement("31","31");
+	this.theMinute.addMenuElement("31","31");
 
-	theMinute.addMenuElement("32","32");
+	this.theMinute.addMenuElement("32","32");
 
-	theMinute.addMenuElement("33","33");
+	this.theMinute.addMenuElement("33","33");
 
-	theMinute.addMenuElement("34","34");
+	this.theMinute.addMenuElement("34","34");
 
-	theMinute.addMenuElement("35","35");
+	this.theMinute.addMenuElement("35","35");
 
-	theMinute.addMenuElement("36","36");
+	this.theMinute.addMenuElement("36","36");
 
-	theMinute.addMenuElement("37","37");
+	this.theMinute.addMenuElement("37","37");
 
-	theMinute.addMenuElement("38","38");
+	this.theMinute.addMenuElement("38","38");
 
-	theMinute.addMenuElement("39","39");
+	this.theMinute.addMenuElement("39","39");
 
 
 
-	theMinute.addMenuElement("40","40");
+	this.theMinute.addMenuElement("40","40");
 
-	theMinute.addMenuElement("41","41");
+	this.theMinute.addMenuElement("41","41");
 
-	theMinute.addMenuElement("42","42");
+	this.theMinute.addMenuElement("42","42");
 
-	theMinute.addMenuElement("43","43");
+	this.theMinute.addMenuElement("43","43");
 
-	theMinute.addMenuElement("44","44");
+	this.theMinute.addMenuElement("44","44");
 
-	theMinute.addMenuElement("45","45");
+	this.theMinute.addMenuElement("45","45");
 
-	theMinute.addMenuElement("46","46");
+	this.theMinute.addMenuElement("46","46");
 
-	theMinute.addMenuElement("47","47");
+	this.theMinute.addMenuElement("47","47");
 
-	theMinute.addMenuElement("48","48");
+	this.theMinute.addMenuElement("48","48");
 
-	theMinute.addMenuElement("49","49");
+	this.theMinute.addMenuElement("49","49");
 
 
 
-	theMinute.addMenuElement("50","50");
+	this.theMinute.addMenuElement("50","50");
 
-	theMinute.addMenuElement("51","51");
+	this.theMinute.addMenuElement("51","51");
 
-	theMinute.addMenuElement("52","52");
+	this.theMinute.addMenuElement("52","52");
 
-	theMinute.addMenuElement("53","53");
+	this.theMinute.addMenuElement("53","53");
 
-	theMinute.addMenuElement("54","54");
+	this.theMinute.addMenuElement("54","54");
 
-	theMinute.addMenuElement("55","55");
+	this.theMinute.addMenuElement("55","55");
 
-	theMinute.addMenuElement("56","56");
+	this.theMinute.addMenuElement("56","56");
 
-	theMinute.addMenuElement("57","57");
+	this.theMinute.addMenuElement("57","57");
 
-	theMinute.addMenuElement("58","58");
+	this.theMinute.addMenuElement("58","58");
 
-	theMinute.addMenuElement("59","59");
+	this.theMinute.addMenuElement("59","59");
 
 
 
@@ -729,37 +729,37 @@ private void init(String name){
 
 
 
-        textInFront.setText(iwrb.getLocalizedString(THETIME_KEY," at "));
+        this.textInFront.setText(iwrb.getLocalizedString(THETIME_KEY," at "));
 
 
 
         String emptyString = "";
 
-        if(inShort){
+        if(this.inShort){
 
-          theDay.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.DAY_KEY_S,"D"));
+          this.theDay.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.DAY_KEY_S,"D"));
 
-          theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY_S,"M"));
+          this.theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY_S,"M"));
 
-          theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY_S,"Y"));
+          this.theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY_S,"Y"));
 
-          theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY_S,"H"));
+          this.theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY_S,"H"));
 
-          theMinute.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.MINUTE_KEY_S,"M"));
+          this.theMinute.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.MINUTE_KEY_S,"M"));
 
         }
 
         else{
 
-          theDay.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.DAY_KEY,"Day"));
+          this.theDay.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.DAY_KEY,"Day"));
 
-          theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY,"Month"));
+          this.theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY,"Month"));
 
-          theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY,"Year"));
+          this.theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY,"Year"));
 
-          theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY,"Hour"));
+          this.theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY,"Hour"));
 
-          theMinute.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.MINUTE_KEY,"Minute"));
+          this.theMinute.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.MINUTE_KEY,"Minute"));
 
         }
 
@@ -779,7 +779,7 @@ private void init(String name){
 
           }
 
-          theMonth.setMenuElementDisplayString(value,monthStrings[i-1]);
+          this.theMonth.setMenuElementDisplayString(value,monthStrings[i-1]);
 
         }
 
@@ -791,23 +791,23 @@ private void init(String name){
 
 public void setYear(int year){
 
-	setCheck=true;
+	this.setCheck=true;
 
-        if(year<fromYear){
+        if(year<this.fromYear){
 
-          fromYear=year;
+          this.fromYear=year;
 
         }
 
-        if(year>toYear){
+        if(year>this.toYear){
 
-          toYear=year;
+          this.toYear=year;
 
         }
 
 	//theYear.setSelectedElement(Integer.toString(year));
 
-        selectedYear=year;
+        this.selectedYear=year;
 
 }
 
@@ -831,17 +831,17 @@ public void setMonth(int month){
 
 public void setMonth(String month){
 
-	setCheck=true;
+	this.setCheck=true;
 
 	if (month.length() > 1){
 
-		theMonth.setSelectedElement(month);
+		this.theMonth.setSelectedElement(month);
 
 	}
 
 	else{
 
-		theMonth.setSelectedElement("0"+month);
+		this.theMonth.setSelectedElement("0"+month);
 
 	}
 
@@ -859,17 +859,17 @@ public void setDay(int day){
 
 public void setDay(String day){
 
-	setCheck=true;
+	this.setCheck=true;
 
 	if (day.length() > 1 ){
 
-		theDay.setSelectedElement(day);
+		this.theDay.setSelectedElement(day);
 
 	}
 
 	else{
 
-		theDay.setSelectedElement("0"+day);
+		this.theDay.setSelectedElement("0"+day);
 
 	}
 
@@ -965,13 +965,13 @@ public void setMinute(String minute){
 
 	if (minute.length() > 1 ){
 
-		theMinute.setSelectedElement(minute);
+		this.theMinute.setSelectedElement(minute);
 
 	}
 
 	else{
 
-		theMinute.setSelectedElement("0"+minute);
+		this.theMinute.setSelectedElement("0"+minute);
 
 	}
 
@@ -993,13 +993,13 @@ public void setHour(String hour){
 
 	if (hour.length() > 1 ){
 
-		theHour.setSelectedElement(hour);
+		this.theHour.setSelectedElement(hour);
 
 	}
 
 	else{
 
-		theHour.setSelectedElement("0"+hour);
+		this.theHour.setSelectedElement("0"+hour);
 
 	}
 
@@ -1065,15 +1065,15 @@ private Script getJavaScript(){
 
 public void keepStatusOnAction(){
 
-	theDay.keepStatusOnAction();
+	this.theDay.keepStatusOnAction();
 
-	theMonth.keepStatusOnAction();
+	this.theMonth.keepStatusOnAction();
 
-	theYear.keepStatusOnAction();
+	this.theYear.keepStatusOnAction();
 
-	theHour.keepStatusOnAction();
+	this.theHour.keepStatusOnAction();
 
-	theMinute.keepStatusOnAction();
+	this.theMinute.keepStatusOnAction();
 
 	//theSecond.keepStatusOnAction();
 
@@ -1109,23 +1109,23 @@ public void print(IWContext iwc)throws Exception{
 
 
 
-  for (int i=fromYear;i<=toYear;i++){
+  for (int i=this.fromYear;i<=this.toYear;i++){
 
-    theYear.addMenuElement(Integer.toString(i));
-
-  }
-
-
-
-  if (selectedYear!=-1){
-
-    theYear.setSelectedElement(Integer.toString(selectedYear));
+    this.theYear.addMenuElement(Integer.toString(i));
 
   }
 
-	if (setCheck == true){
 
-		theWholeTimestamp.setValue(theYear.getSelectedElementValue()+"-"+theMonth.getSelectedElementValue()+"-"+theDay.getSelectedElementValue()+" "+theHour.getSelectedElementValue()+":"+theMinute.getSelectedElementValue()+":00.000000");
+
+  if (this.selectedYear!=-1){
+
+    this.theYear.setSelectedElement(Integer.toString(this.selectedYear));
+
+  }
+
+	if (this.setCheck == true){
+
+		this.theWholeTimestamp.setValue(this.theYear.getSelectedElementValue()+"-"+this.theMonth.getSelectedElementValue()+"-"+this.theDay.getSelectedElementValue()+" "+this.theHour.getSelectedElementValue()+":"+this.theMinute.getSelectedElementValue()+":00.000000");
 
 	}
 

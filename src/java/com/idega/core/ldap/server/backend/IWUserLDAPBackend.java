@@ -70,45 +70,45 @@ LDAPReplicationConstants {
 	
 	public IWUserLDAPBackend() {
 		super();
-		ldapUtil = IWLDAPUtil.getInstance();
+		this.ldapUtil = IWLDAPUtil.getInstance();
 		// The list of supported attributes to search for
-		exactIndexes = new ArrayList();
-		exactIndexes.add(LDAP_ATTRIBUTE_COMMON_NAME);
-		exactIndexes.add(LDAP_ATTRIBUTE_EMAIL);
-		exactIndexes.add(LDAP_ATTRIBUTE_SURNAME);
-		exactIndexes.add(LDAP_ATTRIBUTE_GIVEN_NAME);
-		exactIndexes.add(LDAP_ATTRIBUTE_UID);
-		exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID);
-		exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION_UNIT);
-		exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION);
-		exactIndexes.add(LDAP_ATTRIBUTE_OBJECT_CLASS);
-		exactIndexes.add(LDAP_ATTRIBUTE_DESCRIPTION);
-		exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID);
+		this.exactIndexes = new ArrayList();
+		this.exactIndexes.add(LDAP_ATTRIBUTE_COMMON_NAME);
+		this.exactIndexes.add(LDAP_ATTRIBUTE_EMAIL);
+		this.exactIndexes.add(LDAP_ATTRIBUTE_SURNAME);
+		this.exactIndexes.add(LDAP_ATTRIBUTE_GIVEN_NAME);
+		this.exactIndexes.add(LDAP_ATTRIBUTE_UID);
+		this.exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID);
+		this.exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION_UNIT);
+		this.exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION);
+		this.exactIndexes.add(LDAP_ATTRIBUTE_OBJECT_CLASS);
+		this.exactIndexes.add(LDAP_ATTRIBUTE_DESCRIPTION);
+		this.exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID);
 		//lowercase
-		exactIndexes.add(LDAP_ATTRIBUTE_COMMON_NAME.toLowerCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_EMAIL.toLowerCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_SURNAME.toLowerCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_GIVEN_NAME.toLowerCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_UID.toLowerCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.toLowerCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION_UNIT.toLowerCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION.toLowerCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_OBJECT_CLASS.toLowerCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_DESCRIPTION.toLowerCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID.toLowerCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_COMMON_NAME.toLowerCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_EMAIL.toLowerCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_SURNAME.toLowerCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_GIVEN_NAME.toLowerCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_UID.toLowerCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.toLowerCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION_UNIT.toLowerCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION.toLowerCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_OBJECT_CLASS.toLowerCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_DESCRIPTION.toLowerCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID.toLowerCase());
 		
 		//uppercase
-		exactIndexes.add(LDAP_ATTRIBUTE_COMMON_NAME.toUpperCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_EMAIL.toUpperCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_SURNAME.toUpperCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_GIVEN_NAME.toUpperCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_UID.toUpperCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.toUpperCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION_UNIT.toUpperCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION.toUpperCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_OBJECT_CLASS.toUpperCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_DESCRIPTION.toUpperCase());
-		exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID.toUpperCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_COMMON_NAME.toUpperCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_EMAIL.toUpperCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_SURNAME.toUpperCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_GIVEN_NAME.toUpperCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_UID.toUpperCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_UNIQUE_ID.toUpperCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION_UNIT.toUpperCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_ORGANIZATION.toUpperCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_OBJECT_CLASS.toUpperCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_DESCRIPTION.toUpperCase());
+		this.exactIndexes.add(LDAP_ATTRIBUTE_IDEGAWEB_PERSONAL_ID.toUpperCase());
 //		exactIndexes.addElement( new DirectoryString( "seealso" ) );
 	}
 
@@ -194,7 +194,7 @@ LDAPReplicationConstants {
 				while(filters.hasNext()){
 					SubstringFilterSeqOfChoice choice = (SubstringFilterSeqOfChoice) filters.next();
 					String type = new DirectoryString(filter.substrings.type).toString();
-					if(exactIndexes.contains(type)){
+					if(this.exactIndexes.contains(type)){
 						//todo this should be handled differently, initial is %string any is %string% and final is string% 
 						byte[] bytes = choice.initial;
 						if(bytes==null){
@@ -275,12 +275,12 @@ LDAPReplicationConstants {
 			new Entry(base);
 		
 			try {
-				if (base.getDirectoryString().equals(ldapUtil.getRootDNString()) && uniqueId == null) {
+				if (base.getDirectoryString().equals(this.ldapUtil.getRootDNString()) && uniqueId == null) {
 					addTopGroupsToEntries(base, entries);
 				}
 				else {
 					//get children if a group
-					if (ldapUtil.isGroup(base) || uniqueId != null) {
+					if (this.ldapUtil.isGroup(base) || uniqueId != null) {
 						Group group = getGroup(base,uniqueId);
 						//handle when group is not found specially, code to send??
 						if (group != null) {
@@ -359,7 +359,7 @@ LDAPReplicationConstants {
 				//FIXME this does something to the DN so it get rid of \\ and what nots...
 				Entry entry = new Entry(base);
 				
-				if (base.getDirectoryString().equals(ldapUtil.getRootDNString()) && uniqueId==null) {
+				if (base.getDirectoryString().equals(this.ldapUtil.getRootDNString()) && uniqueId==null) {
 					//addTopGroupsToEntries(base, entries);
 					entries.add(new Entry(base));
 				}
@@ -457,7 +457,7 @@ LDAPReplicationConstants {
 	 *      java.util.List)
 	 */
 	public void modify(DirectoryString base, List changeEntries) throws DirectoryException {
-		if (ldapUtil.isUser(base)) {
+		if (this.ldapUtil.isUser(base)) {
 			User user = null;
 			try {
 				user = getUser(base, null);
@@ -474,7 +474,7 @@ LDAPReplicationConstants {
 				//TODO modify the record
 			}
 		}
-		else if (ldapUtil.isGroup(base)) {
+		else if (this.ldapUtil.isGroup(base)) {
 			Group group = null;
 			try {
 				group = getGroup(base, null);
@@ -509,7 +509,7 @@ LDAPReplicationConstants {
 		
 		Entry entry = new Entry(base);
 		
-		if (!isGroupSearch && ldapUtil.isUser(base)) {
+		if (!isGroupSearch && this.ldapUtil.isUser(base)) {
 			User user = getUser(base, uniqueId);
 			if (user == null) {
 				System.err.println("[IWUserLDAPBackend] No user found for DN : " + base.toString());
@@ -519,7 +519,7 @@ LDAPReplicationConstants {
 				fillUserEntry(user, entry);
 			}
 		}
-		else if (isGroupSearch || ldapUtil.isGroup(base)) {
+		else if (isGroupSearch || this.ldapUtil.isGroup(base)) {
 			Group group = getGroup(base, uniqueId);
 			if (group == null) {
 				System.err.println("[IWUserLDAPBackend] No group found for DN : " + base.toString());
@@ -559,7 +559,7 @@ LDAPReplicationConstants {
 			System.err.println("[IWUserLDAPBackend] No user found for unique id: " + uniqueId + " trying DN");
 		}
 		if (user == null) {
-			user = (User) getUserBusiness().getUserByDirectoryString(base.toString());
+			user = getUserBusiness().getUserByDirectoryString(base.toString());
 		}
 		return user;
 	}
@@ -583,15 +583,15 @@ LDAPReplicationConstants {
 	}
 	
 	protected String getUserIdentifier(User user, DirectoryString base) {
-		return ldapUtil.getUserIdentifier(user, base);
+		return this.ldapUtil.getUserIdentifier(user, base);
 	}
 	
 	protected String getGroupIdentifier(Group group, DirectoryString base) {
-		return ldapUtil.getGroupIdentifier(group, base);
+		return this.ldapUtil.getGroupIdentifier(group, base);
 	}
 	
 	protected String getGroupName(Group group) {
-		return ldapUtil.getGroupName(group);
+		return this.ldapUtil.getGroupName(group);
 	}
 	
 	/**
@@ -955,7 +955,7 @@ LDAPReplicationConstants {
 				String metaValue = (String) metadata.get(metaKey);
 				if (metaValue != null) {
 					List metaDataValue = getAttributeListForSingleEntry(metaValue);
-					entry.put(getDirectoryStringForIdentifier(ldapUtil.getAttributeKeyWithMetaDataNamePrefix(metaKey)),metaDataValue);
+					entry.put(getDirectoryStringForIdentifier(this.ldapUtil.getAttributeKeyWithMetaDataNamePrefix(metaKey)),metaDataValue);
 				}
 			}
 		}
@@ -1005,28 +1005,28 @@ LDAPReplicationConstants {
 	}
 	
 	public EmbeddedLDAPServerBusiness getEmbeddedLDAPServerBusiness(IWApplicationContext iwc) {
-		if (embeddedLDAPServerBiz == null) {
+		if (this.embeddedLDAPServerBiz == null) {
 			try {
-				embeddedLDAPServerBiz = (EmbeddedLDAPServerBusiness) com.idega.business.IBOLookup.getServiceInstance(
+				this.embeddedLDAPServerBiz = (EmbeddedLDAPServerBusiness) com.idega.business.IBOLookup.getServiceInstance(
 						iwc, EmbeddedLDAPServerBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return embeddedLDAPServerBiz;
+		return this.embeddedLDAPServerBiz;
 	}
 	
 	public LDAPReplicationBusiness getLDAPReplicationBusiness(IWApplicationContext iwc) {
-		if (ldapReplicationBiz == null) {
+		if (this.ldapReplicationBiz == null) {
 			try {
-				ldapReplicationBiz = (LDAPReplicationBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc,
+				this.ldapReplicationBiz = (LDAPReplicationBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc,
 						LDAPReplicationBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return ldapReplicationBiz;
+		return this.ldapReplicationBiz;
 	}
 }

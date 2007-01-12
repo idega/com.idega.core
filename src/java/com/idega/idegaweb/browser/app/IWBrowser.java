@@ -19,7 +19,7 @@ import java.rmi.RemoteException;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -69,79 +69,79 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
   }
 
   protected void initializeFrames(){
-    for (int i = 0; i < _browserFrames.length; i++) {
+    for (int i = 0; i < this._browserFrames.length; i++) {
 //      System.out.println("IWBrowser.initializeFrames(): "+i);
-      _browserFrames[i] = new IWBrowserFrame();
-      _browserFrames[i].setNameProperty(this.getFrameName(i));
-      _browserFrames[i].getLocation().setApplicationClass(this.getClass());
+      this._browserFrames[i] = new IWBrowserFrame();
+      this._browserFrames[i].setNameProperty(this.getFrameName(i));
+      this._browserFrames[i].getLocation().setApplicationClass(this.getClass());
       //_browserFrames[i].getLocation().isInFrameSet(true);
     }
-    _middleFrameset = new FrameTable();
-    _middleFrameset.setHorizontal();
+    this._middleFrameset = new FrameTable();
+    this._middleFrameset.setHorizontal();
   }
 
   public String getControlframeTarget(){
-    return this.getFrameName(_controlPosition);
+    return this.getFrameName(this._controlPosition);
   }
 
   public Frame getControlframe(){
-    return this.getFrame(this.getFrameName(_controlPosition));
+    return this.getFrame(this.getFrameName(this._controlPosition));
   }
 
   public String getFrameName(int pos){
-    return _frameName[pos];
+    return this._frameName[pos];
   }
 
   protected FrameTable getMiddleFrameset(){
-    return _middleFrameset;
+    return this._middleFrameset;
   }
 
   public void showTopFrame(boolean value){
-    _showTopFrame = value;
+    this._showTopFrame = value;
   }
 
   public void showMenuFrame(boolean value){
-    _showMenuFrame = value;
+    this._showMenuFrame = value;
   }
 
   public void showRightMainFrame(boolean value){
-    _showRightMainFrame = value;
+    this._showRightMainFrame = value;
   }
 
   public void showLeftMainFrame(boolean value){
-    _showLeftMainFrame = value;
+    this._showLeftMainFrame = value;
   }
 
   public void showBottomFrame(boolean value){
-    _showBottomFrame = value;
+    this._showBottomFrame = value;
   }
 
   public void showEventFrame(boolean value){
-    _showEventFrame = value;
+    this._showEventFrame = value;
   }
 
   public boolean showEventFrame(){
-    return _showEventFrame;
+    return this._showEventFrame;
   }
 
   public boolean showBottomFrame(){
-    return _showBottomFrame;
+    return this._showBottomFrame;
   }
 
   public boolean showRightMainFrame(){
-    return _showRightMainFrame;
+    return this._showRightMainFrame;
   }
 
   public boolean showLeftMainFrame(){
-    return _showLeftMainFrame;
+    return this._showLeftMainFrame;
   }
 
   public boolean showTopFrame(){
-    return _showTopFrame;
+    return this._showTopFrame;
   }
 
   public boolean showMenuFrame(){
-    return _showMenuFrame;
+    return this._showMenuFrame;
   }
 
 
@@ -182,39 +182,39 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
   }
 
   public void setSpanPixels(int pos, int pixels){
-    _browserFrames[pos].setSpanPixels(pixels);
+    this._browserFrames[pos].setSpanPixels(pixels);
   }
 
   protected IWBrowserFrame getTopFrame(){
-    return _browserFrames[POS_TOP];
+    return this._browserFrames[POS_TOP];
   }
 
   protected IWBrowserFrame getMenuFrame(){
-    return _browserFrames[POS_MENU];
+    return this._browserFrames[POS_MENU];
   }
 
   protected IWBrowserFrame getMiddleFrame(){
-    return _browserFrames[POS_MIDDLE];
+    return this._browserFrames[POS_MIDDLE];
   }
 
   protected IWBrowserFrame getMainFrame(){
-    return _browserFrames[POS_MAIN];
+    return this._browserFrames[POS_MAIN];
   }
 
   protected IWBrowserFrame getLeftMainFrame(){
-    return _browserFrames[POS_LEFTMAIN];
+    return this._browserFrames[POS_LEFTMAIN];
   }
 
   protected IWBrowserFrame getRightMainFrame(){
-    return _browserFrames[POS_RIGHTMAIN];
+    return this._browserFrames[POS_RIGHTMAIN];
   }
 
   protected IWBrowserFrame getBottomFrame(){
-    return _browserFrames[POS_BOTTOM];
+    return this._browserFrames[POS_BOTTOM];
   }
 
   protected IWBrowserFrame getEventFrame(){
-    return _browserFrames[POS_EVENT];
+    return this._browserFrames[POS_EVENT];
   }
 
 
@@ -351,59 +351,59 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
 
 
   public Page getControlFramePresentation(IWUserContext iwc, boolean askForPermission){
-    return getFrame(this.getFrameName(_controlPosition), iwc, askForPermission);
+    return getFrame(this.getFrameName(this._controlPosition), iwc, askForPermission);
   }
 
 
   public void _main(IWContext iwc) throws Exception {
     //System.out.println("in _main()");
 
-    if(_showTopFrame || _showMenuFrame || _showBottomFrame || _showEventFrame){
-      if(_showTopFrame){
+    if(this._showTopFrame || this._showMenuFrame || this._showBottomFrame || this._showEventFrame){
+      if(this._showTopFrame){
         this.add(this.getTopFrame());
       }
 
-      if(_showMenuFrame){
+      if(this._showMenuFrame){
         this.add(this.getMenuFrame());
       }
 
-      if(_showLeftMainFrame || _showRightMainFrame ){
-        if(_showLeftMainFrame){
-          _middleFrameset.add(this.getLeftMainFrame());
+      if(this._showLeftMainFrame || this._showRightMainFrame ){
+        if(this._showLeftMainFrame){
+          this._middleFrameset.add(this.getLeftMainFrame());
         }
 
-        _middleFrameset.add(this.getMainFrame());
+        this._middleFrameset.add(this.getMainFrame());
 
-        if(_showRightMainFrame){
-          _middleFrameset.add(this.getRightMainFrame());
+        if(this._showRightMainFrame){
+          this._middleFrameset.add(this.getRightMainFrame());
         }
 
         IWBrowserFrame bFrame = this.getMiddleFrame();
-        bFrame.setPresentationObject(_middleFrameset);
+        bFrame.setPresentationObject(this._middleFrameset);
         this.add(bFrame);
 
       } else {
         this.add(this.getMainFrame());
       }
       
-      if(_showBottomFrame) {
+      if(this._showBottomFrame) {
       		this.add(this.getBottomFrame());
       }
       
-      if(_showEventFrame){
+      if(this._showEventFrame){
         this.add(this.getEventFrame());
       }
 
-    } else if (_showLeftMainFrame || _showRightMainFrame ) {
-      this.setMarkupAttributes(_middleFrameset.getMarkupAttributes());
+    } else if (this._showLeftMainFrame || this._showRightMainFrame ) {
+      this.setMarkupAttributes(this._middleFrameset.getMarkupAttributes());
 
-      if(_showLeftMainFrame){
+      if(this._showLeftMainFrame){
         this.add(this.getLeftMainFrame());
       }
 
       this.add(this.getMainFrame());
 
-      if(_showRightMainFrame){
+      if(this._showRightMainFrame){
         this.add(this.getRightMainFrame());
       }
 
@@ -524,16 +524,16 @@ public class IWBrowser extends FrameTable implements StatefullPresentation {
 //  }
 
   public IWPresentationState getPresentationState(IWUserContext iwuc){
-    if(_presentationState == null){
+    if(this._presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        _presentationState = (IWBrowserPresentationState)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
+        this._presentationState = (IWBrowserPresentationState)stateMachine.getStateFor(getCompoundId(),this.getPresentationStateClass());
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());
       }
     }
-    return _presentationState;
+    return this._presentationState;
   }
 
   public Class getPresentationStateClass(){

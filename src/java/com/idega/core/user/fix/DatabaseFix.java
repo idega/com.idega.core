@@ -3,6 +3,7 @@ package com.idega.core.user.fix;
 import java.util.List;
 import java.util.Iterator;
 import com.idega.data.EntityFinder;
+import com.idega.user.data.UserBMPBean;
 import com.idega.core.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.core.data.GenericGroup;
@@ -13,7 +14,7 @@ import com.idega.core.data.GenericGroup;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -29,7 +30,7 @@ public class DatabaseFix {
   }
 
   public void main() throws Exception {
-    List users = EntityFinder.findAll(com.idega.core.user.data.UserBMPBean.getStaticInstance());
+    List users = EntityFinder.findAll(UserBMPBean.getStaticInstance());
 
     if(users != null){
       Iterator iter = users.iterator();

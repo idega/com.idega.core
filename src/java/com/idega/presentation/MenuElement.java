@@ -41,22 +41,22 @@ public class MenuElement extends PresentationObject {
 	 * @param name
 	 */
 	public MenuElement(String name){
-		setMenuName(menuName);
+		setMenuName(this.menuName);
 		setName(name); //name is used as an id for the MenuElement
-		setParent(parent);
-		setText(text);
-		setLink(link);
-		setTarget(target);
-		setWidth(width);
-		setHeight(height);
-		setRegImg(regImg);
-		setOverImg(overImg);
-		setAlign(align);
-		setRows(rows);
-		setNoLink(noLink);
-		setOnClick(onClick);
-		setOnMouseOver(onMouseOver);
-		setOnMouseOut(onMouseOut);
+		setParent(this.parent);
+		setText(this.text);
+		setLink(this.link);
+		setTarget(this.target);
+		setWidth(this.width);
+		setHeight(this.height);
+		setRegImg(this.regImg);
+		setOverImg(this.overImg);
+		setAlign(this.align);
+		setRows(this.rows);
+		setNoLink(this.noLink);
+		setOnClick(this.onClick);
+		setOnMouseOver(this.onMouseOver);
+		setOnMouseOut(this.onMouseOut);
 	}
 	/**
 	 * can be used to create a rootNode
@@ -65,7 +65,7 @@ public class MenuElement extends PresentationObject {
 	 * @param rootName
 	 */
 	public void createRootNode(MenuElement rootNode, String rootName){
-		isRoot = true;
+		this.isRoot = true;
 		rootNode.setName(rootName);
 	}
 	/**
@@ -78,7 +78,7 @@ public class MenuElement extends PresentationObject {
 		MenuElement child = new MenuElement();
 		child.setParent(parentName);
 		child.setName(childName);
-		children.add(child);
+		this.children.add(child);
 	}
 	/**
 	 * adds a child to the ArrayList containing the children of the
@@ -94,7 +94,7 @@ public class MenuElement extends PresentationObject {
 		child.setParent(parentName);
 		child.setText(tx);
 		child.setLink(url);
-		children.add(child);
+		this.children.add(child);
 	}
 	/**
 	 * 
@@ -108,246 +108,246 @@ public class MenuElement extends PresentationObject {
 	 * @param mn
 	 */
 	public void setMenuName(String mn){
-		menuName = mn;
+		this.menuName = mn;
 	}
 	/**
 	 * @param n - sets the name of the MenuElement
 	 */
 	public void setName(String n){
-		name = n;
+		this.name = n;
 	}
 	/**
 	 * 
 	 * @param par - sets the parent of a MenuElement
 	 */
 	public void setParent(String par){
-		parent = par;
+		this.parent = par;
 	}
 	/**
 	 * 
 	 * @param txt
 	 */
 	public void setText(String txt){
-		text = txt;
+		this.text = txt;
 	}
 	/**
 	 * 
 	 * @param lnk
 	 */
 	public void setLink(String lnk){
-		link = lnk;
+		this.link = lnk;
 	}
 	/**
 	 * 
 	 * @param targ
 	 */
 	public void setTarget(String targ){
-		target = targ;		
+		this.target = targ;		
 	}
 	/**
 	 * @param w
 	 */
 	public void setWidth(String w){
-		width = w;
+		this.width = w;
 	}
 	/**
 	 * @param h
 	 */
 	public void setHeight(String h){
-		height = h;
+		this.height = h;
 	}
 	/**
 	 * 
 	 * @param rImg
 	 */
 	public void setRegImg(String rImg){
-		regImg = rImg;
+		this.regImg = rImg;
 	}
 	/**
 	 * 
 	 * @param oImg
 	 */
 	public void setOverImg(String oImg){
-		overImg = oImg;
+		this.overImg = oImg;
 	}
 	/**
 	 * 
 	 * @param rClass
 	 */
 	public void setRegClass (String rClass){
-		regClass = rClass;
+		this.regClass = rClass;
 	}
 	/**
 	 * 
 	 * @param oClass
 	 */
 	public void setOverClass(String oClass){
-		overClass = oClass;
+		this.overClass = oClass;
 	}
 	/**
 	 * 
 	 * @param aln
 	 */
 	public void setAlign(String aln){
-		align = aln;
+		this.align = aln;
 	}
 	/**
 	 * 
 	 * @param r
 	 */
 	public void setRows(int r){
-		rows = r;
+		this.rows = r;
 	}
 	/**
 	 * 
 	 * @param nLink
 	 */
 	public void setNoLink(String nLink){
-		noLink = nLink;
+		this.noLink = nLink;
 	}
 	/**
 	 * 
 	 * @param onCl
 	 */
 	public void setOnClick(String onCl){
-		onClick = onCl;
+		this.onClick = onCl;
 	}
 	/**
 	 * 
 	 * @param onMOver
 	 */
 	public void setOnMouseOver(String onMOver){
-		onMouseOver = onMOver;
+		this.onMouseOver = onMOver;
 	}
 	/**
 	 * 
 	 * @param onMOut
 	 */
 	public void setOnMouseOut(String onMOut){
-		onMouseOut = onMOut;
+		this.onMouseOut = onMOut;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getMenuName(){
-		return menuName;
+		return this.menuName;
 	}
 	/**
 	 * 
 	 */
 	public String getName(){
-		return name;
+		return this.name;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getParentString(){
-		return parent;
+		return this.parent;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getText(){
-		return text;
+		return this.text;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getLink(){
-		return link;
+		return this.link;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getTarget(){
-		return target;
+		return this.target;
 	}
 	/**
 	 * @return
 	 */
 	public String getWidth(){
-		return width;
+		return this.width;
 	}
 	/**
 	 * @return
 	 */
 	public String getHeight(){
-		return height;
+		return this.height;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getRegImg(){
-		return regImg;
+		return this.regImg;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getOverImg(){
-		return overImg;
+		return this.overImg;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getRegClass(){
-		return regClass;
+		return this.regClass;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getOverClass(){
-		return overClass;
+		return this.overClass;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getAlign(){
-		return align;
+		return this.align;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public int getRows(){
-		return rows;
+		return this.rows;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getNoLink(){
-		return noLink;
+		return this.noLink;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getOnClick(){
-		return onClick;
+		return this.onClick;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getOnMouseOver(){
-		return onMouseOver;
+		return this.onMouseOver;
 	}
 	/**
 	 * 
 	 * @return
 	 */
 	public String getOnMouseOut(){
-		return onMouseOut;
+		return this.onMouseOut;
 	}
 	/**
 	 * 

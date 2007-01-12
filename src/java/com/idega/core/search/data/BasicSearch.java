@@ -1,5 +1,5 @@
 /*
- * $Id: BasicSearch.java,v 1.1 2005/01/19 01:48:30 eiki Exp $
+ * $Id: BasicSearch.java,v 1.1.2.1 2007/01/12 19:32:41 idegaweb Exp $
  * Created on Jan 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import com.idega.core.search.business.SearchQuery;
 
 /**
  * 
- *  Last modified: $Date: 2005/01/19 01:48:30 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/01/12 19:32:41 $ by $Author: idegaweb $
  * A general implementation of Search with simple get and set methods.
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class BasicSearch implements Search {
 
@@ -41,28 +41,28 @@ public class BasicSearch implements Search {
 	 * @see com.idega.core.search.business.Search#getSearchType()
 	 */
 	public String getSearchType() {
-		return searchType;
+		return this.searchType;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.Search#getSearchName()
 	 */
 	public String getSearchName() {
-		return searchName;
+		return this.searchName;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.Search#getSearchQuery()
 	 */
 	public SearchQuery getSearchQuery() {
-		return searchQuery;
+		return this.searchQuery;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.Search#getSearchResults()
 	 */
 	public Collection getSearchResults() {
-		return searchResults;
+		return this.searchResults;
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +73,7 @@ public class BasicSearch implements Search {
 		if(results!=null && !results.isEmpty()){
 			return results.size();
 		}
-		return numberOfResults;
+		return this.numberOfResults;
 	}
 
 	/**

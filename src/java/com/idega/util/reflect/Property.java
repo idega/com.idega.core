@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.2 2005/10/12 21:52:24 tryggvil Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.2.2.1 2007/01/12 19:33:00 idegaweb Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -23,10 +23,10 @@ import com.idega.user.data.GroupHome;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2005/10/12 21:52:24 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/01/12 19:33:00 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.2.2.1 $
  */
 public class Property implements Serializable{
 
@@ -79,7 +79,7 @@ public class Property implements Serializable{
 	 * @return Returns the method.
 	 */
 	public Method getMethod() {
-		return method;
+		return this.method;
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class Property implements Serializable{
 	 * @return Returns the propertyName.
 	 */
 	public String getPropertyName() {
-		return propertyName;
+		return this.propertyName;
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class Property implements Serializable{
 	 * @return Returns the propertyValues.
 	 */
 	public Object[] getPropertyValues() {
-		return propertyValues;
+		return this.propertyValues;
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class Property implements Serializable{
 					args[i] = convertStringToObject(parameterTypes[i], aString);
 				}
 				catch (Exception e) {
-					System.err.println("Error in property '" + method.toString());
+					System.err.println("Error in property '" + this.method.toString());
 					e.printStackTrace();
 				}
 			}
@@ -230,7 +230,7 @@ public class Property implements Serializable{
 		//REMOVE AND MAKE GENERIC! ask tryggvi and eiki
 		else if (parameterType.equals(Group.class)) {
 			try {
-				argument = (Group) ((GroupHome) com.idega.data.IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(
+				argument = ((GroupHome) com.idega.data.IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(
 						stringValue.substring(stringValue.lastIndexOf('_') + 1, stringValue.length())));
 			}
 			catch (Exception ex) {

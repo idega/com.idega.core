@@ -28,18 +28,18 @@ public class IDODependencyList {
 
 
   List getStartClasses(){
-    if(startClasses==null){
-      startClasses = new Vector();
+    if(this.startClasses==null){
+      this.startClasses = new Vector();
     }
-    return startClasses;
+    return this.startClasses;
   }
 
 
 
   public void addEntityClass(Class startingEntityClass){
     if(startingEntityClass!=null){
-      Class interfaceClass = this.getInterfaceClassForClass(startingEntityClass);
-      if(!this.listContainsClass(getStartClasses(),interfaceClass)){
+      Class interfaceClass = IDODependencyList.getInterfaceClassForClass(startingEntityClass);
+      if(!IDODependencyList.listContainsClass(getStartClasses(),interfaceClass)){
         this.getStartClasses().add(interfaceClass);
       }
     }
@@ -78,7 +78,7 @@ public class IDODependencyList {
    */
   public void compile(){
     List l = compileDependencyList();
-    dependencyClassesList=l;
+    this.dependencyClassesList=l;
     //compileDependencyList((Class)getStartClasses().get(0),getStartClasses());
   }
 
@@ -170,8 +170,9 @@ public class IDODependencyList {
 
   private static void reshuffleDependencyList(Class entityClass,List theReturn,List checkList){
     System.out.println("[idoDependencyList] Reshuffling for entityClass = "+entityClass.getName());
-    if(listContainsClass(checkList,entityClass))
-      return;
+    if(listContainsClass(checkList,entityClass)) {
+		return;
+	}
 
     Class interfaceClass = getInterfaceClassForClass(entityClass);
     checkList.add(interfaceClass);

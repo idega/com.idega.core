@@ -4,6 +4,7 @@ import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
 
 /**
  * @author Laddi
@@ -31,13 +32,13 @@ public abstract class GenericInput extends InterfaceObject {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[2];
 		values[0] = super.saveState(ctx);
-		values[1] = inputType;
+		values[1] = this.inputType;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		inputType = ((String) values[1]);
+		this.inputType = ((String) values[1]);
 	}	
 	
 	public GenericInput() {
@@ -46,7 +47,7 @@ public abstract class GenericInput extends InterfaceObject {
 	}
 
 	public String getInputType() {
-		return inputType;
+		return this.inputType;
 	}
 	
 	public void setInputType(String inputType) {
@@ -55,8 +56,8 @@ public abstract class GenericInput extends InterfaceObject {
 	
 	public void print(IWContext main) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
-			String markup = main.getApplicationSettings().getProperty(Page.MARKUP_LANGUAGE, Page.HTML);
-			println("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " "+(!markup.equals(Page.HTML) ? "/" : "")+">");
+			String markup = main.getApplicationSettings().getProperty(PresentationObject.MARKUP_LANGUAGE, PresentationObject.HTML);
+			println("<input type=\"" + getInputType() + "\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " "+(!markup.equals(PresentationObject.HTML) ? "/" : "")+">");
 		}
 		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			if(normalPrintSequence()) {
@@ -80,7 +81,7 @@ public abstract class GenericInput extends InterfaceObject {
 	public void printWML(IWContext main) {
 		String[] definedAttributes = getDefinedWmlAttributes();
 		print("<input type=\"");
-		if(INPUT_TYPE_PASSWORD.equals(inputType)) {
+		if(INPUT_TYPE_PASSWORD.equals(this.inputType)) {
 			print("password");
 		} else {
 			print("text");

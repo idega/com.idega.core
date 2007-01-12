@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.17 2005/11/04 14:18:27 eiki Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.17.2.1 2007/01/12 19:32:46 idegaweb Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -43,10 +43,10 @@ import com.idega.util.CypherText;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2005/11/04 14:18:27 $ by $Author: eiki $
+ * Last modified: $Date: 2007/01/12 19:32:46 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.17.2.1 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -93,7 +93,7 @@ public class IWAuthenticator extends BaseFilter {
 		//IWContext iwc = IWContext.getIWContext(fc);
 		IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
 		
-		authenticationBusiness = getAuthenticationBusiness(iwc);
+		this.authenticationBusiness = getAuthenticationBusiness(iwc);
 		
 //		Enumeration headerNames = request.getHeaderNames();
 //		System.out.println("------------HEADER BEGINS-------------");
@@ -162,9 +162,9 @@ public class IWAuthenticator extends BaseFilter {
 		
 		//TODO support also on basic authentication (e.g. webdav) or is that not necessery?
 		//TODO grab an interrupt exeption and just return; (could be necessery for the methods to be able to use response.sendRedirect)
-		if( loginBusiness.isLogOnAction(iwc) && iwc.isLoggedOn()){
+		if( LoginBusinessBean.isLogOnAction(iwc) && iwc.isLoggedOn()){
 			try {
-				authenticationBusiness.callOnLogonMethodInAllAuthenticationListeners(iwc, iwc.getCurrentUser());
+				this.authenticationBusiness.callOnLogonMethodInAllAuthenticationListeners(iwc, iwc.getCurrentUser());
 			}
 			catch (ServletFilterChainInterruptException e) {
 				//this is normal behaviour if e.g. the listener issues a response.sendRedirect(...)
@@ -172,9 +172,9 @@ public class IWAuthenticator extends BaseFilter {
 				return;
 			}
 		}
-		else if(loginBusiness.isLogOffAction(iwc) && !iwc.isLoggedOn() && lastLoggedOnAsUser!=null){
+		else if(LoginBusinessBean.isLogOffAction(iwc) && !iwc.isLoggedOn() && lastLoggedOnAsUser!=null){
 			try {
-				authenticationBusiness.callOnLogoffMethodInAllAuthenticationListeners(iwc, lastLoggedOnAsUser);
+				this.authenticationBusiness.callOnLogoffMethodInAllAuthenticationListeners(iwc, lastLoggedOnAsUser);
 			}
 			catch (ServletFilterChainInterruptException e) {
 				//this is normal behaviour if e.g. the listener issues a response.sendRedirect(...)
@@ -223,7 +223,7 @@ public class IWAuthenticator extends BaseFilter {
 	public void addCookie(IWContext iwc) {
 		Cookie userIDCookie = getCookie(iwc);
 		//System.err.println("actionPerformed in LoginCookieListener");
-		if (getLoginBusiness(iwc).isLogOffAction(iwc) && userIDCookie != null) {
+		if (LoginBusinessBean.isLogOffAction(iwc) && userIDCookie != null) {
 			userIDCookie.setMaxAge(0);
 			iwc.addCookies(userIDCookie);
 		}
@@ -232,9 +232,9 @@ public class IWAuthenticator extends BaseFilter {
 				&& LoginBusinessBean.isLoggedOn(iwc)) {
 			if (userIDCookie == null) {
 				//System.err.println("adding cookie");
-				String login = getLoginBusiness(iwc).getLoggedOnInfo(iwc)
+				String login = LoginBusinessBean.getLoggedOnInfo(iwc)
 						.getLogin();
-				userIDCookie = new Cookie(userIDCookieName, cypherUserLogin(
+				userIDCookie = new Cookie(this.userIDCookieName, cypherUserLogin(
 						iwc, login));
 				userIDCookie.setMaxAge(60 * 60 * 24 * 30);
 				iwc.addCookies(userIDCookie);
@@ -263,7 +263,7 @@ public class IWAuthenticator extends BaseFilter {
 	}
 
 	private Cookie getCookie(IWContext iwc) {
-		Cookie userIDCookie = iwc.getCookie(userIDCookieName);
+		Cookie userIDCookie = iwc.getCookie(this.userIDCookieName);
 		return userIDCookie;
 	}
 
@@ -295,18 +295,18 @@ public class IWAuthenticator extends BaseFilter {
 	}
 
 	protected LoginBusinessBean getLoginBusiness(IWContext iwc){
-		return loginBusiness;
+		return this.loginBusiness;
 	}
 	
 	protected AuthenticationBusiness getAuthenticationBusiness(IWApplicationContext iwac){
 		try {
-			authenticationBusiness = (AuthenticationBusiness) IBOLookup.getServiceInstance(iwac, AuthenticationBusiness.class);
+			this.authenticationBusiness = (AuthenticationBusiness) IBOLookup.getServiceInstance(iwac, AuthenticationBusiness.class);
 		}
 		catch (IBOLookupException e) {
 			e.printStackTrace();
 		}
 		
-		return authenticationBusiness;
+		return this.authenticationBusiness;
 	}
 	
 	protected BuilderService getBuilderService(IWContext iwc) throws RemoteException {

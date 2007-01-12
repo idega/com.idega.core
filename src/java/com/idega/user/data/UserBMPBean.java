@@ -427,7 +427,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if( temp.equals("")){
 				this.removeFromColumn(getColumnNameFirstName());
 			}
-			else setColumn(getColumnNameFirstName(), fName);
+			else {
+				setColumn(getColumnNameFirstName(), fName);
+			}
 		}	
 		//      }
 	}
@@ -441,7 +443,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if( temp.equals("")){
 				this.removeFromColumn(getColumnNameMiddleName());
 			}
-			else setColumn(getColumnNameMiddleName(), mName);
+			else {
+				setColumn(getColumnNameMiddleName(), mName);
+			}
 		}	
 	}
 
@@ -454,7 +458,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if( temp.equals("")){
 				this.removeFromColumn(getColumnNameLastName());
 			}
-			else setColumn(getColumnNameLastName(), lName);
+			else {
+				setColumn(getColumnNameLastName(), lName);
+			}
 		}	
 	}
 	
@@ -1136,8 +1142,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	public Integer ejbFindByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String personalId, String first_name, String last_name) throws FinderException {
     
-    if (personalId.length() < 6)
-	    throw new FinderException("PersonalID shorter than 6 letters");
+    if (personalId.length() < 6) {
+		throw new FinderException("PersonalID shorter than 6 letters");
+	}
 	IDOQuery query = idoQueryGetSelect();
 		 query
 			.appendWhere(getColumnNamePersonalID())
@@ -1155,12 +1162,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		 Collection users = idoFindPKsByQuery(query);
 
 
-		if (users.size() > 1)
+		if (users.size() > 1) {
 			throw new FinderException("More than one user matched the criteria. Couldn't determine which user to choose");
-		else if (!users.isEmpty())
+		}
+		else if (!users.isEmpty()) {
 			return (Integer) users.iterator().next();
-		else
+		}
+		else {
 			throw new FinderException("No user found");
+		}
 	}
 
 	
@@ -1245,7 +1255,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 
 	protected Group getGeneralGroup() {
-		if (_group == null) {
+		if (this._group == null) {
 			try {
 				Integer groupID;
 				Integer userGroupID = this.getIntegerColumnValue(_COLUMNNAME_USER_GROUP_ID);
@@ -1255,14 +1265,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				else {
 					groupID = userGroupID;
 				}
-				_group = getGroupHome().findByPrimaryKey(groupID);
+				this._group = getGroupHome().findByPrimaryKey(groupID);
 				//System.out.println("Getting userGroup "+_group.getName()+",id="+_group.getPrimaryKey()+" for user: "+this.getName()+",id="+this.getID());
 			}
 			catch (FinderException fe) {
 				throw new EJBException(fe.getMessage());
 			}
 		}
-		return _group;
+		return this._group;
 	}
 
 	public void setGroupID(int icGroupId) {
@@ -1336,10 +1346,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				
 		if( (startAge >= 0) && (endAge >=startAge) ){
 			Criteria ageCriteria = getUserDateOfBirthCriteria(startAge, endAge);
-			if(theCriteria==null)
+			if(theCriteria==null) {
 				theCriteria = ageCriteria;
-			else 
+			}
+			else {
 				theCriteria = new AND(theCriteria,ageCriteria);
+			}
 		}		
 		
 		//personalId
@@ -1348,10 +1360,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if(theCriteria==null){
 				theCriteria = personalIdCriteria;
 			} else {
-				if(useAnd)
+				if(useAnd) {
 					theCriteria = new AND(theCriteria,personalIdCriteria);
-				else 
+				}
+				else {
 					theCriteria = new OR(theCriteria,personalIdCriteria);
+				}
 			}	
 		}
 			
@@ -1362,10 +1376,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				if(theCriteria==null){
 					theCriteria = streetNameCriteria;
 				} else {
-					if(useAnd)
+					if(useAnd) {
 						theCriteria = new AND(theCriteria,streetNameCriteria);
-					else 
+					}
+					else {
 						theCriteria = new OR(theCriteria,streetNameCriteria);
+					}
 				}
 			}
 			catch (RemoteException re) {
@@ -1379,10 +1395,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if(theCriteria==null){
 				theCriteria = genderCriteria;
 			} else {
-				if(useAnd)
+				if(useAnd) {
 					theCriteria = new AND(theCriteria,genderCriteria);
-				else 
+				}
+				else {
 					theCriteria = new OR(theCriteria,genderCriteria);
+				}
 			}
 		}
 			
@@ -1393,10 +1411,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if(theCriteria==null){
 				theCriteria = StatusIdCriteria;
 			} else {
-				if(useAnd)
+				if(useAnd) {
 					theCriteria = new AND(theCriteria,StatusIdCriteria);
-				else 
+				}
+				else {
 					theCriteria = new OR(theCriteria,StatusIdCriteria);
+				}
 			}
 		}
 		
@@ -1407,10 +1427,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if(theCriteria==null){
 				theCriteria = groupNameCriteria;
 			} else {
-				if(useAnd)
+				if(useAnd) {
 					theCriteria = new AND(theCriteria,groupNameCriteria);
-				else 
+				}
+				else {
 					theCriteria = new OR(theCriteria,groupNameCriteria);
+				}
 			}
 		}	
 			
@@ -1424,10 +1446,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			}
 		}
 		
-		if(theCriteria==null)
+		if(theCriteria==null) {
 			theCriteria = getNotDeletedCriteria();
-		else 
+		}
+		else {
 			theCriteria = new AND(theCriteria,getNotDeletedCriteria());
+		}
 		
 		query.addCriteria(theCriteria);
 		addOrderByName(query,orderLastFirst,true);
@@ -1603,30 +1627,39 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		
 		switch (count) {
 		case 1:
-			if(firstNameCriteria!=null)
+			if(firstNameCriteria!=null) {
 				return firstNameCriteria;
-			if(middleNameCriteria!=null)
+			}
+			if(middleNameCriteria!=null) {
 				return middleNameCriteria;
-			if(lastNameCriteria!=null)
+			}
+			if(lastNameCriteria!=null) {
 				return lastNameCriteria;
+			}
 		case 2:
 			if(middleNameCriteria==null){
-				if(andCriteria)
+				if(andCriteria) {
 					return new AND(firstNameCriteria,lastNameCriteria);
-				else 
+				}
+				else {
 					return new OR(firstNameCriteria,lastNameCriteria);
+				}
 			}
 			if(lastNameCriteria==null){
-				if(andCriteria)
+				if(andCriteria) {
 					return new AND(firstNameCriteria,middleNameCriteria);
-				else 
+				}
+				else {
 					return new OR(firstNameCriteria,middleNameCriteria);
+				}
 			}
 			if(firstNameCriteria==null){
-				if(andCriteria)
+				if(andCriteria) {
 					return new AND(middleNameCriteria,lastNameCriteria);
-				else 
+				}
+				else {
 					return new OR(middleNameCriteria,lastNameCriteria);
+				}
 			}
 			
 		case 3:
@@ -2310,4 +2343,102 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public Collection ejbFindAllUsersWithDuplicatedPhones(String phoneType)throws FinderException{
     	return this.idoFindPKsBySQL("select up.ic_user_id from ic_user_phone up, ic_phone p where up.ic_phone_id = p.ic_phone_id and p.ic_phone_type_id = " + phoneType + " group by ic_user_id having count(up.ic_user_id)>1");
 	}
+
+	private boolean validateSSN(String ssn) {
+        int sum = 0; 
+        boolean validSSN = false; 
+        if (ssn.length() == 10) { 
+            try {
+	            sum = sum + Integer.parseInt(ssn.substring(0,1)) * 3; 
+	            sum = sum + Integer.parseInt(ssn.substring(1,2)) * 2; 
+	            sum = sum + Integer.parseInt(ssn.substring(2,3)) * 7; 
+	            sum = sum + Integer.parseInt(ssn.substring(3,4)) * 6; 
+	            sum = sum + Integer.parseInt(ssn.substring(4,5)) * 5; 
+	            sum = sum + Integer.parseInt(ssn.substring(5,6)) * 4; 
+	            sum = sum + Integer.parseInt(ssn.substring(6,7)) * 3; 
+	            sum = sum + Integer.parseInt(ssn.substring(7,8)) * 2; 
+	            sum = sum + Integer.parseInt(ssn.substring(8,9)) * 1; 
+	            sum = sum + Integer.parseInt(ssn.substring(9,10)) * 0; 
+            	if ((sum%11) == 0) {
+            	    validSSN = true; 
+            	} else {
+            	    System.out.println(ssn + " is not a valid SSN. If fails validation test.");
+            	}
+            }
+            catch (NumberFormatException e) {
+                System.out.println(ssn + " is not a valid SSN. It contains characters other than digits.");
+            }
+        } else {
+            System.out.println(ssn + " is not a valid SSN. It is not 10 characters.");
+        }
+        return validSSN;
+    }
+	
+	public boolean hasValidSSN() {
+		if (getPersonalID() == null) {
+			return false;
+		}
+		return validateSSN(getPersonalID());
+	}
+	
+//	public boolean isDeceased() {
+//		boolean isDeceased = false;
+//		try {
+//			UserStatus userStatus = getUserStatusBusiness().getDeceasedUserStatus((Integer)getPrimaryKey());
+//			isDeceased = userStatus != null;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//   	 	return isDeceased;
+//	}
+	
+	public boolean isDeceased()  {
+		Status deceasedStatus = null;
+		try {
+			deceasedStatus = getStatusHome().findByStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
+		}
+		catch (FinderException e) {
+			try {
+				deceasedStatus = getStatusHome().create();
+				deceasedStatus.setStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
+				deceasedStatus.store();
+			}
+			catch (CreateException e1) {
+				e1.printStackTrace();
+			}
+		}
+		Collection coll = null;
+		try {
+			coll = getUserStatusHome().findAllByUserIDAndStatusID((Integer)getPrimaryKey(),(Integer) deceasedStatus.getPrimaryKey());
+		} 
+		catch (FinderException e) {
+			e.printStackTrace();
+		}
+		if (coll != null && !coll.isEmpty()) {
+			System.out.println("User with SSN = " + getPersonalID() + " is deceased"); 
+		} 
+		return coll != null && !coll.isEmpty();
+	}
+		
+		protected UserStatusHome getUserStatusHome(){
+			UserStatusHome home = null;
+			try {
+			 home = (UserStatusHome) com.idega.data.IDOLookup.getHome(UserStatus.class);
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			return home;
+		}
+
+		protected StatusHome getStatusHome(){
+			StatusHome home = null;
+			try {
+			 home = (StatusHome) com.idega.data.IDOLookup.getHome(Status.class);
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			return home;
+		}
 }

@@ -44,11 +44,15 @@ public class CBSystemProperties
         String os = System.getProperty("os.name");
         if (os != null && os.toLowerCase().indexOf("windows") > -1) 
         {
-            if (debug) System.out.println("this is a windows machine.");
+            if (debug) {
+				System.out.println("this is a windows machine.");
+			}
             return true;
         }   
          
-        if (debug) System.out.println("this is a unix machine.");
+        if (debug) {
+			System.out.println("this is a unix machine.");
+		}
         return false;
     }
     
@@ -118,8 +122,9 @@ public class CBSystemProperties
         String line = "";
         //int pos;
         
-        if (debug)
-            System.out.println("reading output from batch file");
+        if (debug) {
+			System.out.println("reading output from batch file");
+		}
 
         setSystemPropertiesFromBufferedReader(input);
 
@@ -140,27 +145,32 @@ public class CBSystemProperties
         String value;
         while ((line = input.readLine()) != null)
         {
-            if (debug)
-                System.out.println("read raw line: " + line);
+            if (debug) {
+				System.out.println("read raw line: " + line);
+			}
 
             if ((pos=line.indexOf('='))>0)
             {
                 name = line.substring(0, pos);
-                if (line.length()>pos)
-                    value = line.substring(pos+1).trim();
-                else
-                    value = "";
+                if (line.length()>pos) {
+					value = line.substring(pos+1).trim();
+				}
+				else {
+					value = "";
+				}
 
 
                 if (System.getProperty(name) == null)
                 {
                     System.setProperty(name, value);
-                    if (debug)
-                        System.out.println("SET setting property '" + name + "' equal '" + value + "'");
+                    if (debug) {
+						System.out.println("SET setting property '" + name + "' equal '" + value + "'");
+					}
                 }
                 else
-                    if (debug)
-                        System.out.println("skipping existing value for: " + name);
+                    if (debug) {
+						System.out.println("skipping existing value for: " + name);
+					}
 
             }
         }
@@ -200,8 +210,9 @@ public class CBSystemProperties
         try
         {
             setSystemPropertiesFromBufferedReader(new BufferedReader(new FileReader(propertiesListFile)));
-            if (debug)
-                dumpProperties();
+            if (debug) {
+				dumpProperties();
+			}
 
             return true;
         }
@@ -238,8 +249,9 @@ public class CBSystemProperties
             readSystemProperties(batchFileName);
     
             // for debugging, dump the list of read properties...
-            if (debug)
-                dumpProperties();
+            if (debug) {
+				dumpProperties();
+			}
                 
             // cleanup - delete the file...
             deleteBatchFile(batchFileName);                

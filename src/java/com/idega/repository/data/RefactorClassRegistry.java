@@ -61,17 +61,17 @@ public class RefactorClassRegistry implements Singleton {
 	public Map getRefactoredClassNames()
 	{
 		// TODO Auto-generated method stub
-		if(refactoredClassNamesMap==null){
-			refactoredClassNamesMap=new HashMap();
+		if(this.refactoredClassNamesMap==null){
+			this.refactoredClassNamesMap=new HashMap();
 		}
-		return refactoredClassNamesMap;
+		return this.refactoredClassNamesMap;
 	}
 	
 	public Map getRefactoredPackageNames() {
-		if (refactoredPackageNamesMap == null) {
-			refactoredPackageNamesMap = new HashMap();
+		if (this.refactoredPackageNamesMap == null) {
+			this.refactoredPackageNamesMap = new HashMap();
 		}
-		return refactoredPackageNamesMap;
+		return this.refactoredPackageNamesMap;
 	}
 	
 	/**

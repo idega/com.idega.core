@@ -19,8 +19,8 @@ public class MemoryInputStream extends InputStream {
 
 	public int read() {
 		//System.out.println("Calling read1 on MemoryInputStream");
-		if (position < buffer.length()) {
-			return (int) buffer.read(position++);
+		if (this.position < this.buffer.length()) {
+			return this.buffer.read(this.position++);
 		} else {
 			return -1;
 		}
@@ -33,11 +33,11 @@ public class MemoryInputStream extends InputStream {
 
 	public int read(byte[] b, int off, int len) {
 		//System.out.println("Calling read3 on MemoryInputStream");
-		int bufferlength = buffer.length();
-		if (position < bufferlength) {
-			int oldPos = position;
-			position += len;
-			return buffer.read(b, oldPos + off, len);
+		int bufferlength = this.buffer.length();
+		if (this.position < bufferlength) {
+			int oldPos = this.position;
+			this.position += len;
+			return this.buffer.read(b, oldPos + off, len);
 		} else {
 			return -1;
 		}
@@ -45,7 +45,7 @@ public class MemoryInputStream extends InputStream {
 
 	public int available() throws IOException {
 		//System.out.println("Calling available on MemoryInputStream");
-		return buffer.length() - position;
+		return this.buffer.length() - this.position;
 	}
 
 	public void close() {
@@ -62,7 +62,7 @@ public class MemoryInputStream extends InputStream {
 	}
 
 	public synchronized void reset() throws IOException {
-		position = 0;
+		this.position = 0;
 		//System.out.println("Calling reset on MemoryInputStream");
 	}
 

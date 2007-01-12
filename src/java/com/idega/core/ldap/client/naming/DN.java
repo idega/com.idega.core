@@ -58,7 +58,7 @@ public class DN implements Name
 
     public DN()
     {
-        RDNs = new Vector();
+        this.RDNs = new Vector();
     }
 
     /**
@@ -72,7 +72,7 @@ public class DN implements Name
     {
         try
         {
-            RDNs = new Vector();
+            this.RDNs = new Vector();
 
             if (copyMe != null)
             {
@@ -106,7 +106,7 @@ public class DN implements Name
     {
         try
         {
-            RDNs = new Vector();
+            this.RDNs = new Vector();
 
             if ("".equals(ldapDN) || BLANKBASEDN.equals(ldapDN))
             {
@@ -153,9 +153,11 @@ public class DN implements Name
     {
         try
         {
-            RDNs = new Vector();
+            this.RDNs = new Vector();
 
-            if (name.isEmpty()) return;
+            if (name.isEmpty()) {
+				return;
+			}
 
             for (int i=0; i<name.size(); i++)
             {
@@ -184,8 +186,9 @@ public class DN implements Name
     public String toString()
     {
         String ldapDN = "";
-        for (int i=0; i<RDNs.size(); i++)
-            ldapDN =  get(i) + (i!=0?",":"") + ldapDN;
+        for (int i=0; i<this.RDNs.size(); i++) {
+			ldapDN =  get(i) + (i!=0?",":"") + ldapDN;
+		}
         if (ldapDN.endsWith(","))
         {
             if (ldapDN.charAt(ldapDN.length()-2) != '\\')
@@ -213,8 +216,9 @@ public class DN implements Name
     public String toFormattedString()
     {
         String ldapDN = "";
-        for (int i=0; i<RDNs.size(); i++)
-            ldapDN += get(i) + "\n";
+        for (int i=0; i<this.RDNs.size(); i++) {
+			ldapDN += get(i) + "\n";
+		}
         return ldapDN;
     }
 
@@ -236,9 +240,15 @@ public class DN implements Name
 
     public String getRDNAttribute(int i)
     {
-        if (isEmpty()) return "";
-        if (i >= size()) return "";
-        if (i < 0) return "";
+        if (isEmpty()) {
+			return "";
+		}
+        if (i >= size()) {
+			return "";
+		}
+        if (i < 0) {
+			return "";
+		}
 
         return getRDN(i).getAtt();
     }
@@ -254,9 +264,15 @@ public class DN implements Name
 
     public String getRDNValue(int i)
     {
-        if (isEmpty()) return "";
-        if (i >= size()) return "";
-        if (i < 0) return "";
+        if (isEmpty()) {
+			return "";
+		}
+        if (i >= size()) {
+			return "";
+		}
+        if (i < 0) {
+			return "";
+		}
 
         return getRDN(i).getRawVal();
     }
@@ -287,8 +303,9 @@ public class DN implements Name
 
     public void setRDN(RDN rdn, int i)
     {
-        if (i<size() && i>= 0)
-            RDNs.setElementAt(rdn, i);
+        if (i<size() && i>= 0) {
+			this.RDNs.setElementAt(rdn, i);
+		}
     }
 
 
@@ -302,12 +319,18 @@ public class DN implements Name
 
     public RDN getRDN(int i)
     {
-        if (i==0 && isEmpty()) return new RDN();  // return empty RDN for empty DN
+        if (i==0 && isEmpty()) {
+			return new RDN();  // return empty RDN for empty DN
+		}
 
-        if (i<0) return new RDN();
-        if (i >= size()) new RDN();
+        if (i<0) {
+			return new RDN();
+		}
+        if (i >= size()) {
+			new RDN();
+		}
 
-        return (RDN) RDNs.elementAt(i);
+        return (RDN) this.RDNs.elementAt(i);
     }
 
     /**
@@ -318,10 +341,12 @@ public class DN implements Name
 
     public RDN getRootRDN()
     {
-        if (isEmpty())
-            return new RDN("");
-        else
-            return getRDN(0);
+        if (isEmpty()) {
+			return new RDN("");
+		}
+		else {
+			return getRDN(0);
+		}
     }
 
     /**
@@ -348,13 +373,16 @@ public class DN implements Name
     public static void checkRDN(String RDN) throws InvalidNameException
     {
 //        if (RDN==null || "".equals(RDN)) return;
-        if (RDN==null || "".equals(RDN))	//TE: empty RDN.
-            throw new InvalidNameException(CBIntText.get("Empty RDN, please enter a valid RDN. ") + ((RDN==null)?"<null>":CBIntText.get("The RDN value entered was: '")+RDN) + "'");
+        if (RDN==null || "".equals(RDN)) {
+			throw new InvalidNameException(CBIntText.get("Empty RDN, please enter a valid RDN. ") + ((RDN==null)?"<null>":CBIntText.get("The RDN value entered was: '")+RDN) + "'");
+		}
 
-        if (NameUtility.next(RDN,0,'=')<0)	//TE: no '='.
-            throw new InvalidNameException(CBIntText.get("Invalid RDN, please enter a naming attribute followed by '=' followed by a name in the RDN field (for example, 'cn=Trudi). '") + ((RDN==null)?"<null>":CBIntText.get("The RDN value entered was: '")+RDN) + "'");
-		else if (NameUtility.next(RDN,0,'=')<1)	//TE: no naming attribute.
-            throw new InvalidNameException(CBIntText.get("Invalid RDN, please enter a naming attribute in the RDN field (for example, cn: 'cn=Trudi). '") + ((RDN==null)?"<null>":CBIntText.get("The RDN value entered was: '")+RDN) + "'");
+        if (NameUtility.next(RDN,0,'=')<0) {
+			throw new InvalidNameException(CBIntText.get("Invalid RDN, please enter a naming attribute followed by '=' followed by a name in the RDN field (for example, 'cn=Trudi). '") + ((RDN==null)?"<null>":CBIntText.get("The RDN value entered was: '")+RDN) + "'");
+		}
+		else if (NameUtility.next(RDN,0,'=')<1) {
+			throw new InvalidNameException(CBIntText.get("Invalid RDN, please enter a naming attribute in the RDN field (for example, cn: 'cn=Trudi). '") + ((RDN==null)?"<null>":CBIntText.get("The RDN value entered was: '")+RDN) + "'");
+		}
     }
 
 
@@ -444,14 +472,19 @@ public class DN implements Name
     public boolean equals(DN testDN)
     {
        //XXX return (toString().equals(testDN.toString()));
-        if (testDN == null) return false;
+        if (testDN == null) {
+			return false;
+		}
 
-        if (testDN.size()!= size()) return false;
+        if (testDN.size()!= size()) {
+			return false;
+		}
 
         for (int i=0; i<size(); i++)
         {
-            if (getRDN(i).equals(testDN.getRDN(i)) == false)
-                return false;
+            if (getRDN(i).equals(testDN.getRDN(i)) == false) {
+				return false;
+			}
         }
         return true;
     }
@@ -463,14 +496,18 @@ public class DN implements Name
      */
     public boolean equals(Object o)
     {
-        if (o == null)
-            return false;
-        if (o instanceof DN)
-            return equals((DN)o);
-        else if (o instanceof Name)
-            return (compareTo((Name)o) == 0);
-        else
-            return false;  // cannot be equal in any sense if not a name
+        if (o == null) {
+			return false;
+		}
+        if (o instanceof DN) {
+			return equals((DN)o);
+		}
+		else if (o instanceof Name) {
+			return (compareTo(o) == 0);
+		}
+		else {
+			return false;  // cannot be equal in any sense if not a name
+		}
     }
     /**
      *    Checks whether the testDN is a subset of the current DN,
@@ -494,12 +531,15 @@ public class DN implements Name
 
     public boolean sharesParent(DN testDN)
     {
-        if (testDN.size()!= size()) return false;
+        if (testDN.size()!= size()) {
+			return false;
+		}
 
         for (int i=0; i<size()-1; i++)
         {
-            if ((testDN.getRDN(i).equals(getRDN(i)))==false)
-                return false;
+            if ((testDN.getRDN(i).equals(getRDN(i)))==false) {
+				return false;
+			}
         }
         return true;
     }
@@ -513,7 +553,9 @@ public class DN implements Name
 
     public DN parentDN()
     {
-        if (size()==1) return new DN();  // return empty DN for top level DNs
+        if (size()==1) {
+			return new DN();  // return empty DN for top level DNs
+		}
 
         DN newDN = new DN(this);
         newDN.RDNs.removeElementAt(size()-1);
@@ -527,9 +569,10 @@ public class DN implements Name
     public void reverse()
     {
         Vector rev = new Vector();
-        for (int i=RDNs.size()-1; i>=0; i--)
-            rev.add(RDNs.elementAt(i));
-        RDNs = rev;
+        for (int i=this.RDNs.size()-1; i>=0; i--) {
+			rev.add(this.RDNs.elementAt(i));
+		}
+        this.RDNs = rev;
     }
 
     /**
@@ -537,8 +580,8 @@ public class DN implements Name
      */
     public void clear()
     {
-        RDNs.clear();
-        errorString = null;
+        this.RDNs.clear();
+        this.errorString = null;
     }
 
     /**
@@ -546,7 +589,7 @@ public class DN implements Name
      */
     public void setError(String e)
     {
-        errorString = e;
+        this.errorString = e;
         System.out.println(e);
     }
 
@@ -555,7 +598,7 @@ public class DN implements Name
      */
     public boolean error()
     {
-        return (errorString == null);
+        return (this.errorString == null);
     }
 
     /**
@@ -563,7 +606,7 @@ public class DN implements Name
      */
     public String getError()
     {
-        return errorString;
+        return this.errorString;
     }
 
 
@@ -627,7 +670,7 @@ public class DN implements Name
 
     public Name add(int posn, RDN rdn)
     {
-        RDNs.insertElementAt(rdn,posn);
+        this.RDNs.insertElementAt(rdn,posn);
         return this;
     }
 
@@ -675,8 +718,9 @@ public class DN implements Name
         throws InvalidNameException
     {
          Enumeration e = n.getAll();
-         while (e.hasMoreElements())
-             add(posn++, e.nextElement().toString());
+         while (e.hasMoreElements()) {
+			add(posn++, e.nextElement().toString());
+		}
          return this;
     }
 
@@ -689,8 +733,9 @@ public class DN implements Name
         throws InvalidNameException
     {
          Enumeration e = suffix.getAll();
-         while (e.hasMoreElements())
-             add(e.nextElement().toString());
+         while (e.hasMoreElements()) {
+			add(e.nextElement().toString());
+		}
          return this;
     }
 
@@ -725,23 +770,28 @@ public class DN implements Name
                 String compRDN = compareMe.get(compSize-pos);
                 int rdnOrder = RDN.compareTo(compRDN);
 
-                if (rdnOrder != 0)
-                    return rdnOrder;  // return alphabetic order of rdn.
+                if (rdnOrder != 0) {
+					return rdnOrder;  // return alphabetic order of rdn.
+				}
 
                 pos++;
                 if (pos>size || pos>compSize)
                 {
-                    if (size==compSize)
-                        return 0;  // names are equal
-                    if (pos>size)
-                        return -1;  // shorter dns first
-                    else
-                        return 1;
+                    if (size==compSize) {
+						return 0;  // names are equal
+					}
+                    if (pos>size) {
+						return -1;  // shorter dns first
+					}
+					else {
+						return 1;
+					}
                 }
             }
         }
-        else
-            throw new ClassCastException("non Name object in DN.compareTo - object was " + obj.getClass());
+		else {
+			throw new ClassCastException("non Name object in DN.compareTo - object was " + obj.getClass());
+		}
 
         return 0; // never reached.
     }
@@ -765,9 +815,11 @@ public class DN implements Name
 
     public String get(int posn)
     {
-        if (posn==0 && isEmpty()) return "";  // return empty string for empty DN
+        if (posn==0 && isEmpty()) {
+			return "";  // return empty string for empty DN
+		}
 
-        return RDNs.elementAt(posn).toString();
+        return this.RDNs.elementAt(posn).toString();
     }
 
     /*
@@ -777,8 +829,9 @@ public class DN implements Name
     public java.util.Enumeration getAll()
     {
         DXNamingEnumeration ret = new DXNamingEnumeration();
-        for (int i=0; i<size(); i++)
-            ret.add(get(i));
+        for (int i=0; i<size(); i++) {
+			ret.add(get(i));
+		}
         return ret;
     }
 
@@ -791,8 +844,9 @@ public class DN implements Name
         DN returnMe = new DN();
         try
         {
-            for (int i=0; i<posn; i++)
-                returnMe.add(get(i));
+            for (int i=0; i<posn; i++) {
+				returnMe.add(get(i));
+			}
             return returnMe;
         }
         catch (InvalidNameException e)
@@ -833,7 +887,7 @@ public class DN implements Name
 
     public Object remove(int posn)
     {
-          return RDNs.remove(posn);
+          return this.RDNs.remove(posn);
     }
 
    /*
@@ -844,7 +898,7 @@ public class DN implements Name
 
     public int size()
     {
-        return RDNs.size();
+        return this.RDNs.size();
     }
 
    /*
@@ -867,9 +921,11 @@ public class DN implements Name
     {
         int pos = 0;
         Enumeration e = n.getAll();
-        while (e.hasMoreElements())
-            if (e.nextElement().toString().equalsIgnoreCase(get(pos++).toString())==false)
-                return false;
+        while (e.hasMoreElements()) {
+			if (e.nextElement().toString().equalsIgnoreCase(get(pos++).toString())==false) {
+				return false;
+			}
+		}
 
         return true;  // falls through - all tested components must be equal!
     }

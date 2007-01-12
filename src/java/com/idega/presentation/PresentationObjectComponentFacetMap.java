@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectComponentFacetMap.java,v 1.2 2004/12/20 08:54:56 tryggvil Exp $
+ * $Id: PresentationObjectComponentFacetMap.java,v 1.2.2.1 2007/01/12 19:31:35 idegaweb Exp $
  * Created on 14.11.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import javax.faces.component.UIComponent;
 /**
  * Overrided from JSFs standard FacetsMap because of the clone() issue.
  * 
- * Last modified: $Date: 2004/12/20 08:54:56 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/01/12 19:31:35 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.2.2.1 $
  */
 public class PresentationObjectComponentFacetMap implements Map, Serializable,Cloneable{
 
@@ -32,24 +32,24 @@ public class PresentationObjectComponentFacetMap implements Map, Serializable,Cl
 	private Map _map = new HashMap();
 
 	public PresentationObjectComponentFacetMap(UIComponent component) {
-		_component = component;
+		this._component = component;
 	}
 
 	public int size() {
-		return _map.size();
+		return this._map.size();
 	}
 
 	public void clear() {
-		_map.clear();
+		this._map.clear();
 	}
 
 	public boolean isEmpty() {
-		return _map.isEmpty();
+		return this._map.isEmpty();
 	}
 
 	public boolean containsKey(Object key) {
 		checkKey(key);
-		return _map.containsKey(key);
+		return this._map.containsKey(key);
 	}
 
 	public boolean containsValue(Object value) {
@@ -58,7 +58,7 @@ public class PresentationObjectComponentFacetMap implements Map, Serializable,Cl
 	}
 
 	public Collection values() {
-		return _map.values();
+		return this._map.values();
 	}
 
 	public void putAll(Map t) {
@@ -69,23 +69,24 @@ public class PresentationObjectComponentFacetMap implements Map, Serializable,Cl
 	}
 
 	public Set entrySet() {
-		return _map.entrySet();
+		return this._map.entrySet();
 	}
 
 	public Set keySet() {
-		return _map.keySet();
+		return this._map.keySet();
 	}
 
 	public Object get(Object key) {
 		checkKey(key);
-		return _map.get(key);
+		return this._map.get(key);
 	}
 
 	public Object remove(Object key) {
 		checkKey(key);
-		UIComponent facet = (UIComponent) _map.remove(key);
-		if (facet != null)
+		UIComponent facet = (UIComponent) this._map.remove(key);
+		if (facet != null) {
 			facet.setParent(null);
+		}
 		return facet;
 	}
 
@@ -93,7 +94,7 @@ public class PresentationObjectComponentFacetMap implements Map, Serializable,Cl
 		checkKey(key);
 		checkValue(value);
 		setNewParent((String) key, (UIComponent) value);
-		return _map.put(key, value);
+		return this._map.put(key, value);
 	}
 
 	private void setNewParent(String facetName, UIComponent facet) {
@@ -101,21 +102,25 @@ public class PresentationObjectComponentFacetMap implements Map, Serializable,Cl
 		if (oldParent != null) {
 			oldParent.getFacets().remove(facetName);
 		}
-		facet.setParent(_component);
+		facet.setParent(this._component);
 	}
 
 	private void checkKey(Object key) {
-		if (key == null)
+		if (key == null) {
 			throw new NullPointerException("key");
-		if (!(key instanceof String))
+		}
+		if (!(key instanceof String)) {
 			throw new ClassCastException("key is not a String");
+		}
 	}
 
 	private void checkValue(Object value) {
-		if (value == null)
+		if (value == null) {
 			throw new NullPointerException("value");
-		if (!(value instanceof UIComponent))
+		}
+		if (!(value instanceof UIComponent)) {
 			throw new ClassCastException("value is not a UIComponent");
+		}
 	}
 
 
@@ -138,7 +143,7 @@ public class PresentationObjectComponentFacetMap implements Map, Serializable,Cl
 	 * @return Returns the _component.
 	 */
 	protected UIComponent getComponent() {
-		return _component;
+		return this._component;
 	}
 	/**
 	 * @param _component The _component to set.

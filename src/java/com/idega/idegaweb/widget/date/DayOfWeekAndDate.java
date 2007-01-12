@@ -1,5 +1,5 @@
 /*
- * $Id: DayOfWeekAndDate.java,v 1.1 2005/10/27 10:16:11 laddi Exp $
+ * $Id: DayOfWeekAndDate.java,v 1.1.2.1 2007/01/12 19:32:40 idegaweb Exp $
  * Created on Oct 27, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.util.text.TextSoap;
 
 
 /**
- * Last modified: $Date: 2005/10/27 10:16:11 $ by $Author: laddi $
+ * Last modified: $Date: 2007/01/12 19:32:40 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class DayOfWeekAndDate extends Widget {
 
@@ -34,7 +34,7 @@ public class DayOfWeekAndDate extends Widget {
 		IWCalendar calendar = new IWCalendar(getLocale());
 		
 		String dayName = TextSoap.capitalize(calendar.getDayName(calendar.getDayOfWeek()));
-		Text text = new Text(dayName + ", " + calendar.getLocaleDate(getLocale(), style));
+		Text text = new Text(dayName + ", " + calendar.getLocaleDate(getLocale(), this.style));
 		
 		return text;
 	}

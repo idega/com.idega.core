@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleLoader.java,v 1.1 2005/06/22 12:27:27 tryggvil Exp $
+ * $Id: IWBundleLoader.java,v 1.1.2.1 2007/01/12 19:31:59 idegaweb Exp $
  * Created on 31.5.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * This is the class responsible for loading the bundles (the new jar method) for the IWMainApplication instance.
  * </p>
- *  Last modified: $Date: 2005/06/22 12:27:27 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:31:59 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class IWBundleLoader {
 
@@ -43,11 +43,11 @@ public class IWBundleLoader {
 	 */
 	public IWBundleLoader(IWMainApplication iwma,ServletContext sContext) {
 		this.iwma=iwma;
-		_externalContext=sContext;
+		this._externalContext=sContext;
 	}
 	
 	private ServletContext getExternalContext(){
-		return _externalContext;
+		return this._externalContext;
 	}
 	
 	public void loadBundlesFromJars()
@@ -99,7 +99,9 @@ public class IWBundleLoader {
             {
                 if (entry.getName().equals("properties/bundle.pxml"))
                 {
-                    if (log.isDebugEnabled()) log.debug("bundle.pxml found in " + jarPath);
+                    if (log.isDebugEnabled()) {
+						log.debug("bundle.pxml found in " + jarPath);
+					}
                     found = true;
                     break;
                 }
@@ -131,10 +133,14 @@ public class IWBundleLoader {
                     JarEntry configFile = jarFile.getJarEntry("properties/bundle.pxml");
                     if (configFile != null)
                     {
-                        if (log.isDebugEnabled()) log.debug("bundle.pxml found in jar " + jarPath);
+                        if (log.isDebugEnabled()) {
+							log.debug("bundle.pxml found in jar " + jarPath);
+						}
                         InputStream stream = jarFile.getInputStream(configFile);
                         String systemId = "jar:" + tmp.toURL() + "!/" + configFile.getName();
-                        if (log.isInfoEnabled()) log.info("Reading config " + systemId);
+                        if (log.isInfoEnabled()) {
+							log.info("Reading config " + systemId);
+						}
                         //_dispenser.feed(_unmarshaller.getFacesConfig(stream, systemId));
                         loadBundle(stream,jarPath,systemId);
                     }
@@ -145,7 +151,9 @@ public class IWBundleLoader {
                 }
             } else
             {
-                if (log.isDebugEnabled()) log.debug("Jar " + jarPath + " contains no faces-config.xml");
+                if (log.isDebugEnabled()) {
+					log.debug("Jar " + jarPath + " contains no faces-config.xml");
+				}
             }
         } catch (Exception e)
         {

@@ -1,5 +1,5 @@
 /*
- * $Id: SimpleSearchQuery.java,v 1.1 2005/01/19 01:48:30 eiki Exp $
+ * $Id: SimpleSearchQuery.java,v 1.1.2.1 2007/01/12 19:32:41 idegaweb Exp $
  * Created on Jan 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,11 +15,11 @@ import com.idega.core.search.business.SearchQuery;
 
 /**
  * 
- *  Last modified: $Date: 2005/01/19 01:48:30 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/01/12 19:32:41 $ by $Author: idegaweb $
  * 
  * A basic implementor for an simple query.
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class SimpleSearchQuery implements SearchQuery {
 
@@ -55,7 +55,7 @@ public class SimpleSearchQuery implements SearchQuery {
 	 * @see com.idega.core.search.business.SearchQuery#getSearchParameters()
 	 */
 	public Map getSearchParameters() {
-		return searchParameters;
+		return this.searchParameters;
 	}
 	
 	/**
@@ -69,8 +69,8 @@ public class SimpleSearchQuery implements SearchQuery {
 	 * @return the first value in the search parameter map
 	 */
 	public String getSimpleSearchQuery(){
-		if(searchParameters!=null && !searchParameters.isEmpty()){
-			return (String)searchParameters.values().iterator().next();
+		if(this.searchParameters!=null && !this.searchParameters.isEmpty()){
+			return (String)this.searchParameters.values().iterator().next();
 		}
 		return null;
 	}

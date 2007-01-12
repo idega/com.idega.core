@@ -36,7 +36,7 @@ public class XMLDataWriter extends WriterToFile {
 	public  String createContainer() throws IOException {
 			// get path
 		long folderIdentifier = System.currentTimeMillis();
-		String name = ((XMLData) storable).getName();
+		String name = ((XMLData) this.storable).getName();
 		String path = getRealPathToFile(name, XML_EXTENSION, folderIdentifier);
     OutputStream destination = null;
     File auxiliaryFile = null;
@@ -61,7 +61,7 @@ public class XMLDataWriter extends WriterToFile {
 	}
 	
 	public String getName() {
-		return ((XMLData) storable).getName();
+		return ((XMLData) this.storable).getName();
 	}
 	
 	public String getMimeType() {
@@ -76,7 +76,7 @@ public class XMLDataWriter extends WriterToFile {
     xmlOutput.setEncoding("UTF-8");
     
     // do not use document directly use accessor method
-    XMLDocument myDocument = ((XMLData) storable).getDocument();
+    XMLDocument myDocument = ((XMLData) this.storable).getDocument();
     xmlOutput.output(myDocument, destination);
     return destination;
 	}

@@ -31,26 +31,28 @@ public class ImageSlideShow extends Block
 	public void main(IWContext iwc)
 	{
 		IWBundle iwb = getBundle(iwc);
-		if (leftObject == null)
-			leftObject = iwb.getImage("arrowleft.gif");
-		if (rightObject == null)
-			rightObject = iwb.getImage("arrowright.gif");
-		if (fileFolder == null && fileId > 1)
+		if (this.leftObject == null) {
+			this.leftObject = iwb.getImage("arrowleft.gif");
+		}
+		if (this.rightObject == null) {
+			this.rightObject = iwb.getImage("arrowright.gif");
+		}
+		if (this.fileFolder == null && this.fileId > 1)
 		{
 			try
 			{
 				ICFileHome fileHome = (ICFileHome) com.idega.data.IDOLookup.getHome(ICFile.class);
-				fileFolder = fileHome.findByPrimaryKey(new Integer(fileId));
+				this.fileFolder = fileHome.findByPrimaryKey(new Integer(this.fileId));
 			}
 			catch (Exception ex)
 			{
 			}
 		}
-		else if (listOfFiles != null && !listOfFiles.isEmpty())
+		else if (this.listOfFiles != null && !this.listOfFiles.isEmpty())
 		{
-			fileFolder = (ICFile) listOfFiles.get(0);
+			this.fileFolder = (ICFile) this.listOfFiles.get(0);
 		}
-		if (fileFolder != null)
+		if (this.fileFolder != null)
 		{
 			Table T = new Table(2, 2);
 			String name = "";
@@ -58,7 +60,7 @@ public class ImageSlideShow extends Block
 			ICFile fileImage = null;
 			int buttonRow = 2;
 			int imageRow = 1;
-			if ((buttonAlign & TOP) != 0)
+			if ((this.buttonAlign & TOP) != 0)
 			{
 				imageRow = 2;
 				buttonRow = 1;
@@ -66,25 +68,25 @@ public class ImageSlideShow extends Block
 			// iterator init
 			Iterator iter = null;
 			int size = 1;
-			int folderSize = fileFolder.getChildCount();
-			if (fileFolder.getChildCount() > 0 && fileFolder.getChildrenIterator() != null)
+			int folderSize = this.fileFolder.getChildCount();
+			if (this.fileFolder.getChildCount() > 0 && this.fileFolder.getChildrenIterator() != null)
 			{
-				iter = fileFolder.getChildrenIterator();
+				iter = this.fileFolder.getChildrenIterator();
 				size += folderSize;
 			}
-			else if (listOfFiles != null)
+			else if (this.listOfFiles != null)
 			{
-				iter = listOfFiles.iterator();
-				size = listOfFiles.size();
+				iter = this.listOfFiles.iterator();
+				size = this.listOfFiles.size();
 			}
 			// iterator work
 			Image image = new Image();
-			name = "p_" + fileFolder.getPrimaryKey().toString();
+			name = "p_" + this.fileFolder.getPrimaryKey().toString();
 			try
 			{
-				if (!fileFolder.isFolder())
+				if (!this.fileFolder.isFolder())
 				{
-					fileImage = fileFolder;
+					fileImage = this.fileFolder;
 				}
 				else if (iter != null && iter.hasNext())
 				{
@@ -95,12 +97,15 @@ public class ImageSlideShow extends Block
 					image = new Image(fileImage);
 					if (image != null)
 					{
-						if (width > 0)
-							image.setWidth(width);
-						if (height > 0)
-							image.setHeight(height);
-						if (alt != null)
-							image.setAlt(alt);
+						if (this.width > 0) {
+							image.setWidth(this.width);
+						}
+						if (this.height > 0) {
+							image.setHeight(this.height);
+						}
+						if (this.alt != null) {
+							image.setAlt(this.alt);
+						}
 					}
 					try
 					{
@@ -126,8 +131,9 @@ public class ImageSlideShow extends Block
 					try
 					{
 						String url = getICFileSystem(iwc).getFileURI(fileImage);
-						if (!urls.contains(url))
+						if (!urls.contains(url)) {
 							urls.add(url);
+						}
 					}
 					catch (Exception ex)
 					{
@@ -138,53 +144,57 @@ public class ImageSlideShow extends Block
 				T.mergeCells(1, imageRow, 2, imageRow);
 				if (size > 1)
 				{
-					if (getParentPage() != null)
+					if (getParentPage() != null) {
 						getParentPage().getAssociatedScript().addFunction("slide" + name, getSlideScript(name, urls));
-					if (showButtons)
+					}
+					if (this.showButtons)
 					{
 						T.add(getLeftLink(name), 1, buttonRow);
 						T.add(getRightLink(name), 2, buttonRow);
 						//T.add(getLeftButton(name),1,buttonRow);
 						//T.add(getRightButton(name),2,buttonRow);
-						if ((buttonAlign & INNER) != 0)
+						if ((this.buttonAlign & INNER) != 0)
 						{
 							T.setAlignment(1, buttonRow, "right");
 							T.setAlignment(2, buttonRow, "left");
 						}
-						else if ((buttonAlign & OUTER) != 0)
+						else if ((this.buttonAlign & OUTER) != 0)
 						{
 							T.setAlignment(1, buttonRow, "left");
 							T.setAlignment(2, buttonRow, "right");
 						}
 					}
 				}
-				else
+				else {
 					T.mergeCells(1, 2, 2, 2);
+				}
 				T.setCellpadding(0);
 				T.setCellspacing(0);
 			}
-			else
+			else {
 				T.mergeCells(1, 2, 2, 2);
+			}
 			add(T);
-			if (delay > 0)
+			if (this.delay > 0) {
 				add(getDelayScript(name));
+			}
 		}
 	}
 	private Link getLeftLink(String imageName)
 	{
-		return getLink(imageName, -1, leftObject);
+		return getLink(imageName, -1, this.leftObject);
 	}
 	private Link getRightLink(String imageName)
 	{
-		return getLink(imageName, 1, rightObject);
+		return getLink(imageName, 1, this.rightObject);
 	}
 	private SubmitButton getLeftButton(String imageName)
 	{
-		return getButton(imageName, -1, (Image) leftObject);
+		return getButton(imageName, -1, (Image) this.leftObject);
 	}
 	private SubmitButton getRightButton(String imageName)
 	{
-		return getButton(imageName, 1, (Image) rightObject);
+		return getButton(imageName, 1, (Image) this.rightObject);
 	}
 	private SubmitButton getButton(String imageName, int step, Image object)
 	{
@@ -213,8 +223,9 @@ public class ImageSlideShow extends Block
 	}
 	public void setDelay(int seconds)
 	{
-		if (seconds > 0)
-			delay = 1000 * seconds;
+		if (seconds > 0) {
+			this.delay = 1000 * seconds;
+		}
 	}
 	public void setWidth(String width)
 	{
@@ -250,33 +261,40 @@ public class ImageSlideShow extends Block
 	}
 	public void setButtonsInnerAlignment(boolean innerAlign)
 	{
-		if (innerAlign)
-			buttonAlign |= INNER;
-		else
+		if (innerAlign) {
+			this.buttonAlign |= INNER;
+		}
+		else {
 			setButtonsOuterAlignment(true);
+		}
 	}
 	public void setButtonsOuterAlignment(boolean outerAlign)
 	{
 		if (outerAlign)
 		{
-			buttonAlign |= OUTER;
+			this.buttonAlign |= OUTER;
 		}
-		else
+		else {
 			setButtonsInnerAlignment(true);
+		}
 	}
 	public void setButtonsTopAlignment(boolean topAlign)
 	{
-		if (topAlign)
-			buttonAlign |= TOP;
-		else
+		if (topAlign) {
+			this.buttonAlign |= TOP;
+		}
+		else {
 			setButtonsBottomAlignment(true);
+		}
 	}
 	public void setButtonsBottomAlignment(boolean bottomAlign)
 	{
-		if (bottomAlign)
-			buttonAlign |= TOP;
-		else
+		if (bottomAlign) {
+			this.buttonAlign |= TOP;
+		}
+		else {
 			setButtonsTopAlignment(true);
+		}
 	}
 	private String getCallingScript(String name, int step)
 	{
@@ -285,7 +303,7 @@ public class ImageSlideShow extends Block
 	private Script getDelayScript(String name)
 	{
 		StringBuffer addPics = new StringBuffer();
-		addPics.append("setInterval('").append(getCallingScript(name, 1)).append("',").append(delay).append(");");
+		addPics.append("setInterval('").append(getCallingScript(name, 1)).append("',").append(this.delay).append(");");
 		Script s = new Script();
 		s.addFunction(name + "load", addPics.toString());
 		return s;
@@ -298,7 +316,7 @@ public class ImageSlideShow extends Block
 		String sSlide = "slide_" + name;
 		StringBuffer addPics = new StringBuffer();
 		//addPics.append("var ").append(sDelay).append(" = 0;\n");
-		addPics.append("var ").append(sCurrent).append(" = ").append(delay).append(";\n");
+		addPics.append("var ").append(sCurrent).append(" = ").append(this.delay).append(";\n");
 		addPics.append("var ").append(sPicArray).append(" = new Array(");
 		int size = urls.size();
 		for (int i = 0; i < size; i++)

@@ -21,7 +21,7 @@ import com.idega.util.IWTimestamp;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -88,7 +88,7 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
   }
 
   public Integer getRelatedGroupPK(){
-    return (Integer)getIntegerColumnValue(RELATED_GROUP_ID_COLUMN);
+    return getIntegerColumnValue(RELATED_GROUP_ID_COLUMN);
   }
 
   public void setRelationship(GroupDomainRelationType type){
@@ -148,8 +148,8 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
   
 
   public Collection ejbFindDomainsRelationshipsContaining(ICDomain domain,Group relatedGroup)throws FinderException{
-    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroup.getPrimaryKey().toString()+" and "+
-      this.DOMAIN_ID_COLUMN+"="+ domain.getPrimaryKey().toString() +" and "+  " GROUP_RELATION_STATUS IS NULL");
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+GroupDomainRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+relatedGroup.getPrimaryKey().toString()+" and "+
+      GroupDomainRelationBMPBean.DOMAIN_ID_COLUMN+"="+ domain.getPrimaryKey().toString() +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }
 
   public Collection ejbFindGroupsRelationshipsUnder(int domainID)throws FinderException{
@@ -167,8 +167,8 @@ public class GroupDomainRelationBMPBean extends GenericEntity implements GroupDo
   }
 
   public Collection ejbFindGroupsRelationshipsContaining(int domainID,int relatedGroupID)throws FinderException{
-    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+this.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and "
-      +this.DOMAIN_ID_COLUMN+"="+domainID +" and "+  " GROUP_RELATION_STATUS IS NULL");
+    return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+GroupDomainRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and "
+      +GroupDomainRelationBMPBean.DOMAIN_ID_COLUMN+"="+domainID +" and "+  " GROUP_RELATION_STATUS IS NULL");
   }
 
   /**Finders end**/

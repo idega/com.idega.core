@@ -55,7 +55,7 @@ public class GenericList extends InterfaceObject {
 	}
 
 	public IDOLegacyEntity[] getEntity() {
-		return entity;
+		return this.entity;
 	}
 
 	public void setEntity(IDOLegacyEntity[] entity) {
@@ -63,23 +63,23 @@ public class GenericList extends InterfaceObject {
 	}
 
 	public void setHeaderFontColor(String color) {
-		headerFontColor = color;
+		this.headerFontColor = color;
 	}
 
 	public void setHeaderColor(String color) {
-		headerColor = color;
+		this.headerColor = color;
 	}
 
 	public void setColor1(String color1) {
-		listColor1 = color1;
+		this.listColor1 = color1;
 	}
 
 	public void setColor2(String color2) {
-		listColor2 = color2;
+		this.listColor2 = color2;
 	}
 
 	public void setLink(String pageToLinkTo) {
-		pageLink = pageToLinkTo;
+		this.pageLink = pageToLinkTo;
 	}
 
 	public void setList(IDOLegacyEntity[] entity) {
@@ -90,8 +90,8 @@ public class GenericList extends InterfaceObject {
 					if (y == 0) {
 						for (int x = 0; x < entity[0].getVisibleColumnNames().length; x++) {
 							Text text = new Text(getEntity()[0].getLongName(entity[0].getVisibleColumnNames()[x]));
-							text.setFontColor(headerFontColor);
-							theTable.add(text, x + 1, y + 1);
+							text.setFontColor(this.headerFontColor);
+							this.theTable.add(text, x + 1, y + 1);
 						}
 					}
 					else {
@@ -131,17 +131,17 @@ public class GenericList extends InterfaceObject {
 								}
 							}
 							if (x == 0) {
-								if (pageLink != null) {
-									Link link = new Link(stringToDisplay, pageLink);
+								if (this.pageLink != null) {
+									Link link = new Link(stringToDisplay, this.pageLink);
 									link.addParameter(entity[0].getIDColumnName(), Integer.toString(entity[y - 1].getID()));
-									theTable.add(link, x + 1, y + 1);
+									this.theTable.add(link, x + 1, y + 1);
 								}
 								else {
-									theTable.add(new Text(stringToDisplay), x + 1, y + 1);
+									this.theTable.add(new Text(stringToDisplay), x + 1, y + 1);
 								}
 							}
 							else {
-								theTable.add(new Text(stringToDisplay), x + 1, y + 1);
+								this.theTable.add(new Text(stringToDisplay), x + 1, y + 1);
 							}
 						}
 					}
@@ -151,28 +151,28 @@ public class GenericList extends InterfaceObject {
 	}
 
 	private void initializeTable() {
-		theTable = new Table();
-		add(theTable);
-		theTable.setBorder(0);
-		theTable.setCellpadding(2);
+		this.theTable = new Table();
+		add(this.theTable);
+		this.theTable.setBorder(0);
+		this.theTable.setCellpadding(2);
 	}
 
 	private void initializeTable(int columns, int rows) {
-		theTable = new Table(columns, rows);
-		add(theTable);
-		theTable.setBorder(0);
-		theTable.setCellpadding(3);
+		this.theTable = new Table(columns, rows);
+		add(this.theTable);
+		this.theTable.setBorder(0);
+		this.theTable.setCellpadding(3);
 	}
 
 	public void beforePrint(IWContext iwc) throws IOException {
-		setList(entity);
+		setList(this.entity);
 	}
 
 	public void print(IWContext iwc) throws Exception {
 		beforePrint(iwc);
-		if (theTable != null) {
-			theTable.setHorizontalZebraColored(listColor1, listColor2);
-			theTable.setRowColor(1, headerColor);
+		if (this.theTable != null) {
+			this.theTable.setHorizontalZebraColored(this.listColor1, this.listColor2);
+			this.theTable.setRowColor(1, this.headerColor);
 		}
 		super.print(iwc);
 	}

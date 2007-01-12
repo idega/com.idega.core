@@ -180,8 +180,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 			LoggedOnInfo _logOnInfo = (LoggedOnInfo)m.remove(logOnInfo.getLogin());
 			if (_logOnInfo != null) {
 				LoginDBHandler.recordLogout(_logOnInfo.getLoginRecordId());
-			} else
+			}
+			else {
 				return false;
+			}
 
 			return true;
 		} catch (Exception e) {
@@ -649,9 +651,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 			com.idega.user.business.UserBusiness userbusiness = (com.idega.user.business.UserBusiness)com.idega.business.IBOLookup.getServiceInstance(iwc, com.idega.user.business.UserBusiness.class);
 			com.idega.user.data.User newUser = com.idega.user.util.Converter.convertToNewUser(user);
 			Collection userGroups = userbusiness.getUserGroups(newUser);
-			if(userGroups!=null)
-			    groups = ListUtil.convertCollectionToList(userGroups);
+			if(userGroups!=null) {
+				groups = ListUtil.convertCollectionToList(userGroups);
 			//New user system end
+			}
 		}
 
 		if (groups != null) {
@@ -680,7 +683,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	private boolean isUsingOldUserSystem()
 	{
-		return this.USING_OLD_USER_SYSTEM;
+		return LoginBusinessBean.USING_OLD_USER_SYSTEM;
 	}
 	protected void storeLoggedOnInfoInSession(IWContext iwc, int loginTableId, String login, User user, int loginRecordId, String loginType) throws NotLoggedOnException, RemoteException {
 		LoggedOnInfo lInfo = createLoggedOnInfo(iwc);
@@ -959,12 +962,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 		String first = "";
 		String middle = "";
 		String last = "";
-		if (tok.hasMoreTokens())
+		if (tok.hasMoreTokens()) {
 			first = tok.nextToken();
-		if (tok.hasMoreTokens())
+		}
+		if (tok.hasMoreTokens()) {
 			middle = tok.nextToken();
-		if (tok.hasMoreTokens())
+		}
+		if (tok.hasMoreTokens()) {
 			last = tok.nextToken();
+		}
 		else {
 			last = middle;
 			middle = "";
@@ -975,12 +981,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 			String login = preferredUserName;
 			String pass = preferredPassword;
 			if (user != null) {
-				if (email != null && email.length() > 0)
-					ub.addNewUserEmail(user.getID(), email);
-				if (login == null)
+				if (email != null && email.length() > 0) {
+					UserBusiness.addNewUserEmail(user.getID(), email);
+				}
+				if (login == null) {
 					login = LoginCreator.createLogin(user.getName());
-				if (pass == null)
+				}
+				if (pass == null) {
 					pass = LoginCreator.createPasswd(8);
+				}
 				LoginDBHandler.createLogin(user.getID(), login, pass);
 				loginContext = new LoginContext(user, login, pass);
 			}
@@ -998,8 +1007,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 			LoginTable lTable = login_table[0];
 			if (lTable != null) {
 				returner = logIn(iwc, login_table[0]);
-				if (returner)
+				if (returner) {
 					onLoginSuccessful(iwc);
+				}
 			} else {
 				try {
 					throw new LoginCreateException("No record chosen");
@@ -1063,8 +1073,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 			//UserProperties properties = (UserProperties)getLoginAttribute(USER_PROPERTY_PARAMETER, iwc);
 		    UserProperties properties = getLoginSession(iwc).getUserProperties();
-			if (properties != null)
+			if (properties != null) {
 				properties.store();
+			}
 
 			//iwc.setSessionAttribute(prmReservedLoginSessionAttribute, iwc.getSessionAttribute(LoginAttributeParameter));
 			//iwc.setSessionAttribute(prmReservedLoginSessionAttribute,getLoginSession(iwc));
@@ -1079,7 +1090,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	public void logOutAsAnotherUser(IWContext iwc) throws NotLoggedOnException, RemoteException {
-		LoggedOnInfo info = this.getLoggedOnInfo(iwc);
+		LoggedOnInfo info = LoginBusinessBean.getLoggedOnInfo(iwc);
 		int rec = info.getLoginRecordId();
 		retrieveLoginInformation(iwc);
 		info.setLoginType("");
@@ -1108,12 +1119,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 	private boolean logInAsAnotherUser(IWContext iwc, User user,boolean reserveCurrentUser) throws Exception {
 
 		if (isLoggedOn(iwc)) {
-		    LoggedOnInfo info = this.getLoggedOnInfo(iwc);
+		    LoggedOnInfo info = LoginBusinessBean.getLoggedOnInfo(iwc);
 			if (iwc.getUser().equals(user)) {
 				return true;
 			}
-			if(reserveCurrentUser)
-			    reserveLoginInformation(iwc);
+			if(reserveCurrentUser) {
+				reserveLoginInformation(iwc);
+			}
 			storeUserAndGroupInformationInSession(iwc, user);
 			
 			int loginRecordId = LoginDBHandler.recordLogin(info.getLoginTableId(), iwc.getRemoteIpAddress(), user.getID());
@@ -1135,8 +1147,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 			LoginTable lTable = this.chooseLoginRecord(iwc, login_table, user);
 			if (lTable != null) {
 				returner = logIn(iwc, lTable);
-				if (returner)
+				if (returner) {
 					onLoginSuccessful(iwc);
+				}
 			} else {
 				try {
 					throw new LoginCreateException("No record chosen");
@@ -1168,8 +1181,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 			LoginTable lTable = this.chooseLoginRecord(iwc, login_table, user);
 			if (lTable != null) {
 				returner = logIn(iwc, lTable);
-				if (returner)
+				if (returner) {
 					onLoginSuccessful(iwc);
+				}
 			} else {
 				try {
 					throw new LoginCreateException("No record chosen");

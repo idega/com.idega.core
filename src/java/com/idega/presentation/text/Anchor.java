@@ -36,7 +36,9 @@ public class Anchor extends Link {
 
    public void main(IWContext iwc)throws Exception {
     if(iwc.isInEditMode()){
-      if( getAnchorName() != null ) super.setText(getAnchorName());
+      if( getAnchorName() != null ) {
+		super.setText(getAnchorName());
+	}
     }
     super.main(iwc);
 

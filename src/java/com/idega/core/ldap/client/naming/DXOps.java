@@ -89,8 +89,9 @@ public class DXOps extends AdvancedOps
         try
         {
             Name cn = new CompositeName(name);
-            if (cn.size()==0)                     // if the name is empty ...
-                return new DN();                  // ... just return an empty DN
+            if (cn.size()==0) {
+				return new DN();                  // ... just return an empty DN
+			}
 
             return new DN(cn.get(cn.size()-1));  // get the last element of the composite name, which will be the ldap compound name, and init the DN with that.
         }
@@ -119,8 +120,9 @@ public class DXOps extends AdvancedOps
          * in an illegal ldap dn)
          */
 
-		if(name.length()==0)
+		if(name.length()==0) {
 			return name;
+		}
 
         if (name.charAt(name.length()-1) == '\\')
         {
@@ -130,8 +132,9 @@ public class DXOps extends AdvancedOps
         try
         {
             Name cn = new CompositeName(name);
-            if (cn.size()==0)                     // if the name is empty ...
-                return "";                  // ... just return an empty DN
+            if (cn.size()==0) {
+				return "";                  // ... just return an empty DN
+			}
 
             return cn.get(cn.size()-1);  // get the last element of the composite name, which will be the ldap compound name, and init the DN with that.
         }
@@ -161,8 +164,9 @@ public class DXOps extends AdvancedOps
 
         String baseString = null;
 
-        if (base != null && base.isEmpty() == false)
-                baseString = base.toString();
+        if (base != null && base.isEmpty() == false) {
+			baseString = base.toString();
+		}
 
         try
         {
@@ -177,10 +181,12 @@ public class DXOps extends AdvancedOps
 
 	            if (ncp.isRelative() && baseString != null)
 	            {
-            	    if (rawName.length() != 0)
-	                	rawName = rawName + "," + baseString;
-	                else
-	                	rawName = baseString;
+            	    if (rawName.length() != 0) {
+						rawName = rawName + "," + baseString;
+					}
+					else {
+						rawName = baseString;
+					}
 	            }
 
                 log.log(Level.FINER,"ended up with: '" + rawName + "'");
@@ -205,10 +211,16 @@ public class DXOps extends AdvancedOps
 
       public boolean modifyEntry(DXEntry oldEntry, DXEntry newEntry)
       {
-          if (oldEntry == null && newEntry == null) return true; // nothing to do.
+          if (oldEntry == null && newEntry == null) {
+			return true; // nothing to do.
+		}
 
-          if (oldEntry != null) oldEntry.removeEmptyAttributes();
-          if (newEntry != null) newEntry.removeEmptyAttributes();
+          if (oldEntry != null) {
+			oldEntry.removeEmptyAttributes();
+		}
+          if (newEntry != null) {
+			newEntry.removeEmptyAttributes();
+		}
 
           if (oldEntry == null || (newEntry != null) && (newEntry.getStatus() == DXEntry.NEW)) // add
           {
@@ -229,8 +241,9 @@ public class DXOps extends AdvancedOps
           }
 
           // see if the name has changed, and modify it if it has
-          if (handleAnyNameChange(oldEntry, newEntry) == false)
-            return false;
+          if (handleAnyNameChange(oldEntry, newEntry) == false) {
+			return false;
+		}
 
 
           // check for change of attributes done in modify()
@@ -296,8 +309,9 @@ public class DXOps extends AdvancedOps
         DN oldDN = oldEntry.getDN();
         DN newDN = newEntry.getDN();
 
-        if (oldDN.equals(newDN))
-            return true;         // nothing to see here, just move along.
+        if (oldDN.equals(newDN)) {
+			return true;         // nothing to see here, just move along.
+		}
 
         if (oldEntry.size()==0 && newEntry.size()==0) // a very simple rename, probably from the tree
         {
@@ -332,8 +346,9 @@ public class DXOps extends AdvancedOps
 
          Object[] temp = CBArray.difference(oldRDNs, newRDNs);
          String[] lostRDNs = new String[temp.length];
-         for (int i=0; i<temp.length; i++)
-             lostRDNs[i] = temp[i].toString();
+         for (int i=0; i<temp.length; i++) {
+			lostRDNs[i] = temp[i].toString();
+		}
 
 
 
@@ -359,8 +374,9 @@ public class DXOps extends AdvancedOps
 
              if (newEntry.get(type).contains(value) == true)
              {
-                 if (deleteRDNState == NOT_SET)      // first time through
-                     deleteRDNState = IN_NEW_ENTRY;
+                 if (deleteRDNState == NOT_SET) {
+					deleteRDNState = IN_NEW_ENTRY;
+				}
                  if (deleteRDNState != IN_NEW_ENTRY)
                  {
                      return setWierdoRDNError(oldDN, newDN);
@@ -368,8 +384,9 @@ public class DXOps extends AdvancedOps
              }
              else
              {
-                 if (deleteRDNState == NOT_SET)      // first time through
-                     deleteRDNState = NOT_IN_NEW_ENTRY;
+                 if (deleteRDNState == NOT_SET) {
+					deleteRDNState = NOT_IN_NEW_ENTRY;
+				}
 
 
                  if (deleteRDNState != NOT_IN_NEW_ENTRY)
@@ -401,8 +418,9 @@ public class DXOps extends AdvancedOps
                  }
                  return true;
              }
-             else
-                 return false;
+			else {
+				return false;
+			}
          }
     }
 
@@ -423,8 +441,9 @@ public class DXOps extends AdvancedOps
                 oldEntry.get(type).remove(value);   // remove old value so it doesn't get double deleted...
                 return true;
             }
-            else
-                return false;
+			else {
+				return false;
+			}
         }
         // if it *does* exist in the new entry, keep it.
         else
@@ -484,8 +503,9 @@ public class DXOps extends AdvancedOps
 
         try
         {
-            if (DXAttributes.attributesEqual(oldSet,newSet))
-                return true; // nothing to do.
+            if (DXAttributes.attributesEqual(oldSet,newSet)) {
+				return true; // nothing to do.
+			}
 
             DN nodeDN = newSet.getDN();
             RDN newRDN = nodeDN.getLowestRDN();
@@ -498,8 +518,9 @@ public class DXOps extends AdvancedOps
             dels = DXAttributes.getDeletionSet(newRDN, oldSet, newSet);
             adds = DXAttributes.getAdditionSet(newRDN, oldSet, newSet);
 
-			if (false)
+			if (false) {
 				printDebug(oldSet, newSet, adds, reps, dels);
+			}
 
             CBUtility.log("updateNode: ", 4);
 

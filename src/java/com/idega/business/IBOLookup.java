@@ -51,7 +51,7 @@ public class IBOLookup implements Singleton
 	private final String BEAN_SUFFIX = "Bean";
 	protected String getBeanSuffix()
 	{
-		return BEAN_SUFFIX;
+		return this.BEAN_SUFFIX;
 	}
 	private Map homes;
 	private Map beanClasses;
@@ -166,10 +166,10 @@ public class IBOLookup implements Singleton
 	 * @return Map
 	 */
 	private Map getCreateMethodsMap() {
-		if(createMethodsMap==null){
-			createMethodsMap=new HashMap();	
+		if(this.createMethodsMap==null){
+			this.createMethodsMap=new HashMap();	
 		}
-		return createMethodsMap;
+		return this.createMethodsMap;
 	}
 
 
@@ -211,14 +211,14 @@ public class IBOLookup implements Singleton
 		try{
 			//First try to suffix the Home to the interface class name
 			String baseClassName = getInterfaceClassForNonStatic(entityInterfaceClass).getName();
-			String homeClassName = baseClassName + HOME_SUFFIX;
+			String homeClassName = baseClassName + this.HOME_SUFFIX;
 			return RefactorClassRegistry.forName(homeClassName);
 		}
 		catch(ClassNotFoundException cnfe){
 			//If that doesn't work then try to suffix the Home to the bean implementation class name - the bean suffix
 			String beanClassName = getBeanClassForNonStatic(entityInterfaceClass).getName();
 			String baseClassName = beanClassName.substring(0,beanClassName.indexOf(getBeanSuffix()));
-			String homeClassName = baseClassName + HOME_SUFFIX;
+			String homeClassName = baseClassName + this.HOME_SUFFIX;
 			return RefactorClassRegistry.forName(homeClassName);
 		}
 		
@@ -229,13 +229,13 @@ public class IBOLookup implements Singleton
 			//First try to suffix the FACTORY_SUFFIX to the bean implementation class name - the bean suffix
 			String beanClassName = getBeanClassForNonStatic(entityInterfaceClass).getName();
 			String baseClassName = beanClassName.substring(0,beanClassName.indexOf(getBeanSuffix()));
-			String homeClassName = baseClassName + FACTORY_SUFFIX;
+			String homeClassName = baseClassName + this.FACTORY_SUFFIX;
 			return RefactorClassRegistry.forName(homeClassName);
 		}
 		catch(ClassNotFoundException cnfe){
 			//If that doesn't work then try to suffix the FACTORY_SUFFIX to the interface class name
 			String baseClassName = getInterfaceClassForNonStatic(entityInterfaceClass).getName();
-			String homeClassName = baseClassName + FACTORY_SUFFIX;
+			String homeClassName = baseClassName + this.FACTORY_SUFFIX;
 			return RefactorClassRegistry.forName(homeClassName);
 		}
 
@@ -392,11 +392,11 @@ public class IBOLookup implements Singleton
 	}
 	private Map getServicesMap()
 	{
-		if (services == null)
+		if (this.services == null)
 		{
-			services = new HashMap();
+			this.services = new HashMap();
 		}
-		return services;
+		return this.services;
 	}
 	/**
 	 * Clears all cached object instaces of looked up objects (Home instances etc.)
@@ -430,38 +430,38 @@ public class IBOLookup implements Singleton
 	}
 
   private InitialContext getInitialContext() throws NamingException{
-  	if(jndiProperties==null){
-  		jndiProperties=new Properties();
+  	if(this.jndiProperties==null){
+  		this.jndiProperties=new Properties();
 	  	try {
-			jndiProperties.load(new FileInputStream("/idega/jndi.properties"));
+			this.jndiProperties.load(new FileInputStream("/idega/jndi.properties"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
   	}
-  	return new InitialContext(jndiProperties);
+  	return new InitialContext(this.jndiProperties);
   }
 
   public Map getBeanClassesMap(){
-  	if(beanClasses==null){
-  		beanClasses = new HashMap();
+  	if(this.beanClasses==null){
+  		this.beanClasses = new HashMap();
   	}
-  	return beanClasses;
+  	return this.beanClasses;
   }
   
   public Map getInterfaceClassesMap(){
-  	if(interfaceClasses==null){
-  		interfaceClasses= new HashMap();
+  	if(this.interfaceClasses==null){
+  		this.interfaceClasses= new HashMap();
   	}
-  	return interfaceClasses;
+  	return this.interfaceClasses;
   }
   
   public Map getHomesMap(){
-  	if(homes==null){
-  		homes= new HashMap();
+  	if(this.homes==null){
+  		this.homes= new HashMap();
   	}
-  	return homes;
+  	return this.homes;
   }
 
   public static void registerImplementationForBean(Class interfaceClass, Class beanClass) {

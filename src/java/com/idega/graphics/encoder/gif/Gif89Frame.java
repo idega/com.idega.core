@@ -63,7 +63,7 @@ public abstract class Gif89Frame {
    */
   public void setPosition(Point p)
   {
-    thePosition = new Point(p);
+    this.thePosition = new Point(p);
   }   
 
   //----------------------------------------------------------------------------
@@ -74,7 +74,7 @@ public abstract class Gif89Frame {
    */  
   public void setInterlaced(boolean b)
   {
-    isInterlaced = b;
+    this.isInterlaced = b;
   }
  
   //----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ public abstract class Gif89Frame {
    */    
   public void setDelay(int interval)
   {
-    csecsDelay = interval;
+    this.csecsDelay = interval;
   }
 
   //----------------------------------------------------------------------------
@@ -101,7 +101,7 @@ public abstract class Gif89Frame {
    */   
   public void setDisposalMode(int code)
   {
-    disposalCode = code;
+    this.disposalCode = code;
   }
 
   //----------------------------------------------------------------------------
@@ -117,13 +117,13 @@ public abstract class Gif89Frame {
   
 
   //----------------------------------------------------------------------------
-  int getWidth() { return theWidth; }
+  int getWidth() { return this.theWidth; }
 
   //----------------------------------------------------------------------------
-  int getHeight() { return theHeight; }
+  int getHeight() { return this.theHeight; }
 
   //----------------------------------------------------------------------------
-  byte[] getPixelSink() { return ciPixels; } 
+  byte[] getPixelSink() { return this.ciPixels; } 
 
   //----------------------------------------------------------------------------
   void encode(OutputStream os, boolean epluribus, int color_depth,
@@ -132,7 +132,7 @@ public abstract class Gif89Frame {
     writeGraphicControlExtension(os, epluribus, transparent_index);
     writeImageDescriptor(os);
     new GifPixelsEncoder(
-      theWidth, theHeight, ciPixels, isInterlaced, color_depth
+      this.theWidth, this.theHeight, this.ciPixels, this.isInterlaced, color_depth
     ).encode(os);
   }
 
@@ -143,11 +143,11 @@ public abstract class Gif89Frame {
     int transflag = itransparent == -1 ? 0 : 1;
     if (transflag == 1 || epluribus)   // using transparency or animating ?
     {
-      os.write((int) '!');             // GIF Extension Introducer
+      os.write('!');             // GIF Extension Introducer
       os.write(0xf9);                  // Graphic Control Label
       os.write(4);                     // subsequent data block size
-      os.write((disposalCode << 2) | transflag); // packed fields (1 byte)
-      Put.leShort(csecsDelay, os);  // delay field (2 bytes)
+      os.write((this.disposalCode << 2) | transflag); // packed fields (1 byte)
+      Put.leShort(this.csecsDelay, os);  // delay field (2 bytes)
       os.write(itransparent);          // transparent index field
       os.write(0);                     // block terminator
     }  
@@ -156,12 +156,12 @@ public abstract class Gif89Frame {
   //----------------------------------------------------------------------------
   private void writeImageDescriptor(OutputStream os) throws IOException
   {
-    os.write((int) ',');                // Image Separator
-    Put.leShort(thePosition.x, os);
-    Put.leShort(thePosition.y, os);
-    Put.leShort(theWidth, os);
-    Put.leShort(theHeight, os);
-    os.write(isInterlaced ? 0x40 : 0);  // packed fields (1 byte)
+    os.write(',');                // Image Separator
+    Put.leShort(this.thePosition.x, os);
+    Put.leShort(this.thePosition.y, os);
+    Put.leShort(this.theWidth, os);
+    Put.leShort(this.theHeight, os);
+    os.write(this.isInterlaced ? 0x40 : 0);  // packed fields (1 byte)
   }
 }
 
@@ -186,22 +186,22 @@ class GifPixelsEncoder {
   GifPixelsEncoder(int width, int height, byte[] pixels, boolean interlaced,
                    int color_depth)
   {
-    imgW = width;
-    imgH = height;
-    pixAry = pixels;
-    wantInterlaced = interlaced;
-    initCodeSize = Math.max(2, color_depth);
+    this.imgW = width;
+    this.imgH = height;
+    this.pixAry = pixels;
+    this.wantInterlaced = interlaced;
+    this.initCodeSize = Math.max(2, color_depth);
   }
  
   //----------------------------------------------------------------------------
   void encode(OutputStream os) throws IOException
   {
-    os.write(initCodeSize);         // write "initial code size" byte
+    os.write(this.initCodeSize);         // write "initial code size" byte
   
-    countDown = imgW * imgH;        // reset navigation variables
-    xCur = yCur = curPass = 0;
+    this.countDown = this.imgW * this.imgH;        // reset navigation variables
+    this.xCur = this.yCur = this.curPass = 0;
     
-    compress(initCodeSize + 1, os); // compress and write the pixel data
+    compress(this.initCodeSize + 1, os); // compress and write the pixel data
     
     os.write(0);                    // write block terminator
   }
@@ -219,48 +219,50 @@ class GifPixelsEncoder {
   private void bumpPosition()
   {
     // Bump the current X position
-    ++xCur;
+    ++this.xCur;
 
     // If we are at the end of a scan line, set xCur back to the beginning
     // If we are interlaced, bump the yCur to the appropriate spot,
     // otherwise, just increment it.
-    if (xCur == imgW)
+    if (this.xCur == this.imgW)
     {
-      xCur = 0;
+      this.xCur = 0;
 
-      if (!wantInterlaced)
-        ++yCur;
-      else
-        switch (curPass)
+      if (!this.wantInterlaced) {
+		++this.yCur;
+	}
+	else {
+		switch (this.curPass)
         {
           case 0:
-            yCur += 8;
-            if (yCur >= imgH)
+            this.yCur += 8;
+            if (this.yCur >= this.imgH)
             {
-              ++curPass;
-              yCur = 4;
+              ++this.curPass;
+              this.yCur = 4;
             }
             break;
           case 1:
-            yCur += 8;
-            if (yCur >= imgH)
+            this.yCur += 8;
+            if (this.yCur >= this.imgH)
             {
-              ++curPass;
-              yCur = 2;
+              ++this.curPass;
+              this.yCur = 2;
             }
             break;
           case 2:
-            yCur += 4;
-            if (yCur >= imgH)
+            this.yCur += 4;
+            if (this.yCur >= this.imgH)
             {
-              ++curPass;
-              yCur = 1;
+              ++this.curPass;
+              this.yCur = 1;
             }
             break;
           case 3:
-            yCur += 2;
+            this.yCur += 2;
             break;
         }
+	}
     }
   }
 
@@ -269,12 +271,13 @@ class GifPixelsEncoder {
   //----------------------------------------------------------------------------
   private int nextPixel()
   {
-    if (countDown == 0)
-      return EOF;
+    if (this.countDown == 0) {
+		return EOF;
+	}
 
-    --countDown;
+    --this.countDown;
 
-    byte pix = pixAry[yCur * imgW + xCur];
+    byte pix = this.pixAry[this.yCur * this.imgW + this.xCur];
 
     bumpPosition();
 
@@ -373,73 +376,77 @@ class GifPixelsEncoder {
       int hshift;
 
       // Set up the globals:  g_init_bits - initial number of bits
-      g_init_bits = init_bits;
+      this.g_init_bits = init_bits;
 
       // Set up the necessary values
-      clear_flg = false;
-      n_bits = g_init_bits;
-      maxcode = MAXCODE( n_bits );
+      this.clear_flg = false;
+      this.n_bits = this.g_init_bits;
+      this.maxcode = MAXCODE( this.n_bits );
 
-      ClearCode = 1 << ( init_bits - 1 );
-      EOFCode = ClearCode + 1;
-      free_ent = ClearCode + 2;
+      this.ClearCode = 1 << ( init_bits - 1 );
+      this.EOFCode = this.ClearCode + 1;
+      this.free_ent = this.ClearCode + 2;
 
       char_init();
 
       ent = nextPixel();
 
       hshift = 0;
-      for ( fcode = hsize; fcode < 65536; fcode *= 2 )
-          ++hshift;
+      for ( fcode = this.hsize; fcode < 65536; fcode *= 2 ) {
+		++hshift;
+	}
       hshift = 8 - hshift;                        // set hash code range bound
 
-      hsize_reg = hsize;
+      hsize_reg = this.hsize;
       cl_hash( hsize_reg );        // clear hash table
 
-      output( ClearCode, outs );
+      output( this.ClearCode, outs );
 
       outer_loop:
       while ( (c = nextPixel()) != EOF )
           {
-          fcode = ( c << maxbits ) + ent;
+          fcode = ( c << this.maxbits ) + ent;
           i = ( c << hshift ) ^ ent;                // xor hashing
 
-          if ( htab[i] == fcode )
+          if ( this.htab[i] == fcode )
               {
-              ent = codetab[i];
+              ent = this.codetab[i];
               continue;
               }
-          else if ( htab[i] >= 0 )        // non-empty slot
+          else if ( this.htab[i] >= 0 )        // non-empty slot
               {
               disp = hsize_reg - i;        // secondary hash (after G. Knott)
-              if ( i == 0 )
-                  disp = 1;
+              if ( i == 0 ) {
+				disp = 1;
+			}
               do
                   {
-                  if ( (i -= disp) < 0 )
-                      i += hsize_reg;
+                  if ( (i -= disp) < 0 ) {
+					i += hsize_reg;
+				}
 
-                  if ( htab[i] == fcode )
+                  if ( this.htab[i] == fcode )
                       {
-                      ent = codetab[i];
+                      ent = this.codetab[i];
                       continue outer_loop;
                       }
                   }
-              while ( htab[i] >= 0 );
+              while ( this.htab[i] >= 0 );
               }
           output( ent, outs );
           ent = c;
-          if ( free_ent < maxmaxcode )
+          if ( this.free_ent < this.maxmaxcode )
               {
-              codetab[i] = free_ent++;        // code -> hashtable
-              htab[i] = fcode;
+              this.codetab[i] = this.free_ent++;        // code -> hashtable
+              this.htab[i] = fcode;
               }
-          else
-              cl_block( outs );
+		else {
+			cl_block( outs );
+		}
           }
       // Put out the final code.
       output( ent, outs );
-      output( EOFCode, outs );
+      output( this.EOFCode, outs );
       }
 
   // output
@@ -467,49 +474,53 @@ class GifPixelsEncoder {
 
   void output( int code, OutputStream outs ) throws IOException
       {
-      cur_accum &= masks[cur_bits];
+      this.cur_accum &= this.masks[this.cur_bits];
 
-      if ( cur_bits > 0 )
-          cur_accum |= ( code << cur_bits );
-      else
-          cur_accum = code;
+      if ( this.cur_bits > 0 ) {
+		this.cur_accum |= ( code << this.cur_bits );
+	}
+	else {
+		this.cur_accum = code;
+	}
 
-      cur_bits += n_bits;
+      this.cur_bits += this.n_bits;
 
-      while ( cur_bits >= 8 )
+      while ( this.cur_bits >= 8 )
           {
-          char_out( (byte) ( cur_accum & 0xff ), outs );
-          cur_accum >>= 8;
-          cur_bits -= 8;
+          char_out( (byte) ( this.cur_accum & 0xff ), outs );
+          this.cur_accum >>= 8;
+          this.cur_bits -= 8;
           }
 
       // If the next entry is going to be too big for the code size,
       // then increase it, if possible.
-     if ( free_ent > maxcode || clear_flg )
+     if ( this.free_ent > this.maxcode || this.clear_flg )
           {
-          if ( clear_flg )
+          if ( this.clear_flg )
               {
-              maxcode = MAXCODE(n_bits = g_init_bits);
-              clear_flg = false;
+              this.maxcode = MAXCODE(this.n_bits = this.g_init_bits);
+              this.clear_flg = false;
               }
           else
               {
-              ++n_bits;
-              if ( n_bits == maxbits )
-                  maxcode = maxmaxcode;
-              else
-                  maxcode = MAXCODE(n_bits);
+              ++this.n_bits;
+              if ( this.n_bits == this.maxbits ) {
+				this.maxcode = this.maxmaxcode;
+			}
+			else {
+				this.maxcode = MAXCODE(this.n_bits);
+			}
               }
           }
 
-      if ( code == EOFCode )
+      if ( code == this.EOFCode )
           {
           // At EOF, write the rest of the buffer.
-          while ( cur_bits > 0 )
+          while ( this.cur_bits > 0 )
               {
-              char_out( (byte) ( cur_accum & 0xff ), outs );
-              cur_accum >>= 8;
-              cur_bits -= 8;
+              char_out( (byte) ( this.cur_accum & 0xff ), outs );
+              this.cur_accum >>= 8;
+              this.cur_bits -= 8;
               }
 
           flush_char( outs );
@@ -521,18 +532,19 @@ class GifPixelsEncoder {
   // table clear for block compress
   void cl_block( OutputStream outs ) throws IOException
       {
-      cl_hash( hsize );
-      free_ent = ClearCode + 2;
-      clear_flg = true;
+      cl_hash( this.hsize );
+      this.free_ent = this.ClearCode + 2;
+      this.clear_flg = true;
 
-      output( ClearCode, outs );
+      output( this.ClearCode, outs );
       }
 
   // reset code table
   void cl_hash( int hsize )
       {
-      for ( int i = 0; i < hsize; ++i )
-          htab[i] = -1;
+      for ( int i = 0; i < hsize; ++i ) {
+		this.htab[i] = -1;
+	}
       }
 
   // GIF Specific routines
@@ -543,7 +555,7 @@ class GifPixelsEncoder {
   // Set up the 'byte output' routine
   void char_init()
       {
-      a_count = 0;
+      this.a_count = 0;
       }
 
   // Define the storage for the packet accumulator
@@ -553,19 +565,20 @@ class GifPixelsEncoder {
   // characters, flush the packet to disk.
   void char_out( byte c, OutputStream outs ) throws IOException
       {
-      accum[a_count++] = c;
-      if ( a_count >= 254 )
-          flush_char( outs );
+      this.accum[this.a_count++] = c;
+      if ( this.a_count >= 254 ) {
+		flush_char( outs );
+	}
       }
 
   // Flush the packet to disk, and reset the accumulator
   void flush_char( OutputStream outs ) throws IOException
       {
-      if ( a_count > 0 )
+      if ( this.a_count > 0 )
           {
-          outs.write( a_count );
-          outs.write( accum, 0, a_count );
-          a_count = 0;
+          outs.write( this.a_count );
+          outs.write( this.accum, 0, this.a_count );
+          this.a_count = 0;
           }
       }        
 }

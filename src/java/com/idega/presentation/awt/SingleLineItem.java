@@ -46,9 +46,9 @@ public class SingleLineItem extends Panel {
     addMouseListener(new ClickAdapter());
     GridBagLayout grid = new GridBagLayout();
     setLayout(grid);
-    setBackground(bgColor);
+    setBackground(this.bgColor);
     setForeground(Color.black);
-    parentContainer = parent;
+    this.parentContainer = parent;
   }
 
   public void setComponentOffset(int componentOffset){
@@ -62,19 +62,19 @@ public class SingleLineItem extends Panel {
 
 
   public void addActionListener(ActionListener l) {
-      actionListener = AWTEventMulticaster.add(actionListener, l);
+      this.actionListener = AWTEventMulticaster.add(this.actionListener, l);
   }
 
   public void removeActionListener(ActionListener l) {
-      actionListener = AWTEventMulticaster.remove(actionListener, l);
+      this.actionListener = AWTEventMulticaster.remove(this.actionListener, l);
   }
 
   public Dimension getPreferredSize() {
-    return new Dimension(iWidth,iHeight);
+    return new Dimension(this.iWidth,this.iHeight);
   }
 
   public Dimension getMinimumSize() {
-    return new Dimension(iWidth,iHeight);
+    return new Dimension(this.iWidth,this.iHeight);
   }
 
   public Dimension minimumSize() {
@@ -134,7 +134,9 @@ public class SingleLineItem extends Panel {
   }
 
   private void openWindow(){
-    if(window!=null) window.setVisible(true);
+    if(this.window!=null) {
+		this.window.setVisible(true);
+	}
   }
 
 
@@ -143,17 +145,17 @@ public class SingleLineItem extends Panel {
   }
 
   public String getId(){
-   return ID;
+   return this.ID;
   }
 
   public Component add(Component component){
-    if(  gbc == null ){
-      gbc = new GridBagConstraints();
-      gbc.gridx = nextXpos;
-      gbc.gridy = nextYpos; //Set at position 0,0
+    if(  this.gbc == null ){
+      this.gbc = new GridBagConstraints();
+      this.gbc.gridx = this.nextXpos;
+      this.gbc.gridy = this.nextYpos; //Set at position 0,0
       //gbc.weightx = gbc.weighty = 0; //No weight so component wont resize
       //gbc.anchor = gbc.SOUTHWEST;
-      gbc.fill = GridBagConstraints.NONE;
+      this.gbc.fill = GridBagConstraints.NONE;
 
       /*
       gbc.fill = GridBagConstraints.NONE;
@@ -168,18 +170,18 @@ public class SingleLineItem extends Panel {
       gbc.fill = GridBagConstraints.HORIZONTAL; //take up extra space horizontally*/
 
     }
-      if( fillRight ){
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.weightx = gbc.weighty = 1;
+      if( this.fillRight ){
+        this.gbc.fill = GridBagConstraints.BOTH;
+        this.gbc.weightx = this.gbc.weighty = 1;
         System.out.println("FILL");
       }
 
 
-      gbc.gridx = nextXpos;
-      nextXpos++;
+      this.gbc.gridx = this.nextXpos;
+      this.nextXpos++;
 
       component.addMouseListener(new ClickAdapter());
-      super.add(component,gbc);
+      super.add(component,this.gbc);
       return component;
   }
 
@@ -189,8 +191,8 @@ public class SingleLineItem extends Panel {
    for (int i = 0; i < comps.length; i++) {
     comps[i].repaint();
    }
-   parentContainer.doLayout();
-   parentContainer.repaint();
+   this.parentContainer.doLayout();
+   this.parentContainer.repaint();
    repaint();
 
   }
@@ -202,7 +204,7 @@ public class SingleLineItem extends Panel {
   private final class ClickAdapter extends MouseAdapter {
     public void mousePressed(MouseEvent e) {
       if( e.getClickCount() > 1){
-        isSelected = true;
+        SingleLineItem.this.isSelected = true;
 
         setBackground(Color.blue);
         setForeground(Color.white);
@@ -210,20 +212,20 @@ public class SingleLineItem extends Panel {
         openWindow();
       }
       else{
-        isSelected = !isSelected;
-        if( isSelected ) {
+        SingleLineItem.this.isSelected = !SingleLineItem.this.isSelected;
+        if( SingleLineItem.this.isSelected ) {
           setBackground(Color.blue);
           setForeground(Color.white);
         }
         else{
-          setBackground(bgColor);
+          setBackground(SingleLineItem.this.bgColor);
           setForeground(Color.black);
         }
       }
 
       refresh();
 
-      actionListener.actionPerformed(new ActionEvent(SingleLineItem.this,ActionEvent.ACTION_PERFORMED, "iw-selected"));
+      SingleLineItem.this.actionListener.actionPerformed(new ActionEvent(SingleLineItem.this,ActionEvent.ACTION_PERFORMED, "iw-selected"));
     }
 /*
     public void mouseReleased(MouseEvent e) {

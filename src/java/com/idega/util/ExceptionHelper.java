@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionHelper.java,v 1.4 2002/04/06 19:07:46 tryggvil Exp $
+ * $Id: ExceptionHelper.java,v 1.4.6.1 2007/01/12 19:31:38 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -26,13 +26,15 @@ public class ExceptionHelper {
   }
 
   public String getExceptionText(String key) {
-    if (bundle == null)
-      return(new String("Unable to get exception resource bundle"));
+    if (this.bundle == null) {
+		return(new String("Unable to get exception resource bundle"));
+	}
 
-    String text = bundle.getString(key);
+    String text = this.bundle.getString(key);
 
-    if (text == null)
-      return(new String("Undefined exception key " + key));
+    if (text == null) {
+		return(new String("Undefined exception key " + key));
+	}
 
     return(text);
   }

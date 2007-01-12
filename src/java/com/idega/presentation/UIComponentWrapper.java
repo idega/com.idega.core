@@ -1,5 +1,5 @@
 /*
- * $Id: UIComponentWrapper.java,v 1.3 2005/01/17 17:05:41 gummi Exp $
+ * $Id: UIComponentWrapper.java,v 1.3.2.1 2007/01/12 19:31:32 idegaweb Exp $
  * Created on 9.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -48,10 +48,10 @@ import javax.faces.validator.Validator;
  * childrens of this class when the faces servlet restores the component tree. (The same probably goes for 
  * facets but has not been tested)
  * 
- *  Last modified: $Date: 2005/01/17 17:05:41 $ by $Author: gummi $
+ *  Last modified: $Date: 2007/01/12 19:31:32 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.3.2.1 $
  */
 public class UIComponentWrapper extends UIComponent implements EditableValueHolder {
 
@@ -67,8 +67,8 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 	public UIComponentWrapper() {
 		super();
 //		tmpChildList = new ChildrenListWrapper();
-		isRestored = true;
-		tmpComponentFacetMap = new HashMap();
+		this.isRestored = true;
+		this.tmpComponentFacetMap = new HashMap();
 	}
 	
 	public UIComponentWrapper(UIComponent component){
@@ -76,9 +76,11 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 	}
 	
 	protected void setUIComponent(UIComponent component){
-		if(component == null) throw new NullPointerException("Component to wrapp");
-		if(_facetMap==null){
-			_facetMap = new FacetMapWrapper(component);
+		if(component == null) {
+			throw new NullPointerException("Component to wrapp");
+		}
+		if(this._facetMap==null){
+			this._facetMap = new FacetMapWrapper(component);
 		}
 	}
 	
@@ -97,7 +99,7 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 	public StateHolder getStateHolder(){
 		UIComponent c = getUIComponent();
 		if(c instanceof StateHolder){
-			return (StateHolder)c;
+			return c;
 		}
 		return null;
 	}
@@ -123,10 +125,10 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 	 * @see javax.faces.component.UIComponent#getFacets()
 	 */
 	public Map getFacets() {
-		if(_facetMap == null){
-			_facetMap = new FacetMapWrapper(null);
+		if(this._facetMap == null){
+			this._facetMap = new FacetMapWrapper(null);
 		}
-		return _facetMap;
+		return this._facetMap;
 	}
 
 	/* (non-Javadoc)
@@ -167,7 +169,9 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 	    {
 	        checkValue(value);
 	        UIComponent child = (UIComponent) super.set(index, value);
-	        if (child != null) child.setParent(null);
+	        if (child != null) {
+				child.setParent(null);
+			}
 	        return child;
 	    }
 		
@@ -184,8 +188,12 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 		
 		private void checkValue(Object value)
 	    {
-	        if (value == null) throw new NullPointerException("value");
-	        if (!(value instanceof UIComponent)) throw new ClassCastException("value is not a UIComponent");
+	        if (value == null) {
+				throw new NullPointerException("value");
+			}
+	        if (!(value instanceof UIComponent)) {
+				throw new ClassCastException("value is not a UIComponent");
+			}
 	    }
 		
 	}
@@ -195,9 +203,9 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 	 * @param value
 	 */
 	protected void processWrapperMapEntryOnPut(Object key, Object value) {
-		if(tmpComponentFacetMap != null && FACETKEY_WRAPPED_COMPONENT.equals(key)){
-			((UIComponent)value).getFacets().putAll(tmpComponentFacetMap);
-			tmpComponentFacetMap=null;
+		if(this.tmpComponentFacetMap != null && FACETKEY_WRAPPED_COMPONENT.equals(key)){
+			((UIComponent)value).getFacets().putAll(this.tmpComponentFacetMap);
+			this.tmpComponentFacetMap=null;
 		}
 	}
 	
@@ -213,7 +221,7 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 				return componentFacetMap;
 			}
 		}
-		return tmpComponentFacetMap;
+		return this.tmpComponentFacetMap;
 	}
 	
 	public class FacetMapWrapper implements Map {
@@ -229,14 +237,22 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 		
 		private void checkKey(Object key)
 	    {
-	        if (key == null) throw new NullPointerException("key");
-	        if (!(key instanceof String)) throw new ClassCastException("key is not a String");
+	        if (key == null) {
+				throw new NullPointerException("key");
+			}
+	        if (!(key instanceof String)) {
+				throw new ClassCastException("key is not a String");
+			}
 	    }
 
 	    private void checkValue(Object value)
 	    {
-	        if (value == null) throw new NullPointerException("value");
-	        if (!(value instanceof UIComponent)) throw new ClassCastException("value is not a UIComponent");
+	        if (value == null) {
+				throw new NullPointerException("value");
+			}
+	        if (!(value instanceof UIComponent)) {
+				throw new ClassCastException("value is not a UIComponent");
+			}
 	    }
 		
 
@@ -244,28 +260,28 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 		 * @see java.util.Map#size()
 		 */
 		public int size() {
-			return getComponentMap().size()+wrapperMap.size();
+			return getComponentMap().size()+this.wrapperMap.size();
 		}
 
 		/* (non-Javadoc)
 		 * @see java.util.Map#isEmpty()
 		 */
 		public boolean isEmpty() {
-			return getComponentMap().isEmpty() && wrapperMap.isEmpty();
+			return getComponentMap().isEmpty() && this.wrapperMap.isEmpty();
 		}
 
 		/* (non-Javadoc)
 		 * @see java.util.Map#containsKey(java.lang.Object)
 		 */
 		public boolean containsKey(Object key) {
-			return getComponentMap().containsKey(key) || wrapperMap.containsKey(key);
+			return getComponentMap().containsKey(key) || this.wrapperMap.containsKey(key);
 		}
 
 		/* (non-Javadoc)
 		 * @see java.util.Map#containsValue(java.lang.Object)
 		 */
 		public boolean containsValue(Object value) {
-			return getComponentMap().containsValue(value) || wrapperMap.containsValue(value);
+			return getComponentMap().containsValue(value) || this.wrapperMap.containsValue(value);
 		}
 
 		/* (non-Javadoc)
@@ -274,7 +290,7 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 		public Object get(Object key) {
 			checkKey(key);
 			if(useWrapperMap(key)){
-				return wrapperMap.get(key);
+				return this.wrapperMap.get(key);
 			} else {
 				return getComponentMap().get(key);
 			}
@@ -288,7 +304,7 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 				checkKey(key);
 				checkValue(value);
 				processWrapperMapEntryOnPut(key,value);
-				return wrapperMap.put(key,value);
+				return this.wrapperMap.put(key,value);
 			} else {
 				return getComponentMap().put(key,value);
 			}
@@ -299,7 +315,7 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 		 */
 		public Object remove(Object key) {
 			if(useWrapperMap(key)){
-				return wrapperMap.remove(key);
+				return this.wrapperMap.remove(key);
 			} else {
 				return getComponentMap().remove(key);
 			}
@@ -324,7 +340,7 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 		 */
 		public Set keySet() {
 			HashSet set = new HashSet();
-			set.addAll(wrapperMap.keySet());
+			set.addAll(this.wrapperMap.keySet());
 			set.addAll(getComponentMap().keySet());
 			return set;
 		}
@@ -334,7 +350,7 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 		 */
 		public Collection values() {
 			ArrayList l = new ArrayList();
-			l.addAll(wrapperMap.values());
+			l.addAll(this.wrapperMap.values());
 			l.addAll(getComponentMap().values());
 			return l;
 		}
@@ -344,7 +360,7 @@ public class UIComponentWrapper extends UIComponent implements EditableValueHold
 		 */
 		public Set entrySet() {
 			HashSet set = new HashSet();
-			set.addAll(wrapperMap.entrySet());
+			set.addAll(this.wrapperMap.entrySet());
 			set.addAll(getComponentMap().entrySet());
 			return set;
 		}

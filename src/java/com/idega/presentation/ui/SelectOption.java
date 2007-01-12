@@ -19,19 +19,19 @@ public class SelectOption extends InterfaceObject {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[8];
 		values[0] = super.saveState(ctx);
-		values[1] = windowClass;
-		values[2] = parameterMap;
-		values[3] = target;
-		values[4] = new Integer(fileID);
+		values[1] = this.windowClass;
+		values[2] = this.parameterMap;
+		values[3] = this.target;
+		values[4] = new Integer(this.fileID);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		windowClass = (Class) values[1];
-		parameterMap = (Map) values[2];
-		target = (String) values[3];
-		fileID = ((Integer) values[4]).intValue();
+		this.windowClass = (Class) values[1];
+		this.parameterMap = (Map) values[2];
+		this.target = (String) values[3];
+		this.fileID = ((Integer) values[4]).intValue();
 	}
 	
 	public SelectOption() {
@@ -64,10 +64,12 @@ public class SelectOption extends InterfaceObject {
 	 * @param selected	The status to set.
 	 */
 	public void setSelected(boolean selected) {
-		if (selected)
+		if (selected) {
 			setMarkupAttribute("selected", "selected");
-		else
+		}
+		else {
 			this.removeMarkupAttribute("selected");
+		}
 	}
 	
 	/**
@@ -83,21 +85,22 @@ public class SelectOption extends InterfaceObject {
 	 * @return boolean	True if <code>SelectOption</code> is selected, false otherwise.
 	 */
 	public boolean getSelected() {
-		if (isMarkupAttributeSet("selected"))
+		if (isMarkupAttributeSet("selected")) {
 			return true;
+		}
 		return false;	
 	}
 	
 	public void main(IWContext iwc) throws Exception {
-		if (windowClass != null) {
-			String URL = Window.getWindowURLWithParameters(windowClass, iwc, parameterMap);
-			String arguments = Window.getWindowArgumentCallingScript(windowClass);
-			setValue(URL + "$" + arguments + "$" + target);
+		if (this.windowClass != null) {
+			String URL = Window.getWindowURLWithParameters(this.windowClass, iwc, this.parameterMap);
+			String arguments = Window.getWindowArgumentCallingScript(this.windowClass);
+			setValue(URL + "$" + arguments + "$" + this.target);
 			
 			getParentSelect().addSelectScript(true);
 		}
-		if (fileID != -1) {
-			String URL = getICFileSystem(iwc).getFileURI(fileID);
+		if (this.fileID != -1) {
+			String URL = getICFileSystem(iwc).getFileURI(this.fileID);
 			String arguments = Window.getWindowArgumentCallingScript(false, false, false, false, false, true, true, true, false, 640, 480, null, null);
 			setValue(URL + "$" + arguments + "$" + "_blank");
 		}

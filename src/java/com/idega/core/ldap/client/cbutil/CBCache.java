@@ -59,18 +59,24 @@ public class CBCache
 
 		for(int i=0; i<allFiles.length; i++)    				//TE: don't create temporary files if they already exist for the entry.
         {
-            if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("jpegPhoto")  && allFiles[i].endsWith(".jpg"))
-                return;
-			else if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("odDocumentDOC") && allFiles[i].endsWith(".doc"))
+            if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("jpegPhoto")  && allFiles[i].endsWith(".jpg")) {
 				return;
-			else if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("odSpreadSheetXLS") && allFiles[i].endsWith(".xls"))
+			}
+			else if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("odDocumentDOC") && allFiles[i].endsWith(".doc")) {
 				return;
-			else if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("odMovieAVI") && allFiles[i].endsWith(".avi"))
+			}
+			else if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("odSpreadSheetXLS") && allFiles[i].endsWith(".xls")) {
 				return;
-			else if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("odSoundWAV") && allFiles[i].endsWith(".wav"))
+			}
+			else if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("odMovieAVI") && allFiles[i].endsWith(".avi")) {
 				return;
-			else if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("odMusicMID") && allFiles[i].endsWith(".mid"))
+			}
+			else if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("odSoundWAV") && allFiles[i].endsWith(".wav")) {
 				return;
+			}
+			else if (allFiles[i].startsWith(currentDN) && type.equalsIgnoreCase("odMusicMID") && allFiles[i].endsWith(".mid")) {
+				return;
+			}
         }
 
         for(int i=0; i<size; i++)
@@ -102,8 +108,9 @@ public class CBCache
 				doNormalCache(currentDN, bytes, ".jpg");
             }
         }
-        if(allFiles.length > CACHEMAX)    	//TE: decrease the size of the cache if the cache contains 100 or more temporary files.
-            decreaseCacheSize();
+        if(allFiles.length > CACHEMAX) {
+			decreaseCacheSize();
+		}
     }
 
 
@@ -133,8 +140,9 @@ public class CBCache
 
 		for(int i=0; i<allAudioFiles.length; i++)    				//TE: don't create temporary files if they already exist for the entry.
         {
-			if (allAudioFiles[i].startsWith(currentDN))
+			if (allAudioFiles[i].startsWith(currentDN)) {
 				return;
+			}
         }
 
         for(int i=0; i<size; i++)
@@ -146,8 +154,9 @@ public class CBCache
 				doAudioCache(currentDN, bytes);
 			}
         }
-        if(allAudioFiles.length > CACHEMAX)    	//TE: decrease the size of the cache if the cache contains 100 or more temporary files.
-            decreaseAudioCacheSize();
+        if(allAudioFiles.length > CACHEMAX) {
+			decreaseAudioCacheSize();
+		}
     }
 
 
@@ -217,45 +226,64 @@ public class CBCache
 	public static void doAudioCache(String currentDN, byte [] bytes)
 	{
 		byte[] testBytes = new byte[100];
-		if (bytes.length > 100)
+		if (bytes.length > 100) {
 			System.arraycopy(bytes, 0, testBytes, 0, 100);
-		else
+		}
+		else {
 			testBytes = bytes;
+		}
 
 		String hexSub = CBUtility.bytes2Hex(testBytes);
 
 		//TE: look at the header of the sound files and determine the extension.
-		if(hexSub.indexOf("574156") > -1)
+		if(hexSub.indexOf("574156") > -1) {
 			extension = ".wav";
-		else if(hexSub.indexOf("494433") > -1)
+		}
+		else if(hexSub.indexOf("494433") > -1) {
 			extension = ".mp3";
-		else if((hexSub.toLowerCase()).indexOf("fffb9044") > -1)
+		}
+		else if((hexSub.toLowerCase()).indexOf("fffb9044") > -1) {
 			extension = ".mp3";
-		else if((hexSub.toLowerCase()).indexOf("fffb300c") > -1)
+		}
+		else if((hexSub.toLowerCase()).indexOf("fffb300c") > -1) {
 			extension = ".mp3";
-		else if((hexSub.toLowerCase()).indexOf("fff330c0") > -1)
+		}
+		else if((hexSub.toLowerCase()).indexOf("fff330c0") > -1) {
 			extension = ".mp3";
-		else if(hexSub.indexOf("524946") > -1)
+		}
+		else if(hexSub.indexOf("524946") > -1) {
 			extension = ".rmi";
-		else if((hexSub.toLowerCase()).indexOf("524d46") > -1)
+		}
+		else if((hexSub.toLowerCase()).indexOf("524d46") > -1) {
 			extension = ".ram";
-		else if(hexSub.indexOf("41494646") > -1)
+		}
+		else if(hexSub.indexOf("41494646") > -1) {
 			extension = ".aiff";
-		else if((hexSub.toLowerCase()).indexOf("4d546864") > -1)
+		}
+		else if((hexSub.toLowerCase()).indexOf("4d546864") > -1) {
 			extension = ".mid";
-		else if((hexSub.toLowerCase()).indexOf("2e736e64") > -1)
+		}
+		else if((hexSub.toLowerCase()).indexOf("2e736e64") > -1) {
 			extension = ".au";
-		else if((hexSub.toLowerCase()).indexOf("636f6f6c") > -1)
+		}
+		else if((hexSub.toLowerCase()).indexOf("636f6f6c") > -1) {
 			extension = ".stm";		//TE: screamTracker format.
-		else if((hexSub.toLowerCase()).indexOf("437265617469766520566f6963652046696c65") > -1)
+		}
+		else if((hexSub.toLowerCase()).indexOf("437265617469766520566f6963652046696c65") > -1) {
 			extension = ".voc";		//TE: Creative Voice File.
-		else if((hexSub.toLowerCase()).indexOf("457874656e646564204d6f64756c65") > -1)
+		}
+		else if((hexSub.toLowerCase()).indexOf("457874656e646564204d6f64756c65") > -1) {
 			extension = ".xm"; 		//TE: Extended Module format.
-		else if((hexSub.toLowerCase()).indexOf("5343524d") > -1)
+		}
+		else if((hexSub.toLowerCase()).indexOf("5343524d") > -1) {
 			extension = ".s3m";
-		else if((hexSub.toLowerCase()).indexOf("494d50") > -1)
+		}
+		else if((hexSub.toLowerCase()).indexOf("494d50") > -1) {
 			extension = ".it";
-		else extension = ".xxx";
+		}
+		else {
+			extension = ".xxx";
+		}
 
         File file = new File(audioFileDir, currentDN+counter+extension);
         counter++;
@@ -492,13 +520,18 @@ public class CBCache
         try
         {
             Attribute a = entry.get(name);
-            if (a == null ) return null;    // no pre-existing value, so nothing to do.
-            if (a.size() == 0 || a.get() == null ) return null;    // no pre-existing value, so nothing to do.
+            if (a == null ) {
+				return null;    // no pre-existing value, so nothing to do.
+			}
+            if (a.size() == 0 || a.get() == null ) {
+				return null;    // no pre-existing value, so nothing to do.
+			}
 
             Object o = a.get(entries);    	//TE: gets the attribute value at a certain position i.e. if 3 attribute values it will get the one at the position stored in entires.
 
-            if (o instanceof byte[])
-                return (byte[]) o;
+            if (o instanceof byte[]) {
+				return (byte[]) o;
+			}
 
             return null;
         }
@@ -555,8 +588,9 @@ public class CBCache
     {
         allFiles = makeDir().list();
 
-        if(allFiles == null)
-            return;
+        if(allFiles == null) {
+			return;
+		}
 
         for(int i=0; i<allFiles.length; i++)
         {

@@ -17,7 +17,7 @@ public class Ldap
      * @return String
      */
     public String getBaseDN() {
-        return baseDN;
+        return this.baseDN;
     }
 
     /**
@@ -25,7 +25,7 @@ public class Ldap
      * @return String
      */
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     /**
@@ -33,7 +33,7 @@ public class Ldap
      * @return String
      */
     public String getPort() {
-        return port;
+        return this.port;
     }
 
     /**
@@ -41,7 +41,7 @@ public class Ldap
      * @return String
      */
     public String getServer() {
-        return server;
+        return this.server;
     }
 
     /**
@@ -49,7 +49,7 @@ public class Ldap
      * @return String
      */
     public String getUser() {
-        return user;
+        return this.user;
     }
 
     /**

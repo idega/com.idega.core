@@ -75,12 +75,12 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 
 	public ICFileBMPBean() {
 		super();
-		_sortLeafs = true;
+		this._sortLeafs = true;
 	}
 
 	public ICFileBMPBean(int id) throws SQLException {
 		super(id);
-		_sortLeafs = true;
+		this._sortLeafs = true;
 	}
 
 	public void initializeAttributes() {
@@ -301,12 +301,15 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	public boolean getDeleted() {
 		String deleted = getStringColumnValue(getColumnDeleted());
 
-		if ((deleted == null) || (deleted.equals(NOT_DELETED)))
+		if ((deleted == null) || (deleted.equals(NOT_DELETED))) {
 			return (false);
-		else if (deleted.equals(DELETED))
+		}
+		else if (deleted.equals(DELETED)) {
 			return (true);
-		else
+		}
+		else {
 			return (false);
+		}
 	}
 
 	public void setDeleted(boolean deleted) {
@@ -351,8 +354,9 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		}
 
 		ICFile file = (ICFile)getParentNode();
-		if (file != null)
+		if (file != null) {
 			file.removeChild(this);
+		}
 
 		Iterator iter = getChildrenIterator();
 		if (iter != null) {
@@ -375,8 +379,9 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 			if (setICRootAsParent) {
 				IWCacheManager cm = IWMainApplication.getIWCacheManager();
 				ICFile parent = (ICFile)cm.getCachedEntity(com.idega.core.file.data.ICFileBMPBean.IC_ROOT_FOLDER_CACHE_KEY);
-				if (parent != null)
+				if (parent != null) {
 					parent.addChild(this);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
@@ -392,8 +397,9 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	 */
 	public void superDelete() throws SQLException {
 		ICFile file = (ICFile)getParentNode();
-		if (file != null)
+		if (file != null) {
 			file.removeChild(this);
+		}
 
 		Iterator iter = getChildrenIterator();
 		if (iter != null) {
@@ -411,8 +417,10 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		Collection files = idoFindPKsBySQL("select " + getIDColumnName() + " from " + getTableName() + " where " + ICFileBMPBean.getColumnNameName() + " = '" + name + "' and (" + ICFileBMPBean.getColumnDeleted() + "='N' or " + ICFileBMPBean.getColumnDeleted() + " is null)");
 		if (!files.isEmpty()) {
 			return (Integer)files.iterator().next();
-		} else
+		}
+		else {
 			throw new FinderException("File was not found");
+		}
 	}
 
 	public Integer ejbFindEntityOfSpecificVersion(ICVersion version) throws FinderException {

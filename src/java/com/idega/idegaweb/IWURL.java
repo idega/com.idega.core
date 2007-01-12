@@ -129,10 +129,10 @@ public class IWURL {
   }
 
   private Map getParametersMap(){
-    if(parametersMap == null){
-      parametersMap = new TreeMap();
+    if(this.parametersMap == null){
+      this.parametersMap = new TreeMap();
     }
-    return parametersMap;
+    return this.parametersMap;
   }
 
   public static IWURL getImageURL(int imageID){
@@ -160,7 +160,7 @@ public class IWURL {
    */
   public String getFullURL(){
     if(hasParameters()){
-      String theReturn = baseURL+questionMark;
+      String theReturn = this.baseURL+questionMark;
       Map map = getParametersMap();
       Set keySet = map.keySet();
       int last = keySet.size();
@@ -180,12 +180,12 @@ public class IWURL {
       return theReturn;
     }
     else{
-      return baseURL;
+      return this.baseURL;
     }
   }
 
   public boolean hasParameters(){
-    return (parametersMap!=null && !parametersMap.isEmpty());
+    return (this.parametersMap!=null && !this.parametersMap.isEmpty());
   }
 
   /**

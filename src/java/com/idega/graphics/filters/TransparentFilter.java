@@ -18,7 +18,7 @@ public class TransparentFilter extends RGBImageFilter{
     */
    public TransparentFilter(int rgb){
       super();
-      canFilterIndexColorModel = true;   // Can filter the colour map
+      this.canFilterIndexColorModel = true;   // Can filter the colour map
 	                                 // irrespective pf pixel locations
       this.rgb = rgb;
    }

@@ -27,7 +27,7 @@ public class IBOSessionContext implements SessionContext, Serializable
 	}
 	public EJBObject getEJBObject() throws java.lang.IllegalStateException
 	{
-		return ejbo;
+		return this.ejbo;
 	}
 	void setEJBObject(EJBObject ejbo)
 	{
@@ -45,7 +45,7 @@ public class IBOSessionContext implements SessionContext, Serializable
 	}
 	public EJBHome getEJBHome()
 	{
-		return ejbHome;
+		return this.ejbHome;
 	}
 	void setEJBHome(EJBHome ejbHome)
 	{

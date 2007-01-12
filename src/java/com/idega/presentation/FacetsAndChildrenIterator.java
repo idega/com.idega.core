@@ -1,5 +1,5 @@
 /*
- * $Id: FacetsAndChildrenIterator.java,v 1.1 2004/11/14 23:22:44 tryggvil Exp $
+ * $Id: FacetsAndChildrenIterator.java,v 1.1.2.1 2007/01/12 19:31:32 idegaweb Exp $
  * Created in 2004 by Tryggvi Larusson
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import java.util.NoSuchElementException;
 /**
  * Class to override the standard iterator for the method getFacetsAndChildren() in UIComponent
  * 
- * Last modified: $Date: 2004/11/14 23:22:44 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/01/12 19:31:32 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 class FacetsAndChildrenIterator
         implements Iterator
@@ -30,25 +30,25 @@ class FacetsAndChildrenIterator
 
     FacetsAndChildrenIterator(Map facetMap, List childrenList)
     {
-        _facetsIterator   = facetMap != null ? facetMap.values().iterator() : null;
-        _childrenIterator = childrenList != null ? childrenList.iterator() : null;
+        this._facetsIterator   = facetMap != null ? facetMap.values().iterator() : null;
+        this._childrenIterator = childrenList != null ? childrenList.iterator() : null;
     }
 
     public boolean hasNext()
     {
-        return (_facetsIterator != null && _facetsIterator.hasNext()) ||
-               (_childrenIterator != null && _childrenIterator.hasNext());
+        return (this._facetsIterator != null && this._facetsIterator.hasNext()) ||
+               (this._childrenIterator != null && this._childrenIterator.hasNext());
     }
 
     public Object next()
     {
-        if (_facetsIterator != null && _facetsIterator.hasNext())
+        if (this._facetsIterator != null && this._facetsIterator.hasNext())
         {
-            return _facetsIterator.next();
+            return this._facetsIterator.next();
         }
-        else if (_childrenIterator != null && _childrenIterator.hasNext())
+        else if (this._childrenIterator != null && this._childrenIterator.hasNext())
         {
-            return _childrenIterator.next();
+            return this._childrenIterator.next();
         }
         else
         {

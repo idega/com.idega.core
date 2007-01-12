@@ -44,7 +44,7 @@ public class GroupComparator extends GenericGroupComparator{
 	}
 
   public int compare(Object groupAOrCollectionOfGroupA, Object groupBOrCollectionOfGroupB) {
-    if( areICPermissions){
+    if( this.areICPermissions){
     	return compareICPermissionCollections(groupAOrCollectionOfGroupA,groupBOrCollectionOfGroupB);
     }
     else if( groupAOrCollectionOfGroupA instanceof Collection ){
@@ -72,19 +72,19 @@ public class GroupComparator extends GenericGroupComparator{
 	    CachedGroup cachedGroupA = null;
 	    CachedGroup cachedGroupB = null;
 		try {
-		    applicationCachedGroups = (Map)_iwc.getApplicationContext().getApplicationAttribute(CACHE_GROUPS_APPLICATION_ATTRIBUTE);
-		    if(applicationCachedGroups == null){
-		        applicationCachedGroups = new HashMap();
-		        _iwc.getApplicationContext().setApplicationAttribute(CACHE_GROUPS_APPLICATION_ATTRIBUTE, applicationCachedGroups);
+		    this.applicationCachedGroups = (Map)this._iwc.getApplicationContext().getApplicationAttribute(CACHE_GROUPS_APPLICATION_ATTRIBUTE);
+		    if(this.applicationCachedGroups == null){
+		        this.applicationCachedGroups = new HashMap();
+		        this._iwc.getApplicationContext().setApplicationAttribute(CACHE_GROUPS_APPLICATION_ATTRIBUTE, this.applicationCachedGroups);
 		    }
 
 		    cachedGroupA = checkForCachedGroups(permissionCollectionA);
 			cachedGroupB = checkForCachedGroups(permissionCollectionB);
-			if (sortByParents) {
-			     applicationCachedParents= (Map)_iwc.getApplicationContext().getApplicationAttribute(CACHE_PARENTS_APPLICATION_ATTRIBUTE);
-			    if(applicationCachedParents == null){
-			        applicationCachedParents = new HashMap();
-			        _iwc.getApplicationContext().setApplicationAttribute(CACHE_PARENTS_APPLICATION_ATTRIBUTE, applicationCachedParents);
+			if (this.sortByParents) {
+			     this.applicationCachedParents= (Map)this._iwc.getApplicationContext().getApplicationAttribute(CACHE_PARENTS_APPLICATION_ATTRIBUTE);
+			    if(this.applicationCachedParents == null){
+			        this.applicationCachedParents = new HashMap();
+			        this._iwc.getApplicationContext().setApplicationAttribute(CACHE_PARENTS_APPLICATION_ATTRIBUTE, this.applicationCachedParents);
 			    }
 			    
 			    Collection parentsA = getParentGroupsRecursive(cachedGroupA);
@@ -102,7 +102,7 @@ public class GroupComparator extends GenericGroupComparator{
 			e.printStackTrace();
 		}
 		if (comp == 0){
-		    Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
+		    Collator collator = Collator.getInstance(this._iwc.getCurrentLocale());
 		    comp = collator.compare(cachedGroupA.getName(), cachedGroupB.getName()); 
 		}
 		return comp;
@@ -119,10 +119,10 @@ public class GroupComparator extends GenericGroupComparator{
 	    CachedGroup cachedGroupA = null;
 	    CachedGroup cachedGroupB = null;
 		try {
-		    applicationCachedGroups = (Map)_iwc.getApplicationContext().getApplicationAttribute(CACHE_GROUPS_APPLICATION_ATTRIBUTE);
-		    if(applicationCachedGroups == null){
-		        applicationCachedGroups = new HashMap();
-		        _iwc.getApplicationContext().setApplicationAttribute(CACHE_GROUPS_APPLICATION_ATTRIBUTE, applicationCachedGroups);
+		    this.applicationCachedGroups = (Map)this._iwc.getApplicationContext().getApplicationAttribute(CACHE_GROUPS_APPLICATION_ATTRIBUTE);
+		    if(this.applicationCachedGroups == null){
+		        this.applicationCachedGroups = new HashMap();
+		        this._iwc.getApplicationContext().setApplicationAttribute(CACHE_GROUPS_APPLICATION_ATTRIBUTE, this.applicationCachedGroups);
 		    }
 
 		    cachedGroupA = new CachedGroup((Group)groupA);
@@ -130,17 +130,17 @@ public class GroupComparator extends GenericGroupComparator{
 		    String keyA = cachedGroupA.getPrimaryKey().toString();
 		    String keyB = cachedGroupB.getPrimaryKey().toString();
 		    
-		    if (applicationCachedGroups.containsKey(keyA)) {
-		        applicationCachedGroups.put(keyA, cachedGroupA);
+		    if (this.applicationCachedGroups.containsKey(keyA)) {
+		        this.applicationCachedGroups.put(keyA, cachedGroupA);
 		    }
-		    if (applicationCachedGroups.containsKey(keyB)) {
-		        applicationCachedGroups.put(keyB, cachedGroupB);
+		    if (this.applicationCachedGroups.containsKey(keyB)) {
+		        this.applicationCachedGroups.put(keyB, cachedGroupB);
 		    }
-			if (sortByParents) {
-			     applicationCachedParents= (Map)_iwc.getApplicationContext().getApplicationAttribute(CACHE_PARENTS_APPLICATION_ATTRIBUTE);
-			    if(applicationCachedParents == null){
-			        applicationCachedParents = new HashMap();
-			        _iwc.getApplicationContext().setApplicationAttribute(CACHE_PARENTS_APPLICATION_ATTRIBUTE, applicationCachedParents);
+			if (this.sortByParents) {
+			     this.applicationCachedParents= (Map)this._iwc.getApplicationContext().getApplicationAttribute(CACHE_PARENTS_APPLICATION_ATTRIBUTE);
+			    if(this.applicationCachedParents == null){
+			        this.applicationCachedParents = new HashMap();
+			        this._iwc.getApplicationContext().setApplicationAttribute(CACHE_PARENTS_APPLICATION_ATTRIBUTE, this.applicationCachedParents);
 			    }
 			    
 			    Collection parentsA = getParentGroupsRecursive(cachedGroupA);
@@ -158,7 +158,7 @@ public class GroupComparator extends GenericGroupComparator{
 			e.printStackTrace();
 		}
 		if (comp == 0){
-		    Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
+		    Collator collator = Collator.getInstance(this._iwc.getCurrentLocale());
 		    comp = collator.compare(cachedGroupA.getName(), cachedGroupB.getName()); 
 		}
 		return comp;
@@ -172,19 +172,20 @@ public class GroupComparator extends GenericGroupComparator{
      */
     private Collection getParentGroupsRecursive(CachedGroup cachedGroup) throws RemoteException, FinderException {
         Collection parentGroupsRecursive = null;
-		if (cachedParentsRecursiveAndCurrentGroup!=null) {
+		if (this.cachedParentsRecursiveAndCurrentGroup!=null) {
 		    String key = cachedGroup.getPrimaryKey().toString();
-			if (cachedParentsRecursiveAndCurrentGroup.containsKey(key))
-			    parentGroupsRecursive = (Collection)cachedParentsRecursiveAndCurrentGroup.get(key);
+			if (this.cachedParentsRecursiveAndCurrentGroup.containsKey(key)) {
+				parentGroupsRecursive = (Collection)this.cachedParentsRecursiveAndCurrentGroup.get(key);
+			}
 			else
 			{	
 			    parentGroupsRecursive = getParentsRecursiveAndCurrentGroup(cachedGroup);
-			    cachedParentsRecursiveAndCurrentGroup.put(key, parentGroupsRecursive);
+			    this.cachedParentsRecursiveAndCurrentGroup.put(key, parentGroupsRecursive);
 				if (parentGroupsRecursive == null) {
 				    setTopmostParentLevel(0);
 				}
 				else {
-			    	if (topmostParentLevel == -1 || topmostParentLevel > parentGroupsRecursive.size()) {
+			    	if (this.topmostParentLevel == -1 || this.topmostParentLevel > parentGroupsRecursive.size()) {
 				        setTopmostParentLevel(parentGroupsRecursive.size());
 				    }
 				}	
@@ -209,8 +210,9 @@ public class GroupComparator extends GenericGroupComparator{
             List tempCollection = new ArrayList();
             tempCollection.addAll(parentGroupsRecursive);
             parentGroupsRecursive.clear();
-            for (int i = collSize-1; i >=0 ;i--)
-                parentGroupsRecursive.add(tempCollection.get(i));
+            for (int i = collSize-1; i >=0 ;i--) {
+				parentGroupsRecursive.add(tempCollection.get(i));
+			}
         	
         }
         else {
@@ -229,8 +231,8 @@ public class GroupComparator extends GenericGroupComparator{
     private void getParentGroupsRecursive(Collection parentsRecursive, Integer groupId) throws RemoteException, FinderException {
         Group group = null;
         Group parent = null;
-        if (applicationCachedParents.containsKey(groupId.toString())) {
-            Collection col = (Collection)applicationCachedParents.get(groupId.toString());
+        if (this.applicationCachedParents.containsKey(groupId.toString())) {
+            Collection col = (Collection)this.applicationCachedParents.get(groupId.toString());
             Iterator it = col.iterator();
             Integer parentId = null;
             CachedGroup cachedParentGroup = null;
@@ -238,19 +240,19 @@ public class GroupComparator extends GenericGroupComparator{
             if (it.hasNext()) {
                  parentId = (Integer)it.next();
                  String key = parentId.toString();
-                 if (applicationCachedGroups.containsKey(key)) {
-                     cachedParentGroup = (CachedGroup)applicationCachedGroups.get(key); 
+                 if (this.applicationCachedGroups.containsKey(key)) {
+                     cachedParentGroup = (CachedGroup)this.applicationCachedGroups.get(key); 
                  }
-                 else if (cachedGroups.containsKey(key)) {
-                     parent = (Group)cachedGroups.get(key);
+                 else if (this.cachedGroups.containsKey(key)) {
+                     parent = (Group)this.cachedGroups.get(key);
                      cachedParentGroup = new CachedGroup(parent);
-                     applicationCachedGroups.put(key, cachedParentGroup);
+                     this.applicationCachedGroups.put(key, cachedParentGroup);
                  }
                  else {
-                     parent = (Group) groupBiz.getGroupByGroupID(parentId.intValue());
+                     parent = this.groupBiz.getGroupByGroupID(parentId.intValue());
 	                 cachedParentGroup = new CachedGroup(parent);
-	                 cachedGroups.put(key,parent);
-	                 applicationCachedGroups.put(key, cachedParentGroup);
+	                 this.cachedGroups.put(key,parent);
+	                 this.applicationCachedGroups.put(key, cachedParentGroup);
                  }
                  parentsRecursive.add(cachedParentGroup);
                  getParentGroupsRecursive(parentsRecursive, cachedParentGroup.getPrimaryKey());
@@ -258,18 +260,18 @@ public class GroupComparator extends GenericGroupComparator{
         }
         else {
             String key = groupId.toString();
-            if (cachedGroups.containsKey(key)) {
-                group = (Group)cachedGroups.get(key);
+            if (this.cachedGroups.containsKey(key)) {
+                group = (Group)this.cachedGroups.get(key);
                 CachedGroup cachedGroup = new CachedGroup(group);
-	            applicationCachedGroups.put(key, cachedGroup);
+	            this.applicationCachedGroups.put(key, cachedGroup);
             }
             else {
-	            group = (Group) groupBiz.getGroupByGroupID(groupId.intValue());
+	            group = this.groupBiz.getGroupByGroupID(groupId.intValue());
 	            CachedGroup cachedGroup = new CachedGroup(group);
-	            cachedGroups.put(key, group);
-	            applicationCachedGroups.put(key, cachedGroup);
+	            this.cachedGroups.put(key, group);
+	            this.applicationCachedGroups.put(key, cachedGroup);
             }
-            Collection parents = group.getParentGroups(applicationCachedParents, cachedGroups);        
+            Collection parents = group.getParentGroups(this.applicationCachedParents, this.cachedGroups);        
             Iterator parIt = parents.iterator();
 	        if (parIt.hasNext()) {
 	            parent = (Group)parIt.next();
@@ -290,9 +292,9 @@ public class GroupComparator extends GenericGroupComparator{
      */
     private int compareGroupTypes(CachedGroup cachedGroupA, CachedGroup cachedGroupB) {
         int comp = 0;
-        Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
-        String groupType1 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(cachedGroupA.getGroupType());
-        String groupType2 = _iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(_iwc.getCurrentLocale()).getLocalizedString(cachedGroupB.getGroupType());
+        Collator collator = Collator.getInstance(this._iwc.getCurrentLocale());
+        String groupType1 = this._iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(this._iwc.getCurrentLocale()).getLocalizedString(cachedGroupA.getGroupType());
+        String groupType2 = this._iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(this._iwc.getCurrentLocale()).getLocalizedString(cachedGroupB.getGroupType());
         if (groupType1 != null && groupType2 == null) {
             comp = -1;
         } else if (groupType1 == null && groupType2 != null) {
@@ -326,7 +328,7 @@ public class GroupComparator extends GenericGroupComparator{
 	                cachedParentGroupB = (CachedGroup)parBIt.next();
 		            comp = compareGroupTypes(cachedParentGroupA, cachedParentGroupB);
 		            if (comp == 0){
-		                Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
+		                Collator collator = Collator.getInstance(this._iwc.getCurrentLocale());
 		                comp = collator.compare(cachedParentGroupA.getName(), cachedParentGroupB.getName());
 		            }
 	            }
@@ -356,20 +358,20 @@ public class GroupComparator extends GenericGroupComparator{
 	    Group group = null;
 	    String groupId = ((ICPermission) ((Collection) permissionCollection).iterator().next()).getContextValue();
 		String key = groupId;
-	    if (applicationCachedGroups.containsKey(key)) {
-		    cachedGroup = (CachedGroup)applicationCachedGroups.get(key);
+	    if (this.applicationCachedGroups.containsKey(key)) {
+		    cachedGroup = (CachedGroup)this.applicationCachedGroups.get(key);
 		}
-		else if (cachedGroups.containsKey(key)) {
-		    group = (Group)cachedGroups.get(groupId);
+		else if (this.cachedGroups.containsKey(key)) {
+		    group = (Group)this.cachedGroups.get(groupId);
             cachedGroup = new CachedGroup(group);
-            applicationCachedGroups.put(key, cachedGroup);
+            this.applicationCachedGroups.put(key, cachedGroup);
         }
 		else
 		{	
-			group = groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
+			group = this.groupBiz.getGroupByGroupID(Integer.parseInt(groupId));
 			cachedGroup = new CachedGroup(group);
-			cachedGroups.put(key, group);
-			applicationCachedGroups.put(key, cachedGroup);
+			this.cachedGroups.put(key, group);
+			this.applicationCachedGroups.put(key, cachedGroup);
 		}
 		return cachedGroup;
 	}
@@ -382,8 +384,9 @@ public class GroupComparator extends GenericGroupComparator{
 		    indent = ((Collection)obj).size();
 		}
 		indent = indent - getTopmostParentLevel();
-		for (int i=0;i<indent;i++)
+		for (int i=0;i<indent;i++) {
 			indentString = "&middot;&nbsp;" + indentString;
+		}
 		indentString = indentString + cachedGroup.getName();
 		return indentString;
 	}
@@ -412,18 +415,18 @@ public class GroupComparator extends GenericGroupComparator{
 	}
 
 	public Map getApplicationCachedGroups() {
-	    return applicationCachedGroups;
+	    return this.applicationCachedGroups;
 	}
 
 	public Map getCachedParentsRecursiveAndCurrentGroup() {
-	    return cachedParentsRecursiveAndCurrentGroup;
+	    return this.cachedParentsRecursiveAndCurrentGroup;
 	}
 	
 /**
  * @return Returns the topmostParentLevel.
  */
 	public int getTopmostParentLevel() {
-    	return topmostParentLevel;
+    	return this.topmostParentLevel;
 	}
 	/**
 	 * @param topmostParentLevel The topmostParentLevel to set.

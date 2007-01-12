@@ -37,7 +37,7 @@ public class IWColor{
 
     public IWColor(Color color){
 
-      awtColor = color;
+      this.awtColor = color;
 
     }
 
@@ -81,7 +81,7 @@ public class IWColor{
 
   public IWColor(ColorSpace cspace, float[] components, float alpha){
 
-    awtColor = new Color(cspace, components, alpha);
+    this.awtColor = new Color(cspace, components, alpha);
 
   }
 
@@ -117,7 +117,7 @@ public class IWColor{
 
   public IWColor(float r, float g, float b){
 
-    awtColor = new Color(r, g, b);
+    this.awtColor = new Color(r, g, b);
 
   }
 
@@ -155,7 +155,7 @@ public class IWColor{
 
   public IWColor(float r, float g, float b, float a){
 
-    awtColor = new Color(r, g, b, a);
+    this.awtColor = new Color(r, g, b, a);
 
   }
 
@@ -191,7 +191,7 @@ public class IWColor{
 
   public IWColor(int rgb){
 
-    awtColor = new Color(rgb);
+    this.awtColor = new Color(rgb);
 
   }
 
@@ -231,7 +231,7 @@ public class IWColor{
 
   public IWColor(int rgba, boolean hasalpha){
 
-    awtColor = new Color( rgba, hasalpha);
+    this.awtColor = new Color( rgba, hasalpha);
 
   }
 
@@ -269,7 +269,7 @@ public class IWColor{
 
   public IWColor(int r, int g, int b){
 
-    awtColor = new Color( r, g, b);
+    this.awtColor = new Color( r, g, b);
 
   }
 
@@ -303,7 +303,7 @@ public class IWColor{
 
   public IWColor(int r, int g, int b, int a){
 
-    awtColor = new Color( r, g, b, a);
+    this.awtColor = new Color( r, g, b, a);
 
   }
 
@@ -311,7 +311,7 @@ public class IWColor{
 
   public int getRed(){
 
-    return awtColor.getRed();
+    return this.awtColor.getRed();
 
   }
 
@@ -319,7 +319,7 @@ public class IWColor{
 
   public int getGreen(){
 
-    return awtColor.getGreen();
+    return this.awtColor.getGreen();
 
   }
 
@@ -327,7 +327,7 @@ public class IWColor{
 
   public int getBlue(){
 
-    return awtColor.getBlue();
+    return this.awtColor.getBlue();
 
   }
 
@@ -335,7 +335,7 @@ public class IWColor{
 
   public IWColor darker(){
 
-    return new IWColor(awtColor.darker());
+    return new IWColor(this.awtColor.darker());
 
   }
 
@@ -343,7 +343,7 @@ public class IWColor{
 
   public IWColor brighter(){
 
-    return new IWColor(awtColor.brighter());
+    return new IWColor(this.awtColor.brighter());
 
   }
 
@@ -375,25 +375,25 @@ public class IWColor{
 
     if ((R < 256 && R > -1) && (G < 256 && G > -1) && (B < 256 && B > -1)){
 
-      if ( R < 16 )
-
-	colorString += "0";
+      if ( R < 16 ) {
+		colorString += "0";
+	}
 
       colorString += Integer.toHexString(R);
 
 
 
-      if ( G < 16 )
-
-	colorString += "0";
+      if ( G < 16 ) {
+		colorString += "0";
+	}
 
       colorString += Integer.toHexString(G);
 
 
 
-      if ( B < 16 )
-
-	colorString += "0";
+      if ( B < 16 ) {
+		colorString += "0";
+	}
 
       colorString += Integer.toHexString(B);
 

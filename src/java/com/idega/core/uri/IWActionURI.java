@@ -1,5 +1,5 @@
 /*
- * $Id: IWActionURI.java,v 1.4 2005/03/08 18:29:43 gummi Exp $
+ * $Id: IWActionURI.java,v 1.4.2.1 2007/01/12 19:32:25 idegaweb Exp $
  * Created on Jan 31, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,10 +15,10 @@ import com.idega.idegaweb.IWMainApplication;
 
 /**
  * 
- *  Last modified: $Date: 2005/03/08 18:29:43 $ by $Author: gummi $
+ *  Last modified: $Date: 2007/01/12 19:32:25 $ by $Author: idegaweb $
  * A "parser" class for an action URI that divides an action uri into three parts: action, path and identifier
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.4.2.1 $
  */
 public class IWActionURI {
 	
@@ -74,7 +74,7 @@ public class IWActionURI {
 	protected String extractHandlerIdentifierPart(String requestURI) {
 		//get the path part
 		StringTokenizer tokenizer = new StringTokenizer(extractActionURI(requestURI),"/");
-		for(int i = 0; i < INDEX_OF_HANDLER_IDENTIFIER;i++){
+		for(int i = 0; i < this.INDEX_OF_HANDLER_IDENTIFIER;i++){
 			if(tokenizer.hasMoreTokens()){
 				tokenizer.nextToken();
 			}
@@ -131,21 +131,21 @@ public class IWActionURI {
 	 * @return Returns the actionPart, e.g. "edit" from /idegaweb/action/edit/default/files/cms/article/1.xml
 	 */
 	public String getActionPart() {
-		return actionPart;
+		return this.actionPart;
 	}
 	
 	/**
 	 * @return Returns the pathPart, e.g. "/files/cms/article/01012005.article/en.xml" from /idegaweb/action/edit/default/files/cms/article/01012005.article/en.xml
 	 */
 	public String getPathPart() {
-		return pathPart;
+		return this.pathPart;
 	}
 	
 	/**
 	 * @return Returns the identifierPart, e.g. "01012005.article/en.xml" from /idegaweb/action/edit/default/files/cms/article/01012005.article/en.xml
 	 */
 	public String getIdentifierPart() {
-		return identifierPart;
+		return this.identifierPart;
 	}
 	
 	
@@ -153,11 +153,11 @@ public class IWActionURI {
 	 * @return Returns the handlerIdentifier, e.g. "default" from /idegaweb/action/edit/default/files/cms/article/1.xml
 	 */
 	public String getHandlerIdentifier() {
-		return (handlerIdentifierPart!=null)?handlerIdentifierPart:UNDEFINED_HANDLER_IDENTIFER;
+		return (this.handlerIdentifierPart!=null)?this.handlerIdentifierPart:UNDEFINED_HANDLER_IDENTIFER;
 	}
 	
 	public String getContextURI(){
-		return contextURI;
+		return this.contextURI;
 	}
 	
 	public static void main(String[] args){
@@ -203,11 +203,11 @@ public class IWActionURI {
 	
 	
 	public void setContextURI(String uri){
-		contextURI = uri;
-		if(contextURI != null && !contextURI.endsWith("/")){
-			contextURI = contextURI+"/";
-		} else if(contextURI==null){
-			contextURI = "/";
+		this.contextURI = uri;
+		if(this.contextURI != null && !this.contextURI.endsWith("/")){
+			this.contextURI = this.contextURI+"/";
+		} else if(this.contextURI==null){
+			this.contextURI = "/";
 		}
 	}
 	

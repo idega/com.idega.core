@@ -129,34 +129,38 @@ public class DXAttribute extends BasicAttribute
         // quickly handle schema atts.
         String ID = getID();
 
-        if ("SYNTAXNAMENUMERICOIDDESC".indexOf(ID) != -1) return;
+        if ("SYNTAXNAMENUMERICOIDDESC".indexOf(ID) != -1) {
+			return;
+		}
 
         ID = ID.toLowerCase();
 
         if (knownBinaryAttributes.get(ID) != null)    // see if we already know this attribute ID...
         {
-            binary = (knownBinaryAttributes.get(ID).equals(Boolean.TRUE));
+            this.binary = (knownBinaryAttributes.get(ID).equals(Boolean.TRUE));
         }
 
-        if (ID.endsWith(";binary")) binary = true;
+        if (ID.endsWith(";binary")) {
+			this.binary = true;
+		}
 
-        if (binary == false)
+        if (this.binary == false)
         {
-            binary = checkIsBinaryInSchema();
+            this.binary = checkIsBinaryInSchema();
         }
 
-        if (binary == false && schema==null) // backup checks for if no schema or bad schema
+        if (this.binary == false && schema==null) // backup checks for if no schema or bad schema
         {
             Object value = null;
             try
             {
                 value = get();
-                binary =  !(value==null || value instanceof String);
+                this.binary =  !(value==null || value instanceof String);
             }
             catch (Exception e) {}
         }
 
-        knownBinaryAttributes.put(ID, new Boolean(binary));
+        knownBinaryAttributes.put(ID, new Boolean(this.binary));
     }
 
     /**
@@ -165,11 +169,13 @@ public class DXAttribute extends BasicAttribute
 
     public static boolean isEmpty(Attribute att)
     {
-        if (att == null)
-            return true;
+        if (att == null) {
+			return true;
+		}
 
-        if (att.size()==0)
-            return true;
+        if (att.size()==0) {
+			return true;
+		}
 
         if (att.size()==1)
         {
@@ -183,8 +189,9 @@ public class DXAttribute extends BasicAttribute
                 return true;  // assume naming exception means empty attribute... (?)
             }
 
-            if (val == null || "".equals(val))
-                return true;
+            if (val == null || "".equals(val)) {
+				return true;
+			}
         }
 
         return false;
@@ -242,12 +249,14 @@ public class DXAttribute extends BasicAttribute
 
     public static boolean isBinarySyntax(String syntaxName)
     {
-        if (syntaxName == null)
-            return false;
+        if (syntaxName == null) {
+			return false;
+		}
 
         int pos = syntaxName.indexOf("1.3.6.1.4.1.1466.115.121.1.");
-        if (pos == -1)
-            return false;
+        if (pos == -1) {
+			return false;
+		}
 
         String number = syntaxName.substring(pos + "1.3.6.1.4.1.1466.115.121.1.".length());
 
@@ -255,8 +264,9 @@ public class DXAttribute extends BasicAttribute
         {
             number = number.substring(0, 2);
             char c = number.charAt(1);
-            if (Character.isDigit(c) == false)
-                number = number.substring(0, 1);
+            if (Character.isDigit(c) == false) {
+				number = number.substring(0, 1);
+			}
         }
 
         try
@@ -302,8 +312,9 @@ public class DXAttribute extends BasicAttribute
                 {
                     String syntaxName = a.toString();
 //System.out.println(getID() + " found syntax as: " + syntaxName);
-                    if (isBinarySyntax(syntaxName))
-                        return true;
+                    if (isBinarySyntax(syntaxName)) {
+						return true;
+					}
                 }
                 else
                 {
@@ -318,8 +329,9 @@ public class DXAttribute extends BasicAttribute
                 //XXX check for bad schema
                     String syntaxName = atts.get("SYNTAX").toString();
                 // XXX check for string length less than 1.3....5
-                    if (isBinarySyntax(syntaxName))
-                        return true;
+                    if (isBinarySyntax(syntaxName)) {
+						return true;
+					}
                 }
                 catch (Exception e2) // give up
                 {
@@ -362,7 +374,7 @@ public class DXAttribute extends BasicAttribute
      *    Whether the attribute contains binary data; ideally found by checking Syntax, but
      *    often set by inspection of the attribute value (whether it is a Byte array).
      */
-    public boolean isBinary() { return binary; }
+    public boolean isBinary() { return this.binary; }
 
     /**
      *    Sets the binary status of the attribute.  Shouldn't be required any more;
@@ -371,7 +383,7 @@ public class DXAttribute extends BasicAttribute
     public void setBinary(boolean bin)
     {
         knownBinaryAttributes.put(getID(), new Boolean(bin));
-        binary = bin;
+        this.binary = bin;
     }
 
     /**
@@ -385,10 +397,11 @@ public class DXAttribute extends BasicAttribute
 
     public String schemaLookup(String schemaEntry, String schemaAttribute)
     {
-        if (schema == null)
-            return null;
-        else
-            return schema.schemaLookup(schemaEntry, schemaAttribute);
+        if (schema == null) {
+			return null;
+		}
+		else {
+			return schema.schemaLookup(schemaEntry, schemaAttribute);
 /*
         String value = null;
         try
@@ -418,15 +431,18 @@ public class DXAttribute extends BasicAttribute
         }
         return value;
 */
+		}
     }
 
     public boolean hasOptions()
     {
-        if (description==null)  // try to load a description if it exists
-            getDescription();
+        if (this.description==null) {
+			getDescription();
+		}
 
-        if (description==null || description == "" || description.indexOf("LIST:")<0)
-            return false;
+        if (this.description==null || this.description == "" || this.description.indexOf("LIST:")<0) {
+			return false;
+		}
 
         return true;
     }
@@ -439,15 +455,19 @@ public class DXAttribute extends BasicAttribute
 
     public String[] getOptions()
     {
-        if (description==null)
-            getDescription();
-        if (description==null || description == "" )
-            return new String[0];
+        if (this.description==null) {
+			getDescription();
+		}
+        if (this.description==null || this.description == "" ) {
+			return new String[0];
+		}
 
         // can't be fagged working out java generic parse stuff - do own quickie...
-        int len = description.length();
-        int pos = description.indexOf("LIST:");
-        if (pos < 0) return new String[0];
+        int len = this.description.length();
+        int pos = this.description.indexOf("LIST:");
+        if (pos < 0) {
+			return new String[0];
+		}
         pos += 5;
         int next = pos;
 
@@ -456,15 +476,15 @@ public class DXAttribute extends BasicAttribute
 //        String option;
         while (pos < len && pos > 0)
         {
-            next = description.indexOf(',', next+1);
+            next = this.description.indexOf(',', next+1);
             if (next < 0)
             {
-                resVect.add(description.substring(pos));
+                resVect.add(this.description.substring(pos));
                 pos = 0;
             }
-            else if (description.charAt(next-1)!= '\\')
+            else if (this.description.charAt(next-1)!= '\\')
             {
-                resVect.add(description.substring(pos, next));
+                resVect.add(this.description.substring(pos, next));
                 pos = next+1;
             }
             else
@@ -475,8 +495,9 @@ public class DXAttribute extends BasicAttribute
 
         // dump vector into string array, unescaping as we go.
         String[] result = new String[resVect.size()];
-        for (int i=0; i<resVect.size(); i++)
-            result[i] = unEscape((String)resVect.elementAt(i));
+        for (int i=0; i<resVect.size(); i++) {
+			result[i] = unEscape((String)resVect.elementAt(i));
+		}
 
         return result;
     }
@@ -496,14 +517,15 @@ public class DXAttribute extends BasicAttribute
 
     public String getSyntaxOID()
     {
-        if (syntaxOID == null)
+        if (this.syntaxOID == null)
         {
-            syntaxOID = schemaLookup("AttributeDefinition/" + getID(), "SYNTAX");
+            this.syntaxOID = schemaLookup("AttributeDefinition/" + getID(), "SYNTAX");
 
-            if (isBinarySyntax(syntaxOID))
-                binary = true;
+            if (isBinarySyntax(this.syntaxOID)) {
+				this.binary = true;
+			}
         }
-        return syntaxOID;
+        return this.syntaxOID;
     }
 
     /**
@@ -512,17 +534,19 @@ public class DXAttribute extends BasicAttribute
      */
     public void setName(String newName)
     {
-        name = newName;
+        this.name = newName;
     }
 
     public String getName()
     {
-        if (name == null)
-            name = schemaLookup("AttributeDefinition/" + getID(), "NAME");
-        if (name == null)
-            name = getID();
+        if (this.name == null) {
+			this.name = schemaLookup("AttributeDefinition/" + getID(), "NAME");
+		}
+        if (this.name == null) {
+			this.name = getID();
+		}
 
-        return name;
+        return this.name;
     }
 
     /**
@@ -530,9 +554,10 @@ public class DXAttribute extends BasicAttribute
      */
     public String getSyntaxDesc()
     {
-        if (syntaxDesc == null)
-            syntaxDesc = schemaLookup("SyntaxDefinition/" + getSyntaxOID(), "DESC");
-        return syntaxDesc;
+        if (this.syntaxDesc == null) {
+			this.syntaxDesc = schemaLookup("SyntaxDefinition/" + getSyntaxOID(), "DESC");
+		}
+        return this.syntaxDesc;
     }
 
     /**
@@ -543,13 +568,14 @@ public class DXAttribute extends BasicAttribute
 
     public String getDescription()
     {
-        if (description == null)
+        if (this.description == null)
         {
-            description = schemaLookup("AttributeDefinition/" + getID(), "DESC");
-            if (description == null)    // if description is still null, set it
-                description = "";       // to an empty string, to avoid repeatedly looking it up.
+            this.description = schemaLookup("AttributeDefinition/" + getID(), "DESC");
+            if (this.description == null) {
+				this.description = "";       // to an empty string, to avoid repeatedly looking it up.
+			}
         }
-        return description;
+        return this.description;
     }
 
 
@@ -565,7 +591,7 @@ public class DXAttribute extends BasicAttribute
         {
             String result = "att: " + getID() + " (size=" + size() + ") ";
             NamingEnumeration vals = getAll();
-            if (binary)
+            if (this.binary)
             {
                 result = result + " (binary) ";
                 while (vals.hasMore())
@@ -615,8 +641,9 @@ public class DXAttribute extends BasicAttribute
          if (verboseBinary && !(id.endsWith(";binary")))
          {
              //System.out.println("binaryness = " + binary);
-             if (binary)
-                 id = id + ";binary";
+             if (this.binary) {
+				id = id + ";binary";
+			}
          }
          log.log(Level.FINER,"returning binary id " + id);
          return id;
@@ -637,8 +664,9 @@ public class DXAttribute extends BasicAttribute
 		
 		try
 		{
-			for(int i=0; i<size(); i++)
+			for(int i=0; i<size(); i++) {
 				values[i] = get(i);
+			}
 			return values;	
 		}
 		catch(NamingException e)
@@ -676,7 +704,7 @@ public class DXAttribute extends BasicAttribute
         }
     }
 
-    public void setOrdered(boolean state) { ordered = state; }
+    public void setOrdered(boolean state) { this.ordered = state; }
 
 
 

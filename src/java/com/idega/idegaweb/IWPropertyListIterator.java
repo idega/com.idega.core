@@ -23,7 +23,7 @@ public class IWPropertyListIterator implements Iterator {
   }
 
   public boolean hasNext() {
-    return innerIterator.hasNext();
+    return this.innerIterator.hasNext();
   }
 
   public Object next() {
@@ -31,15 +31,15 @@ public class IWPropertyListIterator implements Iterator {
   }
 
   public void remove(){
-    if(currentKey!=null){
-      list.removeProperty(currentKey);
+    if(this.currentKey!=null){
+      this.list.removeProperty(this.currentKey);
     }
   }
 
   public IWProperty nextProperty(){
-    String key = (String)innerIterator.next();
-    currentKey=key;
-    return list.getIWProperty(key);
+    String key = (String)this.innerIterator.next();
+    this.currentKey=key;
+    return this.list.getIWProperty(key);
   }
 
 }

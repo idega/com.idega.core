@@ -76,8 +76,8 @@ public class HTMLArea extends Block {
 		loadPlugins.append("HTMLArea.loadPlugin(\"CSS\");\n").append("HTMLArea.loadPlugin(\"ContextMenu\");\n");
 		StringBuffer initEditorScript = new StringBuffer();
 		initEditorScript.append(" var editor = null;\n").append("function initEditor() {\n").append(
-				"// create an editor for the \"" + inputName + "\" textbox\n").append(
-				"editor = new HTMLArea('" + inputName + "');\n");
+				"// create an editor for the \"" + this.inputName + "\" textbox\n").append(
+				"editor = new HTMLArea('" + this.inputName + "');\n");
 		if (hasFullHTMLPageSupport()) {
 			initEditorScript.append("// register the FullPage plugin\n").append("editor.registerPlugin(FullPage);\n");
 		}
@@ -92,12 +92,12 @@ public class HTMLArea extends Block {
 		parent.addJavaScriptAfterJavaScriptURLs("htmlAreaLoadPlugins", loadPlugins.toString());
 		parent.addJavaScriptAfterJavaScriptURLs("htmlAreainitEditorMethod", initEditorScript.toString());
 		
-		TextArea area = new TextArea(inputName);
-		area.setRows(rows);
-		area.setID(inputName);
-		area.setContent(text);
-		area.setStyleAttribute("width", width);
-		area.setStyleAttribute("heigth", height);
+		TextArea area = new TextArea(this.inputName);
+		area.setRows(this.rows);
+		area.setID(this.inputName);
+		area.setContent(this.text);
+		area.setStyleAttribute("width", this.width);
+		area.setStyleAttribute("heigth", this.height);
 		add(area);
 	}
 
@@ -133,8 +133,9 @@ public class HTMLArea extends Block {
 																 // IE)
 			return "HTML";
 		}
-		else
+		else {
 			return null;
+		}
 	}
 
 	/**
@@ -142,7 +143,7 @@ public class HTMLArea extends Block {
 	 *         not handle editor.
 	 */
 	public int getRows() {
-		return rows;
+		return this.rows;
 	}
 
 	/**
@@ -159,7 +160,7 @@ public class HTMLArea extends Block {
 	 *         not handle editor.
 	 */
 	public int getColumns() {
-		return cols;
+		return this.cols;
 	}
 
 	/**
@@ -175,7 +176,7 @@ public class HTMLArea extends Block {
 	 * @return Returns true if this editor can handle a full html page
 	 */
 	public boolean hasFullHTMLPageSupport() {
-		return fullHTMLPageSupport;
+		return this.fullHTMLPageSupport;
 	}
 
 	/**
@@ -191,7 +192,7 @@ public class HTMLArea extends Block {
 	 * @return Returns the fullScreen.
 	 */
 	public boolean isFullScreen() {
-		return fullScreen;
+		return this.fullScreen;
 	}
 
 	/**

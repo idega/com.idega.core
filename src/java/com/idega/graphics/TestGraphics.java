@@ -1,5 +1,5 @@
 /*
- * $Id: TestGraphics.java,v 1.6 2002/11/27 19:15:29 tryggvil Exp $
+ * $Id: TestGraphics.java,v 1.6.6.1 2007/01/12 19:32:25 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -23,7 +23,7 @@ public class TestGraphics {
     TestGraphics testGraphics = new TestGraphics();
     testGraphics.invokedStandalone = true;
 
-    testGraphics.test();
+    TestGraphics.test();
   }
   private boolean invokedStandalone = false;
 
@@ -39,7 +39,7 @@ public class TestGraphics {
     String legend[] = new String[5];
     legend[0] = "Ernir";
     legend[1] = "Fuglar";
-    legend[2] = "Pör";
+    legend[2] = "Pï¿½r";
     legend[3] = "Skollar";
     legend[4] = "Skrambar+";
     Double data[] = new Double[5];
@@ -53,7 +53,7 @@ public class TestGraphics {
       CreateChart chart =new CreateChart();
       chart.setData(data);
       chart.setLegend(legend);
-      //Hérna á að nota Constants.getChartFileRootDir() í staðinn
+      //Hï¿½rna ï¿½ aï¿½ nota Constants.getChartFileRootDir() ï¿½ staï¿½inn
       chart.setFilePrefix("c:\\");
       chart.setFilePostfix("temp");
       chart.setWebPrefix("/tio/no/survey/results/");

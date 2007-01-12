@@ -30,9 +30,10 @@ public class ExcelOutput extends HttpServlet
     try
     {
       // take the message from the URL or create default message
-      String spath = (String)request.getParameter("dir");
-      if (spath == null || spath.trim().length() <= 0)
-        spath = "[ specify a message in the 'msg' argument on the URL ]";
+      String spath = request.getParameter("dir");
+      if (spath == null || spath.trim().length() <= 0) {
+		spath = "[ specify a message in the 'msg' argument on the URL ]";
+	}
       new FilePermission(spath,"read,execute");
       // create simple doc and write to a ByteArrayOutputStream
       ByteArrayOutputStream baos = new ByteArrayOutputStream();

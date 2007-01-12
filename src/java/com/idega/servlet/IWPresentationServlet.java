@@ -1,5 +1,5 @@
 /*
- * $Id: IWPresentationServlet.java,v 1.65 2005/03/09 00:59:30 tryggvil Exp $
+ * $Id: IWPresentationServlet.java,v 1.65.2.1 2007/01/12 19:32:47 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -54,10 +54,10 @@ public class IWPresentationServlet extends IWCoreServlet {
 		initializePage();
 	}*/
 	protected boolean hasCheckedCurrentAppContext() {
-		if (checkedCurrentAppContext == null) {
+		if (this.checkedCurrentAppContext == null) {
 			synchronized (this) {
-				if (checkedCurrentAppContext == null) {
-					checkedCurrentAppContext = Boolean.TRUE;
+				if (this.checkedCurrentAppContext == null) {
+					this.checkedCurrentAppContext = Boolean.TRUE;
 					return false;
 				}
 				else {

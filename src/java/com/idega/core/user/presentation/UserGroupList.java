@@ -28,7 +28,7 @@ import com.idega.util.Disposable;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -55,20 +55,20 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
 
   }
   public void initFieldContents() {
-    addLink.setWindowToOpen(UserGroupList.UserGroupSetter.class);
-    addLink.addParameter(UserGroupList.PARAMETER_USER_ID,this.getUserId());
+    this.addLink.setWindowToOpen(UserGroupList.UserGroupSetter.class);
+    this.addLink.addParameter(UserGroupList.PARAMETER_USER_ID,this.getUserId());
     List userGroups = UserBusiness.getUserGroupsDirectlyRelated(this.getUserId());
     if(userGroups != null){
       Iterator iter = userGroups.iterator();
       while (iter.hasNext()) {
         GenericGroup item = (GenericGroup)iter.next();
-        primaryGroupField.addMenuElement(item.getID(),item.getName());
+        this.primaryGroupField.addMenuElement(item.getID(),item.getName());
       }
     }
     try {
       User user = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(this.getUserId());
       int prgroupid = user.getPrimaryGroupID();
-      fieldValues.put(primaryGroupFieldName, (prgroupid != -1)?Integer.toString(prgroupid):"");
+      this.fieldValues.put(this.primaryGroupFieldName, (prgroupid != -1)?Integer.toString(prgroupid):"");
     }
     catch (SQLException ex) {
 
@@ -76,18 +76,18 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
     updateFieldsDisplayStatus();
   }
   public void updateFieldsDisplayStatus() {
-    primaryGroupField.setSelectedElement((String)fieldValues.get(primaryGroupFieldName));
+    this.primaryGroupField.setSelectedElement((String)this.fieldValues.get(this.primaryGroupFieldName));
   }
   public void initializeFields() {
-    memberofFrame = new IFrame("ic_user_memberof_ic_group",UserGroupList.GroupList.class);
-    memberofFrame.setHeight(280);
-    memberofFrame.setWidth(370);
-    memberofFrame.setScrolling(IFrame.SCROLLING_YES);
+    this.memberofFrame = new IFrame("ic_user_memberof_ic_group",UserGroupList.GroupList.class);
+    this.memberofFrame.setHeight(280);
+    this.memberofFrame.setWidth(370);
+    this.memberofFrame.setScrolling(IFrame.SCROLLING_YES);
 
-    primaryGroupField = new DropdownMenu(primaryGroupFieldName);
-    primaryGroupField.keepStatusOnAction();
+    this.primaryGroupField = new DropdownMenu(this.primaryGroupFieldName);
+    this.primaryGroupField.keepStatusOnAction();
 
-    addLink = new Link("  Add/Remove  ");
+    this.addLink = new Link("  Add/Remove  ");
   }
 
   public void actionPerformed(IWLinkEvent e){
@@ -95,11 +95,11 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
   }
 
   public void initializeTexts() {
-    memberof = this.getTextObject();
-    memberof.setText("Member of:");
+    this.memberof = this.getTextObject();
+    this.memberof.setText("Member of:");
 
-    primaryGroupText = this.getTextObject();
-    primaryGroupText.setText("Primarygroup");
+    this.primaryGroupText = this.getTextObject();
+    this.primaryGroupText.setText("Primarygroup");
   }
   public boolean store(IWContext iwc) {
     try {
@@ -122,19 +122,19 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
     prTable.setWidth(1,"100");
 
     this.add(prTable,1,1);
-    this.add(memberof,1,2);
-    this.add(memberofFrame,1,3);
+    this.add(this.memberof,1,2);
+    this.add(this.memberofFrame,1,3);
 
     this.setHeight(1,"30");
     this.setHeight(2,super.rowHeight);
     this.setHeight(4,super.rowHeight);
 
-    this.add(addLink,1,4);
+    this.add(this.addLink,1,4);
   }
   public boolean collect(IWContext iwc) {
-    String prgroup = iwc.getParameter(primaryGroupFieldName);
+    String prgroup = iwc.getParameter(this.primaryGroupFieldName);
     if(prgroup != null){
-      fieldValues.put(primaryGroupFieldName,prgroup);
+      this.fieldValues.put(this.primaryGroupFieldName,prgroup);
     }
     return true;
   }
@@ -142,7 +142,7 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
     this.primaryGroupFieldName = "primary_group";
   }
   public void initializeFieldValues() {
-    fieldValues.put(this.primaryGroupFieldName,"");
+    this.fieldValues.put(this.primaryGroupFieldName,"");
     this.updateFieldsDisplayStatus();
   }
 
@@ -152,17 +152,17 @@ public class UserGroupList extends UserTab implements Disposable, IWLinkListener
   }
 
   public void main(IWContext iwc) throws Exception {
-    primaryGroupField.removeElements();
-    primaryGroupField.addSeparator();
+    this.primaryGroupField.removeElements();
+    this.primaryGroupField.addSeparator();
     List userGroups = UserBusiness.getUserGroupsDirectlyRelated(this.getUserId());
     if(userGroups != null){
       Iterator iter = userGroups.iterator();
       while (iter.hasNext()) {
         GenericGroup item = (GenericGroup)iter.next();
-        primaryGroupField.addMenuElement(item.getID(),item.getName());
+        this.primaryGroupField.addMenuElement(item.getID(),item.getName());
       }
     }
-    primaryGroupField.setSelectedElement((String)fieldValues.get(primaryGroupFieldName));
+    this.primaryGroupField.setSelectedElement((String)this.fieldValues.get(this.primaryGroupFieldName));
 
 
     Object obj = UserBusiness.getUserGroupsDirectlyRelated(this.getUserId());

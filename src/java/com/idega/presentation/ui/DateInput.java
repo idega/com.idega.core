@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.59 2005/10/11 11:40:32 eiki Exp $
+ * $Id: DateInput.java,v 1.59.2.1 2007/01/12 19:32:05 idegaweb Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -151,7 +151,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	 */
 	public DateInput(String name, boolean inShort, boolean showNullValue) {
 		super.setName(name);
-		justConstructed = true;
+		this.justConstructed = true;
 		this.showNullValue = showNullValue;
 		this.inShort = inShort;
 		constructInputs();
@@ -160,23 +160,23 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	public Object clone() {
 		DateInput newObject = (DateInput) super.clone();
 
-		if (theWholeDate != null) {
-			newObject.theWholeDate = (Parameter) theWholeDate.clone();
+		if (this.theWholeDate != null) {
+			newObject.theWholeDate = (Parameter) this.theWholeDate.clone();
 		}
 
-		if (theDay != null) {
+		if (this.theDay != null) {
 			newObject.theDay = (DropdownMenu) this.theDay.clone();
 		}
 
-		if (theMonth != null) {
+		if (this.theMonth != null) {
 			newObject.theMonth = (DropdownMenu) this.theMonth.clone();
 		}
 
-		if (theYear != null) {
+		if (this.theYear != null) {
 			newObject.theYear = (DropdownMenu) this.theYear.clone();
 		}
 
-		if (script != null) {
+		if (this.script != null) {
 			newObject.script = (Script) this.script.clone();
 		}
 
@@ -186,21 +186,21 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	public void setName(String name) {
 		super.setName(name);
 
-		if (theWholeDate != null) {
-			theWholeDate.setName(name);
+		if (this.theWholeDate != null) {
+			this.theWholeDate.setName(name);
 		}
 
-		if (theDay != null) {
-			theDay.setName(name + "_day");
+		if (this.theDay != null) {
+			this.theDay.setName(name + "_day");
 		}
 
-		if (theMonth != null) {
-			theMonth.setName(name + "_month");
+		if (this.theMonth != null) {
+			this.theMonth.setName(name + "_month");
 		}
 
-		if (showYear) {
-			if (theYear != null) {
-				theYear.setName(name + "_year");
+		if (this.showYear) {
+			if (this.theYear != null) {
+				this.theYear.setName(name + "_year");
 			}
 		}
 	}
@@ -224,116 +224,116 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		IWTimestamp stamp = IWTimestamp.RightNow();
 		int currentYear = stamp.getYear();
 
-		if (showYear) {
+		if (this.showYear) {
 			this.setYearRange(currentYear, currentYear + 5);
 		}
 
-		if (showNullValue) {
-			theMonth.addMenuElement("00");
+		if (this.showNullValue) {
+			this.theMonth.addMenuElement("00");
 		}
-		theMonth.addMenuElement("01");
-		theMonth.addMenuElement("02");
-		theMonth.addMenuElement("03");
-		theMonth.addMenuElement("04");
-		theMonth.addMenuElement("05");
-		theMonth.addMenuElement("06");
-		theMonth.addMenuElement("07");
-		theMonth.addMenuElement("08");
-		theMonth.addMenuElement("09");
-		theMonth.addMenuElement("10");
-		theMonth.addMenuElement("11");
-		theMonth.addMenuElement("12");
+		this.theMonth.addMenuElement("01");
+		this.theMonth.addMenuElement("02");
+		this.theMonth.addMenuElement("03");
+		this.theMonth.addMenuElement("04");
+		this.theMonth.addMenuElement("05");
+		this.theMonth.addMenuElement("06");
+		this.theMonth.addMenuElement("07");
+		this.theMonth.addMenuElement("08");
+		this.theMonth.addMenuElement("09");
+		this.theMonth.addMenuElement("10");
+		this.theMonth.addMenuElement("11");
+		this.theMonth.addMenuElement("12");
 
-		if (showNullValue) {
-			theDay.addMenuElement("00", "D");
+		if (this.showNullValue) {
+			this.theDay.addMenuElement("00", "D");
 		}
-		theDay.addMenuElement("01", "1");
-		theDay.addMenuElement("02", "2");
-		theDay.addMenuElement("03", "3");
-		theDay.addMenuElement("04", "4");
-		theDay.addMenuElement("05", "5");
-		theDay.addMenuElement("06", "6");
-		theDay.addMenuElement("07", "7");
-		theDay.addMenuElement("08", "8");
-		theDay.addMenuElement("09", "9");
-		theDay.addMenuElement("10", "10");
-		theDay.addMenuElement("11", "11");
-		theDay.addMenuElement("12", "12");
-		theDay.addMenuElement("13", "13");
-		theDay.addMenuElement("14", "14");
-		theDay.addMenuElement("15", "15");
-		theDay.addMenuElement("16", "16");
-		theDay.addMenuElement("17", "17");
-		theDay.addMenuElement("18", "18");
-		theDay.addMenuElement("19", "19");
-		theDay.addMenuElement("20", "20");
-		theDay.addMenuElement("21", "21");
-		theDay.addMenuElement("22", "22");
-		theDay.addMenuElement("23", "23");
-		theDay.addMenuElement("24", "24");
-		theDay.addMenuElement("25", "25");
-		theDay.addMenuElement("26", "26");
-		theDay.addMenuElement("27", "27");
-		theDay.addMenuElement("28", "28");
-		theDay.addMenuElement("29", "29");
-		theDay.addMenuElement("30", "30");
-		theDay.addMenuElement("31", "31");
+		this.theDay.addMenuElement("01", "1");
+		this.theDay.addMenuElement("02", "2");
+		this.theDay.addMenuElement("03", "3");
+		this.theDay.addMenuElement("04", "4");
+		this.theDay.addMenuElement("05", "5");
+		this.theDay.addMenuElement("06", "6");
+		this.theDay.addMenuElement("07", "7");
+		this.theDay.addMenuElement("08", "8");
+		this.theDay.addMenuElement("09", "9");
+		this.theDay.addMenuElement("10", "10");
+		this.theDay.addMenuElement("11", "11");
+		this.theDay.addMenuElement("12", "12");
+		this.theDay.addMenuElement("13", "13");
+		this.theDay.addMenuElement("14", "14");
+		this.theDay.addMenuElement("15", "15");
+		this.theDay.addMenuElement("16", "16");
+		this.theDay.addMenuElement("17", "17");
+		this.theDay.addMenuElement("18", "18");
+		this.theDay.addMenuElement("19", "19");
+		this.theDay.addMenuElement("20", "20");
+		this.theDay.addMenuElement("21", "21");
+		this.theDay.addMenuElement("22", "22");
+		this.theDay.addMenuElement("23", "23");
+		this.theDay.addMenuElement("24", "24");
+		this.theDay.addMenuElement("25", "25");
+		this.theDay.addMenuElement("26", "26");
+		this.theDay.addMenuElement("27", "27");
+		this.theDay.addMenuElement("28", "28");
+		this.theDay.addMenuElement("29", "29");
+		this.theDay.addMenuElement("30", "30");
+		this.theDay.addMenuElement("31", "31");
 
-		if (showYear && showNullValue) {
-			theYear.addMenuElement("YY");
+		if (this.showYear && this.showNullValue) {
+			this.theYear.addMenuElement("YY");
 		}
 	}
 
 	public void setDisabled(boolean disabled) {
-		isDisabled = disabled;
+		this.isDisabled = disabled;
 	}
 
 	public void setStyle(String styleAttribute) {
-		if (isShowDay) {
-			theDay.setStyleClass(styleAttribute);
+		if (this.isShowDay) {
+			this.theDay.setStyleClass(styleAttribute);
 		}
 
-		theMonth.setStyleClass(styleAttribute);
+		this.theMonth.setStyleClass(styleAttribute);
 
-		if (showYear) {
-			theYear.setStyleClass(styleAttribute);
+		if (this.showYear) {
+			this.theYear.setStyleClass(styleAttribute);
 		}
 	}
 
 	public void setStyleAttribute(String attributeName, String attributeValue) {
-		theDay.setMarkupAttribute(attributeName, attributeValue);
-		theMonth.setMarkupAttribute(attributeName, attributeValue);
-		theYear.setMarkupAttribute(attributeName, attributeValue);
+		this.theDay.setMarkupAttribute(attributeName, attributeValue);
+		this.theMonth.setMarkupAttribute(attributeName, attributeValue);
+		this.theYear.setMarkupAttribute(attributeName, attributeValue);
 	}
 
 	public void setStyleAttribute(String attributeName) {
-		theDay.setStyleAttribute(attributeName);
-		theMonth.setStyleAttribute(attributeName);
-		theYear.setStyleAttribute(attributeName);
+		this.theDay.setStyleAttribute(attributeName);
+		this.theMonth.setStyleAttribute(attributeName);
+		this.theYear.setStyleAttribute(attributeName);
 	}
 
 	public void setYear(int year) {
-		setCheck = true;
+		this.setCheck = true;
 
 		// Gimmi 13.10.2002
-		selectedYear = year;
+		this.selectedYear = year;
 
-		if (fromYear > toYear) {
-			if (fromYear < year) {
-				fromYear = year;
+		if (this.fromYear > this.toYear) {
+			if (this.fromYear < year) {
+				this.fromYear = year;
 			}
 
-			if (toYear > year) {
-				toYear = year;
+			if (this.toYear > year) {
+				this.toYear = year;
 			}
 		}
 		else {
-			if (fromYear > year) {
-				fromYear = year;
+			if (this.fromYear > year) {
+				this.fromYear = year;
 			}
 
-			if (toYear < year) {
-				toYear = year;
+			if (this.toYear < year) {
+				this.toYear = year;
 			}
 		}
 	}
@@ -352,13 +352,13 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	 * @param month
 	 */
 	public void setMonth(String month) {
-		setCheck = true;
+		this.setCheck = true;
 
 		if (month.length() > 1) {
-			setMonth = month;
+			this.setMonth = month;
 		}
 		else {
-			setMonth = "0" + month;
+			this.setMonth = "0" + month;
 		}
 	}
 
@@ -367,13 +367,13 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	}
 
 	public void setDay(String day) {
-		setCheck = true;
+		this.setCheck = true;
 
 		if (day.length() > 1) {
-			setDay = day;
+			this.setDay = day;
 		}
 		else {
-			setDay = "0" + day;
+			this.setDay = "0" + day;
 		}
 	}
 
@@ -403,7 +403,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	}
 
 	public void setToShowDay(boolean ifShow) {
-		isShowDay = ifShow;
+		this.isShowDay = ifShow;
 
 		if (!ifShow) {
 			setDay(1);
@@ -411,75 +411,75 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	}
 
 	public void setToShowYear(boolean ifShow) {
-		showYear = ifShow;
+		this.showYear = ifShow;
 	}
 
 	public void setToDisplayDayLast(boolean dayLast) {
-		displayDayLast = dayLast;
+		this.displayDayLast = dayLast;
 	}
 
 	private void constructInputs() {
-		if (justConstructed) {
+		if (this.justConstructed) {
 			String name = getName();
-			script = new Script();
+			this.script = new Script();
 
-			if (isShowDay) {
-				theDay = new DropdownMenu(name + "_day");
+			if (this.isShowDay) {
+				this.theDay = new DropdownMenu(name + "_day");
 			}
 
-			theMonth = new DropdownMenu(name + "_month");
+			this.theMonth = new DropdownMenu(name + "_month");
 
-			if (showYear) {
-				theYear = new DropdownMenu(name + "_year");
+			if (this.showYear) {
+				this.theYear = new DropdownMenu(name + "_year");
 			}
 
-			theWholeDate = new Parameter(name, "");
+			this.theWholeDate = new Parameter(name, "");
 			addMenuElementsToDropdowns();
 		}
 	}
 
 	private void initilizeValues() {
-		if (setMonth != null) {
-			theMonth.setSelectedElement(setMonth);
+		if (this.setMonth != null) {
+			this.theMonth.setSelectedElement(this.setMonth);
 		}
 
-		if (setDay != null) {
-			if (isShowDay) {
-				theDay.setSelectedElement(setDay);
+		if (this.setDay != null) {
+			if (this.isShowDay) {
+				this.theDay.setSelectedElement(this.setDay);
 			}
 		}
 
-		if (justConstructed) {
-			if (showYear) {
+		if (this.justConstructed) {
+			if (this.showYear) {
 				// hack to avoid duplicate values
-				theYear.removeElements();
-				if (showNullValue) {
-					theYear.addMenuElement("YY");
+				this.theYear.removeElements();
+				if (this.showNullValue) {
+					this.theYear.addMenuElement("YY");
 				}
-				if (fromYear < toYear) {
-					for (int i = fromYear; i <= toYear; i++) {
-						theYear.addMenuElement(Integer.toString(i));
+				if (this.fromYear < this.toYear) {
+					for (int i = this.fromYear; i <= this.toYear; i++) {
+						this.theYear.addMenuElement(Integer.toString(i));
 					}
 				}
 				else {
-					for (int i = fromYear; i >= toYear; i--) {
-						theYear.addMenuElement(Integer.toString(i));
+					for (int i = this.fromYear; i >= this.toYear; i--) {
+						this.theYear.addMenuElement(Integer.toString(i));
 					}
 				}
 			}
 		}
 
-		if (selectedYear != -1) {
-			if (showYear) {
-				theYear.setSelectedElement(Integer.toString(selectedYear));
+		if (this.selectedYear != -1) {
+			if (this.showYear) {
+				this.theYear.setSelectedElement(Integer.toString(this.selectedYear));
 			}
 		}
 
-		if (setCheck == true) {
+		if (this.setCheck == true) {
 			String year = getCurrentYear();
-			String month = theMonth.getSelectedElementValue();
+			String month = this.theMonth.getSelectedElementValue();
 			String day = getCurrentDay();
-			theWholeDate.setValue(year + "-" + month + "-" + day);
+			this.theWholeDate.setValue(year + "-" + month + "-" + day);
 		}
 	}
 
@@ -488,81 +488,81 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		initilizeValues();
 		addLocalized(iwc);
 		addScriptElements(iwc);
-		justConstructed = false;
+		this.justConstructed = false;
 
-		if (keepStatusOnAction) {
+		if (this.keepStatusOnAction) {
 			handleKeepStatus(iwc);
 		}
 
-		if (isDisabled) {
-			theYear.setDisabled(isDisabled);
-			theMonth.setDisabled(isDisabled);
-			theDay.setDisabled(isDisabled);
+		if (this.isDisabled) {
+			this.theYear.setDisabled(this.isDisabled);
+			this.theMonth.setDisabled(this.isDisabled);
+			this.theDay.setDisabled(this.isDisabled);
 		}
-		if (styleClass != null) {
-			theYear.setStyleClass(styleClass);
-			theMonth.setStyleClass(styleClass);
-			theDay.setStyleClass(styleClass);
+		if (this.styleClass != null) {
+			this.theYear.setStyleClass(this.styleClass);
+			this.theMonth.setStyleClass(this.styleClass);
+			this.theDay.setStyleClass(this.styleClass);
 		}
 
-		if (displayDayLast) {
-			if (showYear) {
-				add(theYear);
+		if (this.displayDayLast) {
+			if (this.showYear) {
+				add(this.theYear);
 			}
 
-			add(theMonth);
+			add(this.theMonth);
 
-			if (isShowDay) {
-				add(theDay);
+			if (this.isShowDay) {
+				add(this.theDay);
 			}
 		}
 		else {
-			if (isShowDay) {
-				add(theDay);
+			if (this.isShowDay) {
+				add(this.theDay);
 			}
 
-			add(theMonth);
+			add(this.theMonth);
 
-			if (showYear) {
-				add(theYear);
+			if (this.showYear) {
+				add(this.theYear);
 			}
 		}
 
-		add(theWholeDate);
-		add(script);
+		add(this.theWholeDate);
+		add(this.script);
 	}
 
 	public void addScriptElements(IWContext iwc) {
-		if (isShowDay) {
-			if (showYear) {
-				theYear.setOnChange("iwPopulateDaysWithYear(this,this.form." + theMonth.getName() + ",this.form." + theDay.getName() + ",'" + dayString + "');iwSetValueOfHiddenDateWithAllInputs(this.form." + theYear.getName() + ",this.form." + theMonth.getName() + ",this.form." + theDay.getName() + ",this.form." + theWholeDate.getName() + ");");
-				theMonth.setOnChange("iwPopulateDaysWithYear(this.form." + theYear.getName() + ",this,this.form." + theDay.getName() + ",'" + dayString + "');iwSetValueOfHiddenDateWithAllInputs(this.form." + theYear.getName() + ",this.form." + theMonth.getName() + ",this.form." + theDay.getName() + ",this.form." + theWholeDate.getName() + ");");
-				theDay.setOnChange("iwSetValueOfHiddenDateWithAllInputs(this.form." + theYear.getName() + ",this.form." + theMonth.getName() + ",this.form." + theDay.getName() + ",this.form." + theWholeDate.getName() + ");");
+		if (this.isShowDay) {
+			if (this.showYear) {
+				this.theYear.setOnChange("iwPopulateDaysWithYear(this,this.form." + this.theMonth.getName() + ",this.form." + this.theDay.getName() + ",'" + this.dayString + "');iwSetValueOfHiddenDateWithAllInputs(this.form." + this.theYear.getName() + ",this.form." + this.theMonth.getName() + ",this.form." + this.theDay.getName() + ",this.form." + this.theWholeDate.getName() + ");");
+				this.theMonth.setOnChange("iwPopulateDaysWithYear(this.form." + this.theYear.getName() + ",this,this.form." + this.theDay.getName() + ",'" + this.dayString + "');iwSetValueOfHiddenDateWithAllInputs(this.form." + this.theYear.getName() + ",this.form." + this.theMonth.getName() + ",this.form." + this.theDay.getName() + ",this.form." + this.theWholeDate.getName() + ");");
+				this.theDay.setOnChange("iwSetValueOfHiddenDateWithAllInputs(this.form." + this.theYear.getName() + ",this.form." + this.theMonth.getName() + ",this.form." + this.theDay.getName() + ",this.form." + this.theWholeDate.getName() + ");");
 			}
 			else {
-				theMonth.setOnChange("iwPopulateDaysWithMonth('" + selectedYear + "',this,this.form." + theDay.getName() + ",'" + dayString + "');iwSetValueOfHiddenDateWithDay('" + selectedYear + "',this.form." + theMonth.getName() + ",this.form." + theDay.getName() + ",this.form." + theWholeDate.getName() + ");");
-				theDay.setOnChange("iwSetValueOfHiddenDateWithDay('" + selectedYear + "',this.form." + theMonth.getName() + ",this.form." + theDay.getName() + ",this.form." + theWholeDate.getName() + ");");
+				this.theMonth.setOnChange("iwPopulateDaysWithMonth('" + this.selectedYear + "',this,this.form." + this.theDay.getName() + ",'" + this.dayString + "');iwSetValueOfHiddenDateWithDay('" + this.selectedYear + "',this.form." + this.theMonth.getName() + ",this.form." + this.theDay.getName() + ",this.form." + this.theWholeDate.getName() + ");");
+				this.theDay.setOnChange("iwSetValueOfHiddenDateWithDay('" + this.selectedYear + "',this.form." + this.theMonth.getName() + ",this.form." + this.theDay.getName() + ",this.form." + this.theWholeDate.getName() + ");");
 			}
 		}
 		else {
-			if (showYear) {
-				theYear.setOnChange("iwSetValueOfHiddenDateWithYear(this.form." + theYear.getName() + ",this.form." + theMonth.getName() + ",this.form." + theWholeDate.getName() + ");");
-				theMonth.setOnChange("iwSetValueOfHiddenDateWithYear(this.form." + theYear.getName() + ",this.form." + theMonth.getName() + ",this.form." + theWholeDate.getName() + ");");
+			if (this.showYear) {
+				this.theYear.setOnChange("iwSetValueOfHiddenDateWithYear(this.form." + this.theYear.getName() + ",this.form." + this.theMonth.getName() + ",this.form." + this.theWholeDate.getName() + ");");
+				this.theMonth.setOnChange("iwSetValueOfHiddenDateWithYear(this.form." + this.theYear.getName() + ",this.form." + this.theMonth.getName() + ",this.form." + this.theWholeDate.getName() + ");");
 			}
 			else {
-				theMonth.setOnChange("iwSetValueOfHiddenDateWithMonth('" + selectedYear + "',this.form." + theMonth.getName() + ",'01',this.form." + theWholeDate.getName() + ");");
+				this.theMonth.setOnChange("iwSetValueOfHiddenDateWithMonth('" + this.selectedYear + "',this.form." + this.theMonth.getName() + ",'01',this.form." + this.theWholeDate.getName() + ");");
 			}
 		}
-		if (isSetAsNotEmpty) {
-			if (showYear) {
-				theYear.setAsNotEmpty(notEmptyErrorMessage, "YY");
+		if (this.isSetAsNotEmpty) {
+			if (this.showYear) {
+				this.theYear.setAsNotEmpty(this.notEmptyErrorMessage, "YY");
 			}
-			theMonth.setAsNotEmpty(notEmptyErrorMessage, "00");
-			if (isShowDay) {
-				theDay.setAsNotEmpty(notEmptyErrorMessage, "00");
+			this.theMonth.setAsNotEmpty(this.notEmptyErrorMessage, "00");
+			if (this.isShowDay) {
+				this.theDay.setAsNotEmpty(this.notEmptyErrorMessage, "00");
 			}
 		}
-		if (earliestDate != null) {
+		if (this.earliestDate != null) {
 			if (getParentForm() != null) {
 				Form form = getParentForm();
 				form.setOnSubmit("return checkSubmit(this)");
@@ -575,9 +575,9 @@ public class DateInput extends InterfaceObject implements InputHandler {
 					script.addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
 				}
 
-				IWTimestamp earlyDate = new IWTimestamp(earliestDate.getTime());
+				IWTimestamp earlyDate = new IWTimestamp(this.earliestDate.getTime());
 				earlyDate.setTime(0, 0, 0, 0);
-				script.addToBeginningOfFunction("checkSubmit", "if (checkEarliestDate (findObj('" + getName() + "')," + earlyDate.getDate().getTime() + ", '" + earliestDateErrorMessage + "') == false ){\nreturn false;\n}\n");
+				script.addToBeginningOfFunction("checkSubmit", "if (checkEarliestDate (findObj('" + getName() + "')," + earlyDate.getDate().getTime() + ", '" + this.earliestDateErrorMessage + "') == false ){\nreturn false;\n}\n");
 
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("function checkEarliestDate(input, date, warnMsg) {").append("\n\t");
@@ -599,7 +599,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 				form.setAssociatedFormScript(script);
 			}
 		}
-		if (latestDate != null) {
+		if (this.latestDate != null) {
 			if (getParentForm() != null) {
 				Form form = getParentForm();
 				form.setOnSubmit("return checkSubmit(this)");
@@ -611,7 +611,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 				if (script.getFunction("checkSubmit") == null) {
 					script.addFunction("checkSubmit", "function checkSubmit(inputs){\n\n}");
 				}
-				script.addToFunction("checkSubmit", "if (checkLatestDate (findObj('" + getName() + "')," + latestDate.getTime() + ", '" + latestDateErrorMessage + "') == false ){\nreturn false;\n}\n");
+				script.addToFunction("checkSubmit", "if (checkLatestDate (findObj('" + getName() + "')," + this.latestDate.getTime() + ", '" + this.latestDateErrorMessage + "') == false ){\nreturn false;\n}\n");
 
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("function checkLatestDate(input, date, warnMsg) {").append("\n\t");
@@ -636,18 +636,18 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	}
 
 	public void setAsNotEmpty(String errorMessage) {
-		isSetAsNotEmpty = true;
-		notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+		this.isSetAsNotEmpty = true;
+		this.notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
 
 	public void setEarliestPossibleDate(Date date, String errorMessage) {
-		earliestDate = date;
-		earliestDateErrorMessage = errorMessage;
+		this.earliestDate = date;
+		this.earliestDateErrorMessage = errorMessage;
 	}
 
 	public void setLatestPossibleDate(Date date, String errorMessage) {
-		latestDate = date;
-		latestDateErrorMessage = errorMessage;
+		this.latestDate = date;
+		this.latestDateErrorMessage = errorMessage;
 	}
 
 	private void addLocalized(IWContext iwc) {
@@ -657,25 +657,25 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		IWResourceBundle iwrb = iwb.getResourceBundle(iwc);
 		String[] monthStrings;
 
-		if (showNullValue) {
-			if (inShort) {
-				dayString = iwrb.getLocalizedString(DAY_KEY_S, "D");
-				monthString = iwrb.getLocalizedString(MONTH_KEY_S, "M");
-				yearString = iwrb.getLocalizedString(YEAR_KEY_S, "Y");
+		if (this.showNullValue) {
+			if (this.inShort) {
+				this.dayString = iwrb.getLocalizedString(DAY_KEY_S, "D");
+				this.monthString = iwrb.getLocalizedString(MONTH_KEY_S, "M");
+				this.yearString = iwrb.getLocalizedString(YEAR_KEY_S, "Y");
 			}
 			else {
-				dayString = iwrb.getLocalizedString(DAY_KEY, "Day");
-				monthString = iwrb.getLocalizedString(MONTH_KEY, "Month");
-				yearString = iwrb.getLocalizedString(YEAR_KEY, "Year");
+				this.dayString = iwrb.getLocalizedString(DAY_KEY, "Day");
+				this.monthString = iwrb.getLocalizedString(MONTH_KEY, "Month");
+				this.yearString = iwrb.getLocalizedString(YEAR_KEY, "Year");
 			}
-			theDay.setMenuElementDisplayString("00", dayString);
-			theMonth.setMenuElementDisplayString("00", monthString);
+			this.theDay.setMenuElementDisplayString("00", this.dayString);
+			this.theMonth.setMenuElementDisplayString("00", this.monthString);
 
-			if (showYear) {
-				theYear.setMenuElementDisplayString("YY", yearString);
+			if (this.showYear) {
+				this.theYear.setMenuElementDisplayString("YY", this.yearString);
 			}
 		}
-		if (inShort) {
+		if (this.inShort) {
 			monthStrings = symbols.getShortMonths();
 		}
 		else {
@@ -689,22 +689,22 @@ public class DateInput extends InterfaceObject implements InputHandler {
 				value = "0" + value;
 			}
 
-			theMonth.setMenuElementDisplayString(value, monthStrings[i - 1]);
+			this.theMonth.setMenuElementDisplayString(value, monthStrings[i - 1]);
 		}
 	}
 
 	public String getCurrentYear() {
-		if (showYear) {
-			return theYear.getSelectedElementValue();
+		if (this.showYear) {
+			return this.theYear.getSelectedElementValue();
 		}
 		else {
-			return Integer.toString(selectedYear);
+			return Integer.toString(this.selectedYear);
 		}
 	}
 
 	private String getCurrentDay() {
-		if (isShowDay) {
-			return theDay.getSelectedElementValue();
+		if (this.isShowDay) {
+			return this.theDay.getSelectedElementValue();
 		}
 		else {
 			return "01";
@@ -728,25 +728,25 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		}
 
 
-		if (theDay != null && nameDay != null) {
-			theDay.setSelectedElement(nameDay);
+		if (this.theDay != null && nameDay != null) {
+			this.theDay.setSelectedElement(nameDay);
 		}
 
 		if (nameMonth != null) {
-			theMonth.setSelectedElement(nameMonth);
+			this.theMonth.setSelectedElement(nameMonth);
 		}
 
-		if (theYear != null && nameYear != null) {
-			theYear.setSelectedElement(nameYear);
+		if (this.theYear != null && nameYear != null) {
+			this.theYear.setSelectedElement(nameYear);
 		}
 
 		if (name != null) {
-			theWholeDate.setValue(name);
+			this.theWholeDate.setValue(name);
 		}
 	}
 
 	public void keepStatusOnAction(boolean keepStatus) {
-		keepStatusOnAction = keepStatus;
+		this.keepStatusOnAction = keepStatus;
 	}
 
 	public void keepStatusOnAction() {
@@ -757,19 +757,19 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	 * @see com.idega.presentation.PresentationObject#setStyleClass(java.lang.String)
 	 */
 	public void setStyleClass(String styleName) {
-		styleClass = styleName;
+		this.styleClass = styleName;
 	}
 
 	public String getIDForDay() {
-		return theDay.getID();
+		return this.theDay.getID();
 	}
 
 	public String getIDForMonth() {
-		return theMonth.getID();
+		return this.theMonth.getID();
 	}
 
 	public String getIDForYear() {
-		return theYear.getID();
+		return this.theYear.getID();
 	}
 
 	/**
@@ -779,7 +779,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	 * @param b
 	 */
 	public void setShowNullValue(boolean b) {
-		showNullValue = b;
+		this.showNullValue = b;
 	}
 
 	/*
@@ -835,8 +835,9 @@ public class DateInput extends InterfaceObject implements InputHandler {
 				return sqlDate;
 			}
 		}
-		else
+		else {
 			return null;
+		}
 	}
 
 	public PresentationObject getHandlerObject(String name, Collection values, IWContext iwc) {

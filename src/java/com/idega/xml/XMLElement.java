@@ -1,5 +1,5 @@
 /*
- * $Id: XMLElement.java,v 1.21 2005/10/17 01:08:44 tryggvil Exp $
+ * $Id: XMLElement.java,v 1.21.2.1 2007/01/12 19:32:21 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -30,11 +30,11 @@ public class XMLElement {
   private Element _element = null;
 
   public XMLElement(String name) {
-    _element = new Element(name);
+    this._element = new Element(name);
   }
 
   public XMLElement(String name, XMLNamespace namespace) {
-    _element = new Element(name, (Namespace)namespace.getNamespace());
+    this._element = new Element(name, (Namespace)namespace.getNamespace());
   }
 
   /**
@@ -44,16 +44,17 @@ public class XMLElement {
    */
   public XMLElement(Object oElement) {
   	Element element = (Element)oElement;
-    _element = element;
-    if (_element == null)
-      System.out.println("Creating XMLElement with element == null");
+    this._element = element;
+    if (this._element == null) {
+		System.out.println("Creating XMLElement with element == null");
+	}
   }
   /**
    * This object really returns a org.jdom.Element type but is declared Object becaluse of jdom dependency issues.
    * @return the set Element instance
    */
   public Object getElement() {
-    return(_element);
+    return(this._element);
   }
   /**
    * This object really only accepts a org.jdom.Element type but is declared Object becaluse of jdom dependency issues.
@@ -62,54 +63,58 @@ public class XMLElement {
    */
   public void setElement(Object oElement) {
   	Element element = (Element)oElement;
-    _element = element;
+    this._element = element;
   }
 
   public void setAttribute(String name, String value) {
-    if (_element != null)
-      _element.setAttribute(name,value);
+    if (this._element != null) {
+		this._element.setAttribute(name,value);
+	}
   }
 
   public XMLElement addContent(XMLElement element) {
-    if (_element != null) {
+    if (this._element != null) {
       Element el = (Element)element.getElement();
       if (el != null) {
-      		_element.addContent(el.detach());
+      		this._element.addContent(el.detach());
       }
     }
     return this;
   }
 
   public XMLElement getChild(String name) {
-    if (_element != null) {
-      Element el = _element.getChild(name);
-      if (el != null)
-        return(new XMLElement(el));
+    if (this._element != null) {
+      Element el = this._element.getChild(name);
+      if (el != null) {
+		return(new XMLElement(el));
+	}
     }
 
     return(null);
   }
 
   public XMLElement getChild(String name, XMLNamespace namespace) {
-    if (_element != null) {
-      Element el = _element.getChild(name,(Namespace)namespace.getNamespace());
-      if (el != null)
-        return(new XMLElement(el));
+    if (this._element != null) {
+      Element el = this._element.getChild(name,(Namespace)namespace.getNamespace());
+      if (el != null) {
+		return(new XMLElement(el));
+	}
     }
 
     return(null);
   }
 
   public boolean hasChildren() {
-    if (_element != null)
-      return(! _element.getChildren().isEmpty());
+    if (this._element != null) {
+		return(! this._element.getChildren().isEmpty());
+	}
 
     return(false);
   }
 
   public List getChildren() {
-    if (_element != null) {
-      List li = _element.getChildren();
+    if (this._element != null) {
+      List li = this._element.getChildren();
       Vector res = new Vector();
       Iterator it = li.iterator();
 
@@ -128,8 +133,8 @@ public class XMLElement {
   }
 
   public List getAttributes() {
-    if (_element != null) {
-      List li = _element.getAttributes();
+    if (this._element != null) {
+      List li = this._element.getAttributes();
       Vector res = new Vector();
       Iterator it = li.iterator();
 
@@ -154,27 +159,31 @@ public class XMLElement {
   }
 
   public XMLAttribute getAttribute(String name) {
-    if (_element != null) {
-      Attribute at = _element.getAttribute(name);
-      if (at != null)
-        return(new XMLAttribute(at));
-      else
-        return(null);
+    if (this._element != null) {
+      Attribute at = this._element.getAttribute(name);
+      if (at != null) {
+		return(new XMLAttribute(at));
+	}
+	else {
+		return(null);
+	}
     }
 
     return(null);
   }
 
   public String getName() {
-    if (_element != null)
-      return(_element.getName());
+    if (this._element != null) {
+		return(this._element.getName());
+	}
 
     return(null);
   }
 
   public String getTextTrim() {
-    if (_element != null)
-      return(_element.getTextTrim());
+    if (this._element != null) {
+		return(this._element.getTextTrim());
+	}
       
     return(null);
   }
@@ -190,14 +199,15 @@ public class XMLElement {
   }
 
   public String getText() {
-    if (_element != null)
-      return(_element.getText());
+    if (this._element != null) {
+		return(this._element.getText());
+	}
 
     return(null);
   }
 
   public List getChildrenRecursive(final String name) {
-  	if (_element != null) {
+  	if (this._element != null) {
   		Filter filter = new Filter() {
 			public boolean matches(Object object) {
 				if (object instanceof Element) {
@@ -208,7 +218,7 @@ public class XMLElement {
 			}
   		};
   		List list = new ArrayList();
-  		Iterator iterator = _element.getDescendants(filter);
+  		Iterator iterator = this._element.getDescendants(filter);
   		while (iterator.hasNext()) {
   			Element el = (Element) iterator.next();
   			XMLElement element = new XMLElement(el);
@@ -221,8 +231,8 @@ public class XMLElement {
   
   
   public List getChildren(String name) {
-    if (_element != null) {
-      List li = _element.getChildren(name);
+    if (this._element != null) {
+      List li = this._element.getChildren(name);
       Vector res = new Vector();
       Iterator it = li.iterator();
 
@@ -239,32 +249,36 @@ public class XMLElement {
   }
 
   public boolean removeContent(XMLElement element) {
-    if (_element != null) {
+    if (this._element != null) {
       Element el = (Element)element.getElement();
-      if (el != null)
-        return(_element.removeContent(el));
+      if (el != null) {
+		return(this._element.removeContent(el));
+	}
     }
 
     return(false);
   }
 
   public XMLElement setText(String text) {
-    if (_element != null)
-      _element.setText(text);
+    if (this._element != null) {
+		this._element.setText(text);
+	}
 
     return this;
   }
 
   public XMLElement addContent(String text) {
-    if (_element != null)
-      _element.addContent(text);
+    if (this._element != null) {
+		this._element.addContent(text);
+	}
 
     return this;
   }
   
   public XMLElement addContent(XMLCDATA data) {
-  	if (_element != null)
-  		_element.addContent(data.getContentData());
+  	if (this._element != null) {
+		this._element.addContent(data.getContentData());
+	}
   		
   	return this;
   }
@@ -299,10 +313,11 @@ public class XMLElement {
    * @return The first CDATA instance in the content for this Element, null otherwise. 
    */
   public XMLCDATA getXMLCDATAContent() {
-  	if (_element == null)
-  		return null;
+  	if (this._element == null) {
+		return null;
+	}
 
-		List li = _element.getContent();
+		List li = this._element.getContent();
 		Iterator it = li.iterator();
 		while (it.hasNext()) {
 			Object obj = it.next();
@@ -315,16 +330,17 @@ public class XMLElement {
   }
   
   public List getContent() {
-  	if (_element == null)
-  		return null;
+  	if (this._element == null) {
+		return null;
+	}
   		
 		List ret = new Vector();
-		List li = _element.getContent();
+		List li = this._element.getContent();
 		Iterator it = li.iterator();
 		while (it.hasNext()) {
 			Object obj = it.next();
 			if (obj instanceof Element) {
-				XMLElement el = new XMLElement((Element)obj);
+				XMLElement el = new XMLElement(obj);
 				ret.add(el);
 			}
 			else if (obj instanceof CDATA) {
@@ -341,41 +357,44 @@ public class XMLElement {
   }
 
   public XMLElement setAttribute(XMLAttribute attribute) {
-    if (_element != null) {
+    if (this._element != null) {
       Attribute at = attribute.getAttribute();
-      if (at != null)
-        _element.setAttribute(at);
+      if (at != null) {
+		this._element.setAttribute(at);
+	}
     }
 
     return this;
   }
 
   public boolean removeAttribute(String name) {
-    if (_element != null)
-      return(_element.removeAttribute(name));
+    if (this._element != null) {
+		return(this._element.removeAttribute(name));
+	}
 
     return(false);
   }
 
   public boolean removeChild(String name) {
-    if (_element != null)
-      return(_element.removeChild(name));
+    if (this._element != null) {
+		return(this._element.removeChild(name));
+	}
 
     return(false);
   }
 
   public boolean removeChildren() {
-    if (_element != null) {
-      return(_element.removeContent()) != null;
+    if (this._element != null) {
+      return(this._element.removeContent()) != null;
     }
     return(false);
   }
   
   public boolean removeParent() {
-	if (_element != null) {
-		Element parent = _element.getParentElement();
+	if (this._element != null) {
+		Element parent = this._element.getParentElement();
 		if(parent!=null){
-			return parent.removeChild(_element.getName());
+			return parent.removeChild(this._element.getName());
 		}
 		return true;
 	}
@@ -383,18 +402,19 @@ public class XMLElement {
   }
   
   public XMLElement setChildren(List children) {
-    if (_element != null) {
+    if (this._element != null) {
       if (children != null) {
         Iterator it = children.iterator();
         Vector res = new Vector();
         while (it.hasNext()) {
           XMLElement xmlel = (XMLElement)it.next();
           Element el = (Element)xmlel.getElement();
-          if (el != null)
-          res.add(el);
+          if (el != null) {
+			res.add(el);
+		}
         }
 
-        _element.setContent(res);
+        this._element.setContent(res);
       }
     }
 
@@ -402,10 +422,11 @@ public class XMLElement {
   }
 
   public synchronized Object clone() {
-    if (_element == null)
-      return(null);
+    if (this._element == null) {
+		return(null);
+	}
 
-    Element el = (Element)_element.clone();
+    Element el = (Element)this._element.clone();
     XMLElement element = new XMLElement(el);
     return element;
   }
@@ -415,10 +436,10 @@ public class XMLElement {
    * @author Thomas
    */
   public XMLElement getParent() {
-  	if (_element == null) {
+  	if (this._element == null) {
   		return null;
   	}
-  	Element parent = _element.getParentElement();
+  	Element parent = this._element.getParentElement();
   	return (parent == null) ? null : new XMLElement(parent);
   }
   
@@ -433,24 +454,24 @@ public class XMLElement {
   		
   		public Object next() {
   			checkInitialization();
-  			return iterator.next();
+  			return this.iterator.next();
   		}
   		
   		public boolean hasNext() {
   			checkInitialization();
-  			return iterator.hasNext();
+  			return this.iterator.hasNext();
   		}
   		
   		public void remove() {
   			checkInitialization();
-  			iterator.remove();
+  			this.iterator.remove();
   		}
  
 			private void checkInitialization() {
-  			 if (iterator == null) {
+  			 if (this.iterator == null) {
   			 	List allChildren = new ArrayList();
   			 	collectChildrenBreadthFirstMethod(XMLElement.this, allChildren);
-  			 	iterator = allChildren.iterator();
+  			 	this.iterator = allChildren.iterator();
   			 }
   		}
   			 	
@@ -473,18 +494,18 @@ public class XMLElement {
    * @author Thomas
    */
   public XMLElement detach()	{
-  	if (_element != null)	{
-  		return new XMLElement((Element)_element.detach());
+  	if (this._element != null)	{
+  		return new XMLElement(this._element.detach());
   	}
   	return null;
   }
   
   public void setName(String newName) {
-  	_element.setName(newName);
+  	this._element.setName(newName);
   }
   
   public void addNamespaceDeclaration(XMLNamespace namespace){
-  	_element.addNamespaceDeclaration((Namespace)namespace.getNamespace());
+  	this._element.addNamespaceDeclaration((Namespace)namespace.getNamespace());
   }
 		
   /**
@@ -495,7 +516,7 @@ public class XMLElement {
    * @return
    */
   public String getValue(){
-	  return _element.getValue();
+	  return this._element.getValue();
   }
   
   /**

@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.11 2005/04/10 21:04:52 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.11.2.1 2007/01/12 19:33:02 idegaweb Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -31,7 +31,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2005/04/10 21:04:52 $ by $Author: eiki $
+ * Last modified: $Date: 2007/01/12 19:33:02 $ by $Author: idegaweb $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -43,7 +43,7 @@ import com.idega.presentation.text.Text;
  * iw_core.css is added and override the styles.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.11.2.1 $
  */
 public class SearchResults extends Block {
 
@@ -82,7 +82,7 @@ public class SearchResults extends Block {
 	 * @return Returns the searchParameterName.
 	 */
 	public String getSimpleSearchParameterName() {
-		return searchParameterName;
+		return this.searchParameterName;
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class SearchResults extends Block {
 	 * @return Returns the advancedSearchParameterName.
 	 */
 	public String getAdvancedSearchParameterName() {
-		return advancedSearchParameterName;
+		return this.advancedSearchParameterName;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class SearchResults extends Block {
 	 * @return Returns the rowOddStyleClass.
 	 */
 	public String getRowOddStyleClass() {
-		return rowOddStyleClass;
+		return this.rowOddStyleClass;
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class SearchResults extends Block {
 	 * @return Returns the rowEvenStyleClass.
 	 */
 	public String getRowEvenStyleClass() {
-		return rowEvenStyleClass;
+		return this.rowEvenStyleClass;
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class SearchResults extends Block {
 	 * @return Returns the styleClass.
 	 */
 	public String getStyleClass() {
-		return styleClass;
+		return this.styleClass;
 	}
 
 	/**
@@ -384,7 +384,7 @@ public class SearchResults extends Block {
 	 * @return Returns the linkStyleClass.
 	 */
 	public String getLinkStyleClass() {
-		return linkStyleClass;
+		return this.linkStyleClass;
 	}
 
 	/**
@@ -399,7 +399,7 @@ public class SearchResults extends Block {
 	 * @return Returns the abstractTextStyleClass.
 	 */
 	public String getAbstractTextStyleClass() {
-		return abstractTextStyleClass;
+		return this.abstractTextStyleClass;
 	}
 
 	/**
@@ -414,7 +414,7 @@ public class SearchResults extends Block {
 	 * @return Returns the extraInformationTextStyleClass.
 	 */
 	public String getExtraInformationTextStyleClass() {
-		return extraInformationTextStyleClass;
+		return this.extraInformationTextStyleClass;
 	}
 
 	/**
@@ -429,7 +429,7 @@ public class SearchResults extends Block {
 	 * @return Returns the searchNameStyleClass.
 	 */
 	public String getSearchNameStyleClass() {
-		return searchNameStyleClass;
+		return this.searchNameStyleClass;
 	}
 
 	/**
@@ -444,7 +444,7 @@ public class SearchResults extends Block {
 	 * @return Returns the iconStyleClass.
 	 */
 	public String getIconStyleClass() {
-		return iconStyleClass;
+		return this.iconStyleClass;
 	}
 
 	/**
@@ -459,7 +459,7 @@ public class SearchResults extends Block {
 	 * @return Returns the searchPluginsToUse.
 	 */
 	public String getSearchPluginsToUse() {
-		return searchPluginsToUse;
+		return this.searchPluginsToUse;
 	}
 
 	/**
@@ -474,7 +474,7 @@ public class SearchResults extends Block {
 	 * @return Returns the extraAttributeTextEvenStyleClass.
 	 */
 	public String getExtraAttributeTextEvenStyleClass() {
-		return extraAttributeTextEvenStyleClass;
+		return this.extraAttributeTextEvenStyleClass;
 	}
 
 	/**
@@ -489,7 +489,7 @@ public class SearchResults extends Block {
 	 * @return Returns the extraAttributeTextOddStyleClass.
 	 */
 	public String getExtraAttributeTextOddStyleClass() {
-		return extraAttributeTextOddStyleClass;
+		return this.extraAttributeTextOddStyleClass;
 	}
 
 	/**

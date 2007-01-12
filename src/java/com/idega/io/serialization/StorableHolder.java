@@ -19,7 +19,7 @@ public class StorableHolder {
 	 * @return Returns the storable.
 	 */
 	public Storable getStorable() {
-		return storable;
+		return this.storable;
 	}
 	/**
 	 * @param storable The storable to set.
@@ -31,7 +31,7 @@ public class StorableHolder {
 	 * @return Returns the value.
 	 */
 	public String getValue() {
-		return value;
+		return this.value;
 	}
 	/**
 	 * @param value The value to set.

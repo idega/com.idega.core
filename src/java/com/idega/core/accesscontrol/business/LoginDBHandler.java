@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.58 2005/11/01 13:20:04 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.58.2.1 2007/01/12 19:31:55 idegaweb Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -43,8 +43,8 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
 
 /**
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst
- *         Sæmundsson </a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st
+ *         Sï¿½mundsson </a>
  * @version 1.0
  */
 public class LoginDBHandler {
@@ -107,7 +107,9 @@ public class LoginDBHandler {
 					}
 					if (noLogin != null && (noLogin.size() > 0 && ((LoginTable) noLogin.get(0)).getUserId() != userID)) {
 						LoginTable tempLoginTable = (LoginTable) noLogin.get(0);
-						if (tempLoginTable.getUserId() != userID) throw new LoginCreateException("login not valid : in use");
+						if (tempLoginTable.getUserId() != userID) {
+							throw new LoginCreateException("login not valid : in use");
+						}
 					}
 				}
 				if (encryptedPassword != null) {
@@ -335,7 +337,9 @@ public class LoginDBHandler {
 	public static LoginTable getUserLoginByUserName(String userName) {
 		try {
 			LoginTable[] login_table = (LoginTable[]) (LoginTableBMPBean.getStaticInstance()).findAllByColumn(LoginTableBMPBean.getUserLoginColumnName(), userName);
-			if (login_table != null && login_table.length > 0) return login_table[0];
+			if (login_table != null && login_table.length > 0) {
+				return login_table[0];
+			}
 		}
 		catch (SQLException ex) {
 		}
@@ -601,9 +605,15 @@ public class LoginDBHandler {
 				middleName = StringHandler.stripNonRomanCharacters(user.getMiddleName()).toLowerCase();
 			}
 		}
-		if (firstName == null) firstName = "";
-		if (middleName == null) middleName = "";
-		if (lastName == null) lastName = "";
+		if (firstName == null) {
+			firstName = "";
+		}
+		if (middleName == null) {
+			middleName = "";
+		}
+		if (lastName == null) {
+			lastName = "";
+		}
 		//String finalPossibility = StringHandler.getRandomString(8);
 		ArrayList userNameList = new ArrayList(200);
 		try {
@@ -689,18 +699,21 @@ public class LoginDBHandler {
 			}
 			else {
 
-				for (int j = 0; j < count2 && index2 + (j) < alfalength && col < namelength; j++)
+				for (int j = 0; j < count2 && index2 + (j) < alfalength && col < namelength; j++) {
 					array[row][col++] = digi[random.nextInt(digilength)];
+				}
 			}
 
 			// if we havent reached the final length
 			// we increase the letter count
 			if ((count2 + count1) < namelength) {
 				// 
-				if (count1 > count2 && count1 < first.length())
+				if (count1 > count2 && count1 < first.length()) {
 					count1++;
-				else
+				}
+				else {
 					count2++;
+				}
 			}
 			// We have reached the final name length
 			// count equals final length of user name
@@ -730,7 +743,9 @@ public class LoginDBHandler {
 					index2 = first.length() + 1;
 					count2 = 1;
 					count1 = first.length() + 2;
-					if ((first.length() + 1) <= namelength) count1--;
+					if ((first.length() + 1) <= namelength) {
+						count1--;
+					}
 
 					startlettercount--;
 				}/*

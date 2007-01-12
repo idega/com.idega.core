@@ -84,11 +84,12 @@ public class DXEntry extends DXAttributes
             {
                 Object o = attr.get();
                     
-                if (o instanceof String)
-                    dn = new DN((String)o);
-
-                else
-                    dn = new DN(o.toString());  // no idea what to do with it...
+                if (o instanceof String) {
+					this.dn = new DN((String)o);
+				}
+				else {
+					this.dn = new DN(o.toString());  // no idea what to do with it...
+				}
             }
             catch (NamingException e)
             {
@@ -96,8 +97,9 @@ public class DXEntry extends DXAttributes
             }
             return null;  // there is by definition no dn attribute...
         }
-        else
-            return super.put(attr);
+		else {
+			return super.put(attr);
+		}
     }
     
     /**
@@ -111,7 +113,7 @@ public class DXEntry extends DXAttributes
      *                        (one of {NORMAL, NEW, NEW_WRITTEN} ).
      */
      
-    public void setStatus(int entryStatus) { status = entryStatus; }
+    public void setStatus(int entryStatus) { this.status = entryStatus; }
     
     /**
      *    Returns the status of the entry as a status constant.  See
@@ -120,7 +122,7 @@ public class DXEntry extends DXAttributes
      *    @return entry status as one of {NORMAL, NEW, NEW_WRITTEN}.
      */
      
-    public int getStatus() { return status; }
+    public int getStatus() { return this.status; }
 
     /**
      *    Returns the status of the entry as a readable string.  See
@@ -131,7 +133,7 @@ public class DXEntry extends DXAttributes
      
     public String getStringStatus() 
     { 
-        switch (status)
+        switch (this.status)
         {
             case NORMAL:      return "Normal";
             
@@ -150,7 +152,7 @@ public class DXEntry extends DXAttributes
      *    @return true if entry status is NEW or NEW_WRITTEN.
      */
      
-    public boolean isNewEntry() { return (status==NEW || status == NEW_WRITTEN); }
+    public boolean isNewEntry() { return (this.status==NEW || this.status == NEW_WRITTEN); }
     
     /**
      *    Add a DN directly, without using an attribute.
@@ -177,7 +179,7 @@ public class DXEntry extends DXAttributes
     
     public DN getDN() 
     {
-        return (dn==null)?new DN():dn;
+        return (this.dn==null)?new DN():this.dn;
     }
  
     /**
@@ -220,10 +222,11 @@ public class DXEntry extends DXAttributes
      
     public RDN getRDN()
     {
-        if (dn == null) 
-            return null;
+        if (this.dn == null) {
+			return null;
+		}
             
-        return dn.getLowestRDN();            
+        return this.dn.getLowestRDN();            
     }
 
 }

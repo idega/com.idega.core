@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.22 2005/08/14 16:53:07 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.22.2.1 2007/01/12 19:31:59 idegaweb Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -158,14 +158,14 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		setResourcesRealPath(getBundleBaseRealPath() + FileUtil.getFileSeparator() + "resources");
 		setPropertiesRealPath(getBundleBaseRealPath() + FileUtil.getFileSeparator() + "properties");
 		setClassesRealPath();
-		if (autoCreate)
+		if (this.autoCreate)
 		{
 			this.initializeStructure();
-			propertyList = new IWPropertyList(getPropertiesRealPath(), propertyFileName, true);
+			this.propertyList = new IWPropertyList(getPropertiesRealPath(), propertyFileName, true);
 		}
 		else
 		{
-			propertyList = new IWPropertyList(getPropertiesRealPath(), propertyFileName, false);
+			this.propertyList = new IWPropertyList(getPropertiesRealPath(), propertyFileName, false);
 		}
 		StringBuffer SystemClassPath = new StringBuffer(System.getProperty("java.class.path"));
 		SystemClassPath.append(File.pathSeparator);
@@ -226,14 +226,15 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 */
 	public Collection getDataObjects() throws IDOLookupException, FinderException {
 		ICObjectHome icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
-		Collection entities = icoHome.findAllByObjectTypeAndBundle(ICObjectBMPBean.COMPONENT_TYPE_DATA, identifier);
+		Collection entities = icoHome.findAllByObjectTypeAndBundle(ICObjectBMPBean.COMPONENT_TYPE_DATA, this.identifier);
 		return entities;
 	}
 	private void registerBlockPermissionKeys(Class blockClass) throws InstantiationException, IllegalAccessException
 	{
 		Object o = blockClass.newInstance();
-		if (o instanceof Block)
-			 ((Block) o).registerPermissionKeys();
+		if (o instanceof Block) {
+			((Block) o).registerPermissionKeys();
+		}
 	}
 	private void registerBlockPermisionKeys() throws IDOLookupException, FinderException
 	{
@@ -298,10 +299,10 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 
 	protected List getBundleStartersList(){
-		if(bundleStarters==null){
-			bundleStarters=new ArrayList();
+		if(this.bundleStarters==null){
+			this.bundleStarters=new ArrayList();
 		}
-		return bundleStarters;
+		return this.bundleStarters;
 	}
 	
 	
@@ -344,18 +345,18 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 */
 	public synchronized void unload(boolean storeState){
 		//resourceBundles.clear();
-		resourceBundlesLookup=null;
-		localizableStringsProperties = null;
+		this.resourceBundlesLookup=null;
+		this.localizableStringsProperties = null;
 		this.localePathsLookup=null;
 		this.localeRealPathsLookup=null;
 		if(storeState){
 			storeState();
 		}
 		stopBundleStarters();
-		localePathsLookup=null;
-		resourceBundlesLookup=null;
-		localeRealPathsLookup=null;
-		localizableStringsProperties=null;
+		this.localePathsLookup=null;
+		this.resourceBundlesLookup=null;
+		this.localeRealPathsLookup=null;
+		this.localizableStringsProperties=null;
 		Iterator valueIter = getComponentPropertiesListMap().values().iterator();
 		while (valueIter.hasNext())
 		{
@@ -363,9 +364,9 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			element.unload();
 		}
 		this.componentPropertyListMap=null;
-		if(propertyList!=null){
-			propertyList.unload();
-			propertyList=null;
+		if(this.propertyList!=null){
+			this.propertyList.unload();
+			this.propertyList=null;
 		}
 
 	}
@@ -376,7 +377,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			IWBundleStartable starter = (IWBundleStartable) iter.next();
 			starter.stop(this);
 		}
-		bundleStarters=null;
+		this.bundleStarters=null;
 	}
 	private void installComponents()
 	{
@@ -407,11 +408,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 */	
 	public String getBundleBaseRealPath()
 	{
-		return rootRealPath;
+		return this.rootRealPath;
 	}
 	protected String getRootVirtualPath()
 	{
-		return rootVirtualPath;
+		return this.rootVirtualPath;
 	}
 	public Image getIconImage()
 	{
@@ -419,7 +420,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	public String getProperty(String propertyName)
 	{
-		return propertyList.getProperty(propertyName);
+		return this.propertyList.getProperty(propertyName);
 	}
 	public String getProperty(String propertyName, String returnValueIfNull)
 	{
@@ -428,14 +429,16 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		{
 			if (getApplication().getSettings().isAutoCreatePropertiesActive())
 			{
-				if (getApplication().getSettings().isDebugActive())
+				if (getApplication().getSettings().isDebugActive()) {
 					log("Storing property: " + propertyName);
+				}
 				setProperty(propertyName, returnValueIfNull);
 			}
 			return returnValueIfNull;
 		}
-		else
+		else {
 			return prop;
+		}
 	}
 	public boolean getBooleanProperty(String propertyName)
 	{
@@ -448,33 +451,35 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		{
 			if (getApplication().getSettings().isAutoCreatePropertiesActive())
 			{
-				if (getApplication().getSettings().isDebugActive())
+				if (getApplication().getSettings().isDebugActive()) {
 					log("Storing property: " + propertyName);
+				}
 				setBooleanProperty(propertyName, returnValueIfNull);
 			}
 			return returnValueIfNull;
 		}
-		else
+		else {
 			return Boolean.valueOf(prop).booleanValue();
+		}
 	}
 	public void setBooleanProperty(String propertyName, boolean setValue){
 		setProperty(propertyName,Boolean.toString(setValue));
 	}
 	public void removeProperty(String propertyName)
 	{
-		propertyList.removeProperty(propertyName);
+		this.propertyList.removeProperty(propertyName);
 	}
 	public void setProperty(String propertyName, String propertyValue)
 	{
-		propertyList.setProperty(propertyName, propertyValue);
+		this.propertyList.setProperty(propertyName, propertyValue);
 	}
 	public void setProperty(String propertyName, String[] propertyValues)
 	{
-		propertyList.setProperty(propertyName, propertyValues);
+		this.propertyList.setProperty(propertyName, propertyValues);
 	}
 	public void setArrayProperty(String propertyName, String propertyValue)
 	{
-		propertyList.setArrayProperty(propertyName, propertyValue);
+		this.propertyList.setArrayProperty(propertyName, propertyValue);
 	}
 	public IWMainApplication getApplication()
 	{
@@ -482,19 +487,19 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	public void setProperty(String propertyName)
 	{
-		propertyList.removeProperty(propertyName);
+		this.propertyList.removeProperty(propertyName);
 	}
 	private void setResourcesRealPath(String path)
 	{
-		resourcesRealPath = path;
+		this.resourcesRealPath = path;
 	}
 	private void setResourcesVirtualPath(String path)
 	{
-		resourcesVirtualPath = path;
+		this.resourcesVirtualPath = path;
 	}
 	private void setPropertiesRealPath(String path)
 	{
-		propertiesRealPath = path;
+		this.propertiesRealPath = path;
 	}
 	/**
 	 * Sets the base path of this bundle.<br>
@@ -503,11 +508,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 */
 	protected void setBundleBaseRealPath(String path)
 	{
-		rootRealPath = path;
+		this.rootRealPath = path;
 	}
 	public void setRootVirtualPath(String path)
 	{
-		rootVirtualPath = path;
+		this.rootVirtualPath = path;
 	}
 	public Image getLocalizedImage(String name, Locale locale)
 	{
@@ -522,15 +527,15 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	protected String getClassesRealPath()
 	{
-		return classesRealPath;
+		return this.classesRealPath;
 	}
 	private void setClassesRealPath()
 	{
-		classesRealPath = this.getBundleBaseRealPath() + FileUtil.getFileSeparator() + "classes";
+		this.classesRealPath = this.getBundleBaseRealPath() + FileUtil.getFileSeparator() + "classes";
 	}
 	public String[] getAvailableProperties()
 	{
-		return ((String[]) ((List) propertyList.getKeys()).toArray(new String[0]));
+		return ((String[]) (this.propertyList.getKeys()).toArray(new String[0]));
 	}
 	public String[] getLocalizableStrings()
 	{
@@ -550,7 +555,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	protected Properties getLocalizableStringsProperties()
 	{
 		initializePropertiesStrings();
-		return localizableStringsProperties;
+		return this.localizableStringsProperties;
 	}
 	public String getLocalizableStringDefaultValue(String key)
 	{
@@ -563,12 +568,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}*/
 	private void initializePropertiesStrings()
 	{
-		if (localizableStringsProperties == null)
+		if (this.localizableStringsProperties == null)
 		{
-			localizableStringsProperties = new SortedProperties();
+			this.localizableStringsProperties = new SortedProperties();
 			try
 			{
-				localizableStringsProperties.load(new FileInputStream(getLocalizableStringsFile()));
+				this.localizableStringsProperties.load(new FileInputStream(getLocalizableStringsFile()));
 				//localizableStringsMap = new TreeMap(localizableStringsProperties);
 			}
 			catch (IOException ex)
@@ -579,24 +584,25 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	private File getLocalizableStringsFile()
 	{
-		if (localizableStringsFile == null)
+		if (this.localizableStringsFile == null)
 		{
 			try
 			{
-				localizableStringsFile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(), "Localizable.strings");
+				this.localizableStringsFile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(), "Localizable.strings");
 			}
 			catch (IOException ex)
 			{
 				log(ex);
 			}
 		}
-		return localizableStringsFile;
+		return this.localizableStringsFile;
 	}
 	public IWPropertyList getUserProperties(IWUserContext iwuc)
 	{
 		UserProperties properties = (UserProperties) getUserProperties(iwuc);
-		if (properties != null)
+		if (properties != null) {
 			return properties.getProperties(this.getBundleName());
+		}
 		return null;
 	}
 	public IWResourceBundle getResourceBundle(IWContext iwc)
@@ -614,7 +620,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 				/**
 				   * @todo: Look into this autoCreateLocalizedResources is always set true
 				   */
-				if (autoCreateLocalizedResources)
+				if (this.autoCreateLocalizedResources)
 				{
 					file = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(locale), "Localized.strings");
 				}
@@ -639,9 +645,9 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 */
 	public Map getResourceBundles(){
 		if(this.resourceBundlesLookup==null){
-			resourceBundlesLookup=new HashMap();
+			this.resourceBundlesLookup=new HashMap();
 		}
-		return resourceBundlesLookup;
+		return this.resourceBundlesLookup;
 	}
 	
 	public String getVersion()
@@ -670,7 +676,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	{
 		//This method is not called on shutdown if getApplication().getSettings().getWriteBundleFilesOnShutdown() is false
 		debug("Storing State");		
-		propertyList.store();
+		this.propertyList.store();
 		boolean storeResourcesOnStore=getIfStoreResourcesOnStore();
 		if(storeResourcesOnStore){
 			this.storeLocalizableStrings();
@@ -734,7 +740,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	
 	public String getResourcesRealPath()
 	{
-		return resourcesRealPath;
+		return this.resourcesRealPath;
 	}
 	public String getResourcesURL(Locale locale)
 	{
@@ -750,7 +756,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	public String getResourcesVirtualPath()
 	{
-		return getApplication().getTranslatedURIWithContext(resourcesVirtualPath);
+		return getApplication().getTranslatedURIWithContext(this.resourcesVirtualPath);
 	}
 	
 	/**
@@ -758,7 +764,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	**/
 	public String getResourcesPath()
 	{
-		return resourcesVirtualPath;
+		return this.resourcesVirtualPath;
 	}
 	/**
 	 * Current locale for the user comes from IWContext.
@@ -799,19 +805,19 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	
 	protected Map getLocaleRealPaths(){
 		if(this.localeRealPathsLookup==null){
-			localeRealPathsLookup=new HashMap();
+			this.localeRealPathsLookup=new HashMap();
 		}
-		return localeRealPathsLookup;
+		return this.localeRealPathsLookup;
 	}
 	protected Map getLocalePaths(){
 		if(this.localePathsLookup==null){
-			localePathsLookup=new HashMap();
+			this.localePathsLookup=new HashMap();
 		}
-		return localePathsLookup;
+		return this.localePathsLookup;
 	}
 	public String getPropertiesRealPath()
 	{
-		return propertiesRealPath;
+		return this.propertiesRealPath;
 	}
 	public void addLocale(Locale locale)
 	{
@@ -842,7 +848,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	public String getBundleIdentifier()
 	{
-		return identifier;
+		return this.identifier;
 	}
 	/**
 	 * temp implementation
@@ -1018,8 +1024,9 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		{
 			return className.substring(length - 250) + IWPropertyList.DEFAULT_FILE_ENDING;
 		}
-		else
+		else {
 			return className + IWPropertyList.DEFAULT_FILE_ENDING;
+		}
 	}
 	private void addComponentToDatabase(String className, String componentType, String componentName)
 	{
@@ -1201,7 +1208,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			IWPropertyList pl = prop.getPropertyList();
 			if (pl.getProperty(COMPONENT_PROPERTY_FILE) == null)
 			{
-				if (autoMoveComponentPropertiesToFile)
+				if (this.autoMoveComponentPropertiesToFile)
 				{
 					try
 					{
@@ -1241,7 +1248,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			IWProperty prop = cl.getNewProperty();
 			prop.setName(className);
 			prop.getNewPropertyList().setProperty(COMPONENT_PROPERTY_FILE, fileName);
-			propertyList.store();
+			this.propertyList.store();
 		}
 		catch (Exception e)
 		{
@@ -1250,11 +1257,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	private Map getComponentPropertiesListMap()
 	{
-		if (componentPropertyListMap == null)
+		if (this.componentPropertyListMap == null)
 		{
-			componentPropertyListMap = new HashMap();
+			this.componentPropertyListMap = new HashMap();
 		}
-		return componentPropertyListMap;
+		return this.componentPropertyListMap;
 	}
 	/**
 	 * @deprecated This method is obsolete
@@ -1535,7 +1542,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	
 	public String getLocalizedString(String localizationKey) {
-		return getLocalizedString(localizationKey,(String)localizationKey);
+		return getLocalizedString(localizationKey,localizationKey);
 	}
 
 	

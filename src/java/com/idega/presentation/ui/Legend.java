@@ -30,26 +30,26 @@ public class Legend extends PresentationObject {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[2];
 		values[0] = super.saveState(ctx);
-		values[1] = _legend;
+		values[1] = this._legend;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		_legend = ((String) values[1]);
+		this._legend = ((String) values[1]);
 	}
 	public Legend() {
 		this("untitled");
 	}
 	
 	public Legend(String legend) {
-		_legend = legend;
+		this._legend = legend;
 		setTransient(false);
 	}
 
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
-			print("<legend " + getMarkupAttributesString() + ">" + _legend + "</legend>");
+			print("<legend " + getMarkupAttributesString() + ">" + this._legend + "</legend>");
 		}
 	}
 	

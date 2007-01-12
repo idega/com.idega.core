@@ -47,7 +47,7 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
     this.iwuc=iwucToSet;
   }
   public IWUserContext getUserContext() {
-    return iwuc;
+    return this.iwuc;
   }
 
   public IWApplicationContext getIWApplicationContext(){
@@ -59,7 +59,7 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
   }
 
   public void ejbRemove(){
-    this.getUserContext().removeSessionAttribute(sessionKey);
+    this.getUserContext().removeSessionAttribute(this.sessionKey);
     this.sessionContext=null;
     this.iwuc=null;
   }

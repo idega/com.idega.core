@@ -1,5 +1,5 @@
 /*
- * $Id: BackButton.java,v 1.16 2005/10/26 17:01:24 tryggvil Exp $
+ * $Id: BackButton.java,v 1.16.2.1 2007/01/12 19:32:09 idegaweb Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.presentation.Image;
  * <p>
  * This component presents a button that can be clicked and the user is sent to the previous page in the browser history.
  * </p>
- *  Last modified: $Date: 2005/10/26 17:01:24 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:32:09 $ by $Author: idegaweb $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.16.2.1 $
  */
 public class BackButton extends GenericButton {
 
@@ -40,17 +40,17 @@ public class BackButton extends GenericButton {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[4];
 		values[0] = super.saveState(ctx);
-		values[1] = howFarBackOrForward;
-		values[2] = Boolean.valueOf(isImage);
-		values[3] = Boolean.valueOf(defaultContent);
+		values[1] = this.howFarBackOrForward;
+		values[2] = Boolean.valueOf(this.isImage);
+		values[3] = Boolean.valueOf(this.defaultContent);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		howFarBackOrForward = (String)values[1];
-		isImage = ((Boolean) values[2]).booleanValue();
-		defaultContent = ((Boolean)values[3]).booleanValue();
+		this.howFarBackOrForward = (String)values[1];
+		this.isImage = ((Boolean) values[2]).booleanValue();
+		this.defaultContent = ((Boolean)values[3]).booleanValue();
 	}
 	
 	/**
@@ -58,7 +58,7 @@ public class BackButton extends GenericButton {
 	 */
 	public BackButton() {
 		this("Back");
-		defaultContent=true;
+		this.defaultContent=true;
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class BackButton extends GenericButton {
 	 */
 	public BackButton(Image defaultImage) {
 		super();
-		isImage=true;
+		this.isImage=true;
 		setButtonImage(defaultImage);
 		setOnClick("history.go(" + this.howFarBackOrForward + ")");
 	}
@@ -89,7 +89,7 @@ public class BackButton extends GenericButton {
 	 * @param steps	The amount of steps to take, forward or backwards.
 	 */
 	public void setHistoryMove(int steps) {
-		howFarBackOrForward = String.valueOf(steps);
+		this.howFarBackOrForward = String.valueOf(steps);
 	}
 	
 
@@ -97,7 +97,7 @@ public class BackButton extends GenericButton {
 		super.main(iwc);
 		IWBundle iwb = this.getBundle(iwc);
 		IWResourceBundle iwrb = iwb.getResourceBundle(iwc);
-		if(!isImage && defaultContent){
+		if(!this.isImage && this.defaultContent){
 			super.setValue(iwrb.getLocalizedString(BACK_KEY,BACK_KEY_DEFAULT_VALUE));	
 		}
 	}
@@ -108,7 +108,7 @@ public class BackButton extends GenericButton {
 	 */
 	public void setValue(String value) {
 		setMarkupAttribute("value", value);
-		defaultContent=false;
+		this.defaultContent=false;
 	}
 	
 	

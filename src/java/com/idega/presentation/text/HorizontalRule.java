@@ -1,5 +1,5 @@
 /*
- * $Id: HorizontalRule.java,v 1.8 2005/03/08 19:51:51 tryggvil Exp $
+ * $Id: HorizontalRule.java,v 1.8.2.1 2007/01/12 19:32:02 idegaweb Exp $
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -16,10 +16,10 @@ import com.idega.presentation.PresentationObject;
  * <p>
  * Component to render out a Horizontal Rule or &lt;HR&gt; tag;
  * </p>
- *  Last modified: $Date: 2005/03/08 19:51:51 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:32:02 $ by $Author: idegaweb $
  * 
- * @author <a href="mailto:laddi@idega.is">Þórhallur Helgason</a>,<a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.8 $
+ * @author <a href="mailto:laddi@idega.is">ï¿½ï¿½rhallur Helgason</a>,<a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.8.2.1 $
  */
 public class HorizontalRule extends PresentationObject {
 
@@ -86,8 +86,9 @@ public class HorizontalRule extends PresentationObject {
 	}
 
 	public void setNoShade(boolean noShade) {
-		if (noShade)
+		if (noShade) {
 			setMarkupAttributeWithoutValue("noshade");
+		}
 	}
 
 	public void setColor(String color) {

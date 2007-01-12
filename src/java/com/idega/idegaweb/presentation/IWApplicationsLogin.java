@@ -37,11 +37,11 @@ public class IWApplicationsLogin extends Page {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 	public void main(IWContext iwc) {
-		iwb = this.getBundle(iwc);
-		iwrb = this.getResourceBundle(iwc);
+		this.iwb = this.getBundle(iwc);
+		this.iwrb = this.getResourceBundle(iwc);
 
 		Page thePage = this;
-		thePage.setBackgroundColor(backgroundColor);
+		thePage.setBackgroundColor(this.backgroundColor);
 		thePage.setAllMargins(0);
 
 		thePage.setTitle("idegaWeb Applications");
@@ -72,7 +72,7 @@ public class IWApplicationsLogin extends Page {
 
 		Image headerImage;
 
-		Image bottomImage = iwrb.getImage("login/bottom.gif", "", 323, 12);
+		Image bottomImage = this.iwrb.getImage("login/bottom.gif", "", 323, 12);
 		mainTable.add(bottomImage, 1, 4);
 
 		boolean isLoggedOn = false;
@@ -91,12 +91,12 @@ public class IWApplicationsLogin extends Page {
 			mainTable.setVerticalAlignment(1, 2, "middle");
 			mainTable.setVerticalAlignment(1, 3, "middle");
 			mainTable.add(iwcc, 1, 2);
-			headerImage = iwrb.getImage("login/header_app_suite.jpg", "", 323, 196);
+			headerImage = this.iwrb.getImage("login/header_app_suite.jpg", "", 323, 196);
 
 			try {
 				PresentationObject login = (PresentationObject) RefactorClassRegistry.forName("com.idega.block.login.presentation.Login").newInstance();
 				MethodInvoker invoker = MethodInvoker.getInstance();
-				invoker.invokeMethodWithStringParameter(login, "setLogoutButtonImageURL", iwrb.getImageURI("login/logout.gif"));
+				invoker.invokeMethodWithStringParameter(login, "setLogoutButtonImageURL", this.iwrb.getImageURI("login/logout.gif"));
 				invoker.invokeMethodWithStringParameter(login, "setHeight", "60");
 				invoker.invokeMethodWithStringParameter(login, "setWidth", "70");
 				invoker.invokeMethodWithStringParameter(login, "setLoginAlignment", "center");
@@ -105,7 +105,7 @@ public class IWApplicationsLogin extends Page {
 				mainTable.add(login, 1, 3);
 			}
 			catch (Exception e) {
-				add(iwrb.getLocalizedString("login.init.error", "There was an error initialising the login component, most likely it is missing"));
+				add(this.iwrb.getLocalizedString("login.init.error", "There was an error initialising the login component, most likely it is missing"));
 				e.printStackTrace();
 			}
 
@@ -119,8 +119,8 @@ public class IWApplicationsLogin extends Page {
 			try {
 				PresentationObject login = (PresentationObject) RefactorClassRegistry.forName("com.idega.block.login.presentation.Login").newInstance();
 				MethodInvoker invoker = MethodInvoker.getInstance();
-				invoker.invokeMethodWithStringParameter(login, "setLoginButtonImageURL", iwrb.getImageURI("login/login.gif"));
-				invoker.invokeMethodWithStringParameter(login, "setLogoutButtonImageURL", iwrb.getImageURI("login/logout.gif"));
+				invoker.invokeMethodWithStringParameter(login, "setLoginButtonImageURL", this.iwrb.getImageURI("login/login.gif"));
+				invoker.invokeMethodWithStringParameter(login, "setLogoutButtonImageURL", this.iwrb.getImageURI("login/logout.gif"));
 				invoker.invokeMethodWithStringParameter(login, "setHeight", "130");
 				invoker.invokeMethodWithStringParameter(login, "setWidth", "160");
 				invoker.invokeMethodWithStringParameter(login, "setStyle", "font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 8pt; border-style:solid; border-width:1; border-color: #000000");
@@ -132,7 +132,7 @@ public class IWApplicationsLogin extends Page {
 				mainTable.add(login, 1, 2);
 			}
 			catch (Exception e) {
-				add(iwrb.getLocalizedString("login.init.error", "There was an error initialising the login component, most likely it is missing"));
+				add(this.iwrb.getLocalizedString("login.init.error", "There was an error initialising the login component, most likely it is missing"));
 				e.printStackTrace();
 			}
 
@@ -151,7 +151,7 @@ public class IWApplicationsLogin extends Page {
 			myForm.add(dropdown);
 			dropdownTable.add(myForm);
 
-			headerImage = iwrb.getImage("/login/header.jpg", "", 323, 196);
+			headerImage = this.iwrb.getImage("/login/header.jpg", "", 323, 196);
 		}
 		Link lheaderLink = new Link(headerImage, iwc.getIWMainApplication().getApplicationContextURI());
 		mainTable.add(lheaderLink, 1, 1);

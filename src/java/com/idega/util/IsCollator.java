@@ -15,18 +15,18 @@ import java.text.RuleBasedCollator;
 public class IsCollator {
 	private static final String isl =
 		"< 1,1< 2,2< 3,3< 4,4< 5,5< 6,6< 7,7< 8,8< 9,9"
-			+ "< a,A< á,Á< b,B< c,C< d,D< ð,Ð< e,E< é,É< f,F< g,G< h,H< i,I< í,Í< j,J"
-			+ "< k,K< l,L< m,M< n,N< o,O< ó,Ó< p,P< q,Q< r,R< s,S< t,T"
-			+ "< u,U< ú,Ú< v,V< w,W< x,X< y,Y< ý,Ý< z,Z< þ,Þ< æ,Æ< ö,Ö";
+			+ "< a,A< ï¿½,ï¿½< b,B< c,C< d,D< ï¿½,ï¿½< e,E< ï¿½,ï¿½< f,F< g,G< h,H< i,I< ï¿½,ï¿½< j,J"
+			+ "< k,K< l,L< m,M< n,N< o,O< ï¿½,ï¿½< p,P< q,Q< r,R< s,S< t,T"
+			+ "< u,U< ï¿½,ï¿½< v,V< w,W< x,X< y,Y< ï¿½,ï¿½< z,Z< ï¿½,ï¿½< ï¿½,ï¿½< ï¿½,ï¿½";
 			
 	private RuleBasedCollator rbc;
 	
 	public IsCollator() {
 		try {
-			rbc = new RuleBasedCollator(isl);
+			this.rbc = new RuleBasedCollator(isl);
 		}
 		catch (ParseException ex) {
-			rbc = (RuleBasedCollator) Collator.getInstance();
+			this.rbc = (RuleBasedCollator) Collator.getInstance();
 		}
 	}
 	

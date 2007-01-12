@@ -1,5 +1,5 @@
 /*
- * $Id: ExceptionWrapper.java,v 1.8 2003/12/11 15:07:10 tryggvil Exp $
+ * $Id: ExceptionWrapper.java,v 1.8.2.1 2007/01/12 19:31:36 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,7 +36,7 @@ public class ExceptionWrapper extends ExpandContainer {
   public ExceptionWrapper(Exception ex, PresentationObject thrower) {
     super();
     setException(ex);
-    _thrower = thrower.getClassName();
+    this._thrower = thrower.getClassName();
     //add(thrower);
   }
 
@@ -46,14 +46,15 @@ public class ExceptionWrapper extends ExpandContainer {
 		
 		String errorMessage = iwrb.getLocalizedString("error.exception_occurred","The following exception occurred");
 		Text error = new Text(errorMessage);
-		if (_exception != null) {
-			PreformattedText stackTrace = new PreformattedText(getStackTrace(_exception));
-			if (_errorStyle != null)
-				stackTrace.setStyleAttribute(_errorStyle);
+		if (this._exception != null) {
+			PreformattedText stackTrace = new PreformattedText(getStackTrace(this._exception));
+			if (this._errorStyle != null) {
+				stackTrace.setStyleAttribute(this._errorStyle);
+			}
 			add(stackTrace);
-			String exceptionFullClassName = _exception.getClass().getName();
+			String exceptionFullClassName = this._exception.getClass().getName();
 			String exceptionShortClassName = exceptionFullClassName.substring(exceptionFullClassName.lastIndexOf(".") + 1);
-			String exceptionMessage = _exception.getMessage();
+			String exceptionMessage = this._exception.getMessage();
 			if(exceptionMessage==null){
 				error.addToText(": "+exceptionShortClassName);
 			}
@@ -70,8 +71,9 @@ public class ExceptionWrapper extends ExpandContainer {
 		StackTraceElement[] elements = exception.getStackTrace();
 		StringBuffer trace = new StringBuffer();
 		for (int i = 0; i < elements.length; i++) {
-			if (i > 0)
+			if (i > 0) {
 				trace.append("\n        ");
+			}
 			trace.append(elements[i].toString());
 		}
 		return trace.toString();
@@ -82,6 +84,6 @@ public class ExceptionWrapper extends ExpandContainer {
   }
 
 	public void setErrorStyle(String style) {
-		_errorStyle = style;
+		this._errorStyle = style;
 	}
 }

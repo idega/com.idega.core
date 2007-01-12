@@ -76,11 +76,11 @@ public EmailAddress(PresentationObject mo){
 
 	super();
 
-	obj = mo;
+	this.obj = mo;
 
-	obj.setParentObject(this);
+	this.obj.setParentObject(this);
 
-	ObjectType="PresentationObject";
+	this.ObjectType="PresentationObject";
 
 }
 
@@ -92,11 +92,11 @@ public EmailAddress(Text text){
 
 	text.setFontColor("");
 
-	obj = (PresentationObject)text;
+	this.obj = text;
 
-	obj.setParentObject(this);
+	this.obj.setParentObject(this);
 
-	ObjectType="Text";
+	this.ObjectType="Text";
 
 
 
@@ -116,13 +116,13 @@ public EmailAddress(PresentationObject mo,String url){
 
 	super();
 
-	obj = mo;
+	this.obj = mo;
 
 	setURL("mailto:"+url);
 
-	obj.setParentObject(this);
+	this.obj.setParentObject(this);
 
-	ObjectType="PresentationObject";
+	this.ObjectType="PresentationObject";
 
 }
 
@@ -134,13 +134,13 @@ public EmailAddress(Text text,String url){
 
 	text.setFontColor("");
 
-	obj = (PresentationObject)text;
+	this.obj = text;
 
 	setURL("mailto:"+url);
 
-	obj.setParentObject(this);
+	this.obj.setParentObject(this);
 
-	ObjectType="Text";
+	this.ObjectType="Text";
 
 }
 
@@ -150,9 +150,11 @@ protected String getParameterString(IWContext iwc){
 
 
 
-if ( parameterString==null) parameterString="";
+if ( this.parameterString==null) {
+	this.parameterString="";
+}
 
-return parameterString;
+return this.parameterString;
 
 
 

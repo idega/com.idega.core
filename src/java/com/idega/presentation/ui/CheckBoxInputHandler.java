@@ -50,8 +50,9 @@ public class CheckBoxInputHandler extends CheckBox implements InputHandler {
 
     public Object getResultingObject(String[] value, IWContext iwc) throws Exception {
         String ret = null;
-        if (value != null && value.length != 0)
-        	ret = CHECKED;
+        if (value != null && value.length != 0) {
+			ret = CHECKED;
+		}
         return ret;
     }
     

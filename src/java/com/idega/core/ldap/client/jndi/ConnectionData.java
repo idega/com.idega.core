@@ -122,12 +122,15 @@ public class ConnectionData
 
     public void setProtocol(String newProtocol)
     {
-        if (newProtocol.equalsIgnoreCase(LDAP))
-            protocol = LDAP;
-        else if (newProtocol.equalsIgnoreCase(DSML))
-            protocol = DSML;
-        else
-            System.err.println("Unknown Protocol " + newProtocol);
+        if (newProtocol.equalsIgnoreCase(LDAP)) {
+			this.protocol = LDAP;
+		}
+		else if (newProtocol.equalsIgnoreCase(DSML)) {
+			this.protocol = DSML;
+		}
+		else {
+			System.err.println("Unknown Protocol " + newProtocol);
+		}
     }
 
    /**
@@ -140,9 +143,21 @@ public class ConnectionData
 
 	public void clearPasswords()
 	{
-		if (pwd!=null) for (int i=0; i<pwd.length; i++) pwd[i] = ' ';  //TE: null is incompatible.
-		if (caKeystorePwd!=null) for (int i=0; i<caKeystorePwd.length; i++) caKeystorePwd[i] = ' ';
-		if (clientKeystorePwd!=null) for (int i=0; i<clientKeystorePwd.length; i++) clientKeystorePwd[i] = ' ';
+		if (this.pwd!=null) {
+			for (int i=0; i<this.pwd.length; i++) {
+				this.pwd[i] = ' ';  //TE: null is incompatible.
+			}
+		}
+		if (this.caKeystorePwd!=null) {
+			for (int i=0; i<this.caKeystorePwd.length; i++) {
+				this.caKeystorePwd[i] = ' ';
+			}
+		}
+		if (this.clientKeystorePwd!=null) {
+			for (int i=0; i<this.clientKeystorePwd.length; i++) {
+				this.clientKeystorePwd[i] = ' ';
+			}
+		}
 	}
 
 
@@ -156,10 +171,12 @@ public class ConnectionData
 
     public void setURL(String host, int port)
     {
-        if (protocol == LDAP)
-            url = "ldap://" + host + ":" + port;
-        else if (protocol == DSML)
-            url = "http://" + host + ":" + port;
+        if (this.protocol == LDAP) {
+			this.url = "ldap://" + host + ":" + port;
+		}
+		else if (this.protocol == DSML) {
+			this.url = "http://" + host + ":" + port;
+		}
 
     }
 
@@ -171,45 +188,50 @@ public class ConnectionData
 
     public void setURL(String URL)
     {
-        if (protocol==LDAP)
+        if (this.protocol==LDAP)
         {
-            if (URL.toLowerCase().startsWith("ldap://"))
-                url = URL;
-            else
-                url = "ldap://" + URL;
+            if (URL.toLowerCase().startsWith("ldap://")) {
+				this.url = URL;
+			}
+			else {
+				this.url = "ldap://" + URL;
+			}
         }
-        else if (protocol == DSML)
+        else if (this.protocol == DSML)
         {
-            if (URL.toLowerCase().startsWith("http://"))
-                url = URL;
-            else if (URL.toLowerCase().startsWith("dsml://"))
-                url = "http://" + URL.substring(7);
-            else
-                url = "http://" + URL;
+            if (URL.toLowerCase().startsWith("http://")) {
+				this.url = URL;
+			}
+			else if (URL.toLowerCase().startsWith("dsml://")) {
+				this.url = "http://" + URL.substring(7);
+			}
+			else {
+				this.url = "http://" + URL;
+			}
         }
         else    // not sure if this is necessary...
         {
             if (URL.toLowerCase().startsWith("ldap:"))
             {
-                protocol = LDAP;
-                url = URL;
+                this.protocol = LDAP;
+                this.url = URL;
             }
             else if (URL.toLowerCase().startsWith("http:"))
             {
-                protocol = DSML;
-                url = URL;
+                this.protocol = DSML;
+                this.url = URL;
             }
             else if (URL.toLowerCase().startsWith("dsml:"))
             {
-                protocol = DSML;
-                url = "http:" + URL.substring(5);
+                this.protocol = DSML;
+                this.url = "http:" + URL.substring(5);
             }
         }
     }
 
     public String getURL()
     {
-        return url;
+        return this.url;
     }
 
    /**
@@ -221,12 +243,13 @@ public class ConnectionData
 
 	public String getHost()
 	{
-		if(url==null)
+		if(this.url==null) {
 			return null;
+		}
 
-        int protocolSeparator = url.indexOf("://") + 3;
-        int portSeparator = url.indexOf(":", protocolSeparator);
-		return url.substring(protocolSeparator, portSeparator);
+        int protocolSeparator = this.url.indexOf("://") + 3;
+        int portSeparator = this.url.indexOf(":", protocolSeparator);
+		return this.url.substring(protocolSeparator, portSeparator);
 	}
 
 
@@ -238,19 +261,21 @@ public class ConnectionData
 
 	public int getPort()
 	{
-		if(url==null)
+		if(this.url==null) {
 			return -1;
+		}
 
         try
         {
-            int protocolSeparator = url.indexOf("://") + 3;
-            int portSeparator = url.indexOf(":", protocolSeparator)+1;
-            int serverDetails = url.indexOf("/", portSeparator);
+            int protocolSeparator = this.url.indexOf("://") + 3;
+            int portSeparator = this.url.indexOf(":", protocolSeparator)+1;
+            int serverDetails = this.url.indexOf("/", portSeparator);
 
-            String port = (serverDetails == -1)? url.substring(portSeparator):url.substring(portSeparator, serverDetails);
+            String port = (serverDetails == -1)? this.url.substring(portSeparator):this.url.substring(portSeparator, serverDetails);
             int portNumber =  Integer.parseInt(port);
-            if (portNumber > 65536 || portNumber <= 0)
-                return -1;
+            if (portNumber > 65536 || portNumber <= 0) {
+				return -1;
+			}
 
             return portNumber;
         }
@@ -269,19 +294,19 @@ public class ConnectionData
 
 	public String toString()
 	{
-		return new String("baseDN: " 					+ baseDN +
-							"\nversion: " 				+ Integer.toString(version) +
-							"\nurl: " 					+ url +
-							"\nuserDN: " 				+ userDN +
-							"\nreferralType: " 			+ referralType +
-							"\naliasType: " 			+ aliasType +
-							"\nuseSSL: " 				+ String.valueOf(useSSL) +
-							"\ncacerts: " 				+ cacerts +
-							"\nclientcerts: " 			+ clientcerts +
-							"\nclientKeystoreType: " 	+ clientKeystoreType +
-							"\ncaKeystoreType: " 		+ caKeystoreType +
-							"\ntracing: " 				+ String.valueOf(tracing) +
-                            "\nprotocol: " 				+ protocol
+		return new String("baseDN: " 					+ this.baseDN +
+							"\nversion: " 				+ Integer.toString(this.version) +
+							"\nurl: " 					+ this.url +
+							"\nuserDN: " 				+ this.userDN +
+							"\nreferralType: " 			+ this.referralType +
+							"\naliasType: " 			+ this.aliasType +
+							"\nuseSSL: " 				+ String.valueOf(this.useSSL) +
+							"\ncacerts: " 				+ this.cacerts +
+							"\nclientcerts: " 			+ this.clientcerts +
+							"\nclientKeystoreType: " 	+ this.clientKeystoreType +
+							"\ncaKeystoreType: " 		+ this.caKeystoreType +
+							"\ntracing: " 				+ String.valueOf(this.tracing) +
+                            "\nprotocol: " 				+ this.protocol
 							);
 	}
 }

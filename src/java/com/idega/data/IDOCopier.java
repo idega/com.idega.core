@@ -47,26 +47,26 @@ public class IDOCopier {
 		this.toDataSourceName = dataSourceName;
 	}
 	public void addEntityToCopy(GenericEntity entity) {
-		if (fromEntity == null) {
-			fromEntity = entity;
+		if (this.fromEntity == null) {
+			this.fromEntity = entity;
 		}
 		getEntityCopyList().add(entity);
 	}
 	private List getEntityCopyList() {
-		if (entityToCopyList == null) {
-			entityToCopyList = new Vector();
+		if (this.entityToCopyList == null) {
+			this.entityToCopyList = new Vector();
 		}
-		return entityToCopyList;
+		return this.entityToCopyList;
 	}
 	public String getToDatasource() {
-		return toDataSourceName;
+		return this.toDataSourceName;
 	}
 	public void copyAllData() {
 		try {
 			//toEntity = (GenericEntity)fromEntity.getClass().newInstance();
-			toEntity = this.createEntityInstance(fromEntity);
-			toEntity.setDatasource(getToDatasource());
-			toEntity.setToInsertStartData(false);
+			this.toEntity = this.createEntityInstance(this.fromEntity);
+			this.toEntity.setDatasource(getToDatasource());
+			this.toEntity.setToInsertStartData(false);
 			IDODependencyList dep = IDODependencyList.createDependencyList();
 			dep.addAllEntityClasses(this.getEntityCopyList());
 			dep.compile();
@@ -78,12 +78,12 @@ public class IDOCopier {
 				Class item = (Class) iter.next();
 				//out.println(item.getName()+"\n<br>");
 				try {
-					GenericEntity toInstance = (GenericEntity) this.createEntityInstance(item);
+					GenericEntity toInstance = this.createEntityInstance(item);
 					//GenericEntity toInstance = (GenericEntity)item.newInstance();
 					toInstance.setDatasource(this.getToDatasource());
 					toInstance.setToInsertStartData(false);
 					//GenericEntity fromInstance = (GenericEntity)item.newInstance();
-					GenericEntity fromInstance = (GenericEntity)this.createEntityInstance(item);
+					GenericEntity fromInstance = this.createEntityInstance(item);
 					fromInstance.setDatasource(this.fromEntity.getDatasource());
 					DatastoreInterface.getInstance(toInstance).createEntityRecord(toInstance);
 					copyAllData(fromInstance, toInstance, true);
@@ -109,17 +109,17 @@ public class IDOCopier {
 					*  @todo change - Shitty mix change this as soon as possible!!!
 					*
 					*/
-					List l1 = EntityFinder.getInstance().findAll((IDOLegacyEntity)fromInstance, "select * from ib_page where template_id is null");
+					List l1 = EntityFinder.findAll((IDOLegacyEntity)fromInstance, "select * from ib_page where template_id is null");
 					l = new Vector();
 					l.addAll(l1);
 					List l2 =
-						EntityFinder.getInstance().findAll((IDOLegacyEntity)
+						EntityFinder.findAll((IDOLegacyEntity)
 							fromInstance,
 							"select * from ib_page where template_id is not null order by template_id asc,ib_page_id asc");
 					l.addAll(l2);
 				}
 				else {
-					l = EntityFinder.getInstance().findAll((IDOLegacyEntity)fromInstance);
+					l = EntityFinder.findAll((IDOLegacyEntity)fromInstance);
 				}
 				if (l != null) {
 					int highestID = 1;
@@ -182,7 +182,7 @@ public class IDOCopier {
 				Connection fromConn = null;
 				try {
 					toConn = this.toEntity.getConnection();
-					fromConn = fromEntity.getConnection();
+					fromConn = this.fromEntity.getConnection();
 					String fromTableName = getCrossTableName(info.relation,fromConn);
 					String toTableName = getCrossTableName(info.relation,toConn);
 					this.copyManyToManyData(fromTableName,toTableName, fromConn, toConn);
@@ -193,10 +193,10 @@ public class IDOCopier {
 				}
 				finally {
 					if (toConn != null) {
-						toEntity.freeConnection(toConn);
+						this.toEntity.freeConnection(toConn);
 					}
 					if (fromConn != null) {
-						fromEntity.freeConnection(fromConn);
+						this.fromEntity.freeConnection(fromConn);
 					}
 				}
 				
@@ -214,7 +214,7 @@ public class IDOCopier {
 		 * Workaround implementation
 		 * @todo Implement this in a more elegant way
 		 */
-		if(this.isDatasourceOracle(fromConn)){
+		if(IDOCopier.isDatasourceOracle(fromConn)){
 			/**
 			 * Returns the possibly truncated name of the table
 			 */
@@ -229,7 +229,7 @@ public class IDOCopier {
 	}
 	private IDOEntityCopyInfo addToCopiedEntityList(GenericEntity entity) {
 		IDOEntityCopyInfo cInfo = getIDOEntityCopyInfo(entity.getClass(), entity.getTableName());
-		copiedEntites.add(cInfo);
+		this.copiedEntites.add(cInfo);
 		//copiedEntityClasses.add(entity.getClass());
 		List relations = EntityControl.getManyToManyRelationShips(entity);
 		if (relations != null) {
@@ -242,7 +242,7 @@ public class IDOCopier {
 				while (classIter.hasNext()) {
 					Class classToCheck = (Class) classIter.next();
 					IDOEntityCopyInfo cInfoToCheck = getIDOEntityCopyInfo(classToCheck);
-					if (copiedEntites.contains(cInfoToCheck) && areAllReferencedEntitiesCopied) {
+					if (this.copiedEntites.contains(cInfoToCheck) && areAllReferencedEntitiesCopied) {
 						//if(copiedEntityClasses.contains(classToCheck)&&areAllReferencedEntitiesCopied){
 						//areAllReferencedEntitiesCopied still kept true
 						areAllReferencedEntitiesCopied = true;
@@ -254,8 +254,8 @@ public class IDOCopier {
 				if (areAllReferencedEntitiesCopied) {
 					IDOEntityRelationshipCopyInfo info = new IDOEntityRelationshipCopyInfo();
 					info.relation = item;
-					if (!entityRelationshipInfos.contains(info)) {
-						entityRelationshipInfos.add(info);
+					if (!this.entityRelationshipInfos.contains(info)) {
+						this.entityRelationshipInfos.add(info);
 					}
 				}
 			}
@@ -266,7 +266,7 @@ public class IDOCopier {
 	 *   Returns a List of IDOEntityRelationshipCopyInfo Objects
 	 */
 	private List getManyToManyRelatedAndCopied(GenericEntity entity) {
-		return entityRelationshipInfos;
+		return this.entityRelationshipInfos;
 	}
 	private void copyManyToManyData(String fromTableName,String toTableName, Connection fromConnection, Connection toConnection) throws SQLException{
 		System.out.println("[idoCopier] Copying data from cross-table: " + fromTableName+" to cross-table: " + toTableName);
@@ -454,8 +454,8 @@ public class IDOCopier {
 		return isTableAlreadyCopied(info);
 	}
 	protected boolean isTableAlreadyCopied(IDOEntityCopyInfo cInfo) {
-		if(copySameTableOnlyOnce){
-			for (Iterator iterator = copiedEntites.iterator(); iterator.hasNext();) {
+		if(this.copySameTableOnlyOnce){
+			for (Iterator iterator = this.copiedEntites.iterator(); iterator.hasNext();) {
 				IDOEntityCopyInfo element = (IDOEntityCopyInfo) iterator.next();
 				if(element.equals(cInfo)){
 					return true;	
@@ -466,6 +466,6 @@ public class IDOCopier {
 	}
 	
 	public void setToTryCopyingSameTableOnlyOnce(boolean setValue){
-		copySameTableOnlyOnce=setValue;
+		this.copySameTableOnlyOnce=setValue;
 	}
 }

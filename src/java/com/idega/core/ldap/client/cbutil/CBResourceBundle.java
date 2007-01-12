@@ -128,8 +128,9 @@ public class CBResourceBundle
         for (int i=names.size()-1; i>=0; i--)
         {
             URL url = loader.getResource(names.get(i).toString());   // XXX why getResource, not findResource???
-            if (loadData(url) == true) 
-                return;                  // once a single file has been loaded, we're done.
+            if (loadData(url) == true) {
+				return;                  // once a single file has been loaded, we're done.
+			}
         }
         
         // couldn't succesfully load anything...
@@ -216,7 +217,9 @@ public class CBResourceBundle
 
     protected boolean loadData(URL url)
     {
-        if (url == null) return false;  // can't read from a null url!
+        if (url == null) {
+			return false;  // can't read from a null url!
+		}
         
         CBUtility.log("Resource Bundle Reading data from " + ((url==null)?"null url":url.toString()), 6);
 
@@ -258,7 +261,7 @@ public class CBResourceBundle
      
     protected boolean parseData(String text)
     {
-        int startSize = translations.size();
+        int startSize = this.translations.size();
         
         int start =0, end = 0; 
         while ((end = text.indexOf('\n',start)) != -1)
@@ -282,7 +285,7 @@ public class CBResourceBundle
 
                     String key = unescape(line.substring(0,equalPos)).trim();
                     String trans = line.substring(equalPos+1).trim();
-                    translations.put(key, trans);
+                    this.translations.put(key, trans);
                     
                 }
                 catch (Exception e) 
@@ -296,9 +299,10 @@ public class CBResourceBundle
         
         // check if we added any new translations - if we did, then this was
         // at least partially successfull.
-        boolean success = (startSize < translations.size());  
-        if (success == false)
-            CBUtility.log("ParseData unsuccessfull - no new data found", 8);
+        boolean success = (startSize < this.translations.size());  
+        if (success == false) {
+			CBUtility.log("ParseData unsuccessfull - no new data found", 8);
+		}
         return success;            
         
     }
@@ -311,8 +315,9 @@ public class CBResourceBundle
     protected String unescape(String escapeMe)
     {
         int pos = 0;
-        while ((pos = escapeMe.indexOf('\\', pos)) >= 0)
-            escapeMe = escapeMe.substring(0, pos) + escapeMe.substring(pos+1);
+        while ((pos = escapeMe.indexOf('\\', pos)) >= 0) {
+			escapeMe = escapeMe.substring(0, pos) + escapeMe.substring(pos+1);
+		}
             
         return escapeMe;            
     }
@@ -323,7 +328,7 @@ public class CBResourceBundle
      *            strings).
      */
      
-    public Enumeration keys() { return translations.keys(); }
+    public Enumeration keys() { return this.translations.keys(); }
 
     /**
      *    returns the translation keys.  Synonym for 'keys()', kept
@@ -332,7 +337,7 @@ public class CBResourceBundle
      *            strings).
      */
      
-    public Enumeration getKeys() { return translations.keys(); }
+    public Enumeration getKeys() { return this.translations.keys(); }
 
     /**
      *    Returns the object corresponding to a given key.
@@ -340,7 +345,7 @@ public class CBResourceBundle
      *    @return the corresponding translation/object
      */
      
-    public Object get(Object key) { return translations.get(key); }
+    public Object get(Object key) { return this.translations.get(key); }
 
     /**
      *    Returns the object corresponding to a given key.  kept
@@ -349,7 +354,7 @@ public class CBResourceBundle
      *    @return the corresponding translation/object
      */
      
-    public Object getObject(Object key) { return translations.get(key); }
+    public Object getObject(Object key) { return this.translations.get(key); }
     
     
     /**
@@ -364,9 +369,13 @@ public class CBResourceBundle
      
     public String getString(String key) 
     { 
-        if (key == null) return "";
-        Object o = translations.get(key); 
-        if (o == null) return "";
+        if (key == null) {
+			return "";
+		}
+        Object o = this.translations.get(key); 
+        if (o == null) {
+			return "";
+		}
         
         return (o instanceof String)?(String)o:o.toString();    
     }

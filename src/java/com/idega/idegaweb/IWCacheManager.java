@@ -101,10 +101,10 @@ public class IWCacheManager implements Singleton {
   }
 
   private Map getKeysMap(){
-    if(_keysMap==null){
-      _keysMap=new HashMap();
+    if(this._keysMap==null){
+      this._keysMap=new HashMap();
     }
-    return _keysMap;
+    return this._keysMap;
   }
 
   public synchronized void registerDerivedKey(String key,String derivedKey){
@@ -191,24 +191,24 @@ public class IWCacheManager implements Singleton {
 
 
   private Map getTimesMap(){
-    if(timesMap==null){
-      timesMap = new HashMap();
+    if(this.timesMap==null){
+      this.timesMap = new HashMap();
     }
-    return timesMap;
+    return this.timesMap;
   }
 
   private Map getObjectsMap(){
-    if(objectsMap==null){
-      objectsMap = new java.util.HashMap();
+    if(this.objectsMap==null){
+      this.objectsMap = new java.util.HashMap();
     }
-    return objectsMap;
+    return this.objectsMap;
   }
 
   private Map getIntervalsMap(){
-    if(intervalsMap==null){
-      intervalsMap = new HashMap();
+    if(this.intervalsMap==null){
+      this.intervalsMap = new HashMap();
     }
-    return intervalsMap;
+    return this.intervalsMap;
   }
 //added by Eirikur Hrafnsson, eiki@idega.is
   public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma){
@@ -250,8 +250,12 @@ private boolean isBlobCached(Cache cache){
 
       
       String virtualPath;
-      if( appVPath.endsWith("/")) virtualPath = appVPath +IW_ROOT_CACHE_DIRECTORY;
-      else virtualPath = appVPath +"/"+IW_ROOT_CACHE_DIRECTORY;
+      if( appVPath.endsWith("/")) {
+		virtualPath = appVPath +IW_ROOT_CACHE_DIRECTORY;
+	}
+	else {
+		virtualPath = appVPath +"/"+IW_ROOT_CACHE_DIRECTORY;
+	}
       
       
       String fileName = ent.getID()+"_"+ent.getName();
@@ -273,7 +277,9 @@ private boolean isBlobCached(Cache cache){
     }
     finally{
       try{
-       if (input != null ) input.close();
+       if (input != null ) {
+		input.close();
+	}
       }
       catch(IOException e){
         e.printStackTrace(System.err);
@@ -296,22 +302,24 @@ private boolean isBlobCached(Cache cache){
 
 /** caches a single entity of type IDOEntity **/
   public void cacheEntity(IDOEntity entity, String cacheKey){
-    if( entityMaps == null ){
-      entityMaps = new HashMap();
+    if( this.entityMaps == null ){
+      this.entityMaps = new HashMap();
     }
-    entityMaps.put(cacheKey, entity);
+    this.entityMaps.put(cacheKey, entity);
   }
 
   public IDOLegacyEntity getCachedEntity(String cacheKey){
-    if( entityMaps != null ){
-      return (IDOLegacyEntity) entityMaps.get(cacheKey);
+    if( this.entityMaps != null ){
+      return (IDOLegacyEntity) this.entityMaps.get(cacheKey);
     }
-    else return null;
+	else {
+		return null;
+	}
   }
 
   public void removeCachedEntity(String cacheKey){
-    if( entityMaps != null ){
-      entityMaps.remove(cacheKey);
+    if( this.entityMaps != null ){
+      this.entityMaps.remove(cacheKey);
     }
   }
 /** caches a whole table and specifies which column to use for a key. Must be of type CacheableEntity**/
@@ -320,28 +328,32 @@ private boolean isBlobCached(Cache cache){
   }
 
   public void removeTableFromCache(Class entityClass){
-    if( entityMaps != null ){
-      entityMaps.remove(entityClass);
-      if( entityMapsKeys != null ) entityMapsKeys.remove(entityClass);
+    if( this.entityMaps != null ){
+      this.entityMaps.remove(entityClass);
+      if( this.entityMapsKeys != null ) {
+		this.entityMapsKeys.remove(entityClass);
+	}
     }
   }
 
   public Map getCachedTableMap(Class entityClass){
-    if( entityMaps!=null ){
-       return (Map) entityMaps.get(entityClass);
+    if( this.entityMaps!=null ){
+       return (Map) this.entityMaps.get(entityClass);
     }
-    else return null;
+	else {
+		return null;
+	}
   }
 
   public void cacheTable(CacheableEntity entity, String columnNameForKey ,String columnNameForSecondKey){
 
-    if( entityMaps == null ){
-      entityMaps = new HashMap();
-      entityMapsKeys = new HashMap();
+    if( this.entityMaps == null ){
+      this.entityMaps = new HashMap();
+      this.entityMapsKeys = new HashMap();
     }
 
 
-    if( entityMaps.get(getCorrectClassForEntity(entity)) == null ){
+    if( this.entityMaps.get(getCorrectClassForEntity(entity)) == null ){
       Map entityMap = new HashMap();
       Vector keys = new Vector();
 
@@ -356,7 +368,7 @@ private boolean isBlobCached(Cache cache){
             keys.addElement(columnNameForSecondKey);
             hasTwoKeys = true;
           }
-          entityMapsKeys.put(getCorrectClassForEntity(entity),keys);
+          this.entityMapsKeys.put(getCorrectClassForEntity(entity),keys);
 
           //traverse through the table and make the entitymap and put it in the master map
           for (int i = 0; i < e.length; i++) {
@@ -367,7 +379,7 @@ private boolean isBlobCached(Cache cache){
                entityMap.put(e[i].getStringColumnValue(columnNameForKey),e[i]);
             }
           }
-          entityMaps.put(getCorrectClassForEntity(entity),entityMap);
+          this.entityMaps.put(getCorrectClassForEntity(entity),entityMap);
           //done!
         }
       }
@@ -381,12 +393,15 @@ private boolean isBlobCached(Cache cache){
   public IDOLegacyEntity getFromCachedTable(Class entityClass, String value ){
     IDOLegacyEntity entity = null;
 
-    if( entityMaps != null ){
+    if( this.entityMaps != null ){
       Map entityMap = getEntityMap(entityClass);
       if( entityMap != null ){
        entity = (IDOLegacyEntity) entityMap.get(value);
       }
-    }else System.out.println("IWCacheManager entityMaps is null!");
+    }
+	else {
+		System.out.println("IWCacheManager entityMaps is null!");
+	}
 
     return entity;
   }
@@ -397,17 +412,17 @@ private boolean isBlobCached(Cache cache){
 
   public Map getEntityMap(Class entityClass){
     Map entityMap = null;
-    if( entityMaps != null ){
+    if( this.entityMaps != null ){
       Class entityBeanClass = this.getCorrectClassForEntity(entityClass);
-      entityMap = (Map) entityMaps.get(entityBeanClass);
+      entityMap = (Map) this.entityMaps.get(entityBeanClass);
     }//else System.out.println("IWCacheManager entityMaps is null!");
     return entityMap;
   }
 
   public Vector getEntityKeyVector(Class entityClass){
     Vector entityKeys = null;
-    if( entityMapsKeys != null ){
-      entityKeys = (Vector) entityMapsKeys.get(entityClass);
+    if( this.entityMapsKeys != null ){
+      entityKeys = (Vector) this.entityMapsKeys.get(entityClass);
     }
     return entityKeys;
   }
@@ -456,7 +471,7 @@ private boolean isBlobCached(Cache cache){
    * Clears all caching in for all objects
    */
   public void clearAllCaches(){
-  	log.info("Clearing all IWCacheManager cache");
+  	this.log.info("Clearing all IWCacheManager cache");
   	this._keysMap=null;
   	this.entityMaps=null;
   	this.entityMapsKeys=null;

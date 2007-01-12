@@ -7,7 +7,7 @@ import com.idega.repository.data.RefactorClassRegistry;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -28,13 +28,13 @@ public class IWPresentationLocation implements IWLocation {
   }
 
   public IWPresentationLocation(String target, boolean inFrameSet, Class applicationClass, boolean topPage, boolean inPopUpWindow){
-    _target = target;
-    _topPage = topPage;
+    this._target = target;
+    this._topPage = topPage;
     if(applicationClass != null){
-      _applicationClass = applicationClass.getName();
+      this._applicationClass = applicationClass.getName();
     }
-    _inFrameset = inFrameSet;
-    _inPopUpWindow = inPopUpWindow;
+    this._inFrameset = inFrameSet;
+    this._inPopUpWindow = inPopUpWindow;
   }
 
   public String toString(){
@@ -45,7 +45,7 @@ public class IWPresentationLocation implements IWLocation {
 
 
   public void setTarget(String target) {
-    _target = target;
+    this._target = target;
 //    try {
 //      throw new Exception("IWPresentationLocation._target: "+target);
 //    }
@@ -54,57 +54,57 @@ public class IWPresentationLocation implements IWLocation {
 //    }
   }
   public void isInFrameSet(boolean inFrameset) {
-    _inFrameset = inFrameset;
+    this._inFrameset = inFrameset;
   }
 
   public void setApplicationClass(Class applicationClass){
     if(applicationClass != null){
-      _applicationClass = applicationClass.getName();
+      this._applicationClass = applicationClass.getName();
     }
   }
 
   public void isTopPage(boolean topPage) {
-    _topPage = topPage;
+    this._topPage = topPage;
   }
   public void isInPopUpWindow(boolean inPopUpWindow) {
-    _inPopUpWindow = inPopUpWindow;
+    this._inPopUpWindow = inPopUpWindow;
   }
 
   public int getICObjectInstanceID(){
-    return _id;
+    return this._id;
   }
 
 
 
   public void setICObjectInstanceID(int id){
-    _id = id;
+    this._id = id;
   }
 
   public int getSubID(){
-    return _subID;
+    return this._subID;
   }
 
   public void setSubID(int id){
-    _subID = id;
+    this._subID = id;
   }
 
 
 
   public String getTarget() {
-    return _target;
+    return this._target;
   }
   public boolean isInFrameSet() {
-    return _inFrameset;
+    return this._inFrameset;
   }
 
   public String getApplicationClassName(){
-    return _applicationClass;
+    return this._applicationClass;
   }
 
   public Class getApplicationClass(){
     try {
-      if(_applicationClass != null){
-        return RefactorClassRegistry.forName(_applicationClass);
+      if(this._applicationClass != null){
+        return RefactorClassRegistry.forName(this._applicationClass);
       } else {
         return null;
       }
@@ -117,10 +117,10 @@ public class IWPresentationLocation implements IWLocation {
   }
 
   public boolean isTopPage() {
-    return _topPage;
+    return this._topPage;
   }
   public boolean isInPopUpWindow() {
-    return _inPopUpWindow;
+    return this._inPopUpWindow;
   }
 
   public boolean equals(Object obj){
@@ -229,15 +229,15 @@ public class IWPresentationLocation implements IWLocation {
       buffer.append("null");
     }
     buffer.append(SEPARATOR);
-    buffer.append(_target);
+    buffer.append(this._target);
     buffer.append(SEPARATOR);
-    buffer.append(((_topPage)?1:0));
+    buffer.append(((this._topPage)?1:0));
     buffer.append(SEPARATOR);
-    buffer.append(((_inFrameset)?1:0));
+    buffer.append(((this._inFrameset)?1:0));
     buffer.append(SEPARATOR);
-    buffer.append(((_inPopUpWindow)?1:0));
+    buffer.append(((this._inPopUpWindow)?1:0));
     buffer.append(SEPARATOR);
-    buffer.append(_subID);
+    buffer.append(this._subID);
 
 //    try {
 //      throw new Exception(buffer.toString());

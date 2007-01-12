@@ -103,8 +103,9 @@ public class IWEventProcessor implements Singleton {
 	private void processIWEvent(IWContext iwc, String EventListenerClass) throws IllegalAccessException,
 			IWException, InstantiationException {
 		if (EventListenerClass != null) {
-			if (iwc.getApplicationSettings().getIfDebug())
+			if (iwc.getApplicationSettings().getIfDebug()) {
 				System.out.println("IWEventListener: " + EventListenerClass);
+			}
 			try{
 				Class eventClass = RefactorClassRegistry.forName(EventListenerClass);
 				IWPageEventListener listener = (IWPageEventListener) eventClass.newInstance();
@@ -151,7 +152,7 @@ public class IWEventProcessor implements Singleton {
 					((ActiveEvent) obj).dispatch();
 					return true;
 					/*
-					 * Kommentað út þar til kerfið ræður við þræði EventQueue q =
+					 * Kommentaï¿½ ï¿½t ï¿½ar til kerfiï¿½ rï¿½ï¿½ur viï¿½ ï¿½rï¿½ï¿½i EventQueue q =
 					 * Toolkit.getDefaultToolkit().getSystemEventQueue();
 					 * q.postEvent((AWTEvent)obj);
 					 */
@@ -214,8 +215,8 @@ public class IWEventProcessor implements Singleton {
 						}
 						//System.err.println("PresentationServelt - checking
 						// stateList");
-						// object geta safnast upp í hashtöflunum því þarf að
-						// fjarlægja þau instöns sem ekki eru á nýju síðunni
+						// object geta safnast upp ï¿½ hashtï¿½flunum ï¿½vï¿½ ï¿½arf aï¿½
+						// fjarlï¿½gja ï¿½au instï¿½ns sem ekki eru ï¿½ nï¿½ju sï¿½ï¿½unni
 						/**
 						 * @todo handle pages in frames or iframes with
 						 * different pageIds
@@ -269,8 +270,9 @@ public class IWEventProcessor implements Singleton {
 		String localeValue = iwc.getParameter(LocaleSwitcher.languageParameterString);
 		if (localeValue != null) {
 			Locale newLocale = LocaleUtil.getLocale(localeValue);
-			if (newLocale != null && !newLocale.equals(locale))
+			if (newLocale != null && !newLocale.equals(locale)) {
 				iwc.setCurrentLocale(newLocale);
+			}
 		}
 		//IWEventProcessor.getInstance().handleLocaleParameter(iwc);
 	}
@@ -337,10 +339,11 @@ public class IWEventProcessor implements Singleton {
 					// Opera mimetype fix ( aron@idega.is )
 					if (mimetype != null) {
 						StringTokenizer tokenizer = new StringTokenizer(mimetype, " ;:");
-						if (tokenizer.hasMoreTokens())
+						if (tokenizer.hasMoreTokens()) {
 							mimetype = tokenizer.nextToken();
+						}
 					}
-					UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, (long) - 1);
+					UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, - 1);
 				    FileUtil.copyFile(f,file);
 					long size = f.length();
 					file.setSize(size);
@@ -381,10 +384,11 @@ public class IWEventProcessor implements Singleton {
 						String mimetype = filePart.getContentType();
 						if (mimetype != null) {
 							StringTokenizer tokenizer = new StringTokenizer(mimetype, " ;:");
-							if (tokenizer.hasMoreTokens())
+							if (tokenizer.hasMoreTokens()) {
 								mimetype = tokenizer.nextToken();
+							}
 						}
-						UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, (long) - 1);
+						UploadFile file = new UploadFile(fileName, filePath, iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimetype, - 1);
 						long size = filePart.writeTo(file);
 						file.setSize(size);
 						iwc.setUploadedFile(file);

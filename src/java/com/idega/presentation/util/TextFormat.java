@@ -53,22 +53,22 @@ public class TextFormat implements Singleton{
   private Text getText(String text,int type){
     Text t  = new Text();
     switch (type) {
-      case NORMAL : t =  (Text)textTemplates[0].clone(); break;
-      case HEADER : t =  (Text)textTemplates[1].clone(); break;
-      case TITLE :  t =  (Text)textTemplates[2].clone(); break;
-      default : t =  (Text)textTemplates[0].clone(); break;
+      case NORMAL : t =  (Text)this.textTemplates[0].clone(); break;
+      case HEADER : t =  (Text)this.textTemplates[1].clone(); break;
+      case TITLE :  t =  (Text)this.textTemplates[2].clone(); break;
+      default : t =  (Text)this.textTemplates[0].clone(); break;
     }
     t.setText(text);
     return t;
   }
 
   private void load(){
-    textTemplates = new Text[3];
-    textTemplates[0] = new Text();
-    textTemplates[1] = new Text();
-    textTemplates[1].setBold(true);
-    textTemplates[2] = new Text();
-    textTemplates[2].setBold(true);
+    this.textTemplates = new Text[3];
+    this.textTemplates[0] = new Text();
+    this.textTemplates[1] = new Text();
+    this.textTemplates[1].setBold(true);
+    this.textTemplates[2] = new Text();
+    this.textTemplates[2].setBold(true);
   }
 
   private void store(){

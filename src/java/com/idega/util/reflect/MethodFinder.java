@@ -43,11 +43,11 @@ public class MethodFinder implements Singleton
 
 	private Map getMethodCache()
 	{
-		if (methodCache == null)
+		if (this.methodCache == null)
 		{
-			methodCache = new CacheMap(1000);
+			this.methodCache = new CacheMap(1000);
 		}
-		return methodCache;
+		return this.methodCache;
 	}
 
 	protected Method getMethodFromGlobalCache(String methodIdentifier)
@@ -63,14 +63,14 @@ public class MethodFinder implements Singleton
 	
 	private Map getClassMethodCache(Class declaringClass)
 	{
-		if (classMethodCache == null)
+		if (this.classMethodCache == null)
 		{
-			classMethodCache = new HashMap();
+			this.classMethodCache = new HashMap();
 		}
-		Map mapForClass = (Map) classMethodCache.get(declaringClass);
+		Map mapForClass = (Map) this.classMethodCache.get(declaringClass);
 		if(mapForClass==null){
 			mapForClass = new CacheMap(150);
-			classMethodCache.put(declaringClass,mapForClass);
+			this.classMethodCache.put(declaringClass,mapForClass);
 		}
 		return mapForClass;
 	}
@@ -441,8 +441,9 @@ public class MethodFinder implements Singleton
 						check=false;
 					}
 				}
-				if(check)
+				if(check) {
 					return methodToCheck;
+				}
 			}
 		}
 		throw new NoSuchMethodException("Method " + name + "() not found in " + objectClass.getName());
@@ -535,8 +536,9 @@ public class MethodFinder implements Singleton
 					}
 				}
 			}
-			if(noStopClass)
+			if(noStopClass) {
 				break;
+			}
 			methodClass = methodClass.getSuperclass();
 		}
 		return map;

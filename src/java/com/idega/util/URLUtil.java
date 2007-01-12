@@ -53,7 +53,7 @@ public class URLUtil {
 	}
 	
 	public URLUtil(String URL, boolean convertSpecialCharacters) {
-		_convertSpecialCharacters = convertSpecialCharacters;
+		this._convertSpecialCharacters = convertSpecialCharacters;
 		parseURL(URL);
 	}
 	
@@ -71,8 +71,9 @@ public class URLUtil {
 			
 			if (URL.indexOf("?") != -1) {
 				setPath(URL.substring(0, URL.indexOf("?")));
-				if (URL.length() > URL.indexOf("?") + 1)
+				if (URL.length() > URL.indexOf("?") + 1) {
 					parseQuery(URL.substring(URL.indexOf("?") + 1));
+				}
 			}
 			else {
 				setPath(URL);
@@ -118,19 +119,20 @@ public class URLUtil {
 	
 	private String getParameters() {
 		StringBuffer parameters = new StringBuffer();
-		if (_parameters != null) {
+		if (this._parameters != null) {
 			parameters.append("?");
 			int index = 0;
-			Iterator iter = _parameters.keySet().iterator();
+			Iterator iter = this._parameters.keySet().iterator();
 			while (iter.hasNext()) {
 				String name = (String) iter.next();
-				Collection values = _parameters.getCollection(name);
+				Collection values = this._parameters.getCollection(name);
 				if (name != null && values != null) {
 					Iterator iterator = values.iterator();
 					while (iterator.hasNext()) {
 						String value = (String) iterator.next();
-						if (index > 0)
+						if (index > 0) {
 							parameters.append("&");
+						}
 						parameters.append(name);
 						parameters.append("=");
 						parameters.append(value);
@@ -140,17 +142,19 @@ public class URLUtil {
 			}
 		}
 		
-		if (_convertSpecialCharacters)
+		if (this._convertSpecialCharacters) {
 			return TextSoap.convertSpecialCharacters(parameters.toString());
-		else
+		}
+		else {
 			return parameters.toString();
+		}
 	}
 
 	/**
 	 * @return String
 	 */
 	public String getPath() {
-		return _path;
+		return this._path;
 	}
 
 	/**
@@ -158,15 +162,17 @@ public class URLUtil {
 	 * @param path The path to set
 	 */
 	public void setPath(String path) {
-		_path = path;
+		this._path = path;
 	}
 
 	public void addParameter(String name, String value) {
-		if (_parameters == null)
-			_parameters = new MultivaluedHashMap();
+		if (this._parameters == null) {
+			this._parameters = new MultivaluedHashMap();
+		}
 			
-		if (name != null && !name.equalsIgnoreCase("null"))
-			_parameters.put(name, value);
+		if (name != null && !name.equalsIgnoreCase("null")) {
+			this._parameters.put(name, value);
+		}
 	}
 	
 	public void addParameter(String name, int value) {
@@ -174,14 +180,14 @@ public class URLUtil {
 	}
 	
 	public void removeParameter(String name) {
-		if (_parameters != null) {
-			_parameters.remove(name);
+		if (this._parameters != null) {
+			this._parameters.remove(name);
 		}
 	}
 	
 	public void removeParameterValue(String name, String value) {
-		if (_parameters != null) {
-			Collection values = _parameters.getCollection(name);
+		if (this._parameters != null) {
+			Collection values = this._parameters.getCollection(name);
 			if (values != null) {
 				values.remove(value);
 			}
@@ -189,15 +195,15 @@ public class URLUtil {
 	}
 	
 	public boolean containsParameter(String name) {
-		if (_parameters != null) {
-			return _parameters.containsKey(name);
+		if (this._parameters != null) {
+			return this._parameters.containsKey(name);
 		}
 		return false;
 	}
 	
 	public boolean containtsParameterValue(String name, String value) {
-		if (_parameters != null) {
-			Collection values = _parameters.getCollection(name);
+		if (this._parameters != null) {
+			Collection values = this._parameters.getCollection(name);
 			if (values != null) {
 				return values.contains(value);
 			}
@@ -219,21 +225,21 @@ public class URLUtil {
 	 * @return String
 	 */
 	public String getHost() {
-		return _host;
+		return this._host;
 	}
 
 	/**
 	 * @return int
 	 */
 	public int getPort() {
-		return _port;
+		return this._port;
 	}
 
 	/**
 	 * @return String
 	 */
 	public String getProtocol() {
-		return _protocol;
+		return this._protocol;
 	}
 
 	/**
@@ -241,7 +247,7 @@ public class URLUtil {
 	 * @param host The host to set
 	 */
 	public void setHost(String host) {
-		_host = host;
+		this._host = host;
 	}
 
 	/**
@@ -249,7 +255,7 @@ public class URLUtil {
 	 * @param port The port to set
 	 */
 	public void setPort(int port) {
-		_port = port;
+		this._port = port;
 	}
 
 	/**
@@ -257,6 +263,6 @@ public class URLUtil {
 	 * @param protocol The protocol to set
 	 */
 	public void setProtocol(String protocol) {
-		_protocol = protocol;
+		this._protocol = protocol;
 	}
 }

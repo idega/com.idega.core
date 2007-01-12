@@ -23,7 +23,7 @@ import java.io.InputStream;
 public class MySQLDatastoreInterface extends DatastoreInterface {
 
 	MySQLDatastoreInterface() {
-		useTransactionsInEntityCreation = false;
+		this.useTransactionsInEntityCreation = false;
 	}
 
 	protected String getCreateUniqueIDQuery(GenericEntity entity) {
@@ -305,10 +305,12 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 			ex.printStackTrace();
 		}
 		finally {
-			if (Conn != null)
+			if (Conn != null) {
 				entity.freeConnection(Conn);
-			if (instream != null)
+			}
+			if (instream != null) {
 				instream.close();
+			}
 		}
 	}
 

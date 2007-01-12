@@ -21,10 +21,10 @@ public class IWRequestHandlerServlet extends IWCoreServlet {
 	public IWRequestHandlerServlet() {
 	}
 	protected String getCurrentIdegaWebAppURI() {
-		if (currentIdegaWebAppPath == null) {
-			currentIdegaWebAppPath = this.getApplication().getTranslatedURIWithContext(IDEGAWEB_START_URI);
+		if (this.currentIdegaWebAppPath == null) {
+			this.currentIdegaWebAppPath = this.getApplication().getTranslatedURIWithContext(IDEGAWEB_START_URI);
 		}
-		return currentIdegaWebAppPath;
+		return this.currentIdegaWebAppPath;
 	}
 	public void doGet(HttpServletRequest servReq, HttpServletResponse servRes) throws ServletException, IOException {
 		processRequest(servReq, servRes);
@@ -139,7 +139,7 @@ public class IWRequestHandlerServlet extends IWCoreServlet {
 	}
 	protected void processNotFoundRequest(HttpServletRequest servReq, HttpServletResponse servRes)
 		throws ServletException, IOException {
-		servRes.sendError(servRes.SC_NOT_FOUND);
+		servRes.sendError(HttpServletResponse.SC_NOT_FOUND);
 	}
 	protected void processIdegaWebApplicationsRequest(HttpServletRequest servReq, HttpServletResponse servRes)
 		throws ServletException, IOException {

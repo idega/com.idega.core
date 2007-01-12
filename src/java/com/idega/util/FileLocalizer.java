@@ -1,5 +1,5 @@
 /*
- * $Id: FileLocalizer.java,v 1.2 2002/04/06 19:07:46 tryggvil Exp $
+ * $Id: FileLocalizer.java,v 1.2.6.1 2007/01/12 19:31:37 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -125,8 +125,9 @@ public class FileLocalizer {
           input = in.readLine();
         }// while ends
       }
-      else
-        return ;
+	else {
+		return ;
+	}
     }
     catch(Exception ex){
       ex.printStackTrace();

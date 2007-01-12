@@ -20,7 +20,7 @@ public abstract class IWServiceImpl implements IWService {
   public abstract String getServiceName();
 
   public void startService(IWMainApplication superApplication){
-    if(application == null){
+    if(this.application == null){
       setApplication(superApplication);
     }
     executeService();
@@ -31,14 +31,14 @@ public abstract class IWServiceImpl implements IWService {
   }
 
   public IWMainApplication getApplication() throws IWServiceNotStartedException{
-    if(application == null){
+    if(this.application == null){
       throw new IWServiceNotStartedException(this);
     }
-    return application;
+    return this.application;
   }
 
   public void setApplication(IWMainApplication iwma){
-    application=iwma;
+    this.application=iwma;
   }
 
 

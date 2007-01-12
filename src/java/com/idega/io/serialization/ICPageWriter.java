@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageWriter.java,v 1.1 2005/09/26 17:29:43 thomas Exp $
+ * $Id: ICPageWriter.java,v 1.1.2.1 2007/01/12 19:32:36 idegaweb Exp $
  * Created on Sep 23, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -24,16 +24,16 @@ public class ICPageWriter extends ICFileWriter {
 	
 	public ICPageWriter(ICPage page, IWContext iwc) {
 		super(page.getFile(), iwc);
-		isMarkedAsDeleted = page.getDeleted();
-		name = page.getName();
+		this.isMarkedAsDeleted = page.getDeleted();
+		this.name = page.getName();
 	}
 	
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	public boolean isMarkedAsDeleted() {
-		return isMarkedAsDeleted;
+		return this.isMarkedAsDeleted;
 	}
 
 }

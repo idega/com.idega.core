@@ -77,7 +77,9 @@ public class ListUtil {
   		
   		return returnList;
   	}
-  	else return null;
+	else {
+		return null;
+	}
 		
   }
   

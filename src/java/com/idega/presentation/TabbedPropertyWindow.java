@@ -38,37 +38,37 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
        
         if(disposeOfPanel(iwc)){
             //temp solution
-            panel = TabbedPropertyPanel.getInstanceFromSessionOrAddToSession(getSessionAddressString(), iwc, null );
-            panel.dispose(iwc);  
-            panel = null;
+            this.panel = TabbedPropertyPanel.getInstanceFromSessionOrAddToSession(getSessionAddressString(), iwc, null );
+            this.panel.dispose(iwc);  
+            this.panel = null;
         }
         
         //the getPanelInstance is needed because we need to override the method from this classes extenders and not the TabbedProprtyPanel classes
-        panel = TabbedPropertyPanel.getInstanceFromSessionOrAddToSession(getSessionAddressString(), iwc , getPanelInstance(iwc));
+        this.panel = TabbedPropertyPanel.getInstanceFromSessionOrAddToSession(getSessionAddressString(), iwc , getPanelInstance(iwc));
         
         // do not close the window if the cancel button was pressed
-        if (panel.clickedCancel()) {
-            panel.dispose(iwc);
+        if (this.panel.clickedCancel()) {
+            this.panel.dispose(iwc);
             close();
         }
         else {
-            this.add(panel,iwc);
+            this.add(this.panel,iwc);
         }
         //WE MUST HAVE ADDED THE PANEL FIRST, OTHERWISE THE PARENT PAGE WILL BE NULL!
-        if(panel.justConstructed()){
-            initializePanel(iwc, panel);
+        if(this.panel.justConstructed()){
+            initializePanel(iwc, this.panel);
         }else{
         		//we must set the page parents to this window so getParentPage() works
         		//their parent is lost because it was added to the session and then the window was destroyed
-        		resetParentOfTabs(panel);
+        		resetParentOfTabs(this.panel);
         }
         
-        if(panel.clickedCancel() || panel.clickedOk() || panel.clickedApply()){
-            if(panel.clickedOk() || panel.clickedApply()){
+        if(this.panel.clickedCancel() || this.panel.clickedOk() || this.panel.clickedApply()){
+            if(this.panel.clickedOk() || this.panel.clickedApply()){
                 iwc.getApplicationContext().removeApplicationAttribute("domain_group_tree");
                 iwc.getApplicationContext().removeApplicationAttribute("group_tree");
                 // clear on load only if okay was clicked    
-                setOnLoad(iwc, panel.clickedOk());
+                setOnLoad(iwc, this.panel.clickedOk());
             }
             else {
                 // cancel was clicked
@@ -105,8 +105,8 @@ public abstract class TabbedPropertyWindow extends StyledIWAdminWindow {
     }
     
     public PresentationObject[] getAddedTabs(){
-        if(panel != null){
-            return panel.getAddedTabs();
+        if(this.panel != null){
+            return this.panel.getAddedTabs();
         } else {
             throw new RuntimeException("TabbedPropertyPanel not set. TabbedPropertyPanel is set in main(IWContext iwc)");
         }

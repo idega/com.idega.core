@@ -100,8 +100,9 @@ public class JndiSocketFactory extends SSLSocketFactory
 
     private static ClassLoader getClassLoader()
     {
-        if (myClassLoader == null)
-            myClassLoader = ClassLoader.getSystemClassLoader();
+        if (myClassLoader == null) {
+			myClassLoader = ClassLoader.getSystemClassLoader();
+		}
 
         return myClassLoader;
     }
@@ -176,8 +177,9 @@ public class JndiSocketFactory extends SSLSocketFactory
         checkFileSanity(caKeystoreFile, clientKeystoreFile, clientPassphrase);
 
         // use the client store if there is no caKeystoreFile.
-        if (caKeystoreFile == null)
-            caKeystoreFile = clientKeystoreFile;
+        if (caKeystoreFile == null) {
+			caKeystoreFile = clientKeystoreFile;
+		}
 
         SSLContext sslctx;
 
@@ -209,8 +211,9 @@ public class JndiSocketFactory extends SSLSocketFactory
         // evil undocumented feature - can change SSL protocol on command line
         // (needed for mainframe TOPSECRET folks who have crippled TLS implementatiuon and want to use SSLv3)
         String protocol = System.getProperty("sslversion", "TLS"); // TLS for java 1.4
-        if (!"TLS".equals(protocol))
-            System.out.println("SECURITY: Using non-standard ssl version: '" + protocol + "'");
+        if (!"TLS".equals(protocol)) {
+			System.out.println("SECURITY: Using non-standard ssl version: '" + protocol + "'");
+		}
 //TODO: proper logging
         sslctx = SSLContext.getInstance(protocol);
 
@@ -253,8 +256,9 @@ public class JndiSocketFactory extends SSLSocketFactory
                     // get password safely - rely on calling routine to clear clientPassphrase
                     int size = clientPassphrase.length;
                     byte[] password = new byte[size];
-                    for (int i=0; i<size; i++)
-                         password[i] = (byte) clientPassphrase[i];
+                    for (int i=0; i<size; i++) {
+						password[i] = (byte) clientPassphrase[i];
+					}
 
                     Object pkcs12Parser = constructor.newInstance(new Object[] {clientKeystoreFile, password});
 
@@ -262,8 +266,9 @@ public class JndiSocketFactory extends SSLSocketFactory
 
                     clientKeystore = (KeyStore) getSunKeyStore.invoke(pkcs12Parser, new Object[] {"MyFriend"});
 
-                    for (int i=0; i<size; i++)  // clear temp password store.
-                        password[i] = 0;
+                    for (int i=0; i<size; i++) {
+						password[i] = 0;
+					}
                 }
                 catch (Exception e)
                 {
@@ -278,8 +283,9 @@ public class JndiSocketFactory extends SSLSocketFactory
                  *    Create a keystore to hold the client certificates and private keys.
                  */
 
-                if (clientKeystoreType == null)
-                    clientKeystoreType = DEFAULT_KEYSTORE_TYPE;
+                if (clientKeystoreType == null) {
+					clientKeystoreType = DEFAULT_KEYSTORE_TYPE;
+				}
 
                 clientKeystore = KeyStore.getInstance(clientKeystoreType); // key manager key store
 
@@ -288,8 +294,9 @@ public class JndiSocketFactory extends SSLSocketFactory
                  *    keystore password.
                  */
 
-                if (clientKeystoreFile != null)
-                    clientKeystore.load(new FileInputStream(clientKeystoreFile), clientPassphrase);
+                if (clientKeystoreFile != null) {
+					clientKeystore.load(new FileInputStream(clientKeystoreFile), clientPassphrase);
+				}
             }
             /*
              *    Create a key manager using the default sun X509 key manager
@@ -312,15 +319,17 @@ public class JndiSocketFactory extends SSLSocketFactory
          */
 
         KeyManager[] keyManagers = null;
-        if (clientKeyManagerFactory != null)
-            keyManagers = clientKeyManagerFactory.getKeyManagers();
+        if (clientKeyManagerFactory != null) {
+			keyManagers = clientKeyManagerFactory.getKeyManagers();
+		}
 
         /*
          *   Initialise the trusted server certificate keystore.
          */
 
-        if (caKeystoreType == null)
-            caKeystoreType = DEFAULT_KEYSTORE_TYPE;
+        if (caKeystoreType == null) {
+			caKeystoreType = DEFAULT_KEYSTORE_TYPE;
+		}
 
         caKeystore = KeyStore.getInstance(caKeystoreType);
 
@@ -374,16 +383,21 @@ public class JndiSocketFactory extends SSLSocketFactory
     private static void checkFileSanity(String caKeystoreFile, String clientKeystoreFile, char[] clientPassphrase)
         throws Exception
     {
-        if (clientKeystoreFile == null && caKeystoreFile == null)
-            throw new Exception("SSL Initialisation error: No valid keystore files available.");
+        if (clientKeystoreFile == null && caKeystoreFile == null) {
+			throw new Exception("SSL Initialisation error: No valid keystore files available.");
+		}
 
-        if (caKeystoreFile != null)
-            if (new File(caKeystoreFile).exists() == false)
-                throw new Exception("SSL Initialisation error: file '" + caKeystoreFile + "' does not exist.");
+        if (caKeystoreFile != null) {
+			if (new File(caKeystoreFile).exists() == false) {
+				throw new Exception("SSL Initialisation error: file '" + caKeystoreFile + "' does not exist.");
+			}
+		}
 
-        if (clientKeystoreFile != null && clientPassphrase != null)
-            if (new File(clientKeystoreFile).exists() == false)
-                throw new Exception("SSL Initialisation error: file '" + clientKeystoreFile + "' does not exist.");
+        if (clientKeystoreFile != null && clientPassphrase != null) {
+			if (new File(clientKeystoreFile).exists() == false) {
+				throw new Exception("SSL Initialisation error: file '" + clientKeystoreFile + "' does not exist.");
+			}
+		}
     }
 
 
@@ -451,11 +465,12 @@ public class JndiSocketFactory extends SSLSocketFactory
     {
         synchronized(JndiSocketFactory.class)
         {
-            if (default_factory == null)
-	            default_factory = new JndiSocketFactory();
+            if (default_factory == null) {
+				default_factory = new JndiSocketFactory();
+			}
         }
 
-        return (SocketFactory)default_factory;
+        return default_factory;
     }
 
 

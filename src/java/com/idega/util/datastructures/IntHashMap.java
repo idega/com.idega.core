@@ -1,5 +1,5 @@
 /*
- * $Id: IntHashMap.java,v 1.1 2004/10/20 10:58:36 aron Exp $
+ * $Id: IntHashMap.java,v 1.1.2.1 2007/01/12 19:32:19 idegaweb Exp $
  * Created on 18.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -12,10 +12,10 @@ package com.idega.util.datastructures;
 /**
  * A hash map mapping int values to objects. 
  * This offers the benefit of not having to use objects as keys, which can result in performance benefits.
- *  Last modified: $Date: 2004/10/20 10:58:36 $ by $Author: aron $
+ *  Last modified: $Date: 2007/01/12 19:32:19 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class IntHashMap {
     /** The default capacity for hash map instances. */
@@ -83,22 +83,22 @@ public class IntHashMap {
         }
 
         //.... Determine parameters
-        loadFactor     = DEFAULT_LOADFACTOR; // As per standard API for java.util.HashMap
-        capacity       = (int) (m.size() / loadFactor);
+        this.loadFactor     = DEFAULT_LOADFACTOR; // As per standard API for java.util.HashMap
+        this.capacity       = (int) (m.size() / this.loadFactor);
 
-        if (capacity < DEFAULT_CAPACITY) { // Avoid underflow
-            capacity = DEFAULT_CAPACITY;
-        } else if ((capacity % 2) == 0) { // Make sure we have an odd value
-            capacity++;
+        if (this.capacity < DEFAULT_CAPACITY) { // Avoid underflow
+            this.capacity = DEFAULT_CAPACITY;
+        } else if ((this.capacity % 2) == 0) { // Make sure we have an odd value
+            this.capacity++;
         }
 
         //.... Standard initialization for the internal map elements
-        maxLoad        = (int) ((loadFactor * capacity) + 0.5f); // Max. number of elements before a rehash occurs
-        initialCap     = capacity;
+        this.maxLoad        = (int) ((this.loadFactor * this.capacity) + 0.5f); // Max. number of elements before a rehash occurs
+        this.initialCap     = this.capacity;
 
-        objectCounter += 2;
-        map       = new MapElement[capacity];
-        count     = new int[capacity];
+        this.objectCounter += 2;
+        this.map       = new MapElement[this.capacity];
+        this.count     = new int[this.capacity];
 
         //.... Copy the elements to the new map 
         int[] keys = m.keySet();
@@ -116,7 +116,7 @@ public class IntHashMap {
      * @return The current number of mappings in the hash map.
      */
     public int size() {
-        return contents;
+        return this.contents;
     }
 
     /**
@@ -125,14 +125,14 @@ public class IntHashMap {
      * @return DOCUMENT ME!
      */
     public boolean isEmpty() {
-        return (contents == 0) ? true : false;
+        return (this.contents == 0) ? true : false;
     }
 
     /**
      * Removes all mappings from this map.
      */
     public void clear() {
-        construct(initialCap, loadFactor);
+        construct(this.initialCap, this.loadFactor);
     }
 
     /**
@@ -143,7 +143,7 @@ public class IntHashMap {
      * @return The number of objects created
      */
     public int getObjectCounter() {
-        return objectCounter;
+        return this.objectCounter;
     }
 
     /**
@@ -155,7 +155,7 @@ public class IntHashMap {
      * @return The current capacity for this hash map.
      */
     public int getCapacity() {
-        return capacity;
+        return this.capacity;
     }
 
     /**
@@ -166,7 +166,7 @@ public class IntHashMap {
      * @return The load factor for this hash map.
      */
     public float getLoadFactor() {
-        return loadFactor;
+        return this.loadFactor;
     }
 
     /**
@@ -177,17 +177,17 @@ public class IntHashMap {
      * @return An array containing the keys for which mappings are stored in this hash map.
      */
     public int[] keySet() {
-        objectCounter++;
+        this.objectCounter++;
 
-        int[]      keys = new int[contents];
+        int[]      keys = new int[this.contents];
         int        cnt = 0;
         MapElement me = null;
 
-        for (int i = 0; i < capacity; i++) {
-            if (map[i] != null) {
-                me = map[i];
+        for (int i = 0; i < this.capacity; i++) {
+            if (this.map[i] != null) {
+                me = this.map[i];
 
-                for (int j = 0; j < count[i]; j++) {
+                for (int j = 0; j < this.count[i]; j++) {
                     keys[cnt++]     = me.getKey();
                     me              = me.getNext();
                 }
@@ -222,20 +222,20 @@ public class IntHashMap {
      */
     public Object put(int    key,
                       Object value) {
-        int index = key % capacity;
+        int index = key % this.capacity;
 
         if (index < 0) {
             index = -index;
         }
 
         //.... This is a new key since no bucket exists
-        if (map[index] == null) {
-            objectCounter++;
-            map[index] = new MapElement(key, value);
-            count[index]++;
-            contents++;
+        if (this.map[index] == null) {
+            this.objectCounter++;
+            this.map[index] = new MapElement(key, value);
+            this.count[index]++;
+            this.contents++;
 
-            if (contents > maxLoad) {
+            if (this.contents > this.maxLoad) {
                 rehash();
             }
 
@@ -243,7 +243,7 @@ public class IntHashMap {
 
             //.... A bucket already exists for this index: check whether we already have a mapping for this key
         } else {
-            MapElement me = map[index];
+            MapElement me = this.map[index];
 
             while (true) {
                 if (me.getKey() == key) { // We have a mapping: just replace the value for this element
@@ -254,12 +254,12 @@ public class IntHashMap {
                     return previous;
                 } else {
                     if (me.getNext() == null) { // No next element: so we have no mapping for this key
-                        objectCounter++;
+                        this.objectCounter++;
                         me.setNext(new MapElement(key, value));
-                        count[index]++;
-                        contents++;
+                        this.count[index]++;
+                        this.contents++;
 
-                        if (contents > maxLoad) {
+                        if (this.contents > this.maxLoad) {
                             rehash();
                         }
 
@@ -322,29 +322,29 @@ public class IntHashMap {
      *         also indicate that the map previously associated <code>null</code>  with the specified key.
      */
     public Object remove(int key) {
-        int index = key % capacity;
+        int index = key % this.capacity;
 
         if (index < 0) {
             index = -index;
         }
 
-        if (map[index] == null) {
+        if (this.map[index] == null) {
             return null;
         } else {
-            MapElement me = map[index];
+            MapElement me = this.map[index];
             MapElement prev = null;
 
             while (true) {
                 if (me.getKey() == key) { // Keys match
 
                     if (prev == null) { // The first element in the chain matches
-                        map[index] = me.getNext();
+                        this.map[index] = me.getNext();
                     } else { // An element further down in the chain matches - delete it from the chain
                         prev.setNext(me.getNext());
                     }
 
-                    count[index]--;
-                    contents--;
+                    this.count[index]--;
+                    this.contents--;
 
                     return me.getValue();
                 } else { // Keys don't match, try the next element
@@ -367,16 +367,16 @@ public class IntHashMap {
      * @return DOCUMENT ME!
      */
     private MapElement exists(int key) {
-        int index = key % capacity;
+        int index = key % this.capacity;
 
         if (index < 0) {
             index = -index;
         }
 
-        if (map[index] == null) {
+        if (this.map[index] == null) {
             return null;
         } else {
-            MapElement me = map[index];
+            MapElement me = this.map[index];
 
             while (true) {
                 if (me.getKey() == key) {
@@ -396,14 +396,14 @@ public class IntHashMap {
      * Increase the capacity of the map to improve performance
      */
     private void rehash() {
-        if (rehashing) {
-            int newCapacity = (2 * capacity) + 1;
+        if (this.rehashing) {
+            int newCapacity = (2 * this.capacity) + 1;
 
             if (newCapacity > MAXIMUM_CAPACITY) {
                 return;
             }
 
-            objectCounter += 2;
+            this.objectCounter += 2;
 
             MapElement[] newMap = new MapElement[newCapacity];
             int[]        newCount = new int[newCapacity];
@@ -413,8 +413,8 @@ public class IntHashMap {
             MapElement   next = null;
             int          newIndex = 0;
 
-            for (int index = 0; index < capacity; index++) {
-                me = map[index];
+            for (int index = 0; index < this.capacity; index++) {
+                me = this.map[index];
 
                 while (me != null) {
                     next         = me.getNext();
@@ -439,10 +439,10 @@ public class IntHashMap {
                 }
             }
 
-            map          = newMap;
-            count        = newCount;
-            capacity     = newCapacity;
-            maxLoad      = (int) ((loadFactor * capacity) + 0.5f); // Max. number of elements before a rehash occurs
+            this.map          = newMap;
+            this.count        = newCount;
+            this.capacity     = newCapacity;
+            this.maxLoad      = (int) ((this.loadFactor * this.capacity) + 0.5f); // Max. number of elements before a rehash occurs
 
             newMap = null;
         }
@@ -478,11 +478,11 @@ public class IntHashMap {
         this.capacity       = initialCapacity;
         this.loadFactor     = loadFactor;
 
-        objectCounter += 2;
-        maxLoad      = (int) ((loadFactor * capacity) + 0.5f); // Max. number of elements before a rehash occurs
-        map          = new MapElement[capacity];
-        count        = new int[capacity];
-        contents     = 0;
+        this.objectCounter += 2;
+        this.maxLoad      = (int) ((loadFactor * this.capacity) + 0.5f); // Max. number of elements before a rehash occurs
+        this.map          = new MapElement[this.capacity];
+        this.count        = new int[this.capacity];
+        this.contents     = 0;
     }
 
     /**
@@ -494,14 +494,14 @@ public class IntHashMap {
      */
     public void printStatistics(boolean full) {
         if (full) {
-            for (int i = 0; i < capacity; i++) {
-                System.out.println("Count[" + i + "] = " + count[i]);
+            for (int i = 0; i < this.capacity; i++) {
+                System.out.println("Count[" + i + "] = " + this.count[i]);
             }
         }
 
-        System.out.println("Initial capacity   = " + initialCap);
-        System.out.println("Capacity           = " + capacity);
-        System.out.println("Number of elements = " + contents);
+        System.out.println("Initial capacity   = " + this.initialCap);
+        System.out.println("Capacity           = " + this.capacity);
+        System.out.println("Number of elements = " + this.contents);
     }
 
     /**
@@ -532,7 +532,7 @@ public class IntHashMap {
          * @return The value for the <code>key</code> property
          */
         public int getKey() {
-            return key;
+            return this.key;
         }
 
         /**
@@ -554,7 +554,7 @@ public class IntHashMap {
          * @return The value for the <code>value</code> property
          */
         public Object getValue() {
-            return value;
+            return this.value;
         }
 
         /**
@@ -576,7 +576,7 @@ public class IntHashMap {
          * @return The value for the <code>next</code> property
          */
         public MapElement getNext() {
-            return next;
+            return this.next;
         }
     }
 }

@@ -9,7 +9,7 @@ import com.idega.event.*;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -23,13 +23,13 @@ public class ResetPresentationEvent extends IWPresentationEvent {
   }
 
   public boolean doReset(){
-    return _doReset;
+    return this._doReset;
   }
 
   public boolean initializeEvent(IWContext iwc) {
-    _doReset = ("1".equals(iwc.getParameter(PRM_DO_RESET)));
+    this._doReset = ("1".equals(iwc.getParameter(PRM_DO_RESET)));
 
-    if(_doReset){
+    if(this._doReset){
       return true;
     }else {
       return false;

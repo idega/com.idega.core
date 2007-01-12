@@ -41,13 +41,13 @@ public class FieldSet extends PresentationObjectContainer {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[2];
 		values[0] = super.saveState(ctx);
-		values[1] = Boolean.valueOf(_hasLegend);
+		values[1] = Boolean.valueOf(this._hasLegend);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		_hasLegend = ((Boolean) values[1]).booleanValue();
+		this._hasLegend = ((Boolean) values[1]).booleanValue();
 	}
 	public FieldSet() {
 		setTransient(false);
@@ -60,7 +60,7 @@ public class FieldSet extends PresentationObjectContainer {
 	public FieldSet(Legend legend) {
 		this();
 		add(legend);
-		_hasLegend = true;
+		this._hasLegend = true;
 		setTransient(false);
 	}
 	
@@ -75,7 +75,7 @@ public class FieldSet extends PresentationObjectContainer {
 	}
 	
 	public boolean hasLegend() {
-		return _hasLegend;
+		return this._hasLegend;
 	}
 	
 	public Legend getLegend() {

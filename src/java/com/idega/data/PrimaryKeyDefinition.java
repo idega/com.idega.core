@@ -32,19 +32,19 @@ public class PrimaryKeyDefinition implements IDOPrimaryKeyDefinition {
 	
 	public void addFieldEntity(IDOEntityField field) {
 		if (!containsEquivalentField(field)) {
-			int length = _fields.length;
+			int length = this._fields.length;
 			IDOEntityField[] tempArray = new IDOEntityField[length + 1];
-			System.arraycopy(_fields, 0, tempArray, 0, length);
+			System.arraycopy(this._fields, 0, tempArray, 0, length);
 			tempArray[length] = field;
-			_fields = tempArray;
+			this._fields = tempArray;
 		} else {
 			//System.err.println(getDeclaredEntity().getUniqueEntityName() + ": PrimaryKeyDefinition already contains equivalent field \"" + field.getSQLFieldName() + "\"");
 		}
 	}
 
 	protected boolean containsEquivalentField(IDOEntityField field) {
-		for (int i = 0; i < _fields.length; i++) {
-			if (_fields[i].getSQLFieldName().equals(field.getSQLFieldName())) {
+		for (int i = 0; i < this._fields.length; i++) {
+			if (this._fields[i].getSQLFieldName().equals(field.getSQLFieldName())) {
 				return true;
 			}
 		}
@@ -57,25 +57,25 @@ public class PrimaryKeyDefinition implements IDOPrimaryKeyDefinition {
 	 * @see com.idega.data.IDOPrimaryKeyDefinition#getFields()
 	 */
 	public IDOEntityField[] getFields() {
-		return _fields;
+		return this._fields;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOPrimaryKeyDefinition#isComposite()
 	 */
 	public boolean isComposite() {
-		return (_fields.length>1);
+		return (this._fields.length>1);
 	}
 	
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOPrimaryKeyDefinition#getPrimaryKeyClass()
 	 */
 	public Class getPrimaryKeyClass() {
-		return _primaryKeyClass;
+		return this._primaryKeyClass;
 	}
 	
 	public Class setPrimaryKeyClass(Class pkClass) {
-		return _primaryKeyClass=pkClass;
+		return this._primaryKeyClass=pkClass;
 	}
 	
 	public void setDeclaredEntity(GenericEntityDefinition definition) {

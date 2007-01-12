@@ -99,15 +99,15 @@ public class IWBundleStarter implements IWBundleStartable,EmbeddedLDAPServerCons
 	}
 
 	public GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
-		if (groupBiz == null) {
+		if (this.groupBiz == null) {
 			try {
-				groupBiz = (GroupBusiness) com.idega.business.IBOLookup
+				this.groupBiz = (GroupBusiness) com.idega.business.IBOLookup
 						.getServiceInstance(iwc, GroupBusiness.class);
 			} catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return groupBiz;
+		return this.groupBiz;
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class IWBundleStarter implements IWBundleStartable,EmbeddedLDAPServerCons
 		try {
 			//			context.createSubcontext("o=Idega,"+ ldap.getBaseDN(),
 			// orgAttributes);
-			context.createSubcontext("o=Idega", orgAttributes);
+			this.context.createSubcontext("o=Idega", orgAttributes);
 		} catch (NamingException e) {
 
 			e.printStackTrace();
@@ -158,7 +158,7 @@ public class IWBundleStarter implements IWBundleStartable,EmbeddedLDAPServerCons
 		try {
 			//context.createSubcontext("ou=Developers,o=Idega,"+
 			// ldap.getBaseDN(), orgAttributes);
-			context
+			this.context
 					.createSubcontext("ou=Developers,o=Idega",
 							orgUnitAttributes);
 		} catch (NamingException e) {
@@ -216,7 +216,7 @@ public class IWBundleStarter implements IWBundleStartable,EmbeddedLDAPServerCons
 			try {
 				//context.createSubcontext("cn=" + user.getPersonalID() +
 				// ",ou=Developers,o=Idega," + ldap.getBaseDN(), attributes);
-				context.createSubcontext("cn=" + user.getPersonalID()
+				this.context.createSubcontext("cn=" + user.getPersonalID()
 						+ ",ou=Developers,o=Idega", attributes);
 			} catch (NamingException e) {
 
@@ -234,40 +234,40 @@ public class IWBundleStarter implements IWBundleStartable,EmbeddedLDAPServerCons
 	}
 
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
-		if (userBiz == null) {
+		if (this.userBiz == null) {
 			try {
-				userBiz = (UserBusiness) com.idega.business.IBOLookup
+				this.userBiz = (UserBusiness) com.idega.business.IBOLookup
 						.getServiceInstance(iwc, UserBusiness.class);
 			} catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return userBiz;
+		return this.userBiz;
 	}
 
 	public EmbeddedLDAPServerBusiness getEmbeddedLDAPServerBusiness(
 			IWApplicationContext iwc) {
-		if (embeddedLDAPServerBiz == null) {
+		if (this.embeddedLDAPServerBiz == null) {
 			try {
-				embeddedLDAPServerBiz = (EmbeddedLDAPServerBusiness) com.idega.business.IBOLookup
+				this.embeddedLDAPServerBiz = (EmbeddedLDAPServerBusiness) com.idega.business.IBOLookup
 						.getServiceInstance(iwc,
 								EmbeddedLDAPServerBusiness.class);
 			} catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return embeddedLDAPServerBiz;
+		return this.embeddedLDAPServerBiz;
 	}
 	
 	public LDAPReplicationBusiness getLDAPReplicationBusiness(IWApplicationContext iwc) {
-		if (ldapReplicationBiz == null) {
+		if (this.ldapReplicationBiz == null) {
 			try {
-				ldapReplicationBiz = (LDAPReplicationBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, LDAPReplicationBusiness.class);
+				this.ldapReplicationBiz = (LDAPReplicationBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, LDAPReplicationBusiness.class);
 			} catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return ldapReplicationBiz;
+		return this.ldapReplicationBiz;
 	}
 
 }

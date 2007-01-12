@@ -2,6 +2,7 @@ package com.idega.idegaweb.presentation;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -37,13 +38,13 @@ public class SmallCalendar extends Block {
 	private String textColor = "#000000";
 	private String highlightedText = "#660000";
 	private String headerTextColor = "#000000";
-	private String dayTextColor = headerTextColor;
+	private String dayTextColor = this.headerTextColor;
 	private String headerColor = null;
 	private String dayCellColor = null;
 	private String bodyColor = null;
 	private String inactiveCellColor = null;
 	private String backgroundColor = null;
-	private String todayColor = headerColor;
+	private String todayColor = this.headerColor;
 	private String selectedColor = "#CCCCCC";
 	private String URL;
 	
@@ -89,31 +90,32 @@ public class SmallCalendar extends Block {
 
 	public SmallCalendar(IWTimestamp timestamp) {
 		initialize();
-		stamp = timestamp;
+		this.stamp = timestamp;
 	}
 
 	public SmallCalendar(int year, int month) {
 		initialize();
-		stamp = new IWTimestamp();
-		stamp.setMonth(month);
-		stamp.setYear(year);
+		this.stamp = new IWTimestamp();
+		this.stamp.setMonth(month);
+		this.stamp.setYear(year);
 	}
 	
 	public void main(IWContext iwc) {
-		cal = new IWCalendar(iwc.getCurrentLocale());
+		this.cal = new IWCalendar(iwc.getCurrentLocale());
 		
-		if (stamp == null) {
+		if (this.stamp == null) {
 			String day = iwc.getParameter(CalendarParameters.PARAMETER_DAY);
 			String month = iwc.getParameter(CalendarParameters.PARAMETER_MONTH);
 			String year = iwc.getParameter(CalendarParameters.PARAMETER_YEAR);
-			if (isTarget() || !useTarget) {
-				stamp = getTimestamp(day, month, year);
+			if (isTarget() || !this.useTarget) {
+				this.stamp = getTimestamp(day, month, year);
 			}
 			else if (iwc.getSessionAttribute("smcal" + getICObjectInstanceID()) != null) {
-				stamp = (IWTimestamp) iwc.getSessionAttribute("smcal" + getICObjectInstanceID());
+				this.stamp = (IWTimestamp) iwc.getSessionAttribute("smcal" + getICObjectInstanceID());
 			}
-			else
-				stamp = IWTimestamp.RightNow();
+			else {
+				this.stamp = IWTimestamp.RightNow();
+			}
 		}
 		if(iwc.isParameterSet(PRM_SETTINGS)){
 			setInitializingString(iwc.getParameter(PRM_SETTINGS));
@@ -122,69 +124,70 @@ public class SmallCalendar extends Block {
 	}
 
 	public void make(IWContext iwc) {
-		int thismonth = today.getMonth();
-		int stampmonth = stamp.getMonth();
+		int thismonth = this.today.getMonth();
+		int stampmonth = this.stamp.getMonth();
 
 		boolean shadow = (thismonth == stampmonth) ? true : false;
-		if (shadow)
-			shadow = (today.getYear() == stamp.getYear()) ? true : false;
-		int daycount = cal.getLengthOfMonth(stamp.getMonth(), stamp.getYear());
-		int daynr = cal.getDayOfWeek(stamp.getYear(), stamp.getMonth(), 1);
-		String sMonth = cal.getMonthName(stamp.getMonth(), iwc.getCurrentLocale(), IWCalendar.SHORT);
+		if (shadow) {
+			shadow = (this.today.getYear() == this.stamp.getYear()) ? true : false;
+		}
+		int daycount = this.cal.getLengthOfMonth(this.stamp.getMonth(), this.stamp.getYear());
+		int daynr = this.cal.getDayOfWeek(this.stamp.getYear(), this.stamp.getMonth(), 1);
+		String sMonth = this.cal.getMonthName(this.stamp.getMonth(), iwc.getCurrentLocale(), IWCalendar.SHORT);
 		try {
 			sMonth = sMonth.substring(0, 1).toUpperCase() + sMonth.substring(1);
 		}
 		catch (Exception e) {
-			sMonth = cal.getMonthName(stamp.getMonth(), iwc.getCurrentLocale(), IWCalendar.SHORT);
+			sMonth = this.cal.getMonthName(this.stamp.getMonth(), iwc.getCurrentLocale(), IWCalendar.SHORT);
 		}
-		String sYear = String.valueOf(stamp.getYear());
+		String sYear = String.valueOf(this.stamp.getYear());
 		Text tMonth = getHeaderText(sMonth + " " + sYear);
 		Link right = null;
-		if (iNextImage != null) {
-			right = new Link(iNextImage);
+		if (this.iNextImage != null) {
+			right = new Link(this.iNextImage);
 		}
 		else {
 			right = new Link(getLinkText(">"));
 		}
 
-		for (int i = 0; i < parameterName.size(); i++) {
-			right.addParameter((String) parameterName.get(i), (String) parameterValue.get(i));
+		for (int i = 0; i < this.parameterName.size(); i++) {
+			right.addParameter((String) this.parameterName.get(i), (String) this.parameterValue.get(i));
 		}
 
-		this.addNextMonthPrm(right, stamp);
+		this.addNextMonthPrm(right, this.stamp);
 		right.setTargetObjectInstance(this.getTargetObjectInstance());
 
 		Link left = null;
-		if (iPreviousImage != null) {
-			left = new Link(iPreviousImage);
+		if (this.iPreviousImage != null) {
+			left = new Link(this.iPreviousImage);
 		}
 		else {
 			left = new Link(getLinkText("<"));
 		}
-		for (int i = 0; i < parameterName.size(); i++) {
-			left.addParameter((String) parameterName.get(i), (String) parameterValue.get(i));
+		for (int i = 0; i < this.parameterName.size(); i++) {
+			left.addParameter((String) this.parameterName.get(i), (String) this.parameterValue.get(i));
 		}
 
-		this.addLastMonthPrm(left, stamp);
+		this.addLastMonthPrm(left, this.stamp);
 		setAsObjectInstanceTarget(left);
 
 		Table T2 = new Table(3, 2);
-		T.setCellpadding(iCellpadding);
+		this.T.setCellpadding(this.iCellpadding);
 		T2.setCellpadding(0);
 		T2.mergeCells(1, 2, 3, 2);
 		T2.setCellspacing(0);
-		T2.setWidth(width);
-		T.setWidth(width);
-		T2.setHeight(height);
-		T.setHeight(height);
+		T2.setWidth(this.width);
+		this.T.setWidth(this.width);
+		T2.setHeight(this.height);
+		this.T.setHeight(this.height);
 		T2.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_CENTER);
 		T2.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_CENTER);
 		T2.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_CENTER);
 		
-		if (backgroundStyleClass != null) {
-			T2.setStyleClass(getStyleName(backgroundStyleClass));
-		} else if (backgroundColor != null) {
-			T2.setColor(backgroundColor);
+		if (this.backgroundStyleClass != null) {
+			T2.setStyleClass(getStyleName(this.backgroundStyleClass));
+		} else if (this.backgroundColor != null) {
+			T2.setColor(this.backgroundColor);
 		}
 
 		//T2.setAlignment(1, "center");
@@ -192,76 +195,78 @@ public class SmallCalendar extends Block {
 
 		//T.setColor(inactiveCellColor);
 
-		if (useNextAndPreviousLinks) {
+		if (this.useNextAndPreviousLinks) {
 			T2.add(left, 1, 1);
 		}
 		T2.add(tMonth, 2, 1);
-		if (useNextAndPreviousLinks) {
+		if (this.useNextAndPreviousLinks) {
 			T2.add(right, 3, 1);
 		}
 
 		Text t;
 		if (this.showNameOfDays) {
-			int weekday = cal.getCalendar().getFirstDayOfWeek();
-			int weekdays = (LINE_VIEW ? daycount + daynr : weekday + 7);
+			int weekday = this.cal.getCalendar().getFirstDayOfWeek();
+			int weekdays = (this.LINE_VIEW ? daycount + daynr : weekday + 7);
 			int a = 1;
 			int b = weekday;
 			while(b < weekdays) {
-				if (weekday > 7)
+				if (weekday > 7) {
 					weekday = weekday - 7;
-				t = getHeaderText(cal.getDayName(weekday++, iwc.getCurrentLocale(), IWCalendar.LONG).substring(0, 1).toUpperCase());
-				T.setAlignment(a, 1, "center");
-				T.add(t, a++, 1);
+				}
+				t = getHeaderText(this.cal.getDayName(weekday++, iwc.getCurrentLocale(), IWCalendar.LONG).substring(0, 1).toUpperCase());
+				this.T.setAlignment(a, 1, "center");
+				this.T.add(t, a++, 1);
 				b++;
 			}
-			if (dayCellStyle != null) {
-				T.setRowStyleClass(1, dayCellStyle);
-			} else 	if (dayCellColor != null) {
-				T.setRowColor(1, dayCellColor);
+			if (this.dayCellStyle != null) {
+				this.T.setRowStyleClass(1, this.dayCellStyle);
+			} else 	if (this.dayCellColor != null) {
+				this.T.setRowColor(1, this.dayCellColor);
 			}
 		}
 
 		int n = 1;
 		int xpos = daynr;
 		int ypos = 1;
-		if (showNameOfDays)
+		if (this.showNameOfDays) {
 			ypos++;
+		}
 
-		int month = stamp.getMonth();
-		int year = stamp.getYear();
+		int month = this.stamp.getMonth();
+		int year = this.stamp.getYear();
 
-		if (dayBackgroundStyleClass != null) {
-			Iterator iter = dayBackgroundStyleClass.keySet().iterator();
+		if (this.dayBackgroundStyleClass != null) {
+			Iterator iter = this.dayBackgroundStyleClass.keySet().iterator();
 			while (iter.hasNext()) {
 				String dayString = (String) iter.next();
 				if (inThisMonth(dayString, year, month)) {
 					IWTimestamp newStamp = new IWTimestamp(dayString);
 					int[] XY = getXYPos(newStamp.getYear(), newStamp.getMonth(), newStamp.getDay());
-					T.setStyleClass(XY[0], XY[1], getDayBackgroundStyleClass(dayString));
+					this.T.setStyleClass(XY[0], XY[1], getDayBackgroundStyleClass(dayString));
 				}
 			}
-		} else if (dayColors != null) {
-			Enumeration enumer = dayColors.keys();
+		} else if (this.dayColors != null) {
+			Enumeration enumer = this.dayColors.keys();
 			while (enumer.hasMoreElements()) {
 				String dayString = (String) enumer.nextElement();
 				if (inThisMonth(dayString, year, month)) {
 					IWTimestamp newStamp = new IWTimestamp(dayString);
 					int[] XY = getXYPos(newStamp.getYear(), newStamp.getMonth(), newStamp.getDay());
-					T.setColor(XY[0], XY[1], getDayColor(dayString));
+					this.T.setColor(XY[0], XY[1], getDayColor(dayString));
 				}
 			}
 		}
 
 		Link theLink;
 		String dayColor = null;
-		DateFormat df = DateFormat.getDateInstance(displayFormat,iwc.getCurrentLocale());
+		DateFormat df = DateFormat.getDateInstance(this.displayFormat,iwc.getCurrentLocale());
 		SimpleDateFormat dateValueFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 		while (n <= daycount) {
 			xpos = getXYPos(year, month, n)[0];
 			ypos = getXYPos(year, month, n)[1];
 			t = new Text(String.valueOf(n));
-			dayColor = textColor;
+			dayColor = this.textColor;
 			String styleClass = getDayStyleClass(getDateString(year, month, n));
 			if (styleClass != null) {
 				t.setStyleClass(styleClass);
@@ -270,33 +275,33 @@ public class SmallCalendar extends Block {
 				t.setFontStyle("font-family: Verdana,Arial, Helvetica, sans-serif; color: " + dayColor + "; font-size: 10px; font-weight: bold; text-decoration: none;");
 			}
 			else {
-				if (today.getYear() == year && today.getMonth() == month && today.getDay() == n) {
-					dayColor = dayTextColor;
+				if (this.today.getYear() == year && this.today.getMonth() == month && this.today.getDay() == n) {
+					dayColor = this.dayTextColor;
 					t.setFontStyle("font-family: Verdana,Arial, Helvetica, sans-serif; color: " + dayColor + "; font-size: 10px; font-weight: bold; text-decoration: none;");
 				}
 				else {
 					t.setFontStyle("font-family: Arial, Helvetica, sans-serif; color: " + dayColor + "; font-size: 10px; text-decoration: none;");
 				}
 			}
-			T.setAlignment(xpos, ypos, "center");
+			this.T.setAlignment(xpos, ypos, "center");
 
-			if (todayBackgroundStyleClass != null && ((n == today.getDay()) && shadow)) {
-				T.setStyleClass(xpos, ypos, todayBackgroundStyleClass);
-			} else if ((todayColor != null) && ((n == today.getDay()) && shadow)) {
-				T.setColor(xpos, ypos, todayColor);
+			if (this.todayBackgroundStyleClass != null && ((n == this.today.getDay()) && shadow)) {
+				this.T.setStyleClass(xpos, ypos, this.todayBackgroundStyleClass);
+			} else if ((this.todayColor != null) && ((n == this.today.getDay()) && shadow)) {
+				this.T.setColor(xpos, ypos, this.todayColor);
 			}
 
-			if (_highlight) {
-				if (n == stamp.getDay() && month == stamp.getMonth() && year == stamp.getYear()) {
-					if (selectedBackgroundStyleClass != null) {
-						T.setStyleClass(xpos, ypos, selectedBackgroundStyleClass);
+			if (this._highlight) {
+				if (n == this.stamp.getDay() && month == this.stamp.getMonth() && year == this.stamp.getYear()) {
+					if (this.selectedBackgroundStyleClass != null) {
+						this.T.setStyleClass(xpos, ypos, this.selectedBackgroundStyleClass);
 					} else {
-						T.setColor(xpos, ypos, selectedColor);
+						this.T.setColor(xpos, ypos, this.selectedColor);
 					}
 				}
 			}
 
-			if (daysAreLinks) {
+			if (this.daysAreLinks) {
 				theLink = getLink();
 				if (styleClass != null) {
 					theLink = new Link(String.valueOf(n));
@@ -305,121 +310,124 @@ public class SmallCalendar extends Block {
 				else {
 					theLink.setPresentationObject(t);
 				}
-				if (_page != null) {
-					theLink.setPage(_page);
+				if (this._page != null) {
+					theLink.setPage(this._page);
 				}
 				theLink.addParameter(CalendarParameters.PARAMETER_DAY, n);
-				theLink.addParameter(CalendarParameters.PARAMETER_MONTH, stamp.getMonth());
-				theLink.addParameter(CalendarParameters.PARAMETER_YEAR, stamp.getYear());
+				theLink.addParameter(CalendarParameters.PARAMETER_MONTH, this.stamp.getMonth());
+				theLink.addParameter(CalendarParameters.PARAMETER_YEAR, this.stamp.getYear());
 				/*if (textStyleClass == null) {
 					theLink.setFontColor(textColor);
 				} else {
 					theLink.setStyleClass(textStyleClass);
 				}*/
 				//theLink.setFontSize(1);
-				for (int i = 0; i < parameterName.size(); i++) {
-					theLink.addParameter((String) parameterName.get(i), (String) parameterValue.get(i));
+				for (int i = 0; i < this.parameterName.size(); i++) {
+					theLink.addParameter((String) this.parameterName.get(i), (String) this.parameterValue.get(i));
 				}
-				if(onClickMessageFormat!=null){
+				if(this.onClickMessageFormat!=null){
 					String[] s = new String[2];
-					IWTimestamp timeStamp = new IWTimestamp(n,stamp.getMonth(),stamp.getYear());
+					IWTimestamp timeStamp = new IWTimestamp(n,this.stamp.getMonth(),this.stamp.getYear());
 					
 					s[0]="'"+dateValueFormat.format(timeStamp.getDate())+"'";
 					//s[1]="'"+timeStamp.getTimestamp().toString()+"'";
 					s[1] = "'"+df.format(timeStamp.getDate())+"'";
-					String onClickString = java.text.MessageFormat.format(onClickMessageFormat,s);
+					String onClickString = java.text.MessageFormat.format(this.onClickMessageFormat,s);
 					theLink.setOnClick(onClickString);
 				}
-				T.add(theLink, xpos, ypos);
+				this.T.add(theLink, xpos, ypos);
 			}
 			else {
-				T.add(t, xpos, ypos);
+				this.T.add(t, xpos, ypos);
 			}
 
-			if (LINE_VIEW)
+			if (this.LINE_VIEW) {
 				xpos++;
-			else
+			}
+			else {
 				xpos = xpos % 7 + 1;
-			if (xpos == 1 && !LINE_VIEW)
+			}
+			if (xpos == 1 && !this.LINE_VIEW) {
 				ypos++;
+			}
 			n++;
 		}
 
-		if (inactiveBackgroundCellStyleClass != null) {
-			for (int a = 1; a <= T.getRows(); a++) {
-				for (int b = 1; b <= T.getColumns(); b++) {
-					if (T.getClass(b, a) == null) {
-						T.setStyleClass(b, a, inactiveBackgroundCellStyleClass);
+		if (this.inactiveBackgroundCellStyleClass != null) {
+			for (int a = 1; a <= this.T.getRows(); a++) {
+				for (int b = 1; b <= this.T.getColumns(); b++) {
+					if (this.T.getClass(b, a) == null) {
+						this.T.setStyleClass(b, a, this.inactiveBackgroundCellStyleClass);
 					}
 				}
 			}
-		} else 	if (inactiveCellColor != null) {
-			for (int a = 1; a <= T.getRows(); a++) {
-				for (int b = 1; b <= T.getColumns(); b++) {
-					if (T.getColor(b, a) == null) {
-						T.setColor(b, a, inactiveCellColor);
+		} else 	if (this.inactiveCellColor != null) {
+			for (int a = 1; a <= this.T.getRows(); a++) {
+				for (int b = 1; b <= this.T.getColumns(); b++) {
+					if (this.T.getColor(b, a) == null) {
+						this.T.setColor(b, a, this.inactiveCellColor);
 					}
 				}
 			}
 		}
 
-		T2.add(T, 1, 2);
+		T2.add(this.T, 1, 2);
 		add(T2);
-		iwc.setSessionAttribute("smcal" + getICObjectInstanceID(), stamp);
+		iwc.setSessionAttribute("smcal" + getICObjectInstanceID(), this.stamp);
 	}
 
 	public void initialize() {
-		today = new IWTimestamp();
-		T = new Table();
-		T.setCellspacing(0);
-		T.setWidth(width);
+		this.today = new IWTimestamp();
+		this.T = new Table();
+		this.T.setCellspacing(0);
+		this.T.setWidth(this.width);
 	}
 
 	private Text getText(String content) {
 		Text text = new Text(content);
-		if (textStyleClass != null) {
-			text.setStyleClass(textStyleClass);
+		if (this.textStyleClass != null) {
+			text.setStyleClass(this.textStyleClass);
 		} else {
-			text.setFontStyle("font-family: Verdana,Arial, Helvetica, sans-serif; font-weight: bold; color: " + dayTextColor + "; font-size: 10px; text-decoration: none;");
+			text.setFontStyle("font-family: Verdana,Arial, Helvetica, sans-serif; font-weight: bold; color: " + this.dayTextColor + "; font-size: 10px; text-decoration: none;");
 		}
 		return text;
 	}
 	
 	private Text getLinkText(String content) {
 		Text text = new Text(content);
-		if (linkStyle != null) {
-			text.setStyleClass(linkStyle);
+		if (this.linkStyle != null) {
+			text.setStyleClass(this.linkStyle);
 		} else {
-			text.setFontColor(headerTextColor);
+			text.setFontColor(this.headerTextColor);
 			text.setFontSize(2);
 			text.setBold();
-			text.setFontStyle("font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: " + headerTextColor + "; font-size: 8pt; text-decoration: none;");
+			text.setFontStyle("font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: " + this.headerTextColor + "; font-size: 8pt; text-decoration: none;");
 		}
 		return text;
 	}
 	
 	private Text getHeaderText(String content) {
 		Text text = new Text(content);
-		if (headerTextStyleClass != null) {
-			text.setStyleClass(headerTextStyleClass);
+		if (this.headerTextStyleClass != null) {
+			text.setStyleClass(this.headerTextStyleClass);
 		} else {
-			text.setFontColor(headerTextColor);
+			text.setFontColor(this.headerTextColor);
 			text.setFontSize(2);
 			text.setBold();
-			text.setFontStyle("font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: " + headerTextColor + "; font-size: 8pt; text-decoration: none;");
+			text.setFontStyle("font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: " + this.headerTextColor + "; font-size: 8pt; text-decoration: none;");
 		}
 		return text;
 	}
 	
 	private Text getMonthText(String content) {
 		Text text = new Text(content);
-		if (monthTextStyleClass != null) {
-			text.setStyleClass(monthTextStyleClass);
+		if (this.monthTextStyleClass != null) {
+			text.setStyleClass(this.monthTextStyleClass);
 		} else {
-			text.setFontColor(headerTextColor);
+			text.setFontColor(this.headerTextColor);
 			text.setFontSize(2);
 			text.setBold();
-			text.setFontStyle("font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: " + headerTextColor + "; font-size: 8pt; text-decoration: none;");
+			text.setFontStyle("font-family: Arial, Helvetica, sans-serif; font-weight: bold; color: " + this.headerTextColor + "; font-size: 8pt; text-decoration: none;");
 		}
 		return text;
 	}
@@ -451,17 +459,21 @@ public class SmallCalendar extends Block {
 	}
 
 	public IWTimestamp nextMonth(IWTimestamp idts) {
-		if (idts.getMonth() == 12)
+		if (idts.getMonth() == 12) {
 			return new IWTimestamp(1, 1, idts.getYear() + 1);
-		else
+		}
+		else {
 			return new IWTimestamp(1, idts.getMonth() + 1, idts.getYear());
+		}
 	}
 
 	public IWTimestamp lastMonth(IWTimestamp idts) {
-		if (idts.getMonth() == 1)
+		if (idts.getMonth() == 1) {
 			return new IWTimestamp(1, 12, idts.getYear() - 1);
-		else
+		}
+		else {
 			return new IWTimestamp(1, idts.getMonth() - 1, idts.getYear());
+		}
 	}
 
 	public String getDateString(int year, int month, int day) {
@@ -469,9 +481,9 @@ public class SmallCalendar extends Block {
 	}
 
 	public String getDayColor(String dateString) {
-		if (dayColors != null) {
-			if (dayColors.get(dateString) != null) {
-				return (String) dayColors.get(dateString);
+		if (this.dayColors != null) {
+			if (this.dayColors.get(dateString) != null) {
+				return (String) this.dayColors.get(dateString);
 			}
 			else {
 				return null;
@@ -481,9 +493,9 @@ public class SmallCalendar extends Block {
 	}
 
 	private String getDayBackgroundStyleClass(String dateString) {
-		if (dayBackgroundStyleClass != null) {
-			if (dayBackgroundStyleClass.get(dateString) != null) {
-				return (String) dayBackgroundStyleClass.get(dateString);
+		if (this.dayBackgroundStyleClass != null) {
+			if (this.dayBackgroundStyleClass.get(dateString) != null) {
+				return (String) this.dayBackgroundStyleClass.get(dateString);
 			}
 		}
 		return null;
@@ -491,21 +503,21 @@ public class SmallCalendar extends Block {
 	
 	private String getDayStyleClass(String dateString) {
 		String dayStyle = null;
-		if (dayStyleClass != null) {
-			if (dayStyleClass.get(dateString) != null) {
-				dayStyle = (String) dayStyleClass.get(dateString);
+		if (this.dayStyleClass != null) {
+			if (this.dayStyleClass.get(dateString) != null) {
+				dayStyle = (String) this.dayStyleClass.get(dateString);
 			}
 		}
 		if (dayStyle == null) {
-			dayStyle = inactiveTextStyleClass;
+			dayStyle = this.inactiveTextStyleClass;
 		}
 		return dayStyle;
 	}
 	
 	public String getDayFontColor(String dateString) {
-		if (dayFontColors != null) {
-			if (dayFontColors.get(dateString) != null) {
-				return (String) dayFontColors.get(dateString);
+		if (this.dayFontColors != null) {
+			if (this.dayFontColors.get(dateString) != null) {
+				return (String) this.dayFontColors.get(dateString);
 			}
 			else {
 				return null;
@@ -619,10 +631,10 @@ public class SmallCalendar extends Block {
 	}
 
 	public void setDayFontStyleClass(int year, int month, int day, String styleClass) {
-		if (dayStyleClass == null) {
-			dayStyleClass = new Hashtable();
+		if (this.dayStyleClass == null) {
+			this.dayStyleClass = new Hashtable();
 		}
-		dayStyleClass.put(getDateString(year, month, day), styleClass);
+		this.dayStyleClass.put(getDateString(year, month, day), styleClass);
 	}
 	
 	public void setDayFontStyleClass(IWTimestamp timestamp, String color) {
@@ -630,17 +642,17 @@ public class SmallCalendar extends Block {
 	}
 
 	public void setDayFontColor(int year, int month, int day) {
-		if (dayFontColors == null) {
-			dayFontColors = new Hashtable();
+		if (this.dayFontColors == null) {
+			this.dayFontColors = new Hashtable();
 		}
-		dayFontColors.put(getDateString(year, month, day), highlightedText);
+		this.dayFontColors.put(getDateString(year, month, day), this.highlightedText);
 	}
 
 	public void setDayFontColor(int year, int month, int day, String color) {
-		if (dayFontColors == null) {
-			dayFontColors = new Hashtable();
+		if (this.dayFontColors == null) {
+			this.dayFontColors = new Hashtable();
 		}
-		dayFontColors.put(getDateString(year, month, day), color);
+		this.dayFontColors.put(getDateString(year, month, day), color);
 	}
 
 	public void setDayFontColor(IWTimestamp timestamp, String color) {
@@ -653,10 +665,10 @@ public class SmallCalendar extends Block {
 	}
 
 	public void setDayStyleClass(int year, int month, int day, String styleClass) {
-		if (dayBackgroundStyleClass == null) {
-			dayBackgroundStyleClass = new Hashtable();
+		if (this.dayBackgroundStyleClass == null) {
+			this.dayBackgroundStyleClass = new Hashtable();
 		}
-		dayBackgroundStyleClass.put(getDateString(year, month, day), styleClass);
+		this.dayBackgroundStyleClass.put(getDateString(year, month, day), styleClass);
 	}
 
 	public void setDayStyleClass(IWTimestamp timestamp, String color) {
@@ -664,10 +676,10 @@ public class SmallCalendar extends Block {
 	}
 	
 	public void setDayColor(int year, int month, int day, String color) {
-		if (dayColors == null) {
-			dayColors = new Hashtable();
+		if (this.dayColors == null) {
+			this.dayColors = new Hashtable();
 		}
-		dayColors.put(getDateString(year, month, day), color);
+		this.dayColors.put(getDateString(year, month, day), color);
 	}
 
 	public void setDayColor(IWTimestamp timestamp, String color) {
@@ -677,36 +689,38 @@ public class SmallCalendar extends Block {
 	public void setDayOfWeekColor(int dayOfWeek, String color) {
 
 		int startingY = 1;
-		if (showNameOfDays) {
+		if (this.showNameOfDays) {
 			++startingY;
 		}
 		int[] lastDay = getMaxPos();
 		int maxX = lastDay[0];
 		int maxY = lastDay[1];
 
-		if (maxX < dayOfWeek)
+		if (maxX < dayOfWeek) {
 			--maxY;
+		}
 
 		for (int i = startingY; i <= maxY; i++) {
-			T.setColor(dayOfWeek, i, color);
+			this.T.setColor(dayOfWeek, i, color);
 		}
 
 	}
 	
 	public void setDayOfWeekStyleClass(int dayOfWeek, String styleClass) {
 		int startingY = 1;
-		if (showNameOfDays) {
+		if (this.showNameOfDays) {
 			++startingY;
 		}
 		int[] lastDay = getMaxPos();
 		int maxX = lastDay[0];
 		int maxY = lastDay[1];
 
-		if (maxX < dayOfWeek)
+		if (maxX < dayOfWeek) {
 			--maxY;
+		}
 
 		for (int i = startingY; i <= maxY; i++) {
-			T.setStyleClass(dayOfWeek, i, styleClass);
+			this.T.setStyleClass(dayOfWeek, i, styleClass);
 		}		
 	}
 
@@ -714,19 +728,19 @@ public class SmallCalendar extends Block {
 	 * returns the x and y pos of the last day of the month
 	 */
 	private int[] getMaxPos() {
-		int day = cal.getLengthOfMonth(stamp.getMonth(), stamp.getYear());
+		int day = this.cal.getLengthOfMonth(this.stamp.getMonth(), this.stamp.getYear());
 
-		return this.getXYPos(stamp.getYear(), stamp.getMonth(), day);
+		return this.getXYPos(this.stamp.getYear(), this.stamp.getMonth(), day);
 	}
 
 	private int[] getXYPos(int year, int month, int day) {
 		int startingY = 1;
-		if (showNameOfDays) {
+		if (this.showNameOfDays) {
 			++startingY;
 		}
 
-		int dayOfWeek = cal.getDayOfWeek(year, month, 1);
-		int firstDayOfWeek = cal.getCalendar().getFirstDayOfWeek();
+		int dayOfWeek = this.cal.getDayOfWeek(year, month, 1);
+		int firstDayOfWeek = this.cal.getCalendar().getFirstDayOfWeek();
 		int daynr = dayOfWeek - firstDayOfWeek;
 		
 		int x = (daynr + day) % 7;
@@ -735,7 +749,7 @@ public class SmallCalendar extends Block {
 			x = 7;
 			--y;
 		}
-		if (dayOfWeek == cal.getCalendar().SUNDAY && firstDayOfWeek != cal.getCalendar().SUNDAY) {
+		if (dayOfWeek == Calendar.SUNDAY && firstDayOfWeek != Calendar.SUNDAY) {
 			y++;
 		}
 
@@ -746,11 +760,11 @@ public class SmallCalendar extends Block {
 	}
 
 	private String getTarget() {
-		return _target;
+		return this._target;
 	}
 
 	public void setTarget(String target) {
-		_target = target;
+		this._target = target;
 	}
 
 	public void setAsLineView(boolean line) {
@@ -758,15 +772,15 @@ public class SmallCalendar extends Block {
 	}
 
 	private Link getLink() {
-		if (_link == null) {
-			_link = new Link();
+		if (this._link == null) {
+			this._link = new Link();
 			if (getTarget() != null) {
-				_link.setTarget(getTarget());
+				this._link.setTarget(getTarget());
 			}
-			setAsObjectInstanceTarget(_link);
+			setAsObjectInstanceTarget(this._link);
 		}
 
-		return (Link) _link.clone();
+		return (Link) this._link.clone();
 	}
 
 	/**
@@ -774,7 +788,7 @@ public class SmallCalendar extends Block {
 	 * @param link
 	 */
 	public void setLink(Link link) {
-		_link = link;
+		this._link = link;
 	}
 
 	/**
@@ -782,7 +796,7 @@ public class SmallCalendar extends Block {
 	 * @param page
 	 */
 	public void setPage(ICPage page) {
-		_page = page;
+		this._page = page;
 	}
 
 	/**
@@ -807,8 +821,8 @@ public class SmallCalendar extends Block {
 	 * @param value
 	 */
 	public void addParameterToLink(String name, String value) {
-		parameterName.add(name);
-		parameterValue.add(value);
+		this.parameterName.add(name);
+		this.parameterValue.add(value);
 	}
 	
 	/**
@@ -836,31 +850,31 @@ public class SmallCalendar extends Block {
 		try {
 			obj = (SmallCalendar) super.clone();
 			if (this.today != null) {
-				obj.today = new IWTimestamp(today);
+				obj.today = new IWTimestamp(this.today);
 			}
 			if (this.stamp != null) {
-				obj.stamp = new IWTimestamp(stamp);
+				obj.stamp = new IWTimestamp(this.stamp);
 			}
 			if (this.T != null) {
-				obj.T = (Table) T.clone();
+				obj.T = (Table) this.T.clone();
 			}
 			if (this.dayColors != null) {
-				obj.dayColors = (Hashtable) dayColors.clone();
+				obj.dayColors = (Hashtable) this.dayColors.clone();
 			}
 			if (this.dayFontColors != null) {
-				obj.dayFontColors = (Hashtable) dayFontColors.clone();
+				obj.dayFontColors = (Hashtable) this.dayFontColors.clone();
 			}
 			if (this.dayStyleClass != null) {
-				obj.dayStyleClass = (Hashtable) dayStyleClass.clone();
+				obj.dayStyleClass = (Hashtable) this.dayStyleClass.clone();
 			}
 			if (this.dayBackgroundStyleClass != null) {
-				obj.dayBackgroundStyleClass = (Hashtable) dayBackgroundStyleClass.clone();
+				obj.dayBackgroundStyleClass = (Hashtable) this.dayBackgroundStyleClass.clone();
 			}
 			if (this.parameterName != null) {
-				obj.parameterName = (Vector) parameterName.clone();
+				obj.parameterName = (Vector) this.parameterName.clone();
 			}
 			if (this.parameterValue != null) {
-				obj.parameterValue = (Vector) parameterValue.clone();
+				obj.parameterValue = (Vector) this.parameterValue.clone();
 			}
 
 			obj.cal = this.cal;
@@ -893,29 +907,37 @@ public class SmallCalendar extends Block {
 		StringTokenizer tok = new StringTokenizer(initializingString,",");
 		if(tok.countTokens()==8){
 			String t = tok.nextToken();
-			if(t.equals("1"))
+			if(t.equals("1")) {
 				showNameOfDays(true);
+			}
 			t = tok.nextToken();
-			if(t!=null)
+			if(t!=null) {
 				setTextColor(t);
+			}
 			t = tok.nextToken();
-			if(t!=null)
+			if(t!=null) {
 				setHeaderTextColor(t);
+			}
 			t = tok.nextToken();
-			if(t!=null)
+			if(t!=null) {
 				setHeaderColor(t);
+			}
 			t = tok.nextToken();
-			if(t!=null)
+			if(t!=null) {
 				setBodyColor(t);
+			}
 			t = tok.nextToken();
-			if(t!=null)
+			if(t!=null) {
 				setInActiveCellColor(t);
+			}
 			t = tok.nextToken();
-			if(t!=null)
+			if(t!=null) {
 				setBackgroundColor(t);
+			}
 			t = tok.nextToken();
-			if(t!=null)
+			if(t!=null) {
 				setTodayFontColor(t);
+			}
 		
 		}
 	}
@@ -1000,17 +1022,17 @@ public class SmallCalendar extends Block {
 	}
 
 	public void setNextImage(Image nextImage) {
-		iNextImage = nextImage;
+		this.iNextImage = nextImage;
 	}
 	
 	public void setPreviousImage(Image previousImage) {
-		iPreviousImage = previousImage;
+		this.iPreviousImage = previousImage;
 	}
 	public void setInactiveTextStyleClass(String inactiveTextStyleClass) {
 		this.inactiveTextStyleClass = inactiveTextStyleClass;
 	}
 	public void setCellpadding(int cellpadding) {
-		iCellpadding = cellpadding;
+		this.iCellpadding = cellpadding;
 	}
 	public void setMonthTextStyleClass(String monthTextStyleClass) {
 		this.monthTextStyleClass = monthTextStyleClass;

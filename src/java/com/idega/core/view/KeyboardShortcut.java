@@ -1,5 +1,5 @@
 /*
- * $Id: KeyboardShortcut.java,v 1.2 2005/06/02 17:09:46 eiki Exp $
+ * $Id: KeyboardShortcut.java,v 1.2.2.1 2007/01/12 19:32:12 idegaweb Exp $
  * Created on 13.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -12,10 +12,10 @@ package com.idega.core.view;
 
 /**
  * 
- *  Last modified: $Date: 2005/06/02 17:09:46 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/01/12 19:32:12 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.2.2.1 $
  */
 public class KeyboardShortcut {
 	private String actionKey;
@@ -33,7 +33,7 @@ public class KeyboardShortcut {
 	 * @return Returns the actionKey.
 	 */
 	public String getActionKey() {
-		return actionKey;
+		return this.actionKey;
 	}
 
 	

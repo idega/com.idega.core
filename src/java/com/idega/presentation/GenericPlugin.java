@@ -56,9 +56,10 @@ public class GenericPlugin extends PresentationObject
 	}
 	public void setParam(String name, String value)
 	{
-		if (params == null)
-			params = new Hashtable();
-		params.put(name, value);
+		if (this.params == null) {
+			this.params = new Hashtable();
+		}
+		this.params.put(name, value);
 	}
 	public void setParam(String name, boolean value)
 	{
@@ -67,9 +68,9 @@ public class GenericPlugin extends PresentationObject
 	public String getParams()
 	{
 		StringBuffer paramString = new StringBuffer();
-		if (params != null)
+		if (this.params != null)
 		{
-			Iterator iter = params.keySet().iterator();
+			Iterator iter = this.params.keySet().iterator();
 			String key;
 			while (iter.hasNext())
 			{
@@ -77,7 +78,7 @@ public class GenericPlugin extends PresentationObject
 				paramString.append("<param name=\"");
 				paramString.append(key);
 				paramString.append("\" value=\"");
-				paramString.append(params.get(key));
+				paramString.append(this.params.get(key));
 				paramString.append("\" >\n");
 			}
 		}
@@ -151,27 +152,29 @@ public class GenericPlugin extends PresentationObject
 	{
 		if (doPrint(iwc))
 		{
-			if (file != null)
+			if (this.file != null)
 			{
-				String url = getICFileSystem(iwc).getFileURI(file);
+				String url = getICFileSystem(iwc).getFileURI(this.file);
 				setURL(url);
 			}
 			if (getMarkupLanguage().equals("HTML"))
 			{
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("<object classid=\"clsid:");
-				buffer.append(classId);
+				buffer.append(this.classId);
 				buffer.append("\" codebase=\"");
-				buffer.append(codeBase);
+				buffer.append(this.codeBase);
 				buffer.append("\" ");
-				if (getHeight() != null)
+				if (getHeight() != null) {
 					buffer.append(getHeightString());
-				if (getWidth() != null)
+				}
+				if (getWidth() != null) {
 					buffer.append(getWidthString());
+				}
 				buffer.append(">\n");
 				buffer.append(getParams());
 				buffer.append("<embed pluginspage=\"");
-				buffer.append(pluginspace);
+				buffer.append(this.pluginspace);
 				buffer.append("\"");
 				buffer.append(getMarkupAttributesString());
 				buffer.append(">\n</embed>\n</object>");

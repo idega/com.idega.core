@@ -66,7 +66,7 @@ public class FileIconSupplier {
 	}
 	
 	protected FileIconSupplier(String themeName){
-		theme = themeName;
+		this.theme = themeName;
 	}	
 	
 	/**
@@ -246,12 +246,12 @@ public class FileIconSupplier {
 	 * @return
 	 */
 	public String getIconRootFolderURI(){
-		if(resourceURI==null){
-			resourceURI = getIconRootFolderURL();
-			resourceURI = IWMainApplication.getDefaultIWMainApplication().getURIFromURL(resourceURI);
+		if(this.resourceURI==null){
+			this.resourceURI = getIconRootFolderURL();
+			this.resourceURI = IWMainApplication.getDefaultIWMainApplication().getURIFromURL(this.resourceURI);
 		}
 		
-		return resourceURI;
+		return this.resourceURI;
 	}
 	
 	/**
@@ -259,13 +259,13 @@ public class FileIconSupplier {
 	 * @return
 	 */
 	public String getIconRootFolderURL(){
-		if(resourceURL==null){
+		if(this.resourceURL==null){
 			IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
 			initializeThemeFolder();
-			resourceURL = iwma.getCoreBundle().getResourcesURL()+"/"+FOLDER_NAME_ICONS+"/"+FOLDER_NAME_THEMES+"/";
+			this.resourceURL = iwma.getCoreBundle().getResourcesURL()+"/"+FOLDER_NAME_ICONS+"/"+FOLDER_NAME_THEMES+"/";
 		}
 		
-		return resourceURL;
+		return this.resourceURL;
 	}
 	
 	/**
@@ -330,27 +330,27 @@ public class FileIconSupplier {
 	}
 	
 	public Properties getThemeSettings() throws IOException {
-		if (properties == null) {
+		if (this.properties == null) {
 			String pathToFile = getIconThemeFolderRealPath()+PROPS_FILE_NAME_PREFIX+getTheme()+PROPS_FILE_NAME_SUFFIX;
 			try {
-				properties = new SortedProperties();
-				properties.load(new FileInputStream(pathToFile));
-				return properties;
+				this.properties = new SortedProperties();
+				this.properties.load(new FileInputStream(pathToFile));
+				return this.properties;
 			}catch (FileNotFoundException e) {
 //				create the file if it does not exist and fill with the data
 				System.out.println("[MimeTypeUtil] - No mime-type.props file. Creating mime type properties file : " + pathToFile);
 				
 				FileUtil.createFile(pathToFile);
-				properties = new SortedProperties();
-				properties.load(new FileInputStream(pathToFile));
+				this.properties = new SortedProperties();
+				this.properties.load(new FileInputStream(pathToFile));
 				
-				fillProperties(properties);
+				fillProperties(this.properties);
 				
-				storeProperties(properties,pathToFile);
+				storeProperties(this.properties,pathToFile);
 			}
 		}
 		
-		return properties;
+		return this.properties;
 	}
 
 	/**

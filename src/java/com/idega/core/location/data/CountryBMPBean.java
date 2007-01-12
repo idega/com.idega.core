@@ -17,7 +17,7 @@ import com.idega.data.query.Table;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -34,8 +34,8 @@ public class CountryBMPBean extends GenericEntity implements Country{
   public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
     this.addAttribute(getColumnNameName(),"Nafn",true,true,String.class,255);
-    this.addAttribute(getColumnNameDescription(),"Lýsing",true,true,String.class,500);
-    this.addAttribute(getColumnNameIsoAbbreviation(),"ISO skammstöfun",true,true,String.class,10);
+    this.addAttribute(getColumnNameDescription(),"Lï¿½sing",true,true,String.class,500);
+    this.addAttribute(getColumnNameIsoAbbreviation(),"ISO skammstï¿½fun",true,true,String.class,10);
     this.getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
 
@@ -101,15 +101,19 @@ public class CountryBMPBean extends GenericEntity implements Country{
     if(!countries.isEmpty()){
       return (Integer)countries.iterator().next();
     }
-    else throw new FinderException("Country was not found");
+	else {
+		throw new FinderException("Country was not found");
+	}
   }
   
  public Integer ejbFindByCountryName(String name)throws FinderException{
-    Collection countries = idoFindAllIDsByColumnBySQL(this.getColumnNameName(),name);
+    Collection countries = idoFindAllIDsByColumnBySQL(CountryBMPBean.getColumnNameName(),name);
     if(!countries.isEmpty()){
       return (Integer)countries.iterator().next();
     }
-    else throw new FinderException("Country was not found");
+	else {
+		throw new FinderException("Country was not found");
+	}
   }
   public Collection ejbFindAll() throws FinderException {
   		IDOQuery query = idoQuery();

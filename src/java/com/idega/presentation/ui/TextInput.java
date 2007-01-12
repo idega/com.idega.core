@@ -1,5 +1,5 @@
 /*
- * $Id: TextInput.java,v 1.40 2005/07/04 15:54:30 gimmi Exp $
+ * $Id: TextInput.java,v 1.40.2.1 2007/01/12 19:32:09 idegaweb Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a input element of type text
  * </p>
- *  Last modified: $Date: 2005/07/04 15:54:30 $ by $Author: gimmi $
+ *  Last modified: $Date: 2007/01/12 19:32:09 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.40 $
+ * @version $Revision: 1.40.2.1 $
  */
 public class TextInput extends GenericInput {
     private boolean isSetAsIntegers;
@@ -57,59 +57,59 @@ public class TextInput extends GenericInput {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[25];
 		values[0] = super.saveState(ctx);
-		values[1] = Boolean.valueOf(isSetAsIntegers);
-		values[2] = Boolean.valueOf(isSetAsPosNegIntegers);
-		values[3] = Boolean.valueOf(isSetAsPosIntegers);
-		values[4] = Boolean.valueOf(isSetAsFloat);
-		values[5] = Boolean.valueOf(isSetAsDouble);
-		values[6] = Boolean.valueOf(isSetAsAlphabetical);
-		values[7] = Boolean.valueOf(isSetAsEmail);
-		values[8] = Boolean.valueOf(isSetAsNotEmpty);
-		values[9] = Boolean.valueOf(isSetAsIcelandicSSNumber);
-		values[10] = Boolean.valueOf(isSetAsCreditCardNumber);
-		values[11] = Boolean.valueOf(isSetMinimumLength);
-		values[12] = integersErrorMessage;
-		values[13] = floatErrorMessage;
-		values[14] = alphabetErrorMessage;
-		values[15] = emailErrorMessage;
-		values[16] = notEmptyErrorMessage;
-		values[17] = posIntegersErrorMessage;
-		values[18] = icelandicSSNumberErrorMessage;
-		values[19] = notCreditCardErrorMessage;
-		values[20] = minimumLengthErrorMessage;
-		values[21] = new Integer(minimumLength);
-		values[22] = new Integer(decimals);
-		values[23] = Boolean.valueOf(isSetEmptyConfirm);
-		values[24] = emptyConfirmMessage;
+		values[1] = Boolean.valueOf(this.isSetAsIntegers);
+		values[2] = Boolean.valueOf(this.isSetAsPosNegIntegers);
+		values[3] = Boolean.valueOf(this.isSetAsPosIntegers);
+		values[4] = Boolean.valueOf(this.isSetAsFloat);
+		values[5] = Boolean.valueOf(this.isSetAsDouble);
+		values[6] = Boolean.valueOf(this.isSetAsAlphabetical);
+		values[7] = Boolean.valueOf(this.isSetAsEmail);
+		values[8] = Boolean.valueOf(this.isSetAsNotEmpty);
+		values[9] = Boolean.valueOf(this.isSetAsIcelandicSSNumber);
+		values[10] = Boolean.valueOf(this.isSetAsCreditCardNumber);
+		values[11] = Boolean.valueOf(this.isSetMinimumLength);
+		values[12] = this.integersErrorMessage;
+		values[13] = this.floatErrorMessage;
+		values[14] = this.alphabetErrorMessage;
+		values[15] = this.emailErrorMessage;
+		values[16] = this.notEmptyErrorMessage;
+		values[17] = this.posIntegersErrorMessage;
+		values[18] = this.icelandicSSNumberErrorMessage;
+		values[19] = this.notCreditCardErrorMessage;
+		values[20] = this.minimumLengthErrorMessage;
+		values[21] = new Integer(this.minimumLength);
+		values[22] = new Integer(this.decimals);
+		values[23] = Boolean.valueOf(this.isSetEmptyConfirm);
+		values[24] = this.emptyConfirmMessage;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		isSetAsIntegers = ((Boolean) values[1]).booleanValue();
-		isSetAsPosIntegers = ((Boolean) values[2]).booleanValue();
-		isSetAsPosIntegers = ((Boolean) values[3]).booleanValue();
-		isSetAsFloat = ((Boolean) values[4]).booleanValue();
-		isSetAsDouble = ((Boolean) values[5]).booleanValue();
-		isSetAsAlphabetical = ((Boolean) values[6]).booleanValue();
-		isSetAsEmail = ((Boolean) values[7]).booleanValue();
-		isSetAsNotEmpty = ((Boolean) values[8]).booleanValue();
-		isSetAsIcelandicSSNumber = ((Boolean) values[9]).booleanValue();
-		isSetAsCreditCardNumber = ((Boolean) values[10]).booleanValue();
-		isSetMinimumLength = ((Boolean) values[11]).booleanValue();
-		isSetEmptyConfirm = ((Boolean) values[23]).booleanValue();
-		integersErrorMessage = (String) values[12];
-		floatErrorMessage = (String) values[13];
-		alphabetErrorMessage = (String) values[14];
-		emailErrorMessage = (String) values[15];
-		notEmptyErrorMessage = (String) values[16];
-		posIntegersErrorMessage = (String) values[17];
-		icelandicSSNumberErrorMessage = (String) values[18];
-		notCreditCardErrorMessage = (String) values[19];
-		minimumLengthErrorMessage = (String) values[20];
-		emptyConfirmMessage = (String) values[24];
-		minimumLength = ((Integer)values[21]).intValue();
-		decimals = ((Integer)values[22]).intValue();
+		this.isSetAsIntegers = ((Boolean) values[1]).booleanValue();
+		this.isSetAsPosIntegers = ((Boolean) values[2]).booleanValue();
+		this.isSetAsPosIntegers = ((Boolean) values[3]).booleanValue();
+		this.isSetAsFloat = ((Boolean) values[4]).booleanValue();
+		this.isSetAsDouble = ((Boolean) values[5]).booleanValue();
+		this.isSetAsAlphabetical = ((Boolean) values[6]).booleanValue();
+		this.isSetAsEmail = ((Boolean) values[7]).booleanValue();
+		this.isSetAsNotEmpty = ((Boolean) values[8]).booleanValue();
+		this.isSetAsIcelandicSSNumber = ((Boolean) values[9]).booleanValue();
+		this.isSetAsCreditCardNumber = ((Boolean) values[10]).booleanValue();
+		this.isSetMinimumLength = ((Boolean) values[11]).booleanValue();
+		this.isSetEmptyConfirm = ((Boolean) values[23]).booleanValue();
+		this.integersErrorMessage = (String) values[12];
+		this.floatErrorMessage = (String) values[13];
+		this.alphabetErrorMessage = (String) values[14];
+		this.emailErrorMessage = (String) values[15];
+		this.notEmptyErrorMessage = (String) values[16];
+		this.posIntegersErrorMessage = (String) values[17];
+		this.icelandicSSNumberErrorMessage = (String) values[18];
+		this.notCreditCardErrorMessage = (String) values[19];
+		this.minimumLengthErrorMessage = (String) values[20];
+		this.emptyConfirmMessage = (String) values[24];
+		this.minimumLength = ((Integer)values[21]).intValue();
+		this.decimals = ((Integer)values[22]).intValue();
 	}	
 	
 	
@@ -142,14 +142,14 @@ public class TextInput extends GenericInput {
         }
         setInputType(INPUT_TYPE_TEXT);
 
-        isSetAsIntegers = false;
-        isSetAsPosNegIntegers = false;
-        isSetAsFloat = false;
-        isSetAsDouble = false;
-        isSetAsAlphabetical = false;
-        isSetAsEmail = false;
-        isSetAsNotEmpty = false;
-        isSetAsIcelandicSSNumber = false;
+        this.isSetAsIntegers = false;
+        this.isSetAsPosNegIntegers = false;
+        this.isSetAsFloat = false;
+        this.isSetAsDouble = false;
+        this.isSetAsAlphabetical = false;
+        this.isSetAsEmail = false;
+        this.isSetAsNotEmpty = false;
+        this.isSetAsIcelandicSSNumber = false;
     }
 
     /**
@@ -200,8 +200,8 @@ public class TextInput extends GenericInput {
      *            The error message to display.
      */
     public void setAsNotEmpty(String errorMessage) {
-        isSetAsNotEmpty = true;
-        notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+        this.isSetAsNotEmpty = true;
+        this.notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
     }
 
     /**
@@ -211,8 +211,8 @@ public class TextInput extends GenericInput {
      *            The confirm message to display.
      */
     public void setEmptyConfirm(String confirmMessage) {
-        isSetEmptyConfirm = true;
-        emptyConfirmMessage = TextSoap.removeLineBreaks(confirmMessage);
+        this.isSetEmptyConfirm = true;
+        this.emptyConfirmMessage = TextSoap.removeLineBreaks(confirmMessage);
     }
 
     /**
@@ -226,9 +226,9 @@ public class TextInput extends GenericInput {
      *            The error message to display.
      */
     public void setMininumLength(int length, String errorMessage) {
-        isSetMinimumLength = true;
-        minimumLength = length;
-        minimumLengthErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+        this.isSetMinimumLength = true;
+        this.minimumLength = length;
+        this.minimumLengthErrorMessage = TextSoap.removeLineBreaks(errorMessage);
     }
 
     /**
@@ -250,8 +250,8 @@ public class TextInput extends GenericInput {
      *            The error message to display.
      */
     public void setAsCreditCardNumber(String errorMessage) {
-        isSetAsCreditCardNumber = true;
-        notCreditCardErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+        this.isSetAsCreditCardNumber = true;
+        this.notCreditCardErrorMessage = TextSoap.removeLineBreaks(errorMessage);
     }
 
     /**
@@ -272,8 +272,8 @@ public class TextInput extends GenericInput {
      *            The error message to display.
      */
     public void setAsEmail(String errorMessage) {
-        isSetAsEmail = true;
-        emailErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+        this.isSetAsEmail = true;
+        this.emailErrorMessage = TextSoap.removeLineBreaks(errorMessage);
     }
 
     /**
@@ -293,8 +293,8 @@ public class TextInput extends GenericInput {
      *            The error message to display.
      */
     public void setAsIntegers(String errorMessage) {
-        isSetAsIntegers = true;
-        integersErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+        this.isSetAsIntegers = true;
+        this.integersErrorMessage = TextSoap.removeLineBreaks(errorMessage);
     }
 
     /**
@@ -306,8 +306,8 @@ public class TextInput extends GenericInput {
      *            The error message to display.
      */
     public void setAsPositiveIntegers(String errorMessage) {
-        isSetAsPosIntegers = true;
-        posIntegersErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+        this.isSetAsPosIntegers = true;
+        this.posIntegersErrorMessage = TextSoap.removeLineBreaks(errorMessage);
     }
 
     /**
@@ -319,8 +319,8 @@ public class TextInput extends GenericInput {
      *            The error message to display.
      */
     public void setAsPosNegIntegers(String errorMessage) {
-        isSetAsPosNegIntegers = true;
-        integersErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+        this.isSetAsPosNegIntegers = true;
+        this.integersErrorMessage = TextSoap.removeLineBreaks(errorMessage);
     }
 
     /**
@@ -340,7 +340,7 @@ public class TextInput extends GenericInput {
      *            The error message to display.
      */
     public void setAsFloat(String errorMessage) {
-        setAsFloat(errorMessage, decimals);
+        setAsFloat(errorMessage, this.decimals);
     }
 
     /**
@@ -355,8 +355,8 @@ public class TextInput extends GenericInput {
      *            The number of decimals
      */
     public void setAsFloat(String errorMessage, int decimals) {
-        isSetAsFloat = true;
-        floatErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+        this.isSetAsFloat = true;
+        this.floatErrorMessage = TextSoap.removeLineBreaks(errorMessage);
         setDecimals(decimals);
     }
 
@@ -377,7 +377,7 @@ public class TextInput extends GenericInput {
      *            The error message to display.
      */
     public void setAsDouble(String errorMessage) {
-        setAsDouble(errorMessage, decimals);
+        setAsDouble(errorMessage, this.decimals);
     }
 
     /**
@@ -392,8 +392,8 @@ public class TextInput extends GenericInput {
      *            The number of decimals
      */
     public void setAsDouble(String errorMessage, int decimals) {
-        isSetAsDouble = true;
-        floatErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+        this.isSetAsDouble = true;
+        this.floatErrorMessage = TextSoap.removeLineBreaks(errorMessage);
         setDecimals(decimals);
     }
 
@@ -405,7 +405,7 @@ public class TextInput extends GenericInput {
      *            The number of decimals
      */
     public void setDecimals(int dec) {
-        decimals = dec;
+        this.decimals = dec;
     }
 
     /**
@@ -428,8 +428,8 @@ public class TextInput extends GenericInput {
      *            The error message to display.
      */
     public void setAsIcelandicSSNumber(String errorMessage) {
-        isSetAsIcelandicSSNumber = true;
-        icelandicSSNumberErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+        this.isSetAsIcelandicSSNumber = true;
+        this.icelandicSSNumberErrorMessage = TextSoap.removeLineBreaks(errorMessage);
     }
 
     /**
@@ -465,59 +465,66 @@ public class TextInput extends GenericInput {
      *            The error message to display.
      */
     public void setAsAlphabeticText(String errorMessage) {
-        isSetAsAlphabetical = true;
-        alphabetErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+        this.isSetAsAlphabetical = true;
+        this.alphabetErrorMessage = TextSoap.removeLineBreaks(errorMessage);
     }
 
     public void main(IWContext iwc) throws Exception {
-        if (isSetAsNotEmpty)
-                setOnSubmitFunction(
-                        "warnIfEmpty",
-                        "function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( !inputbox.disabled && inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}",
-                        notEmptyErrorMessage);
+        if (this.isSetAsNotEmpty) {
+			setOnSubmitFunction(
+			        "warnIfEmpty",
+			        "function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( !inputbox.disabled && inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}",
+			        this.notEmptyErrorMessage);
+		}
 
-        if (isSetEmptyConfirm)
-          setOnSubmitFunction(
-                  "confirmIfEmpty",
-                  "function confirmIfEmpty(inputbox,confirmMsg) {\n\n		if ( inputbox.value == '' ) { \n		return confirm( confirmMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}",
-                  emptyConfirmMessage);
+        if (this.isSetEmptyConfirm) {
+			setOnSubmitFunction(
+			          "confirmIfEmpty",
+			          "function confirmIfEmpty(inputbox,confirmMsg) {\n\n		if ( inputbox.value == '' ) { \n		return confirm( confirmMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}",
+			          this.emptyConfirmMessage);
+		}
 
-        if (isSetAsIntegers)
-                setOnSubmitFunction(
-                        "warnIfNotIntegers",
-                        "function warnIfNotIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}",
-                        integersErrorMessage);
+        if (this.isSetAsIntegers) {
+			setOnSubmitFunction(
+			        "warnIfNotIntegers",
+			        "function warnIfNotIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}",
+			        this.integersErrorMessage);
+		}
 
-        if (isSetAsPosIntegers)
-                setOnSubmitFunction(
-                        "warnIfNotPosIntegers",
-                        "function warnIfNotPosIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n      if (i == 0) {\n        if (inputbox.value.charAt(i) < '1'){	\n          alert ( warnMsg );\n          return false; \n        } \n      } else {\n        if (inputbox.value.charAt(i) < '0'){	\n          alert ( warnMsg );\n          return false; \n        }\n      }\n      if(inputbox.value.charAt(i) > '9'){	\n        alert ( warnMsg );\n        return false;\n      } \n    } \n    return true;\n\n}",
-                        posIntegersErrorMessage);
+        if (this.isSetAsPosIntegers) {
+			setOnSubmitFunction(
+			        "warnIfNotPosIntegers",
+			        "function warnIfNotPosIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n      if (i == 0) {\n        if (inputbox.value.charAt(i) < '1'){	\n          alert ( warnMsg );\n          return false; \n        } \n      } else {\n        if (inputbox.value.charAt(i) < '0'){	\n          alert ( warnMsg );\n          return false; \n        }\n      }\n      if(inputbox.value.charAt(i) > '9'){	\n        alert ( warnMsg );\n        return false;\n      } \n    } \n    return true;\n\n}",
+			        this.posIntegersErrorMessage);
+		}
 
-        if (isSetAsPosNegIntegers)
-                setOnSubmitFunction(
-                        "warnIfNotPosNegIntegers",
-                        "function warnIfNotPosNegIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	        if (i==0){\n            if (inputbox.value.charAt(0) == '-'){\n                continue;\n            }\n        }\n        if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}",
-                        integersErrorMessage);
+        if (this.isSetAsPosNegIntegers) {
+			setOnSubmitFunction(
+			        "warnIfNotPosNegIntegers",
+			        "function warnIfNotPosNegIntegers (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	        if (i==0){\n            if (inputbox.value.charAt(0) == '-'){\n                continue;\n            }\n        }\n        if (inputbox.value.charAt(i) < '0'){	\n alert ( warnMsg );\n		return false; \n	} \n	if(inputbox.value.charAt(i) > '9'){	\n alert ( warnMsg );\n		return false;\n	} \n } \n  return true;\n\n}",
+			        this.integersErrorMessage);
+		}
 
-        if (isSetAsIcelandicSSNumber)
-                setOnSubmitFunction(
-                        "warnIfNotIcelandicSSNumber",
-                        "function warnIfNotIcelandicSSNumber (inputbox,warnMsg) {\n\tif (inputbox.value.length == 10){ \n\t\tvar var1 = inputbox.value.charAt(0);\n\t\tvar var2 = inputbox.value.charAt(1);\n\t\t\n\t\tvar var3 = inputbox.value.charAt(2);\n\t\tvar var4 = inputbox.value.charAt(3);\n\t\tvar var5 = inputbox.value.charAt(4);\n\t\tvar var6 = inputbox.value.charAt(5);\n\t\tvar var7 = inputbox.value.charAt(6);\n\t\tvar var8 = inputbox.value.charAt(7);\n\t\tvar var9 = inputbox.value.charAt(8);\n\n\t\tvar sum = (3 * var1) + (2 * var2) + (7 * var3) + (6 * var4) + (5 * var5) + (4 * var6) + (3 * var7) + (2 * var8);\n\n\t\tvar result = sum % 11;\n\t\tvar variable = 11 - result;\n\n\t\tif (variable == 10) {\n\t\t\tvariable = 1;\n\t\t}\n\t\telse if (variable == 11) {\n\t\t\tvariable = 0;\n\t\t}\n\n\t\tif (var9 == variable) {\n\t\t\treturn (true);\n\t\t}\n\t}  \n\telse if (inputbox.value.length == 0){\n\t\treturn (true)\n\t}   \n\talert ( warnMsg );\n\treturn false;\n}",
-                        icelandicSSNumberErrorMessage);
+        if (this.isSetAsIcelandicSSNumber) {
+			setOnSubmitFunction(
+			        "warnIfNotIcelandicSSNumber",
+			        "function warnIfNotIcelandicSSNumber (inputbox,warnMsg) {\n\tif (inputbox.value.length == 10){ \n\t\tvar var1 = inputbox.value.charAt(0);\n\t\tvar var2 = inputbox.value.charAt(1);\n\t\t\n\t\tvar var3 = inputbox.value.charAt(2);\n\t\tvar var4 = inputbox.value.charAt(3);\n\t\tvar var5 = inputbox.value.charAt(4);\n\t\tvar var6 = inputbox.value.charAt(5);\n\t\tvar var7 = inputbox.value.charAt(6);\n\t\tvar var8 = inputbox.value.charAt(7);\n\t\tvar var9 = inputbox.value.charAt(8);\n\n\t\tvar sum = (3 * var1) + (2 * var2) + (7 * var3) + (6 * var4) + (5 * var5) + (4 * var6) + (3 * var7) + (2 * var8);\n\n\t\tvar result = sum % 11;\n\t\tvar variable = 11 - result;\n\n\t\tif (variable == 10) {\n\t\t\tvariable = 1;\n\t\t}\n\t\telse if (variable == 11) {\n\t\t\tvariable = 0;\n\t\t}\n\n\t\tif (var9 == variable) {\n\t\t\treturn (true);\n\t\t}\n\t}  \n\telse if (inputbox.value.length == 0){\n\t\treturn (true)\n\t}   \n\talert ( warnMsg );\n\treturn false;\n}",
+			        this.icelandicSSNumberErrorMessage);
+		}
 
-        if (isSetAsCreditCardNumber)
-                setOnSubmitFunction(
-                        "warnIfNotCreditCardNumber",
-                        "function warnIfNotCreditCardNumber (inputbox,warnMsg) {\n  \n   if (inputbox.value.length == 16){ \n    return true; \n   } \n else if (inputbox.value.length == 0){\n return true; \n }   \n     alert ( warnMsg );\n   return false;\n \n }",
-                        notCreditCardErrorMessage);
+        if (this.isSetAsCreditCardNumber) {
+			setOnSubmitFunction(
+			        "warnIfNotCreditCardNumber",
+			        "function warnIfNotCreditCardNumber (inputbox,warnMsg) {\n  \n   if (inputbox.value.length == 16){ \n    return true; \n   } \n else if (inputbox.value.length == 0){\n return true; \n }   \n     alert ( warnMsg );\n   return false;\n \n }",
+			        this.notCreditCardErrorMessage);
+		}
 
-        if (isSetAsFloat || isSetAsDouble) {
+        if (this.isSetAsFloat || this.isSetAsDouble) {
             setOnSubmitFunction(
                     "warnIfNotFloat",
                     "function warnIfNotFloat(inputbox,warnMsg,submit) {\n	var ok = false;\n	var inputString = inputbox.value;\n	for(i=0; i < inputString.length; i++) { \n	\tif (inputString.charAt(i) == \",\") { inputString = inputString.substring(0,i) + \".\" + inputString.substring(i+1,inputString.length); }\n	}\n	if (inputString.length == 0) {\n		ok = true;\n	} else if (isNaN(inputString)){\n	\talert ( warnMsg );\n	\tok = false;\n	}else{\n		ok = true;\n	}\n	if (ok && submit){\n		inputbox.value = inputString;\n	}\n 	return ok;\n}",
-                    floatErrorMessage, "true");
-            setOnBlur("return warnIfNotFloat(this, '" + floatErrorMessage
+                    this.floatErrorMessage, "true");
+            setOnBlur("return warnIfNotFloat(this, '" + this.floatErrorMessage
                     + "', false)");
 
             //formating decimal sign (for default Locale) and number of
@@ -526,14 +533,14 @@ public class TextInput extends GenericInput {
             NumberFormat numberFormat = NumberFormat.getInstance(iwc
                     .getCurrentLocale());
             numberFormat.setGroupingUsed(false);
-            if (decimals >= 0) {
-                numberFormat.setMaximumFractionDigits(decimals);
-                numberFormat.setMinimumFractionDigits(decimals);
+            if (this.decimals >= 0) {
+                numberFormat.setMaximumFractionDigits(this.decimals);
+                numberFormat.setMinimumFractionDigits(this.decimals);
             }
             try {
                 // do not forget the cast to Object otherwise the compiler is
                 // complaining
-                Object number = (isSetAsFloat) ? (Object) new Float(
+                Object number = (this.isSetAsFloat) ? (Object) new Float(
                         getContent()) : (Object) new Double(getContent());
                 setContent(numberFormat.format(number));
             } catch (IllegalArgumentException ex) {
@@ -541,26 +548,28 @@ public class TextInput extends GenericInput {
             }
         }
 
-        if (isSetMinimumLength) {
+        if (this.isSetMinimumLength) {
             setOnSubmitFunction(
                     "warnIfNotMinimumLength",
                     "function warnIfNotMinimumLength(inputbox,warnMsg) {\n\tif (inputbox.value.length < "
-                            + minimumLength
+                            + this.minimumLength
                             + ") {\n\t\talert(warnMsg);\n\t\treturn false;\n\t}\n\treturn true;\n}",
-                    minimumLengthErrorMessage);
+                    this.minimumLengthErrorMessage);
         }
 
-        if (isSetAsAlphabetical)
-                setOnSubmitFunction(
-                        "warnIfNotAlphabetical",
-                        "function warnIfNotAlphabetical (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if ((inputbox.value.charAt(i) > '0') && (inputbox.value.charAt(i) < '9')){	\n alert ( warnMsg );\n		return false; \n	}  \n } \n  return true;\n\n}",
-                        alphabetErrorMessage);
+        if (this.isSetAsAlphabetical) {
+			setOnSubmitFunction(
+			        "warnIfNotAlphabetical",
+			        "function warnIfNotAlphabetical (inputbox,warnMsg) {\n \n    for(i=0; i < inputbox.value.length; i++) { \n	if ((inputbox.value.charAt(i) > '0') && (inputbox.value.charAt(i) < '9')){	\n alert ( warnMsg );\n		return false; \n	}  \n } \n  return true;\n\n}",
+			        this.alphabetErrorMessage);
+		}
 
-        if (isSetAsEmail)
-                setOnSubmitFunction(
-                        "warnIfNotEmail",
-                        "function warnIfNotEmail (inputbox,message) {\n \tvar strng = inputbox.value;\n \tif (strng.length == 0)\n \t\treturn true;\n\n \tvar emailFilter=/^.+@.+\\..{2,3}$/;\n \tif (!(emailFilter.test(strng))) {\n \t\talert(message);\n \t\treturn false;\n \t}\n\n \tvar illegalChars= /[\\(\\)\\<\\>\\,\\;\\:\\\\\\/\\\"\\[\\]]/;\n \tif (strng.match(illegalChars)) {\n \t\talert(message);\n \t\treturn false;\n \t}\n \treturn true;\n}",
-                        emailErrorMessage);
+        if (this.isSetAsEmail) {
+			setOnSubmitFunction(
+			        "warnIfNotEmail",
+			        "function warnIfNotEmail (inputbox,message) {\n \tvar strng = inputbox.value;\n \tif (strng.length == 0)\n \t\treturn true;\n\n \tvar emailFilter=/^.+@.+\\..{2,3}$/;\n \tif (!(emailFilter.test(strng))) {\n \t\talert(message);\n \t\treturn false;\n \t}\n\n \tvar illegalChars= /[\\(\\)\\<\\>\\,\\;\\:\\\\\\/\\\"\\[\\]]/;\n \tif (strng.match(illegalChars)) {\n \t\talert(message);\n \t\treturn false;\n \t}\n \treturn true;\n}",
+			        this.emailErrorMessage);
+		}
     }
 
     public synchronized Object clone() {
@@ -602,9 +611,11 @@ public class TextInput extends GenericInput {
      *            To set as password, set as true, false otherwise.
      */
     public void setAsPasswordInput(boolean asPasswordInput) {
-        if (asPasswordInput)
-            setInputType(INPUT_TYPE_PASSWORD);
-        else
-            setInputType(INPUT_TYPE_TEXT);
+        if (asPasswordInput) {
+			setInputType(INPUT_TYPE_PASSWORD);
+		}
+		else {
+			setInputType(INPUT_TYPE_TEXT);
+		}
     }
 }

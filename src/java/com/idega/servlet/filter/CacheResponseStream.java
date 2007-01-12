@@ -15,34 +15,34 @@ public class CacheResponseStream extends ServletOutputStream {
   public CacheResponseStream(HttpServletResponse response,
       OutputStream cache) throws IOException {
     super();
-    closed = false;
+    this.closed = false;
     this.response = response;
     this.cache = cache;
   }
 
   public void close() throws IOException {
-    if (closed) {
+    if (this.closed) {
       throw new IOException(
         "This output stream has already been closed");
     }
-    cache.close();
-    closed = true;
+    this.cache.close();
+    this.closed = true;
   }
 
   public void flush() throws IOException {
-    if (closed) {
+    if (this.closed) {
       throw new IOException(
         "Cannot flush a closed output stream");
     }
-    cache.flush();
+    this.cache.flush();
   }
 
   public void write(int b) throws IOException {
-    if (closed) {
+    if (this.closed) {
       throw new IOException(
         "Cannot write to a closed output stream");
     }
-    cache.write((byte)b);
+    this.cache.write((byte)b);
   }
 
   public void write(byte b[]) throws IOException {
@@ -51,11 +51,11 @@ public class CacheResponseStream extends ServletOutputStream {
 
   public void write(byte b[], int off, int len)
     throws IOException {
-    if (closed) {
+    if (this.closed) {
       throw new IOException(
        "Cannot write to a closed output stream");
     }
-    cache.write(b, off, len);
+    this.cache.write(b, off, len);
   }
 
   public boolean closed() {

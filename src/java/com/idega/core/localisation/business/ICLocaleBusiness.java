@@ -89,34 +89,39 @@ public class ICLocaleBusiness  implements MutableClass {
         return null;
       }
     }
-    else
-      return L;
+	else {
+		return L;
+	}
   }
 
   /**
    * @return a list of ICLocales that are in use
    */
   public static List listOfLocales(){
-    if(usedIcLocales ==null)
-        reload();
+    if(usedIcLocales ==null) {
+		reload();
+	}
       return usedIcLocales;
   }
 
   public static List listOfAllLocales(){
-    if(allIcLocales==null)
-      reload();
+    if(allIcLocales==null) {
+		reload();
+	}
     return allIcLocales;
   }
 
   public static List listOfLocales(boolean inUse){
     if(inUse){
-      if(usedIcLocales == null)
-        reload();
+      if(usedIcLocales == null) {
+		reload();
+	}
       return  usedIcLocales;
     }
     else{
-      if(notUsedIcLocales == null)
-        reload();
+      if(notUsedIcLocales == null) {
+		reload();
+	}
       return notUsedIcLocales;
     }
   }
@@ -133,8 +138,9 @@ public class ICLocaleBusiness  implements MutableClass {
       while (iter.hasNext()) {
        ICLocale item = (ICLocale) iter.next();
        Locale locale = getLocaleFromLocaleString(item.getLocale());
-       if ( locale != null )
-        localeList.add(locale);
+       if ( locale != null ) {
+		localeList.add(locale);
+	}
       }
     }
     return localeList;
@@ -152,8 +158,9 @@ public class ICLocaleBusiness  implements MutableClass {
 			while (iter.hasNext()) {
 			 ICLocale item = (ICLocale) iter.next();
 			 Locale locale = getLocaleFromLocaleString(item.getLocale());
-			 if ( locale != null )
+			 if ( locale != null ) {
 				localeList.add(locale);
+			}
 			}
 		}
 		return localeList;
@@ -169,10 +176,10 @@ public class ICLocaleBusiness  implements MutableClass {
       LocaleHashInUseById = new Hashtable();
       for (int i = 0; i < len; i++) {
         ICLocale ICL = (ICLocale) L.get(i);
-        LocaleHashById.put( (Integer)  ICL.getPrimaryKey(),ICL);
+        LocaleHashById.put( ICL.getPrimaryKey(),ICL);
         LocaleHashByString.put(ICL.getLocale(),ICL);
         if(ICL.getInUse()){
-          LocaleHashInUseById.put((Integer)ICL.getPrimaryKey(),ICL);
+          LocaleHashInUseById.put(ICL.getPrimaryKey(),ICL);
           LocaleHashInUseByString.put(ICL.getLocale(),ICL);
         }
       }
@@ -188,14 +195,16 @@ public class ICLocaleBusiness  implements MutableClass {
   }
 
   public static Map mapOfLocalesInUseById(){
-    if(LocaleHashInUseById == null)
-      reload();
+    if(LocaleHashInUseById == null) {
+		reload();
+	}
     return LocaleHashInUseById;
   }
 
   public static Map mapOfLocalesInUseByString(){
-   if(LocaleHashInUseByString == null)
-      reload();
+   if(LocaleHashInUseByString == null) {
+	reload();
+}
     return LocaleHashInUseByString;
   }
 
@@ -217,8 +226,9 @@ public class ICLocaleBusiness  implements MutableClass {
   }
 
   public static IWTimestamp getReloadStamp(){
-    if(reloadStamp == null)
-      reload();
+    if(reloadStamp == null) {
+		reload();
+	}
     return reloadStamp;
   }
 
@@ -231,20 +241,23 @@ public class ICLocaleBusiness  implements MutableClass {
   }
 
   public static Hashtable getLocaleHashById(){
-    if(LocaleHashById == null)
-      reload();
+    if(LocaleHashById == null) {
+		reload();
+	}
     return LocaleHashById;
   }
   public static Hashtable getLocaleHashByString(){
-    if(LocaleHashByString == null)
-      reload();
+    if(LocaleHashByString == null) {
+		reload();
+	}
     return LocaleHashByString;
   }
 
   public static int getLocaleId(Locale locale){
     int r = -1;
-    if(LocaleHashByString == null)
-      reload();
+    if(LocaleHashByString == null) {
+		reload();
+	}
     if( LocaleHashByString!=null && LocaleHashByString.containsKey(locale.toString()) ){
       ICLocale ICL = (ICLocale) LocaleHashByString.get(locale.toString());
       r = ((Integer)ICL.getPrimaryKey()).intValue();
@@ -253,8 +266,9 @@ public class ICLocaleBusiness  implements MutableClass {
   }
 
 	public static ICLocale getICLocale(Locale locale){
-    if(LocaleHashByString == null)
-      reload();
+    if(LocaleHashByString == null) {
+		reload();
+	}
     if( LocaleHashByString!=null && LocaleHashByString.containsKey(locale.toString()) ){
       ICLocale ICL = (ICLocale) LocaleHashByString.get(locale.toString());
       return ICL;
@@ -292,9 +306,10 @@ public class ICLocaleBusiness  implements MutableClass {
     else if(localeString.length() > 5 && localeString.indexOf("_")==2 && localeString.indexOf("_",3)== 5){
       return new Locale(localeString.substring(0,2),localeString.substring(3,5),localeString.substring(6,localeString.length()));
     }
-    else
-      return null;
-      //return Locale.getDefault();
+	else {
+		return null;
+		  //return Locale.getDefault();
+	}
   }
 
   public static Locale getLocaleReturnIcelandicLocaleIfNotFound(int iLocaleId) {

@@ -25,14 +25,14 @@ public class GenericGroupComparator implements Comparator {
 	protected final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	
 	public GenericGroupComparator(IWContext iwc) {
-		_iwc = iwc;
+		this._iwc = iwc;
 	}
 
 	/**
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object o1, Object o2) {
-		Collator collator = Collator.getInstance(_iwc.getCurrentLocale());
+		Collator collator = Collator.getInstance(this._iwc.getCurrentLocale());
 		
 		GenericGroup g1 = (GenericGroup) o1;
 		GenericGroup g2 = (GenericGroup) o2;

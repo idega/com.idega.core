@@ -19,7 +19,7 @@ import com.idega.presentation.Page;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  **/
 
@@ -49,7 +49,7 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
 
   public EventListenerList getListenersFor(ICObjectInstance instance){
     //try {
-      return getListenersFor((Object)instance.getPrimaryKey());
+      return getListenersFor(instance.getPrimaryKey());
     //}
     //catch (RemoteException ex) {
     //  throw new RuntimeException(ex.getMessage());
@@ -108,8 +108,8 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
 
 
 
-    if(!_stateMap.isEmpty()){
-      Set set = _stateMap.keySet();
+    if(!this._stateMap.isEmpty()){
+      Set set = this._stateMap.keySet();
       Iterator iter = set.iterator();
       int counter = 1;
       while (iter.hasNext()) {
@@ -120,7 +120,7 @@ public class IWEventMachineBean extends IBOSessionBean implements IWEventMachine
         counter++;
       }
     }
-    return _stateMap;
+    return this._stateMap;
   }
 
 

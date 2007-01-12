@@ -247,7 +247,7 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	{
 		try
 		{
-			if (((GenericEntity) entity).getPrimaryKeyClass().equals(Integer.class))
+			if ((entity).getPrimaryKeyClass().equals(Integer.class))
 			{
 				boolean pkIsNull = entity.isNull(entity.getIDColumnName());
 				if (!pkIsNull)

@@ -19,7 +19,7 @@ public class IWStarterServlet extends GenericServlet {
     IWMainApplicationStarter starter;
 
     public void init() throws ServletException {
-        starter = new IWMainApplicationStarter(this.getServletContext());
+        this.starter = new IWMainApplicationStarter(this.getServletContext());
     }
 
     public void service(ServletRequest _req, ServletResponse _res)
@@ -29,8 +29,8 @@ public class IWStarterServlet extends GenericServlet {
 
     public void destroy() {
         sendShutdownMessage("Destroying IdegaWebStarterServlet");
-        starter.shutdown();
-        starter=null;
+        this.starter.shutdown();
+        this.starter=null;
         sendShutdownMessage("Destroyed IdegaWebStarterServlet");
     }
 

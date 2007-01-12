@@ -51,8 +51,8 @@ public class CacheFilter implements Filter {
     HttpServletResponse response = (HttpServletResponse) res;
 
     // check if was a resource that shouldn't be cached.
-    String r = sc.getRealPath("");
-    String path = fc.getInitParameter(request.getRequestURI());
+    String r = this.sc.getRealPath("");
+    String path = this.fc.getInitParameter(request.getRequestURI());
     if (path!= null && path.equals("nocache")) {
       chain.doFilter(request, response);
       return;
@@ -62,7 +62,7 @@ public class CacheFilter implements Filter {
     // customize to match parameters
     String id = request.getRequestURI()+request.getQueryString();
     // optionally append i18n sensitivity
-    String localeSensitive = fc.getInitParameter("locale-sensitive");
+    String localeSensitive = this.fc.getInitParameter("locale-sensitive");
     if (localeSensitive != null) {
       StringWriter ldata = new StringWriter();
       Enumeration locales = request.getLocales();
@@ -72,7 +72,7 @@ public class CacheFilter implements Filter {
       }
       id = id + ldata.toString();
     }
-    File tempDir = (File)sc.getAttribute(
+    File tempDir = (File)this.sc.getAttribute(
       "javax.servlet.context.tempdir");
 
     // get possible cache
@@ -81,7 +81,7 @@ public class CacheFilter implements Filter {
 
     // get current resource
     if (path == null) {
-      path = sc.getRealPath(request.getRequestURI());
+      path = this.sc.getRealPath(request.getRequestURI());
     }
     File current = new File(path);
 
@@ -90,7 +90,7 @@ public class CacheFilter implements Filter {
       //set timestamp check
       if (!file.exists() || (file.exists() &&
           current.lastModified() > file.lastModified()) ||
-          cacheTimeout < now - file.lastModified()) {
+          this.cacheTimeout < now - file.lastModified()) {
         String name = file.getAbsolutePath();
         name = name.substring(0,name.lastIndexOf("/")==-1?0:name.lastIndexOf("/"));
         new File(name).mkdirs();
@@ -116,7 +116,7 @@ public class CacheFilter implements Filter {
     }
 
     FileInputStream fis = new FileInputStream(file);
-    String mt = sc.getMimeType(request.getRequestURI());
+    String mt = this.sc.getMimeType(request.getRequestURI());
     response.setContentType(mt);
     ServletOutputStream sos = res.getOutputStream();
     for (int i = fis.read(); i!= -1; i = fis.read()) {
@@ -126,9 +126,9 @@ public class CacheFilter implements Filter {
 
   public void init(FilterConfig filterConfig) {
     this.fc = filterConfig;
-    String ct = fc.getInitParameter("cacheTimeout");
+    String ct = this.fc.getInitParameter("cacheTimeout");
     if (ct != null) {
-      cacheTimeout = 60*1000*Long.parseLong(ct);
+      this.cacheTimeout = 60*1000*Long.parseLong(ct);
     }
     this.sc = filterConfig.getServletContext();
   }

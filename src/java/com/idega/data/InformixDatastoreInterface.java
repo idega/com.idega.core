@@ -28,7 +28,7 @@ import com.informix.jdbc.IfxPreparedStatement;
 public class InformixDatastoreInterface extends DatastoreInterface {
 	private boolean checkedBlobTable = false;
 	InformixDatastoreInterface() {
-		useTransactionsInEntityCreation = false;
+		this.useTransactionsInEntityCreation = false;
 		IWTimestamp.CUT_MILLISECONDS_OFF_IN_TOSTRING=false;
 	}
 	public String getSQLType(String javaClassName, int maxlength) {
@@ -115,7 +115,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
 			Stmt.executeUpdate(
-					"create table " + this.getInformixSequenceTableName(entity) + "(" + entity.getIDColumnName() + " serial)");
+					"create table " + InformixDatastoreInterface.getInformixSequenceTableName(entity) + "(" + entity.getIDColumnName() + " serial)");
 		}
 		finally {
 			if (Stmt != null) {
@@ -140,7 +140,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 		try {
 			conn = entity.getConnection();
 			Stmt = conn.createStatement();
-			Stmt.executeUpdate("drop table " + this.getInformixSequenceTableName(entity));
+			Stmt.executeUpdate("drop table " + InformixDatastoreInterface.getInformixSequenceTableName(entity));
 		}
 		finally {
 			if (Stmt != null) {
@@ -227,7 +227,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 	**/
 	public int createUniqueID(GenericEntity entity) throws Exception {
 		int returnInt = -1;
-		String query = "insert into " + this.getInformixSequenceTableName(entity) + "(" + entity.getIDColumnName() + ") values (0)";
+		String query = "insert into " + InformixDatastoreInterface.getInformixSequenceTableName(entity) + "(" + entity.getIDColumnName() + ") values (0)";
 		Connection conn = null;
 		Statement stmt = null;
 		try {
@@ -386,8 +386,9 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 			ex.printStackTrace();
 		}
 		finally {
-			if (Conn != null)
+			if (Conn != null) {
 				entity.freeConnection(Conn);
+			}
 		}
 		return returnInt;
 	}
@@ -401,7 +402,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 		if (!this.checkedBlobTable) {
 			createBlobTable();
 		}
-		checkedBlobTable = true;
+		this.checkedBlobTable = true;
 	}
 	private void createBlobTable() {
 		Connection conn = null;
@@ -482,46 +483,46 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 		private Reader reader;
 		private int available;
 		protected IDOInformixStringStream(String stringValue) {
-			reader = new StringReader(stringValue);
-			available = stringValue.length();
+			this.reader = new StringReader(stringValue);
+			this.available = stringValue.length();
 		}
 		public int available() {
-			return available;
+			return this.available;
 		}
 		public void close() throws IOException {
-			reader.close();
+			this.reader.close();
 		}
 		public void mark(int readlimit) {
 			try {
-				reader.mark(readlimit);
+				this.reader.mark(readlimit);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		public boolean markSupported() {
-			return reader.markSupported();
+			return this.reader.markSupported();
 		}
 		public int read() throws IOException {
-			return reader.read();
+			return this.reader.read();
 		}
 		public int read(byte[] b) throws IOException {
 			char[] c = new char[b.length];
-			int theReturn = reader.read(c);
+			int theReturn = this.reader.read(c);
 			convertCharArrayToByteArray(c, b);
 			return theReturn;
 		}
 		public int read(byte[] b, int off, int len) throws IOException {
 			char[] c = new char[b.length];
-			int theReturn = reader.read(c, off, len);
+			int theReturn = this.reader.read(c, off, len);
 			convertCharArrayToByteArray(c, b);
 			return theReturn;
 		}
 		public void reset() throws IOException {
-			reader.reset();
+			this.reader.reset();
 		}
 		public long skip(long n) throws IOException {
-			return reader.skip(n);
+			return this.reader.skip(n);
 		}
 	}
 	protected void fillStringColumn(GenericEntity entity, String columnName, ResultSet rs) throws SQLException {

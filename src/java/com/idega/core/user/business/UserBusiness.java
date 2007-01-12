@@ -13,8 +13,10 @@ import com.idega.core.user.data.Gender;
 import com.idega.core.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.data.EntityFinder;
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.presentation.IWContext;
+import com.idega.user.data.UserBMPBean;
 import com.idega.util.IWTimestamp;
 import com.idega.util.reflect.MethodInvoker;
 
@@ -145,19 +147,19 @@ public class UserBusiness {
     //delUser.removeFrom(com.idega.core.data.GenericGroupBMPBean.getStaticInstance());
     int groupId =delUser.getGroupID();
     try {
-      delUser.removeFrom((Address)com.idega.core.location.data.AddressBMPBean.getStaticInstance(Address.class));
+      delUser.removeFrom(GenericEntity.getStaticInstance(Address.class));
     }
     catch (SQLException e) {
       e.printStackTrace();
     }
     try {
-      delUser.removeFrom((Email)com.idega.core.contact.data.EmailBMPBean.getStaticInstance(Email.class));
+      delUser.removeFrom(GenericEntity.getStaticInstance(Email.class));
     }
     catch (SQLException ex) {
       ex.printStackTrace();
     }
     try {
-      delUser.removeFrom((Phone)com.idega.core.contact.data.PhoneBMPBean.getStaticInstance(Phone.class));
+      delUser.removeFrom(GenericEntity.getStaticInstance(Phone.class));
     }
     catch (SQLException exc) {
       exc.printStackTrace();
@@ -190,7 +192,7 @@ public class UserBusiness {
         //throw new RuntimeException("String gender must be: M, male, 0, F, female or 1 ");
         return null;
       }
-      Gender g = (Gender)com.idega.core.user.data.GenderBMPBean.getStaticInstance(Gender.class);
+      Gender g = (Gender)GenericEntity.getStaticInstance(Gender.class);
       String[] result = com.idega.data.SimpleQuerier.executeStringQuery("Select "+g.getIDColumnName()+" from "+g.getEntityName()+"where "+com.idega.core.user.data.GenderBMPBean.getNameColumnName()+" = '"+genderName+"'");
 
       if(result != null && result.length > 0){
@@ -203,7 +205,7 @@ public class UserBusiness {
 
   public static Phone[] getUserPhones(int userId) {
     try {
-      return (Phone[]) ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.contact.data.PhoneBMPBean.getStaticInstance(Phone.class));
+      return (Phone[]) ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(GenericEntity.getStaticInstance(Phone.class));
     }
     catch (SQLException ex) {
       ex.printStackTrace();
@@ -213,7 +215,7 @@ public class UserBusiness {
 
   public static Phone getUserPhone(int userId, int phoneTypeId) {
     try {
-      IDOLegacyEntity[] result = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.contact.data.PhoneBMPBean.getStaticInstance(Phone.class));
+      IDOLegacyEntity[] result = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(GenericEntity.getStaticInstance(Phone.class));
       if(result != null){
         for (int i = 0; i < result.length; i++) {
           if(((Phone)result[i]).getPhoneTypeId() == phoneTypeId){
@@ -243,8 +245,9 @@ public class UserBusiness {
     try {
       List L = EntityFinder.getInstance().findRelated(user,Email.class);
       if(L != null){
-        if ( L.size() > 0 )
-          return (Email)L.get(0);
+        if ( L.size() > 0 ) {
+			return (Email)L.get(0);
+		}
       }
       return null;
     }
@@ -298,7 +301,7 @@ public class UserBusiness {
   }
 
   public Address getUserAddress1(int userId) throws SQLException {
-    IDOLegacyEntity[] result = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.location.data.AddressBMPBean.getStaticInstance(Address.class));
+    IDOLegacyEntity[] result = ((com.idega.core.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(GenericEntity.getStaticInstance(Address.class));
     if(result != null){
       int addrTypeId = com.idega.core.location.data.AddressTypeBMPBean.getId(com.idega.core.location.data.AddressTypeBMPBean.ADDRESS_1);
       for (int i = 0; i < result.length; i++) {
@@ -409,8 +412,9 @@ public class UserBusiness {
 			userToUpdate.setPrimaryGroupID(primary_group);
 		}
 		
-		if (personalID != null)
+		if (personalID != null) {
 			userToUpdate.setPersonalID(personalID);
+		}
 
 		userToUpdate.update();
 
@@ -454,8 +458,9 @@ public class UserBusiness {
       //EntityFinder.debug = true;
       java.util.List c = EntityFinder.getInstance().findAllByColumn(Email.class,com.idega.core.contact.data.EmailBMPBean.getColumnNameAddress(),EmailAddress);
       //EntityFinder.debug = false;
-      if(c!=null && c.size() > 0)
-        return (Email) c.get(0);
+      if(c!=null && c.size() > 0) {
+		return (Email) c.get(0);
+	}
     }
     catch (Exception ex) {
 
@@ -503,7 +508,7 @@ public class UserBusiness {
 
 
   public static List getUsers() throws SQLException  {
-    List l = EntityFinder.findAll(com.idega.core.user.data.UserBMPBean.getStaticInstance());
+    List l = EntityFinder.findAll(UserBMPBean.getStaticInstance());
     return l;
   }
 
@@ -554,7 +559,7 @@ public class UserBusiness {
 
   public static List getUsersInPrimaryGroup(GenericGroup group){
     try {
-      return EntityFinder.findAllByColumn(com.idega.core.user.data.UserBMPBean.getStaticInstance(),com.idega.core.user.data.UserBMPBean._COLUMNNAME_PRIMARY_GROUP_ID,group.getID());
+      return EntityFinder.findAllByColumn(UserBMPBean.getStaticInstance(),UserBMPBean._COLUMNNAME_PRIMARY_GROUP_ID,group.getID());
     }
     catch (SQLException ex) {
       ex.printStackTrace();

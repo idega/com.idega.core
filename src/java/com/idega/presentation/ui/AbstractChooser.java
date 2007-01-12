@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.30 2005/11/03 14:15:40 gimmi Exp $
+ * $Id: AbstractChooser.java,v 1.30.2.1 2007/01/12 19:32:06 idegaweb Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -62,11 +62,11 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 *          the new value for disabled
 	 */
 	public void setDisabled(boolean aDisabled) {
-		disabled = aDisabled;
+		this.disabled = aDisabled;
 	}
 
 	public void setInputLength(int length) {
-		_inputLength = length;
+		this._inputLength = length;
 	}
 	
 	/**
@@ -91,16 +91,16 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 *
 	 */
 	public String getChooserParameter() {
-		return (chooserParameter);
+		return (this.chooserParameter);
 	}
 
 	/**
 	 *
 	 */
 	public void setChooserParameter(String parameterName) {
-		chooserParameter = parameterName;
-		if (displayInputName.equals(DISPLAYSTRING_PARAMETER)) {
-			displayInputName = parameterName + "_displaystring";
+		this.chooserParameter = parameterName;
+		if (this.displayInputName.equals(DISPLAYSTRING_PARAMETER)) {
+			this.displayInputName = parameterName + "_displaystring";
 		}
 	}
 
@@ -122,7 +122,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	}
 
 	public String getChooserValue() {
-		return _stringValue;
+		return this._stringValue;
 	}
 
 	public void setFilter(String filter) {
@@ -133,9 +133,9 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 *
 	 */
 	public void setName(String name) {
-		displayInputName = name;
-		if (chooserParameter.equals(VALUE_PARAMETER)) {
-			chooserParameter = name;// + "_chooser";
+		this.displayInputName = name;
+		if (this.chooserParameter.equals(VALUE_PARAMETER)) {
+			this.chooserParameter = name;// + "_chooser";
 		}
 	}
 
@@ -143,7 +143,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 *
 	 */
 	public String getName() {
-		return (displayInputName);
+		return (this.displayInputName);
 	}
 
 	/**
@@ -151,17 +151,17 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 */
 	public void _main(IWContext iwc) throws Exception {
 		super._main(iwc);
-		_bundle = getBundle(iwc);
-		_iwrb = getResourceBundle(iwc);
-		if (_addForm) {
-			_form = new Form();
-			_form.setWindowToOpen(getChooserWindowClass());
-			add(_form);
-			_form.add(getTable(iwc, _bundle));
+		this._bundle = getBundle(iwc);
+		this._iwrb = getResourceBundle(iwc);
+		if (this._addForm) {
+			this._form = new Form();
+			this._form.setWindowToOpen(getChooserWindowClass());
+			add(this._form);
+			this._form.add(getTable(iwc, this._bundle));
 		}
 		else {
-			add(getTable(iwc, _bundle));
-			_form = getParentForm();
+			add(getTable(iwc, this._bundle));
+			this._form = getParentForm();
 		}
 
 	}
@@ -175,8 +175,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		table.setCellspacing(0);
 
 		Parameter value = new Parameter(getChooserParameter(), "");
-		if (_stringValue != null) {
-			value.setValue(_stringValue);
+		if (this._stringValue != null) {
+			value.setValue(this._stringValue);
 		}
 		table.add(value);
 
@@ -185,26 +185,26 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		table.add(new Parameter(VALUE_PARAMETER_NAME, value.getName()));
 		//GenericButton button = new
 		// GenericButton("chooserbutton",bundle.getResourceBundle(iwc).getLocalizedString(chooserText,"Choose"));
-		if (_addForm) {
-			SubmitButton button = new SubmitButton(_iwrb.getLocalizedString("choose", "Choose"));
+		if (this._addForm) {
+			SubmitButton button = new SubmitButton(this._iwrb.getLocalizedString("choose", "Choose"));
 			table.add(button, 2, 1);
-			_form.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
-			_form.addParameter(FORM_ID_PARAMETER, "window.opener.document.getElementById(\"" + _form.getID() +"\").");
-			_form.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
-			_form.addParameter(FILTER_PARAMETER, filter);
-			addParametersToForm(_form);
+			this._form.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
+			this._form.addParameter(FORM_ID_PARAMETER, "window.opener.document.getElementById(\"" + this._form.getID() +"\").");
+			this._form.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
+			this._form.addParameter(FILTER_PARAMETER, this.filter);
+			addParametersToForm(this._form);
 		}
 		else {
-			getLink(_iwrb);
+			getLink(this._iwrb);
 
 			if (getUsePublicWindowOpener()) {
-				link.setPublicWindowToOpen(getChooserWindowClass());
+				this.link.setPublicWindowToOpen(getChooserWindowClass());
 			} else {
-				link.setWindowToOpen(getChooserWindowClass());
+				this.link.setWindowToOpen(getChooserWindowClass());
 			}
-			link.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
+			this.link.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
 
-			link.addParameter(FORM_ID_PARAMETER, getParentFormID());
+			this.link.addParameter(FORM_ID_PARAMETER, getParentFormID());
 
 			//TODO Make the javascript work for other objects than form elements,
 			// e.g. a Link
@@ -212,22 +212,22 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			 * if(object instanceof Layer){
 			 * link.addParameter(SCRIPT_SUFFIX_PARAMETER,"title"); }
 			 */
-			link.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
+			this.link.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
 			//}
 			
 			//this was object.getID() but the id could change if this object was kept in session but the form changed
 			//by using getName() the reference is not lost, however we might need to add extra steps for handling more than one
 			//chooser of the same type in the same form.
-			link.addParameter(DISPLAYSTRING_PARAMETER_NAME, object.getName());
-			link.addParameter(VALUE_PARAMETER_NAME, value.getName());
-			if (_attributeName != null && _attributeValue != null) {
-				link.addParameter(_attributeName, _attributeValue);
+			this.link.addParameter(DISPLAYSTRING_PARAMETER_NAME, object.getName());
+			this.link.addParameter(VALUE_PARAMETER_NAME, value.getName());
+			if (this._attributeName != null && this._attributeValue != null) {
+				this.link.addParameter(this._attributeName, this._attributeValue);
 			}
-			link.addParameter(FILTER_PARAMETER, filter);
+			this.link.addParameter(FILTER_PARAMETER, this.filter);
 			
-			addParametersToLink(link);
+			addParametersToLink(this.link);
 			
-			table.add(link, 2, 1);
+			table.add(this.link, 2, 1);
 		}
 
 		table.add(object, 1, 1);
@@ -254,29 +254,30 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	}
 
 	public PresentationObject getPresentationObject(IWContext iwc) {
-		if (_addTextInput) {
-			TextInput input = new TextInput(displayInputName+"_chooser");
-			input.setDisabled(disabled);
-			if (_inputLength > 0)
-				input.setLength(_inputLength);
-
-			if (_style != null) {
-				input.setMarkupAttribute("style", _style);
-			}
-			if(isStyleClassSet) {
-				input.setStyleClass(styleClassName);
+		if (this._addTextInput) {
+			TextInput input = new TextInput(this.displayInputName+"_chooser");
+			input.setDisabled(this.disabled);
+			if (this._inputLength > 0) {
+				input.setLength(this._inputLength);
 			}
 
-			if (_stringDisplay != null) {
-				input.setValue(_stringDisplay);
+			if (this._style != null) {
+				input.setMarkupAttribute("style", this._style);
+			}
+			if(this.isStyleClassSet) {
+				input.setStyleClass(this.styleClassName);
+			}
+
+			if (this._stringDisplay != null) {
+				input.setValue(this._stringDisplay);
 			}
 
 			return input;
 		}
 		else {
-			HiddenInput input = new HiddenInput(displayInputName);
-			if (_stringDisplay != null) {
-				input.setValue(_stringDisplay);
+			HiddenInput input = new HiddenInput(this.displayInputName);
+			if (this._stringDisplay != null) {
+				input.setValue(this._stringDisplay);
 			}
 			return input;
 		}
@@ -303,25 +304,25 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	}
 
 	public void setInputStyle(String style) {
-		_style = style;
+		this._style = style;
 	}
 	
 	public void setStyleClassName(String styleClassName) {
 		this.styleClassName = styleClassName;
-		isStyleClassSet = true;
+		this.isStyleClassSet = true;
 	}
 
 	public void addForm(boolean addForm) {
-		_addForm = addForm;
+		this._addForm = addForm;
 	}
 
 	public void setChooseButtonImage(Image buttonImage) {
-		_buttonImage = buttonImage;
+		this._buttonImage = buttonImage;
 	}
 
 	public void setParameterValue(String attributeName, String attributeValue) {
-		_attributeName = attributeName;
-		_attributeValue = URLEncoder.encode(attributeValue);
+		this._attributeName = attributeName;
+		this._attributeValue = URLEncoder.encode(attributeValue);
 	}
 
 	public void addParameterToChooserLink(String param, String value) {
@@ -329,17 +330,17 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	}
 
 	private Link getLink(IWResourceBundle iwrb) {
-		if (link == null) {
-			if (_buttonImage == null) {
-				link = new Link(iwrb.getLocalizedString("choose", "Choose"));
+		if (this.link == null) {
+			if (this._buttonImage == null) {
+				this.link = new Link(iwrb.getLocalizedString("choose", "Choose"));
 			}
 			else {
-				_buttonImage.setHorizontalSpacing(3);
-				link = new Link(_buttonImage);
+				this._buttonImage.setHorizontalSpacing(3);
+				this.link = new Link(this._buttonImage);
 			}
 		}
 
-		return link;
+		return this.link;
 	}
 
 	public void addTextInput(boolean addTextInput) {
@@ -360,6 +361,6 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	}
 	
 	protected boolean getUsePublicWindowOpener() {
-		return usePublicWindowOpener;
+		return this.usePublicWindowOpener;
 	}
 }

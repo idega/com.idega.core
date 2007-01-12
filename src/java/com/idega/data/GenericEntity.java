@@ -119,7 +119,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		setDefaultValues();
 		//this boolean is needed because developers are using setColumn in setDefaultValues() and not initializeColumnValue
 		//it stops the defaultvalues from being considered changed
-		canRegisterColumnsForUpdate = true;
+		this.canRegisterColumnsForUpdate = true;
 	}
 	protected GenericEntity(int id) throws SQLException {
 		this(id, DEFAULT_DATASOURCE);
@@ -238,7 +238,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	public Object getPrimaryKeyValue() {
 		if (this._primaryKey != null) {
-			return _primaryKey;
+			return this._primaryKey;
 		} else {
 			return this.getValue(getIDColumnName());
 		}
@@ -251,8 +251,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	public String getName() {
 		Object primaryKey = this.getPrimaryKey();
-		if (primaryKey != null)
+		if (primaryKey != null) {
 			return primaryKey.toString();
+		}
 		return null;
 	}
 	public BlobWrapper getEmptyBlob(String columnName) {
@@ -418,7 +419,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	}
 	protected void addLanguageAttribute() {
-		this.addAttribute(getLanguageIDColumnName(), "Tungumál", true, true, "java.lang.Integer", "one_to_one", "com.idega.core.localisation.data.Language");
+		this.addAttribute(getLanguageIDColumnName(), "Tungumï¿½l", true, true, "java.lang.Integer", "one_to_one", "com.idega.core.localisation.data.Language");
 	}
 	/**
 	 * @deprecated Replaced with getAttribute()
@@ -524,11 +525,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		//only update if it is a new value
 		//and remove if it a null value
 		String upperCaseColumnName = columnName.toUpperCase();
-		Object oldValue = _columns.get(upperCaseColumnName);
+		Object oldValue = this._columns.get(upperCaseColumnName);
 		
 		if (columnValue != null) {
 			if( !(oldValue!=null && columnValue.equals(oldValue)) ){
-				_columns.put(upperCaseColumnName, columnValue);
+				this._columns.put(upperCaseColumnName, columnValue);
 			}
 			else{
 //				its the same, don't add it
@@ -557,13 +558,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	
 	protected Object getValue(String columnName) {
 		//return _columns.get(columnName.toLowerCase());
-		return _columns.get(columnName.toUpperCase());
+		return this._columns.get(columnName.toUpperCase());
 	}
 	/**
 	 * Sets the column to null
 	 */
 	public void removeFromColumn(String columnName) {
-		_columns.remove(columnName.toUpperCase());
+		this._columns.remove(columnName.toUpperCase());
 		this.flagColumnUpdate(columnName);
 	}
 	/**
@@ -1022,7 +1023,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 	public String getDatasource() {
-		return _dataSource;
+		return this._dataSource;
 	}
 	/**
 	 * @todo add:
@@ -1039,8 +1040,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public boolean isPrimaryKeyColumn(String columnName) {
 		IDOEntityField[] fields = getEntityDefinition().getPrimaryKeyDefinition().getFields();
 		for (int i = 0; i < fields.length; i++) {
-			if (fields[i].getSQLFieldName().equalsIgnoreCase(columnName))
+			if (fields[i].getSQLFieldName().equalsIgnoreCase(columnName)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -1161,7 +1163,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				}
 		*/
 		//if (_columns.get(columnName.toLowerCase())== null){
-		Object o = _columns.get(columnName.toUpperCase());
+		Object o = this._columns.get(columnName.toUpperCase());
 		if (o == null) {
 			return true;
 		} else {
@@ -1219,8 +1221,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 			flushQueryCache();
 		} catch (Exception ex) {
-			if (isDebugActive())
+			if (isDebugActive()) {
 				ex.printStackTrace();
+			}
 
 			try {
 				this.closeBlobConnections();
@@ -1241,10 +1244,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	*/
 	public void updateMetaData() throws SQLException {
 		try {
-			if (isIdColumnValueNotEmpty())
+			if (isIdColumnValueNotEmpty()) {
 				DatastoreInterface.getInstance(this).crunchMetaData(this);
-			else
+			}
+			else {
 				System.err.println("IDOLegacyEntity: updateMetaData() getID = -1 !");
+			}
 		} catch (Exception ex) {
 			if (ex instanceof SQLException) {
 				ex.printStackTrace();
@@ -1299,8 +1304,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			DatastoreInterface.getInstance(this).update(this);
 			flushQueryCache();
 		} catch (Exception ex) {
-			if (isDebugActive())
+			if (isDebugActive()) {
 				ex.printStackTrace();
+			}
 
 			if (ex instanceof SQLException) {
 				//ex.printStackTrace();
@@ -1614,8 +1620,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			RS = Stmt.executeQuery();
 			//ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
 			//eiki added null check
-			if ((RS == null) || !RS.next())
+			if ((RS == null) || !RS.next()) {
 				throw new FinderException("Record with Primary Key = '" + pk + "' not found");
+			}
 			loadFromResultSet(RS);
 		} finally {
 			if (RS != null) {
@@ -1656,11 +1663,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			ResultSet RS = Stmt.executeQuery(buffer.toString());
 			//ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+" where "+getIDColumnName()+"="+id);
 			//eiki added null check
-			if ((RS == null) || !RS.next())
+			if ((RS == null) || !RS.next()) {
 				throw new SQLException("Record with id=" + id + " not found");
+			}
 			loadFromResultSet(RS);
-			if (RS != null)
+			if (RS != null) {
 				RS.close();
+			}
 		} finally {
 			if (Stmt != null) {
 				Stmt.close();
@@ -1744,8 +1753,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				    }
 				  }*/
 				System.err.println("Exception in " + this.getClass().getName() + " findByPrimaryKey, RS.getString( " + columnNames[i] + " ) not found: " + ex.getMessage());
-				if (!(ex instanceof NullPointerException))
+				if (!(ex instanceof NullPointerException)) {
 					ex.printStackTrace(System.err);
+				}
 			}
 		}
 	}
@@ -1804,7 +1814,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			buffer.append(primaryValue);
 		}
 
-		if (entityColumnName != null)
+		if (entityColumnName != null) {
 			if (!entityColumnName.equals("")) {
 				buffer.append(" and ");
 				buffer.append("e." + entityColumnName);
@@ -1815,6 +1825,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 					buffer.append(" is null");
 				}
 			}
+		}
 		if (orderByColumnName != null){
 			if (!orderByColumnName.equals("")) {
 				buffer.append(" order by e.");
@@ -1859,7 +1870,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			return null;
 		}
 
-		if (entityColumnName != null)
+		if (entityColumnName != null) {
 			if (!entityColumnName.equals("")) {
 				buffer.append(" and ");
 				buffer.append("e." + entityColumnName);
@@ -1870,6 +1881,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 					buffer.append(" is null");
 				}
 			}
+		}
 		String SQLString = buffer.toString();
 		return SQLString;
 	}
@@ -1963,7 +1975,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			buffer.append(getKeyValueSQLString(entity.getPrimaryKeyValue()));
 		}
 
-		if (entityColumnName != null)
+		if (entityColumnName != null) {
 			if (!entityColumnName.equals("")) {
 				buffer.append(" and ");
 				buffer.append("e." + entityColumnName);
@@ -1974,6 +1986,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 					buffer.append(" is null");
 				}
 			}
+		}
 		String SQLString = buffer.toString();
 		return findRelatedIDs(entity, SQLString);
 	}
@@ -2182,7 +2195,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	public int getNumberOfRecords(String columnName, int columnValue) throws SQLException {
 		//return getNumberOfRecords("select count(*) from " + getEntityName() + " where " + columnName + " = " + columnValue);
-	    return getNumberOfRecords(new MatchCriteria(idoQueryTable,columnName,MatchCriteria.EQUALS,columnValue));
+	    return getNumberOfRecords(new MatchCriteria(this.idoQueryTable,columnName,MatchCriteria.EQUALS,columnValue));
 	}
 	public int getNumberOfRecordsRelated(IDOLegacyEntity entity) throws SQLException {
 		String tableToSelectFrom = getNameOfMiddleTable(entity, this);
@@ -2246,8 +2259,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	
 	protected double idoGetValueFromSingleValueResultSet(String sqlString) throws IDOException {
 		try {
-			if (isDebugActive())
+			if (isDebugActive()) {
 				logSQL(sqlString);
+			}
 			return this.getDoubleTableValue(sqlString);
 		} catch (SQLException e) {
 			throw new IDOException(e, this);
@@ -2272,9 +2286,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	    SelectQuery query = new SelectQuery(idoQueryTable());
 	    query.addColumn(new Column(idoQueryTable(), getIDColumnName()));
 	    query.setAsCountQuery(true);
-	    if(criteria!=null)
-	        query.addCriteria(criteria);
+	    if(criteria!=null) {
+			query.addCriteria(criteria);
 	    //query.addCriteria(new MatchCriteria(idoQueryTable(),columnName,operator,columnValue,));
+		}
 	    
 		//StringBuffer buffer = new StringBuffer("select count(*) from ");
 		//buffer.append(getEntityName()).append(" where ").append(columnName).append(" ").append(operator).append(" ").append(columnValue);
@@ -2305,10 +2320,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		try {
 			conn = getConnection(this.getDatasource());
 			rsh = prepareResultSet(conn,CountSQLString,query);
-			if (rsh.rs.next())
+			if (rsh.rs.next()) {
 				recordCount = rsh.rs.getInt(1);
 			//rs.close();
 			//System.out.println(SQLString+"\n");
+			}
 		} catch (SQLException e) {
 			throw new SQLException("There was an error in com.idega.data.GenericEntity.getNumberOfRecords \n" + e.getMessage());
 		} catch (Exception e) {
@@ -2337,8 +2353,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			conn = getConnection(this.getDatasource());
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(dateSQLString);
-			if (rs.next())
+			if (rs.next()) {
 				date = new Date(rs.getTimestamp(1).getTime());
+			}
 			rs.close();
 			//System.out.println(SQLString+"\n");
 		} catch (SQLException e) {
@@ -2365,8 +2382,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			conn = getConnection(this.getDatasource());
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sqlString);
-			if (rs.next())
+			if (rs.next()) {
 				value = rs.getDouble(1);
+			}
 			rs.close();
 			//System.out.println(SQLString+"\n");
 		} catch (SQLException e) {
@@ -2712,10 +2730,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			Stmt = conn.createStatement();
 			//try
 			//{
-			if (!isColumnValueNotEmpty(getKeyValueSQLString(entityToRemoveFrom.getPrimaryKey()))) //removing all in middle table
+			if (!isColumnValueNotEmpty(getKeyValueSQLString(entityToRemoveFrom.getPrimaryKey()))) {
 				qry = "delete from " + getNameOfMiddleTable(entityToRemoveFrom, this) + " where " + this.getIDColumnName() + "= " + getPrimaryKeyValueSQLString();
-			else // just removing this particular one
+			}
+			else {
 				qry = "delete from " + getNameOfMiddleTable(entityToRemoveFrom, this) + " where " + this.getIDColumnName() + "=" + getPrimaryKeyValueSQLString() + " AND " + entityToRemoveFrom.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName() + "= " + getKeyValueSQLString(entityToRemoveFrom.getPrimaryKey());
+			}
 			//}
 			/*catch (RemoteException rme)
 			{
@@ -2792,10 +2812,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		String qry = "";
 		try {
 			Stmt = conn.createStatement();
-			if (isColumnValueNotEmpty(getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue()))) //removing all in middle table
+			if (isColumnValueNotEmpty(getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue()))) {
 				qry = "delete from " + getNameOfMiddleTable(entityToRemoveFrom, this) + " where " + this.getIDColumnName() + "= " + getPrimaryKeyValueSQLString();
-			else // just removing this particular one
+			}
+			else {
 				qry = "delete from " + getNameOfMiddleTable(entityToRemoveFrom, this) + " where " + this.getIDColumnName() + "= " + getPrimaryKeyValueSQLString() + " AND " + entityToRemoveFrom.getIDColumnName() + "= " + getKeyValueSQLString(entityToRemoveFrom.getPrimaryKeyValue());
+			}
 
 			//  System.out.println("GENERIC ENTITY: "+ qry);
 			logSQL(qry);
@@ -2915,7 +2937,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return false;
 	}
 	public void empty() {
-		_columns.clear();
+		this._columns.clear();
 	}
 
 	public boolean hasLobColumn() throws Exception {
@@ -3065,10 +3087,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		EntityControl.addTreeRelationShip(this);
 	}
 	public int getEntityState() {
-		return _state;
+		return this._state;
 	}
 	public void setEntityState(int state) {
-		_state = state;
+		this._state = state;
 	}
 	public boolean isInSynchWithDatastore() {
 		return (getEntityState() == IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
@@ -3099,16 +3121,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		//this.getStaticInstance(this.getClass())._hasMetaDataRelationship=true;
 		 ((GenericEntity)this.getIDOEntityStaticInstance())._hasMetaDataRelationship = true;
 		// bug in getIDOEntityStaticInstance
-		_hasMetaDataRelationship = true;
+		this._hasMetaDataRelationship = true;
 	}
 	public boolean hasMetaDataRelationship() {
 		return ((GenericEntity)this.getIDOEntityStaticInstance())._hasMetaDataRelationship;
 	}
 	// fetches the metadata for this id and puts it in a HashTable
 	private void getMetaData() {
-		_theMetaDataAttributes = new Hashtable();
-		_theMetaDataIds = new Hashtable();
-		_theMetaDataTypes = new Hashtable();
+		this._theMetaDataAttributes = new Hashtable();
+		this._theMetaDataIds = new Hashtable();
+		this._theMetaDataTypes = new Hashtable();
 //		_theMetaDataOrdering = new Hashtable();
 
 		if( getEntityState() ==  IDOLegacyEntity.STATE_NEW || getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE){
@@ -3152,11 +3174,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				RS = Stmt.executeQuery(query);
 				while (RS.next()) {
 					if(RS.getString("metadata_value")!=null) {
-						_theMetaDataAttributes.put(RS.getString("metadata_name"), RS.getString("metadata_value"));
-						_theMetaDataIds.put(RS.getString("metadata_name"), new Integer(RS.getInt("ic_metadata_id")));
+						this._theMetaDataAttributes.put(RS.getString("metadata_name"), RS.getString("metadata_value"));
+						this._theMetaDataIds.put(RS.getString("metadata_name"), new Integer(RS.getInt("ic_metadata_id")));
 					}				
 					if (RS.getString("meta_data_type") != null) {
-						_theMetaDataTypes.put(RS.getString("metadata_name"), RS.getString("meta_data_type"));
+						this._theMetaDataTypes.put(RS.getString("metadata_name"), RS.getString("meta_data_type"));
 					}
 //					if (RS.getInt("ordering_number") != -1) {
 //						_theMetaDataOrdering.put(RS.getString("metadata_name"), new Integer(RS.getInt("ordering_number")));
@@ -3190,9 +3212,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 	public String getMetaData(String metaDataKey) {
-		if (_theMetaDataAttributes == null)
+		if (this._theMetaDataAttributes == null) {
 			getMetaData(); //get all meta data first if null
-		return (String)_theMetaDataAttributes.get(metaDataKey);
+		}
+		return (String)this._theMetaDataAttributes.get(metaDataKey);
 	}
 	public void setMetaDataAttributes(java.util.Map metaDataAttribs) {
 		String metaDataKey;
@@ -3219,11 +3242,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	
 	public void renameMetaData(String oldKeyName, String newKeyName, String value) {
-		if (_theMetaDataAttributes == null) {
+		if (this._theMetaDataAttributes == null) {
 			getMetaData();
 		}
 		if (oldKeyName != null && newKeyName != null && !oldKeyName.equals("") && !newKeyName.equals("") && !oldKeyName.equals(newKeyName)) {
-			Integer pk = (Integer) _theMetaDataIds.get(oldKeyName);
+			Integer pk = (Integer) this._theMetaDataIds.get(oldKeyName);
 			if (pk != null) {
 				try {
 					MetaData md = ((MetaDataHome) IDOLookup.getHome(MetaData.class)).findByPrimaryKey(pk);
@@ -3251,26 +3274,26 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	// Ordering not implemented yet
 	private void addMetaData(String metaDataKey, String metaDataValue, String metaDataType, int orderingNumber) {
 		boolean dataHasChanged = false;
-		if (_theMetaDataAttributes == null){
+		if (this._theMetaDataAttributes == null){
 			getMetaData(); //get all meta data first if null
 		}
 		
 		//this null string is a strange value coming from the user tabs in the user system, it means the value is empty or should be removed
 		if (metaDataValue != null && !"null".equals(metaDataValue)) {
 			if (metaDataType != null) {				
-				Object oldType = _theMetaDataTypes.get(metaDataKey);
+				Object oldType = this._theMetaDataTypes.get(metaDataKey);
 				if( !(oldType!=null && metaDataType.equals(oldType)) ){
 					//the value changed
-					_theMetaDataTypes.put(metaDataKey, metaDataType);
+					this._theMetaDataTypes.put(metaDataKey, metaDataType);
 					dataHasChanged = true;
 				}				
 			}
 			
-			Object oldValue = _theMetaDataAttributes.get(metaDataKey);
+			Object oldValue = this._theMetaDataAttributes.get(metaDataKey);
 			Object obj = null;
 			if( !(oldValue!=null && metaDataValue.equals(oldValue)) ){
 				//the value changed
-				obj = _theMetaDataAttributes.put(metaDataKey, metaDataValue);
+				obj = this._theMetaDataAttributes.put(metaDataKey, metaDataValue);
 				dataHasChanged = true;
 			}
 			
@@ -3287,20 +3310,20 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			
 			if(dataHasChanged){		
 				if (obj == null) { //is new
-					if (_insertMetaDataVector == null) {
-						_insertMetaDataVector = new Vector();
+					if (this._insertMetaDataVector == null) {
+						this._insertMetaDataVector = new Vector();
 					}
-					_insertMetaDataVector.add(metaDataKey);
+					this._insertMetaDataVector.add(metaDataKey);
 				} else { //is old
-					if (_updateMetaDataVector == null) {
-						_updateMetaDataVector = new Vector();
+					if (this._updateMetaDataVector == null) {
+						this._updateMetaDataVector = new Vector();
 					}
-					if (_insertMetaDataVector != null) {
-						if (_insertMetaDataVector.indexOf(metaDataKey) == -1) { //is old and not in the insertlist
-							_updateMetaDataVector.add(metaDataKey);
+					if (this._insertMetaDataVector != null) {
+						if (this._insertMetaDataVector.indexOf(metaDataKey) == -1) { //is old and not in the insertlist
+							this._updateMetaDataVector.add(metaDataKey);
 						}
 					} else {
-						_updateMetaDataVector.add(metaDataKey);
+						this._updateMetaDataVector.add(metaDataKey);
 					}
 				}
 			
@@ -3321,22 +3344,25 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	
 	public void removeAllMetaData() {
-		if (_theMetaDataAttributes == null)
+		if (this._theMetaDataAttributes == null) {
 			getMetaData(); //get all meta data first if null
-		if (_deleteMetaDataVector == null) {
-			_deleteMetaDataVector = new Vector();
 		}
-		if (_theMetaDataAttributes != null) {
-			Set keySet = _theMetaDataAttributes.keySet();
+		if (this._deleteMetaDataVector == null) {
+			this._deleteMetaDataVector = new Vector();
+		}
+		if (this._theMetaDataAttributes != null) {
+			Set keySet = this._theMetaDataAttributes.keySet();
 			if (keySet != null) {
 				Iterator iter = keySet.iterator();
 				while (iter.hasNext()) {
 					String metaDataKey = (String)iter.next();
-					_deleteMetaDataVector.add(metaDataKey);
-					if (_insertMetaDataVector != null)
-						_insertMetaDataVector.remove(metaDataKey);
-					if (_updateMetaDataVector != null)
-						_updateMetaDataVector.remove(metaDataKey);
+					this._deleteMetaDataVector.add(metaDataKey);
+					if (this._insertMetaDataVector != null) {
+						this._insertMetaDataVector.remove(metaDataKey);
+					}
+					if (this._updateMetaDataVector != null) {
+						this._updateMetaDataVector.remove(metaDataKey);
+					}
 				}
 				metaDataHasChanged(true);
 			}
@@ -3346,14 +3372,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	* return true if the metadata to delete already exists
 	*/
 	public boolean removeMetaData(String metaDataKey) {
-		if (_theMetaDataAttributes == null)
+		if (this._theMetaDataAttributes == null) {
 			getMetaData(); //get all meta data first if null
+		}
 
-		if (_theMetaDataAttributes.get(metaDataKey) != null) {
-			if (_deleteMetaDataVector == null) {
-				_deleteMetaDataVector = new Vector();
+		if (this._theMetaDataAttributes.get(metaDataKey) != null) {
+			if (this._deleteMetaDataVector == null) {
+				this._deleteMetaDataVector = new Vector();
 			}
-			_deleteMetaDataVector.add(metaDataKey);
+			this._deleteMetaDataVector.add(metaDataKey);
 			
 			if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
 				setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
@@ -3362,39 +3389,44 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				this.setEntityState(IDOLegacyEntity.STATE_NOT_IN_SYNCH_WITH_DATASTORE);
 			}
 
-			if (_insertMetaDataVector != null)
-				_insertMetaDataVector.remove(metaDataKey);
+			if (this._insertMetaDataVector != null) {
+				this._insertMetaDataVector.remove(metaDataKey);
+			}
 			
-			if (_updateMetaDataVector != null)
-				_updateMetaDataVector.remove(metaDataKey);
+			if (this._updateMetaDataVector != null) {
+				this._updateMetaDataVector.remove(metaDataKey);
+			}
 			
 			metaDataHasChanged(true);
 			return true;
 		}
-		else
+		else {
 			return false;
+		}
 	}
 
 	public void clearMetaDataVectors() {
-		_insertMetaDataVector = null;
-		_updateMetaDataVector = null;
-		_deleteMetaDataVector = null;
-		_theMetaDataAttributes = null;
-		_theMetaDataTypes = null;
+		this._insertMetaDataVector = null;
+		this._updateMetaDataVector = null;
+		this._deleteMetaDataVector = null;
+		this._theMetaDataAttributes = null;
+		this._theMetaDataTypes = null;
 	}
 
 	public java.util.Map getMetaDataAttributes() {
-		if (_theMetaDataAttributes == null)
+		if (this._theMetaDataAttributes == null) {
 			getMetaData();
-		return _theMetaDataAttributes;
+		}
+		return this._theMetaDataAttributes;
 	}
 	public Hashtable getMetaDataIds() {
-		return _theMetaDataIds;
+		return this._theMetaDataIds;
 	}
 	public java.util.Map getMetaDataTypes() {
-		if (_theMetaDataTypes == null)
+		if (this._theMetaDataTypes == null) {
 			getMetaData();
-		return _theMetaDataTypes;
+		}
+		return this._theMetaDataTypes;
 	}
 //	public Map getMetaDataOrdering() {
 //		if (_theMetaDataOrdering == null) {
@@ -3403,23 +3435,23 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 //		return _theMetaDataOrdering;
 //	}
 	public Vector getMetaDataUpdateVector() {
-		return _updateMetaDataVector;
+		return this._updateMetaDataVector;
 	}
 	public Vector getMetaDataInsertVector() {
-		return _insertMetaDataVector;
+		return this._insertMetaDataVector;
 	}
 	public Vector getMetaDataDeleteVector() {
-		return _deleteMetaDataVector;
+		return this._deleteMetaDataVector;
 	}
 	public boolean metaDataHasChanged() {
-		return _metaDataHasChanged;
+		return this._metaDataHasChanged;
 	}
 	public void metaDataHasChanged(boolean metaDataHasChanged) {
-		_metaDataHasChanged = metaDataHasChanged;
+		this._metaDataHasChanged = metaDataHasChanged;
 	}
 
 	public void setEJBLocalHome(javax.ejb.EJBLocalHome ejbHome) {
-		_ejbHomes.put(this.getClass().getName()+getDatasource(), ejbHome);
+		this._ejbHomes.put(this.getClass().getName()+getDatasource(), ejbHome);
 	}
 
 	/*
@@ -3458,11 +3490,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 	public javax.ejb.EJBLocalHome getEJBLocalHome(String datasource) {
 		String key = this.getClass().toString()+datasource;
-		EJBLocalHome ejbHome = (EJBLocalHome) _ejbHomes.get(key);
+		EJBLocalHome ejbHome = (EJBLocalHome) this._ejbHomes.get(key);
 		if (ejbHome == null) {
 			try {
 				ejbHome = IDOLookup.getHome(this.getClass(), datasource);
-				_ejbHomes.put(key, ejbHome);
+				this._ejbHomes.put(key, ejbHome);
 			} catch (Exception e) {
 				throw new EJBException("Lookup for home for: " + this.getClass().getName() + " failed. Errormessage was: " + e.getMessage());
 			}
@@ -3515,21 +3547,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public void ejbActivate() {
 	}
 	public void ejbPassivate() {
-		if (_columns != null) {
-			_columns.clear();
+		if (this._columns != null) {
+			this._columns.clear();
 		}
-		_dataStoreType = null;
-		_dataSource = DEFAULT_DATASOURCE;
-		_state = IDOLegacyEntity.STATE_NEW;
-		_updatedColumns = null;
-		_primaryKey = null;
-		_theMetaDataAttributes = null;
-		_insertMetaDataVector = null;
-		_updateMetaDataVector = null;
-		_deleteMetaDataVector = null;
-		_theMetaDataIds = null;
+		this._dataStoreType = null;
+		this._dataSource = DEFAULT_DATASOURCE;
+		this._state = IDOLegacyEntity.STATE_NEW;
+		this._updatedColumns = null;
+		this._primaryKey = null;
+		this._theMetaDataAttributes = null;
+		this._insertMetaDataVector = null;
+		this._updateMetaDataVector = null;
+		this._deleteMetaDataVector = null;
+		this._theMetaDataIds = null;
 		//_hasMetaDataRelationship = false;
-		_metaDataHasChanged = false;
+		this._metaDataHasChanged = false;
 
 	}
 	public void ejbRemove() throws javax.ejb.RemoveException {
@@ -3637,28 +3669,28 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	void flagColumnUpdate(String columnName) {
-		if(canRegisterColumnsForUpdate){
+		if(this.canRegisterColumnsForUpdate){
 			if (this._updatedColumns == null) {
-				_updatedColumns = new HashMap();
+				this._updatedColumns = new HashMap();
 			}
-			_updatedColumns.put(columnName.toUpperCase(), Boolean.TRUE);
+			this._updatedColumns.put(columnName.toUpperCase(), Boolean.TRUE);
 		}
 	}
 	boolean hasColumnBeenUpdated(String columnName) {
 		if (this._updatedColumns == null) {
 			return false;
 		} else {
-			return (_updatedColumns.get(columnName.toUpperCase()) != null);
+			return (this._updatedColumns.get(columnName.toUpperCase()) != null);
 		}
 	}
 	public boolean columnsHaveChanged() {
-		return (_updatedColumns != null);
+		return (this._updatedColumns != null);
 	}
 	public void setToInsertStartData(boolean ifTrue) {
 		this.insertStartData = ifTrue;
 	}
 	public boolean getIfInsertStartData() {
-		return insertStartData;
+		return this.insertStartData;
 	}
 	protected void setPrimaryKey(int pk) {
 		Integer id = new Integer(pk);
@@ -3784,10 +3816,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			logSQL(sqlQuery);
 		//}
 
-		if (startingEntry < 0)
+		if (startingEntry < 0) {
 			startingEntry = 0;
-		if (returningNumber < 0)
+		}
+		if (returningNumber < 0) {
 			returningNumber = 0;
+		}
 
 		Connection conn = null;
 		//ResultSet rs = null;
@@ -3803,10 +3837,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			while (rsh.rs.next() && addEntity) {
 				if (startingEntry <= counter) {
 					if (returningNumber > 0) {
-						if (counter < (returningNumber + startingEntry))
+						if (counter < (returningNumber + startingEntry)) {
 							addEntity = true;
-						else
+						}
+						else {
 							addEntity = false;
+						}
 					} else {
 						addEntity = true;
 					}
@@ -3825,8 +3861,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		} catch (SQLException sqle) {
 			throw new IDOFinderException(sqle);
 		} finally {
-		    if(rsh!=null)
-		        rsh.close();
+		    if(rsh!=null) {
+				rsh.close();
+			}
 			if (conn != null) {
 				freeConnection(getDatasource(), conn);
 			}
@@ -3839,15 +3876,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	    Statement stmt = null;
 	    
 	    void close(){
-	        if(rs!=null)
-                try {
-                    rs.close();
+	        if(this.rs!=null) {
+				try {
+                    this.rs.close();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
-	        if (stmt != null) {
+			}
+	        if (this.stmt != null) {
 				try {
-					stmt.close();
+					this.stmt.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -4392,8 +4430,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	protected int idoGetNumberOfRecords(String sql) throws IDOException {
 		try {
-			if (isDebugActive())
+			if (isDebugActive()) {
 				logSQL(sql);
+			}
 			return this.getNumberOfRecords(sql);
 		} catch (SQLException e) {
 			throw new IDOException(e, this);
@@ -4402,8 +4441,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	
 	protected double idoGetAverage(String sql) throws IDOException {
 		try {
-			if (isDebugActive())
+			if (isDebugActive()) {
 				logSQL(sql);
+			}
 			return this.getAverage(sql);
 		} catch (SQLException e) {
 			throw new IDOException(e, this);
@@ -4427,8 +4467,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	protected int idoGetNumberOfRecords(SelectQuery query) throws IDOException {
 	    try {
-			if (isDebugActive())
+			if (isDebugActive()) {
 				logSQL(query.toString());
+			}
 			return this.getNumberOfRecords(query);
 		} catch (SQLException e) {
 			throw new IDOException(e, this);
@@ -4635,10 +4676,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		if (value != null) {
 			if (value instanceof String) {
 				return "'" + value.toString() + "'";
-			} else
+			}
+			else {
 				return value.toString();
-		} else
+			}
+		}
+		else {
 			return null;
+		}
 	}
 
 	/**
@@ -4659,8 +4704,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		//not sure if the =0 check is needed
 		if ((value != null) && (!value.equals("-1")) && (!value.equals("'-1'")) && (!value.equals("")) && (!value.equals("0"))) {
 			return true;
-		} else
+		}
+		else {
 			return false;
+		}
 	}
 
 	/**
@@ -4686,10 +4733,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	protected Table idoQueryTable(){
-		if(idoQueryTable == null){
-			idoQueryTable = new Table(this);
+		if(this.idoQueryTable == null){
+			this.idoQueryTable = new Table(this);
 		}
-		return idoQueryTable;
+		return this.idoQueryTable;
 	}
 	
 	/**
@@ -5004,7 +5051,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected void addUniqueIDColumn() {
 		addAttribute(getUniqueIdColumnName(),"A generated unique id do not change manually!",String.class,36);
 		setUnique(getUniqueIdColumnName(), true);
-		_hasUniqueIDColumn = true;
+		this._hasUniqueIDColumn = true;
 	}
 	
 	/**

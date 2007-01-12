@@ -68,11 +68,11 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	}
 
 	private void construct(Object primaryKey, ICLocale locale, ICVersion version, String versionName) throws IDOLookupException, FinderException {
-		_mainPrimaryKey = primaryKey;
-		_locale = locale;
+		this._mainPrimaryKey = primaryKey;
+		this._locale = locale;
 		
 		if(version != null){
-			_selectedVersion = version;
+			this._selectedVersion = version;
 		} else if(versionName != null){
 //			ICVersionHome versionHome = (ICVersionHome)IDOLookup.getHome(ICVersion.class);
 //			_selectedVersion = versionHome.
@@ -93,29 +93,29 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	}
 
 	protected void initialize() throws IDOLookupException, FinderException {
-		_mainClass = getMainClass();
-		_mainEntityHome = IDOLookup.getHome(_mainClass);
-		if (_mainPrimaryKey != null) {
-			_mainEntity = _mainEntityHome.findByPrimaryKeyIDO(_mainPrimaryKey);
+		this._mainClass = getMainClass();
+		this._mainEntityHome = IDOLookup.getHome(this._mainClass);
+		if (this._mainPrimaryKey != null) {
+			this._mainEntity = this._mainEntityHome.findByPrimaryKeyIDO(this._mainPrimaryKey);
 		}
 
 		if (useTranslations()) {
-			_translationClass = getTranslationClass();
-			_translationEntityHome = IDOLookup.getHome(_translationClass);
+			this._translationClass = getTranslationClass();
+			this._translationEntityHome = IDOLookup.getHome(this._translationClass);
 		}
 
 		if (useVersions()) {
-			if (!(_mainEntityHome instanceof ICVersionableHome)) {
+			if (!(this._mainEntityHome instanceof ICVersionableHome)) {
 				throw new UnsupportedOperationException("if useVersions() is true, then the Home-Interface must extend " + ICVersionableHome.class);
 			}
-			if (!(_mainEntity instanceof ICVersionableEntity)) {
+			if (!(this._mainEntity instanceof ICVersionableEntity)) {
 				throw new UnsupportedOperationException("if useVersions() is true, then the Bean-Interface must extend " + ICVersionableEntity.class);
 			}
 
-			_versionClass = getVersionClass();
-			_versionEntityHome = IDOLookup.getHome(_versionClass);
+			this._versionClass = getVersionClass();
+			this._versionEntityHome = IDOLookup.getHome(this._versionClass);
 
-			if (!(_versionEntityHome instanceof ICVersionableHome)) {
+			if (!(this._versionEntityHome instanceof ICVersionableHome)) {
 				throw new UnsupportedOperationException("if useVersions() is true, then the Home-Interface must extend " + ICVersionableHome.class);
 			}
 		}
@@ -129,26 +129,26 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 		}
 
 		if (useVersions()) {
-			Object itemPK = ((ICVersionableEntity)_mainEntity).getItemPrimaryKey();
+			Object itemPK = ((ICVersionableEntity)this._mainEntity).getItemPrimaryKey();
 			if (itemPK != null) {
-				_mainEntityItem = ((ICItemHome)IDOLookup.getHome(ICItemHome.class)).findByPrimaryKey(itemPK);
+				this._mainEntityItem = ((ICItemHome)IDOLookup.getHome(ICItemHome.class)).findByPrimaryKey(itemPK);
 				try {
-					_currentOpenVersionEntity = ((ICVersionableHome)_versionEntityHome).findEntityOfSpecificVersion(_mainEntityItem.getCurrentOpenVersion());
+					this._currentOpenVersionEntity = ((ICVersionableHome)this._versionEntityHome).findEntityOfSpecificVersion(this._mainEntityItem.getCurrentOpenVersion());
 					//TODO find currentVersionInProgress
-					_versionInProgress = _currentOpenVersionEntity;
+					this._versionInProgress = this._currentOpenVersionEntity;
 				} catch (FinderException e) {
 					e.printStackTrace();
 				}
 			}
 
-			if (_currentOpenVersionEntity == null) {
+			if (this._currentOpenVersionEntity == null) {
 				System.out.println("IDOEntityWrapper: No version is available for this item. ");
-				System.out.println("IDOEntityWrapper: MainClass: " + this.getMainClass() + " PK: " + _mainEntity.getPrimaryKey());
-				_currentOpenVersionEntity = _mainEntity;
-				_versionInProgress = _currentOpenVersionEntity;
+				System.out.println("IDOEntityWrapper: MainClass: " + this.getMainClass() + " PK: " + this._mainEntity.getPrimaryKey());
+				this._currentOpenVersionEntity = this._mainEntity;
+				this._versionInProgress = this._currentOpenVersionEntity;
 			}
 
-			if (!(_currentOpenVersionEntity instanceof ICVersionableEntity)) {
+			if (!(this._currentOpenVersionEntity instanceof ICVersionableEntity)) {
 				throw new UnsupportedOperationException("if useVersions() is true, then the Bean-Interface must extend " + ICVersionableEntity.class);
 			}
 		}
@@ -156,74 +156,74 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	}
 
 	public ICLocale getICLocale() {
-		return _locale;
+		return this._locale;
 	}
 
 	public IDOHome getMainEntityHome() {
-		return _mainEntityHome;
+		return this._mainEntityHome;
 	}
 
 	public IDOHome getTranslationEntityHome() {
-		return _translationEntityHome;
+		return this._translationEntityHome;
 	}
 
 	protected IDOEntity getMainEntity() {
-		return _mainEntity;
+		return this._mainEntity;
 	}
 
 	protected IDOEntity getTranslationEntity() {
-		return _translationEntity;
+		return this._translationEntity;
 	}
 
 	protected IDOEntity getCurrentOpenVersionEntity() {
-		return _currentOpenVersionEntity;
+		return this._currentOpenVersionEntity;
 	}
 
 	protected IDOEntity getVersionInProgress() {
-		return _versionInProgress;
+		return this._versionInProgress;
 	}
 
 	public Object getPrimaryKey() throws EJBException {
-		return _mainPrimaryKey;
+		return this._mainPrimaryKey;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntity#store()
 	 */
 	public void store() throws IDOStoreException {
-		if (_mainEntity != null) {
-			_mainEntity.store();
+		if (this._mainEntity != null) {
+			this._mainEntity.store();
 		}
-		if (_currentOpenVersionEntity != null) {
-			_currentOpenVersionEntity.store();
+		if (this._currentOpenVersionEntity != null) {
+			this._currentOpenVersionEntity.store();
 		}
-		if (_translationEntity != null) {
-			_translationEntity.store();
+		if (this._translationEntity != null) {
+			this._translationEntity.store();
 		}
 	}
 
 	//////IDOEntityBean	//////
 	public Object ejbCreate() throws CreateException {
-		if (_mainEntity != null) {
+		if (this._mainEntity != null) {
 			if (useVersions()) {
 				//TODO:Gummi create new version
 			}
 		} else {
-			_mainEntity = getMainEntityHome().createIDO();
-			_mainPrimaryKey = _mainEntity.getPrimaryKey();
+			this._mainEntity = getMainEntityHome().createIDO();
+			this._mainPrimaryKey = this._mainEntity.getPrimaryKey();
 		}
 
 		return this;
 	}
 
 	public Object ejbFindByPrimaryKey(Object pk) throws FinderException {
-		_mainEntity = _mainEntityHome.findByPrimaryKeyIDO(pk);
-		_mainPrimaryKey = pk;
-		return _mainPrimaryKey;
+		this._mainEntity = this._mainEntityHome.findByPrimaryKeyIDO(pk);
+		this._mainPrimaryKey = pk;
+		return this._mainPrimaryKey;
 	}
 
 	public void setEJBLocalHome(javax.ejb.EJBLocalHome ejbHome) {
-		_ejbHome = ejbHome;
+		this._ejbHome = ejbHome;
 	}
 	/**
 	 * Meant to be overrided in subclasses, returns default Integer.class
@@ -236,14 +236,14 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	 * @see javax.ejb.EJBLocalObject#remove()
 	 */
 	public void remove() throws RemoveException, EJBException {
-		if (_currentOpenVersionEntity != null) {
-			_currentOpenVersionEntity.remove();
+		if (this._currentOpenVersionEntity != null) {
+			this._currentOpenVersionEntity.remove();
 		}
-		if (_translationEntity != null) {
-			_translationEntity.remove();
+		if (this._translationEntity != null) {
+			this._translationEntity.remove();
 		}
-		if (_mainEntity != null) {
-			_mainEntity.remove();
+		if (this._mainEntity != null) {
+			this._mainEntity.remove();
 		}
 	}
 
@@ -258,30 +258,30 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	}
 
 	public void ejbLoad() throws EJBException, RemoteException {
-		((IDOEntityBean)_mainEntity).ejbLoad();
+		((IDOEntityBean)this._mainEntity).ejbLoad();
 
-		if (_translationEntity != null) {
-			((IDOEntityBean)_translationEntity).ejbLoad();
+		if (this._translationEntity != null) {
+			((IDOEntityBean)this._translationEntity).ejbLoad();
 		}
-		if (_currentOpenVersionEntity != null) {
-			((IDOEntityBean)_currentOpenVersionEntity).ejbLoad();
+		if (this._currentOpenVersionEntity != null) {
+			((IDOEntityBean)this._currentOpenVersionEntity).ejbLoad();
 		}
 	}
 
 	public void ejbPassivate() throws EJBException, RemoteException {
-		_locale = null;
+		this._locale = null;
 
-		_mainClass = null;
-		_translationClass = null;
+		this._mainClass = null;
+		this._translationClass = null;
 
-		_mainPrimaryKey = null;
+		this._mainPrimaryKey = null;
 
-		_mainEntity = null;
-		_currentOpenVersionEntity = null;
-		_translationEntity = null;
+		this._mainEntity = null;
+		this._currentOpenVersionEntity = null;
+		this._translationEntity = null;
 
-		_mainEntityHome = null;
-		_translationEntityHome = null;
+		this._mainEntityHome = null;
+		this._translationEntityHome = null;
 
 	}
 
@@ -332,14 +332,14 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	////////
 
 	public javax.ejb.EJBLocalHome getEJBLocalHome() {
-		if (_ejbHome == null) {
+		if (this._ejbHome == null) {
 			try {
-				_ejbHome = IDOLookup.getHome(this.getClass());
+				this._ejbHome = IDOLookup.getHome(this.getClass());
 			} catch (Exception e) {
 				throw new EJBException("Lookup for home for: " + this.getClass().getName() + " failed. Errormessage was: " + e.getMessage());
 			}
 		}
-		return _ejbHome;
+		return this._ejbHome;
 	}
 
 	/* (non-Javadoc)

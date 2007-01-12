@@ -13,7 +13,7 @@ import com.idega.util.IWTimestamp;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -35,7 +35,7 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
   }
   //setters
   public void setUser(User user){
-    _user = user;
+    this._user = user;
   }
 
 /*
@@ -45,24 +45,24 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 */
 
   public void setTimeOfLogon(IWTimestamp timeOfLogon){
-    _timeOfLogon = timeOfLogon;
+    this._timeOfLogon = timeOfLogon;
   }
 
   public void setLogin(String login){
-    _login = login;
+    this._login = login;
   }
 
   public void setLoginRecordId(int loginRecordId){
-    _loginRecordId = loginRecordId;
+    this._loginRecordId = loginRecordId;
   }
   
   public void setEncryptionType(String encryptionType){
-  	_encryptionType = encryptionType;
+  	this._encryptionType = encryptionType;
   }
 
   //getters
   public User getUser(){
-    return _user;
+    return this._user;
   }
 
 /*
@@ -73,19 +73,19 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 
 
   public IWTimestamp getTimeOfLogon(){
-    return _timeOfLogon;
+    return this._timeOfLogon;
   }
 
   public String getLogin(){
-    return _login;
+    return this._login;
   }
 
   public int getLoginRecordId(){
-    return _loginRecordId;
+    return this._loginRecordId;
   }
 
   public String getEncryptionType(){
-  	return _encryptionType;
+  	return this._encryptionType;
   }
 
 
@@ -107,7 +107,7 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 
 
   public boolean equals(LoggedOnInfo obj){
-    return this.getUser().equals(((LoggedOnInfo)obj).getUser());
+    return this.getUser().equals((obj).getUser());
   }
 /*
   public boolean equals(HttpSession obj){
@@ -128,8 +128,8 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 	public void valueUnbound(HttpSessionBindingEvent event) {
 		//log out!
 		String name = "Unknown";
-		if(_user != null){
-			name = _user.getName();
+		if(this._user != null){
+			name = this._user.getName();
 		}
 		
 		boolean success = LoginBusinessBean.logOutUserOnSessionTimeout(event.getSession(),this);
@@ -143,48 +143,48 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 	 * @return
 	 */
 	public String getLoginType() {
-		return _loginType;
+		return this._loginType;
 	}
 	
 	/**
 	 * @param loginType
 	 */
 	public void setLoginType(String loginType) {
-		_loginType = loginType;
+		this._loginType = loginType;
 	}
 
 	/**
 	 * @return
 	 */
 	public int getLoginTableId() {
-		return _loginTableId;
+		return this._loginTableId;
 	}
 
 	/**
 	 * @param id
 	 */
 	public void setLoginTableId(int id) {
-		_loginTableId = id;
+		this._loginTableId = id;
 	}
 
 	/**
 	 * @return Returns the user role String's.
 	 */
 	public Set getUserRoles() {
-		return _userRoles;
+		return this._userRoles;
 	}
 	/**
 	 * @param roles Collections of the role String's that the user has.
 	 */
 	public void setUserRoles(Set roles) {
-		_userRoles = roles;
+		this._userRoles = roles;
 	}
 	
 	public void setAttribute(Object key, Object value){
-		_loggedOnInfoAttribute.put(key,value);
+		this._loggedOnInfoAttribute.put(key,value);
 	}
 	
 	public Object getAttribute(Object key){
-		return _loggedOnInfoAttribute.get(key);
+		return this._loggedOnInfoAttribute.get(key);
 	}
 }

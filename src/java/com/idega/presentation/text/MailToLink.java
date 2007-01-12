@@ -1,5 +1,5 @@
 /*
- * $Id: MailToLink.java,v 1.1.2.1 2006/12/04 20:17:27 idegaweb Exp $
+ * $Id: MailToLink.java,v 1.1.2.2 2007/01/12 19:32:01 idegaweb Exp $
  * Created on Dec 1, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -53,49 +53,49 @@ public class MailToLink extends Link {
 	}
 	
 	public String getBCC() {
-		return bcc;
+		return this.bcc;
 	}
 	
 	public void setBCC(String bcc) {
-		if (isParameterSet(PARAM_BCC)) {
-			removeParameter(PARAM_BCC);
+		if (isParameterSet(this.PARAM_BCC)) {
+			removeParameter(this.PARAM_BCC);
 		}
 		this.bcc = bcc;
 		if (this.bcc != null && !this.bcc.equals("")) {
-			addParameter(PARAM_BCC, this.bcc);
+			addParameter(this.PARAM_BCC, this.bcc);
 		}
 	}
 	
 	public String getBody() {
-		return body;
+		return this.body;
 	}
 	
 	public void setBody(String body) {
-		if (isParameterSet(PARAM_BODY)) {
-			removeParameter(PARAM_BODY);
+		if (isParameterSet(this.PARAM_BODY)) {
+			removeParameter(this.PARAM_BODY);
 		}
 		this.body = body;
 		if (this.body != null && !this.body.equals("")) {
-			addParameter(PARAM_BODY, this.body);
+			addParameter(this.PARAM_BODY, this.body);
 		}
 	}
 	
 	public String getCC() {
-		return cc;
+		return this.cc;
 	}
 	
 	public void setCC(String cc) {
-		if (isParameterSet(PARAM_CC)) {
-			removeParameter(PARAM_CC);
+		if (isParameterSet(this.PARAM_CC)) {
+			removeParameter(this.PARAM_CC);
 		}
 		this.cc = cc;
 		if (this.cc != null && !this.cc.equals("")) {
-			addParameter(PARAM_CC, this.cc);
+			addParameter(this.PARAM_CC, this.cc);
 		}
 	}
 	
 	public String getRecipients() {
-		return recipients;
+		return this.recipients;
 	}
 	
 	public void setRecipients(String recipients) {
@@ -108,32 +108,32 @@ public class MailToLink extends Link {
 	}
 	
 	public String getSubject() {
-		return subject;
+		return this.subject;
 	}
 	
 	public void setSubject(String subject) {
-		if (isParameterSet(PARAM_SUBJECT)) {
-			removeParameter(PARAM_SUBJECT);
+		if (isParameterSet(this.PARAM_SUBJECT)) {
+			removeParameter(this.PARAM_SUBJECT);
 		}
 		this.subject = subject;
 		if (this.subject != null && !this.subject.equals("")) {
-			addParameter(PARAM_SUBJECT, this.subject);
+			addParameter(this.PARAM_SUBJECT, this.subject);
 		}
 	}
 	
 	public void addParameter(String parameterName, String parameterValue) {
 		if ((parameterName != null) && (parameterValue != null)) {
-			if (_parameterString == null) {
-				_parameterString = new StringBuffer();
-				_parameterString.append("?");
+			if (this._parameterString == null) {
+				this._parameterString = new StringBuffer();
+				this._parameterString.append("?");
 			}
 			else {
-				_parameterString.append("&");
+				this._parameterString.append("&");
 			}
 
-			_parameterString.append(parameterName);
-			_parameterString.append("=");
-			_parameterString.append(parameterValue);
+			this._parameterString.append(parameterName);
+			this._parameterString.append("=");
+			this._parameterString.append(parameterValue);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: FramedWindowClassViewNode.java,v 1.1 2004/11/14 23:24:47 tryggvil Exp $
+ * $Id: FramedWindowClassViewNode.java,v 1.1.2.1 2007/01/12 19:32:12 idegaweb Exp $
  * Created on 22.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,10 +14,10 @@ import com.idega.idegaweb.IWMainApplication;
 
 /**
  * 
- *  Last modified: $Date: 2004/11/14 23:24:47 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/01/12 19:32:12 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class FramedWindowClassViewNode extends FramedApplicationViewNode {
 
@@ -27,7 +27,7 @@ public class FramedWindowClassViewNode extends FramedApplicationViewNode {
 	 * @return Returns the windowClass.
 	 */
 	public Class getWindowClass() {
-		return windowClass;
+		return this.windowClass;
 	}
 	/**
 	 * @param windowClass The windowClass to set.

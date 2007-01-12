@@ -1,5 +1,5 @@
 /*
- * $Id: Image.java,v 1.88 2005/10/05 17:47:05 thomas Exp $
+ * $Id: Image.java,v 1.88.2.1 2007/01/12 19:31:35 idegaweb Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -40,11 +40,11 @@ import com.idega.util.text.TextSoap;
  * This is the component to render out Image elements in idegaWeb.<br>
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
- *  Last modified: $Date: 2005/10/05 17:47:05 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/01/12 19:31:35 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
- * @version $Revision: 1.88 $
+ * @version $Revision: 1.88.2.1 $
  */
 public class Image extends PresentationObject implements NonEJBResource, PropertyDescriptionHolder
 {
@@ -89,43 +89,43 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[17];
 		values[0] = super.saveState(ctx);
-		values[1] = overImageUrl;
-		values[2] = downImageUrl;
-		values[3] = _ImageLocalizationMap;
-		values[4] = _overImageLocalizationMap;
-		values[5] = textBgColor;
-		values[6] = Boolean.valueOf(limitImageWidth);
-		values[7] = Boolean.valueOf(zoomView);
-		values[8] = Boolean.valueOf(linkOnImage);
-		values[9] = Boolean.valueOf(useCaching);
-		values[10] = align;
-		values[11] = zoomPageID;
-		values[12] = zoomImageWidth;
-		values[13] = zoomImageHeight;
-		values[14] = new Integer(imageId);
-		values[15] = new Integer(maxImageWidth);
-		values[16] = datasource;
+		values[1] = this.overImageUrl;
+		values[2] = this.downImageUrl;
+		values[3] = this._ImageLocalizationMap;
+		values[4] = this._overImageLocalizationMap;
+		values[5] = this.textBgColor;
+		values[6] = Boolean.valueOf(this.limitImageWidth);
+		values[7] = Boolean.valueOf(this.zoomView);
+		values[8] = Boolean.valueOf(this.linkOnImage);
+		values[9] = Boolean.valueOf(this.useCaching);
+		values[10] = this.align;
+		values[11] = this.zoomPageID;
+		values[12] = this.zoomImageWidth;
+		values[13] = this.zoomImageHeight;
+		values[14] = new Integer(this.imageId);
+		values[15] = new Integer(this.maxImageWidth);
+		values[16] = this.datasource;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		overImageUrl = (String) values[1];
-		downImageUrl = (String) values[2];
-		_ImageLocalizationMap = (Map) values[3];
-		_overImageLocalizationMap = (Map) values[4];
-		textBgColor = (String) values[5];
-		limitImageWidth = ((Boolean)values[6]).booleanValue();
-		zoomView = ((Boolean)values[7]).booleanValue();
-		linkOnImage = ((Boolean)values[8]).booleanValue();
-		useCaching = ((Boolean)values[9]).booleanValue();
-		align = (String)values[10];
-		zoomImageID = (String)values[11];
-		zoomImageWidth = (String) values[12];
-		zoomImageHeight = (String)values[13];
-		imageId = ((Integer)values[14]).intValue();
-		maxImageWidth = ((Integer)values[15]).intValue();
-		datasource = (String) values[16];
+		this.overImageUrl = (String) values[1];
+		this.downImageUrl = (String) values[2];
+		this._ImageLocalizationMap = (Map) values[3];
+		this._overImageLocalizationMap = (Map) values[4];
+		this.textBgColor = (String) values[5];
+		this.limitImageWidth = ((Boolean)values[6]).booleanValue();
+		this.zoomView = ((Boolean)values[7]).booleanValue();
+		this.linkOnImage = ((Boolean)values[8]).booleanValue();
+		this.useCaching = ((Boolean)values[9]).booleanValue();
+		this.align = (String)values[10];
+		this.zoomImageID = (String)values[11];
+		this.zoomImageWidth = (String) values[12];
+		this.zoomImageHeight = (String)values[13];
+		this.imageId = ((Integer)values[14]).intValue();
+		this.maxImageWidth = ((Integer)values[15]).intValue();
+		this.datasource = (String) values[16];
 	}
 	
 	public Image()
@@ -142,8 +142,9 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		super();
 		setTransient(false);
-		if ("".equalsIgnoreCase(name))
+		if ("".equalsIgnoreCase(name)) {
 			name = this.generateID();
+		}
 		setName(name);
 		setAlt(name);
 		setToolTip(name);
@@ -223,10 +224,10 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 
 	
 		String url;
-		if(datasource != null){
-			url = getICFileSystem(iwc).getFileURI(imageId, datasource);
+		if(this.datasource != null){
+			url = getICFileSystem(iwc).getFileURI(this.imageId, this.datasource);
 		} else {
-			url = getICFileSystem(iwc).getFileURI(imageId);
+			url = getICFileSystem(iwc).getFileURI(this.imageId);
 		}
 		setURL(url);
 	}
@@ -239,7 +240,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	protected void setOverImageURLAndJavascript(IWContext iwc) throws Exception{
 		Integer overImageId = null;
 		String finalOverImageUrl = null;
-		if (_overImageLocalizationMap != null && !_overImageLocalizationMap.isEmpty()){
+		if (this._overImageLocalizationMap != null && !this._overImageLocalizationMap.isEmpty()){
 			Locale currLocale = iwc.getCurrentLocale();
 			overImageId = (Integer) this.getOverImageLocalizationMap().get(currLocale);
 			if (overImageId == null){
@@ -249,8 +250,8 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			if(overImageId!=null){
 				finalOverImageUrl = getICFileSystem(iwc).getFileURI(overImageId.intValue());
 			}
-		}else if(overImageUrl!=null){
-			finalOverImageUrl = overImageUrl;
+		}else if(this.overImageUrl!=null){
+			finalOverImageUrl = this.overImageUrl;
 		}
 			
 		
@@ -283,29 +284,30 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	
 	private Map getImageLocalizationMap()
 	{
-		if (_ImageLocalizationMap == null)
+		if (this._ImageLocalizationMap == null)
 		{
-			_ImageLocalizationMap = new HashMap();
+			this._ImageLocalizationMap = new HashMap();
 		}
-		return _ImageLocalizationMap;
+		return this._ImageLocalizationMap;
 	}
 	
 	private Map getOverImageLocalizationMap()
 	{
-		if (_overImageLocalizationMap == null){
-			_overImageLocalizationMap = new HashMap();
+		if (this._overImageLocalizationMap == null){
+			this._overImageLocalizationMap = new HashMap();
 		}
-		return _overImageLocalizationMap;
+		return this._overImageLocalizationMap;
 	}
 	
 	public void setOverImageLocalizationMap(Map overImagesmap){
-		_overImageLocalizationMap = overImagesmap;
+		this._overImageLocalizationMap = overImagesmap;
 	}
 	
 	public void setProperty(String key, String values[])
 	{
-		if (key.equalsIgnoreCase("url"))
+		if (key.equalsIgnoreCase("url")) {
 			setURL(values[0]);
+		}
 		else if (key.equalsIgnoreCase("width"))
 		{
 			setWidth(values[0]);
@@ -388,7 +390,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		try
 		{
 			Integer localizedID = null;
-			if (_ImageLocalizationMap != null){
+			if (this._ImageLocalizationMap != null){
 				Locale currLocale = iwc.getCurrentLocale();
 				localizedID = (Integer) this.getImageLocalizationMap().get(currLocale);
 				if(localizedID==null){
@@ -462,7 +464,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	}
 	public void setOnClickImageURL(String clickImageURL)
 	{
-		overImageUrl = clickImageURL;
+		this.overImageUrl = clickImageURL;
 		setOnClick("swapImgRestore(); swapImage('" + getName() + "','','" + clickImageURL + "',1)");
 	}
 	public void setOnClickImage(Image image)
@@ -493,15 +495,15 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		if (attributeMap.containsKey(FileSystemConstants.ZOOMIMAGE) && attributeMap.containsKey(FileSystemConstants.ZOOMPAGE))
 		{
-			zoomImageID =
+			this.zoomImageID =
 				attributeMap.containsKey(FileSystemConstants.ZOOMIMAGE) ? (String) attributeMap.get(FileSystemConstants.ZOOMIMAGE) : null;
-			zoomPageID =
+			this.zoomPageID =
 				attributeMap.containsKey(FileSystemConstants.ZOOMPAGE) ? (String) attributeMap.get(FileSystemConstants.ZOOMPAGE) : null;
-			zoomImageWidth =
+			this.zoomImageWidth =
 				attributeMap.containsKey(FileSystemConstants.ZOOMWIDTH)
 					? (String) attributeMap.get(FileSystemConstants.ZOOMWIDTH)
 					: "400";
-			zoomImageHeight =
+			this.zoomImageHeight =
 				attributeMap.containsKey(FileSystemConstants.ZOOMHEIGHT)
 					? (String) attributeMap.get(FileSystemConstants.ZOOMHEIGHT)
 					: "400";
@@ -522,7 +524,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			getFacets().put("image_associatedscript",myScript);
 		}
 		else{
-			theOldAssociatedScript = myScript;
+			this.theOldAssociatedScript = myScript;
 		}
 	}
 	public Script getAssociatedScript()
@@ -536,7 +538,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	}
 	public void setAlignment(String alignment)
 	{
-		align = alignment;
+		this.align = alignment;
 	}
 
 	public void setImageLinkZoomView()
@@ -620,9 +622,9 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			}
 		}
 		sPrint.append(getMarkupAttributesString());
-		if (align != null)
+		if (this.align != null)
 		{
-			sPrint.append(" align=\"" + align + "\" ");
+			sPrint.append(" align=\"" + this.align + "\" ");
 		}
 		sPrint.append(" "+(!markup.equals(Page.HTML) ? "/" : "")+">");
 		return sPrint.toString();
@@ -640,7 +642,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 				String width = null;
 				String height = null;
 			
-				if (!limitImageWidth)
+				if (!this.limitImageWidth)
 				{
 					if ((width != null) && (!width.equalsIgnoreCase("")) && (!width.equalsIgnoreCase("-1")))
 					{
@@ -655,14 +657,14 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 				{
 					if ((width != null) && (!width.equalsIgnoreCase("")) && (!width.equalsIgnoreCase("-1")))
 					{
-						if (Integer.parseInt(width) > maxImageWidth)
+						if (Integer.parseInt(width) > this.maxImageWidth)
 						{
-							setWidth(maxImageWidth);
+							setWidth(this.maxImageWidth);
 						}
 					}
 					else
 					{
-						setWidth(maxImageWidth);
+						setWidth(this.maxImageWidth);
 					}
 				}
 				if ((texti != null) && (!"".equalsIgnoreCase(texti)))
@@ -672,15 +674,15 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 					imageTable.setAlignment(1, 2, "left");
 					//imageTable.setCellpadding(0);
 					//imageTable.setCellspacing(0);
-					imageTable.setColor(1, 2, textBgColor);
+					imageTable.setColor(1, 2, this.textBgColor);
 					String sWidth = getWidth();
-					if ((sWidth != null) && (!sWidth.equalsIgnoreCase("")) && (!limitImageWidth))
+					if ((sWidth != null) && (!sWidth.equalsIgnoreCase("")) && (!this.limitImageWidth))
 					{
 						imageTable.setWidth(sWidth);
 					}
-					else if (limitImageWidth)
+					else if (this.limitImageWidth)
 					{
-						imageTable.setWidth(maxImageWidth);
+						imageTable.setWidth(this.maxImageWidth);
 					}
 					Text imageText = new Text(texti);
 					imageText.setFontSize(1);
@@ -691,7 +693,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 						textLink.setFontSize(1);
 						imageTable.add(textLink, 1, 2); //add the text with the link on it
 						//should we add the image with a link? or just the image
-						if (zoomView)
+						if (this.zoomView)
 						{
 							Link zoomViewLink = getImageZoomLink();
 							if (zoomViewLink != null)
@@ -702,22 +704,23 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 							else
 							{
 								Link imageLink = new Link(getHTMLString(iwc));
-								imageLink.addParameter("image_id", imageId);
+								imageLink.addParameter("image_id", this.imageId);
 								imageTable.add(imageLink, 1, 1);
 							}
 						}
-						else if ((!zoomView) && (linkOnImage))
+						else if ((!this.zoomView) && (this.linkOnImage))
 						{
 							Link imageLink = new Link(getHTMLString(iwc), link);
 							imageLink.setTarget("_new");
 							imageTable.add(imageLink, 1, 1);
 						}
-						else
+						else {
 							imageTable.add(getHTMLString(iwc), 1, 1);
+						}
 					}
 					else
 					{ //or no link
-						if (zoomView)
+						if (this.zoomView)
 						{
 							Link zoomViewLink = getImageZoomLink();
 							if (zoomViewLink != null)
@@ -728,19 +731,20 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 							else
 							{
 								Link imageLink = new Link(getHTMLString(iwc));
-								imageLink.addParameter("image_id", imageId);
+								imageLink.addParameter("image_id", this.imageId);
 								imageTable.add(imageLink, 1, 1);
 							}
 						}
-						else
+						else {
 							imageTable.add(getHTMLString(iwc), 1, 1);
+						}
 						imageTable.add(imageText, 1, 2);
 					}
 					renderChild(iwc,imageTable);
 				}
 				else
 				{
-					if (zoomView)
+					if (this.zoomView)
 					{
 						Link zoomViewLink = getImageZoomLink();
 						if (zoomViewLink != null)
@@ -751,12 +755,13 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 						else
 						{
 							Link imageLink = new Link(getHTMLString(iwc));
-							imageLink.addParameter("image_id", imageId);
+							imageLink.addParameter("image_id", this.imageId);
 							imageLink._print(iwc);
 						}
 					}
-					else
+					else {
 						print(getHTMLString(iwc));
+					}
 				}
 			//} //end debug
 		}
@@ -800,12 +805,12 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	 */
 	public String getMediaURL(IWApplicationContext iwc)
 	{
-		if (imageId != -1){
+		if (this.imageId != -1){
 			String theReturn = "";
 			//return MediaBusiness.getMediaURL(imageId, ImageEntity.class, iwc.getApplication());
 			try
 			{
-				theReturn = getICFileSystem(iwc).getFileURI(imageId);
+				theReturn = getICFileSystem(iwc).getFileURI(this.imageId);
 			}
 			catch (RemoteException e)
 			{
@@ -832,7 +837,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		try
 		{
 			obj = (Image) super.clone();
-			if (theOldAssociatedScript != null)
+			if (this.theOldAssociatedScript != null)
 			{
 				obj.theOldAssociatedScript = (Script) this.theOldAssociatedScript.clone();
 			}
@@ -862,11 +867,11 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	}
 	public void print(IWContext iwc) throws Exception
 	{
-		if (zoomImageID != null)
+		if (this.zoomImageID != null)
 		{
 			Link link = new Link();
-			link.addParameter(PARAM_IMAGE_ID, zoomImageID);
-			link.setPage(Integer.parseInt(zoomPageID));
+			link.addParameter(PARAM_IMAGE_ID, this.zoomImageID);
+			link.setPage(Integer.parseInt(this.zoomPageID));
 			link.setURL("/index.jsp");
 			link.setWindowToOpenScript(
 				Window.getWindowCallingScript(
@@ -881,16 +886,16 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 					false,
 					true,
 					false,
-					Integer.parseInt(zoomImageWidth),
-					Integer.parseInt(zoomImageHeight)));
+					Integer.parseInt(this.zoomImageWidth),
+					Integer.parseInt(this.zoomImageHeight)));
 			setImageZoomLink(link);
 			setImageLinkZoomView();
 		}
 		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML))
 		{
 		
-			imageId = this.getImageID(iwc);
-			if (imageId == -1)
+			this.imageId = this.getImageID(iwc);
+			if (this.imageId == -1)
 			{ //from an url
 				print(getHTMLString(iwc));
 			}

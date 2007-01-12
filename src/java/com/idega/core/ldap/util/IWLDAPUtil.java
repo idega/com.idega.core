@@ -159,7 +159,9 @@ public class IWLDAPUtil implements IWLDAPConstants,EmbeddedLDAPServerConstants,L
 		if(index>=0){
 			return key.substring(LDAP_META_DATA_KEY_PREFIX.length(),key.length());
 		}
-		else return key;
+		else {
+			return key;
+		}
 	}
 	
 	/**
@@ -290,27 +292,27 @@ public class IWLDAPUtil implements IWLDAPConstants,EmbeddedLDAPServerConstants,L
 	
 	public EmbeddedLDAPServerBusiness getEmbeddedLDAPServerBusiness(
 			IWApplicationContext iwac) {
-		if (embeddedLDAPServerBiz == null) {
+		if (this.embeddedLDAPServerBiz == null) {
 			try {
-				embeddedLDAPServerBiz = (EmbeddedLDAPServerBusiness) com.idega.business.IBOLookup
+				this.embeddedLDAPServerBiz = (EmbeddedLDAPServerBusiness) com.idega.business.IBOLookup
 						.getServiceInstance(iwac,
 								EmbeddedLDAPServerBusiness.class);
 			} catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return embeddedLDAPServerBiz;
+		return this.embeddedLDAPServerBiz;
 	}
 	
 	public LDAPReplicationBusiness getLDAPReplicationBusiness(IWApplicationContext iwca) {
-		if (ldapReplicationBiz == null) {
+		if (this.ldapReplicationBiz == null) {
 			try {
-				ldapReplicationBiz = (LDAPReplicationBusiness) com.idega.business.IBOLookup.getServiceInstance(iwca, LDAPReplicationBusiness.class);
+				this.ldapReplicationBiz = (LDAPReplicationBusiness) com.idega.business.IBOLookup.getServiceInstance(iwca, LDAPReplicationBusiness.class);
 			} catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return ldapReplicationBiz;
+		return this.ldapReplicationBiz;
 	}
 	
 	public DirectoryString getRootDN(){

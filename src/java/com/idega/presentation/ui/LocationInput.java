@@ -46,130 +46,130 @@ public class LocationInput extends InterfaceObject {
 	}
 	
 	public LocationInput(String countryParameterName, String cityParameterName, String postalCodeParameterName) {
-		parCountryID = countryParameterName;
-		parCityName = cityParameterName;
-		parZipID = postalCodeParameterName;
+		this.parCountryID = countryParameterName;
+		this.parCityName = cityParameterName;
+		this.parZipID = postalCodeParameterName;
 		
-		iframeName = parCountryID + "_" + parCityName + "_" + zipDrop;
+		this.iframeName = this.parCountryID + "_" + this.parCityName + "_" + this.zipDrop;
 		
-		setName(iframeName);
+		setName(this.iframeName);
 		
-		countryDrop = new DropdownMenu(parCountryID);
-		cityDrop = new DropdownMenu(parCityName);
-		zipDrop = new DropdownMenu(parZipID);
+		this.countryDrop = new DropdownMenu(this.parCountryID);
+		this.cityDrop = new DropdownMenu(this.parCityName);
+		this.zipDrop = new DropdownMenu(this.parZipID);
 	}
 	
 	public Object clone() {
 		LocationInput inp = (LocationInput) super.clone();
-		if (countryDrop != null) {
-			inp.countryDrop = (DropdownMenu) countryDrop.clone();
+		if (this.countryDrop != null) {
+			inp.countryDrop = (DropdownMenu) this.countryDrop.clone();
 		}
-		if (cityDrop != null) {
-			inp.cityDrop = (DropdownMenu) cityDrop.clone();
+		if (this.cityDrop != null) {
+			inp.cityDrop = (DropdownMenu) this.cityDrop.clone();
 		}
-		if (zipDrop != null) {
-			inp.zipDrop = (DropdownMenu) zipDrop.clone();
+		if (this.zipDrop != null) {
+			inp.zipDrop = (DropdownMenu) this.zipDrop.clone();
 		}
-		if (availableCountries != null) {
-			inp.availableCountries = availableCountries;
+		if (this.availableCountries != null) {
+			inp.availableCountries = this.availableCountries;
 		}
 		return inp;
 	}
 	
 	public DropdownMenu getCountryDropdown() {
-		return countryDrop;
+		return this.countryDrop;
 	}
 	
 	public DropdownMenu getCityDropdown() {
-		return cityDrop;
+		return this.cityDrop;
 	}
 	
 	public DropdownMenu getPostalCodeDropdown() {
-		return zipDrop;
+		return this.zipDrop;
 	}
 	
 	public void main(IWContext iwc) throws Exception {
 
-		String usedCountryID = iwc.getParameter(parCountryID);
-		String usedCityName = iwc.getParameter(parCityName);
-		String usedZipID = iwc.getParameter(parZipID);
+		String usedCountryID = iwc.getParameter(this.parCountryID);
+		String usedCityName = iwc.getParameter(this.parCityName);
+		String usedZipID = iwc.getParameter(this.parZipID);
 		
-		if (specifiedCountryID != null) {
-			usedCountryID = specifiedCountryID;
+		if (this.specifiedCountryID != null) {
+			usedCountryID = this.specifiedCountryID;
 		}
-		if (specifiedCityName != null) {
-			usedCityName = specifiedCityName;
+		if (this.specifiedCityName != null) {
+			usedCityName = this.specifiedCityName;
 		}
-		if (specifiedZipID != null) {
-			usedZipID = specifiedZipID;
+		if (this.specifiedZipID != null) {
+			usedZipID = this.specifiedZipID;
 		}
 
 		CountryHome countryHome = (CountryHome) IDOLookup.getHome(Country.class);
 		PostalCodeHome pcHome = (PostalCodeHome) IDOLookup.getHome(PostalCode.class);
-		if ( availableCountries == null ) {
-			availableCountries = countryHome.findAll();
+		if ( this.availableCountries == null ) {
+			this.availableCountries = countryHome.findAll();
 		}
 		Collection postalCodes = null;
 		Collection cities = null;
 
 		SelectorUtility su = new SelectorUtility();
 		
-		countryDrop.addMenuElement("-1", "Select a country");
-		countryDrop.addMenuElements(availableCountries);
+		this.countryDrop.addMenuElement("-1", "Select a country");
+		this.countryDrop.addMenuElements(this.availableCountries);
 		if (usedCountryID != null) {
 			cities = pcHome.getUniquePostalCodeNamesByCountryIdOrderedByPostalCodeName(Integer.parseInt(usedCountryID));
-			countryDrop.setSelectedElement(usedCountryID);
+			this.countryDrop.setSelectedElement(usedCountryID);
 		}
 		
 		if (cities != null) {
 			Iterator iter = cities.iterator();
 			while (iter.hasNext()) {
 				String city = (String) iter.next();
-				cityDrop.addMenuElement(city, city);
+				this.cityDrop.addMenuElement(city, city);
 			}
 		}
 
-		cityDrop.addFirstOption(new SelectOption("Select a city", "-1"));
+		this.cityDrop.addFirstOption(new SelectOption("Select a city", "-1"));
 		
 		if (usedCityName != null) {
 			postalCodes = pcHome.findByNameAndCountry(usedCityName,new Integer(usedCountryID));
-			cityDrop.setSelectedElement(usedCityName);
+			this.cityDrop.setSelectedElement(usedCityName);
 		}
 
-		zipDrop = (DropdownMenu) su.getSelectorFromIDOEntities(zipDrop, postalCodes, "getPostalAddress");
-		zipDrop.addFirstOption(new SelectOption("Select a postal code", "-1"));
+		this.zipDrop = (DropdownMenu) su.getSelectorFromIDOEntities(this.zipDrop, postalCodes, "getPostalAddress");
+		this.zipDrop.addFirstOption(new SelectOption("Select a postal code", "-1"));
 		if (usedZipID != null) {
-			zipDrop.setSelectedElement(usedZipID);
+			this.zipDrop.setSelectedElement(usedZipID);
 		}
 				
 		boolean addSeparator = false;
-		if (countryDrop.getParent() == null) {
-			add(countryDrop);
+		if (this.countryDrop.getParent() == null) {
+			add(this.countryDrop);
 			addSeparator = true;
 		}
-		if (cityDrop.getParent() == null) {
+		if (this.cityDrop.getParent() == null) {
 			if (addSeparator) {
-				add(separator);
+				add(this.separator);
 			}
-			add(cityDrop);
+			add(this.cityDrop);
 		}
-		if (zipDrop.getParent() == null) {
+		if (this.zipDrop.getParent() == null) {
 			if (addSeparator) {
-				add(separator);
+				add(this.separator);
 			}
-			add(zipDrop);
+			add(this.zipDrop);
 		}
 
-		RemoteScriptHandler rsh = new RemoteScriptHandler(countryDrop, cityDrop);
+		RemoteScriptHandler rsh = new RemoteScriptHandler(this.countryDrop, this.cityDrop);
 		rsh.setRemoteScriptCollectionClass(LocationInputCollectionHandler.class);
 		rsh.addParameter(PARAMETER_ACTION, ACTION_UPDATE_CITIES);
-		rsh.setToClear(zipDrop, "Select a city");
+		rsh.setToClear(this.zipDrop, "Select a city");
 		add(rsh);
 			
-		RemoteScriptHandler rsh2 = new RemoteScriptHandler(cityDrop, zipDrop);
+		RemoteScriptHandler rsh2 = new RemoteScriptHandler(this.cityDrop, this.zipDrop);
 		rsh2.setRemoteScriptCollectionClass(LocationInputCollectionHandler.class);
 		rsh2.addParameter(PARAMETER_ACTION, ACTION_UPDATE_POSTAL_CODE);
-		rsh2.addParameter(PARAMETER_COUNTRY_ID, parCountryID);
+		rsh2.addParameter(PARAMETER_COUNTRY_ID, this.parCountryID);
 		add(rsh2);
 		
 	}
@@ -179,18 +179,18 @@ public class LocationInput extends InterfaceObject {
 			PostalCodeHome pcHome = (PostalCodeHome) IDOLookup.getHome(PostalCode.class);
 			PostalCode pc = pcHome.findByPrimaryKey(postalCodePK);
 			
-			specifiedCountryID = new Integer(pc.getCountryID()).toString();
-			specifiedCityName = pc.getName();
-			specifiedZipID = postalCodePK.toString();
+			this.specifiedCountryID = new Integer(pc.getCountryID()).toString();
+			this.specifiedCityName = pc.getName();
+			this.specifiedZipID = postalCodePK.toString();
 		} catch (IDOLookupException e) {
 			e.printStackTrace();
 		} 
 	}
 
 	public void setStyleClass(String styleClass) {
-		countryDrop.setStyleClass(styleClass);
-		cityDrop.setStyleClass(styleClass);
-		zipDrop.setStyleClass(styleClass);
+		this.countryDrop.setStyleClass(styleClass);
+		this.cityDrop.setStyleClass(styleClass);
+		this.zipDrop.setStyleClass(styleClass);
 	}
 	
 	public void setAvailableCountries(Collection countries) {

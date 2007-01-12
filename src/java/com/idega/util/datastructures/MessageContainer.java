@@ -21,7 +21,7 @@ public class MessageContainer {
 	 * @return Returns the mainMessage.
 	 */
 	public String getMainMessage() {
-		return mainMessage;
+		return this.mainMessage;
 	}
 	
 	/**
@@ -35,14 +35,14 @@ public class MessageContainer {
 	 * @return Returns the messages.
 	 */
 	public List getMessages() {
-		return messages;
+		return this.messages;
 	}
 	
 	public boolean addMessage(String message) {
-		if (messages == null) {
-			messages = new ArrayList();
+		if (this.messages == null) {
+			this.messages = new ArrayList();
 		}
-		return messages.add(message);
+		return this.messages.add(message);
 	}
 		
 }

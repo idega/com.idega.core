@@ -74,8 +74,9 @@ public class LdifUtility
      */
     public String ldifEncode(Object o, int offset, boolean forceBase64Encoding)
     {
-        if (forceBase64Encoding == false)
-            return ldifEncode(o, offset);
+        if (forceBase64Encoding == false) {
+			return ldifEncode(o, offset);
+		}
             
         String ret = ":: ";    
         if (o.getClass().isArray())
@@ -118,19 +119,25 @@ public class LdifUtility
 
         if ((o instanceof String) == false)
         {
-if (debug == true) System.out.println("found a " + o.getClass().toString());
+if (debug == true) {
+	System.out.println("found a " + o.getClass().toString());
+}
             if (o.getClass().isArray())
             {
                 try
                 {
                     byte b[] = (byte[]) o;
                     String ret = ":: " + CBBase64.binaryToString(b, offset + 3);
-if (debug == true) System.out.println("phenomenal - identified and wrote '" + ret + "'");
+if (debug == true) {
+	System.out.println("phenomenal - identified and wrote '" + ret + "'");
+}
                     return ret;
                 }
                 catch (ClassCastException e)
                 {
-if (debug == true) System.out.println("unable to cast array to byte array.");
+if (debug == true) {
+	System.out.println("unable to cast array to byte array.");
+}
                 }
             }
             return o.toString();
@@ -140,15 +147,18 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
             String s = o.toString();
             int len = s.length();
 
-            if (len==0) return ": ";  // this shouldn't really happen; null attributes should be culled before we get here...
+            if (len==0) {
+				return ": ";  // this shouldn't really happen; null attributes should be culled before we get here...
+			}
 
             char test[] = new char[len];
             s.getChars(0,len,test,0);
 
             // run the rfc tests to see if this is a good and virtuous string
-            if ("\n\r :<".indexOf(s.charAt(0)) != -1)    // check for safe start char
-                base64Encode = true;
-            else
+            if ("\n\r :<".indexOf(s.charAt(0)) != -1) {
+				base64Encode = true;
+			}
+			else
             {
                 for (int i=0; i<len; i++)
                 {
@@ -161,8 +171,9 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
                 }
             }
 
-            if (s.charAt(s.length()-1)==' ')        // end space considered harmful
-                base64Encode = true;
+            if (s.charAt(s.length()-1)==' ') {
+				base64Encode = true;
+			}
 
             if (base64Encode)
             {
@@ -177,8 +188,9 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
                 }
                 return ":: " + s;
             }
-            else
-                return ": " + s;                        // return unmodified string.
+			else {
+				return ": " + s;                        // return unmodified string.
+			}
         }
     }
 
@@ -217,26 +229,34 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
           */            
          if ((originalPrefix != null) && (dn.endsWith(originalPrefix))) // which it jolly well should...
          {
-             if (debug == true) System.out.println("original DN = '" + dn + "'");
+             if (debug == true) {
+				System.out.println("original DN = '" + dn + "'");
+			}
              dn = dn.substring(0,dn.length()-originalPrefix.length()) + replacementPrefix;
-             if (debug == true) System.out.println("after replacement DN = '" + dn + "'");
+             if (debug == true) {
+				System.out.println("after replacement DN = '" + dn + "'");
+			}
          }
          
          Attribute oc;        // we treat the object class attribute
          oc = atts.get("oc"); // specially to ensure it is first after the dn.   
          if (oc != null)      // XXX do a name conversion...
          {
-             if (oc instanceof DXAttribute)
-                 ((DXAttribute)oc).setName("objectClass");
+             if (oc instanceof DXAttribute) {
+				((DXAttribute)oc).setName("objectClass");
+			}
          }
-         else                 // (mind you its bloody hard to track down...!)  
-             oc = atts.get("objectclass");  // so keep looking...
-         if (oc == null)
-             oc = atts.get("objectClass"); // this really bites.
+		else {
+			oc = atts.get("objectclass");  // so keep looking...
+		}
+         if (oc == null) {
+			oc = atts.get("objectClass"); // this really bites.
+		}
          if (oc == null)
          {
-             if (dn.endsWith("cn=schema"))  // XXX el dirty hack to allow schema to be sorta written out...
-                 oc = new BasicAttribute("oc","schema");
+             if (dn.endsWith("cn=schema")) {
+				oc = new BasicAttribute("oc","schema");
+			}
          }    
          
          if (oc == null)
@@ -245,20 +265,24 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
              return;
          }    
          
-         if (debug)
-             System.out.println("dn" + ldifEncode(dn, 2));
-         else
-             saveFile.write("dn" + ldifEncode(dn,2) + "\n");
+         if (debug) {
+			System.out.println("dn" + ldifEncode(dn, 2));
+		}
+		else {
+			saveFile.write("dn" + ldifEncode(dn,2) + "\n");
+		}
 
          
          
          NamingEnumeration ocs = oc.getAll();
          while (ocs.hasMore())
          {
-             if (debug)
-                 System.out.println(oc.getID() + ": " + ocs.next());
-             else    
-                 saveFile.write(oc.getID() + ldifEncode(ocs.next(), oc.getID().length()) + "\n");
+             if (debug) {
+				System.out.println(oc.getID() + ": " + ocs.next());
+			}
+			else {
+				saveFile.write(oc.getID() + ldifEncode(ocs.next(), oc.getID().length()) + "\n");
+			}
          }
          
          NamingEnumeration allAtts = atts.getAll();
@@ -269,8 +293,9 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
          {
              currentAtt = (Attribute) allAtts.next();
              boolean binary = false;
-             if (currentAtt instanceof DXAttribute)
-                 binary = ((DXAttribute)currentAtt).isBinary();
+             if (currentAtt instanceof DXAttribute) {
+				binary = ((DXAttribute)currentAtt).isBinary();
+			}
                  
              attName = currentAtt.getID();
              
@@ -298,10 +323,12 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
                          }    
                          else
                          {
-                             if (binary)
-                                 saveFile.write(attName + ldifEncode(value, attName.length(), true) + "\n");   
-                             else    
-                                 saveFile.write(attName + ldifEncode(value, attName.length()) + "\n");    
+                             if (binary) {
+								saveFile.write(attName + ldifEncode(value, attName.length(), true) + "\n");
+							}
+							else {
+								saveFile.write(attName + ldifEncode(value, attName.length()) + "\n");
+							}    
                          }    
                      }    
                  }
@@ -335,7 +362,9 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
         int attLen = attribute.length();
         
         // auto-translate 'oc' to 'objectClass'
-        if (attribute.equals("oc")) attribute = "objectClass";
+        if (attribute.equals("oc")) {
+			attribute = "objectClass";
+		}
         
         int startpos = 2;
  
@@ -346,13 +375,15 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
         else if (parseableLine.charAt(breakpos+1)==':')  // check for base64 encoded binary
         {
             value = getBase64Value(parseableLine, attLen, startpos, attribute);  // may return string or byte array!
-            if (value instanceof String == false)
-                isBinary = true;
+            if (value instanceof String == false) {
+				isBinary = true;
+			}
         }
         else
         {
-            if (parseableLine.charAt(attLen+1)!=' ') // again, may be a leading space, or may not...
-                startpos = 1;    
+            if (parseableLine.charAt(attLen+1)!=' ') {
+				startpos = 1;
+			}    
             value = parseableLine.substring(attLen+startpos);
             
             // expand the value parameters, including the urls
@@ -365,20 +396,24 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
             if (value instanceof String)
             {
                 DN dn = new DN((String)value);
-                if (dn.error())
-                    CBUtility.log("Error trying to initialise ldif DN: \n"+dn.getError());
-                else    
-                    newEntry.putDN(dn);
+                if (dn.error()) {
+					CBUtility.log("Error trying to initialise ldif DN: \n"+dn.getError());
+				}
+				else {
+					newEntry.putDN(dn);
+				}
             }    
             else    // this code should no longer be triggered, as utf8 conversion is done when data first read...
             {
                 try
                 {
                     DN dn = new DN(new String((byte[])value, "UTF8"));
-                    if (dn.error())
-                        CBUtility.log("Error trying to initialise ldif DN: \n"+dn.getError());
-                    else    
-                        newEntry.putDN(dn);
+                    if (dn.error()) {
+						CBUtility.log("Error trying to initialise ldif DN: \n"+dn.getError());
+					}
+					else {
+						newEntry.putDN(dn);
+					}
                 }
                 catch (UnsupportedEncodingException e) {} // can't happen?: UTF8 is mandatory...    
             }
@@ -408,8 +443,9 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
     {
         byte[] rawBinaryData;
 
-        if (parseableLine.charAt(attLen+2) == ' ') // may be ::XXXX or :: XXXX -> so must adjust for possible space
-            startpos = 3;
+        if (parseableLine.charAt(attLen+2) == ' ') {
+			startpos = 3;
+		}
 
         rawBinaryData = CBBase64.stringToBinary(parseableLine.substring(attribute.length()+startpos));
 
@@ -424,8 +460,9 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
             testBytes = new byte[256];
             System.arraycopy(rawBinaryData, 0, testBytes, 0, 256);
         }
-        else
-            testBytes = rawBinaryData;
+		else {
+			testBytes = rawBinaryData;
+		}
 
         /*
          *    Make a (slightly ad-hoc) check to see if it is actually a utf-8 string *pretending* to by bytes...
@@ -498,8 +535,9 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
             // unusual - end of file reached, and the file *doesn't* have
             // a blank line at the end - hence a special case while we write 
             // the last entry
-            if (oldLine != null && oldLine.trim().length()>0)
-                ldifDecode(oldLine, entry);
+            if (oldLine != null && oldLine.trim().length()>0) {
+				ldifDecode(oldLine, entry);
+			}
                 
             return entry;                    // should be last entry
         }
@@ -515,13 +553,13 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
 	 */
 	public Object expandValueParams(Object value)
 	{
-		if (params != null)
+		if (this.params != null)
 		{ 
-			Enumeration keys = params.keys();
+			Enumeration keys = this.params.keys();
 			while (keys.hasMoreElements())
 			{
 				String key = (String)keys.nextElement();
-				String keyvalue = (String)params.get(key);
+				String keyvalue = (String)this.params.get(key);
 				
 				// check for the key
 				String oldValue = (String)value;
@@ -537,7 +575,7 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
 		}
 		
 		// load the file if the value is a url		
-		if (filedir != null)
+		if (this.filedir != null)
 		{
 			// check if it is a file, i.e. look for "< file:"
 			String oldValue = (String)value;
@@ -547,7 +585,7 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
 			
    			if (index > -1)
 			{
-				String filename = filedir + oldValue.substring(index+9, oldValue.length());
+				String filename = this.filedir + oldValue.substring(index+9, oldValue.length());
 				File file = new File(filename);
 				try
 				{	
@@ -558,7 +596,9 @@ if (debug == true) System.out.println("unable to cast array to byte array.");
 					{
 						byte[] bytes = new byte[length];
 						int read = input.read(bytes);
-						if (read > 0)	value = bytes;
+						if (read > 0) {
+							value = bytes;
+						}
 					}
 					input.close();
 				} 

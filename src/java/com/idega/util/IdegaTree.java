@@ -8,7 +8,7 @@
 
  * Copyright:    Copyright (c) idega<p>
 
- * Company:      idega margmiðlun<p>
+ * Company:      idega margmiï¿½lun<p>
 
  * @author idega 2000 - idega team - <a href="mailto:gummi@idega.is">gummi@idega.is</a>
 
@@ -34,7 +34,7 @@ public class IdegaTree {
 
   public IdegaTree() {
 
-     theTree = new Hashtable();
+     this.theTree = new Hashtable();
 
   }
 
@@ -44,7 +44,7 @@ public class IdegaTree {
 
   public Object getNode(Object node_id){
 
-    IdegaNode myNode = (IdegaNode)(theTree.get(node_id));
+    IdegaNode myNode = (IdegaNode)(this.theTree.get(node_id));
 
     return myNode.getNode();
 
@@ -54,7 +54,7 @@ public class IdegaTree {
 
   public Vector getChildren_ids(Object node_id){
 
-    IdegaNode myNode = (IdegaNode)(theTree.get(node_id));
+    IdegaNode myNode = (IdegaNode)(this.theTree.get(node_id));
 
     return myNode.getChildren_ids();
 
@@ -64,7 +64,7 @@ public class IdegaTree {
 
   public Vector getChildrens(Object node_id){
 
-    IdegaNode myNode = (IdegaNode)(theTree.get(node_id));
+    IdegaNode myNode = (IdegaNode)(this.theTree.get(node_id));
 
     Vector Child_ids = myNode.getChildren_ids();
 
@@ -90,7 +90,7 @@ public class IdegaTree {
 
   public Object getParentID(Object node_id){
 
-    IdegaNode myNode = (IdegaNode)(theTree.get(node_id));
+    IdegaNode myNode = (IdegaNode)(this.theTree.get(node_id));
 
     return myNode.getParentID();
 
@@ -102,9 +102,9 @@ public class IdegaTree {
 
   /**
 
-   * Þetta fall byr til tóman hnut sem foreldri ef það er ekki til fyrir og
+   * ï¿½etta fall byr til tï¿½man hnut sem foreldri ef ï¿½aï¿½ er ekki til fyrir og
 
-   * skrifar þar af leiðandi yfir hnut komi annar með sama ID.
+   * skrifar ï¿½ar af leiï¿½andi yfir hnut komi annar meï¿½ sama ID.
 
    */
 
@@ -114,25 +114,25 @@ public class IdegaTree {
 
 
 
-    if (!theTree.contains(node_id)){
+    if (!this.theTree.contains(node_id)){
 
       IdegaNode myNode = new IdegaNode(parent_id);
 
       myNode.addNode(theObject);
 
-      theTree.put(node_id,myNode);
+      this.theTree.put(node_id,myNode);
 
       addChilde( node_id, parent_id);
 
     } else{
 
-      IdegaNode myNode = (IdegaNode)(theTree.remove(node_id));
+      IdegaNode myNode = (IdegaNode)(this.theTree.remove(node_id));
 
       myNode.addNode(theObject);
 
       myNode.setParent(parent_id);
 
-      theTree.put(node_id,myNode);
+      this.theTree.put(node_id,myNode);
 
       addChilde( node_id, parent_id);
 
@@ -146,7 +146,7 @@ public class IdegaTree {
 
   /**
 
-   * Þetta fall krefst þess að foreldri se til i trenu
+   * ï¿½etta fall krefst ï¿½ess aï¿½ foreldri se til i trenu
 
    */
 
@@ -158,7 +158,7 @@ public class IdegaTree {
 
     myNode.addNode(theObject);
 
-    theTree.put(node_id,myNode);
+    this.theTree.put(node_id,myNode);
 
     addChildeInOrder( node_id, parent_id);
 
@@ -168,7 +168,7 @@ public class IdegaTree {
 
   /**
 
-   * eiðir hnut en færir börn sin a foreldri sitt
+   * eiï¿½ir hnut en fï¿½rir bï¿½rn sin a foreldri sitt
 
    */
 
@@ -176,7 +176,7 @@ public class IdegaTree {
 
   public void removeNode(Object node_id){
 
-    IdegaNode thisNode = (IdegaNode)(theTree.remove(node_id));
+    IdegaNode thisNode = (IdegaNode)(this.theTree.remove(node_id));
 
     removeChilde( node_id, thisNode.getParentID());  //from Parent
 
@@ -194,7 +194,7 @@ public class IdegaTree {
 
   /**
 
-   * eiðir hnut og öllu þvi sem fyrir neðan hann er (ekki utfært)
+   * eiï¿½ir hnut og ï¿½llu ï¿½vi sem fyrir neï¿½an hann er (ekki utfï¿½rt)
 
    */
 
@@ -202,7 +202,7 @@ public class IdegaTree {
 
    public void removeNodesTree(Object node_id){
 
-    IdegaNode thisNode = (IdegaNode)(theTree.remove(node_id));
+    IdegaNode thisNode = (IdegaNode)(this.theTree.remove(node_id));
 
     removeChilde( node_id, thisNode.getParentID());  //from Parent
 
@@ -216,7 +216,7 @@ public class IdegaTree {
 
   /**
 
-   * Kallar á toString() fallið ur Hashtable hlutnum sem heldur utan um tréð.
+   * Kallar ï¿½ toString() falliï¿½ ur Hashtable hlutnum sem heldur utan um trï¿½ï¿½.
 
    */
 
@@ -224,23 +224,23 @@ public class IdegaTree {
 
   public String toString(){
 
-    return theTree.toString();
+    return this.theTree.toString();
 
   }
 
 
 
-  //  ### Private - Föll  ###
+  //  ### Private - Fï¿½ll  ###
 
 
 
   private void removeChilde(Object childe, Object parent){  // from parent
 
-    IdegaNode myNode = (IdegaNode)(theTree.remove(parent));
+    IdegaNode myNode = (IdegaNode)(this.theTree.remove(parent));
 
     myNode.removeChildren(childe);
 
-    theTree.put(parent, myNode);
+    this.theTree.put(parent, myNode);
 
   }
 
@@ -248,13 +248,13 @@ public class IdegaTree {
 
   private void addChilde( Object childe, Object parent){
 
-    if (theTree.contains(parent)){
+    if (this.theTree.contains(parent)){
 
-      IdegaNode myNode = (IdegaNode)(theTree.remove(parent));
+      IdegaNode myNode = (IdegaNode)(this.theTree.remove(parent));
 
       myNode.addChildren(childe);
 
-      theTree.put( parent, myNode);
+      this.theTree.put( parent, myNode);
 
     } else{
 
@@ -262,7 +262,7 @@ public class IdegaTree {
 
       myNode.addChildren(childe);
 
-      theTree.put( parent, myNode);
+      this.theTree.put( parent, myNode);
 
     }
 
@@ -272,11 +272,11 @@ public class IdegaTree {
 
   private void addChildeInOrder(Object childe, Object parent){
 
-    IdegaNode myNode = (IdegaNode)(theTree.remove(parent));
+    IdegaNode myNode = (IdegaNode)(this.theTree.remove(parent));
 
     myNode.addChildren(childe);
 
-    theTree.put(parent, myNode);
+    this.theTree.put(parent, myNode);
 
   }
 
@@ -300,11 +300,11 @@ public class IdegaTree {
 
     public IdegaNode(Object parent_id){
 
-      myParentID = parent_id;
+      this.myParentID = parent_id;
 
-      childeIDs = new Vector();
+      this.childeIDs = new Vector();
 
-      childeIDs.trimToSize();
+      this.childeIDs.trimToSize();
 
     }
 
@@ -312,9 +312,9 @@ public class IdegaTree {
 
     public IdegaNode(){
 
-      childeIDs = new Vector();
+      this.childeIDs = new Vector();
 
-      childeIDs.trimToSize();
+      this.childeIDs.trimToSize();
 
     }
 
@@ -340,7 +340,7 @@ public class IdegaTree {
 
     public void setParent(Object parent_id){
 
-      myParentID = parent_id;
+      this.myParentID = parent_id;
 
     }
 
@@ -348,9 +348,9 @@ public class IdegaTree {
 
     public void addChildren( Object children_id ){
 
-      childeIDs.add(children_id);
+      this.childeIDs.add(children_id);
 
-      childeIDs.trimToSize();
+      this.childeIDs.trimToSize();
 
     }
 
@@ -358,7 +358,7 @@ public class IdegaTree {
 
     public void addNode( Object Node ){
 
-      theNode = Node;
+      this.theNode = Node;
 
     }
 
@@ -366,7 +366,7 @@ public class IdegaTree {
 
     public Object getNode(){
 
-      return theNode;
+      return this.theNode;
 
     }
 
@@ -374,7 +374,7 @@ public class IdegaTree {
 
     public boolean hasChildren(){
 
-      return (childeIDs.size() > 0);
+      return (this.childeIDs.size() > 0);
 
     }
 
@@ -382,9 +382,9 @@ public class IdegaTree {
 
     public boolean removeChildren( Object children_id ){
 
-      boolean temp = childeIDs.remove(children_id);
+      boolean temp = this.childeIDs.remove(children_id);
 
-      childeIDs.trimToSize();
+      this.childeIDs.trimToSize();
 
       return temp;
 
@@ -394,7 +394,7 @@ public class IdegaTree {
 
     public Vector getChildren_ids(){
 
-      return childeIDs;
+      return this.childeIDs;
 
     }
 
@@ -402,7 +402,7 @@ public class IdegaTree {
 
     public Object getParentID(){
 
-      return myParentID;
+      return this.myParentID;
 
     }
 

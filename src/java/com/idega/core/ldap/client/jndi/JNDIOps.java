@@ -35,7 +35,7 @@ public class JNDIOps
 
     public JNDIOps(DirContext c)
     {
-        ctx = c;
+        this.ctx = c;
     }
 
     /**
@@ -48,7 +48,7 @@ public class JNDIOps
     public JNDIOps(Properties env)
         throws NamingException
     {
-        ctx = openContext(env);                         // create the connection!
+        this.ctx = openContext(env);                         // create the connection!
     }
 
     /**
@@ -65,7 +65,7 @@ public class JNDIOps
 
         setupBasicProperties(env, url);       // set up the bare minimum parameters
 
-        ctx = openContext(env);                         // create the connection!
+        this.ctx = openContext(env);                         // create the connection!
     }
 
     /**
@@ -89,7 +89,7 @@ public class JNDIOps
 
         setupSimpleSecurityProperties(env, userDN, pwd);  // add the username + password parameters
 
-        ctx = openContext(env);             // create the connection !
+        this.ctx = openContext(env);             // create the connection !
     }
 
     /**
@@ -125,7 +125,7 @@ public class JNDIOps
         setupSSLProperties(env, cacerts,      // add the SSL ('ca...') and possible SASL ('client...') parameters
                     clientcerts, caKeystorePwd, clientKeystorePwd, caKeystoreType, clientKeystoreType, tracing, sslTracing);
 
-        ctx = openContext(env);            // create the connection !
+        this.ctx = openContext(env);            // create the connection !
     }
 
     /**
@@ -143,8 +143,9 @@ public class JNDIOps
     public static void setupBasicProperties(Properties env, String url) throws NamingException
     {
         // sanity check
-        if (url == null)
-            throw new NamingException("URL not specified in openContext()!");
+        if (url == null) {
+			throw new NamingException("URL not specified in openContext()!");
+		}
 
         env.put("java.naming.ldap.version", "3");               // always use ldap v3
 
@@ -217,8 +218,9 @@ public class JNDIOps
     {
 
         // sanity check
-        if (cacerts == null)
-            throw new NamingException("Cannot use SSL without a trusted CA certificates JKS file.");
+        if (cacerts == null) {
+			throw new NamingException("Cannot use SSL without a trusted CA certificates JKS file.");
+		}
 
         // the exact protocol (e.g. "TLS") set in JndiSocketFactory
         env.put(Context.SECURITY_PROTOCOL, "ssl");
@@ -239,11 +241,13 @@ public class JNDIOps
         }
 
         // set the tracing level now, since (wierdly) it can't be set once the connection is open.
-        if (tracing)
-            env.put("com.sun.jndi.ldap.trace.ber", System.err);
+        if (tracing) {
+			env.put("com.sun.jndi.ldap.trace.ber", System.err);
+		}
 
-        if (sslTracing)
-            System.setProperty("javax.net.debug=all", "all");
+        if (sslTracing) {
+			System.setProperty("javax.net.debug=all", "all");
+		}
     }
 
 
@@ -261,8 +265,9 @@ public class JNDIOps
     {
         DirContext ctx = new InitialDirContext(env);
 
-        if (ctx == null)
-            throw new NamingException("Internal Error with jndi connection: No Context was returned, however no exception was reported by jndi.");
+        if (ctx == null) {
+			throw new NamingException("Internal Error with jndi connection: No Context was returned, however no exception was reported by jndi.");
+		}
 
         return ctx;
     }
@@ -287,8 +292,9 @@ public class JNDIOps
          Name rdn = newDN.getSuffix(newDN.size()-1);
          Name oldRdn = oldDN.getSuffix(oldDN.size()-1);
 
-         if (oldRdn.toString().equals(rdn.toString()) == false) // do nothing if names the same.
-             ctx.rename (oldDN, rdn);
+         if (oldRdn.toString().equals(rdn.toString()) == false) {
+			this.ctx.rename (oldDN, rdn);
+		}
      }
 
 
@@ -319,7 +325,7 @@ public class JNDIOps
      public void addEntry (Name dn, Attributes atts)
         throws NamingException
      {
-         ctx.createSubcontext (dn, atts);
+         this.ctx.createSubcontext (dn, atts);
      }
 
      /**
@@ -332,7 +338,7 @@ public class JNDIOps
      public void deleteEntry (Name dn)
         throws NamingException
      {
-         ctx.destroySubcontext (dn);
+         this.ctx.destroySubcontext (dn);
      }
 
 
@@ -348,7 +354,7 @@ public class JNDIOps
      public boolean exists(Name nodeDN)
         throws NamingException
      {
-         return (ctx.lookup(nodeDN)!=null);
+         return (this.ctx.lookup(nodeDN)!=null);
 
          /* FUTURE - DSML bug
          catch (NullPointerException e)          //TE: thrown by sun at com.sun.jndi.dsmlv2.soap.DsmlSoapCtx.c_lookup(DsmlSoapCtx.java:571)
@@ -382,7 +388,7 @@ public class JNDIOps
      public synchronized Attributes read(Name dn, String[] returnAttributes)
         throws NamingException
      {
-         return ctx.getAttributes(dn, returnAttributes);
+         return this.ctx.getAttributes(dn, returnAttributes);
      }
 
      /**
@@ -399,7 +405,7 @@ public class JNDIOps
      public void modifyAttributes(Name dn, int mod_type, Attributes attr)
         throws NamingException
      {
-         ctx.modifyAttributes(dn, mod_type, attr);
+         this.ctx.modifyAttributes(dn, mod_type, attr);
      }
 
 
@@ -414,7 +420,7 @@ public class JNDIOps
      public void modifyAttributes(Name dn, ModificationItem[] modList)
         throws NamingException
      {
-             ctx.modifyAttributes(dn, modList);
+             this.ctx.modifyAttributes(dn, modList);
      }
 
      /**
@@ -599,7 +605,7 @@ public class JNDIOps
 
          constraints.setReturningAttributes(returnAttributes);
 
-         NamingEnumeration results = ctx.search(searchbase, filter, null);
+         NamingEnumeration results = this.ctx.search(searchbase, filter, null);
 
          return results;
 
@@ -637,8 +643,9 @@ public class JNDIOps
      {
          NamingEnumeration result = null;
 
-         if (returnAttributes != null  &&  returnAttributes.length == 0)
-             returnAttributes = new String[] {"objectClass"};
+         if (returnAttributes != null  &&  returnAttributes.length == 0) {
+			returnAttributes = new String[] {"objectClass"};
+		}
 
          /* specify search constraints to search subtree */
          SearchControls constraints = new SearchControls();
@@ -649,7 +656,7 @@ public class JNDIOps
 
          constraints.setReturningAttributes(returnAttributes);
 
-         result = ctx.search(searchbase, filter, constraints);
+         result = this.ctx.search(searchbase, filter, constraints);
 
          return result;
 
@@ -693,8 +700,9 @@ public class JNDIOps
      {
          NamingEnumeration result = null;
 
-         if (returnAttributes != null  &&  returnAttributes.length == 0)
-             returnAttributes = new String[] {"objectClass"};
+         if (returnAttributes != null  &&  returnAttributes.length == 0) {
+			returnAttributes = new String[] {"objectClass"};
+		}
 
          /* specify search constraints to search subtree */
          SearchControls constraints = new SearchControls();
@@ -705,7 +713,7 @@ public class JNDIOps
 
          constraints.setReturningAttributes(returnAttributes);
 
-         result = ctx.search(searchbase, filter, constraints);
+         result = this.ctx.search(searchbase, filter, constraints);
 
          return result;
      }
@@ -726,15 +734,15 @@ public class JNDIOps
         String value = (deleteOldRDN) ? "true" : "false" ;
         try
         {
-            ctx.addToEnvironment("java.naming.ldap.deleteRDN", value);
+            this.ctx.addToEnvironment("java.naming.ldap.deleteRDN", value);
 
             renameEntry(OldDN, NewDN);
 
-            ctx.addToEnvironment("java.naming.ldap.deleteRDN", "false");  // reset to default of 'false' afterwards.
+            this.ctx.addToEnvironment("java.naming.ldap.deleteRDN", "false");  // reset to default of 'false' afterwards.
         }
         catch (NamingException e)
         {
-            ctx.addToEnvironment("java.naming.ldap.deleteRDN", "false");  // reset to default of 'false' afterwards.
+            this.ctx.addToEnvironment("java.naming.ldap.deleteRDN", "false");  // reset to default of 'false' afterwards.
             throw e;
         }
     }
@@ -761,7 +769,7 @@ public class JNDIOps
      public void renameEntry (String oldDN, String newDN)
         throws NamingException
      {
-          ctx.rename (oldDN, newDN);
+          this.ctx.rename (oldDN, newDN);
      }
 
 
@@ -791,7 +799,7 @@ public class JNDIOps
      public void addEntry (String dn, Attributes atts)
         throws NamingException
      {
-         ctx.createSubcontext (dn, atts);
+         this.ctx.createSubcontext (dn, atts);
      }
 
      /**
@@ -804,7 +812,7 @@ public class JNDIOps
      public void deleteEntry (String dn)
         throws NamingException
      {
-         ctx.destroySubcontext (dn);
+         this.ctx.destroySubcontext (dn);
      }
 
 
@@ -820,7 +828,7 @@ public class JNDIOps
      public boolean exists(String nodeDN)
         throws NamingException
      {
-         return (ctx.lookup(nodeDN)!=null);
+         return (this.ctx.lookup(nodeDN)!=null);
 
          /* FUTURE - DSML bug
          catch (NullPointerException e)          //TE: thrown by sun at com.sun.jndi.dsmlv2.soap.DsmlSoapCtx.c_lookup(DsmlSoapCtx.java:571)
@@ -856,7 +864,7 @@ public class JNDIOps
      {
      	
      	Name name = getNameFromDNString(dn);
-         return ctx.getAttributes(name, returnAttributes);
+         return this.ctx.getAttributes(name, returnAttributes);
      }
 
      /**
@@ -873,7 +881,7 @@ public class JNDIOps
      public void modifyAttributes(String dn, int mod_type, Attributes attr)
         throws NamingException
      {
-         ctx.modifyAttributes(dn, mod_type, attr);
+         this.ctx.modifyAttributes(dn, mod_type, attr);
      }
 
 
@@ -888,7 +896,7 @@ public class JNDIOps
      public void modifyAttributes(String dn, ModificationItem[] modList)
         throws NamingException
      {
-             ctx.modifyAttributes(dn, modList);
+             this.ctx.modifyAttributes(dn, modList);
      }
 
      /**
@@ -1073,7 +1081,7 @@ public class JNDIOps
 
      private Name getNameFromDNString(String searchbase) throws NamingException {
 		// Get the parser for this namespace
- 	    NameParser ldapParser = ctx.getNameParser("");
+ 	    NameParser ldapParser = this.ctx.getNameParser("");
  	    // Parse name
  	    Name compound = ldapParser.parse(searchbase);
 		return compound;
@@ -1111,8 +1119,9 @@ public class JNDIOps
      {
          NamingEnumeration result = null;
 
-         if (returnAttributes != null  &&  returnAttributes.length == 0)
-             returnAttributes = new String[] {"objectClass"};
+         if (returnAttributes != null  &&  returnAttributes.length == 0) {
+			returnAttributes = new String[] {"objectClass"};
+		}
 
          /* specify search constraints to search subtree */
          SearchControls constraints = new SearchControls();
@@ -1123,7 +1132,7 @@ public class JNDIOps
 
          constraints.setReturningAttributes(returnAttributes);
 
-         result = ctx.search(searchbase, filter, constraints);
+         result = this.ctx.search(searchbase, filter, constraints);
 
          return result;
 
@@ -1167,8 +1176,9 @@ public class JNDIOps
      {
          NamingEnumeration result = null;
 
-         if (returnAttributes != null  &&  returnAttributes.length == 0)
-             returnAttributes = new String[] {"objectClass"};
+         if (returnAttributes != null  &&  returnAttributes.length == 0) {
+			returnAttributes = new String[] {"objectClass"};
+		}
 
          /* specify search constraints to search subtree */
          SearchControls constraints = new SearchControls();
@@ -1179,7 +1189,7 @@ public class JNDIOps
 
          constraints.setReturningAttributes(returnAttributes);
 
-         result = ctx.search(searchbase, filter, constraints);
+         result = this.ctx.search(searchbase, filter, constraints);
 
          return result;
      }
@@ -1194,9 +1204,11 @@ public class JNDIOps
      public void close()
         throws NamingException
      {
-         if (ctx == null) return;  // it is not an error to multiply disconnect.
+         if (this.ctx == null) {
+			return;  // it is not an error to multiply disconnect.
+		}
 
-         ctx.close();
+         this.ctx.close();
      }
 
     /**
@@ -1214,15 +1226,15 @@ public class JNDIOps
         String value = (deleteOldRDN) ? "true" : "false" ;
         try
         {
-            ctx.addToEnvironment("java.naming.ldap.deleteRDN", value);
+            this.ctx.addToEnvironment("java.naming.ldap.deleteRDN", value);
 
             renameEntry(OldDN, NewDN);
 
-            ctx.addToEnvironment("java.naming.ldap.deleteRDN", "false");  // reset to default of 'false' afterwards.
+            this.ctx.addToEnvironment("java.naming.ldap.deleteRDN", "false");  // reset to default of 'false' afterwards.
         }
         catch (NamingException e)
         {
-            ctx.addToEnvironment("java.naming.ldap.deleteRDN", "false");  // reset to default of 'false' afterwards.
+            this.ctx.addToEnvironment("java.naming.ldap.deleteRDN", "false");  // reset to default of 'false' afterwards.
             throw e;  // rethrow exception...
         }
     }

@@ -1,5 +1,5 @@
 /*
- * $Id: Block.java,v 1.70 2005/08/04 11:22:24 sigtryggur Exp $
+ * $Id: Block.java,v 1.70.2.1 2007/01/12 19:31:37 idegaweb Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -35,10 +35,10 @@ import com.idega.presentation.text.Text;
  * their functionality is done with the main() method in old style idegaWeb.
  * This class has functionality regarding caching and how the main method is processed in JSF.
  * 
- * Last modified: $Date: 2005/08/04 11:22:24 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2007/01/12 19:31:37 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.70 $
+ * @version $Revision: 1.70.2.1 $
  */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
@@ -104,20 +104,24 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	/////// target code begins ////////////
 
 	public void setTargetObjectInstance(ICObjectInstance instance) {
-		if (instance != null)
+		if (instance != null) {
 			this.targetObjInst = instance.getID();
+		}
 	}
 
 	public int getTargetObjectInstance() {
-		if (targetObjInst > 0)
-			return targetObjInst;
-		else
+		if (this.targetObjInst > 0) {
+			return this.targetObjInst;
+		}
+		else {
 			return getICObjectInstanceID();
+		}
 	}
 
 	public void setAsObjectInstanceTarget(Link link) {
-		if (targetObjInst > 0)
+		if (this.targetObjInst > 0) {
 			link.setTargetObjectInstance(getTargetObjectInstance());
+		}
 	}
 
 	public boolean isTarget() {
@@ -257,7 +261,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 	/**@ todo how do this.cacheKey and setCacheKey work together??**/
 	public void setCacheable(String cacheKey, long millisecondsInterval) {
-		cacheable = true;
+		this.cacheable = true;
 		this.cacheKey = cacheKey;
 		this.cacheInterval = millisecondsInterval;
 	}
@@ -275,38 +279,42 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	
 	public void endCacheing(IWContext iwc, StringBuffer buffer) {
 		iwc.setCacheing(false);
-		IWCacheManager.getInstance(iwc.getIWMainApplication()).setObject(getOriginalCacheKey(), getDerivedCacheKey(), buffer, cacheInterval);
+		IWCacheManager.getInstance(iwc.getIWMainApplication()).setObject(getOriginalCacheKey(), getDerivedCacheKey(), buffer, this.cacheInterval);
 	}
 
 	public boolean hasEditPermission() {
-		return editPermission;
+		return this.editPermission;
 	}
 
 	public void _main(IWContext iwc) throws Exception {
-		editPermission = iwc.hasEditPermission(this);
-		manager = IWStyleManager.getInstance();
+		this.editPermission = iwc.hasEditPermission(this);
+		this.manager = IWStyleManager.getInstance();
 
-		if (debugParameters) {
+		if (this.debugParameters) {
 			debugParameters(iwc);
 		}
 
-		if (iwc.isParameterSet(TARGET_OBJ_INS))
-			targetObjInstset = Integer.parseInt(iwc.getParameter(TARGET_OBJ_INS));
+		if (iwc.isParameterSet(TARGET_OBJ_INS)) {
+			this.targetObjInstset = Integer.parseInt(iwc.getParameter(TARGET_OBJ_INS));
+		}
 
-		if (targetObjInst <= 0)
-			targetObjInst = getParentObjectInstanceID();
+		if (this.targetObjInst <= 0) {
+			this.targetObjInst = getParentObjectInstanceID();
+		}
 
 		if (getStyleNames() != null) {
 			String prefix = getBundle(this.getIWUserContext()).getBundleName();
-			if (prefix != this.IW_CORE_BUNDLE_IDENTIFIER)
+			if (prefix != Builderaware.IW_CORE_BUNDLE_IDENTIFIER) {
 				prefix = prefix.substring(prefix.lastIndexOf(".") + 1) + "_";
+			}
 
 			Map styles = getStyleNames();
 			Iterator iter = styles.keySet().iterator();
 			while (iter.hasNext()) {
 				String style = (String) iter.next();
-				if (!manager.isStyleSet(prefix + style))
-					manager.setStyle(prefix + style, (String) styles.get(style));
+				if (!this.manager.isStyleSet(prefix + style)) {
+					this.manager.setStyle(prefix + style, (String) styles.get(style));
+				}
 			}
 		}
 
@@ -366,14 +374,14 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	 * @param iwc
 	 */
 	protected void printPreCachedContent(IWContext iwc){
-		IWCacheManager cacher = iwc.getIWMainApplication().getIWCacheManager();
+		IWCacheManager cacher = IWMainApplication.getIWCacheManager();
 		StringBuffer buffer = (StringBuffer) cacher.getObject(getDerivedCacheKey());
 		//iwc.getWriter().print(buffer.toString());
 		print(buffer.toString());
 	}
 	
 	public Text getStyleText(String text, String styleName) {
-		return (Text) getStyleText(new Text(text),styleName);	
+		return getStyleText(new Text(text),styleName);	
 	}
 	
 	public Text getStyleText(Text text, String styleName) {
@@ -381,7 +389,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 	
 	public Link getStyleLink(String link, String styleName) {
-		return (Link) getStyleLink(new Link(link),styleName);	
+		return getStyleLink(new Link(link),styleName);	
 	}
 	
 	public Link getStyleLink(Link link, String styleName) {
@@ -389,7 +397,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 	
 	public PresentationObject getStyleObject(PresentationObject object, String styleName) {
-		return (PresentationObject) setStyle(object, styleName);
+		return setStyle(object, styleName);
 	}
 	
 	/**
@@ -401,16 +409,18 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	private String getStyleName(String styleName, boolean isLink){
 		if ( getIWUserContext() != null ) {
 			String prefix = getBundle(getIWUserContext()).getBundleName();
-			if (prefix != this.IW_CORE_BUNDLE_IDENTIFIER) {
+			if (prefix != Builderaware.IW_CORE_BUNDLE_IDENTIFIER) {
 				prefix = prefix.substring(prefix.lastIndexOf(".") + 1) + "_";
 				styleName = prefix+styleName;
 			}
 		}
-		if (manager != null) {
-			if (!manager.isStyleSet(styleName))
-				manager.setStyle(styleName, "");
-			if (autoCreateGlobalHoverStyles() && !manager.isStyleSet(styleName + ":hover"))
-				manager.setStyle(styleName + ":hover", "");
+		if (this.manager != null) {
+			if (!this.manager.isStyleSet(styleName)) {
+				this.manager.setStyle(styleName, "");
+			}
+			if (autoCreateGlobalHoverStyles() && !this.manager.isStyleSet(styleName + ":hover")) {
+				this.manager.setStyle(styleName + ":hover", "");
+			}
 		}
 					
 		return styleName;
@@ -437,7 +447,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 
 	private boolean isCacheValid(IWContext iwc) {
 		boolean valid = false;
-		if (cacheable) {
+		if (this.cacheable) {
 			if (getDerivedCacheKey() != null) {
 				valid = IWCacheManager.getInstance(iwc.getIWMainApplication()).isCacheValid(getDerivedCacheKey());
 			}
@@ -451,17 +461,17 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	 * @uml.property name="derivedCacheKey"
 	 */
 	protected String getDerivedCacheKey() {
-		return derivedCacheKey;
+		return this.derivedCacheKey;
 	}
 
 
 	private String getOriginalCacheKey() {
-		return cacheKey;
+		return this.cacheKey;
 	}
 
 	/** cache specifically for view right and for edit rights**/
 	private void setCacheKey(IWContext iwc) {
-		derivedCacheKey = cacheKey + getCacheState(iwc, getCachePrefixString(iwc));
+		this.derivedCacheKey = this.cacheKey + getCacheState(iwc, getCachePrefixString(iwc));
 		//    cacheKey += getCacheState(iwc,getCachePrefixString(iwc));
 		/**@todo remove debug**/
 		//debug("cachKey = "+cacheKey);
@@ -534,17 +544,19 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 
 	public void invalidateCache(IWMainApplication iwma) {
-		if (getDerivedCacheKey() != null)
-			iwma.getIWCacheManager().invalidateCache(getDerivedCacheKey());
+		if (getDerivedCacheKey() != null) {
+			IWMainApplication.getIWCacheManager().invalidateCache(getDerivedCacheKey());
+		}
 	}
 
 	/**
 	 * Default: iwc.getApplication().getIWCacheManager().invalidateCache(cacheKey+suffix);
 	 */
 	public void invalidateCache(IWContext iwc, String suffix) {
-		if (getOriginalCacheKey() != null)
-			iwc.getIWMainApplication().getIWCacheManager().invalidateCache(getOriginalCacheKey() + suffix);
+		if (getOriginalCacheKey() != null) {
+			IWMainApplication.getIWCacheManager().invalidateCache(getOriginalCacheKey() + suffix);
 		//debug("INVALIDATING : "+getCacheKey(iwc)+suffix);
+		}
 	}
 
 	public static Block getCacheableObject(PresentationObject objectToCache, String cacheKey, long millisecondsInterval) {
@@ -626,15 +638,15 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[10];
 		values[0] = super.saveState(context);
-		values[1] = (String)cacheKey;
-		values[2] = derivedCacheKey;
-		values[3] = Boolean.valueOf(cacheable);
-		values[4] = new Long(cacheInterval);
-		values[5] = new Integer(targetObjInst);
-		values[6] = new Integer(targetObjInstset);
-		values[7] = Boolean.valueOf(editPermission);
-		values[8] = Boolean.valueOf(debugParameters);
-		values[9] = blockWidth;
+		values[1] = this.cacheKey;
+		values[2] = this.derivedCacheKey;
+		values[3] = Boolean.valueOf(this.cacheable);
+		values[4] = new Long(this.cacheInterval);
+		values[5] = new Integer(this.targetObjInst);
+		values[6] = new Integer(this.targetObjInstset);
+		values[7] = Boolean.valueOf(this.editPermission);
+		values[8] = Boolean.valueOf(this.debugParameters);
+		values[9] = this.blockWidth;
 		return values;
 	}
 	
@@ -651,15 +663,15 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 	
 	public void setWidth(String width) {
-		blockWidth = width;
+		this.blockWidth = width;
 	}
 	
 	public String getWidth() {
-		return blockWidth;
+		return this.blockWidth;
 	}
 	
 	protected void setDefaultWidth() {
-		blockWidth = Table.HUNDRED_PERCENT;
+		this.blockWidth = Table.HUNDRED_PERCENT;
 	}
 	
 	

@@ -40,11 +40,11 @@ int lastParentNodeid;
 
 public TreeStructure(){
 
-	theTree = new Hashtable();
+	this.theTree = new Hashtable();
 
-	lastNodeid=0;
+	this.lastNodeid=0;
 
-	lastParentNodeid=0;
+	this.lastParentNodeid=0;
 
 }
 

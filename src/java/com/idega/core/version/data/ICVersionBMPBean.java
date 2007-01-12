@@ -232,8 +232,9 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	public Iterator getChildrenIterator() {
 	    Iterator it = null;
 	    Collection children = getChildren();
-	    if (children != null)
-	        it = children.iterator();
+	    if (children != null) {
+			it = children.iterator();
+		}
 	    return it;
 	}
 	/* (non-Javadoc)

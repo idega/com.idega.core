@@ -90,7 +90,7 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
 	}
 
     public Collection ejbFindAllLoginRecords(int loginID)throws FinderException{
-      String sql = "select * from "+this.getTableName()+" where "+this.getColumnLoginId()+" = "+loginID;
+      String sql = "select * from "+this.getTableName()+" where "+LoginRecordBMPBean.getColumnLoginId()+" = "+loginID;
       System.out.println("----------------");
       System.out.println(sql);
       System.out.println("----------------");
@@ -98,16 +98,18 @@ public class LoginRecordBMPBean extends com.idega.data.GenericEntity implements 
     }
     
     public int ejbHomeGetNumberOfLoginsByLoginID(int loginID) throws IDOException {
-      String sql = "select count(*) from "+this.getTableName()+" where "+this.getColumnLoginId()+" = "+loginID;
+      String sql = "select count(*) from "+this.getTableName()+" where "+LoginRecordBMPBean.getColumnLoginId()+" = "+loginID;
       return super.idoGetNumberOfRecords(sql);
     }
     
     public Integer ejbFindByLoginID(int loginID)throws FinderException{
-      Collection loginRecords = idoFindAllIDsByColumnOrderedBySQL(this.getColumnLoginId(),loginID);
+      Collection loginRecords = idoFindAllIDsByColumnOrderedBySQL(LoginRecordBMPBean.getColumnLoginId(),loginID);
       if(!loginRecords.isEmpty()){
         return (Integer)loginRecords.iterator().next();
       }
-      else throw new FinderException("File was not found");
+	else {
+		throw new FinderException("File was not found");
+	}
   }
     
     public java.sql.Date ejbHomeGetLastLoginByLoginID(Integer loginID) throws FinderException{

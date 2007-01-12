@@ -72,15 +72,15 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
      * Constructs and returns a CSSMenu with your presentationobject as the label
      */
     public CSSMenu createCSSMenu(String menuName, PresentationObject menuLabel) {
-        if(topMenuMap==null) {
-            topMenuMap = new LinkedHashMap();
+        if(this.topMenuMap==null) {
+            this.topMenuMap = new LinkedHashMap();
         }
         
-        CSSMenu menu = (CSSMenu)topMenuMap.get(menuName);
+        CSSMenu menu = (CSSMenu)this.topMenuMap.get(menuName);
         
         if(menu==null) {
             menu = new CSSMenu(menuName,menuLabel);
-            topMenuMap.put(menuName,menu);
+            this.topMenuMap.put(menuName,menu);
         }
         
         return menu;
@@ -130,7 +130,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
 		parentPage.addJavascriptURL(pathToMainScript);
 		
 		
-		if(addTestData) {
+		if(this.addTestData) {
 			//A little test code, 
 			//create a menu
 			CSSMenu level0101 = createCSSMenu("First top menu");
@@ -161,7 +161,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
     public void print(IWContext iwc) throws Exception {
         
         if(getMarkupLanguage().equals("HTML")) {
-	        if(topMenuMap!=null && !topMenuMap.isEmpty()) {
+	        if(this.topMenuMap!=null && !this.topMenuMap.isEmpty()) {
 	        	println("<script type=\"text/javascript\">\n ADXM.Add( \"menuList\", \"H\" ); \n </script>");
 	            print(prefix);
 	        
@@ -242,10 +242,10 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
         public void print(IWContext iwc) throws Exception {
             List children = getChildren();
             if(children!=null && !children.isEmpty()) {
-                topMenuItem.setStyleClass("submenu");
+                this.topMenuItem.setStyleClass("submenu");
                 
                 print(LI_START_TAG);
-                topMenuItem._print(iwc);
+                this.topMenuItem._print(iwc);
                 println(UL_START_TAG);
                 
                 //iterate through the children and print them to
@@ -271,7 +271,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
             else {
                 //topMenuItem.setStyleClass("menuitem");
                 print(LI_START_TAG);
-                topMenuItem._print(iwc);
+                this.topMenuItem._print(iwc);
                 print(LI_END_TAG);
             }
             
@@ -279,7 +279,7 @@ public class CSSMultiLevelMenu extends PresentationObjectContainer {
         
         
         public String getMenuName() {
-            return menuName;
+            return this.menuName;
         }
         
         public void setMenuName(String menuName) {

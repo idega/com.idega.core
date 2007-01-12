@@ -33,12 +33,13 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	}
 	
 	public IWTreeNode(String name,int ID,ICTreeNodeAddable parent){
-			childs = new ArrayList();
+			this.childs = new ArrayList();
 			this.Name = name;
 			//this.object = object;
 			this.ID = ID;
-			if(parent!=null)
+			if(parent!=null) {
 				parent.addChild(this);
+			}
 	}
 	
 	
@@ -55,8 +56,8 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	}
 	
 	public void setAsRootNode(){
-		path = "root";
-		parent = null;
+		this.path = "root";
+		this.parent = null;
 		internalID = 1;
 	}
 	
@@ -120,13 +121,13 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	 * @see com.idega.core.ICTreeNode#getParentNode()
 	 */
 	public ICTreeNode getParentNode() {
-		return parent;
+		return this.parent;
 	}
 	/**
 	 * @see com.idega.core.ICTreeNode#isLeaf()
 	 */
 	public boolean isLeaf() {
-		return childs.isEmpty();
+		return this.childs.isEmpty();
 	}
 	/**
 	 * @see com.idega.core.ICTreeNode#getNodeName()
@@ -145,15 +146,17 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	 * @see com.idega.core.ICTreeNode#getSiblingCount()
 	 */
 	public int getSiblingCount() {
-		if(parent!=null)
-			return parent.getChildCount()-1;
+		if(this.parent!=null) {
+			return this.parent.getChildCount()-1;
+		}
 		return 0;
 	}
 	
 	public String getNodePath(){
-		if(path==null)
-			path = generatePath(this);
-		return path;
+		if(this.path==null) {
+			this.path = generatePath(this);
+		}
+		return this.path;
 	}
 	
 	private String generatePath(ICTreeNode node){
@@ -168,28 +171,28 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	 * @param i
 	 */
 	public void setNodeID(int i) {
-		ID = i;
+		this.ID = i;
 	}
 
 	/**
 	 * @return
 	 */
 	public String getName() {
-		return Name;
+		return this.Name;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setName(String string) {
-		Name = string;
+		this.Name = string;
 	}
 
 	/**
 	 * @param string
 	 */
 	public void setNodePath(String string) {
-		path = string;
+		this.path = string;
 	}
 
 	/* (non-Javadoc)

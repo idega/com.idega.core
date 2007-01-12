@@ -12,7 +12,7 @@ import java.util.Hashtable;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -32,12 +32,12 @@ public abstract class UserGroupTab extends Table implements Collectable {
 
   public UserGroupTab() {
     super();
-    business = new UserBusiness();
+    this.business = new UserBusiness();
     init();
     this.setCellpadding(0);
     this.setCellspacing(0);
     this.setWidth("370");
-    fieldValues = new Hashtable();
+    this.fieldValues = new Hashtable();
     initializeFieldNames();
     initializeFields();
     initializeTexts();
@@ -58,25 +58,25 @@ public abstract class UserGroupTab extends Table implements Collectable {
   public abstract void initFieldContents();
 
   private void initProxyText(){
-    proxyText = new Text("");
-    proxyText.setFontSize(fontSize);
+    this.proxyText = new Text("");
+    this.proxyText.setFontSize(this.fontSize);
 
   }
 
   public Text getTextObject(){
-    if(proxyText == null){
+    if(this.proxyText == null){
       initProxyText();
     }
-    return (Text)proxyText.clone();
+    return (Text)this.proxyText.clone();
   }
 
   public void setGroupId(int id){
-    groupId = id;
+    this.groupId = id;
     initFieldContents();
   }
 
   public int getGroupId(){
-    return groupId;
+    return this.groupId;
   }
 
 

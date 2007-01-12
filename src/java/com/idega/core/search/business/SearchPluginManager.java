@@ -1,5 +1,5 @@
 /*
- * $Id: SearchPluginManager.java,v 1.3 2005/06/03 15:18:30 thomas Exp $ Created on Jan 18,
+ * $Id: SearchPluginManager.java,v 1.3.2.1 2007/01/12 19:33:01 idegaweb Exp $ Created on Jan 18,
  * 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import com.idega.repository.data.SingletonRepository;
 
 /**
  * 
- * Last modified: $Date: 2005/06/03 15:18:30 $ by $Author: thomas $
+ * Last modified: $Date: 2007/01/12 19:33:01 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki </a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.3.2.1 $
  */
 public class SearchPluginManager implements Singleton {
 
@@ -43,7 +43,7 @@ public class SearchPluginManager implements Singleton {
 	 */
 	protected SearchPluginManager() {
 		super();
-		searchPlugins = new HashMap();
+		this.searchPlugins = new HashMap();
 	}
 
 	public static SearchPluginManager getInstance() {
@@ -60,13 +60,13 @@ public class SearchPluginManager implements Singleton {
 				while (iter.hasNext()) {
 					obj = (ICObject) iter.next();
 					String className = obj.getClassName();
-					if (!searchPlugins.containsKey(className)) {
+					if (!this.searchPlugins.containsKey(className)) {
 						SearchPlugin searchPlugin;
 						try {
 							searchPlugin = (SearchPlugin) RefactorClassRegistry.forName(className).newInstance();
 							boolean success = searchPlugin.initialize(iwma);
 							if (success) {
-								searchPlugins.put(className, searchPlugin);
+								this.searchPlugins.put(className, searchPlugin);
 							}
 							else {
 								//Todo use logger
@@ -90,7 +90,7 @@ public class SearchPluginManager implements Singleton {
 			//no plugins
 			//e.printStackTrace();
 		}
-		return searchPlugins.values();
+		return this.searchPlugins.values();
 	}
 
 	/**
@@ -101,10 +101,10 @@ public class SearchPluginManager implements Singleton {
 	 */
 	public void addSearchPlugin(SearchPlugin plugin, IWMainApplication iwma) {
 		String className = plugin.getClass().getName();
-		if (!searchPlugins.containsKey(className)) {
+		if (!this.searchPlugins.containsKey(className)) {
 			boolean success = plugin.initialize(iwma);
 			if (success) {
-				searchPlugins.put(className,plugin);
+				this.searchPlugins.put(className,plugin);
 			}
 			else {
 				//Todo use logger

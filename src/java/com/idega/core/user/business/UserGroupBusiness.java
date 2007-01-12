@@ -13,14 +13,16 @@ import com.idega.core.data.GenericGroup;
 import com.idega.core.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.data.EntityFinder;
+import com.idega.data.GenericEntity;
 import com.idega.presentation.IWContext;
+import com.idega.user.data.UserBMPBean;
 
 /**
  * Title:        
  * Description: The main business class for Group management in the idegaWeb User system.
  * Copyright:    Idega Software Copyright (c) 2001
  * Company:      Idega Software
- * @author idega team <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author idega team <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -35,7 +37,7 @@ public class UserGroupBusiness {
     try {
       //filter
       String[] groupsNotToReturn = new String[1];
-      groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+      groupsNotToReturn[0] = ((UserGroupRepresentative)GenericEntity.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
       //filter end
       return UserGroupBusiness.getGroups(groupsNotToReturn,false,iwc);
       //return EntityFinder.findAll(com.idega.core.data.GenericGroupBMPBean.getStaticInstance());
@@ -50,8 +52,8 @@ public class UserGroupBusiness {
     try {
       //filter
       String[] groupsNotToReturn = new String[2];
-      groupsNotToReturn[0] = ((GenericGroup)com.idega.core.data.GenericGroupBMPBean.getStaticInstance(GenericGroup.class)).getGroupTypeValue();
-      groupsNotToReturn[0] = ((PermissionGroup)com.idega.core.accesscontrol.data.PermissionGroupBMPBean.getStaticInstance(PermissionGroup.class)).getGroupTypeValue();
+      groupsNotToReturn[0] = ((GenericGroup)GenericEntity.getStaticInstance(GenericGroup.class)).getGroupTypeValue();
+      groupsNotToReturn[0] = ((PermissionGroup)GenericEntity.getStaticInstance(PermissionGroup.class)).getGroupTypeValue();
       //filter end
       return UserGroupBusiness.getGroups(groupsNotToReturn,true,iwc);
     }
@@ -196,7 +198,7 @@ public class UserGroupBusiness {
   public static List getGroupsContaining(GenericGroup group) throws SQLException {
     //filter
     String[] groupsNotToReturn = new String[1];
-    groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    groupsNotToReturn[0] = ((UserGroupRepresentative)GenericEntity.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
     //filter end
     return UserGroupBusiness.getGroupsContaining(group,groupsNotToReturn,false);
   }
@@ -314,7 +316,7 @@ public class UserGroupBusiness {
   public static List getGroupsContained(GenericGroup group) throws SQLException{
     //filter
     String[] groupsNotToReturn = new String[1];
-    groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    groupsNotToReturn[0] = ((UserGroupRepresentative)GenericEntity.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
     //filter end
 
     return UserGroupBusiness.getGroupsContained(group,groupsNotToReturn,false);
@@ -383,7 +385,7 @@ public class UserGroupBusiness {
   public static List getUsersContained(GenericGroup group) throws SQLException{
     //filter
     String[] groupsNotToReturn = new String[1];
-    groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+    groupsNotToReturn[0] = ((UserGroupRepresentative)GenericEntity.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
     //filter end
 
     List list = UserGroupBusiness.getGroupsContained(group,groupsNotToReturn,true);
@@ -398,7 +400,7 @@ public class UserGroupBusiness {
     try {
       //filter
       String[] groupsNotToReturn = new String[1];
-      groupsNotToReturn[0] = ((UserGroupRepresentative)com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+      groupsNotToReturn[0] = ((UserGroupRepresentative)GenericEntity.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
       //filter end
 
       List list = group.getChildGroups(groupsNotToReturn,false);
@@ -526,8 +528,8 @@ public class UserGroupBusiness {
         sGroupList += item.getID();
       }
       if(!sGroupList.equals("")){
-        User user = com.idega.core.user.data.UserBMPBean.getStaticInstance();
-        return EntityFinder.findAll(user,"Select * from "+user.getEntityName()+" where "+com.idega.core.user.data.UserBMPBean._COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
+        User user = UserBMPBean.getStaticInstance();
+        return EntityFinder.findAll(user,"Select * from "+user.getEntityName()+" where "+UserBMPBean._COLUMNNAME_USER_GROUP_ID+" in ("+sGroupList+")");
       }
     }
     return null;

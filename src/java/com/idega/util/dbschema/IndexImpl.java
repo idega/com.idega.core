@@ -1,5 +1,5 @@
 /*
- * $Id: IndexImpl.java,v 1.1 2004/11/01 10:05:31 aron Exp $
+ * $Id: IndexImpl.java,v 1.1.2.1 2007/01/12 19:31:31 idegaweb Exp $
  * Created on 28.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,10 +14,10 @@ import java.util.List;
 
 /**
  * 
- *  Last modified: $Date: 2004/11/01 10:05:31 $ by $Author: aron $
+ *  Last modified: $Date: 2007/01/12 19:31:31 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class IndexImpl implements Index {
     
@@ -42,7 +42,7 @@ public class IndexImpl implements Index {
      * @see com.idega.data.store.IndexDefinition#getColumns()
      */
     public IndexColumn[] getColumns() {
-       return (IndexColumn[]) fields.toArray(new IndexColumn[0]);
+       return (IndexColumn[]) this.fields.toArray(new IndexColumn[0]);
     }
     
     
@@ -66,14 +66,14 @@ public class IndexImpl implements Index {
          * @see com.idega.data.store.IndexField#getName()
          */
         public String getName() {
-            return name;
+            return this.name;
         }
 
         /* (non-Javadoc)
          * @see com.idega.data.store.IndexField#isDescending()
          */
         public boolean isDescending() {
-           return descending;
+           return this.descending;
         }
         
     }
@@ -90,7 +90,7 @@ public class IndexImpl implements Index {
      * @see com.idega.data.store.IndexDefinition#isUnique()
      */
     public boolean isUnique() {
-        return unique;
+        return this.unique;
     }
 
 }

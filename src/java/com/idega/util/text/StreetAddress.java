@@ -1,5 +1,5 @@
 /*
- * $Id: StreetAddress.java,v 1.1 2004/10/20 15:00:07 aron Exp $
+ * $Id: StreetAddress.java,v 1.1.2.1 2007/01/12 19:32:38 idegaweb Exp $
  * Created on 20.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -11,10 +11,10 @@ package com.idega.util.text;
 
 /**
  *  Formats street addresses
- *  Last modified: $Date: 2004/10/20 15:00:07 $ by $Author: aron $
+ *  Last modified: $Date: 2007/01/12 19:32:38 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class StreetAddress {
     private String street;
@@ -30,10 +30,12 @@ public class StreetAddress {
      */
     public String toString() {
         StringBuffer addr = new StringBuffer();
-    		if (street != null)
-    		    addr.append(street).append(" ");
-    		if (number != null)
-    		    addr.append(number);
+    		if (this.street != null) {
+				addr.append(this.street).append(" ");
+			}
+    		if (this.number != null) {
+				addr.append(this.number);
+			}
     		return TextSoap.capitalize(addr.toString(), " ");
     }
     

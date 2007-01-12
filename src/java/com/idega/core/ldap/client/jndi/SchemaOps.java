@@ -64,14 +64,15 @@ public class SchemaOps
     public SchemaOps(DirContext context)
             throws NamingException
     {
-        ctx = context;
-        if (ctx == null)
-            return;
+        this.ctx = context;
+        if (this.ctx == null) {
+			return;
+		}
 
         log.log(Level.FINER,"Reading Schema info from directory context");
 
         setSchemaRoot(getSchemaRoot());
-        rawSchemaAttributes = getRawSchema();
+        this.rawSchemaAttributes = getRawSchema();
 
 //printRawSchema();
 //System.out.println("\n\n\n\n");
@@ -89,8 +90,8 @@ public class SchemaOps
     SchemaOps(Attributes rawSchemaAtts)
            // throws NamingException
     {
-        ctx = null;
-        rawSchemaAttributes = rawSchemaAtts;
+        this.ctx = null;
+        this.rawSchemaAttributes = rawSchemaAtts;
 
         setSchemaRoot("cn=schema");
         loadOIDs();
@@ -105,10 +106,12 @@ public class SchemaOps
      */
     public String translateOID(String oid)
     {
-        if (oids.containsKey(oid))
-            return (String)oids.get(oid);
-        else
-            return oid;
+        if (this.oids.containsKey(oid)) {
+			return (String)this.oids.get(oid);
+		}
+		else {
+			return oid;
+		}
     }
 
     /**
@@ -127,12 +130,13 @@ public class SchemaOps
      */
     protected void loadOIDsFromSchema()
     {
-        if (rawSchemaAttributes == null)
-            return;
+        if (this.rawSchemaAttributes == null) {
+			return;
+		}
 
         try
         {
-            NamingEnumeration rawSchemaAtts = rawSchemaAttributes.getAll();
+            NamingEnumeration rawSchemaAtts = this.rawSchemaAttributes.getAll();
             while (rawSchemaAtts.hasMoreElements())
             {
                 Attribute rawSchemaAtt = (Attribute)rawSchemaAtts.nextElement();
@@ -141,10 +145,12 @@ public class SchemaOps
                 while (values.hasMoreElements())
                 {
                     String value = (String)values.nextElement();
-                    if (value.indexOf('(') == -1)
-                        log.log(Level.FINER,"skipping non schema attribute: " + rawSchemaAtt.getID() + ":" + value);
-                    else
-                        oids.put (getOID(value), getFirstName(value));
+                    if (value.indexOf('(') == -1) {
+						log.log(Level.FINER,"skipping non schema attribute: " + rawSchemaAtt.getID() + ":" + value);
+					}
+					else {
+						this.oids.put (getOID(value), getFirstName(value));
+					}
                 }
             }
         }
@@ -161,64 +167,64 @@ public class SchemaOps
          // (and other servers that don't publish syntax descriptions)
          // taken from rfc 2252
 
-        oids.put("1.3.6.1.4.1.1466.115.121.1.1","ACI Item");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.2","Access Point");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.3","Attribute Type Description");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.4","Audio");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.5","Binary");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.6","Bit String");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.7","Boolean");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.8","Certificate");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.9","Certificate List");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.10","Certificate Pair");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.11","Country String");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.12","DN");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.13","Data Quality Syntax");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.14","Delivery Method");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.15","Directory String");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.16","DIT Content Rule Description");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.17","DIT Structure Rule Description");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.18","DL Submit Permission");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.19","DSA Quality Syntax");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.20","DSE Type");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.21","Enhanced Guide");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.22","Facsimile Telephone Number");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.23","Fax");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.24","Generalized Time");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.25","Guide");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.26","IA5 String");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.27","INTEGER");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.28","JPEG");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.54","LDAP Syntax Description");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.56","LDAP Schema Definition");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.57","LDAP Schema Description");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.29","Master And Shadow Access Points");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.30","Matching Rule Description");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.31","Matching Rule Use Description");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.32","Mail Preference");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.33","MHS OR Address");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.55","Modify Rights");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.34","Name And Optional UID");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.35","Name Form Description");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.36","Numeric String");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.37","Object Class Description");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.40","Octet String");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.38","OID");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.39","Other Mailbox");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.41","Postal Address");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.42","Protocol Information");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.43","Presentation Address");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.44","Printable String");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.58","Substring Assertion");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.45","Subtree Specification");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.46","Supplier Information");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.47","Supplier Or Consumer");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.48","Supplier And Consumer");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.49","Supported Algorithm");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.50","Telephone Number");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.51","Teletex Terminal Identifier");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.52","Telex Number");
-        oids.put("1.3.6.1.4.1.1466.115.121.1.53","UTC Time");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.1","ACI Item");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.2","Access Point");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.3","Attribute Type Description");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.4","Audio");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.5","Binary");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.6","Bit String");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.7","Boolean");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.8","Certificate");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.9","Certificate List");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.10","Certificate Pair");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.11","Country String");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.12","DN");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.13","Data Quality Syntax");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.14","Delivery Method");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.15","Directory String");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.16","DIT Content Rule Description");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.17","DIT Structure Rule Description");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.18","DL Submit Permission");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.19","DSA Quality Syntax");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.20","DSE Type");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.21","Enhanced Guide");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.22","Facsimile Telephone Number");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.23","Fax");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.24","Generalized Time");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.25","Guide");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.26","IA5 String");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.27","INTEGER");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.28","JPEG");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.54","LDAP Syntax Description");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.56","LDAP Schema Definition");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.57","LDAP Schema Description");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.29","Master And Shadow Access Points");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.30","Matching Rule Description");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.31","Matching Rule Use Description");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.32","Mail Preference");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.33","MHS OR Address");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.55","Modify Rights");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.34","Name And Optional UID");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.35","Name Form Description");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.36","Numeric String");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.37","Object Class Description");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.40","Octet String");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.38","OID");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.39","Other Mailbox");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.41","Postal Address");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.42","Protocol Information");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.43","Presentation Address");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.44","Printable String");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.58","Substring Assertion");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.45","Subtree Specification");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.46","Supplier Information");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.47","Supplier Or Consumer");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.48","Supplier And Consumer");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.49","Supported Algorithm");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.50","Telephone Number");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.51","Teletex Terminal Identifier");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.52","Telex Number");
+        this.oids.put("1.3.6.1.4.1.1466.115.121.1.53","UTC Time");
      }
 
     /**
@@ -231,8 +237,9 @@ public class SchemaOps
     {
         System.out.println("---DEBUG PRINT---");
         System.out.println("schema root: "+ getSchemaRoot());
-        if (syntaxRoot.length()>0 && syntaxRoot.startsWith("schema=")==false)
-            syntaxRoot = "schema=" + syntaxRoot;
+        if (syntaxRoot.length()>0 && syntaxRoot.startsWith("schema=")==false) {
+			syntaxRoot = "schema=" + syntaxRoot;
+		}
 
         tabbedDebugPrint(syntaxRoot, "");
         System.out.println("-----------------");
@@ -244,9 +251,10 @@ public class SchemaOps
         System.out.println(indent + syntaxElement);
         Attributes entry = getAttributes(syntaxElement);
         System.out.println(indent + "--==< " + syntaxElement + ">==--");
-        if (entry == null)
-            System.out.println(indent + " ** NULL ENTRY **");
-        else
+        if (entry == null) {
+			System.out.println(indent + " ** NULL ENTRY **");
+		}
+		else
         {
             NamingEnumeration atts = entry.getAll();
             while (atts.hasMoreElements())
@@ -254,8 +262,9 @@ public class SchemaOps
                 Attribute att = (Attribute)atts.nextElement();
                 System.out.println(indent + "att " + att.getID());
                 NamingEnumeration values = att.getAll();
-                while (values.hasMoreElements())
-                    System.out.println(indent + "   " + values.nextElement().toString());
+                while (values.hasMoreElements()) {
+					System.out.println(indent + "   " + values.nextElement().toString());
+				}
             }
         }
         System.out.println(indent + "-");
@@ -268,8 +277,9 @@ public class SchemaOps
         for (int i = 0; i < list.size(); i++)
         {
             String nextLevel = syntaxElement;
-            if (nextLevel.length()>0)
-                nextLevel = "," + nextLevel;
+            if (nextLevel.length()>0) {
+				nextLevel = "," + nextLevel;
+			}
             nextLevel = "schema=" + list.get(i) + nextLevel;
             tabbedDebugPrint(nextLevel, "\t"+indent);
         }
@@ -277,7 +287,7 @@ public class SchemaOps
 
     public void printRawSchema()
     {
-        if (rawSchemaAttributes == null)
+        if (this.rawSchemaAttributes == null)
         {
             System.out.println("NO SCHEMA READ!");
             return;
@@ -285,14 +295,15 @@ public class SchemaOps
         try
         {
             System.out.println("---RAW SCHEMA---");
-            Enumeration attEnum = rawSchemaAttributes.getAll();
+            Enumeration attEnum = this.rawSchemaAttributes.getAll();
             while (attEnum.hasMoreElements())
             {
                 Attribute att = (Attribute)attEnum.nextElement();
                 String ID = att.getID();
                 Enumeration vals = att.getAll();
-                while (vals.hasMoreElements())
-                    System.out.println(ID + " : " + vals.nextElement());
+                while (vals.hasMoreElements()) {
+					System.out.println(ID + " : " + vals.nextElement());
+				}
             }
         }
         catch (NamingException e)
@@ -316,7 +327,7 @@ public class SchemaOps
         //Attributes rawSchema = ctx.getAttributes(rawSchemaRoot);
         // need to explicitly list operational attributes... (although eTrust Directory doesn't need this, others do)
 //        Attributes rawSchema = ctx.getAttributes(rawSchemaRoot, new String[] {"attributeTypes", "objectClasses", "matchingRules", "matchingRuleUse", "ditStructureRules", "ldapSyntaxes", "nameForms" });
-        Attributes rawSchema = ctx.getAttributes(rawSchemaRoot, new String[] {"attributeTypes", "objectClasses", "matchingRules", "ldapSyntaxes", "*" });
+        Attributes rawSchema = this.ctx.getAttributes(rawSchemaRoot, new String[] {"attributeTypes", "objectClasses", "matchingRules", "ldapSyntaxes", "*" });
         if (rawSchema == null)
         {
         		log.log(Level.WARNING,"null schema read - returning empty schema list.");
@@ -347,7 +358,7 @@ public class SchemaOps
 
     private void setSchemaRoot(String schema)
     {
-        schemaRoot = schema;
+        this.schemaRoot = schema;
     }
 
     /**
@@ -357,30 +368,32 @@ public class SchemaOps
 
     public String getSchemaRoot()
     {
-        if (schemaRoot != null)
-            return schemaRoot;
+        if (this.schemaRoot != null) {
+			return this.schemaRoot;
+		}
 
         try
         {
             log.log(Level.FINER,"start get schema root call");
             Attributes SSSE;
-            SSSE = ctx.getAttributes("", new String[]{subschemaAttributeName});
-            if (SSSE != null && SSSE.get(subschemaAttributeName) != null)
-                schemaRoot = (String) SSSE.get(subschemaAttributeName).get();
+            SSSE = this.ctx.getAttributes("", new String[]{subschemaAttributeName});
+            if (SSSE != null && SSSE.get(subschemaAttributeName) != null) {
+				this.schemaRoot = (String) SSSE.get(subschemaAttributeName).get();
+			}
 
-            log.log(Level.FINER,"schema root read as being: '" + String.valueOf(schemaRoot) + "'");
+            log.log(Level.FINER,"schema root read as being: '" + String.valueOf(this.schemaRoot) + "'");
         }
         catch (NamingException e)
         {
             // revert to using good old 'cn=schema' ...
         }
 
-        if (schemaRoot == null )
+        if (this.schemaRoot == null )
         {
             log.log(Level.FINER,"forcing value of schema root to 'cn=schema', since can't read subschema attribute name");
-            schemaRoot = "cn=schema";  // default: this is what it usually is anyway... :-)
+            this.schemaRoot = "cn=schema";  // default: this is what it usually is anyway... :-)
         }
-        return schemaRoot;
+        return this.schemaRoot;
     }
 
     /**
@@ -412,7 +425,7 @@ public class SchemaOps
 
         if (entryName == null || entryName.length() == 0)                    // return synthetic entry for syntax root
         {
-            schemaAttributes.put(subschemaAttributeName, schemaRoot);
+            schemaAttributes.put(subschemaAttributeName, this.schemaRoot);
         }
         else if (entryName.indexOf(',') == -1 && entryName.indexOf('/') == -1) // return synthetic entry for syntax type headings
         {
@@ -443,12 +456,15 @@ public class SchemaOps
      */
     protected String mangleEntryName(String entryName)
     {
-        if (entryName.indexOf("ClassDefinition")>-1)
-            entryName = entryName.replaceAll("(ClassDefinition)", "objectClasses");
-        if (entryName.indexOf("SyntaxDefinition")>-1)
-            entryName = entryName.replaceAll("(SyntaxDefinition)", "ldapSyntaxes");
-        if (entryName.indexOf("AttributeDefinition")>-1)
-            entryName = entryName.replaceAll("(AttributeDefinition)", "attributeTypes");
+        if (entryName.indexOf("ClassDefinition")>-1) {
+			entryName = entryName.replaceAll("(ClassDefinition)", "objectClasses");
+		}
+        if (entryName.indexOf("SyntaxDefinition")>-1) {
+			entryName = entryName.replaceAll("(SyntaxDefinition)", "ldapSyntaxes");
+		}
+        if (entryName.indexOf("AttributeDefinition")>-1) {
+			entryName = entryName.replaceAll("(AttributeDefinition)", "attributeTypes");
+		}
 
         // if it is an ldap name, restructure it to the schema=..., schema=... used in JX.
         if (entryName.indexOf('/') > 0)
@@ -456,8 +472,9 @@ public class SchemaOps
             // trim ;binary for prettiness...
             // TODO: Is this such a good idea?; it may mess up some directories such as slapd...
             int pos = entryName.indexOf(";binary");
-            if (pos > -1)
-                 entryName = entryName.substring(0, pos);
+            if (pos > -1) {
+				entryName = entryName.substring(0, pos);
+			}
 
 
             int slashpos = entryName.indexOf('/');
@@ -469,14 +486,16 @@ public class SchemaOps
         // otherwise it is already a JX style name, so we clean it up a bit to get it in a standard form
 
         // trim the schema root off the end, since we're only interested in the next level (objectclasses etc.)
-        int pos = entryName.indexOf(schemaRoot);
-        if (pos > 0)                                        // not '-1' due to need to trim preceeding comma
-            entryName = entryName.substring(0, pos-1);
+        int pos = entryName.indexOf(this.schemaRoot);
+        if (pos > 0) {
+			entryName = entryName.substring(0, pos-1);
+		}
 
         // a little naughtily, we often use 'cn=schema' as shorthand for the schema root... get rid of that instead if it is different from the schema root (usually it isn't)
         pos = entryName.indexOf("cn=schema");
-        if (pos > 0)                                        // not '-1' due to need to trim preceeding comma
-            entryName = entryName.substring(0, pos-1);
+        if (pos > 0) {
+			entryName = entryName.substring(0, pos-1);
+		}
 
 
 
@@ -495,8 +514,9 @@ public class SchemaOps
     {
          int equalpos = entryName.indexOf('=')+1;
          int commapos = entryName.indexOf(',');
-         if (equalpos <= 0 || commapos == -1 || equalpos>commapos)
-             throw new NamingException("error parsing schema dn '" + entryName + "' ");
+         if (equalpos <= 0 || commapos == -1 || equalpos>commapos) {
+			throw new NamingException("error parsing schema dn '" + entryName + "' ");
+		}
 
          return entryName.substring(equalpos, commapos);
     }
@@ -511,8 +531,9 @@ public class SchemaOps
     protected String getTypeName(String entryName)
         throws NamingException
     {
-        if (entryName.endsWith(",cn=schema"))
-            entryName = entryName.substring(0, entryName.length()-10);
+        if (entryName.endsWith(",cn=schema")) {
+			entryName = entryName.substring(0, entryName.length()-10);
+		}
 
         int equalpos = entryName.lastIndexOf('=')+1;
         return entryName.substring(equalpos);
@@ -528,8 +549,9 @@ public class SchemaOps
     // package visibility for testing
     BasicAttributes getAttributesFromSchemaName(String entryName) throws NamingException
     {
-        if (rawSchemaAttributes == null)
-            return null;
+        if (this.rawSchemaAttributes == null) {
+			return null;
+		}
 
         entryName = mangleEntryName(entryName);
 
@@ -537,13 +559,13 @@ public class SchemaOps
         String schemaTypeName = getTypeName(entryName);
         String specificName = getSpecificName(entryName);
 
-        Attribute schemaGroup = rawSchemaAttributes.get(schemaTypeName);
+        Attribute schemaGroup = this.rawSchemaAttributes.get(schemaTypeName);
 
         if (schemaGroup == null)
         {
             // some wierdo directories manage to get their cases muddled.  This is a last-gasp attempt
             // to read them by using an all-lower case version of the name.
-            schemaGroup = rawSchemaAttributes.get(schemaTypeName.toLowerCase());
+            schemaGroup = this.rawSchemaAttributes.get(schemaTypeName.toLowerCase());
             throw new NamingException("Unable to find schema entry for schema type '" + schemaTypeName + "'");
         }
 
@@ -590,8 +612,9 @@ public class SchemaOps
             String token = st.nextToken();
             if (token.endsWith(")"))  // that's all for this list...
             {
-                if (token.length()>1)
-                    schemaAttribute.add(getQuotedTokens(token.substring(0, token.length()-1), st));
+                if (token.length()>1) {
+					schemaAttribute.add(getQuotedTokens(token.substring(0, token.length()-1), st));
+				}
 
                 return;
             }
@@ -608,24 +631,29 @@ public class SchemaOps
      */
     private String getQuotedTokens(String token, StringTokenizer st)
     {
-        if (token.charAt(0) != '\'')
-            return token;
+        if (token.charAt(0) != '\'') {
+			return token;
+		}
 
-        if (token.length() < 2)  // ??? Wierd - this should never happen.
-            return token;
+        if (token.length() < 2) {
+			return token;
+		}
 
-        if (token.charAt(0) == '\'' && token.charAt(token.length()-1) == '\'')
-            return token.substring(1, token.length()-1);
+        if (token.charAt(0) == '\'' && token.charAt(token.length()-1) == '\'') {
+			return token.substring(1, token.length()-1);
+		}
 
         // string of quoted text... this would be so much easier in perl.  sigh.
         StringBuffer returnText = new StringBuffer(token.substring(1));
         while (st.hasMoreTokens())
         {
             token = st.nextToken();
-            if (token.endsWith("'"))
-                return (returnText.append(" ").append(token.substring(0, token.length()-1)).toString());
-            else
-                returnText.append(" ").append(token);
+            if (token.endsWith("'")) {
+				return (returnText.append(" ").append(token.substring(0, token.length()-1)).toString());
+			}
+			else {
+				returnText.append(" ").append(token);
+			}
         }
 
         return returnText.toString();  // someone forgot the closing quote I guess...
@@ -651,10 +679,12 @@ public class SchemaOps
             String oid = st.nextToken();
             if (oid.startsWith("("))  // can be a stray opening '('.
             {
-                if (oid.length()==1)
-                    oid = st.nextToken();
-                else
-                    oid = oid.substring(1);     // handle case where there is no space between ( and Oid.
+                if (oid.length()==1) {
+					oid = st.nextToken();
+				}
+				else {
+					oid = oid.substring(1);     // handle case where there is no space between ( and Oid.
+				}
             }
             schemaValues.put(new BasicAttribute("OID", oid));
         }
@@ -668,8 +698,9 @@ public class SchemaOps
             }
             else
             {
-                if (attributeID.length()>1)
-                    addAttribute(schemaValues, attributeID.substring(1), st);
+                if (attributeID.length()>1) {
+					addAttribute(schemaValues, attributeID.substring(1), st);
+				}
             }
         }
 
@@ -707,8 +738,9 @@ public class SchemaOps
                         addBracketedValues(schemaAttribute, st);
                     }
                 }
-                else
-                    addBracketedValues(schemaAttribute, st);
+				else {
+					addBracketedValues(schemaAttribute, st);
+				}
             }
             else if (token.endsWith(")"))
             { // do nothing - this should be the very end of the string tokenizer list, and this the left over bit at the end.
@@ -783,12 +815,15 @@ public class SchemaOps
             "USAGE" };
 
         int size = reservedKeywords.length;
-        for (int i=0; i<size; i++)
-            if (reservedKeywords[i].equals(token))
-                return true;
+        for (int i=0; i<size; i++) {
+			if (reservedKeywords[i].equals(token)) {
+				return true;
+			}
+		}
 
-        if (token.startsWith("X-"))
-            return true;
+        if (token.startsWith("X-")) {
+			return true;
+		}
 
         return false;  // probably isn't - but they might change the standard I suppose.  Oh well...
     }
@@ -816,32 +851,36 @@ public class SchemaOps
     public ArrayList listEntryNames(String entryName)
             throws NamingException
     {
-        if (rawSchemaAttributes == null)
-            return new ArrayList();
+        if (this.rawSchemaAttributes == null) {
+			return new ArrayList();
+		}
 
         entryName = mangleEntryName(entryName);
 
         ArrayList schemaNames;
 
-        if (entryName == null || entryName.length() == 0 || entryName.equals("cn=schema") || entryName.equals(schemaRoot))  // The 'root node', i.e. the top of the schema tree - returns things like
+        if (entryName == null || entryName.length() == 0 || entryName.equals("cn=schema") || entryName.equals(this.schemaRoot))  // The 'root node', i.e. the top of the schema tree - returns things like
         {                                                 // 'objectClasses', 'ldapSyntaxes', 'attributeTypes'
             schemaNames = new ArrayList(10);
-            Enumeration schemaTopLevelNames = rawSchemaAttributes.getIDs();
+            Enumeration schemaTopLevelNames = this.rawSchemaAttributes.getIDs();
             while (schemaTopLevelNames.hasMoreElements())
             {
                 String name = (String)schemaTopLevelNames.nextElement();
-                if(!schemaNames.contains(name))             //TE: don't add duplicates
-                    schemaNames.add(name);
+                if(!schemaNames.contains(name)) {
+					schemaNames.add(name);
+				}
             }
         }
         else if (entryName.indexOf(',') == -1 && entryName.indexOf('/') == -1) // the first layer - returns things like
         {                                                                    // 'person', 'orgunit', 'newPilotPerson' etc...
             schemaNames = new ArrayList(1000);
-            if (entryName.indexOf('=') > 0)
-                entryName = entryName.substring(entryName.indexOf('=')+1);
-            Attribute rawSyntaxAttribute = rawSchemaAttributes.get(entryName);   // entryName might be 'attributeTypes'
-            if (rawSyntaxAttribute == null)
-                throw new NamingException("unable to list syntaxes of type '" + entryName + "'");
+            if (entryName.indexOf('=') > 0) {
+				entryName = entryName.substring(entryName.indexOf('=')+1);
+			}
+            Attribute rawSyntaxAttribute = this.rawSchemaAttributes.get(entryName);   // entryName might be 'attributeTypes'
+            if (rawSyntaxAttribute == null) {
+				throw new NamingException("unable to list syntaxes of type '" + entryName + "'");
+			}
 
             Enumeration values = rawSyntaxAttribute.getAll();
             String[] names;
@@ -850,8 +889,9 @@ public class SchemaOps
                 names = getNames((String) values.nextElement());
                 for (int i = 0; i < names.length; i++)
                 {
-                    if(!schemaNames.contains(names[i]))     //TE: don't add duplicates
-                        schemaNames.add(names[i]);
+                    if(!schemaNames.contains(names[i])) {
+						schemaNames.add(names[i]);
+					}
                 }
             }
         }
@@ -877,24 +917,29 @@ public class SchemaOps
 
     final String getOID(String ldapSchemaDescription)
     {
-        if (ldapSchemaDescription == null)
-            return "0";  // error.
+        if (ldapSchemaDescription == null) {
+			return "0";  // error.
+		}
 
         int start = 0;
 
-        if (ldapSchemaDescription.charAt(0) == '(')
-            start++;
+        if (ldapSchemaDescription.charAt(0) == '(') {
+			start++;
+		}
 
-        while (ldapSchemaDescription.charAt(start)==' ')  // technically could be any whitespace, but practically it is only spaces... (I hope)
-            start++;
+        while (ldapSchemaDescription.charAt(start)==' ') {
+			start++;
+		}
 
         try
         {
             int endpos = ldapSchemaDescription.indexOf(' ', start);
-            if (endpos == -1)
-                endpos = ldapSchemaDescription.indexOf(')', start);
-            if (endpos == -1)
-                endpos = ldapSchemaDescription.length();
+            if (endpos == -1) {
+				endpos = ldapSchemaDescription.indexOf(')', start);
+			}
+            if (endpos == -1) {
+				endpos = ldapSchemaDescription.length();
+			}
 
             String ret = ldapSchemaDescription.substring(start, endpos);
             return ret;
@@ -917,27 +962,30 @@ public class SchemaOps
 
     final String getFirstName(String ldapSchemaDescription)
     {
-        name_pos = ldapSchemaDescription.indexOf("NAME");
-        if (name_pos == -1)
-            name_pos = ldapSchemaDescription.indexOf("DESC");  // for ldapSyntaxes entries
-        if (name_pos == -1)  // fall back - should never happen; try to return OID
+        this.name_pos = ldapSchemaDescription.indexOf("NAME");
+        if (this.name_pos == -1) {
+			this.name_pos = ldapSchemaDescription.indexOf("DESC");  // for ldapSyntaxes entries
+		}
+        if (this.name_pos == -1)  // fall back - should never happen; try to return OID
         {
-            if (ldapSchemaDescription.startsWith("{"))
-                ldapSchemaDescription = ldapSchemaDescription.substring(1).trim();
-            pos = ldapSchemaDescription.indexOf(' ');
-            if(pos == -1)
+            if (ldapSchemaDescription.startsWith("{")) {
+				ldapSchemaDescription = ldapSchemaDescription.substring(1).trim();
+			}
+            this.pos = ldapSchemaDescription.indexOf(' ');
+            if(this.pos == -1)
             {
                 log.log(Level.WARNING,"unable to get name from " + ldapSchemaDescription);
                 return "syntax_error";
             }
-            return ldapSchemaDescription.substring(0, pos).trim();
+            return ldapSchemaDescription.substring(0, this.pos).trim();
         }
-        quote_pos = ldapSchemaDescription.indexOf('\'', name_pos);
-        quote_pos++;
-        last_pos = ldapSchemaDescription.indexOf('\'', quote_pos);
-        if (quote_pos != 0 && last_pos != -1)
-            return ldapSchemaDescription.substring(quote_pos, last_pos);
-        else
+        this.quote_pos = ldapSchemaDescription.indexOf('\'', this.name_pos);
+        this.quote_pos++;
+        this.last_pos = ldapSchemaDescription.indexOf('\'', this.quote_pos);
+        if (this.quote_pos != 0 && this.last_pos != -1) {
+			return ldapSchemaDescription.substring(this.quote_pos, this.last_pos);
+		}
+		else
         {
             log.log(Level.WARNING,"unable to parse " + ldapSchemaDescription);
             return "syntax_error";
@@ -957,41 +1005,43 @@ public class SchemaOps
     {
         try
         {
-            name_pos = ldapSyntaxDescription.indexOf("NAME");
-            if (name_pos == -1)
-                name_pos = ldapSyntaxDescription.indexOf("DESC");  // for ldapSyntaxes entries
-            if (name_pos == -1)  // fall back - should never happen; try to return OID
+            this.name_pos = ldapSyntaxDescription.indexOf("NAME");
+            if (this.name_pos == -1) {
+				this.name_pos = ldapSyntaxDescription.indexOf("DESC");  // for ldapSyntaxes entries
+			}
+            if (this.name_pos == -1)  // fall back - should never happen; try to return OID
             {
-                if (ldapSyntaxDescription.startsWith("{"))
-                    ldapSyntaxDescription = ldapSyntaxDescription.substring(1).trim();
+                if (ldapSyntaxDescription.startsWith("{")) {
+					ldapSyntaxDescription = ldapSyntaxDescription.substring(1).trim();
+				}
                 return new String[] {ldapSyntaxDescription.substring(0, ldapSyntaxDescription.indexOf(' ')).trim()};
             }
 
-            bracket_pos = ldapSyntaxDescription.indexOf('(', name_pos);
-            quote_pos = ldapSyntaxDescription.indexOf('\'', name_pos);
+            this.bracket_pos = ldapSyntaxDescription.indexOf('(', this.name_pos);
+            this.quote_pos = ldapSyntaxDescription.indexOf('\'', this.name_pos);
 
-            if (bracket_pos != -1 && bracket_pos < quote_pos)  // multiple names...
+            if (this.bracket_pos != -1 && this.bracket_pos < this.quote_pos)  // multiple names...
             {
-                bracket_pos = ldapSyntaxDescription.indexOf(')', bracket_pos);  // get end bracket pos
+                this.bracket_pos = ldapSyntaxDescription.indexOf(')', this.bracket_pos);  // get end bracket pos
                 ArrayList newList = new ArrayList(5);
-                while (quote_pos < bracket_pos && quote_pos != -1)  // iterate through grabbing 'quoted' substrings until we get to the end of the bracketed expression
+                while (this.quote_pos < this.bracket_pos && this.quote_pos != -1)  // iterate through grabbing 'quoted' substrings until we get to the end of the bracketed expression
                 {
-                    int start = ++quote_pos;
-                    quote_pos = ldapSyntaxDescription.indexOf('\'', quote_pos);
+                    int start = ++this.quote_pos;
+                    this.quote_pos = ldapSyntaxDescription.indexOf('\'', this.quote_pos);
 
-                    String temp = ldapSyntaxDescription.substring(start, quote_pos);
+                    String temp = ldapSyntaxDescription.substring(start, this.quote_pos);
                     newList.add(temp);
 
-                    quote_pos++;
-                    quote_pos = ldapSyntaxDescription.indexOf('\'', quote_pos);
+                    this.quote_pos++;
+                    this.quote_pos = ldapSyntaxDescription.indexOf('\'', this.quote_pos);
                 }
                 return (String[]) newList.toArray(new String[]{});
             }
             else  // return the single name
             {
-                quote_pos++;
-                int next_quote = ldapSyntaxDescription.indexOf('\'', quote_pos);
-                String temp = ldapSyntaxDescription.substring(quote_pos, next_quote);
+                this.quote_pos++;
+                int next_quote = ldapSyntaxDescription.indexOf('\'', this.quote_pos);
+                String temp = ldapSyntaxDescription.substring(this.quote_pos, next_quote);
                 return new String[]{temp};
             }
         }
@@ -1036,23 +1086,25 @@ public class SchemaOps
     public ArrayList objectClasses()
         throws NamingException
      {
-         if (fullObjectClassArray == null)
+         if (this.fullObjectClassArray == null)
          {
              ArrayList temp = listEntryNames("schema=objectClasses,cn=schema");
-             if (temp==null)
-                throw new NamingException("unable to read list of object classes from schema");
+             if (temp==null) {
+				throw new NamingException("unable to read list of object classes from schema");
+			}
              String[] OCs = (String[]) temp.toArray(new String[temp.size()]);
              Arrays.sort(OCs, new Comparator() {
                  public int compare(Object a, Object b) { return ((String)a).compareToIgnoreCase((String)b); }
                  public boolean equals(Object a, Object b) { return ((String)a).equalsIgnoreCase((String)b); }
              });
              int size = OCs.length;
-             fullObjectClassArray = new ArrayList(size);
-             for (int i=0;i<size; i++)
-                 fullObjectClassArray.add(i, OCs[i]);
+             this.fullObjectClassArray = new ArrayList(size);
+             for (int i=0;i<size; i++) {
+				this.fullObjectClassArray.add(i, OCs[i]);
+			}
          }
 
-         return fullObjectClassArray;
+         return this.fullObjectClassArray;
      }
 
 
@@ -1064,23 +1116,25 @@ public class SchemaOps
     public ArrayList attributeNames()
         throws NamingException
      {
-         if (fullAttributeNameArray == null)
+         if (this.fullAttributeNameArray == null)
          {
              ArrayList temp = listEntryNames("schema=attributeTypes,cn=schema");
-             if (temp==null)
-                throw new NamingException("unable to read list of attribute types from schema");
+             if (temp==null) {
+				throw new NamingException("unable to read list of attribute types from schema");
+			}
              String[] ATs = (String[]) temp.toArray(new String[temp.size()]);
              Arrays.sort(ATs, new Comparator() {
                  public int compare(Object a, Object b) { return ((String)a).compareToIgnoreCase((String)b); }
                  public boolean equals(Object a, Object b) { return ((String)a).equalsIgnoreCase((String)b); }
              });
              int size = ATs.length;
-             fullAttributeNameArray = new ArrayList(size);
-             for (int i=0;i<size; i++)
-                 fullAttributeNameArray.add(i, ATs[i]);
+             this.fullAttributeNameArray = new ArrayList(size);
+             for (int i=0;i<size; i++) {
+				this.fullAttributeNameArray.add(i, ATs[i]);
+			}
          }
 
-         return fullAttributeNameArray;
+         return this.fullAttributeNameArray;
      }
 
     /**
@@ -1097,7 +1151,7 @@ public class SchemaOps
         {
             if ((dn!=null))
             {
-                Attributes atts = ctx.getAttributes(dn);
+                Attributes atts = this.ctx.getAttributes(dn);
 
                 if (atts == null)
                 {
@@ -1106,10 +1160,12 @@ public class SchemaOps
                 else
                 {
                     Attribute objectClasses = atts.get("objectclass");
-                    if (objectClasses == null) // hack.  Shouldn't have to do this.  Bad Server! Spank!
-                        objectClasses = atts.get("objectClass");
-                    if (objectClasses == null) // still!  - try 'oc'
-                        objectClasses = atts.get("oc");
+                    if (objectClasses == null) {
+						objectClasses = atts.get("objectClass");
+					}
+                    if (objectClasses == null) {
+						objectClasses = atts.get("oc");
+					}
 
                     if (objectClasses == null) // aargh! Give up.
                     {
@@ -1118,12 +1174,14 @@ public class SchemaOps
                     else
                     {
                         NamingEnumeration names = objectClasses.getAll();
-                        if (names == null)
-                            log.log(Level.WARNING,"object class has no attributes!");
+                        if (names == null) {
+							log.log(Level.WARNING,"object class has no attributes!");
+						}
 
                         ArrayList returnArray = new ArrayList(10);
-                        while (names.hasMore())
-                            returnArray.add(names.next());
+                        while (names.hasMore()) {
+							returnArray.add(names.next());
+						}
 
                         return returnArray;
                     }
@@ -1146,15 +1204,17 @@ public class SchemaOps
 // Performance note - this might be sped up a tad if required...
     public String getNewBinaryAttributes()
     {
-        if (rawSchemaAttributes == null)
-            return "";
+        if (this.rawSchemaAttributes == null) {
+			return "";
+		}
 
         try
         {
             StringBuffer binaryAttributeList = new StringBuffer(1000);
-            Attribute rawSyntaxAttribute = rawSchemaAttributes.get("attributeTypes");
-            if (rawSyntaxAttribute == null)
-                return "";
+            Attribute rawSyntaxAttribute = this.rawSchemaAttributes.get("attributeTypes");
+            if (rawSyntaxAttribute == null) {
+				return "";
+			}
 
             NamingEnumeration values = rawSyntaxAttribute.getAll();
             while (values.hasMore())
@@ -1203,8 +1263,9 @@ public class SchemaOps
      */
     public String getAttributeSyntax(String attID)
 	{
-		if (attID.indexOf(';') > 0)
+		if (attID.indexOf(';') > 0) {
 			attID = attID.substring(0, attID.indexOf(';'));		//TE: for example: userCertificate;binary.
+		}
 
         return schemaLookup("schema="+attID+",schema=attributeTypes", "SYNTAX");
 	}
@@ -1234,8 +1295,9 @@ public class SchemaOps
         }
         catch (NullPointerException e2)
         {
-            if ("DESC".equals(schemaAttribute) == false)  // ignore frequent error encountered searching for option 'DESC' schema paramater
-                log.log(Level.WARNING,"unable to read any schema entry for " + entryName + "and attribute: " + schemaAttribute, e2);
+            if ("DESC".equals(schemaAttribute) == false) {
+				log.log(Level.WARNING,"unable to read any schema entry for " + entryName + "and attribute: " + schemaAttribute, e2);
+			}
         }
         return null;
     }
@@ -1263,12 +1325,13 @@ public class SchemaOps
 
     public boolean isAttributeSingleValued(String name)
     {/* TE */
-        if (rawSchemaAttributes == null)
-            return false;
+        if (this.rawSchemaAttributes == null) {
+			return false;
+		}
 
         try
         {
-            Attribute attributeTypes = rawSchemaAttributes.get("attributeTypes");
+            Attribute attributeTypes = this.rawSchemaAttributes.get("attributeTypes");
             NamingEnumeration enumer = attributeTypes.getAll();
 
             while(enumer.hasMore())
@@ -1276,9 +1339,11 @@ public class SchemaOps
                 String attr = (String)enumer.next();
                 String[] attrName = getNames(attr);
 
-                for(int i=0;i<attrName.length;i++)
-                    if(attrName[i].equals(name) && (attr.indexOf("SINGLE-VALUE") >= 0))
-                        return true;
+                for(int i=0;i<attrName.length;i++) {
+					if(attrName[i].equals(name) && (attr.indexOf("SINGLE-VALUE") >= 0)) {
+						return true;
+					}
+				}
             }
         }
         catch(NamingException e)

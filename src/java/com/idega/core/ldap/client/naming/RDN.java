@@ -82,7 +82,7 @@ public class RDN
      *   the status of the RDN (one of UNTESTED|SINGLEVALUED|MULTIVALUED)
      */
 
-    private int status = UNTESTED;
+    private int status = this.UNTESTED;
 
     /**
      *  Default number of allowable elements (before a manual array resize
@@ -95,7 +95,7 @@ public class RDN
      *    Empty constructor - creates an RDN with no values.
      */
 
-    public RDN() { ldapEscapedRDN = "";}
+    public RDN() { this.ldapEscapedRDN = "";}
 
 
     private boolean debug = false;
@@ -122,18 +122,23 @@ public class RDN
             {
                 int len = rdn.length();
 
-                if (len >=2 && rdn.charAt(len-2) == '\\')
-                    rdn = specialSpaceHandling(rdn); // pathalogical case
-                else
-                    rdn = rdn.trim();
+                if (len >=2 && rdn.charAt(len-2) == '\\') {
+					rdn = specialSpaceHandling(rdn); // pathalogical case
+				}
+				else {
+					rdn = rdn.trim();
+				}
             }
-            else
-                rdn = rdn.trim();
+			else {
+				rdn = rdn.trim();
+			}
         }
 
-        ldapEscapedRDN = rdn;
+        this.ldapEscapedRDN = rdn;
 
-        if (debug) System.out.println(" % NEW RDN: " + rdn);
+        if (this.debug) {
+			System.out.println(" % NEW RDN: " + rdn);
+		}
     }
 
     /**
@@ -172,7 +177,9 @@ public class RDN
         }                      // (otherwise leave it alone, it's
         else                       // escaped and meant to be there) - so
         {                       // just get rid of leading spaces...
-            while ( rdn.length()>0  &&  rdn.charAt(0) == ' ' ) rdn = rdn.substring(1);
+            while ( rdn.length()>0  &&  rdn.charAt(0) == ' ' ) {
+				rdn = rdn.substring(1);
+			}
         }
         return rdn;
     }
@@ -183,7 +190,7 @@ public class RDN
 
     public boolean isEmpty()
     {
-        return ("".equals(ldapEscapedRDN));
+        return ("".equals(this.ldapEscapedRDN));
     }
 
     /**
@@ -200,10 +207,11 @@ public class RDN
 
         // check rdn has at least one non null attribute and one non null value
 
-        if (equalpos <= 0 || equalpos == rdnfragment.length()-2)
-            throw new InvalidNameException("RDN.add(): invalid rdn fragment '" + ((rdnfragment==null)?"<null>":rdnfragment) + "' (can't find equal sign)");
+        if (equalpos <= 0 || equalpos == rdnfragment.length()-2) {
+			throw new InvalidNameException("RDN.add(): invalid rdn fragment '" + ((rdnfragment==null)?"<null>":rdnfragment) + "' (can't find equal sign)");
+		}
 
-        ldapEscapedRDN += "+" + rdnfragment;
+        this.ldapEscapedRDN += "+" + rdnfragment;
     }
 
     /**
@@ -228,7 +236,7 @@ public class RDN
 
     public String toString()
     {
-        return ldapEscapedRDN;
+        return this.ldapEscapedRDN;
     }
 
     /**
@@ -237,24 +245,25 @@ public class RDN
 
     public void dump()
     {
-        if (status == UNTESTED)
-            checkForMultiValued();
+        if (this.status == this.UNTESTED) {
+			checkForMultiValued();
+		}
 
-        System.out.println("DEBUG DUMP - RDN: " + ldapEscapedRDN + ((status==MULTIVALUED)?" MULTI VALUED":" SINGLE VALUED"));
+        System.out.println("DEBUG DUMP - RDN: " + this.ldapEscapedRDN + ((this.status==this.MULTIVALUED)?" MULTI VALUED":" SINGLE VALUED"));
 
-        if (status == MULTIVALUED)
+        if (this.status == this.MULTIVALUED)
         {
-            for (int i=0; i<(elements.length - 1); i++)
+            for (int i=0; i<(this.elements.length - 1); i++)
             {
-                System.out.println("element-m (" + (elements[i]+1) + ") -> (" + elements[i+1] + ") " + i + ": " + getElement(i));
+                System.out.println("element-m (" + (this.elements[i]+1) + ") -> (" + this.elements[i+1] + ") " + i + ": " + getElement(i));
             }
         }
         else
         {
-            System.out.println("element-s 0: " + ldapEscapedRDN);
+            System.out.println("element-s 0: " + this.ldapEscapedRDN);
         }
 
-        Thread.currentThread().dumpStack();
+        Thread.dumpStack();
 
     }
 
@@ -266,16 +275,19 @@ public class RDN
 
     public String getElement(int i)
     {
-        if (status == UNTESTED)
-            checkForMultiValued();
+        if (this.status == this.UNTESTED) {
+			checkForMultiValued();
+		}
 
-        if (status == SINGLEVALUED && i==0)
-            return ldapEscapedRDN;
+        if (this.status == this.SINGLEVALUED && i==0) {
+			return this.ldapEscapedRDN;
+		}
 
-        if (i<0 || elements == null || elements.length <= i+1)
-            return "error VII";
+        if (i<0 || this.elements == null || this.elements.length <= i+1) {
+			return "error VII";
+		}
 
-        return ldapEscapedRDN.substring(elements[i]+1, elements[i+1]);
+        return this.ldapEscapedRDN.substring(this.elements[i]+1, this.elements[i+1]);
     }
 
     /**
@@ -284,19 +296,23 @@ public class RDN
 
     public String[] getElements()
     {
-        if (status == UNTESTED)
-            checkForMultiValued();
+        if (this.status == this.UNTESTED) {
+			checkForMultiValued();
+		}
 
-        if (status == SINGLEVALUED)
-            return new String[] {ldapEscapedRDN};
+        if (this.status == this.SINGLEVALUED) {
+			return new String[] {this.ldapEscapedRDN};
+		}
 
-        if (elements == null)
-            return new String[] {"error VIIB"};
+        if (this.elements == null) {
+			return new String[] {"error VIIB"};
+		}
 
-        String[] elementArray = new String[elements.length-1];
+        String[] elementArray = new String[this.elements.length-1];
 
-        for (int i=0; i<(elements.length-1); i++)
-            elementArray[i] = ldapEscapedRDN.substring(elements[i]+1, elements[i+1]);
+        for (int i=0; i<(this.elements.length-1); i++) {
+			elementArray[i] = this.ldapEscapedRDN.substring(this.elements[i]+1, this.elements[i+1]);
+		}
 
         return elementArray;
     }
@@ -313,21 +329,24 @@ public class RDN
     {
         validate();
 
-        if (status == SINGLEVALUED)
+        if (this.status == this.SINGLEVALUED)
         {
-            if (i==0)
-                ldapEscapedRDN = ldapEscapedElement;
-            else
-                throw new InvalidNameException("cannot set non zero element of single valued rdn.");
+            if (i==0) {
+				this.ldapEscapedRDN = ldapEscapedElement;
+			}
+			else {
+				throw new InvalidNameException("cannot set non zero element of single valued rdn.");
+			}
         }
         else
         {
-            if (i < 0 || i >= size())
-                throw new InvalidNameException("attempt to set element " + i + " of rdn: '" + ldapEscapedRDN + "' (size = " + size() + ")");
+            if (i < 0 || i >= size()) {
+				throw new InvalidNameException("attempt to set element " + i + " of rdn: '" + this.ldapEscapedRDN + "' (size = " + size() + ")");
+			}
 
-            ldapEscapedRDN = ldapEscapedRDN.substring(0, elements[i]+1) +
+            this.ldapEscapedRDN = this.ldapEscapedRDN.substring(0, this.elements[i]+1) +
                              ldapEscapedElement +
-                             ldapEscapedRDN.substring(elements[i+1]);
+                             this.ldapEscapedRDN.substring(this.elements[i+1]);
 
             parseMultiValued();
 
@@ -351,22 +370,26 @@ public class RDN
 
     public String getAtt(int i)
     {
-        if (status == UNTESTED)
-            checkForMultiValued();
+        if (this.status == this.UNTESTED) {
+			checkForMultiValued();
+		}
 
-        if (status == SINGLEVALUED && i!=0)
-            return "rdn error VIII";
+        if (this.status == this.SINGLEVALUED && i!=0) {
+			return "rdn error VIII";
+		}
 
         String element = getElement(i);
 
         int pos = element.indexOf('='); // no need for escape check, since att must be unescaped always.
 
-        if (pos == -1) return "rdn error IX";
+        if (pos == -1) {
+			return "rdn error IX";
+		}
 
-if (debug)
+if (this.debug)
 {
-    System.out.println("Debug = " + debug);
-    Thread.currentThread().dumpStack();
+    System.out.println("Debug = " + this.debug);
+    Thread.dumpStack();
     System.out.println(" % RDN -> found attribute as '" + element.substring(0,pos) + "'");
 }
 
@@ -380,8 +403,9 @@ if (debug)
 
     public String[] getAtts()
     {
-        if (status == UNTESTED)
-            checkForMultiValued();
+        if (this.status == this.UNTESTED) {
+			checkForMultiValued();
+		}
 
         String[] atts = getElements();
 
@@ -389,7 +413,9 @@ if (debug)
         {
             int pos = atts[i].indexOf('='); // no need for escape check, since att must be unescaped always.
 
-            if (pos == -1) return new String[] {"rdn error IXB"};
+            if (pos == -1) {
+				return new String[] {"rdn error IXB"};
+			}
 
             atts[i] = atts[i].substring(0, pos);
         }
@@ -410,15 +436,19 @@ if (debug)
 
     public boolean contains(String attributeType)
     {
-        if (status == UNTESTED)
-            checkForMultiValued();
+        if (this.status == this.UNTESTED) {
+			checkForMultiValued();
+		}
 
-        if (attributeType == null || attributeType.length()==0)
-            return false;
+        if (attributeType == null || attributeType.length()==0) {
+			return false;
+		}
 
-        for (int i=0; i<size(); i++)
-            if (attributeType.equalsIgnoreCase(getAtt(i)))
-                return true;
+        for (int i=0; i<size(); i++) {
+			if (attributeType.equalsIgnoreCase(getAtt(i))) {
+				return true;
+			}
+		}
 
         return false;
     }
@@ -436,15 +466,19 @@ if (debug)
 
     public String getRawVal(String attributeType)
     {
-        if (status == UNTESTED)
-            checkForMultiValued();
+        if (this.status == this.UNTESTED) {
+			checkForMultiValued();
+		}
 
-        if (attributeType == null || attributeType.length()==0)
-            return null;
+        if (attributeType == null || attributeType.length()==0) {
+			return null;
+		}
 
-        for (int i=0; i<size(); i++)
-            if (attributeType.equalsIgnoreCase(getAtt(i)))
-                return getRawVal(i);
+        for (int i=0; i<size(); i++) {
+			if (attributeType.equalsIgnoreCase(getAtt(i))) {
+				return getRawVal(i);
+			}
+		}
 
         return null;
 
@@ -465,11 +499,13 @@ if (debug)
 
     public String getRawVal(int i)
     {
-        if (status == UNTESTED)
-            checkForMultiValued();
+        if (this.status == this.UNTESTED) {
+			checkForMultiValued();
+		}
 
-        if (status == SINGLEVALUED && i!=0)
-            return "rdn error X";
+        if (this.status == this.SINGLEVALUED && i!=0) {
+			return "rdn error X";
+		}
 
         String element = getElement(i);
 
@@ -500,8 +536,9 @@ if (debug)
 
     public String[] getRawVals()
     {
-        if (status == UNTESTED)
-            checkForMultiValued();
+        if (this.status == this.UNTESTED) {
+			checkForMultiValued();
+		}
 
         String[] vals = getElements();
 
@@ -536,8 +573,9 @@ if (debug)
 
         String attval = getElement(i);
         String att = attval.substring(0, attval.indexOf('='));
-        if (att == null || att.length()==0)
-            throw new InvalidNameException("can't parse old RDN '" + ldapEscapedRDN);
+        if (att == null || att.length()==0) {
+			throw new InvalidNameException("can't parse old RDN '" + this.ldapEscapedRDN);
+		}
 
         String newElement = att + "=" + NameUtility.escape(v);
         setElement(i, newElement);
@@ -549,10 +587,11 @@ if (debug)
 
     public int size()
     {
-        if (status == UNTESTED)
-            checkForMultiValued();
+        if (this.status == this.UNTESTED) {
+			checkForMultiValued();
+		}
 
-        return (status==SINGLEVALUED)?1:elements.length-1;
+        return (this.status==this.SINGLEVALUED)?1:this.elements.length-1;
     }
 
 
@@ -563,10 +602,11 @@ if (debug)
 
     public boolean isMultiValued()
     {
-       if (status == UNTESTED)
-           checkForMultiValued();
+       if (this.status == this.UNTESTED) {
+		checkForMultiValued();
+	}
 
-       return (status == MULTIVALUED);
+       return (this.status == this.MULTIVALUED);
     }
 
 
@@ -586,9 +626,12 @@ if (debug)
 
     public boolean equals(RDN test)
     {
-        if (test == null)
-            return false;
-        else if (test.size() != size()) return false;
+        if (test == null) {
+			return false;
+		}
+		else if (test.size() != size()) {
+			return false;
+		}
 
         if (isMultiValued())
         {
@@ -607,9 +650,11 @@ if (debug)
             String[] testAtts = test.getAtts();
             String[] testVals = test.getRawVals();      // get unescaped unicode value
 
-            for (int i=0; i<size(); i++)
-                if (!elementsEqual(atts[i], testAtts[i], vals[i], testVals[i]) )
-                    return false;
+            for (int i=0; i<size(); i++) {
+				if (!elementsEqual(atts[i], testAtts[i], vals[i], testVals[i]) ) {
+					return false;
+				}
+			}
 
             return true;
         }
@@ -649,12 +694,14 @@ System.out.println(">>"+val1+"<<");
 System.out.println(">>"+val2+"<<");
 */
 
-            if (att1.equalsIgnoreCase(att2) == false)
-                return false;
+            if (att1.equalsIgnoreCase(att2) == false) {
+				return false;
+			}
 
             // XXX THIS ASSUME CASE INSENSITIVE MATCH!  (Really should check schema...)
-            if (val1.equalsIgnoreCase(val2) == false)
-                return false;
+            if (val1.equalsIgnoreCase(val2) == false) {
+				return false;
+			}
 
             return true;
     }
@@ -668,12 +715,15 @@ System.out.println(">>"+val2+"<<");
 
     public boolean equals(Object o)
     {
-        if (o == null)
-            return false;
-        if (o instanceof RDN)
-            return equals((RDN)o);
-        else
-            return (ldapEscapedRDN.equalsIgnoreCase(o.toString()));
+        if (o == null) {
+			return false;
+		}
+        if (o instanceof RDN) {
+			return equals((RDN)o);
+		}
+		else {
+			return (this.ldapEscapedRDN.equalsIgnoreCase(o.toString()));
+		}
     }
 
 
@@ -686,15 +736,17 @@ System.out.println(">>"+val2+"<<");
 
     private void checkForMultiValued()
     {
-        if (status != UNTESTED) return;  // nothing to do
+        if (this.status != this.UNTESTED) {
+			return;  // nothing to do
+		}
 
-        if (NameUtility.next(ldapEscapedRDN, 0, '+') == -1)  // test for simplest case
+        if (NameUtility.next(this.ldapEscapedRDN, 0, '+') == -1)  // test for simplest case
         {
-            status = SINGLEVALUED;
+            this.status = this.SINGLEVALUED;
         }
         else  // things now get complicated and slow...
         {
-            status = MULTIVALUED;
+            this.status = this.MULTIVALUED;
             parseMultiValued(MAXELEMENTS);
         }
     }
@@ -726,45 +778,63 @@ System.out.println(">>"+val2+"<<");
             int numElements = 0;
             int pos = 0;
 
-if (debug) System.out.println("\n*** parsing multi valued rdn");
-if (debug) System.out.println("parsing " + ldapEscapedRDN);
-            while ((pos = NameUtility.next(ldapEscapedRDN, pos, '+'))>-1)
+if (this.debug) {
+	System.out.println("\n*** parsing multi valued rdn");
+}
+if (this.debug) {
+	System.out.println("parsing " + this.ldapEscapedRDN);
+}
+            while ((pos = NameUtility.next(this.ldapEscapedRDN, pos, '+'))>-1)
             {
                 numElements++;
                 temp[numElements] = pos;
 
-if (debug) System.out.println("found " + numElements + " -th element at " + pos);
+if (this.debug) {
+	System.out.println("found " + numElements + " -th element at " + pos);
+}
 
                 int pos1, pos2;
                 pos1 = temp[numElements-1] + 1;
                 pos2 = temp[numElements];
-if (debug) System.out.println(" = string " + pos1 + " -> " + pos2 + " = ");
-if (debug) System.out.println(ldapEscapedRDN.substring(pos1, pos2));
+if (this.debug) {
+	System.out.println(" = string " + pos1 + " -> " + pos2 + " = ");
+}
+if (this.debug) {
+	System.out.println(this.ldapEscapedRDN.substring(pos1, pos2));
+}
 
                 pos++;
             }
 
             numElements++;
-            temp[numElements] = ldapEscapedRDN.length();
+            temp[numElements] = this.ldapEscapedRDN.length();
 
             int pos1, pos2;
             pos1 = temp[numElements-1] + 1;
             pos2 = temp[numElements];
 
-if (debug) System.out.println("found " + numElements + " -th element at " + pos + " = string " +
-             pos1 + " -> " + pos2 + " final len: " + ldapEscapedRDN.length());
-if (debug) System.out.println(" = '" + ldapEscapedRDN.substring(pos1, pos2) + "'");
+if (this.debug) {
+	System.out.println("found " + numElements + " -th element at " + pos + " = string " +
+	             pos1 + " -> " + pos2 + " final len: " + this.ldapEscapedRDN.length());
+}
+if (this.debug) {
+	System.out.println(" = '" + this.ldapEscapedRDN.substring(pos1, pos2) + "'");
+}
 
 
 
-if (debug) System.out.println("found total of " + numElements + " elements...\n*****\n");
+if (this.debug) {
+	System.out.println("found total of " + numElements + " elements...\n*****\n");
+}
 
-            elements = new int[numElements+1];
-            System.arraycopy(temp, 0, elements, 0, numElements+1);
+            this.elements = new int[numElements+1];
+            System.arraycopy(temp, 0, this.elements, 0, numElements+1);
         }
         catch (IndexOutOfBoundsException e)
         {
-if (debug) e.printStackTrace();
+if (this.debug) {
+	e.printStackTrace();
+}
             System.err.println("huge number of multi-valued RDN units - increasing to: " + max*2);
             parseMultiValued(max*2);
 
@@ -780,11 +850,13 @@ if (debug) e.printStackTrace();
     {
         try
         {
-            if (status == UNTESTED)
-                checkForMultiValued();
+            if (this.status == this.UNTESTED) {
+				checkForMultiValued();
+			}
 
-            if (isEmpty())        // *technically* an empty RDN isn't valid...
-                return false;
+            if (isEmpty()) {
+				return false;
+			}
 
             int noElements = size();
             for (int i=0; i<noElements; i++)

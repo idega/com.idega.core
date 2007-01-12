@@ -1,5 +1,5 @@
 /*
- * $Id: LoggedOnLink.java,v 1.1 2004/11/10 13:04:27 laddi Exp $
+ * $Id: LoggedOnLink.java,v 1.1.2.1 2007/01/12 19:32:30 idegaweb Exp $
  * Created on 1.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -26,7 +26,7 @@ import com.idega.presentation.text.LinkContainer;
  * Last modified: 1.11.2004 17:07:07 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class LoggedOnLink extends PresentationObjectContainer {
 	
@@ -41,11 +41,11 @@ public class LoggedOnLink extends PresentationObjectContainer {
 	public void print(IWContext iwc) throws Exception {
 		if (iwc.isLoggedOn()) {
 			LinkContainer link = new LinkContainer();
-			if (iLoggedOnStyleClass != null) {
-				link.setStyleClass(iLoggedOnStyleClass);
+			if (this.iLoggedOnStyleClass != null) {
+				link.setStyleClass(this.iLoggedOnStyleClass);
 			}
-			if (iPage != null) {
-				link.setPage(iPage);
+			if (this.iPage != null) {
+				link.setPage(this.iPage);
 			}
 			
 			List list = this.getChildren();
@@ -67,8 +67,8 @@ public class LoggedOnLink extends PresentationObjectContainer {
 				Iterator iter = list.iterator();
 				while (iter.hasNext()) {
 					PresentationObject object = (PresentationObject) iter.next();
-					if (iLoggedOffStyleClass != null) {
-						object.setStyleClass(iLoggedOffStyleClass);
+					if (this.iLoggedOffStyleClass != null) {
+						object.setStyleClass(this.iLoggedOffStyleClass);
 					}
 				}
 			}
@@ -82,7 +82,7 @@ public class LoggedOnLink extends PresentationObjectContainer {
 	 * @param loggedOnStyleClass The loggedOnStyleClass to set.
 	 */
 	public void setLoggedOnStyleClass(String loggedOnStyleClass) {
-		iLoggedOnStyleClass = loggedOnStyleClass;
+		this.iLoggedOnStyleClass = loggedOnStyleClass;
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class LoggedOnLink extends PresentationObjectContainer {
 	 * @param loggedOffStyleClass The loggedOffStyleClass to set.
 	 */
 	public void setLoggedOffStyleClass(String loggedOffStyleClass) {
-		iLoggedOffStyleClass = loggedOffStyleClass;
+		this.iLoggedOffStyleClass = loggedOffStyleClass;
 	}
 	
 	public boolean isContainer() {
@@ -102,6 +102,6 @@ public class LoggedOnLink extends PresentationObjectContainer {
 	 * @param page The page to set.
 	 */
 	public void setPage(ICPage page) {
-		iPage = page;
+		this.iPage = page;
 	}
 }

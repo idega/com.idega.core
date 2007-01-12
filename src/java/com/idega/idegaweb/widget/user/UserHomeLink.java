@@ -1,5 +1,5 @@
 /*
- * $Id: UserHomeLink.java,v 1.4 2004/11/10 13:01:00 laddi Exp $
+ * $Id: UserHomeLink.java,v 1.4.2.1 2007/01/12 19:32:30 idegaweb Exp $
  * Created on 1.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -34,7 +34,7 @@ import com.idega.user.business.UserBusiness;
  * Last modified: 1.11.2004 17:07:07 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.4.2.1 $
  */
 public class UserHomeLink extends PresentationObjectContainer {
 	
@@ -49,8 +49,8 @@ public class UserHomeLink extends PresentationObjectContainer {
 			try {
 				ICPage homePage = getUserBusiness(iwc).getHomePageForUser(iwc.getCurrentUser());
 				LinkContainer link = new LinkContainer();
-				if (iLoggedOnStyleClass != null) {
-					link.setStyleClass(iLoggedOnStyleClass);
+				if (this.iLoggedOnStyleClass != null) {
+					link.setStyleClass(this.iLoggedOnStyleClass);
 				}
 				link.setPage(homePage);
 				
@@ -80,8 +80,8 @@ public class UserHomeLink extends PresentationObjectContainer {
 				Iterator iter = list.iterator();
 				while (iter.hasNext()) {
 					PresentationObject object = (PresentationObject) iter.next();
-					if (iLoggedOffStyleClass != null) {
-						object.setStyleClass(iLoggedOffStyleClass);
+					if (this.iLoggedOffStyleClass != null) {
+						object.setStyleClass(this.iLoggedOffStyleClass);
 					}
 				}
 			}
@@ -104,7 +104,7 @@ public class UserHomeLink extends PresentationObjectContainer {
 	 * @param loggedOnStyleClass The loggedOnStyleClass to set.
 	 */
 	public void setLoggedOnStyleClass(String loggedOnStyleClass) {
-		iLoggedOnStyleClass = loggedOnStyleClass;
+		this.iLoggedOnStyleClass = loggedOnStyleClass;
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class UserHomeLink extends PresentationObjectContainer {
 	 * @param loggedOffStyleClass The loggedOffStyleClass to set.
 	 */
 	public void setLoggedOffStyleClass(String loggedOffStyleClass) {
-		iLoggedOffStyleClass = loggedOffStyleClass;
+		this.iLoggedOffStyleClass = loggedOffStyleClass;
 	}
 	
 	public boolean isContainer() {

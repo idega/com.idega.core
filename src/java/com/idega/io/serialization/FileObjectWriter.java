@@ -39,7 +39,7 @@ public class FileObjectWriter extends WriterToFile {
 	public String createContainer() throws IOException {
 		
 		long folderIdentifier = System.currentTimeMillis();
-		String name = ((File) storable).getName();
+		String name = ((File) this.storable).getName();
 		String path = getRealPathToFile(name, null, folderIdentifier);
 		
 		File realFile = new File(path);
@@ -63,20 +63,20 @@ public class FileObjectWriter extends WriterToFile {
 
 
 	public String getName() {
-		return ((File) storable).getName();
+		return ((File) this.storable).getName();
 	}
 
 	
 	public String getMimeType() {
 		MimetypesFileTypeMap map = new MimetypesFileTypeMap();
-		String name = ((File) storable).getName();
+		String name = ((File) this.storable).getName();
 		name = (name == null) ? "" : name;
 		return map.getContentType(name);
 	}
 
 	
 	public OutputStream writeData(OutputStream destination) throws IOException {
-		InputStream source = new BufferedInputStream(new FileInputStream((File) storable));
+		InputStream source = new BufferedInputStream(new FileInputStream((File) this.storable));
 		try {
 			writeFromStreamToStream(source, destination);
 		}

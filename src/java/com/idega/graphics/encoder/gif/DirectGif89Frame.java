@@ -41,19 +41,21 @@ public class DirectGif89Frame extends Gif89Frame {
 
     String errmsg = null;
     try {   
-      if (!pg.grabPixels())
-        errmsg = "can't grab pixels from image";     
+      if (!pg.grabPixels()) {
+		errmsg = "can't grab pixels from image";
+	}     
     } catch (InterruptedException e) {
       errmsg = "interrupted grabbing pixels from image";
     }
 
-    if (errmsg != null)
-      throw new IOException(errmsg + " (" + getClass().getName() + ")");
+    if (errmsg != null) {
+		throw new IOException(errmsg + " (" + getClass().getName() + ")");
+	}
     
-    theWidth = pg.getWidth(); 
-    theHeight = pg.getHeight();
-    argbPixels = (int[]) pg.getPixels();
-    ciPixels = new byte[argbPixels.length];
+    this.theWidth = pg.getWidth(); 
+    this.theHeight = pg.getHeight();
+    this.argbPixels = (int[]) pg.getPixels();
+    this.ciPixels = new byte[this.argbPixels.length];
   }
 
   //----------------------------------------------------------------------------
@@ -69,13 +71,13 @@ public class DirectGif89Frame extends Gif89Frame {
    */
   public DirectGif89Frame(int width, int height, int argb_pixels[])
   {
-    theWidth = width;
-    theHeight = height;
-    argbPixels = new int[theWidth * theHeight];
-    System.arraycopy(argb_pixels, 0, argbPixels, 0, argbPixels.length);
-    ciPixels = new byte[argbPixels.length];
+    this.theWidth = width;
+    this.theHeight = height;
+    this.argbPixels = new int[this.theWidth * this.theHeight];
+    System.arraycopy(argb_pixels, 0, this.argbPixels, 0, this.argbPixels.length);
+    this.ciPixels = new byte[this.argbPixels.length];
   }
 
   //----------------------------------------------------------------------------
-  Object getPixelSource() { return argbPixels; }
+  Object getPixelSource() { return this.argbPixels; }
 }

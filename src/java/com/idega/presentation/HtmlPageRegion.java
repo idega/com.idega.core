@@ -52,7 +52,7 @@ public class HtmlPageRegion extends PresentationObjectContainer {
 	 * @return Returns the regionId.
 	 */
 	public String getRegionId() {
-		return regionId;
+		return this.regionId;
 	}
 	/**
 	 * @param regionId The regionId to set.
@@ -93,7 +93,7 @@ public class HtmlPageRegion extends PresentationObjectContainer {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[2];
 		values[0] = super.saveState(ctx);
-		values[1] = regionId;
+		values[1] = this.regionId;
 		return values;
 	}
 	
@@ -103,7 +103,7 @@ public class HtmlPageRegion extends PresentationObjectContainer {
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[])state;
 		super.restoreState(ctx, values[0]);
-		regionId = (String)values[1];
+		this.regionId = (String)values[1];
 	}
 	
 }

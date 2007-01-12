@@ -387,9 +387,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	                Group usersPrimaryGroup = null;
                     String key = String.valueOf(user.getPrimaryGroupID());
         	        if (cachedGroups != null) {
-        	        	if (cachedGroups.containsKey(key))
-        	        	    usersPrimaryGroup = (Group)cachedGroups.get(key);
-        	        	else
+        	        	if (cachedGroups.containsKey(key)) {
+							usersPrimaryGroup = (Group)cachedGroups.get(key);
+						}
+						else
         	        	{	
         	        	    usersPrimaryGroup = user.getPrimaryGroup();
         	        		cachedGroups.put(key, usersPrimaryGroup);
@@ -422,8 +423,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		Collection col = null;
 		String key = this.getPrimaryKey().toString();
 		if (cachedParents!=null) {
-			if (cachedParents.containsKey(key))
+			if (cachedParents.containsKey(key)) {
 				col = (Collection)cachedParents.get(key);
+			}
 			else
 			{	
 				col = ejbFindParentGroups(this.getID());
@@ -442,8 +444,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			parentID = (Integer)iter.next();
 			key = parentID.toString();
 			if (cachedGroups != null) {
-				if (cachedGroups.containsKey(key))
+				if (cachedGroups.containsKey(key)) {
 					parent = (Group)cachedGroups.get(key);
+				}
 				else
 				{	
 					parent = getGroupHome().findByPrimaryKey(parentID);
@@ -1772,17 +1775,21 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 	public void removeGroup(Group entityToRemoveFrom, User currentUser) throws EJBException {
 		int groupId = this.getGroupIDFromGroup(entityToRemoveFrom);
-		if ((groupId == -1) || (groupId == 0)) //removing all in middle table
+		if ((groupId == -1) || (groupId == 0)) {
 			this.removeGroup(groupId, currentUser, true);
-		else // just removing this particular one
+		}
+		else {
 			this.removeGroup(groupId, currentUser, false);
+		}
 	}
 	protected int getGroupIDFromGroup(Group group) {
 		Integer groupID = ((Integer)group.getPrimaryKey());
-		if (groupID != null)
+		if (groupID != null) {
 			return groupID.intValue();
-		else
+		}
+		else {
 			return -1;
+		}
 	}
 	public void removeGroup(User currentUser) throws EJBException {
 		this.removeGroup(-1, currentUser, true);

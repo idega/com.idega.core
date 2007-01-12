@@ -35,7 +35,7 @@ public class IWUserContextImpl extends IWContext implements IWUserContext{
 	}
 	
 	public HttpSession getSession(){
-		return session;	
+		return this.session;	
 	}
 	
 	/* (non-Javadoc)

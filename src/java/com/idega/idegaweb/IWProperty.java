@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.13 2004/11/02 14:54:51 tryggvil Exp $
+ * $Id: IWProperty.java,v 1.13.2.1 2007/01/12 19:31:59 idegaweb Exp $
 
  *
 
@@ -50,7 +50,7 @@ public class IWProperty implements Comparable
 	}
 	private IWPropertyList getParentList()
 	{
-		return parentList;
+		return this.parentList;
 	}
 	public String getKey()
 	{
@@ -350,7 +350,7 @@ public class IWProperty implements Comparable
 	private XMLElement createKeyElement()
 	{
 		this.propertyElement = createKeyElement(getParentList());
-		return propertyElement;
+		return this.propertyElement;
 	}
 	static XMLElement createKeyElement(IWPropertyList list)
 	{
@@ -379,8 +379,9 @@ public class IWProperty implements Comparable
 	}
 	static String getPropertyName(XMLElement keyElement)
 	{
-		if (keyElement != null)
+		if (keyElement != null) {
 			return keyElement.getChild(nameTag).getText();
+		}
 		return null;
 	}
 	static String getPropertyType(XMLElement keyElement)
@@ -388,15 +389,17 @@ public class IWProperty implements Comparable
 		if (keyElement != null)
 		{
 			XMLElement child = keyElement.getChild(typeTag);
-			if (child != null)
+			if (child != null) {
 				return child.getText();
+			}
 		}
 		return null;
 	}
 	static String getPropertyValue(XMLElement keyElement)
 	{
-		if (keyElement != null)
+		if (keyElement != null) {
 			return keyElement.getChild(valueTag).getText();
+		}
 		return null;
 	}
 	static XMLElement createArrayElement(XMLElement valueElement)

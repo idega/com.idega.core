@@ -1,5 +1,5 @@
 /*
- * $Id: MINUS.java,v 1.1 2004/10/07 14:59:18 gummi Exp $
+ * $Id: MINUS.java,v 1.1.2.1 2007/01/12 19:32:33 idegaweb Exp $
  * Created on 5.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import com.idega.data.query.output.ToStringer;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/07 14:59:18 $ by $Author: gummi $
+ *  Last modified: $Date: 2007/01/12 19:32:33 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 public class MINUS implements Outputable{
 
@@ -38,9 +38,9 @@ public class MINUS implements Outputable{
 	 */
 	public void write(Output out) {
 		out.print("(")
-		.print(query1)
+		.print(this.query1)
 		.print(") MINUS (")
-		.print(query2)
+		.print(this.query2)
 		.print(")");
 	}
 	

@@ -32,20 +32,27 @@ public static void main(String args[]) throws Exception{
 	}
 
 	DifferentSearches dc = new DifferentSearches();
-	if(args[0].equalsIgnoreCase("Lookup"))
-	    dc.doLookup();
-	else if(args[0].equalsIgnoreCase("Basic"))
-	  dc.doBasicSearch();
-	else if(args[0].equalsIgnoreCase("Filter"))
-	  dc.doFilterSearch();
-	else if(args[0].equalsIgnoreCase("ControlAttributes"))
-	  dc.controlArrtibutesInResults();
-	else if(args[0].equalsIgnoreCase("ControlResults"))
-      dc.controlResults();
-    else if(args[0].equalsIgnoreCase("Compare"))
-      dc.doCompareSearch();
-    else
-    	System.out.println("Usage :java DifferentSearches [Lookup |Basic|Filter|ControlAttributes|ControlResults|Compare]");
+	if(args[0].equalsIgnoreCase("Lookup")) {
+		dc.doLookup();
+	}
+	else if(args[0].equalsIgnoreCase("Basic")) {
+		dc.doBasicSearch();
+	}
+	else if(args[0].equalsIgnoreCase("Filter")) {
+		dc.doFilterSearch();
+	}
+	else if(args[0].equalsIgnoreCase("ControlAttributes")) {
+		dc.controlArrtibutesInResults();
+	}
+	else if(args[0].equalsIgnoreCase("ControlResults")) {
+		dc.controlResults();
+	}
+	else if(args[0].equalsIgnoreCase("Compare")) {
+		dc.doCompareSearch();
+	}
+	else {
+		System.out.println("Usage :java DifferentSearches [Lookup |Basic|Filter|ControlAttributes|ControlResults|Compare]");
+	}
 
 
 }
@@ -193,8 +200,9 @@ public  void formatResults(NamingEnumeration enumer) throws Exception{
 		for (NamingEnumeration enumer = attrs.getAll(); enumer.hasMore();) {
 		    Attribute attrib = (Attribute)enumer.next();
 		    System.out.println("ATTRIBUTE :" + attrib.getID());
-		    for (NamingEnumeration e = attrib.getAll();e.hasMore();)
-			 System.out.println("\t\t        = " + e.next());
+		    for (NamingEnumeration e = attrib.getAll();e.hasMore();) {
+				System.out.println("\t\t        = " + e.next());
+			}
 		}
 
 	    } catch (NamingException e) {

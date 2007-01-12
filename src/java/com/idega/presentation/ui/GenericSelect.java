@@ -34,29 +34,29 @@ public class GenericSelect extends InterfaceObject {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[10];
 		values[0] = super.saveState(ctx);
-		values[1] = new Boolean(_isSetToSubmit);
-		values[2] = new Boolean(_isSetToDisable);
-		values[3] = new Boolean(_isSetAsNotEmpty);
-		values[4] = _notEmptyErrorMessage;
-		values[5] = _emptyValue;
-		values[6] = selectedElements;
-		values[7] = new Boolean(_allSelected);
-		values[8] = new Boolean(_isMultiple);
-		values[9] = new Boolean(addSelectScript);
+		values[1] = new Boolean(this._isSetToSubmit);
+		values[2] = new Boolean(this._isSetToDisable);
+		values[3] = new Boolean(this._isSetAsNotEmpty);
+		values[4] = this._notEmptyErrorMessage;
+		values[5] = this._emptyValue;
+		values[6] = this.selectedElements;
+		values[7] = new Boolean(this._allSelected);
+		values[8] = new Boolean(this._isMultiple);
+		values[9] = new Boolean(this.addSelectScript);
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		_isSetToSubmit = ((Boolean) values[1]).booleanValue();
-		_isSetToDisable = ((Boolean) values[2]).booleanValue();
-		_isSetAsNotEmpty = ((Boolean) values[3]).booleanValue();
-		_notEmptyErrorMessage = (String) values[4];
-		_emptyValue = (String) values[5];
-		selectedElements = (List) values[6];
-		_allSelected = ((Boolean) values[7]).booleanValue();
-		_isMultiple = ((Boolean) values[8]).booleanValue();
-		addSelectScript = ((Boolean) values[9]).booleanValue();
+		this._isSetToSubmit = ((Boolean) values[1]).booleanValue();
+		this._isSetToDisable = ((Boolean) values[2]).booleanValue();
+		this._isSetAsNotEmpty = ((Boolean) values[3]).booleanValue();
+		this._notEmptyErrorMessage = (String) values[4];
+		this._emptyValue = (String) values[5];
+		this.selectedElements = (List) values[6];
+		this._allSelected = ((Boolean) values[7]).booleanValue();
+		this._isMultiple = ((Boolean) values[8]).booleanValue();
+		this.addSelectScript = ((Boolean) values[9]).booleanValue();
 	}
 	
 	
@@ -74,7 +74,7 @@ public class GenericSelect extends InterfaceObject {
 	public GenericSelect(String name) {
 		setName(name);
 		setTransient(false);
-		selectedElements = new ArrayList();
+		this.selectedElements = new ArrayList();
 	}
 
 	/**
@@ -82,8 +82,8 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public void removeElements() {
 		this.getChildren().clear();
-		if(selectedElements!=null){
-			selectedElements.clear();
+		if(this.selectedElements!=null){
+			this.selectedElements.clear();
 		}
 	}
 
@@ -107,10 +107,12 @@ public class GenericSelect extends InterfaceObject {
 	 * Must add to a form before this function is used!!!!
 	 */
 	public void setToSubmit(boolean setToSubmit) {
-		if (setToSubmit)
+		if (setToSubmit) {
 			setOnChange("this.form.submit()");
-		else
+		}
+		else {
 			removeMarkupAttribute("onChange");
+		}
 	}
 
 	/**
@@ -118,7 +120,7 @@ public class GenericSelect extends InterfaceObject {
 	 * Must add to a form before this function is used!!!!
 	 */
 	public void setToSubmit(String optionValue) {
-		_isSetToSubmit = true;
+		this._isSetToSubmit = true;
 		setOnChange("submitWhenSelected(this,'"+optionValue+"')");
 	}
 
@@ -128,8 +130,9 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public void addOption(SelectOption option) {
 		add(option);
-		if (option.getSelected())
+		if (option.getSelected()) {
 			setSelectedOption(option.getValueAsString());
+		}
 	}
 
 	/**
@@ -146,8 +149,9 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public void addFirstOption(SelectOption option) {
 		add(0, option);
-		if (option.getSelected())
+		if (option.getSelected()) {
 			setSelectedOption(option.getValueAsString());
+		}
 	}
 	
 	/**
@@ -174,8 +178,9 @@ public class GenericSelect extends InterfaceObject {
 	public void addDisabledOption(SelectOption option) {
 		option.setDisabled(true);
 		add(option);
-		if (option.getSelected())
+		if (option.getSelected()) {
 			setSelectedOption(option.getValueAsString());
+		}
 	}
 
 	/**
@@ -199,7 +204,7 @@ public class GenericSelect extends InterfaceObject {
 	 * Sets all <code>SelectOption</code> object in the select object as not selected.
 	 */
 	protected void deselectOptions() {
-		selectedElements.clear();
+		this.selectedElements.clear();
 	}
 
 	/**
@@ -207,7 +212,7 @@ public class GenericSelect extends InterfaceObject {
 	 * @return String	The value of the <code>SelectOption</code> in the select object.
 	 */
 	public String getSelectedValue() {
-		Iterator iter = selectedElements.iterator();
+		Iterator iter = this.selectedElements.iterator();
 		while (iter.hasNext()) {
 			return (String) iter.next();
 		}
@@ -220,9 +225,10 @@ public class GenericSelect extends InterfaceObject {
 	 * @param value	The value of the <code>SelectOption</code> to set as selected.
 	 */
 	public void setSelectedOption(String value) {
-		if (!getMultiple())
+		if (!getMultiple()) {
 			deselectOptions();
-		selectedElements.add(value);
+		}
+		this.selectedElements.add(value);
 	}
 
 	/**
@@ -235,8 +241,9 @@ public class GenericSelect extends InterfaceObject {
 		Iterator iter = getChildren().iterator();
 		while (iter.hasNext()) {
 			SelectOption element = (SelectOption) iter.next();
-			if (element.getValueAsString().equals(value))
+			if (element.getValueAsString().equals(value)) {
 				return element;
+			}
 		}
 		return theReturn;
 	}
@@ -256,10 +263,12 @@ public class GenericSelect extends InterfaceObject {
 	 * @param multiple	True to allow multiple, false otherwise.
 	 */
 	protected void setMultiple(boolean multiple) {
-		if (multiple)
+		if (multiple) {
 			setMarkupAttributeWithoutValue("multiple");
-		else
+		}
+		else {
 			removeMarkupAttribute("multiple");
+		}
 	}
 
 	/**
@@ -267,34 +276,37 @@ public class GenericSelect extends InterfaceObject {
 	 * @return True if allows multiple, false otherwise.
 	 */
 	protected boolean getMultiple() {
-		if (isMarkupAttributeSet("multiple"))
+		if (isMarkupAttributeSet("multiple")) {
 			return true;
+		}
 		return false;
 	}
 
 	public void main(IWContext iwc) throws Exception {
-		if (_isSetAsNotEmpty)
-			setOnSubmitFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", _notEmptyErrorMessage, _emptyValue);
+		if (this._isSetAsNotEmpty) {
+			setOnSubmitFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", this._notEmptyErrorMessage, this._emptyValue);
+		}
 //		if (_isSetToDisable) {
 		if (getScript() != null) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("function disableObjectByDropdown (dropdown,inputs,value,selectedValue) {\n	if (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue)) {\n \tif (inputs.length > 1) {\n	\t\tfor(var i=0;i<inputs.length;i++)\n	\t\t\tinputs[i].disabled=eval(value);\n	\t\t}\n	\t\tinputs.disabled=eval(value);\n}\n");
-			if (!_isMultiple) {
+			if (!this._isMultiple) {
 				buffer.append("else {\n\tif (inputs.length > 1) {\n	\t\tfor(var i=0;i<inputs.length;i++)\n	\t\t\tinputs[i].disabled=!eval(value);\n	\t\t}\n	\t\tinputs.disabled=!eval(value);\n}\n");
 			}
 			buffer.append("}");
 			getScript().addFunction("disableObjectByDropdown", buffer.toString());
 		}
 //		}
-		if (_isSetToSubmit)
+		if (this._isSetToSubmit) {
 			getScript().addFunction("submitWhenSelected", "function submitWhenSelected (dropdown,selectedValue) {\n\tif (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue))\n\t\tdropdown.form.submit();\n}");
+		}
 	}
 
 	/**
 	 * @see com.idega.presentation.PresentationObject#print(IWContext)
 	 */
 	public void print(IWContext iwc) throws Exception {
-		if (addSelectScript) {
+		if (this.addSelectScript) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("function navHandler(input) {").append("\n\t");
 			buffer.append("var URL = input.options[input.selectedIndex].value;").append("\n\t");
@@ -333,7 +345,7 @@ public class GenericSelect extends InterfaceObject {
 			Object optionObj = iter.next();
 			if(optionObj instanceof SelectOption) {
 				SelectOption option = (SelectOption) optionObj;
-				boolean setSelected = ((_allSelected) || selectedElements.contains(option.getValueAsString()));
+				boolean setSelected = ((this._allSelected) || this.selectedElements.contains(option.getValueAsString()));
 				option.setSelected(setSelected);
 				if(setSelected){
 					val = option.getValueAsString();
@@ -408,7 +420,7 @@ public class GenericSelect extends InterfaceObject {
 	}
 
 	protected void setAllSelected(boolean allSelected) {
-		_allSelected = allSelected;
+		this._allSelected = allSelected;
 	}
 
 	/**
@@ -453,8 +465,8 @@ public class GenericSelect extends InterfaceObject {
 	 * @param isMultiple					Must be used when multiple values can disable...
 	 */
 	public void setToDisableWhenSelected(String objectToDisableName, String selectedValue, boolean disable, boolean isMultiple) {
-		_isSetToDisable = true;
-		_isMultiple = isMultiple;
+		this._isSetToDisable = true;
+		this._isMultiple = isMultiple;
 		this.setOnChange("disableObjectByDropdown(this,findObj('"+objectToDisableName+"'),'"+String.valueOf(disable)+"','"+selectedValue+"')");
 	}
 
@@ -505,9 +517,9 @@ public class GenericSelect extends InterfaceObject {
 	 * @param emptyValue		The value representing the "empty" value.
 	 */
 	public void setAsNotEmpty(String errorMessage, String emptyValue) {
-		_isSetAsNotEmpty = true;
-		_notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
-		_emptyValue = emptyValue;
+		this._isSetAsNotEmpty = true;
+		this._notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
+		this._emptyValue = emptyValue;
 	}
 
 	/**

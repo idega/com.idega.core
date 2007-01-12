@@ -103,52 +103,52 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
   }
 
   public UserHome getUserHome(){
-    if(userHome==null){
+    if(this.userHome==null){
       try{
-        userHome = (UserHome)IDOLookup.getHome(User.class);
+        this.userHome = (UserHome)IDOLookup.getHome(User.class);
       }
       catch(RemoteException rme){
         throw new RuntimeException(rme.getMessage());
       }
     }
-    return userHome;
+    return this.userHome;
   }
 
   public UserGroupRepresentativeHome getUserGroupRepresentativeHome(){
-    if(userRepHome==null){
+    if(this.userRepHome==null){
       try{
-        userRepHome = (UserGroupRepresentativeHome)IDOLookup.getHome(UserGroupRepresentative.class);
+        this.userRepHome = (UserGroupRepresentativeHome)IDOLookup.getHome(UserGroupRepresentative.class);
       }
       catch(RemoteException rme){
         throw new RuntimeException(rme.getMessage());
       }
     }
-    return userRepHome;
+    return this.userRepHome;
   }
 
   public GroupHome getGroupHome(){
-    if(groupHome==null){
+    if(this.groupHome==null){
       try{
-        groupHome = (GroupHome)IDOLookup.getHome(Group.class);
+        this.groupHome = (GroupHome)IDOLookup.getHome(Group.class);
       }
       catch(RemoteException rme){
         throw new RuntimeException(rme.getMessage());
       }
     }
-    return groupHome;
+    return this.groupHome;
   }
 
 
   public GroupHome getPermissionGroupHome(){
-    if(permGroupHome==null){
+    if(this.permGroupHome==null){
       try{
-        permGroupHome = (GroupHome)IDOLookup.getHome(PermissionGroup.class);
+        this.permGroupHome = (GroupHome)IDOLookup.getHome(PermissionGroup.class);
       }
       catch(RemoteException rme){
         throw new RuntimeException(rme.getMessage());
       }
     }
-    return permGroupHome;
+    return this.permGroupHome;
   }
 
   /** 
@@ -364,11 +364,11 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
 	}
 
 	public String[] getUserRepresentativeGroupTypeStringArray(){
-		if(userRepresentativeType == null){
-			userRepresentativeType = new String[1];
-			userRepresentativeType[0] = this.getUserGroupRepresentativeHome().getGroupType();
+		if(this.userRepresentativeType == null){
+			this.userRepresentativeType = new String[1];
+			this.userRepresentativeType[0] = this.getUserGroupRepresentativeHome().getGroupType();
 		}
-		return userRepresentativeType;
+		return this.userRepresentativeType;
 	}
 
 
@@ -468,10 +468,12 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
  */
   private  void putGroupsContaining(Group group, Map GroupsContained , String[] groupTypes, boolean returnGroupTypes, Map cachedParents, Map cachedGroups ) {
   	Collection pGroups = null;
-  	if (cachedParents == null)
-  		pGroups = group.getParentGroups();//TODO EIKI FINISH THIS groupTypes,returnGroupTypes);
-  	else 
-  		pGroups = group.getParentGroups(cachedParents, cachedGroups);
+  	if (cachedParents == null) {
+		pGroups = group.getParentGroups();//TODO EIKI FINISH THIS groupTypes,returnGroupTypes);
+	}
+	else {
+		pGroups = group.getParentGroups(cachedParents, cachedGroups);
+	}
 		if (pGroups != null ){
 		  String key = "";
 		  Iterator iter = pGroups.iterator();
@@ -830,7 +832,7 @@ public  Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId){
       if (includeAliases) {
           if (child.isAlias()) {
               if (child.getAlias() != null){ 
-	              alreadyCheckedGroups.add((Integer)child.getPrimaryKey());
+	              alreadyCheckedGroups.add(child.getPrimaryKey());
 	              child = child.getAlias();
 	          }
           }
@@ -1103,31 +1105,31 @@ public  Collection getChildGroupsInDirect(int groupId) throws EJBException,Finde
    * Not yet implemented
    */
   public GroupHome getGroupHome(String groupType){
-    if(groupHome==null){
+    if(this.groupHome==null){
       try{
         /**
          * @todo: implement
          */
-        groupHome = (GroupHome)IDOLookup.getHome(Group.class);
+        this.groupHome = (GroupHome)IDOLookup.getHome(Group.class);
       }
       catch(RemoteException rme){
         throw new RuntimeException(rme.getMessage());
       }
     }
-    return groupHome;
+    return this.groupHome;
   }
 
 
 	public GroupRelationHome getGroupRelationHome(){
-		 if(groupRelationHome==null){
+		 if(this.groupRelationHome==null){
 			 try{
-				groupRelationHome = (GroupRelationHome)IDOLookup.getHome(GroupRelation.class);
+				this.groupRelationHome = (GroupRelationHome)IDOLookup.getHome(GroupRelation.class);
 			 }
 			 catch(RemoteException rme){
 				 throw new RuntimeException(rme.getMessage());
 			 }
 		 }
-		 return groupRelationHome;
+		 return this.groupRelationHome;
 	 }
 	
 
@@ -1424,19 +1426,19 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
   }
   
 	public ICFileHome getICFileHome(){
-		if(fileHome==null){
+		if(this.fileHome==null){
 			try{
-				fileHome = (ICFileHome)IDOLookup.getHome(ICFile.class);
+				this.fileHome = (ICFileHome)IDOLookup.getHome(ICFile.class);
 			}
 			catch(RemoteException rme){
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
-		return fileHome;
+		return this.fileHome;
 	}
 
 	public ICFile createGroupHomeFolder(Group group) throws CreateException {
-		ICFile file = (ICFile)getICFileHome().create();
+		ICFile file = getICFileHome().create();
 		file.setName(group.getName());
 		file.setLocalizationKey(GROUP_HOME_FOLDER_LOCALIZATION_PREFIX+group.getGroupType());
 		file.setMimeType(com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
@@ -1474,8 +1476,9 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 			// super admin: return all group types
 			if (iwuc.isSuperAdmin()) {
 				try {
-					if (groupTypeHome.getNumberOfVisibleGroupTypes() <= 0)
+					if (groupTypeHome.getNumberOfVisibleGroupTypes() <= 0) {
 						((com.idega.data.GenericEntity) com.idega.data.IDOLookup.instanciateEntity(GroupType.class)).insertStartData();
+					}
 				}
 				catch (Exception e) {
 					e.printStackTrace();
@@ -1803,15 +1806,29 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
             addAddress = true;
           }
   
-          if( country!=null ) address.setCountry(country);
-          if( code!=null ) address.setPostalCode(code);
-          if( province!=null ) address.setProvince(province);
-          if( city!=null ) address.setCity(city);
-          if( poBox!=null) address.setPOBox(poBox);
+          if( country!=null ) {
+			address.setCountry(country);
+		}
+          if( code!=null ) {
+			address.setPostalCode(code);
+		}
+          if( province!=null ) {
+			address.setProvince(province);
+		}
+          if( city!=null ) {
+			address.setCity(city);
+		}
+          if( poBox!=null) {
+			address.setPOBox(poBox);
+		}
           
           address.setStreetName(streetName);
-          if( streetNumber!=null ) address.setStreetNumber(streetNumber);
-          else address.setStreetNumber("");
+          if( streetNumber!=null ) {
+			address.setStreetNumber(streetNumber);
+		}
+		else {
+			address.setStreetNumber("");
+		}
 
           address.store();
   
@@ -1825,7 +1842,9 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
         }
           
       }
-        else throw new CreateException("No streetname or userId is null!");
+	else {
+		throw new CreateException("No streetname or userId is null!");
+	}
         
         return address;
   }
@@ -1849,15 +1868,15 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
   }  
 
   public AddressHome getAddressHome(){
-    if(addressHome==null){
+    if(this.addressHome==null){
       try{
-        addressHome = (AddressHome)IDOLookup.getHome(Address.class);
+        this.addressHome = (AddressHome)IDOLookup.getHome(Address.class);
       }
       catch(RemoteException rme){
         throw new RuntimeException(rme.getMessage());
       }
     }
-    return addressHome;
+    return this.addressHome;
   }
   
   public  Phone[] getGroupPhones(Group group)throws RemoteException{
@@ -1878,8 +1897,9 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
     try {
       Collection L = group.getEmails();
       if(L != null){
-        if ( ! L.isEmpty() )
-          return (Email)L.iterator().next();
+        if ( ! L.isEmpty() ) {
+			return (Email)L.iterator().next();
+		}
       }
       return null;
     }
@@ -1914,15 +1934,15 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
   }
 
   public EmailHome getEmailHome(){
-    if(emailHome==null){
+    if(this.emailHome==null){
       try{
-        emailHome = (EmailHome)IDOLookup.getHome(Email.class);
+        this.emailHome = (EmailHome)IDOLookup.getHome(Email.class);
       }
       catch(RemoteException rme){
         throw new RuntimeException(rme.getMessage());
       }
     }
-    return emailHome;
+    return this.emailHome;
   }
 
   public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException {
@@ -1960,8 +1980,8 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
       //IDOLegacyEntity[] result = ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.data.PhoneBMPBean.getStaticInstance(Phone.class));
       if(result != null){
         for (int i = 0; i < result.length; i++) {
-          if(((Phone)result[i]).getPhoneTypeId() == phoneTypeId){
-            return (Phone)result[i];
+          if((result[i]).getPhoneTypeId() == phoneTypeId){
+            return result[i];
           }
         }
       }
@@ -1974,15 +1994,15 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
   }  
 
   public PhoneHome getPhoneHome(){
-    if(phoneHome==null){
+    if(this.phoneHome==null){
       try{
-        phoneHome = (PhoneHome)IDOLookup.getHome(Phone.class);
+        this.phoneHome = (PhoneHome)IDOLookup.getHome(Phone.class);
       }
       catch(RemoteException rme){
         throw new RuntimeException(rme.getMessage());
       }
     }
-    return phoneHome;
+    return this.phoneHome;
   }
  
  
@@ -2150,7 +2170,7 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
 	                          access.setPermission(
 	                                  AccessController.CATEGORY_GROUP_ID, this.getIWApplicationContext(),
 	                                  primaryGroupId, groupId,
-	                                  access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
+	                                  AccessController.PERMISSION_KEY_PERMIT, Boolean.TRUE);
 	                      } catch (Exception e) {
 	                          e.printStackTrace();
 	                      }
@@ -2225,23 +2245,23 @@ public Group getGroupByUniqueId(String uniqueID) throws FinderException {
           //create permission
           access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
-                  access.PERMISSION_KEY_CREATE, Boolean.TRUE);
+                  AccessController.PERMISSION_KEY_CREATE, Boolean.TRUE);
           //edit permission
           access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
-                  access.PERMISSION_KEY_EDIT, Boolean.TRUE);
+                  AccessController.PERMISSION_KEY_EDIT, Boolean.TRUE);
           //delete permission
           access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
-                  access.PERMISSION_KEY_DELETE, Boolean.TRUE);
+                  AccessController.PERMISSION_KEY_DELETE, Boolean.TRUE);
           //view permission
           access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
-                  access.PERMISSION_KEY_VIEW, Boolean.TRUE);
+                  AccessController.PERMISSION_KEY_VIEW, Boolean.TRUE);
           //permission to give other permission
           access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
                   groupId, theGroupIDToSetPermissionTo,
-                  access.PERMISSION_KEY_PERMIT, Boolean.TRUE);
+                  AccessController.PERMISSION_KEY_PERMIT, Boolean.TRUE);
       } catch (Exception ex) {
           ex.printStackTrace();
       }
@@ -2526,10 +2546,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	
 	public NestedSetsContainer getLastGroupTreeSnapShot() throws EJBException {
-		if(groupTreeSnapShot==null){
+		if(this.groupTreeSnapShot==null){
 			refreshGroupTreeSnapShot();
 		}
-		return groupTreeSnapShot;
+		return this.groupTreeSnapShot;
 	}
 	
 	public void refreshGroupTreeSnapShotInANewThread(){
@@ -2550,7 +2570,7 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 			while(iter.hasNext()){
 				nsc.add(GroupTreeImageProcedure.getInstance().getGroupTree((Group)iter.next()));
 			}
-			groupTreeSnapShot=nsc;
+			this.groupTreeSnapShot=nsc;
 		}
 		catch (Exception e) {
 			throw new EJBException(e);
@@ -2563,10 +2583,10 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 	
 	/**
 	 * 
-	 *  Last modified: $Date: 2006/06/30 18:10:51 $ by $Author: sigtryggur $
+	 *  Last modified: $Date: 2007/01/12 19:32:31 $ by $Author: idegaweb $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.99.2.2 $
+	 * @version $Revision: 1.99.2.3 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 		
@@ -2580,14 +2600,14 @@ public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
 		
 		private GroupTreeRefreshThread(String name, int rand){
 			super(name+rand);
-			randID=rand;
+			this.randID=rand;
 		}
 		
 		public void run() {
 			try {
-				log("[GroupBusiness]: fetch grouptree, new thread started 'randID:"+randID+"'");
+				log("[GroupBusiness]: fetch grouptree, new thread started 'randID:"+this.randID+"'");
 				refreshGroupTreeSnapShot();
-				log("[GroupBusiness]: fetch grouptree, thread done 'randID:"+randID+"'");
+				log("[GroupBusiness]: fetch grouptree, thread done 'randID:"+this.randID+"'");
 			}
 			catch (EJBException e) {
 				e.printStackTrace();

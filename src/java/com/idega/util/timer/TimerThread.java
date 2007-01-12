@@ -17,8 +17,9 @@ public class TimerThread implements Runnable {
   private boolean shutdown = false;
 
   private void debug(String s) {
-    if (debug)
-      System.out.println("[" + Thread.currentThread().getName() + "] TimerThread: " + s);
+    if (this.debug) {
+		System.out.println("[" + Thread.currentThread().getName() + "] TimerThread: " + s);
+	}
   }
 
   /**
@@ -31,9 +32,9 @@ public class TimerThread implements Runnable {
     this.mgr = mgr;
 
     // start the thread
-    thread = new Thread(this, waiterName);
-    thread.setDaemon(isDaemon);
-    thread.start();
+    this.thread = new Thread(this, waiterName);
+    this.thread.setDaemon(isDaemon);
+    this.thread.start();
   }
 
   /**
@@ -62,23 +63,23 @@ public class TimerThread implements Runnable {
     * Stops (destroy) the thread.
     */
   public synchronized void stop() {
-    shutdown = true;
+    this.shutdown = true;
     notify();
   }
 
 
   public synchronized void run() {
     debug("I'm running");
-    while(!shutdown) {
+    while(!this.shutdown) {
       try {
         // check if there's timer here
-        if (sleepUntil <= 0) {
+        if (this.sleepUntil <= 0) {
           // no timer here. So wait for a new timer to come along.
           wait();
         } // if
         else {
           // yes, there's an timer here. Wait until the timer is ready.
-          long timeout = sleepUntil - System.currentTimeMillis();
+          long timeout = this.sleepUntil - System.currentTimeMillis();
           if (timeout > 0) {
             wait(timeout);
           } // if
@@ -86,11 +87,11 @@ public class TimerThread implements Runnable {
 
         // now that we've awakened again, check if an timer is due (within
         // 1 second)
-        if (sleepUntil >= 0 && (sleepUntil - System.currentTimeMillis() < 1000)) {
+        if (this.sleepUntil >= 0 && (this.sleepUntil - System.currentTimeMillis() < 1000)) {
           // yes, an timer is ready. Notify the listeners.
-          sleepUntil = -1;
+          this.sleepUntil = -1;
           debug("notifying listeners");
-          mgr.notifyListeners();
+          this.mgr.notifyListeners();
         } // if
 
       }

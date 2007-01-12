@@ -16,10 +16,10 @@ import java.security.NoSuchAlgorithmException;
  *
  * see java.security.MessageDigest for other algorithms
  * 
- * modified: $Date: 2004/11/21 01:30:43 $ by $Author: aron $
+ * modified: $Date: 2007/01/12 19:31:37 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:aron@idega.com">aron </a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.2.1 $
  */
 
 public class CheckSum {
@@ -71,38 +71,54 @@ public class CheckSum {
     
 //  converts the hex base to integer values.
     public static int hex2Int(char c) {
-        if (c == '0')
-            return 0;
-        if (c == '1')
-            return 1;
-        if (c == '2')
-            return 2;
-        if (c == '3')
-            return 3;
-        if (c == '4')
-            return 4;
-        if (c == '5')
-            return 5;
-        if (c == '6')
-            return 6;
-        if (c == '7')
-            return 7;
-        if (c == '8')
-            return 8;
-        if (c == '9')
-            return 9;
-        if (c == 'a' || c == 'A')
-            return 10;
-        if (c == 'b' || c == 'B')
-            return 11;
-        if (c == 'c' || c == 'C')
-            return 12;
-        if (c == 'd' || c == 'D')
-            return 13;
-        if (c == 'e' || c == 'E')
-            return 14;
-        if (c == 'f' || c == 'F')
-            return 15;
+        if (c == '0') {
+			return 0;
+		}
+        if (c == '1') {
+			return 1;
+		}
+        if (c == '2') {
+			return 2;
+		}
+        if (c == '3') {
+			return 3;
+		}
+        if (c == '4') {
+			return 4;
+		}
+        if (c == '5') {
+			return 5;
+		}
+        if (c == '6') {
+			return 6;
+		}
+        if (c == '7') {
+			return 7;
+		}
+        if (c == '8') {
+			return 8;
+		}
+        if (c == '9') {
+			return 9;
+		}
+        if (c == 'a' || c == 'A') {
+			return 10;
+		}
+        if (c == 'b' || c == 'B') {
+			return 11;
+		}
+        if (c == 'c' || c == 'C') {
+			return 12;
+		}
+        if (c == 'd' || c == 'D') {
+			return 13;
+		}
+        if (c == 'e' || c == 'E') {
+			return 14;
+		}
+        if (c == 'f' || c == 'F') {
+			return 15;
+		}
 
         System.out.println("should not occur! " + c);
 
@@ -167,10 +183,12 @@ public class CheckSum {
                 md.update(buffer, 0, b_read);
                 b_read = s.read(buffer);
             }
-            if(closeStream)
-                s.close();
-            else
-                s.reset();
+            if(closeStream) {
+				s.close();
+			}
+			else {
+				s.reset();
+			}
             byte[] digest = md.digest();
             return byte2Hex(digest);
         } catch (FileNotFoundException e) {

@@ -1,5 +1,5 @@
 /*
- * $Id: GenericButton.java,v 1.33 2005/07/15 12:40:24 thomas Exp $
+ * $Id: GenericButton.java,v 1.33.2.1 2007/01/12 19:32:08 idegaweb Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * This component is for rendering out a input element of type button.
  * </p>
- *  Last modified: $Date: 2005/07/15 12:40:24 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/01/12 19:32:08 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.33.2.1 $
  */
 public class GenericButton extends GenericInput {
 
@@ -58,35 +58,35 @@ public class GenericButton extends GenericInput {
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[13];
 		values[0] = super.saveState(ctx);
-		values[1] = new Integer(_pageID);
-		values[2] = new Integer(_fileID);
-		values[3] = Boolean.valueOf(asImageButton);
-		values[4] = _windowClassToOpen;
-		values[5] = parameterList;
-		values[6] = Boolean.valueOf(_onClickConfirm);
-		values[7] = _confirmMessage;
-		values[8] = new Integer(_parentPageID);
-		values[9] = classToInstanciate;
-		values[10] = templatePageClass;
-		values[11] = templateForObjectInstanciation;
-		values[12] = _URL;
+		values[1] = new Integer(this._pageID);
+		values[2] = new Integer(this._fileID);
+		values[3] = Boolean.valueOf(this.asImageButton);
+		values[4] = this._windowClassToOpen;
+		values[5] = this.parameterList;
+		values[6] = Boolean.valueOf(this._onClickConfirm);
+		values[7] = this._confirmMessage;
+		values[8] = new Integer(this._parentPageID);
+		values[9] = this.classToInstanciate;
+		values[10] = this.templatePageClass;
+		values[11] = this.templateForObjectInstanciation;
+		values[12] = this._URL;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
-		_pageID = ((Integer)values[1]).intValue();
-		_fileID = ((Integer)values[2]).intValue();
-		asImageButton = ((Boolean)values[3]).booleanValue();
-		_windowClassToOpen = (Class)values[4];
-		parameterList = (KeyValueList)values[5];
-		_onClickConfirm = ((Boolean)values[6]).booleanValue();
-		_confirmMessage = (String)values[7];
-		_parentPageID = ((Integer)values[8]).intValue();
-		classToInstanciate = (Class)values[9];
-		templatePageClass = (Class)values[10];
-		templateForObjectInstanciation = (String) values[11];
-		_URL = (String)values[12];
+		this._pageID = ((Integer)values[1]).intValue();
+		this._fileID = ((Integer)values[2]).intValue();
+		this.asImageButton = ((Boolean)values[3]).booleanValue();
+		this._windowClassToOpen = (Class)values[4];
+		this.parameterList = (KeyValueList)values[5];
+		this._onClickConfirm = ((Boolean)values[6]).booleanValue();
+		this._confirmMessage = (String)values[7];
+		this._parentPageID = ((Integer)values[8]).intValue();
+		this.classToInstanciate = (Class)values[9];
+		this.templatePageClass = (Class)values[10];
+		this.templateForObjectInstanciation = (String) values[11];
+		this._URL = (String)values[12];
 	}
 	
 	public GenericButton() {
@@ -139,10 +139,11 @@ public class GenericButton extends GenericInput {
 	 * @see com.idega.presentation.PresentationObject#main(IWContext)
 	 */
 	public void main(IWContext iwc) throws Exception {
-		if (_onClickConfirm) {
+		if (this._onClickConfirm) {
 			Script script = getParentPage().getAssociatedScript();
-			if (script != null)
+			if (script != null) {
 				script = new Script();
+			}
 					
 			boolean addFunction = false;
 					
@@ -151,36 +152,36 @@ public class GenericButton extends GenericInput {
 			buffer.append("var submit = confirm(message);").append("\n\t");
 			buffer.append("if (submit)").append("\n\t\t");
 					
-			if (_windowClassToOpen != null) {
-				String URL = Window.getWindowURLWithParameters(_windowClassToOpen, iwc, getConvertedAndCheckedParameterList());
-				buffer.append(Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc)).append(";\n");
+			if (this._windowClassToOpen != null) {
+				String URL = Window.getWindowURLWithParameters(this._windowClassToOpen, iwc, getConvertedAndCheckedParameterList());
+				buffer.append(Window.getCallingScriptString(this._windowClassToOpen, URL, true, iwc)).append(";\n");
 				addFunction = true;
 			}
-			if (_pageID != -1) {
-				buffer.append("window.location='"+getURLString(iwc, _pageID, false)+"';").append("\n");
+			if (this._pageID != -1) {
+				buffer.append("window.location='"+getURLString(iwc, this._pageID, false)+"';").append("\n");
 				addFunction = true;
 			}
-			if (_parentPageID != -1) {
-				buffer.append("window.location='"+getURLString(iwc, _parentPageID, false)+"';").append("\n");
+			if (this._parentPageID != -1) {
+				buffer.append("window.location='"+getURLString(iwc, this._parentPageID, false)+"';").append("\n");
 				addFunction = true;
 			}
-			if (_fileID != -1) {
+			if (this._fileID != -1) {
 				ICFileSystem fsystem = getICFileSystem(iwc);
-				buffer.append(Window.getCallingScript(fsystem.getFileURI(_fileID))).append(";\n");
+				buffer.append(Window.getCallingScript(fsystem.getFileURI(this._fileID))).append(";\n");
 				addFunction = true;
 			}
-			if(classToInstanciate!=null){
+			if(this.classToInstanciate!=null){
 				buffer.append("location='"+getURIToClassToInstanciate(iwc)+"';").append("\n");
 				addFunction = true;
 			}
-			if(_URL != null){
-				buffer.append(Window.getWindowCallingScript(_URL, "_blank", true, true, true, true, true, true, true, true, false, 640, 480)).append("\n");
+			if(this._URL != null){
+				buffer.append(Window.getWindowCallingScript(this._URL, "_blank", true, true, true, true, true, true, true, true, false, 640, 480)).append("\n");
 				addFunction = true;
 			}
 
 			buffer.append("}");
 			if (addFunction) {
-				setOnClick("javascript:onClickConfirm('"+_confirmMessage+"')");
+				setOnClick("javascript:onClickConfirm('"+this._confirmMessage+"')");
 				script.addFunction("onClickConfirm", buffer.toString());
 				getParentPage().setAssociatedScript(script);
 			}
@@ -189,30 +190,30 @@ public class GenericButton extends GenericInput {
 	
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
-			if (asImageButton) {
+			if (this.asImageButton) {
 				Image generatedImage = iwc.getIWMainApplication().getCoreBundle().getImageButton(getValueAsString());
 				setButtonImage(generatedImage);
 			}
-			if (!_onClickConfirm) {
-				if (_windowClassToOpen != null) {
-					String URL =  Window.getWindowURLWithParameters(_windowClassToOpen, iwc, getConvertedAndCheckedParameterList()); 
-					setOnClick("javascript:" + Window.getCallingScriptString(_windowClassToOpen, URL, true, iwc));
+			if (!this._onClickConfirm) {
+				if (this._windowClassToOpen != null) {
+					String URL =  Window.getWindowURLWithParameters(this._windowClassToOpen, iwc, getConvertedAndCheckedParameterList()); 
+					setOnClick("javascript:" + Window.getCallingScriptString(this._windowClassToOpen, URL, true, iwc));
 				}
-				if (_pageID != -1) {
-					setOnClick("javascript:window.location='"+getURLString(iwc, _pageID, true)+"';");
+				if (this._pageID != -1) {
+					setOnClick("javascript:window.location='"+getURLString(iwc, this._pageID, true)+"';");
 				}
-				if (_parentPageID != -1) {
-					setOnClick("javascript:window.opener.location='"+getURLString(iwc, _parentPageID, true)+"';window.close();");
+				if (this._parentPageID != -1) {
+					setOnClick("javascript:window.opener.location='"+getURLString(iwc, this._parentPageID, true)+"';window.close();");
 				}
-				if (_fileID != -1) {
+				if (this._fileID != -1) {
 					ICFileSystem fsystem = getICFileSystem(iwc);
-					setOnClick("javascript:"+Window.getCallingScript(fsystem.getFileURI(_fileID)));	
+					setOnClick("javascript:"+Window.getCallingScript(fsystem.getFileURI(this._fileID)));	
 				}
-				if (classToInstanciate != null) {
+				if (this.classToInstanciate != null) {
 					setOnClick("javascript:location='"+getURIToClassToInstanciate(iwc)+"';");
 				}
-				if (_URL != null) {
-					setOnClick("javascript:"+Window.getWindowCallingScript(_URL, "_blank", true, true, true, true, true, true, true, true, false, 640, 480));
+				if (this._URL != null) {
+					setOnClick("javascript:"+Window.getWindowCallingScript(this._URL, "_blank", true, true, true, true, true, true, true, true, false, 640, 480));
 				}
 			}
 			
@@ -251,8 +252,9 @@ public class GenericButton extends GenericInput {
 					setSource(URL);
 					super.print(iwc);
 				}
-				else
+				else {
 					print("<img " + buttonImage.getMarkupAttributesString() + " />");
+				}
 			}
 		} 
 		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
@@ -278,36 +280,38 @@ public class GenericButton extends GenericInput {
 	}
 	
 	public void setWindowToOpen(Class windowClassToOpen) {
-		_windowClassToOpen = windowClassToOpen;
+		this._windowClassToOpen = windowClassToOpen;
 	}
 	
 	public void setPageToOpen(int pageID) {
-		_pageID = pageID;
+		this._pageID = pageID;
 	}
 	
 	public void setPageToOpen(ICPage page) {
-		if (page != null && page.getID() != -1)
+		if (page != null && page.getID() != -1) {
 			setPageToOpen(page.getID());
+		}
 	}
 	
 	public void setParentPageToOpen(int pageID) {
-		_parentPageID = pageID;
+		this._parentPageID = pageID;
 	}
 	
 	public void setParentPageToOpen(ICPage page) {
-		if (page != null && page.getID() != -1)
+		if (page != null && page.getID() != -1) {
 			setParentPageToOpen(page.getID());
+		}
 	}
 	
 	public void setURLToOpen(String URL) {
-		_URL = URL;
+		this._URL = URL;
 	}
 	
 	public void addParameter(String name, String value) {
-		if (parameterList == null) {
-			parameterList = new KeyValueList();
+		if (this.parameterList == null) {
+			this.parameterList = new KeyValueList();
 		}
-		parameterList.put(name, value);
+		this.parameterList.put(name, value);
 	}
 	
 	/**
@@ -362,11 +366,11 @@ public class GenericButton extends GenericInput {
 	
 	
 	private KeyValueList getConvertedAndCheckedParameterList() {
-		if (parameterList == null) {
+		if (this.parameterList == null) {
 			return null;
 		}
-		KeyValueList convertedList = new KeyValueList(parameterList.size());
-		Iterator iter = parameterList.iterator();
+		KeyValueList convertedList = new KeyValueList(this.parameterList.size());
+		Iterator iter = this.parameterList.iterator();
 		while (iter.hasNext()) {
 			KeyValuePair pair = (KeyValuePair) iter.next();
 			String name = (String) pair.getKey();
@@ -384,8 +388,8 @@ public class GenericButton extends GenericInput {
 	private String getURLString(IWContext iwc, int pageID, boolean convert) throws Exception{
 		BuilderService bservice = getBuilderService(iwc);
 		URLUtil url = new URLUtil(bservice.getPageURI(pageID), convert);
-		if (parameterList != null) {
-			Iterator iter = parameterList.iterator();
+		if (this.parameterList != null) {
+			Iterator iter = this.parameterList.iterator();
 			while (iter.hasNext()) {
 				KeyValuePair pair = (KeyValuePair) iter.next();
 				String name = (String) pair.getKey();
@@ -403,12 +407,12 @@ public class GenericButton extends GenericInput {
 	 * @param fileID 	The fileID to set
 	 */
 	public void setFileToOpen(int fileID) {
-		_fileID = fileID;
+		this._fileID = fileID;
 	}
 	
 	public void setOnClickConfirm(String confirmMessage) {
-		_onClickConfirm = true;
-		_confirmMessage = confirmMessage;
+		this._onClickConfirm = true;
+		this._confirmMessage = confirmMessage;
 	}
 	
 	private String getURIToClassToInstanciate(IWContext iwc) {
@@ -418,13 +422,13 @@ public class GenericButton extends GenericInput {
 		String uri = null;
 		if (this.templatePageClass != null) {
 				//return (iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templatePageClass))+getParameters();
-			uri = iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate);
+			uri = iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate);
 		}
 		else if (this.templateForObjectInstanciation != null) {
-			uri = iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templateForObjectInstanciation);
+			uri = iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate, this.templateForObjectInstanciation);
 		}
 		else {
-			uri = iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate);
+			uri = iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate);
 		}
 		KeyValueList convertedList = getConvertedAndCheckedParameterList();
 		if (convertedList.isEmpty()) {

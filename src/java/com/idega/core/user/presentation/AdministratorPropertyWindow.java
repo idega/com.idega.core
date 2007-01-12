@@ -7,7 +7,7 @@ import com.idega.presentation.TabbedPropertyPanel;
  * Title:        User
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -20,7 +20,7 @@ public class AdministratorPropertyWindow extends UserPropertyWindow{
   }
 
   public String getSessionAddressString(){
-    return SESSION_ADDRESS;
+    return this.SESSION_ADDRESS;
   }
 
   public void initializePanel( IWContext iwc, TabbedPropertyPanel panel){

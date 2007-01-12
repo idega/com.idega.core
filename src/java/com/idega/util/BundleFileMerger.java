@@ -31,7 +31,7 @@ public class BundleFileMerger extends ModuleFileMerger {
 	}
 	
 	public String getBundleFilePath(){
-		return bundleFilePath;
+		return this.bundleFilePath;
 	}
 	
 	

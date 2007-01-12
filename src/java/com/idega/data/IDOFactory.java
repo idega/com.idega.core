@@ -56,7 +56,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
         e.printStackTrace();
       }
       entity.setEJBLocalHome(this);
-	  entity.setDatasource(dataSource);
+	  entity.setDatasource(this.dataSource);
       return (IDOEntity)entity;
       //return (IDOEntity)beanClass.newInstance();
     }
@@ -84,7 +84,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   }
 
   public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,Object pk)throws javax.ejb.FinderException{
-      IDOEntity theReturn = IDOContainer.getInstance().findByPrimaryKey(entityInterfaceClass,pk,this, dataSource);
+      IDOEntity theReturn = IDOContainer.getInstance().findByPrimaryKey(entityInterfaceClass,pk,this, this.dataSource);
       return theReturn;
 
     /*if(pk instanceof Integer){
@@ -221,7 +221,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
 		    while (iter.hasNext()) {
 		      Object pk = iter.next();
 		      if(pk instanceof IDOEntity){
-		      	theReturn.add((IDOEntity)pk);
+		      	theReturn.add(pk);
 		      } else {
 			      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
 			      theReturn.add(entityObject);
@@ -254,7 +254,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
      * @todo: Change implementation
      */
 	 GenericEntity ent = (GenericEntity) com.idega.data.GenericEntity.getStaticInstanceIDO(this.getEntityInterfaceClass());
-	 ent.setDatasource(dataSource, false);
+	 ent.setDatasource(this.dataSource, false);
 	 return ent;
   }
 

@@ -9,7 +9,7 @@ import com.idega.util.datastructures.Collectable;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -30,7 +30,7 @@ public class GenericFormCollector {
   }
 
   public int getSelectedIndex(){
-    return selectedIndex;
+    return this.selectedIndex;
   }
 
   /**
@@ -42,7 +42,7 @@ public class GenericFormCollector {
   public boolean setSelectedIndex(int index, IWContext iwc){
     boolean collected = true;
     if(this.selectedIndex > -1 && this.selectedIndex < this.addedCollectableObjects.size()){
-      if(selectedIndex != index ){
+      if(this.selectedIndex != index ){
         collected = ((Collectable)this.addedCollectableObjects.get(this.selectedIndex)).collect(iwc);
       }
     }

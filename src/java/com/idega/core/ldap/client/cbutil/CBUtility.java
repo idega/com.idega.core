@@ -122,8 +122,9 @@ public class CBUtility
         while ((blockSize = is.read(buffer)) != -1)        // kinda clumsy, reallocating
         {                                                  // memory like this I guess,
             byte[] temp = new byte[size + blockSize];      // but since we don't know
-            if (size != 0)                                 // how big the stream is, what
-                System.arraycopy(data, 0, temp, 0, size);  // else can we do? (?)
+            if (size != 0) {
+				System.arraycopy(data, 0, temp, 0, size);  // else can we do? (?)
+			}
 
             System.arraycopy(buffer, 0, temp, size, blockSize);
             data = temp;
@@ -146,16 +147,18 @@ public class CBUtility
     {
             // special handling for file reading in non-english locales...
 
-            if (Locale.getDefault().getLanguage().equals("en")==false)
-                return readI18NFile(file);
+            if (Locale.getDefault().getLanguage().equals("en")==false) {
+				return readI18NFile(file);
+			}
 
             // Read File into String Buffer
             FileReader in = new FileReader(file);
             int size = (int) file.length();
             char[] data = new char[size];
             int chars_read = 0;
-            while (chars_read < size)
-                chars_read += in.read(data, chars_read, size - chars_read);
+            while (chars_read < size) {
+				chars_read += in.read(data, chars_read, size - chars_read);
+			}
 
             return new String(data);  // use default locale encoding...
     }
@@ -184,8 +187,9 @@ public class CBUtility
             byte[] data = new byte[size];
             int bytes_read = 0;
 
-            while (bytes_read < size)
-                bytes_read += in.read(data, bytes_read, size - bytes_read);
+            while (bytes_read < size) {
+				bytes_read += in.read(data, bytes_read, size - bytes_read);
+			}
 
             return readI18NByteArray(data);
     }
@@ -201,23 +205,29 @@ public class CBUtility
             {
                 log("reading unicode 16 bit text", 7);
                 String text = new String(data, "UTF-16");  // return as 16 bit unicode
-                if (text.length() > 0) return text;
+                if (text.length() > 0) {
+					return text;
+				}
                 return new String(data); // something went wrong - try again with default encoding...
             }
             else
             {
                 byte[] test = new byte[250];  // grab the start of the file to test...
 
-                if (data.length<250)
-                    test = data;
-                else
-                    System.arraycopy(data,0,test,0,250);
+                if (data.length<250) {
+					test = data;
+				}
+				else {
+					System.arraycopy(data,0,test,0,250);
+				}
 
                 if (isNonAsciiUTF8(test))
                 {
                     log("reading utf8 text", 7);
                     String text = new String(data, "UTF-8");   // return as UTF-8
-                    if (text.length() > 0 ) return text;
+                    if (text.length() > 0 ) {
+						return text;
+					}
                     return (new String(data));  // something went wrong - try again with default encoding
                 }
                 else
@@ -240,11 +250,13 @@ public class CBUtility
                     int pos = 0;
                     while (pos+6 < buffer.length())
                     {
-                        if (buffer.charAt(pos) != '\\')
-                            pos++;
-                        else if (buffer.charAt(pos+1) != 'u')
-                            pos += 2;
-                        else
+                        if (buffer.charAt(pos) != '\\') {
+							pos++;
+						}
+						else if (buffer.charAt(pos+1) != 'u') {
+							pos += 2;
+						}
+						else
                         {
                             String unicode = buffer.substring(pos+2,pos+6);
                             int uni = Integer.parseInt(unicode, 16);
@@ -332,8 +344,9 @@ public class CBUtility
     public static void writeStringArrayFile(String fileName, String[] strings)
     {
         Properties props = new Properties();
-        for (int i=0; i<strings.length; i++)
-            props.put(strings[i], strings[i]);     // so it's redundant.  sue me.
+        for (int i=0; i<strings.length; i++) {
+			props.put(strings[i], strings[i]);     // so it's redundant.  sue me.
+		}
 
         writePropertyFile(fileName, props, "generated string array list");
     }
@@ -373,19 +386,23 @@ public class CBUtility
     public static String toHTML(String rawText)
     {
         String test;
-        if (rawText.length()>14)
-            test = rawText.substring(0,14).toLowerCase();
-        else
-            test = rawText.toLowerCase();
+        if (rawText.length()>14) {
+			test = rawText.substring(0,14).toLowerCase();
+		}
+		else {
+			test = rawText.toLowerCase();
+		}
 
         if (test.startsWith("<html>") || test.startsWith("<!doctype html>"))
         {
 
 // XXX this was commented out, but it seems to be necessaary/desirable?
-            if (test.startsWith("<html>"))
-                rawText = rawText.substring(6);
-            else if (test.startsWith("<!doctype html>"))
-                rawText = rawText.substring(15);
+            if (test.startsWith("<html>")) {
+				rawText = rawText.substring(6);
+			}
+			else if (test.startsWith("<!doctype html>")) {
+				rawText = rawText.substring(15);
+			}
 
             if (rawText.toLowerCase().endsWith("</html>"))
             {
@@ -457,8 +474,9 @@ public class CBUtility
         while (pos != -1)
         {
             pos = text.toString().indexOf(c,pos);
-            if (pos!=-1)
-                pos = replaceChar(text, pos, replacement);
+            if (pos!=-1) {
+				pos = replaceChar(text, pos, replacement);
+			}
         }
         return text;
     }
@@ -509,8 +527,9 @@ public class CBUtility
         while (pos != -1)
         {
             pos = text.toString().indexOf(orig,pos);
-            if (pos!=-1)
-                pos = replaceString(text, pos, orig.length(), replacement);
+            if (pos!=-1) {
+				pos = replaceString(text, pos, orig.length(), replacement);
+			}
         }
         return text;
     }
@@ -538,8 +557,9 @@ public class CBUtility
         while (pos < length)
         {
             test = searchMe.charAt(pos);
-            if ((compare.indexOf(test) != -1) == match)
-                return pos;
+            if ((compare.indexOf(test) != -1) == match) {
+				return pos;
+			}
             pos++;
         }
         return -1;
@@ -580,8 +600,9 @@ public class CBUtility
              {
                  for (int i=0; i<extensions.length;i++)
                  {
-                     if (name.endsWith(extensions[i]))
-                         return true;
+                     if (name.endsWith(extensions[i])) {
+						return true;
+					}
                  }
                  return false;
               }
@@ -649,10 +670,12 @@ public class CBUtility
      */
     public static void restoreCursor(Component C)
     {
-        if (savedCursor != null)
-            C.setCursor(savedCursor);
-        else
-            log("can't restore cursor; no cursor saved...",1);
+        if (savedCursor != null) {
+			C.setCursor(savedCursor);
+		}
+		else {
+			log("can't restore cursor; no cursor saved...",1);
+		}
     }
 
     /**
@@ -684,18 +707,24 @@ public class CBUtility
 
     public static void setLogType(String logType, String fileName)
     {
-        if (logType.equalsIgnoreCase("none")) loggingStyle = NOLOG;
-        else if (logType.equalsIgnoreCase("console")) loggingStyle = CONSOLE;
-        else if (logType.equalsIgnoreCase("file") || logType.equalsIgnoreCase("both"))
+        if (logType.equalsIgnoreCase("none")) {
+			loggingStyle = NOLOG;
+		}
+		else if (logType.equalsIgnoreCase("console")) {
+			loggingStyle = CONSOLE;
+		}
+		else if (logType.equalsIgnoreCase("file") || logType.equalsIgnoreCase("both"))
         {
             String logFileName = (fileName==null)?"jxplorer.log":fileName;
             try
             {
                 logfile = new FileWriter(logFileName);
-                if (logType.equalsIgnoreCase("both"))
-                    loggingStyle=CONSOLEANDFILE;
-                else
-                    loggingStyle = FILE;
+                if (logType.equalsIgnoreCase("both")) {
+					loggingStyle=CONSOLEANDFILE;
+				}
+				else {
+					loggingStyle = FILE;
+				}
             }
             catch (Exception e)
             {
@@ -703,7 +732,9 @@ public class CBUtility
                 loggingStyle = CONSOLE;
             }
         }
-        else loggingStyle = CONSOLE;  // console is default...
+		else {
+			loggingStyle = CONSOLE;  // console is default...
+		}
 
         log("Logging Initialised to " + logType, 1);
     }
@@ -716,7 +747,9 @@ public class CBUtility
     {
         try
         {
-            if (logfile != null) logfile.close();
+            if (logfile != null) {
+				logfile.close();
+			}
         }
         catch (Exception e)
         {
@@ -749,7 +782,9 @@ public class CBUtility
      */
     public static void log(String S, int level)
     {
-        if (debugLevel >= level) log(S);
+        if (debugLevel >= level) {
+			log(S);
+		}
     }
 
     /**
@@ -776,7 +811,9 @@ public class CBUtility
                         CBUtility.log("unable to write to log file\nreverting to console\n" + e + "\n"+S);
                         loggingStyle = CONSOLE;
                     }
-                    if (loggingStyle == FILE) break;
+                    if (loggingStyle == FILE) {
+						break;
+					}
 
             case CONSOLE:                     // console
 
@@ -974,11 +1011,14 @@ public class CBUtility
      */
     public static Frame getParentFrame(Component c)
     {
-        if (c==null) return null;
+        if (c==null) {
+			return null;
+		}
 
         Component parent = c.getParent();
-        while (!(parent instanceof Frame)&& (parent != null))
-            parent = parent.getParent();
+        while (!(parent instanceof Frame)&& (parent != null)) {
+			parent = parent.getParent();
+		}
 
         return (parent==null)?null:(Frame) parent;
     }
@@ -1018,7 +1058,9 @@ public class CBUtility
 
     public static void center(Component centerMe, Component positioner)
     {
-        if (centerMe == null) return;
+        if (centerMe == null) {
+			return;
+		}
 
         if (positioner != null && positioner.isShowing())
         {
@@ -1051,10 +1093,12 @@ public class CBUtility
 
             Toolkit toolKit = Toolkit.getDefaultToolkit();
 
-            if((x-100)<0 || (x+100)>toolKit.getScreenSize().width || (y-100)<0 || (y+100)>toolKit.getScreenSize().height)       //TE: if off screen (add some padding/a safety margin)...
-                centerOnScreen(centerMe);                                                               //TE: center in middle of screen (bug 2926).
-            else
-                centerMe.setLocation(x, y);  // move, using local co-ordinates.
+            if((x-100)<0 || (x+100)>toolKit.getScreenSize().width || (y-100)<0 || (y+100)>toolKit.getScreenSize().height) {
+				centerOnScreen(centerMe);                                                               //TE: center in middle of screen (bug 2926).
+			}
+			else {
+				centerMe.setLocation(x, y);  // move, using local co-ordinates.
+			}
         }
         else
         {
@@ -1129,12 +1173,15 @@ public class CBUtility
 
     static public byte hexChar2Byte(char hex)
     {
-        if (hex <= '9')
-            return ((byte)(hex-48)); // ('0' -> '9')
-        else if (hex <= 'F')
-            return ((byte)(hex-55)); // ('A' -> 'F')
-        else
-            return ((byte)(hex-87)); // ('a' -> 'f')
+        if (hex <= '9') {
+			return ((byte)(hex-48)); // ('0' -> '9')
+		}
+		else if (hex <= 'F') {
+			return ((byte)(hex-55)); // ('A' -> 'F')
+		}
+		else {
+			return ((byte)(hex-87)); // ('a' -> 'f')
+		}
     }
 
     /**
@@ -1152,8 +1199,9 @@ public class CBUtility
         for (int i = 0; i < hex.length(); i++)
         {
             buff.append(hex.charAt(i));
-            if ((i+1) % wordlength == 0)
-                buff.append(" ");
+            if ((i+1) % wordlength == 0) {
+				buff.append(" ");
+			}
         }
 
         return buff.toString();
@@ -1178,10 +1226,12 @@ public class CBUtility
         for (int i = 0; i < hex.length(); i++)
         {
             buff.append(hex.charAt(i));
-            if ((i+1) % wordlength == 0)
-                buff.append(" ");
-            if ((i+1) % linelength == 0)
-                buff.append("\n");
+            if ((i+1) % wordlength == 0) {
+				buff.append(" ");
+			}
+            if ((i+1) % linelength == 0) {
+				buff.append("\n");
+			}
         }
 
         return buff.toString();
@@ -1198,16 +1248,22 @@ public class CBUtility
     public static boolean isUTF8(byte[] sequence)
     {
         boolean debug = true;
-if (debug) System.out.println("\n\n Starting UTF8 Check\n\n");
+if (debug) {
+	System.out.println("\n\n Starting UTF8 Check\n\n");
+}
         int numberBytesInChar;
 
         for (int i=0; i< sequence.length; i++)
         {
             byte b = sequence[i];
-            if (debug) System.out.println("testing byte: " + byte2Hex(b));
+            if (debug) {
+				System.out.println("testing byte: " + byte2Hex(b));
+			}
             if (((b >> 6) & 0x03) == 2)
             {
-                if (debug) System.out.println("start byte is invalid utf8 - has 10... start");
+                if (debug) {
+					System.out.println("start byte is invalid utf8 - has 10... start");
+				}
                 return false;
             }
             byte test = b;
@@ -1224,13 +1280,19 @@ if (debug) System.out.println("\n\n Starting UTF8 Check\n\n");
                 {
                     if (i+j >= sequence.length)
                     {
-                        if (debug) System.out.println("following byte length is invalid - overruns end... ");
+                        if (debug) {
+							System.out.println("following byte length is invalid - overruns end... ");
+						}
                         return false;           // not a character encoding - probably random bytes
                     }
-                    if (debug) System.out.println("testing byte: " + byte2Hex(sequence[i+j]));
+                    if (debug) {
+						System.out.println("testing byte: " + byte2Hex(sequence[i+j]));
+					}
                     if (((sequence[i+j] >> 6) & 0x03) != 2)
                     {
-                        if (debug) System.out.println("following byte is invalid utf8 - does *not* have 10... start");
+                        if (debug) {
+							System.out.println("following byte is invalid utf8 - does *not* have 10... start");
+						}
                         return false;
                     }
                 }
@@ -1264,7 +1326,9 @@ if (debug) System.out.println("\n\n Starting UTF8 Check\n\n");
         for (int i=0; i< sequence.length-3; i++)
         {
             byte b = sequence[i];
-            if (((b >> 6) & 0x03) == 2) return false;
+            if (((b >> 6) & 0x03) == 2) {
+				return false;
+			}
             byte test = b;
             numberBytesInChar = 0;
             while ((test & 0x80)>0)
@@ -1279,8 +1343,9 @@ if (debug) System.out.println("\n\n Starting UTF8 Check\n\n");
                 nonAsciiDetected = true;
                 for (int j=1; j< numberBytesInChar; j++)
                 {
-                    if (((sequence[i+j] >> 6) & 0x03) != 2)
-                        return false;
+                    if (((sequence[i+j] >> 6) & 0x03) != 2) {
+						return false;
+					}
                 }
                 i += numberBytesInChar - 1;  // increment i to the next utf8 character start position.
             }
@@ -1307,8 +1372,12 @@ if (debug) System.out.println("\n\n Starting UTF8 Check\n\n");
     {
         if (sequence.length>=2)
         {
-            if (sequence[0] == (byte)0xFF && sequence[1] == (byte)0xFE) return true;
-            if (sequence[0] == (byte)0xFE && sequence[1] == (byte)0xFF) return true;
+            if (sequence[0] == (byte)0xFF && sequence[1] == (byte)0xFE) {
+				return true;
+			}
+            if (sequence[0] == (byte)0xFE && sequence[1] == (byte)0xFF) {
+				return true;
+			}
         }
         return false;
     }
@@ -1333,8 +1402,9 @@ if (debug) System.out.println("\n\n Starting UTF8 Check\n\n");
         int returnVal = chooser.showSaveDialog(parent);
         if (returnVal == JFileChooser.APPROVE_OPTION)
         {
-            if (chooser.getSelectedFile() != null)
-                return chooser.getSelectedFile().toString();
+            if (chooser.getSelectedFile() != null) {
+				return chooser.getSelectedFile().toString();
+			}
         }
         return null;
     }
@@ -1385,12 +1455,15 @@ if (debug) System.out.println("\n\n Starting UTF8 Check\n\n");
 
         public int compare(Object o1, Object o2)
         {
-            if (o1 == null && o2 != null)
-                return 1;
-            else if (o2 == null && o1 != null)
-                return -1;
-            else if (o1 == null && o2 == null)
-                return 0;
+            if (o1 == null && o2 != null) {
+				return 1;
+			}
+			else if (o2 == null && o1 != null) {
+				return -1;
+			}
+			else if (o1 == null && o2 == null) {
+				return 0;
+			}
 
             try
             {

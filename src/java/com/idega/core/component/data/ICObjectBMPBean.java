@@ -272,7 +272,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	    Table table = new Table(this);
 	    SelectQuery query = new SelectQuery(table);
 	    query.addColumn(new WildCardColumn());
-	    query.addCriteria(new MatchCriteria(table,this.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
+	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
 	    return idoFindPKsByQuery(query);
 	}
 	public Collection ejbFindAllByObjectTypeAndBundle(String type, String bundle) throws FinderException
@@ -280,8 +280,8 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	    Table table = new Table(this);
 	    SelectQuery query = new SelectQuery(table);
 	    query.addColumn(new WildCardColumn());
-	    query.addCriteria(new MatchCriteria(table,this.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
-	    query.addCriteria(new MatchCriteria(table,this.getBundleColumnName(),MatchCriteria.EQUALS,bundle,true));
+	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
+	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getBundleColumnName(),MatchCriteria.EQUALS,bundle,true));
 	    
 	    /*
 		IDOQuery query =
@@ -296,7 +296,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	    Table table = new Table(this);
 	    SelectQuery query = new SelectQuery(table);
 	    query.addColumn(new WildCardColumn());
-	    query.addCriteria(new MatchCriteria(table,this.getBundleColumnName(),MatchCriteria.EQUALS,bundle,true));
+	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getBundleColumnName(),MatchCriteria.EQUALS,bundle,true));
 	    return idoFindPKsByQuery(query);
 	}
 	public Object ejbFindByClassName(String className) throws FinderException{
@@ -304,7 +304,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	    Table table = new Table(this);
 	    SelectQuery query = new SelectQuery(table);
 	    query.addColumn(new WildCardColumn());
-	    query.addCriteria(new MatchCriteria(table,this.getClassNameColumnName(),MatchCriteria.EQUALS,className,true));
+	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getClassNameColumnName(),MatchCriteria.EQUALS,className,true));
 	    return idoFindOnePKByQuery(query);
 	}
 	public Collection ejbFindAllBlocksByBundle(String bundle) throws FinderException

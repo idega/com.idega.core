@@ -101,9 +101,11 @@ public class EmailBMPBean
 	{
 		IDOQuery query = idoQueryGetSelect().appendWhereEqualsQuoted(getColumnNameAddress(),address );
 		Collection coll = super.idoFindPKsByQuery(query);
-		if (!coll.isEmpty())
+		if (!coll.isEmpty()) {
 			return (Integer) coll.iterator().next();
-		else
+		}
+		else {
 			throw new FinderException("No email found");
+		}
 	}
 }

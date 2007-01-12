@@ -1,5 +1,5 @@
 /*
- * $Id: ICApplicationBindingBusinessBean.java,v 1.3 2005/10/20 14:47:01 thomas Exp $
+ * $Id: ICApplicationBindingBusinessBean.java,v 1.3.2.1 2007/01/12 19:32:32 idegaweb Exp $
  * Created on Oct 7, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -107,10 +107,10 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean   implement
 	}
 	
 	private ICApplicationBindingHome getICApplicationBindingHome() throws IDOLookupException {
-		if (applicationBindingHome == null) {
-			applicationBindingHome = (ICApplicationBindingHome) IDOLookup.getHome(ICApplicationBinding.class);
+		if (this.applicationBindingHome == null) {
+			this.applicationBindingHome = (ICApplicationBindingHome) IDOLookup.getHome(ICApplicationBinding.class);
 		}
-		return applicationBindingHome;
+		return this.applicationBindingHome;
 	}
 	
 	private ICApplicationBinding getICApplicationBinding(String key) throws IDOLookupException, FinderException {

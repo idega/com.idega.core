@@ -124,17 +124,24 @@ public class Executer {
 
     exec = exec.toLowerCase();
 
-    if(exec.indexOf("rm -r")!=-1) return false;
-
-    else if(exec.indexOf("rm -f")!=-1) return false;
-
-    else if(exec.indexOf("rm /")!=-1) return false;
-
-    else if(exec.indexOf("rmdir")!=-1) return false;
-
-    else if(exec.startsWith("del ")) return false;
-
-    else return true;
+    if(exec.indexOf("rm -r")!=-1) {
+		return false;
+	}
+	else if(exec.indexOf("rm -f")!=-1) {
+		return false;
+	}
+	else if(exec.indexOf("rm /")!=-1) {
+		return false;
+	}
+	else if(exec.indexOf("rmdir")!=-1) {
+		return false;
+	}
+	else if(exec.startsWith("del ")) {
+		return false;
+	}
+	else {
+		return true;
+	}
 
   }
 
@@ -180,11 +187,15 @@ public class Executer {
 
       classPath = System.getProperty("tc_path_add");//tomcat 3.3
 
-      if(classPath==null) classPath = System.getProperty("java.class.path");
+      if(classPath==null) {
+		classPath = System.getProperty("java.class.path");
+	}
 
 
 
-      if(classPath!=null ) classPath = TextSoap.findAndCut(classPath," ");//take away all spaces
+      if(classPath!=null ) {
+		classPath = TextSoap.findAndCut(classPath," ");//take away all spaces
+	}
 
 
 

@@ -45,7 +45,7 @@ public class AdvancedOps extends BasicOps
     public AdvancedOps(DirContext c)
     {
         super(c);
-        parser = getBaseNameParser();
+        this.parser = getBaseNameParser();
     }
 
    /**
@@ -136,8 +136,9 @@ public class AdvancedOps extends BasicOps
                 while (children.hasMoreElements())
                 {
                     String subDN = ((NameClassPair)children.next()).getName();
-                    if (recDeleteTree(parser.parse(subDN))==false)
-                        return false;    // ... this also abandons updating progress bar
+                    if (recDeleteTree(this.parser.parse(subDN))==false) {
+						return false;    // ... this also abandons updating progress bar
+					}
                 }
                 pop();              // inform progress tracker that we've come up.
             }
@@ -296,12 +297,12 @@ public class AdvancedOps extends BasicOps
                 while (children.hasMoreElements())
                 {
                     String subDNString = ((NameClassPair)children.next()).getName();
-                    Name subDN = parser.parse(subDNString);
+                    Name subDN = this.parser.parse(subDNString);
                     String childDN = subDN.get(subDN.size()-1);
 
-                    if (recCopyTree(parser.parse(childDN+","+from.toString()), parser.parse(childDN+","+to.toString()))==false)
+                    if (recCopyTree(this.parser.parse(childDN+","+from.toString()), this.parser.parse(childDN+","+to.toString()))==false)
                     {
-                        recDeleteTree(parser.parse(childDN+","+to.toString()));  // error! - try to clean up
+                        recDeleteTree(this.parser.parse(childDN+","+to.toString()));  // error! - try to clean up
                         return false;              // and return false...(abandoning pbar updates)
                     }
                 }

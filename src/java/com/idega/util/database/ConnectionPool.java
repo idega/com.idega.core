@@ -130,11 +130,11 @@ public class ConnectionPool
 		}
 		this.maxConns = maxConns;
 		this.timeOut = timeOut > 0 ? timeOut : 5;
-		logWriter = new LogWriter(name, logLevel, pw);
+		this.logWriter = new LogWriter(name, logLevel, pw);
 		initPool(initConns);
-		logWriter.log("New pool created", LogWriter.INFO);
+		this.logWriter.log("New pool created", LogWriter.INFO);
 		String lf = System.getProperty("line.separator");
-		logWriter.log(
+		this.logWriter.log(
 			lf
 				+ " url="
 				+ URL
@@ -154,23 +154,23 @@ public class ConnectionPool
 				+ " logintimeout="
 				+ this.timeOut,
 			LogWriter.DEBUG);
-		logWriter.log(getStats(), LogWriter.DEBUG);
+		this.logWriter.log(getStats(), LogWriter.DEBUG);
 	}
 	public void initializeRefresher(long refreshIntervalMillis)
 	{
-		if(refresher==null){
-			refresher = new ConnectionRefresher(this, refreshIntervalMillis);
+		if(this.refresher==null){
+			this.refresher = new ConnectionRefresher(this, refreshIntervalMillis);
 		}
 	}
 	protected synchronized void refresh()
 	{
 		this.cleanUpCheckedOut();
-		int size = freeConnections.size();
+		int size = this.freeConnections.size();
 		int conns = getCurrentConnectionCount();
 		debug("[ConnectionPool.refresh()] : size=" + size + ", conns=" + conns + ", getCheckedOutCount()=" + this.getCheckedOutCount());
 		if(conns==0){
 			//This should only happen if the datastore has become unreachable
-			initPool(minConns);	
+			initPool(this.minConns);	
 			return;
 		}
 		for (int i = 0; i < conns; i++)
@@ -220,14 +220,14 @@ public class ConnectionPool
 	{
 		//debug still active for now
 		// lastRefresh = System.currentTimeMillis();
-		initializeRefresher(refreshIntervalMillis);
+		initializeRefresher(this.refreshIntervalMillis);
 		//
 		for (int i = 0; i < initConns; i++)
 		{
 			try
 			{
 				Connection pc = newConnection();
-				freeConnections.addElement(pc);
+				this.freeConnections.addElement(pc);
 			}
 			catch (SQLException e)
 			{
@@ -236,14 +236,14 @@ public class ConnectionPool
 	}
 	public Connection getConnection() throws SQLException
 	{
-		logWriter.log(DEBUG_REQUESTING_CONNECTION, LogWriter.DEBUG);
+		this.logWriter.log(DEBUG_REQUESTING_CONNECTION, LogWriter.DEBUG);
 		try
 		{
-			return getConnection(timeOut * 1000);
+			return getConnection(this.timeOut * 1000);
 		}
 		catch (SQLException e)
 		{
-			logWriter.log(e, "Exception getting connection", LogWriter.ERROR);
+			this.logWriter.log(e, "Exception getting connection", LogWriter.ERROR);
 			throw e;
 		}
 	}
@@ -259,7 +259,7 @@ public class ConnectionPool
 		{
 			try
 			{
-				logWriter.log("Waiting for connection. Timeout=" + remaining, LogWriter.DEBUG);
+				this.logWriter.log("Waiting for connection. Timeout=" + remaining, LogWriter.DEBUG);
 				wait(remaining);
 			}
 			catch (InterruptedException e)
@@ -269,7 +269,7 @@ public class ConnectionPool
 			if (remaining <= 0)
 			{
 				// Timeout has expired
-				logWriter.log("Time-out while waiting for connection", LogWriter.DEBUG);
+				this.logWriter.log("Time-out while waiting for connection", LogWriter.DEBUG);
 				throw new SQLException("getConnection() timed-out");
 			}
 		}
@@ -284,7 +284,7 @@ public class ConnectionPool
 			catch (SQLException ex)
 			{
 			}
-			logWriter.log("Removed selected bad connection from pool", LogWriter.ERROR);
+			this.logWriter.log("Removed selected bad connection from pool", LogWriter.ERROR);
 			return getConnection(remaining);
 		}
 		//checkedOut++;
@@ -372,14 +372,14 @@ public class ConnectionPool
 	private Connection getPooledConnection() throws SQLException
 	{
 		Connection conn = null;
-		if (freeConnections.size() > 0)
+		if (this.freeConnections.size() > 0)
 		{
 			// Pick the first Connection in the Vector
 			// to get round-robin usage
-			conn = (Connection) freeConnections.firstElement();
-			freeConnections.removeElementAt(0);
+			conn = (Connection) this.freeConnections.firstElement();
+			this.freeConnections.removeElementAt(0);
 		}
-		else if (maxConns == 0 || this.getCheckedOutCount() < maxConns)
+		else if (this.maxConns == 0 || this.getCheckedOutCount() < this.maxConns)
 		{
 			conn = newConnection();
 		}
@@ -391,17 +391,17 @@ public class ConnectionPool
 		{
 			Connection conn = null;
 			DatastoreConnection dsc = null;
-			if (user == null)
+			if (this.user == null)
 			{
-				conn = DriverManager.getConnection(URL);
+				conn = DriverManager.getConnection(this.URL);
 				dsc = new DatastoreConnection(conn, this.name);
 			}
 			else
 			{
-				conn = DriverManager.getConnection(URL, user, password);
+				conn = DriverManager.getConnection(this.URL, this.user, this.password);
 				dsc = new DatastoreConnection(conn, this.name);
 			}
-			logWriter.log("Opened a new connection", LogWriter.INFO);
+			this.logWriter.log("Opened a new connection", LogWriter.INFO);
 			return dsc;
 		}
 		catch (SQLException e)
@@ -423,7 +423,7 @@ public class ConnectionPool
 			removeFromCheckedOutList(conn);
 			notifyAll();
 			//debug
-			logWriter.log(DEBUG_RETURNED_CONNECTION, LogWriter.DEBUG);
+			this.logWriter.log(DEBUG_RETURNED_CONNECTION, LogWriter.DEBUG);
 			//logWriter.log(getStats(), LogWriter.DEBUG);
 		}
 		else
@@ -439,28 +439,29 @@ public class ConnectionPool
 	private synchronized void addConnectionToPool(Connection conn)
 	{
 		// Put the connection at the end of the Vector
-		freeConnections.addElement(conn);
+		this.freeConnections.addElement(conn);
 	}
 	public synchronized void release()
 	{
-		if (refresher != null)
-			refresher.stop();
-		refresher=null;
-		Enumeration allConnections = freeConnections.elements();
+		if (this.refresher != null) {
+			this.refresher.stop();
+		}
+		this.refresher=null;
+		Enumeration allConnections = this.freeConnections.elements();
 		while (allConnections.hasMoreElements())
 		{
 			Connection con = (Connection) allConnections.nextElement();
 			try
 			{
 				con.close();
-				logWriter.log("Closed connection", LogWriter.INFO);
+				this.logWriter.log("Closed connection", LogWriter.INFO);
 			}
 			catch (SQLException e)
 			{
-				logWriter.log(e, "Couldn't close connection", LogWriter.ERROR);
+				this.logWriter.log(e, "Couldn't close connection", LogWriter.ERROR);
 			}
 		}
-		freeConnections.removeAllElements();
+		this.freeConnections.removeAllElements();
 	}
 	//  debug
 	//  private String getStats() {
@@ -469,21 +470,21 @@ public class ConnectionPool
 		return "Total connections: "
 			+ (this.getCurrentConnectionCount())
 			+ " Available: "
-			+ freeConnections.size()
+			+ this.freeConnections.size()
 			+ " Checked-out: "
 			+ this.getCheckedOutCount();
 	}
 	public String getURL()
 	{
-		return URL;
+		return this.URL;
 	}
 	public String getUserName()
 	{
-		return user;
+		return this.user;
 	}
 	public String getPassword()
 	{
-		return password;
+		return this.password;
 	}
 	public Connection recycleConnection(Connection conn)
 	{
@@ -494,7 +495,7 @@ public class ConnectionPool
 		}
 		catch (SQLException ex)
 		{
-			logWriter.log(ex, ex.getMessage(), LogWriter.ERROR);
+			this.logWriter.log(ex, ex.getMessage(), LogWriter.ERROR);
 			return null;
 		}
 	}
@@ -664,7 +665,7 @@ public class ConnectionPool
 	public int getCurrentConnectionCount()
 	{
 		//return this.currentConns;
-		return freeConnections.size() + this.getCheckedOutCount();
+		return this.freeConnections.size() + this.getCheckedOutCount();
 	}
 	public int getMaximumConnectionCount()
 	{
@@ -688,11 +689,11 @@ public class ConnectionPool
 	}
 	private Map getCheckedOutMap()
 	{
-		if (checkedOutInfoMap == null)
+		if (this.checkedOutInfoMap == null)
 		{
-			checkedOutInfoMap = new HashMap();
+			this.checkedOutInfoMap = new HashMap();
 		}
-		return checkedOutInfoMap;
+		return this.checkedOutInfoMap;
 	}
 	private void addToCheckedOutList(Connection conn)
 	{
@@ -711,7 +712,7 @@ public class ConnectionPool
 			Connection conn = (Connection) iter.next();
 			Long timeCheckedOut = (Long) getCheckedOutMap().get(conn);
 			long lCheckedOut = timeCheckedOut.longValue();
-			if (lCheckedOut + lConnectionTimeOut < System.currentTimeMillis())
+			if (lCheckedOut + this.lConnectionTimeOut < System.currentTimeMillis())
 			{
 				//Throw away the reference to the connection
 				//debug("Throwing away timed out connection from out-pool");
@@ -721,7 +722,7 @@ public class ConnectionPool
 	}
 	protected void debug(String debug)
 	{
-		logWriter.log("[ConnectionPool-Debug] : " + debug, LogWriter.DEBUG);
+		this.logWriter.log("[ConnectionPool-Debug] : " + debug, LogWriter.DEBUG);
 		//System.out.println("[ConnectionPool-Debug] : "+debug);
 	}
 	
@@ -730,6 +731,6 @@ public class ConnectionPool
 	 * @return String
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 }

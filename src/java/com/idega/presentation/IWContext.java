@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.126.2.1 2006/02/03 12:30:16 sigtryggur Exp $
+ * $Id: IWContext.java,v 1.126.2.2 2007/01/12 19:31:33 idegaweb Exp $
  * Created 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -75,10 +75,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * functionality or Application scoped functionality).
  *<br>
  *
- * Last modified: $Date: 2006/02/03 12:30:16 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2007/01/12 19:31:33 $ by $Author: idegaweb $
  *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.126.2.1 $
+ * @version $Revision: 1.126.2.2 $
  */
 public class IWContext
 extends javax.faces.context.FacesContext
@@ -145,7 +145,7 @@ implements IWUserContext, IWApplicationContext {
 		if(getIfSetRequestCharacterEncoding()){
 			try {
 				getRequest().setCharacterEncoding(getApplicationSettings().getCharacterEncoding());
-				isRequestCharacterEncodingSet = true;
+				this.isRequestCharacterEncodingSet = true;
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
@@ -156,7 +156,7 @@ implements IWUserContext, IWApplicationContext {
 	
 	protected boolean getIfSetRequestCharacterEncoding(){
 	    //TODO: check if this is ok for multipart forms
-	    boolean returner = (!isRequestCharacterEncodingSet)&&this.getIWMainApplication().getApplicationServer().getSupportsSettingCharactersetInRequest();
+	    boolean returner = (!this.isRequestCharacterEncodingSet)&&this.getIWMainApplication().getApplicationServer().getSupportsSettingCharactersetInRequest();
 	    return returner;
 	}
 	
@@ -197,33 +197,34 @@ implements IWUserContext, IWApplicationContext {
 		}
 	}
 	public void setMultipartParameter(String key, String value) {
-		if (_multipartParameters == null) {
-			_multipartParameters = new HashtableMultivalued();
+		if (this._multipartParameters == null) {
+			this._multipartParameters = new HashtableMultivalued();
 		}
-		_multipartParameters.put(key, value);
+		this._multipartParameters.put(key, value);
 	}
 	public String getMultipartParameter(String key) {
-		if (_multipartParameters != null) {
-			return (String) _multipartParameters.get(key);
+		if (this._multipartParameters != null) {
+			return (String) this._multipartParameters.get(key);
 		} else {
 			return null;
 		}
 	}
 	public UploadFile getUploadedFile() {
-	    if(isMultipartFormData() && _uploadedFile==null)
-            try {
+	    if(isMultipartFormData() && this._uploadedFile==null) {
+			try {
                 IWEventProcessor.getInstance().handleMultipartFormData(this);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-		return _uploadedFile;
+		}
+		return this._uploadedFile;
 	}
 	public void setUploadedFile(UploadFile file) {
-		_uploadedFile = file;
+		this._uploadedFile = file;
 	}
 
 	public boolean isUploadedFileSet() {
-		return _uploadedFile != null;
+		return this._uploadedFile != null;
 	}
 
 	public String getUserAgent() {
@@ -343,8 +344,9 @@ implements IWUserContext, IWApplicationContext {
 	}
 	
 	public boolean isParameterSet(String parameterName) {
-		if (parameterName == null)
+		if (parameterName == null) {
 			return false;
+		}
 		boolean theReturn = false;
 		String value = getParameter(parameterName) ;
 		
@@ -361,8 +363,9 @@ implements IWUserContext, IWApplicationContext {
 	}
 	
 	public boolean isParameterSetAsEmpty(String parameterName) {
-		if (parameterName == null)
+		if (parameterName == null) {
 			return false;
+		}
 		boolean theReturn = false;
 		String value = getParameter(parameterName) ;
 		
@@ -404,7 +407,7 @@ implements IWUserContext, IWApplicationContext {
 		return theReturn;
 	}
 	public void setRequest(HttpServletRequest request) {
-		if(_request == null){
+		if(this._request == null){
 			this._request = request;
 		} else {
 			this._request = request;
@@ -440,7 +443,7 @@ implements IWUserContext, IWApplicationContext {
 		this.getResponse().addCookie(cookie);
 	}
 	public boolean isCookieSet(String cookieName) {
-		Cookie[] cookies = (Cookie[]) this.getCookies();
+		Cookie[] cookies = this.getCookies();
 		boolean returner = false;
 		if (cookies != null) {
 			if (cookies.length > 0) {
@@ -456,7 +459,7 @@ implements IWUserContext, IWApplicationContext {
 	}
 	public String getParameter(String parameterName) {
 		String prm = null;
-		if (_multipartParameters != null) {
+		if (this._multipartParameters != null) {
 			prm = getMultipartParameter(parameterName);
 		} else {
 			prm = getRequest().getParameter(parameterName);
@@ -464,15 +467,15 @@ implements IWUserContext, IWApplicationContext {
 		return prm;
 	}
 	public Enumeration getParameterNames() {
-		if (_multipartParameters != null) {
-			return _multipartParameters.keys();
+		if (this._multipartParameters != null) {
+			return this._multipartParameters.keys();
 		} else {
 			return getRequest().getParameterNames();
 		}
 	}
 	public String[] getParameterValues(String parameterName) {
-		if (_multipartParameters != null) {
-			Collection values = _multipartParameters.getCollection(parameterName);
+		if (this._multipartParameters != null) {
+			Collection values = this._multipartParameters.getCollection(parameterName);
 			if (values != null) {
 				return (String[]) values.toArray(new String[values.size()]);
 			} else {
@@ -510,15 +513,16 @@ implements IWUserContext, IWApplicationContext {
 		return this.markupLanguage;
 	}
 	public String getSpokenLanguage() {
-		if (this.spokenLanguage == null)
+		if (this.spokenLanguage == null) {
 			this.setSpokenLanguage("IS");
+		}
 		return this.spokenLanguage;
 	}
 	/**
 	 * @ deprecated replaced width getApplication
 	 */
 	public ServletContext getServletContext() {
-		return servletContext;
+		return this.servletContext;
 	}
 	public void setServletContext(ServletContext context) {
 		this.servletContext = context;
@@ -562,20 +566,20 @@ implements IWUserContext, IWApplicationContext {
 		return getRequest().getServerPort();
 	}
 	public PrintWriter getWriter() throws IOException {
-		if (this.isCacheing() && cacheWriter!=null) {
-			return cacheWriter;
+		if (this.isCacheing() && this.cacheWriter!=null) {
+			return this.cacheWriter;
 		} else {
-			if( writer == null ){
-				writer = getResponse().getWriter(); 
+			if( this.writer == null ){
+				this.writer = getResponse().getWriter(); 
 			}
 			
-			return writer;
+			return this.writer;
 		}
 		
 	}
 	
 	public boolean isWriterNull(){
-		return (writer==null);
+		return (this.writer==null);
 	}
 	
 	public void setWriter(PrintWriter writer){
@@ -612,7 +616,7 @@ implements IWUserContext, IWApplicationContext {
 		return getIWMainApplication().getSystemProperties();
 	}
 	public UserProperties getUserProperties() {
-		return (UserProperties) LoginBusinessBean.getUserProperties(this);
+		return LoginBusinessBean.getUserProperties(this);
 	}
 	public Locale getCurrentLocale() {
 		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
@@ -702,7 +706,7 @@ implements IWUserContext, IWApplicationContext {
 		}
 	}
 	boolean isCacheing() {
-		return isCaching;
+		return this.isCaching;
 	}
 	public void setCacheWriter(PrintWriter writer) {
 		this.cacheWriter = writer;
@@ -728,7 +732,7 @@ implements IWUserContext, IWApplicationContext {
 		return -1;
 	}
 	public AccessController getAccessController() {
-		return ((AccessController) this.getIWMainApplication().getAccessController());
+		return (this.getIWMainApplication().getAccessController());
 	}
 	public String getRequestContentType() {
 		return getRequest().getContentType();
@@ -787,8 +791,9 @@ implements IWUserContext, IWApplicationContext {
 	
 	public boolean isSuperAdmin() {
 		try {
-			if (this.isLoggedOn())
+			if (this.isLoggedOn()) {
 				return this.getUser().equals(this.getAccessController().getAdministratorUser());
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -863,8 +868,9 @@ implements IWUserContext, IWApplicationContext {
 		if (isParameterSet("view")) {
 			if (isBuilderApplicationRunning()) {
 				String view = getParameter("view");
-				if (view.equals("preview"))
+				if (view.equals("preview")) {
 					preview = true;
+				}
 			}
 		}
 		return (preview);
@@ -878,8 +884,9 @@ implements IWUserContext, IWApplicationContext {
 		if (isParameterSet("view")) {
 			if (isBuilderApplicationRunning()) {
 				String view = getParameter("view");
-				if (view.equals("builder"))
+				if (view.equals("builder")) {
 					edit = true;
+				}
 			}
 		}
 		return (edit);
@@ -892,26 +899,26 @@ implements IWUserContext, IWApplicationContext {
 	 * @return true if the client is a handheld device such as a PalmPilot, a PocketPC device or a phone
 	 */
 	public boolean isClientHandheld() {
-		if (!_doneHandHeldCheck) {
+		if (!this._doneHandHeldCheck) {
 			String user_agent = this.getUserAgent();
 			if (user_agent.indexOf("Windows CE") != -1) {
-				_clientIsHandHeld = true;
+				this._clientIsHandHeld = true;
 			} else if (user_agent.indexOf("Palm") != -1) {
-				_clientIsHandHeld = true;
+				this._clientIsHandHeld = true;
 			} else if (user_agent.toLowerCase().indexOf("wap") != -1) {
-				_clientIsHandHeld = true;
+				this._clientIsHandHeld = true;
 			} else if (user_agent.toLowerCase().indexOf("nokia") != -1) {
-				_clientIsHandHeld = true;
+				this._clientIsHandHeld = true;
 			} else if (user_agent.toLowerCase().indexOf("ericsson") != -1) {
-				_clientIsHandHeld = true;
+				this._clientIsHandHeld = true;
 			} else if (user_agent.toLowerCase().indexOf("symbian") != -1) {
-				_clientIsHandHeld = true;
+				this._clientIsHandHeld = true;
 			} else if (user_agent.toLowerCase().indexOf("wapman") != -1) {
-				_clientIsHandHeld = true;
+				this._clientIsHandHeld = true;
 			}
-			_doneHandHeldCheck = true;
+			this._doneHandHeldCheck = true;
 		}
-		return _clientIsHandHeld;
+		return this._clientIsHandHeld;
 	}
 	public ICDomain getDomain() {
 	    ICDomain domain = getIWMainApplication().getIWApplicationContext().getDomain();
@@ -998,10 +1005,12 @@ implements IWUserContext, IWApplicationContext {
 				}
 				URL.append(requestString);
 			}
-			if(secondInterval>0)
+			if(secondInterval>0) {
 				fromPage.setToRedirect(URL.toString(),secondInterval);
-			else
+			}
+			else {
 				fromPage.setToRedirect(URL.toString());
+			}
 			fromPage.empty();
 		//}
 		//catch (RemoteException e)
@@ -1015,7 +1024,7 @@ implements IWUserContext, IWApplicationContext {
 	 *  Returns null if not found
 	 */
 	public Cookie getCookie(String cookieName) {
-		Cookie[] cookies = (Cookie[]) this.getCookies();
+		Cookie[] cookies = this.getCookies();
 
 		if (cookies != null) {
 			if (cookies.length > 0) {
@@ -1214,8 +1223,8 @@ implements IWUserContext, IWApplicationContext {
 	 * @see javax.faces.context.FacesContext#getResponseWriter()
 	 */
 	public ResponseWriter getResponseWriter() {
-		if (this.isCacheing() && cacheResponseWriter!=null) {
-			return cacheResponseWriter;
+		if (this.isCacheing() && this.cacheResponseWriter!=null) {
+			return this.cacheResponseWriter;
 		} else {
 			return getRealFacesContext().getResponseWriter();
 		}
@@ -1260,7 +1269,7 @@ implements IWUserContext, IWApplicationContext {
 	*Gets the real (underlying) FacesContext instance
 	*/
 	private FacesContext getRealFacesContext(){
-		return realFacesContext;
+		return this.realFacesContext;
 	}
 	/**
 	 *Sets the real (underlying) FacesContext instance

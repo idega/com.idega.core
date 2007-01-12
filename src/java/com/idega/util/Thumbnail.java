@@ -56,10 +56,12 @@ public  class Thumbnail
         int imageWidth = image.getWidth(null);
         int imageHeight = image.getHeight(null);
         double imageRatio = (double)imageWidth / imageHeight;
-        if (thumbRatio < imageRatio)
-            thumbHeight = (int)((double)thumbWidth / imageRatio);
-        else
-            thumbWidth = (int)((double)thumbHeight * imageRatio);
+        if (thumbRatio < imageRatio) {
+			thumbHeight = (int)(thumbWidth / imageRatio);
+		}
+		else {
+			thumbWidth = (int)(thumbHeight * imageRatio);
+		}
         BufferedImage thumbImage = new BufferedImage(thumbWidth, thumbHeight, 1);
         Graphics2D graphics2D = thumbImage.createGraphics();
         graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -85,10 +87,12 @@ public  class Thumbnail
         int imageWidth = image.getWidth(null);
         int imageHeight = image.getHeight(null);
         double imageRatio = (double)imageWidth / imageHeight;
-        if (thumbRatio < imageRatio)
-            thumbHeight = (int)((double)thumbWidth / imageRatio);
-        else
-            thumbWidth = (int)((double)thumbHeight * imageRatio);
+        if (thumbRatio < imageRatio) {
+			thumbHeight = (int)(thumbWidth / imageRatio);
+		}
+		else {
+			thumbWidth = (int)(thumbHeight * imageRatio);
+		}
         BufferedImage thumbImage = new BufferedImage(thumbWidth, thumbHeight, 1);
         Graphics2D graphics2D = thumbImage.createGraphics();
         graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);

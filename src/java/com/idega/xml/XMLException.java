@@ -31,10 +31,10 @@ public class XMLException extends Exception {
   
 	public void printStackTrace() { 
 		super.printStackTrace();
-		if(_cause != null){
+		if(this._cause != null){
 			System.err.println("------ Root Cause -----");
-			System.err.println(_cause.getMessage());
-			_cause.printStackTrace();
+			System.err.println(this._cause.getMessage());
+			this._cause.printStackTrace();
 		}
 		
 		
@@ -42,20 +42,20 @@ public class XMLException extends Exception {
 
 	public void printStackTrace(PrintStream s) {
 		super.printStackTrace(s);
-		if(_cause != null){
+		if(this._cause != null){
 			s.println("------ Root Cause -----");
-			s.println(_cause.getMessage());
-			_cause.printStackTrace(s);
+			s.println(this._cause.getMessage());
+			this._cause.printStackTrace(s);
 		}
 	}
   
   
 	public void printStackTrace(PrintWriter s) { 
 		super.printStackTrace(s);
-		if(_cause != null){
+		if(this._cause != null){
 			s.println("------ Root Cause -----");
-			s.println(_cause.getMessage());
-			_cause.printStackTrace(s);
+			s.println(this._cause.getMessage());
+			this._cause.printStackTrace(s);
 		}
 	}
   

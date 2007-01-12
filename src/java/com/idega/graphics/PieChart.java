@@ -1,5 +1,5 @@
 /*
- * $Id: PieChart.java,v 1.5 2003/04/03 09:48:02 laddi Exp $
+ * $Id: PieChart.java,v 1.5.6.1 2007/01/12 19:32:26 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -31,26 +31,27 @@ import java.util.Date;
 public class PieChart extends Chart{
 
    public PieChart() {
-    colours_ = new Color[5];
-    colours_[0] = new Color(194,180,166);
-    colours_[1] = new Color(140,159,208);
-    colours_[2] = new Color(125,161,158);
-    colours_[3] = new Color(255,239,222);
-    colours_[4] = new Color(225,180,143);
+    this.colours_ = new Color[5];
+    this.colours_[0] = new Color(194,180,166);
+    this.colours_[1] = new Color(140,159,208);
+    this.colours_[2] = new Color(125,161,158);
+    this.colours_[3] = new Color(255,239,222);
+    this.colours_[4] = new Color(225,180,143);
 
-    backGround_ = new Color(224,215,194);
+    this.backGround_ = new Color(224,215,194);
    }
 
    /**
-    * Lýsing á falli
+    * Lï¿½sing ï¿½ falli
     *
     * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
     * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
     * @throws class-name description
     */
    public String create() throws ChartException {
-    if (data_ == null)
-      throw new ChartException("No data specified");
+    if (this.data_ == null) {
+		throw new ChartException("No data specified");
+	}
 
     //The width of the picture in pixels
     int width = 450;
@@ -66,12 +67,13 @@ public class PieChart extends Chart{
     int xBarLength = yBarStart - yBarEnd;
 
     //Sum of data entered
-    if (data_.length == 0)
-      throw new ChartException("No data specified");
+    if (this.data_.length == 0) {
+		throw new ChartException("No data specified");
+	}
 
-    double sumPlotValues = data_[0].doubleValue();
-    for (int i = 1; i < data_.length; i++) {
-      sumPlotValues += data_[i].doubleValue();
+    double sumPlotValues = this.data_[0].doubleValue();
+    for (int i = 1; i < this.data_.length; i++) {
+      sumPlotValues += this.data_[i].doubleValue();
     }
 
     //How long is the longest legend in pixel
@@ -93,29 +95,32 @@ public class PieChart extends Chart{
     g = image.createGraphics();
     g.setTransform(I);
 
-    g.setColor(backGround_);
+    g.setColor(this.backGround_);
     g.fillRect(0,0,width,height);
 
-    if (legend_.length != 0) {
+    if (this.legend_.length != 0) {
       fm = g.getFontMetrics(g.getFont());
-      for (int i = 0; i < legend_.length; i++) {
-        curr = fm.stringWidth(legend_[i]);
-        if (curr > max)
-          max = curr;
+      for (int i = 0; i < this.legend_.length; i++) {
+        curr = fm.stringWidth(this.legend_[i]);
+        if (curr > max) {
+			max = curr;
+		}
       }
 
       g.setColor(Color.black);
-      for (int i = 0; i < legend_.length; i++) {
-        g.drawString((String)legend_[i],width-max-10,40+i*20);
+      for (int i = 0; i < this.legend_.length; i++) {
+        g.drawString(this.legend_[i],width-max-10,40+i*20);
       }
 
       g.setTransform(trans);
 
-      for (int i = 0; i < legend_.length; i++) {
-        if (colours_.length > i)
-          g.setColor(colours_[i]);
-        else
-          g.setColor(Color.yellow);
+      for (int i = 0; i < this.legend_.length; i++) {
+        if (this.colours_.length > i) {
+			g.setColor(this.colours_[i]);
+		}
+		else {
+			g.setColor(Color.yellow);
+		}
         g.fillRect(width-max-30,height-40-i*20,10,10);
         g.setColor(Color.black);
         g.drawRect(width-max-30,height-40-i*20,10,10);
@@ -125,30 +130,33 @@ public class PieChart extends Chart{
     g.setTransform(chart);
     double startAngle = 0;
     double angle = 0;
-    for (int i = 0; i < data_.length; i++) {
-      if (colours_.length > i)
-        g.setColor(colours_[i]);
-      else
-        g.setColor(Color.yellow);
-      angle = (data_[i].doubleValue() / sumPlotValues * 360);
+    for (int i = 0; i < this.data_.length; i++) {
+      if (this.colours_.length > i) {
+		g.setColor(this.colours_[i]);
+	}
+	else {
+		g.setColor(Color.yellow);
+	}
+      angle = (this.data_[i].doubleValue() / sumPlotValues * 360);
       arc = new Arc2D.Double(0,0,xBarLength,xBarLength,startAngle,angle,Arc2D.PIE);
       g.fill(arc);
       g.setColor(Color.black);
       g.draw(arc);
 
       DecimalFormat format = new DecimalFormat();
-      if (numberOfDigits_ >= 0) {
-        format.setMaximumFractionDigits(numberOfDigits_);
-        format.setMinimumFractionDigits(numberOfDigits_);
+      if (this.numberOfDigits_ >= 0) {
+        format.setMaximumFractionDigits(this.numberOfDigits_);
+        format.setMinimumFractionDigits(this.numberOfDigits_);
       }
 
       double an = (startAngle+angle/2)*(2*java.lang.Math.PI/360);
       float x = (float)((xBarLength/2) + (xBarLength/2+10)*java.lang.Math.cos(an));
       float y = (float)((xBarLength/2) - (xBarLength/2+10)*java.lang.Math.sin(an));
       double currAngle = startAngle+angle/2;
-      String over = format.format(data_[i].doubleValue()).toString();
-      if (addToBarLabel_ != null)
-        over = over.concat(addToBarLabel_);
+      String over = format.format(this.data_[i].doubleValue()).toString();
+      if (this.addToBarLabel_ != null) {
+		over = over.concat(this.addToBarLabel_);
+	}
       fm = g.getFontMetrics(g.getFont());
       int stringWidth = fm.stringWidth(over);
       int stringHeight = fm.getHeight();
@@ -184,11 +192,13 @@ public class PieChart extends Chart{
       GIFEncoder encode = new GIFEncoder(image);
       Date date = Calendar.getInstance().getTime();
       String filename = Long.toString(date.getTime());
-      URL_ = filename;
-      if (prefix_ != null)
-        filename = new String(prefix_ + filename);
-      if (postfix_ != null)
-        filename = filename.concat(postfix_);
+      this.URL_ = filename;
+      if (this.prefix_ != null) {
+		filename = new String(this.prefix_ + filename);
+	}
+      if (this.postfix_ != null) {
+		filename = filename.concat(this.postfix_);
+	}
       filename = filename.concat(".gif");
 
       OutputStream output = new BufferedOutputStream(new FileOutputStream(filename));
@@ -200,12 +210,14 @@ public class PieChart extends Chart{
       System.out.println("Error : " + e);
     }
 
-    if (webPrefix_ != null)
-      URL_ = new String(webPrefix_ + URL_);
-    if (postfix_ != null)
-      URL_ = URL_.concat(postfix_);
-    URL_ = URL_.concat(".gif");
+    if (this.webPrefix_ != null) {
+		this.URL_ = new String(this.webPrefix_ + this.URL_);
+	}
+    if (this.postfix_ != null) {
+		this.URL_ = this.URL_.concat(this.postfix_);
+	}
+    this.URL_ = this.URL_.concat(".gif");
 
-    return(URL_);
+    return(this.URL_);
    }
 }

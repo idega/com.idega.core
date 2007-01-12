@@ -1,5 +1,5 @@
 /*
- * $Id: ListNavigator.java,v 1.2 2005/10/19 12:52:11 laddi Exp $
+ * $Id: ListNavigator.java,v 1.2.2.1 2007/01/12 19:31:35 idegaweb Exp $
  * Created on Oct 12, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import com.idega.presentation.ui.Form;
 
 
 /**
- * Last modified: $Date: 2005/10/19 12:52:11 $ by $Author: laddi $
+ * Last modified: $Date: 2007/01/12 19:31:35 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.2.2.1 $
  */
 public class ListNavigator extends Block implements IWPageEventListener {
 
@@ -40,21 +40,21 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	}
 	
 	public ListNavigator(String uniqueIdentifier, int size) {
-		iUniqueIdentifier = uniqueIdentifier;
-		iSize = size;
+		this.iUniqueIdentifier = uniqueIdentifier;
+		this.iSize = size;
 	}
 	
 	public void main(IWContext iwc) throws Exception {
 		Form form = new Form();
 		form.setEventListener(ListNavigator.class);
-		form.addParameter(PARAMETER_UNIQUE_IDENTIFIER, iUniqueIdentifier);
+		form.addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
 		
 		Lists list = new Lists();
 		form.add(list);
 		
 		int currentPage = getCurrentPage(iwc);
-		int numberOfPages = iSize / getNumberOfEntriesPerPage(iwc);
-		if (iSize % getNumberOfEntriesPerPage(iwc) != 0) {
+		int numberOfPages = this.iSize / getNumberOfEntriesPerPage(iwc);
+		if (this.iSize % getNumberOfEntriesPerPage(iwc) != 0) {
 			numberOfPages++;
 		}
 		if (numberOfPages == 0) {
@@ -69,7 +69,7 @@ public class ListNavigator extends Block implements IWPageEventListener {
 			ListItem item = new ListItem();
 			Link link = new Link("&lt;");
 			link.addParameter(getCurrentPageParameter(), (currentPage - 1));
-			link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, iUniqueIdentifier);
+			link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
 			link.setEventListener(ListNavigator.class);
 			
 			item.add(link);
@@ -82,7 +82,7 @@ public class ListNavigator extends Block implements IWPageEventListener {
 				link.setStyleClass("currentPage");
 			}
 			link.addParameter(getCurrentPageParameter(), i);
-			link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, iUniqueIdentifier);
+			link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
 			link.setEventListener(ListNavigator.class);
 			
 			item.add(link);
@@ -92,7 +92,7 @@ public class ListNavigator extends Block implements IWPageEventListener {
 			ListItem item = new ListItem();
 			Link link = new Link("&gt;");
 			link.addParameter(getCurrentPageParameter(), (currentPage + 1));
-			link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, iUniqueIdentifier);
+			link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
 			link.setEventListener(ListNavigator.class);
 			
 			item.add(link);
@@ -136,19 +136,19 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		if (numberOfEntries != null) {
 			return numberOfEntries.intValue();
 		}
-		return iNumberOfEntriesPerPage;
+		return this.iNumberOfEntriesPerPage;
 	}
 	
 	private String getCurrentPageParameter() {
-		return PARAMETER_CURRENT_PAGE + "_" + iUniqueIdentifier;
+		return PARAMETER_CURRENT_PAGE + "_" + this.iUniqueIdentifier;
 	}
 
 	private String getNumberOfEntriesParameter() {
-		return PARAMETER_NUMBER_OF_ENTRIES + "_" + iUniqueIdentifier;
+		return PARAMETER_NUMBER_OF_ENTRIES + "_" + this.iUniqueIdentifier;
 	}
 
 	public boolean actionPerformed(IWContext iwc) throws IWException {
-		iUniqueIdentifier = iwc.getParameter(PARAMETER_UNIQUE_IDENTIFIER);
+		this.iUniqueIdentifier = iwc.getParameter(PARAMETER_UNIQUE_IDENTIFIER);
 		if (iwc.isParameterSet(getCurrentPageParameter())) {
 			iwc.setSessionAttribute(getCurrentPageParameter(), new Integer(iwc.getParameter(getCurrentPageParameter())));
 		}
@@ -160,10 +160,10 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	}
 	
 	public void setSize(int size) {
-		iSize = size;
+		this.iSize = size;
 	}
 	
 	public void setUniqueIdentifier(String identifier) {
-		iUniqueIdentifier = identifier;
+		this.iUniqueIdentifier = identifier;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: InterbaseDatastoreInterface.java,v 1.34 2005/05/12 04:10:45 gimmi Exp $
+ * $Id: InterbaseDatastoreInterface.java,v 1.34.2.1 2007/01/12 19:31:22 idegaweb Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -29,7 +29,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 	private static String infoKey = "interbase_datastoreinterface_connection_info";
 	InterbaseDatastoreInterface()
 	{
-		useTransactionsInEntityCreation = false;
+		this.useTransactionsInEntityCreation = false;
 	}
 	public String getSQLType(String javaClassName, int maxlength)
 	{
@@ -475,7 +475,7 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 	public void setNumberGeneratorValue(GenericEntity entity, int value)
 	{
 		//throw new RuntimeException("setSequenceValue() not implemented for "+this.getClass().getName());
-		String statement = "set generator " + this.getInterbaseGeneratorName(entity) + " to " + value;
+		String statement = "set generator " + InterbaseDatastoreInterface.getInterbaseGeneratorName(entity) + " to " + value;
 		try
 		{
 			this.executeUpdate(entity, statement);

@@ -44,16 +44,16 @@ public class GroupEntrySet implements EntrySet {
 
 			//create the directorystring path to the top node?
 			//or do all the entries belong to the same directory string suffix?
-			Entry current = (Entry) entryIter.next();
+			Entry current = (Entry) this.entryIter.next();
 			return current;
 		}
 	}
 	
 	
 	public boolean hasMore() {
-		if(entryIter==null) {
-			entryIter = entries.iterator();
+		if(this.entryIter==null) {
+			this.entryIter = this.entries.iterator();
 		}
-		return entryIter.hasNext();
+		return this.entryIter.hasNext();
 	}
 }

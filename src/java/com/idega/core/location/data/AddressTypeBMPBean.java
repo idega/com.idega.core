@@ -21,8 +21,8 @@ import com.idega.data.IDOQuery;
  * 
  * Company: idega.is
  * 
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst
- *         Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st
+ *         Sï¿½mundsson</a>
  * 
  * @version 1.0
  * 
@@ -88,19 +88,23 @@ public class AddressTypeBMPBean extends GenericTypeBMPBean implements
 	public Integer ejbFindAddressType1() throws FinderException {
 		Collection coll = super.idoFindAllIDsByColumnBySQL(
 				getColumnNameUniqueName(), ADDRESS_1);
-		if (!coll.isEmpty())
+		if (!coll.isEmpty()) {
 			return (Integer) coll.iterator().next();
-		else
+		}
+		else {
 			throw new FinderException("AddressType1 does not exist");
+		}
 	}
 
 	public Integer ejbFindAddressType2() throws FinderException {
 		Collection coll = super.idoFindAllIDsByColumnBySQL(
 				getColumnNameUniqueName(), ADDRESS_2);
-		if (!coll.isEmpty())
+		if (!coll.isEmpty()) {
 			return (Integer) coll.iterator().next();
-		else
+		}
+		else {
 			throw new FinderException("AddressType2 does not exist");
+		}
 	}
 
 	public Object ejbFindByUniqueName(String name) throws FinderException {

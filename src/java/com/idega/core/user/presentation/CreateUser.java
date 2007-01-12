@@ -10,6 +10,7 @@ import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.core.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.data.GenericEntity;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
@@ -29,7 +30,7 @@ import com.idega.util.IWTimestamp;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 
@@ -99,14 +100,14 @@ public class CreateUser extends Window {
 
 	public CreateUser() {
 		super();
-		this.setName("idegaWeb Builder - Stofna félaga");
+		this.setName("idegaWeb Builder - Stofna fï¿½laga");
 		this.setHeight(460);
 		this.setWidth(390);
 		this.setBackgroundColor("#d4d0c8");
 		this.setScrollbar(false);
-		myForm = new Form();
-		this.add(myForm);
-		business = new UserBusiness();
+		this.myForm = new Form();
+		this.add(this.myForm);
+		this.business = new UserBusiness();
 		initializeTexts();
 		initializeFields();
 		lineUpElements();
@@ -114,55 +115,55 @@ public class CreateUser extends Window {
 
 	protected void initializeTexts() {
 
-		firstNameText = new Text("First name");
-		middleNameText = new Text("Middle name");
-		lastNameText = new Text("Last name");
-		userLoginText = new Text("User login");
-		passwordText = new Text("Password");
-		confirmPasswordText = new Text("Confirm password");
+		this.firstNameText = new Text("First name");
+		this.middleNameText = new Text("Middle name");
+		this.lastNameText = new Text("Last name");
+		this.userLoginText = new Text("User login");
+		this.passwordText = new Text("Password");
+		this.confirmPasswordText = new Text("Confirm password");
 
-		generateLoginText = new Text("generate");
-		generatePasswordText = new Text("generate");
-		mustChangePasswordText = new Text("User must change password at next login");
-		cannotChangePasswordText = new Text("User cannot change password");
-		passwordNeverExpiresText = new Text("Password never expires");
-		disableAccountText = new Text("Account is disabled");
-		goToPropertiesText = new Text("go to properties");
+		this.generateLoginText = new Text("generate");
+		this.generatePasswordText = new Text("generate");
+		this.mustChangePasswordText = new Text("User must change password at next login");
+		this.cannotChangePasswordText = new Text("User cannot change password");
+		this.passwordNeverExpiresText = new Text("Password never expires");
+		this.disableAccountText = new Text("Account is disabled");
+		this.goToPropertiesText = new Text("go to properties");
 
-		primaryGroupText = new Text("Primarygroup");
+		this.primaryGroupText = new Text("Primarygroup");
 	}
 
 	protected void initializeFields() {
-		firstNameField = new TextInput(firstNameFieldParameterName);
-		firstNameField.setLength(12);
-		middleNameField = new TextInput(middleNameFieldParameterName);
-		middleNameField.setLength(12);
-		lastNameField = new TextInput(lastNameFieldParameterName);
-		lastNameField.setLength(12);
-		userLoginField = new TextInput(userLoginFieldParameterName);
-		userLoginField.setLength(12);
-		passwordField = new PasswordInput(passwordFieldParameterName);
-		passwordField.setLength(12);
-		confirmPasswordField = new PasswordInput(confirmPasswordFieldParameterName);
-		confirmPasswordField.setLength(12);
+		this.firstNameField = new TextInput(firstNameFieldParameterName);
+		this.firstNameField.setLength(12);
+		this.middleNameField = new TextInput(middleNameFieldParameterName);
+		this.middleNameField.setLength(12);
+		this.lastNameField = new TextInput(lastNameFieldParameterName);
+		this.lastNameField.setLength(12);
+		this.userLoginField = new TextInput(userLoginFieldParameterName);
+		this.userLoginField.setLength(12);
+		this.passwordField = new PasswordInput(passwordFieldParameterName);
+		this.passwordField.setLength(12);
+		this.confirmPasswordField = new PasswordInput(confirmPasswordFieldParameterName);
+		this.confirmPasswordField.setLength(12);
 
-		generateLoginField = new CheckBox(generateLoginFieldParameterName);
-		generatePasswordField = new CheckBox(generatePasswordFieldParameterName);
-		mustChangePasswordField = new CheckBox(mustChangePasswordFieldParameterName);
-		cannotChangePasswordField = new CheckBox(cannotChangePasswordFieldParameterName);
-		passwordNeverExpiresField = new CheckBox(passwordNeverExpiresFieldParameterName);
-		passwordNeverExpiresField.setChecked(true);
-		disableAccountField = new CheckBox(disableAccountFieldParameterName);
-		goToPropertiesField = new CheckBox(goToPropertiesFieldParameterName);
-		goToPropertiesField.setChecked(true);
+		this.generateLoginField = new CheckBox(generateLoginFieldParameterName);
+		this.generatePasswordField = new CheckBox(generatePasswordFieldParameterName);
+		this.mustChangePasswordField = new CheckBox(mustChangePasswordFieldParameterName);
+		this.cannotChangePasswordField = new CheckBox(cannotChangePasswordFieldParameterName);
+		this.passwordNeverExpiresField = new CheckBox(passwordNeverExpiresFieldParameterName);
+		this.passwordNeverExpiresField.setChecked(true);
+		this.disableAccountField = new CheckBox(disableAccountFieldParameterName);
+		this.goToPropertiesField = new CheckBox(goToPropertiesFieldParameterName);
+		this.goToPropertiesField.setChecked(true);
 
-		primaryGroupField = new DropdownMenu(this.primaryGroupFieldParameterName);
-		//primaryGroupField.addMenuElement("","aðalhópur");
-		primaryGroupField.addSeparator();
+		this.primaryGroupField = new DropdownMenu(CreateUser.primaryGroupFieldParameterName);
+		//primaryGroupField.addMenuElement("","aï¿½alhï¿½pur");
+		this.primaryGroupField.addSeparator();
 
 		try {
 			String[] gr = new String[1];
-			gr[0] = ((UserGroupRepresentative) com.idega.core.user.data.UserGroupRepresentativeBMPBean.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
+			gr[0] = ((UserGroupRepresentative) GenericEntity.getStaticInstance(UserGroupRepresentative.class)).getGroupTypeValue();
 			List groups = com.idega.core.data.GenericGroupBMPBean.getAllGroups(gr, false);
 			if (groups != null) {
 				/**
@@ -172,7 +173,7 @@ public class CreateUser extends Window {
 				Iterator iter = groups.iterator();
 				while (iter.hasNext()) {
 					GenericGroup item = (GenericGroup) iter.next();
-					primaryGroupField.addMenuElement(item.getID(), item.getName());
+					this.primaryGroupField.addMenuElement(item.getID(), item.getName());
 				}
 			}
 		}
@@ -180,8 +181,8 @@ public class CreateUser extends Window {
 
 		}
 
-		okButton = new SubmitButton("     OK     ", submitButtonParameterName, okButtonParameterValue);
-		cancelButton = new SubmitButton(" Cancel ", submitButtonParameterName, cancelButtonParameterValue);
+		this.okButton = new SubmitButton("     OK     ", submitButtonParameterName, okButtonParameterValue);
+		this.cancelButton = new SubmitButton(" Cancel ", submitButtonParameterName, cancelButtonParameterValue);
 
 	}
 
@@ -195,24 +196,24 @@ public class CreateUser extends Window {
 		Table nameTable = new Table(4, 2);
 		nameTable.setCellpadding(0);
 		nameTable.setCellspacing(0);
-		nameTable.setHeight(1, rowHeight);
-		nameTable.setHeight(2, rowHeight);
+		nameTable.setHeight(1, this.rowHeight);
+		nameTable.setHeight(2, this.rowHeight);
 
-		nameTable.add(firstNameText, 1, 1);
-		nameTable.add(firstNameField, 2, 1);
-		nameTable.add(middleNameText, 3, 1);
-		nameTable.add(middleNameField, 4, 1);
-		nameTable.add(lastNameText, 1, 2);
-		nameTable.add(lastNameField, 2, 2);
+		nameTable.add(this.firstNameText, 1, 1);
+		nameTable.add(this.firstNameField, 2, 1);
+		nameTable.add(this.middleNameText, 3, 1);
+		nameTable.add(this.middleNameField, 4, 1);
+		nameTable.add(this.lastNameText, 1, 2);
+		nameTable.add(this.lastNameField, 2, 2);
 		// nameTable end
 
 		// loginTable begin
 		Table loginTable = new Table(4, 3);
 		loginTable.setCellpadding(0);
 		loginTable.setCellspacing(0);
-		loginTable.setHeight(1, rowHeight);
-		loginTable.setHeight(2, rowHeight);
-		loginTable.setHeight(3, rowHeight);
+		loginTable.setHeight(1, this.rowHeight);
+		loginTable.setHeight(2, this.rowHeight);
+		loginTable.setHeight(3, this.rowHeight);
 		loginTable.setWidth(1, "110");
 
 		loginTable.add(this.userLoginText, 1, 1);
@@ -231,7 +232,7 @@ public class CreateUser extends Window {
 		Table groupTable = new Table(2, 1);
 		groupTable.setCellpadding(0);
 		groupTable.setCellspacing(0);
-		groupTable.setHeight(1, rowHeight);
+		groupTable.setHeight(1, this.rowHeight);
 		groupTable.setWidth(1, "110");
 
 		groupTable.add(this.primaryGroupText, 1, 1);
@@ -242,10 +243,10 @@ public class CreateUser extends Window {
 		Table AccountPropertyTable = new Table(2, 4);
 		AccountPropertyTable.setCellpadding(0);
 		AccountPropertyTable.setCellspacing(0);
-		AccountPropertyTable.setHeight(1, rowHeight);
-		AccountPropertyTable.setHeight(2, rowHeight);
-		AccountPropertyTable.setHeight(3, rowHeight);
-		AccountPropertyTable.setHeight(4, rowHeight);
+		AccountPropertyTable.setHeight(1, this.rowHeight);
+		AccountPropertyTable.setHeight(2, this.rowHeight);
+		AccountPropertyTable.setHeight(3, this.rowHeight);
+		AccountPropertyTable.setHeight(4, this.rowHeight);
 
 		AccountPropertyTable.add(this.mustChangePasswordField, 1, 1);
 		AccountPropertyTable.add(this.mustChangePasswordText, 2, 1);
@@ -261,7 +262,7 @@ public class CreateUser extends Window {
 		Table propertyTable = new Table(2, 1);
 		propertyTable.setCellpadding(0);
 		propertyTable.setCellspacing(0);
-		propertyTable.setHeight(1, rowHeight);
+		propertyTable.setHeight(1, this.rowHeight);
 
 		propertyTable.add(this.goToPropertiesText, 1, 1);
 		propertyTable.add(this.goToPropertiesField, 2, 1);
@@ -271,11 +272,11 @@ public class CreateUser extends Window {
 		Table buttonTable = new Table(3, 1);
 		buttonTable.setCellpadding(0);
 		buttonTable.setCellspacing(0);
-		buttonTable.setHeight(1, rowHeight);
+		buttonTable.setHeight(1, this.rowHeight);
 		buttonTable.setWidth(2, "5");
 
-		buttonTable.add(okButton, 1, 1);
-		buttonTable.add(cancelButton, 3, 1);
+		buttonTable.add(this.okButton, 1, 1);
+		buttonTable.add(this.cancelButton, 3, 1);
 		// buttonTable end
 
 		frameTable.add(nameTable, 1, 1);
@@ -287,7 +288,7 @@ public class CreateUser extends Window {
 		frameTable.add(buttonTable, 1, 6);
 		frameTable.setAlignment(1, 6, "right");
 
-		myForm.add(frameTable);
+		this.myForm.add(frameTable);
 
 	}
 
@@ -296,16 +297,16 @@ public class CreateUser extends Window {
 		User newUser;
 		boolean createLogin = false;
 
-		String login = iwc.getParameter(this.userLoginFieldParameterName);
-		String passw = iwc.getParameter(this.passwordFieldParameterName);
-		String cfPassw = iwc.getParameter(this.confirmPasswordFieldParameterName);
+		String login = iwc.getParameter(CreateUser.userLoginFieldParameterName);
+		String passw = iwc.getParameter(CreateUser.passwordFieldParameterName);
+		String cfPassw = iwc.getParameter(CreateUser.confirmPasswordFieldParameterName);
 		String password = null;
 
-		String mustChage = iwc.getParameter(this.mustChangePasswordFieldParameterName);
-		String cannotchangePassw = iwc.getParameter(this.cannotChangePasswordFieldParameterName);
-		String passwNeverExpires = iwc.getParameter(this.passwordNeverExpiresFieldParameterName);
-		String disabledAccount = iwc.getParameter(this.disableAccountFieldParameterName);
-		String primaryGroup = iwc.getParameter(this.primaryGroupFieldParameterName);
+		String mustChage = iwc.getParameter(CreateUser.mustChangePasswordFieldParameterName);
+		String cannotchangePassw = iwc.getParameter(CreateUser.cannotChangePasswordFieldParameterName);
+		String passwNeverExpires = iwc.getParameter(CreateUser.passwordNeverExpiresFieldParameterName);
+		String disabledAccount = iwc.getParameter(CreateUser.disableAccountFieldParameterName);
+		String primaryGroup = iwc.getParameter(CreateUser.primaryGroupFieldParameterName);
 
 		Boolean bMustChage;
 		Boolean bAllowedToChangePassw;
@@ -353,14 +354,15 @@ public class CreateUser extends Window {
 			throw new Exception("password and confirmed password not the same");
 		}
 
-		if (password != null && password.length() > 0 && login != null && login.length() > 0)
+		if (password != null && password.length() > 0 && login != null && login.length() > 0) {
 			createLogin = true;
+		}
 
 		TransactionManager transaction = IdegaTransactionManager.getInstance();
 		try {
 			transaction.begin();
 			newUser =
-				business.insertUser(
+				this.business.insertUser(
 					iwc.getParameter(firstNameFieldParameterName),
 					iwc.getParameter(middleNameFieldParameterName),
 					iwc.getParameter(lastNameFieldParameterName),
@@ -370,8 +372,9 @@ public class CreateUser extends Window {
 					null,
 					primaryGroupId);
 
-			if (createLogin)
+			if (createLogin) {
 				LoginDBHandler.createLogin(newUser.getID(), login, password, bEnabledAccount, IWTimestamp.RightNow(), 5000, bPasswNeverExpires, bAllowedToChangePassw, bMustChage, null);
+			}
 
 			transaction.commit();
 		}

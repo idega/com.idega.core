@@ -61,8 +61,9 @@ public class CBIntText
 
         addBundle(bundleLocation, customLoader);
         
-        if (!def.getLanguage().equals("en"))
-            english = false;
+        if (!def.getLanguage().equals("en")) {
+			english = false;
+		}
     }
 
     /**
@@ -107,7 +108,9 @@ public class CBIntText
                 boolean debug = (CBUtility.getLogDebugLevel() >= 8);
                 if (translations.containsKey(key) == false)
                 {
-                    if (debug) CBUtility.log("adding key: " + key + " trans: " + bundle.getString((String)key));
+                    if (debug) {
+						CBUtility.log("adding key: " + key + " trans: " + bundle.getString((String)key));
+					}
                         
                     translations.put(key, bundle.getString((String)key));
                 }    
@@ -150,7 +153,9 @@ public class CBIntText
         {
             if (errorGiven == false)  // only print error message once!  (otherwise we'd print an
             {                         // error for every string in the program!)
-        	    if (!english) CBUtility.log("Unable to translate (" + key + ") - can't find language resource bundle.");
+        	    if (!english) {
+					CBUtility.log("Unable to translate (" + key + ") - can't find language resource bundle.");
+				}
                 errorGiven = true;
             }
             return key;        // try to keep on trucking using the (english) key phrase
@@ -163,7 +168,9 @@ public class CBIntText
             String val = (String)translations.get(key);  // return the translated word!
             if (val == null)  // this shouldn't happen, but can occur with an out-of-date (=incomplete) translation file.
             {
-                if (!english) CBUtility.log("Can't find translation for (" + key + ") - returning unchanged.",3);
+                if (!english) {
+					CBUtility.log("Can't find translation for (" + key + ") - returning unchanged.",3);
+				}
                 return key;
             }
             return val;

@@ -22,26 +22,31 @@ public class LocaleSwitcher extends com.idega.idegaweb.presentation.LocaleChange
 	public final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 
 	public void make(IWContext iwc) {
-		if (showLinks)
+		if (this.showLinks) {
 			doLinkView(iwc);
-		else
+		}
+		else {
 			doDeveloperView(iwc);
+		}
 
 	}
 
 	private void doDeveloperView(IWContext iwc) {
 		add(getTitle());
-		if (!iwc.isIE())
+		if (!iwc.isIE()) {
 			getParentPage().setBackgroundColor("#FFFFFF");
+		}
 		IWMainApplication iwma = iwc.getIWMainApplication();
 
 		DropdownMenu localesDrop = LocalePresentationUtil.getAvailableLocalesDropdown(iwma, com.idega.core.localisation.business.LocaleSwitcher.languageParameterString);
 		//localesDrop.keepStatusOnAction();
 		localesDrop.setToSubmit();
-		if (!iwc.isParameterSet(com.idega.core.localisation.business.LocaleSwitcher.languageParameterString))
+		if (!iwc.isParameterSet(com.idega.core.localisation.business.LocaleSwitcher.languageParameterString)) {
 			localesDrop.setSelectedElement(iwc.getCurrentLocale().toString());
-		else
+		}
+		else {
 			localesDrop.setSelectedElement(iwc.getParameter(com.idega.core.localisation.business.LocaleSwitcher.languageParameterString));
+		}
 
 		Form form = new Form();
 		addMaintainedFormParameters(form);

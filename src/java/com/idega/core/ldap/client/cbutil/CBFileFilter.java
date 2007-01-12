@@ -20,26 +20,30 @@ public class CBFileFilter extends javax.swing.filechooser.FileFilter
 
     public CBFileFilter(String[] exts, String desc)
     {
-        extensions = new String[exts.length];
+        this.extensions = new String[exts.length];
         for (int i=0; i<exts.length; i++)
         {
-            extensions[i] = exts[i].toLowerCase();
+            this.extensions[i] = exts[i].toLowerCase();
         }
 
-        description = desc;
+        this.description = desc;
     }
 
     public boolean accept(File f)
     {
-        if (f.isDirectory()) return true;
+        if (f.isDirectory()) {
+			return true;
+		}
 
-        for (int i=0; i<extensions.length; i++)
-            if (f.getName().toLowerCase().endsWith(extensions[i]))
-                return true;
+        for (int i=0; i<this.extensions.length; i++) {
+			if (f.getName().toLowerCase().endsWith(this.extensions[i])) {
+				return true;
+			}
+		}
 
         return false;
     }
 
-    public String getDescription() { return description; }
+    public String getDescription() { return this.description; }
 
 }

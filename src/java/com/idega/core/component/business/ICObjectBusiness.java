@@ -28,7 +28,7 @@ import com.idega.repository.data.SingletonRepository;
  * Description:  Use this class to get and manipulate ICObject and ICObjectInstance data objects rather than constructing them with "new"
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000-2002 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ * @author 2000-2002 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 
@@ -45,17 +45,17 @@ public class ICObjectBusiness implements Singleton {
   }
 
   private  Map getIcoInstanceMap(){
-    if(icoInstanceMap==null){
-      icoInstanceMap = new HashMap();
+    if(this.icoInstanceMap==null){
+      this.icoInstanceMap = new HashMap();
     }
-    return icoInstanceMap;
+    return this.icoInstanceMap;
   }
 
   private  Map getIcObjectMap(){
-    if(icObjectMap==null){
-      icObjectMap = new HashMap();
+    if(this.icObjectMap==null){
+      this.icObjectMap = new HashMap();
     }
-    return icObjectMap;
+    return this.icObjectMap;
   }
 
   /**
@@ -162,7 +162,7 @@ public class ICObjectBusiness implements Singleton {
   public  IWBundle getBundleForInstance(int icObjectInstanceID,IWMainApplication iwma){
     try{
       if(icObjectInstanceID==-1){
-        return iwma.getBundle(com.idega.presentation.Page.IW_BUNDLE_IDENTIFIER);
+        return iwma.getBundle(PresentationObject.IW_BUNDLE_IDENTIFIER);
       }
       else{
         ICObjectInstance instance = getICObjectInstance(icObjectInstanceID);
@@ -186,10 +186,12 @@ public class ICObjectBusiness implements Singleton {
    * Returns the Class that the ICObjectInstance is associated with
    */
   public Class getClassForInstance(int icObjectInstanceID)throws ClassNotFoundException{
-    if (icObjectInstanceID == -1)
-      return(com.idega.presentation.Page.class);
-    else
-      return getICObjectInstance(icObjectInstanceID).getObject().getObjectClass();
+    if (icObjectInstanceID == -1) {
+		return(com.idega.presentation.Page.class);
+	}
+	else {
+		return getICObjectInstance(icObjectInstanceID).getObject().getObjectClass();
+	}
   }
 
   /**

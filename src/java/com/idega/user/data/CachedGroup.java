@@ -17,13 +17,13 @@ public class CachedGroup {
     private String groupType;
 
     public CachedGroup(Group group) {
-        primaryKey = (Integer)group.getPrimaryKey();
-        name = group.getName();
-        groupType = group.getGroupType();
+        this.primaryKey = (Integer)group.getPrimaryKey();
+        this.name = group.getName();
+        this.groupType = group.getGroupType();
     }
     
     public Integer getPrimaryKey() {
-        return primaryKey;
+        return this.primaryKey;
     }
  
     public void setPrimaryKey(Integer primaryKey) {
@@ -35,7 +35,7 @@ public class CachedGroup {
     }
 
     public String getGroupType() {
-        return groupType;
+        return this.groupType;
     }
 
     public void setGroupType(String groupType) {
@@ -43,6 +43,6 @@ public class CachedGroup {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 }

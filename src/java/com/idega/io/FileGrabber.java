@@ -101,17 +101,17 @@ public class FileGrabber {
 
         //System.out.println(fileURL + "is an invalid URL: " + mue);
 
-      	errorFlag = -1;
+      	this.errorFlag = -1;
 
-      	return errorFlag;
+      	return this.errorFlag;
 
     } catch(IOException ioe) { // Stream constructors
 
       //System.out.println("IOException: " + ioe);
 
-      errorFlag=-3;
+      this.errorFlag=-3;
 
-      return errorFlag;
+      return this.errorFlag;
 
     }
 
@@ -123,11 +123,11 @@ public class FileGrabber {
 
 
 
-	errorFlag = writer.WriteToFile(pageString.toString(),fileName,filePath);
+	this.errorFlag = writer.WriteToFile(pageString.toString(),fileName,filePath);
 
 
 
-	return errorFlag;
+	return this.errorFlag;
 
 
 

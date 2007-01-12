@@ -1,5 +1,5 @@
 /*
- * $Id: DayOfWeek.java,v 1.5 2005/07/14 09:39:41 laddi Exp $
+ * $Id: DayOfWeek.java,v 1.5.2.1 2007/01/12 19:32:39 idegaweb Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -23,7 +23,7 @@ import com.idega.util.text.TextSoap;
  * Last modified: 14.10.2004 14:04:38 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.5.2.1 $
  */
 public class DayOfWeek extends Widget {
 
@@ -36,7 +36,7 @@ public class DayOfWeek extends Widget {
 		IWCalendar calendar = new IWCalendar(getLocale());
 		
 		String dayName = calendar.getDayName(calendar.getDayOfWeek());
-		if (capitalized) {
+		if (this.capitalized) {
 			dayName = TextSoap.capitalize(dayName);
 		}
 		

@@ -2,6 +2,7 @@ package com.idega.util.jsp;
 
 
 
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import java.sql.*;
@@ -24,7 +25,7 @@ private PoolManager poolMgr;
 
 *
 
-*Margt mjög merkilegt
+*Margt mjï¿½g merkilegt
 
 *
 
@@ -164,13 +165,13 @@ private PoolManager poolMgr;
 
 			case 01 :
 
-					manudurnafn=("Janúar");
+					manudurnafn=("Janï¿½ar");
 
 				break;
 
 			case 02 :
 
-					manudurnafn=("Febrúar");
+					manudurnafn=("Febrï¿½ar");
 
 				break;
 
@@ -182,31 +183,31 @@ private PoolManager poolMgr;
 
 			case 04 :
 
-					manudurnafn=("Apríl");
+					manudurnafn=("Aprï¿½l");
 
 				break;
 
 			case 05 :
 
-					manudurnafn=("Maí");
+					manudurnafn=("Maï¿½");
 
 				break;
 
 			case 06 :
 
-					manudurnafn=("Júní");
+					manudurnafn=("Jï¿½nï¿½");
 
 				break;
 
 			case 07 :
 
-					manudurnafn=("Júlí");
+					manudurnafn=("Jï¿½lï¿½");
 
 				break;
 
 			case 8 :
 
-					manudurnafn=("Ágúst");
+					manudurnafn=("ï¿½gï¿½st");
 
 				break;
 
@@ -218,13 +219,13 @@ private PoolManager poolMgr;
 
 			case 10 :
 
-					manudurnafn=("Október");
+					manudurnafn=("Oktï¿½ber");
 
 				break;
 
 			case 11 :
 
-					manudurnafn=("Nóvember");
+					manudurnafn=("Nï¿½vember");
 
 				break;
 
@@ -236,7 +237,7 @@ private PoolManager poolMgr;
 
 			case 13 :
 
-					manudurnafn=("Janúar");
+					manudurnafn=("Janï¿½ar");
 
 				break;
 
@@ -264,19 +265,19 @@ private PoolManager poolMgr;
 
 			case 2:
 
-				nafn=("Mánudagur");
+				nafn=("Mï¿½nudagur");
 
 				break;
 
 			case 3:
 
-				nafn=("Þriðjudagur");
+				nafn=("ï¿½riï¿½judagur");
 
 				break;
 
 			case 4:
 
-				nafn=("Miðvikudagur");
+				nafn=("Miï¿½vikudagur");
 
 				break;
 
@@ -288,7 +289,7 @@ private PoolManager poolMgr;
 
 			case 6:
 
-				nafn=("Föstudagur");
+				nafn=("Fï¿½studagur");
 
 				break;
 
@@ -314,7 +315,7 @@ private PoolManager poolMgr;
 
 
 
-		int vdagur = calendar.get(calendar.DAY_OF_WEEK);
+		int vdagur = calendar.get(Calendar.DAY_OF_WEEK);
 
 
 
@@ -352,66 +353,72 @@ private PoolManager poolMgr;
 
 
 
-			if (!(svara))
+			if (!(svara)) {
+				switch (manudur) {
 
-			switch (manudur) {
+					case 1:
 
-				case 1:
+						if (dagur==1) {
+							svara=true;
+						}
 
-					if (dagur==1) svara=true;
+						break;
 
-					break;
+					case 2:
 
-				case 2:
+						break;
 
-					break;
+					case 3:
 
-				case 3:
+						break;
 
-					break;
+					case 4:
 
-				case 4:
+						break;
 
-					break;
+					case 5:
 
-				case 5:
+						if (dagur==1) {
+							svara=true;
+						}
 
-					if (dagur==1) svara=true;
+						break;
 
-					break;
+					case 6:
 
-				case 6:
+						if (dagur==17) {
+							svara=true;
+						}
 
-					if (dagur==17) svara=true;
+						break;
 
-					break;
+					case 7:
 
-				case 7:
+						break;
 
-					break;
+					case 8:
 
-				case 8:
+						break;
 
-					break;
+					case 9:
 
-				case 9:
+						break;
 
-					break;
+					case 10:
 
-				case 10:
+						break;
 
-					break;
+					case 11:
 
-				case 11:
+						break;
 
-					break;
+					case 12:
 
-				case 12:
-
-					break;
+						break;
 
 
 
+				}
 			}
 
 
@@ -434,11 +441,11 @@ private PoolManager poolMgr;
 
 
 
-		int	dayM = calendar.get(calendar.DAY_OF_MONTH);
+		int	dayM = calendar.get(Calendar.DAY_OF_MONTH);
 
-		int	monthY = calendar.get(calendar.MONTH)+1;
+		int	monthY = calendar.get(Calendar.MONTH)+1;
 
-		int	year = calendar.get(calendar.YEAR)+000;
+		int	year = calendar.get(Calendar.YEAR)+000;
 
 
 
@@ -468,11 +475,11 @@ private PoolManager poolMgr;
 
 
 
-		int	dayM = calendar.get(calendar.DAY_OF_MONTH);
+		int	dayM = calendar.get(Calendar.DAY_OF_MONTH);
 
-		int	monthY = calendar.get(calendar.MONTH)+1;
+		int	monthY = calendar.get(Calendar.MONTH)+1;
 
-		int	year = calendar.get(calendar.YEAR)+000;
+		int	year = calendar.get(Calendar.YEAR)+000;
 
 
 
@@ -496,7 +503,7 @@ private PoolManager poolMgr;
 
 
 
-		int month = calendar.get(calendar.MONTH)+1;
+		int month = calendar.get(Calendar.MONTH)+1;
 
 
 
@@ -514,7 +521,7 @@ private PoolManager poolMgr;
 
 
 
-		int day = calendar.get(calendar.DAY_OF_MONTH);
+		int day = calendar.get(Calendar.DAY_OF_MONTH);
 
 
 
@@ -532,7 +539,7 @@ private PoolManager poolMgr;
 
 
 
-		int year = calendar.get(calendar.YEAR);
+		int year = calendar.get(Calendar.YEAR);
 
 
 
@@ -604,11 +611,11 @@ private PoolManager poolMgr;
 
 
 
-		int	dayM = calendar.get(calendar.DAY_OF_MONTH);
+		int	dayM = calendar.get(Calendar.DAY_OF_MONTH);
 
-		int	monthY = calendar.get(calendar.MONTH)+1;
+		int	monthY = calendar.get(Calendar.MONTH)+1;
 
-		int	year = calendar.get(calendar.YEAR)+000;
+		int	year = calendar.get(Calendar.YEAR)+000;
 
 
 
