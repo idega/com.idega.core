@@ -552,4 +552,16 @@ function expandMinimizeContents(container){
 	}
 }
 
+function insertJavaScriptFileToHeader(src) {
+	if (src == null) {
+		return;
+	}
+	var script = document.createElement("script");
+	script.setAttribute("type","text/javascript");
+	script.setAttribute("src", src);
+	document.getElementsByTagName("head")[0].appendChild(script); 
+}
 
+function changeSiteInfo(id) {
+	setTimeout("changeSiteInfoValue('" + id + "')", 250);
+}
