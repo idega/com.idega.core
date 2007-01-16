@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.67.2.1 2007/01/16 11:23:02 idegaweb Exp $
+ * $Id: LoginDBHandler.java,v 1.67.2.2 2007/01/16 15:22:41 idegaweb Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -377,7 +377,8 @@ public class LoginDBHandler {
 			return getLoginTableHome().findDefaultLoginForUser(user);
 		}
 		catch (FinderException ex) {
-			ex.printStackTrace();
+			System.err.println("LoginDBHandler: no default login found for user: " + user.getPrimaryKey());
+			//ex.printStackTrace();
 		}
 		return null;
 	}
