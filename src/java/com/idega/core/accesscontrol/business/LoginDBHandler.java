@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.67 2006/05/24 07:46:54 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.68 2007/01/16 14:29:10 idegaweb Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -40,8 +40,8 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
 
 /**
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst
- *         Sæmundsson </a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st
+ *         Sï¿½mundsson </a>
  * @version 1.0
  */
 public class LoginDBHandler {
@@ -377,7 +377,8 @@ public class LoginDBHandler {
 			return getLoginTableHome().findDefaultLoginForUser(user);
 		}
 		catch (FinderException ex) {
-			ex.printStackTrace();
+			System.err.println("LoginDBHandler: no default login found for user: " + user.getPrimaryKey());
+			//ex.printStackTrace();
 		}
 		return null;
 	}
@@ -395,7 +396,8 @@ public class LoginDBHandler {
 			return getLoginTableHome().findDefaultLoginForUser(userId);
 		}
 		catch (FinderException ex) {
-			ex.printStackTrace();
+			System.err.println("LoginDBHandler: no default login found for user: " + userId);
+			//ex.printStackTrace();
 		}
 		return null;
 	}
