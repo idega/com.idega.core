@@ -1,5 +1,5 @@
 /*
- * $Id: Script.java,v 1.29 2006/04/09 12:13:13 laddi Exp $ 
+ * $Id: Script.java,v 1.30 2007/01/16 15:27:23 tryggvil Exp $ 
  * Created in 2000 by Tryggvi Larusson
  * 
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.faces.context.FacesContext;
+import com.idega.idegaweb.IWConstants;
 
 /**
  * <p>
@@ -22,10 +23,10 @@ import javax.faces.context.FacesContext;
  * An instance of this component can be used to define javascript functions and
  * add to a component or a page.
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
+ * Last modified: $Date: 2007/01/16 15:27:23 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class Script extends PresentationObject {
 
@@ -33,9 +34,15 @@ public class Script extends PresentationObject {
 	private Map scriptCode;
 	private Hashtable variables;
 	private Hashtable methods;
+	private String scriptLines;
+	
+	private static final String SCRIPT_TYPE_JAVACRIPT="javascript";
+	private static final String MIMETYPE_JAVACRIPT="text/javascript";
+	private static final String ATTRIBUTE_SOURCE="src";
+	private static final String ATTRIBUTE_TYPE="type";
 
 	public Script() {
-		this("javascript");
+		this(SCRIPT_TYPE_JAVACRIPT);
 	}
 
 	public Script(String scriptLanguage) {
@@ -57,15 +64,15 @@ public class Script extends PresentationObject {
 	}
 
 	protected void setType() {
-		setType("text/javascript");
+		setType(MIMETYPE_JAVACRIPT);
 	}
 
 	protected void setType(String type) {
-		setMarkupAttribute("type", type);
+		setMarkupAttribute(ATTRIBUTE_TYPE, type);
 	}
 
 	public void setScriptSource(String sourceURL) {
-		setMarkupAttribute("src", sourceURL);
+		setMarkupAttribute(ATTRIBUTE_SOURCE, sourceURL);
 	}
 
 	/*
@@ -218,7 +225,7 @@ public class Script extends PresentationObject {
 
 	public void print(IWContext iwc) throws Exception {
 		if (doPrint(iwc)) {
-			if (getMarkupLanguage().equals("HTML")) {
+			if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 				/*try {
 					com.idega.core.builder.data.ICDomain d = iwc.getDomain();
 					String serverUrl = d.getURL();
@@ -238,7 +245,12 @@ public class Script extends PresentationObject {
 				// else{
 				println("<script " + getMarkupAttributesString() + " >");
 				println("<!--");
-				if (!isMarkupAttributeSet("src")) {
+				if (!isMarkupAttributeSet(ATTRIBUTE_SOURCE)) {
+					
+					String lines = getScriptLines();
+					if(lines!=null){
+						print(lines);
+					}
 					print(getVariables());
 					print(getMethods());
 					print(getScriptCode(iwc));
@@ -248,7 +260,7 @@ public class Script extends PresentationObject {
 				// flush();
 				// }
 			}
-			else if (getMarkupLanguage().equals("WML")) {
+			else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 				println("");
 			}
 		}
@@ -290,6 +302,7 @@ public class Script extends PresentationObject {
 		this.scriptCode = (Map) values[2];
 		this.variables = (Hashtable) values[3];
 		this.methods = (Hashtable) values[4];
+		this.scriptLines = (String)values[5];
 	}
 
 	/*
@@ -298,12 +311,13 @@ public class Script extends PresentationObject {
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[5];
+		Object values[] = new Object[6];
 		values[0] = super.saveState(context);
 		values[1] = this.scriptType;
 		values[2] = this.scriptCode;
 		values[3] = this.variables;
 		values[4] = this.methods;
+		values[5] = this.scriptLines;
 		return values;
 	}
 	
@@ -349,5 +363,25 @@ public class Script extends PresentationObject {
 			}
 		}
 		return sb.toString();
+	}
+	
+	public String getScriptLines(){
+		return this.scriptLines;
+	}
+	
+	/**
+	 * <p>
+	 * Adds a single script line to the source body of the script object, not within any function declaration.<br/>
+	 * example: "document.myform.myinput.focus();".
+	 * </p>
+	 * @param singleScriptLine
+	 */
+	public void addScriptLine(String singleScriptLine) {
+		if(scriptLines==null){
+			scriptLines=singleScriptLine+"\n";
+		}
+		else{
+			scriptLines=scriptLines+singleScriptLine+"\n";
+		}
 	}
 }
