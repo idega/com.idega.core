@@ -16,6 +16,13 @@
 
 var IE = document.all?true:false; 
 
+var SITE_INFO_KEYWORD_FROM_BOX = null;
+var OLD_APPLICATION_PROPERTY = null;
+var CLICKED_ON_PROPERTY = false;
+
+var APPLICATION_PROPERTY = "application_property";
+var EDIT_BOX_ID = "changeSiteInfoBox";
+
 function iwOpenWindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height,Xcoord,Ycoord) {  
   	// usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height,xcoord,ycoord) 
 	var option = 'toolbar=' + ToolBar 
@@ -562,6 +569,205 @@ function insertJavaScriptFileToHeader(src) {
 	document.getElementsByTagName("head")[0].appendChild(script); 
 }
 
+function isEnterEvent(event) {
+	if (event == null) {
+		return false;
+	}
+	var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
+	if (keyCode == 13) {
+		return true;
+	}
+	return false;
+}
+
 function changeSiteInfo(id) {
-	setTimeout("changeSiteInfoValue('" + id + "')", 250);
+	if (id == null) {
+		return;
+	}
+	insertJavaScriptFileToHeader("/dwr/engine.js");
+	insertJavaScriptFileToHeader("/dwr/interface/ThemesEngine.js");
+	CLICKED_ON_PROPERTY = true;
+	changeSiteInfoValue(id);
+}
+
+function changeSiteInfoValue(id) {
+	if (id == null) {
+		return;
+	}
+	document.onclick = showSiteInfoValue;
+	showSiteInfoValue();
+	SITE_INFO_KEYWORD_FROM_BOX = id;
+	
+	var element = document.getElementById(id);
+	if (element == null) {
+		return;
+	}
+	
+	var editBox = document.getElementById(EDIT_BOX_ID);
+	if (editBox == null) {
+		editBox = document.createElement("input");
+		editBox.setAttribute("type", "input");
+		editBox.setAttribute("id", EDIT_BOX_ID);
+		if (typeof element.attachEvent != "undefined") {
+        	editBox.attachEvent("onkeypress", function(e){saveSiteInfoValue(e, this.value);});
+		} else {
+        	editBox.addEventListener("keypress", function(e){saveSiteInfoValue(e, this.value);}, true);
+		}
+	}
+	else {
+		editBox.value = "";
+		editBox.style.display = "inline";
+		var parentNode = editBox.parentNode;
+		if (parentNode != null) {
+			parentNode.removeChild(editBox);
+		}
+	}
+	
+	var children = element.childNodes;
+	if (children != null) {
+		if (children[0] != null) {
+			if (children[0].nodeValue != null) {
+				editBox.value = children[0].nodeValue;
+			}
+		}
+	}
+	
+	if (element.getAttribute(APPLICATION_PROPERTY) == null) {
+		element.setAttribute(APPLICATION_PROPERTY, true);
+	}
+
+	appendEditBoxToExactPlace(element, editBox);
+	
+	editBox.focus();
+	editBox.select();
+	
+	element.style.visibility = "hidden";
+}
+
+
+function appendEditBoxToExactPlace(element, edit) {
+	if (element == null || edit == null) {
+		return;
+	}
+	var container = null;
+	if (element.tagName != null) {
+		if ((element.tagName != "div" && element.tagName != "DIV") && (element.tagName != "img" && element.tagName != "IMG")) {
+			container = document.createElement(element.tagName);
+			container.setAttribute("id", EDIT_BOX_ID + "_container");
+			container.appendChild(edit);
+		}
+	}
+	var parentNode = element.parentNode;
+	if (parentNode != null) {
+		if (container != null) {
+			parentNode.insertBefore(container, element);
+		}
+		else {
+			parentNode.insertBefore(edit, element);
+		}
+	}
+	else {
+		if (container != null) {
+			element.appendChild(container);
+		}
+		else {
+			element.appendChild(edit);
+		}
+	}
+}
+
+function saveSiteInfoValue(event, value) {
+	if (event == null) {
+		return;
+	}
+	if (!isEnterEvent(event)) {
+		return;
+	}
+	if (SITE_INFO_KEYWORD_FROM_BOX == null || value == null) {
+		return;
+	}
+	
+	var element = document.getElementById(SITE_INFO_KEYWORD_FROM_BOX); // Setting new value
+	if (element != null) {
+		if (element.value != null) {
+			element.value = value;
+		}
+		else {
+			var children = element.childNodes;
+			if (children != null) {
+				for (var j = 0; j < children.length; j++) {
+					element.removeChild(children[j]);
+				}				
+			}
+			element.appendChild(document.createTextNode(value));
+		}
+	}
+	
+	showLoadingMessage("Saving...");
+	setTimeout("executeDwrAndSaveSiteInfo('" + value + "')", 500);
+}
+
+function executeDwrAndSaveSiteInfo(value) {
+	ThemesEngine.saveSiteInfoValue(SITE_INFO_KEYWORD_FROM_BOX, value, saveSiteInfoValueCallback);
+}
+
+function saveSiteInfoValueCallback(result) {
+	showSiteInfoValue();
+	closeLoadingMessage();
+}
+
+function showSiteInfoValue() {
+	var editBox = document.getElementById(EDIT_BOX_ID);
+	if (editBox != null) {
+		var container = editBox.parentNode;
+		if (container != null) {
+			container.removeChild(editBox);
+			if (container.id != null) {
+				if (container.id == EDIT_BOX_ID + "_container") {
+					var parentContainer = container.parentNode;
+					if (parentContainer != null) {
+						parentContainer.removeChild(container);
+					}
+				}
+			}
+		}
+		else {
+			editBox.style.display = "none";
+		}
+	}
+	if (SITE_INFO_KEYWORD_FROM_BOX == null) {
+		return;
+	}
+	var element = document.getElementById(SITE_INFO_KEYWORD_FROM_BOX);
+	if (element != null) {
+		if (element.style.visibility == "hidden") {
+			CLICKED_ON_PROPERTY = false;
+			removeStyleProperty(SITE_INFO_KEYWORD_FROM_BOX);
+			element.style.visibility = "visible";
+		}
+	}
+}
+
+function addStyleProperty(id, propertyValue) {
+	if (id == null || propertyValue == null) {
+		return;
+	}
+	var element = document.getElementById(id);
+	if (element == null) {
+		return;
+	}
+	element.setAttribute("style", propertyValue);
+}
+
+function removeStyleProperty(id) {
+	if (id == null) {
+		return;
+	}
+	var element = document.getElementById(id);
+	if (element == null) {
+		return;
+	}
+	if (!CLICKED_ON_PROPERTY) {
+		element.removeAttribute("style");
+	}
 }
