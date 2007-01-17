@@ -1,5 +1,5 @@
 /*
- * $Id: Email.java,v 1.3 2006/05/18 11:43:43 laddi Exp $
+ * $Id: Email.java,v 1.3.2.1 2007/01/17 11:35:14 idegaweb Exp $
  * Created on May 16, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -13,10 +13,10 @@ package com.idega.core.contact.data;
 
 /**
  * 
- *  Last modified: $Date: 2006/05/18 11:43:43 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/01/17 11:35:14 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.3.2.1 $
  */
 public interface Email extends com.idega.data.IDOLegacyEntity, EmailDataView {
 
@@ -30,6 +30,10 @@ public interface Email extends com.idega.data.IDOLegacyEntity, EmailDataView {
 	 */
 	public String getEmailAddress();
 	
+	public java.lang.String getEmailAddressMailtoFormatted();
+
+ 	public java.lang.String getEmailAddressMailtoFormattedWithSubject(String subject);	
+
 	public void setEmailType(EmailType emailType);
 	
 	public EmailType getEmailType();
