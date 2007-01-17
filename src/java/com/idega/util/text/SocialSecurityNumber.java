@@ -2,7 +2,6 @@ package com.idega.util.text;
 
 import java.sql.Date;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import com.idega.util.IWTimestamp;

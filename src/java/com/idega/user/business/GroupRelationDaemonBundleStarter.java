@@ -17,7 +17,6 @@ import javax.ejb.FinderException;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneType;
-import com.idega.core.contact.data.PhoneTypeBMPBean;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.idegaweb.IWApplicationContext;

@@ -1,9 +1,9 @@
 package com.idega.presentation.ui;
 
 import javax.faces.context.FacesContext;
+
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 
 /**
