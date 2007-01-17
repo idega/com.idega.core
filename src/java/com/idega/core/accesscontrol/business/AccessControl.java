@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.112.2.1 2006/06/28 10:20:06 tryggvil Exp $
+ * $Id: AccessControl.java,v 1.112.2.2 2007/01/17 11:35:30 idegaweb Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -70,12 +70,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2006/06/28 10:20:06 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/01/17 11:35:30 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.112.2.1 $
+ * @version $Revision: 1.112.2.2 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -355,7 +355,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else {
 
 			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
-			if ( !"true".equals(recurseParents) ) { //old crap
+			if ( !"true".equalsIgnoreCase(recurseParents) ) { //old crap
 				//			TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
 				groups = LoginBusinessBean.getPermissionGroups(iwuc);
 			}
@@ -544,7 +544,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else { //user check
 
 			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
-			if ( !"true".equals(recurseParents) )  { //old crap
+			if ( !"true".equalsIgnoreCase(recurseParents) )  { //old crap
 				//TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
 				groups = LoginBusinessBean.getPermissionGroups(iwuc);
 			}
@@ -1673,6 +1673,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 		else { //updating
 			permission.setPermissionValue(permissionValue);
+			if (AccessControl.PERMISSION_KEY_OWNER.equals(permission.getPermissionString())) {
+				if (permissionValue.booleanValue()) {
+					permission.setActive();
+				} else {
+					permission.setPassive();
+				}
+			}
 			permission.update();
 		}
 

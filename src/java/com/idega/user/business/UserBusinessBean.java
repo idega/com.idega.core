@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207 2006/06/01 15:28:23 thomas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.1 2007/01/17 11:33:57 idegaweb Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -97,10 +97,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2006/06/01 15:28:23 $ by $Author: thomas $
+ * Last modified: $Date: 2007/01/17 11:33:57 $ by $Author: idegaweb $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207 $
+ * @version $Revision: 1.207.2.1 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -1204,18 +1204,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				if (country != null) {
 					address.setCountry(country);
 				}
-				if (postalCode != null) {
 					address.setPostalCode(postalCode);
-				}
-				if (province != null) {
 					address.setProvince(province);
-				}
-				if (city != null) {
 					address.setCity(city);
-				}
-				if (poBox != null) {
 					address.setPOBox(poBox);
-				}
 				address.setStreetName(streetName);
 				if (streetNumber != null) {
 					address.setStreetNumber(streetNumber);
@@ -1224,13 +1216,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					// Fix when entering unnumbered addresses (Aron )
 					address.setStreetNumber("");
 				}
-				if (communeID != null) {
-					if (communeID.intValue() == -1) {
+				if (communeID == null || communeID.intValue() == -1) {
 						address.setCommune(null);
 					} else {
 						address.setCommuneID(communeID.intValue());
 					}
-				}
 				address.store();
 				if (addAddress) {
 					user.addAddress(address);

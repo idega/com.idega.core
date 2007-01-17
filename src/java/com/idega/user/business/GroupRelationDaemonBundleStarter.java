@@ -120,9 +120,17 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 							relation.setPassive();
 							//relation.setTerminationDate(stamp.getTimestamp());
 							relation.store();
+							Group relatedGroup = relation.getRelatedGroup();
+							if (relatedGroup.getGroupType().equals(User.USER_GROUP_TYPE)) {
+								User user = getUserHome().findByPrimaryKey(relatedGroup.getPrimaryKey());
+								if (relation.getGroupID() == user.getPrimaryGroupID()) {
+									user.setPrimaryGroupID(null);
+									user.store();
 						}
 					}
 				}
+			}
+		}
 			}
 		}
 		catch (Exception x) {
