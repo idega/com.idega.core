@@ -16,6 +16,8 @@ public class CheckBox extends GenericInput {
 	private boolean _mustBeChecked = false;
 	private boolean _enableWhenChecked = false;
 	private boolean _disableWhenUnchecked = false;
+	private boolean _disableWhenChecked = false;
+	private boolean _enableWhenUnchecked = false;
 	private boolean _checkWhenCheckedUncheckWhenUnchecked = false;
 	private String _errorMessage;
 
@@ -99,6 +101,12 @@ public class CheckBox extends GenericInput {
 			if (this._disableWhenUnchecked) {
 				getScript().addFunction("disableWhenUnchecked", "function disableWhenUnchecked (check, input) {\n\t	if (check.checked == false) input.disabled = true; \n}");
 			}
+			if (this._enableWhenUnchecked) {
+				getScript().addFunction("disableWhenChecked", "function disableWhenChecked (check, input) {\n\t	if (check.checked == false) input.disabled = true; \n}");
+			}
+			if (this._disableWhenChecked) {
+				getScript().addFunction("enableWhenUnchecked", "function enableWhenUnchecked (check, input) {\n\t	if (check.checked == true) input.disabled = false; \n}");
+			}
 			if ( this._checkWhenCheckedUncheckWhenUnchecked ) {
 				//getScript().addFunction("toggleOnChange", "function toggleOnChange (check, input) {\n\t	if (check.checked == false)  {input.checked = false;} \n\t else if (check.checked == true) { input.checked = true;} \n}");
 				getScript().addFunction("toggleOnChange", "function toggleOnChange (check, inputs) {\n	if (inputs.length > 1) {\n	\tfor(var i=0;i<inputs.length;i++)\n	\t\tinputs[i].checked = check.checked;\n	\t}\n	else\n	\tinputs.checked = check.checked;\n}");
@@ -119,6 +127,16 @@ public class CheckBox extends GenericInput {
 	public void setToDisableWhenUnchecked(InterfaceObject object) {
 		this._disableWhenUnchecked = true;
 		setOnAction(ACTION_ON_CLICK, "disableWhenUnchecked(this, findObj('" + object.getName() + "'))");
+	}
+	
+	public void setToDisableWhenChecked(InterfaceObject object) {
+		this._disableWhenChecked = true;
+		setOnAction(ACTION_ON_CLICK, "disableWhenChecked(this, findObj('" + object.getName() + "'))");
+	}
+	
+	public void setToEnableWhenUnchecked(InterfaceObject object) {
+		this._enableWhenUnchecked = true;
+		setOnAction(ACTION_ON_CLICK, "enableWhenUnchecked(this, findObj('" + object.getName() + "'))");
 	}
 	
 	public void setToCheckWhenCheckedAndUncheckWhenUnchecked(InterfaceObject object) {
