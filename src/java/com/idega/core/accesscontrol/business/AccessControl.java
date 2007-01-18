@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.112.2.2 2007/01/17 11:35:30 idegaweb Exp $
+ * $Id: AccessControl.java,v 1.112.2.3 2007/01/18 14:55:04 laddi Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -70,12 +70,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2007/01/17 11:35:30 $ by $Author: idegaweb $
+ * Last modified: $Date: 2007/01/18 14:55:04 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.112.2.2 $
+ * @version $Revision: 1.112.2.3 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -1673,7 +1673,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 		else { //updating
 			permission.setPermissionValue(permissionValue);
-			if (AccessControl.PERMISSION_KEY_OWNER.equals(permission.getPermissionString())) {
+			if (AccessController.PERMISSION_KEY_OWNER.equals(permission.getPermissionString())) {
 				if (permissionValue.booleanValue()) {
 					permission.setActive();
 				} else {
