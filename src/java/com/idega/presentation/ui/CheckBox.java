@@ -102,10 +102,10 @@ public class CheckBox extends GenericInput {
 				getScript().addFunction("disableWhenUnchecked", "function disableWhenUnchecked (check, input) {\n\t	if (check.checked == false) input.disabled = true; \n}");
 			}
 			if (this._enableWhenUnchecked) {
-				getScript().addFunction("disableWhenChecked", "function disableWhenChecked (check, input) {\n\t	if (check.checked == false) input.disabled = true; \n}");
+				getScript().addFunction("enableWhenUnchecked", "function enableWhenUnchecked (check, input) {\n\t	if (check.checked == true) input.disabled = false; \n}");
 			}
 			if (this._disableWhenChecked) {
-				getScript().addFunction("enableWhenUnchecked", "function enableWhenUnchecked (check, input) {\n\t	if (check.checked == true) input.disabled = false; \n}");
+				getScript().addFunction("disableWhenChecked", "function disableWhenChecked (check, input) {\n\t	if (check.checked == false) input.disabled = true; \n}");
 			}
 			if ( this._checkWhenCheckedUncheckWhenUnchecked ) {
 				//getScript().addFunction("toggleOnChange", "function toggleOnChange (check, input) {\n\t	if (check.checked == false)  {input.checked = false;} \n\t else if (check.checked == true) { input.checked = true;} \n}");
