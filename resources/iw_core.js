@@ -20,6 +20,10 @@ var SITE_INFO_KEYWORD_FROM_BOX = null;
 var OLD_APPLICATION_PROPERTY = null;
 var CLICKED_ON_PROPERTY = false;
 
+var PARENT_ELEMENT = null;
+var CHILD_ELEMENT = null;
+var ORIGINAL_ELEMENT_INDEX = 0;
+
 var APPLICATION_PROPERTY = "application_property";
 var EDIT_BOX_ID = "changeSiteInfoBox";
 
@@ -602,6 +606,7 @@ function changeSiteInfoValue(id) {
 	if (element == null) {
 		return;
 	}
+	CHILD_ELEMENT = element;
 	
 	var editBox = document.getElementById(EDIT_BOX_ID);
 	if (editBox == null) {
@@ -623,7 +628,10 @@ function changeSiteInfoValue(id) {
 		}
 	}
 	
-	var children = element.childNodes;
+	PARENT_ELEMENT = CHILD_ELEMENT.parentNode;
+	ORIGINAL_ELEMENT_INDEX = findChildIndex(PARENT_ELEMENT, CHILD_ELEMENT);
+	
+	var children = CHILD_ELEMENT.childNodes;
 	if (children != null) {
 		if (children[0] != null) {
 			if (children[0].nodeValue != null) {
@@ -641,7 +649,12 @@ function changeSiteInfoValue(id) {
 	editBox.focus();
 	editBox.select();
 	
-	element.style.visibility = "hidden";
+	if (PARENT_ELEMENT == null) {
+		element.style.visibility = "hidden";
+	}
+	else {
+		PARENT_ELEMENT.removeChild(CHILD_ELEMENT);
+	}
 }
 
 
@@ -687,20 +700,12 @@ function saveSiteInfoValue(event, value) {
 		return;
 	}
 	
-	var element = document.getElementById(SITE_INFO_KEYWORD_FROM_BOX); // Setting new value
-	if (element != null) {
-		if (element.value != null) {
-			element.value = value;
-		}
-		else {
-			var children = element.childNodes;
-			if (children != null) {
-				for (var j = 0; j < children.length; j++) {
-					element.removeChild(children[j]);
-				}				
-			}
-			element.appendChild(document.createTextNode(value));
-		}
+	if (PARENT_ELEMENT == null) {
+		var element = document.getElementById(SITE_INFO_KEYWORD_FROM_BOX); // Setting new value
+		setElementNewValue(element, value);
+	}
+	else {
+		setElementNewValue(CHILD_ELEMENT, value);
 	}
 	
 	showLoadingMessage("Saving...");
@@ -738,13 +743,21 @@ function showSiteInfoValue() {
 	if (SITE_INFO_KEYWORD_FROM_BOX == null) {
 		return;
 	}
-	var element = document.getElementById(SITE_INFO_KEYWORD_FROM_BOX);
-	if (element != null) {
-		if (element.style.visibility == "hidden") {
-			CLICKED_ON_PROPERTY = false;
-			removeStyleProperty(SITE_INFO_KEYWORD_FROM_BOX);
-			element.style.visibility = "visible";
+	
+	if (PARENT_ELEMENT == null) {
+		var element = document.getElementById(SITE_INFO_KEYWORD_FROM_BOX);
+		if (element != null) {
+			if (element.style.visibility == "hidden") {
+				CLICKED_ON_PROPERTY = false;
+				removeStyleProperty(SITE_INFO_KEYWORD_FROM_BOX);
+				element.style.visibility = "visible";
+			}
 		}
+	}
+	else {
+		CLICKED_ON_PROPERTY = false;
+		appendChildrenToExactPlace(PARENT_ELEMENT, CHILD_ELEMENT, ORIGINAL_ELEMENT_INDEX);
+		removeStyleProperty(CHILD_ELEMENT.id);
 	}
 }
 
@@ -769,5 +782,68 @@ function removeStyleProperty(id) {
 	}
 	if (!CLICKED_ON_PROPERTY) {
 		element.removeAttribute("style");
+	}
+}
+
+function findChildIndex(parentNode, element) {
+	if (parentNode == null || element == null) {
+		return -1;
+	}
+	var children = parentNode.childNodes;
+	if (children == null) {
+		return -1;
+	}
+	var i = 0;
+	for (i = 0; i < children.length; i++) {
+		if (element == children[i]) {
+			return i;
+		}
+	}
+	return i;
+}
+
+function appendChildrenToExactPlace(parentNode, element, index) {
+	if (parentNode == null || element == null) {
+		return;
+	}
+	var children = parentNode.childNodes;
+	if (children == null) {
+		return;
+	}
+	if (index < 0) {
+		index = 0;
+	}
+	var newChildrenList = new Array();
+	for (var i = 0; i < children.length; i++) { // Making copy of exact current structure
+		if (i == index) {
+			newChildrenList.push(element);
+		}
+		else{
+			newChildrenList.push(children[i]);
+		}
+	}
+	for (var i = 0; i < children.length; i++) { // Removing old children
+		parentNode.removeChild(children[i]);
+	}
+	for (var i = 0; i < newChildrenList.length; i++) { // Appending new children
+		parentNode.appendChild(newChildrenList[i]);
+	}
+}
+
+function setElementNewValue(element, value) {
+	if (element == null || value == null) {
+		return;
+	}
+	if (element.value != null) {
+		element.value = value;
+	}
+	else {
+		var children = element.childNodes;
+		if (children != null) {
+			for (var j = 0; j < children.length; j++) {
+				element.removeChild(children[j]);
+			}				
+		}
+		element.appendChild(document.createTextNode(value));
 	}
 }
