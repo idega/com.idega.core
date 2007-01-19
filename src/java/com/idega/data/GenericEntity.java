@@ -3716,7 +3716,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			return (GenericEntity)IDOLookup.instanciateEntity(entityInterfaceOrBeanClass, datasource);
 		} catch (Exception e1) {
 			//Only for legacy beans;
-			e1.printStackTrace();
+			//e1.printStackTrace();
 			try {
 				GenericEntity ent =(GenericEntity)entityInterfaceOrBeanClass.newInstance();
 				ent.setDatasource(datasource);

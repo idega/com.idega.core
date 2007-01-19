@@ -248,7 +248,7 @@ public class IDOLookup extends IBOLookup implements Singleton {
     }
     catch(Exception e){
 	 System.err.println("Exception in IDOLookup#instanciateEntity(Class) for "+entityBeanOrInterfaceClass);
-      e.printStackTrace();
+      //e.printStackTrace();
       throw new EJBException(e.getMessage());
     }
   }
