@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.15 2006/04/09 12:13:17 laddi Exp $
+ * $Id: DefaultViewNode.java,v 1.16 2007/01/19 08:16:21 laddi Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -10,12 +10,14 @@
 package com.idega.core.view;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.StringHandler;
 
@@ -23,10 +25,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/01/19 08:16:21 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -79,7 +81,7 @@ public class DefaultViewNode implements ViewNode {
 
 	protected Map getChildrenMap(){
 		if(this.children==null){
-			this.children=new HashMap();
+			this.children=new LinkedHashMap();
 		}
 		return this.children;
 	}
