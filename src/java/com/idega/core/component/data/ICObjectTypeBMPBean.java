@@ -60,7 +60,7 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 	}
 
 	public void initializeAttributes() {
-		this.addAttribute(getIDColumnName(),"Type",String.class,100);
+		this.addAttribute(getIDColumnName(),"Type",String.class,255);
 		this.setAsPrimaryKey(getIDColumnName(),true);
 		this.addAttribute(COLUMN_NAME, "Name", String.class);
 		this.addAttribute(COLUMN_REQUIRED_SUPER_CLASS, "superclass", String.class);
