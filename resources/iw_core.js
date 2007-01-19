@@ -22,6 +22,7 @@ var CLICKED_ON_PROPERTY = false;
 
 var PARENT_ELEMENT = null;
 var CHILD_ELEMENT = null;
+var CHANGED_CHILDREN_LIST = null;
 var ORIGINAL_ELEMENT_INDEX = 0;
 
 var APPLICATION_PROPERTY = "application_property";
@@ -591,6 +592,7 @@ function changeSiteInfo(id) {
 	insertJavaScriptFileToHeader("/dwr/engine.js");
 	insertJavaScriptFileToHeader("/dwr/interface/ThemesEngine.js");
 	CLICKED_ON_PROPERTY = true;
+	document.onclick = showSiteInfoValue;
 	changeSiteInfoValue(id);
 }
 
@@ -598,7 +600,6 @@ function changeSiteInfoValue(id) {
 	if (id == null) {
 		return;
 	}
-	document.onclick = showSiteInfoValue;
 	showSiteInfoValue();
 	SITE_INFO_KEYWORD_FROM_BOX = id;
 	
@@ -645,7 +646,6 @@ function changeSiteInfoValue(id) {
 	}
 
 	appendEditBoxToExactPlace(element, editBox);
-	
 	editBox.focus();
 	editBox.select();
 	
@@ -654,6 +654,10 @@ function changeSiteInfoValue(id) {
 	}
 	else {
 		PARENT_ELEMENT.removeChild(CHILD_ELEMENT);
+		CHANGED_CHILDREN_LIST = new Array();
+		for (var i = 0; i < PARENT_ELEMENT.childNodes.length; i++) {
+			CHANGED_CHILDREN_LIST.push(PARENT_ELEMENT.childNodes[i]);
+		}
 	}
 }
 
@@ -740,6 +744,7 @@ function showSiteInfoValue() {
 			editBox.style.display = "none";
 		}
 	}
+	
 	if (SITE_INFO_KEYWORD_FROM_BOX == null) {
 		return;
 	}
@@ -756,8 +761,11 @@ function showSiteInfoValue() {
 	}
 	else {
 		CLICKED_ON_PROPERTY = false;
-		appendChildrenToExactPlace(PARENT_ELEMENT, CHILD_ELEMENT, ORIGINAL_ELEMENT_INDEX);
+		appendChildrenToExactPlace();
 		removeStyleProperty(CHILD_ELEMENT.id);
+		PARENT_ELEMENT = null;
+		CHILD_ELEMENT = null;
+		CHANGED_CHILDREN_LIST = null;
 	}
 }
 
@@ -799,34 +807,30 @@ function findChildIndex(parentNode, element) {
 			return i;
 		}
 	}
-	return i;
+	return i - 1;
 }
 
-function appendChildrenToExactPlace(parentNode, element, index) {
-	if (parentNode == null || element == null) {
+function appendChildrenToExactPlace() {
+	if (PARENT_ELEMENT == null || CHILD_ELEMENT == null || CHANGED_CHILDREN_LIST == null) {
 		return;
 	}
-	var children = parentNode.childNodes;
+	var children = PARENT_ELEMENT.childNodes;
 	if (children == null) {
 		return;
 	}
-	if (index < 0) {
-		index = 0;
+	if (ORIGINAL_ELEMENT_INDEX < 0) {
+		ORIGINAL_ELEMENT_INDEX = 0;
 	}
 	var newChildrenList = new Array();
-	for (var i = 0; i < children.length; i++) { // Making copy of exact current structure
-		if (i == index) {
-			newChildrenList.push(element);
-		}
-		else{
-			newChildrenList.push(children[i]);
-		}
+	for (var i = 0; i < CHANGED_CHILDREN_LIST.length; i++) { // Making copy of exact current structure
+		newChildrenList.push(CHANGED_CHILDREN_LIST[i]);
 	}
+	newChildrenList.splice(ORIGINAL_ELEMENT_INDEX, 1, CHILD_ELEMENT); // Adding original element with new value
 	for (var i = 0; i < children.length; i++) { // Removing old children
-		parentNode.removeChild(children[i]);
+		PARENT_ELEMENT.removeChild(children[i]);
 	}
 	for (var i = 0; i < newChildrenList.length; i++) { // Appending new children
-		parentNode.appendChild(newChildrenList[i]);
+		PARENT_ELEMENT.appendChild(newChildrenList[i]);
 	}
 }
 
