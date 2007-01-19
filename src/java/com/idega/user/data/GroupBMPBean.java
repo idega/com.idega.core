@@ -113,7 +113,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		
 //		id of the group that has the permissions for this group. If this is not null then this group has inherited permissions.
 		addManyToOneRelationship(COLUMN_PERMISSION_CONTROLLING_GROUP, Group.class);
-		addManyToOneRelationship(getGroupTypeColumnName(), GroupType.class);
+		//addManyToOneRelationship(getGroupTypeColumnName(), GroupType.class);
 
 		addAttribute(COLUMN_IS_PERMISSION_CONTROLLING_GROUP, "Do children of this group get same permissions", true, true, Boolean.class);
 		
