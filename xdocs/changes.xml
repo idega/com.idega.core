@@ -4,6 +4,17 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+
+	<release version="3.1.25" date="2007-01-22">
+		<action dev="tryggvil" type="update">
+			Moved security filter for Web-Services, WebServiceAuthorizationFilter, from the block com.idega.block.process.webservice to
+			be standard part of com.idega.core.
+		</action>
+		<action dev="tryggvil" type="update">
+			Updated JAAS LoginModule implementation and added a standard PersonalIdCredential object that is always initialized for
+			all users that login-in and have a personalId set. This was updated because of requirements from VUF - Reykjavik.
+		</action>
+	</release>
   
 	<release version="3.1.24" date="2007-01-05">
 		<action dev="laddi" type="update">
