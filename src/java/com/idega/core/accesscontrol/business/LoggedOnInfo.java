@@ -1,5 +1,5 @@
 /*
- * $Id: LoggedOnInfo.java,v 1.20 2006/05/19 07:39:45 laddi Exp $
+ * $Id: LoggedOnInfo.java,v 1.20.2.1 2007/01/22 08:10:29 tryggvil Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -9,6 +9,7 @@
 package com.idega.core.accesscontrol.business;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpSession;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpSessionBindingListener;
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.jaas.IWCredential;
+import com.idega.core.accesscontrol.jaas.PersonalIdCredential;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 
@@ -27,14 +29,16 @@ import com.idega.util.IWTimestamp;
  * up when the users session times out.
  * </p>
  *
- * Last modified: $Date: 2006/05/19 07:39:45 $ by $Author: laddi $
+ * Last modified: $Date: 2007/01/22 08:10:29 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
  * 		   <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.20.2.1 $
  */
 public class LoggedOnInfo implements HttpSessionBindingListener  {
 
+  private static final String TICKET_CREDENTIAL = "ticket";
+ 
   private User _user = null;
 //  private HttpSession _session = null; 
   private IWTimestamp _timeOfLogon = null;
@@ -54,9 +58,26 @@ public LoggedOnInfo() {
   }
   //setters
   public void setUser(User user){
-    this._user = user;
+	  this._user = user;
+	  if(user!=null){
+		  initializePersonalIdCredential(user);
+	  }
   }
 
+/**
+ * <p>
+ * Initializes the PersonalIdCredential object set in the Credentials map
+ * </p>
+ * @param user
+ */
+private void initializePersonalIdCredential(User user) {
+	Map credentials = getCredentials();
+	String personalId = user.getPersonalID();
+	if(personalId!=null){
+		PersonalIdCredential pidCredential = new PersonalIdCredential(personalId);
+		credentials.put("PersonalIdCredential",pidCredential);
+	}
+}
 /*
   public void setSession(HttpSession session){
     _session = session;
@@ -217,6 +238,31 @@ public LoggedOnInfo() {
 	 */
 	public Map getCredentials() {
 		return this.credentials;
+	}
+	/**
+	 * <p>
+	 * Gets a Ticket that is used with Single-Sign-On solutions, and if that is in use.
+	 * If no single sign-on is set up this method returns null.
+	 * </p>
+	 * @return
+	 */
+	public String getTicket() {
+		Map credentials = getCredentials();
+		if(credentials!=null){
+			for (Iterator iter = credentials.keySet().iterator(); iter.hasNext();) {
+				Object ckey = iter.next();
+				IWCredential credential = (IWCredential) credentials.get(ckey);
+				
+				String name = credential.getName();
+				Object key = credential.getKey();
+				String sKey = key.toString();
+				
+				if(name.equals(TICKET_CREDENTIAL)){
+					return sKey;
+				}
+			}
+		}
+		return null;
 	}
 
 }
