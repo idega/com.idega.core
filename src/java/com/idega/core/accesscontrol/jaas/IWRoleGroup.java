@@ -1,5 +1,5 @@
 /*
- * $Id: IWRoleGroup.java,v 1.2 2006/04/09 12:13:17 laddi Exp $
+ * $Id: IWRoleGroup.java,v 1.3 2007/01/22 08:16:38 tryggvil Exp $
  * Created on 8.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,14 +18,19 @@ import java.util.Iterator;
 
 /**
  * 
- *  Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/01/22 08:16:38 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class IWRoleGroup extends HashSet implements Group {
 	    
-	    public boolean addMember(Principal user) {
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = -469125899951424627L;
+
+		public boolean addMember(Principal user) {
 	        return this.add(user);
 	    }
 	    

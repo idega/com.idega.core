@@ -1,5 +1,5 @@
 /*
- * $Id: IWCredential.java,v 1.1 2006/05/18 16:18:33 thomas Exp $
+ * $Id: IWCredential.java,v 1.2 2007/01/22 08:16:38 tryggvil Exp $
  * Created on May 10, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import javax.security.auth.Destroyable;
  * Not fully implemented. Add more method if needed.
  * 
  * 
- *  Last modified: $Date: 2006/05/18 16:18:33 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/01/22 08:16:38 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public interface IWCredential extends Destroyable {
 	

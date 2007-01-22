@@ -267,7 +267,14 @@
 		<url-pattern>/idegaweb/action/*</url-pattern>
 	</filter-mapping>
 
-
+    <filter>
+        <filter-name>WebServiceAuthorizationFilter</filter-name>
+        <filter-class>com.idega.servlet.filter.WebServiceAuthorizationFilter</filter-class>
+    </filter>
+	<filter-mapping>
+        <filter-name>WebServiceAuthorizationFilter</filter-name>
+        <url-pattern>/services/*</url-pattern>
+    </filter-mapping>
 
 	<!-- DISABLED The GZIPFilter that compressed output to the client
 		<filter>
