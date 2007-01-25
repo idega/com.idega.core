@@ -52,11 +52,11 @@ DIV.LoadLayerOld {
 }
 
 .LoadLayer {
-	height: 100%;
-	width: 100%;
+	height: expression((document.body.clientHeight) ? document.body.clientHeight  + 'px' : document.documentElement.clientHeight  + 'px');
+	width: expression((document.body.clientWidth) ? document.body.clientWidth  + 'px' : document.documentElement.clientWidth  + 'px');
 
-	left: expression( document.body.scrollLeft + 'px' );
-	top: expression( document.body.scrollTop + 'px' );
+	left: 0;
+	top: 0;
 
 	visibility: hidden;
 	position: absolute;
@@ -65,8 +65,8 @@ DIV.LoadLayerOld {
 }
 
 html>body .LoadLayer {
-	top: 0;
-	left: 0;
+	height: 100%;
+	width: 100%;
 	position: fixed;
 	filter: none;
 	background: url(/idegaweb/bundles/com.idega.core.bundle/resources/style/images/transparent.png);
