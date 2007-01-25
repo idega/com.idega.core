@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.41 2006/04/09 12:13:13 laddi Exp $ Created on
+ * $Id: StringHandler.java,v 1.42 2007/01/25 14:17:42 gediminas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,18 +24,18 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
+ * Last modified: $Date: 2007/01/25 14:17:42 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.41 $
+ * @version $Revision: 1.42 $
  */
 public class StringHandler {
 
 	/**
 	 * substitution string if a character is not a letter
 	 */
-	public static String NO_LETTER_SUBSTITUTION = "x";
+	public static String NO_LETTER_SUBSTITUTION = "_";
 
 	/**
 	 * groups of characters (represented by uni code) replaced by strings
@@ -74,14 +74,69 @@ public class StringHandler {
 			{ 249, 250, 251, 252 }, // u
 			{ 253 }, // y
 			{ 254 }, // th
-			{ 255 } }; // y
+			{ 255 }, // y
+			// Latin Extended-A
+			{ 0x0100, 0x0102, 0x0104 }, // A 
+			{ 0x0101, 0x0103, 0x0105 }, // a
+			{ 0x0106, 0x0108, 0x010A, 0x010C }, // C 
+			{ 0x0107, 0x0109, 0x010B, 0x010D }, // c 
+			{ 0x010E, 0x0110 }, // D 
+			{ 0x010F, 0x0111 }, // d 
+			{ 0x0112, 0x0114, 0x0116, 0x0118, 0x011A }, // E 
+			{ 0x0113, 0x0115, 0x0117, 0x0119, 0x011B }, // e 
+			{ 0x011C, 0x011E, 0x0120, 0x0122 }, // G
+			{ 0x011D, 0x011F, 0x0121, 0x0123 }, // g 
+			{ 0x0124, 0x0126 }, // H
+			{ 0x0125, 0x0127 }, // h 
+			{ 0x0128, 0x012A, 0x012C, 0x012E, 0x0130 }, // I
+			{ 0x0129, 0x012B, 0x012D, 0x012F, 0x0131 }, // i
+			{ 0x0132 }, // IJ
+			{ 0x0133 }, // ij
+			{ 0x0134 }, // J
+			{ 0x0135 }, // j
+			{ 0x0136 }, // K
+			{ 0x0137 }, // k
+			{ 0x0138 }, // kra
+			{ 0x0139, 0x013B, 0x013D, 0x013F, 0x0141 }, // L
+			{ 0x013A, 0x013C, 0x013E, 0x0140, 0x0142 }, // l
+			{ 0x0143, 0x0145, 0x0147 }, // N
+			{ 0x0144, 0x0146, 0x0148, 0x0149 }, // n 
+			{ 0x014A }, // ENG
+			{ 0x014B }, // eng
+			{ 0x014C, 0x014E, 0x0150 }, // O 
+			{ 0x014D, 0x014F, 0x0151 }, // o
+			{ 0x0152 }, // OE
+			{ 0x0153 }, // oe
+			{ 0x0154, 0x0156, 0x0158 }, // R 
+			{ 0x0155, 0x0157, 0x0159 }, // r
+			{ 0x015A, 0x015C, 0x015E, 0x0160 }, // S
+			{ 0x015B, 0x015D, 0x015F, 0x0161 }, // s 
+			{ 0x0162, 0x0164, 0x0166 }, // T
+			{ 0x0163, 0x0165, 0x0167 }, // t
+			{ 0x0168, 0x016A, 0x016C, 0x016E, 0x0170, 0x0172 }, // U
+			{ 0x0169, 0x016B, 0x016D, 0x016F, 0x0171, 0x0173 }, // u
+			{ 0x0174 }, // W
+			{ 0x0175 }, // w
+			{ 0x0176, 0x0178 }, // Y
+			{ 0x0177 }, // y
+			{ 0x0179, 0x017B, 0x017D }, // Z
+			{ 0x017A, 0x017C, 0x017E }, // z
+			{ 0x017F }, // s
+		};
+	
+	private static final int SUBSTITUTED_MIN = 192;
+	private static final int SUBSTITUTED_MAX = 0x017F;
 
 	/**
 	 * substitution strings for characters defined in substitution group
 	 */
 	static public String[] SUBSTITUTION = { "A", "Ae", "C", "E", "I", "D", "N", "O", NO_LETTER_SUBSTITUTION, "O", "U",
-			"Y", "Th", "ss", "a", "ae", "c", "e", "i", "d", "n", "o", NO_LETTER_SUBSTITUTION, "o", "u", "y", "th", "y" };
-
+			"Y", "Th", "ss", "a", "ae", "c", "e", "i", "d", "n", "o", NO_LETTER_SUBSTITUTION, "o", "u", "y", "th", "y",
+			"A", "a", "C", "c", "D", "d", "E", "e", "G", "g", "H", "h", "I", "i", "IJ", "ij", "J", "j",
+			"K", "k", "kra", "L", "l", "N", "n", "ENG", "eng", "O", "o", "OE", "oe", "R", "r", "S", "s",
+			"T", "t", "U", "u", "W", "w", "Y", "y", "Z", "z", "s", 
+			};
+	
 	public static String alfabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 	// Alphabet+Numbers without ambigous characters such as 0 O and I l and 1
@@ -863,6 +918,20 @@ public class StringHandler {
 		return (string.indexOf(pattern) >= 0);
 	}
 
+	public static String[] TRANSLATED;
+	
+	static {
+		TRANSLATED = new String[SUBSTITUTED_MAX - SUBSTITUTED_MIN + 1];
+		Arrays.fill(TRANSLATED, NO_LETTER_SUBSTITUTION);
+		for (int i = 0; i < SUBSTITUTION_GROUP.length; i++) {
+			int[] group = SUBSTITUTION_GROUP[i];
+			for (int j = 0; j < group.length; j++) {
+				int c = group[j];
+				TRANSLATED[c - SUBSTITUTED_MIN] = SUBSTITUTION[i];
+			}
+		}
+	}
+
 	/**
 	 * Replaces all non roman characters by suitable strings
 	 * @param c the character to replace
@@ -875,19 +944,12 @@ public class StringHandler {
 		if (('A' <= value && value <= 'Z') || ('a' <= value && value <= 'z') || (Arrays.binarySearch(exceptions,c) >= 0)){
 			return String.valueOf(c);
 		}
-		int groupsNumber = SUBSTITUTION_GROUP.length;
-		int i = 0;
-		// look up to which group the character belongs
-		while ((i < groupsNumber) && (Arrays.binarySearch(SUBSTITUTION_GROUP[i], value) < 0)) {
-			i++;
+		
+		if (value >= SUBSTITUTED_MIN || value <= SUBSTITUTED_MAX) {
+			return TRANSLATED[value - SUBSTITUTED_MIN];
 		}
-		// if the character does not belong to a group return special
-		// substitution
-		if (i == groupsNumber) {
-			return NO_LETTER_SUBSTITUTION;
-		}
-		// return substitution string
-		return SUBSTITUTION[i];
+
+		return NO_LETTER_SUBSTITUTION;
 	}
 
 	public static String shortenToLength(CharSequence sequence, int length) {
