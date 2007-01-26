@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.25 2006/12/28 15:48:28 valdas Exp $
+ * $Id: BuilderService.java,v 1.26 2007/01/26 05:45:57 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,7 @@ package com.idega.core.builder.business;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
@@ -238,4 +239,14 @@ public interface BuilderService extends IBOService
 	public boolean unlockRegion(String pageKey, String parentObjectInstanceID, String label);
 	
 	public void setCurrentPageId(IWContext iwc, String pageKey);
+	
+	public boolean addPropertyToModule(String pageKey, String moduleId, String propName, String propValue);
+	
+	public List<String> getModuleId(String pageKey, String moduleClass);
+	
+	public boolean isPropertySet(String pageKey, String instanceId, String propertyName, IWMainApplication iwma);
+	
+	public boolean isPropertyValueSet(String pageKey, String moduleId, String propertyName, String propertyValue);
+	
+	public boolean removeValueFromModuleProperty(String pageKey, String moduleId, String propertyName, String valueToRemove);
 }
