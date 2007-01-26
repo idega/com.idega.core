@@ -5,6 +5,12 @@
   </properties>
   <body>
 
+	<release version="3.1.27" date="2007-01-26">
+		<action dev="sigtryggur" type="update">
+			Added mailto-link object
+		</action>
+	</release>
+	
 	<release version="3.1.26" date="2007-01-25">
 		<action dev="laddi" type="update">
 			Fixed loading layer for better support of IE6 and under.
