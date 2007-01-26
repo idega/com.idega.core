@@ -1,5 +1,5 @@
 /*
- * $Id: XMLAttribute.java,v 1.4 2006/04/09 12:13:14 laddi Exp $
+ * $Id: XMLAttribute.java,v 1.5 2007/01/26 05:43:44 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -46,6 +46,13 @@ private Attribute _attribute = null;
 		}
 
     return(null);
+  }
+  
+  public void setValue(String value) {
+	  if (this._attribute == null) {
+		  return;
+	  }
+	  this._attribute.setValue(value);
   }
 
   public int getIntValue() throws XMLException {
