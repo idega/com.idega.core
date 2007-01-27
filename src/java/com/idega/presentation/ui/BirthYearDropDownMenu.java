@@ -1,5 +1,5 @@
 /*
- * $Id: BirthYearDropDownMenu.java,v 1.2.2.2 2007/01/26 19:43:56 idegaweb Exp $
+ * $Id: BirthYearDropDownMenu.java,v 1.2.2.3 2007/01/27 15:32:07 idegaweb Exp $
  * Created on 26.1.2007
  *
  * Copyright (C) 2007 Idega Software hf. All Rights Reserved.
@@ -32,7 +32,7 @@ public class BirthYearDropDownMenu extends DropDownMenuInputHandler {
 		int currentYear = stamp.getYear();
 		int beginningYear = 1900;				
 
-		addMenuElement(" ",iwrb.getLocalizedString("BirthYearsDropdownmenu.all_ages", "All birthYears"));
+		addMenuElement(" ",iwrb.getLocalizedString("BirthYearDropdownmenu.all_ages", "All birthYears"));
 		for (int i = currentYear; i >= beginningYear; i--) {
 			addMenuElement(i, Integer.toString(i));
 		}
