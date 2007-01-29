@@ -462,6 +462,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		// therefore these bundle starters will not start automatically
 		startTemporaryBundleStarter("com.idega.block.category.IWBundleStarter");
 		startTemporaryBundleStarter("com.idega.block.media.IWBundleStarter");
+		startTemporaryBundleStarter("com.idega.builder.IWBundleStarter");
 		startTemporaryBundleStarter("is.idega.idegaweb.member.IWBundleStarter");
 	}
 	
