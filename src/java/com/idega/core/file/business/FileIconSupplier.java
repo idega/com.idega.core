@@ -4,10 +4,12 @@
  */
 package com.idega.core.file.business;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.util.Properties;
@@ -238,9 +240,19 @@ public class FileIconSupplier {
 	public String getIconThemeFolderRealPath(){
 		IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
 		String realpath = iwma.getCoreBundle().getResourcesRealPath();	
-		return realpath+FileUtil.getFileSeparator()+FOLDER_NAME_ICONS+FileUtil.getFileSeparator()+FOLDER_NAME_THEMES+FileUtil.getFileSeparator()+getTheme()+FileUtil.getFileSeparator();
+		return realpath+getIconThemeFolderInsideResources();
 	}
 	
+	/**
+	 * <p>
+	 * TODO menesis describe method getIconThemeFolderInsideResources
+	 * </p>
+	 * @return
+	 */
+	private String getIconThemeFolderInsideResources() {
+		return File.separator+FOLDER_NAME_ICONS+File.separator+FOLDER_NAME_THEMES+File.separator+getTheme()+File.separator;
+	}
+
 	/**
 	 * Without the context
 	 * @return
@@ -333,8 +345,15 @@ public class FileIconSupplier {
 		if (this.properties == null) {
 			String pathToFile = getIconThemeFolderRealPath()+PROPS_FILE_NAME_PREFIX+getTheme()+PROPS_FILE_NAME_SUFFIX;
 			try {
+				InputStream in;
+				File file = new File(pathToFile);
+				if (file.exists()) {
+					in = new FileInputStream(file);
+				} else {
+					in = IWMainApplication.getDefaultIWMainApplication().getCoreBundle().getResourceInputStream("resources"+getIconThemeFolderInsideResources()+PROPS_FILE_NAME_PREFIX+getTheme()+PROPS_FILE_NAME_SUFFIX);
+				}
 				this.properties = new SortedProperties();
-				this.properties.load(new FileInputStream(pathToFile));
+				this.properties.load(in);
 				return this.properties;
 			}catch (FileNotFoundException e) {
 //				create the file if it does not exist and fill with the data

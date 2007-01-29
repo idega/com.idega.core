@@ -1,9 +1,11 @@
 package com.idega.core.file.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
@@ -334,8 +336,15 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 		if (this.properties == null) {
 			String pathToFile = getRealPathToConfigFiles()+MIME_TYPE_PROPS_FILE_NAME;
 			try {
+				InputStream in;
+				File file = new File(pathToFile);
+				if (file.exists()) {
+					in = new FileInputStream(file);
+				} else {
+					in = IWMainApplication.getDefaultIWMainApplication().getCoreBundle().getResourceInputStream("properties/" + MIME_TYPE_PROPS_FILE_NAME);
+				}
 				this.properties = new SortedProperties();
-				this.properties.load(new FileInputStream(pathToFile));
+				this.properties.load(in);
 				return this.properties;
 			}catch (FileNotFoundException e) {
 //				create the file if it does not exist and fill with the data
@@ -389,7 +398,7 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 		if (this.pathToConfigFile == null) {
 			this.pathToConfigFile = IWMainApplication.getDefaultIWMainApplication()
 					.getCoreBundle().getPropertiesRealPath()
-					+ FileUtil.getFileSeparator();
+					+ File.separator;
 		}
 		return this.pathToConfigFile;
 	}
