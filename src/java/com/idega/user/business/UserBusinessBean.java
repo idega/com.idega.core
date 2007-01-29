@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.1 2007/01/17 11:33:57 idegaweb Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.2 2007/01/29 03:53:08 idegaweb Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -97,10 +97,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/01/17 11:33:57 $ by $Author: idegaweb $
+ * Last modified: $Date: 2007/01/29 03:53:08 $ by $Author: idegaweb $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.1 $
+ * @version $Revision: 1.207.2.2 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -833,7 +833,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return getUsersMainEmail(user);
 		}
 		catch (Exception ex) {
-			ex.printStackTrace();
+			System.out.println(ex.getMessage());
+			//ex.printStackTrace();
 			return null;
 		}
 	}
