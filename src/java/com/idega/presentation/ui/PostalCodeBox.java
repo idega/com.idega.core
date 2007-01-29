@@ -1,5 +1,5 @@
 /*
- * $Id: PostalCodeBox.java,v 1.2 2007/01/26 06:36:37 idegaweb Exp $
+ * $Id: PostalCodeBox.java,v 1.3 2007/01/29 23:47:59 idegaweb Exp $
  * Created on 26.1.2007
  *
  * Copyright (C) 2007 Idega Software hf. All Rights Reserved.
@@ -35,7 +35,7 @@ public class PostalCodeBox extends SelectionBox implements InputHandler {
 
 	public void main(IWContext iwc) {
 		try {
-			Country country = getAddressBusiness(iwc).getCountryHome().findByCountryName("Iceland");			
+			Country country = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation("IS");			
 			
 			if( country!=null ){
 				Collection postals = getAddressBusiness(iwc).getPostalCodeHome().findAllByCountryIdOrderedByPostalCode(((Integer)country.getPrimaryKey()).intValue());
