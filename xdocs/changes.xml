@@ -5,6 +5,12 @@
   </properties>
   <body>
 
+	<release version="3.1.28" date="2007-01-29">
+		<action dev="sigtryggur" type="update">
+			Added the option to set size for SelectionBox, so number of elements can be configured
+		</action>
+	</release>
+	
 	<release version="3.1.27" date="2007-01-26">
 		<action dev="sigtryggur" type="update">
 			Added mailto-link object
