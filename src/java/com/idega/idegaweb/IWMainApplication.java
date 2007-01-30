@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.176 2006/11/28 18:43:13 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.177 2007/01/30 03:24:31 justinas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -90,10 +91,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/11/28 18:43:13 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/01/30 03:24:31 $ by $Author: justinas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.176 $
+ * @version $Revision: 1.177 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2207,5 +2208,12 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		// same bundleidentifier
 		bundle.runBundleStarters();
 	}
+	
+	public ServletContext getServletContext(){
+		return this.application;
+	}
 
+	public Set getResourcePaths(String s){
+		return this.application.getResourcePaths(s);
+	}
 }

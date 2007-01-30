@@ -1,5 +1,5 @@
 /*
- * $Id: IWModuleLoader.java,v 1.6 2006/09/18 12:55:04 gediminas Exp $ Created on
+ * $Id: IWModuleLoader.java,v 1.7 2007/01/30 03:25:56 justinas Exp $ Created on
  * 31.5.2005 in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import javax.servlet.ServletContext;
  * This is the class responsible for loading the bundles (the new jar method)
  * for the IWMainApplication instance.
  * </p>
- * Last modified: $Date: 2006/09/18 12:55:04 $ by $Author: gediminas $
+ * Last modified: $Date: 2007/01/30 03:25:56 $ by $Author: justinas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class IWModuleLoader {
 
@@ -42,13 +42,19 @@ public class IWModuleLoader {
 	private String defaultLibPath = "/WEB-INF/lib/";
 	
 	/**
+	 * @deprecated
 	 * 
+	 * There is no need to send ServletContext. Instead of it can be used iwma.getServletContext().
 	 */
 	public IWModuleLoader(IWMainApplication iwma, ServletContext sContext) {
 		this.iwma = iwma;
 		this._externalContext = sContext;
 	}
 
+	public IWModuleLoader(IWMainApplication iwma) {
+		this.iwma = iwma;
+	}	
+	
 	private ServletContext getExternalContext() {
 		return this._externalContext;
 	}
@@ -82,7 +88,8 @@ public class IWModuleLoader {
 	}
 	
 	protected Set getJarSet(){
-		Set jars = getExternalContext().getResourcePaths(defaultLibPath);
+//		Set jars = getExternalContext().getResourcePaths(defaultLibPath);
+		Set jars = iwma.getResourcePaths(defaultLibPath);
 		return jars;
 	}
 
@@ -153,13 +160,16 @@ public class IWModuleLoader {
 			}
 //			 2. get the stream from external context
 			else {
-				InputStream in = getExternalContext().getResourceAsStream(jarPath);
+//				InputStream in = getExternalContext().getResourceAsStream(jarPath);
+				InputStream in = iwma.getResourceAsStream(jarPath);
 				if (in == null) {
 					if (jarPath.startsWith("/")) {
-						in = getExternalContext().getResourceAsStream(jarPath.substring(1));
+//						in = getExternalContext().getResourceAsStream(jarPath.substring(1));
+						in = iwma.getResourceAsStream(jarPath.substring(1));						
 					}
 					else {
-						in = getExternalContext().getResourceAsStream("/" + jarPath);
+//						in = getExternalContext().getResourceAsStream("/" + jarPath);
+						in = iwma.getResourceAsStream("/" + jarPath);
 					}
 				}
 				if (in == null) {
