@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.2 2007/01/29 03:53:08 idegaweb Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.3 2007/01/30 06:20:15 eiki Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -24,12 +24,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -97,10 +99,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/01/29 03:53:08 $ by $Author: idegaweb $
+ * Last modified: $Date: 2007/01/30 06:20:15 $ by $Author: eiki $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.2 $
+ * @version $Revision: 1.207.2.3 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3286,5 +3288,27 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 	
+	/**
+	 * Sets the preferredLocale for the user and STORES to the database.
+	 * @param user
+	 * @param preferredLocale (the language)
+	 */
+	public void setUsersPreferredLocale(User user,String preferredLocale, boolean storeUser){
+		user.setPreferredLocale(preferredLocale);
+		
+		if(storeUser){
+			user.store();
+		}
+	}
+	
+	/**
+	 * @param user
+	 * @return a Locale object created with the users preferred locale (language)
+	 */
+	public Locale getUsersPreferredLocale(User user){
+		String localeString = user.getPreferredLocale();
+		Locale locale = new Locale(localeString);
+		return locale;
+	}
 	
 } // Class UserBusiness

@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.92 2006/06/01 15:28:23 thomas Exp $
+ * $Id: UserBusiness.java,v 1.92.2.1 2007/01/30 06:20:14 eiki Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,11 +13,14 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
 import com.idega.business.IBOService;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.data.LoginTable;
@@ -47,10 +50,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2006/06/01 15:28:23 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/01/30 06:20:14 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.92 $
+ * @version $Revision: 1.92.2.1 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -804,6 +807,22 @@ public interface UserBusiness extends IBOService {
 	public void callAllUserGroupPluginBeforeUserRemoveMethod(User user, Group parentGroup)
 			throws java.rmi.RemoteException;
 	
+
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#cleanUserEmails
+	 */
 	public void cleanUserEmails();
+	
+
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#setUsersPreferredLocale
+	 */
+	public void setUsersPreferredLocale(User user,String preferredLocale, boolean storeUser);
+	
+
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#getUsersPreferredLocale
+	 */
+	public Locale getUsersPreferredLocale(User user);
 	
 }

@@ -61,7 +61,7 @@ import com.idega.util.text.TextSoap;
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>
- * @version 1.0 
+ * @version 1.5
  */
 
 public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, com.idega.core.user.data.User {
@@ -78,17 +78,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public final static String SQL_RELATION_PHONE = "IC_USER_PHONE";
 	public final static String TABLE_NAME = SQL_TABLE_NAME;
   
-  static final String META_DATA_HOME_PAGE = "homepage";
+	static final String META_DATA_HOME_PAGE = "homepage";
   
-
-
-	//    public UserBMPBean(){
-	//      super();
-	//    }
-
-	//    public UserBMPBean(int id)throws SQLException{
-	//      super(id);
-	//    }
 
 	public String getEntityName() {
 		return TABLE_NAME;
@@ -104,10 +95,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		addAttribute(getColumnNameDescription(), "Description", true, true, java.lang.String.class);
 		addAttribute(getColumnNameDateOfBirth(), "Birth date", true, true, java.sql.Date.class);
 		addAttribute(getColumnNamePersonalID(), "Personal ID", true, true, String.class, 20);
-    addAttribute(getColumnNameDeleted(),"Deleted",true,true,Boolean.class);
-    addAttribute(getColumnNameDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
-    addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
+	    addAttribute(getColumnNameDeleted(),"Deleted",true,true,Boolean.class);
+	    addAttribute(getColumnNameDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
+	    addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
     	addAttribute(getColumnNameFamilyID(), "Family ID", true, true, String.class, 20);
+    	addAttribute(getColumnNamePreferredLocale(), "Preferred locale", true, true, String.class, 20);
     
 	//adds a unique id string column to this entity that is set when the entity is first stored.
 	addUniqueIDColumn();
@@ -237,6 +229,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public static String getColumnNameFamilyID() {
 		return "FAMILY_ID";
 	}
+	
+	public static String getColumnNamePreferredLocale(){
+		return "PREFERRED_LOCALE";
+	}
 
 	/**
 	 * @depricated
@@ -308,9 +304,21 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		setColumn(getColumnNameNativeLanguage(), language);
 	}
 
-//	public String getFamilyID() {
-//		return getStringColumnValue(getColumnNameFamilyID());
-//	}
+	public void setFamilyID(String familyID) {
+		setColumn(getColumnNameFamilyID(), familyID);
+	}
+	
+	public String getFamilyID() {
+		return getStringColumnValue(getColumnNameFamilyID());
+	}
+	
+	public void setPreferredLocale(String preferredLocale) {
+		setColumn(getColumnNamePreferredLocale(), preferredLocale);
+	}
+	
+	public String getPreferredLocale() {
+		return getStringColumnValue(getColumnNamePreferredLocale());
+	}
 
 	public String getName() {
 		String firstName = this.getFirstName();
