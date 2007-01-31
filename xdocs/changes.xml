@@ -5,6 +5,12 @@
   </properties>
   <body>
 
+	<release version="3.1.30" date="2007-02-01">
+		<action dev="eiki" type="fix">
+			Fixed locale error in userbusinessbean
+		</action>
+	</release>
+	
 	<release version="3.1.29" date="2007-01-30">
 		<action dev="eiki" type="update">
 			Added a new column to ICUser (User) PREFERRED_LOCALE and get and set methods to the data bean and UserBusiness.
