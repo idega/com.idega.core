@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.42 2007/01/25 14:17:42 gediminas Exp $ Created on
+ * $Id: StringHandler.java,v 1.43 2007/02/01 03:37:00 gediminas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,18 +24,18 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2007/01/25 14:17:42 $ by $Author: gediminas $
+ * Last modified: $Date: 2007/02/01 03:37:00 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.42 $
+ * @version $Revision: 1.43 $
  */
 public class StringHandler {
 
 	/**
 	 * substitution string if a character is not a letter
 	 */
-	public static String NO_LETTER_SUBSTITUTION = "_";
+	public static String NO_LETTER_SUBSTITUTION = "-";
 
 	/**
 	 * groups of characters (represented by uni code) replaced by strings
@@ -945,7 +945,7 @@ public class StringHandler {
 			return String.valueOf(c);
 		}
 		
-		if (value >= SUBSTITUTED_MIN || value <= SUBSTITUTED_MAX) {
+		if ((value >= SUBSTITUTED_MIN) && (value <= SUBSTITUTED_MAX)) {
 			return TRANSLATED[value - SUBSTITUTED_MIN];
 		}
 
