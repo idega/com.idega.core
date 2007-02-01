@@ -40,6 +40,7 @@ public class SelectionBox extends InterfaceObject
 	private boolean isSetAsNotEmpty = false;
 	private String notEmptyErrorMessage;
 	private boolean showOnlySelected = false;
+	private int size = -1;
 	
 	public SelectionBox()
 	{
@@ -448,7 +449,7 @@ public class SelectionBox extends InterfaceObject
 						setSelectedElements(selectedValues);
 					}
 				}
-					println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " " + this.multipleString + " >");
+					println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " " + this.multipleString + " " + getSizeString() +" >");
 					Iterator iter = this.theElements.iterator();
 					while (iter.hasNext())
 					{
@@ -535,5 +536,20 @@ public class SelectionBox extends InterfaceObject
 	
 	public void setToShowOnlySelected(boolean showOnlySelected){
 		this.showOnlySelected  = showOnlySelected;
+	}
+	
+	public int getSize() {
+		return size;
+}	
+	public String getSizeString() {
+		if (getSize() == -1) {
+			return "";
+		} else {
+			return "size = " + getSize();
+		}
+	}
+	
+	public void setSize(int size) {
+		this.size = size;
 	}
 }
