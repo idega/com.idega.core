@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.43 2007/02/01 03:37:00 gediminas Exp $ Created on
+ * $Id: StringHandler.java,v 1.44 2007/02/01 04:51:35 gediminas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,11 +24,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2007/02/01 03:37:00 $ by $Author: gediminas $
+ * Last modified: $Date: 2007/02/01 04:51:35 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.43 $
+ * @version $Revision: 1.44 $
  */
 public class StringHandler {
 
@@ -321,6 +321,7 @@ public class StringHandler {
 	public static String stripNonRomanCharacters(String inputString,char[] exceptions) {
 		char[] cAinputString = inputString.toCharArray();
 		StringBuffer newString = new StringBuffer();
+		Arrays.sort(exceptions);
 		for (int i = 0; i < cAinputString.length; i++) {
 			char c = cAinputString[i];
 			newString.append(translateNonRomanCharacter(c,exceptions));
@@ -933,9 +934,9 @@ public class StringHandler {
 	}
 
 	/**
-	 * Replaces all non roman characters by suitable strings
+	 * Returns a suitable replacement for a character
 	 * @param c the character to replace
-	 * @param exceptions an array of exceptions e.g. {1,2,3,4,5,6,7,8,9,0,-}
+	 * @param exceptions an array of exceptions e.g. {-,0,1,2,3,4,5,6,7,8,9}
 	 */
 	private static String translateNonRomanCharacter(char c, char[] exceptions) {
 		// get uni code number
@@ -1063,7 +1064,7 @@ public class StringHandler {
 	}
 	
 	
-	private static char[] allowedcharacters={'1','2','3','4','5','6','7','8','9','0','-'};
+	private static char[] allowedcharacters={'-','0','1','2','3','4','5','6','7','8','9'};
 	/**
 	 * Parses the inputString so that it has a "URL friendly" format. i.e. only
 	 * latin characters in lowercase without special characters. <br>
