@@ -40,7 +40,7 @@ public class SingletonRepository {
 	}
 	
 	public static synchronized void start() {
-		//singletonRepository = new SingletonRepository();
+		singletonRepository = new SingletonRepository();
 		System.out.println("["+ SingletonRepository.class.getName()+"] Repository started");
 	}
 	
@@ -56,7 +56,8 @@ public class SingletonRepository {
 	
 	public static synchronized SingletonRepository getRepository()	{
 		if(singletonRepository==null){
-			singletonRepository = new SingletonRepository();
+			throw new RuntimeException("SingletonRepsitory not started or has already been stooped.");
+			//	singletonRepository = new SingletonRepository();
 		}
 		return singletonRepository;
 	}
