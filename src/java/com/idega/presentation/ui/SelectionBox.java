@@ -136,6 +136,10 @@ public class SelectionBox extends InterfaceObject
 	{
 		addMenuElement(Integer.toString(value), DisplayString);
 	}
+	public void addMenuElement(MenuElement menuElement)
+	{
+		this.theElements.addElement(menuElement);
+	}
 	/**
 	
 	 * Add menu elements from an List of IDOLegacyEntity Objects and uses
