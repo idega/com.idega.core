@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.52.2.1 2006/11/02 07:51:43 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.52.2.2 2007/02/02 01:14:30 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -26,6 +26,7 @@ import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.business.ICApplicationBindingBusiness;
 import com.idega.core.data.ICApplicationBindingBMPBean;
+import com.idega.core.event.client.MethodWrapper;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.EntityControl;
 import com.idega.presentation.Page;
@@ -41,10 +42,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/11/02 07:51:43 $ by $Author: laddi $
+ * Last modified: $Date: 2007/02/02 01:14:30 $ by $Author: thomas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.52.2.1 $
+ * @version $Revision: 1.52.2.2 $
  */
 
 
@@ -128,9 +129,15 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	private boolean preloadedCache=false;
 	
+	// extension for handling events
+	private IWMainApplicationSettingsEventClient iwApplicationSettingsEventClient = null;
+	
 	public IWMainApplicationSettings(IWMainApplication application) {
 		this.application=application;	
+		initializeEventClient();
 	}
+	
+
 	
 	/**
 	 * <p>
@@ -712,6 +719,8 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	private void setApplicationBindingInMap(String key, String value) {
+		// note that on the other servers the cache might be active!
+		iwApplicationSettingsEventClient.setApplicationBindingInMap(key, value);
 		if(this.cache){
 			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
 			if (map == null) {
@@ -723,6 +732,8 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	private void removeApplicationBindingFromMap(String key) {
+		// note that on the other servers the cache might be active!
+		iwApplicationSettingsEventClient.removeApplicationBindingFromMap(key);
 		if(this.cache){
 			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
 			if (map != null) {
@@ -793,6 +804,37 @@ public class IWMainApplicationSettings implements MutableClass {
 	 */
 	public IWPropertyList getLegacyApplicationSettings() {
 		return getIdegawebPropertyList();
+	}
+	
+	/**
+	 * Register the private methods to the event client as method wrappers.
+	 * In that way the event client is able to call them.
+	 *
+	 */
+	private void initializeEventClient() {
+		iwApplicationSettingsEventClient = new IWMainApplicationSettingsEventClient();		
+		MethodWrapper methodWrapper1 = new MethodWrapper() {
+
+			public String getIdentifier() {
+				return IWMainApplicationSettingsEventClient.SET_APPLICATION_BINDING_IN_MAP;
+			}
+
+			public void perform(Object object1, Object object2) {
+				setApplicationBindingInMap((String) object1, (String) object2);
+			}
+		};
+		iwApplicationSettingsEventClient.addMethod(methodWrapper1);
+		MethodWrapper methodWrapper2 = new MethodWrapper() {
+			
+			public String getIdentifier() {
+				return IWMainApplicationSettingsEventClient.REMOVE_APPLICATION_BINDING_FROM_MAP;
+			}
+			
+			public void perform(Object object1) {
+				removeApplicationBindingFromMap((String) object1);
+			}
+		};
+		iwApplicationSettingsEventClient.addMethod(methodWrapper2);
 	}
 	
 }
