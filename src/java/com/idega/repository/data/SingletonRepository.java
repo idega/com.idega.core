@@ -54,9 +54,16 @@ public class SingletonRepository {
 		System.out.println("["+ SingletonRepository.class.getName()+"] Repository stopped");
 	}
 	
+	/**
+	 * <p>
+	 * This method should be called only after the start() method has been invoked once, and not after the stop() method has been called.
+	 * </p>
+	 * @return An instance of the SingletonRepository if it is correctly initialized
+	 * @throws RuntimeException if no instance is initialized.
+	 */
 	public static synchronized SingletonRepository getRepository()	{
 		if(singletonRepository==null){
-			throw new RuntimeException("SingletonRepsitory not started or has already been stooped.");
+			throw new RuntimeException("SingletonRepsitory not started or has already been stopped.");
 			//	singletonRepository = new SingletonRepository();
 		}
 		return singletonRepository;
