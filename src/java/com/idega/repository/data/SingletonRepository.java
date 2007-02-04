@@ -43,6 +43,7 @@ public class SingletonRepository {
 	
 	public static synchronized void start() {
 		singletonRepository = new SingletonRepository();
+		hasBeenStopped=false;
 		System.out.println("["+ SingletonRepository.class.getName()+"] Repository started");
 	}
 	
