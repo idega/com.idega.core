@@ -1,5 +1,5 @@
 /*
- * $Id: InterfaceObject.java,v 1.39.2.2 2006/09/11 14:18:00 gimmi Exp $
+ * $Id: InterfaceObject.java,v 1.39.2.3 2007/02/04 23:11:00 idegaweb Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.presentation.Script;
  * In JSF there is now a more recent javax.faces.compoent.UIInput that serves a
  * similar purpose and is recommended to use/extend in newer pure JSF applications.
  * </p>
- *  Last modified: $Date: 2006/09/11 14:18:00 $ by $Author: gimmi $
+ *  Last modified: $Date: 2007/02/04 23:11:00 $ by $Author: idegaweb $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.39.2.2 $
+ * @version $Revision: 1.39.2.3 $
  */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
@@ -745,7 +745,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 			}
 		}
 		if (this._inFocus && hasParentPage()) {
-			getParentPage().setOnLoad("this.form['" + getName() + "'].focus();");
+			getParentPage().setOnLoad("findObj('" + getName() + "').focus();");
 		}
 	}
 
@@ -881,10 +881,10 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 			getParentForm().setOnSubmit("return checkSubmit"+getForm().getId()+"(this)");
 			setCheckSubmit();
 			if (value2 != null) {
-				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (this.form['" + getName() + "'],'" + value1 + "', '"+value2+"') == false ){\nreturn false;\n}\n");
+				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "', '"+value2+"') == false ){\nreturn false;\n}\n");
 			}
 			else {
-				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (this.form['" + getName() + "'],'" + value1 + "') == false ){\nreturn false;\n}\n");
+				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (findObj('" + getName() + "'),'" + value1 + "') == false ){\nreturn false;\n}\n");
 			}
 			getScript().addFunction(functionName, function);
 		}
