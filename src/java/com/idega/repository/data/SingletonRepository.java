@@ -27,6 +27,8 @@ import java.util.Map;
 public class SingletonRepository {
 
 	private static SingletonRepository singletonRepository = null;
+
+	private static boolean hasBeenStopped=false;
 	
 	// key: classname value: instance
 	private HashMap singletonMap = new HashMap();
@@ -45,6 +47,7 @@ public class SingletonRepository {
 	}
 	
 	public static synchronized void stop() {
+		hasBeenStopped=true;
 		if (singletonRepository == null) {
 			// nothing to do
 			return;
@@ -63,7 +66,12 @@ public class SingletonRepository {
 	 */
 	public static synchronized SingletonRepository getRepository()	{
 		if(singletonRepository==null){
-			throw new RuntimeException("SingletonRepsitory not started or has already been stopped.");
+			if(hasBeenStopped){
+				throw new RuntimeException("SingletonRepsitory has been stopped so no instance exists.");
+			}
+			else{
+				start();
+			}
 			//	singletonRepository = new SingletonRepository();
 		}
 		return singletonRepository;
