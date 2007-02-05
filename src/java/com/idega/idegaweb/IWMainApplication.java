@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.178 2007/02/05 06:55:21 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.179 2007/02/05 09:39:31 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -91,10 +91,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2007/02/05 06:55:21 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/02/05 09:39:31 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.178 $
+ * @version $Revision: 1.179 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -865,32 +865,21 @@ public class IWMainApplication	extends Application  implements MutableClass {
         //String sBundle = getBundlesFile().getProperty(bundleIdentifier);
         String sBundle = getInternalBundleVirtualPath(bundleIdentifier);
         if (sBundle != null) {
-					sBundle = TextSoap.findAndReplace(getBundlesFile().getProperty(
-					        bundleIdentifier), "\\", "/");
-				}
+        	sBundle = TextSoap.findAndReplace(sBundle, "\\", "/");
+        }
 
         String path = "/" + getApplicationSpecialVirtualPath() + "/" + sBundle;
         return path;
     }
 
     private String getBundleRealPath(String bundleIdentifier) {
-        //String sBundle = getBundlesFile().getProperty(bundleIdentifier);
-        String sBundle = getInternalBundleVirtualPath(bundleIdentifier);
-        if (sBundle != null) {
-            if (File.separator.equals("/")) {
-                sBundle = TextSoap.findAndReplace(sBundle, "\\", "/");//unix
-            } else {
-                sBundle = TextSoap.findAndReplace(sBundle, "/", "\\");//windows
-            }
-        }
-        //debug
-        //System.out.println("IWMainApplication : sBundle = "+sBundle);
-
-        //check for the workpace in eclipse if property is set:
-		String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
-		if(directory!=null){
+    	
+		if(loadBundlesFromWorkspace){
+	        //check for the workpace in eclipse if property is set:
+			String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
+			
 			//First try the default name (with .bundle extension)
-			String sBundleDirWithBundleExtension = directory+ File.separator+sBundle;
+			String sBundleDirWithBundleExtension = directory+ File.separator+bundleIdentifier;
 			File bundleDir = new File(sBundleDirWithBundleExtension);
 			if(bundleDir.exists()){
 				return sBundleDirWithBundleExtension;
@@ -902,7 +891,19 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				return sBundleDirWithoutBundleExtension;
 			}
 		}
-		
+    	
+        //String sBundle = getBundlesFile().getProperty(bundleIdentifier);
+        String sBundle = getInternalBundleVirtualPath(bundleIdentifier);
+        if (sBundle != null) {
+            if (File.separator.equals("/")) {
+                sBundle = TextSoap.findAndReplace(sBundle, "\\", "/");//unix
+            } else {
+                sBundle = TextSoap.findAndReplace(sBundle, "/", "\\");//windows
+            }
+        }
+        //debug
+        //System.out.println("IWMainApplication : sBundle = "+sBundle);
+        
 		//default method:
         return getApplicationSpecialRealPath() + File.separator + sBundle;
     }
@@ -954,28 +955,37 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		if (tryString != null) {
 			return tryString;
 		}
-		// tryString is now null
-		File theRoot = new File(this.getApplicationSpecialRealPath(), BUNDLES_STANDARD_DIRECTORY);
-		File[] bundles = theRoot.listFiles();
-		for (int i = 0; i < bundles.length; i++) {
-			if (bundles[i].isDirectory()) {
-				File properties = new File(bundles[i], "properties");
-				File propertiesFile = new File(properties, DefaultIWBundle.propertyFileName);
-				try {
-					IWPropertyList list = new IWPropertyList(propertiesFile);
-					if (list.getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY).equalsIgnoreCase(
-							bundleIdentifier)) {
-						tryString = BUNDLES_STANDARD_DIRECTORY + File.separator + bundles[i].getName();
-						this.registerBundle(bundleIdentifier, tryString);
-						return tryString;
+		if(loadBundlesLegacy){
+			// tryString is now null
+			File theRoot = new File(this.getApplicationSpecialRealPath(), BUNDLES_STANDARD_DIRECTORY);
+			if(theRoot!=null){
+				File[] bundles = theRoot.listFiles();
+				if(bundles!=null){
+					for (int i = 0; i < bundles.length; i++) {
+						if (bundles[i].isDirectory()) {
+							File properties = new File(bundles[i], "properties");
+							File propertiesFile = new File(properties, DefaultIWBundle.propertyFileName);
+							try {
+								IWPropertyList list = new IWPropertyList(propertiesFile);
+								if (list.getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY).equalsIgnoreCase(
+										bundleIdentifier)) {
+									tryString = BUNDLES_STANDARD_DIRECTORY + File.separator + bundles[i].getName();
+									this.registerBundle(bundleIdentifier, tryString);
+									return tryString;
+								}
+							}
+							catch (Exception e) {
+								log.info("Error reading property file of bundle: " + bundles[i].getName());
+							}
+						}
 					}
 				}
-				catch (Exception e) {
-					log.info("Error reading property file of bundle: " + bundles[i].getName());
-				}
 			}
+			throw new IWBundleDoesNotExist(bundleIdentifier);
 		}
-		throw new IWBundleDoesNotExist(bundleIdentifier);
+		else{
+			return BUNDLES_STANDARD_DIRECTORY + File.separator + bundleIdentifier + File.separator + DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
+		}
 	}
 
     public IWBundle getBundle(String bundleIdentifier)throws IWBundleDoesNotExist{
