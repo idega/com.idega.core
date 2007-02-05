@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.37 2006/11/28 18:43:14 laddi Exp $
+ * $Id: DefaultIWBundle.java,v 1.38 2007/02/05 09:39:43 tryggvil Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -78,6 +78,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	//Parameter that can be passed to the system to let it read bundles from another directory
 	//than directly under the webapp, e.g. an Eclipse workspace folder.
 	public static final String SYSTEM_BUNDLES_RESOURCE_DIR="idegaweb.bundles.resource.dir";
+	public static final String BUNDLE_FOLDER_STANDARD_SUFFIX = ".bundle";
 	
 	//Member variables:
 	private boolean autoMoveComponentPropertiesToFile = true;
