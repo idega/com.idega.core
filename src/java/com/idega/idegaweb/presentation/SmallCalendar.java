@@ -27,6 +27,7 @@ public class SmallCalendar extends Block {
 	private IWCalendar cal;
 	private ICPage _page;
 	private Class _class;
+	private String _url;
 	private Image iNextImage;
 	private Image iPreviousImage;
 
@@ -168,6 +169,7 @@ public class SmallCalendar extends Block {
 		setAsObjectInstanceTarget(left);
 
 		Table T2 = new Table(3, 2);
+		T2.setStyleClass("small_calendar");
 		this.T.setCellpadding(this.iCellpadding);
 		T2.setCellpadding(0);
 		T2.mergeCells(1, 2, 3, 2);
@@ -179,7 +181,7 @@ public class SmallCalendar extends Block {
 		T2.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_CENTER);
 		T2.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_CENTER);
 		T2.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_CENTER);
-		
+
 		if (this.backgroundStyleClass != null) {
 			T2.setStyleClass(getStyleName(this.backgroundStyleClass));
 		} else if (this.backgroundColor != null) {
@@ -211,6 +213,7 @@ public class SmallCalendar extends Block {
 				}
 				t = getHeaderText(this.cal.getDayName(weekday++, iwc.getCurrentLocale(), IWCalendar.LONG).substring(0, 1).toUpperCase());
 				this.T.setAlignment(a, 1, "center");
+				this.T.setStyleClass(a, 1, "header");
 				this.T.add(t, a++, 1);
 				b++;
 			}
@@ -312,6 +315,9 @@ public class SmallCalendar extends Block {
 				if (this._class != null) {
 					theLink.setClassToInstanciate(this._class);
 				}
+				if (this._url != null) {
+					theLink.setURL(_url);
+				}
 				if (this.dateParameterName != null) {
 					theLink.addParameter(this.dateParameterName, new IWTimestamp(n, this.stamp.getMonth(), this.stamp.getYear()).toSQLDateString());
 				}
@@ -372,7 +378,7 @@ public class SmallCalendar extends Block {
 				}
 			}
 		}
-
+		T.setStyleClass("calendar");
 		T2.add(this.T, 1, 2);
 		add(T2);
 		iwc.setSessionAttribute("smcal" + getICObjectInstanceID(), this.stamp);
@@ -572,10 +578,6 @@ public class SmallCalendar extends Block {
 
 	public void setDaysAsLink(boolean use) {
 		this.daysAreLinks = use;
-	}
-
-	public void setURL(String url) {
-		setDaysAsLink(true);
 	}
 
 	public void setWidth(String width) {
@@ -1015,6 +1017,10 @@ public class SmallCalendar extends Block {
 
 	public void setClassToLinkTo(Class classToLinkTo) {
 		this._class = classToLinkTo;
+	}
+	
+	public void setUrlToLinkTo(String urlToLinkTo) {
+		this._url = urlToLinkTo;
 	}
 
 	public void setDateParameterName(String dateParameterName) {
