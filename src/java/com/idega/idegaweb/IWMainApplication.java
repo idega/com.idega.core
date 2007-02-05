@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.177 2007/01/30 03:24:31 justinas Exp $
+ * $Id: IWMainApplication.java,v 1.178 2007/02/05 06:55:21 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -91,10 +91,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2007/01/30 03:24:31 $ by $Author: justinas $
+ *  Last modified: $Date: 2007/02/05 06:55:21 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.177 $
+ * @version $Revision: 1.178 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -190,9 +190,18 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private Map windowClassesStaticInstances;
     private Application realJSFApplication;
     private ApplicationProductInfo applicationProductInfo;
+	private ApplicationInstallationInfo applicationInstallationInfo;
     private boolean inDatabaseLessMode=false;
     private boolean inSetupMode=false;
     public static boolean loadBundlesFromJars=true;
+	public static boolean loadBundlesFromWorkspace=false;
+    static{
+    	String workspaceFolder = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
+    	if(workspaceFolder!=null){
+    		loadBundlesFromWorkspace=true;
+    	}
+    }
+    
     private boolean alreadyUnloaded = false; // for restart application
 	//Defined as private variables to speed up reflection:
 	private Object builderLogicInstance;
@@ -201,6 +210,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	private String defKey = "Wwo2Y4qTTDTuRe+OjPpql0Hhoxhrf2P75XvHSSyLWTRmdsGHApCHzVHl1xlChPdQcqTAM0C6HNAn\nwXvqJj7newW7I+u4dVh4YJVI+miCOwt3/sn3Rk9mnV5MnE+hND4mR67SojlrT7+v/8kufV88DDmm\n4ALga+8/O8S/xWroxMKBnvcDKgBsMzdsB+/hy5FANkj2IauJ+pYcXrCZIDt3NAjYJG/md0QL4mQr\nzQt3FlGnL61Y34aSd3wG6Hq9GzojeO31SVsK6+mUZ8uWJNQz9aeHurPWIFE5yRdYPnakQ0DrpReQ\n2Sg5gfJeOKtK0ghX1p06CFU+nqaql6fu75FNm7ScpLDNSxXIyIOtKRoMUGQ5bV07Ej/74UXIRDql\ntWZrbXWXvdHNwUO4yX2dSkxQ1TQrWWSrrvZLE1li21qZK+3ZOPmGXAm6AB3WZ4N6tLqZ2Mw6f/x6\nTSJtto0m/DaHlsVKTliuFpV9RcTetnYgOcTBFfMLBs2DrJTtJ0LX0Ss0E/6lp3L3TnioBxPfy1e5\nkTD7ksRwFZkMdMndqI3hUmq9+D1U+VAJf6A+uCJQCyXDguZzZrYH+Uu22kyBCdsPWHE3JqxbPNeC\nIn+3aGqMbOjHoob+eyb/VANNGD34YbZW";
 
 	private IWModuleLoader moduleLoader;
+
 	//Flag to set if bundles should be loaded the older way by reading /idegaweb/bundles folder
 	public static boolean loadBundlesLegacy=false;
 	
@@ -282,6 +292,17 @@ public class IWMainApplication	extends Application  implements MutableClass {
     		return this.applicationProductInfo;
     }
     
+    /**
+     * Gets information about the installed application.
+     * @return
+     */
+    public ApplicationInstallationInfo getInstallationInfo(){
+    		if(this.applicationInstallationInfo==null){
+    			this.applicationInstallationInfo = new ApplicationInstallationInfo(this);
+    		}
+    		return this.applicationInstallationInfo;
+    }
+    
     private void load() {
         this.setPropertiesRealPath();
         this.setBundlesRealPath();
@@ -304,8 +325,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	}
 
 	public void loadBundles() {
+		loadBundlesLegacy();
     	loadBundlesFromJars();
-        loadBundlesLegacy();
         loadBundlesLocalizationsForJSF();
         this.setAttribute("bundles",getLoadedBundles());
         
@@ -895,22 +916,32 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private void loadBundlesLegacy() {
 		if (loadBundlesLegacy) {
 			File theRoot = new File(getApplicationSpecialRealPath(), BUNDLES_STANDARD_DIRECTORY);
-			File[] bundles = theRoot.listFiles();
-			if (bundles != null) {
-				for (int i = 0; i < bundles.length; i++) {
-					if (bundles[i].isDirectory() && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)) {
-						File properties = new File(bundles[i], "properties");
-						File propertiesFile = new File(properties, DefaultIWBundle.propertyFileName);
-						IWPropertyList list = new IWPropertyList(propertiesFile);
-						String bundleIdentifier = list.getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
-						if (bundleIdentifier != null) {
-							String bundleDir = BUNDLES_STANDARD_DIRECTORY + File.separator + bundles[i].getName();
-							try {
-								this.registerBundle(bundleIdentifier, bundleDir);
-							}
-							catch (Throwable t) {
-								log.log(Level.WARNING, "Error loading bundle " + bundleIdentifier, t);
-							}
+			loadBundlesInFolder(theRoot);
+		}
+	}
+
+	/**
+	 * <p>
+	 * TODO tryggvil describe method loadBundlesInFolder
+	 * </p>
+	 * @param theRoot
+	 */
+	private void loadBundlesInFolder(File bundlesFolder) {
+		File[] bundles = bundlesFolder.listFiles();
+		if (bundles != null) {
+			for (int i = 0; i < bundles.length; i++) {
+				if (bundles[i].isDirectory() && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)) {
+					File properties = new File(bundles[i], "properties");
+					File propertiesFile = new File(properties, DefaultIWBundle.propertyFileName);
+					IWPropertyList list = new IWPropertyList(propertiesFile);
+					String bundleIdentifier = list.getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
+					if (bundleIdentifier != null) {
+						String bundleDir = BUNDLES_STANDARD_DIRECTORY + File.separator + bundles[i].getName();
+						try {
+							this.registerBundle(bundleIdentifier, bundleDir);
+						}
+						catch (Throwable t) {
+							log.log(Level.WARNING, "Error loading bundle " + bundleIdentifier, t);
 						}
 					}
 				}
@@ -954,8 +985,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public IWBundle getBundle(String bundleIdentifier, boolean autoCreate)throws IWBundleDoesNotExist{
         IWBundle bundle = (IWBundle) getLoadedBundles().get(bundleIdentifier);
         if (bundle == null) {
-        	if(loadBundlesFromJars){
+        	if(loadBundlesFromWorkspace){
+            	bundle = loadBundleLegacy(bundleIdentifier, autoCreate);
+            	loadBundle(bundle);
+        	}
+        	else if(loadBundlesFromJars){
         		bundle = loadBundleFromJar(bundleIdentifier);
+        		loadBundle(bundle);
         	}
         	else if (loadBundlesLegacy){
             	bundle = loadBundleLegacy(bundleIdentifier, autoCreate);

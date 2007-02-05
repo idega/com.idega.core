@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationProductInfo.java,v 1.11 2006/08/10 19:12:00 tryggvil Exp $
+ * $Id: ApplicationProductInfo.java,v 1.12 2007/02/05 06:55:21 tryggvil Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.util.IWTimestamp;
 /**
  *  This class holds information about the application product installed.<br>
  * 
- *  Last modified: $Date: 2006/08/10 19:12:00 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/02/05 06:55:21 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class ApplicationProductInfo {
 	
@@ -34,9 +34,10 @@ public class ApplicationProductInfo {
 	private String platformVersion="3.5.0-SNAPSHOT";
 	private String buildId="20060701.000000";
 	private String vendor="idega software";
+	private String vendorUrl="http://www.idega.com/";
+	private String vendorLogoUrl="http://developer.idega.com/idega_onwhite_120.gif";
 	private String name="ePlatform";
 	private String family="idegaWeb";
-	
 	
 	public ApplicationProductInfo(IWMainApplication iwma){
 		String filePath = iwma.getPropertiesRealPath()+FileUtil.getFileSeparator()+"product.properties";
@@ -222,6 +223,27 @@ public class ApplicationProductInfo {
 	public boolean isMajorPlatformVersionEqualOrHigherThan(int version){
 		int majorVersion = getMajorPlatformVersion();
 		return (version<=majorVersion);
+	}
+
+	
+	public String getVendorUrl() {
+		return vendorUrl;
+	}
+
+	
+	public void setVendorUrl(String vendorUrl) {
+		this.vendorUrl = vendorUrl;
+	}
+
+
+	
+	public String getVendorLogoUrl() {
+		return vendorLogoUrl;
+	}
+
+	
+	public void setVendorLogoUrl(String vendorLogoUrl) {
+		this.vendorLogoUrl = vendorLogoUrl;
 	}
 	
 }
