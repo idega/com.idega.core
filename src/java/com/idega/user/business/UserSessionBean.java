@@ -1,5 +1,5 @@
 /*
- * $Id: UserSessionBean.java,v 1.2 2006/04/09 12:13:14 laddi Exp $
+ * $Id: UserSessionBean.java,v 1.2.2.1 2007/02/05 22:25:31 laddi Exp $
  * Created on 24.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,17 +9,27 @@
  */
 package com.idega.user.business;
 
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+
 import com.idega.business.IBOSessionBean;
 import com.idega.user.data.User;
 
 
 /**
- * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
+ * Last modified: $Date: 2007/02/05 22:25:31 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.2.2.1 $
  */
-public class UserSessionBean extends IBOSessionBean  implements UserSession{
+public class UserSessionBean extends IBOSessionBean implements UserSession, HttpSessionBindingListener {
+
+	public void valueBound(HttpSessionBindingEvent arg0) {
+	}
+
+	public void valueUnbound(HttpSessionBindingEvent arg0) {
+		iUser = null;
+	}
 
 	private User iUser;
 	
