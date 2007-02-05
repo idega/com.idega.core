@@ -41,8 +41,8 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 	//}
 	
 	public WindowViewHandler(ViewHandler parentViewHandler) {
-		//super(parentViewHandler);
-		super();
+		super(parentViewHandler);
+		//super();
 	}
 	
 	/**
@@ -54,10 +54,15 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 		
 		//this.setParentViewHandler(parentViewHandler);
 	}
+	
+	public UIViewRoot createView(FacesContext ctx, String viewId) {
+		return super.createView(ctx, viewId);
+	}
+	
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#createView(javax.faces.context.FacesContext, java.lang.String)
 	 */
-	public UIViewRoot createView(FacesContext ctx, String viewId) {
+	public UIViewRoot createViewOld(FacesContext ctx, String viewId) {
 
 
 		//UIComponent component = (UIComponent) Class.forName(realClassName).newInstance();
@@ -67,7 +72,7 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 		
 
 		try {
-			if(isFrameRequest(ctx)){
+			if(isFrameRequestOld(ctx)){
 				IWContext iwc = IWContext.getIWContext(ctx);
 				com.idega.presentation.Page frame = com.idega.presentation.Page.loadPage(iwc);
 				String frameId = (String)ctx.getExternalContext().getRequestParameterMap().get(com.idega.presentation.Page.IW_FRAMESET_PAGE_PARAMETER);
@@ -143,7 +148,7 @@ public class WindowViewHandler extends CbpViewHandler{// CbpViewHandler {
 	 * @param ctx
 	 * @return
 	 */
-	private boolean isFrameRequest(FacesContext ctx) {
+	private boolean isFrameRequestOld(FacesContext ctx) {
 		String value = (String)ctx.getExternalContext().getRequestParameterMap().get(com.idega.presentation.Page.IW_FRAMESET_PAGE_PARAMETER);
 		if(value!=null){
 			return true;

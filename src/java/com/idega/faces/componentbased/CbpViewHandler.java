@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.5 2006/05/31 11:18:43 tryggvil Exp $
+ * $Id: CbpViewHandler.java,v 1.6 2007/02/05 23:57:35 tryggvil Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -31,6 +31,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.application.MyfacesStateManager;
 import org.apache.myfaces.application.jsp.JspViewHandlerImpl;
 import org.apache.myfaces.shared_impl.renderkit.html.HtmlLinkRendererBase;
+import com.idega.core.view.ViewManager;
+import com.idega.core.view.ViewNode;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.RefactorClassRegistry;
 
@@ -42,14 +44,16 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2006/05/31 11:18:43 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/02/05 23:57:35 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class CbpViewHandler extends ViewHandler {
 
 	private static Log log = LogFactory.getLog(CbpViewHandler.class);
+
+	private ViewHandler parentViewHandler;
 	
 //	private StateManager stateManager;
 	
@@ -58,6 +62,11 @@ public class CbpViewHandler extends ViewHandler {
 	 */
 	public CbpViewHandler() {
 //		stateManager = new CbpStateManagerImpl();
+	}
+	
+	public CbpViewHandler(ViewHandler parentViewHandler) {
+		//super(parentViewHandler);
+		setParentViewHandler(parentViewHandler);
 	}
 	
 	/**
@@ -266,10 +275,47 @@ public class CbpViewHandler extends ViewHandler {
 //		return null;
 	}
 
+	protected ViewManager getViewManager(FacesContext context){
+		return ViewManager.getInstance(context);
+	}
+	
+	/* (non-Javadoc)
+	 * @see net.sourceforge.smile.application.CbpViewHandlerImpl#createView(javax.faces.context.FacesContext, java.lang.String)
+	 */
+	public UIViewRoot createView(FacesContext ctx, String viewId) {
+		//return getParentViewHandler().createView(arg0, arg1);
+		ViewNode node = getViewManager(ctx).getViewNodeForContext(ctx);
+		if(node!=null){
+			if(node.isComponentBased()){
+				UIComponent comp = node.createComponent(ctx);
+				UIViewRoot root = null;
+				if(comp instanceof UIViewRoot){
+					root = (UIViewRoot)comp;
+				}
+				else{
+					root = new UIViewRoot();
+					root.setViewId(viewId);
+					root.getChildren().add(comp);
+				}
+				//set the locale
+				root.setLocale(calculateLocale(ctx));
+				return root;
+			}
+		}
+
+		if(getParentViewHandler()!=null){
+			return getParentViewHandler().createView(ctx,viewId);
+		}
+		else{
+			//return createView(ctx,vewId);
+			throw new RuntimeException ("No parent ViewHandler");
+		}
+	}
+	
 	/**
 	 * @see javax.faces.application.ViewHandler#createView(javax.faces.context.FacesContext, java.lang.String)
 	 */
-	public UIViewRoot createView(FacesContext ctx, String viewId) {
+	public UIViewRoot createViewOld(FacesContext ctx, String viewId) {
 
 		UIViewRoot ret = new UIViewRoot();
 		ret.setViewId(viewId);
@@ -501,5 +547,13 @@ public class CbpViewHandler extends ViewHandler {
 		// TODO Auto-generated method stub
 		String resourceUrl = ctx.getExternalContext().encodeResourceURL(path);
 		return resourceUrl;
+	}
+	
+	protected ViewHandler getParentViewHandler(){
+		return this.parentViewHandler;
+	}
+	
+	protected void setParentViewHandler(ViewHandler viewHandler){
+		this.parentViewHandler=viewHandler;
 	}
 }

@@ -8,27 +8,24 @@ package com.idega.faces;
 
 import java.io.IOException;
 import java.util.Locale;
-
 import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
-import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-
-import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.faces.componentbased.CbpViewHandler;
-import com.idega.presentation.IWContext;
 
 /**
+ * <p>
+ * Viewhandler that is on the root of the idegaWeb ViewHandler hierarchy, i.e. handles the '/' URI and
+ * is therefore the default viewhandler of the system.
+ * </p>
  * @author tryggvil
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class RootNodeViewHandler extends CbpViewHandler{// extends CbpViewHandler {
-	
-	private ViewHandler parentViewHandler;
 	
 	/**
 	 * 
@@ -43,21 +40,15 @@ public class RootNodeViewHandler extends CbpViewHandler{// extends CbpViewHandle
 		//super(parentViewHandler);
 		setParentViewHandler(parentViewHandler);
 	}
-
-	protected ViewHandler getParentViewHandler(){
-		return this.parentViewHandler;
-	}
 	
-	protected void setParentViewHandler(ViewHandler viewHandler){
-		this.parentViewHandler=viewHandler;
-	}
 	
 	/* (non-Javadoc)
 	 * @see net.sourceforge.smile.application.CbpViewHandlerImpl#calculateLocale(javax.faces.context.FacesContext)
 	 */
-	public Locale calculateLocale(FacesContext arg0) {
-		IWContext iwc = IWContext.getIWContext(arg0);
-		return iwc.getCurrentLocale();
+	public Locale calculateLocale(FacesContext ctx) {
+		/*IWContext iwc = IWContext.getIWContext(ctx);
+		return iwc.getCurrentLocale();*/
+		return super.calculateLocale(ctx);
 	}
 	/* (non-Javadoc)
 	 * @see net.sourceforge.smile.application.CbpViewHandlerImpl#calculateRenderKitId(javax.faces.context.FacesContext)
@@ -70,7 +61,7 @@ public class RootNodeViewHandler extends CbpViewHandler{// extends CbpViewHandle
 	 */
 	public UIViewRoot createView(FacesContext ctx, String viewId) {
 		//return getParentViewHandler().createView(arg0, arg1);
-		ViewNode node = getViewManager(ctx).getViewNodeForContext(ctx);
+		/*ViewNode node = getViewManager(ctx).getViewNodeForContext(ctx);
 		if(node!=null){
 			if(node.isComponentBased()){
 				UIComponent comp = node.createComponent(ctx);
@@ -95,12 +86,10 @@ public class RootNodeViewHandler extends CbpViewHandler{// extends CbpViewHandle
 		else{
 			//return createView(ctx,vewId);
 			throw new RuntimeException ("No parent ViewHandler");
-		}
+		}*/
+		return super.createView(ctx, viewId);
 	}
-	
-	protected ViewManager getViewManager(FacesContext context){
-		return ViewManager.getInstance(context);
-	}
+
 
 	/* (non-Javadoc)
 	 * @see net.sourceforge.smile.application.CbpViewHandlerImpl#getActionURL(javax.faces.context.FacesContext, java.lang.String)
