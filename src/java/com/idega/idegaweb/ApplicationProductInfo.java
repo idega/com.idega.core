@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationProductInfo.java,v 1.12 2007/02/05 06:55:21 tryggvil Exp $
+ * $Id: ApplicationProductInfo.java,v 1.13 2007/02/05 09:39:55 tryggvil Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,22 +9,26 @@
  */
 package com.idega.idegaweb;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
-import com.idega.util.FileUtil;
 import com.idega.util.IWTimestamp;
 
 
 /**
  *  This class holds information about the application product installed.<br>
  * 
- *  Last modified: $Date: 2007/02/05 06:55:21 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/02/05 09:39:55 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class ApplicationProductInfo {
 	
@@ -40,12 +44,74 @@ public class ApplicationProductInfo {
 	private String family="idegaWeb";
 	
 	public ApplicationProductInfo(IWMainApplication iwma){
-		String filePath = iwma.getPropertiesRealPath()+FileUtil.getFileSeparator()+"product.properties";
-		File file = new File(filePath);
-		loadFromFile(file);
+		//String filePath = iwma.getPropertiesRealPath()+FileUtil.getFileSeparator()+"product.properties";
+		String manifestFilePath = File.separator+"META-INF"+File.separator+"MANIFEST.MF";
+		InputStream fileStream = iwma.getResourceAsStream(manifestFilePath);
+		loadFromManifest(fileStream);
 	}
 	
-	public void loadFromFile(File file){
+	public void loadFromManifest(InputStream fileStream){
+		if(fileStream != null){
+			Map properties = new HashMap();
+			try {
+
+				loadManifestIntoMap(fileStream,properties);
+				//properties.load(new FileInputStream(file));
+				
+				String inceptionYear = (String) properties.get("Implementation-InceptionYear");
+				if(inceptionYear!=null){
+					setInceptionYear(inceptionYear);
+				}
+				String productVersion = (String) properties.get("Implementation-Version");
+				if(productVersion!=null){
+					setVersion(productVersion);
+				}
+				String buildId = (String) properties.get("Implementation-Build");
+				if(buildId!=null){
+					setBuildId(buildId);
+				}
+				String vendorName = (String) properties.get("Implementation-Vendor");
+				if(vendorName!=null){
+					setVendor(vendorName);
+				}
+				String productName = (String) properties.get("Implementation-Title");
+				if(productName!=null){
+					setName(productName);
+				}
+				String productFamily = (String) properties.get("Implementation-Family");
+				if(productFamily!=null){
+					setFamily(productFamily);
+				}	
+				
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+	}
+	
+	private void loadManifestIntoMap(InputStream fileStream, Map properties) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(fileStream));
+		String line = br.readLine();
+
+		while (line != null){
+			String lineStr = line.toString();
+			int index = lineStr.indexOf(": ");
+			if(index!=-1){
+				String key = lineStr.substring(0, index);
+				String value = lineStr.substring(index+2,lineStr.length());
+				//System.out.println("DEBUG: " +key+". line = " + value);
+				properties.put(key, value);
+			}
+			line = br.readLine();
+		}
+		
+		
+	}
+
+	public void loadFromProductPropertiesFile(File file){
 		if(file.exists()){
 			Properties properties = new Properties();
 			try {
