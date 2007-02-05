@@ -5,6 +5,13 @@
   </properties>
   <body>
 
+
+	<release version="3.1.33" date="2007-02-06">
+		<action dev="gimmi" type="update">
+			minor adjustment to SmallCalendar
+		</action>
+	</release>
+	
 	<release version="3.1.32" date="2007-02-05">
 		<action dev="sigtryggur" type="fix">
 			General javascript fix for methods commonly used in the platform
