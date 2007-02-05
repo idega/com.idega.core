@@ -1,5 +1,5 @@
 /*
- * $Id: IWModuleLoader.java,v 1.7 2007/01/30 03:25:56 justinas Exp $ Created on
+ * $Id: IWModuleLoader.java,v 1.8 2007/02/05 00:03:06 laddi Exp $ Created on
  * 31.5.2005 in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import javax.servlet.ServletContext;
  * This is the class responsible for loading the bundles (the new jar method)
  * for the IWMainApplication instance.
  * </p>
- * Last modified: $Date: 2007/01/30 03:25:56 $ by $Author: justinas $
+ * Last modified: $Date: 2007/02/05 00:03:06 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class IWModuleLoader {
 
@@ -55,9 +55,9 @@ public class IWModuleLoader {
 		this.iwma = iwma;
 	}	
 	
-	private ServletContext getExternalContext() {
+	/*private ServletContext getExternalContext() {
 		return this._externalContext;
-	}
+	}*/
 
 	/**
 	 * Tries to load a bundle from a jar, it assumes that the jar file-name begins with the bundleIdentifier
