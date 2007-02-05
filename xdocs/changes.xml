@@ -5,6 +5,12 @@
   </properties>
   <body>
 
+	<release version="3.1.32" date="2007-02-05">
+		<action dev="sigtryggur" type="fix">
+			General javascript fix for methods commonly used in the platform
+		</action>
+	</release>
+
 	<release version="3.1.31" date="2007-02-01">
 		<action dev="gediminas" type="fix">
 			Fixed character substitution for non-letter chars
