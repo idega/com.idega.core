@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationInstallationInfo.java,v 1.3 2007/02/05 06:55:21 tryggvil Exp $
+ * $Id: ApplicationInstallationInfo.java,v 1.4 2007/02/06 00:46:45 laddi Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,10 +13,10 @@ package com.idega.idegaweb;
 /**
  *  This class holds information about the installation (customer instance) of the application.<br>
  * 
- *  Last modified: $Date: 2007/02/05 06:55:21 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/02/06 00:46:45 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ApplicationInstallationInfo {
 	
@@ -32,12 +32,12 @@ public class ApplicationInstallationInfo {
 	}
 	
 	
-	private void loadDummyData() {
+	/*private void loadDummyData() {
 		setSystemName("Tryggva kerfi");
 		
 		getLicenceOwner().setName("Google");
 		getLicenceOwner().setLogoUrl("http://www.google.is/intl/en_com/images/logo_plain.png");
-	}
+	}*/
 
 
 	public class LicencingInformation{
