@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.41 2006/06/21 18:08:49 tryggvil Exp $
+ * $Id: IWResourceBundle.java,v 1.40.2.1 2007/02/06 00:49:33 eiki Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -14,7 +14,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -23,6 +22,7 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
+
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.presentation.Image;
 import com.idega.util.EnumerationIteratorWrapper;
@@ -37,10 +37,10 @@ import com.idega.util.StringHandler;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2006/06/21 18:08:49 $ by $Author: tryggvil $<br/>
+ * Last modified: $Date: 2007/02/06 00:49:33 $ by $Author: eiki $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.41 $
+ * @version $Revision: 1.40.2.1 $
  */
 public class IWResourceBundle extends ResourceBundle {
 
@@ -67,12 +67,18 @@ public class IWResourceBundle extends ResourceBundle {
 	 *          Locale to create from
 	 */
 	public IWResourceBundle(IWBundle parent, File file, Locale locale) throws IOException {
-		initialize(parent, new FileInputStream(file), file, locale);
-	}
-
-	
-	public IWResourceBundle(IWBundle parent, InputStream stream, Locale locale) throws IOException {
-		initialize(parent,stream,null,locale);
+		setIWBundleParent(parent);
+		setLocale(locale);
+		this.file = file;
+		try {
+			this.properties.load(new FileInputStream(file));
+		}
+		catch (FileNotFoundException e) {
+			// System.err.println("IWResourceBundle: File Not
+			// Found:"+file.getAbsolutePath());
+		}
+		this.lookup = new TreeMap(this.properties);
+		setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
 	}
 
 	/**
@@ -85,42 +91,6 @@ public class IWResourceBundle extends ResourceBundle {
 		this(parent.getIWBundleParent(), file, locale);
 		setParent(parent);
 	}
-
-	/**
-	 * <p>
-	 * This constructor is used for locale variants, and the parent resourceBundle
-	 * includes the default localizations.
-	 * </p>
-	 */
-	public IWResourceBundle(IWResourceBundle parent, InputStream inputStream, Locale locale) throws IOException {
-		this(parent.getIWBundleParent(), inputStream, locale);
-		setParent(parent);
-	}
-	
-	/**
-	 * <p>
-	 * TODO tryggvil describe method initialize
-	 * </p>
-	 * @param parent
-	 * @param file
-	 * @param locale
-	 * @throws IOException
-	 */
-	protected void initialize(IWBundle parent, InputStream streamForRead, File file, Locale locale) throws IOException {
-		setIWBundleParent(parent);
-		setLocale(locale);
-		this.file = file;
-		try {
-			this.properties.load(streamForRead);
-		}
-		catch (FileNotFoundException e) {
-			// System.err.println("IWResourceBundle: File Not
-			// Found:"+file.getAbsolutePath());
-		}
-		this.lookup = new TreeMap(this.properties);
-		setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
-	}
-	
 
 	/**
 	 * Override of ResourceBundle, same semantics
@@ -197,38 +167,33 @@ public class IWResourceBundle extends ResourceBundle {
 	}
 
 	public synchronized void storeState() {
-		if(file!=null){
-			try {
-				this.properties.clear();
-				if (this.lookup != null) {
-					Iterator iter = this.lookup.keySet().iterator();
-					while (iter.hasNext()) {
-						Object key = iter.next();
-						if (key != null) {
-							Object value = this.lookup.get(key);
-							if (value != null) {
-								this.properties.put(key, value);
-							}
+		try {
+			this.properties.clear();
+			if (this.lookup != null) {
+				Iterator iter = this.lookup.keySet().iterator();
+				while (iter.hasNext()) {
+					Object key = iter.next();
+					if (key != null) {
+						Object value = this.lookup.get(key);
+						if (value != null) {
+							this.properties.put(key, value);
 						}
 					}
-					if (!this.file.exists()) {
-						this.file.createNewFile();
-						System.out.println("IWResourceBundle: Created new file: " + this.file.getAbsolutePath());
-					}
-					FileOutputStream fos = new FileOutputStream(this.file);
-					this.properties.store(fos, null);
-					fos.close();
 				}
-			}
-			catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			catch (IOException ex) {
-				ex.printStackTrace();
+				if (!this.file.exists()) {
+					this.file.createNewFile();
+					System.out.println("IWResourceBundle: Created new file: " + this.file.getAbsolutePath());
+				}
+				FileOutputStream fos = new FileOutputStream(this.file);
+				this.properties.store(fos, null);
+				fos.close();
 			}
 		}
-		else{
-			System.out.println("IWResourceBundle: Cannot save, was nat read from file ");
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
 		}
 	}
 
@@ -254,28 +219,37 @@ public class IWResourceBundle extends ResourceBundle {
 	}
 
 	/**
-	 * Gets a localized stringvalue and sets the value as returnValueIfNotFound if
-	 * it is previously not found and returns it.
+	 * Gets a localized string value and sets the value as returnValueIfNotFound if it is previously not found and returns it. <br/>
+	 * However if e.g. an english version does not exist for the english local the value from Localizable.strings is used, unless it is null or empty then returnValueIfNotFound is used<br/>
 	 * 
 	 * @param key
 	 * @param returnValueIfNotFound
-	 * @return
+	 * @return a string localized in the IWRB locale or the default value from Localizable.strings or the returnValueIfNotFound if that is null or empty. 
 	 */
 	public String getLocalizedString(String key, String returnValueIfNotFound) {
 		String returnString = getLocalizedString(key);
 		if (((returnString == null) || StringHandler.EMPTY_STRING.equals(returnString)) && returnValueIfNotFound != null) {// null
-																																																												// check
-																																																												// on
-																																																												// return
-																																																												// value
 																																																												// IS
-																																																												// necessary
+																																																											// necessary
 			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
 				// if
 				// (getIWBundleParent().getApplication().getSettings().isDebugActive())
 				// System.out.println("Storing localized string: " + key);
 				// setLocalizedString(key, returnValueIfNotFound);
-				this.checkBundleLocalizedString(key, returnValueIfNotFound);
+				boolean hadToCreate = this.checkBundleLocalizedString(key, returnValueIfNotFound);
+				
+				//Localizable.strings always wins unless
+				if(!hadToCreate){
+					IWBundle bundle = getIWBundleParent();
+					String value = bundle.getLocalizableStringDefaultValue(key);
+					if( value==null || ("".equals(value) && (returnValueIfNotFound!=null)) ){
+						return returnValueIfNotFound;
+					}
+					else{
+						return value;
+					}
+				}
+				
 			}
 			return returnValueIfNotFound;
 		}
