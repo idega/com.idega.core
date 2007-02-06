@@ -1,5 +1,5 @@
 /*
- * $Id: WindowViewNode.java,v 1.4 2007/02/05 23:57:34 tryggvil Exp $
+ * $Id: WindowViewNode.java,v 1.5 2007/02/06 00:46:03 laddi Exp $
  * Created on 4.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -25,10 +25,10 @@ import com.idega.util.StringHandler;
 
 
 /**
- * Last modified: $Date: 2007/02/05 23:57:34 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/02/06 00:46:03 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class WindowViewNode extends ComponentClassViewNode {
 
@@ -79,8 +79,8 @@ public class WindowViewNode extends ComponentClassViewNode {
 			if(isFrameRequest(ctx)){
 				IWContext iwc = IWContext.getIWContext(ctx);
 				com.idega.presentation.Page frame = com.idega.presentation.Page.loadPage(iwc);
-				String frameId = (String)ctx.getExternalContext().getRequestParameterMap().get(com.idega.presentation.Page.IW_FRAMESET_PAGE_PARAMETER);
-				String newViewId = viewId+frameId;
+				/*String frameId = (String)*/ ctx.getExternalContext().getRequestParameterMap().get(com.idega.presentation.Page.IW_FRAMESET_PAGE_PARAMETER);
+				//String newViewId = viewId+frameId;
 				//ret.setViewId(newViewId);
 				
 				component=frame;

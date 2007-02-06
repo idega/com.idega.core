@@ -1,5 +1,5 @@
 /*
- * $Id: WindowViewManager.java,v 1.1 2007/02/05 23:57:34 tryggvil Exp $
+ * $Id: WindowViewManager.java,v 1.2 2007/02/06 00:44:23 laddi Exp $
  * Created on 2.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -9,14 +9,9 @@
  */
 package com.idega.faces;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import javax.faces.context.FacesContext;
-import com.idega.core.accesscontrol.business.StandardRoles;
-import com.idega.core.view.ApplicationViewNode;
+
 import com.idega.core.view.DefaultViewNode;
-import com.idega.core.view.FramedApplicationViewNode;
-import com.idega.core.view.KeyboardShortcut;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.faces.viewnode.WindowViewNode;
@@ -28,15 +23,15 @@ import com.idega.repository.data.Singleton;
 /**
  *  This is the class modules should use to attatch themselves on to the '/window' viewnode structure
  * 
- *  Last modified: $Date: 2007/02/05 23:57:34 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/02/06 00:44:23 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class WindowViewManager implements Singleton  {
 
 	private static final String IW_WINDOW_VIEW_MANAGER_KEY = "iw_windowviewmanager";
-	private static final String WINDOW_ID="window";
+	//private static final String WINDOW_ID="window";
 	private static final String FACES_BUNDLE_IDENTIFIER="com.idega.faces";
 	private ViewNode windowRootNode;
 	private IWMainApplication iwma;
