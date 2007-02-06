@@ -2344,7 +2344,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     	return this.idoFindPKsBySQL("select up.ic_user_id from ic_user_phone up, ic_phone p where up.ic_phone_id = p.ic_phone_id and p.ic_phone_type_id = " + phoneType + " group by ic_user_id having count(up.ic_user_id)>1");
 	}
 
-	private boolean validateSSN(String ssn) {
+	private boolean validateIcelandicSSN(String ssn) {
         int sum = 0; 
         boolean validSSN = false; 
         if (ssn.length() == 10) { 
@@ -2374,11 +2374,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
         return validSSN;
     }
 	
-	public boolean hasValidSSN() {
+	public boolean hasValidIcelandicSSN() {
 		if (getPersonalID() == null) {
 			return false;
 		}
-		return validateSSN(getPersonalID());
+		return validateIcelandicSSN(getPersonalID());
 	}
 	
 //	public boolean isDeceased() {
