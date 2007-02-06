@@ -2,9 +2,11 @@ package com.idega.presentation.ui;
 
 import java.util.List;
 import java.util.Vector;
+
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
+import com.idega.util.text.TextSoap;
 
 /**
  * Title: ResultOutput Description: Copyright: Copyright (c) 2001 - 2004
@@ -180,10 +182,18 @@ public class ResultOutput extends GenericInput {
 		}
 	}
 	
+	/**
+	 * If this object as other js registered  to the same action, this action will happen last
+	 * @param obj
+	 */
 	public void addTrigger(InterfaceObject obj) {
 		if (obj instanceof TextInput) {
 			TextInput temp = (TextInput) obj;
-			temp.setOnKeyUp(this.functionName + "(this.form)");
+			String sName = this.functionName + "(this.form)";
+			String tmp = temp.getMarkupAttribute(InterfaceObject.ACTION_ON_KEY_UP);
+			tmp = TextSoap.findAndCut(tmp, sName+";");
+			temp.setMarkupAttribute(InterfaceObject.ACTION_ON_KEY_UP, tmp);
+			temp.setOnKeyUp(sName);
 		} else if (obj instanceof DropdownMenu) {
 			DropdownMenu temp = (DropdownMenu) obj;
 			temp.setOnChange(this.functionName + "(this.form)");
