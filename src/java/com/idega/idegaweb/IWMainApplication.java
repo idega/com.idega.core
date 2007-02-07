@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.179 2007/02/05 09:39:31 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.180 2007/02/07 20:49:13 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -91,10 +92,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2007/02/05 09:39:31 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/02/07 20:49:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.179 $
+ * @version $Revision: 1.180 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2197,6 +2198,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			httpconn.connect();
 			httpconn.getContent();
 			httpconn.disconnect();
+		}
+		catch (ProtocolException pe) {
+			System.err.println(pe.getMessage());
 		}
 		catch (MalformedURLException e) {
 			e.printStackTrace();
