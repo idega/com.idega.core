@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.7 2006/06/15 17:53:23 tryggvil Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.8 2007/02/07 20:48:35 laddi Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,9 +13,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.ejb.RemoveException;
 import javax.servlet.ServletContext;
+
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
+import com.idega.core.component.data.ICObjectInstance;
+import com.idega.core.component.data.ICObjectInstanceHome;
+import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWMainApplication;
@@ -27,10 +33,10 @@ import com.idega.idegaweb.IWModuleLoader;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2006/06/15 17:53:23 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/02/07 20:48:35 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class ComponentRegistry {
 
@@ -175,12 +181,31 @@ public class ComponentRegistry {
 		} 
 		catch (ClassNotFoundException e) {
 			System.out.println("[ComponentRegistry] Class not found : "+ico.getClassName());
+			if (!hasReferenceToICObjectInstance(ico)) {
+				try {
+					ico.remove();
+				}
+				catch (RemoveException e1) {
+					e1.printStackTrace();
+				}
+			}
 		}
 		catch (Exception e) {
 			//e.printStackTrace();
 			System.err.println("ComponentRegistry Error: "+e.getClass().getName()+" "+e.getMessage());
 		}
 		return null;
+	}
+	
+	private boolean hasReferenceToICObjectInstance(ICObject ico) {
+		ICObjectInstanceHome home = (ICObjectInstanceHome) IDOLookup.getHomeLegacy(ICObjectInstance.class);
+		try {
+			return home.getCountByICObject(ico) > 0;
+		}
+		catch (IDOException ie) {
+			ie.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
