@@ -22,6 +22,8 @@ import java.io.InputStream;
  */
 public class MySQLDatastoreInterface extends DatastoreInterface {
 
+	private static final int MAX_INDEX_COLUMN_SIZE = 255;
+	
 	MySQLDatastoreInterface() {
 		this.useTransactionsInEntityCreation = false;
 	}
@@ -171,6 +173,25 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 
 	public void createForeignKeys(GenericEntity entity) throws Exception {
 	}
+
+  public void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
+		if (useIndexes()) {
+	  		StringBuffer sql = new StringBuffer("CREATE INDEX ").append(name).append(" ON ").append(entity.getTableName()).append(" (");
+	  		for (int i = 0; i < fields.length; i++) {
+	  			IDOEntityField field = entity.getEntityDefinition().findFieldByUniqueName(fields[i]);
+	  			int maxLength = field.getMaxLength();
+	  			if (i > 0) {
+	  				sql.append(", ");
+	  			}
+	  			sql.append(fields[i]);
+	  			if (maxLength > MAX_INDEX_COLUMN_SIZE) {
+	  				sql.append("(").append(MAX_INDEX_COLUMN_SIZE).append(")");
+	  			}
+	  		}
+	  		sql.append(")");
+	  		executeUpdate(entity, sql.toString());
+		}
+  }
 
 	protected String getCreationStatement(GenericEntity entity) {
 		String returnString = "create table " + entity.getTableName() + "(";

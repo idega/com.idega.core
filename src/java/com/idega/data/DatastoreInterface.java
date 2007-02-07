@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.133 2006/09/22 11:08:14 gediminas Exp $
+ * $Id: DatastoreInterface.java,v 1.134 2007/02/07 20:47:34 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -620,6 +620,21 @@ public abstract class DatastoreInterface implements MutableClass {
 		}
 		return returnInt;
 	}
+
+  public void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
+		if (useIndexes()) {
+	  		StringBuffer sql = new StringBuffer("CREATE INDEX ")
+			.append(name).append(" ON ").append(entity.getTableName()).append(" (");
+	  		for (int i = 0; i < fields.length; i++) {
+	  			if (i > 0) {
+	  				sql.append(", ");
+	  			}
+	  			sql.append(fields[i]);
+	  		}
+	  		sql.append(")");
+	  		executeUpdate(entity, sql.toString());
+		}
+  }
 
 	protected String getCreateUniqueIDQuery(GenericEntity entity) throws Exception {
 		return "";

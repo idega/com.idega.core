@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.57 2006/04/09 12:13:15 laddi Exp $
+ * $Id: IDOTableCreator.java,v 1.58 2007/02/07 20:47:35 laddi Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -34,10 +34,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
+ * Last modified: $Date: 2007/02/07 20:47:35 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.57 $
+ * @version $Revision: 1.58 $
  */
 public class IDOTableCreator{
 
@@ -625,7 +625,7 @@ public class IDOTableCreator{
 	  				try {
 		  				key = (String) iter.next();
 		  				values = (String[]) map.get(key);
-		  				createIndex(entity, key, values);
+		  		    this._dsi.createIndex(entity, key, values);
 	  				} catch (Exception e) {
 	  					e.printStackTrace();
 	  				}
@@ -634,21 +634,6 @@ public class IDOTableCreator{
 	  	} catch (NoIndexException ignore) {}
   }
   
-  private void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
-		if (this._dsi.useIndexes()) {
-	  		StringBuffer sql = new StringBuffer("CREATE INDEX ")
-			.append(name).append(" ON ").append(entity.getTableName()).append(" (");
-	  		for (int i = 0; i < fields.length; i++) {
-	  			if (i > 0) {
-	  				sql.append(", ");
-	  			}
-	  			sql.append(fields[i]);
-	  		}
-	  		sql.append(")");
-	  		executeUpdate(entity, sql.toString());
-		}
-  }
-
   protected void createForeignKeys(IDOEntity entity) throws Exception {
     /*Connection conn = null;
     Statement Stmt = null;
@@ -883,7 +868,7 @@ public class IDOTableCreator{
 					while (iter.hasNext()) {
 						indexName = (String) iter.next();
 						try {
-							this.createIndex(entity, indexName, (String[]) map.get(indexName));
+							this._dsi.createIndex(entity, indexName, (String[]) map.get(indexName));
 						}
 						catch (Exception e1) {
 							System.out.println("IDOTableCreator : failed to create index : "+indexName+" ("+e1.getMessage()+")");
