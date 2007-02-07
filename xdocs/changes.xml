@@ -5,7 +5,12 @@
   </properties>
   <body>
 
-
+	<release version="3.1.34" date="2007-02-08">
+		<action dev="laddi" type="update">
+			Changed so that ICObject values that have no corresponding class are removed.
+		</action>
+	</release>
+	
 	<release version="3.1.33" date="2007-02-06">
 		<action dev="gimmi" type="update">
 			minor adjustment to SmallCalendar

@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.7 2006/06/15 17:53:23 tryggvil Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.7.2.1 2007/02/07 16:35:52 laddi Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.ejb.RemoveException;
 import javax.servlet.ServletContext;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
@@ -27,10 +29,10 @@ import com.idega.idegaweb.IWModuleLoader;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2006/06/15 17:53:23 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/02/07 16:35:52 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.7.2.1 $
  */
 public class ComponentRegistry {
 
@@ -165,16 +167,17 @@ public class ComponentRegistry {
 	 */
 	protected ComponentInfo registerComponent(ICObject ico) {
 		try {
-			//Class clazz = ico.getObjectClass();
-			//String name = ico.getName();
-			//String type = ico.getObjectType();
-			//int icObjectId = ((Integer)ico.getPrimaryKey()).intValue();
 			ICObjectComponentInfo info = new ICObjectComponentInfo(ico);
 			registerComponent(info);
 			return info;
 		} 
 		catch (ClassNotFoundException e) {
-			System.out.println("[ComponentRegistry] Class not found : "+ico.getClassName());
+			try {
+				ico.remove();
+			}
+			catch (RemoveException re) {
+				System.out.println("[ComponentRegistry] Class not found : "+ico.getClassName());
+			}
 		}
 		catch (Exception e) {
 			//e.printStackTrace();
