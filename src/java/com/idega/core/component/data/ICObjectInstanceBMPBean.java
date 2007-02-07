@@ -13,8 +13,10 @@ import java.util.Iterator;
 import javax.ejb.FinderException;
 
 import com.idega.core.component.business.ICObjectBusiness;
+import com.idega.data.IDOException;
 import com.idega.data.IDOFinderException;
 import com.idega.data.IDORemoveRelationshipException;
+import com.idega.data.query.CountColumn;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
@@ -137,7 +139,6 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 	}
 
 	public Integer ejbFindByUniqueId(String uuid) throws FinderException {
-		
 		Collection cachedList = getCachedEntities();
 		for (Iterator iter = cachedList.iterator(); iter.hasNext();) {
 			ICObjectInstance instance = (ICObjectInstance) iter.next();
@@ -165,5 +166,15 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 			throw new IDOFinderException(nfe);
 		}
 
+	}
+	
+	public int ejbHomeGetCountByICObject(ICObject ico) throws IDOException {
+		Table thisTable = new Table(this);
+
+		SelectQuery query = new SelectQuery(thisTable);
+		query.addColumn(new CountColumn(getIDColumnName()));
+		query.addCriteria(new MatchCriteria(thisTable, COLUMN_OBJECT_ID, MatchCriteria.EQUALS, ico));
+		
+		return idoGetNumberOfRecords(query);
 	}
 }

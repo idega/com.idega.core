@@ -1,90 +1,75 @@
-/*
- * $Id: ICObjectInstanceHomeImpl.java,v 1.4 2006/05/29 18:15:09 tryggvil Exp $
- * Created on 14.10.2004
- *
- * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
- */
 package com.idega.core.component.data;
 
 
+import com.idega.data.IDOException;
 import java.util.Collection;
+import javax.ejb.CreateException;
+import java.sql.SQLException;
 import javax.ejb.FinderException;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOFactory;
-import com.idega.data.IDORemoveRelationshipException;
 
-/**
- * 
- *  Last modified: $Date: 2006/05/29 18:15:09 $ by $Author: tryggvil $
- * 
- * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.4 $
- */
-public class ICObjectInstanceHomeImpl extends IDOFactory implements
-        ICObjectInstanceHome {
-    protected Class getEntityInterfaceClass() {
-        return ICObjectInstance.class;
-    }
+public class ICObjectInstanceHomeImpl extends IDOFactory implements ICObjectInstanceHome {
 
-    public ICObjectInstance create() throws javax.ejb.CreateException {
-        return (ICObjectInstance) super.createIDO();
-    }
-    
-    public ICObjectInstance createLegacy(){
-        try{
-    		return create();
-    	}
-    	catch(javax.ejb.CreateException ce){
-    		throw new RuntimeException("CreateException:"+ce.getMessage());
-    	}
-
-    }
-
-    public ICObjectInstance findByPrimaryKey(Object pk)
-            throws javax.ejb.FinderException {
-        return (ICObjectInstance) super.findByPrimaryKeyIDO(pk);
-    }
-    
-    public ICObjectInstance findByPrimaryKey(int id) throws javax.ejb.FinderException{
-        return (ICObjectInstance) super.findByPrimaryKeyIDO(id);
-       }
-
-
-       public ICObjectInstance findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
-      	try{
-      		return findByPrimaryKey(id);
-      	}
-      	catch(javax.ejb.FinderException fe){
-      		throw new java.sql.SQLException(fe.getMessage());
-      	}
-
-       }
-
-    public void removeRelation(ICObjectInstance instance, Class relatedEntity)
-            throws IDORemoveRelationshipException {
-        com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-        ((ICObjectInstanceBMPBean) entity).ejbHomeRemoveRelation(instance, relatedEntity);
-        this.idoCheckInPooledEntity(entity);
-        
-    }
-
-	public ICObjectInstance findByUniqueId(String uuid) throws FinderException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		Integer id = ((ICObjectInstanceBMPBean) entity).ejbFindByUniqueId(uuid);
-		this.idoCheckInPooledEntity(entity);
-		return this.findByPrimaryKey(id);
+	public Class getEntityInterfaceClass() {
+		return ICObjectInstance.class;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.idega.core.component.data.ICObjectInstanceHome#findByPageKey(java.lang.String)
-	 */
+	public ICObjectInstance create() throws CreateException {
+		return (ICObjectInstance) super.createIDO();
+	}
+
+	public ICObjectInstance findByPrimaryKey(Object pk) throws FinderException {
+		return (ICObjectInstance) super.findByPrimaryKeyIDO(pk);
+	}
+
+	public ICObjectInstance createLegacy() {
+		try {
+			return create();
+		}
+		catch (CreateException ce) {
+			throw new RuntimeException(ce.getMessage());
+		}
+	}
+
+	public ICObjectInstance findByPrimaryKey(int id) throws FinderException {
+		return (ICObjectInstance) super.findByPrimaryKeyIDO(id);
+	}
+
+	public ICObjectInstance findByPrimaryKeyLegacy(int id) throws SQLException {
+		try {
+			return findByPrimaryKey(id);
+		}
+		catch (FinderException fe) {
+			throw new SQLException(fe.getMessage());
+		}
+	}
+
+	public void removeRelation(ICObjectInstance instance, Class relatedEntity) throws IDORemoveRelationshipException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		((ICObjectInstanceBMPBean) entity).ejbHomeRemoveRelation(instance, relatedEntity);
+		this.idoCheckInPooledEntity(entity);
+	}
+
+	public ICObjectInstance findByUniqueId(String uuid) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((ICObjectInstanceBMPBean) entity).ejbFindByUniqueId(uuid);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
+
 	public Collection findByPageKey(String pageKey) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
 		Collection ids = ((ICObjectInstanceBMPBean) entity).ejbFindByPageKey(pageKey);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public int getCountByICObject(ICObject ico) throws IDOException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		int theReturn = ((ICObjectInstanceBMPBean) entity).ejbHomeGetCountByICObject(ico);
+		this.idoCheckInPooledEntity(entity);
+		return theReturn;
 	}
 }
