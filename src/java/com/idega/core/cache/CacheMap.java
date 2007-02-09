@@ -1,5 +1,5 @@
 /*
- * $Id: CacheMap.java,v 1.12 2006/10/02 10:44:55 civilis Exp $
+ * $Id: CacheMap.java,v 1.13 2007/02/09 01:55:01 tryggvil Exp $
  * Created on 6.1.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import net.sf.ehcache.Element;
  * <p>
  * Wrapper for the Cache implemented as a standard Map
  * </p>
- *  Last modified: $Date: 2006/10/02 10:44:55 $ by $Author: civilis $
+ *  Last modified: $Date: 2007/02/09 01:55:01 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class CacheMap implements Map {
 
@@ -53,9 +53,11 @@ public class CacheMap implements Map {
 	 * @see java.util.Map#size()
 	 */
 	public int size() {
-		int memorySize = (int) getCache().getMemoryStoreSize();
-		int diskSize = (int) getCache().getMemoryStoreSize();
-		return memorySize+diskSize;
+		//int memorySize = (int) getCache().getMemoryStoreSize();
+		//int diskSize = (int) getCache().getMemoryStoreSize();
+		//return memorySize+diskSize;
+		int size = getCache().getKeysWithExpiryCheck().size();
+		return size;
 	}
 
 	/* (non-Javadoc)
@@ -101,20 +103,15 @@ public class CacheMap implements Map {
 	 * @see java.util.Map#get(java.lang.Object)
 	 */
 	public Object get(Object key) {
-		
 		Object theRet = null;
 		try {
-			
 			Element element = getCache().get(key);
-		
 			if(element != null) {
-				
 				theRet = element.getObjectValue();
-				
 				if(getCacheListeners() != null){
 					for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
 						CacheMapListener listener = (CacheMapListener) iterator.next();
-						listener.gotObject((String)key, theRet);
+						listener.gotObject(key,theRet);
 					}
 				}
 			}
@@ -138,7 +135,7 @@ public class CacheMap implements Map {
 			if(getCacheListeners()!=null){
 				for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
 					CacheMapListener listener = (CacheMapListener) iterator.next();
-					listener.putObject((String)key,value);
+					listener.putObject(key,value);
 				}
 			}
 			return null;
@@ -157,7 +154,7 @@ public class CacheMap implements Map {
 			if(getCacheListeners()!=null){
 				for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
 					CacheMapListener listener = (CacheMapListener) iterator.next();
-					listener.removedObject((String)key);
+					listener.removedObject(key);
 				}
 			}
 			return null;
