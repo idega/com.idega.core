@@ -1,5 +1,5 @@
 /*
- * $Id: CacheMap.java,v 1.10.2.1 2007/02/02 01:00:43 thomas Exp $
+ * $Id: CacheMap.java,v 1.10.2.2 2007/02/09 01:38:20 tryggvil Exp $
  * Created on 6.1.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import net.sf.ehcache.Element;
  * <p>
  * Wrapper for the Cache implemented as a standard Map
  * </p>
- *  Last modified: $Date: 2007/02/02 01:00:43 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/02/09 01:38:20 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10.2.1 $
+ * @version $Revision: 1.10.2.2 $
  */
 public class CacheMap implements Map {
 
@@ -53,9 +53,11 @@ public class CacheMap implements Map {
 	 * @see java.util.Map#size()
 	 */
 	public int size() {
-		int memorySize = (int) getCache().getMemoryStoreSize();
-		int diskSize = (int) getCache().getMemoryStoreSize();
-		return memorySize+diskSize;
+		//int memorySize = (int) getCache().getMemoryStoreSize();
+		//int diskSize = (int) getCache().getMemoryStoreSize();
+		//return memorySize+diskSize;
+		int size = getCache().getKeysWithExpiryCheck().size();
+		return size;
 	}
 
 	/* (non-Javadoc)
