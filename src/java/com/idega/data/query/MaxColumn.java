@@ -18,4 +18,8 @@ public class MaxColumn extends Column {
 		setPrefix("MAX(");
 		setPostfix(")");
 	}
+	
+	public void setPostfix(String postfix) {
+		super.setPostfix(") " + postfix);
+	}
 }
