@@ -757,7 +757,7 @@ Calendar.prototype.callCloseHandler = function () {
 	if (this.yourCloseHandler) {
 		this.yourCloseHandler(this);
 	}
-	this.hideShowCovered();
+	this.hideShowCovered(true);
 };
 
 Calendar.prototype.destroy = function () {
@@ -923,7 +923,7 @@ Calendar.prototype.parseDate = function (str, fmt) {
 	}
 };
 
-Calendar.prototype.hideShowCovered = function () {
+Calendar.prototype.hideShowCovered = function (closingCalendar) {
 	var tags = new Array ('applet', 'iframe', 'select');
 	var el = this.element;
 
@@ -946,7 +946,7 @@ Calendar.prototype.hideShowCovered = function () {
 			var CY1 = p.y;
 			var CY2 = cc.offsetHeight + CY1;
 
-			if ((CX1 > EX2) || (CX2 < EX1) || (CY1 > EY2) || (CY2 < EY1)) {
+			if (closingCalendar || (CX1 > EX2) || (CX2 < EX1) || (CY1 > EY2) || (CY2 < EY1)) {
 				cc.style.visibility = "visible";
 			} else {
 				cc.style.visibility = "hidden";
