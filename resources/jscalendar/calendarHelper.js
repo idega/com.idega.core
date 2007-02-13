@@ -16,7 +16,7 @@ function selected(cal, formattedDate,date) {
 // destroying it.
 function closeHandler(cal) {
   cal.hide();                        // hide the calendar
-  cal.hideShowCovered();             // show again controls that disappeared behind the calendar 
+  cal.hideShowCovered(true);             // show again controls that disappeared behind the calendar 
   cal.sel.date = new Date(cal.date); // remember the date in the input field
 
   // don't check mousedown on document anymore (used to be able to hide the
