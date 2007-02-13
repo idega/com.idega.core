@@ -585,6 +585,7 @@ function isEnterEvent(event) {
 	return false;
 }
 
+/** Application Property logic begins **/
 function changeSiteInfo(id) {
 	if (id == null) {
 		return;
@@ -851,3 +852,4 @@ function setElementNewValue(element, value) {
 		element.appendChild(document.createTextNode(value));
 	}
 }
+/** Application Property logic ends **/
