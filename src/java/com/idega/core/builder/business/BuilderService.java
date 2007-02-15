@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.26 2007/01/26 05:45:57 valdas Exp $
+ * $Id: BuilderService.java,v 1.27 2007/02/15 12:05:16 justinas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -208,6 +208,8 @@ public interface BuilderService extends IBOService
 	
 	public int createNewPage(String parentId, String name, String type, String templateId, String pageUri, Map tree, IWUserContext creatorContext, String subType, int domainId, String format, String sourceMarkup);
 	
+	public int createNewPage(String parentId, String name, String type, String templateId, String pageUri, Map tree, IWUserContext creatorContext, String subType, int domainId, String format, String sourceMarkup, String treeOrder);
+	
 	public int createPageOrTemplateToplevelOrWithParent(String name, String parentId, String type, String templateId, Map tree, IWContext creatorContext);
 
 	public boolean setProperty(String pageKey, String instanceId, String propertyName, String[] propertyValues, IWMainApplication iwma);
@@ -249,4 +251,12 @@ public interface BuilderService extends IBOService
 	public boolean isPropertyValueSet(String pageKey, String moduleId, String propertyName, String propertyValue);
 	
 	public boolean removeValueFromModuleProperty(String pageKey, String moduleId, String propertyName, String valueToRemove);
+	
+	public void setTreeOrder(int id, int order);
+	
+	public int getTreeOrder(int id);
+	
+	public void increaseTreeOrder(int id);
+	
+	public void decreaseTreeOrder(int id);
 }
