@@ -4,15 +4,9 @@ package com.idega.io;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-
-import oracle.jdbc.driver.OracleResultSet;
-
 import com.idega.util.IWTimestamp;
 
 /**
@@ -43,12 +37,13 @@ public class ImageSave {
 
       String dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
 
-      if( !dataBaseType.equalsIgnoreCase("oracle")  ) {
+      //if( !dataBaseType.equalsIgnoreCase("oracle")  ) {
 				return saveImageToDB(imageId,-1,in,ContentType,FileName,"-1", "-1",NewImage);
-			}
+	  /*	}
 			else {
 				return saveImageToOracleDB(imageId,-1,in,ContentType,FileName,"-1","-1",NewImage);
 			}
+			*/
 
     }
 		else {
@@ -69,15 +64,16 @@ public class ImageSave {
 
       String dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
 
-      if( !dataBaseType.equalsIgnoreCase("oracle")  ) {
+      //if( !dataBaseType.equalsIgnoreCase("oracle")  ) {
 				return saveImageToDB(imageId,parentImageId,in,ContentType,FileName,width, height,NewImage);
-			}
+	 /*		}
 			else {
 				return saveImageToOracleDB(imageId,parentImageId,in,ContentType,FileName,width, height,NewImage);
-			}
+			}*/
 
-    }
+    	}
 
+				
     catch(SQLException e){
 
       e.printStackTrace(System.err);
@@ -199,7 +195,7 @@ public class ImageSave {
   }
 
 
-
+/*
   public static int saveImageToOracleDB(int imageId, int parentImageId, InputStream in,String ContentType,String FileName, String width, String height, boolean NewImage){
 
     int id = -1;
@@ -369,7 +365,7 @@ System.out.println("ImageSave : height ="+height);
     return id;
 
   }
-
+*/
 }
 
 

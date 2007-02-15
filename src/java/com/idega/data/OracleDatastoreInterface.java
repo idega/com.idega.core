@@ -16,10 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
-
-import oracle.jdbc.OracleResultSet;
-import oracle.sql.CLOB;
-
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.database.ConnectionBroker;
 
@@ -384,7 +380,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 				//
 				// here starts the fork.................................................................................................
 				//
-				if (rs instanceof OracleResultSet) {
+				/*if (rs instanceof OracleResultSet) {
 					// we go this way if JDBC 1.22 or JDBC 2.0 without JNDI is used 
 					// (note that the returned ResultSet of the database is not wrapped)
 					OracleResultSet oracleResultSet = (OracleResultSet) rs;
@@ -399,7 +395,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 						chrInstream = oracleClob.getCharacterStream(); 
 					}
 				}
-				else {
+				else {*/
 					// we go this way if JNDI with JDBC 2.0 standard is used 
 					try {
 						// method getClob() does not exist in JDBC 1.22
@@ -426,7 +422,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 						length = 0;
 						chrInstream = null;
 					}
-				}
+				/*}*/
 				//				
 				// ....................................................................................................end of the fork
 				//

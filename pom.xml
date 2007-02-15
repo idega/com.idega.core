@@ -178,13 +178,6 @@
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>oracle_jdbc</groupId>
-      <artifactId>oracle_jdbc</artifactId>
-      <version>10.1.0.2.0</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>informix_jdbc</groupId>
       <artifactId>informix_jdbc</artifactId>
       <version>9.0</version>
