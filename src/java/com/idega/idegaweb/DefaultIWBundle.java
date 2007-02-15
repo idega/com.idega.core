@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.38 2007/02/05 09:39:43 tryggvil Exp $
+ * $Id: DefaultIWBundle.java,v 1.39 2007/02/15 12:11:54 gediminas Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -93,7 +93,6 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	private IWMainApplication superApplication;
 	private Map localePathsLookup;
 	private Map resourceBundlesLookup;
-	private boolean autoCreateLocalizedResources = true;
 	private boolean autoCreate = false;
 	//private Map handlers;
 	private Map localeRealPathsLookup;
@@ -680,26 +679,18 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	protected IWResourceBundle initializeResourceBundle(Locale locale) throws IOException {
 		IWResourceBundle theReturn;
 		File file;
-		/**
-		   * @todo: Look into this autoCreateLocalizedResources is always set true
-		   */
-		if (this.autoCreateLocalizedResources)
-		{
+		if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
 			file = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(locale), getLocalizedStringsFileName());
 		}
-		else
-		{
-			file = new File(getResourcesRealPath(locale) + File.separator + getLocalizedStringsFileName());
+		else {
+			file = new File(getResourcesRealPath(locale), getLocalizedStringsFileName());
 		}
 		IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, file, locale);
-		if(isUsingLocalVariants()){
-			//Locale variants are used:
-			File variantFile;
-			String variantfileName = getLocalizedStringsVariantFileName();
-			variantFile = new File(getResourcesRealPath(locale) + File.separator + variantfileName);
+		if (isUsingLocalVariants()) {
+			File variantFile = new File(getResourcesRealPath(locale), getLocalizedStringsVariantFileName());
 			theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantFile, locale);
 		}
-		else{
+		else {
 			theReturn = defaultLocalizedResourceBundle;
 		}
 		return theReturn;
