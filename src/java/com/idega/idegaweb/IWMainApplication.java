@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.180 2007/02/07 20:49:13 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.181 2007/02/15 12:09:20 gediminas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -92,10 +92,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2007/02/07 20:49:13 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/02/15 12:09:20 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.180 $
+ * @version $Revision: 1.181 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -880,7 +880,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 			
 			//First try the default name (with .bundle extension)
-			String sBundleDirWithBundleExtension = directory+ File.separator+bundleIdentifier;
+			String sBundleDirWithBundleExtension = directory+ File.separator+bundleIdentifier+DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
 			File bundleDir = new File(sBundleDirWithBundleExtension);
 			if(bundleDir.exists()){
 				return sBundleDirWithBundleExtension;
@@ -985,7 +985,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			throw new IWBundleDoesNotExist(bundleIdentifier);
 		}
 		else{
-			return BUNDLES_STANDARD_DIRECTORY + File.separator + bundleIdentifier + File.separator + DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
+			return BUNDLES_STANDARD_DIRECTORY + File.separator + bundleIdentifier + DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
 		}
 	}
 
