@@ -24,6 +24,7 @@ import com.idega.user.data.UserBMPBean;
  * Company:      Idega Software
  * @author idega team <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
+ * @deprecated use com.idega.user.business.GroupBusiness
  */
 
 

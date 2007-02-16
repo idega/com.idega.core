@@ -1,5 +1,5 @@
 /*
- * $Id: LoginInfo.java,v 1.14 2006/01/15 17:29:35 laddi Exp $
+ * $Id: LoginInfo.java,v 1.14.2.1 2007/02/16 16:02:45 eiki Exp $
  * Created on Jan 15, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.util.IWTimestamp;
  * <p>
  * TODO laddi Describe Type LoginInfo
  * </p>
- *  Last modified: $Date: 2006/01/15 17:29:35 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/02/16 16:02:45 $ by $Author: eiki $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.14.2.1 $
  */
 public interface LoginInfo extends IDOEntity, MetaDataCapable {
 
@@ -53,12 +53,12 @@ public interface LoginInfo extends IDOEntity, MetaDataCapable {
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#getPasswordExpires
 	 */
-	public boolean getPasswordExpires();
+//	public boolean getPasswordExpires();
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#getPasswNeverExpires
 	 */
-	public boolean getPasswNeverExpires();
+//	public boolean getPasswNeverExpires();
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#getAllowedToChange
@@ -138,22 +138,22 @@ public interface LoginInfo extends IDOEntity, MetaDataCapable {
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#setPasswordExpires
 	 */
-	public void setPasswordExpires(boolean value);
+//	public void setPasswordExpires(boolean value);
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#setPasswordExpires
 	 */
-	public void setPasswordExpires(Boolean value);
+//	public void setPasswordExpires(Boolean value);
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#setPasswNeverExpires
 	 */
-	public void setPasswNeverExpires(boolean value);
+//	public void setPasswNeverExpires(boolean value);
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#setPasswNeverExpires
 	 */
-	public void setPasswNeverExpires(Boolean value);
+//	public void setPasswNeverExpires(Boolean value);
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#setEncriptionType

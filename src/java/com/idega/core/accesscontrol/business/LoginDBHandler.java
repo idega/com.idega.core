@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.67.2.2 2007/01/16 15:22:41 idegaweb Exp $
+ * $Id: LoginDBHandler.java,v 1.67.2.3 2007/02/16 16:02:45 eiki Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -27,7 +27,6 @@ import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
-import com.idega.user.data.User;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -35,6 +34,9 @@ import com.idega.data.IDORemoveException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.presentation.IWContext;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
@@ -116,18 +118,17 @@ public class LoginDBHandler {
 		}
 		if (update) {
 			if (userLogin != null && !"".equals(userLogin)) {
-				if (!loginTable.getUserLogin().equals(userLogin)) {
+				String userName = loginTable.getUserLogin();
+				LoginTable existingLogin = null;
+				if (!userName.equals(userLogin)) {
 					try {
-						loginTable = getLoginTableHome().findByLogin(userLogin);
+						existingLogin = getLoginTableHome().findByLogin(userLogin);
 					}
 					catch (FinderException e) {
-						throw new LoginCreateException(e.getMessage());
+						//throw new LoginCreateException(e.getMessage());
 					}
-					if (loginTable != null && loginTable.getUserId() != userID) {
-						LoginTable tempLoginTable = loginTable;
-						if (tempLoginTable.getUserId() != userID) {
-							throw new LoginCreateException("login not valid : in use");
-						}
+					if (existingLogin != null && existingLogin.getUserId() != userID) {
+						throw new LoginCreateException("login not valid : in use");
 					}
 				}
 				if (encryptedPassword != null) {
@@ -155,6 +156,26 @@ public class LoginDBHandler {
 			}
 		}
 		loginTable.setLastChanged(IWTimestamp.getTimestampRightNow());
+			try {
+				//save the last changed by stuff if not the same user or super admin
+				IWContext iwc = IWContext.getInstance();
+				if(!iwc.isSuperAdmin() && iwc.getCurrentUserId()!=userID){
+					User changer = iwc.getCurrentUser();
+					loginTable.setChangedByUser(changer);
+					
+					//don't change the primary group though!
+					if(loginTable.getChangedByGroupId()!=-1){
+						Group primary = changer.getPrimaryGroup();
+					
+						if(primary!=null){
+							loginTable.setChangedByGroup(primary);
+						}
+					}
+				}
+			} catch (Exception e) {
+				//no user, must be a system process setting a login				
+			}
+		
 		loginTable.store();
 		return loginTable;
 	}
@@ -194,9 +215,9 @@ public class LoginDBHandler {
 		if (daysOfVality > -1) {
 			logInfo.setDaysOfVality(daysOfVality);
 		}
-		if (passwordExpires != null) {
-			logInfo.setPasswordExpires(passwordExpires);
-		}
+//		if (passwordExpires != null) {
+//			logInfo.setPasswordExpires(passwordExpires);
+//		}
 		if (userAllowedToChangePassw != null) {
 			logInfo.setAllowedToChange(userAllowedToChangePassw);
 		}
