@@ -4,6 +4,14 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  
+	<release version="3.1.37" date="2007-02-16">
+		<action dev="eiki" type="update">
+			Change the UserLoginTab in com.idega.user to fix a security hole along with Login and user classes in core.
+			Now only the user himself, admin or the first person or the persons group that changes the users password for the first time can change it again.
+			Removed a lot of old stuff from com.idega.core.user.
+		</action>
+	</release>
 
 	<release version="3.1.36" date="2007-02-14">
 		<action dev="gimmi" type="fix">
