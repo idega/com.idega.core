@@ -26,6 +26,7 @@ import com.idega.util.reflect.MethodInvoker;
  * Company:      idega margmi�lun
  * @author
  * @version 1.0
+ * @deprecated use com.idega.user.business.UserBusiness
  */
 
 public class UserBusiness {
