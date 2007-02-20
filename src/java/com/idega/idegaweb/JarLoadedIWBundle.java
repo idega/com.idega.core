@@ -19,10 +19,10 @@ import com.idega.util.SortedProperties;
  * <p>
  * Implementation of an IWBundle loaded from a jar file instead of a folder
  * </p>
- *  Last modified: $Date: 2006/11/23 11:18:12 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/02/20 15:10:13 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class JarLoadedIWBundle extends DefaultIWBundle {
 
@@ -113,20 +113,28 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	 * @see com.idega.idegaweb.DefaultIWBundle#initializeResourceBundle(java.util.Locale)
 	 */
 	protected IWResourceBundle initializeResourceBundle(Locale locale) throws IOException {
-		IWResourceBundle theReturn = null;
-		InputStream defaultInputStream = getResourceInputStream(getLocalizedResourcePath(locale)+"/"+getLocalizedStringsFileName());
-		IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, defaultInputStream, locale);
-		if(isUsingLocalVariants()){
-			//Locale variants are used:
-			String variantfileName = getLocalizedStringsVariantFileName();
-			String variantPath = getLocalizedResourcePath(locale)+"/"+variantfileName;
-			if(doesResourceExist(variantPath)){
-				InputStream variantStream = getResourceInputStream(variantPath);
-				theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantStream, locale);
+		IWResourceBundle theReturn;
+		try {
+			InputStream defaultInputStream = getResourceInputStream(getLocalizedResourcePath(locale) + "/" + getLocalizedStringsFileName());
+			IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, defaultInputStream, locale);
+			if (isUsingLocalVariants()) {
+				String variantPath = getLocalizedResourcePath(locale)+"/"+getLocalizedStringsVariantFileName();
+				if (doesResourceExist(variantPath)) {
+					InputStream variantStream = getResourceInputStream(variantPath);
+					theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantStream, locale);
+				}
+				else {
+					File file = new File(getResourcesRealPath(locale), getLocalizedStringsVariantFileName());
+					theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, file, locale);
+				}
+			}
+			else {
+				theReturn = defaultLocalizedResourceBundle;
 			}
 		}
-		else{
-			theReturn = defaultLocalizedResourceBundle;
+		catch (IOException e) {
+			// if any error occurs, try default way (autocreated resources in webapp's bundle directory)
+			theReturn = super.initializeResourceBundle(locale);
 		}
 		return theReturn;
 	}
