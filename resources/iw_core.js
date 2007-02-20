@@ -470,13 +470,22 @@ function tableruler()
 	}
 	
 function closeLoadingMessage() {
-	var elem = document.getElementById('busybuddy');
-	if (elem) {
-		if(elem.style) { 
-	      elem.style.display = 'none';
-	    } else {
-	      elem.display = 'none' ;
-	    }
+	var busyMessage = document.getElementById("busybuddy");
+	if (busyMessage) {
+		var parentElement = busyMessage.parentNode;
+		if (parentElement == null) {
+			if (busyMessage.style) {
+				busyMessage.style.display = "none";
+				busyMessage.style.visibility = "hidden";
+			}
+			else {
+				busyMessage.display = "none";
+				busyMessage.visibility = "hidden";
+			}
+		}
+		else {
+			parentElement.removeChild(busyMessage);
+		}		
 	}
 }
 
@@ -853,3 +862,71 @@ function setElementNewValue(element, value) {
 	}
 }
 /** Application Property logic ends **/
+
+/** Comment logic begins **/
+var COMMENTS_POSTED_LABEL = "Posted";
+var COMMENTS_MESSAGE = "Loading comments...";
+var COMMENTS_LINK_TO_FILE = "/files";
+var SHOW_COMMENTS_LIST = false;
+
+function setPostedLabel(postedLabel) {
+	COMMENTS_POSTED_LABEL = postedLabel;
+}
+function getPostedLabel() {
+	return COMMENTS_POSTED_LABEL;
+}
+
+function setCommentsLoadingMessage(message) {
+	COMMENTS_MESSAGE = message;
+}
+function getCommentsLoadingMessage() {
+	return COMMENTS_MESSAGE;
+}
+
+function setLinkToComments(linkToComments) {
+	COMMENTS_LINK_TO_FILE = linkToComments;
+}
+function getLinkToComments() {
+	return COMMENTS_LINK_TO_FILE;
+}
+
+function setActiveReverseAjax(active) {
+	if (isSafariBrowser()) {
+		setTimeout("DWREngine.setActiveReverseAjax("+active+")", 1000);
+	}
+	else {
+		DWREngine.setActiveReverseAjax(active);
+	}
+}
+
+function getAllArticleComments(linkToComments) {
+	if (isSafariBrowser()) {
+		setTimeout("getComments('"+linkToComments+"')", 1000);
+	}
+	else {
+		getComments(linkToComments);
+	}
+}
+
+function setShowCommentsList(showComments) {
+	SHOW_COMMENTS_LIST = showComments;
+}
+function isShowCommentsList() {
+	return SHOW_COMMENTS_LIST;
+}
+/** Comment logic ends **/
+
+function isSafariBrowser() {
+	if (navigator == null) {
+		return false;
+	}
+	var browser = navigator.userAgent;
+	if (browser == null) {
+		return false;
+	}
+	browser = browser.toLowerCase();
+	if (browser.indexOf("safari") == -1) {
+		return false;
+	}
+	return true;
+}
