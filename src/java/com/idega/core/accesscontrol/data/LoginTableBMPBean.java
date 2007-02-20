@@ -12,6 +12,9 @@ import com.idega.data.query.CountColumn;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
+import com.idega.user.data.UserBMPBean;
 import com.idega.util.EncryptionType;
 
 public class LoginTableBMPBean extends GenericEntity implements LoginTable, EncryptionType {
@@ -22,22 +25,32 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	private static final String COLUMN_USER_LOGIN = "USER_LOGIN";
 	private static final String COLUMN_USER_PASSWORD = "USER_PASSWORD";
 	private static final String COLUMN_LAST_CHANGED = "LAST_CHANGED";
+	private static final String COLUMN_CHANGED_BY_USER = "CHANGED_BY_USER_ID";
+	private static final String COLUMN_CHANGED_BY_GROUP = "CHANGED_BY_GROUP_ID";
+	
 	private static final String COLUMN_LOGIN_TYPE = "LOGIN_TYPE";
 	private transient String unEncryptedUserPassword;
 
 	public void initializeAttributes() {
 		addAttribute(this.getIDColumnName());
-		addAttribute(getColumnNameUserID(), "Notandi", true, true, Integer.class, "many-to-one", User.class);
-		addAttribute(getUserLoginColumnName(), "Notandanafn", true, true, String.class, 32);
-		addAttribute(getNewUserPasswordColumnName(), "Lykilorð", true, true, String.class, 255);
+		addAttribute(getColumnNameUserID(), "User id", true, true, Integer.class, "many-to-one", User.class);
+		addAttribute(getUserLoginColumnName(), "User name", true, true, String.class, 32);
+		addAttribute(getNewUserPasswordColumnName(), "Password (encrypted)", true, true, String.class, 255);
 		// deprecated column
-		addAttribute(getOldUserPasswordColumnName(), "Lykilorð", true, true, String.class, 20);
-		addAttribute(getLastChangedColumnName(), "Síðast breytt", true, true, Timestamp.class);
-		addAttribute(getLoginTypeColumnName(), "Tegund aðgagns", true, true, String.class, 32);
+		addAttribute(getOldUserPasswordColumnName(), "Password (deprecated)", true, true, String.class, 20);
+		addAttribute(getLastChangedColumnName(), "Last changed", true, true, Timestamp.class);
+		addAttribute(getLoginTypeColumnName(), "Login type", true, true, String.class, 32);
+		addAttribute(COLUMN_CHANGED_BY_USER, "Last changed by user id", true, true, Integer.class, "many-to-one", User.class);
+		addAttribute(COLUMN_CHANGED_BY_GROUP, "Last changed by group id", true, true, Integer.class, "many-to-one", Group.class);
+		
 		setNullable(getUserLoginColumnName(), false);
 		setUnique(getUserLoginColumnName(), true);
-		addIndex("IDX_LOGIN_REC_2", getUserIDColumnName());
 		
+		addIndex("IDX_LOGIN_REC_2", getUserIDColumnName());
+		addIndex("IDX_LOGIN_REC_3", new String[]{getUserIDColumnName(), getLoginTypeColumnName()});
+		addIndex("IDX_LOGIN_REC_4", new String[]{getUserIDColumnName(), getUserLoginColumnName()});
+		addIndex("IDX_LOGIN_REC_5", getUserLoginColumnName());
+	    
 		getEntityDefinition().setBeanCachingActiveByDefault(true);
 		
 	}
@@ -206,6 +219,38 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		return UserBMPBean.getColumnNameUserID();
 	}
 
+	public void setChangedByGroup(Group group){
+		setColumn(COLUMN_CHANGED_BY_GROUP, group);
+	}
+	
+	public void setChangedByGroupId(int changedByGroupId){
+		setColumn(COLUMN_CHANGED_BY_GROUP, changedByGroupId);
+	}
+	
+	public int getChangedByGroupId(){
+		return getIntColumnValue(COLUMN_CHANGED_BY_GROUP);
+	}
+	
+	public Group getChangedByGroup(){
+		return (Group) getColumnValue(COLUMN_CHANGED_BY_GROUP);
+	}
+	
+	public void setChangedByUser(User changedByUser){
+		setColumn(COLUMN_CHANGED_BY_USER, changedByUser);
+	}
+	
+	public void setChangedByUserId(int changedByUserId){
+		setColumn(COLUMN_CHANGED_BY_USER, changedByUserId);
+	}
+	
+	public int getChangedByUserId(){
+		return getIntColumnValue(COLUMN_CHANGED_BY_USER);
+	}
+	
+	public User getChangedByUser(){
+		return (User) getColumnValue(COLUMN_CHANGED_BY_USER);
+	}
+	
 	public void setLastChanged(Timestamp when) {
 		setColumn(getLastChangedColumnName(), when);
 	}

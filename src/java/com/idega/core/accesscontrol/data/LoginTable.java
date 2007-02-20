@@ -1,5 +1,5 @@
 /*
- * $Id: LoginTable.java,v 1.26 2006/03/29 13:10:16 laddi Exp $
+ * $Id: LoginTable.java,v 1.27 2007/02/20 16:55:18 eiki Exp $
  * Created on Jan 15, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -10,8 +10,10 @@
 package com.idega.core.accesscontrol.data;
 
 import java.sql.Timestamp;
-import com.idega.user.data.User;
+
 import com.idega.data.IDOEntity;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
 import com.idega.util.EncryptionType;
 
 
@@ -19,10 +21,10 @@ import com.idega.util.EncryptionType;
  * <p>
  * TODO laddi Describe Type LoginTable
  * </p>
- *  Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/02/20 16:55:18 $ by $Author: eiki $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 public interface LoginTable extends IDOEntity, EncryptionType {
 
@@ -65,10 +67,6 @@ public interface LoginTable extends IDOEntity, EncryptionType {
 	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getUser
 	 */
 	public User getUser();
-	/**
-	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getUser
-	 */
-	public void setUser(User user);
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setUserId
@@ -79,6 +77,51 @@ public interface LoginTable extends IDOEntity, EncryptionType {
 	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setUserId
 	 */
 	public void setUserId(int userId);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setUser
+	 */
+	public void setUser(User user);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setChangedByGroup
+	 */
+	public void setChangedByGroup(Group group);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setChangedByGroupId
+	 */
+	public void setChangedByGroupId(int changedByGroupId);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getChangedByGroupId
+	 */
+	public int getChangedByGroupId();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getChangedByGroup
+	 */
+	public Group getChangedByGroup();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setChangedByUser
+	 */
+	public void setChangedByUser(User changedByUser);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setChangedByUserId
+	 */
+	public void setChangedByUserId(int changedByUserId);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getChangedByUserId
+	 */
+	public int getChangedByUserId();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getChangedByUser
+	 */
+	public User getChangedByUser();
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setLastChanged
