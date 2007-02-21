@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.58.2.2 2007/02/21 14:05:37 eiki Exp $
+ * $Id: LoginDBHandler.java,v 1.58.2.3 2007/02/21 14:33:32 eiki Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -147,7 +147,7 @@ public class LoginDBHandler {
 				loginTable.setChangedByUser(changer);
 				
 				//don't change the primary group though!
-				if(loginTable.getChangedByGroupId()!=-1){
+				if(loginTable.getChangedByGroupId()>0){
 					Group primary = changer.getPrimaryGroup();
 				
 					if(primary!=null){
