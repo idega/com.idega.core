@@ -16,9 +16,10 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 
-import com.idega.core.user.data.User;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOQuery;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
 import com.idega.user.data.UserBMPBean;
 
 
@@ -34,6 +35,9 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 	    private static final String COLUMN_USER_PASSWORD = "USER_PASSWORD";
     	private static final String COLUMN_LAST_CHANGED = "LAST_CHANGED";
 	    private static final String COLUMN_LOGIN_TYPE = "LOGIN_TYPE";
+	    private static final String COLUMN_CHANGED_BY_USER = "CHANGED_BY_USER_ID";
+		private static final String COLUMN_CHANGED_BY_GROUP = "CHANGED_BY_GROUP_ID";
+	
 
         private transient String unEncryptedUserPassword;
 
@@ -49,18 +53,24 @@ public class LoginTableBMPBean extends com.idega.data.GenericEntity implements c
 
 
 	public void initializeAttributes(){
-          addAttribute(this.getIDColumnName());
-          addAttribute(getColumnNameUserID(),"Notandi",true,true,Integer.class,"many-to-one",User.class);
-          addAttribute(getUserLoginColumnName(),"Notandanafn",true,true,String.class,32);
-          addAttribute(getNewUserPasswordColumnName(),"Lykilor�",true,true,String.class,255);
-          //deprecated column
-          addAttribute(getOldUserPasswordColumnName(),"Lykilor�",true,true,String.class,20);
-          addAttribute(getLastChangedColumnName(),"S��ast breytt",true,true,Timestamp.class);
-          addAttribute(getLoginTypeColumnName(),"Tegund a�gagns",true,true,String.class,32);
-          setNullable(getUserLoginColumnName(), false);
-          setUnique(getUserLoginColumnName(),true);
-
-          addIndex("IDX_LOGIN_REC_2", getUserIDColumnName());
+  		addAttribute(this.getIDColumnName());
+		addAttribute(getColumnNameUserID(), "User id", true, true, Integer.class, "many-to-one", User.class);
+		addAttribute(getUserLoginColumnName(), "User name", true, true, String.class, 32);
+		addAttribute(getNewUserPasswordColumnName(), "Password (encrypted)", true, true, String.class, 255);
+		// deprecated column
+		addAttribute(getOldUserPasswordColumnName(), "Password (deprecated)", true, true, String.class, 20);
+		addAttribute(getLastChangedColumnName(), "Last changed", true, true, Timestamp.class);
+		addAttribute(getLoginTypeColumnName(), "Login type", true, true, String.class, 32);
+		addAttribute(COLUMN_CHANGED_BY_USER, "Last changed by user id", true, true, Integer.class, "many-to-one", User.class);
+		addAttribute(COLUMN_CHANGED_BY_GROUP, "Last changed by group id", true, true, Integer.class, "many-to-one", Group.class);
+		
+		setNullable(getUserLoginColumnName(), false);
+		setUnique(getUserLoginColumnName(), true);
+		
+		addIndex("IDX_LOGIN_REC_2", getUserIDColumnName());
+		addIndex("IDX_LOGIN_REC_3", new String[]{getUserIDColumnName(), getLoginTypeColumnName()});
+		addIndex("IDX_LOGIN_REC_4", new String[]{getUserIDColumnName(), getUserLoginColumnName()});
+		addIndex("IDX_LOGIN_REC_5", getUserLoginColumnName());
 	}
 
 
@@ -436,6 +446,39 @@ public void setUserPasswordInClearText(String password){
         public Timestamp getLastChanged() {
           return((Timestamp)getColumnValue(getLastChangedColumnName()));
         }
+        
+        public void setChangedByGroup(Group group){
+    		setColumn(COLUMN_CHANGED_BY_GROUP, group);
+    	}
+    	
+    	public void setChangedByGroupId(int changedByGroupId){
+    		setColumn(COLUMN_CHANGED_BY_GROUP, changedByGroupId);
+    	}
+    	
+    	public int getChangedByGroupId(){
+    		return getIntColumnValue(COLUMN_CHANGED_BY_GROUP);
+    	}
+    	
+    	public Group getChangedByGroup(){
+    		return (Group) getColumnValue(COLUMN_CHANGED_BY_GROUP);
+    	}
+    	
+    	public void setChangedByUser(User changedByUser){
+    		setColumn(COLUMN_CHANGED_BY_USER, changedByUser);
+    	}
+    	
+    	public void setChangedByUserId(int changedByUserId){
+    		setColumn(COLUMN_CHANGED_BY_USER, changedByUserId);
+    	}
+    	
+    	public int getChangedByUserId(){
+    		return getIntColumnValue(COLUMN_CHANGED_BY_USER);
+    	}
+    	
+    	public User getChangedByUser(){
+    		return (User) getColumnValue(COLUMN_CHANGED_BY_USER);
+    	}
+    	
 
         /**
          * Sets both the intented encrypted password and the original unencrypted password for temporary retrieval
@@ -467,7 +510,7 @@ public void setUserPasswordInClearText(String password){
 		}
 		
 		
-		public Collection ejbFindLoginsForUser(User user) throws FinderException{
+		public Collection ejbFindLoginsForUser(com.idega.core.user.data.User user) throws FinderException{
 			
 			IDOQuery query = idoQuery();
 			query.appendSelectAllFrom(this);

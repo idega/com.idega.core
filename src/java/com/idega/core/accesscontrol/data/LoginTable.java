@@ -1,6 +1,7 @@
 package com.idega.core.accesscontrol.data;
 
-import com.idega.core.user.data.User;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
 
 
 public interface LoginTable extends com.idega.data.IDOLegacyEntity,com.idega.util.EncryptionType
@@ -12,6 +13,46 @@ public interface LoginTable extends com.idega.data.IDOLegacyEntity,com.idega.uti
  public java.lang.String getUserPassword();
  public void setDefaultValues();
  public void setLastChanged(java.sql.Timestamp p0);
+ /**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setChangedByGroup
+	 */
+	public void setChangedByGroup(Group group);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setChangedByGroupId
+	 */
+	public void setChangedByGroupId(int changedByGroupId);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getChangedByGroupId
+	 */
+	public int getChangedByGroupId();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getChangedByGroup
+	 */
+	public Group getChangedByGroup();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setChangedByUser
+	 */
+	public void setChangedByUser(User changedByUser);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#setChangedByUserId
+	 */
+	public void setChangedByUserId(int changedByUserId);
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getChangedByUserId
+	 */
+	public int getChangedByUserId();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getChangedByUser
+	 */
+	public User getChangedByUser();
+ 
  public void setUserId(java.lang.Integer p0);
  public void setUserId(int p0);
  public void setUserLogin(java.lang.String p0);

@@ -1,6 +1,7 @@
 package com.idega.core.accesscontrol.data;
 
 
+
 public class LoginTableHomeImpl extends com.idega.data.IDOFactory implements LoginTableHome
 {
  protected Class getEntityInterfaceClass(){
