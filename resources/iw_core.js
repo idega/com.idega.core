@@ -580,7 +580,7 @@ function insertJavaScriptFileToHeader(src) {
 	var script = document.createElement("script");
 	script.setAttribute("type","text/javascript");
 	script.setAttribute("src", src);
-	document.getElementsByTagName("head")[0].appendChild(script); 
+	document.getElementsByTagName("head")[0].appendChild(script);
 }
 
 function isEnterEvent(event) {
@@ -867,7 +867,24 @@ function setElementNewValue(element, value) {
 var COMMENTS_POSTED_LABEL = "Posted";
 var COMMENTS_MESSAGE = "Loading comments...";
 var COMMENTS_LINK_TO_FILE = "/files";
-var SHOW_COMMENTS_LIST = false;
+
+var ADDED_LINK_TO_ATOM = false;
+var COMMENTS_ATOM_LINK_TITLE = "Atom Feed";
+var COMMENTS_ATOMS_SERVER = "127.0.0.1";
+
+function setCommentsAtomLinkTitle(title) {
+	COMMENTS_ATOM_LINK_TITLE = title;
+}
+function getCommentsAtomLinkTitle() {
+	return COMMENTS_ATOM_LINK_TITLE;
+}
+
+function setCommentsAtomsServer(atomServer) {
+	COMMENTS_ATOMS_SERVER = atomServer;
+}
+function getCommentsAtomsServer() {
+	return COMMENTS_ATOMS_SERVER;
+}
 
 function setPostedLabel(postedLabel) {
 	COMMENTS_POSTED_LABEL = postedLabel;
@@ -890,29 +907,90 @@ function getLinkToComments() {
 	return COMMENTS_LINK_TO_FILE;
 }
 
-function setActiveReverseAjax(active) {
-	if (isSafariBrowser()) {
-		setTimeout("DWREngine.setActiveReverseAjax("+active+")", 1000);
-	}
-	else {
-		DWREngine.setActiveReverseAjax(active);
+function setActiveReverseAjax() {
+	if (!isSafariBrowser()) {
+		enableReverseAjax();
 	}
 }
 
 function getAllArticleComments(linkToComments) {
 	if (isSafariBrowser()) {
-		setTimeout("getComments('"+linkToComments+"')", 1000);
+		setTimeout("getComments('"+linkToComments+"')", 5000);
 	}
 	else {
 		getComments(linkToComments);
 	}
 }
 
-function setShowCommentsList(showComments) {
-	SHOW_COMMENTS_LIST = showComments;
+function getCommentsCount() {
+	if (isSafariBrowser()) {
+		setTimeout("getCommentsSize()", 5000);
+	}
+	else {
+		getCommentsSize();
+	}
 }
-function isShowCommentsList() {
-	return SHOW_COMMENTS_LIST;
+
+function addAtomLinkForComments() {
+	addAtomLinkInHeader();
+	if (isSafariBrowser()) {
+		setTimeout("addAtomButtonForComments()", 3000);
+	}
+	else {
+		addAtomButtonForComments();
+	}
+}
+
+function addAtomButtonForComments() {
+	var atomContainerId = "blog-rss-feeds";
+	var temp = document.getElementById(atomContainerId);
+	if (temp != null) {
+		var tempParent = temp.parentNode;
+		if (tempParent != null) {
+			tempParent.removeChild(temp);
+		}
+	}
+	
+	// Sidebar
+	var sidebar = document.getElementById("sidebar");
+	if (sidebar == null) {
+		sidebar = document.createElement("div");
+		sidebar.setAttribute("id", "sidebar");
+		document.body.appendChild(sidebar);
+	}
+	
+	// Feed container
+	var atomContainer = document.createElement("div");
+	atomContainer.setAttribute("id", atomContainerId);
+	
+	// Feed
+	var linkToFeed = document.createElement("a");
+	linkToFeed.setAttribute("class", "blog-rss-link");
+	linkToFeed.setAttribute("title", getCommentsAtomLinkTitle());
+	linkToFeed.setAttribute("href", getCommentsAtomsServer() + getLinkToComments());
+	linkToFeed.setAttribute("rel", "alternate");
+	linkToFeed.setAttribute("type", "application/atom+xml");
+	linkToFeed.appendChild(document.createTextNode(getCommentsAtomLinkTitle()));
+	atomContainer.appendChild(linkToFeed);
+	
+	// Break line
+	atomContainer.appendChild(document.createElement("br"));
+	
+	sidebar.appendChild(atomContainer);
+	
+	addAtomLinkInHeader();
+}
+
+function addAtomLinkInHeader() {
+	if (!ADDED_LINK_TO_ATOM) {
+		var linkToAtomInHeader = document.createElement("link");
+		linkToAtomInHeader.setAttribute("href", getCommentsAtomsServer() + getLinkToComments());
+		linkToAtomInHeader.setAttribute("title", "Atom 1.0");
+		linkToAtomInHeader.setAttribute("type", "application/atom+xml");
+		linkToAtomInHeader.setAttribute("rel", "alternate");
+		document.getElementsByTagName("head")[0].appendChild(linkToAtomInHeader);
+		ADDED_LINK_TO_ATOM = true;
+	}
 }
 /** Comment logic ends **/
 
