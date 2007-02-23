@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.26.2.1 2007/01/22 08:10:28 tryggvil Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.26.2.2 2007/02/23 12:30:06 tryggvil Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -56,10 +56,10 @@ import com.idega.util.RequestUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2007/01/22 08:10:28 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/02/23 12:30:06 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.26.2.1 $
+ * @version $Revision: 1.26.2.2 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -84,7 +84,7 @@ public class IWAuthenticator extends BaseFilter {
 	// following string are used as keys in the sharedState map used by LoginModules
 	public static final String SESSION_KEY = "session"; // a HttpSession
 	public static final String REQUEST_KEY = "request"; // a HttpRequest
-	
+	private static final String PROPERTY_SLIDEAUTHENTICATOR_ENABLED = "slide.authenticator.enable";
 	private static Logger log = Logger.getLogger(IWAuthenticator.class
 			.getName());
 	
@@ -161,11 +161,38 @@ public class IWAuthenticator extends BaseFilter {
 		if(didInterrupt){
 			return;
 		}
-		
-		chain.doFilter(new IWJAASAuthenticationRequestWrapper(request), response);
-
+		if(isJaasAuthenticatorEnabled(request)){
+			chain.doFilter(new IWJAASAuthenticationRequestWrapper(request), response);
+		}
+		else{
+			chain.doFilter(request, response);
+		}
 	}
 
+	
+	/**
+	 * <p>
+	 * Returns true if feature of adding idegaweb principals and roles into the HttpServletRequest
+	 * </p>
+	 * @return
+	 */
+	protected boolean isJaasAuthenticatorEnabled(HttpServletRequest request) {
+		
+		IWMainApplication iwma = getIWMainApplication(request);
+		String slideServletMapping = "/content";
+		
+		//Logic for disabling the IWJAASAuthenticationRequestWrapper to be used on requests on slide on "/content/*"
+		String prop = iwma.getSettings().getProperty(PROPERTY_SLIDEAUTHENTICATOR_ENABLED);
+		String requestedUri = getURIMinusContextPath(request);
+		
+		if(prop!=null){
+			if(requestedUri.startsWith(slideServletMapping)){
+				return Boolean.valueOf(prop).booleanValue();
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * <p>
 	 * Processes the possibly attatched AuthenticationListeners. Returns true if one of the
