@@ -16,10 +16,10 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * Implementation of a general cacher for UIComponents.	
  * </p>
- *  Last modified: $Date: 2006/06/08 15:36:54 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/02/23 17:25:46 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class UIComponentCacher {
 	
@@ -115,7 +115,7 @@ public class UIComponentCacher {
 		return iwcm.getCache(DEFAULT_CACHE_NAME);
 	}
 
-	protected String getCacheKey(UIComponent component, FacesContext context) {
+	public String getCacheKey(UIComponent component, FacesContext context) {
 		return getCacheKeyStringBuffer(component, context).toString();
 	}
 	

@@ -868,9 +868,62 @@ var COMMENTS_POSTED_LABEL = "Posted";
 var COMMENTS_MESSAGE = "Loading comments...";
 var COMMENTS_LINK_TO_FILE = "/files";
 
-var ADDED_LINK_TO_ATOM = false;
+var ADDED_LINK_TO_ATOM_IN_HEAD = false;
+var ADDED_LINK_TO_ATOM_IN_BODY = false;
 var COMMENTS_ATOM_LINK_TITLE = "Atom Feed";
 var COMMENTS_ATOMS_SERVER = "127.0.0.1";
+var COMPONENT_CACHE_KEY = "";
+var LINK_TO_ATOM_FEED_IMAGE = "/idegaweb/bundles/com.idega.content.bundle/resources/images/feed.png";
+var ADD_NOTIFICATION_TEXT = "Do You wish to receive notifications about new comments?";
+var COMMENTS_YES = "Yes";
+var COMMENTS_NO = "No";
+var COMMENTS_ENTER_EMAIL = "Please enter Your e-mail";
+
+function getEnterEmailText() {
+	return COMMENTS_ENTER_EMAIL;
+}
+function setEnterEmailText(text) {
+	COMMENTS_ENTER_EMAIL = text;
+}
+
+function getNoText() {
+	return COMMENTS_NO;
+}
+function setNoText(text) {
+	COMMENTS_NO = text;
+}
+
+function getYesText() {
+	return COMMENTS_YES;
+}
+function setYesText(text) {
+	COMMENTS_YES = text;
+}
+
+function getAddNotificationText() {
+	return ADD_NOTIFICATION_TEXT;
+}
+function setAddNotificationText(text) {
+	ADD_NOTIFICATION_TEXT = text;
+}
+
+function setComponentCacheKey(key) {
+	COMPONENT_CACHE_KEY = key;
+}
+function getComponentCacheKey() {
+	return COMPONENT_CACHE_KEY;
+}
+
+function setAddedLinkToAtomInBody(added) {
+	ADDED_LINK_TO_ATOM_IN_BODY = added;
+}
+
+function setLinkToAtomFeedImage(link) {
+	LINK_TO_ATOM_FEED_IMAGE = link;
+}
+function getLinkToAtomFeedImage() {
+	return LINK_TO_ATOM_FEED_IMAGE;
+}
 
 function setCommentsAtomLinkTitle(title) {
 	COMMENTS_ATOM_LINK_TITLE = title;
@@ -922,74 +975,55 @@ function getAllArticleComments(linkToComments) {
 	}
 }
 
-function getCommentsCount() {
-	if (isSafariBrowser()) {
-		setTimeout("getCommentsSize()", 5000);
-	}
-	else {
-		getCommentsSize();
-	}
-}
-
-function addAtomLinkForComments() {
-	addAtomLinkInHeader();
-	if (isSafariBrowser()) {
-		setTimeout("addAtomButtonForComments()", 3000);
-	}
-	else {
-		addAtomButtonForComments();
-	}
-}
-
 function addAtomButtonForComments() {
-	var atomContainerId = "blog-rss-feeds";
-	var temp = document.getElementById(atomContainerId);
-	if (temp != null) {
-		var tempParent = temp.parentNode;
-		if (tempParent != null) {
-			tempParent.removeChild(temp);
+	if (!ADDED_LINK_TO_ATOM_IN_BODY) {
+		var atomLinkId = "article_comments_link_to_feed";
+		var temp = document.getElementById(atomLinkId);
+		if (temp != null) {
+			var tempParent = temp.parentNode;
+			if (tempParent != null) {
+				tempParent.removeChild(temp);
+			}
 		}
+		
+		// Container
+		var container = document.getElementById("article_comments_link_label_container");
+		if (container == null) {
+			return;
+		}
+		
+		// Link
+		var linkToFeed = document.createElement("a");
+		linkToFeed.setAttribute("id", atomLinkId);
+		linkToFeed.setAttribute("href", getCommentsAtomsServer() + getLinkToComments());
+		linkToFeed.setAttribute("rel", "alternate");
+		linkToFeed.setAttribute("type", "application/atom+xml");
+		
+		linkToFeed.appendChild(document.createTextNode(" "));
+		
+		// Image
+		var image = document.createElement("img");
+		image.setAttribute("src", getLinkToAtomFeedImage());
+		image.setAttribute("title", getCommentsAtomLinkTitle());
+		image.setAttribute("alt", getCommentsAtomLinkTitle());
+		image.setAttribute("name", getCommentsAtomLinkTitle());
+		linkToFeed.appendChild(image);
+		
+		container.appendChild(linkToFeed);
 	}
-	
-	// Sidebar
-	var sidebar = document.getElementById("sidebar");
-	if (sidebar == null) {
-		sidebar = document.createElement("div");
-		sidebar.setAttribute("id", "sidebar");
-		document.body.appendChild(sidebar);
-	}
-	
-	// Feed container
-	var atomContainer = document.createElement("div");
-	atomContainer.setAttribute("id", atomContainerId);
-	
-	// Feed
-	var linkToFeed = document.createElement("a");
-	linkToFeed.setAttribute("class", "blog-rss-link");
-	linkToFeed.setAttribute("title", getCommentsAtomLinkTitle());
-	linkToFeed.setAttribute("href", getCommentsAtomsServer() + getLinkToComments());
-	linkToFeed.setAttribute("rel", "alternate");
-	linkToFeed.setAttribute("type", "application/atom+xml");
-	linkToFeed.appendChild(document.createTextNode(getCommentsAtomLinkTitle()));
-	atomContainer.appendChild(linkToFeed);
-	
-	// Break line
-	atomContainer.appendChild(document.createElement("br"));
-	
-	sidebar.appendChild(atomContainer);
 	
 	addAtomLinkInHeader();
 }
 
 function addAtomLinkInHeader() {
-	if (!ADDED_LINK_TO_ATOM) {
+	if (!ADDED_LINK_TO_ATOM_IN_HEAD) {
 		var linkToAtomInHeader = document.createElement("link");
 		linkToAtomInHeader.setAttribute("href", getCommentsAtomsServer() + getLinkToComments());
 		linkToAtomInHeader.setAttribute("title", "Atom 1.0");
 		linkToAtomInHeader.setAttribute("type", "application/atom+xml");
 		linkToAtomInHeader.setAttribute("rel", "alternate");
 		document.getElementsByTagName("head")[0].appendChild(linkToAtomInHeader);
-		ADDED_LINK_TO_ATOM = true;
+		ADDED_LINK_TO_ATOM_IN_HEAD = true;
 	}
 }
 /** Comment logic ends **/
