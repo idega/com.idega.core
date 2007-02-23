@@ -5,6 +5,14 @@
   </properties>
   <body>
   
+	<release version="3.1.38" date="2007-02-23">
+		<action dev="tryggvil" type="fix">
+			Better handling of requests to the slide repository when the property 'slide.authenticator.enable' is set to false.<br/>
+			This was done by making the IWAuthenticator aware of the 'slide.authenticator.enable' and disable some functionality if it is set to 'false'
+			for http requests that are made to slide, that is if they begin with /content/*.
+		</action>
+	</release>
+  
 	<release version="3.1.37" date="2007-02-16">
 		<action dev="eiki" type="update">
 			Change the UserLoginTab in com.idega.user to fix a security hole along with Login and user classes in core.
