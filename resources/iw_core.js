@@ -961,7 +961,10 @@ function getLinkToComments() {
 }
 
 function setActiveReverseAjax() {
-	if (!isSafariBrowser()) {
+	if (isSafariBrowser()) {
+		setTimeout("enableReverseAjax()", 5000);
+	}
+	else {
 		enableReverseAjax();
 	}
 }
