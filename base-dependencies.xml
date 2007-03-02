@@ -53,12 +53,9 @@
         <dependency>
 	        <groupId>bundles</groupId>
 	        <artifactId>com.idega.block.web2.0</artifactId>
-	        <version>3.1.2</version>
+	        <version>3.1.4</version>
 	        <type>jar</type>
 	        <url>http://www.idega.com</url>
-	        <properties>
-        		<eclipse.dependency>true</eclipse.dependency>
-      		</properties>
     		</dependency>
     </dependencies>
 </project>
