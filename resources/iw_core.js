@@ -863,174 +863,6 @@ function setElementNewValue(element, value) {
 }
 /** Application Property logic ends **/
 
-/** Comment logic begins **/
-var COMMENTS_POSTED_LABEL = "Posted";
-var COMMENTS_MESSAGE = "Loading comments...";
-var COMMENTS_LINK_TO_FILE = "/files";
-
-var ADDED_LINK_TO_ATOM_IN_HEAD = false;
-var ADDED_LINK_TO_ATOM_IN_BODY = false;
-var COMMENTS_ATOM_LINK_TITLE = "Atom Feed";
-var COMMENTS_ATOMS_SERVER = "127.0.0.1";
-var COMPONENT_CACHE_KEY = "";
-var LINK_TO_ATOM_FEED_IMAGE = "/idegaweb/bundles/com.idega.content.bundle/resources/images/feed.png";
-var ADD_NOTIFICATION_TEXT = "Do You wish to receive notifications about new comments?";
-var COMMENTS_YES = "Yes";
-var COMMENTS_NO = "No";
-var COMMENTS_ENTER_EMAIL = "Please enter Your e-mail";
-
-function getEnterEmailText() {
-	return COMMENTS_ENTER_EMAIL;
-}
-function setEnterEmailText(text) {
-	COMMENTS_ENTER_EMAIL = text;
-}
-
-function getNoText() {
-	return COMMENTS_NO;
-}
-function setNoText(text) {
-	COMMENTS_NO = text;
-}
-
-function getYesText() {
-	return COMMENTS_YES;
-}
-function setYesText(text) {
-	COMMENTS_YES = text;
-}
-
-function getAddNotificationText() {
-	return ADD_NOTIFICATION_TEXT;
-}
-function setAddNotificationText(text) {
-	ADD_NOTIFICATION_TEXT = text;
-}
-
-function setComponentCacheKey(key) {
-	COMPONENT_CACHE_KEY = key;
-}
-function getComponentCacheKey() {
-	return COMPONENT_CACHE_KEY;
-}
-
-function setAddedLinkToAtomInBody(added) {
-	ADDED_LINK_TO_ATOM_IN_BODY = added;
-}
-
-function setLinkToAtomFeedImage(link) {
-	LINK_TO_ATOM_FEED_IMAGE = link;
-}
-function getLinkToAtomFeedImage() {
-	return LINK_TO_ATOM_FEED_IMAGE;
-}
-
-function setCommentsAtomLinkTitle(title) {
-	COMMENTS_ATOM_LINK_TITLE = title;
-}
-function getCommentsAtomLinkTitle() {
-	return COMMENTS_ATOM_LINK_TITLE;
-}
-
-function setCommentsAtomsServer(atomServer) {
-	COMMENTS_ATOMS_SERVER = atomServer;
-}
-function getCommentsAtomsServer() {
-	return COMMENTS_ATOMS_SERVER;
-}
-
-function setPostedLabel(postedLabel) {
-	COMMENTS_POSTED_LABEL = postedLabel;
-}
-function getPostedLabel() {
-	return COMMENTS_POSTED_LABEL;
-}
-
-function setCommentsLoadingMessage(message) {
-	COMMENTS_MESSAGE = message;
-}
-function getCommentsLoadingMessage() {
-	return COMMENTS_MESSAGE;
-}
-
-function setLinkToComments(linkToComments) {
-	COMMENTS_LINK_TO_FILE = linkToComments;
-}
-function getLinkToComments() {
-	return COMMENTS_LINK_TO_FILE;
-}
-
-function setActiveReverseAjax() {
-	if (isSafariBrowser()) {
-		setTimeout("enableReverseAjax()", 5000);
-	}
-	else {
-		enableReverseAjax();
-	}
-}
-
-function getAllArticleComments(linkToComments) {
-	if (isSafariBrowser()) {
-		setTimeout("getComments('"+linkToComments+"')", 5000);
-	}
-	else {
-		getComments(linkToComments);
-	}
-}
-
-function addAtomButtonForComments() {
-	if (!ADDED_LINK_TO_ATOM_IN_BODY) {
-		var atomLinkId = "article_comments_link_to_feed";
-		var temp = document.getElementById(atomLinkId);
-		if (temp != null) {
-			var tempParent = temp.parentNode;
-			if (tempParent != null) {
-				tempParent.removeChild(temp);
-			}
-		}
-		
-		// Container
-		var container = document.getElementById("article_comments_link_label_container");
-		if (container == null) {
-			return;
-		}
-		
-		// Link
-		var linkToFeed = document.createElement("a");
-		linkToFeed.setAttribute("id", atomLinkId);
-		linkToFeed.setAttribute("href", getCommentsAtomsServer() + getLinkToComments());
-		linkToFeed.setAttribute("rel", "alternate");
-		linkToFeed.setAttribute("type", "application/atom+xml");
-		
-		linkToFeed.appendChild(document.createTextNode(" "));
-		
-		// Image
-		var image = document.createElement("img");
-		image.setAttribute("src", getLinkToAtomFeedImage());
-		image.setAttribute("title", getCommentsAtomLinkTitle());
-		image.setAttribute("alt", getCommentsAtomLinkTitle());
-		image.setAttribute("name", getCommentsAtomLinkTitle());
-		linkToFeed.appendChild(image);
-		
-		container.appendChild(linkToFeed);
-	}
-	
-	addAtomLinkInHeader();
-}
-
-function addAtomLinkInHeader() {
-	if (!ADDED_LINK_TO_ATOM_IN_HEAD) {
-		var linkToAtomInHeader = document.createElement("link");
-		linkToAtomInHeader.setAttribute("href", getCommentsAtomsServer() + getLinkToComments());
-		linkToAtomInHeader.setAttribute("title", "Atom 1.0");
-		linkToAtomInHeader.setAttribute("type", "application/atom+xml");
-		linkToAtomInHeader.setAttribute("rel", "alternate");
-		document.getElementsByTagName("head")[0].appendChild(linkToAtomInHeader);
-		ADDED_LINK_TO_ATOM_IN_HEAD = true;
-	}
-}
-/** Comment logic ends **/
-
 function isSafariBrowser() {
 	if (navigator == null) {
 		return false;
@@ -1044,4 +876,21 @@ function isSafariBrowser() {
 		return false;
 	}
 	return true;
+}
+
+// Function to add event to any object, example: addEvent(window, "load", foo);
+function addEvent(object, eventType, functionName){ 
+	if (object.addEventListener) { 
+		object.addEventListener(eventType, functionName, false); 
+		return true;
+	} 
+	else {
+		if (object.attachEvent) {
+			var result = object.attachEvent("on"+eventType, functionName);
+			return result;
+		}
+		else { 
+   			return false;
+		}
+	} 
 }
