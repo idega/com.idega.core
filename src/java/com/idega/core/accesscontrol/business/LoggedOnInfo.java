@@ -1,5 +1,5 @@
 /*
- * $Id: LoggedOnInfo.java,v 1.20.2.1 2007/01/22 08:10:29 tryggvil Exp $
+ * $Id: LoggedOnInfo.java,v 1.20.2.2 2007/03/06 22:05:46 tryggvil Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -29,15 +29,16 @@ import com.idega.util.IWTimestamp;
  * up when the users session times out.
  * </p>
  *
- * Last modified: $Date: 2007/01/22 08:10:29 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/03/06 22:05:46 $ by $Author: tryggvil $
  *
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
  * 		   <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.20.2.1 $
+ * @version $Revision: 1.20.2.2 $
  */
 public class LoggedOnInfo implements HttpSessionBindingListener  {
 
   private static final String TICKET_CREDENTIAL = "ticket";
+  public static final String DEFAULT_LOGINTYPE_USERNAME_PASSWORD = "username_password";
  
   private User _user = null;
 //  private HttpSession _session = null; 
@@ -263,6 +264,24 @@ private void initializePersonalIdCredential(User user) {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * <p>
+	 * Gets the type of authentication mechanism used to authenticate as the current user.
+	 * Returns the same as getLoginType() except when null, then it returns the default
+	 * constant DEFAULT_LOGINTYPE_USERNAME_PASSWORD wich is set to "username_password".
+	 * </p>
+	 * @return
+	 */
+	public String getAuthenticationType(){
+		String loginType = getLoginType();
+		if(loginType==null){
+			return DEFAULT_LOGINTYPE_USERNAME_PASSWORD;
+		}
+		else{
+			return loginType;
+		}
 	}
 
 }

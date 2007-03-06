@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.26.2.2 2007/02/23 12:30:06 tryggvil Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.26.2.3 2007/03/06 22:05:46 tryggvil Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -56,10 +56,10 @@ import com.idega.util.RequestUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2007/02/23 12:30:06 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/03/06 22:05:46 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.26.2.2 $
+ * @version $Revision: 1.26.2.3 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -240,6 +240,8 @@ public class IWAuthenticator extends BaseFilter {
 		return false;
 	}
 
+	
+
 	/**
 	 * <p>
 	 * Processes possible redirects that might happen at login time.
@@ -254,28 +256,32 @@ public class IWAuthenticator extends BaseFilter {
 	 * @throws RemoteException
 	 */
 	protected boolean processRedirects(HttpServletRequest request, HttpServletResponse response, HttpSession session, LoginBusinessBean loginBusiness) throws IOException, RemoteException {
+		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
+		boolean redirectTuUserHomePage=false;
+		if (RequestUtil.isParameterSet(request,PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE)&&isLoggedOn){
+			redirectTuUserHomePage=true;
+		}
+		return processRedirects(request,response,session,loginBusiness,redirectTuUserHomePage);
+	}
+	
+	/**
+	 * <p>
+	 * Processes possible redirects that might happen at login time.
+	 * Returns true if a redirect did happen.
+	 * </p>
+	 * @param request
+	 * @param response
+	 * @param session
+	 * @param loginBusiness
+	 * @return
+	 * @throws IOException
+	 * @throws RemoteException
+	 */
+	protected boolean processRedirects(HttpServletRequest request, HttpServletResponse response, HttpSession session, LoginBusinessBean loginBusiness,boolean redirectToUserHomePage) throws IOException, RemoteException {
 		//We have to call this method again because the user might just have logged on before:
 		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
-		if (RequestUtil.isParameterSet(request,PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE)){
-			if(isLoggedOn) {
-				User user = loginBusiness.getCurrentUser(session);
-				int homePageID = user.getHomePageID();
-				if (homePageID > 0) {
-					IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
-					response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
-					return true;
-				}
-				
-				Group prmg = user.getPrimaryGroup(); 
-				if (prmg != null) {
-					homePageID = prmg.getHomePageID();
-					if (homePageID > 0) {
-						IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
-						response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
-						return true;
-					}
-				}
-			}
+		if(redirectToUserHomePage){
+			return redirectToUserHomepage(request, response, loginBusiness);
 		}
 		if (RequestUtil.isParameterSet(request,PARAMETER_REDIRECT_URI_ONLOGON) && isLoggedOn) {
 			String uri = getLoginRedirectUriOnLogonParsedWithVariables(request);
@@ -288,6 +294,41 @@ public class IWAuthenticator extends BaseFilter {
 			String uri = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGOFF);
 			if (uri!=null) {
 				response.sendRedirect(uri);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
+	
+	
+	/**
+	 * <p>
+	 * TODO tryggvil describe method redirectToUserHomepage
+	 * </p>
+	 * @param request
+	 * @param response
+	 * @param isLoggedOn
+	 * @throws IOException
+	 * @throws RemoteException
+	 */
+	protected boolean redirectToUserHomepage(HttpServletRequest request, HttpServletResponse response, LoginBusinessBean loginBusiness) throws IOException, RemoteException {
+		HttpSession session = request.getSession();
+		User user = loginBusiness.getCurrentUser(session);
+		int homePageID = user.getHomePageID();
+		if (homePageID > 0) {
+			IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
+			response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
+			return true;
+		}
+		
+		Group prmg = user.getPrimaryGroup(); 
+		if (prmg != null) {
+			homePageID = prmg.getHomePageID();
+			if (homePageID > 0) {
+				IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
+				response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
 				return true;
 			}
 		}

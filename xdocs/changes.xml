@@ -5,6 +5,12 @@
   </properties>
   <body>
   
+	<release version="3.1.39" date="2007-03-06">
+		<action dev="tryggvil" type="update">
+			Updates and modifications to implement Icelandic PKI Authentication inside is.idega.block.pki module.
+		</action>
+	</release>
+  
 	<release version="3.1.38" date="2007-02-23">
 		<action dev="tryggvil" type="fix">
 			Better handling of requests to the slide repository when the property 'slide.authenticator.enable' is set to false.<br/>
