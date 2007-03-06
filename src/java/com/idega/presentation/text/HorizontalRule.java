@@ -1,5 +1,5 @@
 /*
- * $Id: HorizontalRule.java,v 1.10 2006/04/09 12:13:16 laddi Exp $
+ * $Id: HorizontalRule.java,v 1.10.2.1 2007/03/06 22:31:49 tryggvil Exp $
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -16,10 +16,10 @@ import com.idega.presentation.PresentationObject;
  * <p>
  * Component to render out a Horizontal Rule or &lt;HR&gt; tag;
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/03/06 22:31:49 $ by $Author: tryggvil $
  * 
- * @author <a href="mailto:laddi@idega.is">Þórhallur Helgason</a>,<a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.10 $
+ * @author <a href="mailto:laddi@idega.is">Thorhallur Helgason</a>,<a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.10.2.1 $
  */
 public class HorizontalRule extends PresentationObject {
 

@@ -1,5 +1,5 @@
 /*
- * $Id: TestGraphics.java,v 1.8 2006/02/22 20:52:49 laddi Exp $
+ * $Id: TestGraphics.java,v 1.8.2.1 2007/03/06 22:31:50 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -34,7 +34,7 @@ public class TestGraphics {
     String legend[] = new String[5];
     legend[0] = "Ernir";
     legend[1] = "Fuglar";
-    legend[2] = "Pör";
+    legend[2] = "Por";
     legend[3] = "Skollar";
     legend[4] = "Skrambar+";
     Double data[] = new Double[5];
@@ -48,7 +48,7 @@ public class TestGraphics {
       CreateChart chart =new CreateChart();
       chart.setData(data);
       chart.setLegend(legend);
-      //Hérna á að nota Constants.getChartFileRootDir() í staðinn
+      //Here Constants.getChartFileRootDir() should be used instead
       chart.setFilePrefix("c:\\");
       chart.setFilePostfix("temp");
       chart.setWebPrefix("/tio/no/survey/results/");

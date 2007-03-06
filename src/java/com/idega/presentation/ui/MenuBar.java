@@ -13,9 +13,9 @@ import com.idega.presentation.Script;
 
  * Description:  <p>
 
- * Copyright:    Copyright (c) idega margmi�lun hf.<p>
+ * Copyright:    Copyright (c) idega margmidlun hf.<p>
 
- * Company:      idega margmi�lun hf.<p>
+ * Company:      idega margmidlun hf.<p>
 
  * @author idega 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur �. Saemundsson</a>
 

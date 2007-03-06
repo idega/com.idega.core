@@ -1,5 +1,5 @@
 /*
- * $Id: BlobWrapper.java,v 1.16 2006/04/09 12:13:15 laddi Exp $
+ * $Id: BlobWrapper.java,v 1.16.2.1 2007/03/06 22:31:49 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -395,7 +395,7 @@ public class BlobWrapper {
 	
 		PreparedStatement myPreparedStatement = Conn.prepareStatement ( statement );
 	
-	        myPreparedStatement.setString(1, "00000001");// 00000001 i stað hins venjulega empty_blob()
+	        myPreparedStatement.setString(1, "00000001");// 00000001 i stad hins venjulega empty_blob()
 	
 	        myPreparedStatement.setString(2, ContentType );
 	

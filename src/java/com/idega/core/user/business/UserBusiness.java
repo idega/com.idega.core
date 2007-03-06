@@ -23,7 +23,7 @@ import com.idega.util.reflect.MethodInvoker;
 /**
  * Title:        User
  * Copyright:    Copyright (c) 2000 idega.is All Rights Reserved
- * Company:      idega margmi�lun
+ * Company:      idega margmidlun
  * @author
  * @version 1.0
  * @deprecated use com.idega.user.business.UserBusiness

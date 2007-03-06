@@ -1,5 +1,5 @@
 /*
- * $Id: PieChart.java,v 1.7 2006/04/09 12:13:12 laddi Exp $
+ * $Id: PieChart.java,v 1.7.2.1 2007/03/06 22:31:49 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -42,7 +42,7 @@ public class PieChart extends Chart{
    }
 
    /**
-    * Lýsing á falli
+    * Description of method
     *
     * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
     * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.

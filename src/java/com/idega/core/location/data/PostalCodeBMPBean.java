@@ -66,10 +66,10 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		 * pCode.setPostalCode("101"); pCode.setName("Reykjavik");
 		 * pCode.setCountryID(country.getID()); pCode.insert(); pCode =
 		 * ((com.idega.core.data.PostalCodeHome)com.idega.data.IDOLookup.getHomeLegacy(PostalCode.class)).createLegacy();
-		 * pCode.setPostalCode("200"); pCode.setName("Kópavogur");
+		 * pCode.setPostalCode("200"); pCode.setName("KÃ³pavogur");
 		 * pCode.setCountryID(country.getID()); pCode.insert(); pCode =
 		 * ((com.idega.core.data.PostalCodeHome)com.idega.data.IDOLookup.getHomeLegacy(PostalCode.class)).createLegacy();
-		 * pCode.setPostalCode("201");< pCode.setName("Kópavogur");
+		 * pCode.setPostalCode("201");< pCode.setName("KÃ³pavogur");
 		 * pCode.setCountryID(country.getID()); pCode.insert(); }
 		 */
 	}

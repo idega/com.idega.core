@@ -444,13 +444,13 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 }
 
 /**
- * @todo Kalla á TabPagePresentation hlut frá ui-inu og setja viðeigani síðu í
+ * @todo Kalla a TabPagePresentation hlut fra ui-inu og setja videigani sidu a
  *       hann.
  * 
- * @todo Selecta viðeigandi hlut og láta TabPresentatnion vita. Nota alltaf
- * sama TabPresentation hlutinn en kalla á fireStateChange() fallið.
- * adda í Tabpresentationhlutinn um leið og hlut er addað í TabbedPane. Veldur
- * vandræðum ef að skipta á um UI því þá þarf að adda öllu í TabPresentation aftur.
+ * @todo Selecta videigandi hlut og lata TabPresentatnion vita. Nota alltaf
+ * sama TabPresentation hlutinn en kalla a fireStateChange() fallid.
+ * adda a Tabpresentationhlutinn um leid og hlut er addad a TabbedPane. Veldur
+ * vandraedum ef ad skipta a um UI thvi ad tharf ad adda ollu a TabPresentation aftur.
  * 
- * @todo stroka út setBorder í Table
+ * @todo stroka ut setBorder i Table
  */

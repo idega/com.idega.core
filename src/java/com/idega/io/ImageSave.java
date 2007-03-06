@@ -268,7 +268,7 @@ System.out.println("ImageSave : height ="+height);
 
 	PreparedStatement myPreparedStatement = Conn.prepareStatement ( statement );
 
-        myPreparedStatement.setString(1, "00000001");// 00000001 i stað hins venjulega empty_blob()
+        myPreparedStatement.setString(1, "00000001");// 00000001 instead of the usual empty_blob()
 
         myPreparedStatement.setString(2, ContentType );
 

@@ -8,7 +8,7 @@
 
  * Copyright:    Copyright (c) idega<p>
 
- * Company:      idega margmiðlun<p>
+ * Company:      idega margmidlun<p>
 
  * @author idega 2000 - idega team - <a href="mailto:gummi@idega.is">gummi@idega.is</a>
 
@@ -102,9 +102,9 @@ public class IdegaTree {
 
   /**
 
-   * Þetta fall byr til tóman hnut sem foreldri ef það er ekki til fyrir og
+   * ï¿½etta fall byr til tï¿½man hnut sem foreldri ef ï¿½aï¿½ er ekki til fyrir og
 
-   * skrifar þar af leiðandi yfir hnut komi annar með sama ID.
+   * skrifar ï¿½ar af leiï¿½andi yfir hnut komi annar meï¿½ sama ID.
 
    */
 
@@ -146,7 +146,7 @@ public class IdegaTree {
 
   /**
 
-   * Þetta fall krefst þess að foreldri se til i trenu
+   * ï¿½etta fall krefst ï¿½ess aï¿½ foreldri se til i trenu
 
    */
 
@@ -168,7 +168,7 @@ public class IdegaTree {
 
   /**
 
-   * eiðir hnut en færir börn sin a foreldri sitt
+   * eiï¿½ir hnut en fï¿½rir bï¿½rn sin a foreldri sitt
 
    */
 
@@ -194,7 +194,7 @@ public class IdegaTree {
 
   /**
 
-   * eiðir hnut og öllu þvi sem fyrir neðan hann er (ekki utfært)
+   * eiï¿½ir hnut og ï¿½llu ï¿½vi sem fyrir neï¿½an hann er (ekki utfï¿½rt)
 
    */
 
@@ -216,7 +216,7 @@ public class IdegaTree {
 
   /**
 
-   * Kallar á toString() fallið ur Hashtable hlutnum sem heldur utan um tréð.
+   * Kallar ï¿½ toString() falliï¿½ ur Hashtable hlutnum sem heldur utan um trï¿½ï¿½.
 
    */
 
@@ -230,7 +230,7 @@ public class IdegaTree {
 
 
 
-  //  ### Private - Föll  ###
+  //  ### Private - Fï¿½ll  ###
 
 
 

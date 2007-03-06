@@ -5,7 +5,7 @@ package com.idega.core.accesscontrol.data;
  * Title:        AccessControl
  * Description:
  * Copyright:    Copyright (c) 2001 idega.is All Rights Reserved
- * Company:      idega margmiðlun
+ * Company:      idega margmidlun
  * @author
  * @version 1.1
  * @deprecated All hardcoded group "type" classes should be avoided. Just use a regular com.idega.user.data.Group and set its grouptype.

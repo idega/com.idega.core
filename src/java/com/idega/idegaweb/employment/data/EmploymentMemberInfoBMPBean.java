@@ -7,7 +7,6 @@ package com.idega.idegaweb.employment.data;
 //import java.util.*;
 
 import java.sql.SQLException;
-
 import com.idega.core.user.data.User;
 import com.idega.data.genericentity.Member;
 
@@ -37,17 +36,17 @@ public class EmploymentMemberInfoBMPBean extends com.idega.data.GenericEntity im
 
 		addAttribute(getIDColumnName());
 
-		addAttribute("title","Titill",true,true, "java.lang.String");
+		addAttribute("title","Title",true,true, "java.lang.String");
 
-		addAttribute("education","Menntun",true,true, "java.lang.String",3500);
+		addAttribute("education","Education",true,true, "java.lang.String",3500);
 
-//		addAttribute("school","Skóli",true,true, "java.lang.String",3500);
+//		addAttribute("school","School",true,true, "java.lang.String",3500);
 
-		addAttribute("cv","Starfsferill",true,true, "java.lang.String",3500);
+		addAttribute("cv","CV",true,true, "java.lang.String",3500);
 
-		addAttribute("began_work","hóf störf", true, true, "java.lang.String");
+		addAttribute("began_work","hï¿½f stï¿½rf", true, true, "java.lang.String");
 
-                addAttribute("","Deild",true,true,"java.lang.Integer");
+                addAttribute("","Division",true,true,"java.lang.Integer");
 
               this.addManyToManyRelationShip(User.class);
 
@@ -117,7 +116,7 @@ public class EmploymentMemberInfoBMPBean extends com.idega.data.GenericEntity im
 
 		if (getID() == -1) {
 
-			returner = "óskírð / ur";
+			returner = "ï¿½skï¿½rï¿½ / ur";
 
 		}
 

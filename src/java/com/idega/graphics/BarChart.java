@@ -1,5 +1,5 @@
 /*
- * $Id: BarChart.java,v 1.7 2006/04/09 12:13:12 laddi Exp $
+ * $Id: BarChart.java,v 1.7.2.1 2007/03/06 22:31:49 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -41,7 +41,7 @@ public class BarChart extends Chart {
   }
 
   /**
-   * Lýsing á falli
+   * Description of method
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
@@ -242,7 +242,7 @@ System.out.println("Chart filename = " + filename);
   private double getRoundedValue(double inValue) {
     int intValue = (int)inValue;
 
-    //Þarf að búa til almennilega rútínu hérna. Á þetta til í Berghita forritinu, og set það inn seinna.
+    //ï¿½arf aï¿½ bï¿½a til almennilega rï¿½tï¿½nu hï¿½rna. ï¿½ ï¿½etta til ï¿½ Berghita forritinu, og set ï¿½aï¿½ inn seinna.
 
     if (intValue == 0) {
 			return(1);

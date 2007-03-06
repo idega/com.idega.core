@@ -21,7 +21,7 @@ import com.idega.util.text.TextSoap;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega</p>
- * @author <a href="mailto:laddi@idega.is">Þórhallur "Laddi" Helgason</a>
+ * @author <a href="mailto:laddi@idega.is">Thorhallur "Laddi" Helgason</a>
  * @version 1.1
  */
 

@@ -467,7 +467,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	protected void addLanguageAttribute() {
-		this.addAttribute(getLanguageIDColumnName(), "Tungumál", true, true, "java.lang.Integer", "one_to_one", "com.idega.core.localisation.data.Language");
+		this.addAttribute(getLanguageIDColumnName(), "Language", true, true, "java.lang.Integer", "one_to_one", "com.idega.core.localisation.data.Language");
 	}
 
 	/**

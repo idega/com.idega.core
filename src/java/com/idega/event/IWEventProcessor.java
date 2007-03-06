@@ -152,7 +152,7 @@ public class IWEventProcessor implements Singleton {
 					((ActiveEvent) obj).dispatch();
 					return true;
 					/*
-					 * Kommentað út þar til kerfið ræður við þræði EventQueue q =
+					 * Commented out til system can handle EventQueue EventQueue q =
 					 * Toolkit.getDefaultToolkit().getSystemEventQueue();
 					 * q.postEvent((AWTEvent)obj);
 					 */
@@ -215,8 +215,8 @@ public class IWEventProcessor implements Singleton {
 						}
 						//System.err.println("PresentationServelt - checking
 						// stateList");
-						// object geta safnast upp í hashtöflunum því þarf að
-						// fjarlægja þau instöns sem ekki eru á nýju síðunni
+						// objects can pile up in hashtables so we need to
+						// remove those instances which are not on the new page.
 						/**
 						 * @todo handle pages in frames or iframes with
 						 * different pageIds

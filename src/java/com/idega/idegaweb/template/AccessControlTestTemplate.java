@@ -9,7 +9,7 @@ import com.idega.presentation.text.Text;
  * Title:        AccessControl
  * Description:
  * Copyright:    Copyright (c) 2000 idega.is All Rights Reserved
- * Company:      idega margmiðlun
+ * Company:      idega margmidlun
  * @author
  * @version 1.0
  */

@@ -57,17 +57,15 @@ public class GroupBMPBean extends com.idega.data.GenericEntity implements com.id
 
 		addAttribute(getIDColumnName());
 
-		addAttribute(getNameColumnName(),"Hópnafn", true, true, "java.lang.String");
+		addAttribute(getNameColumnName(),"Name", true, true, "java.lang.String");
 
-		addAttribute(getGroupTypeColumnName(),"Hópgerð", true, true, "java.lang.String");
+		addAttribute(getGroupTypeColumnName(),"Type", true, true, "java.lang.String");
 
-		addAttribute(getGroupDescriptionColumnName(),"Lýsing", true, true, "java.lang.String");
+		addAttribute(getGroupDescriptionColumnName(),"Description", true, true, "java.lang.String");
 
-		addAttribute(getExtraInfoColumnName(),"Auka upplýsingar", true, true, "java.lang.String");
+		addAttribute(getExtraInfoColumnName(),"Extra info", true, true, "java.lang.String");
 
-
-
-                      addManyToManyRelationShip("com.idega.data.genericentity.Member","group_member");
+		addManyToManyRelationShip("com.idega.data.genericentity.Member","group_member");
 
 
 
