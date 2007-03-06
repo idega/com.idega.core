@@ -1,7 +1,7 @@
 package com.idega.util;
 
 /**
- * This exception is thrown when a date couldn´t be parsed
+ * This exception is thrown when a date couldnt be parsed
  * @author <a href="mailto:joakim@idega.is">Joakim Johnson</a>
  * @version 1.0
  */

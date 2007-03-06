@@ -6,7 +6,7 @@ import java.util.Date;
 /**
   * This class represents the attributs of a timer.
   *
-  * @author  Olivier Dedieu, David Sims, Simon Bécot, Jim Lerner
+  * @author  Olivier Dedieu, David Sims, Simon Bacot, Jim Lerner
   * @version 1.4, 01/02/2002
   * @modified Eirikur Hrafnsson eiki@idega.is
   */
