@@ -41,9 +41,9 @@ public class ICFileTypeBMPBean extends com.idega.data.CacheableEntityBMPBean imp
 
   public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
-    this.addAttribute(getColumnNameDisplayName(),"Nafn",true,true,String.class,255);
-    this.addAttribute(getColumnNameDescription(),"Lýsing",true,true,String.class,500);
-    this.addAttribute(getColumnNameUniqueName(),"unique name",true,true,String.class,255);
+    this.addAttribute(getColumnNameDisplayName(),"Name",true,true,String.class,255);
+    this.addAttribute(getColumnNameDescription(),"Description",true,true,String.class,500);
+    this.addAttribute(getColumnNameUniqueName(),"Unique name",true,true,String.class,255);
     addManyToOneRelationship(getColumnNameFileTypeHandler(),"Filetypehandler",ICFileTypeHandler.class);
   }
 

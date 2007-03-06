@@ -35,7 +35,7 @@ public class WindowOpener extends IWJSPPresentationServlet {
 	 * 
 	 * theReturn = new Window();
 	 * 
-	 * theReturn.add("<H2>Síða útrunnin, vinsamlegast endurhlaðið síðurnar</H2>");
+	 * theReturn.add("<H2>Sida utrunnin, vinsamlegast endurhladid sidurnar</H2>");
 	 *  }
 	 * 
 	 * 

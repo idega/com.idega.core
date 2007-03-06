@@ -1,5 +1,5 @@
 /*
- * $Id: Stripper.java,v 1.3 2002/04/06 19:07:46 tryggvil Exp $
+ * $Id: Stripper.java,v 1.3.8.1 2007/03/06 22:38:28 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -29,8 +29,7 @@ public class Stripper {
     //Stripper stripper1 = new Stripper();
 
     if (args.length != 2) {
-      System.err.println("Auli. Þú átt að hafa tvo parametra með þessu, innskrá og útskrá");
-
+    	System.err.println("You moron. You should have two parameters with this, login and logout");
       return;
     }
 
@@ -41,7 +40,7 @@ public class Stripper {
       in = new BufferedReader(new FileReader(args[0]));
     }
     catch (java.io.FileNotFoundException e) {
-      System.err.println("Auli. Error : " + e.toString());
+      System.err.println("You moron. Error : " + e.toString());
 
       return;
     }
@@ -50,7 +49,7 @@ public class Stripper {
       out = new BufferedWriter(new FileWriter(args[1]));
     }
     catch (java.io.IOException e) {
-      System.err.println("Auli. Error : " + e.toString());
+      System.err.println("You moron. Error : " + e.toString());
 
       return;
     }
