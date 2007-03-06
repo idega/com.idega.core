@@ -52,7 +52,7 @@ import com.idega.util.ListUtil;
  * Title: IW Core Description: Copyright: Copyright (c) 2001-2003 idega software
  * Company: idega.is
  * 
- * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson</a>,
+ * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
  * @version 1.0
  */
 public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements Group, ICTreeNode, MetaDataCapable, UniqueIDCapable {

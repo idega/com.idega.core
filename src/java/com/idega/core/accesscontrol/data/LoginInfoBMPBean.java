@@ -9,8 +9,8 @@ import com.idega.util.IWTimestamp;
 /**
  * Title: User Description: Copyright: Copyright (c) 2001 Company: idega.is
  * 
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu�mundur
- *         �g�st S�mundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur
+ *         Agust Saemundsson</a>
  * @version 1.0
  */
 public class LoginInfoBMPBean extends GenericEntity implements LoginInfo, MetaDataCapable {

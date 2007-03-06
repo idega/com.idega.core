@@ -34,7 +34,7 @@ import com.idega.repository.data.RefactorClassRegistry;
  * Company: idega Software
  * </p>
  * 
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson </a>
  * @version 1.0
  */
 public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine {

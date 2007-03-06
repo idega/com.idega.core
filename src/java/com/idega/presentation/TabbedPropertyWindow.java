@@ -13,7 +13,7 @@ import com.idega.idegaweb.presentation.StyledIWAdminWindow;
  * Title:        IW
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version 1.0
  */
 

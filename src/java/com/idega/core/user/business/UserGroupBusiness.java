@@ -22,7 +22,7 @@ import com.idega.user.data.UserBMPBean;
  * Description: The main business class for Group management in the idegaWeb User system.
  * Copyright:    Idega Software Copyright (c) 2001
  * Company:      Idega Software
- * @author idega team <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author idega team <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version 1.0
  * @deprecated use com.idega.user.business.GroupBusiness
  */

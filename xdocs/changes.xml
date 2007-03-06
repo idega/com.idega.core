@@ -9,6 +9,9 @@
 		<action dev="tryggvil" type="update">
 			Updates and modifications to implement Icelandic PKI Authentication inside is.idega.block.pki module.
 		</action>
+		<action dev="tryggvil" type="fix">
+			Fixing and correcting encoding in all java files to be Unicode UTF-8.
+		</action>
 	</release>
   
 	<release version="3.1.38" date="2007-02-23">

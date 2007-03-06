@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.41.2.3 2007/02/01 03:58:51 gediminas Exp $ Created on
+ * $Id: StringHandler.java,v 1.41.2.4 2007/03/06 22:19:49 tryggvil Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,11 +24,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2007/02/01 03:58:51 $ by $Author: gediminas $
+ * Last modified: $Date: 2007/03/06 22:19:49 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.41.2.3 $
+ * @version $Revision: 1.41.2.4 $
  */
 public class StringHandler {
 
@@ -301,7 +301,7 @@ public class StringHandler {
 	 * Icelandic,Swedish,German etc. characters. <br>
 	 * This method replaces these characters and re-writes them with Roman
 	 * equivalents. <br>
-	 * So 'Þ'/&THORN; becomes TH, '‡'/&aacute; becomes a, 'Š'/&auml; becomes ae,
+	 * So 'Ãž'/&THORN; becomes TH, 'Ã¡'/&aacute; becomes a, 'Ã¤'/&auml; becomes ae,
 	 * etc.
 	 */
 	public static String stripNonRomanCharacters(String inputString) {
@@ -313,7 +313,7 @@ public class StringHandler {
 	 * Icelandic,Swedish,German etc. characters. <br>
 	 * This method replaces these characters and re-writes them with Roman
 	 * equivalents. <br>
-	 * So 'Þ'/&THORN; becomes Th, '‡'/&aacute; becomes a, 'Š'/&auml; becomes ae,
+	 * So 'Ãž'/&THORN; becomes Th, 'Ã¡'/&aacute; becomes a, 'Ã¤'/&auml; becomes ae,
 	 * etc.
 	 * @param inputString the input string to replace
 	 * @param exceptions an array of characters to maintain in the outputString

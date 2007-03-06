@@ -17,7 +17,7 @@ import com.idega.presentation.text.Link;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega
- * @author <a href="gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version 1.0
  */
 

@@ -31,7 +31,7 @@ import com.idega.repository.data.SingletonRepository;
  * Description:  Use this class to get and manipulate ICObject and ICObjectInstance data objects rather than constructing them with "new"
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000-2002 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ * @author 2000-2002 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 

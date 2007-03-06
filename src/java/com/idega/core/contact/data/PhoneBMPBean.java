@@ -11,7 +11,7 @@ import com.idega.data.IDOFinderException;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version 1.0
  */
 public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.idega.core.contact.data.Phone
@@ -30,7 +30,7 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 	{
 		addAttribute(getIDColumnName());
 		addAttribute(getColumnNamePhoneNumber(), "Number", true, true, "java.lang.String");
-		//      addAttribute(getColumnNameCountryCodeId(),"Landsnúmer",true,true,Integer.class,"many-to-one",CountryCode.class);
+		//      addAttribute(getColumnNameCountryCodeId(),"Landsnï¿½mer",true,true,Integer.class,"many-to-one",CountryCode.class);
 		addManyToOneRelationship(getColumnNameAreaCodeId(), "Area code", AreaCode.class);
 		addManyToOneRelationship(getColumnNamePhoneTypeId(), "Type", PhoneType.class);
 		//      this.addManyToManyRelationShip(PhoneType.class,"ic_phone_phone_type");

@@ -1,5 +1,5 @@
 /*
- * $Id: AccessController.java,v 1.30 2006/03/29 13:10:16 laddi Exp $
+ * $Id: AccessController.java,v 1.30.2.1 2007/03/06 22:19:45 tryggvil Exp $
  * 
  * Created in 2001 by gummi
  * 
@@ -32,10 +32,10 @@ import com.idega.user.data.Group;
  * This is the main service interface for the old generation permission system
  * in idegaWeb based around the ICPermission entity (IC_PERMISSION table).
  * </p>
- * Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
+ * Last modified: $Date: 2007/03/06 22:19:45 $ by $Author: tryggvil $
  * 
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
- * @version $Revision: 1.30 $
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
+ * @version $Revision: 1.30.2.1 $
  */
 public interface AccessController extends com.idega.idegaweb.IWService{
 

@@ -7,7 +7,7 @@ import com.idega.user.data.User;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2002 - idega - <a href="mailto:gimmi@idega.is">Grímur Jónsson</a>
+ * @author 2002 - idega - <a href="mailto:gimmi@idega.is">Grimur Jonsson</a>
  * @version 1.0
  */
 

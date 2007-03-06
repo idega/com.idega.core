@@ -1,5 +1,5 @@
 /*
- * $Id: PermissionCacher.java,v 1.34 2006/04/09 12:13:20 laddi Exp $ Created
+ * $Id: PermissionCacher.java,v 1.34.2.1 2007/03/06 22:19:43 tryggvil Exp $ Created
  * in 2001
  * 
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -28,12 +28,12 @@ import com.idega.user.data.Group;
  * AccessControl.
  * </p>
  * 
- * Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
+ * Last modified: $Date: 2007/03/06 22:19:43 $ by $Author: tryggvil $
  * 
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
+ * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.34.2.1 $
  */
 class PermissionCacher {
 

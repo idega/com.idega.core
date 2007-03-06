@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.67.2.4 2007/02/21 16:49:33 eiki Exp $
+ * $Id: LoginDBHandler.java,v 1.67.2.5 2007/03/06 22:19:40 tryggvil Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -42,8 +42,8 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
 
 /**
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst
- *         Sæmundsson </a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Agust
+ *         Saemundsson </a>
  * @version 1.0
  */
 public class LoginDBHandler {

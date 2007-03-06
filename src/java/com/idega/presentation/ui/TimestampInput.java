@@ -1,6 +1,6 @@
 /*
 
- * $Id: TimestampInput.java,v 1.9 2006/04/09 12:13:16 laddi Exp $
+ * $Id: TimestampInput.java,v 1.9.2.1 2007/03/06 22:19:45 tryggvil Exp $
 
  *
 
@@ -205,7 +205,7 @@ private void init(String name){
 
 
 
-	//theYear.addMenuElement("","Ár");
+	//theYear.addMenuElement("","ï¿½r");
 
 
 
@@ -225,33 +225,33 @@ private void init(String name){
 
 
 
-	//theMonth.addMenuElement("","Mánuður");
+	//theMonth.addMenuElement("","Mï¿½nuï¿½ur");
 
 
 
         /*
 
-	theMonth.addMenuElement("01","janúar");
+	theMonth.addMenuElement("01","janï¿½ar");
 
-	theMonth.addMenuElement("02","febrúar");
+	theMonth.addMenuElement("02","febrï¿½ar");
 
 	theMonth.addMenuElement("03","mars");
 
-	theMonth.addMenuElement("04","apríl");
+	theMonth.addMenuElement("04","aprï¿½l");
 
-	theMonth.addMenuElement("05","maí");
+	theMonth.addMenuElement("05","maï¿½");
 
-	theMonth.addMenuElement("06","júní");
+	theMonth.addMenuElement("06","jï¿½nï¿½");
 
-	theMonth.addMenuElement("07","júlí");
+	theMonth.addMenuElement("07","jï¿½lï¿½");
 
-	theMonth.addMenuElement("08","ágúst");
+	theMonth.addMenuElement("08","Agust");
 
 	theMonth.addMenuElement("09","september");
 
-	theMonth.addMenuElement("10","október");
+	theMonth.addMenuElement("10","oktï¿½ber");
 
-	theMonth.addMenuElement("11","nóvember");
+	theMonth.addMenuElement("11","nï¿½vember");
 
 	theMonth.addMenuElement("12","desember");
 
@@ -419,7 +419,7 @@ private void init(String name){
 
 
 
-	//theMinute.addMenuElement("","Mínútur");
+	//theMinute.addMenuElement("","Mï¿½nï¿½tur");
 
 
 
