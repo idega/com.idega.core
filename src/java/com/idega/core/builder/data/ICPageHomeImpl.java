@@ -11,10 +11,10 @@ import javax.ejb.FinderException;
  * <p>
  * TODO tryggvil Describe Type ICPageHomeImpl
  * </p>
- *  Last modified: $Date: 2006/04/04 11:53:02 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/03/07 08:54:09 $ by $Author: justinas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageHome
@@ -72,7 +72,16 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
     		this.idoCheckInPooledEntity(entity);
     		return this.findByPrimaryKey(pk);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see com.idega.core.builder.data.ICPageHome#findByUri(java.lang.String, int)
+	 */
+	public ICPage findExistingByUri(String pageUri, int domainId) throws FinderException {
+        com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+        Integer pk  = ((ICPageBMPBean)entity).ejbFindExistingPageByPageUri(pageUri,domainId);
+    		this.idoCheckInPooledEntity(entity);
+    		return this.findByPrimaryKey(pk);
+	}
 	/* (non-Javadoc)
 	 * @see com.idega.core.builder.data.ICPageHome#findAllPagesWithoutUri()
 	 */

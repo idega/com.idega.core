@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.28 2007/02/27 08:45:39 justinas Exp $
+ * $Id: BuilderService.java,v 1.29 2007/03/07 08:52:52 justinas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -261,4 +261,10 @@ public interface BuilderService extends IBOService
 	public void decreaseTreeOrder(int id);
 	
 	public int setAsLastInLevel(boolean isTopLevel, String parentId);
+	
+	public String getProperty(String pageKey, String instanceId, String propertyName);
+	
+	public String getPageKeyByURI(String requestURI);
+	
+	public String getExistingPageKeyByURI(String requestURI);
 }

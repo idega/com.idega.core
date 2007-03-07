@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.6 2006/07/20 09:33:36 gimmi Exp $
+ * $Id: ICPageBMPBean.java,v 1.7 2007/03/07 08:53:13 justinas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -64,6 +64,8 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	private final static String PAGE_URI="PAGE_URI";
 	private static final String DOMAIN_ID = "IB_DOMAIN_ID";
 	private static final String WEBDAV_URI = "WEBDAV_URI";
+	private static final String IS = "IS";
+	private static final String NULL = "NULL";
 	private ICFile _file;
 	
 
@@ -731,7 +733,16 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	    	return (Integer)idoFindOnePKByQuery(query);
 	}
 	
-
+	public Integer ejbFindExistingPageByPageUri(String pageUri,int domainId)throws javax.ejb.FinderException{
+	    Table table = new Table(this);
+	    	SelectQuery query = new SelectQuery(table);
+	    	query.addColumn(new Column(table, getIDColumnName()));
+	    	query.addCriteria(new MatchCriteria(table,PAGE_URI,MatchCriteria.EQUALS,pageUri));
+	    	query.addCriteria(new MatchCriteria(table,DELETED_COLUMN,MatchCriteria.IS,NULL));
+	    	//query.addCriteria(new MatchCriteria(table,DOMAIN_ID,MatchCriteria.EQUALS,domainId));
+	    	return (Integer)idoFindOnePKByQuery(query);
+	}
+	
 	/**
 	 * Gets the id/key of the template of this page as a String.
 	 * Returns null if no template is set (templateId<=0)

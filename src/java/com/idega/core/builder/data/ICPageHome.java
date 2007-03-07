@@ -17,6 +17,7 @@ public interface ICPageHome extends com.idega.data.IDOHome
  */
  public java.util.Collection findByTemplate(Integer integer)throws javax.ejb.FinderException;
  public ICPage findByUri(String pageUri,int domainId)throws javax.ejb.FinderException;
+ public ICPage findExistingByUri(String pageUri, int domainId) throws FinderException; 
 /**
  * @return
  */
