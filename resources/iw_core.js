@@ -922,3 +922,20 @@ function in_array(needle, haystack) {
     }
     return false;
 }
+
+/**
+ * linkToFeed: e.g. http://www.idega.com/rss/articles.xml
+ * feedType: e.g. "atom" or "rss"
+ * feedTitle: e.g. "Atom 1.0" or "RSS 2.0"
+ */
+function addFeedSymbolInHeader(linkToFeed, feedType, feedTitle) {
+	if (linkToFeed == null || feedType == null || feedTitle == null) {
+		return;
+	}
+	var linkToAtomInHeader = document.createElement("link");
+	linkToAtomInHeader.setAttribute("href", linkToFeed);
+	linkToAtomInHeader.setAttribute("title", feedTitle);
+	linkToAtomInHeader.setAttribute("type", "application/"+feedType+"+xml");
+	linkToAtomInHeader.setAttribute("rel", "alternate");
+	document.getElementsByTagName("head")[0].appendChild(linkToAtomInHeader);
+}
