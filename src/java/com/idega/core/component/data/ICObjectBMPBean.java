@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectBMPBean.java,v 1.18 2006/06/28 09:39:54 tryggvil Exp $
+ * $Id: ICObjectBMPBean.java,v 1.19 2007/03/07 15:38:50 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
  *
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
@@ -40,10 +40,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * time the application starts it updates the IC_OBJECT table with all components
  * registered in all idegaWeb bundles installed in the web-application.
  * </p>
- * Last modified: $Date: 2006/06/28 09:39:54 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/03/07 15:38:50 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
 	/**
@@ -67,6 +67,8 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	private final static String class_value_column_name = "CLASS_VALUE";
 	private final static String icon_file = "ICON_FILE";
 	private static final String COLUMN_OBJECT_NAME = "OBJECT_NAME";
+	private static final String WIDGET = "WIDGET";
+	private static final String BLOCK = "BLOCK";
 	
 	private static boolean allCached=true;
 	//private static Collection cachedList;
@@ -89,6 +91,8 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		addAttribute(getBundleColumnName(), "Bundle", true, true, java.lang.String.class, 1000);
 		addManyToOneRelationship(getColumnClassValue(), "Class File", ICFile.class);
 		addManyToOneRelationship(getColumnIcon(), "Icon", ICFile.class);
+		addAttribute(getWidgetColumnName(),"Widget",true,true,Boolean.class);
+		addAttribute(getBlockColumnName(),"Block",true,true,Boolean.class);
 		//addAttribute("settings_url","Sl?? stillingas??u",true,true,"java.lang.String");
 		//addAttribute("class_value","Klasi sj?lfur",true,true,"java.sql.Blob");
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer","many-to-one","com.idega.data.genericentity.Image");
@@ -118,6 +122,14 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	{
 		return icon_file;
 	}
+	public static String getWidgetColumnName() {
+		return WIDGET;
+	}
+	
+	public static String getBlockColumnName() {
+		return BLOCK;
+	}
+	
 	private static List componentList;
 	public static List getAvailableComponentTypes()
 	{
@@ -220,6 +232,21 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		//setColumn("small_icon_image_id",1);
 		//setObjectType("iw.block");
 	}
+	
+	public Boolean isWidget() {
+		return getBooleanColumnValue(getWidgetColumnName());
+	}
+	public void setIsWidget(Boolean isWidget) {
+		setColumn(getWidgetColumnName(), isWidget);
+	}
+	
+	public Boolean isBlock() {
+		return getBooleanColumnValue(getBlockColumnName());
+	}
+	public void setIsBlock(Boolean isBlock) {
+		setColumn(getBlockColumnName(), isBlock);
+	}
+	
 	public String getName()
 	{
 		return getStringColumnValue(getColumnObjectName());

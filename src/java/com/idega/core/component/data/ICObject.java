@@ -83,4 +83,24 @@ public interface ICObject extends IDOEntity {
 	 * @see com.idega.core.component.data.ICObjectBMPBean#getID
 	 */
 	public int getID();
+	
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#isWidget
+	 */
+	public Boolean isWidget();
+
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#setIsWidget
+	 */
+	public void setIsWidget(Boolean isWidget);
+	
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#isBlock
+	 */
+	public Boolean isBlock();
+	
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#setIsBlock
+	 */
+	public void setIsBlock(Boolean isBlock);
 }

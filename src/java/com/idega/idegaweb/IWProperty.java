@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.16 2006/04/09 12:13:14 laddi Exp $
+ * $Id: IWProperty.java,v 1.17 2007/03/07 15:38:50 valdas Exp $
 
  *
 
@@ -25,10 +25,10 @@ import com.idega.xml.XMLElement;
  * &lt;key&gt; tag.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
+ * Last modified: $Date: 2007/03/07 15:38:50 $ by $Author: valdas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class IWProperty implements Comparable
 {
@@ -40,6 +40,7 @@ public class IWProperty implements Comparable
 	static String keyTag = IWPropertyList.keyTag;
 	static String valueTag = IWPropertyList.valueTag;
 	static String typeTag = IWPropertyList.typeTag;
+	static String simpleTag = IWPropertyList.simpleTag;
 	static String stringTag = IWPropertyList.stringTag;
 	static String stringString = IWPropertyList.stringString;
 	public static String MAP_TYPE = mapTag;
@@ -68,34 +69,33 @@ public class IWProperty implements Comparable
 	{
 		return IWProperty.getPropertyType(getKeyElement());
 	}
-	public boolean getBooleanValue()
-	{
-		String value = getValue();
-		if (value != null)
-		{
-			if (value.equalsIgnoreCase("true"))
-			{
+	public boolean getBooleanValue() {
+		return getBooleanValue(getValue());
+	}
+	
+	private boolean getBooleanValue(String value) {
+		if (value == null) {
+			return false;
+		}
+		else  {
+			if (value.equalsIgnoreCase("true")) {
 				return true;
 			}
-			else if (value.equalsIgnoreCase("false"))
-			{
+			else if (value.equalsIgnoreCase("false")) {
 				return false;
 			}
-			else if (value.equalsIgnoreCase("y"))
-			{
+			else if (value.equalsIgnoreCase("y")) {
 				return true;
 			}
-			else if (value.equalsIgnoreCase("n"))
-			{
+			else if (value.equalsIgnoreCase("n")) {
 				return false;
 			}
-			else
-			{
+			else {
 				return false;
 			}
 		}
-		return false;
 	}
+	
 	public String getValue()
 	{
 		return IWProperty.getPropertyValue(getKeyElement());
@@ -193,6 +193,24 @@ public class IWProperty implements Comparable
 		name.setText(sName);
 		key.addContent(name);
 	}
+	
+	public void setSimple(boolean isSimple) {
+		XMLElement key = getKeyElement();
+		XMLElement simple = null;
+		if (key == null) {
+			key = createKeyElement();
+			simple = new XMLElement(simpleTag);
+		}
+		else {
+			simple = key.getChild(simpleTag);
+			if (simple == null) {
+				simple = new XMLElement(simpleTag);
+			}
+		}
+		simple.setText(String.valueOf(isSimple));
+		key.addContent(simple);
+	}
+	
 	public void setProperty(String key, int value)
 	{
 		setProperty(key, new Integer(value));
@@ -201,25 +219,25 @@ public class IWProperty implements Comparable
 	{
 		setProperty(key, new Boolean(value));
 	}
-	public void setProperty(String key, String value)
+	public void setProperty(String key, String value, boolean isSimple)
 	{
-		setProperty(key, value, stringString);
+		setProperty(key, value, stringString, isSimple);
 	}
-	public void setProperty(String key, Object[] value)
+	public void setProperty(String key, Object[] value, boolean isSimple)
 	{
 		XMLElement keyElement = this.getKeyElement();
-		setProperty(keyElement, key, value, getParentList());
+		setProperty(keyElement, key, value, isSimple, getParentList());
 	}
-	private void setProperty(String key, Object value, String type)
+	private void setProperty(String key, Object value, String type, boolean isSimple)
 	{
 		XMLElement keyElement = getKeyElement();
-		setProperty(keyElement, key, value, type, getParentList());
+		setProperty(keyElement, key, value, type, isSimple, getParentList());
 	}
-	static void setProperty(XMLElement keyElement, String key, Object value, String type, IWPropertyList list)
+	static void setProperty(XMLElement keyElement, String key, Object value, String type, boolean isSimple, IWPropertyList list)
 	{
 		if (keyElement == null)
 		{
-			addProperty(key, value, type, list);
+			addProperty(key, value, type, isSimple, list);
 		}
 		else
 		{
@@ -233,27 +251,29 @@ public class IWProperty implements Comparable
 				keyElement.removeChild(nameTag);
 				keyElement.removeChild(valueTag);
 				keyElement.removeChild(typeTag);
-				addNewProperty(keyElement, key, value, type);
+				keyElement.removeChild(simpleTag);
+				addNewProperty(keyElement, key, value, isSimple, type);
 			}
 		}
 	}
-	static void setProperty(XMLElement keyElement, String key, Object[] value, IWPropertyList list)
+	static void setProperty(XMLElement keyElement, String key, Object[] value, boolean isSimple, IWPropertyList list)
 	{
 		if (keyElement == null)
 		{
-			addProperty(key, value, arrayTag, list);
+			addProperty(key, value, arrayTag, isSimple, list);
 		}
 		else
 		{
 			keyElement.removeChild(nameTag);
 			keyElement.removeChild(valueTag);
 			keyElement.removeChild(typeTag);
-			addNewProperty(keyElement, key, value, arrayTag);
+			keyElement.removeChild(simpleTag);
+			addNewProperty(keyElement, key, value, isSimple, arrayTag);
 		}
 	}
-	public void setProperty(String key, Object value)
+	public void setProperty(String key, Object value, boolean isSimple)
 	{
-		setProperty(key, value.toString(), value.getClass().getName());
+		setProperty(key, value.toString(), value.getClass().getName(), isSimple);
 	}
 	/**
 	
@@ -321,10 +341,10 @@ public class IWProperty implements Comparable
 		}
 	}
 	
-	static void addProperty(String key, Object value, String type, IWPropertyList plist)
+	static void addProperty(String key, Object value, String type, boolean isSimple, IWPropertyList plist)
 	{
 		XMLElement keyElement = createKeyElement(plist);
-		addNewProperty(keyElement, key, value, type);
+		addNewProperty(keyElement, key, value, isSimple, type);
 	}
 	private XMLElement getKeyElementAndCreateIfNotExists()
 	{
@@ -390,6 +410,18 @@ public class IWProperty implements Comparable
 		}
 		return null;
 	}
+	
+	public boolean getPropertySimple() {
+		if (propertyElement == null) {
+			return false;
+		}
+		XMLElement tag = propertyElement.getChild(simpleTag);
+		if (tag == null) {
+			return false;
+		}
+		return getBooleanValue(tag.getText());
+	}
+	
 	static XMLElement createArrayElement(XMLElement valueElement)
 	{
 		XMLElement arrayElement = new XMLElement(arrayTag);
@@ -419,13 +451,15 @@ public class IWProperty implements Comparable
 	{
 		valueElement.addContent(value.toString());
 	}
-	static void addNewProperty(XMLElement key, String keyName, Object value, String type)
+	static void addNewProperty(XMLElement key, String keyName, Object value, boolean isSimple, String type)
 	{
 		XMLElement nameElement = new XMLElement(nameTag);
 		nameElement.addContent(keyName);
 		XMLElement typeElement = new XMLElement(typeTag);
 		typeElement.addContent(type);
 		XMLElement valueElement = new XMLElement(valueTag);
+		XMLElement simpleElement = new XMLElement(simpleTag);
+		simpleElement.addContent(String.valueOf(isSimple));
 		if (type.equals(arrayTag))
 		{
 			XMLElement arrayElement = new XMLElement(arrayTag);
@@ -454,6 +488,7 @@ public class IWProperty implements Comparable
 		key.addContent(nameElement);
 		key.addContent(typeElement);
 		key.addContent(valueElement);
+		key.addContent(simpleElement);
 	}
 	public String toString()
 	{
