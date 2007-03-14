@@ -595,12 +595,16 @@ function isEnterEvent(event) {
 }
 
 /** Application Property logic begins **/
-function changeSiteInfo(id) {
+var SAVING_SITE_INFO_VALUE_MESSAGE_TEXT = "Saving...";
+function changeSiteInfo(id, savingSiteInfoValueMessageText) {
 	if (id == null) {
 		return;
 	}
 	insertJavaScriptFileToHeader("/dwr/engine.js");
 	insertJavaScriptFileToHeader("/dwr/interface/ThemesEngine.js");
+	if (savingSiteInfoValueMessageText != null) {
+		SAVING_SITE_INFO_VALUE_MESSAGE_TEXT = savingSiteInfoValueMessageText;
+	}
 	CLICKED_ON_PROPERTY = true;
 	document.onclick = showSiteInfoValue;
 	changeSiteInfoValue(id);
@@ -625,9 +629,11 @@ function changeSiteInfoValue(id) {
 		editBox.setAttribute("type", "input");
 		editBox.setAttribute("id", EDIT_BOX_ID);
 		if (typeof element.attachEvent != "undefined") {
-        	editBox.attachEvent("onkeypress", function(e){saveSiteInfoValue(e, this.value);});
+        	editBox.attachEvent("onkeypress", function(e){saveSiteInfoValueWithEnter(e, this.value);});
+        	editBox.attachEvent("onblur", function(e){saveSiteInfoValueWithBlur(e, this.value);});
 		} else {
-        	editBox.addEventListener("keypress", function(e){saveSiteInfoValue(e, this.value);}, true);
+        	editBox.addEventListener("keypress", function(e){saveSiteInfoValueWithEnter(e, this.value);}, true);
+        	editBox.addEventListener("blur", function(e){saveSiteInfoValueWithBlur(e, this.value);}, true);
 		}
 	}
 	else {
@@ -703,13 +709,26 @@ function appendEditBoxToExactPlace(element, edit) {
 	}
 }
 
-function saveSiteInfoValue(event, value) {
+function saveSiteInfoValueWithBlur(event, value) {
+	if (event == null) {
+		return;
+	}
+	if (event.type == "blur" || event.type == "onblur") {
+		mainSaveSiteInfo(value);
+	}
+}
+
+function saveSiteInfoValueWithEnter(event, value) {
 	if (event == null) {
 		return;
 	}
 	if (!isEnterEvent(event)) {
 		return;
 	}
+	mainSaveSiteInfo(value);
+}
+
+function mainSaveSiteInfo(value) {
 	if (SITE_INFO_KEYWORD_FROM_BOX == null || value == null) {
 		return;
 	}
@@ -722,7 +741,7 @@ function saveSiteInfoValue(event, value) {
 		setElementNewValue(CHILD_ELEMENT, value);
 	}
 	
-	showLoadingMessage("Saving...");
+	showLoadingMessage(SAVING_SITE_INFO_VALUE_MESSAGE_TEXT);
 	setTimeout("executeDwrAndSaveSiteInfo('" + value + "')", 500);
 }
 
@@ -858,7 +877,14 @@ function setElementNewValue(element, value) {
 				element.removeChild(children[j]);
 			}				
 		}
-		element.appendChild(document.createTextNode(value));
+		if (value == "               " || value == "" || value == " ") {
+			for (var i = 0; i < 15; i++) {
+				element.appendChild(document.createTextNode("\u00A0"));
+			}
+		}
+		else {
+			element.appendChild(document.createTextNode(value));
+		}
 	}
 }
 /** Application Property logic ends **/
@@ -938,4 +964,34 @@ function addFeedSymbolInHeader(linkToFeed, feedType, feedTitle) {
 	linkToAtomInHeader.setAttribute("type", "application/"+feedType+"+xml");
 	linkToAtomInHeader.setAttribute("rel", "alternate");
 	document.getElementsByTagName("head")[0].appendChild(linkToAtomInHeader);
+}
+
+// Returns element postition from left (px)
+function getAbsoluteLeft(objectId) {
+	o = document.getElementById(objectId);
+	if (o == null) {
+		return 0;
+	}
+	oLeft = o.offsetLeft;
+	while(o.offsetParent != null) {
+		oParent = o.offsetParent;
+		oLeft += oParent.offsetLeft;
+		o = oParent;
+	}
+	return oLeft;
+}
+
+// Returns element postition from top (px)
+function getAbsoluteTop(objectId) {
+	o = document.getElementById(objectId);
+	if (o == null) {
+		return 0;
+	}
+	oTop = o.offsetTop;
+	while(o.offsetParent != null) {
+		oParent = o.offsetParent;
+		oTop += oParent.offsetTop;
+		o = oParent;
+	}
+	return oTop;
 }
