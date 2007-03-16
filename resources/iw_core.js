@@ -958,6 +958,14 @@ function addFeedSymbolInHeader(linkToFeed, feedType, feedTitle) {
 	if (linkToFeed == null || feedType == null || feedTitle == null) {
 		return;
 	}
+	//check if such feed already has been added
+	var headElement = document.getElementsByTagName("head")[0];
+	var alreadyAdded = false;
+	for (var i = 0; i < headElement.getElementsByTagName("link").length; i++){
+		var linkElement = headElement.getElementsByTagName("link")[i];
+		if (linkElement.getAttribute("href") == linkToFeed)
+			return;
+	}
 	var linkToAtomInHeader = document.createElement("link");
 	linkToAtomInHeader.setAttribute("href", linkToFeed);
 	linkToAtomInHeader.setAttribute("title", feedTitle);
