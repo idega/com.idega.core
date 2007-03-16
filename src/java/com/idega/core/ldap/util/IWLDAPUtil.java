@@ -65,7 +65,9 @@ public class IWLDAPUtil implements IWLDAPConstants,EmbeddedLDAPServerConstants,L
 				return (String) obj;
 			}
 		} catch (Exception e) {
+			//System.out.println(e.getClass() + ": " + e.getMessage());
 			System.out.println("[IWLDAPUtil] "+attributeKey+" not defined in attributes");
+			e.printStackTrace();
 		}
 		
 		return null;
