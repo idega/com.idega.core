@@ -13,8 +13,7 @@ import com.idega.repository.data.SingletonRepository;
 /**
  * The default UUID Generator.<br>
  * Generates unique id string 36 characters long (128bit).<br>
- * The default implementation generates the string with a combination of a <br>
- * dummy ip address and a time based random number generator and uses the Jug Generator.<br>
+ * The default implementation generates a string based on a random number generator using the Jug Generator.<br>
  * For more info see the JUG project, http://www.doomdark.org/doomdark/proj/jug/
  * An example uid: ac483688-b6ed-4f45-ac64-c105e599d482 <br>
  * @author tryggvil
