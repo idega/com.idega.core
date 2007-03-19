@@ -34,13 +34,12 @@ public class UUIDGenerator implements IdGenerator, Singleton {
 	}
 	/**
 	 * Generates unique id string 36 characters long (128bit).<br>
-	 * The default implementation generates the string with a combination of a <br>
-	 * dummy ip address and a time based random number generator.<br>
-	 * For more info see the JUG project, http://www.doomdark.org/doomdark/proj/jug/
+	 * The default implementation uses UUIDGenerator.generateRandomBasedUUID() .<br>
+	 * For more info see the JUG project, http://jug.safehaus.org/
 	 * An example uid: ac483688-b6ed-4f45-ac64-c105e599d482 <br>
 	 */
 	public String generateUUID(){
-		return this.uidGenerator.generateTimeBasedUUID().toString();
+		return this.uidGenerator.generateRandomBasedUUID().toString();
 	}
 
 	/* (non-Javadoc)
