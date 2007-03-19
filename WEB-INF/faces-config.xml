@@ -20,5 +20,11 @@
 		<component-type>Help</component-type>
 		<component-class>com.idega.idegaweb.help.presentation.Help</component-class>
 	</component>
+	
+	<managed-bean>
+		<managed-bean-name>loginSession</managed-bean-name>
+		<managed-bean-class>com.idega.core.accesscontrol.business.LoginSessionManagedBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 </faces-config>
