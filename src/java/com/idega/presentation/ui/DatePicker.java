@@ -48,6 +48,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     private String styleClass = null;
     private int length = -1;
     private boolean keepStatus = false;
+    
+    private String textInputId = null;
+    private String textInputOnchange = null;
     /**
      * Creates a new DateInput object.
      */
@@ -106,6 +109,13 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 
         TextInput input = new TextInput(this.displayInputName);
         input.setDisabled(this.disabled);
+        if (textInputId != null) {
+        	input.setId(textInputId);
+        }
+        if (textInputOnchange != null) {
+        	input.setOnChange(textInputOnchange);
+        }
+        
         int inputLength = 10;
         if (this.length < 0) {
 	        switch (this.dateFormatStyle) {
@@ -339,7 +349,6 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		
 		Image button = (bundle.getImage("calendar.gif", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
 		button.setOnClick("return showCalendar('"+object.getID()+"', '"+this.dateFormatPattern+"','"+value.getID()+"');");
-		
 		Page parentPage = getParentPage();
 		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar.js"));
 		
@@ -462,6 +471,22 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     }
     protected boolean getUsePublicWindowOpener() {
 		return true;
+	}
+
+	public String getTextInputId() {
+		return textInputId;
+	}
+
+	public void setTextInputId(String textInputId) {
+		this.textInputId = textInputId;
+	}
+
+	public String getTextInputOnchange() {
+		return textInputOnchange;
+	}
+
+	public void setTextInputOnchange(String textInputOnchange) {
+		this.textInputOnchange = textInputOnchange;
 	}
 
 }
