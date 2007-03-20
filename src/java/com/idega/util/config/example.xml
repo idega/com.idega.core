@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+    <!-- PLEASE COMMENT YOUR ENTRIES -->
+    <properties name="example-properties">
+        <property name="some.example.property" value="This is some property" />
+    </properties>
+    <properties name="example2-properties">
+        <property name="some.example2.property" value="This is some property from 2nd property map" />
+    </properties>
+</config>

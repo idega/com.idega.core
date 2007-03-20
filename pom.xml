@@ -240,6 +240,12 @@
       <version>0.6</version>
       <type>jar</type>
     </dependency>
+    <dependency>
+      <groupId>commons-jxpath</groupId>
+      <artifactId>commons-jxpath</artifactId>
+      <version>1.2-patched</version>
+      <type>jar</type>
+    </dependency>
 	<dependency>
       <groupId>javax.persistence</groupId>
       <artifactId>persistence-api</artifactId>
