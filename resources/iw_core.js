@@ -1003,3 +1003,8 @@ function getAbsoluteTop(objectId) {
 	}
 	return oTop;
 }
+
+function initComments() {
+	enableReverseAjax();
+	CommentsEngine.getInitInfoForComments(getInitInfoForCommentsCallback);
+}
