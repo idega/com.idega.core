@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.115 2007/01/19 08:16:21 laddi Exp $
+ * $Id: AccessControl.java,v 1.116 2007/03/26 22:28:09 eiki Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -21,11 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICPermissionHome;
 import com.idega.core.accesscontrol.data.ICRole;
@@ -70,12 +72,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2007/01/19 08:16:21 $ by $Author: laddi $
+ * Last modified: $Date: 2007/03/26 22:28:09 $ by $Author: eiki $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.115 $
+ * @version $Revision: 1.116 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -3368,7 +3370,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	  		String serverName = request.getServerName();
 	  		BuilderService bs = BuilderServiceFactory.getBuilderService(iwuc.getApplicationContext());
 	  		String pageKey = bs.getPageKeyByRequestURIAndServerName(pageUri,serverName);
-	  		return hasViewPermissionForPageKey(pageKey,iwuc);
+	  		if(pageKey!=null){
+	  			return hasViewPermissionForPageKey(pageKey,iwuc);
+	  		}
+	  		else{
+	  			System.err.println("No pageKey for : "+pageUri);
+	  			return false;
+	  		}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
