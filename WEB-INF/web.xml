@@ -105,10 +105,10 @@
  		<display-name>Ajax4jsf Filter</display-name>
 		 <filter-name>ajax4jsf</filter-name>
 		 <filter-class>org.ajax4jsf.Filter</filter-class>
-		 <init-param>
+		 <!-- init-param>
    			<param-name>forceparser</param-name>
    			<param-value>false</param-value>
-		</init-param>
+		</init-param -->
 	</filter>
 	<filter-mapping>
 	 	<filter-name>ajax4jsf</filter-name>
