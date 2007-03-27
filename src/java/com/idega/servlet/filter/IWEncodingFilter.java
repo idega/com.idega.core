@@ -15,8 +15,10 @@ import com.idega.presentation.IWContext;
 
 /**
  * 
- * This filter should always be the first filter in the filter chain. It sets the correct encoding to the request
- * and response that has to be done before anything is written to the headers or gotten from the request.
+ * This filter should always be the first filter in the filter chain. It sets
+ * the correct encoding to the request and response that has to be done before
+ * anything is written to the headers or gotten from the request.
+ * 
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  */
 public class IWEncodingFilter implements Filter {
@@ -30,25 +32,67 @@ public class IWEncodingFilter implements Filter {
 	public void doFilter(ServletRequest myRequest, ServletResponse myResponse,
 			FilterChain chain) throws IOException, ServletException {
 
-		HttpServletRequest request = (HttpServletRequest)myRequest;
-		HttpServletResponse response = (HttpServletResponse)myResponse;
-		
-		//FIXME move the real methods from the constructor to this filter!
-		//IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
+		HttpServletRequest request = (HttpServletRequest) myRequest;
+		HttpServletResponse response = (HttpServletResponse) myResponse;
+
+		// FIXME move the real methods from the constructor to this filter!
+		// IWContext iwc = new IWContext(request,response,
+		// request.getSession().getServletContext());
+
 		IWContext.setCharactersetEncoding(request);
+
+		// String contentType = request.getHeader("Content-Type");
+		// String characterEncoding = lookupCharacterEncoding(contentType);
+
 		request.getParameter("just forcing the getting of parameters, remove later");
-		//iwc.getParameter("just forcing the getting of parameters, remove later");
-		
+		// iwc.getParameter("just forcing the getting of parameters, remove
+		// later");
+
 		chain.doFilter(request, response);
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
-	public void init(FilterConfig arg0) throws ServletException {	
+	public void init(FilterConfig arg0) throws ServletException {
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see javax.servlet.Filter#destroy()
 	 */
 	public void destroy() {
+	}
+
+	/**
+	 * Detect request encoding from Content-Type header
+	 * 
+	 * @param contentType
+	 * @return - charset, if present.
+	 */
+	private String lookupCharacterEncoding(String contentType) {
+		String characterEncoding = null;
+
+		if (contentType != null) {
+			int charsetFind = contentType.indexOf("charset=");
+			if (charsetFind != -1) {
+				if (charsetFind == 0) {
+					// charset at beginning of Content-Type, curious
+					characterEncoding = contentType.substring(8);
+				} else {
+					char charBefore = contentType.charAt(charsetFind - 1);
+					if (charBefore == ';' || Character.isWhitespace(charBefore)) {
+						// Correct charset after mime type
+						characterEncoding = contentType
+								.substring(charsetFind + 8);
+					}
+				}
+			}
+
+		}
+		return characterEncoding;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.141 2007/03/07 08:55:18 justinas Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.142 2007/03/27 16:57:16 eiki Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
+
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
+import javax.faces.application.ViewHandler;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
@@ -36,6 +38,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginSession;
@@ -77,10 +80,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2007/03/07 08:55:18 $ by $Author: justinas $
+ * Last modified: $Date: 2007/03/27 16:57:16 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.141 $
+ * @version $Revision: 1.142 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -162,6 +165,9 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			try {
 				String characterSetEncoding = iwma.getSettings().getCharacterEncoding();
 				request.setCharacterEncoding(characterSetEncoding);
+				//encoding for myfaces and ajax4jsf to pick up
+				request.getSession().setAttribute(ViewHandler.CHARACTER_ENCODING_KEY,characterSetEncoding);
+				//request.setAttribute(ViewHandler.CHARACTER_ENCODING_KEY,characterSetEncoding);
 				// isRequestCharacterEncodingSet = true;
 			}
 			catch (UnsupportedEncodingException e) {
