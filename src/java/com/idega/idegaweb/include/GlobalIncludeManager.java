@@ -28,7 +28,7 @@ public class GlobalIncludeManager implements Singleton {
 	
 	private static Instantiator instantiator = new Instantiator() { public Object getInstance() {return new GlobalIncludeManager();}};
 
-	private String standardIWStyleSheetURL = "/idegaweb/style/style.css";
+	//private String standardIWStyleSheetURL = "/idegaweb/style/style.css";
 	private String coreIWStyleSheetURL = "/idegaweb/bundles/com.idega.core.bundle/resources/style/iw_core.css";
 	
 	private IWMainApplication iwma;
@@ -39,7 +39,7 @@ public class GlobalIncludeManager implements Singleton {
 	protected GlobalIncludeManager() {
 		this.iwma =  IWMainApplication.getDefaultIWMainApplication();
 		addStyleSheet(this.coreIWStyleSheetURL);
-		addStyleSheet(this.standardIWStyleSheetURL);
+		//addStyleSheet(this.standardIWStyleSheetURL);
 	}
 
 	/**
