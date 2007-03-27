@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.44 2007/02/01 04:51:35 gediminas Exp $ Created on
+ * $Id: StringHandler.java,v 1.45 2007/03/27 16:19:49 valdas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -12,6 +12,7 @@ package com.idega.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,11 +25,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2007/02/01 04:51:35 $ by $Author: gediminas $
+ * Last modified: $Date: 2007/03/27 16:19:49 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.44 $
+ * @version $Revision: 1.45 $
  */
 public class StringHandler {
 
@@ -301,7 +302,7 @@ public class StringHandler {
 	 * Icelandic,Swedish,German etc. characters. <br>
 	 * This method replaces these characters and re-writes them with Roman
 	 * equivalents. <br>
-	 * So 'Þ'/&THORN; becomes TH, '‡'/&aacute; becomes a, 'Š'/&auml; becomes ae,
+	 * So 'ï¿½'/&THORN; becomes TH, 'ï¿½'/&aacute; becomes a, 'ï¿½'/&auml; becomes ae,
 	 * etc.
 	 */
 	public static String stripNonRomanCharacters(String inputString) {
@@ -313,7 +314,7 @@ public class StringHandler {
 	 * Icelandic,Swedish,German etc. characters. <br>
 	 * This method replaces these characters and re-writes them with Roman
 	 * equivalents. <br>
-	 * So 'Þ'/&THORN; becomes Th, '‡'/&aacute; becomes a, 'Š'/&auml; becomes ae,
+	 * So 'ï¿½'/&THORN; becomes Th, 'ï¿½'/&aacute; becomes a, 'ï¿½'/&auml; becomes ae,
 	 * etc.
 	 * @param inputString the input string to replace
 	 * @param exceptions an array of characters to maintain in the outputString
@@ -1126,4 +1127,55 @@ public class StringHandler {
 		return htmlString.replaceAll("\\<.*?\\>","");
 	}
 	
+	/**
+	 * Checks if value is represented in hexidecimal notation
+	 * @param value
+	 * @return true || false
+	 */
+	public static boolean isHexidecimalValue(String value) {
+		if (-2 == getNotHexValueIndexInHexValue(value)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Returns the first index of not hexidecimal letter in provided String
+	 * @param value
+	 * @return -2 - didn't find incorrext letter, -1 - error, index
+	 */
+	public static int getNotHexValueIndexInHexValue(String value) {
+		if (value == null) {
+			return -1;	// Error
+		}
+		value = value.trim();
+		if (value.startsWith(CoreConstants.NUMBER_SIGN)) {
+			value = value.substring(value.indexOf(CoreConstants.NUMBER_SIGN));
+		}
+		if (value.endsWith(CoreConstants.SEMICOLON)) {
+			value = value.substring(0, value.lastIndexOf(CoreConstants.SEMICOLON));
+		}
+		if (value.length() == 3 || value.length() == 6) {
+			for (int i = 0; i < value.length(); i++) {
+				if (!Character.isDigit(value.charAt(i))) {
+					if (!CoreConstants.HEXIDECIMAL_LETTERS.contains(String.valueOf(value.charAt(i)))) {
+						return i;	// Error - returning index
+					}
+				}
+			}
+			return -2; // OK
+		}
+		return -1;	// Error
+	}
+	
+	public static String removeCharacters(String value, String whatToRemove, String whatToPlace) {
+		if (value == null || whatToRemove == null || whatToPlace == null) {
+			return null;
+		}
+		value = value.trim();
+		while (value.indexOf(whatToRemove) != -1) {
+			value = value.replace(whatToRemove, whatToPlace);
+		}
+		return value;
+	}
 }
