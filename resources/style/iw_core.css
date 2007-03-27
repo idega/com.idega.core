@@ -19,6 +19,12 @@ img {
 iframe {
 	border: 0;
 }
+/* for Safari */
+div h1, div h2, div h3, div h4, div h5, div h6,
+h1, h2, h3, h4, h5, h6{
+	background: transparent;
+	background-color: transparent;
+}
 
 /** END: General CSS definitions: **/
 
