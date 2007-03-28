@@ -259,26 +259,4 @@
       <type>jar</type>
     </dependency>
   </dependencies>
-  <build>
-	    <resources>
-	      <resource>
-	       <directory>${basedir}/META-INF</directory>
-	       <targetPath>META-INF</targetPath>
-	        <includes>
-	          <include>**/**</include>
-	        </includes>
-	      </resource>
-	      <resource>
-	        <directory>${basedir}/src/java</directory>
-	        <includes>
-	          <include>**/*.xml</include>
-	        </includes>
-	      </resource>
-	      	<resource>
-        		<directory>${basedir}/WEB-INF</directory>
-        		<targetPath>WEB-INF</targetPath>
-      		</resource>
-		</resources>
-	</build>
-
 </project>
