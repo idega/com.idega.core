@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSessionBean.java,v 1.7 2007/03/28 10:09:11 civilis Exp $
+ * $Id: LoginSessionBean.java,v 1.8 2007/03/28 13:19:02 civilis Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -22,35 +22,21 @@ import com.idega.user.business.UserProperties;
 
 /**
  * 
- *  Last modified: $Date: 2007/03/28 10:09:11 $ by $Author: civilis $
+ *  Last modified: $Date: 2007/03/28 13:19:02 $ by $Author: civilis $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
-public class LoginSessionBean
-//extends IBOSessionBean 
-implements LoginSession{
+public class LoginSessionBean implements LoginSession {
     
 	private IWApplicationContext iwac;
     private SessionHelper sessionHelper = new SessionHelper();
     private Stack reservedSessionHelpers = new Stack();
     
-    private void reset(){
-        this.sessionHelper = null;
-        this.sessionHelper = new SessionHelper();
-        /*
-        sessionHelper.user=null;
-        sessionHelper.permissionGroups = null;
-        sessionHelper.primaryGroup = null;
-        sessionHelper.repGroup = null;
-        sessionHelper.loggedOnInfo = null;
-        sessionHelper.loginState = LoginState.NoState;
-        sessionHelper.userLoginName = null;
-        sessionHelper.userProperties = null;
-        sessionHelper.mapOfExtraAttributes = null;
-        */
+    public void reset() {
+        sessionHelper = new SessionHelper();
+        reservedSessionHelpers = new Stack();
     }
-    
     
     /**
      * @return Returns the permissionGroups.

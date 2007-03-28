@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.65 2007/03/28 10:09:11 civilis Exp $
+ * $Id: LoginBusinessBean.java,v 1.66 2007/03/28 13:19:02 civilis Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -62,11 +62,11 @@ import com.idega.util.RequestUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2007/03/28 10:09:11 $ by $Author: civilis $
+ * Last modified: $Date: 2007/03/28 13:19:02 $ by $Author: civilis $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.65 $
+ * @version $Revision: 1.66 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -1587,31 +1587,25 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 	
 	/**
-	 * Deletes the LoginSession object from the user session
+	 * Resets the LoginSession object
 	 * 
 	 * @param iwc
-	 * @throws RemoteException
-	 * @throws RemoveException
 	 */
-	private static void removeLoginSession(IWUserContext iwc) throws RemoteException, RemoveException {
-//		TODO: not used - probably delete, as this method does nothing
-		//IBOLookup.removeSessionInstance(iwc, LoginSession.class);
+	private static void removeLoginSession(IWUserContext iwc) {
+		getLoginSessionBean(iwc.getSession()).reset();
 	}
 
 	/**
-	 * Deletes the LoginSession object from the user session
+	 * Resets the LoginSession object
 	 * 
 	 * @param iwc
-	 * @throws RemoteException
-	 * @throws RemoveException
 	 */
-	private void removeLoginSession(HttpSession session) throws RemoteException, RemoveException {
-		//IBOLookup.removeSessionInstance(session, LoginSession.class);
+	private void removeLoginSession(HttpSession session) {
+		getLoginSessionBean(session).reset();
 	}
 
 	/**
 	 * TODO tryggvil describe method getCurrentUser
-	 * 
 	 * @param context
 	 * @return
 	 */
