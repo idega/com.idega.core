@@ -1,5 +1,5 @@
 /*
- * $Id: Script.java,v 1.30 2007/01/16 15:27:23 tryggvil Exp $ 
+ * $Id: Script.java,v 1.31 2007/03/28 13:50:12 eiki Exp $ 
  * Created in 2000 by Tryggvi Larusson
  * 
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.idegaweb.IWConstants;
  * An instance of this component can be used to define javascript functions and
  * add to a component or a page.
  * </p>
- * Last modified: $Date: 2007/01/16 15:27:23 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/03/28 13:50:12 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class Script extends PresentationObject {
 
@@ -203,7 +203,7 @@ public class Script extends PresentationObject {
 	}
 
 	public void addScriptSource(String jsString) {
-		if (jsString != null && jsString.endsWith(".js")) {
+		if (jsString != null) {
 			Script js = new Script();
 			js.setScriptSource(jsString);
 			//DOCUMENT.WRITE is illegal in XHTML you must use DOM writing instead
