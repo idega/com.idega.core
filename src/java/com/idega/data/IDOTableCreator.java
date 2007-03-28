@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.57 2006/04/09 12:13:15 laddi Exp $
+ * $Id: IDOTableCreator.java,v 1.57.2.1 2007/03/28 16:01:18 eiki Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -34,10 +34,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
+ * Last modified: $Date: 2007/03/28 16:01:18 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.57 $
+ * @version $Revision: 1.57.2.1 $
  */
 public class IDOTableCreator{
 
@@ -54,10 +54,6 @@ public class IDOTableCreator{
   }
 
   protected int executeUpdate(GenericEntity entity,String SQLCode)throws Exception{
-
-	  if(SQLCode.toLowerCase().startsWith("create table ic_group(")){
-		  System.out.println("creating group");
-	  }
     return this._dsi.executeUpdate(entity,SQLCode);
   }
 

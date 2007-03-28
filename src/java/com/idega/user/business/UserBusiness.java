@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.92.2.1 2007/01/30 06:20:14 eiki Exp $
+ * $Id: UserBusiness.java,v 1.92.2.2 2007/03/28 16:01:20 eiki Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -50,10 +50,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2007/01/30 06:20:14 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/03/28 16:01:20 $ by $Author: eiki $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.92.2.1 $
+ * @version $Revision: 1.92.2.2 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -825,4 +825,14 @@ public interface UserBusiness extends IBOService {
 	 */
 	public Locale getUsersPreferredLocale(User user);
 	
+	
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#validateIcelandicSSN
+	 */
+	public boolean validateIcelandicSSN(String ssn);
+	
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#hasValidIcelandicSSN
+	 */
+	public boolean hasValidIcelandicSSN(User user);
 }

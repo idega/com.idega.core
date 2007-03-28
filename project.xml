@@ -6,7 +6,7 @@
   <artifactId>com.idega.core</artifactId>
   <!-- DONT FORGET to change the current version when declaring a new one -->
 
-  <currentVersion>3.1.40</currentVersion>
+  <currentVersion>3.1.41</currentVersion>
   <shortDescription>idegaweb core is the core package of the idegaweb framework</shortDescription>
   <package>com.idega</package>
   <versions>
@@ -477,7 +477,7 @@
     <dependency>
       <groupId>lucene</groupId>
       <artifactId>lucene-core</artifactId>
-      <version>1.9.1</version>
+      <version>2.1.0</version>
       <type>jar</type>
       <url>http://jakarta.apache.org/lucene/</url>
       <properties>
@@ -525,7 +525,7 @@
     <dependency>
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
-      <version>2.0.2</version>
+      <version>3.0.1</version>
       <type>jar</type>
       <url>http://jakarta.apache.org/commons/httpclient/</url>
       <properties>
@@ -537,7 +537,7 @@
     <dependency>
       <groupId>slide</groupId>
       <artifactId>jakarta-slide-webdavlib</artifactId>
-      <version>2.2pre1.iwbuild4</version>
+      <version>2.2pre1.iwbuild5</version>
       <type>jar</type>
       <url>http://www.slide.com/</url>
       <properties>

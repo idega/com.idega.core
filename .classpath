@@ -39,7 +39,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jug/jars/jug-1.1.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/lucene/jars/lucene-core-1.9.1.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/lucene/jars/lucene-core-2.1.0.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jai/jars/jai-1.0.jar">
   </classpathentry>
@@ -47,9 +47,9 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/itextpdf/jars/itext-paulo-139.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-2.0.2.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/commons-httpclient/jars/commons-httpclient-3.0.1.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/slide/jars/jakarta-slide-webdavlib-2.2pre1.iwbuild4.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/slide/jars/jakarta-slide-webdavlib-2.2pre1.iwbuild5.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.8.jar">
   </classpathentry>

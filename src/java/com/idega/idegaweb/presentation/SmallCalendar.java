@@ -10,6 +10,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import com.idega.core.builder.data.ICPage;
+import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -760,6 +761,7 @@ public class SmallCalendar extends Block {
 			setAsObjectInstanceTarget(this._link);
 		}
 
+		this._link.setId(UUIDGenerator.getInstance().generateId());
 		return (Link) this._link.clone();
 	}
 

@@ -82,7 +82,7 @@ public void setName(String name){
 
 public void setId(String id){
 
- super.setID(id);
+ super.setId(id);
 
  setParamAndAttribute("MOVEID",id);
 

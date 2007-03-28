@@ -2332,42 +2332,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return getPrimaryKey().toString();
 	}
 	
-	private boolean validateSSN(String ssn) {
-        int sum = 0; 
-        boolean validSSN = false; 
-        if (ssn.length() == 10) { 
-            try {
-	            sum = sum + Integer.parseInt(ssn.substring(0,1)) * 3; 
-	            sum = sum + Integer.parseInt(ssn.substring(1,2)) * 2; 
-	            sum = sum + Integer.parseInt(ssn.substring(2,3)) * 7; 
-	            sum = sum + Integer.parseInt(ssn.substring(3,4)) * 6; 
-	            sum = sum + Integer.parseInt(ssn.substring(4,5)) * 5; 
-	            sum = sum + Integer.parseInt(ssn.substring(5,6)) * 4; 
-	            sum = sum + Integer.parseInt(ssn.substring(6,7)) * 3; 
-	            sum = sum + Integer.parseInt(ssn.substring(7,8)) * 2; 
-	            sum = sum + Integer.parseInt(ssn.substring(8,9)) * 1; 
-	            sum = sum + Integer.parseInt(ssn.substring(9,10)) * 0; 
-            	if ((sum%11) == 0) {
-            	    validSSN = true; 
-            	} else {
-            	    System.out.println(ssn + " is not a valid SSN. If fails validation test.");
-            	}
-            }
-            catch (NumberFormatException e) {
-                System.out.println(ssn + " is not a valid SSN. It contains characters other than digits.");
-            }
-        } else {
-            System.out.println(ssn + " is not a valid SSN. It is not 10 characters.");
-        }
-        return validSSN;
-    }
 	
-	public boolean hasValidSSN() {
-		if (getPersonalID() == null) {
-			return false;
-}
-		return validateSSN(getPersonalID());
-	}
 //	public boolean isDeceased() {
 //		boolean isDeceased = false;
 //		try {

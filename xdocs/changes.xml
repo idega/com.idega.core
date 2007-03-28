@@ -5,6 +5,17 @@
   </properties>
   <body>
   
+  	<release version="3.1.41" date="2007-03-19">
+		<action dev="eiki" type="fix">
+			Changed the default creation of UUIDs to use a random generator rather than a time based method (could be safer, switch back if not).
+			Did it to avoid getting the same uuid if created at the exact same time.
+			Also added validation methods for Icelandic SSN's to UserBusiness, see TODO on those methods for more info
+			Changed HttpClient to v. 3.0.1 and Lucene to v. 2.1.0.
+			Fixed stack overflow error in Quicktime PresentationObject.
+			Fixed MSSQLDatastoreInterface so it now creates UNIQUE_ID columns even if htere is data in the table.
+		</action>
+	</release>
+  
 	<release version="3.1.40" date="2007-03-20">
 		<action dev="gimmi" type="update">
 			added a setTextInputId method

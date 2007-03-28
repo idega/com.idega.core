@@ -403,4 +403,20 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		return 1000;
 	}
 	
+	
+	/**
+	 * Overridden because unique columns cannot be created if the table already has data.
+	 * @see com.idega.data.DatastoreInterface
+	 */
+	public String getAddColumnCommand(String columnName, GenericEntity entity) {
+		String SQLString = "alter table "+entity.getTableName()+" add "+getColumnSQLDefinition(columnName,entity);
+		//remove the UNIQUE definition
+		int uniqueIndex = SQLString.lastIndexOf("UNIQUE");
+		if(uniqueIndex>=0){
+			SQLString = SQLString.substring(0,uniqueIndex);
+		}
+		
+		return SQLString;
+	}
+	
 }
