@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.142 2007/03/27 16:57:16 eiki Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.143 2007/03/28 10:09:50 civilis Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.idega.business.SpringBeanLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginSession;
@@ -80,10 +81,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2007/03/27 16:57:16 $ by $Author: eiki $
+ * Last modified: $Date: 2007/03/28 10:09:50 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.142 $
+ * @version $Revision: 1.143 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -911,7 +912,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		if(isLoggedOn()){
 			LoginSession lSession;
 			try {
-				lSession = LoginBusinessBean.getLoginSession(this);
+				lSession = (LoginSession)SpringBeanLookup.getInstance().getSpringBean(getSession(), LoginSession.class);
 				return lSession.isSuperAdmin();
 			}
 			catch (Exception e) {

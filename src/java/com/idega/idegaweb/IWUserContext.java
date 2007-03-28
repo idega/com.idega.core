@@ -1,5 +1,5 @@
 /*
- * $Id: IWUserContext.java,v 1.10 2005/12/07 11:51:51 tryggvil Exp $
+ * $Id: IWUserContext.java,v 1.11 2007/03/28 10:09:35 civilis Exp $
  * Created in 2002 by Tryggvi Larusson
  *
  * Copyright (C) 2002-2005 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,8 @@ package com.idega.idegaweb;
 
 import java.security.Principal;
 import java.util.Locale;
+
+import javax.servlet.http.HttpSession;
 
 //import com.idega.core.accesscontrol.business.AccessController;
 //import com.idega.core.component.data.ICObject;
@@ -25,10 +27,10 @@ import com.idega.user.business.UserProperties;
  * bound instances such as the idegaWeb User object.
  * </p>
  * 
- * Last modified: $Date: 2005/12/07 11:51:51 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/03/28 10:09:35 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public interface IWUserContext extends java.io.Serializable{
 
@@ -83,5 +85,6 @@ public interface IWUserContext extends java.io.Serializable{
   public boolean isSuperAdmin();
   public boolean isLoggedOn();
 
+  public abstract HttpSession getSession();
 
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: AccessController.java,v 1.30 2006/03/29 13:10:16 laddi Exp $
+ * $Id: AccessController.java,v 1.31 2007/03/28 10:09:11 civilis Exp $
  * 
  * Created in 2001 by gummi
  * 
@@ -32,10 +32,10 @@ import com.idega.user.data.Group;
  * This is the main service interface for the old generation permission system
  * in idegaWeb based around the ICPermission entity (IC_PERMISSION table).
  * </p>
- * Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
+ * Last modified: $Date: 2007/03/28 10:09:11 $ by $Author: civilis $
  * 
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
- * @version $Revision: 1.30 $
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
+ * @version $Revision: 1.31 $
  */
 public interface AccessController extends com.idega.idegaweb.IWService{
 
@@ -101,11 +101,6 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public boolean hasPermission(String permissionKey, Object obj,IWUserContext iwc) throws Exception;
   public boolean hasPermissionForGroup(String permissionKey, Group obj,IWUserContext iwc) throws Exception;
   
-  /**
-	   * 
-	   * @deprecated only used in idegaWeb Project removed in next major version
-	   */
-  public boolean hasPermission(String permissionKey, int category, String identifier, IWUserContext iwc) throws Exception;
   public boolean hasFilePermission(String permissionKey, int id, IWUserContext iwc)throws Exception;
   //temp public boolean hasDataPermission(String permissionKey, Class entity, int entityRecordId, IWUserContext iwc)throws Exception;
   //temp public boolean hasDataPermission(String permissionKey, Class entity, IWUserContext iwc)throws Exception;

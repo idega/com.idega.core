@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSessionBean.java,v 1.6 2006/04/09 12:13:20 laddi Exp $
+ * $Id: LoginSessionBean.java,v 1.7 2007/03/28 10:09:11 civilis Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -13,22 +13,25 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import com.idega.business.IBOSessionBean;
 import com.idega.core.data.GenericGroup;
 import com.idega.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.business.UserProperties;
 
 /**
  * 
- *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/03/28 10:09:11 $ by $Author: civilis $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
-public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
+public class LoginSessionBean
+//extends IBOSessionBean 
+implements LoginSession{
     
-
+	private IWApplicationContext iwac;
     private SessionHelper sessionHelper = new SessionHelper();
     private Stack reservedSessionHelpers = new Stack();
     
@@ -212,5 +215,16 @@ public class LoginSessionBean extends IBOSessionBean  implements LoginSession{
 			ex.printStackTrace();
 		}
 		return false;
+	}
+	
+	public IWApplicationContext getIWApplicationContext(){
+		if(this.iwac==null){
+			return IWMainApplication.getDefaultIWApplicationContext();
+		}
+	    return this.iwac;
+	}
+	
+	protected AccessController getAccessController() {
+		return this.getIWApplicationContext().getIWMainApplication().getAccessController();
 	}
 }

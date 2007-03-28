@@ -79,6 +79,7 @@ public class IBOLookup implements Singleton
 	 */
 	public static IBOSession getSessionInstance(IWUserContext iwuc, Class beanInterfaceClass) throws IBOLookupException
 	{
+		checkAnnotatedAsSpringBean(beanInterfaceClass);
 		return getInstance().getSessionInstanceImpl(iwuc, beanInterfaceClass);
 	}
 	private IBOSession getSessionInstanceImpl(IWUserContext iwuc, Class beanInterfaceClass) throws IBOLookupException
@@ -566,6 +567,7 @@ public class IBOLookup implements Singleton
 	 */
 	public static IBOSession getSessionInstance(HttpServletRequest request, Class beanInterfaceClass) throws IBOLookupException
 	{
+		checkAnnotatedAsSpringBean(beanInterfaceClass);
 		return getInstance().getSessionInstanceImpl(request.getSession(), beanInterfaceClass);
 	}
 	
@@ -577,6 +579,7 @@ public class IBOLookup implements Singleton
 	 */
 	public static IBOSession getSessionInstance(HttpSession session, Class beanInterfaceClass) throws IBOLookupException
 	{
+		checkAnnotatedAsSpringBean(beanInterfaceClass);
 		return getInstance().getSessionInstanceImpl(session, beanInterfaceClass);
 	}
 	
@@ -592,4 +595,14 @@ public class IBOLookup implements Singleton
 
 	}
 	
+	private static void checkAnnotatedAsSpringBean(Class interface_class) {
+		
+		if(interface_class.isAnnotationPresent(SpringBeanName.class)) {
+			throw new UnsupportedOperationException(
+					"Provided interface: "+interface_class.getName()+
+					" is annotated as spring bean therefore it's not IBO bean anymore. " +
+					"You need to retrieve this bean either by letting spring to inject it (use this one if possible)" +
+					" or making a lookup from SpringBeanLookup -> getSpringBean(..)");
+		}
+	}
 }
