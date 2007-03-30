@@ -1,52 +1,50 @@
 /*
- * $Id: RealEstateBMPBean.java,v 1.1.2.1 2007/03/28 17:13:23 thomas Exp $
- * Created on Mar 26, 2007
- *
+ * $Id: RealEstateBMPBean.java,v 1.1.2.2 2007/03/30 07:33:11 laddi Exp $ Created on Mar 26, 2007
+ * 
  * Copyright (C) 2007 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
+ * 
+ * This software is the proprietary information of Idega hf. Use is subject to license terms.
  */
 package com.idega.core.location.data;
 
-import java.util.Collection;
 import javax.ejb.FinderException;
-import com.idega.data.IDOQuery;
-import com.idega.user.data.Group;
-import com.idega.user.data.User;
 
+import com.idega.data.IDOQuery;
 
 public class RealEstateBMPBean extends com.idega.data.GenericEntity implements RealEstate {
-	
+
 	// length of description field
 	private static final int DESCRIPTION = 255;
-	
-	// long input fields 
-	private static final int LONG_INPUT_FIELD = 255;
-	
-	private static final String COLUMN_REAL_ESTATE_NUMBER = "REAl_ESTATE_NUMBER";
-	
-	private static final String COLUMN_REAL_ESTATE_CODE = "REAL_ESTATE_CODE";
-	
-	private static final String COLUMN_NAME = "NAME";
-	
-	private static final String COLUMN_USE = "REAL_ESTATE_USE";
-	
-	private static final String COLUMN_COMMENT = "REAL_ESTATE_COMMENT";
-	
-	private static final String COLUMN_STREET_NUMBER = "STREET_NUMBER";
-	
-	private static final String COLUMN_STREET_ID = "STREET_ID";
-	
 
-	/* (non-Javadoc)
+	// long input fields
+	private static final int LONG_INPUT_FIELD = 255;
+
+	private static final String COLUMN_REAL_ESTATE_NUMBER = "REAl_ESTATE_NUMBER";
+
+	private static final String COLUMN_REAL_ESTATE_CODE = "REAL_ESTATE_CODE";
+
+	private static final String COLUMN_NAME = "NAME";
+
+	private static final String COLUMN_USE = "REAL_ESTATE_USE";
+
+	private static final String COLUMN_COMMENT = "REAL_ESTATE_COMMENT";
+
+	private static final String COLUMN_STREET_NUMBER = "STREET_NUMBER";
+
+	private static final String COLUMN_STREET_ID = "STREET_ID";
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.idega.data.GenericEntity#getEntityName()
 	 */
 	public String getEntityName() {
 		return "ic_real_estate";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.idega.data.GenericEntity#initializeAttributes()
 	 */
 	public void initializeAttributes() {
@@ -60,59 +58,59 @@ public class RealEstateBMPBean extends com.idega.data.GenericEntity implements R
 		// pointers to other entities
 		addManyToOneRelationship(COLUMN_STREET_ID, Street.class);
 	}
-	
+
 	public void setRealEstateNumber(String realEstateNumber) {
 		setColumn(COLUMN_REAL_ESTATE_NUMBER, realEstateNumber);
 	}
-	
+
 	public String getRealEstateNumber() {
 		return (String) getColumnValue(COLUMN_REAL_ESTATE_NUMBER);
-	}	
-	
+	}
+
 	public void setRealEstateCode(String realEstateCode) {
 		setColumn(COLUMN_REAL_ESTATE_CODE, realEstateCode);
 	}
-	
+
 	public String getRealEstateCode() {
 		return (String) getColumnValue(COLUMN_REAL_ESTATE_CODE);
 	}
-	
+
 	public void setName(String name) {
 		setColumn(COLUMN_NAME, name);
 	}
-	
+
 	public String getName() {
 		return (String) getColumnValue(COLUMN_NAME);
 	}
-	
+
 	public void setUse(String use) {
 		setColumn(COLUMN_USE, use);
 	}
-	
+
 	public String getUse() {
 		return (String) getColumnValue(COLUMN_USE);
 	}
-	
+
 	public void setComment(String comment) {
 		setColumn(COLUMN_COMMENT, comment);
 	}
-	
+
 	public String getComment() {
 		return (String) getColumnValue(COLUMN_COMMENT);
 	}
-	
+
 	public void setStreetNumber(String streetNumber) {
 		setColumn(COLUMN_STREET_NUMBER, streetNumber);
 	}
-	
+
 	public String getStreetNumber() {
 		return (String) getColumnValue(COLUMN_STREET_NUMBER);
 	}
-	
+
 	public void setStreet(Street street) {
 		setColumn(COLUMN_STREET_ID, street);
 	}
-	
+
 	public Street getStreet() {
 		return (Street) getColumnValue(COLUMN_STREET_ID);
 	}
@@ -120,16 +118,16 @@ public class RealEstateBMPBean extends com.idega.data.GenericEntity implements R
 	public void setStreetID(Integer streetID) {
 		setColumn(COLUMN_STREET_ID, streetID);
 	}
-	
+
 	public Integer getStreetID() {
 		return getIntegerColumnValue(COLUMN_STREET_ID);
 	}
-	
+
 	public Object ejbFindRealEstateByNumber(String number) throws FinderException {
-	    IDOQuery query = idoQueryGetSelect();
-	    query.appendWhere();
-	    query.appendEqualsQuoted(COLUMN_REAL_ESTATE_NUMBER, number);
-	    return idoFindOnePKByQuery(query);
+		IDOQuery query = idoQueryGetSelect();
+		query.appendWhere();
+		query.appendEqualsQuoted(COLUMN_REAL_ESTATE_NUMBER, number);
+		return idoFindOnePKByQuery(query);
 	}
-	
+
 }
