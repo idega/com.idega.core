@@ -265,6 +265,11 @@
       <name>3.1.41</name>
       <tag>CORE_3_1_41</tag>
     </version>
+    <version>
+      <id>3.1.42</id>
+      <name>3.1.42</name>
+      <tag>CORE_3_1_42</tag>
+    </version>
   </versions>
   <branches/>
   <mailingLists>
