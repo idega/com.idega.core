@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.210 2007/01/29 23:49:06 idegaweb Exp $
+ * $Id: UserBusinessBean.java,v 1.211 2007/04/01 13:34:08 civilis Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -24,12 +24,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -97,10 +99,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/01/29 23:49:06 $ by $Author: idegaweb $
+ * Last modified: $Date: 2007/04/01 13:34:08 $ by $Author: civilis $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.210 $
+ * @version $Revision: 1.211 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -1205,10 +1207,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				if (country != null) {
 					address.setCountry(country);
 				}
-				address.setPostalCode(postalCode);
-				address.setProvince(province);
-				address.setCity(city);
-				address.setPOBox(poBox);
+					address.setPostalCode(postalCode);
+					address.setProvince(province);
+					address.setCity(city);
+					address.setPOBox(poBox);
 				address.setStreetName(streetName);
 				if (streetNumber != null) {
 					address.setStreetNumber(streetNumber);
@@ -1218,10 +1220,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					address.setStreetNumber("");
 				}
 				if (communeID == null || communeID.intValue() == -1) {
-					address.setCommune(null);
-				} else {
-					address.setCommuneID(communeID.intValue());
-				}
+						address.setCommune(null);
+					} else {
+						address.setCommuneID(communeID.intValue());
+					}
 				address.store();
 				if (addAddress) {
 					user.addAddress(address);
@@ -3285,5 +3287,80 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 	
+	/**
+	 * Sets the preferredLocale for the user and STORES to the database.
+	 * @param user
+	 * @param preferredLocale (the language)
+	 */
+	public void setUsersPreferredLocale(User user,String preferredLocale, boolean storeUser){
+		user.setPreferredLocale(preferredLocale);
+		
+		if(storeUser){
+			user.store();
+		}
+	}
+	
+	/**
+	 * @param user
+	 * @return a Locale object created with the users preferred locale (language)
+	 */
+	public Locale getUsersPreferredLocale(User user){
+		Locale locale = null;
+		if(user!=null){
+			String localeString = user.getPreferredLocale();
+			
+			if(localeString!=null){
+				locale = new Locale(localeString);
+			}
+		}
+		return locale;
+	}
+	
+	/**
+	 * Validated the Icelandic SSN checksum
+	 */
+	public boolean validateIcelandicSSN(String ssn) {
+		//TODO change to validateSSN(string ssn, Locale locale)
+		// so we can implement other SSN checking
+        int sum = 0; 
+        boolean validSSN = false; 
+        if (ssn.length() == 10) { 
+            try {
+	            sum = sum + Integer.parseInt(ssn.substring(0,1)) * 3; 
+	            sum = sum + Integer.parseInt(ssn.substring(1,2)) * 2; 
+	            sum = sum + Integer.parseInt(ssn.substring(2,3)) * 7; 
+	            sum = sum + Integer.parseInt(ssn.substring(3,4)) * 6; 
+	            sum = sum + Integer.parseInt(ssn.substring(4,5)) * 5; 
+	            sum = sum + Integer.parseInt(ssn.substring(5,6)) * 4; 
+	            sum = sum + Integer.parseInt(ssn.substring(6,7)) * 3; 
+	            sum = sum + Integer.parseInt(ssn.substring(7,8)) * 2; 
+	            sum = sum + Integer.parseInt(ssn.substring(8,9)) * 1; 
+	            sum = sum + Integer.parseInt(ssn.substring(9,10)) * 0; 
+            	if ((sum%11) == 0) {
+            	    validSSN = true; 
+            	} else {
+            	    System.out.println(ssn + " is not a valid SSN. If fails validation test.");
+            	}
+            }
+            catch (NumberFormatException e) {
+                System.out.println(ssn + " is not a valid SSN. It contains characters other than digits.");
+            }
+        } else {
+            System.out.println(ssn + " is not a valid SSN. It is not 10 characters.");
+        }
+        return validSSN;
+    }
+	
+	/**
+	 * @return Returns true if the user has a valid Icelandic social security number
+	 */
+	public boolean hasValidIcelandicSSN(User user) {
+		//TODO change to hasValidSSN(string ssn, Locale locale)
+		// so we can implement other SSN checking
+		if (user.getPersonalID() == null) {
+			return false;
+		}
+		return validateIcelandicSSN(user.getPersonalID());
+	}
 	
 } // Class UserBusiness

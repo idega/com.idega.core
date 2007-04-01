@@ -121,6 +121,10 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public com.idega.core.localisation.data.ICLanguage getNativeLanguage();
  public void setNativeLanguage(int ICLanguageID);
  public void setNativeLanguage(com.idega.core.localisation.data.ICLanguage language);
- public boolean hasValidSSN();
  public boolean isDeceased();
+ public void setFamilyID(String familyID);
+ public String getFamilyID();
+ public void setPreferredLocale(String preferredLocale);
+ public String getPreferredLocale();
+ 
 }

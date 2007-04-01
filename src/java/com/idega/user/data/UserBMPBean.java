@@ -61,7 +61,7 @@ import com.idega.util.text.TextSoap;
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>
- * @version 1.0 
+ * @version 1.5
  */
 
 public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, com.idega.core.user.data.User {
@@ -78,17 +78,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public final static String SQL_RELATION_PHONE = "IC_USER_PHONE";
 	public final static String TABLE_NAME = SQL_TABLE_NAME;
   
-  static final String META_DATA_HOME_PAGE = "homepage";
+	static final String META_DATA_HOME_PAGE = "homepage";
   
-
-
-	//    public UserBMPBean(){
-	//      super();
-	//    }
-
-	//    public UserBMPBean(int id)throws SQLException{
-	//      super(id);
-	//    }
 
 	public String getEntityName() {
 		return TABLE_NAME;
@@ -104,10 +95,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		addAttribute(getColumnNameDescription(), "Description", true, true, java.lang.String.class);
 		addAttribute(getColumnNameDateOfBirth(), "Birth date", true, true, java.sql.Date.class);
 		addAttribute(getColumnNamePersonalID(), "Personal ID", true, true, String.class, 20);
-    addAttribute(getColumnNameDeleted(),"Deleted",true,true,Boolean.class);
-    addAttribute(getColumnNameDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
-    addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
+	    addAttribute(getColumnNameDeleted(),"Deleted",true,true,Boolean.class);
+	    addAttribute(getColumnNameDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
+	    addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
     	addAttribute(getColumnNameFamilyID(), "Family ID", true, true, String.class, 20);
+    	addAttribute(getColumnNamePreferredLocale(), "Preferred locale", true, true, String.class, 20);
     
 	//adds a unique id string column to this entity that is set when the entity is first stored.
 	addUniqueIDColumn();
@@ -237,6 +229,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public static String getColumnNameFamilyID() {
 		return "FAMILY_ID";
 	}
+	
+	public static String getColumnNamePreferredLocale(){
+		return "PREFERRED_LOCALE";
+	}
 
 	/**
 	 * @depricated
@@ -308,9 +304,21 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		setColumn(getColumnNameNativeLanguage(), language);
 	}
 
-//	public String getFamilyID() {
-//		return getStringColumnValue(getColumnNameFamilyID());
-//	}
+	public void setFamilyID(String familyID) {
+		setColumn(getColumnNameFamilyID(), familyID);
+	}
+	
+	public String getFamilyID() {
+		return getStringColumnValue(getColumnNameFamilyID());
+	}
+	
+	public void setPreferredLocale(String preferredLocale) {
+		setColumn(getColumnNamePreferredLocale(), preferredLocale);
+	}
+	
+	public String getPreferredLocale() {
+		return getStringColumnValue(getColumnNamePreferredLocale());
+	}
 
 	public String getName() {
 		String firstName = this.getFirstName();
@@ -1145,8 +1153,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public Integer ejbFindByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String personalId, String first_name, String last_name) throws FinderException {
     
     if (personalId.length() < 6) {
-		throw new FinderException("PersonalID shorter than 6 letters");
-	}
+			throw new FinderException("PersonalID shorter than 6 letters");
+		}
 	IDOQuery query = idoQueryGetSelect();
 		 query
 			.appendWhere(getColumnNamePersonalID())
@@ -1755,13 +1763,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		
 		Criteria join = new JoinCriteria(new Column(addressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())),new Column(userAddressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())));
 		if (streetName.indexOf(" ") == -1) {
-			IDOEntityField addressField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
-			Criteria match = new MatchCriteria(addressTable,addressField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
-			query.addCriteria(new AND(join,match));
+		IDOEntityField addressField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
+		Criteria match = new MatchCriteria(addressTable,addressField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
+
+		query.addCriteria(new AND(join,match));
 		} else {
 			String streetNumber = streetName.substring(streetName.lastIndexOf(" ") + 1);
 			streetName = streetName.substring(0, streetName.lastIndexOf(" "));
-			
+		
 			IDOEntityField streetNameField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
 			Criteria matchStreetName = new MatchCriteria(addressTable,streetNameField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
 			query.addCriteria(new AND(join,matchStreetName));
@@ -2125,7 +2134,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			  statusSubQuery.addCriteria(new MatchCriteria(statusTable, StatusBMPBean.STATUS_LOC_KEY, MatchCriteria.EQUALS, userStatuses.iterator().next().toString()));
 	      } else {
 	    	  statusSubQuery.addCriteria(new InCriteria(statusTable,StatusBMPBean.STATUS_LOC_KEY, userStatuses));
-	      }
+	      }  
 	  }
 	  if (statusSubQueryDeceased != null) {
 		  InCriteria statusIn = new InCriteria(userTable, getColumnNameUserID(), statusSubQuery);
@@ -2323,43 +2332,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return getPrimaryKey().toString();
 	}
 	
-	private boolean validateSSN(String ssn) {
-        int sum = 0; 
-        boolean validSSN = false; 
-        if (ssn.length() == 10) { 
-            try {
-	            sum = sum + Integer.parseInt(ssn.substring(0,1)) * 3; 
-	            sum = sum + Integer.parseInt(ssn.substring(1,2)) * 2; 
-	            sum = sum + Integer.parseInt(ssn.substring(2,3)) * 7; 
-	            sum = sum + Integer.parseInt(ssn.substring(3,4)) * 6; 
-	            sum = sum + Integer.parseInt(ssn.substring(4,5)) * 5; 
-	            sum = sum + Integer.parseInt(ssn.substring(5,6)) * 4; 
-	            sum = sum + Integer.parseInt(ssn.substring(6,7)) * 3; 
-	            sum = sum + Integer.parseInt(ssn.substring(7,8)) * 2; 
-	            sum = sum + Integer.parseInt(ssn.substring(8,9)) * 1; 
-	            sum = sum + Integer.parseInt(ssn.substring(9,10)) * 0; 
-            	if ((sum%11) == 0) {
-            	    validSSN = true; 
-            	} else {
-            	    System.out.println(ssn + " is not a valid SSN. If fails validation test.");
-            	}
-            }
-            catch (NumberFormatException e) {
-                System.out.println(ssn + " is not a valid SSN. It contains characters other than digits.");
-            }
-        } else {
-            System.out.println(ssn + " is not a valid SSN. It is not 10 characters.");
-        }
-        return validSSN;
-    }
-
-	public boolean hasValidSSN() {
-		if (getPersonalID() == null) {
-			return false;
-		}
-		return validateSSN(getPersonalID());
-	}
-
+	
 //	public boolean isDeceased() {
 //		boolean isDeceased = false;
 //		try {
