@@ -24,11 +24,13 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
@@ -205,28 +207,32 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		String fileName=null;
 		String sfile1 = this.iwma.getApplicationRealPath()+"/WEB-INF/idegaweb/properties/db.properties";
 		String sfile2= this.iwma.getPropertiesRealPath()+separator+"db.properties";
+		String dbPropsFromSystemProperty = System.getProperty(ConnectionBroker.SYSTEM_PROPERTY_DB_PROPERTIES_FILE_PATH);
+		if(dbPropsFromSystemProperty!=null && !"".equals(dbPropsFromSystemProperty)){
+			sfile1 = dbPropsFromSystemProperty;
+		}
+		
 		File file1 = new File(sfile1);
 		File file2 = new File(sfile2);
+		
+		
 		if(file1.exists()){
 			fileName=sfile1;
-			log.info("Reading Databases from file: "+fileName);
-			log.fine("Starting idega Datastore ConnectionPool");
-			PoolManager.unlock();
-			PoolManager.getInstance(fileName,this.iwma);	
-			return true;
 		}
 		else if(file2.exists()){
 			fileName=sfile2;
-			log.info("Reading Databases from file: "+fileName);
-			log.fine("Starting idega Datastore ConnectionPool");
-			PoolManager.unlock();
-			PoolManager.getInstance(fileName,this.iwma);	
-			return true;
 		}
 		else{
 			log.fine("No db.properties found");
 			return false;
 		}
+		
+		log.info("Reading Databases from file: "+fileName);
+		log.fine("Starting idega Datastore ConnectionPool");
+		PoolManager.unlock();
+		PoolManager.getInstance(fileName,this.iwma);	
+		
+		return true;
 	}
 	/**
 	 * <p>

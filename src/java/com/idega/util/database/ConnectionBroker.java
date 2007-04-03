@@ -1,5 +1,5 @@
 /*
- * $Id: ConnectionBroker.java,v 1.16 2006/10/18 13:11:33 gediminas Exp $
+ * $Id: ConnectionBroker.java,v 1.17 2007/04/03 13:22:12 eiki Exp $
  *
  * Copyright (C) 2000-2005 Idega hf. All Rights Reserved.
  *
@@ -14,10 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
 import com.idega.transaction.IdegaTransaction;
 import com.idega.transaction.IdegaTransactionManager;
 /**
@@ -36,7 +38,7 @@ import com.idega.transaction.IdegaTransactionManager;
  * <br>
  * </p>
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
 */
 public class ConnectionBroker
 {
@@ -45,6 +47,7 @@ public class ConnectionBroker
 	public final static int POOL_MANAGER_TYPE_IDEGA = 1;
 	public final static int POOL_MANAGER_TYPE_POOLMAN = 2;
 	public final static int POOL_MANAGER_TYPE_JDBC_DATASOURCE = 3;
+	public static final String SYSTEM_PROPERTY_DB_PROPERTIES_FILE_PATH = "idegaweb.db.properties";
 	public static int POOL_MANAGER_TYPE = POOL_MANAGER_TYPE_IDEGA;
 	private static String DEFAULT_JDBC_JNDI_URL = "jdbc/DefaultDS";
 	
