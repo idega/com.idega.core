@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentProperty.java,v 1.2 2006/05/09 14:47:18 tryggvil Exp $
+ * $Id: ComponentProperty.java,v 1.3 2007/04/04 10:48:07 valdas Exp $
  * Created on 20.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import java.util.Locale;
  * <p>
  * This class holds info about properties available for each ComponentInfo.
  * </p>
- *  Last modified: $Date: 2006/05/09 14:47:18 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/04/04 10:48:07 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface ComponentProperty {
 	
@@ -38,5 +38,7 @@ public interface ComponentProperty {
 	public String getClassName();
 	
 	public String getIcon();
+	
+	public boolean isSimpleProperty();
 	
 }

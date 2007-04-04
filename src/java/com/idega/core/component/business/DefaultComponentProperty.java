@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultComponentProperty.java,v 1.2 2006/05/10 08:27:16 laddi Exp $
+ * $Id: DefaultComponentProperty.java,v 1.3 2007/04/04 10:48:07 valdas Exp $
  * Created on 25.4.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import java.util.Map;
  * <p>
  * Default implementation of the ComponentProperty
  * </p>
- *  Last modified: $Date: 2006/05/10 08:27:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/04/04 10:48:07 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class DefaultComponentProperty implements ComponentProperty {
 
@@ -33,6 +33,7 @@ public class DefaultComponentProperty implements ComponentProperty {
 	private String icon;
 	private String suggestedValue;
 	private Map extensions;
+	private boolean simpleProperty;
 	
 
 	/**
@@ -215,5 +216,13 @@ public class DefaultComponentProperty implements ComponentProperty {
 			return getName();
 		}
 		return display;
+	}
+	
+	public void setSimpleProperty(boolean simpleProperty) {
+		this.simpleProperty = simpleProperty;
+	}
+	
+	public boolean isSimpleProperty() {
+		return simpleProperty;
 	}
 }
