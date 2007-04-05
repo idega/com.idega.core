@@ -65,6 +65,7 @@ public abstract class IBOTimedServiceBean extends IBOServiceBean implements Runn
 
     public final void executeService(){
         this.thread = new Thread(this);
+        this.thread.setDaemon(true);
         this.thread.setPriority(Thread.MIN_PRIORITY);
         this.thread.start();
     }
