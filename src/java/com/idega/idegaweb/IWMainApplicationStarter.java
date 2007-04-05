@@ -210,11 +210,11 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		String dbPropsFromSystemProperty = System.getProperty(ConnectionBroker.SYSTEM_PROPERTY_DB_PROPERTIES_FILE_PATH);
 		if(dbPropsFromSystemProperty!=null && !"".equals(dbPropsFromSystemProperty)){
 			sfile1 = dbPropsFromSystemProperty;
+			log.info("Trying to load db.properties from system property ("+ConnectionBroker.SYSTEM_PROPERTY_DB_PROPERTIES_FILE_PATH+") :"+dbPropsFromSystemProperty);
 		}
 		
 		File file1 = new File(sfile1);
 		File file2 = new File(sfile2);
-		
 		
 		if(file1.exists()){
 			fileName=sfile1;
