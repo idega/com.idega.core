@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.108 2006/06/01 15:22:10 thomas Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.109 2007/04/06 00:04:03 eiki Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -83,12 +83,12 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * removing, lookups and manipulating Groups.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2006/02/20
- * 11:04:35 $ by $Author: thomas $
+ * 11:04:35 $ by $Author: eiki $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.108 $
+ * @version $Revision: 1.109 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -2464,10 +2464,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	/**
 	 * 
-	 * Last modified: $Date: 2006/06/01 15:22:10 $ by $Author: thomas $
+	 * Last modified: $Date: 2007/04/06 00:04:03 $ by $Author: eiki $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.108 $
+	 * @version $Revision: 1.109 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 
@@ -2482,6 +2482,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 		private GroupTreeRefreshThread(String name, int rand) {
 			super(name + rand);
+			this.setDaemon(true);
 			this.randID = rand;
 		}
 

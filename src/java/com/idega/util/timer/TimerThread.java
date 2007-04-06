@@ -97,6 +97,7 @@ public class TimerThread implements Runnable {
       }
       catch(InterruptedException e) {
         debug("I'm interrupted");
+        stop();
       }
     }
     debug("I'm stopping");
