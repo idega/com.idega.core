@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.27 2007/01/22 08:16:57 tryggvil Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.28 2007/04/06 20:19:13 civilis Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -10,11 +10,15 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
@@ -56,10 +60,10 @@ import com.idega.util.RequestUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2007/01/22 08:16:57 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/04/06 20:19:13 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -280,6 +284,16 @@ public class IWAuthenticator extends BaseFilter {
 	 */
 	public static String getLoginRedirectUriOnLogonParsedWithVariables(HttpServletRequest request) {
 		String uri = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGON);
+		
+		if(uri != null) {
+			try {
+				uri = URLDecoder.decode(uri, PARAMS_ENCODING_USED);
+			} catch (UnsupportedEncodingException e) {
+				// TODO: what tha heck container is that?
+				log.log(Level.WARNING, "Exception while decoding redirect uri parameter: "+PARAMETER_REDIRECT_URI_ONLOGON+" by using "+PARAMS_ENCODING_USED+" encoding", e);
+			}
+		}
+		
 		uri = getUriParsedWithVariables(request,uri);
 		return uri;
 	}
@@ -482,4 +496,20 @@ public class IWAuthenticator extends BaseFilter {
 		}
 	}
 
+	public static void main(String[] args) {
+
+//		http://formbuilder.idega.is/login/?logon_redirect_uri=/workspace/
+		try {
+			
+			String encoded = URLEncoder.encode("http://formbuilder.idega.is/login/?logon_redirect_uri=/workspace/", "UTF-8");
+			System.out.println("encooded: "+encoded);
+			String decoded = URLDecoder.decode(encoded, "UTF-8");
+			System.out.println("decoded: "+decoded);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
 }

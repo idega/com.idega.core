@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.16 2006/01/14 16:04:41 tryggvil Exp $
+ * $Id: BaseFilter.java,v 1.17 2007/04/06 20:19:13 civilis Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -8,6 +8,9 @@
  * Use is subject to license terms.
  */
 package com.idega.servlet.filter;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
@@ -23,10 +26,10 @@ import com.idega.util.RequestUtil;
  * <p>
  *  Class that holds basic functionality used by many filters.<br>
  * </p>
- *  Last modified: $Date: 2006/01/14 16:04:41 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/04/06 20:19:13 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
@@ -50,6 +53,8 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	protected static final String SETUP_URI="/setup/";
 	protected static final String PAGES_URI="/pages/";
 	protected static final String PAGES_URI_MINUSSLASH="/pages";
+	protected static final String ENC_PARAMS_PARAM = "encParams";
+	protected static final String PARAMS_ENCODING_USED = "UTF-8";
 	
 	static final String SLASH = "/";
 
@@ -62,7 +67,22 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	protected String getNewLoginUri(HttpServletRequest request,String uriToRedirectTo){
 		IWMainApplication iwma = getIWMainApplication(request);
 		String baseUri = iwma.getTranslatedURIWithContext(NEW_IDEGAWEB_LOGIN);
-		baseUri = baseUri+"?"+IWAuthenticator.PARAMETER_REDIRECT_URI_ONLOGON+"="+uriToRedirectTo;
+		String q_string = null;
+		
+		if(request.getParameter(ENC_PARAMS_PARAM) != null)
+			q_string = request.getQueryString();
+		
+		if(q_string != null) {
+			
+			try {
+				baseUri = baseUri+"?"+IWAuthenticator.PARAMETER_REDIRECT_URI_ONLOGON+"="+URLEncoder.encode(
+						uriToRedirectTo+"?"+q_string, PARAMS_ENCODING_USED);
+			} catch (UnsupportedEncodingException e) {
+				baseUri = baseUri+"?"+IWAuthenticator.PARAMETER_REDIRECT_URI_ONLOGON+"="+uriToRedirectTo;
+			}
+		} else
+			baseUri = baseUri+"?"+IWAuthenticator.PARAMETER_REDIRECT_URI_ONLOGON+"="+uriToRedirectTo;
+		
 		return baseUri;
 		//return NEW_IDEGAWEB_LOGIN;
 	}
