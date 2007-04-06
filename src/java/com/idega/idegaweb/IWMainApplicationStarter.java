@@ -281,6 +281,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		for (int i = 0; i < threads.length; i++) {
 			Thread thread = threads[i];
 			String name = (thread == null) ? null : thread.getName();
+			//System.out.println(name);
 			if (name != null && name.startsWith("HSQLDB")) {
 				thread.interrupt();
 			}
