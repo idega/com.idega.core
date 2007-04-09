@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.28 2007/04/06 20:19:13 civilis Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.29 2007/04/09 22:17:59 tryggvil Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -60,10 +60,10 @@ import com.idega.util.RequestUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2007/04/06 20:19:13 $ by $Author: civilis $
+ * Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -148,7 +148,7 @@ public class IWAuthenticator extends BaseFilter {
 			if(!isLoggedOn){
 				loginBusiness.authenticateBasicAuthenticationRequest(request);
 			}
-			initializeDefaultDomain(request);
+			//initializeDefaultDomain(request);
 			tryRegularLogin(request);
 			tryCookieLogin(request,response,loginBusiness);
 			//addCookie(request,response,loginBusiness);

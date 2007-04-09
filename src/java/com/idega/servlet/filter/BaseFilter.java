@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.17 2007/04/06 20:19:13 civilis Exp $
+ * $Id: BaseFilter.java,v 1.18 2007/04/09 22:17:59 tryggvil Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,7 +15,9 @@ import java.net.URLEncoder;
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.builder.data.CachedDomain;
 import com.idega.core.builder.data.ICDomain;
+import com.idega.idegaweb.IWApplicationContextFactory;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.MutableClass;
 import com.idega.util.RequestUtil;
@@ -26,18 +28,18 @@ import com.idega.util.RequestUtil;
  * <p>
  *  Class that holds basic functionality used by many filters.<br>
  * </p>
- *  Last modified: $Date: 2007/04/06 20:19:13 $ by $Author: civilis $
+ *  Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
-	private static final boolean DEFAULT_VALUE_INITIALIZED_DOMAIN = false;
-	private static boolean hasInitializedDefaultDomain = DEFAULT_VALUE_INITIALIZED_DOMAIN;
+	//private static final boolean DEFAULT_VALUE_INITIALIZED_DOMAIN = false;
+	//private static boolean hasInitializedDefaultDomain = DEFAULT_VALUE_INITIALIZED_DOMAIN;
 
 	public static void unload()	{
-		hasInitializedDefaultDomain = DEFAULT_VALUE_INITIALIZED_DOMAIN; 
+		//hasInitializedDefaultDomain = DEFAULT_VALUE_INITIALIZED_DOMAIN; 
 	}
 
 	protected static final String OLD_BUILDER_SERVLET_URI = "/servlet/IBMainServlet";
@@ -114,60 +116,6 @@ public abstract class BaseFilter implements Filter, MutableClass {
 		
 	}
 
-
-	/**
-	 * This may be called from several filter subclasses. This should ideally be called by the first filter in the chain.
-	 * @param iwc
-	 */
-	protected void initializeDefaultDomain(HttpServletRequest request ){
-		if (!hasInitializedDefaultDomain()) {
-
-			String contextPath = request.getContextPath();
-			String serverProtocol = request.getScheme();
-			ICDomain domain = getIWMainApplication(request).getIWApplicationContext().getDomain();
-	    		String setServerName = domain.getServerName();
-	    		String setUrl = domain.getURL();
-	    		String setContextPath = domain.getServerContextPath();
-	    		int setPort = domain.getServerPort();
-	    		String setProtocol = domain.getServerProtocol();
-	    		if(setServerName==null||setServerName.equals("")){
-	    			String newServerName = request.getServerName();
-	    			domain.setServerName(newServerName);
-	    		}
-	    		if(setUrl==null||setUrl.equals("")){
-	    			String newServerURL = RequestUtil.getServerURL(request);
-	    			domain.setURL(newServerURL);
-	    		}
-	    		if(setContextPath==null||setContextPath.equals("")){
-	    			
-	    	        if (contextPath != null) {
-	    	            if (!contextPath.startsWith(SLASH)) {
-	    	            	contextPath = SLASH + contextPath;
-	    	            }
-	    	        } else {
-	    	        		contextPath = SLASH;
-	    	        }
-	    			
-	    			domain.setServerContextPath(contextPath);
-	    		}
-	    		if(setPort==-1){
-	    			int port = request.getServerPort();
-	    			if(port!=80){
-	    				domain.setServerPort(port);
-	    			}
-	    		}
-	    		if(setProtocol==null||setProtocol.equals("")){
-	    			domain.setServerProtocol(serverProtocol);
-	    		}
-			
-			//getIWMainApplication(request).setApplicationContextURI(contextPath);
-			hasInitializedDefaultDomain=true;
-		}
-	}
-	
-	private boolean hasInitializedDefaultDomain(){
-		return hasInitializedDefaultDomain;
-	}
 	
 	protected IWMainApplication getIWMainApplication(HttpServletRequest request) {
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
@@ -177,5 +125,48 @@ public abstract class BaseFilter implements Filter, MutableClass {
 
 	protected LoginBusinessBean getLoginBusiness(HttpServletRequest request){
 		return LoginBusinessBean.getLoginBusinessBean(request);
+	}
+	
+	protected ICDomain getDomain(HttpServletRequest request){
+		
+		String serverName = request.getServerName();
+		ICDomain domain = getIWMainApplication(request).getIWApplicationContext().getDomainByServerName(serverName);
+		if(domain instanceof CachedDomain){
+			CachedDomain cachedDomain = (CachedDomain)domain;
+			if(!cachedDomain.isHasInitializedCachedAttribute()){
+				cachedDomain.initializeCachedInfo(request);
+			}
+			
+		}
+		return domain;
+	}
+	
+	protected CachedDomain getCachedDomain(HttpServletRequest request){
+		return (CachedDomain)getDomain(request);
+	}
+	
+	/**
+	 * <p>
+	 * Detects and sets the IWApplicationContext instance and associates it to the current Thread.<br/>
+	 * This should live throughout the request processing (until removeApplicationContext() is called).<br/>
+	 * These methods should called by the first ServletFilter in the Chain (which currently iw IWUrlRedirector).
+	 * </p>
+	 * @param request
+	 */
+	protected void setApplicationContext(HttpServletRequest request){
+		//We call getDomain() to make sure it is initialized:
+		getDomain(request);
+		IWApplicationContextFactory.setCurrentIWApplicationContext(request);
+	}
+	/**
+	 * <p>
+	 * Removed the set IWApplicationContext instance from the current Thread, that was prevously 
+	 * allocated by setApplicationContext() method.<br/>
+	 * These methods should called by the first ServletFilter in the Chain (which currently iw IWUrlRedirector).
+	 * </p>
+	 * @param request
+	 */
+	protected void removeApplicationContext(HttpServletRequest request){
+		IWApplicationContextFactory.removeCurrentIWApplicationContext(request);
 	}
 }

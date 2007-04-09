@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.181 2007/02/15 12:09:20 gediminas Exp $
+ * $Id: IWMainApplication.java,v 1.182 2007/04/09 22:17:59 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -55,11 +55,15 @@ import javax.faces.el.VariableResolver;
 import javax.faces.event.ActionListener;
 import javax.faces.validator.Validator;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.builder.business.ICDomainLookup;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
@@ -92,10 +96,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2007/02/15 12:09:20 $ by $Author: gediminas $
+ *  Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.181 $
+ * @version $Revision: 1.182 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -189,7 +193,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	private AppServer applicationServer;
 	//Holds a map of Window classes to know its dimensions etc.
     private Map windowClassesStaticInstances;
-    private Application realJSFApplication;
+    private Application facesApplication;
     private ApplicationProductInfo applicationProductInfo;
 	private ApplicationInstallationInfo applicationInstallationInfo;
     private boolean inDatabaseLessMode=false;
@@ -238,6 +242,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		EntityControl.unload();
     }
     
+    public IWMainApplication(){
+    	//Constructor exists for subclasses
+    }
     
     public IWMainApplication(ServletContext application,AppServer appserver) {
         this.application = application;
@@ -423,7 +430,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      */
     protected void replaceJSFApplication(ApplicationFactory factory){
     		Application oldApp = factory.getApplication();
-    		this.setRealJSFApplication(oldApp);
+    		this.setFacesApplication(oldApp);
     		factory.setApplication(this);
     		log("Replaced the JSF Application of instance "+oldApp.getClass()+" with IWMainApplication");      
     }
@@ -618,7 +625,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     /**
-     * Gets the application instance from the given ServletContext instance
+     * <p>
+     * Gets the application context from the given HttpServletRequest instance.<br/>
+     * This method is NOT Multi-Domain safe.
+     * </p>
      * @param application
      * @return
      */
@@ -629,22 +639,55 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     /**
-     * Gets the application instance from the given FacesContext instance
+     * <p>
+     * Gets the application context from the given FacesContext instance.<br/>
+     * This method is Multi-Domain safe.
+     * </p>
      * @param application
      * @return
      */
     public static IWMainApplication getIWMainApplication(
-            FacesContext facesContext) {
-    	
-    		try{
-    			ServletContext servletContext = (ServletContext)facesContext.getExternalContext().getContext();
-    			return getIWMainApplication(servletContext);
-    		}
-    		catch(ClassCastException cce){
-    			throw new RuntimeException("IWMainApplication.getIWMainApplication(): FacesContext does not contain a ServletContext",cce);
-    		}
+    	FacesContext facesContext) {
+		try{
+			HttpServletRequest request = (HttpServletRequest)facesContext.getExternalContext().getRequest();
+			return getIWMainApplication(request);
+		}
+		catch(ClassCastException cce){
+			throw new RuntimeException("IWMainApplication.getIWMainApplication(): FacesContext does not contain a HttpServletRequest",cce);
+		}
     }
-    
+    /**
+     * <p>
+     * Gets the application context from the given HttpServletRequest instance.<br/>
+     * This method is Multi-Domain safe.
+     * </p>
+     * @param application
+     * @return
+     */
+    public static IWApplicationContext getIWApplicationContext(HttpServletRequest request){
+    	return getIWMainApplication(request).getIWApplicationContext();
+    }
+    /**
+     * <p>
+     * Gets the application instance from the given HttpServletRequest instance.<br/>
+     * This method is Multi-Domain safe.
+     * </p>
+     * @param application
+     * @return
+     */
+    public static IWMainApplication getIWMainApplication(HttpServletRequest request){
+
+		ICDomain domain = ICDomainLookup.getInstance().getDomainByRequest(request);
+		
+		if(domain.isDefaultDomain()){
+			return IWMainApplication.getDefaultIWMainApplication();
+		}
+		else{
+			String domainServerName = domain.getServerName();
+			IWMainApplication subApplication =  IWMainApplication.getDefaultIWMainApplication().getSubApplication(domainServerName);
+			return subApplication;
+		}
+    }
     
     public String getDefaultDarkInterfaceColor() {
         return this.defaultDarkInterfaceColor;
@@ -1221,6 +1264,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
     private String SYSTEM_PROPERTIES_STORAGE_PARAMETER = "idegaweb_system_properties";
 
+	private Map<String,IWMainApplication> subApplications;
+
     private static boolean isUsingCryptoProperties() {
         return isCryptoUsed;
     }
@@ -1392,7 +1437,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public IWApplicationContext getIWApplicationContext() {
         //IWContext iwc = new IWContext(
         if (this.iwappContext == null) {
-            this.iwappContext = new IWApplicationContextImpl(this);
+            this.iwappContext = new IWMainApplicationContext(this);
         }
         return this.iwappContext;
     }
@@ -1781,7 +1826,24 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		return getDefaultIWMainApplication().getIWApplicationContext();
 	}
     
-    /**
+    public IWMainApplication getSubApplication(String domainServerName) {
+		IWMainApplication subApplication = getSubApplications().get(domainServerName);
+		if(subApplication==null){
+			subApplication = new IWSubApplication(this,domainServerName);
+			getSubApplications().put(domainServerName, subApplication);
+		}
+		return subApplication;
+    	
+	}
+    
+    protected Map<String,IWMainApplication> getSubApplications(){
+    	if(subApplications==null){
+    		subApplications=new HashMap<String,IWMainApplication>();
+    	}
+    	return subApplications;
+    }
+
+	/**
      * Removes the application context prefix from a RELATIVE PATH (an URL without the http/servername/port) and returns the URI (url without context)
      * @param URL
      */
@@ -1847,11 +1909,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		return false;
 	}
 
-	protected Application getRealJSFApplication(){
-		return this.realJSFApplication;
+	protected Application getFacesApplication(){
+		return this.facesApplication;
 	}
-	protected void setRealJSFApplication(Application jsfApplication){
-		this.realJSFApplication=jsfApplication;
+	protected void setFacesApplication(Application jsfApplication){
+		this.facesApplication=jsfApplication;
 	}
 	
 	//Begin JSF Application implementation
@@ -1861,21 +1923,21 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * @see javax.faces.application.Application#getActionListener()
 	 */
 	public ActionListener getActionListener() {
-		return getRealJSFApplication().getActionListener();
+		return getFacesApplication().getActionListener();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setActionListener(javax.faces.event.ActionListener)
 	 */
 	public void setActionListener(ActionListener listener) {
-		getRealJSFApplication().setActionListener(listener);
+		getFacesApplication().setActionListener(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getDefaultLocale()
 	 */
 	public Locale getDefaultLocale() {
-		Locale locale = getRealJSFApplication().getDefaultLocale();
+		Locale locale = getFacesApplication().getDefaultLocale();
 		if(!this.hasSetLocaleOnFacesApplication){
 			locale = getSettings().getDefaultLocale();
 			setDefaultLocale(locale);
@@ -1888,112 +1950,112 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * @see javax.faces.application.Application#setDefaultLocale(java.util.Locale)
 	 */
 	public void setDefaultLocale(Locale locale) {
-		getRealJSFApplication().setDefaultLocale(locale);
+		getFacesApplication().setDefaultLocale(locale);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getDefaultRenderKitId()
 	 */
 	public String getDefaultRenderKitId() {
-		return getRealJSFApplication().getDefaultRenderKitId();
+		return getFacesApplication().getDefaultRenderKitId();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setDefaultRenderKitId(java.lang.String)
 	 */
 	public void setDefaultRenderKitId(String renderKitId) {
-		getRealJSFApplication().setDefaultRenderKitId(renderKitId);
+		getFacesApplication().setDefaultRenderKitId(renderKitId);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getMessageBundle()
 	 */
 	public String getMessageBundle() {
-		return getRealJSFApplication().getMessageBundle();
+		return getFacesApplication().getMessageBundle();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setMessageBundle(java.lang.String)
 	 */
 	public void setMessageBundle(String bundle) {
-		getRealJSFApplication().setMessageBundle(bundle);
+		getFacesApplication().setMessageBundle(bundle);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getNavigationHandler()
 	 */
 	public NavigationHandler getNavigationHandler() {
-		return getRealJSFApplication().getNavigationHandler();
+		return getFacesApplication().getNavigationHandler();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setNavigationHandler(javax.faces.application.NavigationHandler)
 	 */
 	public void setNavigationHandler(NavigationHandler handler) {
-		getRealJSFApplication().setNavigationHandler(handler);
+		getFacesApplication().setNavigationHandler(handler);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getPropertyResolver()
 	 */
 	public PropertyResolver getPropertyResolver() {
-		return getRealJSFApplication().getPropertyResolver();
+		return getFacesApplication().getPropertyResolver();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setPropertyResolver(javax.faces.el.PropertyResolver)
 	 */
 	public void setPropertyResolver(PropertyResolver resolver) {
-		getRealJSFApplication().setPropertyResolver(resolver);
+		getFacesApplication().setPropertyResolver(resolver);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getVariableResolver()
 	 */
 	public VariableResolver getVariableResolver() {
-		return getRealJSFApplication().getVariableResolver();
+		return getFacesApplication().getVariableResolver();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setVariableResolver(javax.faces.el.VariableResolver)
 	 */
 	public void setVariableResolver(VariableResolver resolver) {
-		getRealJSFApplication().setVariableResolver(resolver);
+		getFacesApplication().setVariableResolver(resolver);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getViewHandler()
 	 */
 	public ViewHandler getViewHandler() {
-		return getRealJSFApplication().getViewHandler();
+		return getFacesApplication().getViewHandler();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setViewHandler(javax.faces.application.ViewHandler)
 	 */
 	public void setViewHandler(ViewHandler handler) {
-		getRealJSFApplication().setViewHandler(handler);
+		getFacesApplication().setViewHandler(handler);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getStateManager()
 	 */
 	public StateManager getStateManager() {
-		return getRealJSFApplication().getStateManager();
+		return getFacesApplication().getStateManager();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setStateManager(javax.faces.application.StateManager)
 	 */
 	public void setStateManager(StateManager manager) {
-		getRealJSFApplication().setStateManager(manager);	
+		getFacesApplication().setStateManager(manager);	
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#addComponent(java.lang.String, java.lang.String)
 	 */
 	public void addComponent(String componentType, String componentClass) {
-		getRealJSFApplication().addComponent(componentType,componentClass);		
+		getFacesApplication().addComponent(componentType,componentClass);		
 	}
 
 	//TODO: Move this logic to the builder package.
@@ -2053,7 +2115,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		}
 		else{
 			//The default to fall back to the default JSF application
-			return getRealJSFApplication().createComponent(componentType);
+			return getFacesApplication().createComponent(componentType);
 		}
 	}
 
@@ -2061,105 +2123,105 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * @see javax.faces.application.Application#createComponent(javax.faces.el.ValueBinding, javax.faces.context.FacesContext, java.lang.String)
 	 */
 	public UIComponent createComponent(ValueBinding componentBinding, FacesContext context, String componentType) throws FacesException {
-		return getRealJSFApplication().createComponent(componentBinding,context,componentType);
+		return getFacesApplication().createComponent(componentBinding,context,componentType);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getComponentTypes()
 	 */
 	public Iterator getComponentTypes() {
-		return getRealJSFApplication().getComponentTypes();
+		return getFacesApplication().getComponentTypes();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#addConverter(java.lang.String, java.lang.String)
 	 */
 	public void addConverter(String converterId, String converterClass) {
-		getRealJSFApplication().addConverter(converterId,converterClass);
+		getFacesApplication().addConverter(converterId,converterClass);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#addConverter(java.lang.Class, java.lang.String)
 	 */
 	public void addConverter(Class targetClass, String converterClass) {
-		getRealJSFApplication().addConverter(targetClass,converterClass);
+		getFacesApplication().addConverter(targetClass,converterClass);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createConverter(java.lang.String)
 	 */
 	public Converter createConverter(String converterId) {
-		return getRealJSFApplication().createConverter(converterId);
+		return getFacesApplication().createConverter(converterId);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createConverter(java.lang.Class)
 	 */
 	public Converter createConverter(Class targetClass) {
-		return getRealJSFApplication().createConverter(targetClass);
+		return getFacesApplication().createConverter(targetClass);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getConverterIds()
 	 */
 	public Iterator getConverterIds() {
-		return getRealJSFApplication().getConverterIds();
+		return getFacesApplication().getConverterIds();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getConverterTypes()
 	 */
 	public Iterator getConverterTypes() {
-		return getRealJSFApplication().getConverterTypes();
+		return getFacesApplication().getConverterTypes();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createMethodBinding(java.lang.String, java.lang.Class[])
 	 */
 	public MethodBinding createMethodBinding(String ref, Class[] params) throws ReferenceSyntaxException {
-		return getRealJSFApplication().createMethodBinding(ref,params);
+		return getFacesApplication().createMethodBinding(ref,params);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getSupportedLocales()
 	 */
 	public Iterator getSupportedLocales() {
-		return getRealJSFApplication().getSupportedLocales();
+		return getFacesApplication().getSupportedLocales();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setSupportedLocales(java.util.Collection)
 	 */
 	public void setSupportedLocales(Collection locales) {
-		getRealJSFApplication().setSupportedLocales(locales);
+		getFacesApplication().setSupportedLocales(locales);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#addValidator(java.lang.String, java.lang.String)
 	 */
 	public void addValidator(String validatorId, String validatorClass) {
-		getRealJSFApplication().addValidator(validatorId,validatorClass);
+		getFacesApplication().addValidator(validatorId,validatorClass);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createValidator(java.lang.String)
 	 */
 	public Validator createValidator(String validatorId) throws FacesException {
-		return getRealJSFApplication().createValidator(validatorId);
+		return getFacesApplication().createValidator(validatorId);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getValidatorIds()
 	 */
 	public Iterator getValidatorIds() {
-		return getRealJSFApplication().getValidatorIds();
+		return getFacesApplication().getValidatorIds();
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createValueBinding(java.lang.String)
 	 */
 	public ValueBinding createValueBinding(String ref) throws ReferenceSyntaxException {
-		return getRealJSFApplication().createValueBinding(ref);
+		return getFacesApplication().createValueBinding(ref);
 	}
 	
 	//End JSF Application implementation

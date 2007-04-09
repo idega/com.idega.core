@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.15 2006/02/22 22:07:28 laddi Exp $
+ * $Id: IWWelcomeFilter.java,v 1.16 2007/04/09 22:17:59 tryggvil Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -30,28 +30,30 @@ import com.idega.util.RequestUtil;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2006/02/22 22:07:28 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
-	private static final boolean DEFAULT_VALUE_IS_INIT = false;
+	/*private static final boolean DEFAULT_VALUE_IS_INIT = false;
 	private static boolean isInit= DEFAULT_VALUE_IS_INIT;
 	
 	private static final boolean DEFAULT_VALUE_START_ON_WORKSPACE = true;
 	private static boolean startOnWorkspace= DEFAULT_VALUE_START_ON_WORKSPACE;
 	
 	private static final boolean DEFAULT_VALUE_START_ON_PAGES = false;
-	private static final String PROPERTY_LOG_REQUESTS = "com.idega.core.logrequests";
 	private static boolean startOnPages= DEFAULT_VALUE_START_ON_PAGES;
+	*/
+	
+	private static final String PROPERTY_LOG_REQUESTS = "com.idega.core.logrequests";
 	
 	
 	public static void unload() {
-		isInit = DEFAULT_VALUE_IS_INIT;
-		startOnWorkspace = DEFAULT_VALUE_START_ON_WORKSPACE;
-		startOnPages = DEFAULT_VALUE_START_ON_PAGES;
+		//isInit = DEFAULT_VALUE_IS_INIT;
+		//startOnWorkspace = DEFAULT_VALUE_START_ON_WORKSPACE;
+		//startOnPages = DEFAULT_VALUE_START_ON_PAGES;
 	}
 	
 	
@@ -73,10 +75,9 @@ public class IWWelcomeFilter extends BaseFilter {
 		HttpServletRequest request = (HttpServletRequest)srequest;
 		HttpServletResponse response = (HttpServletResponse)sresponse;
 		
-		if(!isInit){
+		/*if(!isInit(request,response)){
 			init(request,response);
-			isInit=true;
-		}
+		}*/
 		
 		
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
@@ -95,6 +96,11 @@ public class IWWelcomeFilter extends BaseFilter {
 		}
 		
 		if(requestUri.equals(appUri)){
+			
+
+			boolean startOnWorkspace=getIfStartOnWorkspace(request);
+			boolean startOnPages=getIfStartOnPages(request);
+			
 			if(startOnWorkspace){
 				//request.getRequestDispatcher("/workspace/").forward(request,response);
 				response.sendRedirect(getNewWorkspaceUri(request));
@@ -110,6 +116,17 @@ public class IWWelcomeFilter extends BaseFilter {
 		}
 
 	}
+
+	private boolean getIfStartOnPages(HttpServletRequest request) {
+		return getCachedDomain(request).isStartOnPages();
+	}
+
+
+	private boolean getIfStartOnWorkspace(HttpServletRequest request) {
+		return getCachedDomain(request).isStartOnWorkspace();
+	}
+
+
 
 	/**
 	 * <p>
@@ -166,17 +183,16 @@ public class IWWelcomeFilter extends BaseFilter {
 	}
 
 
-	/**
-	 * @param request
-	 * @param response
-	 */
-	private void init(HttpServletRequest request, HttpServletResponse response) {
+
+	/*private void init(HttpServletRequest request, HttpServletResponse response) {
 		
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
 		
 		try {
 			BuilderService bService = (BuilderService)IBOLookup.getServiceInstance(iwma.getIWApplicationContext(),BuilderService.class);
 			ICPage rootPage = bService.getRootPage();
+			boolean startOnPages=false;
+			boolean startOnWorkspace=false;
 			if(rootPage!=null){
 				//set the filter to forward to /pages if there is a rootPage created
 				startOnPages=true;
@@ -186,16 +202,21 @@ public class IWWelcomeFilter extends BaseFilter {
 				startOnWorkspace=true;
 				startOnPages=false;
 			}
-			/*String serverName = request.getServerName();
-			int port = request.getLocalPort();
-			if(port!=80){
-				serverName += ":"+port;
-			}
-			iwma.getIWApplicationContext().getDomain().setServerName(serverName);*/
+			//String serverName = request.getServerName();
+			//int port = request.getLocalPort();
+			//if(port!=80){
+			//	serverName += ":"+port;
+			//}
+			iwma.getIWApplicationContext().getDomain().setServerName(serverName);
 			//IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
 			//This sets the domain by default:
 			//iwc.getDomain();
-			initializeDefaultDomain(request);
+			
+			
+			//initializeDefaultDomain(request);
+		
+			//Done to initialize the domain:
+			getDomain(request);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -205,7 +226,7 @@ public class IWWelcomeFilter extends BaseFilter {
 				de.printStackTrace();
 			}
 		}
-	}
+	}*/
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#destroy()
@@ -214,5 +235,6 @@ public class IWWelcomeFilter extends BaseFilter {
 		// TODO Auto-generated method stub
 
 	}
+
 
 }

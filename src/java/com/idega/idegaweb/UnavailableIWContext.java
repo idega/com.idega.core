@@ -18,4 +18,8 @@ public class UnavailableIWContext extends RuntimeException {
   public UnavailableIWContext(String message) {
     super(message);
   }
+  
+  public UnavailableIWContext(Exception cause) {
+	    super(cause);
+	  }
 }

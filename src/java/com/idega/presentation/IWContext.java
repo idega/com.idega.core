@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.143 2007/03/28 10:09:50 civilis Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.144 2007/04/09 22:17:59 tryggvil Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -81,10 +81,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2007/03/28 10:09:50 $ by $Author: civilis $
+ * Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.143 $
+ * @version $Revision: 1.144 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -708,7 +708,17 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	}
 
 	public IWMainApplication getIWMainApplication() {
-		return IWMainApplication.getIWMainApplication(getServletContext());
+		
+		HttpServletRequest request = getRequest();
+		if(request!=null){
+			return IWMainApplication.getIWMainApplication(request);
+		}
+		else{
+			ServletContext servletContext = getServletContext();
+			return IWMainApplication.getIWMainApplication(servletContext);
+		}
+		
+		
 	}
 
 	public IWMainApplicationSettings getApplicationSettings() {
@@ -949,8 +959,13 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			throw new UnavailableIWContext();
+			//e.printStackTrace();
+			if(e instanceof UnavailableIWContext){
+				throw (UnavailableIWContext)e;
+			}
+			else{
+				throw new UnavailableIWContext(e);
+			}
 		}
 		// }
 		return theReturn;
@@ -1072,7 +1087,9 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	}
 
 	public ICDomain getDomain() {
-		ICDomain domain = getIWMainApplication().getIWApplicationContext().getDomain();
+		//ICDomain domain = getIWMainApplication().getIWApplicationContext().getDomain();
+		String serverName = getServerName();
+		ICDomain domain = getDomainByServerName(serverName);
 		return domain;
 	}
 

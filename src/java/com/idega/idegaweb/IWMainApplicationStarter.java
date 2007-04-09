@@ -36,6 +36,8 @@ import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.appserver.AppServerDetector;
+import com.idega.core.builder.data.ICDomain;
+import com.idega.core.builder.data.ICDomainHome;
 import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.core.component.business.ComponentRegistry;
 import com.idega.core.component.data.ICObject;
@@ -641,8 +643,40 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	protected void updateStartDataInDatabase() {
 		updateStartDataGroupRelationType();
 		updateStartTypeEmailType();
+		updateDomainData();
 	}
 		
+	private void updateDomainData() {
+		
+		String propertyKey = "dataupdate_domain_done";
+		String done = iwma.getSettings().getProperty(propertyKey);;
+		if(done==null){
+			
+			ICDomainHome domainHome = null;
+			ICDomain defaultDomain = null;
+			try {
+				domainHome = (ICDomainHome) IDOLookup.getHome(ICDomain.class);
+				defaultDomain = domainHome.findDefaultDomain();
+
+			} catch (FinderException e) {
+				if(defaultDomain==null){
+					try {
+						defaultDomain = domainHome.findFirstDomain();
+						defaultDomain.setType(ICDomain.TYPE_DEFAULT);
+						defaultDomain.store();
+						iwma.getSettings().setProperty(propertyKey, "true");
+					} catch (FinderException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			} catch (IDOLookupException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+
 	private void updateStartDataGroupRelationType() {
 		/*
 		 * @todo Move to user plugin system

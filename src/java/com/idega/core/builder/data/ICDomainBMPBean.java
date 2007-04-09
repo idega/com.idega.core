@@ -1,5 +1,5 @@
 /*
- * $Id: ICDomainBMPBean.java,v 1.3 2006/03/28 10:20:10 tryggvil Exp $
+ * $Id: ICDomainBMPBean.java,v 1.4 2007/04/09 22:17:59 tryggvil Exp $
  * Created on 25.11.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,32 +10,36 @@
 package com.idega.core.builder.data;
 
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Locale;
 import java.util.Vector;
+
 import javax.ejb.FinderException;
+
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORelationshipException;
+import com.idega.data.query.Criteria;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationHome;
 import com.idega.user.data.GroupDomainRelationTypeBMPBean;
+import com.idega.util.LocaleUtil;
 
 
 /**
  * <p>
  * Default implementation of ICDomain and mapping of the IB_DOMAIN Table.
  * </p>
- *  Last modified: $Date: 2006/03/28 10:20:10 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  /**
@@ -52,8 +56,11 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  public static final String COLUMNNAME_SERVER_PORT = "SERVER_PORT";
 	  public static final String COLUMNNAME_SERVER_PROTOCOL = "SERVER_PROTOCOL";
 	  public static final String COLUMNNAME_SERVER_CONTEXT_PATH = "SERVER_CONTEXT_PATH";
-
-	  private static Map cachedDomains;
+	  public static final String COLUMNNAME_DEFAULT_LOCALE= "DEFAULT_LOCALE";
+	  public static final String COLUMNNAME_TYPE= "DOMAIN_TYPE";
+	  public static final String COLUMNNAME_SERVER_ALIASES= "SERVER_ALIASES";
+	  
+	  //private static Map cachedDomains;
 
 	  public ICDomainBMPBean() {
 	    super();
@@ -77,26 +84,35 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	    addAttribute(COLUMNNAME_SERVER_PROTOCOL,"Server protocol",String.class,30);
 	    addAttribute(COLUMNNAME_SERVER_CONTEXT_PATH,"Server context path",String.class);
 	    
+	    addAttribute(COLUMNNAME_DEFAULT_LOCALE,"Domain Default Locale",String.class,5);
+	    addAttribute(COLUMNNAME_TYPE,"Domain Type",String.class,20);
+	    addAttribute(COLUMNNAME_SERVER_ALIASES,"Server Aliases",String.class,255);
+	    
 	  }
 
-	  public static ICDomain getDomain(int id)throws SQLException {
+	  /*public static ICDomain getDomain(int id)throws SQLException {
 	    ICDomain theReturn;
 	    theReturn = (ICDomain)getDomainsMap().get(new Integer(id));
 	    if (theReturn == null) {
-	      theReturn = ((ICDomainHome)IDOLookup.getHomeLegacy(ICDomain.class)).findByPrimaryKeyLegacy(id);
+	      try {
+	    	  ICDomainHome domainHome = (ICDomainHome) IDOLookup.getHome(ICDomain.class);
+	    	  theReturn = domainHome.findByPrimaryKey(new Integer(id));
+			} catch (Exception e) {
+				throw new SQLException(e.getMessage());
+			}
 	      if (theReturn != null) {
 	        getDomainsMap().put(new Integer(id),theReturn);
 	      }
 	    }
 	    return(theReturn);
-	  }
+	  }*/
 
-	  private static Map getDomainsMap() {
+	  /*private static Map getDomainsMap() {
 	    if (cachedDomains==null) {
 	      cachedDomains = new HashMap();
 	    }
 	    return(cachedDomains);
-	  }
+	  }*/
 
 	  public void insertStartData() throws Exception {
 	    //BuilderLogic instance = BuilderLogic.getInstance();
@@ -105,6 +121,7 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	    //TODO: Make this possible to set
 	    String domainName = "Default Site";
 	    domain.setName(domainName);
+	    domain.setType(TYPE_DEFAULT);
 /*
 		ICPageHome pageHome = (ICPageHome)getIDOHome(ICPage.class);
 
@@ -266,7 +283,29 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  
 	  public String getServerProtocol(){
 	      return getStringColumnValue(COLUMNNAME_SERVER_PROTOCOL);
-	  } 
+	  }
+	  
+	  public void setDefaultLocale(Locale locale){
+		  if(locale!=null){
+			  setDefaultLocaleString(locale.toString());
+		  }
+	  }
+	  
+	  public void setDefaultLocaleString(String serverName){
+	      setColumn(COLUMNNAME_DEFAULT_LOCALE,serverName);
+	  }
+	  
+	  public String getDefaultLocaleString(){
+	      return getStringColumnValue(COLUMNNAME_DEFAULT_LOCALE);
+	  }
+	  
+	  public Locale getDefaultLocale(){
+		  String localeString = getDefaultLocaleString();
+		  if(localeString!=null){
+			  return LocaleUtil.getLocale(localeString);
+		  }
+		  return null;
+	  }
 
 	  public Collection ejbFindAllDomains() throws FinderException {
 	    String sql = "select * from " + getTableName();
@@ -312,5 +351,70 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  	Table t = new Table(this);
 	  	query.addOrder(t,getIDColumnName(),true);
 	  	return idoFindOnePKByQuery(query);
+	}
+
+	/**
+	 * <p>
+	 * Finds the domain marked as default (Default Domain) in the table.
+	 * </p>
+	 * @return
+	 */
+	public Object ejbFindDefaultDomain() throws FinderException{
+	  	SelectQuery query = idoSelectPKQuery();
+	  	Table t = new Table(this);
+	  	query.addCriteria(new MatchCriteria(t,COLUMNNAME_TYPE,MatchCriteria.EQUALS,TYPE_DEFAULT));
+	  	return idoFindOnePKByQuery(query);
+	}
+	
+	/**
+	 * <p>
+	 * Finds the domain that has the given serverName if any, else it gets the one marked as default (Default Domain) in the table.
+	 * </p>
+	 * @return
+	 */
+	public Object ejbFindDomainByServernameOrDefault(String serverName) throws FinderException{
+	  	try{
+	  		SelectQuery query = idoSelectPKQuery();
+	  		Table t = new Table(this);
+	  		
+	  		Criteria serverNameCriteria = new MatchCriteria(t,COLUMNNAME_SERVER_NAME,MatchCriteria.EQUALS,serverName);
+	  		Criteria aliasesCriteria = new MatchCriteria(t,COLUMNNAME_SERVER_ALIASES,MatchCriteria.LIKE,serverName);
+
+	  		OR orCriteria = new OR(serverNameCriteria,aliasesCriteria);
+	  		
+	  		query.addCriteria(orCriteria);
+	  		
+	  		return idoFindOnePKByQuery(query);
+	  	}
+	  	catch(FinderException fe){
+	  		logWarning("Couldn't find domain record for ServerName : '"+ serverName+"' Falling back on Default domain");
+	  		return ejbFindDefaultDomain();
+	  	}
+	}
+	
+	public String getType() {
+		return getStringColumnValue(COLUMNNAME_TYPE);
+	}
+
+
+	public void setType(String type) {
+		setColumn(COLUMNNAME_TYPE, type);
+	}
+	
+	public String getServerAliases() {
+		return getStringColumnValue(COLUMNNAME_SERVER_ALIASES);
+	}
+
+
+	public void setServerAliases(String aliases) {
+		setColumn(COLUMNNAME_SERVER_ALIASES, aliases);
+	}
+
+	public boolean isDefaultDomain() {
+		String type = getType();
+		if(type!=null&&type.equals(TYPE_DEFAULT)){
+			return true;
+		}
+		return false;
 	}
 }
