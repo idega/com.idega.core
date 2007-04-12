@@ -1,5 +1,5 @@
 /*
- * $Id: TextInput.java,v 1.44 2006/05/10 15:31:29 laddi Exp $
+ * $Id: TextInput.java,v 1.44.2.1 2007/04/12 16:29:35 sigtryggur Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a input element of type text
  * </p>
- *  Last modified: $Date: 2006/05/10 15:31:29 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/04/12 16:29:35 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.44 $
+ * @version $Revision: 1.44.2.1 $
  */
 public class TextInput extends GenericInput {
     private boolean isSetAsIntegers;
@@ -525,7 +525,7 @@ public class TextInput extends GenericInput {
         if (this.isSetAsFloat || this.isSetAsDouble) {
             setOnSubmitFunction(
                     "warnIfNotFloat",
-                    "function warnIfNotFloat(inputbox,warnMsg,submit) {\n	var ok = false;\n	var inputString = inputbox.value;\n	for(i=0; i < inputString.length; i++) { \n	\tif (inputString.charAt(i) == \",\") { inputString = inputString.substring(0,i) + \".\" + inputString.substring(i+1,inputString.length); }\n	}\n	if (inputString.length == 0) {\n		ok = true;\n	} else if (isNaN(inputString)){\n	\talert ( warnMsg );\n	\tok = false;\n	}else{\n		ok = true;\n	}\n	if (ok && submit){\n		inputbox.value = inputString;\n	}\n 	return ok;\n}",
+                    "function warnIfNotFloat(inputbox,warnMsg,submit) {\n	var ok = false;\n	if (inputbox.value != null) {\n		var inputString = inputbox.value;\n		for(i=0; i < inputString.length; i++) { \n		\tif (inputString.charAt(i) == \",\") { inputString = inputString.substring(0,i) + \".\" + inputString.substring(i+1,inputString.length); }\n		}\n		if (inputString.length == 0) {\n			ok = true;\n		} else if (isNaN(inputString)){\n		\talert ( warnMsg );\n		\tok = false;\n		}else{\n			ok = true;\n		}\n		if (ok && submit){\n			inputbox.value = inputString;\n		}\n	}\n	else {\n		ok = true;\n	}\n 	return ok;\n}",
                     this.floatErrorMessage, "true");
             setOnBlur("return warnIfNotFloat(this, '" + this.floatErrorMessage
                     + "', false)");
