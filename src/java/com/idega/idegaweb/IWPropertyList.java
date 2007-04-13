@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.33 2007/04/13 07:58:50 valdas Exp $
+ * $Id: IWPropertyList.java,v 1.34 2007/04/13 08:17:53 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.xml.XMLParser;
  * files and a few others.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2007/04/13 07:58:50 $ by $Author: valdas $
+ * Last modified: $Date: 2007/04/13 08:17:53 $ by $Author: valdas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public class IWPropertyList {
 	private XMLDocument xmlDocument;
@@ -364,7 +364,6 @@ public class IWPropertyList {
 	}
 
 	public void load(File file) {
-		System.out.println("Loading: " + file);
 		this.xmlFile = file;
 		if(file.exists()){
 			try {
@@ -381,7 +380,6 @@ public class IWPropertyList {
 	}
 	
 	public void load(InputStream stream) {
-		System.out.println("Loading stream: " + stream);
 		XMLParser builder = new XMLParser(false);
 		try {
 			this.xmlDocument = builder.parse(stream);
@@ -468,7 +466,6 @@ public class IWPropertyList {
 			System.err.println("IWPropertyList is not storable, it is not loaded from a file");
 			return;
 		}
-		System.out.println(xmlFile);
 		try {
 			String fileName = this.xmlFile.getName();
 			String fileNameBeginning = fileName.substring(0, fileName.lastIndexOf("."));
@@ -490,7 +487,6 @@ public class IWPropertyList {
 	}
 
 	public void delete() {
-		System.out.println("Deleting: " + xmlFile);
 		try {
 			String fileName = this.xmlFile.getName();
 			File XMLFile = new File(this.xmlFile.getParentFile(), fileName);
@@ -526,7 +522,6 @@ public class IWPropertyList {
 	}
 
 	public void unload(){
-		System.out.println("Unloading: " + xmlFile);
 		this.xmlFile=null;
 		this.xmlDocument=null;
 		this.parentElement=null;
