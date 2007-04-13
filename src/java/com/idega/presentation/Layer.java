@@ -34,7 +34,6 @@ public class Layer extends PresentationObjectContainer {
 	public static final String LEFT = "left";
 	public static final String MOUSE_OUT = "onmouseout";
 	public static final String MOUSE_OVER = "onmouseover";
-	public static final String CLICK = "onclick";
 	public static final String OVERFLOW = "overflow";
 	public static final String POSITION = "position";
 	public static final String TOP = "top";

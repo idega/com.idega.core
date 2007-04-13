@@ -1,5 +1,5 @@
 /*
- * $Id: ListItem.java,v 1.3 2006/01/12 11:20:30 laddi Exp $
+ * $Id: ListItem.java,v 1.4 2007/04/13 15:16:05 valdas Exp $
  * Created on 16.2.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.presentation.PresentationObjectContainer;
  * An item to render out a "ListItem" or <code>li</code> html tag.
  * This class is used by the Lists class.
  * </p>
- *  Last modified: $Date: 2006/01/12 11:20:30 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/04/13 15:16:05 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ListItem extends PresentationObjectContainer {
 	
@@ -70,6 +70,10 @@ public class ListItem extends PresentationObjectContainer {
 	
 	public String getListItemStyleClass(){
 		return (String)getMarkupAttributes().get("class");
+	}
+	
+	public void setOnClick(String action) {
+		setMarkupAttributeMultivalued(CLICK, action);
 	}
 	
 }
