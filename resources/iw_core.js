@@ -1008,3 +1008,20 @@ function initComments() {
 	enableReverseAjax();
 	CommentsEngine.getInitInfoForComments(getInitInfoForCommentsCallback);
 }
+
+function removeElementFromArray(array, elementToRemove) {
+	if (array == null || elementToRemove == null) {
+		return;
+	}
+	var index = 0;
+	var found = false;
+	for (var i = 0; (i < array.length && !found); i++) {
+		if (elementToRemove == array[i]) {
+			index = i;
+			found = true;
+		}
+	}
+	if (found) {
+		array.splice(index, 1);
+	}
+}
