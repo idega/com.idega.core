@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.20 2006/11/09 15:53:29 gimmi Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.21 2007/04/15 23:33:25 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,6 +17,7 @@ import java.util.Map;
 
 import javax.faces.component.UIComponent;
 
+import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.core.search.business.Search;
 import com.idega.core.search.business.SearchPlugin;
 import com.idega.core.search.business.SearchPluginManager;
@@ -34,7 +35,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2006/11/09 15:53:29 $ by $Author: gimmi $
+ * Last modified: $Date: 2007/04/15 23:33:25 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -47,7 +48,7 @@ import com.idega.presentation.text.Text;
  * This class can also be EXTENDED like e.g. WhatIsNew block does by overriding some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class SearchResults extends Block {
 
@@ -249,6 +250,7 @@ public class SearchResults extends Block {
 							container.add(searchName);
 							int row = 1;
 							Iterator iterator = results.iterator();
+							UUIDGenerator generator = UUIDGenerator.getInstance();
 							while (iterator.hasNext()) {
 								SearchResult result = (SearchResult) iterator.next();
 								String textOnLink = result.getSearchResultName();
@@ -264,13 +266,17 @@ public class SearchResults extends Block {
 								else {
 									rowContainer = (Layer) oddRowProtoType.clone();
 								}
+								rowContainer.setId(generator.generateId());
+								
 								// add an extra optional style with the search
 								// type suffix
 								addSearchResultTypeStyleClass(rowContainer, type);
 								// adding spacer to force the row container
 								// around all floating elements, another one is
 								// added at the end
-								rowContainer.add(spacer.clone());
+								CSSSpacer space = (CSSSpacer) spacer.clone();
+								space.setId(generator.generateId());
+								rowContainer.add(space);
 								// add an optional icon, use a background image
 								// in the style
 								Layer icon = (Layer) iconPrototype.clone();
