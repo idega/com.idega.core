@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.21 2007/04/15 23:33:25 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.22 2007/04/16 00:45:29 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -35,7 +35,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2007/04/15 23:33:25 $ by $Author: eiki $
+ * Last modified: $Date: 2007/04/16 00:45:29 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -48,7 +48,7 @@ import com.idega.presentation.text.Text;
  * This class can also be EXTENDED like e.g. WhatIsNew block does by overriding some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class SearchResults extends Block {
 
@@ -280,11 +280,14 @@ public class SearchResults extends Block {
 								// add an optional icon, use a background image
 								// in the style
 								Layer icon = (Layer) iconPrototype.clone();
+								icon.setId(generator.generateId());
+								
 								addSearchResultTypeStyleClass(icon, type);
 								rowContainer.add(icon);
 								if (textOnLink != null) {
 									Link link = (Link) linkProtoType.clone();
 									link.setText(textOnLink);
+									link.setId(generator.generateId());
 									// add an extra optional style with the
 									// search type suffix
 									addSearchResultTypeStyleClass(link, type);
@@ -299,6 +302,7 @@ public class SearchResults extends Block {
 								if (extraInfo != null) {
 									Text extraInfoText = (Text) extraInfoTextProtoType.clone();
 									extraInfoText.setText(extraInfo);
+									extraInfoText.setId(generator.generateId());
 									// add an extra optional style with the
 									// search type suffix
 									addSearchResultTypeStyleClass(extraInfoText, type);
@@ -307,6 +311,7 @@ public class SearchResults extends Block {
 								if (abstractText != null) {
 									Text abstractT = (Text) abstractTextProtoType.clone();
 									abstractT.setText(abstractText);
+									abstractT.setId(generator.generateId());
 									// add an extra optional style with the
 									// search type suffix
 									addSearchResultTypeStyleClass(abstractT, type);
@@ -330,6 +335,7 @@ public class SearchResults extends Block {
 										}
 										
 										extraParams.setText(value);
+										extraParams.setId(generator.generateId());
 										addSearchResultTypeAndAttributeKeyStyleClass(extraParams, type, key);
 								
 										rowContainer.add(extraParams);
@@ -349,7 +355,9 @@ public class SearchResults extends Block {
 								
 								// adding spacer to force the row container
 								// around all floating elements
-								rowContainer.add(spacer.clone());
+								CSSSpacer space2 = (CSSSpacer) spacer.clone();
+								space2.setId(generator.generateId());
+								rowContainer.add(space2);
 								addResultRow(container, rowContainer, extraInfo);
 								row++;
 							}
