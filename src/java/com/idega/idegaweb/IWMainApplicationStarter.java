@@ -527,13 +527,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		startTemporaryBundleStarter("com.idega.builder.IWBundleStarter");
 		//Temporary, should be removed:
 		
-		try {
+		/*try {
 			Class.forName("com.idega.hibernate.demo.Test").newInstance();
 		}
 		catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
 		//startTemporaryBundleStarter("is.idega.idegaweb.member.IWBundleStarter");
 		//startTemporaryBundleStarter("se.idega.idegaweb.commune.childcare.IWBundleStarter");
