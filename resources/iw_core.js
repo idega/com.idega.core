@@ -904,8 +904,8 @@ function isSafariBrowser() {
 	return true;
 }
 
-// Function to add event to any object, example: addEvent(window, "load", foo);
-function addEvent(object, eventType, functionName){ 
+// Function to add event to any object, example: registerEvent(window, "load", foo);
+function registerEvent(object, eventType, functionName){ 
 	if (object.addEventListener) { 
 		object.addEventListener(eventType, functionName, false); 
 		return true;
