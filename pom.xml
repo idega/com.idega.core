@@ -45,6 +45,12 @@
 	<url>scp://repository.idega.com/var/www/webs/developer.idega.com/bundles</url>
 	</site>
 </distributionManagement>
+
+  <scm>
+    <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
+    <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection>
+  </scm>
+
   <ciManagement>
     <notifiers>
       <notifier>
