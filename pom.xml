@@ -51,13 +51,6 @@
     <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection>
   </scm>
 
-  <ciManagement>
-    <notifiers>
-      <notifier>
-        <address>idegaweb-dev@idega.com</address>
-      </notifier>
-    </notifiers>
-  </ciManagement>
   
 	<developers>
 		<developer>
