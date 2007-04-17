@@ -3153,6 +3153,41 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	public boolean equals(IDOEntity entity) {
 		if (entity != null) {
+			
+// just for testing begins
+			
+			IDOEntityDefinition entityDef = null;
+			String tableName = null;
+			
+			entityDef = entity.getEntityDefinition();
+			if(entityDef == null){
+				System.out.println("Given entity definition is null");
+				return false;
+			}
+			else{
+				tableName = entityDef.getSQLTableName();
+				if(tableName == null){
+					System.out.println("tableName == null");
+					return false;
+				}
+//				System.out.println("tableName "+tableName);
+			}
+			entityDef = this.getEntityDefinition();
+			if(entityDef == null){
+				System.out.println("Given entity definition is null");
+				return false;
+			}
+			else{
+				tableName = entityDef.getSQLTableName();
+				if(tableName == null){
+					System.out.println("tableName == null");
+					return false;		
+				}
+//				System.out.println("tableName "+tableName);
+			}
+						
+// just for testing ends
+			
 			if (entity.getEntityDefinition().getSQLTableName().equalsIgnoreCase(this.getEntityDefinition().getSQLTableName())) {
 				Object entityPK = entity.getPrimaryKey();
 				if (entityPK != null && entityPK.equals(this.getPrimaryKey())) {
