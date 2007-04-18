@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.19 2007/04/09 22:17:59 tryggvil Exp $
+ * $Id: IWUrlRedirector.java,v 1.20 2007/04/18 08:39:12 alexis Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -33,10 +33,10 @@ import com.idega.idegaweb.IWMainApplication;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/04/18 08:39:12 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -58,8 +58,11 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 				String newUrl = getNewRedirectURL(request);
 				response.sendRedirect(newUrl);
 			}
-			else{
+			else if(isCorrectPath(request)) {
 				chain.doFilter(srequest,sresponse);
+			} else {
+				String newUrl = getFixedSlashURL(request);
+				response.sendRedirect(newUrl);
 			}
 		}
 		catch(BuilderPageException pe){
@@ -72,6 +75,27 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		}
 		
 		removeApplicationContext(request);
+	}
+	
+	String getFixedSlashURL(HttpServletRequest request) {
+		return request.getRequestURI() + "/";
+	}
+	
+	boolean isCorrectPath(HttpServletRequest request) {
+		String requestUri = getURIMinusContextPath(request);
+		if(requestUri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH) || requestUri.startsWith(super.PAGES_URI_MINUSSLASH)) {
+			int lastSlashIndex = requestUri.lastIndexOf("/");
+			if(lastSlashIndex == requestUri.length() - 1) {
+				return true;
+			}
+			int lastDotIndex = requestUri.lastIndexOf(".");
+			if(lastSlashIndex < lastDotIndex) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
