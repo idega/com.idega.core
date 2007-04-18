@@ -1,5 +1,5 @@
 /*
- * $Id: BooleanInput.java,v 1.12 2006/04/09 12:13:16 laddi Exp $
+ * $Id: BooleanInput.java,v 1.13 2007/04/18 17:26:24 civilis Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -9,6 +9,7 @@
  */
 package com.idega.presentation.ui;
 import javax.faces.context.FacesContext;
+
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
@@ -17,10 +18,10 @@ import com.idega.presentation.IWContext;
  * <p>
  * This component presents a selection of a boolean value as a dropdown menu and presents the user with values Yes and No.
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/04/18 17:26:24 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class BooleanInput extends DropdownMenu {
 	private static final String NO_KEY = "booleaninput.no";
@@ -41,11 +42,18 @@ public class BooleanInput extends DropdownMenu {
 		this._showSelectOption = ((Boolean) values[1]).booleanValue();
 	}
 	
+	/**
+	 * Dedicated to jsf restore phase
+	 *
+	 */
 	public BooleanInput() {
-		this("booleaninput");
+		super();
 	}
+	
 	public BooleanInput(String name) {
-		super(name);
+		
+		super(name == null ? "booleaninput" : name);
+		
 		addMenuElement("N");
 		addMenuElement("Y");
 	}
@@ -60,6 +68,7 @@ public class BooleanInput extends DropdownMenu {
 		setMenuElementDisplayString("Y", iwrb.getLocalizedString(YES_KEY,"Yes"));
 	}
 	public void setSelected(boolean selected) {
+		
 		if (selected) {
 			this.setSelectedElement("Y");
 			//System.out.println("Setting selected=true for BooleanInput");
