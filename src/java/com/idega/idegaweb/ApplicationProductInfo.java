@@ -1,5 +1,5 @@
 /*
- * $Id: ApplicationProductInfo.java,v 1.13 2007/02/05 09:39:55 tryggvil Exp $
+ * $Id: ApplicationProductInfo.java,v 1.14 2007/04/18 08:09:22 civilis Exp $
  * Created on 4.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -25,17 +25,17 @@ import com.idega.util.IWTimestamp;
 /**
  *  This class holds information about the application product installed.<br>
  * 
- *  Last modified: $Date: 2007/02/05 09:39:55 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/04/18 08:09:22 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class ApplicationProductInfo {
 	
 	//This will be swapped out by reading from /WEB-INF/idegaweb/properties/product.properties
 	private String inceptionYear="2000";
-	private String version="3.5.0-SNAPSHOT";
-	private String platformVersion="3.5.0-SNAPSHOT";
+	private String version="4.0-SNAPSHOT";
+	private String platformVersion="4.0-SNAPSHOT";
 	private String buildId="20060701.000000";
 	private String vendor="idega software";
 	private String vendorUrl="http://www.idega.com/";
