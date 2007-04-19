@@ -1025,3 +1025,21 @@ function removeElementFromArray(array, elementToRemove) {
 		array.splice(index, 1);
 	}
 }
+
+function removeChildren(element) {
+	if (element == null) {
+		return;
+	}
+	var children = element.childNodes;
+	if (children == null) {
+		return;
+	}
+	var size = children.length;
+	var child = null;
+	for (var i = 0; i < size; i++) {
+		child = children[0];
+		if (child != null) {
+			element.removeChild(child);
+		}
+	}
+}
