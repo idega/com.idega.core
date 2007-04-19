@@ -51,7 +51,7 @@ public class SelectionBox extends InterfaceObject
 		setName(name);
 		this.theElements = new Vector(10);
 		this.keepStatus = false;
-		this.multipleString = "multiple";
+		this.multipleString = "multiple=\"true\"";
 	}
 	public SelectionBox(String name, String textHeading)
 	{
@@ -65,7 +65,7 @@ public class SelectionBox extends InterfaceObject
 		this.theElements = new Vector(10);
 		this.keepStatus = false;
 		setMarkupAttribute("CLASS", "select");
-		this.multipleString = "multiple";
+		this.multipleString = "multiple=\"true\"";
 		if (entity != null)
 		{
 			if (entity.length > 0)
@@ -86,7 +86,7 @@ public class SelectionBox extends InterfaceObject
 		this.theElements = new Vector(10);
 		this.keepStatus = false;
 		setMarkupAttribute("CLASS", "select");
-		this.multipleString = "multiple";
+		this.multipleString = "multiple=\"true\"";
 		
 		setName(untitled);
 		addMenuElements(entityList);
@@ -370,7 +370,7 @@ public class SelectionBox extends InterfaceObject
 	{
 		if (ifMultiple)
 		{
-			this.multipleString = "multiple";
+			this.multipleString = "multiple=\"true\"";
 		} else
 		{
 			this.multipleString = "";

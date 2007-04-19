@@ -69,7 +69,7 @@ public class CheckBox extends GenericInput {
 	 */
 	public void setChecked(boolean ifChecked) {
 		if (ifChecked) {
-			setMarkupAttributeWithoutValue("checked");
+			setMarkupAttribute("checked", ifChecked);
 		}
 		else {
 			removeMarkupAttribute("checked");

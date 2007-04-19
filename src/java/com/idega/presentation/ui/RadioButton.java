@@ -1,5 +1,5 @@
 /*
- * $Id: RadioButton.java,v 1.14 2006/04/09 12:13:16 laddi Exp $
+ * $Id: RadioButton.java,v 1.15 2007/04/19 13:26:28 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import com.idega.presentation.IWContext;
  * <p>
  * This component renders out an input of type radiobutton.
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/04/19 13:26:28 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class RadioButton extends GenericInput {
 
@@ -78,7 +78,7 @@ public class RadioButton extends GenericInput {
 	 */
 	public void setSelected(boolean selected) {
 		if (selected) {
-			setMarkupAttributeWithoutValue("checked");
+			setMarkupAttribute("checked", selected);
 		}
 		else {
 			removeMarkupAttribute("checked");

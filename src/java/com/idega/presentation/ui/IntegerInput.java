@@ -123,7 +123,7 @@ public void print(IWContext iwc)throws IOException{
 
 			//if (getInterfaceStyle().equals("default"))
 
-				println("<input type=\"text\" name=\""+getName()+"\" "+getMarkupAttributesString()+" >");
+				println("<input type=\"text\" name=\""+getName()+"\" "+getMarkupAttributesString()+" />");
 
 				//println("</input>");
 

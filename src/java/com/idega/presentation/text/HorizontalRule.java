@@ -1,5 +1,5 @@
 /*
- * $Id: HorizontalRule.java,v 1.10 2006/04/09 12:13:16 laddi Exp $
+ * $Id: HorizontalRule.java,v 1.11 2007/04/19 13:26:28 valdas Exp $
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
  *
@@ -16,10 +16,10 @@ import com.idega.presentation.PresentationObject;
  * <p>
  * Component to render out a Horizontal Rule or &lt;HR&gt; tag;
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/04/19 13:26:28 $ by $Author: valdas $
  * 
- * @author <a href="mailto:laddi@idega.is">Þórhallur Helgason</a>,<a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.10 $
+ * @author <a href="mailto:laddi@idega.is">ï¿½ï¿½rhallur Helgason</a>,<a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
+ * @version $Revision: 1.11 $
  */
 public class HorizontalRule extends PresentationObject {
 
@@ -121,7 +121,7 @@ public class HorizontalRule extends PresentationObject {
 
 	public void print(IWContext iwc) throws IOException {
 		if (getMarkupLanguage().equals("HTML")) {
-			print("<hr " + getMarkupAttributesString() + " >");
+			print("<hr " + getMarkupAttributesString() + " />");
 		}
 	}
 }
