@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.17 2007/03/07 15:38:50 valdas Exp $
+ * $Id: IWProperty.java,v 1.18 2007/04/20 13:10:50 valdas Exp $
 
  *
 
@@ -25,13 +25,13 @@ import com.idega.xml.XMLElement;
  * &lt;key&gt; tag.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2007/03/07 15:38:50 $ by $Author: valdas $
+ * Last modified: $Date: 2007/04/20 13:10:50 $ by $Author: valdas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
-public class IWProperty implements Comparable
-{
+public class IWProperty implements Comparable {
+	
 	private XMLElement propertyElement;
 	private IWPropertyList parentList;
 	static String mapTag = IWPropertyList.mapTag;
@@ -41,34 +41,36 @@ public class IWProperty implements Comparable
 	static String valueTag = IWPropertyList.valueTag;
 	static String typeTag = IWPropertyList.typeTag;
 	static String simpleTag = IWPropertyList.simpleTag;
+	static String needsReloadTag = IWPropertyList.needsReloadTag;
 	static String stringTag = IWPropertyList.stringTag;
 	static String stringString = IWPropertyList.stringString;
 	public static String MAP_TYPE = mapTag;
-	IWProperty(IWPropertyList parentList)
-	{
+	
+	IWProperty(IWPropertyList parentList) {
 		this(null, parentList);
 	}
-	IWProperty(XMLElement propertyElement, IWPropertyList parentList)
-	{
+	
+	IWProperty(XMLElement propertyElement, IWPropertyList parentList) {
 		this.propertyElement = propertyElement;
 		this.parentList = parentList;
 	}
-	private IWPropertyList getParentList()
-	{
+	
+	private IWPropertyList getParentList() {
 		return this.parentList;
 	}
-	public String getKey()
-	{
+	
+	public String getKey() {
 		return this.getName();
 	}
-	public String getName()
-	{
+	
+	public String getName()	{
 		return IWProperty.getPropertyName(getKeyElement());
 	}
-	public String getType()
-	{
+	
+	public String getType() {
 		return IWProperty.getPropertyType(getKeyElement());
 	}
+	
 	public boolean getBooleanValue() {
 		return getBooleanValue(getValue());
 	}
@@ -96,12 +98,11 @@ public class IWProperty implements Comparable
 		}
 	}
 	
-	public String getValue()
-	{
+	public String getValue() {
 		return IWProperty.getPropertyValue(getKeyElement());
 	}
-	public void setValue(String sValue)
-	{
+	
+	public void setValue(String sValue)	{
 		XMLElement key = getKeyElement();
 		XMLElement value = null;
 		if (key == null)
@@ -121,16 +122,16 @@ public class IWProperty implements Comparable
 		key.addContent(value);
 		setType(stringString);
 	}
-	public void setValue(int iValue)
-	{
+	
+	public void setValue(int iValue) {
 		setValue(new Integer(iValue));
 	}
-	public void setValue(boolean bValue)
-	{
+	
+	public void setValue(boolean bValue) {
 		setValue(new Boolean(bValue));
 	}
-	public void setValue(Object oValue)
-	{
+	
+	public void setValue(Object oValue)	{
 		XMLElement key = getKeyElement();
 		XMLElement value = null;
 		if (key == null)
@@ -150,12 +151,12 @@ public class IWProperty implements Comparable
 		key.addContent(value);
 		setType(oValue.getClass().getName());
 	}
-	private void setType(String sType)
-	{
+	
+	private void setType(String sType) {
 		setType(getKeyElement(), getParentList(), sType);
 	}
-	static void setType(XMLElement key, IWPropertyList plist, String sType)
-	{
+	
+	static void setType(XMLElement key, IWPropertyList plist, String sType)	{
 		XMLElement type = null;
 		if (key == null)
 		{
@@ -173,8 +174,8 @@ public class IWProperty implements Comparable
 		type.setText(sType);
 		key.addContent(type);
 	}
-	public void setName(String sName)
-	{
+	
+	public void setName(String sName) {
 		XMLElement key = getKeyElement();
 		XMLElement name = null;
 		if (key == null)
@@ -211,69 +212,82 @@ public class IWProperty implements Comparable
 		key.addContent(simple);
 	}
 	
-	public void setProperty(String key, int value)
-	{
+	public void setNeedsReload(boolean needsReload) {
+		XMLElement key = getKeyElement();
+		XMLElement reload = null;
+		if (key == null) {
+			key = createKeyElement();
+			reload = new XMLElement(needsReloadTag);
+		}
+		else {
+			reload = key.getChild(needsReloadTag);
+			if (reload == null) {
+				reload = new XMLElement(needsReloadTag);
+			}
+		}
+		reload.setText(String.valueOf(needsReload));
+		key.addContent(reload);
+	}
+	
+	public void setProperty(String key, int value) {
 		setProperty(key, new Integer(value));
 	}
-	public void setProperty(String key, boolean value)
-	{
+	
+	public void setProperty(String key, boolean value) {
 		setProperty(key, new Boolean(value));
 	}
-	public void setProperty(String key, String value, boolean isSimple)
-	{
-		setProperty(key, value, stringString, isSimple);
+	
+	public void setProperty(String key, String value, boolean isSimple, boolean needsReload) {
+		setProperty(key, value, stringString, isSimple, needsReload);
 	}
-	public void setProperty(String key, Object[] value, boolean isSimple)
-	{
+	
+	public void setProperty(String key, Object[] value, boolean isSimple, boolean needsReload) {
 		XMLElement keyElement = this.getKeyElement();
-		setProperty(keyElement, key, value, isSimple, getParentList());
+		setProperty(keyElement, key, value, isSimple, needsReload, getParentList());
 	}
-	private void setProperty(String key, Object value, String type, boolean isSimple)
-	{
+	
+	private void setProperty(String key, Object value, String type, boolean isSimple, boolean needsReload) {
 		XMLElement keyElement = getKeyElement();
-		setProperty(keyElement, key, value, type, isSimple, getParentList());
+		setProperty(keyElement, key, value, type, isSimple, needsReload, getParentList());
 	}
-	static void setProperty(XMLElement keyElement, String key, Object value, String type, boolean isSimple, IWPropertyList list)
-	{
-		if (keyElement == null)
-		{
-			addProperty(key, value, type, isSimple, list);
+	
+	static void setProperty(XMLElement keyElement, String key, Object value, String type, boolean isSimple, boolean needsReload,
+			IWPropertyList list) {
+		if (keyElement == null)	{
+			addProperty(key, value, type, isSimple, needsReload, list);
 		}
-		else
-		{
+		else {
 			XMLElement typeElement = keyElement.getChild(typeTag);
-			if (typeElement.getText().equals(arrayTag))
-			{
+			if (typeElement.getText().equals(arrayTag))	{
 				keyElement.getChild(valueTag);
 			}
-			else
-			{
+			else {
 				keyElement.removeChild(nameTag);
 				keyElement.removeChild(valueTag);
 				keyElement.removeChild(typeTag);
 				keyElement.removeChild(simpleTag);
-				addNewProperty(keyElement, key, value, isSimple, type);
+				keyElement.removeChild(needsReloadTag);
+				addNewProperty(keyElement, key, value, isSimple, needsReload, type);
 			}
 		}
 	}
-	static void setProperty(XMLElement keyElement, String key, Object[] value, boolean isSimple, IWPropertyList list)
-	{
-		if (keyElement == null)
-		{
-			addProperty(key, value, arrayTag, isSimple, list);
+	
+	static void setProperty(XMLElement keyElement, String key, Object[] value, boolean isSimple, boolean needsReload,
+			IWPropertyList list) {
+		if (keyElement == null)	{
+			addProperty(key, value, arrayTag, isSimple, needsReload, list);
 		}
-		else
-		{
+		else {
 			keyElement.removeChild(nameTag);
 			keyElement.removeChild(valueTag);
 			keyElement.removeChild(typeTag);
 			keyElement.removeChild(simpleTag);
-			addNewProperty(keyElement, key, value, isSimple, arrayTag);
+			addNewProperty(keyElement, key, value, isSimple, needsReload, arrayTag);
 		}
 	}
-	public void setProperty(String key, Object value, boolean isSimple)
-	{
-		setProperty(key, value.toString(), value.getClass().getName(), isSimple);
+	
+	public void setProperty(String key, Object value, boolean isSimple, boolean needsReload) {
+		setProperty(key, value.toString(), value.getClass().getName(), isSimple, needsReload);
 	}
 	/**
 	
@@ -330,8 +344,8 @@ public class IWProperty implements Comparable
 		setChildPropertyList(keyElement,valueElement,plist,childList);
 		return childList;
 	}
-	static void setChildPropertyList(XMLElement keyElement,XMLElement valueElement, IWPropertyList parentPropertyList,IWPropertyList childPropertyList)
-	{
+	static void setChildPropertyList(XMLElement keyElement, XMLElement valueElement, IWPropertyList parentPropertyList,
+			IWPropertyList childPropertyList) {
 		if (valueElement != null)
 		{
 			valueElement.removeChildren();
@@ -341,13 +355,12 @@ public class IWProperty implements Comparable
 		}
 	}
 	
-	static void addProperty(String key, Object value, String type, boolean isSimple, IWPropertyList plist)
-	{
+	static void addProperty(String key, Object value, String type, boolean isSimple, boolean needsReload, IWPropertyList plist)	{
 		XMLElement keyElement = createKeyElement(plist);
-		addNewProperty(keyElement, key, value, isSimple, type);
+		addNewProperty(keyElement, key, value, isSimple, needsReload, type);
 	}
-	private XMLElement getKeyElementAndCreateIfNotExists()
-	{
+	
+	private XMLElement getKeyElementAndCreateIfNotExists() {
 		XMLElement key = getKeyElement();
 		if (key == null)
 		{
@@ -355,13 +368,13 @@ public class IWProperty implements Comparable
 		}
 		return key;
 	}
-	private XMLElement createKeyElement()
-	{
+	
+	private XMLElement createKeyElement() {
 		this.propertyElement = createKeyElement(getParentList());
 		return this.propertyElement;
 	}
-	static XMLElement createKeyElement(IWPropertyList list)
-	{
+	
+	static XMLElement createKeyElement(IWPropertyList list)	{
 		XMLElement keyElement = new XMLElement(keyTag);
 		if (list != null)
 		{
@@ -369,8 +382,8 @@ public class IWProperty implements Comparable
 		}
 		return keyElement;
 	}
-	static XMLElement createKeyElement(IWPropertyList list, String keyName)
-	{
+	
+	static XMLElement createKeyElement(IWPropertyList list, String keyName)	{
 		XMLElement keyElement = new XMLElement(keyTag);
 		XMLElement nameElement = new XMLElement(nameTag);
 		nameElement.addContent(keyName);
@@ -381,19 +394,19 @@ public class IWProperty implements Comparable
 		}
 		return keyElement;
 	}
-	private XMLElement getKeyElement()
-	{
+	
+	private XMLElement getKeyElement() {
 		return this.propertyElement;
 	}
-	static String getPropertyName(XMLElement keyElement)
-	{
+	
+	static String getPropertyName(XMLElement keyElement) {
 		if (keyElement != null) {
 			return keyElement.getChild(nameTag).getText();
 		}
 		return null;
 	}
-	static String getPropertyType(XMLElement keyElement)
-	{
+	
+	static String getPropertyType(XMLElement keyElement) {
 		if (keyElement != null)
 		{
 			XMLElement child = keyElement.getChild(typeTag);
@@ -403,15 +416,15 @@ public class IWProperty implements Comparable
 		}
 		return null;
 	}
-	static String getPropertyValue(XMLElement keyElement)
-	{
+	
+	static String getPropertyValue(XMLElement keyElement) {
 		if (keyElement != null) {
 			return keyElement.getChild(valueTag).getText();
 		}
 		return null;
 	}
 	
-	public boolean getPropertySimple() {
+	public boolean isPropertySimple() {
 		if (propertyElement == null) {
 			return false;
 		}
@@ -422,14 +435,24 @@ public class IWProperty implements Comparable
 		return getBooleanValue(tag.getText());
 	}
 	
-	static XMLElement createArrayElement(XMLElement valueElement)
-	{
+	public boolean doNeedReload() {
+		if (propertyElement == null) {
+			return false;
+		}
+		XMLElement tag = propertyElement.getChild(needsReloadTag);
+		if (tag == null) {
+			return false;
+		}
+		return getBooleanValue(tag.getText());
+	}
+	
+	static XMLElement createArrayElement(XMLElement valueElement) {
 		XMLElement arrayElement = new XMLElement(arrayTag);
 		valueElement.addContent(arrayElement);
 		return arrayElement;
 	}
-	static XMLElement getValueElement(XMLElement keyElement)
-	{
+	
+	static XMLElement getValueElement(XMLElement keyElement) {
 		XMLElement value = keyElement.getChild(valueTag);
 		if (value == null)
 		{
@@ -437,29 +460,35 @@ public class IWProperty implements Comparable
 		}
 		return value;
 	}
-	static XMLElement createValueElement(XMLElement parent)
-	{
+	
+	static XMLElement createValueElement(XMLElement parent)	{
 		XMLElement valueElement = new XMLElement(valueTag);
 		parent.addContent(valueElement);
 		return valueElement;
 	}
-	static boolean valueContains(XMLElement valueElement, Object value)
-	{
+	
+	static boolean valueContains(XMLElement valueElement, Object value) {
 		return valueElement.getText().equals(value.toString());
 	}
-	static void setValue(XMLElement valueElement, Object value)
-	{
+	
+	static void setValue(XMLElement valueElement, Object value)	{
 		valueElement.addContent(value.toString());
 	}
-	static void addNewProperty(XMLElement key, String keyName, Object value, boolean isSimple, String type)
-	{
+	
+	static void addNewProperty(XMLElement key, String keyName, Object value, boolean isSimple, boolean needsReload, String type)	{
 		XMLElement nameElement = new XMLElement(nameTag);
 		nameElement.addContent(keyName);
+		
 		XMLElement typeElement = new XMLElement(typeTag);
 		typeElement.addContent(type);
+		
 		XMLElement valueElement = new XMLElement(valueTag);
+		
 		XMLElement simpleElement = new XMLElement(simpleTag);
 		simpleElement.addContent(String.valueOf(isSimple));
+		
+		XMLElement reloadElement = new XMLElement(needsReloadTag);
+		reloadElement.addContent(String.valueOf(needsReload));
 		if (type.equals(arrayTag))
 		{
 			XMLElement arrayElement = new XMLElement(arrayTag);
@@ -489,6 +518,7 @@ public class IWProperty implements Comparable
 		key.addContent(typeElement);
 		key.addContent(valueElement);
 		key.addContent(simpleElement);
+		key.addContent(reloadElement);
 	}
 	public String toString()
 	{

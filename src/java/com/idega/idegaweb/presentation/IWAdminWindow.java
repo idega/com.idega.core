@@ -425,7 +425,7 @@ public class IWAdminWindow extends Window {
 			styleSheet = iwc.getIWMainApplication().getSystemProperties().getIWProperty(IW_BUNDLE_IDENTIFIER + ".editorwindow_styleSheet_path");
 			if (styleSheet == null) {
 				styleSrc = this.iwbCore.getVirtualPath() + "/editorwindow/";
-				iwc.getIWMainApplication().getSystemProperties().getNewProperty().setProperty(IW_BUNDLE_IDENTIFIER + ".editorwindow_styleSheet_path", styleSrc, false);
+				iwc.getIWMainApplication().getSystemProperties().getNewProperty().setProperty(IW_BUNDLE_IDENTIFIER + ".editorwindow_styleSheet_path", styleSrc, false, false);
 			}
 			else {
 				styleSrc = styleSheet.getValue();
@@ -435,7 +435,7 @@ public class IWAdminWindow extends Window {
 			styleSheet = iwc.getIWMainApplication().getSystemProperties().getIWProperty(getBundleIdentifier() + ".editorwindow_styleSheet_name");
 			if (styleSheet == null) {
 				styleSrc = this.iwb.getVirtualPath() + "/editorwindow/";
-				iwc.getIWMainApplication().getSystemProperties().getNewProperty().setProperty(getBundleIdentifier() + ".editorwindow_styleSheet_name", styleSrc, false);
+				iwc.getIWMainApplication().getSystemProperties().getNewProperty().setProperty(getBundleIdentifier() + ".editorwindow_styleSheet_name", styleSrc, false, false);
 			}
 			else {
 				styleSrc = styleSheet.getValue();

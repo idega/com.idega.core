@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.34 2007/04/13 08:17:53 valdas Exp $
+ * $Id: IWPropertyList.java,v 1.35 2007/04/20 13:10:50 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.xml.XMLParser;
  * files and a few others.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2007/04/13 08:17:53 $ by $Author: valdas $
+ * Last modified: $Date: 2007/04/20 13:10:50 $ by $Author: valdas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class IWPropertyList {
 	private XMLDocument xmlDocument;
@@ -57,6 +57,7 @@ public class IWPropertyList {
 	static String valueTag = "value";
 	static String typeTag = "type";
 	static String simpleTag = "simple";
+	static String needsReloadTag = "reload";
 	static String stringTag = "string";
 	static String stringString = "java.lang.String";
 	static String backupEnding = ".bak";
@@ -187,7 +188,7 @@ public class IWPropertyList {
 
 	public void setProperty(String key, Object[] value) {
 		XMLElement keyElement = findKeyElement(key);
-		IWProperty.setProperty(keyElement, key, value, false, this);
+		IWProperty.setProperty(keyElement, key, value, false, false, this);
 	}
 
 	public IWProperty getNewProperty() {
@@ -268,7 +269,7 @@ public class IWPropertyList {
 
 	void setProperty(String key, Object value, String type) {
 		XMLElement keyElement = findKeyElement(key);
-		IWProperty.setProperty(keyElement, key, value, type, false, this);
+		IWProperty.setProperty(keyElement, key, value, type, false, false, this);
 	}
 
 	private void addProperty(String key, String value) {
@@ -276,7 +277,7 @@ public class IWPropertyList {
 	}
 
 	private void addProperty(String key, Object value, String type) {
-		IWProperty.addProperty(key, value, type, false, this);
+		IWProperty.addProperty(key, value, type, false, false, this);
 	}
 
 	public String getPropertyType(String key) {
