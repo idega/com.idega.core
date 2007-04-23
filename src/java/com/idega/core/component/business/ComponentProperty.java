@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentProperty.java,v 1.4 2007/04/20 13:10:50 valdas Exp $
+ * $Id: ComponentProperty.java,v 1.5 2007/04/23 12:05:57 gediminas Exp $
  * Created on 20.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import java.util.Locale;
  * <p>
  * This class holds info about properties available for each ComponentInfo.
  * </p>
- *  Last modified: $Date: 2007/04/20 13:10:50 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/04/23 12:05:57 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface ComponentProperty {
 	
@@ -41,6 +41,6 @@ public interface ComponentProperty {
 	
 	public boolean isSimpleProperty();
 	
-	public boolean doNeedsReload();
+	public boolean isNeedsReload();
 	
 }

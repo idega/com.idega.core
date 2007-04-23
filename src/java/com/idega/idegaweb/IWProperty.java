@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.18 2007/04/20 13:10:50 valdas Exp $
+ * $Id: IWProperty.java,v 1.19 2007/04/23 12:05:57 gediminas Exp $
 
  *
 
@@ -25,10 +25,10 @@ import com.idega.xml.XMLElement;
  * &lt;key&gt; tag.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2007/04/20 13:10:50 $ by $Author: valdas $
+ * Last modified: $Date: 2007/04/23 12:05:57 $ by $Author: gediminas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class IWProperty implements Comparable {
 	
@@ -435,7 +435,7 @@ public class IWProperty implements Comparable {
 		return getBooleanValue(tag.getText());
 	}
 	
-	public boolean doNeedReload() {
+	public boolean isNeedsReload() {
 		if (propertyElement == null) {
 			return false;
 		}

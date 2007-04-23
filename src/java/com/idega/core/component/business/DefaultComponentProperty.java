@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultComponentProperty.java,v 1.4 2007/04/20 13:10:49 valdas Exp $
+ * $Id: DefaultComponentProperty.java,v 1.5 2007/04/23 12:05:57 gediminas Exp $
  * Created on 25.4.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import java.util.Map;
  * <p>
  * Default implementation of the ComponentProperty
  * </p>
- *  Last modified: $Date: 2007/04/20 13:10:49 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/04/23 12:05:57 $ by $Author: gediminas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class DefaultComponentProperty implements ComponentProperty {
 
@@ -226,7 +226,7 @@ public class DefaultComponentProperty implements ComponentProperty {
 		return simpleProperty;
 	}
 
-	public boolean doNeedsReload() {
+	public boolean isNeedsReload() {
 		return needsReload;
 	}
 
