@@ -1005,7 +1005,7 @@ function getAbsoluteTop(objectId) {
 }
 
 function initComments() {
-	enableReverseAjax();
+	/*enableReverseAjax();*/
 	CommentsEngine.getInitInfoForComments(getInitInfoForCommentsCallback);
 }
 
