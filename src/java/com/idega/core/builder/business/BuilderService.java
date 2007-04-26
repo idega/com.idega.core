@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.29 2007/03/07 08:52:52 justinas Exp $
+ * $Id: BuilderService.java,v 1.30 2007/04/26 10:23:52 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -16,6 +16,8 @@ import java.util.Map;
 
 import javax.faces.component.UIComponent;
 
+import org.jdom.Document;
+
 import com.idega.business.IBOService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
@@ -24,6 +26,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
+import com.idega.presentation.PresentationObject;
 
 /**
  * BuilderService: This is the interface to the iW Builder functions in idegaWeb
@@ -267,4 +270,8 @@ public interface BuilderService extends IBOService
 	public String getPageKeyByURI(String requestURI);
 	
 	public String getExistingPageKeyByURI(String requestURI);
+	
+	public Document getRenderedPresentationObject(IWContext iwc, PresentationObject object, boolean cleanHtml);
+	
+	public boolean removeBlockObjectFromCache(IWContext iwc, String cacheKey);
 }

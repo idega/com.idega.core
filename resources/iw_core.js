@@ -1043,3 +1043,67 @@ function removeChildren(element) {
 		}
 	}
 }
+
+/** These functions transforms Document (received via DWR) to DOM **/
+function getTransformedDocumentToDom(component) {
+	var nodes = new Array();
+	if (component == null) {
+		return nodes;
+	}
+	var children = component.childNodes;
+	if (children == null) {
+		return nodes;
+	}
+	if (children.length == 0) {
+		return nodes;
+	}
+	
+	var size = children.length;
+	var node = null;
+	for (var i = 0; i < size; i++) {
+		node = children.item(i);
+		nodes.push(node);
+	}
+	return nodes;
+}
+
+function createRealNode(element) {
+	// Text
+	if(element.nodeName == '#text') {
+		var textNode = document.createTextNode(element.nodeValue);
+		return textNode;
+	}
+	// Comment
+	if (element.nodeName == '#comment') {
+		var commentNode = document.createComment(element.nodeValue);
+		return commentNode;
+	}
+	// Element
+	var result = document.createElement(element.nodeName);
+	for (var i = 0; i < element.attributes.length; i++) {
+		result.setAttribute(element.attributes[i].nodeName, element.attributes[i].nodeValue);
+	}
+	for(var j = 0; j < element.childNodes.length; j++) {
+		result.appendChild(createRealNode(element.childNodes[j]));
+	}
+	return result;
+}
+
+function insertNodesToContainer(component, container) {
+	if (component == null || container == null) {
+		return;
+	}
+	
+	// Making copy
+	var nodes = getTransformedDocumentToDom(component);
+	
+	// Inserting nodes
+	var activeNode = null;
+	var realNode = null;
+	for (var i = 0; i < nodes.length; i++) {
+		activeNode = nodes[i];
+		realNode = createRealNode(activeNode);
+		container.appendChild(realNode);
+	}
+}
+/** End **/
