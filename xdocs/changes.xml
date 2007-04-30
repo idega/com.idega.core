@@ -8,10 +8,11 @@
     <release version="3.1.43" date="2007-04-17">
 		<action dev="thomas" type="update">
 			Minor change to WriterToFile (Strings are now allowed as folder identifiers)
+		</action>
+		<action dev="eiki" type="fix">
 			Removed the adding of the "standard" style.css file from idegaweb/style/... it has long been deprecated and causes style problems in safari when not found.
 		</action>
-	</release>
-			<action dev="thomas" type="add">
+		<action dev="thomas" type="add">
 			Added package com.idega.core.event.
 			Added EventClients extensions for IWCacheManager and IWMainApplicationSettings that is
 			IWCacheManagerClientEvent and IWMainAppicationSettingsClientEvent.
@@ -19,6 +20,8 @@
 			package com.idega.core.event is used by the com.idega.cluster bundle.
 			Actually those changes seems to be included since version 3.1.32.
 		</action>
+	</release>
+	
   	<release version="3.1.42" date="2007-03-30">
 		<action dev="palli" type="fix">
 			Fixed the IWAuthenticator so that the commune redirect works again. Now the listeners are called.
