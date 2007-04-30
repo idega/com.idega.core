@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.15 2006/02/22 22:07:28 laddi Exp $
+ * $Id: IWWelcomeFilter.java,v 1.15.2.1 2007/04/30 17:10:02 tryggvil Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,8 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -30,10 +32,10 @@ import com.idega.util.RequestUtil;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2006/02/22 22:07:28 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/04/30 17:10:02 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.15.2.1 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
@@ -46,6 +48,9 @@ public class IWWelcomeFilter extends BaseFilter {
 	private static final boolean DEFAULT_VALUE_START_ON_PAGES = false;
 	private static final String PROPERTY_LOG_REQUESTS = "com.idega.core.logrequests";
 	private static boolean startOnPages= DEFAULT_VALUE_START_ON_PAGES;
+
+	private Map initializedPages=new HashMap();
+	private Map synchronizationObjects=new HashMap();
 	
 	
 	public static void unload() {
@@ -53,7 +58,7 @@ public class IWWelcomeFilter extends BaseFilter {
 		startOnWorkspace = DEFAULT_VALUE_START_ON_WORKSPACE;
 		startOnPages = DEFAULT_VALUE_START_ON_PAGES;
 	}
-	
+
 	
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
@@ -106,7 +111,20 @@ public class IWWelcomeFilter extends BaseFilter {
 			}
 		}
 		else{
-			chain.doFilter(srequest,sresponse);
+			/**
+			 * This Clause is here to protect the server in high loads so that
+			 * the server will let the first accessor on each pages cache it self up.
+			 */
+			if(isSynchronizeFirstAccess(request,response)){
+				Object syncObject = getSynchronizationObject(request,response);
+				synchronized(syncObject){
+					chain.doFilter(srequest,sresponse);
+					setSynchronizedFirstAccess(request,response);
+				}
+			}
+			else{
+				chain.doFilter(srequest,sresponse);
+			}
 		}
 
 	}
@@ -214,5 +232,27 @@ public class IWWelcomeFilter extends BaseFilter {
 		// TODO Auto-generated method stub
 
 	}
+
+	protected synchronized Object getSynchronizationObject(HttpServletRequest request, HttpServletResponse response) {
+		String requestUri = request.getRequestURI();
+		Object value = synchronizationObjects.get(requestUri);
+		if(value==null){
+			value = requestUri;
+			synchronizationObjects.put(requestUri,value);
+		}
+		return value;
+		
+	}
+
+	protected boolean isSynchronizeFirstAccess(HttpServletRequest request, HttpServletResponse response) {
+		String requestUri = request.getRequestURI();
+		return initializedPages.containsKey(requestUri);
+	}
+
+	protected void setSynchronizedFirstAccess(HttpServletRequest request, HttpServletResponse response) {
+		String requestUri = request.getRequestURI();
+		initializedPages.put(requestUri,requestUri);
+	}
+	
 
 }
