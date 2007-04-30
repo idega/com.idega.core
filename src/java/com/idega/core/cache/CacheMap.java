@@ -1,5 +1,5 @@
 /*
- * $Id: CacheMap.java,v 1.10.2.3 2007/04/30 13:24:40 thomas Exp $
+ * $Id: CacheMap.java,v 1.10.2.4 2007/04/30 15:55:49 thomas Exp $
  * Created on 6.1.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -27,10 +27,10 @@ import net.sf.ehcache.Element;
  * <p>
  * Wrapper for the Cache implemented as a standard Map
  * </p>
- *  Last modified: $Date: 2007/04/30 13:24:40 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/04/30 15:55:49 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10.2.3 $
+ * @version $Revision: 1.10.2.4 $
  */
 public class CacheMap implements Map {
 
@@ -131,12 +131,7 @@ public class CacheMap implements Map {
 	public Object put(Object key, Object value) {
 		try {
 			Element element = new Element((Serializable)key,(Serializable)value);
-			// check if the element is already added
-			Element existingElement = getCache().getQuiet(key);
-			if (existingElement != null && existingElement.getValue().equals(existingElement.getValue())) {
-				return existingElement;
-			}
-			getCache().put(element);	
+			getCache().put(element);
 			if(getCacheListeners()!=null){
 				for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
 					CacheMapListener listener = (CacheMapListener) iterator.next();
