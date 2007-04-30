@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.17 2007/04/30 17:20:04 tryggvil Exp $
+ * $Id: IWWelcomeFilter.java,v 1.18 2007/04/30 23:56:23 eiki Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,9 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -17,10 +20,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.idega.business.IBOLookup;
-import com.idega.core.builder.business.BuilderService;
-import com.idega.core.builder.data.ICPage;
-import com.idega.data.IDONoDatastoreError;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.IWTimestamp;
 import com.idega.util.RequestUtil;
@@ -30,10 +30,10 @@ import com.idega.util.RequestUtil;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2007/04/30 17:20:04 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/04/30 23:56:23 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
