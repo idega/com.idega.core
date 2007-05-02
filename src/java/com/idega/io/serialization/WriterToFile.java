@@ -50,51 +50,60 @@ public abstract class WriterToFile {
 		return false;
 	}
 		
+	protected String getRealPathToFile(String fileName, String extension, long folderIdentifier) {
+		String folderIdentifierAsString = Long.toString(folderIdentifier);
+		return getRealPathToFile(fileName, extension, folderIdentifierAsString);
+	}
+	
 
-
-  protected String getRealPathToFile(String fileName, String extension, long folderIdentifier) {
-    IWMainApplication mainApp = this.iwc.getIWMainApplication();
-    String separator = FileUtil.getFileSeparator();
-    StringBuffer path = new StringBuffer(mainApp.getApplicationRealPath());
-    path.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY)
-      .append(separator)
-      .append(DOWNLOAD_FOLDER);
-    // check if the folder exists create it if necessary (see call of method createFolder below)
-    // usually the folder should be already be there.
-    // the folder is never deleted by this class
-    String folderPath = path.toString();
-    FileUtil.deleteAllFilesAndFolderInFolderOlderThan(folderPath, 300000);
+	protected String getRealPathToFile(String fileName, String extension, String folderIdentifier) {
+		IWMainApplication mainApp = this.iwc.getIWMainApplication();
+		String separator = FileUtil.getFileSeparator();
+		StringBuffer path = new StringBuffer(mainApp.getApplicationRealPath());
+		path.append(mainApp.getCacheDirectoryURI())
+		.append(separator)
+		.append(DOWNLOAD_FOLDER);
+		// check if the folder exists create it if necessary (see call of method createFolder below)
+		// usually the folder should be already be there.
+		// the folder is never deleted by this class
+		String folderPath = path.toString();
+		FileUtil.deleteAllFilesAndFolderInFolderOlderThan(folderPath, 300000);
 		path.append(separator);
 		path.append(folderIdentifier);
 		folderPath = path.toString();
 		FileUtil.createFolder(folderPath);
 		path.append(separator).append(fileName);
 		if (extension != null && extension.length() > 0) {
-      path.append(DOT).append(extension);
+			path.append(DOT).append(extension);
 		}
-    return path.toString();
-  }
+		return path.toString();
+	}
+	
+	protected String getURLToFile(String reportName, String extension, long folderIdentifier) {
+		String folderIdentifierAsString = Long.toString(folderIdentifier);
+		return getRealPathToFile(reportName, extension, folderIdentifierAsString);
+	}
   
-  protected String getURLToFile(String reportName, String extension, long folderIdentifier) {
-    IWMainApplication mainApp = this.iwc.getIWMainApplication();
-    String separator = "/";
-    String appContextURI = mainApp.getApplicationContextURI();
-    StringBuffer uri = new StringBuffer(appContextURI);
-    if(!appContextURI.endsWith(separator)){
+	protected String getURLToFile(String reportName, String extension, String folderIdentifier) {
+		IWMainApplication mainApp = this.iwc.getIWMainApplication();
+		String separator = "/";
+		String appContextURI = mainApp.getApplicationContextURI();
+		StringBuffer uri = new StringBuffer(appContextURI);
+		if(!appContextURI.endsWith(separator)){
 			uri.append(separator);
-    }
-      uri.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY)
-      .append(separator)
-      .append(DOWNLOAD_FOLDER)
-      .append(separator)
-      .append(folderIdentifier)
-      .append(separator)
-      .append(reportName);
-		if (extension != null && extension.length() > 0) {
-      uri.append(DOT).append(extension);
 		}
-    return uri.toString();
-  }  
+		uri.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY)
+		.append(separator)
+		.append(DOWNLOAD_FOLDER)
+		.append(separator)
+		.append(folderIdentifier)
+		.append(separator)
+		.append(reportName);
+		if (extension != null && extension.length() > 0) {
+			uri.append(DOT).append(extension);
+		}
+		return uri.toString();
+	}  
   
 
 	
@@ -120,7 +129,7 @@ public abstract class WriterToFile {
   	}
   }
   
-	protected void writeFromStreamToStream(InputStream source, OutputStream destination) throws IOException { 
+  protected void writeFromStreamToStream(InputStream source, OutputStream destination) throws IOException { 
 		// parts of this method  were copied from "Java in a nutshell" by David Flanagan
     byte[] buffer = new byte[4096];  // A buffer to hold file contents
     int bytesRead;                       
