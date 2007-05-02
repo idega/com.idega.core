@@ -3,12 +3,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 /**
+ * <p>
+ * NOTE:
+ * This cache does NOT notify any listeners, that is be careful when using this cache in a cluster environment.
+ * For automatic cache synchronization use IWCacheManager2.
+ * </p>
+ * 
  *<p>
  *This class is to be used as a java.util.Map as a convenient way of caching objects.
  *The maximum number of cached objects can be set and increased an decreased (default number is 100)
  *The Map removes the least used objects in favour of newly inserted ones and keeps the most accessed objects.<br/>
  *This Cache Map is deprecated as of platform 3.1 as now is more recommended to use IWCacheManager2.getCache()
  *<p>
+ *
+ *@deprecated
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 0.5
  */
