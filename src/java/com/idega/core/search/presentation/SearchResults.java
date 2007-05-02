@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.13.2.9 2006/11/09 15:48:02 gimmi Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.13.2.10 2007/05/02 14:14:11 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -32,9 +32,10 @@ import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.util.Timer;
 
 /**
- * Last modified: $Date: 2006/11/09 15:48:02 $ by $Author: gimmi $
+ * Last modified: $Date: 2007/05/02 14:14:11 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -48,7 +49,7 @@ import com.idega.presentation.text.Text;
  * some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.13.2.9 $
+ * @version $Revision: 1.13.2.10 $
  */
 public class SearchResults extends Block {
 
@@ -166,6 +167,9 @@ public class SearchResults extends Block {
 	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
 	 */
 	public void main(IWContext iwc) throws Exception {
+		Timer timer = new Timer();
+		timer.start();
+		
 		super.main(iwc);
 		IWResourceBundle iwrb = IWContext.getInstance().getIWMainApplication().getCoreBundle().getResourceBundle(iwc);
 		if (isSimpleSearch(iwc) || isAdvancedSearch(iwc)) {
@@ -359,6 +363,9 @@ public class SearchResults extends Block {
 			afterAddingResultRows(container);
 			add(container);
 		}
+		
+		timer.stop();
+		add("<!-- Search took: "+timer.getTimeString()+" -->");
 	}
 
 	protected void beforeAddingResultRows(Layer container) {
