@@ -1451,7 +1451,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public synchronized void update() throws SQLException {
 		try {
 			DatastoreInterface.getInstance(this).update(this);
-			flushQueryCache();
+			updateInCaches();
 		}
 		catch (Exception ex) {
 			if (isDebugActive()) {
@@ -1471,11 +1471,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public void update(Connection c) throws SQLException {
 		try {
 			DatastoreInterface.getInstance(c).update(this, c);
-			flushQueryCache();
-			if (IDOContainer.getInstance().beanCachingActive(this.getInterfaceClass())) {
-				IDOContainer.getInstance().getBeanCache(getDatasource(),this.getInterfaceClass()).removeCachedEntity(this.getPrimaryKey());
-			}
-			this.empty();
+			updateInCaches();
 		}
 		catch (Exception ex) {
 			if (ex instanceof SQLException) {
@@ -1484,15 +1480,19 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		}
 	}
+	
+	private void updateInCaches() {
+		flushQueryCache();
+		if (IDOContainer.getInstance().beanCachingActive(this.getInterfaceClass())) {
+			IDOContainer.getInstance().getBeanCache(getDatasource(),this.getInterfaceClass()).putCachedEntity(this.getPrimaryKey(), this);
+		}
+	}
+	
 
 	public void delete() throws SQLException {
 		try {
 			DatastoreInterface.getInstance(this).delete(this);
-			flushQueryCache();
-			if (IDOContainer.getInstance().beanCachingActive(this.getInterfaceClass())) {
-				IDOContainer.getInstance().getBeanCache(getDatasource(),this.getInterfaceClass()).removeCachedEntity(this.getPrimaryKey());
-			}
-			this.empty();
+			deleteInCaches();
 		}
 		catch (Exception ex) {
 			if (ex instanceof SQLException) {
@@ -1505,7 +1505,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	public void delete(Connection c) throws SQLException {
 		try {
 			DatastoreInterface.getInstance(c).delete(this, c);
-			flushQueryCache();
+			deleteInCaches();
 		}
 		catch (Exception ex) {
 			if (ex instanceof SQLException) {
@@ -1514,6 +1514,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		}
 	}
+	
+	private void deleteInCaches() {
+		flushQueryCache();
+		if (IDOContainer.getInstance().beanCachingActive(this.getInterfaceClass())) {
+			IDOContainer.getInstance().getBeanCache(getDatasource(),this.getInterfaceClass()).removeCachedEntity(this.getPrimaryKey());
+		}
+		this.empty();
+	}
+	
+	
 
 	public void deleteMultiple(String columnName, String stringColumnValue) throws SQLException {
 		Connection conn = null;
