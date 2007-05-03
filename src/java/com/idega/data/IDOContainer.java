@@ -1,5 +1,5 @@
 /*
- * $Id: IDOContainer.java,v 1.26 2006/06/08 07:47:42 laddi Exp $
+ * $Id: IDOContainer.java,v 1.27 2007/05/03 14:35:45 thomas Exp $
  * Created in 2002 by Tryggvi Larusson
  * 
  * Copyright (C) 2002-2006 Idega software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.util.datastructures.HashtableDoubleKeyed;
  * This class is a singleton for the application and is the "base center" for
  * getting access to other component of the persistence engine.
  * </p>
- * Last modified: $Date: 2006/06/08 07:47:42 $ by $Author: laddi $
+ * Last modified: $Date: 2007/05/03 14:35:45 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 public class IDOContainer implements Singleton {
 
@@ -241,10 +241,10 @@ public class IDOContainer implements Singleton {
 				else {
 					((IDOEntityBean) entity).ejbLoad();
 				}
-			}
-			((IDOEntityBean) entity).setEJBLocalHome(home);
-			if (useBeanCaching) {
-				cache.putCachedEntity(pk, entity);
+				((IDOEntityBean) entity).setEJBLocalHome(home);
+				if (useBeanCaching) {
+					cache.putCachedEntity(pk, entity);
+				}
 			}
 			return entity;
 		}
