@@ -1,5 +1,5 @@
 /*
- * $Id: DerbyDatastoreInterface.java,v 1.2 2005/07/19 13:34:53 tryggvil Exp $
+ * $Id: DerbyDatastoreInterface.java,v 1.3 2007/05/03 15:44:53 thomas Exp $
  * Created on 12.4.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import java.sql.Statement;
  * <p>
  * This class is for supporting the Apache Derby database in idegaWeb.
  * </p>
- *  Last modified: $Date: 2005/07/19 13:34:53 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/05/03 15:44:53 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class DerbyDatastoreInterface extends DatastoreInterface {
 
@@ -157,4 +157,23 @@ public class DerbyDatastoreInterface extends DatastoreInterface {
 			return "INTEGER";
 		}
 	}	
+	
+	/**
+	 * Derby supports UNIQUE only for columns that are set to be not null.
+	 * Note: Returning false when calling supportsUniqueConstraintInColumnDefinition() is not a solution
+	 * since it prevents use of UNIQUE in general.
+	 * 
+	 * In other words: If UNIQUE is used there must be NOT NULL in front of it (that is "NOT NULL UNIQUE")
+	 * By checking if the column is not nullable it is ensured that NOT NULL is already added to the columnDefinition.
+	 * (see call of this method in DatastoreInterface)
+	 * 
+	 */
+	protected String addUniqueConstraint(String columnDefintion, String columnName,GenericEntity entity) {
+	    if (entity.getIfUnique(columnName)&&supportsUniqueConstraintInColumnDefinition()&& (! entity.getIfNullable(columnName))) {
+		      return columnDefintion + " UNIQUE";
+	    }
+		return columnDefintion;
+	}
+
+	
 }
