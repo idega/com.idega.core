@@ -4,6 +4,27 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+      	<release version="3.1.44" date="2007-05-03">
+      	  <action dev="thomas" type="add">
+			The cahces homeQueryCache and findQueryCache in class IDOBeanCache are now using ehcache.
+			In that way those caches are now 
+			connected to the event system of the 
+			cluster environment that synchronizes the caches.
+			(this add is crucial for cluster environment)
+		</action>
+      <action dev="thomas" type="fix">
+			Method findPrimaryKey was calling put method of the bean cache in the wrong way 
+			((this fix is crucial for cluster environment)
+		</action>
+		<action dev="thomas" type="fix">
+			Some update and delete methods in GenericEntity fixed (notification of bean cache forgotten).
+			(this fix is crucial for cluster environment)
+		</action>
+		<action dev="thomas" type="fix">
+			Bug fixed with Derby database when setting UNIQUE constraint (is only allowed to set  when NOT NULL constraint is set)
+			(see DatastoreInterface, DerbyDatastoreInterface) 
+		</action>
+	</release>
     
     <release version="3.1.43" date="2007-04-30">
 		<action dev="thomas" type="update">
