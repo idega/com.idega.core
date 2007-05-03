@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.132 2006/05/31 10:52:32 tryggvil Exp $
+ * $Id: DatastoreInterface.java,v 1.132.2.1 2007/05/03 13:19:20 thomas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2179,11 +2179,20 @@ public abstract class DatastoreInterface implements MutableClass {
 	    if (isPrimaryKey) {
 	      returnString = 	returnString + " PRIMARY KEY";
 	    }*/
-	    if (entity.getIfUnique(columnName)&&supportsUniqueConstraintInColumnDefinition()){
-	      returnString = 	returnString + " UNIQUE";
-	    }
+	    returnString = addUniqueConstraint(returnString, columnName, entity);
 	    return returnString;
 	  }
+	
+	/**
+	 * DerbyDatastoreInterface is overwriting this method
+	 * 
+	 */
+	protected String addUniqueConstraint(String columnDefintion, String columnName,GenericEntity entity) {
+	    if (entity.getIfUnique(columnName)&&supportsUniqueConstraintInColumnDefinition()){
+		      return columnDefintion + " UNIQUE";
+	    }
+		return columnDefintion;
+	}
 	
 	public boolean supportsUniqueConstraintInColumnDefinition(){
 		return true;
