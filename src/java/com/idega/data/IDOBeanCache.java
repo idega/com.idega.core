@@ -1,5 +1,5 @@
 /*
- * $Id: IDOBeanCache.java,v 1.15 2006/06/08 07:47:42 laddi Exp $ Crated in
+ * $Id: IDOBeanCache.java,v 1.16 2007/05/03 15:37:42 thomas Exp $ Crated in
  * 2002 by tryggvil
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -13,47 +13,48 @@ import java.util.Collection;
 import java.util.Map;
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.util.caching.CacheMap;
 
 /**
  * <p>
  * This class holds a cache for each entity (class) and datasource.
  * </p>
- * Last modified: $Date: 2006/06/08 07:47:42 $ by $Author: laddi $
+ * Last modified: $Date: 2007/05/03 15:37:42 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class IDOBeanCache {
 
-	private Class entityInterfaceClass;
-	// Map cacheMap;
-	private Map findQueryCacheMap;
-	private Map homeQueryCacheMap;
 	private String cacheName = null;
-	private String datasource;
+	private String findQueryCacheName = null;
+	private String homeQueryCacheName = null;
+	
+	private Class entityInterfaceClass = null;
+	private String datasource = null;
+	private boolean isEternal = false;
+	private int maxCachedBeans = -1;
+		
 
 	IDOBeanCache(Class entityInterfaceClass,String datasource) {
+		initialize(entityInterfaceClass, datasource);
+	}
+	
+	private void initialize(Class entityInterfaceClass, String datasource) {
 		this.entityInterfaceClass = entityInterfaceClass;
-		this.datasource=datasource;
+		this.datasource = datasource;
+		IDOEntityDefinition definition = getEntityDefinition();
+		isEternal = definition.isAllRecordsCached();
+		maxCachedBeans = definition.getMaxCachedBeans();
 	}
 
 	private Map getFindQueryCacheMap() {
-		if (this.findQueryCacheMap == null) {
-			// findQueryCacheMap=new HashMap();
-			this.findQueryCacheMap = new CacheMap(200);
-		}
-		return this.findQueryCacheMap;
+		return getCacheMap(getFindQueryCacheName());
 	}
-
+	
 	private Map getHomeQueryCacheMap() {
-		if (this.homeQueryCacheMap == null) {
-			// homeQueryCacheMap=new HashMap();
-			this.homeQueryCacheMap = new CacheMap(200);
-		}
-		return this.homeQueryCacheMap;
+		return getCacheMap(getHomeQueryCacheName());
 	}
-
+	
 	/**
 	 * <p>
 	 * Holds a Map over cached entity objects for this BeanCache. Keys are
@@ -63,9 +64,10 @@ public class IDOBeanCache {
 	 * @return
 	 */
 	protected Map getCacheMap() {
-		int maxCachedBeans = 200;
-		boolean overFlowToDisk = true;
-		boolean isEternal = false;
+		return getCacheMap(getCacheName());
+	}
+
+	private Map getCacheMap(String nameOfCache) {
 		/*
 		 * if(this.cacheMap==null){ //cacheMap=new HashMap(); int maxCachedBeans =
 		 * 200; IDOEntityDefinition entityDef; try { entityDef =
@@ -78,24 +80,28 @@ public class IDOBeanCache {
 		 * Auto-generated catch block e.printStackTrace(); } } return
 		 * this.cacheMap;
 		 */
-		IDOEntityDefinition definition = getEntityDefinition();
-		isEternal=definition.isAllRecordsCached();
-		maxCachedBeans = definition.getMaxCachedBeans();
-		return getCacheManger().getCache(getCacheName(), maxCachedBeans, overFlowToDisk, isEternal);
+		return getCacheManger().getCache(nameOfCache, maxCachedBeans, true, isEternal);
 	}
-
-	/**
-	 * <p>
-	 * TODO tryggvil describe method getCacheName
-	 * </p>
-	 * 
-	 * @return
-	 */
+	
 	private String getCacheName() {
-		if (this.cacheName == null) {
-			this.cacheName = "BeanCache_" + getEntityInterfaceClass().getName();
+		if (cacheName == null) {
+			cacheName = "BeanCache_" + getEntityInterfaceClass().getName();
 		}
-		return this.cacheName;
+		return cacheName;
+	}
+	
+	private String getFindQueryCacheName() {
+		if (findQueryCacheName == null) {
+			findQueryCacheName = "QueryCache_" + getEntityInterfaceClass().getName();
+		}
+		return findQueryCacheName;
+	}
+	
+	private String getHomeQueryCacheName() {
+		if (homeQueryCacheName == null) {
+			homeQueryCacheName = "HomeQueryCache_" + getEntityInterfaceClass().getName();
+		}
+		return homeQueryCacheName;
 	}
 
 	protected IWCacheManager2 getCacheManger() {
@@ -151,15 +157,14 @@ public class IDOBeanCache {
 	}
 
 	synchronized void flushAllHomeQueryCache() {
-		this.homeQueryCacheMap = null;
+		getHomeQueryCacheMap().clear();
 	}
 
 	synchronized void flushAllFindQueryCache() {
-		this.findQueryCacheMap = null;
+		getFindQueryCacheMap().clear();
 	}
 
 	synchronized void flushAllBeanCache() {
-		// this.cacheMap=null;
 		getCacheMap().clear();
 	}
 
