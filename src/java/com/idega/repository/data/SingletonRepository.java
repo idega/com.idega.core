@@ -42,6 +42,11 @@ public class SingletonRepository {
 	}
 	
 	public static synchronized void start() {
+		if (singletonRepository != null) {
+			// nothing to do, start already called!
+			System.out.println("["+ SingletonRepository.class.getName()+"] Note: Tried to start Repository again but it is already running (this is usually not an  error or problem)");
+			return;
+		}
 		singletonRepository = new SingletonRepository();
 		hasBeenStopped=false;
 		System.out.println("["+ SingletonRepository.class.getName()+"] Repository started");
@@ -70,10 +75,7 @@ public class SingletonRepository {
 			if(hasBeenStopped){
 				throw new RuntimeException("SingletonRepsitory has been stopped so no instance exists.");
 			}
-			else{
-				start();
-			}
-			//	singletonRepository = new SingletonRepository();
+			start();
 		}
 		return singletonRepository;
 	}
