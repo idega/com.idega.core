@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+        	<release version="3.1.45" date="2007-05-05">
+      	  <action dev="thomas" type="fix">
+			SingletonRepository was started twice (there were two instances of a singleton running)
+		</action>
+		</release>
       	<release version="3.1.44" date="2007-05-03">
       	  <action dev="thomas" type="add">
 			The cahces homeQueryCache and findQueryCache in class IDOBeanCache are now using ehcache.
