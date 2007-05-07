@@ -1107,3 +1107,48 @@ function insertNodesToContainer(component, container) {
 	}
 }
 /** End **/
+
+function getNeededElements(element, className) {
+	if (element == null) {
+		return null;
+	}
+	return getNeededElementsFromList(element.childNodes, className);
+}
+
+function getNeededElementsFromList(list, className) {
+	if (list == null || className == null) {
+		return new Array();
+	}
+	var childElement = null;
+	var elements = new Array();
+	for (var i = 0; i < list.length; i++) {
+		childElement = list[i];
+		if (childElement != null) {
+			if (childElement.className != null) {
+				if (childElement.className == className) {
+					elements.push(childElement);
+				}
+			}
+		}
+	}
+	return elements;
+}
+
+function getNeededElementsFromListById(list, id) {
+	if (list == null || id == null) {
+		return new Array();
+	}
+	var childElement = null;
+	var elements = new Array();
+	for (var i = 0; i < list.length; i++) {
+		childElement = list[i];
+		if (childElement != null) {
+			if (childElement.id != null) {
+				if (childElement.id == id) {
+					elements.push(childElement);
+				}
+			}
+		}
+	}
+	return elements;
+}
