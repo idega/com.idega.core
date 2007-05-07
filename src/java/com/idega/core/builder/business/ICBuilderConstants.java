@@ -16,4 +16,12 @@ public class ICBuilderConstants {
 	public static final String IB_PAGE_PARAMETER = "ib_page";
 	public static final String PRM_HISTORY_ID = "ib_history";
 	public static final String SESSION_OBJECT_STATE = "obj_inst_state";
+	
+	public static final String HANLDER_VALUE_OBJECTS_STYLE_CLASS = "handlerValueObjects";
+	
+	/** Parameters for choosers **/
+	public static final String PAGE_NAME_ATTRIBUTE = "pageName";
+	public static final String PAGE_ID_ATTRIBUTE = "pageId";
+	public static final String CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE = "chooser_value_viewer_id";
+	
 }
