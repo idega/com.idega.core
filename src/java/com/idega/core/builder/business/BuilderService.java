@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.30 2007/04/26 10:23:52 valdas Exp $
+ * $Id: BuilderService.java,v 1.31 2007/05/07 14:32:01 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -273,5 +273,9 @@ public interface BuilderService extends IBOService
 	
 	public Document getRenderedPresentationObject(IWContext iwc, PresentationObject object, boolean cleanHtml);
 	
+	public String getRenderedPresentationObjectAsString(IWContext iwc, PresentationObject object, boolean cleanHtml);
+	
 	public boolean removeBlockObjectFromCache(IWContext iwc, String cacheKey);
+	
+	public void startBuilderSession(IWContext iwc);
 }
