@@ -27,6 +27,8 @@ import java.util.Map;
 public class SingletonRepository {
 
 	private static SingletonRepository singletonRepository = null;
+
+	private static boolean hasBeenStopped=false;
 	
 	// key: classname value: instance
 	private HashMap singletonMap = new HashMap();
@@ -40,11 +42,18 @@ public class SingletonRepository {
 	}
 	
 	public static synchronized void start() {
+		if (singletonRepository != null) {
+			// nothing to do, start already called!
+			System.out.println("["+ SingletonRepository.class.getName()+"] Note: Tried to start Repository again but it is already running (this is usually not an  error or problem)");
+			return;
+		}
 		singletonRepository = new SingletonRepository();
+		hasBeenStopped=false;
 		System.out.println("["+ SingletonRepository.class.getName()+"] Repository started");
 	}
 	
 	public static synchronized void stop() {
+		hasBeenStopped=true;
 		if (singletonRepository == null) {
 			// nothing to do
 			return;
@@ -54,8 +63,18 @@ public class SingletonRepository {
 		System.out.println("["+ SingletonRepository.class.getName()+"] Repository stopped");
 	}
 	
+	/**
+	 * <p>
+	 * This method should be called only after the start() method has been invoked once, and not after the stop() method has been called.
+	 * </p>
+	 * @return An instance of the SingletonRepository if it is correctly initialized
+	 * @throws RuntimeException if no instance is initialized.
+	 */
 	public static synchronized SingletonRepository getRepository()	{
 		if(singletonRepository==null){
+			if(hasBeenStopped){
+				throw new RuntimeException("SingletonRepsitory has been stopped so no instance exists.");
+			}
 			start();
 		}
 		return singletonRepository;
