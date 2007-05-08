@@ -29,7 +29,7 @@ import com.idega.idegaweb.IWApplicationContext;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Gu�mundur �g�st S�mundsson</a>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 

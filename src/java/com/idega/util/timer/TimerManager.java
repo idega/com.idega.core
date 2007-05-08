@@ -136,7 +136,7 @@ public class TimerManager {
   /**
     * Creates a new TimerManager. The waiter thread will be started
     * only when the first timer listener will be added. The waiter
-    * thread will run as a daemon.
+    * thread will be run as a daemon.
     */
   public TimerManager() {
     this(true, "TimerManager");
