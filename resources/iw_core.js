@@ -1152,3 +1152,30 @@ function getNeededElementsFromListById(list, id) {
 	}
 	return elements;
 }
+
+/**
+ * Be sure mootools.js is added to page!
+ */
+function highlightElement(element, effectTime, endColor) {
+	if (element == null || effectTime == null || endColor == null) {
+		return;
+	}
+	// Highlight
+	var highlight = new Fx.Style(element, 'background-color', {duration: effectTime});
+	highlight.start("#ffff99", endColor);
+}
+
+function getElementsByClassName(oElm, strTagName, strClassName) {
+	var arrElements = (strTagName == "*" && oElm.all)? oElm.all : oElm.getElementsByTagName(strTagName);
+	var arrReturnElements = new Array();
+	strClassName = strClassName.replace(/-/g, "\-");
+	var oRegExp = new RegExp("(^|\s)" + strClassName + "(\s|$)");
+	var oElement;
+	for(var i=0; i<arrElements.length; i++){
+		oElement = arrElements[i];
+		if(oRegExp.test(oElement.className)){
+			arrReturnElements.push(oElement);
+		}
+	}
+	return (arrReturnElements)
+}

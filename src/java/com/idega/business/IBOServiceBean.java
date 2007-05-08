@@ -24,6 +24,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
+import com.idega.util.CoreConstants;
 import com.idega.util.logging.LoggingHelper;
 
 /**
@@ -37,7 +38,6 @@ public class IBOServiceBean implements IBOService, SessionBean {
 
   private SessionContext ejbSessionContext;
   private IWApplicationContext iwac;
-  private static final String CORE_IW_BUNDLE_IDENTIFIER = "com.idega.core";
   private List actionListeners = new ArrayList();
 
   public IBOServiceBean() {
@@ -151,7 +151,7 @@ public class IBOServiceBean implements IBOService, SessionBean {
    * @return
    */
   protected String getBundleIdentifier(){
-  	return CORE_IW_BUNDLE_IDENTIFIER;
+  	return CoreConstants.CORE_IW_BUNDLE_IDENTIFIER;
   }
   
   

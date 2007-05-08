@@ -3,6 +3,7 @@ package com.idega.presentation.ui;
 import java.rmi.RemoteException;
 
 import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
@@ -48,6 +49,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	public static final String ONCLICK_FUNCTION_NAME = "treenodeselect";
 	public static final String ONCLICK_DEFAULT_NODE_ID_PARAMETER_NAME = "iw_node_id";
 	public static final String ONCLICK_DEFAULT_NODE_NAME_PARAMETER_NAME = "iw_node_name";
+	
+	private boolean addPageNameAttribute = false;
+	private boolean addPageIdAtribute = false;
 
 	public TreeViewer() {
 		super();
@@ -185,14 +189,31 @@ public class TreeViewer extends AbstractTreeViewer {
 			l.addParameter(this.nodeActionPrm, node.getId());
 		}
 		setLinkToMaintainOpenAndClosedNodes(l);
+		
+		if (isAddPageNameAttribute()) {
+			l.setMarkupAttribute(ICBuilderConstants.PAGE_NAME_ATTRIBUTE, nodeName);
+		}
+		
+		if (isAddPageIdAtribute()) {
+			l.setMarkupAttribute(ICBuilderConstants.PAGE_ID_ATTRIBUTE, node.getId());
+		}
+		
 		return l;
 	}
 
 	public PresentationObject getFirstColumnObject(ICTreeNode node, boolean nodesOpen, boolean isRootNode) {
-		if (!node.isLeaf()) {
+		if (node.isLeaf()) {
+			if (isRootNode && !showRootNodeTreeIcons()) {
+				Link l = getLinkOpenClosePrototype();
+				l.setImage((Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE].clone());
+				setLinkToOpenOrCloseNode(l, node, nodesOpen);
+				return l;
+			}
+			return (Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE].clone();
+		}
+		else {
 			if (nodesOpen) {
 				if (isRootNode && !showRootNodeTreeIcons()) {
-					//Link l = new Link();
 					Link l = getLinkOpenClosePrototype();
 					l.setImage((Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN].clone());
 					if (!nodesOpen) {
@@ -200,33 +221,16 @@ public class TreeViewer extends AbstractTreeViewer {
 					}
 					return l;
 				}
-				else {
-					return (Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN].clone();
-				}
+				return (Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_OPEN].clone();
 			}
 			else {
 				if (isRootNode && !showRootNodeTreeIcons()) {
-					//Link l = new Link();
 					Link l = getLinkOpenClosePrototype();
 					l.setImage((Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED].clone());
 					setLinkToOpenOrCloseNode(l, node, nodesOpen);
 					return l;
 				}
-				else {
-					return (Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED].clone();
-				}
-			}
-		}
-		else {
-			if (isRootNode && !showRootNodeTreeIcons()) {
-				//Link l = new Link();
-				Link l = getLinkOpenClosePrototype();
-				l.setImage((Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE].clone());
-				setLinkToOpenOrCloseNode(l, node, nodesOpen);
-				return l;
-			}
-			else {
-				return (Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FILE].clone();
+				return (Image) this.folderAndFileIcons[FOLDERANDFILE_ICONINDEX_FOLDER_CLOSED].clone();
 			}
 		}
 	}
@@ -335,4 +339,21 @@ public class TreeViewer extends AbstractTreeViewer {
 		getLinkOpenClosePrototype().maintainParameter(parameterName, iwc);
 		super.setToMaintainParameter(parameterName, iwc);
 	}
+
+	public boolean isAddPageIdAtribute() {
+		return addPageIdAtribute;
+	}
+
+	public void setAddPageIdAtribute(boolean addPageIdAtribute) {
+		this.addPageIdAtribute = addPageIdAtribute;
+	}
+
+	public boolean isAddPageNameAttribute() {
+		return addPageNameAttribute;
+	}
+
+	public void setAddPageNameAttribute(boolean addPageNameAttribute) {
+		this.addPageNameAttribute = addPageNameAttribute;
+	}
+	
 }
