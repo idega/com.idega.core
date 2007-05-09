@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.33 2007/05/08 15:04:13 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.34 2007/05/09 12:50:03 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -19,7 +19,6 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
-import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 
 /**
@@ -58,6 +57,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	private String styleClassName;
 	private boolean isStyleClassSet = false;
 	private boolean usePublicWindowOpener = false;
+	
+	private boolean addSaveButton = true;
 
 	/**
 	 * @param aDisabled -
@@ -166,7 +167,9 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			this._form = getParentForm();
 		}
 
-		add(getSaveButton());
+		if (isAddSaveButton()) {	//	Some choosers may not need save button
+			add(getSaveButton());
+		}
 	}
 	
 	private GenericButton getSaveButton() {
@@ -180,7 +183,6 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 */
 	public PresentationObject getTable(IWContext iwc, IWBundle bundle) {
 		Layer container = new Layer();
-//		container.setId();
 		
 		PresentationObject object = getPresentationObject(iwc);
 		container.add(object);
@@ -236,9 +238,6 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			this.link.addParameter(FILTER_PARAMETER, this.filter);
 			
 			addParametersToLink(this.link);
-			
-			this.link.setOnClick("alert('clicked')");
-			this.link.setURL("#");
 			
 			table.add(this.link, 2, 1);
 		}
@@ -388,5 +387,13 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	
 	protected boolean getUsePublicWindowOpener() {
 		return this.usePublicWindowOpener;
+	}
+
+	public boolean isAddSaveButton() {
+		return addSaveButton;
+	}
+
+	public void setAddSaveButton(boolean addSaveButton) {
+		this.addSaveButton = addSaveButton;
 	}
 }
