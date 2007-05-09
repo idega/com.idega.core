@@ -1179,3 +1179,35 @@ function getElementsByClassName(oElm, strTagName, strClassName) {
 	}
 	return (arrReturnElements)
 }
+
+function setActionsForRegion() {
+	$$('div.regionLabel').each(
+		function(element) {
+    		var parentElement = element.parentNode;
+			if (parentElement == null) {
+				return;
+			}
+			var regionLabel = "";
+			var inputs = element.getElementsByTagName("input");
+			if (inputs != null) {
+				if (inputs.length > 0) {
+					var input = inputs[0];
+					if (input.type != null) {
+						if (input.type == "hidden") {
+							regionLabel = input.value;
+						}
+					}
+				}
+			}
+			
+			parentElement.style.visibility = "hidden";
+			
+			parentElement.onmouseover = function() {
+				showAddComponentImage(parentElement, element, regionLabel);
+			},
+			parentElement.onmouseout = function() {
+				closeAddComponentContainer(element.id);
+			}
+    	}
+    );
+}

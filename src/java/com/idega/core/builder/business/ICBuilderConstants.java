@@ -22,6 +22,10 @@ public class ICBuilderConstants {
 	/** Parameters for choosers **/
 	public static final String PAGE_NAME_ATTRIBUTE = "pageName";
 	public static final String PAGE_ID_ATTRIBUTE = "pageId";
+	
+	public static final String GROUP_NAME_ATTRIBUTE = "groupName";
+	public static final String GROUP_ID_ATTRIBUTE = "groupId";
+	
 	public static final String CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE = "chooser_value_viewer_id";
 	
 }

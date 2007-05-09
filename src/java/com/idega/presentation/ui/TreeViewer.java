@@ -161,7 +161,6 @@ public class TreeViewer extends AbstractTreeViewer {
 			}
 			catch (RemoteException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -177,7 +176,6 @@ public class TreeViewer extends AbstractTreeViewer {
 				}
 				catch (RemoteException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
