@@ -118,6 +118,7 @@ package com.idega.util.config;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -130,7 +131,7 @@ import java.util.logging.Logger;
  * @author Flavio Costa <flaviocosta@users.sourceforge.net>
  * @author Modified by: <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
  */
-public abstract class Config {
+public abstract class Config implements Serializable {
 
 	protected static final Logger logger = Logger.getLogger(Config.class.getName());
 	

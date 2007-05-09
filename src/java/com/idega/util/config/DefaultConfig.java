@@ -135,6 +135,7 @@ import java.util.Map;
  */
 public class DefaultConfig extends Config {
 	
+	private static final long serialVersionUID = -6643307392754451111L;
 	private final String properties_xpath = "/properties";
 	private final String property_xpath = "/property";
 	private final String name_att = "name";
