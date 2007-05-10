@@ -1,5 +1,5 @@
 /*
- * $Id: IWCacheManager.java,v 1.37 2006/06/02 11:48:34 tryggvil Exp $
+ * $Id: IWCacheManager.java,v 1.38 2007/05/10 22:34:28 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -39,11 +39,11 @@ import com.idega.util.text.TextSoap;
  * fragments of their rendering output in memory.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/06/02 11:48:34 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/05/10 22:34:28 $ by $Author: thomas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @deprecated Replaced with IWCacheManager2
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public class IWCacheManager implements Singleton {
 
@@ -59,9 +59,12 @@ public class IWCacheManager implements Singleton {
   private Map entityMapsKeys;
   private Map _keysMap;
   
+  private IWCacheManagerEventClient iwCacheManagerEventClient = null;
+  
   private static final long CACHE_NEVER_EXPIRES = -1;
 
   private IWCacheManager() {
+	  iwCacheManagerEventClient = new IWCacheManagerEventClient(this);
   }
 
   public static synchronized IWCacheManager getInstance(IWMainApplication iwma){
@@ -72,7 +75,7 @@ public class IWCacheManager implements Singleton {
     }
     return iwcm;
   }
-
+ 
   /*public static IWCacheManager getInstance(){
     if(instance==null){
       instance = new IWCacheManager();
@@ -111,11 +114,14 @@ public class IWCacheManager implements Singleton {
   }
 
   public void invalidateCache(String key){
+	iwCacheManagerEventClient.invalidateCache(key);
     removeCache(key, null);
   }
   
   public void invalidateCacheWithPartialKey(String key, String partialKey) {
-  		removeCache(key, partialKey);
+	iwCacheManagerEventClient.invalidateCacheWithPartialKey(key, partialKey);
+  	removeCache(key, partialKey);
+
   }
 
   private Map getKeysMap(){
@@ -346,6 +352,7 @@ private boolean isBlobCached(Cache cache){
   }
 
   public void removeCachedEntity(String cacheKey){
+    iwCacheManagerEventClient.removeCachedEntity(cacheKey);
     if( this.entityMaps != null ){
       this.entityMaps.remove(cacheKey);
     }
@@ -356,6 +363,7 @@ private boolean isBlobCached(Cache cache){
   }
 
   public void removeTableFromCache(Class entityClass){
+    iwCacheManagerEventClient.removeTableFromCache(entityClass);
     if( this.entityMaps != null ){
       this.entityMaps.remove(entityClass);
       if( this.entityMapsKeys != null ) {
@@ -499,6 +507,7 @@ private boolean isBlobCached(Cache cache){
    * Clears all caching in for all objects
    */
   public void clearAllCaches(){
+	iwCacheManagerEventClient.clearAllCaches();
   	this.log.info("Clearing all IWCacheManager cache");
   	this._keysMap=null;
   	this.entityMaps=null;
