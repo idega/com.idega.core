@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.31 2007/05/07 14:32:01 valdas Exp $
+ * $Id: BuilderService.java,v 1.32 2007/05/11 12:29:16 civilis Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -278,4 +278,15 @@ public interface BuilderService extends IBOService
 	public boolean removeBlockObjectFromCache(IWContext iwc, String cacheKey);
 	
 	public void startBuilderSession(IWContext iwc);
+	
+	/**
+	 * renames region element id and label attributes
+	 * 
+	 * @param pageKey - page the region to be found 
+	 * @param region_id - current
+	 * @param region_label - current. if not provided, region_id will be used as a region_label
+	 * @param new_region_id - new id
+	 * @param new_region_label - new label. if not provided, new_region_id will be used as a new_region_label
+	 */
+	public abstract void renameRegion(String pageKey, String region_id, String region_label, String new_region_id, String new_region_label);
 }
