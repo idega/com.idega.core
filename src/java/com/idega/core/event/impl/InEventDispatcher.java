@@ -1,5 +1,5 @@
 /*
- * $Id: InEventDispatcher.java,v 1.1.2.1 2007/02/02 01:13:22 thomas Exp $
+ * $Id: InEventDispatcher.java,v 1.1.2.2 2007/05/11 13:13:38 thomas Exp $
  * Created on Jan 11, 2007
  *
  * Copyright (C) 2007 Idega Software hf. All Rights Reserved.
@@ -16,19 +16,19 @@ import com.idega.core.event.MethodCallEventHandler;
 
 /**
  * 
- *  Last modified: $Date: 2007/02/02 01:13:22 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/05/11 13:13:38 $ by $Author: thomas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  */
 public class InEventDispatcher implements MethodCallEventDispatcher {
 	
 	private OutEventDispatcher outEventDispatcher = null;
 	private MethodCallEventDispatcher inEventDispatcher = null;
 
-	public InEventDispatcher(OutEventDispatcher outEventDispatcher) {
+	public InEventDispatcher(OutEventDispatcher outEventDispatcher, String identifier) {
 		this.outEventDispatcher = outEventDispatcher;
-		inEventDispatcher = new MethodCallEventDispatcherImpl();
+		inEventDispatcher = new MethodCallEventDispatcherImpl(identifier);
 		
 	}
 	

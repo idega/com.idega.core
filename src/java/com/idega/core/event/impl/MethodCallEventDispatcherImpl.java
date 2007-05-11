@@ -1,5 +1,5 @@
 /*
- * $Id: MethodCallEventDispatcherImpl.java,v 1.1.2.1 2007/02/02 01:13:21 thomas Exp $
+ * $Id: MethodCallEventDispatcherImpl.java,v 1.1.2.2 2007/05/11 13:13:37 thomas Exp $
  * Created on Jan 9, 2007
  *
  * Copyright (C) 2007 Idega Software hf. All Rights Reserved.
@@ -20,14 +20,15 @@ import com.idega.core.idgenerator.business.UUIDGenerator;
 
 /**
  * 
- *  Last modified: $Date: 2007/02/02 01:13:21 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/05/11 13:13:37 $ by $Author: thomas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  */
 public class MethodCallEventDispatcherImpl implements  MethodCallEventDispatcher{
 	
-	private String id = null;
+	// identifer used e.g. for sender id (used by filters)
+	private String identifier = null;
 	
 	private List eventHandler = null;
 	
@@ -37,14 +38,12 @@ public class MethodCallEventDispatcherImpl implements  MethodCallEventDispatcher
 		return isActive;
 	}
 
-	public MethodCallEventDispatcherImpl() {
-		// create a unique id for this application during runtime!
-		// it does not matter if it changes when a new startup is done
-		id = UUIDGenerator.getInstance().generateUUID();
+	public MethodCallEventDispatcherImpl(String identifier) {
+		this.identifier = identifier;
 	}
 
 	public String getIdentifier() {
-		return id;
+		return identifier;
 	}
 	
 	public synchronized void addListener(MethodCallEventHandler methodCallEventHandler) {
