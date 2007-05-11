@@ -1,5 +1,5 @@
 /*
- * $Id: OutEventDispatcher.java,v 1.2 2007/05/10 22:35:04 thomas Exp $
+ * $Id: OutEventDispatcher.java,v 1.3 2007/05/11 13:32:57 thomas Exp $
  * Created on Jan 11, 2007
  *
  * Copyright (C) 2007 Idega Software hf. All Rights Reserved.
@@ -16,19 +16,19 @@ import com.idega.core.event.MethodCallEventHandler;
 
 /**
  * 
- *  Last modified: $Date: 2007/05/10 22:35:04 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/05/11 13:32:57 $ by $Author: thomas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class OutEventDispatcher implements MethodCallEventDispatcher {
 	
 	private MethodCallEventDispatcher outEventDispatcher = null;
 	private FireEventFilter fireEventFilter = null;
 	
-	public OutEventDispatcher() {
+	public OutEventDispatcher(String identifier) {
 		fireEventFilter = new FireEventFilter();
-		outEventDispatcher = new MethodCallEventDispatcherImpl();
+		outEventDispatcher = new MethodCallEventDispatcherImpl(identifier);
 	}
 	
 	public void catchEventOnce(MethodCallEvent methodCallEvent) {

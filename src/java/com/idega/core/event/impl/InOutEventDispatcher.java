@@ -1,5 +1,5 @@
 /*
- * $Id: InOutEventDispatcher.java,v 1.2 2007/05/10 22:35:04 thomas Exp $
+ * $Id: InOutEventDispatcher.java,v 1.3 2007/05/11 13:32:57 thomas Exp $
  * Created on Jan 11, 2007
  *
  * Copyright (C) 2007 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
 package com.idega.core.event.impl;
 
 import com.idega.core.event.MethodCallEventDispatcher;
+import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
@@ -17,10 +18,10 @@ import com.idega.repository.data.SingletonRepository;
 
 /**
  * 
- *  Last modified: $Date: 2007/05/10 22:35:04 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/05/11 13:32:57 $ by $Author: thomas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class InOutEventDispatcher implements Singleton{
 	
@@ -35,8 +36,10 @@ public class InOutEventDispatcher implements Singleton{
 	private OutEventDispatcher outEventDispatcher = null;
 	
 	protected InOutEventDispatcher() {
-		outEventDispatcher = new OutEventDispatcher();
-		inEventDispatcher = new InEventDispatcher(outEventDispatcher);
+		// create an identifier for the application. Does not matter if the id changes when restarting
+		String applicationId = UUIDGenerator.getInstance().generateUUID();
+		outEventDispatcher = new OutEventDispatcher(applicationId);
+		inEventDispatcher = new InEventDispatcher(outEventDispatcher, applicationId);
 	}
 	
 	public MethodCallEventDispatcher getInEventDispatcher() {
