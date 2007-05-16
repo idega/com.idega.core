@@ -1,6 +1,8 @@
 package com.idega.idegaweb.presentation;
 
 
+import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.help.presentation.Help;
@@ -168,11 +170,7 @@ private Image helpImage = null;
 		this.styleSrc = this.userBusiness.getUserApplicationStyleSheetURL();
 		this.parentPage.addStyleSheetURL(this.styleSrc);
 		
-		this.parentPage.addJavascriptURL("/dwr/engine.js");
-		this.parentPage.addJavascriptURL("/dwr/interface/BuilderEngine.js");
-		
-		// TODO: get real script
-		this.parentPage.addJavascriptURL("/idegaweb/bundles/com.idega.builder.bundle/resources/javascript/BuilderHelper.js");
+		BuilderServiceFactory.getBuilderService(iwc).addJavaScriptForChooser(this.parentPage);
 		
 		super._main(iwc);
 	}

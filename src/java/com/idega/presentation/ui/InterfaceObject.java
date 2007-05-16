@@ -1,5 +1,5 @@
 /*
- * $Id: InterfaceObject.java,v 1.41 2006/09/11 14:28:01 gimmi Exp $
+ * $Id: InterfaceObject.java,v 1.42 2007/05/16 14:15:17 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -21,10 +21,10 @@ import com.idega.presentation.Script;
  * In JSF there is now a more recent javax.faces.compoent.UIInput that serves a
  * similar purpose and is recommended to use/extend in newer pure JSF applications.
  * </p>
- *  Last modified: $Date: 2006/09/11 14:28:01 $ by $Author: gimmi $
+ *  Last modified: $Date: 2007/05/16 14:15:17 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.41 $
+ * @version $Revision: 1.42 $
  */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
@@ -879,12 +879,13 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		if (getForm() != null) {
 			getParentForm().setOnSubmit("return checkSubmit"+getForm().getId()+"(this)");
 			setCheckSubmit();
+			
+			StringBuffer script = new StringBuffer("if (!").append(functionName).append(" (document.getElementById('").append(getId()).append("'),'").append(value1);
 			if (value2 != null) {
-				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (this.form['" + getName() + "'],'" + value1 + "', '"+value2+"') == false ){\nreturn false;\n}\n");
+				script.append("', '").append(value2);
 			}
-			else {
-				getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+" (this.form['" + getName() + "'],'" + value1 + "') == false ){\nreturn false;\n}\n");
-			}
+			script.append("')){\nreturn false;\n}\n");
+			getScript().addToBeginningOfFunction("checkSubmit", script.toString());
 			getScript().addFunction(functionName, function);
 		}
 	}

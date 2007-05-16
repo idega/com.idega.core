@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.34 2007/05/09 12:50:03 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.35 2007/05/16 14:15:17 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -59,6 +59,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	private boolean usePublicWindowOpener = false;
 	
 	private boolean addSaveButton = true;
+	private String hiddenInputAttribute = null;
 
 	/**
 	 * @param aDisabled -
@@ -154,16 +155,17 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 */
 	public void _main(IWContext iwc) throws Exception {
 		super._main(iwc);
+		
 		this._bundle = getBundle(iwc);
 		this._iwrb = getResourceBundle(iwc);
 		if (this._addForm) {
 			this._form = new Form();
 			this._form.setWindowToOpen(getChooserWindowClass());
 			add(this._form);
-			this._form.add(getTable(iwc, this._bundle));
+			this._form.add(getChooser(iwc, this._bundle));
 		}
 		else {
-			add(getTable(iwc, this._bundle));
+			add(getChooser(iwc, this._bundle));
 			this._form = getParentForm();
 		}
 
@@ -181,7 +183,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	/**
 	 *
 	 */
-	public PresentationObject getTable(IWContext iwc, IWBundle bundle) {
+	public PresentationObject getChooser(IWContext iwc, IWBundle bundle) {
 		Layer container = new Layer();
 		
 		PresentationObject object = getPresentationObject(iwc);
@@ -189,7 +191,18 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		
 		Image chooser = getChooser(bundle);
 		chooser.setStyleClass("chooserStyle");
-		chooser.setOnClick(new StringBuffer("addChooserObject(this, '").append(getChooserWindowClass().getName()).append("', '").append(ICBuilderConstants.CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE).append("');").toString());
+		
+		//	OnClick action
+		StringBuffer action = new StringBuffer("addChooserObject(this, '").append(getChooserWindowClass().getName());
+		if (getHiddenInputAttribute() == null) {
+			action.append("', null, '");
+		}
+		else {
+			action.append("', '").append(getHiddenInputAttribute()).append("', '");
+		}
+		action.append(ICBuilderConstants.CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE).append("');");
+		chooser.setOnClick(action.toString());
+		
 		container.add(chooser);
 		
 		return container;
@@ -395,5 +408,13 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 
 	public void setAddSaveButton(boolean addSaveButton) {
 		this.addSaveButton = addSaveButton;
+	}
+	
+	public String getHiddenInputAttribute() {
+		return hiddenInputAttribute;
+	}
+
+	public void setHiddenInputAttribute(String hiddenInputAttribute) {
+		this.hiddenInputAttribute = hiddenInputAttribute;
 	}
 }

@@ -19,6 +19,7 @@
             <name>:method:1:implied:void:setText:java.lang.String:</name>
             <type>java.lang.String</type>
             <value>Text</value>
+            <simple>true</simple>
           </key>
           <key>
             <name>:method:1:implied:void:setBold:boolean:</name>

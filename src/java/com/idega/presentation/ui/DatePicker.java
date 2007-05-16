@@ -331,10 +331,10 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     /* (non-Javadoc)
      * @see com.idega.presentation.ui.AbstractChooser#getTable(com.idega.presentation.IWContext, com.idega.idegaweb.IWBundle)
      */
-    public PresentationObject getTable(IWContext iwc, IWBundle bundle) {
+    public PresentationObject getChooser(IWContext iwc, IWBundle bundle) {
         IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
         if(!useJSCalendar(bundle)) {
-					return super.getTable(iwc, bundle);
+					return super.getChooser(iwc, bundle);
 				}
         
         Table table = new Table(3, 2);

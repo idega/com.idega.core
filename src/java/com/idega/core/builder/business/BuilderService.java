@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.33 2007/05/14 10:17:44 valdas Exp $
+ * $Id: BuilderService.java,v 1.34 2007/05/16 14:15:17 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -291,4 +291,10 @@ public interface BuilderService extends IBOService
 	 * @param new_region_label - new label. if not provided, new_region_id will be used as a new_region_label
 	 */
 	public abstract void renameRegion(String pageKey, String region_id, String region_label, String new_region_id, String new_region_label);
+	
+	/**
+	 * Adds needed script for chooser
+	 * @param page
+	 */
+	public void addJavaScriptForChooser(Page page);
 }

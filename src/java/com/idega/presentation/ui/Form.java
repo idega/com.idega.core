@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.97 2006/09/07 15:09:37 gimmi Exp $
+ * $Id: Form.java,v 1.98 2007/05/16 14:15:17 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -37,10 +37,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2006/09/07 15:09:37 $ by $Author: gimmi $
+ *  Last modified: $Date: 2007/05/16 14:15:17 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.97 $
+ * @version $Revision: 1.98 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -459,10 +459,10 @@ public class Form
 	}
 
 	protected void setCheckSubmit() {
-		if (getScript().getFunction("checkSubmit") == null) {
+		/*if (getScript().getFunction("checkSubmit") == null) {
 			getScript().addFunction("checkSubmit", "function checkSubmit"+getId()+"(inputs){\n\n}");
 			setOnSubmit("return checkSubmit"+getId()+"(this)");
-		}
+		}*/
 	}
 
 	/*

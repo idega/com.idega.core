@@ -23,9 +23,14 @@ public class ICBuilderConstants {
 	public static final String PAGE_NAME_ATTRIBUTE = "pageName";
 	public static final String PAGE_ID_ATTRIBUTE = "pageId";
 	
+	public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
+	public static final String TEMPLATE_ID_ATTRIBUTE = "templateId";
+	
 	public static final String GROUP_NAME_ATTRIBUTE = "groupName";
 	public static final String GROUP_ID_ATTRIBUTE = "groupId";
 	
 	public static final String CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE = "chooser_value_viewer_id";
 	
+	public static final String CHOOSER_PRESENTATION_OBJECT_CONTAINER_ID = "chooser_presentation_object";
+	public static final String HIDDEN_INPUT_FOR_CHOOSER_NAME = "hidden_input_for_advanced_chooser_parameter";
 }
