@@ -1,10 +1,8 @@
 /*
- * $Id: Page.java,v 1.162 2006/11/23 10:45:30 laddi Exp $ Created in 2000 by
- * Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.163 2007/05/18 16:15:16 laddi Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
- * This software is the proprietary information of Idega hf. Use is subject to
- * license terms.
+ * This software is the proprietary information of Idega hf. Use is subject to license terms.
  * 
  */
 package com.idega.presentation;
@@ -56,9 +54,8 @@ import com.idega.util.datastructures.QueueMap;
 
 /**
  * <p>
- * An instance of this class (or subclass) is always a top level object in
- * UIComponent tree in an HTML presentation in idegaWeb. This object maps to and
- * renders the
+ * An instance of this class (or subclass) is always a top level object in UIComponent tree in an HTML presentation in idegaWeb. This object maps to
+ * and renders the
  * 
  * <pre>
  *   &lt;HTML&gt;&lt;HEAD&gt;...&lt;/HEAD&gt; &lt;BODY&gt;... &lt;/BODY&gt;&lt;/HTML&gt;
@@ -66,10 +63,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2006/11/23 10:45:30 $ by $Author: laddi $
+ * Last modified: $Date: 2007/05/18 16:15:16 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.162 $
+ * @version $Revision: 1.163 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -87,30 +84,24 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	// \"-//W3C//DTD HTML 4.01 Transitional//EN\"
 	// \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>";
 	/**
-	 * By skipping the validation URL XML compliant browser still recognise
-	 * attributes such as height / width *
+	 * By skipping the validation URL XML compliant browser still recognise attributes such as height / width *
 	 */
 	public final static String DOCTYPE_HTML_4_0_1_TRANSITIONAL = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">";
 	public final static String DOCTYPE_HTML_4_0_1_STRICT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
 	public final static String DOCTYPE_XHTML_1_0_TRANSITIONAL = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
 	public final static String DOCTYPE_XHTML_1_1 = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n\t\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">";
 	/**
-	 * Constant used to declare if the rendering should be in HTML 4.0 or lower.<br/>
-	 * This can be set as a property in
-	 * IWMainApplicationSettings.getDefaultMarkupLanguage() for backwards
-	 * compatability.
+	 * Constant used to declare if the rendering should be in HTML 4.0 or lower.<br/> This can be set as a property in
+	 * IWMainApplicationSettings.getDefaultMarkupLanguage() for backwards compatability.
 	 */
 	public final static String HTML = "HTML";
 	/**
-	 * Constant used to declare if the rendering should be in XHTML 1.0
-	 * (transitional).<br/> This is used by
-	 * IWMainApplicationSettings.getDefaultMarkupLanguage() and is the default
-	 * value in ePlatform 3.0
+	 * Constant used to declare if the rendering should be in XHTML 1.0 (transitional).<br/> This is used by
+	 * IWMainApplicationSettings.getDefaultMarkupLanguage() and is the default value in ePlatform 3.0
 	 */
 	public final static String XHTML = "XHTML";
 	/**
-	 * Constant used to declare if the rendering should be in XHTML 1.1 (strict).<br/>
-	 * This can be set as a property in
+	 * Constant used to declare if the rendering should be in XHTML 1.1 (strict).<br/> This can be set as a property in
 	 * IWMainApplicationSettings.getDefaultMarkupLanguage().
 	 */
 	public final static String XHTML1_1 = "XHTML1.1";
@@ -304,7 +295,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		if (this._javascripts == null) {
 			this._javascripts = new QueueMap();
 		}
-		this._javascripts.put(URL, URL);
+		if (!this._javascripts.containsKey(URL)) {
+			this._javascripts.put(URL, URL);
+		}
 	}
 
 	protected String getJavascriptURLs(IWContext iwc) {
@@ -313,15 +306,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			// Print a reference to the global .js script file
 			String src = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
 			/*
-			 * try { ICDomain d = iwc.getDomain(); String serverUrl =
-			 * d.getURLWithoutLastSlash(); if (serverUrl != null) { if
-			 * (src.startsWith("/")) { // String protocol; //@todo this is case
-			 * sensitive and // could break! move to IWContext. Also done in Link, //
-			 * SubmitButton, Image and PageIncluder if //
-			 * (iwc.getRequest().isSecure()) { protocol = // "https://"; } else {
-			 * protocol = "http://"; } src = // protocol + serverName + src; src =
-			 * serverUrl + src; } } } catch (IDONoDatastoreError de) { //
-			 * de.printStackTrace(); }
+			 * try { ICDomain d = iwc.getDomain(); String serverUrl = d.getURLWithoutLastSlash(); if (serverUrl != null) { if (src.startsWith("/")) { //
+			 * String protocol; //@todo this is case sensitive and // could break! move to IWContext. Also done in Link, // SubmitButton, Image and
+			 * PageIncluder if // (iwc.getRequest().isSecure()) { protocol = // "https://"; } else { protocol = "http://"; } src = // protocol + serverName +
+			 * src; src = serverUrl + src; } } } catch (IDONoDatastoreError de) { // de.printStackTrace(); }
 			 */
 			buffer.append("<script type=\"text/javascript\" src=\"" + src + "/iw_core.js\">");
 			buffer.append("</script>");
@@ -480,8 +468,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * <p>
-	 * This method gets the script fragment that calls the javacript for the IE7
-	 * (plugin) that makes IE more standards compliant.<br/> See: <a
+	 * This method gets the script fragment that calls the javacript for the IE7 (plugin) that makes IE more standards compliant.<br/> See: <a
 	 * href="http://dean.edwards.name/IE7/">http://dean.edwards.name/IE7/</a>
 	 * </p>
 	 * 
@@ -495,8 +482,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * <p>
-	 * Gets if the IE7 Code fragment is rendered out in the header of the page.
-	 * Defaults to false.
+	 * Gets if the IE7 Code fragment is rendered out in the header of the page. Defaults to false.
 	 * </p>
 	 * 
 	 * @return
@@ -507,8 +493,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * <p>
-	 * Sets if the IE7 Extension (http://dean.edwards.name/IE7/) should be used.
-	 * Default is false.
+	 * Sets if the IE7 Extension (http://dean.edwards.name/IE7/) should be used. Default is false.
 	 * </p>
 	 */
 	public void setUseIE7Extension(boolean useIE7Extension) {
@@ -858,8 +843,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	/**
 	 * @param backgroundImage
 	 *          The new backgroundImage value
-	 * @todo : this must implemented in the print method...like in the Link class
-	 *       IMPORTANT! for this to work you must have an application property
+	 * @todo : this must implemented in the print method...like in the Link class IMPORTANT! for this to work you must have an application property
 	 *       called IW_USES_OLD_MEDIA_TABLES (set to anything)
 	 */
 	public void setBackgroundImage(Image backgroundImage) {
@@ -872,8 +856,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @param image
 	 *          Description of the Parameter
 	 * @return The imageUrl value
-	 * @todo : replace this with a implementation in print IMPORTANT! for this to
-	 *       work you must have an application property called
+	 * @todo : replace this with a implementation in print IMPORTANT! for this to work you must have an application property called
 	 *       IW_USES_OLD_MEDIA_TABLES (set to anything)
 	 */
 	private String getImageUrl(Image image) {
@@ -937,8 +920,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Sets the window to close immediately when page is loaded and the focus on
-	 * its parent ( opener ) if exists
+	 * Sets the window to close immediately when page is loaded and the focus on its parent ( opener ) if exists
 	 * 
 	 * @param focusOnparent
 	 */
@@ -977,16 +959,14 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Sets the parent (caller) window to submit its first form when this page
-	 * unloads if there is one
+	 * Sets the parent (caller) window to submit its first form when this page unloads if there is one
 	 */
 	public void setParentPageMainFormToSubmitOnUnLoad() {
 		setParentPageFormToSubmitOnUnLoad(0);
 	}
 
 	/**
-	 * Sets the parent (caller) window to submit its form at index formIndex if
-	 * there is one, on unload of this page.
+	 * Sets the parent (caller) window to submit its form at index formIndex if there is one, on unload of this page.
 	 * 
 	 * @param formIndex
 	 *          index of the form in the parent page
@@ -996,8 +976,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Sets the parent (caller) window to submit the form with the given name if
-	 * there is one, on unload of this page.
+	 * Sets the parent (caller) window to submit the form with the given name if there is one, on unload of this page.
 	 * 
 	 * @param formIndex
 	 *          index of the form in the parent page
@@ -1007,8 +986,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Sets the parent (caller) page to change location (URL) when this page
-	 * unloads
+	 * Sets the parent (caller) page to change location (URL) when this page unloads
 	 * 
 	 * @param URL
 	 *          The new toRedirect value
@@ -1058,8 +1036,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	private void setDefaultAttributes(IWContext iwc) {
 		/*
-		 * if (!isAttributeSet("bgcolor")) {
-		 * setBackgroundColor(iwc.getDefaultBackgroundColor()); }
+		 * if (!isAttributeSet("bgcolor")) { setBackgroundColor(iwc.getDefaultBackgroundColor()); }
 		 */
 	}
 
@@ -1247,16 +1224,11 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/*
-	 * public synchronized Object clone() { Page obj = null; try { obj =
-	 * (Page)super.clone(); if (this.theAssociatedScript != null) {
-	 * obj.theAssociatedScript = (Script)this.theAssociatedScript.clone(); }
-	 * obj.title = this.title; obj.zeroWait = this.zeroWait; obj.redirectInfo =
-	 * this.redirectInfo; obj.doReload = this.doReload; obj.linkColor =
-	 * this.linkColor; obj.visitedColor = this.visitedColor; obj.hoverColor =
-	 * this.hoverColor; obj.textDecoration = this.textDecoration;
-	 * obj.styleSheetURL = this.styleSheetURL; obj.addStyleSheet =
-	 * this.addStyleSheet; } catch(Exception ex) { ex.printStackTrace(System.err); }
-	 * return obj; }
+	 * public synchronized Object clone() { Page obj = null; try { obj = (Page)super.clone(); if (this.theAssociatedScript != null) {
+	 * obj.theAssociatedScript = (Script)this.theAssociatedScript.clone(); } obj.title = this.title; obj.zeroWait = this.zeroWait; obj.redirectInfo =
+	 * this.redirectInfo; obj.doReload = this.doReload; obj.linkColor = this.linkColor; obj.visitedColor = this.visitedColor; obj.hoverColor =
+	 * this.hoverColor; obj.textDecoration = this.textDecoration; obj.styleSheetURL = this.styleSheetURL; obj.addStyleSheet = this.addStyleSheet; }
+	 * catch(Exception ex) { ex.printStackTrace(System.err); } return obj; }
 	 */
 	/**
 	 * @param iwc
@@ -1403,8 +1375,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Gets a block of free form javascript (just strings) to insert BEFORE
-	 * importing some javascript.js files
+	 * Gets a block of free form javascript (just strings) to insert BEFORE importing some javascript.js files
 	 * 
 	 * @param iwc
 	 * @return a javascript block
@@ -1424,8 +1395,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Gets a block of free form javascript (just strings) to insert AFTER
-	 * importing some javascript.js files
+	 * Gets a block of free form javascript (just strings) to insert AFTER importing some javascript.js files
 	 * 
 	 * @param iwc
 	 * @return a javascript block
@@ -1508,10 +1478,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				println("<head>");
 				println("<title>" + getLocalizedTitle(iwc) + "</title>\n");
 				/*
-				 * //shortcut icon println(getPrintableSchortCutIconURL(iwc));
-				 * print(getMetaInformation(markup, characterEncoding));
-				 * print(getMetaTags(markup)); print(getJavascriptURLs(iwc)); if
-				 * (getAssociatedScript() != null) { getAssociatedScript()._print(iwc); }
+				 * //shortcut icon println(getPrintableSchortCutIconURL(iwc)); print(getMetaInformation(markup, characterEncoding));
+				 * print(getMetaTags(markup)); print(getJavascriptURLs(iwc)); if (getAssociatedScript() != null) { getAssociatedScript()._print(iwc); }
 				 * print(getStyleSheetURL(markup)); print(getStyleDefinition());
 				 */
 				print(getHeadContents(markup, characterEncoding, iwc));
@@ -1522,8 +1490,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				}
 				// Laddi: Made obsolete with default style sheet
 				/*
-				 * if (_addStyleSheet) { println("<link rel=\"stylesheet\" href=\"" +
-				 * _styleSheetURL + "\" type=\"text/css\">\n"); }
+				 * if (_addStyleSheet) { println("<link rel=\"stylesheet\" href=\"" + _styleSheetURL + "\" type=\"text/css\">\n"); }
 				 */
 				println("\n</head>");
 				if (this._addBody) {
@@ -1588,10 +1555,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			println("<h2>" + notLoggedOnString + "</h2>");
 		}
 		/*
-		 * Iterator iter = children.iterator(); int size = children.size();
-		 * while(iter.hasNext()){ //for (Iterator iter = children.iterator();
-		 * iter.hasNext();) { UIComponent child = (UIComponent) iter.next();
-		 * this.renderChild(context,child); }
+		 * Iterator iter = children.iterator(); int size = children.size(); while(iter.hasNext()){ //for (Iterator iter = children.iterator();
+		 * iter.hasNext();) { UIComponent child = (UIComponent) iter.next(); this.renderChild(context,child); }
 		 */
 	}
 
@@ -1603,8 +1568,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * <p>
-	 * Prints out the render time in millisconds as a comment. This is by default
-	 * called last in encodeEnd()
+	 * Prints out the render time in millisconds as a comment. This is by default called last in encodeEnd()
 	 * </p>
 	 * 
 	 * @param context
@@ -1683,26 +1647,15 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			return buffer.toString();
 		}
 		/*
-		 * if (markup.equals(XHTML)) { StringBuffer buffer = new StringBuffer();
-		 * buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding !=
-		 * null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
-		 * //buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0
-		 * Transitional//EN\"").append("\n");
-		 * //buffer.append("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">").append("\n");
-		 * buffer.append(DOCTYPE_XHTML_1_0_TRANSITIONAL); buffer.append("<html
-		 * xmlns=\"http://www.w3.org/1999/xhtml\"
-		 * xml:lang=\""+locale.getLanguage()+"\"
-		 * lang=\""+locale.getLanguage()+"\">"); return buffer.toString(); } else if
-		 * (markup.equals(XHTML1_1)) { StringBuffer buffer = new StringBuffer();
-		 * buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding !=
-		 * null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
-		 * //buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML
-		 * 1.1//EN\"").append("\n");
-		 * //buffer.append("\t\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">").append("\n");
-		 * buffer.append(DOCTYPE_XHTML_1_1); buffer.append("<html
-		 * xmlns=\"http://www.w3.org/1999/xhtml\"
-		 * xml:lang=\""+locale.getLanguage()+"\">"); return buffer.toString(); }
-		 * return START_TAG;
+		 * if (markup.equals(XHTML)) { StringBuffer buffer = new StringBuffer(); buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding !=
+		 * null ? encoding : "ISO-8859-1").append("\"?>").append("\n"); //buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0
+		 * Transitional//EN\"").append("\n"); //buffer.append("\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">").append("\n");
+		 * buffer.append(DOCTYPE_XHTML_1_0_TRANSITIONAL); buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\"
+		 * xml:lang=\""+locale.getLanguage()+"\" lang=\""+locale.getLanguage()+"\">"); return buffer.toString(); } else if (markup.equals(XHTML1_1)) {
+		 * StringBuffer buffer = new StringBuffer(); buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding :
+		 * "ISO-8859-1").append("\"?>").append("\n"); //buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"").append("\n");
+		 * //buffer.append("\t\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">").append("\n"); buffer.append(DOCTYPE_XHTML_1_1); buffer.append("<html
+		 * xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\""+locale.getLanguage()+"\">"); return buffer.toString(); } return START_TAG;
 		 */
 	}
 
@@ -1923,8 +1876,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * method for adding a style sheet file the url generating is done in the main
-	 * method
+	 * method for adding a style sheet file the url generating is done in the main method
 	 * 
 	 * @param file
 	 *          The new styleSheet value
@@ -2044,8 +1996,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Used to add source of scriptfiles (JavaScript) The file url should end on
-	 * the form "scriptfile.js"
+	 * Used to add source of scriptfiles (JavaScript) The file url should end on the form "scriptfile.js"
 	 * 
 	 * @param jsString
 	 *          The feature to be added to the ScriptSource attribute
@@ -2150,8 +2101,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Set the docType for the header of the page. Default it is set to Html
-	 * 4.0.1. transitional. Most commonn doctypes are defined in the static
+	 * Set the docType for the header of the page. Default it is set to Html 4.0.1. transitional. Most commonn doctypes are defined in the static
 	 * contsants DOCTYPE_... in this class.
 	 * 
 	 * @param docType
@@ -2161,8 +2111,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Get the set docType. If no doctype/markupLanguage is set in the page/system
-	 * then this method returns the HTML 4.0.1 Transitional.
+	 * Get the set docType. If no doctype/markupLanguage is set in the page/system then this method returns the HTML 4.0.1 Transitional.
 	 * 
 	 * @return
 	 */
@@ -2187,8 +2136,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	/**
 	 * Checks if an XHTML doctype is defined for the page or the system.
 	 * 
-	 * @return True if an XHTML doctype has been set for the document or XHTML
-	 *         markup for the application.
+	 * @return True if an XHTML doctype has been set for the document or XHTML markup for the application.
 	 */
 	public boolean isXHtmlDocTypeDeclared() {
 		String docType = getDocType();
@@ -2204,8 +2152,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Gets if the Markup Language for the Page. This method uses the set DocType
-	 * (if any) to calculate the used MarkupLanguage String.
+	 * Gets if the Markup Language for the Page. This method uses the set DocType (if any) to calculate the used MarkupLanguage String.
 	 * 
 	 * @return
 	 */
@@ -2242,8 +2189,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext,
-	 *      java.lang.Object)
+	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[]) state;
@@ -2349,12 +2295,11 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		list.add(new PropertyDescription(":method:1:implied:void:setTemplateId:java.lang.String:", "1", ICPage.class.getName(), ICPage.class.getName(), true));
 		return list;
 	}
-	
-//	public void addWeb2JSLibrariesToPage(){
-//		this.addScriptSource(web2.getBundleURIToPrototypeLib(Web2BusinessBean.SCRIPTACULOUS_VERSION_1_6_1));
-//		this.addScriptSource(web2.getBundleURIToScriptaculousLib(Web2BusinessBean.SCRIPTACULOUS_VERSION_1_6_1));
-//		this.addScriptSource(web2.getBundleURIToBehaviourLib());
-//	}
-	
-	
+
+// public void addWeb2JSLibrariesToPage(){
+// this.addScriptSource(web2.getBundleURIToPrototypeLib(Web2BusinessBean.SCRIPTACULOUS_VERSION_1_6_1));
+// this.addScriptSource(web2.getBundleURIToScriptaculousLib(Web2BusinessBean.SCRIPTACULOUS_VERSION_1_6_1));
+// this.addScriptSource(web2.getBundleURIToBehaviourLib());
+// }
+
 }
