@@ -138,13 +138,13 @@ public abstract class StyledAbstractChooserWindow extends StyledIWAdminWindow{
 		this.noScript = noScript;
 	}
 
-	public Collection getHiddenParameters(IWContext iwc) {
+	public static Collection<Parameter> getHiddenParameters(IWContext iwc) {
 		String prefix = iwc.getParameter(SCRIPT_PREFIX_PARAMETER);
 		String suffix = iwc.getParameter(SCRIPT_SUFFIX_PARAMETER);
 		String displayString = iwc.getParameter(DISPLAYSTRING_PARAMETER_NAME);
 		String valueString = iwc.getParameter(VALUE_PARAMETER_NAME);
 
-		Collection coll = new ArrayList();
+		Collection<Parameter> coll = new ArrayList<Parameter>();
 
 		coll.add(new Parameter(SCRIPT_PREFIX_PARAMETER,prefix));
 		coll.add(new Parameter(SCRIPT_SUFFIX_PARAMETER,suffix));
