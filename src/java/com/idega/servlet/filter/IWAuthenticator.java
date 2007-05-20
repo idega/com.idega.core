@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.26.2.4 2007/03/30 13:53:44 palli Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.26.2.5 2007/05/20 13:53:09 tryggvil Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -56,10 +56,10 @@ import com.idega.util.RequestUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2007/03/30 13:53:44 $ by $Author: palli $
+ * Last modified: $Date: 2007/05/20 13:53:09 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.26.2.4 $
+ * @version $Revision: 1.26.2.5 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -188,13 +188,23 @@ public class IWAuthenticator extends BaseFilter {
 		//Logic for disabling the IWJAASAuthenticationRequestWrapper to be used on requests on slide on "/content/*"
 		String prop = iwma.getSettings().getProperty(PROPERTY_SLIDEAUTHENTICATOR_ENABLED);
 		String requestedUri = getURIMinusContextPath(request);
-		
-		if(prop!=null){
+		String method = request.getMethod();
+		if(method.equals(HTTP_METHOD_GET)||method.equals(HTTP_METHOD_POST)){
 			if(requestedUri.startsWith(slideServletMapping)){
-				return Boolean.valueOf(prop).booleanValue();
+				if(prop!=null){
+					return Boolean.valueOf(prop).booleanValue();
+				}
+				//Default value false for all slide GET and POST requests
+				return false;
+			}
+			else{
+				//Default value true for non-Slide request
+				return true;
 			}
 		}
-		return true;
+		else{
+			return true;
+		}
 	}
 	
 	/**
