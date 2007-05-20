@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.96.2.1 2006/09/07 13:54:36 gimmi Exp $
+ * $Id: Form.java,v 1.96.2.2 2007/05/20 20:59:39 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -37,10 +37,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2006/09/07 13:54:36 $ by $Author: gimmi $
+ *  Last modified: $Date: 2007/05/20 20:59:39 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.96.2.1 $
+ * @version $Revision: 1.96.2.2 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -887,6 +887,17 @@ public class Form
 		this.setTarget(IWConstants.IW_CONTROLLER_FRAME_NAME);
 	}
 
+	public void setPublicWindowToOpen(Class windowClass) {
+		this.windowClass = windowClass;
+		// setAction(IWMainApplication.windowOpenerURL);
+		if (IWMainApplication.useNewURLScheme) {
+			this.setAction(getIWApplicationContext().getIWMainApplication().getPublicWindowOpenerURI(windowClass));
+		}
+		else {
+			addParameter(Page.IW_FRAME_CLASS_PARAMETER, IWMainApplication.getEncryptedClassName(windowClass));
+		}
+		setWindow(Window.getStaticInstance(windowClass));
+	}	
 	public void setWindowToOpen(Class windowClass) {
 		this.windowClass = windowClass;
 		// setAction(IWMainApplication.windowOpenerURL);
