@@ -1,5 +1,5 @@
 /*
- * $Id: ICPropertyHandler.java,v 1.1 2004/06/28 14:06:40 thomas Exp $
+ * $Id: ICPropertyHandler.java,v 1.2 2007/05/21 09:57:40 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -27,7 +27,7 @@ public interface ICPropertyHandler {
   /**
    * Returns an instance of the GUI Widget that handles the setting
    */
-  public PresentationObject getHandlerObject(String name,String stringValue,IWContext iwc);
+  public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc, boolean oldGenerationHandler);
 
   /**
    * A function that is executed after the user presses OK/Apply on the property window.
