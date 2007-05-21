@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.35 2007/05/16 14:15:17 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.36 2007/05/21 09:50:16 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -19,6 +19,7 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
+import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 
 /**
@@ -60,6 +61,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	
 	private boolean addSaveButton = true;
 	private String hiddenInputAttribute = null;
+	
+	private boolean useOldLogic = true;
 
 	/**
 	 * @param aDisabled -
@@ -76,14 +79,20 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	/**
 	 *
 	 */
-	public AbstractChooser() {}
+	public AbstractChooser() {
+		this(true);
+	}
+	
+	public AbstractChooser(boolean useOldLogic) {
+		this.useOldLogic = useOldLogic;
+	}
 	
 	/**
 	 * @see UIComponentBase#setId(java.lang.String)
 	 */
 	public void setId(String id){
 	  super.setId(id);
-//	  setChooserParameter(id);
+	  setChooserParameter(id);
 	}
 
 	/**
@@ -169,8 +178,10 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			this._form = getParentForm();
 		}
 
-		if (isAddSaveButton()) {	//	Some choosers may not need save button
-			add(getSaveButton());
+		if (!isUseOldLogic()) {	// This is needed only for new choosers
+			if (isAddSaveButton()) {	//	Some choosers may not need save button
+				add(getSaveButton());
+			}
 		}
 	}
 	
@@ -184,80 +195,104 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	 *
 	 */
 	public PresentationObject getChooser(IWContext iwc, IWBundle bundle) {
-		Layer container = new Layer();
-		
-		PresentationObject object = getPresentationObject(iwc);
-		container.add(object);
-		
-		Image chooser = getChooser(bundle);
-		chooser.setStyleClass("chooserStyle");
-		
-		//	OnClick action
-		StringBuffer action = new StringBuffer("addChooserObject(this, '").append(getChooserWindowClass().getName());
-		if (getHiddenInputAttribute() == null) {
-			action.append("', null, '");
-		}
-		else {
-			action.append("', '").append(getHiddenInputAttribute()).append("', '");
-		}
-		action.append(ICBuilderConstants.CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE).append("');");
-		chooser.setOnClick(action.toString());
-		
-		container.add(chooser);
-		
-		return container;
-		
-		/*Table table = new Table(2, 1);
-		table.setCellpadding(0);
-		table.setCellspacing(0);
+		if (useOldLogic) {	//	Old chooser
+			Table table = new Table(2, 1);
+			table.setCellpadding(0);
+			table.setCellspacing(0);
 
-		Parameter value = new Parameter(getChooserParameter(), "");
-		if (this._stringValue != null) {
-			value.setValue(this._stringValue);
-		}
-		table.add(value);
-
-		PresentationObject object = getPresentationObject(iwc);
-
-		table.add(new Parameter(VALUE_PARAMETER_NAME, value.getName()));
-		if (this._addForm) {
-			SubmitButton button = new SubmitButton(this._iwrb.getLocalizedString("choose", "Choose"));
-			table.add(button, 2, 1);
-			this._form.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
-			this._form.addParameter(FORM_ID_PARAMETER, "window.opener.document.getElementById(\"" + this._form.getID() +"\").");
-			this._form.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
-			this._form.addParameter(FILTER_PARAMETER, this.filter);
-			addParametersToForm(this._form);
-		}
-		else {
-			getLink(this._iwrb);
-
-			this.link.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
-
-			this.link.addParameter(FORM_ID_PARAMETER, getParentFormID());
-
-			//TODO Make the javascript work for other objects than form elements,
-			// e.g. a Link
-			this.link.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
-			
-			//this was object.getID() but the id could change if this object was kept in session but the form changed
-			//by using getName() the reference is not lost, however we might need to add extra steps for handling more than one
-			//chooser of the same type in the same form.
-			this.link.addParameter(DISPLAYSTRING_PARAMETER_NAME, object.getName());
-			this.link.addParameter(VALUE_PARAMETER_NAME, value.getName());
-			if (this._attributeName != null && this._attributeValue != null) {
-				this.link.addParameter(this._attributeName, this._attributeValue);
+			Parameter value = new Parameter(getChooserParameter(), "");
+			if (this._stringValue != null) {
+				value.setValue(this._stringValue);
 			}
-			this.link.addParameter(FILTER_PARAMETER, this.filter);
-			
-			addParametersToLink(this.link);
-			
-			table.add(this.link, 2, 1);
-		}
+			table.add(value);
 
-		table.add(object, 1, 1);
-		table.add(new Parameter(DISPLAYSTRING_PARAMETER_NAME, "151324213"));
-		return (table);*/
+			PresentationObject object = getPresentationObject(iwc);
+
+			table.add(new Parameter(VALUE_PARAMETER_NAME, value.getName()));
+			//GenericButton button = new
+			// GenericButton("chooserbutton",bundle.getResourceBundle(iwc).getLocalizedString(chooserText,"Choose"));
+			if (this._addForm) {
+				SubmitButton button = new SubmitButton(this._iwrb.getLocalizedString("choose", "Choose"));
+				table.add(button, 2, 1);
+				this._form.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
+				this._form.addParameter(FORM_ID_PARAMETER, "window.opener.document.getElementById(\"" + this._form.getID() +"\").");
+				this._form.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
+				if (this.filter != null) {
+					if (this.filter.length() > 0) {
+						this._form.addParameter(FILTER_PARAMETER, this.filter);
+					}
+				}
+				addParametersToForm(this._form);
+			}
+			else {
+				getLink(this._iwrb);
+
+				if (getUsePublicWindowOpener()) {
+					this.link.setPublicWindowToOpen(getChooserWindowClass());
+				} else {
+					this.link.setWindowToOpen(getChooserWindowClass());
+				}
+				this.link.addParameter(CHOOSER_SELECTION_PARAMETER, getChooserParameter());
+
+				this.link.addParameter(FORM_ID_PARAMETER, getParentFormID());
+
+				//TODO Make the javascript work for other objects than form elements,
+				// e.g. a Link
+				/*
+				 * if(object instanceof Layer){
+				 * link.addParameter(SCRIPT_SUFFIX_PARAMETER,"title"); }
+				 */
+				this.link.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
+				//}
+				
+				//this was object.getID() but the id could change if this object was kept in session but the form changed
+				//by using getName() the reference is not lost, however we might need to add extra steps for handling more than one
+				//chooser of the same type in the same form.
+				this.link.addParameter(DISPLAYSTRING_PARAMETER_NAME, object.getName());
+				this.link.addParameter(VALUE_PARAMETER_NAME, value.getName());
+				if (this._attributeName != null && this._attributeValue != null) {
+					this.link.addParameter(this._attributeName, this._attributeValue);
+				}
+				if (this.filter != null) {
+					if (this.filter.length() > 0) {
+						this.link.addParameter(FILTER_PARAMETER, this.filter);
+					}
+				}
+				
+				
+				addParametersToLink(this.link);
+				
+				table.add(this.link, 2, 1);
+			}
+
+			table.add(object, 1, 1);
+			table.add(new Parameter(DISPLAYSTRING_PARAMETER_NAME, "151324213"));
+			return (table);
+		}
+		else {	//	New chooser
+			Layer container = new Layer();
+			
+			PresentationObject object = getPresentationObject(iwc);
+			container.add(object);
+			
+			Image chooser = getChooser(bundle);
+			chooser.setStyleClass("chooserStyle");
+			
+			//	OnClick action
+			StringBuffer action = new StringBuffer("addChooserObject(this, '").append(getChooserWindowClass().getName());
+			if (getHiddenInputAttribute() == null) {
+				action.append("', null, '");
+			}
+			else {
+				action.append("', '").append(getHiddenInputAttribute()).append("', '");
+			}
+			action.append(ICBuilderConstants.CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE).append("');");
+			chooser.setOnClick(action.toString());
+			
+			container.add(chooser);
+			
+			return container;
+		}
 	}
 
 	/**
@@ -416,5 +451,13 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 
 	public void setHiddenInputAttribute(String hiddenInputAttribute) {
 		this.hiddenInputAttribute = hiddenInputAttribute;
+	}
+
+	public void setUseOldLogic(boolean useOldLogic) {
+		this.useOldLogic = useOldLogic;
+	}
+
+	public boolean isUseOldLogic() {
+		return useOldLogic;
 	}
 }
