@@ -1211,3 +1211,10 @@ function setActionsForRegion() {
     	}
     );
 }
+
+function reloadPage() {
+	var oldLocation = "" + window.location.href;
+	var parts = oldLocation.split("#");
+	var date = new Date();
+	window.location.href = parts[0]  + "&reloading=" + date.getTime();	// changing href to be sure the page will be reloaded
+}

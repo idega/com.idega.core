@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.34 2007/05/16 14:15:17 valdas Exp $
+ * $Id: BuilderService.java,v 1.35 2007/05/24 11:31:05 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -292,9 +292,5 @@ public interface BuilderService extends IBOService
 	 */
 	public abstract void renameRegion(String pageKey, String region_id, String region_label, String new_region_id, String new_region_label);
 	
-	/**
-	 * Adds needed script for chooser
-	 * @param page
-	 */
-	public void addJavaScriptForChooser(Page page);
+	public boolean setModuleProperty(String pageKey, String moduleId, String propertyName, String[] properties);
 }

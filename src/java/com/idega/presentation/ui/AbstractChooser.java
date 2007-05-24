@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.36 2007/05/21 09:50:16 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.37 2007/05/24 11:31:04 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -21,6 +21,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
+import com.idega.util.CoreUtil;
 
 /**
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>,
@@ -63,6 +64,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	private String hiddenInputAttribute = null;
 	
 	private boolean useOldLogic = true;
+	private String instanceId = null;
+	private String method = null;
 
 	/**
 	 * @param aDisabled -
@@ -179,6 +182,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		}
 
 		if (!isUseOldLogic()) {	// This is needed only for new choosers
+			CoreUtil.addJavaSciptForChooser(iwc);
+			
 			if (isAddSaveButton()) {	//	Some choosers may not need save button
 				add(getSaveButton());
 			}
@@ -187,7 +192,25 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	
 	private GenericButton getSaveButton() {
 		GenericButton save = new GenericButton("save", _iwrb.getLocalizedString("save", "Save"));
-		save.setOnClick("saveSelectedValues();");
+		
+		StringBuffer action = new StringBuffer("saveSelectedValues('");
+		action.append(getResourceBundle().getLocalizedString("saving", "Saving..."));
+		action.append("', ");
+		if (getInstanceId() == null) {
+			action.append("null, ");
+		}
+		else {
+			action.append("'").append(getInstanceId()).append("', ");
+		}
+		if (getMethod() == null) {
+			action.append("null");
+		}
+		else {
+			action.append("'").append(getMethod()).append("'");
+		}
+		action.append(");");
+		
+		save.setOnClick(action.toString());
 		return save;
 	}
 
@@ -286,7 +309,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			else {
 				action.append("', '").append(getHiddenInputAttribute()).append("', '");
 			}
-			action.append(ICBuilderConstants.CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE).append("');");
+			action.append(ICBuilderConstants.CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE).append("', '");
+			action.append(getResourceBundle().getLocalizedString("loading", "Loading...")).append("');");
 			chooser.setOnClick(action.toString());
 			
 			container.add(chooser);
@@ -460,4 +484,21 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	public boolean isUseOldLogic() {
 		return useOldLogic;
 	}
+
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
+
+	public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+	
 }

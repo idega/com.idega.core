@@ -17,4 +17,6 @@ public class CoreConstants {
 	public static final String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
 	public static final String PROP_SYSTEM_MAIL_FROM_ADDRESS = "messagebox_from_mailaddress";
 
+	public static final String HANDLER_PARAMETER = "handler_parameter";
+
 }

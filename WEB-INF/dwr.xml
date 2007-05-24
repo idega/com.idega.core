@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://www.getahead.ltd.uk/dwr//dwr20.dtd">
+
+<dwr>
+	<allow>
+		<create creator="ibo" javascript="ChooserService" scope="application">
+			<param name="class" value="com.idega.business.chooser.ChooserService" />
+		</create>
+		<convert converter="bean" match="com.idega.bean.AdvancedProperty" />
+	</allow>
+	<signatures>
+		<![CDATA[
+			import java.util.List;
+			import com.idega.bean.AdvancedProperty;
+
+			ChooserService.setModuleProperty(String, String, List<AdvancedProperty>);
+		]]>
+	</signatures>
+</dwr>
