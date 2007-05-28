@@ -17,6 +17,10 @@ public class UserPropertiesBean extends PropertiesBean {
 	private boolean showSchool = true;
 	private boolean showArea = true;
 	private boolean showBeganWork = true;
+	private boolean showImage = true;
+	
+	private String imageWidth = null;
+	private String imageHeight = null;
 	
 	public boolean isShowAge() {
 		return showAge;
@@ -89,6 +93,24 @@ public class UserPropertiesBean extends PropertiesBean {
 	}
 	public void setUniqueIds(List<String> uniqueIds) {
 		this.uniqueIds = uniqueIds;
+	}
+	public boolean isShowImage() {
+		return showImage;
+	}
+	public void setShowImage(boolean showImage) {
+		this.showImage = showImage;
+	}
+	public String getImageHeight() {
+		return imageHeight;
+	}
+	public void setImageHeight(String imageHeight) {
+		this.imageHeight = imageHeight;
+	}
+	public String getImageWidth() {
+		return imageWidth;
+	}
+	public void setImageWidth(String imageWidth) {
+		this.imageWidth = imageWidth;
 	}
 	
 }

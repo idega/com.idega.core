@@ -4,6 +4,7 @@ import java.util.List;
 
 public class GroupMemberDataBean {
 	
+	private String name = null;
 	private String title = null;
 	private String education = null;
 	private String school = null;
@@ -13,8 +14,17 @@ public class GroupMemberDataBean {
 	private String homePhone = null;
 	private String mobilePhone = null;
 	private String age = null;
+	private String imageUrl = null;
 	
 	private List<String> emailsAddresses = null;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public String getAge() {
 		return age;
@@ -94,6 +104,14 @@ public class GroupMemberDataBean {
 
 	public void setWorkPhone(String workPhone) {
 		this.workPhone = workPhone;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 	
 }

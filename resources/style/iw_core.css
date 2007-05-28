@@ -329,4 +329,9 @@ html>body .LoadLayer .LoadLayerMiddle .LoadLayerContents {
 	list-style: none;
 	list-style-position: inside;
 }
+
+.groupsMembersInfoList ul {
+	list-style: none;
+	list-style-position: inside;
+}
 /** END: Groups and Groups members info classes **/

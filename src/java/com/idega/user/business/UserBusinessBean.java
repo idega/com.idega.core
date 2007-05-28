@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.212 2007/05/28 09:39:30 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.213 2007/05/28 15:51:47 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -31,8 +31,6 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
-
-import org.apache.poi.hssf.record.formula.MemErrPtg;
 
 import com.idega.bean.GroupMemberDataBean;
 import com.idega.bean.GroupMembersDataBean;
@@ -79,6 +77,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.employment.data.EmploymentMemberInfo;
 import com.idega.idegaweb.employment.data.EmploymentMemberInfoHome;
+import com.idega.presentation.Image;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
@@ -106,10 +105,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/05/28 09:39:30 $ by $Author: valdas $
+ * Last modified: $Date: 2007/05/28 15:51:47 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.212 $
+ * @version $Revision: 1.213 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3473,10 +3472,39 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				//	Emails
 				setUserMails(memberInfo, user);
 				
+				//	Name
+				memberInfo.setName(user.getName());
+				
+				//	Image
+				Image image = getUserImage(user);
+				if (image != null) {
+					memberInfo.setImageUrl(image.getURL());
+				}
+				
 				membersInfo.add(memberInfo);
 			}
 		}
 		bean.setMembersInfo(membersInfo);
+	}
+	
+	private Image getUserImage(User user) {
+		if (user == null) {
+			return null;
+		}
+		
+		int imageId = user.getSystemImageID();
+		Image image = null;
+		if (imageId == -1) {
+			return null;
+		}
+		else {
+			try {
+				image = new Image(imageId);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return image;
 	}
 	
 	private void setUserMails(GroupMemberDataBean memberInfo, User user) {
