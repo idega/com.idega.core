@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.211 2007/04/01 13:34:08 civilis Exp $
+ * $Id: UserBusinessBean.java,v 1.212 2007/05/28 09:39:30 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -32,6 +32,11 @@ import javax.ejb.RemoveException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import org.apache.poi.hssf.record.formula.MemErrPtg;
+
+import com.idega.bean.GroupMemberDataBean;
+import com.idega.bean.GroupMembersDataBean;
+import com.idega.bean.UserPropertiesBean;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -72,6 +77,8 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.employment.data.EmploymentMemberInfo;
+import com.idega.idegaweb.employment.data.EmploymentMemberInfoHome;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
@@ -99,10 +106,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/04/01 13:34:08 $ by $Author: civilis $
+ * Last modified: $Date: 2007/05/28 09:39:30 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.211 $
+ * @version $Revision: 1.212 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3361,6 +3368,181 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return false;
 		}
 		return validateIcelandicSSN(user.getPersonalID());
+	}
+	
+	/**
+	 * Gets info about Groups members
+	 */
+	public List<GroupMembersDataBean> getGroupsMembersData(UserPropertiesBean bean) {
+		if (bean == null) {
+			return null;
+		}
+		
+		List<String> uniqueIds = bean.getUniqueIds();
+		if (uniqueIds == null) {
+			return null;
+		}
+		
+		List<GroupMembersDataBean> groupsMembers = new ArrayList<GroupMembersDataBean>();
+		GroupMembersDataBean groupMembers = null;
+		Group group = null;
+		for (int i = 0; i < uniqueIds.size(); i++) {
+			group = null;
+			try {
+				group = getGroupBusiness().getGroupByUniqueId(uniqueIds.get(i));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (group != null) {
+				groupMembers = new GroupMembersDataBean();				
+				
+				//	Simple data
+				groupMembers.setGroupName(group.getName());
+				
+				//	Complex data
+				setComplexData(groupMembers, group);
+				
+				groupsMembers.add(groupMembers);
+			}
+		}
+		
+		return groupsMembers;
+	}
+	
+	/**
+	 * Getting info about all users in selected Group
+	 * @param bean
+	 * @param group
+	 */
+	private void setComplexData(GroupMembersDataBean bean, Group group) {
+		if (bean == null || group == null) {
+			return;
+		}
+		
+		Collection users = getUsersInGroup(group);
+		if (users == null) {
+			return;
+		}
+		
+		Object o = null;
+		User user = null;
+		GroupMemberDataBean memberInfo = null;
+		List<GroupMemberDataBean> membersInfo = new ArrayList<GroupMemberDataBean>();
+		for (Iterator it = users.iterator(); it.hasNext(); ) {
+			o = it.next();
+			if (o instanceof User) {
+				user = (User) o;
+				
+				memberInfo = new GroupMemberDataBean();
+				
+				//	Title, Education, School, Area, Began work
+				extractExtraInfo(memberInfo, user);
+				
+				//	Age
+				memberInfo.setAge(getUserAge(user));
+				
+				//	Phones
+				Phone workPhone = null;
+				try {
+					workPhone = getUsersWorkPhone(user);
+				} catch (NoPhoneFoundException e) {
+					e.printStackTrace();
+				}
+				if (workPhone != null) {
+					memberInfo.setWorkPhone(workPhone.getNumber());
+				}
+				Phone homePhone = null;
+				try {
+					homePhone = getUsersHomePhone(user);
+				} catch (NoPhoneFoundException e) {
+					e.printStackTrace();
+				}
+				if (homePhone != null) {
+					memberInfo.setHomePhone(homePhone.getNumber());
+				}
+				Phone mobilePhone = null;
+				try {
+					mobilePhone = getUsersMobilePhone(user);
+				} catch (NoPhoneFoundException e) {
+					e.printStackTrace();
+				}
+				if (mobilePhone != null) {
+					memberInfo.setMobilePhone(mobilePhone.getNumber());
+				}
+				
+				//	Emails
+				setUserMails(memberInfo, user);
+				
+				membersInfo.add(memberInfo);
+			}
+		}
+		bean.setMembersInfo(membersInfo);
+	}
+	
+	private void setUserMails(GroupMemberDataBean memberInfo, User user) {
+		if (memberInfo == null || user == null) {
+			return;
+		}
+		
+		Collection emails = user.getEmails();
+		if (emails == null) {
+			return;
+		}
+		Object o = null;
+		Email email = null;
+		List<String> emailsAddresses = new ArrayList<String>();
+		for (Iterator it = emails.iterator(); it.hasNext(); ) {
+			o = it.next();
+			if (o instanceof Email) {
+				email = (Email) o;
+				emailsAddresses.add(email.getEmailAddress());
+			}
+		}
+		memberInfo.setEmailsAddresses(emailsAddresses);
+	}
+	
+	private void extractExtraInfo(GroupMemberDataBean bean, User user) {
+		if (bean == null || user == null) {
+			return;
+		}
+		EmploymentMemberInfo memberInfo = null;
+		try {
+			memberInfo = getMemberHome().findByPrimaryKey(Integer.valueOf(user.getId()));
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		if (memberInfo == null) {
+			return;
+		}
+		
+		bean.setTitle(memberInfo.getTitle());
+		bean.setEducation(memberInfo.getEducation());
+		bean.setSchool(memberInfo.getSchool());
+		//bean.setArea(memberInfo);	TODO
+		bean.setBeganWork(memberInfo.getBeganWork());
+	}
+	
+	private EmploymentMemberInfoHome getMemberHome() {
+		try {
+			return (EmploymentMemberInfoHome) IDOLookup.getHome(EmploymentMemberInfo.class);
+		} catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private String getUserAge(User user) {
+		if (user == null) {
+			return null;
+		}
+		if (user.getDateOfBirth() == null) {
+			return null;
+		}
+		IWTimestamp dateOfBirth = new IWTimestamp(user.getDateOfBirth());
+		IWTimestamp dateToday = new IWTimestamp();
+		return Integer.toString((IWTimestamp.getDaysBetween(dateOfBirth, dateToday)) / 365);
 	}
 	
 } // Class UserBusiness

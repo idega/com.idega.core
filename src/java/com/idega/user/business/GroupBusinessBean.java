@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.110 2007/05/08 16:38:14 eiki Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.111 2007/05/28 09:39:30 valdas Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -26,6 +26,10 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
+import com.idega.bean.AddressData;
+import com.idega.bean.GroupDataBean;
+import com.idega.bean.GroupPropertiesBean;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -40,6 +44,7 @@ import com.idega.core.contact.data.EmailType;
 import com.idega.core.contact.data.EmailTypeHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneHome;
+import com.idega.core.contact.data.PhoneType;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.core.location.business.AddressBusiness;
@@ -84,12 +89,12 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * removing, lookups and manipulating Groups.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2006/02/20
- * 11:04:35 $ by $Author: eiki $
+ * 11:04:35 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.110 $
+ * @version $Revision: 1.111 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -1827,7 +1832,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		if (coll == null || coll.isEmpty()) {
 			return null;
 		}
-		// return the first element (there is only on element)
+		// return the first element (there is only one element)
 		return (Address) coll.iterator().next();
 	}
 
@@ -2466,13 +2471,134 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public boolean userGroupTreeImageProcedureTopNodeSearch() {
 		return GroupTreeImageProcedure.getInstance().isAvailable();
 	}
+	
+	/**
+	 * Returns info about groups
+	 */
+	public List<GroupDataBean> getGroupsData(GroupPropertiesBean bean) {
+		if (bean == null) {
+			return null;
+		}
+		if (bean.getUniqueIds() == null) {
+			return null;
+		}
+		
+		List<String> uniqueIds = bean.getUniqueIds();
+		List<GroupDataBean> groupsData = new ArrayList<GroupDataBean>();
+		GroupDataBean dataBean = null;
+		Group group = null;
+		for (int i = 0; i < uniqueIds.size(); i++) {
+			group = null;
+			try {
+				group = getGroupByUniqueId(uniqueIds.get(i));
+			} catch (FinderException e) {
+				e.printStackTrace();
+			}
+			if (group != null) {
+				dataBean = new GroupDataBean();
+				
+				//	Simple data
+				dataBean.setName(group.getName());
+				dataBean.setDescription(group.getDescription());
+				dataBean.setExtraInfo(group.getExtraInfo());
+				dataBean.setHomePageUrl(group.getHomePageURL());
+				dataBean.setShortName(group.getShortName());
+				
+				//	Complex data
+				dataBean.setAddress(getAddressParts(group));
+				setPhoneAndFax(dataBean, group);
+				dataBean.setEmailAddresses(getEmails(group));
+				
+				//	Adding to list
+				groupsData.add(dataBean);
+			}
+		}
+		
+		return groupsData;
+	}
+	
+	private List<String> getEmails(Group group) {
+		if (group == null) {
+			return null;
+		}
+		
+		Collection emails = group.getEmails();
+		if (emails == null) {
+			return null;
+		}
+		
+		List<String> emailsAddresses = new ArrayList<String>();
+		
+		Iterator emailIter = emails.iterator();
+		Email email = null;
+		Object o = null;
+		for (Iterator it = emailIter; it.hasNext(); ) {
+			o = it.next();
+			if (o instanceof Email) {
+				email = (Email) o;
+				emailsAddresses.add(email.getEmailAddress());
+			}
+		}
+		return emailsAddresses;
+	}
+	
+	private void setPhoneAndFax(GroupDataBean dataBean, Group group) {
+		if (dataBean == null || group == null) {
+			return;
+		}
+		
+		Collection phones = group.getPhones();
+		if (phones == null) {
+			return;
+		}
+		Iterator phoneIter = phones.iterator();
+		Object o = null;
+		Phone phoneObj = null;
+		for (Iterator it = phoneIter; it.hasNext(); ) {
+			o = it.next();
+			if (o instanceof Phone) {
+				phoneObj = (Phone) o;
+				if (phoneObj.getPhoneTypeId() == PhoneType.WORK_PHONE_ID) {
+					dataBean.setPhoneNumber(phoneObj.getNumber());
+				} else { 
+					if (phoneObj.getPhoneTypeId() == PhoneType.FAX_NUMBER_ID) {
+						dataBean.setFaxNumber(phoneObj.getNumber());
+					}
+				}
+			}
+		}
+	}
+	
+	private AddressData getAddressParts(Group group) {
+		Address mainAddress = null;
+		try {
+			mainAddress = getGroupMainAddress(group);
+		} catch (IDOLookupException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (IDOCompositePrimaryKeyException e) {
+			e.printStackTrace();
+		} catch (IDORelationshipException e) {
+			e.printStackTrace();
+		}
+		if (mainAddress == null) {
+			return null;
+		}
+		
+		AddressData address = new AddressData();
+		address.setStreetAddress(mainAddress.getStreetAddress());
+		address.setPostalCode(mainAddress.getPostalCode().getPostalCode());
+		address.setCity(mainAddress.getCity());
+		return address;
+	}
 
 	/**
 	 * 
-	 * Last modified: $Date: 2007/05/08 16:38:14 $ by $Author: eiki $
+	 * Last modified: $Date: 2007/05/28 09:39:30 $ by $Author: valdas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.110 $
+	 * @version $Revision: 1.111 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 

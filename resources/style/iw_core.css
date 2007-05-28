@@ -323,3 +323,10 @@ html>body .LoadLayer .LoadLayerMiddle .LoadLayerContents {
 	height: auto;
 }
 /** END: Searcher and SearchResults classes **/
+
+/** START: Groups and Groups members info classes **/
+.groupsInfoList ul {
+	list-style: none;
+	list-style-position: inside;
+}
+/** END: Groups and Groups members info classes **/
