@@ -5,6 +5,14 @@
   </properties>
   <body>
 
+		<release version="3.1.48" date="2007-05-30">
+			<action dev="eiki" type="update">
+				Removed inactive clone method from Table that was rendered unusable with JSF. "Fixed" Scrolltable to hide the extra header in the table.
+				Added new method : public boolean hasUserAccess(IWUserContext iwuc); to ViewNode to support custom permission logic in ViewNodes. Also refactored the wrong spelling from hasUserAcess to hasUserAccess
+				Updated base-dependencies.xml to add newer version of web2.0 bundle
+			</action>
+		</release>
+		
 		<release version="3.1.47" date="2007-05-20">
 			<action dev="tryggvil" type="fix">
 				Improved handing of Slide authentication, disabled Slide authentication by default for GET and POST requests.
