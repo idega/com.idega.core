@@ -115,70 +115,66 @@ public class ScrollTable extends Block implements TableType {
 	public void main(IWContext iwc) throws Exception {
 		
 			this.numberOfHeaderRows = this.numberOfHeaderRows<1?1:this.numberOfHeaderRows;
-			Table headerTable = (Table) this.theTable.clone(null,false,1,this.numberOfHeaderRows);
+			
+			//Steal the header rows from the theTable object later we need to copy the rest of the rows
+			Table headerTable = (Table) this.theTable.clone(null,false);
 			headerTable.resize(this.theTable.getColumns(),this.numberOfHeaderRows);
 			headerTable.removeStyleAttribute(PresentationObject.HEIGHT);
 			
 			StringBuffer scriptSource1 = new StringBuffer("\t if(document.getElementById){");
 			StringBuffer scriptSource2 = new StringBuffer("\t else if(document.all){");
-			Image heightImage = new Image("blank.gif");
+			Image heightImage = Table.getTransparentCell(iwc);
 			heightImage.setHeight("100%");
 			heightImage.setWidth(1);
-			/*for(int row=1;row<=numberOfHeaderRows;row++){
 			
-				for (int col = 1; col <= theTable.getColumns(); col++) {
-					TableCell cell = theTable.getCellAt(col,row);
-					headerTable.add(cell,col,row);
-					headerTable.setStyleAttribute(cell.getStyleAttribute());
-				}
-			}*/
-			Table table = (Table)this.theTable.clone(null,false);
+			//here we need to get just the added data OR HACKIT!
+			//Hide the first row! Hahahahahahaa....fucking crap class...it worked before jsf but now we need to do this...
+			theTable.setRowStyle(1, "display", "none");
+						
 			int layerWidth = -1,layerHeight=-1;
 			if(this.theTable.getWidth()!=null){
 				try {
-					layerWidth = Integer.parseInt(table.getWidth());
+					layerWidth = Integer.parseInt(theTable.getWidth());
 				} catch (NumberFormatException e) {
 				}
 			}
 			if(this.theTable.getHeight()!=null){
 				try {
-					layerHeight = Integer.parseInt(table.getHeight());
+					layerHeight = Integer.parseInt(theTable.getHeight());
 				} catch (NumberFormatException e) {
 				}
 			}
-	
-			this.theTable = null;
 			
-			Image image = new Image("blank.gif");
+			Image image = Table.getTransparentCell(iwc);
 			image.setWidth("100%");
 			image.setHeight(1);
-			int testrow = table.getRows()+1;
+			int testrow = theTable.getRows()+1;
 			String generatedID = "_"+generateID();
-			for (int col = 1; col <= table.getColumns(); col++) {
+			for (int col = 1; col <= theTable.getColumns(); col++) {
 				String name = "tstimg"+col+generatedID;
 				String cellName = "cll"+col+generatedID;
 				Image img = (Image)image.clone();
 				img.setName(name);
 				img.setID(name);
-				table.add(img,col,testrow);
+				theTable.add(img,col,testrow);
 				headerTable.getCellAt(col,this.numberOfHeaderRows).setID(cellName);
 				scriptSource1.append("\n\t\t document.getElementById('").append(cellName).append("').width=document.images['").append(name).append("'].width;");
 				scriptSource2.append("\n\t\t document.all.").append(cellName).append(".width=document.all.").append(name).append(".width;");
 			}
 			testrow++;
-			table.mergeCells(1,testrow,table.getColumns(),testrow);
+			theTable.mergeCells(1,testrow,theTable.getColumns(),testrow);
 			Image img = (Image)image.clone();
 			img.setName("widthImage"+generatedID);
 			img.setID("widthImage"+generatedID);
-			table.add(img,1,testrow);
+			theTable.add(img,1,testrow);
 			
 			
 			layerWidth += this.scrollLayerWidthPadding;
 			layerHeight += this.scrollLayerHeightPadding;
-			headerTable.setWidth(table.getWidth());
+			headerTable.setWidth(theTable.getWidth());
 			
 			Layer headerLayer = new Layer(Layer.DIV);
-			headerLayer.setWidth(table.getWidth());
+			headerLayer.setWidth(theTable.getWidth());
 			headerLayer.add(headerTable);
 			
 			Layer layer = new Layer(Layer.DIV);
@@ -193,12 +189,12 @@ public class ScrollTable extends Block implements TableType {
 			if(layerHeight>0) {
 				layer.setHeight(layerHeight);
 			}
-			table.setStyleAttribute(Layer.POSITION,Layer.RELATIVE);
+			theTable.setStyleAttribute(Layer.POSITION,Layer.RELATIVE);
 			if(this.scrollLayerHeaderRowThickness>0) {
 				this.scrollLayerHeaderRowThickness *= -1;
 			}
-			table.setStyleAttribute(Layer.TOP,String.valueOf(this.scrollLayerHeaderRowThickness*this.numberOfHeaderRows));
-			layer.add(table);
+			theTable.setStyleAttribute(Layer.TOP,String.valueOf(this.scrollLayerHeaderRowThickness*this.numberOfHeaderRows));
+			layer.add(theTable);
 			
 			String scriptName = "measureCells";
 			StringBuffer script = new StringBuffer("var tomt;\nfunction "+scriptName+generatedID+"(){\n");

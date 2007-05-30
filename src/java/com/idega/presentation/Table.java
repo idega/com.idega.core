@@ -1,5 +1,5 @@
 /*
- * $Id: Table.java,v 1.93 2006/05/08 13:51:09 laddi Exp $
+ * $Id: Table.java,v 1.93.2.1 2007/05/30 16:46:12 eiki Exp $
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
  *
@@ -1920,31 +1920,11 @@ public class Table extends PresentationObjectContainer implements TableType{
 	
 
 	public Object clone(IWUserContext iwc, boolean askForPermission) {
-		return clone(iwc,askForPermission,1,getRows());
-	}
-	public Object clone(IWUserContext iwc,boolean askForPermission,int startRow,int endRow){
 		Table obj = null;
+		
 		try {
-			obj = (Table) super.clone(iwc, askForPermission);
-			if(useFacetBasedCells()){
-				//Facets have already been cloned here in super.clone(iwc, askForPermission);
-				//cloneJSFFacets(obj,iwc,askForPermission);
-			}
-			else{
-				if (this.theCells != null) {
-					obj.theCells = new TableCell[this.cols][this.rows];
-					for (int x = 0; x < this.theCells.length; x++) {
-						for (int y = (startRow-1); y < endRow; y++) {
-							if (this.theCells[x][y] != null) {
-								obj.theCells[x][y] = (TableCell) this.theCells[x][y].clonePermissionChecked(iwc, askForPermission);
-								obj.theCells[x][y].setParentObject(obj);
-								obj.theCells[x][y].setLocation(this.getLocation());
-								//obj.theObjects[x][y].remove(NULL_CLONE_OBJECT);
-							}
-						}
-					}
-				}
-			}
+			obj = (Table)  super.clone(iwc, askForPermission);
+			
 			obj.cols = this.cols;
 			obj.rows = this.rows;
 			if (this.beginMergedxpos != null) {
@@ -1961,10 +1941,10 @@ public class Table extends PresentationObjectContainer implements TableType{
 			}
 			obj.isResizable = this.isResizable;
 			obj.cellsAreMerged = this.cellsAreMerged;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		catch (Exception ex) {
-			ex.printStackTrace(System.err);
-		}
+		
 		return obj;
 	}
 
