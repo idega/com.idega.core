@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.39 2007/02/15 12:11:54 gediminas Exp $
+ * $Id: DefaultIWBundle.java,v 1.40 2007/05/30 15:14:55 gediminas Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -626,6 +626,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		{
 			try
 			{
+				// TODO: save to workspace if the property is set
 				this.localizableStringsFile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(), getLocalizableStringsFileName() );
 			}
 			catch (IOException ex)
@@ -1540,7 +1541,9 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * @see com.idega.idegaweb.IWBundle#getValueBinding(java.lang.String)
 	 */
 	public ValueBinding getValueBinding(String localizationKey) {
-		return getValueBinding(localizationKey,localizationKey);
+		String valueBinding = getLocalizedStringExpr(localizationKey);
+		ValueBinding vb = getApplication().createValueBinding(valueBinding);
+		return vb;
 	}
 	
 	public ValueBinding getValueBinding(String localizationKey, String defaultValue) {
@@ -1549,7 +1552,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	
 	public ValueBinding getValueBinding(FacesContext ctx, String localizationKey, String defaultValue) {
-		String valueBinding = "#{localizedStrings['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
+		String valueBinding = getLocalizedStringExpr(localizationKey);
 		ValueBinding vb = getApplication().createValueBinding(valueBinding);
 		Object obj = vb.getValue(ctx);
 		if(obj==null){
@@ -1557,6 +1560,15 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			vb.setValue(ctx,((defaultValue==null)?"":defaultValue));
 		}
 		return vb;
+	}
+
+	/**
+	 * Creates value binding expression for given key
+	 * @param localizationKey
+	 * @return a String #{localizedStrings['bundle']['key']}
+	 */
+	public String getLocalizedStringExpr(String localizationKey) {
+		return "#{localizedStrings['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
 	}
 	
 	public String getLocalizedString(String localizationKey) {
