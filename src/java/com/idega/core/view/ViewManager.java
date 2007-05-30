@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.20 2006/04/09 12:13:17 laddi Exp $
+ * $Id: ViewManager.java,v 1.20.2.1 2007/05/30 16:48:05 eiki Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -9,17 +9,18 @@
  */
 package com.idega.core.view;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
 import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
-import com.idega.core.accesscontrol.business.StandardRoles;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.data.Instantiator;
-import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.util.FacesUtil;
@@ -30,10 +31,10 @@ import com.idega.util.RequestUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/05/30 16:48:05 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.20.2.1 $
  */
 public class ViewManager implements Singleton {
 	
@@ -91,7 +92,7 @@ public class ViewManager implements Singleton {
 			e.printStackTrace();
 		}*/
 		
-		try {
+		/*try {
 			Class applicationClass = RefactorClassRegistry.forName("com.idega.user.app.UserApplication");
 			FramedWindowClassViewNode userNode = new FramedWindowClassViewNode("user",getWorkspaceRoot());
 			userNode.setKeyboardShortcut(new KeyboardShortcut("1"));
@@ -108,7 +109,7 @@ public class ViewManager implements Singleton {
 		catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		
 		/*try {
 			Class applicationClass = RefactorClassRegistry.forName("com.idega.development.presentation.IWDeveloper");
@@ -313,7 +314,17 @@ public class ViewManager implements Singleton {
 	 * @param user
 	 * @return
 	 */
-	public boolean hasUserAcess(ViewNode node,IWUserContext userContext){
+	public boolean hasUserAccess(ViewNode node,IWUserContext userContext){
+		
+		//First check hasUserAccess for custom logic
+		try {
+			boolean hasAccess = node.hasUserAccess(userContext);
+			return hasAccess;
+		} catch (NotImplementedException e) {
+			//ignore just not implemented
+		}
+		
+		//then check roles
 		Collection roles = node.getAuthorizedRoles();
 		if(roles!=null){
 			if(roles.size()>0){
@@ -326,6 +337,7 @@ public class ViewManager implements Singleton {
 				return false;
 			}
 		}
+		
 		return true;
 	}
 	

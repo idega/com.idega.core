@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.15 2006/04/09 12:13:17 laddi Exp $
+ * $Id: DefaultViewNode.java,v 1.15.2.1 2007/05/30 16:48:05 eiki Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -13,20 +13,25 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.util.StringHandler;
 
 
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/05/30 16:48:05 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.15.2.1 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -564,5 +569,12 @@ public class DefaultViewNode implements ViewNode {
 	 */
 	public void setRedirectsToResourceUri(boolean redirectsToResourceUri) {
 		this.redirectsToResourceUri = redirectsToResourceUri;
+	}
+
+	/**
+	 * Override this method to do your own access control for viewnodes, throws NotImplementedException by default
+	 */
+	public boolean hasUserAccess(IWUserContext iwuc) {
+		throw new NotImplementedException();
 	}
 }

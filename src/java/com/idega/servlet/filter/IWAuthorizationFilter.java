@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthorizationFilter.java,v 1.12 2006/01/12 15:26:07 tryggvil Exp $ Created on 31.7.2004
+ * $Id: IWAuthorizationFilter.java,v 1.12.2.1 2007/05/30 16:48:04 eiki Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -31,10 +31,10 @@ import com.idega.idegaweb.IWUserContextImpl;
  * sufficent priviliges.<br/>
  * In some instances (when accessing the workspace) it redirects the user to the login page.
  * </p>
- * Last modified: $Date: 2006/01/12 15:26:07 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/05/30 16:48:04 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.12.2.1 $
  */
 public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
@@ -108,7 +108,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 				ViewNode node = vManager.getViewNodeForRequest(request);
 				IWUserContext iwuc = new IWUserContextImpl(request.getSession(),request.getSession().getServletContext());
 				
-				if(vManager.hasUserAcess(node,iwuc)){
+				if(vManager.hasUserAccess(node,iwuc)){
 					return true;
 				}
 				else{

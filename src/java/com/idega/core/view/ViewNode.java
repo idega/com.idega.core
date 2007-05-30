@@ -1,5 +1,5 @@
 /*
- * $Id: ViewNode.java,v 1.8 2005/12/07 21:39:16 tryggvil Exp $
+ * $Id: ViewNode.java,v 1.8.2.1 2007/05/30 16:48:05 eiki Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -11,9 +11,12 @@ package com.idega.core.view;
 
 import java.util.Collection;
 import java.util.Locale;
+
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+
+import com.idega.idegaweb.IWUserContext;
 
 
 /**
@@ -26,10 +29,10 @@ import javax.faces.context.FacesContext;
  * 'workspace' and 'builder parts of the URL. <br>
  * ViewNodes are accessed and managed by the ViewManager instance.<br>
  * </p>
- *  Last modified: $Date: 2005/12/07 21:39:16 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/05/30 16:48:05 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.8.2.1 $
  */
 public interface ViewNode {
 	
@@ -106,6 +109,12 @@ public interface ViewNode {
 	 * This should be a collection of Strings.
 	 */
 	public Collection getAuthorizedRoles();
+	
+	/**
+	 * @param iwuc
+	 * @return true if custom logic says the user can view the node
+	 */
+	public boolean hasUserAccess(IWUserContext iwuc);
 	
 	//UI properties
 	public Icon getIcon();
