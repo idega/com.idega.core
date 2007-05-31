@@ -457,6 +457,25 @@ function tableruler()
 	    }
 	}
 
+function closeLoadingMessage() {
+	var busyMessage = document.getElementById("busybuddy");
+	if (busyMessage) {
+		var parentElement = busyMessage.parentNode;
+		if (parentElement == null) {
+			if (busyMessage.style) {
+				busyMessage.style.display = "none";
+				busyMessage.style.visibility = "hidden";
+			}
+			else {
+				busyMessage.display = "none";
+				busyMessage.visibility = "hidden";
+			}
+		}
+		else {
+			parentElement.removeChild(busyMessage);
+		}		
+	}
+}
 
 //setLinkToBold method. moved here to fix bug in UserApplication
 
@@ -541,4 +560,55 @@ function expandMinimizeContents(container){
 	}
 }
 
+function insertJavaScriptFileToHeader(src) {
+	if (src == null) {
+		return;
+	}
+	var script = document.createElement("script");
+	script.setAttribute("type","text/javascript");
+	script.setAttribute("src", src);
+	document.getElementsByTagName("head")[0].appendChild(script);
+}
 
+function isEnterEvent(event) {
+	if (event == null) {
+		return false;
+	}
+	var keyCode = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
+	if (keyCode == 13) {
+		return true;
+	}
+	return false;
+}
+
+function isSafariBrowser() {
+	if (navigator == null) {
+		return false;
+	}
+	var browser = navigator.userAgent;
+	if (browser == null) {
+		return false;
+	}
+	browser = browser.toLowerCase();
+	if (browser.indexOf("safari") == -1) {
+		return false;
+	}
+	return true;
+}
+
+// Function to add event to any object, example: registerEvent(window, "load", foo);
+function registerEvent(object, eventType, functionName){ 
+	if (object.addEventListener) { 
+		object.addEventListener(eventType, functionName, false); 
+		return true;
+	} 
+	else {
+		if (object.attachEvent) {
+			var result = object.attachEvent("on"+eventType, functionName);
+			return result;
+		}
+		else { 
+   			return false;
+		}
+	} 
+}
