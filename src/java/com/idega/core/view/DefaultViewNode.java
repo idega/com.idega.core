@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.15.2.1 2007/05/30 16:48:05 eiki Exp $
+ * $Id: DefaultViewNode.java,v 1.15.2.2 2007/05/31 12:20:07 eiki Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,8 +18,6 @@ import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.util.StringHandler;
@@ -28,10 +26,10 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2007/05/30 16:48:05 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/05/31 12:20:07 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15.2.1 $
+ * @version $Revision: 1.15.2.2 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -575,6 +573,6 @@ public class DefaultViewNode implements ViewNode {
 	 * Override this method to do your own access control for viewnodes, throws NotImplementedException by default
 	 */
 	public boolean hasUserAccess(IWUserContext iwuc) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.20.2.1 2007/05/30 16:48:05 eiki Exp $
+ * $Id: ViewManager.java,v 1.20.2.2 2007/05/31 12:20:08 eiki Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -16,8 +16,6 @@ import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.data.Instantiator;
@@ -31,10 +29,10 @@ import com.idega.util.RequestUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2007/05/30 16:48:05 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/05/31 12:20:08 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.20.2.1 $
+ * @version $Revision: 1.20.2.2 $
  */
 public class ViewManager implements Singleton {
 	
@@ -320,7 +318,7 @@ public class ViewManager implements Singleton {
 		try {
 			boolean hasAccess = node.hasUserAccess(userContext);
 			return hasAccess;
-		} catch (NotImplementedException e) {
+		} catch (UnsupportedOperationException e) {
 			//ignore just not implemented
 		}
 		
