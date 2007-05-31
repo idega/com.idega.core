@@ -11,6 +11,7 @@ import com.idega.bean.AdvancedProperty;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -64,7 +65,45 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 		return true;
 	}
 	
+	private String[] getPropertyValueForGroupsChooser(IWContext iwc, List<AdvancedProperty> properties) {
+		String server = null;
+		String login = null;
+		String password = null;
+		String uniqueIds = null;
+		
+		String connection = findPropertyValue(properties, "connection");
+		if (connection == null) {
+			return null;
+		}
+		
+		if (connection.equals(ICBuilderConstants.GROUPS_CHOOSER_REMOTE_CONNECTION)) {
+			//	Settings for remote connection
+			server = findPropertyValue(properties, "server");
+			login = findPropertyValue(properties, "login");
+			password = CoreUtil.getEncodedValue(findPropertyValue(properties, "password"));
+		}
+		else {
+			//	Settings for local connection
+			server = connection;
+			login = connection;
+			password = connection;
+		}
+		uniqueIds = findPropertyValue(properties, "uniqueids");
+		
+		if (server == null || login == null || password == null || uniqueIds == null) {
+			return null;
+		}
+		StringBuffer value = new StringBuffer(server).append(ICBuilderConstants.BUILDER_MODULE_PROPERTY_VALUES_SEPARATOR);
+		value.append(login).append(ICBuilderConstants.BUILDER_MODULE_PROPERTY_VALUES_SEPARATOR).append(password);
+		value.append(ICBuilderConstants.BUILDER_MODULE_PROPERTY_VALUES_SEPARATOR).append(uniqueIds);
+		value.append(ICBuilderConstants.BUILDER_MODULE_PROPERTY_VALUES_SEPARATOR).append(connection);
+		return new String[] {value.toString()};
+	}
+	
 	public boolean setModuleProperty(String moduleId, String propertyName, List<AdvancedProperty> properties) {
+		if (propertyName == null) {
+			return false;
+		}
 		if (properties == null) {
 			return false;
 		}
@@ -72,14 +111,23 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 			return false;
 		}
 		
-		String[] parsedProperties = new String[properties.size()];
-		for (int i = 0; i < properties.size(); i++) {
-			parsedProperties[i] = properties.get(i).getValue();
-		}
-		
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return false;
+		}
+		
+		String[] parsedProperties = null;
+		if (propertyName.equals(":method:1:implied:void:setGroups:com.idega.bean.PropertiesBean:")) {
+			parsedProperties = getPropertyValueForGroupsChooser(iwc, properties);
+			if (parsedProperties == null) {
+				return false;
+			}
+		}
+		else {
+			parsedProperties = new String[properties.size()];
+			for (int i = 0; i < properties.size(); i++) {
+				parsedProperties[i] = properties.get(i).getValue();
+			}
 		}
 		
 		String pageKey = null;
@@ -133,6 +181,20 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 			return null;
 		}
 		return o;
+	}
+	
+	private String findPropertyValue(List<AdvancedProperty> properties, String id) {
+		String value = null;
+		boolean found = false;
+		AdvancedProperty property = null;
+		for (int i = 0; (i < properties.size() && !found); i++) {
+			property = properties.get(i);
+			if (id.equals(property.getId())) {
+				value = property.getValue();
+				found = true;
+			}
+		}
+		return value;
 	}
 
 }

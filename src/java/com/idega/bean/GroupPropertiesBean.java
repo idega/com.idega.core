@@ -1,10 +1,6 @@
 package com.idega.bean;
 
-import java.util.List;
-
 public class GroupPropertiesBean extends PropertiesBean {
-	
-	private List<String> uniqueIds = null;
 	
 	private boolean showName = true;
 	private boolean showHomePage = false;
@@ -17,12 +13,6 @@ public class GroupPropertiesBean extends PropertiesBean {
 	private boolean showAddress = false;
 	private boolean showEmptyFields = true;
 	
-	public List<String> getUniqueIds() {
-		return uniqueIds;
-	}
-	public void setUniqueIds(List<String> uniqueIds) {
-		this.uniqueIds = uniqueIds;
-	}
 	public boolean isShowAddress() {
 		return showAddress;
 	}

@@ -1,10 +1,6 @@
 package com.idega.bean;
 
-import java.util.List;
-
 public class UserPropertiesBean extends PropertiesBean {
-
-	private List<String> uniqueIds = null;
 	
 	private boolean showGroupName = true;
 	private boolean showTitle = true;
@@ -87,12 +83,6 @@ public class UserPropertiesBean extends PropertiesBean {
 	}
 	public void setShowWorkPhone(boolean showWorkPhone) {
 		this.showWorkPhone = showWorkPhone;
-	}
-	public List<String> getUniqueIds() {
-		return uniqueIds;
-	}
-	public void setUniqueIds(List<String> uniqueIds) {
-		this.uniqueIds = uniqueIds;
 	}
 	public boolean isShowImage() {
 		return showImage;

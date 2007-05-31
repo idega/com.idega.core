@@ -169,8 +169,8 @@ function addAdvancedProperty(id, value) {
 	if (ADVANCED_PROPERTIES == null) {
 		ADVANCED_PROPERTIES = new Array();
 	}
-	if (existAdvancedProperty(id, value)) {
-		return;
+	if (existAdvancedProperty(id)) {
+		removeAdvancedProperty(id);	//	Removing old value
 	}
 	ADVANCED_PROPERTIES.push(new AdvancedProperty(id, value));
 }
@@ -193,17 +193,28 @@ function removeAdvancedProperty(id) {
 	}
 }
 
-function existAdvancedProperty(id, value) {
-	if (id == null && value == null) {
+function removeAllAdvancedProperties() {
+	ADVANCED_PROPERTIES = new Array();
+}
+
+function existAdvancedProperty(id) {
+	var property = getAdvancedProperty(id);
+	if (property == null) {
 		return false;
 	}
-	var advancedProperty = null;
+	return true;
+}
+
+function getAdvancedProperty(id) {
+	if (id == null) {
+		return null;
+	}
 	for (var i = 0; i < ADVANCED_PROPERTIES.length; i++) {
-		advancedProperty = ADVANCED_PROPERTIES[i];
-		if (advancedProperty.id == id && advancedProperty.value == value) {
-			return true;
+		if (ADVANCED_PROPERTIES[i].id == id) {
+			return ADVANCED_PROPERTIES[i];
 		}
 	}
+	return null;
 }
 
 function AdvancedProperty(id, value) {

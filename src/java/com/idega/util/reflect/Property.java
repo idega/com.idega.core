@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.5 2006/04/09 12:13:19 laddi Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.6 2007/05/31 13:52:10 valdas Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -10,10 +10,16 @@ package com.idega.util.reflect;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.idega.bean.PropertiesBean;
+import com.idega.business.chooser.helper.GroupsChooserHelper;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.data.ICFile;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.ui.PasswordInput;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 
@@ -23,10 +29,10 @@ import com.idega.user.data.GroupHome;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
+ * Last modified: $Date: 2007/05/31 13:52:10 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class Property implements Serializable{
 
@@ -246,6 +252,36 @@ public class Property implements Serializable{
 			// nothing to cast
 			argument = stringValue;
 		}
+		else if (parameterType.equals(PasswordInput.class)) {
+			argument = new PasswordInput();
+			if (stringValue != null) {
+				((PasswordInput) argument).setContent(stringValue);
+			}
+		}
+		else if (parameterType.equals(List.class)) {
+			argument = getValuesFromString(stringValue, ",");
+		}
+		else if (parameterType.equals(PropertiesBean.class)) {
+			GroupsChooserHelper helper = new GroupsChooserHelper();
+			argument = helper.getExtractedPropertiesFromString(stringValue);
+		}
 		return argument;
+	}
+	
+	private List<String> getValuesFromString(String value, String separator) {
+		if (value == null) {
+			return null;
+		}
+
+		String[] values = value.split(separator);
+		if (values == null) {
+			return null;
+		}
+
+		List<String> extractedValues = new ArrayList<String>();
+		for (int i = 0; i < values.length; i++) {
+			extractedValues.add(values[i]);
+		}
+		return extractedValues;
 	}
 }

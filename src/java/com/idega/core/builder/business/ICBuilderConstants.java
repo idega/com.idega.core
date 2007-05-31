@@ -33,4 +33,9 @@ public class ICBuilderConstants {
 	
 	public static final String CHOOSER_PRESENTATION_OBJECT_CONTAINER_ID = "chooser_presentation_object";
 	public static final String HIDDEN_INPUT_FOR_CHOOSER_NAME = "hidden_input_for_advanced_chooser_parameter";
+	
+	public static final String GROUPS_CHOOSER_REMOTE_CONNECTION = "remote";
+	
+	/** Property values separator **/
+	public static final String BUILDER_MODULE_PROPERTY_VALUES_SEPARATOR = "<idega_builder_module_property>";
 }
