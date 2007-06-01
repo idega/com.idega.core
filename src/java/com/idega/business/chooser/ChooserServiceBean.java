@@ -56,9 +56,6 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 			return false;
 		}
 		ICPropertyHandler handler = (ICPropertyHandler) o;
-		if (handler == null) {
-			return false;
-		}
 		
 		handler.onUpdate(values, iwc);
 		
@@ -119,9 +116,6 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 		String[] parsedProperties = null;
 		if (propertyName.equals(":method:1:implied:void:setGroups:com.idega.bean.PropertiesBean:")) {
 			parsedProperties = getPropertyValueForGroupsChooser(iwc, properties);
-			if (parsedProperties == null) {
-				return false;
-			}
 		}
 		else {
 			parsedProperties = new String[properties.size()];
@@ -138,7 +132,15 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 			return false;
 		}
 		
-		return getBuilderService(null).setModuleProperty(pageKey, moduleId, propertyName, parsedProperties);
+		if (parsedProperties == null) {	//	Cannot set new values, deleting old values
+			String values[] = getBuilderService(iwc).getPropertyValues(iwc.getIWMainApplication(),pageKey,moduleId, propertyName, null, true);
+			if (getBuilderService(iwc).removeProperty(iwc.getIWMainApplication(), pageKey, moduleId, propertyName, values)) {
+				return getBuilderService(iwc).removeAllBlockObjectsFromCache(iwc);
+			}
+			return false;
+		}
+		
+		return getBuilderService(iwc).setModuleProperty(pageKey, moduleId, propertyName, parsedProperties);
 	}
 	
 	public Document getRenderedPresentationObject(String className, String hiddenInputAttribute, boolean cleanHtml) {

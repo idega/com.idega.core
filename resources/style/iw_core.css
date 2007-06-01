@@ -334,4 +334,12 @@ html>body .LoadLayer .LoadLayerMiddle .LoadLayerContents {
 	list-style: none;
 	list-style-position: inside;
 }
+
+.groupsChooserConnectionDataTableStyle {
+	width: 100%; 
+}
+
+.groupConnectionChooserInputStyle {
+	width: 100%;
+}
 /** END: Groups and Groups members info classes **/
