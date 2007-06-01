@@ -296,7 +296,7 @@ public class SelectionBox extends InterfaceObject
 			this.getParentForm().setOnSubmit("selectAllInSelectionBoxIfNoneSelected(this." + this.getName() + ")");
 		}
 		if (this.isSetAsNotEmpty) {
-			setOnSubmitFunction("warnIfNonSelected", "function warnIfNonSelected (inputbox,warnMsg) {\n\n		if ( inputbox.length == 0 ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", this.notEmptyErrorMessage);
+			setOnSubmitFunction("warnIfNonSelected", "function warnIfNonSelected (inputbox,warnMsg) {\n\n		if ( inputbox.selectedIndex == -1 ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", this.notEmptyErrorMessage);
 		}
 
 	}
