@@ -1,5 +1,5 @@
 /*
- * $Id: LinkContainer.java,v 1.29 2006/05/13 14:39:05 laddi Exp $
+ * $Id: LinkContainer.java,v 1.30 2007/06/03 16:03:43 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ package com.idega.presentation.text;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import com.idega.core.builder.business.BuilderService;
@@ -89,6 +90,18 @@ public class LinkContainer extends PresentationObjectContainer {
 	 */
 	public void addParameter(String parameterName, Class theClass) {
 		addParameter(parameterName, IWMainApplication.getEncryptedClassName(theClass));
+	}
+	
+	public void addParameters(Map parameterMap) {
+		if (parameterMap != null) {
+			Iterator parameters = parameterMap.entrySet().iterator();
+			while (parameters.hasNext()) {
+				Map.Entry entry = (Map.Entry) parameters.next();
+				String key = (String) entry.getKey();
+				String value = (String) entry.getValue();
+				addParameter(key, value);
+			}
+		}
 	}
 
 	public boolean isParameterSet(String prmName) {
