@@ -3,6 +3,7 @@ package com.idega.business.chooser;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import javax.faces.component.UIComponent;
 import javax.servlet.http.HttpSession;
 
 import org.jdom.Document;
@@ -14,7 +15,6 @@ import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.util.AbstractChooserBlock;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.CoreConstants;
@@ -154,9 +154,9 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 	}
 	
 	private Document getRenderedPresentationObject(Object object, boolean cleanHtml) {
-		if (object instanceof PresentationObject) {
+		if (object instanceof UIComponent) {
 			IWContext iwc = CoreUtil.getIWContext();
-			return getBuilderService(iwc).getRenderedPresentationObject(iwc, (PresentationObject) object, cleanHtml);
+			return getBuilderService(iwc).getRenderedComponent(iwc, (UIComponent) object, cleanHtml);
 		}
 		return null;
 	}
