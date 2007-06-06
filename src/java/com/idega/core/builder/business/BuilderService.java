@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.37 2007/06/05 17:00:18 valdas Exp $
+ * $Id: BuilderService.java,v 1.38 2007/06/06 12:08:02 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -294,4 +294,12 @@ public interface BuilderService extends IBOService
 	public boolean setModuleProperty(String pageKey, String moduleId, String propertyName, String[] properties);
 	
 	public boolean removeAllBlockObjectsFromCache(IWContext iwc);
+	
+	/**
+	 * Creates path (uri) based on current time
+	 * @return
+	 */
+	public String getYearMonthPath();
+	
+	public String generateResourcePath(String base, String scope, String fileName);
 }
