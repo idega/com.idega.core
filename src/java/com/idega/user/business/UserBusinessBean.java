@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.213 2007/05/28 15:51:47 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.214 2007/06/08 16:02:27 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -105,10 +105,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/05/28 15:51:47 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/08 16:02:27 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.213 $
+ * @version $Revision: 1.214 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3405,6 +3405,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		
+		System.out.println("Returning info about groups members: " + groupsMembers.size());
 		return groupsMembers;
 	}
 	
@@ -3419,9 +3420,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		
 		Collection users = getUsersInGroup(group);
+		System.out.println("Users: " + users + " in: " + group.getName());
 		if (users == null) {
 			return;
 		}
+		System.out.println("Totaly users in group ("+group.getName()+"): " + users.size());
 		
 		Object o = null;
 		User user = null;
@@ -3429,6 +3432,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		List<GroupMemberDataBean> membersInfo = new ArrayList<GroupMemberDataBean>();
 		for (Iterator it = users.iterator(); it.hasNext(); ) {
 			o = it.next();
+			System.out.println("User ("+group.getName()+"): " + o);
 			if (o instanceof User) {
 				user = (User) o;
 				
@@ -3442,28 +3446,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				
 				//	Phones
 				Phone workPhone = null;
+				Phone homePhone = null;
+				Phone mobilePhone = null;
 				try {
 					workPhone = getUsersWorkPhone(user);
+					homePhone = getUsersHomePhone(user);
+					mobilePhone = getUsersMobilePhone(user);
 				} catch (NoPhoneFoundException e) {
 					e.printStackTrace();
 				}
 				if (workPhone != null) {
 					memberInfo.setWorkPhone(workPhone.getNumber());
 				}
-				Phone homePhone = null;
-				try {
-					homePhone = getUsersHomePhone(user);
-				} catch (NoPhoneFoundException e) {
-					e.printStackTrace();
-				}
 				if (homePhone != null) {
 					memberInfo.setHomePhone(homePhone.getNumber());
-				}
-				Phone mobilePhone = null;
-				try {
-					mobilePhone = getUsersMobilePhone(user);
-				} catch (NoPhoneFoundException e) {
-					e.printStackTrace();
 				}
 				if (mobilePhone != null) {
 					memberInfo.setMobilePhone(mobilePhone.getNumber());
@@ -3485,6 +3481,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		bean.setMembersInfo(membersInfo);
+		System.out.println("Finished parsing group: " + group.getName());
 	}
 	
 	private Image getUserImage(User user) {
