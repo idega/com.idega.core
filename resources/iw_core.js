@@ -1297,3 +1297,18 @@ function existsElementInArray(array, element) {
 	}
 	return false;
 }
+
+//	Requires MooTools!
+function initToolTipForElement(element) {
+	var tip = new Tips(element, {
+		initialize:function(){
+			this.fx = new Fx.Style(this.toolTip, 'opacity', {duration: 500, wait: false}).set(0);
+		},
+		onShow: function(toolTip) {
+			this.fx.start(0.75);
+		},
+		onHide: function(toolTip) {
+			this.fx.start(0);
+		}
+	});
+}
