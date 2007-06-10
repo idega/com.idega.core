@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.214 2007/06/08 16:02:27 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.215 2007/06/10 23:59:19 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -105,10 +105,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/08 16:02:27 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/10 23:59:19 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.214 $
+ * @version $Revision: 1.215 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3405,7 +3405,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		
-		System.out.println("Returning info about groups members: " + groupsMembers.size());
 		return groupsMembers;
 	}
 	
@@ -3420,11 +3419,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		
 		Collection users = getUsersInGroup(group);
-		System.out.println("Users: " + users + " in: " + group.getName());
 		if (users == null) {
 			return;
 		}
-		System.out.println("Totaly users in group ("+group.getName()+"): " + users.size());
 		
 		Object o = null;
 		User user = null;
@@ -3432,7 +3429,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		List<GroupMemberDataBean> membersInfo = new ArrayList<GroupMemberDataBean>();
 		for (Iterator it = users.iterator(); it.hasNext(); ) {
 			o = it.next();
-			System.out.println("User ("+group.getName()+"): " + o);
 			if (o instanceof User) {
 				user = (User) o;
 				
@@ -3481,7 +3477,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		bean.setMembersInfo(membersInfo);
-		System.out.println("Finished parsing group: " + group.getName());
 	}
 	
 	private Image getUserImage(User user) {

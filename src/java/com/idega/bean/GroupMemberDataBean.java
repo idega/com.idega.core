@@ -2,6 +2,8 @@ package com.idega.bean;
 
 import java.util.List;
 
+import com.idega.util.IWTimestamp;
+
 public class GroupMemberDataBean {
 	
 	private String name = null;
@@ -47,7 +49,12 @@ public class GroupMemberDataBean {
 	}
 
 	public void setBeganWork(String beganWork) {
-		this.beganWork = beganWork;
+		if (beganWork == null) {
+			this.beganWork = beganWork;
+		}
+		else {
+			this.beganWork = new IWTimestamp(beganWork).getDateString("dd-MM-yyyy");
+		}
 	}
 
 	public String getEducation() {

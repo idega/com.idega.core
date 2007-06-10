@@ -2,6 +2,8 @@ package com.idega.bean;
 
 import java.util.List;
 
+import com.idega.util.CoreConstants;
+
 public class PropertiesBean implements AbstractProperties {
 	
 	private String server = null;
@@ -9,8 +11,10 @@ public class PropertiesBean implements AbstractProperties {
 	private String password = null;
 	
 	private List<String> uniqueIds = null;
+	private List<String> localizedText = null;
 	
 	private boolean isRemoteMode = false;
+	private boolean showLabels = false;
 
 	public String getLogin() {
 		return login;
@@ -33,6 +37,13 @@ public class PropertiesBean implements AbstractProperties {
 	}
 
 	public void setServer(String server) {
+		if (server == null) {
+			this.server = null;
+			return;
+		}
+		if (server.endsWith(CoreConstants.SLASH)) {
+			server = server.substring(0, server.lastIndexOf(CoreConstants.SLASH));
+		}
 		this.server = server;
 	}
 
@@ -52,4 +63,19 @@ public class PropertiesBean implements AbstractProperties {
 		this.isRemoteMode = isRemoteMode;
 	}
 
+	public List<String> getLocalizedText() {
+		return localizedText;
+	}
+
+	public void setLocalizedText(List<String> localizedText) {
+		this.localizedText = localizedText;
+	}
+	
+	public boolean isShowLabels() {
+		return showLabels;
+	}
+	
+	public void setShowLabels(boolean showLabels) {
+		this.showLabels = showLabels;
+	}
 }
