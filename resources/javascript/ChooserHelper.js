@@ -4,7 +4,7 @@ var ADVANCED_PROPERTIES = new Array();
 var CHOOSER_VALUE_VIEWER_ID = null;
 
 /** Logic for Choosers/Advanced handlers starts **/
-function saveSelectedValues(message, instanceId, method) {
+function saveSelectedValues(message, instanceId, method, needsReload, reloadMessage, actionAfter) {
 	showLoadingMessage(message);
 	var values = new Array();
 	var advancedProperty = null;
@@ -15,18 +15,18 @@ function saveSelectedValues(message, instanceId, method) {
 
 	ChooserService.updateHandler(values, {
 		callback: function(result) {
-			saveSelectedValuesCallback(result, message, instanceId, method);
+			saveSelectedValuesCallback(result, message, instanceId, method, needsReload, reloadMessage, actionAfter);
 		}
 	});
 }
 
-function saveSelectedValuesCallback(result, message, instanceId, method) {
+function saveSelectedValuesCallback(result, message, instanceId, method, needsReload, reloadMessage, actionAfter) {
 	closeLoadingMessage();
 	if (result && instanceId != null && method != null) {
 		showLoadingMessage(message);
 		ChooserService.setModuleProperty(instanceId, method, ADVANCED_PROPERTIES, {
 			callback: function(savedSuccessfully) {
-				setModulePropertyCallback(savedSuccessfully, instanceId, "true");	//	Temporary
+				setModulePropertyCallback(savedSuccessfully, instanceId, needsReload, reloadMessage, actionAfter);
 			}
 		});
 	}
@@ -36,11 +36,33 @@ function saveSelectedValuesCallback(result, message, instanceId, method) {
 	}
 }
 
-function setModulePropertyCallback(result, instanceId, needsReload) {
-	if (result) {
-		ADVANCED_PROPERTIES = new Array();
+function setModulePropertyCallback(result, instanceId, needsReload, reloadMessage, actionAfter) {
+	closeLoadingMessage();
+	if (!result) {
+		return;
 	}
-	reloadPage();
+	ADVANCED_PROPERTIES = new Array();
+	if (needsReload) {
+		var activePropertyBoxId = null;
+		try {
+			activePropertyBoxId = getActivePropertyBoxId();
+			if (activePropertyBoxId != null) {
+				var box = document.getElementById(activePropertyBoxId);
+				if (box != null) {
+					box.className = 'modulePropertyIsSet';
+				}
+			}
+		} catch(ex) {}
+		var actionOnClose = function() {
+			showLoadingMessage(reloadMessage);
+			reloadPage();
+		};
+		addActionForMoodalBoxOnCloseEvent(actionOnClose);
+		return;
+	}
+	if (actionAfter != null) {
+		actionAfter();
+	}
 }
 
 function addChooserObject(chooserObject, objectClass, hiddenInputAttribute, chooserValueViewerId, message) {
@@ -55,7 +77,7 @@ function addChooserObject(chooserObject, objectClass, hiddenInputAttribute, choo
 	}
 	
 	var chooser = null;
-	var choosers = getNeededElementsFromListById(container.childNodes, "chooser_presentation_object");
+	var choosers = getNeededElementsFromListById(container.childNodes, 'chooser_presentation_object');
 	if (choosers != null) {
 		if (choosers.length > 0) {
 			chooser = choosers[0];
@@ -71,14 +93,14 @@ function addChooserObject(chooserObject, objectClass, hiddenInputAttribute, choo
 	}
 	else {
 		if (chooser.style.display == null) {
-			chooser.style.display = "block";
+			chooser.style.display = 'block';
 		}
 		else {
-			if (chooser.style.display == "block") {
-				chooser.style.display = "none";
+			if (chooser.style.display == 'block') {
+				chooser.style.display = 'none';
 			}
 			else {
-				chooser.style.display = "block";
+				chooser.style.display = 'block';
 			}
 		}
 	}
@@ -117,7 +139,7 @@ function chooseObjectWithHidden(element, attributeId, attributeValue, hiddenName
 	if (value == null) {
 		return;
 	}
-	var forms = document.getElementsByTagName("form");
+	var forms = document.getElementsByTagName('form');
 	if (forms == null) {
 		return;
 	}
@@ -132,13 +154,13 @@ function chooseObjectWithHidden(element, attributeId, attributeValue, hiddenName
 	
 	var hidden = document.getElementById(hiddenName);
 	if (hidden == null) {
-		hidden = document.createElement("input");
-		hidden.setAttribute("type", "hidden");
-		hidden.setAttribute("id", hiddenName);
-		hidden.setAttribute("name", hiddenName);
+		hidden = document.createElement('input');
+		hidden.setAttribute('type', 'hidden');
+		hidden.setAttribute('id', hiddenName);
+		hidden.setAttribute('name', hiddenName);
 		form.appendChild(hidden);
 	}
-	hidden.setAttribute("value", value);
+	hidden.setAttribute('value', value);
 }
 
 function setChooserView(element, attributeValue) {
@@ -154,7 +176,7 @@ function setChooserView(element, attributeValue) {
 		value = attributes.getNamedItem(attributeValue).value;
 	}
 	if (value == null) {
-		alert("Error: no value found to set!");
+		alert('Error: no value found to set!');
 		return;
 	}
 	

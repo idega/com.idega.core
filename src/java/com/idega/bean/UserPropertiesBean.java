@@ -18,6 +18,12 @@ public class UserPropertiesBean extends PropertiesBean {
 	private String imageWidth = null;
 	private String imageHeight = null;
 	
+	public UserPropertiesBean() {}
+	
+	public UserPropertiesBean(PropertiesBean bean) {
+		super(bean);
+	}
+	
 	public boolean isShowAge() {
 		return showAge;
 	}

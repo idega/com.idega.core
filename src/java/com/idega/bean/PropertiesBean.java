@@ -15,6 +15,18 @@ public class PropertiesBean implements AbstractProperties {
 	
 	private boolean isRemoteMode = false;
 	private boolean showLabels = false;
+	
+	public PropertiesBean() {}
+	
+	public PropertiesBean(PropertiesBean bean) {
+		setServer(bean.getServer());
+		setLogin(bean.getLogin());
+		setPassword(bean.getPassword());
+		setUniqueIds(bean.getUniqueIds());
+		setLocalizedText(bean.getLocalizedText());
+		setRemoteMode(bean.isRemoteMode());
+		setShowLabels(bean.isShowLabels());
+	}
 
 	public String getLogin() {
 		return login;

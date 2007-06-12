@@ -13,6 +13,12 @@ public class GroupPropertiesBean extends PropertiesBean {
 	private boolean showAddress = false;
 	private boolean showEmptyFields = true;
 	
+	public GroupPropertiesBean() {}
+	
+	public GroupPropertiesBean(PropertiesBean bean) {
+		super(bean);
+	}
+	
 	public boolean isShowAddress() {
 		return showAddress;
 	}

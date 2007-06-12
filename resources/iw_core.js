@@ -471,7 +471,10 @@ function tableruler()
 	
 function closeLoadingMessage() {
 	var busyMessage = document.getElementById("busybuddy");
-	if (busyMessage) {
+	if (busyMessage == null) {
+		return;
+	}
+	else {
 		var parentElement = busyMessage.parentNode;
 		if (parentElement == null) {
 			if (busyMessage.style) {
@@ -485,10 +488,28 @@ function closeLoadingMessage() {
 		}
 		else {
 			parentElement.removeChild(busyMessage);
-		}		
+			closeLoadingMessage();	//	We want to close all layers
+		}
 	}
 }
 
+function closeAllLoadingMessages() {
+	var bodyArray = document.getElementsByTagName('body');
+	var bodyTag = bodyArray[0];
+	var layers = getElementsByClassName(bodyTag, '*', 'LoadLayer');
+	if (layers == null) {
+		return;
+	}
+	var parentNode = null;
+	var layer = null;
+	for (var i = 0; i < layers.length; i++) {
+		layer = layers[i];
+		parentNode = layer.parentNode;
+		if (parentNode != null) {
+			parentNode.removeChild(layer);
+		}
+	}
+}
 
 //setLinkToBold method. moved here to fix bug in UserApplication
 
@@ -1161,8 +1182,14 @@ function highlightElement(element, effectTime, endColor) {
 		return;
 	}
 	// Highlight
-	var highlight = new Fx.Style(element, 'background-color', {duration: effectTime});
-	highlight.start("#ffff99", endColor);
+	var fx = new Fx.Styles(element, {duration: effectTime, wait: false, transition: Fx.Transitions.Quad.easeOut});
+	fx.start({'background-color': ['#fff36f', endColor]});
+	
+	//	Setting background color back
+	var setStyleBack = function() {
+		element.style.backgroundColor = '';
+	}
+	var id = window.setTimeout(setStyleBack, effectTime);
 }
 
 function getElementsByClassName(oElm, strTagName, strClassName) {
@@ -1217,6 +1244,19 @@ function reloadPage() {
 	var parts = oldLocation.split("#");
 	var date = new Date();
 	window.location.href = parts[0]  + "&reloading=" + date.getTime();	// changing href to be sure the page will be reloaded
+}
+
+function addActionForMoodalBoxOnCloseEvent(actionOnClose) {
+	try {
+		if (MOOdalBox) {
+			MOOdalBox.addEventToCloseAction(actionOnClose);
+		}
+		else {
+			reloadPage();
+		}
+	} catch(ex) {
+		reloadPage();
+	}
 }
 
 // This code was written by Tyler Akins and has been placed in the

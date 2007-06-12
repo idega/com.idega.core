@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.37 2007/05/24 11:31:04 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.38 2007/06/12 17:32:03 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -61,11 +61,13 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	private boolean usePublicWindowOpener = false;
 	
 	private boolean addSaveButton = true;
-	private String hiddenInputAttribute = null;
-	
 	private boolean useOldLogic = true;
+	private boolean needsReload = true;
+	
+	private String hiddenInputAttribute = null;
 	private String instanceId = null;
 	private String method = null;
+	private String actionAfterPropertySaved = null;
 
 	/**
 	 * @param aDisabled -
@@ -88,6 +90,12 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	
 	public AbstractChooser(boolean useOldLogic) {
 		this.useOldLogic = useOldLogic;
+	}
+	
+	public AbstractChooser(boolean needsReload, boolean useOldLogic, String actionAfterPropertySaved) {
+		this(useOldLogic);
+		this.needsReload = needsReload;
+		this.actionAfterPropertySaved = actionAfterPropertySaved;
 	}
 	
 	/**
@@ -193,9 +201,16 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	private GenericButton getSaveButton() {
 		GenericButton save = new GenericButton("save", _iwrb.getLocalizedString("save", "Save"));
 		
-		StringBuffer action = new StringBuffer("saveSelectedValues('");
-		action.append(getResourceBundle().getLocalizedString("saving", "Saving..."));
-		action.append("', ");
+		StringBuffer preAction = null;
+		if (actionAfterPropertySaved != null) {
+			preAction = new StringBuffer("var actionAfter = function() {").append(actionAfterPropertySaved).append("}; ");
+		}
+		
+		StringBuffer action = new StringBuffer();
+		if (preAction != null) {
+			action.append(preAction.toString());
+		}
+		action.append("saveSelectedValues('").append(getResourceBundle().getLocalizedString("saving", "Saving...")).append("', ");
 		if (getInstanceId() == null) {
 			action.append("null, ");
 		}
@@ -207,6 +222,14 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		}
 		else {
 			action.append("'").append(getMethod()).append("'");
+		}
+		action.append(", ").append(needsReload).append(", '").append(getResourceBundle().getLocalizedString("reload", "Reloading..."));
+		action.append("', ");
+		if (preAction == null) {
+			action.append("null");
+		}
+		else {
+			action.append("actionAfter");
 		}
 		action.append(");");
 		
