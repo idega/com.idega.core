@@ -59,6 +59,8 @@ public Shockwave(String url,int width,int height){
 
 }
 
+//Alex fix
+public void clearParams(){};
 
 
 }
