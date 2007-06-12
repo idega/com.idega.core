@@ -5,6 +5,14 @@
   </properties>
   <body>
 
+		<release version="3.1.49" date="2007-06-12">
+			<action dev="laddi" type="update">
+				Changed Group so that it is stored on creation.
+				Added count method to User to find number of users with given birth year range and Commune.
+				Added find method to PostalCode to find codes by Commune.
+			</action>
+		</release>
+		
 		<release version="3.1.48" date="2007-05-30">
 			<action dev="eiki" type="update">
 				Removed inactive clone method from Table that was rendered unusable with JSF. "Fixed" Scrolltable to hide the extra header in the table.

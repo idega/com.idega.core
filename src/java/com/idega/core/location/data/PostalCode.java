@@ -1,26 +1,10 @@
-/*
- * $Id: PostalCode.java,v 1.6 2005/06/02 16:14:28 gimmi Exp $
- * Created on 2.6.2005
- *
- * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
- */
 package com.idega.core.location.data;
 
+
 import java.util.Collection;
-import com.idega.data.IDOEntity;
 import com.idega.data.IDOStoreException;
+import com.idega.data.IDOEntity;
 
-
-/**
- * 
- *  Last modified: $Date: 2005/06/02 16:14:28 $ by $Author: gimmi $
- * 
- * @author <a href="mailto:gimmi@idega.com">gimmi</a>
- * @version $Revision: 1.6 $
- */
 public interface PostalCode extends IDOEntity {
 
 	/**

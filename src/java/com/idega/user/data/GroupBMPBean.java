@@ -49,8 +49,7 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 
 /**
- * Title: IW Core Description: Copyright: Copyright (c) 2001-2003 idega software
- * Company: idega.is
+ * Title: IW Core Description: Copyright: Copyright (c) 2001-2003 idega software Company: idega.is
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
  * @version 1.0
@@ -84,6 +83,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	static final String META_DATA_HOME_PAGE = "homepage";
 
 	private static List userGroupTypeSingletonList;
+
+	protected boolean doInsertInCreate() {
+		return true;
+	}
 
 	public final void initializeAttributes() {
 		addAttribute(getIDColumnName());
@@ -268,8 +271,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	/**
-	 * This only returns true if the group is of the type alias and the id is
-	 * bigger than 0
+	 * This only returns true if the group is of the type alias and the id is bigger than 0
 	 */
 	public boolean isAlias() {
 		return ("alias".equals(getGroupType()) && (getAliasID() > 0));
@@ -397,8 +399,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	/**
-	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004 Database
-	 * access is minimized by passing a Map of cached groupParents and Map of
+	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004 Database access is minimized by passing a Map of cached groupParents and Map of
 	 * cached groups to the method
 	 */
 	public List getParentGroups(Map cachedParents, Map cachedGroups) throws EJBException {
@@ -492,8 +493,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	/**
-	 * Returns the User instance representing the Group if the Group is of type
-	 * UserGroupRepresentative
+	 * Returns the User instance representing the Group if the Group is of type UserGroupRepresentative
 	 * 
 	 * @throws IDOLookupException
 	 * @throws FinderException
@@ -504,8 +504,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	/**
-	 * Finds all the GroupRelations that point to groups that "this" group is a
-	 * direct parent for
+	 * Finds all the GroupRelations that point to groups that "this" group is a direct parent for
 	 * 
 	 * @return Collection of GroupRelations
 	 */
@@ -999,10 +998,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	/**
-	 * Returns collection of Childs that match the type of 'groupTypeProxy' and
-	 * according to groupTypeProxy.getSelectQueryConstrains(). The objects in the
-	 * collection will be of the same class as 'groupTypeProxy' i.e. if
-	 * groupTypeProxy implements User then it will be collection of User elements
+	 * Returns collection of Childs that match the type of 'groupTypeProxy' and according to groupTypeProxy.getSelectQueryConstrains(). The objects in
+	 * the collection will be of the same class as 'groupTypeProxy' i.e. if groupTypeProxy implements User then it will be collection of User elements
 	 */
 	public Collection getChildGroups(Group groupTypeProxy) throws EJBException {
 
@@ -1029,8 +1026,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	/**
-	 * Adds the user by id under this group and changes his deleted status to
-	 * false if needed. Also sets his primary group to this group if it is not set
+	 * Adds the user by id under this group and changes his deleted status to false if needed. Also sets his primary group to this group if it is not
+	 * set
 	 * 
 	 * @see com.idega.user.data.Group#addGroup(User)
 	 */
@@ -1168,8 +1165,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	/**
-	 * @deprecated use removeRelation(int relatedGroupId, String relationType,
-	 *             User performer)
+	 * @deprecated use removeRelation(int relatedGroupId, String relationType, User performer)
 	 */
 	public void removeRelation(Group relatedGroup, String relationType) throws RemoveException {
 		int groupId = this.getGroupIDFromGroup(relatedGroup);
@@ -1177,16 +1173,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	/**
-	 * @deprecated use removeRelation(int relatedGroupId, String relationType,
-	 *             User performer)
+	 * @deprecated use removeRelation(int relatedGroupId, String relationType, User performer)
 	 */
 	public void removeRelation(int relatedGroupId, String relationType) throws RemoveException {
 		removeRelation(relatedGroupId, relationType, null);
 	}
 
 	/**
-	 * @deprecated use removeRelation(int relatedGroupId, String relationType,
-	 *             User performer)
+	 * @deprecated use removeRelation(int relatedGroupId, String relationType, User performer)
 	 */
 	public void removeRelation(Group relatedGroup, String relationType, User performer) throws RemoveException {
 		int groupId = this.getGroupIDFromGroup(relatedGroup);
@@ -1216,16 +1210,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	/**
-	 * Returns a collection of Group objects that are related by the relation type
-	 * relationType with this Group
+	 * Returns a collection of Group objects that are related by the relation type relationType with this Group
 	 */
 	public Collection getRelatedBy(GroupRelationType relationType) throws FinderException {
 		return getRelatedBy(relationType.getType());
 	}
 
 	/**
-	 * Returns a collection of Group objects that are related by the relation type
-	 * relationType with this Group
+	 * Returns a collection of Group objects that are related by the relation type relationType with this Group
 	 */
 	public Collection getRelatedBy(String relationType) throws FinderException {
 		GroupRelation rel = null;
@@ -1242,8 +1234,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	/**
-	 * Returns a collection of Group objects that are reverse related by the
-	 * relation type relationType with this Group
+	 * Returns a collection of Group objects that are reverse related by the relation type relationType with this Group
 	 */
 	public Collection getReverseRelatedBy(String relationType) throws FinderException {
 		GroupRelation rel = null;
@@ -1369,12 +1360,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	//
 	// }
 	/**
-	 * This finder returns a collection of all groups of the grouptype(s) that are
-	 * defined in the groupTypes parameter It also returns the groups that are
-	 * defined as topnodes in the ic_domain_group_relation table It excludes
-	 * groups that have been deleted and don't have any active relations to parent
-	 * groups If returnSpecifiedGroupTypes is set as false then it excludes the
-	 * grouptype(s) defined in the groupTypes paremeter excluding user
+	 * This finder returns a collection of all groups of the grouptype(s) that are defined in the groupTypes parameter It also returns the groups that
+	 * are defined as topnodes in the ic_domain_group_relation table It excludes groups that have been deleted and don't have any active relations to
+	 * parent groups If returnSpecifiedGroupTypes is set as false then it excludes the grouptype(s) defined in the groupTypes paremeter excluding user
 	 * representative groups
 	 * 
 	 * @return all groups of certain type(s) that have not been deleted
@@ -1457,13 +1445,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 */
 	public static List getAllGroupsOld(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws SQLException {
 		/*
-		 * String typeList = ""; if (groupTypes != null && groupTypes.length > 0){
-		 * for(int g = 0; g < groupTypes.length; g++){ if(g>0){ typeList += ", "; }
-		 * typeList += "'"+groupTypes[g]+"'"; } Group gr =
-		 * (Group)com.idega.user.data.GroupBMPBean.getStaticInstance(); return
+		 * String typeList = ""; if (groupTypes != null && groupTypes.length > 0){ for(int g = 0; g < groupTypes.length; g++){ if(g>0){ typeList += ", "; }
+		 * typeList += "'"+groupTypes[g]+"'"; } Group gr = (Group)com.idega.user.data.GroupBMPBean.getStaticInstance(); return
 		 * EntityFinder.findAll(gr,"select * from "+gr.getEntityName()+" where
-		 * "+com.idega.user.data.GroupBMPBean.getGroupTypeColumnName()+((returnSepcifiedGroupTypes)?"
-		 * in (":" not in (")+typeList+") order by
+		 * "+com.idega.user.data.GroupBMPBean.getGroupTypeColumnName()+((returnSepcifiedGroupTypes)?" in (":" not in (")+typeList+") order by
 		 * "+com.idega.user.data.GroupBMPBean.getNameColumnName()); } return
 		 * EntityFinder.findAllOrdered(com.idega.user.data.GroupBMPBean.getStaticInstance(),com.idega.user.data.GroupBMPBean.getNameColumnName());
 		 */
@@ -1560,8 +1545,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		Collection toReturn = new ArrayList(0);
 		String sGroupList = "";
 		/*
-		 * if (groupIDs != null && groupIDs.length > 0){ for(int g = 0; g <
-		 * groupIDs.length; g++){ if(g>0){ sGroupList += ", "; } sGroupList +=
+		 * if (groupIDs != null && groupIDs.length > 0){ for(int g = 0; g < groupIDs.length; g++){ if(g>0){ sGroupList += ", "; } sGroupList +=
 		 * groupIDs[g]; } }
 		 */
 		sGroupList = IDOUtil.getInstance().convertArrayToCommaseparatedString(groupIDs);
@@ -1688,8 +1672,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	public Collection getChildren() {
 		/**
-		 * @todo: Change implementation this first part may not be needed.
-		 *        (Eiki,gummi)
+		 * @todo: Change implementation this first part may not be needed. (Eiki,gummi)
 		 * 
 		 */
 		if (this.getID() == GroupBMPBean.GROUP_ID_USERS) {
@@ -1959,8 +1942,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return null;
 	}
 
-	public String getId(){
+	public String getId() {
 		return getPrimaryKey().toString();
 	}
-	
+
 } // Class Group
