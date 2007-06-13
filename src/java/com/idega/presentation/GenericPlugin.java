@@ -61,6 +61,9 @@ public class GenericPlugin extends PresentationObject
 		}
 		this.params.put(name, value);
 	}
+	public void clearParams() {
+		this.params.clear();
+	}
 	public void setParam(String name, boolean value)
 	{
 		setParam(name, String.valueOf(value));
@@ -160,11 +163,17 @@ public class GenericPlugin extends PresentationObject
 			if (getMarkupLanguage().equals("HTML"))
 			{
 				StringBuffer buffer = new StringBuffer();
-				buffer.append("<object classid=\"clsid:");
-				buffer.append(this.classId);
-				buffer.append("\" codebase=\"");
-				buffer.append(this.codeBase);
-				buffer.append("\" ");
+				buffer.append("<object ");
+				if(this.classId != null && !this.classId.equals("")) {
+					buffer.append("classid=\"clsid:");
+					buffer.append(this.classId);
+					buffer.append("\" ");
+				}
+				if(this.codeBase != null && !this.codeBase.equals("")) {
+					buffer.append("codebase=\"");
+					buffer.append(this.codeBase);
+					buffer.append("\" ");
+				}
 				if (getHeight() != null) {
 					buffer.append(getHeightString());
 				}
@@ -173,9 +182,12 @@ public class GenericPlugin extends PresentationObject
 				}
 				buffer.append(">\n");
 				buffer.append(getParams());
-				buffer.append("<embed pluginspage=\"");
-				buffer.append(this.pluginspace);
-				buffer.append("\"");
+				buffer.append("<embed ");
+				if(this.pluginspace != null && !this.pluginspace.equals("")) {
+					buffer.append("pluginspage=\"");
+					buffer.append(this.pluginspace);
+					buffer.append("\" ");
+				}
 				buffer.append(getMarkupAttributesString());
 				buffer.append(">\n</embed>\n</object>");
 				print(buffer.toString());
