@@ -42,8 +42,18 @@ public class CoreUtil {
 		IWBundle iwb = getCoreBundle();
 		
 		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
+		
 		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
 		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/interface/ChooserService.js");
+		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+		
+		IWBundle userBundle = iwc.getIWMainApplication().getBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER);
+		if (userBundle != null) {
+			adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, userBundle.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
+			adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, userBundle.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
+			adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, userBundle.getVirtualPathWithFileNameString("javascript/groupTree.js"));
+			adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, userBundle.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js"));
+		}
 	}
 	
 	public static String getEncodedValue(String originalValue) {
