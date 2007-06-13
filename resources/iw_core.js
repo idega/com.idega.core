@@ -1352,3 +1352,16 @@ function initToolTipForElement(element) {
 		}
 	});
 }
+
+String.prototype.wordWrap = function(m, b, c){
+    var i, j, s, r = this.split("\n");
+    if(m > 0) for(i in r){
+        for(s = r[i], r[i] = ""; s.length > m;
+            j = c ? m : (j = s.substr(0, m).match(/\S*$/)).input.length - j[0].length
+            || m,
+            r[i] += s.substr(0, j) + ((s = s.substr(j)).length ? b : "")
+        );
+        r[i] += s;
+    }
+    return r.join("\n");
+};
