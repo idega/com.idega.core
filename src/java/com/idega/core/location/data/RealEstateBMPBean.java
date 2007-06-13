@@ -1,5 +1,5 @@
 /*
- * $Id: RealEstateBMPBean.java,v 1.1.2.2 2007/03/30 07:33:11 laddi Exp $ Created on Mar 26, 2007
+ * $Id: RealEstateBMPBean.java,v 1.1.2.3 2007/06/13 10:52:44 thomas Exp $ Created on Mar 26, 2007
  * 
  * Copyright (C) 2007 Idega Software hf. All Rights Reserved.
  * 
@@ -15,6 +15,9 @@ public class RealEstateBMPBean extends com.idega.data.GenericEntity implements R
 
 	// length of description field
 	private static final int DESCRIPTION = 255;
+	
+	// length of fields that are identifiers (equal to size of primary keys)
+	private static final int IDENTIFIER = 22;
 
 	// long input fields
 	private static final int LONG_INPUT_FIELD = 255;
@@ -22,6 +25,8 @@ public class RealEstateBMPBean extends com.idega.data.GenericEntity implements R
 	private static final String COLUMN_REAL_ESTATE_NUMBER = "REAl_ESTATE_NUMBER";
 
 	private static final String COLUMN_REAL_ESTATE_CODE = "REAL_ESTATE_CODE";
+	
+	private static final String COLUMN_LAND_REGISTER_MAP_NUMBER = "LAND_REGISTER";
 
 	private static final String COLUMN_NAME = "NAME";
 
@@ -55,6 +60,8 @@ public class RealEstateBMPBean extends com.idega.data.GenericEntity implements R
 		addAttribute(COLUMN_USE, "use of the real estate", String.class, DESCRIPTION);
 		addAttribute(COLUMN_COMMENT, "some explanation", String.class, DESCRIPTION);
 		addAttribute(COLUMN_STREET_NUMBER, "street number", String.class, LONG_INPUT_FIELD);
+		// pseudo pointer to land register map number 
+		addAttribute(COLUMN_LAND_REGISTER_MAP_NUMBER, "land register map number", String.class, IDENTIFIER);
 		// pointers to other entities
 		addManyToOneRelationship(COLUMN_STREET_ID, Street.class);
 	}
@@ -99,6 +106,14 @@ public class RealEstateBMPBean extends com.idega.data.GenericEntity implements R
 		return (String) getColumnValue(COLUMN_COMMENT);
 	}
 
+	public void setLandRegisterMapNumber(String landRegisterMapNumber) {
+		setColumn(COLUMN_LAND_REGISTER_MAP_NUMBER, landRegisterMapNumber);
+	}
+
+	public String getLandRegisterMapNumber() {
+		return (String) getColumnValue(COLUMN_LAND_REGISTER_MAP_NUMBER);
+	}
+
 	public void setStreetNumber(String streetNumber) {
 		setColumn(COLUMN_STREET_NUMBER, streetNumber);
 	}
@@ -106,7 +121,7 @@ public class RealEstateBMPBean extends com.idega.data.GenericEntity implements R
 	public String getStreetNumber() {
 		return (String) getColumnValue(COLUMN_STREET_NUMBER);
 	}
-
+	
 	public void setStreet(Street street) {
 		setColumn(COLUMN_STREET_ID, street);
 	}
