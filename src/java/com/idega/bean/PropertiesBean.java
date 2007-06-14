@@ -14,7 +14,7 @@ public class PropertiesBean implements AbstractProperties {
 	private List<String> localizedText = null;
 	
 	private boolean isRemoteMode = false;
-	private boolean showLabels = false;
+	private boolean showLabels = true;
 	
 	public PropertiesBean() {}
 	

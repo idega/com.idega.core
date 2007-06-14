@@ -3,14 +3,14 @@ package com.idega.bean;
 public class GroupPropertiesBean extends PropertiesBean {
 	
 	private boolean showName = true;
-	private boolean showHomePage = false;
-	private boolean showDescription = false;
-	private boolean showExtraInfo = false;
-	private boolean showShortName = false;
-	private boolean showPhone = false;
-	private boolean showFax = false;
-	private boolean showEmails = false;
-	private boolean showAddress = false;
+	private boolean showHomePage = true;
+	private boolean showDescription = true;
+	private boolean showExtraInfo = true;
+	private boolean showShortName = true;
+	private boolean showPhone = true;
+	private boolean showFax = true;
+	private boolean showEmails = true;
+	private boolean showAddress = true;
 	private boolean showEmptyFields = true;
 	
 	public GroupPropertiesBean() {}
