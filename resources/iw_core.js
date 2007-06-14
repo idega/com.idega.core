@@ -1187,7 +1187,7 @@ function highlightElement(element, effectTime, endColor) {
 	
 	//	Setting background color back
 	var setStyleBack = function() {
-		element.style.backgroundColor = '';
+		element.removeAttribute('style');
 	}
 	var id = window.setTimeout(setStyleBack, effectTime);
 }
