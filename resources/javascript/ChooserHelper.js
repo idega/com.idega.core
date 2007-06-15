@@ -1,32 +1,35 @@
-//	Constants
-var ADVANCED_PROPERTIES = new Array();
+if(ChooserHelper == null) var ChooserHelper = function() {};
 
-var CHOOSER_VALUE_VIEWER_ID = null;
+ChooserHelper.prototype.ADVANCED_PROPERTIES = new Array();
+ChooserHelper.prototype.CHOOSER_VALUE_VIEWER_ID = null;
 
 /** Logic for Choosers/Advanced handlers starts **/
-function saveSelectedValues(message, instanceId, method, needsReload, reloadMessage, actionAfter) {
+ChooserHelper.prototype.saveSelectedValues = function(message, instanceId, method, needsReload, reloadMessage, actionAfter) {
 	showLoadingMessage(message);
 	var values = new Array();
 	var advancedProperty = null;
-	for (var i = 0; i < ADVANCED_PROPERTIES.length; i++) {
-		advancedProperty = ADVANCED_PROPERTIES[i];
+	for (var i = 0; i < this.ADVANCED_PROPERTIES.length; i++) {
+		advancedProperty = this.ADVANCED_PROPERTIES[i];
 		values.push(advancedProperty.value);
 	}
-
+	var callback_function = this.saveSelectedValuesCallback;
+	var chooser_helper = this;
+	
 	ChooserService.updateHandler(values, {
 		callback: function(result) {
-			saveSelectedValuesCallback(result, message, instanceId, method, needsReload, reloadMessage, actionAfter);
+			callback_function(result, message, instanceId, method, needsReload, reloadMessage, actionAfter, chooser_helper);
 		}
 	});
 }
 
-function saveSelectedValuesCallback(result, message, instanceId, method, needsReload, reloadMessage, actionAfter) {
+ChooserHelper.prototype.saveSelectedValuesCallback = function(result, message, instanceId, method, needsReload, reloadMessage, actionAfter, chooser_helper) {
 	closeLoadingMessage();
 	if (result && instanceId != null && method != null) {
 		showLoadingMessage(message);
-		ChooserService.setModuleProperty(instanceId, method, ADVANCED_PROPERTIES, {
+		
+		ChooserService.setModuleProperty(instanceId, method, chooser_helper.ADVANCED_PROPERTIES, {
 			callback: function(savedSuccessfully) {
-				setModulePropertyCallback(savedSuccessfully, instanceId, needsReload, reloadMessage, actionAfter);
+				chooser_helper.setModulePropertyCallback(savedSuccessfully, instanceId, needsReload, reloadMessage, actionAfter);
 			}
 		});
 	}
@@ -36,12 +39,11 @@ function saveSelectedValuesCallback(result, message, instanceId, method, needsRe
 	}
 }
 
-function setModulePropertyCallback(result, instanceId, needsReload, reloadMessage, actionAfter) {
+ChooserHelper.prototype.setModulePropertyCallback = function(result, instanceId, needsReload, reloadMessage, actionAfter) {
 	closeLoadingMessage();
 	if (!result) {
 		return;
 	}
-	ADVANCED_PROPERTIES = new Array();
 	if (needsReload) {
 		var activePropertyBoxId = null;
 		try {
@@ -65,14 +67,14 @@ function setModulePropertyCallback(result, instanceId, needsReload, reloadMessag
 	}
 }
 
-function addChooserObject(chooserObject, objectClass, hiddenInputAttribute, chooserValueViewerId, message) {
+ChooserHelper.prototype.addChooserObject = function(chooserObject, objectClass, hiddenInputAttribute, chooserValueViewerId, message) {
 	var container = chooserObject.parentNode;
 	
-	CHOOSER_VALUE_VIEWER_ID = null;
+	this.CHOOSER_VALUE_VIEWER_ID = null;
 	var attributes = chooserObject.attributes;
 	if (attributes != null) {
 		if (attributes.getNamedItem(chooserValueViewerId) != null) {
-			CHOOSER_VALUE_VIEWER_ID = attributes.getNamedItem(chooserValueViewerId).value;
+			this.CHOOSER_VALUE_VIEWER_ID = attributes.getNamedItem(chooserValueViewerId).value;
 		}
 	}
 	
@@ -85,9 +87,10 @@ function addChooserObject(chooserObject, objectClass, hiddenInputAttribute, choo
 	}
 	if (chooser == null) {
 		showLoadingMessage(message);
+		var callback_function = this.getRenderedPresentationObjectCallback;
 		ChooserService.getRenderedPresentationObject(objectClass, hiddenInputAttribute, false, {
 			callback: function(renderedObject) {
-				getRenderedPresentationObjectCallback(renderedObject, container);
+				callback_function(renderedObject, container);
 			}
 		});
 	}
@@ -106,12 +109,12 @@ function addChooserObject(chooserObject, objectClass, hiddenInputAttribute, choo
 	}
 }
 
-function getRenderedPresentationObjectCallback(renderedObject, container) {
+ChooserHelper.prototype.getRenderedPresentationObjectCallback = function(renderedObject, container) {
 	closeLoadingMessage();
 	insertNodesToContainer(renderedObject, container);
 }
 
-function chooseObject(element, attributeId, attributeValue) {
+ChooserHelper.prototype.chooseObject = function(element, attributeId, attributeValue) {
 	if (element == null) {
 		return null;
 	}
@@ -129,13 +132,13 @@ function chooseObject(element, attributeId, attributeValue) {
 		return null;
 	}
 	
-	addAdvancedProperty(id, value);
+	this.addAdvancedProperty(id, value);
 	
 	return value;
 }
 
-function chooseObjectWithHidden(element, attributeId, attributeValue, hiddenName) {
-	var value = chooseObject(element, attributeId, attributeValue);
+ChooserHelper.prototype.chooseObjectWithHidden = function(element, attributeId, attributeValue, hiddenName) {
+	var value = this.chooseObject(element, attributeId, attributeValue);
 	if (value == null) {
 		return;
 	}
@@ -163,8 +166,8 @@ function chooseObjectWithHidden(element, attributeId, attributeValue, hiddenName
 	hidden.setAttribute('value', value);
 }
 
-function setChooserView(element, attributeValue) {
-	if (element == null || attributeValue == null || CHOOSER_VALUE_VIEWER_ID == null) {
+ChooserHelper.prototype.setChooserView = function(element, attributeValue) {
+	if (element == null || attributeValue == null || this.CHOOSER_VALUE_VIEWER_ID == null) {
 		return;
 	}
 	var attributes = element.attributes;
@@ -180,66 +183,66 @@ function setChooserView(element, attributeValue) {
 		return;
 	}
 	
-	var viewer = document.getElementById(CHOOSER_VALUE_VIEWER_ID);
+	var viewer = document.getElementById(this.CHOOSER_VALUE_VIEWER_ID);
 	if (viewer == null) {
 		return;
 	}
 	viewer.value = value;
 }
 
-function addAdvancedProperty(id, value) {
-	if (ADVANCED_PROPERTIES == null) {
-		ADVANCED_PROPERTIES = new Array();
+ChooserHelper.prototype.addAdvancedProperty = function(id, value) {
+	if (this.ADVANCED_PROPERTIES == null) {
+		this.ADVANCED_PROPERTIES = new Array();
 	}
-	if (existAdvancedProperty(id)) {
-		removeAdvancedProperty(id);	//	Removing old value
+	if (this.existAdvancedProperty(id)) {
+		this.removeAdvancedProperty(id);	//	Removing old value
 	}
-	ADVANCED_PROPERTIES.push(new AdvancedProperty(id, value));
+	this.ADVANCED_PROPERTIES.push(new ChooserHelperAdvancedProperty(id, value));
 }
 
-function removeAdvancedProperty(id) {
+ChooserHelper.prototype.removeAdvancedProperty = function(id) {
 	if (id == null) {
 		return;
 	}
-	if (ADVANCED_PROPERTIES == null) {
+	if (this.ADVANCED_PROPERTIES == null) {
 		return;
 	}
 	var needless = new Array();
-	for (var i = 0; i < ADVANCED_PROPERTIES.length; i++) {
-		if (ADVANCED_PROPERTIES[i].id == id) {
-			needless.push(ADVANCED_PROPERTIES[i]);
+	for (var i = 0; i < this.ADVANCED_PROPERTIES.length; i++) {
+		if (this.ADVANCED_PROPERTIES[i].id == id) {
+			needless.push(this.ADVANCED_PROPERTIES[i]);
 		}
 	}
 	for (var i = 0; i < needless.length; i++) {
-		removeElementFromArray(ADVANCED_PROPERTIES, needless[i]);
+		removeElementFromArray(this.ADVANCED_PROPERTIES, needless[i]);
 	}
 }
 
-function removeAllAdvancedProperties() {
-	ADVANCED_PROPERTIES = new Array();
+ChooserHelper.prototype.removeAllAdvancedProperties = function() {
+	this.ADVANCED_PROPERTIES = new Array();
 }
 
-function existAdvancedProperty(id) {
-	var property = getAdvancedProperty(id);
+ChooserHelper.prototype.existAdvancedProperty = function(id) {
+	var property = this.getAdvancedProperty(id);
 	if (property == null) {
 		return false;
 	}
 	return true;
 }
 
-function getAdvancedProperty(id) {
+ChooserHelper.prototype.getAdvancedProperty = function(id) {
 	if (id == null) {
 		return null;
 	}
-	for (var i = 0; i < ADVANCED_PROPERTIES.length; i++) {
-		if (ADVANCED_PROPERTIES[i].id == id) {
-			return ADVANCED_PROPERTIES[i];
+	for (var i = 0; i < this.ADVANCED_PROPERTIES.length; i++) {
+		if (this.ADVANCED_PROPERTIES[i].id == id) {
+			return this.ADVANCED_PROPERTIES[i];
 		}
 	}
 	return null;
 }
 
-function AdvancedProperty(id, value) {
+ChooserHelperAdvancedProperty = function(id, value) {
 	this.id = id;
 	this.value = value;
 }
