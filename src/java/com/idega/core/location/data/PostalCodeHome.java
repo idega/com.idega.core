@@ -15,6 +15,8 @@ public interface PostalCodeHome extends IDOHome {
 
 	public Collection findByCommune(Commune commune) throws FinderException;
 
+	public Collection findByPostalCode(Collection codes) throws FinderException;
+
 	public PostalCode findByPostalCode(String code) throws FinderException;
 
 	public PostalCode findByPostalCodeAndCountryId(String code, int countryId) throws FinderException;

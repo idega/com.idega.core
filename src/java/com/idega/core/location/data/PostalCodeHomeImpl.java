@@ -29,6 +29,13 @@ public class PostalCodeHomeImpl extends IDOFactory implements PostalCodeHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	public Collection findByPostalCode(Collection codes) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection ids = ((PostalCodeBMPBean) entity).ejbFindByPostalCode(codes);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
 	public PostalCode findByPostalCode(String code) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((PostalCodeBMPBean) entity).ejbFindByPostalCode(code);

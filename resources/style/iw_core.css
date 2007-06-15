@@ -20,6 +20,14 @@ iframe {
 	border: 0;
 }
 
+layer.datePicker {
+
+}
+
+layer.datePicer input {
+	
+}
+
 /** END: General CSS definitions: **/
 
 /** BEGIN: Style for com.idega.presentation.CSSSpacer element used in the beginning and end of containers that use float-ing elements**/

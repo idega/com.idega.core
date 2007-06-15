@@ -16,6 +16,7 @@ import com.idega.data.SimpleQuerier;
 import com.idega.data.query.AND;
 import com.idega.data.query.Column;
 import com.idega.data.query.Criteria;
+import com.idega.data.query.InCriteria;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
@@ -157,6 +158,17 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(table.getColumn(getIDColumnName()));
 		query.addCriteria(new MatchCriteria(table.getColumn(COLUMN_COMMUNE_ID), MatchCriteria.EQUALS, commune));
+		query.addOrder(table, COLUMN_POSTAL_CODE, true);
+
+		return idoFindPKsByQuery(query);
+	}
+
+	public Collection ejbFindByPostalCode(Collection codes) throws FinderException {
+		Table table = new Table(this);
+
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(table.getColumn(getIDColumnName()));
+		query.addCriteria(new InCriteria(table.getColumn(COLUMN_POSTAL_CODE), codes));
 		query.addOrder(table, COLUMN_POSTAL_CODE, true);
 
 		return idoFindPKsByQuery(query);
