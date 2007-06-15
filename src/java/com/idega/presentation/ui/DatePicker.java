@@ -489,4 +489,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		this.textInputOnchange = textInputOnchange;
 	}
 
+	@Override
+	protected String getChooserHelperVarName() {
+		  return "datepicker_chooser_helper";
+	}
 }

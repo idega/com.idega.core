@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.38 2007/06/12 17:32:03 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.39 2007/06/15 13:19:28 civilis Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -198,6 +198,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		}
 	}
 	
+	protected abstract String getChooserHelperVarName();
+	
 	private GenericButton getSaveButton() {
 		GenericButton save = new GenericButton("save", _iwrb.getLocalizedString("save", "Save"));
 		
@@ -210,7 +212,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		if (preAction != null) {
 			action.append(preAction.toString());
 		}
-		action.append("saveSelectedValues('").append(getResourceBundle().getLocalizedString("saving", "Saving...")).append("', ");
+		action.append(getChooserHelperVarName()).append(getChooserHelperVarName() != null ? "." : "").append("saveSelectedValues('").append(getResourceBundle().getLocalizedString("saving", "Saving...")).append("', ");
 		if (getInstanceId() == null) {
 			action.append("null, ");
 		}
