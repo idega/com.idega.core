@@ -44,7 +44,7 @@ public abstract class AbstractChooserBlock extends Block {
 	 * @return
 	 */
 	public String getRemoveSelectedPropertyAction(String idAttribute) {
-		return new StringBuffer("removeAdvancedProperty('").append(idAttribute).append("');").toString();
+		return new StringBuffer("ChooserHelperGlobal.removeAdvancedProperty('").append(idAttribute).append("');").toString();
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public abstract class AbstractChooserBlock extends Block {
 	 * @return
 	 */
 	public String getChooserObjectAction(String idAttribute, String valueAttribute) {
-		return new StringBuffer("chooseObject(this, '").append(idAttribute).append("', '").append(valueAttribute).append("');").toString();
+		return new StringBuffer("ChooserHelperGlobal.chooseObject(this, '").append(idAttribute).append("', '").append(valueAttribute).append("');").toString();
 	}
 	
 	/**
@@ -86,7 +86,7 @@ public abstract class AbstractChooserBlock extends Block {
 	 * @return
 	 */
 	public String getChooserObjectAction(String idAttribute, String valueAttribute, String hiddenInputAttribute) {
-		StringBuffer action = new StringBuffer("chooseObjectWithHidden(this, '").append(idAttribute).append("', '");
+		StringBuffer action = new StringBuffer("ChooserHelperGlobal.chooseObjectWithHidden(this, '").append(idAttribute).append("', '");
 		action.append(valueAttribute).append("', '").append(hiddenInputAttribute).append("');");
 		return action.toString();
 	}
@@ -97,7 +97,7 @@ public abstract class AbstractChooserBlock extends Block {
 	 * @return
 	 */
 	public String getChooserViewAction(String valueAttribute) {
-		return new StringBuffer("setChooserView(this, '").append(valueAttribute).append("');").toString();
+		return new StringBuffer("ChooserHelperGlobal.setChooserView(this, '").append(valueAttribute).append("');").toString();
 	}
 	
 	/**
