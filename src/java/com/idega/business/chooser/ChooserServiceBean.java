@@ -65,7 +65,6 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 	
 	public boolean setModuleProperty(String moduleId, String propertyName, List<AdvancedProperty> properties) {
 		
-		System.out.println("setting: "+properties);
 		if (propertyName == null) {
 			return false;
 		}
