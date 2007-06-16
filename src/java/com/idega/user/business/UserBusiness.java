@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.92.2.2 2007/03/28 16:01:20 eiki Exp $
+ * $Id: UserBusiness.java,v 1.92.2.3 2007/06/16 16:03:37 valdas Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,6 +21,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
+import com.idega.bean.UserPropertiesBean;
 import com.idega.business.IBOService;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.data.LoginTable;
@@ -50,10 +51,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2007/03/28 16:01:20 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/06/16 16:03:37 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.92.2.2 $
+ * @version $Revision: 1.92.2.3 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -835,4 +836,9 @@ public interface UserBusiness extends IBOService {
 	 * @see com.idega.user.business.UserBusinessBean#hasValidIcelandicSSN
 	 */
 	public boolean hasValidIcelandicSSN(User user);
+	
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#getGroupsMembersData
+	 */
+	public List getGroupsMembersData(UserPropertiesBean bean);
 }

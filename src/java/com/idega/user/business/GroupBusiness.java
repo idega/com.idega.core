@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusiness.java,v 1.58 2006/06/01 15:22:10 thomas Exp $
+ * $Id: GroupBusiness.java,v 1.58.2.1 2007/06/16 16:03:37 valdas Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -17,6 +17,8 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
+import com.idega.bean.GroupPropertiesBean;
 import com.idega.business.IBOService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.contact.data.Email;
@@ -46,10 +48,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2006/06/01 15:22:10 $ by $Author: thomas $
+ *  Last modified: $Date: 2007/06/16 16:03:37 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.58 $
+ * @version $Revision: 1.58.2.1 $
  */
 public interface GroupBusiness extends IBOService {
 
@@ -662,4 +664,9 @@ public interface GroupBusiness extends IBOService {
 		  
 	public Group createGroup(String name,String description,String type,int homePageID,int homeFolderID,int aliasID,boolean createUnderDomainRoot,Group parentGroup)throws CreateException,RemoteException;
 
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getGroupsData
+	 */
+	public List getGroupsData(GroupPropertiesBean bean);
+	
 }
