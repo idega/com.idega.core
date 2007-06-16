@@ -310,6 +310,11 @@
       <name>3.1.50</name>
       <tag>CORE_3_1_50</tag>
     </version>
+    <version>
+      <id>3.1.51</id>
+      <name>3.1.51</name>
+      <tag>CORE_3_1_51</tag>
+    </version>
   </versions>
   <branches/>
   <mailingLists>
