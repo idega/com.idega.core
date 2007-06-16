@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.64 2006/04/09 12:13:20 laddi Exp $
+ * $Id: LoginBusinessBean.java,v 1.64.2.1 2007/06/16 16:29:31 valdas Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -61,11 +61,11 @@ import com.idega.util.RequestUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
+ * Last modified: $Date: 2007/06/16 16:29:31 $ by $Author: valdas $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.64 $
+ * @version $Revision: 1.64.2.1 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -259,7 +259,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * @return True if logIn was succesful, false if it failed
 	 */
-	protected boolean logInUser(HttpServletRequest request, String username, String password) {
+	public boolean logInUser(HttpServletRequest request, String username, String password) {
 		try {
 			/*
 			 * int didLogin = verifyPasswordAndLogin(iwc, username, password); if
