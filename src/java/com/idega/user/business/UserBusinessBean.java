@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.7 2007/06/16 16:03:37 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.8 2007/06/16 17:12:06 eiki Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -34,6 +34,7 @@ import javax.transaction.UserTransaction;
 
 import com.idega.bean.GroupMemberDataBean;
 import com.idega.bean.GroupMembersDataBean;
+import com.idega.bean.UserPropertiesBean;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -74,6 +75,9 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.idegaweb.employment.data.EmploymentMemberInfo;
+import com.idega.idegaweb.employment.data.EmploymentMemberInfoHome;
+import com.idega.presentation.Image;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
@@ -101,10 +105,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/16 16:03:37 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/16 17:12:06 $ by $Author: eiki $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.7 $
+ * @version $Revision: 1.207.2.8 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3379,7 +3383,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return null;
 		}
 		
-		List<String> uniqueIds = bean.getUniqueIds();
+		List uniqueIds = bean.getUniqueIds();
 		if (uniqueIds == null) {
 			return null;
 		}
@@ -3415,7 +3419,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param bean
 	 * @param group
 	 */
-	private void setComplexData(GroupMembersDataBean bean, Group group) {
+	protected void setComplexData(GroupMembersDataBean bean, Group group) {
 		if (bean == null || group == null) {
 			return;
 		}
@@ -3481,7 +3485,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		bean.setMembersInfo(membersInfo);
 	}
 	
-	private Image getUserImage(User user) {
+	protected Image getUserImage(User user) {
 		if (user == null) {
 			return null;
 		}
@@ -3501,7 +3505,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return image;
 	}
 	
-	private void setUserMails(GroupMemberDataBean memberInfo, User user) {
+	protected void setUserMails(GroupMemberDataBean memberInfo, User user) {
 		if (memberInfo == null || user == null) {
 			return;
 		}
@@ -3523,7 +3527,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		memberInfo.setEmailsAddresses(emailsAddresses);
 	}
 	
-	private void extractExtraInfo(GroupMemberDataBean bean, User user) {
+	protected void extractExtraInfo(GroupMemberDataBean bean, User user) {
 		if (bean == null || user == null) {
 			return;
 		}

@@ -4,6 +4,12 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+    	<release version="3.1.51" date="2007-06-16">
+			<action dev="eiki" type="add">
+            	Valdas and I merged DWR beans for the usersystem from HEAD. These beans enable data about users to be sent over a network with dwr.
+			</action>
+		</release>
+		
   		<release version="3.1.50" date="2007-06-13">
 			<action dev="thomas" type="add">
              Added land register map number attribute in RealEstate
