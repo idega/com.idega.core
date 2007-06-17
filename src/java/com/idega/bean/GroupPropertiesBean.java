@@ -4,14 +4,10 @@ public class GroupPropertiesBean extends PropertiesBean {
 	
 	private boolean showName = true;
 	private boolean showHomePage = true;
-	private boolean showDescription = true;
-	private boolean showExtraInfo = true;
-	private boolean showShortName = true;
+	private boolean showShortName = false;
 	private boolean showPhone = true;
 	private boolean showFax = true;
-	private boolean showEmails = true;
-	private boolean showAddress = true;
-	private boolean showEmptyFields = true;
+	private boolean showEmptyFields = false;
 	
 	public GroupPropertiesBean() {}
 	
@@ -19,35 +15,11 @@ public class GroupPropertiesBean extends PropertiesBean {
 		super(bean);
 	}
 	
-	public boolean isShowAddress() {
-		return showAddress;
-	}
-	public void setShowAddress(boolean showAddress) {
-		this.showAddress = showAddress;
-	}
-	public boolean isShowDescription() {
-		return showDescription;
-	}
-	public void setShowDescription(boolean showDescription) {
-		this.showDescription = showDescription;
-	}
-	public boolean isShowEmails() {
-		return showEmails;
-	}
-	public void setShowEmails(boolean showEmails) {
-		this.showEmails = showEmails;
-	}
 	public boolean isShowEmptyFields() {
 		return showEmptyFields;
 	}
 	public void setShowEmptyFields(boolean showEmptyFields) {
 		this.showEmptyFields = showEmptyFields;
-	}
-	public boolean isShowExtraInfo() {
-		return showExtraInfo;
-	}
-	public void setShowExtraInfo(boolean showExtraInfo) {
-		this.showExtraInfo = showExtraInfo;
 	}
 	public boolean isShowFax() {
 		return showFax;

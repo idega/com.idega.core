@@ -14,7 +14,11 @@ public class PropertiesBean implements AbstractProperties {
 	private List<String> localizedText = null;
 	
 	private boolean isRemoteMode = false;
-	private boolean showLabels = true;
+	private boolean showLabels = false;
+	private boolean showAddress = true;
+	private boolean showDescription = false;
+	private boolean showExtraInfo = false;
+	private boolean showEmails = true;
 	
 	public PropertiesBean() {}
 	
@@ -26,6 +30,10 @@ public class PropertiesBean implements AbstractProperties {
 		setLocalizedText(bean.getLocalizedText());
 		setRemoteMode(bean.isRemoteMode());
 		setShowLabels(bean.isShowLabels());
+		setShowAddress(bean.isShowAddress());
+		setShowDescription(bean.isShowDescription());
+		setShowExtraInfo(bean.isShowExtraInfo());
+		setShowEmails(bean.isShowEmails());
 	}
 
 	public String getLogin() {
@@ -90,4 +98,37 @@ public class PropertiesBean implements AbstractProperties {
 	public void setShowLabels(boolean showLabels) {
 		this.showLabels = showLabels;
 	}
+
+	public boolean isShowAddress() {
+		return showAddress;
+	}
+
+	public void setShowAddress(boolean showAddress) {
+		this.showAddress = showAddress;
+	}
+
+	public boolean isShowDescription() {
+		return showDescription;
+	}
+
+	public void setShowDescription(boolean showDescription) {
+		this.showDescription = showDescription;
+	}
+
+	public boolean isShowEmails() {
+		return showEmails;
+	}
+
+	public void setShowEmails(boolean showEmails) {
+		this.showEmails = showEmails;
+	}
+
+	public boolean isShowExtraInfo() {
+		return showExtraInfo;
+	}
+
+	public void setShowExtraInfo(boolean showExtraInfo) {
+		this.showExtraInfo = showExtraInfo;
+	}
+	
 }

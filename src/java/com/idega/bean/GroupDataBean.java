@@ -1,7 +1,5 @@
 package com.idega.bean;
 
-import java.util.List;
-
 /**
  * 
  * @author valdas
@@ -10,42 +8,12 @@ import java.util.List;
  *	will be stored in this class
  */
 
-public class GroupDataBean {
+public class GroupDataBean extends DataBean {
 
-	private String name = null;
 	private String shortName = null;
 	private String homePageUrl = null;
-	private String description = null;
-	private String extraInfo = null;
 	private String phoneNumber = null;
 	private String faxNumber = null;
-	
-	private List<String> emailAddresses = null;
-	private AddressData address = null;
-	
-	public String getDescription() {
-		return description;
-	}
-	
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public List<String> getEmailAddresses() {
-		return emailAddresses;
-	}
-	
-	public void setEmailAddresses(List<String> emailAddresses) {
-		this.emailAddresses = emailAddresses;
-	}
-	
-	public String getExtraInfo() {
-		return extraInfo;
-	}
-	
-	public void setExtraInfo(String extraInfo) {
-		this.extraInfo = extraInfo;
-	}
 	
 	public String getHomePageUrl() {
 		return homePageUrl;
@@ -55,28 +23,12 @@ public class GroupDataBean {
 		this.homePageUrl = homePageUrl;
 	}
 	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	public String getShortName() {
 		return shortName;
 	}
 	
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
-	}
-
-	public AddressData getAddress() {
-		return address;
-	}
-
-	public void setAddress(AddressData address) {
-		this.address = address;
 	}
 
 	public String getFaxNumber() {
