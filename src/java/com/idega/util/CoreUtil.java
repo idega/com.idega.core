@@ -23,6 +23,11 @@ public class CoreUtil {
 		return IWMainApplication.getDefaultIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER);
 	}
 	
+	/**
+	 * Almost identical method to {@link IWContext#getInstance()} just this one doesn't throw any exception - it's very importany
+	 * using it with DWR
+	 * @return
+	 */
 	public static IWContext getIWContext() {
 		try {
 			FacesContext context = FacesContext.getCurrentInstance();
