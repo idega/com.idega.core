@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.9 2007/06/17 13:26:44 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.10 2007/06/17 15:20:04 eiki Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -108,10 +108,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/17 13:26:44 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/17 15:20:04 $ by $Author: eiki $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.9 $
+ * @version $Revision: 1.207.2.10 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3406,7 +3406,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		Group group = null;
 		for (int i = 0; i < uniqueIds.size(); i++) {
 			try {
-				group = business.getGroupByUniqueId(uniqueIds.get(i));
+				group = business.getGroupByUniqueId((String)uniqueIds.get(i));
 			} catch (Exception e) {}
 
 			if (group != null) {
