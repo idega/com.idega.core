@@ -20,6 +20,7 @@ public class UserPropertiesBean extends PropertiesBean {
 	private boolean showJob = false;
 	private boolean showWorkplace = false;
 	private boolean showStatus = true;
+	private boolean addReflection = true;
 	
 	private String imageWidth = "70";
 	private String imageHeight = "90";
@@ -145,5 +146,11 @@ public class UserPropertiesBean extends PropertiesBean {
 	}
 	public void setShowStatus(boolean showStatus) {
 		this.showStatus = showStatus;
+	}
+	public boolean isAddReflection() {
+		return addReflection;
+	}
+	public void setAddReflection(boolean addReflection) {
+		this.addReflection = addReflection;
 	}
 }
