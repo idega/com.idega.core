@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.215 2007/06/10 23:59:19 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.216 2007/06/17 10:47:55 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -77,6 +77,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.employment.data.EmploymentMemberInfo;
 import com.idega.idegaweb.employment.data.EmploymentMemberInfoHome;
+import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
@@ -87,12 +88,14 @@ import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupRelation;
 import com.idega.user.data.GroupRelationHome;
+import com.idega.user.data.Status;
 import com.idega.user.data.TopNodeGroup;
 import com.idega.user.data.TopNodeGroupHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserComment;
 import com.idega.user.data.UserCommentHome;
 import com.idega.user.data.UserHome;
+import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
@@ -105,10 +108,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/10 23:59:19 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/17 10:47:55 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.215 $
+ * @version $Revision: 1.216 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -145,6 +148,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private Gender male, female;
 
 	private Map pluginsForGroupTypeCachMap = new HashMap();
+	
+	private UserStatusBusiness statusBusiness = null;
 
 	public UserBusinessBean() {
 	}
@@ -3382,16 +3387,22 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return null;
 		}
 		
+		GroupBusiness business = null;
+		try {
+			business = getGroupBusiness();
+		} catch (RemoteException e) {}
+		if (business == null) {
+			return null;
+		}
+		
 		List<GroupMembersDataBean> groupsMembers = new ArrayList<GroupMembersDataBean>();
 		GroupMembersDataBean groupMembers = null;
 		Group group = null;
 		for (int i = 0; i < uniqueIds.size(); i++) {
-			group = null;
 			try {
-				group = getGroupBusiness().getGroupByUniqueId(uniqueIds.get(i));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+				group = business.getGroupByUniqueId(uniqueIds.get(i));
+			} catch (Exception e) {}
+
 			if (group != null) {
 				groupMembers = new GroupMembersDataBean();				
 				
@@ -3399,7 +3410,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				groupMembers.setGroupName(group.getName());
 				
 				//	Complex data
-				setComplexData(groupMembers, group);
+				setComplexData(groupMembers, group, business);
 				
 				groupsMembers.add(groupMembers);
 			}
@@ -3413,7 +3424,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param bean
 	 * @param group
 	 */
-	private void setComplexData(GroupMembersDataBean bean, Group group) {
+	private void setComplexData(GroupMembersDataBean bean, Group group, GroupBusiness business) {
 		if (bean == null || group == null) {
 			return;
 		}
@@ -3448,7 +3459,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					workPhone = getUsersWorkPhone(user);
 					homePhone = getUsersHomePhone(user);
 					mobilePhone = getUsersMobilePhone(user);
-				} catch (NoPhoneFoundException e) {
+					
+					//	Addresses (main and company's)
+					memberInfo.setAddress(business.getAddressParts(getUsersMainAddress(user)));
+					memberInfo.setCompanyAddress(business.getAddressParts(getUsersCoAddress(user)));
+					
+					//	Is male?
+					memberInfo.setMale(isMale(user.getGenderID()));
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				if (workPhone != null) {
@@ -3472,11 +3490,99 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				if (image != null) {
 					memberInfo.setImageUrl(image.getURL());
 				}
+
+				//	Extra info
+				memberInfo.setExtraInfo(user.getExtraInfo());
+				
+				//	Description
+				memberInfo.setDescription(user.getDescription());
+				
+				//	Date of birth
+				memberInfo.setDateOfBirth(user.getDateOfBirth());
+				
+				//	Job
+				memberInfo.setJob(getUserJob(user));
+				
+				//	Work place
+				memberInfo.setWorkPlace(getUserWorkPlace(user));
+				
+				//	Status
+				memberInfo.setStatus(getUserStatus(null, user, group));
 				
 				membersInfo.add(memberInfo);
 			}
 		}
 		bean.setMembersInfo(membersInfo);
+	}
+	
+	/**
+	 * Returns user's status in concrete group.
+	 * Note: IWContext may be null, it will be checked
+	 */
+	public String getUserStatus(IWContext iwc, User user, Group group) {
+		if (user == null || group == null) {
+			return null;
+		}
+		
+		int userId = -1;
+		int groupId = -1;
+		try {
+			userId = Integer.valueOf(user.getId()).intValue();
+			groupId = Integer.valueOf(group.getId()).intValue();
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return getUserStatus(iwc, userId, groupId);
+	}
+	
+	/**
+	 * Returns user's status in concrete group.
+	 * Note: IWContext may be null, it will be checked
+	 */
+	public String getUserStatus(IWContext iwc, int userId, int groupId) {
+		if (statusBusiness == null && iwc == null) {	// Checking if we need instance of IWContext
+			iwc = CoreUtil.getIWContext();
+			if (iwc == null) {
+				return null;
+			}
+		}
+		
+		int statusId = -1;
+		try {
+			statusId = getUserStatusBusiness(iwc).getUserGroupStatus(userId, groupId);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (statusId == -1) {
+			return null;
+		}
+		
+		Status status = null;
+		try {
+			status = (Status) IDOLookup.findByPrimaryKey(Status.class, statusId);
+		} catch (IDOLookupException e) {
+			e.printStackTrace();
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		if (status == null) {
+			return null;
+		}
+		return status.getStatusKey();
+	}
+	
+	private UserStatusBusiness getUserStatusBusiness(IWContext iwc){
+		if (statusBusiness == null) {
+			try {
+				statusBusiness = (UserStatusBusiness) IBOLookup.getServiceInstance(iwc, UserStatusBusiness.class);
+			}
+			catch (RemoteException e){
+				e.printStackTrace();
+			}
+		}
+		return statusBusiness;
 	}
 	
 	private Image getUserImage(User user) {
