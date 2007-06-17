@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.10 2007/06/17 15:20:04 eiki Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.11 2007/06/17 18:11:04 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -108,10 +108,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/17 15:20:04 $ by $Author: eiki $
+ * Last modified: $Date: 2007/06/17 18:11:04 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.10 $
+ * @version $Revision: 1.207.2.11 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3404,6 +3404,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		List groupsMembers = new ArrayList();
 		GroupMembersDataBean groupMembers = null;
 		Group group = null;
+		IWContext iwc = CoreUtil.getIWContext();
 		for (int i = 0; i < uniqueIds.size(); i++) {
 			try {
 				group = business.getGroupByUniqueId((String)uniqueIds.get(i));
@@ -3416,7 +3417,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				groupMembers.setGroupName(group.getName());
 				
 				//	Complex data
-				setComplexData(groupMembers, group, business);
+				setComplexData(groupMembers, group, business, iwc);
 				
 				groupsMembers.add(groupMembers);
 			}
@@ -3430,7 +3431,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param bean
 	 * @param group
 	 */
-	private void setComplexData(GroupMembersDataBean bean, Group group, GroupBusiness business) {
+	private void setComplexData(GroupMembersDataBean bean, Group group, GroupBusiness business, IWContext iwc) {
 		if (bean == null || group == null) {
 			return;
 		}
@@ -3492,9 +3493,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				memberInfo.setName(user.getName());
 				
 				//	Image
-				Image image = getUserImage(user);
-				if (image != null) {
-					memberInfo.setImageUrl(image.getURL());
+				if (iwc != null) {
+					Image image = getUserImage(user);
+					if (image != null) {
+						memberInfo.setImageUrl(image.getMediaURL(iwc));
+					}
 				}
 
 				//	Extra info
@@ -3513,7 +3516,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				memberInfo.setWorkPlace(getUserWorkPlace(user));
 				
 				//	Status
-				memberInfo.setStatus(getUserStatus(null, user, group));
+				memberInfo.setStatus(getUserStatus(iwc, user, group));
 				
 				membersInfo.add(memberInfo);
 			}
