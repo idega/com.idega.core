@@ -1,5 +1,7 @@
 package com.idega.bean;
 
+import java.util.List;
+
 import com.idega.util.CoreUtil;
 
 public class UserPropertiesBean extends PropertiesBean {
@@ -26,6 +28,8 @@ public class UserPropertiesBean extends PropertiesBean {
 	private String imageHeight = "90";
 	
 	private String defaultPhoto = CoreUtil.getCoreBundle().getVirtualPathWithFileNameString("default_photo.jpg");
+	
+	private List<String> statusLocalization = null;
 	
 	public UserPropertiesBean() {}
 	
@@ -152,5 +156,11 @@ public class UserPropertiesBean extends PropertiesBean {
 	}
 	public void setAddReflection(boolean addReflection) {
 		this.addReflection = addReflection;
+	}
+	public List<String> getStatusLocalization() {
+		return statusLocalization;
+	}
+	public void setStatusLocalization(List<String> statusLocalization) {
+		this.statusLocalization = statusLocalization;
 	}
 }
