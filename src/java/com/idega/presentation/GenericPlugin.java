@@ -82,7 +82,7 @@ public class GenericPlugin extends PresentationObject
 				paramString.append(key);
 				paramString.append("\" value=\"");
 				paramString.append(this.params.get(key));
-				paramString.append("\" >\n");
+				paramString.append("\" />\n");
 			}
 		}
 		return paramString.toString();
