@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.11 2007/06/17 18:11:04 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.12 2007/06/17 20:49:37 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -108,10 +108,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/17 18:11:04 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/17 20:49:37 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.11 $
+ * @version $Revision: 1.207.2.12 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3453,7 +3453,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				memberInfo = new GroupMemberDataBean();
 				
 				//	Title, Education, School, Area, Began work
-				extractExtraInfo(memberInfo, user);
+				//extractExtraInfo(memberInfo, user);	//	TODO	may be useful later
 				
 				//	Age
 				memberInfo.setAge(getUserAge(user));
@@ -3464,18 +3464,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				Phone mobilePhone = null;
 				try {
 					workPhone = getUsersWorkPhone(user);
+				} catch (NoPhoneFoundException e) {}				
+				try {
 					homePhone = getUsersHomePhone(user);
+				} catch (NoPhoneFoundException e) {}
+				try {
 					mobilePhone = getUsersMobilePhone(user);
-					
-					//	Addresses (main and company's)
-					memberInfo.setAddress(business.getAddressParts(getUsersMainAddress(user)));
-					memberInfo.setCompanyAddress(business.getAddressParts(getUsersCoAddress(user)));
-					
-					//	Is male?
-					memberInfo.setMale(isMale(user.getGenderID()));
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				} catch (NoPhoneFoundException e) {}
 				if (workPhone != null) {
 					memberInfo.setWorkPhone(workPhone.getNumber());
 				}
@@ -3485,6 +3480,21 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				if (mobilePhone != null) {
 					memberInfo.setMobilePhone(mobilePhone.getNumber());
 				}
+				
+				//	Addresses (main and company's)
+				try {
+					memberInfo.setAddress(business.getAddressParts(getUsersMainAddress(user)));
+				} catch (RemoteException e) {}
+				try {
+					memberInfo.setCompanyAddress(business.getAddressParts(getUsersCoAddress(user)));
+				} catch (RemoteException e) {}
+					
+				//	Is male?
+				try {
+					memberInfo.setMale(isMale(user.getGenderID()));
+				}
+				catch (RemoteException e) {}
+				catch (FinderException e) {}
 				
 				//	Emails
 				setUserMails(memberInfo, user);
