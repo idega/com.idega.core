@@ -1,22 +1,30 @@
 package com.idega.bean;
 
+import com.idega.util.CoreUtil;
+
 public class UserPropertiesBean extends PropertiesBean {
 	
-	private boolean showGroupName = true;
-	private boolean showTitle = true;
-	private boolean showAge = true;
+	private boolean showGroupName = false;
+	private boolean showTitle = false;
+	private boolean showAge = false;
 	private boolean showWorkPhone = true;
 	private boolean showHomePhone = true;
 	private boolean showMobilePhone = true;
-	private boolean showEmails = true;
-	private boolean showEducation = true;
-	private boolean showSchool = true;
-	private boolean showArea = true;
-	private boolean showBeganWork = true;
+	private boolean showEducation = false;
+	private boolean showSchool = false;
+	private boolean showArea = false;
+	private boolean showBeganWork = false;
 	private boolean showImage = true;
+	private boolean showCompanyAddress = false;
+	private boolean showDateOfBirth = false;
+	private boolean showJob = false;
+	private boolean showWorkplace = false;
+	private boolean showStatus = true;
 	
-	private String imageWidth = null;
-	private String imageHeight = null;
+	private String imageWidth = "70";
+	private String imageHeight = "90";
+	
+	private String defaultPhoto = CoreUtil.getCoreBundle().getVirtualPathWithFileNameString("default_photo.jpg");
 	
 	public UserPropertiesBean() {}
 	
@@ -47,12 +55,6 @@ public class UserPropertiesBean extends PropertiesBean {
 	}
 	public void setShowEducation(boolean showEducation) {
 		this.showEducation = showEducation;
-	}
-	public boolean isShowEmails() {
-		return showEmails;
-	}
-	public void setShowEmails(boolean showEmails) {
-		this.showEmails = showEmails;
 	}
 	public boolean isShowGroupName() {
 		return showGroupName;
@@ -108,5 +110,40 @@ public class UserPropertiesBean extends PropertiesBean {
 	public void setImageWidth(String imageWidth) {
 		this.imageWidth = imageWidth;
 	}
-	
+	public String getDefaultPhoto() {
+		return defaultPhoto;
+	}
+	public void setDefaultPhoto(String defaultPhoto) {
+		this.defaultPhoto = defaultPhoto;
+	}
+	public boolean isShowCompanyAddress() {
+		return showCompanyAddress;
+	}
+	public void setShowCompanyAddress(boolean showCompanyAddress) {
+		this.showCompanyAddress = showCompanyAddress;
+	}
+	public boolean isShowDateOfBirth() {
+		return showDateOfBirth;
+	}
+	public void setShowDateOfBirth(boolean showDateOfBirth) {
+		this.showDateOfBirth = showDateOfBirth;
+	}
+	public boolean isShowJob() {
+		return showJob;
+	}
+	public void setShowJob(boolean showJob) {
+		this.showJob = showJob;
+	}
+	public boolean isShowWorkplace() {
+		return showWorkplace;
+	}
+	public void setShowWorkplace(boolean showWorkplace) {
+		this.showWorkplace = showWorkplace;
+	}
+	public boolean isShowStatus() {
+		return showStatus;
+	}
+	public void setShowStatus(boolean showStatus) {
+		this.showStatus = showStatus;
+	}
 }
