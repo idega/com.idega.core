@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.111 2007/05/28 09:39:30 valdas Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.112 2007/06/17 10:46:58 valdas Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -94,7 +94,7 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.111 $
+ * @version $Revision: 1.112 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -2479,11 +2479,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		if (bean == null) {
 			return null;
 		}
-		if (bean.getUniqueIds() == null) {
+		
+		List<String> uniqueIds = bean.getUniqueIds();
+		if (uniqueIds == null) {
 			return null;
 		}
 		
-		List<String> uniqueIds = bean.getUniqueIds();
 		List<GroupDataBean> groupsData = new ArrayList<GroupDataBean>();
 		GroupDataBean dataBean = null;
 		Group group = null;
@@ -2504,10 +2505,14 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				dataBean.setHomePageUrl(group.getHomePageURL());
 				dataBean.setShortName(group.getShortName());
 				
-				//	Complex data
-				dataBean.setAddress(getAddressParts(group));
+				//	Complex data (address, phone, fax, emails)
+				try {
+					dataBean.setAddress(getAddressParts(getGroupMainAddress(group)));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				setPhoneAndFax(dataBean, group);
-				dataBean.setEmailAddresses(getEmails(group));
+				dataBean.setEmailsAddresses(getEmails(group));
 				
 				//	Adding to list
 				groupsData.add(dataBean);
@@ -2569,36 +2574,24 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 	}
 	
-	private AddressData getAddressParts(Group group) {
-		Address mainAddress = null;
-		try {
-			mainAddress = getGroupMainAddress(group);
-		} catch (IDOLookupException e) {
-			e.printStackTrace();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (IDOCompositePrimaryKeyException e) {
-			e.printStackTrace();
-		} catch (IDORelationshipException e) {
-			e.printStackTrace();
-		}
-		if (mainAddress == null) {
+	public AddressData getAddressParts(Address address) {
+		if (address == null) {
 			return null;
 		}
 		
-		AddressData address = new AddressData();
-		address.setStreetAddress(mainAddress.getStreetAddress());
-		address.setPostalCode(mainAddress.getPostalCode().getPostalCode());
-		address.setCity(mainAddress.getCity());
-		return address;
+		AddressData addressData = new AddressData();
+		addressData.setStreetAddress(address.getStreetAddress());
+		addressData.setPostalCode(address.getPostalCode().getPostalCode());
+		addressData.setCity(address.getCity());
+		return addressData;
 	}
 
 	/**
 	 * 
-	 * Last modified: $Date: 2007/05/28 09:39:30 $ by $Author: valdas $
+	 * Last modified: $Date: 2007/06/17 10:46:58 $ by $Author: valdas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.111 $
+	 * @version $Revision: 1.112 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 

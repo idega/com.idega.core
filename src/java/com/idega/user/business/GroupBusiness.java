@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusiness.java,v 1.59 2007/05/28 09:39:30 valdas Exp $
+ * $Id: GroupBusiness.java,v 1.60 2007/06/17 10:46:58 valdas Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,6 +18,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
+import com.idega.bean.AddressData;
 import com.idega.bean.GroupDataBean;
 import com.idega.bean.GroupPropertiesBean;
 import com.idega.business.IBOService;
@@ -49,10 +50,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2007/05/28 09:39:30 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/06/17 10:46:58 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.59 $
+ * @version $Revision: 1.60 $
  */
 public interface GroupBusiness extends IBOService {
 
@@ -669,4 +670,9 @@ public interface GroupBusiness extends IBOService {
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupsData
 	 */
 	public List<GroupDataBean> getGroupsData(GroupPropertiesBean bean);
+	
+	/**
+	 * @see com.idega.user.business.GroupBusinessBean#getAddressParts
+	 */
+	public AddressData getAddressParts(Address address);
 }
