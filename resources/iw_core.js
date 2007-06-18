@@ -1404,3 +1404,14 @@ function hideOldLabels(container) {
 	}
 }
 /** Functions for Builder modules ends **/
+
+/**
+ * This function 'prepares' DWR to make call to the very server that point path
+ * @param interfaceClass - class where our method lives (like ThemesEngine)
+ * @param path - server's path (like 'http://formbuilder.idega.is/dwr')
+ */
+function prepareDwr(interfaceClass, path) {
+	dwr.engine._defaultPath = path;
+	interfaceClass._path = path;
+	DWREngine.setMethod(DWREngine.ScriptTag);
+}
