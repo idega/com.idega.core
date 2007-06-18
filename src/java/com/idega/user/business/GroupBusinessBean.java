@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.108.2.4 2007/06/17 13:26:43 valdas Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.108.2.5 2007/06/18 12:28:23 valdas Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -94,7 +94,7 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.108.2.4 $
+ * @version $Revision: 1.108.2.5 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -2581,17 +2581,19 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		
 		AddressData addressData = new AddressData();
 		addressData.setStreetAddress(address.getStreetAddress());
-		addressData.setPostalCode(address.getPostalCode().getPostalCode());
+		if (address.getPostalCode() != null) {
+			addressData.setPostalCode(address.getPostalCode().getPostalCode());
+		}
 		addressData.setCity(address.getCity());
 		return addressData;
 	}
 
 	/**
 	 * 
-	 * Last modified: $Date: 2007/06/17 13:26:43 $ by $Author: valdas $
+	 * Last modified: $Date: 2007/06/18 12:28:23 $ by $Author: valdas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.108.2.4 $
+	 * @version $Revision: 1.108.2.5 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 
