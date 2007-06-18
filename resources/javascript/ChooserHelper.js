@@ -46,7 +46,7 @@ ChooserHelper.prototype.saveSelectedValuesCallback = function(result, message, i
 ChooserHelper.prototype.setModulePropertyCallback = function(result, instanceId, needsReload, reloadMessage, actionAfter) {
 	closeLoadingMessage();
 	if (!result) {
-		return;
+		return false;
 	}
 	if (needsReload) {
 		var activePropertyBoxId = null;
@@ -59,20 +59,26 @@ ChooserHelper.prototype.setModulePropertyCallback = function(result, instanceId,
 				}
 			}
 		} catch(ex) {}
-		var actionOnClose = function() {
-			showLoadingMessage(reloadMessage);
-			reloadPage();
-		};
-		addActionForMoodalBoxOnCloseEvent(actionOnClose);
-		return;
+		addActionBeforeClosingMoodalBox(reloadMessage);
+		return true;
 	}
 	try {
 		if (actionAfter != null) {
 			actionAfter();
 		}
 	} catch(ex) {
+		addActionBeforeClosingMoodalBox(reloadMessage);
 		return false;
 	}
+	return true;
+}
+
+function addActionBeforeClosingMoodalBox(reloadMessage) {
+	var actionOnClose = function() {
+		showLoadingMessage(reloadMessage);
+		reloadPage();
+	};
+	addActionForMoodalBoxOnCloseEvent(actionOnClose);
 }
 
 ChooserHelperGlobal.addChooserObject = function(chooserObject, objectClass, hiddenInputAttribute, chooserValueViewerId, message) {
