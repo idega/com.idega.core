@@ -66,8 +66,12 @@ ChooserHelper.prototype.setModulePropertyCallback = function(result, instanceId,
 		addActionForMoodalBoxOnCloseEvent(actionOnClose);
 		return;
 	}
-	if (actionAfter != null) {
-		actionAfter();
+	try {
+		if (actionAfter != null) {
+			actionAfter();
+		}
+	} catch(ex) {
+		return false;
 	}
 }
 
