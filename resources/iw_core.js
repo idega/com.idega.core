@@ -1341,7 +1341,7 @@ function existsElementInArray(array, element) {
 //	Requires MooTools!
 function initToolTipForElement(element) {
 	var tip = new Tips(element, {
-		initialize:function(){
+		initialize: function() {
 			this.fx = new Fx.Style(this.toolTip, 'opacity', {duration: 500, wait: false}).set(0);
 		},
 		onShow: function(toolTip) {
@@ -1404,6 +1404,12 @@ function hideOldLabels(container) {
 	}
 }
 /** Functions for Builder modules ends **/
+
+var DEFAULT_DWR_PATH = '/dwr';
+
+function getDefaultDwrPath() {
+	return DEFAULT_DWR_PATH;
+}
 
 /**
  * This function 'prepares' DWR to make call to the very server that point path
