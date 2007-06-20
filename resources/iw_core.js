@@ -819,30 +819,6 @@ function showSiteInfoValue() {
 	}
 }
 
-function addStyleProperty(id, propertyValue) {
-	if (id == null || propertyValue == null) {
-		return;
-	}
-	var element = document.getElementById(id);
-	if (element == null) {
-		return;
-	}
-	element.setAttribute("style", propertyValue);
-}
-
-function removeStyleProperty(id) {
-	if (id == null) {
-		return;
-	}
-	var element = document.getElementById(id);
-	if (element == null) {
-		return;
-	}
-	if (!CLICKED_ON_PROPERTY) {
-		element.removeAttribute("style");
-	}
-}
-
 function findChildIndex(parentNode, element) {
 	if (parentNode == null || element == null) {
 		return -1;
