@@ -1,5 +1,7 @@
 package com.idega.business;
 
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import org.springframework.context.ApplicationContext;
 
@@ -46,9 +48,25 @@ public class SpringBeanLookup {
 		
 		SpringBeanName bname = (SpringBeanName)interface_class.getAnnotation(SpringBeanName.class);
 		
+		ServletContext servlet_ctx = session != null ? session.getServletContext() :
+			(ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext();
+		
 		 ApplicationContext ac = org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext(
-				 session.getServletContext());
+				 servlet_ctx);
 		 return ac.getBean(bname.value());
+	}
+	
+	/**
+	 * Retrieves ServletContext from FacesContext current instance
+	 * 
+	 * 
+	 * @param session - current http session
+	 * @param interface_class - interface class, annotated with com.idega.business.SpringBeanName 
+	 * @return Spring managed bean. Null if bean not found or interface not annotated.
+	 */
+	public Object getSpringBean(Class interface_class) {
+		
+		return getSpringBean(null, interface_class);
 	}
 	
 }
