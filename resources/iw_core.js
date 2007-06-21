@@ -1397,3 +1397,11 @@ function prepareDwr(interfaceClass, path) {
 	interfaceClass._path = path;
 	DWREngine.setMethod(DWREngine.ScriptTag);
 }
+
+String.prototype.cropEnd = function(symbols_count, string_to_append) {
+
+	if(this.length <= symbols_count)
+		return this;
+		
+	return this.substr(0, symbols_count)+string_to_append;
+}
