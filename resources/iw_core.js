@@ -1065,23 +1065,33 @@ function getTransformedDocumentToDom(component) {
 }
 
 function createRealNode(element) {
-	// Text
+	//	Text
 	if(element.nodeName == '#text') {
 		var textNode = document.createTextNode(element.nodeValue);
 		return textNode;
 	}
-	// Comment
+	//	Comment
 	if (element.nodeName == '#comment') {
 		var commentNode = document.createComment(element.nodeValue);
 		return commentNode;
 	}
+	if (IE) {
+		if (element.nodeName == 'script') {	//	Script
+			var script = document.createElement('script');
+			return script;
+		}
+	}
 	// Element
 	var result = document.createElement(element.nodeName);
-	for (var i = 0; i < element.attributes.length; i++) {
-		result.setAttribute(element.attributes[i].nodeName, element.attributes[i].nodeValue);
+	if (element.attributes != null) {
+		for (var i = 0; i < element.attributes.length; i++) {
+			result.setAttribute(element.attributes[i].nodeName, element.attributes[i].nodeValue);
+		}
 	}
-	for(var j = 0; j < element.childNodes.length; j++) {
-		result.appendChild(createRealNode(element.childNodes[j]));
+	if (element.childNodes != null) {
+		for (var j = 0; j < element.childNodes.length; j++) {
+			result.appendChild(createRealNode(element.childNodes[j]));
+		}
 	}
 	return result;
 }
@@ -1393,9 +1403,8 @@ function getDefaultDwrPath() {
  * @param path - server's path (like 'http://formbuilder.idega.is/dwr')
  */
 function prepareDwr(interfaceClass, path) {
-	dwr.engine._defaultPath = path;
-	interfaceClass._path = path;
 	DWREngine.setMethod(DWREngine.ScriptTag);
+	interfaceClass._path = path;
 }
 
 String.prototype.cropEnd = function(symbols_count, string_to_append) {
