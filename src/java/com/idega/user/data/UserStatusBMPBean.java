@@ -30,8 +30,6 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 	protected static final String DATE_FROM = "date_from";
 	protected static final String DATE_TO = "date_to";
 	protected static final String CREATED_BY = "created_by";
-	protected static final String ORDER = "order";
-
 	public UserStatusBMPBean() {
 		super();
 	}
@@ -58,7 +56,6 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 		addManyToOneRelationship(CREATED_BY, User.class);
 		addAttribute(DATE_FROM, "Date from", true, true, java.sql.Timestamp.class);
 		addAttribute(DATE_TO, "Date to", true, true, java.sql.Timestamp.class);
-		addAttribute(ORDER, "Order", true, true, Integer.class);
 
 		addIndex("IDX_IC_USERGROUP_STATUS_1", new String[]{IC_USER, DATE_FROM});
 	}
@@ -145,14 +142,6 @@ public class UserStatusBMPBean extends GenericEntity implements UserStatus {
 
 	public Timestamp getDateTo() {
 		return (Timestamp) getColumnValue(DATE_TO);
-	}
-	
-	public void setOrder(Integer order) {
-		setColumn(ORDER, order);
-	}
-	
-	public Integer getOrder() {
-		return (Integer) getColumnValue(ORDER);
 	}
 
 	public Collection ejbFindAll() throws FinderException {
