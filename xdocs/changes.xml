@@ -6,7 +6,9 @@
   <body>
     	<release version="3.1.51" date="2007-06-16">
 			<action dev="eiki" type="add">
-            	Valdas and I merged DWR beans for the usersystem from HEAD. These beans enable data about users to be sent over a network with dwr.
+            	Valdas and I merged DWR beans for the usersystem from HEAD. 
+            	These beans enable data about users to be sent over a network with dwr.
+            	Added an ordering column to Status bmp bean
 			</action>
 		</release>
 		
