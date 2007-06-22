@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.13 2007/06/22 08:17:57 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.14 2007/06/22 13:08:13 eiki Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -109,10 +109,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/22 08:17:57 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/22 13:08:13 $ by $Author: eiki $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.13 $
+ * @version $Revision: 1.207.2.14 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3439,7 +3439,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param bean
 	 * @param group
 	 */
-	private void setComplexData(GroupMembersDataBean bean, Group group, GroupBusiness business, IWContext iwc) {
+	private void setComplexData(GroupMembersDataBean bean, Group group, GroupBusiness groupBusiness, IWContext iwc) {
 		if (bean == null || group == null) {
 			return;
 		}
