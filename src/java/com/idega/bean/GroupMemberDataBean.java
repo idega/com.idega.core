@@ -27,6 +27,9 @@ public class GroupMemberDataBean extends DataBean {
 	private String job = null;
 	private String workPlace = null;
 	private String status = null;
+	private String infoOne = null;
+	private String infoTwo = null;
+	private String infoThree = null;
 	
 	private Date dateOfBirth = null;
 
@@ -165,6 +168,30 @@ public class GroupMemberDataBean extends DataBean {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public String getInfoOne() {
+		return infoOne;
+	}
+
+	public void setInfoOne(String infoOne) {
+		this.infoOne = infoOne;
+	}
+
+	public String getInfoThree() {
+		return infoThree;
+	}
+
+	public void setInfoThree(String infoThree) {
+		this.infoThree = infoThree;
+	}
+
+	public String getInfoTwo() {
+		return infoTwo;
+	}
+
+	public void setInfoTwo(String infoTwo) {
+		this.infoTwo = infoTwo;
 	}
 	
 }

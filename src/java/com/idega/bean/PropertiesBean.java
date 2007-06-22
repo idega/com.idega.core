@@ -35,6 +35,17 @@ public class PropertiesBean implements AbstractProperties {
 		setShowExtraInfo(bean.isShowExtraInfo());
 		setShowEmails(bean.isShowEmails());
 	}
+	
+	public PropertiesBean(PropertiesBean bean, boolean showDescription, boolean showExtraInfo) {
+		this(bean);
+		setShowDescription(showDescription);
+		setShowExtraInfo(showExtraInfo);
+	}
+	
+	public PropertiesBean(boolean showDescription, boolean showExtraInfo) {
+		setShowDescription(showDescription);
+		setShowExtraInfo(showExtraInfo);
+	}
 
 	public String getLogin() {
 		return login;

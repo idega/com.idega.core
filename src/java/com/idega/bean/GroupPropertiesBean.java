@@ -9,10 +9,12 @@ public class GroupPropertiesBean extends PropertiesBean {
 	private boolean showFax = true;
 	private boolean showEmptyFields = false;
 	
-	public GroupPropertiesBean() {}
+	public GroupPropertiesBean() {
+		super(true, true);
+	}
 	
 	public GroupPropertiesBean(PropertiesBean bean) {
-		super(bean);
+		super(bean, true, true);
 	}
 	
 	public boolean isShowEmptyFields() {
