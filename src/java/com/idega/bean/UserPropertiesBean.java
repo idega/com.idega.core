@@ -21,6 +21,9 @@ public class UserPropertiesBean extends PropertiesBean {
 	private boolean showWorkplace = false;
 	private boolean showStatus = true;
 	private boolean addReflection = true;
+	private boolean showUserInfoOne = false;
+	private boolean showUserInfoTwo = false;
+	private boolean showUserInfoThree = false;
 	
 	private String imageWidth = "70";
 	private String imageHeight = "90";
@@ -152,5 +155,29 @@ public class UserPropertiesBean extends PropertiesBean {
 	}
 	public void setAddReflection(boolean addReflection) {
 		this.addReflection = addReflection;
+	}
+
+	public boolean isShowUserInfoOne() {
+		return showUserInfoOne;
+	}
+
+	public void setShowUserInfoOne(boolean showUserInfoOne) {
+		this.showUserInfoOne = showUserInfoOne;
+	}
+
+	public boolean isShowUserInfoThree() {
+		return showUserInfoThree;
+	}
+
+	public void setShowUserInfoThree(boolean showUserInfoThree) {
+		this.showUserInfoThree = showUserInfoThree;
+	}
+
+	public boolean isShowUserInfoTwo() {
+		return showUserInfoTwo;
+	}
+
+	public void setShowUserInfoTwo(boolean showUserInfoTwo) {
+		this.showUserInfoTwo = showUserInfoTwo;
 	}
 }

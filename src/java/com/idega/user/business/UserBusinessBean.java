@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.218 2007/06/17 20:41:25 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.219 2007/06/22 07:18:13 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -71,6 +71,7 @@ import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDOStoreException;
 import com.idega.data.IDOUtil;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
@@ -108,10 +109,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/17 20:41:25 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/22 07:18:13 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.218 $
+ * @version $Revision: 1.219 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -150,6 +151,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private Map pluginsForGroupTypeCachMap = new HashMap();
 	
 	private UserStatusBusiness statusBusiness = null;
+	
+	private UserInfoColumnsBusiness userInfoBusiness = null;
 
 	public UserBusinessBean() {
 	}
@@ -1691,7 +1694,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public GroupBusiness getGroupBusiness() throws RemoteException {
-		return (GroupBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), GroupBusiness.class);
+		return getGroupBusiness(this.getIWApplicationContext());
+	}
+	
+	private GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws RemoteException {
+		return (GroupBusiness) IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 	}
 
 	public Collection getAllUsersOrderedByFirstName() throws FinderException, RemoteException {
@@ -3399,6 +3406,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		GroupMembersDataBean groupMembers = null;
 		Group group = null;
 		IWContext iwc = CoreUtil.getIWContext();
+		
 		for (int i = 0; i < uniqueIds.size(); i++) {
 			try {
 				group = business.getGroupByUniqueId(uniqueIds.get(i));
@@ -3425,15 +3433,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param bean
 	 * @param group
 	 */
-	private void setComplexData(GroupMembersDataBean bean, Group group, GroupBusiness business, IWContext iwc) {
+	private void setComplexData(GroupMembersDataBean bean, Group group, GroupBusiness groupBusiness, IWContext iwc) {
 		if (bean == null || group == null) {
 			return;
 		}
+		
+		UserInfoColumnsBusiness userInfoBusiness = getUserInfoColumnsBusiness(iwc);
 		
 		Collection users = getUsersInGroup(group);
 		if (users == null) {
 			return;
 		}
+		
+		int groupId = getParsedValue(group.getId());
 		
 		Object o = null;
 		User user = null;
@@ -3443,6 +3455,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			o = it.next();
 			if (o instanceof User) {
 				user = (User) o;
+				
+				int userId = getParsedValue(user.getId());
 				
 				memberInfo = new GroupMemberDataBean();
 				
@@ -3475,13 +3489,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					memberInfo.setMobilePhone(mobilePhone.getNumber());
 				}
 				
-				//	Addresses (main and company's)
-				try {
-					memberInfo.setAddress(business.getAddressParts(getUsersMainAddress(user)));
-				} catch (RemoteException e) {}
-				try {
-					memberInfo.setCompanyAddress(business.getAddressParts(getUsersCoAddress(user)));
-				} catch (RemoteException e) {}
+				if (groupBusiness != null) {
+					//	Addresses (main and company's)
+					try {
+						memberInfo.setAddress(groupBusiness.getAddressParts(getUsersMainAddress(user)));
+					} catch (RemoteException e) {}
+					try {
+						memberInfo.setCompanyAddress(groupBusiness.getAddressParts(getUsersCoAddress(user)));
+					} catch (RemoteException e) {}
+				}
 					
 				//	Is male?
 				try {
@@ -3521,6 +3537,22 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				
 				//	Status
 				memberInfo.setStatus(getUserStatus(iwc, user, group));
+				
+				//	Descriptions
+				if (userInfoBusiness != null) {
+					//	User info 1
+					try {
+						memberInfo.setInfoOne(userInfoBusiness.getUserInfo1(userId, groupId));
+					} catch (RemoteException e) {}
+					//	User info 2
+					try {
+						memberInfo.setInfoTwo(userInfoBusiness.getUserInfo2(userId, groupId));
+					} catch (RemoteException e) {}
+					//	User info 3
+					try {
+						memberInfo.setInfoThree(userInfoBusiness.getUserInfo3(userId, groupId));
+					} catch (RemoteException e) {}
+				}
 				
 				membersInfo.add(memberInfo);
 			}
@@ -3596,6 +3628,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		return statusBusiness;
+	}
+	
+	private UserInfoColumnsBusiness getUserInfoColumnsBusiness(IWContext iwc){
+		if (userInfoBusiness == null) {
+			try {
+				userInfoBusiness = (UserInfoColumnsBusiness) IBOLookup.getServiceInstance(iwc, UserInfoColumnsBusiness.class);
+			}
+			catch (RemoteException e){
+				e.printStackTrace();
+			}
+		}
+		return userInfoBusiness;
 	}
 	
 	private Image getUserImage(User user) {
@@ -3682,6 +3726,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		IWTimestamp dateOfBirth = new IWTimestamp(user.getDateOfBirth());
 		IWTimestamp dateToday = new IWTimestamp();
 		return Integer.toString((IWTimestamp.getDaysBetween(dateOfBirth, dateToday)) / 365);
+	}
+	
+	private int getParsedValue(String value) {
+		if (value == null) {
+			return -1;
+		}
+		try {
+			return Integer.valueOf(value).intValue();
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}
 	
 } // Class UserBusiness
