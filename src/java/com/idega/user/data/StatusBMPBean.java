@@ -26,6 +26,8 @@ public class StatusBMPBean extends GenericEntity implements Status {
 	protected static final String STATUS_LOC_KEY = "status_key";
 	protected static final String PARENT_STATUS = "parent_id";
 
+	protected static final String ORDER = "order";
+
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOLegacyEntity#getEntityName()
 	 */
@@ -39,6 +41,7 @@ public class StatusBMPBean extends GenericEntity implements Status {
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(STATUS_LOC_KEY,"Status key",true,true,java.lang.String.class);
+		addAttribute(ORDER, "Order", true, true, Integer.class);
 		
 		addManyToOneRelationship(PARENT_STATUS,Status.class);
 	}
@@ -49,6 +52,14 @@ public class StatusBMPBean extends GenericEntity implements Status {
 
 	public String getStatusKey() {
 		return getStringColumnValue(STATUS_LOC_KEY);
+	}
+	
+	public void setOrder(Integer order) {
+		setColumn(ORDER, order);
+	}
+	
+	public Integer getOrder() {
+		return (Integer) getColumnValue(ORDER);
 	}
 	
 	public Collection ejbFindAll() throws FinderException {

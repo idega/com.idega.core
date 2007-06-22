@@ -126,14 +126,4 @@ public interface UserStatus extends IDOEntity {
 	 * @see com.idega.user.data.UserStatusBMPBean#getDateTo
 	 */
 	public Timestamp getDateTo();
-	
-	/**
-	 * @see com.idega.user.data.UserStatusBMPBean#setOrder
-	 */
-	public void setOrder(Integer order);
-	
-	/**
-	 * @see com.idega.user.data.UserStatusBMPBean#getOrder
-	 */
-	public Integer getOrder();
 }
