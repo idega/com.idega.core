@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.219 2007/06/22 07:18:13 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.220 2007/06/26 11:01:12 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -15,6 +15,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,6 +34,7 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import com.idega.bean.GroupMemberDataBean;
+import com.idega.bean.GroupMemberDataBeanComparator;
 import com.idega.bean.GroupMembersDataBean;
 import com.idega.bean.UserPropertiesBean;
 import com.idega.business.IBOLookup;
@@ -109,10 +111,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/22 07:18:13 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/26 11:01:12 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.219 $
+ * @version $Revision: 1.220 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3451,6 +3453,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		User user = null;
 		GroupMemberDataBean memberInfo = null;
 		List<GroupMemberDataBean> membersInfo = new ArrayList<GroupMemberDataBean>();
+		List<GroupMemberDataBean> membersWithStatusInfo = new ArrayList<GroupMemberDataBean>();
 		for (Iterator it = users.iterator(); it.hasNext(); ) {
 			o = it.next();
 			if (o instanceof User) {
@@ -3536,7 +3539,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				memberInfo.setWorkPlace(getUserWorkPlace(user));
 				
 				//	Status
-				memberInfo.setStatus(getUserStatus(iwc, user, group));
+				Status userStatus = getUserStatus(iwc, user, group);
+				if (userStatus != null) {
+					memberInfo.setStatus(userStatus.getStatusKey());
+					memberInfo.setStatusOrder(userStatus.getStatusOrder());
+				}
 				
 				//	Descriptions
 				if (userInfoBusiness != null) {
@@ -3554,9 +3561,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					} catch (RemoteException e) {}
 				}
 				
-				membersInfo.add(memberInfo);
+				if (memberInfo.getStatusOrder() == -1) {	//	Has user status?
+					membersInfo.add(memberInfo);
+				}
+				else {
+					membersWithStatusInfo.add(memberInfo);
+				}
 			}
 		}
+		
+		if (membersWithStatusInfo.size() > 0) {
+			Collections.sort(membersWithStatusInfo, new GroupMemberDataBeanComparator());	//	Sorting
+			membersInfo.addAll(0, membersWithStatusInfo);	//	Adding to begin
+		}
+		
 		bean.setMembersInfo(membersInfo);
 	}
 	
@@ -3564,7 +3582,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * Returns user's status in concrete group.
 	 * Note: IWContext may be null, it will be checked
 	 */
-	public String getUserStatus(IWContext iwc, User user, Group group) {
+	public Status getUserStatus(IWContext iwc, User user, Group group) {
 		if (user == null || group == null) {
 			return null;
 		}
@@ -3586,7 +3604,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * Returns user's status in concrete group.
 	 * Note: IWContext may be null, it will be checked
 	 */
-	public String getUserStatus(IWContext iwc, int userId, int groupId) {
+	public Status getUserStatus(IWContext iwc, int userId, int groupId) {
 		if (statusBusiness == null && iwc == null) {	// Checking if we need instance of IWContext
 			iwc = CoreUtil.getIWContext();
 			if (iwc == null) {
@@ -3612,10 +3630,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		} catch (FinderException e) {
 			e.printStackTrace();
 		}
-		if (status == null) {
-			return null;
-		}
-		return status.getStatusKey();
+		return status;
 	}
 	
 	private UserStatusBusiness getUserStatusBusiness(IWContext iwc){
