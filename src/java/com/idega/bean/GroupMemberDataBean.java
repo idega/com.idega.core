@@ -31,6 +31,8 @@ public class GroupMemberDataBean extends DataBean {
 	private String infoTwo = null;
 	private String infoThree = null;
 	
+	private Integer statusOrder = null;
+	
 	private Date dateOfBirth = null;
 
 	private AddressData companyAddress = null;
@@ -192,6 +194,14 @@ public class GroupMemberDataBean extends DataBean {
 
 	public void setInfoTwo(String infoTwo) {
 		this.infoTwo = infoTwo;
+	}
+
+	public Integer getStatusOrder() {
+		return statusOrder;
+	}
+
+	public void setStatusOrder(Integer statusOrder) {
+		this.statusOrder = statusOrder;
 	}
 	
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.92.2.4 2007/06/17 13:26:44 valdas Exp $
+ * $Id: UserBusiness.java,v 1.92.2.5 2007/06/26 13:08:51 valdas Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -44,6 +44,7 @@ import com.idega.user.data.Gender;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
+import com.idega.user.data.Status;
 import com.idega.user.data.TopNodeGroupHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
@@ -52,10 +53,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2007/06/17 13:26:44 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/06/26 13:08:51 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.92.2.4 $
+ * @version $Revision: 1.92.2.5 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -846,10 +847,10 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserStatus
 	 */
-	public String getUserStatus(IWContext iwc, User user, Group group);
+	public Status getUserStatus(IWContext iwc, User user, Group group);
 	
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserStatus
 	 */
-	public String getUserStatus(IWContext iwc, int userId, int groupId);
+	public Status getUserStatus(IWContext iwc, int userId, int groupId);
 }
