@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.220 2007/06/26 11:01:12 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.221 2007/06/26 13:20:08 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -111,10 +111,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/26 11:01:12 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/26 13:20:08 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.220 $
+ * @version $Revision: 1.221 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3561,7 +3561,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					} catch (RemoteException e) {}
 				}
 				
-				if (memberInfo.getStatusOrder() == -1) {	//	Has user status?
+				if (memberInfo.getStatus() == null) {	//	Has user status?
 					membersInfo.add(memberInfo);
 				}
 				else {
