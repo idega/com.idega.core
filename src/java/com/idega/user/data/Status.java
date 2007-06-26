@@ -10,10 +10,10 @@ public interface Status extends com.idega.data.IDOEntity
 	/**
 	 * @see com.idega.user.data.StatusBMPBean#setOrder
 	 */
-	public void setOrder(Integer order);
+	public void setStatusOrder(Integer order);
 	
 	/**
 	 * @see com.idega.user.data.StatusBMPBean#getOrder
 	 */
-	public Integer getOrder();
+	public Integer getStatusOrder();
 }
