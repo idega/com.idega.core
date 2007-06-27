@@ -4,6 +4,18 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+
+    	<release version="3.1.52" date="2007-06-27">
+			<action dev="tryggvil" type="add">
+				Added new simplified API for doing Messaging/Emailing, based around 
+				com.idega.core.messaging.SimpleMessage com.idega.core.messaging.EmailMessage
+			</action>
+			<action dev="tryggvil" type="add">
+				Created new com.idega.presentation.ui.FormItem component to make accessible 
+				forms.
+			</action>
+		</release>
+
     	<release version="3.1.51" date="2007-06-16">
 			<action dev="eiki" type="add">
             	Valdas and I merged DWR beans for the usersystem from HEAD. 
