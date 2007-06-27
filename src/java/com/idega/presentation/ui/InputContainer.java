@@ -7,7 +7,7 @@ import com.idega.presentation.text.Text;
 
 /**
  * @author Joakim
- *
+ * @deprecated Replaced with FormItem
  */
 public class InputContainer extends InterfaceObject {
 	
