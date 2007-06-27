@@ -8,8 +8,10 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
 import com.idega.core.data.ICApplicationBinding;
 import com.idega.core.data.ICApplicationBindingHome;
 import com.idega.core.localisation.data.ICLocale;
@@ -60,6 +62,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	public static String IC_ROOT_FOLDER_CACHE_KEY = "IC_ROOT_FOLDER";
 	public static String IC_ROOT_FOLDER_NAME = "ICROOT";
 	public static String IC_APPLICATION_BINDING_TYPE_SYSTEM_FOLDER = "system_folder";
+	private static final String FILE_URI_IN_SLIDE = "FILE_URI_IN_SLIDE";
 	
 	public static final int NODETYPE_FOLDER = 0;
 	public static final int NODETYPE_FILE = 1;
@@ -98,6 +101,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		addAttribute(getColumnDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
 		addAttribute(getColumnDeletedWhen(), "Deleted when", true, true, Timestamp.class);
 		addAttribute(getColumnNameLocalizationKey(), "Localization key", true, true, String.class, 255);
+		addAttribute(FILE_URI_IN_SLIDE, "File URI", true, true, String.class, 1000);
 
 		addManyToManyRelationShip(ICItem.class, TABLENAME_ICFILE_ICITEM);
 		addManyToManyRelationShip(ICVersion.class, TABLENAME_ICFILE_ICVERSION);
@@ -568,6 +572,14 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		super.store();
 		BlobWrapper wrapper = getBlobColumnValue(getColumnNameFileValue());
 		wrapper.setInputStreamForBlobWrite(null);
+	}
+	
+	public void setFileUri(String uri) {
+		setColumn(FILE_URI_IN_SLIDE, uri);
+	}
+	
+	public String getFileUri() {
+		return getStringColumnValue(FILE_URI_IN_SLIDE);
 	}
 	
 }

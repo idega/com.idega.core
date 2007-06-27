@@ -43,4 +43,6 @@ public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.Treeable
  public boolean isEmpty();
  public String getLocalizationKey();
  public void setLocalizationKey(String key);
+ public void setFileUri(String uri);
+ public String getFileUri();
 }

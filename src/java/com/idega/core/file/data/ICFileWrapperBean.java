@@ -441,6 +441,14 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	public String getDatasource() {
 		return ((ICFile) this.getMainEntity()).getDatasource();
 	}
+	
+	public void setFileUri(String uri) {
+		((ICFile) this.getMainEntity()).setFileUri(uri);
+	}
+	
+	public String getFileUri() {
+		return ((ICFile) this.getMainEntity()).getFileUri();
+	}
 
 	// implements Storable
 	public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
