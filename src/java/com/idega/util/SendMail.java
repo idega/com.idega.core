@@ -1,6 +1,6 @@
 package com.idega.util;
-import java.io.File;
 
+import java.io.File;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -14,14 +14,45 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import com.idega.idegaweb.IWMainApplication;
+
+/**
+ * <p>
+ * Utility class to send Emails with the Java Mail API.
+ * </p>
+ *  Last modified: $Date: 2007/06/27 22:09:41 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
+ * @version $Revision: 1.12 $
+ */
 public class SendMail {
 	public SendMail() {
 	}
-	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text, File attachedFile)
-		throws MessagingException {
+
+	/**
+	 * <p>
+	 * Method that uses the Java Mail API to send an email message.<br/>
+	 * It is recommended to use the <type>com.idega.core.messaging.EmailMessage</type>
+	 * class rather than calling this method
+	 * directly.
+	 * </p>
+	 * @param from
+	 * @param to
+	 * @param cc
+	 * @param bcc
+	 * @param replyTo
+	 * @param host
+	 * @param subject
+	 * @param text
+	 * @param attachedFile
+	 * @throws MessagingException
+	 */
+	public static void send(String from, String to, String cc, String bcc,
+			String replyTo, String host, String subject, String text,
+			File attachedFile) throws MessagingException {
 		// charset usually either "UTF-8" or "ISO-8859-1"
-		// if not set the system default set is taken 
-		String charset = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings().getCharSetForSendMail();
+		// if not set the system default set is taken
+		String charset = IWMainApplication.getDefaultIWApplicationContext()
+				.getApplicationSettings().getCharSetForSendMail();
 		// Start a session
 		java.util.Properties properties = System.getProperties();
 		Session session = Session.getInstance(properties, null);
@@ -29,26 +60,31 @@ public class SendMail {
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
 		message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-		//process cc and bcc
-		//this Address[] ccAddressess = InternetAddress.parse(cc); or similar
+		// process cc and bcc
+		// this Address[] ccAddressess = InternetAddress.parse(cc); or similar
 		if ((cc != null) && !("".equals(cc))) {
-			message.addRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
+			message.addRecipients(Message.RecipientType.CC, InternetAddress
+					.parse(cc));
 		}
 		if ((bcc != null) && !("".equals(bcc))) {
-			message.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));
+			message.addRecipients(Message.RecipientType.BCC, InternetAddress
+					.parse(bcc));
 		}
 		/** @todo tryggvi laga */
 		/*
-			message.setSubject(parseCharacters(subject));
-		
-			message.setText(parseCharacters(text));
-		
-		*/
+		 * message.setSubject(parseCharacters(subject));
+		 * 
+		 * message.setText(parseCharacters(text));
+		 * 
+		 */
+		if (replyTo != null && !"".equals(replyTo)) {
+			message.setReplyTo(InternetAddress.parse(replyTo));
+		}
+
 		message.setSubject(subject, charset);
 		if (attachedFile == null) {
 			message.setText(text, charset);
-		}
-		else {
+		} else {
 			MimeBodyPart body = new MimeBodyPart();
 			body.setText(text, charset);
 			BodyPart attachment = new MimeBodyPart();
@@ -63,16 +99,28 @@ public class SendMail {
 			multipart.addBodyPart(attachment);
 			message.setContent(multipart);
 		}
-		//Connect to the transport
+		// Connect to the transport
 		Transport transport = session.getTransport("smtp");
 		transport.connect(host, "", "");
-		//Send the message and close the connection
+		// Send the message and close the connection
 		transport.sendMessage(message, message.getAllRecipients());
 		transport.close();
 	}
-	
-	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text)
+
+	public static void send(String from, String to, String cc, String bcc,
+			String host, String subject, String text, File attachedFile)
 			throws MessagingException {
-		send(from, to, cc, bcc, host, subject, text, null);
+		send(from, to, cc, bcc, null, host, subject, text, attachedFile);
+	}
+
+	public static void send(String from, String to, String cc, String bcc,
+			String host, String subject, String text) throws MessagingException {
+		send(from, to, cc, bcc, null, host, subject, text, null);
+	}
+
+	public static void send(String from, String to, String cc, String bcc,
+			String replyTo, String host, String subject, String text)
+			throws MessagingException {
+		send(from, to, cc, bcc, host, replyTo, subject, text, null);
 	}
 }
