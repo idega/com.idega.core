@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.173 2006/06/21 18:08:49 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.171.2.1 2007/06/27 11:05:35 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -62,6 +62,7 @@ import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.core.messaging.MessagingSettings;
 import com.idega.core.view.ViewManager;
 import com.idega.data.DatastoreInterface;
 import com.idega.data.EntityControl;
@@ -90,10 +91,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2006/06/21 18:08:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/06/27 11:05:35 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.173 $
+ * @version $Revision: 1.171.2.1 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -190,17 +191,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private ApplicationProductInfo applicationProductInfo;
     private boolean inDatabaseLessMode=false;
     private boolean inSetupMode=false;
-    public static boolean loadBundlesFromJars=true;
+    private boolean loadBundlesFromJars=false;
     private boolean alreadyUnloaded = false; // for restart application
 	//Defined as private variables to speed up reflection:
 	private Object builderLogicInstance;
 	private Method methodIsBuilderApplicationRunning;
 	private boolean hasSetLocaleOnFacesApplication=false;
 	private String defKey = "Wwo2Y4qTTDTuRe+OjPpql0Hhoxhrf2P75XvHSSyLWTRmdsGHApCHzVHl1xlChPdQcqTAM0C6HNAn\nwXvqJj7newW7I+u4dVh4YJVI+miCOwt3/sn3Rk9mnV5MnE+hND4mR67SojlrT7+v/8kufV88DDmm\n4ALga+8/O8S/xWroxMKBnvcDKgBsMzdsB+/hy5FANkj2IauJ+pYcXrCZIDt3NAjYJG/md0QL4mQr\nzQt3FlGnL61Y34aSd3wG6Hq9GzojeO31SVsK6+mUZ8uWJNQz9aeHurPWIFE5yRdYPnakQ0DrpReQ\n2Sg5gfJeOKtK0ghX1p06CFU+nqaql6fu75FNm7ScpLDNSxXIyIOtKRoMUGQ5bV07Ej/74UXIRDql\ntWZrbXWXvdHNwUO4yX2dSkxQ1TQrWWSrrvZLE1li21qZK+3ZOPmGXAm6AB3WZ4N6tLqZ2Mw6f/x6\nTSJtto0m/DaHlsVKTliuFpV9RcTetnYgOcTBFfMLBs2DrJTtJ0LX0Ss0E/6lp3L3TnioBxPfy1e5\nkTD7ksRwFZkMdMndqI3hUmq9+D1U+VAJf6A+uCJQCyXDguZzZrYH+Uu22kyBCdsPWHE3JqxbPNeC\nIn+3aGqMbOjHoob+eyb/VANNGD34YbZW";
-
-	private IWModuleLoader moduleLoader;
-	//Flag to set if bundles should be loaded the older way by reading /idegaweb/bundles folder
-	public static boolean loadBundlesLegacy=false;
 	
     public static void unload()	{
     	defaultIWMainApplication = null;
@@ -307,7 +304,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	}
 
 	public void loadBundles() {
-    	loadBundlesFromJars();
+    		loadBundlesFromJars();
         loadBundlesLegacy();
         loadBundlesLocalizationsForJSF();
         this.setAttribute("bundles",getLoadedBundles());
@@ -322,20 +319,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 */
 	private void loadBundlesFromJars() {
 		if(this.loadBundlesFromJars){
-			IWModuleLoader loader = getModuleLoader();
+			IWModuleLoader loader = new IWModuleLoader(this,this.application);
 			loader.loadBundlesFromJars();
 		}
-	}
-	
-	protected IWModuleLoader getModuleLoader(){
-		if(moduleLoader==null){
-			moduleLoader = new IWModuleLoader(this,this.application);
-			if(this.loadBundlesFromJars){
-				moduleLoader.getJarLoaders().add(new IWBundleLoader(this));
-				
-			}
-		}
-		return moduleLoader;
 	}
 
 	/*
@@ -907,40 +893,38 @@ public class IWMainApplication	extends Application  implements MutableClass {
     /**
      * <p>
      * This method loads the bundles from the /idegaweb/bundles folder under the expanded webapp folder.<br>
-     * This is the older way and is as of platform 3.2 replaced with loading from jars instead.
+     * This is the older way and will be replaced with loading from jars instead.
      * </p>
      */
     private void loadBundlesLegacy() {
-    	if(this.loadBundlesLegacy){
-	    		String appSpRealPath = getApplicationSpecialRealPath();
-	        File theRoot = new File(appSpRealPath,
-	                BUNDLES_STANDARD_DIRECTORY);
-	        File[] bundles = theRoot.listFiles();
-	        if(bundles!=null){
-		        for (int i = 0; i < bundles.length; i++) {
-		            if (bundles[i].isDirectory()
-		                    && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)) {
-		                File properties = new File(bundles[i], "properties");
-		                File propertiesFile = new File(properties,
-		                        DefaultIWBundle.propertyFileName);
-		                IWPropertyList list = new IWPropertyList(propertiesFile);
-		                String bundleIdentifier = list
-		                        .getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
-		                if (bundleIdentifier != null) {
-		                    String bundleDir = BUNDLES_STANDARD_DIRECTORY
-		                            + File.separator + bundles[i].getName();
-		                    try {
-		                        this.registerBundle(bundleIdentifier, bundleDir);
-		                    } catch (Throwable t) {
-		                        this.sendStartupMessage("Error loading bundle "
-		                                + bundleIdentifier);
-		                        t.printStackTrace();
-		                    }
-		                }
-		            }
-		        }
+    		String appSpRealPath = getApplicationSpecialRealPath();
+        File theRoot = new File(appSpRealPath,
+                BUNDLES_STANDARD_DIRECTORY);
+        File[] bundles = theRoot.listFiles();
+        if(bundles!=null){
+	        for (int i = 0; i < bundles.length; i++) {
+	            if (bundles[i].isDirectory()
+	                    && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)) {
+	                File properties = new File(bundles[i], "properties");
+	                File propertiesFile = new File(properties,
+	                        DefaultIWBundle.propertyFileName);
+	                IWPropertyList list = new IWPropertyList(propertiesFile);
+	                String bundleIdentifier = list
+	                        .getProperty(DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY);
+	                if (bundleIdentifier != null) {
+	                    String bundleDir = BUNDLES_STANDARD_DIRECTORY
+	                            + File.separator + bundles[i].getName();
+	                    try {
+	                        this.registerBundle(bundleIdentifier, bundleDir);
+	                    } catch (Throwable t) {
+	                        this.sendStartupMessage("Error loading bundle "
+	                                + bundleIdentifier);
+	                        t.printStackTrace();
+	                    }
+	                }
+	            }
 	        }
-    	}
+        }
     }
 
     private String getInternalBundleVirtualPath(String bundleIdentifier) {
@@ -983,63 +967,34 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public IWBundle getBundle(String bundleIdentifier, boolean autoCreate)throws IWBundleDoesNotExist{
         IWBundle bundle = (IWBundle) getLoadedBundles().get(bundleIdentifier);
         if (bundle == null) {
-        	if(loadBundlesFromJars){
-        		bundle = loadBundleFromJar(bundleIdentifier);
-        	}
-        	else if (loadBundlesLegacy){
-            	bundle = loadBundleLegacy(bundleIdentifier, autoCreate);
-        	}
-        	loadBundle(bundle);
+        		//if to throw out the IWBundleDoesNotExist exception:
+        		boolean throwException=false;
+        		if(!autoCreate){
+        			//Check if bundle does exist only if autocreate is false:
+        			File file = new File(getBundleRealPath(bundleIdentifier));
+        			if(!file.exists()){
+        				throwException=true;
+        			}
+        		}
+        		if(!throwException){
+	            
+        			String realBundleDir = getBundleRealPath(bundleIdentifier);
+        			sendStartupMessage("Loading bundle " + bundleIdentifier+" (from "+realBundleDir+")");
+	            
+	            bundle = new DefaultIWBundle(realBundleDir,
+	                    getBundleVirtualPath(bundleIdentifier), bundleIdentifier,
+	                    this, autoCreate);
+	            
+	            getLoadedBundles().put(bundleIdentifier, bundle);
+	            //must be put in the loadedBundles map FIRST to prevent looping if a starter class calls IWMainApplication.getBundle(...) for the same bundleidentifier
+	            bundle.runBundleStarters();
+        		}
+        		else{
+        			throw new IWBundleDoesNotExist(bundleIdentifier);
+        		}
         }
         return bundle;
     }
-
-	protected IWBundle loadBundleFromJar(String bundleIdentifier) {
-		getModuleLoader().tryBundleLoad(bundleIdentifier);
-		//see if it exists in the bundleMap after load:
-		IWBundle bundle = (IWBundle) getLoadedBundles().get(bundleIdentifier);
-		if(bundle==null){
-			throw new IWBundleDoesNotExist(bundleIdentifier);
-		}
-		return bundle;
-	}
-
-	/**
-	 * <p>
-	 * TODO tryggvil describe method loadBundleLegacy
-	 * </p>
-	 * @param bundleIdentifier
-	 * @param autoCreate
-	 * @param bundle
-	 * @return
-	 */
-	protected IWBundle loadBundleLegacy(String bundleIdentifier, boolean autoCreate) {
-		IWBundle bundle = null;
-		//if to throw out the IWBundleDoesNotExist exception:
-		boolean throwException=false;
-		if(!autoCreate){
-			//Check if bundle does exist only if autocreate is false:
-			File file = new File(getBundleRealPath(bundleIdentifier));
-			if(!file.exists()){
-				throwException=true;
-			}
-		}
-		if(!throwException){
-		
-			String realBundleDir = getBundleRealPath(bundleIdentifier);
-			sendStartupMessage("Loading bundle " + bundleIdentifier+" (from "+realBundleDir+")");
-		
-		bundle = new DefaultIWBundle(realBundleDir,
-		        getBundleVirtualPath(bundleIdentifier), bundleIdentifier,
-		        this, autoCreate);
-		}
-		else{
-			throw new IWBundleDoesNotExist(bundleIdentifier);
-		}
-		return bundle;
-	}
-    
-    
 
     
     /**
@@ -2236,29 +2191,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	public void setInSetupMode(boolean inSetupMode) {
 		this.inSetupMode = inSetupMode;
 	}
-	/**
-	 * <p>
-	 * Return true if a bundle with bundleIdentifier is already loaded by application
-	 * </p>
-	 * @param bundleIdentifier
-	 * @return
-	 */
-	public boolean isBundleLoaded(String bundleIdentifier) {
-		return getLoadedBundles().containsKey(bundleIdentifier);
+	
+	private MessagingSettings messagingSettings;
+	public MessagingSettings getMessagingSettings(){
+		if(messagingSettings==null){
+			messagingSettings = new MessagingSettings(this);
+		}
+		return messagingSettings;
 	}
-
-	/**
-	 * <p>
-	 * Registers a bundle into the application and calls necessary loading on it.
-	 * </p>
-	 * @param bundleIdentifier
-	 * @param bundle
-	 */
-	public void loadBundle(IWBundle bundle) {
-		String bundleIdentifier = bundle.getBundleIdentifier();
-		getLoadedBundles().put(bundleIdentifier, bundle);
-		//must be put in the loadedBundles map FIRST to prevent looping if a starter class calls IWMainApplication.getBundle(...) for the same bundleidentifier
-		bundle.runBundleStarters();
-		
-	}
+	
 }

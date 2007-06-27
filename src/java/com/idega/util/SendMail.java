@@ -15,10 +15,37 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import com.idega.idegaweb.IWMainApplication;
 
+/**
+ * <p>
+ * Utility class to send Emails with the Java Mail API.
+ * </p>
+ *  Last modified: $Date: 2007/06/27 11:06:27 $ by $Author: tryggvil $
+ * 
+ * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
+ * @version $Revision: 1.10.2.2 $
+ */
 public class SendMail {
 	public SendMail() {
 	}
 
+	/**
+	 * <p>
+	 * Method that uses the Java Mail API to send an email message.<br/>
+	 * It is recommended to use the <type>com.idega.core.messaging.EmailMessage</type>
+	 * class rather than calling this method
+	 * directly.
+	 * </p>
+	 * @param from
+	 * @param to
+	 * @param cc
+	 * @param bcc
+	 * @param replyTo
+	 * @param host
+	 * @param subject
+	 * @param text
+	 * @param attachedFile
+	 * @throws MessagingException
+	 */
 	public static void send(String from, String to, String cc, String bcc,
 			String replyTo, String host, String subject, String text,
 			File attachedFile) throws MessagingException {
