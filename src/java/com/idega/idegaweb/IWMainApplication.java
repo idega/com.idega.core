@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.182 2007/04/09 22:17:59 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.183 2007/06/27 22:18:46 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
@@ -69,6 +70,7 @@ import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.core.messaging.MessagingSettings;
 import com.idega.core.view.ViewManager;
 import com.idega.data.DatastoreInterface;
 import com.idega.data.EntityControl;
@@ -96,10 +98,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/06/27 22:18:46 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.182 $
+ * @version $Revision: 1.183 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2328,4 +2330,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	public Set getResourcePaths(String s){
 		return this.application.getResourcePaths(s);
 	}
+	
+	private MessagingSettings messagingSettings;
+	public MessagingSettings getMessagingSettings(){
+		if(messagingSettings==null){
+			messagingSettings = new MessagingSettings(this);
+		}
+		return messagingSettings;
+	}
+	
 }
