@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.96 2007/06/26 11:01:11 valdas Exp $
+ * $Id: UserBusiness.java,v 1.97 2007/06/28 09:03:07 valdas Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,7 +21,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
-import com.idega.bean.GroupMembersDataBean;
+import com.idega.bean.GroupMemberDataBean;
 import com.idega.bean.UserPropertiesBean;
 import com.idega.business.IBOService;
 import com.idega.core.accesscontrol.business.LoginCreateException;
@@ -54,10 +54,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2007/06/26 11:01:11 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/06/28 09:03:07 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.96 $
+ * @version $Revision: 1.97 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -843,7 +843,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getGroupsMembersData
 	 */
-	public List<GroupMembersDataBean> getGroupsMembersData(UserPropertiesBean bean);
+	public List<GroupMemberDataBean> getGroupsMembersData(UserPropertiesBean bean);
 	
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserStatus

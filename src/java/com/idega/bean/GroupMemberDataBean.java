@@ -30,6 +30,7 @@ public class GroupMemberDataBean extends DataBean {
 	private String infoOne = null;
 	private String infoTwo = null;
 	private String infoThree = null;
+	private String groupName = null;
 	
 	private Integer statusOrder = null;
 	
@@ -202,6 +203,14 @@ public class GroupMemberDataBean extends DataBean {
 
 	public void setStatusOrder(Integer statusOrder) {
 		this.statusOrder = statusOrder;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 	
 }
