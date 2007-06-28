@@ -1,4 +1,4 @@
-package com.idega.bean;
+package com.idega.user.bean;
 
 public interface AbstractProperties {
 

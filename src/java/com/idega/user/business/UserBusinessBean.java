@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.16 2007/06/28 09:23:24 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.17 2007/06/28 15:20:03 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -33,9 +33,6 @@ import javax.ejb.RemoveException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import com.idega.bean.GroupMemberDataBean;
-import com.idega.bean.GroupMemberDataBeanComparator;
-import com.idega.bean.UserPropertiesBean;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -81,6 +78,9 @@ import com.idega.idegaweb.employment.data.EmploymentMemberInfo;
 import com.idega.idegaweb.employment.data.EmploymentMemberInfoHome;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.user.bean.GroupMemberDataBean;
+import com.idega.user.bean.GroupMemberDataBeanComparator;
+import com.idega.user.bean.UserPropertiesBean;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/28 09:23:24 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/28 15:20:03 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.16 $
+ * @version $Revision: 1.207.2.17 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 

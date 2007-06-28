@@ -3,6 +3,6 @@
 
 <dwr>
 	<allow>
-		<convert converter="bean" match="com.idega.bean.AdvancedProperty" />
+		<convert converter="bean" match="com.idega.builder.bean.AdvancedProperty" />
 	</allow>
 </dwr>

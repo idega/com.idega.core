@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.92.2.5 2007/06/26 13:08:51 valdas Exp $
+ * $Id: UserBusiness.java,v 1.92.2.6 2007/06/28 15:20:02 valdas Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -21,7 +21,6 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
-import com.idega.bean.UserPropertiesBean;
 import com.idega.business.IBOService;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.data.LoginTable;
@@ -40,6 +39,7 @@ import com.idega.data.IDOQuery;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
+import com.idega.user.bean.UserPropertiesBean;
 import com.idega.user.data.Gender;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelationType;
@@ -53,10 +53,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2007/06/26 13:08:51 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/06/28 15:20:02 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.92.2.5 $
+ * @version $Revision: 1.92.2.6 $
  */
 public interface UserBusiness extends IBOService {
 
