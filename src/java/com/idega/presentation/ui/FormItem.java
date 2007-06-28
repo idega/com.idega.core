@@ -8,10 +8,10 @@ import com.idega.presentation.Layer;
  * with an associated "label" contained together inside a Layer/Div.<br/>
  * This Div has by default the styleClass "formItem"
  * </p>
- *  Last modified: $Date: 2007/06/27 11:06:58 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/06/28 11:15:01 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  */
 public class FormItem extends Layer {
 
@@ -22,6 +22,7 @@ public class FormItem extends Layer {
 	}
 
 	public FormItem(String labelText,InterfaceObject inputComponent) {
+		setStyleClass(DEFAULT_STYLE_CLASS);
 		addLabel(labelText,inputComponent);
 		add(inputComponent);
 	}
