@@ -9,6 +9,7 @@ public class PropertiesBean implements AbstractProperties {
 	private String server = null;
 	private String login = null;
 	private String password = null;
+	private String instanceId = null;
 	
 	private List<String> uniqueIds = null;
 	private List<String> localizedText = null;
@@ -19,6 +20,8 @@ public class PropertiesBean implements AbstractProperties {
 	private boolean showDescription = false;
 	private boolean showExtraInfo = false;
 	private boolean showEmails = true;
+	
+	private Integer cacheTime = 10;	//	minutes
 	
 	public PropertiesBean() {}
 	
@@ -140,6 +143,22 @@ public class PropertiesBean implements AbstractProperties {
 
 	public void setShowExtraInfo(boolean showExtraInfo) {
 		this.showExtraInfo = showExtraInfo;
+	}
+
+	public Integer getCacheTime() {
+		return cacheTime;
+	}
+
+	public void setCacheTime(Integer cacheTime) {
+		this.cacheTime = cacheTime;
+	}
+
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
 	}
 	
 }
