@@ -21,7 +21,7 @@ public class PropertiesBean implements AbstractProperties {
 	private boolean showExtraInfo = false;
 	private boolean showEmails = true;
 	
-	private Integer cacheTime = 10;	//	minutes
+	private Integer cacheTime = new Integer(10);	//	minutes
 	
 	public PropertiesBean() {}
 	
