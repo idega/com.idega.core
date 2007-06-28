@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.15 2007/06/26 13:08:51 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.16 2007/06/28 09:23:24 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -35,7 +35,6 @@ import javax.transaction.UserTransaction;
 
 import com.idega.bean.GroupMemberDataBean;
 import com.idega.bean.GroupMemberDataBeanComparator;
-import com.idega.bean.GroupMembersDataBean;
 import com.idega.bean.UserPropertiesBean;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
@@ -111,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/26 13:08:51 $ by $Author: valdas $
+ * Last modified: $Date: 2007/06/28 09:23:24 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.15 $
+ * @version $Revision: 1.207.2.16 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3410,30 +3409,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return null;
 		}
 		
-		List groupsMembers = new ArrayList();
-		GroupMembersDataBean groupMembers = null;
 		Group group = null;
 		IWContext iwc = CoreUtil.getIWContext();
+		List members = new ArrayList();
 		
 		for (int i = 0; i < uniqueIds.size(); i++) {
 			try {
 				group = business.getGroupByUniqueId((String)uniqueIds.get(i));
 			} catch (Exception e) {}
 
-			if (group != null) {
-				groupMembers = new GroupMembersDataBean();				
-				
-				//	Simple data
-				groupMembers.setGroupName(group.getName());
-				
-				//	Complex data
-				setComplexData(groupMembers, group, business, iwc);
-				
-				groupsMembers.add(groupMembers);
-			}
+			//	Filling beans with data
+			setComplexData(members, group, business, iwc);
 		}
 		
-		return groupsMembers;
+		return getSortedMembersByStatus(members);
 	}
 	
 	/**
@@ -3441,8 +3430,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param bean
 	 * @param group
 	 */
-	private void setComplexData(GroupMembersDataBean bean, Group group, GroupBusiness groupBusiness, IWContext iwc) {
-		if (bean == null || group == null) {
+	private void setComplexData(List members, Group group, GroupBusiness groupBusiness, IWContext iwc) {
+		if (group == null) {
 			return;
 		}
 		
@@ -3458,8 +3447,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		Object o = null;
 		User user = null;
 		GroupMemberDataBean memberInfo = null;
-		List membersInfo = new ArrayList();
-		List membersWithStatusInfo = new ArrayList();
 		for (Iterator it = users.iterator(); it.hasNext(); ) {
 			o = it.next();
 			if (o instanceof User) {
@@ -3567,21 +3554,40 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					} catch (RemoteException e) {}
 				}
 				
-				if (memberInfo.getStatus() == null) {	//	Has user status?
-					membersInfo.add(memberInfo);
-				}
-				else {
-					membersWithStatusInfo.add(memberInfo);
-				}
+				//	Group name
+				memberInfo.setGroupName(group.getName());
+				
+				members.add(memberInfo);
+			}
+		}
+	}
+	
+	private List getSortedMembersByStatus(List members) {
+		if (members == null) {
+			return null;
+		}
+		
+		//	Finding users with status
+		List allMembers = new ArrayList();
+		List membersWithStatusInfo = new ArrayList();
+		GroupMemberDataBean memberInfo = null;
+		for (int i = 0; i < members.size(); i++) {
+			memberInfo = (GroupMemberDataBean) members.get(i);
+			if (memberInfo.getStatus() == null) {	//	Has user status?
+				allMembers.add(memberInfo);
+			}
+			else {
+				membersWithStatusInfo.add(memberInfo);
 			}
 		}
 		
+		//	Sorting
 		if (membersWithStatusInfo.size() > 0) {
-			Collections.sort(membersWithStatusInfo, new GroupMemberDataBeanComparator());	//	Sorting
-			membersInfo.addAll(0, membersWithStatusInfo);	//	Adding to begin
+			Collections.sort(membersWithStatusInfo, new GroupMemberDataBeanComparator());
+			allMembers.addAll(0, membersWithStatusInfo);	//	Adding to begin
 		}
 		
-		bean.setMembersInfo(membersInfo);
+		return allMembers;
 	}
 	
 	/**
