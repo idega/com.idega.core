@@ -8,7 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.jdom.Document;
 
-import com.idega.bean.AdvancedProperty;
+import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOServiceBean;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;

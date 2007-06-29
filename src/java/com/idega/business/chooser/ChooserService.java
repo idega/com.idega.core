@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.jdom.Document;
 
-import com.idega.bean.AdvancedProperty;
+import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOService;
 
 public interface ChooserService extends IBOService {

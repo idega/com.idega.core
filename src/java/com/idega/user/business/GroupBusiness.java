@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusiness.java,v 1.60 2007/06/17 10:46:58 valdas Exp $
+ * $Id: GroupBusiness.java,v 1.61 2007/06/29 10:01:19 valdas Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,9 +18,6 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
-import com.idega.bean.AddressData;
-import com.idega.bean.GroupDataBean;
-import com.idega.bean.GroupPropertiesBean;
 import com.idega.business.IBOService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.contact.data.Email;
@@ -36,6 +33,9 @@ import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.user.bean.AddressData;
+import com.idega.user.bean.GroupDataBean;
+import com.idega.user.bean.GroupPropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
@@ -50,10 +50,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
  * 
- *  Last modified: $Date: 2007/06/17 10:46:58 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/06/29 10:01:19 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.60 $
+ * @version $Revision: 1.61 $
  */
 public interface GroupBusiness extends IBOService {
 

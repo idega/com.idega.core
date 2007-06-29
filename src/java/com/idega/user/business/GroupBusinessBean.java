@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.113 2007/06/18 09:59:29 valdas Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.114 2007/06/29 10:01:19 valdas Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -27,9 +27,6 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
-import com.idega.bean.AddressData;
-import com.idega.bean.GroupDataBean;
-import com.idega.bean.GroupPropertiesBean;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
@@ -62,6 +59,9 @@ import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.user.bean.AddressData;
+import com.idega.user.bean.GroupDataBean;
+import com.idega.user.bean.GroupPropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
@@ -94,7 +94,7 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.113 $
+ * @version $Revision: 1.114 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -2590,10 +2590,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	/**
 	 * 
-	 * Last modified: $Date: 2007/06/18 09:59:29 $ by $Author: valdas $
+	 * Last modified: $Date: 2007/06/29 10:01:19 $ by $Author: valdas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.113 $
+	 * @version $Revision: 1.114 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 

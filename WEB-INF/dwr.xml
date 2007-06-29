@@ -6,12 +6,12 @@
 		<create creator="ibo" javascript="ChooserService" scope="application">
 			<param name="class" value="com.idega.business.chooser.ChooserService" />
 		</create>
-		<convert converter="bean" match="com.idega.bean.AdvancedProperty" />
+		<convert converter="bean" match="com.idega.builder.bean.AdvancedProperty" />
 	</allow>
 	<signatures>
 		<![CDATA[
 			import java.util.List;
-			import com.idega.bean.AdvancedProperty;
+			import com.idega.builder.bean.AdvancedProperty;
 
 			ChooserService.setModuleProperty(String, String, List<AdvancedProperty>);
 		]]>

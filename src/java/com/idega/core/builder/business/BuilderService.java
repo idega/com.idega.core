@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.39 2007/06/15 08:53:10 valdas Exp $
+ * $Id: BuilderService.java,v 1.40 2007/06/29 10:01:20 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -18,7 +18,7 @@ import javax.faces.component.UIComponent;
 
 import org.jdom.Document;
 
-import com.idega.bean.AdvancedProperty;
+import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;

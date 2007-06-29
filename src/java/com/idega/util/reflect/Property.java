@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.7 2007/06/14 19:01:12 civilis Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.8 2007/06/29 10:01:20 valdas Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import com.idega.bean.PropertiesBean;
 import com.idega.business.chooser.helper.GroupsChooserHelper;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
@@ -20,6 +19,7 @@ import com.idega.core.file.data.ICFile;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.PasswordInput;
+import com.idega.user.bean.PropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.util.StringUtil;
@@ -30,10 +30,10 @@ import com.idega.util.StringUtil;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2007/06/14 19:01:12 $ by $Author: civilis $
+ * Last modified: $Date: 2007/06/29 10:01:20 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class Property implements Serializable{
 

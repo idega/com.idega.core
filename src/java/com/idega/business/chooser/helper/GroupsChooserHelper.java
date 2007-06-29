@@ -3,8 +3,8 @@ package com.idega.business.chooser.helper;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.idega.bean.PropertiesBean;
 import com.idega.core.builder.business.ICBuilderConstants;
+import com.idega.user.bean.PropertiesBean;
 import com.idega.util.CoreUtil;
 
 public class GroupsChooserHelper {
