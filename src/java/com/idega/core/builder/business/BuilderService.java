@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.40 2007/06/29 10:01:20 valdas Exp $
+ * $Id: BuilderService.java,v 1.41 2007/07/02 14:35:59 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -272,6 +272,8 @@ public interface BuilderService extends IBOService
 	public String getPageKeyByURI(String requestURI);
 	
 	public String getExistingPageKeyByURI(String requestURI);
+	
+	public Document getRenderedModule(String pageKey, String componentId, boolean cleanHtml);
 	
 	public Document getRenderedComponent(IWContext iwc, UIComponent component, boolean cleanHtml);
 	
