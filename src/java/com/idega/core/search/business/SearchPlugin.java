@@ -1,5 +1,5 @@
 /*
- * $Id: SearchPlugin.java,v 1.5 2007/06/14 18:58:06 civilis Exp $
+ * $Id: SearchPlugin.java,v 1.6 2007/07/02 16:16:10 civilis Exp $
  * Created on Jan 17, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,8 +18,8 @@ import com.idega.idegaweb.IWResourceBundle;
 
 /**
  * 
- *  Last modified: $Date: 2007/06/14 18:58:06 $ by $Author: civilis $
- *  Last modified: $Date: 2007/06/14 18:58:06 $ by $Author: civilis $
+ *  Last modified: $Date: 2007/07/02 16:16:10 $ by $Author: civilis $
+ *  Last modified: $Date: 2007/07/02 16:16:10 $ by $Author: civilis $
  * 
  * This interface defines methods that have to be implemented to make "collection" searchable e.g. users/files/websites etc.<br>
  * Objects implementing this interface should be registered to their bundle as "iw.searchplugin" if you want to use the default<br>
@@ -30,7 +30,7 @@ import com.idega.idegaweb.IWResourceBundle;
  * in the package com.idega.search.
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>,<a href="mailto:tryggvi@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public interface SearchPlugin extends Cloneable{
 
@@ -91,4 +91,11 @@ public interface SearchPlugin extends Cloneable{
 	 * @return A collection of UIComponents. 
 	 */
 	public Collection getExtraRowElements(SearchResult result, IWResourceBundle iwrb);
+	
+	/**
+	 * 
+	 * @param result_uri - uri of the result. can be null
+	 * @return context uri to result img. if null returned - default is used
+	 */
+	public String getResultImgByResultURI(String result_uri);
 }
