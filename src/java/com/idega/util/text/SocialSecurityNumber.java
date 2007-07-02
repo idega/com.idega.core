@@ -6,16 +6,16 @@ import java.util.Locale;
 import com.idega.util.IWTimestamp;
 
 /**
- * Title:
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:
- * @author       <a href="mailto:aron@idega.is">Aron Birkir</a>
+ * Title: Description: Copyright: Copyright (c) 2001 Company:
+ * 
+ * @author <a href="mailto:aron@idega.is">Aron Birkir</a>
  * @version 1.0
  */
 
 public class SocialSecurityNumber {
+
 	private String sSSN = null;
+
 	public SocialSecurityNumber() {
 	}
 
@@ -63,47 +63,46 @@ public class SocialSecurityNumber {
 
 	public static Date getDateFromSocialSecurityNumber(String socialSecurityNumber) {
 		return getDateFromSocialSecurityNumber(socialSecurityNumber, true);
-	}	
+	}
+
 	public static Date getDateFromSocialSecurityNumber(String socialSecurityNumber, boolean checkForValidity) {
 
-		if ( !checkForValidity || isValidIcelandicSocialSecurityNumber(socialSecurityNumber) ) {
-	      int day = Integer.parseInt(socialSecurityNumber.substring(0, 2));
-	      int month = Integer.parseInt(socialSecurityNumber.substring(2, 4));
-	      int year = Integer.parseInt(socialSecurityNumber.substring(4, 6));
-	      int century = Integer.parseInt(socialSecurityNumber.substring(9));
-				if (century == 9) {
-					year += 1900;
-				}
-				if (century == 0) {
-					year += 2000;
-				}
-				if (century == 1) {
-					year += 2100;
-				}
-				if (century == 2) {
-					year += 2200;
-				}
-					
-				IWTimestamp stamp = new IWTimestamp(day,month,year);
-				return stamp.getDate();
-		}
-	  	return null;
-	}
-	
+		if (!checkForValidity || isValidIcelandicSocialSecurityNumber(socialSecurityNumber)) {
+			int day = Integer.parseInt(socialSecurityNumber.substring(0, 2));
+			int month = Integer.parseInt(socialSecurityNumber.substring(2, 4));
+			int year = Integer.parseInt(socialSecurityNumber.substring(4, 6));
+			int century = Integer.parseInt(socialSecurityNumber.substring(9));
+			if (century == 9) {
+				year += 1900;
+			}
+			if (century == 0) {
+				year += 2000;
+			}
+			if (century == 1) {
+				year += 2100;
+			}
+			if (century == 2) {
+				year += 2200;
+			}
 
-	public static boolean isValidSocialSecurityNumber(String ssn,Locale locale){
-		if(ssn!=null && locale.equals(new Locale("is","IS"))){
+			IWTimestamp stamp = new IWTimestamp(day, month, year);
+			return stamp.getDate();
+		}
+		return null;
+	}
+
+	public static boolean isValidSocialSecurityNumber(String ssn, Locale locale) {
+		if (ssn != null && locale.equals(new Locale("is", "IS"))) {
 			return isValidIcelandicSocialSecurityNumber(ssn);
 		}
 		// TODO handle other system locales
 		else {
 			return false;
 		}
-		
 	}
 
 	/**
-	 *  Checks for validity of an icelandic ssn
+	 * Checks for validity of an icelandic ssn
 	 */
 	public static boolean isValidIcelandicSocialSecurityNumber(String socialSecurityNumber) {
 		if (socialSecurityNumber.length() != 10) {
@@ -143,5 +142,37 @@ public class SocialSecurityNumber {
 		catch (Exception e) {
 			return (false);
 		}
+	}
+
+	public static boolean isIndividualSocialSecurityNumber(String socialSecurityNumber, Locale locale) {
+		if (isValidSocialSecurityNumber(socialSecurityNumber, locale)) {
+			if (locale.equals(new Locale("is", "IS"))) {
+				return isIcelandicIndividualSocialSecurityNumber(socialSecurityNumber);
+			}
+		}
+		return false;
+	}
+
+	private static boolean isIcelandicIndividualSocialSecurityNumber(String socialSecurityNumber) {
+		int var1 = Integer.parseInt(socialSecurityNumber.substring(0, 1));
+		return var1 >= 0 && var1 <= 3;
+	}
+
+	public static boolean isCompanySocialSecurityNumber(String socialSecurityNumber, Locale locale) {
+		if (isValidSocialSecurityNumber(socialSecurityNumber, locale)) {
+			if (locale.equals(new Locale("is", "IS"))) {
+				return isIcelandicCompanySocialSecurityNumber(socialSecurityNumber);
+			}
+		}
+		return false;
+	}
+
+	private static boolean isIcelandicCompanySocialSecurityNumber(String socialSecurityNumber) {
+		int var1 = Integer.parseInt(socialSecurityNumber.substring(0, 1));
+		return var1 >= 4 && var1 <= 9;
+	}
+
+	public static void main(String[] arguments) throws Exception {
+		System.out.println(isCompanySocialSecurityNumber("7101002090", new Locale("is", "IS")));
 	}
 }

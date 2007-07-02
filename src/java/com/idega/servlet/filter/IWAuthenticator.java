@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.26.2.5 2007/05/20 13:53:09 tryggvil Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.26.2.6 2007/07/02 12:12:32 laddi Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -11,11 +11,13 @@ package com.idega.servlet.filter;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
@@ -28,6 +30,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AuthenticationBusiness;
@@ -51,43 +54,46 @@ import com.idega.util.RequestUtil;
 
 /**
  * <p>
- * This servletFilter is by default mapped early in the filter chain in idegaWeb and 
- * calls the idegaWeb Accesscontrol system to log the user in to the idegaWeb User system.<br/>
- * When the user has a "remember me" cookie set then this filter reads that and
- * logs the user into the system.
+ * This servletFilter is by default mapped early in the filter chain in idegaWeb
+ * and calls the idegaWeb Accesscontrol system to log the user in to the
+ * idegaWeb User system.<br/> When the user has a "remember me" cookie set then
+ * this filter reads that and logs the user into the system.
  * </p>
- * Last modified: $Date: 2007/05/20 13:53:09 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/07/02 12:12:32 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.26.2.5 $
+ * @version $Revision: 1.26.2.6 $
  */
 public class IWAuthenticator extends BaseFilter {
+
+	private static final String PROPERTY_FORWARD_PAGE_URI = "FORWARD_PAGE_URI";
 
 	/**
 	 * This parameter can be set
 	 */
 	public static final String PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE = "logon_redirect_user";
 	/**
-	 * This parameter can be set to forward to a certain page when logging in (and it is succesful)
+	 * This parameter can be set to forward to a certain page when logging in (and
+	 * it is succesful)
 	 */
 	public static final String PARAMETER_REDIRECT_URI_ONLOGON = "logon_redirect_uri";
-	private static final String PERSONAL_ID_PATTERN="\\$\\{currentUser.personalID\\}";
-	private static final String TICKET_PATTERN="\\$\\{currentUser.ticket\\}";
+	private static final String PERSONAL_ID_PATTERN = "\\$\\{currentUser.personalID\\}";
+	private static final String TICKET_PATTERN = "\\$\\{currentUser.ticket\\}";
 	/**
-	 * This parameter can be set to forward to a certain page when logging off (and it is succesful)
+	 * This parameter can be set to forward to a certain page when logging off
+	 * (and it is succesful)
 	 */
 	public static final String PARAMETER_REDIRECT_URI_ONLOGOFF = "logoff_redirect_uri";
 	public static final String COOKIE_NAME = "iwrbusid";
 	//public String IW_BUNDLE_IDENTIFIER = "com.idega.block.login";
 	public static final String PARAMETER_ALLOWS_COOKIE_LOGIN = "icusallows";
-	
+
 	// following string are used as keys in the sharedState map used by LoginModules
 	public static final String SESSION_KEY = "session"; // a HttpSession
 	public static final String REQUEST_KEY = "request"; // a HttpRequest
 	private static final String PROPERTY_SLIDEAUTHENTICATOR_ENABLED = "slide.authenticator.enable";
-	private static Logger log = Logger.getLogger(IWAuthenticator.class
-			.getName());
-	
+	private static Logger log = Logger.getLogger(IWAuthenticator.class.getName());
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -102,116 +108,117 @@ public class IWAuthenticator extends BaseFilter {
 	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
 	 *      javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
-	public void doFilter(ServletRequest srequest, ServletResponse sresponse,
-			FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest srequest, ServletResponse sresponse, FilterChain chain) throws IOException, ServletException {
 
-		HttpServletRequest request = (HttpServletRequest)srequest;
-		HttpServletResponse response = (HttpServletResponse)sresponse;
+		HttpServletRequest request = (HttpServletRequest) srequest;
+		HttpServletResponse response = (HttpServletResponse) sresponse;
 		HttpSession session = request.getSession();
-		
-//		Enumeration headerNames = request.getHeaderNames();
-//		System.out.println("------------HEADER BEGINS-------------");
-//		while (headerNames.hasMoreElements()) {
-//		String headerName = (String) headerNames.nextElement();
-//		System.out.println("\t["+headerName+"]: "+request.getHeader(headerName));
-//		}
-//		System.out.println("------------HEADER ENDS-------------");
-		
-//		Enumeration parameterNames = request.getParameterNames();
-//		System.out.println("------------PARAMETERS BEGINS-------------");
-//		while (parameterNames.hasMoreElements()) {
-//		String parameterName = (String) parameterNames.nextElement();
-//		System.out.println("\t["+parameterNames+"]: "+request.getParameter(parameterName));
-//		}
-//		System.out.println("------------PARAMETERS ENDS-------------");
+
+		//		Enumeration headerNames = request.getHeaderNames();
+		//		System.out.println("------------HEADER BEGINS-------------");
+		//		while (headerNames.hasMoreElements()) {
+		//		String headerName = (String) headerNames.nextElement();
+		//		System.out.println("\t["+headerName+"]: "+request.getHeader(headerName));
+		//		}
+		//		System.out.println("------------HEADER ENDS-------------");
+
+		//		Enumeration parameterNames = request.getParameterNames();
+		//		System.out.println("------------PARAMETERS BEGINS-------------");
+		//		while (parameterNames.hasMoreElements()) {
+		//		String parameterName = (String) parameterNames.nextElement();
+		//		System.out.println("\t["+parameterNames+"]: "+request.getParameter(parameterName));
+		//		}
+		//		System.out.println("------------PARAMETERS ENDS-------------");
 		User lastLoggedOnAsUser = null;
 		LoginBusinessBean loginBusiness = getLoginBusiness(request);
 		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
-		
-		if(isLoggedOn){
+
+		if (isLoggedOn) {
 			//lastLoggedOnAsUser = iwc.getCurrentUser();
 			lastLoggedOnAsUser = loginBusiness.getCurrentUser(session);
 		}
-		
-		if(useBasicAuthenticationMethod(request)){
-			if(!isLoggedOn){
-				if (!loginBusiness.authenticateBasicAuthenticationRequest(request)) {	
-					loginBusiness.callForBasicAuthentication(request,response,null);
+
+		if (useBasicAuthenticationMethod(request)) {
+			if (!isLoggedOn) {
+				if (!loginBusiness.authenticateBasicAuthenticationRequest(request)) {
+					loginBusiness.callForBasicAuthentication(request, response, null);
 					return;
 				}
 			}
-		} else {
-			if(!isLoggedOn){
+		}
+		else {
+			if (!isLoggedOn) {
 				loginBusiness.authenticateBasicAuthenticationRequest(request);
 			}
 			initializeDefaultDomain(request);
 			tryRegularLogin(request);
-			tryCookieLogin(request,response,loginBusiness);
+			tryCookieLogin(request, response, loginBusiness);
 			//addCookie(request,response,loginBusiness);
 		}
-		
+
 		processJAASLogin(request);
-		
-		
+
 		boolean didRedirect = processRedirects(request, response, session, loginBusiness);
-		if(didRedirect){
+		if (didRedirect) {
 			return;
 		}
-		
+
 		//We have to call this method again because the user might have logged on above:
 		isLoggedOn = loginBusiness.isLoggedOn(request);
 
 		boolean didInterrupt = processAuthenticationListeners(request, response, session, lastLoggedOnAsUser, loginBusiness, isLoggedOn);
-		if(didInterrupt){
+		if (didInterrupt) {
 			return;
 		}
-		if(isJaasAuthenticatorEnabled(request)){
+		if (isJaasAuthenticatorEnabled(request)) {
 			chain.doFilter(new IWJAASAuthenticationRequestWrapper(request), response);
 		}
-		else{
+		else {
 			chain.doFilter(request, response);
 		}
 	}
 
-	
 	/**
 	 * <p>
-	 * Returns true if feature of adding idegaweb principals and roles into the HttpServletRequest
+	 * Returns true if feature of adding idegaweb principals and roles into the
+	 * HttpServletRequest
 	 * </p>
+	 * 
 	 * @return
 	 */
 	protected boolean isJaasAuthenticatorEnabled(HttpServletRequest request) {
-		
+
 		IWMainApplication iwma = getIWMainApplication(request);
 		String slideServletMapping = "/content";
-		
+
 		//Logic for disabling the IWJAASAuthenticationRequestWrapper to be used on requests on slide on "/content/*"
 		String prop = iwma.getSettings().getProperty(PROPERTY_SLIDEAUTHENTICATOR_ENABLED);
 		String requestedUri = getURIMinusContextPath(request);
 		String method = request.getMethod();
-		if(method.equals(HTTP_METHOD_GET)||method.equals(HTTP_METHOD_POST)){
-			if(requestedUri.startsWith(slideServletMapping)){
-				if(prop!=null){
+		if (method.equals(HTTP_METHOD_GET) || method.equals(HTTP_METHOD_POST)) {
+			if (requestedUri.startsWith(slideServletMapping)) {
+				if (prop != null) {
 					return Boolean.valueOf(prop).booleanValue();
 				}
 				//Default value false for all slide GET and POST requests
 				return false;
 			}
-			else{
+			else {
 				//Default value true for non-Slide request
 				return true;
 			}
 		}
-		else{
+		else {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * <p>
-	 * Processes the possibly attatched AuthenticationListeners. Returns true if one of the
-	 * authenticationfilters interrupts the filter chain.
+	 * Processes the possibly attatched AuthenticationListeners. Returns true if
+	 * one of the authenticationfilters interrupts the filter chain.
 	 * </p>
+	 * 
 	 * @param request
 	 * @param response
 	 * @param session
@@ -223,31 +230,31 @@ public class IWAuthenticator extends BaseFilter {
 	protected boolean processAuthenticationListeners(HttpServletRequest request, HttpServletResponse response, HttpSession session, User lastLoggedOnAsUser, LoginBusinessBean loginBusiness, boolean isLoggedOn) throws RemoteException {
 		//TODO support also on basic authentication (e.g. webdav) or is that not necessery?
 		//TODO grab an interrupt exeption and just return; (could be necessery for the methods to be able to use response.sendRedirect)
-		if( loginBusiness.isLogOnAction(request) && isLoggedOn){
+		if (loginBusiness.isLogOnAction(request) && isLoggedOn) {
 			try {
 				AuthenticationBusiness authenticationBusiness = getAuthenticationBusiness(request);
 				User currentUser = loginBusiness.getCurrentUser(session);
 				//TODO: Remove IWContext
-				IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
+				IWContext iwc = new IWContext(request, response, request.getSession().getServletContext());
 				authenticationBusiness.callOnLogonMethodInAllAuthenticationListeners(iwc, currentUser);
 			}
 			catch (ServletFilterChainInterruptException e) {
 				//this is normal behaviour if e.g. the listener issues a response.sendRedirect(...)
-				System.out.println("[IWAuthenticator] - Filter chain interrupted. The reason was: "+e.getMessage());
+				System.out.println("[IWAuthenticator] - Filter chain interrupted. The reason was: " + e.getMessage());
 				return true;
 			}
 		}
-//		else if(loginBusiness.isLogOffAction(request) && !isLoggedOn && lastLoggedOnAsUser!=null){
-		else if(loginBusiness.isLogOffAction(request) && lastLoggedOnAsUser!=null){
+		//		else if(loginBusiness.isLogOffAction(request) && !isLoggedOn && lastLoggedOnAsUser!=null){
+		else if (loginBusiness.isLogOffAction(request) && lastLoggedOnAsUser != null) {
 			try {
 				AuthenticationBusiness authenticationBusiness = getAuthenticationBusiness(request);
 				//TODO: Remove IWContext
-				IWContext iwc = new IWContext(request,response, request.getSession().getServletContext());
+				IWContext iwc = new IWContext(request, response, request.getSession().getServletContext());
 				authenticationBusiness.callOnLogoffMethodInAllAuthenticationListeners(iwc, lastLoggedOnAsUser);
 			}
 			catch (ServletFilterChainInterruptException e) {
 				//this is normal behaviour if e.g. the listener issues a response.sendRedirect(...)
-				System.out.println("[IWAuthenticator] - Filter chain interrupted. The reason was: "+e.getMessage());
+				System.out.println("[IWAuthenticator] - Filter chain interrupted. The reason was: " + e.getMessage());
 				return true;
 			}
 		}
@@ -255,13 +262,12 @@ public class IWAuthenticator extends BaseFilter {
 		return false;
 	}
 
-	
-
 	/**
 	 * <p>
-	 * Processes possible redirects that might happen at login time.
-	 * Returns true if a redirect did happen.
+	 * Processes possible redirects that might happen at login time. Returns true
+	 * if a redirect did happen.
 	 * </p>
+	 * 
 	 * @param request
 	 * @param response
 	 * @param session
@@ -272,18 +278,19 @@ public class IWAuthenticator extends BaseFilter {
 	 */
 	protected boolean processRedirects(HttpServletRequest request, HttpServletResponse response, HttpSession session, LoginBusinessBean loginBusiness) throws IOException, RemoteException {
 		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
-		boolean redirectTuUserHomePage=false;
-		if (RequestUtil.isParameterSet(request,PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE)&&isLoggedOn){
-			redirectTuUserHomePage=true;
+		boolean redirectToUserHomePage = false;
+		if (RequestUtil.isParameterSet(request, PARAMETER_REDIRECT_USER_TO_PRIMARY_GROUP_HOME_PAGE) && isLoggedOn) {
+			redirectToUserHomePage = true;
 		}
-		return processRedirects(request,response,session,loginBusiness,redirectTuUserHomePage);
+		return processRedirects(request, response, session, loginBusiness, redirectToUserHomePage);
 	}
-	
+
 	/**
 	 * <p>
-	 * Processes possible redirects that might happen at login time.
-	 * Returns true if a redirect did happen.
+	 * Processes possible redirects that might happen at login time. Returns true
+	 * if a redirect did happen.
 	 * </p>
+	 * 
 	 * @param request
 	 * @param response
 	 * @param session
@@ -292,22 +299,22 @@ public class IWAuthenticator extends BaseFilter {
 	 * @throws IOException
 	 * @throws RemoteException
 	 */
-	protected boolean processRedirects(HttpServletRequest request, HttpServletResponse response, HttpSession session, LoginBusinessBean loginBusiness,boolean redirectToUserHomePage) throws IOException, RemoteException {
+	protected boolean processRedirects(HttpServletRequest request, HttpServletResponse response, HttpSession session, LoginBusinessBean loginBusiness, boolean redirectToUserHomePage) throws IOException, RemoteException {
 		//We have to call this method again because the user might just have logged on before:
 		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
-		if(redirectToUserHomePage){
+		if (redirectToUserHomePage) {
 			return redirectToUserHomepage(request, response, loginBusiness);
 		}
-		if (RequestUtil.isParameterSet(request,PARAMETER_REDIRECT_URI_ONLOGON) && isLoggedOn) {
+		if (RequestUtil.isParameterSet(request, PARAMETER_REDIRECT_URI_ONLOGON) && isLoggedOn) {
 			String uri = getLoginRedirectUriOnLogonParsedWithVariables(request);
-			if (uri!=null) {
+			if (uri != null) {
 				response.sendRedirect(uri);
 				return true;
 			}
 		}
-		if (RequestUtil.isParameterSet(request,PARAMETER_REDIRECT_URI_ONLOGOFF) && !isLoggedOn) {
+		if (RequestUtil.isParameterSet(request, PARAMETER_REDIRECT_URI_ONLOGOFF) && !isLoggedOn) {
 			String uri = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGOFF);
-			if (uri!=null) {
+			if (uri != null) {
 				response.sendRedirect(uri);
 				return true;
 			}
@@ -315,13 +322,11 @@ public class IWAuthenticator extends BaseFilter {
 		return false;
 	}
 
-	
-	
-	
 	/**
 	 * <p>
 	 * TODO tryggvil describe method redirectToUserHomepage
 	 * </p>
+	 * 
 	 * @param request
 	 * @param response
 	 * @param isLoggedOn
@@ -331,63 +336,85 @@ public class IWAuthenticator extends BaseFilter {
 	protected boolean redirectToUserHomepage(HttpServletRequest request, HttpServletResponse response, LoginBusinessBean loginBusiness) throws IOException, RemoteException {
 		HttpSession session = request.getSession();
 		User user = loginBusiness.getCurrentUser(session);
+		IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
+
+		IWMainApplicationSettings settings = iwac.getIWMainApplication().getSettings();
+		String forwardPage = settings.getProperty(PROPERTY_FORWARD_PAGE_URI);
+		if (forwardPage != null) {
+			int rolePageCount = 0;
+			Collection groups = user.getParentGroups();
+			Iterator iterator = groups.iterator();
+			while (iterator.hasNext()) {
+				Group element = (Group) iterator.next();
+				if (element.getHomePageID() > 0) {
+					Collection roles = iwac.getIWMainApplication().getAccessController().getAllRolesForGroup(element);
+					if (roles != null && !roles.isEmpty()) {
+						rolePageCount++;
+					}
+				}
+			}
+
+			if (rolePageCount > 1) {
+				response.sendRedirect(forwardPage);
+			}
+		}
+
 		int homePageID = user.getHomePageID();
 		if (homePageID > 0) {
-			IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
 			response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
 			return true;
 		}
-		
-		Group prmg = user.getPrimaryGroup(); 
+
+		Group prmg = user.getPrimaryGroup();
 		if (prmg != null) {
 			homePageID = prmg.getHomePageID();
 			if (homePageID > 0) {
-				IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
 				response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	
-	
 
 	/**
 	 * <p>
-	 * Parses the set RedirectOnLogon URI and replaces with user variables such as the
-	 * variables ${currentUser.personalID}, ${currentUser.ticket} in the URL String.
+	 * Parses the set RedirectOnLogon URI and replaces with user variables such as
+	 * the variables ${currentUser.personalID}, ${currentUser.ticket} in the URL
+	 * String.
 	 * </p>
+	 * 
 	 * @param request
 	 * @return
 	 */
 	public static String getLoginRedirectUriOnLogonParsedWithVariables(HttpServletRequest request) {
 		String uri = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGON);
-		uri = getUriParsedWithVariables(request,uri);
+		uri = getUriParsedWithVariables(request, uri);
 		return uri;
 	}
-	
+
 	/**
 	 * <p>
-	 * Parses the set RedirectOnLogon URI and replaces with user variables such as the
-	 * variables ${currentUser.personalID}, ${currentUser.ticket} in the URL String.
+	 * Parses the set RedirectOnLogon URI and replaces with user variables such as
+	 * the variables ${currentUser.personalID}, ${currentUser.ticket} in the URL
+	 * String.
 	 * </p>
+	 * 
 	 * @param request
 	 * @return
 	 */
-	public static String getUriParsedWithVariables(HttpServletRequest request,String uri) {
-		
+	public static String getUriParsedWithVariables(HttpServletRequest request, String uri) {
+
 		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(request);
 		LoggedOnInfo info = loginBean.getLoggedOnInfo(request.getSession());
-		
+
 		User user = loginBean.getCurrentUser(request.getSession());
-		if(user!=null){
-			String personalId=user.getPersonalID();
-			uri = uri.replaceAll(PERSONAL_ID_PATTERN,personalId);
+		if (user != null) {
+			String personalId = user.getPersonalID();
+			uri = uri.replaceAll(PERSONAL_ID_PATTERN, personalId);
 		}
 		String ticket = info.getTicket();
-		if(ticket!=null){
-			uri = uri.replaceAll(TICKET_PATTERN,ticket);
+		if (ticket != null) {
+			uri = uri.replaceAll(TICKET_PATTERN, ticket);
 		}
 		return uri;
 	}
@@ -407,11 +434,12 @@ public class IWAuthenticator extends BaseFilter {
 	 */
 	public void destroy() {
 	}
-	
-	public void tryRegularLogin(HttpServletRequest request){
+
+	public void tryRegularLogin(HttpServletRequest request) {
 		try {
 			getLoginBusiness(request).processRequest(request);
-		} catch (IWException e) {
+		}
+		catch (IWException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -419,13 +447,15 @@ public class IWAuthenticator extends BaseFilter {
 
 	/**
 	 * <p>
-	 * Authenticates in/out with reading existing cookie or creating it on login or removing it on logout
+	 * Authenticates in/out with reading existing cookie or creating it on login
+	 * or removing it on logout
 	 * </p>
+	 * 
 	 * @param request
 	 * @param response
 	 * @param loginBusiness
 	 */
-	public void tryCookieLogin(HttpServletRequest request,HttpServletResponse response,LoginBusinessBean loginBusiness) {
+	public void tryCookieLogin(HttpServletRequest request, HttpServletResponse response, LoginBusinessBean loginBusiness) {
 		if (!loginBusiness.isLoggedOn(request)) {
 			//No user is logged in, try to authenticate with the cookie:
 			Cookie userIDCookie = getCookie(request);
@@ -433,38 +463,40 @@ public class IWAuthenticator extends BaseFilter {
 			if (userIDCookie != null) {
 				//System.err.println("found the cookie");
 
-				if(loginBusiness.isLogOffAction(request)) {
+				if (loginBusiness.isLogOffAction(request)) {
 					//A cookie is found
 					//delete it:
 					userIDCookie.setMaxAge(0);
 					response.addCookie(userIDCookie);
 				}
-				else{
+				else {
 					String cypheredLoginName = userIDCookie.getValue();
 					IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
 					String loginName = deCypherUserLogin(iwac, cypheredLoginName);
 					try {
 						loginBusiness.logInUnVerified(request, loginName);
-					} catch (Exception ex) {
+					}
+					catch (Exception ex) {
 						//throw new IWException("Cookie login failed :
 						// "+ex.getMessage());
-						log.warning("Cookie login failed for loginName: "+loginName+" :" + ex.getMessage());
+						log.warning("Cookie login failed for loginName: " + loginName + " :" + ex.getMessage());
 					}
 				}
-			} else {
+			}
+			else {
 			}
 		}
-		else{
+		else {
 			//A user is logged in
 			if (loginBusiness.isLogOffAction(request)) {
 				Cookie userIDCookie = getCookie(request);
-				if(userIDCookie != null){
+				if (userIDCookie != null) {
 					//A cookie is found, try to remove it on logout
 					userIDCookie.setMaxAge(0);
 					response.addCookie(userIDCookie);
 				}
 			}
-			else if (RequestUtil.isParameterSet(request,PARAMETER_ALLOWS_COOKIE_LOGIN)) {
+			else if (RequestUtil.isParameterSet(request, PARAMETER_ALLOWS_COOKIE_LOGIN)) {
 				Cookie userIDCookie = getCookie(request);
 				HttpSession session = request.getSession();
 				String login = loginBusiness.getLoggedOnInfo(session).getLogin();
@@ -474,11 +506,11 @@ public class IWAuthenticator extends BaseFilter {
 				int maxAge = 60 * 60 * 24 * 30;
 				if (userIDCookie == null) {
 					//No cookie exists on logon, try to add it:
-					userIDCookie = new Cookie(COOKIE_NAME,cypheredLogin);
+					userIDCookie = new Cookie(COOKIE_NAME, cypheredLogin);
 					userIDCookie.setMaxAge(maxAge);
 					response.addCookie(userIDCookie);
 				}
-				else{
+				else {
 					userIDCookie.setValue(login);
 					userIDCookie.setMaxAge(maxAge);
 				}
@@ -487,7 +519,7 @@ public class IWAuthenticator extends BaseFilter {
 	}
 
 	private Cookie getCookie(HttpServletRequest request) {
-		Cookie userIDCookie = RequestUtil.getCookie(request,COOKIE_NAME);
+		Cookie userIDCookie = RequestUtil.getCookie(request, COOKIE_NAME);
 		return userIDCookie;
 	}
 
@@ -509,13 +541,12 @@ public class IWAuthenticator extends BaseFilter {
 		return cypheredId;
 	}
 
-	protected String deCypherUserLogin(IWApplicationContext iwc,
-			String cypheredLogin) {
+	protected String deCypherUserLogin(IWApplicationContext iwc, String cypheredLogin) {
 		String key = getCypherKey(iwc);
 		return new CypherText().doDeCypher(cypheredLogin, key);
 	}
-	
-	protected AuthenticationBusiness getAuthenticationBusiness(HttpServletRequest request){
+
+	protected AuthenticationBusiness getAuthenticationBusiness(HttpServletRequest request) {
 		AuthenticationBusiness authenticationBusiness = null;
 		try {
 			IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
@@ -526,12 +557,12 @@ public class IWAuthenticator extends BaseFilter {
 		}
 		return authenticationBusiness;
 	}
-	
+
 	protected BuilderService getBuilderService(IWApplicationContext iwac) throws RemoteException {
 		return BuilderServiceFactory.getBuilderService(iwac);
 	}
 
-	protected void processJAASLogin(HttpServletRequest request)  {
+	protected void processJAASLogin(HttpServletRequest request) {
 		List loginModules = ImplementorRepository.getInstance().newInstances(LoginModule.class, this.getClass());
 		// just a shortcut 
 		if (loginModules.isEmpty()) {

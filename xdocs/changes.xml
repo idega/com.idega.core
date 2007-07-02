@@ -5,6 +5,18 @@
   </properties>
   <body>
 
+    	<release version="3.1.53" date="2007-07-02">
+			<action dev="laddi" type="update">
+				Added possibility to forward to a special page when user has multiple roles and home pages.
+			</action>
+			<action dev="laddi" type="update">
+				Changed DatePicker to use layers instead of tables.
+			</action>
+			<action dev="laddi" type="update">
+				Added support for company personal IDs.
+			</action>
+		</release>
+
     	<release version="3.1.52" date="2007-06-27">
 			<action dev="tryggvil" type="add">
 				Added new simplified API for doing Messaging/Emailing, based around 

@@ -26,9 +26,12 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.text.TextSoap;
 
 /**
- * DatePicker is a chooser object used to choose a date from a calendar. The chooser leaves a hidden input with the name of the chooser in a form with
- * the value of the chosen date represented in the timestamp format yyyy-mm-dd hh:mm:ss:fffffffff where fffffffff are nanoseconds The default
- * dateformat style is DateFormat.SHORT A IWTimestamp object can be constructed from the timestamp format value.
+ * DatePicker is a chooser object used to choose a date from a calendar. The
+ * chooser leaves a hidden input with the name of the chooser in a form with the
+ * value of the chosen date represented in the timestamp format yyyy-mm-dd
+ * hh:mm:ss:fffffffff where fffffffff are nanoseconds The default dateformat
+ * style is DateFormat.SHORT A IWTimestamp object can be constructed from the
+ * timestamp format value.
  * 
  * @author <a href="aron@idega.is">Aron Birkir </a>
  * @version 1.0
@@ -90,7 +93,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		empty();
 		IWBundle iwb = getBundle(iwc);
 		IWResourceBundle iwrb = this.getResourceBundle(iwc);
-		this.dateFormatPattern = iwb.getProperty("DatePicker.date_format_string", "yyyy-MM-dd");
+		this.dateFormatPattern = iwc.getApplicationSettings().getProperty("DatePicker.date_format_string", "yyyy-MM-dd");
 		setChooseButtonImage(iwb.getImage("calendar.gif", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
 		if (this.locale == null) {
 			this.locale = iwc.getCurrentLocale();
@@ -98,9 +101,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		if (this.date != null) {
 			setDate(this.date);
 		}
-		else {
+		/*else {
 			setDate(new Date());
-		}
+		}*/
 		// setParameterValue(SmallCalendar.PRM_SETTINGS,SmallCalendar.getInitializingString(true,null,"#0000FF","#00FF00","#00FFFF","#FFFF00","#FFFFFF","#FFF000"));
 	}
 
@@ -166,7 +169,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 	}
 
 	/**
-	 * Sets the chosen date andformats it according to the formatstyle set, and the locale set, or default locale if none is set
+	 * Sets the chosen date andformats it according to the formatstyle set, and
+	 * the locale set, or default locale if none is set
 	 * 
 	 * @param date
 	 */
@@ -187,7 +191,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 	}
 
 	/**
-	 * Sets the chosen date and formats it according to the formatstyle set and locale.
+	 * Sets the chosen date and formats it according to the formatstyle set and
+	 * locale.
 	 * 
 	 * @param date
 	 * @param locale
@@ -198,7 +203,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 	}
 
 	/**
-	 * Sets the format style used by DateFormat to format the date chosen values can be one of SHORT,MEDIUM,LONG,FULL in class DateFormat
+	 * Sets the format style used by DateFormat to format the date chosen values
+	 * can be one of SHORT,MEDIUM,LONG,FULL in class DateFormat
 	 * 
 	 * @param formatStyle
 	 */
