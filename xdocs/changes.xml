@@ -4,6 +4,14 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  		<release version="3.1.54" date="2007-07-04">
+			<action dev="valdas" type="update">
+				Made multiple changes that was needed for Simple user application
+			</action>
+			<action dev="valdas" type="update">
+				Added one more compare option (by personal id) in User comparator
+			</action>
+		</release>
 
     	<release version="3.1.53" date="2007-07-02">
 			<action dev="laddi" type="update">
