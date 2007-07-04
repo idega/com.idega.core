@@ -11,6 +11,7 @@ public class CoreConstants {
 	private static final String[] _HEXIDECIMAL_LETTERS = new String[] {"a", "b", "c", "d", "e", "f", "A", "B", "C", "D", "E", "F"};
 	public static final List HEXIDECIMAL_LETTERS = Collections.unmodifiableList(Arrays.asList(_HEXIDECIMAL_LETTERS));
 	
+	public static final String EMPTY = "";
 	public static final String SLASH = "/";
 	public static final String NUMBER_SIGN = "#";
 	public static final String SEMICOLON = ";";

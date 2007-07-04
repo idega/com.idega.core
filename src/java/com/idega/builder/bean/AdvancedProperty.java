@@ -1,9 +1,17 @@
 package com.idega.builder.bean;
 
 public class AdvancedProperty {
-
+	
 	private String id = null;
 	private String value = null;
+	
+	public AdvancedProperty() {}
+	
+	public AdvancedProperty(String id, String value) {
+		this();
+		this.id = id;
+		this.value = value;
+	}
 	
 	public String getId() {
 		return id;

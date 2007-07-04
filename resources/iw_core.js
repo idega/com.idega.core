@@ -459,7 +459,10 @@ function tableruler()
 
 function closeLoadingMessage() {
 	var busyMessage = document.getElementById("busybuddy");
-	if (busyMessage) {
+	if (busyMessage == null) {
+		return;
+	}
+	else {
 		var parentElement = busyMessage.parentNode;
 		if (parentElement == null) {
 			if (busyMessage.style) {
@@ -473,9 +476,29 @@ function closeLoadingMessage() {
 		}
 		else {
 			parentElement.removeChild(busyMessage);
-		}		
+			closeLoadingMessage();	//	We want to close all layers
+		}
 	}
 }
+
+function closeAllLoadingMessages() {
+	var bodyArray = document.getElementsByTagName('body');
+	var bodyTag = bodyArray[0];
+	var layers = getElementsByClassName(bodyTag, '*', 'LoadLayer');
+	if (layers == null) {
+		return;
+	}
+	var parentNode = null;
+	var layer = null;
+	for (var i = 0; i < layers.length; i++) {
+		layer = layers[i];
+		parentNode = layer.parentNode;
+		if (parentNode != null) {
+			parentNode.removeChild(layer);
+		}
+	}
+}
+
 
 //setLinkToBold method. moved here to fix bug in UserApplication
 
@@ -612,3 +635,110 @@ function registerEvent(object, eventType, functionName){
 		}
 	} 
 }
+
+function removeChildren(element) {
+	if (element == null) {
+		return;
+	}
+	var children = element.childNodes;
+	if (children == null) {
+		return;
+	}
+	var size = children.length;
+	var child = null;
+	for (var i = 0; i < size; i++) {
+		child = children[0];
+		if (child != null) {
+			element.removeChild(child);
+		}
+	}
+}
+
+function getElementsByClassName(oElm, strTagName, strClassName) {
+	var arrElements = (strTagName == "*" && oElm.all)? oElm.all : oElm.getElementsByTagName(strTagName);
+	var arrReturnElements = new Array();
+	strClassName = strClassName.replace(/-/g, "\-");
+	var oRegExp = new RegExp("(^|\s)" + strClassName + "(\s|$)");
+	var oElement;
+	for(var i=0; i<arrElements.length; i++){
+		oElement = arrElements[i];
+		if(oRegExp.test(oElement.className)){
+			arrReturnElements.push(oElement);
+		}
+	}
+	return (arrReturnElements)
+}
+
+/** These functions transforms Document (received via DWR) to DOM **/
+function getTransformedDocumentToDom(component) {
+	var nodes = new Array();
+	if (component == null) {
+		return nodes;
+	}
+	var children = component.childNodes;
+	if (children == null) {
+		return nodes;
+	}
+	if (children.length == 0) {
+		return nodes;
+	}
+	
+	var size = children.length;
+	var node = null;
+	for (var i = 0; i < size; i++) {
+		node = children.item(i);
+		nodes.push(node);
+	}
+	return nodes;
+}
+
+function createRealNode(element) {
+	//	Text
+	if(element.nodeName == '#text') {
+		var textNode = document.createTextNode(element.nodeValue);
+		return textNode;
+	}
+	//	Comment
+	if (element.nodeName == '#comment') {
+		var commentNode = document.createComment(element.nodeValue);
+		return commentNode;
+	}
+	if (IE) {
+		if (element.nodeName == 'script') {	//	Script
+			var script = document.createElement('script');
+			return script;
+		}
+	}
+	// Element
+	var result = document.createElement(element.nodeName);
+	if (element.attributes != null) {
+		for (var i = 0; i < element.attributes.length; i++) {
+			result.setAttribute(element.attributes[i].nodeName, element.attributes[i].nodeValue);
+		}
+	}
+	if (element.childNodes != null) {
+		for (var j = 0; j < element.childNodes.length; j++) {
+			result.appendChild(createRealNode(element.childNodes[j]));
+		}
+	}
+	return result;
+}
+
+function insertNodesToContainer(component, container) {
+	if (component == null || container == null) {
+		return;
+	}
+	
+	// Making copy
+	var nodes = getTransformedDocumentToDom(component);
+	
+	// Inserting nodes
+	var activeNode = null;
+	var realNode = null;
+	for (var i = 0; i < nodes.length; i++) {
+		activeNode = nodes[i];
+		realNode = createRealNode(activeNode);
+		container.appendChild(realNode);
+	}
+}
+/** End **/
