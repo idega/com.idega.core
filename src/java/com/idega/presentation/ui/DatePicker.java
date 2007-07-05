@@ -101,9 +101,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		if (this.date != null) {
 			setDate(this.date);
 		}
-		/*else {
+		else {
 			setDate(new Date());
-		}*/
+		}
 		// setParameterValue(SmallCalendar.PRM_SETTINGS,SmallCalendar.getInitializingString(true,null,"#0000FF","#00FF00","#00FFFF","#FFFF00","#FFFFFF","#FFF000"));
 	}
 
