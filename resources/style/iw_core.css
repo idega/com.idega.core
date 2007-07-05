@@ -69,7 +69,21 @@ DIV.LoadLayerOld {
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/transparent.png',sizingMethod='scale');
 	z-index: 9999 !important;
 }
-
+.LocalLoadLayer {
+	height: 100%;
+	width: 100%;
+	left: 0px;
+	top: 0px;
+	visibility: hidden;
+	position: relative;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/transparent.png',sizingMethod='scale');
+	z-index: 9999 !important;
+}
+.LocalLoadLayer .LoadingImage {
+	position: relative;
+	top: 21px;
+	left: 52%;
+}
 html>body .LoadLayer {
 	height: 100%;
 	width: 100%;
@@ -77,16 +91,38 @@ html>body .LoadLayer {
 	filter: none;
 	background: url(/idegaweb/bundles/com.idega.core.bundle/resources/style/images/transparent.png);
 }
-
-.LoadLayer .LoadLayerMiddle {
+html>body .LocalLoadLayer {
+	left: 0px;
+	top: 0px;
+	height: 100%;
+	width: 100%;
+	position: relative;
+	filter: none;
+	background: url(/idegaweb/bundles/com.idega.core.bundle/resources/style/images/transparent.png);
+	z-index: 9999 !important;
+}
+html>body .LocalLoadLayer .LoadingImage {
+	position: relative;
+	top: 21px;
+	left: 0px;
+}
+.LoadLayer .LoadLayerMiddle, .LocalLoadLayer .LoadLayerMiddle {
 	position: absolute;
 	width: 100%;
 	top: 50%;
 	text-align: center;
 	height: 74px;
 }
-
-.LoadLayer .LoadLayerMiddle .LoadLayerContents {
+.LocalLoadLayer .LoadLayerMiddle .LoadLayerContents {
+	width: 74px;
+	height: 74px;
+	margin: 0 auto;
+	position: relative;
+	top: -50%;
+	padding: 0px 0px;
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/whiteTransparentSmall.png',sizingMethod='scale');
+}
+.LoadLayer .LoadLayerMiddle .LoadLayerContents{
 	width: 231px;
 	height: 54px;
 	margin: 0 auto;
@@ -95,7 +131,11 @@ html>body .LoadLayer {
 	padding: 10px 20px;
 	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/whitetransparent.png',sizingMethod='scale');
 }
-
+html>body .LocalLoadLayer .LoadLayerMiddle .LoadLayerContents {
+	width: 74px;
+	filter: none;
+	background: url(/idegaweb/bundles/com.idega.core.bundle/resources/style/images/whiteTransparentSmall.png);
+}
 html>body .LoadLayer .LoadLayerMiddle .LoadLayerContents {
 	width: 191px;
 	filter: none;

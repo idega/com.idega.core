@@ -420,6 +420,9 @@ function tableruler()
 
 	var image3 = new Image();
 	image3.src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/whitetransparent.png';
+	
+	var image4 = new Image();
+	image4.src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/ajax-loader.gif';
 
 	function showLoadingMessage(sLoadingText){
 	
@@ -460,6 +463,49 @@ function tableruler()
 		var bodyTag = bodyArray[0];
 		bodyTag.appendChild(outer);
 		//alert('bodyTag:'+bodyTag);
+		
+		if( outer.style ) { 
+	      outer.style.visibility = 'visible';
+	    }
+	    else {
+	      outer.visibility = 'show' ;
+	    }
+	}
+	
+	function showElementLoading(element) {
+		var outer = document.createElement('div');
+		outer.setAttribute('id', 'busybuddy'); 
+		outer.setAttribute('class', 'LocalLoadLayer');
+		//IE class workaround:
+		outer.setAttribute('className', 'LocalLoadLayer');
+		
+		var middle = document.createElement('div');
+		middle.setAttribute('id', 'busybuddy-middle');
+		middle.setAttribute('class', 'LoadLayerMiddle');
+		//IE class workaround:
+		middle.setAttribute('className', 'LoadLayerMiddle');
+		outer.appendChild(middle);
+		
+		var inner = document.createElement('div');
+		inner.setAttribute('id', 'busybuddy-contents');
+		inner.setAttribute('class', 'LoadLayerContents');
+		//IE class workaround:
+		inner.setAttribute('className', 'LoadLayerContents');
+		middle.appendChild(inner);
+		
+		var image = document.createElement('img');
+		image.setAttribute('id', 'loadingimage');
+		image.setAttribute('src',image4.src);
+		image.setAttribute('class', 'LoadingImage');
+		image.setAttribute('className', 'LoadingImage');
+		image.src=image4.src;
+		inner.appendChild(image);
+		
+		
+		var component = document.getElementById(element);
+		removeChildren(component);
+		component.appendChild(outer);
+		
 		
 		if( outer.style ) { 
 	      outer.style.visibility = 'visible';
