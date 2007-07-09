@@ -13,6 +13,7 @@ package com.idega.util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -20,13 +21,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -200,75 +201,49 @@ public class FileUtil {
     return file.delete();
 }
 
-  
-  /*
-  * streams an inputstream to a file
-  */
-    public static void streamToFile(InputStream input, File toFile) throws IOException{
-    	FileOutputStream out = new FileOutputStream(toFile);
-    	streamToOutputStream(input, out);
-    }
-  
-    
-
-    /*
-    * streams an inputstream to a file
-    */
-      public static File streamToFile( InputStream input, String filePath, String fileName){
-      	File file = null;
-        try{
-          if(input!=null){
-            input.available();//this casts an ioexception if the stream is null
-            file = getFileAndCreateIfNotExists(filePath,fileName);
-            FileOutputStream fileOut = new FileOutputStream(file);
-            streamToOutputStream(input,fileOut);
-          }
-        }
-        catch(IOException e){
-            //e.printStackTrace(System.err);
-            System.err.println("FileUtil : Error or skipping (for folders) writing to file");
-         }
-
-        return file;
-      }
-    
 /*
 * streams an inputstream to a file
 */
-  public static void streamToOutputStream( InputStream input, OutputStream out)throws IOException{
+  public static File streamToFile( InputStream input, String filePath, String fileName){
+  	File file = null;
     try{
       if(input!=null){
-        input.available();
+        input.available();//this casts an ioexception if the stream is null
+        file = getFileAndCreateIfNotExists(filePath,fileName);
+        FileOutputStream fileOut = new FileOutputStream(file);
+
         byte buffer[]= new byte[1024];
         int	noRead	= 0;
 
         noRead = input.read( buffer, 0, 1024 );
         //Write out the stream to the file
         while ( noRead != -1 ){
-          out.write( buffer, 0, noRead );
+          fileOut.write( buffer, 0, noRead );
           noRead = input.read( buffer, 0, 1024 );
         }
 
-        out.flush();
-        out.close();
+        fileOut.flush();
+        fileOut.close();
       }
 
     }
-    //catch(IOException e){
-    //  //e.printStackTrace(System.err);
-    //  System.err.println("FileUtil : Error or skipping (for folders) writing to file");
-    //}
+    catch(IOException e){
+      //e.printStackTrace(System.err);
+      System.err.println("FileUtil : Error or skipping (for folders) writing to file");
+    }
     finally{
       try{
         if(input!=null) {
-        	input.close();
-        }
+					input.close();
+				}
       }
       catch(IOException e){
         //e.printStackTrace(System.err);
         System.err.println("FileUtil : Error closing the inputstream");
       }
     }
+
+    return file;
   }
 
   /** 
@@ -882,5 +857,94 @@ public class FileUtil {
           id = "b";
       }
       return nf.format((bytes < 0 ? -1 : 1) * relSize) + " "+id;
+  }
+  
+  /**
+   * <p>
+   * Gets the "head" of a text file, as a List of Strings with the first lines with length numberOfLinesToRead
+   * </p>
+   * @param file
+   * @param encoding
+   * @param numberOfLinesToRead
+   * @return
+   * @throws IOException
+   */
+  public static List head(File file, int numberOfLinesToRead) throws IOException
+  {
+      return head(file, "UTF-8" , numberOfLinesToRead);
+  }
+  
+  /**
+   * <p>
+   * Gets the "head" of a text file, as a List of Strings with the first lines with length numberOfLinesToRead
+   * </p>
+   * @param file
+   * @param encoding
+   * @param numberOfLinesToRead
+   * @return
+   * @throws IOException
+   */
+  public static List head(File file, String encoding, int numberOfLinesToRead) throws IOException
+  {
+      //assert (file != null) && file.exists() && file.isFile() && file.canRead();
+      //assert numberOfLinesToRead > 0;
+      //assert encoding != null;
+      
+      LinkedList lines = new LinkedList();
+      BufferedReader reader= new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
+      for (String line = null; (numberOfLinesToRead-- > 0) && (line = reader.readLine()) != null;)
+      {
+          lines.addLast(line);
+      }
+      reader.close();
+      return lines;
+  }
+  /**
+   * <p>
+   * Gets the "tail" of a text file, as a List of Strings of the last lines with length numberOfLinesToRead
+   * </p>
+   * @param file
+   * @param encoding
+   * @param numberOfLinesToRead
+   * @return
+   * @throws IOException
+   */
+  public static List tail(File file, int numberOfLinesToRead) throws IOException
+  {
+      return tail(file, "UTF-8" , numberOfLinesToRead);
+  }
+  
+  /**
+   * <p>
+   * Gets the "tail" of a text file, as a List of Strings of the last lines with length numberOfLinesToRead
+   * </p>
+   * @param file
+   * @param encoding
+   * @param numberOfLinesToRead
+   * @return
+   * @throws IOException
+   */
+  public static List tail(File file, String encoding, int numberOfLinesToRead) throws IOException
+  {
+      //assert (file != null) && file.exists() && file.isFile() && file.canRead();
+      //assert numberOfLinesToRead > 0;
+      //assert (encoding != null) && encoding.matches("(?i)(iso-8859|ascii|us-ascii).*");
+      
+      LinkedList lines = new LinkedList();
+      BufferedReader reader= new BufferedReader(new InputStreamReader(new BackwardsFileInputStream(file), encoding));
+      for (String line = null; (numberOfLinesToRead-- > 0) && (line = reader.readLine()) != null;)
+      {
+          // Reverse the order of the characters in the string
+          char[] chars = line.toCharArray();
+          for (int j = 0, k = chars.length - 1; j < k ; j++, k--)
+          {
+              char temp = chars[j];
+              chars[j] = chars[k];
+              chars[k]= temp;
+          }
+          lines.addFirst(new String(chars));
+      }
+      reader.close();
+      return lines;
   }
 }
