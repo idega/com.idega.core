@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.17 2007/06/28 15:20:03 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.18 2007/07/09 17:35:57 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/28 15:20:03 $ by $Author: valdas $
+ * Last modified: $Date: 2007/07/09 17:35:57 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.17 $
+ * @version $Revision: 1.207.2.18 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -1886,6 +1886,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		//throw new IBORuntimeException("Error find user for group
 		// "+userGroup.toString());
 	}
+	
+	private LoginTable getLoginTableForUser(User user) {
+		if (user == null) {
+			return null;
+		}
+		
+		return LoginDBHandler.getUserLogin(((Integer) user.getPrimaryKey()).intValue());
+	}
 
 	public boolean hasUserLogin(User user) throws RemoteException {
 		LoginTable lt = LoginDBHandler.getUserLogin(((Integer) user.getPrimaryKey()).intValue());
@@ -1895,6 +1903,27 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public boolean hasUserLogin(int userID) throws RemoteException {
 		LoginTable lt = LoginDBHandler.getUserLogin(userID);
 		return lt != null;
+	}
+	
+	public String getUserLogin(User user) {
+		LoginTable loginTable = getLoginTableForUser(user);
+		if (loginTable == null) {
+			return null;
+		}
+		
+		return loginTable.getUserLogin();
+	}
+	
+	public String getUserPassword(User user) {
+		LoginTable loginTable = getLoginTableForUser(user);
+		if (loginTable == null) {
+			return null;
+		}
+		if (loginTable == null) {
+			return null;
+		}
+		
+		return loginTable.getUserPasswordInClearText();
 	}
 
 	public Group getUsersHighestTopGroupNode(User user, List groupTypes, IWUserContext iwuc) throws RemoteException {

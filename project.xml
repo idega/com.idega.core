@@ -393,6 +393,13 @@
       <organization>idega software</organization>
       <roles/>
     </developer>
+    <developer>
+      <name>Valdas Zemaitis</name>
+      <id>valdas</id>
+      <email>valdas@idega.com</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>
   </developers>
   <dependencies>
     <dependency>
