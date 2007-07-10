@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.18 2007/07/09 17:35:57 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.19 2007/07/10 10:12:13 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/07/09 17:35:57 $ by $Author: valdas $
+ * Last modified: $Date: 2007/07/10 10:12:13 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.18 $
+ * @version $Revision: 1.207.2.19 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -1923,7 +1923,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return null;
 		}
 		
-		return loginTable.getUserPasswordInClearText();
+		return loginTable.getUserPassword();
 	}
 
 	public Group getUsersHighestTopGroupNode(User user, List groupTypes, IWUserContext iwuc) throws RemoteException {
