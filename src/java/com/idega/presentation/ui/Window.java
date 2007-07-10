@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.48.2.2 2006/08/01 17:04:54 gimmi Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.48.2.3 2007/07/10 13:58:48 sigtryggur Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -27,10 +27,10 @@ import com.idega.util.datastructures.list.KeyValuePair;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2006/08/01 17:04:54 $ by $Author: gimmi $
+ * Last modified: $Date: 2007/07/10 13:58:48 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.48.2.2 $
+ * @version $Revision: 1.48.2.3 $
  */
 public class Window extends Page {
 
@@ -581,7 +581,7 @@ public class Window extends Page {
 			// return
 			// "window.open('"+theURL+"','tempwindow','resizable=yes,toolbar=yes,location=no,directories=no,status=yes,scrollbars=yes,menubar=yes,titlebar=yes,width=500,height=500')";
 			return getWindowCallingScript(theURL, "tempwindow", true, true, true, true, true, true, true, true, false,
-					500, 500, win.getCoordinateX(), win.getCoordinateY());
+					500, 500, null, null);
 		}
 		// return
 		// "window.open('"+theURL+"','"+win.getTarget()+"','resizable="+win.returnCheck(windowInstance.resizable)+",toolbar="+win.returnCheck(windowInstance.toolbar)+",location="+win.returnCheck(win.location)+",directories="+win.returnCheck(win.directories)+",status="+win.returnCheck(win.status)+",scrollbars="+win.returnCheck(win.scrollbar)+",menubar="+win.returnCheck(win.menubar)+",titlebar="+win.returnCheck(win.titlebar)+win.returnFullScreen()+",width="+win.getWidth()+",height="+win.getHeight()+"')";
@@ -604,7 +604,7 @@ public class Window extends Page {
 			// return
 			// "window.open('"+theURL+"','tempwindow','resizable=yes,toolbar=yes,location=no,directories=no,status=yes,scrollbars=yes,menubar=yes,titlebar=yes,width=500,height=500')";
 			return getWindowCallingScript(theURL, "tempwindow", true, true, true, true, true, true, true, true, false,
-					500, 500, win.getCoordinateX(), win.getCoordinateY());
+					500, 500, null, null);
 		}
 		// return
 		// "window.open('"+theURL+"','"+win.getTarget()+"','resizable="+win.returnCheck(windowInstance.resizable)+",toolbar="+win.returnCheck(windowInstance.toolbar)+",location="+win.returnCheck(win.location)+",directories="+win.returnCheck(win.directories)+",status="+win.returnCheck(win.status)+",scrollbars="+win.returnCheck(win.scrollbar)+",menubar="+win.returnCheck(win.menubar)+",titlebar="+win.returnCheck(win.titlebar)+win.returnFullScreen()+",width="+win.getWidth()+",height="+win.getHeight()+"')";
@@ -695,7 +695,7 @@ public class Window extends Page {
 		Window win = getStaticInstance(windowClass);
 		if (win == null) {
 			return getWindowArgumentCallingScript(true, true, true, true, true, true, true, true, false, 500, 500,
-					win.getCoordinateX(), win.getCoordinateY());
+					null, null);
 		}
 		return getWindowArgumentCallingScript(win.toolbar, win.location, win.directories, win.status, win.menubar,
 				win.titlebar, win.scrollbar, win.resizable, win.fullscreen, win.getWindowWidth(),
