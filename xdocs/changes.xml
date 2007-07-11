@@ -4,6 +4,12 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  		<release version="3.1.55" date="2007-07-11">
+      		<action dev="valdas" type="update">
+				Backed DWR to 1.1
+      		</action>
+    	</release>
+  		
   		<release version="3.1.54" date="2007-07-04">
 			<action dev="valdas" type="update">
 				Made multiple changes that was needed for Simple user application
