@@ -1131,7 +1131,24 @@ function createRealNode(element) {
 	var result = document.createElement(element.nodeName);
 	if (element.attributes != null) {
 		for (var i = 0; i < element.attributes.length; i++) {
-			result.setAttribute(element.attributes[i].nodeName, element.attributes[i].nodeValue);
+			var attribute = element.attributes[i];
+			if (attribute.nodeName == 'class' && IE) {
+				result.className = attribute.nodeValue;
+			}
+			else if (attribute.nodeName.indexOf('on') == 0 && IE) {
+				var event = attribute.nodeName.substring(attribute.nodeName.indexOf('on') + 2);
+				var functionCall = attribute.nodeValue;
+				var elementFunction = function() {
+					eval(functionCall);
+				};
+				registerEvent(result, event, elementFunction);
+			}
+			else if (attribute.nodeName == 'checked' && IE) {
+				result.setAttribute('defaultChecked', attribute.nodeValue);
+			}
+			else {
+				result.setAttribute(attribute.nodeName, attribute.nodeValue);
+			}
 		}
 	}
 	if (element.childNodes != null) {
