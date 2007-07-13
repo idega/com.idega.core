@@ -667,8 +667,6 @@ function changeSiteInfo(id, savingSiteInfoValueMessageText) {
 	if (id == null) {
 		return;
 	}
-	insertJavaScriptFileToHeader("/dwr/engine.js");
-	insertJavaScriptFileToHeader("/dwr/interface/ThemesEngine.js");
 	if (savingSiteInfoValueMessageText != null) {
 		SAVING_SITE_INFO_VALUE_MESSAGE_TEXT = savingSiteInfoValueMessageText;
 	}
@@ -809,16 +807,12 @@ function mainSaveSiteInfo(value) {
 	}
 	
 	showLoadingMessage(SAVING_SITE_INFO_VALUE_MESSAGE_TEXT);
-	setTimeout("executeDwrAndSaveSiteInfo('" + value + "')", 500);
-}
-
-function executeDwrAndSaveSiteInfo(value) {
 	ThemesEngine.saveSiteInfoValue(SITE_INFO_KEYWORD_FROM_BOX, value, saveSiteInfoValueCallback);
 }
 
 function saveSiteInfoValueCallback(result) {
+	closeAllLoadingMessages();
 	showSiteInfoValue();
-	closeLoadingMessage();
 }
 
 function showSiteInfoValue() {
