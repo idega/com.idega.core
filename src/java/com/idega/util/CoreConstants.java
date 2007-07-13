@@ -33,5 +33,7 @@ public class CoreConstants {
 	public static final String SCHEDULE_SESSION_DWR_INTERFACE_SCRIPT = "/dwr/interface/ScheduleSession.js";
 
 	public static final String CONTENT = "/content";
+	
+	public static final String ARTICLE_ITEM_VIEWER_NAME = "ArticleItemViewer";
 
 }
