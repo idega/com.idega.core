@@ -850,7 +850,6 @@ function showSiteInfoValue() {
 		if (element != null) {
 			if (element.style.visibility == "hidden") {
 				CLICKED_ON_PROPERTY = false;
-				removeStyleProperty(SITE_INFO_KEYWORD_FROM_BOX);
 				element.style.visibility = "visible";
 			}
 		}
@@ -858,7 +857,6 @@ function showSiteInfoValue() {
 	else {
 		CLICKED_ON_PROPERTY = false;
 		appendChildrenToExactPlace();
-		removeStyleProperty(CHILD_ELEMENT.id);
 		PARENT_ELEMENT = null;
 		CHILD_ELEMENT = null;
 		CHANGED_CHILDREN_LIST = null;
