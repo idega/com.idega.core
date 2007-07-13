@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.11 2007/07/12 16:30:05 justinas Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.12 2007/07/13 09:16:52 justinas Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -33,10 +33,10 @@ import com.idega.idegaweb.IWModuleLoader;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2007/07/12 16:30:05 $ by $Author: justinas $
+ * Last modified: $Date: 2007/07/13 09:16:52 $ by $Author: justinas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class ComponentRegistry {
 
@@ -113,8 +113,9 @@ public class ComponentRegistry {
 
 	public void registerComponent(ComponentInfo info) {
 //GroupAndCalendarChooserSystem.out.println("registerComponent "+info.getComponentClass().getName());
-		if(info.getComponentClass().getName().startsWith("com.idega.block.cal."))
+		if(info.getComponentClass().getName().startsWith("com.idega.block.cal.")){
 			System.out.println("com.idega.block.cal.");
+		}
 		if(info.getComponentClass().getName().equals("com.idega.block.cal.presentation.CalendarViewer"))
 			System.out.println("calendarViewer");
 		internalGetComponentList().add(info);
@@ -147,6 +148,12 @@ public class ComponentRegistry {
 				Collection objects = icoHome.findAll();
 				for (Iterator iter = objects.iterator(); iter.hasNext();) {
 					ICObject component = (ICObject) iter.next();
+					
+if(component.getObjectClass().toString().startsWith("com.idega.block.cal.")){
+	System.out.println("loadOldIWComponents");
+	System.out.println(component.getObjectClass().toString());
+}
+					
 					registerComponent(component);
 				}
 			}
