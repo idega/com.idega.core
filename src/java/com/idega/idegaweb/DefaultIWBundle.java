@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.41 2007/07/11 19:03:15 justinas Exp $
+ * $Id: DefaultIWBundle.java,v 1.42 2007/07/16 08:46:01 justinas Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -423,11 +423,6 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			String className = (String) iter.next();
 			String componentName = getComponentName(className);
 			String componentType = this.getComponentType(className);
-
-if(this.identifier.equals("com.idega.block.cal")){
-	System.out.println("className "+className);
-	System.out.println("componentName "+componentName);
-}	
 
 			if(className!=null && componentName != null && componentType!=null){
 				try{
