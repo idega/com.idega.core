@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectBMPBean.java,v 1.20 2007/07/13 09:18:00 justinas Exp $
+ * $Id: ICObjectBMPBean.java,v 1.21 2007/07/16 08:38:14 justinas Exp $
  * Created in 2001 by Tryggvi Larusson
  *
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
@@ -40,10 +40,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * time the application starts it updates the IC_OBJECT table with all components
  * registered in all idegaWeb bundles installed in the web-application.
  * </p>
- * Last modified: $Date: 2007/07/13 09:18:00 $ by $Author: justinas $
+ * Last modified: $Date: 2007/07/16 08:38:14 $ by $Author: justinas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
 	/**
@@ -325,10 +325,6 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 				for (Iterator iter = cachedEntitiesList.iterator(); iter.hasNext();) {
 					ICObject obj = (ICObject) iter.next();
 					cachedList.add(obj.getPrimaryKey());
-if(obj.getClassName().startsWith("com.idega.block.cal.presentation.CalendarViewer")){
-System.out.println("ejbFindAll");	
-	System.out.println(obj.getPrimaryKey()+" "+obj.getClassName());
-}
 				}
 			}
 			return cachedList;
@@ -452,20 +448,11 @@ System.out.println("ejbFindAll");
 	}
 	public Object ejbFindByClassName(String className) throws FinderException{
 		if(allCached){
-if(className.startsWith("com.idega.block.cal.presentation.CalendarView"))			
-	System.out.println();
 			Collection allPKs = ejbFindAll();
 			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
 			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
 				Object pk = iter.next();
 				ICObject ico = home.findByPrimaryKey(pk);
-if(className.startsWith("com.idega.block.cal.presentation.Calendar")){
-	System.out.println("ejbFindByClassName");
-	System.out.println(className);
-	System.out.println(ico.getClassName());
-	System.out.println(pk);
-}
-
 				if(ico.getClassName().equals(className)){
 					return pk;
 				}
