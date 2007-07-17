@@ -35,5 +35,7 @@ public class CoreConstants {
 	public static final String CONTENT = "/content";
 	
 	public static final String ARTICLE_ITEM_VIEWER_NAME = "ArticleItemViewer";
+	
+	public static final String APPLICATION_PROPERTY_TO_USE_OLD_THEME_PREVIEW_GENERATOR = "useOldThemeGenerator";
 
 }
