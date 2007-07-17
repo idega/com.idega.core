@@ -38,7 +38,7 @@ function iwOpenWindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,T
 	+ ',titlebar=' + Titlebar  
 	+ ',scrollbars=' + Scrollbars  
 	+ ',resizable='  + Resizable  
-	+ ',width=' + Width  
+	+ ',width=' + Width
 	+ ',height=' + Height; 
 	if(Xcoord) option+=',left=' + Xcoord;
 	if(Ycoord) option+=',top=' + Ycoord;
@@ -609,7 +609,7 @@ function toggleSelectBoxes() {
 //ScrollTable end
 
 function openContentEditor(url){
-	iwOpenWindow(url,'contentEditor','0','0','0','0','0','0','0','1','700','600');
+	iwOpenWindow(url,'contentEditor','0','0','0','0','0','0','0','1','\'700\'','\'600\'');
 }
 
 
