@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.41.2.4 2007/03/06 22:19:49 tryggvil Exp $ Created on
+ * $Id: StringHandler.java,v 1.41.2.5 2007/07/18 14:43:25 thomas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -24,11 +24,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2007/03/06 22:19:49 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/07/18 14:43:25 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.41.2.4 $
+ * @version $Revision: 1.41.2.5 $
  */
 public class StringHandler {
 
@@ -1126,4 +1126,32 @@ public class StringHandler {
 		return htmlString.replaceAll("\\<.*?\\>","");
 	}
 	
+	/** 
+	 * Converts a wildcard expression to a regular expression, that is 
+	 * "*" is replaced by ".*" and
+	 * "?" is replaced by "."
+	 * Protects existing dots in the wildcard expressions.
+	 * 
+	 * If the specified wildcardExpression is null or empty the specified wildcardExpression is simply returned.
+	 * 
+	 * Examples: "hello.c?s*" returns "hello\.c.s.*"
+	 * 
+	 * Typical invocation sequence:
+	 * String regex = StringHandler.convertWildcardExpressionToRegularExpression("H?llo W*");
+	 * Pattern pattern = Pattern.compile(regex);
+	 * Matcher matcher = pattern.matches("Hello world");
+	 * boolean b = matcher.matches();
+	 * 
+	 * @param wildcardExpression
+	 * @return regular expression
+	 */
+	public static String convertWildcardExpressionToRegularExpression(String wildcardExpression) {
+		if (StringHandler.isEmpty(wildcardExpression)) {
+			return wildcardExpression;
+		}
+		String regularExpression = wildcardExpression.replace(".", "\\.");
+		regularExpression = regularExpression.replace('?', '.');
+		regularExpression = regularExpression.replace("*", ".*");
+		return regularExpression;
+	}
 }
