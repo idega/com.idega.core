@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.45 2007/03/27 16:19:49 valdas Exp $ Created on
+ * $Id: StringHandler.java,v 1.46 2007/07/19 09:11:21 thomas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -12,7 +12,6 @@ package com.idega.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,11 +24,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2007/03/27 16:19:49 $ by $Author: valdas $
+ * Last modified: $Date: 2007/07/19 09:11:21 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.45 $
+ * @version $Revision: 1.46 $
  */
 public class StringHandler {
 
@@ -1178,4 +1177,34 @@ public class StringHandler {
 		}
 		return value;
 	}
+	
+	/** 
+	 * Converts a wildcard expression to a regular expression, that is 
+	 * "*" is replaced by ".*" and
+	 * "?" is replaced by "."
+	 * Protects existing dots in the wildcard expressions.
+	 * 
+	 * If the specified wildcardExpression is null or empty the specified wildcardExpression is simply returned.
+	 * 
+	 * Examples: "hello.c?s*" returns "hello\.c.s.*"
+	 * 
+	 * Typical invocation sequence:
+	 * String regex = StringHandler.convertWildcardExpressionToRegularExpression("H?llo W*");
+	 * Pattern pattern = Pattern.compile(regex);
+	 * Matcher matcher = pattern.matches("Hello world");
+	 * boolean b = matcher.matches();
+	 * 
+	 * @param wildcardExpression
+	 * @return regular expression
+	 */
+	public static String convertWildcardExpressionToRegularExpression(String wildcardExpression) {
+		if (StringHandler.isEmpty(wildcardExpression)) {
+			return wildcardExpression;
+		}
+		String regularExpression = wildcardExpression.replace(".", "\\.");
+		regularExpression = regularExpression.replace('?', '.');
+		regularExpression = regularExpression.replace("*", ".*");
+		return regularExpression;
+	}
+
 }
