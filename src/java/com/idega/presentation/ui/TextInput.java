@@ -1,5 +1,5 @@
 /*
- * $Id: TextInput.java,v 1.44.2.2 2007/07/20 11:33:57 gimmi Exp $
+ * $Id: TextInput.java,v 1.44.2.3 2007/07/20 12:20:59 sigtryggur Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a input element of type text
  * </p>
- *  Last modified: $Date: 2007/07/20 11:33:57 $ by $Author: gimmi $
+ *  Last modified: $Date: 2007/07/20 12:20:59 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.44.2.2 $
+ * @version $Revision: 1.44.2.3 $
  */
 public class TextInput extends GenericInput {
     private boolean isSetAsIntegers;
@@ -661,9 +661,20 @@ public class TextInput extends GenericInput {
     
     public void setNextInput(GenericInput input) {
     	if (input != null) {
-	    	this.isNextInputSet = true;
-	    	this.nextInputID = input.getId();
-    	}
-    }
-    
+	    	setNextInput(input.getId());
+		}
+	}
+
+	public void setNextInput(GenericSelect select) {
+		if (select != null) {
+			setNextInput(select.getId());
+		}
+	}
+
+	public void setNextInput(String inputID) {
+		if (inputID != null) {
+			this.isNextInputSet = true;
+			this.nextInputID = inputID;
+		}
+	}
 }
