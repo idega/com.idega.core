@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.41.2.5 2007/07/18 14:43:25 thomas Exp $ Created on
+ * $Id: StringHandler.java,v 1.41.2.6 2007/07/20 16:22:53 thomas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -9,6 +9,8 @@
  */
 package com.idega.util;
 
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,11 +26,11 @@ import java.util.TreeSet;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2007/07/18 14:43:25 $ by $Author: thomas $
+ * Last modified: $Date: 2007/07/20 16:22:53 $ by $Author: thomas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.41.2.5 $
+ * @version $Revision: 1.41.2.6 $
  */
 public class StringHandler {
 
@@ -1149,9 +1151,22 @@ public class StringHandler {
 		if (StringHandler.isEmpty(wildcardExpression)) {
 			return wildcardExpression;
 		}
-		String regularExpression = wildcardExpression.replace(".", "\\.");
-		regularExpression = regularExpression.replace('?', '.');
-		regularExpression = regularExpression.replace("*", ".*");
-		return regularExpression;
+		CharacterIterator iterator = new StringCharacterIterator(wildcardExpression);
+		StringBuffer regularExpression  = new StringBuffer(wildcardExpression.length());
+		for(char c = iterator.first(); c != CharacterIterator.DONE; c = iterator.next()){
+			if (c =='.') {
+				regularExpression.append("\\.");
+			}
+			else if (c == '?') {
+				regularExpression.append('.');
+			}
+			else if (c == '*') {
+				regularExpression.append(".*");
+			}
+			else {
+				regularExpression.append(c);
+			}
+		}
+		return regularExpression.toString();
 	}
 }
