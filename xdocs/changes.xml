@@ -4,12 +4,16 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+      	<release version="3.1.58" date="2007-07-20">
+      		<action dev="thomas" type="fix">
+				StringHandler: fixed compile version with version 1.4 (replace method does not exist)
+      		</action>
+    	</release>
     	<release version="3.1.57" date="2007-07-20">
       		<action dev="sigtryggur" type="add">
 				Added in co-operation with Gimmi gotoNextInput-logic to TextInput 
       		</action>
     	</release>
-    	
     	<release version="3.1.56" date="2007-07-18">
       		<action dev="thomas" type="add">
 				StringHandler: added method for convertng wildcard expressions to regular expressions
