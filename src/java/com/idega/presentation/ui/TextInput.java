@@ -1,5 +1,5 @@
 /*
- * $Id: TextInput.java,v 1.44.2.1 2007/04/12 16:29:35 sigtryggur Exp $
+ * $Id: TextInput.java,v 1.44.2.2 2007/07/20 11:33:57 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.util.text.TextSoap;
  * <p>
  * Class that renders out a input element of type text
  * </p>
- *  Last modified: $Date: 2007/04/12 16:29:35 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2007/07/20 11:33:57 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.44.2.1 $
+ * @version $Revision: 1.44.2.2 $
  */
 public class TextInput extends GenericInput {
     private boolean isSetAsIntegers;
@@ -41,6 +41,7 @@ public class TextInput extends GenericInput {
     private boolean isSetMinimumLength;
     private boolean isSetEmptyConfirm;
     private boolean isSetToDisableWhenNotEmpty;
+    private boolean isNextInputSet;
     private String integersErrorMessage;
     private String floatErrorMessage;
     private String alphabetErrorMessage;
@@ -51,12 +52,13 @@ public class TextInput extends GenericInput {
     private String notCreditCardErrorMessage;
     private String minimumLengthErrorMessage;
     private String emptyConfirmMessage;
+    private String nextInputID;
     private int minimumLength;
     private int decimals = -1;
 	
 	
 	public Object saveState(FacesContext ctx) {
-		Object values[] = new Object[26];
+		Object values[] = new Object[28];
 		values[0] = super.saveState(ctx);
 		values[1] = Boolean.valueOf(this.isSetAsIntegers);
 		values[2] = Boolean.valueOf(this.isSetAsPosNegIntegers);
@@ -83,6 +85,8 @@ public class TextInput extends GenericInput {
 		values[23] = Boolean.valueOf(this.isSetEmptyConfirm);
 		values[24] = this.emptyConfirmMessage;
 		values[25] = Boolean.valueOf(this.isSetToDisableWhenNotEmpty);
+		values[26] = Boolean.valueOf(isNextInputSet);
+		values[27] = nextInputID;
 		return values;
 	}
 	public void restoreState(FacesContext ctx, Object state) {
@@ -113,6 +117,8 @@ public class TextInput extends GenericInput {
 		this.emptyConfirmMessage = (String) values[24];
 		this.minimumLength = ((Integer)values[21]).intValue();
 		this.decimals = ((Integer)values[22]).intValue();
+		this.isNextInputSet = ((Boolean) values[26]).booleanValue();
+		this.nextInputID = (String) values[27];
 	}	
 	
 	
@@ -577,6 +583,12 @@ public class TextInput extends GenericInput {
         if (this.isSetToDisableWhenNotEmpty) {
   					getScript().addFunction("disableObjectWhenNotEmpty", "function disableObjectWhenNotEmpty(input, otherInput) {\n	if (input.value.length() > 1) {	otherInput[i].disabled=true; }\n	else	otherInput.disabled=false;\n}");
         }
+        
+        if (this.isNextInputSet) {
+        	getScript().addFunction("gotoNextInput","function gotoNextInput(event,source,destination) {\n\tif(((event.keyCode > 31 && event.keyCode < 128) || event.keyCode == 9) \t&& (event.keyCode != 37\t&& event.keyCode != 39) ) {\n\t\tif ((source.value).length == source.maxLength) {\n\t\t\tif(event.keyCode == 9)\t{\n\t\t\t\tsource.focus();\n\t\t\t\tsource.select();\n\t\t\t} else {\n\t\t\t\tdestination.focus();\n\t\t\t\tdestination.select();\n\t\t\t}\n\t\t\treturn 0;\n\t\t}\n\t}\n\treturn 1;\n};");            
+        	this.setOnKeyUp("gotoNextInput(event,this,"+ nextInputID +")"); 
+        }
+        
     }
 
   	/**
@@ -646,4 +658,12 @@ public class TextInput extends GenericInput {
 					setInputType(INPUT_TYPE_TEXT);
 				}
     }
+    
+    public void setNextInput(GenericInput input) {
+    	if (input != null) {
+	    	this.isNextInputSet = true;
+	    	this.nextInputID = input.getId();
+    	}
+    }
+    
 }
