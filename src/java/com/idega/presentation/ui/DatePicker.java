@@ -41,6 +41,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 	private static Boolean jsExists = null;
 	private Locale locale = null;
 	private boolean useJSCalendar = true;
+	private boolean showEmpty = false;
 
 	private int dateFormatStyle = DateFormat.SHORT;
 	private String dateFormatPattern = "yyyy-MM-dd";
@@ -101,7 +102,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		if (this.date != null) {
 			setDate(this.date);
 		}
-		else {
+		else if (!showEmpty) {
 			setDate(new Date());
 		}
 		// setParameterValue(SmallCalendar.PRM_SETTINGS,SmallCalendar.getInitializingString(true,null,"#0000FF","#00FF00","#00FFFF","#FFFF00","#FFFFFF","#FFF000"));
@@ -149,11 +150,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		if (this.styleClass != null) {
 			input.setStyleClass(this.styleClass);
 		}
-		if (this.keepStatus) {
+		if (this.keepStatus && iwc.isParameterSet(getChooserParameter())) {
 			String p = iwc.getParameter(getChooserParameter());
-			if (p != null) {
-				input.setValue(p);
-			}
+			setDate(new IWTimestamp(p).getDate());
 		}
 
 		return input;
@@ -465,4 +464,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		this.textInputOnchange = textInputOnchange;
 	}
 
+	public void setShowEmpty(boolean showEmpty) {
+		this.showEmpty = showEmpty;
+	}
 }
