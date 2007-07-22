@@ -144,15 +144,15 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 			input.setMarkupAttribute("style", this._style);
 		}
 
+		if (this.keepStatus && iwc.isParameterSet(getChooserParameter())) {
+			String p = iwc.getParameter(getChooserParameter());
+			setDate(new IWTimestamp(p).getDate());
+		}
 		if (this._stringDisplay != null) {
 			input.setValue(this._stringDisplay);
 		}
 		if (this.styleClass != null) {
 			input.setStyleClass(this.styleClass);
-		}
-		if (this.keepStatus && iwc.isParameterSet(getChooserParameter())) {
-			String p = iwc.getParameter(getChooserParameter());
-			setDate(new IWTimestamp(p).getDate());
 		}
 
 		return input;
