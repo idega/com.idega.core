@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.26.2.6 2007/07/02 12:12:32 laddi Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.26.2.7 2007/07/23 07:15:56 laddi Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,7 @@ package com.idega.servlet.filter;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -59,10 +60,10 @@ import com.idega.util.RequestUtil;
  * idegaWeb User system.<br/> When the user has a "remember me" cookie set then
  * this filter reads that and logs the user into the system.
  * </p>
- * Last modified: $Date: 2007/07/02 12:12:32 $ by $Author: laddi $
+ * Last modified: $Date: 2007/07/23 07:15:56 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.26.2.6 $
+ * @version $Revision: 1.26.2.7 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -341,20 +342,20 @@ public class IWAuthenticator extends BaseFilter {
 		IWMainApplicationSettings settings = iwac.getIWMainApplication().getSettings();
 		String forwardPage = settings.getProperty(PROPERTY_FORWARD_PAGE_URI);
 		if (forwardPage != null) {
-			int rolePageCount = 0;
+			Collection homepages = new ArrayList();
 			Collection groups = user.getParentGroups();
 			Iterator iterator = groups.iterator();
 			while (iterator.hasNext()) {
 				Group element = (Group) iterator.next();
 				if (element.getHomePageID() > 0) {
 					Collection roles = iwac.getIWMainApplication().getAccessController().getAllRolesForGroup(element);
-					if (roles != null && !roles.isEmpty()) {
-						rolePageCount++;
+					if (roles != null && !roles.isEmpty() && !homepages.contains(new Integer(element.getHomePageID()))) {
+						homepages.add(new Integer(element.getHomePageID()));
 					}
 				}
 			}
 
-			if (rolePageCount > 1) {
+			if (homepages.size() > 1) {
 				response.sendRedirect(forwardPage);
 			}
 		}
