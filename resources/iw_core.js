@@ -1414,7 +1414,7 @@ function showAllComponentsLabels(element) {
 	}
 	hideOldLabels();
 	
-	var children = getNeededElements(element, 'DnDAreaTable');
+	var children = element.getElementsByClassName('moduleName');
 	if (children == null) {
 		return;
 	}
@@ -1423,10 +1423,6 @@ function showAllComponentsLabels(element) {
 	for (var i = 0; i < children.length; i++) {
 		child = children[i];
 		child.style.visibility = 'visible';
-		/*elementsToHighlight = getNeededElementsFromList(child.getElementsByTagName('div'), 'moduleName');
-		for (var j = 0; j < elementsToHighlight.length; j++) {
-			highlightElement(elementsToHighlight[j], 1000, '#FFFFFF');
-		}*/
 	}
 }
 
@@ -1434,7 +1430,7 @@ function hideOldLabels(container) {
 	if (container == null) {
 		return;
 	}
-	var children = container.getElementsByClassName('DnDAreaTable');
+	var children = container.getElementsByClassName('moduleName');
 	if (children == null) {
 		return;
 	}
