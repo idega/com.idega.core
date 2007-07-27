@@ -1,5 +1,5 @@
 /*
- * $Id: IWViewHandlerImpl.java,v 1.9 2006/04/09 11:56:22 laddi Exp $
+ * $Id: IWViewHandlerImpl.java,v 1.10 2007/07/27 15:47:39 civilis Exp $
  * Created on 12.3.2004 by  tryggvil in project smile
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.idega.core.view.DefaultViewNode;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
+import com.idega.core.view.ViewNodeBase;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.util.FacesUtil;
@@ -38,10 +39,10 @@ import com.idega.util.FacesUtil;
  * 
  * Copyright (C) idega software 2004<br>
  * 
- * Last modified: $Date: 2006/04/09 11:56:22 $ by $Author: laddi $
+ * Last modified: $Date: 2007/07/27 15:47:39 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class IWViewHandlerImpl extends ViewHandler{
 	
@@ -50,6 +51,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	private ViewHandler parentViewHandler;
 	private ViewManager viewManager;
 	private ViewHandler jspViewHandler;
+	private ViewHandler faceletsViewHandler;
 	
 	public IWViewHandlerImpl(){
 		log.info("Loading IWViewHandlerImpl");
@@ -145,39 +147,22 @@ public class IWViewHandlerImpl extends ViewHandler{
 
 	
 	private ViewHandler getViewHandlerForContext(FacesContext ctx) {
-		//String url = getRequestUrl(ctx);
-		//ViewHandler viewHandler = getViewHandlerForUrl(url,ctx);
+		
 		ViewNode node = getViewManager().getViewNodeForContext(ctx);
-			if(node!=null){
-				if(node.isResourceBased()){
-					//if(node.getRedirectsToResourceUri()){
-					//	ctx.responseComplete();
-					//	try{
-					//		ctx.getExternalContext().redirect(node.getResourceURI());
-					//	}
-					//	catch(IOException e){
-					//		throw new RuntimeException(e);
-					//	}
-					//}
-					//else{
-						return this.jspViewHandler;
-					//}
-				}
-				else{
-					return node.getViewHandler();
-				}
-			}
-			
-			
-				if(getParentViewHandler()!=null){
-					return getParentViewHandler();
-				}
-				else{
-					//return createView(ctx,vewId);
-					throw new RuntimeException ("No parent ViewHandler");
-				}
-			
-		//return viewHandler;
+		
+		if(node != null)
+			if(node.getViewNodeBase() == ViewNodeBase.JSP)
+				return jspViewHandler;
+			else if(node.getViewNodeBase() == ViewNodeBase.FACELET)
+				return faceletsViewHandler;
+			else
+				return node.getViewHandler();
+		
+		
+		if(getParentViewHandler() != null)
+			return getParentViewHandler();
+		
+		throw new RuntimeException ("No parent ViewHandler");
 	}
 	
 	/**
@@ -404,7 +389,8 @@ public class IWViewHandlerImpl extends ViewHandler{
 	 * @param defaultViewHandler The defaultViewHandler to set.
 	 */
 	public void setParentViewHandler(ViewHandler parentViewHandler) {
-		this.jspViewHandler=new IWJspViewHandler(parentViewHandler);
+		jspViewHandler = new IWJspViewHandler(parentViewHandler);
+		faceletsViewHandler = new IWFaceletsViewHandler(parentViewHandler);
 		this.parentViewHandler = parentViewHandler;
 	}
 	

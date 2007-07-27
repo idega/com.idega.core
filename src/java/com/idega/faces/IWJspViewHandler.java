@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.14 2006/06/21 18:05:58 tryggvil Exp $
+ * $Id: IWJspViewHandler.java,v 1.15 2007/07/27 15:47:39 civilis Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,6 +18,7 @@ import javax.faces.context.FacesContext;
 
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
+import com.idega.core.view.ViewNodeBase;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.servlet.filter.IWBundleResourceFilter;
@@ -29,10 +30,10 @@ import com.idega.util.FacesUtil;
  * This class overrides the default JSF ViewHandler and adds idegaWeb specific way of handling JSP pages
  * that are registered in the ViewNode hierarchy.<br/>
  * </p>
- *  Last modified: $Date: 2006/06/21 18:05:58 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/07/27 15:47:39 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -92,7 +93,7 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 		ViewNode node = getNode(context);
 		String viewId = viewToRender.getViewId();
 		String newViewId=viewId;
-		if(node.isResourceBased() && nodeCorrespondsToViewId(node, viewId, context)){
+		if(node.getViewNodeBase() == ViewNodeBase.JSP && nodeCorrespondsToViewId(node, viewId, context)){
 			newViewId=node.getResourceURI();
 		}
 		viewToRender.setViewId(newViewId);
@@ -109,16 +110,14 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 		return ViewManager.getInstance(iwma).getViewNodeForContext(context);
 	}
 
-	private static String JSP_EXT = ".jsp";
-	
 	/* (non-Javadoc)
 	 * @see javax.faces.application.ViewHandler#restoreView(javax.faces.context.FacesContext, java.lang.String)
 	 */
 	public UIViewRoot restoreView(FacesContext context, String viewId) {
 		ViewNode node = getNode(context);
 		String newViewId=viewId;
-		if(node.isResourceBased()){
-			if(!viewId.endsWith(JSP_EXT)){
+		if(node.getViewNodeBase() == ViewNodeBase.JSP){
+			if(!viewId.endsWith(ViewNodeBase.JSP.extension())){
 				newViewId=node.getResourceURI();
 			}
 		}
@@ -131,7 +130,7 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	public UIViewRoot createView(FacesContext context, String viewId) {
 		ViewNode node = getNode(context);
 		String newViewId=viewId;
-		if(node.isResourceBased() && nodeCorrespondsToViewId(node, viewId, context)){
+		if(node.getViewNodeBase() == ViewNodeBase.JSP && nodeCorrespondsToViewId(node, viewId, context)){
 			checkCopyOfJspToWebapp(context,node);
 			newViewId=node.getResourceURI();
 		}
@@ -204,7 +203,7 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	 * </p>
 	 */
 	private void checkCopyOfJspToWebapp(FacesContext context,ViewNode node) {
-		if(node.isResourceBased()){
+		if(node.getViewNodeBase() == ViewNodeBase.JSP){
 			String bundlesProperty=System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 			IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
 			if(bundlesProperty!=null){
