@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.16 2007/01/19 08:16:21 laddi Exp $
+ * $Id: DefaultViewNode.java,v 1.17 2007/07/27 15:43:48 civilis Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -25,18 +25,16 @@ import com.idega.util.StringHandler;
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2007/01/19 08:16:21 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/07/27 15:43:48 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class DefaultViewNode implements ViewNode {
 
 	private String viewId;
 	private Map children;
 	private ViewHandler viewHandler;
-	private boolean isResourceBased;
-	private boolean isComponentBased;
 	private String resourceUri;
 	private ViewNode parent;
 	private Collection roles;
@@ -47,6 +45,8 @@ public class DefaultViewNode implements ViewNode {
 	private String name;
 	private KeyboardShortcut keyboardShortcut;
 	private boolean redirectsToResourceUri=false;
+	
+	private ViewNodeBase viewNodeBase = ViewNodeBase.UNSPECIFIED;
 	
 	/**
 	 * @param viewId the ViewId of this node (must be unique under its parent)
@@ -135,7 +135,7 @@ public class DefaultViewNode implements ViewNode {
 	}
 
 	/**
-	 * This method retorns a child that is a direct child of this instance (not a child of a child).
+	 * This method returns a child that is a direct child of this instance (not a child of a child).
 	 * This method assumes that childId does not contain the / (SLASH) character.
 	 * @param childId
 	 * @return
@@ -371,6 +371,7 @@ public class DefaultViewNode implements ViewNode {
 	 * the ViewHandler from the parent ViewNode
 	 */
 	public ViewHandler getViewHandler() {
+		
 		if(this.viewHandler==null){
 			ViewNode parent = getParent();
 			if(parent!=null){
@@ -384,25 +385,26 @@ public class DefaultViewNode implements ViewNode {
 		this.viewHandler=viewHandler;
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.idega.faces.view.ViewNode#isJSP()
-	 */
-	public boolean isResourceBased() {
-		return this.isResourceBased;
+	public ViewNodeBase getViewNodeBase() {
+		return viewNodeBase;
 	}
-
+	
+	public void setViewNodeBase(ViewNodeBase view_node_base) {
+		this.viewNodeBase = view_node_base;
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#isCBP()
 	 */
 	public boolean isComponentBased() {
-		return this.isComponentBased;
+		return getViewNodeBase() == ViewNodeBase.COMPONENT;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getJSPURI()
 	 */
 	public String getResourceURI() {
-		return this.resourceUri;
+		return resourceUri;
 	}
 
 	/* (non-Javadoc)
@@ -491,22 +493,35 @@ public class DefaultViewNode implements ViewNode {
 
 	/**
 	 * @param isCBP The isCBP to set.
+	 * @deprecated use setViewNodeBase instead
 	 */
+	@Deprecated
 	public void setComponentBased(boolean isCBP) {
-		this.isComponentBased = isCBP;
+		
+		if(isCBP)
+			viewNodeBase = ViewNodeBase.COMPONENT;
 	}
 	/**
 	 * @param isJSP The isJSP to set.
+	 * @deprecated use setViewNodeBase instead
 	 */
+	@Deprecated
 	public void setResourceBased(boolean isJSP) {
-		this.isResourceBased = isJSP;
+		
+		if(isJSP)
+			viewNodeBase = ViewNodeBase.JSP;
 	}
 	/**
 	 * @param jspUri The jspUri to set.
 	 */
 	public void setJspUri(String jspUri) {
-		this.setResourceBased(true);
-		this.resourceUri = jspUri;
+		setViewNodeBase(ViewNodeBase.JSP);
+		resourceUri = jspUri;
+	}
+	
+	public void setFaceletUri(String faceletUri) {
+		setViewNodeBase(ViewNodeBase.FACELET);
+		resourceUri = faceletUri;
 	}
 	/**
 	 * @return Returns the parent.

@@ -1,5 +1,5 @@
 /*
- * $Id: ViewNode.java,v 1.8 2005/12/07 21:39:16 tryggvil Exp $
+ * $Id: ViewNode.java,v 1.9 2007/07/27 15:43:48 civilis Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import javax.faces.context.FacesContext;
  * 'workspace' and 'builder parts of the URL. <br>
  * ViewNodes are accessed and managed by the ViewManager instance.<br>
  * </p>
- *  Last modified: $Date: 2005/12/07 21:39:16 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/07/27 15:43:48 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public interface ViewNode {
 	
@@ -74,18 +74,20 @@ public interface ViewNode {
 	public void setParent(ViewNode parent);
 	//ViewHandler/JSF properties
 	public ViewHandler getViewHandler();
+	
 	/**
-	 * Returns true if the node is resource based wich means that it will be served (dispatched) from a resource
-	 * (e.g. a JSP page) on a given URI on the sever. A viewNode can not be both resource based or component based at the same time.
-	 * @return
+	 * @return Returns what the ViewNode is based upon (e.g. jsp, facelet, or component) 
 	 */
-	public boolean isResourceBased();
+	public abstract ViewNodeBase getViewNodeBase();
+	
 	/**
 	 * Returns true if the node represents a component (UIComponent) and will be created with createComponent() 
 	 * typically called from a ViewHandler.
 	 * A viewNode can not be both resource based or component based at the same time.
+	 * @deprecated - use getViewNodeBase instead
 	 * @return
 	 */
+	@Deprecated
 	public boolean isComponentBased();
 	/**
 	 * Gets the URI to the resource that this node is a virtual node for, this is only applicable if the node is ResourceBased.
