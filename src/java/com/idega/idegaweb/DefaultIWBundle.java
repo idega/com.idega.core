@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.42 2007/07/16 08:46:01 justinas Exp $
+ * $Id: DefaultIWBundle.java,v 1.43 2007/07/27 15:44:44 civilis Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -1515,6 +1515,15 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	public String getJSPURI(String jspInBundle) {
 		String jspPath = "/jsp/"+jspInBundle;
 		return this.rootVirtualPath+jspPath;
+	}
+	
+	/**
+	 * Returns the path to the facelet inside the bundle structure.<br/>
+	 * The default path is under 'facelets/' relative to the bundle folder.<br/>
+	 * This method does not include a potential web application context path.
+	 */
+	public String getFaceletURI(String faceletInBundle) {
+		return rootVirtualPath+"/facelets/"+faceletInBundle;
 	}
 
 	/**

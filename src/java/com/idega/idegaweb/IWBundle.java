@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.96 2006/09/26 13:13:15 gediminas Exp $
+ * $Id: IWBundle.java,v 1.97 2007/07/27 15:44:44 civilis Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -33,10 +33,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2006/09/26 13:13:15 $ by $Author: gediminas $
+ * Last modified: $Date: 2007/07/27 15:44:44 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.96 $
+ * @version $Revision: 1.97 $
  */
 public interface IWBundle extends IWModule{
 	/**
@@ -280,6 +280,13 @@ public interface IWBundle extends IWModule{
 	 * @return
 	 */
 	public String getJSPURI(String jspInBundle);
+	
+	/**
+	 * Returns the URI of a facelet page found inside this bundle
+	 * @param faceletInBundle
+	 * @return
+	 */
+	public abstract String getFaceletURI(String faceletUri);
 	
 	public HtmlGraphicImage getLocalizedImage(String pathAndName);
 	public HtmlGraphicImage getLocalizedImage(String pathAndName, IWContext context);
