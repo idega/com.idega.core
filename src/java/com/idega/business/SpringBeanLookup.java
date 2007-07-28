@@ -1,6 +1,5 @@
 package com.idega.business;
 
-import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import org.springframework.context.ApplicationContext;
@@ -19,16 +18,10 @@ public class SpringBeanLookup {
 	
 	private static SpringBeanLookup me;
 	
-	public static SpringBeanLookup getInstance() {
+	public static synchronized SpringBeanLookup getInstance() {
 		
-		if (me == null) {
-			
-			synchronized (SpringBeanLookup.class) {
-				if (me == null) {
-					me = new SpringBeanLookup();
-				}
-			}
-		}
+		if (me == null)
+			me = new SpringBeanLookup();
 		
 		return me;
 	}
