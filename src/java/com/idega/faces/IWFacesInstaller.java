@@ -1,5 +1,5 @@
 /*
- * $Id: IWFacesInstaller.java,v 1.2 2005/11/15 23:57:58 tryggvil Exp $
+ * $Id: IWFacesInstaller.java,v 1.3 2007/07/28 13:17:07 civilis Exp $
  *
  * Created on 19.5.2004 by Tryggvi Larusson
  *
@@ -10,6 +10,9 @@
  *
  */
 package com.idega.faces;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
@@ -33,7 +36,8 @@ public class IWFacesInstaller implements ServletContextListener {
 	 * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
 	 */
 	public void contextInitialized(ServletContextEvent arg0) {
-		System.out.println("IWInstaller.contextInitialized");
+		
+		Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Calling IWInstaller context initialized");
 		installViewHandler(arg0.getServletContext());
 		installFacesPhaseListener();
 	}
@@ -65,29 +69,6 @@ public class IWFacesInstaller implements ServletContextListener {
 		Application app = factory.getApplication();
 		ViewHandler origViewHandler = app.getViewHandler();
 		ViewHandler iwViewHandler=origViewHandler;
-		/*try {
-			//iwViewHandler = (ViewHandler)Class.forName("com.idega.faces.IWViewHandlerImpl").newInstance();
-			Constructor[] css = Class.forName("com.idega.faces.componentbased.IWViewHandlerImpl").getConstructors();
-			Constructor cs = css[1];
-			Object[] args = {origViewHandler};
-			iwViewHandler = (ViewHandler)cs.newInstance(args);
-			
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
 		
