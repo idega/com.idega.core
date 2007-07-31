@@ -1414,7 +1414,7 @@ function showAllComponentsLabels(element) {
 	}
 	hideOldLabels();
 	
-	var children = element.getElementsByClassName('moduleName');
+	var children = getElementsByClassName(element, 'div', 'moduleName');
 	if (children == null) {
 		return;
 	}
@@ -1430,7 +1430,7 @@ function hideOldLabels(container) {
 	if (container == null) {
 		return;
 	}
-	var children = container.getElementsByClassName('moduleName');
+	var children = getElementsByClassName(container, 'div', 'moduleName');
 	if (children == null) {
 		return;
 	}
