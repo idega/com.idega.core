@@ -682,24 +682,29 @@ function changeSiteInfoValue(id) {
 	showSiteInfoValue();
 	SITE_INFO_KEYWORD_FROM_BOX = id;
 	
-	var element = document.getElementById(id);
+	var element = $(id);
 	if (element == null) {
 		return;
 	}
 	CHILD_ELEMENT = element;
 	
-	var editBox = document.getElementById(EDIT_BOX_ID);
+	var editBox = $(EDIT_BOX_ID);
 	if (editBox == null) {
-		editBox = document.createElement("input");
+		editBox = new Element("input");
 		editBox.setAttribute("type", "input");
 		editBox.setAttribute("id", EDIT_BOX_ID);
-		if (typeof element.attachEvent != "undefined") {
-        	editBox.attachEvent("onkeypress", function(e){saveSiteInfoValueWithEnter(e, this.value);});
-        	editBox.attachEvent("onblur", function(e){saveSiteInfoValueWithBlur(e, this.value);});
-		} else {
-        	editBox.addEventListener("keypress", function(e){saveSiteInfoValueWithEnter(e, this.value);}, true);
-        	editBox.addEventListener("blur", function(e){saveSiteInfoValueWithBlur(e, this.value);}, true);
-		}
+		editBox.addEvents({
+			'keyup': function(e) {
+				e = new Event(e);
+				saveSiteInfoValueWithEnter(e);
+				e.stop();
+			},
+			'blur': function(e) {
+				e = new Event(e);
+				saveSiteInfoValueWithBlur(e);
+				e.stop();
+			}
+		});
 	}
 	else {
 		editBox.value = "";
@@ -774,23 +779,26 @@ function appendEditBoxToExactPlace(element, edit) {
 	}
 }
 
-function saveSiteInfoValueWithBlur(event, value) {
+function saveSiteInfoValueWithBlur(event) {
 	if (event == null) {
-		return;
+		return false;
 	}
 	if (event.type == "blur" || event.type == "onblur") {
-		mainSaveSiteInfo(value);
+		mainSaveSiteInfo($(EDIT_BOX_ID).value);
 	}
 }
 
-function saveSiteInfoValueWithEnter(event, value) {
+function saveSiteInfoValueWithEnter(event) {
 	if (event == null) {
-		return;
+		return false;
 	}
-	if (!isEnterEvent(event)) {
-		return;
+	
+	if (event.key) {
+		if ('enter' == event.key) {
+			mainSaveSiteInfo($(EDIT_BOX_ID).value);
+		}
 	}
-	mainSaveSiteInfo(value);
+	return false;
 }
 
 function mainSaveSiteInfo(value) {
@@ -816,7 +824,7 @@ function saveSiteInfoValueCallback(result) {
 }
 
 function showSiteInfoValue() {
-	var editBox = document.getElementById(EDIT_BOX_ID);
+	var editBox = $(EDIT_BOX_ID);
 	if (editBox != null) {
 		var container = editBox.parentNode;
 		if (container != null) {
@@ -840,7 +848,7 @@ function showSiteInfoValue() {
 	}
 	
 	if (PARENT_ELEMENT == null) {
-		var element = document.getElementById(SITE_INFO_KEYWORD_FROM_BOX);
+		var element = $(SITE_INFO_KEYWORD_FROM_BOX);
 		if (element != null) {
 			if (element.style.visibility == "hidden") {
 				CLICKED_ON_PROPERTY = false;
