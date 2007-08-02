@@ -1047,11 +1047,6 @@ function getAbsoluteTop(objectId) {
 	return oTop;
 }
 
-function initComments() {
-	/*enableReverseAjax();*/
-	CommentsEngine.getInitInfoForComments(getInitInfoForCommentsCallback);
-}
-
 function removeElementFromArray(array, elementToRemove) {
 	if (array == null || elementToRemove == null) {
 		return;
