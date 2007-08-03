@@ -1105,23 +1105,50 @@ function getTransformedDocumentToDom(component) {
 	return nodes;
 }
 
+var SCRIPT_BEGAN = false;
+var SCRIPT_INSTRUCTION = '';
+
 function createRealNode(element) {
 	//	Text
 	if(element.nodeName == '#text') {
-		var textNode = document.createTextNode(element.nodeValue);
-		return textNode;
+		if (IE && SCRIPT_BEGAN) {	// Building script 'string'
+			SCRIPT_INSTRUCTION += element.nodeValue;
+		}
+		else {
+			var textNode = document.createTextNode(element.nodeValue);
+			return textNode;
+		}
 	}
+	
 	//	Comment
 	if (element.nodeName == '#comment') {
 		var commentNode = document.createComment(element.nodeValue);
 		return commentNode;
 	}
-	if (IE) {
-		if (element.nodeName == 'script') {	//	Script
+	
+	//	JavaScript for IE
+	if (element.nodeName == 'script' && IE) {
+		if (element.nodeName == 'script') {
+			if (SCRIPT_BEGAN) {
+				//	Finish script
+				if (SCRIPT_INSTRUCTION != '') {
+					try {
+						eval(SCRIPT_INSTRUCTION);
+					} catch(e) {}
+				}
+				SCRIPT_BEGAN = false;
+				SCRIPT_INSTRUCTION = '';
+			}
+			else {
+				//	Begin script
+				SCRIPT_BEGAN = true;
+			}
+			
 			var script = document.createElement('script');
 			return script;
 		}
 	}
+	
 	// Element
 	var result = document.createElement(element.nodeName);
 	if (element.attributes != null) {
@@ -1146,11 +1173,13 @@ function createRealNode(element) {
 			}
 		}
 	}
+	
 	if (element.childNodes != null) {
 		for (var j = 0; j < element.childNodes.length; j++) {
 			result.appendChild(createRealNode(element.childNodes[j]));
 		}
 	}
+	
 	return result;
 }
 
