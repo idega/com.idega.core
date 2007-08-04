@@ -228,7 +228,13 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		.append("    if (namesColl[q].nodeType!=1) continue; // it's not an element node, let's skedaddle\n")
 		.append("    str = namesColl[q].innerHTML;\n")
 		.append("    ids = idsColl[q].innerHTML;\n")
+		//TODO Sigtryggur: Implement the ability to have a selected element
+		//.append("    if (ids == '"+this.selectedElement+"') { \n")
+		//.append("      zipEl.options[zipEl.options.length] = new Option(str, ids, 'false', 'selected');\n")
+		//.append("      alert(ids);\n")
+		//.append("    } else {\n")
 		.append("    zipEl.options[zipEl.options.length] = new Option(str, ids);\n")
+		//.append("    }\n")
 		.append("  }\n");
 				
 		buff = addClearMethods(buff);
