@@ -428,3 +428,8 @@ html>body .LoadLayer .LoadLayerMiddle .LoadLayerContents {
 	background: #CFDFA7;
 }
 /** Tooltips ends **/
+
+/** Hiding theme's expander **/
+div#idegaThemeExpandRegion {
+	display: none;
+}
