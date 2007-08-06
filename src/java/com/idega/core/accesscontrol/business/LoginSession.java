@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSession.java,v 1.6 2007/03/28 13:19:02 civilis Exp $
+ * $Id: LoginSession.java,v 1.7 2007/08/06 13:34:31 valdas Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.user.business.UserProperties;
 
 /**
- *  <p />Last modified: $Date: 2007/03/28 13:19:02 $ by $Author: civilis $
+ *  <p />Last modified: $Date: 2007/08/06 13:34:31 $ by $Author: valdas $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 @SpringBeanName("loginSession")
 public interface LoginSession {
@@ -138,4 +138,6 @@ public interface LoginSession {
     public boolean isSuperAdmin();
     
     public abstract void reset();
+    
+    public String getSuperAdminId();
 }

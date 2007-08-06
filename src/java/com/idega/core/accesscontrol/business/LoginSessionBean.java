@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSessionBean.java,v 1.8 2007/03/28 13:19:02 civilis Exp $
+ * $Id: LoginSessionBean.java,v 1.9 2007/08/06 13:34:31 valdas Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -22,10 +22,10 @@ import com.idega.user.business.UserProperties;
 
 /**
  * 
- *  Last modified: $Date: 2007/03/28 13:19:02 $ by $Author: civilis $
+ *  Last modified: $Date: 2007/08/06 13:34:31 $ by $Author: valdas $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class LoginSessionBean implements LoginSession {
     
@@ -212,5 +212,12 @@ public class LoginSessionBean implements LoginSession {
 	
 	protected AccessController getAccessController() {
 		return this.getIWApplicationContext().getIWMainApplication().getAccessController();
+	}
+	
+	public String getSuperAdminId() {
+		if (isSuperAdmin()) {
+			return getUser().getId();
+		}
+		return null;
 	}
 }
