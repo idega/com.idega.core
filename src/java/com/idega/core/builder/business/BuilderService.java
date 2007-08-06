@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.41 2007/07/02 14:35:59 valdas Exp $
+ * $Id: BuilderService.java,v 1.42 2007/08/06 13:36:28 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -23,6 +23,7 @@ import com.idega.business.IBOService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.data.ICTreeNode;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
@@ -307,4 +308,7 @@ public interface BuilderService extends IBOService
 	public String generateResourcePath(String base, String scope, String fileName);
 	
 	public boolean setProperty(IWContext iwc, String pageKey, String instanceId, String propertyName, List<AdvancedProperty> properties);
+
+	public Map getTree(IWApplicationContext iwac);
+	
 }
