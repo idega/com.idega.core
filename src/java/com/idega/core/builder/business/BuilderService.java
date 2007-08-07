@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.11 2005/08/31 02:10:08 eiki Exp $
+ * $Id: BuilderService.java,v 1.11.4.1 2007/08/07 14:00:33 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -147,6 +147,11 @@ public interface BuilderService extends IBOService
 	 * Unloads all the resources associated with the Builder
 	 */
 	public void unload();
+	
+	/**
+	 * Returns instanceId for UIComponent used in Builder (inserted in IBXMLPage)
+	 */
+	public String getInstanceId(UIComponent object);
 	
 	/**
 	 * DRAFT OF METHODS TO BE IN THIS CLASS:
