@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.67.2.5 2007/03/06 22:19:40 tryggvil Exp $
+ * $Id: LoginDBHandler.java,v 1.67.2.6 2007/08/09 08:22:48 laddi Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -86,7 +86,7 @@ public class LoginDBHandler {
 		catch (FinderException fe) {
 			// No login found for user...
 		}
-		
+
 		if (update) {
 			if (loginTable == null) {
 				throw new LoginCreateException("User_id : " + userID + " , cannot update login : cannot find login");
@@ -100,14 +100,14 @@ public class LoginDBHandler {
 				throw new LoginCreateException(ce.getMessage());
 			}
 		}
-		
+
 		if (userID > 0 && !update) {
 			loginTable.setUserId(userID);
 		}
 		else if (!update) {
 			throw new LoginCreateException("invalid user_id");
 		}
-		
+
 		String encryptedPassword = null;
 		if (password != null && !"".equals(password)) {
 			encryptedPassword = Encrypter.encryptOneWay(password);
@@ -156,26 +156,27 @@ public class LoginDBHandler {
 			}
 		}
 		loginTable.setLastChanged(IWTimestamp.getTimestampRightNow());
-			try {
-				//save the last changed by stuff if not the same user or super admin
-				IWContext iwc = IWContext.getInstance();
-				if(!iwc.isSuperAdmin() && iwc.getCurrentUserId()!=userID){
-					User changer = iwc.getCurrentUser();
-					loginTable.setChangedByUser(changer);
-					
-					//don't change the primary group though!
-					if(loginTable.getChangedByGroupId()<0){
-						Group primary = changer.getPrimaryGroup();
-					
-						if(primary!=null){
-							loginTable.setChangedByGroup(primary);
-						}
+		try {
+			//save the last changed by stuff if not the same user or super admin
+			IWContext iwc = IWContext.getInstance();
+			if (!iwc.isSuperAdmin() && iwc.getCurrentUserId() != userID) {
+				User changer = iwc.getCurrentUser();
+				loginTable.setChangedByUser(changer);
+
+				//don't change the primary group though!
+				if (loginTable.getChangedByGroupId() < 0) {
+					Group primary = changer.getPrimaryGroup();
+
+					if (primary != null) {
+						loginTable.setChangedByGroup(primary);
 					}
 				}
-			} catch (Exception e) {
-				//no user, must be a system process setting a login				
 			}
-		
+		}
+		catch (Exception e) {
+			//no user, must be a system process setting a login				
+		}
+
 		loginTable.store();
 		return loginTable;
 	}
@@ -215,9 +216,9 @@ public class LoginDBHandler {
 		if (daysOfVality > -1) {
 			logInfo.setDaysOfVality(daysOfVality);
 		}
-//		if (passwordExpires != null) {
-//			logInfo.setPasswordExpires(passwordExpires);
-//		}
+		//		if (passwordExpires != null) {
+		//			logInfo.setPasswordExpires(passwordExpires);
+		//		}
 		if (userAllowedToChangePassw != null) {
 			logInfo.setAllowedToChange(userAllowedToChangePassw);
 		}
@@ -369,9 +370,10 @@ public class LoginDBHandler {
 
 	/**
 	 * <p>
-	 * Finds and returns the first found login for user user unregarding
-	 * login type.
+	 * Finds and returns the first found login for user user unregarding login
+	 * type.
 	 * </p>
+	 * 
 	 * @param user
 	 * @return
 	 */
@@ -384,12 +386,13 @@ public class LoginDBHandler {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * <p>
-	 * Finds and returns the first found login for user user 
-	 * with no set loginType.
+	 * Finds and returns the first found login for user user with no set
+	 * loginType.
 	 * </p>
+	 * 
 	 * @param user
 	 * @return
 	 */
@@ -403,12 +406,13 @@ public class LoginDBHandler {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * <p>
-	 * Finds and returns the first found login for user user 
-	 * with no set loginType.
+	 * Finds and returns the first found login for user user with no set
+	 * loginType.
 	 * </p>
+	 * 
 	 * @param user
 	 * @return
 	 */
@@ -557,7 +561,7 @@ public class LoginDBHandler {
 			return (0);
 		}
 	}
-	
+
 	public static boolean hasLoggedIn(LoginTable loginTable) {
 		return getNumberOfSuccessfulLogins(new Integer(loginTable.getPrimaryKey().toString()).intValue()) > 0;
 	}
@@ -780,7 +784,7 @@ public class LoginDBHandler {
 					count1 = first.length();
 					// laststep = namelength-first.length();
 				}
-				else if (alfa.length >= 6 && number++ < 99) {
+				else if (alfalength >= 6 && number++ < 99) {
 					array[row] = (alfabet.substring(0, 6) + number).toCharArray();
 				}
 				else if (startlettercount > 0) {
@@ -793,11 +797,11 @@ public class LoginDBHandler {
 					}
 					startlettercount--;
 				}/*
-					 * else if (!rand) { rand = true; startlettercount =
-					 * startletters.length(); count2 = 1; count1 = first.length(); index2 =
-					 * first.length();
-					 *  }
-					 */
+													 * else if (!rand) { rand = true; startlettercount =
+													 * startletters.length(); count2 = 1; count1 = first.length(); index2 =
+													 * first.length();
+													 *  }
+													 */
 				else {// lets break this
 					list.add("u" + userid.toString());
 					// System.out.println(row);
