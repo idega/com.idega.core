@@ -19,10 +19,10 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * Utility class to send Emails with the Java Mail API.
  * </p>
- *  Last modified: $Date: 2007/06/27 11:06:27 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/08/10 01:49:46 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10.2.2 $
+ * @version $Revision: 1.10.2.3 $
  */
 public class SendMail {
 	public SendMail() {
@@ -59,7 +59,7 @@ public class SendMail {
 		// Construct a message
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
-		message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+		message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
 		// process cc and bcc
 		// this Address[] ccAddressess = InternetAddress.parse(cc); or similar
 		if ((cc != null) && !("".equals(cc))) {
