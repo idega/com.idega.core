@@ -56,6 +56,16 @@ public interface RealEstate extends IDOEntity {
 	public String getComment();
 
 	/**
+	 * @see com.idega.core.location.data.RealEstateBMPBean#setLandRegisterMapNumber
+	 */
+	public void setLandRegisterMapNumber(String landRegisterMapNumber);
+
+	/**
+	 * @see com.idega.core.location.data.RealEstateBMPBean#getLandRegisterMapNumber
+	 */
+	public String getLandRegisterMapNumber();
+
+	/**
 	 * @see com.idega.core.location.data.RealEstateBMPBean#setStreetNumber
 	 */
 	public void setStreetNumber(String streetNumber);

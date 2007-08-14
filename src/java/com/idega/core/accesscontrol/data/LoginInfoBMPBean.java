@@ -23,6 +23,8 @@ public class LoginInfoBMPBean extends GenericEntity implements LoginInfo, MetaDa
 	private static final String COLUMN_ALLOWED_TO_CHANGE = "ALLOWED_TO_CHANGE";
 	private static final String COLUMN_CHANGE_NEXT_TIME = "CHANGE_NEXT_TIME";
 	private static final String COLUMN_ENCRYPTION_TYPE = "ENCRYPTION_TYPE";
+	private static final String COLUMN_CREATION_TYPE = "CREATION_TYPE";
+	
 	private static final String META_DATA_ACCESS_CLOSED = "ACCESS_CLOSED";
 	private static final String META_DATA_FAILED_ATTEMPT_COUNT = "FAILED_ATTEMPT_COUNT";
 	public static String className = LoginInfo.class.getName();
@@ -36,6 +38,8 @@ public class LoginInfoBMPBean extends GenericEntity implements LoginInfo, MetaDa
 		addAttribute(getAllowedToChangeColumnName(), "Notandi m� breyta", true, true, Boolean.class);
 		addAttribute(getChangeNextTimeColumnName(), "Breyta n�st", true, true, Boolean.class);
 		addAttribute(getEncryptionTypeColumnName(), "K��unara�fer�", true, true, String.class, 30);
+		addAttribute(getCreationTypeColumnName(), "Creation type", true, true, String.class, 30);
+	
 		addMetaDataRelationship();
 		setAsPrimaryKey(getIDColumnName(), true);
 	}
@@ -93,6 +97,10 @@ public class LoginInfoBMPBean extends GenericEntity implements LoginInfo, MetaDa
 	public static String getEncryptionTypeColumnName() {
 		return COLUMN_ENCRYPTION_TYPE;
 	}
+	
+	public static String getCreationTypeColumnName() {
+		return COLUMN_CREATION_TYPE;
+	}
 
 	/* ColumNames end */
 	/* Getters begin */
@@ -137,6 +145,10 @@ public class LoginInfoBMPBean extends GenericEntity implements LoginInfo, MetaDa
 
 	public String getEncryprionType() {
 		return this.getStringColumnValue(getEncryptionTypeColumnName());
+	}
+	
+	public String getCreationType() {
+		return this.getStringColumnValue(getCreationTypeColumnName());
 	}
 
 	public boolean getAccessClosed() {
@@ -221,6 +233,10 @@ public class LoginInfoBMPBean extends GenericEntity implements LoginInfo, MetaDa
 
 	public void setEncriptionType(String type) {
 		this.setColumn(getEncryptionTypeColumnName(), type);
+	}
+	
+	public void setCreationType(String type) {
+		this.setColumn(getCreationTypeColumnName(), type);
 	}
 
 	public boolean isLoginExpired() {

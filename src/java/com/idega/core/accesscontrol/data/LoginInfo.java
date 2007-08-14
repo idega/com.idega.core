@@ -1,5 +1,5 @@
 /*
- * $Id: LoginInfo.java,v 1.15 2007/02/20 16:55:17 eiki Exp $
+ * $Id: LoginInfo.java,v 1.16 2007/08/14 12:35:08 alexis Exp $
  * Created on Jan 15, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.util.IWTimestamp;
  * <p>
  * TODO laddi Describe Type LoginInfo
  * </p>
- *  Last modified: $Date: 2007/02/20 16:55:17 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/08/14 12:35:08 $ by $Author: alexis $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public interface LoginInfo extends IDOEntity, MetaDataCapable {
 
@@ -74,6 +74,11 @@ public interface LoginInfo extends IDOEntity, MetaDataCapable {
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#getEncryprionType
 	 */
 	public String getEncryprionType();
+
+	/**
+	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#getCreationType
+	 */
+	public String getCreationType();
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#getAccessClosed
@@ -159,6 +164,11 @@ public interface LoginInfo extends IDOEntity, MetaDataCapable {
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#setEncriptionType
 	 */
 	public void setEncriptionType(String type);
+
+	/**
+ 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#setCreationType
+	 */
+	public void setCreationType(String type);
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginInfoBMPBean#isLoginExpired
