@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+		  <release version="3.1.61" date="2007-08-14">
+      		<action dev="civilis" type="update">
+				LoginInfoBMPBean creation type field added
+      		</action>
+    	</release>
   		<release version="3.1.60" date="2007-08-07">
       		<action dev="valdas" type="update">
 				Made method (to get instanceId of UIComponent) accessible through BuilderService
