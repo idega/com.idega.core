@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.92.2.7 2007/07/09 17:35:57 valdas Exp $
+ * $Id: UserBusiness.java,v 1.92.2.8 2007/08/15 10:31:38 sigtryggur Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -53,10 +53,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2007/07/09 17:35:57 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/08/15 10:31:38 $ by $Author: sigtryggur $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.92.2.7 $
+ * @version $Revision: 1.92.2.8 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -190,6 +190,12 @@ public interface UserBusiness extends IBOService {
 	 * @see com.idega.user.business.UserBusinessBean#createUser
 	 */
 	public User createUser(String firstname, String middlename, String lastname, String personalID, Gender gender,
+			IWTimestamp dateOfBirth) throws CreateException, RemoteException;
+
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#createUser
+	 */
+	public User createUser(String firstname, String middlename, String lastname, String displayname, String personalID, Gender gender,
 			IWTimestamp dateOfBirth) throws CreateException, RemoteException;
 
 	/**

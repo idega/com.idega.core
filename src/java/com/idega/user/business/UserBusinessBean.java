@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.20 2007/07/11 12:16:32 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.21 2007/08/15 10:31:38 sigtryggur Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/07/11 12:16:32 $ by $Author: valdas $
+ * Last modified: $Date: 2007/08/15 10:31:38 $ by $Author: sigtryggur $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.20 $
+ * @version $Revision: 1.207.2.21 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -572,6 +572,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public User createUser(String firstname, String middlename, String lastname, String personalID, Gender gender,
 			IWTimestamp dateOfBirth) throws CreateException, RemoteException {
 		return createUser(firstname, middlename, lastname, null, personalID, null,
+				gender != null ? (Integer) gender.getPrimaryKey() : null, dateOfBirth, null);
+	}
+	
+	/**
+	 * Creates a new user with a firstname,middlename, lastname ,personalID,
+	 * gender and date of birth where middlename,personalID,gender,dateofbirth
+	 * can be null
+	 */
+	public User createUser(String firstname, String middlename, String lastname, String displayname, String personalID, Gender gender,
+			IWTimestamp dateOfBirth) throws CreateException, RemoteException {
+		return createUser(firstname, middlename, lastname, displayname, personalID, null,
 				gender != null ? (Integer) gender.getPrimaryKey() : null, dateOfBirth, null);
 	}
 
