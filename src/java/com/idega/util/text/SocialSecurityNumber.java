@@ -39,6 +39,7 @@ public class SocialSecurityNumber {
 		}
 	}
 
+	/** @return THE AGE OF THE YEAR**/
 	public static int getAge(String socialSecurityNumber) {
 		int thisYear = Calendar.YEAR;
 		int age;
