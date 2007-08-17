@@ -20,8 +20,9 @@ public class CoreConstants {
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
 
-	public static final String CONTENT_PATH = "/files/cms";
-	public static final String PAGES_PATH = "/files/cms/pages";
+	public static final String PATH_FILES_ROOT = "/files";
+	public static final String CONTENT_PATH = PATH_FILES_ROOT + "/cms";
+	public static final String PAGES_PATH = CONTENT_PATH + "/pages";
 
 	public static final String ARTICLE_CONTENT_PATH = "/article";
 	public final static String ARTICLE_FILENAME_SCOPE = "article";
