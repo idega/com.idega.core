@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.46 2007/07/19 09:11:21 thomas Exp $ Created on
+ * $Id: StringHandler.java,v 1.47 2007/08/20 14:41:57 valdas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -21,14 +21,18 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.idega.presentation.IWContext;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2007/07/19 09:11:21 $ by $Author: thomas $
+ * Last modified: $Date: 2007/08/20 14:41:57 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.46 $
+ * @version $Revision: 1.47 $
  */
 public class StringHandler {
 
@@ -1207,4 +1211,85 @@ public class StringHandler {
 		return regularExpression;
 	}
 
+	public static String removeAbsoluteReferencies(String text) {
+		if (text == null) {
+			return null;
+		}
+		
+		StringBuffer replaceBuffer = new StringBuffer(text);
+		List<Pattern> patterns = new ArrayList<Pattern>();
+		Pattern p1 = Pattern.compile("(<a[^>]+href=\")([^#][^\"]+)([^>]+>)", Pattern.CASE_INSENSITIVE);
+		Pattern p2 = Pattern.compile("(<img[^>]+src=\")([^#][^\"]+)([^>]+>)", Pattern.CASE_INSENSITIVE);
+		patterns.add(p1);
+		patterns.add(p2);
+		
+		StringBuffer outString = null;
+
+		IWContext iwc = CoreUtil.getIWContext();
+		String serverName = null;
+		if (iwc != null) {
+			serverName = iwc.getServerName();
+		}
+		if (serverName == null) {
+			return text;
+		}
+		
+		for (int i = 0; i < patterns.size(); i++) {
+			Pattern p = patterns.get(i);
+			Matcher m = p.matcher(replaceBuffer);
+			outString = new StringBuffer();
+
+			while (m.find()) {
+				String url = m.group(2);
+				if (url.startsWith("http") && url.indexOf(serverName) > 0) {
+					url = url.substring(url.indexOf("//")+2);
+					url = url.substring(url.indexOf("/"));
+
+					m.appendReplacement(outString,"$1"+url+"$3");
+				}
+			}
+			m.appendTail(outString);
+			replaceBuffer=new StringBuffer(outString.toString());
+
+		}
+		text = replaceBuffer.toString();
+		return text;
+	}
+	
+	public static String removeAbsoluteReference(String serverName, String link) {
+		if (link == null) {
+			return null;
+		}
+		if (serverName == null) {
+			return link;
+		}
+		if (link.indexOf(serverName) == -1) {
+			return link;
+		}
+		
+		link = link.toLowerCase();
+		
+		//	Throwing away server name from link
+		int serverNameStart = link.indexOf(serverName);
+		if (serverNameStart > 0) {
+			int serverNameEnd = serverNameStart + serverName.length();
+			link = link.substring(serverNameEnd);
+		}
+		
+		//	Throwing away port number from link
+		if (link.startsWith(":")) {
+			link = link.substring(1);
+			boolean portNumber = true;
+			try {
+				while (link.length() > 0 && portNumber && Integer.valueOf(link.substring(0, 1)) != null) {
+					link = link.substring(1);
+				}
+			} catch (NumberFormatException e) {
+				portNumber = false;
+			}
+		}
+		
+		return link;
+	}
+	
 }
