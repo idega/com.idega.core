@@ -11,6 +11,7 @@ public class CoreConstants {
 	private static final String[] _HEXIDECIMAL_LETTERS = new String[] {"a", "b", "c", "d", "e", "f", "A", "B", "C", "D", "E", "F"};
 	public static final List <String> HEXIDECIMAL_LETTERS = Collections.unmodifiableList(Arrays.asList(_HEXIDECIMAL_LETTERS));
 	
+	public static final String EMPTY = "";
 	public static final String SLASH = "/";
 	public static final String NUMBER_SIGN = "#";
 	public static final String SEMICOLON = ";";
@@ -32,11 +33,11 @@ public class CoreConstants {
 	public static final String GROUP_SERVICE_DWR_INTERFACE_SCRIPT = "/dwr/interface/GroupService.js";
 	
 	public static final String SCHEDULE_SESSION_DWR_INTERFACE_SCRIPT = "/dwr/interface/ScheduleSession.js";
-
-	public static final String CONTENT = "/content";
 	
 	public static final String ARTICLE_ITEM_VIEWER_NAME = "ArticleItemViewer";
 	
 	public static final String APPLICATION_PROPERTY_TO_USE_OLD_THEME_PREVIEW_GENERATOR = "useOldThemeGenerator";
+
+	public static final String WEBDAV_SERVLET_URI = "/content";
 
 }
