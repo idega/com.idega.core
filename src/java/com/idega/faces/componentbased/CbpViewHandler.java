@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.6 2007/02/05 23:57:35 tryggvil Exp $
+ * $Id: CbpViewHandler.java,v 1.7 2007/08/22 09:58:54 valdas Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Locale;
+
 import javax.faces.FacesException;
 import javax.faces.application.Application;
 import javax.faces.application.StateManager;
@@ -26,11 +27,15 @@ import javax.faces.render.RenderKitFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.application.MyfacesStateManager;
 import org.apache.myfaces.application.jsp.JspViewHandlerImpl;
 import org.apache.myfaces.shared_impl.renderkit.html.HtmlLinkRendererBase;
+
+import com.icesoft.faces.application.D2DViewHandler;
+import com.icesoft.faces.context.BridgeFacesContext;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.presentation.IWContext;
@@ -44,10 +49,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2007/02/05 23:57:35 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/08/22 09:58:54 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class CbpViewHandler extends ViewHandler {
 
@@ -80,11 +85,18 @@ public class CbpViewHandler extends ViewHandler {
 		response.setContentType("text/html");
 		
 		// make sure to set the responsewriter
-		initializeResponseWriter(ctx);		
+		initializeResponseWriter(ctx);
 		
 		if(viewRoot == null) {
 			throw new RuntimeException("CbpViewHandler: No component tree is available !");
 		}
+		
+		if (ctx instanceof BridgeFacesContext) {
+			D2DViewHandler view = new D2DViewHandler();
+			view.renderView(ctx, viewRoot);
+			return;
+		}
+		
 		String renderkitId = viewRoot.getRenderKitId();
 		if (renderkitId == null) {
 			renderkitId = calculateRenderKitId(ctx);
@@ -410,6 +422,16 @@ public class CbpViewHandler extends ViewHandler {
 		//HttpServletResponse response = (HttpServletResponse) ctx.getExternalContext().getResponse();
 		String contextType = "text/html";
 		String characterEncoding = request.getCharacterEncoding();
+		
+		if (ctx instanceof BridgeFacesContext) {	// ICEfaces
+			BridgeFacesContext iceFacesContext = (BridgeFacesContext) ctx;
+			try {
+				iceFacesContext.createAndSetResponseWriter();
+			} catch (IOException e) {
+				throw new FacesException(e.getMessage(),e);
+			}
+			return;
+		}
 		//try {
 			//This responsewriter is first constructed with a buffer that is later written out.
 			ResponseWriter responseWriter = new HtmlStringBufferedResponseWriter(bufferWriter,contextType,characterEncoding);
