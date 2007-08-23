@@ -1,5 +1,5 @@
 /*
- * $Id: IWViewHandlerImpl.java,v 1.10 2007/07/27 15:47:39 civilis Exp $
+ * $Id: IWViewHandlerImpl.java,v 1.11 2007/08/23 13:22:43 valdas Exp $
  * Created on 12.3.2004 by  tryggvil in project smile
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.Logger;
+
 import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIComponent;
@@ -21,6 +22,8 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.servlet.http.HttpServletResponse;
+
+import com.icesoft.faces.context.BridgeFacesContext;
 import com.idega.core.view.DefaultViewNode;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
@@ -28,6 +31,7 @@ import com.idega.core.view.ViewNodeBase;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.util.FacesUtil;
+import com.idega.util.StringHandler;
 
 
 /**
@@ -39,10 +43,10 @@ import com.idega.util.FacesUtil;
  * 
  * Copyright (C) idega software 2004<br>
  * 
- * Last modified: $Date: 2007/07/27 15:47:39 $ by $Author: civilis $
+ * Last modified: $Date: 2007/08/23 13:22:43 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class IWViewHandlerImpl extends ViewHandler{
 	
@@ -52,6 +56,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	private ViewManager viewManager;
 	private ViewHandler jspViewHandler;
 	private ViewHandler faceletsViewHandler;
+	private ViewHandler iceFacesViewHandler;
 	
 	public IWViewHandlerImpl(){
 		log.info("Loading IWViewHandlerImpl");
@@ -146,8 +151,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 
 
 	
-	private ViewHandler getViewHandlerForContext(FacesContext ctx) {
-		
+	private ViewHandler getViewHandlerForContext(FacesContext ctx) {		
 		ViewNode node = getViewManager().getViewNodeForContext(ctx);
 		
 		if(node != null)
@@ -155,6 +159,8 @@ public class IWViewHandlerImpl extends ViewHandler{
 				return jspViewHandler;
 			else if(node.getViewNodeBase() == ViewNodeBase.FACELET)
 				return faceletsViewHandler;
+			else if(node.getViewNodeBase() == ViewNodeBase.ICEFACE)
+				return iceFacesViewHandler;
 			else
 				return node.getViewHandler();
 		
@@ -219,7 +225,13 @@ public class IWViewHandlerImpl extends ViewHandler{
 	public String getResourceURL(FacesContext ctx, String path) {
 		ViewHandler realHandler = getViewHandlerForContext(ctx);
 		if(realHandler!=null){
-			return realHandler.getResourceURL(ctx,path);
+			String pathFromHandler = realHandler.getResourceURL(ctx,path);
+			if (ctx instanceof IWContext) {
+				if (path.startsWith(StringHandler.SLASH) && !pathFromHandler.startsWith(StringHandler.SLASH)) {
+					pathFromHandler = new StringBuffer("/").append(pathFromHandler).toString();
+				}
+			}
+			return pathFromHandler;
 		}
 		else{
 			throw new RuntimeException ("No ViewHandler Found for getResourceURL");
@@ -391,6 +403,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	public void setParentViewHandler(ViewHandler parentViewHandler) {
 		jspViewHandler = new IWJspViewHandler(parentViewHandler);
 		faceletsViewHandler = new IWFaceletsViewHandler(parentViewHandler);
+		iceFacesViewHandler = new IWIceFacesViewHandler(parentViewHandler);
 		this.parentViewHandler = parentViewHandler;
 	}
 	

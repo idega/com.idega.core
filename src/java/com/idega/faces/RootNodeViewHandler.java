@@ -8,10 +8,13 @@ package com.idega.faces;
 
 import java.io.IOException;
 import java.util.Locale;
+
 import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+
+import com.icesoft.faces.context.BridgeFacesContext;
 import com.idega.core.view.ViewNode;
 import com.idega.faces.componentbased.CbpViewHandler;
 
@@ -117,6 +120,10 @@ public class RootNodeViewHandler extends CbpViewHandler{// extends CbpViewHandle
 	 */
 	public void renderView(FacesContext ctx, UIViewRoot viewRoot) throws IOException, FacesException {
 		//getParentViewHandler().renderView(arg0, arg1);
+		if (ctx instanceof BridgeFacesContext) {
+			getParentViewHandler().renderView(ctx, viewRoot);
+			return;
+		}
 		super.renderView(ctx,viewRoot);
 	}
 	/* (non-Javadoc)
