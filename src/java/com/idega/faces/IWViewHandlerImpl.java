@@ -1,5 +1,5 @@
 /*
- * $Id: IWViewHandlerImpl.java,v 1.12 2007/08/23 13:32:51 valdas Exp $
+ * $Id: IWViewHandlerImpl.java,v 1.13 2007/08/23 13:33:36 valdas Exp $
  * Created on 12.3.2004 by  tryggvil in project smile
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -43,10 +43,10 @@ import com.idega.util.StringHandler;
  * 
  * Copyright (C) idega software 2004<br>
  * 
- * Last modified: $Date: 2007/08/23 13:32:51 $ by $Author: valdas $
+ * Last modified: $Date: 2007/08/23 13:33:36 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class IWViewHandlerImpl extends ViewHandler{
 	
@@ -228,7 +228,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 			String pathFromHandler = realHandler.getResourceURL(ctx,path);
 			if (!(ctx instanceof BridgeFacesContext)) {
 				if (path.startsWith(StringHandler.SLASH) && !pathFromHandler.startsWith(StringHandler.SLASH)) {
-					pathFromHandler = new StringBuffer("/").append(pathFromHandler).toString();
+					pathFromHandler = new StringBuffer(StringHandler.SLASH).append(pathFromHandler).toString();
 				}
 			}
 			return pathFromHandler;
