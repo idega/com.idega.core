@@ -694,7 +694,7 @@
     <key>
       <name>EventHistoryList.time_format_string</name>
       <type>java.lang.String</type>
-      <value>hh:mm</value>
+      <value>HH:mm</value>
     </key>
     <key>
       <name>DatePicker.date_format_string</name>
