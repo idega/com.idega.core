@@ -1,5 +1,5 @@
 /*
- * $Id: IWViewHandlerImpl.java,v 1.13 2007/08/23 13:33:36 valdas Exp $
+ * $Id: IWViewHandlerImpl.java,v 1.14 2007/08/27 09:46:32 valdas Exp $
  * Created on 12.3.2004 by  tryggvil in project smile
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -43,10 +43,10 @@ import com.idega.util.StringHandler;
  * 
  * Copyright (C) idega software 2004<br>
  * 
- * Last modified: $Date: 2007/08/23 13:33:36 $ by $Author: valdas $
+ * Last modified: $Date: 2007/08/27 09:46:32 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class IWViewHandlerImpl extends ViewHandler{
 	
@@ -403,7 +403,7 @@ public class IWViewHandlerImpl extends ViewHandler{
 	public void setParentViewHandler(ViewHandler parentViewHandler) {
 		jspViewHandler = new IWJspViewHandler(parentViewHandler);
 		faceletsViewHandler = new IWFaceletsViewHandler(parentViewHandler);
-		iceFacesViewHandler = new IWIceFacesViewHandler(parentViewHandler);
+		iceFacesViewHandler = parentViewHandler;
 		this.parentViewHandler = parentViewHandler;
 	}
 	
