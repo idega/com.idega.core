@@ -13,6 +13,7 @@ public class CoreConstants {
 	
 	public static final String EMPTY = "";
 	public static final String SLASH = "/";
+	public static final String SPACE = " ";
 	public static final String NUMBER_SIGN = "#";
 	public static final String SEMICOLON = ";";
 	
