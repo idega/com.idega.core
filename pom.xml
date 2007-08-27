@@ -198,7 +198,7 @@
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
-      <version>1.2</version>
+      <version>1.1</version>
       <type>jar</type>
     </dependency>
     <!-- This Commons-Collections Dependecy is requred by ehcache, and is also used in org.apache.myfaces and org.apache.slide -->
@@ -254,7 +254,7 @@
 	<dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.springframework</artifactId>
-      <version>2.0.4</version>
+      <version>2.1-m3</version>
       <type>jar</type>
     </dependency>
   </dependencies>
