@@ -37,7 +37,8 @@ public class SocialSecurityNumber {
 	}
 
 	public static int getAge(String socialSecurityNumber) {
-		int thisYear = Calendar.YEAR;
+		
+		int thisYear = Calendar.getInstance().get(Calendar.YEAR);
 		int age;
 		int year = Integer.parseInt(socialSecurityNumber.substring(4, 6));
 		if (socialSecurityNumber.length() == 10) {

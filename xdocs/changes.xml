@@ -4,6 +4,13 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  		 <release version="3.1.62" date="2007-08-30">
+      		<action dev="eiki" type="fix">
+				Fixed a bug in UserBusinessBean when getting the users preferred locale.
+				Fixed a bug in getting a users age by his SocialSecurityNumber.getAge...
+      		</action>
+    	</release>
+    	
 		  <release version="3.1.61" date="2007-08-14">
       		<action dev="civilis" type="update">
 				LoginInfoBMPBean creation type field added

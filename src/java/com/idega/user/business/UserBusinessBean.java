@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.21 2007/08/15 10:31:38 sigtryggur Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.22 2007/08/30 16:47:19 eiki Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/08/15 10:31:38 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2007/08/30 16:47:19 $ by $Author: eiki $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.21 $
+ * @version $Revision: 1.207.2.22 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3374,8 +3374,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		if(user!=null){
 			String localeString = user.getPreferredLocale();
 			
+			
 			if(localeString!=null){
-				locale = new Locale(localeString);
+				//only the language part!
+				locale = new Locale(localeString.substring(0,2));
 			}
 		}
 		return locale;
