@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.223 2007/06/29 10:01:20 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.224 2007/08/31 11:13:49 eiki Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/06/29 10:01:20 $ by $Author: valdas $
+ * Last modified: $Date: 2007/08/31 11:13:49 $ by $Author: eiki $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.223 $
+ * @version $Revision: 1.224 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -574,6 +574,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return createUser(firstname, middlename, lastname, null, personalID, null,
 				gender != null ? (Integer) gender.getPrimaryKey() : null, dateOfBirth, null);
 	}
+	
+	/**
+	 * Creates a new user with a firstname,middlename, lastname ,personalID,
+	 * gender and date of birth where middlename,personalID,gender,dateofbirth
+	 * can be null
+	 */
+	public User createUser(String firstname, String middlename, String lastname, String displayname, String personalID, Gender gender,
+			IWTimestamp dateOfBirth) throws CreateException, RemoteException {
+		return createUser(firstname, middlename, lastname, displayname, personalID, null,
+				gender != null ? (Integer) gender.getPrimaryKey() : null, dateOfBirth, null);
+	}
 
 	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN,
 			String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group,
@@ -850,7 +861,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return getUsersMainEmail(user);
 		}
 		catch (Exception ex) {
-			System.out.println(ex.getMessage());
+			//System.out.println(ex.getMessage());
 			//ex.printStackTrace();
 			return null;
 		}
@@ -3111,11 +3122,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public String getUserApplicationStyleSheetURL() {
-		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
-		IWBundle bundle = application.getBundle("com.idega.user");
-		String styleScript = bundle.getProperty("styleSheet_name", "DefaultStyle.css");
-		String styleSrc = bundle.getVirtualPathWithFileNameString(styleScript);
-		return styleSrc;
+		IWMainApplication application = this.getIWMainApplication();
+		String styleSheetOverrideURI = application.getSettings().getProperty("USER_APP_STYLE_SHEET", "");
+		
+		if(!"".equals(styleSheetOverrideURI)){
+			return styleSheetOverrideURI;
+		}
+		else{
+			IWBundle bundle = application.getBundle("com.idega.user");
+			return  bundle.getVirtualPathWithFileNameString("DefaultStyle.css");
+		}
+		
 	}
 
 	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException {
@@ -3329,7 +3346,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			String localeString = user.getPreferredLocale();
 			
 			if(localeString!=null){
-				locale = new Locale(localeString);
+				//only the language part!
+				locale = new Locale(localeString.substring(0,2));
 			}
 		}
 		return locale;
