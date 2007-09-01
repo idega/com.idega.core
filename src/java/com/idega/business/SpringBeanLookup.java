@@ -50,7 +50,7 @@ public class SpringBeanLookup {
 	public Object getSpringBean(ServletContext ctx, Class interface_class) {
 		
 		if(!interface_class.isAnnotationPresent(SpringBeanName.class))
-			return null;
+			throw new RuntimeException("Interface is not annotated with "+SpringBeanName.class.getName()+" annotation");
 		
 		SpringBeanName bname = (SpringBeanName)interface_class.getAnnotation(SpringBeanName.class);
 		
