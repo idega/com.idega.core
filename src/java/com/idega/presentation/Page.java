@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.163 2007/05/18 16:15:16 laddi Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.164 2007/09/01 12:16:42 civilis Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -63,10 +63,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2007/05/18 16:15:16 $ by $Author: laddi $
+ * Last modified: $Date: 2007/09/01 12:16:42 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.163 $
+ * @version $Revision: 1.164 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -620,6 +620,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *          The new styleSheetURL value
 	 */
 	public void setStyleSheetURL(String styleSheetURL) {
+		
+		if(styleSheetURL == null)
+			return;
+		
 		int index = styleSheetURL.indexOf(",");
 		while (index > -1) {
 			addStyleSheetURL(styleSheetURL.substring(0, index));
