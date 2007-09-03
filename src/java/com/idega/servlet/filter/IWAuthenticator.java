@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.26.2.7 2007/07/23 07:15:56 laddi Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.26.2.8 2007/09/03 07:30:09 alexis Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -60,10 +60,10 @@ import com.idega.util.RequestUtil;
  * idegaWeb User system.<br/> When the user has a "remember me" cookie set then
  * this filter reads that and logs the user into the system.
  * </p>
- * Last modified: $Date: 2007/07/23 07:15:56 $ by $Author: laddi $
+ * Last modified: $Date: 2007/09/03 07:30:09 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.26.2.7 $
+ * @version $Revision: 1.26.2.8 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -260,6 +260,29 @@ public class IWAuthenticator extends BaseFilter {
 			}
 		}
 
+		return false;
+	}
+	
+	protected boolean processRedirectsToUserHome(HttpServletRequest request, HttpServletResponse response, HttpSession session, LoginBusinessBean loginBusiness, boolean isLoggedOn) throws IOException, RemoteException {
+		if(isLoggedOn) {
+			User user = loginBusiness.getCurrentUser(session);
+			int homePageID = user.getHomePageID();
+			if (homePageID > 0) {
+				IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
+				response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
+				return true;
+			}
+			
+			Group prmg = user.getPrimaryGroup(); 
+			if (prmg != null) {
+				homePageID = prmg.getHomePageID();
+				if (homePageID > 0) {
+					IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
+					response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 
