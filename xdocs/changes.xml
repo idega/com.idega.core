@@ -4,6 +4,12 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  		<release version="3.1.63" date="2007-09-03">
+      		<action dev="alexis" type="update">
+				Added a processRedirectsToUserHome method in IWAuthenticator
+      		</action>
+    	</release>
+    	
   		 <release version="3.1.62" date="2007-08-30">
       		<action dev="eiki" type="fix">
 				Fixed a bug in UserBusinessBean when getting the users preferred locale.
