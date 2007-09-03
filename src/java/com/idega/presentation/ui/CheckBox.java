@@ -76,6 +76,21 @@ public class CheckBox extends GenericInput {
 		}
 	}
 	
+	/**
+	 * Sets whether the checkbox is checked or not.
+	 * @param ifChecked
+	 * @param useXhtml
+	 */
+	public void setChecked(boolean ifChecked, boolean useXhtml) {
+		if (useXhtml) {
+			if (ifChecked) {
+				setMarkupAttribute("checked", ifChecked);
+				return;
+			}
+		}
+		setChecked(ifChecked);
+	}
+	
 	public void main(IWContext iwc) {
 		if (isEnclosedByForm()) {
 			if (this._mustBeChecked) {

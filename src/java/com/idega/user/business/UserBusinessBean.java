@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.224 2007/08/31 11:13:49 eiki Exp $
+ * $Id: UserBusinessBean.java,v 1.225 2007/09/03 14:46:21 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/08/31 11:13:49 $ by $Author: eiki $
+ * Last modified: $Date: 2007/09/03 14:46:21 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.224 $
+ * @version $Revision: 1.225 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3777,6 +3777,35 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			e.printStackTrace();
 		}
 		return -1;
+	}
+	
+	public String getUserPassword(User user) {
+		LoginTable loginTable = getLoginTableForUser(user);
+		if (loginTable == null) {
+			return null;
+		}
+		if (loginTable == null) {
+			return null;
+		}
+		
+		return loginTable.getUserPasswordInClearText();
+	}
+	
+	private LoginTable getLoginTableForUser(User user) {
+		if (user == null) {
+			return null;
+		}
+		
+		return LoginDBHandler.getUserLogin(((Integer) user.getPrimaryKey()).intValue());
+	}
+	
+	public String getUserLogin(User user) {
+		LoginTable loginTable = getLoginTableForUser(user);
+		if (loginTable == null) {
+			return null;
+		}
+		
+		return loginTable.getUserLogin();
 	}
 	
 } // Class UserBusiness

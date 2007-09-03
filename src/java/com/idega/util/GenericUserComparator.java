@@ -2,8 +2,14 @@
 package com.idega.util;
 
 import java.text.Collator;
-import java.util.*;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Vector;
+
 import com.idega.core.user.data.User;
 
 
@@ -22,6 +28,7 @@ public class GenericUserComparator implements Comparator {
   public static final int FIRSTLASTMIDDLE = 2;
   public static final int LASTFIRSTMIDDLE = 3;
   public static final int FIRSTMIDDLELAST = 4;
+  public static final int PERSONALID = 5;
 
 
   private int sortBy;
@@ -77,6 +84,9 @@ public class GenericUserComparator implements Comparator {
 	        break;
         case FIRSTMIDDLELAST:
 	        result = this.nameSortFirstMiddleLast(o1,o2);
+	        break;
+        case PERSONALID:
+	        result = this.sortByPersonalId(o1,o2);
 	        break;
       }
 
@@ -232,6 +242,40 @@ public class GenericUserComparator implements Comparator {
           users[i] = (User) objArr[i];
       }
       return (users);
+  }
+  
+  private int sortByPersonalId(Object o1, Object o2) {
+	  User user1 = (User) o1;
+	  User user2 = (User) o2;
+	  int result = 0;
+		
+	  String id1 = getFixedPersonalId(user1.getPersonalID());
+	  String id2 = getFixedPersonalId(user2.getPersonalID());
+		
+	  if (id1 == null && id2 == null) {
+		  result = 0;
+	  }
+	  else if (id1 == null) {
+		  result = 1;
+	  }
+	  else if (id2 == null) {
+		  result = -1;
+	  }
+	  else {
+		  result = this.collator.compare(id1, id2);
+	  }
+	
+	  return result;
+  }
+  
+  private String getFixedPersonalId(String id) {
+	  if (id == null) {
+		  return null;
+	  }
+	  if (id.indexOf("-") != -1) {
+		  return id.replaceAll("-", CoreConstants.EMPTY);
+	  }
+	  return id;
   }
 
 }
