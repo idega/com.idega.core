@@ -1183,6 +1183,23 @@ function createRealNode(element) {
 	return result;
 }
 
+function replaceNode(component, nodeToReplace, container) {
+	if (component == null || nodeToReplace == null) {
+		return;
+	}
+	
+	var nodes = getTransformedDocumentToDom(component);
+	
+	// Inserting nodes
+	var activeNode = null;
+	var realNode = null;
+	for (var i = 0; i < nodes.length; i++) {
+		activeNode = nodes[i];
+		realNode = createRealNode(activeNode);
+		container.replaceChild(realNode, nodeToReplace);
+	}
+}
+
 function insertNodesToContainer(component, container) {
 	if (component == null || container == null) {
 		return;
