@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.7 2007/08/22 09:58:54 valdas Exp $
+ * $Id: CbpViewHandler.java,v 1.8 2007/09/08 13:16:20 civilis Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -34,8 +34,8 @@ import org.apache.myfaces.application.MyfacesStateManager;
 import org.apache.myfaces.application.jsp.JspViewHandlerImpl;
 import org.apache.myfaces.shared_impl.renderkit.html.HtmlLinkRendererBase;
 
-import com.icesoft.faces.application.D2DViewHandler;
-import com.icesoft.faces.context.BridgeFacesContext;
+//import com.icesoft.faces.application.D2DViewHandler;
+//import com.icesoft.faces.context.BridgeFacesContext;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.presentation.IWContext;
@@ -49,10 +49,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2007/08/22 09:58:54 $ by $Author: valdas $
+ * Last modified: $Date: 2007/09/08 13:16:20 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class CbpViewHandler extends ViewHandler {
 
@@ -91,11 +91,12 @@ public class CbpViewHandler extends ViewHandler {
 			throw new RuntimeException("CbpViewHandler: No component tree is available !");
 		}
 		
-		if (ctx instanceof BridgeFacesContext) {
+/*		if (ctx instanceof BridgeFacesContext) {
 			D2DViewHandler view = new D2DViewHandler();
 			view.renderView(ctx, viewRoot);
 			return;
 		}
+*/
 		
 		String renderkitId = viewRoot.getRenderKitId();
 		if (renderkitId == null) {
@@ -423,7 +424,7 @@ public class CbpViewHandler extends ViewHandler {
 		String contextType = "text/html";
 		String characterEncoding = request.getCharacterEncoding();
 		
-		if (ctx instanceof BridgeFacesContext) {	// ICEfaces
+/*		if (ctx instanceof BridgeFacesContext) {	// ICEfaces
 			BridgeFacesContext iceFacesContext = (BridgeFacesContext) ctx;
 			try {
 				iceFacesContext.createAndSetResponseWriter();
@@ -432,6 +433,7 @@ public class CbpViewHandler extends ViewHandler {
 			}
 			return;
 		}
+*/
 		//try {
 			//This responsewriter is first constructed with a buffer that is later written out.
 			ResponseWriter responseWriter = new HtmlStringBufferedResponseWriter(bufferWriter,contextType,characterEncoding);
