@@ -198,14 +198,14 @@
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
-      <version>1.1</version>
+      <version>${commons-fileupload-commons-fileupload-version}</version>
       <type>jar</type>
     </dependency>
     <!-- This Commons-Collections Dependecy is requred by ehcache, and is also used in org.apache.myfaces and org.apache.slide -->
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-      <version>3.1</version>
+      <version>${commons-collections-commons-collections-version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
