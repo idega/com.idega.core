@@ -21,6 +21,7 @@ import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Script;
 import com.idega.util.IWCalendar;
 import com.idega.util.IWTimestamp;
 import com.idega.util.text.TextSoap;
@@ -354,11 +355,16 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		// String langScriptURI = "jscalendar/calendar_lang.js";
 		// checkOrCreateLanguageScript(iwc,iwrb,langScriptURI);
 		// parentPage.addJavascriptURL(iwrb.getImageURI(langScriptURI ));
-		parentPage.addJavaScriptAfterJavaScriptURLs("calendar_lang", createCalendarLangScript(iwrb));
+//		parentPage.addJavaScriptAfterJavaScriptURLs("calendar_lang", createCalendarLangScript(iwrb));
 		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendarHelper.js"));
 
 		parentPage.addStyleSheetURL(bundle.getImageURI("jscalendar/calendar-win2k-1.css"));
 
+		Script s =  new Script();
+		s.addFunction("calendar_lang", createCalendarLangScript(iwrb));
+		layer.add(s);
+
+		
 		layer.add(value);
 		layer.add(new Parameter(VALUE_PARAMETER_NAME, value.getName()));
 		layer.add(object);
