@@ -1168,6 +1168,28 @@ function createRealNode(element) {
 			else if (attribute.nodeName == 'checked' && IE) {
 				result.setAttribute('defaultChecked', attribute.nodeValue);
 			}
+
+			else if (attribute.nodeName == 'style' && IE) {
+				var styleValue = attribute.nodeValue;
+				while(true){
+					var stylePropertyNameLength = styleValue.indexOf(':');
+					if(stylePropertyNameLength == -1){
+						break;
+					}
+					var stylePropertyName = styleValue.substring(0, stylePropertyNameLength);
+					styleValue = styleValue.substring(stylePropertyNameLength+1);
+					var stylePropertyValueLength = styleValue.indexOf(';');
+					if(stylePropertyValueLength == -1){
+						$(result).setStyle(stylePropertyName, styleValue);
+						break;
+					}
+					var stylePropertyValue = styleValue.substring(0, stylePropertyValueLength);
+					styleValue = styleValue.substring(stylePropertyValueLength+2);
+				
+					$(result).setStyle(stylePropertyName, stylePropertyValue);
+				}
+			}
+
 			else {
 				result.setAttribute(attribute.nodeName, attribute.nodeValue);
 			}
@@ -1181,6 +1203,33 @@ function createRealNode(element) {
 	}
 	
 	return result;
+}
+
+function getStyleAttributes(styleValue){
+
+	var styleAttributes = new Array();
+	for(key in styleAttributes){
+		delete styleAttributes[key];
+//		styleAttributes.removeit
+	}
+	while(true){
+		var stylePropertyNameLength = styleValue.indexOf(':');
+		if(stylePropertyNameLength == -1){
+			break;
+		}
+		var stylePropertyName = styleValue.substring(0, stylePropertyNameLength);
+		styleValue = styleValue.substring(stylePropertyNameLength+1);
+		var stylePropertyValueLength = styleValue.indexOf(';');
+		if(stylePropertyValueLength == -1){
+			break;
+		}
+		var stylePropertyValue = styleValue.substring(0, stylePropertyValueLength);
+		styleValue = styleValue.substring(stylePropertyValueLength+2);
+
+		styleAttributes[stylePropertyName.toString()] = stylePropertyValue;
+		
+	}	
+	return styleAttributes;
 }
 
 function replaceNode(component, nodeToReplace, container) {
@@ -1505,26 +1554,6 @@ function getDefaultDwrPath() {
 function prepareDwr(interfaceClass, path) {
 	DWREngine.setMethod(DWREngine.ScriptTag);
 	interfaceClass._path = path;
-}
-
-/**
- * This is much faster than using (el.innerHTML = str) when there are many
- * existing descendants, because in some browsers, innerHTML spends much longer
- * removing existing elements than it does creating new ones.
- * http://blog.stevenlevithan.com/archives/faster-than-innerhtml
- */
-function replaceHtml(el, html) {
-	var oldEl = (typeof el === "string" ? document.getElementById(el) : el);
-	/*@cc_on // Pure innerHTML is slightly faster in IE
-		oldEl.innerHTML = html;
-		return oldEl;
-	@*/
-	var newEl = oldEl.cloneNode(false);
-	newEl.innerHTML = html;
-	oldEl.parentNode.replaceChild(newEl, oldEl);
-	/* Since we just removed the old element from the DOM, return a reference
-	to the new element, which can be used to restore variable references. */
-	return newEl;
 }
 
 String.prototype.cropEnd = function(symbols_count, string_to_append) {
