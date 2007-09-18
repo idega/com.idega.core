@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.164 2007/09/01 12:16:42 civilis Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.165 2007/09/18 08:01:38 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -16,9 +16,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
@@ -46,6 +48,7 @@ import com.idega.repository.data.PropertyDescription;
 import com.idega.repository.data.PropertyDescriptionHolder;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.servlet.IWCoreServlet;
+import com.idega.util.CoreConstants;
 import com.idega.util.FacesUtil;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
@@ -63,10 +66,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2007/09/01 12:16:42 $ by $Author: civilis $
+ * Last modified: $Date: 2007/09/18 08:01:38 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.164 $
+ * @version $Revision: 1.165 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -159,6 +162,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	private ICPage forwardPage;
 	private String docType;
 	private boolean useIE7Extension = false;
+	
+	private boolean useHtmlTag = true;
 
 	/**
 	 */
@@ -1621,35 +1626,40 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	/**
 	 * @return The startTag value
 	 */
-	public static String getStartTag(Locale locale, String docType, String encoding) {
+	public String getStartTag(Locale locale, String docType, String encoding) {
 		StringBuffer buffer = new StringBuffer();
-		if (docType.equals(DOCTYPE_XHTML_1_0_TRANSITIONAL)) {
-			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
-			buffer.append(docType);
-			buffer.append(NEWLINE);
-			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"");
-			buffer.append(locale.getLanguage());
-			buffer.append("\" lang=\"");
-			buffer.append(locale.getLanguage());
-			buffer.append("\">");
-			return buffer.toString();
+		if (isUseHtmlTag()) {
+			if (docType.equals(DOCTYPE_XHTML_1_0_TRANSITIONAL)) {
+				buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
+				buffer.append(docType);
+				buffer.append(NEWLINE);
+				
+				buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"");
+				buffer.append(locale.getLanguage());
+				buffer.append("\" lang=\"");
+				buffer.append(locale.getLanguage());
+				buffer.append("\">");
+				
+				return buffer.toString();
+			}
+			else if (docType.equals(DOCTYPE_XHTML_1_1)) {
+				buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
+				buffer.append(docType);
+				buffer.append(NEWLINE);
+				buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"");
+				buffer.append(locale.getLanguage());
+				buffer.append("\">");
+				return buffer.toString();
+			}
+			else {
+				buffer.append(docType);
+				buffer.append(NEWLINE);
+				buffer.append(START_TAG_HTML_4_0);
+				buffer.append(NEWLINE);
+				return buffer.toString();
+			}
 		}
-		else if (docType.equals(DOCTYPE_XHTML_1_1)) {
-			buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding != null ? encoding : "ISO-8859-1").append("\"?>").append("\n");
-			buffer.append(docType);
-			buffer.append(NEWLINE);
-			buffer.append("<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"");
-			buffer.append(locale.getLanguage());
-			buffer.append("\">");
-			return buffer.toString();
-		}
-		else {
-			buffer.append(docType);
-			buffer.append(NEWLINE);
-			buffer.append(START_TAG_HTML_4_0);
-			buffer.append(NEWLINE);
-			return buffer.toString();
-		}
+		return CoreConstants.EMPTY;
 		/*
 		 * if (markup.equals(XHTML)) { StringBuffer buffer = new StringBuffer(); buffer.append("<?xml version=\"1.0\" encoding=\"").append(encoding !=
 		 * null ? encoding : "ISO-8859-1").append("\"?>").append("\n"); //buffer.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0
@@ -1666,8 +1676,19 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	/**
 	 * @return The endTag value
 	 */
-	public static String getEndTag() {
-		return END_TAG;
+	public String getEndTag() {
+		if (isUseHtmlTag()) {
+			return END_TAG;
+		}
+		return CoreConstants.EMPTY;
+	}
+
+	private boolean isUseHtmlTag() {
+		return useHtmlTag;
+	}
+
+	public void setUseHtmlTag(boolean useHtmlTag) {
+		this.useHtmlTag = useHtmlTag;
 	}
 
 	/**
