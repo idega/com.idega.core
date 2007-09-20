@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthorizationFilter.java,v 1.12 2006/01/12 15:26:07 tryggvil Exp $ Created on 31.7.2004
+ * $Id: IWAuthorizationFilter.java,v 1.13 2007/09/20 13:53:48 eiki Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -18,6 +19,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
@@ -31,10 +33,10 @@ import com.idega.idegaweb.IWUserContextImpl;
  * sufficent priviliges.<br/>
  * In some instances (when accessing the workspace) it redirects the user to the login page.
  * </p>
- * Last modified: $Date: 2006/01/12 15:26:07 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/09/20 13:53:48 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
@@ -108,7 +110,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 				ViewNode node = vManager.getViewNodeForRequest(request);
 				IWUserContext iwuc = new IWUserContextImpl(request.getSession(),request.getSession().getServletContext());
 				
-				if(vManager.hasUserAcess(node,iwuc)){
+				if(vManager.hasUserAccess(node,iwuc)){
 					return true;
 				}
 				else{
