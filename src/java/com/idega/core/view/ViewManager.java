@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.22 2007/09/20 13:17:07 eiki Exp $
+ * $Id: ViewManager.java,v 1.23 2007/09/20 13:49:07 eiki Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.util.RequestUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2007/09/20 13:17:07 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/09/20 13:49:07 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public class ViewManager implements Singleton {
 	
@@ -72,60 +72,7 @@ public class ViewManager implements Singleton {
 	public void initializeStandardViews(ViewHandler handler){
 		
 		setApplicationRoot(this.iwma,handler);
-		
-		/*
-		try {
 
-			Class applicationClass = RefactorClassRegistry.forName("com.idega.builder.app.IBApplication");
-			FramedWindowClassViewNode builderNode = new FramedWindowClassViewNode("builder",getWorkspaceRoot());
-			Collection roles = new ArrayList();
-			roles.add(StandardRoles.ROLE_KEY_BUILDER);
-			builderNode.setAuthorizedRoles(roles);
-			builderNode.setWindowClass(applicationClass);
-			builderNode.setJspUri(getWorkspaceRoot().getResourceURI());
-			builderNode.setKeyboardShortcut(new KeyboardShortcut("2"));
-		}
-		catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		
-		/* moved to com.idega.user bundle starter
-		try {
-			Class applicationClass = RefactorClassRegistry.forName("com.idega.user.app.UserApplication");
-			ClassViewNode userNode = new ClassViewNode("user",getWorkspaceRoot());
-			userNode.setKeyboardShortcut(new KeyboardShortcut("1"));
-			
-			Collection roles = new ArrayList();
-			roles.add(StandardRoles.ROLE_KEY_USERADMIN);
-			userNode.setAuthorizedRoles(roles);
-			userNode.setWindowClass(applicationClass);
-			
-			String jspPath = this.iwma.getBundle("com.idega.workspace").getJSPURI("workspace.jsp");
-			userNode.setJspUri(jspPath);
-			//userNode.setJspUri(getWorkspaceRoot().getResourceURI());
-		}
-		catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
-		/*try {
-			Class applicationClass = RefactorClassRegistry.forName("com.idega.development.presentation.IWDeveloper");
-			FramedWindowClassViewNode developerNode = new FramedWindowClassViewNode("developer",getWorkspaceRoot());
-			Collection roles = new ArrayList();
-			roles.add(StandardRoles.ROLE_KEY_DEVELOPER);
-			developerNode.setAuthorizedRoles(roles);
-			developerNode.setWindowClass(applicationClass);
-			developerNode.setJspUri(getWorkspaceRoot().getResourceURI());
-			developerNode.setKeyboardShortcut(new KeyboardShortcut("3"));
-		}
-		catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-
-		
 		if(this.showMyPage){
 			DefaultViewNode myPageNode = new ApplicationViewNode("mypage",getWorkspaceRoot());
 			myPageNode.setName("My Page");
