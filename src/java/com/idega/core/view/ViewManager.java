@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.21 2007/09/20 12:48:28 eiki Exp $
+ * $Id: ViewManager.java,v 1.22 2007/09/20 13:17:07 eiki Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.util.RequestUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2007/09/20 12:48:28 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/09/20 13:17:07 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class ViewManager implements Singleton {
 	
@@ -313,7 +313,17 @@ public class ViewManager implements Singleton {
 	 * @param user
 	 * @return
 	 */
-	public boolean hasUserAcess(ViewNode node,IWUserContext userContext){
+	public boolean hasUserAccess(ViewNode node,IWUserContext userContext){
+		
+		//First check hasUserAccess for custom logic
+		try {
+			boolean hasAccess = node.hasUserAccess(userContext);
+			return hasAccess;
+		} catch (UnsupportedOperationException e) {
+			//ignore just not implemented
+		}
+		
+		//then check roles
 		Collection roles = node.getAuthorizedRoles();
 		if(roles!=null){
 			if(roles.size()>0){
@@ -326,6 +336,7 @@ public class ViewManager implements Singleton {
 				return false;
 			}
 		}
+		
 		return true;
 	}
 	
