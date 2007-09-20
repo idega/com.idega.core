@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.20 2006/04/09 12:13:17 laddi Exp $
+ * $Id: ViewManager.java,v 1.21 2007/09/20 12:48:28 eiki Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -9,17 +9,16 @@
  */
 package com.idega.core.view;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+
 import javax.faces.application.ViewHandler;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
-import com.idega.core.accesscontrol.business.StandardRoles;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.data.Instantiator;
-import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.util.FacesUtil;
@@ -30,10 +29,10 @@ import com.idega.util.RequestUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2006/04/09 12:13:17 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/09/20 12:48:28 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class ViewManager implements Singleton {
 	
@@ -91,9 +90,10 @@ public class ViewManager implements Singleton {
 			e.printStackTrace();
 		}*/
 		
+		/* moved to com.idega.user bundle starter
 		try {
 			Class applicationClass = RefactorClassRegistry.forName("com.idega.user.app.UserApplication");
-			FramedWindowClassViewNode userNode = new FramedWindowClassViewNode("user",getWorkspaceRoot());
+			ClassViewNode userNode = new ClassViewNode("user",getWorkspaceRoot());
 			userNode.setKeyboardShortcut(new KeyboardShortcut("1"));
 			
 			Collection roles = new ArrayList();
@@ -109,7 +109,7 @@ public class ViewManager implements Singleton {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		*/
 		/*try {
 			Class applicationClass = RefactorClassRegistry.forName("com.idega.development.presentation.IWDeveloper");
 			FramedWindowClassViewNode developerNode = new FramedWindowClassViewNode("developer",getWorkspaceRoot());
