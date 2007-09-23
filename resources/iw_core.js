@@ -1082,6 +1082,21 @@ function removeChildren(element) {
 	}
 }
 
+//use this function rather than innerHtml it's much faster see: http://blog.stevenlevithan.com/archives/faster-than-innerhtml
+function replaceHtml(el, html) {
+	var oldEl = (typeof el === "string" ? document.getElementById(el) : el);
+	/*@cc_on // Pure innerHTML is slightly faster in IE
+		oldEl.innerHTML = html;
+		return oldEl;
+	@*/
+	var newEl = oldEl.cloneNode(false);
+	newEl.innerHTML = html;
+	oldEl.parentNode.replaceChild(newEl, oldEl);
+	/* Since we just removed the old element from the DOM, return a reference
+	to the new element, which can be used to restore variable references. */
+	return newEl;
+};
+
 /** These functions transforms Document (received via DWR) to DOM **/
 function getTransformedDocumentToDom(component) {
 	var nodes = new Array();
