@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.22 2007/08/30 16:47:19 eiki Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.23 2007/09/24 12:44:32 gimmi Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -100,6 +100,7 @@ import com.idega.user.data.UserHome;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.LocaleUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.Timer;
 import com.idega.util.datastructures.NestedSetsContainer;
@@ -110,10 +111,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/08/30 16:47:19 $ by $Author: eiki $
+ * Last modified: $Date: 2007/09/24 12:44:32 $ by $Author: gimmi $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.22 $
+ * @version $Revision: 1.207.2.23 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3374,11 +3375,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		if(user!=null){
 			String localeString = user.getPreferredLocale();
 			
-			
-			if(localeString!=null){
-				//only the language part!
-				locale = new Locale(localeString.substring(0,2));
-			}
+			return LocaleUtil.getLocale(localeString);
 		}
 		return locale;
 	}
