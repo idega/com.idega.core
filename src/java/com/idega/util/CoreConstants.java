@@ -16,6 +16,7 @@ public class CoreConstants {
 	public static final String SPACE = " ";
 	public static final String NUMBER_SIGN = "#";
 	public static final String SEMICOLON = ";";
+	public static final String COMMA = ",";
 	
 	public static final String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
 	public static final String PROP_SYSTEM_MAIL_FROM_ADDRESS = "messagebox_from_mailaddress";
