@@ -113,9 +113,9 @@ public class ICLocaleBusiness  implements MutableClass {
   /**
    * @return a list of Locale object of the locales in use
    */
-  public static List getListOfLocalesJAVA(){
+  public static List<Locale> getListOfLocalesJAVA(){
     List list = listOfLocales();
-    List localeList = new Vector();
+    List<Locale> localeList = new Vector<Locale>();
 
     if ( list != null ) {
       Iterator iter = list.iterator();
