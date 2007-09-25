@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.43 2007/08/20 14:43:34 valdas Exp $
+ * $Id: BuilderService.java,v 1.44 2007/09/25 11:53:35 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -250,6 +250,8 @@ public interface BuilderService extends IBOService
 	
 	public boolean addPropertyToModule(String pageKey, String moduleId, String propName, String propValue);
 	
+	public boolean addPropertyToModules(String pageKey, List<String> moduleIds, String propName, String propValue);
+	
 	public List<String> getModuleId(String pageKey, String moduleClass);
 	
 	public boolean isPropertySet(String pageKey, String instanceId, String propertyName, IWMainApplication iwma);
@@ -257,6 +259,8 @@ public interface BuilderService extends IBOService
 	public boolean isPropertyValueSet(String pageKey, String moduleId, String propertyName, String propertyValue);
 	
 	public boolean removeValueFromModuleProperty(String pageKey, String moduleId, String propertyName, String valueToRemove);
+	
+	public boolean removeValueFromModuleProperty(String pageKey, List<String> moduleIds, String propertyName, String valueToRemove);
 	
 	public void setTreeOrder(int id, int order);
 	
