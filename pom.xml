@@ -106,26 +106,9 @@
   
   <dependencies>
     <dependency>
-    <!-- new version dependency instead of old one(s)  -->
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>2.8.1</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
       <groupId>jdom</groupId>
       <artifactId>jdom</artifactId>
-      <version>1.0</version>
-      <type>jar</type>
-      <exclusions>
-        <exclusion>
-          <groupId>xerces</groupId>
-          <artifactId>xercesImpl</artifactId>
-          <!-- too old version -->
-        </exclusion>
-      </exclusions>
     </dependency>
-
     <dependency>
       <groupId>javax.ejb</groupId>
       <artifactId>ejb</artifactId>
@@ -223,15 +206,6 @@
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <version>1.2</version>
-      <type>jar</type>
-      <exclusions>
-        <exclusion>
-          <groupId>xerces</groupId>
-          <artifactId>xercesImpl</artifactId>
-          <!-- too old version -->
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
@@ -254,7 +228,19 @@
 	<dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
-      <version>${org.springframework-spring-version}</version>
+    </dependency>
+    
+    <!-- dependencies that excluded from other jars, and need to be added explicitlyvc -->
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+      <version>${xml-apis-xml-apis-version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>${xerces-xercesImpl-version}</version>
       <type>jar</type>
     </dependency>
   </dependencies>
