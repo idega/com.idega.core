@@ -29,15 +29,10 @@
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>4.0-SNAPSHOT</version>
-      <type>jar</type>
     </dependency>
-    
 	<dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>org.apache.myfaces</artifactId>
-      <version>1.1.5</version>
-      <type>jar</type>
     </dependency>
     <dependency>
       <groupId>com.sun.facelets</groupId>
