@@ -4,7 +4,13 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
-  		<release version="3.1.64" date="2007-09-17">
+  		<release version="3.1.65" date="2007-09-27">
+      		<action dev="laddi" type="fix">
+      			Fixed getting users preferred locale so it doesn't throw a NullPointerException when there is no value in the User bean for preferred locale.
+      		</action>
+    	</release>
+    	
+  		<release version="3.1.64" date="2007-09-24">
       		<action dev="gimmi" type="fix">
       			Fixed datepicker to use with different text encodings.
       			Fixed getting users preferred locale
