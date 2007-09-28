@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.16 2007/02/05 09:40:11 tryggvil Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.17 2007/09/28 11:08:06 civilis Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -40,10 +40,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/02/05 09:40:11 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/09/28 11:08:06 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -83,6 +83,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 			try {
 				String webappDir = getIWMainApplication(request).getApplicationRealPath();
 				if (!speciallyHandleFile(request, this.sBundlesDirectory, webappDir, requestUriWithoutContextPath)) {
+					
 					File realFile = getFileInWorkspace(this.sBundlesDirectory, requestUriWithoutContextPath);
 					if (realFile.exists()) {
 						feedOutFile(request,response, realFile);
@@ -140,8 +141,10 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * @param requestUriWithoutContextPath
 	 */
 	public static void copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath){
+		
 		String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
+		
 		IWBundle bundle = iwma.getBundle(bundleIdentifier);
 		long bundleLastModified = bundle.getResourceTime(pathWithinBundle);
 		
@@ -161,12 +164,13 @@ public class IWBundleResourceFilter extends BaseFilter {
 			webappFile.setLastModified(bundleLastModified);
 		}
 		catch (IOException e) {
-			log.warning("Could not copy resource from jar to " + requestUriWithoutContextPath);
+			log.log(Level.WARNING, "Could not copy resource from jar to " + requestUriWithoutContextPath, e);
 		}
 	}
 	
 	private static String SVG = "svg";
 	private static String JSP = "jsp";
+	private static String XHTML = "xhtml";
 	private static String PSVG = "psvg";
 	private static String AXIS_JWS = "jws";
 
@@ -177,7 +181,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	// bundleIdentifier,String filePathInBundle,File file) {
 	private boolean speciallyHandleFile(HttpServletRequest request, String workspaceDir, String webappDir, String requestUriWithoutContextPath) {
 		String fileEnding = getFileEnding(requestUriWithoutContextPath);
-
+		
 		if (fileEnding.equalsIgnoreCase(PSVG)) {
 			copyWorkspaceFileToWebapp(workspaceDir, webappDir, requestUriWithoutContextPath);
 			return true;
@@ -187,6 +191,10 @@ public class IWBundleResourceFilter extends BaseFilter {
 			return true;
 		}
 		else if (fileEnding.equalsIgnoreCase(JSP)) {
+			copyWorkspaceFileToWebapp(workspaceDir, webappDir, requestUriWithoutContextPath);
+			return true;
+		}
+		else if (fileEnding.equalsIgnoreCase(XHTML)) {
 			copyWorkspaceFileToWebapp(workspaceDir, webappDir, requestUriWithoutContextPath);
 			return true;
 		}
