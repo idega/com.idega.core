@@ -1,6 +1,6 @@
 /*
 
- * $Id: IWProperty.java,v 1.19 2007/04/23 12:05:57 gediminas Exp $
+ * $Id: IWProperty.java,v 1.20 2007/10/01 05:34:04 valdas Exp $
 
  *
 
@@ -25,12 +25,12 @@ import com.idega.xml.XMLElement;
  * &lt;key&gt; tag.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2007/04/23 12:05:57 $ by $Author: gediminas $
+ * Last modified: $Date: 2007/10/01 05:34:04 $ by $Author: valdas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
-public class IWProperty implements Comparable {
+public class IWProperty implements Comparable<IWProperty> {
 	
 	private XMLElement propertyElement;
 	private IWPropertyList parentList;
@@ -251,8 +251,7 @@ public class IWProperty implements Comparable {
 		setProperty(keyElement, key, value, type, isSimple, needsReload, getParentList());
 	}
 	
-	static void setProperty(XMLElement keyElement, String key, Object value, String type, boolean isSimple, boolean needsReload,
-			IWPropertyList list) {
+	static void setProperty(XMLElement keyElement, String key, Object value, String type, boolean isSimple, boolean needsReload, IWPropertyList list) {
 		if (keyElement == null)	{
 			addProperty(key, value, type, isSimple, needsReload, list);
 		}
@@ -484,11 +483,16 @@ public class IWProperty implements Comparable {
 		
 		XMLElement valueElement = new XMLElement(valueTag);
 		
-		XMLElement simpleElement = new XMLElement(simpleTag);
-		simpleElement.addContent(String.valueOf(isSimple));
+		XMLElement simpleElement = null;
+		XMLElement reloadElement = null;
+		if (!DefaultIWBundle.BUNDLE_IDENTIFIER_PROPERTY_KEY.equals(keyName)) {
+			simpleElement = new XMLElement(simpleTag);
+			simpleElement.addContent(String.valueOf(isSimple));
+			
+			reloadElement = new XMLElement(needsReloadTag);
+			reloadElement.addContent(String.valueOf(needsReload));
+		}
 		
-		XMLElement reloadElement = new XMLElement(needsReloadTag);
-		reloadElement.addContent(String.valueOf(needsReload));
 		if (type.equals(arrayTag))
 		{
 			XMLElement arrayElement = new XMLElement(arrayTag);
@@ -517,8 +521,12 @@ public class IWProperty implements Comparable {
 		key.addContent(nameElement);
 		key.addContent(typeElement);
 		key.addContent(valueElement);
-		key.addContent(simpleElement);
-		key.addContent(reloadElement);
+		if (simpleElement != null) {
+			key.addContent(simpleElement);
+		}
+		if (reloadElement != null) {
+			key.addContent(reloadElement);
+		}
 	}
 	public String toString()
 	{
@@ -528,14 +536,11 @@ public class IWProperty implements Comparable {
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	public int compareTo(Object o) {
+	public int compareTo(IWProperty object) {
 		int returner = 0;
-		if (o instanceof IWProperty) {
-			IWProperty object = (IWProperty) o;
-			returner = Collator.getInstance().compare(this.getName(), object.getName());
-			if (returner == 0) {
-				returner = Collator.getInstance().compare(this.getValue(), object.getValue());
-			}
+		returner = Collator.getInstance().compare(this.getName(), object.getName());
+		if (returner == 0) {
+			returner = Collator.getInstance().compare(this.getValue(), object.getValue());
 		}
 		return returner;
 	}
