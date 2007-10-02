@@ -1,5 +1,5 @@
 /*
- * $Id: IWModuleLoader.java,v 1.8 2007/02/05 00:03:06 laddi Exp $ Created on
+ * $Id: IWModuleLoader.java,v 1.9 2007/10/02 04:47:58 valdas Exp $ Created on
  * 31.5.2005 in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import javax.servlet.ServletContext;
  * This is the class responsible for loading the bundles (the new jar method)
  * for the IWMainApplication instance.
  * </p>
- * Last modified: $Date: 2007/02/05 00:03:06 $ by $Author: laddi $
+ * Last modified: $Date: 2007/10/02 04:47:58 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class IWModuleLoader {
 
@@ -37,7 +37,7 @@ public class IWModuleLoader {
 
 	IWMainApplication iwma;
 	ServletContext _externalContext;
-	private List jarLoaders;
+	private List<JarLoader> jarLoaders;
 
 	private String defaultLibPath = "/WEB-INF/lib/";
 	
@@ -53,11 +53,7 @@ public class IWModuleLoader {
 
 	public IWModuleLoader(IWMainApplication iwma) {
 		this.iwma = iwma;
-	}	
-	
-	/*private ServletContext getExternalContext() {
-		return this._externalContext;
-	}*/
+	}
 
 	/**
 	 * Tries to load a bundle from a jar, it assumes that the jar file-name begins with the bundleIdentifier
@@ -126,14 +122,13 @@ public class IWModuleLoader {
 	 * @param jarPath
 	 */
 	public void loadJar(File bundleJarFile, JarFile jarFile, String jarPath) {
-		List loaders = getJarLoaders();
+		List<JarLoader> loaders = getJarLoaders();
 		if (loaders.isEmpty()) {
 			LOGGER.warning("No Jar Loaders defined");
 			return;
 		}
-		for (Iterator iter = loaders.iterator(); iter.hasNext();) {
-			JarLoader loader = (JarLoader) iter.next();
-			loader.loadJar(bundleJarFile,jarFile,jarPath);
+		for (Iterator<JarLoader> iter = loaders.iterator(); iter.hasNext();) {
+			iter.next().loadJar(bundleJarFile, jarFile, jarPath);
 		}
 		
 	}
@@ -223,9 +218,9 @@ public class IWModuleLoader {
 	/**
 	 * @return Returns the jarLoaders.
 	 */
-	public List getJarLoaders() {
+	public List<JarLoader> getJarLoaders() {
 		if(this.jarLoaders==null){
-			this.jarLoaders = new ArrayList();
+			this.jarLoaders = new ArrayList<JarLoader>();
 		}
 		return this.jarLoaders;
 	}
@@ -234,7 +229,7 @@ public class IWModuleLoader {
 	/**
 	 * @param jarLoaders The jarLoaders to set.
 	 */
-	public void setJarLoaders(List jarLoaders) {
+	public void setJarLoaders(List<JarLoader> jarLoaders) {
 		this.jarLoaders = jarLoaders;
 	}
 
