@@ -1394,10 +1394,20 @@ function setActionsForRegion() {
 }
 
 function reloadPage() {
-	var oldLocation = "" + window.location.href;
-	var parts = oldLocation.split("#");
-	var date = new Date();
-	window.location.href = parts[0]  + "&reloading=" + date.getTime();	// changing href to be sure the page will be reloaded
+	var oldLocation = '' + window.location.href;
+	if (oldLocation.indexOf('?' != -1)) {
+		oldLocation = oldLocation.split('?')[0];
+	}
+	
+	if (oldLocation.indexOf('#' != -1)) {
+		oldLocation = oldLocation.split('#')[0];
+	}
+	
+	if (oldLocation.lastIndexOf('/') == -1) {
+		oldLocation += '/';
+	}
+	
+	window.location.href = oldLocation  + "?reloading=" + new Date().getTime();	// changing href to be sure the page will be reloaded
 }
 
 function addActionForMoodalBoxOnCloseEvent(actionOnClose) {
