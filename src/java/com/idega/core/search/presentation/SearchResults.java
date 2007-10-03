@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.22 2007/04/16 00:45:29 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.23 2007/10/03 22:59:20 eiki Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -35,7 +35,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 
 /**
- * Last modified: $Date: 2007/04/16 00:45:29 $ by $Author: eiki $
+ * Last modified: $Date: 2007/10/03 22:59:20 $ by $Author: eiki $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -48,7 +48,7 @@ import com.idega.presentation.text.Text;
  * This class can also be EXTENDED like e.g. WhatIsNew block does by overriding some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public class SearchResults extends Block {
 
@@ -80,6 +80,7 @@ public class SearchResults extends Block {
 	protected String searchQueryString;
 	protected boolean showAllResultProperties = false;
 	protected boolean openLinksInAnotherWindow = false;
+	protected boolean hideResultsLayer = false;
 
 	public SearchResults() {
 		super();
@@ -159,6 +160,15 @@ public class SearchResults extends Block {
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
 	}
+	
+	/**
+	 * You need a very special reason to use this class since it makes the result list disappear with the style attribute display:none;
+	 * For example if you want to use the file list in javascript but don't want to display it.
+	 * @param hideResultsLayer
+	 */
+	public void setToHideResultsLayer(boolean hideResultsLayer){
+		this.hideResultsLayer = hideResultsLayer;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -172,6 +182,11 @@ public class SearchResults extends Block {
 			CSSSpacer spacer = new CSSSpacer();
 			Layer container = new Layer();
 			container.setStyleClass(getStyleClass());
+			
+			if(hideResultsLayer){
+				container.setStyleAttribute("display","none");
+			}
+			
 			beforeAddingResultRows(container);
 			// prototypes
 			Layer evenRowProtoType = new Layer();
