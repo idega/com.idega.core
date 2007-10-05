@@ -1,10 +1,17 @@
 package com.idega.util;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.idega.business.SpringBeanName;
+
+@SpringBeanName("coreConstants")
 public class CoreConstants {
+	
+	private static Object ARTICLE_CONSTANTS = null;
+	private static Class<?> ARTICLE_ITEM_VIEWER_NAME = null;
 	
 	public static final String CORE_IW_BUNDLE_IDENTIFIER = "com.idega.core";
 	
@@ -30,6 +37,7 @@ public class CoreConstants {
 
 	public static final String ARTICLE_CONTENT_PATH = "/article";
 	public final static String ARTICLE_FILENAME_SCOPE = "article";
+	public final static String ARTICLE_RESOURCE_PATH_PROPERTY_NAME = "resourcePath";
 
 	public static final String IW_USER_BUNDLE_IDENTIFIER = "com.idega.user";
 
@@ -37,10 +45,45 @@ public class CoreConstants {
 	
 	public static final String SCHEDULE_SESSION_DWR_INTERFACE_SCRIPT = "/dwr/interface/ScheduleSession.js";
 	
-	public static final String ARTICLE_ITEM_VIEWER_NAME = "ArticleItemViewer";
-	
 	public static final String APPLICATION_PROPERTY_TO_USE_OLD_THEME_PREVIEW_GENERATOR = "useOldThemeGenerator";
 
 	public static final String WEBDAV_SERVLET_URI = "/content";
+	
+	public void setArticleConstantsInstance(Object o) {
+		CoreConstants.ARTICLE_CONSTANTS = o;
+	}
+	
+	public static Class<?> getArticleItemViewerClass() {
+		if (ARTICLE_ITEM_VIEWER_NAME != null) {
+			return ARTICLE_ITEM_VIEWER_NAME;
+		}
+		
+		if (ARTICLE_CONSTANTS == null) {
+			return null;
+		}
+		
+		try {
+			Class<?> clazz = Class.forName(ARTICLE_CONSTANTS.getClass().getName());
+			Method[] methods = clazz.getDeclaredMethods();
+			Method m = null;
+			String name = null;
+			Object[] params = null;
+			Object result = null;
+			for (int i = 0; (i < methods.length && ARTICLE_ITEM_VIEWER_NAME == null); i++) {
+				m = methods[i];
+				name = m.getName();
+				params = m.getParameterTypes();
+				result = m.invoke(name, params);
+				if (result instanceof Class) {
+					ARTICLE_ITEM_VIEWER_NAME = (Class<?>) result;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		return ARTICLE_ITEM_VIEWER_NAME;
+	}
 
 }

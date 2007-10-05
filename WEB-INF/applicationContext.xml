@@ -3,4 +3,8 @@
 
 <beans>
 	<bean id="loginSession" class="com.idega.core.accesscontrol.business.LoginSessionBean" scope="session" />
+	
+	<bean id="coreConstants" class="com.idega.util.CoreConstants" scope="singleton">
+		<property name="articleConstantsInstance" ref="articleConstants"></property>
+	</bean>
 </beans>
