@@ -1395,19 +1395,30 @@ function setActionsForRegion() {
 
 function reloadPage() {
 	var oldLocation = '' + window.location.href;
-	if (oldLocation.indexOf('?' != -1)) {
-		oldLocation = oldLocation.split('?')[0];
+	
+	if (oldLocation.indexOf('#') != -1) {
+		oldLocation = oldLocation.split('#')[0];
 	}
 	
-	if (oldLocation.indexOf('#' != -1)) {
-		oldLocation = oldLocation.split('#')[0];
+	var separator = '?'
+	var reloadingParam = 'reloading';
+	if (oldLocation.indexOf(separator + reloadingParam) != -1) {
+		oldLocation = oldLocation.split(separator + reloadingParam)[0];
+	}
+	else if (oldLocation.indexOf('&' + reloadingParam) != -1) {
+		oldLocation = oldLocation.split('&' + reloadingParam)[0];
+	}
+	
+	
+	if (oldLocation.indexOf(separator) != -1) {
+		separator = '&';
 	}
 	
 	if (oldLocation.lastIndexOf('/') == -1) {
 		oldLocation += '/';
 	}
 	
-	window.location.href = oldLocation  + "?reloading=" + new Date().getTime();	// changing href to be sure the page will be reloaded
+	window.location.href = oldLocation  + separator + reloadingParam + '=' + new Date().getTime();	// changing href to be sure the page will be reloaded
 }
 
 function addActionForMoodalBoxOnCloseEvent(actionOnClose) {
