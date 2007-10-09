@@ -1,5 +1,5 @@
 /*
- * $Id: WebServiceAuthorizationFilter.java,v 1.1.2.1 2007/01/22 08:10:28 tryggvil Exp $
+ * $Id: WebServiceAuthorizationFilter.java,v 1.1.2.2 2007/10/09 14:32:42 eiki Exp $
  * Created on Apr 4, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -15,6 +15,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.ejb.FinderException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -25,7 +26,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import sun.misc.BASE64Decoder;
+
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
@@ -48,13 +51,15 @@ import com.idega.util.StringHandler;
  * So access by clients that desire to use the services needs to be configured 
  * with the WS_DO_BASIC_AUTHENTICATION or WS_VALID_IP application properties.
  * </p>
- *  Last modified: $Date: 2007/01/22 08:10:28 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/10/09 14:32:42 $ by $Author: eiki $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  */
 public class WebServiceAuthorizationFilter implements Filter {
 	
+	public static final String WS_ALLOW_ALL_IPS = "*";
+
 	private final String WEB_SERVICE_USER_ROLE = "web_service_user"; 
 	
 	private final String DO_BASIC_AUTHENTICATION = "WS_DO_BASIC_AUTHENTICATION";
@@ -95,12 +100,17 @@ public class WebServiceAuthorizationFilter implements Filter {
 			boolean isValid = false;
     			try {
     				String validIP = mainApplication.getIWApplicationContext().getApplicationSettings().getProperty(this.VALID_IP, "");
-    				String[] ips = validIP.split("\\;");
-    				for (int i = 0; i < ips.length; i++) {
-    					if (ips[i].equals(request.getRemoteAddr())) {
-    						isValid = true;
-    						break;
-    					}
+    				if(WS_ALLOW_ALL_IPS.equals(validIP)){
+    					isValid = true;
+    				}
+    				else{
+	    				String[] ips = validIP.split("\\;");
+	    				for (int i = 0; i < ips.length; i++) {
+	    					if (ips[i].equals(request.getRemoteAddr())) {
+	    						isValid = true;
+	    						break;
+	    					}
+	    				}
     				}
     			} catch (Exception e) {
     				isValid = false;
