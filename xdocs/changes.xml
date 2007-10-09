@@ -8,6 +8,9 @@
       		<action dev="laddi" type="fix">
       			Fixed getting users preferred locale so it doesn't throw a NullPointerException when there is no value in the User bean for preferred locale.
       		</action>
+      		<action dev="eiki" type="update">
+      			Added the option to allow access to webservices for all IP numbers if you specify "*" in the WS_VALID_IP application property
+      		</action>
     	</release>
     	
   		<release version="3.1.64" date="2007-09-24">
