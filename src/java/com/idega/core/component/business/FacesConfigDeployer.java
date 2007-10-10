@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.8 2007/10/10 05:23:21 valdas Exp $
+ * $Id: FacesConfigDeployer.java,v 1.9 2007/10/10 05:24:06 valdas Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -35,10 +35,10 @@ import com.idega.idegaweb.JarLoader;
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2007/10/10 05:23:21 $ by $Author: valdas $
+ * Last modified: $Date: 2007/10/10 05:24:06 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
@@ -88,8 +88,6 @@ public class FacesConfigDeployer implements JarLoader {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(false);
 		factory.setValidating(false);
-		//System.out.println("factimpl: "+factory.getClass().getName());
-		//factory.setFeature("http://xml.org/sax/features/validation", false);
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		
 		Document document = builder.parse(stream);
