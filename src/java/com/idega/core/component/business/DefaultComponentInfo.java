@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultComponentInfo.java,v 1.7 2006/05/31 11:12:02 laddi Exp $
+ * $Id: DefaultComponentInfo.java,v 1.8 2007/10/10 05:21:49 valdas Exp $
  * Created on 8.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import java.util.Locale;
  * <p>
  * Default Implementation of the ComponentInfo interface.
  * </p>
- *  Last modified: $Date: 2006/05/31 11:12:02 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/10/10 05:21:49 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class DefaultComponentInfo implements ComponentInfo {
 
@@ -29,7 +29,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	private String componentName;
 	private String objectType;
 	private String bundleIdentifier;
-	private List properties;
+	private List<ComponentProperty> properties;
 	private List componentPermissions;
 	private boolean deprecated=false;
 	private boolean expert=false;
@@ -120,9 +120,9 @@ public class DefaultComponentInfo implements ComponentInfo {
 	/**
 	 * @return Returns the properties.
 	 */
-	public List getProperties() {
+	public List<ComponentProperty> getProperties() {
 		if(this.properties==null){
-			this.properties=new ArrayList();
+			this.properties=new ArrayList<ComponentProperty>();
 		}
 		return this.properties;
 	}
@@ -132,7 +132,7 @@ public class DefaultComponentInfo implements ComponentInfo {
 	/**
 	 * @param properties The properties to set.
 	 */
-	public void setProperties(List properties) {
+	public void setProperties(List<ComponentProperty> properties) {
 		this.properties = properties;
 	}
 

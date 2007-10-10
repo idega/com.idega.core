@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentInfo.java,v 1.4 2006/05/29 18:15:50 tryggvil Exp $
+ * $Id: ComponentInfo.java,v 1.5 2007/10/10 05:21:49 valdas Exp $
  * Created on 8.9.2005 in project com.idega.core
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,10 +17,10 @@ import java.util.Locale;
  * <p>
  * This class describes a component (JSF UIComponent, IW Element, IW Block etc. ) and holds information about it. 
  * </p>
- *  Last modified: $Date: 2006/05/29 18:15:50 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/10/10 05:21:49 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface ComponentInfo {
 	
@@ -40,7 +40,7 @@ public interface ComponentInfo {
 	 * </p>
 	 * @return
 	 */
-	public List getProperties();
+	public List<ComponentProperty> getProperties();
 	
 	/**
 	 * <p>

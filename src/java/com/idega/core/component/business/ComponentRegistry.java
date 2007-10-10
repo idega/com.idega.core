@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.13 2007/07/16 08:43:36 justinas Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.14 2007/10/10 05:21:49 valdas Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -33,15 +33,15 @@ import com.idega.idegaweb.IWModuleLoader;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2007/07/16 08:43:36 $ by $Author: justinas $
+ * Last modified: $Date: 2007/10/10 05:21:49 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class ComponentRegistry {
 
 	public final static String BEAN_KEY = "ComponentRegistry";
-	private ArrayList allComponents;
+	private List<ComponentInfo> allComponents;
 	private boolean loadedOldIWComponents=false;
 	private boolean loadedFacesConfig=false;
 	private IWMainApplication iwma;
@@ -80,7 +80,7 @@ public class ComponentRegistry {
 		return registry;
 	}
 	
-	public List getAllComponents(){
+	public List<ComponentInfo> getAllComponents(){
 		//this method sees to it to load first all components:
 		loadOldIWComponents();
 		loadFacesConfig();
@@ -94,8 +94,7 @@ public class ComponentRegistry {
 	 * </p>
 	 */
 	private void loadFacesConfig() {
-		if(!this.loadedFacesConfig){
-
+		if (!this.loadedFacesConfig) {
 			this.loadedFacesConfig=true;
 			IWModuleLoader loader = new IWModuleLoader(this.iwma,this.context);
 			loader.getJarLoaders().add(new FacesConfigDeployer(this));
@@ -104,9 +103,9 @@ public class ComponentRegistry {
 		}
 	}
 
-	private List internalGetComponentList() {
+	private List<ComponentInfo> internalGetComponentList() {
 		if (this.allComponents == null) {
-			this.allComponents = new ArrayList();
+			this.allComponents = new ArrayList<ComponentInfo>();
 		}
 		return this.allComponents;
 	}
@@ -122,11 +121,11 @@ public class ComponentRegistry {
 	 * @param type
 	 * @return
 	 */
-	public List getComponentsByType(String type) {
-		List componentList = getAllComponents();
-		ArrayList list = new ArrayList();
-		for (Iterator iter = componentList.iterator(); iter.hasNext();) {
-			ComponentInfo component = (ComponentInfo) iter.next();
+	public List<ComponentInfo> getComponentsByType(String type) {
+		List<ComponentInfo> componentList = getAllComponents();
+		List<ComponentInfo> list = new ArrayList<ComponentInfo>();
+		for (Iterator<ComponentInfo> iter = componentList.iterator(); iter.hasNext();) {
+			ComponentInfo component = iter.next();
 			if (component.getObjectType().equals(type)) {
 				list.add(component);
 			}
@@ -217,9 +216,9 @@ public class ComponentRegistry {
 	 * @return
 	 */
 	public ComponentInfo getComponentByClassName(String componentClassName) {
-		List componentList = getAllComponents();
-		for (Iterator iter = componentList.iterator(); iter.hasNext();) {
-			ComponentInfo info = (ComponentInfo) iter.next();
+		List<ComponentInfo> componentList = getAllComponents();
+		for (Iterator<ComponentInfo> iter = componentList.iterator(); iter.hasNext();) {
+			ComponentInfo info = iter.next();
 			if(info.getComponentClass().getName().equals(componentClassName)){
 				return info;
 			}
