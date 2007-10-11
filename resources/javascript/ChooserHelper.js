@@ -1,11 +1,7 @@
 if(ChooserHelper == null) var ChooserHelper = function() {};
-if(ChooserHelperGlobal == null) var ChooserHelperGlobal = {};
 
 ChooserHelper.prototype.ADVANCED_PROPERTIES = new Array();
 ChooserHelper.prototype.CHOOSER_VALUE_VIEWER_ID = null;
-
-ChooserHelperGlobal.ADVANCED_PROPERTIES = new Array();
-ChooserHelperGlobal.CHOOSER_VALUE_VIEWER_ID = null;
 
 /** Logic for Choosers/Advanced handlers starts **/
 ChooserHelper.prototype.saveSelectedValues = function(message, instanceId, method, needsReload, reloadMessage, actionAfter) {
@@ -27,7 +23,7 @@ ChooserHelper.prototype.saveSelectedValues = function(message, instanceId, metho
 }
 
 ChooserHelper.prototype.saveSelectedValuesCallback = function(result, message, instanceId, method, needsReload, reloadMessage, actionAfter, chooser_helper) {
-	closeLoadingMessage();
+	closeAllLoadingMessages();
 	if (result && instanceId != null && method != null) {
 		showLoadingMessage(message);
 		
@@ -38,13 +34,13 @@ ChooserHelper.prototype.saveSelectedValuesCallback = function(result, message, i
 		});
 	}
 	else {
-		closeLoadingMessage();
+		closeAllLoadingMessages();
 		return;
 	}
 }
 
 ChooserHelper.prototype.setModulePropertyCallback = function(result, instanceId, needsReload, reloadMessage, actionAfter) {
-	closeLoadingMessage();
+	closeAllLoadingMessages();
 	if (!result) {
 		return false;
 	}
@@ -81,14 +77,24 @@ function addActionBeforeClosingMoodalBox(reloadMessage) {
 	addActionForMoodalBoxOnCloseEvent(actionOnClose);
 }
 
-ChooserHelperGlobal.addChooserObject = function(chooserObject, objectClass, hiddenInputAttribute, chooserValueViewerId, message) {
+ChooserHelper.prototype.addChooserObject = function(id, objectClass, hiddenInputAttribute, chooserValueViewerId, message) {
+	var chooserObject = document.getElementById(id);
+	if (chooserObject == null) {
+		return false;
+	}
+	
 	var container = chooserObject.parentNode;
 	
-	ChooserHelperGlobal.CHOOSER_VALUE_VIEWER_ID = null;
+	var chooserObjectName = null;
+	this.CHOOSER_VALUE_VIEWER_ID = null;
 	var attributes = chooserObject.attributes;
 	if (attributes != null) {
 		if (attributes.getNamedItem(chooserValueViewerId) != null) {
-			ChooserHelperGlobal.CHOOSER_VALUE_VIEWER_ID = attributes.getNamedItem(chooserValueViewerId).value;
+			this.CHOOSER_VALUE_VIEWER_ID = attributes.getNamedItem(chooserValueViewerId).value;
+		}
+		
+		if (attributes.getNamedItem('choosername') != null) {
+			chooserObjectName = attributes.getNamedItem('choosername').value;
 		}
 	}
 	
@@ -101,9 +107,10 @@ ChooserHelperGlobal.addChooserObject = function(chooserObject, objectClass, hidd
 	}
 	if (chooser == null) {
 		showLoadingMessage(message);
-		ChooserService.getRenderedPresentationObject(objectClass, hiddenInputAttribute, false, {
+		ChooserService.getRenderedPresentationObject(objectClass, hiddenInputAttribute, chooserObjectName, false, {
 			callback: function(renderedObject) {
-				ChooserHelperGlobal.getRenderedPresentationObjectCallback(renderedObject, container);
+				closeAllLoadingMessages();
+				insertNodesToContainer(renderedObject, container);
 			}
 		});
 	}
@@ -122,12 +129,7 @@ ChooserHelperGlobal.addChooserObject = function(chooserObject, objectClass, hidd
 	}
 }
 
-ChooserHelperGlobal.getRenderedPresentationObjectCallback = function(renderedObject, container) {
-	closeLoadingMessage();
-	insertNodesToContainer(renderedObject, container);
-}
-
-ChooserHelperGlobal.chooseObject = function(element, attributeId, attributeValue) {
+ChooserHelper.prototype.chooseObject = function(element, attributeId, attributeValue) {
 	if (element == null) {
 		return null;
 	}
@@ -145,13 +147,13 @@ ChooserHelperGlobal.chooseObject = function(element, attributeId, attributeValue
 		return null;
 	}
 	
-	ChooserHelperGlobal.addAdvancedProperty(id, value);
+	this.addAdvancedProperty(id, value);
 	
 	return value;
 }
 
-ChooserHelperGlobal.chooseObjectWithHidden = function(element, attributeId, attributeValue, hiddenName) {
-	var value = ChooserHelperGlobal.chooseObject(element, attributeId, attributeValue);
+ChooserHelper.prototype.chooseObjectWithHidden = function(element, attributeId, attributeValue, hiddenName) {
+	var value = this.chooseObject(element, attributeId, attributeValue);
 	if (value == null) {
 		return;
 	}
@@ -179,8 +181,8 @@ ChooserHelperGlobal.chooseObjectWithHidden = function(element, attributeId, attr
 	hidden.setAttribute('value', value);
 }
 
-ChooserHelperGlobal.setChooserView = function(element, attributeValue) {
-	if (element == null || attributeValue == null || ChooserHelperGlobal.CHOOSER_VALUE_VIEWER_ID == null) {
+ChooserHelper.prototype.setChooserView = function(element, attributeValue) {
+	if (element == null || attributeValue == null || this.CHOOSER_VALUE_VIEWER_ID == null) {
 		return;
 	}
 	var attributes = element.attributes;
@@ -196,21 +198,11 @@ ChooserHelperGlobal.setChooserView = function(element, attributeValue) {
 		return;
 	}
 	
-	var viewer = document.getElementById(ChooserHelperGlobal.CHOOSER_VALUE_VIEWER_ID);
+	var viewer = document.getElementById(this.CHOOSER_VALUE_VIEWER_ID);
 	if (viewer == null) {
 		return;
 	}
 	viewer.value = value;
-}
-
-ChooserHelperGlobal.addAdvancedProperty = function(id, value) {
-	if (ChooserHelperGlobal.ADVANCED_PROPERTIES == null) {
-		ChooserHelperGlobal.ADVANCED_PROPERTIES = new Array();
-	}
-	if (ChooserHelperGlobal.existAdvancedProperty(id)) {
-		ChooserHelperGlobal.removeAdvancedProperty(id);	//	Removing old value
-	}
-	ChooserHelperGlobal.ADVANCED_PROPERTIES.push(new ChooserHelperAdvancedProperty(id, value));
 }
 
 ChooserHelper.prototype.addAdvancedProperty = function(id, value) {
@@ -221,24 +213,6 @@ ChooserHelper.prototype.addAdvancedProperty = function(id, value) {
 		this.removeAdvancedProperty(id);	//	Removing old value
 	}
 	this.ADVANCED_PROPERTIES.push(new ChooserHelperAdvancedProperty(id, value));
-}
-
-ChooserHelperGlobal.removeAdvancedProperty = function(id) {
-	if (id == null) {
-		return;
-	}
-	if (ChooserHelperGlobal.ADVANCED_PROPERTIES == null) {
-		return;
-	}
-	var needless = new Array();
-	for (var i = 0; i < ChooserHelperGlobal.ADVANCED_PROPERTIES.length; i++) {
-		if (ChooserHelperGlobal.ADVANCED_PROPERTIES[i].id == id) {
-			needless.push(ChooserHelperGlobal.ADVANCED_PROPERTIES[i]);
-		}
-	}
-	for (var i = 0; i < needless.length; i++) {
-		removeElementFromArray(ChooserHelperGlobal.ADVANCED_PROPERTIES, needless[i]);
-	}
 }
 
 ChooserHelper.prototype.removeAdvancedProperty = function(id) {
@@ -263,20 +237,8 @@ ChooserHelper.prototype.removeAllAdvancedProperties = function() {
 	this.ADVANCED_PROPERTIES = new Array();
 }
 
-ChooserHelperGlobal.removeAllAdvancedProperties = function() {
-	ChooserHelperGlobal.ADVANCED_PROPERTIES = new Array();
-}
-
 ChooserHelper.prototype.existAdvancedProperty = function(id) {
 	var property = this.getAdvancedProperty(id);
-	if (property == null) {
-		return false;
-	}
-	return true;
-}
-
-ChooserHelperGlobal.existAdvancedProperty = function(id) {
-	var property = ChooserHelperGlobal.getAdvancedProperty(id);
 	if (property == null) {
 		return false;
 	}
@@ -290,18 +252,6 @@ ChooserHelper.prototype.getAdvancedProperty = function(id) {
 	for (var i = 0; i < this.ADVANCED_PROPERTIES.length; i++) {
 		if (this.ADVANCED_PROPERTIES[i].id == id) {
 			return this.ADVANCED_PROPERTIES[i];
-		}
-	}
-	return null;
-}
-
-ChooserHelperGlobal.getAdvancedProperty = function(id) {
-	if (id == null) {
-		return null;
-	}
-	for (var i = 0; i < ChooserHelperGlobal.ADVANCED_PROPERTIES.length; i++) {
-		if (ChooserHelperGlobal.ADVANCED_PROPERTIES[i].id == id) {
-			return ChooserHelperGlobal.ADVANCED_PROPERTIES[i];
 		}
 	}
 	return null;

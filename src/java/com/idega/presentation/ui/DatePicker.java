@@ -494,7 +494,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 	}
 
 	@Override
-	protected String getChooserHelperVarName() {
+	public String getChooserHelperVarName() {
 		  return "datepicker_chooser_helper";
 	}
 }

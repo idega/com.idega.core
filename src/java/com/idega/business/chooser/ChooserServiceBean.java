@@ -91,13 +91,18 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 		return getBuilderService(iwc).setProperty(iwc, pageKey, moduleId, propertyName, properties);
 	}
 	
-	public Document getRenderedPresentationObject(String className, String hiddenInputAttribute, boolean cleanHtml) {
+	public Document getRenderedPresentationObject(String className, String hiddenInputAttribute, String chooserObject, boolean cleanHtml) {
 		Object o = getObjectInstance(className);
+		
 		if (hiddenInputAttribute != null) {
 			if (o instanceof AbstractChooserBlock) {
 				((AbstractChooserBlock) o).setHiddenInputAttribute(hiddenInputAttribute);
 			}
 		}
+		if ((chooserObject != null) && (o instanceof AbstractChooserBlock)) {
+			((AbstractChooserBlock) o).setChooserObject(chooserObject);
+		}
+		
 		return getRenderedPresentationObject(o, cleanHtml);
 	}
 	
@@ -113,7 +118,7 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 		if (className == null) {
 			return null;
 		}
-		Class objectClass = null;
+		Class<?> objectClass = null;
 		try {
 			objectClass = RefactorClassRegistry.forName(className);
 		} catch (ClassNotFoundException e) {

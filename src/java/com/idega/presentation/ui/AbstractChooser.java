@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.40 2007/06/15 15:49:35 civilis Exp $
+ * $Id: AbstractChooser.java,v 1.41 2007/10/11 11:28:16 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -21,6 +21,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.ui.util.AbstractChooserBlock;
 import com.idega.util.CoreUtil;
 
 /**
@@ -198,7 +199,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		}
 	}
 	
-	protected abstract String getChooserHelperVarName();
+	public abstract String getChooserHelperVarName();
 	
 	private GenericButton getSaveButton() {
 		GenericButton save = new GenericButton("save", _iwrb.getLocalizedString("save", "Save"));
@@ -320,14 +321,26 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		else {	//	New chooser
 			Layer container = new Layer();
 			
+			String chooserObject = getChooserHelperVarName();
+			if (chooserObject == null) {
+				chooserObject = AbstractChooserBlock.GLOBAL_HELPER_NAME;
+			}
+			else {
+				StringBuffer js = new StringBuffer("<script type=\"text/javascript\">var ").append(chooserObject).append(" = new ChooserHelper();</script>");
+				add(js.toString());
+			}
+			
 			PresentationObject object = getPresentationObject(iwc);
 			container.add(object);
 			
 			Image chooser = getChooser(bundle);
 			chooser.setStyleClass("chooserStyle");
 			
+			chooser.setMarkupAttribute("choosername", chooserObject);
+			
 			//	OnClick action
-			StringBuffer action = new StringBuffer("ChooserHelperGlobal.addChooserObject(this, '").append(getChooserWindowClass().getName());
+			StringBuffer action = new StringBuffer(chooserObject).append(".addChooserObject('").append(chooser.getId()).append("', '");
+			action.append(getChooserWindowClass().getName());
 			if (getHiddenInputAttribute() == null) {
 				action.append("', null, '");
 			}
