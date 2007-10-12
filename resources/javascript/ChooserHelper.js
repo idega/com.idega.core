@@ -77,7 +77,7 @@ function addActionBeforeClosingMoodalBox(reloadMessage) {
 	addActionForMoodalBoxOnCloseEvent(actionOnClose);
 }
 
-ChooserHelper.prototype.addChooserObject = function(id, objectClass, hiddenInputAttribute, chooserValueViewerId, message) {
+addChooserObject = function(id, objectClass, hiddenInputAttribute, chooserValueViewerId, message) {
 	var chooserObject = document.getElementById(id);
 	if (chooserObject == null) {
 		return false;
@@ -86,16 +86,21 @@ ChooserHelper.prototype.addChooserObject = function(id, objectClass, hiddenInput
 	var container = chooserObject.parentNode;
 	
 	var chooserObjectName = null;
-	this.CHOOSER_VALUE_VIEWER_ID = null;
 	var attributes = chooserObject.attributes;
 	if (attributes != null) {
-		if (attributes.getNamedItem(chooserValueViewerId) != null) {
-			this.CHOOSER_VALUE_VIEWER_ID = attributes.getNamedItem(chooserValueViewerId).value;
-		}
-		
 		if (attributes.getNamedItem('choosername') != null) {
 			chooserObjectName = attributes.getNamedItem('choosername').value;
+			
+			var actions = 'var needToCreateNewChooser = false; try{if(!'+chooserObjectName+'){needToCreateNewChooser = true;} } catch(e){needToCreateNewChooser = true;}';
+			actions += ' if(needToCreateNewChooser) {'+chooserObjectName+' = new ChooserHelper();} ';
+			if (attributes.getNamedItem(chooserValueViewerId) != null) {
+				actions += '' + chooserObjectName + ".CHOOSER_VALUE_VIEWER_ID = '" + attributes.getNamedItem(chooserValueViewerId).value + "'; ";
+			}
+			
+			actions += '' + chooserObjectName + '.ADVANCED_PROPERTIES = new Array();'
 		}
+		
+		window.eval(actions);
 	}
 	
 	var chooser = null;

@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.41 2007/10/11 11:28:16 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.42 2007/10/12 06:48:55 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -339,7 +339,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			chooser.setMarkupAttribute("choosername", chooserObject);
 			
 			//	OnClick action
-			StringBuffer action = new StringBuffer(chooserObject).append(".addChooserObject('").append(chooser.getId()).append("', '");
+			StringBuffer action = new StringBuffer("addChooserObject('").append(chooser.getId()).append("', '");
 			action.append(getChooserWindowClass().getName());
 			if (getHiddenInputAttribute() == null) {
 				action.append("', null, '");
