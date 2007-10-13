@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.64.2.1 2007/06/16 16:29:31 valdas Exp $
+ * $Id: LoginBusinessBean.java,v 1.64.2.2 2007/10/13 12:41:17 tryggvil Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -35,9 +35,7 @@ import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserBusiness;
-import com.idega.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
-import com.idega.user.data.UserHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.event.IWPageEventListener;
@@ -48,6 +46,8 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.UserProperties;
+import com.idega.user.data.User;
+import com.idega.user.data.UserHome;
 import com.idega.user.util.Converter;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
@@ -61,11 +61,11 @@ import com.idega.util.RequestUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2007/06/16 16:29:31 $ by $Author: valdas $
+ * Last modified: $Date: 2007/10/13 12:41:17 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.64.2.1 $
+ * @version $Revision: 1.64.2.2 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -98,6 +98,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final String LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST = "LOGIN_BY_UUID_AUTHORIZED_HOSTS";
 	protected static final String SESSION_KEY_CURRENT_USER = "iw_new_user";
 	public static final String BEAN_ID = "LoginBusinessBean";
+	public static final String ENCRYPTEDPASSWD_PREFIX = "ENCRYPTEDPASSWD-";
 
 	public LoginBusinessBean() {
 	}
@@ -1037,8 +1038,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 */
 	public boolean verifyPassword(LoginTable loginRecord,String password){
-		if (Encrypter.verifyOneWayEncrypted(loginRecord.getUserPassword(), password)) {
+		String dbUserPassword = loginRecord.getUserPassword();
+		if (Encrypter.verifyOneWayEncrypted(dbUserPassword, password)) {
 			return true;
+		}
+		else if(password.startsWith(ENCRYPTEDPASSWD_PREFIX)){
+			String encrPasswd = password.substring(ENCRYPTEDPASSWD_PREFIX.length(),password.length());
+			String clearPassword = loginRecord.getUserPasswordInClearText();
+			if(clearPassword.equals(encrPasswd)){
+				return true;
+			}
 		}
 		return false;
 	}

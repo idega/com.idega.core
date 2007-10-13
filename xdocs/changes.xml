@@ -4,6 +4,14 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  
+  		<release version="3.1.67" date="2007-10-13">
+      		<action dev="tryggvil" type="update">
+      			Updated handling of authentication to let slide be able to run on a separate server and authenticate correctly.
+      			<br/>This was done for the golf application.
+      		</action>
+    	</release>
+  
   		<release version="3.1.66" date="2007-10-12">
       		<action dev="sigtryggur" type="update">
       			Fixed EmailValidator so that it validates 'valid' emails.
