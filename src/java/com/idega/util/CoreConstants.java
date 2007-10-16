@@ -32,6 +32,7 @@ public class CoreConstants {
 	public static final String PROP_SYSTEM_MAIL_FROM_ADDRESS = "messagebox_from_mailaddress";
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
+	public static final String BUILDER_PORPERTY_SETTER_STYLE_CLASS = "modulePropertySetter";
 
 	public static final String PATH_FILES_ROOT = "/files";
 	public static final String CONTENT_PATH = PATH_FILES_ROOT + "/cms";
