@@ -7,6 +7,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.Script;
 import com.idega.presentation.text.Link;
+import com.idega.util.CoreConstants;
 
 /**
  * Title:        idegaclasses
@@ -61,16 +62,16 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
       String valueString = iwc.getParameter(VALUE_PARAMETER_NAME);
 
       if( prefix == null ) {
-				prefix = "";
+				prefix = CoreConstants.EMPTY;
 			}
       if( suffix == null ) {
-				suffix = "";
+				suffix = CoreConstants.EMPTY;
 			}
       if( displayString == null ) {
-				displayString = "";
+				displayString = CoreConstants.EMPTY;
 			}
       if( valueString == null ) {
-				valueString = "";
+				valueString = CoreConstants.EMPTY;
 			}
 
       if( !this.onlyScript ){
@@ -90,9 +91,14 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
         script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ "+SCRIPT_PREFIX_IN_A_FRAME+"window.opener.document.getElementById(\""+prefix+"\")."+displayString+"."+suffix+"=displaystring; "+SCRIPT_PREFIX_IN_A_FRAME+"window.opener.document.getElementById(\""+prefix+"\")."+valueString+".value=value;window.close();return false;}");
       }
       else{
-        script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ window.opener.document.getElementById(\""+prefix+"\")."+displayString+"."+suffix+"=displaystring;window.opener.document.getElementById(\""+prefix+"\")."+valueString+".value=value;window.close();return false;}");
+    	  if (prefix.equals(CoreConstants.EMPTY)) {
+    		  script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){window.opener.document.getElementById(\""+displayString+"\")."+suffix+"=displaystring;window.close();return false;}");
+    	  }
+    	  else {
+    		  script.addFunction(SELECT_FUNCTION_NAME,"function "+SELECT_FUNCTION_NAME+"(displaystring,value){ window.opener.document.getElementById(\""+prefix+"\")."+displayString+"."+suffix+"=displaystring;window.opener.document.getElementById(\""+prefix+"\")."+valueString+".value=value;window.close();return false;}");
+    	  }
       }
-    }
+    }   
     displaySelection(iwc);
   }
 
@@ -124,13 +130,13 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
     this.noScript = noScript;
   }
 
-  public Collection getHiddenParameters(IWContext iwc) {
+  public Collection<Parameter> getHiddenParameters(IWContext iwc) {
     String prefix = iwc.getParameter(FORM_ID_PARAMETER);
     String suffix = iwc.getParameter(SCRIPT_SUFFIX_PARAMETER);
     String displayString = iwc.getParameter(DISPLAYSTRING_PARAMETER_NAME);
     String valueString = iwc.getParameter(VALUE_PARAMETER_NAME);
 
-    Collection coll = new ArrayList();
+    Collection<Parameter> coll = new ArrayList<Parameter>();
 
     coll.add(new Parameter(FORM_ID_PARAMETER,prefix));
     coll.add(new Parameter(SCRIPT_SUFFIX_PARAMETER,suffix));
@@ -145,4 +151,5 @@ public abstract class AbstractChooserWindow extends IWAdminWindow {
 	  linkToMaintainParameters.maintainParameter(DISPLAYSTRING_PARAMETER_NAME, iwc);
 	  linkToMaintainParameters.maintainParameter(VALUE_PARAMETER_NAME, iwc);
   }
+
 }
