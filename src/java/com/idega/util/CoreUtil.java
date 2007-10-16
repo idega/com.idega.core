@@ -24,7 +24,7 @@ public class CoreUtil {
 	}
 	
 	/**
-	 * Almost identical method to {@link IWContext#getInstance()} just this one doesn't throw any exception - it's very importany
+	 * Almost identical method to {@link IWContext#getInstance()} just this one doesn't throw any exception - it's very important
 	 * using it with DWR
 	 * @return
 	 */
