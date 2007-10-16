@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.42 2007/10/12 06:48:55 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.43 2007/10/16 07:36:57 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -22,6 +22,7 @@ import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.util.AbstractChooserBlock;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 
 /**
@@ -400,6 +401,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 				input.setValue(this._stringDisplay);
 			}
 
+			input.setStyleClass(CoreConstants.BUILDER_PORPERTY_SETTER_STYLE_CLASS);
 			return input;
 		}
 		else {
