@@ -1183,7 +1183,6 @@ function createRealNode(element) {
 			else if (attribute.nodeName == 'checked' && IE) {
 				result.setAttribute('defaultChecked', attribute.nodeValue);
 			}
-
 			else if (attribute.nodeName == 'style' && IE) {
 				var styleValue = attribute.nodeValue;
 				while(true){
@@ -1204,7 +1203,14 @@ function createRealNode(element) {
 					$(result).setStyle(stylePropertyName, stylePropertyValue);
 				}
 			}
-
+			else if (attribute.nodeName == 'href') {
+				var hrefValue = attribute.nodeValue;
+				while (hrefValue.indexOf('&#38;') != -1) {
+					hrefValue = hrefValue.replace('&#38;', '&');
+				}
+				
+				result.setAttribute(attribute.nodeName, hrefValue);
+			}
 			else {
 				result.setAttribute(attribute.nodeName, attribute.nodeValue);
 			}
@@ -1221,11 +1227,9 @@ function createRealNode(element) {
 }
 
 function getStyleAttributes(styleValue){
-
 	var styleAttributes = new Array();
 	for(key in styleAttributes){
 		delete styleAttributes[key];
-//		styleAttributes.removeit
 	}
 	while(true){
 		var stylePropertyNameLength = styleValue.indexOf(':');
