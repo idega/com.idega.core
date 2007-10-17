@@ -52,6 +52,8 @@ public class CoreConstants {
 
 	public static final String WEBDAV_SERVLET_URI = "/content";
 	
+	public static final String ENCODING_UTF8 = "UTF-8";
+	
 	public void setArticleConstantsInstance(Object o) {
 		CoreConstants.ARTICLE_CONSTANTS = o;
 	}

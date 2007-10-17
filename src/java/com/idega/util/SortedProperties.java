@@ -323,7 +323,7 @@ public class SortedProperties extends Properties //implements SortedMap
 		BufferedWriter awriter;
 		//awriter = new BufferedWriter(new OutputStreamWriter(out, "8859_1"));
 		//TODO change javadoc comment
-		awriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+		awriter = new BufferedWriter(new OutputStreamWriter(out, CoreConstants.ENCODING_UTF8));
 		
 		if (header != null) {
 			writeln(awriter, "#" + header);

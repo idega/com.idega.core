@@ -6,9 +6,12 @@ package com.idega.util.encryption;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.CoreConstants;
 
 /**
  * <p>
@@ -24,10 +27,10 @@ import com.idega.idegaweb.IWMainApplication;
  * This encryption implementation is extended and used by MentorEncryptionBean 
  * in module is.mentor.
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:15 $ by $Author: laddi $
+ * Last modified: $Date: 2007/10/17 15:09:36 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class RijndaelEncryptionBean {
 
@@ -61,7 +64,7 @@ public class RijndaelEncryptionBean {
 		// setup key (default keysize is 16 bytes so the password will 
 		// be shortened if it is longer.
 		byte[] keyBytes = new byte[getKeySize()];
-		byte[] b = password.getBytes("UTF-8");
+		byte[] b = password.getBytes(CoreConstants.ENCODING_UTF8);
 		int len = b.length;
 		if (len > keyBytes.length) {
 			len = keyBytes.length;
@@ -72,7 +75,7 @@ public class RijndaelEncryptionBean {
 		byte[] iv = getIV();
 		IvParameterSpec ivSpec = new IvParameterSpec(iv);
 		cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
-		byte[] results = cipher.doFinal(text.getBytes("UTF-8"));
+		byte[] results = cipher.doFinal(text.getBytes(CoreConstants.ENCODING_UTF8));
 		//BASE64Encoder encoder = new BASE64Encoder();
 		return this.base64Encoder.encode(results);
 	}
@@ -96,7 +99,7 @@ public class RijndaelEncryptionBean {
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		// setup key
 		byte[] keyBytes = new byte[getKeySize()];
-		byte[] b = password.getBytes("UTF-8");
+		byte[] b = password.getBytes(CoreConstants.ENCODING_UTF8);
 		int len = b.length;
 		if (len > keyBytes.length) {
 			len = keyBytes.length;
@@ -107,14 +110,14 @@ public class RijndaelEncryptionBean {
 		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
 		//BASE64Decoder decoder = new BASE64Decoder();
 		byte[] results = cipher.doFinal(this.base64Decoder.decodeBuffer(text));
-		return new String(results, "UTF-8");
+		return new String(results, CoreConstants.ENCODING_UTF8);
 	}
 /*
 	public String encryptJCEOld(String sInputPlaintext) throws Exception {
 		// byte[] keyBytes = "Kui29Sie46K7seTk".getBytes();
 		byte[] keyBytes = secretKey.getBytes();
 		char[] keyChars = secretKey.toCharArray();
-		byte[] bInputPlainText = sInputPlaintext.getBytes("UTF-8");
+		byte[] bInputPlainText = sInputPlaintext.getBytes(CoreConstants.ENCODING_UTF8);
 		byte[] plainText = new byte[bInputPlainText.length * 2];
 		byte[] salt = Integer.toString(secretKey.length()).getBytes("ASCII");
 		// byte[] salt = keyBytes;
@@ -162,7 +165,7 @@ public class RijndaelEncryptionBean {
 		 
 		// SecretKeySpec KeySpec = new SecretKeySpec(pbeKey.getEncoded(),
 		// "AES");
-		IvParameterSpec ivspec = new IvParameterSpec("testvector123456".getBytes("UTF-8"));
+		IvParameterSpec ivspec = new IvParameterSpec("testvector123456".getBytes(CoreConstants.ENCODING_UTF8));
 		// PBEKeySpec KeySpec = new PBEKeySpec(keyChars,salt,1);
 		// SecretKey secretKey =
 		// SecretKeyFactory.getInstance("PBEWithMD5AndDES",provider).generateSecret(KeySpec);
@@ -203,7 +206,7 @@ public class RijndaelEncryptionBean {
 		StreamCipher streamCipher = new StreamBlockCipher(cfbCipher);
 		StreamCipher cipher = streamCipher;
 		// Concatenate the IV and the message.
-		byte[] messageBytes1 = sInputPlaintext.getBytes("UTF-8");
+		byte[] messageBytes1 = sInputPlaintext.getBytes(CoreConstants.ENCODING_UTF8);
 		byte[] messageBytes = new byte[messageBytes1.length * 2];
 		for (int i = 0; i < messageBytes1.length; i++) {
 			// Enlarge the byte array to get a two-byte representation per

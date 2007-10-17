@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.183 2007/06/27 22:18:46 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.184 2007/10/17 15:09:37 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -84,6 +84,7 @@ import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.servlet.filter.BaseFilter;
 import com.idega.servlet.filter.IWWelcomeFilter;
+import com.idega.util.CoreConstants;
 import com.idega.util.Executer;
 import com.idega.util.FileUtil;
 import com.idega.util.ThreadContext;
@@ -98,10 +99,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2007/06/27 22:18:46 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/10/17 15:09:37 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.183 $
+ * @version $Revision: 1.184 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2236,14 +2237,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		byte[] bServUrl = {104, 116, 116, 112, 58, 47, 47, 115, 116, 111, 114, 101, 46, 105, 100, 101, 103, 97, 46, 99, 111, 109, 47, 115, 101, 114, 118, 105, 99, 101, 115, 47, 76, 105, 99, 101, 110, 99, 101, 83, 101, 114, 118, 105, 99, 101};
 		String serviceUrl = null;
 		try {
-			serviceUrl = new String(bServUrl,"UTF-8");
+			serviceUrl = new String(bServUrl,CoreConstants.ENCODING_UTF8);
 		}
 		catch (UnsupportedEncodingException e2) {
 			e2.printStackTrace();
 		}
 		String urlEncLic;
 		try {
-			urlEncLic = URLEncoder.encode(encrLic,"UTF-8");
+			urlEncLic = URLEncoder.encode(encrLic,CoreConstants.ENCODING_UTF8);
 			serviceUrl +="?method=validateEncryptedLicence";
 			serviceUrl +="&in0="+urlEncLic;
 			serviceUrl +="&in1="+URLEncoder.encode(systemIdentifier);

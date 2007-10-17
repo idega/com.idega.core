@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.idega.presentation.IWContext;
+import com.idega.util.CoreConstants;
 import com.idega.util.xml.XMLData;
 import com.idega.xml.XMLDocument;
 import com.idega.xml.XMLOutput;
@@ -73,7 +74,7 @@ public class XMLDataWriter extends WriterToFile {
     xmlOutput.setLineSeparator(System.getProperty("line.separator"));
     xmlOutput.setTextNormalize(true);
     //xmlOutput.setEncoding("iso-8859-1");
-    xmlOutput.setEncoding("UTF-8");
+    xmlOutput.setEncoding(CoreConstants.ENCODING_UTF8);
     
     // do not use document directly use accessor method
     XMLDocument myDocument = ((XMLData) this.storable).getDocument();

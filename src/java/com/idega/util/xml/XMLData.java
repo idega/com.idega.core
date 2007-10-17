@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.zip.ZipInputStream;
+
 import org.jdom.IllegalDataException;
 
 import com.idega.core.file.data.ICFile;
@@ -22,8 +23,8 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.serialization.ObjectReader;
 import com.idega.io.serialization.ObjectWriter;
 import com.idega.io.serialization.Storable;
-
 import com.idega.presentation.IWContext;
+import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.xml.XMLDocument;
 import com.idega.xml.XMLElement;
@@ -419,7 +420,7 @@ public class XMLData implements Storable {
       xmlOutput.setTextNormalize(true);
       
       //xmlOutput.setEncoding("iso-8859-1");
-      xmlOutput.setEncoding("UTF-8");
+      xmlOutput.setEncoding(CoreConstants.ENCODING_UTF8);
       
       // do not use document directly use accessor method
       XMLDocument myDocument = getDocument();

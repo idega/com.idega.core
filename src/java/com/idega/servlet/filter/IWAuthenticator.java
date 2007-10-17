@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.30 2007/08/14 12:35:08 alexis Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.31 2007/10/17 15:09:37 valdas Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
@@ -32,6 +33,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AuthenticationBusiness;
@@ -50,6 +52,7 @@ import com.idega.presentation.IWContext;
 import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.CypherText;
 import com.idega.util.RequestUtil;
 
@@ -60,10 +63,10 @@ import com.idega.util.RequestUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2007/08/14 12:35:08 $ by $Author: alexis $
+ * Last modified: $Date: 2007/10/17 15:09:37 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -292,10 +295,10 @@ public class IWAuthenticator extends BaseFilter {
 		
 		if(uri != null) {
 			try {
-				uri = URLDecoder.decode(uri, PARAMS_ENCODING_USED);
+				uri = URLDecoder.decode(uri, CoreConstants.ENCODING_UTF8);
 			} catch (UnsupportedEncodingException e) {
 				// TODO: what tha heck container is that?
-				log.log(Level.WARNING, "Exception while decoding redirect uri parameter: "+PARAMETER_REDIRECT_URI_ONLOGON+" by using "+PARAMS_ENCODING_USED+" encoding", e);
+				log.log(Level.WARNING, "Exception while decoding redirect uri parameter: "+PARAMETER_REDIRECT_URI_ONLOGON+" by using "+CoreConstants.ENCODING_UTF8+" encoding", e);
 			}
 		}
 		
@@ -506,9 +509,9 @@ public class IWAuthenticator extends BaseFilter {
 //		http://formbuilder.idega.is/login/?logon_redirect_uri=/workspace/
 		try {
 			
-			String encoded = URLEncoder.encode("http://formbuilder.idega.is/login/?logon_redirect_uri=/workspace/", "UTF-8");
+			String encoded = URLEncoder.encode("http://formbuilder.idega.is/login/?logon_redirect_uri=/workspace/", CoreConstants.ENCODING_UTF8);
 			System.out.println("encooded: "+encoded);
-			String decoded = URLDecoder.decode(encoded, "UTF-8");
+			String decoded = URLDecoder.decode(encoded, CoreConstants.ENCODING_UTF8);
 			System.out.println("decoded: "+decoded);
 			
 		} catch (Exception e) {

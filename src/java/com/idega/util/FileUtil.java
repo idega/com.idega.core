@@ -897,7 +897,7 @@ public class FileUtil {
    */
   public static List<String> head(File file, int numberOfLinesToRead) throws IOException
   {
-      return head(file, "UTF-8" , numberOfLinesToRead);
+      return head(file, CoreConstants.ENCODING_UTF8 , numberOfLinesToRead);
   }
   
   /**
@@ -937,7 +937,7 @@ public class FileUtil {
    */
   public static List<String> tail(File file, int numberOfLinesToRead) throws IOException
   {
-      return tail(file, "UTF-8" , numberOfLinesToRead);
+      return tail(file, CoreConstants.ENCODING_UTF8 , numberOfLinesToRead);
   }
   
   /**

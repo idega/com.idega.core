@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.18 2007/04/09 22:17:59 tryggvil Exp $
+ * $Id: BaseFilter.java,v 1.19 2007/10/17 15:09:36 valdas Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -20,6 +20,7 @@ import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWApplicationContextFactory;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.MutableClass;
+import com.idega.util.CoreConstants;
 import com.idega.util.RequestUtil;
 
 
@@ -28,10 +29,10 @@ import com.idega.util.RequestUtil;
  * <p>
  *  Class that holds basic functionality used by many filters.<br>
  * </p>
- *  Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/10/17 15:09:36 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
@@ -56,7 +57,6 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	protected static final String PAGES_URI="/pages/";
 	protected static final String PAGES_URI_MINUSSLASH="/pages";
 	protected static final String ENC_PARAMS_PARAM = "encParams";
-	protected static final String PARAMS_ENCODING_USED = "UTF-8";
 	
 	static final String SLASH = "/";
 
@@ -78,7 +78,7 @@ public abstract class BaseFilter implements Filter, MutableClass {
 			
 			try {
 				baseUri = baseUri+"?"+IWAuthenticator.PARAMETER_REDIRECT_URI_ONLOGON+"="+URLEncoder.encode(
-						uriToRedirectTo+"?"+q_string, PARAMS_ENCODING_USED);
+						uriToRedirectTo+"?"+q_string, CoreConstants.ENCODING_UTF8);
 			} catch (UnsupportedEncodingException e) {
 				baseUri = baseUri+"?"+IWAuthenticator.PARAMETER_REDIRECT_URI_ONLOGON+"="+uriToRedirectTo;
 			}

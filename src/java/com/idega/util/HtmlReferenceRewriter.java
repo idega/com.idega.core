@@ -1,5 +1,5 @@
 /*
- * $Id: HtmlReferenceRewriter.java,v 1.11 2006/04/09 12:13:13 laddi Exp $ 
+ * $Id: HtmlReferenceRewriter.java,v 1.12 2007/10/17 15:09:36 valdas Exp $ 
  * Created on 3.6.2004
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -34,10 +34,10 @@ import com.idega.core.builder.data.ICPage;
  * This class takes in a source (Reader) of a HTML document parses it and rewrites relative URLs (that are referencing URLs within the same host)
  * to be an abolute URL with http://[hostname]/[oldurl]
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
+ * Last modified: $Date: 2007/10/17 15:09:36 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class HtmlReferenceRewriter {
 
@@ -240,7 +240,7 @@ public class HtmlReferenceRewriter {
 		
 		String utfString;
 		try {
-			utfString = new String(outString.toString().getBytes("UTF-8"),"UTF-8");
+			utfString = new String(outString.toString().getBytes(CoreConstants.ENCODING_UTF8),CoreConstants.ENCODING_UTF8);
 			StringReader sr = new StringReader(utfString);
 			System.out.println("[HTMLReferenceWriter] The final html string in unicode:\n"+utfString);
 			Writer out = getOutput();

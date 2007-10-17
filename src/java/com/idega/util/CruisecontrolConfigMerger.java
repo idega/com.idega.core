@@ -56,7 +56,7 @@ public class CruisecontrolConfigMerger extends BundleFileMerger {
 			XMLOutput output = new XMLOutput("  ", true);
 			output.setLineSeparator(System.getProperty("line.separator"));
 			output.setTextNormalize(true);
-			output.setEncoding("UTF-8");
+			output.setEncoding(CoreConstants.ENCODING_UTF8);
 			output.output(outDoc, outStream);
 			outStream.close();
 		}
