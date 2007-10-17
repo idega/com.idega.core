@@ -641,7 +641,7 @@ function expandMinimizeContents(container){
 }
 
 function insertJavaScriptFileToHeader(src) {
-	if (src == null) {
+	if (src == null || src == '') {
 		return;
 	}
 	var script = document.createElement("script");
@@ -1120,19 +1120,11 @@ function getTransformedDocumentToDom(component) {
 	return nodes;
 }
 
-var SCRIPT_BEGAN = false;
-var SCRIPT_INSTRUCTION = '';
-
 function createRealNode(element) {
 	//	Text
-	if(element.nodeName == '#text') {
-		if (IE && SCRIPT_BEGAN) {	// Building script 'string'
-			SCRIPT_INSTRUCTION += element.nodeValue;
-		}
-		else {
-			var textNode = document.createTextNode(element.nodeValue);
-			return textNode;
-		}
+	if (element.nodeName == '#text') {
+		var textNode = document.createTextNode(element.nodeValue);
+		return textNode;
 	}
 	
 	//	Comment
@@ -1141,27 +1133,37 @@ function createRealNode(element) {
 		return commentNode;
 	}
 	
-	//	JavaScript for IE
-	if (element.nodeName == 'script' && IE) {
-		if (element.nodeName == 'script') {
-			if (SCRIPT_BEGAN) {
-				//	Finish script
-				if (SCRIPT_INSTRUCTION != '') {
-					try {
-						eval(SCRIPT_INSTRUCTION);
-					} catch(e) {}
-				}
-				SCRIPT_BEGAN = false;
-				SCRIPT_INSTRUCTION = '';
-			}
-			else {
-				//	Begin script
-				SCRIPT_BEGAN = true;
-			}
-			
-			var script = document.createElement('script');
-			return script;
+	//	Script
+	if (element.nodeName == 'script') {
+		if (element.nodeValue != null && element.nodeValue != '') {
+			var action = '' + element.nodeValue;
+			//try {
+				eval(action);
+			//} catch(e) {}
 		}
+		
+		if (element.attributes != null) {
+			for (var i = 0; i < element.attributes.length; i++) {
+				var attribute = element.attributes[i];
+				if (attribute.nodeName == 'src') {
+					insertJavaScriptFileToHeader(attribute.nodeValue);	//	Adding source file
+				}
+			}
+		}
+		
+		if (element.childNodes != null) {
+			var allActions = '';
+			for (var i = 0; i < element.childNodes.length; i++) {
+				allActions += element.childNodes[i].nodeValue;
+			}
+			if (allActions != null && allActions != '') {
+				//try {
+					eval(allActions);	//	Executing script
+				//} catch(e) {}
+			}
+		}
+		
+		return document.createElement('script');	//	Fake, all actions are executed already
 	}
 	
 	// Element
