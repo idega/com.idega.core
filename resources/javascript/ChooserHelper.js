@@ -29,7 +29,7 @@ ChooserHelper.prototype.saveSelectedValuesCallback = function(result, message, i
 		
 		ChooserService.setModuleProperty(instanceId, method, chooser_helper.ADVANCED_PROPERTIES, {
 			callback: function(savedSuccessfully) {
-				chooser_helper.setModulePropertyCallback(savedSuccessfully, instanceId, needsReload, reloadMessage, actionAfter);
+				chooser_helper.setModulePropertyCallback(savedSuccessfully, instanceId, needsReload, reloadMessage, actionAfter, method);
 			}
 		});
 	}
@@ -39,7 +39,7 @@ ChooserHelper.prototype.saveSelectedValuesCallback = function(result, message, i
 	}
 }
 
-ChooserHelper.prototype.setModulePropertyCallback = function(result, instanceId, needsReload, reloadMessage, actionAfter) {
+ChooserHelper.prototype.setModulePropertyCallback = function(result, instanceId, needsReload, reloadMessage, actionAfter, method) {
 	closeAllLoadingMessages();
 	if (!result) {
 		return false;
@@ -52,6 +52,8 @@ ChooserHelper.prototype.setModulePropertyCallback = function(result, instanceId,
 				var box = document.getElementById(activePropertyBoxId);
 				if (box != null) {
 					box.className = 'modulePropertyIsSet';
+
+					getRemoveBuilderPropertyImage(instanceId, method);
 				}
 			}
 		} catch(ex) {}
