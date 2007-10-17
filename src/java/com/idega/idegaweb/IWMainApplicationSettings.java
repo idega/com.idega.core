@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.54 2007/05/10 22:34:28 thomas Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.55 2007/10/17 15:04:44 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
  */
 package com.idega.idegaweb;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,7 +20,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
+
 import javax.mail.internet.MimeUtility;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
@@ -32,6 +35,7 @@ import com.idega.data.EntityControl;
 import com.idega.presentation.Page;
 import com.idega.repository.data.MutableClass;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.util.CoreConstants;
 import com.idega.util.LocaleUtil;
 import com.idega.util.StringHandler;
 /**
@@ -42,10 +46,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2007/05/10 22:34:28 $ by $Author: thomas $
+ * Last modified: $Date: 2007/10/17 15:04:44 $ by $Author: valdas $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.54 $
+ * @version $Revision: 1.55 $
  */
 
 
@@ -65,7 +69,6 @@ public class IWMainApplicationSettings implements MutableClass {
 	public static boolean CREATE_PROPERTIES = true;
 
 	private static String DEFAULT_CHARACTER_ENCODING; //= "ISO-8859-1";
-	//public static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
 	
 	private static String DEFAULT_TEMPLATE_NAME;
 	private static String DEFAULT_TEMPLATE_CLASS;
@@ -623,12 +626,27 @@ public class IWMainApplicationSettings implements MutableClass {
 			DEFAULT_CHARACTER_ENCODING=fileEncoding;
 			if(DEFAULT_CHARACTER_ENCODING==null){
 				//if still there is no character encoding from the jvm, set it as unicode:
-				DEFAULT_CHARACTER_ENCODING="UTF-8";
+				DEFAULT_CHARACTER_ENCODING=CoreConstants.ENCODING_UTF8;
 			}
 		}
 		return DEFAULT_CHARACTER_ENCODING;
 	}
 	
+	public void setDefaultCharacterEncoding(String encoding) {
+		this.putInApplicationBinding(CHARACTER_ENCODING_KEY, encoding);
+	}
+	
+	public boolean isSetDefaultCharacterEncoding() {
+		try {
+			return getApplicationBindingBusiness().get(CHARACTER_ENCODING_KEY) != null;
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
 	
 	/**
 	 * 
