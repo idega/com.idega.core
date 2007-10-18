@@ -16,11 +16,20 @@ public abstract class Criteria implements Outputable, Cloneable{
     public String toString() {
         return ToStringer.toString(this);
     }
+    
+    protected String quote(char s) {
+        if (s == '\\') {
+			return "'\\'";
+		} else {
+			return "'"+s+"'";
+		}
+    }
+
 
     protected String quote(String s) {
         if (s == null) {
-					return "null";
-				}
+			return "null";
+		}
         StringBuffer str = new StringBuffer();
         str.append('\'');
         for (int i = 0; i < s.length(); i++) {
