@@ -112,6 +112,18 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		}
 		this.value = v.toString();
 	}
+	
+	public InCriteria(Column column, char[] values) {
+		this.column = column;
+		StringBuffer v = new StringBuffer();
+		for (int i = 0; i < values.length; i++) {
+			v.append(quote(values[i]));
+			if (i < values.length - 1) {
+				v.append(',');
+			}
+		}
+		this.value = v.toString();
+	}
 
 	public InCriteria(Column column, SelectQuery subSelect) {
 		this.column = column;
