@@ -44,22 +44,25 @@ ChooserHelper.prototype.setModulePropertyCallback = function(result, instanceId,
 	if (!result) {
 		return false;
 	}
-	if (needsReload) {
-		var activePropertyBoxId = null;
-		try {
-			activePropertyBoxId = getActivePropertyBoxId();
-			if (activePropertyBoxId != null) {
-				var box = document.getElementById(activePropertyBoxId);
-				if (box != null) {
-					box.className = 'modulePropertyIsSet';
+	
+	var activePropertyBoxId = null;
+	try {
+		activePropertyBoxId = getActivePropertyBoxId();
+		if (activePropertyBoxId != null) {
+			var box = document.getElementById(activePropertyBoxId);
+			if (box != null) {
+				box.className = 'modulePropertyIsSet';
 
-					getRemoveBuilderPropertyImage(instanceId, method);
-				}
+				getRemoveBuilderPropertyImage(instanceId, method);
 			}
-		} catch(ex) {}
+		}
+	} catch(ex) {}
+	
+	if (needsReload) {
 		addActionBeforeClosingMoodalBox(reloadMessage);
 		return true;
 	}
+	
 	try {
 		if (actionAfter != null) {
 			actionAfter();
@@ -68,6 +71,7 @@ ChooserHelper.prototype.setModulePropertyCallback = function(result, instanceId,
 		addActionBeforeClosingMoodalBox(reloadMessage);
 		return false;
 	}
+	
 	return true;
 }
 
