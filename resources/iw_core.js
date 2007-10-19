@@ -1134,12 +1134,10 @@ function createRealNode(element) {
 	}
 	
 	//	Script
-	if (element.nodeName == 'script') {
+	if (element.nodeName == 'script' && IE) {
 		if (element.nodeValue != null && element.nodeValue != '') {
 			var action = '' + element.nodeValue;
-			//try {
-				eval(action);
-			//} catch(e) {}
+			eval(action);
 		}
 		
 		if (element.attributes != null) {
@@ -1157,9 +1155,7 @@ function createRealNode(element) {
 				allActions += element.childNodes[i].nodeValue;
 			}
 			if (allActions != null && allActions != '') {
-				//try {
-					eval(allActions);	//	Executing script
-				//} catch(e) {}
+				eval(allActions);	//	Executing script
 			}
 		}
 		
@@ -1212,6 +1208,9 @@ function createRealNode(element) {
 				}
 				
 				result.setAttribute(attribute.nodeName, hrefValue);
+			}
+			else if (attribute.nodeName == 'src' && element.nodeName == 'script') {
+				insertJavaScriptFileToHeader(attribute.nodeValue);	//	Adding source file
 			}
 			else {
 				result.setAttribute(attribute.nodeName, attribute.nodeValue);
