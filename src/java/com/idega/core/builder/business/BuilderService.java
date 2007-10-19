@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.45 2007/09/28 13:06:38 valdas Exp $
+ * $Id: BuilderService.java,v 1.46 2007/10/19 12:07:23 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -318,4 +318,8 @@ public interface BuilderService extends IBOService
 	public boolean setPageUri(ICPage page, String pageUri, int domainId);
 	
 	public String getClassNameForSourceView();
+	
+	public String getInstanceId(UIComponent component);
+	
+	public UIComponent findComponentInPage(IWContext iwc, String pageKey, String instanceId);
 }
