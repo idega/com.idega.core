@@ -27,6 +27,9 @@ public class CoreConstants {
 	public static final String COMMA = ",";
 	public static final String DOT = ".";
 	public static final String UNDER = "_";
+	public static final String AMP = "&";
+	public static final String EQ = "=";
+	public static final String QMARK = "?";
 	
 	public static final String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
 	public static final String PROP_SYSTEM_MAIL_FROM_ADDRESS = "messagebox_from_mailaddress";
