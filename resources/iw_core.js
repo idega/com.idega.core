@@ -1269,6 +1269,24 @@ function replaceNode(component, nodeToReplace, container) {
 	}
 }
 
+function insertNodesToContainerBefore(component, container, before) {
+	if (component == null || container == null || before == null) {
+		return;
+	}
+	
+	// Making copy
+	var nodes = getTransformedDocumentToDom(component);
+	
+	// Inserting nodes
+	var activeNode = null;
+	var realNode = null;
+	for (var i = 0; i < nodes.length; i++) {
+		activeNode = nodes[i];
+		realNode = createRealNode(activeNode);
+		container.insertBefore(realNode, before);
+	}
+}
+
 function insertNodesToContainer(component, container) {
 	if (component == null || container == null) {
 		return;
