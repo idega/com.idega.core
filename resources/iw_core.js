@@ -472,48 +472,71 @@ function tableruler()
 	    }
 	}
 	
-	function showElementLoading(element) {
-		var outer = document.createElement('div');
-		outer.setAttribute('id', 'busybuddy'); 
-		outer.setAttribute('class', 'LocalLoadLayer');
-		//IE class workaround:
-		outer.setAttribute('className', 'LocalLoadLayer');
-		
-		var middle = document.createElement('div');
-		middle.setAttribute('id', 'busybuddy-middle');
-		middle.setAttribute('class', 'LoadLayerMiddle');
-		//IE class workaround:
-		middle.setAttribute('className', 'LoadLayerMiddle');
-		outer.appendChild(middle);
-		
-		var inner = document.createElement('div');
-		inner.setAttribute('id', 'busybuddy-contents');
-		inner.setAttribute('class', 'LoadLayerContents');
-		//IE class workaround:
-		inner.setAttribute('className', 'LoadLayerContents');
-		middle.appendChild(inner);
-		
-		var image = document.createElement('img');
-		image.setAttribute('id', 'loadingimage');
-		image.setAttribute('src',image4.src);
-		image.setAttribute('class', 'LoadingImage');
-		image.setAttribute('className', 'LoadingImage');
-		image.src=image4.src;
-		inner.appendChild(image);
-		
-		
-		var component = document.getElementById(element);
-		removeChildren(component);
-		component.appendChild(outer);
-		
-		
-		if( outer.style ) { 
-	      outer.style.visibility = 'visible';
-	    }
-	    else {
-	      outer.visibility = 'show' ;
-	    }
+	function showElementLoading(id) {
+		setLoadingLayerForElement(id, true, null, null);
 	}
+	
+function setLoadingLayerForElement(id, removeContent, size, position) {
+	var component = document.getElementById(id);
+	if (component == null) {
+		return false;
+	}
+	
+	var outer = document.createElement('div');
+	outer.setAttribute('id', 'busybuddy'); 
+	outer.setAttribute('class', 'LocalLoadLayer');
+	//IE class workaround:
+	outer.setAttribute('className', 'LocalLoadLayer');
+	
+	var middle = document.createElement('div');
+	middle.setAttribute('id', 'busybuddy-middle');
+	middle.setAttribute('class', 'LoadLayerMiddle');
+	//IE class workaround:
+	middle.setAttribute('className', 'LoadLayerMiddle');
+	outer.appendChild(middle);
+	
+	var inner = document.createElement('div');
+	inner.setAttribute('id', 'busybuddy-contents');
+	inner.setAttribute('class', 'LoadLayerContents');
+	//IE class workaround:
+	inner.setAttribute('className', 'LoadLayerContents');
+	middle.appendChild(inner);
+	
+	var image = document.createElement('img');
+	image.setAttribute('id', 'loadingimage');
+	image.setAttribute('src',image4.src);
+	image.setAttribute('class', 'LoadingImage');
+	image.setAttribute('className', 'LoadingImage');
+	image.src=image4.src;
+	inner.appendChild(image);
+			
+	if (removeContent) {
+		removeChildren(component);
+	}
+	if (size == null) {
+		component.appendChild(outer);
+	}
+	else {
+		outer.style.position = 'absolute';
+		
+		outer.style.left = position.x + 'px';
+		outer.style.top = position.y + 'px';
+		
+		outer.style.width = size.size.x + 'px';
+		outer.style.height = size.size.y + 'px';
+		
+		document.body.appendChild(outer);
+	}
+	
+	if (outer.style) {
+		outer.style.visibility = 'visible';
+	}
+	else {
+		outer.visibility = 'show';
+	}
+	
+	return outer;
+}
 	
 function closeLoadingMessage() {
 	var busyMessage = document.getElementById("busybuddy");
