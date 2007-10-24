@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.172 2007/01/12 21:41:48 idegaweb Exp $
+ * $Id: Link.java,v 1.173 2007/10/24 15:26:51 civilis Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -708,6 +708,10 @@ public class Link extends Text {
 	 *
 	 */
 	public void maintainParameter(String parameterName, IWContext iwc) {
+		
+		if(parameterName == null)
+			return;
+		
 		String parameterValue = iwc.getParameter(parameterName);
 		if (parameterValue != null) {
 			addParameter(parameterName, parameterValue);
