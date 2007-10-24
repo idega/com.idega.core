@@ -52,7 +52,7 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 		
 		Object o = session.getAttribute(CoreConstants.HANDLER_PARAMETER);
 		if (!(o instanceof ICPropertyHandler)) {
-			return false;
+			return true;	//	No handler assigned
 		}
 		ICPropertyHandler handler = (ICPropertyHandler) o;
 		
