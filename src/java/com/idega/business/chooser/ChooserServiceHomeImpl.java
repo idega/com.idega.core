@@ -8,7 +8,7 @@ public class ChooserServiceHomeImpl extends IBOHomeImpl implements ChooserServic
 
 	private static final long serialVersionUID = 1628924374771246076L;
 
-	public Class getBeanInterfaceClass() {
+	public Class<ChooserService> getBeanInterfaceClass() {
 		return ChooserService.class;
 	}
 
