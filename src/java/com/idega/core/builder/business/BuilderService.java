@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.46 2007/10/19 12:07:23 valdas Exp $
+ * $Id: BuilderService.java,v 1.47 2007/10/25 18:27:17 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -57,6 +57,16 @@ public interface BuilderService extends IBOService
 	 * @throws RemoteException
 	 */	
 	public String getPageURI(String pageID)throws RemoteException;
+	
+	/**
+	 * Gets the URI to a page on this webserver, checks if page is not deleted
+	 * @param iwc - {@link IWContext}
+	 * @param pageKey an id for a page to get the URI to
+	 * @param checkIfDeleted - check if page is deleted or not
+	 * @return The string that is the URI to the requested page on this webserver
+	 * @throws RemoteException
+	 */	
+	public String getPageURI(IWContext iwc, String pageKey, boolean checkIfDeleted) throws RemoteException;
 	/**
 	 * Gets the URI to a page on this webserver
 	 * @param page a page to get the URI to
