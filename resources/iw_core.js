@@ -1645,3 +1645,26 @@ String.prototype.cropEnd = function(symbols_count, string_to_append) {
 		
 	return this.substr(0, symbols_count)+string_to_append;
 }
+
+function isCorrectFileType(id, fileType, noFileMsg, invalidFileTypeMsg) {
+	var input = document.getElementById(id);
+	if (input) {
+		if (input.value == '') {
+			if (noFileMsg != null) {
+				alert(noFileMsg);
+			}
+			return false;
+		}
+		var nameParts = input.value.split('.');
+		if (nameParts) {
+			var lastPart = nameParts[nameParts.length - 1];
+			if (lastPart.toLowerCase() != fileType) {
+				if (invalidFileTypeMsg != null) {
+					alert(invalidFileTypeMsg + ': ' + input.value);
+				}
+				return false;
+			}
+		}
+	}
+	return true;
+}
