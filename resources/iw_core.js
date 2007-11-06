@@ -1160,7 +1160,9 @@ function createRealNode(element) {
 	if (element.nodeName == 'script' && IE) {
 		if (element.nodeValue != null && element.nodeValue != '') {
 			var action = '' + element.nodeValue;
-			eval(action);
+			if (action.indexOf('<!--') == -1 && action.indexOf('//-->') == -1) {
+				eval(action);
+			}
 		}
 		
 		if (element.attributes != null) {
@@ -1175,7 +1177,10 @@ function createRealNode(element) {
 		if (element.childNodes != null) {
 			var allActions = '';
 			for (var i = 0; i < element.childNodes.length; i++) {
-				allActions += element.childNodes[i].nodeValue;
+				var scriptNodeValue = element.childNodes[i].nodeValue;
+				if (scriptNodeValue.indexOf('<!--') == -1 && scriptNodeValue.indexOf('//-->') == -1) {
+					allActions += scriptNodeValue;
+				}
 			}
 			if (allActions != null && allActions != '') {
 				eval(allActions);	//	Executing script
