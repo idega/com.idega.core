@@ -3,6 +3,7 @@ package com.idega.util;
 import java.io.IOException;
 
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
@@ -78,6 +79,19 @@ public class CoreUtil {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static boolean isIE(HttpServletRequest request) {
+		if (request == null) {
+			return false;
+		}
+		
+		String userAgent = RequestUtil.getUserAgent(request);
+		if (userAgent != null) {
+			return userAgent.indexOf("MSIE") != -1;
+		}
+		
+		return false;
 	}
 
 }

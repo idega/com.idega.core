@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.144 2007/04/09 22:17:59 tryggvil Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.145 2007/11/06 13:12:18 valdas Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -64,6 +64,7 @@ import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
 import com.idega.user.business.UserProperties;
+import com.idega.util.CoreUtil;
 import com.idega.util.FacesUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.datastructures.HashtableMultivalued;
@@ -81,10 +82,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
+ * Last modified: $Date: 2007/11/06 13:12:18 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.144 $
+ * @version $Revision: 1.145 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -328,13 +329,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	}
 
 	public boolean isIE() {
-		String userAgent = getUserAgent();
-		if (userAgent != null) {
-			if (userAgent.indexOf("MSIE") != -1) {
-				return true;
-			}
-		}
-		return false;
+		return CoreUtil.isIE(getRequest());
 	}
 
 	public boolean isOpera() {
