@@ -1161,7 +1161,7 @@ function createRealNode(element) {
 		if (element.nodeValue != null && element.nodeValue != '') {
 			var action = '' + element.nodeValue;
 			if (action.indexOf('<!--') == -1 && action.indexOf('//-->') == -1) {
-				eval(action);
+				window.eval(action);
 			}
 		}
 		
@@ -1183,7 +1183,7 @@ function createRealNode(element) {
 				}
 			}
 			if (allActions != null && allActions != '') {
-				eval(allActions);	//	Executing script
+				window.eval(allActions);	//	Executing script
 			}
 		}
 		
@@ -1202,12 +1202,20 @@ function createRealNode(element) {
 				var event = attribute.nodeName.substring(attribute.nodeName.indexOf('on') + 2);
 				var functionCall = attribute.nodeValue;
 				var elementFunction = function() {
-					eval(functionCall);
+					window.eval(functionCall);
 				};
 				registerEvent(result, event, elementFunction);
 			}
 			else if (attribute.nodeName == 'checked' && IE) {
-				result.setAttribute('defaultChecked', attribute.nodeValue);
+				var isChecked = attribute.nodeValue == 'true';
+				if (isChecked) {
+					if (result.type != null && result.type != '') {
+						result = document.createElement('<input type="'+result.type+'" name="'+element.nodeName+'" checked>');
+					}
+					else {
+						result = document.createElement('<input name="'+element.nodeName+'" checked>');
+					}
+				}
 			}
 			else if (attribute.nodeName == 'style' && IE) {
 				var styleValue = attribute.nodeValue;
@@ -1639,7 +1647,18 @@ function getDefaultDwrPath() {
  * @param path - server's path (like 'http://formbuilder.idega.is/dwr')
  */
 function prepareDwr(interfaceClass, path) {
-	DWREngine.setMethod(DWREngine.ScriptTag);
+	if (interfaceClass == null || path == null) {
+		return false;
+	}
+	
+	var isRemoteMode = (path != DEFAULT_DWR_PATH);
+	if (isRemoteMode) {
+		DWREngine.setRpcType(DWREngine.ScriptTag);
+	}
+	else {
+		DWREngine.setRpcType(DWREngine.XMLHttpRequest);
+	}
+	
 	interfaceClass._path = path;
 }
 
