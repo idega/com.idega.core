@@ -125,6 +125,7 @@ search_results.delete=Delete
 search_results.no_results=Din s\u00F6kning gav inget resultat
 searcher.button=S\u00F6k
 select_all=Select all
+select_group=Select group
 slide_role_root=slide_role_root
 slide_role_user=slide_role_user
 success.added=RSS Source "tilkynnningar" added
