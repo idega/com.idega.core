@@ -1650,15 +1650,7 @@ function prepareDwr(interfaceClass, path) {
 	if (interfaceClass == null || path == null) {
 		return false;
 	}
-	
-	var isRemoteMode = (path != DEFAULT_DWR_PATH);
-	if (isRemoteMode) {
-		DWREngine.setRpcType(DWREngine.ScriptTag);
-	}
-	else {
-		DWREngine.setRpcType(DWREngine.XMLHttpRequest);
-	}
-	
+		
 	interfaceClass._path = path;
 }
 
