@@ -12,7 +12,6 @@ public class PropertiesBean implements AbstractProperties {
 	private String instanceId = null;
 	
 	private List<String> uniqueIds = null;
-	private List<String> localizedText = null;
 	
 	private boolean isRemoteMode = false;
 	private boolean showLabels = false;
@@ -30,7 +29,6 @@ public class PropertiesBean implements AbstractProperties {
 		setLogin(bean.getLogin());
 		setPassword(bean.getPassword());
 		setUniqueIds(bean.getUniqueIds());
-		setLocalizedText(bean.getLocalizedText());
 		setRemoteMode(bean.isRemoteMode());
 		setShowLabels(bean.isShowLabels());
 		setShowAddress(bean.isShowAddress());
@@ -95,14 +93,6 @@ public class PropertiesBean implements AbstractProperties {
 
 	public void setRemoteMode(boolean isRemoteMode) {
 		this.isRemoteMode = isRemoteMode;
-	}
-
-	public List<String> getLocalizedText() {
-		return localizedText;
-	}
-
-	public void setLocalizedText(List<String> localizedText) {
-		this.localizedText = localizedText;
 	}
 	
 	public boolean isShowLabels() {
