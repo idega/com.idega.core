@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.99 2007/09/03 14:46:21 valdas Exp $
+ * $Id: UserBusiness.java,v 1.100 2007/11/12 14:56:36 valdas Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -54,10 +54,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2007/09/03 14:46:21 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/11/12 14:56:36 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.99 $
+ * @version $Revision: 1.100 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -843,7 +843,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getGroupsMembersData
 	 */
-	public List<GroupMemberDataBean> getGroupsMembersData(UserPropertiesBean bean);
+	public List<GroupMemberDataBean> getGroupsMembersData(UserPropertiesBean bean, List<String> uniqueIds);
 	
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserStatus
