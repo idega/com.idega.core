@@ -25,27 +25,29 @@ public class PropertiesBean implements AbstractProperties {
 	public PropertiesBean() {}
 	
 	public PropertiesBean(PropertiesBean bean) {
-		setServer(bean.getServer());
-		setLogin(bean.getLogin());
-		setPassword(bean.getPassword());
-		setUniqueIds(bean.getUniqueIds());
-		setRemoteMode(bean.isRemoteMode());
-		setShowLabels(bean.isShowLabels());
-		setShowAddress(bean.isShowAddress());
-		setShowDescription(bean.isShowDescription());
-		setShowExtraInfo(bean.isShowExtraInfo());
-		setShowEmails(bean.isShowEmails());
+		this();
+		this.setServer(bean.getServer());
+		this.setLogin(bean.getLogin());
+		this.setPassword(bean.getPassword());
+		this.setInstanceId(bean.getInstanceId());
+		this.setUniqueIds(bean.getUniqueIds());
+		this.setRemoteMode(bean.isRemoteMode());
+		this.setShowLabels(bean.isShowLabels());
+		this.setShowAddress(bean.isShowAddress());
+		this.setShowDescription(bean.isShowDescription());
+		this.setShowExtraInfo(bean.isShowExtraInfo());
+		this.setShowEmails(bean.isShowEmails());
 	}
 	
 	public PropertiesBean(PropertiesBean bean, boolean showDescription, boolean showExtraInfo) {
 		this(bean);
-		setShowDescription(showDescription);
-		setShowExtraInfo(showExtraInfo);
+		this.setShowDescription(showDescription);
+		this.setShowExtraInfo(showExtraInfo);
 	}
 	
 	public PropertiesBean(boolean showDescription, boolean showExtraInfo) {
-		setShowDescription(showDescription);
-		setShowExtraInfo(showExtraInfo);
+		this.setShowDescription(showDescription);
+		this.setShowExtraInfo(showExtraInfo);
 	}
 
 	public String getLogin() {
