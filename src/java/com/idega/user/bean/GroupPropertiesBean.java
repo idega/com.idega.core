@@ -13,8 +13,9 @@ public class GroupPropertiesBean extends PropertiesBean {
 		super(true, true);
 	}
 	
-	public GroupPropertiesBean(PropertiesBean bean) {
+	public GroupPropertiesBean(PropertiesBean bean, String instanceId) {
 		super(bean, true, true);
+		this.setInstanceId(instanceId);
 	}
 	
 	public boolean isShowEmptyFields() {

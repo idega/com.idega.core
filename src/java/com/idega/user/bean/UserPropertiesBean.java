@@ -32,8 +32,9 @@ public class UserPropertiesBean extends PropertiesBean {
 	
 	public UserPropertiesBean() {}
 	
-	public UserPropertiesBean(PropertiesBean bean) {
+	public UserPropertiesBean(PropertiesBean bean, String instanceId) {
 		super(bean);
+		this.setInstanceId(instanceId);
 	}
 	
 	public boolean isShowAge() {

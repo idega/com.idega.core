@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.108.2.6 2007/06/28 15:20:03 valdas Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.108.2.7 2007/11/13 13:59:25 valdas Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -61,7 +62,6 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.bean.AddressData;
 import com.idega.user.bean.GroupDataBean;
-import com.idega.user.bean.GroupPropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
@@ -94,7 +94,7 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.108.2.6 $
+ * @version $Revision: 1.108.2.7 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -2475,12 +2475,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	/**
 	 * Returns info about groups
 	 */
-	public List getGroupsData(GroupPropertiesBean bean) {
-		if (bean == null) {
-			return null;
-		}
-		
-		List uniqueIds = bean.getUniqueIds();
+	public List getGroupsData(List uniqueIds) {
 		if (uniqueIds == null) {
 			return null;
 		}
@@ -2590,10 +2585,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	/**
 	 * 
-	 * Last modified: $Date: 2007/06/28 15:20:03 $ by $Author: valdas $
+	 * Last modified: $Date: 2007/11/13 13:59:25 $ by $Author: valdas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.108.2.6 $
+	 * @version $Revision: 1.108.2.7 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 

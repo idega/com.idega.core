@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.24 2007/09/27 07:50:02 laddi Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.25 2007/11/13 13:59:25 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -80,7 +80,6 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.user.bean.GroupMemberDataBean;
 import com.idega.user.bean.GroupMemberDataBeanComparator;
-import com.idega.user.bean.UserPropertiesBean;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
@@ -111,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/09/27 07:50:02 $ by $Author: laddi $
+ * Last modified: $Date: 2007/11/13 13:59:25 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.24 $
+ * @version $Revision: 1.207.2.25 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3431,12 +3430,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Gets info about Groups members
 	 */
-	public List getGroupsMembersData(UserPropertiesBean bean) {
-		if (bean == null) {
-			return null;
-		}
-		
-		List uniqueIds = bean.getUniqueIds();
+	public List getGroupsMembersData(List uniqueIds) {
 		if (uniqueIds == null) {
 			return null;
 		}
