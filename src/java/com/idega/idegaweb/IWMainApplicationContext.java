@@ -1,18 +1,7 @@
 package com.idega.idegaweb;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.ejb.FinderException;
-
 import com.idega.core.builder.business.ICDomainLookup;
-import com.idega.core.builder.data.CachedDomain;
 import com.idega.core.builder.data.ICDomain;
-import com.idega.core.builder.data.ICDomainHome;
-import com.idega.data.IDOLookup;
-import com.idega.data.IDOLookupException;
 
 /**
  * Title:        A default implementation of IWApplicationContext
@@ -152,6 +141,7 @@ public class IWMainApplicationContext implements IWApplicationContext {
 		}
 	}*/
 	
+	@Override
 	public boolean equals(Object o){
 			if(o instanceof IWApplicationContext){
 				IWApplicationContext iwac = (IWApplicationContext)o;

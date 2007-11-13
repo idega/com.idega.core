@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.70 2007/02/21 16:45:44 eiki Exp $
+ * $Id: LoginDBHandler.java,v 1.71 2007/11/13 09:31:07 laddi Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -27,7 +27,6 @@ import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
-import com.idega.user.data.User;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -75,6 +74,7 @@ public class LoginDBHandler {
 	/**
 	 * @deprecated replaced with createUserLogin()
 	 */
+	@Deprecated
 	protected static LoginTable createLogin(boolean update, int userID, String userLogin, String password) throws LoginCreateException {
 		return createUserLogin(update, userID, userLogin, password);
 	}
@@ -294,6 +294,7 @@ public class LoginDBHandler {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static void updateLogin(int userID, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime) throws Exception {
 		updateLogin(userID, userLogin, password, accountEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime, null);
 	}
@@ -306,6 +307,7 @@ public class LoginDBHandler {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public static void updateLoginInfo(LoginTable login, Boolean accoutEnabled, IWTimestamp modified, int daysOfVality, Boolean passwNeverExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime) throws Exception {
 		updateLoginInfo(login, accoutEnabled, modified, daysOfVality, passwNeverExpires, userAllowedToChangePassw, changeNextTime, null);
 	}
@@ -345,6 +347,7 @@ public class LoginDBHandler {
 	/**
 	 * @deprecated use getUserLogin
 	 */
+	@Deprecated
 	public static LoginTable findUserLogin(int iUserId) {
 		return getUserLogin(iUserId);
 	}

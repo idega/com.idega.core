@@ -19,7 +19,8 @@ public class IDOEntityList implements List {
 
   private IDOPrimaryKeyList _pkLists;
 
-  private IDOEntityList(){
+  @SuppressWarnings("unused")
+	private IDOEntityList(){
   }
 
   public IDOEntityList(Collection idoPrimaryKeyList) {
@@ -40,7 +41,8 @@ public class IDOEntityList implements List {
   public void clear() {
     this._pkLists.clear();
   }
-  public boolean equals(Object o) {
+  @Override
+	public boolean equals(Object o) {
     if(o instanceof IDOEntityList){
       return this._pkLists.equals(((IDOEntityList)o)._pkLists);
     }
@@ -167,7 +169,8 @@ public class IDOEntityList implements List {
 	private int _index=0;
 	private boolean _hasPrevious=false;
 
-    private IDOEntityIterator() {
+    @SuppressWarnings("unused")
+		private IDOEntityIterator() {
     }
 
     public IDOEntityIterator( IDOEntityList entities) {

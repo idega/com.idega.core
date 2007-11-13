@@ -3,9 +3,9 @@ package com.idega.core.accesscontrol.data;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
+
 import javax.ejb.FinderException;
-import com.idega.user.data.User;
-import com.idega.user.data.UserBMPBean;
+
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOException;
 import com.idega.data.query.CountColumn;
@@ -31,6 +31,7 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	private static final String COLUMN_LOGIN_TYPE = "LOGIN_TYPE";
 	private transient String unEncryptedUserPassword;
 
+	@Override
 	public void initializeAttributes() {
 		addAttribute(this.getIDColumnName());
 		addAttribute(getColumnNameUserID(), "User id", true, true, Integer.class, "many-to-one", User.class);
@@ -55,10 +56,12 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		
 	}
 
+	@Override
 	public void setDefaultValues() {
 		setColumn(getOldUserPasswordColumnName(), "rugl");
 	}
 
+	@Override
 	public String getEntityName() {
 		return ENTITY_NAME;
 	}

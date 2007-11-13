@@ -17,7 +17,9 @@ import java.util.RandomAccess;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.FinderException;
+
 import com.idega.data.query.Criteria;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.JoinCriteria;
@@ -63,6 +65,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 
 	
 
+	@SuppressWarnings("unused")
 	private IDOPrimaryKeyList() {
 	}
 
@@ -517,6 +520,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		return o;
 	}
 
+	@Override
 	public void clear() {
 		super.clear();
 		this._entities.clear();
@@ -677,7 +681,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 //	}
 
 
-  public boolean equals(Object o) {
+  @Override
+	public boolean equals(Object o) {
   	if(!super.equals(o)) {
 			return false;
 		}
@@ -712,7 +717,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
   }
 
   
-  public Object remove(int index) {
+  @Override
+	public Object remove(int index) {
   	super.remove(index);
   	debug("[PrimaryKeyList]: method remove("+index+") before");
 	this._tracker.printLoadInformations();
@@ -722,7 +728,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
     return this._entities.remove(index);
   }
 
-  public boolean remove(Object o) {
+  @Override
+	public boolean remove(Object o) {
   	if(o instanceof IDOEntity){
   		return removeIDOEntity((IDOEntity)o);
   	}
@@ -775,7 +782,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
     return this._entities.toArray(a);
   }
   
-  public boolean containsAll(Collection c) {  //Implementation copied from java.util.AbstractCollection
+  @Override
+	public boolean containsAll(Collection c) {  //Implementation copied from java.util.AbstractCollection
   	Iterator e = c.iterator();
 	while (e.hasNext()) {
 		if(!contains(e.next())) {
@@ -786,7 +794,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	return true;
   }
   
-  public boolean add(Object o) {
+  @Override
+	public boolean add(Object o) {
   	boolean toReturn;
   	if(o instanceof IDOEntity){
   		toReturn = this._entities.add(validateIDOEntityObject((IDOEntity)o)) && super.add(((IDOEntity)o).getPrimaryKey());
@@ -812,7 +821,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
   	return toReturn;
   }
   
-  public void add(int index, Object element) {
+  @Override
+	public void add(int index, Object element) {
   	if(element instanceof IDOEntity){
   		this._entities.add(index,validateIDOEntityObject((IDOEntity)element));
   		super.add(index,((IDOEntity)element).getPrimaryKey());
@@ -837,7 +847,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
   	}
   }
   
-  public boolean addAll(Collection c) {
+  @Override
+	public boolean addAll(Collection c) {
   	boolean toReturn=true;
 	for (Iterator iter = c.iterator(); iter.hasNext();) {
 		Object element = iter.next();
@@ -847,7 +858,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	}
   	return toReturn;
   }
-  public boolean addAll(int index, Collection c) {
+  @Override
+	public boolean addAll(int index, Collection c) {
   	int i = index;
   	for (Iterator iter = c.iterator(); iter.hasNext();i++) {
 		Object element = iter.next();
@@ -857,7 +869,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
     return c.size() != 0; // this return implementation is copied from java.util.Vector
   }
   
-  public boolean removeAll(Collection c) {  //Implementation copied from java.util.AbstractCollection
+  @Override
+	public boolean removeAll(Collection c) {  //Implementation copied from java.util.AbstractCollection
 	boolean modified = false;
 	Iterator e = iterator();
 	while (e.hasNext()) {
@@ -869,7 +882,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	return modified;
   }
   
-  public boolean retainAll(Collection c) {  //Implementation copied from java.util.AbstractCollection
+  @Override
+	public boolean retainAll(Collection c) {  //Implementation copied from java.util.AbstractCollection
 	boolean modified = false;
 	Iterator e = iterator();
 	while (e.hasNext()) {
@@ -881,7 +895,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	return modified;
   }
   
-  public Object set(int index, Object element) {
+  @Override
+	public Object set(int index, Object element) {
   	Object toReturn = null;
   	if(element instanceof IDOEntity){
   		toReturn=this._entities.set(index,validateIDOEntityObject((IDOEntity)element));
@@ -909,14 +924,16 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
   	return toReturn;
   }
   
-  public int indexOf(Object o) {
+  @Override
+	public int indexOf(Object o) {
   	if(o instanceof IDOEntity){
   		return this._entities.indexOf(o);
   	} else {
   		return super.indexOf(o);
   	}
   }
-  public int lastIndexOf(Object o) {
+  @Override
+	public int lastIndexOf(Object o) {
   	if(o instanceof IDOEntity){
   		return this._entities.lastIndexOf(o);
   	} else {
@@ -1018,6 +1035,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 			return true;
 		}
 		
+		@Override
 		public Object clone(){
 			LoadTracker obj = null;
 				
@@ -1483,6 +1501,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 			}
 
 
+			@Override
 			public boolean equals(Object obj) {
 				/**@todo: Implement this java.util.Comparator method*/
 				throw new java.lang.UnsupportedOperationException("Method equals() not yet implemented.");
