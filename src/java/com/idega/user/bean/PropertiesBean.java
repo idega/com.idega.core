@@ -13,7 +13,7 @@ public class PropertiesBean implements AbstractProperties {
 	
 	private List<String> uniqueIds = null;
 	
-	private boolean isRemoteMode = false;
+	private boolean remoteMode = false;
 	private boolean showLabels = false;
 	private boolean showAddress = true;
 	private boolean showDescription = false;
@@ -90,11 +90,11 @@ public class PropertiesBean implements AbstractProperties {
 	}
 
 	public boolean isRemoteMode() {
-		return isRemoteMode;
+		return remoteMode;
 	}
 
-	public void setRemoteMode(boolean isRemoteMode) {
-		this.isRemoteMode = isRemoteMode;
+	public void setRemoteMode(boolean remoteMode) {
+		this.remoteMode = remoteMode;
 	}
 	
 	public boolean isShowLabels() {
