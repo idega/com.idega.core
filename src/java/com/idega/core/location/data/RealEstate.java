@@ -16,6 +16,16 @@ public interface RealEstate extends IDOEntity {
 	public String getRealEstateNumber();
 
 	/**
+	 * @see com.idega.core.location.data.RealEstateBMPBean#setRealEstateUnit
+	 */
+	public void setRealEstateUnit(String unit);
+
+	/**
+	 * @see com.idega.core.location.data.RealEstateBMPBean#getRealEstateUnit
+	 */
+	public String getRealEstateUnit();
+
+	/**
 	 * @see com.idega.core.location.data.RealEstateBMPBean#setRealEstateCode
 	 */
 	public void setRealEstateCode(String realEstateCode);
@@ -94,4 +104,9 @@ public interface RealEstate extends IDOEntity {
 	 * @see com.idega.core.location.data.RealEstateBMPBean#getStreetID
 	 */
 	public Integer getStreetID();
+
+	/**
+	 * @see com.idega.core.location.data.RealEstateBMPBean#isDummy
+	 */
+	public boolean isDummy();
 }

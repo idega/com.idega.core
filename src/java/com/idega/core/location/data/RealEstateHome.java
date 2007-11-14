@@ -11,5 +11,6 @@ public interface RealEstateHome extends IDOHome {
 
 	public RealEstate findByPrimaryKey(Object pk) throws FinderException;
 
-	public RealEstate findRealEstateByNumber(String number) throws FinderException;
+	public RealEstate findRealEstateByRealEstateIdentifier(String landRegisterMapNumber, String number, String unit,
+			String code) throws FinderException;
 }
