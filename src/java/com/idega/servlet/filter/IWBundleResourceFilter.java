@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.24 2007/11/15 21:12:53 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.25 2007/11/15 23:19:41 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/15 21:12:53 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/15 23:19:41 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -58,6 +58,12 @@ public class IWBundleResourceFilter extends BaseFilter {
 	protected List flushedResources = new ArrayList();
 	static String BUNDLES_STANDARD_DIR = "/idegaweb/bundles/";
 	static String BUNDLE_SUFFIX = DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
+	
+	private static String SVG = "svg";
+	private static String JSP = "jsp";
+	private static String XHTML = "xhtml";
+	private static String PSVG = "psvg";
+	private static String AXIS_JWS = "jws";
 
 	/*
 	 * (non-Javadoc)
@@ -108,14 +114,11 @@ public class IWBundleResourceFilter extends BaseFilter {
 					//check if we have flushed the file from the jar before and then do nothing OR flush it and then do nothing
 					//THIS IS VERY SIMPLE CACHING that invalidates on restart
 					try {
-						String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
-						String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
-						IWBundle bundle = getIWMainApplication(request).getBundle(bundleIdentifier);
-						InputStream stream = bundle.getResourceInputStream(pathWithinBundle);
-						
-						//TODO DO we need to synchronize ON the requestUriWithoutContextPath ?
-						copyResourceFromJarToWebapp(iwma,requestUriWithoutContextPath);
-						flushedResources.add(requestUriWithoutContextPath);
+						//syncronized on the resource, this only happens once for each resource because the second time the file has been flushed
+						synchronized (requestUriWithoutContextPath) {
+							copyResourceFromJarToWebapp(iwma,requestUriWithoutContextPath);
+							flushedResources.add(requestUriWithoutContextPath);
+						}
 						
 						//old way without flushing to webapp
 						//String mimeType = getMimeType(pathWithinBundle);
@@ -141,10 +144,10 @@ public class IWBundleResourceFilter extends BaseFilter {
 		int index = requestUriWithoutContextPath.indexOf(BUNDLE_SUFFIX);
 		String bundleIdentifier = null;
 		if(index!=-1){
-			bundleIdentifier = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length(), index);
+			bundleIdentifier = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length()+1, index);
 		}
 		else{
-			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length());
+			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length()+1);
 			index = URIWithoutBundlesURI.indexOf("/");
 			bundleIdentifier = URIWithoutBundlesURI.substring(0, index);
 		}
@@ -156,12 +159,11 @@ public class IWBundleResourceFilter extends BaseFilter {
 	protected static String getResourceWithinBundle(String requestUriWithoutContextPath) {
 		String rest = null;
 		int index = requestUriWithoutContextPath.indexOf(BUNDLE_SUFFIX);
-		String bundleIdentifier = null;
 		if(index!=-1){
 			rest = requestUriWithoutContextPath.substring(index+BUNDLE_SUFFIX.length()+1);
 		}
 		else{
-			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length());
+			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length()+1);
 			index = URIWithoutBundlesURI.indexOf("/");
 			rest = URIWithoutBundlesURI.substring(index);
 		}
@@ -205,16 +207,11 @@ public class IWBundleResourceFilter extends BaseFilter {
 		}
 	}
 	
-	private static String SVG = "svg";
-	private static String JSP = "jsp";
-	private static String XHTML = "xhtml";
-	private static String PSVG = "psvg";
-	private static String AXIS_JWS = "jws";
 
 	/**
 	 * @param realFile
 	 */
-	// private boolean speciallyHandleFile(HttpServletRequest request,String
+	// private boolean d(HttpServletRequest request,String
 	// bundleIdentifier,String filePathInBundle,File file) {
 	private boolean speciallyHandleFile(HttpServletRequest request, String workspaceDir, String webappDir, String requestUriWithoutContextPath) {
 		String fileEnding = getFileEnding(requestUriWithoutContextPath);
