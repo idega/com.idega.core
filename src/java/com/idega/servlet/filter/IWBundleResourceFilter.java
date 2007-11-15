@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.17 2007/09/28 11:08:06 civilis Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.18 2007/11/15 17:45:15 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,15 +15,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import com.idega.core.file.business.FileIconSupplier;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWBundle;
@@ -40,18 +35,20 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/09/28 11:08:06 $ by $Author: civilis $
+ * Last modified: $Date: 2007/11/15 17:45:15 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
 	private static final Logger log = Logger.getLogger(IWBundleResourceFilter.class.getName());
 	
-	private boolean feedFromSetBundleDir = false;
-	private boolean feedFromJarFiles = IWMainApplication.loadBundlesFromJars;
-	private String sBundlesDirectory;
+	protected boolean feedFromSetBundleDir = false;
+	protected boolean feedFromJarFiles = IWMainApplication.loadBundlesFromJars;
+	protected String sBundlesDirectory;
+
+	protected List<String> flushedResources = new ArrayList(<String>);
 	static String BUNDLES_STANDARD_DIR = "/idegaweb/bundles/";
 	static String BUNDLE_SUFFIX = DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
 
@@ -79,43 +76,57 @@ public class IWBundleResourceFilter extends BaseFilter {
 		HttpServletRequest request = (HttpServletRequest) sreq;
 		HttpServletResponse response = (HttpServletResponse) sres;
 		String requestUriWithoutContextPath = getURIMinusContextPath(request);
-		if (this.feedFromSetBundleDir) {
-			try {
-				String webappDir = getIWMainApplication(request).getApplicationRealPath();
-				if (!speciallyHandleFile(request, this.sBundlesDirectory, webappDir, requestUriWithoutContextPath)) {
-					
-					File realFile = getFileInWorkspace(this.sBundlesDirectory, requestUriWithoutContextPath);
-					if (realFile.exists()) {
-						feedOutFile(request,response, realFile);
-						return;
+		
+		if(!flushedResources.contains(requestUriWithoutContextPath)){
+			IWMainApplication iwma = getIWMainApplication(request);
+			String webappDir = iwma.getApplicationRealPath();
+			
+			if (this.feedFromSetBundleDir) {
+				try {
+					if (!speciallyHandleFile(request, this.sBundlesDirectory, webappDir, requestUriWithoutContextPath)) {
+						
+						File realFile = getFileInWorkspace(this.sBundlesDirectory, requestUriWithoutContextPath);
+						if (realFile.exists()) {
+							feedOutFile(request,response, realFile);
+							return;
+						}
 					}
 				}
-			}
-			catch (Exception e) {
-				log.log(Level.WARNING, "Error serving file from workspace", e);
-			}
-		}
-		else if (feedFromJarFiles) {
-			if (requestUriWithoutContextPath.startsWith(BUNDLES_STANDARD_DIR)) {
-				try {
-					String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
-					String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
-					IWBundle bundle = getIWMainApplication(request).getBundle(bundleIdentifier);
-					InputStream stream = bundle.getResourceInputStream(pathWithinBundle);
-					String mimeType = getMimeType(pathWithinBundle);
-					feedOutFile(request, response, mimeType, stream);
-					return;
-				}
-				catch (FileNotFoundException e) {
-					log.warning("File not found: " + requestUriWithoutContextPath);
-				}
 				catch (Exception e) {
-					log.log(Level.WARNING, "Error serving file from jar", e);
+					log.log(Level.WARNING, "Error serving file from workspace", e);
+				}
+			}
+			else if (feedFromJarFiles) {
+				if (requestUriWithoutContextPath.startsWith(BUNDLES_STANDARD_DIR)) {
+					//check if we have flushed the file from the jar before and then do nothing OR flush it and then do nothing
+					//THIS IS VERY SIMPLE CACHING that invalidates on restart
+					try {
+						String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
+						String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
+						IWBundle bundle = getIWMainApplication(request).getBundle(bundleIdentifier);
+						InputStream stream = bundle.getResourceInputStream(pathWithinBundle);
+						
+						//TODO DO we need to synchronize ON the requestUriWithoutContextPath ?
+						copyResourceFromJarToWebapp(iwma,requestUriWithoutContextPath);
+						flushedResources.add(requestUriWithoutContextPath);
+						
+						//old way without flushing to webapp
+						//String mimeType = getMimeType(pathWithinBundle);
+						//feedOutFile(request, response, mimeType, stream);
+						//return;
+						
+					}
+					catch (FileNotFoundException e) {
+						log.warning("File not found: " + requestUriWithoutContextPath);
+					}
+					catch (Exception e) {
+						log.log(Level.WARNING, "Error serving file from jar : "+ requestUriWithoutContextPath, e);
+					}
 				}
 			}
 		}
 		
-		// if file is specially handled, or any error occurs, fall back to the default
+		// if file is specially handled, flushed from the jar file or any error occurs, then let the server keep on going with it
 		chain.doFilter(sreq, sres);
 	}
 
