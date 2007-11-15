@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.28 2007/11/15 23:58:04 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.29 2007/11/15 23:59:20 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/15 23:58:04 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/15 23:59:20 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -171,7 +171,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * @param iwma
 	 * @param requestUriWithoutContextPath
 	 */
-	public static void synchronized copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath){
+	public synchronized static void copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath){
 		
 		String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
