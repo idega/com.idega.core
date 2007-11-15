@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.23 2007/11/15 19:16:41 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.24 2007/11/15 21:12:53 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/15 19:16:41 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/15 21:12:53 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -161,7 +161,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 			rest = requestUriWithoutContextPath.substring(index+BUNDLE_SUFFIX.length()+1);
 		}
 		else{
-			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length()+1);
+			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length());
 			index = URIWithoutBundlesURI.indexOf("/");
 			rest = URIWithoutBundlesURI.substring(index);
 		}
