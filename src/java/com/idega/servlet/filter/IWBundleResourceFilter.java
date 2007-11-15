@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.18 2007/11/15 17:45:15 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.19 2007/11/15 17:50:49 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,10 +36,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/15 17:45:15 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/15 17:50:49 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -48,7 +49,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	protected boolean feedFromJarFiles = IWMainApplication.loadBundlesFromJars;
 	protected String sBundlesDirectory;
 
-	protected List<String> flushedResources = new ArrayList(<String>);
+	protected List flushedResources = new ArrayList();
 	static String BUNDLES_STANDARD_DIR = "/idegaweb/bundles/";
 	static String BUNDLE_SUFFIX = DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
 
