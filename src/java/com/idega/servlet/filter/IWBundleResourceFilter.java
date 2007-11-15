@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.27 2007/11/15 23:32:54 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.28 2007/11/15 23:58:04 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/15 23:32:54 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/15 23:58:04 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -114,12 +114,8 @@ public class IWBundleResourceFilter extends BaseFilter {
 					//check if we have flushed the file from the jar before and then do nothing OR flush it and then do nothing
 					//THIS IS VERY SIMPLE CACHING that invalidates on restart
 					try {
-						//syncronized on the resource, this only happens once for each resource because the second time the file has been flushed
-						synchronized (requestUriWithoutContextPath) {
-							copyResourceFromJarToWebapp(iwma,requestUriWithoutContextPath);
-							flushedResources.add(requestUriWithoutContextPath);
-						}
-						
+						copyResourceFromJarToWebapp(iwma,requestUriWithoutContextPath);
+						flushedResources.add(requestUriWithoutContextPath);
 						//old way without flushing to webapp
 						//String mimeType = getMimeType(pathWithinBundle);
 						//feedOutFile(request, response, mimeType, stream);
@@ -175,7 +171,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * @param iwma
 	 * @param requestUriWithoutContextPath
 	 */
-	public static void copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath){
+	public static void synchronized copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath){
 		
 		String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
