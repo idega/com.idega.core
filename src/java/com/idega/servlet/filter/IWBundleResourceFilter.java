@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.25 2007/11/15 23:19:41 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.26 2007/11/15 23:21:55 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/15 23:19:41 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/15 23:21:55 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -125,11 +125,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 						//feedOutFile(request, response, mimeType, stream);
 						//return;
 						
-					}
-					catch (FileNotFoundException e) {
-						log.warning("File not found: " + requestUriWithoutContextPath);
-					}
-					catch (Exception e) {
+					}catch (Exception e) {
 						log.log(Level.WARNING, "Error serving file from jar : "+ requestUriWithoutContextPath, e);
 					}
 				}
