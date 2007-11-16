@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.31 2007/11/16 02:04:03 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.32 2007/11/16 02:37:18 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,13 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import com.idega.core.file.business.FileIconSupplier;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWBundle;
@@ -42,10 +36,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/16 02:04:03 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/16 02:37:18 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -89,6 +83,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 		HttpServletRequest request = (HttpServletRequest) sreq;
 		HttpServletResponse response = (HttpServletResponse) sres;
 		String requestUriWithoutContextPath = getURIMinusContextPath(request);
+		
 		
 		if(!flushedResources.contains(requestUriWithoutContextPath)){
 			IWMainApplication iwma = getIWMainApplication(request);
@@ -134,18 +129,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 
 	protected static String getBundleFromRequest(String requestUriWithoutContextPath) {
 		int index = requestUriWithoutContextPath.indexOf(BUNDLE_SUFFIX);
-		String bundleIdentifier = null;
-		if(index!=-1){
-			bundleIdentifier = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length(), index);
-		}
-		else{
-			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length());
-			index = URIWithoutBundlesURI.indexOf("/");
-			bundleIdentifier = URIWithoutBundlesURI.substring(0, index);
-		}
-		
-		return bundleIdentifier;
-		
+		return requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length(), index);
 	}
 
 	protected static String getResourceWithinBundle(String requestUriWithoutContextPath) {
@@ -155,7 +139,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 			rest = requestUriWithoutContextPath.substring(index+BUNDLE_SUFFIX.length()+1);
 		}
 		else{
-			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length());
+			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length()+1);
 			index = URIWithoutBundlesURI.indexOf("/");
 			rest = URIWithoutBundlesURI.substring(index);
 		}
