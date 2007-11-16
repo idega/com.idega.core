@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.29 2007/11/15 23:59:20 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.30 2007/11/16 01:13:53 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/15 23:59:20 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/16 01:13:53 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -175,24 +175,23 @@ public class IWBundleResourceFilter extends BaseFilter {
 		
 		String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
-		
-		IWBundle bundle = iwma.getBundle(bundleIdentifier);
-		long bundleLastModified = bundle.getResourceTime(pathWithinBundle);
-		
 		String webappFilePath = iwma.getApplicationRealPath() + requestUriWithoutContextPath;
 		File webappFile = new File(webappFilePath);
-		if (webappFile.exists()) {
-			long webappLastModified = webappFile.lastModified();
-			if (webappLastModified > bundleLastModified) {
-				return;
-			}
-		}
+		IWBundle bundle = iwma.getBundle(bundleIdentifier);
+		
+//		long bundleLastModified = bundle.getResourceTime(pathWithinBundle);
+//		if (webappFile.exists()) {
+//			long webappLastModified = webappFile.lastModified();
+//			if (webappLastModified > bundleLastModified) {
+//				return;
+//			}
+//		}
 		
 		try {
 			webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
 			InputStream input = bundle.getResourceInputStream(pathWithinBundle);
 			FileUtil.streamToFile(input, webappFile);
-			webappFile.setLastModified(bundleLastModified);
+//			webappFile.setLastModified(bundleLastModified);
 		}
 		catch (IOException e) {
 			log.log(Level.WARNING, "Could not copy resource from jar to " + requestUriWithoutContextPath, e);
