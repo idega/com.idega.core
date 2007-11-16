@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.33 2007/11/16 02:38:44 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.34 2007/11/16 03:18:17 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/16 02:38:44 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/16 03:18:17 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -115,12 +115,13 @@ public class IWBundleResourceFilter extends BaseFilter {
 					//check if we have flushed the file from the jar before and then do nothing OR flush it and then do nothing
 					//THIS IS VERY SIMPLE CACHING that invalidates on restart
 					try {
-						copyResourceFromJarToWebapp(iwma,requestUriWithoutContextPath);
-						flushedResources.add(requestUriWithoutContextPath);
+						File realFile = copyResourceFromJarToWebapp(iwma,requestUriWithoutContextPath);
 						//old way without flushing to webapp
 						//String mimeType = getMimeType(pathWithinBundle);
 						//feedOutFile(request, response, mimeType, stream);
-						//return;
+						feedOutFile(request,response,realFile);
+						flushedResources.add(requestUriWithoutContextPath);
+						return;
 						
 					}catch (Exception e) {
 						log.log(Level.WARNING, "Error serving file from jar : "+ requestUriWithoutContextPath, e);
@@ -161,7 +162,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * @param iwma
 	 * @param requestUriWithoutContextPath
 	 */
-	public synchronized static void copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath){
+	public synchronized static File copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath){
 		
 		String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
@@ -182,6 +183,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 			InputStream input = bundle.getResourceInputStream(pathWithinBundle);
 			FileUtil.streamToFile(input, webappFile);
 //			webappFile.setLastModified(bundleLastModified);
+			return webappFile;
 		}
 		catch (IOException e) {
 			log.log(Level.WARNING, "Could not copy resource from jar to " + requestUriWithoutContextPath, e);
