@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.34 2007/11/16 03:18:17 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.35 2007/11/16 03:20:03 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/16 03:18:17 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/16 03:20:03 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -188,6 +188,8 @@ public class IWBundleResourceFilter extends BaseFilter {
 		catch (IOException e) {
 			log.log(Level.WARNING, "Could not copy resource from jar to " + requestUriWithoutContextPath, e);
 		}
+		
+		return null;
 	}
 	
 
