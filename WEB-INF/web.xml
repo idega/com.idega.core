@@ -274,7 +274,7 @@
         <url-pattern>/services/*</url-pattern>
     </filter-mapping>
 
-	<!-- DISABLED The GZIPFilter that compressed output to the client
+	<!-- GZIPFilter that compresses output to the client -->
 		<filter>
 		<filter-name>compress</filter-name>
 		<filter-class>com.idega.servlet.filter.GZIPFilter</filter-class>  
@@ -292,12 +292,22 @@
 		
 		<filter-mapping>
 		<filter-name>compress</filter-name>
+		<url-pattern>*.xhtml</url-pattern>
+		</filter-mapping>
+		
+		<filter-mapping>
+		<filter-name>compress</filter-name>
 		<url-pattern>*.html</url-pattern>
 		</filter-mapping>
 		
 		<filter-mapping>
 		<filter-name>compress</filter-name>
 		<url-pattern>*.htm</url-pattern>
+		</filter-mapping>
+		
+		<filter-mapping>
+		<filter-name>compress</filter-name>
+		<url-pattern>*.css</url-pattern>
 		</filter-mapping>
 		
 		<filter-mapping>
@@ -315,7 +325,6 @@
 		<url-pattern>/workspace/*</url-pattern>
 		</filter-mapping>
 		
-	-->
 	<!-- End of GZIPFilter -->
 
 	<welcome-file-list>
