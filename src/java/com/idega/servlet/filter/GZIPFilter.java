@@ -13,6 +13,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.idega.idegaweb.IWMainApplication;
+
 
 /**
  * USAGE:
@@ -42,7 +44,7 @@ import javax.servlet.http.HttpServletResponse;
  * 
  * @author laddi
  */
-public class GZIPFilter implements Filter {
+public class GZIPFilter extends BaseFilter implements Filter {
 
 	/*
 	 * (non-Javadoc)
@@ -60,7 +62,12 @@ public class GZIPFilter implements Filter {
 	 *      javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-		if (req instanceof HttpServletRequest) {
+		
+		//TODO make a checkbox/application setting for turning this filter on and off
+		IWMainApplication iwma = getIWMainApplication(request);
+		boolean gzipOutput = Boolean.valueOf(iwma.getSettings().getProperty("GZIP_ENABLED", "false"));
+		
+		if (gzipOutput && (req instanceof HttpServletRequest)) {
 			HttpServletRequest request = (HttpServletRequest) req;
 			HttpServletResponse response = (HttpServletResponse) res;
 			String ae = request.getHeader("accept-encoding");
