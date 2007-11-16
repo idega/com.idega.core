@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.35 2007/11/16 03:20:03 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.36 2007/11/16 22:53:48 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,13 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import com.idega.core.file.business.FileIconSupplier;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWBundle;
@@ -42,10 +36,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/16 03:20:03 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/16 22:53:48 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -119,9 +113,11 @@ public class IWBundleResourceFilter extends BaseFilter {
 						//old way without flushing to webapp
 						//String mimeType = getMimeType(pathWithinBundle);
 						//feedOutFile(request, response, mimeType, stream);
-						feedOutFile(request,response,realFile);
-						flushedResources.add(requestUriWithoutContextPath);
-						return;
+						if(realFile!=null){
+							feedOutFile(request,response,realFile);
+							flushedResources.add(requestUriWithoutContextPath);
+							return;
+						}
 						
 					}catch (Exception e) {
 						log.log(Level.WARNING, "Error serving file from jar : "+ requestUriWithoutContextPath, e);
@@ -170,19 +166,19 @@ public class IWBundleResourceFilter extends BaseFilter {
 		File webappFile = new File(webappFilePath);
 		IWBundle bundle = iwma.getBundle(bundleIdentifier);
 		
-//		long bundleLastModified = bundle.getResourceTime(pathWithinBundle);
-//		if (webappFile.exists()) {
-//			long webappLastModified = webappFile.lastModified();
-//			if (webappLastModified > bundleLastModified) {
-//				return;
-//			}
-//		}
+		long bundleLastModified = bundle.getResourceTime(pathWithinBundle);
+		if (webappFile.exists()) {
+			long webappLastModified = webappFile.lastModified();
+			if (webappLastModified > bundleLastModified) {
+				return null;
+			}
+		}
 		
 		try {
 			webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
 			InputStream input = bundle.getResourceInputStream(pathWithinBundle);
 			FileUtil.streamToFile(input, webappFile);
-//			webappFile.setLastModified(bundleLastModified);
+			webappFile.setLastModified(bundleLastModified);
 			return webappFile;
 		}
 		catch (IOException e) {
