@@ -63,23 +63,27 @@ public class GZIPFilter extends BaseFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 		
-		//TODO make a checkbox/application setting for turning this filter on and off
-		IWMainApplication iwma = getIWMainApplication(request);
-		boolean gzipOutput = Boolean.valueOf(iwma.getSettings().getProperty("GZIP_ENABLED", "false"));
-		
-		if (gzipOutput && (req instanceof HttpServletRequest)) {
+		if (req instanceof HttpServletRequest) {
 			HttpServletRequest request = (HttpServletRequest) req;
 			HttpServletResponse response = (HttpServletResponse) res;
-			String ae = request.getHeader("accept-encoding");
-			if (ae != null && ae.indexOf("gzip") != -1) {
-				//System.out.println("GZIP supported, compressing.");
-				GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(response);
-				chain.doFilter(req, wrappedResponse);
-				wrappedResponse.finishResponse();
-				return;
+			
+			//TODO make a checkbox/application setting for turning this filter on and off
+			IWMainApplication iwma = getIWMainApplication(request);
+			boolean gzipOutput = Boolean.valueOf(iwma.getSettings().getProperty("GZIP_ENABLED", "false"));
+			if(gzipOutput){
+				String ae = request.getHeader("accept-encoding");
+				if (ae != null && ae.indexOf("gzip") != -1) {
+					//System.out.println("GZIP supported, compressing.");
+					GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(response);
+					chain.doFilter(req, wrappedResponse);
+					wrappedResponse.finishResponse();
+					return;
+				}
 			}
-			chain.doFilter(req, res);
 		}
+		//continue the chain if failed or gzipping is disabled
+		chain.doFilter(req, res);
+	
 	}
 
 	/*
