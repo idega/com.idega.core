@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.37 2007/11/16 22:54:46 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.38 2007/11/16 23:08:25 eiki Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -42,10 +42,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/16 22:54:46 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/16 23:08:25 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -122,6 +122,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 						if(realFile!=null){
 							feedOutFile(request,response,realFile);
 							flushedResources.add(requestUriWithoutContextPath);
+							log.log(Level.INFO, "Flushed file to webapp : "+requestUriWithoutContextPath);
 							return;
 						}
 						
