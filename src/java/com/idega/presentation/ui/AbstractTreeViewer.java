@@ -48,7 +48,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	boolean _nowrap = true;
 	String lastNode = null;
 
-	private static final String TREEVIEW_PREFIX = "treeviewer/ui/";
+	public static final String TREEVIEW_PREFIX = "treeviewer/ui/";
 
 	public static final String _UI_WIN = "win/";
 	public static final String _UI_MAC = "mac/";
