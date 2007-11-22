@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.38 2007/11/16 23:08:25 eiki Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.39 2007/11/22 13:41:51 civilis Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.faces.context.FacesContext;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -42,10 +44,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/16 23:08:25 $ by $Author: eiki $
+ * Last modified: $Date: 2007/11/22 13:41:51 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -318,7 +320,9 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 *          Something like
 	 *          '/idegaweb/bundles/com.idega.core.bundle/jsp/myjsp.jsp'
 	 */
-	public static void copyWorkspaceFileToWebapp(String workspaceDir, String webappDir, String requestUriWithoutContextPath) {
+	public static synchronized void copyWorkspaceFileToWebapp(String workspaceDir, String webappDir, String requestUriWithoutContextPath) {
+		
+//		TODO: check if synchronization is needed here
 
 		if (webappDir.endsWith(File.separator)) {
 			// cut the slash:
@@ -346,6 +350,22 @@ public class IWBundleResourceFilter extends BaseFilter {
 			catch (IOException e) {
 				log.warning("Error copying file: " + fileInWorkspace.getPath());
 			}
+		}
+	}
+	
+	public static void checkCopyOfResourceToWebapp(FacesContext context, String resourceURI) {
+		
+		String bundlesProperty = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
+		
+		if(bundlesProperty != null) {
+			String webappDir = iwma.getApplicationRealPath();
+			String workspaceDir = bundlesProperty;
+			String pathToBundleFileInWorkspace = resourceURI;
+			IWBundleResourceFilter.copyWorkspaceFileToWebapp(workspaceDir, webappDir, pathToBundleFileInWorkspace);
+			
+		} else if(IWMainApplication.loadBundlesFromJars) {
+			IWBundleResourceFilter.copyResourceFromJarToWebapp(iwma, resourceURI);
 		}
 	}
 
