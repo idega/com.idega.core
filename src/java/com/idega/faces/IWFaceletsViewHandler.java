@@ -10,7 +10,6 @@ import javax.faces.context.FacesContext;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.core.view.ViewNodeBase;
-import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.servlet.filter.IWBundleResourceFilter;
 import com.idega.util.FacesUtil;
@@ -20,10 +19,10 @@ import com.sun.facelets.FaceletViewHandler;
  * <p>
  * Mostly copied from IWJspViewHandler
  * </p>
- *  Last modified: $Date: 2007/07/27 15:46:53 $ by $Author: civilis $
+ *  Last modified: $Date: 2007/11/22 13:42:31 $ by $Author: civilis $
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class IWFaceletsViewHandler extends FaceletViewHandler {
 	
@@ -121,22 +120,8 @@ public class IWFaceletsViewHandler extends FaceletViewHandler {
 	 * </p>
 	 */
 	private void checkCopyOfFaceletToWebapp(FacesContext context,ViewNode node) {
-		if(node.getViewNodeBase() == ViewNodeBase.FACELET){
-			String bundlesProperty=System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
-			IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
-			if(bundlesProperty!=null){
-				String webappDir = iwma.getApplicationRealPath();
-				String workspaceDir = bundlesProperty;
-				String pathToBundleFileInWorkspace = node.getResourceURI();
-				IWBundleResourceFilter.copyWorkspaceFileToWebapp(workspaceDir,webappDir,pathToBundleFileInWorkspace);
-			}
-			else if(IWMainApplication.loadBundlesFromJars){
-				String jspUri = node.getResourceURI();
-				IWBundleResourceFilter.copyResourceFromJarToWebapp(iwma,jspUri);
-			}
 		
-		}
+		if(node.getViewNodeBase() == ViewNodeBase.FACELET)
+			IWBundleResourceFilter.checkCopyOfResourceToWebapp(context, node.getResourceURI());
 	}
-	
 }
-

@@ -1,5 +1,5 @@
 /*
- * $Id: IWJspViewHandler.java,v 1.15 2007/07/27 15:47:39 civilis Exp $
+ * $Id: IWJspViewHandler.java,v 1.16 2007/11/22 13:42:31 civilis Exp $
  * Created on 21.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -19,7 +19,6 @@ import javax.faces.context.FacesContext;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.core.view.ViewNodeBase;
-import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.servlet.filter.IWBundleResourceFilter;
 import com.idega.util.FacesUtil;
@@ -30,10 +29,10 @@ import com.idega.util.FacesUtil;
  * This class overrides the default JSF ViewHandler and adds idegaWeb specific way of handling JSP pages
  * that are registered in the ViewNode hierarchy.<br/>
  * </p>
- *  Last modified: $Date: 2007/07/27 15:47:39 $ by $Author: civilis $
+ *  Last modified: $Date: 2007/11/22 13:42:31 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
@@ -203,22 +202,8 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	 * </p>
 	 */
 	private void checkCopyOfJspToWebapp(FacesContext context,ViewNode node) {
-		if(node.getViewNodeBase() == ViewNodeBase.JSP){
-			String bundlesProperty=System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
-			IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
-			if(bundlesProperty!=null){
-				String webappDir = iwma.getApplicationRealPath();
-				String workspaceDir = bundlesProperty;
-				String pathToBundleFileInWorkspace = node.getResourceURI();
-				IWBundleResourceFilter.copyWorkspaceFileToWebapp(workspaceDir,webappDir,pathToBundleFileInWorkspace);
-			}
-			else if(IWMainApplication.loadBundlesFromJars){
-				String jspUri = node.getResourceURI();
-				IWBundleResourceFilter.copyResourceFromJarToWebapp(iwma,jspUri);
-			}
 		
-		}
+		if(node.getViewNodeBase() == ViewNodeBase.JSP)
+			IWBundleResourceFilter.checkCopyOfResourceToWebapp(context, node.getResourceURI());
 	}
-	
 }
-
