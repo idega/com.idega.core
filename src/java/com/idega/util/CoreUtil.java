@@ -42,7 +42,7 @@ public class CoreUtil {
 		}
 	}
 	
-	public static void addJavaSciptForChooser(IWContext iwc) {
+	public static void addJavaScriptForChooser(IWContext iwc) {
 		AddResource adder = AddResourceFactory.getInstance(iwc);
 		
 		IWBundle iwb = getCoreBundle();

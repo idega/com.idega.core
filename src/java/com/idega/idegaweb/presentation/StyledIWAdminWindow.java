@@ -168,7 +168,7 @@ private Image helpImage = null;
 		this.styleSrc = this.userBusiness.getUserApplicationStyleSheetURL();
 		this.parentPage.addStyleSheetURL(this.styleSrc);
 		
-		CoreUtil.addJavaSciptForChooser(iwc);
+		CoreUtil.addJavaScriptForChooser(iwc);
 		
 		super._main(iwc);
 	}

@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.43 2007/10/16 07:36:57 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.44 2007/11/26 14:35:02 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -192,7 +192,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		}
 
 		if (!isUseOldLogic()) {	// This is needed only for new choosers
-			CoreUtil.addJavaSciptForChooser(iwc);
+			CoreUtil.addJavaScriptForChooser(iwc);
 			
 			if (isAddSaveButton()) {	//	Some choosers may not need save button
 				add(getSaveButton());
