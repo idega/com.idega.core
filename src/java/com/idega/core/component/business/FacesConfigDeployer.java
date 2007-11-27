@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.9 2007/10/10 05:24:06 valdas Exp $
+ * $Id: FacesConfigDeployer.java,v 1.10 2007/11/27 16:29:56 civilis Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -18,7 +18,6 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
@@ -29,16 +28,18 @@ import org.xml.sax.SAXException;
 
 import com.idega.idegaweb.IWModule;
 import com.idega.idegaweb.JarLoader;
+import com.idega.util.xml.XPathUtil;
+import com.idega.util.xml.XmlUtil;
 
 /**
  * <p>
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2007/10/10 05:24:06 $ by $Author: valdas $
+ * Last modified: $Date: 2007/11/27 16:29:56 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
@@ -60,9 +61,9 @@ public class FacesConfigDeployer implements JarLoader {
 	 *      java.util.jar.JarFile, java.lang.String)
 	 */
 	public void loadJar(File bundleJarFile, JarFile jarFile, String jarPath) {
-		Enumeration entries = jarFile.entries();
+		Enumeration<JarEntry> entries = jarFile.entries();
 		while (entries.hasMoreElements()) {
-			JarEntry entry = (JarEntry) entries.nextElement();
+			JarEntry entry = entries.nextElement();
 			String entryName = entry.getName();
 			if (entryName.equals("META-INF/faces-config.xml")) {
 				try {
@@ -85,17 +86,27 @@ public class FacesConfigDeployer implements JarLoader {
 	}
 
 	public void processFacesConfig(JarFile jarFile,InputStream stream) throws ParserConfigurationException, SAXException, IOException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(false);
-		factory.setValidating(false);
-		DocumentBuilder builder = factory.newDocumentBuilder();
+		DocumentBuilder builder = XmlUtil.getDocumentBuilder();
 		
 		Document document = builder.parse(stream);
 		processDocument(jarFile,document);
 	}
 
 	public void processDocument(JarFile jarFile, Document document) {
-		Element rootElement = document.getDocumentElement();
+
+		XPathUtil util = new XPathUtil(".//component");
+		NodeList componentsElements = util.getNodeset(document);
+		
+		try {
+			
+			for (int i = 0; i < componentsElements.getLength(); i++)
+				processComponentElement(jarFile, (Element)componentsElements.item(i));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		/*Element rootElement = document.getDocumentElement();
 		try {
 			// processWSDD(null,engine,rootElement);
 			NodeList childList = rootElement.getChildNodes();
@@ -113,6 +124,7 @@ public class FacesConfigDeployer implements JarLoader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 	}
 
 	protected void processComponentElement(JarFile jarFile,Element element) throws Exception {
