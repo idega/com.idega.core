@@ -14,6 +14,8 @@
 //
 //***********************************************************//
 
+if(IWCORE == null) var IWCORE = {};
+
 var IE = document.all?true:false; 
 
 var SITE_INFO_KEYWORD_FROM_BOX = null;
@@ -27,6 +29,7 @@ var ORIGINAL_ELEMENT_INDEX = 0;
 
 var APPLICATION_PROPERTY = "application_property";
 var EDIT_BOX_ID = "changeSiteInfoBox";
+
 
 function iwOpenWindow(Address,Name,ToolBar,Location,Directories,Status,Menubar,Titlebar,Scrollbars,Resizable,Width,Height,Xcoord,Ycoord) {  
   	// usage openwindow(addr,name,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,yes/no,width,height,xcoord,ycoord) 
@@ -987,26 +990,70 @@ function registerEvent(object, eventType, functionName){
 	} 
 }
 
-function include_dom(script_filename) {
-    var html_doc = document.getElementsByTagName('head').item(0);
-    var js = document.createElement('script');
-    js.setAttribute('language', 'javascript');
-    js.setAttribute('type', 'text/javascript');
-    js.setAttribute('src', script_filename);
-    html_doc.appendChild(js);
-    return false;
+window.onload = function() {
+
+    IWCORE.includedScripts.load();
 }
 
-var included_files = new Array();
+IWCORE.includedScripts = {
 
-function include_once(script_filename) {
-    if (!in_array(script_filename, included_files)) {
-        included_files[included_files.length] = script_filename;
-        include_dom(script_filename);
+    load: function() {
+    
+        var scriptElements = document.getElementsByTagName("script");
+        var scripts = new Array();
+        
+        if(scriptElements != null)
+            for(var idx = 0; idx < scriptElements.length; idx++)
+                scripts.push(scriptElements[idx].getAttribute('src'));
+
+                
+        IWCORE.includedScripts.includedScripts = scripts;
+        return IWCORE.includedScripts.includedScripts;
+    },
+    get: function() {
+    
+	   if(IWCORE.includedScripts.includedScripts == null)
+	       IWCORE.includedScripts.includedScripts = IWCORE.includedScripts.load();
+       
+       return IWCORE.includedScripts.includedScripts;
+    },
+    
+    add: function(scriptPath) {
+    
+        var scripts = IWCORE.includedScripts.get();
+        
+        if (!IWCORE.inArray(scriptPath, scripts))
+            scripts.push(scriptPath);
+    },
+    
+    includedScripts: null,
+    
+    includeScript: function(scriptPath) {
+    
+        var scripts = IWCORE.includedScripts.get();
+        
+        if (!IWCORE.inArray(scriptPath, scripts)) {
+            scripts.push(scriptPath);
+            IWCORE.includedScripts.includeJs(scriptPath);
+        }
+    },
+    
+    includeJs: function(scriptPath) {
+    
+        var js = document.createElement('script');
+        js.setAttribute('language', 'javascript');
+        js.setAttribute('type', 'text/javascript');
+        js.setAttribute('src', scriptPath);
+        document.getElementsByTagName('head').item(0).appendChild(js);
     }
 }
 
-function in_array(needle, haystack) {
+IWCORE.includeScript = function(scriptPath) {
+
+    return IWCORE.includedScripts.includeScript(scriptPath);  
+}
+
+IWCORE.inArray = function(needle, haystack) {
     for (var i = 0; i < haystack.length; i++) {
         if (haystack[i] == needle) {
             return true;
@@ -1014,6 +1061,35 @@ function in_array(needle, haystack) {
     }
     return false;
 }
+
+/* !!    REQUIRES MOOTOOLS      !!
+*/
+IWCORE.includeScriptBatch = function(orderedScriptPathes) {
+
+    if(orderedScriptPathes == null)
+        return;
+        
+    orderedScriptPathes = orderedScriptPathes.reverse();
+    
+    IWCORE.includeScriptBatch.addJs(orderedScriptPathes);
+}
+
+IWCORE.includeScriptBatch.addJs = function(pathes) {
+
+    var path = pathes.pop();
+    IWCORE.includedScripts.add(path);
+    
+    if(pathes.length == 0) {
+        new Asset.javascript(path, {onload: function(){ }});
+    } else {
+        new Asset.javascript(path, {
+            onload: function() {
+                        IWCORE.includeScriptBatch.addJs(pathes);
+                    }
+            }
+        );
+    }
+};
 
 /**
  * linkToFeed: e.g. http://www.idega.com/rss/articles.xml
@@ -1155,6 +1231,19 @@ function createRealNode(element) {
 		var commentNode = document.createComment(element.nodeValue);
 		return commentNode;
 	}
+    
+    //  javascript cnode
+    if (element.nodeName == '#cdata-section' && element.parentNode.nodeName == 'script') {
+    
+    var value = element.nodeValue;
+    
+    if(value.indexOf('prototype') == -1 && value.indexOf('scriptac') == -1) {
+    
+        window.eval(element.nodeValue);    
+    }
+        
+        return document.createTextNode('');
+    }
 	
 	//	Script
 	if (element.nodeName == 'script' && IE) {
