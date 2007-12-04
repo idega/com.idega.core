@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+    	<release version="3.1.71" date="2007-12-04">
+      		<action dev="gimmi" type="update">
+      			SendMail now accepts ; delimiter between the email addresses
+      		</action>
+    	</release>
     	<release version="3.1.70" date="2007-11-30">
       		<action dev="thomas" type="update">
       			Added new column real_estate_unit to RealEstate.
