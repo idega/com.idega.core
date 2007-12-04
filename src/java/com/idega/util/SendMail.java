@@ -24,13 +24,16 @@ public class SendMail {
 		// Construct a message
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
+		to = to.replace(';', ',');
 		message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
 		//process cc and bcc
 		//this Address[] ccAddressess = InternetAddress.parse(cc); or similar
 		if ((cc != null) && !("".equals(cc))) {
+			cc = cc.replace(';', ',');
 			message.addRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
 		}
 		if ((bcc != null) && !("".equals(bcc))) {
+			bcc = bcc.replace(';', ',');
 			message.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));
 		}
 		/** @todo tryggvi laga */
@@ -112,11 +115,11 @@ public class SendMail {
 	 * From 2M Business Applications DK
 	 */
 	private static String convertStringBody(String tekst) {
-		while (tekst.indexOf("Æ") > -1) {
-			tekst = replace(tekst, "Æ", "&AElig;");
+		while (tekst.indexOf("ï¿½") > -1) {
+			tekst = replace(tekst, "ï¿½", "&AElig;");
 		}
-		while (tekst.indexOf("æ") > -1) {
-			tekst = replace(tekst, "æ", "&aelig;");
+		while (tekst.indexOf("ï¿½") > -1) {
+			tekst = replace(tekst, "ï¿½", "&aelig;");
 		}
 		while (tekst.indexOf(System.getProperty("line.separator")) > -1) {
 			tekst = replace(tekst, System.getProperty("line.separator"), "<br>");
