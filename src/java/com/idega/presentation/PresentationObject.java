@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.161.2.3 2007/12/07 11:23:31 laddi Exp $
+ * $Id: PresentationObject.java,v 1.161.2.4 2007/12/07 13:14:28 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextStyler;
  * In all new applications it is recommended to either extend UIComponentBase or
  * IWBaseComponent.
  * 
- * Last modified: $Date: 2007/12/07 11:23:31 $ by $Author: laddi $
+ * Last modified: $Date: 2007/12/07 13:14:28 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.161.2.3 $
+ * @version $Revision: 1.161.2.4 $
  */
 public class PresentationObject
 //implements Cloneable{
@@ -2123,21 +2123,17 @@ public class PresentationObject
 		try {
 			//if(!goneThroughRenderPhase()){
 			IWContext iwc = castToIWContext(fc);
-			//This should only happen when the component is restored and before main is called the first time on the (restored)component
-			boolean loggedIn = iwc.isLoggedOn();
-			if ((renderForLoggedIn && renderForLoggedOut) || (renderForLoggedIn && loggedIn) || (renderForLoggedOut && !loggedIn)) {
-				if (isRestoredFromState()) {
-					if (!this.goneThroughMain && resetGoneThroughMainInRestore()) {
-						resetBeforeMain(fc);
-					}
+			if (isRestoredFromState()) {
+				if (!this.goneThroughMain && resetGoneThroughMainInRestore()) {
+					resetBeforeMain(fc);
 				}
-				//initVariables(iwc);
-				//if(this instanceof AbstractTreeViewer){
-				//	boolean check=true;
-				//}
-				if (mayGoThroughMain()) {
-					this._main(iwc);
-				}
+			}
+			//initVariables(iwc);
+			//if(this instanceof AbstractTreeViewer){
+			//	boolean check=true;
+			//}
+			if (mayGoThroughMain()) {
+				this._main(iwc);
 			}
 			setGoneThroughMain();
 			//}
@@ -2183,11 +2179,8 @@ public class PresentationObject
 		try {
 			//if(!goneThroughRenderPhase()){
 			IWContext iwc = castToIWContext(fc);
-			boolean loggedIn = iwc.isLoggedOn();
-			if ((renderForLoggedIn && renderForLoggedOut) || (renderForLoggedIn && loggedIn) || (renderForLoggedOut && !loggedIn)) {
-				initVariables(iwc);
-				this.print(iwc);
-			}
+			initVariables(iwc);
+			this.print(iwc);
 			//}
 		}
 		catch (NotLoggedOnException noex) {
@@ -2221,6 +2214,17 @@ public class PresentationObject
 				UIComponent element = (UIComponent) children.next();
 				renderChild(context, element);
 			}
+		}
+	}
+
+	public boolean isRendered() {
+		IWContext iwc = castToIWContext(getFacesContext());
+		boolean loggedIn = iwc.isLoggedOn();
+		if ((renderForLoggedIn && renderForLoggedOut) || (renderForLoggedIn && loggedIn) || (renderForLoggedOut && !loggedIn)) {
+			return super.isRendered();
+		}
+		else {
+			return false;
 		}
 	}
 
