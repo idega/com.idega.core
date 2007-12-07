@@ -11,7 +11,8 @@ public class CalendarPropertiesBean extends PropertiesBean {
 	private boolean hidePreviousAndNext = false;
 	private boolean showTime = false;
 	
-	private List<String> eventsTypes = null;
+	private List<String> events = null;
+	private List<String> ledgers = null;
 	
 	public CalendarPropertiesBean() {
 		super();
@@ -21,12 +22,12 @@ public class CalendarPropertiesBean extends PropertiesBean {
 		super(properties);
 	}
 	
-	public List<String> getEventsTypes() {
-		return eventsTypes;
+	public List<String> getEvents() {
+		return events;
 	}
 
-	public void setEventsTypes(List<String> eventsTypes) {
-		this.eventsTypes = eventsTypes;
+	public void setEvents(List<String> events) {
+		this.events = events;
 	}
 
 	public boolean isShowEntriesAsList() {
@@ -59,6 +60,14 @@ public class CalendarPropertiesBean extends PropertiesBean {
 
 	public void setShowTime(boolean showTime) {
 		this.showTime = showTime;
+	}
+
+	public List<String> getLedgers() {
+		return ledgers;
+	}
+
+	public void setLedgers(List<String> ledgers) {
+		this.ledgers = ledgers;
 	}
 
 }
