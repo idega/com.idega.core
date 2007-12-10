@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.19 2007/10/17 15:09:36 valdas Exp $
+ * $Id: BaseFilter.java,v 1.20 2007/12/10 21:00:02 eiki Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
+
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.builder.data.CachedDomain;
 import com.idega.core.builder.data.ICDomain;
@@ -29,10 +30,10 @@ import com.idega.util.RequestUtil;
  * <p>
  *  Class that holds basic functionality used by many filters.<br>
  * </p>
- *  Last modified: $Date: 2007/10/17 15:09:36 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/12/10 21:00:02 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
@@ -57,6 +58,7 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	protected static final String PAGES_URI="/pages/";
 	protected static final String PAGES_URI_MINUSSLASH="/pages";
 	protected static final String ENC_PARAMS_PARAM = "encParams";
+	protected static boolean INITIALIZE_CACHED_DOMAIN_ON_NEXT_REQUEST = true;
 	
 	static final String SLASH = "/";
 
@@ -64,6 +66,10 @@ public abstract class BaseFilter implements Filter, MutableClass {
 		IWMainApplication iwma = getIWMainApplication(request);
 		return iwma.getTranslatedURIWithContext(NEW_IDEGAWEB_LOGIN);
 		//return NEW_IDEGAWEB_LOGIN;
+	}
+	
+	public static void reInitializeCachedDomainOnNextRequest() {
+		INITIALIZE_CACHED_DOMAIN_ON_NEXT_REQUEST = true;
 	}
 	
 	protected String getNewLoginUri(HttpServletRequest request,String uriToRedirectTo){
@@ -133,8 +139,9 @@ public abstract class BaseFilter implements Filter, MutableClass {
 		ICDomain domain = getIWMainApplication(request).getIWApplicationContext().getDomainByServerName(serverName);
 		if(domain instanceof CachedDomain){
 			CachedDomain cachedDomain = (CachedDomain)domain;
-			if(!cachedDomain.isHasInitializedCachedAttribute()){
+			if(INITIALIZE_CACHED_DOMAIN_ON_NEXT_REQUEST || !cachedDomain.isHasInitializedCachedAttribute()){
 				cachedDomain.initializeCachedInfo(request);
+				INITIALIZE_CACHED_DOMAIN_ON_NEXT_REQUEST = false;
 			}
 			
 		}

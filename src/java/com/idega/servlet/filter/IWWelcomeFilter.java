@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.19 2007/12/10 00:16:22 eiki Exp $
+ * $Id: IWWelcomeFilter.java,v 1.20 2007/12/10 21:00:02 eiki Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.RequestUtil;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2007/12/10 00:16:22 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/12/10 21:00:02 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
@@ -46,12 +46,11 @@ public class IWWelcomeFilter extends BaseFilter {
 	private static final boolean DEFAULT_VALUE_START_ON_PAGES = false;
 	private static boolean startOnPages= DEFAULT_VALUE_START_ON_PAGES;
 	*/
-
+	
 	private Map initializedPages=new HashMap();
 	private Map synchronizationObjects=new HashMap();
 	
 	private static final String PROPERTY_LOG_REQUESTS = "com.idega.core.logrequests";
-	
 	
 	public static void unload() {
 		//isInit = DEFAULT_VALUE_IS_INIT;
