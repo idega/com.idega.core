@@ -33,6 +33,7 @@ public class CoreConstants {
 	public static final String COLON = ":";
 	public static final String NEWLINE = "\n";
 	public static final String STAR = "*";
+	public static final String MINUS = "-";
 	
 	public static final String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
 	public static final String PROP_SYSTEM_MAIL_FROM_ADDRESS = "messagebox_from_mailaddress";

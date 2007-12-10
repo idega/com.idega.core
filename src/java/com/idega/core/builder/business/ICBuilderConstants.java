@@ -38,4 +38,8 @@ public class ICBuilderConstants {
 	
 	/** Property values separator **/
 	public static final String BUILDER_MODULE_PROPERTY_VALUES_SEPARATOR = ":idega_builder_module_property:";
+	
+	/**	Calendar stuff **/
+	public static final String CALENDAR_EVENTS_ADVANCED_PROPERTY_KEY = "calendareventtype";
+	public static final String CALENDAR_LEDGERS_ADVANCED_PROPERTY_KEY = "calendarledgertype";
 }
