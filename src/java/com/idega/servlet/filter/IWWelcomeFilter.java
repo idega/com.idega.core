@@ -1,5 +1,5 @@
 /*
- * $Id: IWWelcomeFilter.java,v 1.18 2007/04/30 23:56:23 eiki Exp $
+ * $Id: IWWelcomeFilter.java,v 1.19 2007/12/10 00:16:22 eiki Exp $
  * Created on 31.7.2004 by tryggvil
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.RequestUtil;
  * This filter detects the incoming url and sends them to the appropriate one if the requestUri of the incoming request is coming to the root of the.
  * </p>
  * 
- *  Last modified: $Date: 2007/04/30 23:56:23 $ by $Author: eiki $
+ *  Last modified: $Date: 2007/12/10 00:16:22 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class IWWelcomeFilter extends BaseFilter {
 
@@ -102,14 +102,11 @@ public class IWWelcomeFilter extends BaseFilter {
 			
 
 			boolean startOnWorkspace=getIfStartOnWorkspace(request);
-			boolean startOnPages=getIfStartOnPages(request);
 			
 			if(startOnWorkspace){
-				//request.getRequestDispatcher("/workspace/").forward(request,response);
 				response.sendRedirect(getNewWorkspaceUri(request));
 			}
-			else if(startOnPages){
-				//request.getRequestDispatcher(PAGES_URI).forward(request,response);
+			else{
 				String pagesUri = getPagesUri(request);
 				response.sendRedirect(pagesUri);
 			}
@@ -131,10 +128,6 @@ public class IWWelcomeFilter extends BaseFilter {
 			}
 		}
 
-	}
-
-	private boolean getIfStartOnPages(HttpServletRequest request) {
-		return getCachedDomain(request).isStartOnPages();
 	}
 
 

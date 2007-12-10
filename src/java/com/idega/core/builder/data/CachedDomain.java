@@ -1,5 +1,5 @@
 /*
- * $Id: CachedDomain.java,v 1.3 2007/04/09 22:17:59 tryggvil Exp $
+ * $Id: CachedDomain.java,v 1.4 2007/12/10 00:16:21 eiki Exp $
  * Created on 20.3.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -33,10 +33,10 @@ import com.idega.util.RequestUtil;
  * Implementation of ICDomain that is cached in the application on run-time
  * and stored as an attribute inside IWMainApplicationContext
  * </p>
- *  Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2007/12/10 00:16:21 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class CachedDomain implements ICDomain {
 
@@ -44,7 +44,6 @@ public class CachedDomain implements ICDomain {
 	
 	//cached attributes:
 	private boolean hasInitializedCachedAttribute=false;
-	private boolean startOnPages=false;
 	private boolean startOnWorkspace=false;	
 
 	private ICDomain runtimeCachedDomainInstance;
@@ -628,24 +627,9 @@ public class CachedDomain implements ICDomain {
 	}
 
 
-
-	public boolean isStartOnPages() {
-		return startOnPages;
-	}
-
-
-
-	public void setStartOnPages(boolean startOnPages) {
-		this.startOnPages = startOnPages;
-	}
-
-
-
 	public boolean isStartOnWorkspace() {
 		return startOnWorkspace;
 	}
-
-
 
 	public void setStartOnWorkspace(boolean startOnWorkspace) {
 		this.startOnWorkspace = startOnWorkspace;
@@ -730,18 +714,12 @@ public class CachedDomain implements ICDomain {
 			//ICPage rootPage = bService.getRootPage();
 			
 			ICPage rootPage = getStartPage();
-			
-			boolean startOnPages=false;
+			//set the filter to forward to /pages if there is a rootPage created
 			boolean startOnWorkspace=false;
-			if(rootPage!=null){
-				//set the filter to forward to /pages if there is a rootPage created
-				startOnPages=true;
-				startOnWorkspace=false;
-			}
-			else{
+			if(rootPage==null){
 				startOnWorkspace=true;
-				startOnPages=false;
 			}
+			
 			/*String serverName = request.getServerName();
 			int port = request.getLocalPort();
 			if(port!=80){
@@ -752,8 +730,6 @@ public class CachedDomain implements ICDomain {
 			//This sets the domain by default:
 			//iwc.getDomain();
 			
-		
-			setStartOnPages(startOnPages);
 			setStartOnWorkspace(startOnWorkspace);
 			
 			//initializeDefaultDomain(request);
