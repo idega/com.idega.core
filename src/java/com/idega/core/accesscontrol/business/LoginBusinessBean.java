@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.67 2007/05/23 08:01:56 valdas Exp $
+ * $Id: LoginBusinessBean.java,v 1.68 2007/12/12 10:36:36 civilis Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -62,11 +62,11 @@ import com.idega.util.RequestUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2007/05/23 08:01:56 $ by $Author: valdas $
+ * Last modified: $Date: 2007/12/12 10:36:36 $ by $Author: civilis $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.67 $
+ * @version $Revision: 1.68 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -1583,7 +1583,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 //	}
 	
 	public static LoginSession getLoginSessionBean(HttpSession session) {
-		return (LoginSession)SpringBeanLookup.getInstance().getSpringBean(session, LoginSession.class);
+		return SpringBeanLookup.getInstance().getSpringBean(session, LoginSession.class);
 	}
 	
 	/**

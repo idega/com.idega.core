@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.145 2007/11/06 13:12:18 valdas Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.146 2007/12/12 10:36:35 civilis Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -82,10 +82,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2007/11/06 13:12:18 $ by $Author: valdas $
+ * Last modified: $Date: 2007/12/12 10:36:35 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.145 $
+ * @version $Revision: 1.146 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -915,10 +915,8 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	public boolean isSuperAdmin() {
 		if(isLoggedOn()){
-			LoginSession lSession;
 			try {
-				lSession = (LoginSession)SpringBeanLookup.getInstance().getSpringBean(getSession(), LoginSession.class);
-				return lSession.isSuperAdmin();
+				return SpringBeanLookup.getInstance().getSpringBean(getSession(), LoginSession.class).isSuperAdmin();
 			}
 			catch (Exception e) {
 				e.printStackTrace();

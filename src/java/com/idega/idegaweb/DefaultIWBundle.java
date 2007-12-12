@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.43 2007/07/27 15:44:44 civilis Exp $
+ * $Id: DefaultIWBundle.java,v 1.44 2007/12/12 10:36:36 civilis Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -46,6 +46,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.business.UserProperties;
+import com.idega.util.CoreConstants;
 import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
 import com.idega.xml.XMLElement;
@@ -1665,12 +1666,23 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * @return FileInputStream
 	 */
 	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException {
-		File file = new File(getBundleBaseRealPath(), pathWithinBundle);
-		if (!file.exists()) {
-			throw new FileNotFoundException("File not found within bundle " + getBundleIdentifier() + ": " + pathWithinBundle);
-		}
-		InputStream inStream = new FileInputStream(file);
-		return inStream;
+		
+		String workspaceDir = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
+		String bundleInWorkspace;
+		
+		if(workspaceDir != null) {
+			
+			bundleInWorkspace = new StringBuilder(workspaceDir).append(CoreConstants.SLASH).append(getBundleIdentifier()).append(CoreConstants.SLASH).toString();
+		} else
+			bundleInWorkspace = getBundleBaseRealPath();
+		
+		
+		File file = new File(bundleInWorkspace, pathWithinBundle);
+		
+		if (!file.exists())
+			throw new FileNotFoundException("File not found within bundle " + bundleInWorkspace + ": " + pathWithinBundle);
+
+		return new FileInputStream(file);
 	}
 
 	/**

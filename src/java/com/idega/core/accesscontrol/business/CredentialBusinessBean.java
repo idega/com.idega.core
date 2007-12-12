@@ -1,5 +1,5 @@
 /*
- * $Id: CredentialBusinessBean.java,v 1.2 2007/03/28 10:09:11 civilis Exp $
+ * $Id: CredentialBusinessBean.java,v 1.3 2007/12/12 10:36:36 civilis Exp $
  * Created on May 10, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -24,10 +24,10 @@ import com.idega.presentation.text.Link;
  * Not fully implemented. There will be more methods pretty soon.
  * 
  * 
- *  Last modified: $Date: 2007/03/28 10:09:11 $ by $Author: civilis $
+ *  Last modified: $Date: 2007/12/12 10:36:36 $ by $Author: civilis $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class CredentialBusinessBean extends IBOServiceBean  implements CredentialBusiness{
 	
@@ -38,7 +38,7 @@ public class CredentialBusinessBean extends IBOServiceBean  implements Credentia
 			return;
 		}
 		
-		LoginSession loginSession = (LoginSession)SpringBeanLookup.getInstance().getSpringBean(iwc.getSession(), LoginSession.class);
+		LoginSession loginSession = SpringBeanLookup.getInstance().getSpringBean(iwc.getSession(), LoginSession.class);
 		LoggedOnInfo loggedOnInfo  = loginSession.getLoggedOnInfo();
 		if (loggedOnInfo != null) {
 			Map credentials = loggedOnInfo.getCredentials();

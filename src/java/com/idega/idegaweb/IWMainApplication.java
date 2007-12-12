@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.184 2007/10/17 15:09:37 valdas Exp $
+ * $Id: IWMainApplication.java,v 1.185 2007/12/12 10:36:36 civilis Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -99,10 +99,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2007/10/17 15:09:37 $ by $Author: valdas $
+ *  Last modified: $Date: 2007/12/12 10:36:36 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.184 $
+ * @version $Revision: 1.185 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -181,7 +181,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public static boolean debug = DEFAULT_DEBUG_FLAG;
     
     //Member variables:
-    private Map loadedBundles;
+    private Map<String, IWBundle> loadedBundles;
     private Properties bundlesFile;
     private File bundlesFileFile;
     private ServletContext application;
@@ -367,15 +367,16 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		return moduleLoader;
 	}
 
-	/*
+	/**
      * Returns a Map over the Loaded bundles:
      * Key is a string (bundle identifier) and value is a IWBundle instance
      */
-    protected Map getLoadedBundles() {
-    	if(this.loadedBundles==null) {
-    		 this.loadedBundles = new HashMap();
-    	}
-    	return this.loadedBundles;
+    public Map<String, IWBundle> getLoadedBundles() {
+    	
+    	if(loadedBundles == null)
+    		 loadedBundles = new HashMap<String, IWBundle>();
+    	
+    	return loadedBundles;
     }
     
     /*
