@@ -1,5 +1,5 @@
 /*
- * $Id: PostalCodeHomeImpl.java,v 1.6 2006/02/25 16:18:05 laddi Exp $
+ * $Id: PostalCodeHomeImpl.java,v 1.7 2007/12/14 13:40:19 alexis Exp $
  * Created on 2.6.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -11,16 +11,19 @@ package com.idega.core.location.data;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+
 import javax.ejb.FinderException;
+
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOFactory;
 
 
 /**
  * 
- *  Last modified: $Date: 2006/02/25 16:18:05 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/12/14 13:40:19 $ by $Author: alexis $
  * 
  * @author <a href="mailto:gimmi@idega.com">gimmi</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class PostalCodeHomeImpl extends IDOFactory implements PostalCodeHome {
 
@@ -34,6 +37,13 @@ public class PostalCodeHomeImpl extends IDOFactory implements PostalCodeHome {
 
 	public PostalCode findByPrimaryKey(Object pk) throws javax.ejb.FinderException {
 		return (PostalCode) super.findByPrimaryKeyIDO(pk);
+	}
+	
+	public Collection findByPostalCode(Collection codes) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection ids = ((PostalCodeBMPBean) entity).ejbFindByPostalCode(codes);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
 	public PostalCode findByPostalCode(String code) throws FinderException {

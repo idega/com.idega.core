@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 
+import com.idega.core.location.data.Commune;
 import com.idega.data.IDOLookupException;
 import com.idega.util.IWTimestamp;
 
@@ -33,6 +34,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public java.util.Collection findAllUsersOrderedByFirstName()throws javax.ejb.FinderException;
  public java.util.Collection findUsersByYearOfBirth (int minYear, int maxYear)  throws  FinderException;
  public int getUserCount()throws com.idega.data.IDOException;
+ public int getCountByBirthYearAndCommune(int fromYear, int toYear, Commune commune) throws com.idega.data.IDOException;
  public java.lang.String getGroupType();
  public java.util.Collection findUsersInQuery(com.idega.data.IDOQuery query)throws javax.ejb.FinderException;
  public Collection findUsersByConditions(String userName, String personalId, String streetName, String groupName, int genderId, int statusId, int startAge, int endAge, String[] allowedGroupIds, String[] allowedUserIds, boolean useAnd, boolean orderLastFirst) throws FinderException;

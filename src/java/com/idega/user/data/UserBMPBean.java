@@ -23,7 +23,9 @@ import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
+import com.idega.core.location.data.AddressBMPBean;
 import com.idega.core.location.data.AddressType;
+import com.idega.core.location.data.Commune;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositePrimaryKeyException;
@@ -40,6 +42,7 @@ import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOUtil;
 import com.idega.data.query.AND;
 import com.idega.data.query.Column;
+import com.idega.data.query.CountColumn;
 import com.idega.data.query.Criteria;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.JoinCriteria;
@@ -1858,6 +1861,30 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
         return idoFindIDsBySQL (sql.toString ());
     }
   
+  public int ejbHomeGetCountByBirthYearAndCommune(int fromYear, int toYear, Commune commune) throws IDOException {
+		IWTimestamp minStamp = new IWTimestamp(1, 1, fromYear);
+		IWTimestamp maxStamp = new IWTimestamp(31, 12, toYear);
+
+		Table user = new Table(User.class, "u");
+		Table address = new Table(Address.class, "a");
+
+		SelectQuery query = new SelectQuery(user);
+		query.addColumn(new CountColumn(user, this.getIDColumnName()));
+		query.addCriteria(new MatchCriteria(user.getColumn(getColumnNameDateOfBirth()), MatchCriteria.GREATEREQUAL, minStamp.toSQLDateString()));
+		query.addCriteria(new MatchCriteria(user.getColumn(getColumnNameDateOfBirth()), MatchCriteria.LESSEQUAL, maxStamp.toSQLDateString()));
+		if (commune != null) {
+			try {
+				query.addManyToManyJoin(user, address, "ua");
+			}
+			catch (IDORelationshipException ile) {
+				throw new IDOException("Tables " + user.getName() + " and " + address.getName() + " don't have a relation.");
+			}
+			query.addCriteria(new MatchCriteria(address, AddressBMPBean.getColumnNameAddressTypeId(), MatchCriteria.EQUALS, 1));
+			query.addCriteria(new MatchCriteria(address, "ic_commune_id", MatchCriteria.EQUALS, commune));
+		}
+
+		return idoGetNumberOfRecords(query);
+	}
   
   public Collection ejbFindUsersByCreationTime(IWTimestamp firstCreationTime, IWTimestamp lastCreationTime) throws FinderException, IDOLookupException{
 		try {

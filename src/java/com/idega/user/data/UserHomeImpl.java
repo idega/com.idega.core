@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 
+import com.idega.core.location.data.Commune;
 import com.idega.data.IDOLookupException;
 import com.idega.util.IWTimestamp;
 
@@ -210,6 +211,13 @@ public int getUserCount()throws com.idega.data.IDOException{
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }
+
+public int getCountByBirthYearAndCommune(int fromYear, int toYear, Commune commune) throws com.idega.data.IDOException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		int theReturn = ((UserBMPBean) entity).ejbHomeGetCountByBirthYearAndCommune(fromYear, toYear, commune);
+		this.idoCheckInPooledEntity(entity);
+		return theReturn;
+	}
 
 public java.lang.String getGroupType(){
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
