@@ -22,9 +22,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  *
- * Last modified: $Date: 2007/12/19 18:05:05 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/19 21:49:06 $ by $Author: civilis $
  *
  */
 public abstract class Wizard extends IWBaseComponent {
@@ -32,7 +32,7 @@ public abstract class Wizard extends IWBaseComponent {
 	private Logger logger;
 	private static final String valueAtt = "value";
 	private static final String stepHolderFacet = "stepHolder";
-	private static final String formFacet = "form";
+	private static final String containerFacet = "container";
 	private static final String stepIdentifierExp = "#{wizardControlValues.stepIdentifier}";
 	private static final String wizardControlValuesExp = "#{wizardControlValues}";
 	
@@ -66,14 +66,21 @@ public abstract class Wizard extends IWBaseComponent {
 		}
 		
 		Application application = context.getApplication();
-		HtmlForm form = (HtmlForm)application.createComponent(HtmlForm.COMPONENT_TYPE);
 		
 		HtmlInputHidden stepHolder = (HtmlInputHidden)application.createComponent(HtmlInputHidden.COMPONENT_TYPE);
 		stepHolder.setValueBinding(valueAtt, application.createValueBinding(stepIdentifierExp));
 		
 		getFacets().put(stepHolderFacet, stepHolder);
-		getFacets().put(formFacet, form);
+		
+		UIComponent container = getContainer(context);
+		
+		if(container == null)
+			container = context.getApplication().createComponent(HtmlForm.COMPONENT_TYPE);
+		
+		getFacets().put(containerFacet, getContainer(context));
 	}
+	
+	protected abstract UIComponent getContainer(FacesContext context);
 	
 	/**
 	 * @Override
@@ -89,10 +96,10 @@ public abstract class Wizard extends IWBaseComponent {
 		
 		String identifier = controlValues.getStepIdentifier() == null || CoreConstants.EMPTY.equals(controlValues.getStepIdentifier()) ? (String)wizardStepsComponentsIdentifiersSequence.get(0) : controlValues.getStepIdentifier();
 		
-		UIComponent form = getFacet(formFacet);
-		form.setRendered(true);
-		form.getChildren().clear();
-		form.getChildren().add(getFacet(stepHolderFacet));
+		UIComponent container = getFacet(containerFacet);
+		container.setRendered(true);
+		container.getChildren().clear();
+		container.getChildren().add(getFacet(stepHolderFacet));
 		
 		UIComponent stepComponent;
 		
@@ -114,12 +121,12 @@ public abstract class Wizard extends IWBaseComponent {
 		}
 
 		if(stepComponent != null)
-			form.getChildren().add(stepComponent);
+			container.getChildren().add(stepComponent);
 		else {
 //			TODO: log
 		}
 		
-		renderChild(context, form);
+		renderChild(context, container);
 	}
 	
 	/**
