@@ -65,22 +65,18 @@ public class ListUtil {
    * @param stringArray
    * @return
    */
-  public static List convertStringArrayToList(String[] stringArray){
-  	
-  	if(stringArray!=null && stringArray.length>0){
-  		List returnList = new ArrayList();
+  public static List<String> convertStringArrayToList(String[] stringArray) {
+  	if (stringArray != null && stringArray.length > 0) {
+  		List<String> returnList = new ArrayList<String>();
   		
   		for (int i = 0; i < stringArray.length; i++) {
-				String string = stringArray[i];
-				returnList.add(i,string);
-			}
+			returnList.add(stringArray[i]);
+		}
   		
   		return returnList;
   	}
-		else {
-			return null;
-		}
-		
+	
+  	return null;		
   }
   
 	/**
@@ -88,17 +84,17 @@ public class ListUtil {
 	 *
 	 * @returns a String with comma separated values
 	 */
-	public static String convertListOfStringsToCommaseparatedString(List list) {
+	public static String convertListOfStringsToCommaseparatedString(List<String> list) {
 		StringBuffer sList = new StringBuffer();
 		if (list != null && !list.isEmpty()) {
-			Iterator iter = list.iterator();
+			Iterator<String> iter = list.iterator();
 			for (int g = 0; iter.hasNext(); g++) {
-				String item = (String) iter.next();
+				String item = iter.next();
 				if (g > 0) {
-					sList.append(",");
+					sList.append(CoreConstants.COMMA);
 				}
 				
-				if(item!=null) {
+				if (item != null) {
 					sList.append(item);
 				}
 				
