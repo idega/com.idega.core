@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.47 2007/08/20 14:41:57 valdas Exp $ Created on
+ * $Id: StringHandler.java,v 1.48 2007/12/21 11:44:36 valdas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -9,6 +9,10 @@
  */
 package com.idega.util;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,11 +32,11 @@ import com.idega.presentation.IWContext;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2007/08/20 14:41:57 $ by $Author: valdas $
+ * Last modified: $Date: 2007/12/21 11:44:36 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.47 $
+ * @version $Revision: 1.48 $
  */
 public class StringHandler {
 
@@ -1290,6 +1294,33 @@ public class StringHandler {
 		}
 		
 		return link;
+	}
+	
+	public static String getContentFromInputStream(InputStream stream) {
+		if (stream == null) {
+			return null;
+		}
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+		StringBuilder sb = new StringBuilder();
+		String line = null;
+
+		try {
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		try {
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return sb.toString();
 	}
 	
 }
