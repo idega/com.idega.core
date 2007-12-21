@@ -22,9 +22,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.2 $
+ * @version $Revision: 1.1.2.3 $
  *
- * Last modified: $Date: 2007/12/19 21:49:06 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/21 15:03:00 $ by $Author: civilis $
  *
  */
 public abstract class Wizard extends IWBaseComponent {
@@ -68,14 +68,17 @@ public abstract class Wizard extends IWBaseComponent {
 		Application application = context.getApplication();
 		
 		HtmlInputHidden stepHolder = (HtmlInputHidden)application.createComponent(HtmlInputHidden.COMPONENT_TYPE);
+		stepHolder.setId(context.getViewRoot().createUniqueId());
 		stepHolder.setValueBinding(valueAtt, application.createValueBinding(stepIdentifierExp));
 		
 		getFacets().put(stepHolderFacet, stepHolder);
 		
 		UIComponent container = getContainer(context);
 		
-		if(container == null)
+		if(container == null) {
 			container = context.getApplication().createComponent(HtmlForm.COMPONENT_TYPE);
+			container.setId(context.getViewRoot().createUniqueId());
+		}
 		
 		getFacets().put(containerFacet, getContainer(context));
 	}
@@ -157,6 +160,7 @@ public abstract class Wizard extends IWBaseComponent {
 		
 		Application application = context.getApplication();
 		HtmlCommandButton nextButton = (HtmlCommandButton)application.createComponent(HtmlCommandButton.COMPONENT_TYPE);
+		nextButton.setId(context.getViewRoot().createUniqueId());
 		
 		nextButton.setValue("Next");
 		
@@ -179,6 +183,7 @@ public abstract class Wizard extends IWBaseComponent {
 		
 		Application application = context.getApplication();
 		HtmlCommandButton prevButton = (HtmlCommandButton)application.createComponent(HtmlCommandButton.COMPONENT_TYPE);
+		prevButton.setId(context.getViewRoot().createUniqueId());
 		prevButton.setValue("Previous");
 		
 		prevButton.setOnclick(new StringBuffer("document.getElementById('").append(((UIComponent)getFacets().get(stepHolderFacet)).getClientId(context)).append("').value='").append(wizardStepsComponentsIdentifiersSequence.get(stepIndex-1)).append("';").toString());
