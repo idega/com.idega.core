@@ -1,5 +1,5 @@
 /*
- * $Id: ExternalLink.java,v 1.3 2006/11/10 12:02:46 laddi Exp $
+ * $Id: ExternalLink.java,v 1.4 2007/12/21 11:45:41 valdas Exp $
  * Created on 12.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,6 +9,8 @@
  */
 package com.idega.idegaweb.include;
 
+import com.idega.util.CoreConstants;
+
 
 /**
  * 	<p>
@@ -16,10 +18,10 @@ package com.idega.idegaweb.include;
  *  a <code>&lt;link&gt;</code> tag used to define resources such ass CSS links.
  *  This class is used by the GlobalIncludeManager for managing resources included in all pages.
  *  </p>
- *  Last modified: $Date: 2006/11/10 12:02:46 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/12/21 11:45:41 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ExternalLink {
 	
@@ -34,7 +36,7 @@ public class ExternalLink {
 	public final static String MEDIA_AURAL="aural";
 	public final static String MEDIA_ALL="all";
 	
-	protected final static String TYPE_CSS="text/css";
+	protected final static String TYPE_CSS=CoreConstants.CONTENT_TYPE_TEXT_CSS;
 	protected final static String TYPE_RSS="application/rss+xml";
 	
 	protected final static String RELATIONSHIP_STYLESHEET="stylesheet";

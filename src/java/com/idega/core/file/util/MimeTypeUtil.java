@@ -10,6 +10,7 @@ import java.util.Properties;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Singleton;
+import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
 
@@ -176,7 +177,7 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 			"text/xml",
 			"text/richtext",
 			"text/enriched",
-			"text/css",
+			CoreConstants.CONTENT_TYPE_TEXT_CSS,
 			"application/postscript",
 			"application/rtf",
 			MIME_TYPE_PDF_1,
