@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.60 2006/04/09 12:13:16 laddi Exp $
+ * $Id: DateInput.java,v 1.60.2.1 2007/12/23 20:56:07 civilis Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -377,7 +377,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		}
 	}
 
-	public void setDate(java.sql.Date date) {
+	public void setDate(java.util.Date date) {
 		GregorianCalendar greg = new GregorianCalendar();
 		greg.setTime(date);
 
@@ -763,7 +763,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	public String getIDForDay() {
 		return this.theDay.getID();
 	}
-
+	
 	public String getIDForMonth() {
 		return this.theMonth.getID();
 	}
@@ -771,6 +771,19 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	public String getIDForYear() {
 		return this.theYear.getID();
 	}
+	
+	public String getNameForDay() {
+		return this.theDay.getName();
+	}
+	
+	public String getNameForMonth() {
+		return this.theMonth.getName();
+	}
+	
+	public String getNameForYear() {
+		return this.theYear.getName();
+	}
+	
 
 	/**
 	 * Sets if the drop down menu should contain a null value (that is a choice
