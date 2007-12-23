@@ -21,6 +21,11 @@
 		<component-class>com.idega.idegaweb.help.presentation.Help</component-class>
 	</component>
 	
+	<component>
+		<component-type>idega_CreditCardNumber</component-type>
+		<component-class>com.idega.presentation.ui.UICreditCardNumber</component-class>
+	</component>
+	
 	<managed-bean>
 		<managed-bean-name>wizardControlValues</managed-bean-name>
 		<managed-bean-class>com.idega.presentation.wizard.WizardControlValues</managed-bean-class>
