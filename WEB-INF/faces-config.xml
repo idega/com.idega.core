@@ -26,6 +26,11 @@
 		<component-class>com.idega.presentation.ui.UICreditCardNumber</component-class>
 	</component>
 	
+	<component>
+		<component-type>idega_DateInput</component-type>
+		<component-class>com.idega.presentation.ui.UIDateInput</component-class>
+	</component>
+	
 	<managed-bean>
 		<managed-bean-name>wizardControlValues</managed-bean-name>
 		<managed-bean-class>com.idega.presentation.wizard.WizardControlValues</managed-bean-class>
