@@ -7,6 +7,7 @@ import javax.faces.application.Application;
 import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+import javax.faces.el.ValueBinding;
 
 import org.apache.myfaces.component.html.util.HtmlComponentUtils;
 
@@ -16,9 +17,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  *
- * Last modified: $Date: 2007/12/23 17:53:36 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/24 11:59:39 $ by $Author: civilis $
  *
  */
 public class UICreditCardNumber extends IWBaseComponent {
@@ -52,7 +53,18 @@ public class UICreditCardNumber extends IWBaseComponent {
 	public void encodeChildren(FacesContext context) throws IOException {
 		super.encodeChildren(context);
 		
-		CreditCardNumber ccNumber = (CreditCardNumber)getValueBinding(valueAtt).getValue(context);
+		ValueBinding vb = getValueBinding(valueAtt);
+		
+		if(vb == null)
+			return;
+		
+		CreditCardNumber ccNumber = (CreditCardNumber)vb.getValue(context);
+		
+		if(ccNumber == null) {
+			ccNumber = new CreditCardNumber();
+			vb.setValue(context, ccNumber);
+		}
+		
 		int i = 0;
 		String[] inputsIndentifiers = getInputsIndentifiers();
 		
@@ -87,33 +99,43 @@ public class UICreditCardNumber extends IWBaseComponent {
 	public void decode(FacesContext context) {
 		super.decode(context);
 		
-		CreditCardNumber ccNumber = (CreditCardNumber)getValueBinding(valueAtt).getValue(context);
+		ValueBinding vb = getValueBinding(valueAtt);
+		
+		if(vb == null)
+			return;
+		
+		CreditCardNumber ccNumber = (CreditCardNumber)vb.getValue(context);
+		
+		if(ccNumber == null) {
+			
+			ccNumber = new CreditCardNumber();
+			vb.setValue(context, ccNumber);
+		}
+		
 		Map requestParams = context.getExternalContext().getRequestParameterMap();
 		
-		if(ccNumber != null) {
-			int i = 0;
-			
-			String number = (String)requestParams.get(inputsIdentifiers[i++]);
-			
-			if(!CoreConstants.EMPTY.equals(number))
-				ccNumber.setNumber1(number);
-			
-			number = (String)requestParams.get(inputsIdentifiers[i++]);
-			
-			if(!CoreConstants.EMPTY.equals(number))
-				ccNumber.setNumber2(number);
-			
-			
-			number = (String)requestParams.get(inputsIdentifiers[i++]);
-			
-			if(!CoreConstants.EMPTY.equals(number))
-				ccNumber.setNumber3(number);
-			
-			number = (String)requestParams.get(inputsIdentifiers[i++]);
-			
-			if(!CoreConstants.EMPTY.equals(number))
-				ccNumber.setNumber4(number);
-		}
+		int i = 0;
+		
+		String number = (String)requestParams.get(inputsIdentifiers[i++]);
+		
+		if(!CoreConstants.EMPTY.equals(number))
+			ccNumber.setNumber1(number);
+		
+		number = (String)requestParams.get(inputsIdentifiers[i++]);
+		
+		if(!CoreConstants.EMPTY.equals(number))
+			ccNumber.setNumber2(number);
+		
+		
+		number = (String)requestParams.get(inputsIdentifiers[i++]);
+		
+		if(!CoreConstants.EMPTY.equals(number))
+			ccNumber.setNumber3(number);
+		
+		number = (String)requestParams.get(inputsIdentifiers[i++]);
+		
+		if(!CoreConstants.EMPTY.equals(number))
+			ccNumber.setNumber4(number);
 	}
 	
 	private String[] getInputsIndentifiers() {
