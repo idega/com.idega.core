@@ -17,9 +17,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.2 $
+ * @version $Revision: 1.1.2.3 $
  *
- * Last modified: $Date: 2007/12/24 11:59:39 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/27 12:51:39 $ by $Author: civilis $
  *
  */
 public class UICreditCardNumber extends IWBaseComponent {
@@ -42,6 +42,8 @@ public class UICreditCardNumber extends IWBaseComponent {
 
 			HtmlInputText input = (HtmlInputText)application.createComponent(HtmlInputText.COMPONENT_TYPE);
 			input.setId(context.getViewRoot().createUniqueId());
+			input.setMaxlength(4);
+			input.setSize(4);
 			getFacets().put(inputFacet+i, input);
 		}
 	}
@@ -69,6 +71,7 @@ public class UICreditCardNumber extends IWBaseComponent {
 		String[] inputsIndentifiers = getInputsIndentifiers();
 		
 		HtmlInputText inputText = (HtmlInputText)getFacet(inputFacet+i);
+		
 		if(ccNumber != null)
 			inputText.setValue(ccNumber.getNumber1() == null ? CoreConstants.EMPTY : ccNumber.getNumber1());
 		inputsIndentifiers[i++] = inputText.getClientId(context);
