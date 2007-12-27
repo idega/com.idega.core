@@ -1,0 +1,333 @@
+package com.idega.presentation;
+
+import java.io.IOException;
+import java.util.Locale;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
+import javax.faces.component.UIViewRoot;
+import javax.faces.context.FacesContext;
+import com.idega.core.cache.CacheableUIComponent;
+import com.idega.core.cache.UIComponentCacher;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.util.RenderUtils;
+import com.idega.util.text.TextStyler;
+
+/**
+ * <p>
+ * This is a base UI component for JSF that adds extended functionality for idegaWeb.<br/>
+ * This is supposed to be a convenient replacement for PresentationObject for new
+ * pure JSF solutions and doesn't have the some of the legacy burdens that PresentationObject has
+ * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
+ * </p>
+ * Copyright (C) idega software 2004-2006 <br/>
+ * Last modified: $Date: 2007/12/27 20:31:59 $ by $Author: civilis $
+ * 
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version $Revision: 1.1.2.1 $
+ * 
+ */
+public class IWBaseInputComponent extends UIInput implements CacheableUIComponent {
+	
+	private TextStyler _styler;
+	private String styleAttribute;
+	private boolean isInitialized = false;
+	private long iSystemTime = 0;
+	
+	/**
+	 * This is an old idegaWeb style add method.
+	 * Does the same as getChildren().add(comp) in JSF>
+	 * @param comp
+	 */
+	public void add(UIComponent comp){
+		getChildren().add(comp);
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#decode(javax.faces.context.FacesContext)
+	 */
+	public void decode(FacesContext arg0) {
+		super.decode(arg0);
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#processDecodes(javax.faces.context.FacesContext)
+	 */
+	public void processDecodes(FacesContext arg0) {
+		super.processDecodes(arg0);
+	}
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#encodeBegin(javax.faces.context.FacesContext)
+	 */
+	public void encodeBegin(FacesContext context) throws IOException {
+
+		UIComponentCacher cacher = getCacher(context);
+		if(cacher.existsInCache(this,context)){
+			// do nothing:
+		}
+		else{
+			if(cacher.isCacheEnbled(this,context)){
+				cacher.beginCache(this,context);
+			}
+			
+			this.iSystemTime = System.currentTimeMillis();
+			if(!isInitialized()){
+				initializeComponent(context);
+				//TODO: Remove call to older method:
+				initializeContent();
+				setInitialized();
+			}
+			else{
+				updateComponent(context);
+			}
+			super.encodeBegin(context);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
+	 */
+	public void encodeChildren(FacesContext context) throws IOException {
+		/*if(getRendersChildren()){
+			Iterator children = this.getChildren().iterator();
+			while (children.hasNext()) {
+				UIComponent element = (UIComponent) children.next();
+				renderChild(context,element);
+			}
+		}*/
+		/*Iterator children = this.getChildren().iterator();
+			while (children.hasNext()) {
+				UIComponent element = (UIComponent) children.next();
+				renderChild(context,element);
+			}*/
+		
+		UIComponentCacher cacher = getCacher(context);
+		if(cacher.existsInCache(this,context)){
+			// do nothing:
+		}
+		else{
+			super.encodeChildren(context);	
+		}
+		
+	}
+	
+	
+	/**
+	 * <p>
+	 * Renders a child component for the current component. This operation is handy when implementing
+	 * renderes that perform child rendering themselves (eg. a layout renderer/grid renderer/ etc..).
+	 * Passes on any IOExceptions thrown by the child/child renderer.
+	 * </p>
+	 * @param context the current FacesContext
+	 * @param child which child to render
+	 */
+	public void renderChild(FacesContext context, UIComponent child) throws IOException {
+		RenderUtils.renderChild(context,child);
+	}	
+	
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#encodeEnd(javax.faces.context.FacesContext)
+	 */
+	public void encodeEnd(FacesContext context) throws IOException {
+		
+
+		UIComponentCacher cacher = getCacher(context);
+		if(cacher.existsInCache(this,context)){
+			// encode the cached version:
+			cacher.encodeCached(this,context);
+		}
+		else{
+
+			long endTime = System.currentTimeMillis();
+			String renderingText = (endTime - this.iSystemTime) + " ms";
+			context.getResponseWriter().writeComment(renderingText);
+			super.encodeEnd(context);
+			
+			if(cacher.isCacheEnbled(this,context)){
+				cacher.endCache(this,context);
+			}
+		}
+		
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#getRendersChildren()
+	 */
+	public boolean getRendersChildren() {
+		//return true;
+		return super.getRendersChildren();
+	}
+
+	/**
+	 * 
+	 * @uml.property name="styleAttribute"
+	 */
+	public void setStyleAttribute(String style) {
+		if (this._styler == null) {
+			this._styler = new TextStyler();
+		}
+		this._styler.parseStyleString(style);
+		this.styleAttribute = style;
+		//this.set("style", _styler.getStyleString());
+
+	}
+
+	public void setStyleAttribute(String attribute, String value) {
+		if (this._styler == null) {
+			this._styler = new TextStyler();
+		}
+		this._styler.setStyleValue(attribute, value);
+		setStyleAttribute( this._styler.getStyleString());
+	}
+
+	/**
+	 * 
+	 * @uml.property name="styleAttribute"
+	 */
+	public String getStyleAttribute() {
+		return this.styleAttribute;
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.faces.component.UIComponent#getFamily()
+	 */
+	public String getFamily() {
+		return "idegaweb";
+	}
+	/**
+	 * <p>
+	 * This method was refactored and replaced with initializeComponent
+	 * </p>
+	 * @deprecated Replaced with initializeComponent
+	 */
+	protected void initializeContent() {
+		//does nothing by default
+	}
+
+	/**
+	 * <p>
+	 * This is a method that is ensured that is only called once in initalization in a
+	 * state saved component. This method is intended to be implemented in subclasses for example to add components.<br/>
+	 * This method is called from the standard encodeBegin() method.
+	 * </p>
+	 * @param context the FacesContext for the request
+	 */
+	protected void initializeComponent(FacesContext context) {
+		//does nothing by default
+	}
+	
+	/**
+	 * <p>
+	 * This method is called when the component is already initialized (i.e. the second time and onwards when a faces rendering
+	 * is called upon this component when it is state saved) and usually happens when the component is restored after a "POST".<br/>
+	 * This callback method could be overrided in sublcasses if something is meant to happen when a new
+	 * request is sent on an already initialized component.<br/>
+	 * This method is called from the standard encodeBegin() method.
+	 * </p>
+	 * @param context
+	 */
+	protected void updateComponent(FacesContext context) {
+		//Does nothing by default
+	}
+	
+	/**
+	 * <p>
+	 * Returns if this component instance has been initialized, i.e. the initializeComponent() method called.
+	 * </p>
+	 * @return
+	 */
+	protected boolean isInitialized(){
+		return this.isInitialized;
+	}
+	
+	protected void setInitialized(){
+		this.isInitialized=true;
+	}
+	
+	protected void setInitialized(boolean initialized) {
+		this.isInitialized = initialized;
+	}
+	
+	/**
+	 * @see javax.faces.component.UIComponentBase#saveState(javax.faces.context.FacesContext)
+	 */
+	public Object saveState(FacesContext ctx) {
+		Object values[] = new Object[4];
+		values[0] = super.saveState(ctx);
+		values[1] = this.styleAttribute;
+		values[2] = this._styler;
+		values[3] = new Boolean(this.isInitialized);
+		return values;
+	}
+
+	/**
+	 * @see javax.faces.component.UIComponentBase#restoreState(javax.faces.context.FacesContext,
+	 *      java.lang.Object)
+	 */
+	public void restoreState(FacesContext ctx, Object state) {
+		Object values[] = (Object[]) state;
+		super.restoreState(ctx, values[0]);
+		this.styleAttribute = ((String) values[1]);
+		this._styler = (TextStyler) values[2];
+		this.isInitialized = ((Boolean) values[3]).booleanValue();
+	}
+	
+	/**
+	 * <p>
+	 * Get the IWMainapplication from the context
+	 * </p>
+	 * @param context
+	 * @return
+	 */
+	protected IWMainApplication getIWMainApplication(FacesContext context){
+		return IWMainApplication.getIWMainApplication(context);
+	}
+	
+	/**
+	 * <p>
+	 * Get the IWBundle from the bundleIdentifier.
+	 * </p>
+	 * @param context
+	 * @param bundleIdentifier
+	 * @return
+	 */
+	protected IWBundle getIWBundle(FacesContext context,String bundleIdentifier){
+		IWMainApplication iwma = getIWMainApplication(context);
+		return iwma.getBundle(bundleIdentifier);
+	}
+	
+	/**
+	 * <p>
+	 * Get the IWResourceBundle from the context and bundleIdentifier.
+	 * It gets the locale from the context.
+	 * </p>
+	 * @param context
+	 * @param bundleIdentifier
+	 * @return
+	 */
+	protected IWResourceBundle getIWResourceBundle(FacesContext context,String bundleIdentifier){
+		IWBundle bundle = getIWBundle(context,bundleIdentifier);
+		Locale locale = null;
+		UIViewRoot viewRoot = context.getViewRoot();
+		if(viewRoot!=null){
+			locale = viewRoot.getLocale();
+		}
+		else{
+			locale = context.getExternalContext().getRequestLocale();
+		}
+		return bundle.getResourceBundle(locale);
+	}
+
+	
+	public UIComponentCacher getCacher(FacesContext context){
+		return UIComponentCacher.getDefaultCacher(context);
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.cache.CacheableUIComponent#getViewState(javax.faces.context.FacesContext)
+	 */
+	public String getViewState(FacesContext context) {
+		return "view";
+	}
+	
+}
