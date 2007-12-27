@@ -11,24 +11,24 @@ import javax.faces.el.ValueBinding;
 
 import org.apache.myfaces.component.html.util.HtmlComponentUtils;
 
-import com.idega.presentation.IWBaseComponent;
+import com.idega.presentation.IWBaseInputComponent;
 import com.idega.util.CoreConstants;
 
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.3 $
+ * @version $Revision: 1.1.2.4 $
  *
- * Last modified: $Date: 2007/12/27 12:51:39 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/27 20:32:22 $ by $Author: civilis $
  *
  */
-public class UICreditCardNumber extends IWBaseComponent {
+public class UICreditCardNumber extends IWBaseInputComponent {
 
-	public static final String COMPONENT_TYPE = "idega_CreditCardNumber";
-	private static final String inputFacet = "input";
-	private static final String spanTag = "span";
-	private static final String valueAtt = "value";
-	private static final String idAtt = "id";
+	public 	static final String COMPONENT_TYPE = 	"idega_CreditCardNumber";
+	private static final String inputFacet = 		"input";
+	private static final String spanTag = 			"span";
+	private static final String valueAtt = 			"value";
+	private static final String idAtt = 			"id";
 	private String[] inputsIdentifiers;
 	
 	/**
@@ -55,17 +55,10 @@ public class UICreditCardNumber extends IWBaseComponent {
 	public void encodeChildren(FacesContext context) throws IOException {
 		super.encodeChildren(context);
 		
-		ValueBinding vb = getValueBinding(valueAtt);
+		CreditCardNumber ccNumber = (CreditCardNumber)getValue();
 		
-		if(vb == null)
+		if(ccNumber == null)
 			return;
-		
-		CreditCardNumber ccNumber = (CreditCardNumber)vb.getValue(context);
-		
-		if(ccNumber == null) {
-			ccNumber = new CreditCardNumber();
-			vb.setValue(context, ccNumber);
-		}
 		
 		int i = 0;
 		String[] inputsIndentifiers = getInputsIndentifiers();
@@ -94,51 +87,6 @@ public class UICreditCardNumber extends IWBaseComponent {
 			inputText.setValue(ccNumber.getNumber4() == null ? CoreConstants.EMPTY : ccNumber.getNumber4());
 		inputsIndentifiers[i++] = inputText.getClientId(context);
 		renderChild(context, inputText);	
-	}
-	
-	/**
-	 * @Override
-	 */
-	public void decode(FacesContext context) {
-		super.decode(context);
-		
-		ValueBinding vb = getValueBinding(valueAtt);
-		
-		if(vb == null)
-			return;
-		
-		CreditCardNumber ccNumber = (CreditCardNumber)vb.getValue(context);
-		
-		if(ccNumber == null) {
-			
-			ccNumber = new CreditCardNumber();
-			vb.setValue(context, ccNumber);
-		}
-		
-		Map requestParams = context.getExternalContext().getRequestParameterMap();
-		
-		int i = 0;
-		
-		String number = (String)requestParams.get(inputsIdentifiers[i++]);
-		
-		if(!CoreConstants.EMPTY.equals(number))
-			ccNumber.setNumber1(number);
-		
-		number = (String)requestParams.get(inputsIdentifiers[i++]);
-		
-		if(!CoreConstants.EMPTY.equals(number))
-			ccNumber.setNumber2(number);
-		
-		
-		number = (String)requestParams.get(inputsIdentifiers[i++]);
-		
-		if(!CoreConstants.EMPTY.equals(number))
-			ccNumber.setNumber3(number);
-		
-		number = (String)requestParams.get(inputsIdentifiers[i++]);
-		
-		if(!CoreConstants.EMPTY.equals(number))
-			ccNumber.setNumber4(number);
 	}
 	
 	private String[] getInputsIndentifiers() {
@@ -203,4 +151,58 @@ public class UICreditCardNumber extends IWBaseComponent {
         
         return clientId;
     }
+	
+	public String getRendererType() {
+		return null;
+	}
+	
+	public Object getSubmittedValue() {
+	
+		FacesContext context = FacesContext.getCurrentInstance();
+		Map requestParams = context.getExternalContext().getRequestParameterMap();
+		String[] submitted = new String[4];
+		
+		for (int i = 0; i < inputsIdentifiers.length; i++) {
+			
+			String number = (String)requestParams.get(inputsIdentifiers[i]);
+			
+			if(!CoreConstants.EMPTY.equals(number))
+				submitted[i] = number;
+		}
+		
+		return submitted;
+	}
+	
+	public Object getValue() {
+		
+		CreditCardNumber ccNumber = (CreditCardNumber)super.getValue();
+		
+		if(ccNumber == null) {
+			ValueBinding vb = getValueBinding(valueAtt);
+			
+			if(vb != null) {
+				ccNumber = new CreditCardNumber();
+				vb.setValue(FacesContext.getCurrentInstance(), ccNumber);
+			}
+		}
+		
+		return ccNumber;
+	}
+	
+	protected Object getConvertedValue(FacesContext context, Object submittedValue) {
+		
+		CreditCardNumber ccNumber = (CreditCardNumber)getValue();
+		
+		if(ccNumber == null)
+			return null;
+		
+		String[] submitted = (String[])submittedValue;
+		
+		ccNumber.setNumber1(submitted[0]);
+		ccNumber.setNumber2(submitted[1]);
+		ccNumber.setNumber3(submitted[2]);
+		ccNumber.setNumber4(submitted[3]);
+		
+		return ccNumber;
+	}
 }

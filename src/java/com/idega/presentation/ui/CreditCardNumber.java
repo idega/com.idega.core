@@ -5,9 +5,9 @@ import java.io.Serializable;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  *
- * Last modified: $Date: 2007/12/23 17:53:36 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/27 20:32:22 $ by $Author: civilis $
  *
  */
 public class CreditCardNumber implements Serializable {
@@ -71,5 +71,15 @@ public class CreditCardNumber implements Serializable {
 	
 	public String getFullNumber(String separator) {
 		return null;
+	}
+	
+	/**
+	 * This is read by validators
+	 * 
+	 * @Override
+	 */
+	public String toString() {
+		
+		return new StringBuffer(number1).append(number2).append(number3).append(number4).toString();
 	}
 }
