@@ -6,6 +6,9 @@
 
 <faces-config>
 
+	<application>
+		<message-bundle>com.idega.core.localisation.data.DefaultFacesMessages</message-bundle>
+	</application>
 	<component>
 		<component-type>Page</component-type>
 		<component-class>com.idega.presentation.Page</component-class>
