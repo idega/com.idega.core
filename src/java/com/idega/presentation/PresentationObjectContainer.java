@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.56 2006/04/09 12:13:13 laddi Exp $
+ * $Id: PresentationObjectContainer.java,v 1.57 2007/12/28 13:23:04 valdas Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -13,14 +13,17 @@ package com.idega.presentation;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.event.IWPresentationState;
@@ -32,17 +35,17 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
+ * Last modified: $Date: 2007/12/28 13:23:04 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.56 $
+ * @version $Revision: 1.57 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
 	//private List children;
 
 	//Legacy temporary variable:
-	protected transient List allObjects = null;
+	protected transient List<UIComponent> allObjects = null;
 
 	//protected boolean goneThroughMain = false;
 	protected boolean _locked = true;
@@ -55,7 +58,7 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 	}
 	
-	public List getChildren(){
+	public List<UIComponent> getChildren(){
 		/*if (this.children == null)
 		{
 			this.children = new PresentationObjectList(this);
@@ -194,10 +197,10 @@ public class PresentationObjectContainer extends PresentationObject
 		addText(Integer.toString(integerToInsert));
 	}
 	
-	public UIComponent getContainedObject(Class objectClass) {
-		List objects = getChildren();
+	public UIComponent getContainedObject(Class<?> objectClass) {
+		List<UIComponent> objects = getChildren();
 		if (objects != null) {
-			Iterator iter = objects.iterator();
+			Iterator<UIComponent> iter = objects.iterator();
 			while (iter.hasNext()) {
 				Object element = iter.next();
 				if (element.getClass() == objectClass) {
@@ -207,25 +210,25 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 		return null;
 	}
-	public List getChildrenRecursive()
+	public List<UIComponent> getChildrenRecursive()
 	{
 		if (this.allObjects == null)
 		{
-			List toReturn = null;
-			List children = this.getChildren();
+			List<UIComponent> toReturn = null;
+			List<UIComponent> children = this.getChildren();
 			if (children != null)
 			{
-				toReturn = new ArrayList();
+				toReturn = new ArrayList<UIComponent>();
 				toReturn.containsAll(children);
-				Iterator iter = children.iterator();
+				Iterator<UIComponent> iter = children.iterator();
 				while (iter.hasNext())
 				{
-					Object item = iter.next();
+					UIComponent item = iter.next();
 					if (item instanceof PresentationObjectContainer)
 					{
 						toReturn.add(item);
 						//if(!toReturn.contains(item)){
-						List tmp = ((PresentationObjectContainer) item).getChildrenRecursive();
+						List<UIComponent> tmp = ((PresentationObjectContainer) item).getChildrenRecursive();
 						if (tmp != null)
 						{
 							toReturn.addAll(tmp);
@@ -329,7 +332,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 * 
 	 * @uml.property name="children"
 	 */
-	protected void setChildren(List newChildren) {
+	protected void setChildren(List<UIComponent> newChildren) {
 		//this.children = newChildren;
 		this.getChildren().addAll(newChildren);
 	}
@@ -390,9 +393,9 @@ public class PresentationObjectContainer extends PresentationObject
 					exep._print(iwc);
 				}
 			}*/
-			Iterator iter = this.getChildren().iterator();
+			Iterator<UIComponent> iter = this.getChildren().iterator();
 			while(iter.hasNext()){
-				UIComponent child = (UIComponent)iter.next();
+				UIComponent child = iter.next();
 				renderChild(iwc,child);
 			}
 		//}
@@ -449,10 +452,10 @@ public class PresentationObjectContainer extends PresentationObject
 						//backward compatability for PresentationObjects
 						int instanceIdINT = Integer.parseInt(instanceId);
 						
-						Iterator iter = this.getFacetsAndChildren();
+						Iterator<UIComponent> iter = this.getFacetsAndChildren();
 						
 						while (iter.hasNext()){
-							UIComponent item = (UIComponent) iter.next();
+							UIComponent item = iter.next();
 							if ( item instanceof PresentationObject &&  ((PresentationObject) item).getICObjectInstanceID() == instanceIdINT){
 								return item;
 							}
@@ -468,10 +471,10 @@ public class PresentationObjectContainer extends PresentationObject
 					catch (NumberFormatException nfe)
 					{
 						//must be one of those spiffy new UIComponents and what'not's 
-						Iterator iter = this.getFacetsAndChildren();
+						Iterator<UIComponent> iter = this.getFacetsAndChildren();
 						
 						while (iter.hasNext()){
-							UIComponent item = (UIComponent) iter.next();
+							UIComponent item = iter.next();
 							if(instanceId.equals(item.getId())){
 								return item;
 							}	
@@ -496,10 +499,10 @@ public class PresentationObjectContainer extends PresentationObject
 	 * 
 	 */
 	public UIComponent getContainedLabeledObject(String label){
-		Iterator iter = this.getFacetsAndChildren();
+		Iterator<UIComponent> iter = this.getFacetsAndChildren();
 		while (iter.hasNext())
 		{
-			UIComponent item = (UIComponent) iter.next();
+			UIComponent item = iter.next();
 			if (item instanceof PresentationObjectContainer)
 			{
 				String itemLabel = ((PresentationObjectContainer) item).getLabel();
@@ -590,7 +593,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 * catch(Exception ex) { ExceptionWrapper exep = new
 	 * ExceptionWrapper(ex,this); }
 	 */
-	public void removeAll(java.util.Collection c)
+	public void removeAll(Collection<UIComponent> c)
 	{
 		getChildren().removeAll(c);
 	}
@@ -688,6 +691,7 @@ public class PresentationObjectContainer extends PresentationObject
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void cloneJSFChildren(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
 		//Cloning the JSF children:
 		if(this.childrenList!=null){
@@ -696,11 +700,11 @@ public class PresentationObjectContainer extends PresentationObject
 			((PresentationObjectComponentList)obj.childrenList).setComponent(obj);
 			
 			//Iterate over the children to clone each child:
-			ListIterator iter = obj.getChildren().listIterator();
+			ListIterator<UIComponent> iter = obj.getChildren().listIterator();
 			while (iter.hasNext())
 			{
 				int index = iter.nextIndex();
-				Object item = iter.next();
+				UIComponent item = iter.next();
 				//Object item = obj.theObjects.elementAt(index);
 				if (item instanceof PresentationObject){
 					PresentationObject newObject = (PresentationObject) ((PresentationObject) item).clonePermissionChecked(iwc, askForPermission);
@@ -709,11 +713,11 @@ public class PresentationObjectContainer extends PresentationObject
 					obj.getChildren().set(index, newObject);
 					//newObject.setParent(obj);
 				}
-				else if(item instanceof UIComponent){
+				else {
 					//create a copy from the IBXML
 					try {
 						BuilderService builderService = getBuilderService(IWMainApplication.getDefaultIWApplicationContext());
-						UIComponent newUIObject = builderService.getCopyOfUIComponentFromIBXML((UIComponent)item);
+						UIComponent newUIObject = builderService.getCopyOfUIComponentFromIBXML(item);
 						//insert the new item
 						obj.getChildren().set(index, newUIObject);
 					}
@@ -726,6 +730,7 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void cloneJSFFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
 		//First clone the facet Map:
 		if(this.facetMap!=null){
@@ -733,8 +738,8 @@ public class PresentationObjectContainer extends PresentationObject
 			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
 			
 			//Iterate over the children to clone each child:
-			for (Iterator iter = getFacets().keySet().iterator(); iter.hasNext();) {
-				String key = (String) iter.next();
+			for (Iterator<String> iter = getFacets().keySet().iterator(); iter.hasNext();) {
+				String key = iter.next();
 				UIComponent component = getFacet(key);
 				if(component instanceof PresentationObject){
 					PresentationObject newObject = (PresentationObject)((PresentationObject)component).clonePermissionChecked(iwc,askForPermission);
@@ -799,14 +804,10 @@ public class PresentationObjectContainer extends PresentationObject
 	public void setLocation(IWLocation location, IWUserContext iwuc)
 	{
 		super.setLocation(location, iwuc);
-		//List l = this.getChildren();
-		//if (l != null)
-		//{
-			Iterator iter = this.getFacetsAndChildren();
-			//Iterator iter = l.iterator();
+			Iterator<UIComponent> iter = this.getFacetsAndChildren();
 			while (iter.hasNext())
 			{
-				Object item = iter.next();
+				UIComponent item = iter.next();
 				if (item instanceof PresentationObject)
 				{
 					((PresentationObject) item).setLocation(location, iwuc);
@@ -820,7 +821,6 @@ public class PresentationObjectContainer extends PresentationObject
 					}
 				}
 			}
-		//}
 	}
 	
 	/*

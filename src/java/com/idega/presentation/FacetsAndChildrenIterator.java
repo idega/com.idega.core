@@ -1,5 +1,5 @@
 /*
- * $Id: FacetsAndChildrenIterator.java,v 1.4 2006/04/09 12:13:13 laddi Exp $
+ * $Id: FacetsAndChildrenIterator.java,v 1.5 2007/12/28 13:23:05 valdas Exp $
  * Created in 2004 by Tryggvi Larusson
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -15,21 +15,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import javax.faces.component.UIComponent;
+
 /**
  * Class to override the standard iterator for the method getFacetsAndChildren() in UIComponent
  * 
- * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
+ * Last modified: $Date: 2007/12/28 13:23:05 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
-class FacetsAndChildrenIterator
-        implements Iterator
+class FacetsAndChildrenIterator implements Iterator<UIComponent>
 {
-    private Iterator _facetsIterator;
-    private Iterator _childrenIterator;
+    private Iterator<UIComponent> _facetsIterator;
+    private Iterator<UIComponent> _childrenIterator;
     
-    FacetsAndChildrenIterator(Map facetMap, List childrenList)
+    FacetsAndChildrenIterator(Map<String, UIComponent> facetMap, List<UIComponent> childrenList)
     {
         this._facetsIterator   = facetMap != null ? facetMap.values().iterator() : null;
         this._childrenIterator = childrenList != null ? childrenList.iterator() : null;
@@ -46,7 +47,7 @@ class FacetsAndChildrenIterator
     		return ( facetsHasNext || childrenHasNext );
     }
 
-    public Object next()
+    public UIComponent next()
     {
 		boolean facetsHasNext = false;
 		boolean childrenHasNext=false;

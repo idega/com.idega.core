@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.165 2007/04/13 15:16:26 valdas Exp $
+ * $Id: PresentationObject.java,v 1.166 2007/12/28 13:23:04 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,7 @@ package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
+import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -58,6 +59,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.presentation.ui.Form;
+import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.RenderUtils;
 import com.idega.util.StringHandler;
@@ -71,10 +73,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2007/04/13 15:16:26 $ by $Author: valdas $
+ * Last modified: $Date: 2007/12/28 13:23:04 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.165 $
+ * @version $Revision: 1.166 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -88,7 +90,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public final static String WIDTH = "width";
 	public final static String HEIGHT = "height";
 	public final static String HORIZONTAL_ALIGNMENT = "align";
-	protected static final String slash = "/";
+	protected static final String slash = CoreConstants.SLASH;
 	private static String emptyString = "";
 	public static String sessionEventStorageName = IWMainApplication.IWEventSessionAddressParameter;
 	public static final PresentationObject NULL_CLONE_OBJECT = new PresentationObject();
@@ -113,7 +115,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	private transient boolean goneThroughRenderPhase=false;
 	
 	//state hold variables:
-	public Map attributes;
+	public Map<String, String> attributes;
 	private String name;
 	//protected UIComponent parentObject;
 	private boolean doPrint = true;
@@ -128,7 +130,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	public EventListenerList listenerList = null;
 	public EventListenerList _listenerList = null;
-	private Hashtable eventAttributes = null;
+	private Dictionary<String, Object> eventAttributes = null;
 	private String UniqueInstanceName;
 	private boolean listenerAdded = false;
 	public String eventLocationString = "";
@@ -147,8 +149,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	private String _objTemplateID = null;
 	
 	//JSF variables duplicated and overridden because of cloning:
-	protected Map facetMap;
-	protected List childrenList;
+	protected Map<String, UIComponent> facetMap;
+	protected List<UIComponent> childrenList;
 
 	//Marker to mark if this component instance is restored via the JSF state restoring mechanism
 	private boolean isStateRestored=false;
@@ -300,19 +302,13 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		return this.doPrint;
 	}
-	protected void setMarkupAttributes(Map attributes)
+	protected void setMarkupAttributes(Map<String, String> attributes)
 	{
-		//this.attributes = attributes;
 		getMarkupAttributes().putAll(attributes);
 	}
 	public void setMarkupAttribute(String attributeName, String attributeValue)
 	{
-		//if (this.attributes == null)
-		//{
-		//	this.attributes = new Hashtable();
-		//}
 		if(attributeName!=null && attributeValue!=null){
-			//this.attributes.put((Object) attributeName, (Object) attributeValue);
 			getMarkupAttributes().put(attributeName,attributeValue);
 		}
 	}
@@ -320,10 +316,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		if (attributeName != null)
 		{
-			//if (this.attributes != null)
-			//{
-			//	this.attributes.remove(attributeName);
-			//}
 			getMarkupAttributes().remove(attributeName);
 		}
 	}
@@ -445,27 +437,22 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * attributes. These mappings will replace attibutes that this map had for
 	 * any of the keys currently in the specified map.
 	 */
-	public void addMarkupAttributes(Map attributeMap)
+	public void addMarkupAttributes(Map<String, String> attributeMap)
 	{
-		//if (this.attributes == null)
-		//{
-		//	this.attributes = new Hashtable();
-		//}
-		//attributes.putAll(attributeMap);
 		getMarkupAttributes().putAll(attributeMap);
 	}
 	/**
 	 *  
 	 */
-	protected static Map getAttributeMap(String attributeString)
+	protected static Map<String, String> getAttributeMap(String attributeString)
 	{
-		Hashtable map = new Hashtable();
+		Map<String, String> map = new Hashtable<String, String>();
 		if (attributeString != null && attributeString.length() > 1)
 		{
 			StringTokenizer tokens = new StringTokenizer(attributeString), tok;
 			while (tokens.hasMoreTokens())
 			{
-				String s = tokens.nextToken(); //.replace('"',' ');
+				String s = tokens.nextToken();
 				tok = new StringTokenizer(s, "=\"");
 				if (tok.countTokens() == 2)
 				{
@@ -477,21 +464,13 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public String getMarkupAttribute(String attributeName)
 	{
-		/*if (this.attributes != null)
-		{
-			return (String) this.attributes.get((Object) attributeName);
-		}
-		else
-		{
-			return null;
-		}*/
-		return (String)getMarkupAttributes().get(attributeName);
+		return getMarkupAttributes().get(attributeName);
 	}
-	protected static String getAttribute(String attributeName, Map map)
+	protected static String getAttribute(String attributeName, Map<String, String> map)
 	{
 		if (map != null)
 		{
-			return (String) map.get(attributeName);
+			return map.get(attributeName);
 		}
 		else
 		{
@@ -509,36 +488,35 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			return true;
 		}
 	}
-	public Map getMarkupAttributes()
+	public Map<String, String> getMarkupAttributes()
 	{
 		if(this.attributes==null){
-			this.attributes = new Hashtable();
+			this.attributes = new Hashtable<String, String>();
 		}
 		return this.attributes;
 	}
-	protected static String getAttributesString(Map map)
+	protected static String getAttributesString(Map<String, String> map)
 	{
 		StringBuffer returnString = new StringBuffer();
-		String Attribute = "";
+		String attributeKey = "";
 		String attributeValue = "";
-		Map.Entry mapEntry;
+		Map.Entry<String, String> mapEntry;
 		if (map != null)
 		{
-			Iterator i = map.entrySet().iterator();
-			while (i.hasNext())
+			for (Iterator<Map.Entry<String, String>> i = map.entrySet().iterator(); i.hasNext();)
 			{
-				mapEntry = (Map.Entry) i.next();
-				Attribute = (String) mapEntry.getKey();
-				returnString.append(" ");
-				returnString.append(Attribute);
-				attributeValue = (String) mapEntry.getValue();
+				mapEntry = i.next();
+				attributeKey = mapEntry.getKey();
+				returnString.append(CoreConstants.SPACE);
+				returnString.append(attributeKey);
+				attributeValue = mapEntry.getValue();
 				if (!attributeValue.equals(slash))
 				{
 					returnString.append("=\"");
 					returnString.append(attributeValue);
 					returnString.append("\"");
 				}
-				returnString.append("");
+				returnString.append(CoreConstants.EMPTY);
 			}
 		}
 		return returnString.toString();
@@ -602,7 +580,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				}
 			}
 			catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -627,7 +604,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				writer.write(StringHandler.NEWLINE);
 			}
 			catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -984,17 +960,16 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			//obj =
 			// (PresentationObject)Class.forName(this.getClassName()).newInstance();
 			obj = (PresentationObject) super.clone();
-			Map markupAttributes = getMarkupAttributes();
+			Map<String, String> markupAttributes = getMarkupAttributes();
 			if (markupAttributes != null)
 			{
 				if(markupAttributes instanceof Hashtable){
-					//obj.setMarkupAttributes((Map) ((Hashtable) markupAttributes).clone());
 					obj.attributes = ((Hashtable) ((Hashtable) markupAttributes).clone());
 				}
 				else{
-					for (Iterator iter = markupAttributes.keySet().iterator(); iter.hasNext();) {
-						Object key = iter.next();
-						Object value = markupAttributes.get(key);
+					for (Iterator<String> iter = markupAttributes.keySet().iterator(); iter.hasNext();) {
+						String key = iter.next();
+						String value = markupAttributes.get(key);
 						obj.getAttributes().put(key,value);
 					}
 				}
@@ -1187,7 +1162,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		return this.getICObject(this.getClass());
 	}
-	protected ICObject getICObject(Class c) throws Exception
+	protected ICObject getICObject(Class<?> c) throws Exception
 	{
 		try
 		{
@@ -1260,7 +1235,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		if (this.eventAttributes == null)
 		{
-			this.eventAttributes = new Hashtable();
+			this.eventAttributes = new Hashtable<String, Object>();
 		}
 		this.eventAttributes.put(attributeName, attributeValue);
 	}
@@ -1920,7 +1895,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		if (mother != null && (PresentationObjectContainer.class).isAssignableFrom(mother.getClass()))
 		{
 			StringBuffer buffer = new StringBuffer(id);
-			List list = ((PresentationObjectContainer) mother).getChildren();
+			List<UIComponent> list = ((PresentationObjectContainer) mother).getChildren();
 			int myIndex = list.indexOf(this);
 			// add underscore
 			buffer.append(PresentationObject.COMPOUNDID_CHILD_NUMBER_DELIMITER);
@@ -1999,7 +1974,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		// code!
 		if (this.formerCompoundId != null && this instanceof StatefullPresentation) {
 			try {
-				Class stateClass = ((StatefullPresentation) this)
+				Class<?> stateClass = ((StatefullPresentation) this)
 					.getPresentationStateClass();
 				IWStateMachine stateMachine = (IWStateMachine) IBOLookup
 					.getSessionInstance(iwuc, IWStateMachine.class);
@@ -2082,18 +2057,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * BEGIN JSF SPECIFIC IMPLEMENTAION METHODS
 	 */
 	public void processDecodes(FacesContext context){
-		/*
-		super.processDecodes(fc);
-		List children = this.getChildren();
-		for (Iterator iter = children.iterator(); iter.hasNext();) {
-			UIComponent child = (UIComponent) iter.next();
-			child.processDecodes(fc);
-		}*/
         // Process all facets and children of this component
-        Iterator kids = getFacetsAndChildren();
-        while (kids.hasNext()) {
-            UIComponent kid = (UIComponent) kids.next();
-            kid.processDecodes(context);
+        for (Iterator<UIComponent> kids = getFacetsAndChildren(); kids.hasNext();) {
+        	kids.next().processDecodes(context);
         }
 
         // Process this component itself
@@ -2112,10 +2078,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
 		super.restoreState(context, values[0]);
-		this.attributes=(Map)values[1];
+		this.attributes=(Map<String, String>)values[1];
 		this.name=(String)values[2];
 		this.doPrint=((Boolean)values[3]).booleanValue();
 		this.errorMessage=(String)values[4];
@@ -2133,7 +2100,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		this.ic_object_id=((Integer)values[9]).intValue();
 		this.listenerList=(EventListenerList)values[10];
 		this._listenerList=(EventListenerList)values[11];
-		this.eventAttributes=(Hashtable)values[12];
+		this.eventAttributes=(Dictionary<String, Object>)values[12];
 		this.UniqueInstanceName=(String)values[13];
 		this.listenerAdded=((Boolean)values[14]).booleanValue();
 		this.eventLocationString=(String)values[15];
@@ -2316,11 +2283,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
 	 */
 	public void encodeChildren(FacesContext context) throws IOException {
-		if(!goneThroughRenderPhase()){
-			Iterator children = this.getChildren().iterator();
-			while (children.hasNext()) {
-				UIComponent element = (UIComponent) children.next();
-				renderChild(context,element);
+		if(!goneThroughRenderPhase()) {
+			for (Iterator<UIComponent> children = this.getChildren().iterator(); children.hasNext();) {
+				renderChild(context, children.next());
 			}
 		}
 	}
@@ -2405,7 +2370,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFacets()
 	 */
-	public Map getFacets() {
+	public Map<String, UIComponent> getFacets() {
 		if(this.facetMap==null){
 			this.facetMap = new PresentationObjectComponentFacetMap(this);
 		}
@@ -2414,9 +2379,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFacetsAndChildren()
 	 */
-	public Iterator getFacetsAndChildren() {
+	public Iterator<UIComponent> getFacetsAndChildren() {
 		//Overridded because Myfaces getFacetsAndChildren() doesn't call getFacets() and getChildren() properly
-		return new FacetsAndChildrenIterator(getFacets(),getChildren());
+		return new FacetsAndChildrenIterator(getFacets(), getChildren());
 	}
 	
 	
@@ -2430,7 +2395,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getChildren()
 	 */
-	public List getChildren() {
+	public List<UIComponent> getChildren() {
 		if (this.childrenList == null)
 		{
 			this.childrenList = new PresentationObjectComponentList(this);
@@ -2760,6 +2725,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * Method to use in subclasses if facets should be cloned.  DOES NOT CHECK PERMISSIONS.
 	 * @param obj The clone.
 	 */
+	@SuppressWarnings("unchecked")
 	protected void cloneJSFFacets(PresentationObject obj){
 		//First clone the facet Map:
 		if(this.facetMap!=null){
@@ -2767,8 +2733,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
 			
 			//Iterate over the children to clone each child:
-			for (Iterator iter = getFacets().keySet().iterator(); iter.hasNext();) {
-				String key = (String) iter.next();
+			for (Iterator<String> iter = getFacets().keySet().iterator(); iter.hasNext();) {
+				String key = iter.next();
 				UIComponent component = getFacet(key);
 				if(component instanceof PresentationObject){
 					PresentationObject newObject = (PresentationObject)((PresentationObject)component).clone();
