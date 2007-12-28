@@ -17,9 +17,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.4 $
+ * @version $Revision: 1.1.2.5 $
  *
- * Last modified: $Date: 2007/12/27 20:32:22 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/28 20:52:19 $ by $Author: civilis $
  *
  */
 public class UICreditCardNumber extends IWBaseInputComponent {
@@ -65,26 +65,22 @@ public class UICreditCardNumber extends IWBaseInputComponent {
 		
 		HtmlInputText inputText = (HtmlInputText)getFacet(inputFacet+i);
 		
-		if(ccNumber != null)
-			inputText.setValue(ccNumber.getNumber1() == null ? CoreConstants.EMPTY : ccNumber.getNumber1());
+		inputText.setValue(ccNumber.getNumber1());
 		inputsIndentifiers[i++] = inputText.getClientId(context);
 		renderChild(context, inputText);
 		
 		inputText = (HtmlInputText)getFacet(inputFacet+i);
-		if(ccNumber != null)
-			inputText.setValue(ccNumber.getNumber2() == null ? CoreConstants.EMPTY : ccNumber.getNumber2());
+		inputText.setValue(ccNumber.getNumber2());
 		inputsIndentifiers[i++] = inputText.getClientId(context);
 		renderChild(context, inputText);
 		
 		inputText = (HtmlInputText)getFacet(inputFacet+i);
-		if(ccNumber != null)
-			inputText.setValue(ccNumber.getNumber3() == null ? CoreConstants.EMPTY : ccNumber.getNumber3());
+		inputText.setValue(ccNumber.getNumber3());
 		inputsIndentifiers[i++] = inputText.getClientId(context);
 		renderChild(context, inputText);
 		
 		inputText = (HtmlInputText)getFacet(inputFacet+i);
-		if(ccNumber != null)
-			inputText.setValue(ccNumber.getNumber4() == null ? CoreConstants.EMPTY : ccNumber.getNumber4());
+		inputText.setValue(ccNumber.getNumber4());
 		inputsIndentifiers[i++] = inputText.getClientId(context);
 		renderChild(context, inputText);	
 	}
@@ -165,9 +161,7 @@ public class UICreditCardNumber extends IWBaseInputComponent {
 		for (int i = 0; i < inputsIdentifiers.length; i++) {
 			
 			String number = (String)requestParams.get(inputsIdentifiers[i]);
-			
-			if(!CoreConstants.EMPTY.equals(number))
-				submitted[i] = number;
+			submitted[i] = number;
 		}
 		
 		return submitted;
@@ -197,6 +191,20 @@ public class UICreditCardNumber extends IWBaseInputComponent {
 			return null;
 		
 		String[] submitted = (String[])submittedValue;
+		
+		boolean empty = true;
+		
+		for (int i = 0; i < submitted.length; i++) {
+			
+			if(submitted[i] != null && !CoreConstants.EMPTY.equals(submitted[i])) {
+				
+				empty = false;
+				break;
+			}
+		}
+		
+		if(empty)
+			return null;
 		
 		ccNumber.setNumber1(submitted[0]);
 		ccNumber.setNumber2(submitted[1]);

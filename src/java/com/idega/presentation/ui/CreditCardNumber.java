@@ -2,12 +2,14 @@ package com.idega.presentation.ui;
 
 import java.io.Serializable;
 
+import com.idega.util.CoreConstants;
+
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.2 $
+ * @version $Revision: 1.1.2.3 $
  *
- * Last modified: $Date: 2007/12/27 20:32:22 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/28 20:52:19 $ by $Author: civilis $
  *
  */
 public class CreditCardNumber implements Serializable {
@@ -79,7 +81,7 @@ public class CreditCardNumber implements Serializable {
 	 * @Override
 	 */
 	public String toString() {
-		
-		return new StringBuffer(number1).append(number2).append(number3).append(number4).toString();
+
+		return new StringBuffer(number1 == null ? CoreConstants.EMPTY : number1).append(number2 == null ? CoreConstants.EMPTY : number2).append(number3 == null ? CoreConstants.EMPTY : number3).append(number4 == null ? CoreConstants.EMPTY : number4).toString();
 	}
 }

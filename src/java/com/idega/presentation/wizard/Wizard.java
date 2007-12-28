@@ -27,9 +27,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.5 $
+ * @version $Revision: 1.1.2.6 $
  *
- * Last modified: $Date: 2007/12/27 20:32:22 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/28 20:52:19 $ by $Author: civilis $
  *
  */
 public abstract class Wizard extends IWBaseComponent {
@@ -120,6 +120,9 @@ public abstract class Wizard extends IWBaseComponent {
 			renderChild(context, stepComponent);
 	}
 	
+	/**
+	 * @Override
+	 */
 	public void decode(FacesContext context) {
 		super.decode(context);
 		
