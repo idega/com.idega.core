@@ -27,9 +27,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.6 $
+ * @version $Revision: 1.1.2.7 $
  *
- * Last modified: $Date: 2007/12/28 20:52:19 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/29 15:40:16 $ by $Author: civilis $
  *
  */
 public abstract class Wizard extends IWBaseComponent {
@@ -37,6 +37,7 @@ public abstract class Wizard extends IWBaseComponent {
 	private Logger logger;
 	
 	private static final String stepHolderFacet = "stepHolder";
+	private static final String currentStepFacet = "currentStep";
 	private static final String stepIdentifierExp = "#{wizardControlValues.stepIdentifier}";
 	private static final String wizardControlValuesExp = "#{wizardControlValues}";
 	private static final String spanTag = "span";
@@ -105,15 +106,11 @@ public abstract class Wizard extends IWBaseComponent {
 			
 			WizardStep wizardStep = (WizardStep)wizardStepsMap.get(identifier);
 			stepComponent = wizardStep.getStepComponent(context, this);
-			
-			if(stepComponent != null) {
-				
-				stepComponent.setRendered(true);
-				getFacets().put(identifier, stepComponent);
-			}
+			getFacets().put(currentStepFacet, stepComponent);
 			
 		} else {
-			stepComponent = getFacet(identifier);
+			
+			stepComponent = getFacet(currentStepFacet);
 		}
 		
 		if(stepComponent != null)
