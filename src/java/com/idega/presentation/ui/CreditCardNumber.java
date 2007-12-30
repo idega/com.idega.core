@@ -7,9 +7,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.3 $
+ * @version $Revision: 1.1.2.4 $
  *
- * Last modified: $Date: 2007/12/28 20:52:19 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/30 15:26:03 $ by $Author: civilis $
  *
  */
 public class CreditCardNumber implements Serializable {
@@ -68,11 +68,25 @@ public class CreditCardNumber implements Serializable {
 	}
 	
 	public void setFullNumber(String fullNumber, String separator) {
+
+		String[] splitted = fullNumber.split(separator);
 		
+		if(splitted.length != 4) {
+			number1 = null;
+			number2 = null;
+			number3 = null;
+			number4 = null;
+		} else {
+			number1 = splitted[0];
+			number2 = splitted[1];
+			number3 = splitted[2];
+			number4 = splitted[3];
+		}
 	}
 	
 	public String getFullNumber(String separator) {
-		return null;
+		
+		return new StringBuffer(number1 == null ? CoreConstants.EMPTY : number1).append(separator).append(number2 == null ? CoreConstants.EMPTY : number2).append(separator).append(number3 == null ? CoreConstants.EMPTY : number3).append(separator).append(number4 == null ? CoreConstants.EMPTY : number4).toString();
 	}
 	
 	/**
@@ -82,6 +96,6 @@ public class CreditCardNumber implements Serializable {
 	 */
 	public String toString() {
 
-		return new StringBuffer(number1 == null ? CoreConstants.EMPTY : number1).append(number2 == null ? CoreConstants.EMPTY : number2).append(number3 == null ? CoreConstants.EMPTY : number3).append(number4 == null ? CoreConstants.EMPTY : number4).toString();
+		return getFullNumber(CoreConstants.EMPTY);
 	}
 }

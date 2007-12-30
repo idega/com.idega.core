@@ -27,9 +27,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.7 $
+ * @version $Revision: 1.1.2.8 $
  *
- * Last modified: $Date: 2007/12/29 15:40:16 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/30 15:26:03 $ by $Author: civilis $
  *
  */
 public abstract class Wizard extends IWBaseComponent {
@@ -116,18 +116,28 @@ public abstract class Wizard extends IWBaseComponent {
 		if(stepComponent != null)
 			renderChild(context, stepComponent);
 	}
-	
+
 	/**
 	 * @Override
 	 */
-	public void decode(FacesContext context) {
-		super.decode(context);
+	public void processValidators(FacesContext context) {
+		super.processValidators(context);
 		
 		ValueBinding vb = context.getApplication().createValueBinding(wizardControlValuesExp);
 		WizardControlValues controlValues = (WizardControlValues)vb.getValue(context);
 		
-		if(controlValues.getStepIdentifier() == null || CoreConstants.EMPTY.equals(controlValues.getStepIdentifier()))
-			controlValues.setStepIdentifier((String)context.getExternalContext().getRequestParameterMap().get(getFacet(stepHolderFacet).getClientId(context)));
+//		validation failed
+		if(context.getMessages().hasNext()) {
+			
+			if(controlValues.getStepIdentifier() == null || CoreConstants.EMPTY.equals(controlValues.getStepIdentifier()))
+				controlValues.setStepIdentifier(latterStepIdentifier);
+
+//		validation succeeded
+		} else {
+			
+			if(controlValues.getStepIdentifier() == null || CoreConstants.EMPTY.equals(controlValues.getStepIdentifier()))
+				controlValues.setStepIdentifier((String)context.getExternalContext().getRequestParameterMap().get(getFacet(stepHolderFacet).getClientId(context)));
+		}
 	}
 	
 	/**
