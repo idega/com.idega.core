@@ -27,9 +27,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.8 $
+ * @version $Revision: 1.1.2.9 $
  *
- * Last modified: $Date: 2007/12/30 15:26:03 $ by $Author: civilis $
+ * Last modified: $Date: 2007/12/30 18:08:11 $ by $Author: civilis $
  *
  */
 public abstract class Wizard extends IWBaseComponent {
@@ -49,8 +49,10 @@ public abstract class Wizard extends IWBaseComponent {
 	/** List<String>*/
 	private List wizardStepsComponentsIdentifiersSequence = new ArrayList();
 	
-	/** Map<String, wizardStep>*/
+	/** Map<String, WizardStep>*/
 	private Map wizardStepsMap = new HashMap();
+	
+	private WizardStep submissionSuccessStep;
 
 	/**
 	 * @Override
@@ -72,6 +74,8 @@ public abstract class Wizard extends IWBaseComponent {
 			wizardStepsComponentsIdentifiersSequence.add(wizardStep.getIdentifier());
 			wizardStepsMap.put(wizardStep.getIdentifier(), wizardStep);
 		}
+		
+		submissionSuccessStep = getSubmissionSuccessStep();
 		
 		Application application = context.getApplication();
 		
@@ -104,7 +108,7 @@ public abstract class Wizard extends IWBaseComponent {
 			
 			latterStepIdentifier = identifier;
 			
-			WizardStep wizardStep = (WizardStep)wizardStepsMap.get(identifier);
+			WizardStep wizardStep = submissionSuccessStep.getIdentifier().equals(identifier) ? submissionSuccessStep : (WizardStep)wizardStepsMap.get(identifier);
 			stepComponent = wizardStep.getStepComponent(context, this);
 			getFacets().put(currentStepFacet, stepComponent);
 			
@@ -145,6 +149,8 @@ public abstract class Wizard extends IWBaseComponent {
 	 * @return List<wizardStep>
 	 */
 	public abstract List getWizardSteps();
+	
+	public abstract WizardStep getSubmissionSuccessStep();
 	
 	protected Logger getLogger() {
 		
@@ -204,9 +210,36 @@ public abstract class Wizard extends IWBaseComponent {
 		return prevButton;
 	}
 	
-	public HtmlCommandButton getCustomStepButton(WizardStep step) {
+	public HtmlCommandButton getCustomStepButton(FacesContext context, WizardStep step) {
 		
-		throw new UnsupportedOperationException("Not implemented yet");
+		String stepIdentifier = step.getIdentifier();
+		
+		int stepIndex = wizardStepsComponentsIdentifiersSequence.lastIndexOf(stepIdentifier);
+		
+		if(stepIndex < 0)
+			throw new RuntimeException("Step provided is not in steps list: "+stepIdentifier);
+		
+		if(stepIndex == 0)
+			return null;
+		
+		Application application = context.getApplication();
+		HtmlCommandButton custButton = (HtmlCommandButton)application.createComponent(HtmlCommandButton.COMPONENT_TYPE);
+		custButton.setId(context.getViewRoot().createUniqueId());
+		custButton.setOnclick(new StringBuffer("document.getElementById('").append(((UIComponent)getFacets().get(stepHolderFacet)).getClientId(context)).append("').value='").append(stepIdentifier).append("';").toString());
+		
+		return custButton;
+	}
+	
+	public HtmlCommandButton getSubmissionSuccessStepButton(FacesContext context) {
+		
+		Application application = context.getApplication();
+		HtmlCommandButton button = (HtmlCommandButton)application.createComponent(HtmlCommandButton.COMPONENT_TYPE);
+		button.setId(context.getViewRoot().createUniqueId());
+		
+		if(submissionSuccessStep != null)
+			button.setOnclick(new StringBuffer("document.getElementById('").append(((UIComponent)getFacets().get(stepHolderFacet)).getClientId(context)).append("').value='").append(submissionSuccessStep.getIdentifier()).append("';").toString());
+		
+		return button;
 	}
 	
 	/**
@@ -214,11 +247,12 @@ public abstract class Wizard extends IWBaseComponent {
 	 */
 	public Object saveState(FacesContext context) {
 		
-		Object values[] = new Object[4];
+		Object values[] = new Object[5];
 		values[0] = super.saveState(context);
 		values[1] = wizardStepsComponentsIdentifiersSequence;
 		values[2] = latterStepIdentifier;
 		values[3] = wizardStepsMap;
+		values[4] = submissionSuccessStep;
 		
 		return values;
 	}
@@ -232,6 +266,7 @@ public abstract class Wizard extends IWBaseComponent {
 		wizardStepsComponentsIdentifiersSequence = (List)values[1];
 		latterStepIdentifier = (String)values[2];
 		wizardStepsMap = (Map)values[3];
+		submissionSuccessStep = (WizardStep)values[4];
 	}
 	
 	/**
