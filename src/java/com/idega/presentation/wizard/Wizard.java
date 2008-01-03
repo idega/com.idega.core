@@ -27,9 +27,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.9 $
+ * @version $Revision: 1.1.2.10 $
  *
- * Last modified: $Date: 2007/12/30 18:08:11 $ by $Author: civilis $
+ * Last modified: $Date: 2008/01/03 20:26:09 $ by $Author: civilis $
  *
  */
 public abstract class Wizard extends IWBaseComponent {
@@ -97,6 +97,9 @@ public abstract class Wizard extends IWBaseComponent {
 		
 		ValueBinding vb = context.getApplication().createValueBinding(wizardControlValuesExp);
 		WizardControlValues controlValues = (WizardControlValues)vb.getValue(context);
+		
+		if(context.getMessages().hasNext())
+			controlValues.setStepIdentifier(latterStepIdentifier);
 		
 		String identifier = controlValues.getStepIdentifier() == null || CoreConstants.EMPTY.equals(controlValues.getStepIdentifier()) ? (String)wizardStepsComponentsIdentifiersSequence.get(0) : controlValues.getStepIdentifier();
 		
