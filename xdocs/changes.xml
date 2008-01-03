@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  		<release version="3.1.73" date="2008-01-03">
+      		<action dev="laddi" type="update">
+      			Fixed NoSuchMethodError in DateInput.
+      		</action>
+    	</release>
   		<release version="3.1.72" date="2007-12-31">
       		<action dev="civilis" type="update">
       			Wizard, IWBaseInputComponent components added 

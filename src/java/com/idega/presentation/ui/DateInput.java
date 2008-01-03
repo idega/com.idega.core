@@ -1,5 +1,5 @@
 /*
- * $Id: DateInput.java,v 1.60.2.1 2007/12/23 20:56:07 civilis Exp $
+ * $Id: DateInput.java,v 1.60.2.2 2008/01/03 13:46:31 laddi Exp $
  * 
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  * 
@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+
 import com.idega.business.InputHandler;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -212,7 +213,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	 *          The content to set.
 	 */
 	public void setContent(String content) {
-		if(!"".equals(content)){
+		if (!"".equals(content)) {
 			IWTimestamp stamp = new IWTimestamp(content);
 			if (stamp != null) {
 				setDate(stamp.getDate());
@@ -384,6 +385,11 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		setYear(greg.get(Calendar.YEAR));
 		setMonth(greg.get(Calendar.MONTH) + 1);
 		setDay(greg.get(Calendar.DAY_OF_MONTH));
+	}
+
+	/** @deprecated Use setDate(java.util.Date) instead... * */
+	public void setDate(java.sql.Date date) {
+		setDate((java.util.Date) date);
 	}
 
 	public void setToCurrentDate() {
@@ -717,7 +723,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	public void handleKeepStatus(IWContext iwc) {
 		initilizeValues();
 		String name = iwc.getParameter(getName());
-		
+
 		String nameDay = null;
 		String nameMonth = null;
 		String nameYear = null;
@@ -726,7 +732,6 @@ public class DateInput extends InterfaceObject implements InputHandler {
 			nameMonth = name.substring(5, 7);
 			nameYear = name.substring(0, 4);
 		}
-
 
 		if (this.theDay != null && nameDay != null) {
 			this.theDay.setSelectedElement(nameDay);
@@ -763,7 +768,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	public String getIDForDay() {
 		return this.theDay.getID();
 	}
-	
+
 	public String getIDForMonth() {
 		return this.theMonth.getID();
 	}
@@ -771,19 +776,18 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	public String getIDForYear() {
 		return this.theYear.getID();
 	}
-	
+
 	public String getNameForDay() {
 		return this.theDay.getName();
 	}
-	
+
 	public String getNameForMonth() {
 		return this.theMonth.getName();
 	}
-	
+
 	public String getNameForYear() {
 		return this.theYear.getName();
 	}
-	
 
 	/**
 	 * Sets if the drop down menu should contain a null value (that is a choice
