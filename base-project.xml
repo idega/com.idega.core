@@ -77,6 +77,12 @@
 	          <include>**/*.wsdd</include>
 	        </includes>
 	      </resource>
+	      <resource>
+	       <directory>${basedir}/src/java</directory>
+	        <includes>
+	          <include>**/DefaultFacesMessages*.properties</include>
+	        </includes>
+	      </resource>
 	    </resources>
     </build>
   <dependencies>
