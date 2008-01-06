@@ -1,10 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 
-<beans>
+<beans  xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
+>
+
 	<bean id="loginSession" class="com.idega.core.accesscontrol.business.LoginSessionBean" scope="session" />
-	
+    
 	<bean id="coreConstants" class="com.idega.util.CoreConstants" scope="singleton">
-		<property name="articleConstantsInstance" ref="articleConstants"></property>
+		<property name="articleConstantsInstance" ref="articleConstants" />
 	</bean>
+    
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    
+        <property name="persistenceUnitPostProcessors">
+            <bean class="com.idega.core.persistence.impl.OrmPathPatternMatchingResolver">
+                <property name="resourceResolver">
+                    <bean class="org.springframework.core.io.support.PathMatchingResourcePatternResolver" />
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+  <tx:annotation-driven />
+  
+  <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory" />
+  </bean>
+  
+  <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+  <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+  
+  <bean id="genericDao" class="com.idega.core.persistence.impl.GenericDaoImpl" />
+  
 </beans>
