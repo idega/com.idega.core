@@ -1,14 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project>
   <modelVersion>4.0.0</modelVersion>
   <parent>
   	<groupId>com.idega.block.platform</groupId>
   	<artifactId>com.idega.block.base</artifactId>
-  	<version>4.0.0</version>
+  	<version>4.0-SNAPSHOT</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.core</artifactId>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0-SNAPSHOT</version>
   <name>idegaWeb Core</name>
   <repositories>
         <repository>
@@ -47,8 +47,8 @@
 </distributionManagement>
 
   <scm>
-    <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</connection>
-    <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</developerConnection>
+    <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
+    <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection>
   </scm>
 
   
@@ -58,49 +58,49 @@
 		<id>tryggvil</id>
       	<email>tryggvi@idega.is</email>
       	<organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Pall Helgason</name>
       <id>palli</id>
       <email>palli@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Eirikur Sveinn Hrafnsson</name>
       <id>eiki</id>
       <email>eiki@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Thorhallur Helgason</name>
       <id>laddi</id>
       <email>laddi@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Gudmundur Agust Saemundsson</name>
       <id>gummi</id>
       <email>gummi@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Grimur Jonsson</name>
       <id>gimmi</id>
       <email>gimmi@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Thomas Hilbig</name>
       <id>thomas</id>
       <email>thomas@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
   </developers>
   
