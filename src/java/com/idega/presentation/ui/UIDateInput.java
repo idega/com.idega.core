@@ -17,9 +17,9 @@ import com.idega.presentation.ui.DateInput;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  *
- * Last modified: $Date: 2007/12/23 20:56:59 $ by $Author: civilis $
+ * Last modified: $Date: 2008/01/07 08:53:42 $ by $Author: civilis $
  *
  */
 public class UIDateInput extends IWBaseComponent {
@@ -34,6 +34,7 @@ public class UIDateInput extends IWBaseComponent {
 	private Integer fromYear;
 	private Integer toYear;
 	private String[] dateElementsIdentifiers;
+	private Boolean showDay;
 	
 	protected void initializeComponent(FacesContext context) {
 		super.initializeComponent(context);
@@ -58,7 +59,11 @@ public class UIDateInput extends IWBaseComponent {
 		ValueBinding vb = getValueBinding(valueAtt);
 		
 		if(vb != null) {
-			dateElementsIdentifiers = new String[] {dateInput.getNameForYear(), dateInput.getNameForMonth(), dateInput.getNameForDay()};
+			
+			if(isShowDay())
+				dateElementsIdentifiers = new String[] {dateInput.getNameForYear(), dateInput.getNameForMonth(), dateInput.getNameForDay()};
+			else
+				dateElementsIdentifiers = new String[] {dateInput.getNameForYear(), dateInput.getNameForMonth()};
 			
 			Date date = (Date)vb.getValue(context);
 			
@@ -77,6 +82,7 @@ public class UIDateInput extends IWBaseComponent {
 		
 		DateInput dateInput = new DateInput();
 		dateInput.setName(dateInputName);
+		dateInput.setToShowDay(isShowDay());
 		
 		if(fromYear != null && toYear != null)
 			dateInput.setYearRange(fromYear.intValue(), toYear.intValue());
@@ -97,9 +103,9 @@ public class UIDateInput extends IWBaseComponent {
 			int i = 0;
 			String yearParam = (String)requestParameters.get(dateElementsIdentifiers[i++]);
 			String monthParam = (String)requestParameters.get(dateElementsIdentifiers[i++]);
-			String dayParam = (String)requestParameters.get(dateElementsIdentifiers[i++]);
+			String dayParam = dateElementsIdentifiers.length == 3 ? (String)requestParameters.get(dateElementsIdentifiers[i++]) : null;
 			
-			if(yearParam != null && monthParam != null && dayParam != null) {
+			if(yearParam != null && monthParam != null) {
 			
 				Date date = (Date)vb.getValue(context);
 				
@@ -109,7 +115,7 @@ public class UIDateInput extends IWBaseComponent {
 				}
 				
 				Calendar cal = Calendar.getInstance();
-				cal.set(new Integer(yearParam).intValue(), new Integer(monthParam).intValue()-1, new Integer(dayParam).intValue());
+				cal.set(new Integer(yearParam).intValue(), new Integer(monthParam).intValue()-1, dayParam == null ? 1 : new Integer(dayParam).intValue());
 				
 				date.setTime(cal.getTimeInMillis());
 			}
@@ -162,11 +168,12 @@ public class UIDateInput extends IWBaseComponent {
 	 */
 	public Object saveState(FacesContext context) {
 		
-		Object values[] = new Object[4];
+		Object values[] = new Object[5];
 		values[0] = super.saveState(context);
 		values[1] = dateElementsIdentifiers;
 		values[2] = fromYear;
 		values[3] = toYear;
+		values[4] = showDay;
 		
 		return values;
 	}
@@ -180,10 +187,20 @@ public class UIDateInput extends IWBaseComponent {
 		dateElementsIdentifiers = (String[])values[1];
 		fromYear = (Integer)values[2];
 		toYear = (Integer)values[3];
+		showDay = (Boolean)values[4];
 	}
 	
 	public void setYearRange(int fromYear, int toYear) {
 		this.fromYear = new Integer(fromYear); 
 		this.toYear = new Integer(toYear);
+	}
+	
+	public void setShowDay(boolean showDay) {
+		this.showDay = new Boolean(showDay);
+	}
+	
+	public boolean isShowDay() {
+//		show day by default
+		return showDay == null || showDay.booleanValue();
 	}
 }
