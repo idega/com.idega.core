@@ -4,6 +4,12 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  
+  		<release version="3.1.76" date="2008-01-07">
+      		<action dev="civilis" type="update">
+      			UIDateInput showDay property added 
+      		</action>
+    	</release>
   		<release version="3.1.75" date="2008-01-03">
       		<action dev="civilis" type="update">
       			(Wizard) checking if no errors occurred in invoke application phase 
