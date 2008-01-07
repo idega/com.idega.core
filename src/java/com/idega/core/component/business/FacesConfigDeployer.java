@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.10 2007/11/27 16:29:56 civilis Exp $
+ * $Id: FacesConfigDeployer.java,v 1.11 2008/01/07 15:05:55 civilis Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -36,10 +36,10 @@ import com.idega.util.xml.XmlUtil;
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2007/11/27 16:29:56 $ by $Author: civilis $
+ * Last modified: $Date: 2008/01/07 15:05:55 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
@@ -86,7 +86,8 @@ public class FacesConfigDeployer implements JarLoader {
 	}
 
 	public void processFacesConfig(JarFile jarFile,InputStream stream) throws ParserConfigurationException, SAXException, IOException {
-		DocumentBuilder builder = XmlUtil.getDocumentBuilder();
+		
+		DocumentBuilder builder = XmlUtil.getDocumentBuilder(false);
 		
 		Document document = builder.parse(stream);
 		processDocument(jarFile,document);
