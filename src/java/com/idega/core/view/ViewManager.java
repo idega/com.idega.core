@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.24 2007/12/17 16:21:28 laddi Exp $
+ * $Id: ViewManager.java,v 1.25 2008/01/07 10:19:26 laddi Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.util.RequestUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2007/12/17 16:21:28 $ by $Author: laddi $
+ *  Last modified: $Date: 2008/01/07 10:19:26 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class ViewManager implements Singleton {
 	
@@ -109,7 +109,7 @@ public class ViewManager implements Singleton {
 			//getApplicationRoot().addChildViewNode(node);
 			node.setParent(getApplicationRoot());
 			//String jspUri = iwma.getBundle("com.idega.webface").getJSPURI("workspace.jsp");
-			String jspUri = "/idegaweb/bundles/com.idega.workspace.bundle/jsp/workspace.jsp";
+			String jspUri = "/idegaweb/bundles/com.idega.workspace.bundle/jsp/welcome.jsp";
 			node.setJspUri(jspUri);
 			this.workspaceNode = node;
 		}
