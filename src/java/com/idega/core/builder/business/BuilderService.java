@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.47 2007/10/25 18:27:17 valdas Exp $
+ * $Id: BuilderService.java,v 1.48 2008/01/08 16:31:57 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -332,4 +332,10 @@ public interface BuilderService extends IBOService
 	public String getInstanceId(UIComponent component);
 	
 	public UIComponent findComponentInPage(IWContext iwc, String pageKey, String instanceId);
+	
+	public String addNewModule(String pageKey, String parentObjectInstanceID, int newICObjectID, String label);
+	
+	public int getICObjectId(String objectClass);
+	
+	public boolean existsRegion(String pageKey, String label, String regionId);
 }
