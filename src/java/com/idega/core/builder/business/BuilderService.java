@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.48 2008/01/08 16:31:57 valdas Exp $
+ * $Id: BuilderService.java,v 1.49 2008/01/09 13:43:51 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -204,7 +204,7 @@ public interface BuilderService extends IBOService
 	 * @param newName the default local name
 	 * @return true if successful
 	 */
-	public boolean changePageName(int ID, String newName);
+	public boolean changePageName(int ID, String newName, IWContext iwc);
 	
 	public Collection getTopLevelPages(IWContext iwc);
 	
@@ -333,9 +333,11 @@ public interface BuilderService extends IBOService
 	
 	public UIComponent findComponentInPage(IWContext iwc, String pageKey, String instanceId);
 	
-	public String addNewModule(String pageKey, String parentObjectInstanceID, int newICObjectID, String label);
+	public String addNewModule(String pageKey, String parentObjectInstanceID, String regionId, int newICObjectID, String label);
 	
 	public int getICObjectId(String objectClass);
 	
 	public boolean existsRegion(String pageKey, String label, String regionId);
+	
+	public boolean copyAllModulesFromRegionIntoRegion(String pageKey, String sourceRegionLabel, String destinationRegionId, String destinationRegionLabel);
 }
