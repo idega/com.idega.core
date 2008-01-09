@@ -689,7 +689,7 @@ function isEnterEvent(event) {
 
 /** Application Property logic begins **/
 var SAVING_SITE_INFO_VALUE_MESSAGE_TEXT = "Saving...";
-function changeSiteInfo(id, savingSiteInfoValueMessageText) {
+function changeSiteInfo(id, savingSiteInfoValueMessageText, needsReload) {
 	if (id == null) {
 		return;
 	}
@@ -698,10 +698,10 @@ function changeSiteInfo(id, savingSiteInfoValueMessageText) {
 	}
 	CLICKED_ON_PROPERTY = true;
 	document.onclick = showSiteInfoValue;
-	changeSiteInfoValue(id);
+	changeSiteInfoValue(id, needsReload);
 }
 
-function changeSiteInfoValue(id) {
+function changeSiteInfoValue(id, needsReload) {
 	if (id == null) {
 		return;
 	}
@@ -722,12 +722,12 @@ function changeSiteInfoValue(id) {
 		editBox.addEvents({
 			'keyup': function(e) {
 				e = new Event(e);
-				saveSiteInfoValueWithEnter(e);
+				saveSiteInfoValueWithEnter(e, needsReload);
 				e.stop();
 			},
 			'blur': function(e) {
 				e = new Event(e);
-				saveSiteInfoValueWithBlur(e);
+				saveSiteInfoValueWithBlur(e, needsReload);
 				e.stop();
 			}
 		});
@@ -805,29 +805,29 @@ function appendEditBoxToExactPlace(element, edit) {
 	}
 }
 
-function saveSiteInfoValueWithBlur(event) {
+function saveSiteInfoValueWithBlur(event, needsReload) {
 	if (event == null) {
 		return false;
 	}
 	if (event.type == "blur" || event.type == "onblur") {
-		mainSaveSiteInfo($(EDIT_BOX_ID).value);
+		mainSaveSiteInfo($(EDIT_BOX_ID).value, needsReload);
 	}
 }
 
-function saveSiteInfoValueWithEnter(event) {
+function saveSiteInfoValueWithEnter(event, needsReload) {
 	if (event == null) {
 		return false;
 	}
 	
 	if (event.key) {
 		if ('enter' == event.key) {
-			mainSaveSiteInfo($(EDIT_BOX_ID).value);
+			mainSaveSiteInfo($(EDIT_BOX_ID).value, needsReload);
 		}
 	}
 	return false;
 }
 
-function mainSaveSiteInfo(value) {
+function mainSaveSiteInfo(value, needsReload) {
 	if (SITE_INFO_KEYWORD_FROM_BOX == null || value == null) {
 		return;
 	}
@@ -841,12 +841,16 @@ function mainSaveSiteInfo(value) {
 	}
 	
 	showLoadingMessage(SAVING_SITE_INFO_VALUE_MESSAGE_TEXT);
-	ThemesEngine.saveSiteInfoValue(SITE_INFO_KEYWORD_FROM_BOX, value, saveSiteInfoValueCallback);
-}
-
-function saveSiteInfoValueCallback(result) {
-	closeAllLoadingMessages();
-	showSiteInfoValue();
+	ThemesEngine.saveSiteInfoValue(SITE_INFO_KEYWORD_FROM_BOX, value, {
+		callback: function(result) {
+			closeAllLoadingMessages();
+			showSiteInfoValue();
+			
+			if (needsReload) {
+				reloadPage();
+			}
+		}
+	});
 }
 
 function showSiteInfoValue() {
