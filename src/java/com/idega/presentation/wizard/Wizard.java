@@ -27,9 +27,9 @@ import com.idega.util.CoreConstants;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1.2.10 $
+ * @version $Revision: 1.1.2.11 $
  *
- * Last modified: $Date: 2008/01/03 20:26:09 $ by $Author: civilis $
+ * Last modified: $Date: 2008/01/09 16:30:18 $ by $Author: civilis $
  *
  */
 public abstract class Wizard extends IWBaseComponent {
@@ -40,8 +40,6 @@ public abstract class Wizard extends IWBaseComponent {
 	private static final String currentStepFacet = "currentStep";
 	private static final String stepIdentifierExp = "#{wizardControlValues.stepIdentifier}";
 	private static final String wizardControlValuesExp = "#{wizardControlValues}";
-	private static final String spanTag = "span";
-	private static final String valueAtt = "value";
 	private static final String idAtt = "id";
 	
 	private String latterStepIdentifier;
@@ -111,7 +109,7 @@ public abstract class Wizard extends IWBaseComponent {
 			
 			latterStepIdentifier = identifier;
 			
-			WizardStep wizardStep = submissionSuccessStep.getIdentifier().equals(identifier) ? submissionSuccessStep : (WizardStep)wizardStepsMap.get(identifier);
+			WizardStep wizardStep = submissionSuccessStep != null && submissionSuccessStep.getIdentifier().equals(identifier) ? submissionSuccessStep : (WizardStep)wizardStepsMap.get(identifier);
 			stepComponent = wizardStep.getStepComponent(context, this);
 			getFacets().put(currentStepFacet, stepComponent);
 			
