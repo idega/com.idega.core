@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.13 2006/04/09 12:13:12 laddi Exp $
+ * $Id: IWBaseComponent.java,v 1.13.2.1 2008/01/09 16:29:52 civilis Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -32,10 +32,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
- * Last modified: $Date: 2006/04/09 12:13:12 $ by $Author: laddi $
+ * Last modified: $Date: 2008/01/09 16:29:52 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.13.2.1 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
@@ -44,6 +44,9 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	private String styleAttribute;
 	private boolean isInitialized = false;
 	private long iSystemTime = 0;
+	protected static final String divTag = "div";
+	protected static final String valueAtt = "value";
+	protected static final String spanTag = "span";
 	
 	/**
 	 * This is an old idegaWeb style add method.
