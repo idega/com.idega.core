@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.50 2008/01/11 09:29:05 valdas Exp $
+ * $Id: BuilderService.java,v 1.51 2008/01/11 11:27:50 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -323,7 +323,7 @@ public interface BuilderService extends IBOService
 	
 	public boolean setProperty(IWContext iwc, String pageKey, String instanceId, String propertyName, List<AdvancedProperty> properties);
 
-	public Map getTree(IWApplicationContext iwac);
+	public Map<Integer, ICTreeNode> getTree(IWApplicationContext iwac);
 	
 	public boolean setPageUri(ICPage page, String pageUri, int domainId);
 	
