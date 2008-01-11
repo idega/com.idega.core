@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.51 2008/01/11 11:27:50 valdas Exp $
+ * $Id: BuilderService.java,v 1.52 2008/01/11 12:13:41 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -210,7 +210,7 @@ public interface BuilderService extends IBOService
 	
 	public Collection getTopLevelTemplates(IWContext iwc);
 	
-	public Map<Integer, ICTreeNode> getTree(IWContext iwc);
+	public Map getTree(IWContext iwc);
 	
 	public String getTemplateKey();
 	
@@ -323,7 +323,7 @@ public interface BuilderService extends IBOService
 	
 	public boolean setProperty(IWContext iwc, String pageKey, String instanceId, String propertyName, List<AdvancedProperty> properties);
 
-	public Map<Integer, ICTreeNode> getTree(IWApplicationContext iwac);
+	public Map getTree(IWApplicationContext iwac);
 	
 	public boolean setPageUri(ICPage page, String pageUri, int domainId);
 	
