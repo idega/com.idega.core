@@ -131,4 +131,8 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 	
 	public void setDomain(ICDomain domain);
 	
+	public void setHidePageInMenu(boolean hidePageInMenu);
+	
+	public boolean isHidePageInMenu();
+	
 }

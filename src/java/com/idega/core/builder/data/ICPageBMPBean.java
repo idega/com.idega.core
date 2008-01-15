@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.7 2007/03/07 08:53:13 justinas Exp $
+ * $Id: ICPageBMPBean.java,v 1.8 2008/01/15 09:32:35 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -66,6 +66,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	private static final String WEBDAV_URI = "WEBDAV_URI";
 	private static final String IS = "IS";
 	private static final String NULL = "NULL";
+	private static final String HIDE_PAGE_IN_MENU = "HIDE_PAGE_IN_MENU";
 	private ICFile _file;
 	
 
@@ -117,6 +118,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		addManyToManyRelationShip(ICProtocol.class, "ib_page_ic_protocol");
 		addAttribute(PAGE_FORMAT, "Format", true, true, String.class, 30);
 		addAttribute(PAGE_URI, "URI", String.class);
+		addAttribute(HIDE_PAGE_IN_MENU, "Hide page in navigation menu", true, true, Boolean.class);
 		
 		addManyToOneRelationship(DOMAIN_ID,ICDomain.class);
 		addUniqueIDColumn();
@@ -824,5 +826,13 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	    SelectQuery query = idoSelectQuery();
 	    query.addCriteria(new MatchCriteria(idoQueryTable(),getColumnSubType(),MatchCriteria.LIKE,SUBTYPE_SIMPLE_TEMPLATE));
 	    	return idoFindPKsByQuery(query);
+	}
+
+	public boolean isHidePageInMenu() {
+		return getBooleanColumnValue(HIDE_PAGE_IN_MENU);
+	}
+
+	public void setHidePageInMenu(boolean hidePageInMenu) {
+		setColumn(HIDE_PAGE_IN_MENU, hidePageInMenu);
 	}
 }
