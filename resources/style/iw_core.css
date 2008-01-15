@@ -433,3 +433,7 @@ html>body .LoadLayer .LoadLayerMiddle .LoadLayerContents {
 div#idegaThemeExpandRegion {
 	display: none;
 }
+
+li.hiddenPageInNavigationMenu {
+	display: none !important;
+}

@@ -1,5 +1,5 @@
 /*
- * $Id: Block.java,v 1.76 2006/04/09 12:13:13 laddi Exp $
+ * $Id: Block.java,v 1.77 2008/01/15 09:34:55 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -21,7 +21,9 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
+import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObjectInstance;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWStyleManager;
@@ -36,10 +38,10 @@ import com.idega.presentation.text.Text;
  * their functionality is done with the main() method in old style idegaWeb.
  * This class has functionality regarding caching and how the main method is processed in JSF.
  * 
- * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
+ * Last modified: $Date: 2008/01/15 09:34:55 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.76 $
+ * @version $Revision: 1.77 $
  */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
@@ -696,5 +698,17 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	 protected boolean resetGoneThroughMainInRestore(){
 	 	return true;
 	 }
+	 
+	protected boolean isPageHiddenInMenu(IWApplicationContext iwac, String pageId) {
+		ICPage page = null;
+		try {
+			page = getBuilderService(iwac).getICPage(pageId);
+		} catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		return page.isHidePageInMenu();
+	}
 	 	
 }
