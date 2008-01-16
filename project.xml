@@ -440,6 +440,11 @@
       <name>3.1.76</name>
       <tag>CORE_3_1_76</tag>
     </version>
+    <version>
+      <id>3.1.77</id>
+      <name>3.1.77</name>
+      <tag>CORE_3_1_77</tag>
+    </version>
   </versions>
   <branches/>
   <mailingLists>
