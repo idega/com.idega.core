@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.13 2008/01/16 13:46:38 alexis Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.14 2008/01/16 13:47:50 alexis Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -34,10 +34,10 @@ import com.idega.util.StringUtil;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2008/01/16 13:46:38 $ by $Author: alexis $
+ * Last modified: $Date: 2008/01/16 13:47:50 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class Property implements Serializable{
 
@@ -275,7 +275,7 @@ public class Property implements Serializable{
 			argument = helper.getExtractedPropertiesFromString(stringValue);
 		}
 		else if (parameterType.equals(Locale.class)) {
-			argument = ICLocaleBusiness.getLocaleFromLocaleString(stringValue);
+			argument = (Locale) ICLocaleBusiness.getLocaleFromLocaleString(stringValue);
 		}
 		return argument;
 	}
