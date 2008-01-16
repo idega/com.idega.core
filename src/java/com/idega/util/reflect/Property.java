@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.9 2007/12/07 12:02:56 valdas Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.10 2008/01/16 13:37:12 alexis Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -11,6 +11,7 @@ package com.idega.util.reflect;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
 
 import com.idega.business.chooser.helper.CalendarsChooserHelper;
 import com.idega.business.chooser.helper.GroupsChooserHelper;
@@ -32,10 +33,10 @@ import com.idega.util.StringUtil;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2007/12/07 12:02:56 $ by $Author: valdas $
+ * Last modified: $Date: 2008/01/16 13:37:12 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class Property implements Serializable{
 
@@ -271,6 +272,13 @@ public class Property implements Serializable{
 		else if (parameterType.equals(CalendarPropertiesBean.class)) {
 			CalendarsChooserHelper helper = new CalendarsChooserHelper();
 			argument = helper.getExtractedPropertiesFromString(stringValue);
+		}
+		else if (parameterType.equals(Locale.class)) {
+			if(stringValue != null && stringValue.indexOf("_") == 2) {
+				String language = stringValue.substring(0, 2);
+				String country = stringValue.substring(3);
+				argument = new Locale(language, country);
+			}
 		}
 		return argument;
 	}
