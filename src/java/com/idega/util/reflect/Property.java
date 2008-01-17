@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.14 2008/01/16 13:47:50 alexis Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.15 2008/01/17 09:29:09 valdas Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -34,10 +34,10 @@ import com.idega.util.StringUtil;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2008/01/16 13:47:50 $ by $Author: alexis $
+ * Last modified: $Date: 2008/01/17 09:29:09 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class Property implements Serializable{
 
@@ -69,7 +69,7 @@ public class Property implements Serializable{
 	 * @param methodIdentifier a string in the format ':method:[modifierInt]:[classIdentifier]:[returnClass]:[methodName]:[parameterClass]:' , example: ':method:1:implied:void:setWidth:java.lang.String:'
 	 * @param declaringClass The class that the method is declared in.
 	 */	
-	public Property(String methodIdentifier, Class declaringClass) {
+	public Property(String methodIdentifier, Class<?> declaringClass) {
 		if (declaringClass != null) {
 			setMethod(getMethodFinder().getMethod(methodIdentifier, declaringClass));		
 		}
@@ -134,7 +134,7 @@ public class Property implements Serializable{
 	public void setPropertyValues(String[] stringPropertyValues) {
 		//this.propertyValues = propertyValues;
 		Object[] args = new Object[stringPropertyValues.length];
-		Class[] parameterTypes = getMethod().getParameterTypes();
+		Class<?>[] parameterTypes = getMethod().getParameterTypes();
 		for (int i = 0; i < parameterTypes.length; i++) {
 			if (parameterTypes[i] != null) {
 				String aString = stringPropertyValues[i];
@@ -182,7 +182,7 @@ public class Property implements Serializable{
 	}
 	
 	//Moved from ComponentPropertyHandler (in builder)
-	protected Object convertStringToObject(Class parameterType, String stringValue) throws Exception {
+	protected Object convertStringToObject(Class<?> parameterType, String stringValue) throws Exception {
 		Object argument = null;
 		if (parameterType.equals(Integer.class) || parameterType.equals(Integer.TYPE)) {
 			//try{
@@ -275,7 +275,7 @@ public class Property implements Serializable{
 			argument = helper.getExtractedPropertiesFromString(stringValue);
 		}
 		else if (parameterType.equals(Locale.class)) {
-			argument = (Locale) ICLocaleBusiness.getLocaleFromLocaleString(stringValue);
+			argument = ICLocaleBusiness.getLocaleFromLocaleString(stringValue);
 		}
 		return argument;
 	}
