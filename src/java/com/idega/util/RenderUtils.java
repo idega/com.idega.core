@@ -1,5 +1,5 @@
 /*
- * $Id: RenderUtils.java,v 1.6 2005/03/09 15:03:12 tryggvil Exp $
+ * $Id: RenderUtils.java,v 1.7 2008/01/18 09:07:37 alexis Exp $
  * Created on 25.8.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import javax.faces.context.ResponseWriter;
 /**
  * Utility class for rendering logic in JSF.
  * 
- *  Last modified: $Date: 2005/03/09 15:03:12 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2008/01/18 09:07:37 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class RenderUtils {
 	
@@ -48,6 +48,7 @@ public class RenderUtils {
 			if(child.isRendered()){
 				child.encodeBegin(context);
 				if(child.getRendersChildren()){
+					System.out.println("Rendering component: " + child.getClientId(context));
 					child.encodeChildren(context);
 				}
 				else
