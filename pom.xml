@@ -8,7 +8,7 @@
   <packaging>jar</packaging>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.core</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.1</version>
   <name>idegaWeb Core</name>
   
 <!--  
@@ -249,8 +249,4 @@
     </dependency>
     -->
   </dependencies>
-
-  <scm>
-    <tag>com_idega_core-4_0_0</tag>
-  </scm>
 </project>
