@@ -93,5 +93,25 @@ public class CoreUtil {
 		
 		return false;
 	}
+	
+	public static boolean isSingleComponentRenderingProcess(FacesContext context) {
+		if (context == null) {
+			return false;
+		}
+		
+		return isSingleComponentRenderingProcess(IWContext.getIWContext(context));
+	}
 
+	public static boolean isSingleComponentRenderingProcess(IWContext iwc) {
+		if (iwc == null) {
+			return false;
+		}
+		
+		Object attribute = iwc.getApplicationAttribute(CoreConstants.SINGLE_UICOMPONENT_RENDERING_PROCESS);
+		if (attribute instanceof Boolean) {
+			return (Boolean) attribute;
+		}
+		
+		return false;
+	}
 }

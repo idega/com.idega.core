@@ -102,5 +102,7 @@ public class CoreConstants {
 		
 		return ARTICLE_ITEM_VIEWER_NAME;
 	}
+	
+	public static final String SINGLE_UICOMPONENT_RENDERING_PROCESS = "singleUIComponentRenderingProcess";
 
 }
