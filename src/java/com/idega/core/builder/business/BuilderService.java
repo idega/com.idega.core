@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.52 2008/01/11 12:13:41 valdas Exp $
+ * $Id: BuilderService.java,v 1.53 2008/01/22 08:21:43 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -340,4 +340,6 @@ public interface BuilderService extends IBOService
 	public boolean existsRegion(String pageKey, String label, String regionId);
 	
 	public boolean copyAllModulesFromRegionIntoRegion(String pageKey, String sourceRegionLabel, String destinationRegionId, String destinationRegionLabel);
+	
+	public String getUriToObject(Class<?> objectClass, List<AdvancedProperty> parameters);
 }
