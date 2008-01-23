@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.44 2007/12/12 10:36:36 civilis Exp $
+ * $Id: DefaultIWBundle.java,v 1.45 2008/01/23 09:35:25 alexis Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -26,12 +26,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.FinderException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.component.html.HtmlOutputText;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
+
 import com.idega.core.component.business.BundleRegistrationListener;
 import com.idega.core.component.business.ComponentRegistry;
 import com.idega.core.component.business.ICObjectComponentInfo;
@@ -691,7 +693,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, file, locale);
 		if (isUsingLocalVariants()) {
 			File variantFile = new File(getResourcesRealPath(locale), getLocalizedStringsVariantFileName());
-			theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantFile, locale);
+			try {
+				theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantFile, locale);
+			} catch(FileNotFoundException e) {
+				theReturn = defaultLocalizedResourceBundle;
+			}
 		}
 		else {
 			theReturn = defaultLocalizedResourceBundle;
