@@ -107,7 +107,7 @@ public class CoreUtil {
 			return false;
 		}
 		
-		Object attribute = iwc.getApplicationAttribute(CoreConstants.SINGLE_UICOMPONENT_RENDERING_PROCESS);
+		Object attribute = iwc.getSessionAttribute(CoreConstants.SINGLE_UICOMPONENT_RENDERING_PROCESS);
 		if (attribute instanceof Boolean) {
 			return (Boolean) attribute;
 		}
