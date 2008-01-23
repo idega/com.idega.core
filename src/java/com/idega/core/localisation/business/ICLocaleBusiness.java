@@ -373,14 +373,27 @@ public class ICLocaleBusiness  implements MutableClass {
  * e.g. "en_US" for English/US
  */
   public static DropdownMenu getAvailableLocalesDropdownStringKeyed(IWMainApplication iwma,String name){
-    List locales = ICLocaleBusiness.getListOfLocalesJAVA();
-    DropdownMenu down = new DropdownMenu(name);
-    Iterator iter = locales.iterator();
-    while (iter.hasNext()) {
-      Locale item = (Locale)iter.next();
-      down.addMenuElement(item.toString(),item.getDisplayLanguage());
-    }
-    return down;
+	  return getAvailableLocalesDropdownStringKeyed(iwma, name, false);
+  }
+  
+  public static DropdownMenu getAvailableLocalesDropdownStringKeyed(IWMainApplication iwma, String name, boolean useLanguageOnly){
+	  List<Locale> locales = ICLocaleBusiness.getListOfLocalesJAVA();
+	  DropdownMenu down = new DropdownMenu(name);
+	  if (locales == null) {
+		  return down;
+	  }
+	  
+	  Locale l = null;
+	  for (int i = 0; i < locales.size(); i++) {
+		  l = locales.get(i);
+		  if (useLanguageOnly) {
+			  down.addMenuElement(l.getLanguage(), l.getDisplayLanguage());
+		  }
+		  else {
+			  down.addMenuElement(l.toString(), l.getDisplayLanguage());
+		  }
+	  }
+	  return down;
   }
 
 
