@@ -107,5 +107,7 @@ public class CoreConstants {
 	
 	public static final String CONTENT_VIEW_MANAGER_ID = "content";
 	public static final String PAGES_VIEW_MANAGER_ID = "pages";
+	
+	public static final String WORKSPACE_BUNDLE_IDENTIFIER = "com.idega.workspace";
 
 }
