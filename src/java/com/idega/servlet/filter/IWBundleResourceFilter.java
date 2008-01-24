@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.39 2007/11/22 13:41:51 civilis Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.40 2008/01/24 10:11:06 valdas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -44,10 +44,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2007/11/22 13:41:51 $ by $Author: civilis $
+ * Last modified: $Date: 2008/01/24 10:11:06 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -57,7 +57,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	protected boolean feedFromJarFiles = IWMainApplication.loadBundlesFromJars;
 	protected String sBundlesDirectory;
 
-	protected List flushedResources = new ArrayList();
+	protected List<String> flushedResources = new ArrayList<String>();
 	static String BUNDLES_STANDARD_DIR = "/idegaweb/bundles/";
 	static String BUNDLE_SUFFIX = DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
 	
@@ -205,6 +205,10 @@ public class IWBundleResourceFilter extends BaseFilter {
 	// bundleIdentifier,String filePathInBundle,File file) {
 	private boolean speciallyHandleFile(HttpServletRequest request, String workspaceDir, String webappDir, String requestUriWithoutContextPath) {
 		String fileEnding = getFileEnding(requestUriWithoutContextPath);
+		if (fileEnding == null) {
+			log.warning(this.getClass().getName() +": file ending is null!");
+			return false;
+		}
 		
 		if (fileEnding.equalsIgnoreCase(PSVG)) {
 			copyWorkspaceFileToWebapp(workspaceDir, webappDir, requestUriWithoutContextPath);
