@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.230 2007/11/13 11:23:54 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.231 2008/01/25 12:58:43 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/11/13 11:23:54 $ by $Author: valdas $
+ * Last modified: $Date: 2008/01/25 12:58:43 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.230 $
+ * @version $Revision: 1.231 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3799,6 +3799,59 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		
 		return loginTable.getUserLogin();
+	}
+	
+	public List<Group> getAllUserGroups(User user, IWUserContext iwuc) {
+		if (user == null || iwuc == null) {
+			return null;
+		}
+		
+		Collection topGroups = null;
+		try {
+			topGroups = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwuc);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (topGroups == null) {
+			return null;
+		}
+		
+		List<Group> allGroups = new ArrayList<Group>();
+		Object o = null;
+		Group group = null;
+		for (Iterator it = topGroups.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				group = (Group) o;
+				
+				if (!(allGroups.contains(group))) {
+					allGroups.add(group);
+				}
+				addAllGroupChildren(group.getChildren(), allGroups);
+			}
+		}
+		
+		return allGroups;
+	}
+	
+	private void addAllGroupChildren(Collection groupChildren, List<Group> allGroups) {
+		if (groupChildren == null) {
+			return;
+		}
+		
+		Object o = null;
+		Group group = null;
+		for (Iterator it = groupChildren.iterator(); it.hasNext();) {
+			o = it.next();
+			if (o instanceof Group) {
+				group = (Group) o;
+				
+				if (!(allGroups.contains(group))) {
+					allGroups.add(group);
+				}
+				addAllGroupChildren(group.getChildren(), allGroups);
+			}
+		}
 	}
 	
 } // Class UserBusiness
