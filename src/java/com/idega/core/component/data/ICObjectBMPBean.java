@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectBMPBean.java,v 1.21 2007/07/16 08:38:14 justinas Exp $
+ * $Id: ICObjectBMPBean.java,v 1.22 2008/01/26 10:20:46 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
  *
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
@@ -40,10 +40,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * time the application starts it updates the IC_OBJECT table with all components
  * registered in all idegaWeb bundles installed in the web-application.
  * </p>
- * Last modified: $Date: 2007/07/16 08:38:14 $ by $Author: justinas $
+ * Last modified: $Date: 2008/01/26 10:20:46 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
 	/**
@@ -446,28 +446,43 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		    return idoFindPKsByQuery(query);
 		}
 	}
-	public Object ejbFindByClassName(String className) throws FinderException{
-		if(allCached){
-			Collection allPKs = ejbFindAll();
-			ICObjectHome home = (ICObjectHome) getEJBLocalHome();
-			for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
-				Object pk = iter.next();
-				ICObject ico = home.findByPrimaryKey(pk);
-				if(ico.getClassName().equals(className)){
-					return pk;
-				}
+	public Object ejbFindByClassName(String className) throws FinderException {
+		Object o = null;
+		if (allCached) {
+			try {
+				o = findByClassNameFromCache(className);
+			} catch(Exception e) {
 			}
-			throw new FinderException("Object "+className+" not found");
 		}
-		else{
-			//return super.idoFindOnePKByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(getClassNameColumnName(), className));
-		    Table table = new Table(this);
-		    SelectQuery query = new SelectQuery(table);
-		    query.addColumn(new WildCardColumn());
-		    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getClassNameColumnName(),MatchCriteria.EQUALS,className,true));
-		    return idoFindOnePKByQuery(query);
+		
+		if (o == null) {
+			o = findByClassNameFromDatabase(className);
 		}
+		
+		return o;
 	}
+	
+	private Object findByClassNameFromDatabase(String className) throws FinderException {
+		Table table = new Table(this);
+	    SelectQuery query = new SelectQuery(table);
+	    query.addColumn(new WildCardColumn());
+	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getClassNameColumnName(),MatchCriteria.EQUALS,className,true));
+	    return idoFindOnePKByQuery(query);
+	}
+	
+	private Object findByClassNameFromCache(String className) throws FinderException {
+		Collection allPKs = ejbFindAll();
+		ICObjectHome home = (ICObjectHome) getEJBLocalHome();
+		for (Iterator iter = allPKs.iterator(); iter.hasNext();) {
+			Object pk = iter.next();
+			ICObject ico = home.findByPrimaryKey(pk);
+			if(ico.getClassName().equals(className)){
+				return pk;
+			}
+		}
+		throw new FinderException("Object "+className+" not found");
+	}
+	
 	public Collection ejbFindAllBlocksByBundle(String bundle) throws FinderException
 	{
 		return ejbFindAllByObjectTypeAndBundle(COMPONENT_TYPE_BLOCK, bundle);
