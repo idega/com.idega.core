@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.233 2008/01/26 11:36:05 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.234 2008/01/26 13:45:49 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2008/01/26 11:36:05 $ by $Author: valdas $
+ * Last modified: $Date: 2008/01/26 13:45:49 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.233 $
+ * @version $Revision: 1.234 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3801,148 +3801,89 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return loginTable.getUserLogin();
 	}
 	
-	public List<Group> getAllUserGroups(User user, IWUserContext iwuc) throws RemoteException {
+	public List<String> getAllUserGroupsIds(User user, IWUserContext iwuc) throws RemoteException {
 		if (user == null || iwuc == null) {
 			return null;
 		}
 		
-//		Collection topGroups = null;
-//		try {
-//			topGroups = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwuc);
-//		} catch (RemoteException e) {
-//			e.printStackTrace();
-//		}
-//		if (topGroups == null) {
-//			return null;
-//		}
-		
-//		Eiki's:
-//		Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
-//		String groupPK = ((ICPermission) iter.next()).getContextValue(); //this// group
-//		+ getParentGroups
-//		getAllGroupPermitPermissionsByGroup
-		
-		
 		List<Group> userGroups = new ArrayList<Group>();
-		
 		GroupBusiness groupBusiness = getGroupBusiness();
 		Collection parentUserGroups = groupBusiness.getParentGroups(user);
-		if (parentUserGroups != null) {
-			Object o = null;
-			for (Iterator it = parentUserGroups.iterator(); it.hasNext();) {
-				o = it.next();
-				
-				if (o instanceof Group) {
-					userGroups.add((Group) o);
-				}
+		if (parentUserGroups == null) {
+			return null;
+		}
+			
+		Object o = null;
+		for (Iterator it = parentUserGroups.iterator(); it.hasNext();) {
+			o = it.next();
+			
+			if (o instanceof Group) {
+				userGroups.add((Group) o);
 			}
 		}
+	
+		List<String> groupsIds = new ArrayList<String>();
+		Collection permissionsByUserGroups = AccessControl.getAllGroupPermitPermissions(userGroups);
+		addIdsFromPermissions(permissionsByUserGroups, groupsIds);
 		
-		Collection permissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
-		if (permissions != null) {
-			Object o = null;
-			ICPermission permission = null;
-			Group group = null;
-			for (Iterator it = permissions.iterator(); it.hasNext();) {
-				group = null;
-				o = it.next();
-				
-				if (o instanceof ICPermission) {
-					permission = (ICPermission) o;
-					
-					try {
-						group = groupBusiness.getGroupByGroupID(Integer.valueOf(permission.getContextValue()));
-					} catch (NumberFormatException e) {
-						e.printStackTrace();
-					} catch (FinderException e) {
-						e.printStackTrace();
-					}
-					
-					if (group != null) {
-						userGroups.add(group);
-					}
-				}
-			}
-		}
+		Collection permissionsByUser = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
+		addIdsFromPermissions(permissionsByUser, groupsIds);
 		
-		Collection permissionsByGroups = AccessControl.getAllGroupPermitPermissions(userGroups);
-		System.out.println(permissionsByGroups);
-		
-		/*Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
-		if (directlyRelatedParents == null) {
+		return groupsIds;
+	}
+	
+	public List<Group> getAllUserGroups(User user, IWUserContext iwuc) throws RemoteException {
+		List<String> groupsIds = getAllUserGroupsIds(user, iwuc);
+		if (groupsIds == null) {
 			return null;
 		}
 		
-		Collection allViewAndOwnerPermissionGroups = null;
-		
-		List<Group> additionalGroups = new ArrayList<Group>();
-		Object o = null;
-		Group parent = null;
-		for (Iterator it = directlyRelatedParents.iterator(); it.hasNext();) {
-			o = it.next();
-			
-			if (o instanceof Group) {
-				parent = (Group) o;
-				if (parent.getPermissionControllingGroupID() > 0) {
-					additionalGroups.add(parent.getPermissionControllingGroup());
-				}
-			}
+		String[] idsInArray = new String[groupsIds.size()];
+		for (int i = 0; i < groupsIds.size(); i++) {
+			idsInArray[i] = groupsIds.get(i);
 		}
-		directlyRelatedParents.addAll(additionalGroups);
-		Collection allViewAndOwnerPermissionGroupPKs = new ArrayList();
-		//get all view permissions for direct parent and put in
-		// a list
-		Collection viewPermissions = AccessControl.getAllGroupViewPermissions(directlyRelatedParents);
-		addGroupPKsToCollectionFromICPermissionCollection(viewPermissions,
-				allViewAndOwnerPermissionGroupPKs);
-		Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
-		//allViewAndOwnerPermissions.removeAll(ownedPermissions);//no
-		// double entries thank you
-		addGroupPKsToCollectionFromICPermissionCollection(ownedPermissions, allViewAndOwnerPermissionGroupPKs);
+		
+		Collection groups = null;
 		try {
-			allViewAndOwnerPermissionGroups = getGroupHome().findByPrimaryKeyCollection(allViewAndOwnerPermissionGroupPKs);
-		} catch(Exception e) {
+			groups = getGroupBusiness().getGroups(idsInArray);
+		} catch (FinderException e) {
 			e.printStackTrace();
 		}
+		if (groups == null) {
+			return null;
+		}
 		
-		System.out.println(allViewAndOwnerPermissionGroups);*/
-			
-		/*List<Group> allGroups = new ArrayList<Group>();
+		List<Group> allUserGroups = new ArrayList<Group>();
 		Object o = null;
-		Group group = null;
-		for (Iterator it = topGroups.iterator(); it.hasNext();) {
+		for (Iterator it = groups.iterator(); it.hasNext();) {
 			o = it.next();
+			
 			if (o instanceof Group) {
-				group = (Group) o;
-				
-				if (!(allGroups.contains(group))) {
-					allGroups.add(group);
-				}
-				addAllGroupChildren(group.getChildren(), allGroups);
+				allUserGroups.add((Group) o);
 			}
 		}
-		
-		return allGroups;*/
-		
-		return userGroups;
+	
+		return allUserGroups;
 	}
 	
-	private void addAllGroupChildren(Collection groupChildren, List<Group> allGroups) {
-		if (groupChildren == null) {
+	private void addIdsFromPermissions(Collection permissions, List<String> ids) {
+		if (permissions == null || ids == null) {
 			return;
 		}
-		
+			
 		Object o = null;
-		Group group = null;
-		for (Iterator it = groupChildren.iterator(); it.hasNext();) {
+		ICPermission permission = null;
+		String id = null;
+		for (Iterator it = permissions.iterator(); it.hasNext();) {
 			o = it.next();
-			if (o instanceof Group) {
-				group = (Group) o;
 				
-				if (!(allGroups.contains(group))) {
-					allGroups.add(group);
+			if (o instanceof ICPermission) {
+				permission = (ICPermission) o;
+				
+				id = permission.getContextValue();
+				if (!ids.contains(id)) {
+					ids.add(id);
 				}
-				addAllGroupChildren(group.getChildren(), allGroups);
 			}
 		}
 	}
