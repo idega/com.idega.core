@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.231 2008/01/25 12:58:43 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.232 2008/01/26 11:06:03 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2008/01/25 12:58:43 $ by $Author: valdas $
+ * Last modified: $Date: 2008/01/26 11:06:03 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.231 $
+ * @version $Revision: 1.232 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3801,22 +3801,67 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return loginTable.getUserLogin();
 	}
 	
-	public List<Group> getAllUserGroups(User user, IWUserContext iwuc) {
+	public List<Group> getAllUserGroups(User user, IWUserContext iwuc) throws RemoteException {
 		if (user == null || iwuc == null) {
 			return null;
 		}
 		
-		Collection topGroups = null;
-		try {
-			topGroups = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwuc);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		if (topGroups == null) {
+//		Collection topGroups = null;
+//		try {
+//			topGroups = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwuc);
+//		} catch (RemoteException e) {
+//			e.printStackTrace();
+//		}
+//		if (topGroups == null) {
+//			return null;
+//		}
+		
+//		Eiki's:
+//		Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
+//		String groupPK = ((ICPermission) iter.next()).getContextValue(); //this// group
+//		+ getParentGroups
+//		getAllGroupPermitPermissionsByGroup
+		
+		Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
+		if (directlyRelatedParents == null) {
 			return null;
 		}
 		
-		List<Group> allGroups = new ArrayList<Group>();
+		Collection allViewAndOwnerPermissionGroups = null;
+		
+		List<Group> additionalGroups = new ArrayList<Group>();
+		Object o = null;
+		Group parent = null;
+		for (Iterator it = directlyRelatedParents.iterator(); it.hasNext();) {
+			o = it.next();
+			
+			if (o instanceof Group) {
+				parent = (Group) o;
+				if (parent.getPermissionControllingGroupID() > 0) {
+					additionalGroups.add(parent.getPermissionControllingGroup());
+				}
+			}
+		}
+		directlyRelatedParents.addAll(additionalGroups);
+		Collection allViewAndOwnerPermissionGroupPKs = new ArrayList();
+		//get all view permissions for direct parent and put in
+		// a list
+		Collection viewPermissions = AccessControl.getAllGroupViewPermissions(directlyRelatedParents);
+		addGroupPKsToCollectionFromICPermissionCollection(viewPermissions,
+				allViewAndOwnerPermissionGroupPKs);
+		Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
+		//allViewAndOwnerPermissions.removeAll(ownedPermissions);//no
+		// double entries thank you
+		addGroupPKsToCollectionFromICPermissionCollection(ownedPermissions, allViewAndOwnerPermissionGroupPKs);
+		try {
+			allViewAndOwnerPermissionGroups = getGroupHome().findByPrimaryKeyCollection(allViewAndOwnerPermissionGroupPKs);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(allViewAndOwnerPermissionGroups);
+			
+		/*List<Group> allGroups = new ArrayList<Group>();
 		Object o = null;
 		Group group = null;
 		for (Iterator it = topGroups.iterator(); it.hasNext();) {
@@ -3831,7 +3876,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		
-		return allGroups;
+		return allGroups;*/
+		
+		return null;
 	}
 	
 	private void addAllGroupChildren(Collection groupChildren, List<Group> allGroups) {
