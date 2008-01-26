@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.232 2008/01/26 11:06:03 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.233 2008/01/26 11:36:05 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2008/01/26 11:06:03 $ by $Author: valdas $
+ * Last modified: $Date: 2008/01/26 11:36:05 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.232 $
+ * @version $Revision: 1.233 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3822,7 +3822,53 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 //		+ getParentGroups
 //		getAllGroupPermitPermissionsByGroup
 		
-		Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
+		
+		List<Group> userGroups = new ArrayList<Group>();
+		
+		GroupBusiness groupBusiness = getGroupBusiness();
+		Collection parentUserGroups = groupBusiness.getParentGroups(user);
+		if (parentUserGroups != null) {
+			Object o = null;
+			for (Iterator it = parentUserGroups.iterator(); it.hasNext();) {
+				o = it.next();
+				
+				if (o instanceof Group) {
+					userGroups.add((Group) o);
+				}
+			}
+		}
+		
+		Collection permissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
+		if (permissions != null) {
+			Object o = null;
+			ICPermission permission = null;
+			Group group = null;
+			for (Iterator it = permissions.iterator(); it.hasNext();) {
+				group = null;
+				o = it.next();
+				
+				if (o instanceof ICPermission) {
+					permission = (ICPermission) o;
+					
+					try {
+						group = groupBusiness.getGroupByGroupID(Integer.valueOf(permission.getContextValue()));
+					} catch (NumberFormatException e) {
+						e.printStackTrace();
+					} catch (FinderException e) {
+						e.printStackTrace();
+					}
+					
+					if (group != null) {
+						userGroups.add(group);
+					}
+				}
+			}
+		}
+		
+		Collection permissionsByGroups = AccessControl.getAllGroupPermitPermissions(userGroups);
+		System.out.println(permissionsByGroups);
+		
+		/*Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
 		if (directlyRelatedParents == null) {
 			return null;
 		}
@@ -3859,7 +3905,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			e.printStackTrace();
 		}
 		
-		System.out.println(allViewAndOwnerPermissionGroups);
+		System.out.println(allViewAndOwnerPermissionGroups);*/
 			
 		/*List<Group> allGroups = new ArrayList<Group>();
 		Object o = null;
@@ -3878,7 +3924,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		
 		return allGroups;*/
 		
-		return null;
+		return userGroups;
 	}
 	
 	private void addAllGroupChildren(Collection groupChildren, List<Group> allGroups) {
