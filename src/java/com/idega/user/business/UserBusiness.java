@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.92.2.9 2007/11/13 13:59:25 valdas Exp $
+ * $Id: UserBusiness.java,v 1.92.2.10 2008/01/27 09:00:45 valdas Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -52,10 +52,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2007/11/13 13:59:25 $ by $Author: valdas $
+ *  Last modified: $Date: 2008/01/27 09:00:45 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.92.2.9 $
+ * @version $Revision: 1.92.2.10 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -862,4 +862,8 @@ public interface UserBusiness extends IBOService {
 	public String getUserLogin(User user);
 	
 	public String getUserPassword(User user);
+	
+	public List getAllUserGroupsIds(User user, IWUserContext iwuc) throws RemoteException;
+	
+	public List getAllUserGroups(User user, IWUserContext iwuc) throws RemoteException;
 }

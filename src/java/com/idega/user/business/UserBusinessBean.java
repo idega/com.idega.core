@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.25 2007/11/13 13:59:25 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.26 2008/01/27 09:00:45 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2007/11/13 13:59:25 $ by $Author: valdas $
+ * Last modified: $Date: 2008/01/27 09:00:45 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.25 $
+ * @version $Revision: 1.207.2.26 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3797,6 +3797,93 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			e.printStackTrace();
 		}
 		return -1;
+	}
+	
+	public List getAllUserGroupsIds(User user, IWUserContext iwuc) throws RemoteException {
+		if (user == null || iwuc == null) {
+			return null;
+		}
+		
+		List userGroups = new ArrayList();
+		GroupBusiness groupBusiness = getGroupBusiness();
+		Collection parentUserGroups = groupBusiness.getParentGroups(user);
+		if (parentUserGroups == null) {
+			return null;
+		}
+			
+		Object o = null;
+		for (Iterator it = parentUserGroups.iterator(); it.hasNext();) {
+			o = it.next();
+			
+			if (o instanceof Group) {
+				userGroups.add((Group) o);
+			}
+		}
+	
+		List groupsIds = new ArrayList();
+		Collection permissionsByUserGroups = AccessControl.getAllGroupPermitPermissions(userGroups);
+		addIdsFromPermissions(permissionsByUserGroups, groupsIds);
+		
+		Collection permissionsByUser = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
+		addIdsFromPermissions(permissionsByUser, groupsIds);
+		
+		return groupsIds;
+	}
+	
+	public List getAllUserGroups(User user, IWUserContext iwuc) throws RemoteException {
+		List groupsIds = getAllUserGroupsIds(user, iwuc);
+		if (groupsIds == null) {
+			return null;
+		}
+		
+		String[] idsInArray = new String[groupsIds.size()];
+		for (int i = 0; i < groupsIds.size(); i++) {
+			idsInArray[i] = groupsIds.get(i).toString();
+		}
+		
+		Collection groups = null;
+		try {
+			groups = getGroupBusiness().getGroups(idsInArray);
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		if (groups == null) {
+			return null;
+		}
+		
+		List allUserGroups = new ArrayList();
+		Object o = null;
+		for (Iterator it = groups.iterator(); it.hasNext();) {
+			o = it.next();
+			
+			if (o instanceof Group) {
+				allUserGroups.add((Group) o);
+			}
+		}
+	
+		return allUserGroups;
+	}
+	
+	private void addIdsFromPermissions(Collection permissions, List ids) {
+		if (permissions == null || ids == null) {
+			return;
+		}
+			
+		Object o = null;
+		ICPermission permission = null;
+		String id = null;
+		for (Iterator it = permissions.iterator(); it.hasNext();) {
+			o = it.next();
+				
+			if (o instanceof ICPermission) {
+				permission = (ICPermission) o;
+				
+				id = permission.getContextValue();
+				if (!ids.contains(id)) {
+					ids.add(id);
+				}
+			}
+		}
 	}
 	
 } // Class UserBusiness
