@@ -39,8 +39,8 @@ public class CalendarsChooserHelper extends GroupsChooserHelper {
 		return calendarProperties;
 	}
 	
-	public String[] getPropertyValue(List<AdvancedProperty> properties) {
-		String[] basicValues = super.getPropertyValue(properties);
+	public String[] getPropertyValue(List<AdvancedProperty> properties, boolean groupsAreRquired) {
+		String[] basicValues = super.getPropertyValue(properties, groupsAreRquired);
 		if (basicValues == null) {
 			return null;
 		}

@@ -35,7 +35,7 @@ public class GroupsChooserHelper {
 		return bean;
 	}
 	
-	public String[] getPropertyValue(List<AdvancedProperty> properties) {
+	public String[] getPropertyValue(List<AdvancedProperty> properties, boolean groupsAreRquired) {
 		String server = null;
 		String login = null;
 		String password = null;
@@ -60,7 +60,18 @@ public class GroupsChooserHelper {
 		}
 		uniqueIds = findPropertyValue(properties, "uniqueids");
 		
-		if (server == null || login == null || password == null || uniqueIds == null) {
+		if (groupsAreRquired) {
+			if (uniqueIds == null) {
+				return null;
+			}
+		}
+		else {
+			if (uniqueIds == null) {
+				uniqueIds = CoreConstants.MINUS;
+			}
+		}
+		
+		if (server == null || login == null || password == null) {
 			return null;
 		}
 		StringBuffer value = new StringBuffer(server).append(ICBuilderConstants.BUILDER_MODULE_PROPERTY_VALUES_SEPARATOR);
@@ -98,7 +109,7 @@ public class GroupsChooserHelper {
 	}
 	
 	protected List<String> getValuesFromString(String value, String separator) {
-		if (value == null) {
+		if (value == null || value.equals(CoreConstants.MINUS)) {
 			return null;
 		}
 
