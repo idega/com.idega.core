@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.40 2008/01/24 10:11:06 valdas Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.41 2008/01/28 10:34:54 valdas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -44,10 +44,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2008/01/24 10:11:06 $ by $Author: valdas $
+ * Last modified: $Date: 2008/01/28 10:34:54 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.40 $
+ * @version $Revision: 1.41 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -58,7 +58,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	protected String sBundlesDirectory;
 
 	protected List<String> flushedResources = new ArrayList<String>();
-	static String BUNDLES_STANDARD_DIR = "/idegaweb/bundles/";
+	public static String BUNDLES_STANDARD_DIR = "/idegaweb/bundles/";
 	static String BUNDLE_SUFFIX = DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
 	
 	private static String SVG = "svg";
