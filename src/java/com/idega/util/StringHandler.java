@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.48 2007/12/21 11:44:36 valdas Exp $ Created on
+ * $Id: StringHandler.java,v 1.49 2008/01/28 06:20:30 valdas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -9,7 +9,9 @@
  */
 package com.idega.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,11 +34,11 @@ import com.idega.presentation.IWContext;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2007/12/21 11:44:36 $ by $Author: valdas $
+ * Last modified: $Date: 2008/01/28 06:20:30 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.48 $
+ * @version $Revision: 1.49 $
  */
 public class StringHandler {
 
@@ -1296,7 +1298,7 @@ public class StringHandler {
 		return link;
 	}
 	
-	public static String getContentFromInputStream(InputStream stream) {
+	public static String getContentFromInputStream(InputStream stream) throws Exception {
 		if (stream == null) {
 			return null;
 		}
@@ -1312,15 +1314,26 @@ public class StringHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
-		}
-
-		try {
+		} finally {
+			stream.close();
 			br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		
 		return sb.toString();
+	}
+	
+	/**
+	 * Returns UTF-8 encoded stream
+	 * @param content
+	 * @return
+	 * @throws Exception
+	 */
+	public static InputStream getStreamFromString(String content) throws Exception {
+		if (content == null) {
+			return null;
+		}
+		
+		return new BufferedInputStream(new ByteArrayInputStream(content.getBytes(CoreConstants.ENCODING_UTF8)));
 	}
 	
 }
