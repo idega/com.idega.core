@@ -2,13 +2,13 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
   	<groupId>com.idega.block.platform</groupId>
-  	<artifactId>com.idega.block.base</artifactId>
-  	<version>4.0.0</version>
+  	<artifactId>com.idega.block.platform</artifactId>
+  	<version>4.0.0-SNAPSHOT</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.faces</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.0-SNAPSHOT</version>
   <name>idegaWeb JavaServer Faces</name>
   <scm>
     <!--
@@ -33,12 +33,10 @@
     <dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>com.idega.core</artifactId>
-      <version>4.0.0</version>
     </dependency>
 	<dependency>
       <groupId>com.idega.block.platform</groupId>
       <artifactId>org.apache.myfaces</artifactId>
-      <version>1.1.5</version>
     </dependency>
     <dependency>
       <groupId>com.sun.facelets</groupId>
@@ -47,5 +45,4 @@
       <type>jar</type>
     </dependency>
   </dependencies>
-  
 </project>
