@@ -1,5 +1,6 @@
 package com.idega.servlet;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.DefaultErrorHandlingUriWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
@@ -17,22 +18,26 @@ public class ObjectInstanciator extends DynamicTemplateServlet {
 
 	//TEMPORARY IMPLEMENTATION - See DynamicTemplateServlet
 	public void main(IWContext iwc) throws Exception {
-		String className =IWMainApplication.decryptClassName(iwc.getParameter(IWMainApplication.classToInstanciateParameter));
-		if ( className != null) {
-			try {
-				PresentationObject obj = (PresentationObject) RefactorClassRegistry.forName(className).newInstance();
-				if (obj instanceof Page) {
-					this.setPage((Page) obj);
-				}
-				else {
-					add(obj);
-				}
-			} catch (ClassNotFoundException e) {
-				System.err.println("[ObjectInstanciator] ClassNotFound : "+className+", referer = "+iwc.getReferer());
-				throw e;
-			}
-		} else {
+		String className = IWMainApplication.decryptClassName(iwc.getParameter(IWMainApplication.classToInstanciateParameter));
+		className = null;
+		
+		if (className == null) {
+			add(new DefaultErrorHandlingUriWindow());
 			log("no class found to instanciate");
+			return;
+		}
+			
+		try {
+			PresentationObject obj = (PresentationObject) RefactorClassRegistry.forName(className).newInstance();
+			if (obj instanceof Page) {
+				this.setPage((Page) obj);
+			}
+			else {
+				add(obj);
+			}
+		} catch (ClassNotFoundException e) {
+			System.err.println("[ObjectInstanciator] ClassNotFound : "+className+", referer = "+iwc.getReferer());
+			add(new DefaultErrorHandlingUriWindow());
 		}
 	}
 }
