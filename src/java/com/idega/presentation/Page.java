@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.166 2008/01/30 17:29:13 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.167 2008/01/30 18:19:07 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -66,10 +66,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/01/30 17:29:13 $ by $Author: valdas $
+ * Last modified: $Date: 2008/01/30 18:19:07 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.166 $
+ * @version $Revision: 1.167 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -272,7 +272,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		
 		String className = this.getClass().getName().toLowerCase();
 		if (className.indexOf("workspace") != -1) {	//	TODO
-			addStyleSheet(buffer, markup, iwc.getIWMainApplication().getBundle(CoreConstants.WORKSPACE_BUNDLE_IDENTIFIER).getVirtualPathWithFileNameString("/style/workspace.css"));
+			addStyleSheet(buffer, markup, iwc.getIWMainApplication().getBundle(CoreConstants.WORKSPACE_BUNDLE_IDENTIFIER).getVirtualPathWithFileNameString("style/workspace.css"));
 		}
 		
 		// Now the added style
