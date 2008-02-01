@@ -1,5 +1,6 @@
 package com.idega.user.data;
 
+import com.idega.core.file.data.ICFile;
 import com.idega.data.IDOReportableEntity;
 
 
@@ -126,5 +127,6 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public String getFamilyID();
  public void setPreferredLocale(String preferredLocale);
  public String getPreferredLocale();
- 
+ public void setUserProperties(ICFile file);	
+ public ICFile getUserProperties();
 }

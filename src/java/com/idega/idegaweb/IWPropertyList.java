@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.35 2007/04/20 13:10:50 valdas Exp $
+ * $Id: IWPropertyList.java,v 1.36 2008/02/01 16:48:40 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,19 +36,19 @@ import com.idega.xml.XMLParser;
  * files and a few others.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2007/04/20 13:10:50 $ by $Author: valdas $
+ * Last modified: $Date: 2008/02/01 16:48:40 $ by $Author: gimmi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public class IWPropertyList {
-	private XMLDocument xmlDocument;
-	private File xmlFile;
+	protected XMLDocument xmlDocument;
+	protected File xmlFile;
 	private XMLElement parentElement;
 
 	private XMLElement mapElement;
 	static String DEFAULT_FILE_ENDING=".pxml";
-	private static String rootElementTag = "pxml";
+	protected static String rootElementTag = "pxml";
 	static String dictTag = "dict";
 	static String mapTag = "map";
 	static String nameTag = "name";
@@ -366,6 +366,11 @@ public class IWPropertyList {
 
 	public void load(File file) {
 		this.xmlFile = file;
+
+		if (file == null) {
+			return;
+		}
+
 		if(file.exists()){
 			try {
 				load(new FileInputStream(file));
