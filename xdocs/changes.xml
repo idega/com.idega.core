@@ -4,11 +4,6 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
-  		<release version="3.1.79" date="2008-02-01">
-      		<action dev="gimmi" type="update">
-      			User properties moved to the db.
-      		</action>
-    	</release>
   		<release version="3.1.78" date="2008-01-26">
       		<action dev="valdas" type="update">
       			New methods to get all user's groups (UserBusiness)
