@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.14 2006/10/03 11:28:11 gediminas Exp $
+ * $Id: IWBaseComponent.java,v 1.15 2008/02/01 12:23:21 civilis Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -11,11 +11,14 @@
 package com.idega.presentation;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
+
 import com.idega.core.cache.CacheableUIComponent;
 import com.idega.core.cache.UIComponentCacher;
 import com.idega.idegaweb.IWBundle;
@@ -32,13 +35,16 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
- * Last modified: $Date: 2006/10/03 11:28:11 $ by $Author: gediminas $
+ * Last modified: $Date: 2008/02/01 12:23:21 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
+	
+	public static final String EXPRESSION_BEGIN = "#{";
+	public static final String EXPRESSION_END = "}";
 	
 	private TextStyler _styler;
 	private String styleAttribute;
@@ -340,4 +346,71 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		return "view";
 	}
 	
+	@Override
+	public List<UIComponent> getChildren() {
+		
+		@SuppressWarnings("unchecked")
+		List<UIComponent> children = super.getChildren();
+		return children;
+	}
+	
+	/**
+	 * <p>
+	 * A method to check if the passed String is a valuebinding expression,
+	 * i.e. a string in the format '#{MyBeanId.myProperty}'
+	 * </p>
+	 * @param any String
+	 * @return
+	 */
+    public boolean isValueBinding(String value)
+    {
+        if (value == null) {
+					return false;
+				}
+        
+        int start = value.indexOf(EXPRESSION_BEGIN);
+        if (start < 0) {
+					return false;
+				}
+        
+        int end = value.lastIndexOf(EXPRESSION_END);
+        return (end >=0 && start < end);
+    }
+
+    /**
+     * Creates the expression syntax, i.e. wraps the beanReference String around with #{ and },
+     * if it does not have them already
+	 *
+     * @param beanReference
+     * @return
+     */
+    public String getExpression(String beanReference){
+    	String exp = beanReference;
+    	if (!isValueBinding(beanReference)) {
+    		exp = EXPRESSION_BEGIN+beanReference+EXPRESSION_END;
+    	}
+    	return exp;
+    }
+    
+    /**
+     * <p>
+     * This method finds a bean instance from a given beanId.<br/>
+     * 
+     * </p>
+     * @param beanId - could be either expression like #{bean.method} or just beanId like beanId
+     * @return
+     */
+    public Object getBeanInstance(String beanId) {
+	    	FacesContext context = FacesContext.getCurrentInstance();
+	    
+	    	String expr;
+	    	
+	    	if(isValueBinding(beanId))
+	    		expr = beanId;
+	    	else
+	    		expr= getExpression(beanId);
+	    	
+		ValueBinding vb = context.getApplication().createValueBinding(expr);
+    	return vb.getValue(context);
+    }
 }
