@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.30 2006/06/21 18:08:49 tryggvil Exp $
+ * $Id: IWPropertyList.java,v 1.29.2.1 2008/02/01 16:27:55 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -36,19 +36,19 @@ import com.idega.xml.XMLParser;
  * files and a few others.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2006/06/21 18:08:49 $ by $Author: tryggvil $
+ * Last modified: $Date: 2008/02/01 16:27:55 $ by $Author: gimmi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.29.2.1 $
  */
 public class IWPropertyList {
-	private XMLDocument xmlDocument;
-	private File xmlFile;
+	protected XMLDocument xmlDocument;
+	protected File xmlFile;
 	private XMLElement parentElement;
 
 	private XMLElement mapElement;
 	static String DEFAULT_FILE_ENDING=".pxml";
-	private static String rootElementTag = "pxml";
+	protected static String rootElementTag = "pxml";
 	static String dictTag = "dict";
 	static String mapTag = "map";
 	static String nameTag = "name";
@@ -96,14 +96,6 @@ public class IWPropertyList {
 			file = new File(path + FileUtil.getFileSeparator() + fileNameWithoutFullPath);
 		}
 		load(file);
-	}
-	
-	/**
-	 * IWPropertyList loaded from an inputStream
-	 * @param stream
-	 */
-	public IWPropertyList(InputStream stream) {
-		load(stream);
 	}
 
 	/**
@@ -364,6 +356,11 @@ public class IWPropertyList {
 
 	public void load(File file) {
 		this.xmlFile = file;
+
+		if (file == null) {
+			return;
+		}
+
 		if(file.exists()){
 			try {
 				load(new FileInputStream(file));
@@ -461,28 +458,23 @@ public class IWPropertyList {
 	}
 
 	public void store() {
-		if(xmlFile!=null){
+		try {
+			String fileName = this.xmlFile.getName();
+			String fileNameBeginning = fileName.substring(0, fileName.lastIndexOf("."));
+			String fileNameEnding = fileName.substring(fileName.lastIndexOf(".") + 1);
+			String tempFileName = fileNameBeginning + "-temp." + fileNameEnding;
+			File tempXMLFile = new File(this.xmlFile.getParentFile(), tempFileName);
+			store(new FileOutputStream(tempXMLFile));
 			try {
-				String fileName = this.xmlFile.getName();
-				String fileNameBeginning = fileName.substring(0, fileName.lastIndexOf("."));
-				String fileNameEnding = fileName.substring(fileName.lastIndexOf(".") + 1);
-				String tempFileName = fileNameBeginning + "-temp." + fileNameEnding;
-				File tempXMLFile = new File(this.xmlFile.getParentFile(), tempFileName);
-				store(new FileOutputStream(tempXMLFile));
-				try {
-					FileUtil.copyFile(tempXMLFile, this.xmlFile);
-					FileUtil.delete(tempXMLFile);
-				}
-				catch (IOException io) {
-					System.err.println("Error storing " + this.xmlFile.getAbsolutePath() + this.xmlFile.getName() + " " + io.getMessage());
-				}
+				FileUtil.copyFile(tempXMLFile, this.xmlFile);
+				FileUtil.delete(tempXMLFile);
 			}
-			catch (FileNotFoundException e) {
-				e.printStackTrace();
+			catch (IOException io) {
+				System.err.println("Error storing " + this.xmlFile.getAbsolutePath() + this.xmlFile.getName() + " " + io.getMessage());
 			}
 		}
-		else{
-			System.err.println("IWPropertyList is not storable, it is not loaded from a file");
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
 	}
 
