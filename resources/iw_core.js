@@ -1223,7 +1223,25 @@ function getTransformedDocumentToDom(component) {
 	return nodes;
 }
 
+function executeJavaScriptActionsCodedInStringInGlobalScope(code) {
+	//	Executing script in global scope
+	var dj_global = this;
+	
+	if (window.execScript) {
+		window.execScript(code);
+		return null;
+	}
+	
+	return dj_global.eval ? dj_global.eval(code) : eval(code);
+}
+
 function createRealNode(element) {
+	//	XML
+	if (element.nodeName == 'xml') {
+		var fakeDiv = document.createElement('div');
+		return fakeDiv;
+	}
+	
 	//	Text
 	if (element.nodeName == '#text') {
 		var textNode = document.createTextNode(element.nodeValue);
@@ -1254,7 +1272,7 @@ function createRealNode(element) {
 		if (element.nodeValue != null && element.nodeValue != '') {
 			var action = '' + element.nodeValue;
 			if (action.indexOf('<!--') == -1 && action.indexOf('//-->') == -1) {
-				window.eval(action);
+				ALL_JAVA_SCRIPT_ACTIONS_FOR_IE += action;
 			}
 		}
 		
@@ -1276,7 +1294,7 @@ function createRealNode(element) {
 				}
 			}
 			if (allActions != null && allActions != '') {
-				window.eval(allActions);	//	Executing script
+				ALL_JAVA_SCRIPT_ACTIONS_FOR_IE += allActions;
 			}
 		}
 		
@@ -1288,10 +1306,7 @@ function createRealNode(element) {
 	if (element.attributes != null) {
 		for (var i = 0; i < element.attributes.length; i++) {
 			var attribute = element.attributes[i];
-			if (attribute.nodeName == 'class' && IE) {
-				result.className = attribute.nodeValue;
-			}
-			else if (attribute.nodeName.indexOf('on') == 0 && IE) {
+			if (attribute.nodeName.indexOf('on') == 0 && IE) {
 				var event = attribute.nodeName.substring(attribute.nodeName.indexOf('on') + 2);
 				var functionCall = attribute.nodeValue;
 				var elementFunction = function() {
@@ -1312,22 +1327,29 @@ function createRealNode(element) {
 			}
 			else if (attribute.nodeName == 'style' && IE) {
 				var styleValue = attribute.nodeValue;
-				while(true){
-					var stylePropertyNameLength = styleValue.indexOf(':');
-					if(stylePropertyNameLength == -1){
-						break;
-					}
-					var stylePropertyName = styleValue.substring(0, stylePropertyNameLength);
-					styleValue = styleValue.substring(stylePropertyNameLength+1);
-					var stylePropertyValueLength = styleValue.indexOf(';');
-					if(stylePropertyValueLength == -1){
-						$(result).setStyle(stylePropertyName, styleValue);
-						break;
-					}
-					var stylePropertyValue = styleValue.substring(0, stylePropertyValueLength);
-					styleValue = styleValue.substring(stylePropertyValueLength+2);
+				var stylePropertyNameLength = styleValue.indexOf(':');
 				
-					$(result).setStyle(stylePropertyName, stylePropertyValue);
+				if (stylePropertyNameLength == -1) {
+					result.setAttribute('style', styleValue);
+				}
+				else {
+					while (true) {
+						stylePropertyNameLength = styleValue.indexOf(':');
+						if (stylePropertyNameLength == -1) {
+							break;
+						}
+						var stylePropertyName = styleValue.substring(0, stylePropertyNameLength);
+						styleValue = styleValue.substring(stylePropertyNameLength+1);
+						var stylePropertyValueLength = styleValue.indexOf(';');
+						if (stylePropertyValueLength == -1) {
+							$(result).setStyle(stylePropertyName, styleValue);
+							break;
+						}
+						var stylePropertyValue = styleValue.substring(0, stylePropertyValueLength);
+						styleValue = styleValue.substring(stylePropertyValueLength+2);
+	
+						$(result).setStyle(stylePropertyName, stylePropertyValue);
+					}
 				}
 			}
 			else if (attribute.nodeName == 'href') {
@@ -1342,7 +1364,12 @@ function createRealNode(element) {
 				insertJavaScriptFileToHeader(attribute.nodeValue);	//	Adding source file
 			}
 			else {
-				result.setAttribute(attribute.nodeName, attribute.nodeValue);
+				if (attribute.nodeName == 'class' && IE) {
+					result.className = attribute.nodeValue;
+				}
+				else {
+					result.setAttribute(attribute.nodeName, attribute.nodeValue);
+				}
 			}
 		}
 	}
@@ -1403,6 +1430,8 @@ function insertNodesToContainerBefore(component, container, before) {
 		return;
 	}
 	
+	ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = '';
+	
 	// Making copy
 	var nodes = getTransformedDocumentToDom(component);
 	
@@ -1414,12 +1443,17 @@ function insertNodesToContainerBefore(component, container, before) {
 		realNode = createRealNode(activeNode);
 		container.insertBefore(realNode, before);
 	}
+	
+	checkIfNeedExecuteDynamicallyReceivedJavaScript();
 }
 
+var ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = null;
 function insertNodesToContainer(component, container) {
 	if (component == null || container == null) {
 		return;
 	}
+	
+	ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = '';
 	
 	// Making copy
 	var nodes = getTransformedDocumentToDom(component);
@@ -1431,6 +1465,18 @@ function insertNodesToContainer(component, container) {
 		activeNode = nodes[i];
 		realNode = createRealNode(activeNode);
 		container.appendChild(realNode);
+	}
+
+	checkIfNeedExecuteDynamicallyReceivedJavaScript();
+}
+
+function checkIfNeedExecuteDynamicallyReceivedJavaScript() {
+	if (ALL_JAVA_SCRIPT_ACTIONS_FOR_IE == null || ALL_JAVA_SCRIPT_ACTIONS_FOR_IE == '') {
+		ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = null;
+	}
+	else {
+		executeJavaScriptActionsCodedInStringInGlobalScope(ALL_JAVA_SCRIPT_ACTIONS_FOR_IE);
+		ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = null;
 	}
 }
 /** End **/
