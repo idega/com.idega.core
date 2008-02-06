@@ -11,9 +11,9 @@ import com.idega.idegaweb.IWApplicationContext;
  * <p>This class should be mainly used for legacy code, which used to lookup bean by using IBOLookup.getSessionInstance</p>
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  *
- * Last modified: $Date: 2007/12/12 10:36:36 $ by $Author: civilis $
+ * Last modified: $Date: 2008/02/06 18:18:10 $ by $Author: civilis $
  *
  */
 public class SpringBeanLookup {
@@ -55,11 +55,16 @@ public class SpringBeanLookup {
 			throw new RuntimeException("Interface is not annotated with "+SpringBeanName.class.getName()+" annotation");
 		
 		SpringBeanName bname = (SpringBeanName)clazz.getAnnotation(SpringBeanName.class);
+
+		@SuppressWarnings("unchecked")
+		T bean = (T)getSpringBean(ctx, bname.value());
+		return bean;
+	}
+	
+	public Object getSpringBean(ServletContext ctx, String springBeanIdentifier) {
 		
 		ApplicationContext ac = org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext(ctx);
-		@SuppressWarnings("unchecked")
-		T bean = (T)ac.getBean(bname.value());
-		return bean;
+		return ac.getBean(springBeanIdentifier);
 	}
 	
 	/**
