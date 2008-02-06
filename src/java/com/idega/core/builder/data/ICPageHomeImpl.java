@@ -11,10 +11,10 @@ import javax.ejb.FinderException;
  * <p>
  * TODO tryggvil Describe Type ICPageHomeImpl
  * </p>
- *  Last modified: $Date: 2007/03/07 08:54:09 $ by $Author: justinas $
+ *  Last modified: $Date: 2008/02/06 18:18:31 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 
 public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageHome
@@ -98,6 +98,13 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
 	public Collection findAllSimpleTemplates() throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         java.util.Collection ids  = ((ICPageBMPBean)entity).ejbFindAllSimpleTemplates();
+    		this.idoCheckInPooledEntity(entity);
+    		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+	
+	public Collection findBySubType(String subType, boolean deleted) throws FinderException {
+        com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+        java.util.Collection ids  = ((ICPageBMPBean)entity).ejbFindBySubType(subType, deleted);
     		this.idoCheckInPooledEntity(entity);
     		return this.getEntityCollectionForPrimaryKeys(ids);
 	}

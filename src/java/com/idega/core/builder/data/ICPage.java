@@ -1,5 +1,6 @@
 package com.idega.core.builder.data;
 
+import java.util.Collection;
 import java.util.Locale;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.data.UniqueIDCapable;
@@ -135,4 +136,5 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 	
 	public boolean isHidePageInMenu();
 	
+	public Collection ejbFindBySubType(String subType, boolean deleted)  throws javax.ejb.FinderException;
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.8 2008/01/15 09:32:35 valdas Exp $
+ * $Id: ICPageBMPBean.java,v 1.9 2008/02/06 18:18:31 civilis Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -29,6 +29,7 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.query.Column;
 import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.idegaweb.IWUserContext;
@@ -718,8 +719,8 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		return super.getEntityState();
 	}
 	
-	public java.util.Collection ejbFindByTemplate(Integer templateID)throws javax.ejb.FinderException{
-	    Table table = new Table(this);
+	public Collection ejbFindByTemplate(Integer templateID)throws javax.ejb.FinderException{
+	    	Table table = new Table(this);
 	    	SelectQuery query = new SelectQuery(table);
 	    	query.addColumn(new Column(table, getIDColumnName()));
 	    	query.addCriteria(new MatchCriteria(table,getColumnTemplateID(),MatchCriteria.EQUALS,templateID));
@@ -727,12 +728,27 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	}
 	
 	public Integer ejbFindByPageUri(String pageUri,int domainId)throws javax.ejb.FinderException{
-	    Table table = new Table(this);
+	    	Table table = new Table(this);
 	    	SelectQuery query = new SelectQuery(table);
 	    	query.addColumn(new Column(table, getIDColumnName()));
 	    	query.addCriteria(new MatchCriteria(table,PAGE_URI,MatchCriteria.EQUALS,pageUri));
 	    	//query.addCriteria(new MatchCriteria(table,DOMAIN_ID,MatchCriteria.EQUALS,domainId));
 	    	return (Integer)idoFindOnePKByQuery(query);
+	}
+	
+	public Collection ejbFindBySubType(String subType, boolean deleted)  throws javax.ejb.FinderException {
+		
+		Table table = new Table(this);	
+		SelectQuery query = new SelectQuery(table);
+    	query.addColumn(new Column(table, getIDColumnName()));
+    	query.addCriteria(new MatchCriteria(table, getColumnSubType(), MatchCriteria.EQUALS, subType));
+    	
+    	if(deleted)
+    		query.addCriteria(new MatchCriteria(table, getColumnDeleted(), MatchCriteria.ISNOT, MatchCriteria.NULL));
+    	else
+    		query.addCriteria(new MatchCriteria(table, getColumnDeleted(), MatchCriteria.IS, MatchCriteria.NULL));
+    	
+    	return idoFindPKsByQuery(query);
 	}
 	
 	public Integer ejbFindExistingPageByPageUri(String pageUri,int domainId)throws javax.ejb.FinderException{
