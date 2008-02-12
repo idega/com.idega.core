@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultViewNode.java,v 1.18 2007/09/20 13:17:07 eiki Exp $
+ * $Id: DefaultViewNode.java,v 1.19 2008/02/12 14:39:54 civilis Exp $
  * Created on 14.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -20,16 +20,17 @@ import javax.faces.context.FacesContext;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.util.CoreConstants;
 import com.idega.util.StringHandler;
 
 
 /**
  * The default implementation of the ViewNode interface.<br>
  * 
- *  Last modified: $Date: 2007/09/20 13:17:07 $ by $Author: eiki $
+ *  Last modified: $Date: 2008/02/12 14:39:54 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class DefaultViewNode implements ViewNode {
 
@@ -142,17 +143,59 @@ public class DefaultViewNode implements ViewNode {
 	 * @return
 	 */
 	protected ViewNode getDirectChild(String realChildId){
+		
 		ViewNode theReturn = (ViewNode)getChildrenMap().get(realChildId);
-		if(theReturn==null){
+		
+		if(theReturn == null) {
+			
+			theReturn = loadChildByViewId(realChildId);
+		}
+		
+		if(theReturn == null) {
 			theReturn = loadChild(realChildId);
-			if(theReturn!=null){
-				getChildrenMap().put(realChildId,theReturn);	
+			if(theReturn != null) {
+				getChildrenMap().put(realChildId, theReturn);	
 				return theReturn;
 			}
-		}
-		else{
+		} else {
 			return theReturn;
 		}
+		return null;
+	}
+	
+	protected ViewNode loadChildByViewId(String viewId) {
+		
+		@SuppressWarnings("unchecked")
+		Map<String, ViewNode> childrenViewNodes = getChildrenMap();
+		
+		if(viewId.startsWith(CoreConstants.SLASH)) {
+			viewId = viewId.substring(1);
+		} 
+		
+		if(viewId.endsWith(CoreConstants.SLASH)) {
+			viewId = viewId.substring(0, viewId.length()-1);
+		}
+		
+		for (ViewNode child : childrenViewNodes.values()) {
+			
+			String uri = child.getURI();
+			
+			String[] splittedPath = uri.split(CoreConstants.SLASH);
+			
+			for (int i = splittedPath.length-1; i >= 0; i--) {
+			
+				String part = splittedPath[i].trim();
+				
+				if(!CoreConstants.EMPTY.equals(part)) {
+				
+					if(viewId.equals(part))
+						return child;
+					
+					break;
+				}
+			}
+		}
+		
 		return null;
 	}
 	
