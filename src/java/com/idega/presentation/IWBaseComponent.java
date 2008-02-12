@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.15 2008/02/01 12:23:21 civilis Exp $
+ * $Id: IWBaseComponent.java,v 1.16 2008/02/12 14:40:15 civilis Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -24,6 +24,7 @@ import com.idega.core.cache.UIComponentCacher;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.util.RenderUtils;
 import com.idega.util.text.TextStyler;
 
@@ -35,10 +36,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
- * Last modified: $Date: 2008/02/01 12:23:21 $ by $Author: civilis $
+ * Last modified: $Date: 2008/02/12 14:40:15 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
@@ -413,4 +414,15 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		ValueBinding vb = context.getApplication().createValueBinding(expr);
     	return vb.getValue(context);
     }
+    
+    public IWBundle getBundle(FacesContext ctx, String bundleIdentifier) {
+    	
+    	IWMainApplication iwma = IWMainApplication.getIWMainApplication(ctx);
+		return iwma.getBundle(bundleIdentifier);
+    }
+    
+    public IWBundle getBundle(IWUserContext iwuc, String bundleIdentifier) {
+		IWMainApplication iwma = iwuc.getApplicationContext().getIWMainApplication();
+		return iwma.getBundle(bundleIdentifier);
+	}
 }
