@@ -110,5 +110,7 @@ public class CoreConstants {
 	public static final String PAGES_VIEW_MANAGER_ID = "pages";
 	
 	public static final String WORKSPACE_BUNDLE_IDENTIFIER = "com.idega.workspace";
-
+	
+	public static final String BUILDER = "builder";
+	public static final String BUILDER_APPLICATION = "builderApplication";
 }

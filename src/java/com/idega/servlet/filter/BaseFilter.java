@@ -1,5 +1,5 @@
 /*
- * $Id: BaseFilter.java,v 1.20 2007/12/10 21:00:02 eiki Exp $
+ * $Id: BaseFilter.java,v 1.21 2008/02/13 14:07:32 valdas Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.RequestUtil;
  * <p>
  *  Class that holds basic functionality used by many filters.<br>
  * </p>
- *  Last modified: $Date: 2007/12/10 21:00:02 $ by $Author: eiki $
+ *  Last modified: $Date: 2008/02/13 14:07:32 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public abstract class BaseFilter implements Filter, MutableClass {
 	
@@ -58,6 +58,7 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	protected static final String PAGES_URI="/pages/";
 	protected static final String PAGES_URI_MINUSSLASH="/pages";
 	protected static final String ENC_PARAMS_PARAM = "encParams";
+	protected static final String BUILDER_APPLICATION_URI = NEW_WORKSPACE_URI + CoreConstants.BUILDER_APPLICATION + CoreConstants.SLASH;
 	protected static boolean INITIALIZE_CACHED_DOMAIN_ON_NEXT_REQUEST = true;
 	
 	static final String SLASH = "/";

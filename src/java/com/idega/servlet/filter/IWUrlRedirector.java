@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.22 2008/01/30 11:39:49 valdas Exp $
+ * $Id: IWUrlRedirector.java,v 1.23 2008/02/13 14:07:32 valdas Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -28,16 +28,17 @@ import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.DefaultErrorHandlingUriWindow;
+import com.idega.util.CoreConstants;
 
 
 /**
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2008/01/30 11:39:49 $ by $Author: valdas $
+ *  Last modified: $Date: 2008/02/13 14:07:32 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -214,6 +215,21 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 				}
 			}
 		}
+		else if (requestUri.startsWith(BUILDER_APPLICATION_URI)) {
+			BuilderService builder = null;
+			try {
+				builder = BuilderServiceFactory.getBuilderService(getIWMainApplication(request).getIWApplicationContext());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			
+			if (builder.isFirstBuilderRun()) {
+				return new StringBuffer(NEW_WORKSPACE_URI).append(CoreConstants.CONTENT_VIEW_MANAGER_ID).toString();
+			}
+			else {
+				return new StringBuffer(NEW_WORKSPACE_URI).append(CoreConstants.BUILDER).toString();
+			}
+		}
 		else{
 			ViewManager viewManager = ViewManager.getInstance(getIWMainApplication(request));
 			ViewNode node = viewManager.getViewNodeForRequest(request);
@@ -284,6 +300,9 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 				return true;
 			}
 			else if(requestUri.equals(OLD_OBJECT_INSTANCIATOR)){
+				return true;
+			}
+			else if (requestUri.startsWith(BUILDER_APPLICATION_URI)) {
 				return true;
 			}
 		}
