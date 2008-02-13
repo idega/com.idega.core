@@ -105,6 +105,7 @@ public class CoreConstants {
 	
 	public static final String SINGLE_UICOMPONENT_RENDERING_PROCESS = "singleUIComponentRenderingProcess";
 	
+	public static final String WORKSPACE_VIEW_MANAGER_ID = "workspace";
 	public static final String CONTENT_VIEW_MANAGER_ID = "content";
 	public static final String PAGES_VIEW_MANAGER_ID = "pages";
 	
