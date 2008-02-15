@@ -370,7 +370,10 @@ function setWindowSizeCentered(width,height){
 //************************************************//
 
 
-window.onload=function(){tableruler();}
+window.onload=function(){
+	tableruler();
+	activeSessionPolling();
+}
 
 function tableruler()
 {
@@ -394,6 +397,20 @@ function tableruler()
 			}
 		}
 	}
+}
+
+var timer = 0;
+var timerF;
+
+function activeSessionPolling() {
+	try {
+		PageSessionPoller.pollSession('ping', {
+			callback: function(result) {
+				timer = timer + 1;
+				timerF = setTimeout("activeSessionPolling()",240000);
+			}
+		});
+	} catch(err) {}
 }
 
 

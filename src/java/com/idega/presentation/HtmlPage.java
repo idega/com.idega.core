@@ -262,7 +262,7 @@ public class HtmlPage extends Page {
 	 */
 	//public void encodeChildren(FacesContext ctx) throws IOException {
 	public void print(IWContext ctx) throws IOException {
-		
+		addSessionPollingDWRFiles(ctx);
 		Writer out;
 		
 		//ResponseWriter out = ctx.getResponseWriter();

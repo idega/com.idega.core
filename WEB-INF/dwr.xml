@@ -3,6 +3,10 @@
 
 <dwr>
 	<allow>
+		<create creator="jsf" javascript="PageSessionPoller" scope="application">
+	    	<param name="managedBeanName" value="pageSessionPoller"/>
+	    	<param name="class" value="com.idega.business.PageSessionPoller"/>
+    	</create>
 		<convert converter="bean" match="com.idega.builder.bean.AdvancedProperty" />
 	</allow>
 </dwr>

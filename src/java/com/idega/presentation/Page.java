@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.160.2.3 2007/05/18 16:25:19 laddi Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All
+ * $Id: Page.java,v 1.160.2.4 2008/02/15 08:46:59 alexis Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All
  * Rights Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -19,6 +19,10 @@ import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+
+import org.apache.myfaces.renderkit.html.util.AddResource;
+import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
@@ -63,10 +67,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2007/05/18 16:25:19 $ by $Author: laddi $
+ * Last modified: $Date: 2008/02/15 08:46:59 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.160.2.3 $
+ * @version $Revision: 1.160.2.4 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -1424,6 +1428,19 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		setDefaultValues();
 		setDefaultAttributes(iwc);
 	}
+	
+	protected void addSessionPollingDWRFiles(IWContext iwc) {
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(IWContext.getInstance());
+		IWMainApplicationSettings applicationSettings  = iwma.getSettings();
+		
+		String value = applicationSettings.getProperty("iw.core.session.polling", "false");
+		
+		if("true".equals(value)) {
+			AddResource resource = AddResourceFactory.getInstance(iwc.getCurrentInstance());
+			resource.addJavaScriptAtPosition(iwc.getCurrentInstance(), AddResource.HEADER_BEGIN, "/dwr/engine.js");
+			resource.addJavaScriptAtPosition(iwc.getCurrentInstance(), AddResource.HEADER_BEGIN, "/dwr/interface/PageSessionPoller.js");
+		}
+	}
 
 	/**
 	 * @param iwc
@@ -1433,6 +1450,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public void print(IWContext iwc) throws Exception {
 		this.printBegin(iwc);
+		addSessionPollingDWRFiles(iwc);
+		
 		// Catch all exceptions that are thrown in print functions of objects
 		// stored inside
 		try {
