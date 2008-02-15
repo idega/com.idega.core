@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.16 2008/02/12 14:40:15 civilis Exp $
+ * $Id: IWBaseComponent.java,v 1.17 2008/02/15 10:05:26 civilis Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -36,13 +36,16 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
- * Last modified: $Date: 2008/02/12 14:40:15 $ by $Author: civilis $
+ * Last modified: $Date: 2008/02/15 10:05:26 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
+	
+	protected static final String divTag = 			"div";
+	protected static final String renderedAtt = 	"rendered";
 	
 	public static final String EXPRESSION_BEGIN = "#{";
 	public static final String EXPRESSION_END = "}";
