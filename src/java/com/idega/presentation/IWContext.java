@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.146 2007/12/12 10:36:35 civilis Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.147 2008/02/18 09:28:46 eiki Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -44,6 +44,7 @@ import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
+import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.builder.business.ICBuilderConstants;
@@ -82,10 +83,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2007/12/12 10:36:35 $ by $Author: civilis $
+ * Last modified: $Date: 2008/02/18 09:28:46 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.146 $
+ * @version $Revision: 1.147 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -857,6 +858,15 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return getRequest().getRemoteHost();
 	}
 
+	/**
+	 * Checks if the current user has the role specified
+	 * @param role
+	 * @return
+	 */
+	public boolean hasRole(String role){
+		return this.getAccessController().hasRole(StandardRoles.ROLE_KEY_EDITOR,this);
+	}
+	
 	public boolean hasPermission(String permissionKey, PresentationObject obj) {
 		try {
 			return this.getAccessController().hasPermission(permissionKey, obj, this);
