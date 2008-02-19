@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  		<release version="3.1.81" date="2008-02-19">
+      		<action dev="alexis" type="update">
+      			Changed the way the session polling property is fetched in Page
+      		</action>
+    	</release>
   		<release version="3.1.80" date="2008-02-15">
       		<action dev="alexis" type="update">
       			Added session polling logic to both site pages and workspace pages

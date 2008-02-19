@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.52.2.3 2007/05/29 08:13:58 laddi Exp $ Created in 2001 by Tryggvi Larusson
+ * $Id: IWMainApplicationSettings.java,v 1.52.2.4 2008/02/19 07:01:54 alexis Exp $ Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
  * 
@@ -39,10 +39,10 @@ import com.idega.util.StringHandler;
  * This class is used by IWMainApplication as the holder of most properties set on an application-wide basis. This class is responsible for reading
  * the properties set in idegaweb.pxml and also holds some default values that don't have to be explicitly set in the idegaweb.pxml properties file.
  * </p>
- * Copyright: Copyright (c) 2001-2005 idega software<br/> Last modified: $Date: 2007/05/29 08:13:58 $ by $Author: laddi $
+ * Copyright: Copyright (c) 2001-2005 idega software<br/> Last modified: $Date: 2008/02/19 07:01:54 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.52.2.3 $
+ * @version $Revision: 1.52.2.4 $
  */
 
 public class IWMainApplicationSettings implements MutableClass {
@@ -77,6 +77,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	private static final String CHARACTER_ENCODING_KEY = "character_encoding";
 	private static final String IDO_ENTITY_BEAN_CACHING_KEY = "ido_entity_bean_caching";
 	private static final String IDO_ENTITY_QUERY_CACHING_KEY = "ido_entity_query_caching";
+	private static final String SESSION_POLLING_KEY = "session_polling";
 
 	// the following three properties seem not to be set but
 	// they are read BEFORE the database is initialized, that is
@@ -491,6 +492,12 @@ public class IWMainApplicationSettings implements MutableClass {
 		com.idega.data.DatastoreInterface.usePreparedStatement = ret;
 		return ret;
 	}
+	
+	public boolean getIfUseSessionPolling() {
+		String value = getFromApplicationBinding(SESSION_POLLING_KEY);
+		boolean ret = Boolean.valueOf(value).booleanValue();
+		return ret;
+	}
 
 	public void setDebugMode(boolean debugFlag) {
 		DEBUG_FLAG = debugFlag;
@@ -535,6 +542,10 @@ public class IWMainApplicationSettings implements MutableClass {
 		if (!onOrOff) {
 			setEntityQueryCaching(false);
 		}
+	}
+	
+	public void setEnableSessionPolling(boolean onOrOff) {
+		putInApplicationBinding(SESSION_POLLING_KEY, Boolean.toString(onOrOff));
 	}
 
 	public void setEntityQueryCaching(boolean onOrOff) {

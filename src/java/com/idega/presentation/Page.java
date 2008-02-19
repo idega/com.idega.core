@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.160.2.4 2008/02/15 08:46:59 alexis Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All
+ * $Id: Page.java,v 1.160.2.5 2008/02/19 07:01:54 alexis Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All
  * Rights Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -67,10 +67,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/02/15 08:46:59 $ by $Author: alexis $
+ * Last modified: $Date: 2008/02/19 07:01:54 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.160.2.4 $
+ * @version $Revision: 1.160.2.5 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -1433,9 +1433,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(IWContext.getInstance());
 		IWMainApplicationSettings applicationSettings  = iwma.getSettings();
 		
-		String value = applicationSettings.getProperty("iw.core.session.polling", "false");
-		
-		if("true".equals(value)) {
+		if(applicationSettings.getIfUseSessionPolling()) {
 			AddResource resource = AddResourceFactory.getInstance(iwc.getCurrentInstance());
 			resource.addJavaScriptAtPosition(iwc.getCurrentInstance(), AddResource.HEADER_BEGIN, "/dwr/engine.js");
 			resource.addJavaScriptAtPosition(iwc.getCurrentInstance(), AddResource.HEADER_BEGIN, "/dwr/interface/PageSessionPoller.js");
