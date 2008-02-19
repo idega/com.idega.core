@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.160.2.5 2008/02/19 07:01:54 alexis Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All
+ * $Id: Page.java,v 1.160.2.6 2008/02/19 08:09:58 laddi Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All
  * Rights Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
@@ -58,8 +59,9 @@ import com.idega.util.datastructures.QueueMap;
 
 /**
  * <p>
- * An instance of this class (or subclass) is always a top level object in UIComponent tree in an HTML presentation in idegaWeb. This object maps to
- * and renders the
+ * An instance of this class (or subclass) is always a top level object in
+ * UIComponent tree in an HTML presentation in idegaWeb. This object maps to and
+ * renders the
  * 
  * <pre>
  *   &lt;HTML&gt;&lt;HEAD&gt;...&lt;/HEAD&gt; &lt;BODY&gt;... &lt;/BODY&gt;&lt;/HTML&gt;
@@ -67,10 +69,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/02/19 07:01:54 $ by $Author: alexis $
+ * Last modified: $Date: 2008/02/19 08:09:58 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.160.2.5 $
+ * @version $Revision: 1.160.2.6 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -88,24 +90,30 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	// \"-//W3C//DTD HTML 4.01 Transitional//EN\"
 	// \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>";
 	/**
-	 * By skipping the validation URL XML compliant browser still recognise attributes such as height / width *
+	 * By skipping the validation URL XML compliant browser still recognise
+	 * attributes such as height / width *
 	 */
 	public final static String DOCTYPE_HTML_4_0_1_TRANSITIONAL = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">";
 	public final static String DOCTYPE_HTML_4_0_1_STRICT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
 	public final static String DOCTYPE_XHTML_1_0_TRANSITIONAL = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
 	public final static String DOCTYPE_XHTML_1_1 = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\n\t\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">";
 	/**
-	 * Constant used to declare if the rendering should be in HTML 4.0 or lower.<br/> This can be set as a property in
-	 * IWMainApplicationSettings.getDefaultMarkupLanguage() for backwards compatability.
+	 * Constant used to declare if the rendering should be in HTML 4.0 or lower.<br/>
+	 * This can be set as a property in
+	 * IWMainApplicationSettings.getDefaultMarkupLanguage() for backwards
+	 * compatability.
 	 */
 	public final static String HTML = "HTML";
 	/**
-	 * Constant used to declare if the rendering should be in XHTML 1.0 (transitional).<br/> This is used by
-	 * IWMainApplicationSettings.getDefaultMarkupLanguage() and is the default value in ePlatform 3.0
+	 * Constant used to declare if the rendering should be in XHTML 1.0
+	 * (transitional).<br/> This is used by
+	 * IWMainApplicationSettings.getDefaultMarkupLanguage() and is the default
+	 * value in ePlatform 3.0
 	 */
 	public final static String XHTML = "XHTML";
 	/**
-	 * Constant used to declare if the rendering should be in XHTML 1.1 (strict).<br/> This can be set as a property in
+	 * Constant used to declare if the rendering should be in XHTML 1.1 (strict).<br/>
+	 * This can be set as a property in
 	 * IWMainApplicationSettings.getDefaultMarkupLanguage().
 	 */
 	public final static String XHTML1_1 = "XHTML1.1";
@@ -472,7 +480,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * <p>
-	 * This method gets the script fragment that calls the javacript for the IE7 (plugin) that makes IE more standards compliant.<br/> See: <a
+	 * This method gets the script fragment that calls the javacript for the IE7
+	 * (plugin) that makes IE more standards compliant.<br/> See: <a
 	 * href="http://dean.edwards.name/IE7/">http://dean.edwards.name/IE7/</a>
 	 * </p>
 	 * 
@@ -486,7 +495,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * <p>
-	 * Gets if the IE7 Code fragment is rendered out in the header of the page. Defaults to false.
+	 * Gets if the IE7 Code fragment is rendered out in the header of the page.
+	 * Defaults to false.
 	 * </p>
 	 * 
 	 * @return
@@ -497,7 +507,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * <p>
-	 * Sets if the IE7 Extension (http://dean.edwards.name/IE7/) should be used. Default is false.
+	 * Sets if the IE7 Extension (http://dean.edwards.name/IE7/) should be used.
+	 * Default is false.
 	 * </p>
 	 */
 	public void setUseIE7Extension(boolean useIE7Extension) {
@@ -847,7 +858,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	/**
 	 * @param backgroundImage
 	 *          The new backgroundImage value
-	 * @todo : this must implemented in the print method...like in the Link class IMPORTANT! for this to work you must have an application property
+	 * @todo : this must implemented in the print method...like in the Link class
+	 *       IMPORTANT! for this to work you must have an application property
 	 *       called IW_USES_OLD_MEDIA_TABLES (set to anything)
 	 */
 	public void setBackgroundImage(Image backgroundImage) {
@@ -860,7 +872,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @param image
 	 *          Description of the Parameter
 	 * @return The imageUrl value
-	 * @todo : replace this with a implementation in print IMPORTANT! for this to work you must have an application property called
+	 * @todo : replace this with a implementation in print IMPORTANT! for this to
+	 *       work you must have an application property called
 	 *       IW_USES_OLD_MEDIA_TABLES (set to anything)
 	 */
 	private String getImageUrl(Image image) {
@@ -924,7 +937,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Sets the window to close immediately when page is loaded and the focus on its parent ( opener ) if exists
+	 * Sets the window to close immediately when page is loaded and the focus on
+	 * its parent ( opener ) if exists
 	 * 
 	 * @param focusOnparent
 	 */
@@ -963,14 +977,16 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Sets the parent (caller) window to submit its first form when this page unloads if there is one
+	 * Sets the parent (caller) window to submit its first form when this page
+	 * unloads if there is one
 	 */
 	public void setParentPageMainFormToSubmitOnUnLoad() {
 		setParentPageFormToSubmitOnUnLoad(0);
 	}
 
 	/**
-	 * Sets the parent (caller) window to submit its form at index formIndex if there is one, on unload of this page.
+	 * Sets the parent (caller) window to submit its form at index formIndex if
+	 * there is one, on unload of this page.
 	 * 
 	 * @param formIndex
 	 *          index of the form in the parent page
@@ -980,7 +996,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Sets the parent (caller) window to submit the form with the given name if there is one, on unload of this page.
+	 * Sets the parent (caller) window to submit the form with the given name if
+	 * there is one, on unload of this page.
 	 * 
 	 * @param formIndex
 	 *          index of the form in the parent page
@@ -990,7 +1007,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Sets the parent (caller) page to change location (URL) when this page unloads
+	 * Sets the parent (caller) page to change location (URL) when this page
+	 * unloads
 	 * 
 	 * @param URL
 	 *          The new toRedirect value
@@ -1379,7 +1397,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Gets a block of free form javascript (just strings) to insert BEFORE importing some javascript.js files
+	 * Gets a block of free form javascript (just strings) to insert BEFORE
+	 * importing some javascript.js files
 	 * 
 	 * @param iwc
 	 * @return a javascript block
@@ -1399,7 +1418,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Gets a block of free form javascript (just strings) to insert AFTER importing some javascript.js files
+	 * Gets a block of free form javascript (just strings) to insert AFTER
+	 * importing some javascript.js files
 	 * 
 	 * @param iwc
 	 * @return a javascript block
@@ -1428,15 +1448,15 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		setDefaultValues();
 		setDefaultAttributes(iwc);
 	}
-	
+
 	protected void addSessionPollingDWRFiles(IWContext iwc) {
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(IWContext.getInstance());
-		IWMainApplicationSettings applicationSettings  = iwma.getSettings();
-		
-		if(applicationSettings.getIfUseSessionPolling()) {
-			AddResource resource = AddResourceFactory.getInstance(iwc.getCurrentInstance());
-			resource.addJavaScriptAtPosition(iwc.getCurrentInstance(), AddResource.HEADER_BEGIN, "/dwr/engine.js");
-			resource.addJavaScriptAtPosition(iwc.getCurrentInstance(), AddResource.HEADER_BEGIN, "/dwr/interface/PageSessionPoller.js");
+		IWMainApplicationSettings applicationSettings = iwma.getSettings();
+
+		if (applicationSettings.getIfUseSessionPolling()) {
+			AddResource resource = AddResourceFactory.getInstance(FacesContext.getCurrentInstance());
+			resource.addJavaScriptAtPosition(FacesContext.getCurrentInstance(), AddResource.HEADER_BEGIN, "/dwr/engine.js");
+			resource.addJavaScriptAtPosition(FacesContext.getCurrentInstance(), AddResource.HEADER_BEGIN, "/dwr/interface/PageSessionPoller.js");
 		}
 	}
 
@@ -1449,7 +1469,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	public void print(IWContext iwc) throws Exception {
 		this.printBegin(iwc);
 		addSessionPollingDWRFiles(iwc);
-		
+
 		// Catch all exceptions that are thrown in print functions of objects
 		// stored inside
 		try {
@@ -1585,7 +1605,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	/**
 	 * <p>
-	 * Prints out the render time in millisconds as a comment. This is by default called last in encodeEnd()
+	 * Prints out the render time in millisconds as a comment. This is by default
+	 * called last in encodeEnd()
 	 * </p>
 	 * 
 	 * @param context
@@ -1893,7 +1914,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * method for adding a style sheet file the url generating is done in the main method
+	 * method for adding a style sheet file the url generating is done in the main
+	 * method
 	 * 
 	 * @param file
 	 *          The new styleSheet value
@@ -1903,7 +1925,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Returns set the (BuilderPage) ID set to this page or -1 if not a builder page
+	 * Returns set the (BuilderPage) ID set to this page or -1 if not a builder
+	 * page
 	 * 
 	 * @return The pageID value
 	 */
@@ -2013,7 +2036,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Used to add source of scriptfiles (JavaScript) The file url should end on the form "scriptfile.js"
+	 * Used to add source of scriptfiles (JavaScript) The file url should end on
+	 * the form "scriptfile.js"
 	 * 
 	 * @param jsString
 	 *          The feature to be added to the ScriptSource attribute
@@ -2118,7 +2142,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Set the docType for the header of the page. Default it is set to Html 4.0.1. transitional. Most commonn doctypes are defined in the static
+	 * Set the docType for the header of the page. Default it is set to Html
+	 * 4.0.1. transitional. Most commonn doctypes are defined in the static
 	 * contsants DOCTYPE_... in this class.
 	 * 
 	 * @param docType
@@ -2128,7 +2153,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Get the set docType. If no doctype/markupLanguage is set in the page/system then this method returns the HTML 4.0.1 Transitional.
+	 * Get the set docType. If no doctype/markupLanguage is set in the page/system
+	 * then this method returns the HTML 4.0.1 Transitional.
 	 * 
 	 * @return
 	 */
@@ -2153,7 +2179,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	/**
 	 * Checks if an XHTML doctype is defined for the page or the system.
 	 * 
-	 * @return True if an XHTML doctype has been set for the document or XHTML markup for the application.
+	 * @return True if an XHTML doctype has been set for the document or XHTML
+	 *         markup for the application.
 	 */
 	public boolean isXHtmlDocTypeDeclared() {
 		String docType = getDocType();
@@ -2169,7 +2196,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Gets if the Markup Language for the Page. This method uses the set DocType (if any) to calculate the used MarkupLanguage String.
+	 * Gets if the Markup Language for the Page. This method uses the set DocType
+	 * (if any) to calculate the used MarkupLanguage String.
 	 * 
 	 * @return
 	 */
@@ -2313,10 +2341,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		return list;
 	}
 
-// public void addWeb2JSLibrariesToPage(){
-// this.addScriptSource(web2.getBundleURIToPrototypeLib(Web2BusinessBean.SCRIPTACULOUS_VERSION_1_6_1));
-// this.addScriptSource(web2.getBundleURIToScriptaculousLib(Web2BusinessBean.SCRIPTACULOUS_VERSION_1_6_1));
-// this.addScriptSource(web2.getBundleURIToBehaviourLib());
-// }
+	// public void addWeb2JSLibrariesToPage(){
+	// this.addScriptSource(web2.getBundleURIToPrototypeLib(Web2BusinessBean.SCRIPTACULOUS_VERSION_1_6_1));
+	// this.addScriptSource(web2.getBundleURIToScriptaculousLib(Web2BusinessBean.SCRIPTACULOUS_VERSION_1_6_1));
+	// this.addScriptSource(web2.getBundleURIToBehaviourLib());
+	// }
 
 }
