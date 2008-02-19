@@ -460,6 +460,11 @@
       <name>3.1.80</name>
       <tag>CORE_3_1_80</tag>
     </version>
+    <version>
+      <id>3.1.81</id>
+      <name>3.1.81</name>
+      <tag>CORE_3_1_81</tag>
+    </version>
   </versions>
   <branches/>
   <mailingLists>
