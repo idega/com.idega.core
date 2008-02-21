@@ -137,4 +137,8 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 	public boolean isHidePageInMenu();
 	
 	public Collection ejbFindBySubType(String subType, boolean deleted)  throws javax.ejb.FinderException;
+	
+	public void setPublished(boolean published);
+	
+	public boolean isPublished();
 }

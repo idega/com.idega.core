@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.9 2008/02/06 18:18:31 civilis Exp $
+ * $Id: ICPageBMPBean.java,v 1.10 2008/02/21 17:44:09 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -29,7 +29,6 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.query.Column;
 import com.idega.data.query.MatchCriteria;
-import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.idegaweb.IWUserContext;
@@ -67,7 +66,8 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	private static final String WEBDAV_URI = "WEBDAV_URI";
 	private static final String IS = "IS";
 	private static final String NULL = "NULL";
-	private static final String HIDE_PAGE_IN_MENU = "HIDE_PAGE_IN_MENU";
+	public static final String HIDE_PAGE_IN_MENU = "HIDE_PAGE_IN_MENU";
+	public static final String PAGE_IS_PUBLISHED = "PAGE_IS_PUBLISHED";
 	private ICFile _file;
 	
 
@@ -120,6 +120,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		addAttribute(PAGE_FORMAT, "Format", true, true, String.class, 30);
 		addAttribute(PAGE_URI, "URI", String.class);
 		addAttribute(HIDE_PAGE_IN_MENU, "Hide page in navigation menu", true, true, Boolean.class);
+		addAttribute(PAGE_IS_PUBLISHED, "Set page published/unpublished", true, true, Boolean.class);
 		
 		addManyToOneRelationship(DOMAIN_ID,ICDomain.class);
 		addUniqueIDColumn();
@@ -850,5 +851,13 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 
 	public void setHidePageInMenu(boolean hidePageInMenu) {
 		setColumn(HIDE_PAGE_IN_MENU, hidePageInMenu);
+	}
+
+	public boolean isPublished() {
+		return getBooleanColumnValue(PAGE_IS_PUBLISHED);
+	}
+
+	public void setPublished(boolean published) {
+		setColumn(PAGE_IS_PUBLISHED, published);
 	}
 }
