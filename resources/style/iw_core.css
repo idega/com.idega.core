@@ -437,8 +437,3 @@ div#idegaThemeExpandRegion {
 li.hiddenPageInNavigationMenu {
 	display: none !important;
 }
-
-iframe.contentItemEditorFrameStyle {
-	width: 650px;
-	height: 506px;
-}
