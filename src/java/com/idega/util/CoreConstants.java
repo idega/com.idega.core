@@ -31,5 +31,7 @@ public class CoreConstants {
 	public static final String IW_USER_BUNDLE_IDENTIFIER = "com.idega.user";
 
 	public static final String GROUP_SERVICE_DWR_INTERFACE_SCRIPT = "/dwr/interface/GroupService.js";
+	
+	public static final String DWR_ENGINE_SCRIPT = "/dwr/engine.js";
 
 }
