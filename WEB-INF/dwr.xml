@@ -6,6 +6,10 @@
 		<create creator="ibo" javascript="ChooserService" scope="application">
 			<param name="class" value="com.idega.business.chooser.ChooserService" />
 		</create>
+		<create creator="jsf" javascript="PageSessionPoller" scope="application">
+	    	<param name="managedBeanName" value="pageSessionPoller"/>
+	    	<param name="class" value="com.idega.business.PageSessionPoller"/>
+    	</create>
 		<convert converter="bean" match="com.idega.builder.bean.AdvancedProperty" />
 	</allow>
 	<signatures>

@@ -20,5 +20,11 @@
 		<component-type>Help</component-type>
 		<component-class>com.idega.idegaweb.help.presentation.Help</component-class>
 	</component>
+	
+	<managed-bean>
+		<managed-bean-name>pageSessionPoller</managed-bean-name>
+		<managed-bean-class>com.idega.business.PageSessionPoller</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
 
 </faces-config>
