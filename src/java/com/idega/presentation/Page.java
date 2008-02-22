@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.168 2008/02/13 11:25:37 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.169 2008/02/22 10:24:41 alexis Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -20,6 +20,9 @@ import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+
+import org.apache.myfaces.renderkit.html.util.AddResource;
+import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
@@ -52,6 +55,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.FacesUtil;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
+import com.idega.util.PresentationUtil;
 import com.idega.util.URLUtil;
 import com.idega.util.datastructures.QueueMap;
 
@@ -66,10 +70,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/02/13 11:25:37 $ by $Author: valdas $
+ * Last modified: $Date: 2008/02/22 10:24:41 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.168 $
+ * @version $Revision: 1.169 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -83,6 +87,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	public final static String IW_FRAMESET_PAGE_PARAMETER = "idegaweb_frameset_path";
 	public final static String IW_FRAME_NAME_PARAMETER = "idegaweb_frame_name";
 	public final static String PRM_IW_BROWSE_EVENT_SOURCE = "iw_b_e_s";
+	public final static String SESSION_POLLING_SCRIPT = "var s_p_t = 0; var s_p_r = null; var s_p_i = 240000; function activeSessionPolling() { try { PageSessionPoller.pollSession('ping', { callback: function(r) { s_p_t++; s_p_r = setTimeout('activeSessionPolling()',s_p_i); } }); } catch(e) {} }";
+	public final static String SESSION_POLLING_FUNCTION = "activeSessionPolling();";
+	public final static String SESSION_POLLING_DWR_INTERFACE = "/dwr/interface/PageSessionPoller.js";
 	// private final static String START_TAG="<!DOCTYPE HTML PUBLIC
 	// \"-//W3C//DTD HTML 4.01 Transitional//EN\"
 	// \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>";
@@ -1438,6 +1445,25 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		super.initVariables(iwc);
 		setDefaultValues();
 		setDefaultAttributes(iwc);
+	}
+	
+	/**
+	 * @param iwc
+	 *          Description of the Parameter
+	 * @exception Exception
+	 *              Description of the Exception
+	 */
+	protected void addSessionPollingDWRFiles(IWContext iwc) {
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(IWContext.getInstance());
+		IWMainApplicationSettings applicationSettings = iwma.getSettings();
+
+		if (applicationSettings.getIfUseSessionPolling()) {
+			AddResource resource = AddResourceFactory.getInstance(FacesContext.getCurrentInstance());
+			resource.addJavaScriptAtPosition(FacesContext.getCurrentInstance(), AddResource.HEADER_BEGIN, CoreConstants.DWR_ENGINE_SCRIPT);
+			resource.addJavaScriptAtPosition(FacesContext.getCurrentInstance(), AddResource.HEADER_BEGIN, SESSION_POLLING_DWR_INTERFACE);
+			PresentationUtil.addJavaScriptActionToBody(iwc, SESSION_POLLING_SCRIPT);
+			PresentationUtil.addJavaScriptActionToBody(iwc, SESSION_POLLING_FUNCTION);
+		}
 	}
 
 	/**
