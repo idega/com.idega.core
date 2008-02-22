@@ -49,7 +49,7 @@ public class CoreUtil {
 		
 		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
 		
-		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/engine.js");
+		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CoreConstants.DWR_ENGINE_SCRIPT);
 		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/interface/ChooserService.js");
 		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		
