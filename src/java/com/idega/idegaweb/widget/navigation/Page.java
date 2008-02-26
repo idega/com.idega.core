@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.5 2004/11/02 14:09:22 laddi Exp $
+ * $Id: Page.java,v 1.6 2008/02/26 16:20:12 laddi Exp $
  * Created on 14.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -24,18 +24,19 @@ import com.idega.presentation.text.Text;
  * Last modified: 14.10.2004 13:56:18 by laddi
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class Page extends Widget {
 
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.widget.Widget#decorate(com.idega.presentation.IWContext)
 	 */
+	@Override
 	protected PresentationObject getWidget(IWContext iwc) {
 		try {
 			ICPage currentPage = getBuilderService(iwc).getCurrentPage(iwc);
 			
-			Text text = new Text(currentPage.getName(iwc.getCurrentLocale()));
+			Text text = new Text(currentPage.getNodeName(iwc.getCurrentLocale()));
 			return text;
 		}
 		catch (RemoteException re) {
