@@ -744,11 +744,16 @@ function changeSiteInfoValue(id, needsReload) {
 	PARENT_ELEMENT = CHILD_ELEMENT.parentNode;
 	ORIGINAL_ELEMENT_INDEX = findChildIndex(PARENT_ELEMENT, CHILD_ELEMENT);
 	
-	var children = CHILD_ELEMENT.childNodes;
-	if (children != null) {
-		if (children[0] != null) {
-			if (children[0].nodeValue != null) {
-				editBox.value = children[0].nodeValue;
+	if ($(CHILD_ELEMENT).getTag() == 'img') {
+		editBox.value = $(CHILD_ELEMENT).getProperty('src');
+	}
+	else {
+		var children = CHILD_ELEMENT.childNodes;
+		if (children != null) {
+			if (children[0] != null) {
+				if (children[0].nodeValue != null) {
+					editBox.value = children[0].nodeValue;
+				}
 			}
 		}
 	}
@@ -810,8 +815,9 @@ function saveSiteInfoValueWithBlur(event, needsReload) {
 		return false;
 	}
 	if (event.type == "blur" || event.type == "onblur") {
-		mainSaveSiteInfo($(EDIT_BOX_ID).value, needsReload);
+		mainSaveSiteInfo($(EDIT_BOX_ID), needsReload);
 	}
+	return false;
 }
 
 function saveSiteInfoValueWithEnter(event, needsReload) {
@@ -821,16 +827,18 @@ function saveSiteInfoValueWithEnter(event, needsReload) {
 	
 	if (event.key) {
 		if ('enter' == event.key) {
-			mainSaveSiteInfo($(EDIT_BOX_ID).value, needsReload);
+			mainSaveSiteInfo($(EDIT_BOX_ID), needsReload);
 		}
 	}
 	return false;
 }
 
-function mainSaveSiteInfo(value, needsReload) {
-	if (SITE_INFO_KEYWORD_FROM_BOX == null || value == null) {
-		return;
+function mainSaveSiteInfo(component, needsReload) {
+	if (SITE_INFO_KEYWORD_FROM_BOX == null || component == null) {
+		return false;
 	}
+	
+	var value = component.value;
 	
 	if (PARENT_ELEMENT == null) {
 		var element = document.getElementById(SITE_INFO_KEYWORD_FROM_BOX); // Setting new value
@@ -849,6 +857,10 @@ function mainSaveSiteInfo(value, needsReload) {
 			if (needsReload) {
 				reloadPage();
 			}
+			
+			try {
+				window.parent.updateSiteInfoBoxWithNewValues();
+			} catch(e) {};
 		}
 	});
 }
