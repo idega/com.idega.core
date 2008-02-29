@@ -33,5 +33,7 @@ public class CoreConstants {
 	public static final String GROUP_SERVICE_DWR_INTERFACE_SCRIPT = "/dwr/interface/GroupService.js";
 	
 	public static final String DWR_ENGINE_SCRIPT = "/dwr/engine.js";
+	
+	public static final String ENCODING_UTF8 = "UTF-8";
 
 }
