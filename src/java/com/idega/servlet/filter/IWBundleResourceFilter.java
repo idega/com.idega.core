@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.41 2008/01/28 10:34:54 valdas Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.42 2008/02/29 14:21:51 civilis Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -44,10 +44,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2008/01/28 10:34:54 $ by $Author: valdas $
+ * Last modified: $Date: 2008/02/29 14:21:51 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.41 $
+ * @version $Revision: 1.42 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -359,8 +359,12 @@ public class IWBundleResourceFilter extends BaseFilter {
 	
 	public static void checkCopyOfResourceToWebapp(FacesContext context, String resourceURI) {
 		
+		checkCopyOfResourceToWebapp(IWMainApplication.getIWMainApplication(context), resourceURI);
+	}
+	
+	public static void checkCopyOfResourceToWebapp(IWMainApplication iwma, String resourceURI) {
+		
 		String bundlesProperty = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
 		
 		if(bundlesProperty != null) {
 			String webappDir = iwma.getApplicationRealPath();
