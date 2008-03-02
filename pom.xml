@@ -184,7 +184,7 @@
     <dependency>
       <groupId>commons-jxpath</groupId>
       <artifactId>commons-jxpath</artifactId>
-      <version>1.2-patched</version>
+      <version>${commons-jxpath-commons-jxpath-version}</version>
       <type>jar</type>
     </dependency>
 	<dependency>
