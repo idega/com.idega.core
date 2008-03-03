@@ -37,6 +37,8 @@ public class CoreConstants {
 	public static final String PERCENT = "%";
 	public static final String PLUS = "+";
 	
+	public static final String JS_STR_PARAM_SEPARATOR = "','";
+	
 	public static final String CONTENT_TYPE_TEXT_CSS = "text/css";
 	
 	public static final String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
