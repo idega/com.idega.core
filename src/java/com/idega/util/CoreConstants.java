@@ -69,6 +69,7 @@ public class CoreConstants {
 	public static final String ENCODING_UTF8 = "UTF-8";
 	
 	public static final String DWR_ENGINE_SCRIPT = "/dwr/engine.js";
+	public static final String DWR_UTIL_SCRIPT = "/dwr/util.js";
 	
 	public void setArticleConstantsInstance(Object o) {
 		CoreConstants.ARTICLE_CONSTANTS = o;
