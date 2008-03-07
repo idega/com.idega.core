@@ -120,7 +120,7 @@ public class ScrollTable extends Block implements TableType {
 			Table headerTable = (Table) this.theTable.clone(null,false);
 			headerTable.resize(this.theTable.getColumns(),this.numberOfHeaderRows);
 			headerTable.removeStyleAttribute(PresentationObject.HEIGHT);
-			
+
 			StringBuffer scriptSource1 = new StringBuffer("\t if(document.getElementById){");
 			StringBuffer scriptSource2 = new StringBuffer("\t else if(document.all){");
 			Image heightImage = Table.getTransparentCell(iwc);
@@ -130,7 +130,11 @@ public class ScrollTable extends Block implements TableType {
 			//here we need to get just the added data OR HACKIT!
 			//Hide the first row! Hahahahahahaa....fucking crap class...it worked before jsf but now we need to do this...
 			theTable.setRowStyle(1, "display", "none");
-						
+			for (int i = 1 ; i <= this.theTable.getColumns(); i++) {
+				theTable.emptyCell(i, 1);
+			}
+			theTable.setStyleAttribute("[if [IE] alert('gimi[endif]");
+			
 			int layerWidth = -1,layerHeight=-1;
 			if(this.theTable.getWidth()!=null){
 				try {
@@ -156,10 +160,22 @@ public class ScrollTable extends Block implements TableType {
 				Image img = (Image)image.clone();
 				img.setName(name);
 				img.setID(name);
+
+				Image img2 = (Image)image.clone();
+				img2.setName(name+"_1");
+				img2.setID(name+"_1");
+
+				headerTable.add(img2,col,1);
+				
 				theTable.add(img,col,testrow);
 				headerTable.getCellAt(col,this.numberOfHeaderRows).setID(cellName);
+				theTable.getCellAt(col,1).setID(cellName+"_1");
 				scriptSource1.append("\n\t\t document.getElementById('").append(cellName).append("').width=document.images['").append(name).append("'].width;");
 				scriptSource2.append("\n\t\t document.all.").append(cellName).append(".width=document.all.").append(name).append(".width;");
+			}
+			for (int col = 1; col <= theTable.getColumns(); col++) {
+				String name = "tstimg"+col+generatedID;
+				scriptSource1.append("\n\t\t document.images['").append(name).append("'].width=document.images['").append(name+"_1").append("'].width;");
 			}
 			testrow++;
 			theTable.mergeCells(1,testrow,theTable.getColumns(),testrow);
@@ -204,7 +220,7 @@ public class ScrollTable extends Block implements TableType {
 			
 			getParentPage().getAssociatedScript().addFunction(scriptName+generatedID,script.toString());
 			getParentPage().setOnLoad(scriptName+generatedID+"()");
-			
+
 			super.add(headerLayer);
 			super.add(layer);
 		
