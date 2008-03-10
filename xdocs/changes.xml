@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  		<release version="3.1.83" date="2008-03-10">
+      		<action dev="gimmi" type="update">
+				fixed scrolltable to propertly set the width in the lower table
+      		</action>
+    	</release>
   		<release version="3.1.82" date="2008-02-22">
       		<action dev="alexis" type="update">
       			Added static DWR_ENGINE_SCRIPT constant to CoreConstants
