@@ -36,6 +36,8 @@ public class CoreConstants {
 	public static final String MINUS = "-";
 	public static final String PERCENT = "%";
 	public static final String PLUS = "+";
+	public static final String CURLY_BRACKET_LEFT = "{";
+	public static final String CURLY_BRACKET_RIGHT = "}";
 	
 	public static final String JS_STR_PARAM_SEPARATOR = "','";
 	
