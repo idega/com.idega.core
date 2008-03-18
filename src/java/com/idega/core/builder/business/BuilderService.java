@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.54 2008/02/13 14:07:32 valdas Exp $
+ * $Id: BuilderService.java,v 1.55 2008/03/18 08:08:08 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -270,7 +270,7 @@ public interface BuilderService extends IBOService
 	
 	public boolean removeValueFromModuleProperty(String pageKey, String moduleId, String propertyName, String valueToRemove);
 	
-	public boolean removeValueFromModuleProperty(String pageKey, List<String> moduleIds, String propertyName, String valueToRemove);
+	public boolean removeValueFromModulesProperties(String pageKey, List<String> moduleIds, String propertyName, String valueToRemove);
 	
 	public void setTreeOrder(int id, int order);
 	
@@ -293,6 +293,8 @@ public interface BuilderService extends IBOService
 	public Document getRenderedComponent(IWContext iwc, UIComponent component, boolean cleanHtml);
 	
 	public String getRenderedComponent(UIComponent component, IWContext iwc, boolean cleanHtml);
+	
+	public boolean removeBlockObjectFromCacheByCacheKey(String cacheKey);
 	
 	public boolean removeBlockObjectFromCache(IWContext iwc, String cacheKey);
 	
