@@ -1,5 +1,5 @@
 /*
- * $Id: Block.java,v 1.78 2008/02/22 08:20:09 valdas Exp $
+ * $Id: Block.java,v 1.79 2008/03/18 15:02:24 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -21,9 +21,7 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
-import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObjectInstance;
-import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWStyleManager;
@@ -38,10 +36,10 @@ import com.idega.presentation.text.Text;
  * their functionality is done with the main() method in old style idegaWeb.
  * This class has functionality regarding caching and how the main method is processed in JSF.
  * 
- * Last modified: $Date: 2008/02/22 08:20:09 $ by $Author: valdas $
+ * Last modified: $Date: 2008/03/18 15:02:24 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.78 $
+ * @version $Revision: 1.79 $
  */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
@@ -699,21 +697,4 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return true;
 	}
 
-	protected ICPage getPage(IWApplicationContext iwac, String pageId) {
-		try {
-			return getBuilderService(iwac).getICPage(pageId);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	protected boolean isPagePublished(ICPage page) {		
-		return page == null ? false : page.isPublished();
-	}
-	 
-	protected boolean isPageHiddenInMenu(ICPage page) {
-		return page == null ? false : page.isHidePageInMenu();
-	}
-	 	
 }

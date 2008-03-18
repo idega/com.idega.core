@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.166 2007/12/28 13:23:04 valdas Exp $
+ * $Id: PresentationObject.java,v 1.167 2008/03/18 15:02:24 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
@@ -26,10 +27,13 @@ import javax.faces.context.ResponseWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
+
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.component.data.ICObjectInstance;
@@ -59,6 +63,9 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.presentation.ui.Form;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.data.GroupBMPBean;
+import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.RenderUtils;
@@ -73,10 +80,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2007/12/28 13:23:04 $ by $Author: valdas $
+ * Last modified: $Date: 2008/03/18 15:02:24 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.166 $
+ * @version $Revision: 1.167 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -2743,6 +2750,87 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 					obj.getFacets().put(key,newObject);
 				}
 			}
+		}
+	}
+	
+	private ICPage getPage(IWApplicationContext iwac, String pageId) {
+		try {
+			return getBuilderService(iwac).getICPage(pageId);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private boolean isPagePublished(ICPage page) {		
+		return page == null ? false : page.isPublished();
+	}
+	 
+	private boolean isPageHiddenInMenu(ICPage page) {
+		return page == null ? false : page.isHidePageInMenu();
+	}
+	
+	private boolean canPageBeDisplayedForCurrentUser(ICPage page, IWContext iwc) {
+		if (page == null) {
+			return false;
+		}
+		
+		if (page.isLocked()) {
+			User currentUser = null;
+			try {
+				currentUser = iwc.getCurrentUser();
+			} catch(Exception e) {}
+			if (currentUser == null) {
+				return false;
+			}
+			
+			UserBusiness userBusiness = null;
+			try {
+				userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+			} catch (IBOLookupException e) {
+				e.printStackTrace();
+			}
+			if (userBusiness == null) {
+				return false;
+			}
+			
+			try {
+				return !userBusiness.isMemberOfGroup(GroupBMPBean.GROUP_ID_USERS, currentUser);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
+		
+		return true;
+	}
+	
+	protected boolean canPageBeDisplayed(IWContext iwc, String pageId) {
+		ICPage page = getPage(iwc, pageId);
+		if (page == null) {
+			return false;
+		}
+		
+		boolean displayPage = true;
+		if (!isPagePublished(page)) {
+			//	Page is not published
+			displayPage = false;
+		}
+		else if (!canPageBeDisplayedForCurrentUser(page, iwc)) {
+			//	Page can be viewed only by logged users
+			displayPage = false;
+		}
+		else if (isPageHiddenInMenu(page)) {
+			//	Page is simply hidden
+			displayPage = false;
+		}
+		
+		return displayPage;
+	}
+	
+	protected void setPageInvisibleInNavigation(IWContext iwc, String pageId, PresentationObject po) {
+		if (!canPageBeDisplayed(iwc, pageId)) {
+			po.setStyleClass(CoreConstants.HIDDEN_PAGE_IN_MENU_STYLE_CLASS);
 		}
 	}
 }
