@@ -114,4 +114,25 @@ public class CoreUtil {
 		
 		return false;
 	}
+	
+	public static Boolean getBooleanValueFromString(String value) {
+		if (value == null) {
+			return false;
+		}
+		
+		if (value.equalsIgnoreCase(CoreConstants.BUILDER_MODULE_PROPERTY_YES_VALUE)) {
+			return true;
+		}
+		if (value.equalsIgnoreCase("T")) {
+			return true;
+		}
+		if (value.equalsIgnoreCase(CoreConstants.BUILDER_MODULE_PROPERTY_NO_VALUE)) {
+			return false;
+		}
+		if (value.equalsIgnoreCase("F")) {
+			return false;
+		}
+		
+		return Boolean.valueOf(value.toLowerCase());
+	}
 }

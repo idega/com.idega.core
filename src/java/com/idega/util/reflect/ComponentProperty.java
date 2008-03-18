@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentProperty.java,v 1.7 2006/05/11 14:59:14 eiki Exp $
+ * $Id: ComponentProperty.java,v 1.8 2008/03/18 12:52:29 valdas Exp $
  * Created on Dec 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -17,6 +17,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import org.apache.myfaces.shared_tomahawk.renderkit.JSFAttr;
 import org.apache.myfaces.shared_tomahawk.taglib.UIComponentTagUtils;
+
+import com.idega.util.CoreUtil;
 
 /**
  * This class holds an instance of a property with its value(s).
@@ -99,7 +101,7 @@ public class ComponentProperty extends Property {
 				UIComponentTagUtils.setIntegerProperty(facesContext, (UIComponent) instance, this.name, value);
 			}
 			else if (Boolean.class.equals(propertyType) || Boolean.TYPE.equals(propertyType)) {
-				UIComponentTagUtils.setBooleanProperty(facesContext, (UIComponent) instance, this.name, value);
+				UIComponentTagUtils.setBooleanProperty(facesContext, (UIComponent) instance, this.name, String.valueOf(CoreUtil.getBooleanValueFromString(value)));
 			}
 			//Fallback on handling the property as String:
 			else{// if (String.class.equals(propertyType)) {

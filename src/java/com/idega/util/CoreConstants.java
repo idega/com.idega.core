@@ -120,4 +120,6 @@ public class CoreConstants {
 	
 	public static final String BUILDER = "builder";
 	public static final String BUILDER_APPLICATION = "builderApplication";
+	public static final String BUILDER_MODULE_PROPERTY_YES_VALUE = "Y";
+	public static final String BUILDER_MODULE_PROPERTY_NO_VALUE = "N";
 }

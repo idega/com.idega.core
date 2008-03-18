@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.15 2008/01/17 09:29:09 valdas Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.16 2008/03/18 12:52:29 valdas Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -26,6 +26,7 @@ import com.idega.presentation.ui.PasswordInput;
 import com.idega.user.bean.PropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
+import com.idega.util.CoreUtil;
 import com.idega.util.StringUtil;
 
 /**
@@ -34,10 +35,10 @@ import com.idega.util.StringUtil;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2008/01/17 09:29:09 $ by $Author: valdas $
+ * Last modified: $Date: 2008/03/18 12:52:29 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class Property implements Serializable{
 
@@ -196,15 +197,7 @@ public class Property implements Serializable{
 			argument = stringValue;
 		}
 		else if (parameterType.equals(Boolean.class) || parameterType.equals(Boolean.TYPE)) {
-			if (stringValue.equals("Y")) {
-				argument = Boolean.TRUE;
-			}
-			else if (stringValue.equals("N")) {
-				argument = Boolean.FALSE;
-			}
-			else {
-				argument = new Boolean(stringValue);
-			}
+			argument = CoreUtil.getBooleanValueFromString(stringValue);
 		}
 		else if (parameterType.equals(Float.class) || parameterType.equals(Float.TYPE)) {
 			argument = new Float(stringValue);
