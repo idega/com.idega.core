@@ -141,4 +141,8 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 	public void setPublished(boolean published);
 	
 	public boolean isPublished();
+	
+	public void setLocked(boolean locked);
+	
+	public boolean isLocked();
 }

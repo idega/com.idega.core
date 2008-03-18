@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.10 2008/02/21 17:44:09 valdas Exp $
+ * $Id: ICPageBMPBean.java,v 1.11 2008/03/18 15:00:52 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -68,6 +68,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	private static final String NULL = "NULL";
 	public static final String HIDE_PAGE_IN_MENU = "HIDE_PAGE_IN_MENU";
 	public static final String PAGE_IS_PUBLISHED = "PAGE_IS_PUBLISHED";
+	public static final String PAGE_IS_LOCKED = "PAGE_IS_LOCKED";
 	private ICFile _file;
 	
 
@@ -121,6 +122,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		addAttribute(PAGE_URI, "URI", String.class);
 		addAttribute(HIDE_PAGE_IN_MENU, "Hide page in navigation menu", true, true, Boolean.class);
 		addAttribute(PAGE_IS_PUBLISHED, "Set page published/unpublished", true, true, Boolean.class);
+		addAttribute(PAGE_IS_LOCKED, "Set page locked/unlocked", true, true, Boolean.class);
 		
 		addManyToOneRelationship(DOMAIN_ID,ICDomain.class);
 		addUniqueIDColumn();
@@ -859,5 +861,13 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 
 	public void setPublished(boolean published) {
 		setColumn(PAGE_IS_PUBLISHED, published);
+	}
+
+	public boolean isLocked() {
+		return getBooleanColumnValue(PAGE_IS_LOCKED);
+	}
+
+	public void setLocked(boolean locked) {
+		setColumn(PAGE_IS_LOCKED, locked);
 	}
 }
