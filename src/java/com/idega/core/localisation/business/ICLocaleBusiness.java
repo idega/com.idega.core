@@ -317,9 +317,9 @@ public class ICLocaleBusiness  implements MutableClass {
      return returnValueIfNotFound;
   }
 
-  public static void makeLocalesInUse(List listOfStringIds){
+  public static void makeLocalesInUse(List<String> listOfStringIds){
     if(listOfStringIds != null){
-      Iterator I = listOfStringIds.iterator();
+      Iterator<String> I = listOfStringIds.iterator();
       try{
         ICLocaleHome home = (ICLocaleHome)com.idega.data.IDOLookup.getHome(ICLocale.class);
         List currentLocales = listOfICLocalesInUse();
