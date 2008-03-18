@@ -33,6 +33,7 @@ import javax.servlet.ServletContextListener;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
+import com.idega.business.SpringBeanLookup;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.appserver.AppServerDetector;
@@ -65,7 +66,7 @@ import com.idega.util.database.PoolManager;
 
 /**
  * <p>
- * This class is esponsible for starting up the idegaWeb application,
+ * This class is responsible for starting up the idegaWeb application,
  * that is initializing the IWMainApplication instance
  * and reading and initializing properties and settings on startup.
  * </p>
@@ -137,6 +138,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	public void startup() {
 		log.info("Initializing IdegaWeb");
 		startIdegaWebApplication();
+		fireAppStartedEvent();
+	}
+	
+	protected void fireAppStartedEvent() {
+		
+		SpringBeanLookup.getInstance().publishEvent(iwma.getServletContext(), new IWMainApplicationStartedEvent(this));
 	}
 
 	public void shutdown() {
@@ -830,5 +837,9 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		catch (FinderException ex) {
 			log.fine("Could not find any ICObjects");
 		}
+	}
+	
+	public IWMainApplication getIWMainApplication() {
+		return iwma;
 	}
 }
