@@ -3,6 +3,7 @@ package com.idega.business;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEvent;
 
 import com.idega.idegaweb.IWApplicationContext;
 
@@ -11,9 +12,9 @@ import com.idega.idegaweb.IWApplicationContext;
  * <p>This class should be mainly used for legacy code, which used to lookup bean by using IBOLookup.getSessionInstance</p>
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  *
- * Last modified: $Date: 2008/02/06 18:18:10 $ by $Author: civilis $
+ * Last modified: $Date: 2008/03/18 15:03:28 $ by $Author: civilis $
  *
  */
 public class SpringBeanLookup {
@@ -63,8 +64,13 @@ public class SpringBeanLookup {
 	
 	public Object getSpringBean(ServletContext ctx, String springBeanIdentifier) {
 		
-		ApplicationContext ac = org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext(ctx);
+		ApplicationContext ac = getAppContext(ctx);
 		return ac.getBean(springBeanIdentifier);
+	}
+	
+	protected ApplicationContext getAppContext(ServletContext ctx) {
+	
+		return org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext(ctx);
 	}
 	
 	/**
@@ -77,5 +83,11 @@ public class SpringBeanLookup {
 	public <T>T getSpringBean(IWApplicationContext iwac, Class<T> clazz) {
 		
 		return getSpringBean(iwac.getIWMainApplication().getServletContext(), clazz);
+	}
+	
+	public void publishEvent(ServletContext ctx, ApplicationEvent event) {
+		
+		ApplicationContext ac = getAppContext(ctx);
+		ac.publishEvent(event);
 	}
 }
