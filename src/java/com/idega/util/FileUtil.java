@@ -304,6 +304,32 @@ public class FileUtil {
   	}
   	return false;
   }
+  
+  /** 
+   * Recursively delete not empty directory.
+   * @author arunas
+   */
+  public static boolean deleteNotEmptyDirectory(String path) {
+	return FileUtil.deleteNotEmptyDirectory(new File(path));
+  }
+  
+  /** 
+   * Recursively delete not empty directory.
+   * @author arunas
+   */
+  
+  public static boolean deleteNotEmptyDirectory(File directory) {
+      if (directory.exists() && directory.isDirectory()) {
+	  String [] children = directory.list();
+	  for (int i = 0; i < children.length; i++) {
+	    boolean success = deleteNotEmptyDirectory(new File(directory,children[i]));
+	    if (!success)
+		return false;
+	}
+	
+    }
+      return directory.delete();
+  }
 
   /** Deletes all files and folders in the specified folder that are older than the
    * specified time in milliseconds. Only the time of the files and folders in the specified folder
