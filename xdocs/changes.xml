@@ -4,6 +4,17 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  		<release version="3.1.84" date="2008-03-20">
+      		<action dev="valdas" type="update">
+				New method in UserBusiness to get user's date of birth from personal id
+      		</action>
+      		<action dev="valdas" type="update">
+				New constant in CoreConstants
+      		</action>
+      		<action dev="valdas" type="update">
+				New class PresentationUtil to add JavaScript, CSS stuff in page's HTML
+      		</action>
+    	</release>
   		<release version="3.1.83" date="2008-03-10">
       		<action dev="gimmi" type="update">
 				fixed scrolltable to propertly set the width in the lower table
