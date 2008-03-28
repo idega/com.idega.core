@@ -1756,7 +1756,6 @@ function showAllComponentsLabels(element) {
 	if (element == null) {
 		return;
 	}
-	hideOldLabels();
 	
 	var children = getElementsByClassName(element, 'div', 'moduleName');
 	if (children == null) {
@@ -1783,6 +1782,50 @@ function hideOldLabels(container) {
 		element = children[i];
 		element.style.visibility = 'hidden';
 	}
+}
+
+function hideModuleContainerTop(element) {
+	var list = getElementsByClassName(element, '*', 'moduleContainerTop');
+	var container = getFirstElementFromList(list);
+	if (container == null) {
+		return false;
+	}
+	
+	container.style.visibility = 'hidden';
+}
+
+function showModuleContainerTop(element) {
+	var list = getElementsByClassName(element, '*', 'moduleContainerTop');
+	var container = getFirstElementFromList(list);
+	if (container == null) {
+		return false;
+	}
+	
+	container.style.visibility = 'visible';
+}
+
+function getFirstElementFromList(elements) {
+	if (elements == null) {
+		return null;
+	}
+	if (elements.length == 0) {
+		return null;
+	}
+	return $(elements[0]);
+}
+
+function manageComponentInfoImageVisibility(element, styleProperty) {
+	if (element == null) {
+		return false;
+	}
+	
+	var list = getElementsByClassName(element, '*', 'regionInfoImageContainer');
+	var container = getFirstElementFromList(list);
+	if (container == null) {
+		return false;
+	}
+	
+	container.style.visibility = styleProperty;
 }
 /** Functions for Builder modules ends **/
 
