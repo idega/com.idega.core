@@ -2,9 +2,7 @@ package com.idega.core.persistence.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.core.io.Resource;
@@ -16,9 +14,9 @@ import com.idega.util.CoreConstants;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
- * Last modified: $Date: 2008/01/06 16:57:38 $ by $Author: civilis $
+ * Last modified: $Date: 2008/03/31 16:08:00 $ by $Author: civilis $
  */
 public class OrmPathPatternMatchingResolver implements PersistenceUnitPostProcessor {
 	
