@@ -141,8 +141,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		fireAppStartedEvent();
 	}
 	
-	protected void fireAppStartedEvent() {
-		
+	protected void fireAppStartedEvent() {		
 		SpringBeanLookup.getInstance().publishEvent(iwma.getServletContext(), new IWMainApplicationStartedEvent(this));
 	}
 
