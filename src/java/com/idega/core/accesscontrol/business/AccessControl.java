@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.116 2007/03/26 22:28:09 eiki Exp $
+ * $Id: AccessControl.java,v 1.117 2008/04/01 15:00:08 valdas Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -72,12 +72,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2007/03/26 22:28:09 $ by $Author: eiki $
+ * Last modified: $Date: 2008/04/01 15:00:08 $ by $Author: valdas $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.116 $
+ * @version $Revision: 1.117 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -3390,17 +3390,29 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	   * @param iwuc context for the current user
 	   * @return
 	   */
-	  public boolean hasViewPermissionForPageKey(String pageKey,IWUserContext iwuc){
+	  public boolean hasViewPermissionForPageKey(String pageKey,IWUserContext iwuc) {
   		PagePermissionObject pageKeyObject = new PagePermissionObject(pageKey);
 		try {
-			boolean permission = hasPermission(PERMISSION_KEY_VIEW,pageKeyObject,iwuc);
+			boolean permission = hasPermission(PERMISSION_KEY_VIEW, pageKeyObject, iwuc);
+			if (!permission) {
+				return false;
+			}
+			
+			ICPage page = BuilderServiceFactory.getBuilderService(IWMainApplication.getDefaultIWApplicationContext()).getICPage(pageKey);
+			if (page == null) {
+				return permission;
+			}
+			if (!page.isPublished()) {
+				boolean permissionForNotPublishedPage = hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
+				return permissionForNotPublishedPage;
+			}
+			
 			return permission;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-  		//return true;
 	  }
 	  
 	  
