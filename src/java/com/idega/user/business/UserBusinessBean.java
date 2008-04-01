@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.207.2.28 2008/03/20 10:19:36 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.207.2.29 2008/04/01 10:44:54 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -118,7 +118,7 @@ import com.idega.util.text.Name;
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.207.2.28 $
+ * @version $Revision: 1.207.2.29 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3325,7 +3325,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					validSSN = true;
 				}
 				else {
-					System.out.println(ssn + " is not a valid SSN. If fails validation test.");
+					System.out.println(ssn + " is not a valid SSN. It fails validation test.");
 				}
 			}
 			catch (NumberFormatException e) {
