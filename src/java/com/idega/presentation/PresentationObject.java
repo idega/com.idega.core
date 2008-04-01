@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.168 2008/04/01 14:58:05 valdas Exp $
+ * $Id: PresentationObject.java,v 1.169 2008/04/01 15:31:41 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -76,10 +76,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2008/04/01 14:58:05 $ by $Author: valdas $
+ * Last modified: $Date: 2008/04/01 15:31:41 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.168 $
+ * @version $Revision: 1.169 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -2758,21 +2758,17 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		return null;
 	}
 	 
-	private boolean isPageHiddenInMenu(ICPage page) {
-		return page == null ? false : page.isHidePageInMenu();
-	}
-	
-	protected boolean canPageBeDisplayed(IWContext iwc, String pageId) {
+	private boolean isPageHiddenInMenu(IWContext iwc, String pageId) {
 		ICPage page = getPage(iwc, pageId);
 		if (page == null) {
 			return false;
 		}
 		
-		return isPageHiddenInMenu(page);
+		return page.isHidePageInMenu();
 	}
 	
 	protected void setPageInvisibleInNavigation(IWContext iwc, String pageId, PresentationObject po) {
-		if (!canPageBeDisplayed(iwc, pageId)) {
+		if (isPageHiddenInMenu(iwc, pageId)) {
 			po.setStyleClass(CoreConstants.HIDDEN_PAGE_IN_MENU_STYLE_CLASS);
 		}
 	}
