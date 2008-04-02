@@ -4,14 +4,14 @@ import org.springframework.context.ApplicationEvent;
 
 /**
  * @author <a href="mailto:anton@idega.com">Anton Makarov</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
- * Last modified: $Date: 2008/04/01 17:47:29 $ by $Author: anton $
+ * Last modified: $Date: 2008/04/02 18:31:12 $ by $Author: anton $
  *
  */
 public class IWMainSlideStartedEvent extends ApplicationEvent  {
 
-	private static final long serialVersionUID = -493360564216547575L;
+	private static final long serialVersionUID = 4469069084637205599L;
 	
 	IWMainApplication iwma;
 
