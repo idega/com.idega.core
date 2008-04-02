@@ -1,5 +1,5 @@
 /*
- * $Id: Table2.java,v 1.3 2005/09/19 15:00:22 laddi Exp $
+ * $Id: Table2.java,v 1.4 2008/04/02 16:37:03 gimmi Exp $
  * Created on Aug 5, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -10,20 +10,22 @@
 package com.idega.presentation;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 
 /**
- * Last modified: $Date: 2005/09/19 15:00:22 $ by $Author: laddi $
+ * Last modified: $Date: 2008/04/02 16:37:03 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Table2 extends PresentationObject {
 	
@@ -287,6 +289,22 @@ public class Table2 extends PresentationObject {
 			}
 		}
 		return null;
+	}
+	/**
+	 * Returns a collection of the <code>BodyRowGroups</code> within the <code>Table2</code> object.
+	 * @return Empty collection if no group are present
+	 */
+	public Collection getBodyRowGroups() {
+		Collection children = getChildren();
+		Iterator iter = children.iterator();
+		ArrayList list = new ArrayList();
+		while (iter.hasNext()) {
+			UIComponent element = (UIComponent) iter.next();
+			if (element instanceof TableBodyRowGroup) {
+				list.add(element);
+			}
+		}
+		return list;
 	}
 	
 	/**
