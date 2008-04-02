@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import javax.ejb.CreateException;
@@ -25,6 +27,10 @@ import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.Table;
+import com.idega.presentation.Table2;
+import com.idega.presentation.TableBodyRowGroup;
+import com.idega.presentation.TableCell2;
+import com.idega.presentation.TableRow;
 import com.idega.presentation.text.Text;
 import com.idega.util.text.TextSoap;
 
@@ -46,6 +52,81 @@ public class POIUtility {
 	 * @param sheetName
 	 * @return Returns True if file creation was a success, otherwise False.
 	 */
+	
+	
+	public static File createFileFromTable(Table2 table, String fileName, String sheetName) {
+//		int rows = table.getRows();
+//		int cols = table.getColumns();
+		
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet(TextSoap.encodeToValidExcelSheetName(sheetName));
+
+		
+		
+		Collection hRows = table.createHeaderRowGroup().getChildren();
+		int row = addTableRows(sheet, hRows, 0);
+		Collection bRows = table.getBodyRowGroups();
+		Iterator brIter = bRows.iterator();
+		while (brIter.hasNext()) {
+			TableBodyRowGroup bRow = (TableBodyRowGroup) brIter.next();
+			row = addTableRows(sheet, bRow.getChildren(), row);
+		}
+		Collection fRows = table.createFooterRowGroup().getChildren();
+		row = addTableRows(sheet, fRows, row);
+
+		// Write the output to a file
+		FileOutputStream fileOut;
+		try {
+			fileOut = new FileOutputStream(fileName);
+			wb.write(fileOut);
+			fileOut.close();
+			
+			File file = new File(fileName);
+
+			return file;
+		}
+		catch (FileNotFoundException e) {
+		}
+		catch (IOException e) {
+		} 
+		
+		return null;
+	}
+
+	private static int addTableRows(HSSFSheet sheet, Collection hRows, int startRow) {
+		Iterator rowsIter = hRows.iterator();
+		Pattern sp = Pattern.compile(Text.NON_BREAKING_SPACE, Pattern.CASE_INSENSITIVE);
+		Pattern br = Pattern.compile(Text.BREAK, Pattern.CASE_INSENSITIVE);
+		Text obj = null;
+		String text;
+		while (rowsIter.hasNext()) {
+			TableRow tRow = (TableRow) rowsIter.next();
+			HSSFRow row = sheet.createRow(startRow);
+			sheet.setRowSumsBelow(true);
+			Collection hCells = tRow.getCells();
+			Iterator hIter = hCells.iterator();
+			int cellCounter = 0;
+			while (hIter.hasNext()) {
+				TableCell2 tCell = (TableCell2) hIter.next();
+				if (tCell.getChildCount() == 1) {
+					obj = (Text) tCell.getChildren().iterator().next();
+				}
+				if (obj != null) {
+					text = obj.toString();
+					if (text == null) {
+						text = "";
+					}
+					text = sp.matcher(text).replaceAll(" ");
+					text = br.matcher(text).replaceAll("\n");
+					row.createCell((short)cellCounter).setCellValue(text);
+				}
+				cellCounter++;
+			}
+			startRow++;
+		}
+		return startRow;
+	}
+	
 	public static File createFileFromTable(Table table, String fileName, String sheetName) {
 		int rows = table.getRows();
 		int cols = table.getColumns();
