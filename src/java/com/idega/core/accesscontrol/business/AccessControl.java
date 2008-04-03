@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.117 2008/04/01 15:00:08 valdas Exp $
+ * $Id: AccessControl.java,v 1.118 2008/04/03 17:33:59 valdas Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -38,6 +38,7 @@ import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.builder.data.ICDynamicPageTrigger;
 import com.idega.core.builder.data.ICPage;
+import com.idega.core.builder.data.ICPageHome;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.data.GenericGroup;
@@ -72,12 +73,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2008/04/01 15:00:08 $ by $Author: valdas $
+ * Last modified: $Date: 2008/04/03 17:33:59 $ by $Author: valdas $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.117 $
+ * @version $Revision: 1.118 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -3398,7 +3399,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				return false;
 			}
 			
-			ICPage page = BuilderServiceFactory.getBuilderService(IWMainApplication.getDefaultIWApplicationContext()).getICPage(pageKey);
+			ICPageHome pageHome = (ICPageHome) IDOLookup.getHome(ICPage.class);
+			ICPage page = pageHome.findByPrimaryKey(pageKey);
 			if (page == null) {
 				return permission;
 			}
