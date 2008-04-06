@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.169 2008/04/01 15:31:41 valdas Exp $
+ * $Id: PresentationObject.java,v 1.170 2008/04/06 14:31:53 civilis Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -24,6 +24,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
@@ -76,10 +77,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2008/04/01 15:31:41 $ by $Author: valdas $
+ * Last modified: $Date: 2008/04/06 14:31:53 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.169 $
+ * @version $Revision: 1.170 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -2771,5 +2772,22 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		if (isPageHiddenInMenu(iwc, pageId)) {
 			po.setStyleClass(CoreConstants.HIDDEN_PAGE_IN_MENU_STYLE_CLASS);
 		}
+	}
+	
+	protected Object getValueBindingByAttributeExp(FacesContext ctx, String attributeName) {
+	
+		ValueBinding vb = getValueBinding(attributeName);
+	
+		if(vb != null) {
+		
+			String exp = vb.getExpressionString();
+			
+			if(exp != null) {
+			
+				return ctx.getApplication().createValueBinding(exp).getValue(ctx);
+			}
+		}
+		
+		return null;
 	}
 }
