@@ -4,6 +4,8 @@
 package com.idega.core.builder.data;
 
 import java.util.Collection;
+import java.util.List;
+
 import javax.ejb.FinderException;
 
 
@@ -11,10 +13,10 @@ import javax.ejb.FinderException;
  * <p>
  * TODO tryggvil Describe Type ICPageHomeImpl
  * </p>
- *  Last modified: $Date: 2008/02/06 18:18:31 $ by $Author: civilis $
+ *  Last modified: $Date: 2008/04/08 18:50:07 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 
 public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageHome
@@ -107,6 +109,20 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
         java.util.Collection ids  = ((ICPageBMPBean)entity).ejbFindBySubType(subType, deleted);
     		this.idoCheckInPooledEntity(entity);
     		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+	
+	public Collection findAllByPhrase(String phrase, List<String> idsToAvoid) throws FinderException {
+        com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+        java.util.Collection ids  = ((ICPageBMPBean)entity).ejbFindAllByPhrase(phrase, idsToAvoid);
+    	this.idoCheckInPooledEntity(entity);
+    	return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+	
+	public Collection findAllByPrimaryKeys(List<String> primaryKeys) throws FinderException {
+        com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+        java.util.Collection ids  = ((ICPageBMPBean)entity).ejbFindAllByPrimaryKeys(primaryKeys);
+    	this.idoCheckInPooledEntity(entity);
+    	return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 	
 }

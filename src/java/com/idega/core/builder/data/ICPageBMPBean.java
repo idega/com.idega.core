@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.11 2008/03/18 15:00:52 valdas Exp $
+ * $Id: ICPageBMPBean.java,v 1.12 2008/04/08 18:50:08 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -15,6 +15,7 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 import javax.ejb.CreateException;
@@ -26,6 +27,7 @@ import com.idega.core.net.data.ICProtocol;
 import com.idega.core.user.data.User;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookupException;
+import com.idega.data.IDOQuery;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.query.Column;
 import com.idega.data.query.MatchCriteria;
@@ -37,6 +39,7 @@ import com.idega.io.serialization.ObjectWriter;
 import com.idega.io.serialization.Storable;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.Resource;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -869,5 +872,20 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 
 	public void setLocked(boolean locked) {
 		setColumn(PAGE_IS_LOCKED, locked);
+	}
+	
+	public Collection ejbFindAllByPhrase(String phrase, List<String> idsToAvoid) throws FinderException {
+		IDOQuery query = idoQuery("select ").append(getIDColumnName()).append(" from ").append(getEntityName()).appendWhere().append("lower(").append(NAME_COLUMN);
+		query.append(")").appendLike().appendSingleQuote().append(CoreConstants.PERCENT).append(phrase.toLowerCase()).append(CoreConstants.PERCENT).appendSingleQuote();
+		if (idsToAvoid != null && !idsToAvoid.isEmpty()) {
+			query.appendAnd().append(getIDColumnName()).appendNotInCollection(idsToAvoid);
+		}
+		return idoFindPKsByQuery(query);
+	}
+	
+	public Collection ejbFindAllByPrimaryKeys(List<String> primaryKeys) throws FinderException {
+		IDOQuery query = idoQuery("select ").append(getIDColumnName()).append(" from ").append(getEntityName());
+		query.appendWhere(getIDColumnName()).appendInCollection(primaryKeys);
+		return idoFindPKsByQuery(query);
 	}
 }

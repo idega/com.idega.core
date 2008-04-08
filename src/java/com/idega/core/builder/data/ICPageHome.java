@@ -1,6 +1,8 @@
 package com.idega.core.builder.data;
 
 import java.util.Collection;
+import java.util.List;
+
 import javax.ejb.FinderException;
 
 public interface ICPageHome extends com.idega.data.IDOHome {
@@ -37,4 +39,8 @@ public interface ICPageHome extends com.idega.data.IDOHome {
 
 	public Collection findBySubType(String subType, boolean deleted)
 			throws FinderException;
+	
+	public Collection findAllByPhrase(String phrase, List<String> idsToAvoid) throws FinderException;
+	
+	public Collection findAllByPrimaryKeys(List<String> primaryKeys) throws FinderException;
 }
