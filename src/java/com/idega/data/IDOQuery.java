@@ -1093,6 +1093,10 @@ public class IDOQuery implements Cloneable {
 		//return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertListToCommaseparatedString(coll));
 	}
 	
+	public IDOQuery appendNotInCollection(Collection coll) {
+		return this.appendNotIn().append(PARENTHESIS_LEFT).appendCommaDelimited(coll).append(PARENTHESIS_RIGHT);
+	}
+	
 	public IDOQuery appendInCollectionWithSingleQuotes(Collection coll) {
 		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertListToCommaseparatedString(coll,true));
 	}
