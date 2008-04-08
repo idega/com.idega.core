@@ -1247,6 +1247,7 @@ function executeJavaScriptActionsCodedInStringInGlobalScope(code) {
 	return dj_global.eval ? dj_global.eval(code) : eval(code);
 }
 
+var DYNAMIC_HTML_ELEMENT_FUNCTION_SEPARATOR = '%idega_separator%';
 function createRealNode(element) {
 	//	XML
 	if (element.nodeName == 'xml') {
@@ -1316,25 +1317,19 @@ function createRealNode(element) {
 	// Element
 	var result = document.createElement(element.nodeName);
 	if (element.attributes != null) {
+		var functionsToRegister = new Array();
 		for (var i = 0; i < element.attributes.length; i++) {
 			var attribute = element.attributes[i];
 			if (attribute.nodeName.indexOf('on') == 0 && IE) {
 				var event = attribute.nodeName.substring(attribute.nodeName.indexOf('on') + 2);
 				var functionCall = attribute.nodeValue;
-				var elementFunction = function() {
-					window.eval(functionCall);
-				};
-				registerEvent(result, event, elementFunction);
+				functionsToRegister.push(event + DYNAMIC_HTML_ELEMENT_FUNCTION_SEPARATOR + functionCall);
 			}
 			else if (attribute.nodeName == 'checked' && IE) {
 				var isChecked = attribute.nodeValue == 'true';
 				if (isChecked) {
-					if (result.type != null && result.type != '') {
-						result = document.createElement('<input type="'+result.type+'" name="'+element.nodeName+'" checked>');
-					}
-					else {
-						result = document.createElement('<input name="'+element.nodeName+'" checked>');
-					}
+					result.setAttribute('checked', true);
+					result.setAttribute('defaultChecked', true);
 				}
 			}
 			else if (attribute.nodeName == 'style' && IE) {
@@ -1375,12 +1370,25 @@ function createRealNode(element) {
 			else if (attribute.nodeName == 'src' && element.nodeName == 'script') {
 				insertJavaScriptFileToHeader(attribute.nodeValue);	//	Adding source file
 			}
-			else {
-				if (attribute.nodeName == 'class' && IE) {
-					result.className = attribute.nodeValue;
-				}
-				else {
-					result.setAttribute(attribute.nodeName, attribute.nodeValue);
+			else if (attribute.nodeName == 'class' && IE) {
+				result.className = attribute.nodeValue;
+			}
+			else if (attribute.nodeName != null && attribute.nodeValue != null) {
+				result.setAttribute(attribute.nodeName, attribute.nodeValue);
+			}
+		}
+		
+		if (functionsToRegister.length > 0) {
+			var expression = null;
+			for (var f = 0; f < functionsToRegister.length; f++) {
+				expression = functionsToRegister[f];
+				
+				var splittedExpression = expression.split(DYNAMIC_HTML_ELEMENT_FUNCTION_SEPARATOR);
+				if (splittedExpression.length == 2) {
+					var elementFunction = function() {
+						window.eval(splittedExpression[1]);
+					};
+					registerEvent(result, splittedExpression[0], elementFunction);
 				}
 			}
 		}
