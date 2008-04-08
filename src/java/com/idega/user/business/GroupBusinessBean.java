@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.117 2007/11/13 11:23:54 valdas Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.118 2008/04/08 18:43:29 valdas Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -94,7 +94,7 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.117 $
+ * @version $Revision: 1.118 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -1316,7 +1316,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 *      String, int)
 	 */
 	public Group createGroup(String name, String description, String type, int homePageID) throws CreateException, RemoteException {
-		return createGroup(name, description, type, -1, -1);
+		return createGroup(name, description, type, homePageID, -1);
 	}
 
 	/**
@@ -2585,10 +2585,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	/**
 	 * 
-	 * Last modified: $Date: 2007/11/13 11:23:54 $ by $Author: valdas $
+	 * Last modified: $Date: 2008/04/08 18:43:29 $ by $Author: valdas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.117 $
+	 * @version $Revision: 1.118 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 
