@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.55 2008/03/18 08:08:08 valdas Exp $
+ * $Id: BuilderService.java,v 1.56 2008/04/08 18:45:29 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -346,4 +346,6 @@ public interface BuilderService extends IBOService
 	public String getUriToObject(Class<?> objectClass, List<AdvancedProperty> parameters);
 	
 	public boolean isFirstBuilderRun();
+	
+	public boolean reloadGroupsInCachedDomain(IWApplicationContext iwac, String serverName);
 }
