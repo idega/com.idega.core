@@ -7,6 +7,11 @@ public class AdvancedProperty {
 	
 	public AdvancedProperty() {}
 	
+	public AdvancedProperty(String id) {
+		this();
+		this.id = id;
+	}
+	
 	public AdvancedProperty(String id, String value) {
 		this();
 		this.id = id;

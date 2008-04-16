@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.234 2008/01/26 13:45:49 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.235 2008/04/16 18:33:27 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -13,6 +13,8 @@ package com.idega.user.business;
 import java.rmi.RemoteException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -110,10 +112,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2008/01/26 13:45:49 $ by $Author: valdas $
+ * Last modified: $Date: 2008/04/16 18:33:27 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.234 $
+ * @version $Revision: 1.235 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -154,6 +156,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private UserStatusBusiness statusBusiness = null;
 	
 	private UserInfoColumnsBusiness userInfoBusiness = null;
+	
+	private SimpleDateFormat userDateOfBirthFormatter = new SimpleDateFormat("ddMMyy");
 
 	public UserBusinessBean() {
 	}
@@ -3758,6 +3762,65 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		IWTimestamp dateOfBirth = new IWTimestamp(user.getDateOfBirth());
 		IWTimestamp dateToday = new IWTimestamp();
 		return Integer.toString((IWTimestamp.getDaysBetween(dateOfBirth, dateToday)) / 365);
+	}
+	
+	public Date getUserDateOfBirthFromPersonalId(String personalId) {
+		//	TODO:	add logic to decide which country's personal id is being parsed
+		if (personalId == null) {
+			return null;
+		}
+		if (!validateIcelandicSSN(personalId)) {
+			return null;
+		}
+		
+		String dateInString = personalId.substring(0, 6);
+		java.util.Date date = null;
+		try {
+			date = userDateOfBirthFormatter.parse(dateInString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+		if (date == null) {
+			return null;
+		}
+		
+		int lastNumber = -1;
+		try {
+			lastNumber = Integer.valueOf(personalId.substring(personalId.length() - 1)).intValue();
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		if (lastNumber < 0) {
+			return null;
+		}
+		IWTimestamp iwDate = new IWTimestamp(date.getTime());
+		int minYearsValue = 1900;
+		int maxYearsValue = 1999;
+		switch (lastNumber) {
+			case 0:
+				minYearsValue = 2000;
+				maxYearsValue = 2099;
+				break;
+			case 8:
+				minYearsValue = 1800;
+				maxYearsValue = 1899;
+				break;
+		}
+		iwDate.setYear(getAdjustedYears(iwDate.getYear(), minYearsValue, maxYearsValue));
+		
+		return iwDate.getDate();
+	}
+	
+	private int getAdjustedYears(int years, int minValue, int maxValue) {
+		while (years > maxValue) {
+			years -= 100;
+		}
+		while (years < minValue) {
+			years += 100;
+		}
+		return years;
 	}
 	
 	private int getParsedValue(String value) {

@@ -20,9 +20,11 @@ public class RealEstateHomeImpl extends IDOFactory implements RealEstateHome {
 		return (RealEstate) super.findByPrimaryKeyIDO(pk);
 	}
 
-	public RealEstate findRealEstateByNumber(String number) throws FinderException {
+	public RealEstate findRealEstateByRealEstateIdentifier(String landRegisterMapNumber, String number, String unit,
+			String code) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
-		Object pk = ((RealEstateBMPBean) entity).ejbFindRealEstateByNumber(number);
+		Object pk = ((RealEstateBMPBean) entity).ejbFindRealEstateByRealEstateIdentifier(landRegisterMapNumber, number,
+				unit, code);
 		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
 	}
