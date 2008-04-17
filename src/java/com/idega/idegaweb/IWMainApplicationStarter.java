@@ -146,6 +146,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	}
 
 	public void shutdown() {
+	    	SpringBeanLookup.getInstance().publishEvent(iwma.getServletContext(), new IWMainApplicationShutdownEvent(this));
 		//poolMgr.release();
 		log.info("Stopping IdegaWeb");
 		endIdegaWebApplication();
