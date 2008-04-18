@@ -123,4 +123,6 @@ public class CoreConstants {
 	public static final String BUILDER_APPLICATION = "builderApplication";
 	public static final String BUILDER_MODULE_PROPERTY_YES_VALUE = "Y";
 	public static final String BUILDER_MODULE_PROPERTY_NO_VALUE = "N";
+	
+	public static final String SPRING_BEAN_NAME_PDF_GENERATOR = "pdfGenerator";
 }
