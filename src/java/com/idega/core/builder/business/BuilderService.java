@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.56 2008/04/08 18:45:29 valdas Exp $
+ * $Id: BuilderService.java,v 1.57 2008/04/23 00:53:06 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -276,9 +276,7 @@ public interface BuilderService extends IBOService
 	
 	public int getTreeOrder(int id);
 	
-	public void increaseTreeOrder(int id);
-	
-	public void decreaseTreeOrder(int id);
+	public void changeTreeOrder(int pageId, int change);
 	
 	public int setAsLastInLevel(boolean isTopLevel, String parentId);
 	
