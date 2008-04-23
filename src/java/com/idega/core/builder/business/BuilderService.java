@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.57 2008/04/23 00:53:06 valdas Exp $
+ * $Id: BuilderService.java,v 1.58 2008/04/23 23:40:29 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -290,7 +290,11 @@ public interface BuilderService extends IBOService
 	
 	public Document getRenderedComponent(IWContext iwc, UIComponent component, boolean cleanHtml);
 	
+	public Document getRenderedComponent(IWContext iwc, UIComponent component, boolean cleanHtml, boolean omitDocTypeEnvelope, boolean omitHtmlEnvelope);
+	
 	public String getRenderedComponent(UIComponent component, IWContext iwc, boolean cleanHtml);
+	
+	public String getRenderedComponent(UIComponent component, IWContext iwc, boolean cleanHtml, boolean omitDocTypeEnvelope, boolean omitHtmlEnvelope);
 	
 	public boolean removeBlockObjectFromCacheByCacheKey(String cacheKey);
 	
