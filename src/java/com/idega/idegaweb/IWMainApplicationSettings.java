@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.56 2008/02/22 10:24:41 alexis Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.57 2008/04/24 21:03:25 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -46,10 +46,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2008/02/22 10:24:41 $ by $Author: alexis $
+ * Last modified: $Date: 2008/04/24 21:03:25 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.56 $
+ * @version $Revision: 1.57 $
  */
 
 
@@ -748,7 +748,7 @@ public class IWMainApplicationSettings implements MutableClass {
 		return null;
 	}
 	
-	private void setApplicationBindingInMap(String key, String value) {
+	void setApplicationBindingInMap(String key, String value) {
 		// note that on the other servers the cache might be active!
 		iwApplicationSettingsEventClient.setApplicationBindingInMap(key, value);
 		if(this.cache){
@@ -761,7 +761,7 @@ public class IWMainApplicationSettings implements MutableClass {
 		}
 	}
 
-	private void removeApplicationBindingFromMap(String key) {
+	void removeApplicationBindingFromMap(String key) {
 		// note that on the other servers the cache might be active!
 		iwApplicationSettingsEventClient.removeApplicationBindingFromMap(key);
 		if(this.cache){
@@ -832,6 +832,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	 * @param key
 	 * @return
 	 */
+	@Deprecated
 	public IWPropertyList getLegacyApplicationSettings() {
 		return getIdegawebPropertyList();
 	}
@@ -845,10 +846,12 @@ public class IWMainApplicationSettings implements MutableClass {
 		iwApplicationSettingsEventClient = new IWMainApplicationSettingsEventClient();		
 		MethodWrapper methodWrapper1 = new MethodWrapper() {
 
+			@Override
 			public String getIdentifier() {
 				return IWMainApplicationSettingsEventClient.SET_APPLICATION_BINDING_IN_MAP;
 			}
 
+			@Override
 			public void perform(Object object1, Object object2) {
 				setApplicationBindingInMap((String) object1, (String) object2);
 			}
@@ -856,10 +859,12 @@ public class IWMainApplicationSettings implements MutableClass {
 		iwApplicationSettingsEventClient.addMethod(methodWrapper1);
 		MethodWrapper methodWrapper2 = new MethodWrapper() {
 			
+			@Override
 			public String getIdentifier() {
 				return IWMainApplicationSettingsEventClient.REMOVE_APPLICATION_BINDING_FROM_MAP;
 			}
 			
+			@Override
 			public void perform(Object object1) {
 				removeApplicationBindingFromMap((String) object1);
 			}

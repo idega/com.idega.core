@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.185 2007/12/12 10:36:36 civilis Exp $
+ * $Id: IWMainApplication.java,v 1.186 2008/04/24 21:04:03 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -99,10 +99,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2007/12/12 10:36:36 $ by $Author: civilis $
+ *  Last modified: $Date: 2008/04/24 21:04:03 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.185 $
+ * @version $Revision: 1.186 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1041,7 +1041,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     public IWBundle getBundle(String bundleIdentifier, boolean autoCreate)throws IWBundleDoesNotExist{
-        IWBundle bundle = (IWBundle) getLoadedBundles().get(bundleIdentifier);
+        IWBundle bundle = getLoadedBundles().get(bundleIdentifier);
         if (bundle == null) {
         	if(loadBundlesFromWorkspace){
             	bundle = loadBundleLegacy(bundleIdentifier, autoCreate);
@@ -1062,7 +1062,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	protected IWBundle loadBundleFromJar(String bundleIdentifier) {
 		getModuleLoader().tryBundleLoad(bundleIdentifier);
 		//see if it exists in the bundleMap after load:
-		IWBundle bundle = (IWBundle) getLoadedBundles().get(bundleIdentifier);
+		IWBundle bundle = getLoadedBundles().get(bundleIdentifier);
 		if(bundle==null){
 			throw new IWBundleDoesNotExist(bundleIdentifier);
 		}
@@ -1433,7 +1433,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
     /**
      * @deprecated method, use getApplicationContextURI() instead.
      */
-    public String getContextURL() {
+    @Deprecated
+		public String getContextURL() {
         //return (String) this.getAttribute(CONTEXT_PATH_KEY);
     		return this.getApplicationContextURI();
     }
@@ -1926,6 +1927,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getActionListener()
 	 */
+	@Override
 	public ActionListener getActionListener() {
 		return getFacesApplication().getActionListener();
 	}
@@ -1933,6 +1935,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setActionListener(javax.faces.event.ActionListener)
 	 */
+	@Override
 	public void setActionListener(ActionListener listener) {
 		getFacesApplication().setActionListener(listener);
 	}
@@ -1940,6 +1943,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getDefaultLocale()
 	 */
+	@Override
 	public Locale getDefaultLocale() {
 		Locale locale = getFacesApplication().getDefaultLocale();
 		if(!this.hasSetLocaleOnFacesApplication){
@@ -1953,6 +1957,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setDefaultLocale(java.util.Locale)
 	 */
+	@Override
 	public void setDefaultLocale(Locale locale) {
 		getFacesApplication().setDefaultLocale(locale);
 	}
@@ -1960,6 +1965,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getDefaultRenderKitId()
 	 */
+	@Override
 	public String getDefaultRenderKitId() {
 		return getFacesApplication().getDefaultRenderKitId();
 	}
@@ -1967,6 +1973,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setDefaultRenderKitId(java.lang.String)
 	 */
+	@Override
 	public void setDefaultRenderKitId(String renderKitId) {
 		getFacesApplication().setDefaultRenderKitId(renderKitId);
 	}
@@ -1974,6 +1981,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getMessageBundle()
 	 */
+	@Override
 	public String getMessageBundle() {
 		return getFacesApplication().getMessageBundle();
 	}
@@ -1981,6 +1989,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setMessageBundle(java.lang.String)
 	 */
+	@Override
 	public void setMessageBundle(String bundle) {
 		getFacesApplication().setMessageBundle(bundle);
 	}
@@ -1988,6 +1997,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getNavigationHandler()
 	 */
+	@Override
 	public NavigationHandler getNavigationHandler() {
 		return getFacesApplication().getNavigationHandler();
 	}
@@ -1995,6 +2005,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setNavigationHandler(javax.faces.application.NavigationHandler)
 	 */
+	@Override
 	public void setNavigationHandler(NavigationHandler handler) {
 		getFacesApplication().setNavigationHandler(handler);
 	}
@@ -2002,6 +2013,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getPropertyResolver()
 	 */
+	@Override
 	public PropertyResolver getPropertyResolver() {
 		return getFacesApplication().getPropertyResolver();
 	}
@@ -2009,6 +2021,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setPropertyResolver(javax.faces.el.PropertyResolver)
 	 */
+	@Override
 	public void setPropertyResolver(PropertyResolver resolver) {
 		getFacesApplication().setPropertyResolver(resolver);
 	}
@@ -2016,6 +2029,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getVariableResolver()
 	 */
+	@Override
 	public VariableResolver getVariableResolver() {
 		return getFacesApplication().getVariableResolver();
 	}
@@ -2023,6 +2037,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setVariableResolver(javax.faces.el.VariableResolver)
 	 */
+	@Override
 	public void setVariableResolver(VariableResolver resolver) {
 		getFacesApplication().setVariableResolver(resolver);
 	}
@@ -2030,6 +2045,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getViewHandler()
 	 */
+	@Override
 	public ViewHandler getViewHandler() {
 		return getFacesApplication().getViewHandler();
 	}
@@ -2037,6 +2053,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setViewHandler(javax.faces.application.ViewHandler)
 	 */
+	@Override
 	public void setViewHandler(ViewHandler handler) {
 		getFacesApplication().setViewHandler(handler);
 	}
@@ -2044,6 +2061,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getStateManager()
 	 */
+	@Override
 	public StateManager getStateManager() {
 		return getFacesApplication().getStateManager();
 	}
@@ -2051,6 +2069,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setStateManager(javax.faces.application.StateManager)
 	 */
+	@Override
 	public void setStateManager(StateManager manager) {
 		getFacesApplication().setStateManager(manager);	
 	}
@@ -2058,6 +2077,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#addComponent(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void addComponent(String componentType, String componentClass) {
 		getFacesApplication().addComponent(componentType,componentClass);		
 	}
@@ -2070,6 +2090,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createComponent(java.lang.String)
 	 */
+	@Override
 	public UIComponent createComponent(String componentType) throws FacesException {
 		
 		if(componentType.startsWith(BUILDER_PREFIX)){
@@ -2126,6 +2147,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createComponent(javax.faces.el.ValueBinding, javax.faces.context.FacesContext, java.lang.String)
 	 */
+	@Override
 	public UIComponent createComponent(ValueBinding componentBinding, FacesContext context, String componentType) throws FacesException {
 		return getFacesApplication().createComponent(componentBinding,context,componentType);
 	}
@@ -2133,6 +2155,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getComponentTypes()
 	 */
+	@Override
 	public Iterator getComponentTypes() {
 		return getFacesApplication().getComponentTypes();
 	}
@@ -2140,6 +2163,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#addConverter(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void addConverter(String converterId, String converterClass) {
 		getFacesApplication().addConverter(converterId,converterClass);
 	}
@@ -2147,6 +2171,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#addConverter(java.lang.Class, java.lang.String)
 	 */
+	@Override
 	public void addConverter(Class targetClass, String converterClass) {
 		getFacesApplication().addConverter(targetClass,converterClass);
 	}
@@ -2154,6 +2179,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createConverter(java.lang.String)
 	 */
+	@Override
 	public Converter createConverter(String converterId) {
 		return getFacesApplication().createConverter(converterId);
 	}
@@ -2161,6 +2187,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createConverter(java.lang.Class)
 	 */
+	@Override
 	public Converter createConverter(Class targetClass) {
 		return getFacesApplication().createConverter(targetClass);
 	}
@@ -2168,6 +2195,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getConverterIds()
 	 */
+	@Override
 	public Iterator getConverterIds() {
 		return getFacesApplication().getConverterIds();
 	}
@@ -2175,6 +2203,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getConverterTypes()
 	 */
+	@Override
 	public Iterator getConverterTypes() {
 		return getFacesApplication().getConverterTypes();
 	}
@@ -2182,6 +2211,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createMethodBinding(java.lang.String, java.lang.Class[])
 	 */
+	@Override
 	public MethodBinding createMethodBinding(String ref, Class[] params) throws ReferenceSyntaxException {
 		return getFacesApplication().createMethodBinding(ref,params);
 	}
@@ -2189,6 +2219,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getSupportedLocales()
 	 */
+	@Override
 	public Iterator getSupportedLocales() {
 		return getFacesApplication().getSupportedLocales();
 	}
@@ -2196,6 +2227,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#setSupportedLocales(java.util.Collection)
 	 */
+	@Override
 	public void setSupportedLocales(Collection locales) {
 		getFacesApplication().setSupportedLocales(locales);
 	}
@@ -2203,6 +2235,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#addValidator(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void addValidator(String validatorId, String validatorClass) {
 		getFacesApplication().addValidator(validatorId,validatorClass);
 	}
@@ -2210,6 +2243,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createValidator(java.lang.String)
 	 */
+	@Override
 	public Validator createValidator(String validatorId) throws FacesException {
 		return getFacesApplication().createValidator(validatorId);
 	}
@@ -2217,6 +2251,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getValidatorIds()
 	 */
+	@Override
 	public Iterator getValidatorIds() {
 		return getFacesApplication().getValidatorIds();
 	}
@@ -2224,6 +2259,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createValueBinding(java.lang.String)
 	 */
+	@Override
 	public ValueBinding createValueBinding(String ref) throws ReferenceSyntaxException {
 		return getFacesApplication().createValueBinding(ref);
 	}
