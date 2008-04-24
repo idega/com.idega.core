@@ -1,5 +1,5 @@
 /*
- * $Id: Window.java,v 1.49 2006/08/01 15:47:06 gimmi Exp $ Created in 2000 by
+ * $Id: Window.java,v 1.50 2008/04/24 21:18:49 laddi Exp $ Created in 2000 by
  * Tryggvi Larusson Copyright (C) 2000-2005 Idega Software hf. All Rights
  * Reserved.
  * 
@@ -27,10 +27,10 @@ import com.idega.util.datastructures.list.KeyValuePair;
  * pop-up windows and such. This class has therefore properties to set
  * width,height etc. of the pop-up window that is opened.
  * </p>
- * Last modified: $Date: 2006/08/01 15:47:06 $ by $Author: gimmi $
+ * Last modified: $Date: 2008/04/24 21:18:49 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.49 $
+ * @version $Revision: 1.50 $
  */
 public class Window extends Page {
 
@@ -63,6 +63,7 @@ public class Window extends Page {
 	private Class templatePageClass;
 	private String templateForObjectInstanciation;
 
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[23];
 		values[0] = super.saveState(ctx);
@@ -90,6 +91,7 @@ public class Window extends Page {
 		values[22] = this.templateForObjectInstanciation;
 		return values;
 	}
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -286,50 +288,62 @@ public class Window extends Page {
 		return ret;
 	}
 
+	@Override
 	public void setBackgroundColor(String color) {
 		setMarkupAttribute("bgcolor", color);
 	}
 
+	@Override
 	public void setTextColor(String color) {
 		setMarkupAttribute("text", color);
 	}
 
+	@Override
 	public void setAlinkColor(String color) {
 		setMarkupAttribute("alink", color);
 	}
 
+	@Override
 	public void setVlinkColor(String color) {
 		setMarkupAttribute("vlink", color);
 	}
 
+	@Override
 	public void setLinkColor(String color) {
 		setMarkupAttribute("link", color);
 	}
 
+	@Override
 	public void setMarginWidth(int width) {
 		setMarkupAttribute("marginwidth", Integer.toString(width));
 	}
 
+	@Override
 	public void setMarginHeight(int height) {
 		setMarkupAttribute("marginheight", Integer.toString(height));
 	}
 
+	@Override
 	public void setLeftMargin(int leftmargin) {
 		setMarkupAttribute("leftmargin", Integer.toString(leftmargin));
 	}
 
+	@Override
 	public void setTopMargin(int topmargin) {
 		setMarkupAttribute("topmargin", Integer.toString(topmargin));
 	}
 
+	@Override
 	public void setTitle(String title) {
 		this.title = title;
 	}
 
+	@Override
 	public String getTitle() {
 		return this.title;
 	}
 
+	@Override
 	public String getName() {
 		return this.getTitle();
 	}
@@ -338,6 +352,7 @@ public class Window extends Page {
 		return this.width;
 	}
 
+	@Override
 	public String getWidth() {
 		return String.valueOf(this.width);
 	}
@@ -353,6 +368,7 @@ public class Window extends Page {
 	 * @param width
 	 *            the int width
 	 */
+	@Override
 	public void setWidth(String width) {
 		this.width = Integer.parseInt(width);
 	}
@@ -361,6 +377,7 @@ public class Window extends Page {
 		return this.height;
 	}
 
+	@Override
 	public String getHeight() {
 		return String.valueOf(this.height);
 	}
@@ -376,6 +393,7 @@ public class Window extends Page {
 	 * @param height
 	 *            the int height
 	 */
+	@Override
 	public void setHeight(String height) {
 		this.height = Integer.parseInt(height);
 	}
@@ -581,7 +599,7 @@ public class Window extends Page {
 			// return
 			// "window.open('"+theURL+"','tempwindow','resizable=yes,toolbar=yes,location=no,directories=no,status=yes,scrollbars=yes,menubar=yes,titlebar=yes,width=500,height=500')";
 			return getWindowCallingScript(theURL, "tempwindow", true, true, true, true, true, true, true, true, false,
-					500, 500, win.getCoordinateX(), win.getCoordinateY());
+					500, 500);
 		}
 		// return
 		// "window.open('"+theURL+"','"+win.getTarget()+"','resizable="+win.returnCheck(windowInstance.resizable)+",toolbar="+win.returnCheck(windowInstance.toolbar)+",location="+win.returnCheck(win.location)+",directories="+win.returnCheck(win.directories)+",status="+win.returnCheck(win.status)+",scrollbars="+win.returnCheck(win.scrollbar)+",menubar="+win.returnCheck(win.menubar)+",titlebar="+win.returnCheck(win.titlebar)+win.returnFullScreen()+",width="+win.getWidth()+",height="+win.getHeight()+"')";
@@ -604,7 +622,7 @@ public class Window extends Page {
 			// return
 			// "window.open('"+theURL+"','tempwindow','resizable=yes,toolbar=yes,location=no,directories=no,status=yes,scrollbars=yes,menubar=yes,titlebar=yes,width=500,height=500')";
 			return getWindowCallingScript(theURL, "tempwindow", true, true, true, true, true, true, true, true, false,
-					500, 500, win.getCoordinateX(), win.getCoordinateY());
+					500, 500);
 		}
 		// return
 		// "window.open('"+theURL+"','"+win.getTarget()+"','resizable="+win.returnCheck(windowInstance.resizable)+",toolbar="+win.returnCheck(windowInstance.toolbar)+",location="+win.returnCheck(win.location)+",directories="+win.returnCheck(win.directories)+",status="+win.returnCheck(win.status)+",scrollbars="+win.returnCheck(win.scrollbar)+",menubar="+win.returnCheck(win.menubar)+",titlebar="+win.returnCheck(win.titlebar)+win.returnFullScreen()+",width="+win.getWidth()+",height="+win.getHeight()+"')";
@@ -695,7 +713,7 @@ public class Window extends Page {
 		Window win = getStaticInstance(windowClass);
 		if (win == null) {
 			return getWindowArgumentCallingScript(true, true, true, true, true, true, true, true, false, 500, 500,
-					win.getCoordinateX(), win.getCoordinateY());
+					null, null);
 		}
 		return getWindowArgumentCallingScript(win.toolbar, win.location, win.directories, win.status, win.menubar,
 				win.titlebar, win.scrollbar, win.resizable, win.fullscreen, win.getWindowWidth(),
@@ -785,14 +803,17 @@ public class Window extends Page {
 //		return "coordY";
 //	}
 
+	@Override
 	public void setBackgroundImage(String imageURL) {
 		setMarkupAttribute("background", imageURL);
 	}
 
+	@Override
 	public void setBackgroundImage(Image backgroundImage) {
 		setBackgroundImage(backgroundImage.getURL());
 	}
 
+	@Override
 	public boolean doPrint(IWContext iwc) {
 		boolean returnBoole;
 		if (iwc.getParameter("idegaspecialrequesttype") == null) {
@@ -821,6 +842,7 @@ public class Window extends Page {
 		return getID();
 	}
 
+	@Override
 	public Object clone() {
 		Window obj = null;
 		try {
@@ -888,6 +910,7 @@ public class Window extends Page {
 	 * 
 	 * @see com.idega.presentation.PresentationObject#initInMain(com.idega.presentation.IWContext)
 	 */
+	@Override
 	protected void initInMain(IWContext iwc) throws Exception {
 		if (isFocusAllowedOnLoad() && !isChildOfOtherPage() && !isInFrameSet()) {
 			setOnLoad("focus()");
@@ -906,6 +929,7 @@ public class Window extends Page {
 	 * 
 	 * @see com.idega.presentation.Page#getLocalizedTitle(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public String getLocalizedTitle(IWContext iwc) {
 		// TODO Auto-generated method stub
 		return getTitle();
@@ -930,6 +954,7 @@ public class Window extends Page {
 	 * @param xCoordinateOffset
 	 * @param yCoordinateOffset
 	 */
+	@Deprecated
 	public void setMousePositionOffsets(int xCoordinateOffset, int yCoordinateOffset) {
 		this.autoPosition = true;
 		this.autoXCoordinateOffset = xCoordinateOffset;
