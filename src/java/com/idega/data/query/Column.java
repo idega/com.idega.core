@@ -1,7 +1,7 @@
 package com.idega.data.query;
 
-import com.idega.data.query.output.Outputable;
 import com.idega.data.query.output.Output;
+import com.idega.data.query.output.Outputable;
 import com.idega.data.query.output.ToStringer;
 
 /**
@@ -45,15 +45,16 @@ public class Column implements Outputable, Cloneable {
 	public void setAsDistinct() {
 		this.distinct = true;
 	}
-	
+
 	public void setAsCount() {
 		this.count = true;
 	}
+
 	public void setAsCount(String countName) {
 		setAsCount();
 		this.countName = countName;
 	}
-	
+
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
@@ -86,20 +87,19 @@ public class Column implements Outputable, Cloneable {
 		if (this.count) {
 			out.println(")");
 			if (this.countName != null) {
-				out.println(" AS "+this.countName);
+				out.println(" AS " + this.countName);
 			}
 		}
 	}
-	
-    public Object clone() {
+
+	public Object clone() {
 		Column obj = null;
 		try {
-			obj = (Column)super.clone();
+			obj = (Column) super.clone();
 		}
 		catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
 		return obj;
 	}
-
 }
