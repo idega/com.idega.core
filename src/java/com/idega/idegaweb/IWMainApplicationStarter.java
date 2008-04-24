@@ -365,7 +365,9 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		
 		// set application variables first before setting any properties (ICApplicationBinding table might be created first)
 		setApplicationVariables();
-		this.iwma.regData();
+		if (!this.iwma.getSettings().getBoolean("use_debug_mode", false)) {
+			this.iwma.regData();
+		}
 		// now set some properties
 		this.iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 
@@ -554,7 +556,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	 * Category bundle is not registered in many web applications (but used) because category wasn't a bundle in the past
 	 * Call BundleStarter directly because the bundle is not loaded by old web applications! 
 	 */
-	private void startTemporaryBundleStarter(String starterName) {
+	/*private void startTemporaryBundleStarter(String starterName) {
 	    IWBundleStartable starter;
         try {
             starter = (IWBundleStartable) RefactorClassRegistry.forName(starterName).newInstance();
@@ -572,7 +574,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		catch (Exception e) {
 			log.log(Level.WARNING, "Error starting " + starterName, e);
         }
-	}
+	}*/
 	
 	
 	/**
@@ -655,7 +657,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	private void updateDomainData() {
 		
 		String propertyKey = "dataupdate_domain_done";
-		String done = iwma.getSettings().getProperty(propertyKey);;
+		String done = iwma.getSettings().getProperty(propertyKey);
 		if(done==null){
 			
 			ICDomainHome domainHome = null;

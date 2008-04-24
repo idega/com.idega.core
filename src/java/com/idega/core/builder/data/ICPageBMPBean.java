@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.12 2008/04/08 18:50:08 valdas Exp $
+ * $Id: ICPageBMPBean.java,v 1.13 2008/04/24 23:37:10 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -67,7 +67,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	private final static String PAGE_URI="PAGE_URI";
 	private static final String DOMAIN_ID = "IB_DOMAIN_ID";
 	private static final String WEBDAV_URI = "WEBDAV_URI";
-	private static final String IS = "IS";
+	//private static final String IS = "IS";
 	private static final String NULL = "NULL";
 	public static final String HIDE_PAGE_IN_MENU = "HIDE_PAGE_IN_MENU";
 	public static final String PAGE_IS_PUBLISHED = "PAGE_IS_PUBLISHED";
@@ -107,6 +107,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(getColumnName(), "Nafn", true, true, String.class);
@@ -138,12 +139,14 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void insertStartData() throws Exception {
 	}
 
 	/**
 	 *
 	 */
+	@Override
 	public String getEntityName() {
 		return (ENTITY_NAME);
 	}
@@ -151,6 +154,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setDefaultValues() {
 		//setColumn("image_id",1);
 	}
@@ -158,6 +162,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public String getName() {
 		return (getStringColumnValue(getColumnName()));
 	}
@@ -182,6 +187,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setName(String name) {
 		setColumn(getColumnName(), name);
 	}
@@ -467,6 +473,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public synchronized void update() throws SQLException {
 		ICFile file = getFile();
 		if (file != null) {
@@ -493,6 +500,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void insert() throws SQLException {
 		ICFile file = getFile();
 		if (file != null) {
@@ -508,6 +516,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void delete() throws SQLException {
 		throw new SQLException("Use delete(int userId) instead");
 	}
@@ -632,6 +641,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public boolean isLeaf() {
 		if (getType().equals(FOLDER)) {
 			return false;
@@ -714,6 +724,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/* (non-Javadoc)
 	 * @see com.idega.data.GenericEntity#getEntityState()
 	 */
+	@Override
 	public int getEntityState() {
 		//we need to override this method and also check if the embedded ICFile has been changed, if it has changed we need generic entity to
 		//update the bean

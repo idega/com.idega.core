@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectComponentFacetMap.java,v 1.4 2007/12/28 13:23:04 valdas Exp $
+ * $Id: PresentationObjectComponentFacetMap.java,v 1.5 2008/04/24 23:44:13 laddi Exp $
  * Created on 14.11.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import javax.faces.component.UIComponent;
 /**
  * Overrided from JSFs standard FacetsMap because of the clone() issue.
  * 
- * Last modified: $Date: 2007/12/28 13:23:04 $ by $Author: valdas $
+ * Last modified: $Date: 2008/04/24 23:44:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class PresentationObjectComponentFacetMap implements Map<String, UIComponent>, Serializable, Cloneable {
 
@@ -77,7 +77,6 @@ public class PresentationObjectComponentFacetMap implements Map<String, UICompon
 		return this._map.put(key, value);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void putAll(Map<? extends String, ? extends UIComponent> t) {
 		if (t == null) {
 			throw new NullPointerException("Map is null");
@@ -109,7 +108,7 @@ public class PresentationObjectComponentFacetMap implements Map<String, UICompon
 
 	public UIComponent remove(Object key) {
 		checkKey(key);
-		UIComponent facet = (UIComponent) this._map.remove(key);
+		UIComponent facet = this._map.remove(key);
 		if (facet != null) {
 			facet.setParent(null);
 		}
@@ -136,8 +135,7 @@ public class PresentationObjectComponentFacetMap implements Map<String, UICompon
 		}
 	}
 
-
-	@SuppressWarnings("unchecked")
+	@Override
 	public Object clone(){
 		Object newObject = null;
 		try {

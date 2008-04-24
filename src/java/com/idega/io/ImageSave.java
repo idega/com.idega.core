@@ -35,7 +35,7 @@ public class ImageSave {
 
     if (Conn!=null){
 
-      String dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
+      //String dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
 
       //if( !dataBaseType.equalsIgnoreCase("oracle")  ) {
 				return saveImageToDB(imageId,-1,in,ContentType,FileName,"-1", "-1",NewImage);
@@ -62,7 +62,7 @@ public class ImageSave {
 
       Conn = com.idega.data.GenericEntity.getStaticInstance("com.idega.jmodule.image.data.ImageEntity").getConnection();
 
-      String dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
+      //String dataBaseType = com.idega.data.DatastoreInterface.getDataStoreType(Conn);
 
       //if( !dataBaseType.equalsIgnoreCase("oracle")  ) {
 				return saveImageToDB(imageId,parentImageId,in,ContentType,FileName,width, height,NewImage);

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectComponentList.java,v 1.7 2007/12/28 13:23:04 valdas Exp $ Created on
+ * $Id: PresentationObjectComponentList.java,v 1.8 2008/04/24 23:44:14 laddi Exp $ Created on
  * 14.11.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import javax.faces.component.UIComponent;
 /**
  * Overrided from JSFs standard Children because of the clone() issue.
  * 
- * Last modified: $Date: 2007/12/28 13:23:04 $ by $Author: valdas $
+ * Last modified: $Date: 2008/04/24 23:44:14 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 class PresentationObjectComponentList extends AbstractList<UIComponent> implements Serializable,Cloneable {
 
@@ -38,6 +38,7 @@ class PresentationObjectComponentList extends AbstractList<UIComponent> implemen
 		this._component = component;
 	}
 
+	@Override
 	public UIComponent get(int index) {
 		try{
 			return this._list.get(index);
@@ -47,13 +48,15 @@ class PresentationObjectComponentList extends AbstractList<UIComponent> implemen
 		}
 	}
 
+	@Override
 	public int size() {
 		return this._list.size();
 	}
 
+	@Override
 	public UIComponent set(int index, UIComponent value) {
 		checkValue(value);
-		setNewParent((UIComponent) value);
+		setNewParent(value);
 		UIComponent child = this._list.set(index, value);
 		if (child != null) {
 			child.setParent(null);
@@ -61,18 +64,21 @@ class PresentationObjectComponentList extends AbstractList<UIComponent> implemen
 		return child;
 	}
 
+	@Override
 	public boolean add(UIComponent value) {
 		checkValue(value);
 		setNewParent(value);
 		return this._list.add(value);
 	}
 
+	@Override
 	public void add(int index, UIComponent value) {
 		checkValue(value);
 		setNewParent(value);
 		this._list.add(index, value);
 	}
 
+	@Override
 	public UIComponent remove(int index) {
 		UIComponent child = this._list.remove(index);
 		if (child != null) {
@@ -95,7 +101,7 @@ class PresentationObjectComponentList extends AbstractList<UIComponent> implemen
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Override
 	public Object clone(){
 		Object newObject = null;
 		try {

@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.170 2008/04/06 14:31:53 civilis Exp $
+ * $Id: PresentationObject.java,v 1.171 2008/04/24 23:44:13 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -77,10 +77,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2008/04/06 14:31:53 $ by $Author: civilis $
+ * Last modified: $Date: 2008/04/24 23:44:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.170 $
+ * @version $Revision: 1.171 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -132,6 +132,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * @deprecated Do not use this function
 	 */
+	@Deprecated
 	public EventListenerList listenerList = null;
 	public EventListenerList _listenerList = null;
 	private Dictionary<String, Object> eventAttributes = null;
@@ -675,6 +676,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * @deprecated Replaced with getMarkupLanguage().
 	 * Only preserved for backwards compatability.
 	 */
+	@Deprecated
 	public String getLanguage() {
 	    return getMarkupLanguage();
 	}
@@ -698,6 +700,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * @see UIComponentBase#setId(java.lang.String)
 	 */
+	@Override
 	public void setId(String id){
 		if (Character.isDigit(id.charAt(0))) {
 			id = "id" + id;
@@ -951,6 +954,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * The default clone implementation
 	 */
+	@Override
 	public Object clone()
 	{
 		PresentationObject obj = null;
@@ -1200,6 +1204,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * @deprecated Do not use this function
 	 */
+	@Deprecated
 	public void addIWLinkListener(IWLinkListener l, IWContext iwc)
 	{
 		//System.err.println(this.getClass().getName() + " : listener added of
@@ -1213,6 +1218,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * @deprecated Do not use this function
 	 */
+	@Deprecated
 	public IWLinkListener[] getIWLinkListeners()
 	{
 		return getEventListenerList().getListeners(IWLinkListener.class);
@@ -1220,6 +1226,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * @deprecated Do not use this function
 	 */
+	@Deprecated
 	public void addIWSubmitListener(IWSubmitListener l, IWContext iwc)
 	{
 		getEventListenerList().add(IWSubmitListener.class, l);
@@ -1227,6 +1234,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * @deprecated Do not use this function
 	 */
+	@Deprecated
 	public IWSubmitListener[] getIWSubmitListeners()
 	{
 		if (this.listenerList == null)
@@ -1323,6 +1331,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * @deprecated Do not use this function
 	 */
+	@Deprecated
 	public EventListenerList getEventListenerList()
 	{
 		if (this.listenerList == null)
@@ -1335,6 +1344,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * @deprecated Do not use this function, it is not safe
 	 */
+	@Deprecated
 	public IWContext getEventIWContext() {
 		//return eventIWContext;
 		return IWContext.getInstance();
@@ -1486,6 +1496,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		return super.equals(obj);
 	}
+	@Override
 	public boolean equals(Object obj)
 	{
 		if (obj instanceof PresentationObject)
@@ -2041,6 +2052,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		throw new UnsupportedOperationException("Method add(int,UIComponent) is not supported yet in PresentationObject");
 	}
 	
+	@Override
 	public UIComponent getParent(){
 		//return parentObject;
 		return super.getParent();
@@ -2050,6 +2062,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#setParent(javax.faces.component.UIComponent)
 	 */
+	@Override
 	public void setParent(UIComponent arg0) {
 		//this.parentObject=arg0;
 		super.setParent(arg0);
@@ -2060,6 +2073,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/*
 	 * BEGIN JSF SPECIFIC IMPLEMENTAION METHODS
 	 */
+	@Override
 	public void processDecodes(FacesContext context){
         // Process all facets and children of this component
         for (Iterator<UIComponent> kids = getFacetsAndChildren(); kids.hasNext();) {
@@ -2075,6 +2089,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
         }
 	}
 	
+	@Override
 	public void decode(FacesContext fc){
 		super.decode(fc);
 	}
@@ -2082,7 +2097,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
 		super.restoreState(context, values[0]);
@@ -2129,6 +2144,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[30];
 		values[0]=super.saveState(context);
@@ -2167,6 +2183,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#processRestoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
+	@Override
 	public void processRestoreState(FacesContext fc, Object arg1) {
 		super.processRestoreState(fc, arg1);
 	}
@@ -2174,6 +2191,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#processSaveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object processSaveState(FacesContext arg0) {
 		// TODO Auto-generated method stub
 		return super.processSaveState(arg0);
@@ -2182,6 +2200,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#processUpdates(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void processUpdates(FacesContext fc) {
 		super.processUpdates(fc);
 	}
@@ -2189,6 +2208,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#processValidators(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void processValidators(FacesContext arg0) {
 		// TODO Auto-generated method stub
 		super.processValidators(arg0);
@@ -2278,6 +2298,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 	}
 
+	@Override
 	public void encodeBegin(FacesContext fc)throws IOException{
 		callMain(fc);
 		callPrint(fc);
@@ -2286,6 +2307,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void encodeChildren(FacesContext context) throws IOException {
 		if(!goneThroughRenderPhase()) {
 			for (Iterator<UIComponent> children = this.getChildren().iterator(); children.hasNext();) {
@@ -2338,6 +2360,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeEnd(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void encodeEnd(FacesContext arg0) throws IOException {
 		super.encodeEnd(arg0);
 		this.setRenderedPhaseDone();
@@ -2348,11 +2371,13 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		return IWContext.getIWContext(fc);
 	}
 	
+	@Override
 	public boolean getRendersChildren(){
 		//This is overrided because PresentationObjects have no extra Renderer by default
 		return true;
 	}
 	
+	@Override
 	public String getId(){
 		if(super.getId()==null){
 			return getID();
@@ -2360,6 +2385,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		return super.getId();
 	}
 	
+	@Override
 	public String getFamily(){
 		return "idegaweb";
 	}
@@ -2368,12 +2394,14 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFacet(java.lang.String)
 	 */
+	@Override
 	public UIComponent getFacet(String name) {
 		return this.facetMap == null ? null : (UIComponent)this.facetMap.get(name);
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFacets()
 	 */
+	@Override
 	public Map<String, UIComponent> getFacets() {
 		if(this.facetMap==null){
 			this.facetMap = new PresentationObjectComponentFacetMap(this);
@@ -2383,6 +2411,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFacetsAndChildren()
 	 */
+	@Override
 	public Iterator<UIComponent> getFacetsAndChildren() {
 		//Overridded because Myfaces getFacetsAndChildren() doesn't call getFacets() and getChildren() properly
 		return new FacetsAndChildrenIterator(getFacets(), getChildren());
@@ -2393,12 +2422,14 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getChildCount()
 	 */
+	@Override
 	public int getChildCount() {
 		 return this.childrenList == null ? 0 : this.childrenList.size();
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getChildren()
 	 */
+	@Override
 	public List<UIComponent> getChildren() {
 		if (this.childrenList == null)
 		{
@@ -2410,6 +2441,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * This method has a bug in the Builder, the attributes do not clone correctly.
 	 */
+	@Override
 	public Map getAttributes(){
 		//TODO: TL override this method because of the clone issue.
 		//		There is a problem with that because of the Myfaces implementation of restoreSate() and saveState() in UIComponentBase
@@ -2613,7 +2645,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	  * @param key
 	  * @param values
 	  */
-	 public void setProperty(String key, String[] values){
+	 @Deprecated
+	public void setProperty(String key, String[] values){
 		getAttributes().put(key,ListUtil.convertStringArrayToList(values));
 	 }
 	 
@@ -2729,7 +2762,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * Method to use in subclasses if facets should be cloned.  DOES NOT CHECK PERMISSIONS.
 	 * @param obj The clone.
 	 */
-	@SuppressWarnings("unchecked")
 	protected void cloneJSFFacets(PresentationObject obj){
 		//First clone the facet Map:
 		if(this.facetMap!=null){

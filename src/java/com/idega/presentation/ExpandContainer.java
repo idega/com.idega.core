@@ -1,5 +1,5 @@
 /*
- * $Id: ExpandContainer.java,v 1.6 2006/05/10 08:27:16 laddi Exp $
+ * $Id: ExpandContainer.java,v 1.7 2008/04/24 23:44:14 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -47,6 +47,7 @@ public ExpandContainer() {
 	/**
 	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		
 		if(!this.initialized){
@@ -111,6 +112,7 @@ public ExpandContainer() {
 		
 	}
 	
+	@Override
 	public void encodeBegin(FacesContext context)throws IOException{
 		
 //		Script script = new Script();
@@ -156,6 +158,7 @@ public ExpandContainer() {
 		
 	}
 	
+	@Override
 	public void encodeChildren(FacesContext context)throws IOException{
 		if(!goneThroughRenderPhase()){
 			Iterator children = this.getChildren().iterator();
@@ -166,6 +169,7 @@ public ExpandContainer() {
 		}
 	}
 
+	@Override
 	public void encodeEnd(FacesContext context)throws IOException{
 		context.getResponseWriter().endElement("div");
 		context.getResponseWriter().endElement("div");
@@ -221,7 +225,7 @@ public ExpandContainer() {
 	}
 	
 	public UIComponent getHeader(){
-		return (UIComponent) getFacets().get("header");
+		return getFacets().get("header");
 	}
 
 	/*
@@ -276,6 +280,7 @@ public ExpandContainer() {
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
+	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
 		super.restoreState(context, values[0]);
@@ -287,6 +292,7 @@ public ExpandContainer() {
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[4];
 		values[0] = super.saveState(context);

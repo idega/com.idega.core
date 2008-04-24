@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderPageFacetMap.java,v 1.2 2007/12/28 13:23:04 valdas Exp $
+ * $Id: BuilderPageFacetMap.java,v 1.3 2008/04/24 23:44:14 laddi Exp $
  * Created on 16.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -20,10 +20,10 @@ import javax.faces.component.UIComponent;
  * This is special implementation of the standard JSF Facet Map to be used to implement the <code>region</code> tag inside Builder pages.<br/>
  * This class is used to override the getFacets() method in BuilderPage and HtmlPage.
  * <p>
- * Last modified: $Date: 2007/12/28 13:23:04 $ by $Author: valdas $
+ * Last modified: $Date: 2008/04/24 23:44:14 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 
@@ -41,6 +41,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#clear()
 	 */
+	@Override
 	public void clear() {
 		super.clear();
 	}
@@ -48,6 +49,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public Object clone() {
 		return super.clone();
 	}
@@ -55,6 +57,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#containsKey(java.lang.Object)
 	 */
+	@Override
 	public boolean containsKey(Object key) {
 		return super.containsKey(key);
 	}
@@ -62,6 +65,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#containsValue(java.lang.Object)
 	 */
+	@Override
 	public boolean containsValue(Object value) {
 		return super.containsValue(value);
 	}
@@ -69,6 +73,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#entrySet()
 	 */
+	@Override
 	public Set<Entry<String, UIComponent>> entrySet() {
 		return super.entrySet();
 	}
@@ -76,6 +81,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#get(java.lang.Object)
 	 */
+	@Override
 	public UIComponent get(Object key) {
 		String facetKey=(String)key;
 		
@@ -102,6 +108,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObjectComponentFacetMap#getComponent()
 	 */
+	@Override
 	protected UIComponent getComponent() {
 		return super.getComponent();
 	}
@@ -109,6 +116,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#isEmpty()
 	 */
+	@Override
 	public boolean isEmpty() {
 		return super.isEmpty();
 	}
@@ -116,6 +124,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#keySet()
 	 */
+	@Override
 	public Set<String> keySet() {
 		return super.keySet();
 	}
@@ -123,10 +132,10 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
 	public UIComponent put(String key, UIComponent value) {
 		//return super.put(key, value);
-		String facetKey = (String)key;
+		String facetKey = key;
 		if(facetKey.startsWith(PREFIX)){
 			String regionKey = facetKey.substring(PREFIX.length(),facetKey.length());
 			UIComponent region = findRegionComponent(regionKey);
@@ -152,7 +161,6 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	 * @param child
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	protected boolean doesComponentContainChild(UIComponent component, UIComponent child){
 		if (component != null) {
 			for (Iterator<UIComponent> iter = component.getChildren().iterator(); iter.hasNext();) {
@@ -179,7 +187,6 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 		return component;
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected UIComponent findRegionComponentRecursive(UIComponent component, String key) {
 		for (Iterator<UIComponent> iter = component.getFacetsAndChildren(); iter.hasNext();) {
 			UIComponent child = iter.next();
@@ -201,6 +208,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#putAll(java.util.Map)
 	 */
+	@Override
 	public void putAll(Map<? extends String, ? extends UIComponent> t) {
 		super.putAll(t);
 	}
@@ -208,6 +216,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#remove(java.lang.Object)
 	 */
+	@Override
 	public UIComponent remove(Object key) {
 		String facetKey = (String)key;
 		if(facetKey.startsWith(PREFIX)){
@@ -228,6 +237,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObjectComponentFacetMap#setComponent(javax.faces.component.UIComponent)
 	 */
+	@Override
 	protected void setComponent(UIComponent _component) {
 		super.setComponent(_component);
 	}
@@ -235,6 +245,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#size()
 	 */
+	@Override
 	public int size() {
 		return super.size();
 	}
@@ -242,6 +253,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.util.Map#values()
 	 */
+	@Override
 	public Collection<UIComponent> values() {
 		return super.values();
 	}
@@ -249,6 +261,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return super.hashCode();
 	}
@@ -256,6 +269,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object arg0) {
 		return super.equals(arg0);
 	}
@@ -263,6 +277,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return super.toString();
 	}
@@ -270,6 +285,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#finalize()
 	 */
+	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
 	}

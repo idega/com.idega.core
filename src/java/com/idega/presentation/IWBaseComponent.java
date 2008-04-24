@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.17 2008/02/15 10:05:26 civilis Exp $
+ * $Id: IWBaseComponent.java,v 1.18 2008/04/24 23:44:13 laddi Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -36,10 +36,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
- * Last modified: $Date: 2008/02/15 10:05:26 $ by $Author: civilis $
+ * Last modified: $Date: 2008/04/24 23:44:13 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
@@ -67,12 +67,14 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#decode(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void decode(FacesContext arg0) {
 		super.decode(arg0);
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#processDecodes(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void processDecodes(FacesContext arg0) {
 		super.processDecodes(arg0);
 	}
@@ -80,6 +82,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeBegin(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
 
 		UIComponentCacher cacher = getCacher(context);
@@ -108,6 +111,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void encodeChildren(FacesContext context) throws IOException {
 		/*if(getRendersChildren()){
 			Iterator children = this.getChildren().iterator();
@@ -149,6 +153,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeEnd(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public void encodeEnd(FacesContext context) throws IOException {
 		
 
@@ -173,6 +178,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getRendersChildren()
 	 */
+	@Override
 	public boolean getRendersChildren() {
 		//return true;
 		return super.getRendersChildren();
@@ -211,6 +217,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFamily()
 	 */
+	@Override
 	public String getFamily() {
 		return "idegaweb";
 	}
@@ -220,6 +227,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	 * </p>
 	 * @deprecated Replaced with initializeComponent
 	 */
+	@Deprecated
 	protected void initializeContent() {
 		//does nothing by default
 	}
@@ -271,6 +279,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	/**
 	 * @see javax.faces.component.UIComponentBase#saveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[4];
 		values[0] = super.saveState(ctx);
@@ -284,6 +293,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	 * @see javax.faces.component.UIComponentBase#restoreState(javax.faces.context.FacesContext,
 	 *      java.lang.Object)
 	 */
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -352,8 +362,6 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	
 	@Override
 	public List<UIComponent> getChildren() {
-		
-		@SuppressWarnings("unchecked")
 		List<UIComponent> children = super.getChildren();
 		return children;
 	}

@@ -73,7 +73,7 @@ public class IWEncodingFilter implements Filter {
 	 * @param contentType
 	 * @return - charset, if present.
 	 */
-	private String lookupCharacterEncoding(String contentType) {
+	/*private String lookupCharacterEncoding(String contentType) {
 		String characterEncoding = null;
 
 		if (contentType != null) {
@@ -94,5 +94,5 @@ public class IWEncodingFilter implements Filter {
 
 		}
 		return characterEncoding;
-	}
+	}*/
 }

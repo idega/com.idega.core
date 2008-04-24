@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.235 2008/04/16 18:33:27 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.236 2008/04/24 23:45:30 laddi Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -76,8 +76,6 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
-import com.idega.idegaweb.employment.data.EmploymentMemberInfo;
-import com.idega.idegaweb.employment.data.EmploymentMemberInfoHome;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.user.bean.GroupMemberDataBean;
@@ -112,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2008/04/16 18:33:27 $ by $Author: valdas $
+ * Last modified: $Date: 2008/04/24 23:45:30 $ by $Author: laddi $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.235 $
+ * @version $Revision: 1.236 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -249,6 +247,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * @deprecated replaced with createUser
 	 */
+	@Deprecated
 	public User insertUser(String firstname, String middlename, String lastname, String displayname,
 			String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group)
 			throws CreateException, RemoteException {
@@ -1003,6 +1002,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 *             and returns it.
 	 * @returns the address if found or null if not.
 	 */
+	@Deprecated
 	public Address getUserAddress1(int userID) throws EJBException, RemoteException {
 		return getUsersMainAddress(userID);
 	}
@@ -1356,6 +1356,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * 
 	 * @deprecated use updateUserMail
 	 */
+	@Deprecated
 	public Email storeUserEmail(Integer userID, String emailAddress, boolean replaceExistentRecord) {
 		return storeUserEmail(getUser(userID), emailAddress, replaceExistentRecord);
 	}
@@ -1369,6 +1370,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * 
 	 * @deprecated use updateuserMail
 	 */
+	@Deprecated
 	public Email storeUserEmail(User user, String emailAddress, boolean replaceExistentRecord) {
 		try { 
 			return updateUserMail(user, emailAddress);
@@ -1433,6 +1435,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * @deprecated use updateUserMail
 	 */
+	@Deprecated
 	public void addNewUserEmail(int iUserId, String sNewEmailAddress) {
 		storeUserEmail(getUser(iUserId), sNewEmailAddress, false);
 	}
@@ -1440,6 +1443,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * @deprecated use getUserGroupsDirectlyRelated(int iUserId)
 	 */
+	@Deprecated
 	public Collection listOfUserGroups(int iUserId) {
 		return getUserGroupsDirectlyRelated(iUserId);
 	}
@@ -3720,7 +3724,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		memberInfo.setEmailsAddresses(emailsAddresses);
 	}
 	
-	private void extractExtraInfo(GroupMemberDataBean bean, User user) {
+	/*private void extractExtraInfo(GroupMemberDataBean bean, User user) {
 		if (bean == null || user == null) {
 			return;
 		}
@@ -3741,16 +3745,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		bean.setSchool(memberInfo.getSchool());
 		//bean.setArea(memberInfo);	TODO
 		bean.setBeganWork(memberInfo.getBeganWork());
-	}
+	}*/
 	
-	private EmploymentMemberInfoHome getMemberHome() {
+	/*private EmploymentMemberInfoHome getMemberHome() {
 		try {
 			return (EmploymentMemberInfoHome) IDOLookup.getHome(EmploymentMemberInfo.class);
 		} catch (IDOLookupException e) {
 			e.printStackTrace();
 		}
 		return null;
-	}
+	}*/
 	
 	private String getUserAge(User user) {
 		if (user == null) {

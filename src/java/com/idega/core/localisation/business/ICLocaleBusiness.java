@@ -326,7 +326,7 @@ public class ICLocaleBusiness  implements MutableClass {
         List oldCurrentLocales = new Vector();
         oldCurrentLocales.addAll(currentLocales);
         while (I.hasNext()) {
-          ICLocale locale = home.findByPrimaryKey(Integer.valueOf((String)I.next()));
+          ICLocale locale = home.findByPrimaryKey(Integer.valueOf(I.next()));
           locale.setInUse(true);
           locale.store();
           oldCurrentLocales.remove(locale);

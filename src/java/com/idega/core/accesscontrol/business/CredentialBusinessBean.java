@@ -1,5 +1,5 @@
 /*
- * $Id: CredentialBusinessBean.java,v 1.3 2007/12/12 10:36:36 civilis Exp $
+ * $Id: CredentialBusinessBean.java,v 1.4 2008/04/24 23:36:09 laddi Exp $
  * Created on May 10, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -11,7 +11,7 @@ package com.idega.core.accesscontrol.business;
 
 import java.util.Iterator;
 import java.util.Map;
-import javax.servlet.http.HttpSession;
+
 import com.idega.business.IBOServiceBean;
 import com.idega.business.SpringBeanLookup;
 import com.idega.core.accesscontrol.jaas.IWCredential;
@@ -24,15 +24,15 @@ import com.idega.presentation.text.Link;
  * Not fully implemented. There will be more methods pretty soon.
  * 
  * 
- *  Last modified: $Date: 2007/12/12 10:36:36 $ by $Author: civilis $
+ *  Last modified: $Date: 2008/04/24 23:36:09 $ by $Author: laddi $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class CredentialBusinessBean extends IBOServiceBean  implements CredentialBusiness{
 	
 	public void addCredentialsToLink(Link link, IWContext iwc) {
-		HttpSession session = iwc.getSession();
+		//HttpSession session = iwc.getSession();
 		if (!LoginBusinessBean.isLoggedOn(iwc)) {
 			// not logged in  - do nothing!
 			return;

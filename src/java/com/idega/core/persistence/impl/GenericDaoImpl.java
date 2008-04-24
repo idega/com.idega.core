@@ -11,9 +11,9 @@ import com.idega.core.persistence.GenericDao;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  *
- * Last modified: $Date: 2008/03/11 12:11:12 $ by $Author: civilis $
+ * Last modified: $Date: 2008/04/24 23:37:55 $ by $Author: laddi $
  */
 @Repository
 @Transactional
@@ -44,9 +44,6 @@ public class GenericDaoImpl implements GenericDao {
 	
 	@Transactional(readOnly=false)
 	public <T>T merge(Object product, Class<T> clazz) {
-
-		
-		@SuppressWarnings("unchecked")
 		T merged = (T)entityManager.merge(product);
 		return merged;
 	}

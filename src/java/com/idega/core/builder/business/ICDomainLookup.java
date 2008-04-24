@@ -1,5 +1,5 @@
 /**
- * $Id: ICDomainLookup.java,v 1.1 2007/04/09 22:17:59 tryggvil Exp $
+ * $Id: ICDomainLookup.java,v 1.2 2008/04/24 23:36:51 laddi Exp $
  * Created in 2007 by tryggvil
  *
  * Copyright (C) 2000-2007 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.data.IDOLookup;
  * <p>
  * Lookup Registry or cache of ICDomains that are available to the idegaWeb Application.
  * </p>
- *  Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2008/04/24 23:36:51 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ICDomainLookup {
 
@@ -56,20 +56,19 @@ public class ICDomainLookup {
 	}
 	
 	public ICDomain getDomainByServerName(String serverName) {
-		
 		String cacheKey = serverName;
 		if(serverName==null){
 			cacheKey=DEFAULT_DOMAIN_KEY;
 		}
 		
-		ICDomain domain = (ICDomain) cachedDomainMap.get(cacheKey);
+		ICDomain domain = cachedDomainMap.get(cacheKey);
 		if(domain==null){
 			ICDomain realDomain = getPersistentDomainByServerName(serverName);
 			
 			if(realDomain.isDefaultDomain()){
 				//This if/else clause is so that we will always get the same CachedDomain instance for the default domain:
 				if(cachedDomainMap.containsKey(DEFAULT_DOMAIN_KEY)){
-					domain = (ICDomain) cachedDomainMap.get(DEFAULT_DOMAIN_KEY);
+					domain = cachedDomainMap.get(DEFAULT_DOMAIN_KEY);
 				}
 				else{
 					CachedDomain cachedDomain = new CachedDomain(realDomain);
@@ -88,13 +87,12 @@ public class ICDomainLookup {
 	}
 
 	public ICDomain getPersistentDomainByServerName(String serverName) {
-
 		String mapKey = serverName;
 		if(serverName==null){
 			mapKey=DEFAULT_DOMAIN_KEY;
 		}
 		
-		ICDomain domain = (ICDomain)this.domainMap.get(mapKey);
+		ICDomain domain = this.domainMap.get(mapKey);
 		if(domain==null){
 			ICDomainHome domainHome;
 			try {
@@ -109,7 +107,6 @@ public class ICDomainLookup {
 				throw new RuntimeException(e);
 			}
 		}
-		return domain;
-		
+		return domain;	
 	}	
 }

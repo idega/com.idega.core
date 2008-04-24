@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObjectContainer.java,v 1.57 2007/12/28 13:23:04 valdas Exp $
+ * $Id: PresentationObjectContainer.java,v 1.58 2008/04/24 23:44:14 laddi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -35,10 +35,10 @@ import com.idega.presentation.text.Text;
  * A base class for Containers of PresentationObjects (i.e. that can have children).<br>
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
- * Last modified: $Date: 2007/12/28 13:23:04 $ by $Author: valdas $
+ * Last modified: $Date: 2008/04/24 23:44:14 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.57 $
+ * @version $Revision: 1.58 $
  */
 public class PresentationObjectContainer extends PresentationObject
 {
@@ -58,6 +58,7 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 	}
 	
+	@Override
 	public List<UIComponent> getChildren(){
 		/*if (this.children == null)
 		{
@@ -140,6 +141,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 * 
 	 * @deprecated replaced by the add function
 	 */
+	@Deprecated
 	public void addObject(PresentationObject modObject)
 	{
 		add(modObject);
@@ -253,6 +255,7 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		return getChildren().isEmpty();
 	}
+	@Override
 	public void _main(IWContext iwc) throws Exception
 	{
 		if (!this.initializedInMain)
@@ -361,6 +364,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 * content. This function should only be overrided in idegaWeb Elements.
 	 */
 	
+	@Override
 	public void print(IWContext iwc) throws Exception
 	{
 		initVariables(iwc);
@@ -405,6 +409,7 @@ public class PresentationObjectContainer extends PresentationObject
 	/**
 	 * @see com.idega.presentation.PresentationObject#initVariables(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void initVariables(IWContext iwc) throws IOException {
 		//goneThroughMain = false;
 		//This is a legacy fix to make sure the goneThroughMain variable is reset back for 
@@ -553,7 +558,7 @@ public class PresentationObjectContainer extends PresentationObject
 	}
 	protected UIComponent objectAt(int index)
 	{
-		return (UIComponent)getChildren().get(index);
+		return getChildren().get(index);
 	}
 	public int getIndex(PresentationObject ob)
 	{
@@ -619,6 +624,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 * This method is overrided from the PresentationObject superclass here 
 	 * to call clone(iwc,askForPermission) if askForPermission is true instead of plain clone() to handle children
 	 */
+	@Override
 	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission)
 	{
 		if (askForPermission || iwc != null)
@@ -637,6 +643,7 @@ public class PresentationObjectContainer extends PresentationObject
 			return this.clone();
 		}
 	}
+	@Override
 	public Object clone()
 	{
 		return this.clone(null, false);
@@ -691,7 +698,6 @@ public class PresentationObjectContainer extends PresentationObject
 		
 	}
 
-	@SuppressWarnings("unchecked")
 	protected void cloneJSFChildren(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
 		//Cloning the JSF children:
 		if(this.childrenList!=null){
@@ -730,7 +736,6 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected void cloneJSFFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
 		//First clone the facet Map:
 		if(this.facetMap!=null){
@@ -801,6 +806,7 @@ public class PresentationObjectContainer extends PresentationObject
 		return (this._label);
 	}
 	
+	@Override
 	public void setLocation(IWLocation location, IWUserContext iwuc)
 	{
 		super.setLocation(location, iwuc);
@@ -830,10 +836,12 @@ public class PresentationObjectContainer extends PresentationObject
 	
 	
 
+	@Override
 	public void addChild(UIComponent child){
 		this.add((PresentationObject)child);
 	}
 
+	@Override
 	public void addChild(int index,UIComponent child){
 		this.add(index,(PresentationObject)child);
 	}
@@ -843,7 +851,7 @@ public class PresentationObjectContainer extends PresentationObject
 	}
 	
 	public UIComponent getChild(int index){
-		return (UIComponent)getChildren().get(index);
+		return getChildren().get(index);
 	}
 	
 	public int getChildrenCount(){
@@ -858,10 +866,12 @@ public class PresentationObjectContainer extends PresentationObject
 		this.remove((PresentationObject)child);
 	}
 	
+	@Override
 	public void encodeBegin(FacesContext context)throws IOException{
 		callMain(context);
 	}
 
+	@Override
 	public void encodeChildren(FacesContext context) throws IOException{
 		//super.encodeChildren(context);
 		callPrint(context);
@@ -870,12 +880,14 @@ public class PresentationObjectContainer extends PresentationObject
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return true;
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
+	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
 		/*try{
@@ -892,6 +904,7 @@ public class PresentationObjectContainer extends PresentationObject
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[3];
 		values[0] = super.saveState(context);
