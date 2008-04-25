@@ -148,7 +148,7 @@ public class IBOLookup implements Singleton
 		IBOHome home = getIBOHomeForClass(beanInterfaceClass);
 		try{
 			Method defaultCreateMethod = getCreateMethod(home);
-			session = (IBOService)defaultCreateMethod.invoke(home, null);
+			session = (IBOService)defaultCreateMethod.invoke(home, (Object[]) null);
 		}
 		catch(InvocationTargetException ite){
 			//ite.printStackTrace();

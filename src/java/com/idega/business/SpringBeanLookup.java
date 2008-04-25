@@ -12,9 +12,9 @@ import com.idega.idegaweb.IWApplicationContext;
  * <p>This class should be mainly used for legacy code, which used to lookup bean by using IBOLookup.getSessionInstance</p>
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  *
- * Last modified: $Date: 2008/03/18 15:03:28 $ by $Author: civilis $
+ * Last modified: $Date: 2008/04/25 00:05:47 $ by $Author: laddi $
  *
  */
 public class SpringBeanLookup {
@@ -50,6 +50,7 @@ public class SpringBeanLookup {
 	 * @param clazz - interface class, annotated with com.idega.business.SpringBeanName 
 	 * @return Spring managed bean. Null if bean not found or interface not annotated.
 	 */
+	@SuppressWarnings("cast")
 	public <T>T getSpringBean(ServletContext ctx, Class<T> clazz) {
 		
 		if(!clazz.isAnnotationPresent(SpringBeanName.class))
@@ -57,7 +58,6 @@ public class SpringBeanLookup {
 		
 		SpringBeanName bname = (SpringBeanName)clazz.getAnnotation(SpringBeanName.class);
 
-		@SuppressWarnings("unchecked")
 		T bean = (T)getSpringBean(ctx, bname.value());
 		return bean;
 	}
