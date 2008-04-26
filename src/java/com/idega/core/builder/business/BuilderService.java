@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.58 2008/04/23 23:40:29 valdas Exp $
+ * $Id: BuilderService.java,v 1.59 2008/04/26 00:07:40 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -9,6 +9,7 @@
  */
 package com.idega.core.builder.business;
 
+import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
@@ -350,4 +351,8 @@ public interface BuilderService extends IBOService
 	public boolean isFirstBuilderRun();
 	
 	public boolean reloadGroupsInCachedDomain(IWApplicationContext iwac, String serverName);
+	
+	public String getCleanedHtmlContent(String htmlContent, boolean omitDocTypeDeclaration, boolean omitHtmlEnvelope, boolean omitComments);
+	
+	public String getCleanedHtmlContent(InputStream htmlStream, boolean omitDocTypeDeclaration, boolean omitHtmlEnvelope, boolean omitComments);
 }
