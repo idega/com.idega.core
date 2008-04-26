@@ -1,12 +1,14 @@
 package com.idega.core.persistence;
 
+import java.util.List;
+
 import javax.persistence.Query;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
- * Last modified: $Date: 2008/01/06 16:57:38 $ by $Author: civilis $
+ * Last modified: $Date: 2008/04/26 02:29:01 $ by $Author: civilis $
  */
 public interface GenericDao {
 
@@ -23,4 +25,8 @@ public interface GenericDao {
 	public abstract void remove(Object obj);
 	
 	public abstract void flush();
+	
+	public abstract <Expected>List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params);
+	
+	public abstract <Expected>Expected getSingleResult(String namedQueryName, Class<Expected> expectedReturnType, Param... params);
 }

@@ -1,5 +1,7 @@
 package com.idega.core.persistence.impl;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -8,12 +10,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.core.persistence.GenericDao;
+import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  *
- * Last modified: $Date: 2008/04/24 23:37:55 $ by $Author: laddi $
+ * Last modified: $Date: 2008/04/26 02:29:01 $ by $Author: civilis $
  */
 @Repository
 @Transactional
@@ -44,6 +47,7 @@ public class GenericDaoImpl implements GenericDao {
 	
 	@Transactional(readOnly=false)
 	public <T>T merge(Object product, Class<T> clazz) {
+		@SuppressWarnings("unchecked")
 		T merged = (T)entityManager.merge(product);
 		return merged;
 	}
@@ -68,5 +72,35 @@ public class GenericDaoImpl implements GenericDao {
 	@Transactional(readOnly=false)
 	public void flush() {
 		entityManager.flush();
+	}
+	
+	public <Expected>Expected getSingleResult(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
+
+		Query q = getEntityManager().createNamedQuery(namedQueryName);
+		
+		for (Param param : params) {
+			
+			q.setParameter(param.getParamName(), param.getParamValue());
+		}
+
+		@SuppressWarnings("unchecked")
+		Expected result = (Expected)q.getSingleResult();
+		
+		return result;
+	}
+	
+	public <Expected>List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
+		
+		Query q = getEntityManager().createNamedQuery(namedQueryName);
+		
+		for (Param param : params) {
+			
+			q.setParameter(param.getParamName(), param.getParamValue());
+		}
+		
+		@SuppressWarnings("unchecked")
+		List<Expected> result = q.getResultList();
+		
+		return result;
 	}
 }
