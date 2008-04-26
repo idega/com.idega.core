@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.118 2008/04/03 17:33:59 valdas Exp $
+ * $Id: AccessControl.java,v 1.119 2008/04/26 02:28:45 civilis Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -73,12 +73,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2008/04/03 17:33:59 $ by $Author: valdas $
+ * Last modified: $Date: 2008/04/26 02:28:45 $ by $Author: civilis $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.118 $
+ * @version $Revision: 1.119 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -3199,7 +3199,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * Checks with ICRole if this roleKey exists if not it creates it so we can get it in the roles window
 	 * @param roleKey
 	 */
-	private boolean checkIfRoleExistsInDataBaseAndCreateIfMissing(String roleKey) {
+	public boolean checkIfRoleExistsInDataBaseAndCreateIfMissing(String roleKey) {
 		if(this.rolesList==null){
 			this.rolesList = new ArrayList();
 		}
