@@ -1,5 +1,5 @@
 /*
- * $Id: Search.java,v 1.4 2005/01/19 01:48:30 eiki Exp $
+ * $Id: Search.java,v 1.5 2008/04/30 14:31:21 valdas Exp $
  * Created on 18.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,10 @@ import java.util.Collection;
  * <p>
  * An instance of this class corresponds to an individual search performed by a user.
  * </p>
- *  Last modified: $Date: 2005/01/19 01:48:30 $ by $Author: eiki $
+ *  Last modified: $Date: 2008/04/30 14:31:21 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface Search {
 	
@@ -42,7 +42,7 @@ public interface Search {
 	/**
 	 * @return Returns a collection of SearchResult objects.
 	 */
-	public Collection getSearchResults();
+	public Collection<SearchResult> getSearchResults();
 	
 	/**
 	 * @return The number of results the search yielded.
