@@ -4,12 +4,17 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  		<release version="3.1.87" date="2008-05-07">
+      		<action dev="laddi" type="update">
+      			Changed so that the logon direct URI can contain parameters.
+      		</action>
+    	</release>
   		<release version="3.1.86" date="2008-04-29">
       		<action dev="gimmi" type="update">
       			EntityControl fix
       		</action>
     	</release>
-     		<release version="3.1.85" date="2008-04-02">
+   		<release version="3.1.85" date="2008-04-02">
       		<action dev="gimmi" type="update">
       			New method in Table2, for getting TableBodyRowGroup
       			New method in POIUtil for making an Excel document from a Table2 object
