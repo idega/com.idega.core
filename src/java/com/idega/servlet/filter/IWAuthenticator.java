@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.26.2.8 2007/09/03 07:30:09 alexis Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.26.2.9 2008/05/07 11:53:32 laddi Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,8 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,10 +62,10 @@ import com.idega.util.RequestUtil;
  * idegaWeb User system.<br/> When the user has a "remember me" cookie set then
  * this filter reads that and logs the user into the system.
  * </p>
- * Last modified: $Date: 2007/09/03 07:30:09 $ by $Author: alexis $
+ * Last modified: $Date: 2008/05/07 11:53:32 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.26.2.8 $
+ * @version $Revision: 1.26.2.9 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -262,9 +264,9 @@ public class IWAuthenticator extends BaseFilter {
 
 		return false;
 	}
-	
+
 	protected boolean processRedirectsToUserHome(HttpServletRequest request, HttpServletResponse response, HttpSession session, LoginBusinessBean loginBusiness, boolean isLoggedOn) throws IOException, RemoteException {
-		if(isLoggedOn) {
+		if (isLoggedOn) {
 			User user = loginBusiness.getCurrentUser(session);
 			int homePageID = user.getHomePageID();
 			if (homePageID > 0) {
@@ -272,8 +274,8 @@ public class IWAuthenticator extends BaseFilter {
 				response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
 				return true;
 			}
-			
-			Group prmg = user.getPrimaryGroup(); 
+
+			Group prmg = user.getPrimaryGroup();
 			if (prmg != null) {
 				homePageID = prmg.getHomePageID();
 				if (homePageID > 0) {
@@ -411,7 +413,14 @@ public class IWAuthenticator extends BaseFilter {
 	 * @return
 	 */
 	public static String getLoginRedirectUriOnLogonParsedWithVariables(HttpServletRequest request) {
-		String uri = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGON);
+		String uri;
+		try {
+			uri = URLDecoder.decode(request.getParameter(PARAMETER_REDIRECT_URI_ONLOGON), System.getProperty("file.encoding"));
+		}
+		catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			uri = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGON);
+		}
 		uri = getUriParsedWithVariables(request, uri);
 		return uri;
 	}
