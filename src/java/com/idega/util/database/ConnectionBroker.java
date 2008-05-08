@@ -1,5 +1,5 @@
 /*
- * $Id: ConnectionBroker.java,v 1.17 2007/04/03 13:22:12 eiki Exp $
+ * $Id: ConnectionBroker.java,v 1.18 2008/05/08 18:19:05 laddi Exp $
  *
  * Copyright (C) 2000-2005 Idega hf. All Rights Reserved.
  *
@@ -38,7 +38,7 @@ import com.idega.transaction.IdegaTransactionManager;
  * <br>
  * </p>
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
 */
 public class ConnectionBroker
 {
@@ -314,7 +314,7 @@ public class ConnectionBroker
 	 * @param datasourceName
 	 * @return
 	 */
-	static DataSource getDataSource(String datasourceName)
+	public static DataSource getDataSource(String datasourceName)
 	{
 		if(datasourceName == null || datasourceName == DEFAULT_POOL || datasourceName.equals(DEFAULT_POOL)){
 			if (defaultDs == null)
