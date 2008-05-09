@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectBMPBean.java,v 1.23 2008/05/09 15:28:28 valdas Exp $
+ * $Id: ICObjectBMPBean.java,v 1.24 2008/05/09 18:43:14 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
  *
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
@@ -44,10 +44,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * time the application starts it updates the IC_OBJECT table with all components
  * registered in all idegaWeb bundles installed in the web-application.
  * </p>
- * Last modified: $Date: 2008/05/09 15:28:28 $ by $Author: valdas $
+ * Last modified: $Date: 2008/05/09 18:43:14 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
 	/**
@@ -319,7 +319,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	}
 	
 	private int getNumberOfICObjects() {
-		if (totalObjectsRegistered < 0) {
+		if (totalObjectsRegistered <= 0) {
 			Table table = new Table(this);
 			SelectQuery query = new SelectQuery(table);
 			query.addColumn(new CountColumn(table, getIDColumnName()));
@@ -341,7 +341,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 			Collection cachedList=new ArrayList();
 			Collection cachedEntitiesList = getCachedEntities();
 			int totalObjectsRegistered = getNumberOfICObjects();
-			if (cachedEntitiesList == null || cachedEntitiesList.isEmpty() || cachedEntitiesList.size() < totalObjectsRegistered || totalObjectsRegistered == -1) {
+			if (cachedEntitiesList == null || cachedEntitiesList.isEmpty() || cachedEntitiesList.size() < totalObjectsRegistered || totalObjectsRegistered <= 0) {
 				cachedList = idoFindPKsByQuery(query);
 			}
 			else{
