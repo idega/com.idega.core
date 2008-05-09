@@ -22,10 +22,10 @@ import com.idega.idegaweb.IWMainApplicationSettings;
  * <p>
  * Utility class to send Emails with the Java Mail API.
  * </p>
- *  Last modified: $Date: 2008/05/09 01:13:09 $ by $Author: eiki $
+ *  Last modified: $Date: 2008/05/09 01:51:36 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10.2.5 $
+ * @version $Revision: 1.10.2.6 $
  */
 public class SendMail {
 	public SendMail() {
@@ -106,7 +106,7 @@ public class SendMail {
 		}
 		// Connect to the transport
 		Transport transport = session.getTransport("smtp");
-		boolean useSmtpAuthentication = Boolean.valueOf(settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION,"true"));
+		boolean useSmtpAuthentication = Boolean.parseBoolean(settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION,"true"));
 		if(useSmtpAuthentication){
 			String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME,"");
 			String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD,"");
