@@ -1,9 +1,12 @@
 package com.idega.util;
 
 import java.io.File;
+import java.util.Properties;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -15,6 +18,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import com.idega.core.messaging.MessagingSettings;
+import com.idega.core.messaging.SMTPAuthenticator;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 
@@ -22,10 +26,10 @@ import com.idega.idegaweb.IWMainApplicationSettings;
  * <p>
  * Utility class to send Emails with the Java Mail API.
  * </p>
- *  Last modified: $Date: 2008/05/09 01:51:36 $ by $Author: eiki $
+ *  Last modified: $Date: 2008/05/09 06:12:21 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10.2.6 $
+ * @version $Revision: 1.10.2.7 $
  */
 public class SendMail {
 	public SendMail() {
@@ -52,13 +56,33 @@ public class SendMail {
 	public static void send(String from, String to, String cc, String bcc,
 			String replyTo, String host, String subject, String text,
 			File attachedFile) throws MessagingException {
+		
 		// charset usually either "UTF-8" or "ISO-8859-1"
 		// if not set the system default set is taken
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
+		boolean useSmtpAuthentication = Boolean.parseBoolean(settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION,"true"));
+		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME,"");
+		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD,"");
+		//Set the host smtp address
+		Properties props = new Properties();
+		props.put("mail.smtp.host", host);
+		
 		// Start a session
-		java.util.Properties properties = System.getProperties();
-		Session session = Session.getInstance(properties, null);
+		Session session;
+		
+		if(useSmtpAuthentication){
+			props.put("mail.smtp.auth", "true");
+			Authenticator auth = new SMTPAuthenticator(username, password);
+			session = Session.getInstance(props, auth);
+		}
+		else{
+			session = Session.getInstance(props, null);
+		}
+		
+		//set debug if needed
+		session.setDebug(settings.isDebugActive());
+		
 		// Construct a message
 		to = to.replace(';', ',');
 		MimeMessage message = new MimeMessage(session);
@@ -86,7 +110,9 @@ public class SendMail {
 			message.setReplyTo(InternetAddress.parse(replyTo));
 		}
 
+		//EIKI IS THIS CORRECT? in examples on the net the second parameter is usually "text/plain" a.k.a. a contenttype!?
 		message.setSubject(subject, charset);
+		
 		if (attachedFile == null) {
 			message.setText(text, charset);
 		} else {
@@ -104,21 +130,12 @@ public class SendMail {
 			multipart.addBodyPart(attachment);
 			message.setContent(multipart);
 		}
-		// Connect to the transport
-		Transport transport = session.getTransport("smtp");
-		boolean useSmtpAuthentication = Boolean.parseBoolean(settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION,"true"));
-		if(useSmtpAuthentication){
-			String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME,"");
-			String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD,"");
-			transport.connect(host,username, password);
-		}
-		else{
-		transport.connect(host, "", "");
-		}
+		
 
 		// Send the message and close the connection
-		transport.sendMessage(message, message.getAllRecipients());
-		transport.close();
+		Transport.send(message);
+		//Transport.sendMessage(message, message.getAllRecipients());
+		//transport.close();
 	}
 
 	public static void send(String from, String to, String cc, String bcc,
@@ -137,4 +154,5 @@ public class SendMail {
 			throws MessagingException {
 		send(from, to, cc, bcc, host, replyTo, subject, text, null);
 	}
+	
 }
