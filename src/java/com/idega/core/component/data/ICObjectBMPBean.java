@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectBMPBean.java,v 1.22 2008/01/26 10:20:46 valdas Exp $
+ * $Id: ICObjectBMPBean.java,v 1.23 2008/05/09 15:28:28 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
  *
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
@@ -16,10 +16,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
 import javax.ejb.FinderException;
+
 import com.idega.core.file.data.ICFile;
+import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.data.query.CountColumn;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
@@ -40,10 +44,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * time the application starts it updates the IC_OBJECT table with all components
  * registered in all idegaWeb bundles installed in the web-application.
  * </p>
- * Last modified: $Date: 2008/01/26 10:20:46 $ by $Author: valdas $
+ * Last modified: $Date: 2008/05/09 15:28:28 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
 	/**
@@ -70,7 +74,8 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	private static final String WIDGET = "WIDGET";
 	private static final String BLOCK = "BLOCK";
 	
-	private static boolean allCached=true;
+	private static boolean allCached = true;
+	private static int totalObjectsRegistered = -1;
 	//private static Collection cachedList;
 	
 	public ICObjectBMPBean()
@@ -313,12 +318,30 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		return BUNDLE_COLUMN_NAME;
 	}
 	
+	private int getNumberOfICObjects() {
+		if (totalObjectsRegistered < 0) {
+			Table table = new Table(this);
+			SelectQuery query = new SelectQuery(table);
+			query.addColumn(new CountColumn(table, getIDColumnName()));
+	
+			try {
+				totalObjectsRegistered = idoGetNumberOfRecords(query);
+			} catch (IDOException e) {
+				e.printStackTrace();
+			}
+			return -1;
+		}
+		
+		return totalObjectsRegistered;
+	}
+	
 	public Collection ejbFindAll() throws FinderException {
-		if(allCached){
+		if (allCached) {
 			SelectQuery query = idoSelectQuery();
 			Collection cachedList=new ArrayList();
 			Collection cachedEntitiesList = getCachedEntities();
-			if(cachedEntitiesList==null||cachedEntitiesList.isEmpty()){
+			int totalObjectsRegistered = getNumberOfICObjects();
+			if (cachedEntitiesList == null || cachedEntitiesList.isEmpty() || cachedEntitiesList.size() < totalObjectsRegistered || totalObjectsRegistered == -1) {
 				cachedList = idoFindPKsByQuery(query);
 			}
 			else{
