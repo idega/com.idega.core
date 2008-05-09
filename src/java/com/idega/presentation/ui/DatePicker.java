@@ -18,6 +18,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
@@ -350,10 +351,11 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		
 		Image button = (bundle.getImage("calendar.gif", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
 		button.setOnClick("return showCalendar('"+object.getID()+"', '"+this.dateFormatPattern+"','"+value.getID()+"');");
-		Page parentPage = getParentPage();
-		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar.js"));
+//		Page parentPage = getParentPage();
+//		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar.js"));
 		
 		
+		addRequiredJavascriptAndStylesheets(iwc, getParentPage());
 		
 		
 		
@@ -362,9 +364,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		//checkOrCreateLanguageScript(iwc,iwrb,langScriptURI);
 		//parentPage.addJavascriptURL(iwrb.getImageURI(langScriptURI ));
 //		parentPage.addJavaScriptAfterJavaScriptURLs("calendar_lang",createCalendarLangScript(iwrb));
-		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendarHelper.js"));
+//		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendarHelper.js"));
 		
-		parentPage.addStyleSheetURL(bundle.getImageURI("jscalendar/calendar-win2k-1.css"));
+//		parentPage.addStyleSheetURL(bundle.getImageURI("jscalendar/calendar-win2k-1.css"));
 
 		Script s =  new Script();
 		s.addFunction("calendar_lang", createCalendarLangScript(iwrb));
@@ -379,6 +381,16 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		
 		return table;
     }
+    
+   	public static void addRequiredJavascriptAndStylesheets(IWContext iwc, Page parentPage) {
+		IWMainApplication iwma = iwc.getApplicationContext().getIWMainApplication();
+		IWBundle bundle = iwma.getBundle(PresentationObject.CORE_IW_BUNDLE_IDENTIFIER);
+
+		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar.js"));
+
+		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendarHelper.js"));
+		parentPage.addStyleSheetURL(bundle.getImageURI("jscalendar/calendar-win2k-1.css"));
+	}
     
     /*
     public void checkOrCreateLanguageScript(IWContext iwc,IWResourceBundle iwrb, String scriptBundleURI){
