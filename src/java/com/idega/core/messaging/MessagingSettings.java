@@ -6,20 +6,23 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * Class to fetch system wide settings for messaging (for emailing).
  * </p>
- *  Last modified: $Date: 2007/06/27 11:05:07 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2008/05/09 01:13:07 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1.2.1 $
+ * @version $Revision: 1.1.2.2 $
  */
 public class MessagingSettings {
 
-	public static String DEFAULT_SMTP_MAILSERVER = "mail.idega.com";
-	public static String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
-	public static String PROP_MESSAGEBOX_FROM_ADDRESS = "messagebox_from_mailaddress";
-	public static String PROP_SYSTEM_FORCED_RECEIVER = "messagebox_forced_receiver_address";
-	public static String PROP_SYSTEM_BCC_RECEIVER = "messagebox_bcc_receiver_address";
-	public static String DEFAULT_MESSAGEBOX_FROM_ADDRESS = "messagebox@idega.com";
-	public static String PROPERTY_EMAIL_ENABLED = "can_send_email";
+	public static final String DEFAULT_SMTP_MAILSERVER = "mail.idega.com";
+	public static final String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
+	public static final String PROP_SYSTEM_SMTP_USER_NAME = "messagebox_smtp_username";
+	public static final String PROP_SYSTEM_SMTP_PASSWORD = "messagebox_smtp_password";
+	public static final String PROP_MESSAGEBOX_FROM_ADDRESS = "messagebox_from_mailaddress";
+	public static final String PROP_SYSTEM_FORCED_RECEIVER = "messagebox_forced_receiver_address";
+	public static final String PROP_SYSTEM_BCC_RECEIVER = "messagebox_bcc_receiver_address";
+	public static final String DEFAULT_MESSAGEBOX_FROM_ADDRESS = "messagebox@idega.com";
+	public static final String PROPERTY_EMAIL_ENABLED = "can_send_email";
+	public static final String PROP_SYSTEM_SMTP_USE_AUTHENTICATION = "messagebox_smtp_authenticate";
 	
 	public static String PROPERTY_VALUE_NOTSET="notset";
 	

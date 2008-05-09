@@ -13,16 +13,19 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+
+import com.idega.core.messaging.MessagingSettings;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 
 /**
  * <p>
  * Utility class to send Emails with the Java Mail API.
  * </p>
- *  Last modified: $Date: 2007/12/03 12:57:51 $ by $Author: gimmi $
+ *  Last modified: $Date: 2008/05/09 01:13:09 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10.2.4 $
+ * @version $Revision: 1.10.2.5 $
  */
 public class SendMail {
 	public SendMail() {
@@ -51,8 +54,8 @@ public class SendMail {
 			File attachedFile) throws MessagingException {
 		// charset usually either "UTF-8" or "ISO-8859-1"
 		// if not set the system default set is taken
-		String charset = IWMainApplication.getDefaultIWApplicationContext()
-				.getApplicationSettings().getCharSetForSendMail();
+		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
+		String charset = settings.getCharSetForSendMail();
 		// Start a session
 		java.util.Properties properties = System.getProperties();
 		Session session = Session.getInstance(properties, null);
@@ -70,8 +73,7 @@ public class SendMail {
 		}
 		if ((bcc != null) && !("".equals(bcc))) {
 			bcc = bcc.replace(';', ',');
-			message.addRecipients(Message.RecipientType.BCC, InternetAddress
-					.parse(bcc));
+			message.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));
 		}
 		/** @todo tryggvi laga */
 		/*
@@ -104,7 +106,16 @@ public class SendMail {
 		}
 		// Connect to the transport
 		Transport transport = session.getTransport("smtp");
+		boolean useSmtpAuthentication = Boolean.valueOf(settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION,"true"));
+		if(useSmtpAuthentication){
+			String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME,"");
+			String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD,"");
+			transport.connect(host,username, password);
+		}
+		else{
 		transport.connect(host, "", "");
+		}
+
 		// Send the message and close the connection
 		transport.sendMessage(message, message.getAllRecipients());
 		transport.close();

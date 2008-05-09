@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.idega.core.messaging.MessagingSettings;
+
 public class CoreConstants {
 	
 	public static final String CORE_IW_BUNDLE_IDENTIFIER = "com.idega.core";
@@ -18,8 +20,11 @@ public class CoreConstants {
 	public static final String SEMICOLON = ";";
 	public static final String MINUS = "-";
 	
-	public static final String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
-	public static final String PROP_SYSTEM_MAIL_FROM_ADDRESS = "messagebox_from_mailaddress";
+	public static final String PROP_SYSTEM_SMTP_MAILSERVER = MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER;
+	public static final String PROP_SYSTEM_MAIL_FROM_ADDRESS = MessagingSettings.PROP_MESSAGEBOX_FROM_ADDRESS;
+	public static final String PROP_SYSTEM_SMTP_USER = MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME;
+	public static final String PROP_SYSTEM_SMTP_PASSWORD = MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD;
+	public static final String PROP_SYSTEM_SMTP_USE_AUTHENTICATION = MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION;
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
 
