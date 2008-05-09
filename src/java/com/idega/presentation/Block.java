@@ -1,5 +1,5 @@
 /*
- * $Id: Block.java,v 1.76 2006/04/09 12:13:13 laddi Exp $
+ * $Id: Block.java,v 1.76.2.1 2008/05/09 10:42:53 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -36,10 +36,10 @@ import com.idega.presentation.text.Text;
  * their functionality is done with the main() method in old style idegaWeb.
  * This class has functionality regarding caching and how the main method is processed in JSF.
  * 
- * Last modified: $Date: 2006/04/09 12:13:13 $ by $Author: laddi $
+ * Last modified: $Date: 2008/05/09 10:42:53 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.76 $
+ * @version $Revision: 1.76.2.1 $
  */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
@@ -460,7 +460,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return setStyle(obj, styleName, false);
 	}
 
-	private boolean isCacheValid(IWContext iwc) {
+	protected boolean isCacheValid(IWContext iwc) {
 		boolean valid = false;
 		if (this.cacheable) {
 			if (getDerivedCacheKey() != null) {
