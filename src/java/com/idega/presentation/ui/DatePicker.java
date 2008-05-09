@@ -348,17 +348,27 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		Image button = (bundle.getImage("calendar.gif", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
 		button.setOnClick("return showCalendar('" + object.getID() + "', '" + this.dateFormatPattern + "','" + value.getID() + "');");
 
-		Page parentPage = getParentPage();
-		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar.js"));
 
 		// String langScriptURI = "jscalendar/calendar-"+iwc.getCurrentLocale().getLanguage()+".js";
 		// String langScriptURI = "jscalendar/calendar_lang.js";
 		// checkOrCreateLanguageScript(iwc,iwrb,langScriptURI);
 		// parentPage.addJavascriptURL(iwrb.getImageURI(langScriptURI ));
 //		parentPage.addJavaScriptAfterJavaScriptURLs("calendar_lang", createCalendarLangScript(iwrb));
-		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendarHelper.js"));
-
-		parentPage.addStyleSheetURL(bundle.getImageURI("jscalendar/calendar-win2k-1.css"));
+//		Page parentPage = getParentPage();
+		addRequiredJavascriptAndStylesheets(iwc, getParentPage());
+//		Script s1 = new Script();
+//		s1.addScriptSource(bundle.getImageURI("jscalendar/calendar.js"));
+//		
+//		Script s2 = new Script();
+//		s2.addScriptSource(bundle.getImageURI("jscalendar/calendarHelper.js"));
+//
+//		Stylesheet sh = new Stylesheet();
+//		sh.setPath(bundle.getImageURI("jscalendar/calendar-win2k-1.css"));
+//		
+//		add(s1);
+//		add(s2);
+//		add(sh);
+		
 
 		Script s =  new Script();
 		s.addFunction("calendar_lang", createCalendarLangScript(iwrb));
@@ -371,6 +381,16 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		layer.add(button);
 
 		return layer;
+	}
+	
+	public static void addRequiredJavascriptAndStylesheets(IWContext iwc, Page parentPage) {
+		IWMainApplication iwma = iwc.getApplicationContext().getIWMainApplication();
+		IWBundle bundle = iwma.getBundle(PresentationObject.CORE_IW_BUNDLE_IDENTIFIER);
+
+		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar.js"));
+
+		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendarHelper.js"));
+		parentPage.addStyleSheetURL(bundle.getImageURI("jscalendar/calendar-win2k-1.css"));
 	}
 
 	/*
