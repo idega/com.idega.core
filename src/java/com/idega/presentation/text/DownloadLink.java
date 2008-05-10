@@ -22,7 +22,7 @@ import com.idega.presentation.PresentationObject;
  */
 public class DownloadLink extends Link {
     
-    private Class writerClass = null;
+    private Class<?> writerClass = null;
     
     /**
      * 
@@ -98,7 +98,7 @@ public class DownloadLink extends Link {
     }
     
     
-    public void setMediaWriterClass(Class writerClass){
+    public void setMediaWriterClass(Class<?> writerClass){
         this.writerClass = writerClass;
     }
     
