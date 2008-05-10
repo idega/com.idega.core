@@ -14,9 +14,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  *
- * Last modified: $Date: 2008/05/05 16:30:12 $ by $Author: laddi $
+ * Last modified: $Date: 2008/05/10 18:30:04 $ by $Author: civilis $
  */
 @Repository
 @Transactional
@@ -47,6 +47,7 @@ public class GenericDaoImpl implements GenericDao {
 	
 	@Transactional(readOnly=false)
 	public <T>T merge(Object product, Class<T> clazz) {
+		@SuppressWarnings("unchecked")
 		T merged = (T)entityManager.merge(product);
 		return merged;
 	}
@@ -82,6 +83,7 @@ public class GenericDaoImpl implements GenericDao {
 			q.setParameter(param.getParamName(), param.getParamValue());
 		}
 
+		@SuppressWarnings("unchecked")
 		Expected result = (Expected)q.getSingleResult();
 		
 		return result;
@@ -96,6 +98,7 @@ public class GenericDaoImpl implements GenericDao {
 			q.setParameter(param.getParamName(), param.getParamValue());
 		}
 		
+		@SuppressWarnings("unchecked")
 		List<Expected> result = q.getResultList();
 		
 		return result;
