@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.174 2008/05/10 15:57:30 laddi Exp $
+ * $Id: Link.java,v 1.175 2008/05/10 16:13:01 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -2532,7 +2532,7 @@ public void setWindowToOpen(String className) {
 
 	@Override
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[44];
+		Object values[] = new Object[45];
 		values[0] = super.saveState(context);
 		if (_obj != null) {
 			Object objState = _obj.saveState(context);
