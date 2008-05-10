@@ -1,5 +1,5 @@
 /*
- * $Id: ConnectionBroker.java,v 1.18 2008/05/08 18:19:05 laddi Exp $
+ * $Id: ConnectionBroker.java,v 1.19 2008/05/10 14:42:30 alexis Exp $
  *
  * Copyright (C) 2000-2005 Idega hf. All Rights Reserved.
  *
@@ -38,7 +38,7 @@ import com.idega.transaction.IdegaTransactionManager;
  * <br>
  * </p>
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
 */
 public class ConnectionBroker
 {
@@ -302,6 +302,48 @@ public class ConnectionBroker
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * <p>
+	 * Checks if the datasource from the string 'datasourceName' is available<br>
+	 * If dataSourceName is 'default' it returns the default datasource from 'jdbc/DefaultDS' otherwise it tries to look up
+	 * a datasource from jdbc/[datasourceName].
+	 * </p>
+	 * @param datasourceName
+	 * @return
+	 */
+	public static boolean hasDataSource(String datasourceName) {
+		if(datasourceName == null || datasourceName == DEFAULT_POOL || datasourceName.equals(DEFAULT_POOL)){
+			if (defaultDs == null)
+			{
+				try
+				{
+					defaultDs = (DataSource) getEnvContext().lookup(DEFAULT_JDBC_JNDI_URL);
+					dataSourcesMap.put(DEFAULT_POOL,defaultDs);
+				}
+				catch (NamingException e)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+		else{
+			DataSource dataSource = (DataSource)dataSourcesMap.get(datasourceName);
+			if(dataSource==null){
+				try
+				{
+					dataSource = (DataSource) getEnvContext().lookup("jdbc/"+datasourceName);
+					dataSourcesMap.put(datasourceName,dataSource);
+				}
+				catch (NamingException e)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
 	}
 	
 	
