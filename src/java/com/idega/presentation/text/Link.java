@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.173 2007/10/24 15:26:51 civilis Exp $
+ * $Id: Link.java,v 1.174 2008/05/10 15:57:30 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -112,6 +112,7 @@ public class Link extends Text {
 	private boolean https = false;
 	private String protocol = null;
 	private int fileId = -1;
+	private String datasource = null;
 	private final static String DEFAULT_TEXT_STRING = "No text";
 	public static boolean usingEventSystem = false;
 	//A BuilderPage to link to:
@@ -402,11 +403,11 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		if (this.fileId != -1){
 			ICFileSystem fsystem = getICFileSystem(iwc);
-			String fileURL = fsystem.getFileURI(this.fileId);
-			//setURL(MediaBusiness.getMediaURL(fileId, iwc.getApplication()));
+			String fileURL = datasource != null ? fsystem.getFileURI(this.fileId, datasource) : fsystem.getFileURI(this.fileId);
 			setURL(fileURL);
 		}
 		setURIToClassToInstanciate(iwc);
@@ -851,6 +852,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setFontSize(String s) {
 		if (isText()) {
 			((Text) this._obj).setFontSize(s);
@@ -860,6 +862,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setFontSize(int i) {
 		setFontSize(Integer.toString(i));
 	}
@@ -867,6 +870,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setFontFace(String s) {
 		if (isText()) {
 			((Text) this._obj).setFontFace(s);
@@ -876,6 +880,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setFontColor(String color) {
 		if (isText()) {
 			((Text) this._obj).setFontColor(color);
@@ -885,6 +890,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setFontStyle(String style) {
 		if (isText()) {
 			((Text) this._obj).setFontStyle(style);
@@ -894,12 +900,14 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setFontClass(String styleClass) {
 		if (isText()) {
 			((Text) this._obj).setFontClass(styleClass);
 		}
 	}
 
+	@Override
 	public void setStyle(String style) {
 		super.setStyle(style);
 		this.hasClass = true;
@@ -915,6 +923,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void addBreak() {
 		if (isText()) {
 			((Text) this._obj).addBreak();
@@ -924,6 +933,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setTeleType() {
 		if (isText()) {
 			((Text) this._obj).setTeleType();
@@ -933,6 +943,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setBold() {
 		if (isText()) {
 			((Text) this._obj).setBold();
@@ -942,6 +953,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setItalic() {
 		if (isText()) {
 			((Text) this._obj).setItalic();
@@ -951,6 +963,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setUnderline() {
 		if (isText()) {
 			((Text) this._obj).setUnderline();
@@ -960,6 +973,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setText(String text) {
 		if (isText()) {
 			((Text) this._obj).setText(text);
@@ -971,6 +985,7 @@ public class Link extends Text {
 		}
 	}
 
+	@Override
 	public String getText() {
 		String toReturn = this.text;
 		if (toReturn == null && this._obj == null && this._obj instanceof Text && !(this._obj instanceof Link)) {
@@ -989,6 +1004,7 @@ public class Link extends Text {
 		this._objectType = OBJECT_TYPE_TEXT;
 	}
 
+	@Override
 	public void setLocalizedText(String localeString, String text) {
 		if (isText()) {
 			((Text) this._obj).setLocalizedText(localeString, text);
@@ -1001,6 +1017,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setLocalizedText(int icLocaleID, String text) {
 		if (isText()) {
 			((Text) this._obj).setLocalizedText(icLocaleID, text);
@@ -1013,6 +1030,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setLocalizedText(Locale locale, String text) {
 		if (isText()) {
 			((Text) this._obj).setLocalizedText(locale, text);
@@ -1025,6 +1043,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void addToText(String text) {
 		if (isText()) {
 			((Text) this._obj).addToText(text);
@@ -1278,6 +1297,7 @@ public class Link extends Text {
 	 */
 	public void setFile(ICFile file) {
 		this.fileId = ((Integer)file.getPrimaryKey()).intValue();
+		this.datasource = file.getDatasource();
 	}
 
 	/**
@@ -1304,6 +1324,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public Object clone() {
 		Link linkObj = null;
 		try {
@@ -1659,6 +1680,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void print(IWContext iwc) throws Exception {
 
 		boolean addParameters = true;
@@ -1784,6 +1806,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void addIWLinkListener(IWLinkListener l, IWContext iwc) {
 		if (!listenerAdded()) {
 			postIWLinkEvent(iwc);
@@ -1913,6 +1936,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setProperty(String key, String values[]) {
 		if (key.equalsIgnoreCase("text")) {
 			setText(values[0]);
@@ -2321,6 +2345,7 @@ public void setWindowToOpen(String className) {
 		return this.protocol;
 	}
 
+	@Override
 	public void setToolTip(String toolTip) 	{
 		super.setToolTip(toolTip);
 		if (this._objectType == OBJECT_TYPE_IMAGE) {
@@ -2386,6 +2411,7 @@ public void setWindowToOpen(String className) {
 	}
 	
 	
+	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
 		super.restoreState(context, values[0]);
@@ -2501,8 +2527,10 @@ public void setWindowToOpen(String className) {
 		_ImageLocalizationMap = (Map) values[41];
 		_toolTipLocalizationMap = (Map) values[42];
 		usePublicOjbectInstanciator = ((Boolean) values[43]).booleanValue();
+		datasource = (String) values[44];
 	}
 
+	@Override
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[44];
 		values[0] = super.saveState(context);
@@ -2564,6 +2592,7 @@ public void setWindowToOpen(String className) {
 		values[41] = _ImageLocalizationMap;
 		values[42] = _toolTipLocalizationMap;
 		values[43] = new Boolean(usePublicOjbectInstanciator);
+		values[44] = datasource;
 		return values;
 	}	
 }
