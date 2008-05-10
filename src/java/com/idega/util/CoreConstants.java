@@ -130,4 +130,5 @@ public class CoreConstants {
 	
 	public static final String SPRING_BEAN_NAME_PDF_GENERATOR = "pdfGenerator";
 	public static final String SPRING_BEAN_NAME_BUILDER_LOGIC_WRAPPER = "builderLogicWrapperBeanId";
+	public static final String SPRING_BEAN_NAME_PROCESS_ARTIFACTS = "BPMProcessAssets";
 }
