@@ -33,6 +33,7 @@ public class CoreConstants {
 	public static final String QMARK = "?";
 	public static final String COLON = ":";
 	public static final String NEWLINE = "\n";
+	public static final String DOUBLENEWLINE = "\n";
 	public static final String STAR = "*";
 	public static final String MINUS = "-";
 	public static final String PERCENT = "%";
