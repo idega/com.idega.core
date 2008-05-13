@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.18 2008/04/24 23:44:13 laddi Exp $
+ * $Id: IWBaseComponent.java,v 1.19 2008/05/13 12:35:39 valdas Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -13,6 +13,8 @@ package com.idega.presentation;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.component.UIViewRoot;
@@ -36,10 +38,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
- * Last modified: $Date: 2008/04/24 23:44:13 $ by $Author: laddi $
+ * Last modified: $Date: 2008/05/13 12:35:39 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
@@ -364,6 +366,12 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	public List<UIComponent> getChildren() {
 		List<UIComponent> children = super.getChildren();
 		return children;
+	}
+	
+	@Override
+	public Map<Object, UIComponent> getFacets() {
+		Map<Object, UIComponent> facets = super.getFacets();
+		return facets;
 	}
 	
 	/**
