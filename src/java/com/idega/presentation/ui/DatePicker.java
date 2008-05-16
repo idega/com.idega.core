@@ -90,12 +90,13 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         this.date = date;
     }
 
-    public void main(IWContext iwc) {
+    @Override
+		public void main(IWContext iwc) {
         empty();
         IWBundle iwb = getBundle(iwc);
         IWResourceBundle iwrb = this.getResourceBundle(iwc);
         this.dateFormatPattern = iwb.getProperty("DatePicker.date_format_string","yyyy-MM-dd");
-        setChooseButtonImage(iwb.getImage("calendar.gif", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
+        setChooseButtonImage(iwb.getImage("date.png", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
         if (this.locale == null) {
             this.locale = iwc.getCurrentLocale();
         }
@@ -107,6 +108,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         //setParameterValue(SmallCalendar.PRM_SETTINGS,SmallCalendar.getInitializingString(true,null,"#0000FF","#00FF00","#00FFFF","#FFFF00","#FFFFFF","#FFF000"));
     }
 
+	@Override
 	public PresentationObject getPresentationObject(IWContext iwc) {
 
         TextInput input = new TextInput(this.displayInputName);
@@ -164,7 +166,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
      * 
      * @see com.idega.presentation.ui.AbstractChooser#getChooserWindowClass()
      */
-    public Class getChooserWindowClass() {
+    @Override
+		public Class getChooserWindowClass() {
         return DatePickerWindow.class;
     }
 
@@ -333,7 +336,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     /* (non-Javadoc)
      * @see com.idega.presentation.ui.AbstractChooser#getTable(com.idega.presentation.IWContext, com.idega.idegaweb.IWBundle)
      */
-    public PresentationObject getChooser(IWContext iwc, IWBundle bundle) {
+    @Override
+		public PresentationObject getChooser(IWContext iwc, IWBundle bundle) {
         IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
         if(!useJSCalendar(bundle)) {
 					return super.getChooser(iwc, bundle);
@@ -349,7 +353,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 			value.setValue(getChooserValue());
 		}
 		
-		Image button = (bundle.getImage("calendar.gif", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
+		Image button = (bundle.getImage("date.png", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
 		button.setOnClick("return showCalendar('"+object.getID()+"', '"+this.dateFormatPattern+"','"+value.getID()+"');");
 //		Page parentPage = getParentPage();
 //		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar.js"));
@@ -470,7 +474,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		return script.toString();
     }
 
-    public void setStyleClass(String styleClass) {
+    @Override
+		public void setStyleClass(String styleClass) {
     	this.styleClass = styleClass;
     }
     
@@ -485,7 +490,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     public void setUseJSCalendar(boolean useJSCalendar) {
     	this.useJSCalendar = useJSCalendar;
     }
-    protected boolean getUsePublicWindowOpener() {
+    @Override
+		protected boolean getUsePublicWindowOpener() {
 		return true;
 	}
 
