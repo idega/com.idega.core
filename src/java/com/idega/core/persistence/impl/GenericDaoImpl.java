@@ -14,9 +14,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  *
- * Last modified: $Date: 2008/05/10 18:30:04 $ by $Author: civilis $
+ * Last modified: $Date: 2008/05/16 09:33:36 $ by $Author: civilis $
  */
 @Repository
 @Transactional
@@ -74,9 +74,7 @@ public class GenericDaoImpl implements GenericDao {
 		entityManager.flush();
 	}
 	
-	public <Expected>Expected getSingleResult(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
-
-		Query q = getEntityManager().createNamedQuery(namedQueryName);
+	protected <Expected>Expected getSingleResultByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
 		
 		for (Param param : params) {
 			
@@ -89,10 +87,8 @@ public class GenericDaoImpl implements GenericDao {
 		return result;
 	}
 	
-	public <Expected>List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
-		
-		Query q = getEntityManager().createNamedQuery(namedQueryName);
-		
+	protected <Expected>List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
+
 		for (Param param : params) {
 			
 			q.setParameter(param.getParamName(), param.getParamValue());
@@ -102,5 +98,30 @@ public class GenericDaoImpl implements GenericDao {
 		List<Expected> result = q.getResultList();
 		
 		return result;
+	}
+	
+	
+	public <Expected>Expected getSingleResultByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params) {
+		
+		Query q = getEntityManager().createQuery(query);
+		return getSingleResultByQuery(q, expectedReturnType, params);
+	}
+	
+	public <Expected>Expected getSingleResult(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
+
+		Query q = getEntityManager().createNamedQuery(namedQueryName);
+		return getSingleResultByQuery(q, expectedReturnType, params);
+	}
+	
+	public <Expected>List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params) {
+
+		Query q = getEntityManager().createQuery(query);
+		return getResultListByQuery(q, expectedReturnType, params);
+	}
+	
+	public <Expected>List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
+
+		Query q = getEntityManager().createNamedQuery(namedQueryName);
+		return getResultListByQuery(q, expectedReturnType, params);
 	}
 }
