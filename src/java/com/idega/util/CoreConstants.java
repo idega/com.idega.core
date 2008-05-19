@@ -56,7 +56,8 @@ public class CoreConstants {
 
 	public static final String PATH_FILES_ROOT = "/files";
 	public static final String CONTENT_PATH = PATH_FILES_ROOT + "/cms";
-	public static final String PAGES_PATH = CONTENT_PATH + "/pages";
+	public static final String PAGES_URI_PREFIX = "/pages";
+	public static final String PAGES_PATH = CONTENT_PATH + PAGES_URI_PREFIX;
 	public static final String PUBLIC_PATH = PATH_FILES_ROOT + "/public";
 
 	public static final String ARTICLE_CONTENT_PATH = "/article";
