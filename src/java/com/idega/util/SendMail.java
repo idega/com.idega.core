@@ -26,22 +26,23 @@ import com.idega.idegaweb.IWMainApplicationSettings;
  * <p>
  * Utility class to send Emails with the Java Mail API.
  * </p>
- *  Last modified: $Date: 2008/05/09 06:12:21 $ by $Author: eiki $
+ * Last modified: $Date: 2008/05/20 13:35:03 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10.2.7 $
+ * @version $Revision: 1.10.2.8 $
  */
 public class SendMail {
+
 	public SendMail() {
 	}
 
 	/**
 	 * <p>
-	 * Method that uses the Java Mail API to send an email message.<br/>
-	 * It is recommended to use the <type>com.idega.core.messaging.EmailMessage</type>
-	 * class rather than calling this method
-	 * directly.
+	 * Method that uses the Java Mail API to send an email message.<br/> It is
+	 * recommended to use the <type>com.idega.core.messaging.EmailMessage</type>
+	 * class rather than calling this method directly.
 	 * </p>
+	 * 
 	 * @param from
 	 * @param to
 	 * @param cc
@@ -53,36 +54,34 @@ public class SendMail {
 	 * @param attachedFile
 	 * @throws MessagingException
 	 */
-	public static void send(String from, String to, String cc, String bcc,
-			String replyTo, String host, String subject, String text,
-			File attachedFile) throws MessagingException {
-		
+	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, File attachedFile) throws MessagingException {
+
 		// charset usually either "UTF-8" or "ISO-8859-1"
 		// if not set the system default set is taken
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
-		boolean useSmtpAuthentication = Boolean.parseBoolean(settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION,"true"));
-		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME,"");
-		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD,"");
+		boolean useSmtpAuthentication = Boolean.valueOf(settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, "true")).booleanValue();
+		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, "");
+		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, "");
 		//Set the host smtp address
 		Properties props = new Properties();
 		props.put("mail.smtp.host", host);
-		
+
 		// Start a session
 		Session session;
-		
-		if(useSmtpAuthentication){
+
+		if (useSmtpAuthentication) {
 			props.put("mail.smtp.auth", "true");
 			Authenticator auth = new SMTPAuthenticator(username, password);
 			session = Session.getInstance(props, auth);
 		}
-		else{
+		else {
 			session = Session.getInstance(props, null);
 		}
-		
+
 		//set debug if needed
 		session.setDebug(settings.isDebugActive());
-		
+
 		// Construct a message
 		to = to.replace(';', ',');
 		MimeMessage message = new MimeMessage(session);
@@ -92,8 +91,7 @@ public class SendMail {
 		// this Address[] ccAddressess = InternetAddress.parse(cc); or similar
 		if ((cc != null) && !("".equals(cc))) {
 			cc = cc.replace(';', ',');
-			message.addRecipients(Message.RecipientType.CC, InternetAddress
-					.parse(cc));
+			message.addRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
 		}
 		if ((bcc != null) && !("".equals(bcc))) {
 			bcc = bcc.replace(';', ',');
@@ -112,10 +110,11 @@ public class SendMail {
 
 		//EIKI IS THIS CORRECT? in examples on the net the second parameter is usually "text/plain" a.k.a. a contenttype!?
 		message.setSubject(subject, charset);
-		
+
 		if (attachedFile == null) {
 			message.setText(text, charset);
-		} else {
+		}
+		else {
 			MimeBodyPart body = new MimeBodyPart();
 			body.setText(text, charset);
 			BodyPart attachment = new MimeBodyPart();
@@ -130,7 +129,6 @@ public class SendMail {
 			multipart.addBodyPart(attachment);
 			message.setContent(multipart);
 		}
-		
 
 		// Send the message and close the connection
 		Transport.send(message);
@@ -138,21 +136,16 @@ public class SendMail {
 		//transport.close();
 	}
 
-	public static void send(String from, String to, String cc, String bcc,
-			String host, String subject, String text, File attachedFile)
-			throws MessagingException {
+	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text, File attachedFile) throws MessagingException {
 		send(from, to, cc, bcc, null, host, subject, text, attachedFile);
 	}
 
-	public static void send(String from, String to, String cc, String bcc,
-			String host, String subject, String text) throws MessagingException {
+	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text) throws MessagingException {
 		send(from, to, cc, bcc, null, host, subject, text, null);
 	}
 
-	public static void send(String from, String to, String cc, String bcc,
-			String replyTo, String host, String subject, String text)
-			throws MessagingException {
+	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text) throws MessagingException {
 		send(from, to, cc, bcc, host, replyTo, subject, text, null);
 	}
-	
+
 }
