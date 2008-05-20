@@ -27,10 +27,12 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.servlet.filter.IWBundleResourceFilter;
 
 public class FileUtil {
 
@@ -430,7 +432,7 @@ public class FileUtil {
 	 * @return
 	 * @author thomas
 	 */
-	public static List getFilesInDirectory(File folder) {
+	public static List<File> getFilesInDirectory(File folder) {
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
 				public boolean accept(File file) {
@@ -449,7 +451,7 @@ public class FileUtil {
 	 * @return
 	 * @author thomas
 	 */
-	public static List getDirectoriesInDirectory(File folder) {
+	public static List<File> getDirectoriesInDirectory(File folder) {
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
 				public boolean accept(File file) {
@@ -462,8 +464,8 @@ public class FileUtil {
 		return null;
 	}
 
-  public static List getLinesFromFile(File fromFile) throws IOException{
-    List strings = new ArrayList();
+  public static List<String> getLinesFromFile(File fromFile) throws IOException{
+    List<String> strings = new ArrayList<String>();
 
     FileReader reader;
     LineNumberReader lineReader = null;
@@ -482,23 +484,27 @@ public class FileUtil {
   }
 
 /** Gets the lines from a file and return the as a vector of strings **/
-  public static List getLinesFromFile(String pathAndFile) throws IOException{
+  public static List<String> getLinesFromFile(String pathAndFile) throws IOException{
     File f = new File(pathAndFile);
+    if (!f.exists()) {
+    	int virtualPathStart = pathAndFile.indexOf("/idegaweb/bundles/");
+    	if (virtualPathStart != -1) {
+    		f = IWBundleResourceFilter.copyResourceFromJarToWebapp(IWMainApplication.getDefaultIWMainApplication(), pathAndFile.substring(virtualPathStart));
+    	}
+    }
     return getLinesFromFile(f);
   }
 
 /** Uses getLinesFromFile and returns them in a string with "\n" between them **/
   public static String getStringFromFile(String pathAndFile) throws IOException{
-    StringBuffer buffer = new StringBuffer();
-    List list = getLinesFromFile(pathAndFile);
-    if ( list != null ) {
-      Iterator iter = list.iterator();
-      while (iter.hasNext()) {
-        buffer.append((String) iter.next());
-        buffer.append('\n');
-      }
-    }
-    return buffer.toString();
+	  StringBuffer buffer = new StringBuffer();
+	  List<String> lines = getLinesFromFile(pathAndFile);
+	  if (lines != null) {
+		  for (String line: lines) {
+			  buffer.append(line).append('\n');
+		  }
+	  }
+	  return buffer.toString();
   }
 
   /** Gets a file relative to the specified file according the specified path.
@@ -687,17 +693,14 @@ public class FileUtil {
 
   /** uses getLinesFromFile and cuts the lines into java.util.StringTokenizer and returns them in a vector **/
 
-   public static List getCommaSeperatedTokensFromLinesFromFile(String pathAndFile, String seperatorToken) throws IOException{
-    List lines = getLinesFromFile(pathAndFile);
-    List tokens = new ArrayList();
-    String item;
+   public static List<StringTokenizer> getCommaSeperatedTokensFromLinesFromFile(String pathAndFile, String seperatorToken) throws IOException{
+    List<String> lines = getLinesFromFile(pathAndFile);
+    List<StringTokenizer> tokens = new ArrayList<StringTokenizer>();
 
-    Iterator iter = lines.iterator();
     StringTokenizer tokenizer;
 
-    while (iter.hasNext()) {
-      item = (String) iter.next();
-      tokenizer = new StringTokenizer(item,seperatorToken);
+    for (String line: lines) {
+      tokenizer = new StringTokenizer(line, seperatorToken);
       tokens.add(tokenizer);
     }
 
