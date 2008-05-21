@@ -13,9 +13,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+
 import com.idega.graphics.encoder.gif.Gif89Encoder;
 import com.idega.util.FileUtil;
 import com.idega.util.IWColor;
@@ -118,7 +118,7 @@ public class Button {
    */
   public static void main(String[] args) {
     try{
-      List tokenizers = FileUtil.getCommaSeperatedTokensFromLinesFromFile(args[0],"=");
+      List<StringTokenizer> tokenizers = FileUtil.getCommaSeperatedTokensFromLinesFromFile(args[0],"=");
       Button button = new Button();
       button.fillColor = IWColor.getAWTColorFromHex(args[1]);
       button.highlightColor = IWColor.getAWTColorFromHex(args[2]);
@@ -129,13 +129,10 @@ public class Button {
       //button.setFont(font.deriveFont(10f));
       button.onlyCreateUpState(true);
 
-      Iterator iter = tokenizers.iterator();
-      while (iter.hasNext()) {
-        StringTokenizer tokens = (StringTokenizer)iter.next();
-
-        while(tokens.hasMoreTokens()){
-          button.name = tokens.nextToken();
-          button.text = tokens.nextToken().toUpperCase();
+      for(StringTokenizer tokenizer: tokenizers) {
+        while(tokenizer.hasMoreTokens()){
+          button.name = tokenizer.nextToken();
+          button.text = tokenizer.nextToken().toUpperCase();
         }
 
         button.width = Integer.parseInt(args[3]);
