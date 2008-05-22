@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthorizationFilter.java,v 1.14 2008/05/21 10:57:32 alexis Exp $ Created on 31.7.2004
+ * $Id: IWAuthorizationFilter.java,v 1.15 2008/05/22 08:19:51 alexis Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -33,10 +33,10 @@ import com.idega.idegaweb.IWUserContextImpl;
  * sufficent priviliges.<br/>
  * In some instances (when accessing the workspace) it redirects the user to the login page.
  * </p>
- * Last modified: $Date: 2008/05/21 10:57:32 $ by $Author: alexis $
+ * Last modified: $Date: 2008/05/22 08:19:51 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
@@ -100,12 +100,9 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 		//HttpServletRequest request = iwc.getRequest();
 		/*HttpServletResponse response = iwc.getResponse();*/
 		String uri = getURIMinusContextPath(request);
-		System.out.println("####### Request URI: " + uri);
 		if(uri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH)){
-			System.out.println("####### accessing workspace URI: " + uri);
 			LoginBusinessBean loginBusiness = getLoginBusiness(request);
 			if(!loginBusiness.isLoggedOn(request)){
-				System.out.println("####### Not logged on - returning FALSE");
 				return false;
 			}
 			else{
@@ -114,19 +111,15 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 				IWUserContext iwuc = new IWUserContextImpl(request.getSession(),request.getSession().getServletContext());
 				
 				if(vManager.hasUserAccess(node,iwuc)){
-					System.out.println("####### Has user access");
 					return true;
 				}
 				else{
-					System.out.println("####### No user access");
 					return false;
 				}
 			}
 		}
 		else if(uri.startsWith(PAGES_URI)){
-			System.out.println("####### accessing pages URI: " + uri);
 			boolean pageAccess = getIWMainApplication(request).getAccessController().hasViewPermissionForPageURI(uri,request);
-			System.out.println("####### Pages URI Access: " + pageAccess);
 			return pageAccess;
 		}
 		return true;
