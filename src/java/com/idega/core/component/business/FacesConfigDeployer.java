@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.11 2008/01/07 15:05:55 civilis Exp $
+ * $Id: FacesConfigDeployer.java,v 1.12 2008/05/22 08:10:30 valdas Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -36,10 +36,10 @@ import com.idega.util.xml.XmlUtil;
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2008/01/07 15:05:55 $ by $Author: civilis $
+ * Last modified: $Date: 2008/05/22 08:10:30 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
@@ -66,11 +66,11 @@ public class FacesConfigDeployer implements JarLoader {
 			JarEntry entry = entries.nextElement();
 			String entryName = entry.getName();
 			if (entryName.equals("META-INF/faces-config.xml")) {
+				InputStream stream = null;
 				try {
-					log.info("Found JSF Description file: " + entryName);
-					InputStream stream = jarFile.getInputStream(entry);
-					processFacesConfig(jarFile,stream);
-					stream.close();
+					log.info("Found JSF Description file in bundle: " + jarPath + ", file: " + entryName);
+					stream = jarFile.getInputStream(entry);
+					processFacesConfig(jarFile, stream);
 				}
 				catch (IOException e) {
 					e.printStackTrace();
@@ -80,29 +80,40 @@ public class FacesConfigDeployer implements JarLoader {
 				}
 				catch (SAXException e) {
 					e.printStackTrace();
+				} finally {
+					closeInputStream(stream);
 				}
 			}
 		}
 	}
-
-	public void processFacesConfig(JarFile jarFile,InputStream stream) throws ParserConfigurationException, SAXException, IOException {
+	
+	private void closeInputStream(InputStream stream) {
+		if (stream == null) {
+			return;
+		}
 		
+		try {
+			stream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void processFacesConfig(JarFile jarFile, InputStream stream) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilder builder = XmlUtil.getDocumentBuilder(false);
 		
 		Document document = builder.parse(stream);
-		processDocument(jarFile,document);
+		processDocument(jarFile, document);
 	}
 
-	public void processDocument(JarFile jarFile, Document document) {
-
+	private void processDocument(JarFile jarFile, Document document) {
 		XPathUtil util = new XPathUtil(".//component");
 		NodeList componentsElements = util.getNodeset(document);
 		
 		try {
-			
-			for (int i = 0; i < componentsElements.getLength(); i++)
+			for (int i = 0; i < componentsElements.getLength(); i++) {
 				processComponentElement(jarFile, (Element)componentsElements.item(i));
-			
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -122,13 +133,12 @@ public class FacesConfigDeployer implements JarLoader {
 			}
 		}
 		catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		*/
 	}
 
-	protected void processComponentElement(JarFile jarFile,Element element) throws Exception {
+	private void processComponentElement(JarFile jarFile,Element element) throws Exception {
 		NodeList children = element.getChildNodes();
 		String componentClass = null;
 		String componentType = null;
