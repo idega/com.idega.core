@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSession.java,v 1.7 2007/08/06 13:34:31 valdas Exp $
+ * $Id: LoginSession.java,v 1.8 2008/05/23 08:22:58 anton Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
 package com.idega.core.accesscontrol.business;
 
 import java.util.List;
+import java.util.Locale;
 
 import com.idega.business.SpringBeanName;
 import com.idega.core.data.GenericGroup;
@@ -18,10 +19,10 @@ import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.user.business.UserProperties;
 
 /**
- *  <p />Last modified: $Date: 2007/08/06 13:34:31 $ by $Author: valdas $
+ *  <p />Last modified: $Date: 2008/05/23 08:22:58 $ by $Author: anton $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 @SpringBeanName("loginSession")
 public interface LoginSession {
@@ -140,4 +141,6 @@ public interface LoginSession {
     public abstract void reset();
     
     public String getSuperAdminId();
+    
+    public Locale getCurrentLocale();
 }

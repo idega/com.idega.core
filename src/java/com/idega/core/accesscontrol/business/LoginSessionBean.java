@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSessionBean.java,v 1.9 2007/08/06 13:34:31 valdas Exp $
+ * $Id: LoginSessionBean.java,v 1.10 2008/05/23 08:22:58 anton Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -11,9 +11,11 @@ package com.idega.core.accesscontrol.business;
 
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
 import com.idega.core.data.GenericGroup;
+import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.idegaweb.IWApplicationContext;
@@ -22,16 +24,17 @@ import com.idega.user.business.UserProperties;
 
 /**
  * 
- *  Last modified: $Date: 2007/08/06 13:34:31 $ by $Author: valdas $
+ *  Last modified: $Date: 2008/05/23 08:22:58 $ by $Author: anton $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class LoginSessionBean implements LoginSession {
     
 	private IWApplicationContext iwac;
     private SessionHelper sessionHelper = new SessionHelper();
     private Stack reservedSessionHelpers = new Stack();
+    private Locale currentLocale;
     
     public void reset() {
         sessionHelper = new SessionHelper();
@@ -220,4 +223,10 @@ public class LoginSessionBean implements LoginSession {
 		}
 		return null;
 	}
+	
+	public Locale getCurrentLocale() {
+		currentLocale = IWContext.getInstance().getCurrentLocale();
+		return currentLocale;
+	}
 }
+
