@@ -15,12 +15,12 @@ import com.idega.util.text.Name;
  * <p>
  * TODO laddi Describe Type UserComparator
  * </p>
- *  Last modified: $Date: 2007/02/07 20:46:30 $ by $Author: laddi $
+ *  Last modified: $Date: 2008/05/24 14:12:39 $ by $Author: valdas $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public class UserComparator implements Comparator {
+public class UserComparator implements Comparator<User> {
 
 	private Locale iLocale;
 	
@@ -31,11 +31,8 @@ public class UserComparator implements Comparator {
 	/* (non-Javadoc)
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
-	public int compare(Object arg0, Object arg1) {
+	public int compare(User user1, User user2) {
 		Collator collator = Collator.getInstance(iLocale);
-		
-		User user1 = (User) arg0;
-		User user2 = (User) arg1;
 		
 		Name name1 = new Name(user1.getFirstName(), user1.getMiddleName(), user1.getLastName());
 		Name name2 = new Name(user2.getFirstName(), user2.getMiddleName(), user2.getLastName());
