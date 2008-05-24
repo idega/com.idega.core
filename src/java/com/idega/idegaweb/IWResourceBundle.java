@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.42 2007/02/06 03:53:13 eiki Exp $
+ * $Id: IWResourceBundle.java,v 1.43 2008/05/24 20:52:51 eiki Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -25,6 +25,7 @@ import java.util.ResourceBundle;
 import java.util.TreeMap;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.presentation.Image;
+import com.idega.util.CoreConstants;
 import com.idega.util.EnumerationIteratorWrapper;
 import com.idega.util.SortedProperties;
 import com.idega.util.StringHandler;
@@ -37,10 +38,10 @@ import com.idega.util.StringHandler;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2007/02/06 03:53:13 $ by $Author: eiki $<br/>
+ * Last modified: $Date: 2008/05/24 20:52:51 $ by $Author: eiki $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.42 $
+ * @version $Revision: 1.43 $
  */
 public class IWResourceBundle extends ResourceBundle {
 
@@ -394,7 +395,12 @@ public class IWResourceBundle extends ResourceBundle {
 	 * inside the resource bundle
 	 */
 	public String getImageURI(String urlInBundle) {
-		return getResourcesURL() + slash + urlInBundle;
+		StringBuffer buf = new StringBuffer(getResourcesURL());
+		if(!urlInBundle.startsWith(CoreConstants.SLASH)){
+			buf.append(CoreConstants.SLASH);
+		}
+		buf.append(urlInBundle);
+	    return buf.toString();
 	}
 
 	public Image getImage(String urlInBundle) {

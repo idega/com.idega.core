@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.45 2008/01/23 09:35:25 alexis Exp $
+ * $Id: DefaultIWBundle.java,v 1.46 2008/05/24 20:50:10 eiki Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -944,9 +944,19 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		return this.getBundleIdentifier();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.idegaweb.IWBundle#getImageURI(java.lang.String)
+	 */
 	public String getImageURI(String urlInBundle){
-	    return getResourcesURL() + slash + urlInBundle;
+		StringBuffer buf = new StringBuffer(getResourcesURL());
+		if(!urlInBundle.startsWith(CoreConstants.SLASH)){
+			buf.append(CoreConstants.SLASH);
+		}
+		buf.append(urlInBundle);
+	    return buf.toString();
 	}
+	
 	public Image getImage(String urlInBundle)
 	{
 		return new Image(getImageURI(urlInBundle));
