@@ -14,12 +14,12 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  *
- * Last modified: $Date: 2008/05/16 09:33:36 $ by $Author: civilis $
+ * Last modified: $Date: 2008/05/24 10:16:29 $ by $Author: civilis $
  */
-@Repository
-@Transactional
+@Repository("genericDAO")
+@Transactional(readOnly=true)
 public class GenericDaoImpl implements GenericDao {
 
 	private EntityManager entityManager;
