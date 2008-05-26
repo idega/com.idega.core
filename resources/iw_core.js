@@ -1611,7 +1611,10 @@ function setActionsForRegion() {
     );
 }
 
-function reloadPage() {
+/**
+ * example: old href: '/pages/' pass attribute (newHref): 'iw_language=en_EN' results in: '/pages/?iw_language=en_EN
+ */
+function changeWindowLocationHref(newHref) {
 	var oldLocation = '' + window.location.href;
 	
 	if (oldLocation.indexOf('#') != -1) {
@@ -1636,7 +1639,11 @@ function reloadPage() {
 		oldLocation += '/';
 	}
 	
-	window.location.href = oldLocation  + separator + reloadingParam + '=' + new Date().getTime();	// changing href to be sure the page will be reloaded
+	window.location.href = oldLocation +separator + newHref;
+}
+
+function reloadPage() {
+	changeWindowLocationHref('reloading=' + new Date().getTime());	// changing href to be sure the page will be reloaded
 }
 
 function addActionForMoodalBoxOnCloseEvent(actionOnClose) {
