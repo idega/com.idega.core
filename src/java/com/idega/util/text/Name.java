@@ -95,17 +95,17 @@ import com.idega.util.LocaleUtil;
     }
     
     public void setMiddleName(String middleName) {
-      this.middleName = middleName;
-      this.fullName = null;
+    	this.middleName = middleName != null ? middleName.trim() : middleName;
+    	this.fullName = null;
     }
 
     public void setFirstName(String firstName) {
-    		this.firstName = firstName;
+    	this.firstName = firstName != null ? firstName.trim() : firstName;
         this.fullName = null;
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+    	this.lastName = lastName != null ? lastName.trim() : lastName;
         this.fullName = null;
     }
 

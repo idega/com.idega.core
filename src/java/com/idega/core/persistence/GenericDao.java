@@ -6,17 +6,15 @@ import javax.persistence.Query;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  *
- * Last modified: $Date: 2008/05/16 09:33:36 $ by $Author: civilis $
+ * Last modified: $Date: 2008/05/26 11:04:37 $ by $Author: civilis $
  */
 public interface GenericDao {
 
 	public abstract void persist(Object product);
 
-	public abstract Object merge(Object product);
-
-	public abstract <T> T merge(Object product, Class<T> clazz);
+	public abstract <T>T merge(T product);
 
 	public abstract <T> T find(Class<T> clazz, Object primaryKey);
 
@@ -25,6 +23,8 @@ public interface GenericDao {
 	public abstract void remove(Object obj);
 	
 	public abstract void flush();
+	
+	public abstract void refresh(Object product);
 	
 	public abstract <Expected>List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params);
 	
