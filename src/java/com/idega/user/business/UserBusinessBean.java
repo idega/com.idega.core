@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.236 2008/04/24 23:45:30 laddi Exp $
+ * $Id: UserBusinessBean.java,v 1.237 2008/05/26 11:04:14 civilis Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2008/04/24 23:45:30 $ by $Author: laddi $
+ * Last modified: $Date: 2008/05/26 11:04:14 $ by $Author: civilis $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.236 $
+ * @version $Revision: 1.237 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -418,11 +418,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			throws CreateException, RemoteException {
 		try {
 			User userToAdd = getUserHome().create();
+			
 			if (fullName == null) {
+				
 				Name name = new Name(firstName, middleName, lastName);
-				fullName = name.getName();
+				userToAdd.setFirstName(name.getFirstName());
+				userToAdd.setMiddleName(name.getMiddleName());
+				userToAdd.setLastName(name.getLastName());
+				 
+			} else {
+			
+				userToAdd.setFullName(fullName);
 			}
-			userToAdd.setFullName(fullName);
+			
 			/*
 			 * userToAdd.setFirstName(firstName);
 			 * userToAdd.setMiddleName(middleName);
