@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.95 2006/06/15 17:53:23 tryggvil Exp $
+ * $Id: IWBundle.java,v 1.95.2.1 2008/05/27 06:53:08 alexis Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -9,15 +9,19 @@
  */
 package com.idega.idegaweb;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.FinderException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.component.html.HtmlOutputText;
 import javax.faces.el.ValueBinding;
+
 import com.idega.core.component.data.ICObject;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.IWContext;
@@ -31,10 +35,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2006/06/15 17:53:23 $ by $Author: tryggvil $
+ * Last modified: $Date: 2008/05/27 06:53:08 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.95 $
+ * @version $Revision: 1.95.2.1 $
  */
 public interface IWBundle extends IWModule{
 	/**
@@ -366,4 +370,25 @@ public interface IWBundle extends IWModule{
 	 * @return
 	 */
 	public String getResourceURIWithoutContextPath(String pathInResourceFolder);
+	
+	/**
+	 * <p>
+	 * Returns InputStream for a resource identified by <code>pathWithinBundle</code>.
+	 * Path starts at the root of the bundle.
+	 * </p>
+	 * @param pathWithinBundle
+	 * @return
+	 * @throws IOException
+	 */
+	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException;
+	
+	/**
+	 * <p>
+	 * Returns time when resource identified by <code>pathWithinBundle</code> was last modified.
+	 * Path starts at the root of the bundle.
+	 * </p>
+	 * @param pathWithinBundle
+	 * @return miliseconds since Epoch, or 0 if not found
+	 */
+	public long getResourceTime(String pathWithinBundle);
 }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
@@ -245,6 +246,50 @@ public class FileUtil {
 
     return file;
   }
+  
+  public static void streamToFile(InputStream input, File toFile) throws IOException{
+  	FileOutputStream out = new FileOutputStream(toFile);
+  	streamToOutputStream(input, out);
+  }
+  
+  /*
+  * streams an inputstream to a file
+  */
+    public static void streamToOutputStream( InputStream input, OutputStream out)throws IOException{
+      try{
+        if(input!=null){
+          input.available();
+          byte buffer[]= new byte[1024];
+          int	noRead	= 0;
+
+          noRead = input.read( buffer, 0, 1024 );
+          //Write out the stream to the file
+          while ( noRead != -1 ){
+            out.write( buffer, 0, noRead );
+            noRead = input.read( buffer, 0, 1024 );
+          }
+
+          out.flush();
+          out.close();
+        }
+
+      }
+      //catch(IOException e){
+      //  //e.printStackTrace(System.err);
+      //  System.err.println("FileUtil : Error or skipping (for folders) writing to file");
+      //}
+      finally{
+        try{
+          if(input!=null) {
+          	input.close();
+          }
+        }
+        catch(IOException e){
+          //e.printStackTrace(System.err);
+          System.err.println("FileUtil : Error closing the inputstream");
+        }
+      }
+    }
 
   /** 
    * Deletes content of folder.
