@@ -1630,9 +1630,10 @@ function changeWindowLocationHref(newHref) {
 		oldLocation = oldLocation.split('&' + reloadingParam)[0];
 	}
 	
-	
-	if (oldLocation.indexOf(separator) != -1) {
-		separator = '&';
+	if (separator == '?') {
+		if (oldLocation.indexOf('/?') != -1) {
+			oldLocation = oldLocation.split('/?')[0];
+		}
 	}
 	
 	if (oldLocation.lastIndexOf('/') == -1) {
