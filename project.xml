@@ -495,6 +495,11 @@
       <name>3.1.87</name>
       <tag>CORE_3_1_87</tag>
     </version>
+    <version>
+      <id>3.1.88</id>
+      <name>3.1.88</name>
+      <tag>CORE_3_1_88</tag>
+    </version>
   </versions>
   <branches/>
   <mailingLists>
