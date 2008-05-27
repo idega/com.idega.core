@@ -50,6 +50,7 @@ public class CoreConstants {
 	public static final String PROP_SYSTEM_SMTP_USER = MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME;
 	public static final String PROP_SYSTEM_SMTP_PASSWORD = MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD;
 	public static final String PROP_SYSTEM_SMTP_USE_AUTHENTICATION = MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION;
+	public static final String PROP_SYSTEM_ACCOUNT = "mail_user_account";
 	
 	public static final String HANDLER_PARAMETER = "handler_parameter";
 	public static final String BUILDER_PORPERTY_SETTER_STYLE_CLASS = "modulePropertySetter";

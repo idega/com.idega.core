@@ -1267,7 +1267,7 @@ function createRealNode(element) {
 		return commentNode;
 	}
     
-    //  javascript cnode
+    //  JavaScript cnode
     if (element.nodeName == '#cdata-section' && element.parentNode.nodeName == 'script') {
     
     var value = element.nodeValue;
@@ -1481,12 +1481,13 @@ function insertNodesToContainer(component, container) {
 	// Inserting nodes
 	var activeNode = null;
 	var realNode = null;
+	
 	for (var i = 0; i < nodes.length; i++) {
 		activeNode = nodes[i];
 		realNode = createRealNode(activeNode);
 		container.appendChild(realNode);
 	}
-
+	
 	checkIfNeedExecuteDynamicallyReceivedJavaScript();
 }
 
