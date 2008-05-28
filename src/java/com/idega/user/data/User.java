@@ -1,6 +1,11 @@
 package com.idega.user.data;
 
+import java.rmi.RemoteException;
+
+import javax.ejb.EJBException;
+
 import com.idega.core.file.data.ICFile;
+import com.idega.core.location.data.Address;
 import com.idega.data.IDOReportableEntity;
 
 
@@ -129,4 +134,5 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public String getPreferredLocale();
  public void setUserProperties(ICFile file);	
  public ICFile getUserProperties();
+ public Address getUsersMainAddress() throws EJBException, RemoteException ;
 }

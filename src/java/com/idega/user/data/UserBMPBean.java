@@ -26,6 +26,7 @@ import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressBMPBean;
+import com.idega.core.location.data.AddressHome;
 import com.idega.core.location.data.AddressType;
 import com.idega.core.location.data.Commune;
 import com.idega.data.GenericEntity;
@@ -423,7 +424,17 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     return getMetaData(META_DATA_HOME_PAGE);
   }
 
-
+  public Address getUsersMainAddress() throws EJBException, RemoteException {
+	try {
+	    AddressHome addressHome = (AddressHome) IDOLookup.getHome(Address.class);  
+	    int id =  Integer.parseInt(getId());
+		return addressHome.findPrimaryUserAddress(id);
+	}
+	catch (FinderException fe) {
+		return null;
+	}
+	
+  }
 	/*  Getters end   */
 
 	/*  Setters begin   */
@@ -735,8 +746,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		try {
 		    Collection<Address> addresses = super.idoGetRelatedEntities(Address.class);
 		    
-		    System.out.println("----addresses="+ addresses);
-			return addresses;
+		   return addresses;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
