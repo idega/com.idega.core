@@ -14,6 +14,8 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
+import org.springframework.dao.UncategorizedDataAccessException;
+
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailBMPBean;
@@ -731,7 +733,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	public Collection getAddresses() {
 		try {
-			return super.idoGetRelatedEntities(Address.class);
+		    Collection<Address> addresses = super.idoGetRelatedEntities(Address.class);
+		    
+		    System.out.println("----addresses="+ addresses);
+			return addresses;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
