@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+  		<release version="3.1.89" date="2008-05-29">
+      		<action dev="gimmi" type="update">
+      			SendMail method fixed
+      		</action>
+    	</release>
   		<release version="3.1.88" date="2008-05-27">
       		<action dev="alexis" type="update">
       			Merged some methods from HEAD to IWBundleResourceFilter, IWBundle, FileUtil and DefaultIWBundle
