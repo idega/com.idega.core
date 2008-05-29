@@ -26,10 +26,10 @@ import com.idega.idegaweb.IWMainApplicationSettings;
  * <p>
  * Utility class to send Emails with the Java Mail API.
  * </p>
- *  Last modified: $Date: 2008/05/09 06:41:11 $ by $Author: eiki $
+ *  Last modified: $Date: 2008/05/29 11:10:59 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class SendMail {
 	public SendMail() {
@@ -152,7 +152,7 @@ public class SendMail {
 	public static void send(String from, String to, String cc, String bcc,
 			String replyTo, String host, String subject, String text)
 			throws MessagingException {
-		send(from, to, cc, bcc, host, replyTo, subject, text, null);
+		send(from, to, cc, bcc, replyTo, host, subject, text, null);
 	}
 	
 }
