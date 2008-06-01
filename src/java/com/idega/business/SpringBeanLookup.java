@@ -8,13 +8,15 @@ import org.springframework.context.ApplicationEvent;
 import com.idega.idegaweb.IWApplicationContext;
 
 /**
+ * WARNING: should be used only if it's not possible to get beans in other ways (through jsf expression for example) 
+ * 
  * <p>Glue code for legacy non-spring beans. Lookup spring bean by interface. Strive as much not to use this class.</p>
  * <p>This class should be mainly used for legacy code, which used to lookup bean by using IBOLookup.getSessionInstance</p>
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  *
- * Last modified: $Date: 2008/05/10 18:29:35 $ by $Author: civilis $
+ * Last modified: $Date: 2008/06/01 17:48:17 $ by $Author: civilis $
  *
  */
 public class SpringBeanLookup {
@@ -39,6 +41,7 @@ public class SpringBeanLookup {
 	 * @param clazz - interface class, annotated with com.idega.business.SpringBeanName 
 	 * @return Spring managed bean. Null if bean not found or interface not annotated.
 	 */
+	@Deprecated
 	public <T>T getSpringBean(HttpSession session, Class<T> clazz) {
 		
 		return getSpringBean(session.getServletContext(), clazz);
@@ -50,6 +53,7 @@ public class SpringBeanLookup {
 	 * @param clazz - interface class, annotated with com.idega.business.SpringBeanName 
 	 * @return Spring managed bean. Null if bean not found or interface not annotated.
 	 */
+	@Deprecated
 	public <T>T getSpringBean(ServletContext ctx, Class<T> clazz) {
 		
 		if(!clazz.isAnnotationPresent(SpringBeanName.class))
@@ -62,6 +66,7 @@ public class SpringBeanLookup {
 		return bean;
 	}
 	
+	@Deprecated
 	public Object getSpringBean(ServletContext ctx, String springBeanIdentifier) {
 		
 		ApplicationContext ac = getAppContext(ctx);
@@ -80,6 +85,7 @@ public class SpringBeanLookup {
 	 * @param clazz - interface class, annotated with com.idega.business.SpringBeanName 
 	 * @return Spring managed bean. Null if bean not found or interface not annotated.
 	 */
+	@Deprecated
 	public <T>T getSpringBean(IWApplicationContext iwac, Class<T> clazz) {
 		
 		return getSpringBean(iwac.getIWMainApplication().getServletContext(), clazz);
