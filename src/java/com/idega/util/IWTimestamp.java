@@ -26,7 +26,7 @@ import com.idega.presentation.IWContext;
  * @author idega 2002 - idega team
  * @version 1.1
  */
-public class IWTimestamp implements Comparable,Cloneable {
+public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable {
 	
 	/**
 	 * This field sets if the toString and toSQLString methods should cut off their milliseconds part in the returned String.
@@ -208,16 +208,10 @@ public class IWTimestamp implements Comparable,Cloneable {
 		this.calendar.add(Calendar.YEAR, numberOfYears);
 	}
 
-///////////////////////////////////////////////////
-//      comparing      
-///////////////////////////////////////////////////
-
 	/**
 	 * @see java.lang.Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object object) {
-	  IWTimestamp compareStamp = (IWTimestamp) object;
-	  
+	public int compareTo(IWTimestamp compareStamp) {
 	  if (isEarlierThan(compareStamp)) {
 			return -1;
 		}
@@ -1384,7 +1378,4 @@ public class IWTimestamp implements Comparable,Cloneable {
 		}
 	}
 
-///////////////////////////////////////////////////
-//      -----      
-///////////////////////////////////////////////////
 }
