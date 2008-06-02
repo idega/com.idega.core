@@ -1069,6 +1069,73 @@ IWCORE.includeScript = function(scriptPath) {
     return IWCORE.includedScripts.includeScript(scriptPath);  
 }
 
+IWCORE.includedCss = {
+
+    load: function() {
+    
+        var cssElements = document.getElementsByTagName("link");
+        var csses = new Array();
+        
+        if(cssElements != null) {
+        	
+        	for(var idx = 0; idx < cssElements.length; idx++) {
+                
+                var type = cssElements[idx].getAttribute('type');
+                
+                if(type == 'text/css') {
+                
+                   csses.push(cssElements[idx].getAttribute('href'));   
+                }
+            }
+        }
+            
+                
+        IWCORE.includedCss.includedCss = csses;
+        return IWCORE.includedCss.includedCss;
+    },
+    get: function() {
+    
+       if(IWCORE.includedCss.includedCss == null)
+           IWCORE.includedCss.includedCss = IWCORE.includedCss.load();
+       
+       return IWCORE.includedCss.includedCss;
+    },
+    
+    add: function(cssPath) {
+    
+        var csses = IWCORE.includedScripts.get();
+        
+        if (!IWCORE.inArray(cssPath, csses))
+            csses.push(cssPath);
+    },
+    
+    includedCss: null,
+    
+    includeCss: function(cssPath) {
+    
+        var csses = IWCORE.includedCss.get();
+        
+        if (!IWCORE.inArray(cssPath, csses)) {
+            csses.push(cssPath);
+            IWCORE.includedCss.includeCss(cssPath);
+        }
+    },
+    
+    includeCss: function(cssPath) {
+    
+        var css = document.createElement('link');
+        css.setAttribute('rel', 'stylesheet');
+        css.setAttribute('type', 'text/css');
+        css.setAttribute('href', cssPath);
+        document.getElementsByTagName('head').item(0).appendChild(css);
+    }
+}
+
+IWCORE.includeCss = function(cssPath) {
+
+    return IWCORE.includedCss.includeScript(cssPath);  
+}
+
 IWCORE.inArray = function(needle, haystack) {
     for (var i = 0; i < haystack.length; i++) {
         if (haystack[i] == needle) {
