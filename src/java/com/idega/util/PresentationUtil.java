@@ -1,5 +1,6 @@
 package com.idega.util;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.myfaces.renderkit.html.util.AddResource;
@@ -64,11 +65,28 @@ public class PresentationUtil {
 	}
 	
 	public static String getJavaScriptSourceLine(String scriptUri) {
+		
+		return getJavaScriptSourceLine(scriptUri, false);
+	}
+	
+	public static String getJavaScriptSourceLine(String scriptUri, boolean includeOnce) {
+		
 		if (scriptUri == null) {
 			return null;
 		}
 		
-		StringBuffer script = new StringBuffer("<script type=\"text/javascript\" src=\"").append(scriptUri).append("\"></script>\n");
+		StringBuffer script;
+		
+		if(includeOnce) {
+			script = new StringBuffer("<script type=\"text/javascript\"> IWCORE.includeScript('")
+			.append(scriptUri).append("');</script>\n");
+			//IWCORE.includeScript(pathtojsfiles+modules[i].incfile);
+			
+		} else {
+			
+			script = new StringBuffer("<script type=\"text/javascript\" src=\"").append(scriptUri).append("\"></script>\n");
+		}
+		
 		return script.toString();
 	}
 	
@@ -80,6 +98,22 @@ public class PresentationUtil {
 		StringBuffer scripts = new StringBuffer();
 		for (int i = 0; i < scriptsUris.size(); i++) {
 			scripts.append(getJavaScriptSourceLine(scriptsUris.get(i)));
+		}
+		
+		return scripts.toString();
+	}
+	
+	public static String getJavaScriptSourceLinesIncludeOnce(Collection<String> scriptsUris) {
+		
+		if (scriptsUris == null) {
+			return null;
+		}
+		
+		StringBuffer scripts = new StringBuffer();
+		
+		for (String uri : scriptsUris) {
+			
+			scripts.append(getJavaScriptSourceLine(uri, true));
 		}
 		
 		return scripts.toString();
@@ -142,6 +176,27 @@ public class PresentationUtil {
 		return style.toString();
 	}
 	
+	public static String getCssLine(String cssUri, boolean includeOnce) {
+		
+		if (cssUri == null) {
+			return null;
+		}
+		
+		StringBuffer css;
+		
+		if(includeOnce) {
+			css = new StringBuffer("<script type=\"text/javascript\"> IWCORE.includeCss('")
+			.append(cssUri).append("');</script>\n");
+			//IWCORE.includeScript(pathtojsfiles+modules[i].incfile);
+			
+		} else {
+			
+			css = new StringBuffer("<link type=\"text/css\" href=\"").append(cssUri).append("\" rel=\"stylesheet\" media=\"screen\"/>\n");
+		}
+		
+		return css.toString();
+	}
+	
 	public static String getStyleSheetsSourceLines(List<String> styleSheetsUris) {
 		if (styleSheetsUris == null) {
 			return null;
@@ -150,6 +205,21 @@ public class PresentationUtil {
 		StringBuffer styles = new StringBuffer();
 		for (int i = 0; i < styleSheetsUris.size(); i++) {
 			styles.append(getStyleSheetSourceLine(styleSheetsUris.get(i)));
+		}
+		
+		return styles.toString();
+	}
+	
+	public static String getStyleSheetsSourceLinesIncludeOnce(Collection<String> styleSheetsUris) {
+		
+		if (styleSheetsUris == null) {
+			return null;
+		}
+		
+		StringBuffer styles = new StringBuffer();
+		
+		for (String uri : styleSheetsUris) {
+			getCssLine(uri, true);
 		}
 		
 		return styles.toString();
