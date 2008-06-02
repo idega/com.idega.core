@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.32.2.1 2008/05/27 06:53:08 alexis Exp $
+ * $Id: DefaultIWBundle.java,v 1.32.2.2 2008/06/02 14:05:05 valdas Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -1703,9 +1703,8 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		String workspaceDir = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 		String bundleInWorkspace;
 		
-		if(workspaceDir != null) {
-			
-			bundleInWorkspace = new StringBuilder(workspaceDir).append(CoreConstants.SLASH).append(getBundleIdentifier()).append(CoreConstants.SLASH).toString();
+		if (workspaceDir != null) {
+			bundleInWorkspace = new StringBuffer(workspaceDir).append(CoreConstants.SLASH).append(getBundleIdentifier()).append(CoreConstants.SLASH).toString();
 		} else
 			bundleInWorkspace = getBundleBaseRealPath();
 		
