@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.19 2008/05/13 12:35:39 valdas Exp $
+ * $Id: IWBaseComponent.java,v 1.20 2008/06/02 19:06:46 civilis Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
- * Last modified: $Date: 2008/05/13 12:35:39 $ by $Author: valdas $
+ * Last modified: $Date: 2008/06/02 19:06:46 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
@@ -420,7 +420,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
      * @param beanId - could be either expression like #{bean.method} or just beanId like beanId
      * @return
      */
-    public Object getBeanInstance(String beanId) {
+    public <T>T getBeanInstance(String beanId) {
 	    	FacesContext context = FacesContext.getCurrentInstance();
 	    
 	    	String expr;
@@ -428,10 +428,13 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	    	if(isValueBinding(beanId))
 	    		expr = beanId;
 	    	else
-	    		expr= getExpression(beanId);
+	    		expr = getExpression(beanId);
 	    	
 		ValueBinding vb = context.getApplication().createValueBinding(expr);
-    	return vb.getValue(context);
+    	//return vb.getValue(context);
+    	@SuppressWarnings("unchecked")
+		T bean = (T)vb.getValue(context);
+    	return bean;
     }
     
     public IWBundle getBundle(FacesContext ctx, String bundleIdentifier) {
