@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.132.2.1 2007/05/03 13:19:20 thomas Exp $
+ * $Id: DatastoreInterface.java,v 1.132.2.2 2008/06/04 20:34:38 gimmi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -18,6 +18,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
@@ -29,7 +30,9 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.transaction.TransactionManager;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.MutableClass;
 import com.idega.repository.data.RefactorClassRegistry;
@@ -1000,6 +1003,52 @@ public abstract class DatastoreInterface implements MutableClass {
 			ex.printStackTrace();
 			throw new SQLException("Entity: " + entity.getEntityName() + "; Column:  " + columnName + " - " + ex.getMessage());
 		}
+	}
+	
+	public String[] getColumnNames(String tableName, String dataSource) throws SQLException {
+		Statement stmt = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		String[] returner = null;
+		try {
+			conn = ConnectionBroker.getConnection(dataSource);
+			// prepare query
+			String query = "select * from "+tableName;
+			// create a statement
+			stmt = conn.createStatement();
+			// execute query and return result as a ResultSet
+			rs = stmt.executeQuery(query);
+			// get the column names from the ResultSet
+
+			if (rs == null) {
+				return null;
+			}
+			ResultSetMetaData rsMetaData = rs.getMetaData();
+			int numberOfColumns = rsMetaData.getColumnCount();
+			returner = new String[numberOfColumns];
+
+			// get the column names; column indexes start from 1
+			for (int i = 1; i < numberOfColumns +1; i++) {
+				String columnName = rsMetaData.getColumnName(i);
+				// Get the name of the column's table name
+//				String tableName = rsMetaData.getTableName(i);
+//				System.out.println("column name=" + columnName + " table=" + tableName + "");
+				returner[i-1] = columnName; 
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		} finally {
+			// release database resources
+			try {
+				rs.close();
+				stmt.close();
+				ConnectionBroker.freeConnection(conn);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return returner;
 	}
 
 	public void handleBlobUpdate(String columnName, PreparedStatement statement, int index, GenericEntity entity) {
