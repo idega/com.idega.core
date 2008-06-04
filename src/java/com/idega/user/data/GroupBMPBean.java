@@ -103,11 +103,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		// is first stored.
 		addUniqueIDColumn();
 
-		this.addManyToManyRelationShip(ICNetwork.class, "ic_group_network");
-		this.addManyToManyRelationShip(ICProtocol.class, "ic_group_protocol");
-		this.addManyToManyRelationShip(Phone.class, SQL_RELATION_PHONE);
-		this.addManyToManyRelationShip(Email.class, SQL_RELATION_EMAIL);
-		this.addManyToManyRelationShip(Address.class, SQL_RELATION_ADDRESS);
 		addMetaDataRelationship();
 		// can have extra info in the ic_metadata table
 
@@ -134,6 +129,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		addIndex("IDX_IC_GROUP_8", new String[] { COLUMN_GROUP_ID, COLUMN_NAME, COLUMN_GROUP_TYPE });
 		addIndex("IDX_IC_GROUP_9", UNIQUE_ID_COLUMN_NAME);
 		addIndex("IDX_IC_GROUP_10", new String[] { COLUMN_GROUP_TYPE, COLUMN_NAME });
+
+		this.addManyToManyRelationShip(ICNetwork.class, "ic_group_network");
+		this.addManyToManyRelationShip(ICProtocol.class, "ic_group_protocol");
+		this.addManyToManyRelationShip(Phone.class, SQL_RELATION_PHONE);
+		this.addManyToManyRelationShip(Email.class, SQL_RELATION_EMAIL);
+		this.addManyToManyRelationShip(Address.class, SQL_RELATION_ADDRESS);
 	}
 
 	public final String getEntityName() {
