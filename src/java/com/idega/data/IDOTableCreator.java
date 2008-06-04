@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.57.2.1 2007/03/28 16:01:18 eiki Exp $
+ * $Id: IDOTableCreator.java,v 1.57.2.2 2008/06/04 20:35:07 gimmi Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -8,8 +8,14 @@
  */
 package com.idega.data;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,8 +30,12 @@ import javax.transaction.TransactionManager;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.transaction.IdegaTransactionManager;
+import com.idega.user.data.GroupBMPBean;
+import com.idega.util.FileUtil;
 import com.idega.util.ThreadContext;
 import com.idega.util.Timer;
+import com.idega.util.database.ConnectionBroker;
+import com.idega.util.database.PoolManager;
 import com.idega.util.logging.LoggingHelper;
 
 
@@ -34,17 +44,18 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2007/03/28 16:01:18 $ by $Author: eiki $
+ * Last modified: $Date: 2008/06/04 20:35:07 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.57.2.1 $
+ * @version $Revision: 1.57.2.2 $
  */
-public class IDOTableCreator{
+public class IDOTableCreator {
 
   private static String recordCreationKey="datastoreinterface_entity_record_creation";
   private DatastoreInterface _dsi;
   private List _entityWithStartData = new Stack();
-
+  private boolean useCopyLog = false;
+  
   protected IDOTableCreator(DatastoreInterface dsi){
     this._dsi=dsi;
   }
@@ -85,7 +96,12 @@ public class IDOTableCreator{
       List alreadyInCreation=this.getCreationList();
       if(!hasAlreadyStartedCreatingEntity(entity)){
         alreadyInCreation.add(entity.getClass());
-        //createRefrencedTables(entity);
+//        try {
+//			createRefrencedTables(entity);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
       }
   }
 
@@ -248,10 +264,8 @@ public class IDOTableCreator{
 		//if(this.isDebugActive())
     	debug("Creating "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
     	
-    	boolean canCommit=false;
-    	canCommit = this.startEntityCreationTransaction(entity,canCommit);
-
-
+      boolean canCommit=false;
+      canCommit = this.startEntityCreationTransaction(entity,canCommit);
       
       try{
 
@@ -259,6 +273,7 @@ public class IDOTableCreator{
         if(!this.hasAlreadyStartedCreatingEntity(entity)){
           createRefrencedTables(entity);
         }
+
 
 
         //Check again if table exists because it could be created through createRefrencedTables(entity)
@@ -282,10 +297,67 @@ public class IDOTableCreator{
              //this can fail but don't kill the transaction then!
            }
           
-          createMiddleTables(entity);
-          if(entity.getIfInsertStartData()){
+          // CHECKING IF COPYING
+          String sourceDatasource = "sourceDB";
+          if (PoolManager.getInstance().hasDatasource(sourceDatasource)) {
+        	  useCopyLog = true;
+        	  IDOHome sourceHome = IDOLookup.getHome(entity.getInterfaceClass(), sourceDatasource);
+//        	  IDOHome localHome = IDOLookup.getHome(entity.getInterfaceClass());
+    		 GenericEntity ent = (GenericEntity) com.idega.data.GenericEntity.getStaticInstanceIDO(entity.getInterfaceClass(),sourceDatasource);
+    		 ent.setDatasource(sourceDatasource, false);
+ 
+    		 System.out.println("Getting data from "+ent.getEntityName());
+    		 Collection ids = ent.idoFindPKsBySQL("select "+ent.getIDColumnName()+" from "+ent.getEntityName()+" order by "+ent.getIDColumnName());
+//    		 Collection results = sourceHome.getEntityCollectionForPrimaryKeys(ids);
+//        	  String[] cols = entity.getColumnNames();
+        	  Iterator i = ids.iterator();
+        	  int counter = 0;
+           	  System.out.print("Starting copy ("+ids.size()+")...");
+        	  while (i.hasNext()) {
+        		  try {
+        			  Object pk = (Object) i.next();
+        			  GenericEntity sourceEnt = (GenericEntity) sourceHome.findByPrimaryKeyIDO(pk);
+//	        		  GenericEntity sourceEnt = (GenericEntity) i.next();
+	        		  sourceEnt.setDatasource(ConnectionBroker.DEFAULT_POOL, false);
+	        		  sourceEnt.setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+	        		  ((GenericEntity) sourceEnt).store();
+        		  } catch (Exception e) {
+        			  logCopyError(entity, e, "data copying");
+//        			  logError(e.getMessage());
+//        			  e.printStackTrace();
+        		  }
+        		  if (counter % 10000 == 0) {
+        			  if (counter != 0) {
+        				  System.out.println(":");
+            			  System.out.print(counter+" ");
+        			  } else {
+        				  System.out.println();
+        				  System.out.print("      ");
+        			  }
+        		  } else if (counter % 1000 == 0) {
+        			  System.out.print(":");
+        		  } else if (counter % 100 == 0) {
+        			  System.out.print(".");
+        		  }
+        		  ++counter;
+
+//        		  GenericEntity targetEnt = (GenericEntity) localHome.createIDO();
+//        		  System.out.print("cp : ");
+//        		  for (int j = 0; j < cols.length; j++) {
+//        			  targetEnt.setColumn(cols[j], sourceEnt.getColumnValue(cols[j]));
+//            		  System.out.print(cols[j]+" = "+sourceEnt.getColumnValue(cols[j])+", ");
+//        		  }
+//        		  System.out.println();
+//        		  targetEnt.store();
+        	  }
+    		  System.out.println(" done : "+counter);
+          } else if(entity.getIfInsertStartData()){
+              // ELSE NORMAL
 	      		this._entityWithStartData.add(entity);
           }
+          
+          createMiddleTables(entity);
+
         }
         
         
@@ -301,8 +373,8 @@ public class IDOTableCreator{
 	      		while (iter.hasNext()) {
 	        		GenericEntity tmpEnt = (GenericEntity) iter.next();
 	        			try{
-			      		System.out.println("IDOTableCreator : Inserting start data for entity : "+tmpEnt.getEntityName());
-		      			tmpEnt.insertStartData();
+	        				System.out.println("IDOTableCreator : Inserting start data for entity : "+tmpEnt.getEntityName());
+		      				tmpEnt.insertStartData();
 	        			}
 	        			catch(Exception e){
 	        				e.printStackTrace();
@@ -354,7 +426,11 @@ public class IDOTableCreator{
 
 
   protected String getCreationStatement(GenericEntity entity){
-  	IDOEntityField[] pkFields = entity.getEntityDefinition().getPrimaryKeyDefinition().getFields();
+  	  if (entity instanceof GroupBMPBean) {
+		  System.out.println("GROUP");
+	  }
+
+	  IDOEntityField[] pkFields = entity.getEntityDefinition().getPrimaryKeyDefinition().getFields();
   	//StringBuffer returnString = new StringBuffer("CREATE TABLE ").append(entity.getTableName()).append("(");
 	String tableName = entity.getEntityDefinition().getSQLTableName();
   	StringBuffer returnString = new StringBuffer(this._dsi.getCreateTableCommand(tableName)).append("(");
@@ -429,6 +505,7 @@ public class IDOTableCreator{
         Class myClass = (Class)iter.next();
           //try{
             //GenericEntity relationShipEntity = (GenericEntity)Class.forName(className).newInstance();
+        	myClass = IDOLookup.getBeanClassFor(myClass);
 			GenericEntity relationShipEntity = (GenericEntity)myClass.newInstance();
             createEntityRecord(relationShipEntity);
           //}
@@ -579,6 +656,73 @@ public class IDOTableCreator{
               //  e.printStackTrace();
               //}
             }
+            
+            String sourceDatasource = "sourceDB";
+            if (PoolManager.getInstance().hasDatasource(sourceDatasource)) {
+//            	IDOHome sourceHome = IDOLookup.getHome(entity.getInterfaceClass(), sourceDatasource);
+            	String[] columnNames = _dsi.getColumnNames(tableName, null);
+//            	System.out.println(columnNames);
+            	
+                Statement stmtSource = null;
+                ResultSet rsSource = null;
+                Statement stmtNew = null;
+                Connection connSource = null;
+            	Connection connNew = null;
+                try {
+                    StringBuffer colNameStr = new StringBuffer();
+                    for (int i = 0; i< columnNames.length; i++) {
+                  	  if (i !=0) {
+                  		  colNameStr.append(",");
+                  	  }
+                  	  colNameStr.append(columnNames[i]);
+                    }
+
+                    connSource = ConnectionBroker.getConnection(sourceDatasource);
+                	connNew = ConnectionBroker.getConnection();
+                  // prepare query
+                  String query = "select "+colNameStr.toString()+" from "+tableName;
+                  // create a statement
+                  stmtSource = connSource.createStatement();
+                  // execute query and return result as a ResultSet
+                  rsSource = stmtSource.executeQuery(query);
+                  // get the column names from the ResultSet
+                  
+                  
+                  while (rsSource.next()) {
+                	  stmtNew = connNew.createStatement();
+                	  StringBuffer b = new StringBuffer();
+                	  for (int i = 0; i < columnNames.length; i++) {
+                		  if (i != 0) {
+                			  b.append(", ");
+                		  }
+                		  Object val = rsSource.getObject(columnNames[i]);
+                		  b.append(val.toString());
+                	  }
+                	  String sql = "insert into "+tableName+" ("+colNameStr.toString()+") values ("+b.toString()+")";
+                	  stmtNew.executeUpdate(sql);
+                      stmtNew.close();
+                  }
+                  
+                } catch (Exception e) {
+                  e.printStackTrace();
+//                  System.exit(1);
+                } finally {
+                  // release database resources
+                  try {
+                    rsSource.close();
+                    stmtSource.close();
+                    ConnectionBroker.freeConnection(connNew);
+                    ConnectionBroker.freeConnection(sourceDatasource, connSource);
+                  } catch (SQLException e) {
+                    e.printStackTrace();
+                  }
+                }
+            	
+//            	_dsi.getColumnStringForSelectList(entity, columnName)
+//          	  IDOHome localHome = IDOLookup.getHome(entity.getInterfaceClass());
+//	      		 GenericEntity ent = (GenericEntity) com.idega.data.GenericEntity.getStaticInstanceIDO(entity.getInterfaceClass(),sourceDatasource);
+//	      		 ent.setDatasource(sourceDatasource, false);
+            }
         }
 
 
@@ -623,7 +767,8 @@ public class IDOTableCreator{
 		  				values = (String[]) map.get(key);
 		  				createIndex(entity, key, values);
 	  				} catch (Exception e) {
-	  					e.printStackTrace();
+	  					logCopyError(entity, e, "index creation");
+//	  					e.printStackTrace();
 	  				}
 	  			}
 	  		}
@@ -1110,7 +1255,31 @@ public class IDOTableCreator{
 		return IWMainApplication.getDefaultIWMainApplication();
 	}
   //END STANDARD LOGGING METHODS
-  
 
+	protected void logCopyError(GenericEntity entity, Exception exception, String extraInfo) {
+		try{
+			if (useCopyLog) {
+				File file = new File("copyErrorLog.txt");
+				FileUtil.createFileIfNotExistent(file);
+				FileWriter fstream = new FileWriter(file, true);
+				BufferedWriter out = new BufferedWriter(fstream);
+				StackTraceElement[] elems = exception.getStackTrace();
+				out.write("=====================================================================================================\n");
+				out.write(entity.getEntityName() +" : "+extraInfo+"\n");
+				out.write(exception.getMessage() +"\n");
+				for (int i = 0; i < elems.length; i++) {
+					out.write("    "+elems[i] +"\n");
+				}
+				out.write("=====================================================================================================\n");
+				out.close();
+
+				System.out.println(">>>> COPY ERROR, logged to "+file.getAbsolutePath());
+			} else {
+				exception.printStackTrace();
+			}
+		}catch (Exception e){//Catch exception if any
+			System.err.println("Error: " + e.getMessage());
+		}
+	}
 
 }
