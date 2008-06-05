@@ -188,50 +188,6 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 			executeUpdate(entity, sql.toString());
 		}
 	}
-
-	protected String getCreationStatement(GenericEntity entity) {
-		String returnString = "create table " + entity.getTableName() + "(";
-		String[] names = entity.getColumnNames();
-		for (int i = 0; i < names.length; i++) {
-			/*
-			 * if (entity.getMaxLength(names[i]) == -1){
-			 * 
-			 * if
-			 * (entity.getStorageClassName(names[i]).equals("java.lang.String")){
-			 * 
-			 * returnString = returnString + names[i]+"
-			 * "+getSQLType(entity.getStorageClassName(names[i]))+"(255)";
-			 *  }
-			 * 
-			 * else{
-			 * 
-			 * returnString = returnString + names[i]+"
-			 * "+getSQLType(entity.getStorageClassName(names[i]));
-			 *  }
-			 * 
-			 * 
-			 *  }
-			 * 
-			 * else{
-			 * 
-			 * returnString = returnString + names[i]+"
-			 * "+getSQLType(entity.getStorageClassName(names[i]))+"("+entity.getMaxLength(names[i])+")";
-			 *  }
-			 */
-			returnString = returnString + names[i] + " "
-					+ getSQLType(entity.getStorageClassName(names[i]), entity.getMaxLength(names[i]));
-			if (entity.isPrimaryKey(names[i])) {
-				returnString = returnString + " PRIMARY KEY auto_increment";
-			}
-			if (i != names.length - 1) {
-				returnString = returnString + ",";
-			}
-		}
-		returnString = returnString + ")";
-		System.out.println(returnString);
-		return returnString;
-	}
-
 	
 	//Auto_increment handling:
 	
