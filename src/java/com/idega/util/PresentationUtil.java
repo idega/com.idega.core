@@ -185,7 +185,7 @@ public class PresentationUtil {
 		StringBuffer css;
 		
 		if(includeOnce) {
-			css = new StringBuffer("<script type=\"text/javascript\"> IWCORE.includeCss('")
+			css = new StringBuffer("<script type=\"text/javascript\">IWCORE.includeCss('")
 			.append(cssUri).append("');</script>\n");
 			//IWCORE.includeScript(pathtojsfiles+modules[i].incfile);
 			
@@ -219,7 +219,7 @@ public class PresentationUtil {
 		StringBuffer styles = new StringBuffer();
 		
 		for (String uri : styleSheetsUris) {
-			getCssLine(uri, true);
+			styles.append(getCssLine(uri, true));
 		}
 		
 		return styles.toString();
