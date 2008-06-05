@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.57.2.2 2008/06/04 20:35:07 gimmi Exp $
+ * $Id: IDOTableCreator.java,v 1.57.2.3 2008/06/05 06:01:16 gimmi Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -8,6 +8,7 @@
  */
 package com.idega.data;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -29,6 +30,9 @@ import java.util.logging.Logger;
 import javax.transaction.TransactionManager;
 
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.io.MemoryFileBuffer;
+import com.idega.io.MemoryInputStream;
+import com.idega.io.MemoryOutputStream;
 import com.idega.transaction.IdegaTransactionManager;
 import com.idega.user.data.GroupBMPBean;
 import com.idega.util.FileUtil;
@@ -44,10 +48,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2008/06/04 20:35:07 $ by $Author: gimmi $
+ * Last modified: $Date: 2008/06/05 06:01:16 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.57.2.2 $
+ * @version $Revision: 1.57.2.3 $
  */
 public class IDOTableCreator {
 
@@ -259,7 +263,8 @@ public class IDOTableCreator {
    * Creates an entity record (table) that represents the entity in the datastore
    */
   public void createEntityRecord(GenericEntity entity)throws Exception{
-  	
+//		 entity = (GenericEntity) com.idega.data.GenericEntity.getStaticInstanceIDO(ICFile.class);
+
     if(!doesTableExist(entity,entity.getTableName())){
 		//if(this.isDebugActive())
     	debug("Creating "+entity.getClass().getName()+" - tablename: "+entity.getTableName());
@@ -289,14 +294,6 @@ public class IDOTableCreator {
             //System.err.println("  Error was: "+e.getMessage());
           }
           
-          try{
-          	createIndexes(entity);
-          }
-          catch(Exception e){
-            e.printStackTrace();
-             //this can fail but don't kill the transaction then!
-           }
-          
           // CHECKING IF COPYING
           String sourceDatasource = "sourceDB";
           if (PoolManager.getInstance().hasDatasource(sourceDatasource)) {
@@ -307,24 +304,56 @@ public class IDOTableCreator {
     		 ent.setDatasource(sourceDatasource, false);
  
     		 System.out.println("Getting data from "+ent.getEntityName());
-    		 Collection ids = ent.idoFindPKsBySQL("select "+ent.getIDColumnName()+" from "+ent.getEntityName()+" order by "+ent.getIDColumnName());
-//    		 Collection results = sourceHome.getEntityCollectionForPrimaryKeys(ids);
+//    		 Collection ids = ent.idoFindPKsBySQL("select ic_file_id from ic_file order by ic_file");
+    		 Collection ids = ent.idoFindPKsBySQL("select * from "+ent.getEntityName()+" order by "+ent.getIDColumnName());
+    		 Collection pkList = ent.idoFindByPrimaryKeyCollection(ids,_dsi.getOptimalEJBLoadFetchSize());
+    		 Collection results = sourceHome.getEntityCollectionForPrimaryKeys(pkList);
+    		 //    		 Collection results = sourceHome.getEntityCollectionForPrimaryKeys(ids);
 //        	  String[] cols = entity.getColumnNames();
-        	  Iterator i = ids.iterator();
-        	  int counter = 0;
+//        	  Iterator i = ids.iterator();
+    		 Iterator i = results.iterator();
+    		 int counter = 0;
            	  System.out.print("Starting copy ("+ids.size()+")...");
         	  while (i.hasNext()) {
+        		  MemoryFileBuffer buffer = null;
+        		  BufferedInputStream bis = null;
+        		  MemoryOutputStream bos = null;
+        		  MemoryInputStream mis = null;
         		  try {
-        			  Object pk = (Object) i.next();
-        			  GenericEntity sourceEnt = (GenericEntity) sourceHome.findByPrimaryKeyIDO(pk);
-//	        		  GenericEntity sourceEnt = (GenericEntity) i.next();
-	        		  sourceEnt.setDatasource(ConnectionBroker.DEFAULT_POOL, false);
+//        			  Object pk = (Object) i.next();
+//        			  GenericEntity sourceEnt = (GenericEntity) sourceHome.findByPrimaryKeyIDO(pk);
+	        		  GenericEntity sourceEnt = (GenericEntity) i.next();
+	        		  if (sourceEnt.hasLobColumn()) {
+	        			  bis = new BufferedInputStream(sourceEnt.getInputStreamColumnValue(sourceEnt.getLobColumnName()));
+	        			  buffer = new MemoryFileBuffer();
+	        			  bos = new MemoryOutputStream(buffer);
+	        			  byte[] buff = new byte[10240];
+	        			  int bytesRead;
+	        			  // Simple read/write loop.
+	        			  while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
+	        				  bos.write(buff, 0, bytesRead);
+	        			  }
+	        		  }
 	        		  sourceEnt.setEntityState(IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE);
+	        		  sourceEnt.setDatasource(ConnectionBroker.DEFAULT_POOL, false);
+	        		  if (buffer != null) {
+	        			  mis = new MemoryInputStream(buffer);
+	        			  sourceEnt.setColumn(sourceEnt.getLobColumnName(), mis);
+	        		  }
 	        		  ((GenericEntity) sourceEnt).store();
         		  } catch (Exception e) {
         			  logCopyError(entity, e, "data copying");
-//        			  logError(e.getMessage());
 //        			  e.printStackTrace();
+        		  } finally {
+        			  if (mis != null) {
+        				  mis.close();
+        			  }
+        			  if (bos != null) {
+        				  bos.close();
+        			  }
+        			  if (bis != null) {
+        				  bis.close();
+        			  }
         		  }
         		  if (counter % 10000 == 0) {
         			  if (counter != 0) {
@@ -350,11 +379,21 @@ public class IDOTableCreator {
 //        		  System.out.println();
 //        		  targetEnt.store();
         	  }
+        	  updateNumberGeneratorValue(entity, (counter+1));
     		  System.out.println(" done : "+counter);
           } else if(entity.getIfInsertStartData()){
               // ELSE NORMAL
 	      		this._entityWithStartData.add(entity);
           }
+          
+          try{
+        	  createIndexes(entity);
+          }
+          catch(Exception e){
+        	  e.printStackTrace();
+        	  //this can fail but don't kill the transaction then!
+          }
+
           
           createMiddleTables(entity);
 
@@ -424,6 +463,34 @@ public class IDOTableCreator {
 	
   }
 
+	private void updateNumberGeneratorValue(GenericEntity entity, int highestValue) {
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		int valueToSet = highestValue;
+		try {
+			conn = entity.getConnection();
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery("select max(" + entity.getIDColumnName() + ") from " + entity.getTableName());
+			rs.next();
+			int i = rs.getInt(1);
+			if (i > valueToSet) {
+				valueToSet = i;
+			}
+			rs.close();
+			stmt.close();
+		}
+		catch (SQLException e) {
+			logCopyError(entity, e, "updating generator");
+//			e.printStackTrace();
+		}
+		finally {
+			if (conn != null) {
+				entity.freeConnection(conn);
+			}
+		}
+		DatastoreInterface.getInstance(entity).setNumberGeneratorValue(entity, valueToSet);
+	}
 
   protected String getCreationStatement(GenericEntity entity){
   	  if (entity instanceof GroupBMPBean) {
@@ -765,7 +832,8 @@ public class IDOTableCreator {
 	  				try {
 		  				key = (String) iter.next();
 		  				values = (String[]) map.get(key);
-		  				createIndex(entity, key, values);
+//		  				createIndex(entity, key, values);
+		  				_dsi.createIndex(entity, key, values);
 	  				} catch (Exception e) {
 	  					logCopyError(entity, e, "index creation");
 //	  					e.printStackTrace();
@@ -775,21 +843,6 @@ public class IDOTableCreator {
 	  	} catch (NoIndexException ignore) {}
   }
   
-  private void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
-		if (this._dsi.useIndexes()) {
-	  		StringBuffer sql = new StringBuffer("CREATE INDEX ")
-			.append(name).append(" ON ").append(entity.getTableName()).append(" (");
-	  		for (int i = 0; i < fields.length; i++) {
-	  			if (i > 0) {
-	  				sql.append(", ");
-	  			}
-	  			sql.append(fields[i]);
-	  		}
-	  		sql.append(")");
-	  		executeUpdate(entity, sql.toString());
-		}
-  }
-
   protected void createForeignKeys(IDOEntity entity) throws Exception {
     /*Connection conn = null;
     Statement Stmt = null;
@@ -1024,7 +1077,8 @@ public class IDOTableCreator {
 					while (iter.hasNext()) {
 						indexName = (String) iter.next();
 						try {
-							this.createIndex(entity, indexName, (String[]) map.get(indexName));
+							_dsi.createIndex(entity, indexName, (String[]) map.get(indexName));
+//							this.createIndex(entity, indexName, (String[]) map.get(indexName));
 						}
 						catch (Exception e1) {
 							System.out.println("IDOTableCreator : failed to create index : "+indexName+" ("+e1.getMessage()+")");
@@ -1259,13 +1313,13 @@ public class IDOTableCreator {
 	protected void logCopyError(GenericEntity entity, Exception exception, String extraInfo) {
 		try{
 			if (useCopyLog) {
-				File file = new File("copyErrorLog.txt");
+				File file = new File("/copyErrorLog.txt");
 				FileUtil.createFileIfNotExistent(file);
 				FileWriter fstream = new FileWriter(file, true);
 				BufferedWriter out = new BufferedWriter(fstream);
 				StackTraceElement[] elems = exception.getStackTrace();
 				out.write("=====================================================================================================\n");
-				out.write(entity.getEntityName() +" : "+extraInfo+"\n");
+				out.write(entity.getEntityName() +" ("+entity.getPrimaryKey()+") : "+extraInfo+"\n");
 				out.write(exception.getMessage() +"\n");
 				for (int i = 0; i < elems.length; i++) {
 					out.write("    "+elems[i] +"\n");
