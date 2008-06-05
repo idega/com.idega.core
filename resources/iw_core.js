@@ -1054,6 +1054,80 @@ IWCORE.includedScripts = {
         }
     },
     
+    /**
+     * uses jquery for now
+     */
+    includeScriptCallback: function(scriptPath, callback) {
+    
+        var scripts = IWCORE.includedScripts.get();
+        
+        if (!IWCORE.inArray(scriptPath, scripts)) {
+            
+            jQuery.getScript(scriptPath, function() { scripts.push(scriptPath); if(callback != null) callback(); });
+        } else if (callback != null)
+            callback();
+    },
+    
+    includeScriptsBatch: function(scripts, callback) {
+    	
+    	if(callback == null) {
+
+    		for(var i = 0; i < scripts.length; i++) {
+    		
+    		  IWCORE.includedScripts.includeScript(scripts[i], null);
+    		}
+    		
+    	} else {
+    		
+    		var btch = new IWCORE.includedScripts.Batch();
+    		btch.run(scripts, callback);
+    	}
+    },
+    
+    batchJob: function() {
+    	prototype = {
+    		
+    		scripts: null,
+    		resolvedCount: 0,
+    		callback: null,
+    		allScripts: null,
+    		
+    		run: function(scripts, clback) {
+    			
+    			this.allScripts = IWCORE.includedScripts.get();
+    			this.callback = clback;
+    			
+    			if(this.scripts != null) {
+    				
+    				var scr = this.scripts;
+    				var f = this.isFunction;
+    				
+    				for(var i = 0; i < scr.length; i++) {
+    					
+    					var script = scr[i];
+    					
+    					if (!IWCORE.inArray(script, this.allScripts)) {
+    					
+    					   jQuery.getScript(script, function() { f(script); });	
+    					}
+    				}
+    			}
+    		},
+    		
+    		isFinished: function(script) {
+    			
+//              can this be considered to be synchronized ?
+    			var cnt = this.resolvedCount++;
+    			
+    			this.allScripts.push(script);
+    			
+    			if(cnt == this.scripts.length && this.callback != null) {
+    				this.callback();
+    			}
+    		}
+    	}
+    },
+   
     includeJs: function(scriptPath) {
     
         var js = document.createElement('script');
@@ -1064,9 +1138,90 @@ IWCORE.includedScripts = {
     }
 }
 
+IWCORE.includedScripts.Batch = function() {};
+
+IWCORE.includedScripts.Batch.prototype.scripts = null;
+IWCORE.includedScripts.Batch.prototype.resolvedCount = 0;
+IWCORE.includedScripts.Batch.prototype.callback = null;
+IWCORE.includedScripts.Batch.prototype.allScripts = null;
+IWCORE.includedScripts.Batch.prototype.run = 
+            function(scripts, clback) {
+                
+                this.allScripts = IWCORE.includedScripts.get();
+                
+                if(scripts != null) {
+                    
+                    var scriptsToInclude = new Array();
+                    
+                    for(var i = 0; i < scripts.length; i++) {
+                    	
+                    	var scr = scripts[i];
+                    	
+                    	if (!IWCORE.inArray(scr, this.allScripts)) {
+                    		
+                    		scriptsToInclude.push(scr);
+                    	}
+                    }
+                    
+                    if(scriptsToInclude.length == 0) {
+                    	
+                    	if(clback != null) {
+                    		
+                    		clback();
+                    	}
+                    	
+                    } else {
+                    	
+                    	this.callback = clback;
+	                    this.scripts = scriptsToInclude;
+	                    
+	                    for(var i = 0; i < scriptsToInclude.length; i++) {
+	                        
+	                        var scr = scriptsToInclude[i];
+	                        IWCORE.includedScripts.Batch.getScript(scr, this);
+	                    }	
+                    }
+                }
+            };
+            
+IWCORE.includedScripts.Batch.getScript = 
+            function(scr, batch) {
+            	
+            	jQuery.getScript(scr, function() { batch.isFinished(scr); });
+            };
+            
+IWCORE.includedScripts.Batch.prototype.isFinished = 
+            function(script) {
+                
+//              can this be considered to be synchronized ?
+                var cnt = this.resolvedCount++;
+                
+                this.allScripts.push(script);
+                
+                if(cnt == this.scripts.length-1 && this.callback != null) {
+                    this.callback();
+                }
+            };
+
 IWCORE.includeScript = function(scriptPath) {
 
     return IWCORE.includedScripts.includeScript(scriptPath);  
+}
+
+/**
+ * uses jquery for now
+ */
+IWCORE.includeScriptCallback = function(scriptPath, callback) {
+
+    return IWCORE.includedScripts.includeScriptCallback(scriptPath, callback);  
+}
+
+/**
+ * uses jquery for now
+ */
+IWCORE.includeScriptsBatch = function(scriptsArray, callback) {
+
+    return IWCORE.includedScripts.includeScriptsBatch(scriptsArray, callback);  
 }
 
 IWCORE.includedCss = {
@@ -1315,7 +1470,9 @@ function executeJavaScriptActionsCodedInStringInGlobalScope(code) {
 }
 
 var DYNAMIC_HTML_ELEMENT_FUNCTION_SEPARATOR = '%idega_separator%';
-function createRealNode(element) {
+
+IWCORE.createRealNode = function(element, scriptsToEval) {
+	
 	//	XML
 	if (element.nodeName == 'xml') {
 		var fakeDiv = document.createElement('div');
@@ -1340,8 +1497,15 @@ function createRealNode(element) {
     var value = element.nodeValue;
     
     if(value.indexOf('prototype') == -1 && value.indexOf('scriptac') == -1) {
-    
-        window.eval(element.nodeValue);    
+
+        if(scriptsToEval != null) {
+        	
+        	scriptsToEval.push(element.nodeValue);
+        	
+        } else {
+        
+            window.eval(element.nodeValue);
+        }
     }
         
         return document.createTextNode('');
@@ -1463,11 +1627,15 @@ function createRealNode(element) {
 	
 	if (element.childNodes != null) {
 		for (var j = 0; j < element.childNodes.length; j++) {
-			result.appendChild(createRealNode(element.childNodes[j]));
+			result.appendChild(IWCORE.createRealNode(element.childNodes[j], scriptsToEval));
 		}
 	}
 	
 	return result;
+};
+
+function createRealNode(element) {
+    IWCORE.createRealNode(element, null);
 }
 
 function getStyleAttributes(styleValue){
@@ -1513,6 +1681,7 @@ function replaceNode(component, nodeToReplace, container) {
 }
 
 function insertNodesToContainerBefore(component, container, before) {
+	
 	if (component == null || container == null || before == null) {
 		return;
 	}
@@ -1557,6 +1726,36 @@ function insertNodesToContainer(component, container) {
 	
 	checkIfNeedExecuteDynamicallyReceivedJavaScript();
 }
+
+IWCORE.insertHtml = function(html, container) {
+	
+	if (html == null || container == null) {
+        return;
+    }
+    
+    ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = '';
+    
+    // Making copy
+    var nodes = getTransformedDocumentToDom(html);
+    
+    // Inserting nodes
+    var activeNode = null;
+    var realNode = null;
+    var scriptsToEval = new Array();
+    
+    for (var i = 0; i < nodes.length; i++) {
+        activeNode = nodes[i];
+        realNode = IWCORE.createRealNode(activeNode, scriptsToEval);
+        container.appendChild(realNode);
+    }
+    
+    for (var i = 0; i < scriptsToEval.length; i++) {
+    	
+    	window.eval(scriptsToEval[i]);
+    }
+    
+    checkIfNeedExecuteDynamicallyReceivedJavaScript();
+};
 
 function checkIfNeedExecuteDynamicallyReceivedJavaScript() {
 	if (ALL_JAVA_SCRIPT_ACTIONS_FOR_IE == null || ALL_JAVA_SCRIPT_ACTIONS_FOR_IE == '') {
