@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.136 2008/06/05 14:12:12 eiki Exp $
+ * $Id: DatastoreInterface.java,v 1.137 2008/06/05 14:45:21 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1502,7 +1502,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	public void setNumberGeneratorValue(GenericEntity entity, int value) {
-		throw new RuntimeException("setNumberGeneratorValue() not implemented for " + this.getClass().getName());
+		//throw new RuntimeException("setNumberGeneratorValue() not implemented for " + this.getClass().getName());
 	}
 
 	public void setDatabaseMetaData(DatabaseMetaData meta) {
