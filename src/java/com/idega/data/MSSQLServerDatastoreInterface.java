@@ -133,9 +133,6 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 					e.printStackTrace();
 				}
 			}
-			if (conn != null) {
-				ConnectionBroker.freeConnection(conn);
-			}
 		}
 	}
 	/**
