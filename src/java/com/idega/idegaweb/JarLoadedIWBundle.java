@@ -19,10 +19,10 @@ import com.idega.util.SortedProperties;
  * <p>
  * Implementation of an IWBundle loaded from a jar file instead of a folder
  * </p>
- *  Last modified: $Date: 2008/01/23 09:35:25 $ by $Author: alexis $
+ *  Last modified: $Date: 2008/06/05 15:21:12 $ by $Author: alexis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class JarLoadedIWBundle extends DefaultIWBundle {
 
@@ -124,12 +124,11 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 					theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantStream, locale);
 				}
 				else {
-					File file = new File(getResourcesRealPath(locale), getLocalizedStringsFileName());
-					theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, file, locale);
+					return defaultLocalizedResourceBundle;
 				}
 			}
 			else {
-				theReturn = defaultLocalizedResourceBundle;
+				return defaultLocalizedResourceBundle;
 			}
 		}
 		catch (IOException e) {
