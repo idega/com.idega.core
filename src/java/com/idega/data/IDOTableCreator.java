@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.57.2.3 2008/06/05 06:01:16 gimmi Exp $
+ * $Id: IDOTableCreator.java,v 1.57.2.4 2008/06/05 16:44:21 gimmi Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -48,10 +48,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2008/06/05 06:01:16 $ by $Author: gimmi $
+ * Last modified: $Date: 2008/06/05 16:44:21 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.57.2.3 $
+ * @version $Revision: 1.57.2.4 $
  */
 public class IDOTableCreator {
 
@@ -304,10 +304,20 @@ public class IDOTableCreator {
     		 ent.setDatasource(sourceDatasource, false);
  
     		 System.out.println("Getting data from "+ent.getEntityName());
-//    		 Collection ids = ent.idoFindPKsBySQL("select ic_file_id from ic_file order by ic_file");
-    		 Collection ids = ent.idoFindPKsBySQL("select * from "+ent.getEntityName()+" order by "+ent.getIDColumnName());
-    		 Collection pkList = ent.idoFindByPrimaryKeyCollection(ids,_dsi.getOptimalEJBLoadFetchSize());
-    		 Collection results = sourceHome.getEntityCollectionForPrimaryKeys(pkList);
+    		 Class pkClass = ent.getPrimaryKeyClass();
+    		 Collection results = null;
+    		 Collection ids = null;
+    		 if (pkClass.equals(IDOPrimaryKey.class)) {
+    			// IMPLEMENTATION NOT DONE
+//    			 ((IDOPrimaryKey) ent.getPrimaryKey()).getInstance().
+        		 ids = ent.idoFindPKsBySQL("select * from "+ent.getEntityName()+" order by "+ent.getIDColumnName());
+        		 Collection pkList = ent.idoFindByPrimaryKeyCollection(ids,_dsi.getOptimalEJBLoadFetchSize());
+        		 results = sourceHome.getEntityCollectionForPrimaryKeys(pkList);
+    		 } else {
+        		 ids = ent.idoFindPKsBySQL("select * from "+ent.getEntityName()+" order by "+ent.getIDColumnName());
+        		 Collection pkList = ent.idoFindByPrimaryKeyCollection(ids,_dsi.getOptimalEJBLoadFetchSize());
+        		 results = sourceHome.getEntityCollectionForPrimaryKeys(pkList);
+    		 }
     		 //    		 Collection results = sourceHome.getEntityCollectionForPrimaryKeys(ids);
 //        	  String[] cols = entity.getColumnNames();
 //        	  Iterator i = ids.iterator();
@@ -379,7 +389,7 @@ public class IDOTableCreator {
 //        		  System.out.println();
 //        		  targetEnt.store();
         	  }
-        	  updateNumberGeneratorValue(entity, (counter+1));
+//        	  updateNumberGeneratorValue(entity, (counter+1));
     		  System.out.println(" done : "+counter);
           } else if(entity.getIfInsertStartData()){
               // ELSE NORMAL
@@ -463,34 +473,34 @@ public class IDOTableCreator {
 	
   }
 
-	private void updateNumberGeneratorValue(GenericEntity entity, int highestValue) {
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		int valueToSet = highestValue;
-		try {
-			conn = entity.getConnection();
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("select max(" + entity.getIDColumnName() + ") from " + entity.getTableName());
-			rs.next();
-			int i = rs.getInt(1);
-			if (i > valueToSet) {
-				valueToSet = i;
-			}
-			rs.close();
-			stmt.close();
-		}
-		catch (SQLException e) {
-			logCopyError(entity, e, "updating generator");
-//			e.printStackTrace();
-		}
-		finally {
-			if (conn != null) {
-				entity.freeConnection(conn);
-			}
-		}
-		DatastoreInterface.getInstance(entity).setNumberGeneratorValue(entity, valueToSet);
-	}
+//	private void updateNumberGeneratorValue(GenericEntity entity, int highestValue) {
+//		Connection conn = null;
+//		Statement stmt = null;
+//		ResultSet rs = null;
+//		int valueToSet = highestValue;
+//		try {
+//			conn = entity.getConnection();
+//			stmt = conn.createStatement();
+//			rs = stmt.executeQuery("select max(" + entity.getIDColumnName() + ") from " + entity.getTableName());
+//			rs.next();
+//			int i = rs.getInt(1);
+//			if (i > valueToSet) {
+//				valueToSet = i;
+//			}
+//			rs.close();
+//			stmt.close();
+//		}
+//		catch (SQLException e) {
+//			logCopyError(entity, e, "updating generator");
+////			e.printStackTrace();
+//		}
+//		finally {
+//			if (conn != null) {
+//				entity.freeConnection(conn);
+//			}
+//		}
+//		DatastoreInterface.getInstance(entity).setNumberGeneratorValue(entity, valueToSet);
+//	}
 
   protected String getCreationStatement(GenericEntity entity){
   	  if (entity instanceof GroupBMPBean) {
