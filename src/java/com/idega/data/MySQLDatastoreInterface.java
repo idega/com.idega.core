@@ -25,15 +25,11 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 		this.useTransactionsInEntityCreation = false;
 	}
 
-	protected String getCreateUniqueIDQuery(GenericEntity entity) {
+	/*protected String getCreateUniqueIDQuery(GenericEntity entity) {
 		return "insert into " + getSequenceTableName(entity) + "(" + entity.getIDColumnName() + ") values(null)";
-	}
+	}*/
 
-	/**
-	 * 
-	 * *Creates a unique ID for the ID column
-	 * 
-	 */
+	/*
 	public int createUniqueID(GenericEntity entity) throws Exception {
 		int returnInt = -1;
 		Connection conn = null;
@@ -71,7 +67,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 
 	public String getSequenceTableName(GenericEntity entity) {
 		return "seq_" + entity.getTableName();
-	}
+	}*/
 
 	public String getSQLType(String javaClassName, int maxlength) {
 		String theReturn;
@@ -143,7 +139,8 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 	 * null) { rs.close(); } if (rs2 != null) { rs2.close(); } if (conn != null) {
 	 * entity.freeConnection(conn); } } return returner; }
 	 */
-	public void createSequenceTable(GenericEntity entity) throws Exception {
+	
+	/*public void createSequenceTable(GenericEntity entity) throws Exception {
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
@@ -162,14 +159,16 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 				entity.freeConnection(conn);
 			}
 		}
-	}
+	}*/
 
 	public void createTrigger(GenericEntity entity) throws Exception {
-		createSequenceTable(entity);
+		//createSequenceTable(entity);
+		//Not needed anymore because now using auto_increment directly
+		
 	}
 
-	public void createForeignKeys(GenericEntity entity) throws Exception {
-	}
+	//public void createForeignKeys(GenericEntity entity) throws Exception {
+	//}
 
 	public void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
 		if (useIndexes()) {
@@ -233,6 +232,45 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 		return returnString;
 	}
 
+	
+	//Auto_increment handling:
+	
+	protected void updateNumberGeneratedValue(GenericEntity entity, Connection conn)
+	{
+		try
+		{
+			//if (((GenericEntity) entity).getPrimaryKeyClass().equals(Integer.class))
+			//{
+			boolean pkIsNull = entity.isNull(entity.getIDColumnName());
+			if (pkIsNull)
+			{
+				//Object value = this.executeQuery(entity, "select @@IDENTITY");
+				Statement stmt = conn.createStatement();
+				ResultSet rs = stmt.executeQuery("select last_insert_id()");
+				rs.next();
+				int id = rs.getInt(1);
+				entity.setID(id);
+				rs.close();
+				stmt.close();
+				//String tableName = entity.getTableName();
+				//Statement stmt2 = conn.createStatement();
+				//stmt2.executeUpdate("set IDENTITY_INSERT " + tableName + " off");
+				//stmt2.close();
+			}
+			//}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * @return boolean
+	 */
+	protected boolean updateNumberGeneratedValueAfterInsert()
+	{
+		return true;
+	}
 	public String getIDColumnType(GenericEntity entity)
 	{
 		if (entity.getIfAutoIncrement()) {
@@ -242,7 +280,7 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 		}
 	}
 
-	public void setNumberGeneratorValue(GenericEntity entity, int value) {
+	/*public void setNumberGeneratorValue(GenericEntity entity, int value) {
 		// throw new RuntimeException("setSequenceValue() not implemented for
 		// "+this.getClass().getName());
 		String statement = "insert into " + this.getSequenceTableName(entity) + " values(" + value + ")";
@@ -253,5 +291,6 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 			// e.printStackTrace();
 			System.err.println("MySQLDatastoreInterface.setNumberGeneratorValue() Exception: " + e.getMessage());
 		}
-	}
+	}*/
+	
 }
