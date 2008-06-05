@@ -110,7 +110,7 @@ public class IDOEntityList implements List {
   }
   
   public boolean retainAll(Collection c) {
-  	return this._pkLists.removeAll(c);
+  	return this._pkLists.retainAll(c);
   }
   
   public Object set(int index, Object element) {

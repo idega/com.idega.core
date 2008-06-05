@@ -1,4 +1,4 @@
-//idega 2000 - Grímur Jónsson
+//idega 2000 - Grimur Jonsson
 
 /*
 
@@ -26,7 +26,7 @@ import java.util.List;
 
  *@deprecated Replaced with com.idega.core.user.data.User
 
-*@author <a href="mailto:gimmi@idega.is">Grímur Jónsson</a>
+*@author <a href="mailto:gimmi@idega.is">Grimur Jonsson</a>
 
 *@version 1.2
 
@@ -76,11 +76,11 @@ public class MemberBMPBean extends com.idega.data.GenericEntity implements com.i
 
           addAttribute("first_name","Fornafn",true,true,"java.lang.String");
 
-          addAttribute("middle_name","Miðnafn",true,true,"java.lang.String");
+          addAttribute("middle_name","Miï¿½nafn",true,true,"java.lang.String");
 
           addAttribute("last_name","Eftirnafn",true,true,"java.lang.String");
 
-          addAttribute("date_of_birth","Fæðingardagur",true,true,"java.sql.Date");
+          addAttribute("date_of_birth","Fï¿½ï¿½ingardagur",true,true,"java.sql.Date");
 
           addAttribute("gender","Kyn",true,true,"java.lang.String");
 
@@ -88,7 +88,7 @@ public class MemberBMPBean extends com.idega.data.GenericEntity implements com.i
 
 
 
-          /* Tillaga um viðbætur one to many tengs */
+          /* Tillaga um viï¿½bï¿½tur one to many tengs */
 
 //        addAttribute("email_id", "e-mail_id", false,false, "java.lang.Integer");
 
@@ -98,7 +98,7 @@ public class MemberBMPBean extends com.idega.data.GenericEntity implements com.i
 
 
 
-          addAttribute("image_id","MyndNúmer",false,false,"java.lang.Integer");
+          addAttribute("image_id","MyndNï¿½mer",false,false,"java.lang.Integer");
 
 
 

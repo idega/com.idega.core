@@ -135,7 +135,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	 */
 	public ICTreeNode getChildAtIndex(int childIndex) {
 		try {
-			GenericEntity entity = this.getClass().newInstance();
+			GenericEntity entity = (GenericEntity)this.getClass().newInstance();
 			entity.findByPrimaryKey(childIndex);
 			return (TreeableEntity)entity;
 		} catch (Exception e) {

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Vector;
 import com.idega.repository.data.MutableClass;
 import com.idega.util.StringHandler;
+import com.idega.util.text.TextSoap;
 //import com.idega.util.datastructures.HashtableMultivalued;
 /**
  * Title:        idega Data Objects
@@ -574,6 +575,7 @@ public class EntityControl implements MutableClass {
 	}
 	public static void addTreeRelationShip(GenericEntity entity) {
 		String relationShipTableName = createTreeRelationShipTableName(entity);
+		relationShipTableName = TextSoap.findAndReplace(relationShipTableName, "__", "_");
 		String idColumnName1 = entity.getIDColumnName();
 		String idColumnName2 = getTreeRelationShipChildColumnName(entity);
 		addManyToManyRelationShip(entity, entity, relationShipTableName, idColumnName1, idColumnName2);

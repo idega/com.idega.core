@@ -211,7 +211,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
    * @return Collection of IDOEntity objects for this Factory
    * @throws FinderException
    */
-  protected Collection getEntityCollectionForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
+  public Collection getEntityCollectionForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
   	if(collectionOfPrimaryKeys instanceof IDOPrimaryKeyList) {
   		return getIDOEntityListForPrimaryKeys(collectionOfPrimaryKeys);
   	} else {
