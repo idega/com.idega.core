@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.57.2.4 2008/06/05 16:44:21 gimmi Exp $
+ * $Id: IDOTableCreator.java,v 1.57.2.5 2008/06/05 19:29:38 eiki Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -48,10 +48,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2008/06/05 16:44:21 $ by $Author: gimmi $
+ * Last modified: $Date: 2008/06/05 19:29:38 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.57.2.4 $
+ * @version $Revision: 1.57.2.5 $
  */
 public class IDOTableCreator {
 
@@ -307,13 +307,12 @@ public class IDOTableCreator {
     		 Class pkClass = ent.getPrimaryKeyClass();
     		 Collection results = null;
     		 Collection ids = null;
-    		 if (pkClass.equals(IDOPrimaryKey.class)) {
-    			// IMPLEMENTATION NOT DONE
-//    			 ((IDOPrimaryKey) ent.getPrimaryKey()).getInstance().
-        		 ids = ent.idoFindPKsBySQL("select * from "+ent.getEntityName()+" order by "+ent.getIDColumnName());
-        		 Collection pkList = ent.idoFindByPrimaryKeyCollection(ids,_dsi.getOptimalEJBLoadFetchSize());
-        		 results = sourceHome.getEntityCollectionForPrimaryKeys(pkList);
+    		 if (IDOPrimaryKey.class.isAssignableFrom(pkClass)) {
+    			 //for combined primary keys we must fetch one by one, and the order shouldn't matter since no generators exist for them
+        		 ids = ent.idoFindPKsBySQL("select * from "+ent.getEntityName());
+        		 results = sourceHome.getEntityCollectionForPrimaryKeys(ids);
     		 } else {
+    			 //for single primary keys we can fetch in batches!
         		 ids = ent.idoFindPKsBySQL("select * from "+ent.getEntityName()+" order by "+ent.getIDColumnName());
         		 Collection pkList = ent.idoFindByPrimaryKeyCollection(ids,_dsi.getOptimalEJBLoadFetchSize());
         		 results = sourceHome.getEntityCollectionForPrimaryKeys(pkList);
