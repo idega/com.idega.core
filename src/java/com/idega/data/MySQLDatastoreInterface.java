@@ -8,6 +8,7 @@ package com.idega.data;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -191,35 +192,38 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 	
 	//Auto_increment handling:
 	
-	protected void updateNumberGeneratedValue(GenericEntity entity, Connection conn)
-	{
-		try
-		{
-			//if (((GenericEntity) entity).getPrimaryKeyClass().equals(Integer.class))
-			//{
+	protected void updateNumberGeneratedValue(GenericEntity entity, Connection conn){
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
 			boolean pkIsNull = entity.isNull(entity.getIDColumnName());
-			if (pkIsNull)
-			{
-				//Object value = this.executeQuery(entity, "select @@IDENTITY");
-				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("select last_insert_id()");
+			if (pkIsNull) {
+				stmt = conn.createStatement();
+				rs = stmt.executeQuery("select last_insert_id()");
 				rs.next();
 				int id = rs.getInt(1);
 				entity.setID(id);
-				rs.close();
-				stmt.close();
-				//String tableName = entity.getTableName();
-				//Statement stmt2 = conn.createStatement();
-				//stmt2.executeUpdate("set IDENTITY_INSERT " + tableName + " off");
-				//stmt2.close();
 			}
-			//}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (stmt != null) {
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
+	
 	/**
 	 * @return boolean
 	 */
