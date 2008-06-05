@@ -1,5 +1,5 @@
 /*
- * $Id: LoginSessionBean.java,v 1.10 2008/05/23 08:22:58 anton Exp $
+ * $Id: LoginSessionBean.java,v 1.11 2008/06/05 18:24:14 civilis Exp $
  * Created on 3.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -24,10 +24,10 @@ import com.idega.user.business.UserProperties;
 
 /**
  * 
- *  Last modified: $Date: 2008/05/23 08:22:58 $ by $Author: anton $
+ *  Last modified: $Date: 2008/06/05 18:24:14 $ by $Author: civilis $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class LoginSessionBean implements LoginSession {
     
@@ -227,6 +227,11 @@ public class LoginSessionBean implements LoginSession {
 	public Locale getCurrentLocale() {
 		currentLocale = IWContext.getInstance().getCurrentLocale();
 		return currentLocale;
+	}
+	
+	public boolean isLoggedIn() {
+		
+		return getUser() != null;
 	}
 }
 
