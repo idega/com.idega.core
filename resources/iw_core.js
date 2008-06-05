@@ -1267,16 +1267,16 @@ IWCORE.includedCss = {
     includedCss: null,
     
     includeCss: function(cssPath) {
-    
+    	
         var csses = IWCORE.includedCss.get();
         
         if (!IWCORE.inArray(cssPath, csses)) {
             csses.push(cssPath);
-            IWCORE.includedCss.includeCss(cssPath);
+            IWCORE.includedCss.includeCssTag(cssPath);
         }
     },
     
-    includeCss: function(cssPath) {
+    includeCssTag: function(cssPath) {
     
         var css = document.createElement('link');
         css.setAttribute('rel', 'stylesheet');
@@ -1288,7 +1288,7 @@ IWCORE.includedCss = {
 
 IWCORE.includeCss = function(cssPath) {
 
-    return IWCORE.includedCss.includeScript(cssPath);  
+    return IWCORE.includedCss.includeCss(cssPath);  
 }
 
 IWCORE.inArray = function(needle, haystack) {
