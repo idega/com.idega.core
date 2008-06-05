@@ -6,12 +6,9 @@
  */
 package com.idega.data;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.sql.Statement;
-import java.io.InputStream;
 
 /**
  * 
@@ -21,6 +18,8 @@ import java.io.InputStream;
  * 
  */
 public class MySQLDatastoreInterface extends DatastoreInterface {
+
+	private static final int MAX_INDEX_COLUMN_SIZE = 255;
 
 	MySQLDatastoreInterface() {
 		this.useTransactionsInEntityCreation = false;
@@ -172,6 +171,25 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 	public void createForeignKeys(GenericEntity entity) throws Exception {
 	}
 
+	public void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
+		if (useIndexes()) {
+			StringBuffer sql = new StringBuffer("CREATE INDEX ").append(name).append(" ON ").append(entity.getTableName()).append(" (");
+			for (int i = 0; i < fields.length; i++) {
+				IDOEntityField field = entity.getEntityDefinition().findFieldByUniqueName(fields[i]);
+				int maxLength = field.getMaxLength();
+				if (i > 0) {
+					sql.append(", ");
+				}
+				sql.append(fields[i]);
+				if (maxLength > MAX_INDEX_COLUMN_SIZE) {
+					sql.append("(").append(MAX_INDEX_COLUMN_SIZE).append(")");
+				}
+			}
+			sql.append(")");
+			executeUpdate(entity, sql.toString());
+		}
+	}
+
 	protected String getCreationStatement(GenericEntity entity) {
 		String returnString = "create table " + entity.getTableName() + "(";
 		String[] names = entity.getColumnNames();
@@ -213,105 +231,6 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 		returnString = returnString + ")";
 		System.out.println(returnString);
 		return returnString;
-	}
-
-	public void handleBlobUpdate(String columnName, PreparedStatement statement, int index, GenericEntity entity) {
-		BlobWrapper wrapper = entity.getBlobColumnValue(columnName);
-		// System.out.println("in MySQLhandleBlobUpdate");
-		if (wrapper != null) {
-			InputStream stream = wrapper.getInputStreamForBlobWrite();
-			// System.out.println("in MySQLhandleBlobUpdate wrapper!=null");
-			if (stream != null) {
-				try {
-					// System.out.println("in MySQLhandleBlobUpdate, stream !=
-					// null");
-					// BufferedInputStream bin = new BufferedInputStream( stream
-					// );
-					// statement.setBinaryStream(index, bin, bin.available() );
-					byte[] data = new byte[stream.available()];
-					// System.out.println("data.length="+data.length);
-					int noread = stream.read(data);
-					int i = 1;
-					while (noread != -1) {
-						noread = stream.read(data);
-						// System.out.println("in while "+i);
-						i++;
-					}
-					statement.setBytes(index, data);
-					// statement.setBinaryStream(index, stream,
-					// stream.available() );
-				}
-				catch (Exception e) {
-					// System.err.println("Error updating BLOB field in
-					// "+entity.getClass().getName());
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	protected void insertBlob(GenericEntity entity) throws Exception {
-		String statement;
-		Connection Conn = null;
-		InputStream instream = null;
-		try {
-			statement = "update " + entity.getEntityName() + " set " + entity.getLobColumnName() + "=? where "
-					+ entity.getIDColumnName() + " = '" + entity.getID() + "'";
-			// System.out.println(statement);
-			// System.out.println("In insertBlob() in MysqlDatastoreInterface");
-			BlobWrapper wrapper = entity.getBlobColumnValue(entity.getLobColumnName());
-			if (wrapper != null) {
-				// System.out.println("In insertBlob() in
-				// MysqlDatastoreInterface wrapper!=null");
-				// Conn.setAutoCommit(false);
-				instream = wrapper.getInputStreamForBlobWrite();
-				if (instream != null) {
-					// System.out.println("In insertBlob() in DatastoreInterface
-					// instream != null");
-					Conn = entity.getConnection();
-					// if(Conn== null){ System.out.println("In insertBlob() in
-					// DatastoreInterface conn==null"); return;}
-					// BufferedInputStream bin = new
-					// BufferedInputStream(instream);
-					byte[] data = new byte[instream.available()];
-					// System.out.println("data.length="+data.length);
-					int noread = instream.read(data);
-					int i = 1;
-					while (noread != -1) {
-						noread = instream.read(data);
-						// System.out.println("in while "+i);
-						i++;
-					}
-					PreparedStatement PS = Conn.prepareStatement(statement);
-					// System.out.println("bin.available(): "+bin.available());
-					// PS.setBinaryStream(1, bin, 0 );
-					// PS.setBinaryStream(1, instream, instream.available() );
-					PS.setBytes(1, data);
-					PS.executeUpdate();
-					PS.close();
-					// System.out.println("bin.available(): "+bin.available());
-					instream.close();
-					// bin.close();
-				}
-				// Conn.commit();
-				// Conn.setAutoCommit(true);
-			}
-		}
-		catch (SQLException ex) {
-			ex.printStackTrace();
-			System.err.println("error uploading blob to db for " + entity.getClass().getName());
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		finally {
-			if (Conn != null) {
-				entity.freeConnection(Conn);
-			}
-			if (instream != null) {
-				instream.close();
-			}
-		}
 	}
 
 	public String getIDColumnType(GenericEntity entity) {
