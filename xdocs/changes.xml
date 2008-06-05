@@ -4,6 +4,12 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+    	<release version="3.1.90" date="2008-06-05">
+      		<action dev="eiki" type="update">
+      			Better implementation of database copying with two datasources. All changes in com.idega.data.
+      		</action>
+    	</release>
+    	
   		<release version="3.1.89" date="2008-05-29">
       		<action dev="gimmi" type="update">
       			SendMail method fixed
