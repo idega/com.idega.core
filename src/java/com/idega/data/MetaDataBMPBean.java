@@ -1,5 +1,5 @@
 /*
- * $Id: MetaDataBMPBean.java,v 1.8 2006/03/03 15:47:45 tryggvil Exp $
+ * $Id: MetaDataBMPBean.java,v 1.8.2.1 2008/06/05 20:36:54 eiki Exp $
  * 
  * Copyright (C) 2001-2006 Idega hf. All Rights Reserved.
  * 
@@ -17,11 +17,11 @@ import java.sql.SQLException;
  * a many-to-many relation to this entity and thus gaining the functionality to
  * store arbitary key/value pairs.
  * <p>
- * Last modified: $Date: 2006/03/03 15:47:45 $ by $Author: tryggvil $
+ * Last modified: $Date: 2008/06/05 20:36:54 $ by $Author: eiki $
  * 
  * @author <a href="eiki@idega.is">Eirikur S. Hrafnsson</a>,<a
  *         href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.8.2.1 $
  */
 public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com.idega.data.MetaData {
 
@@ -49,6 +49,8 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 		addAttribute(COLUMN_META_VALUE, "The key's value", true, true, String.class, 2000);
 		addAttribute(COLUMN_META_TYPE, "The value's type", true, true, String.class, 255);
 		addIndex("IDX_IC_METADATA_1", new String[] { COLUMN_META_KEY, COLUMN_META_VALUE });
+		addIndex("IDX_IC_METADATA_2", new String[] { COLUMN_META_KEY });
+		addIndex("IDX_IC_METADATA_3", new String[] { COLUMN_META_VALUE });
 	}
 
 	public String getEntityName() {
