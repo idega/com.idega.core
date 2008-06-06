@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.57.2.5 2008/06/05 19:29:38 eiki Exp $
+ * $Id: IDOTableCreator.java,v 1.57.2.6 2008/06/06 00:01:10 gimmi Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -48,10 +48,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2008/06/05 19:29:38 $ by $Author: eiki $
+ * Last modified: $Date: 2008/06/06 00:01:10 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.57.2.5 $
+ * @version $Revision: 1.57.2.6 $
  */
 public class IDOTableCreator {
 
@@ -763,7 +763,8 @@ public class IDOTableCreator {
                   rsSource = stmtSource.executeQuery(query);
                   // get the column names from the ResultSet
                   
-                  
+                  int counter = 0;
+                  System.out.println("Starting copy ");
                   while (rsSource.next()) {
                 	  stmtNew = connNew.createStatement();
                 	  StringBuffer b = new StringBuffer();
@@ -777,6 +778,23 @@ public class IDOTableCreator {
                 	  String sql = "insert into "+tableName+" ("+colNameStr.toString()+") values ("+b.toString()+")";
                 	  stmtNew.executeUpdate(sql);
                       stmtNew.close();
+
+            		  if (counter % 10000 == 0) {
+            			  if (counter != 0) {
+            				  System.out.println(":");
+                			  System.out.print(counter+" ");
+            			  } else {
+            				  System.out.println();
+            				  System.out.print("      ");
+            			  }
+            		  } else if (counter % 1000 == 0) {
+            			  System.out.print(":");
+            		  } else if (counter % 100 == 0) {
+            			  System.out.print(".");
+            		  }
+            		  ++counter;
+
+                  
                   }
                   
                 } catch (Exception e) {
@@ -835,8 +853,8 @@ public class IDOTableCreator {
 	  		Set keys = map.keySet();
 	  		if (keys != null) {
 	  			Iterator iter = keys.iterator();
-	  			String key;
-	  			String[] values;
+	  			String key = null;
+	  			String[] values = null;
 	  			while (iter.hasNext()) {
 	  				try {
 		  				key = (String) iter.next();
@@ -1322,7 +1340,7 @@ public class IDOTableCreator {
 	protected void logCopyError(GenericEntity entity, Exception exception, String extraInfo) {
 		try{
 			if (useCopyLog) {
-				File file = new File("/copyErrorLog.txt");
+				File file = new File(getIWMainApplication().getApplicationRealPath()+"/copyErrorLog.txt");
 				FileUtil.createFileIfNotExistent(file);
 				FileWriter fstream = new FileWriter(file, true);
 				BufferedWriter out = new BufferedWriter(fstream);
@@ -1330,7 +1348,7 @@ public class IDOTableCreator {
 				out.write("=====================================================================================================\n");
 				out.write(entity.getEntityName() +" ("+entity.getPrimaryKey()+") : "+extraInfo+"\n");
 				out.write(exception.getMessage() +"\n");
-				for (int i = 0; i < elems.length; i++) {
+				for (int i = 0; i < elems.length && i < 15; i++) {
 					out.write("    "+elems[i] +"\n");
 				}
 				out.write("=====================================================================================================\n");
