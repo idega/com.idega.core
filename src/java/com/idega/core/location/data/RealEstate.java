@@ -14,7 +14,7 @@ public interface RealEstate extends IDOEntity {
 	 * @see com.idega.core.location.data.RealEstateBMPBean#getRealEstateNumber
 	 */
 	public String getRealEstateNumber();
-	
+
 	/**
 	 * @see com.idega.core.location.data.RealEstateBMPBean#setRealEstateUnit
 	 */

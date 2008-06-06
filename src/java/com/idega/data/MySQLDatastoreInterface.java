@@ -20,7 +20,7 @@ import java.sql.Statement;
  */
 public class MySQLDatastoreInterface extends DatastoreInterface {
 
-	private static final int MAX_INDEX_COLUMN_SIZE = 255;
+	private static final int MAX_INDEX_COLUMN_SIZE = 100;
 
 	MySQLDatastoreInterface() {
 		this.useTransactionsInEntityCreation = false;
@@ -177,12 +177,16 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 			for (int i = 0; i < fields.length; i++) {
 				IDOEntityField field = entity.getEntityDefinition().findFieldByUniqueName(fields[i]);
 				int maxLength = field.getMaxLength();
+				
 				if (i > 0) {
 					sql.append(", ");
 				}
 				sql.append(fields[i]);
-				if (maxLength > MAX_INDEX_COLUMN_SIZE) {
-					sql.append("(").append(MAX_INDEX_COLUMN_SIZE).append(")");
+				if (maxLength > 0) {
+					if (maxLength > MAX_INDEX_COLUMN_SIZE) {
+						maxLength = MAX_INDEX_COLUMN_SIZE;
+					}
+					sql.append("(").append(maxLength).append(")");
 				}
 			}
 			sql.append(")");

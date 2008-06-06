@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.59 2008/06/05 14:12:12 eiki Exp $
+ * $Id: IDOTableCreator.java,v 1.60 2008/06/06 00:08:05 eiki Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -48,10 +48,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2008/06/05 14:12:12 $ by $Author: eiki $
+ * Last modified: $Date: 2008/06/06 00:08:05 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.59 $
+ * @version $Revision: 1.60 $
  */
 public class IDOTableCreator {
 
@@ -304,10 +304,19 @@ public class IDOTableCreator {
     		 ent.setDatasource(sourceDatasource, false);
  
     		 System.out.println("Getting data from "+ent.getEntityName());
-//    		 Collection ids = ent.idoFindPKsBySQL("select ic_file_id from ic_file order by ic_file");
-    		 Collection ids = ent.idoFindPKsBySQL("select * from "+ent.getEntityName()+" order by "+ent.getIDColumnName());
-    		 Collection pkList = ent.idoFindByPrimaryKeyCollection(ids,_dsi.getOptimalEJBLoadFetchSize());
-    		 Collection results = sourceHome.getEntityCollectionForPrimaryKeys(pkList);
+    		 Class pkClass = ent.getPrimaryKeyClass();
+    		 Collection results = null;
+    		 Collection ids = null;
+    		 if (IDOPrimaryKey.class.isAssignableFrom(pkClass)) {
+    			 //for combined primary keys we must fetch one by one, and the order shouldn't matter since no generators exist for them
+        		 ids = ent.idoFindPKsBySQL("select * from "+ent.getEntityName());
+        		 results = sourceHome.getEntityCollectionForPrimaryKeys(ids);
+    		 } else {
+    			 //for single primary keys we can fetch in batches!
+        		 ids = ent.idoFindPKsBySQL("select * from "+ent.getEntityName()+" order by "+ent.getIDColumnName());
+        		 Collection pkList = ent.idoFindByPrimaryKeyCollection(ids,_dsi.getOptimalEJBLoadFetchSize());
+        		 results = sourceHome.getEntityCollectionForPrimaryKeys(pkList);
+    		 }
     		 //    		 Collection results = sourceHome.getEntityCollectionForPrimaryKeys(ids);
 //        	  String[] cols = entity.getColumnNames();
 //        	  Iterator i = ids.iterator();
@@ -379,7 +388,7 @@ public class IDOTableCreator {
 //        		  System.out.println();
 //        		  targetEnt.store();
         	  }
-        	  updateNumberGeneratorValue(entity, (counter+1));
+//        	  updateNumberGeneratorValue(entity, (counter+1));
     		  System.out.println(" done : "+counter);
           } else if(entity.getIfInsertStartData()){
               // ELSE NORMAL
@@ -463,34 +472,34 @@ public class IDOTableCreator {
 	
   }
 
-	private void updateNumberGeneratorValue(GenericEntity entity, int highestValue) {
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		int valueToSet = highestValue;
-		try {
-			conn = entity.getConnection();
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("select max(" + entity.getIDColumnName() + ") from " + entity.getTableName());
-			rs.next();
-			int i = rs.getInt(1);
-			if (i > valueToSet) {
-				valueToSet = i;
-			}
-			rs.close();
-			stmt.close();
-		}
-		catch (SQLException e) {
-			logCopyError(entity, e, "updating generator");
-//			e.printStackTrace();
-		}
-		finally {
-			if (conn != null) {
-				entity.freeConnection(conn);
-			}
-		}
-		DatastoreInterface.getInstance(entity).setNumberGeneratorValue(entity, valueToSet);
-	}
+//	private void updateNumberGeneratorValue(GenericEntity entity, int highestValue) {
+//		Connection conn = null;
+//		Statement stmt = null;
+//		ResultSet rs = null;
+//		int valueToSet = highestValue;
+//		try {
+//			conn = entity.getConnection();
+//			stmt = conn.createStatement();
+//			rs = stmt.executeQuery("select max(" + entity.getIDColumnName() + ") from " + entity.getTableName());
+//			rs.next();
+//			int i = rs.getInt(1);
+//			if (i > valueToSet) {
+//				valueToSet = i;
+//			}
+//			rs.close();
+//			stmt.close();
+//		}
+//		catch (SQLException e) {
+//			logCopyError(entity, e, "updating generator");
+////			e.printStackTrace();
+//		}
+//		finally {
+//			if (conn != null) {
+//				entity.freeConnection(conn);
+//			}
+//		}
+//		DatastoreInterface.getInstance(entity).setNumberGeneratorValue(entity, valueToSet);
+//	}
 
   protected String getCreationStatement(GenericEntity entity){
   	  if (entity instanceof GroupBMPBean) {
@@ -754,7 +763,8 @@ public class IDOTableCreator {
                   rsSource = stmtSource.executeQuery(query);
                   // get the column names from the ResultSet
                   
-                  
+                  int counter = 0;
+                  System.out.println("Starting copy ");
                   while (rsSource.next()) {
                 	  stmtNew = connNew.createStatement();
                 	  StringBuffer b = new StringBuffer();
@@ -768,6 +778,23 @@ public class IDOTableCreator {
                 	  String sql = "insert into "+tableName+" ("+colNameStr.toString()+") values ("+b.toString()+")";
                 	  stmtNew.executeUpdate(sql);
                       stmtNew.close();
+
+            		  if (counter % 10000 == 0) {
+            			  if (counter != 0) {
+            				  System.out.println(":");
+                			  System.out.print(counter+" ");
+            			  } else {
+            				  System.out.println();
+            				  System.out.print("      ");
+            			  }
+            		  } else if (counter % 1000 == 0) {
+            			  System.out.print(":");
+            		  } else if (counter % 100 == 0) {
+            			  System.out.print(".");
+            		  }
+            		  ++counter;
+
+                  
                   }
                   
                 } catch (Exception e) {
@@ -826,8 +853,8 @@ public class IDOTableCreator {
 	  		Set keys = map.keySet();
 	  		if (keys != null) {
 	  			Iterator iter = keys.iterator();
-	  			String key;
-	  			String[] values;
+	  			String key = null;
+	  			String[] values = null;
 	  			while (iter.hasNext()) {
 	  				try {
 		  				key = (String) iter.next();
@@ -1313,7 +1340,7 @@ public class IDOTableCreator {
 	protected void logCopyError(GenericEntity entity, Exception exception, String extraInfo) {
 		try{
 			if (useCopyLog) {
-				File file = new File("/copyErrorLog.txt");
+				File file = new File(getIWMainApplication().getApplicationRealPath()+"/copyErrorLog.txt");
 				FileUtil.createFileIfNotExistent(file);
 				FileWriter fstream = new FileWriter(file, true);
 				BufferedWriter out = new BufferedWriter(fstream);
@@ -1321,7 +1348,7 @@ public class IDOTableCreator {
 				out.write("=====================================================================================================\n");
 				out.write(entity.getEntityName() +" ("+entity.getPrimaryKey()+") : "+extraInfo+"\n");
 				out.write(exception.getMessage() +"\n");
-				for (int i = 0; i < elems.length; i++) {
+				for (int i = 0; i < elems.length && i < 15; i++) {
 					out.write("    "+elems[i] +"\n");
 				}
 				out.write("=====================================================================================================\n");

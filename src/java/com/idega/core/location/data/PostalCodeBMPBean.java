@@ -69,10 +69,10 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		 * pCode.setPostalCode("101"); pCode.setName("Reykjavik");
 		 * pCode.setCountryID(country.getID()); pCode.insert(); pCode =
 		 * ((com.idega.core.data.PostalCodeHome)com.idega.data.IDOLookup.getHomeLegacy(PostalCode.class)).createLegacy();
-		 * pCode.setPostalCode("200"); pCode.setName("Kópavogur");
+		 * pCode.setPostalCode("200"); pCode.setName("Kï¿½pavogur");
 		 * pCode.setCountryID(country.getID()); pCode.insert(); pCode =
 		 * ((com.idega.core.data.PostalCodeHome)com.idega.data.IDOLookup.getHomeLegacy(PostalCode.class)).createLegacy();
-		 * pCode.setPostalCode("201");< pCode.setName("Kópavogur");
+		 * pCode.setPostalCode("201");< pCode.setName("Kï¿½pavogur");
 		 * pCode.setCountryID(country.getID()); pCode.insert(); }
 		 */
 	}
@@ -158,7 +158,18 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	private void setPostalAddress(String postal_address) {
 		setColumn(COLUMN_POSTAL_ADDRESS, postal_address);
 	}
-	
+
+	public Collection ejbFindByCommune(Commune commune) throws FinderException {
+		Table table = new Table(this);
+
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(table.getColumn(getIDColumnName()));
+		query.addCriteria(new MatchCriteria(table.getColumn(COLUMN_COMMUNE_ID), MatchCriteria.EQUALS, commune));
+		query.addOrder(table, COLUMN_POSTAL_CODE, true);
+
+		return idoFindPKsByQuery(query);
+	}
+
 	public Collection ejbFindByPostalCode(Collection codes) throws FinderException {
 		Table table = new Table(this);
 
@@ -169,7 +180,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 
 		return idoFindPKsByQuery(query);
 	}
-	
+
 	public Object ejbFindByPostalCode(String code) throws FinderException {
 		return ejbFindByPostalCodeAndCountryId(code, -1);
 	}
