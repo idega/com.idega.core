@@ -30,6 +30,9 @@ public interface UserHome extends com.idega.data.IDOHome
  public Collection findUsersBySearchCondition(String condition, String[] userIds, boolean orderLastFirst) throws FinderException;
  public User findUserForUserGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException;
  public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException;
+ 
+ public abstract Collection<User> findUsersByEmail(String email) throws javax.ejb.FinderException;
+ 
  public java.util.Collection findUsers(java.lang.String[] userIDs)throws javax.ejb.FinderException;
  public java.util.Collection findAllUsersOrderedByFirstName()throws javax.ejb.FinderException;
  public java.util.Collection findUsersByYearOfBirth (int minYear, int maxYear)  throws  FinderException;

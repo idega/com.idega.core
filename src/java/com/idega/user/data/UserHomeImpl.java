@@ -184,6 +184,16 @@ public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderExcepti
 	return this.findByPrimaryKey(pk);
 }
 
+public Collection<User> findUsersByEmail(java.lang.String email)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	@SuppressWarnings("unchecked")
+	Collection<Integer> pks = ((UserBMPBean)entity).ejbFindUsersByEmail(email);
+	this.idoCheckInPooledEntity(entity);
+	@SuppressWarnings("unchecked")
+	Collection<User> usrs = getEntityCollectionForPrimaryKeys(pks);
+	return usrs;
+}
+
 public java.util.Collection findUsers(java.lang.String[] userIDs)throws javax.ejb.FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((UserBMPBean)entity).ejbFindUsers(userIDs);

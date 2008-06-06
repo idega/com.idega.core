@@ -14,8 +14,6 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
-import org.springframework.dao.UncategorizedDataAccessException;
-
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailBMPBean;
@@ -1127,6 +1125,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 	
 	public Integer ejbFindUserFromEmail(String emailAddress) throws FinderException {
+ 		String sql = getUsersByEmailSqlQuery(emailAddress);
+ 		return (Integer) super.idoFindOnePKBySQL(sql);
+	}
+	
+	private String getUsersByEmailSqlQuery(String emailAddress) {
+		
 		StringBuffer sql = new StringBuffer("select iu.* ");
 		sql.append(" from ").append(this.getTableName()).append(" iu ,");
 		sql.append(EmailBMPBean.SQL_TABLE_NAME).append(" ie ,");
@@ -1136,11 +1140,17 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		sql.append("iue.").append(getIDColumnName()).append(" = iu.").append(getIDColumnName());
 		sql.append(" and ie.").append(EmailBMPBean.SQL_COLUMN_EMAIL).append(" = '");
 		sql.append(emailAddress).append("'");
-    // append is not deleted
-    sql
-      .append(" and ");//iu.");
-    appendIsNotDeleted(sql);
- 		return (Integer) super.idoFindOnePKBySQL(sql.toString());
+	    // append is not deleted
+	    sql.append(" and ");//iu.");
+	    appendIsNotDeleted(sql);
+	    
+	    return sql.toString();
+	}
+	
+	public Collection ejbFindUsersByEmail(String emailAddress) throws FinderException {
+		
+		String sql = getUsersByEmailSqlQuery(emailAddress);
+ 		return idoFindPKsBySQL(sql);
 	}
 
 	public Collection ejbFindByNames(String first, String middle, String last) throws FinderException {
