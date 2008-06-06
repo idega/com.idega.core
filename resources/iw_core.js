@@ -1565,8 +1565,9 @@ IWCORE.createRealNode = function(element, scriptsToEval) {
 			}
 			else if (attribute.nodeName == 'style' && IE) {
 				var styleValue = attribute.nodeValue;
-				var stylePropertyNameLength = styleValue.indexOf(':');
+				result.setAttribute('style', styleValue);
 				
+				/*var stylePropertyNameLength = styleValue.indexOf(':');
 				if (stylePropertyNameLength == -1) {
 					result.setAttribute('style', styleValue);
 				}
@@ -1588,7 +1589,7 @@ IWCORE.createRealNode = function(element, scriptsToEval) {
 	
 						$(result).setStyle(stylePropertyName, stylePropertyValue);
 					}
-				}
+				}*/
 			}
 			else if (attribute.nodeName == 'href') {
 				var hrefValue = attribute.nodeValue;
