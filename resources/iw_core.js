@@ -1635,7 +1635,7 @@ IWCORE.createRealNode = function(element, scriptsToEval) {
 };
 
 function createRealNode(element) {
-    IWCORE.createRealNode(element, null);
+	return IWCORE.createRealNode(element, null);
 }
 
 function getStyleAttributes(styleValue){
