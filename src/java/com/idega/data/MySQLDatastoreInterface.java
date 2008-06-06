@@ -20,8 +20,9 @@ import java.sql.Statement;
  */
 public class MySQLDatastoreInterface extends DatastoreInterface {
 
+	private static final int MAX_TOTAL_INDEX_COLUMN_SIZE = 255; // 767 / 3 (Innodb max / 3 for unicode)
 	private static final int MAX_INDEX_COLUMN_SIZE = 100;
-
+	
 	MySQLDatastoreInterface() {
 		this.useTransactionsInEntityCreation = false;
 	}
@@ -174,6 +175,11 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 	public void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
 		if (useIndexes()) {
 			StringBuffer sql = new StringBuffer("CREATE INDEX ").append(name).append(" ON ").append(entity.getTableName()).append(" (");
+			int maxSize = MAX_TOTAL_INDEX_COLUMN_SIZE / fields.length;
+			if (maxSize > MAX_INDEX_COLUMN_SIZE) {
+				maxSize = MAX_INDEX_COLUMN_SIZE;
+			}
+			
 			for (int i = 0; i < fields.length; i++) {
 				IDOEntityField field = entity.getEntityDefinition().findFieldByUniqueName(fields[i]);
 				int maxLength = field.getMaxLength();
@@ -182,11 +188,17 @@ public class MySQLDatastoreInterface extends DatastoreInterface {
 					sql.append(", ");
 				}
 				sql.append(fields[i]);
+
+				Class dataTypeClass = field.getDataTypeClass();
 				if (maxLength > 0) {
 					if (maxLength > MAX_INDEX_COLUMN_SIZE) {
 						maxLength = MAX_INDEX_COLUMN_SIZE;
 					}
 					sql.append("(").append(maxLength).append(")");
+				} else if (maxLength == -1 && String.class.isAssignableFrom(dataTypeClass)) {
+					sql.append("(").append(maxSize).append(")");
+				} else if (Boolean.class.isAssignableFrom(dataTypeClass)) {
+					sql.append("(1)");
 				}
 			}
 			sql.append(")");
