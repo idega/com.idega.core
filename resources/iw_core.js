@@ -1566,30 +1566,6 @@ IWCORE.createRealNode = function(element, scriptsToEval) {
 			else if (attribute.nodeName == 'style' && IE) {
 				var styleValue = attribute.nodeValue;
 				result.setAttribute('style', styleValue);
-				
-				/*var stylePropertyNameLength = styleValue.indexOf(':');
-				if (stylePropertyNameLength == -1) {
-					result.setAttribute('style', styleValue);
-				}
-				else {
-					while (true) {
-						stylePropertyNameLength = styleValue.indexOf(':');
-						if (stylePropertyNameLength == -1) {
-							break;
-						}
-						var stylePropertyName = styleValue.substring(0, stylePropertyNameLength);
-						styleValue = styleValue.substring(stylePropertyNameLength+1);
-						var stylePropertyValueLength = styleValue.indexOf(';');
-						if (stylePropertyValueLength == -1) {
-							$(result).setStyle(stylePropertyName, styleValue);
-							break;
-						}
-						var stylePropertyValue = styleValue.substring(0, stylePropertyValueLength);
-						styleValue = styleValue.substring(stylePropertyValueLength+2);
-	
-						$(result).setStyle(stylePropertyName, stylePropertyValue);
-					}
-				}*/
 			}
 			else if (attribute.nodeName == 'href') {
 				var hrefValue = attribute.nodeValue;
