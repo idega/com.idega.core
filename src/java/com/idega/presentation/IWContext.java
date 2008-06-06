@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.148 2008/02/19 11:39:34 eiki Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.149 2008/06/06 09:06:33 civilis Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -82,10 +82,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2008/02/19 11:39:34 $ by $Author: eiki $
+ * Last modified: $Date: 2008/06/06 09:06:33 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.148 $
+ * @version $Revision: 1.149 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -948,29 +948,30 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	public static IWContext getInstance() throws UnavailableIWContext {
 		// IWContext theReturn =
 		// com.idega.servlet.IWPresentationServlet.getIWContext();
-		IWContext theReturn = null;
 		// if(theReturn==null){
 		try {
+			IWContext iwc;
 			// If no IWContext is found then try to get the FacesContext:
 			FacesContext fc = FacesContext.getCurrentInstance();
 			if (fc != null) {
-				theReturn = getIWContext(fc);
-			}
-			else{
-				throw new UnavailableIWContext();
-			}
-		}
-		catch (Exception e) {
+				iwc = getIWContext(fc);
+			} else
+				iwc = null;
+//			else{
+//				throw new UnavailableIWContext();
+//			}
+			return iwc;
+		} catch (Exception e) {
 			//e.printStackTrace();
-			if(e instanceof UnavailableIWContext){
-				throw (UnavailableIWContext)e;
-			}
-			else{
-				throw new UnavailableIWContext(e);
-			}
+//			if(e instanceof UnavailableIWContext){
+//				throw (UnavailableIWContext)e;
+//			}
+//			else{
+//				throw new UnavailableIWContext(e);
+//			}
+			throw new UnavailableIWContext(e);
 		}
 		// }
-		return theReturn;
 	}
 
 	public String getCurrentState(PresentationObject obj) {
