@@ -26,10 +26,10 @@ import com.idega.idegaweb.IWMainApplicationSettings;
  * <p>
  * Utility class to send Emails with the Java Mail API.
  * </p>
- * Last modified: $Date: 2008/05/29 11:08:48 $ by $Author: gimmi $
+ * Last modified: $Date: 2008/06/07 15:47:57 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10.2.9 $
+ * @version $Revision: 1.10.2.10 $
  */
 public class SendMail {
 
@@ -60,9 +60,15 @@ public class SendMail {
 		// if not set the system default set is taken
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
-		boolean useSmtpAuthentication = Boolean.valueOf(settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, "true")).booleanValue();
+		boolean useSmtpAuthentication = Boolean.valueOf(settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, "false")).booleanValue();
 		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, "");
 		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, "");
+		
+		if("".equals(username)){
+			useSmtpAuthentication = false;
+		}
+		
+		
 		//Set the host smtp address
 		Properties props = new Properties();
 		props.put("mail.smtp.host", host);
