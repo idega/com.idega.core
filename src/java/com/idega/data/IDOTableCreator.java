@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.60 2008/06/06 00:08:05 eiki Exp $
+ * $Id: IDOTableCreator.java,v 1.61 2008/06/09 13:31:57 eiki Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -48,10 +48,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2008/06/06 00:08:05 $ by $Author: eiki $
+ * Last modified: $Date: 2008/06/09 13:31:57 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.60 $
+ * @version $Revision: 1.61 $
  */
 public class IDOTableCreator {
 
@@ -59,6 +59,7 @@ public class IDOTableCreator {
   private DatastoreInterface _dsi;
   private List _entityWithStartData = new Stack();
   private boolean useCopyLog = false;
+  private static String sourceDatasource = "sourceDB";
   
   protected IDOTableCreator(DatastoreInterface dsi){
     this._dsi=dsi;
@@ -295,7 +296,6 @@ public class IDOTableCreator {
           }
           
           // CHECKING IF COPYING
-          String sourceDatasource = "sourceDB";
           if (PoolManager.getInstance().hasDatasource(sourceDatasource)) {
         	  useCopyLog = true;
         	  IDOHome sourceHome = IDOLookup.getHome(entity.getInterfaceClass(), sourceDatasource);
@@ -733,7 +733,6 @@ public class IDOTableCreator {
               //}
             }
             
-            String sourceDatasource = "sourceDB";
             if (PoolManager.getInstance().hasDatasource(sourceDatasource)) {
 //            	IDOHome sourceHome = IDOLookup.getHome(entity.getInterfaceClass(), sourceDatasource);
             	String[] columnNames = _dsi.getColumnNames(tableName, null);
