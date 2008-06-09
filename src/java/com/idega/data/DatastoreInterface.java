@@ -1,5 +1,5 @@
 /*
- * $Id: DatastoreInterface.java,v 1.137 2008/06/05 14:45:21 eiki Exp $
+ * $Id: DatastoreInterface.java,v 1.138 2008/06/09 13:30:40 eiki Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -624,20 +624,20 @@ public abstract class DatastoreInterface implements MutableClass {
 		return returnInt;
 	}
 
-  public void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
+	public void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
 		if (useIndexes()) {
-	  		StringBuffer sql = new StringBuffer("CREATE INDEX ")
+			StringBuffer sql = new StringBuffer("CREATE INDEX ")
 			.append(name).append(" ON ").append(entity.getTableName()).append(" (");
-	  		for (int i = 0; i < fields.length; i++) {
-	  			if (i > 0) {
-	  				sql.append(", ");
-	  			}
-	  			sql.append(fields[i]);
-	  		}
-	  		sql.append(")");
-	  		executeUpdate(entity, sql.toString());
+			for (int i = 0; i < fields.length; i++) {
+				if (i > 0) {
+					sql.append(", ");
+				}
+				sql.append(fields[i]);
+			}
+			sql.append(")");
+			executeUpdate(entity, sql.toString());
 		}
-  }
+	}
 
 	protected String getCreateUniqueIDQuery(GenericEntity entity) throws Exception {
 		return "";
@@ -1502,7 +1502,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	public void setNumberGeneratorValue(GenericEntity entity, int value) {
-		//throw new RuntimeException("setNumberGeneratorValue() not implemented for " + this.getClass().getName());
+//		throw new RuntimeException("setNumberGeneratorValue() not implemented for " + this.getClass().getName());
 	}
 
 	public void setDatabaseMetaData(DatabaseMetaData meta) {
