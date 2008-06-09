@@ -1083,50 +1083,6 @@ IWCORE.includedScripts = {
     		btch.run(scripts, callback);
     	}
     },
-    
-    batchJob: function() {
-    	prototype = {
-    		
-    		scripts: null,
-    		resolvedCount: 0,
-    		callback: null,
-    		allScripts: null,
-    		
-    		run: function(scripts, clback) {
-    			
-    			this.allScripts = IWCORE.includedScripts.get();
-    			this.callback = clback;
-    			
-    			if(this.scripts != null) {
-    				
-    				var scr = this.scripts;
-    				var f = this.isFunction;
-    				
-    				for(var i = 0; i < scr.length; i++) {
-    					
-    					var script = scr[i];
-    					
-    					if (!IWCORE.inArray(script, this.allScripts)) {
-    					
-    					   jQuery.getScript(script, function() { f(script); });	
-    					}
-    				}
-    			}
-    		},
-    		
-    		isFinished: function(script) {
-    			
-//              can this be considered to be synchronized ?
-    			var cnt = this.resolvedCount++;
-    			
-    			this.allScripts.push(script);
-    			
-    			if(cnt == this.scripts.length && this.callback != null) {
-    				this.callback();
-    			}
-    		}
-    	}
-    },
    
     includeJs: function(scriptPath) {
     
