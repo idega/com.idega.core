@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.96.2.2 2007/05/20 20:59:39 gimmi Exp $
+ * $Id: Form.java,v 1.96.2.3 2008/06/10 19:30:45 gimmi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -37,10 +37,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2007/05/20 20:59:39 $ by $Author: gimmi $
+ *  Last modified: $Date: 2008/06/10 19:30:45 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.96.2.2 $
+ * @version $Revision: 1.96.2.3 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -204,21 +204,21 @@ public class Form
 	//This variable is kept because of legacy reasons but should be replaced with a Facet
 	private Window oldPopupWindow;
 	protected void setWindow(Window window) {
-		if(IWMainApplication.useJSF){
-			getFacets().put("popupwindow",window);
-		}
-		else{
+//		if(IWMainApplication.useJSF){
+//			getFacets().put("popupwindow",window);
+//		}
+//		else{
 			this.oldPopupWindow = window;
-		}
+//		}
 	}
 	
 	protected Window getWindow(){
-		if(IWMainApplication.useJSF){
-			return (Window)getFacet("popupwindow");
-		}
-		else{
+//		if(IWMainApplication.useJSF){
+//			return (Window)getFacet("popupwindow");
+//		}
+//		else{
 			return this.oldPopupWindow;
-		}
+//		}
 	}
 
 	public void setMultiPart() {
