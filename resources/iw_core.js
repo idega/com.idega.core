@@ -1812,7 +1812,7 @@ LazyLoader.loadMultiple = function(urls, callback) {
 			LazyLoader.loadMultiple(urls, callback);
 		});
 	} catch(e) {
-		alert(e);
+		//alert('Exception using LazyLoader.loadMultiple: ' + e);
 	}
 }
 
@@ -1888,19 +1888,10 @@ LazyLoader.load = function(url, callback) {
 						callback();
 						return;
 					}
-					//	Safari doesn't support either onload or readystate, create a timer - only way to do this in safari
-					if (isSafariBrowser()) {
-						LazyLoader.timer[url] = setInterval(function() {
-							if (/loaded|complete/.test(document.readyState)) {
-								clearInterval(LazyLoader.timer[url]);
-								callback();	//	Call the callback handler
-							}
-						}, 10);
-					}
 				}
 			}
 		}
 	} catch (e) {
-		alert(e);
+		//alert('Exception using LazyLoader.load: ' + e);
 	}
 }
