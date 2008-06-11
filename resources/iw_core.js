@@ -1006,285 +1006,6 @@ function registerEvent(object, eventType, functionName){
 	} 
 }
 
-window.onload = function() {
-
-    IWCORE.includedScripts.load();
-}
-
-IWCORE.includedScripts = {
-
-    load: function() {
-    
-        var scriptElements = document.getElementsByTagName("script");
-        var scripts = new Array();
-        
-        if(scriptElements != null)
-            for(var idx = 0; idx < scriptElements.length; idx++)
-                scripts.push(scriptElements[idx].getAttribute('src'));
-
-                
-        IWCORE.includedScripts.includedScripts = scripts;
-        return IWCORE.includedScripts.includedScripts;
-    },
-    get: function() {
-    
-	   if(IWCORE.includedScripts.includedScripts == null)
-	       IWCORE.includedScripts.includedScripts = IWCORE.includedScripts.load();
-       
-       return IWCORE.includedScripts.includedScripts;
-    },
-    
-    add: function(scriptPath) {
-    
-        var scripts = IWCORE.includedScripts.get();
-        
-        if (!IWCORE.inArray(scriptPath, scripts))
-            scripts.push(scriptPath);
-    },
-    
-    includedScripts: null,
-    
-    includeScript: function(scriptPath) {
-    
-        var scripts = IWCORE.includedScripts.get();
-        
-        if (!IWCORE.inArray(scriptPath, scripts)) {
-            scripts.push(scriptPath);
-            IWCORE.includedScripts.includeJs(scriptPath);
-        }
-    },
-    
-    /**
-     * uses jquery for now
-     */
-    includeScriptCallback: function(scriptPath, callback) {
-    
-        var scripts = IWCORE.includedScripts.get();
-        
-        if (!IWCORE.inArray(scriptPath, scripts)) {
-            
-            jQuery.getScript(scriptPath, function() { scripts.push(scriptPath); if(callback != null) callback(); });
-        } else if (callback != null)
-            callback();
-    },
-    
-    includeScriptsBatch: function(scripts, callback) {
-    	
-    	if(callback == null) {
-
-    		for(var i = 0; i < scripts.length; i++) {
-    		
-    		  IWCORE.includedScripts.includeScript(scripts[i], null);
-    		}
-    		
-    	} else {
-    		
-    		var btch = new IWCORE.includedScripts.Batch();
-    		btch.run(scripts, callback);
-    	}
-    },
-   
-    includeJs: function(scriptPath) {
-    
-        var js = document.createElement('script');
-        js.setAttribute('language', 'javascript');
-        js.setAttribute('type', 'text/javascript');
-        js.setAttribute('src', scriptPath);
-        document.getElementsByTagName('head').item(0).appendChild(js);
-    }
-}
-
-IWCORE.includedScripts.Batch = function() {};
-
-IWCORE.includedScripts.Batch.prototype.scripts = null;
-IWCORE.includedScripts.Batch.prototype.resolvedCount = 0;
-IWCORE.includedScripts.Batch.prototype.callback = null;
-IWCORE.includedScripts.Batch.prototype.allScripts = null;
-IWCORE.includedScripts.Batch.prototype.run = 
-            function(scripts, clback) {
-                
-                this.allScripts = IWCORE.includedScripts.get();
-                
-                if(scripts != null) {
-                    
-                    var scriptsToInclude = new Array();
-                    
-                    for(var i = 0; i < scripts.length; i++) {
-                    	
-                    	var scr = scripts[i];
-                    	
-                    	if (!IWCORE.inArray(scr, this.allScripts)) {
-                    		
-                    		scriptsToInclude.push(scr);
-                    	}
-                    }
-                    
-                    if(scriptsToInclude.length == 0) {
-                    	
-                    	if(clback != null) {
-                    		
-                    		clback();
-                    	}
-                    	
-                    } else {
-                    	
-                    	this.callback = clback;
-	                    this.scripts = scriptsToInclude;
-	                    
-	                    for(var i = 0; i < scriptsToInclude.length; i++) {
-	                        
-	                        var scr = scriptsToInclude[i];
-	                        IWCORE.includedScripts.Batch.getScript(scr, this);
-	                    }	
-                    }
-                }
-            };
-            
-IWCORE.includedScripts.Batch.getScript = 
-            function(scr, batch) {
-            	
-            	jQuery.getScript(scr, function() { batch.isFinished(scr); });
-            };
-            
-IWCORE.includedScripts.Batch.prototype.isFinished = 
-            function(script) {
-                
-//              can this be considered to be synchronized ?
-                var cnt = this.resolvedCount++;
-                
-                this.allScripts.push(script);
-                
-                if(cnt == this.scripts.length-1 && this.callback != null) {
-                    this.callback();
-                }
-            };
-
-IWCORE.includeScript = function(scriptPath) {
-
-    return IWCORE.includedScripts.includeScript(scriptPath);  
-}
-
-/**
- * uses jquery for now
- */
-IWCORE.includeScriptCallback = function(scriptPath, callback) {
-
-    return IWCORE.includedScripts.includeScriptCallback(scriptPath, callback);  
-}
-
-/**
- * uses jquery for now
- */
-IWCORE.includeScriptsBatch = function(scriptsArray, callback) {
-
-    return IWCORE.includedScripts.includeScriptsBatch(scriptsArray, callback);  
-}
-
-IWCORE.includedCss = {
-
-    load: function() {
-    
-        var cssElements = document.getElementsByTagName("link");
-        var csses = new Array();
-        
-        if(cssElements != null) {
-        	
-        	for(var idx = 0; idx < cssElements.length; idx++) {
-                
-                var type = cssElements[idx].getAttribute('type');
-                
-                if(type == 'text/css') {
-                
-                   csses.push(cssElements[idx].getAttribute('href'));   
-                }
-            }
-        }
-            
-                
-        IWCORE.includedCss.includedCss = csses;
-        return IWCORE.includedCss.includedCss;
-    },
-    get: function() {
-    
-       if(IWCORE.includedCss.includedCss == null)
-           IWCORE.includedCss.includedCss = IWCORE.includedCss.load();
-       
-       return IWCORE.includedCss.includedCss;
-    },
-    
-    add: function(cssPath) {
-    
-        var csses = IWCORE.includedScripts.get();
-        
-        if (!IWCORE.inArray(cssPath, csses))
-            csses.push(cssPath);
-    },
-    
-    includedCss: null,
-    
-    includeCss: function(cssPath) {
-    	
-        var csses = IWCORE.includedCss.get();
-        
-        if (!IWCORE.inArray(cssPath, csses)) {
-            csses.push(cssPath);
-            IWCORE.includedCss.includeCssTag(cssPath);
-        }
-    },
-    
-    includeCssTag: function(cssPath) {
-    
-        var css = document.createElement('link');
-        css.setAttribute('rel', 'stylesheet');
-        css.setAttribute('type', 'text/css');
-        css.setAttribute('href', cssPath);
-        document.getElementsByTagName('head').item(0).appendChild(css);
-    }
-}
-
-IWCORE.includeCss = function(cssPath) {
-
-    return IWCORE.includedCss.includeCss(cssPath);  
-}
-
-IWCORE.inArray = function(needle, haystack) {
-    for (var i = 0; i < haystack.length; i++) {
-        if (haystack[i] == needle) {
-            return true;
-        }
-    }
-    return false;
-}
-
-/* !!    REQUIRES MOOTOOLS      !!
-*/
-IWCORE.includeScriptBatch = function(orderedScriptPathes) {
-
-    if(orderedScriptPathes == null)
-        return;
-        
-    orderedScriptPathes = orderedScriptPathes.reverse();
-    
-    IWCORE.includeScriptBatch.addJs(orderedScriptPathes);
-}
-
-IWCORE.includeScriptBatch.addJs = function(pathes) {
-
-    var path = pathes.pop();
-    IWCORE.includedScripts.add(path);
-    
-    if(pathes.length == 0) {
-        new Asset.javascript(path, {onload: function(){ }});
-    } else {
-        new Asset.javascript(path, {
-            onload: function() {
-                        IWCORE.includeScriptBatch.addJs(pathes);
-                    }
-            }
-        );
-    }
-};
-
 /**
  * linkToFeed: e.g. http://www.idega.com/rss/articles.xml
  * feedType: e.g. "atom" or "rss"
@@ -1414,6 +1135,10 @@ function getTransformedDocumentToDom(component) {
 }
 
 function executeJavaScriptActionsCodedInStringInGlobalScope(code) {
+	if (code == null || code == '') {
+		return null;
+	}
+	
 	//	Executing script in global scope
 	var dj_global = this;
 	
@@ -1425,9 +1150,8 @@ function executeJavaScriptActionsCodedInStringInGlobalScope(code) {
 	return dj_global.eval ? dj_global.eval(code) : eval(code);
 }
 
-var DYNAMIC_HTML_ELEMENT_FUNCTION_SEPARATOR = '%idega_separator%';
-
-IWCORE.createRealNode = function(element, scriptsToEval) {
+IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
+	var DYNAMIC_HTML_ELEMENT_FUNCTION_SEPARATOR = '%idega_separator%';
 	
 	//	XML
 	if (element.nodeName == 'xml') {
@@ -1449,30 +1173,28 @@ IWCORE.createRealNode = function(element, scriptsToEval) {
     
     //  JavaScript cnode
     if (element.nodeName == '#cdata-section' && element.parentNode.nodeName == 'script') {
+        var value = element.nodeValue;
     
-    var value = element.nodeValue;
-    
-    if(value.indexOf('prototype') == -1 && value.indexOf('scriptac') == -1) {
+		if (value.indexOf('prototype') == -1 && value.indexOf('scriptac') == -1) {
+			if (scriptsToEval != null) {
+	        	scriptsToEval.push(element.nodeValue);
+			} else {
+				executeJavaScriptActionsCodedInStringInGlobalScope(element.nodeValue);
+			}
+		}
 
-        if(scriptsToEval != null) {
-        	
-        	scriptsToEval.push(element.nodeValue);
-        	
-        } else {
-        
-            window.eval(element.nodeValue);
-        }
-    }
-        
-        return document.createTextNode('');
+		return document.createTextNode('');
     }
 	
 	//	Script
-	if (element.nodeName == 'script' && IE) {
+	if (element.nodeName == 'script') {
 		if (element.nodeValue != null && element.nodeValue != '') {
 			var action = '' + element.nodeValue;
 			if (action.indexOf('<!--') == -1 && action.indexOf('//-->') == -1) {
-				ALL_JAVA_SCRIPT_ACTIONS_FOR_IE += action;
+				if (scriptsToEval == null) {
+					scriptsToEval = new Array();
+				}
+				scriptsToEval.push(action);	//	Adding action needed to execute
 			}
 		}
 		
@@ -1480,7 +1202,10 @@ IWCORE.createRealNode = function(element, scriptsToEval) {
 			for (var i = 0; i < element.attributes.length; i++) {
 				var attribute = element.attributes[i];
 				if (attribute.nodeName == 'src') {
-					insertJavaScriptFileToHeader(attribute.nodeValue);	//	Adding source file
+					if (resourcesToAdd == null) {
+						resourcesToAdd = new Array();
+					}
+					resourcesToAdd.push(attribute.nodeValue);	//	Adding source file
 				}
 			}
 		}
@@ -1494,7 +1219,10 @@ IWCORE.createRealNode = function(element, scriptsToEval) {
 				}
 			}
 			if (allActions != null && allActions != '') {
-				ALL_JAVA_SCRIPT_ACTIONS_FOR_IE += allActions;
+				if (scriptsToEval == null) {
+					scriptsToEval = new Array();
+				}
+				scriptsToEval.push(allActions);	//	Adding actions needed to execute
 			}
 		}
 		
@@ -1504,7 +1232,7 @@ IWCORE.createRealNode = function(element, scriptsToEval) {
 	// Element
 	var result = document.createElement(element.nodeName);
 	if (element.attributes != null) {
-		var functionsToRegister = new Array();
+		var functionsToRegister = new Array();	//	Functions for single element, like onclick, onchange etc.
 		for (var i = 0; i < element.attributes.length; i++) {
 			var attribute = element.attributes[i];
 			if (attribute.nodeName.indexOf('on') == 0 && IE) {
@@ -1530,9 +1258,19 @@ IWCORE.createRealNode = function(element, scriptsToEval) {
 				}
 				
 				result.setAttribute(attribute.nodeName, hrefValue);
+				
+				if (element.nodeName == 'link') {
+					if (resourcesToAdd == null) {
+						resourcesToAdd = new Array();
+					}
+					resourcesToAdd.push(hrefValue);	//	Adding CSS source file
+				}
 			}
 			else if (attribute.nodeName == 'src' && element.nodeName == 'script') {
-				insertJavaScriptFileToHeader(attribute.nodeValue);	//	Adding source file
+				if (resourcesToAdd == null) {
+					resourcesToAdd = new Array();
+				}
+				resourcesToAdd.push(attribute.nodeValue);	//	Adding source file
 			}
 			else if (attribute.nodeName == 'class' && IE) {
 				result.className = attribute.nodeValue;
@@ -1560,40 +1298,36 @@ IWCORE.createRealNode = function(element, scriptsToEval) {
 	
 	if (element.childNodes != null) {
 		for (var j = 0; j < element.childNodes.length; j++) {
-			result.appendChild(IWCORE.createRealNode(element.childNodes[j], scriptsToEval));
+			result.appendChild(IWCORE.createRealNode(element.childNodes[j], scriptsToEval, resourcesToAdd));
 		}
 	}
 	
 	return result;
 };
 
-function createRealNode(element) {
-	return IWCORE.createRealNode(element, null);
+IWCORE.includeScriptAndExecuteActions = function(resourcesToAdd, scriptsToEval) {
+	var actionsToExecute = null;
+	if (scriptsToEval != null && scriptsToEval.length > 0) {
+		actionsToExecute = '';
+		for (var i = 0; i < scriptsToEval.length; i++) {
+			actionsToExecute += scriptsToEval[i];
+		}
+	}
+	
+	if (resourcesToAdd == null || resourcesToAdd.length == 0) {
+		executeJavaScriptActionsCodedInStringInGlobalScope(actionsToExecute);
+		return false;
+	}
+	
+	var callback = function() {
+		executeJavaScriptActionsCodedInStringInGlobalScope(actionsToExecute);
+	}
+	
+	LazyLoader.loadMultiple(resourcesToAdd, callback);
 }
 
-function getStyleAttributes(styleValue){
-	var styleAttributes = new Array();
-	for(key in styleAttributes){
-		delete styleAttributes[key];
-	}
-	while(true){
-		var stylePropertyNameLength = styleValue.indexOf(':');
-		if(stylePropertyNameLength == -1){
-			break;
-		}
-		var stylePropertyName = styleValue.substring(0, stylePropertyNameLength);
-		styleValue = styleValue.substring(stylePropertyNameLength+1);
-		var stylePropertyValueLength = styleValue.indexOf(';');
-		if(stylePropertyValueLength == -1){
-			break;
-		}
-		var stylePropertyValue = styleValue.substring(0, stylePropertyValueLength);
-		styleValue = styleValue.substring(stylePropertyValueLength+2);
-
-		styleAttributes[stylePropertyName.toString()] = stylePropertyValue;
-		
-	}	
-	return styleAttributes;
+function createRealNode(element, scriptsToEval, resourcesToAdd) {
+	return IWCORE.createRealNode(element, scriptsToEval, resourcesToAdd);
 }
 
 function replaceNode(component, nodeToReplace, container) {
@@ -1606,99 +1340,64 @@ function replaceNode(component, nodeToReplace, container) {
 	// Inserting nodes
 	var activeNode = null;
 	var realNode = null;
+	var scriptsToEval = new Array();
+	var resourcesToAdd = new Array();
 	for (var i = 0; i < nodes.length; i++) {
 		activeNode = nodes[i];
-		realNode = createRealNode(activeNode);
+		realNode = createRealNode(activeNode, scriptsToEval, resourcesToAdd);
 		container.replaceChild(realNode, nodeToReplace);
 	}
+	
+	IWCORE.includeScriptAndExecuteActions(resourcesToAdd, scriptsToEval);
 }
 
 function insertNodesToContainerBefore(component, container, before) {
-	
 	if (component == null || container == null || before == null) {
 		return;
 	}
 	
-	ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = '';
-	
 	// Making copy
 	var nodes = getTransformedDocumentToDom(component);
 	
 	// Inserting nodes
 	var activeNode = null;
 	var realNode = null;
+	var scriptsToEval = new Array();
+	var resourcesToAdd = new Array();
 	for (var i = 0; i < nodes.length; i++) {
 		activeNode = nodes[i];
-		realNode = createRealNode(activeNode);
+		realNode = createRealNode(activeNode, scriptsToEval, resourcesToAdd);
 		container.insertBefore(realNode, before);
 	}
 	
-	checkIfNeedExecuteDynamicallyReceivedJavaScript();
+	IWCORE.includeScriptAndExecuteActions(resourcesToAdd, scriptsToEval);
 }
 
-var ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = null;
 function insertNodesToContainer(component, container) {
-	if (component == null || container == null) {
-		return;
-	}
-	
-	ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = '';
-	
-	// Making copy
-	var nodes = getTransformedDocumentToDom(component);
-	
-	// Inserting nodes
-	var activeNode = null;
-	var realNode = null;
-	
-	for (var i = 0; i < nodes.length; i++) {
-		activeNode = nodes[i];
-		realNode = createRealNode(activeNode);
-		container.appendChild(realNode);
-	}
-	
-	checkIfNeedExecuteDynamicallyReceivedJavaScript();
+	IWCORE.insertHtml(component, container);
 }
 
 IWCORE.insertHtml = function(html, container) {
-	
 	if (html == null || container == null) {
-        return;
-    }
-    
-    ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = '';
-    
-    // Making copy
-    var nodes = getTransformedDocumentToDom(html);
-    
-    // Inserting nodes
-    var activeNode = null;
-    var realNode = null;
-    var scriptsToEval = new Array();
-    
-    for (var i = 0; i < nodes.length; i++) {
-        activeNode = nodes[i];
-        realNode = IWCORE.createRealNode(activeNode, scriptsToEval);
-        container.appendChild(realNode);
-    }
-    
-    for (var i = 0; i < scriptsToEval.length; i++) {
-    	
-    	window.eval(scriptsToEval[i]);
-    }
-    
-    checkIfNeedExecuteDynamicallyReceivedJavaScript();
-};
+		return;
+	}
 
-function checkIfNeedExecuteDynamicallyReceivedJavaScript() {
-	if (ALL_JAVA_SCRIPT_ACTIONS_FOR_IE == null || ALL_JAVA_SCRIPT_ACTIONS_FOR_IE == '') {
-		ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = null;
+	// Making copy
+	var nodes = getTransformedDocumentToDom(html);
+
+	// Inserting nodes
+	var activeNode = null;
+	var realNode = null;
+	var scriptsToEval = new Array();
+	var resourcesToAdd = new Array();
+	for (var i = 0; i < nodes.length; i++) {
+		activeNode = nodes[i];
+		realNode = IWCORE.createRealNode(activeNode, scriptsToEval, resourcesToAdd);
+		container.appendChild(realNode);
 	}
-	else {
-		executeJavaScriptActionsCodedInStringInGlobalScope(ALL_JAVA_SCRIPT_ACTIONS_FOR_IE);
-		ALL_JAVA_SCRIPT_ACTIONS_FOR_IE = null;
-	}
-}
+
+	IWCORE.includeScriptAndExecuteActions(resourcesToAdd, scriptsToEval);
+};
 /** End **/
 
 function getNeededElements(element, className) {
@@ -2093,4 +1792,112 @@ function isCorrectFileType(id, fileType, noFileMsg, invalidFileTypeMsg) {
 		}
 	}
 	return true;
+}
+
+var LazyLoader = {};		//	Namespace
+LazyLoader.timer = {};		//	Contains timers for resources
+LazyLoader.resources = [];	//	Contains called resources references
+LazyLoader.loadMultiple = function(urls, callback) {
+	try {
+		if (urls == null || urls.length == 0) {
+			if (callback) {
+				callback();
+			}
+		}
+		
+		for (var i = 0; i < urls.length; i++) {
+			LazyLoader.load(urls[i], i + 1 == urls.length ? callback : null);
+		}
+	} catch(e) {
+		alert(e);
+	}
+}
+
+LazyLoader.load = function(url, callback) {
+	try {
+		var foundRequiredResource = false;
+		
+		var currentScripts = document.getElementsByTagName('script');
+		if (currentScripts != null && currentScripts.length > 0) {
+			var scriptUri = null;
+			for (var i = 0; (i < currentScripts.length && !foundRequiredResource); i++) {
+				var scriptElement = currentScripts[i];
+				scriptUri = scriptElement.getAttribute('src');
+				if (url == scriptUri) {
+					foundRequiredResource = true;
+				}
+			}
+		}
+		
+		if (!foundRequiredResource) {
+			var loadedScripts = LazyLoader.resources;
+			if (loadedScripts != null && loadedScripts.length > 0) {
+				for (var i = 0; (i < loadedScripts.length && !foundRequiredResource); i++) {
+					if (url == loadedScripts[i]) {
+						foundRequiredResource = true;
+					}
+				}
+			}
+		}
+		
+		//	Make sure we only load once
+		if (foundRequiredResource) {
+			if (callback) {
+				callback();
+			}
+		} else {
+			//	Note that we loaded already
+			LazyLoader.resources.push(url);
+					
+			var resourceEnd = url.substring(url.lastIndexOf('.') + 1);
+			var isCSS = resourceEnd.toLowerCase() == 'css';
+			
+			var resource = null;
+			if (isCSS) {
+				resource = document.createElement('link');
+				resource.href = url;
+				resource.type = 'text/css';
+				resource.rel = 'stylesheet';
+				resource.media = 'screen';
+			}
+			else {
+				//	Will treat as JavaScript
+				resource = document.createElement('script');
+				resource.src = url;
+				resource.type = 'text/javascript';
+			}
+			document.getElementsByTagName('head')[0].appendChild(resource);	//	Add resource tag to head element
+			
+			//	Was a callback requested?
+			if (callback) {
+				if (isCSS) {
+					callback();	//	TODO: is it better way?
+				}
+				else {
+					//	Test for onreadystatechange to trigger callback
+					resource.onreadystatechange = function () {
+						if (resource.readyState == 'loaded' || resource.readyState == 'complete') {
+							callback();
+						}
+					}				
+					//	Test for onload to trigger callback
+					resource.onload = function () {
+						callback();
+						return;
+					}
+					//	Safari doesn't support either onload or readystate, create a timer - only way to do this in safari
+					if (isSafariBrowser()) {
+						LazyLoader.timer[url] = setInterval(function() {
+							if (/loaded|complete/.test(document.readyState)) {
+								clearInterval(LazyLoader.timer[url]);
+								callback();	//	Call the callback handler
+							}
+						}, 10);
+					}
+				}
+			}
+		}
+	} catch (e) {
+		alert(e);
+	}
 }

@@ -1,5 +1,6 @@
 package com.idega.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,6 +10,10 @@ import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 import com.idega.presentation.IWContext;
 
 public class PresentationUtil {
+	
+	public static final String ATTRIBUTE_JAVA_SCRIPT_SOURCE_FOR_HEADER = "javaScriptSourceLineForHeaderAttribute";
+	public static final String ATTRIBUTE_JAVA_SCRIPT_ACTION_FOR_BODY = "javaScriptActionForBodyAttribute";
+	public static final String ATTRIBUTE_CSS_SOURCE_LINE_FOR_HEADER = "cssSourceLineForHeaderAttribute";
 	
 	public static boolean addJavaScriptSourceLineToHeader(IWContext iwc, String scriptUri) {
 		if (iwc == null || scriptUri == null) {
@@ -33,6 +38,12 @@ public class PresentationUtil {
 	}
 	
 	private static boolean addJavaScriptSourceLineToHeader(IWContext iwc, AddResource adder, String scriptUri) {
+		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+			manageCientResource(iwc, ATTRIBUTE_JAVA_SCRIPT_SOURCE_FOR_HEADER, scriptUri);
+		
+			return true;
+		}
+		
 		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, scriptUri);
 		return true;
 	}
@@ -59,7 +70,30 @@ public class PresentationUtil {
 		return true;
 	}
 	
+	@SuppressWarnings("unchecked")
+	private static synchronized void manageCientResource(IWContext iwc, String attributeName, String resource) {
+		List<String> resources = null;
+		Object o = iwc.getSessionAttribute(attributeName);
+		if (o instanceof List) {
+			resources = (List) o;
+		}
+		else {
+			resources = new ArrayList<String>();
+		}
+		
+		if (!resources.contains(resource)) {
+			resources.add(resource);
+		
+			iwc.setSessionAttribute(attributeName, resources);
+		}
+	}
+	
 	private static boolean addJavaScriptActionToBody(IWContext iwc, AddResource adder, String action) {
+		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+			manageCientResource(iwc, ATTRIBUTE_JAVA_SCRIPT_ACTION_FOR_BODY, action);
+		
+			return true;
+		}
 		adder.addInlineScriptAtPosition(iwc, AddResource.BODY_END, action);
 		return true;
 	}
@@ -70,20 +104,15 @@ public class PresentationUtil {
 	}
 	
 	public static String getJavaScriptSourceLine(String scriptUri, boolean includeOnce) {
-		
 		if (scriptUri == null) {
 			return null;
 		}
 		
 		StringBuffer script;
 		
-		if(includeOnce) {
-			script = new StringBuffer("<script type=\"text/javascript\"> IWCORE.includeScript('")
-			.append(scriptUri).append("');</script>\n");
-			//IWCORE.includeScript(pathtojsfiles+modules[i].incfile);
-			
+		if (includeOnce) {
+			script = new StringBuffer("<script type=\"text/javascript\"> LazyLoader.load('").append(scriptUri).append("', null);</script>\n");
 		} else {
-			
 			script = new StringBuffer("<script type=\"text/javascript\" src=\"").append(scriptUri).append("\"></script>\n");
 		}
 		
@@ -163,6 +192,11 @@ public class PresentationUtil {
 	}
 	
 	private static boolean addStyleSheetToHeader(IWContext iwc, AddResource adder, String styleSheetUri) {
+		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+			manageCientResource(iwc, ATTRIBUTE_CSS_SOURCE_LINE_FOR_HEADER, styleSheetUri);
+			
+			return true;
+		}
 		adder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, styleSheetUri);
 		return true;
 	}
@@ -184,13 +218,9 @@ public class PresentationUtil {
 		
 		StringBuffer css;
 		
-		if(includeOnce) {
-			css = new StringBuffer("<script type=\"text/javascript\">IWCORE.includeCss('")
-			.append(cssUri).append("');</script>\n");
-			//IWCORE.includeScript(pathtojsfiles+modules[i].incfile);
-			
+		if (includeOnce) {
+			css = new StringBuffer("<script type=\"text/javascript\">LazyLoader.load('").append(cssUri).append("', null);</script>\n");
 		} else {
-			
 			css = new StringBuffer("<link type=\"text/css\" href=\"").append(cssUri).append("\" rel=\"stylesheet\" media=\"screen\"/>\n");
 		}
 		
