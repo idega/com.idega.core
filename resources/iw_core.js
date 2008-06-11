@@ -1219,6 +1219,7 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 				}
 			}
 			if (allActions != null && allActions != '') {
+				allActions = allActions.replace('\n//', '');
 				if (scriptsToEval == null) {
 					scriptsToEval = new Array();
 				}
@@ -1305,7 +1306,7 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 	return result;
 };
 
-IWCORE.includeScriptAndExecuteActions = function(resourcesToAdd, scriptsToEval) {
+IWCORE.includeResourcesAndExecuteActions = function(resourcesToAdd, scriptsToEval) {
 	var actionsToExecute = null;
 	if (scriptsToEval != null && scriptsToEval.length > 0) {
 		actionsToExecute = '';
@@ -1348,7 +1349,7 @@ function replaceNode(component, nodeToReplace, container) {
 		container.replaceChild(realNode, nodeToReplace);
 	}
 	
-	IWCORE.includeScriptAndExecuteActions(resourcesToAdd, scriptsToEval);
+	IWCORE.includeResourcesAndExecuteActions(resourcesToAdd, scriptsToEval);
 }
 
 function insertNodesToContainerBefore(component, container, before) {
@@ -1370,7 +1371,7 @@ function insertNodesToContainerBefore(component, container, before) {
 		container.insertBefore(realNode, before);
 	}
 	
-	IWCORE.includeScriptAndExecuteActions(resourcesToAdd, scriptsToEval);
+	IWCORE.includeResourcesAndExecuteActions(resourcesToAdd, scriptsToEval);
 }
 
 function insertNodesToContainer(component, container) {
@@ -1396,7 +1397,7 @@ IWCORE.insertHtml = function(html, container) {
 		container.appendChild(realNode);
 	}
 
-	IWCORE.includeScriptAndExecuteActions(resourcesToAdd, scriptsToEval);
+	IWCORE.includeResourcesAndExecuteActions(resourcesToAdd, scriptsToEval);
 };
 /** End **/
 
@@ -1805,9 +1806,11 @@ LazyLoader.loadMultiple = function(urls, callback) {
 			}
 		}
 		
-		for (var i = 0; i < urls.length; i++) {
-			LazyLoader.load(urls[i], i + 1 == urls.length ? callback : null);
-		}
+		var url = urls[0];
+		removeElementFromArray(urls, url)
+		LazyLoader.load(url, urls.length == 0 ? callback : function() {
+			LazyLoader.loadMultiple(urls, callback);
+		});
 	} catch(e) {
 		alert(e);
 	}
