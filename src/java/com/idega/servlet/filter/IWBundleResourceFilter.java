@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.43 2008/06/11 16:57:06 tryggvil Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.44 2008/06/11 19:01:35 tryggvil Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -44,10 +44,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2008/06/11 16:57:06 $ by $Author: tryggvil $
+ * Last modified: $Date: 2008/06/11 19:01:35 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.43 $
+ * @version $Revision: 1.44 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -185,10 +185,11 @@ public class IWBundleResourceFilter extends BaseFilter {
 		
 		try {
 			//Special Windows handling:
-			String separator = File.separator;
-			String BACKSLASH = "\\";
-			if(separator.equals(BACKSLASH)){
-				webappFilePath.replace(SLASH, BACKSLASH);
+			char separatorChar = File.separatorChar;
+			//This is to handle the case when the URI contains the '/' character (in requestUriWithoutContextPath)
+			// this '/' needs to be replaced with '\' for Windows
+			if(separatorChar==FileUtil.WINDOWS_FILE_SEPARATOR){
+				webappFilePath = webappFilePath.replace(FileUtil.UNIX_FILE_SEPARATOR, FileUtil.WINDOWS_FILE_SEPARATOR);
 			}
 			
 			webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
