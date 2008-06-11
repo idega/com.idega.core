@@ -7,8 +7,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+
+import javax.faces.FactoryFinder;
 import javax.servlet.ServletContext;
+
 import junit.framework.TestCase;
+
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.web.context.support.GenericWebApplicationContext;
+
+import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWMainApplicationStarter;
 import com.idega.util.FileUtil;
 
@@ -18,10 +28,10 @@ import com.idega.util.FileUtil;
  * Test case that set-ups an embedded IdegaWeb application and loads up all
  * necessary resources before running a test case.
  * </p>
- *  Last modified: $Date: 2006/12/08 10:32:12 $ by $Author: gediminas $
+ *  Last modified: $Date: 2008/06/11 16:57:05 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class IWApplicationTestCase extends TestCase {
 
@@ -38,9 +48,21 @@ public class IWApplicationTestCase extends TestCase {
 		
 		initializeDBProperties();
 		
+		//Mock the ServletContext:
 		ServletContext context = new MockServletContext(this.baseDir);
+		
+		//Mock the JSF ApplicationFactory object
+		FactoryFinder.setFactory(FactoryFinder.APPLICATION_FACTORY, MockApplicationFactory.class.getName());
+		
+		//Mock the Spring ApplicationContext and environment
+		DefaultListableBeanFactory beanFactory= new DefaultListableBeanFactory();
+		ApplicationContext appContext = new GenericWebApplicationContext(beanFactory);
+		((AbstractApplicationContext) appContext).refresh();
+		
+		SpringBeanLookup.getInstance().setAppContext(appContext, context);
+		
+		//Starts the IWMainApplication:
 		this.starter = new IWMainApplicationStarter(context);
-		this.starter.startup();
 	}
 
 	/**

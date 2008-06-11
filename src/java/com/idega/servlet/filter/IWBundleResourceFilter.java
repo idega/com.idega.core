@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.42 2008/02/29 14:21:51 civilis Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.43 2008/06/11 16:57:06 tryggvil Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -44,10 +44,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2008/02/29 14:21:51 $ by $Author: civilis $
+ * Last modified: $Date: 2008/06/11 16:57:06 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.42 $
+ * @version $Revision: 1.43 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -184,6 +184,13 @@ public class IWBundleResourceFilter extends BaseFilter {
 		}
 		
 		try {
+			//Special Windows handling:
+			String separator = File.separator;
+			String BACKSLASH = "\\";
+			if(separator.equals(BACKSLASH)){
+				webappFilePath.replace(SLASH, BACKSLASH);
+			}
+			
 			webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
 			InputStream input = bundle.getResourceInputStream(pathWithinBundle);
 			FileUtil.streamToFile(input, webappFile);

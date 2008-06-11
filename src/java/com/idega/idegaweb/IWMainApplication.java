@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.186 2008/04/24 21:04:03 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.187 2008/06/11 16:57:06 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -99,10 +99,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2008/04/24 21:04:03 $ by $Author: laddi $
+ *  Last modified: $Date: 2008/06/11 16:57:06 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.186 $
+ * @version $Revision: 1.187 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -329,10 +329,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
     /**
 	 */
 	void regData() {
-		try{
+		/*try{
 			reg(this.defKey,getIWApplicationContext().getDomain().getName(),getProductInfo().getName());
 		}
-		catch(Exception e){}
+		catch(Exception e){}*/
 	}
 
 	public void loadBundles() {
@@ -416,16 +416,23 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		}
     }
     
+    private ApplicationFactory applicationFactory;
     
+    public void setApplicationFactory(ApplicationFactory factory){
+    	this.applicationFactory=factory;
+    }
     
     /**
      * Get the JSF ApplicationFactory
      * @return
      */
-    public static ApplicationFactory getApplicationFactory(){
-    		ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
-		//Application app = factory.getApplication();
-    		return factory;
+    public ApplicationFactory getApplicationFactory(){
+    		if(this.applicationFactory==null){
+    			return (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
+    		}
+    		else{
+    			return this.applicationFactory;
+    		}
     }
     
     /**
@@ -1918,6 +1925,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		return this.facesApplication;
 	}
 	protected void setFacesApplication(Application jsfApplication){
+		if(jsfApplication.equals(this)){
+			throw new RuntimeException("Cannot set same instance (itself) as internal facesApplication");
+		}
 		this.facesApplication=jsfApplication;
 	}
 	

@@ -14,9 +14,9 @@ import com.idega.idegaweb.IWApplicationContext;
  * <p>This class should be mainly used for legacy code, which used to lookup bean by using IBOLookup.getSessionInstance</p>
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  *
- * Last modified: $Date: 2008/06/01 17:48:17 $ by $Author: civilis $
+ * Last modified: $Date: 2008/06/11 16:57:06 $ by $Author: tryggvil $
  *
  */
 public class SpringBeanLookup {
@@ -31,6 +31,8 @@ public class SpringBeanLookup {
 		return me;
 	}
 	
+	private ApplicationContext appContext;
+
 	protected SpringBeanLookup() { 	}
 	
 	/**
@@ -73,9 +75,19 @@ public class SpringBeanLookup {
 		return ac.getBean(springBeanIdentifier);
 	}
 	
-	protected ApplicationContext getAppContext(ServletContext ctx) {
 	
-		return org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext(ctx);
+
+	public void setAppContext(ApplicationContext appContext, ServletContext context) {
+		this.appContext = appContext;
+	}
+	
+	protected ApplicationContext getAppContext(ServletContext ctx) {
+		if(this.appContext==null){
+			return org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext(ctx);
+		}
+		else{
+			return this.appContext;
+		}
 	}
 	
 	/**

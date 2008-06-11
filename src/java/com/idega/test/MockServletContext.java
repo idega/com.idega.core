@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -20,10 +21,10 @@ import javax.servlet.ServletException;
  * <p>
  * Class to simulate a ServletContext
  * </p>
- *  Last modified: $Date: 2006/06/09 07:50:36 $ by $Author: laddi $
+ *  Last modified: $Date: 2008/06/11 16:57:06 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class MockServletContext implements ServletContext {
 
