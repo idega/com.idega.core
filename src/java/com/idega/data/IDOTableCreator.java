@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.57.2.7 2008/06/06 04:55:03 gimmi Exp $
+ * $Id: IDOTableCreator.java,v 1.57.2.8 2008/06/12 00:45:59 gimmi Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -48,10 +48,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2008/06/06 04:55:03 $ by $Author: gimmi $
+ * Last modified: $Date: 2008/06/12 00:45:59 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.57.2.7 $
+ * @version $Revision: 1.57.2.8 $
  */
 public class IDOTableCreator {
 
@@ -328,10 +328,11 @@ public class IDOTableCreator {
         		  BufferedInputStream bis = null;
         		  MemoryOutputStream bos = null;
         		  MemoryInputStream mis = null;
+        		  GenericEntity sourceEnt = (GenericEntity) i.next();;
         		  try {
 //        			  Object pk = (Object) i.next();
 //        			  GenericEntity sourceEnt = (GenericEntity) sourceHome.findByPrimaryKeyIDO(pk);
-	        		  GenericEntity sourceEnt = (GenericEntity) i.next();
+	        		  
 	        		  if (sourceEnt.hasLobColumn()) {
 	        			  bis = new BufferedInputStream(sourceEnt.getInputStreamColumnValue(sourceEnt.getLobColumnName()));
 	        			  buffer = new MemoryFileBuffer();
@@ -351,7 +352,7 @@ public class IDOTableCreator {
 	        		  }
 	        		  ((GenericEntity) sourceEnt).store();
         		  } catch (Exception e) {
-        			  logCopyError(entity, e, "data copying");
+        			  logCopyError(sourceEnt, e, "data copying");
 //        			  e.printStackTrace();
         		  } finally {
         			  if (mis != null) {
@@ -1340,18 +1341,54 @@ public class IDOTableCreator {
 		try{
 			if (useCopyLog) {
 				File file = new File(getIWMainApplication().getApplicationRealPath()+"/copyErrorLog.txt");
+				File file2 = new File(getIWMainApplication().getApplicationRealPath()+"/copyErrorLogCreation.txt");
 				FileUtil.createFileIfNotExistent(file);
 				FileWriter fstream = new FileWriter(file, true);
 				BufferedWriter out = new BufferedWriter(fstream);
-				StackTraceElement[] elems = exception.getStackTrace();
+				FileUtil.createFileIfNotExistent(file2);
+				FileWriter fstream2 = new FileWriter(file2, true);
+				BufferedWriter out2 = new BufferedWriter(fstream2);
 				out.write("=====================================================================================================\n");
 				out.write(entity.getEntityName() +" ("+entity.getPrimaryKey()+") : "+extraInfo+"\n");
+				if (exception instanceof IDOStoreException) {
+					String[] names = entity.getColumnNames();
+					out2.write("insert into "+entity.getEntityName()+" (");
+					for (int i = 0; i< names.length; i++) {
+						if (i!=0) {
+							out2.write(", ");
+						}
+						out2.write(names[i]);
+					}
+					out2.write(") values (");
+					for (int i = 0; i< names.length; i++) {
+						if (i!=0) {
+							out2.write(", ");
+						}
+						if (names[i].equals("USER_LOGIN")) {
+							out2.write("'"+String.valueOf(entity.getColumnValue(names[i]))+"_2'");
+						} else {
+							Object value = entity.getColumnValue(names[i]);
+							String valueS = "null";
+							if (value instanceof GenericEntity) {
+								valueS = ((GenericEntity) value).getPrimaryKey().toString();
+							} else if (value instanceof Integer) {
+								valueS = value.toString();
+							} else if (value != null) {
+								valueS = "'"+String.valueOf(value)+"'";
+							}
+							out2.write(valueS);
+						}
+					}
+					out2.write(");\n");
+				}
+				StackTraceElement[] elems = exception.getStackTrace();
 				out.write(exception.getMessage() +"\n");
 				for (int i = 0; i < elems.length && i < 15; i++) {
 					out.write("    "+elems[i] +"\n");
 				}
 				out.write("=====================================================================================================\n");
 				out.close();
+				out2.close();
 
 				System.out.println(">>>> COPY ERROR, logged to "+file.getAbsolutePath());
 			} else {
