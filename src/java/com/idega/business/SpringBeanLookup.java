@@ -14,9 +14,9 @@ import com.idega.idegaweb.IWApplicationContext;
  * <p>This class should be mainly used for legacy code, which used to lookup bean by using IBOLookup.getSessionInstance</p>
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  *
- * Last modified: $Date: 2008/06/11 16:57:06 $ by $Author: tryggvil $
+ * Last modified: $Date: 2008/06/12 18:24:50 $ by $Author: civilis $
  *
  */
 public class SpringBeanLookup {
@@ -36,7 +36,7 @@ public class SpringBeanLookup {
 	protected SpringBeanLookup() { 	}
 	
 	/**
-	 * 
+	 * @deprecated use com.idega.util.expression.ELUtil getBean method
 	 * Additionaly retrieves ServletContext from HttpSession instance
 	 * 
 	 * @param session - current http session
@@ -50,7 +50,7 @@ public class SpringBeanLookup {
 	}
 	
 	/**
-	 * 
+	 * @deprecated use com.idega.util.expression.ELUtil getBean method
 	 * @param ctx - current ServletContext
 	 * @param clazz - interface class, annotated with com.idega.business.SpringBeanName 
 	 * @return Spring managed bean. Null if bean not found or interface not annotated.
@@ -68,6 +68,12 @@ public class SpringBeanLookup {
 		return bean;
 	}
 	
+	/**
+	 * @deprecated use com.idega.util.expression.ELUtil getBean method
+	 * @param ctx
+	 * @param springBeanIdentifier
+	 * @return
+	 */
 	@Deprecated
 	public Object getSpringBean(ServletContext ctx, String springBeanIdentifier) {
 		
@@ -91,6 +97,7 @@ public class SpringBeanLookup {
 	}
 	
 	/**
+	 * @deprecated use com.idega.util.expression.ELUtil getBean method
 	 * Retrieves ServletContext from IWMainApplication instance
 	 * 
 	 * @param iwac - current IWApplicationContext
