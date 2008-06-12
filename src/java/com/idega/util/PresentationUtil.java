@@ -119,6 +119,26 @@ public class PresentationUtil {
 		return script.toString();
 	}
 	
+	public static final String getJavaScriptLinesLoadedLazily(List<String> scriptUris, String callbackFunction) {
+		if (scriptUris == null) {
+			return null;
+		}
+		
+		StringBuffer action = new StringBuffer("LazyLoader.loadMultiple([");
+		for (int i = 0; i < scriptUris.size(); i++) {
+			action.append("'").append(scriptUris.get(i)).append("'");
+			if ((i + 1) < scriptUris.size()) {
+				action.append(", ");
+			}
+		}
+		
+		if (callbackFunction != null && !callbackFunction.startsWith("function()")) {
+			callbackFunction = new StringBuffer("function() { ").append(callbackFunction).append(" }").toString();
+		}
+		action.append("], ").append(callbackFunction == null ? "null" : callbackFunction).append(");");
+		return action.toString();
+	}
+	
 	public static String getJavaScriptSourceLines(List<String> scriptsUris) {
 		if (scriptsUris == null) {
 			return null;
