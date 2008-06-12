@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.169 2008/02/22 10:24:41 alexis Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.170 2008/06/12 14:21:02 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -70,10 +70,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/02/22 10:24:41 $ by $Author: alexis $
+ * Last modified: $Date: 2008/06/12 14:21:02 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.169 $
+ * @version $Revision: 1.170 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -319,29 +319,19 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	protected String getJavascriptURLs(IWContext iwc) {
-		if (this.addGlobalScript) {
-			StringBuffer buffer = new StringBuffer();
-			// Print a reference to the global .js script file
-			String src = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
-			/*
-			 * try { ICDomain d = iwc.getDomain(); String serverUrl = d.getURLWithoutLastSlash(); if (serverUrl != null) { if (src.startsWith("/")) { //
-			 * String protocol; //@todo this is case sensitive and // could break! move to IWContext. Also done in Link, // SubmitButton, Image and
-			 * PageIncluder if // (iwc.getRequest().isSecure()) { protocol = // "https://"; } else { protocol = "http://"; } src = // protocol + serverName +
-			 * src; src = serverUrl + src; } } } catch (IDONoDatastoreError de) { // de.printStackTrace(); }
-			 */
-			buffer.append("<script type=\"text/javascript\" src=\"" + src + "/iw_core.js\">");
-			buffer.append("</script>");
+		if (this.addGlobalScript) {			
+			String resourceUri = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
+			StringBuffer buffer = new StringBuffer(PresentationUtil.getJavaScriptSourceLine(resourceUri + "/iw_core.js"));
+			
 			if (this._javascripts != null && !this._javascripts.isEmpty()) {
 				Iterator iter = this._javascripts.values().iterator();
 				while (iter.hasNext()) {
-					String URL = (String) iter.next();
-					buffer.append("<script type=\"text/javascript\" src=\"" + URL + "\"></script>\n");
+					buffer.append(PresentationUtil.getJavaScriptSourceLine(iter.next().toString()));
 				}
 			}
-			buffer.append("\n");
 			return buffer.toString();
 		}
-		return "";
+		return CoreConstants.EMPTY;
 	}
 
 	/**
