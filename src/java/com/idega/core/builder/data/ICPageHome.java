@@ -43,4 +43,6 @@ public interface ICPageHome extends com.idega.data.IDOHome {
 	public Collection findAllByPhrase(String phrase, List<String> idsToAvoid) throws FinderException;
 	
 	public Collection findAllByPrimaryKeys(List<String> primaryKeys) throws FinderException;
+	
+	public Collection<ICPage> findAllByName(String name) throws FinderException;
 }

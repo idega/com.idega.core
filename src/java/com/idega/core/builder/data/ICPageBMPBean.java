@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.13 2008/04/24 23:37:10 laddi Exp $
+ * $Id: ICPageBMPBean.java,v 1.14 2008/06/13 13:08:04 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -897,6 +897,12 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	public Collection ejbFindAllByPrimaryKeys(List<String> primaryKeys) throws FinderException {
 		IDOQuery query = idoQuery("select ").append(getIDColumnName()).append(" from ").append(getEntityName());
 		query.appendWhere(getIDColumnName()).appendInCollection(primaryKeys);
+		return idoFindPKsByQuery(query);
+	}
+	
+	public Collection ejbFindAllByName(String name) throws FinderException {
+		IDOQuery query = idoQuery("select ").append(getIDColumnName()).append(" from ").append(getEntityName());
+		query.appendWhere(NAME_COLUMN).appendEqualSign().appendSingleQuote().append(name).appendSingleQuote();
 		return idoFindPKsByQuery(query);
 	}
 }
