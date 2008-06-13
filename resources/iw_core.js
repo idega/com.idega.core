@@ -850,6 +850,18 @@ function executeJavaScriptActionsCodedInStringInGlobalScope(code) {
 	return dj_global.eval ? dj_global.eval(code) : eval(code);
 }
 
+IWCORE.getFixedHrefValue = function(hrefValue) {
+	if (hrefValue == null) {
+		return null;
+	}
+	
+	while (hrefValue.indexOf('&#38;') != -1) {
+		hrefValue = hrefValue.replace('&#38;', '&');
+	}
+	
+	return hrefValue;
+}
+
 IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 	var DYNAMIC_HTML_ELEMENT_FUNCTION_SEPARATOR = '%idega_separator%';
 	
@@ -930,6 +942,36 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 		return document.createElement('script');	//	Fake, all actions are executed already
 	}
 	
+	//	Link
+	if (element.nodeName == 'link') {
+		if (element.attributes != null) {
+			var foundCSSForScreen = false;
+			for (var i = 0; (i < element.attributes.length && !foundCSSForScreen); i++) {
+				var attribute = element.attributes[i];
+				if (attribute.nodeName == 'media' && attribute.nodeValue == 'screen') {
+					foundCSSForScreen = true;
+				}
+			}
+			
+			if (foundCSSForScreen) {
+				for (var i = 0; i < element.attributes.length; i++) {
+					var attribute = element.attributes[i];
+					if (attribute.nodeName == 'href') {
+						var hrefValue = IWCORE.getFixedHrefValue(attribute.nodeValue);
+						if (hrefValue != null) {
+							if (resourcesToAdd == null) {
+								resourcesToAdd = new Array();
+							}
+							resourcesToAdd.push(hrefValue);	//	Adding CSS source file
+						}
+					
+						return document.createElement('link');	//	Fake
+					}
+				}
+			}
+		}
+	}
+	
 	// Element
 	var result = document.createElement(element.nodeName);
 	if (element.attributes != null) {
@@ -953,18 +995,9 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 				result.setAttribute('style', styleValue);
 			}
 			else if (attribute.nodeName == 'href') {
-				var hrefValue = attribute.nodeValue;
-				while (hrefValue.indexOf('&#38;') != -1) {
-					hrefValue = hrefValue.replace('&#38;', '&');
-				}
-				
-				result.setAttribute(attribute.nodeName, hrefValue);
-				
-				if (element.nodeName == 'link') {
-					if (resourcesToAdd == null) {
-						resourcesToAdd = new Array();
-					}
-					resourcesToAdd.push(hrefValue);	//	Adding CSS source file
+				var hrefValue = IWCORE.getFixedHrefValue(attribute.nodeValue);
+				if (hrefValue != null) {
+					result.setAttribute(attribute.nodeName, hrefValue);
 				}
 			}
 			else if (attribute.nodeName == 'src' && element.nodeName == 'script') {
