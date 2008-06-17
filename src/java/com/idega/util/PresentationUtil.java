@@ -226,8 +226,7 @@ public class PresentationUtil {
 			return null;
 		}
 		
-		StringBuffer style = new StringBuffer("<link type=\"text/css\" href=\"").append(styleSheetUri).append("\" rel=\"stylesheet\" media=\"screen\"/>\n");
-		return style.toString();
+		return getCssLine(styleSheetUri, false);
 	}
 	
 	public static String getCssLine(String cssUri, boolean includeOnce) {
