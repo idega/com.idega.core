@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.170 2008/06/12 14:21:02 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.171 2008/06/17 13:19:25 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -20,9 +20,6 @@ import java.util.Map;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-
-import org.apache.myfaces.renderkit.html.util.AddResource;
-import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
@@ -70,10 +67,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/06/12 14:21:02 $ by $Author: valdas $
+ * Last modified: $Date: 2008/06/17 13:19:25 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.170 $
+ * @version $Revision: 1.171 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -169,8 +166,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	private ICPage forwardPage;
 	private String docType;
 	private boolean useIE7Extension = false;
-	
 	private boolean useHtmlTag = true;
+	private boolean printScriptSourcesDirectly = true;
 
 	/**
 	 */
@@ -320,16 +317,27 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	protected String getJavascriptURLs(IWContext iwc) {
 		if (this.addGlobalScript) {			
-			String resourceUri = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
-			StringBuffer buffer = new StringBuffer(PresentationUtil.getJavaScriptSourceLine(resourceUri + "/iw_core.js"));
+			String iwCoreScript = iwc.getIWMainApplication().getCoreBundle().getResourcesURL() + "/iw_core.js";
+			StringBuffer buffer = null;
+			if (printScriptSourcesDirectly) {
+				buffer = new StringBuffer(PresentationUtil.getJavaScriptSourceLine(iwCoreScript));
+			}
+			else {
+				PresentationUtil.addJavaScriptSourceLineToHeader(iwc, iwCoreScript);
+			}
 			
 			if (this._javascripts != null && !this._javascripts.isEmpty()) {
 				Iterator iter = this._javascripts.values().iterator();
 				while (iter.hasNext()) {
-					buffer.append(PresentationUtil.getJavaScriptSourceLine(iter.next().toString()));
+					if (printScriptSourcesDirectly) {
+						buffer.append(PresentationUtil.getJavaScriptSourceLine(iter.next().toString()));
+					}
+					else {
+						PresentationUtil.addJavaScriptSourceLineToHeader(iwc, iter.next().toString());
+					}
 				}
 			}
-			return buffer.toString();
+			return buffer == null ? CoreConstants.EMPTY : buffer.toString();
 		}
 		return CoreConstants.EMPTY;
 	}
@@ -1448,9 +1456,9 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		IWMainApplicationSettings applicationSettings = iwma.getSettings();
 
 		if (applicationSettings.getIfUseSessionPolling()) {
-			AddResource resource = AddResourceFactory.getInstance(FacesContext.getCurrentInstance());
-			resource.addJavaScriptAtPosition(FacesContext.getCurrentInstance(), AddResource.HEADER_BEGIN, CoreConstants.DWR_ENGINE_SCRIPT);
-			resource.addJavaScriptAtPosition(FacesContext.getCurrentInstance(), AddResource.HEADER_BEGIN, SESSION_POLLING_DWR_INTERFACE);
+			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, CoreConstants.DWR_ENGINE_SCRIPT);
+			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, SESSION_POLLING_DWR_INTERFACE);
+			
 			PresentationUtil.addJavaScriptActionToBody(iwc, SESSION_POLLING_SCRIPT);
 			PresentationUtil.addJavaScriptActionToBody(iwc, SESSION_POLLING_FUNCTION);
 		}
@@ -2341,6 +2349,14 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		list.add(new PropertyDescription("method:1:implied:void:setStyleSheetURL:java.lang.String:", "1", File.class.getName(), FileObjectReader.class.getName(), false));
 		list.add(new PropertyDescription(":method:1:implied:void:setTemplateId:java.lang.String:", "1", ICPage.class.getName(), ICPage.class.getName(), true));
 		return list;
+	}
+	
+	protected boolean isPrintScriptSourcesDirectly() {
+		return printScriptSourcesDirectly;
+	}
+
+	protected void setPrintScriptSourcesDirectly(boolean printScriptSourcesDirectly) {
+		this.printScriptSourcesDirectly = printScriptSourcesDirectly;
 	}
 
 // public void addWeb2JSLibrariesToPage(){
