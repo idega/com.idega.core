@@ -552,10 +552,8 @@ function closeLoadingMessage() {
 	}
 }
 
-function closeAllLoadingMessages() {
-	var bodyArray = document.getElementsByTagName('body');
-	var bodyTag = bodyArray[0];
-	var layers = getElementsByClassName(bodyTag, '*', 'LoadLayer');
+function closeAllLoadingLayers(className) {
+	var layers = getElementsByClassName(document.body, '*', className);
 	if (layers == null) {
 		return;
 	}
@@ -568,6 +566,14 @@ function closeAllLoadingMessages() {
 			parentNode.removeChild(layer);
 		}
 	}
+}
+
+function closeAllLoadingMessages() {
+	closeAllLoadingLayers('LoadLayer');
+}
+
+function closeAllLocalLoadingLayers() {
+	closeAllLoadingLayers('LocalLoadLayer');
 }
 
 //setLinkToBold method. moved here to fix bug in UserApplication
