@@ -44,5 +44,5 @@ public interface ICPageHome extends com.idega.data.IDOHome {
 	
 	public Collection findAllByPrimaryKeys(List<String> primaryKeys) throws FinderException;
 	
-	public Collection<ICPage> findAllByName(String name) throws FinderException;
+	public Collection<ICPage> findAllByName(String name, boolean findOnlyNotDeleted) throws FinderException;
 }

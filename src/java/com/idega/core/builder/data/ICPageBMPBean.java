@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.14 2008/06/13 13:08:04 valdas Exp $
+ * $Id: ICPageBMPBean.java,v 1.15 2008/06/17 15:30:39 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -900,9 +900,14 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		return idoFindPKsByQuery(query);
 	}
 	
-	public Collection ejbFindAllByName(String name) throws FinderException {
+	public Collection ejbFindAllByName(String name, boolean findOnlyNotDeleted) throws FinderException {
 		IDOQuery query = idoQuery("select ").append(getIDColumnName()).append(" from ").append(getEntityName());
 		query.appendWhere(NAME_COLUMN).appendEqualSign().appendSingleQuote().append(name).appendSingleQuote();
+		
+		if (findOnlyNotDeleted) {
+			query.appendAnd().append(DELETED_COLUMN).appendNOTEqual().appendSingleQuote().append("Y").appendSingleQuote();
+		}
+		
 		return idoFindPKsByQuery(query);
 	}
 }
