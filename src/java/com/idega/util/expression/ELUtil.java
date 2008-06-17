@@ -12,9 +12,9 @@ import com.idega.util.CoreConstants;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  *
- * Last modified: $Date: 2008/06/12 18:24:50 $ by $Author: civilis $
+ * Last modified: $Date: 2008/06/17 12:17:31 $ by $Author: civilis $
  *
  */
 public class ELUtil {
@@ -81,7 +81,7 @@ public class ELUtil {
 	public void autowire(Object obj, ServletContext sctx) {
 
 		ApplicationContext ac = getAppContext(sctx);
-		ac.getAutowireCapableBeanFactory().autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT, true);
+		ac.getAutowireCapableBeanFactory().autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT, false);
 	}
 	
 	public <T>T getBean(String expression) {
