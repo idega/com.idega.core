@@ -8,6 +8,8 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
@@ -35,28 +37,33 @@ public class URIUtil {
 		if(parameters == null)
 			parameters = new HashMap<String, String>();
 		
-		try {
-			String query = new URI(uri).getQuery();
+		if(uri != null) {
 			
-			if(query == null || CoreConstants.EMPTY.equals(query))
-				return parameters;
-			
-			StringTokenizer st = new StringTokenizer(query, CoreConstants.AMP, false);
-			
-			while (st.hasMoreTokens()) {
+			try {
+				String query = new URI(uri).getQuery();
 				
-				String current = st.nextToken();
+				if(query == null || CoreConstants.EMPTY.equals(query))
+					return parameters;
 				
-				if(current.contains(CoreConstants.EQ)) {
+				StringTokenizer st = new StringTokenizer(query, CoreConstants.AMP, false);
+				
+				while (st.hasMoreTokens()) {
 					
-					int eqOcc = current.indexOf(CoreConstants.EQ);
-					parameters.put(URLDecoder.decode(current.substring(0, eqOcc), CoreConstants.ENCODING_UTF8), URLDecoder.decode(current.substring(eqOcc+1), CoreConstants.ENCODING_UTF8));
+					String current = st.nextToken();
+					
+					if(current.contains(CoreConstants.EQ)) {
+						
+						int eqOcc = current.indexOf(CoreConstants.EQ);
+						parameters.put(URLDecoder.decode(current.substring(0, eqOcc), CoreConstants.ENCODING_UTF8), URLDecoder.decode(current.substring(eqOcc+1), CoreConstants.ENCODING_UTF8));
+					}
 				}
+				
+			} catch (Exception e) {
+				parameters = null;
+				throw new RuntimeException(e);
 			}
-			
-		} catch (Exception e) {
-			parameters = null;
-			throw new RuntimeException(e);
+		} else {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "No uri while resolving uri parameters");
 		}
 		
 		return parameters;
