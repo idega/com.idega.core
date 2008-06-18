@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.171 2008/04/24 23:44:13 laddi Exp $
+ * $Id: PresentationObject.java,v 1.172 2008/06/18 13:00:14 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -15,6 +15,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -77,10 +78,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2008/04/24 23:44:13 $ by $Author: laddi $
+ * Last modified: $Date: 2008/06/18 13:00:14 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.171 $
+ * @version $Revision: 1.172 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -1360,7 +1361,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public IWBundle getBundle(IWUserContext iwuc)
 	{
-		IWMainApplication iwma = iwuc.getApplicationContext().getIWMainApplication();
+		IWMainApplication iwma = iwuc == null ? IWMainApplication.getDefaultIWMainApplication() : iwuc.getApplicationContext().getIWMainApplication();
 		return iwma.getBundle(getBundleIdentifier());
 	}
 	public IWResourceBundle getResourceBundle(IWUserContext iwuc)
@@ -1535,9 +1536,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 
 	public String getBuilderName(IWUserContext iwuc)
 	{
-		//return
-		// this.getClassName().substring(this.getClassName().lastIndexOf(".")+1);
-		return this.getBundle(iwuc).getComponentName(this.getClass(), iwuc.getCurrentLocale());
+		return this.getBundle(iwuc).getComponentName(this.getClass(), iwuc == null ? Locale.ENGLISH : iwuc.getCurrentLocale());
 	}
 
 	public void setWidth(String width)
