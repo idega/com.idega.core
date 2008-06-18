@@ -20,4 +20,9 @@ public class StringUtil {
 		Collections.addAll(extractedValues, values);
 		return extractedValues;
 	}
+	
+	public static boolean isEmpty(String str) {
+		
+		return str == null || CoreConstants.EMPTY.equals(str);
+	}
 }
