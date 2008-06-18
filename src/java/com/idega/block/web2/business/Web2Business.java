@@ -5,11 +5,17 @@ import java.rmi.RemoteException;
 
 import com.idega.business.IBOService;
 import com.idega.business.SpringBeanName;
+import com.idega.presentation.IWContext;
 
 @SpringBeanName(Web2Business.SPRING_BEAN_IDENTIFIER)
 public interface Web2Business extends IBOService {
 	
 	public static final String SPRING_BEAN_IDENTIFIER = "web2bean";
+	
+	/**
+	 * @see com.idega.block.web2.business.Web2BusinessBean#addTablesorterScriptFilesToPage
+	 */
+	public void addTablesorterScriptFilesToPage(IWContext iwc, String className, String theme);
 	
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToBehaviourLib
