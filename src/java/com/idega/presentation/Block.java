@@ -1,5 +1,5 @@
 /*
- * $Id: Block.java,v 1.80 2008/05/09 11:30:24 gimmi Exp $
+ * $Id: Block.java,v 1.81 2008/06/18 12:59:28 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
+import com.idega.core.component.data.ICObjectBMPBean;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
@@ -36,10 +37,10 @@ import com.idega.presentation.text.Text;
  * their functionality is done with the main() method in old style idegaWeb.
  * This class has functionality regarding caching and how the main method is processed in JSF.
  * 
- * Last modified: $Date: 2008/05/09 11:30:24 $ by $Author: gimmi $
+ * Last modified: $Date: 2008/06/18 12:59:28 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.80 $
+ * @version $Revision: 1.81 $
  */
 public class Block extends PresentationObjectContainer implements Builderaware {
 
@@ -623,7 +624,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	 */	
 	
 	public String getComponentType(){
-		return "iw.block";
+		return ICObjectBMPBean.COMPONENT_TYPE_BLOCK;
 	}
 	
 	public void decode(FacesContext fc){

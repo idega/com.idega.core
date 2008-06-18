@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.14 2007/10/10 05:21:49 valdas Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.15 2008/06/18 12:59:30 valdas Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,6 +18,7 @@ import javax.ejb.RemoveException;
 import javax.servlet.ServletContext;
 
 import com.idega.core.component.data.ICObject;
+import com.idega.core.component.data.ICObjectBMPBean;
 import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.core.component.data.ICObjectInstanceHome;
@@ -33,10 +34,10 @@ import com.idega.idegaweb.IWModuleLoader;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2007/10/10 05:21:49 $ by $Author: valdas $
+ * Last modified: $Date: 2008/06/18 12:59:30 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class ComponentRegistry {
 
@@ -46,9 +47,9 @@ public class ComponentRegistry {
 	private boolean loadedFacesConfig=false;
 	private IWMainApplication iwma;
 	private ServletContext context;
-	public static final String COMPONENT_TYPE_ELEMENT = "iw.element";
-	public static final String COMPONENT_TYPE_BLOCK = "iw.block";
-	public static final String COMPONENT_TYPE_JSF_UICOMPONENT = "jsf.uicomponent";
+	public static final String COMPONENT_TYPE_ELEMENT = ICObjectBMPBean.COMPONENT_TYPE_ELEMENT;
+	public static final String COMPONENT_TYPE_BLOCK = ICObjectBMPBean.COMPONENT_TYPE_BLOCK;
+	public static final String COMPONENT_TYPE_JSF_UICOMPONENT = ICObjectBMPBean.COMPONENT_TYPE_JSFUICOMPONENT;
 
 	/**
 	 * @param iwma 

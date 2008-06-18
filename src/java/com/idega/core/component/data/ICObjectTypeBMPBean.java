@@ -47,16 +47,16 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 
   // be careful when changing the order of the columns because of the methods insertData and updateStartData
   private static final String[][] startData = {
-  		{ "iw.element","Element", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
-		{"iw.block","Block", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
-		{"jsf.uicomponent","JSF UIComponent", UIComponent.class.getName(), null, UIComponent.class.getName(), "set"},
-		{"iw.application","Application", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
-		{"iw.application.component","Application component", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
-		{"iw.data","Data", null, IDOEntity.class.getName(), null, "get,set"},
-		{"iw.home","Home", null, IDOHome.class.getName(), null, "find,get"},
-		{"iw.propertyhandler","Property handler", null, ICPropertyHandler.class.getName(), null, "set"},
+  		{ ICObjectBMPBean.COMPONENT_TYPE_ELEMENT, "Element", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
+		{ICObjectBMPBean.COMPONENT_TYPE_BLOCK, "Block", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
+		{ICObjectBMPBean.COMPONENT_TYPE_JSFUICOMPONENT, "JSF UIComponent", UIComponent.class.getName(), null, UIComponent.class.getName(), "set"},
+		{ICObjectBMPBean.COMPONENT_TYPE_APPLICATION, "Application", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
+		{ICObjectBMPBean.COMPONENT_TYPE_APPLICATION_COMPONENT, "Application component", PresentationObject.class.getName(), null, PresentationObject.class.getName(), "set"},
+		{ICObjectBMPBean.COMPONENT_TYPE_DATA, "Data", null, IDOEntity.class.getName(), null, "get,set"},
+		{ICObjectBMPBean.COMPONENT_TYPE_HOME, "Home", null, IDOHome.class.getName(), null, "find,get"},
+		{ICObjectBMPBean.COMPONENT_TYPE_PROPERTYHANDLER, "Property handler", null, ICPropertyHandler.class.getName(), null, "set"},
 		{"iw.plugin.user","User Plugin", null, null, null, null},
-		{"iw.searchplugin","Search plugin",null,SearchPlugin.class.getName(),null,null}
+		{ICObjectBMPBean.COMPONENT_TYPE_SEARCH_PLUGIN, "Search plugin",null,SearchPlugin.class.getName(),null,null}
   };
   
 
