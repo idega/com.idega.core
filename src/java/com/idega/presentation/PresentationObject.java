@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.172 2008/06/18 13:00:14 valdas Exp $
+ * $Id: PresentationObject.java,v 1.173 2008/06/19 15:17:49 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -78,10 +78,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2008/06/18 13:00:14 $ by $Author: valdas $
+ * Last modified: $Date: 2008/06/19 15:17:49 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.172 $
+ * @version $Revision: 1.173 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -163,6 +163,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	private String xmlId;
 	private boolean resetGoneThroughMainInRestore=false;
 	private boolean supportsMultipleMainCalls=false;
+	private boolean renderForLoggedOut = true;
+	private boolean renderForLoggedIn = true;
 	
 
 	/**
@@ -2303,6 +2305,17 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		callPrint(fc);
 	}
 	
+	@Override
+	public boolean isRendered() {
+		IWContext iwc = castToIWContext(getFacesContext());
+		boolean loggedIn = iwc.isLoggedOn();
+		if ((renderForLoggedIn && renderForLoggedOut) || (renderForLoggedIn && loggedIn) || (renderForLoggedOut && !loggedIn)) {
+			return super.isRendered();
+		}
+		else {
+			return false;
+		}
+	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
 	 */
@@ -2820,5 +2833,13 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		
 		return null;
+	}
+
+	public void setToRenderForLoggedIn(boolean render) {
+		this.renderForLoggedIn = render;
+	}
+
+	public void setToRenderForLoggedOut(boolean render) {
+		this.renderForLoggedOut = render;
 	}
 }
