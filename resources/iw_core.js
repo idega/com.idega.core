@@ -1254,6 +1254,10 @@ function setActionsForRegion() {
  * example: old href: '/pages/' pass attribute (newHref): 'iw_language=en_EN' results in: '/pages/?iw_language=en_EN
  */
 function changeWindowLocationHref(newHref) {
+	changeWindowLocationHrefAndCheckParameters(newHref, false);
+}
+	
+function changeWindowLocationHrefAndCheckParameters(newHref, keepOldParameters) {
 	var oldLocation = '' + window.location.href;
 	
 	if (oldLocation.indexOf('#') != -1) {
@@ -1262,6 +1266,7 @@ function changeWindowLocationHref(newHref) {
 	
 	var separator = '?'
 	var reloadingParam = 'reloading';
+	//	Removing the same parameter (if such exists)
 	if (oldLocation.indexOf(separator + reloadingParam) != -1) {
 		oldLocation = oldLocation.split(separator + reloadingParam)[0];
 	}
@@ -1269,9 +1274,15 @@ function changeWindowLocationHref(newHref) {
 		oldLocation = oldLocation.split('&' + reloadingParam)[0];
 	}
 	
-	if (separator == '?') {
-		if (oldLocation.indexOf('/?') != -1) {
-			oldLocation = oldLocation.split('/?')[0];
+	var existsAnyParameter = oldLocation.indexOf('/?') != -1;
+	if (keepOldParameters) {
+		if (existsAnyParameter) {
+			separator = '&';
+		}
+	}
+	else {
+		if (existsAnyParameter) {
+			oldLocation = oldLocation.split('/?')[0];	//	Removing ALL parameters
 		}
 	}
 	
@@ -1279,11 +1290,11 @@ function changeWindowLocationHref(newHref) {
 		oldLocation += '/';
 	}
 	
-	window.location.href = oldLocation +separator + newHref;
+	window.location.href = oldLocation + separator + newHref;
 }
 
 function reloadPage() {
-	changeWindowLocationHref('reloading=' + new Date().getTime());	// changing href to be sure the page will be reloaded
+	changeWindowLocationHrefAndCheckParameters('reloading=' + new Date().getTime(), true);	// changing href to be sure the page will be reloaded
 }
 
 function addActionForMoodalBoxOnCloseEvent(actionOnClose) {
