@@ -1,5 +1,5 @@
 /*
- * $Id: ICPropertyHandler.java,v 1.3 2007/05/24 11:31:05 valdas Exp $
+ * $Id: ICPropertyHandler.java,v 1.4 2008/06/26 08:34:27 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,8 +10,9 @@
 package com.idega.core.builder.presentation;
 
 import java.util.List;
-import com.idega.presentation.PresentationObject;
+
 import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
 
 /**
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
@@ -22,7 +23,7 @@ public interface ICPropertyHandler {
    * Returns a list of Class Objects this Handler will default handle
    * Can return null if none apply
    */
-  public List getDefaultHandlerTypes();
+  public List<?> getDefaultHandlerTypes();
 
   /**
    * Returns an instance of the GUI Widget that handles the setting
