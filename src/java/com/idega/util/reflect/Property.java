@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.16 2008/03/18 12:52:29 valdas Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.17 2008/06/26 08:35:10 valdas Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -23,6 +23,7 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.PasswordInput;
+import com.idega.presentation.ui.handlers.IWDatePickerHandler;
 import com.idega.user.bean.PropertiesBean;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
@@ -35,10 +36,10 @@ import com.idega.util.StringUtil;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2008/03/18 12:52:29 $ by $Author: valdas $
+ * Last modified: $Date: 2008/06/26 08:35:10 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class Property implements Serializable{
 
@@ -186,12 +187,7 @@ public class Property implements Serializable{
 	protected Object convertStringToObject(Class<?> parameterType, String stringValue) throws Exception {
 		Object argument = null;
 		if (parameterType.equals(Integer.class) || parameterType.equals(Integer.TYPE)) {
-			//try{
-			argument = new Integer(stringValue);
-			//}
-			//catch(NumberFormatException e){
-			//  e.printStackTrace(System.out);
-			//}
+			argument = Integer.valueOf(stringValue);
 		}
 		else if (parameterType.equals(String.class)) {
 			argument = stringValue;
@@ -203,12 +199,7 @@ public class Property implements Serializable{
 			argument = new Float(stringValue);
 		}
 		else if (parameterType.equals(ICPage.class)) {
-			//try {
 			argument = ((com.idega.core.builder.data.ICPageHome) com.idega.data.IDOLookup.getHomeLegacy(ICPage.class)).findByPrimaryKeyLegacy(Integer.parseInt(stringValue));
-			//}
-			//catch (Exception ex) {
-			//  ex.printStackTrace(System.err);
-			//}
 		}
 		else if (parameterType.equals(ICFile.class)) {
 			try {
@@ -219,21 +210,8 @@ public class Property implements Serializable{
 				ex.printStackTrace(System.err);
 			}
 		}
-		//        else if(parameterType.equals(IBTemplatePage.class)){
-		//          try {
-		//            argument = new IBTemplatePage(Integer.parseInt(stringValue));
-		//          }
-		//          catch (Exception ex) {
-		//            ex.printStackTrace(System.err);
-		//          }
-		//        }
 		else if (parameterType.equals(Image.class)) {
-			//try {
 			argument = new Image(Integer.parseInt(stringValue));
-			//}
-			//catch (Exception ex) {
-			//  ex.printStackTrace(System.err);
-			//}
 		}
 		//REMOVE AND MAKE GENERIC! ask tryggvi and eiki
 		else if (parameterType.equals(Group.class)) {
@@ -269,6 +247,9 @@ public class Property implements Serializable{
 		}
 		else if (parameterType.equals(Locale.class)) {
 			argument = ICLocaleBusiness.getLocaleFromLocaleString(stringValue);
+		}
+		else if (parameterType.equals(java.util.Date.class)) {
+			argument = IWDatePickerHandler.getParsedDate(stringValue);
 		}
 		return argument;
 	}
