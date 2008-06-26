@@ -9,8 +9,8 @@
 
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         
-        <mapping-file>classpath*:com/idega/**/test-orm*.xml</mapping-file>
-        <mapping-file>classpath*:is/idega/**/test-orm*.xml</mapping-file>
+        <mapping-file>classpath*:com/idega/**/orm*.xml</mapping-file>
+        <mapping-file>classpath*:is/idega/**/orm*.xml</mapping-file>
         <mapping-file>classpath*:org/jbpm/**/*.hbm.xml</mapping-file>
         
         <exclude-unlisted-classes/>
