@@ -1,0 +1,128 @@
+package com.idega.presentation.ui.handlers;
+
+import java.rmi.RemoteException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.builder.presentation.ICPropertyHandler;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Layer;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.ui.IWDatePicker;
+import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
+
+/**
+ * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
+ * @version $Revision: 1.1 $
+ *
+ * Handler for date (range) picker: converts date to storable format and user friendly format.
+ *
+ * Last modified: $Date: 2008/06/26 08:35:33 $ by $Author: valdas $
+ */
+public class IWDatePickerHandler implements ICPropertyHandler {
+	
+	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+	
+	private String method = null;
+	private String instanceId = null;
+	
+	public List<?> getDefaultHandlerTypes() {
+		return null;
+	}
+
+	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc, boolean oldGenerationHandler, String instanceId, String method) {
+		this.instanceId = instanceId;
+		this.method = method;
+		
+		Layer layer = new Layer();
+		IWDatePicker datePicker = new IWDatePicker();
+		layer.add(datePicker);
+		
+		Date date = getParsedDate(stringValue);
+		if (date != null) {
+			datePicker.setDate(date);
+		}
+		
+		datePicker.setUseCurrentDateIfNotSet(false);
+		datePicker.setShowCalendarImage(true);
+		datePicker.setOnSelectAction("saveModuleProperty(null, $('#" + datePicker.getId() + "'));");
+		
+		return layer;
+	}
+
+	private static final Date getParsedDateByDefaultPattern(String source) {
+		if (source == null || CoreConstants.EMPTY.equals(source)) {
+			return null;
+		}
+		
+		try {
+			return DATE_FORMATTER.parse(source);
+		} catch (ParseException e) {
+		}
+		
+		return null;
+	}
+	
+	private static final Date getParsedDateByCurrentLocale(String source, Locale locale) {
+		if (source == null || CoreConstants.EMPTY.equals(source)) {
+			return null;
+		}
+		
+		if (locale == null) {
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc != null) {
+				locale = iwc.getCurrentLocale();
+			}
+			if (locale == null) {
+				locale = Locale.ENGLISH;
+			}
+		}
+		
+		try {
+			return DateFormat.getDateInstance(DateFormat.SHORT, locale).parse(source);
+		} catch(Exception e) {
+		}
+		return null;
+	}
+	
+	public static final Date getParsedDate(String source) {
+		return getParsedDate(source, null);
+	}
+	
+	public static final Date getParsedDate(String source, Locale locale) {
+		Date date = getParsedDateByCurrentLocale(source, locale);
+		return date == null ? getParsedDateByDefaultPattern(source) : date;	
+	}
+	
+	public void onUpdate(String[] values, IWContext iwc) {
+		if (values == null || values.length == 0) {
+			return;
+		}
+		
+		Date selectedDate = getParsedDateByCurrentLocale(values[0], iwc.getCurrentLocale());
+		if (selectedDate == null) {
+			return;
+		}
+		
+		values = new String[] {DATE_FORMATTER.format(selectedDate)};
+		
+		BuilderService builderService = null;
+		try {
+			builderService = BuilderServiceFactory.getBuilderService(iwc);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		if (builderService == null) {
+			return;
+		}
+		builderService.setProperty(String.valueOf(iwc.getCurrentIBPageID()), instanceId, method, values, iwc.getIWMainApplication());
+	}
+
+}
