@@ -196,8 +196,10 @@
 	<dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
-      <type>jar</type>
-      
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
     </dependency>
     
     <!-- dependencies that excluded from other jars, and need to be added explicitlyvc -->
