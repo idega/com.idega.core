@@ -482,15 +482,27 @@ public class FileUtil {
 
     return strings;
   }
+  
+  	public static final File getFileFromWorkspace(String pathToFile) throws IOException {
+  		File file = new File(pathToFile);
+	    if (!file.exists()) {
+	    	int virtualPathStart = pathToFile.indexOf("/idegaweb/bundles/");
+	    	if (virtualPathStart != -1) {
+	    		file = IWBundleResourceFilter.copyResourceFromJarToWebapp(IWMainApplication.getDefaultIWMainApplication(), pathToFile.substring(virtualPathStart));
+	    	}
+	    }
+	    if (file.exists()) {
+	    	return file;
+	    }
+	    
+	    throw new IOException("File '" + pathToFile + "' doesn't exist!");
+  	}
 
 /** Gets the lines from a file and return the as a vector of strings **/
   public static List<String> getLinesFromFile(String pathAndFile) throws IOException{
     File f = new File(pathAndFile);
     if (!f.exists()) {
-    	int virtualPathStart = pathAndFile.indexOf("/idegaweb/bundles/");
-    	if (virtualPathStart != -1) {
-    		f = IWBundleResourceFilter.copyResourceFromJarToWebapp(IWMainApplication.getDefaultIWMainApplication(), pathAndFile.substring(virtualPathStart));
-    	}
+    	f = getFileFromWorkspace(pathAndFile);
     }
     return getLinesFromFile(f);
   }
