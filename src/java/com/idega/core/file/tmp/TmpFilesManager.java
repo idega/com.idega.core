@@ -2,6 +2,7 @@ package com.idega.core.file.tmp;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,9 +17,9 @@ import com.idega.util.FileUtil;
 
 /**
  * @author <a href="mailto:arunas@idega.com">Arūnas Vasmanas</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  *
- * Last modified: $Date: 2008/05/01 15:36:54 $ by $Author: civilis $
+ * Last modified: $Date: 2008/06/28 19:03:01 $ by $Author: civilis $
  */
 @Scope("singleton")
 @Service
@@ -103,8 +104,15 @@ public class TmpFilesManager {
     	}
     }
     
-    public Collection<File> getFiles(String identifier, Object resource, TmpFileResolver resolver) {
+    /**
+     * 
+     * @param identifier - might be some specific identifier, that you want to get files for, e.g., variable in xforms submission data. Highly resolver dependent.
+     * @param resource - the same as with identifier
+     * @param resolver
+     * @return files uris. Might be local files, or stored in slide etc.
+     */
+    public Collection<URI> getFilesUris(String identifier, Object resource, TmpFileResolver resolver) {
     	
-    	return resolver.resolveFiles(identifier, resource);
+    	return resolver.resolveFilesUris(identifier, resource);
     }
 }
