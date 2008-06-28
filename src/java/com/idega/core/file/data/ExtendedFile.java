@@ -1,6 +1,6 @@
 package com.idega.core.file.data;
 
-import java.io.File;
+import java.net.URI;
 
 /**
  *
@@ -11,15 +11,15 @@ import java.io.File;
  * Last modified: May 8, 2008 by Author: Anton 
  *
  */
-
 public class ExtendedFile {
+	
 	private String fileInfo;
-	private File file;
+	private URI fileUri;
 	
 	public ExtendedFile() {}
 	
-	public ExtendedFile(File file, String info) {
-		setFile(file);
+	public ExtendedFile(URI fileUri, String info) {
+		setFileUri(fileUri);
 		setFileInfo(info);
 	}
 
@@ -31,11 +31,11 @@ public class ExtendedFile {
 		this.fileInfo = fileInfo;
 	}
 
-	public File getFile() {
-		return file;
+	public URI getFileUri() {
+		return fileUri;
 	}
 
-	public void setFile(File file) {
-		this.file = file;
+	public void setFileUri(URI fileUri) {
+		this.fileUri = fileUri;
 	}	
 }

@@ -1,9 +1,9 @@
 package com.idega.core.file.tmp;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -15,9 +15,9 @@ import com.idega.util.FileUtil;
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  *
- * Last modified: $Date: 2008/05/01 15:36:54 $ by $Author: civilis $
+ * Last modified: $Date: 2008/06/28 19:02:23 $ by $Author: civilis $
  *
  */
 @Scope("singleton")
@@ -27,7 +27,7 @@ public class DefaultTmpFileResolverImpl implements TmpFileResolver {
 
 	public static String UPLOADS_PATH;
 
-	public Collection<File> resolveFiles(String identifier, Object resource) {
+	public Collection<URI> resolveFilesUris(String identifier, Object resource) {
 		
 		String realBasePath = getRealBasePath();
 		
@@ -37,12 +37,18 @@ public class DefaultTmpFileResolverImpl implements TmpFileResolver {
 		
 		if(files != null) {
 		
-			ArrayList<File> fs = new ArrayList<File>(files.length);
-			Collections.addAll(fs, files);
-			return fs;
+			ArrayList<URI> uris = new ArrayList<URI>(files.length);
+			
+			for (File file : files) {
+				
+				URI uri = file.toURI();
+				uris.add(uri);
+			}
+			
+			return uris;
 		}
 		
-		return new ArrayList<File>(0);
+		return new ArrayList<URI>(0);
 	}
 	
 	public String getRealBasePath() {
@@ -81,5 +87,16 @@ public class DefaultTmpFileResolverImpl implements TmpFileResolver {
 		fs.add(new File(filesFolder));
 		
 		return fs;
+	}
+
+	public Collection<URI> resolveAllFilesUris(Object resource) {
+		
+		throw new UnsupportedOperationException("Not supported yet");
+	}
+
+	public void replaceAllFiles(Object resource,
+			TmpFilesModifyStrategy replaceStrategy) {
+		
+		throw new UnsupportedOperationException("Not supported");
 	}
 }
