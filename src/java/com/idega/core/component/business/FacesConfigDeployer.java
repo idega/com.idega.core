@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.12 2008/05/22 08:10:30 valdas Exp $
+ * $Id: FacesConfigDeployer.java,v 1.13 2008/06/30 11:51:31 eiki Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -36,13 +36,14 @@ import com.idega.util.xml.XmlUtil;
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2008/05/22 08:10:30 $ by $Author: valdas $
+ * Last modified: $Date: 2008/06/30 11:51:31 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
+	protected static final String META_INF_FACES_CONFIG_XML = "META-INF/faces-config.xml";
 	private static Logger log = Logger.getLogger(FacesConfigDeployer.class.getName());
 	private ComponentRegistry registry;
 
@@ -61,28 +62,24 @@ public class FacesConfigDeployer implements JarLoader {
 	 *      java.util.jar.JarFile, java.lang.String)
 	 */
 	public void loadJar(File bundleJarFile, JarFile jarFile, String jarPath) {
-		Enumeration<JarEntry> entries = jarFile.entries();
-		while (entries.hasMoreElements()) {
-			JarEntry entry = entries.nextElement();
-			String entryName = entry.getName();
-			if (entryName.equals("META-INF/faces-config.xml")) {
-				InputStream stream = null;
-				try {
-					log.info("Found JSF Description file in bundle: " + jarPath + ", file: " + entryName);
-					stream = jarFile.getInputStream(entry);
-					processFacesConfig(jarFile, stream);
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-				catch (ParserConfigurationException e) {
-					e.printStackTrace();
-				}
-				catch (SAXException e) {
-					e.printStackTrace();
-				} finally {
-					closeInputStream(stream);
-				}
+		JarEntry entry = jarFile.getJarEntry(META_INF_FACES_CONFIG_XML);
+		if(entry!=null){
+			InputStream stream = null;
+			try {
+				log.info("Found JSF Description file in bundle: " + jarPath + ", file: " + entry.getName());
+				stream = jarFile.getInputStream(entry);
+				processFacesConfig(jarFile, stream);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			}
+			catch (SAXException e) {
+				e.printStackTrace();
+			} finally {
+				closeInputStream(stream);
 			}
 		}
 	}
