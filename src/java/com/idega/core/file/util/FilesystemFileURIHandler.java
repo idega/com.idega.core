@@ -11,14 +11,12 @@ import java.util.logging.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.idega.util.CoreConstants;
-
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  *
- * Last modified: $Date: 2008/06/28 19:03:51 $ by $Author: civilis $
+ * Last modified: $Date: 2008/06/30 13:34:13 $ by $Author: civilis $
  *
  */
 @Service
@@ -36,27 +34,6 @@ public class FilesystemFileURIHandler implements FileURIHandler {
 		//uriStr = URLDecoder.decode(uriStr, "UTF-8");
 		FileInputStream is = new FileInputStream(new File(uri));
 		return is;
-	}
-
-	public String getFileName(URI uri) {
-		
-		final String path = uri.getPath();
-		final String fileName;
-		
-		if(path.contains(CoreConstants.SLASH)) {
-			
-			fileName = path.substring(path.lastIndexOf(CoreConstants.SLASH)+1);
-		} else {
-			fileName = path;
-		}
-		
-		return fileName;
-	}
-
-	public Long getContentLength(URI uri) {
-		
-		File f = new File(uri);
-		return f.length();
 	}
 
 	public FileInfo getFileInfo(URI uri) {
