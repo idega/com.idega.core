@@ -17,8 +17,10 @@ import javax.ejb.FinderException;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailBMPBean;
+import com.idega.core.contact.data.EmailHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneBMPBean;
+import com.idega.core.contact.data.PhoneHome;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
@@ -433,6 +435,62 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 	
   }
+  
+  public Phone getUsersHomePhone() throws EJBException, RemoteException {
+	try {
+	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);  
+	 
+	    return phoneHome.findUsersHomePhone(this);
+	}
+	catch (FinderException fe) {
+		return null;
+	}
+  }
+  
+  public Phone getUsersWorkPhone() throws EJBException, RemoteException {
+	try {
+	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);  
+	 
+	    return phoneHome.findUsersWorkPhone(this);
+	}
+	catch (FinderException fe) {
+		return null;
+	}
+  }
+  
+  public Phone getUsersMobilePhone() throws EJBException, RemoteException {
+	try {
+	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);  
+	 
+	    return phoneHome.findUsersMobilePhone(this);
+	}
+	catch (FinderException fe) {
+		return null;
+	}
+  }
+  
+  public Phone getUsersFaxPhone() throws EJBException, RemoteException {
+	try {
+	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);  
+	 
+	    return phoneHome.findUsersFaxPhone(this);
+	}
+	catch (FinderException fe) {
+		return null;
+	}
+  }
+  
+  public Email getUsersEmail() throws EJBException, RemoteException {
+	try {
+	    EmailHome emailHome = (EmailHome) IDOLookup.getHome(Email.class);  
+	  
+	    return emailHome.findMainEmailForUser(this);
+	}
+	catch (FinderException fe) {
+		return null;
+	}
+	
+}
 	/*  Getters end   */
 
 	/*  Setters begin   */

@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 
 import javax.ejb.EJBException;
 
+import com.idega.core.contact.data.Email;
+import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOReportableEntity;
@@ -135,4 +137,9 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void setUserProperties(ICFile file);	
  public ICFile getUserProperties();
  public Address getUsersMainAddress() throws EJBException, RemoteException ;
+ public Phone getUsersHomePhone() throws EJBException, RemoteException ;
+ public Phone getUsersWorkPhone() throws EJBException, RemoteException ;
+ public Phone getUsersMobilePhone() throws EJBException, RemoteException ;
+ public Phone getUsersFaxPhone() throws EJBException, RemoteException ;
+ public Email getUsersEmail() throws EJBException, RemoteException ;
 }
