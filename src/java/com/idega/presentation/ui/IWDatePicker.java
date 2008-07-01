@@ -14,11 +14,11 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  *
  * Date (range) picker
  *
- * Last modified: $Date: 2008/06/26 08:35:33 $ by $Author: valdas $
+ * Last modified: $Date: 2008/07/01 19:38:14 $ by $Author: civilis $
  */
 public class IWDatePicker extends TextInput {
 	
@@ -86,7 +86,7 @@ public class IWDatePicker extends TextInput {
 	private void addRequiredLibraries(IWContext iwc, String language) {
 		List<String> scripts = new ArrayList<String>();
 		
-		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.SPRING_BEAN_IDENTIFIER, iwc);
+		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.SPRING_BEAN_IDENTIFIER);
 		scripts.add(web2.getBundleURIToJQueryLib());
 		scripts.add(web2.getBundleURIToJQueryUILib("1.5b/datepicker/core", "ui.datepicker.js"));
 		if (language != null  && !CoreConstants.EMPTY.equals(language)) {
