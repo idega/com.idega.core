@@ -1,25 +1,33 @@
 package com.idega.util.expression;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
-import javax.servlet.ServletContext;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.CoreConstants;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
- * Last modified: $Date: 2008/06/17 12:17:31 $ by $Author: civilis $
+ * Last modified: $Date: 2008/07/01 19:38:02 $ by $Author: civilis $
  *
  */
-public class ELUtil {
-	
-	private static ELUtil me = new ELUtil();
+@Scope("singleton")
+@Service
+public class ELUtil implements ApplicationContextAware {
+
+	private ApplicationContext applicationcontext;
+	private static ELUtil me;
 	public static final String EXPRESSION_BEGIN	=	"#{";
 	public static final String EXPRESSION_END	=	"}";
 	
@@ -27,9 +35,16 @@ public class ELUtil {
 		return me;
 	}
 	
-	protected ELUtil() { 	}
+	public ELUtil() {
+		
+//		should be created by spring
+		if(ELUtil.me == null)
+			ELUtil.me = this;
+		else
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Tried to repeatedly create singleton instance");
+	}
 	
-	public <T>T getBean(String expression, ServletContext sctx) {
+	public <T>T getBean(String expression) {
 		
 		if(expression.contains(CoreConstants.DOT)) {
 			
@@ -57,11 +72,7 @@ public class ELUtil {
 			
 		expression = cleanupExp(expression);
 
-		if(sctx == null) {
-			sctx = IWMainApplication.getDefaultIWMainApplication().getServletContext();
-		}
-		
-		ApplicationContext ac = getAppContext(sctx);
+		ApplicationContext ac = getApplicationContext();
 		@SuppressWarnings("unchecked")
 		T val = (T)ac.getBean(expression);
 		return val;
@@ -69,48 +80,8 @@ public class ELUtil {
 	
 	public void autowire(Object obj) {
 
-		autowire(obj, FacesContext.getCurrentInstance());
-	}
-	
-	public void autowire(Object obj, FacesContext fctx) {
-		
-		final ServletContext sctx = getServletContext(fctx);
-		autowire(obj, sctx);
-	}
-	
-	public void autowire(Object obj, ServletContext sctx) {
-
-		ApplicationContext ac = getAppContext(sctx);
+		ApplicationContext ac = getApplicationContext();
 		ac.getAutowireCapableBeanFactory().autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT, false);
-	}
-	
-	public <T>T getBean(String expression) {
-
-		@SuppressWarnings("unchecked")
-		T bean = (T)getBean(expression, FacesContext.getCurrentInstance());
-		return bean;
-	}
-	
-	public <T>T getBean(String expression, FacesContext fctx) {
-
-		final ServletContext sctx = getServletContext(fctx);
-		
-		@SuppressWarnings("unchecked")
-		T bean = (T)getBean(expression, sctx);
-		return bean;
-	}
-	
-	private ServletContext getServletContext(FacesContext fctx) {
-		
-		final ServletContext sctx;
-		
-		if(fctx != null) {
-			
-			sctx = (ServletContext)fctx.getExternalContext().getContext();
-		} else
-			sctx = null;
-		
-		return sctx;
 	}
 	
 	private static String cleanupExp(String exp) {
@@ -126,7 +97,13 @@ public class ELUtil {
 		return exp;
 	}
 	
-	protected ApplicationContext getAppContext(ServletContext ctx) {
-		return org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext(ctx);
+	public ApplicationContext getApplicationContext() {
+		
+		return applicationcontext;
+	}
+	
+	public void setApplicationContext(ApplicationContext applicationcontext)
+			throws BeansException {
+		this.applicationcontext = applicationcontext;
 	}
 }
