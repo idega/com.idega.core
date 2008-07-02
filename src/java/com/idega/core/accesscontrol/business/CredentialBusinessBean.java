@@ -1,5 +1,5 @@
 /*
- * $Id: CredentialBusinessBean.java,v 1.4 2008/04/24 23:36:09 laddi Exp $
+ * $Id: CredentialBusinessBean.java,v 1.5 2008/07/02 19:27:34 civilis Exp $
  * Created on May 10, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -13,10 +13,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.idega.business.IBOServiceBean;
-import com.idega.business.SpringBeanLookup;
 import com.idega.core.accesscontrol.jaas.IWCredential;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Link;
+import com.idega.util.expression.ELUtil;
 
 
 /**
@@ -24,13 +24,15 @@ import com.idega.presentation.text.Link;
  * Not fully implemented. There will be more methods pretty soon.
  * 
  * 
- *  Last modified: $Date: 2008/04/24 23:36:09 $ by $Author: laddi $
+ *  Last modified: $Date: 2008/07/02 19:27:34 $ by $Author: civilis $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class CredentialBusinessBean extends IBOServiceBean  implements CredentialBusiness{
 	
+	private static final long serialVersionUID = 8019421364512045310L;
+
 	public void addCredentialsToLink(Link link, IWContext iwc) {
 		//HttpSession session = iwc.getSession();
 		if (!LoginBusinessBean.isLoggedOn(iwc)) {
@@ -38,13 +40,14 @@ public class CredentialBusinessBean extends IBOServiceBean  implements Credentia
 			return;
 		}
 		
-		LoginSession loginSession = SpringBeanLookup.getInstance().getSpringBean(iwc.getSession(), LoginSession.class);
+		LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
 		LoggedOnInfo loggedOnInfo  = loginSession.getLoggedOnInfo();
 		if (loggedOnInfo != null) {
-			Map credentials = loggedOnInfo.getCredentials();
-			Iterator iterator = credentials.values().iterator();
+			@SuppressWarnings("unchecked")
+			Map<Object, IWCredential> credentials = loggedOnInfo.getCredentials();
+			Iterator<IWCredential> iterator = credentials.values().iterator();
 			while (iterator.hasNext())  {
-				IWCredential credential = (IWCredential) iterator.next();
+				IWCredential credential = iterator.next();
 				String name = credential.getName();
 				Object key = credential.getKey();
 				if (key != null) {

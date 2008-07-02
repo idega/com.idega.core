@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.150 2008/06/06 10:09:00 civilis Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.151 2008/07/02 19:27:34 civilis Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -39,7 +39,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.idega.business.SpringBeanLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginSession;
@@ -68,6 +67,7 @@ import com.idega.util.CoreUtil;
 import com.idega.util.FacesUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.datastructures.HashtableMultivalued;
+import com.idega.util.expression.ELUtil;
 
 /**
  * This class is a context information that lives through each user request in
@@ -82,10 +82,10 @@ import com.idega.util.datastructures.HashtableMultivalued;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2008/06/06 10:09:00 $ by $Author: civilis $
+ * Last modified: $Date: 2008/07/02 19:27:34 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.150 $
+ * @version $Revision: 1.151 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -925,7 +925,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	public boolean isSuperAdmin() {
 		if(isLoggedOn()){
 			try {
-				return SpringBeanLookup.getInstance().getSpringBean(getSession(), LoginSession.class).isSuperAdmin();
+				return ELUtil.getInstance().getBean(LoginSession.class).isSuperAdmin();
 			}
 			catch (Exception e) {
 				e.printStackTrace();

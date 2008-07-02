@@ -33,7 +33,6 @@ import javax.servlet.ServletContextListener;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
-import com.idega.business.SpringBeanLookup;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.appserver.AppServerDetector;
@@ -63,6 +62,7 @@ import com.idega.user.data.GroupRelationType;
 import com.idega.user.data.GroupRelationTypeHome;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.database.PoolManager;
+import com.idega.util.expression.ELUtil;
 
 /**
  * <p>
@@ -142,11 +142,11 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	}
 	
 	protected void fireAppStartedEvent() {		
-		SpringBeanLookup.getInstance().publishEvent(iwma.getServletContext(), new IWMainApplicationStartedEvent(this));
+		ELUtil.getInstance().publishEvent(new IWMainApplicationStartedEvent(this));
 	}
 
 	public void shutdown() {
-	    	SpringBeanLookup.getInstance().publishEvent(iwma.getServletContext(), new IWMainApplicationShutdownEvent(this));
+		ELUtil.getInstance().publishEvent(new IWMainApplicationShutdownEvent(this));
 		//poolMgr.release();
 		log.info("Stopping IdegaWeb");
 		endIdegaWebApplication();

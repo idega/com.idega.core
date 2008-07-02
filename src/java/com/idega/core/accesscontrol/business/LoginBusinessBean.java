@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.68 2007/12/12 10:36:36 civilis Exp $
+ * $Id: LoginBusinessBean.java,v 1.69 2008/07/02 19:27:34 civilis Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.logging.Logger;
+
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
@@ -24,10 +25,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
-import com.idega.business.SpringBeanLookup;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginInfoHome;
 import com.idega.core.accesscontrol.data.LoginRecord;
@@ -36,9 +37,7 @@ import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.user.business.UserBusiness;
-import com.idega.user.data.User;
 import com.idega.core.user.data.UserGroupRepresentative;
-import com.idega.user.data.UserHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.event.IWPageEventListener;
@@ -49,11 +48,14 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.UserProperties;
+import com.idega.user.data.User;
+import com.idega.user.data.UserHome;
 import com.idega.user.util.Converter;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.RequestUtil;
+import com.idega.util.expression.ELUtil;
 
 /**
  * <p>
@@ -62,11 +64,11 @@ import com.idega.util.RequestUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2007/12/12 10:36:36 $ by $Author: civilis $
+ * Last modified: $Date: 2008/07/02 19:27:34 $ by $Author: civilis $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.68 $
+ * @version $Revision: 1.69 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -168,7 +170,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public static boolean isLoggedOn(IWUserContext iwc) {
 		
-		return getLoginSessionBean(iwc.getSession()).getUser() != null;
+		return getLoginSessionBean().getUser() != null;
 //		if (isLoginSessionCreated(iwc)) {
 //			return getUser(iwc) != null;
 //		}
@@ -208,7 +210,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public boolean isLoggedOn(HttpSession session) {
 		
-		return getLoginSessionBean(session).getUser() != null;
+		return getLoginSessionBean().getUser() != null;
 //		if (isLoginSessionCreated(session)) {
 //			return getUser(session) != null;
 //		}
@@ -219,15 +221,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	// public static void internalSetState(IWContext iwc, int state) {
 	public static void internalSetState(IWContext iwc, LoginState state) throws RemoteException {
-		LoginBusinessBean.getLoginSessionBean(iwc.getSession()).setLoginState(state);
+		LoginBusinessBean.getLoginSessionBean().setLoginState(state);
 	}
 
 	public void internalSetState(HttpServletRequest request, LoginState state) {
-		LoginBusinessBean.getLoginSessionBean(request.getSession()).setLoginState(state);
+		LoginBusinessBean.getLoginSessionBean().setLoginState(state);
 	}
 
 	public static LoginState internalGetState(IWContext iwc) {
-		return LoginBusinessBean.getLoginSessionBean(iwc.getSession()).getLoginState();
+		return LoginBusinessBean.getLoginSessionBean().getLoginState();
 	}
 
 	/**
@@ -322,7 +324,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		logOutUser(request);
 		internalSetState(request, loginState);
 		try {
-			LoginBusinessBean.getLoginSessionBean(request.getSession()).setUserLoginName(username);
+			LoginBusinessBean.getLoginSessionBean().setUserLoginName(username);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -602,7 +604,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					LoggedOnInfo lInfo = getLoggedOnInfo(session, username);
 					if (!isLoggedOn(request) && lInfo != null) {
 						// used for re-logging in clients that do not keep cookies/session
-						LoginSession lSession = LoginBusinessBean.getLoginSessionBean(session);
+						LoginSession lSession = LoginBusinessBean.getLoginSessionBean();
 						lSession.setLoggedOnInfo(lInfo);
 						lSession.setUser(lInfo.getUser());
 						// TODO: some more variables need to be set in LoginSession if this
@@ -648,30 +650,30 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 	public static void setLoginAttribute(String key, Object value, IWUserContext iwc) throws NotLoggedOnException {
 		if (isLoggedOn(iwc))
-			LoginBusinessBean.getLoginSessionBean(iwc.getSession()).setLoginAttribute(key, value);
+			LoginBusinessBean.getLoginSessionBean().setLoginAttribute(key, value);
 		else
 			throw new NotLoggedOnException();
 	}
 
 	public static Object getLoginAttribute(String key, IWUserContext iwc) throws NotLoggedOnException {
 		if (isLoggedOn(iwc))
-			return LoginBusinessBean.getLoginSessionBean(iwc.getSession()).getLoginAttribute(key);
+			return LoginBusinessBean.getLoginSessionBean().getLoginAttribute(key);
 		else
 			throw new NotLoggedOnException();
 	}
 
 	public static void removeLoginAttribute(String key, IWUserContext iwc) throws RemoteException, RemoveException {
 		if (isLoggedOn(iwc)) {
-			LoginBusinessBean.getLoginSessionBean(iwc.getSession()).removeLoginAttribute(key);
+			LoginBusinessBean.getLoginSessionBean().removeLoginAttribute(key);
 		}
-		else if (LoginBusinessBean.getLoginSessionBean(iwc.getSession()) != null) {
+		else if (LoginBusinessBean.getLoginSessionBean() != null) {
 			removeLoginSession(iwc);
 		}
 	}
 
 	public static User getUser(IWUserContext iwc) {
 		try {
-			return LoginBusinessBean.getLoginSessionBean(iwc.getSession()).getUser();
+			return LoginBusinessBean.getLoginSessionBean().getUser();
 		}
 		catch (NotLoggedOnException ex) {
 			return null;
@@ -703,7 +705,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public User getUser(HttpSession session) {
 		try {
-			return LoginBusinessBean.getLoginSessionBean(session).getUser();
+			return LoginBusinessBean.getLoginSessionBean().getUser();
 		}
 		catch (NotLoggedOnException ex) {
 			return null;
@@ -711,31 +713,31 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	public static List getPermissionGroups(IWUserContext iwc) {
-		return LoginBusinessBean.getLoginSessionBean(iwc.getSession()).getPermissionGroups();
+		return LoginBusinessBean.getLoginSessionBean().getPermissionGroups();
 	}
 
 	public static UserGroupRepresentative getUserRepresentativeGroup(IWUserContext iwc) {
-		return LoginBusinessBean.getLoginSessionBean(iwc.getSession()).getRepresentativeGroup();
+		return LoginBusinessBean.getLoginSessionBean().getRepresentativeGroup();
 	}
 
 	public static GenericGroup getPrimaryGroup(IWUserContext iwc) {
-		return LoginBusinessBean.getLoginSessionBean(iwc.getSession()).getPrimaryGroup();
+		return LoginBusinessBean.getLoginSessionBean().getPrimaryGroup();
 	}
 
 	protected static void setUser(IWUserContext iwc, User user) throws RemoteException {
-		LoginBusinessBean.getLoginSessionBean(iwc.getSession()).setUser(user);
+		LoginBusinessBean.getLoginSessionBean().setUser(user);
 	}
 
 	protected static void setPermissionGroups(IWUserContext iwc, List value) throws RemoteException {
-		LoginBusinessBean.getLoginSessionBean(iwc.getSession()).setPermissionGroups(value);
+		LoginBusinessBean.getLoginSessionBean().setPermissionGroups(value);
 	}
 
 	protected static void setUserRepresentativeGroup(IWUserContext iwc, UserGroupRepresentative value) throws RemoteException {
-		LoginBusinessBean.getLoginSessionBean(iwc.getSession()).setRepresentativeGroup(value);
+		LoginBusinessBean.getLoginSessionBean().setRepresentativeGroup(value);
 	}
 
 	protected static void setPrimaryGroup(IWUserContext iwc, GenericGroup value) throws RemoteException {
-		LoginBusinessBean.getLoginSessionBean(iwc.getSession()).setPrimaryGroup(value);
+		LoginBusinessBean.getLoginSessionBean().setPrimaryGroup(value);
 	}
 
 	/**
@@ -785,7 +787,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	protected void storeUserAndGroupInformationInSession(HttpSession session, User user) throws Exception {
 		List groups = null;
-		LoginSession lSession = LoginBusinessBean.getLoginSessionBean(session);
+		LoginSession lSession = LoginBusinessBean.getLoginSessionBean();
 		if (isUsingOldUserSystem()) {
 			// Old user system
 			// iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
@@ -1006,7 +1008,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected void logOut(HttpServletRequest request) throws Exception {
 		// if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
 		HttpSession session = request.getSession();
-		if (LoginBusinessBean.getLoginSessionBean(session) != null) {
+		if (LoginBusinessBean.getLoginSessionBean() != null) {
 			// this.getLoggedOnInfoList(iwc).remove(this.getLoggedOnInfo(iwc));
 			LoggedOnInfo info = getLoggedOnInfo(session);
 			if (info != null) {
@@ -1102,11 +1104,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * return loggedOnMap; }
 	 */
 	public static LoggedOnInfo getLoggedOnInfo(IWUserContext iwc) {
-		return LoginBusinessBean.getLoginSessionBean(iwc.getSession()).getLoggedOnInfo();
+		return LoginBusinessBean.getLoginSessionBean().getLoggedOnInfo();
 	}
 
 	public LoggedOnInfo getLoggedOnInfo(HttpSession session) {
-		return LoginBusinessBean.getLoginSessionBean(session).getLoggedOnInfo();
+		return LoginBusinessBean.getLoginSessionBean().getLoggedOnInfo();
 	}
 
 	public static void setLoggedOnInfo(LoggedOnInfo lInfo, IWContext iwc) throws NotLoggedOnException, RemoteException {
@@ -1119,7 +1121,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		// setLoginAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, lInfo, iwc);
 		if (isLoggedOn(session)) {
 			// iwc.setSessionAttribute(_LOGGINADDRESS_LOGGED_ON_INFO, lInfo);
-			LoginBusinessBean.getLoginSessionBean(session).setLoggedOnInfo(lInfo);
+			LoginBusinessBean.getLoginSessionBean().setLoggedOnInfo(lInfo);
 		}
 		else {
 			throw new NotLoggedOnException();
@@ -1248,7 +1250,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	public boolean retrieveLoginInformation(HttpServletRequest request) throws NotLoggedOnException, RemoteException {
 		HttpSession session = request.getSession();
-		if (LoginBusinessBean.getLoginSessionBean(session) != null) {
+		if (LoginBusinessBean.getLoginSessionBean() != null) {
 			Map m = getLoggedOnInfoMap(session);
 			LoggedOnInfo _logOnInfo = (LoggedOnInfo) m.remove(getLoggedOnInfo(session).getLogin());
 			if (_logOnInfo != null) {
@@ -1256,8 +1258,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 		}
 
-		LoginBusinessBean.getLoginSessionBean(session).retrieve();
-		if (LoginBusinessBean.getLoginSessionBean(session).getUser() != null) {
+		LoginBusinessBean.getLoginSessionBean().retrieve();
+		if (LoginBusinessBean.getLoginSessionBean().getUser() != null) {
 			return true;
 		}
 		else {
@@ -1272,12 +1274,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	public void reserveLoginInformation(HttpServletRequest request) throws RemoteException {
 		HttpSession session = request.getSession();
-		if (LoginBusinessBean.getLoginSessionBean(session) != null) {
-			UserProperties properties = LoginBusinessBean.getLoginSessionBean(session).getUserProperties();
+		if (LoginBusinessBean.getLoginSessionBean() != null) {
+			UserProperties properties = LoginBusinessBean.getLoginSessionBean().getUserProperties();
 			if (properties != null) {
 				properties.store();
 			}
-			LoginBusinessBean.getLoginSessionBean(session).reserve();
+			LoginBusinessBean.getLoginSessionBean().reserve();
 		}
 	}
 
@@ -1562,11 +1564,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	public static UserProperties getUserProperties(IWUserContext iwuc) {
-		return LoginBusinessBean.getLoginSessionBean(iwuc.getSession()).getUserProperties();
+		return LoginBusinessBean.getLoginSessionBean().getUserProperties();
 	}
 
 	public UserProperties getUserProperties(HttpSession session) {
-		return LoginBusinessBean.getLoginSessionBean(session).getUserProperties();
+		return LoginBusinessBean.getLoginSessionBean().getUserProperties();
 	}
 
 //	public static LoginSession getLoginSession(IWUserContext iwc) throws RemoteException {
@@ -1582,8 +1584,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 //		return (LoginSession) IBOLookup.getSessionInstance(session, LoginSession.class);
 //	}
 	
-	public static LoginSession getLoginSessionBean(HttpSession session) {
-		return SpringBeanLookup.getInstance().getSpringBean(session, LoginSession.class);
+	public static LoginSession getLoginSessionBean() {
+		return ELUtil.getInstance().getBean(LoginSession.class);
 	}
 	
 	/**
@@ -1592,7 +1594,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @param iwc
 	 */
 	private static void removeLoginSession(IWUserContext iwc) {
-		getLoginSessionBean(iwc.getSession()).reset();
+		getLoginSessionBean().reset();
 	}
 
 	/**
@@ -1601,7 +1603,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @param iwc
 	 */
 	private void removeLoginSession(HttpSession session) {
-		getLoginSessionBean(session).reset();
+		getLoginSessionBean().reset();
 	}
 
 	/**
