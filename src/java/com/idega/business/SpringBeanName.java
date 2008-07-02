@@ -13,7 +13,9 @@ import java.lang.annotation.Target;
  * then <b>UnsupportedOperationException</b> will be thrown.</p>
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version 1.0
+ * @version $Revision: 1.2 $
+ *
+ * Last modified: $Date: 2008/07/02 19:25:49 $ by $Author: civilis $
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
