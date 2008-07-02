@@ -10,16 +10,18 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.idega.business.SpringBeanName;
 import com.idega.util.CoreConstants;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  *
- * Last modified: $Date: 2008/07/01 19:38:02 $ by $Author: civilis $
+ * Last modified: $Date: 2008/07/02 19:26:37 $ by $Author: civilis $
  *
  */
 @Scope("singleton")
@@ -37,7 +39,7 @@ public class ELUtil implements ApplicationContextAware {
 	
 	public ELUtil() {
 		
-//		should be created by spring
+//		should be created by spring, so no need to synchronize
 		if(ELUtil.me == null)
 			ELUtil.me = this;
 		else
@@ -105,5 +107,23 @@ public class ELUtil implements ApplicationContextAware {
 	public void setApplicationContext(ApplicationContext applicationcontext)
 			throws BeansException {
 		this.applicationcontext = applicationcontext;
+	}
+	
+	public void publishEvent(ApplicationEvent event) {
+		
+		ApplicationContext ac = getApplicationContext();
+		ac.publishEvent(event);
+	}
+	
+	public <T>T getBean(Class<T> clazz) {
+		
+		if(!clazz.isAnnotationPresent(SpringBeanName.class))
+			throw new RuntimeException("Interface is not annotated with "+SpringBeanName.class.getName()+" annotation");
+		
+		SpringBeanName bname = (SpringBeanName)clazz.getAnnotation(SpringBeanName.class);
+
+		@SuppressWarnings("unchecked")
+		T bean = (T)getBean(bname.value());
+		return bean;
 	}
 }
