@@ -13,12 +13,14 @@ import javax.servlet.ServletContext;
 
 import junit.framework.TestCase;
 
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
-import com.idega.business.SpringBeanLookup;
 import com.idega.idegaweb.IWMainApplicationStarter;
 import com.idega.util.FileUtil;
 
@@ -28,11 +30,13 @@ import com.idega.util.FileUtil;
  * Test case that set-ups an embedded IdegaWeb application and loads up all
  * necessary resources before running a test case.
  * </p>
- *  Last modified: $Date: 2008/06/11 16:57:05 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2008/07/02 19:26:57 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration
 public class IWApplicationTestCase extends TestCase {
 
 	IWMainApplicationStarter starter;
@@ -57,9 +61,12 @@ public class IWApplicationTestCase extends TestCase {
 		//Mock the Spring ApplicationContext and environment
 		DefaultListableBeanFactory beanFactory= new DefaultListableBeanFactory();
 		ApplicationContext appContext = new GenericWebApplicationContext(beanFactory);
+//		TODO: this context should be aware of all spring testing framework environment
 		((AbstractApplicationContext) appContext).refresh();
 		
-		SpringBeanLookup.getInstance().setAppContext(appContext, context);
+//		FIXME: use ELUtil, which is spring bean. Should be created by webapp, as it needs to have context
+//		now it's created by spring test framework, and doesn't have iw application context
+		//SpringBeanLookup.getInstance().setAppContext(appContext, context);
 		
 		//Starts the IWMainApplication:
 		this.starter = new IWMainApplicationStarter(context);
