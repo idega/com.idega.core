@@ -1,5 +1,8 @@
 package com.idega.util;
 
+import java.lang.reflect.Array;
+import java.util.Collection;
+
 
 /**
  * <p>Title: idegaWeb</p>
@@ -15,7 +18,6 @@ package com.idega.util;
 public class ArrayUtil  {
 
 	private ArrayUtil() {
-		// private contructor
 	}
 		
 	public static boolean contains(Object[] array, Object object) {
@@ -29,5 +31,21 @@ public class ArrayUtil  {
 			}
 		}
 		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static final <T>T[] convertListToArray(Collection<T> collection) {
+		if (collection == null || collection.isEmpty()) {
+			return null;
+		}
+		
+		int index = 0;
+		T[] array = (T[]) Array.newInstance(collection.iterator().next().getClass(), collection.size());
+		for (T collectionItem: collection) {
+			array[index] = collectionItem;
+			index++;
+		}
+		
+		return array;
 	}
 }
