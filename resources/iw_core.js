@@ -1562,7 +1562,7 @@ LazyLoader.loadMultiple = function(urls, callback) {
 		}
 		
 		var url = urls[0];
-		removeElementFromArray(urls, url)
+		removeElementFromArray(urls, url);
 		LazyLoader.load(url, urls.length == 0 ? callback : function() {
 			LazyLoader.loadMultiple(urls, callback);
 		});
@@ -1642,7 +1642,6 @@ LazyLoader.load = function(url, callback) {
 					//	Test for onload to trigger callback
 					resource.onload = function () {
 						callback();
-						return;
 					}
 				}
 			}

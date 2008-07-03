@@ -18,7 +18,6 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
-import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
@@ -91,7 +90,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     }
 
     @Override
-		public void main(IWContext iwc) {
+	public void main(IWContext iwc) {
         empty();
         IWBundle iwb = getBundle(iwc);
         IWResourceBundle iwrb = this.getResourceBundle(iwc);
@@ -167,7 +166,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
      * @see com.idega.presentation.ui.AbstractChooser#getChooserWindowClass()
      */
     @Override
-		public Class getChooserWindowClass() {
+		public Class<?> getChooserWindowClass() {
         return DatePickerWindow.class;
     }
 
