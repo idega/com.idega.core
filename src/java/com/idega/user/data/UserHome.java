@@ -21,7 +21,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public Collection findAllUsersWithDuplicatedPhones(String p0)throws javax.ejb.FinderException;
  public java.util.Collection findAllUsers()throws javax.ejb.FinderException;
  public Collection findNewestUsers(int returningNumberOfRecords, int startingRecord) throws FinderException;
- public java.util.Collection findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException;
+ public java.util.Collection<User> findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException;
  public java.util.Collection findUsersForUserRepresentativeGroups(java.util.Collection p0)throws javax.ejb.FinderException;
  public User findUserForUserRepresentativeGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException;
  public java.util.Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException;
@@ -48,5 +48,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public java.util.Collection findByGroupRelationInitiationTimeAndStatus(Group relatedGroup, java.sql.Timestamp firstInitiationDateInPeriode, java.sql.Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException;
  public User findUserByUniqueId(String uniqueIdString) throws FinderException;
  public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) throws FinderException;
-	
+
+ public java.util.Collection<User> findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2, boolean useLoweredValues) throws FinderException;
+ 
 }

@@ -58,6 +58,7 @@ import com.idega.user.business.UserStatusBusinessBean;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 import com.idega.util.text.Name;
 import com.idega.util.text.TextSoap;
 
@@ -88,10 +89,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	static final String META_DATA_HOME_PAGE = "homepage";
   
 
+	@Override
 	public String getEntityName() {
 		return TABLE_NAME;
 	}
 
+	@Override
 	public void initializeAttributes() {
 		//      addAttribute(getIDColumnName());
 		super.addGeneralGroupRelation();
@@ -142,7 +145,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	}
 
-    public void setDefaultValues(){
+    @Override
+	public void setDefaultValues(){
     		super.setDefaultValues();
     		initializeColumnValue(getColumnNameDeleted(),Boolean.FALSE);
     }
@@ -151,6 +155,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	//
 	//    }
 
+	@Override
 	public String getIDColumnName() {
 		return getColumnNameUserID();
 	}
@@ -163,18 +168,22 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return "Administrator";
 	}
 
+	@Override
 	public String getGroupTypeDescription() {
 		return "";
 	}
 
+	@Override
 	public String getGroupTypeKey() {
 		return USER_GROUP_TYPE;
 	}
 	
+	@Override
 	public String ejbHomeGetGroupType(){
 		return super.ejbHomeGetGroupType();
 	}
 
+	@Override
 	public boolean getGroupTypeVisibility() {
 		return false;
 	}
@@ -273,6 +282,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return (String) getColumnValue(getColumnNameDisplayName());
 	}
 
+	@Override
 	public String getDescription() {
 		return (String) getColumnValue(getColumnNameDescription());
 	}
@@ -329,6 +339,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return getStringColumnValue(getColumnNamePreferredLocale());
 	}
 
+	@Override
 	public String getName() {
 		String firstName = this.getFirstName();
 		String middleName = this.getMiddleName();
@@ -404,6 +415,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return getGeneralGroup().getHomeFolder();
 	}
 	
+	@Override
 	public Timestamp getCreated() {
 		return getGeneralGroup().getCreated();
 	}
@@ -598,6 +610,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		setColumn(getColumnNameDisplayName(), dName);
 	}
 
+	@Override
 	public void setDescription(String description) {
 		setColumn(getColumnNameDescription(), description);
 	}
@@ -711,6 +724,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 	}
 	
+	@Override
 	public void setCreated(Timestamp stamp) {
 		try{
 			Group group = getGeneralGroup();
@@ -855,7 +869,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   /**
    *
    */
-  public void delete() throws SQLException {
+  @Override
+public void delete() throws SQLException {
     throw new SQLException("Use delete(int userId) instead");
   }
 
@@ -911,6 +926,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		//      return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+this.getIDColumnName()+" in ("+sGroupList+")");
 	}
 	
+	@Override
 	public SelectQuery getSelectQueryConstraints(){
 		SelectQuery query = idoSelectQuery();
     	
@@ -1039,15 +1055,18 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method removeUser() not supported.");
 	}
+	@Override
 	public void setGroupType(String p0){
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method setGroupType() not yet implemented.");
 	}
+	@Override
 	public String getGroupTypeValue() {
 		return USER_GROUP_TYPE;
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method getGroupTypeValue() not yet implemented.");
 	}
+	@Override
 	public void setExtraInfo(String p0) {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method setExtraInfo() not yet implemented.");
@@ -1063,14 +1082,17 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public void addGroup(Group p0,java.sql.Timestamp p1) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
+	@Override
 	public void addGroup(Group p0) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
 	
+	@Override
 	public void addGroup(User p0) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
 	
+	@Override
 	public List getChildGroups(String[] p0, boolean p1) throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not supported");
 	}
@@ -1080,24 +1102,29 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public List getListOfAllGroupsContaining(int p0) throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContaining() not yet implemented.");
 	}
+	@Override
 	public void addGroup(int p0) throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
+	@Override
 	public List getChildGroups() throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContained() not supported");
 	}
+	@Override
 	public Collection getAllGroupsContainingUser(User p0) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method getAllGroupsContainingUser() not supported.");
 	}
 	public void removeGroup(Group p0) throws EJBException {
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
 	}
+	@Override
 	public String getGroupType() {
 		//throw new java.lang.UnsupportedOperationException("Method getGroupType() not yet implemented.");
 		return "user_group_representative";
 	}
 	/**
 	 * Gets a list of all the groups that this "group" is directly member of.	 * @see com.idega.user.data.Group#getListOfAllGroupsContainingThis()	 */
+	@Override
 	public List getParentGroups() throws EJBException {
 		return getParentGroups(null, null);
 	}
@@ -1122,6 +1149,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			throw new IDORuntimeException(e,this);	
 		}
 	}
+	@Override
 	public String getExtraInfo()  {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method getExtraInfo() not yet implemented.");
@@ -1137,6 +1165,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		throw new java.lang.UnsupportedOperationException("Method addUser() not yet implemented.");
 	}
 
+	@Override
 	public boolean isUser(){
 		return true;
 	}
@@ -1145,35 +1174,45 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	    return false;
 	}
 	
+	@Override
 	public Iterator getChildrenIterator() {
 		return ListUtil.getEmptyList().iterator();
 	}
+	@Override
 	public boolean getAllowsChildren() {
 		return false;
 	}
+	@Override
 	public ICTreeNode getChildAtIndex(int childIndex) {
 		/**@todo: Implement this com.idega.core.ICTreeNode method*/
 		throw new java.lang.UnsupportedOperationException("Method getChildAtIndex() not supported.");
 	}
+	@Override
 	public int getChildCount() {
 		return 0;
 	}
+	@Override
 	public int getIndex(ICTreeNode node) {
 		throw new java.lang.UnsupportedOperationException("Method getIndex() not supported.");
 	}
+	@Override
 	public ICTreeNode getParentNode() {
 		/**@todo: Implement this com.idega.core.ICTreeNode method*/
 		throw new java.lang.UnsupportedOperationException("Method getParentNode() not yet implemented.");
 	}
+	@Override
 	public boolean isLeaf() {
 		return true;
 	}
+	@Override
 	public String getNodeName() {
 		return this.getName();
 	}
+	@Override
 	public String getNodeName(Locale locale) {
 		return this.getNodeName();
 	}
+	@Override
 	public int getNodeID() {
 		return this.getID();
 	}
@@ -1210,18 +1249,27 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		String sql = getUsersByEmailSqlQuery(emailAddress);
  		return idoFindPKsBySQL(sql);
 	}
+	
+	private Column getColumnForSearchByNames(String columnName, boolean useLoweredValues) {
+		Column column = idoQueryTable().getColumn(getColumnNameFirstName());
+		if (useLoweredValues) {
+			column.setPrefix("lower(");
+			column.setPostfix(")");
+		}
+		return column;
+	}
 
-	public Collection ejbFindByNames(String first, String middle, String last) throws FinderException {
+	public Collection ejbFindByNames(String first, String middle, String last, boolean useLoweredValues) throws FinderException {
 	    SelectQuery query = idoSelectQuery();
 		if (first != null || middle != null || last != null) {
-			if (first != null && !"".equals(first)) {
-			    query.addCriteria(new MatchCriteria(idoQueryTable(), getColumnNameFirstName(),MatchCriteria.LIKE,"%"+first+"%",true));
+			if (!StringUtil.isEmpty(first)) {
+				query.addCriteria(new MatchCriteria(getColumnForSearchByNames(getColumnNameFirstName(), useLoweredValues), MatchCriteria.LIKE, true, first));
 			}
-			if (middle != null && !"".equals(middle)) {
-			    query.addCriteria(new MatchCriteria(idoQueryTable(), getColumnNameFirstName(),MatchCriteria.LIKE,"%"+middle+"%",true));
+			if (!StringUtil.isEmpty(middle)) {
+				query.addCriteria(new MatchCriteria(getColumnForSearchByNames(getColumnNameMiddleName(), useLoweredValues), MatchCriteria.LIKE, true, middle));
 			}
-			if (last != null && !"".equals(last)) {
-			    query.addCriteria(new MatchCriteria(idoQueryTable(), getColumnNameFirstName(),MatchCriteria.LIKE,"%"+last+"%",true));
+			if (!StringUtil.isEmpty(last)) {
+				query.addCriteria(new MatchCriteria(getColumnForSearchByNames(getColumnNameLastName(), useLoweredValues), MatchCriteria.LIKE, true, last));
 			}
 			// append is deleted filter 
 			query.addCriteria(getNotDeletedCriteria());
@@ -1335,6 +1383,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public Group getGroup() {
 		return this;
 	}
@@ -1342,6 +1391,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public int getGroupID() {
 		return this.getID();
 	}
@@ -1349,10 +1399,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public Group getUserGroup() {
 		return getGeneralGroup();
 	}
 
+	@Override
 	protected Group getGeneralGroup() {
 		if (this._group == null) {
 			try {
@@ -2402,6 +2454,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	/**
 	 * Do not use this method, it is just here because User implements Group
 	 */
+	@Override
 	public void addGroup(int groupId, Timestamp time) throws EJBException {
 	    throw new UnsupportedOperationException();
 	}
@@ -2409,6 +2462,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	/**
 	 * Do not use this method, it is just here because User implements Group
 	 */
+	@Override
 	public void addUniqueRelation(int relatedGroupId, String relationType, Timestamp time) throws CreateException {
 	    throw new UnsupportedOperationException();
 	}
@@ -2417,6 +2471,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	/**
 	 * Do not use this method, it is just here because User implements Group
 	 */
+	@Override
 	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries, Timestamp time) throws EJBException {
 	    throw new UnsupportedOperationException();	
 	}

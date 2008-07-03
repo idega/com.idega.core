@@ -64,7 +64,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		}
 	}
 
-	public MatchCriteria(Column column, String matchType, String value) {
+	public MatchCriteria(Column column, String matchType, boolean addPercents, String value) {
 		this.column = column;
 		this.matchType = matchType;
 		if (value == null) {
@@ -77,11 +77,14 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 			this.value = value;
 		}
 		else {
-			this.value = quote(value);
-			//if(!matchType.equalsIgnoreCase(LIKE))
+			this.value = quote(value, addPercents);
 			this.placeHolderValue = value;
 		}
 
+	}
+	
+	public MatchCriteria(Column column, String matchType, String value) {
+		this(column, matchType, false, value);
 	}
 
 	public MatchCriteria(Column column, String matchType, String value, boolean addQuotes) {
@@ -218,6 +221,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		return this.column;
 	}
 
+	@Override
 	public void write(Output out) {
 		if (out.isFlagged() && getPlaceValue() != null) {
 			out.print(this.column).print(' ').print(this.matchType).print(' ').print("?");
@@ -234,6 +238,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		return this.dataStore;
 	}
 
+	@Override
 	public Set getTables() {
 		Set s = new HashSet();
 		s.add(this.column.getTable());
@@ -255,6 +260,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		return v;
 	}
 
+	@Override
 	public Object clone() {
 		MatchCriteria obj = (MatchCriteria) super.clone();
 		if (this.column != null) {

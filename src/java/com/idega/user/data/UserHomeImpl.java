@@ -13,7 +13,8 @@ import com.idega.util.IWTimestamp;
 
 public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome
 {
- protected Class getEntityInterfaceClass(){
+ @Override
+protected Class getEntityInterfaceClass(){
   return User.class;
  }
 
@@ -90,12 +91,15 @@ public Collection findNewestUsers(int returningNumberOfRecords, int startingReco
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException{
+public java.util.Collection<User> findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2, boolean useLoweredValues) throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((UserBMPBean)entity).ejbFindByNames(p0,p1,p2);
+	java.util.Collection ids = ((UserBMPBean)entity).ejbFindByNames(p0,p1,p2, useLoweredValues);
 	this.idoCheckInPooledEntity(entity);
-//return this.getEntityCollectionForPrimaryKeys(ids);
-			return this.getEntityCollectionForPrimaryKeys(ids);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection<User> findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException{
+	return findByNames(p0, p1, p2, false);
 }
 
 public java.util.Collection findUsersForUserRepresentativeGroups(java.util.Collection p0)throws javax.ejb.FinderException{
