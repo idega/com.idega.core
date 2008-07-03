@@ -8,17 +8,18 @@ import java.util.Locale;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.presentation.IWContext;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PresentationUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
  * Date (range) picker
  *
- * Last modified: $Date: 2008/07/01 19:38:14 $ by $Author: civilis $
+ * Last modified: $Date: 2008/07/03 13:08:53 $ by $Author: valdas $
  */
 public class IWDatePicker extends TextInput {
 	
@@ -44,7 +45,6 @@ public class IWDatePicker extends TextInput {
 		}
 		
 		String language = locale.getLanguage();
-		addRequiredLibraries(iwc, language);
 		
 		IWTimestamp iwDate = null;
 		if (date == null && useCurrentDateIfNotSet) {
@@ -57,30 +57,43 @@ public class IWDatePicker extends TextInput {
 			setValue(iwDate.getLocaleDate(locale, IWTimestamp.SHORT));
 		}
 		
-		String pickerVar = new StringBuffer("jQuery(function($){ $('#").append(this.getId()).append("')").toString();
-		String pickerCallEnd = " });";
-		StringBuffer initAction = new StringBuffer(pickerVar).append(".datepicker({");
-		
-			initAction.append("rangeSelect: ").append(isDateRange()).append(", ");
+		boolean canUseLocalizedText = language != null  && !CoreConstants.EMPTY.equals(language) && !Locale.ENGLISH.getLanguage().equals(language);
+		StringBuffer initAction = new StringBuffer("jQuery('#").append(this.getId()).append("').datepicker({");
+			// Is date range?
+			initAction.append("rangeSelect: ").append(isDateRange());
 			
+			//	Custom date
 			if (iwDate != null) {
-				initAction.append("defaultDate: new Date(").append(iwDate.getYear()).append(", ").append(iwDate.getMonth() - 1).append(", ").append(iwDate.getDay())
-							.append("), ");
+				initAction.append(", defaultDate: new Date(").append(iwDate.getYear()).append(", ").append(iwDate.getMonth() - 1).append(", ").append(iwDate.getDay())
+							.append(")");
 			}
+			
+			//	Calendar image
 			if (isShowCalendarImage()) {
-				initAction.append("showOn: 'both', buttonImage: '").append(getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif"))
-							.append("', buttonImageOnly: true, ");
+				initAction.append(", showOn: 'both', buttonImage: '").append(getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif"))
+							.append("', buttonImageOnly: true");
 			}
+			
+			//	onSelect action
 			if (onSelectAction != null) {
-				initAction.append("onSelect: function() {").append(onSelectAction).append("}, ");
+				initAction.append(", onSelect: function() {").append(onSelectAction).append("}");
 			}
-			if (language != null && !CoreConstants.EMPTY.equals(language)) {
-				initAction.append("regional: ['").append(language).append("']");
+			
+			//	Localization
+			if (canUseLocalizedText) {
+				initAction.append(", regional: ['").append(language).append("']");
 			}
 	
-		initAction.append("});").append(pickerCallEnd);
+		initAction.append("});");
 		
+		//	Initialization action
+		if (!CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+			initAction = new StringBuffer("jQuery(window).load(function() {").append(initAction.toString()).append("});");
+		}
 		PresentationUtil.addJavaScriptActionToBody(iwc, initAction.toString());
+		
+		//	Resources
+		addRequiredLibraries(iwc, canUseLocalizedText ? language : null);
 	}
 	
 	private void addRequiredLibraries(IWContext iwc, String language) {
@@ -89,7 +102,7 @@ public class IWDatePicker extends TextInput {
 		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.SPRING_BEAN_IDENTIFIER);
 		scripts.add(web2.getBundleURIToJQueryLib());
 		scripts.add(web2.getBundleURIToJQueryUILib("1.5b/datepicker/core", "ui.datepicker.js"));
-		if (language != null  && !CoreConstants.EMPTY.equals(language)) {
+		if (language != null) {
 			scripts.add(web2.getBundleURIToJQueryUILib("1.5b/datepicker/i18n", "ui.datepicker-" + language + ".js"));
 		}
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scripts);
