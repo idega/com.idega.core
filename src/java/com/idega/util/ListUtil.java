@@ -108,8 +108,8 @@ public class ListUtil {
 	 * @param commaSeparatedString A comma separated string e.g. "value1,value2,value3,..."
 	 * @returns a List of Strings or an empty list if no values where found
 	 */
-	public static List convertCommaSeparatedStringToList(String commaSeparatedString) {
-		return ListUtil.convertTokenSeparatedStringToList(commaSeparatedString,",");
+	public static List<String> convertCommaSeparatedStringToList(String commaSeparatedString) {
+		return ListUtil.convertTokenSeparatedStringToList(commaSeparatedString, CoreConstants.COMMA);
 	}
 	
 	/**
@@ -118,14 +118,13 @@ public class ListUtil {
 	 * @param tokenSeparator The separator such as a "," or ";" for example
 	 * @returns a List of Strings or an empty list if no values where found
 	 */
-	public static List convertTokenSeparatedStringToList(String tokenSeparatedString, String tokenSeparator) {
-		List list = new ArrayList();
+	public static List<String> convertTokenSeparatedStringToList(String tokenSeparatedString, String tokenSeparator) {
+		List<String> list = new ArrayList<String>();
 		
 		if(tokenSeparatedString!=null && tokenSeparator!=null){
 			StringTokenizer tokens = new StringTokenizer(tokenSeparatedString,tokenSeparator);
 			while (tokens.hasMoreTokens()) {
-				String value = tokens.nextToken();	
-				list.add(value);
+				list.add(tokens.nextToken());
 			}
 		}
 		else{
@@ -134,27 +133,40 @@ public class ListUtil {
 		
 		return list;
 	}
+	
+	public static final boolean isEmpty(Collection<?> collection) {
+		if (collection == null || collection.isEmpty()) {
+			return true;
+		}
+		
+		return false;
+	}
 
   protected static class EmptyList extends ArrayList{
 
 
-    public boolean add(Object o){
+    @Override
+	public boolean add(Object o){
       throw new RuntimeException("This empty list is final and cannot be modified");
     }
 
-    public void add(int index,Object o){
+    @Override
+	public void add(int index,Object o){
       throw new RuntimeException("This empty list is final and cannot be modified");
     }
 
-    public boolean addAll(Collection o){
+    @Override
+	public boolean addAll(Collection o){
       throw new RuntimeException("This empty list is final and cannot be modified");
     }
 
-    public boolean addAll(int index, Collection o){
+    @Override
+	public boolean addAll(int index, Collection o){
       throw new RuntimeException("This empty list is final and cannot be modified");
     }
 
-    public Object set(int index,Object o){
+    @Override
+	public Object set(int index,Object o){
       throw new RuntimeException("This empty list is final and cannot be modified");
     }
 
