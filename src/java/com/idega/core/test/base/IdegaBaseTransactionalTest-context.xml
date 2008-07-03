@@ -29,7 +29,7 @@
 		    <property name="entityManagerFactory" ref="entityManagerFactory" />
 		  </bean>
         
-        <bean id="genericDao" class="com.idega.core.persistence.impl.GenericDaoImpl" scope="singleton" />
+        <bean id="genericDAO" class="com.idega.core.persistence.impl.GenericDaoImpl" scope="singleton" />
         
         <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 		<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
