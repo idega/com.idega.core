@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
   	<groupId>com.idega.block.platform</groupId>
@@ -26,49 +27,49 @@
 		<id>tryggvil</id>
       	<email>tryggvi@idega.is</email>
       	<organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Pall Helgason</name>
       <id>palli</id>
       <email>palli@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Eirikur Sveinn Hrafnsson</name>
       <id>eiki</id>
       <email>eiki@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Thorhallur Helgason</name>
       <id>laddi</id>
       <email>laddi@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Gudmundur Agust Saemundsson</name>
       <id>gummi</id>
       <email>gummi@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Grimur Jonsson</name>
       <id>gimmi</id>
       <email>gimmi@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
     <developer>
       <name>Thomas Hilbig</name>
       <id>thomas</id>
       <email>thomas@idega.is</email>
       <organization>idega software</organization>
-      <roles />
+      <roles/>
     </developer>
   </developers>
   
@@ -200,6 +201,11 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>jsr250-api</artifactId>
+      <version>${javax.annotation-jsr250-api-version}</version>
     </dependency>
     
     <!-- dependencies that excluded from other jars, and need to be added explicitlyvc -->
