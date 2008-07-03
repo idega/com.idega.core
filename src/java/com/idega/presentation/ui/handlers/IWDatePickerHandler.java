@@ -20,11 +20,11 @@ import com.idega.util.CoreUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  *
  * Handler for date (range) picker: converts date to storable format and user friendly format.
  *
- * Last modified: $Date: 2008/06/26 08:35:33 $ by $Author: valdas $
+ * Last modified: $Date: 2008/07/03 13:09:20 $ by $Author: valdas $
  */
 public class IWDatePickerHandler implements ICPropertyHandler {
 	
@@ -52,7 +52,7 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 		
 		datePicker.setUseCurrentDateIfNotSet(false);
 		datePicker.setShowCalendarImage(true);
-		datePicker.setOnSelectAction("saveModuleProperty(null, $('#" + datePicker.getId() + "'));");
+		datePicker.setOnSelectAction("saveModuleProperty(null, jQuery('#" + datePicker.getId() + "'));");
 		
 		return layer;
 	}
