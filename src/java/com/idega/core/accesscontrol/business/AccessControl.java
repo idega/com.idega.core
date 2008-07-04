@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.119 2008/04/26 02:28:45 civilis Exp $
+ * $Id: AccessControl.java,v 1.120 2008/07/04 15:13:43 valdas Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -73,12 +73,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2008/04/26 02:28:45 $ by $Author: civilis $
+ * Last modified: $Date: 2008/07/04 15:13:43 $ by $Author: valdas $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.119 $
+ * @version $Revision: 1.120 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -363,7 +363,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				groups = LoginBusinessBean.getPermissionGroups(iwuc);
 			}
 			else { //the correct version
-				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwuc);
+				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwuc.getCurrentUser());
 
 			}
 
@@ -552,7 +552,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				groups = LoginBusinessBean.getPermissionGroups(iwuc);
 			}
 			else { //the correct version
-				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwuc);
+				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwuc.getCurrentUser());
 			}
 
 			GenericGroup primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
@@ -612,12 +612,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	} // method hasPermission
 
-	private Collection getParentGroupsAndPermissionControllingParentGroups(String permissionKey, IWUserContext iwc) throws RemoteException {
+	private Collection getParentGroupsAndPermissionControllingParentGroups(String permissionKey, User user) throws RemoteException {
 		Collection groups;
 		//must be slow optimize
 		Map cachedParents = new HashMap();
 		Map cachedGroups = new HashMap();
-		groups = getGroupBusiness(iwc.getApplicationContext()).getParentGroups(iwc.getCurrentUser(), cachedParents, cachedGroups); //com.idega.user.data.User
+		groups = getGroupBusiness(IWMainApplication.getDefaultIWApplicationContext()).getParentGroups(user, cachedParents, cachedGroups); //com.idega.user.data.User
 
 		Vector groupsToCheckForPermissions = new Vector();
 		Iterator iter = groups.iterator();
@@ -2753,8 +2753,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 	
 	public Set getAllRolesForCurrentUser(IWUserContext iwc) {
+		return getAllRolesForUser(iwc.getCurrentUser());
+	}
+	
+	public Set getAllRolesForUser(User user) {
 		try {
-			Collection c = getAllRolesForGroupCollection(getParentGroupsAndPermissionControllingParentGroups(null,iwc));
+			Collection c = getAllRolesForGroupCollection(getParentGroupsAndPermissionControllingParentGroups(null, user));
 			if(c!=null){
 				Set s = new HashSet();
 				for (Iterator iter = c.iterator(); iter.hasNext();) {

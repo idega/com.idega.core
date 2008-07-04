@@ -1,5 +1,5 @@
 /*
- * $Id: AccessController.java,v 1.32 2008/04/26 02:28:45 civilis Exp $
+ * $Id: AccessController.java,v 1.33 2008/07/04 15:13:43 valdas Exp $
  * 
  * Created in 2001 by gummi
  * 
@@ -32,10 +32,10 @@ import com.idega.user.data.Group;
  * This is the main service interface for the old generation permission system
  * in idegaWeb based around the ICPermission entity (IC_PERMISSION table).
  * </p>
- * Last modified: $Date: 2008/04/26 02:28:45 $ by $Author: civilis $
+ * Last modified: $Date: 2008/07/04 15:13:43 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 public interface AccessController extends com.idega.idegaweb.IWService{
 
@@ -158,6 +158,7 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public ICRole getRoleByRoleKey(String roleKey) throws FinderException;
   public String getRoleIdentifier();
   public Set getAllRolesForCurrentUser(IWUserContext iwc);
+  public Set getAllRolesForUser(User user);
 
 /*
   public static List getPermissionGroups(User user) throws Exception;
