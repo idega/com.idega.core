@@ -32,6 +32,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException;
  
  public abstract Collection<User> findUsersByEmail(String email) throws javax.ejb.FinderException;
+ public abstract Collection<User> findUsersByEmail(String email, boolean useLoweredValue, boolean useLikeExpression) throws javax.ejb.FinderException;
  
  public java.util.Collection findUsers(java.lang.String[] userIDs)throws javax.ejb.FinderException;
  public java.util.Collection findAllUsersOrderedByFirstName()throws javax.ejb.FinderException;
@@ -52,5 +53,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public java.util.Collection<User> findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2, boolean useLoweredValues) throws FinderException;
  
  public java.util.Collection<User> findByDisplayName(java.lang.String displayName, boolean useLoweredValue) throws FinderException;
+ 
+ public java.util.Collection<User> findByPhoneNumber(java.lang.String phoneNumber) throws FinderException;
  
 }

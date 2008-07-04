@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.237 2008/05/26 11:04:14 civilis Exp $
+ * $Id: UserBusinessBean.java,v 1.238 2008/07/04 15:13:03 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -96,11 +96,13 @@ import com.idega.user.data.User;
 import com.idega.user.data.UserComment;
 import com.idega.user.data.UserCommentHome;
 import com.idega.user.data.UserHome;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 import com.idega.util.Timer;
 import com.idega.util.datastructures.NestedSetsContainer;
 import com.idega.util.text.Name;
@@ -110,10 +112,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2008/05/26 11:04:14 $ by $Author: civilis $
+ * Last modified: $Date: 2008/07/04 15:13:03 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.237 $
+ * @version $Revision: 1.238 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3961,6 +3963,104 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				}
 			}
 		}
+	}
+	
+	private String getLoweredStringValueByCurrentLocale(String value) {
+		Locale locale = null;
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc != null) {
+			locale = iwc.getCurrentLocale();
+		}
+		if (locale == null) {
+			locale = Locale.ENGLISH;
+		}
+		
+		value = value.toLowerCase(locale);
+		return value;
+	}
+
+	public Collection<User> getUsersByNameOrEmailOrPhone(String nameEmailOrPhone) {
+		if (StringUtil.isEmpty(nameEmailOrPhone)) {
+			return null;
+		}
+		
+		Collection<User> usersByNames = getUsersByName(nameEmailOrPhone);
+		if (!ListUtil.isEmpty(usersByNames)) {
+			return usersByNames;
+		}
+		
+		Collection<User> usersByEmails = getUsersByEmail(nameEmailOrPhone);
+		if (!ListUtil.isEmpty(usersByEmails)) {
+			return usersByEmails;
+		}
+		
+		return getUsersByPhoneNumber(nameEmailOrPhone);
+	}
+	
+	public Collection<User> getUsersByPhoneNumber(String phoneNumber) {
+		if (StringUtil.isEmpty(phoneNumber)) {
+			return null;
+		}
+		
+		try {
+			return getUserHome().findByPhoneNumber(getLoweredStringValueByCurrentLocale(phoneNumber));
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public Collection<User> getUsersByEmail(String email) {
+		if (StringUtil.isEmpty(email)) {
+			return null;
+		}
+		
+		try {
+			return getUserHome().findUsersByEmail(getLoweredStringValueByCurrentLocale(email), true, true);
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+
+	public Collection<User> getUsersByName(String name) {
+		if (StringUtil.isEmpty(name)) {
+			return null;
+		}
+		
+		name = getLoweredStringValueByCurrentLocale(name);
+		String[] nameParts = name.split(CoreConstants.SPACE);
+		String firstName = null;
+		String middleName = null;
+		String lastName = null;
+		if (nameParts.length == 3) {
+			middleName = nameParts[1];
+			lastName = nameParts[2];
+		}
+		if (nameParts.length == 2) {
+			lastName = nameParts[1];
+		}
+		if (nameParts.length >= 1) {
+			firstName = nameParts[0];
+		}
+		
+		Collection<User> users = null;
+		try {
+			users = getUserHome().findByNames(firstName, middleName, lastName, true);
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		if (ListUtil.isEmpty(users)) {
+			try {
+				users = getUserHome().findByDisplayName(name, true);
+			} catch (FinderException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return users;
 	}
 	
 } // Class UserBusiness

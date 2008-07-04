@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -1222,12 +1221,11 @@ public void delete() throws SQLException {
 	}
 	
 	public Integer ejbFindUserFromEmail(String emailAddress) throws FinderException {
- 		String sql = getUsersByEmailSqlQuery(emailAddress);
+ 		String sql = getUsersByEmailSqlQuery(emailAddress, false, false);
  		return (Integer) super.idoFindOnePKBySQL(sql);
 	}
 	
-	private String getUsersByEmailSqlQuery(String emailAddress) {
-		
+	private String getUsersByEmailSqlQuery(String emailAddress, boolean useLoweredValue, boolean useLikeExpression) {
 		StringBuffer sql = new StringBuffer("select iu.* ");
 		sql.append(" from ").append(this.getTableName()).append(" iu ,");
 		sql.append(EmailBMPBean.SQL_TABLE_NAME).append(" ie ,");
@@ -1235,23 +1233,69 @@ public void delete() throws SQLException {
 		sql.append(" where ie.").append(EmailBMPBean.SQL_TABLE_NAME).append("_ID = ");
 		sql.append("iue.").append(EmailBMPBean.SQL_TABLE_NAME).append("_ID  and ");
 		sql.append("iue.").append(getIDColumnName()).append(" = iu.").append(getIDColumnName());
-		sql.append(" and ie.").append(EmailBMPBean.SQL_COLUMN_EMAIL).append(" = '");
-		sql.append(emailAddress).append("'");
+		sql.append(" and ");
+		
+		if (useLoweredValue) {
+			sql.append("lower(");
+		}
+		sql.append("ie.").append(EmailBMPBean.SQL_COLUMN_EMAIL);
+		if (useLoweredValue) {
+			sql.append(")");
+		}
+		
+		if (useLikeExpression) {
+			sql.append(" like '%");
+		}
+		else {
+			sql.append(" = '");
+		}
+		sql.append(emailAddress);
+		if (useLikeExpression) {
+			sql.append("%'");
+		}
+		else {
+			sql.append("'");
+		}
+		
 	    // append is not deleted
-	    sql.append(" and ");//iu.");
+	    sql.append(" and ");
 	    appendIsNotDeleted(sql);
 	    
 	    return sql.toString();
 	}
 	
-	public Collection ejbFindUsersByEmail(String emailAddress) throws FinderException {
+	public Collection ejbFindByPhoneNumber(String phoneNumber) throws FinderException {
+		Table users = new Table(this);
+		Table phones = new Table(Phone.class);
 		
-		String sql = getUsersByEmailSqlQuery(emailAddress);
+		SelectQuery query = new SelectQuery(users);
+		query.addColumn(users.getColumn(getIDColumnName()));
+		try {
+			query.addJoin(users, phones);
+		}
+		catch (IDORelationshipException e) {
+			e.printStackTrace();
+			throw new FinderException(e.getMessage());
+		}
+		
+		query.addCriteria(new MatchCriteria(getColumn(phones, PhoneBMPBean.getColumnNamePhoneNumber(), true), MatchCriteria.LIKE, true, phoneNumber));
+		
+		Criteria equalsFalse = new MatchCriteria(users.getColumn(getColumnNameDeleted()), MatchCriteria.EQUALS, GenericEntity.COLUMN_VALUE_FALSE);
+		Criteria isNull = new MatchCriteria(users.getColumn(getColumnNameDeleted()), MatchCriteria.IS, MatchCriteria.NULL);
+		query.addCriteria(new OR(equalsFalse, isNull));
+		
+		query.addGroupByColumn(users.getColumn(getIDColumnName()));
+		
+		return idoFindPKsByQuery(query);
+	}
+	
+	public Collection ejbFindUsersByEmail(String emailAddress, boolean useLoweredValue, boolean useLikeExpression) throws FinderException {
+		String sql = getUsersByEmailSqlQuery(emailAddress, useLoweredValue, useLikeExpression);
  		return idoFindPKsBySQL(sql);
 	}
 	
-	private Column getColumnForSearchByNames(String columnName, boolean useLoweredValues) {
-		Column column = idoQueryTable().getColumn(columnName);
+	private Column getColumn(Table table, String columnName, boolean useLoweredValues) {
+		Column column = table.getColumn(columnName);
 		if (useLoweredValues) {
 			column.setPrefix("lower(");
 			column.setPostfix(")");
@@ -1261,15 +1305,16 @@ public void delete() throws SQLException {
 
 	public Collection ejbFindByNames(String first, String middle, String last, boolean useLoweredValues) throws FinderException {
 	    SelectQuery query = idoSelectQuery();
+	    Table users = new Table(this);
 		if (first != null || middle != null || last != null) {
 			if (!StringUtil.isEmpty(first)) {
-				query.addCriteria(new MatchCriteria(getColumnForSearchByNames(getColumnNameFirstName(), useLoweredValues), MatchCriteria.LIKE, true, first));
+				query.addCriteria(new MatchCriteria(getColumn(users, getColumnNameFirstName(), useLoweredValues), MatchCriteria.LIKE, true, first));
 			}
 			if (!StringUtil.isEmpty(middle)) {
-				query.addCriteria(new MatchCriteria(getColumnForSearchByNames(getColumnNameMiddleName(), useLoweredValues), MatchCriteria.LIKE, true, middle));
+				query.addCriteria(new MatchCriteria(getColumn(users, getColumnNameMiddleName(), useLoweredValues), MatchCriteria.LIKE, true, middle));
 			}
 			if (!StringUtil.isEmpty(last)) {
-				query.addCriteria(new MatchCriteria(getColumnForSearchByNames(getColumnNameLastName(), useLoweredValues), MatchCriteria.LIKE, true, last));
+				query.addCriteria(new MatchCriteria(getColumn(users, getColumnNameLastName(), useLoweredValues), MatchCriteria.LIKE, true, last));
 			}
 			// append is deleted filter 
 			query.addCriteria(getNotDeletedCriteria());
@@ -1284,7 +1329,7 @@ public void delete() throws SQLException {
 		}
 		
 		SelectQuery query = idoSelectQuery();
-		query.addCriteria(new MatchCriteria(getColumnForSearchByNames(getColumnNameDisplayName(), useLoweredValue), MatchCriteria.LIKE, true, displayName));
+		query.addCriteria(new MatchCriteria(getColumn(new Table(this), getColumnNameDisplayName(), useLoweredValue), MatchCriteria.LIKE, true, displayName));
 		query.addCriteria(getNotDeletedCriteria());
 		return super.idoFindPKsByQuery(query);
 	}

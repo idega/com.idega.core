@@ -189,9 +189,13 @@ public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderExcepti
 }
 
 public Collection<User> findUsersByEmail(java.lang.String email)throws javax.ejb.FinderException{
+	return findUsersByEmail(email, false, false);
+}
+
+public Collection<User> findUsersByEmail(String email, boolean useLoweredValue, boolean useLikeExpression) throws FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	@SuppressWarnings("unchecked")
-	Collection<Integer> pks = ((UserBMPBean)entity).ejbFindUsersByEmail(email);
+	Collection<Integer> pks = ((UserBMPBean)entity).ejbFindUsersByEmail(email, useLoweredValue, useLikeExpression);
 	this.idoCheckInPooledEntity(entity);
 	@SuppressWarnings("unchecked")
 	Collection<User> usrs = getEntityCollectionForPrimaryKeys(pks);
@@ -295,6 +299,13 @@ public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Col
 	public Collection<User> findByDisplayName(String displayName, boolean useLoweredValue) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserBMPBean) entity).ejbFindByDisplayName(displayName, useLoweredValue);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public Collection<User> findByPhoneNumber(String phoneNumber) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((UserBMPBean) entity).ejbFindByPhoneNumber(phoneNumber);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
