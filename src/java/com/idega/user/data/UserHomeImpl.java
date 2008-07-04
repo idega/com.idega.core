@@ -291,4 +291,11 @@ public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Col
        	this.idoCheckInPooledEntity(entity);
        	return this.getEntityCollectionForPrimaryKeys(ids);
     }
+
+	public Collection<User> findByDisplayName(String displayName, boolean useLoweredValue) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((UserBMPBean) entity).ejbFindByDisplayName(displayName, useLoweredValue);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 }

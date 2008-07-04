@@ -51,4 +51,6 @@ public interface UserHome extends com.idega.data.IDOHome
 
  public java.util.Collection<User> findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2, boolean useLoweredValues) throws FinderException;
  
+ public java.util.Collection<User> findByDisplayName(java.lang.String displayName, boolean useLoweredValue) throws FinderException;
+ 
 }

@@ -1251,7 +1251,7 @@ public void delete() throws SQLException {
 	}
 	
 	private Column getColumnForSearchByNames(String columnName, boolean useLoweredValues) {
-		Column column = idoQueryTable().getColumn(getColumnNameFirstName());
+		Column column = idoQueryTable().getColumn(columnName);
 		if (useLoweredValues) {
 			column.setPrefix("lower(");
 			column.setPostfix(")");
@@ -1276,6 +1276,17 @@ public void delete() throws SQLException {
 			return super.idoFindPKsByQuery(query);
 		}
 		throw new FinderException("No legal names provided");
+	}
+	
+	public Collection ejbFindByDisplayName(String displayName, boolean useLoweredValue) throws FinderException {
+		if (StringUtil.isEmpty(displayName)) {
+			throw new FinderException("Invalid name provided: " + displayName);
+		}
+		
+		SelectQuery query = idoSelectQuery();
+		query.addCriteria(new MatchCriteria(getColumnForSearchByNames(getColumnNameDisplayName(), useLoweredValue), MatchCriteria.LIKE, true, displayName));
+		query.addCriteria(getNotDeletedCriteria());
+		return super.idoFindPKsByQuery(query);
 	}
 
 	public Integer ejbFindByPersonalID(String personalId) throws FinderException {
