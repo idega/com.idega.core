@@ -13,6 +13,7 @@ import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.repository.data.MutableClass;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -282,12 +283,12 @@ public class ICLocaleBusiness  implements MutableClass {
    */
   public static Locale getLocaleFromLocaleString(String localeString){
     if(localeString.length() == 2){
-      return new Locale(localeString,"");
+      return new Locale(localeString, CoreConstants.EMPTY);
     }
-    else if(localeString.length()==5 && localeString.indexOf("_")==2){
+    else if(localeString.length()==5 && localeString.indexOf(CoreConstants.UNDER)==2){
       return new Locale(localeString.substring(0,2),localeString.substring(3,5));
     }
-    else if(localeString.length() > 5 && localeString.indexOf("_")==2 && localeString.indexOf("_",3)== 5){
+    else if(localeString.length() > 5 && localeString.indexOf(CoreConstants.UNDER)==2 && localeString.indexOf(CoreConstants.UNDER,3)== 5){
       return new Locale(localeString.substring(0,2),localeString.substring(3,5),localeString.substring(6,localeString.length()));
     }
 		else {
