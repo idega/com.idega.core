@@ -894,14 +894,13 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
         var value = element.nodeValue;
     
 		if (value.indexOf('prototype') == -1 && value.indexOf('scriptac') == -1) {
-			if (scriptsToEval != null) {
-	        	scriptsToEval.push(element.nodeValue);
-			} else {
-				executeJavaScriptActionsCodedInStringInGlobalScope(element.nodeValue);
+			if (scriptsToEval == null) {
+				scriptsToEval = new Array();
 			}
+			scriptsToEval.push(element.nodeValue);
 		}
 
-		return document.createTextNode('');
+		return document.createElement('script');
     }
 	
 	//	Script
@@ -945,7 +944,7 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 			}
 		}
 		
-		return document.createElement('script');	//	Fake, all actions are executed already
+		return document.createElement('script');
 	}
 	
 	//	Link
@@ -1067,7 +1066,8 @@ IWCORE.includeResourcesAndExecuteActions = function(resourcesToAdd, scriptsToEva
 }
 
 function createRealNode(element, scriptsToEval, resourcesToAdd) {
-	return IWCORE.createRealNode(element, scriptsToEval, resourcesToAdd);
+	var newElement = IWCORE.createRealNode(element, scriptsToEval, resourcesToAdd);
+	return newElement;
 }
 
 function replaceNode(component, nodeToReplace, container) {
@@ -1595,8 +1595,10 @@ LazyLoader.load = function(url, callback) {
 				for (var i = 0; (i < currentResources.length && !foundRequiredResource); i++) {
 					var resourceElement = currentResources[i];
 					resourceUri = isCSS ? resourceElement.getAttribute('href') : resourceElement.getAttribute('src');
-					if (url == resourceUri) {
-						foundRequiredResource = true;
+					if (resourceUri != null && resourceUri != '') {
+						if (url == resourceUri) {
+							foundRequiredResource = true;
+						}
 					}
 				}
 			}
