@@ -1,7 +1,7 @@
 //***********************************************************//
 //
 // idegaWeb Core Javascript Function library
-// (c) Copyright idega hf. 2000-2006 All rights reserved.
+// (c) Copyright idega hf. 2000-2008 All rights reserved.
 //
 // 	This file contains proprietary information owned
 // 	by idega and may not be copied without prior concent.
@@ -1548,6 +1548,7 @@ function isCorrectFileType(id, fileType, noFileMsg, invalidFileTypeMsg) {
 var LazyLoader = {};		//	Namespace
 LazyLoader.timer = {};		//	Contains timers for resources
 LazyLoader.resources = [];	//	Contains called resources references
+LazyLoader.loading = false;
 LazyLoader.loadMultiple = function(urls, callback) {
 	try {
 		if (urls == null || urls.length == 0) {
@@ -1567,11 +1568,33 @@ LazyLoader.loadMultiple = function(urls, callback) {
 			LazyLoader.loadMultiple(urls, callback);
 		});
 	} catch(e) {
-		//alert('Exception using LazyLoader.loadMultiple: ' + e);
+		LazyLoader.loading = false;
+		//alert('Exception using LazyLoader.loadMultiple: ' + e.message);
 	}
 }
 
 LazyLoader.load = function(url, callback) {
+	if (LazyLoader.loading) {
+		LazyLoader.timer[url + '_loading'] = setInterval(function() {
+			if (!LazyLoader.loading) {
+				clearInterval(LazyLoader.timer[url + '_loading']);
+				LazyLoader.doRealLoading(url, callback);
+			}
+		}, 10);
+	}
+	else {
+		LazyLoader.doRealLoading(url, callback);
+	}
+}
+
+LazyLoader.doRealLoading = function(url, callback) {
+	if (LazyLoader.loading) {
+		//	Sending back to "synchronize"
+		LazyLoader.load(url, callback);
+		return false;
+	}
+	LazyLoader.loading = true;
+	
 	try {
 		var foundRequiredResource = false;
 		
@@ -1606,6 +1629,7 @@ LazyLoader.load = function(url, callback) {
 		
 		//	Make sure we only load once
 		if (foundRequiredResource) {
+			LazyLoader.loading = false;
 			if (callback) {
 				callback();
 			}
@@ -1619,7 +1643,7 @@ LazyLoader.load = function(url, callback) {
 				resource.href = url;
 				resource.type = 'text/css';
 				resource.rel = 'stylesheet';
-				resource.media = 'screen';
+				resource.media = 'all';
 			}
 			else {
 				//	Will treat as JavaScript
@@ -1627,28 +1651,37 @@ LazyLoader.load = function(url, callback) {
 				resource.src = url;
 				resource.type = 'text/javascript';
 			}
-			head.appendChild(resource);	//	Add resource tag to head element
 			
 			//	Was a callback requested?
 			if (callback) {
 				if (isCSS) {
+					LazyLoader.loading = false;
 					callback();	//	TODO: is it better way?
 				}
 				else {
-					//	Test for onreadystatechange to trigger callback
+					//	IE
 					resource.onreadystatechange = function () {
 						if (resource.readyState == 'loaded' || resource.readyState == 'complete') {
+							LazyLoader.loading = false;
 							callback();
 						}
-					}				
-					//	Test for onload to trigger callback
+					}
+					
+					//	FF, Safari...
 					resource.onload = function () {
+						LazyLoader.loading = false;
 						callback();
 					}
 				}
 			}
+			
+			head.appendChild(resource);	//	Add resource tag to head element
+			if (callback == null) {
+				LazyLoader.loading = false;
+			}
 		}
 	} catch (e) {
-		//alert('Exception using LazyLoader.load: ' + e);
+		LazyLoader.loading = false;
+		//alert('Exception using LazyLoader.load: ' + e.message);
 	}
 }
