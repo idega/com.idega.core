@@ -15,9 +15,9 @@ import org.w3c.dom.NodeList;
  * when using xpath variables, access to XPathUtil instance needs to be synchronized
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  *
- * Last modified: $Date: 2007/10/30 21:55:22 $ by $Author: civilis $
+ * Last modified: $Date: 2008/07/10 07:18:37 $ by $Author: civilis $
  */
 public class XPathUtil {
 
@@ -57,11 +57,13 @@ public class XPathUtil {
 		}
 	}
 	
-	public Node getNode(Node context) {
+	public <T extends Node>T getNode(Node context) {
 		
 		try {
 			synchronized (xpathExpression) {
-				return (Node)xpathExpression.evaluate(context, XPathConstants.NODE);
+				@SuppressWarnings("unchecked")
+				T node = (T)xpathExpression.evaluate(context, XPathConstants.NODE);
+				return node;
 			}
 				
 		} catch (XPathException e) {
