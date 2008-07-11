@@ -1,6 +1,11 @@
 package com.idega.core.persistence.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,15 +19,16 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  *
- * Last modified: $Date: 2008/05/26 11:04:37 $ by $Author: civilis $
+ * Last modified: $Date: 2008/07/11 07:50:09 $ by $Author: civilis $
  */
 @Repository("genericDAO")
 @Transactional(readOnly=true)
 public class GenericDaoImpl implements GenericDao {
 
 	private EntityManager entityManager;
+	private static final Logger logger = Logger.getLogger(GenericDaoImpl.class.getName());
 	
 	protected EntityManager getEntityManager() {
 		
@@ -84,6 +90,7 @@ public class GenericDaoImpl implements GenericDao {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected <Expected>List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
 
 		for (Param param : params) {
@@ -91,10 +98,45 @@ public class GenericDaoImpl implements GenericDao {
 			q.setParameter(param.getParamName(), param.getParamValue());
 		}
 		
-		@SuppressWarnings("unchecked")
-		List<Expected> result = q.getResultList();
+		final List<Expected> fresult;
 		
-		return result;
+		if(Long.class.equals(expectedReturnType)) {
+
+			@SuppressWarnings("unchecked")
+			List<Object> result = q.getResultList();
+			
+			if(result != null) {
+			
+				List<Long> longsResult = new ArrayList<Long>(result.size());
+				
+				for (Object item : result) {
+					
+					if (item instanceof Long) {
+						longsResult.add((Long)item);
+						
+					} else if (item instanceof BigInteger) {
+						
+						logger.log(Level.INFO, "Converting BigInteger: " + item + " to Long");
+						longsResult.add(Long.valueOf(((BigInteger) item).longValue()));
+					} else if (item instanceof BigDecimal) {
+						
+						logger.log(Level.INFO, "Converting BigDecimal: " + item + " to Long");
+						longsResult.add(Long.valueOf(((BigDecimal) item).longValue()));
+					} else {
+						logger.log(Level.WARNING, "Unsupported -expected long- type="+item.getClass().getName()+", item="+item);
+					}
+				}
+				
+				fresult = (List<Expected>)longsResult;
+			} else {
+				fresult = null;
+			}
+			
+		} else {
+			fresult = q.getResultList();
+		}
+		
+		return fresult;
 	}
 	
 	
