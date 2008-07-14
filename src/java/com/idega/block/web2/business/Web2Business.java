@@ -349,4 +349,8 @@ public interface Web2Business extends IBOService {
 	public String getBundleUriToContextMenuScript(String version, boolean compressedFile);
 	public String getBundleUriToContextMenuScript(boolean compressedFile);
 	public String getBundleUriToContextMenuScript();
+	
+	//	Humanized messages
+	public String getBundleUriToHumanizedMessagesScript();
+	public String getBundleUriToHumanizedMessagesStyleSheet();
 }
