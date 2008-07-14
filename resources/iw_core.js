@@ -1651,6 +1651,7 @@ LazyLoader.doRealLoading = function(url, callback) {
 				resource.src = url;
 				resource.type = 'text/javascript';
 			}
+			head.appendChild(resource);	//	Add resource tag to head element
 			
 			//	Was a callback requested?
 			if (callback) {
@@ -1675,7 +1676,6 @@ LazyLoader.doRealLoading = function(url, callback) {
 				}
 			}
 			
-			head.appendChild(resource);	//	Add resource tag to head element
 			if (callback == null) {
 				LazyLoader.loading = false;
 			}
