@@ -118,7 +118,7 @@ addChooserObject = function(id, objectClass, hiddenInputAttribute, chooserValueV
 	}
 	if (chooser == null) {
 		showLoadingMessage(message);
-		ChooserService.getRenderedPresentationObject(objectClass, hiddenInputAttribute, chooserObjectName, false, {
+		ChooserService.getRenderedPresentationObject(objectClass, hiddenInputAttribute, chooserObjectName, true, {
 			callback: function(renderedObject) {
 				closeAllLoadingMessages();
 				insertNodesToContainer(renderedObject, container);
