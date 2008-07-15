@@ -25,6 +25,7 @@ import com.idega.data.IDOLookupException;
 //import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
+import com.idega.util.StringUtil;
 
 
 /**
@@ -133,11 +134,11 @@ public class CountryDropdownMenu extends DropdownMenu {
 		}
 		
 		try {
-			if( this.selectedCountryName!=null){
+			if(!StringUtil.isEmpty(this.selectedCountryName)){
 				this.selectedCountry = getAddressBusiness(iwc).getCountryHome().findByCountryName(this.selectedCountryName);	
 			}
 			// we must ensure no external selected country is set
-			else if(this.selectedCountry==null){
+			else if(this.selectedCountry==null && !StringUtil.isEmpty(currentLocale.getCountry())){
 				this.selectedCountry = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(currentLocale.getCountry());	
 			}
 		}
