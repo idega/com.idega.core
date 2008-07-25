@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.32 2008/05/30 14:16:03 civilis Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.33 2008/07/25 14:40:33 anton Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -63,10 +64,10 @@ import com.idega.util.RequestUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2008/05/30 14:16:03 $ by $Author: civilis $
+ * Last modified: $Date: 2008/07/25 14:40:33 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -229,7 +230,17 @@ public class IWAuthenticator extends BaseFilter {
 	protected boolean processRedirectsToUserHome(HttpServletRequest request, HttpServletResponse response, HttpSession session, LoginBusinessBean loginBusiness, boolean isLoggedOn) throws IOException, RemoteException {
 		if(isLoggedOn) {
 			User user = loginBusiness.getCurrentUser(session);
-			int homePageID = user.getHomePageID();
+			int homePageID = -1;
+			
+			String userPrefferedRole = user.getPreferredRole();
+			if(userPrefferedRole != null && userPrefferedRole.length() != 0) {
+				IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
+				Collection<Group> userGroups = getIWMainApplication(request).getAccessController().getAllUserGroupsForRoleKey(user.getPreferredRole(), iwac, user);
+				homePageID = userGroups.iterator().next().getHomePageID();
+			}
+			if (homePageID <= 0) {
+				homePageID = user.getHomePageID();
+			}
 			if (homePageID > 0) {
 				IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
 				response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));

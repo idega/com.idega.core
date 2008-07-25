@@ -109,6 +109,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	    addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
     	addAttribute(getColumnNameFamilyID(), "Family ID", true, true, String.class, 20);
     	addAttribute(getColumnNamePreferredLocale(), "Preferred locale", true, true, String.class, 20);
+    	addAttribute(getColumnNamePreferredRole(), "Preferred role", true, true, String.class, 50);
 		addOneToOneRelationship(COLUMN_NAME_USER_PROPERTIES_FILE_ID, ICFile.class);
 		this.setNullable(COLUMN_NAME_USER_PROPERTIES_FILE_ID, true);
 
@@ -250,6 +251,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public static String getColumnNamePreferredLocale(){
 		return "PREFERRED_LOCALE";
 	}
+	
+	public static String getColumnNamePreferredRole(){
+		return "PREFERRED_ROLE";
+	}
 
 	/**
 	 * @depricated
@@ -336,6 +341,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	
 	public String getPreferredLocale() {
 		return getStringColumnValue(getColumnNamePreferredLocale());
+	}
+	
+	public void setPreferredRole(String preferredRole) {
+		setColumn(getColumnNamePreferredRole(), preferredRole);
+	}
+	
+	public String getPreferredRole() {
+		return getStringColumnValue(getColumnNamePreferredRole());
 	}
 
 	@Override
@@ -2626,5 +2639,5 @@ public void delete() throws SQLException {
 		}
 		return home;
 	}
-	
+
 }

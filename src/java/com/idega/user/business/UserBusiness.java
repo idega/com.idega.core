@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.106 2008/07/04 15:13:03 valdas Exp $
+ * $Id: UserBusiness.java,v 1.107 2008/07/25 14:40:26 anton Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -54,10 +54,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2008/07/04 15:13:03 $ by $Author: valdas $
+ *  Last modified: $Date: 2008/07/25 14:40:26 $ by $Author: anton $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.106 $
+ * @version $Revision: 1.107 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -823,11 +823,21 @@ public interface UserBusiness extends IBOService {
 	 */
 	public void setUsersPreferredLocale(User user,String preferredLocale, boolean storeUser);
 	
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#setUsersPreferredRole
+	 */
+	public void setUsersPreferredRole(User user, String preferredRole, boolean storeUser);
+	
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersPreferredLocale
 	 */
 	public Locale getUsersPreferredLocale(User user);
+	
+	/**
+	 * @see com.idega.user.business.UserBusinessBean#getUsersPreferredRole
+	 */
+	public String getUsersPreferredRole(User user);
 	
 	
 	/**

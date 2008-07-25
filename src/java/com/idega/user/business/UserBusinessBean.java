@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.238 2008/07/04 15:13:03 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.239 2008/07/25 14:40:29 anton Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -112,10 +112,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2008/07/04 15:13:03 $ by $Author: valdas $
+ * Last modified: $Date: 2008/07/25 14:40:29 $ by $Author: anton $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.238 $
+ * @version $Revision: 1.239 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3355,6 +3355,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 	
 	/**
+	 * Sets the preferredRole for the user and STORES to the database.
+	 * @param user
+	 * @param preferredRole
+	 */
+	public void setUsersPreferredRole(User user,String preferredRole, boolean storeUser){
+		user.setPreferredRole(preferredRole);
+		
+		if(storeUser){
+			user.store();
+		}
+	}
+	
+	/**
 	 * @param user
 	 * @return a Locale object created with the users preferred locale (language)
 	 */
@@ -3367,6 +3380,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		return locale;
+	}
+	
+	/**
+	 * @param user
+	 * @return a Locale object created with the users preferred locale (language)
+	 */
+	public String getUsersPreferredRole(User user){
+		String roleString = null;
+		if(user!=null){
+			roleString = user.getPreferredRole();
+		}
+		return roleString;
 	}
 	
 	/**

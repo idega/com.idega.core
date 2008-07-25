@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.120 2008/07/04 15:13:43 valdas Exp $
+ * $Id: AccessControl.java,v 1.121 2008/07/25 14:40:31 anton Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -73,12 +73,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2008/07/04 15:13:43 $ by $Author: valdas $
+ * Last modified: $Date: 2008/07/25 14:40:31 $ by $Author: anton $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.120 $
+ * @version $Revision: 1.121 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -2864,6 +2864,24 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		return groups;	
+	}
+	
+	public Collection getAllUserGroupsForRoleKey(String roleKey, IWApplicationContext iwac, User user) {
+		Collection<Group> groupsForRoleKey = getAllGroupsForRoleKey(roleKey, iwac);
+		Collection<Group> userGroups = user.getParentGroups();
+		Collection<Group> groups = new ArrayList<Group>();
+		
+		for(Group group : groupsForRoleKey) {
+			if(userGroups.contains(group)) {
+				groups.add(group);
+			}
+		}
+		
+		if(groups.size() > 0) {
+			//TODO sort groups that prefferable group would have highest index 
+		}
+		
+		return groups;
 	}
 	
 	public Collection getAllGroupsThatAreRoleMasters(IWApplicationContext iwac){
