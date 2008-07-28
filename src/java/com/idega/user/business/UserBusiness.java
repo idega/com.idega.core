@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.107 2008/07/25 14:40:26 anton Exp $
+ * $Id: UserBusiness.java,v 1.108 2008/07/28 10:51:18 anton Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -24,6 +24,7 @@ import javax.ejb.RemoveException;
 
 import com.idega.business.IBOService;
 import com.idega.core.accesscontrol.business.LoginCreateException;
+import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.contact.data.Email;
@@ -54,10 +55,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2008/07/25 14:40:26 $ by $Author: anton $
+ *  Last modified: $Date: 2008/07/28 10:51:18 $ by $Author: anton $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.107 $
+ * @version $Revision: 1.108 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -826,7 +827,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#setUsersPreferredRole
 	 */
-	public void setUsersPreferredRole(User user, String preferredRole, boolean storeUser);
+	public void setUsersPreferredRole(User user, ICRole preferredRole, boolean storeUser);
 	
 
 	/**
@@ -837,7 +838,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersPreferredRole
 	 */
-	public String getUsersPreferredRole(User user);
+	public ICRole getUsersPreferredRole(User user);
 	
 	
 	/**

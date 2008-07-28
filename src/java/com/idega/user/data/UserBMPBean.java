@@ -9,10 +9,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
+import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailBMPBean;
@@ -109,7 +111,6 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	    addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
     	addAttribute(getColumnNameFamilyID(), "Family ID", true, true, String.class, 20);
     	addAttribute(getColumnNamePreferredLocale(), "Preferred locale", true, true, String.class, 20);
-    	addAttribute(getColumnNamePreferredRole(), "Preferred role", true, true, String.class, 50);
 		addOneToOneRelationship(COLUMN_NAME_USER_PROPERTIES_FILE_ID, ICFile.class);
 		this.setNullable(COLUMN_NAME_USER_PROPERTIES_FILE_ID, true);
 
@@ -118,6 +119,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	
 		addManyToOneRelationship(getColumnNameGender(), "Gender", com.idega.user.data.Gender.class);
 		addOneToOneRelationship(getColumnNameSystemImage(), "Image", com.idega.core.file.data.ICFile.class);
+		addOneToOneRelationship(getColumnNamePreferredRole(), "Preferred role", com.idega.core.accesscontrol.data.ICRole.class);
 		/**
 		 * For legacy compatabuility
 		 */
@@ -343,12 +345,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return getStringColumnValue(getColumnNamePreferredLocale());
 	}
 	
-	public void setPreferredRole(String preferredRole) {
+	public void setPreferredRole(ICRole preferredRole) {
 		setColumn(getColumnNamePreferredRole(), preferredRole);
 	}
 	
-	public String getPreferredRole() {
-		return getStringColumnValue(getColumnNamePreferredRole());
+	public ICRole getPreferredRole() {
+		return (ICRole)getColumnValue(getColumnNamePreferredRole());
 	}
 
 	@Override

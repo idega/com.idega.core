@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 
 import javax.ejb.EJBException;
 
+import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
@@ -133,9 +134,9 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void setFamilyID(String familyID);
  public String getFamilyID();
  public void setPreferredLocale(String preferredLocale);
- public void setPreferredRole(String preferredRole);
+ public void setPreferredRole(ICRole preferredRole);
  public String getPreferredLocale();
- public String getPreferredRole();
+ public ICRole getPreferredRole();
  public void setUserProperties(ICFile file);	
  public ICFile getUserProperties();
  public Address getUsersMainAddress() throws EJBException, RemoteException ;

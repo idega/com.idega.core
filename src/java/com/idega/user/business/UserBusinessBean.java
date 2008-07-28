@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.239 2008/07/25 14:40:29 anton Exp $
+ * $Id: UserBusinessBean.java,v 1.240 2008/07/28 10:51:18 anton Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -41,6 +41,7 @@ import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.data.ICPermission;
+import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
@@ -112,10 +113,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2008/07/25 14:40:29 $ by $Author: anton $
+ * Last modified: $Date: 2008/07/28 10:51:18 $ by $Author: anton $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.239 $
+ * @version $Revision: 1.240 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3359,7 +3360,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param user
 	 * @param preferredRole
 	 */
-	public void setUsersPreferredRole(User user,String preferredRole, boolean storeUser){
+	public void setUsersPreferredRole(User user,ICRole preferredRole, boolean storeUser){
 		user.setPreferredRole(preferredRole);
 		
 		if(storeUser){
@@ -3384,14 +3385,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	
 	/**
 	 * @param user
-	 * @return a Locale object created with the users preferred locale (language)
+	 * @return a ICRole object created with the users preferred role
 	 */
-	public String getUsersPreferredRole(User user){
-		String roleString = null;
+	public ICRole getUsersPreferredRole(User user){
+		ICRole role = null;
 		if(user!=null){
-			roleString = user.getPreferredRole();
+			role = user.getPreferredRole();
 		}
-		return roleString;
+		return role;
 	}
 	
 	/**

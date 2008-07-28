@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.33 2008/07/25 14:40:33 anton Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.34 2008/07/28 10:51:18 anton Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -41,6 +41,7 @@ import com.idega.core.accesscontrol.business.AuthenticationBusiness;
 import com.idega.core.accesscontrol.business.LoggedOnInfo;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.ServletFilterChainInterruptException;
+import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.jaas.IWCallbackHandler;
 import com.idega.core.accesscontrol.jaas.IWJAASAuthenticationRequestWrapper;
 import com.idega.core.builder.business.BuilderService;
@@ -64,10 +65,10 @@ import com.idega.util.RequestUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2008/07/25 14:40:33 $ by $Author: anton $
+ * Last modified: $Date: 2008/07/28 10:51:18 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -232,17 +233,21 @@ public class IWAuthenticator extends BaseFilter {
 			User user = loginBusiness.getCurrentUser(session);
 			int homePageID = -1;
 			
-			String userPrefferedRole = user.getPreferredRole();
-			if(userPrefferedRole != null && userPrefferedRole.length() != 0) {
-				IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
-				Collection<Group> userGroups = getIWMainApplication(request).getAccessController().getAllUserGroupsForRoleKey(user.getPreferredRole(), iwac, user);
-				homePageID = userGroups.iterator().next().getHomePageID();
+			ICRole userPrefferedRole = user.getPreferredRole();
+			IWMainApplication app = getIWMainApplication(request);
+			if(userPrefferedRole != null) {
+				IWApplicationContext iwac = app.getIWApplicationContext();
+				Collection<Group> userGroups = app.getAccessController().getAllUserGroupsForRoleKey(user.getPreferredRole().getId(), iwac, user);
+				for(Group userGroup : userGroups) {
+					if((homePageID = userGroup.getHomePageID()) > 0)
+						break;
+				}
 			}
 			if (homePageID <= 0) {
 				homePageID = user.getHomePageID();
 			}
 			if (homePageID > 0) {
-				IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
+				IWApplicationContext iwac = app.getIWApplicationContext();
 				response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
 				return true;
 			}
@@ -251,7 +256,7 @@ public class IWAuthenticator extends BaseFilter {
 			if (prmg != null) {
 				homePageID = prmg.getHomePageID();
 				if (homePageID > 0) {
-					IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
+					IWApplicationContext iwac = app.getIWApplicationContext();
 					response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
 					return true;
 				}
