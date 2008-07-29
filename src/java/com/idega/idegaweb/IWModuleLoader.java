@@ -1,5 +1,5 @@
 /*
- * $Id: IWModuleLoader.java,v 1.9 2007/10/02 04:47:58 valdas Exp $ Created on
+ * $Id: IWModuleLoader.java,v 1.10 2008/07/29 15:54:43 tryggvil Exp $ Created on
  * 31.5.2005 in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -26,29 +26,27 @@ import javax.servlet.ServletContext;
  * This is the class responsible for loading the bundles (the new jar method)
  * for the IWMainApplication instance.
  * </p>
- * Last modified: $Date: 2007/10/02 04:47:58 $ by $Author: valdas $
+ * Last modified: $Date: 2008/07/29 15:54:43 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class IWModuleLoader {
 
 	private static final Logger LOGGER = Logger.getLogger(IWBundleLoader.class.getName());
 
 	IWMainApplication iwma;
-	ServletContext _externalContext;
+	//ServletContext _externalContext;
 	private List<JarLoader> jarLoaders;
 
 	private String defaultLibPath = "/WEB-INF/lib/";
-	
+
 	/**
 	 * @deprecated
-	 * 
 	 * There is no need to send ServletContext. Instead of it can be used iwma.getServletContext().
 	 */
 	public IWModuleLoader(IWMainApplication iwma, ServletContext sContext) {
-		this.iwma = iwma;
-		this._externalContext = sContext;
+		this(iwma);
 	}
 
 	public IWModuleLoader(IWMainApplication iwma) {

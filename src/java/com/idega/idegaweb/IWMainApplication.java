@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.187 2008/06/11 16:57:06 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.188 2008/07/29 15:54:44 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -99,10 +99,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2008/06/11 16:57:06 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2008/07/29 15:54:44 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.187 $
+ * @version $Revision: 1.188 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -203,9 +203,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private boolean inSetupMode=false;
     public static boolean loadBundlesFromJars=true;
 	public static boolean loadBundlesFromWorkspace=false;
+	static String workpaceBundlesFolder;
     static{
-    	String workspaceFolder = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
-    	if(workspaceFolder!=null){
+    	workpaceBundlesFolder = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
+    	if(workpaceBundlesFolder!=null){
     		loadBundlesFromWorkspace=true;
     	}
     }
@@ -336,6 +337,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	}
 
 	public void loadBundles() {
+		loadBundlesFromWorkspace();
 		loadBundlesLegacy();
     	loadBundlesFromJars();
         loadBundlesLocalizationsForJSF();
@@ -356,7 +358,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		}
 	}
 	
-	protected IWModuleLoader getModuleLoader(){
+	public IWModuleLoader getModuleLoader(){
 		if(moduleLoader==null){
 			moduleLoader = new IWModuleLoader(this,this.application);
 			if(loadBundlesFromJars){
@@ -966,7 +968,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     /**
      * <p>
      * This method loads the bundles from the /idegaweb/bundles folder under the expanded webapp folder.<br>
-     * This is the older way and is as of platform 3.2 replaced with loading from jars instead.
+     * This is the older way and is as of platform 4.0 replaced with loading from jars instead.
      * </p>
      */
     private void loadBundlesLegacy() {
@@ -976,6 +978,17 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		}
 	}
 
+    /**
+     * <p>
+     * This method loads the bundles from the (eclipse) workspace folder where the bundles are checked out as project<br>
+     * </p>
+     */
+    private void loadBundlesFromWorkspace() {
+		if (loadBundlesFromWorkspace) {
+			File theRoot = new File(workpaceBundlesFolder);
+			loadBundlesInFolder(theRoot);
+		}
+	}
 	/**
 	 * <p>
 	 * TODO tryggvil describe method loadBundlesInFolder
@@ -986,7 +999,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		File[] bundles = bundlesFolder.listFiles();
 		if (bundles != null) {
 			for (int i = 0; i < bundles.length; i++) {
-				if (bundles[i].isDirectory() && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)) {
+				//if (bundles[i].isDirectory() && (bundles[i].getName().toLowerCase().indexOf(".bundle") != -1)) {
+				if (bundles[i].isDirectory()) {
 					File properties = new File(bundles[i], "properties");
 					File propertiesFile = new File(properties, DefaultIWBundle.propertyFileName);
 					IWPropertyList list = new IWPropertyList(propertiesFile);
@@ -2363,12 +2377,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * @param bundle
 	 */
 	public void loadBundle(IWBundle bundle) {
-		String bundleIdentifier = bundle.getBundleIdentifier();
-		getLoadedBundles().put(bundleIdentifier, bundle);
-		// must be put in the loadedBundles map FIRST to prevent looping if
-		// a starter class calls IWMainApplication.getBundle(...) for the
-		// same bundleidentifier
-		bundle.runBundleStarters();
+		if(!this.isBundleLoaded(bundle.getBundleIdentifier())){
+			String bundleIdentifier = bundle.getBundleIdentifier();
+			getLoadedBundles().put(bundleIdentifier, bundle);
+			// must be put in the loadedBundles map FIRST to prevent looping if
+			// a starter class calls IWMainApplication.getBundle(...) for the
+			// same bundleidentifier
+			bundle.runBundleStarters();
+		}
 	}
 	
 	public ServletContext getServletContext(){

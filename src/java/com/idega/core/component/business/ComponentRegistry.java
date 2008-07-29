@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.15 2008/06/18 12:59:30 valdas Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.16 2008/07/29 15:54:45 tryggvil Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -34,10 +34,10 @@ import com.idega.idegaweb.IWModuleLoader;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2008/06/18 12:59:30 $ by $Author: valdas $
+ * Last modified: $Date: 2008/07/29 15:54:45 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class ComponentRegistry {
 
@@ -45,6 +45,7 @@ public class ComponentRegistry {
 	private List<ComponentInfo> allComponents;
 	private boolean loadedOldIWComponents=false;
 	private boolean loadedFacesConfig=false;
+	private boolean initializedModuleLoader=false;
 	private IWMainApplication iwma;
 	private ServletContext context;
 	public static final String COMPONENT_TYPE_ELEMENT = ICObjectBMPBean.COMPONENT_TYPE_ELEMENT;
@@ -58,6 +59,7 @@ public class ComponentRegistry {
 	public ComponentRegistry(IWMainApplication iwma,ServletContext context) {
 		this.iwma=iwma;
 		this.context=context;
+		initialize();
 	}
 
 	public static ComponentRegistry loadRegistry(IWMainApplication iwma, ServletContext context) {
@@ -65,7 +67,7 @@ public class ComponentRegistry {
 		ComponentRegistry registry = null;
 		//if (registry != null) {
 			registry = new ComponentRegistry(iwma,context);
-			registry.getAllComponents();
+			//registry.getAllComponents();
 			iwma.setAttribute(BEAN_KEY, registry);
 		//}
 		return registry;
@@ -81,10 +83,15 @@ public class ComponentRegistry {
 		return registry;
 	}
 	
+	public void initialize(){
+		this.initializeModuleLoader();
+	}
+	
 	public List<ComponentInfo> getAllComponents(){
 		//this method sees to it to load first all components:
 		loadOldIWComponents();
 		loadFacesConfig();
+		
 		return internalGetComponentList();
 		
 	}
@@ -97,11 +104,22 @@ public class ComponentRegistry {
 	private void loadFacesConfig() {
 		if (!this.loadedFacesConfig) {
 			this.loadedFacesConfig=true;
-			IWModuleLoader loader = new IWModuleLoader(this.iwma,this.context);
-			loader.getJarLoaders().add(new FacesConfigDeployer(this));
+			IWModuleLoader loader = initializeModuleLoader();
 			loader.loadBundlesFromJars();
 			
 		}
+	}
+
+	private IWModuleLoader initializeModuleLoader() {
+
+		if (!this.initializedModuleLoader) {
+			//IWModuleLoader loader = new IWModuleLoader(this.iwma,this.context);
+			IWModuleLoader loader = this.iwma.getModuleLoader();
+			loader.getJarLoaders().add(new FacesConfigDeployer(this));
+			initializedModuleLoader=true;
+			return loader;
+		}
+		return this.iwma.getModuleLoader();
 	}
 
 	private List<ComponentInfo> internalGetComponentList() {
