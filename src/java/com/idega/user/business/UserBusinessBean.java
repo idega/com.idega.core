@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.240 2008/07/28 10:51:18 anton Exp $
+ * $Id: UserBusinessBean.java,v 1.241 2008/07/29 11:04:20 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -36,13 +36,18 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
+import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICRole;
+import com.idega.core.accesscontrol.data.ICRoleHome;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.builder.data.ICPageHome;
@@ -113,10 +118,10 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/>
- * Last modified: $Date: 2008/07/28 10:51:18 $ by $Author: anton $
+ * Last modified: $Date: 2008/07/29 11:04:20 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.240 $
+ * @version $Revision: 1.241 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -4087,6 +4092,91 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		
 		return users;
+	}
+
+	public String setPreferredRoleAndGetHomePageUri(String roleKey) {
+		if (StringUtil.isEmpty(roleKey)) {
+			return null;
+		}
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		User currentUser = null;
+		try {
+			currentUser = iwc.getCurrentUser();
+		} catch(NotLoggedOnException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		ICRoleHome roleHome = null;
+		try {
+			roleHome = (ICRoleHome) getIDOHome(ICRole.class);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			return null;
+		}
+		ICRole preferredRole = null;
+		try {
+			preferredRole = roleHome.findByPrimaryKey(roleKey);
+		} catch (FinderException e) {
+			e.printStackTrace();
+			return null;
+		}
+		setUsersPreferredRole(currentUser, preferredRole, true);
+		return getPageUriByUserPreferredRole(currentUser);
+	}
+	
+	public String getPageUriByUserPreferredRole(User user) {
+		ICRole userPrefferedRole = user.getPreferredRole();
+		if (userPrefferedRole == null) {
+			return null;
+		}
+		
+		IWApplicationContext iwac = getIWApplicationContext();
+		Collection<Group> userGroups = getAccessController().getAllUserGroupsForRoleKey(user.getPreferredRole().getId(), iwac, user);
+		if (ListUtil.isEmpty(userGroups)) {
+			return null;
+		}
+		
+		int homePageId = -1;
+		for (Group userGroup : userGroups) {
+			homePageId = userGroup.getHomePageID();
+			if (homePageId > 0) {
+				try {
+					return ((BuilderService) getServiceInstance(BuilderService.class)).getPageURI(homePageId);
+				} catch (IBOLookupException e) {
+					e.printStackTrace();
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
+	
+	public List<ICRole> getAvailableRolesForUserAsPreferredRoles(User user) {
+		List<ICRole> rolesForUser = new ArrayList<ICRole>();
+		AccessController accessController = getAccessController();
+		Collection<Group> groups = user.getParentGroups();
+		for (Group group : groups) {
+			if (group.getHomePageID() > 0) {
+				Collection<ICPermission> roles = accessController.getAllRolesForGroup(group);
+				if (!ListUtil.isEmpty(roles)) {
+					for (ICPermission permission : roles) {
+						ICRole role;
+						try {
+							role = getAccessController().getRoleByRoleKey(permission.getPermissionString());
+							if (!rolesForUser.contains(role)) {
+								rolesForUser.add(role);
+							}
+						} catch (FinderException e) {
+							continue;
+						}
+					}
+				}
+			}
+		}
+		return rolesForUser;
 	}
 	
 } // Class UserBusiness

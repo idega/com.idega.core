@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.108 2008/07/28 10:51:18 anton Exp $
+ * $Id: UserBusiness.java,v 1.109 2008/07/29 11:04:20 valdas Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -55,10 +55,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2008/07/28 10:51:18 $ by $Author: anton $
+ *  Last modified: $Date: 2008/07/29 11:04:20 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.108 $
+ * @version $Revision: 1.109 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -883,4 +883,10 @@ public interface UserBusiness extends IBOService {
 	public Collection<User> getUsersByEmail(String email);
 	
 	public Collection<User> getUsersByPhoneNumber(String phoneNumber);
+	
+	public String setPreferredRoleAndGetHomePageUri(String roleKey);
+	
+	public String getPageUriByUserPreferredRole(User user);
+	
+	public List<ICRole> getAvailableRolesForUserAsPreferredRoles(User user);
 }
