@@ -11,6 +11,10 @@
 	    	<param name="class" value="com.idega.business.PageSessionPoller"/>
     	</create>
 		<convert converter="bean" match="com.idega.builder.bean.AdvancedProperty" />
+		<create creator="ibo" javascript="UserBusiness" scope="application">
+			<param name="class" value="com.idega.user.business.UserBusiness" />
+			<include method="setPreferredRoleAndGetHomePageUri"/>
+		</create>
 	</allow>
 	<signatures>
 		<![CDATA[
